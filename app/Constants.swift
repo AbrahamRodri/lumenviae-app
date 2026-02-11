@@ -160,7 +160,7 @@ struct Constants {
     static let homeTab = "HOME"
     static let journalTab = "JOURNAL"
     static let progressTab = "PROGRESS"
-    static let settingsTab = "SETTINGS"
+    static let accountTab = "ACCOUNT"
 }
 
 // MARK: - Color Extension for Hex Support

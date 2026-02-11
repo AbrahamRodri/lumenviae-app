@@ -8,14 +8,14 @@
 import SwiftUI
 
 enum AppTab: CaseIterable {
-    case home, journal, progress, settings
+    case home, journal, progress, account
 
     var title: String {
         switch self {
         case .home: return Constants.homeTab
         case .journal: return Constants.journalTab
         case .progress: return Constants.progressTab
-        case .settings: return Constants.settingsTab
+        case .account: return Constants.accountTab
         }
     }
 
@@ -24,7 +24,7 @@ enum AppTab: CaseIterable {
         case .home: return "house.fill"
         case .journal: return "book.fill"
         case .progress: return "chart.line.uptrend.xyaxis"
-        case .settings: return "gearshape.fill"
+        case .account: return "person.fill"
         }
     }
 }
@@ -45,10 +45,10 @@ struct CustomTabBar: View {
             }
         }
         .padding(.top, 12)
-        .padding(.bottom, 28)
         .background(
             AppColors.cardBackground
-                .shadow(color: Color.black.opacity(0.3), radius: 10, y: -5)
+                .ignoresSafeArea()
+                .shadow(color: Color.black.opacity(0.3), radius: 10)
         )
     }
 }

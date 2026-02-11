@@ -9,14 +9,14 @@ import SwiftUI
 
 struct QuoteSection: View {
     let quote: String
-    let attribution: String
+    let author: String
 
     init(
         quote: String = "\"There is no problem, I tell you, no matter how difficult it is, that we cannot resolve by the prayer of the Holy Rosary.\"",
-        attribution: String = "SISTER LUCIA OF FATIMA"
+        author: String = "SISTER LUCIA OF FATIMA"
     ) {
         self.quote = quote
-        self.attribution = attribution
+        self.author = author
     }
 
     var body: some View {
@@ -34,7 +34,7 @@ struct QuoteSection: View {
                 .lineSpacing(6)
 
             // Attribution
-            Text("— \(attribution)")
+            Text("— \(author)")
                 .font(AppFonts.bodyFont(11))
                 .tracking(2)
                 .foregroundColor(AppColors.gold)

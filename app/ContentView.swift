@@ -25,14 +25,15 @@ struct ContentView: View {
                         PlaceholderView(title: "Journal")
                     case .progress:
                         PlaceholderView(title: "Progress")
-                    case .settings:
-                        PlaceholderView(title: "Settings")
+                    case .account:
+                        AccountView()
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
                 // Custom Tab Bar
                 CustomTabBar(selectedTab: $selectedTab)
+                    .ignoresSafeArea(.all, edges: .bottom)
             }
         }
     }
