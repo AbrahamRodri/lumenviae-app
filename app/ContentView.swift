@@ -11,6 +11,11 @@ struct ContentView: View {
     @State private var router = AppRouter()
     @State private var selectedTab: AppTab = .home
 
+    /// Hide tab bar during prayer flow (prayer session and completion screens)
+    private var shouldShowTabBar: Bool {
+        router.path.isEmpty
+    }
+
     var body: some View {
         ZStack {
             AppColors.background
@@ -25,9 +30,11 @@ struct ContentView: View {
                         }
                 }
 
-                // Custom Tab Bar
-                CustomTabBar(selectedTab: $selectedTab)
-                    .ignoresSafeArea(.all, edges: .bottom)
+                // Custom Tab Bar - hidden during prayer flow
+                if shouldShowTabBar {
+                    CustomTabBar(selectedTab: $selectedTab)
+                        .ignoresSafeArea(.all, edges: .bottom)
+                }
             }
         }
         .environment(router)
