@@ -38,7 +38,12 @@ struct MysteryPrayerView: View {
                 // Current meditation content
                 if let meditation = viewModel.currentMeditation {
                     // Mystery Image (fixed height, not in scroll)
-                    MysteryImageView(imageURL: Constants.mysteryPlaceholderImageURL)
+                    MysteryImageView(
+                        imageURL: Constants.mysteryImageURL(
+                            category: meditationSet.category,
+                            index: viewModel.currentMysteryIndex
+                        )
+                    )
                         .padding(.horizontal, 20)
                         .padding(.top, 12)
 
