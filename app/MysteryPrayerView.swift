@@ -50,7 +50,7 @@ struct MysteryPrayerView: View {
                     )
                     .padding(.top, 20)
 
-                    // Scripture / Meditation content - scrollable
+                    // Scripture / Meditation content - scrollable with padding for controls
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 16) {
                             // Meditation content
@@ -69,16 +69,32 @@ struct MysteryPrayerView: View {
                                     .foregroundColor(AppColors.gold.opacity(0.8))
                             }
                         }
+                        // Extra padding so content can scroll behind controls
+                        .padding(.top, 20)
+                        .padding(.bottom, 180)
                     }
                     .frame(maxHeight: .infinity)
+                    .overlay(alignment: .top) {
+                        // Top gradient fade for scroll content
+                        LinearGradient(
+                            colors: [AppColors.background, AppColors.background.opacity(0.85), .clear],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .frame(height: 40)
+                        .allowsHitTesting(false)
+                    }
                 } else {
                     Spacer()
                     ProgressView()
                         .tint(AppColors.gold)
                     Spacer()
                 }
+            }
 
-                // Fixed bottom section - always visible
+            // Fixed bottom section - floating over content with full gradient
+            VStack {
+                Spacer()
                 VStack(spacing: 12) {
                     // Audio Controls (if audio available)
                     if viewModel.currentMeditation?.hasAudio == true {
@@ -98,7 +114,14 @@ struct MysteryPrayerView: View {
                     .padding(.horizontal, 20)
                     .padding(.bottom, 8)
                 }
-                .background(AppColors.background)
+                .padding(.top, 24)
+                .background(
+                    LinearGradient(
+                        colors: [.clear, AppColors.background.opacity(0.85), AppColors.background],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
             }
         }
         .navigationBarHidden(true)
@@ -366,6 +389,6 @@ struct NextMysteryButton: View {
 // MARK: - Preview
 
 #Preview {
-    MysteryPrayerView(meditationSet: MockDataService.meditationSet(for: .sorrowful))
+    MysteryPrayerView(meditationSet: MockDataService.meditationSet(for: .sorrowful, includeAudio: true))
         .environment(AppRouter())
 }
