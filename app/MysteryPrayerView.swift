@@ -92,9 +92,20 @@ struct MysteryPrayerView: View {
                 }
             }
 
-            // Fixed bottom section - floating over content with full gradient
-            VStack {
+            // Fixed bottom section - floating over content with gradient fade
+            VStack(spacing: 0) {
                 Spacer()
+
+                // Gradient fade zone above controls
+                LinearGradient(
+                    colors: [.clear, AppColors.background],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 60)
+                .allowsHitTesting(false)
+
+                // Controls with solid background
                 VStack(spacing: 12) {
                     // Audio Controls (if audio available)
                     if viewModel.currentMeditation?.hasAudio == true {
@@ -114,14 +125,7 @@ struct MysteryPrayerView: View {
                     .padding(.horizontal, 20)
                     .padding(.bottom, 8)
                 }
-                .padding(.top, 24)
-                .background(
-                    LinearGradient(
-                        colors: [.clear, AppColors.background.opacity(0.85), AppColors.background],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
+                .background(AppColors.background)
             }
         }
         .navigationBarHidden(true)
