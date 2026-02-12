@@ -153,57 +153,57 @@ struct Constants {
     /// Images for Joyful Mysteries
     static let joyfulMysteryImages: [String] = [
         // 1. The Annunciation - Fra Angelico
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Fra_Angelico_-_The_Annunciation_-_WGA00555.jpg/800px-Fra_Angelico_-_The_Annunciation_-_WGA00555.jpg",
-        // 2. The Visitation - Raphael
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Visitaci%C3%B3n_%28Rafael%29.jpg/800px-Visitaci%C3%B3n_%28Rafael%29.jpg",
-        // 3. The Nativity - Gerard van Honthorst
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Gerard_van_Honthorst_-_Adoration_of_the_Shepherds_%281622%29.jpg/800px-Gerard_van_Honthorst_-_Adoration_of_the_Shepherds_%281622%29.jpg",
-        // 4. The Presentation - Simon Vouet
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Simon_Vouet_-_Presentation_in_the_Temple_-_WGA25366.jpg/800px-Simon_Vouet_-_Presentation_in_the_Temple_-_WGA25366.jpg",
-        // 5. Finding Jesus in the Temple - Heinrich Hofmann
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Christ_in_the_Temple_-_Heinrich_Hofmann.jpg/800px-Christ_in_the_Temple_-_Heinrich_Hofmann.jpg"
+        "https://commons.wikimedia.org/wiki/Special:FilePath/Fra_Angelico_-_The_Annunciation_-_WGA00555.jpg?width=1024",
+        // 2. The Visitation - Pontormo
+        "https://commons.wikimedia.org/wiki/Special:FilePath/Pontormo-Visitazione1.jpg?width=1024",
+        // 3. The Nativity - Bartolomé Esteban Murillo
+        "https://commons.wikimedia.org/wiki/Special:FilePath/Bartolom%C3%A9_Esteban_Murillo_-_The_Nativity_-_Google_Art_Project.jpg?width=1024",
+        // 4. The Presentation in the Temple
+        "https://commons.wikimedia.org/wiki/Special:FilePath/The_Presentation_in_the_Temple_MET_DT8826.jpg?width=1024",
+        // 5. Finding Jesus in the Temple - Albrecht Dürer
+        "https://commons.wikimedia.org/wiki/Special:FilePath/Albrecht_D%C3%BCrer_-_Jesus_among_the_Doctors_-_Google_Art_Project.jpg?width=1024"
     ]
 
     /// Images for Sorrowful Mysteries
     static let sorrowfulMysteryImages: [String] = [
-        // 1. The Agony in the Garden - Heinrich Hofmann
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Christ_in_Gethsemane.jpg/800px-Christ_in_Gethsemane.jpg",
-        // 2. The Scourging at the Pillar - William-Adolphe Bouguereau
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/William-Adolphe_Bouguereau_%281825-1905%29_-_The_Flagellation_of_Our_Lord_Jesus_Christ_%281880%29.jpg/800px-William-Adolphe_Bouguereau_%281825-1905%29_-_The_Flagellation_of_Our_Lord_Jesus_Christ_%281880%29.jpg",
-        // 3. The Crowning with Thorns - Titian
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Titian_-_Christ_Crowned_with_Thorns_-_WGA22832.jpg/800px-Titian_-_Christ_Crowned_with_Thorns_-_WGA22832.jpg",
+        // 1. The Agony in the Garden - Andrea Mantegna
+        "https://commons.wikimedia.org/wiki/Special:FilePath/Andrea_Mantegna_-_Agony_in_the_Garden_-_WGA13946.jpg?width=1024",
+        // 2. The Scourging at the Pillar - Piero della Francesca
+        "https://commons.wikimedia.org/wiki/Special:FilePath/Piero_della_Francesca_042_Flagellation.jpg?width=1024",
+        // 3. The Crowning with Thorns - Caravaggio
+        "https://commons.wikimedia.org/wiki/Special:FilePath/The_Crowning_with_Thorns-Caravaggio_(1602).jpg?width=1024",
         // 4. The Carrying of the Cross - El Greco
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/El_Greco_-_Christ_Carrying_the_Cross_-_WGA10456.jpg/800px-El_Greco_-_Christ_Carrying_the_Cross_-_WGA10456.jpg",
+        "https://commons.wikimedia.org/wiki/Special:FilePath/El_Greco_-_Christ_Carrying_the_Cross_-_WGA10559.jpg?width=1024",
         // 5. The Crucifixion - Diego Velázquez
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Cristo_crucificado.jpg/800px-Cristo_crucificado.jpg"
+        "https://commons.wikimedia.org/wiki/Special:FilePath/Cristo_crucificado.jpg?width=1024"
     ]
 
     /// Images for Glorious Mysteries
     static let gloriousMysteryImages: [String] = [
-        // 1. The Resurrection - Carl Heinrich Bloch
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Bloch-Resurrection.jpg/800px-Bloch-Resurrection.jpg",
-        // 2. The Ascension - John Singleton Copley
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/The_Ascension_by_Benjamin_West%2C_PRA.jpg/800px-The_Ascension_by_Benjamin_West%2C_PRA.jpg",
-        // 3. The Descent of the Holy Spirit - Titian
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Tizian_041.jpg/800px-Tizian_041.jpg",
+        // 1. The Resurrection - Piero della Francesca
+        "https://commons.wikimedia.org/wiki/Special:FilePath/Piero_della_Francesca_-_Resurrection_-_WGA17609.jpg?width=1024",
+        // 2. The Ascension - Giotto di Bondone
+        "https://commons.wikimedia.org/wiki/Special:FilePath/Giotto_di_Bondone_-_Ascension_of_Christ_-_WGA09156.jpg?width=1024",
+        // 3. The Descent of the Holy Spirit (Pentecost) - El Greco
+        "https://commons.wikimedia.org/wiki/Special:FilePath/El_Greco_-_The_Pentecost_-_WGA10533.jpg?width=1024",
         // 4. The Assumption of Mary - Titian
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Tiziano%2C_Assunta_frari.jpg/800px-Tiziano%2C_Assunta_frari.jpg",
-        // 5. The Coronation of Mary - Diego Velázquez
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Coronation_of_the_Virgin_by_Diego_Velazquez.jpg/800px-Coronation_of_the_Virgin_by_Diego_Velazquez.jpg"
+        "https://commons.wikimedia.org/wiki/Special:FilePath/Tizian_041.jpg?width=1024",
+        // 5. The Coronation of Mary - Fra Angelico
+        "https://commons.wikimedia.org/wiki/Special:FilePath/Fra_Angelico_-_The_Coronation_of_the_Virgin_-_WGA0630.jpg?width=1024"
     ]
 
     /// Images for Luminous Mysteries
     static let luminousMysteryImages: [String] = [
-        // 1. The Baptism in the Jordan - Piero della Francesca
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Piero_della_Francesca_-_Baptism_of_Christ_-_WGA17595.jpg/800px-Piero_della_Francesca_-_Baptism_of_Christ_-_WGA17595.jpg",
-        // 2. The Wedding at Cana - Paolo Veronese
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Paolo_Veronese_-_The_Wedding_at_Cana_-_WGA24877.jpg/800px-Paolo_Veronese_-_The_Wedding_at_Cana_-_WGA24877.jpg",
-        // 3. The Proclamation of the Kingdom - Carl Heinrich Bloch (Sermon on the Mount)
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Bloch-SermonOnTheMount.jpg/800px-Bloch-SermonOnTheMount.jpg",
+        // 1. The Baptism of Jesus in the Jordan - Verrocchio & Leonardo
+        "https://commons.wikimedia.org/wiki/Special:FilePath/The_Baptism_of_Christ_(Verrocchio_%26_Leonardo).jpg?width=1024",
+        // 2. The Wedding Feast at Cana - Paolo Veronese
+        "https://commons.wikimedia.org/wiki/Special:FilePath/Paolo_Veronese%2C_The_Wedding_at_Cana.JPG?width=1024",
+        // 3. The Proclamation of the Kingdom of God - Carl Heinrich Bloch (Sermon on the Mount)
+        "https://commons.wikimedia.org/wiki/Special:FilePath/Bloch-SermonOnTheMount.jpg?width=1024",
         // 4. The Transfiguration - Raphael
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Transfiguration_Raphael.jpg/800px-Transfiguration_Raphael.jpg",
-        // 5. The Institution of the Eucharist - Leonardo da Vinci (Last Supper)
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/The_Last_Supper_-_Leonardo_Da_Vinci_-_High_Resolution_32x16.jpg/800px-The_Last_Supper_-_Leonardo_Da_Vinci_-_High_Resolution_32x16.jpg"
+        "https://commons.wikimedia.org/wiki/Special:FilePath/Transfiguration_Raphael.jpg?width=1024",
+        // 5. The Institution of the Eucharist - Juan de Juanes
+        "https://commons.wikimedia.org/wiki/Special:FilePath/%C3%9Altima_Cena_-_Juan_de_Juanes.jpg?width=1024"
     ]
 
     /// Get mystery image URL by category and index (0-based)
