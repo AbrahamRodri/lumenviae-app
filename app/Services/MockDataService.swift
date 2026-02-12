@@ -59,7 +59,7 @@ struct MockDataService {
     }
 
     /// Get a mock full meditation set with meditations
-    static func meditationSet(for category: MysteryCategory) -> MeditationSet {
+    static func meditationSet(for category: MysteryCategory, includeAudio: Bool = false) -> MeditationSet {
         let mysteries = self.mysteries(for: category)
         let meditations = mysteries.map { mystery in
             Meditation(
@@ -68,7 +68,7 @@ struct MockDataService {
                 content: "Consider the mystery of \(mystery.name). \(mystery.description ?? "")",
                 author: "Traditional",
                 source: nil,
-                audioUrl: nil,
+                audioUrl: includeAudio ? "https://example.com/audio.mp3" : nil,
                 mystery: mystery
             )
         }
