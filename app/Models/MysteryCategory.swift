@@ -1,45 +1,97 @@
 //
 //  MysteryCategory.swift
-//  app
+//  Lumen Viae
 //
-//  Represents the four types of Rosary mysteries with display properties.
+//  ═══════════════════════════════════════════════════════════════════════════
+//  MYSTERY CATEGORY - THE FOUR TYPES OF ROSARY MYSTERIES
+//  ═══════════════════════════════════════════════════════════════════════════
 //
+//  The Rosary is organized into four categories, each containing five
+//  mysteries. This enum represents those categories with associated
+//  display properties (colors, icons, days).
+//
+//  ## The Four Categories
+//
+//  | Category   | Theme             | Days (Traditional) |
+//  |------------|-------------------|-------------------|
+//  | Joyful     | The Incarnation   | Mon, Sat          |
+//  | Sorrowful  | The Passion       | Tue, Fri          |
+//  | Glorious   | The Resurrection  | Wed, Sun          |
+//  | Luminous   | The Light (2002)  | Thu               |
+//
+//  Note: Luminous mysteries were added by Pope John Paul II in 2002.
+//  The traditional pre-2002 schedule doesn't include them in daily rotation.
+//
+//  ═══════════════════════════════════════════════════════════════════════════
 
 import SwiftUI
 
-/// The four types of Rosary mysteries
+// MARK: - MysteryCategory
+
+/// The four types of Rosary mysteries.
+///
+/// ## Protocol Conformances
+///
+/// ### String RawValue
+/// Each case has a string raw value matching the API (e.g., `"joyful"`).
+/// This enables easy JSON encoding/decoding.
+///
+/// ### Codable
+/// Automatic JSON encoding/decoding using the raw value string.
+///
+/// ### CaseIterable
+/// Provides `MysteryCategory.allCases` array for iterating all categories.
+/// Used by the home screen's mystery grid.
+///
+/// ### Hashable
+/// Allows using in Sets, Dictionaries, and NavigationPath.
+///
 enum MysteryCategory: String, Codable, CaseIterable, Hashable {
+
+    // MARK: - Cases
+
     case joyful
     case sorrowful
     case glorious
     case luminous
 
-    /// Display name for UI
+    // MARK: - Display Properties
+
+    /// Human-readable name (e.g., "Joyful")
     var displayName: String {
         rawValue.capitalized
     }
 
-    /// Subtitle describing the mystery theme
+    /// Subtitle describing the theological theme of this category
     var subtitle: String {
         switch self {
-        case .joyful: return "The Incarnation"
+        case .joyful:    return "The Incarnation"
         case .sorrowful: return "The Passion"
-        case .glorious: return "The Resurrection"
-        case .luminous: return "The Light"
+        case .glorious:  return "The Resurrection"
+        case .luminous:  return "The Light"
         }
     }
 
-    /// SF Symbol icon name
+    /// SF Symbol name for visual representation
+    ///
+    /// SF Symbols are Apple's built-in icon library. Browse at:
+    /// https://developer.apple.com/sf-symbols/
     var iconName: String {
         switch self {
-        case .joyful: return "star.fill"
+        case .joyful:    return "star.fill"
         case .sorrowful: return "cross.fill"
-        case .glorious: return "sunrise.fill"
-        case .luminous: return "light.max"
+        case .glorious:  return "sunrise.fill"
+        case .luminous:  return "light.max"
         }
     }
 
-    /// Gradient colors for mystery card backgrounds
+    /// Gradient colors for card backgrounds (top → bottom)
+    ///
+    /// Each category has a unique color scheme:
+    /// - Joyful: Warm gold/brown (celebratory)
+    /// - Sorrowful: Deep purple/red (somber)
+    /// - Glorious: Cool blue (heavenly)
+    /// - Luminous: Amber/gold (radiant light)
     var gradientColors: [Color] {
         switch self {
         case .joyful:
@@ -56,14 +108,22 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
     /// Traditional days this mystery is prayed
     var daysPrayed: String {
         switch self {
-        case .joyful: return "Monday, Saturday"
+        case .joyful:    return "Monday, Saturday"
         case .sorrowful: return "Tuesday, Friday"
-        case .glorious: return "Wednesday, Sunday"
-        case .luminous: return "Thursday"
+        case .glorious:  return "Wednesday, Sunday"
+        case .luminous:  return "Thursday"
         }
     }
 
-    /// Initialize from API string (handles case variations)
+    // MARK: - Initialization
+
+    /// Creates a category from an API string, handling case variations.
+    ///
+    /// The API might return "Joyful", "JOYFUL", or "joyful" - this
+    /// normalizes to lowercase for matching.
+    ///
+    /// - Parameter string: The category string from the API
+    /// - Returns: The matching category, or nil if not found
     init?(fromAPIString string: String) {
         self.init(rawValue: string.lowercased())
     }
