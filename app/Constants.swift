@@ -147,6 +147,11 @@ struct Constants {
     static let journalIconString = "book"
     static let accountIconString = "person"
 
+    // MARK: Image URLs
+
+    /// Placeholder image for mystery meditation (Rosary artwork)
+    static let mysteryPlaceholderImageURL = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Bartolom%C3%A9_Esteban_Murillo_-_Madonna_and_Child_-_Google_Art_Project.jpg/800px-Bartolom%C3%A9_Esteban_Murillo_-_Madonna_and_Child_-_Google_Art_Project.jpg"
+
     // MARK: App Identity
 
     /// The app's display name

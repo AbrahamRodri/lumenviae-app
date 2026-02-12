@@ -38,7 +38,7 @@ struct MysteryPrayerView: View {
                 // Current meditation content
                 if let meditation = viewModel.currentMeditation {
                     // Mystery Image (fixed height, not in scroll)
-                    MysteryImageView(imageURL: nil) // TODO: Add image URL to API
+                    MysteryImageView(imageURL: Constants.mysteryPlaceholderImageURL)
                         .padding(.horizontal, 20)
                         .padding(.top, 12)
 
