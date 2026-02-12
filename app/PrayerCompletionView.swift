@@ -10,25 +10,26 @@
 import SwiftUI
 
 struct PrayerCompletionView: View {
-    // Quote data (will come from API in future)
-    let quoteText: String
-    let quoteAuthor: String
-    let backgroundImageURL: String?
+    @Environment(AppRouter.self) private var router
 
-    // Actions
-    var onRecordDevotion: () -> Void = {}
-    var onReturnHome: () -> Void = {}
-    var onClose: () -> Void = {}
+    let meditationSet: MeditationSet
+
+    // Quote from MockDataService
+    private var quote: (text: String, author: String) {
+        MockDataService.todaysQuote
+    }
 
     var body: some View {
         ZStack {
             // Full-screen background image
-            CompletionBackgroundImage(imageURL: backgroundImageURL)
+            CompletionBackgroundImage(
+                gradientColors: meditationSet.mysteryCategory?.gradientColors ?? []
+            )
 
             // Content overlay
             VStack(spacing: 0) {
                 // Header
-                CompletionHeader(onClose: onClose)
+                CompletionHeader(onClose: { router.popToRoot() })
 
                 Spacer()
 
@@ -38,8 +39,8 @@ struct PrayerCompletionView: View {
 
                 // Quote card
                 CompletionQuoteCard(
-                    quote: quoteText,
-                    author: quoteAuthor
+                    quote: quote.text,
+                    author: quote.author
                 )
                 .padding(.horizontal, 20)
 
@@ -48,7 +49,10 @@ struct PrayerCompletionView: View {
                 // Action buttons
                 VStack(spacing: 12) {
                     // Record Devotion (Journal) - Primary
-                    Button(action: onRecordDevotion) {
+                    // Disabled until Journal API is available
+                    Button(action: {
+                        // TODO: Navigate to journal when API supports it
+                    }) {
                         HStack(spacing: 12) {
                             Image(systemName: "pencil.line")
                                 .font(.system(size: 18))
@@ -60,12 +64,13 @@ struct PrayerCompletionView: View {
                         .foregroundColor(AppColors.background)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 18)
-                        .background(AppColors.goldLight)
+                        .background(AppColors.goldLight.opacity(0.5))
                         .cornerRadius(30)
                     }
+                    .disabled(true)
 
                     // Return Home - Secondary
-                    Button(action: onReturnHome) {
+                    Button(action: { router.popToRoot() }) {
                         Text("RETURN HOME")
                             .font(AppFonts.bodyFont(16))
                             .tracking(2)
@@ -82,38 +87,25 @@ struct PrayerCompletionView: View {
                 .padding(.bottom, 16)
             }
         }
+        .navigationBarHidden(true)
     }
 }
 
 // MARK: - Background Image
+
 struct CompletionBackgroundImage: View {
-    let imageURL: String?
+    var gradientColors: [Color] = []
 
     var body: some View {
         ZStack {
             // Fallback gradient
             LinearGradient(
-                colors: [
-                    Color(hex: "3d3522"),
-                    AppColors.background
-                ],
+                colors: gradientColors.isEmpty
+                    ? [Color(hex: "3d3522"), AppColors.background]
+                    : gradientColors + [AppColors.background],
                 startPoint: .top,
                 endPoint: .bottom
             )
-
-            // Remote image if available
-            if let urlString = imageURL, let url = URL(string: urlString) {
-                AsyncImage(url: url) { phase in
-                    switch phase {
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    default:
-                        EmptyView()
-                    }
-                }
-            }
 
             // Gradient overlay for text readability
             LinearGradient(
@@ -131,6 +123,7 @@ struct CompletionBackgroundImage: View {
 }
 
 // MARK: - Header
+
 struct CompletionHeader: View {
     var onClose: () -> Void = {}
 
@@ -155,6 +148,7 @@ struct CompletionHeader: View {
 }
 
 // MARK: - Completion Badge
+
 struct CompletionBadge: View {
     var body: some View {
         VStack(spacing: 16) {
@@ -184,6 +178,7 @@ struct CompletionBadge: View {
 }
 
 // MARK: - Quote Card
+
 struct CompletionQuoteCard: View {
     let quote: String
     let author: String
@@ -233,11 +228,8 @@ struct CompletionQuoteCard: View {
 }
 
 // MARK: - Preview
-#Preview {
-    PrayerCompletionView(
-        quoteText: "The Rosary is the most beautiful and the most rich in graces of all prayers; it is the prayer that touches most the Heart of the Mother of God.",
-        quoteAuthor: "St. Pius X",
-        backgroundImageURL: nil
-    )
-}
 
+#Preview {
+    PrayerCompletionView(meditationSet: MockDataService.meditationSet(for: .joyful))
+        .environment(AppRouter())
+}

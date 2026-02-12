@@ -11,23 +11,15 @@
 import SwiftUI
 
 struct MysteryPrayerView: View {
-    // MARK: - Properties
-    let currentMystery: Int  // 1-5
-    let totalMysteries: Int  // Usually 5
-    let mysteryType: String  // e.g., "SORROWFUL"
-    let mysteryTitle: String
-    let scriptureText: String
-    let scriptureReference: String
-    let imageURL: String?
+    @Environment(AppRouter.self) private var router
+    @State private var viewModel: PrayerSessionViewModel
 
-    // Audio state (UI only for now)
-    @State private var isPlaying = false
-    @State private var currentTime: Double = 45  // seconds
-    @State private var totalTime: Double = 180   // 3 minutes
+    let meditationSet: MeditationSet
 
-    // Dismiss action
-    var onClose: () -> Void = {}
-    var onNextMystery: () -> Void = {}
+    init(meditationSet: MeditationSet) {
+        self.meditationSet = meditationSet
+        self._viewModel = State(initialValue: PrayerSessionViewModel(meditationSet: meditationSet))
+    }
 
     var body: some View {
         ZStack {
@@ -38,60 +30,103 @@ struct MysteryPrayerView: View {
             VStack(spacing: 0) {
                 // Header with progress
                 MysteryProgressHeader(
-                    current: currentMystery,
-                    total: totalMysteries,
-                    onClose: onClose
+                    current: viewModel.currentMysteryIndex + 1,
+                    total: viewModel.totalMysteries,
+                    onClose: { router.popToRoot() }
                 )
 
-                // Mystery Image (fixed height, not in scroll)
-                MysteryImageView(imageURL: imageURL)
-                    .padding(.horizontal, 20)
-                    .padding(.top, 12)
+                // Current meditation content
+                if let meditation = viewModel.currentMeditation {
+                    // Mystery Image (fixed height, not in scroll)
+                    MysteryImageView(imageURL: nil) // TODO: Add image URL to API
+                        .padding(.horizontal, 20)
+                        .padding(.top, 12)
 
-                // Mystery Info
-                MysteryInfoSection(
-                    mysteryType: mysteryType,
-                    mysteryNumber: currentMystery,
-                    mysteryTitle: mysteryTitle
-                )
-                .padding(.top, 20)
-
-                // Scripture - scrollable area with more room
-                // Future: This will auto-scroll with audio, fading in/out
-                ScrollView(showsIndicators: false) {
-                    ScriptureSection(
-                        text: scriptureText,
-                        reference: scriptureReference
+                    // Mystery Info
+                    MysteryInfoSection(
+                        mysteryType: meditationSet.mysteryCategory?.displayName ?? "",
+                        mysteryNumber: viewModel.currentMysteryIndex + 1,
+                        mysteryTitle: meditation.displayTitle
                     )
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 16)
+                    .padding(.top, 20)
+
+                    // Scripture / Meditation content - scrollable
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 16) {
+                            // Meditation content
+                            Text(meditation.content)
+                                .font(AppFonts.bodyFont(17))
+                                .foregroundColor(AppColors.cream.opacity(0.9))
+                                .multilineTextAlignment(.center)
+                                .lineSpacing(6)
+                                .padding(.horizontal, 24)
+                                .padding(.vertical, 16)
+
+                            // Scripture reference if available
+                            if let reference = meditation.mystery?.scriptureReference {
+                                Text(reference)
+                                    .font(AppFonts.italicFont(14))
+                                    .foregroundColor(AppColors.gold.opacity(0.8))
+                            }
+                        }
+                    }
+                    .frame(maxHeight: .infinity)
+                } else {
+                    Spacer()
+                    ProgressView()
+                        .tint(AppColors.gold)
+                    Spacer()
                 }
-                .frame(maxHeight: .infinity)
 
                 // Fixed bottom section - always visible
                 VStack(spacing: 12) {
-                    // Audio Controls
-                    AudioControlsView(
-                        isPlaying: $isPlaying,
-                        currentTime: $currentTime,
-                        totalTime: totalTime
-                    )
-                    .padding(.horizontal, 20)
+                    // Audio Controls (if audio available)
+                    if viewModel.currentMeditation?.hasAudio == true {
+                        AudioControlsView(
+                            isPlaying: $viewModel.isPlaying,
+                            currentTime: $viewModel.currentTime,
+                            totalTime: viewModel.totalDuration
+                        )
+                        .padding(.horizontal, 20)
+                    }
 
                     // Next Mystery Button
                     NextMysteryButton(
-                        isLastMystery: currentMystery == totalMysteries,
-                        action: onNextMystery
+                        isLastMystery: viewModel.isLastMystery,
+                        action: handleNextMystery
                     )
                     .padding(.horizontal, 20)
+                    .padding(.bottom, 8)
                 }
                 .background(AppColors.background)
             }
+        }
+        .navigationBarHidden(true)
+        .task {
+            await viewModel.loadCurrentAudio()
+        }
+        .onChange(of: viewModel.currentMysteryIndex) { _, _ in
+            Task {
+                await viewModel.loadCurrentAudio()
+            }
+        }
+    }
+
+    private func handleNextMystery() {
+        if viewModel.nextMystery() {
+            // Moved to next mystery
+        } else {
+            // Completed all mysteries - navigate to completion
+            Task {
+                try? await viewModel.recordCompletion()
+            }
+            router.navigateToCompletion()
         }
     }
 }
 
 // MARK: - Progress Header
+
 struct MysteryProgressHeader: View {
     let current: Int
     let total: Int
@@ -132,6 +167,7 @@ struct MysteryProgressHeader: View {
                     Rectangle()
                         .fill(AppColors.gold)
                         .frame(width: geometry.size.width * progress, height: 3)
+                        .animation(.easeInOut(duration: 0.3), value: progress)
                 }
             }
             .frame(height: 3)
@@ -142,6 +178,7 @@ struct MysteryProgressHeader: View {
 }
 
 // MARK: - Mystery Image
+
 struct MysteryImageView: View {
     let imageURL: String?
 
@@ -171,12 +208,12 @@ struct MysteryImageView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 16))
             } else {
                 // Placeholder
-                Image(systemName: "photo")
+                Image(systemName: "hands.and.sparkles")
                     .font(.system(size: 48))
-                    .foregroundColor(AppColors.textSecondary)
+                    .foregroundColor(AppColors.gold.opacity(0.5))
             }
         }
-        .frame(height: 280)
+        .frame(height: 200)
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .overlay(
             RoundedRectangle(cornerRadius: 16)
@@ -186,6 +223,7 @@ struct MysteryImageView: View {
 }
 
 // MARK: - Mystery Info Section
+
 struct MysteryInfoSection: View {
     let mysteryType: String
     let mysteryNumber: Int
@@ -221,38 +259,8 @@ struct MysteryInfoSection: View {
     }
 }
 
-// MARK: - Scripture Section
-/// Displays the scripture passage and reference.
-///
-/// ## Future Enhancement: Auto-Scrolling Text
-/// When audio is playing, the text will:
-/// - Auto-scroll from bottom to top synced with audio
-/// - Fade in at the bottom edge
-/// - Fade out at the top edge
-/// - Current line/phrase highlighted
-/// This creates a teleprompter-like reading experience.
-struct ScriptureSection: View {
-    let text: String
-    let reference: String
-
-    var body: some View {
-        VStack(spacing: 16) {
-            // Scripture text
-            Text("\"\(text)\"")
-                .font(AppFonts.bodyFont(17))
-                .foregroundColor(AppColors.cream.opacity(0.9))
-                .multilineTextAlignment(.center)
-                .lineSpacing(6)
-
-            // Reference
-            Text(reference)
-                .font(AppFonts.italicFont(14))
-                .foregroundColor(AppColors.gold.opacity(0.8))
-        }
-    }
-}
-
 // MARK: - Audio Controls
+
 struct AudioControlsView: View {
     @Binding var isPlaying: Bool
     @Binding var currentTime: Double
@@ -268,7 +276,7 @@ struct AudioControlsView: View {
         VStack(spacing: 16) {
             // Progress slider
             VStack(spacing: 4) {
-                Slider(value: $currentTime, in: 0...totalTime)
+                Slider(value: $currentTime, in: 0...max(totalTime, 1))
                     .tint(AppColors.gold)
 
                 HStack {
@@ -307,7 +315,7 @@ struct AudioControlsView: View {
                         Image(systemName: isPlaying ? "pause.fill" : "play.fill")
                             .font(.system(size: 24))
                             .foregroundColor(AppColors.background)
-                            .offset(x: isPlaying ? 0 : 2)  // Optical centering for play icon
+                            .offset(x: isPlaying ? 0 : 2)
                     }
                 }
 
@@ -325,6 +333,7 @@ struct AudioControlsView: View {
 }
 
 // MARK: - Next Mystery Button
+
 struct NextMysteryButton: View {
     let isLastMystery: Bool
     let action: () -> Void
@@ -355,14 +364,8 @@ struct NextMysteryButton: View {
 }
 
 // MARK: - Preview
+
 #Preview {
-    MysteryPrayerView(
-        currentMystery: 1,
-        totalMysteries: 5,
-        mysteryType: "Sorrowful",
-        mysteryTitle: "The Agony in the Garden",
-        scriptureText: "Then Jesus came with them to a place called Gethsemane, and he said to his disciples, 'Sit here while I go over there and pray.' He took along Peter and the two sons of Zebedee, and began to feel sorrow and distress.",
-        scriptureReference: "Matthew 26:36-37",
-        imageURL: "https://upload.wikimedia.org/wikipedia/commons/6/68/Christ_in_Gethsemane.jpg"
-    )
+    MysteryPrayerView(meditationSet: MockDataService.meditationSet(for: .sorrowful))
+        .environment(AppRouter())
 }

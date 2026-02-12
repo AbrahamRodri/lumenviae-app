@@ -8,17 +8,24 @@
 import SwiftUI
 
 struct SelectMeditationView: View {
-    let mysteryType: String
-    let dayLabel: String
+    @Environment(AppRouter.self) private var router
+    @State private var viewModel: MeditationSelectionViewModel
+
+    let category: MysteryCategory
+
+    init(category: MysteryCategory) {
+        self.category = category
+        self._viewModel = State(initialValue: MeditationSelectionViewModel(category: category))
+    }
 
     var body: some View {
         ZStack {
             // Background gradient
             LinearGradient(
                 colors: [
-                    Color(hex: "2a2518"),
-                    Color(hex: "1a1a2e"),
-                    Color(hex: "1a1a2e")
+                    category.gradientColors.first ?? Color(hex: "2a2518"),
+                    AppColors.background,
+                    AppColors.background
                 ],
                 startPoint: .top,
                 endPoint: .center
@@ -28,8 +35,8 @@ struct SelectMeditationView: View {
             VStack(spacing: 0) {
                 // Header
                 MeditationHeaderView(
-                    mysteryType: mysteryType,
-                    dayLabel: dayLabel
+                    category: category,
+                    onBack: { router.pop() }
                 )
 
                 // Content
@@ -42,27 +49,32 @@ struct SelectMeditationView: View {
                             .padding(.top, 24)
                             .padding(.bottom, 8)
 
-                        // Meditation Options (uses MeditationOptionCard component)
-                        MeditationOptionCard(
-                            title: "Traditional Meditations",
-                            description: "Classic meditations from the saints focusing on the virtue of each mystery.",
-                            iconName: "building.columns",
-                            hasAudio: true
-                        )
-
-                        MeditationOptionCard(
-                            title: "St. Louis de Montfort",
-                            description: "Deeply theological reflections aimed at total consecration through Mary.",
-                            iconName: "book.closed",
-                            hasAudio: true
-                        )
-
-                        MeditationOptionCard(
-                            title: "Scriptural Rosary",
-                            description: "Scripture verses for each bead, drawing you deeper into the Gospel.",
-                            iconName: "text.quote",
-                            hasAudio: false
-                        )
+                        // Loading state
+                        if viewModel.isLoading {
+                            ProgressView()
+                                .tint(AppColors.gold)
+                                .padding(.top, 40)
+                        } else if let error = viewModel.errorMessage {
+                            Text(error)
+                                .font(AppFonts.bodyFont(14))
+                                .foregroundColor(AppColors.textSecondary)
+                                .padding(.top, 40)
+                        } else {
+                            // Meditation Options
+                            ForEach(viewModel.meditationSets) { meditationSet in
+                                MeditationOptionCard(
+                                    title: meditationSet.name,
+                                    description: meditationSet.description ?? "",
+                                    iconName: iconName(for: meditationSet.name),
+                                    hasAudio: true,
+                                    onTap: {
+                                        Task {
+                                            await selectMeditationSet(meditationSet)
+                                        }
+                                    }
+                                )
+                            }
+                        }
                     }
                     .padding(.horizontal, 20)
                     .padding(.bottom, 120)
@@ -71,25 +83,71 @@ struct SelectMeditationView: View {
                 Spacer()
             }
 
-            // Bottom Streak Widget (uses StreakWidget component)
+            // Loading overlay when fetching full set
+            if viewModel.isLoadingSet {
+                Color.black.opacity(0.5)
+                    .ignoresSafeArea()
+                    .overlay(
+                        VStack(spacing: 16) {
+                            ProgressView()
+                                .tint(AppColors.gold)
+                                .scaleEffect(1.5)
+                            Text("Loading meditation...")
+                                .font(AppFonts.bodyFont(14))
+                                .foregroundColor(AppColors.cream)
+                        }
+                    )
+            }
+
+            // Bottom Streak Widget
             VStack {
                 Spacer()
                 StreakWidget(days: 12)
             }
         }
+        .navigationBarHidden(true)
+        .task {
+            await viewModel.loadMeditationSets()
+        }
+    }
+
+    // MARK: - Helpers
+
+    private func iconName(for setName: String) -> String {
+        let name = setName.lowercased()
+        if name.contains("traditional") {
+            return "building.columns"
+        } else if name.contains("louis") || name.contains("montfort") {
+            return "book.closed"
+        } else if name.contains("scriptural") {
+            return "text.quote"
+        } else {
+            return "sparkles"
+        }
+    }
+
+    private func selectMeditationSet(_ summary: MeditationSetSummary) async {
+        do {
+            let fullSet = try await viewModel.loadFullMeditationSet(id: summary.id)
+            router.navigateToPrayerSession(meditationSet: fullSet)
+        } catch {
+            // Error handling - stay on current screen
+            print("Failed to load meditation set: \(error)")
+        }
     }
 }
 
 // MARK: - Meditation Header View
+
 struct MeditationHeaderView: View {
-    let mysteryType: String
-    let dayLabel: String
+    let category: MysteryCategory
+    var onBack: () -> Void = {}
 
     var body: some View {
         VStack(spacing: 8) {
             // Back button row
             HStack {
-                Button(action: {}) {
+                Button(action: onBack) {
                     Image(systemName: "chevron.left")
                         .font(.system(size: 20, weight: .medium))
                         .foregroundColor(AppColors.gold)
@@ -100,14 +158,14 @@ struct MeditationHeaderView: View {
             .padding(.top, 8)
 
             // Day label
-            Text(dayLabel.uppercased())
+            Text(category.daysPrayed.uppercased())
                 .font(AppFonts.bodyFont(12))
                 .tracking(4)
                 .foregroundColor(AppColors.gold)
                 .padding(.top, 16)
 
             // Mystery title
-            Text(mysteryType.uppercased())
+            Text("\(category.displayName.uppercased())\nMYSTERIES")
                 .font(AppFonts.headlineFont(32))
                 .tracking(2)
                 .foregroundColor(AppColors.gold)
@@ -124,8 +182,6 @@ struct MeditationHeaderView: View {
 }
 
 #Preview {
-    SelectMeditationView(
-        mysteryType: "Sorrowful\nMysteries",
-        dayLabel: "Tuesdays & Fridays"
-    )
+    SelectMeditationView(category: .sorrowful)
+        .environment(AppRouter())
 }

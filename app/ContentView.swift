@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var router = AppRouter()
     @State private var selectedTab: AppTab = .home
 
     var body: some View {
@@ -16,30 +17,67 @@ struct ContentView: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
-                // Content
-                Group {
-                    switch selectedTab {
-                    case .home:
-                        HomeView()
-                    case .journal:
-                        PlaceholderView(title: "Journal")
-                    case .progress:
-                        PlaceholderView(title: "Progress")
-                    case .account:
-                        AccountView()
-                    }
+                // Navigation Stack with tab content
+                NavigationStack(path: $router.path) {
+                    tabContent
+                        .navigationDestination(for: AppRoute.self) { route in
+                            destinationView(for: route)
+                        }
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
 
                 // Custom Tab Bar
                 CustomTabBar(selectedTab: $selectedTab)
                     .ignoresSafeArea(.all, edges: .bottom)
             }
         }
+        .environment(router)
+    }
+
+    // MARK: - Tab Content
+
+    @ViewBuilder
+    private var tabContent: some View {
+        switch selectedTab {
+        case .home:
+            HomeView()
+        case .journal:
+            PlaceholderView(title: "Journal")
+        case .progress:
+            PlaceholderView(title: "Progress")
+        case .account:
+            AccountView()
+        }
+    }
+
+    // MARK: - Navigation Destinations
+
+    @ViewBuilder
+    private func destinationView(for route: AppRoute) -> some View {
+        switch route {
+        case .meditationSelection(let category):
+            SelectMeditationView(category: category)
+
+        case .prayerSession:
+            if let meditationSet = router.loadedMeditationSet {
+                MysteryPrayerView(meditationSet: meditationSet)
+            } else {
+                ProgressView("Loading...")
+                    .tint(AppColors.gold)
+            }
+
+        case .completion:
+            if let meditationSet = router.loadedMeditationSet {
+                PrayerCompletionView(meditationSet: meditationSet)
+            } else {
+                ProgressView("Loading...")
+                    .tint(AppColors.gold)
+            }
+        }
     }
 }
 
 // MARK: - Placeholder View
+
 struct PlaceholderView: View {
     let title: String
 
