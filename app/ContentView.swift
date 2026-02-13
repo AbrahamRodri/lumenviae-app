@@ -135,7 +135,7 @@ struct ContentView: View {
         case .home:
             HomeView()
         case .journal:
-            PlaceholderView(title: "Journal")
+            JournalView()
         case .progress:
             PrayerProgressView()
         case .account:

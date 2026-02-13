@@ -68,8 +68,8 @@ struct HomeView: View {
 
     var body: some View {
         ZStack {
-            // Background color extending to edges
-            AppColors.background
+            // Background gradient extending to edges
+            AppColors.appGradient
                 .ignoresSafeArea()
 
             // Scrollable content

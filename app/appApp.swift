@@ -71,6 +71,6 @@ struct appApp: App {
         WindowGroup {
             ContentView()
         }
-        .modelContainer(for: PrayerSession.self)
+        .modelContainer(for: [PrayerSession.self, JournalEntry.self])
     }
 }

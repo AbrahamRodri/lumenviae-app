@@ -20,15 +20,15 @@ struct SelectMeditationView: View {
 
     var body: some View {
         ZStack {
-            // Background gradient
+            // Background gradient with category color fade
             LinearGradient(
                 colors: [
                     category.gradientColors.first ?? Color(hex: "2a2518"),
-                    AppColors.background,
-                    AppColors.background
+                    Color(hex: "1a1a2e"),
+                    Color(hex: "0d0d1a")
                 ],
                 startPoint: .top,
-                endPoint: .center
+                endPoint: .bottom
             )
             .ignoresSafeArea()
 

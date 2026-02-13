@@ -26,6 +26,9 @@ struct PrayerCompletionView: View {
     /// Whether the session has been recorded (to prevent duplicates)
     @State private var hasRecordedSession = false
 
+    /// Controls the post-prayer journal editor sheet
+    @State private var showingJournalEditor = false
+
     // Quote from MockDataService
     private var quote: (text: String, author: String) {
         MockDataService.todaysQuote
@@ -61,10 +64,7 @@ struct PrayerCompletionView: View {
                 // Action buttons
                 VStack(spacing: 12) {
                     // Record Devotion (Journal) - Primary
-                    // Disabled until Journal API is available
-                    Button(action: {
-                        // TODO: Navigate to journal when API supports it
-                    }) {
+                    Button(action: { showingJournalEditor = true }) {
                         HStack(spacing: 12) {
                             Image(systemName: "pencil.line")
                                 .font(.system(size: 18))
@@ -76,10 +76,9 @@ struct PrayerCompletionView: View {
                         .foregroundColor(AppColors.background)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 18)
-                        .background(AppColors.goldLight.opacity(0.5))
+                        .background(AppColors.goldLight)
                         .cornerRadius(30)
                     }
-                    .disabled(true)
 
                     // Return Home - Secondary
                     Button(action: { router.popToRoot() }) {
@@ -102,6 +101,16 @@ struct PrayerCompletionView: View {
         .navigationBarHidden(true)
         .onAppear {
             recordPrayerSession()
+        }
+        .sheet(isPresented: $showingJournalEditor) {
+            JournalEntryEditorView(
+                category: meditationSet.mysteryCategory,
+                mysteryTitle: nil,
+                mysteryIndex: nil,
+                isMidPrayer: false
+            )
+            .presentationDetents([.large])
+            .presentationDragIndicator(.visible)
         }
     }
 
@@ -127,11 +136,11 @@ struct CompletionBackgroundImage: View {
 
     var body: some View {
         ZStack {
-            // Fallback gradient
+            // Base gradient with category colors if available
             LinearGradient(
                 colors: gradientColors.isEmpty
-                    ? [Color(hex: "3d3522"), AppColors.background]
-                    : gradientColors + [AppColors.background],
+                    ? [Color(hex: "0d0d1a"), Color(hex: "1a1a2e"), Color(hex: "0d0d1a")]
+                    : gradientColors + [Color(hex: "1a1a2e"), Color(hex: "0d0d1a")],
                 startPoint: .top,
                 endPoint: .bottom
             )
@@ -140,8 +149,8 @@ struct CompletionBackgroundImage: View {
             LinearGradient(
                 colors: [
                     Color.clear,
-                    AppColors.background.opacity(0.6),
-                    AppColors.background.opacity(0.95)
+                    Color(hex: "1a1a2e").opacity(0.6),
+                    Color(hex: "1a1a2e").opacity(0.95)
                 ],
                 startPoint: .top,
                 endPoint: .bottom

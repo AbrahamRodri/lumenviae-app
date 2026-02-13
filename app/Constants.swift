@@ -32,10 +32,10 @@ import SwiftUI
 /// ```
 struct AppColors {
     /// Deep navy background - the main app background color
-    static let background = Color(hex: "1a1a2e")
+    static let background = Color(hex: "#1F2033")
 
     /// Slightly lighter navy for cards and elevated surfaces
-    static let cardBackground = Color(hex: "252542")
+    static let cardBackground = Color(hex: "#22223A")
 
     /// Primary gold accent color - used for highlights and important elements
     static let gold = Color(hex: "d4af37")
@@ -54,6 +54,19 @@ struct AppColors {
 
     /// Special background color for quote sections
     static let quoteBackground = Color(hex: "2a2a45")
+
+    /// Gradient background used throughout the app for a glowy, contemplative feel
+    static var appGradient: LinearGradient {
+        LinearGradient(
+            colors: [
+                Color(hex: "0d0d1a"),
+                Color(hex: "1a1a2e"),
+                Color(hex: "0d0d1a")
+            ],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    }
 }
 
 // MARK: - App Fonts

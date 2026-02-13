@@ -14,8 +14,8 @@ struct AccountView: View {
 
     var body: some View {
         ZStack {
-            // Background
-            AppColors.background
+            // Background gradient
+            AppColors.appGradient
                 .ignoresSafeArea()
 
             ScrollView(showsIndicators: false) {

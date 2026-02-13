@@ -13,6 +13,7 @@ import SwiftUI
 struct MysteryPrayerView: View {
     @Environment(AppRouter.self) private var router
     @State private var viewModel: PrayerSessionViewModel
+    @State private var showingJournalEditor = false
 
     let meditationSet: MeditationSet
 
@@ -23,8 +24,8 @@ struct MysteryPrayerView: View {
 
     var body: some View {
         ZStack {
-            // Background
-            AppColors.background
+            // Background gradient
+            AppColors.appGradient
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
@@ -32,7 +33,8 @@ struct MysteryPrayerView: View {
                 MysteryProgressHeader(
                     current: viewModel.currentMysteryIndex + 1,
                     total: viewModel.totalMysteries,
-                    onClose: { router.popToRoot() }
+                    onClose: { router.popToRoot() },
+                    onJournal: { showingJournalEditor = true }
                 )
 
                 // Current meditation content
@@ -122,11 +124,32 @@ struct MysteryPrayerView: View {
                         .padding(.horizontal, 20)
                     }
 
-                    // Next Mystery Button
-                    NextMysteryButton(
-                        isLastMystery: viewModel.isLastMystery,
-                        action: handleNextMystery
-                    )
+                    // Prayer controls row: journal note + next mystery
+                    HStack(spacing: 12) {
+                        // Journal note button
+                        Button(action: { showingJournalEditor = true }) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "pencil.line")
+                                    .font(.system(size: 15))
+                                Text("Note")
+                                    .font(AppFonts.bodyFont(15))
+                                    .tracking(1)
+                            }
+                            .foregroundColor(AppColors.gold)
+                            .padding(.vertical, 18)
+                            .frame(width: 100)
+                            .background(
+                                RoundedRectangle(cornerRadius: 30)
+                                    .strokeBorder(AppColors.gold.opacity(0.5), lineWidth: 1)
+                            )
+                        }
+
+                        // Next Mystery Button
+                        NextMysteryButton(
+                            isLastMystery: viewModel.isLastMystery,
+                            action: handleNextMystery
+                        )
+                    }
                     .padding(.horizontal, 20)
                     .padding(.bottom, 8)
                 }
@@ -141,6 +164,16 @@ struct MysteryPrayerView: View {
             Task {
                 await viewModel.loadCurrentAudio()
             }
+        }
+        .sheet(isPresented: $showingJournalEditor) {
+            JournalEntryEditorView(
+                category: meditationSet.mysteryCategory,
+                mysteryTitle: viewModel.currentMeditation?.displayTitle,
+                mysteryIndex: viewModel.currentMysteryIndex,
+                isMidPrayer: true
+            )
+            .presentationDetents([.large])
+            .presentationDragIndicator(.visible)
         }
     }
 
@@ -163,6 +196,7 @@ struct MysteryProgressHeader: View {
     let current: Int
     let total: Int
     var onClose: () -> Void = {}
+    var onJournal: () -> Void = {}
 
     private var progress: CGFloat {
         CGFloat(current) / CGFloat(total)
@@ -177,6 +211,14 @@ struct MysteryProgressHeader: View {
                     .foregroundColor(AppColors.gold)
 
                 Spacer()
+
+                // Journal note shortcut
+                Button(action: onJournal) {
+                    Image(systemName: "square.and.pencil")
+                        .font(.system(size: 16))
+                        .foregroundColor(AppColors.gold.opacity(0.8))
+                }
+                .padding(.trailing, 12)
 
                 Button(action: onClose) {
                     Image(systemName: "xmark")
