@@ -85,6 +85,18 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
         }
     }
 
+    /// Representative image asset name for this category (used on home screen cards).
+    ///
+    /// Maps to local Assets.xcassets image names.
+    var cardImageName: String {
+        switch self {
+        case .joyful:    return "joyful_annunciation"
+        case .sorrowful: return "sorrowful_agony"
+        case .glorious:  return "glorious_resurrection"
+        case .luminous:  return "luminous_baptism"
+        }
+    }
+
     /// Returns the asset catalog image name for a specific mystery in this category.
     ///
     /// Images should be added to Assets.xcassets using the naming convention:

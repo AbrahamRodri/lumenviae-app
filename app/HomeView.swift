@@ -86,7 +86,6 @@ struct HomeView: View {
                         .padding(.top, 16)
 
                     featuredMysterySection
-                        .padding(.horizontal, 20)
                         .padding(.top, 16)
 
                     SacredMysteriesSection(
@@ -192,14 +191,15 @@ struct DayPrayerLabel: View {
 
 /// A large, prominent card showcasing today's featured mystery.
 ///
-/// This is the main call-to-action on the home screen, encouraging
-/// users to begin their daily Rosary prayer.
+/// Background image fills the card via `.overlay` so it never
+/// affects layout sizing. Text content sits at the bottom over
+/// a gradient scrim for readability.
 ///
 /// ## Layout
 /// ```
 /// ┌─────────────────────────────┐
 /// │                             │
-/// │                             │  ← Background gradient
+/// │      [mystery image]        │  ← Full-bleed photo
 /// │   ╭─────────────────────╮   │
 /// │   │  JOYFUL MYSTERIES   │   │  ← Category badge
 /// │   ╰─────────────────────╯   │
@@ -228,48 +228,44 @@ struct FeaturedMysteryCard: View {
     // MARK: - Body
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-            backgroundGradient
-            contentOverlay
-        }
-        .clipShape(RoundedRectangle(cornerRadius: 20))
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .strokeBorder(AppColors.gold.opacity(0.4), lineWidth: 1)
-        )
+        Rectangle()
+            .fill(Color(hex: "0f1a26"))
+            .frame(height: 380)
+            .overlay(
+                Image(category.cardImageName)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .overlay(Color.black.opacity(0.25))
+            )
+            .clipped()
+            .overlay(
+                Rectangle()
+                    .strokeBorder(AppColors.gold.opacity(0.4), lineWidth: 1)
+            )
+            .overlay(alignment: .bottom) {
+                VStack(spacing: 16) {
+                    categoryBadge
+                    mysteryTitle
+                    scriptureReference
+                    beginPrayerButton
+                }
+                .padding(.vertical, 24)
+                .padding(.horizontal, 16)
+                .background(
+                    LinearGradient(
+                        colors: [
+                            Color.clear,
+                            AppColors.background.opacity(0.7),
+                            AppColors.background.opacity(0.95)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+            }
     }
 
     // MARK: - Subviews
-
-    /// The blue gradient background of the card
-    private var backgroundGradient: some View {
-        RoundedRectangle(cornerRadius: 20)
-            .fill(
-                LinearGradient(
-                    colors: [
-                        Color(hex: "2d3a4a"),
-                        Color(hex: "1a2433"),
-                        Color(hex: "0f1a26")
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-            )
-            .frame(height: 380)
-    }
-
-    /// The content stack with badge, title, reference, and button
-    private var contentOverlay: some View {
-        VStack(spacing: 16) {
-            categoryBadge
-            mysteryTitle
-            scriptureReference
-            beginPrayerButton
-        }
-        .padding(.vertical, 24)
-        .padding(.horizontal, 16)
-        .background(contentGradient)
-    }
 
     /// "JOYFUL MYSTERIES" badge
     private var categoryBadge: some View {
@@ -334,18 +330,6 @@ struct FeaturedMysteryCard: View {
         .padding(.top, 8)
     }
 
-    /// Gradient behind content for readability
-    private var contentGradient: some View {
-        LinearGradient(
-            colors: [
-                Color.clear,
-                AppColors.background.opacity(0.7),
-                AppColors.background.opacity(0.95)
-            ],
-            startPoint: .top,
-            endPoint: .bottom
-        )
-    }
 }
 
 // MARK: - FeaturedMysteryCardPlaceholder
@@ -356,7 +340,7 @@ struct FeaturedMysteryCard: View {
 /// maintaining the same dimensions as the actual FeaturedMysteryCard.
 struct FeaturedMysteryCardPlaceholder: View {
     var body: some View {
-        RoundedRectangle(cornerRadius: 20)
+        Rectangle()
             .fill(AppColors.cardBackground)
             .frame(height: 380)
             .overlay(
@@ -364,7 +348,7 @@ struct FeaturedMysteryCardPlaceholder: View {
                     .tint(AppColors.gold)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 20)
+                Rectangle()
                     .strokeBorder(AppColors.gold.opacity(0.4), lineWidth: 1)
             )
     }
@@ -444,8 +428,8 @@ struct SacredMysteriesSection: View {
                 MysteryCard(
                     title: category.displayName,
                     subtitle: category.subtitle,
-                    imageName: category.iconName,
-                    gradientColors: category.gradientColors
+                    gradientColors: category.gradientColors,
+                    cardImageName: category.cardImageName
                 )
                 .onTapGesture {
                     onSelectCategory?(category)
