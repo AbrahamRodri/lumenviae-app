@@ -1,18 +1,30 @@
 //
 //  PrayerCompletionView.swift
-//  app
+//  Lumen Viae
 //
-//  Created by Abraham Rodriguez on 2/11/26.
+//  ═══════════════════════════════════════════════════════════════════════════
+//  PRAYER COMPLETION VIEW - CELEBRATION & SESSION RECORDING
+//  ═══════════════════════════════════════════════════════════════════════════
 //
 //  Displayed after completing all 5 mysteries of the Rosary.
-//  Offers option to record a journal entry or return home.
+//  Automatically records the completed prayer session to SwiftData and displays:
+//  - Completion badge with checkmark
+//  - Inspirational scripture quote
+//  - Options to record reflection or return home
+//
+//  ═══════════════════════════════════════════════════════════════════════════
 
 import SwiftUI
+import SwiftData
 
 struct PrayerCompletionView: View {
     @Environment(AppRouter.self) private var router
+    @Environment(\.modelContext) private var modelContext
 
     let meditationSet: MeditationSet
+
+    /// Whether the session has been recorded (to prevent duplicates)
+    @State private var hasRecordedSession = false
 
     // Quote from MockDataService
     private var quote: (text: String, author: String) {
@@ -88,6 +100,23 @@ struct PrayerCompletionView: View {
             }
         }
         .navigationBarHidden(true)
+        .onAppear {
+            recordPrayerSession()
+        }
+    }
+
+    /// Records the completed prayer session to SwiftData.
+    private func recordPrayerSession() {
+        guard !hasRecordedSession else { return }
+        guard let category = meditationSet.mysteryCategory else { return }
+
+        let session = PrayerSession(
+            category: category,
+            completedAt: Date(),
+            meditationType: meditationSet.name
+        )
+        modelContext.insert(session)
+        hasRecordedSession = true
     }
 }
 
