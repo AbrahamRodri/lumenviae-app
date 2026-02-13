@@ -7,6 +7,10 @@
 //  This view displays a single mystery during the prayer flow.
 //  Users progress through 5 mysteries, each with meditation content,
 //  scripture, and optional audio.
+//
+//  Two view modes:
+//  - Image View: Full-screen artwork with mystery info overlay (default)
+//  - Text View: Meditation text takes precedence, no image
 
 import SwiftUI
 
@@ -14,6 +18,7 @@ struct MysteryPrayerView: View {
     @Environment(AppRouter.self) private var router
     @State private var viewModel: PrayerSessionViewModel
     @State private var showingJournalEditor = false
+    @State private var isImageMode = true // Toggle between image and text views
 
     let meditationSet: MeditationSet
 
@@ -24,31 +29,197 @@ struct MysteryPrayerView: View {
 
     var body: some View {
         ZStack {
+            if isImageMode {
+                // MARK: - Image Mode (Full-screen artwork)
+                imageViewMode
+            } else {
+                // MARK: - Text Mode (Meditation content focus)
+                textViewMode
+            }
+        }
+        .navigationBarHidden(true)
+        .task {
+            await viewModel.loadCurrentAudio()
+        }
+        .onChange(of: viewModel.currentMysteryIndex) { _, _ in
+            Task {
+                await viewModel.loadCurrentAudio()
+            }
+        }
+        .sheet(isPresented: $showingJournalEditor) {
+            JournalEntryEditorView(
+                category: meditationSet.mysteryCategory,
+                mysteryTitle: viewModel.currentMeditation?.displayTitle,
+                mysteryIndex: viewModel.currentMysteryIndex,
+                isMidPrayer: true
+            )
+            .presentationDetents([.large])
+            .presentationDragIndicator(.visible)
+        }
+    }
+
+    // MARK: - Image View Mode
+    private var imageViewMode: some View {
+        GeometryReader { geometry in
+            ZStack {
+                // Dark background
+                AppColors.background
+                    .ignoresSafeArea()
+
+                // Image fills top 70% of screen
+                VStack(spacing: 0) {
+                    if let assetName = Constants.mysteryImageURL(
+                        category: meditationSet.category,
+                        index: viewModel.currentMysteryIndex
+                    ) {
+                        Image(assetName)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: geometry.size.width, height: geometry.size.height * 0.80)
+                            .clipped()
+                    } else {
+                        Rectangle()
+                            .fill(AppColors.cardBackground)
+                            .frame(height: geometry.size.height * 0.70)
+                    }
+                    Spacer()
+                }
+                .ignoresSafeArea(edges: .top)
+
+                // Gradient overlay - positioned to fade over the image
+                VStack {
+                    // Push gradient to start where we want the fade (around 50% of screen)
+                    Spacer()
+                        .frame(height: geometry.size.height * 0.60)
+
+                    LinearGradient(
+                        colors: [
+                            .clear,
+                            AppColors.background.opacity(6),
+                            AppColors.background
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                }
+                .ignoresSafeArea()
+
+                // Content overlay
+                VStack(spacing: 0) {
+                    // Top header bar
+                    imageViewHeader
+                        .padding(.top, 8)
+
+                    Spacer()
+
+                    // Bottom content card
+                    if let meditation = viewModel.currentMeditation {
+                        imageViewBottomCard(meditation: meditation)
+                    }
+                }
+            }
+        }
+    }
+
+    private var imageViewHeader: some View {
+        HStack {
+            // Close button
+            Button(action: { router.popToRoot() }) {
+                Image(systemName: "xmark")
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundColor(.white)
+                    .padding(12)
+                    .background(Color.black.opacity(0.3))
+                    .clipShape(Circle())
+            }
+
+            Spacer()
+
+            // Toggle to reading/text mode button
+            Button(action: { withAnimation(.easeInOut(duration: 0.3)) { isImageMode.toggle() } }) {
+                Image(systemName: "text.alignleft")
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(.white)
+                    .padding(12)
+                    .background(Color.black.opacity(0.3))
+                    .clipShape(Circle())
+            }
+
+            // Journal button
+            Button(action: { showingJournalEditor = true }) {
+                Image(systemName: "square.and.pencil")
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(.white)
+                    .padding(12)
+                    .background(Color.black.opacity(0.3))
+                    .clipShape(Circle())
+            }
+        }
+        .padding(.horizontal, 16)
+    }
+
+    private func imageViewBottomCard(meditation: Meditation) -> some View {
+        VStack(spacing: 16) {
+            // Mystery info - no card, just text
+            VStack(spacing: 12) {
+                // Mystery label
+                Text("THE \(ordinalNumber(viewModel.currentMysteryIndex + 1).uppercased()) \(meditationSet.mysteryCategory?.displayName.uppercased() ?? "") MYSTERY")
+                    .font(AppFonts.bodyFont(11))
+                    .tracking(2)
+                    .foregroundColor(AppColors.gold)
+
+                // Mystery title
+                Text(meditation.displayTitle)
+                    .font(AppFonts.italicFont(28))
+                    .foregroundColor(AppColors.cream)
+                    .multilineTextAlignment(.center)
+
+                // Scripture reference only (no quote text)
+                if let reference = meditation.mystery?.scriptureReference {
+                    HStack(spacing: 8) {
+                        Rectangle()
+                            .fill(AppColors.gold.opacity(0.5))
+                            .frame(width: 20, height: 1)
+                        Text(reference)
+                            .font(AppFonts.italicFont(13))
+                            .foregroundColor(AppColors.gold.opacity(0.8))
+                        Rectangle()
+                            .fill(AppColors.gold.opacity(0.5))
+                            .frame(width: 20, height: 1)
+                    }
+                }
+            }
+            .padding(.horizontal, 24)
+
+            // Audio controls
+            if viewModel.currentMeditation?.hasAudio == true {
+                AudioControlsView(
+                    isPlaying: $viewModel.isPlaying,
+                    currentTime: $viewModel.currentTime,
+                    totalTime: viewModel.totalDuration
+                )
+                .padding(.horizontal, 20)
+            }
+
+            // Navigation buttons
+            navigationButtons
+                .padding(.bottom, 16)
+        }
+    }
+
+    // MARK: - Text View Mode
+    private var textViewMode: some View {
+        ZStack {
             // Background gradient
             AppColors.appGradient
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
                 // Header with progress
-                MysteryProgressHeader(
-                    current: viewModel.currentMysteryIndex + 1,
-                    total: viewModel.totalMysteries,
-                    onClose: { router.popToRoot() },
-                    onJournal: { showingJournalEditor = true }
-                )
+                textViewHeader
 
                 // Current meditation content
                 if let meditation = viewModel.currentMeditation {
-                    // Mystery Image (fixed height, not in scroll)
-                    MysteryImageView(
-                        imageURL: Constants.mysteryImageURL(
-                            category: meditationSet.category,
-                            index: viewModel.currentMysteryIndex
-                        )
-                    )
-                        .padding(.horizontal, 20)
-                        .padding(.top, 8)
-
                     // Mystery Info
                     MysteryInfoSection(
                         mysteryType: meditationSet.mysteryCategory?.displayName ?? "",
@@ -60,6 +231,22 @@ struct MysteryPrayerView: View {
                     // Scripture / Meditation content - scrollable with padding for controls
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 16) {
+                            // Scripture reference
+                            if let reference = meditation.mystery?.scriptureReference {
+                                HStack(spacing: 8) {
+                                    Rectangle()
+                                        .fill(AppColors.gold.opacity(0.5))
+                                        .frame(width: 20, height: 1)
+                                    Text(reference)
+                                        .font(AppFonts.italicFont(14))
+                                        .foregroundColor(AppColors.gold.opacity(0.8))
+                                    Rectangle()
+                                        .fill(AppColors.gold.opacity(0.5))
+                                        .frame(width: 20, height: 1)
+                                }
+                                .padding(.top, 8)
+                            }
+
                             // Meditation content
                             Text(meditation.content)
                                 .font(AppFonts.bodyFont(17))
@@ -68,29 +255,12 @@ struct MysteryPrayerView: View {
                                 .lineSpacing(6)
                                 .padding(.horizontal, 24)
                                 .padding(.vertical, 16)
-
-                            // Scripture reference if available
-                            if let reference = meditation.mystery?.scriptureReference {
-                                Text(reference)
-                                    .font(AppFonts.italicFont(14))
-                                    .foregroundColor(AppColors.gold.opacity(0.8))
-                            }
                         }
                         // Extra padding so content can scroll behind controls
-                        .padding(.top, 20)
-                        .padding(.bottom, 180)
+                        .padding(.top, 12)
+                        .padding(.bottom, 200)
                     }
                     .frame(maxHeight: .infinity)
-                    .overlay(alignment: .top) {
-                        // Top gradient fade for scroll content
-                        LinearGradient(
-                            colors: [Color(hex: "1a1a2e"), Color(hex: "1a1a2e").opacity(0.85), .clear],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                        .frame(height: 40)
-                        .allowsHitTesting(false)
-                    }
                 } else {
                     Spacer()
                     ProgressView()
@@ -124,86 +294,137 @@ struct MysteryPrayerView: View {
                         .padding(.horizontal, 20)
                     }
 
-                    // Previous and Next buttons row
-                    HStack(spacing: 12) {
-                        // Previous Mystery Button
-                        Button(action: {
-                            viewModel.previousMystery()
-                            Task {
-                                await viewModel.loadCurrentAudio()
-                            }
-                        }) {
-                            HStack(spacing: 4) {
-                                Image(systemName: "arrow.left")
-                                    .font(.system(size: 12, weight: .medium))
-                                Text("Prev")
-                                    .font(AppFonts.bodyFont(13))
-                                    .tracking(0.5)
-                            }
-                            .foregroundColor(AppColors.background)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 10)
-                            .background(
-                                RoundedRectangle(cornerRadius: 20)
-                                    .fill(AppColors.goldLight)
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 20)
-                                    .strokeBorder(AppColors.gold.opacity(0.5), lineWidth: 1)
-                            )
-                        }
-                        .disabled(viewModel.currentMysteryIndex == 0)
-                        .opacity(viewModel.currentMysteryIndex == 0 ? 0.5 : 1.0)
-
-                        Spacer()
-
-                        // Next Mystery Button
-                        Button(action: handleNextMystery) {
-                            HStack(spacing: 4) {
-                                Text("Next")
-                                    .font(AppFonts.bodyFont(13))
-                                    .tracking(0.5)
-                                Image(systemName: viewModel.isLastMystery ? "checkmark" : "arrow.right")
-                                    .font(.system(size: 12, weight: .medium))
-                            }
-                            .foregroundColor(AppColors.background)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 10)
-                            .background(
-                                RoundedRectangle(cornerRadius: 20)
-                                    .fill(AppColors.goldLight)
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 20)
-                                    .strokeBorder(AppColors.gold.opacity(0.5), lineWidth: 1)
-                            )
-                        }
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 8)
+                    // Navigation buttons
+                    navigationButtons
+                        .padding(.bottom, 8)
                 }
                 .background(Color(hex: "1a1a2e"))
             }
         }
-        .navigationBarHidden(true)
-        .task {
-            await viewModel.loadCurrentAudio()
+    }
+
+    private var textViewHeader: some View {
+        VStack(spacing: 12) {
+            HStack {
+                Text("MYSTERY \(viewModel.currentMysteryIndex + 1) OF \(viewModel.totalMysteries)")
+                    .font(AppFonts.bodyFont(14))
+                    .tracking(3)
+                    .foregroundColor(AppColors.gold)
+
+                Spacer()
+
+                // Toggle view mode
+                Button(action: { withAnimation(.easeInOut(duration: 0.3)) { isImageMode.toggle() } }) {
+                    Image(systemName: "photo")
+                        .font(.system(size: 16))
+                        .foregroundColor(AppColors.gold.opacity(0.8))
+                }
+                .padding(.trailing, 12)
+
+                // Journal note shortcut
+                Button(action: { showingJournalEditor = true }) {
+                    Image(systemName: "square.and.pencil")
+                        .font(.system(size: 16))
+                        .foregroundColor(AppColors.gold.opacity(0.8))
+                }
+                .padding(.trailing, 12)
+
+                Button(action: { router.popToRoot() }) {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(AppColors.gold)
+                }
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 16)
+
+            // Progress Bar
+            GeometryReader { geometry in
+                ZStack(alignment: .leading) {
+                    // Background track
+                    Rectangle()
+                        .fill(AppColors.gold.opacity(0.2))
+                        .frame(height: 3)
+
+                    // Progress fill
+                    Rectangle()
+                        .fill(AppColors.gold)
+                        .frame(width: geometry.size.width * (CGFloat(viewModel.currentMysteryIndex + 1) / CGFloat(viewModel.totalMysteries)), height: 3)
+                        .animation(.easeInOut(duration: 0.3), value: viewModel.currentMysteryIndex)
+                }
+            }
+            .frame(height: 3)
+            .padding(.horizontal, 20)
         }
-        .onChange(of: viewModel.currentMysteryIndex) { _, _ in
-            Task {
-                await viewModel.loadCurrentAudio()
+        .padding(.bottom, 8)
+    }
+
+    // MARK: - Shared Components
+
+    private var navigationButtons: some View {
+        HStack(spacing: 12) {
+            // Previous Mystery Button
+            Button(action: {
+                viewModel.previousMystery()
+                Task {
+                    await viewModel.loadCurrentAudio()
+                }
+            }) {
+                HStack(spacing: 4) {
+                    Image(systemName: "arrow.left")
+                        .font(.system(size: 12, weight: .medium))
+                    Text("Prev")
+                        .font(AppFonts.bodyFont(13))
+                        .tracking(0.5)
+                }
+                .foregroundColor(AppColors.background)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+                .background(
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(AppColors.goldLight)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .strokeBorder(AppColors.gold.opacity(0.5), lineWidth: 1)
+                )
+            }
+            .disabled(viewModel.currentMysteryIndex == 0)
+            .opacity(viewModel.currentMysteryIndex == 0 ? 0.5 : 1.0)
+
+            Spacer()
+
+            // Next Mystery Button
+            Button(action: handleNextMystery) {
+                HStack(spacing: 4) {
+                    Text("Next")
+                        .font(AppFonts.bodyFont(13))
+                        .tracking(0.5)
+                    Image(systemName: viewModel.isLastMystery ? "checkmark" : "arrow.right")
+                        .font(.system(size: 12, weight: .medium))
+                }
+                .foregroundColor(AppColors.background)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+                .background(
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(AppColors.goldLight)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .strokeBorder(AppColors.gold.opacity(0.5), lineWidth: 1)
+                )
             }
         }
-        .sheet(isPresented: $showingJournalEditor) {
-            JournalEntryEditorView(
-                category: meditationSet.mysteryCategory,
-                mysteryTitle: viewModel.currentMeditation?.displayTitle,
-                mysteryIndex: viewModel.currentMysteryIndex,
-                isMidPrayer: true
-            )
-            .presentationDetents([.large])
-            .presentationDragIndicator(.visible)
-        }
+        .padding(.horizontal, 20)
+    }
+
+    // MARK: - Helper Functions
+
+    private func ordinalNumber(_ number: Int) -> String {
+        let ordinals = ["First", "Second", "Third", "Fourth", "Fifth"]
+        guard number >= 1 && number <= 5 else { return "" }
+        return ordinals[number - 1]
     }
 
     private func handleNextMystery() {
