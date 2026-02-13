@@ -95,7 +95,7 @@ struct MysteryPrayerView: View {
                     LinearGradient(
                         colors: [
                             .clear,
-                            AppColors.background.opacity(6),
+                            AppColors.background.opacity(2),
                             AppColors.background
                         ],
                         startPoint: .top,
@@ -306,37 +306,40 @@ struct MysteryPrayerView: View {
     private var textViewHeader: some View {
         VStack(spacing: 12) {
             HStack {
-                Text("MYSTERY \(viewModel.currentMysteryIndex + 1) OF \(viewModel.totalMysteries)")
-                    .font(AppFonts.bodyFont(14))
-                    .tracking(3)
-                    .foregroundColor(AppColors.gold)
+                // Close button (left side, matching image view)
+                Button(action: { router.popToRoot() }) {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundColor(.white)
+                        .padding(12)
+                        .background(Color.black.opacity(0.3))
+                        .clipShape(Circle())
+                }
 
                 Spacer()
 
                 // Toggle view mode
                 Button(action: { withAnimation(.easeInOut(duration: 0.3)) { isImageMode.toggle() } }) {
                     Image(systemName: "photo")
-                        .font(.system(size: 16))
-                        .foregroundColor(AppColors.gold.opacity(0.8))
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(.white)
+                        .padding(12)
+                        .background(Color.black.opacity(0.3))
+                        .clipShape(Circle())
                 }
-                .padding(.trailing, 12)
 
                 // Journal note shortcut
                 Button(action: { showingJournalEditor = true }) {
                     Image(systemName: "square.and.pencil")
-                        .font(.system(size: 16))
-                        .foregroundColor(AppColors.gold.opacity(0.8))
-                }
-                .padding(.trailing, 12)
-
-                Button(action: { router.popToRoot() }) {
-                    Image(systemName: "xmark")
                         .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(AppColors.gold)
+                        .foregroundColor(.white)
+                        .padding(12)
+                        .background(Color.black.opacity(0.3))
+                        .clipShape(Circle())
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.top, 16)
+            .padding(.horizontal, 16)
+            .padding(.top, 8)
 
             // Progress Bar
             GeometryReader { geometry in
@@ -611,11 +614,11 @@ struct AudioControlsView: View {
                     }
                 }
 
-                // Forward 30s
+                // Forward 10s
                 Button(action: {
-                    currentTime = min(totalTime, currentTime + 30)
+                    currentTime = min(totalTime, currentTime + 10)
                 }) {
-                    Image(systemName: "goforward.30")
+                    Image(systemName: "goforward.10")
                         .font(.system(size: 24))
                         .foregroundColor(AppColors.gold)
                 }
