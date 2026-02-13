@@ -23,9 +23,15 @@ struct AccountView: View {
                     // Header
                     AccountHeaderView()
 
+                    // Disclaimer Banner
+                    DisclaimerBanner()
+                        .padding(.horizontal, 20)
+                        .padding(.top, 20)
+                        .padding(.bottom, 16)
+
                     // Profile Section
                     ProfileSection()
-                        .padding(.top, 24)
+                        .padding(.top, 12)
 
                     // Prayer Experience Section
                     AccountSection(title: "PRAYER EXPERIENCE") {
@@ -336,6 +342,41 @@ struct TextSizeRow: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
+    }
+}
+
+// MARK: - Disclaimer Banner
+
+struct DisclaimerBanner: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 12) {
+                Image(systemName: "exclamationmark.circle.fill")
+                    .font(.system(size: 18))
+                    .foregroundColor(AppColors.gold.opacity(0.8))
+
+                Text("COMING SOON")
+                    .font(AppFonts.bodyFont(12))
+                    .tracking(1)
+                    .foregroundColor(AppColors.gold)
+
+                Spacer()
+            }
+
+            Text("These settings are not yet functional in this version. Full feature support coming soon.")
+                .font(AppFonts.bodyFont(13))
+                .foregroundColor(AppColors.cream.opacity(0.8))
+                .lineSpacing(2)
+        }
+        .padding(14)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(AppColors.cardBackground.opacity(0.8))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: 1)
+        )
     }
 }
 

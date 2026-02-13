@@ -64,6 +64,11 @@ struct HomeView: View {
     /// ViewModel managing this screen's data and state.
     @State private var viewModel = HomeViewModel()
 
+    // MARK: - State
+
+    /// Controls whether the menu sheet is displayed
+    @State private var showingMenu = false
+
     // MARK: - Body
 
     var body: some View {
@@ -75,7 +80,7 @@ struct HomeView: View {
             // Scrollable content
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
-                    HeaderView()
+                    HeaderView(onMenuTap: { showingMenu = true })
 
                     DayPrayerLabel(label: viewModel.dayLabel)
                         .padding(.top, 16)
@@ -105,6 +110,10 @@ struct HomeView: View {
         // Load mysteries when view appears
         .task {
             await viewModel.loadMysteries()
+        }
+        // Menu sheet
+        .sheet(isPresented: $showingMenu) {
+            MenuView(isPresented: $showingMenu)
         }
     }
 
