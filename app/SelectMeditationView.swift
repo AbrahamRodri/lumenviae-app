@@ -98,12 +98,6 @@ struct SelectMeditationView: View {
                         }
                     )
             }
-
-            // Bottom Streak Widget
-            VStack {
-                Spacer()
-                StreakWidget(days: 12)
-            }
         }
         .navigationBarHidden(true)
         .task {
