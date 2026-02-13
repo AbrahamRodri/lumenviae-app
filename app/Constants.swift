@@ -160,66 +160,67 @@ struct Constants {
     static let journalIconString = "book"
     static let accountIconString = "person"
 
-    // MARK: Mystery Image URLs
-    // Public domain artwork from Wikimedia Commons for each Rosary mystery
+    // MARK: Mystery Image Assets
+    // Local images bundled with the app for instant loading without network requests
 
-    /// Images for Joyful Mysteries
+    /// Images for Joyful Mysteries (3 best artworks per mystery)
     static let joyfulMysteryImages: [String] = [
-        // 1. The Annunciation - Fra Angelico
-        "https://commons.wikimedia.org/wiki/Special:FilePath/Fra_Angelico_-_The_Annunciation_-_WGA00555.jpg?width=1024",
-        // 2. The Visitation - Pontormo
-        "https://commons.wikimedia.org/wiki/Special:FilePath/Pontormo-Visitazione1.jpg?width=1024",
-        // 3. The Nativity - Bartolomé Esteban Murillo
-        "https://commons.wikimedia.org/wiki/Special:FilePath/Bartolom%C3%A9_Esteban_Murillo_-_The_Nativity_-_Google_Art_Project.jpg?width=1024",
+        // 1. The Annunciation
+        "joyful_annunciation",
+        // 2. The Visitation
+        "joyful_visitation",
+        // 3. The Nativity
+        "joyful_nativity",
         // 4. The Presentation in the Temple
-        "https://commons.wikimedia.org/wiki/Special:FilePath/The_Presentation_in_the_Temple_MET_DT8826.jpg?width=1024",
-        // 5. Finding Jesus in the Temple - Albrecht Dürer
-        "https://commons.wikimedia.org/wiki/Special:FilePath/Albrecht_D%C3%BCrer_-_Jesus_among_the_Doctors_-_Google_Art_Project.jpg?width=1024"
+        "joyful_presentation",
+        // 5. Finding Jesus in the Temple
+        "joyful_finding"
     ]
 
     /// Images for Sorrowful Mysteries
     static let sorrowfulMysteryImages: [String] = [
-        // 1. The Agony in the Garden - Andrea Mantegna
-        "https://commons.wikimedia.org/wiki/Special:FilePath/Andrea_Mantegna_-_Agony_in_the_Garden_-_WGA13946.jpg?width=1024",
-        // 2. The Scourging at the Pillar - Piero della Francesca
-        "https://commons.wikimedia.org/wiki/Special:FilePath/Piero_della_Francesca_042_Flagellation.jpg?width=1024",
-        // 3. The Crowning with Thorns - Caravaggio
-        "https://commons.wikimedia.org/wiki/Special:FilePath/The_Crowning_with_Thorns-Caravaggio_(1602).jpg?width=1024",
-        // 4. The Carrying of the Cross - El Greco
-        "https://commons.wikimedia.org/wiki/Special:FilePath/El_Greco_-_Christ_Carrying_the_Cross_-_WGA10559.jpg?width=1024",
-        // 5. The Crucifixion - Diego Velázquez
-        "https://commons.wikimedia.org/wiki/Special:FilePath/Cristo_crucificado.jpg?width=1024"
+        // 1. The Agony in the Garden
+        "sorrowful_agony",
+        // 2. The Scourging at the Pillar
+        "sorrowful_scourging",
+        // 3. The Crowning with Thorns
+        "sorrowful_crowning",
+        // 4. The Carrying of the Cross
+        "sorrowful_carrying",
+        // 5. The Crucifixion
+        "sorrowful_crucifixion"
     ]
 
     /// Images for Glorious Mysteries
     static let gloriousMysteryImages: [String] = [
-        // 1. The Resurrection - Piero della Francesca
-        "https://commons.wikimedia.org/wiki/Special:FilePath/Piero_della_Francesca_-_Resurrection_-_WGA17609.jpg?width=1024",
-        // 2. The Ascension - Giotto di Bondone
-        "https://commons.wikimedia.org/wiki/Special:FilePath/Giotto_di_Bondone_-_Ascension_of_Christ_-_WGA09156.jpg?width=1024",
-        // 3. The Descent of the Holy Spirit (Pentecost) - El Greco
-        "https://commons.wikimedia.org/wiki/Special:FilePath/El_Greco_-_The_Pentecost_-_WGA10533.jpg?width=1024",
-        // 4. The Assumption of Mary - Titian
-        "https://commons.wikimedia.org/wiki/Special:FilePath/Tizian_041.jpg?width=1024",
-        // 5. The Coronation of Mary - Fra Angelico
-        "https://commons.wikimedia.org/wiki/Special:FilePath/Fra_Angelico_-_The_Coronation_of_the_Virgin_-_WGA0630.jpg?width=1024"
+        // 1. The Resurrection
+        "glorious_resurrection",
+        // 2. The Ascension
+        "glorious_ascension",
+        // 3. The Descent of the Holy Spirit
+        "glorious_pentecost",
+        // 4. The Assumption of Mary
+        "glorious_assumption",
+        // 5. The Coronation of Mary
+        "glorious_coronation"
     ]
 
     /// Images for Luminous Mysteries
     static let luminousMysteryImages: [String] = [
-        // 1. The Baptism of Jesus in the Jordan - Verrocchio & Leonardo
-        "https://commons.wikimedia.org/wiki/Special:FilePath/The_Baptism_of_Christ_(Verrocchio_%26_Leonardo).jpg?width=1024",
-        // 2. The Wedding Feast at Cana - Paolo Veronese
-        "https://commons.wikimedia.org/wiki/Special:FilePath/Paolo_Veronese%2C_The_Wedding_at_Cana.JPG?width=1024",
-        // 3. The Proclamation of the Kingdom of God - Carl Heinrich Bloch (Sermon on the Mount)
-        "https://commons.wikimedia.org/wiki/Special:FilePath/Bloch-SermonOnTheMount.jpg?width=1024",
-        // 4. The Transfiguration - Raphael
-        "https://commons.wikimedia.org/wiki/Special:FilePath/Transfiguration_Raphael.jpg?width=1024",
-        // 5. The Institution of the Eucharist - Juan de Juanes
-        "https://commons.wikimedia.org/wiki/Special:FilePath/%C3%9Altima_Cena_-_Juan_de_Juanes.jpg?width=1024"
+        // 1. The Baptism in the Jordan
+        "luminous_baptism",
+        // 2. The Wedding at Cana
+        "luminous_cana",
+        // 3. The Proclamation of the Kingdom
+        "luminous_proclamation",
+        // 4. The Transfiguration
+        "luminous_transfiguration",
+        // 5. The Institution of the Eucharist
+        "luminous_eucharist"
     ]
 
-    /// Get mystery image URL by category and index (0-based)
+    /// Get mystery image asset name by category and index (0-based)
+    /// Returns the local image asset name, not a URL
     static func mysteryImageURL(category: String, index: Int) -> String? {
         let images: [String]
         switch category.lowercased() {

@@ -109,4 +109,19 @@ struct Mystery: Codable, Identifiable, Hashable {
         guard order >= 1, order <= ordinals.count else { return "" }
         return ordinals[order - 1]
     }
+
+    /// Asset catalog image name for this mystery.
+    ///
+    /// Follows the naming convention: `mystery_<category>_<order>`
+    /// (e.g., `mystery_joyful_1` for The Annunciation).
+    ///
+    /// Usage:
+    /// ```swift
+    /// Image(mystery.imageName)
+    ///     .resizable()
+    ///     .scaledToFill()
+    /// ```
+    var imageName: String {
+        "mystery_\(category)_\(order)"
+    }
 }

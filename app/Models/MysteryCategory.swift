@@ -85,6 +85,17 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
         }
     }
 
+    /// Returns the asset catalog image name for a specific mystery in this category.
+    ///
+    /// Images should be added to Assets.xcassets using the naming convention:
+    /// `mystery_<category>_<order>` (e.g., `mystery_joyful_1`)
+    ///
+    /// - Parameter order: The mystery's position within the category (1–5)
+    /// - Returns: The image asset name string
+    func imageName(for order: Int) -> String {
+        "mystery_\(rawValue)_\(order)"
+    }
+
     /// Gradient colors for card backgrounds (top → bottom)
     ///
     /// Each category has a unique color scheme:

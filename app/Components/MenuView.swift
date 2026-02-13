@@ -55,7 +55,7 @@ struct MenuView: View {
 
                     MenuItemButton(
                         icon: "sparkles",
-                        title: "Mysteries & Meditations",
+                        title: "Finding the Mysteries in Scripture",
                         action: { }
                     )
 
@@ -65,12 +65,41 @@ struct MenuView: View {
 
                     MenuItemButton(
                         icon: "heart.fill",
-                        title: "About Lumen Viae",
+                        title: "Marian Theology Library",
                         action: { }
                     )
                 }
 
                 Spacer()
+
+                // Disclaimer
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "exclamationmark.circle.fill")
+                            .font(.system(size: 14))
+                            .foregroundColor(AppColors.gold.opacity(0.8))
+
+                        Text("COMING SOON")
+                            .font(AppFonts.bodyFont(11))
+                            .tracking(1)
+                            .foregroundColor(AppColors.gold)
+                    }
+
+                    Text("Menu features are not yet functional.")
+                        .font(AppFonts.bodyFont(12))
+                        .foregroundColor(AppColors.cream.opacity(0.7))
+                        .lineSpacing(1)
+                }
+                .padding(12)
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(AppColors.cardBackground.opacity(0.8))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .strokeBorder(AppColors.gold.opacity(0.25), lineWidth: 1)
+                )
+                .padding(.bottom, 16)
 
                 // Footer with version
                 VStack(spacing: 8) {

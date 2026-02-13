@@ -84,7 +84,7 @@ struct MysteryPrayerView: View {
                     .overlay(alignment: .top) {
                         // Top gradient fade for scroll content
                         LinearGradient(
-                            colors: [AppColors.background, AppColors.background.opacity(0.85), .clear],
+                            colors: [Color(hex: "1a1a2e"), Color(hex: "1a1a2e").opacity(0.85), .clear],
                             startPoint: .top,
                             endPoint: .bottom
                         )
@@ -105,7 +105,7 @@ struct MysteryPrayerView: View {
 
                 // Gradient fade zone above controls
                 LinearGradient(
-                    colors: [.clear, AppColors.background],
+                    colors: [.clear, Color(hex: "1a1a2e")],
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -153,7 +153,7 @@ struct MysteryPrayerView: View {
                     .padding(.horizontal, 20)
                     .padding(.bottom, 8)
                 }
-                .background(AppColors.background)
+                .background(Color(hex: "1a1a2e"))
             }
         }
         .navigationBarHidden(true)
@@ -261,25 +261,11 @@ struct MysteryImageView: View {
             RoundedRectangle(cornerRadius: 16)
                 .fill(AppColors.cardBackground)
 
-            if let urlString = imageURL, let url = URL(string: urlString) {
-                AsyncImage(url: url) { phase in
-                    switch phase {
-                    case .empty:
-                        ProgressView()
-                            .tint(AppColors.gold)
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    case .failure:
-                        Image(systemName: "photo")
-                            .font(.system(size: 48))
-                            .foregroundColor(AppColors.textSecondary)
-                    @unknown default:
-                        EmptyView()
-                    }
-                }
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+            if let assetName = imageURL {
+                Image(assetName)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
             } else {
                 // Placeholder
                 Image(systemName: "hands.and.sparkles")
@@ -374,7 +360,7 @@ struct AudioControlsView: View {
                 }) {
                     Image(systemName: "gobackward.10")
                         .font(.system(size: 24))
-                        .foregroundColor(AppColors.textSecondary)
+                        .foregroundColor(AppColors.gold)
                 }
 
                 // Play/Pause
@@ -383,7 +369,7 @@ struct AudioControlsView: View {
                 }) {
                     ZStack {
                         Circle()
-                            .fill(AppColors.goldLight)
+                            .fill(AppColors.gold)
                             .frame(width: 64, height: 64)
 
                         Image(systemName: isPlaying ? "pause.fill" : "play.fill")
@@ -399,7 +385,7 @@ struct AudioControlsView: View {
                 }) {
                     Image(systemName: "goforward.30")
                         .font(.system(size: 24))
-                        .foregroundColor(AppColors.textSecondary)
+                        .foregroundColor(AppColors.gold)
                 }
             }
         }
