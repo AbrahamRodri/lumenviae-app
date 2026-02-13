@@ -31,6 +31,7 @@
 //  ═══════════════════════════════════════════════════════════════════════════
 
 import SwiftUI
+import SwiftData
 
 // MARK: - App Entry Point
 
@@ -70,5 +71,6 @@ struct appApp: App {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(for: PrayerSession.self)
     }
 }
