@@ -68,6 +68,17 @@ struct MenuView: View {
                         title: "Marian Theology Library",
                         action: { }
                     )
+
+                    Divider()
+                        .background(AppColors.gold.opacity(0.2))
+                        .padding(.horizontal, 20)
+
+                    MenuItemButton(
+                        icon: "candle.fill",
+                        title: "St. Carlo Acutis",
+                        subtitle: "Digital Altar",
+                        action: { }
+                    )
                 }
 
                 Spacer()
@@ -127,6 +138,7 @@ struct MenuView: View {
 struct MenuItemButton: View {
     let icon: String
     let title: String
+    var subtitle: String? = nil
     let action: () -> Void
 
     var body: some View {
@@ -137,9 +149,17 @@ struct MenuItemButton: View {
                     .foregroundColor(AppColors.gold)
                     .frame(width: 24)
 
-                Text(title)
-                    .font(AppFonts.bodyFont(16))
-                    .foregroundColor(AppColors.cream)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(AppFonts.bodyFont(16))
+                        .foregroundColor(AppColors.cream)
+
+                    if let subtitle = subtitle {
+                        Text(subtitle)
+                            .font(AppFonts.bodyFont(12))
+                            .foregroundColor(AppColors.textSecondary)
+                    }
+                }
 
                 Spacer()
 
@@ -155,4 +175,5 @@ struct MenuItemButton: View {
 
 #Preview {
     MenuView(isPresented: .constant(true))
+        .environment(AppRouter())
 }
