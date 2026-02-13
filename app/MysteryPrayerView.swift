@@ -47,7 +47,7 @@ struct MysteryPrayerView: View {
                         )
                     )
                         .padding(.horizontal, 20)
-                        .padding(.top, 12)
+                        .padding(.top, 8)
 
                     // Mystery Info
                     MysteryInfoSection(
@@ -124,31 +124,60 @@ struct MysteryPrayerView: View {
                         .padding(.horizontal, 20)
                     }
 
-                    // Prayer controls row: journal note + next mystery
+                    // Previous and Next buttons row
                     HStack(spacing: 12) {
-                        // Journal note button
-                        Button(action: { showingJournalEditor = true }) {
-                            HStack(spacing: 6) {
-                                Image(systemName: "pencil.line")
-                                    .font(.system(size: 15))
-                                Text("Note")
-                                    .font(AppFonts.bodyFont(15))
-                                    .tracking(1)
+                        // Previous Mystery Button
+                        Button(action: {
+                            viewModel.previousMystery()
+                            Task {
+                                await viewModel.loadCurrentAudio()
                             }
-                            .foregroundColor(AppColors.gold)
-                            .padding(.vertical, 18)
-                            .frame(width: 100)
+                        }) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "arrow.left")
+                                    .font(.system(size: 12, weight: .medium))
+                                Text("Prev")
+                                    .font(AppFonts.bodyFont(13))
+                                    .tracking(0.5)
+                            }
+                            .foregroundColor(AppColors.background)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 10)
                             .background(
-                                RoundedRectangle(cornerRadius: 30)
+                                RoundedRectangle(cornerRadius: 20)
+                                    .fill(AppColors.goldLight)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 20)
                                     .strokeBorder(AppColors.gold.opacity(0.5), lineWidth: 1)
                             )
                         }
+                        .disabled(viewModel.currentMysteryIndex == 0)
+                        .opacity(viewModel.currentMysteryIndex == 0 ? 0.5 : 1.0)
+
+                        Spacer()
 
                         // Next Mystery Button
-                        NextMysteryButton(
-                            isLastMystery: viewModel.isLastMystery,
-                            action: handleNextMystery
-                        )
+                        Button(action: handleNextMystery) {
+                            HStack(spacing: 4) {
+                                Text("Next")
+                                    .font(AppFonts.bodyFont(13))
+                                    .tracking(0.5)
+                                Image(systemName: viewModel.isLastMystery ? "checkmark" : "arrow.right")
+                                    .font(.system(size: 12, weight: .medium))
+                            }
+                            .foregroundColor(AppColors.background)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 10)
+                            .background(
+                                RoundedRectangle(cornerRadius: 20)
+                                    .fill(AppColors.goldLight)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 20)
+                                    .strokeBorder(AppColors.gold.opacity(0.5), lineWidth: 1)
+                            )
+                        }
                     }
                     .padding(.horizontal, 20)
                     .padding(.bottom, 8)
@@ -264,7 +293,7 @@ struct MysteryImageView: View {
             if let assetName = imageURL {
                 Image(assetName)
                     .resizable()
-                    .aspectRatio(contentMode: .fill)
+                    .aspectRatio(contentMode: .fit)
                     .clipShape(RoundedRectangle(cornerRadius: 16))
             } else {
                 // Placeholder
@@ -334,24 +363,6 @@ struct AudioControlsView: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            // Progress slider
-            VStack(spacing: 4) {
-                Slider(value: $currentTime, in: 0...max(totalTime, 1))
-                    .tint(AppColors.gold)
-
-                HStack {
-                    Text(formatTime(currentTime))
-                        .font(AppFonts.bodyFont(12))
-                        .foregroundColor(AppColors.textSecondary)
-
-                    Spacer()
-
-                    Text(formatTime(totalTime))
-                        .font(AppFonts.bodyFont(12))
-                        .foregroundColor(AppColors.textSecondary)
-                }
-            }
-
             // Playback controls
             HStack(spacing: 40) {
                 // Rewind 10s
@@ -392,36 +403,6 @@ struct AudioControlsView: View {
     }
 }
 
-// MARK: - Next Mystery Button
-
-struct NextMysteryButton: View {
-    let isLastMystery: Bool
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 8) {
-                Text(isLastMystery ? "Complete" : "Next Mystery")
-                    .font(AppFonts.bodyFont(16))
-                    .tracking(1)
-
-                Image(systemName: isLastMystery ? "checkmark" : "arrow.right")
-                    .font(.system(size: 14, weight: .medium))
-            }
-            .foregroundColor(AppColors.background)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 18)
-            .background(
-                RoundedRectangle(cornerRadius: 30)
-                    .fill(AppColors.goldLight)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 30)
-                    .strokeBorder(AppColors.gold.opacity(0.5), lineWidth: 1)
-            )
-        }
-    }
-}
 
 // MARK: - Preview
 
