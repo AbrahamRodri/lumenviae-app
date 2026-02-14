@@ -18,6 +18,8 @@ struct SelectMeditationView: View {
         self._viewModel = State(initialValue: MeditationSelectionViewModel(category: category))
     }
 
+    @State private var contentOpacity: Double = 0
+
     var body: some View {
         ZStack {
             // Background gradient with category color fade
@@ -79,6 +81,19 @@ struct SelectMeditationView: View {
                     .padding(.horizontal, 20)
                     .padding(.bottom, 120)
                 }
+                .opacity(contentOpacity)
+                .mask(
+                    LinearGradient(
+                        stops: [
+                            .init(color: .clear, location: 0),
+                            .init(color: .black, location: 0.05),
+                            .init(color: .black, location: 0.92),
+                            .init(color: .clear, location: 1)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
 
                 Spacer()
             }
@@ -100,6 +115,13 @@ struct SelectMeditationView: View {
             }
         }
         .navigationBarHidden(true)
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                withAnimation(.easeIn(duration: 0.45)) {
+                    contentOpacity = 1
+                }
+            }
+        }
         .task {
             await viewModel.loadMeditationSets()
         }
