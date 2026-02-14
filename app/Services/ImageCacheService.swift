@@ -77,9 +77,7 @@ final class ImageCacheService: @unchecked Sendable {
             }
             for await (name, image) in group {
                 if let image {
-                    lock.lock()
-                    cache[name] = image
-                    lock.unlock()
+                    lock.withLock { cache[name] = image }
                 }
             }
         }
