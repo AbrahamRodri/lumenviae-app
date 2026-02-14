@@ -50,26 +50,29 @@ import SwiftData
 @main
 struct appApp: App {
 
+    // MARK: - State
+
+    /// Whether the app has finished loading (splash screen complete)
+    @State private var isLaunched = false
+
     // MARK: - Body
 
     /// The app's main content, required by the `App` protocol.
     ///
-    /// `body` returns a `Scene` - in this case, a `WindowGroup` which
-    /// represents the main window of our app. WindowGroup automatically
-    /// handles creating windows on different platforms (iPhone, iPad, Mac).
-    ///
-    /// ## What's happening here:
-    /// 1. `WindowGroup` creates the app's window
-    /// 2. `ContentView()` is placed inside as the root view
-    /// 3. SwiftUI handles all the rendering and lifecycle
-    ///
-    /// ## some Scene
-    /// The `some` keyword means "returns something that conforms to Scene,
-    /// but we won't specify exactly what type." This is called an "opaque
-    /// return type" and is common in SwiftUI.
+    /// Shows a launch screen first while preloading images, then
+    /// transitions to the main content.
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if isLaunched {
+                ContentView()
+                    .transition(.opacity)
+            } else {
+                LaunchView {
+                    withAnimation(.easeInOut(duration: 0.4)) {
+                        isLaunched = true
+                    }
+                }
+            }
         }
         .modelContainer(for: [PrayerSession.self, JournalEntry.self])
     }

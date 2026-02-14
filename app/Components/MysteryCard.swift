@@ -22,8 +22,7 @@ struct MysteryCard: View {
             .overlay(
                 Group {
                     if let cardImageName {
-                        Image(cardImageName)
-                            .resizable()
+                        CachedAssetImage(cardImageName)
                             .aspectRatio(contentMode: .fill)
                             .overlay(
                                 LinearGradient(

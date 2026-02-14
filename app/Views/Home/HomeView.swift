@@ -22,7 +22,7 @@
 //  HomeViewModel
 //      │
 //      ├── todaysCategory (from ScheduleService)
-//      ├── mysteries (from APIService)
+//      ├── mysteries (from local MysteryData - instant load)
 //      ├── featuredMystery (first mystery of today's set)
 //      └── currentQuote (from MockDataService)
 //  ```
@@ -47,11 +47,6 @@ import SwiftUI
 /// The ViewModel is marked `@State` because HomeView "owns" it.
 /// The ViewModel uses `@Observable`, so SwiftUI automatically
 /// re-renders when its properties change.
-///
-/// ### .task modifier
-/// `.task { }` runs async code when the view appears.
-/// It automatically cancels if the view disappears.
-/// Preferred over `.onAppear` for async work.
 ///
 struct HomeView: View {
 
@@ -106,11 +101,6 @@ struct HomeView: View {
                 }
             }
         }
-        // Load mysteries when view appears
-        .task {
-            await viewModel.loadMysteries()
-        }
-        // Menu sheet
         .sheet(isPresented: $showingMenu) {
             MenuView(isPresented: $showingMenu)
         }
@@ -118,19 +108,17 @@ struct HomeView: View {
 
     // MARK: - Subviews
 
-    /// The featured mystery card, showing either content or a loading placeholder.
+    /// The featured mystery card - data loaded instantly from local storage.
     @ViewBuilder
     private var featuredMysterySection: some View {
-        if let featuredMystery = viewModel.featuredMystery {
+        if let mystery = viewModel.featuredMystery {
             FeaturedMysteryCard(
                 category: viewModel.todaysCategory,
-                mystery: featuredMystery,
+                mystery: mystery,
                 onBeginPrayer: {
                     router.navigateToMeditationSelection(category: viewModel.todaysCategory)
                 }
             )
-        } else if viewModel.isLoading {
-            FeaturedMysteryCardPlaceholder()
         }
     }
 }
@@ -219,7 +207,7 @@ struct FeaturedMysteryCard: View {
     /// The mystery category (Joyful, Sorrowful, etc.)
     let category: MysteryCategory
 
-    /// The mystery to display (e.g., "The Annunciation")
+    /// The mystery to display (loaded instantly from local data)
     let mystery: Mystery
 
     /// Action triggered when "Begin Prayer" is tapped
@@ -228,17 +216,16 @@ struct FeaturedMysteryCard: View {
     // MARK: - Body
 
     var body: some View {
+        // Rectangle drives size; image goes in .overlay so it never expands layout bounds
         Rectangle()
             .fill(Color(hex: "0f1a26"))
             .frame(height: 380)
             .overlay(
-                Image(category.cardImageName)
-                    .resizable()
+                CachedAssetImage(category.cardImageName)
                     .aspectRatio(contentMode: .fill)
                     .overlay(Color.black.opacity(0.25))
             )
-            .clipped()
-            .drawingGroup()
+            .clipShape(Rectangle())
             .overlay(
                 Rectangle()
                     .strokeBorder(AppColors.gold.opacity(0.4), lineWidth: 1)
@@ -268,7 +255,7 @@ struct FeaturedMysteryCard: View {
 
     // MARK: - Subviews
 
-    /// "JOYFUL MYSTERIES" badge
+    /// "JOYFUL MYSTERIES" badge - always available (uses category)
     private var categoryBadge: some View {
         Text("\(category.displayName.uppercased()) MYSTERIES")
             .font(AppFonts.bodyFont(10))
@@ -286,7 +273,7 @@ struct FeaturedMysteryCard: View {
             )
     }
 
-    /// Mystery name (e.g., "The Annunciation")
+    /// Mystery name
     private var mysteryTitle: some View {
         Text(mystery.name)
             .font(AppFonts.headlineFont(28))
@@ -294,7 +281,7 @@ struct FeaturedMysteryCard: View {
             .multilineTextAlignment(.center)
     }
 
-    /// Scripture reference (e.g., "Luke 1:26-38")
+    /// Scripture reference
     @ViewBuilder
     private var scriptureReference: some View {
         if let reference = mystery.scriptureReference {
@@ -331,28 +318,6 @@ struct FeaturedMysteryCard: View {
         .padding(.top, 8)
     }
 
-}
-
-// MARK: - FeaturedMysteryCardPlaceholder
-
-/// Loading placeholder shown while the featured mystery is being fetched.
-///
-/// Displays a loading spinner centered in a card-shaped container,
-/// maintaining the same dimensions as the actual FeaturedMysteryCard.
-struct FeaturedMysteryCardPlaceholder: View {
-    var body: some View {
-        Rectangle()
-            .fill(AppColors.cardBackground)
-            .frame(height: 380)
-            .overlay(
-                ProgressView()
-                    .tint(AppColors.gold)
-            )
-            .overlay(
-                Rectangle()
-                    .strokeBorder(AppColors.gold.opacity(0.4), lineWidth: 1)
-            )
-    }
 }
 
 // MARK: - SacredMysteriesSection
