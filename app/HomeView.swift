@@ -238,6 +238,7 @@ struct FeaturedMysteryCard: View {
                     .overlay(Color.black.opacity(0.25))
             )
             .clipped()
+            .drawingGroup()
             .overlay(
                 Rectangle()
                     .strokeBorder(AppColors.gold.opacity(0.4), lineWidth: 1)

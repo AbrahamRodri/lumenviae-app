@@ -38,13 +38,8 @@ struct MysteryPrayerView: View {
             }
         }
         .navigationBarHidden(true)
-        .task {
+        .task(id: viewModel.currentMysteryIndex) {
             await viewModel.loadCurrentAudio()
-        }
-        .onChange(of: viewModel.currentMysteryIndex) { _, _ in
-            Task {
-                await viewModel.loadCurrentAudio()
-            }
         }
         .sheet(isPresented: $showingJournalEditor) {
             JournalEntryEditorView(
@@ -66,7 +61,7 @@ struct MysteryPrayerView: View {
                 AppColors.background
                     .ignoresSafeArea()
 
-                // Image fills top 70% of screen
+                // Image fills top 80% of screen with gradient fade
                 VStack(spacing: 0) {
                     if let assetName = Constants.mysteryImageURL(
                         category: meditationSet.category,
@@ -85,10 +80,12 @@ struct MysteryPrayerView: View {
                     Spacer()
                 }
                 .ignoresSafeArea(edges: .top)
+                .id(viewModel.currentMysteryIndex)
+                .transition(.opacity)
+                .animation(.easeInOut(duration: 0.3), value: viewModel.currentMysteryIndex)
 
-                // Gradient overlay - positioned to fade over the image
+                // Gradient overlay
                 VStack {
-                    // Push gradient to start where we want the fade (around 50% of screen)
                     Spacer()
                         .frame(height: geometry.size.height * 0.60)
 
@@ -103,6 +100,7 @@ struct MysteryPrayerView: View {
                     )
                 }
                 .ignoresSafeArea()
+                .drawingGroup()
 
                 // Content overlay
                 VStack(spacing: 0) {
@@ -369,9 +367,6 @@ struct MysteryPrayerView: View {
             // Previous Mystery Button
             Button(action: {
                 viewModel.previousMystery()
-                Task {
-                    await viewModel.loadCurrentAudio()
-                }
             }) {
                 HStack(spacing: 4) {
                     Image(systemName: "arrow.left")

@@ -123,17 +123,24 @@ struct PrayerProgressView: View {
         .padding(.horizontal, 8)
     }
 
+    private static let monthFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "MMMM"
+        return f
+    }()
+
+    private static let yearFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "yyyy"
+        return f
+    }()
+
     private var monthName: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMMM"
-        return formatter.string(from: displayedMonth)
+        Self.monthFormatter.string(from: displayedMonth)
     }
 
     private var yearString: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy"
-        let year = formatter.string(from: displayedMonth)
-        return "Anno Domini \(year)"
+        "Anno Domini \(Self.yearFormatter.string(from: displayedMonth))"
     }
 
     private func previousMonth() {
@@ -247,14 +254,21 @@ struct PrayerProgressView: View {
         return days
     }
 
-    private func prayerCount(for date: Date) -> Int {
-        let calendar = Calendar.current
-        let startOfDay = calendar.startOfDay(for: date)
-        guard let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay) else { return 0 }
+    /// Pre-builds a [startOfDay: count] lookup from all sessions.
+    /// O(n) once, instead of O(n) per calendar cell.
+    private var prayerCountsByDay: [Date: Int] {
+        let cal = Calendar.current
+        var counts: [Date: Int] = [:]
+        for session in sessions {
+            let day = cal.startOfDay(for: session.completedAt)
+            counts[day, default: 0] += 1
+        }
+        return counts
+    }
 
-        return sessions.filter { session in
-            session.completedAt >= startOfDay && session.completedAt < endOfDay
-        }.count
+    private func prayerCount(for date: Date) -> Int {
+        let startOfDay = Calendar.current.startOfDay(for: date)
+        return prayerCountsByDay[startOfDay] ?? 0
     }
 
     // MARK: - Devotions Section

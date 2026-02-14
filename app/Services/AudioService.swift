@@ -74,6 +74,9 @@ final class AudioService {
     /// Currently loaded audio URL (for avoiding redundant loads)
     private var currentURL: URL?
 
+    /// Token for the end-of-playback notification observer
+    private var endOfPlaybackObserver: NSObjectProtocol?
+
     // MARK: - Initialization
 
     /// Private initializer enforces singleton pattern
@@ -81,9 +84,11 @@ final class AudioService {
         setupAudioSession()
     }
 
-    /// Cleanup when service is deallocated
     deinit {
         removeTimeObserver()
+        if let observer = endOfPlaybackObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
     }
 
     // MARK: - Audio Session Setup
@@ -218,6 +223,7 @@ final class AudioService {
     func reset() {
         pause()
         removeTimeObserver()
+        removeEndOfPlaybackObserver()
         player = nil
         currentURL = nil
         currentTime = 0
@@ -264,7 +270,8 @@ final class AudioService {
     ///
     /// When audio reaches the end, reset to the beginning and stop.
     private func setupNotifications(for item: AVPlayerItem) {
-        NotificationCenter.default.addObserver(
+        removeEndOfPlaybackObserver()
+        endOfPlaybackObserver = NotificationCenter.default.addObserver(
             forName: .AVPlayerItemDidPlayToEndTime,
             object: item,
             queue: .main
@@ -273,5 +280,12 @@ final class AudioService {
             self?.currentTime = 0
             self?.player?.seek(to: .zero)
         }
+    }
+
+    private func removeEndOfPlaybackObserver() {
+        if let observer = endOfPlaybackObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+        endOfPlaybackObserver = nil
     }
 }
