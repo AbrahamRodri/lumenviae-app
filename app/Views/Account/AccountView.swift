@@ -11,6 +11,7 @@ struct AccountView: View {
     @State private var audioAutoPlay = false
     @State private var dailyRemindersEnabled = true
     @State private var textSizeValue: Double = 0.5
+    @State private var showOnboarding = false
 
     var body: some View {
         ZStack {
@@ -97,6 +98,33 @@ struct AccountView: View {
                             Divider()
                                 .background(AppColors.gold.opacity(0.2))
 
+                            // App intro / onboarding replay
+                            Button {
+                                showOnboarding = true
+                            } label: {
+                                HStack(spacing: 16) {
+                                    Image(systemName: "book.pages")
+                                        .font(.system(size: 18))
+                                        .foregroundColor(AppColors.textSecondary)
+                                        .frame(width: 24)
+
+                                    Text("App Introduction")
+                                        .font(AppFonts.bodyFont(16))
+                                        .foregroundColor(AppColors.cream)
+
+                                    Spacer()
+
+                                    Image(systemName: "chevron.right")
+                                        .font(.system(size: 14, weight: .medium))
+                                        .foregroundColor(AppColors.textSecondary.opacity(0.6))
+                                }
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 14)
+                            }
+
+                            Divider()
+                                .background(AppColors.gold.opacity(0.2))
+
                             NavigationRow(
                                 icon: "shield",
                                 title: "Privacy Policy"
@@ -119,6 +147,9 @@ struct AccountView: View {
                         .padding(.bottom, 120)
                 }
             }
+        }
+        .sheet(isPresented: $showOnboarding) {
+            OnboardingView(onComplete: { showOnboarding = false })
         }
     }
 }

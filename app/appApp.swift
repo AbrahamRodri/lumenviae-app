@@ -55,17 +55,32 @@ struct appApp: App {
     /// Whether the app has finished loading (splash screen complete)
     @State private var isLaunched = false
 
+    /// Persisted flag: true after the user completes onboarding once.
+    /// Stored in UserDefaults via @AppStorage so it survives app restarts.
+    @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
+
     // MARK: - Body
 
     /// The app's main content, required by the `App` protocol.
     ///
-    /// Shows a launch screen first while preloading images, then
-    /// transitions to the main content.
+    /// Flow:
+    ///   1. LaunchView (splash + image preload)
+    ///   2. OnboardingView — shown once on first launch
+    ///   3. ContentView — main app (all subsequent launches start here)
     var body: some Scene {
         WindowGroup {
             if isLaunched {
-                ContentView()
+                if hasSeenOnboarding {
+                    ContentView()
+                        .transition(.opacity)
+                } else {
+                    OnboardingView {
+                        withAnimation(.easeInOut(duration: 0.4)) {
+                            hasSeenOnboarding = true
+                        }
+                    }
                     .transition(.opacity)
+                }
             } else {
                 LaunchView {
                     withAnimation(.easeInOut(duration: 0.4)) {
