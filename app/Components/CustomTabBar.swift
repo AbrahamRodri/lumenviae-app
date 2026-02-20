@@ -35,6 +35,7 @@ import SwiftUI
 ///
 enum AppTab: CaseIterable {
     case home
+    case consecration
     case journal
     case progress
     case account
@@ -42,20 +43,22 @@ enum AppTab: CaseIterable {
     /// Tab title text (from Constants for potential localization)
     var title: String {
         switch self {
-        case .home:     return Constants.homeTab
-        case .journal:  return Constants.journalTab
-        case .progress: return Constants.progressTab
-        case .account:  return Constants.accountTab
+        case .home:         return Constants.homeTab
+        case .consecration: return Constants.consecrationTab
+        case .journal:      return Constants.journalTab
+        case .progress:     return Constants.progressTab
+        case .account:      return Constants.accountTab
         }
     }
 
     /// SF Symbol name for the tab icon
     var icon: String {
         switch self {
-        case .home:     return "house.fill"
-        case .journal:  return "book.fill"
-        case .progress: return "chart.line.uptrend.xyaxis"
-        case .account:  return "person.fill"
+        case .home:         return "house.fill"
+        case .consecration: return "flame.fill"
+        case .journal:      return "book.fill"
+        case .progress:     return "chart.line.uptrend.xyaxis"
+        case .account:      return "person.fill"
         }
     }
 }

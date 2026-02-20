@@ -92,6 +92,6 @@ struct appApp: App {
             }
         }
         .environment(userSettings)
-        .modelContainer(for: [PrayerSession.self, JournalEntry.self])
+        .modelContainer(for: [PrayerSession.self, JournalEntry.self, ConsecrationProgress.self])
     }
 }

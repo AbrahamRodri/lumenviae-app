@@ -12,9 +12,10 @@ struct ContentView: View {
 
     @State private var router = AppRouter()
     @State private var selectedTab: AppTab = .home
+    @State private var isConsecrationNavigating: Bool = false
 
     private var shouldShowTabBar: Bool {
-        router.path.isEmpty
+        router.path.isEmpty && !isConsecrationNavigating
     }
 
     // MARK: - Body
@@ -41,6 +42,12 @@ struct ContentView: View {
             }
         }
         .environment(router)
+        .onChange(of: selectedTab) { _, newTab in
+            // Reset consecration navigation state when switching tabs
+            if newTab != .consecration {
+                isConsecrationNavigating = false
+            }
+        }
     }
 
     // MARK: - Tab Content
@@ -50,6 +57,10 @@ struct ContentView: View {
         switch selectedTab {
         case .home:
             HomeView()
+        case .consecration:
+            ConsecrationTabView(onNavigationChange: { isNavigating in
+                isConsecrationNavigating = isNavigating
+            })
         case .journal:
             JournalView()
         case .progress:

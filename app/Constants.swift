@@ -250,6 +250,7 @@ struct Constants {
     // MARK: Tab Bar Labels
 
     static let homeTab = "HOME"
+    static let consecrationTab = "CONSECRATE"
     static let journalTab = "JOURNAL"
     static let progressTab = "PROGRESS"
     static let accountTab = "ACCOUNT"
