@@ -67,6 +67,8 @@ struct appApp: App {
     ///   1. LaunchView (splash + image preload)
     ///   2. OnboardingView — shown once on first launch
     ///   3. ContentView — main app (all subsequent launches start here)
+    private let userSettings = UserSettings.shared
+
     var body: some Scene {
         WindowGroup {
             if isLaunched {
@@ -89,6 +91,7 @@ struct appApp: App {
                 }
             }
         }
+        .environment(userSettings)
         .modelContainer(for: [PrayerSession.self, JournalEntry.self])
     }
 }

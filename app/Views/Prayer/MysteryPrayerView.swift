@@ -16,6 +16,7 @@ import SwiftUI
 
 struct MysteryPrayerView: View {
     @Environment(AppRouter.self) private var router
+    @Environment(UserSettings.self) private var userSettings
     @State private var viewModel: PrayerSessionViewModel
     @State private var showingJournalEditor = false
     @State private var isImageMode = true // Toggle between image and text views
@@ -247,7 +248,7 @@ struct MysteryPrayerView: View {
 
                             // Meditation content
                             Text(meditation.content)
-                                .font(AppFonts.bodyFont(17))
+                                .font(AppFonts.bodyFont(userSettings.meditationFontSize))
                                 .foregroundColor(AppColors.cream.opacity(0.9))
                                 .multilineTextAlignment(.center)
                                 .lineSpacing(6)
