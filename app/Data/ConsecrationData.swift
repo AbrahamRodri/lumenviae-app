@@ -491,30 +491,177 @@ Pray at least five decades of the Rosary, meditating on the mysteries appropriat
         var allDays: [ConsecrationDay] = []
 
         // MARK: Preparatory Period (Days 1-12)
-        let preparatoryTitles = [
-            "Renouncing the Spirit of the World",
-            "Emptying Oneself",
-            "Detachment from Creatures",
-            "Worldly Maxims",
-            "The Vanity of the World",
-            "The Spirit of the World",
-            "Worldly Wisdom",
-            "The Ways of the World",
-            "Interior Emptiness",
-            "Renunciation",
-            "Dying to Self",
-            "Complete Detachment"
+
+        // Day 1
+        allDays.append(ConsecrationDay(
+            dayNumber: 1,
+            phase: .preparatory,
+            title: "The Spirit of the World",
+            meditationTitle: "Matthew 5:1-19",
+            meditationText: """
+And seeing the multitudes, he went up into a mountain, and when he was set down, his disciples came unto him. And opening his mouth, he taught them, saying: Blessed are the poor in spirit: for theirs is the kingdom of heaven. Blessed are the meek: for they shall possess the land. Blessed are they that mourn: for they shall be comforted. Blessed are they that hunger and thirst after justice: for they shall have their fill. Blessed are the merciful: for they shall obtain mercy. Blessed are the clean of heart: for they shall see God. Blessed are the peacemakers: for they shall be called children of God. Blessed are they that suffer persecution for justice' sake: for theirs is the kingdom of heaven. Blessed are ye when they shall revile you, and persecute you, and speak all that is evil against you, untruly, for my sake: Be glad and rejoice, for your reward is very great in heaven. For so they persecuted the prophets that were before you.
+
+You are the salt of the earth. But if the salt lose its savour, wherewith shall it be salted? It is good for nothing any more but to be cast out, and to be trodden on by men. You are the light of the world. A city seated on a mountain cannot be hid. Neither do men light a candle and put it under a bushel, but upon a candlestick, that it may shine to all that are in the house. So let your light shine before men, that they may see your good works, and glorify your Father who is in heaven. Do not think that I am come to destroy the law, or the prophets. I am not come to destroy, but to fulfill. For amen I say unto you, till heaven and earth pass, one jot, or one tittle shall not pass of the law, till all be fulfilled. He therefore that shall break one of these least commandments, and shall so teach men, shall be called the least in the kingdom of heaven. But he that shall do and teach, he shall be called great in the kingdom of heaven.
+
+─────
+
+Examine your conscience, pray, practice renouncement of your own will; mortification, purity of heart. This purity is the indispensable condition for contemplating God in heaven, to see Him on earth and to know Him by the light of faith. The first part of the preparation should be employed in casting off the spirit of the world which is contrary to that of Jesus Christ.
+
+The spirit of the world consists essentially in the denial of the supreme dominion of God; a denial which is manifested in practice by sin and disobedience; thus it is principally opposed to the spirit of Christ, which is also that of Mary.
+
+It manifests itself by the concupiscence of the flesh, by the concupiscence of the eyes and by the pride of life. By disobedience to God's laws and the abuse of created things. Its works are: sin in all forms, then all else by which the devil leads to sin; works which bring error and darkness to the mind, and seduction and corruption to the will. Its pomps are the splendor and the charms employed by the devil to render sin alluring in persons, places and things.
+""",
+            meditationSource: "Douay-Rheims Bible",
+            journalPrompt: "What worldly attachments or attitudes do you need to release to follow Christ more fully?"
+        ))
+
+        // Day 2
+        allDays.append(ConsecrationDay(
+            dayNumber: 2,
+            phase: .preparatory,
+            title: "Seeking God's Approval",
+            meditationTitle: "Matthew 5:48, 6:1-15",
+            meditationText: """
+Be you therefore perfect, as also your heavenly Father is perfect.
+
+Take heed that you do not your justice before men, to be seen by them: otherwise you shall not have a reward of your Father who is in heaven. Therefore when thou dost an almsdeed, sound not a trumpet before thee, as the hypocrites do in the synagogues and in the streets, that they may be honoured by men. Amen I say to you, they have received their reward. But when thou dost alms, let not thy left hand know what thy right hand doth. That thy alms may be in secret, and thy Father who seeth in secret will repay thee.
+
+And when ye pray, you shall not be as the hypocrites, that love to stand and pray in the synagogues and corners of the streets, that they may be seen by men: Amen I say to you, they have received their reward. But thou when thou shalt pray, enter into thy chamber, and having shut the door, pray to thy Father in secret: and thy Father who seeth in secret will repay thee.
+
+And when you are praying, speak not much, as the heathens. For they think that in their much speaking they may be heard. Be not you therefore like to them, for your Father knoweth what is needful for you, before you ask him.
+
+Thus therefore shall you pray: Our Father who art in heaven, hallowed be thy name. Thy kingdom come. Thy will be done on earth as it is in heaven. Give us this day our supersubstantial bread. And forgive us our debts, as we also forgive our debtors. And lead us not into temptation. But deliver us from evil. Amen.
+
+For if you will forgive men their offences, your heavenly Father will forgive you also your offences. But if you will not forgive men, neither will your Father forgive you your offences.
+""",
+            meditationSource: "Douay-Rheims Bible",
+            journalPrompt: "Do you seek God's approval or the approval of others? How can you practice charity and prayer in secret?"
+        ))
+
+        // Day 3
+        allDays.append(ConsecrationDay(
+            dayNumber: 3,
+            phase: .preparatory,
+            title: "The Narrow Path",
+            meditationTitle: "Matthew 7:1-14",
+            meditationText: """
+Judge not, that you may not be judged, For with what judgment you judge, you shall be judged: and with what measure you mete, it shall be measured to you again. Any why seest thou the mote that is in thy brother's eye; and seest not the beam that is in thy own eye? Or how sayest thou to thy brother: Let me cast the mote out of thy eye; and behold a beam is in thy own eye? Thou hypocrite, cast out first the beam in thy own eye, and then shalt thou see to cast out the mote out of thy brother's eye.
+
+Give not that which is holy to dogs; neither cast ye your pearls before swine, lest perhaps they trample them under their feet, and turning upon you, they tear you.
+
+Ask, and it shall be given you: seek, and you shall find: knock, and it shall be opened to you. For every one that asketh, receiveth: and he that seeketh, findeth: and to him that knocketh, it shall be opened. Or what man is there among you, of whom if his son shall ask bread, will he reach him a stone? Or if he shall ask him a fish, will he reach him a serpent? If you then being evil, know how to give good gifts to your children: how much more will your Father who is in heaven, give good things to them that ask him?
+
+All things therefore whatsoever you would that men should do to you, do you also to them. For this is the law and the prophets.
+
+Enter ye in at the narrow gate: for wide is the gate, and broad is the way that leadeth to destruction, and many there are who go in thereat. How narrow is the gate, and strait is the way that leadeth to life: and few there are that find it!
+""",
+            meditationSource: "Douay-Rheims Bible",
+            journalPrompt: "How is Christ calling you to enter through the narrow gate? What must you leave behind?"
+        ))
+
+        // Day 4
+        allDays.append(ConsecrationDay(
+            dayNumber: 4,
+            phase: .preparatory,
+            title: "Our Nothingness Before God",
+            meditationTitle: "Imitation of Christ, Book 3, Chapters 7 & 40",
+            meditationText: """
+That man has no good of himself, and that he cannot glory in anything.
+
+Lord, what is man, that Thou art mindful of him; or the son of man, that Thou visit him? What has man deserved that Thou should give him grace? Lord, what cause have I to complain, if Thou forsakest me, or what can I justly allege, if what I petition Thou shalt not grant? This most assuredly, I may truly think and say: Lord I am nothing, I can do nothing of myself, that is good, but I am in all things defective and ever tend to nothing. And unless I am assisted and interiorly instructed by Thee, I become wholly tepid and relaxed, but Thou, O Lord, art always the same, and endurest unto eternity, ever good, just and holy, doing all things well, justly and holily and disposing them in wisdom.
+
+But I who am more inclined to go back, than to go forward, continue not always in one state, for I am changed, seven different times. But it quickly becomes better when it pleases Thee, and Thou stretchest out Thy helping hand: for Thou alone, without man's aid can assist me and so strengthen me, that my countenance shall be more diversely changed: but my heart be converted and find its rest in Thee alone.
+
+He who would be too secure in time of peace will often be found too much dejected in time of war. If you could always continue to be humble and little in your own eyes, and keep your spirit in due order and subjection, you would not fall so easily into danger and offense. It is good counsel that, when you have conceived the spirit of fervor, you should meditate how it will be when that light shall be withdrawn.
+""",
+            meditationSource: "Thomas à Kempis",
+            journalPrompt: "In what ways do you rely on yourself rather than God's grace? How does recognizing your nothingness lead to greater trust in God?"
+        ))
+
+        // Day 5
+        allDays.append(ConsecrationDay(
+            dayNumber: 5,
+            phase: .preparatory,
+            title: "Rejecting Vainglory",
+            meditationTitle: "Imitation of Christ, Book 3, Chapter 40",
+            meditationText: """
+Wherefore, but I did know well, how to cast from me all human comfort, either for the sake of devotion, or through the necessity by which I am compelled to seek Thee, because there is no man that can comfort me. Then might I deservedly hope in Thy favor, and rejoice in the gift of a new consolation.
+
+Thanks be to Thee from Whom all things proceed, as often as it happens to me. I, indeed, am but vanity, and nothing in Thy sight, an inconstant and weak man. Where, therefore, can I glory, or for what do I desire to be thought of highly?
+
+Forsooth of my very nothingness; and this is most vain. Truly vainglory is an evil plague, because it draws away from true glory, and robs us of heavenly grace. For, while a man takes complacency in himself, he displeases Thee; while he wants for human applause, he is deprived of true virtues.
+
+But true glory and holy exultation is to glory in Thee, and not in one's self; to rejoice in Thy Name, but not in one's own strength. To find pleasure in no creature, save only for Thy sake.
+
+Let Thy Name be praised, not mine; let Thy work be magnified, not mine; let Thy Holy Name be blessed, but let nothing be attributed to me of the praise of men. Thou art my glory; Thou art the exultation of my heart; in Thee, will I glory and rejoice all the day; but for myself, I will glory in nothing but in my infirmities.
+""",
+            meditationSource: "Thomas à Kempis",
+            journalPrompt: "Where do you seek human approval rather than God's glory? How can you redirect your desire for praise toward glorifying God?"
+        ))
+
+        // Day 6
+        allDays.append(ConsecrationDay(
+            dayNumber: 6,
+            phase: .preparatory,
+            title: "The Example of the Holy Fathers",
+            meditationTitle: "Imitation of Christ, Book 1, Chapter 18",
+            meditationText: """
+On the examples of the Holy Fathers.
+
+Look upon the lively examples of the holy Fathers in whom shone real perfection and the religious life, and you will see how little it is, and almost nothing that we do. Alas, what is our life when we compare it with theirs? Saints and friends of Christ, they served our Lord in hunger and in thirst, in cold, in nakedness, in labor and in weariness, in watching, in fasting, prayers and holy meditations, and in frequent persecutions and reproaches.
+
+Oh, how many grievous tribulations did the Apostles suffer and the Martyrs and Confessors and Virgins, and all the rest who resolved to follow the steps of Christ! For they hated their lives in this world, that they might keep them in life everlasting.
+
+Oh what a strict and self-renouncing life the holy Fathers of the desert led! What long and grievous temptations did they bear! How often were they harassed by the enemy, what frequent and fervent prayers did they offer up to God, what rigorous abstinence did they practice!
+
+What a valiant contest waged they to subdue their imperfections! What purity and straightforwardness of purpose kept they towards God! By day they labored, and much of the night they spent in prayer; though while they labored, they were far from leaving off mental prayer. They spent all their time profitably. Every hour seemed short to spend with God; and even their necessary bodily refreshment was forgotten in the great sweetness of contemplation.
+
+They renounced all riches, dignities, honors and kindred; they hardly took what was necessary for life. It grieved them to serve the body even in its necessity. Accordingly, they were poor in earthly things, but very rich in grace and virtues.
+""",
+            meditationSource: "Thomas à Kempis",
+            journalPrompt: "What sacrifices are you called to make for Christ? How does the example of the saints inspire you?"
+        ))
+
+        // Day 7
+        allDays.append(ConsecrationDay(
+            dayNumber: 7,
+            phase: .preparatory,
+            title: "Spiritual Lukewarmness",
+            meditationTitle: "Imitation of Christ, Book 1, Chapter 18 (cont.)",
+            meditationText: """
+Outwardly they suffered want, but within they were refreshed with grace and Divine consolation. They were aliens to the world; they seemed as nothing and the world despised them; but they were precious and beloved in the sight of God. They persevered in true humility, they lived in simple obedience, they walked in charity and patience, and so every day they advanced in spirit and gained great favor with God.
+
+They were given for example to all religious, and ought more to excite us to advance in good, than the number of lukewarm to induce us to grow remiss.
+
+Oh! how great was the fervor of all religious in the beginning of their holy institute! Oh, how great was their devotion in prayer, how great was their zeal for virtue! How vigorous the discipline that was kept up, what reverence and obedience, under the rule of the superior, flourished in all!
+
+Their traces that remain still bear witness, that they were truly holy and perfect men who did battle so stoutly, and trampled the world under their feet. Now, he is thought great who is not a transgressor; and who can, with patience, endure what he has undertaken.
+
+Ah, the lukewarmness and negligence of our state! that we soon fall away from our first fervor, and are even now tired with life, from slothfulness and tepidity. Oh that advancement in virtue be not quite asleep in thee, who has so often seen the manifold examples of the devout!
+""",
+            meditationSource: "Thomas à Kempis",
+            journalPrompt: "Where has your spiritual fervor grown cold? How can you rekindle the fire of your first devotion?"
+        ))
+
+        // Days 8-12 - placeholders for now
+        let preparatoryData: [(title: String, prompt: String)] = [
+            ("Resisting Temptation", "What temptations do you struggle with most?"),
+            ("Beginnings of Temptation", "How can you resist temptation at its first appearance?"),
+            ("Despising the World", "What worldly pleasures hold you back from serving God?"),
+            ("Amendment of Life", "What concrete steps can you take to grow in virtue today?"),
+            ("Keeping Christ Crucified Before You", "How does meditation on Christ's passion strengthen you?")
         ]
 
-        for i in 1...12 {
+        for i in 8...12 {
+            let data = preparatoryData[i - 8]
             allDays.append(ConsecrationDay(
                 dayNumber: i,
                 phase: .preparatory,
-                title: preparatoryTitles[i - 1],
+                title: data.title,
                 meditationTitle: "Meditation for Day \(i)",
-                meditationText: "[Meditation content placeholder for Day \(i)]",
+                meditationText: "[Meditation content to be added]",
                 meditationSource: "Preparatory Period",
-                journalPrompt: "Reflect on today's meditation and how it applies to your life."
+                journalPrompt: data.prompt
             ))
         }
 
