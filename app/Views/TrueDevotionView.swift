@@ -211,13 +211,8 @@ struct DevotionItemView: View {
         let isBilingual = settings.prayerLanguage == .both || settings.prayerLanguage == .latinUnderEnglish
 
         if isBilingual {
-            // Check if this is The Little Crown (special versicle format)
-            if item.title == "The Little Crown" {
-                formatLittleCrownBilingual(lines)
-            } else {
-                // Regular prayers: line-by-line alternating format
-                formatRegularBilingualPrayer(lines)
-            }
+            // All prayers use the same line-by-line alternating format with ||| separator
+            formatRegularBilingualPrayer(lines)
         } else {
             // Single language - display normally
             Text(item.content)
@@ -225,27 +220,6 @@ struct DevotionItemView: View {
                 .foregroundColor(AppColors.cream.opacity(0.9))
                 .lineSpacing(3)
                 .fixedSize(horizontal: false, vertical: true)
-        }
-    }
-
-    /// Format The Little Crown with versicle pairs
-    @ViewBuilder
-    private func formatLittleCrownBilingual(_ lines: [String]) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            ForEach(Array(lines.enumerated()), id: \.offset) { index, line in
-                let trimmed = line.trimmingCharacters(in: .whitespaces)
-
-                if !trimmed.isEmpty {
-                    if trimmed.hasPrefix("V.") || trimmed.hasPrefix("R.") {
-                        let isIndented = line.hasPrefix("   ")
-
-                        // For "Latin & English": not indented = primary (Latin)
-                        // For "English & Latin": not indented = primary (English)
-                        // The indented lines are always secondary
-                        formatVersicle(trimmed, isPrimary: !isIndented)
-                    }
-                }
-            }
         }
     }
 
@@ -300,51 +274,6 @@ struct DevotionItemView: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.leading, 8)
             }
-        }
-    }
-
-    /// Parse content into language blocks separated by empty lines
-    private func parseLanguageBlocks(_ lines: [String]) -> [[String]] {
-        var blocks: [[String]] = []
-        var currentBlock: [String] = []
-
-        for line in lines {
-            let trimmed = line.trimmingCharacters(in: .whitespaces)
-
-            if trimmed.isEmpty {
-                // Empty line - end current block if it has content
-                if !currentBlock.isEmpty {
-                    blocks.append(currentBlock)
-                    currentBlock = []
-                }
-            } else {
-                currentBlock.append(trimmed)
-            }
-        }
-
-        // Add final block if it has content
-        if !currentBlock.isEmpty {
-            blocks.append(currentBlock)
-        }
-
-        return blocks
-    }
-
-    @ViewBuilder
-    private func formatVersicle(_ line: String, isPrimary: Bool) -> some View {
-        if isPrimary {
-            // Primary language versicle
-            Text(line)
-                .font(AppFonts.bodyFont(14))
-                .foregroundColor(AppColors.cream.opacity(0.95))
-                .padding(.leading, 8)
-        } else {
-            // Secondary language versicle
-            Text(line)
-                .font(AppFonts.bodyFont(12))
-                .foregroundColor(AppColors.textSecondary.opacity(0.75))
-                .italic()
-                .padding(.leading, 20)
         }
     }
 }
