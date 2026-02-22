@@ -343,3 +343,7 @@ POST /journal (future)            # Save journal entry
 - **Mystery:** A scene from Jesus/Mary's life to meditate on
 - **Rosary:** Full prayer = 5 decades (one set of mysteries)
 - **Chaplet:** Shorter prayer devotion (like Seven Sorrows)
+
+## Git Commit Guidelines
+
+**IMPORTANT**: Do NOT add AI co-author attribution to commits. All commits should be attributed to the human developer only.
