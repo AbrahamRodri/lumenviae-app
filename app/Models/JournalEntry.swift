@@ -123,6 +123,7 @@ final class JournalEntry {
         case .sorrowful:   return "cloud.rain.fill"
         case .glorious:    return "sparkles"
         case .luminous:    return "rays"
+        case .sevenSorrows: return "heart.fill"
         case .none:        return "book.fill"
         }
     }

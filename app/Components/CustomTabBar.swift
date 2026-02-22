@@ -78,19 +78,26 @@ struct CustomTabBar: View {
     @Binding var selectedTab: AppTab
 
     var body: some View {
-        HStack(spacing: 0) {
-            // Create a tab item for each case in AppTab
-            ForEach(AppTab.allCases, id: \.self) { tab in
-                TabBarItem(
-                    icon: tab.icon,
-                    title: tab.title,
-                    isSelected: selectedTab == tab
-                ) {
-                    selectedTab = tab
+        VStack(spacing: 0) {
+            // Gold line above tab bar
+            Rectangle()
+                .fill(AppColors.gold.opacity(0.5))
+                .frame(height: 1)
+
+            HStack(spacing: 0) {
+                // Create a tab item for each case in AppTab
+                ForEach(AppTab.allCases, id: \.self) { tab in
+                    TabBarItem(
+                        icon: tab.icon,
+                        title: tab.title,
+                        isSelected: selectedTab == tab
+                    ) {
+                        selectedTab = tab
+                    }
                 }
             }
+            .padding(.top, 12)
         }
-        .padding(.top, 12)
         .background(
             AppColors.cardBackground
                 .ignoresSafeArea()
