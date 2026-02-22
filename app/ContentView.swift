@@ -75,6 +75,9 @@ struct ContentView: View {
     @ViewBuilder
     private func destinationView(for route: AppRoute) -> some View {
         switch route {
+        case .allMysteries:
+            AllMysteriesView()
+
         case .meditationSelection(let category):
             SelectMeditationView(category: category)
 

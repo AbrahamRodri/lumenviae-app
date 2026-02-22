@@ -54,21 +54,34 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
     case sorrowful
     case glorious
     case luminous
+    case sevenSorrows
+
+    // MARK: - Category Groups
+
+    /// Categories shown on the home screen grid (traditional mysteries + Seven Sorrows)
+    static let homeCategories: [MysteryCategory] = [.joyful, .sorrowful, .glorious, .sevenSorrows]
+
+    /// All mystery categories including Luminous (for "View All" screen)
+    static let allCategories: [MysteryCategory] = [.joyful, .sorrowful, .glorious, .luminous, .sevenSorrows]
 
     // MARK: - Display Properties
 
     /// Human-readable name (e.g., "Joyful")
     var displayName: String {
-        rawValue.capitalized
+        switch self {
+        case .sevenSorrows: return "Seven Sorrows"
+        default: return rawValue.capitalized
+        }
     }
 
     /// Subtitle describing the theological theme of this category
     var subtitle: String {
         switch self {
-        case .joyful:    return "The Incarnation"
-        case .sorrowful: return "The Passion"
-        case .glorious:  return "The Resurrection"
-        case .luminous:  return "The Light"
+        case .joyful:      return "The Incarnation"
+        case .sorrowful:   return "The Passion"
+        case .glorious:    return "The Resurrection"
+        case .luminous:    return "The Light"
+        case .sevenSorrows: return "Mary's Sorrows"
         }
     }
 
@@ -78,10 +91,11 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
     /// https://developer.apple.com/sf-symbols/
     var iconName: String {
         switch self {
-        case .joyful:    return "star.fill"
-        case .sorrowful: return "cross.fill"
-        case .glorious:  return "sunrise.fill"
-        case .luminous:  return "light.max"
+        case .joyful:      return "star.fill"
+        case .sorrowful:   return "cross.fill"
+        case .glorious:    return "sunrise.fill"
+        case .luminous:    return "light.max"
+        case .sevenSorrows: return "heart.fill"
         }
     }
 
@@ -90,10 +104,11 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
     /// Maps to local Assets.xcassets image names.
     var cardImageName: String {
         switch self {
-        case .joyful:    return "joyful_annunciation"
-        case .sorrowful: return "sorrowful_agony"
-        case .glorious:  return "glorious_resurrection"
-        case .luminous:  return "luminous_baptism"
+        case .joyful:      return "joyful_annunciation"
+        case .sorrowful:   return "sorrowful_agony"
+        case .glorious:    return "glorious_resurrection"
+        case .luminous:    return "luminous_baptism"
+        case .sevenSorrows: return "seven_sorrows_pieta"
         }
     }
 
@@ -115,6 +130,7 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
     /// - Sorrowful: Deep purple/red (somber)
     /// - Glorious: Cool blue (heavenly)
     /// - Luminous: Amber/gold (radiant light)
+    /// - Seven Sorrows: Deep blue/purple (Marian)
     var gradientColors: [Color] {
         switch self {
         case .joyful:
@@ -125,16 +141,19 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
             return [Color(hex: "2a3a4a"), Color(hex: "1a2a3a")]
         case .luminous:
             return [Color(hex: "4a3a2a"), Color(hex: "3a2a1a")]
+        case .sevenSorrows:
+            return [Color(hex: "2a2a4a"), Color(hex: "1a1a3a")]
         }
     }
 
     /// Traditional days this mystery is prayed
     var daysPrayed: String {
         switch self {
-        case .joyful:    return "Monday, Saturday"
-        case .sorrowful: return "Tuesday, Friday"
-        case .glorious:  return "Wednesday, Sunday"
-        case .luminous:  return "Thursday"
+        case .joyful:      return "Monday, Saturday"
+        case .sorrowful:   return "Tuesday, Friday"
+        case .glorious:    return "Wednesday, Sunday"
+        case .luminous:    return "Thursday"
+        case .sevenSorrows: return "Fridays, September 15"
         }
     }
 

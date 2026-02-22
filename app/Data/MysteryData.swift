@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// Local data source for all 20 Rosary mysteries.
+/// Local data source for all Rosary mysteries including the Seven Sorrows.
 ///
 /// The mystery names, scripture references, and descriptions are unchanging
 /// Catholic tradition. Storing them locally provides instant access without
@@ -21,7 +21,8 @@ enum MysteryData {
         .joyful: joyful,
         .sorrowful: sorrowful,
         .glorious: glorious,
-        .luminous: luminous
+        .luminous: luminous,
+        .sevenSorrows: sevenSorrows
     ]
 
     /// Get mysteries for a specific category
@@ -226,6 +227,74 @@ enum MysteryData {
             daysPrayed: "Thursday",
             description: "Jesus institutes the Eucharist at the Last Supper.",
             scriptureReference: "Matthew 26:26-28"
+        )
+    ]
+
+    // MARK: - Seven Sorrows of Mary
+
+    static let sevenSorrows: [Mystery] = [
+        Mystery(
+            id: 21,
+            name: "The Prophecy of Simeon",
+            category: "sevenSorrows",
+            order: 1,
+            daysPrayed: "Fridays, September 15",
+            description: "Simeon prophesies that a sword will pierce Mary's soul.",
+            scriptureReference: "Luke 2:34-35"
+        ),
+        Mystery(
+            id: 22,
+            name: "The Flight into Egypt",
+            category: "sevenSorrows",
+            order: 2,
+            daysPrayed: "Fridays, September 15",
+            description: "The Holy Family flees to Egypt to escape King Herod's massacre.",
+            scriptureReference: "Matthew 2:13-15"
+        ),
+        Mystery(
+            id: 23,
+            name: "The Loss of Jesus in the Temple",
+            category: "sevenSorrows",
+            order: 3,
+            daysPrayed: "Fridays, September 15",
+            description: "Mary and Joseph search for the child Jesus for three days.",
+            scriptureReference: "Luke 2:41-50"
+        ),
+        Mystery(
+            id: 24,
+            name: "Mary Meets Jesus Carrying the Cross",
+            category: "sevenSorrows",
+            order: 4,
+            daysPrayed: "Fridays, September 15",
+            description: "Mary encounters her Son on the way to Calvary.",
+            scriptureReference: "Luke 23:27-31"
+        ),
+        Mystery(
+            id: 25,
+            name: "The Crucifixion",
+            category: "sevenSorrows",
+            order: 5,
+            daysPrayed: "Fridays, September 15",
+            description: "Mary stands at the foot of the cross as Jesus dies.",
+            scriptureReference: "John 19:25-27"
+        ),
+        Mystery(
+            id: 26,
+            name: "Jesus Taken Down from the Cross",
+            category: "sevenSorrows",
+            order: 6,
+            daysPrayed: "Fridays, September 15",
+            description: "Mary receives the body of her Son in her arms.",
+            scriptureReference: "Matthew 27:57-59"
+        ),
+        Mystery(
+            id: 27,
+            name: "The Burial of Jesus",
+            category: "sevenSorrows",
+            order: 7,
+            daysPrayed: "Fridays, September 15",
+            description: "Mary watches as Jesus is laid in the tomb.",
+            scriptureReference: "John 19:40-42"
         )
     ]
 }

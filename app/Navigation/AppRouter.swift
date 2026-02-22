@@ -44,6 +44,9 @@ import SwiftUI
 /// Enums with Hashable associated values are automatically Hashable.
 ///
 enum AppRoute: Hashable {
+    /// All mysteries view (View All screen including Luminous)
+    case allMysteries
+
     /// Meditation selection screen for a specific category
     case meditationSelection(category: MysteryCategory)
 
@@ -89,6 +92,11 @@ final class AppRouter {
     var loadedMeditationSet: MeditationSet?
 
     // MARK: - Navigation Actions
+
+    /// Navigates to the all mysteries view (View All screen).
+    func navigateToAllMysteries() {
+        path.append(AppRoute.allMysteries)
+    }
 
     /// Navigates to the meditation selection screen for a category.
     ///

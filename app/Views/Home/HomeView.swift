@@ -87,6 +87,9 @@ struct HomeView: View {
                         categories: viewModel.allCategories,
                         onSelectCategory: { category in
                             router.navigateToMeditationSelection(category: category)
+                        },
+                        onViewAll: {
+                            router.navigateToAllMysteries()
                         }
                     )
                     .padding(.top, 32)
@@ -345,11 +348,14 @@ struct SacredMysteriesSection: View {
 
     // MARK: - Properties
 
-    /// All mystery categories to display (Joyful, Sorrowful, Glorious, Luminous)
+    /// Mystery categories to display on home (Joyful, Sorrowful, Glorious, Seven Sorrows)
     let categories: [MysteryCategory]
 
     /// Callback when a category card is tapped
     var onSelectCategory: ((MysteryCategory) -> Void)?
+
+    /// Callback when VIEW ALL is tapped
+    var onViewAll: (() -> Void)?
 
     // MARK: - Body
 
@@ -371,7 +377,7 @@ struct SacredMysteriesSection: View {
 
             Spacer()
 
-            Button(action: {}) {
+            Button(action: { onViewAll?() }) {
                 Text("VIEW ALL")
                     .font(AppFonts.bodyFont(12))
                     .tracking(1)

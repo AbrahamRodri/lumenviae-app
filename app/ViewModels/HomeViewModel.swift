@@ -56,8 +56,8 @@ final class HomeViewModel {
     /// Mysteries for today's category - loaded from local data instantly.
     let mysteries: [Mystery]
 
-    /// All four mystery categories for the grid.
-    let allCategories: [MysteryCategory] = MysteryCategory.allCases
+    /// Mystery categories for the home screen grid (excludes Luminous, includes Seven Sorrows).
+    let allCategories: [MysteryCategory] = MysteryCategory.homeCategories
 
     /// Whether data is currently being fetched (always false now - data is local)
     let isLoading = false
