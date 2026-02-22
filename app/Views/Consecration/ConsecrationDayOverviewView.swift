@@ -192,7 +192,7 @@ struct ConsecrationDayOverviewView: View {
             }
 
             // Phase Progress (Day X of Y in this phase)
-            if let day = day, let phase = phase {
+            if let day = day, phase != nil {
                 VStack(spacing: 8) {
                     // Phase progress bar
                     GeometryReader { geometry in
