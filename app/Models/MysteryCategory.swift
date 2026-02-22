@@ -54,7 +54,7 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
     case sorrowful
     case glorious
     case luminous
-    case sevenSorrows
+    case sevenSorrows = "seven_sorrows"
 
     // MARK: - Category Groups
 

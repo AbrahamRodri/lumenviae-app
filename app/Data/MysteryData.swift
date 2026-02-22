@@ -236,7 +236,7 @@ enum MysteryData {
         Mystery(
             id: 21,
             name: "The Prophecy of Simeon",
-            category: "sevenSorrows",
+            category: "seven_sorrows",
             order: 1,
             daysPrayed: "Fridays, September 15",
             description: "Simeon prophesies that a sword will pierce Mary's soul.",
@@ -245,7 +245,7 @@ enum MysteryData {
         Mystery(
             id: 22,
             name: "The Flight into Egypt",
-            category: "sevenSorrows",
+            category: "seven_sorrows",
             order: 2,
             daysPrayed: "Fridays, September 15",
             description: "The Holy Family flees to Egypt to escape King Herod's massacre.",
@@ -254,7 +254,7 @@ enum MysteryData {
         Mystery(
             id: 23,
             name: "The Loss of Jesus in the Temple",
-            category: "sevenSorrows",
+            category: "seven_sorrows",
             order: 3,
             daysPrayed: "Fridays, September 15",
             description: "Mary and Joseph search for the child Jesus for three days.",
@@ -263,7 +263,7 @@ enum MysteryData {
         Mystery(
             id: 24,
             name: "Mary Meets Jesus Carrying the Cross",
-            category: "sevenSorrows",
+            category: "seven_sorrows",
             order: 4,
             daysPrayed: "Fridays, September 15",
             description: "Mary encounters her Son on the way to Calvary.",
@@ -272,7 +272,7 @@ enum MysteryData {
         Mystery(
             id: 25,
             name: "The Crucifixion",
-            category: "sevenSorrows",
+            category: "seven_sorrows",
             order: 5,
             daysPrayed: "Fridays, September 15",
             description: "Mary stands at the foot of the cross as Jesus dies.",
@@ -281,7 +281,7 @@ enum MysteryData {
         Mystery(
             id: 26,
             name: "Jesus Taken Down from the Cross",
-            category: "sevenSorrows",
+            category: "seven_sorrows",
             order: 6,
             daysPrayed: "Fridays, September 15",
             description: "Mary receives the body of her Son in her arms.",
@@ -290,7 +290,7 @@ enum MysteryData {
         Mystery(
             id: 27,
             name: "The Burial of Jesus",
-            category: "sevenSorrows",
+            category: "seven_sorrows",
             order: 7,
             daysPrayed: "Fridays, September 15",
             description: "Mary watches as Jesus is laid in the tomb.",

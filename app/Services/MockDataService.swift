@@ -302,7 +302,7 @@ struct MockDataService {
         Mystery(
             id: 0,
             name: "The Prophecy of Simeon",
-            category: "sevenSorrows",
+            category: "seven_sorrows",
             order: 1,
             daysPrayed: "Fridays, September 15",
             description: "Simeon prophesies that a sword will pierce Mary's soul.",
@@ -311,7 +311,7 @@ struct MockDataService {
         Mystery(
             id: 0,
             name: "The Flight into Egypt",
-            category: "sevenSorrows",
+            category: "seven_sorrows",
             order: 2,
             daysPrayed: "Fridays, September 15",
             description: "The Holy Family flees to Egypt to escape King Herod's massacre.",
@@ -320,7 +320,7 @@ struct MockDataService {
         Mystery(
             id: 0,
             name: "The Loss of Jesus in the Temple",
-            category: "sevenSorrows",
+            category: "seven_sorrows",
             order: 3,
             daysPrayed: "Fridays, September 15",
             description: "Mary and Joseph search for the child Jesus for three days.",
@@ -329,7 +329,7 @@ struct MockDataService {
         Mystery(
             id: 0,
             name: "Mary Meets Jesus Carrying the Cross",
-            category: "sevenSorrows",
+            category: "seven_sorrows",
             order: 4,
             daysPrayed: "Fridays, September 15",
             description: "Mary encounters her Son on the way to Calvary.",
@@ -338,7 +338,7 @@ struct MockDataService {
         Mystery(
             id: 0,
             name: "The Crucifixion",
-            category: "sevenSorrows",
+            category: "seven_sorrows",
             order: 5,
             daysPrayed: "Fridays, September 15",
             description: "Mary stands at the foot of the cross as Jesus dies.",
@@ -347,7 +347,7 @@ struct MockDataService {
         Mystery(
             id: 0,
             name: "Jesus Taken Down from the Cross",
-            category: "sevenSorrows",
+            category: "seven_sorrows",
             order: 6,
             daysPrayed: "Fridays, September 15",
             description: "Mary receives the body of her Son in her arms.",
@@ -356,7 +356,7 @@ struct MockDataService {
         Mystery(
             id: 0,
             name: "The Burial of Jesus",
-            category: "sevenSorrows",
+            category: "seven_sorrows",
             order: 7,
             daysPrayed: "Fridays, September 15",
             description: "Mary watches as Jesus is laid in the tomb.",
