@@ -23,6 +23,10 @@ struct ConsecrationPrayerFlowView: View {
 
     let dayNumber: Int
 
+    // MARK: - Environment
+
+    @Environment(UserSettings.self) private var settings
+
     // MARK: - State
 
     @State private var currentIndex: Int = 0
@@ -32,7 +36,7 @@ struct ConsecrationPrayerFlowView: View {
 
     private var prayers: [ConsecrationPrayer] {
         guard let phase = ConsecrationPhase.phase(for: dayNumber) else { return [] }
-        return ConsecrationData.prayers(for: phase)
+        return ConsecrationData.prayers(for: phase, language: settings.prayerLanguage)
     }
 
     private var currentPrayer: ConsecrationPrayer? {
