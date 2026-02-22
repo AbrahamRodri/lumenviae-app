@@ -10,13 +10,15 @@ import SwiftUI
 struct MenuView: View {
     @Binding var isPresented: Bool
     @Environment(AppRouter.self) private var router
+    @State private var showTrueDevotionView = false
 
     var body: some View {
-        ZStack {
-            AppColors.appGradient
-                .ignoresSafeArea()
+        NavigationStack {
+            ZStack {
+                AppColors.appGradient
+                    .ignoresSafeArea()
 
-            VStack(alignment: .leading, spacing: 0) {
+                VStack(alignment: .leading, spacing: 0) {
                 // Header
                 HStack {
                     Text("MENU")
@@ -43,6 +45,19 @@ struct MenuView: View {
 
                 // Menu Items
                 VStack(alignment: .leading, spacing: 0) {
+                    MenuItemButton(
+                        icon: "crown.fill",
+                        title: "True Devotion to Mary",
+                        subtitle: "St. Louis de Montfort",
+                        action: {
+                            showTrueDevotionView = true
+                        }
+                    )
+
+                    Divider()
+                        .background(AppColors.gold.opacity(0.2))
+                        .padding(.horizontal, 20)
+
                     MenuItemButton(
                         icon: "book.closed",
                         title: "How to Pray the Rosary",
@@ -90,13 +105,13 @@ struct MenuView: View {
                             .font(.system(size: 14))
                             .foregroundColor(AppColors.gold.opacity(0.8))
 
-                        Text("COMING SOON")
+                        Text("MOSTLY COMING SOON")
                             .font(AppFonts.bodyFont(11))
                             .tracking(1)
                             .foregroundColor(AppColors.gold)
                     }
 
-                    Text("Menu features are not yet functional.")
+                    Text("Most menu features are not yet functional. True Devotion to Mary is now available!")
                         .font(AppFonts.bodyFont(12))
                         .foregroundColor(AppColors.cream.opacity(0.7))
                         .lineSpacing(1)
@@ -128,6 +143,10 @@ struct MenuView: View {
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 24)
+                }
+            }
+            .navigationDestination(isPresented: $showTrueDevotionView) {
+                TrueDevotionView()
             }
         }
     }

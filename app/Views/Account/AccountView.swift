@@ -26,7 +26,16 @@ struct AccountView: View {
 
                     // MARK: Prayer Experience
                     AccountSection(title: "PRAYER EXPERIENCE") {
-                        TextSizeRow(value: Bindable(userSettings).textSizeScale)
+                        VStack(spacing: 0) {
+                            TextSizeRow(value: Bindable(userSettings).textSizeScale)
+
+                            Divider()
+                                .background(AppColors.gold.opacity(0.2))
+
+                            PrayerLanguageRow(
+                                selectedLanguage: Bindable(userSettings).prayerLanguagePreference
+                            )
+                        }
                     }
                     .padding(.top, 24)
 
@@ -295,6 +304,67 @@ struct TextSizeRow: View {
                 Text("A")
                     .font(.system(size: 20, weight: .medium, design: .serif))
                     .foregroundColor(AppColors.textSecondary)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 14)
+    }
+}
+
+// MARK: - Prayer Language Row
+
+struct PrayerLanguageRow: View {
+    @Binding var selectedLanguage: String
+
+    var body: some View {
+        VStack(spacing: 12) {
+            HStack(spacing: 16) {
+                Image(systemName: "globe")
+                    .font(.system(size: 18))
+                    .foregroundColor(AppColors.textSecondary)
+                    .frame(width: 24)
+
+                Text("Prayer Language")
+                    .font(AppFonts.bodyFont(16))
+                    .foregroundColor(AppColors.cream)
+
+                Spacer()
+            }
+
+            VStack(spacing: 8) {
+                ForEach(PrayerLanguage.allCases) { language in
+                    Button(action: {
+                        selectedLanguage = language.rawValue
+                    }) {
+                        HStack {
+                            Text(language.rawValue)
+                                .font(AppFonts.bodyFont(15))
+                                .foregroundColor(
+                                    selectedLanguage == language.rawValue
+                                        ? AppColors.gold
+                                        : AppColors.cream
+                                )
+
+                            Spacer()
+
+                            if selectedLanguage == language.rawValue {
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundColor(AppColors.gold)
+                            }
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 10)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(
+                                    selectedLanguage == language.rawValue
+                                        ? AppColors.gold.opacity(0.15)
+                                        : AppColors.cardBackground.opacity(0.3)
+                                )
+                        )
+                    }
+                }
             }
         }
         .padding(.horizontal, 16)

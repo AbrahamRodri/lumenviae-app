@@ -8,6 +8,18 @@
 
 import SwiftUI
 import UserNotifications
+import Foundation
+
+// MARK: - Prayer Language Preference
+
+enum PrayerLanguage: String, CaseIterable, Identifiable {
+    case english = "English"
+    case latin = "Latin"
+    case both = "Latin & English"
+    case latinUnderEnglish = "English & Latin"
+
+    var id: String { rawValue }
+}
 
 // MARK: - UserSettings
 
@@ -29,6 +41,18 @@ final class UserSettings {
     /// Resolved font size for meditation content
     var meditationFontSize: CGFloat {
         CGFloat(14 + textSizeScale * 8) // 14–22 pt
+    }
+
+    // MARK: - Prayer Language
+
+    /// Prayer language preference for devotional prayers
+    var prayerLanguagePreference: String = PrayerLanguage.both.rawValue {
+        didSet { UserDefaults.standard.set(prayerLanguagePreference, forKey: "userSettings.prayerLanguage") }
+    }
+
+    /// Resolved prayer language enum
+    var prayerLanguage: PrayerLanguage {
+        PrayerLanguage(rawValue: prayerLanguagePreference) ?? .both
     }
 
     // MARK: - Daily Reminders
@@ -72,6 +96,9 @@ final class UserSettings {
 
         if d.object(forKey: "userSettings.textSizeScale") != nil {
             textSizeScale = d.double(forKey: "userSettings.textSizeScale")
+        }
+        if d.object(forKey: "userSettings.prayerLanguage") != nil {
+            prayerLanguagePreference = d.string(forKey: "userSettings.prayerLanguage") ?? PrayerLanguage.both.rawValue
         }
         if d.object(forKey: "userSettings.remindersEnabled") != nil {
             remindersEnabled = d.bool(forKey: "userSettings.remindersEnabled")
