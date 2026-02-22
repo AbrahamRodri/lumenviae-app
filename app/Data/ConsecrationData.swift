@@ -469,6 +469,20 @@ Pray at least five decades of the Rosary, meditating on the mysteries appropriat
         allPrayers[id]
     }
 
+    /// Get prayers for a phase with language preference applied
+    static func prayers(for phase: ConsecrationPhase, language: PrayerLanguage) -> [ConsecrationPrayer] {
+        let bilingualPrayers = BilingualConsecrationPrayers.allPrayers()
+
+        return phase.prayerIds.compactMap { id in
+            // Try to get bilingual version first
+            if let bilingualPrayer = bilingualPrayers[id] {
+                return bilingualPrayer.toConsecrationPrayer(for: language)
+            }
+            // Fall back to original prayer (for lit anies and others not yet converted)
+            return allPrayers[id]
+        }
+    }
+
     // MARK: - Days
 
     /// All 34 days of the consecration
