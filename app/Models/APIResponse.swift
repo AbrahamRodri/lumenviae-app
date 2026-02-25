@@ -54,6 +54,19 @@ typealias MeditationSetsResponse = APIResponse<[MeditationSetSummary]>
 /// Response from GET /api/meditation-sets/:id (detail)
 typealias MeditationSetDetailResponse = APIResponse<MeditationSet>
 
+// MARK: - Prayer Audio Types
+
+/// Response from GET /api/prayers/:id/audio
+struct PrayerAudioResponse: Codable {
+    let id: String
+    let audioUrl: String
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case audioUrl = "audio_url"
+    }
+}
+
 // MARK: - Completion Types
 
 /// Request body for POST /api/completions.

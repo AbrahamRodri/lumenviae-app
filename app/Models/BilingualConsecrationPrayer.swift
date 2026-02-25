@@ -36,6 +36,9 @@ struct BilingualConsecrationPrayer: Identifiable {
     /// Optional audio URL
     let audioUrl: String?
 
+    /// Whether this prayer has a chant audio recording available via the API
+    let hasChantAudio: Bool
+
     // MARK: - Initializer
 
     init(
@@ -44,7 +47,8 @@ struct BilingualConsecrationPrayer: Identifiable {
         latinTitle: String,
         englishContent: String,
         latinContent: String,
-        audioUrl: String? = nil
+        audioUrl: String? = nil,
+        hasChantAudio: Bool = false
     ) {
         self.id = id
         self.englishTitle = englishTitle
@@ -54,6 +58,7 @@ struct BilingualConsecrationPrayer: Identifiable {
             latin: latinContent
         )
         self.audioUrl = audioUrl
+        self.hasChantAudio = hasChantAudio
     }
 
     // MARK: - Computed Properties
@@ -80,12 +85,13 @@ struct BilingualConsecrationPrayer: Identifiable {
             title: displayTitle(for: language),
             latinTitle: latinTitle,
             content: formattedContent(for: language),
-            audioUrl: audioUrl
+            audioUrl: audioUrl,
+            hasChantAudio: hasChantAudio
         )
     }
 
     /// Whether this prayer has audio available
     var hasAudio: Bool {
-        audioUrl != nil
+        audioUrl != nil || hasChantAudio
     }
 }

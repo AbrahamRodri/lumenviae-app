@@ -12,6 +12,7 @@
 //  ═══════════════════════════════════════════════════════════════════════════
 
 import SwiftUI
+import AVFoundation
 
 // MARK: - ConsecrationPrayerFlowView
 
@@ -31,6 +32,9 @@ struct ConsecrationPrayerFlowView: View {
 
     @State private var currentIndex: Int = 0
     @State private var opacity: Double = 1.0
+    @State private var cachedAudioUrls: [String: String] = [:]
+
+    private let audio = AudioService.shared
 
     // MARK: - Computed Properties
 
@@ -109,6 +113,71 @@ struct ConsecrationPrayerFlowView: View {
         }
     }
 
+    // MARK: - Audio
+
+    private func loadAudioIfAvailable() {
+        guard let prayer = currentPrayer, prayer.hasAudio else { return }
+        Task {
+            do {
+                let presignedUrl: String
+                if let cached = cachedAudioUrls[prayer.id] {
+                    presignedUrl = cached
+                } else {
+                    presignedUrl = try await APIService.shared.fetchPrayerAudioUrl(prayerId: prayer.id)
+                    cachedAudioUrls[prayer.id] = presignedUrl
+                }
+                await audio.loadAudio(from: presignedUrl)
+            } catch {
+                print("ConsecrationPrayerFlowView: Failed to load audio: \(error)")
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func audioPlayer() -> some View {
+        HStack(spacing: 16) {
+            // Play/Pause button
+            Button {
+                audio.togglePlayback()
+            } label: {
+                Image(systemName: audio.isPlaying ? "pause.circle.fill" : "play.circle.fill")
+                    .font(.system(size: 36))
+                    .foregroundColor(AppColors.gold)
+            }
+            .disabled(audio.isLoading)
+
+            // Progress slider
+            VStack(alignment: .leading, spacing: 4) {
+                Slider(
+                    value: Binding(
+                        get: { audio.currentTime },
+                        set: { audio.seek(to: $0) }
+                    ),
+                    in: 0...(audio.duration > 0 ? audio.duration : 1)
+                )
+                .tint(AppColors.gold)
+
+                HStack {
+                    Text(formatTime(audio.currentTime))
+                    Spacer()
+                    Text(formatTime(audio.duration))
+                }
+                .font(AppFonts.bodyFont(11))
+                .foregroundColor(AppColors.textSecondary)
+            }
+        }
+        .padding(16)
+        .background(AppColors.cardBackground)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+
+    private func formatTime(_ seconds: Double) -> String {
+        guard seconds > 0, !seconds.isNaN, !seconds.isInfinite else { return "0:00" }
+        let m = Int(seconds) / 60
+        let s = Int(seconds) % 60
+        return "\(m):\(String(format: "%02d", s))"
+    }
+
     // MARK: - Body
 
     var body: some View {
@@ -140,6 +209,14 @@ struct ConsecrationPrayerFlowView: View {
         .onAppear {
             currentIndex = 0
             opacity = 1.0
+            loadAudioIfAvailable()
+        }
+        .onDisappear {
+            audio.reset()
+        }
+        .onChange(of: currentIndex) {
+            audio.reset()
+            loadAudioIfAvailable()
         }
     }
 
@@ -253,6 +330,13 @@ struct ConsecrationPrayerFlowView: View {
                     }
                     .padding(.horizontal, 50)
                     .padding(.vertical, 24)
+
+                    // Audio Player (only shown when audio is available)
+                    if prayer.hasAudio {
+                        audioPlayer()
+                            .padding(.horizontal, 28)
+                            .padding(.bottom, 24)
+                    }
 
                     // Prayer Text
                     formattedPrayerText(prayer.content)

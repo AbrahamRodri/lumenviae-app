@@ -199,6 +199,22 @@ final class APIService {
         return try await post(url: url, body: request, responseType: APIResponse<CompletionResponse>.self).data
     }
 
+    // MARK: - Prayer Audio
+
+    /// Fetches a presigned S3 URL for a consecration prayer's chant audio.
+    ///
+    /// - Parameter prayerId: The prayer ID (e.g., "veni_creator")
+    /// - Returns: Presigned HTTPS URL string to stream the audio from
+    func fetchPrayerAudioUrl(prayerId: String) async throws -> String {
+        let urlString = "\(baseURL)/prayers/\(prayerId)/audio"
+
+        guard let url = URL(string: urlString) else {
+            throw APIError.invalidURL
+        }
+
+        return try await fetch(url: url, responseType: APIResponse<PrayerAudioResponse>.self).data.audioUrl
+    }
+
     // MARK: - Private Helpers
 
     /// Performs a GET request and decodes the response.

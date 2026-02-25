@@ -48,6 +48,9 @@ struct ConsecrationPrayer: Codable, Identifiable, Hashable {
     /// URL for audio recording of the prayer (optional)
     let audioUrl: String?
 
+    /// Whether this prayer has a chant audio recording available via the API
+    let hasChantAudio: Bool
+
     // MARK: - Initializer
 
     init(
@@ -55,13 +58,15 @@ struct ConsecrationPrayer: Codable, Identifiable, Hashable {
         title: String,
         latinTitle: String? = nil,
         content: String,
-        audioUrl: String? = nil
+        audioUrl: String? = nil,
+        hasChantAudio: Bool = false
     ) {
         self.id = id
         self.title = title
         self.latinTitle = latinTitle
         self.content = content
         self.audioUrl = audioUrl
+        self.hasChantAudio = hasChantAudio
     }
 
     // MARK: - Computed Properties
@@ -73,6 +78,6 @@ struct ConsecrationPrayer: Codable, Identifiable, Hashable {
 
     /// Whether this prayer has audio available
     var hasAudio: Bool {
-        audioUrl != nil
+        audioUrl != nil || hasChantAudio
     }
 }
