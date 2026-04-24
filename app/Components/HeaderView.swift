@@ -17,6 +17,8 @@ struct HeaderView: View {
                 Image(systemName: "line.3.horizontal")
                     .font(.system(size: 22))
                     .foregroundColor(AppColors.cream)
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
             }
 
             Spacer()
@@ -39,6 +41,8 @@ struct HeaderView: View {
                 Image(systemName: "bell.fill")
                     .font(.system(size: 20))
                     .foregroundColor(AppColors.gold)
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
             }
         }
         .padding(.horizontal, 20)

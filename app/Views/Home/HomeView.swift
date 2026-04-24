@@ -72,13 +72,14 @@ struct HomeView: View {
             AppColors.appGradient
                 .ignoresSafeArea()
 
-            // Scrollable content
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 0) {
-                    HeaderView(onMenuTap: { showingMenu = true })
+            VStack(spacing: 0) {
+                HeaderView(onMenuTap: { showingMenu = true })
 
-                    DayPrayerLabel(label: viewModel.dayLabel)
-                        .padding(.top, 16)
+                // Scrollable content
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 0) {
+                        DayPrayerLabel(label: viewModel.dayLabel)
+                            .padding(.top, 16)
 
                     featuredMysterySection
                         .padding(.top, 16)
@@ -101,6 +102,7 @@ struct HomeView: View {
                     .padding(.horizontal, 20)
                     .padding(.top, 32)
                     .padding(.bottom, 100) // Extra space for tab bar
+                    }
                 }
             }
         }
