@@ -138,7 +138,9 @@ struct SelectMeditationView: View {
             router.navigateToPrayerSession(meditationSet: fullSet)
         } catch {
             // Error handling - stay on current screen
+            #if DEBUG
             print("Failed to load meditation set: \(error)")
+            #endif
         }
     }
 }

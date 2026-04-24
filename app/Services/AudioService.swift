@@ -107,7 +107,9 @@ final class AudioService {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
             try AVAudioSession.sharedInstance().setActive(true)
         } catch {
+            #if DEBUG
             print("AudioService: Failed to set up audio session: \(error)")
+            #endif
         }
         #endif
     }
@@ -155,7 +157,9 @@ final class AudioService {
                 duration = 0
             }
         } catch {
+            #if DEBUG
             print("AudioService: Failed to load duration: \(error)")
+            #endif
         }
 
         setupTimeObserver()
