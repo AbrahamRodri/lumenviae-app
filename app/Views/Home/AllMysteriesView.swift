@@ -19,7 +19,6 @@ struct AllMysteriesView: View {
     // MARK: - Dependencies
 
     @Environment(AppRouter.self) private var router
-    @Environment(\.dismiss) private var dismiss
 
     // MARK: - Body
 
@@ -45,7 +44,7 @@ struct AllMysteriesView: View {
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: { dismiss() }) {
+                Button(action: { router.pop() }) {
                     HStack(spacing: 6) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 16, weight: .medium))
@@ -82,15 +81,17 @@ struct AllMysteriesView: View {
             spacing: 16
         ) {
             ForEach(MysteryCategory.allCategories, id: \.self) { category in
-                MysteryCard(
-                    title: category.displayName,
-                    subtitle: category.subtitle,
-                    gradientColors: category.gradientColors,
-                    cardImageName: category.cardImageName
-                )
-                .onTapGesture {
+                Button {
                     router.navigateToMeditationSelection(category: category)
+                } label: {
+                    MysteryCard(
+                        title: category.displayName,
+                        subtitle: category.subtitle,
+                        gradientColors: category.gradientColors,
+                        cardImageName: category.cardImageName
+                    )
                 }
+                .buttonStyle(.plain)
             }
         }
     }

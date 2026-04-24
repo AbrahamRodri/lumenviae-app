@@ -382,6 +382,8 @@ struct SacredMysteriesSection: View {
                     .font(AppFonts.bodyFont(12))
                     .tracking(1)
                     .foregroundColor(AppColors.gold)
+                    .padding(.vertical, 8)
+                    .padding(.leading, 16)
             }
         }
         .padding(.horizontal, 20)
@@ -397,15 +399,17 @@ struct SacredMysteriesSection: View {
             spacing: 16
         ) {
             ForEach(categories, id: \.self) { category in
-                MysteryCard(
-                    title: category.displayName,
-                    subtitle: category.subtitle,
-                    gradientColors: category.gradientColors,
-                    cardImageName: category.cardImageName
-                )
-                .onTapGesture {
+                Button {
                     onSelectCategory?(category)
+                } label: {
+                    MysteryCard(
+                        title: category.displayName,
+                        subtitle: category.subtitle,
+                        gradientColors: category.gradientColors,
+                        cardImageName: category.cardImageName
+                    )
                 }
+                .buttonStyle(.plain)
             }
         }
         .padding(.horizontal, 20)
