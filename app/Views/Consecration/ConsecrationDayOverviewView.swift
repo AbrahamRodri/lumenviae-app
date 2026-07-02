@@ -2,14 +2,9 @@
 //  ConsecrationDayOverviewView.swift
 //  Lumen Viae
 //
-//  ═══════════════════════════════════════════════════════════════════════════
-//  CONSECRATION DAY OVERVIEW - TODAY'S DAY LANDING PAGE
-//  ═══════════════════════════════════════════════════════════════════════════
-//
 //  Auto-loads today's day based on the start date.
 //  Shows the day number, phase info, what's included, and a button to start.
 //
-//  ═══════════════════════════════════════════════════════════════════════════
 
 import SwiftUI
 

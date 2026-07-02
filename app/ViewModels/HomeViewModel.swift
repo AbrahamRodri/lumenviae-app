@@ -2,77 +2,31 @@
 //  HomeViewModel.swift
 //  Lumen Viae
 //
-//  ═══════════════════════════════════════════════════════════════════════════
-//  HOME VIEW MODEL - STATE & LOGIC FOR THE HOME SCREEN
-//  ═══════════════════════════════════════════════════════════════════════════
+//  State and logic for the home screen.
 //
-//  ## What is a ViewModel?
-//  A ViewModel is the "brain" behind a View. It handles:
-//  - Loading data from services (API, database, etc.)
-//  - Managing state (loading, errors, data)
-//  - Business logic (what mystery to show today)
-//
-//  The View just displays what the ViewModel tells it to.
-//  This separation makes code easier to test and maintain.
-//
-//  ## MVVM Architecture
-//  ```
-//  View (HomeView)
-//    │
-//    │ observes
-//    ▼
-//  ViewModel (HomeViewModel)
-//    │
-//    │ calls
-//    ▼
-//  Services (APIService, ScheduleService)
-//  ```
-//
-//  ═══════════════════════════════════════════════════════════════════════════
 
 import Foundation
 
-// MARK: - HomeViewModel
-
-/// Manages state and data loading for the Home screen.
-///
-/// ## @Observable
-/// The `@Observable` macro (iOS 17+) makes this class observable by SwiftUI.
-/// When any property changes, SwiftUI automatically re-renders views that
-/// depend on it. This replaces the older `ObservableObject` + `@Published`.
-///
-/// ## final class
-/// - `final`: Cannot be subclassed (slight performance benefit)
-/// - `class`: Reference type, same instance shared across views
-///
 @Observable
 final class HomeViewModel {
 
     // MARK: - State
 
-    /// Today's mystery category based on traditional schedule.
+    /// Today's mystery category based on the traditional schedule.
     let todaysCategory: MysteryCategory
 
-    /// Mysteries for today's category - loaded from local data instantly.
+    /// Mysteries for today's category, loaded from local data.
     let mysteries: [Mystery]
 
     /// Mystery categories for the home screen grid (excludes Luminous, includes Seven Sorrows).
     let allCategories: [MysteryCategory] = MysteryCategory.homeCategories
 
-    /// Whether data is currently being fetched (always false now - data is local)
-    let isLoading = false
-
     // MARK: - Dependencies
 
-    /// Service for determining today's mystery schedule.
     private let scheduleService: ScheduleService.Type
 
     // MARK: - Initialization
 
-    /// Creates a new HomeViewModel.
-    ///
-    /// Mystery data is loaded instantly from local storage - no API needed.
-    /// The API is only used later for meditation text and audio.
     init(scheduleService: ScheduleService.Type = ScheduleService.self) {
         self.scheduleService = scheduleService
         self.todaysCategory = scheduleService.categoryForToday()
@@ -82,7 +36,6 @@ final class HomeViewModel {
     // MARK: - Computed Properties
 
     /// The first mystery of today's set, shown in the featured card.
-    /// Returns nil if mysteries haven't loaded yet.
     var featuredMystery: Mystery? {
         mysteries.first
     }
@@ -92,7 +45,7 @@ final class HomeViewModel {
         scheduleService.dayLabel
     }
 
-    /// Today's inspirational quote from the mock data service
+    /// Today's inspirational quote
     var currentQuote: (text: String, author: String) {
         MockDataService.todaysQuote
     }

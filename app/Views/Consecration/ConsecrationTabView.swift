@@ -2,10 +2,6 @@
 //  ConsecrationTabView.swift
 //  Lumen Viae
 //
-//  ═══════════════════════════════════════════════════════════════════════════
-//  CONSECRATION TAB VIEW - ROOT VIEW FOR 33-DAY CONSECRATION
-//  ═══════════════════════════════════════════════════════════════════════════
-//
 //  The main container view for the 33-Day Total Consecration feature.
 //  Handles navigation within the consecration flow and determines which
 //  view to show based on the user's progress state.
@@ -14,7 +10,6 @@
 //  - No active consecration → Show intro/start view
 //  - Active consecration → Auto-load today's day overview
 //
-//  ═══════════════════════════════════════════════════════════════════════════
 
 import SwiftUI
 import SwiftData

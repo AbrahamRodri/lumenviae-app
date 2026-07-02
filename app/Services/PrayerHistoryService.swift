@@ -2,41 +2,17 @@
 //  PrayerHistoryService.swift
 //  Lumen Viae
 //
-//  ═══════════════════════════════════════════════════════════════════════════
-//  PRAYER HISTORY SERVICE - MANAGES PRAYER SESSION DATA & STATISTICS
-//  ═══════════════════════════════════════════════════════════════════════════
+//  Records completed prayer sessions and computes streaks and statistics,
+//  persisted via SwiftData (PrayerSession model).
 //
-//  This service handles all prayer history operations:
-//  - Recording completed prayer sessions
-//  - Calculating streaks
-//  - Computing statistics (totals, by category, by time period)
-//
-//  Uses SwiftData for persistence with the PrayerSession model.
-//
-//  ═══════════════════════════════════════════════════════════════════════════
 
 import Foundation
 import SwiftData
 
-// MARK: - PrayerHistoryService
-
-/// Service for managing prayer session history and statistics.
-///
-/// ## Usage
-/// ```swift
-/// @Environment(\.modelContext) private var modelContext
-/// let service = PrayerHistoryService(modelContext: modelContext)
-/// service.recordSession(category: .joyful)
-/// ```
-///
 @Observable
 final class PrayerHistoryService {
 
-    // MARK: - Properties
-
     private let modelContext: ModelContext
-
-    // MARK: - Initialization
 
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
@@ -45,11 +21,6 @@ final class PrayerHistoryService {
     // MARK: - Recording Sessions
 
     /// Records a completed prayer session.
-    ///
-    /// - Parameters:
-    ///   - category: The mystery category that was prayed
-    ///   - durationSeconds: How long the session took (optional)
-    ///   - meditationType: The meditation style used (optional)
     func recordSession(
         category: MysteryCategory,
         durationSeconds: Int? = nil,

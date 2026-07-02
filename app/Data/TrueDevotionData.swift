@@ -2,14 +2,9 @@
 //  TrueDevotionData.swift
 //  Lumen Viae
 //
-//  ═══════════════════════════════════════════════════════════════════════════
-//  TRUE DEVOTION TO MARY - KEY TEACHINGS AND PRINCIPLES
-//  ═══════════════════════════════════════════════════════════════════════════
+//  Key aspects, principles, and ejaculatory prayers from
+//  St. Louis de Montfort's "True Devotion to Mary".
 //
-//  Contains the key aspects, principles, and ejaculatory prayers from
-//  St. Louis de Montfort's "True Devotion to Mary"
-//
-//  ═══════════════════════════════════════════════════════════════════════════
 
 import Foundation
 

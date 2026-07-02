@@ -2,14 +2,9 @@
 //  ConsecrationMeditationView.swift
 //  Lumen Viae
 //
-//  ═══════════════════════════════════════════════════════════════════════════
-//  CONSECRATION MEDITATION VIEW - IMMERSIVE DAILY SPIRITUAL READING
-//  ═══════════════════════════════════════════════════════════════════════════
-//
 //  Displays the day's meditation/spiritual writing in an immersive format.
 //  After reading, the user continues to the journal view.
 //
-//  ═══════════════════════════════════════════════════════════════════════════
 
 import SwiftUI
 

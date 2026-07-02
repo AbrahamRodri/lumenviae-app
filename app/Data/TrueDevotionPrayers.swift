@@ -2,15 +2,9 @@
 //  TrueDevotionPrayers.swift
 //  Lumen Viae
 //
-//  ═══════════════════════════════════════════════════════════════════════════
-//  TRUE DEVOTION - EJACULATORY PRAYERS
-//  ═══════════════════════════════════════════════════════════════════════════
+//  Ejaculatory prayers from True Devotion to Mary, each defined once with
+//  English and Latin and formatted per user language preference.
 //
-//  Ejaculatory prayers from True Devotion to Mary, stored efficiently with
-//  bilingual support. Each prayer is defined once with both English and Latin,
-//  then formatted dynamically based on user preference.
-//
-//  ═══════════════════════════════════════════════════════════════════════════
 
 import Foundation
 import SwiftUI

@@ -2,10 +2,6 @@
 //  JournalView.swift
 //  Lumen Viae
 //
-//  ═══════════════════════════════════════════════════════════════════════════
-//  JOURNAL VIEW - SPIRITUAL DIARY OF PRAYER REFLECTIONS
-//  ═══════════════════════════════════════════════════════════════════════════
-//
 //  Lists all journal entries grouped by month. Users can:
 //  - Browse past reflections
 //  - Tap an entry to read it in full
@@ -15,7 +11,6 @@
 //  Design mirrors the app's navy/gold palette — NOT the light design in the
 //  screenshot mockup. Drop-cap first letters on each entry match the preview.
 //
-//  ═══════════════════════════════════════════════════════════════════════════
 
 import SwiftUI
 import SwiftData

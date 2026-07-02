@@ -2,37 +2,12 @@
 //  MeditationSelectionViewModel.swift
 //  Lumen Viae
 //
-//  ═══════════════════════════════════════════════════════════════════════════
-//  MEDITATION SELECTION VIEW MODEL
-//  ═══════════════════════════════════════════════════════════════════════════
+//  State for the meditation selection screen: loads the list of meditation
+//  sets for a category, then the full set when the user picks one.
 //
-//  Manages state for the meditation selection screen, where users choose
-//  which meditation style to use for their prayer.
-//
-//  ## Available Meditation Styles
-//  - Traditional Meditations
-//  - St. Louis de Montfort
-//  - Scriptural Rosary
-//  - (More can be added via the API)
-//
-//  ## Data Flow
-//  1. Load list of meditation sets (summaries, no content)
-//  2. User taps a set
-//  3. Load full meditation set with all 5 meditations
-//  4. Navigate to prayer session
-//
-//  ═══════════════════════════════════════════════════════════════════════════
 
 import Foundation
 
-// MARK: - MeditationSelectionViewModel
-
-/// Manages state for the meditation selection screen.
-///
-/// Handles two API calls:
-/// 1. `loadMeditationSets()` - Get list of available sets for a category
-/// 2. `loadFullMeditationSet(id:)` - Get complete set when user selects one
-///
 @Observable
 final class MeditationSelectionViewModel {
 
@@ -59,11 +34,6 @@ final class MeditationSelectionViewModel {
 
     // MARK: - Initialization
 
-    /// Creates a ViewModel for the given category.
-    ///
-    /// - Parameters:
-    ///   - category: The mystery category to show sets for
-    ///   - apiService: Service for API calls (defaults to shared)
     init(category: MysteryCategory, apiService: APIService = .shared) {
         self.category = category
         self.apiService = apiService
@@ -102,18 +72,8 @@ final class MeditationSelectionViewModel {
         isLoading = false
     }
 
-    /// Loads a complete meditation set with all meditations.
-    ///
-    /// Called when the user taps a meditation set card.
+    /// Loads a complete meditation set when the user taps a set card.
     /// Falls back to mock data if the API call fails.
-    ///
-    /// - Parameter id: The meditation set ID to load
-    /// - Returns: Full MeditationSet with meditations array
-    ///
-    /// ## defer { }
-    /// The `defer` block runs when the function exits, regardless of
-    /// how it exits (return, throw, etc.). This ensures `isLoadingSet`
-    /// is always set back to false.
     @MainActor
     func loadFullMeditationSet(id: Int) async throws -> MeditationSet {
         isLoadingSet = true
