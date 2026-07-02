@@ -2,14 +2,9 @@
 //  ConsecrationCompletionView.swift
 //  Lumen Viae
 //
-//  ═══════════════════════════════════════════════════════════════════════════
-//  CONSECRATION COMPLETION VIEW - DAY 34 CELEBRATION
-//  ═══════════════════════════════════════════════════════════════════════════
-//
 //  Shown after completing Day 34 - the Act of Consecration.
 //  Celebrates the user's completion of the 33-Day journey.
 //
-//  ═══════════════════════════════════════════════════════════════════════════
 
 import SwiftUI
 

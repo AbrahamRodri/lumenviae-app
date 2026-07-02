@@ -427,107 +427,13 @@ struct MysteryPrayerView: View {
     }
 
     private func handleNextMystery() {
-        if viewModel.nextMystery() {
-            // Moved to next mystery
-        } else {
-            // Completed all mysteries - navigate to completion
-            Task {
-                try? await viewModel.recordCompletion()
-            }
-            router.navigateToCompletion()
+        guard !viewModel.nextMystery() else { return }
+
+        // Completed all mysteries - navigate to completion
+        Task {
+            try? await viewModel.recordCompletion()
         }
-    }
-}
-
-// MARK: - Progress Header
-
-struct MysteryProgressHeader: View {
-    let current: Int
-    let total: Int
-    var onClose: () -> Void = {}
-    var onJournal: () -> Void = {}
-
-    private var progress: CGFloat {
-        CGFloat(current) / CGFloat(total)
-    }
-
-    var body: some View {
-        VStack(spacing: 12) {
-            HStack {
-                Text("MYSTERY \(current) OF \(total)")
-                    .font(AppFonts.bodyFont(14))
-                    .tracking(3)
-                    .foregroundColor(AppColors.gold)
-
-                Spacer()
-
-                // Journal note shortcut
-                Button(action: onJournal) {
-                    Image(systemName: "square.and.pencil")
-                        .font(.system(size: 16))
-                        .foregroundColor(AppColors.gold.opacity(0.8))
-                }
-                .padding(.trailing, 12)
-
-                Button(action: onClose) {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(AppColors.gold)
-                }
-            }
-            .padding(.horizontal, 20)
-            .padding(.top, 16)
-
-            // Progress Bar
-            GeometryReader { geometry in
-                ZStack(alignment: .leading) {
-                    // Background track
-                    Rectangle()
-                        .fill(AppColors.gold.opacity(0.2))
-                        .frame(height: 3)
-
-                    // Progress fill
-                    Rectangle()
-                        .fill(AppColors.gold)
-                        .frame(width: geometry.size.width * progress, height: 3)
-                        .animation(.easeInOut(duration: 0.3), value: progress)
-                }
-            }
-            .frame(height: 3)
-            .padding(.horizontal, 20)
-        }
-        .padding(.bottom, 8)
-    }
-}
-
-// MARK: - Mystery Image
-
-struct MysteryImageView: View {
-    let imageURL: String?
-
-    var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(AppColors.cardBackground)
-
-            if let assetName = imageURL {
-                Image(assetName)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
-            } else {
-                // Placeholder
-                Image(systemName: "hands.and.sparkles")
-                    .font(.system(size: 48))
-                    .foregroundColor(AppColors.gold.opacity(0.5))
-            }
-        }
-        .frame(height: 200)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: 1)
-        )
+        router.navigateToCompletion()
     }
 }
 

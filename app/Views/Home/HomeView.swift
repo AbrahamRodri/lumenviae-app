@@ -4,64 +4,18 @@
 //
 //  Created by Abraham Rodriguez on 2/10/26.
 //
-//  ═══════════════════════════════════════════════════════════════════════════
-//  HOME SCREEN - THE MAIN LANDING VIEW
-//  ═══════════════════════════════════════════════════════════════════════════
+//  Home screen: header, day label, featured mystery card,
+//  Sacred Mysteries grid, and daily quote.
 //
-//  This is the first screen users see when opening the app.
-//
-//  ## Layout (top to bottom)
-//  1. Header (app name + menu/notification buttons)
-//  2. Day label (e.g., "WEDNESDAY PRAYER")
-//  3. Featured mystery card (today's recommended mystery)
-//  4. Sacred Mysteries grid (2x2 grid of all mystery types)
-//  5. Daily inspirational quote
-//
-//  ## Data Flow
-//  ```
-//  HomeViewModel
-//      │
-//      ├── todaysCategory (from ScheduleService)
-//      ├── mysteries (from local MysteryData - instant load)
-//      ├── featuredMystery (first mystery of today's set)
-//      └── currentQuote (from MockDataService)
-//  ```
-//
-//  ═══════════════════════════════════════════════════════════════════════════
 
 import SwiftUI
 
 // MARK: - HomeView
 
-/// The main home screen displaying today's mystery and navigation to all mysteries.
-///
-/// ## SwiftUI Concepts
-///
-/// ### @Environment
-/// `@Environment` reads a value from the SwiftUI environment.
-/// Here we read the `AppRouter` that was injected by ContentView.
-/// This lets us navigate from anywhere without passing the router down
-/// through every view.
-///
-/// ### @State with ViewModel
-/// The ViewModel is marked `@State` because HomeView "owns" it.
-/// The ViewModel uses `@Observable`, so SwiftUI automatically
-/// re-renders when its properties change.
-///
 struct HomeView: View {
 
-    // MARK: - Dependencies
-
-    /// Router for navigating to meditation selection screen.
-    /// Injected via ContentView's `.environment(router)`.
     @Environment(AppRouter.self) private var router
-
-    /// ViewModel managing this screen's data and state.
     @State private var viewModel = HomeViewModel()
-
-    // MARK: - State
-
-    /// Controls whether the menu sheet is displayed
     @State private var showingMenu = false
 
     // MARK: - Body
@@ -130,17 +84,11 @@ struct HomeView: View {
 
 // MARK: - DayPrayerLabel
 
-/// Displays the current day's prayer label with decorative gradient lines.
-///
-/// Example: "━━━━ WEDNESDAY PRAYER ━━━━"
-///
-/// The gradients fade from transparent to gold, creating an elegant
-/// divider effect around the text.
+/// The current day's prayer label with decorative gradient lines on each side,
+/// e.g. "━━━━ WEDNESDAY PRAYER ━━━━".
 struct DayPrayerLabel: View {
-    /// The label text (e.g., "WEDNESDAY PRAYER")
     let label: String
 
-    /// Reusable gradient for the decorative lines
     private var fadeInGradient: LinearGradient {
         LinearGradient(
             colors: [AppColors.gold.opacity(0), AppColors.gold],
@@ -327,25 +275,8 @@ struct FeaturedMysteryCard: View {
 
 // MARK: - SacredMysteriesSection
 
-/// A 2x2 grid displaying all four mystery categories.
-///
-/// Each card is tappable and navigates to the meditation selection
-/// for that category. This provides quick access to any mystery type,
-/// not just today's featured mystery.
-///
-/// ## SwiftUI Concepts
-///
-/// ### LazyVGrid
-/// A grid that only creates views when they're needed (scrolled into view).
-/// "Lazy" means it's memory-efficient for large grids.
-/// - `columns`: Defines how many columns and their sizing
-/// - `GridItem(.flexible())`: Column that fills available space
-///
-/// ### ForEach with id: \.self
-/// Iterates over a collection and creates a view for each item.
-/// `id: \.self` tells SwiftUI to use the item itself as the identifier
-/// (works because MysteryCategory conforms to Hashable).
-///
+/// A 2x2 grid of mystery category cards; each navigates to meditation
+/// selection for that category.
 struct SacredMysteriesSection: View {
 
     // MARK: - Properties

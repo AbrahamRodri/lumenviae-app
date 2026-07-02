@@ -102,33 +102,6 @@ struct ContentView: View {
     }
 }
 
-// MARK: - PlaceholderView
-
-struct PlaceholderView: View {
-    let title: String
-
-    var body: some View {
-        ZStack {
-            AppColors.background
-                .ignoresSafeArea()
-
-            VStack(spacing: 16) {
-                Image(systemName: "hammer.fill")
-                    .font(.system(size: 48))
-                    .foregroundColor(AppColors.gold.opacity(0.5))
-
-                Text(title)
-                    .font(AppFonts.headlineFont(24))
-                    .foregroundColor(AppColors.cream)
-
-                Text("Coming Soon")
-                    .font(AppFonts.bodyFont(14))
-                    .foregroundColor(AppColors.textSecondary)
-            }
-        }
-    }
-}
-
 // MARK: - Preview
 
 #Preview {

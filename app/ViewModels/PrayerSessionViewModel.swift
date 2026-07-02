@@ -2,35 +2,12 @@
 //  PrayerSessionViewModel.swift
 //  Lumen Viae
 //
-//  ═══════════════════════════════════════════════════════════════════════════
-//  PRAYER SESSION VIEW MODEL - MANAGES THE PRAYER FLOW
-//  ═══════════════════════════════════════════════════════════════════════════
+//  State for the prayer flow through the 5 mysteries: position, audio
+//  playback (delegated to AudioService), and session timing.
 //
-//  This ViewModel manages state during the prayer flow through 5 mysteries.
-//  It tracks:
-//  - Current mystery position (1 of 5, 2 of 5, etc.)
-//  - Audio playback state (delegated to AudioService)
-//  - Session timing for analytics
-//
-//  ## Flow
-//  ```
-//  Mystery 1 → Mystery 2 → Mystery 3 → Mystery 4 → Mystery 5 → Completion
-//  ```
-//
-//  ═══════════════════════════════════════════════════════════════════════════
 
 import Foundation
 
-// MARK: - PrayerSessionViewModel
-
-/// Manages state for the prayer flow through the Rosary mysteries.
-///
-/// This ViewModel coordinates:
-/// - Navigation between mysteries (next/previous)
-/// - Audio playback via AudioService
-/// - Recording completion when finished
-/// - Session duration tracking
-///
 @Observable
 final class PrayerSessionViewModel {
 
@@ -46,7 +23,7 @@ final class PrayerSessionViewModel {
 
     private let apiService: APIService
 
-    /// Audio service is `let` (not private) because the View may need to observe it
+    /// Not private because the View may need to observe it
     let audioService: AudioService
 
     /// When the prayer session started (for duration tracking)
@@ -54,11 +31,9 @@ final class PrayerSessionViewModel {
 
     // MARK: - Audio State (Proxied)
 
-    /// These properties proxy through to AudioService.
-    /// This allows the View to bind directly to the ViewModel while
-    /// the actual audio logic lives in AudioService.
+    // These properties proxy through to AudioService so the View can bind
+    // directly to the ViewModel while the audio logic lives in one place.
 
-    /// Whether audio is currently playing
     var isPlaying: Bool {
         get { audioService.isPlaying }
         set {
@@ -70,18 +45,15 @@ final class PrayerSessionViewModel {
         }
     }
 
-    /// Current playback position in seconds
     var currentTime: Double {
         get { audioService.currentTime }
         set { audioService.seek(to: newValue) }
     }
 
-    /// Total audio duration in seconds
     var totalDuration: Double {
         audioService.duration
     }
 
-    /// Whether audio is currently loading
     var isLoadingAudio: Bool {
         audioService.isLoading
     }
@@ -207,10 +179,7 @@ final class PrayerSessionViewModel {
 
     // MARK: - Completion
 
-    /// Records the prayer completion to the API.
-    ///
-    /// Called when the user finishes all 5 mysteries.
-    /// Failures are typically ignored (completion is best-effort).
+    /// Records the prayer completion to the API (best-effort).
     @MainActor
     func recordCompletion() async throws {
         try await apiService.recordCompletion(meditationSetId: meditationSet.id)

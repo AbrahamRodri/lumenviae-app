@@ -2,52 +2,22 @@
 //  MeditationSet.swift
 //  Lumen Viae
 //
-//  ═══════════════════════════════════════════════════════════════════════════
-//  MEDITATION SET - A COLLECTION OF MEDITATIONS FOR A CATEGORY
-//  ═══════════════════════════════════════════════════════════════════════════
+//  A meditation set groups 5 meditations (one per mystery) under a theme,
+//  e.g. "Traditional Meditations" for the Joyful mysteries.
 //
-//  A MeditationSet groups 5 meditations (one per mystery) under a theme.
-//  For example, "Traditional Meditations" for Joyful mysteries contains
-//  5 traditional meditations for the 5 Joyful mysteries.
-//
-//  ## API Endpoints
 //  - List: GET /api/meditation-sets?category=joyful → [MeditationSetSummary]
-//  - Detail: GET /api/meditation-sets/1 → MeditationSet (with meditations)
+//  - Detail: GET /api/meditation-sets/:id → MeditationSet (with meditations)
 //
-//  ## Why Two Structs?
-//  The list endpoint returns summary data (no meditations array) while
-//  the detail endpoint returns the full set with all meditations.
-//  Using separate structs prevents accidentally accessing nil meditations.
-//
-//  ═══════════════════════════════════════════════════════════════════════════
 
 import Foundation
 
 // MARK: - MeditationSet
 
-/// A complete meditation set with all meditations included.
-///
-/// Used when fetching a specific set from GET /api/meditation-sets/:id.
-/// Contains the full array of Meditation objects.
-///
-/// ## Example
-/// ```
-/// MeditationSet
-/// ├── name: "Traditional Meditations"
-/// ├── category: "joyful"
-/// └── meditations: [
-///       Meditation (The Annunciation),
-///       Meditation (The Visitation),
-///       Meditation (The Nativity),
-///       Meditation (The Presentation),
-///       Meditation (Finding Jesus in the Temple)
-///     ]
-/// ```
+/// A complete meditation set with all meditations included (detail endpoint).
 struct MeditationSet: Codable, Identifiable, Hashable {
 
     // MARK: - Properties
 
-    /// Unique identifier
     let id: Int
 
     /// Set name (e.g., "Traditional Meditations")
@@ -83,17 +53,12 @@ struct MeditationSet: Codable, Identifiable, Hashable {
 
 // MARK: - MeditationSetSummary
 
-/// A summary of a meditation set WITHOUT the meditations array.
-///
-/// Used when listing available sets from GET /api/meditation-sets?category=.
-/// Lighter weight than MeditationSet since it doesn't include all content.
-///
-/// When the user selects a set, fetch the full MeditationSet by ID.
+/// A meditation set without the meditations array (list endpoint).
+/// When the user selects one, fetch the full MeditationSet by ID.
 struct MeditationSetSummary: Codable, Identifiable, Hashable {
 
     // MARK: - Properties
 
-    /// Unique identifier
     let id: Int
 
     /// Set name (e.g., "St. Louis de Montfort")

@@ -2,17 +2,12 @@
 //  JournalEntryEditorView.swift
 //  Lumen Viae
 //
-//  ═══════════════════════════════════════════════════════════════════════════
-//  JOURNAL ENTRY EDITOR - WRITE OR EDIT A REFLECTION
-//  ═══════════════════════════════════════════════════════════════════════════
-//
 //  Used in three contexts:
 //  1. Mid-prayer (isMidPrayer: true)  — subject locked to current mystery
 //  2. Post-prayer completion           — subject locked to category
 //  3. From journal tab                 — subject is a free-form editable field
 //     defaulting to "General Reflection"; user can type any title they want
 //
-//  ═══════════════════════════════════════════════════════════════════════════
 
 import SwiftUI
 import SwiftData

@@ -2,14 +2,8 @@
 //  BilingualConsecrationPrayers.swift
 //  Lumen Viae
 //
-//  ═══════════════════════════════════════════════════════════════════════════
-//  BILINGUAL CONSECRATION PRAYERS
-//  ═══════════════════════════════════════════════════════════════════════════
+//  Consecration prayers, each defined once with English and Latin versions.
 //
-//  Consecration prayers stored efficiently with bilingual support.
-//  Each prayer is defined once with both English and Latin versions.
-//
-//  ═══════════════════════════════════════════════════════════════════════════
 
 import Foundation
 import SwiftUI

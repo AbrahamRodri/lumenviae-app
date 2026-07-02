@@ -2,14 +2,9 @@
 //  ConsecrationJournalView.swift
 //  Lumen Viae
 //
-//  ═══════════════════════════════════════════════════════════════════════════
-//  CONSECRATION JOURNAL VIEW - DAILY REFLECTION
-//  ═══════════════════════════════════════════════════════════════════════════
-//
 //  Allows the user to write a reflection based on the day's prompt.
 //  Completing the journal marks the day as complete.
 //
-//  ═══════════════════════════════════════════════════════════════════════════
 
 import SwiftUI
 

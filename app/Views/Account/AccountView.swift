@@ -445,8 +445,6 @@ struct AccountFooter: View {
 // MARK: - About Sheet
 
 struct AboutSheet: View {
-    @Environment(\.dismiss) private var dismiss
-
     var body: some View {
         ZStack {
             AppColors.appGradient.ignoresSafeArea()
@@ -516,8 +514,6 @@ struct AboutSheet: View {
 // MARK: - Privacy Policy Sheet
 
 struct PrivacyPolicySheet: View {
-    @Environment(\.dismiss) private var dismiss
-
     var body: some View {
         ZStack {
             AppColors.appGradient.ignoresSafeArea()
@@ -582,8 +578,6 @@ struct PrivacyPolicySheet: View {
 // MARK: - Help & Support Sheet
 
 struct HelpSupportSheet: View {
-    @Environment(\.dismiss) private var dismiss
-
     var body: some View {
         ZStack {
             AppColors.appGradient.ignoresSafeArea()

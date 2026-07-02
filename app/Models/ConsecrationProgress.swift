@@ -2,33 +2,14 @@
 //  ConsecrationProgress.swift
 //  Lumen Viae
 //
-//  ═══════════════════════════════════════════════════════════════════════════
-//  CONSECRATION PROGRESS - SWIFTDATA MODEL FOR TRACKING 33-DAY PROGRESS
-//  ═══════════════════════════════════════════════════════════════════════════
+//  SwiftData model tracking 33-Day Consecration progress. The current day
+//  is computed from the start date (advancing at midnight), and days must
+//  be completed in order.
 //
-//  Tracks the user's progress through the 33-Day Total Consecration.
-//  Stores the start date and completed days, enabling:
-//  - Auto-calculation of current day based on start date
-//  - Progress persistence across app sessions
-//  - Multiple consecration attempts (only one active at a time)
-//
-//  ═══════════════════════════════════════════════════════════════════════════
 
 import Foundation
 import SwiftData
 
-// MARK: - ConsecrationProgress
-
-/// Tracks progress through the 33-Day Consecration journey.
-///
-/// ## SwiftData
-/// The `@Model` macro makes this class persistable with SwiftData.
-///
-/// ## Key Behavior
-/// - `currentDayNumber` is computed from the start date
-/// - Days automatically advance at midnight
-/// - User cannot skip ahead - must complete days in order
-///
 @Model
 final class ConsecrationProgress {
 
