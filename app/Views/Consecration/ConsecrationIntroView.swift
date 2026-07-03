@@ -34,12 +34,11 @@ struct ConsecrationIntroView: View {
         return feast.canStartToday()
     }
 
-    /// If the selected feast's 33-day window has already begun but the feast
-    /// hasn't passed, the day number today would be so that Day 34 lands on
-    /// the feast. Nil when a normal Day-1 start is possible (or no feast).
-    private var catchUpDay: Int? {
-        guard let feast = selectedFeast,
-              !feast.canStartToday(),
+    /// Catch-up day for a feast whose 33-day preparation window has already
+    /// begun but whose feast hasn't passed: the day number today would be so
+    /// that Day 34 lands on the feast. Nil when a normal Day-1 start applies.
+    private func catchUpDay(for feast: MarianFeastDay) -> Int? {
+        guard !feast.canStartToday(),
               let feastDate = feast.nextOccurrence() else { return nil }
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
@@ -81,7 +80,7 @@ struct ConsecrationIntroView: View {
                     // Begin Button
                     if canBeginToday {
                         beginButton
-                    } else if let day = catchUpDay {
+                    } else if let feast = selectedFeast, let day = catchUpDay(for: feast) {
                         catchUpButton(day: day)
                     }
 
@@ -310,6 +309,17 @@ struct ConsecrationIntroView: View {
                             Capsule()
                                 .fill(AppColors.gold)
                         )
+                } else if let day = catchUpDay(for: feast) {
+                    Text("Catch Up · Day \(day)")
+                        .font(AppFonts.bodyFont(10))
+                        .fontWeight(.semibold)
+                        .foregroundColor(AppColors.gold)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(
+                            Capsule()
+                                .stroke(AppColors.gold.opacity(0.6), lineWidth: 1)
+                        )
                 } else if let startDate = feast.nextStartDate() {
                     let daysUntilStart = daysUntil(startDate)
                     Text("in \(daysUntilStart) day\(daysUntilStart == 1 ? "" : "s")")
@@ -383,6 +393,14 @@ struct ConsecrationIntroView: View {
                         Text("Today is the start date for this feast!")
                             .font(AppFonts.bodyFont(12))
                             .foregroundColor(.green)
+                    }
+                } else if let day = catchUpDay(for: feast) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "clock.arrow.circlepath")
+                            .foregroundColor(AppColors.gold)
+                        Text("Preparation is underway — begin today at Day \(day)")
+                            .font(AppFonts.bodyFont(12))
+                            .foregroundColor(AppColors.gold)
                     }
                 } else {
                     Text("You can begin on \(startDate, style: .date)")
@@ -486,15 +504,9 @@ struct ConsecrationIntroView: View {
                     Image(systemName: "calendar.day.timeline.left")
                         .foregroundColor(AppColors.gold)
 
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Start at Any Day")
-                            .font(AppFonts.bodyFont(16))
-                            .foregroundColor(AppColors.cream)
-
-                        Text("Already mid-preparation? Jump in where you are.")
-                            .font(AppFonts.bodyFont(12))
-                            .foregroundColor(AppColors.textSecondary)
-                    }
+                    Text("Start at Any Day")
+                        .font(AppFonts.bodyFont(16))
+                        .foregroundColor(AppColors.cream)
 
                     Spacer()
 

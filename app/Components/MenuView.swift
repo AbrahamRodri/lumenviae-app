@@ -99,7 +99,7 @@ struct MenuView: View {
                         .padding(.horizontal, 20)
 
                     MenuItemButton(
-                        icon: "candle.fill",
+                        icon: "flame.fill",
                         title: "St. Carlo Acutis",
                         subtitle: "Digital Altar",
                         action: {
