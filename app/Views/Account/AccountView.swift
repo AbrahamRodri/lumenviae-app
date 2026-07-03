@@ -11,6 +11,7 @@ struct AccountView: View {
     @State private var showAbout = false
     @State private var showPrivacyPolicy = false
     @State private var showHelpSupport = false
+    @State private var showSoundPicker = false
 
     var body: some View {
         ZStack {
@@ -59,6 +60,18 @@ struct AccountView: View {
                                     hour: Bindable(userSettings).reminderHour,
                                     minute: Bindable(userSettings).reminderMinute
                                 )
+                                .transition(.opacity.combined(with: .move(edge: .top)))
+
+                                Divider()
+                                    .background(AppColors.gold.opacity(0.2))
+
+                                ActionRow(
+                                    icon: "speaker.wave.2",
+                                    title: "Reminder Sound",
+                                    subtitle: userSettings.reminderSound.displayName
+                                ) {
+                                    showSoundPicker = true
+                                }
                                 .transition(.opacity.combined(with: .move(edge: .top)))
                             }
                         }
@@ -114,6 +127,9 @@ struct AccountView: View {
         }
         .sheet(isPresented: $showHelpSupport) {
             HelpSupportSheet()
+        }
+        .sheet(isPresented: $showSoundPicker) {
+            ReminderSoundSheet()
         }
     }
 }

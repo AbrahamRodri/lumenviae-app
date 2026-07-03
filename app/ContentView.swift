@@ -11,8 +11,10 @@ import SwiftUI
 struct ContentView: View {
 
     @State private var router = AppRouter()
-    @State private var selectedTab: AppTab = .home
     @State private var isConsecrationNavigating: Bool = false
+
+    /// Guards the Pray button against double-taps while a set loads
+    @State private var isStartingPrayer = false
 
     private var shouldShowTabBar: Bool {
         router.path.isEmpty && !isConsecrationNavigating
@@ -34,7 +36,10 @@ struct ContentView: View {
 
             VStack {
                 Spacer()
-                CustomTabBar(selectedTab: $selectedTab)
+                CustomTabBar(
+                    selectedTab: Bindable(router).selectedTab,
+                    onPrayNow: startTodaysPrayer
+                )
                     .ignoresSafeArea(.all, edges: .bottom)
                     .opacity(shouldShowTabBar ? 1 : 0)
                     .offset(y: shouldShowTabBar ? 0 : 100)
@@ -42,10 +47,41 @@ struct ContentView: View {
             }
         }
         .environment(router)
-        .onChange(of: selectedTab) { _, newTab in
+        .onChange(of: router.selectedTab) { _, newTab in
             if newTab != .consecration {
                 isConsecrationNavigating = false
             }
+        }
+    }
+
+    // MARK: - Quick Prayer
+
+    /// Starts today's Rosary directly from the Pray button: resolves the
+    /// weekday's mystery category, loads its first meditation set (falling
+    /// back to the built-in traditional set), and goes straight to prayer —
+    /// no selection screens.
+    private func startTodaysPrayer() {
+        guard !isStartingPrayer, router.path.isEmpty else { return }
+        isStartingPrayer = true
+
+        let category = ScheduleService.categoryForToday()
+
+        Task {
+            defer { isStartingPrayer = false }
+
+            let meditationSet: MeditationSet
+            do {
+                let summaries = try await APIService.shared.fetchMeditationSets(category: category)
+                if let first = summaries.first {
+                    meditationSet = try await APIService.shared.fetchMeditationSet(id: first.id)
+                } else {
+                    meditationSet = MockDataService.meditationSet(for: category)
+                }
+            } catch {
+                meditationSet = MockDataService.meditationSet(for: category)
+            }
+
+            router.navigateToPrayerSession(meditationSet: meditationSet)
         }
     }
 
@@ -53,7 +89,7 @@ struct ContentView: View {
 
     @ViewBuilder
     private var tabContent: some View {
-        switch selectedTab {
+        switch router.selectedTab {
         case .home:
             HomeView()
         case .consecration:
