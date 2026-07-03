@@ -9,6 +9,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 // MARK: - HomeView
 
@@ -16,10 +17,15 @@ struct HomeView: View {
 
     @Environment(AppRouter.self) private var router
     @State private var viewModel = HomeViewModel()
-    @State private var showingMenu = false
 
-    /// Controls whether the reminder settings sheet is displayed
-    @State private var showingReminders = false
+    /// SwiftData context for prayer history (streak data).
+    @Environment(\.modelContext) private var modelContext
+
+    /// Live query so the streak flame refreshes when a session is recorded.
+    @Query(sort: \PrayerSession.completedAt, order: .reverse) private var sessions: [PrayerSession]
+
+    /// Controls whether the menu sheet is displayed
+    @State private var showingMenu = false
 
     // MARK: - Body
 
@@ -30,9 +36,13 @@ struct HomeView: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
+                // Reading `sessions` here registers the @Query dependency,
+                // so the flame refreshes the moment a Rosary is recorded.
                 HeaderView(
                     onMenuTap: { showingMenu = true },
-                    onNotificationTap: { showingReminders = true }
+                    streak: sessions.isEmpty ? 0 : historyService.currentStreak(),
+                    flameLit: sessions.isEmpty ? false : historyService.hasPrayedToday(),
+                    onFlameTap: { router.selectedTab = .progress }
                 )
 
                 // Scrollable content
@@ -69,12 +79,16 @@ struct HomeView: View {
         .sheet(isPresented: $showingMenu) {
             MenuView(isPresented: $showingMenu)
         }
-        .sheet(isPresented: $showingReminders) {
-            ReminderSettingsSheet()
-        }
     }
 
     // MARK: - Subviews
+
+    /// History service for the header's streak flame.
+    /// The @Query-backed `sessions` keeps the header live: when a Rosary
+    /// is recorded, the query changes and the body (and flame) refresh.
+    private var historyService: PrayerHistoryService {
+        PrayerHistoryService(modelContext: modelContext)
+    }
 
     /// The featured mystery card - data loaded instantly from local storage.
     @ViewBuilder

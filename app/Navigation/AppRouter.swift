@@ -35,6 +35,12 @@ final class AppRouter {
 
     var path = NavigationPath()
 
+    /// The currently selected bottom tab.
+    ///
+    /// Lives on the router (not ContentView-local state) so any view can
+    /// switch tabs — e.g. the home header's streak flame jumps to Progress.
+    var selectedTab: AppTab = .home
+
     /// Currently selected mystery category, persisted across the navigation flow.
     var selectedCategory: MysteryCategory?
 

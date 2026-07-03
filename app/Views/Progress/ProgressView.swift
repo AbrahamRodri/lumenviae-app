@@ -47,6 +47,9 @@ struct PrayerProgressView: View {
                     // Header
                     headerSection
 
+                    // Streak card (flame, week dots, next milestone)
+                    streakSection
+
                     // Month Navigation
                     monthNavigationSection
 
@@ -82,6 +85,21 @@ struct PrayerProgressView: View {
                 .font(AppFonts.bodyFont(12))
                 .tracking(4)
                 .foregroundColor(AppColors.gold.opacity(0.7))
+        }
+    }
+
+    // MARK: - Streak Section
+
+    /// The streak card: living flame, this week's prayer days, and
+    /// progress toward the next devotional milestone.
+    @ViewBuilder
+    private var streakSection: some View {
+        if let service {
+            StreakWidget(
+                streak: service.currentStreak(),
+                hasPrayedToday: service.hasPrayedToday(),
+                weekStatus: service.weeklyPrayerStatus()
+            )
         }
     }
 

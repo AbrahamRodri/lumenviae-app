@@ -114,6 +114,11 @@ final class PrayerHistoryService {
         return sessions(from: monthStart, to: today).count
     }
 
+    /// Whether at least one Rosary was completed today.
+    func hasPrayedToday() -> Bool {
+        !sessions(on: Date()).isEmpty
+    }
+
     // MARK: - Streak Calculation
 
     /// Current consecutive days of prayer.
