@@ -18,6 +18,9 @@ struct HomeView: View {
     @State private var viewModel = HomeViewModel()
     @State private var showingMenu = false
 
+    /// Controls whether the reminder settings sheet is displayed
+    @State private var showingReminders = false
+
     // MARK: - Body
 
     var body: some View {
@@ -27,7 +30,10 @@ struct HomeView: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
-                HeaderView(onMenuTap: { showingMenu = true })
+                HeaderView(
+                    onMenuTap: { showingMenu = true },
+                    onNotificationTap: { showingReminders = true }
+                )
 
                 // Scrollable content
                 ScrollView(showsIndicators: false) {
@@ -62,6 +68,9 @@ struct HomeView: View {
         }
         .sheet(isPresented: $showingMenu) {
             MenuView(isPresented: $showingMenu)
+        }
+        .sheet(isPresented: $showingReminders) {
+            ReminderSettingsSheet()
         }
     }
 

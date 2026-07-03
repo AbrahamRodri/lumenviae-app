@@ -12,11 +12,10 @@ struct ContentView: View {
 
     @State private var router = AppRouter()
     @State private var selectedTab: AppTab = .home
-    //@State private var isConsecrationNavigating: Bool = false
+    @State private var isConsecrationNavigating: Bool = false
 
     private var shouldShowTabBar: Bool {
-        router.path.isEmpty 
-        // && !isConsecrationNavigating
+        router.path.isEmpty && !isConsecrationNavigating
     }
 
     // MARK: - Body
@@ -43,12 +42,11 @@ struct ContentView: View {
             }
         }
         .environment(router)
-        // Hidden for v1.0 — consecration feature not yet complete
-//        .onChange(of: selectedTab) { _, newTab in
-//            if newTab != .consecration {
-//                isConsecrationNavigating = false
-//            }
-//        }
+        .onChange(of: selectedTab) { _, newTab in
+            if newTab != .consecration {
+                isConsecrationNavigating = false
+            }
+        }
     }
 
     // MARK: - Tab Content
@@ -58,11 +56,10 @@ struct ContentView: View {
         switch selectedTab {
         case .home:
             HomeView()
-        // Hidden for v1.0 — consecration feature not yet complete
-//        case .consecration:
-//            ConsecrationTabView(onNavigationChange: { isNavigating in
-//                isConsecrationNavigating = isNavigating
-//            })
+        case .consecration:
+            ConsecrationTabView(onNavigationChange: { isNavigating in
+                isConsecrationNavigating = isNavigating
+            })
         case .journal:
             JournalView()
         case .progress:

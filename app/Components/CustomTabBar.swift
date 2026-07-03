@@ -15,7 +15,7 @@ import SwiftUI
 /// The available tabs in the bottom navigation.
 enum AppTab: CaseIterable {
     case home
-    // case consecration  // Hidden for v1.0 — feature not yet complete
+    case consecration
     case journal
     case progress
     case account
@@ -23,7 +23,7 @@ enum AppTab: CaseIterable {
     var title: String {
         switch self {
         case .home:         return Constants.homeTab
-        // case .consecration: return Constants.consecrationTab
+        case .consecration: return Constants.consecrationTab
         case .journal:      return Constants.journalTab
         case .progress:     return Constants.progressTab
         case .account:      return Constants.accountTab
@@ -34,7 +34,7 @@ enum AppTab: CaseIterable {
     var icon: String {
         switch self {
         case .home:         return "house.fill"
-        // case .consecration: return "flame.fill"
+        case .consecration: return "flame.fill"
         case .journal:      return "book.fill"
         case .progress:     return "chart.line.uptrend.xyaxis"
         case .account:      return "person.fill"

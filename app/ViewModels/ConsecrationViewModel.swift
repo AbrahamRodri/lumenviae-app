@@ -144,6 +144,21 @@ final class ConsecrationViewModel {
         }
     }
 
+    /// Start a new consecration with today counting as a specific day (1-34).
+    ///
+    /// Backdates the start date so `currentDayNumber` resolves to `dayNumber`
+    /// today. Useful for joining mid-preparation (e.g., following along in a
+    /// book) or catching up to a feast day that is fewer than 33 days away.
+    func startConsecration(startingAt dayNumber: Int) {
+        let clamped = min(max(dayNumber, 1), 34)
+        let backdatedStart = Calendar.current.date(
+            byAdding: .day,
+            value: -(clamped - 1),
+            to: Calendar.current.startOfDay(for: Date())
+        ) ?? Date()
+        startConsecration(on: backdatedStart)
+    }
+
     /// Load the day data for the current day number
     func loadCurrentDay() {
         currentDay = ConsecrationData.day(todaysDayNumber)

@@ -11,6 +11,10 @@ struct MenuView: View {
     @Binding var isPresented: Bool
     @Environment(AppRouter.self) private var router
     @State private var showTrueDevotionView = false
+    @State private var showHowToPrayView = false
+    @State private var showMysteriesInScriptureView = false
+    @State private var showMarianLibraryView = false
+    @State private var showCarloAcutisView = false
 
     var body: some View {
         NavigationStack {
@@ -61,7 +65,9 @@ struct MenuView: View {
                     MenuItemButton(
                         icon: "book.closed",
                         title: "How to Pray the Rosary",
-                        action: { }
+                        action: {
+                            showHowToPrayView = true
+                        }
                     )
 
                     Divider()
@@ -71,7 +77,9 @@ struct MenuView: View {
                     MenuItemButton(
                         icon: "sparkles",
                         title: "Finding the Mysteries in Scripture",
-                        action: { }
+                        action: {
+                            showMysteriesInScriptureView = true
+                        }
                     )
 
                     Divider()
@@ -81,7 +89,9 @@ struct MenuView: View {
                     MenuItemButton(
                         icon: "heart.fill",
                         title: "Marian Theology Library",
-                        action: { }
+                        action: {
+                            showMarianLibraryView = true
+                        }
                     )
 
                     Divider()
@@ -89,43 +99,16 @@ struct MenuView: View {
                         .padding(.horizontal, 20)
 
                     MenuItemButton(
-                        icon: "candle.fill",
+                        icon: "flame.fill",
                         title: "St. Carlo Acutis",
                         subtitle: "Digital Altar",
-                        action: { }
+                        action: {
+                            showCarloAcutisView = true
+                        }
                     )
                 }
 
                 Spacer()
-
-                // Disclaimer
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack(spacing: 8) {
-                        Image(systemName: "exclamationmark.circle.fill")
-                            .font(.system(size: 14))
-                            .foregroundColor(AppColors.gold.opacity(0.8))
-
-                        Text("MOSTLY COMING SOON")
-                            .font(AppFonts.bodyFont(11))
-                            .tracking(1)
-                            .foregroundColor(AppColors.gold)
-                    }
-
-                    Text("Most menu features are not yet functional. True Devotion to Mary is now available!")
-                        .font(AppFonts.bodyFont(12))
-                        .foregroundColor(AppColors.cream.opacity(0.7))
-                        .lineSpacing(1)
-                }
-                .padding(12)
-                .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(AppColors.cardBackground.opacity(0.8))
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .strokeBorder(AppColors.gold.opacity(0.25), lineWidth: 1)
-                )
-                .padding(.bottom, 16)
 
                 // Footer with version
                 VStack(spacing: 8) {
@@ -147,6 +130,18 @@ struct MenuView: View {
             }
             .navigationDestination(isPresented: $showTrueDevotionView) {
                 TrueDevotionView()
+            }
+            .navigationDestination(isPresented: $showHowToPrayView) {
+                HowToPrayRosaryView()
+            }
+            .navigationDestination(isPresented: $showMysteriesInScriptureView) {
+                MysteriesInScriptureView()
+            }
+            .navigationDestination(isPresented: $showMarianLibraryView) {
+                MarianLibraryView()
+            }
+            .navigationDestination(isPresented: $showCarloAcutisView) {
+                CarloAcutisView()
             }
         }
     }
