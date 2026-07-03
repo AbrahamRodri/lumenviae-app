@@ -99,8 +99,7 @@ struct ConsecrationMeditationView: View {
             Button {
                 path.removeLast()
             } label: {
-                Image(systemName: "chevron.left")
-                    .font(.system(size: 16, weight: .medium))
+                AppIcon("ph-caret-left", size: 16)
                     .foregroundColor(AppColors.cream.opacity(0.7))
                     .frame(width: 36, height: 36)
                     .background(
@@ -119,8 +118,7 @@ struct ConsecrationMeditationView: View {
                     .foregroundColor(AppColors.textSecondary)
 
                 HStack(spacing: 6) {
-                    Image(systemName: "book.fill")
-                        .font(.system(size: 10))
+                    AppIcon("ph-book-open-fill", size: 10)
                     Text("SPIRITUAL READING")
                         .font(AppFonts.bodyFont(10))
                         .tracking(1)
@@ -168,8 +166,7 @@ struct ConsecrationMeditationView: View {
                 )
                 .frame(height: 1)
 
-            Image(systemName: "sparkle")
-                .font(.system(size: 10))
+            AppIcon("ph-sparkle", size: 10)
                 .foregroundColor(AppColors.gold.opacity(0.6))
 
             Rectangle()
@@ -207,8 +204,7 @@ struct ConsecrationMeditationView: View {
                     Text("Continue to Journal")
                         .font(AppFonts.headlineFont(16))
 
-                    Image(systemName: "pencil.line")
-                        .font(.system(size: 14, weight: .semibold))
+                    AppIcon("ph-note-pencil", size: 14)
                 }
                 .foregroundColor(AppColors.background)
                 .frame(maxWidth: .infinity)

@@ -137,7 +137,7 @@ struct ConsecrationPrayerFlowView: View {
             Button {
                 audio.togglePlayback()
             } label: {
-                Image(systemName: audio.isPlaying ? "pause.circle.fill" : "play.circle.fill")
+                AppIcon(audio.isPlaying ? "ph-pause-circle-fill" : "ph-play-circle-fill", size: 44)
                     .font(.system(size: 36))
                     .foregroundColor(AppColors.gold)
             }
@@ -225,8 +225,7 @@ struct ConsecrationPrayerFlowView: View {
             Button {
                 path.removeLast()
             } label: {
-                Image(systemName: "xmark")
-                    .font(.system(size: 16, weight: .medium))
+                AppIcon("ph-x", size: 16)
                     .foregroundColor(AppColors.cream.opacity(0.7))
                     .frame(width: 36, height: 36)
                     .background(
@@ -311,8 +310,7 @@ struct ConsecrationPrayerFlowView: View {
                             )
                             .frame(height: 1)
 
-                        Image(systemName: "sparkle")
-                            .font(.system(size: 10))
+                        AppIcon("ph-sparkle", size: 10)
                             .foregroundColor(AppColors.gold.opacity(0.6))
 
                         Rectangle()
@@ -404,7 +402,7 @@ struct ConsecrationPrayerFlowView: View {
                     Text(isLastPrayer ? "Continue to Meditation" : "Continue")
                         .font(AppFonts.headlineFont(16))
 
-                    Image(systemName: isLastPrayer ? "book.fill" : "arrow.right")
+                    AppIcon(isLastPrayer ? "ph-book-open-fill" : "ph-arrow-right", size: 15)
                         .font(.system(size: 14, weight: .semibold))
                 }
                 .foregroundColor(AppColors.background)

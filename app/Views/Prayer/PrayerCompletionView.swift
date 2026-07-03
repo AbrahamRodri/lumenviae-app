@@ -107,33 +107,34 @@ struct PrayerCompletionView: View {
                     // Record Devotion (Journal) - Primary
                     Button(action: { showingJournalEditor = true }) {
                         HStack(spacing: 12) {
-                            Image(systemName: "pencil.line")
-                                .font(.system(size: 18))
+                            AppIcon("ph-note-pencil", size: 17)
 
                             Text("RECORD DEVOTION")
-                                .font(AppFonts.bodyFont(16))
-                                .tracking(2)
+                                .font(AppFonts.labelFont(14))
+                                .tracking(2.5)
                         }
                         .foregroundColor(AppColors.background)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 18)
-                        .background(AppColors.goldLight)
-                        .cornerRadius(30)
+                        .background(Capsule().fill(AppColors.goldGradient))
+                        .haloGlow(AppColors.gold, radius: 9, intensity: 0.3)
                     }
+                    .buttonStyle(GoldCTAButtonStyle())
 
                     // Return Home - Secondary
                     Button(action: { router.popToRoot() }) {
                         Text("RETURN HOME")
-                            .font(AppFonts.bodyFont(16))
-                            .tracking(2)
+                            .font(AppFonts.labelFont(14))
+                            .tracking(2.5)
                             .foregroundColor(AppColors.cream)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 18)
                             .background(
-                                RoundedRectangle(cornerRadius: 30)
+                                Capsule()
                                     .strokeBorder(AppColors.gold.opacity(0.5), lineWidth: 1)
                             )
                     }
+                    .buttonStyle(GoldCTAButtonStyle())
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 16)
@@ -352,30 +353,30 @@ struct MilestoneCelebrationCard: View {
     var body: some View {
         VStack(spacing: 10) {
             HStack(spacing: 8) {
-                Image(systemName: "sparkles")
-                    .font(.system(size: 12))
+                AppIcon("ph-sparkle-fill", size: 12)
                     .foregroundColor(AppColors.goldLight)
-                    .symbolEffect(.bounce, value: celebrate)
+                    .scaleEffect(celebrate ? 1 : 0.5)
+                    .animation(.spring(response: 0.5, dampingFraction: 0.5), value: celebrate)
 
                 Text("MILESTONE REACHED")
-                    .font(AppFonts.bodyFont(11))
+                    .font(AppFonts.labelFont(10))
                     .tracking(3)
                     .foregroundColor(AppColors.goldLight)
 
-                Image(systemName: "sparkles")
-                    .font(.system(size: 12))
+                AppIcon("ph-sparkle-fill", size: 12)
                     .foregroundColor(AppColors.goldLight)
-                    .symbolEffect(.bounce, value: celebrate)
+                    .scaleEffect(celebrate ? 1 : 0.5)
+                    .animation(.spring(response: 0.5, dampingFraction: 0.5).delay(0.08), value: celebrate)
             }
 
             HStack(spacing: 10) {
-                Image(systemName: milestone.icon)
-                    .font(.system(size: 20, weight: .light))
+                AppIcon(milestone.icon, size: 20)
                     .foregroundColor(AppColors.gold)
-                    .symbolEffect(.bounce, options: .speed(0.8), value: celebrate)
+                    .scaleEffect(celebrate ? 1 : 0.6)
+                    .animation(.spring(response: 0.6, dampingFraction: 0.5), value: celebrate)
 
                 Text(milestone.name)
-                    .font(AppFonts.headlineFont(24))
+                    .font(AppFonts.headlineFont(22))
                     .foregroundColor(AppColors.cream)
             }
 
@@ -424,13 +425,12 @@ struct StreakCelebrationChip: View {
     var body: some View {
         HStack(spacing: 14) {
             HStack(spacing: 6) {
-                Image(systemName: "flame.fill")
-                    .font(.system(size: 14))
+                AppIcon("ph-flame-fill", size: 14)
                     .foregroundColor(AppColors.goldLight)
 
                 Text(streakDays == 1 ? "DAY 1 STREAK" : "\(streakDays) DAY STREAK")
-                    .font(AppFonts.bodyFont(13))
-                    .tracking(2)
+                    .font(AppFonts.labelFont(11))
+                    .tracking(1.5)
                     .foregroundColor(AppColors.cream)
             }
 
@@ -438,10 +438,15 @@ struct StreakCelebrationChip: View {
                 .fill(AppColors.gold.opacity(0.4))
                 .frame(width: 1, height: 14)
 
-            Text(totalRosaries == 1 ? "1 ROSARY OFFERED" : "\(totalRosaries) ROSARIES OFFERED")
-                .font(AppFonts.bodyFont(13))
-                .tracking(2)
-                .foregroundColor(AppColors.cream)
+            HStack(spacing: 6) {
+                AppIcon("ch-rosary", size: 14)
+                    .foregroundColor(AppColors.goldLight)
+
+                Text(totalRosaries == 1 ? "1 ROSARY OFFERED" : "\(totalRosaries) ROSARIES OFFERED")
+                    .font(AppFonts.labelFont(11))
+                    .tracking(1.5)
+                    .foregroundColor(AppColors.cream)
+            }
         }
         .padding(.horizontal, 18)
         .padding(.vertical, 10)
@@ -466,8 +471,8 @@ struct CompletionBackgroundImage: View {
             // Base gradient with category colors if available
             LinearGradient(
                 colors: gradientColors.isEmpty
-                    ? [Color(hex: "0d0d1a"), Color(hex: "1a1a2e"), Color(hex: "0d0d1a")]
-                    : gradientColors + [Color(hex: "1a1a2e"), Color(hex: "0d0d1a")],
+                    ? [AppColors.backgroundDeep, AppColors.background, AppColors.backgroundDeep]
+                    : gradientColors + [AppColors.background, AppColors.backgroundDeep],
                 startPoint: .top,
                 endPoint: .bottom
             )
@@ -476,8 +481,8 @@ struct CompletionBackgroundImage: View {
             LinearGradient(
                 colors: [
                     Color.clear,
-                    Color(hex: "1a1a2e").opacity(0.6),
-                    Color(hex: "1a1a2e").opacity(0.95)
+                    AppColors.background.opacity(0.6),
+                    AppColors.background.opacity(0.95)
                 ],
                 startPoint: .top,
                 endPoint: .bottom
@@ -495,17 +500,19 @@ struct CompletionHeader: View {
     var body: some View {
         HStack {
             Text("LUMEN VIAE")
-                .font(AppFonts.bodyFont(12))
+                .font(AppFonts.labelFont(11))
                 .tracking(4)
                 .foregroundColor(AppColors.cream.opacity(0.8))
 
             Spacer()
 
             Button(action: onClose) {
-                Image(systemName: "xmark")
-                    .font(.system(size: 16, weight: .medium))
+                AppIcon("ph-x", size: 16)
                     .foregroundColor(AppColors.gold)
+                    .frame(width: 40, height: 40)
+                    .contentShape(Rectangle())
             }
+            .accessibilityLabel("Close")
         }
         .padding(.horizontal, 20)
         .padding(.top, 16)
@@ -545,8 +552,7 @@ struct CompletionBadge: View {
                     .rotationEffect(.degrees(-90))
                     .frame(width: 56, height: 56)
 
-                Image(systemName: "checkmark")
-                    .font(.system(size: 24, weight: .medium))
+                AppIcon("ph-check", size: 24)
                     .foregroundColor(AppColors.gold)
                     .scaleEffect(showCheck ? 1 : 0.3)
                     .opacity(showCheck ? 1 : 0)
@@ -605,10 +611,10 @@ struct CompletionQuoteCard: View {
 
             // Quote text
             Text(quote)
-                .font(AppFonts.italicFont(18))
+                .font(AppFonts.readingItalicFont(18))
                 .foregroundColor(AppColors.cream)
                 .multilineTextAlignment(.center)
-                .lineSpacing(6)
+                .lineSpacing(7)
 
             // Author with decorative lines
             HStack(spacing: 12) {
@@ -617,7 +623,7 @@ struct CompletionQuoteCard: View {
                     .frame(width: 24, height: 1)
 
                 Text(author.uppercased())
-                    .font(AppFonts.bodyFont(12))
+                    .font(AppFonts.labelFont(10))
                     .tracking(2)
                     .foregroundColor(AppColors.gold)
 

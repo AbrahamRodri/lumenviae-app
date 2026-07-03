@@ -49,8 +49,7 @@ struct MysteriesInScriptureView: View {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button(action: { dismiss() }) {
                     HStack(spacing: 6) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 14, weight: .semibold))
+                        AppIcon("ph-caret-left", size: 14)
                         Text("Back")
                             .font(AppFonts.bodyFont(16))
                     }
@@ -64,8 +63,7 @@ struct MysteriesInScriptureView: View {
 
     private var header: some View {
         VStack(spacing: 12) {
-            Image(systemName: "sparkles")
-                .font(.system(size: 36))
+            AppIcon("ph-sparkle", size: 36)
                 .foregroundColor(AppColors.gold)
                 .padding(.top, 24)
 
@@ -175,8 +173,7 @@ struct MysteriesInScriptureView: View {
             // Scripture reference
             if let reference = mystery.scriptureReference {
                 HStack(spacing: 6) {
-                    Image(systemName: "book")
-                        .font(.system(size: 11))
+                    AppIcon("ph-book", size: 11)
                         .foregroundColor(AppColors.gold)
 
                     Text(reference)

@@ -59,8 +59,7 @@ struct TrueDevotionView: View {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button(action: { dismiss() }) {
                     HStack(spacing: 6) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 14, weight: .semibold))
+                        AppIcon("ph-caret-left", size: 14)
                         Text("Back")
                             .font(AppFonts.bodyFont(16))
                     }
@@ -74,8 +73,7 @@ struct TrueDevotionView: View {
 
     private var header: some View {
         VStack(spacing: 12) {
-            Image(systemName: "crown.fill")
-                .font(.system(size: 36))
+            AppIcon("ph-crown-fill", size: 36)
                 .foregroundColor(AppColors.gold)
                 .padding(.top, 24)
 
@@ -137,8 +135,7 @@ struct SectionCard: View {
             // Section Header
             Button(action: toggleExpanded) {
                 HStack(spacing: 12) {
-                    Image(systemName: section.icon)
-                        .font(.system(size: 20))
+                    AppIcon(section.icon, size: 20)
                         .foregroundColor(AppColors.gold)
                         .frame(width: 28)
 
@@ -149,8 +146,7 @@ struct SectionCard: View {
 
                     Spacer()
 
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 14, weight: .semibold))
+                    AppIcon("ph-caret-right", size: 14)
                         .foregroundColor(AppColors.gold.opacity(0.6))
                         .rotationEffect(.degrees(isExpanded ? 90 : 0))
                 }

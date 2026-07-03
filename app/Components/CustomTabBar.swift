@@ -35,16 +35,19 @@ enum AppTab: CaseIterable {
         }
     }
 
-    /// SF Symbol name for the tab icon
+    /// Asset icon shown when the tab is at rest (Phosphor light weight)
     var icon: String {
         switch self {
-        case .home:         return "house.fill"
-        case .consecration: return "flame.fill"
-        case .journal:      return "book.fill"
-        case .progress:     return "chart.line.uptrend.xyaxis"
-        case .account:      return "person.fill"
+        case .home:         return "ph-house"
+        case .consecration: return "ph-crown"
+        case .journal:      return "ph-book-open"
+        case .progress:     return "ph-flame"
+        case .account:      return "ph-user"
         }
     }
+
+    /// Asset icon shown when the tab is selected (Phosphor fill weight)
+    var selectedIcon: String { icon + "-fill" }
 }
 
 // MARK: - CustomTabBar
@@ -73,8 +76,7 @@ struct CustomTabBar: View {
             HStack(spacing: 0) {
                 ForEach(visibleTabs, id: \.self) { tab in
                     TabBarItem(
-                        icon: tab.icon,
-                        title: tab.title,
+                        tab: tab,
                         isSelected: selectedTab == tab
                     ) {
                         selectedTab = tab
@@ -87,7 +89,7 @@ struct CustomTabBar: View {
                 Color.clear
                     .frame(width: 78, height: 1)
             }
-            .padding(.top, 12)
+            .padding(.top, 10)
         }
         .background(
             AppColors.cardBackground
@@ -99,6 +101,7 @@ struct CustomTabBar: View {
                 .padding(.trailing, 12)
                 .offset(y: -20)
         }
+        .sensoryFeedback(.selection, trigger: selectedTab)
     }
 }
 
@@ -130,7 +133,7 @@ struct PrayNowButton: View {
                 Circle()
                     .fill(
                         RadialGradient(
-                            colors: [Color(hex: "2e2e52"), AppColors.cardBackground],
+                            colors: [AppColors.cardElevated, AppColors.cardBackground],
                             center: UnitPoint(x: 0.35, y: 0.3),
                             startRadius: 2,
                             endRadius: 46
@@ -161,25 +164,19 @@ struct PrayNowButton: View {
                             .frame(width: 14, height: 20)
                     } else {
                         LatinCross()
-                            .fill(
-                                LinearGradient(
-                                    colors: [AppColors.goldLight, AppColors.gold],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                            )
+                            .fill(AppColors.goldGradient)
                             .frame(width: 14, height: 20)
                     }
 
                     Text("PRAY")
-                        .font(AppFonts.bodyFont(9))
+                        .font(AppFonts.labelFont(8.5))
                         .tracking(2)
                         .foregroundColor(AppColors.gold)
                 }
             }
             .shadow(color: Color.black.opacity(0.4), radius: 8, y: 3)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(GoldCTAButtonStyle())
         .disabled(isLoading)
         .accessibilityLabel(isLoading ? "Preparing today's Rosary" : "Pray today's Rosary")
     }
@@ -213,11 +210,11 @@ struct LatinCross: Shape {
 
 // MARK: - TabBarItem
 
-/// A single tab button, highlighted in gold when selected.
+/// A single tab button. The icon crossfades from light to fill weight
+/// when selected, and a small gold bead settles in beneath the label.
 struct TabBarItem: View {
 
-    let icon: String
-    let title: String
+    let tab: AppTab
     let isSelected: Bool
     let action: () -> Void
 
@@ -227,18 +224,33 @@ struct TabBarItem: View {
 
     var body: some View {
         Button(action: action) {
-            VStack(spacing: 6) {
-                Image(systemName: icon)
-                    .font(.system(size: 20))
+            VStack(spacing: 5) {
+                ZStack {
+                    AppIcon(tab.icon, size: 21)
+                        .opacity(isSelected ? 0 : 1)
+                    AppIcon(tab.selectedIcon, size: 21)
+                        .opacity(isSelected ? 1 : 0)
+                        .scaleEffect(isSelected ? 1 : 0.85)
+                }
+                .foregroundColor(foregroundColor)
+
+                Text(tab.title)
+                    .font(AppFonts.labelFont(9))
+                    .tracking(1.5)
                     .foregroundColor(foregroundColor)
 
-                Text(title)
-                    .font(AppFonts.bodyFont(10))
-                    .tracking(1)
-                    .foregroundColor(foregroundColor)
+                Circle()
+                    .fill(AppColors.gold)
+                    .frame(width: 3.5, height: 3.5)
+                    .opacity(isSelected ? 1 : 0)
+                    .scaleEffect(isSelected ? 1 : 0.3)
             }
             .frame(maxWidth: .infinity)
+            .animation(.easeOut(duration: 0.25), value: isSelected)
         }
+        .buttonStyle(.plain)
+        .accessibilityLabel(tab.title)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }
 

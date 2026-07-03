@@ -50,9 +50,11 @@ struct HomeView: View {
                     VStack(spacing: 0) {
                         DayPrayerLabel(label: viewModel.dayLabel)
                             .padding(.top, 16)
+                            .devotionalEntrance()
 
                     featuredMysterySection
                         .padding(.top, 16)
+                        .devotionalEntrance(delay: 0.08)
 
                     SacredMysteriesSection(
                         categories: viewModel.allCategories,
@@ -64,6 +66,7 @@ struct HomeView: View {
                         }
                     )
                     .padding(.top, 32)
+                    .devotionalEntrance(delay: 0.16)
 
                     QuoteSection(
                         quote: viewModel.currentQuote.text,
@@ -72,6 +75,7 @@ struct HomeView: View {
                     .padding(.horizontal, 20)
                     .padding(.top, 32)
                     .padding(.bottom, 100) // Extra space for tab bar
+                    .devotionalEntrance(delay: 0.24)
                     }
                 }
             }
@@ -137,7 +141,7 @@ struct DayPrayerLabel: View {
 
             // Day label text
             Text(label)
-                .font(AppFonts.bodyFont(12))
+                .font(AppFonts.labelFont(11))
                 .tracking(3)  // Letter spacing for elegance
                 .foregroundColor(AppColors.gold)
                 .fixedSize()  // Prevent text from being compressed
@@ -191,20 +195,27 @@ struct FeaturedMysteryCard: View {
 
     // MARK: - Body
 
+    /// The cathedral-window arch that frames the mystery image
+    private var arch: GothicArchShape { GothicArchShape(riseRatio: 0.34) }
+
     var body: some View {
-        // Rectangle drives size; image goes in .overlay so it never expands layout bounds
-        Rectangle()
-            .fill(Color(hex: "0f1a26"))
-            .frame(height: 380)
+        // Arch shape drives size; image goes in .overlay so it never
+        // expands layout bounds, then everything clips to the arch.
+        arch
+            .fill(AppColors.cardBackground)
+            .frame(height: 410)
             .overlay(
                 CachedAssetImage(category.cardImageName)
                     .aspectRatio(contentMode: .fill)
                     .overlay(Color.black.opacity(0.25))
             )
-            .clipShape(Rectangle())
+            .clipShape(arch)
             .overlay(
-                Rectangle()
-                    .strokeBorder(AppColors.gold.opacity(0.4), lineWidth: 1)
+                arch.strokeBorder(AppColors.gold.opacity(0.5), lineWidth: 1)
+            )
+            .overlay(
+                arch.inset(by: 5)
+                    .strokeBorder(AppColors.gold.opacity(0.2), lineWidth: 0.5)
             )
             .overlay(alignment: .bottom) {
                 VStack(spacing: 16) {
@@ -227,6 +238,13 @@ struct FeaturedMysteryCard: View {
                     )
                 )
             }
+            .breathingGlow(
+                AppColors.gold,
+                radius: 18,
+                dimOpacity: 0.10,
+                brightOpacity: 0.22,
+                period: 3.8
+            )
     }
 
     // MARK: - Subviews
@@ -234,8 +252,8 @@ struct FeaturedMysteryCard: View {
     /// "JOYFUL MYSTERIES" badge - always available (uses category)
     private var categoryBadge: some View {
         Text("\(category.displayName.uppercased()) MYSTERIES")
-            .font(AppFonts.bodyFont(10))
-            .tracking(2)
+            .font(AppFonts.labelFont(9))
+            .tracking(2.5)
             .foregroundColor(AppColors.goldLight)
             .padding(.horizontal, 16)
             .padding(.vertical, 8)
@@ -252,9 +270,10 @@ struct FeaturedMysteryCard: View {
     /// Mystery name
     private var mysteryTitle: some View {
         Text(mystery.name)
-            .font(AppFonts.headlineFont(28))
+            .font(AppFonts.headlineFont(24))
             .foregroundColor(AppColors.cream)
             .multilineTextAlignment(.center)
+            .minimumScaleFactor(0.85)
     }
 
     /// Scripture reference
@@ -263,7 +282,7 @@ struct FeaturedMysteryCard: View {
         if let reference = mystery.scriptureReference {
             Text(reference)
                 .font(AppFonts.italicFont(16))
-                .foregroundColor(AppColors.cream.opacity(0.9))
+                .foregroundColor(AppColors.accentSoft)
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
                 .padding(.horizontal, 8)
@@ -274,22 +293,24 @@ struct FeaturedMysteryCard: View {
     private var beginPrayerButton: some View {
         Button(action: onBeginPrayer) {
             HStack(spacing: 10) {
-                Image(systemName: "play.fill")
-                    .font(.system(size: 12))
+                LatinCross()
+                    .fill(AppColors.background)
+                    .frame(width: 10, height: 14)
                 Text("BEGIN PRAYER")
-                    .font(AppFonts.bodyFont(14))
-                    .tracking(2)
+                    .font(AppFonts.labelFont(13))
+                    .tracking(2.5)
             }
             .foregroundColor(AppColors.background)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 16)
-            .background(AppColors.goldLight)
-            .cornerRadius(30)
+            .background(Capsule().fill(AppColors.goldGradient))
             .overlay(
                 Capsule()
-                    .strokeBorder(AppColors.gold.opacity(0.6), lineWidth: 0.5)
+                    .strokeBorder(AppColors.goldLight.opacity(0.6), lineWidth: 0.5)
             )
+            .haloGlow(AppColors.gold, radius: 9, intensity: 0.3)
         }
+        .buttonStyle(GoldCTAButtonStyle())
         .padding(.horizontal, 20)
         .padding(.top, 8)
     }
@@ -328,18 +349,21 @@ struct SacredMysteriesSection: View {
     private var sectionHeader: some View {
         HStack {
             Text("Sacred Mysteries")
-                .font(AppFonts.headlineFont(22))
+                .font(AppFonts.headlineFont(19))
                 .foregroundColor(AppColors.goldLight)
 
             Spacer()
 
             Button(action: { onViewAll?() }) {
-                Text("VIEW ALL")
-                    .font(AppFonts.bodyFont(12))
-                    .tracking(1)
-                    .foregroundColor(AppColors.gold)
-                    .padding(.vertical, 8)
-                    .padding(.leading, 16)
+                HStack(spacing: 5) {
+                    Text("VIEW ALL")
+                        .font(AppFonts.labelFont(10))
+                        .tracking(1.5)
+                    AppIcon("ph-caret-right", size: 9)
+                }
+                .foregroundColor(AppColors.gold)
+                .padding(.vertical, 8)
+                .padding(.leading, 16)
             }
         }
         .padding(.horizontal, 20)
@@ -365,7 +389,7 @@ struct SacredMysteriesSection: View {
                         cardImageName: category.cardImageName
                     )
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(SacredCardButtonStyle())
             }
         }
         .padding(.horizontal, 20)

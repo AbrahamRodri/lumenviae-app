@@ -21,26 +21,25 @@ struct QuoteSection: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            // Decorative stars icon
-            Image(systemName: "sparkles")
-                .font(.system(size: 24))
-                .foregroundColor(AppColors.gold)
+            // Ornamental rule in place of a plain icon
+            OrnamentDivider()
+                .frame(maxWidth: 210)
 
             // Quote text
             Text(quote)
-                .font(AppFonts.italicFont(18))
-                .foregroundColor(AppColors.cream.opacity(0.9))
+                .font(AppFonts.readingItalicFont(18))
+                .foregroundColor(AppColors.cream.opacity(0.92))
                 .multilineTextAlignment(.center)
-                .lineSpacing(6)
+                .lineSpacing(7)
 
             // Attribution
             Text("— \(author)")
-                .font(AppFonts.bodyFont(11))
-                .tracking(2)
+                .font(AppFonts.labelFont(10))
+                .tracking(2.5)
                 .foregroundColor(AppColors.gold)
                 .padding(.top, 8)
         }
-        .padding(.vertical, 40)
+        .padding(.vertical, 36)
         .padding(.horizontal, 28)
         .frame(maxWidth: .infinity)
         .background(AppColors.quoteBackground)
@@ -51,19 +50,19 @@ struct QuoteSection: View {
                 .strokeBorder(AppColors.gold.opacity(0.4), lineWidth: 1)
         )
         .overlay(alignment: .topLeading) {
-            // Thick corner accent - top left
+            // Fine corner accent - top left
             CornerAccent()
-                .stroke(AppColors.gold.opacity(0.8), lineWidth: 3)
-                .frame(width: 24, height: 24)
-                .padding(6)
+                .stroke(AppColors.gold.opacity(0.7), lineWidth: 1.5)
+                .frame(width: 20, height: 20)
+                .padding(8)
         }
         .overlay(alignment: .bottomTrailing) {
-            // Thick corner accent - bottom right (rotated)
+            // Fine corner accent - bottom right (rotated)
             CornerAccent()
-                .stroke(AppColors.gold.opacity(0.8), lineWidth: 3)
-                .frame(width: 24, height: 24)
+                .stroke(AppColors.gold.opacity(0.7), lineWidth: 1.5)
+                .frame(width: 20, height: 20)
                 .rotationEffect(.degrees(180))
-                .padding(6)
+                .padding(8)
         }
     }
 }

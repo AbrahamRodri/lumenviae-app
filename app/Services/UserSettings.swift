@@ -59,25 +59,25 @@ struct ReminderSound: Identifiable, Equatable {
             fileName: "church_bell.caf",
             displayName: "Church Bells",
             detail: "A full peal of church bells",
-            icon: "bell.fill"
+            icon: "ph-bell-fill"
         ),
         ReminderSound(
             fileName: "altar_bell.caf",
             displayName: "Altar Bell",
             detail: "A single strike of a small bronze bell",
-            icon: "bell"
+            icon: "ph-bell"
         ),
         ReminderSound(
             fileName: "harp.caf",
             displayName: "Harp of David",
             detail: "A gentle harp glissando",
-            icon: "music.note"
+            icon: "ph-music-note"
         ),
         ReminderSound(
             fileName: "songbird.caf",
             displayName: "Songbird",
             detail: "A hermit thrush at dawn in Yosemite",
-            icon: "bird"
+            icon: "ph-bird"
         )
     ]
 

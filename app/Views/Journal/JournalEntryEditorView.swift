@@ -204,8 +204,7 @@ struct JournalEntryEditorView: View {
     @ViewBuilder
     private var subjectRow: some View {
         HStack(spacing: 10) {
-            Image(systemName: categoryIcon)
-                .font(.system(size: 13))
+            AppIcon(categoryIcon, size: 13)
                 .foregroundColor(AppColors.gold.opacity(0.8))
 
             if isSubjectLocked {

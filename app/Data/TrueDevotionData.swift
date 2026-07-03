@@ -38,7 +38,7 @@ enum TrueDevotionData {
 
     static let keyPrinciples = DevotionSection(
         title: "Key Principles of True Devotion",
-        icon: "book.closed.fill",
+        icon: "ch-bible",
         items: [
             DevotionItem(
                 title: "Perfect Consecration",
@@ -122,7 +122,7 @@ The exterior practice includes:
 
     static let marksOfTrueDevotion = DevotionSection(
         title: "Marks of True Devotion to Mary",
-        icon: "checkmark.seal.fill",
+        icon: "ph-seal-check-fill",
         items: [
             DevotionItem(
                 title: "Interior",
@@ -181,7 +181,7 @@ The true subject of Mary does not serve her for temporal or eternal reward, but 
 
     static let benefits = DevotionSection(
         title: "Benefits of This Devotion",
-        icon: "gift.fill",
+        icon: "ph-gift",
         items: [
             DevotionItem(
                 title: "Freedom from Scruples and Servile Fear",
@@ -242,7 +242,7 @@ All our actions, being done through Mary:
 
     static let spirit = DevotionSection(
         title: "The Spirit of This Devotion",
-        icon: "heart.fill",
+        icon: "ch-sacred-heart",
         items: [
             DevotionItem(
                 title: "Spirit of Humility",

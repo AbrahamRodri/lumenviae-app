@@ -97,8 +97,7 @@ struct ConsecrationJournalView: View {
             Button {
                 path.removeLast()
             } label: {
-                Image(systemName: "chevron.left")
-                    .font(.system(size: 16, weight: .medium))
+                AppIcon("ph-caret-left", size: 16)
                     .foregroundColor(AppColors.cream.opacity(0.7))
                     .frame(width: 36, height: 36)
                     .background(
@@ -117,8 +116,7 @@ struct ConsecrationJournalView: View {
                     .foregroundColor(AppColors.textSecondary)
 
                 HStack(spacing: 6) {
-                    Image(systemName: "pencil.line")
-                        .font(.system(size: 10))
+                    AppIcon("ph-note-pencil", size: 10)
                     Text("REFLECTION")
                         .font(AppFonts.bodyFont(10))
                         .tracking(1)
@@ -209,7 +207,7 @@ struct ConsecrationJournalView: View {
             }
         } label: {
             HStack {
-                Image(systemName: isConsecrationDay ? "sparkles" : "checkmark.circle.fill")
+                AppIcon(isConsecrationDay ? "ph-sparkle" : "ph-check-circle-fill", size: 15)
 
                 Text(isConsecrationDay ? "Complete Consecration" : "Complete Day")
                     .font(AppFonts.headlineFont(16))

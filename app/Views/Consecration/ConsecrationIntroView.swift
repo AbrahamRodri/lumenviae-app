@@ -107,8 +107,7 @@ struct ConsecrationIntroView: View {
     private var heroSection: some View {
         VStack(spacing: 16) {
             // Icon
-            Image(systemName: "flame.fill")
-                .font(.system(size: 56))
+            AppIcon("ph-flame-fill", size: 56)
                 .foregroundStyle(
                     LinearGradient(
                         colors: [AppColors.gold, AppColors.goldLight],
@@ -214,7 +213,7 @@ struct ConsecrationIntroView: View {
                 }
             } label: {
                 HStack {
-                    Image(systemName: "calendar.badge.clock")
+                    AppIcon("ph-calendar-dots", size: 18)
                         .foregroundColor(AppColors.gold)
 
                     VStack(alignment: .leading, spacing: 2) {
@@ -231,7 +230,7 @@ struct ConsecrationIntroView: View {
 
                     Spacer()
 
-                    Image(systemName: "chevron.down")
+                    AppIcon("ph-caret-down", size: 14)
                         .foregroundColor(AppColors.textSecondary)
                         .rotationEffect(.degrees(showFeastPicker ? 180 : 0))
                 }
@@ -334,7 +333,7 @@ struct ConsecrationIntroView: View {
                 }
 
                 if selectedFeast?.id == feast.id {
-                    Image(systemName: "checkmark")
+                    AppIcon("ph-check", size: 14)
                         .foregroundColor(AppColors.gold)
                 }
             }
@@ -366,7 +365,7 @@ struct ConsecrationIntroView: View {
 
                     Spacer()
 
-                    Image(systemName: "arrow.right")
+                    AppIcon("ph-arrow-right", size: 15)
                         .foregroundColor(AppColors.gold)
 
                     Spacer()
@@ -388,7 +387,7 @@ struct ConsecrationIntroView: View {
 
                 if feast.canStartToday() {
                     HStack(spacing: 6) {
-                        Image(systemName: "checkmark.circle.fill")
+                        AppIcon("ph-check-circle-fill", size: 13)
                             .foregroundColor(.green)
                         Text("Today is the start date for this feast!")
                             .font(AppFonts.bodyFont(12))
@@ -396,7 +395,7 @@ struct ConsecrationIntroView: View {
                     }
                 } else if let day = catchUpDay(for: feast) {
                     HStack(spacing: 6) {
-                        Image(systemName: "clock.arrow.circlepath")
+                        AppIcon("ph-clock-counter-clockwise", size: 13)
                             .foregroundColor(AppColors.gold)
                         Text("Preparation is underway — begin today at Day \(day)")
                             .font(AppFonts.bodyFont(12))
@@ -423,7 +422,7 @@ struct ConsecrationIntroView: View {
                 Text("Begin Consecration")
                     .font(AppFonts.headlineFont(16))
 
-                Image(systemName: "arrow.right")
+                AppIcon("ph-arrow-right", size: 15)
             }
             .foregroundColor(AppColors.background)
             .frame(maxWidth: .infinity)
@@ -452,7 +451,7 @@ struct ConsecrationIntroView: View {
                     Text("Begin Today at Day \(day)")
                         .font(AppFonts.headlineFont(16))
 
-                    Image(systemName: "arrow.right")
+                    AppIcon("ph-arrow-right", size: 15)
                 }
                 .foregroundColor(AppColors.background)
                 .frame(maxWidth: .infinity)
@@ -501,7 +500,7 @@ struct ConsecrationIntroView: View {
                 }
             } label: {
                 HStack {
-                    Image(systemName: "calendar.day.timeline.left")
+                    AppIcon("ph-calendar-dots", size: 16)
                         .foregroundColor(AppColors.gold)
 
                     Text("Start at Any Day")
@@ -510,7 +509,7 @@ struct ConsecrationIntroView: View {
 
                     Spacer()
 
-                    Image(systemName: "chevron.down")
+                    AppIcon("ph-caret-down", size: 14)
                         .foregroundColor(AppColors.textSecondary)
                         .rotationEffect(.degrees(showCustomStart ? 180 : 0))
                 }
@@ -566,7 +565,7 @@ struct ConsecrationIntroView: View {
                     Text("Begin Today at Day \(customStartDay)")
                         .font(AppFonts.headlineFont(16))
 
-                    Image(systemName: "arrow.right")
+                    AppIcon("ph-arrow-right", size: 15)
                 }
                 .foregroundColor(AppColors.background)
                 .frame(maxWidth: .infinity)

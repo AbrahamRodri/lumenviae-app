@@ -38,8 +38,7 @@ struct RosaryMethodsView: View {
                     Button {
                         dismiss()
                     } label: {
-                        Image(systemName: "xmark")
-                            .font(.system(size: 14, weight: .semibold))
+                        AppIcon("ph-x", size: 14)
                             .foregroundColor(AppColors.textSecondary)
                             .padding(10)
                             .background(AppColors.cardBackground)
@@ -69,28 +68,28 @@ struct RosaryMethodsView: View {
                         // Method cards
                         VStack(spacing: 16) {
                             MethodDetailCard(
-                                icon: "rosette",
+                                icon: "ch-rosary",
                                 tag: "DEFAULT",
                                 title: "Standard Meditations",
                                 description: "The classic approach to the Rosary. Each mystery is accompanied by a traditional meditation on its scriptural scene, its deeper meaning, and the virtue or fruit it invites you to cultivate in your daily life.\n\nThis is the recommended starting point for most people."
                             )
 
                             MethodDetailCard(
-                                icon: "person.fill",
+                                icon: "ph-user",
                                 tag: "SAINTS",
                                 title: "Saint Meditations",
                                 description: "Meditations composed by or attributed to specific saints — such as St. Louis de Montfort, St. Alphonsus Liguori, or St. John Paul II. Each saint offers a unique spiritual lens shaped by their own devotion, charism, and theological insight.\n\nIdeal for those exploring different traditions of Marian spirituality."
                             )
 
                             MethodDetailCard(
-                                icon: "heart.text.square",
+                                icon: "ch-sacred-heart",
                                 tag: "INTENTIONAL",
                                 title: "Intentional Meditations",
                                 description: "Pray through a set of mysteries from a specific life perspective or vocation — as a father or mother, in times of suffering, for discernment, or in gratitude. The same mysteries speak in different ways depending on where you are in life.\n\nThese meditations are especially useful when you are bringing a particular intention to prayer."
                             )
 
                             MethodDetailCard(
-                                icon: "text.book.closed",
+                                icon: "ch-bible",
                                 tag: "COMING SOON",
                                 title: "Scriptural Rosary",
                                 description: "A more contemplative form in which a different scripture verse is offered for each individual bead — not just each mystery. This slows the prayer significantly, anchoring every Hail Mary in a specific passage of the Gospel.\n\nThis method will be available in a future update.",
@@ -123,8 +122,7 @@ private struct MethodDetailCard: View {
                     RoundedRectangle(cornerRadius: 10)
                         .fill(isComingSoon ? AppColors.textSecondary.opacity(0.08) : AppColors.gold.opacity(0.12))
                         .frame(width: 44, height: 44)
-                    Image(systemName: icon)
-                        .font(.system(size: 19, weight: .regular))
+                    AppIcon(icon, size: 19)
                         .foregroundColor(isComingSoon ? AppColors.textSecondary : AppColors.gold)
                 }
 

@@ -53,8 +53,7 @@ struct HowToPrayRosaryView: View {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button(action: { dismiss() }) {
                     HStack(spacing: 6) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 14, weight: .semibold))
+                        AppIcon("ph-caret-left", size: 14)
                         Text("Back")
                             .font(AppFonts.bodyFont(16))
                     }
@@ -68,8 +67,7 @@ struct HowToPrayRosaryView: View {
 
     private var header: some View {
         VStack(spacing: 12) {
-            Image(systemName: "book.closed")
-                .font(.system(size: 36))
+            AppIcon("ph-book", size: 36)
                 .foregroundColor(AppColors.gold)
                 .padding(.top, 24)
 
@@ -423,8 +421,7 @@ Per eundem Christum Dominum nostrum. Amen.
 
                     Spacer()
 
-                    Image(systemName: "chevron.down")
-                        .font(.system(size: 13, weight: .medium))
+                    AppIcon("ph-caret-down", size: 13)
                         .foregroundColor(AppColors.gold)
                         .rotationEffect(.degrees(isExpanded ? 180 : 0))
                 }

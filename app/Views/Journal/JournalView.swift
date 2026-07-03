@@ -123,8 +123,7 @@ struct JournalView: View {
                 HStack(spacing: 18) {
                     // Search toggle
                     Button(action: { withAnimation { showingSearch.toggle() } }) {
-                        Image(systemName: "magnifyingglass")
-                            .font(.system(size: 18))
+                        AppIcon("ph-magnifying-glass", size: 18)
                             .foregroundColor(AppColors.gold)
                     }
 
@@ -134,8 +133,7 @@ struct JournalView: View {
                             Circle()
                                 .fill(AppColors.gold)
                                 .frame(width: 40, height: 40)
-                            Image(systemName: "pencil")
-                                .font(.system(size: 16, weight: .medium))
+                            AppIcon("ph-pencil-simple", size: 16)
                                 .foregroundColor(AppColors.background)
                         }
                     }
@@ -148,9 +146,8 @@ struct JournalView: View {
             // Search bar
             if showingSearch {
                 HStack(spacing: 8) {
-                    Image(systemName: "magnifyingglass")
+                    AppIcon("ph-magnifying-glass", size: 14)
                         .foregroundColor(AppColors.textSecondary)
-                        .font(.system(size: 14))
 
                     TextField("Search reflections…", text: $searchText)
                         .font(AppFonts.bodyFont(15))
@@ -159,7 +156,7 @@ struct JournalView: View {
 
                     if !searchText.isEmpty {
                         Button(action: { searchText = "" }) {
-                            Image(systemName: "xmark.circle.fill")
+                            AppIcon("ph-x-circle", size: 16)
                                 .foregroundColor(AppColors.textSecondary)
                         }
                     }
@@ -243,8 +240,7 @@ struct JournalView: View {
         VStack(spacing: 20) {
             Spacer()
 
-            Image(systemName: "book.closed")
-                .font(.system(size: 52))
+            AppIcon("ph-book", size: 52)
                 .foregroundColor(AppColors.gold.opacity(0.3))
 
             VStack(spacing: 8) {
@@ -261,7 +257,7 @@ struct JournalView: View {
 
             Button(action: { showingNewEntry = true }) {
                 HStack(spacing: 8) {
-                    Image(systemName: "pencil.line")
+                    AppIcon("ph-note-pencil", size: 16)
                     Text("Write First Entry")
                         .tracking(1)
                 }
@@ -308,8 +304,7 @@ struct JournalEntryCard: View {
         VStack(alignment: .leading, spacing: 12) {
             // Entry metadata row
             HStack(spacing: 8) {
-                Image(systemName: entry.categoryIcon)
-                    .font(.system(size: 12))
+                AppIcon(entry.categoryIcon, size: 12)
                     .foregroundColor(AppColors.gold)
 
                 Text(dateLabel)
@@ -342,7 +337,7 @@ struct JournalEntryCard: View {
             }
 
             // Drop-cap styled text preview
-            DropCapText(text: entry.text)
+            JournalDropCapText(text: entry.text)
         }
         .padding(16)
         .background(
@@ -358,7 +353,7 @@ struct JournalEntryCard: View {
 
 // MARK: - Drop Cap Text
 
-struct DropCapText: View {
+struct JournalDropCapText: View {
     let text: String
 
     private var firstLetter: String {
@@ -420,8 +415,7 @@ struct JournalDetailView: View {
                 // Header
                 HStack {
                     Button(action: { dismiss() }) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 16, weight: .medium))
+                        AppIcon("ph-caret-left", size: 16)
                             .foregroundColor(AppColors.gold)
                     }
 
@@ -429,14 +423,12 @@ struct JournalDetailView: View {
 
                     HStack(spacing: 20) {
                         Button(action: { showingEditor = true }) {
-                            Image(systemName: "pencil")
-                                .font(.system(size: 16))
+                            AppIcon("ph-pencil-simple", size: 16)
                                 .foregroundColor(AppColors.gold)
                         }
 
                         Button(action: { showingDeleteConfirm = true }) {
-                            Image(systemName: "trash")
-                                .font(.system(size: 16))
+                            AppIcon("ph-trash", size: 16)
                                 .foregroundColor(AppColors.textSecondary)
                         }
                     }
@@ -454,8 +446,7 @@ struct JournalDetailView: View {
                         // Mystery / subject info
                         VStack(alignment: .leading, spacing: 6) {
                             HStack(spacing: 8) {
-                                Image(systemName: entry.categoryIcon)
-                                    .font(.system(size: 13))
+                                AppIcon(entry.categoryIcon, size: 13)
                                     .foregroundColor(AppColors.gold)
 
                                 Text(entry.subjectLabel)
@@ -480,7 +471,7 @@ struct JournalDetailView: View {
                             .frame(height: 1)
 
                         // Full text with drop cap
-                        DropCapText(text: entry.text)
+                        JournalDropCapText(text: entry.text)
                             .frame(maxWidth: .infinity, alignment: .leading)
 
                         Spacer(minLength: 80)

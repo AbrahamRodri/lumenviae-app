@@ -49,8 +49,7 @@ struct MarianLibraryView: View {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button(action: { dismiss() }) {
                     HStack(spacing: 6) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 14, weight: .semibold))
+                        AppIcon("ph-caret-left", size: 14)
                         Text("Back")
                             .font(AppFonts.bodyFont(16))
                     }
@@ -64,8 +63,7 @@ struct MarianLibraryView: View {
 
     private var header: some View {
         VStack(spacing: 12) {
-            Image(systemName: "heart.fill")
-                .font(.system(size: 36))
+            AppIcon("ph-heart-fill", size: 36)
                 .foregroundColor(AppColors.gold)
                 .padding(.top, 24)
 
@@ -117,7 +115,7 @@ struct MarianLibraryView: View {
     static let sections: [LibrarySection] = [
         LibrarySection(
             id: "dogmas",
-            icon: "crown.fill",
+            icon: "ph-crown-fill",
             title: "The Four Marian Dogmas",
             subtitle: "What the Church solemnly teaches",
             entries: [
@@ -145,7 +143,7 @@ struct MarianLibraryView: View {
         ),
         LibrarySection(
             id: "scripture",
-            icon: "book.fill",
+            icon: "ch-bible",
             title: "Mary in Scripture",
             subtitle: "From Genesis to the Apocalypse",
             entries: [
@@ -178,7 +176,7 @@ struct MarianLibraryView: View {
         ),
         LibrarySection(
             id: "apparitions",
-            icon: "sun.max.fill",
+            icon: "ph-sun",
             title: "Approved Apparitions",
             subtitle: "When Heaven visited earth",
             entries: [
@@ -216,7 +214,7 @@ struct MarianLibraryView: View {
         ),
         LibrarySection(
             id: "saints",
-            icon: "person.3.fill",
+            icon: "ph-users-three",
             title: "The Marian Saints",
             subtitle: "In their own words",
             entries: [
@@ -259,7 +257,7 @@ struct MarianLibraryView: View {
         ),
         LibrarySection(
             id: "titles",
-            icon: "star.fill",
+            icon: "ph-star-fill",
             title: "Titles of Our Lady",
             subtitle: "From the Litany of Loreto",
             entries: [
@@ -308,8 +306,7 @@ struct MarianLibraryView: View {
                 }
             } label: {
                 HStack(spacing: 14) {
-                    Image(systemName: section.icon)
-                        .font(.system(size: 18))
+                    AppIcon(section.icon, size: 18)
                         .foregroundColor(AppColors.gold)
                         .frame(width: 26)
 
@@ -325,8 +322,7 @@ struct MarianLibraryView: View {
 
                     Spacer()
 
-                    Image(systemName: "chevron.down")
-                        .font(.system(size: 13, weight: .medium))
+                    AppIcon("ph-caret-down", size: 13)
                         .foregroundColor(AppColors.gold)
                         .rotationEffect(.degrees(isExpanded ? 180 : 0))
                 }

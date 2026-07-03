@@ -38,11 +38,10 @@ struct MysteryCard: View {
             .overlay(alignment: .topTrailing) {
                 ZStack {
                     Circle()
-                        .fill(AppColors.background.opacity(0.2))
+                        .fill(AppColors.background.opacity(0.25))
                         .overlay(Circle().strokeBorder(AppColors.gold.opacity(0.8), lineWidth: 0.5))
                         .frame(width: 28, height: 28)
-                    Image(systemName: "arrow.right")
-                        .font(.system(size: 12))
+                    AppIcon("ph-arrow-right", size: 12)
                         .foregroundColor(AppColors.gold)
                 }
                 .padding(12)
@@ -50,17 +49,19 @@ struct MysteryCard: View {
             .overlay(alignment: .bottomLeading) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
-                        .font(AppFonts.headlineFont(20))
+                        .font(AppFonts.headlineFont(16))
                         .foregroundColor(AppColors.cream)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.85)
                     Text(subtitle)
-                        .font(AppFonts.bodyFont(12))
-                        .foregroundColor(AppColors.textSecondary)
+                        .font(AppFonts.italicFont(12))
+                        .foregroundColor(AppColors.cream.opacity(0.75))
                 }
-                .padding(16)
+                .padding(14)
             }
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(AppColors.gold.opacity(0.8), lineWidth: 0.5)
+                    .strokeBorder(AppColors.gold.opacity(0.55), lineWidth: 0.5)
             )
     }
 }

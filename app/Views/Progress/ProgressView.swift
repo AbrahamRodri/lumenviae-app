@@ -108,8 +108,7 @@ struct PrayerProgressView: View {
     private var monthNavigationSection: some View {
         HStack {
             Button(action: previousMonth) {
-                Image(systemName: "chevron.left")
-                    .font(.system(size: 16, weight: .medium))
+                AppIcon("ph-caret-left", size: 16)
                     .foregroundColor(AppColors.gold)
             }
 
@@ -128,8 +127,7 @@ struct PrayerProgressView: View {
             Spacer()
 
             Button(action: nextMonth) {
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 16, weight: .medium))
+                AppIcon("ph-caret-right", size: 16)
                     .foregroundColor(AppColors.gold)
             }
         }
