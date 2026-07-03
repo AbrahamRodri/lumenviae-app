@@ -38,6 +38,7 @@ struct ContentView: View {
                 Spacer()
                 CustomTabBar(
                     selectedTab: Bindable(router).selectedTab,
+                    isLoadingPrayer: isStartingPrayer,
                     onPrayNow: startTodaysPrayer
                 )
                     .ignoresSafeArea(.all, edges: .bottom)
@@ -57,9 +58,9 @@ struct ContentView: View {
     // MARK: - Quick Prayer
 
     /// Starts today's Rosary directly from the Pray button: resolves the
-    /// weekday's mystery category, loads its first meditation set (falling
-    /// back to the built-in traditional set), and goes straight to prayer —
-    /// no selection screens.
+    /// weekday's mystery category and picks a random meditation set from
+    /// the prefetched cache (falling back to the built-in traditional set),
+    /// then goes straight to prayer — no selection screens.
     private func startTodaysPrayer() {
         guard !isStartingPrayer, router.path.isEmpty else { return }
         isStartingPrayer = true
@@ -69,17 +70,13 @@ struct ContentView: View {
         Task {
             defer { isStartingPrayer = false }
 
-            let meditationSet: MeditationSet
-            do {
-                let summaries = try await APIService.shared.fetchMeditationSets(category: category)
-                if let first = summaries.first {
-                    meditationSet = try await APIService.shared.fetchMeditationSet(id: first.id)
-                } else {
-                    meditationSet = MockDataService.meditationSet(for: category)
-                }
-            } catch {
-                meditationSet = MockDataService.meditationSet(for: category)
-            }
+            let meditationSet = await MeditationCacheService.shared.randomSet(for: category)
+
+            // The load may have taken a while (cold API) — only navigate if
+            // the user hasn't already pushed a different screen. Appending
+            // to the path mid-transition is what caused intermittent
+            // crashes when rapidly entering and exiting prayer.
+            guard router.path.isEmpty else { return }
 
             router.navigateToPrayerSession(meditationSet: meditationSet)
         }
