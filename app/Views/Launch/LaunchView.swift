@@ -84,6 +84,12 @@ struct LaunchView: View {
                 scale = 1
             }
 
+            // Warm the API and prefetch today's meditation sets so the
+            // Pray button starts instantly. Fire-and-forget: a Fly.io cold
+            // start can take many seconds and must not hold the splash
+            // hostage — the Pray button shows a spinner if tapped early.
+            MeditationCacheService.shared.startPrefetch(category: ScheduleService.categoryForToday())
+
             // Preload images while showing splash
             await ImageCacheService.shared.preloadImages()
 
