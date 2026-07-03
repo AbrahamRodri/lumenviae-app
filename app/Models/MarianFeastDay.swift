@@ -2,17 +2,9 @@
 //  MarianFeastDay.swift
 //  Lumen Viae
 //
-//  ═══════════════════════════════════════════════════════════════════════════
-//  MARIAN FEAST DAY - FEAST DAYS FOR CONSECRATION
-//  ═══════════════════════════════════════════════════════════════════════════
+//  The consecration traditionally ends on a Marian feast day. The user
+//  selects a feast (Day 34) and the start date is calculated 33 days prior.
 //
-//  The 33-Day Consecration traditionally ends on a Marian feast day.
-//  This model defines the major feast days and calculates start dates.
-//
-//  The user selects a feast day (Day 34), and the start date (Day 1)
-//  is automatically calculated as 33 days prior.
-//
-//  ═══════════════════════════════════════════════════════════════════════════
 
 import Foundation
 

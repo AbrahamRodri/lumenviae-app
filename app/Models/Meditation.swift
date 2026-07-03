@@ -2,49 +2,18 @@
 //  Meditation.swift
 //  Lumen Viae
 //
-//  ═══════════════════════════════════════════════════════════════════════════
-//  MEDITATION MODEL - CONTENT FOR A SINGLE MYSTERY
-//  ═══════════════════════════════════════════════════════════════════════════
+//  Meditation content for a single mystery, nested in the MeditationSet
+//  API response. Each mystery can have multiple meditation styles
+//  (Traditional, St. Louis de Montfort, Scriptural, etc.).
 //
-//  A Meditation contains the actual text content that users read/listen to
-//  while praying a specific mystery. Each mystery can have multiple
-//  meditation styles (Traditional, St. Louis de Montfort, Scriptural, etc.).
-//
-//  ## Relationship to Other Models
-//  ```
-//  MeditationSet (e.g., "Traditional Meditations for Joyful")
-//      └── meditations: [Meditation]
-//              └── mystery: Mystery (e.g., "The Annunciation")
-//  ```
-//
-//  ## Example API Response (nested in MeditationSet)
-//  ```json
-//  {
-//    "id": 1,
-//    "title": "The Annunciation",
-//    "content": "Consider the humility of Mary...",
-//    "author": "Traditional",
-//    "source": null,
-//    "audio_url": "https://example.com/annunciation.mp3",
-//    "mystery": { ... }
-//  }
-//  ```
-//
-//  ═══════════════════════════════════════════════════════════════════════════
 
 import Foundation
 
-// MARK: - Meditation
-
-/// Individual meditation content for a specific mystery.
-///
-/// Contains the text content users read during prayer, plus optional
-/// audio URL for guided meditation playback.
+/// Meditation text for a specific mystery, with optional guided audio.
 struct Meditation: Codable, Identifiable, Hashable {
 
     // MARK: - Properties
 
-    /// Unique identifier
     let id: Int
 
     /// Optional title (falls back to mystery name if nil)
@@ -65,8 +34,6 @@ struct Meditation: Codable, Identifiable, Hashable {
     /// The mystery this meditation belongs to (includes name, scripture, etc.)
     let mystery: Mystery?
 
-    // MARK: - Coding Keys
-
     enum CodingKeys: String, CodingKey {
         case id, title, content, author, source, mystery
         case audioUrl = "audio_url"
@@ -79,9 +46,7 @@ struct Meditation: Codable, Identifiable, Hashable {
         title ?? mystery?.name ?? "Meditation"
     }
 
-    /// Whether this meditation has an audio version available.
-    ///
-    /// Checks both that audioUrl exists AND is not empty string.
+    /// Whether this meditation has a non-empty audio URL
     var hasAudio: Bool {
         guard let url = audioUrl else { return false }
         return !url.isEmpty

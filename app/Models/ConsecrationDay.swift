@@ -2,30 +2,12 @@
 //  ConsecrationDay.swift
 //  Lumen Viae
 //
-//  ═══════════════════════════════════════════════════════════════════════════
-//  CONSECRATION DAY - REPRESENTS A SINGLE DAY OF THE 33-DAY CONSECRATION
-//  ═══════════════════════════════════════════════════════════════════════════
+//  A single day of the 33-Day Consecration: title/theme, meditation text,
+//  and a journal prompt. Daily prayers come from the phase, not the day.
 //
-//  Each of the 34 days has unique content:
-//  - A title/theme for the day
-//  - Meditation text (spiritual writings that vary daily)
-//  - A journal prompt for reflection
-//
-//  The prayers for each day come from the phase, not stored per-day.
-//
-//  ═══════════════════════════════════════════════════════════════════════════
 
 import Foundation
 
-// MARK: - ConsecrationDay
-
-/// Represents a single day of the 33-Day Consecration journey.
-///
-/// Each day includes:
-/// - Unique meditation content (spiritual writings)
-/// - Journal prompt for reflection
-/// - Phase-based prayers (derived from the phase)
-///
 struct ConsecrationDay: Codable, Identifiable, Hashable {
 
     // MARK: - Properties

@@ -2,15 +2,9 @@
 //  BilingualPrayer.swift
 //  Lumen Viae
 //
-//  ═══════════════════════════════════════════════════════════════════════════
-//  BILINGUAL PRAYER MODEL
-//  ═══════════════════════════════════════════════════════════════════════════
+//  Reusable model for prayers stored with both translations; display format
+//  is generated from the user's language preference.
 //
-//  A reusable model for storing prayers in multiple languages efficiently.
-//  Each prayer is stored once with both translations, and the display format
-//  is generated dynamically based on user language preference.
-//
-//  ═══════════════════════════════════════════════════════════════════════════
 
 import Foundation
 import SwiftUI

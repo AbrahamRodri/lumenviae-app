@@ -2,18 +2,9 @@
 //  JournalEntry.swift
 //  Lumen Viae
 //
-//  ═══════════════════════════════════════════════════════════════════════════
-//  JOURNAL ENTRY - SWIFTDATA MODEL FOR PRAYER REFLECTIONS
-//  ═══════════════════════════════════════════════════════════════════════════
+//  SwiftData model for prayer reflections. Rosary entries are tied to a
+//  mystery category/mystery; consecration entries to a day (1-34) and phase.
 //
-//  Stores personal reflections written during or after prayer sessions.
-//  Supports both Rosary and 33-Day Consecration entries.
-//
-//  Entry Types:
-//  - Rosary: Tied to mystery category and specific mystery
-//  - Consecration: Tied to consecration day (1-34) and phase
-//
-//  ═══════════════════════════════════════════════════════════════════════════
 
 import Foundation
 import SwiftData

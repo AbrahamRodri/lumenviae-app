@@ -2,15 +2,10 @@
 //  ConsecrationIntroView.swift
 //  Lumen Viae
 //
-//  ═══════════════════════════════════════════════════════════════════════════
-//  CONSECRATION INTRO VIEW - START A NEW 33-DAY CONSECRATION
-//  ═══════════════════════════════════════════════════════════════════════════
-//
 //  Shown when the user has no active consecration.
 //  Introduces the 33-Day Total Consecration and allows the user to select
 //  a feast day to consecrate on. The start date is calculated automatically.
 //
-//  ═══════════════════════════════════════════════════════════════════════════
 
 import SwiftUI
 

@@ -2,11 +2,7 @@
 //  ConsecrationData.swift
 //  Lumen Viae
 //
-//  ═══════════════════════════════════════════════════════════════════════════
-//  CONSECRATION DATA - STATIC DATA FOR THE 33-DAY CONSECRATION
-//  ═══════════════════════════════════════════════════════════════════════════
-//
-//  Contains all prayers and day definitions for the 33-Day Total Consecration
+//  All prayers and day definitions for the 33-Day Total Consecration
 //  to Jesus through Mary (St. Louis de Montfort).
 //
 //  Content follows the traditional 33-day plan of readings from Sacred
@@ -14,7 +10,6 @@
 //  St. Louis de Montfort (True Devotion to the Blessed Virgin Mary,
 //  The Secret of Mary).
 //
-//  ═══════════════════════════════════════════════════════════════════════════
 
 import Foundation
 

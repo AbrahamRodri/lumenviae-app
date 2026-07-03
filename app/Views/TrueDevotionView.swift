@@ -2,14 +2,9 @@
 //  TrueDevotionView.swift
 //  Lumen Viae
 //
-//  ═══════════════════════════════════════════════════════════════════════════
-//  TRUE DEVOTION TO MARY - REFERENCE GUIDE
-//  ═══════════════════════════════════════════════════════════════════════════
-//
 //  A comprehensive reference guide displaying the key aspects, principles,
 //  and ejaculatory prayers from St. Louis de Montfort's True Devotion to Mary.
 //
-//  ═══════════════════════════════════════════════════════════════════════════
 
 import SwiftUI
 

@@ -4,35 +4,15 @@
 //
 //  Created by Abraham Rodriguez on 2/10/26.
 //
-//  ═══════════════════════════════════════════════════════════════════════════
-//  CUSTOM TAB BAR - BOTTOM NAVIGATION
-//  ═══════════════════════════════════════════════════════════════════════════
+//  Custom tab bar (instead of TabView) so it can match the design system
+//  and hide during the prayer flow.
 //
-//  A custom tab bar that matches the app's design system.
-//  Uses gold highlighting for the selected tab.
-//
-//  ## Why Custom Instead of SwiftUI's TabView?
-//  1. Full control over appearance (colors, fonts, spacing)
-//  2. Can hide during prayer flow (TabView doesn't support this easily)
-//  3. Consistent with the app's elegant, dark theme
-//
-//  ## Components
-//  - `AppTab`: Enum defining available tabs
-//  - `CustomTabBar`: The container view with all tabs
-//  - `TabBarItem`: Individual tab button
-//
-//  ═══════════════════════════════════════════════════════════════════════════
 
 import SwiftUI
 
 // MARK: - AppTab
 
-/// Defines the available tabs in the bottom navigation.
-///
-/// ## CaseIterable
-/// Allows iterating over all tabs with `AppTab.allCases`.
-/// Used to dynamically create tab items in the bar.
-///
+/// The available tabs in the bottom navigation.
 enum AppTab: CaseIterable {
     case home
     case consecration
@@ -40,7 +20,6 @@ enum AppTab: CaseIterable {
     case progress
     case account
 
-    /// Tab title text (from Constants for potential localization)
     var title: String {
         switch self {
         case .home:         return Constants.homeTab
@@ -65,16 +44,8 @@ enum AppTab: CaseIterable {
 
 // MARK: - CustomTabBar
 
-/// The bottom tab bar containing navigation tabs.
-///
-/// ## @Binding
-/// `@Binding` creates a two-way connection to a value owned by a parent view.
-/// When `selectedTab` changes here, the parent's value changes too.
-/// When the parent changes it, this view updates automatically.
-///
 struct CustomTabBar: View {
 
-    /// The currently selected tab (two-way binding to parent)
     @Binding var selectedTab: AppTab
 
     var body: some View {
@@ -85,7 +56,6 @@ struct CustomTabBar: View {
                 .frame(height: 1)
 
             HStack(spacing: 0) {
-                // Create a tab item for each case in AppTab
                 ForEach(AppTab.allCases, id: \.self) { tab in
                     TabBarItem(
                         icon: tab.icon,
@@ -108,24 +78,14 @@ struct CustomTabBar: View {
 
 // MARK: - TabBarItem
 
-/// A single tab button in the tab bar.
-///
-/// Shows an icon and title, highlighted in gold when selected.
+/// A single tab button, highlighted in gold when selected.
 struct TabBarItem: View {
 
-    /// SF Symbol name for the icon
     let icon: String
-
-    /// Title text below the icon
     let title: String
-
-    /// Whether this tab is currently selected
     let isSelected: Bool
-
-    /// Action to perform when tapped
     let action: () -> Void
 
-    /// Color based on selection state
     private var foregroundColor: Color {
         isSelected ? AppColors.gold : AppColors.textSecondary
     }
@@ -142,7 +102,7 @@ struct TabBarItem: View {
                     .tracking(1)
                     .foregroundColor(foregroundColor)
             }
-            .frame(maxWidth: .infinity)  // Equal width for all tabs
+            .frame(maxWidth: .infinity)
         }
     }
 }

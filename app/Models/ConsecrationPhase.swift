@@ -2,33 +2,15 @@
 //  ConsecrationPhase.swift
 //  Lumen Viae
 //
-//  ═══════════════════════════════════════════════════════════════════════════
-//  CONSECRATION PHASE - REPRESENTS A PHASE OF THE 33-DAY CONSECRATION
-//  ═══════════════════════════════════════════════════════════════════════════
+//  The phases of the 33-Day Total Consecration (St. Louis de Montfort):
+//  Preparatory (Days 1-12), Knowledge of Self (13-19), Knowledge of Mary
+//  (20-26), Knowledge of Jesus (27-33), Consecration Day (34). Each phase
+//  has its own focus, daily prayers, and colors.
 //
-//  The 33-Day Total Consecration to Jesus through Mary (St. Louis de Montfort)
-//  is divided into four phases, each with its own focus and set of prayers:
-//
-//  - Preparatory Period (Days 1-12): Emptying oneself of worldly spirit
-//  - Week 1 (Days 13-19): Knowledge of Self
-//  - Week 2 (Days 20-26): Knowledge of Mary
-//  - Week 3 (Days 27-33): Knowledge of Jesus
-//  - Consecration Day (Day 34): The Act of Consecration
-//
-//  ═══════════════════════════════════════════════════════════════════════════
 
 import Foundation
 import SwiftUI
 
-// MARK: - ConsecrationPhase
-
-/// Represents a phase of the 33-Day Total Consecration.
-///
-/// Each phase has its own:
-/// - Focus/theme for meditation
-/// - Set of daily prayers (same prayers throughout the phase)
-/// - Unique visual styling (colors)
-///
 enum ConsecrationPhase: String, Codable, CaseIterable, Hashable {
 
     case preparatory       // Days 1-12: Emptying of worldly spirit

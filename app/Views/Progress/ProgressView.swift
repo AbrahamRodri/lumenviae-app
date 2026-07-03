@@ -2,16 +2,11 @@
 //  ProgressView.swift
 //  Lumen Viae
 //
-//  ═══════════════════════════════════════════════════════════════════════════
-//  PROGRESS VIEW - SACRED RECORD OF PRAYER HISTORY
-//  ═══════════════════════════════════════════════════════════════════════════
-//
 //  Displays the user's prayer history and statistics:
 //  - Monthly calendar showing prayer days
 //  - Devotions offered by category
 //  - Inspirational scripture quote
 //
-//  ═══════════════════════════════════════════════════════════════════════════
 
 import SwiftUI
 import SwiftData

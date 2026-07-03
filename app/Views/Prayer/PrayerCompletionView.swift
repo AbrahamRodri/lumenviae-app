@@ -2,17 +2,12 @@
 //  PrayerCompletionView.swift
 //  Lumen Viae
 //
-//  ═══════════════════════════════════════════════════════════════════════════
-//  PRAYER COMPLETION VIEW - CELEBRATION & SESSION RECORDING
-//  ═══════════════════════════════════════════════════════════════════════════
-//
 //  Displayed after completing all 5 mysteries of the Rosary.
 //  Automatically records the completed prayer session to SwiftData and displays:
 //  - Completion badge with checkmark
 //  - Inspirational scripture quote
 //  - Options to record reflection or return home
 //
-//  ═══════════════════════════════════════════════════════════════════════════
 
 import SwiftUI
 import SwiftData

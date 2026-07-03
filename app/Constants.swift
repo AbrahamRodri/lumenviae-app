@@ -1,35 +1,15 @@
 //
 //  Constants.swift
-//  app
+//  Lumen Viae
 //
-//  Created by Abraham Rodriguez on 2/10/26.
-//
-//  This file contains all the app's theme colors, fonts, and constant strings.
-//  Centralizing these values makes it easy to update the app's appearance
-//  from one place instead of hunting through multiple files.
+//  Theme colors, fonts, and constant strings.
 //
 
-// MARK: - Imports
-// 'import' brings in external code libraries (called "frameworks" in iOS)
-// Foundation: Basic Swift utilities (strings, dates, etc.)
-// SwiftUI: Apple's modern UI framework for building interfaces
 import Foundation
 import SwiftUI
 
 // MARK: - App Colors
-/// `AppColors` holds all the color values used throughout the app.
-///
-/// ## Swift Concepts Used:
-/// - `struct`: A value type that groups related data together (like a blueprint)
-/// - `static`: Means this property belongs to the TYPE itself, not instances of it
-///   - Access with: `AppColors.gold` (no need to create an AppColors object)
-/// - `let`: Declares a constant (value cannot change after being set)
-///
-/// ## Usage Example:
-/// ```swift
-/// Text("Hello")
-///     .foregroundColor(AppColors.gold)
-/// ```
+
 struct AppColors {
     /// Deep navy background - the main app background color
     static let background = Color(hex: "#1F2033")
@@ -37,25 +17,25 @@ struct AppColors {
     /// Slightly lighter navy for cards and elevated surfaces
     static let cardBackground = Color(hex: "#22223A")
 
-    /// Primary gold accent color - used for highlights and important elements
+    /// Primary gold accent color
     static let gold = Color(hex: "d4af37")
 
     /// Lighter gold variant - used for buttons and emphasized text
     static let goldLight = Color(hex: "e8c547")
 
-    /// Cream/off-white color - used for primary text on dark backgrounds
+    /// Cream/off-white - primary text on dark backgrounds
     static let cream = Color(hex: "f5f0e1")
 
-    /// Pure white - used for the most prominent text
+    /// Pure white - the most prominent text
     static let textPrimary = Color.white
 
-    /// Muted gray-blue - used for secondary/less important text
+    /// Muted gray-blue - secondary text
     static let textSecondary = Color(hex: "a0a0b0")
 
-    /// Special background color for quote sections
+    /// Background color for quote sections
     static let quoteBackground = Color(hex: "2a2a45")
 
-    /// Gradient background used throughout the app for a glowy, contemplative feel
+    /// Gradient background used throughout the app
     static var appGradient: LinearGradient {
         LinearGradient(
             colors: [
@@ -70,51 +50,11 @@ struct AppColors {
 }
 
 // MARK: - App Fonts
-/// `AppFonts` provides font styles used throughout the app.
-///
-/// ## Swift Concepts Used:
-/// - `func`: Declares a function (a reusable block of code)
-/// - `(_ size: CGFloat)`: A parameter with an external name omitted (`_`)
-///   - `CGFloat`: A number type used for graphics (Core Graphics Float)
-/// - `-> Font`: The return type - this function returns a Font object
-///
-/// ## Usage Example:
-/// ```swift
-/// Text("Title")
-///     .font(AppFonts.headlineFont(24))
-/// ```
+
 struct AppFonts {
 
-    // MARK: Custom Fonts (require font files to be added to project)
-
-    /// Cinzel Regular - elegant serif font for titles
-    /// Note: You need to add the actual font file to use this
-    static func cinzelRegular(_ size: CGFloat) -> Font {
-        .custom("Cinzel-Regular", size: size)
-    }
-
-    /// Cinzel Bold - bold variant for emphasis
-    static func cinzelBold(_ size: CGFloat) -> Font {
-        .custom("Cinzel-Bold", size: size)
-    }
-
-    /// Cormorant Garamond Medium Italic - for quotes and scripture
-    static func cormorantMediumItalic(_ size: CGFloat) -> Font {
-        .custom("CormorantGaramond-MediumItalic", size: size)
-    }
-
-    /// Cormorant Garamond Regular - elegant body text
-    static func cormorantRegular(_ size: CGFloat) -> Font {
-        .custom("CormorantGaramond-Regular", size: size)
-    }
-
-    // MARK: System Fonts (always available, used as fallbacks)
-
-    /// System serif font for titles - always available on iOS
+    /// System serif font for titles
     static func titleFont(_ size: CGFloat) -> Font {
-        // .system() creates a built-in iOS font
-        // weight: how thick/thin the font is
-        // design: .serif gives it a traditional book-like appearance
         .system(size: size, weight: .regular, design: .serif)
     }
 
@@ -130,97 +70,53 @@ struct AppFonts {
 
     /// Italic serif for quotes and scripture references
     static func italicFont(_ size: CGFloat) -> Font {
-        // .italic() is a modifier that makes the font italic
         .system(size: size, weight: .medium, design: .serif).italic()
     }
 }
 
 // MARK: - String Constants
-/// `Constants` holds text strings used throughout the app.
-///
-/// ## Why Use Constants?
-/// 1. **Avoid typos**: Write the string once, reference it everywhere
-/// 2. **Easy updates**: Change text in one place, updates everywhere
-/// 3. **Localization**: Makes it easier to translate the app later
-///
-/// ## Usage Example:
-/// ```swift
-/// Text(Constants.appName)  // Displays "LUMEN VIAE"
-/// ```
+
 struct Constants {
-    /// The word "Pray" - used in various places
-    static let prayString = "Pray"
-
-    // MARK: SF Symbol Icon Names
-    // SF Symbols are Apple's built-in icon library (thousands of free icons!)
-    // Browse them at: https://developer.apple.com/sf-symbols/
-
-    static let homeIconString = "house"
-    static let prayerIconString = "prayer"
-    static let journalIconString = "book"
-    static let accountIconString = "person"
 
     // MARK: Mystery Image Assets
-    // Local images bundled with the app for instant loading without network requests
 
-    /// Images for Joyful Mysteries (3 best artworks per mystery)
+    /// Images for Joyful Mysteries, in mystery order
     static let joyfulMysteryImages: [String] = [
-        // 1. The Annunciation
         "joyful_annunciation",
-        // 2. The Visitation
         "joyful_visitation",
-        // 3. The Nativity
         "joyful_nativity",
-        // 4. The Presentation in the Temple
         "joyful_presentation",
-        // 5. Finding Jesus in the Temple
         "joyful_finding"
     ]
 
-    /// Images for Sorrowful Mysteries
+    /// Images for Sorrowful Mysteries, in mystery order
     static let sorrowfulMysteryImages: [String] = [
-        // 1. The Agony in the Garden
         "sorrowful_agony",
-        // 2. The Scourging at the Pillar
         "sorrowful_scourging",
-        // 3. The Crowning with Thorns
         "sorrowful_crowning",
-        // 4. The Carrying of the Cross
         "sorrowful_carrying",
-        // 5. The Crucifixion
         "sorrowful_crucifixion"
     ]
 
-    /// Images for Glorious Mysteries
+    /// Images for Glorious Mysteries, in mystery order
     static let gloriousMysteryImages: [String] = [
-        // 1. The Resurrection
         "glorious_resurrection",
-        // 2. The Ascension
         "glorious_ascension",
-        // 3. The Descent of the Holy Spirit
         "glorious_pentecost",
-        // 4. The Assumption of Mary
         "glorious_assumption",
-        // 5. The Coronation of Mary
         "glorious_coronation"
     ]
 
-    /// Images for Luminous Mysteries
+    /// Images for Luminous Mysteries, in mystery order
     static let luminousMysteryImages: [String] = [
-        // 1. The Baptism in the Jordan
         "luminous_baptism",
-        // 2. The Wedding at Cana
         "luminous_cana",
-        // 3. The Proclamation of the Kingdom
         "luminous_proclamation",
-        // 4. The Transfiguration
         "luminous_transfiguration",
-        // 5. The Institution of the Eucharist
         "luminous_eucharist"
     ]
 
-    /// Get mystery image asset name by category and index (0-based)
-    /// Returns the local image asset name, not a URL
+    /// Get the local image asset name for a mystery by category and 0-based index
     static func mysteryImageURL(category: String, index: Int) -> String? {
         let images: [String]
         switch category.lowercased() {
@@ -241,10 +137,7 @@ struct Constants {
 
     // MARK: App Identity
 
-    /// The app's display name
     static let appName = "LUMEN VIAE"
-
-    /// Tagline shown under the app name
     static let appTagline = "LIGHT OF THE WAY"
 
     // MARK: Tab Bar Labels
@@ -256,50 +149,28 @@ struct Constants {
     static let accountTab = "ACCOUNT"
 }
 
-// MARK: - Color Extension for Hex Support
-/// This `extension` adds new functionality to SwiftUI's built-in `Color` type.
-///
-/// ## Swift Concepts Used:
-/// - `extension`: Adds new methods/properties to an existing type
-///   - Here we're adding a new initializer to Color
-/// - `init`: A special function that creates a new instance of a type
-///
-/// ## Why We Need This:
-/// SwiftUI's Color doesn't natively support hex color codes like "#d4af37".
-/// This extension adds that ability so we can use web-style hex colors.
-///
-/// ## Usage Example:
-/// ```swift
-/// let gold = Color(hex: "d4af37")  // Creates a gold color
-/// let blue = Color(hex: "#0000FF") // The # is optional
-/// ```
+// MARK: - Color Hex Support
+
 extension Color {
-    /// Creates a Color from a hex string (like "FF5733" or "#FF5733")
-    /// - Parameter hex: A hex color string (3, 6, or 8 characters)
+    /// Creates a Color from a hex string like "d4af37" or "#d4af37" (3, 6, or 8 digits)
     init(hex: String) {
-        // Remove any non-alphanumeric characters (like # or spaces)
         let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
 
-        // Convert the hex string to a number
         var int: UInt64 = 0
         Scanner(string: hex).scanHexInt64(&int)
 
-        // Declare variables for alpha, red, green, blue
         let a, r, g, b: UInt64
-
-        // Parse differently based on hex string length
         switch hex.count {
-        case 3: // RGB (12-bit) - e.g., "F00" for red
+        case 3: // RGB (12-bit)
             (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
-        case 6: // RGB (24-bit) - e.g., "FF0000" for red (most common)
+        case 6: // RGB (24-bit)
             (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
-        case 8: // ARGB (32-bit) - includes alpha/transparency
+        case 8: // ARGB (32-bit)
             (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
         default:
-            (a, r, g, b) = (1, 1, 1, 0) // Fallback to transparent
+            (a, r, g, b) = (1, 1, 1, 0)
         }
 
-        // Create the Color with RGB values (converted to 0.0-1.0 range)
         self.init(
             .sRGB,
             red: Double(r) / 255,

@@ -2,17 +2,9 @@
 //  ConsecrationViewModel.swift
 //  Lumen Viae
 //
-//  ═══════════════════════════════════════════════════════════════════════════
-//  CONSECRATION VIEW MODEL - STATE MANAGEMENT FOR 33-DAY CONSECRATION
-//  ═══════════════════════════════════════════════════════════════════════════
+//  State and logic for the 33-Day Consecration: progress tracking,
+//  prayer flow, and journal entries, persisted via SwiftData.
 //
-//  Manages all state and logic for the 33-Day Consecration feature:
-//  - Progress tracking (current day, completed days)
-//  - Prayer flow state (current prayer index)
-//  - Journal entry management
-//  - Data persistence via SwiftData
-//
-//  ═══════════════════════════════════════════════════════════════════════════
 
 import Foundation
 import SwiftUI

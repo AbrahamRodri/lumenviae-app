@@ -2,14 +2,9 @@
 //  ConsecrationPrayerFlowView.swift
 //  Lumen Viae
 //
-//  ═══════════════════════════════════════════════════════════════════════════
-//  CONSECRATION PRAYER FLOW - IMMERSIVE SEQUENTIAL PRAYER DISPLAY
-//  ═══════════════════════════════════════════════════════════════════════════
-//
 //  Displays prayers one at a time in an immersive, full-screen view.
 //  After the last prayer, navigates to the meditation view.
 //
-//  ═══════════════════════════════════════════════════════════════════════════
 
 import SwiftUI
 import AVFoundation
@@ -128,7 +123,9 @@ struct ConsecrationPrayerFlowView: View {
                 }
                 await audio.loadAudio(from: presignedUrl)
             } catch {
+                #if DEBUG
                 print("ConsecrationPrayerFlowView: Failed to load audio: \(error)")
+                #endif
             }
         }
     }
