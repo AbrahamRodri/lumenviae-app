@@ -33,8 +33,7 @@ struct MenuView: View {
                     Spacer()
 
                     Button(action: { isPresented = false }) {
-                        Image(systemName: "xmark")
-                            .font(.system(size: 16, weight: .medium))
+                        AppIcon("ph-x", size: 16)
                             .foregroundColor(AppColors.gold)
                     }
                 }
@@ -50,7 +49,7 @@ struct MenuView: View {
                 // Menu Items
                 VStack(alignment: .leading, spacing: 0) {
                     MenuItemButton(
-                        icon: "crown.fill",
+                        icon: "ph-crown",
                         title: "True Devotion to Mary",
                         subtitle: "St. Louis de Montfort",
                         action: {
@@ -63,7 +62,7 @@ struct MenuView: View {
                         .padding(.horizontal, 20)
 
                     MenuItemButton(
-                        icon: "book.closed",
+                        icon: "ph-book",
                         title: "How to Pray the Rosary",
                         action: {
                             showHowToPrayView = true
@@ -75,7 +74,7 @@ struct MenuView: View {
                         .padding(.horizontal, 20)
 
                     MenuItemButton(
-                        icon: "sparkles",
+                        icon: "ph-sparkle",
                         title: "Finding the Mysteries in Scripture",
                         action: {
                             showMysteriesInScriptureView = true
@@ -87,7 +86,7 @@ struct MenuView: View {
                         .padding(.horizontal, 20)
 
                     MenuItemButton(
-                        icon: "heart.fill",
+                        icon: "ph-heart",
                         title: "Marian Theology Library",
                         action: {
                             showMarianLibraryView = true
@@ -99,7 +98,7 @@ struct MenuView: View {
                         .padding(.horizontal, 20)
 
                     MenuItemButton(
-                        icon: "flame.fill",
+                        icon: "ph-flame",
                         title: "St. Carlo Acutis",
                         subtitle: "Digital Altar",
                         action: {
@@ -158,8 +157,7 @@ struct MenuItemButton: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: 16) {
-                Image(systemName: icon)
-                    .font(.system(size: 18))
+                AppIcon(icon, size: 18)
                     .foregroundColor(AppColors.gold)
                     .frame(width: 24)
 
@@ -177,8 +175,7 @@ struct MenuItemButton: View {
 
                 Spacer()
 
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 14, weight: .medium))
+                AppIcon("ph-caret-right", size: 14)
                     .foregroundColor(AppColors.textSecondary.opacity(0.6))
             }
             .padding(.horizontal, 20)

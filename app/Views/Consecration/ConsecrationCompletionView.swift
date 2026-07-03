@@ -91,8 +91,7 @@ struct ConsecrationCompletionView: View {
                 .frame(width: 100, height: 100)
 
             // Icon
-            Image(systemName: "seal.fill")
-                .font(.system(size: 50))
+            AppIcon("ph-seal-check-fill", size: 50)
                 .foregroundColor(AppColors.gold)
         }
         .scaleEffect(showConfetti ? 1.0 : 0.5)
@@ -181,7 +180,7 @@ struct ConsecrationCompletionView: View {
             path.removeLast(path.count)
         } label: {
             HStack {
-                Image(systemName: "house.fill")
+                AppIcon("ph-house", size: 16)
 
                 Text("Return Home")
                     .font(AppFonts.headlineFont(16))

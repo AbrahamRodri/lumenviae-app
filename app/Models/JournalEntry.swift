@@ -107,15 +107,15 @@ final class JournalEntry {
     /// Icon name for the entry type
     var categoryIcon: String {
         if isConsecrationEntry {
-            return "flame.fill"
+            return "ph-flame-fill"
         }
         switch category {
-        case .joyful:      return "sun.max.fill"
-        case .sorrowful:   return "cloud.rain.fill"
-        case .glorious:    return "sparkles"
-        case .luminous:    return "rays"
-        case .sevenSorrows: return "heart.fill"
-        case .none:        return "book.fill"
+        case .joyful:      return "ph-sun"
+        case .sorrowful:   return "ph-cloud-rain"
+        case .glorious:    return "ph-sparkle"
+        case .luminous:    return "ph-sun-horizon"
+        case .sevenSorrows: return "ph-heart-fill"
+        case .none:        return "ph-book"
         }
     }
 

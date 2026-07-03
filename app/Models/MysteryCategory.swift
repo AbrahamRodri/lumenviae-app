@@ -51,11 +51,11 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
     /// SF Symbol name for visual representation
     var iconName: String {
         switch self {
-        case .joyful:      return "star.fill"
-        case .sorrowful:   return "cross.fill"
-        case .glorious:    return "sunrise.fill"
-        case .luminous:    return "light.max"
-        case .sevenSorrows: return "heart.fill"
+        case .joyful:      return "ph-star"
+        case .sorrowful:   return "ch-crown-of-thorns"
+        case .glorious:    return "ph-sun-horizon"
+        case .luminous:    return "ph-sparkle"
+        case .sevenSorrows: return "ch-sacred-heart"
         }
     }
 

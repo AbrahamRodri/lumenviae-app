@@ -69,8 +69,7 @@ struct CarloAcutisView: View {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button(action: { dismiss() }) {
                     HStack(spacing: 6) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 14, weight: .semibold))
+                        AppIcon("ph-caret-left", size: 14)
                         Text("Back")
                             .font(AppFonts.bodyFont(16))
                     }
@@ -88,8 +87,7 @@ struct CarloAcutisView: View {
 
     private var header: some View {
         VStack(spacing: 12) {
-            Image(systemName: "laptopcomputer")
-                .font(.system(size: 36))
+            AppIcon("ph-laptop", size: 36)
                 .foregroundColor(AppColors.gold)
                 .padding(.top, 24)
 
@@ -129,8 +127,8 @@ struct CarloAcutisView: View {
                             .frame(width: flameFlicker ? 64 : 52, height: flameFlicker ? 64 : 52)
                             .blur(radius: 12)
 
-                        Image(systemName: "flame.fill")
-                            .font(.system(size: flameFlicker ? 34 : 30))
+                        AppIcon("ph-flame-fill", size: 32)
+                            .scaleEffect(flameFlicker ? 1.07 : 0.94)
                             .foregroundStyle(
                                 LinearGradient(
                                     colors: [AppColors.goldLight, .orange],
@@ -143,8 +141,7 @@ struct CarloAcutisView: View {
                                 value: flameFlicker
                             )
                     } else {
-                        Image(systemName: "flame")
-                            .font(.system(size: 30))
+                        AppIcon("ph-flame", size: 30)
                             .foregroundColor(AppColors.textSecondary.opacity(0.4))
                     }
                 }
@@ -210,7 +207,7 @@ struct CarloAcutisView: View {
                         intentionFocused = false
                     } label: {
                         HStack(spacing: 8) {
-                            Image(systemName: "flame.fill")
+                            AppIcon("ph-flame-fill", size: 15)
                             Text("Light a Candle")
                                 .font(AppFonts.headlineFont(15))
                         }

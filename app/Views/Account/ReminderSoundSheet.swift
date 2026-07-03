@@ -39,8 +39,7 @@ struct ReminderSoundSheet: View {
                 VStack(spacing: 24) {
                     // Header
                     VStack(spacing: 10) {
-                        Image(systemName: "speaker.wave.2.fill")
-                            .font(.system(size: 32))
+                        AppIcon("ph-speaker-high", size: 32)
                             .foregroundColor(AppColors.gold)
 
                         Text("Reminder Sound")
@@ -133,8 +132,7 @@ private struct ReminderSoundRow: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: 14) {
-                Image(systemName: sound.icon)
-                    .font(.system(size: 16))
+                AppIcon(sound.icon, size: 16)
                     .foregroundColor(isSelected ? AppColors.gold : AppColors.textSecondary)
                     .frame(width: 24)
 
@@ -151,13 +149,11 @@ private struct ReminderSoundRow: View {
                 Spacer()
 
                 if isPlaying {
-                    Image(systemName: "speaker.wave.3.fill")
-                        .font(.system(size: 16))
+                    AppIcon("ph-speaker-high-fill", size: 16)
                         .foregroundColor(AppColors.goldLight)
                         .symbolEffect(.variableColor.iterative, options: .repeating)
                 } else if isSelected {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 18))
+                    AppIcon("ph-check-circle-fill", size: 18)
                         .foregroundColor(AppColors.gold)
                 }
             }

@@ -4,6 +4,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct AccountView: View {
     @Environment(UserSettings.self) private var userSettings
@@ -28,6 +29,12 @@ struct AccountView: View {
                     // MARK: Appearance
                     AccountSection(title: "APPEARANCE") {
                         ThemePickerRows()
+                    }
+                    .padding(.top, 24)
+
+                    // MARK: App Icon
+                    AccountSection(title: "APP ICON") {
+                        AppIconPickerRows()
                     }
                     .padding(.top, 24)
 
@@ -220,6 +227,125 @@ private struct ThemeRow: View {
         .buttonStyle(.plain)
         .accessibilityLabel("\(theme.displayName) theme")
         .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+}
+
+// MARK: - App Icon Picker
+
+/// The custom app icons, switchable at runtime. Selecting one calls
+/// `setAlternateIconName`; iOS shows its confirmation and the home
+/// screen icon changes immediately.
+struct AppIconPickerRows: View {
+
+    private struct IconOption: Identifiable {
+        /// Alternate icon name registered in build settings; nil = primary
+        let alternateName: String?
+        let displayName: String
+        let detail: String
+        /// Preview imageset in the asset catalog
+        let preview: String
+        var id: String { alternateName ?? "primary" }
+    }
+
+    private static let options: [IconOption] = [
+        IconOption(
+            alternateName: nil,
+            displayName: "Original",
+            detail: "The painted icon",
+            preview: "icon-preview-Original"
+        ),
+        IconOption(
+            alternateName: "AppIconGothic",
+            displayName: "Cathedral Window",
+            detail: "A lancet arch beneath the stars",
+            preview: "icon-preview-Gothic"
+        ),
+        IconOption(
+            alternateName: "AppIconMonstrance",
+            displayName: "Monstrance",
+            detail: "Radiant gold on chapel black",
+            preview: "icon-preview-Monstrance"
+        ),
+        IconOption(
+            alternateName: "AppIconWreath",
+            displayName: "Rosary Wreath",
+            detail: "Beads crowned by twelve stars",
+            preview: "icon-preview-Wreath"
+        )
+    ]
+
+    @State private var selection: String? = UIApplication.shared.alternateIconName
+
+    var body: some View {
+        VStack(spacing: 0) {
+            ForEach(Array(Self.options.enumerated()), id: \.element.id) { index, option in
+                Button {
+                    select(option)
+                } label: {
+                    HStack(spacing: 16) {
+                        Image(option.preview)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 42, height: 42)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .strokeBorder(AppColors.gold.opacity(0.4), lineWidth: 0.5)
+                            )
+
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(option.displayName)
+                                .font(AppFonts.bodyFont(16))
+                                .foregroundColor(
+                                    selection == option.alternateName
+                                        ? AppColors.gold
+                                        : AppColors.cream
+                                )
+
+                            Text(option.detail)
+                                .font(AppFonts.italicFont(12))
+                                .foregroundColor(AppColors.textSecondary)
+                        }
+
+                        Spacer()
+
+                        if selection == option.alternateName {
+                            AppIcon("ph-check-circle-fill", size: 20)
+                                .foregroundColor(AppColors.gold)
+                                .transition(.scale.combined(with: .opacity))
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("\(option.displayName) app icon")
+                .accessibilityAddTraits(selection == option.alternateName ? .isSelected : [])
+
+                if index < Self.options.count - 1 {
+                    Divider()
+                        .background(AppColors.gold.opacity(0.2))
+                }
+            }
+        }
+    }
+
+    private func select(_ option: IconOption) {
+        guard selection != option.alternateName else { return }
+        let previous = selection
+
+        withAnimation(.easeOut(duration: 0.25)) {
+            selection = option.alternateName
+        }
+
+        UIApplication.shared.setAlternateIconName(option.alternateName) { error in
+            if error != nil {
+                DispatchQueue.main.async {
+                    withAnimation { selection = previous }
+                }
+            }
+        }
     }
 }
 

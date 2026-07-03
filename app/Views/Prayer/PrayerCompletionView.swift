@@ -370,10 +370,10 @@ struct MilestoneCelebrationCard: View {
             }
 
             HStack(spacing: 10) {
-                Image(systemName: milestone.icon)
-                    .font(.system(size: 20, weight: .light))
+                AppIcon(milestone.icon, size: 20)
                     .foregroundColor(AppColors.gold)
-                    .symbolEffect(.bounce, options: .speed(0.8), value: celebrate)
+                    .scaleEffect(celebrate ? 1 : 0.6)
+                    .animation(.spring(response: 0.6, dampingFraction: 0.5), value: celebrate)
 
                 Text(milestone.name)
                     .font(AppFonts.headlineFont(22))

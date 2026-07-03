@@ -78,7 +78,7 @@ struct OnboardingView: View {
 
     private var slide1: some View {
         OnboardingSlideLayout(
-            icon: "rosette",
+            icon: "ch-rosary",
             iconIsGradient: true,
             title: "Your Rosary Companion",
             isActive: currentPage == 0,
@@ -103,10 +103,10 @@ struct OnboardingView: View {
                             .font(AppFonts.headlineFont(14))
                             .foregroundColor(AppColors.gold)
 
-                        AppFeatureRow(icon: "bookmark",     label: "Meditations for every mystery")
-                        AppFeatureRow(icon: "text.quote",   label: "Scripture for each mystery — for study, not recited during prayer")
-                        AppFeatureRow(icon: "calendar",     label: "Daily mystery auto-selected by traditional schedule")
-                        AppFeatureRow(icon: "book",         label: "Multiple meditation styles — General, Saint, Situational, Contemplative")
+                        AppFeatureRow(icon: "ph-bookmark",     label: "Meditations for every mystery")
+                        AppFeatureRow(icon: "ph-quotes",   label: "Scripture for each mystery — for study, not recited during prayer")
+                        AppFeatureRow(icon: "ph-calendar-dots",     label: "Daily mystery auto-selected by traditional schedule")
+                        AppFeatureRow(icon: "ph-book",         label: "Multiple meditation styles — General, Saint, Situational, Contemplative")
                     }
                 }
                 .multilineTextAlignment(.leading)
@@ -123,7 +123,7 @@ struct OnboardingView: View {
 
     private var slide2: some View {
         OnboardingSlideLayout(
-            icon: "figure.walk",
+            icon: "ph-person-simple-walk",
             iconIsGradient: false,
             title: "How a Session Works",
             isActive: currentPage == 1,
@@ -135,10 +135,10 @@ struct OnboardingView: View {
                         .lineSpacing(5)
 
                     VStack(spacing: 14) {
-                        NumberedStepRow(number: "1", icon: "calendar",    title: "Today's mystery is chosen",  detail: "The traditional schedule assigns Joyful, Sorrowful, or Glorious by day. Luminous is available but not in the default rotation — you can always pick any set.")
-                        NumberedStepRow(number: "2", icon: "sparkles",    title: "Choose how to meditate",     detail: "General, from a Saint, Situational, or Contemplative — each style brings a different lens to the same mysteries.")
-                        NumberedStepRow(number: "3", icon: "book.closed", title: "Pray 5 decades",             detail: "The app guides you through each mystery at your own pace. You pray the prayers; the app holds your place.")
-                        NumberedStepRow(number: "4", icon: "heart",       title: "Reflect and journal",        detail: "Close with a moment of reflection and an optional journal entry to capture what moved you.")
+                        NumberedStepRow(number: "1", icon: "ph-calendar-dots",    title: "Today's mystery is chosen",  detail: "The traditional schedule assigns Joyful, Sorrowful, or Glorious by day. Luminous is available but not in the default rotation — you can always pick any set.")
+                        NumberedStepRow(number: "2", icon: "ph-sparkle",    title: "Choose how to meditate",     detail: "General, from a Saint, Situational, or Contemplative — each style brings a different lens to the same mysteries.")
+                        NumberedStepRow(number: "3", icon: "ph-book", title: "Pray 5 decades",             detail: "The app guides you through each mystery at your own pace. You pray the prayers; the app holds your place.")
+                        NumberedStepRow(number: "4", icon: "ph-heart",       title: "Reflect and journal",        detail: "Close with a moment of reflection and an optional journal entry to capture what moved you.")
                     }
                 }
                 .multilineTextAlignment(.leading)
@@ -163,7 +163,7 @@ struct OnboardingView: View {
 
     private var intentionSlide: some View {
         OnboardingSlideLayout(
-            icon: "heart",
+            icon: "ph-heart",
             iconIsGradient: true,
             title: "What Draws You Here?",
             isActive: currentPage == 2,
@@ -212,7 +212,7 @@ struct OnboardingView: View {
 
     private var reminderSlide: some View {
         OnboardingSlideLayout(
-            icon: "bell",
+            icon: "ph-bell",
             iconIsGradient: false,
             title: "A Daily Call to Prayer",
             isActive: currentPage == 3,
@@ -257,8 +257,7 @@ struct OnboardingView: View {
                         HStack(spacing: 6) {
                             Text("Set Reminder")
                                 .font(AppFonts.headlineFont(17))
-                            Image(systemName: "chevron.right")
-                                .font(.system(size: 13, weight: .semibold))
+                            AppIcon("ph-caret-right", size: 13)
                         }
                         .foregroundColor(selectedReminderHour == nil ? AppColors.textSecondary : AppColors.background)
                         .frame(maxWidth: .infinity)
@@ -354,8 +353,7 @@ struct OnboardingView: View {
                             Text("Methods of Praying the Rosary")
                                 .font(AppFonts.bodyFont(15))
                                 .foregroundColor(AppColors.gold)
-                            Image(systemName: "chevron.right")
-                                .font(.system(size: 12, weight: .semibold))
+                            AppIcon("ph-caret-right", size: 12)
                                 .foregroundColor(AppColors.gold)
                         }
                         .padding(.vertical, 12)
@@ -403,8 +401,7 @@ private struct OnboardingSlideLayout<Content: View, Bottom: View>: View {
 
                         Group {
                             if iconIsGradient {
-                                Image(systemName: icon)
-                                    .font(.system(size: 64, weight: .thin))
+                                AppIcon(icon, size: 64)
                                     .foregroundStyle(
                                         LinearGradient(
                                             colors: [AppColors.gold, AppColors.goldLight],
@@ -413,8 +410,7 @@ private struct OnboardingSlideLayout<Content: View, Bottom: View>: View {
                                         )
                                     )
                             } else {
-                                Image(systemName: icon)
-                                    .font(.system(size: 64, weight: .thin))
+                                AppIcon(icon, size: 64)
                                     .foregroundColor(AppColors.gold)
                             }
                         }
@@ -486,8 +482,7 @@ private struct OnboardingNextButton: View {
             HStack(spacing: 6) {
                 Text(label)
                     .font(AppFonts.headlineFont(17))
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 13, weight: .semibold))
+                AppIcon("ph-caret-right", size: 13)
             }
             .foregroundColor(AppColors.background)
             .frame(maxWidth: .infinity)
@@ -511,8 +506,7 @@ private struct AppFeatureRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Image(systemName: icon)
-                .font(.system(size: 14, weight: .regular))
+            AppIcon(icon, size: 14)
                 .foregroundColor(AppColors.gold)
                 .frame(width: 20)
 
@@ -535,8 +529,7 @@ private struct SelectableOptionRow: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: 14) {
-                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: 20, weight: .light))
+                AppIcon(isSelected ? "ph-check-circle-fill" : "ph-circle", size: 20)
                     .foregroundColor(isSelected ? AppColors.gold : AppColors.textSecondary.opacity(0.6))
 
                 VStack(alignment: .leading, spacing: 2) {

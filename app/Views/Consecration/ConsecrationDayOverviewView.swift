@@ -153,8 +153,7 @@ struct ConsecrationDayOverviewView: View {
             // Completed badge if applicable
             if isCompleted {
                 HStack(spacing: 6) {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 14))
+                    AppIcon("ph-check-circle-fill", size: 14)
                     Text("Completed")
                         .font(AppFonts.bodyFont(14))
                 }
@@ -223,8 +222,7 @@ struct ConsecrationDayOverviewView: View {
 
     private var consecrationDateCard: some View {
         HStack(spacing: 16) {
-            Image(systemName: "calendar.badge.clock")
-                .font(.system(size: 24))
+            AppIcon("ph-calendar-dots", size: 24)
                 .foregroundColor(AppColors.gold)
 
             VStack(alignment: .leading, spacing: 2) {
@@ -260,7 +258,7 @@ struct ConsecrationDayOverviewView: View {
             path.append(ConsecrationRoute.prayerFlow(dayNumber: displayDayNumber))
         } label: {
             HStack(spacing: 10) {
-                Image(systemName: isCompleted ? "arrow.counterclockwise" : "play.fill")
+                AppIcon(isCompleted ? "ph-arrow-counter-clockwise" : "ph-play-fill", size: 15)
                     .font(.system(size: 14, weight: .semibold))
 
                 Text(isCompleted ? "Review Day" : "Begin Today's Prayer")
@@ -284,7 +282,7 @@ struct ConsecrationDayOverviewView: View {
 
     private var completedBadge: some View {
         HStack(spacing: 8) {
-            Image(systemName: "checkmark.seal.fill")
+            AppIcon("ph-seal-check-fill", size: 16)
             Text("Day Completed")
                 .font(AppFonts.headlineFont(16))
         }
@@ -312,11 +310,11 @@ struct ConsecrationDayOverviewView: View {
                 }
             } label: {
                 HStack {
-                    Image(systemName: "wrench.and.screwdriver")
+                    AppIcon("ph-wrench", size: 12)
                     Text("Testing Controls")
                         .font(AppFonts.bodyFont(12))
                     Spacer()
-                    Image(systemName: showDebugControls ? "chevron.up" : "chevron.down")
+                    AppIcon(showDebugControls ? "ph-caret-up" : "ph-caret-down", size: 12)
                 }
                 .foregroundColor(AppColors.textSecondary)
                 .padding(12)
@@ -333,7 +331,7 @@ struct ConsecrationDayOverviewView: View {
                         viewModel.debugAdvanceDay()
                     } label: {
                         HStack {
-                            Image(systemName: "forward.fill")
+                            AppIcon("ph-skip-forward-fill", size: 14)
                             Text("Advance to Next Day")
                                 .font(AppFonts.bodyFont(14))
                         }
@@ -351,7 +349,7 @@ struct ConsecrationDayOverviewView: View {
                         viewModel.debugResetConsecration()
                     } label: {
                         HStack {
-                            Image(systemName: "arrow.counterclockwise")
+                            AppIcon("ph-arrow-counter-clockwise", size: 14)
                             Text("Reset Consecration")
                                 .font(AppFonts.bodyFont(14))
                         }

@@ -46,8 +46,7 @@ struct AllMysteriesView: View {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button(action: { router.pop() }) {
                     HStack(spacing: 6) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 16, weight: .medium))
+                        AppIcon("ph-caret-left", size: 16)
                         Text("Back")
                             .font(AppFonts.bodyFont(16))
                     }

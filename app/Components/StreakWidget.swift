@@ -205,8 +205,7 @@ struct MilestoneProgressLine: View {
         VStack(spacing: 8) {
             HStack {
                 HStack(spacing: 6) {
-                    Image(systemName: milestone.icon)
-                        .font(.system(size: 11))
+                    AppIcon(milestone.icon, size: 11)
                         .foregroundColor(AppColors.gold)
 
                     Text(milestone.name.uppercased())
