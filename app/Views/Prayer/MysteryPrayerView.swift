@@ -93,7 +93,7 @@ struct MysteryPrayerView: View {
                     LinearGradient(
                         colors: [
                             .clear,
-                            AppColors.background.opacity(2),
+                            AppColors.background.opacity(0.9),
                             AppColors.background
                         ],
                         startPoint: .top,
@@ -123,35 +123,20 @@ struct MysteryPrayerView: View {
     private var imageViewHeader: some View {
         HStack {
             // Close button
-            Button(action: { router.popToRoot() }) {
-                Image(systemName: "xmark")
-                    .font(.system(size: 18, weight: .medium))
-                    .foregroundColor(.white)
-                    .padding(12)
-                    .background(Color.black.opacity(0.3))
-                    .clipShape(Circle())
+            PrayerHeaderButton(icon: "ph-x", size: 18, label: "End prayer") {
+                router.popToRoot()
             }
 
             Spacer()
 
             // Toggle to reading/text mode button
-            Button(action: { withAnimation(.easeInOut(duration: 0.3)) { isImageMode.toggle() } }) {
-                Image(systemName: "text.alignleft")
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(.white)
-                    .padding(12)
-                    .background(Color.black.opacity(0.3))
-                    .clipShape(Circle())
+            PrayerHeaderButton(icon: "ph-text-align-left", label: "Reading mode") {
+                withAnimation(.easeInOut(duration: 0.3)) { isImageMode.toggle() }
             }
 
             // Journal button
-            Button(action: { showingJournalEditor = true }) {
-                Image(systemName: "square.and.pencil")
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(.white)
-                    .padding(12)
-                    .background(Color.black.opacity(0.3))
-                    .clipShape(Circle())
+            PrayerHeaderButton(icon: "ph-note-pencil", label: "Add journal note") {
+                showingJournalEditor = true
             }
         }
         .padding(.horizontal, 16)
@@ -159,19 +144,29 @@ struct MysteryPrayerView: View {
 
     private func imageViewBottomCard(meditation: Meditation) -> some View {
         VStack(spacing: 16) {
+            // Decade progress as a strand of rosary beads
+            RosaryBeadProgress(
+                total: viewModel.totalMysteries,
+                completed: viewModel.currentMysteryIndex,
+                activeIndex: viewModel.currentMysteryIndex,
+                beadSize: 8
+            )
+            .frame(width: 150)
+
             // Mystery info - no card, just text
             VStack(spacing: 12) {
                 // Mystery label
                 Text("THE \(ordinalNumber(viewModel.currentMysteryIndex + 1).uppercased()) \(meditationSet.mysteryCategory?.displayName.uppercased() ?? "") MYSTERY")
-                    .font(AppFonts.bodyFont(11))
-                    .tracking(2)
+                    .font(AppFonts.labelFont(10))
+                    .tracking(2.5)
                     .foregroundColor(AppColors.gold)
 
                 // Mystery title
                 Text(meditation.displayTitle)
-                    .font(AppFonts.italicFont(28))
+                    .font(AppFonts.headlineFont(25))
                     .foregroundColor(AppColors.cream)
                     .multilineTextAlignment(.center)
+                    .minimumScaleFactor(0.85)
 
                 // Scripture reference only (no quote text)
                 if let reference = meditation.mystery?.scriptureReference {
@@ -180,8 +175,8 @@ struct MysteryPrayerView: View {
                             .fill(AppColors.gold.opacity(0.5))
                             .frame(width: 20, height: 1)
                         Text(reference)
-                            .font(AppFonts.italicFont(13))
-                            .foregroundColor(AppColors.gold.opacity(0.8))
+                            .font(AppFonts.italicFont(14))
+                            .foregroundColor(AppColors.accentSoft)
                         Rectangle()
                             .fill(AppColors.gold.opacity(0.5))
                             .frame(width: 20, height: 1)
@@ -189,6 +184,9 @@ struct MysteryPrayerView: View {
                 }
             }
             .padding(.horizontal, 24)
+            .id(viewModel.currentMysteryIndex)
+            .transition(.opacity)
+            .animation(.easeInOut(duration: 0.4), value: viewModel.currentMysteryIndex)
 
             // Audio controls
             if viewModel.currentMeditation?.hasAudio == true {
@@ -238,7 +236,7 @@ struct MysteryPrayerView: View {
                                         .frame(width: 20, height: 1)
                                     Text(reference)
                                         .font(AppFonts.italicFont(14))
-                                        .foregroundColor(AppColors.gold.opacity(0.8))
+                                        .foregroundColor(AppColors.accentSoft)
                                     Rectangle()
                                         .fill(AppColors.gold.opacity(0.5))
                                         .frame(width: 20, height: 1)
@@ -246,18 +244,23 @@ struct MysteryPrayerView: View {
                                 .padding(.top, 8)
                             }
 
-                            // Meditation content
-                            Text(meditation.content)
-                                .font(AppFonts.bodyFont(userSettings.meditationFontSize))
-                                .foregroundColor(AppColors.cream.opacity(0.9))
-                                .multilineTextAlignment(.center)
-                                .lineSpacing(6)
-                                .padding(.horizontal, 24)
-                                .padding(.vertical, 16)
+                            // Meditation content, opened by an illuminated initial
+                            DropCapText(
+                                text: meditation.content,
+                                bodySize: userSettings.meditationFontSize,
+                                capSize: userSettings.meditationFontSize * 2.4,
+                                textColor: AppColors.cream.opacity(0.92)
+                            )
+                            .multilineTextAlignment(.leading)
+                            .padding(.horizontal, 26)
+                            .padding(.vertical, 16)
                         }
                         // Extra padding so content can scroll behind controls
                         .padding(.top, 12)
                         .padding(.bottom, 200)
+                        .id(viewModel.currentMysteryIndex)
+                        .transition(.opacity)
+                        .animation(.easeInOut(duration: 0.4), value: viewModel.currentMysteryIndex)
                     }
                     .frame(maxHeight: .infinity)
                 } else {
@@ -274,7 +277,7 @@ struct MysteryPrayerView: View {
 
                 // Gradient fade zone above controls
                 LinearGradient(
-                    colors: [.clear, Color(hex: "1a1a2e")],
+                    colors: [.clear, AppColors.background],
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -297,66 +300,42 @@ struct MysteryPrayerView: View {
                     navigationButtons
                         .padding(.bottom, 8)
                 }
-                .background(Color(hex: "1a1a2e"))
+                .background(AppColors.background)
             }
         }
     }
 
     private var textViewHeader: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 14) {
             HStack {
                 // Close button (left side, matching image view)
-                Button(action: { router.popToRoot() }) {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(.white)
-                        .padding(12)
-                        .background(Color.black.opacity(0.3))
-                        .clipShape(Circle())
+                PrayerHeaderButton(icon: "ph-x", size: 18, label: "End prayer") {
+                    router.popToRoot()
                 }
 
                 Spacer()
 
                 // Toggle view mode
-                Button(action: { withAnimation(.easeInOut(duration: 0.3)) { isImageMode.toggle() } }) {
-                    Image(systemName: "photo")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(.white)
-                        .padding(12)
-                        .background(Color.black.opacity(0.3))
-                        .clipShape(Circle())
+                PrayerHeaderButton(icon: "ph-image", label: "Image mode") {
+                    withAnimation(.easeInOut(duration: 0.3)) { isImageMode.toggle() }
                 }
 
                 // Journal note shortcut
-                Button(action: { showingJournalEditor = true }) {
-                    Image(systemName: "square.and.pencil")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(.white)
-                        .padding(12)
-                        .background(Color.black.opacity(0.3))
-                        .clipShape(Circle())
+                PrayerHeaderButton(icon: "ph-note-pencil", label: "Add journal note") {
+                    showingJournalEditor = true
                 }
             }
             .padding(.horizontal, 16)
             .padding(.top, 8)
 
-            // Progress Bar
-            GeometryReader { geometry in
-                ZStack(alignment: .leading) {
-                    // Background track
-                    Rectangle()
-                        .fill(AppColors.gold.opacity(0.2))
-                        .frame(height: 3)
-
-                    // Progress fill
-                    Rectangle()
-                        .fill(AppColors.gold)
-                        .frame(width: geometry.size.width * (CGFloat(viewModel.currentMysteryIndex + 1) / CGFloat(viewModel.totalMysteries)), height: 3)
-                        .animation(.easeInOut(duration: 0.3), value: viewModel.currentMysteryIndex)
-                }
-            }
-            .frame(height: 3)
-            .padding(.horizontal, 20)
+            // Decade progress as a strand of rosary beads
+            RosaryBeadProgress(
+                total: viewModel.totalMysteries,
+                completed: viewModel.currentMysteryIndex,
+                activeIndex: viewModel.currentMysteryIndex,
+                beadSize: 8
+            )
+            .frame(width: 170)
         }
         .padding(.bottom, 8)
     }
@@ -365,57 +344,57 @@ struct MysteryPrayerView: View {
 
     private var navigationButtons: some View {
         HStack(spacing: 12) {
-            // Previous Mystery Button
+            // Previous Mystery Button — quiet outline, secondary
             Button(action: {
-                viewModel.previousMystery()
-            }) {
-                HStack(spacing: 4) {
-                    Image(systemName: "arrow.left")
-                        .font(.system(size: 12, weight: .medium))
-                    Text("Prev")
-                        .font(AppFonts.bodyFont(13))
-                        .tracking(0.5)
+                withAnimation(.easeInOut(duration: 0.4)) {
+                    viewModel.previousMystery()
                 }
-                .foregroundColor(AppColors.background)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 10)
+            }) {
+                HStack(spacing: 6) {
+                    AppIcon("ph-arrow-left", size: 12)
+                    Text("PREV")
+                        .font(AppFonts.labelFont(11))
+                        .tracking(1.5)
+                }
+                .foregroundColor(AppColors.gold)
+                .padding(.horizontal, 18)
+                .padding(.vertical, 11)
                 .background(
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(AppColors.goldLight)
+                    Capsule().fill(AppColors.background.opacity(0.6))
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: 20)
-                        .strokeBorder(AppColors.gold.opacity(0.5), lineWidth: 1)
+                    Capsule().strokeBorder(AppColors.gold.opacity(0.5), lineWidth: 1)
                 )
             }
+            .buttonStyle(GoldCTAButtonStyle())
             .disabled(viewModel.currentMysteryIndex == 0)
-            .opacity(viewModel.currentMysteryIndex == 0 ? 0.5 : 1.0)
+            .opacity(viewModel.currentMysteryIndex == 0 ? 0.4 : 1.0)
 
             Spacer()
 
-            // Next Mystery Button
+            // Next Mystery Button — gold, primary
             Button(action: handleNextMystery) {
-                HStack(spacing: 4) {
-                    Text("Next")
-                        .font(AppFonts.bodyFont(13))
-                        .tracking(0.5)
-                    Image(systemName: viewModel.isLastMystery ? "checkmark" : "arrow.right")
-                        .font(.system(size: 12, weight: .medium))
+                HStack(spacing: 6) {
+                    Text(viewModel.isLastMystery ? "AMEN" : "NEXT")
+                        .font(AppFonts.labelFont(11))
+                        .tracking(1.5)
+                    AppIcon(viewModel.isLastMystery ? "ph-check" : "ph-arrow-right", size: 12)
                 }
                 .foregroundColor(AppColors.background)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 10)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 11)
                 .background(
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(AppColors.goldLight)
+                    Capsule().fill(AppColors.goldGradient)
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: 20)
-                        .strokeBorder(AppColors.gold.opacity(0.5), lineWidth: 1)
+                    Capsule().strokeBorder(AppColors.goldLight.opacity(0.6), lineWidth: 0.5)
                 )
+                .haloGlow(AppColors.gold, radius: 8, intensity: 0.3)
             }
+            .buttonStyle(GoldCTAButtonStyle())
         }
         .padding(.horizontal, 20)
+        .sensoryFeedback(.impact(weight: .light), trigger: viewModel.currentMysteryIndex)
     }
 
     // MARK: - Helper Functions
@@ -427,13 +406,38 @@ struct MysteryPrayerView: View {
     }
 
     private func handleNextMystery() {
-        guard !viewModel.nextMystery() else { return }
+        let finished = withAnimation(.easeInOut(duration: 0.4)) {
+            viewModel.nextMystery()
+        }
+        guard finished else { return }
 
         // Completed all mysteries - navigate to completion
         Task {
             try? await viewModel.recordCompletion()
         }
         router.navigateToCompletion()
+    }
+}
+
+// MARK: - PrayerHeaderButton
+
+/// A circular scrim button used in the prayer flow header.
+struct PrayerHeaderButton: View {
+    let icon: String
+    var size: CGFloat = 16
+    var label: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            AppIcon(icon, size: size)
+                .foregroundColor(.white)
+                .padding(12)
+                .background(Color.black.opacity(0.3))
+                .clipShape(Circle())
+        }
+        .buttonStyle(GoldCTAButtonStyle())
+        .accessibilityLabel(label)
     }
 }
 
@@ -451,25 +455,25 @@ struct MysteryInfoSection: View {
     }
 
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 10) {
             // Category label
             Text("THE \(ordinalNumber.uppercased()) \(mysteryType.uppercased()) MYSTERY")
-                .font(AppFonts.bodyFont(12))
+                .font(AppFonts.labelFont(10))
                 .tracking(3)
                 .foregroundColor(AppColors.gold)
 
             // Mystery title
             Text(mysteryTitle)
-                .font(AppFonts.italicFont(32))
+                .font(AppFonts.headlineFont(27))
                 .foregroundColor(AppColors.cream)
                 .multilineTextAlignment(.center)
+                .minimumScaleFactor(0.85)
                 .padding(.horizontal, 20)
 
-            // Gold divider
-            Rectangle()
-                .fill(AppColors.gold)
-                .frame(width: 50, height: 2)
-                .padding(.top, 8)
+            // Ornamental divider
+            OrnamentDivider(showsCross: false)
+                .frame(width: 150)
+                .padding(.top, 6)
         }
     }
 }
@@ -491,12 +495,12 @@ struct AudioControlsView: View {
         VStack(spacing: 16) {
             // Playback controls
             HStack(spacing: 40) {
-                // Rewind 10s
+                // Rewind 10s (SF symbol — it encodes the "10" glyph)
                 Button(action: {
                     currentTime = max(0, currentTime - 10)
                 }) {
                     Image(systemName: "gobackward.10")
-                        .font(.system(size: 24))
+                        .font(.system(size: 24, weight: .light))
                         .foregroundColor(AppColors.gold)
                 }
 
@@ -506,22 +510,23 @@ struct AudioControlsView: View {
                 }) {
                     ZStack {
                         Circle()
-                            .fill(AppColors.gold)
+                            .fill(AppColors.goldGradient)
                             .frame(width: 64, height: 64)
+                            .haloGlow(AppColors.gold, radius: 10, intensity: 0.4)
 
-                        Image(systemName: isPlaying ? "pause.fill" : "play.fill")
-                            .font(.system(size: 24))
+                        AppIcon(isPlaying ? "ph-pause-fill" : "ph-play-fill", size: 24)
                             .foregroundColor(AppColors.background)
                             .offset(x: isPlaying ? 0 : 2)
                     }
                 }
+                .buttonStyle(GoldCTAButtonStyle())
 
-                // Forward 10s
+                // Forward 10s (SF symbol — it encodes the "10" glyph)
                 Button(action: {
                     currentTime = min(totalTime, currentTime + 10)
                 }) {
                     Image(systemName: "goforward.10")
-                        .font(.system(size: 24))
+                        .font(.system(size: 24, weight: .light))
                         .foregroundColor(AppColors.gold)
                 }
             }

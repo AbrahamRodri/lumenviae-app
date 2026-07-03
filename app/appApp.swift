@@ -22,6 +22,10 @@ struct appApp: App {
 
     private let userSettings = UserSettings.shared
 
+    init() {
+        FontRegistrar.registerBundledFonts()
+    }
+
     var body: some Scene {
         WindowGroup {
             if isLaunched {

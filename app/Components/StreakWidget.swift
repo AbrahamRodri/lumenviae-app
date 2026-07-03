@@ -43,7 +43,7 @@ struct StreakWidget: View {
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("CURRENT STREAK")
-                        .font(AppFonts.bodyFont(11))
+                        .font(AppFonts.labelFont(10))
                         .tracking(2)
                         .foregroundColor(AppColors.gold)
 
@@ -57,10 +57,9 @@ struct StreakWidget: View {
 
                 if hasPrayedToday {
                     HStack(spacing: 6) {
-                        Image(systemName: "checkmark")
-                            .font(.system(size: 11, weight: .semibold))
+                        AppIcon("ph-check", size: 11)
                         Text("TODAY")
-                            .font(AppFonts.bodyFont(11))
+                            .font(AppFonts.labelFont(10))
                             .tracking(1)
                     }
                     .foregroundColor(AppColors.background)
@@ -161,8 +160,7 @@ struct FlameOrb: View {
                 .frame(width: 50, height: 50)
 
             // Flickering flame
-            Image(systemName: "flame.fill")
-                .font(.system(size: 22))
+            AppIcon("ph-flame-fill", size: 22)
                 .foregroundStyle(
                     isLit
                         ? LinearGradient(
@@ -281,8 +279,7 @@ private struct WeekDayDot: View {
                 }
 
                 if didPray {
-                    Image(systemName: "checkmark")
-                        .font(.system(size: 9, weight: .bold))
+                    AppIcon("ph-check", size: 9)
                         .foregroundColor(AppColors.background)
                 }
             }

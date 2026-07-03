@@ -10,7 +10,10 @@ import SwiftUI
 struct MeditationOptionCard: View {
     let title: String
     let description: String
+
+    /// Asset icon name (Phosphor "ph-*" or Christicons "ch-*")
     let iconName: String
+
     let hasAudio: Bool
     var onTap: (() -> Void)?
 
@@ -20,14 +23,14 @@ struct MeditationOptionCard: View {
                 // Title row with audio indicator
                 HStack(alignment: .center) {
                     Text(title)
-                        .font(AppFonts.headlineFont(20))
+                        .font(AppFonts.headlineFont(17))
                         .foregroundColor(AppColors.cream)
+                        .minimumScaleFactor(0.85)
 
                     Spacer()
 
                     if hasAudio {
-                        Image(systemName: "speaker.wave.2.fill")
-                            .font(.system(size: 16))
+                        AppIcon("ph-speaker-high", size: 16)
                             .foregroundColor(AppColors.textSecondary)
                     }
                 }
@@ -43,9 +46,8 @@ struct MeditationOptionCard: View {
 
                     Spacer()
 
-                    Image(systemName: iconName)
-                        .font(.system(size: 32))
-                        .foregroundColor(AppColors.textSecondary.opacity(0.4))
+                    AppIcon(iconName, size: 34)
+                        .foregroundColor(AppColors.gold.opacity(0.45))
                 }
             }
             .padding(20)
@@ -53,8 +55,12 @@ struct MeditationOptionCard: View {
                 RoundedRectangle(cornerRadius: 16)
                     .fill(AppColors.cardBackground)
             )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: 0.5)
+            )
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(SacredCardButtonStyle())
     }
 }
 
@@ -63,14 +69,14 @@ struct MeditationOptionCard: View {
         MeditationOptionCard(
             title: "Traditional Meditations",
             description: "Classic meditations from the saints focusing on the virtue of each mystery.",
-            iconName: "building.columns",
+            iconName: "ch-church",
             hasAudio: true
         )
 
         MeditationOptionCard(
             title: "St. Louis de Montfort",
             description: "Deeply theological reflections aimed at total consecration through Mary.",
-            iconName: "book.closed",
+            iconName: "ch-bible",
             hasAudio: true
         )
     }

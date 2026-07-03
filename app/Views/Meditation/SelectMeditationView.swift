@@ -23,9 +23,9 @@ struct SelectMeditationView: View {
             // Background gradient with category color fade
             LinearGradient(
                 colors: [
-                    category.gradientColors.first ?? Color(hex: "2a2518"),
-                    Color(hex: "1a1a2e"),
-                    Color(hex: "0d0d1a")
+                    category.gradientColors.first ?? AppColors.cardBackground,
+                    AppColors.background,
+                    AppColors.backgroundDeep
                 ],
                 startPoint: .top,
                 endPoint: .bottom
@@ -61,7 +61,7 @@ struct SelectMeditationView: View {
                                 .padding(.top, 40)
                         } else {
                             // Meditation Options
-                            ForEach(viewModel.meditationSets) { meditationSet in
+                            ForEach(Array(viewModel.meditationSets.enumerated()), id: \.element.id) { index, meditationSet in
                                 MeditationOptionCard(
                                     title: meditationSet.name,
                                     description: meditationSet.description ?? "",
@@ -73,6 +73,7 @@ struct SelectMeditationView: View {
                                         }
                                     }
                                 )
+                                .devotionalEntrance(delay: Double(index) * 0.07)
                             }
                         }
                     }
@@ -122,13 +123,13 @@ struct SelectMeditationView: View {
     private func iconName(for setName: String) -> String {
         let name = setName.lowercased()
         if name.contains("traditional") {
-            return "building.columns"
+            return "ch-church"
         } else if name.contains("louis") || name.contains("montfort") {
-            return "book.closed"
+            return "ch-bible"
         } else if name.contains("scriptural") {
-            return "text.quote"
+            return "ph-scroll"
         } else {
-            return "sparkles"
+            return "ph-sparkle"
         }
     }
 
@@ -156,10 +157,12 @@ struct MeditationHeaderView: View {
             // Back button row
             HStack {
                 Button(action: onBack) {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 20, weight: .medium))
+                    AppIcon("ph-caret-left", size: 20)
                         .foregroundColor(AppColors.gold)
+                        .frame(width: 40, height: 40)
+                        .contentShape(Rectangle())
                 }
+                .accessibilityLabel("Back")
                 Spacer()
             }
             .padding(.horizontal, 20)
@@ -167,22 +170,22 @@ struct MeditationHeaderView: View {
 
             // Day label
             Text(category.daysPrayed.uppercased())
-                .font(AppFonts.bodyFont(12))
+                .font(AppFonts.labelFont(10))
                 .tracking(4)
                 .foregroundColor(AppColors.gold)
                 .padding(.top, 16)
 
             // Mystery title
             Text("\(category.displayName.uppercased())\nMYSTERIES")
-                .font(AppFonts.headlineFont(32))
+                .font(AppFonts.headlineFont(30))
                 .tracking(2)
                 .foregroundColor(AppColors.gold)
                 .multilineTextAlignment(.center)
+                .minimumScaleFactor(0.85)
 
-            // Gold underline
-            Rectangle()
-                .fill(AppColors.gold)
-                .frame(width: 60, height: 2)
+            // Ornamental underline
+            OrnamentDivider(showsCross: false)
+                .frame(width: 160)
                 .padding(.top, 8)
         }
         .padding(.bottom, 8)

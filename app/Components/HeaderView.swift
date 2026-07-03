@@ -26,8 +26,7 @@ struct HeaderView: View {
     var body: some View {
         HStack {
             Button(action: { onMenuTap?() }) {
-                Image(systemName: "line.3.horizontal")
-                    .font(.system(size: 22))
+                AppIcon("ph-list", size: 22)
                     .foregroundColor(AppColors.cream)
                     .frame(width: 44, height: 44)
                     .contentShape(Rectangle())
@@ -132,10 +131,20 @@ struct StreakFlame: View {
                                 .blur(radius: 6)
                                 .opacity(glowing ? 1 : 0)
 
-                            Image(systemName: "flame.fill")
-                                .font(.system(size: 20))
+                            AppIcon("ph-flame-fill", size: 20)
                                 .foregroundStyle(flameColor)
-                                .symbolEffect(.bounce, value: flare)
+                                .keyframeAnimator(
+                                    initialValue: 1.0,
+                                    trigger: flare
+                                ) { view, scale in
+                                    view.scaleEffect(scale, anchor: .bottom)
+                                } keyframes: { _ in
+                                    KeyframeTrack {
+                                        CubicKeyframe(1.18, duration: 0.16)
+                                        CubicKeyframe(0.96, duration: 0.16)
+                                        CubicKeyframe(1.0, duration: 0.18)
+                                    }
+                                }
                         }
                         .frame(height: 26)
 

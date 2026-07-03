@@ -35,22 +35,28 @@ struct LaunchView: View {
             VStack(spacing: 24) {
                 Spacer()
 
-                // App icon/logo
-                Image(systemName: "rosette")
-                    .font(.system(size: 80, weight: .thin))
+                // App icon/logo — a rosary, glowing like a votive candle
+                AppIcon("ch-rosary", size: 88)
                     .foregroundStyle(
                         LinearGradient(
-                            colors: [AppColors.gold, AppColors.goldLight],
+                            colors: [AppColors.goldLight, AppColors.gold],
                             startPoint: .top,
                             endPoint: .bottom
                         )
                     )
+                    .breathingGlow(
+                        AppColors.gold,
+                        radius: 18,
+                        dimOpacity: 0.25,
+                        brightOpacity: 0.55,
+                        period: 2.2
+                    )
                     .scaleEffect(scale)
 
                 // App name
-                VStack(spacing: 8) {
+                VStack(spacing: 10) {
                     Text("LUMEN VIAE")
-                        .font(AppFonts.headlineFont(32))
+                        .font(AppFonts.headlineFont(30))
                         .tracking(6)
                         .foregroundColor(AppColors.cream)
 

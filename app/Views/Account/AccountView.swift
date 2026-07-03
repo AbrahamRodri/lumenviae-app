@@ -25,6 +25,12 @@ struct AccountView: View {
                     ProfileSection()
                         .padding(.top, 24)
 
+                    // MARK: Appearance
+                    AccountSection(title: "APPEARANCE") {
+                        ThemePickerRows()
+                    }
+                    .padding(.top, 24)
+
                     // MARK: Prayer Experience
                     AccountSection(title: "PRAYER EXPERIENCE") {
                         VStack(spacing: 0) {
@@ -44,7 +50,7 @@ struct AccountView: View {
                     AccountSection(title: "DEVOTION") {
                         VStack(spacing: 0) {
                             ToggleRow(
-                                icon: "bell",
+                                icon: "ph-bell",
                                 title: "Daily Reminders",
                                 subtitle: userSettings.remindersEnabled
                                     ? userSettings.reminderTimeLabel
@@ -66,7 +72,7 @@ struct AccountView: View {
                                     .background(AppColors.gold.opacity(0.2))
 
                                 ActionRow(
-                                    icon: "speaker.wave.2",
+                                    icon: "ph-speaker-high",
                                     title: "Reminder Sound",
                                     subtitle: userSettings.reminderSound.displayName
                                 ) {
@@ -82,28 +88,28 @@ struct AccountView: View {
                     // MARK: About
                     AccountSection(title: "ABOUT") {
                         VStack(spacing: 0) {
-                            ActionRow(icon: "info.circle", title: "About Lumen Viae") {
+                            ActionRow(icon: "ph-info", title: "About Lumen Viae") {
                                 showAbout = true
                             }
 
                             Divider()
                                 .background(AppColors.gold.opacity(0.2))
 
-                            ActionRow(icon: "book.pages", title: "App Introduction") {
+                            ActionRow(icon: "ph-book-open", title: "App Introduction") {
                                 showOnboarding = true
                             }
 
                             Divider()
                                 .background(AppColors.gold.opacity(0.2))
 
-                            ActionRow(icon: "shield", title: "Privacy Policy") {
+                            ActionRow(icon: "ph-shield", title: "Privacy Policy") {
                                 showPrivacyPolicy = true
                             }
 
                             Divider()
                                 .background(AppColors.gold.opacity(0.2))
 
-                            ActionRow(icon: "questionmark.circle", title: "Help & Support") {
+                            ActionRow(icon: "ph-question", title: "Help & Support") {
                                 showHelpSupport = true
                             }
                         }
@@ -131,6 +137,89 @@ struct AccountView: View {
         .sheet(isPresented: $showSoundPicker) {
             ReminderSoundSheet()
         }
+    }
+}
+
+// MARK: - Theme Picker
+
+/// The three sanctuary themes, each with a swatch preview.
+/// Selecting one re-themes the entire app with a soft crossfade.
+struct ThemePickerRows: View {
+
+    /// Observed so the checkmark moves the moment the theme changes
+    private var themeManager = ThemeManager.shared
+
+    var body: some View {
+        VStack(spacing: 0) {
+            ForEach(AppTheme.allCases) { theme in
+                ThemeRow(
+                    theme: theme,
+                    isSelected: themeManager.current == theme
+                ) {
+                    withAnimation(.easeInOut(duration: 0.45)) {
+                        ThemeManager.shared.current = theme
+                    }
+                }
+
+                if theme != AppTheme.allCases.last {
+                    Divider()
+                        .background(AppColors.gold.opacity(0.2))
+                }
+            }
+        }
+        .sensoryFeedback(.selection, trigger: themeManager.current)
+    }
+}
+
+/// A single theme option: overlapping swatches, name, and character line.
+private struct ThemeRow: View {
+    let theme: AppTheme
+    let isSelected: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 16) {
+                // Swatch trio: background, card, and gold of the theme
+                HStack(spacing: -6) {
+                    Circle()
+                        .fill(theme.palette.background)
+                        .overlay(Circle().strokeBorder(AppColors.gold.opacity(0.5), lineWidth: 0.5))
+                        .frame(width: 20, height: 20)
+                    Circle()
+                        .fill(theme.palette.card)
+                        .overlay(Circle().strokeBorder(AppColors.gold.opacity(0.3), lineWidth: 0.5))
+                        .frame(width: 20, height: 20)
+                    Circle()
+                        .fill(theme.palette.gold)
+                        .frame(width: 20, height: 20)
+                }
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(theme.displayName)
+                        .font(AppFonts.bodyFont(16))
+                        .foregroundColor(isSelected ? AppColors.gold : AppColors.cream)
+
+                    Text(theme.detail)
+                        .font(AppFonts.italicFont(12))
+                        .foregroundColor(AppColors.textSecondary)
+                }
+
+                Spacer()
+
+                if isSelected {
+                    AppIcon("ph-check-circle-fill", size: 20)
+                        .foregroundColor(AppColors.gold)
+                        .transition(.scale.combined(with: .opacity))
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("\(theme.displayName) theme")
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }
 
@@ -169,8 +258,7 @@ struct ProfileSection: View {
                     .fill(AppColors.cardBackground)
                     .frame(width: 80, height: 80)
 
-                Image(systemName: "person.fill")
-                    .font(.system(size: 32))
+                AppIcon("ph-user", size: 32)
                     .foregroundColor(AppColors.textSecondary)
             }
             .overlay(
@@ -194,7 +282,7 @@ struct AccountSection<Content: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(title)
-                .font(AppFonts.bodyFont(12))
+                .font(AppFonts.labelFont(11))
                 .tracking(2)
                 .foregroundColor(AppColors.textSecondary)
                 .padding(.horizontal, 20)
@@ -221,8 +309,7 @@ struct ToggleRow: View {
 
     var body: some View {
         HStack(spacing: 16) {
-            Image(systemName: icon)
-                .font(.system(size: 18))
+            AppIcon(icon, size: 18)
                 .foregroundColor(AppColors.textSecondary)
                 .frame(width: 24)
 
@@ -260,8 +347,7 @@ struct ActionRow: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: 16) {
-                Image(systemName: icon)
-                    .font(.system(size: 18))
+                AppIcon(icon, size: 18)
                     .foregroundColor(AppColors.textSecondary)
                     .frame(width: 24)
 
@@ -279,13 +365,14 @@ struct ActionRow: View {
 
                 Spacer()
 
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 14, weight: .medium))
+                AppIcon("ph-caret-right", size: 13)
                     .foregroundColor(AppColors.textSecondary.opacity(0.6))
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
+            .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
     }
 }
 
@@ -297,8 +384,7 @@ struct TextSizeRow: View {
     var body: some View {
         VStack(spacing: 12) {
             HStack(spacing: 16) {
-                Image(systemName: "textformat.size")
-                    .font(.system(size: 18))
+                AppIcon("ph-text-aa", size: 18)
                     .foregroundColor(AppColors.textSecondary)
                     .frame(width: 24)
 
@@ -335,8 +421,7 @@ struct PrayerLanguageRow: View {
     var body: some View {
         VStack(spacing: 12) {
             HStack(spacing: 16) {
-                Image(systemName: "globe")
-                    .font(.system(size: 18))
+                AppIcon("ph-globe", size: 18)
                     .foregroundColor(AppColors.textSecondary)
                     .frame(width: 24)
 
@@ -364,8 +449,7 @@ struct PrayerLanguageRow: View {
                             Spacer()
 
                             if selectedLanguage == language.rawValue {
-                                Image(systemName: "checkmark")
-                                    .font(.system(size: 14, weight: .semibold))
+                                AppIcon("ph-check", size: 14)
                                     .foregroundColor(AppColors.gold)
                             }
                         }
@@ -413,8 +497,7 @@ struct ReminderTimeRow: View {
 
     var body: some View {
         HStack(spacing: 16) {
-            Image(systemName: "clock")
-                .font(.system(size: 18))
+            AppIcon("ph-clock", size: 18)
                 .foregroundColor(AppColors.textSecondary)
                 .frame(width: 24)
 
@@ -442,9 +525,12 @@ struct ReminderTimeRow: View {
 
 struct AccountFooter: View {
     var body: some View {
-        VStack(spacing: 8) {
-            Image(systemName: "church.fill")
-                .font(.system(size: 28))
+        VStack(spacing: 10) {
+            OrnamentDivider()
+                .frame(width: 170)
+                .padding(.bottom, 4)
+
+            AppIcon("ch-church", size: 28)
                 .foregroundColor(AppColors.gold.opacity(0.5))
 
             Text("Lumen Viae v1.0.0")
@@ -476,8 +562,7 @@ struct AboutSheet: View {
                     VStack(spacing: 32) {
                         // Icon
                         VStack(spacing: 16) {
-                            Image(systemName: "church.fill")
-                                .font(.system(size: 48))
+                            AppIcon("ch-rosary", size: 52)
                                 .foregroundColor(AppColors.gold)
 
                             Text("Lumen Viae")
