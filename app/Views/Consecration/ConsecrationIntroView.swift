@@ -25,6 +25,8 @@ struct ConsecrationIntroView: View {
 
     @State private var selectedFeast: MarianFeastDay? = nil
     @State private var showFeastPicker: Bool = false
+    @State private var showCustomStart: Bool = false
+    @State private var customStartDay: Int = 1
 
     // MARK: - Computed Properties
 
@@ -35,6 +37,25 @@ struct ConsecrationIntroView: View {
     private var canBeginToday: Bool {
         guard let feast = selectedFeast else { return false }
         return feast.canStartToday()
+    }
+
+    /// If the selected feast's 33-day window has already begun but the feast
+    /// hasn't passed, the day number today would be so that Day 34 lands on
+    /// the feast. Nil when a normal Day-1 start is possible (or no feast).
+    private var catchUpDay: Int? {
+        guard let feast = selectedFeast,
+              !feast.canStartToday(),
+              let feastDate = feast.nextOccurrence() else { return nil }
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let daysUntilFeast = calendar.dateComponents(
+            [.day],
+            from: today,
+            to: calendar.startOfDay(for: feastDate)
+        ).day ?? 0
+        let dayToday = 34 - daysUntilFeast
+        guard (2...33).contains(dayToday) else { return nil }
+        return dayToday
     }
 
     // MARK: - Body
@@ -65,7 +86,12 @@ struct ConsecrationIntroView: View {
                     // Begin Button
                     if canBeginToday {
                         beginButton
+                    } else if let day = catchUpDay {
+                        catchUpButton(day: day)
                     }
+
+                    // Custom start (begin at any day)
+                    customStartSection
 
                     Spacer()
                         .frame(height: 100)
@@ -398,6 +424,174 @@ struct ConsecrationIntroView: View {
             )
             .clipShape(RoundedRectangle(cornerRadius: 12))
         }
+    }
+
+    // MARK: - Catch-Up Button
+
+    /// Offered when the 33-day window for the selected feast has already begun.
+    /// Starting at a later day lets Day 34 still land on the feast.
+    private func catchUpButton(day: Int) -> some View {
+        VStack(spacing: 10) {
+            Button {
+                viewModel.startConsecration(startingAt: day)
+            } label: {
+                HStack {
+                    Text("Begin Today at Day \(day)")
+                        .font(AppFonts.headlineFont(16))
+
+                    Image(systemName: "arrow.right")
+                }
+                .foregroundColor(AppColors.background)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
+                .background(
+                    LinearGradient(
+                        colors: [AppColors.gold, AppColors.goldLight],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+            }
+
+            Text("The preparation for this feast has already begun. Start today at Day \(day) and your consecration day will still fall on the feast.")
+                .font(AppFonts.bodyFont(12))
+                .foregroundColor(AppColors.textSecondary)
+                .multilineTextAlignment(.center)
+                .lineSpacing(3)
+        }
+    }
+
+    // MARK: - Custom Start Section
+
+    /// Lets the user begin at any day of the 33-day preparation, independent
+    /// of feast alignment (e.g., following along in a book or group).
+    private var customStartSection: some View {
+        VStack(spacing: 16) {
+            // Divider with "OR"
+            HStack(spacing: 12) {
+                Rectangle()
+                    .fill(AppColors.gold.opacity(0.25))
+                    .frame(height: 1)
+                Text("OR")
+                    .font(AppFonts.bodyFont(11))
+                    .tracking(2)
+                    .foregroundColor(AppColors.textSecondary)
+                Rectangle()
+                    .fill(AppColors.gold.opacity(0.25))
+                    .frame(height: 1)
+            }
+
+            Button {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    showCustomStart.toggle()
+                }
+            } label: {
+                HStack {
+                    Image(systemName: "calendar.day.timeline.left")
+                        .foregroundColor(AppColors.gold)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Start at Any Day")
+                            .font(AppFonts.bodyFont(16))
+                            .foregroundColor(AppColors.cream)
+
+                        Text("Already mid-preparation? Jump in where you are.")
+                            .font(AppFonts.bodyFont(12))
+                            .foregroundColor(AppColors.textSecondary)
+                    }
+
+                    Spacer()
+
+                    Image(systemName: "chevron.down")
+                        .foregroundColor(AppColors.textSecondary)
+                        .rotationEffect(.degrees(showCustomStart ? 180 : 0))
+                }
+                .padding(16)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(AppColors.cardBackground)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(AppColors.gold.opacity(0.3), lineWidth: 1)
+                        )
+                )
+            }
+
+            if showCustomStart {
+                customStartPicker
+            }
+        }
+    }
+
+    private var customStartPicker: some View {
+        VStack(spacing: 16) {
+            // Day picker
+            Picker("Start Day", selection: $customStartDay) {
+                ForEach(1...33, id: \.self) { day in
+                    Text(customStartLabel(for: day))
+                        .font(AppFonts.bodyFont(16))
+                        .foregroundColor(AppColors.cream)
+                        .tag(day)
+                }
+            }
+            .pickerStyle(.wheel)
+            .frame(height: 120)
+            .colorScheme(.dark)
+
+            // Phase context for the chosen day
+            if let phase = ConsecrationPhase.phase(for: customStartDay) {
+                Text("\(phase.displayName) — \(phase.subtitle)")
+                    .font(AppFonts.italicFont(13))
+                    .foregroundColor(AppColors.gold.opacity(0.8))
+            }
+
+            // Resulting consecration date
+            Text("Your consecration day will be \(consecrationDate(startingAt: customStartDay), style: .date).")
+                .font(AppFonts.bodyFont(12))
+                .foregroundColor(AppColors.textSecondary)
+                .multilineTextAlignment(.center)
+
+            Button {
+                viewModel.startConsecration(startingAt: customStartDay)
+            } label: {
+                HStack {
+                    Text("Begin Today at Day \(customStartDay)")
+                        .font(AppFonts.headlineFont(16))
+
+                    Image(systemName: "arrow.right")
+                }
+                .foregroundColor(AppColors.background)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
+                .background(
+                    LinearGradient(
+                        colors: [AppColors.gold, AppColors.goldLight],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+            }
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(AppColors.cardBackground.opacity(0.6))
+        )
+    }
+
+    private func customStartLabel(for day: Int) -> String {
+        day == 1 ? "Day 1 — from the beginning" : "Day \(day)"
+    }
+
+    /// The date Day 34 lands on when today counts as `day`.
+    private func consecrationDate(startingAt day: Int) -> Date {
+        Calendar.current.date(
+            byAdding: .day,
+            value: 34 - day,
+            to: Calendar.current.startOfDay(for: Date())
+        ) ?? Date()
     }
 }
 

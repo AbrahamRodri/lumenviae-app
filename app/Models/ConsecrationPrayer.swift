@@ -42,7 +42,6 @@ struct ConsecrationPrayer: Codable, Identifiable, Hashable {
     let latinTitle: String?
 
     /// Full text of the prayer
-    /// Note: Placeholder content for now - will be populated with actual prayers
     let content: String
 
     /// URL for audio recording of the prayer (optional)

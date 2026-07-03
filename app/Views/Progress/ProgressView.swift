@@ -309,7 +309,7 @@ struct PrayerProgressView: View {
             ("Sorrowful Mysteries", categoryBreakdown[.sorrowful] ?? 0, AppColors.gold),
             ("Glorious Mysteries", categoryBreakdown[.glorious] ?? 0, AppColors.gold),
             ("Luminous Mysteries", categoryBreakdown[.luminous] ?? 0, AppColors.gold.opacity(0.5)),
-            ("Seven Sorrows", 0, AppColors.gold) // Placeholder for future
+            ("Seven Sorrows", categoryBreakdown[.sevenSorrows] ?? 0, AppColors.gold)
         ]
     }
 
