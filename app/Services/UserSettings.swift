@@ -261,7 +261,7 @@ final class UserSettings {
 
     private func scheduleDailyReminder() {
         let center = UNUserNotificationCenter.current()
-        center.removePendingNotificationRequests(withIdentifiers: reminderIdentifiers + ["lumenviae.dailyReminder"])
+        center.removePendingNotificationRequests(withIdentifiers: reminderIdentifiers)
 
         for weekday in 1...7 {
             let message = Self.reminderMessages[(weekday - 1) % Self.reminderMessages.count]
@@ -289,8 +289,7 @@ final class UserSettings {
     }
 
     private func cancelDailyReminder() {
-        // Includes the legacy single-reminder identifier from earlier versions
         UNUserNotificationCenter.current()
-            .removePendingNotificationRequests(withIdentifiers: reminderIdentifiers + ["lumenviae.dailyReminder"])
+            .removePendingNotificationRequests(withIdentifiers: reminderIdentifiers)
     }
 }
