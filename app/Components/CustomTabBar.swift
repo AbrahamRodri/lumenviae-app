@@ -53,6 +53,9 @@ struct CustomTabBar: View {
 
     @Binding var selectedTab: AppTab
 
+    /// Whether today's meditation set is still loading after a Pray tap
+    var isLoadingPrayer: Bool = false
+
     /// Starts today's Rosary directly (invoked by the raised Pray button)
     var onPrayNow: () -> Void = {}
 
@@ -92,7 +95,7 @@ struct CustomTabBar: View {
                 .shadow(color: Color.black.opacity(0.3), radius: 10)
         )
         .overlay(alignment: .topTrailing) {
-            PrayNowButton(action: onPrayNow)
+            PrayNowButton(isLoading: isLoadingPrayer, action: onPrayNow)
                 .padding(.trailing, 12)
                 .offset(y: -20)
         }
@@ -109,6 +112,9 @@ struct CustomTabBar: View {
 /// Deliberately understated: it matches the app's dark-card / gold-line
 /// language instead of competing with the gold prayer CTAs above it.
 struct PrayNowButton: View {
+    /// Shows a spinner in place of the cross while the meditation set loads
+    var isLoading: Bool = false
+
     var action: () -> Void = {}
 
     var body: some View {
@@ -149,15 +155,21 @@ struct PrayNowButton: View {
                     .frame(width: 53, height: 53)
 
                 VStack(spacing: 4) {
-                    LatinCross()
-                        .fill(
-                            LinearGradient(
-                                colors: [AppColors.goldLight, AppColors.gold],
-                                startPoint: .top,
-                                endPoint: .bottom
+                    if isLoading {
+                        ProgressView()
+                            .tint(AppColors.gold)
+                            .frame(width: 14, height: 20)
+                    } else {
+                        LatinCross()
+                            .fill(
+                                LinearGradient(
+                                    colors: [AppColors.goldLight, AppColors.gold],
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
                             )
-                        )
-                        .frame(width: 14, height: 20)
+                            .frame(width: 14, height: 20)
+                    }
 
                     Text("PRAY")
                         .font(AppFonts.bodyFont(9))
@@ -168,7 +180,8 @@ struct PrayNowButton: View {
             .shadow(color: Color.black.opacity(0.4), radius: 8, y: 3)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("Pray today's Rosary")
+        .disabled(isLoading)
+        .accessibilityLabel(isLoading ? "Preparing today's Rosary" : "Pray today's Rosary")
     }
 }
 

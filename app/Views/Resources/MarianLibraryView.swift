@@ -226,6 +226,11 @@ struct MarianLibraryView: View {
                     text: "\u{201C}In dangers, in doubts, in difficulties, think of Mary, call upon Mary... If you follow her, you cannot go astray; if you pray to her, you cannot despair; if you think of her, you cannot err. If she holds you, you cannot fall; if she protects you, you need not fear; if she guides you, you will never tire.\u{201D} — Homily in Praise of the Virgin Mother"
                 ),
                 LibraryEntry(
+                    title: "St. Dominic",
+                    detail: "1170-1221 — Founder of the Order of Preachers",
+                    text: "\u{201C}Arm yourself with prayer rather than a sword; wear humility rather than fine clothes.\u{201D} Tradition, handed down through Bl. Alan de la Roche, holds that Our Lady gave St. Dominic the Rosary around 1214 as the weapon against the Albigensian heresy: where preaching alone had failed, her Psalter — 150 Hail Marys echoing the 150 Psalms — converted thousands. His Order of Preachers has carried the Rosary to the world ever since."
+                ),
+                LibraryEntry(
                     title: "St. Louis de Montfort",
                     detail: "1673-1716 — Apostle of Total Consecration",
                     text: "\u{201C}The more one is consecrated to Mary, the more one is consecrated to Jesus... She is the safest, easiest, shortest and most perfect way of approaching Jesus.\u{201D} His True Devotion to Mary, written around 1712 and hidden for over a century, teaches the total consecration practiced in this app's 33-day preparation."
