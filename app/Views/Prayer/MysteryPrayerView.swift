@@ -406,10 +406,10 @@ struct MysteryPrayerView: View {
     }
 
     private func handleNextMystery() {
-        let finished = withAnimation(.easeInOut(duration: 0.4)) {
+        let advanced = withAnimation(.easeInOut(duration: 0.4)) {
             viewModel.nextMystery()
         }
-        guard finished else { return }
+        guard !advanced else { return }
 
         // Completed all mysteries - navigate to completion
         Task {
