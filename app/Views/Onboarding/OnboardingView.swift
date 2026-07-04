@@ -5,14 +5,20 @@
 //  First-run tutorial shown once on initial launch.
 //  Tracked via @AppStorage so it never appears again after completion.
 //
-//  Flow (5 slides — Headspace-style: few questions, personalized payoff):
-//    1. Welcome           — what the app is
-//    2. How it works      — the session flow
+//  Flow (7 slides — Headspace-style: few words, felt experience):
+//    1. Welcome           — an invitation, not a manual
+//    2. At your own pace  — a live demo of the five mysteries advancing;
+//                            meditations are read or played, prayer is
+//                            self-paced (no bead-level tracking is implied)
 //    3. Intention         — "What draws you here?" (self-segmentation;
 //                            creates ownership, personalizes the closing)
-//    4. Daily reminder    — pick a prayer time with the value explained,
+//    4. Sanctuary         — pick a theme; tapping re-themes the whole app
+//                            live, so onboarding itself is the preview
+//    5. Prayer language   — English, Latin, or bilingual, with a live
+//                            preview of the Hail Mary in the chosen format
+//    6. Daily reminder    — pick a prayer time with the value explained,
 //                            which beats a cold permission prompt
-//    5. Begin             — closing line personalized to the intention
+//    7. Begin             — closing line personalized to the intention
 //      • "Begin Prayer"                    → onComplete() → ContentView
 //      • "Methods of Praying the Rosary"   → sheet (RosaryMethodsView)
 //
@@ -37,7 +43,11 @@ struct OnboardingView: View {
     /// Selected intention on the "What draws you here?" slide
     @State private var selectedIntention: PrayerIntention? = nil
 
-    private let totalPages = 5
+    /// Selected prayer language on the language slide — seeded from settings
+    /// so re-running onboarding from Account reflects the current choice
+    @State private var selectedLanguage: PrayerLanguage = UserSettings.shared.prayerLanguage
+
+    private let totalPages = 7
 
     var body: some View {
         ZStack {
@@ -62,8 +72,10 @@ struct OnboardingView: View {
                     slide1.tag(0)
                     slide2.tag(1)
                     intentionSlide.tag(2)
-                    reminderSlide.tag(3)
-                    finalSlide.tag(4)
+                    themeSlide.tag(3)
+                    languageSlide.tag(4)
+                    reminderSlide.tag(5)
+                    finalSlide.tag(6)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
                 .animation(.easeInOut(duration: 0.3), value: currentPage)
@@ -74,74 +86,61 @@ struct OnboardingView: View {
         }
     }
 
-    // MARK: - Slide 1: What the App Is
+    // MARK: - Slide 1: Welcome (an invitation, not a manual)
 
     private var slide1: some View {
         OnboardingSlideLayout(
             icon: "ch-rosary",
             iconIsGradient: true,
-            title: "Your Rosary Companion",
+            title: "Lumen Viae",
             isActive: currentPage == 0,
             content: {
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("Lumen Viae is a Rosary helper — not an audio walkthrough of the entire prayer.")
-                        .font(AppFonts.headlineFont(17))
-                        .foregroundColor(AppColors.cream)
-                        .lineSpacing(5)
+                VStack(spacing: 18) {
+                    Text("LIGHT OF THE WAY")
+                        .font(AppFonts.labelFont(11))
+                        .tracking(4)
+                        .foregroundColor(AppColors.gold)
 
-                    Text("You pray the words yourself. The app keeps your place, provides a meditation for each mystery, and deepens your focus with scripture and reflection.")
-                        .font(AppFonts.bodyFont(15))
-                        .foregroundColor(AppColors.cream.opacity(0.8))
-                        .lineSpacing(5)
-
-                    Divider()
-                        .background(AppColors.gold.opacity(0.2))
-                        .padding(.vertical, 4)
-
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("The app provides:")
-                            .font(AppFonts.headlineFont(14))
-                            .foregroundColor(AppColors.gold)
-
-                        AppFeatureRow(icon: "ph-bookmark",     label: "Meditations for every mystery")
-                        AppFeatureRow(icon: "ph-quotes",   label: "Scripture for each mystery — for study, not recited during prayer")
-                        AppFeatureRow(icon: "ph-calendar-dots",     label: "Daily mystery auto-selected by traditional schedule")
-                        AppFeatureRow(icon: "ph-book",         label: "Multiple meditation styles — General, Saint, Situational, Contemplative")
-                    }
+                    Text("A quiet place to pray the Rosary — scripture, meditation, and stillness, one mystery at a time.")
+                        .font(AppFonts.italicFont(17))
+                        .foregroundColor(AppColors.cream.opacity(0.9))
+                        .multilineTextAlignment(.center)
+                        .lineSpacing(6)
+                        .padding(.horizontal, 8)
                 }
-                .multilineTextAlignment(.leading)
             },
             bottomContent: {
-                OnboardingNextButton(label: "Next") {
+                OnboardingNextButton(label: "Begin") {
                     withAnimation(.easeInOut(duration: 0.3)) { currentPage = 1 }
                 }
             }
         )
     }
 
-    // MARK: - Slide 2: What the Process Is Like
+    // MARK: - Slide 2: At Your Own Pace (shown, not told)
 
     private var slide2: some View {
         OnboardingSlideLayout(
-            icon: "ph-person-simple-walk",
+            icon: "ph-hands-praying",
             iconIsGradient: false,
-            title: "How a Session Works",
+            title: "At Your Own Pace",
             isActive: currentPage == 1,
             content: {
-                VStack(alignment: .leading, spacing: 20) {
-                    Text("Each time you open the app, a full Rosary session flows like this:")
-                        .font(AppFonts.bodyFont(15))
-                        .foregroundColor(AppColors.cream.opacity(0.8))
+                VStack(spacing: 26) {
+                    Text("Each mystery brings its meditation. You pray, and move on when you're ready.")
+                        .font(AppFonts.italicFont(16))
+                        .foregroundColor(AppColors.cream.opacity(0.9))
+                        .multilineTextAlignment(.center)
                         .lineSpacing(5)
 
+                    MysteryPaceDemoView(isActive: currentPage == 1)
+
                     VStack(spacing: 14) {
-                        NumberedStepRow(number: "1", icon: "ph-calendar-dots",    title: "Today's mystery is chosen",  detail: "The traditional schedule assigns Joyful, Sorrowful, or Glorious by day. Luminous is available but not in the default rotation — you can always pick any set.")
-                        NumberedStepRow(number: "2", icon: "ph-sparkle",    title: "Choose how to meditate",     detail: "General, from a Saint, Situational, or Contemplative — each style brings a different lens to the same mysteries.")
-                        NumberedStepRow(number: "3", icon: "ph-book", title: "Pray 5 decades",             detail: "The app guides you through each mystery at your own pace. You pray the prayers; the app holds your place.")
-                        NumberedStepRow(number: "4", icon: "ph-heart",       title: "Reflect and journal",        detail: "Close with a moment of reflection and an optional journal entry to capture what moved you.")
+                        SessionMomentRow(icon: "ph-calendar-dots", text: "Today's mystery, chosen for you")
+                        SessionMomentRow(icon: "ph-book-open",     text: "A meditation for each — read or listen")
+                        SessionMomentRow(icon: "ph-note-pencil",   text: "A quiet reflection to close")
                     }
                 }
-                .multilineTextAlignment(.leading)
             },
             bottomContent: {
                 OnboardingNextButton(label: "Next") {
@@ -201,7 +200,85 @@ struct OnboardingView: View {
         )
     }
 
-    // MARK: - Slide 4: Daily Reminder
+    // MARK: - Slide 4: Theme ("Choose Your Sanctuary")
+
+    private var themeSlide: some View {
+        OnboardingSlideLayout(
+            icon: "ch-window",
+            iconIsGradient: true,
+            title: "Choose Your Sanctuary",
+            isActive: currentPage == 3,
+            content: {
+                VStack(alignment: .leading, spacing: 20) {
+                    Text("Every chapel has its own light. Choose the palette your prayers will live in — the whole app changes the moment you tap.")
+                        .font(AppFonts.bodyFont(15))
+                        .foregroundColor(AppColors.cream.opacity(0.8))
+                        .lineSpacing(5)
+
+                    OnboardingThemePicker()
+                }
+                .multilineTextAlignment(.leading)
+            },
+            bottomContent: {
+                OnboardingNextButton(label: "Continue") {
+                    withAnimation(.easeInOut(duration: 0.3)) { currentPage = 4 }
+                }
+            }
+        )
+    }
+
+    // MARK: - Slide 5: Prayer Language ("The Language of Prayer")
+
+    /// Language presets: the enum case plus a one-line description of the format.
+    private let languageOptions: [(language: PrayerLanguage, detail: String)] = [
+        (.english, "Every prayer in English"),
+        (.latin, "The Church's ancient tongue"),
+        (.both, "Latin leads, English beneath each line"),
+        (.latinUnderEnglish, "English leads, Latin beneath each line")
+    ]
+
+    private var languageSlide: some View {
+        OnboardingSlideLayout(
+            icon: "ph-globe",
+            iconIsGradient: false,
+            title: "The Language of Prayer",
+            isActive: currentPage == 4,
+            content: {
+                VStack(alignment: .leading, spacing: 20) {
+                    Text("Pray in English, in the Church's Latin, or in both together — line by line, one tongue above the other.")
+                        .font(AppFonts.bodyFont(15))
+                        .foregroundColor(AppColors.cream.opacity(0.8))
+                        .lineSpacing(5)
+
+                    LanguagePreviewCard(language: selectedLanguage)
+
+                    VStack(spacing: 12) {
+                        ForEach(languageOptions, id: \.language) { option in
+                            SelectableOptionRow(
+                                label: option.language.rawValue,
+                                detail: option.detail,
+                                isSelected: selectedLanguage == option.language
+                            ) {
+                                withAnimation(.easeInOut(duration: 0.25)) {
+                                    selectedLanguage = option.language
+                                }
+                            }
+                        }
+                    }
+                    .sensoryFeedback(.selection, trigger: selectedLanguage)
+                }
+                .multilineTextAlignment(.leading)
+            },
+            bottomContent: {
+                OnboardingNextButton(label: "Continue") {
+                    UserSettings.shared.prayerLanguagePreference = selectedLanguage.rawValue
+                    withAnimation(.easeInOut(duration: 0.3)) { currentPage = 5 }
+                }
+            }
+        )
+    }
+
+    // MARK: - Slide 6: Daily Reminder
 
     /// Reminder presets: label, description, and hour (24h).
     private let reminderOptions: [(label: String, detail: String, hour: Int)] = [
@@ -215,7 +292,7 @@ struct OnboardingView: View {
             icon: "ph-bell",
             iconIsGradient: false,
             title: "A Daily Call to Prayer",
-            isActive: currentPage == 3,
+            isActive: currentPage == 5,
             content: {
                 VStack(alignment: .leading, spacing: 20) {
                     Text("A consistent hour of prayer is the surest way to make the Rosary a daily habit. When would you like to be reminded?")
@@ -252,7 +329,7 @@ struct OnboardingView: View {
                             settings.reminderMinute = 0
                             settings.remindersEnabled = true
                         }
-                        withAnimation(.easeInOut(duration: 0.3)) { currentPage = 4 }
+                        withAnimation(.easeInOut(duration: 0.3)) { currentPage = 6 }
                     } label: {
                         HStack(spacing: 6) {
                             Text("Set Reminder")
@@ -282,7 +359,7 @@ struct OnboardingView: View {
 
                     Button {
                         UserSettings.shared.remindersEnabled = false
-                        withAnimation(.easeInOut(duration: 0.3)) { currentPage = 4 }
+                        withAnimation(.easeInOut(duration: 0.3)) { currentPage = 6 }
                     } label: {
                         Text("Not Now")
                             .font(AppFonts.bodyFont(15))
@@ -294,7 +371,7 @@ struct OnboardingView: View {
         )
     }
 
-    // MARK: - Slide 5: Begin or Learn More
+    // MARK: - Slide 7: Begin or Learn More
 
     /// Closing line personalized to the chosen intention —
     /// the small "made for you" payoff at the end of onboarding.
@@ -315,10 +392,10 @@ struct OnboardingView: View {
 
     private var finalSlide: some View {
         OnboardingSlideLayout(
-            icon: "rays",
+            icon: "ph-sun-horizon",
             iconIsGradient: false,
             title: "Begin Your Journey",
-            isActive: currentPage == 4,
+            isActive: currentPage == 6,
             content: {
                 Text(personalizedClosing)
                     .font(AppFonts.italicFont(16))
@@ -499,23 +576,119 @@ private struct OnboardingNextButton: View {
     }
 }
 
-/// Slide 1 — compact icon + label row listing what the app provides.
-private struct AppFeatureRow: View {
+/// Slide 2 — one quiet moment of the session: circled icon + a short line.
+private struct SessionMomentRow: View {
     let icon: String
-    let label: String
+    let text: String
 
     var body: some View {
-        HStack(spacing: 12) {
-            AppIcon(icon, size: 14)
-                .foregroundColor(AppColors.gold)
-                .frame(width: 20)
+        HStack(spacing: 14) {
+            ZStack {
+                Circle()
+                    .fill(AppColors.gold.opacity(0.12))
+                    .frame(width: 34, height: 34)
+                AppIcon(icon, size: 15)
+                    .foregroundColor(AppColors.gold)
+            }
 
-            Text(label)
-                .font(AppFonts.bodyFont(14))
-                .foregroundColor(AppColors.cream.opacity(0.8))
+            Text(text)
+                .font(AppFonts.bodyFont(15))
+                .foregroundColor(AppColors.cream.opacity(0.85))
 
             Spacer()
         }
+    }
+}
+
+/// Slide 2's show-don't-tell: the five mysteries advancing one by one,
+/// the way a session actually moves — a meditation per mystery, prayed
+/// at your own pace. Loops while the slide is visible; holds a still
+/// frame when inactive or Reduce Motion is on.
+private struct MysteryPaceDemoView: View {
+    let isActive: Bool
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    /// Seconds each mystery lingers in the demo
+    private static let mysteryInterval: Double = 2.4
+
+    /// The Joyful mysteries, as a familiar example set
+    private static let mysteries = [
+        "The Annunciation",
+        "The Visitation",
+        "The Nativity",
+        "The Presentation",
+        "Finding Jesus in the Temple"
+    ]
+
+    private static let ordinals = ["FIRST", "SECOND", "THIRD", "FOURTH", "FIFTH"]
+
+    var body: some View {
+        Group {
+            if isActive && !reduceMotion {
+                TimelineView(.periodic(from: .now, by: Self.mysteryInterval)) { context in
+                    let tick = Int(context.date.timeIntervalSinceReferenceDate / Self.mysteryInterval)
+                    demo(current: tick % 5)
+                }
+            } else {
+                demo(current: 1)
+            }
+        }
+        .padding(.vertical, 18)
+        .padding(.horizontal, 16)
+        .frame(maxWidth: .infinity)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(AppColors.quoteBackground)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .strokeBorder(AppColors.gold.opacity(0.2), lineWidth: 1)
+        )
+    }
+
+    private func demo(current: Int) -> some View {
+        VStack(spacing: 14) {
+            // Five mystery markers — prayed ones filled, the current one lit
+            HStack(spacing: 14) {
+                ForEach(0..<5, id: \.self) { index in
+                    let isReached = index <= current
+                    let isCurrent = index == current
+
+                    Circle()
+                        .fill(isReached ? AnyShapeStyle(AppColors.goldGradient) : AnyShapeStyle(AppColors.cardElevated))
+                        .overlay(
+                            Circle().strokeBorder(
+                                AppColors.gold.opacity(isReached ? 0.8 : 0.25),
+                                lineWidth: 1
+                            )
+                        )
+                        .frame(width: 13, height: 13)
+                        .scaleEffect(isCurrent ? 1.3 : 1)
+                        .shadow(color: AppColors.gold.opacity(isCurrent ? 0.6 : 0), radius: 6)
+                }
+            }
+            .animation(.spring(response: 0.45, dampingFraction: 0.7), value: current)
+
+            // The mystery now open, as the prayer screen presents it
+            VStack(spacing: 4) {
+                Text("THE \(Self.ordinals[current]) MYSTERY")
+                    .font(AppFonts.labelFont(9))
+                    .tracking(2.5)
+                    .foregroundColor(AppColors.gold)
+
+                Text(Self.mysteries[current])
+                    .font(AppFonts.headlineFont(17))
+                    .foregroundColor(AppColors.cream)
+            }
+            .id(current)
+            .transition(.opacity.combined(with: .offset(y: 6)))
+
+            Text("Meditate, pray the decade, continue when ready")
+                .font(AppFonts.italicFont(12))
+                .foregroundColor(AppColors.textSecondary)
+        }
+        .animation(.easeOut(duration: 0.4), value: current)
     }
 }
 
@@ -529,8 +702,14 @@ private struct SelectableOptionRow: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: 14) {
-                AppIcon(isSelected ? "ph-check-circle-fill" : "ph-circle", size: 20)
-                    .foregroundColor(isSelected ? AppColors.gold : AppColors.textSecondary.opacity(0.6))
+                if isSelected {
+                    AppIcon("ph-check-circle-fill", size: 20)
+                        .foregroundColor(AppColors.gold)
+                        .transition(.scale(scale: 0.4).combined(with: .opacity))
+                } else {
+                    AppIcon("ph-circle", size: 20)
+                        .foregroundColor(AppColors.textSecondary.opacity(0.6))
+                }
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(label)
@@ -549,6 +728,7 @@ private struct SelectableOptionRow: View {
             .background(
                 RoundedRectangle(cornerRadius: 16)
                     .fill(AppColors.cardBackground.opacity(isSelected ? 1 : 0.5))
+                    .shadow(color: AppColors.gold.opacity(isSelected ? 0.22 : 0), radius: 12, x: 0, y: 3)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
@@ -558,40 +738,225 @@ private struct SelectableOptionRow: View {
                     )
             )
         }
-        .buttonStyle(.plain)
+        .buttonStyle(SacredCardButtonStyle())
     }
 }
 
-/// Slide 2 — numbered step with a title and detail line.
-private struct NumberedStepRow: View {
-    let number: String
-    let icon: String
-    let title: String
-    let detail: String
+/// Theme slide — the three sanctuary palettes. Selecting one re-themes
+/// the entire app instantly (ThemeManager is @Observable and every color
+/// flows through AppColors), so the onboarding itself is the live preview.
+private struct OnboardingThemePicker: View {
+
+    /// Observed so the checkmark moves the moment the theme changes
+    private var themeManager = ThemeManager.shared
 
     var body: some View {
-        HStack(alignment: .top, spacing: 14) {
-            ZStack {
-                Circle()
-                    .fill(AppColors.gold.opacity(0.15))
-                    .frame(width: 38, height: 38)
-                Text(number)
-                    .font(AppFonts.headlineFont(16))
-                    .foregroundColor(AppColors.gold)
+        VStack(spacing: 12) {
+            ForEach(AppTheme.allCases) { theme in
+                OnboardingThemeRow(
+                    theme: theme,
+                    isSelected: themeManager.current == theme
+                ) {
+                    withAnimation(.easeInOut(duration: 0.35)) {
+                        ThemeManager.shared.current = theme
+                    }
+                }
             }
 
-            VStack(alignment: .leading, spacing: 3) {
-                Text(title)
-                    .font(AppFonts.headlineFont(14))
-                    .foregroundColor(AppColors.cream)
+            // A verse in the voice of the chosen sanctuary — the small
+            // reward for trying each one.
+            Text(verse(for: themeManager.current))
+                .font(AppFonts.italicFont(14))
+                .foregroundColor(AppColors.accentSoft)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
+                .padding(.top, 10)
+                .id(themeManager.current)
+                .transition(.opacity.combined(with: .offset(y: 6)))
+        }
+        .sensoryFeedback(.selection, trigger: themeManager.current)
+    }
 
-                Text(detail)
-                    .font(AppFonts.bodyFont(13))
+    private func verse(for theme: AppTheme) -> String {
+        switch theme {
+        case .marianBlue: return "“Tota pulchra es, Maria” — you are all fair, O Mary."
+        case .midnight:   return "“Be still, and know that I am God.” — Psalm 46"
+        case .candlelit:  return "“Your word is a lamp to my feet.” — Psalm 119"
+        }
+    }
+}
+
+/// A single theme choice: swatch trio, name, character line, and check —
+/// the same card treatment as SelectableOptionRow.
+private struct OnboardingThemeRow: View {
+    let theme: AppTheme
+    let isSelected: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 14) {
+                // Swatch trio: background, card, and gold — the stack
+                // fans open and the gold "lights" when this theme is chosen
+                HStack(spacing: isSelected ? 3 : -8) {
+                    swatch(theme.palette.background)
+                    swatch(theme.palette.card)
+                    swatch(theme.palette.gold)
+                        .shadow(color: theme.palette.gold.opacity(isSelected ? 0.7 : 0), radius: 6)
+                }
+                .animation(.spring(response: 0.4, dampingFraction: 0.65), value: isSelected)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(theme.displayName)
+                        .font(AppFonts.headlineFont(16))
+                        .foregroundColor(AppColors.cream)
+
+                    Text(theme.detail)
+                        .font(AppFonts.bodyFont(13))
+                        .foregroundColor(AppColors.textSecondary)
+                }
+
+                Spacer()
+
+                if isSelected {
+                    AppIcon("ph-check-circle-fill", size: 20)
+                        .foregroundColor(AppColors.gold)
+                        .transition(.scale(scale: 0.4).combined(with: .opacity))
+                } else {
+                    AppIcon("ph-circle", size: 20)
+                        .foregroundColor(AppColors.textSecondary.opacity(0.6))
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(AppColors.cardBackground.opacity(isSelected ? 1 : 0.5))
+                    .shadow(color: AppColors.gold.opacity(isSelected ? 0.22 : 0), radius: 12, x: 0, y: 3)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(
+                        isSelected ? AppColors.gold.opacity(0.6) : AppColors.gold.opacity(0.15),
+                        lineWidth: 1
+                    )
+            )
+        }
+        .buttonStyle(SacredCardButtonStyle())
+        .accessibilityLabel("\(theme.displayName) theme")
+    }
+
+    private func swatch(_ color: Color) -> some View {
+        Circle()
+            .fill(color)
+            .frame(width: 24, height: 24)
+            .overlay(Circle().strokeBorder(AppColors.cream.opacity(0.25), lineWidth: 1))
+    }
+}
+
+/// Language slide — live preview of the Hail Mary's opening lines,
+/// rendered in the same line-by-line format the prayer screens use,
+/// so each option shows exactly what it means before it's chosen.
+private struct LanguagePreviewCard: View {
+    let language: PrayerLanguage
+
+    /// Opening lines of the Ave Maria in both tongues
+    private static let lines: [(latin: String, english: String)] = [
+        ("Ave Maria, gratia plena, Dominus tecum;", "Hail Mary, full of grace, the Lord is with thee;"),
+        ("benedicta tu in mulieribus,", "blessed art thou among women,")
+    ]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 8) {
+                AppIcon("ph-hands-praying", size: 13)
+                    .foregroundColor(AppColors.gold.opacity(0.85))
+
+                Text("The Hail Mary")
+                    .font(AppFonts.italicFont(12))
                     .foregroundColor(AppColors.textSecondary)
-                    .lineSpacing(4)
+
+                Spacer()
+
+                // Mode chip — the dot order mirrors which tongue leads
+                Text(badge)
+                    .font(AppFonts.headlineFont(10))
+                    .tracking(1.1)
+                    .foregroundColor(AppColors.gold)
+                    .padding(.horizontal, 9)
+                    .padding(.vertical, 4)
+                    .background(Capsule().fill(AppColors.gold.opacity(0.12)))
+                    .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.25), lineWidth: 1))
+                    .id(language)
+                    .transition(.opacity.combined(with: .scale(scale: 0.8)))
             }
 
-            Spacer()
+            VStack(alignment: .leading, spacing: 8) {
+                ForEach(Array(Self.lines.enumerated()), id: \.offset) { _, line in
+                    linePair(latin: line.latin, english: line.english)
+                }
+            }
+            .id(language)
+            .transition(.opacity.combined(with: .offset(y: 8)))
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(AppColors.quoteBackground)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .strokeBorder(AppColors.gold.opacity(0.2), lineWidth: 1)
+        )
+        .animation(.easeOut(duration: 0.3), value: language)
+    }
+
+    /// Compact label for the active mode, e.g. "LATIN · ENGLISH"
+    private var badge: String {
+        switch language {
+        case .english:           return "ENGLISH"
+        case .latin:             return "LATIN"
+        case .both:              return "LATIN · ENGLISH"
+        case .latinUnderEnglish: return "ENGLISH · LATIN"
+        }
+    }
+
+    /// One line of the prayer in the chosen format
+    @ViewBuilder
+    private func linePair(latin: String, english: String) -> some View {
+        switch language {
+        case .english:
+            singleLine(english)
+        case .latin:
+            singleLine(latin)
+        case .both:
+            bilingualPair(primary: latin, secondary: english)
+        case .latinUnderEnglish:
+            bilingualPair(primary: english, secondary: latin)
+        }
+    }
+
+    private func singleLine(_ text: String) -> some View {
+        Text(text)
+            .font(AppFonts.bodyFont(15))
+            .foregroundColor(AppColors.cream)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private func bilingualPair(primary: String, secondary: String) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(primary)
+                .font(AppFonts.bodyFont(15))
+                .foregroundColor(AppColors.cream)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Text(secondary)
+                .font(AppFonts.bodyFont(13))
+                .foregroundColor(AppColors.textSecondary.opacity(0.8))
+                .italic()
+                .padding(.leading, 8)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 }

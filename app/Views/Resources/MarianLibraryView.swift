@@ -214,7 +214,7 @@ struct MarianLibraryView: View {
         ),
         LibrarySection(
             id: "saints",
-            icon: "ph-users-three",
+            icon: "ph-hands-praying",
             title: "The Marian Saints",
             subtitle: "In their own words",
             entries: [

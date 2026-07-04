@@ -65,14 +65,15 @@ struct JournalEntryEditorView: View {
             : "Record your thoughts…"
     }
 
+    // Mirrors JournalEntry.categoryIcon so list and editor match
     private var categoryIcon: String {
         switch lockedCategory {
-        case .joyful:      return "sun.max.fill"
-        case .sorrowful:   return "cloud.rain.fill"
-        case .glorious:    return "sparkles"
-        case .luminous:    return "rays"
-        case .sevenSorrows: return "heart.fill"
-        case .none:        return "book.fill"
+        case .joyful:      return "ph-sun"
+        case .sorrowful:   return "ph-cross"
+        case .glorious:    return "ph-sparkle"
+        case .luminous:    return "ph-sun-horizon"
+        case .sevenSorrows: return "ph-heart-fill"
+        case .none:        return "ph-book"
         }
     }
 

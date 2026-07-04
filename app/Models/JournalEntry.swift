@@ -111,7 +111,7 @@ final class JournalEntry {
         }
         switch category {
         case .joyful:      return "ph-sun"
-        case .sorrowful:   return "ph-cloud-rain"
+        case .sorrowful:   return "ph-cross"
         case .glorious:    return "ph-sparkle"
         case .luminous:    return "ph-sun-horizon"
         case .sevenSorrows: return "ph-heart-fill"

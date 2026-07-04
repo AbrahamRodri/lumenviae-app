@@ -181,7 +181,7 @@ The true subject of Mary does not serve her for temporal or eternal reward, but 
 
     static let benefits = DevotionSection(
         title: "Benefits of This Devotion",
-        icon: "ph-gift",
+        icon: "ph-sparkle",
         items: [
             DevotionItem(
                 title: "Freedom from Scruples and Servile Fear",

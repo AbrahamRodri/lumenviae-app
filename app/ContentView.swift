@@ -28,10 +28,17 @@ struct ContentView: View {
                 .ignoresSafeArea()
 
             NavigationStack(path: $router.path) {
-                tabContent
-                    .navigationDestination(for: AppRoute.self) { route in
-                        destinationView(for: route)
-                    }
+                // The destination table must hang off a structurally stable
+                // view. Attached directly to the tab `switch`, iOS can drop
+                // the registration when the root re-evaluates during a pop
+                // transition — the next push then fails with "no matching
+                // navigationDestination" and the screen won't open again.
+                ZStack {
+                    tabContent
+                }
+                .navigationDestination(for: AppRoute.self) { route in
+                    destinationView(for: route)
+                }
             }
 
             VStack {

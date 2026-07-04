@@ -76,7 +76,10 @@ final class AppRouter {
 
     /// Returns to the home screen and clears stored navigation state.
     func popToRoot() {
-        path = NavigationPath()
+        // Mutate in place rather than replacing the NavigationPath object;
+        // swapping the whole path mid-transition can desync the stack's
+        // internal destination bookkeeping.
+        path.removeLast(path.count)
         selectedCategory = nil
         loadedMeditationSet = nil
     }
