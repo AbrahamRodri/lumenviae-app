@@ -10,9 +10,12 @@
 
 import SwiftUI
 import SwiftData
+import UIKit
 
 @main
 struct appApp: App {
+
+    @Environment(\.scenePhase) private var scenePhase
 
     /// Whether the app has finished loading (splash screen complete)
     @State private var isLaunched = false
@@ -50,5 +53,19 @@ struct appApp: App {
         }
         .environment(userSettings)
         .modelContainer(for: [PrayerSession.self, JournalEntry.self, ConsecrationProgress.self])
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase == .active {
+                resetAlternateIconIfNeeded()
+            }
+        }
+    }
+
+    /// While the icon picker is disabled, devices that previously chose an
+    /// alternate icon fall back to the primary one. Removing this once
+    /// `AppIconPickerRows.isEnabled` is true restores their choice.
+    private func resetAlternateIconIfNeeded() {
+        guard !AppIconPickerRows.isEnabled,
+              UIApplication.shared.alternateIconName != nil else { return }
+        UIApplication.shared.setAlternateIconName(nil)
     }
 }

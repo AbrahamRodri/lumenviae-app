@@ -33,10 +33,12 @@ struct AccountView: View {
                     .padding(.top, 24)
 
                     // MARK: App Icon
-                    AccountSection(title: "APP ICON") {
-                        AppIconPickerRows()
+                    if AppIconPickerRows.isEnabled {
+                        AccountSection(title: "APP ICON") {
+                            AppIconPickerRows()
+                        }
+                        .padding(.top, 24)
                     }
-                    .padding(.top, 24)
 
                     // MARK: Prayer Experience
                     AccountSection(title: "PRAYER EXPERIENCE") {
@@ -237,6 +239,11 @@ private struct ThemeRow: View {
 /// screen icon changes immediately.
 struct AppIconPickerRows: View {
 
+    /// Hidden until there are alternate icons that match the current
+    /// artwork. Flipping this back to `true` restores the picker and
+    /// stops the launch-time reset in `appApp`.
+    static let isEnabled = false
+
     private struct IconOption: Identifiable {
         /// Alternate icon name registered in build settings; nil = primary
         let alternateName: String?
@@ -251,7 +258,7 @@ struct AppIconPickerRows: View {
         IconOption(
             alternateName: nil,
             displayName: "Original",
-            detail: "The painted icon",
+            detail: "Our Lady beneath a crown of stars",
             preview: "icon-preview-Original"
         ),
         IconOption(
