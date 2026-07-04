@@ -32,6 +32,7 @@ struct MockDataService {
             name: "Traditional Meditations",
             category: category.rawValue,
             description: "Classic meditations from the tradition of the Church.",
+            labels: nil,
             meditations: meditations
         )
     }

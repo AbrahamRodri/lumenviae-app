@@ -29,6 +29,11 @@ struct MeditationSet: Codable, Identifiable, Hashable {
     /// Optional description of this meditation style
     let description: String?
 
+    /// Descriptive labels for browsing/filtering (e.g., ["Saints", "Marian"]).
+    /// The first label is the set's primary group. Optional — absent until
+    /// the API sends it, in which case the picker shows a flat list.
+    let labels: [String]?
+
     /// Array of meditations, one per mystery (5 for standard Rosary).
     /// Optional because list endpoint doesn't include this.
     let meditations: [Meditation]?
@@ -70,10 +75,19 @@ struct MeditationSetSummary: Codable, Identifiable, Hashable {
     /// Optional description
     let description: String?
 
+    /// Descriptive labels for browsing/filtering (e.g., ["Saints", "Marian"]).
+    /// The first label is the set's primary group; nil until the API sends it.
+    let labels: [String]?
+
     // MARK: - Computed Properties
 
     /// Type-safe category enum
     var mysteryCategory: MysteryCategory? {
         MysteryCategory(fromAPIString: category)
+    }
+
+    /// The label this set is grouped under when browsing unfiltered
+    var primaryLabel: String? {
+        labels?.first
     }
 }

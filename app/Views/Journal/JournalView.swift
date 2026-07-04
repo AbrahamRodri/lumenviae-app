@@ -66,16 +66,8 @@ struct JournalView: View {
     var body: some View {
         ZStack {
             // Background gradient
-            LinearGradient(
-                colors: [
-                    Color(hex: "0d0d1a"),
-                    Color(hex: "1a1a2e"),
-                    Color(hex: "0d0d1a")
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
+            AppColors.appGradient
+                .ignoresSafeArea()
 
             VStack(spacing: 0) {
                 // Navigation header

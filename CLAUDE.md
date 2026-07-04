@@ -326,6 +326,7 @@ app/
 - **Standard meditation:** 1 per mystery (20 total for 4 mystery types)
 - **Saint meditations:** Variable per saint (aim for full sets of 5 per mystery type)
 - **Intentional meditations:** Sets of 5 mysteries sharing a theme/intention
+- **Labels (live in API):** Each meditation set carries a `labels: [String]` array (labels currently in use: Contemplative, Saints, Intentions). The iOS picker builds its multi-select filter chips from these and groups unfiltered browsing by each set's *first* label, so order labels primary-first. If a set arrives without `labels`, the picker gracefully falls back to a flat list. Favorites are on-device (not API).
 
 ### Expected API Endpoints (coordinate with web app)
 ```

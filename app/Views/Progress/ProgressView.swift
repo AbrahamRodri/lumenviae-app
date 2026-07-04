@@ -31,16 +31,8 @@ struct PrayerProgressView: View {
     var body: some View {
         ZStack {
             // Background gradient
-            LinearGradient(
-                colors: [
-                    Color(hex: "0d0d1a"),
-                    Color(hex: "1a1a2e"),
-                    Color(hex: "0d0d1a")
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
+            AppColors.appGradient
+                .ignoresSafeArea()
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 32) {

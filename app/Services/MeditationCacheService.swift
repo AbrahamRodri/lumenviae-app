@@ -29,8 +29,8 @@ final class MeditationCacheService {
 
     private let apiService: APIService
 
-    init(apiService: APIService = .shared) {
-        self.apiService = apiService
+    init(apiService: APIService? = nil) {
+        self.apiService = apiService ?? .shared
     }
 
     // MARK: - Prefetching

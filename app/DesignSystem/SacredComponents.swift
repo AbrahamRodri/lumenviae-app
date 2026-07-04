@@ -229,16 +229,14 @@ struct DropCapText: View {
 
     var body: some View {
         if let first = text.first {
-            (
-                Text(String(first))
-                    .font(AppFonts.titleFont(capSize))
-                    .foregroundColor(AppColors.gold)
-                +
-                Text(String(text.dropFirst()))
-                    .font(AppFonts.readingFont(bodySize))
-                    .foregroundColor(textColor)
-            )
-            .lineSpacing(7)
+            let cap = Text(String(first))
+                .font(AppFonts.titleFont(capSize))
+                .foregroundColor(AppColors.gold)
+            let rest = Text(String(text.dropFirst()))
+                .font(AppFonts.readingFont(bodySize))
+                .foregroundColor(textColor)
+            Text("\(cap)\(rest)")
+                .lineSpacing(7)
         } else {
             Text(text)
                 .font(AppFonts.readingFont(bodySize))
