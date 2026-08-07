@@ -20,6 +20,10 @@ final class ConsecrationViewModel {
     /// Current active consecration progress (nil if none started)
     var progress: ConsecrationProgress?
 
+    /// Most recently completed consecration, if any. Lets the intro screen
+    /// honor a finished journey instead of pretending it never happened.
+    var completedProgress: ConsecrationProgress?
+
     /// The day currently being viewed/completed
     var currentDay: ConsecrationDay?
 
@@ -115,13 +119,13 @@ final class ConsecrationViewModel {
         defer { isLoading = false }
 
         let descriptor = FetchDescriptor<ConsecrationProgress>(
-            predicate: #Predicate { !$0.isCompleted },
             sortBy: [SortDescriptor(\.createdAt, order: .reverse)]
         )
 
         do {
             let results = try context.fetch(descriptor)
-            progress = results.first
+            progress = results.first { !$0.isCompleted }
+            completedProgress = results.first { $0.isCompleted }
             loadCurrentDay()
         } catch {
             errorMessage = "Failed to load progress: \(error.localizedDescription)"
@@ -288,6 +292,26 @@ final class ConsecrationViewModel {
         errorMessage = nil
     }
 
+    /// Delete the active consecration so the user can start over — a
+    /// wrong feast pick or an abandoned attempt shouldn't lock the tab
+    /// for 34 days. Journal reflections written along the way are kept.
+    func abandonConsecration() {
+        guard let context = modelContext,
+              let progress = progress else { return }
+
+        context.delete(progress)
+
+        do {
+            try context.save()
+            self.progress = nil
+            self.currentDay = nil
+            self.journalText = ""
+            self.currentPrayerIndex = 0
+        } catch {
+            errorMessage = "Failed to reset consecration: \(error.localizedDescription)"
+        }
+    }
+
     // MARK: - Debug Methods (Testing Only)
 
     #if DEBUG
@@ -310,20 +334,7 @@ final class ConsecrationViewModel {
 
     /// Reset/delete the current consecration to start fresh
     func debugResetConsecration() {
-        guard let context = modelContext,
-              let progress = progress else { return }
-
-        context.delete(progress)
-
-        do {
-            try context.save()
-            self.progress = nil
-            self.currentDay = nil
-            self.journalText = ""
-            self.currentPrayerIndex = 0
-        } catch {
-            errorMessage = "Debug: Failed to reset consecration"
-        }
+        abandonConsecration()
     }
     #endif
 }
