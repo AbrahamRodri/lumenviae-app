@@ -78,40 +78,44 @@ enum ConsecrationPhase: String, Codable, CaseIterable, Hashable {
 
     // MARK: - Visual Styling
 
-    /// Gradient colors for this phase's visual theme
+    /// Background gradient for this phase — a quiet hue journey inside the
+    /// app's dark navy/gold vocabulary: penitential violet-navy, deep navy,
+    /// Marian blue, then warming toward gold as the consecration nears.
+    /// All dark enough to sit under cream and gold text.
     var gradientColors: [Color] {
         switch self {
         case .preparatory:
-            // Deep purple gradient
-            return [Color(hex: "#4A1A6B"), Color(hex: "#2D1B4E")]
+            // Emptying of self: dark violet-tinged navy
+            return [Color(hex: "#1D1832"), Color(hex: "#100D1F")]
         case .knowledgeOfSelf:
-            // Navy blue gradient
-            return [Color(hex: "#1A365D"), Color(hex: "#1E3A5F")]
+            // Introspection: the app's own deep navy
+            return [Color(hex: "#141E38"), Color(hex: "#0C1222")]
         case .knowledgeOfMary:
-            // Blue to gold gradient
-            return [Color(hex: "#1E40AF"), Color(hex: "#D4AF37")]
+            // Marian blue cast
+            return [Color(hex: "#16264D"), Color(hex: "#0D142A")]
         case .knowledgeOfJesus:
-            // Gold to cream gradient
-            return [Color(hex: "#D4AF37"), Color(hex: "#F5F0E1")]
+            // Warming toward gold
+            return [Color(hex: "#2A2318"), Color(hex: "#14101E")]
         case .consecrationDay:
-            // Full gold gradient
-            return [Color(hex: "#D4AF37"), Color(hex: "#E8C547")]
+            // Rich dark gold, matching the mystery-card gradient family
+            return [Color(hex: "#3D3522"), Color(hex: "#1A1408")]
         }
     }
 
-    /// Primary accent color for this phase
+    /// Accent for progress indicators — a gold that quietly brightens as
+    /// the 33 days advance.
     var accentColor: Color {
         switch self {
         case .preparatory:
-            return Color(hex: "#9B59B6")  // Purple accent
+            return Color(hex: "#A18A4E")
         case .knowledgeOfSelf:
-            return Color(hex: "#3498DB")  // Blue accent
+            return Color(hex: "#B49A52")
         case .knowledgeOfMary:
-            return Color(hex: "#5DADE2")  // Light blue accent
+            return Color(hex: "#C4A94F")
         case .knowledgeOfJesus:
-            return Color(hex: "#D4AF37")  // Gold accent
+            return Color(hex: "#D4AF37")
         case .consecrationDay:
-            return Color(hex: "#E8C547")  // Bright gold
+            return Color(hex: "#E8C547")
         }
     }
 

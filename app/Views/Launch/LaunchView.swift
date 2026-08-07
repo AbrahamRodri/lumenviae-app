@@ -80,9 +80,11 @@ struct LaunchView: View {
             .opacity(opacity)
         }
         .task {
-            // Track start time to ensure minimum display duration
+            // Track start time to ensure minimum display duration —
+            // just long enough for the crest to land; image preloading
+            // finishes in well under a second.
             let startTime = Date()
-            let minimumDuration: TimeInterval = 3.0
+            let minimumDuration: TimeInterval = 1.0
 
             // Animate in
             withAnimation(.easeOut(duration: 0.6)) {

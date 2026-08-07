@@ -72,9 +72,19 @@ struct ConsecrationDayOverviewView: View {
 
     var body: some View {
         ZStack {
-            // Background - consistent app gradient
-            AppColors.appGradient
+            // Background — each phase carries its own quiet tint so the
+            // 33-day journey visibly progresses
+            if let phase {
+                LinearGradient(
+                    colors: phase.gradientColors,
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
                 .ignoresSafeArea()
+            } else {
+                AppColors.appGradient
+                    .ignoresSafeArea()
+            }
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
@@ -207,7 +217,7 @@ struct ConsecrationDayOverviewView: View {
                                 .fill(AppColors.cardBackground.opacity(0.8))
 
                             RoundedRectangle(cornerRadius: 3)
-                                .fill(AppColors.gold)
+                                .fill(phase?.accentColor ?? AppColors.gold)
                                 .frame(width: geometry.size.width * day.phaseProgress)
                         }
                     }
