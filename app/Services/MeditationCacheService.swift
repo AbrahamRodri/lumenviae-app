@@ -99,6 +99,13 @@ final class MeditationCacheService {
             return set
         }
 
+        // Offline: prefer real downloaded content over the generic
+        // built-in fallback.
+        if let stored = OfflineContentService.shared.storedSets(category: category),
+           let set = stored.randomElement() {
+            return set
+        }
+
         return MockDataService.meditationSet(for: category)
     }
 }
