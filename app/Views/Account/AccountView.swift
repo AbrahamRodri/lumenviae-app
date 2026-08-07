@@ -67,6 +67,22 @@ struct AccountView: View {
                                 isOn: Bindable(userSettings).remindersEnabled
                             )
 
+                            if userSettings.remindersEnabled && userSettings.notificationAuthorizationDenied {
+                                Divider()
+                                    .background(AppColors.gold.opacity(0.2))
+
+                                ActionRow(
+                                    icon: "ph-bell-fill",
+                                    title: "Enable in Settings",
+                                    subtitle: "Notifications are turned off for Lumen Viae"
+                                ) {
+                                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                                        UIApplication.shared.open(url)
+                                    }
+                                }
+                                .transition(.opacity.combined(with: .move(edge: .top)))
+                            }
+
                             if userSettings.remindersEnabled {
                                 Divider()
                                     .background(AppColors.gold.opacity(0.2))

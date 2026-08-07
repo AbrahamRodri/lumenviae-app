@@ -178,6 +178,11 @@ final class UserSettings {
     /// Whether notification permission has been granted
     var notificationAuthorizationGranted: Bool = false
 
+    /// Whether the user has denied notifications at the OS level.
+    /// Drives the "enable in Settings" affordance when reminders are on
+    /// but nothing can actually fire.
+    var notificationAuthorizationDenied: Bool = false
+
     // MARK: - Initialization
 
     private init() {
@@ -220,23 +225,54 @@ final class UserSettings {
     func syncNotifications() async {
         let center = UNUserNotificationCenter.current()
 
-        if remindersEnabled {
-            let settings = await center.notificationSettings()
-            if settings.authorizationStatus == .notDetermined {
-                let granted = (try? await center.requestAuthorization(options: [.alert, .sound, .badge])) ?? false
-                notificationAuthorizationGranted = granted
-                if !granted {
-                    remindersEnabled = false
-                    return
-                }
-            } else {
-                notificationAuthorizationGranted =
-                    settings.authorizationStatus == .authorized ||
-                    settings.authorizationStatus == .provisional
-            }
-            scheduleDailyReminder()
-        } else {
+        guard remindersEnabled else {
             cancelDailyReminder()
+            return
+        }
+
+        let settings = await center.notificationSettings()
+        switch settings.authorizationStatus {
+        case .notDetermined:
+            let granted = (try? await center.requestAuthorization(options: [.alert, .sound, .badge])) ?? false
+            notificationAuthorizationGranted = granted
+            notificationAuthorizationDenied = !granted
+            if !granted {
+                remindersEnabled = false
+                return
+            }
+        case .denied:
+            // Keep the user's intent (toggle stays on) but don't schedule
+            // requests that can never fire; Account surfaces the fix.
+            notificationAuthorizationGranted = false
+            notificationAuthorizationDenied = true
+            return
+        default:
+            notificationAuthorizationGranted = true
+            notificationAuthorizationDenied = false
+        }
+
+        scheduleDailyReminder()
+    }
+
+    /// Re-syncs scheduled reminders with stored settings at launch and on
+    /// foreground. Never prompts for permission — the request stays where
+    /// the user can see why (onboarding or the Account toggle). Needed
+    /// because property observers don't fire during `init`, so nothing
+    /// else schedules reminders for a user who never touches the toggle.
+    @MainActor
+    func syncNotificationsAtLaunch() async {
+        let settings = await UNUserNotificationCenter.current().notificationSettings()
+        notificationAuthorizationGranted =
+            settings.authorizationStatus == .authorized ||
+            settings.authorizationStatus == .provisional
+        notificationAuthorizationDenied = settings.authorizationStatus == .denied
+
+        guard remindersEnabled else {
+            cancelDailyReminder()
+            return
+        }
+        if notificationAuthorizationGranted {
+            scheduleDailyReminder()
         }
     }
 
