@@ -174,6 +174,10 @@ final class MeditationSelectionViewModel {
     /// Loads the list of available meditation sets for this category.
     ///
     /// Only loads once - subsequent calls are no-ops if data exists.
+    ///
+    /// Luminous has no server content yet, so the bundled traditional set
+    /// is always prepended — even when the API call fails, the picker
+    /// still has something to pray with.
     @MainActor
     func loadMeditationSets() async {
         guard meditationSets.isEmpty else { return }
@@ -187,6 +191,11 @@ final class MeditationSelectionViewModel {
             errorMessage = "Failed to load meditation sets"
         }
 
+        if category == .luminous {
+            meditationSets.insert(LuminousMeditationData.summary, at: 0)
+            errorMessage = nil
+        }
+
         isLoading = false
     }
 
@@ -194,6 +203,10 @@ final class MeditationSelectionViewModel {
     /// Falls back to mock data if the API call fails.
     @MainActor
     func loadFullMeditationSet(id: Int) async throws -> MeditationSet {
+        if id == LuminousMeditationData.setID {
+            return LuminousMeditationData.set
+        }
+
         isLoadingSet = true
         defer { isLoadingSet = false }
 
