@@ -5,9 +5,15 @@
 //  Meditation audio playback via AVFoundation. Singleton so audio state
 //  lives in one place and playback survives view changes.
 //
+//  Integrates with the system so guided prayer works eyes-closed:
+//  - Now Playing metadata on the Lock Screen / Control Center
+//  - Remote commands (headphones, AirPods, watch): play, pause, skip, scrub
+//  - Interruption handling (calls, Siri) and headphone-unplug pausing
+//
 
 import AVFoundation
 import Foundation
+import MediaPlayer
 
 @Observable
 final class AudioService {
@@ -41,10 +47,16 @@ final class AudioService {
 
     private var endOfPlaybackObserver: NSObjectProtocol?
 
+    /// Title/subtitle shown on the Lock Screen for the loaded audio
+    private var nowPlayingTitle: String?
+    private var nowPlayingSubtitle: String?
+
     // MARK: - Initialization
 
     private init() {
         setupAudioSession()
+        setupRemoteCommands()
+        setupSessionObservers()
     }
 
     deinit {
@@ -61,7 +73,7 @@ final class AudioService {
     private func setupAudioSession() {
         #if os(iOS)
         do {
-            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio)
             try AVAudioSession.sharedInstance().setActive(true)
         } catch {
             #if DEBUG
@@ -71,11 +83,129 @@ final class AudioService {
         #endif
     }
 
+    /// Interruptions (calls, Siri) pause the player under us — keep
+    /// `isPlaying` truthful so the UI never shows a pause icon over
+    /// silence, and resume when the system says we should.
+    private func setupSessionObservers() {
+        #if os(iOS)
+        NotificationCenter.default.addObserver(
+            forName: AVAudioSession.interruptionNotification,
+            object: AVAudioSession.sharedInstance(),
+            queue: .main
+        ) { [weak self] notification in
+            guard let self,
+                  let info = notification.userInfo,
+                  let typeValue = info[AVAudioSessionInterruptionTypeKey] as? UInt,
+                  let type = AVAudioSession.InterruptionType(rawValue: typeValue) else { return }
+
+            switch type {
+            case .began:
+                self.isPlaying = false
+                self.updateNowPlayingPlaybackState()
+            case .ended:
+                let optionsValue = info[AVAudioSessionInterruptionOptionKey] as? UInt ?? 0
+                let options = AVAudioSession.InterruptionOptions(rawValue: optionsValue)
+                if options.contains(.shouldResume) {
+                    self.play()
+                }
+            @unknown default:
+                break
+            }
+        }
+
+        // Unplugging headphones pauses system-side; mirror it in our state.
+        NotificationCenter.default.addObserver(
+            forName: AVAudioSession.routeChangeNotification,
+            object: AVAudioSession.sharedInstance(),
+            queue: .main
+        ) { [weak self] notification in
+            guard let self,
+                  let info = notification.userInfo,
+                  let reasonValue = info[AVAudioSessionRouteChangeReasonKey] as? UInt,
+                  let reason = AVAudioSession.RouteChangeReason(rawValue: reasonValue),
+                  reason == .oldDeviceUnavailable else { return }
+            self.pause()
+        }
+        #endif
+    }
+
+    // MARK: - Remote Commands (Lock Screen / headphones / watch)
+
+    private func setupRemoteCommands() {
+        let center = MPRemoteCommandCenter.shared()
+
+        center.playCommand.addTarget { [weak self] _ in
+            guard let self, self.player != nil else { return .noActionableNowPlayingItem }
+            self.play()
+            return .success
+        }
+        center.pauseCommand.addTarget { [weak self] _ in
+            guard let self, self.player != nil else { return .noActionableNowPlayingItem }
+            self.pause()
+            return .success
+        }
+        center.togglePlayPauseCommand.addTarget { [weak self] _ in
+            guard let self, self.player != nil else { return .noActionableNowPlayingItem }
+            self.togglePlayback()
+            return .success
+        }
+
+        center.skipForwardCommand.isEnabled = true
+        center.skipForwardCommand.preferredIntervals = [10]
+        center.skipForwardCommand.addTarget { [weak self] _ in
+            guard let self, self.player != nil else { return .noActionableNowPlayingItem }
+            self.skipForward()
+            return .success
+        }
+
+        center.skipBackwardCommand.isEnabled = true
+        center.skipBackwardCommand.preferredIntervals = [10]
+        center.skipBackwardCommand.addTarget { [weak self] _ in
+            guard let self, self.player != nil else { return .noActionableNowPlayingItem }
+            self.skipBackward()
+            return .success
+        }
+
+        center.changePlaybackPositionCommand.addTarget { [weak self] event in
+            guard let self, self.player != nil,
+                  let event = event as? MPChangePlaybackPositionCommandEvent else {
+                return .noActionableNowPlayingItem
+            }
+            self.seek(to: event.positionTime)
+            return .success
+        }
+    }
+
+    // MARK: - Now Playing Info
+
+    /// Publishes metadata to the Lock Screen / Control Center.
+    private func updateNowPlayingInfo() {
+        var info: [String: Any] = [:]
+        info[MPMediaItemPropertyTitle] = nowPlayingTitle ?? "Meditation"
+        info[MPMediaItemPropertyArtist] = nowPlayingSubtitle ?? "Lumen Viae"
+        info[MPMediaItemPropertyPlaybackDuration] = duration
+        info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
+        info[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? 1.0 : 0.0
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = info
+    }
+
+    /// Cheap update of just position/rate after play/pause/seek.
+    private func updateNowPlayingPlaybackState() {
+        guard var info = MPNowPlayingInfoCenter.default().nowPlayingInfo else {
+            updateNowPlayingInfo()
+            return
+        }
+        info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
+        info[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? 1.0 : 0.0
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = info
+    }
+
     // MARK: - Loading Audio
 
-    /// Loads audio from a URL string, skipping if the same URL is already loaded.
+    /// Loads audio from a URL string, skipping if the same URL is already
+    /// loaded. `title`/`subtitle` feed the Lock Screen metadata.
     @MainActor
-    func loadAudio(from urlString: String) async {
+    func loadAudio(from urlString: String, title: String? = nil, subtitle: String? = nil) async {
         guard let url = URL(string: urlString) else {
             errorMessage = "Invalid audio URL"
             return
@@ -83,6 +213,9 @@ final class AudioService {
 
         // Skip if same URL already loaded
         if url == currentURL && player != nil {
+            nowPlayingTitle = title ?? nowPlayingTitle
+            nowPlayingSubtitle = subtitle ?? nowPlayingSubtitle
+            updateNowPlayingInfo()
             return
         }
 
@@ -90,6 +223,8 @@ final class AudioService {
         errorMessage = nil
         reset()
         currentURL = url
+        nowPlayingTitle = title
+        nowPlayingSubtitle = subtitle
 
         let playerItem = AVPlayerItem(url: url)
         player = AVPlayer(playerItem: playerItem)
@@ -103,13 +238,21 @@ final class AudioService {
                 duration = 0
             }
         } catch {
+            // The asset is unreachable (offline, or an expired link) —
+            // tear down so the UI shows the failure instead of a dead
+            // transport that plays silence.
             #if DEBUG
-            print("AudioService: Failed to load duration: \(error)")
+            print("AudioService: Failed to load audio: \(error)")
             #endif
+            reset()
+            errorMessage = "Audio unavailable — check your connection"
+            isLoading = false
+            return
         }
 
         setupTimeObserver()
         setupNotifications(for: playerItem)
+        updateNowPlayingInfo()
         isLoading = false
     }
 
@@ -122,16 +265,20 @@ final class AudioService {
         if isPlaying {
             player.pause()
         } else {
+            reactivateSessionIfNeeded()
             player.play()
         }
         isPlaying.toggle()
+        updateNowPlayingPlaybackState()
     }
 
     /// Starts playback (no-op if already playing)
     func play() {
         guard let player, !isPlaying else { return }
+        reactivateSessionIfNeeded()
         player.play()
         isPlaying = true
+        updateNowPlayingPlaybackState()
     }
 
     /// Pauses playback (no-op if already paused)
@@ -139,6 +286,14 @@ final class AudioService {
         guard let player, isPlaying else { return }
         player.pause()
         isPlaying = false
+        updateNowPlayingPlaybackState()
+    }
+
+    /// An interruption can deactivate the session; reactivate before playing.
+    private func reactivateSessionIfNeeded() {
+        #if os(iOS)
+        try? AVAudioSession.sharedInstance().setActive(true)
+        #endif
     }
 
     /// Seeks to a specific time in seconds.
@@ -147,6 +302,7 @@ final class AudioService {
         let cmTime = CMTime(seconds: time, preferredTimescale: 600)
         player.seek(to: cmTime)
         currentTime = time
+        updateNowPlayingPlaybackState()
     }
 
     /// Skips forward by the specified number of seconds
@@ -173,6 +329,7 @@ final class AudioService {
         currentTime = 0
         duration = 0
         isPlaying = false
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
     }
 
     // MARK: - Time Observer
@@ -216,6 +373,7 @@ final class AudioService {
             self?.isPlaying = false
             self?.currentTime = 0
             self?.player?.seek(to: .zero)
+            self?.updateNowPlayingPlaybackState()
         }
     }
 

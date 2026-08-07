@@ -19,13 +19,19 @@ struct MysteryPrayerView: View {
     @Environment(UserSettings.self) private var userSettings
     @State private var viewModel: PrayerSessionViewModel
     @State private var showingJournalEditor = false
-    @State private var isImageMode = true // Toggle between image and text views
 
     let meditationSet: MeditationSet
 
-    init(meditationSet: MeditationSet) {
+    /// Image vs. reading mode, persisted so the preference survives sessions
+    private var isImageMode: Bool { userSettings.prayerImageMode }
+
+    init(meditationSet: MeditationSet, startAtIndex: Int = 0, startedAt: Date = Date()) {
         self.meditationSet = meditationSet
-        self._viewModel = State(initialValue: PrayerSessionViewModel(meditationSet: meditationSet))
+        self._viewModel = State(initialValue: PrayerSessionViewModel(
+            meditationSet: meditationSet,
+            startAtIndex: startAtIndex,
+            startedAt: startedAt
+        ))
     }
 
     var body: some View {
@@ -40,6 +46,14 @@ struct MysteryPrayerView: View {
         }
         .navigationBarHidden(true)
         .task(id: viewModel.currentMysteryIndex) {
+            // Remember the position so an interrupted Rosary can resume
+            PrayerResumeService.shared.save(
+                setId: meditationSet.id,
+                setName: meditationSet.name,
+                category: meditationSet.category,
+                mysteryIndex: viewModel.currentMysteryIndex,
+                startedAt: viewModel.sessionStartedAt
+            )
             await viewModel.loadCurrentAudio()
         }
         .onDisappear {
@@ -136,7 +150,7 @@ struct MysteryPrayerView: View {
 
             // Toggle to reading/text mode button
             PrayerHeaderButton(icon: "ph-text-align-left", label: "Reading mode") {
-                withAnimation(.easeInOut(duration: 0.3)) { isImageMode.toggle() }
+                withAnimation(.easeInOut(duration: 0.3)) { userSettings.prayerImageMode.toggle() }
             }
 
             // Journal button
@@ -198,7 +212,9 @@ struct MysteryPrayerView: View {
                 AudioControlsView(
                     isPlaying: $viewModel.isPlaying,
                     currentTime: $viewModel.currentTime,
-                    totalTime: viewModel.totalDuration
+                    totalTime: viewModel.totalDuration,
+                    isLoading: viewModel.isLoadingAudio,
+                    errorMessage: viewModel.audioErrorMessage
                 )
                 .padding(.horizontal, 20)
             }
@@ -296,7 +312,9 @@ struct MysteryPrayerView: View {
                         AudioControlsView(
                             isPlaying: $viewModel.isPlaying,
                             currentTime: $viewModel.currentTime,
-                            totalTime: viewModel.totalDuration
+                            totalTime: viewModel.totalDuration,
+                            isLoading: viewModel.isLoadingAudio,
+                            errorMessage: viewModel.audioErrorMessage
                         )
                         .padding(.horizontal, 20)
                     }
@@ -322,7 +340,7 @@ struct MysteryPrayerView: View {
 
                 // Toggle view mode
                 PrayerHeaderButton(icon: "ph-image", label: "Image mode") {
-                    withAnimation(.easeInOut(duration: 0.3)) { isImageMode.toggle() }
+                    withAnimation(.easeInOut(duration: 0.3)) { userSettings.prayerImageMode.toggle() }
                 }
 
                 // Journal note shortcut
@@ -411,6 +429,7 @@ struct MysteryPrayerView: View {
         guard !advanced else { return }
 
         // Completed all mysteries - navigate to completion
+        PrayerResumeService.shared.clear()
         Task {
             try? await viewModel.recordCompletion()
         }
@@ -420,12 +439,9 @@ struct MysteryPrayerView: View {
 
 // MARK: - Ordinals
 
-/// Ordinal word for a mystery's position — covers five-decade rosaries
-/// and the Seven Sorrows chaplet.
+/// Ordinal word for a mystery's position (shared app-wide via Constants).
 fileprivate func ordinalNumber(_ number: Int) -> String {
-    let ordinals = ["First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh"]
-    guard number >= 1 && number <= ordinals.count else { return "" }
-    return ordinals[number - 1]
+    Constants.ordinalWord(number)
 }
 
 // MARK: - PrayerHeaderButton
@@ -487,6 +503,15 @@ struct AudioControlsView: View {
     @Binding var isPlaying: Bool
     @Binding var currentTime: Double
     let totalTime: Double
+    var isLoading: Bool = false
+    var errorMessage: String? = nil
+
+    /// Local value while the user drags, so we seek once on release
+    /// instead of flooding AVPlayer mid-drag.
+    @State private var scrubValue: Double = 0
+    @State private var isScrubbing = false
+
+    private var isReady: Bool { !isLoading && errorMessage == nil && totalTime > 0 }
 
     private func formatTime(_ seconds: Double) -> String {
         let mins = Int(seconds) / 60
@@ -495,7 +520,14 @@ struct AudioControlsView: View {
     }
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 12) {
+            if let errorMessage {
+                Text(errorMessage)
+                    .font(AppFonts.bodyFont(12))
+                    .foregroundColor(AppColors.textSecondary)
+                    .multilineTextAlignment(.center)
+            }
+
             // Playback controls
             HStack(spacing: 40) {
                 // Rewind 10s (SF symbol — it encodes the "10" glyph)
@@ -505,9 +537,13 @@ struct AudioControlsView: View {
                     Image(systemName: "gobackward.10")
                         .font(.system(size: 24, weight: .light))
                         .foregroundColor(AppColors.gold)
+                        .frame(width: 44, height: 44)
                 }
+                .disabled(!isReady)
+                .opacity(isReady ? 1 : 0.35)
+                .accessibilityLabel("Back 10 seconds")
 
-                // Play/Pause
+                // Play/Pause (spinner while the audio loads)
                 Button(action: {
                     isPlaying.toggle()
                 }) {
@@ -517,12 +553,19 @@ struct AudioControlsView: View {
                             .frame(width: 64, height: 64)
                             .haloGlow(AppColors.gold, radius: 10, intensity: 0.4)
 
-                        AppIcon(isPlaying ? "ph-pause-fill" : "ph-play-fill", size: 24)
-                            .foregroundColor(AppColors.background)
-                            .offset(x: isPlaying ? 0 : 2)
+                        if isLoading {
+                            ProgressView()
+                                .tint(AppColors.background)
+                        } else {
+                            AppIcon(isPlaying ? "ph-pause-fill" : "ph-play-fill", size: 24)
+                                .foregroundColor(AppColors.background)
+                                .offset(x: isPlaying ? 0 : 2)
+                        }
                     }
                 }
                 .buttonStyle(GoldCTAButtonStyle())
+                .disabled(!isReady)
+                .accessibilityLabel(isLoading ? "Loading audio" : (isPlaying ? "Pause" : "Play"))
 
                 // Forward 10s (SF symbol — it encodes the "10" glyph)
                 Button(action: {
@@ -531,6 +574,46 @@ struct AudioControlsView: View {
                     Image(systemName: "goforward.10")
                         .font(.system(size: 24, weight: .light))
                         .foregroundColor(AppColors.gold)
+                        .frame(width: 44, height: 44)
+                }
+                .disabled(!isReady)
+                .opacity(isReady ? 1 : 0.35)
+                .accessibilityLabel("Forward 10 seconds")
+            }
+
+            // Scrubber with elapsed/total time
+            if isReady {
+                HStack(spacing: 10) {
+                    Text(formatTime(isScrubbing ? scrubValue : currentTime))
+                        .font(AppFonts.bodyFont(11))
+                        .foregroundColor(AppColors.textSecondary)
+                        .monospacedDigit()
+                        .frame(width: 38, alignment: .trailing)
+
+                    Slider(
+                        value: Binding(
+                            get: { isScrubbing ? scrubValue : min(currentTime, totalTime) },
+                            set: { scrubValue = $0 }
+                        ),
+                        in: 0...max(totalTime, 1),
+                        onEditingChanged: { editing in
+                            if editing {
+                                scrubValue = currentTime
+                                isScrubbing = true
+                            } else {
+                                currentTime = scrubValue
+                                isScrubbing = false
+                            }
+                        }
+                    )
+                    .tint(AppColors.gold)
+                    .accessibilityLabel("Playback position")
+
+                    Text(formatTime(totalTime))
+                        .font(AppFonts.bodyFont(11))
+                        .foregroundColor(AppColors.textSecondary)
+                        .monospacedDigit()
+                        .frame(width: 38, alignment: .leading)
                 }
             }
         }

@@ -62,13 +62,24 @@ final class PrayerSessionViewModel {
 
     init(
         meditationSet: MeditationSet,
+        startAtIndex: Int = 0,
+        startedAt: Date = Date(),
         apiService: APIService = .shared,
         audioService: AudioService = .shared
     ) {
         self.meditationSet = meditationSet
         self.apiService = apiService
         self.audioService = audioService
-        self.startTime = Date()
+        self.startTime = startedAt
+
+        let upperBound = max((meditationSet.meditations?.count ?? 5) - 1, 0)
+        self.currentMysteryIndex = min(max(startAtIndex, 0), upperBound)
+    }
+
+    /// When the session began — the original start for resumed sessions,
+    /// so recorded duration spans the whole devotion.
+    var sessionStartedAt: Date {
+        startTime ?? Date()
     }
 
     // MARK: - Computed Properties
@@ -145,11 +156,31 @@ final class PrayerSessionViewModel {
 
     // MARK: - Audio Controls
 
-    /// Loads the audio file for the current meditation
+    /// Loads the audio file for the current meditation. Downloaded copies
+    /// win over the network — the bundled URLs are 24-hour presigned links
+    /// that expire, and local files play offline.
     @MainActor
     func loadCurrentAudio() async {
-        guard let audioUrl = currentMeditation?.audioUrl else { return }
-        await audioService.loadAudio(from: audioUrl)
+        guard let meditation = currentMeditation else { return }
+
+        if let local = OfflineContentService.shared.localAudioURL(meditationId: meditation.id) {
+            await audioService.loadAudio(
+                from: local.absoluteString,
+                title: meditation.displayTitle,
+                subtitle: meditationSet.name
+            )
+        } else if let audioUrl = meditation.audioUrl {
+            await audioService.loadAudio(
+                from: audioUrl,
+                title: meditation.displayTitle,
+                subtitle: meditationSet.name
+            )
+        }
+    }
+
+    /// Error from the audio layer, surfaced next to the transport
+    var audioErrorMessage: String? {
+        audioService.errorMessage
     }
 
     /// Toggles play/pause state
