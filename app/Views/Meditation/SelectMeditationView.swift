@@ -16,6 +16,9 @@ struct SelectMeditationView: View {
     @Environment(AppRouter.self) private var router
     @State private var viewModel: MeditationSelectionViewModel
 
+    /// The set whose detail load failed, driving the retry alert
+    @State private var failedSet: MeditationSetSummary?
+
     init(category: MysteryCategory) {
         self._viewModel = State(initialValue: MeditationSelectionViewModel(category: category))
     }
@@ -64,10 +67,29 @@ struct SelectMeditationView: View {
                                 .tint(AppColors.gold)
                                 .padding(.top, 40)
                         } else if let error = viewModel.errorMessage {
-                            Text(error)
-                                .font(AppFonts.bodyFont(14))
-                                .foregroundColor(AppColors.textSecondary)
-                                .padding(.top, 40)
+                            VStack(spacing: 16) {
+                                Text(error)
+                                    .font(AppFonts.bodyFont(14))
+                                    .foregroundColor(AppColors.textSecondary)
+                                    .multilineTextAlignment(.center)
+
+                                Button {
+                                    Task { await viewModel.retry() }
+                                } label: {
+                                    HStack(spacing: 8) {
+                                        AppIcon("ph-arrow-counter-clockwise", size: 13)
+                                        Text("TRY AGAIN")
+                                            .font(AppFonts.labelFont(12))
+                                            .tracking(2)
+                                    }
+                                    .foregroundColor(AppColors.background)
+                                    .padding(.horizontal, 24)
+                                    .padding(.vertical, 12)
+                                    .background(Capsule().fill(AppColors.goldGradient))
+                                }
+                                .buttonStyle(GoldCTAButtonStyle())
+                            }
+                            .padding(.top, 40)
                         } else {
                             setList
                                 .devotionalEntrance(delay: 0.05)
@@ -111,6 +133,25 @@ struct SelectMeditationView: View {
         .navigationBarHidden(true)
         .task {
             await viewModel.loadMeditationSets()
+        }
+        // A set failed to load (cold server or offline): offer a retry
+        // instead of silently substituting content.
+        .alert(
+            "Couldn't load this meditation set",
+            isPresented: Binding(
+                get: { failedSet != nil },
+                set: { if !$0 { failedSet = nil } }
+            )
+        ) {
+            Button("Try Again") {
+                if let summary = failedSet {
+                    failedSet = nil
+                    Task { await selectMeditationSet(summary) }
+                }
+            }
+            Button("Cancel", role: .cancel) { failedSet = nil }
+        } message: {
+            Text("The server may still be waking up — it can take a few seconds. Downloading offline content in Account keeps every meditation available without a connection.")
         }
     }
 
@@ -232,14 +273,20 @@ struct SelectMeditationView: View {
     }
 
     private func selectMeditationSet(_ summary: MeditationSetSummary) async {
+        // A cold server can answer long after the user gave up and
+        // navigated away — never mutate navigation from a stale response.
+        // The generation token bumps on ANY path change (including system
+        // back-swipes), unlike a depth count, which can coincide across
+        // different screens.
+        let generation = router.generation
+
         do {
             let fullSet = try await viewModel.loadFullMeditationSet(id: summary.id)
+            guard router.generation == generation else { return }
             router.navigateToPrayerSession(meditationSet: fullSet)
         } catch {
-            // Error handling - stay on current screen
-            #if DEBUG
-            print("Failed to load meditation set: \(error)")
-            #endif
+            guard router.generation == generation else { return }
+            failedSet = summary
         }
     }
 }

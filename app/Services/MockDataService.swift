@@ -14,10 +14,14 @@ struct MockDataService {
 
     /// A full meditation set built from local mystery data, used as an
     /// offline fallback and in previews.
+    ///
+    /// Meditation IDs are distinct negatives: id 0 for every row would
+    /// break `Identifiable` (ForEach drops duplicates) and alias every
+    /// mystery to the same downloaded audio file (`meditation_0.mp3`).
     static func meditationSet(for category: MysteryCategory, includeAudio: Bool = false) -> MeditationSet {
-        let meditations = MysteryData.mysteries(for: category).map { mystery in
+        let meditations = MysteryData.mysteries(for: category).enumerated().map { index, mystery in
             Meditation(
-                id: 0,
+                id: -(1000 + index),
                 title: mystery.name,
                 content: "Consider the mystery of \(mystery.name). \(mystery.description ?? "")",
                 author: "Traditional",

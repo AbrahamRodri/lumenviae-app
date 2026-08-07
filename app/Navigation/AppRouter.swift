@@ -25,6 +25,24 @@ enum AppRoute: Hashable {
     case completion
 }
 
+// MARK: - PrayerLaunch
+
+/// Everything a prayer session needs at launch, carried out-of-band because
+/// NavigationStack paths hold Hashable values only. One struct instead of
+/// parallel optionals so setting and clearing is atomic.
+struct PrayerLaunch {
+    let meditationSet: MeditationSet
+
+    /// 0-based mystery index to start at (non-zero when resuming)
+    var startIndex: Int = 0
+
+    /// Seconds already prayed in earlier segments of a resumed session
+    var priorSeconds: Int = 0
+
+    /// When the devotion originally began (display/snapshot continuity)
+    var startedAt: Date = Date()
+}
+
 // MARK: - AppRouter
 
 /// App-wide navigation state. Injected via `.environment(router)` in ContentView.
@@ -33,7 +51,16 @@ final class AppRouter {
 
     // MARK: - Navigation State
 
-    var path = NavigationPath()
+    /// Any mutation (push, pop, system back-swipe) bumps `generation`:
+    /// NavigationPath is a value type, so every change lands in didSet.
+    /// Async flows capture the generation before awaiting and refuse to
+    /// navigate if it moved — a stale response must never mutate the stack.
+    var path = NavigationPath() {
+        didSet { generation &+= 1 }
+    }
+
+    /// Monotonic token identifying the current navigation state.
+    private(set) var generation = 0
 
     /// The currently selected bottom tab.
     ///
@@ -44,13 +71,11 @@ final class AppRouter {
     /// Currently selected mystery category, persisted across the navigation flow.
     var selectedCategory: MysteryCategory?
 
-    /// The full meditation set with all meditations loaded.
-    /// Stored here (not in the route) because NavigationStack paths hold
-    /// Hashable values, and both the prayer and completion screens need it.
-    var loadedMeditationSet: MeditationSet?
+    /// The pending prayer session's payload (set, start position, timing).
+    var pendingPrayer: PrayerLaunch?
 
     /// How long the just-finished session took, for the completion screen
-    /// to record. Carried the same way as `loadedMeditationSet`.
+    /// to record. Carried the same way as `pendingPrayer`.
     var completedSessionDuration: Int?
 
     // MARK: - Navigation Actions
@@ -64,8 +89,18 @@ final class AppRouter {
         path.append(AppRoute.meditationSelection(category: category))
     }
 
-    func navigateToPrayerSession(meditationSet: MeditationSet) {
-        loadedMeditationSet = meditationSet
+    func navigateToPrayerSession(
+        meditationSet: MeditationSet,
+        startAtIndex: Int = 0,
+        priorSeconds: Int = 0,
+        startedAt: Date? = nil
+    ) {
+        pendingPrayer = PrayerLaunch(
+            meditationSet: meditationSet,
+            startIndex: startAtIndex,
+            priorSeconds: priorSeconds,
+            startedAt: startedAt ?? Date()
+        )
         path.append(AppRoute.prayerSession(meditationSetId: meditationSet.id))
     }
 
@@ -91,7 +126,7 @@ final class AppRouter {
         // internal destination bookkeeping.
         path.removeLast(path.count)
         selectedCategory = nil
-        loadedMeditationSet = nil
+        pendingPrayer = nil
         completedSessionDuration = nil
     }
 }

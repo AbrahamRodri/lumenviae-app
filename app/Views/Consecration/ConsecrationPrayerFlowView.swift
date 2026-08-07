@@ -113,6 +113,16 @@ struct ConsecrationPrayerFlowView: View {
     private func loadAudioIfAvailable() {
         guard let prayer = currentPrayer, prayer.hasAudio else { return }
         Task {
+            // Downloaded chants play offline and skip the presign round-trip
+            if let local = OfflineContentService.shared.localPrayerAudioURL(prayerId: prayer.id) {
+                await audio.loadAudio(
+                    from: local.absoluteString,
+                    title: prayer.title,
+                    subtitle: "33-Day Consecration"
+                )
+                return
+            }
+
             do {
                 let presignedUrl: String
                 if let cached = cachedAudioUrls[prayer.id] {
@@ -121,7 +131,11 @@ struct ConsecrationPrayerFlowView: View {
                     presignedUrl = try await APIService.shared.fetchPrayerAudioUrl(prayerId: prayer.id)
                     cachedAudioUrls[prayer.id] = presignedUrl
                 }
-                await audio.loadAudio(from: presignedUrl)
+                await audio.loadAudio(
+                    from: presignedUrl,
+                    title: prayer.title,
+                    subtitle: "33-Day Consecration"
+                )
             } catch {
                 #if DEBUG
                 print("ConsecrationPrayerFlowView: Failed to load audio: \(error)")
@@ -180,7 +194,7 @@ struct ConsecrationPrayerFlowView: View {
     var body: some View {
         ZStack {
             // Background - use app gradient
-            AppColors.appGradient
+            ConsecrationPhaseBackground(phase: phase)
                 .ignoresSafeArea()
 
             // Content
@@ -210,6 +224,8 @@ struct ConsecrationPrayerFlowView: View {
         }
         .onDisappear {
             audio.reset()
+            // Hand the audio session back so other apps' audio can resume
+            audio.deactivateSession()
         }
         .onChange(of: currentIndex) {
             audio.reset()
@@ -428,5 +444,6 @@ struct ConsecrationPrayerFlowView: View {
     NavigationStack {
         ConsecrationPrayerFlowView(path: .constant(NavigationPath()), dayNumber: 1)
             .environment(ConsecrationViewModel())
+            .environment(UserSettings.shared)
     }
 }

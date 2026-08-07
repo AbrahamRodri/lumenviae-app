@@ -47,9 +47,7 @@ struct Mystery: Codable, Identifiable, Hashable {
 
     /// Human-readable ordinal (e.g., "First") for "The First Joyful Mystery" labels.
     var ordinalName: String {
-        let ordinals = ["First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh"]
-        guard order >= 1, order <= ordinals.count else { return "" }
-        return ordinals[order - 1]
+        Constants.ordinalWord(order)
     }
 
     /// Asset catalog image name, following the `mystery_<category>_<order>` convention.

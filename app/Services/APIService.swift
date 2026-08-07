@@ -60,8 +60,18 @@ final class APIService {
     // MARK: - Initialization
 
     /// The session parameter allows injecting a mock session for testing.
-    init(session: URLSession = .shared) {
-        self.session = session
+    /// The default session fails fast (15s) instead of URLSession's 60s —
+    /// the API sleeps on Fly.io, and a hung cold start should surface as a
+    /// retryable error, not a minute-long spinner.
+    init(session: URLSession? = nil) {
+        if let session {
+            self.session = session
+        } else {
+            let config = URLSessionConfiguration.default
+            config.timeoutIntervalForRequest = 15
+            config.timeoutIntervalForResource = 45
+            self.session = URLSession(configuration: config)
+        }
     }
 
     // MARK: - Mysteries
@@ -135,8 +145,39 @@ final class APIService {
 
     // MARK: - Private Helpers
 
-    /// Performs a GET request and decodes the response.
+    /// Performs a GET request with one retry for transient failures —
+    /// the first request to a sleeping Fly.io machine often wakes it just
+    /// in time for the second.
+    ///
+    /// Only connection-shaped errors retry: a 404, a decoding failure, or
+    /// a cancelled task must fail immediately, once. The un-optional
+    /// `Task.sleep` propagates cancellation so a dismissed screen never
+    /// fires a second request.
     private func fetch<T: Codable>(url: URL, responseType: T.Type) async throws -> T {
+        do {
+            return try await fetchOnce(url: url, responseType: responseType)
+        } catch let error as APIError {
+            guard case .networkError(let underlying) = error,
+                  let urlError = underlying as? URLError,
+                  Self.retryableCodes.contains(urlError.code) else {
+                throw error
+            }
+            try await Task.sleep(for: .seconds(1.5))
+            return try await fetchOnce(url: url, responseType: responseType)
+        }
+    }
+
+    /// Failures that plausibly mean "the server is still waking up".
+    private static let retryableCodes: Set<URLError.Code> = [
+        .timedOut,
+        .cannotConnectToHost,
+        .cannotFindHost,
+        .networkConnectionLost,
+        .dnsLookupFailed
+    ]
+
+    /// Performs a single GET request and decodes the response.
+    private func fetchOnce<T: Codable>(url: URL, responseType: T.Type) async throws -> T {
         do {
             let (data, response) = try await session.data(from: url)
 

@@ -110,6 +110,12 @@ struct AccountView: View {
                     }
                     .padding(.top, 24)
 
+                    // MARK: Offline
+                    AccountSection(title: "OFFLINE") {
+                        OfflineContentRows()
+                    }
+                    .padding(.top, 24)
+
                     // MARK: About
                     AccountSection(title: "ABOUT") {
                         VStack(spacing: 0) {
@@ -444,6 +450,166 @@ struct AccountSection<Content: View>: View {
                         .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: 0.5)
                 )
                 .padding(.horizontal, 20)
+        }
+    }
+}
+
+// MARK: - Offline Content Rows
+
+/// Download/remove controls for offline meditations and audio, driven by
+/// `OfflineContentService.state`.
+struct OfflineContentRows: View {
+
+    private var service = OfflineContentService.shared
+
+    @State private var showRemoveConfirm = false
+
+    private static let byteFormatter: ByteCountFormatter = {
+        let formatter = ByteCountFormatter()
+        formatter.countStyle = .file
+        return formatter
+    }()
+
+    var body: some View {
+        VStack(spacing: 0) {
+            switch service.state {
+            case .idle:
+                ActionRow(
+                    icon: "ph-arrow-counter-clockwise",
+                    title: "Download for Offline",
+                    subtitle: "Every meditation and audio file, ready without a connection"
+                ) {
+                    Task { await service.downloadAll() }
+                }
+
+                // Leftover files with no manifest should still be removable
+                if service.hasContentOnDisk {
+                    removeRow
+                }
+
+            case .downloading(let stage, let completed, let total):
+                HStack(spacing: 16) {
+                    ProgressView()
+                        .tint(AppColors.gold)
+                        .frame(width: 24)
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Downloading \(stage)…")
+                            .font(AppFonts.bodyFont(16))
+                            .foregroundColor(AppColors.cream)
+
+                        Text("\(completed) of \(total)")
+                            .font(AppFonts.bodyFont(12))
+                            .foregroundColor(AppColors.textSecondary)
+                    }
+
+                    Spacer()
+
+                    Text("\(total > 0 ? Int(Double(completed) / Double(total) * 100) : 0)%")
+                        .font(AppFonts.headlineFont(15))
+                        .foregroundColor(AppColors.gold)
+                        .monospacedDigit()
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 14)
+
+            case .downloaded(let date, let bytes):
+                VStack(spacing: 0) {
+                    HStack(spacing: 16) {
+                        AppIcon("ph-check-circle-fill", size: 18)
+                            .foregroundColor(AppColors.gold)
+                            .frame(width: 24)
+
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Available Offline")
+                                .font(AppFonts.bodyFont(16))
+                                .foregroundColor(AppColors.cream)
+
+                            Text("\(Self.byteFormatter.string(fromByteCount: bytes)) · \(date.formatted(date: .abbreviated, time: .omitted))")
+                                .font(AppFonts.bodyFont(12))
+                                .foregroundColor(AppColors.textSecondary)
+                        }
+
+                        Spacer()
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 14)
+
+                    Divider()
+                        .background(AppColors.gold.opacity(0.2))
+
+                    ActionRow(
+                        icon: "ph-arrow-counter-clockwise",
+                        title: "Update Download",
+                        subtitle: "Re-fetches meditation text; existing audio is kept"
+                    ) {
+                        Task { await service.downloadAll(refreshText: true) }
+                    }
+
+                    Divider()
+                        .background(AppColors.gold.opacity(0.2))
+
+                    removeRow
+                }
+
+            case .failed(let message):
+                VStack(spacing: 0) {
+                    HStack(spacing: 16) {
+                        AppIcon("ph-x-circle", size: 18)
+                            .foregroundColor(AppColors.textSecondary)
+                            .frame(width: 24)
+
+                        Text(message)
+                            .font(AppFonts.bodyFont(13))
+                            .foregroundColor(AppColors.textSecondary)
+
+                        Spacer()
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 14)
+
+                    Divider()
+                        .background(AppColors.gold.opacity(0.2))
+
+                    ActionRow(
+                        icon: "ph-arrow-counter-clockwise",
+                        title: "Try Again",
+                        subtitle: "Already-downloaded files are kept"
+                    ) {
+                        Task { await service.downloadAll() }
+                    }
+
+                    // A partial download must always be reclaimable
+                    if service.hasContentOnDisk {
+                        Divider()
+                            .background(AppColors.gold.opacity(0.2))
+
+                        removeRow
+                    }
+                }
+            }
+        }
+        .confirmationDialog(
+            "Remove offline downloads?",
+            isPresented: $showRemoveConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Remove Downloads", role: .destructive) {
+                service.removeAll()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Meditations and audio will stream when you're online. You can download everything again at any time.")
+        }
+    }
+
+    private var removeRow: some View {
+        ActionRow(
+            icon: "ph-trash",
+            title: "Remove Downloads",
+            subtitle: "Frees storage; streaming still works online"
+        ) {
+            showRemoveConfirm = true
         }
     }
 }

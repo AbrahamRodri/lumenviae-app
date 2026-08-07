@@ -106,6 +106,14 @@ final class UserSettings {
         CGFloat(14 + textSizeScale * 8) // 14–22 pt
     }
 
+    // MARK: - Prayer View Mode
+
+    /// Whether the prayer flow opens in full-bleed image mode (vs. reading
+    /// mode). Persisted so the preference survives between sessions.
+    var prayerImageMode: Bool = true {
+        didSet { UserDefaults.standard.set(prayerImageMode, forKey: "userSettings.prayerImageMode") }
+    }
+
     // MARK: - Prayer Language
 
     /// Prayer language preference for devotional prayers
@@ -193,6 +201,9 @@ final class UserSettings {
         }
         if d.object(forKey: "userSettings.prayerLanguage") != nil {
             prayerLanguagePreference = d.string(forKey: "userSettings.prayerLanguage") ?? PrayerLanguage.both.rawValue
+        }
+        if d.object(forKey: "userSettings.prayerImageMode") != nil {
+            prayerImageMode = d.bool(forKey: "userSettings.prayerImageMode")
         }
         if d.object(forKey: "userSettings.onboardingIntention") != nil {
             onboardingIntention = d.string(forKey: "userSettings.onboardingIntention") ?? ""

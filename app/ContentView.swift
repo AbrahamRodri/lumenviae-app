@@ -73,6 +73,7 @@ struct ContentView: View {
         isStartingPrayer = true
 
         let category = ScheduleService.categoryForToday()
+        let generation = router.generation
 
         Task {
             defer { isStartingPrayer = false }
@@ -80,10 +81,10 @@ struct ContentView: View {
             let meditationSet = await MeditationCacheService.shared.randomSet(for: category)
 
             // The load may have taken a while (cold API) — only navigate if
-            // the user hasn't already pushed a different screen. Appending
-            // to the path mid-transition is what caused intermittent
-            // crashes when rapidly entering and exiting prayer.
-            guard router.path.isEmpty else { return }
+            // navigation hasn't moved since the tap. The generation token
+            // catches any change, including push-and-return to the same
+            // depth, which a plain isEmpty check would miss.
+            guard router.generation == generation else { return }
 
             router.navigateToPrayerSession(meditationSet: meditationSet)
         }
@@ -121,15 +122,15 @@ struct ContentView: View {
             SelectMeditationView(category: category)
 
         case .prayerSession:
-            if let meditationSet = router.loadedMeditationSet {
-                MysteryPrayerView(meditationSet: meditationSet)
+            if let launch = router.pendingPrayer {
+                MysteryPrayerView(launch: launch)
             } else {
                 ProgressView("Loading...")
                     .tint(AppColors.gold)
             }
 
         case .completion:
-            if let meditationSet = router.loadedMeditationSet {
+            if let meditationSet = router.pendingPrayer?.meditationSet {
                 PrayerCompletionView(meditationSet: meditationSet)
             } else {
                 ProgressView("Loading...")

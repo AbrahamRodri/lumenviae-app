@@ -78,40 +78,45 @@ enum ConsecrationPhase: String, Codable, CaseIterable, Hashable {
 
     // MARK: - Visual Styling
 
-    /// Gradient colors for this phase's visual theme
+    /// Tint colors layered OVER the theme's own gradient (never a
+    /// standalone background, which would freeze one theme's palette) —
+    /// a quiet hue journey: penitential violet-navy, deep navy, Marian
+    /// blue, then warming toward gold as the consecration nears.
     var gradientColors: [Color] {
         switch self {
         case .preparatory:
-            // Deep purple gradient
-            return [Color(hex: "#4A1A6B"), Color(hex: "#2D1B4E")]
+            // Emptying of self: dark violet-tinged navy
+            return [Color(hex: "#1D1832"), Color(hex: "#100D1F")]
         case .knowledgeOfSelf:
-            // Navy blue gradient
-            return [Color(hex: "#1A365D"), Color(hex: "#1E3A5F")]
+            // Introspection: deep navy
+            return [Color(hex: "#141E38"), Color(hex: "#0C1222")]
         case .knowledgeOfMary:
-            // Blue to gold gradient
-            return [Color(hex: "#1E40AF"), Color(hex: "#D4AF37")]
+            // Marian blue cast
+            return [Color(hex: "#16264D"), Color(hex: "#0D142A")]
         case .knowledgeOfJesus:
-            // Gold to cream gradient
-            return [Color(hex: "#D4AF37"), Color(hex: "#F5F0E1")]
+            // Warming toward gold
+            return [Color(hex: "#2A2318"), Color(hex: "#14101E")]
         case .consecrationDay:
-            // Full gold gradient
-            return [Color(hex: "#D4AF37"), Color(hex: "#E8C547")]
+            // Rich dark gold, matching the mystery-card gradient family
+            return [Color(hex: "#3D3522"), Color(hex: "#1A1408")]
         }
     }
 
-    /// Primary accent color for this phase
+    /// Accent for progress indicators — the active theme's gold, quietly
+    /// brightening as the 33 days advance. Reads through AppColors so all
+    /// three themes stay coherent.
     var accentColor: Color {
         switch self {
         case .preparatory:
-            return Color(hex: "#9B59B6")  // Purple accent
+            return AppColors.gold.opacity(0.6)
         case .knowledgeOfSelf:
-            return Color(hex: "#3498DB")  // Blue accent
+            return AppColors.gold.opacity(0.75)
         case .knowledgeOfMary:
-            return Color(hex: "#5DADE2")  // Light blue accent
+            return AppColors.gold.opacity(0.9)
         case .knowledgeOfJesus:
-            return Color(hex: "#D4AF37")  // Gold accent
+            return AppColors.gold
         case .consecrationDay:
-            return Color(hex: "#E8C547")  // Bright gold
+            return AppColors.goldLight
         }
     }
 

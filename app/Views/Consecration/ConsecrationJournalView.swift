@@ -41,7 +41,7 @@ struct ConsecrationJournalView: View {
     var body: some View {
         ZStack {
             // Background - use app gradient
-            AppColors.appGradient
+            ConsecrationPhaseBackground(phase: phase)
                 .ignoresSafeArea()
                 .onTapGesture {
                     isTextEditorFocused = false

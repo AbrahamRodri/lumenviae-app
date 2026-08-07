@@ -188,7 +188,12 @@ final class MeditationSelectionViewModel {
         do {
             meditationSets = try await apiService.fetchMeditationSets(category: category)
         } catch {
-            errorMessage = "Failed to load meditation sets"
+            // Downloaded offline content keeps the picker honest and usable
+            if let stored = OfflineContentService.shared.storedSummaries(category: category) {
+                meditationSets = stored
+            } else {
+                errorMessage = "Can't reach Lumen Viae — the server may be waking up."
+            }
         }
 
         if category == .luminous {
@@ -199,22 +204,24 @@ final class MeditationSelectionViewModel {
         isLoading = false
     }
 
+    /// Clears the loaded list and fetches again (drives the Retry button).
+    @MainActor
+    func retry() async {
+        meditationSets = []
+        await loadMeditationSets()
+    }
+
     /// Loads a complete meditation set when the user taps a set card.
-    /// Falls back to mock data if the API call fails.
+    ///
+    /// Resolution (bundled → API → offline download) lives in
+    /// MeditationSetResolver so this path can never diverge from the
+    /// resume flow. Throws so the view can offer a retry — it must never
+    /// silently substitute generic text under the tapped set's name.
     @MainActor
     func loadFullMeditationSet(id: Int) async throws -> MeditationSet {
-        if id == LuminousMeditationData.setID {
-            return LuminousMeditationData.set
-        }
-
         isLoadingSet = true
         defer { isLoadingSet = false }
 
-        do {
-            return try await apiService.fetchMeditationSet(id: id)
-        } catch {
-            // Fallback to mock data for offline support
-            return MockDataService.meditationSet(for: category)
-        }
+        return try await MeditationSetResolver.resolve(id: id, categoryHint: category.rawValue)
     }
 }
