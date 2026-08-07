@@ -29,14 +29,17 @@ struct MarianLibraryView: View {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
                     header
+                        .devotionalEntrance()
 
                     introduction
                         .padding(.horizontal, 20)
                         .padding(.bottom, 28)
+                        .devotionalEntrance(delay: 0.08)
 
                     VStack(spacing: 14) {
-                        ForEach(Self.sections) { section in
+                        ForEach(Array(Self.sections.enumerated()), id: \.element.id) { index, section in
                             sectionCard(section)
+                                .devotionalEntrance(delay: 0.16 + Double(index) * 0.06)
                         }
                     }
                     .padding(.horizontal, 20)
@@ -65,6 +68,7 @@ struct MarianLibraryView: View {
         VStack(spacing: 12) {
             AppIcon("ph-heart-fill", size: 36)
                 .foregroundColor(AppColors.gold)
+                .breathingGlow(AppColors.gold)
                 .padding(.top, 24)
 
             Text("Marian Theology Library")
@@ -76,8 +80,7 @@ struct MarianLibraryView: View {
                 .font(AppFonts.italicFont(16))
                 .foregroundColor(AppColors.gold.opacity(0.8))
 
-            Divider()
-                .background(AppColors.gold.opacity(0.3))
+            OrnamentDivider()
                 .padding(.horizontal, 40)
                 .padding(.top, 8)
         }
@@ -87,10 +90,10 @@ struct MarianLibraryView: View {
     // MARK: - Introduction
 
     private var introduction: some View {
-        Text("\u{201C}Of Mary, there is never enough.\u{201D} Everything the Church teaches about Mary points to her Son: each dogma safeguards a truth about Christ, each apparition calls the world back to Him, and each Marian saint found in her the surest way to Him. Explore the Church's rich teaching below.")
-            .font(AppFonts.bodyFont(15))
-            .foregroundColor(AppColors.cream.opacity(0.9))
-            .lineSpacing(5)
+        DropCapText(
+            text: "\u{201C}Of Mary, there is never enough.\u{201D} Everything the Church teaches about Mary points to her Son: each dogma safeguards a truth about Christ, each apparition calls the world back to Him, and each Marian saint found in her the surest way to Him. Explore the Church's rich teaching below.",
+            bodySize: 15
+        )
     }
 
     // MARK: - Section Model
@@ -159,7 +162,7 @@ struct MarianLibraryView: View {
                 ),
                 LibraryEntry(
                     title: "The Queen Mother",
-                    detail: "3 Kings 2:19 & Apocalypse 12:1",
+                    detail: "3 Kings 2:19-20 & Apocalypse 12:1",
                     text: "In the kingdom of David, the queen was not the king's wife but his mother — the Gebirah — who sat enthroned at his right hand and interceded for the people. Solomon told Bathsheba: \u{201C}Ask, my mother, for I must not turn away thy face.\u{201D} Christ, Son of David, honors His mother the same way. St. John sees her in heaven: \u{201C}a woman clothed with the sun... and on her head a crown of twelve stars.\u{201D}"
                 ),
                 LibraryEntry(
@@ -191,9 +194,19 @@ struct MarianLibraryView: View {
                     text: "In the chapel of the Rue du Bac, Our Lady showed St. Catherine the design of a medal with the prayer: \u{201C}O Mary, conceived without sin, pray for us who have recourse to thee.\u{201D} The graces attached to the medal were so abundant that the faithful named it \u{201C}miraculous.\u{201D} It prepared the world for the dogma of the Immaculate Conception."
                 ),
                 LibraryEntry(
+                    title: "Our Lady of La Salette",
+                    detail: "France, 1846 — Mélanie Calvat & Maximin Giraud",
+                    text: "On a mountain high in the French Alps, two shepherd children found a beautiful Lady seated and weeping, light streaming from a crucifix at her breast. She grieved over blasphemy and the abandonment of Sunday worship, calling her people to conversion: \u{201C}If my people will not submit, I shall be forced to let fall the arm of my Son.\u{201D} The apparition was approved in 1851."
+                ),
+                LibraryEntry(
                     title: "Our Lady of Lourdes",
                     detail: "France, 1858 — St. Bernadette Soubirous",
                     text: "In eighteen apparitions at the grotto of Massabielle, Our Lady called for penance and prayer for sinners, and a spring of healing water broke forth at her word. Asked her name, she replied: \u{201C}I am the Immaculate Conception.\u{201D} Lourdes remains one of the great places of pilgrimage and healing in the world."
+                ),
+                LibraryEntry(
+                    title: "Our Lady of Pontmain",
+                    detail: "France, 1871",
+                    text: "As the Prussian army advanced on Laval during the Franco-Prussian War, Our Lady of Hope appeared above a village barn to a group of children, smiling in a starry mantle while the townsfolk prayed the Rosary. Letters formed in gold beneath her feet: \u{201C}But pray, my children. God will hear you in a little while. My Son allows Himself to be touched.\u{201D} The army halted that night, and the armistice followed within days."
                 ),
                 LibraryEntry(
                     title: "Our Lady of Knock",
@@ -256,11 +269,44 @@ struct MarianLibraryView: View {
             ]
         ),
         LibrarySection(
+            id: "rosary_history",
+            icon: "ch-rosary",
+            title: "The Rosary Through History",
+            subtitle: "Eight centuries of Our Lady's Psalter",
+            entries: [
+                LibraryEntry(
+                    title: "Our Lady's Psalter",
+                    detail: "Medieval origins",
+                    text: "The Rosary grew out of the monastic praying of the 150 Psalms. Lay brothers and the faithful who could not read the Latin Psalter prayed 150 Hail Marys in their place, counted on knotted cords and strings of beads — and so the Rosary came to be called Our Lady's Psalter. Meditation on the life of Christ was gradually joined to the beads, until vocal prayer and contemplation became one."
+                ),
+                LibraryEntry(
+                    title: "St. Dominic and the Confraternity",
+                    detail: "1214 — Bl. Alan de la Roche, 15th century",
+                    text: "Tradition holds that Our Lady gave the Rosary to St. Dominic as the weapon against the Albigensian heresy. Two centuries later the Dominican Bl. Alan de la Roche revived the devotion, preached its fifteen mysteries, and established the Confraternity of the Rosary, which spread it through all of Christendom. The Fifteen Promises of Our Lady to those who pray the Rosary have been handed down through him as a treasured pious tradition."
+                ),
+                LibraryEntry(
+                    title: "Lepanto and the Feast of the Rosary",
+                    detail: "October 7, 1571 — Pope St. Pius V",
+                    text: "As the Christian fleet met the Ottoman navy at Lepanto, Pope St. Pius V — a Dominican — called all of Europe to pray the Rosary, and the Confraternities processed in Rome as the battle raged. Victory was won against all odds, and the Pope, attributing it to Our Lady, instituted the feast of Our Lady of Victory — kept ever since on October 7 as the feast of the Most Holy Rosary. October remains the month of the Rosary."
+                ),
+                LibraryEntry(
+                    title: "The Rosary Popes",
+                    detail: "Leo XIII to St. John Paul II",
+                    text: "Pope Leo XIII wrote eleven encyclicals on the Rosary — earning the name \u{201C}the Rosary Pope\u{201D} — and dedicated the month of October to it. At Fatima in 1917, Our Lady asked for the daily Rosary in every apparition. St. John Paul II crowned this heritage in Rosarium Virginis Mariae (2002), calling the Rosary his favorite prayer and proposing the Luminous Mysteries to the Church."
+                )
+            ]
+        ),
+        LibrarySection(
             id: "titles",
             icon: "ph-star-fill",
             title: "Titles of Our Lady",
-            subtitle: "From the Litany of Loreto",
+            subtitle: "From the Litany and sacred Tradition",
             entries: [
+                LibraryEntry(
+                    title: "Mediatrix of All Graces",
+                    detail: "Mediatrix Omnium Gratiarum",
+                    text: "All grace comes from Christ, the one Mediator between God and men (1 Timothy 2:5) — yet God willed that His grace should reach us through Mary. As she gave the world its Redeemer, so she dispenses what He won on Calvary. St. Bernard taught: \u{201C}God has willed that we should have nothing which does not pass through the hands of Mary.\u{201D} Leo XIII wrote that nothing of the immense treasury of grace is imparted to us except through her, and Benedict XV granted a feast of Mary, Mediatrix of All Graces, in 1921. Though not yet solemnly defined, many of the faithful pray for its definition as the fifth Marian dogma — and it is the keystone of St. Louis de Montfort's True Devotion."
+                ),
                 LibraryEntry(
                     title: "Mystical Rose",
                     detail: "Rosa Mystica",
@@ -328,6 +374,7 @@ struct MarianLibraryView: View {
                 }
                 .padding(16)
             }
+            .buttonStyle(SacredCardButtonStyle())
 
             if isExpanded {
                 VStack(alignment: .leading, spacing: 20) {

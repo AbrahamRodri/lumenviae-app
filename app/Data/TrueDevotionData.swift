@@ -227,12 +227,106 @@ Consecrating ourselves to Mary means:
             DevotionItem(
                 title: "Greater Merit and Grace",
                 content: """
-All our actions, being done through Mary:
-• Become her actions
-• Are infinitely more meritorious
-• Are more sanctifying
-• Are more glorious to God
-• Are more profitable to our neighbor
+All our actions, being done through Mary, gain in value, because she:
+• Purifies them of self-love and hidden attachment
+• Embellishes them, adorning them with her own merits
+• Presents them to Jesus with her own hands
+• Makes them more glorious to God
+• Makes them more profitable to our neighbor
+"""
+            )
+        ]
+    )
+
+    // MARK: - False Devotions to Avoid
+
+    static let falseDevotions = DevotionSection(
+        title: "False Devotions to Avoid",
+        icon: "ph-shield",
+        items: [
+            DevotionItem(
+                title: "The Critical Devotee",
+                content: """
+Proud scholars who question and criticize nearly every approved devotion to Our Lady — the pious practices of the simple faithful seem beneath them.
+
+Montfort answers: the Church, guided by the Holy Spirit, has approved these devotions for centuries; humility receives what pride dissects.
+"""
+            ),
+            DevotionItem(
+                title: "The Scrupulous Devotee",
+                content: """
+Those who fear that honoring the Mother dishonors the Son — who avoid speaking of Mary lest they "take away" from Jesus.
+
+In truth, we honor Mary only that Jesus may be more perfectly honored; we go to her only as the way that leads to Him, who is our final end.
+"""
+            ),
+            DevotionItem(
+                title: "The External Devotee",
+                content: """
+Those whose devotion consists entirely in outward practices — many rosaries hurried through, medals worn, processions joined — with no interior spirit, no effort to amend their lives.
+"""
+            ),
+            DevotionItem(
+                title: "The Presumptuous Devotee",
+                content: """
+Sinners who hide behind a cloak of devotion to Mary while remaining attached to their sins, presuming she will save them without conversion.
+
+This presumption, Montfort warns, is a detestable abuse: true devotion to Mary is holy — it leads us away from sin, never provides cover for it.
+"""
+            ),
+            DevotionItem(
+                title: "The Inconstant Devotee",
+                content: """
+Those devout by fits and starts — fervent one month, lukewarm the next; taking up practices and abandoning them at the first dryness.
+
+True devotion is constant: better a short rule kept faithfully than great practices soon abandoned.
+"""
+            ),
+            DevotionItem(
+                title: "The Hypocritical Devotee",
+                content: """
+Those who cloak their sins under the mantle of the Virgin so as to pass for what they are not in the eyes of others.
+"""
+            ),
+            DevotionItem(
+                title: "The Self-Interested Devotee",
+                content: """
+Those who have recourse to Mary only to win a lawsuit, escape a danger, be cured of an illness, or obtain some temporal good — and otherwise never think of her.
+
+We may certainly bring her our needs, but true devotion serves her for God's sake, not merely for our own.
+"""
+            )
+        ]
+    )
+
+    // MARK: - Foundations
+
+    static let foundations = DevotionSection(
+        title: "Foundations of the Devotion",
+        icon: "ch-church",
+        items: [
+            DevotionItem(
+                title: "It Begins and Ends with Jesus",
+                content: """
+"Jesus Christ our Saviour, true God and true man, must be the ultimate end of all our other devotions; otherwise they would be false and misleading."
+
+Montfort opens True Devotion with this rule. Devotion to Mary is not a rival to devotion to Christ — it exists only to form Christ in us more perfectly. It was through Mary that Jesus came into the world, and it is through Mary that He wishes to reign in souls.
+"""
+            ),
+            DevotionItem(
+                title: "The Figure of Rebecca and Jacob",
+                content: """
+Montfort's great scriptural figure (Genesis 27): as Rebecca clothed her beloved son Jacob in the garments of his elder brother to obtain the father's blessing, so Mary clothes her children in the merits and virtues of her Son, that they may be blessed by the Father.
+
+Those who give themselves to her are dressed, cared for, and presented by her hands — and the Father, finding in them the fragrance of His Son, blesses them.
+"""
+            ),
+            DevotionItem(
+                title: "Tested and Approved by the Church",
+                content: """
+Montfort wrote True Devotion around 1712 and foretold that it would be hidden by the devil — the manuscript lay unknown in a trunk until 1842, and was published in 1843.
+
+Since then: St. Pius X granted an apostolic blessing to all who would read it; Pius XII canonized Montfort in 1947; and St. John Paul II took his papal motto, Totus Tuus, from Montfort's formula of consecration, calling the book "a decisive turning point" in his life.
 """
             )
         ]
@@ -293,8 +387,10 @@ We seek to imitate Mary's:
         let prayerSection = TrueDevotionPrayers.prayers.toDevotionSection(for: prayerLanguage)
 
         return [
+            foundations,
             keyPrinciples,
             marksOfTrueDevotion,
+            falseDevotions,
             benefits,
             prayerSection,
             spirit

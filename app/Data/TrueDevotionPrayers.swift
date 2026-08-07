@@ -19,7 +19,7 @@ enum TrueDevotionPrayers {
         icon: "ph-flame-fill",
         items: [
             BilingualPrayer(
-                title: "The Little Crown",
+                title: "The Little Crown (Opening Versicle)",
                 content: BilingualText(
                     english: """
 V. Grant me to praise thee, O Sacred Virgin.
