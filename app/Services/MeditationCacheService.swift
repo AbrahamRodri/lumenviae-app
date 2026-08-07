@@ -92,17 +92,18 @@ final class MeditationCacheService {
             return set
         }
 
-        // Cache miss (launch prefetch failed or different category) — retry now.
+        // The launch prefetch failed or missed this category. Downloaded
+        // content answers instantly (and off the main actor) — check it
+        // BEFORE a second network attempt, which can burn 30s+ against a
+        // cold or unreachable server.
+        if let stored = await OfflineContentService.shared.storedRandomSet(category: category) {
+            return stored
+        }
+
+        // Nothing on disk — retry the network now.
         await prefetch(category: category)
 
         if let sets = cachedSets[category], let set = sets.randomElement() {
-            return set
-        }
-
-        // Offline: prefer real downloaded content over the generic
-        // built-in fallback.
-        if let stored = OfflineContentService.shared.storedSets(category: category),
-           let set = stored.randomElement() {
             return set
         }
 

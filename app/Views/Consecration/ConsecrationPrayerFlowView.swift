@@ -194,7 +194,7 @@ struct ConsecrationPrayerFlowView: View {
     var body: some View {
         ZStack {
             // Background - use app gradient
-            AppColors.appGradient
+            ConsecrationPhaseBackground(phase: phase)
                 .ignoresSafeArea()
 
             // Content
@@ -224,6 +224,8 @@ struct ConsecrationPrayerFlowView: View {
         }
         .onDisappear {
             audio.reset()
+            // Hand the audio session back so other apps' audio can resume
+            audio.deactivateSession()
         }
         .onChange(of: currentIndex) {
             audio.reset()
@@ -442,5 +444,6 @@ struct ConsecrationPrayerFlowView: View {
     NavigationStack {
         ConsecrationPrayerFlowView(path: .constant(NavigationPath()), dayNumber: 1)
             .environment(ConsecrationViewModel())
+            .environment(UserSettings.shared)
     }
 }

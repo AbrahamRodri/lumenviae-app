@@ -83,6 +83,16 @@ struct Constants {
         return images[index]
     }
 
+    // MARK: Ordinals
+
+    /// Ordinal word for a mystery's position ("First"…"Seventh") — covers
+    /// five-decade rosaries and the Seven Sorrows chaplet.
+    static func ordinalWord(_ number: Int) -> String {
+        let ordinals = ["First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh"]
+        guard number >= 1 && number <= ordinals.count else { return "" }
+        return ordinals[number - 1]
+    }
+
     // MARK: App Identity
 
     static let appName = "LUMEN VIAE"

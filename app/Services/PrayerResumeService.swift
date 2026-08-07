@@ -17,7 +17,7 @@ import Foundation
 
 /// A snapshot of an unfinished Rosary session.
 struct InProgressPrayer: Codable, Equatable {
-    /// Meditation set ID (negative = bundled local set, 0 = offline fallback)
+    /// Meditation set ID (negative = bundled local set, 0 = built-in fallback)
     let meditationSetId: Int
 
     /// Set name for display ("St. Louis de Montfort")
@@ -29,8 +29,12 @@ struct InProgressPrayer: Codable, Equatable {
     /// 0-based index of the mystery the user was on
     let mysteryIndex: Int
 
-    /// When the session originally started (drives recorded duration)
+    /// When the devotion originally began (display only — never used
+    /// for duration, which would count interruption gaps as prayer)
     let startedAt: Date
+
+    /// Seconds actually spent praying across all segments so far
+    let accumulatedSeconds: Int
 
     /// When this snapshot was last written (drives expiry)
     let savedAt: Date
@@ -43,8 +47,18 @@ final class PrayerResumeService {
 
     static let shared = PrayerResumeService()
 
+    /// Backing storage; expiry is enforced in the `inProgress` accessor so
+    /// a long-suspended process can't surface a days-old card.
+    private var snapshot: InProgressPrayer?
+
     /// The unfinished session, if one exists and hasn't expired.
-    private(set) var inProgress: InProgressPrayer?
+    var inProgress: InProgressPrayer? {
+        guard let snapshot else { return nil }
+        guard Date().timeIntervalSince(snapshot.savedAt) <= Self.expiry else {
+            return nil
+        }
+        return snapshot
+    }
 
     private static let storageKey = "prayerResume.inProgress"
 
@@ -59,16 +73,24 @@ final class PrayerResumeService {
     // MARK: - API
 
     /// Records the user's current position; called as the prayer advances.
-    func save(setId: Int, setName: String, category: String, mysteryIndex: Int, startedAt: Date) {
+    func save(
+        setId: Int,
+        setName: String,
+        category: String,
+        mysteryIndex: Int,
+        startedAt: Date,
+        accumulatedSeconds: Int
+    ) {
         let snapshot = InProgressPrayer(
             meditationSetId: setId,
             setName: setName,
             category: category,
             mysteryIndex: mysteryIndex,
             startedAt: startedAt,
+            accumulatedSeconds: accumulatedSeconds,
             savedAt: Date()
         )
-        inProgress = snapshot
+        self.snapshot = snapshot
         if let data = try? JSONEncoder().encode(snapshot) {
             UserDefaults.standard.set(data, forKey: Self.storageKey)
         }
@@ -76,7 +98,7 @@ final class PrayerResumeService {
 
     /// Clears the snapshot — on completion, or when the user dismisses it.
     func clear() {
-        inProgress = nil
+        snapshot = nil
         UserDefaults.standard.removeObject(forKey: Self.storageKey)
     }
 
@@ -84,13 +106,15 @@ final class PrayerResumeService {
 
     private func load() {
         guard let data = UserDefaults.standard.data(forKey: Self.storageKey),
-              let snapshot = try? JSONDecoder().decode(InProgressPrayer.self, from: data) else {
+              let stored = try? JSONDecoder().decode(InProgressPrayer.self, from: data) else {
+            // Missing or unreadable (schema change): drop any stale blob
+            UserDefaults.standard.removeObject(forKey: Self.storageKey)
             return
         }
-        if Date().timeIntervalSince(snapshot.savedAt) > Self.expiry {
+        if Date().timeIntervalSince(stored.savedAt) > Self.expiry {
             clear()
         } else {
-            inProgress = snapshot
+            snapshot = stored
         }
     }
 }

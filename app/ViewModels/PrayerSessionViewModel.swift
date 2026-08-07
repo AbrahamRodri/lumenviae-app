@@ -26,8 +26,12 @@ final class PrayerSessionViewModel {
     /// Not private because the View may need to observe it
     let audioService: AudioService
 
-    /// When the prayer session started (for duration tracking)
-    private var startTime: Date?
+    /// When THIS segment of the session started. Resumed sessions get a
+    /// fresh clock — the gap between segments is not prayer time.
+    private let segmentStart = Date()
+
+    /// Seconds prayed in earlier segments of a resumed session
+    private let priorSeconds: Int
 
     // MARK: - Audio State (Proxied)
 
@@ -63,23 +67,17 @@ final class PrayerSessionViewModel {
     init(
         meditationSet: MeditationSet,
         startAtIndex: Int = 0,
-        startedAt: Date = Date(),
+        priorSeconds: Int = 0,
         apiService: APIService = .shared,
         audioService: AudioService = .shared
     ) {
         self.meditationSet = meditationSet
         self.apiService = apiService
         self.audioService = audioService
-        self.startTime = startedAt
+        self.priorSeconds = max(priorSeconds, 0)
 
         let upperBound = max((meditationSet.meditations?.count ?? 5) - 1, 0)
         self.currentMysteryIndex = min(max(startAtIndex, 0), upperBound)
-    }
-
-    /// When the session began — the original start for resumed sessions,
-    /// so recorded duration spans the whole devotion.
-    var sessionStartedAt: Date {
-        startTime ?? Date()
     }
 
     // MARK: - Computed Properties
@@ -163,19 +161,17 @@ final class PrayerSessionViewModel {
     func loadCurrentAudio() async {
         guard let meditation = currentMeditation else { return }
 
-        if let local = OfflineContentService.shared.localAudioURL(meditationId: meditation.id) {
-            await audioService.loadAudio(
-                from: local.absoluteString,
-                title: meditation.displayTitle,
-                subtitle: meditationSet.name
-            )
-        } else if let audioUrl = meditation.audioUrl {
-            await audioService.loadAudio(
-                from: audioUrl,
-                title: meditation.displayTitle,
-                subtitle: meditationSet.name
-            )
-        }
+        // hasAudio also rejects the empty-string URLs the server can emit
+        let source = OfflineContentService.shared.localAudioURL(meditationId: meditation.id)?.absoluteString
+            ?? (meditation.hasAudio ? meditation.audioUrl : nil)
+
+        guard let source else { return }
+
+        await audioService.loadAudio(
+            from: source,
+            title: meditation.displayTitle,
+            subtitle: meditationSet.name
+        )
     }
 
     /// Error from the audio layer, surfaced next to the transport
@@ -221,14 +217,16 @@ final class PrayerSessionViewModel {
         try await apiService.recordCompletion(meditationSetId: meditationSet.id)
     }
 
-    /// Stops any playing meditation audio; call when leaving the prayer flow.
+    /// Stops any playing meditation audio and hands the audio session back
+    /// to the system; call when leaving the prayer flow.
     func stopAudio() {
         audioService.reset()
+        audioService.deactivateSession()
     }
 
-    /// Duration of the prayer session in seconds since it started
+    /// Seconds actually spent praying: earlier segments plus this one.
+    /// Interruption gaps between segments are never counted.
     var sessionDuration: Int {
-        guard let startTime else { return 0 }
-        return Int(Date().timeIntervalSince(startTime))
+        priorSeconds + Int(Date().timeIntervalSince(segmentStart))
     }
 }

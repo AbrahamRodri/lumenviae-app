@@ -274,15 +274,18 @@ struct SelectMeditationView: View {
 
     private func selectMeditationSet(_ summary: MeditationSetSummary) async {
         // A cold server can answer long after the user gave up and
-        // navigated away — never mutate the path from a stale response.
-        let depthAtTap = router.path.count
+        // navigated away — never mutate navigation from a stale response.
+        // The generation token bumps on ANY path change (including system
+        // back-swipes), unlike a depth count, which can coincide across
+        // different screens.
+        let generation = router.generation
 
         do {
             let fullSet = try await viewModel.loadFullMeditationSet(id: summary.id)
-            guard router.path.count == depthAtTap else { return }
+            guard router.generation == generation else { return }
             router.navigateToPrayerSession(meditationSet: fullSet)
         } catch {
-            guard router.path.count == depthAtTap else { return }
+            guard router.generation == generation else { return }
             failedSet = summary
         }
     }

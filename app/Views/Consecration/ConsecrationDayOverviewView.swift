@@ -72,19 +72,9 @@ struct ConsecrationDayOverviewView: View {
 
     var body: some View {
         ZStack {
-            // Background — each phase carries its own quiet tint so the
-            // 33-day journey visibly progresses
-            if let phase {
-                LinearGradient(
-                    colors: phase.gradientColors,
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
-            } else {
-                AppColors.appGradient
-                    .ignoresSafeArea()
-            }
+            // Theme gradient with the phase's tint — the 33-day journey
+            // visibly progresses without abandoning the chosen theme
+            ConsecrationPhaseBackground(phase: phase)
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {

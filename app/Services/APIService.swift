@@ -145,16 +145,36 @@ final class APIService {
 
     // MARK: - Private Helpers
 
-    /// Performs a GET request with one retry — the first request to a
-    /// sleeping Fly.io machine often wakes it just in time for the second.
+    /// Performs a GET request with one retry for transient failures —
+    /// the first request to a sleeping Fly.io machine often wakes it just
+    /// in time for the second.
+    ///
+    /// Only connection-shaped errors retry: a 404, a decoding failure, or
+    /// a cancelled task must fail immediately, once. The un-optional
+    /// `Task.sleep` propagates cancellation so a dismissed screen never
+    /// fires a second request.
     private func fetch<T: Codable>(url: URL, responseType: T.Type) async throws -> T {
         do {
             return try await fetchOnce(url: url, responseType: responseType)
-        } catch {
-            try? await Task.sleep(for: .seconds(1.5))
+        } catch let error as APIError {
+            guard case .networkError(let underlying) = error,
+                  let urlError = underlying as? URLError,
+                  Self.retryableCodes.contains(urlError.code) else {
+                throw error
+            }
+            try await Task.sleep(for: .seconds(1.5))
             return try await fetchOnce(url: url, responseType: responseType)
         }
     }
+
+    /// Failures that plausibly mean "the server is still waking up".
+    private static let retryableCodes: Set<URLError.Code> = [
+        .timedOut,
+        .cannotConnectToHost,
+        .cannotFindHost,
+        .networkConnectionLost,
+        .dnsLookupFailed
+    ]
 
     /// Performs a single GET request and decodes the response.
     private func fetchOnce<T: Codable>(url: URL, responseType: T.Type) async throws -> T {

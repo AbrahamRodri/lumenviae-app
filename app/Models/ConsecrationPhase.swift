@@ -78,17 +78,17 @@ enum ConsecrationPhase: String, Codable, CaseIterable, Hashable {
 
     // MARK: - Visual Styling
 
-    /// Background gradient for this phase — a quiet hue journey inside the
-    /// app's dark navy/gold vocabulary: penitential violet-navy, deep navy,
-    /// Marian blue, then warming toward gold as the consecration nears.
-    /// All dark enough to sit under cream and gold text.
+    /// Tint colors layered OVER the theme's own gradient (never a
+    /// standalone background, which would freeze one theme's palette) —
+    /// a quiet hue journey: penitential violet-navy, deep navy, Marian
+    /// blue, then warming toward gold as the consecration nears.
     var gradientColors: [Color] {
         switch self {
         case .preparatory:
             // Emptying of self: dark violet-tinged navy
             return [Color(hex: "#1D1832"), Color(hex: "#100D1F")]
         case .knowledgeOfSelf:
-            // Introspection: the app's own deep navy
+            // Introspection: deep navy
             return [Color(hex: "#141E38"), Color(hex: "#0C1222")]
         case .knowledgeOfMary:
             // Marian blue cast
@@ -102,20 +102,21 @@ enum ConsecrationPhase: String, Codable, CaseIterable, Hashable {
         }
     }
 
-    /// Accent for progress indicators — a gold that quietly brightens as
-    /// the 33 days advance.
+    /// Accent for progress indicators — the active theme's gold, quietly
+    /// brightening as the 33 days advance. Reads through AppColors so all
+    /// three themes stay coherent.
     var accentColor: Color {
         switch self {
         case .preparatory:
-            return Color(hex: "#A18A4E")
+            return AppColors.gold.opacity(0.6)
         case .knowledgeOfSelf:
-            return Color(hex: "#B49A52")
+            return AppColors.gold.opacity(0.75)
         case .knowledgeOfMary:
-            return Color(hex: "#C4A94F")
+            return AppColors.gold.opacity(0.9)
         case .knowledgeOfJesus:
-            return Color(hex: "#D4AF37")
+            return AppColors.gold
         case .consecrationDay:
-            return Color(hex: "#E8C547")
+            return AppColors.goldLight
         }
     }
 

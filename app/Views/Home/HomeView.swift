@@ -120,37 +120,35 @@ struct HomeView: View {
     }
 
     /// Reloads the interrupted session's meditation set and jumps back to
-    /// the saved mystery. Bundled and fallback sets resolve locally; API
-    /// sets are refetched (the in-memory cache doesn't survive relaunch).
+    /// the saved mystery. Resolution (bundled → API → offline download)
+    /// is shared with the picker via MeditationSetResolver.
     private func resumeInterruptedPrayer() {
         guard let session = PrayerResumeService.shared.inProgress,
               !isResuming, router.path.isEmpty else { return }
 
         isResuming = true
         resumeError = nil
+        let generation = router.generation
 
         Task {
             defer { isResuming = false }
 
-            let category = MysteryCategory(fromAPIString: session.category)
-            let set: MeditationSet?
-            if session.meditationSetId == LuminousMeditationData.setID {
-                set = LuminousMeditationData.set
-            } else if session.meditationSetId == 0 {
-                set = MockDataService.meditationSet(for: category ?? .joyful)
-            } else {
-                set = try? await APIService.shared.fetchMeditationSet(id: session.meditationSetId)
-            }
+            let set = try? await MeditationSetResolver.resolve(
+                id: session.meditationSetId,
+                categoryHint: session.category
+            )
 
             guard let set else {
                 resumeError = "Couldn't load — check your connection"
                 return
             }
-            guard router.path.isEmpty else { return }
+            // The user may have navigated while we loaded — never push then.
+            guard router.generation == generation else { return }
 
             router.navigateToPrayerSession(
                 meditationSet: set,
                 startAtIndex: session.mysteryIndex,
+                priorSeconds: session.accumulatedSeconds,
                 startedAt: session.startedAt
             )
         }
@@ -194,7 +192,30 @@ struct ResumePrayerCard: View {
 
     var body: some View {
         VStack(spacing: 8) {
-            Button(action: onContinue) {
+            // ZStack (not .overlay on the button) so the dismiss X can
+            // never inherit the continue button's disabled state.
+            ZStack(alignment: .topTrailing) {
+                continueButton
+                    .disabled(isLoading)
+
+                Button(action: onDismiss) {
+                    AppIcon("ph-x", size: 10)
+                        .foregroundColor(AppColors.textSecondary)
+                        .padding(8)
+                }
+                .accessibilityLabel("Dismiss unfinished Rosary")
+            }
+
+            if let errorMessage {
+                Text(errorMessage)
+                    .font(AppFonts.bodyFont(12))
+                    .foregroundColor(AppColors.textSecondary)
+            }
+        }
+    }
+
+    private var continueButton: some View {
+        Button(action: onContinue) {
                 HStack(spacing: 14) {
                     AppIcon("ch-rosary", size: 26)
                         .foregroundColor(AppColors.gold)
@@ -242,23 +263,7 @@ struct ResumePrayerCard: View {
                 .contentShape(RoundedRectangle(cornerRadius: 14))
             }
             .buttonStyle(SacredCardButtonStyle())
-            .disabled(isLoading)
             .accessibilityLabel("Continue your Rosary at the \(mysteryLabel)")
-            .overlay(alignment: .topTrailing) {
-                Button(action: onDismiss) {
-                    AppIcon("ph-x", size: 10)
-                        .foregroundColor(AppColors.textSecondary)
-                        .padding(8)
-                }
-                .accessibilityLabel("Dismiss unfinished Rosary")
-            }
-
-            if let errorMessage {
-                Text(errorMessage)
-                    .font(AppFonts.bodyFont(12))
-                    .foregroundColor(AppColors.textSecondary)
-            }
-        }
     }
 }
 

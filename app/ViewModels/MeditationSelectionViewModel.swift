@@ -213,25 +213,15 @@ final class MeditationSelectionViewModel {
 
     /// Loads a complete meditation set when the user taps a set card.
     ///
-    /// Falls back to downloaded offline content; otherwise throws so the
-    /// view can offer a retry. (It used to silently substitute generic
-    /// mock text under the tapped set's name — never again.)
+    /// Resolution (bundled → API → offline download) lives in
+    /// MeditationSetResolver so this path can never diverge from the
+    /// resume flow. Throws so the view can offer a retry — it must never
+    /// silently substitute generic text under the tapped set's name.
     @MainActor
     func loadFullMeditationSet(id: Int) async throws -> MeditationSet {
-        if id == LuminousMeditationData.setID {
-            return LuminousMeditationData.set
-        }
-
         isLoadingSet = true
         defer { isLoadingSet = false }
 
-        do {
-            return try await apiService.fetchMeditationSet(id: id)
-        } catch {
-            if let stored = OfflineContentService.shared.storedSet(id: id) {
-                return stored
-            }
-            throw error
-        }
+        return try await MeditationSetResolver.resolve(id: id, categoryHint: category.rawValue)
     }
 }

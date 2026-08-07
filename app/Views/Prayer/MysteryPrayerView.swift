@@ -22,15 +22,20 @@ struct MysteryPrayerView: View {
 
     let meditationSet: MeditationSet
 
+    /// When the devotion originally began (carried through resumes for
+    /// snapshot continuity; never used for duration)
+    private let sessionStartedAt: Date
+
     /// Image vs. reading mode, persisted so the preference survives sessions
     private var isImageMode: Bool { userSettings.prayerImageMode }
 
-    init(meditationSet: MeditationSet, startAtIndex: Int = 0, startedAt: Date = Date()) {
-        self.meditationSet = meditationSet
+    init(launch: PrayerLaunch) {
+        self.meditationSet = launch.meditationSet
+        self.sessionStartedAt = launch.startedAt
         self._viewModel = State(initialValue: PrayerSessionViewModel(
-            meditationSet: meditationSet,
-            startAtIndex: startAtIndex,
-            startedAt: startedAt
+            meditationSet: launch.meditationSet,
+            startAtIndex: launch.startIndex,
+            priorSeconds: launch.priorSeconds
         ))
     }
 
@@ -46,14 +51,20 @@ struct MysteryPrayerView: View {
         }
         .navigationBarHidden(true)
         .task(id: viewModel.currentMysteryIndex) {
-            // Remember the position so an interrupted Rosary can resume
-            PrayerResumeService.shared.save(
-                setId: meditationSet.id,
-                setName: meditationSet.name,
-                category: meditationSet.category,
-                mysteryIndex: viewModel.currentMysteryIndex,
-                startedAt: viewModel.sessionStartedAt
-            )
+            // Remember the position so an interrupted Rosary can resume.
+            // Only once the user has actually advanced — glancing at a
+            // set's first mystery and backing out must neither pin a
+            // resume card nor overwrite a genuinely interrupted session.
+            if viewModel.currentMysteryIndex > 0 {
+                PrayerResumeService.shared.save(
+                    setId: meditationSet.id,
+                    setName: meditationSet.name,
+                    category: meditationSet.category,
+                    mysteryIndex: viewModel.currentMysteryIndex,
+                    startedAt: sessionStartedAt,
+                    accumulatedSeconds: viewModel.sessionDuration
+                )
+            }
             await viewModel.loadCurrentAudio()
         }
         .onDisappear {
@@ -175,7 +186,7 @@ struct MysteryPrayerView: View {
             // Mystery info - no card, just text
             VStack(spacing: 12) {
                 // Mystery label
-                Text("THE \(ordinalNumber(viewModel.currentMysteryIndex + 1).uppercased()) \(meditationSet.mysteryCategory?.displayName.uppercased() ?? "") MYSTERY")
+                Text("THE \(Constants.ordinalWord(viewModel.currentMysteryIndex + 1).uppercased()) \(meditationSet.mysteryCategory?.displayName.uppercased() ?? "") MYSTERY")
                     .font(AppFonts.labelFont(10))
                     .tracking(2.5)
                     .foregroundColor(AppColors.gold)
@@ -437,13 +448,6 @@ struct MysteryPrayerView: View {
     }
 }
 
-// MARK: - Ordinals
-
-/// Ordinal word for a mystery's position (shared app-wide via Constants).
-fileprivate func ordinalNumber(_ number: Int) -> String {
-    Constants.ordinalWord(number)
-}
-
 // MARK: - PrayerHeaderButton
 
 /// A circular scrim button used in the prayer flow header.
@@ -476,7 +480,7 @@ struct MysteryInfoSection: View {
     var body: some View {
         VStack(spacing: 10) {
             // Category label
-            Text("THE \(ordinalNumber(mysteryNumber).uppercased()) \(mysteryType.uppercased()) MYSTERY")
+            Text("THE \(Constants.ordinalWord(mysteryNumber).uppercased()) \(mysteryType.uppercased()) MYSTERY")
                 .font(AppFonts.labelFont(10))
                 .tracking(3)
                 .foregroundColor(AppColors.gold)
@@ -514,6 +518,9 @@ struct AudioControlsView: View {
     private var isReady: Bool { !isLoading && errorMessage == nil && totalTime > 0 }
 
     private func formatTime(_ seconds: Double) -> String {
+        // Int(Double.nan) traps — keep the guard local even though current
+        // inputs are sanitized upstream in AudioService.
+        guard seconds > 0, !seconds.isNaN, !seconds.isInfinite else { return "0:00" }
         let mins = Int(seconds) / 60
         let secs = Int(seconds) % 60
         return String(format: "%d:%02d", mins, secs)
@@ -617,6 +624,11 @@ struct AudioControlsView: View {
                 }
             }
         }
+        // If the slider is torn out mid-drag (audio reset, error), the
+        // release callback never fires — unlatch so the thumb tracks again.
+        .onChange(of: isReady) { _, ready in
+            if !ready { isScrubbing = false }
+        }
     }
 }
 
@@ -624,6 +636,11 @@ struct AudioControlsView: View {
 // MARK: - Preview
 
 #Preview {
-    MysteryPrayerView(meditationSet: MockDataService.meditationSet(for: .sorrowful, includeAudio: true))
-        .environment(AppRouter())
+    MysteryPrayerView(
+        launch: PrayerLaunch(
+            meditationSet: MockDataService.meditationSet(for: .sorrowful, includeAudio: true)
+        )
+    )
+    .environment(AppRouter())
+    .environment(UserSettings.shared)
 }

@@ -11,11 +11,12 @@
 //    sets/<id>.json               full MeditationSet
 //    audio/meditation_<id>.mp3    meditation narration
 //    audio/prayer_<slug>.mp3      consecration chant
-//    manifest.json                download date, size, counts
+//    manifest.json                download date, size, counts, completeness
 //
-//  Reads are synchronous disk hits used as fallbacks when the API is
-//  unreachable, and audio is always served locally when present (the
-//  bundled URLs are 24-hour presigned links that expire).
+//  Reads are fallbacks for when the API is unreachable, and audio is
+//  always served locally when present (the bundled URLs are 24-hour
+//  presigned links that expire). Heavy I/O runs off the main actor; the
+//  content directory is excluded from iCloud backup (it's re-downloadable).
 //
 
 import Foundation
@@ -29,7 +30,7 @@ final class OfflineContentService {
 
     enum State: Equatable {
         case idle
-        case downloading(completed: Int, total: Int)
+        case downloading(stage: String, completed: Int, total: Int)
         case downloaded(at: Date, bytes: Int64)
         case failed(String)
     }
@@ -41,6 +42,15 @@ final class OfflineContentService {
         return false
     }
 
+    /// Whether any downloaded files exist, regardless of `state` — drives
+    /// the Remove affordance so partial downloads are never unreclaimable.
+    var hasContentOnDisk: Bool {
+        let fm = FileManager.default
+        let sets = (try? fm.contentsOfDirectory(atPath: setsDir.path)) ?? []
+        let audio = (try? fm.contentsOfDirectory(atPath: audioDir.path)) ?? []
+        return !sets.isEmpty || !audio.isEmpty
+    }
+
     // MARK: - Manifest
 
     private struct Manifest: Codable {
@@ -48,6 +58,9 @@ final class OfflineContentService {
         let bytes: Int64
         let setCount: Int
         let audioCount: Int
+        /// False when some files failed — restored as .failed so the UI
+        /// offers Try Again instead of pretending nothing exists.
+        let complete: Bool
     }
 
     // MARK: - Storage Locations
@@ -57,58 +70,87 @@ final class OfflineContentService {
     private var audioDir: URL { root.appendingPathComponent("audio", isDirectory: true) }
     private var manifestURL: URL { root.appendingPathComponent("manifest.json") }
 
-    private let encoder = JSONEncoder()
-    private let decoder = JSONDecoder()
+    /// Dedicated session for audio files: fail a stalled connection in 30s
+    /// instead of URLSession.shared's 60s, but allow large transfers.
+    private let downloadSession: URLSession = {
+        let config = URLSessionConfiguration.default
+        config.timeoutIntervalForRequest = 30
+        config.timeoutIntervalForResource = 300
+        return URLSession(configuration: config)
+    }()
 
     // MARK: - Init
 
     private init() {
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
         root = base.appendingPathComponent("OfflineContent", isDirectory: true)
-        try? FileManager.default.createDirectory(at: setsDir, withIntermediateDirectories: true)
-        try? FileManager.default.createDirectory(at: audioDir, withIntermediateDirectories: true)
+        createDirectories()
 
         if let data = try? Data(contentsOf: manifestURL),
-           let manifest = try? decoder.decode(Manifest.self, from: data) {
-            state = .downloaded(at: manifest.downloadedAt, bytes: manifest.bytes)
+           let manifest = try? Self.decoder().decode(Manifest.self, from: data) {
+            state = manifest.complete
+                ? .downloaded(at: manifest.downloadedAt, bytes: manifest.bytes)
+                : .failed("The last download didn't finish. Try Again to complete it — finished files are kept.")
+        } else if hasContentOnDisk {
+            // Files but no readable manifest: a previous run was interrupted.
+            state = .failed("A previous download didn't finish. Try Again to complete it, or remove the partial files.")
         }
+    }
+
+    private func createDirectories() {
+        try? FileManager.default.createDirectory(at: setsDir, withIntermediateDirectories: true)
+        try? FileManager.default.createDirectory(at: audioDir, withIntermediateDirectories: true)
+        excludeFromBackup()
+    }
+
+    /// The whole library is re-downloadable — it must never consume the
+    /// user's iCloud backup quota.
+    private func excludeFromBackup() {
+        var url = root
+        var values = URLResourceValues()
+        values.isExcludedFromBackup = true
+        try? url.setResourceValues(values)
     }
 
     // MARK: - Download
 
-    /// Downloads every meditation set and audio file. Already-present audio
-    /// files are skipped, so retrying after a failure resumes rather than
-    /// starting over.
+    /// Downloads every meditation set and audio file.
+    ///
+    /// Already-present files are skipped (retrying resumes rather than
+    /// starting over); pass `refreshText: true` to re-fetch set text for
+    /// content updates. Network and disk work run off the main actor.
     @MainActor
-    func downloadAll() async {
+    func downloadAll(refreshText: Bool = false) async {
         guard !isDownloading else { return }
-        state = .downloading(completed: 0, total: 1)
+        state = .downloading(stage: "Preparing", completed: 0, total: 0)
 
         do {
-            // Phase 1 — text: every set in every category
+            // Stage 1 — text: every set in every category. Indexes are
+            // written after their bodies so an interruption can't leave a
+            // catalog that lists sets with no content.
             var summariesByCategory: [MysteryCategory: [MeditationSetSummary]] = [:]
             for category in MysteryCategory.allCases {
-                let summaries = try await APIService.shared.fetchMeditationSets(category: category)
-                summariesByCategory[category] = summaries
-                let data = try encoder.encode(summaries)
-                try data.write(to: indexURL(for: category), options: .atomic)
+                summariesByCategory[category] = try await APIService.shared.fetchMeditationSets(category: category)
             }
 
             let allSummaries = summariesByCategory.values.flatMap { $0 }
+            let chantIds = Self.consecrationChantIds()
 
-            // Chants come from local consecration data; enumerate once
-            let chantPrayers = Self.consecrationPrayersWithAudio()
-
-            var completed = 0
-            var total = allSummaries.count + chantPrayers.count
-            state = .downloading(completed: 0, total: total)
+            var textDone = 0
+            state = .downloading(stage: "Meditations", completed: 0, total: allSummaries.count)
 
             var audioJobs: [(url: String, destination: URL)] = []
 
             for summary in allSummaries {
-                let set = try await APIService.shared.fetchMeditationSet(id: summary.id)
-                let data = try encoder.encode(set)
-                try data.write(to: setURL(id: set.id), options: .atomic)
+                let file = setURL(id: summary.id)
+                let set: MeditationSet
+
+                if !refreshText, let stored = await Self.readJSON(MeditationSet.self, from: file) {
+                    set = stored
+                } else {
+                    set = try await APIService.shared.fetchMeditationSet(id: summary.id)
+                    try await Self.writeJSON(set, to: file)
+                }
 
                 for meditation in set.meditations ?? [] where meditation.hasAudio {
                     if let urlString = meditation.audioUrl {
@@ -116,59 +158,70 @@ final class OfflineContentService {
                     }
                 }
 
-                completed += 1
-                state = .downloading(completed: completed, total: total)
+                textDone += 1
+                state = .downloading(stage: "Meditations", completed: textDone, total: allSummaries.count)
             }
 
-            // Phase 2 — audio: narrations discovered above + chants
-            total += audioJobs.count
-            state = .downloading(completed: completed, total: total)
+            for (category, summaries) in summariesByCategory {
+                try await Self.writeJSON(summaries, to: indexURL(for: category))
+            }
 
+            // Stage 2 — audio: narrations discovered above, plus chants.
+            // Its own monotonic counter; the denominator never moves.
             var failures = 0
+            var audioDone = 0
+            let audioTotal = audioJobs.count + chantIds.count
+            state = .downloading(stage: "Audio", completed: 0, total: max(audioTotal, 1))
 
             for job in audioJobs {
                 if !FileManager.default.fileExists(atPath: job.destination.path) {
                     do {
-                        try await download(job.url, to: job.destination)
+                        try await Self.download(with: downloadSession, from: job.url, to: job.destination)
                     } catch {
                         failures += 1
                     }
                 }
-                completed += 1
-                state = .downloading(completed: completed, total: total)
+                audioDone += 1
+                state = .downloading(stage: "Audio", completed: audioDone, total: audioTotal)
             }
 
-            for prayer in chantPrayers {
-                let destination = prayerAudioURL(prayerId: prayer)
+            for prayerId in chantIds {
+                let destination = prayerAudioURL(prayerId: prayerId)
                 if !FileManager.default.fileExists(atPath: destination.path) {
                     do {
-                        let presigned = try await APIService.shared.fetchPrayerAudioUrl(prayerId: prayer)
-                        try await download(presigned, to: destination)
+                        let presigned = try await APIService.shared.fetchPrayerAudioUrl(prayerId: prayerId)
+                        try await Self.download(with: downloadSession, from: presigned, to: destination)
                     } catch {
                         failures += 1
                     }
                 }
-                completed += 1
-                state = .downloading(completed: completed, total: total)
+                audioDone += 1
+                state = .downloading(stage: "Audio", completed: audioDone, total: audioTotal)
             }
 
-            guard failures == 0 else {
-                state = .failed("\(failures) file\(failures == 1 ? "" : "s") couldn't be downloaded. Try again to finish.")
-                return
-            }
-
-            // Manifest
-            let bytes = directorySize(root)
+            // Manifest is written for partial runs too, so a relaunch
+            // restores an honest .failed instead of pretending .idle.
+            let bytes = await Self.directorySize(of: root)
             let manifest = Manifest(
                 downloadedAt: Date(),
                 bytes: bytes,
                 setCount: allSummaries.count,
-                audioCount: audioJobs.count + chantPrayers.count
+                audioCount: audioTotal,
+                complete: failures == 0
             )
-            let manifestData = try encoder.encode(manifest)
-            try manifestData.write(to: manifestURL, options: .atomic)
-            state = .downloaded(at: manifest.downloadedAt, bytes: bytes)
+            try? await Self.writeJSON(manifest, to: manifestURL)
+
+            if failures == 0 {
+                state = .downloaded(at: manifest.downloadedAt, bytes: bytes)
+            } else {
+                state = .failed("\(failures) file\(failures == 1 ? "" : "s") couldn't be downloaded. Try Again to finish — finished files are kept.")
+            }
         } catch {
+            if hasContentOnDisk {
+                let bytes = await Self.directorySize(of: root)
+                let manifest = Manifest(downloadedAt: Date(), bytes: bytes, setCount: 0, audioCount: 0, complete: false)
+                try? await Self.writeJSON(manifest, to: manifestURL)
+            }
             state = .failed("Download failed — check your connection and try again.")
         }
     }
@@ -176,32 +229,51 @@ final class OfflineContentService {
     /// Deletes all downloaded content.
     func removeAll() {
         try? FileManager.default.removeItem(at: root)
-        try? FileManager.default.createDirectory(at: setsDir, withIntermediateDirectories: true)
-        try? FileManager.default.createDirectory(at: audioDir, withIntermediateDirectories: true)
+        createDirectories()
         state = .idle
     }
 
     // MARK: - Offline Reads
 
-    /// Stored set summaries for a category (picker fallback).
+    /// Stored set summaries for a category (picker fallback). Only
+    /// summaries whose full set is actually on disk are listed — a
+    /// partial download must never show sets that fail on tap.
     func storedSummaries(category: MysteryCategory) -> [MeditationSetSummary]? {
         guard let data = try? Data(contentsOf: indexURL(for: category)),
-              let summaries = try? decoder.decode([MeditationSetSummary].self, from: data),
-              !summaries.isEmpty else { return nil }
-        return summaries
+              let summaries = try? Self.decoder().decode([MeditationSetSummary].self, from: data) else {
+            return nil
+        }
+        let available = summaries.filter {
+            FileManager.default.fileExists(atPath: setURL(id: $0.id).path)
+        }
+        return available.isEmpty ? nil : available
     }
 
     /// A stored full meditation set by ID.
     func storedSet(id: Int) -> MeditationSet? {
         guard let data = try? Data(contentsOf: setURL(id: id)) else { return nil }
-        return try? decoder.decode(MeditationSet.self, from: data)
+        return try? Self.decoder().decode(MeditationSet.self, from: data)
     }
 
-    /// All stored full sets for a category (quick-pray fallback).
-    func storedSets(category: MysteryCategory) -> [MeditationSet]? {
-        guard let summaries = storedSummaries(category: category) else { return nil }
-        let sets = summaries.compactMap { storedSet(id: $0.id) }
-        return sets.isEmpty ? nil : sets
+    /// One random stored set for a category, read and decoded off the main
+    /// actor — quick-pray's offline fallback must not freeze the Pray tap.
+    nonisolated func storedRandomSet(category: MysteryCategory) async -> MeditationSet? {
+        let index = await indexURL(for: category)
+        let dir = await setsDir
+
+        guard let data = try? Data(contentsOf: index),
+              let summaries = try? Self.decoder().decode([MeditationSetSummary].self, from: data) else {
+            return nil
+        }
+
+        let available = summaries.filter {
+            FileManager.default.fileExists(atPath: dir.appendingPathComponent("\($0.id).json").path)
+        }
+        guard let pick = available.randomElement() else { return nil }
+
+        let file = dir.appendingPathComponent("\(pick.id).json")
+        guard let setData = try? Data(contentsOf: file) else { return nil }
+        return try? Self.decoder().decode(MeditationSet.self, from: setData)
     }
 
     /// Local narration audio for a meditation, if downloaded.
@@ -234,12 +306,15 @@ final class OfflineContentService {
         audioDir.appendingPathComponent("prayer_\(prayerId).mp3")
     }
 
-    /// Every consecration prayer slug that has chant audio.
-    private static func consecrationPrayersWithAudio() -> [String] {
+    /// Every consecration prayer slug that has chant audio. Uses the
+    /// language-aware prayer list — the same one the prayer flow renders —
+    /// because that's where the bilingual chants (and their audio flags)
+    /// are merged in.
+    private static func consecrationChantIds() -> [String] {
         var seen = Set<String>()
         var result: [String] = []
         for phase in ConsecrationPhase.allCases {
-            for prayer in ConsecrationData.prayers(for: phase) where prayer.hasAudio {
+            for prayer in ConsecrationData.prayers(for: phase, language: .both) where prayer.hasAudio {
                 if seen.insert(prayer.id).inserted {
                     result.append(prayer.id)
                 }
@@ -248,9 +323,25 @@ final class OfflineContentService {
         return result
     }
 
-    private func download(_ urlString: String, to destination: URL) async throws {
+    // MARK: - Off-Main I/O
+
+    // nonisolated async: runs on the concurrency pool, never the main actor.
+
+    private nonisolated static func decoder() -> JSONDecoder { JSONDecoder() }
+
+    private nonisolated static func writeJSON<T: Encodable>(_ value: T, to url: URL) async throws {
+        let data = try JSONEncoder().encode(value)
+        try data.write(to: url, options: .atomic)
+    }
+
+    private nonisolated static func readJSON<T: Decodable>(_ type: T.Type, from url: URL) async -> T? {
+        guard let data = try? Data(contentsOf: url) else { return nil }
+        return try? JSONDecoder().decode(T.self, from: data)
+    }
+
+    private nonisolated static func download(with session: URLSession, from urlString: String, to destination: URL) async throws {
         guard let url = URL(string: urlString) else { throw URLError(.badURL) }
-        let (temp, response) = try await URLSession.shared.download(from: url)
+        let (temp, response) = try await session.download(from: url)
         if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
             throw URLError(.badServerResponse)
         }
@@ -258,7 +349,7 @@ final class OfflineContentService {
         try FileManager.default.moveItem(at: temp, to: destination)
     }
 
-    private func directorySize(_ url: URL) -> Int64 {
+    private nonisolated static func directorySize(of url: URL) async -> Int64 {
         guard let enumerator = FileManager.default.enumerator(
             at: url,
             includingPropertiesForKeys: [.fileSizeKey]

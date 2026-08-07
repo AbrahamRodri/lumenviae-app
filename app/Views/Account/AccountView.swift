@@ -482,14 +482,19 @@ struct OfflineContentRows: View {
                     Task { await service.downloadAll() }
                 }
 
-            case .downloading(let completed, let total):
+                // Leftover files with no manifest should still be removable
+                if service.hasContentOnDisk {
+                    removeRow
+                }
+
+            case .downloading(let stage, let completed, let total):
                 HStack(spacing: 16) {
                     ProgressView()
                         .tint(AppColors.gold)
                         .frame(width: 24)
 
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Downloading…")
+                        Text("Downloading \(stage)…")
                             .font(AppFonts.bodyFont(16))
                             .foregroundColor(AppColors.cream)
 
@@ -534,12 +539,17 @@ struct OfflineContentRows: View {
                         .background(AppColors.gold.opacity(0.2))
 
                     ActionRow(
-                        icon: "ph-trash",
-                        title: "Remove Downloads",
-                        subtitle: "Frees storage; streaming still works online"
+                        icon: "ph-arrow-counter-clockwise",
+                        title: "Update Download",
+                        subtitle: "Re-fetches meditation text; existing audio is kept"
                     ) {
-                        showRemoveConfirm = true
+                        Task { await service.downloadAll(refreshText: true) }
                     }
+
+                    Divider()
+                        .background(AppColors.gold.opacity(0.2))
+
+                    removeRow
                 }
 
             case .failed(let message):
@@ -568,6 +578,14 @@ struct OfflineContentRows: View {
                     ) {
                         Task { await service.downloadAll() }
                     }
+
+                    // A partial download must always be reclaimable
+                    if service.hasContentOnDisk {
+                        Divider()
+                            .background(AppColors.gold.opacity(0.2))
+
+                        removeRow
+                    }
                 }
             }
         }
@@ -582,6 +600,16 @@ struct OfflineContentRows: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("Meditations and audio will stream when you're online. You can download everything again at any time.")
+        }
+    }
+
+    private var removeRow: some View {
+        ActionRow(
+            icon: "ph-trash",
+            title: "Remove Downloads",
+            subtitle: "Frees storage; streaming still works online"
+        ) {
+            showRemoveConfirm = true
         }
     }
 }
