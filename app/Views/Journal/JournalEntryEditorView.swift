@@ -286,6 +286,7 @@ struct JournalEntryEditorView: View {
             modelContext.insert(entry)
         }
 
+        try? modelContext.save()
         dismiss()
     }
 }
