@@ -41,6 +41,17 @@ struct ContentView: View {
                 }
             }
 
+            // The consecration tab hosts its OWN NavigationStack. Nesting
+            // it inside the outer stack's root silently drops the outer
+            // stack's destination table — after visiting the tab, every
+            // push rendered the white "missing destination" placeholder
+            // until the app was relaunched. It must live as a sibling.
+            if router.selectedTab == .consecration {
+                ConsecrationTabView(onNavigationChange: { isNavigating in
+                    isConsecrationNavigating = isNavigating
+                })
+            }
+
             VStack {
                 Spacer()
                 CustomTabBar(
@@ -98,9 +109,10 @@ struct ContentView: View {
         case .home:
             HomeView()
         case .consecration:
-            ConsecrationTabView(onNavigationChange: { isNavigating in
-                isConsecrationNavigating = isNavigating
-            })
+            // Rendered as a sibling of the NavigationStack (see body) —
+            // its own stack must never nest inside this one.
+            AppColors.background
+                .ignoresSafeArea()
         case .journal:
             JournalView()
         case .progress:
