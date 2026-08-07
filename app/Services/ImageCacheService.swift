@@ -30,26 +30,16 @@ final class ImageCacheService: @unchecked Sendable {
 
     // MARK: - Image Names
 
-    /// All mystery card images used in the app
-    private let mysteryCardImages = [
-        // Category cards (home screen grid)
-        "joyful_annunciation",
-        "sorrowful_agony",
-        "glorious_resurrection",
-        "luminous_baptism",
-        // Individual mystery images
-        "joyful_visitation",
-        "joyful_nativity",
-        "joyful_presentation",
-        "joyful_finding",
-        "sorrowful_scourging",
-        "sorrowful_crowning",
-        "sorrowful_carrying",
-        "sorrowful_crucifixion",
-        "glorious_ascension",
-        "glorious_assumption",
-        "glorious_coronation"
-    ]
+    /// All mystery images used in the app: every per-mystery image from
+    /// Constants plus the Seven Sorrows category card.
+    private let mysteryCardImages: [String] = Array(Set(
+        Constants.joyfulMysteryImages
+            + Constants.sorrowfulMysteryImages
+            + Constants.gloriousMysteryImages
+            + Constants.luminousMysteryImages
+            + Constants.sevenSorrowsMysteryImages
+            + ["seven_sorrows_pieta"]
+    ))
 
     // MARK: - Preloading
 
@@ -121,6 +111,13 @@ struct CachedAssetImage: View {
         if let uiImage = ImageCacheService.shared.image(named: name) {
             Image(uiImage: uiImage)
                 .resizable()
+        } else {
+            // Missing asset: render a quiet themed surface instead of nothing
+            LinearGradient(
+                colors: [AppColors.cardBackground, AppColors.background],
+                startPoint: .top,
+                endPoint: .bottom
+            )
         }
     }
 }

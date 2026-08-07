@@ -6,7 +6,7 @@
 //  - Browse past reflections
 //  - Tap an entry to read it in full
 //  - Tap the pencil button to write a new general reflection
-//  - Delete entries by swiping
+//  - Delete entries via long-press, or from the entry's detail view
 //
 //  Design mirrors the app's navy/gold palette — NOT the light design in the
 //  screenshot mockup. Drop-cap first letters on each entry match the preview.
@@ -30,6 +30,7 @@ struct JournalView: View {
     @State private var selectedEntry: JournalEntry? = nil
     @State private var showingSearch = false
     @State private var searchText = ""
+    @State private var entryPendingDelete: JournalEntry? = nil
 
     // MARK: - Computed
 
@@ -91,6 +92,23 @@ struct JournalView: View {
             JournalDetailView(entry: entry)
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
+        }
+        // Long-press delete confirmation
+        .confirmationDialog(
+            "Delete this reflection?",
+            isPresented: Binding(
+                get: { entryPendingDelete != nil },
+                set: { if !$0 { entryPendingDelete = nil } }
+            ),
+            titleVisibility: .visible
+        ) {
+            Button("Delete", role: .destructive) {
+                if let entry = entryPendingDelete {
+                    deleteEntry(entry)
+                }
+                entryPendingDelete = nil
+            }
+            Button("Cancel", role: .cancel) { entryPendingDelete = nil }
         }
     }
 
@@ -211,13 +229,14 @@ struct JournalView: View {
                     .frame(maxWidth: .infinity)
             }
 
-            // Entry cards
+            // Entry cards (swipe actions only work inside List, so
+            // deletion lives in a long-press menu + the detail view)
             ForEach(group.entries) { entry in
                 JournalEntryCard(entry: entry)
                     .onTapGesture { selectedEntry = entry }
-                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                    .contextMenu {
                         Button(role: .destructive) {
-                            deleteEntry(entry)
+                            entryPendingDelete = entry
                         } label: {
                             Label("Delete", systemImage: "trash")
                         }
@@ -275,6 +294,7 @@ struct JournalView: View {
         withAnimation {
             modelContext.delete(entry)
         }
+        try? modelContext.save()
     }
 }
 
@@ -486,6 +506,7 @@ struct JournalDetailView: View {
         .confirmationDialog("Delete this reflection?", isPresented: $showingDeleteConfirm, titleVisibility: .visible) {
             Button("Delete", role: .destructive) {
                 modelContext.delete(entry)
+                try? modelContext.save()
                 dismiss()
             }
             Button("Cancel", role: .cancel) {}

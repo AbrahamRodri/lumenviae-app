@@ -68,6 +68,11 @@ struct ConsecrationIntroView: View {
                     // Hero Section
                     heroSection
 
+                    // A finished consecration is honored, not forgotten
+                    if let completed = viewModel.completedProgress {
+                        completedBanner(completed)
+                    }
+
                     // Description
                     descriptionSection
 
@@ -128,6 +133,50 @@ struct ConsecrationIntroView: View {
                 .foregroundColor(AppColors.textSecondary)
                 .multilineTextAlignment(.center)
         }
+    }
+
+    // MARK: - Completed Banner
+
+    /// Shown when a past consecration was completed: honors the date and
+    /// frames starting again as a renewal.
+    private func completedBanner(_ progress: ConsecrationProgress) -> some View {
+        let dateText: String = {
+            guard let date = progress.completedAt else { return "" }
+            let formatter = DateFormatter()
+            formatter.dateStyle = .long
+            return formatter.string(from: date)
+        }()
+
+        return VStack(spacing: 8) {
+            HStack(spacing: 8) {
+                AppIcon("ph-seal-check-fill", size: 16)
+                Text("Consecration Completed")
+                    .font(AppFonts.headlineFont(15))
+            }
+            .foregroundColor(AppColors.gold)
+
+            if !dateText.isEmpty {
+                Text("Totus tuus — consecrated \(dateText)")
+                    .font(AppFonts.italicFont(13))
+                    .foregroundColor(AppColors.cream.opacity(0.85))
+            }
+
+            Text("Many renew their consecration each year. You may begin the preparation again whenever you wish.")
+                .font(AppFonts.bodyFont(12))
+                .foregroundColor(AppColors.textSecondary)
+                .multilineTextAlignment(.center)
+                .lineSpacing(3)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 14)
+                .fill(AppColors.gold.opacity(0.08))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14)
+                        .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: 1)
+                )
+        )
     }
 
     // MARK: - Description Section

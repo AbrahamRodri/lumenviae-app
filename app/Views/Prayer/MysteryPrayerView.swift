@@ -42,6 +42,11 @@ struct MysteryPrayerView: View {
         .task(id: viewModel.currentMysteryIndex) {
             await viewModel.loadCurrentAudio()
         }
+        .onDisappear {
+            // Leaving the prayer flow (close, completion, or back) must not
+            // leave meditation audio playing over other screens.
+            viewModel.stopAudio()
+        }
         .sheet(isPresented: $showingJournalEditor) {
             JournalEntryEditorView(
                 category: meditationSet.mysteryCategory,
@@ -76,7 +81,7 @@ struct MysteryPrayerView: View {
                     } else {
                         Rectangle()
                             .fill(AppColors.cardBackground)
-                            .frame(height: geometry.size.height * 0.70)
+                            .frame(height: geometry.size.height * 0.80)
                     }
                     Spacer()
                 }
@@ -399,12 +404,6 @@ struct MysteryPrayerView: View {
 
     // MARK: - Helper Functions
 
-    private func ordinalNumber(_ number: Int) -> String {
-        let ordinals = ["First", "Second", "Third", "Fourth", "Fifth"]
-        guard number >= 1 && number <= 5 else { return "" }
-        return ordinals[number - 1]
-    }
-
     private func handleNextMystery() {
         let advanced = withAnimation(.easeInOut(duration: 0.4)) {
             viewModel.nextMystery()
@@ -415,8 +414,18 @@ struct MysteryPrayerView: View {
         Task {
             try? await viewModel.recordCompletion()
         }
-        router.navigateToCompletion()
+        router.navigateToCompletion(durationSeconds: viewModel.sessionDuration)
     }
+}
+
+// MARK: - Ordinals
+
+/// Ordinal word for a mystery's position — covers five-decade rosaries
+/// and the Seven Sorrows chaplet.
+fileprivate func ordinalNumber(_ number: Int) -> String {
+    let ordinals = ["First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh"]
+    guard number >= 1 && number <= ordinals.count else { return "" }
+    return ordinals[number - 1]
 }
 
 // MARK: - PrayerHeaderButton
@@ -448,16 +457,10 @@ struct MysteryInfoSection: View {
     let mysteryNumber: Int
     let mysteryTitle: String
 
-    private var ordinalNumber: String {
-        let ordinals = ["First", "Second", "Third", "Fourth", "Fifth"]
-        guard mysteryNumber >= 1 && mysteryNumber <= 5 else { return "" }
-        return ordinals[mysteryNumber - 1]
-    }
-
     var body: some View {
         VStack(spacing: 10) {
             // Category label
-            Text("THE \(ordinalNumber.uppercased()) \(mysteryType.uppercased()) MYSTERY")
+            Text("THE \(ordinalNumber(mysteryNumber).uppercased()) \(mysteryType.uppercased()) MYSTERY")
                 .font(AppFonts.labelFont(10))
                 .tracking(3)
                 .foregroundColor(AppColors.gold)

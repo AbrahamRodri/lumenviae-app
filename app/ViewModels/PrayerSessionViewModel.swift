@@ -179,10 +179,20 @@ final class PrayerSessionViewModel {
 
     // MARK: - Completion
 
-    /// Records the prayer completion to the API (best-effort).
+    /// Whether the completion has already been sent (guards double-taps)
+    private var hasRecordedCompletion = false
+
+    /// Records the prayer completion to the API (best-effort, at most once).
     @MainActor
     func recordCompletion() async throws {
+        guard !hasRecordedCompletion else { return }
+        hasRecordedCompletion = true
         try await apiService.recordCompletion(meditationSetId: meditationSet.id)
+    }
+
+    /// Stops any playing meditation audio; call when leaving the prayer flow.
+    func stopAudio() {
+        audioService.reset()
     }
 
     /// Duration of the prayer session in seconds since it started

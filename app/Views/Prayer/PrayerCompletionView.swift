@@ -169,9 +169,11 @@ struct PrayerCompletionView: View {
         let session = PrayerSession(
             category: category,
             completedAt: Date(),
+            durationSeconds: router.completedSessionDuration,
             meditationType: meditationSet.name
         )
         modelContext.insert(session)
+        try? modelContext.save()
         hasRecordedSession = true
 
         // Compute progress feedback now that this session counts

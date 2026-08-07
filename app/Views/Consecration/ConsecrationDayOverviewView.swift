@@ -66,6 +66,7 @@ struct ConsecrationDayOverviewView: View {
     // MARK: - State
 
     @State private var showDebugControls: Bool = false
+    @State private var showRestartConfirm: Bool = false
 
     // MARK: - Body
 
@@ -97,14 +98,25 @@ struct ConsecrationDayOverviewView: View {
                         consecrationDateCard
                     }
 
+                    // Journey strip — revisit any past day (only at the root;
+                    // pushed past-day views stay focused on their one day)
+                    if dayNumber == nil {
+                        Spacer()
+                            .frame(height: 16)
+                        journeySection
+                    }
+
                     Spacer()
                         .frame(height: 32)
 
                     // Start Button
-                    if !isCompleted || isToday {
-                        startButton
-                    } else {
-                        completedBadge
+                    startButton
+
+                    // Restart / start over (root only)
+                    if dayNumber == nil {
+                        Spacer()
+                            .frame(height: 28)
+                        restartSection
                     }
 
                     // Debug Controls (for testing)
@@ -250,7 +262,113 @@ struct ConsecrationDayOverviewView: View {
         )
     }
 
+    // MARK: - Journey Strip
+
+    /// One tappable chip per day: completed days show a check, missed days
+    /// stay reachable, future days are locked. This is how a user who
+    /// missed Day 14 gets back to it.
+    private var journeySection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("YOUR JOURNEY")
+                .font(AppFonts.bodyFont(11))
+                .tracking(2)
+                .foregroundColor(AppColors.gold)
+
+            ScrollViewReader { proxy in
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(1...34, id: \.self) { day in
+                            journeyDayChip(day)
+                                .id(day)
+                        }
+                    }
+                    .padding(.vertical, 4)
+                }
+                .onAppear {
+                    proxy.scrollTo(viewModel.todaysDayNumber, anchor: .center)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private func journeyDayChip(_ day: Int) -> some View {
+        let completed = viewModel.isDayCompleted(day)
+        let accessible = viewModel.canAccessDay(day)
+        let isCurrent = day == viewModel.todaysDayNumber
+
+        return Button {
+            guard accessible else { return }
+            if day == viewModel.todaysDayNumber {
+                viewModel.loadCurrentDay()
+            } else {
+                path.append(ConsecrationRoute.dayOverview(dayNumber: day))
+            }
+        } label: {
+            VStack(spacing: 3) {
+                Text("\(day)")
+                    .font(AppFonts.headlineFont(15))
+                    .foregroundColor(
+                        completed
+                            ? AppColors.background
+                            : (accessible ? AppColors.cream : AppColors.textSecondary.opacity(0.5))
+                    )
+
+                if completed {
+                    AppIcon("ph-check", size: 8)
+                        .foregroundColor(AppColors.background.opacity(0.8))
+                }
+            }
+            .frame(width: 44, height: 44)
+            .background(
+                Circle()
+                    .fill(completed ? AppColors.gold : AppColors.cardBackground.opacity(accessible ? 0.9 : 0.4))
+            )
+            .overlay(
+                Circle()
+                    .strokeBorder(
+                        isCurrent ? AppColors.goldLight : AppColors.gold.opacity(accessible ? 0.35 : 0.1),
+                        lineWidth: isCurrent ? 1.5 : 0.5
+                    )
+            )
+        }
+        .disabled(!accessible)
+        .accessibilityLabel(
+            "Day \(day)\(completed ? ", completed" : "")\(isCurrent ? ", today" : "")\(accessible ? "" : ", locked")"
+        )
+    }
+
+    // MARK: - Restart
+
+    private var restartSection: some View {
+        Button {
+            showRestartConfirm = true
+        } label: {
+            Text("Restart Consecration")
+                .font(AppFonts.bodyFont(13))
+                .foregroundColor(AppColors.textSecondary)
+                .underline()
+        }
+        .confirmationDialog(
+            "Restart your consecration?",
+            isPresented: $showRestartConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Erase Progress and Start Over", role: .destructive) {
+                viewModel.abandonConsecration()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Your day progress will be erased so you can begin again. Journal reflections you have written are kept in your Journal.")
+        }
+    }
+
     // MARK: - Start Button
+
+    private var startButtonTitle: String {
+        if isCompleted { return "Review Day" }
+        return isToday ? "Begin Today's Prayer" : "Complete This Day"
+    }
 
     private var startButton: some View {
         Button {
@@ -261,7 +379,7 @@ struct ConsecrationDayOverviewView: View {
                 AppIcon(isCompleted ? "ph-arrow-counter-clockwise" : "ph-play-fill", size: 15)
                     .font(.system(size: 14, weight: .semibold))
 
-                Text(isCompleted ? "Review Day" : "Begin Today's Prayer")
+                Text(startButtonTitle)
                     .font(AppFonts.headlineFont(16))
             }
             .foregroundColor(AppColors.background)
@@ -276,27 +394,6 @@ struct ConsecrationDayOverviewView: View {
             )
             .clipShape(RoundedRectangle(cornerRadius: 14))
         }
-    }
-
-    // MARK: - Completed Badge
-
-    private var completedBadge: some View {
-        HStack(spacing: 8) {
-            AppIcon("ph-seal-check-fill", size: 16)
-            Text("Day Completed")
-                .font(AppFonts.headlineFont(16))
-        }
-        .foregroundColor(AppColors.gold)
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 18)
-        .background(
-            RoundedRectangle(cornerRadius: 14)
-                .fill(AppColors.gold.opacity(0.1))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 14)
-                        .stroke(AppColors.gold.opacity(0.3), lineWidth: 1)
-                )
-        )
     }
 
     // MARK: - Debug Controls

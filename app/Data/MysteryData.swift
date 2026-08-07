@@ -297,4 +297,53 @@ enum MysteryData {
             scriptureReference: "John 19:40-42"
         )
     ]
+
+    // MARK: - Fruits of the Mysteries
+
+    /// The traditional fruit (grace) of each mystery, keyed by
+    /// "<category>_<order>". For the Seven Sorrows, the grace associated
+    /// with each sorrow in the devotion.
+    static let traditionalFruits: [String: String] = [
+        // Joyful
+        "joyful_1": "Humility",
+        "joyful_2": "Love of Neighbor",
+        "joyful_3": "Poverty of Spirit",
+        "joyful_4": "Obedience",
+        "joyful_5": "Joy in Finding Jesus",
+
+        // Sorrowful
+        "sorrowful_1": "Sorrow for Sin",
+        "sorrowful_2": "Purity",
+        "sorrowful_3": "Moral Courage",
+        "sorrowful_4": "Patience",
+        "sorrowful_5": "Perseverance",
+
+        // Glorious
+        "glorious_1": "Faith",
+        "glorious_2": "Hope",
+        "glorious_3": "Love of God",
+        "glorious_4": "Grace of a Happy Death",
+        "glorious_5": "Trust in Mary's Intercession",
+
+        // Luminous
+        "luminous_1": "Openness to the Holy Spirit",
+        "luminous_2": "To Jesus through Mary",
+        "luminous_3": "Repentance and Trust in God",
+        "luminous_4": "Desire for Holiness",
+        "luminous_5": "Eucharistic Adoration",
+
+        // Seven Sorrows
+        "seven_sorrows_1": "Surrender to God's Will",
+        "seven_sorrows_2": "Trust in God's Providence",
+        "seven_sorrows_3": "Seeking Jesus Above All",
+        "seven_sorrows_4": "Compassion for Christ",
+        "seven_sorrows_5": "Standing Faithful at the Cross",
+        "seven_sorrows_6": "Receiving Christ into Our Hearts",
+        "seven_sorrows_7": "Hope in the Resurrection"
+    ]
+
+    /// The traditional fruit for a given mystery, if one is defined.
+    static func fruit(for mystery: Mystery) -> String? {
+        traditionalFruits["\(mystery.category)_\(mystery.order)"]
+    }
 }

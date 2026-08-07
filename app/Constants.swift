@@ -50,6 +50,18 @@ struct Constants {
         "luminous_eucharist"
     ]
 
+    /// Images for the Seven Sorrows of Mary, in sorrow order.
+    /// The third and fifth sorrows share scenes with existing mystery art.
+    static let sevenSorrowsMysteryImages: [String] = [
+        "seven_sorrows_simeon",
+        "seven_sorrows_flight",
+        "joyful_finding",
+        "seven_sorrows_meeting",
+        "sorrowful_crucifixion",
+        "seven_sorrows_descent",
+        "seven_sorrows_burial"
+    ]
+
     /// Get the local image asset name for a mystery by category and 0-based index
     static func mysteryImageURL(category: String, index: Int) -> String? {
         let images: [String]
@@ -62,6 +74,8 @@ struct Constants {
             images = gloriousMysteryImages
         case "luminous":
             images = luminousMysteryImages
+        case "seven_sorrows":
+            images = sevenSorrowsMysteryImages
         default:
             return nil
         }

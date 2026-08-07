@@ -49,6 +49,10 @@ final class AppRouter {
     /// Hashable values, and both the prayer and completion screens need it.
     var loadedMeditationSet: MeditationSet?
 
+    /// How long the just-finished session took, for the completion screen
+    /// to record. Carried the same way as `loadedMeditationSet`.
+    var completedSessionDuration: Int?
+
     // MARK: - Navigation Actions
 
     func navigateToAllMysteries() {
@@ -65,7 +69,13 @@ final class AppRouter {
         path.append(AppRoute.prayerSession(meditationSetId: meditationSet.id))
     }
 
-    func navigateToCompletion() {
+    /// Shows the completion screen in place of the prayer session, so a
+    /// finished Rosary can't be navigated back into and recorded twice.
+    func navigateToCompletion(durationSeconds: Int? = nil) {
+        completedSessionDuration = durationSeconds
+        if !path.isEmpty {
+            path.removeLast()
+        }
         path.append(AppRoute.completion)
     }
 
@@ -82,5 +92,6 @@ final class AppRouter {
         path.removeLast(path.count)
         selectedCategory = nil
         loadedMeditationSet = nil
+        completedSessionDuration = nil
     }
 }

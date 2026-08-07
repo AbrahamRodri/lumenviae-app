@@ -29,22 +29,32 @@ struct HowToPrayRosaryView: View {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
                     header
+                        .devotionalEntrance()
 
                     introduction
                         .padding(.horizontal, 20)
                         .padding(.bottom, 28)
+                        .devotionalEntrance(delay: 0.08)
 
                     stepsSection
                         .padding(.horizontal, 20)
                         .padding(.bottom, 32)
+                        .devotionalEntrance(delay: 0.16)
 
                     prayersSection
                         .padding(.horizontal, 20)
                         .padding(.bottom, 32)
+                        .devotionalEntrance(delay: 0.24)
+
+                    montfortSection
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 32)
+                        .devotionalEntrance(delay: 0.3)
 
                     scheduleSection
                         .padding(.horizontal, 20)
                         .padding(.bottom, 48)
+                        .devotionalEntrance(delay: 0.36)
                 }
             }
         }
@@ -67,8 +77,9 @@ struct HowToPrayRosaryView: View {
 
     private var header: some View {
         VStack(spacing: 12) {
-            AppIcon("ph-book", size: 36)
+            AppIcon("ch-rosary", size: 38)
                 .foregroundColor(AppColors.gold)
+                .breathingGlow(AppColors.gold)
                 .padding(.top, 24)
 
             Text("How to Pray the Rosary")
@@ -80,8 +91,7 @@ struct HowToPrayRosaryView: View {
                 .font(AppFonts.italicFont(16))
                 .foregroundColor(AppColors.gold.opacity(0.8))
 
-            Divider()
-                .background(AppColors.gold.opacity(0.3))
+            OrnamentDivider()
                 .padding(.horizontal, 40)
                 .padding(.top, 8)
         }
@@ -91,10 +101,10 @@ struct HowToPrayRosaryView: View {
     // MARK: - Introduction
 
     private var introduction: some View {
-        Text("The Rosary is a Scripture-based prayer in which we meditate on the great mysteries of the life of Jesus and Mary while praying familiar vocal prayers. The repetition is not the point — it is the quiet rhythm that frees the heart to contemplate. As St. John Paul II wrote, the Rosary is \"a compendium of the Gospel\" in which, with Mary, we contemplate the face of Christ.")
-            .font(AppFonts.bodyFont(15))
-            .foregroundColor(AppColors.cream.opacity(0.9))
-            .lineSpacing(5)
+        DropCapText(
+            text: "The Rosary is a Scripture-based prayer in which we meditate on the great mysteries of the life of Jesus and Mary while praying familiar vocal prayers. The repetition is not the point — it is the quiet rhythm that frees the heart to contemplate. As St. John Paul II wrote, the Rosary is \"a compendium of the Gospel\" in which, with Mary, we contemplate the face of Christ.",
+            bodySize: 15
+        )
     }
 
     // MARK: - Steps
@@ -118,6 +128,9 @@ struct HowToPrayRosaryView: View {
         RosaryStep(id: 10, title: "Conclude", detail: "Pray the Hail, Holy Queen and the closing prayer, then finish with the Sign of the Cross.")
     ]
 
+    /// Which step is currently highlighted on the strand (tap to move).
+    @State private var activeStep: Int = 1
+
     private var stepsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("THE STEPS")
@@ -127,47 +140,98 @@ struct HowToPrayRosaryView: View {
 
             VStack(spacing: 0) {
                 ForEach(steps) { step in
-                    HStack(alignment: .top, spacing: 14) {
-                        // Number circle
-                        ZStack {
-                            Circle()
-                                .strokeBorder(AppColors.gold.opacity(0.5), lineWidth: 1)
-                                .frame(width: 28, height: 28)
-                            Text("\(step.id)")
-                                .font(AppFonts.bodyFont(13))
-                                .foregroundColor(AppColors.gold)
-                        }
-
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(step.title)
-                                .font(AppFonts.headlineFont(15))
-                                .foregroundColor(AppColors.cream)
-
-                            Text(step.detail)
-                                .font(AppFonts.bodyFont(13))
-                                .foregroundColor(AppColors.textSecondary)
-                                .lineSpacing(3)
-                        }
-
-                        Spacer(minLength: 0)
-                    }
-                    .padding(.vertical, 12)
-
-                    if step.id != steps.last?.id {
-                        Divider()
-                            .background(AppColors.gold.opacity(0.15))
-                    }
+                    stepRow(step)
                 }
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 8)
+            .padding(.vertical, 12)
             .background(AppColors.cardBackground)
             .cornerRadius(16)
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
                     .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: 0.5)
             )
+
+            Text("Tap a step to follow along as you learn — the strand keeps your place.")
+                .font(AppFonts.bodyFont(12))
+                .foregroundColor(AppColors.textSecondary)
         }
+    }
+
+    /// One step on the strand: a bead joined to its neighbors by a fine
+    /// gold chain. Beads already prayed glow; the active bead breathes.
+    private func stepRow(_ step: RosaryStep) -> some View {
+        let isActive = step.id == activeStep
+        let isDone = step.id < activeStep
+
+        return Button {
+            withAnimation(.easeInOut(duration: 0.3)) {
+                activeStep = step.id
+            }
+        } label: {
+            HStack(alignment: .top, spacing: 14) {
+                // Bead (the connecting chain is drawn as the row background)
+                ZStack {
+                    if isDone {
+                        Circle()
+                            .fill(AppColors.goldGradient)
+                            .frame(width: 26, height: 26)
+                            .shadow(color: AppColors.gold.opacity(0.5), radius: 3)
+                    } else {
+                        Circle()
+                            .fill(AppColors.cardBackground)
+                            .frame(width: 26, height: 26)
+                            .overlay(
+                                Circle()
+                                    .fill(isActive ? AppColors.gold.opacity(0.25) : .clear)
+                            )
+                            .overlay(
+                                Circle()
+                                    .strokeBorder(
+                                        isActive ? AppColors.goldLight : AppColors.gold.opacity(0.5),
+                                        lineWidth: isActive ? 1.5 : 1
+                                    )
+                            )
+                    }
+
+                    Text("\(step.id)")
+                        .font(AppFonts.bodyFont(13))
+                        .foregroundColor(isDone ? AppColors.background : AppColors.gold)
+                }
+                .breathingGlow(
+                    AppColors.gold,
+                    radius: isActive ? 8 : 0,
+                    dimOpacity: isActive ? 0.3 : 0,
+                    brightOpacity: isActive ? 0.7 : 0
+                )
+                .padding(.top, 8)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(step.title)
+                        .font(AppFonts.headlineFont(15))
+                        .foregroundColor(isActive ? AppColors.gold : AppColors.cream)
+
+                    Text(step.detail)
+                        .font(AppFonts.bodyFont(13))
+                        .foregroundColor(AppColors.textSecondary)
+                        .lineSpacing(3)
+                }
+                .padding(.vertical, 8)
+
+                Spacer(minLength: 0)
+            }
+            .background(alignment: .topLeading) {
+                // The chain: a fine gold line running through the bead
+                // centers (bead center sits 21pt below the row top).
+                Rectangle()
+                    .fill(AppColors.gold.opacity(0.25))
+                    .frame(width: 1)
+                    .frame(maxHeight: step.id == steps.count ? 21 : .infinity)
+                    .padding(.leading, 12.5)
+                    .padding(.top, step.id == 1 ? 21 : 0)
+            }
+        }
+        .buttonStyle(SacredCardButtonStyle())
     }
 
     // MARK: - Prayers
@@ -492,6 +556,316 @@ Per eundem Christum Dominum nostrum. Amen.
                 .foregroundColor(AppColors.cream.opacity(0.9))
                 .lineSpacing(5)
                 .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    // MARK: - The Montfort Methods
+
+    @State private var expandedMethods: Set<String> = []
+
+    /// A petition (or Hail Mary clause) tied to one mystery.
+    private struct MontfortLine: Identifiable {
+        var id: String { mystery }
+        let mystery: String
+        let text: String
+    }
+
+    private struct MontfortGroup: Identifiable {
+        var id: String { title }
+        let title: String
+        let lines: [MontfortLine]
+    }
+
+    /// The graces St. Louis asks for in his first method — one per decade.
+    private static let montfortPetitions: [MontfortGroup] = [
+        MontfortGroup(title: "JOYFUL", lines: [
+            MontfortLine(mystery: "The Annunciation", text: "a profound humility"),
+            MontfortLine(mystery: "The Visitation", text: "charity towards our neighbor"),
+            MontfortLine(mystery: "The Nativity", text: "detachment from the things of the world and love of poverty"),
+            MontfortLine(mystery: "The Presentation", text: "purity of body and soul"),
+            MontfortLine(mystery: "The Finding in the Temple", text: "true wisdom")
+        ]),
+        MontfortGroup(title: "SORROWFUL", lines: [
+            MontfortLine(mystery: "The Agony in the Garden", text: "contrition for our sins"),
+            MontfortLine(mystery: "The Scourging", text: "mortification of our senses"),
+            MontfortLine(mystery: "The Crowning with Thorns", text: "contempt of the world"),
+            MontfortLine(mystery: "The Carrying of the Cross", text: "patience in bearing our crosses"),
+            MontfortLine(mystery: "The Crucifixion", text: "horror of sin, love of the Cross, and the grace of a holy death")
+        ]),
+        MontfortGroup(title: "GLORIOUS", lines: [
+            MontfortLine(mystery: "The Resurrection", text: "a lively faith"),
+            MontfortLine(mystery: "The Ascension", text: "a firm hope and a longing for heaven"),
+            MontfortLine(mystery: "The Descent of the Holy Spirit", text: "the coming of the Holy Spirit into our souls"),
+            MontfortLine(mystery: "The Assumption", text: "a tender devotion to Mary"),
+            MontfortLine(mystery: "The Coronation", text: "perseverance in grace and a crown of glory")
+        ])
+    ]
+
+    /// The clauses of Montfort's shorter method — a word recalling the
+    /// mystery, spoken within each Hail Mary after the name of Jesus.
+    private static let montfortClauses: [MontfortGroup] = [
+        MontfortGroup(title: "JOYFUL", lines: [
+            MontfortLine(mystery: "The Annunciation", text: "Jesus becoming man"),
+            MontfortLine(mystery: "The Visitation", text: "Jesus sanctifying"),
+            MontfortLine(mystery: "The Nativity", text: "Jesus born in poverty"),
+            MontfortLine(mystery: "The Presentation", text: "Jesus sacrificed"),
+            MontfortLine(mystery: "The Finding in the Temple", text: "Jesus holy of holies")
+        ]),
+        MontfortGroup(title: "SORROWFUL", lines: [
+            MontfortLine(mystery: "The Agony in the Garden", text: "Jesus in His agony"),
+            MontfortLine(mystery: "The Scourging", text: "Jesus scourged"),
+            MontfortLine(mystery: "The Crowning with Thorns", text: "Jesus crowned with thorns"),
+            MontfortLine(mystery: "The Carrying of the Cross", text: "Jesus carrying His cross"),
+            MontfortLine(mystery: "The Crucifixion", text: "Jesus crucified")
+        ]),
+        MontfortGroup(title: "GLORIOUS", lines: [
+            MontfortLine(mystery: "The Resurrection", text: "Jesus risen from the dead"),
+            MontfortLine(mystery: "The Ascension", text: "Jesus ascending to heaven"),
+            MontfortLine(mystery: "The Descent of the Holy Spirit", text: "Jesus filling thee with the Holy Spirit"),
+            MontfortLine(mystery: "The Assumption", text: "Jesus raising thee up"),
+            MontfortLine(mystery: "The Coronation", text: "Jesus crowning thee")
+        ])
+    ]
+
+    private var montfortSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("THE MONTFORT METHODS")
+                .font(AppFonts.bodyFont(12))
+                .tracking(2)
+                .foregroundColor(AppColors.gold)
+
+            Text("St. Louis de Montfort, the great apostle of the Rosary, left several methods for praying it more fruitfully. Each uses the same beads and prayers — what changes is how deeply the mystery enters each prayer. He composed them for the fifteen traditional mysteries; the same spirit extends naturally to the Luminous Mysteries.")
+                .font(AppFonts.bodyFont(14))
+                .foregroundColor(AppColors.cream.opacity(0.9))
+                .lineSpacing(5)
+
+            VStack(spacing: 12) {
+                methodCard(
+                    id: "offering",
+                    title: "Offer Each Decade",
+                    subtitle: "His first method",
+                    intro: "Before each decade, offer it to Jesus in honor of the mystery and ask, through Mary, for its particular grace. For example, before the first Joyful Mystery:",
+                    example: "\u{201C}We offer Thee, O Lord Jesus, this first decade in honour of Thy Incarnation, and we ask of Thee, through this mystery and through the intercession of Thy most holy Mother, a profound humility. Amen.\u{201D}",
+                    outro: "And after the decade: \u{201C}May the grace of the mystery of the Incarnation come down into our souls. Amen.\u{201D} The grace to ask for in each decade:",
+                    groups: Self.montfortPetitions,
+                    lineStyle: .petition
+                )
+
+                methodCard(
+                    id: "clauses",
+                    title: "A Word Within Each Hail Mary",
+                    subtitle: "His shorter method",
+                    intro: "Keep the mystery present by adding a brief clause after the name of Jesus in every Hail Mary of the decade:",
+                    example: "\u{201C}...and blessed is the fruit of thy womb, Jesus — becoming man. Holy Mary, Mother of God...\u{201D}",
+                    outro: "The clause for each mystery:",
+                    groups: Self.montfortClauses,
+                    lineStyle: .clause
+                )
+
+                sayingItWellCard
+            }
+        }
+    }
+
+    private enum MontfortLineStyle {
+        case petition
+        case clause
+    }
+
+    private func methodCard(
+        id: String,
+        title: String,
+        subtitle: String,
+        intro: String,
+        example: String,
+        outro: String,
+        groups: [MontfortGroup],
+        lineStyle: MontfortLineStyle
+    ) -> some View {
+        let isExpanded = expandedMethods.contains(id)
+
+        return VStack(alignment: .leading, spacing: 0) {
+            Button {
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    if isExpanded {
+                        expandedMethods.remove(id)
+                    } else {
+                        expandedMethods.insert(id)
+                    }
+                }
+            } label: {
+                HStack {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(title)
+                            .font(AppFonts.headlineFont(16))
+                            .foregroundColor(AppColors.cream)
+                            .multilineTextAlignment(.leading)
+
+                        Text(subtitle)
+                            .font(AppFonts.italicFont(12))
+                            .foregroundColor(AppColors.gold.opacity(0.7))
+                    }
+
+                    Spacer()
+
+                    AppIcon("ph-caret-down", size: 13)
+                        .foregroundColor(AppColors.gold)
+                        .rotationEffect(.degrees(isExpanded ? 180 : 0))
+                }
+                .padding(16)
+            }
+            .buttonStyle(SacredCardButtonStyle())
+
+            if isExpanded {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text(intro)
+                        .font(AppFonts.bodyFont(14))
+                        .foregroundColor(AppColors.cream.opacity(0.9))
+                        .lineSpacing(4)
+
+                    Text(example)
+                        .font(AppFonts.readingItalicFont(14))
+                        .foregroundColor(AppColors.gold.opacity(0.9))
+                        .lineSpacing(4)
+                        .padding(.leading, 12)
+                        .overlay(alignment: .leading) {
+                            Rectangle()
+                                .fill(AppColors.gold.opacity(0.4))
+                                .frame(width: 2)
+                        }
+
+                    Text(outro)
+                        .font(AppFonts.bodyFont(14))
+                        .foregroundColor(AppColors.cream.opacity(0.9))
+                        .lineSpacing(4)
+
+                    ForEach(groups) { group in
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(group.title)
+                                .font(AppFonts.labelFont(10))
+                                .tracking(2)
+                                .foregroundColor(AppColors.gold.opacity(0.7))
+                                .padding(.top, 4)
+
+                            ForEach(group.lines) { line in
+                                HStack(alignment: .top, spacing: 8) {
+                                    Text(line.mystery)
+                                        .font(AppFonts.bodyFont(13))
+                                        .foregroundColor(AppColors.textSecondary)
+                                        .frame(width: 140, alignment: .leading)
+
+                                    Text(lineStyle == .clause ? "\u{201C}\(line.text)\u{201D}" : line.text)
+                                        .font(lineStyle == .clause ? AppFonts.italicFont(13) : AppFonts.bodyFont(13))
+                                        .foregroundColor(AppColors.cream.opacity(0.9))
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                }
+                            }
+                        }
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 16)
+            }
+        }
+        .background(AppColors.cardBackground)
+        .cornerRadius(14)
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .strokeBorder(AppColors.gold.opacity(isExpanded ? 0.35 : 0.15), lineWidth: 0.5)
+        )
+    }
+
+    private var sayingItWellCard: some View {
+        let id = "well"
+        let isExpanded = expandedMethods.contains(id)
+
+        return VStack(alignment: .leading, spacing: 0) {
+            Button {
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    if isExpanded {
+                        expandedMethods.remove(id)
+                    } else {
+                        expandedMethods.insert(id)
+                    }
+                }
+            } label: {
+                HStack {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Saying It Well")
+                            .font(AppFonts.headlineFont(16))
+                            .foregroundColor(AppColors.cream)
+
+                        Text("From The Secret of the Rosary")
+                            .font(AppFonts.italicFont(12))
+                            .foregroundColor(AppColors.gold.opacity(0.7))
+                    }
+
+                    Spacer()
+
+                    AppIcon("ph-caret-down", size: 13)
+                        .foregroundColor(AppColors.gold)
+                        .rotationEffect(.degrees(isExpanded ? 180 : 0))
+                }
+                .padding(16)
+            }
+            .buttonStyle(SacredCardButtonStyle())
+
+            if isExpanded {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("\u{201C}The Rosary without meditation on the sacred mysteries of our salvation would almost be a body without a soul.\u{201D}")
+                        .font(AppFonts.readingItalicFont(14))
+                        .foregroundColor(AppColors.gold.opacity(0.9))
+                        .lineSpacing(4)
+                        .padding(.leading, 12)
+                        .overlay(alignment: .leading) {
+                            Rectangle()
+                                .fill(AppColors.gold.opacity(0.4))
+                                .frame(width: 2)
+                        }
+
+                    montfortCounsel(
+                        title: "Begin with purity of intention",
+                        text: "Offer the Rosary for a definite grace or intention, in union with Jesus praying in you."
+                    )
+                    montfortCounsel(
+                        title: "Picture the scene",
+                        text: "Before each decade, pause and place the mystery before your mind's eye — the stable, the garden, the empty tomb — and stay in it while you pray."
+                    )
+                    montfortCounsel(
+                        title: "Pray without rushing",
+                        text: "Montfort counsels deliberate pauses within the prayers themselves. A slower, attentive Rosary is worth more than several hurried ones."
+                    )
+                    montfortCounsel(
+                        title: "Fight distractions gently",
+                        text: "Distractions will come; do not be discouraged or give up. Simply return to the mystery each time you notice you have wandered — that quiet return is itself a prayer."
+                    )
+                    montfortCounsel(
+                        title: "Persevere in dryness",
+                        text: "The Rosary prayed faithfully when it feels dry and unrewarding is especially pleasing to God — fidelity, not feeling, is the measure."
+                    )
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 16)
+            }
+        }
+        .background(AppColors.cardBackground)
+        .cornerRadius(14)
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .strokeBorder(AppColors.gold.opacity(isExpanded ? 0.35 : 0.15), lineWidth: 0.5)
+        )
+    }
+
+    private func montfortCounsel(title: String, text: String) -> some View {
+        VStack(alignment: .leading, spacing: 3) {
+            Text(title)
+                .font(AppFonts.semiboldBodyFont(14))
+                .foregroundColor(AppColors.cream)
+
+            Text(text)
+                .font(AppFonts.bodyFont(13))
+                .foregroundColor(AppColors.textSecondary)
+                .lineSpacing(3)
         }
     }
 

@@ -56,6 +56,9 @@ struct appApp: App {
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active {
                 resetAlternateIconIfNeeded()
+                // Fires at launch too: keeps scheduled reminders in step
+                // with stored settings and OS-level permission changes.
+                Task { await userSettings.syncNotificationsAtLaunch() }
             }
         }
     }

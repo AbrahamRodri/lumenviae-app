@@ -62,8 +62,9 @@ struct MenuView: View {
                         .padding(.horizontal, 20)
 
                     MenuItemButton(
-                        icon: "ph-book",
+                        icon: "ch-rosary",
                         title: "How to Pray the Rosary",
+                        subtitle: "Step by step • The Montfort methods",
                         action: {
                             showHowToPrayView = true
                         }
@@ -74,8 +75,9 @@ struct MenuView: View {
                         .padding(.horizontal, 20)
 
                     MenuItemButton(
-                        icon: "ph-sparkle",
+                        icon: "ch-bible",
                         title: "Finding the Mysteries in Scripture",
+                        subtitle: "A key verse and fruit for every mystery",
                         action: {
                             showMysteriesInScriptureView = true
                         }
@@ -88,6 +90,7 @@ struct MenuView: View {
                     MenuItemButton(
                         icon: "ph-heart",
                         title: "Marian Theology Library",
+                        subtitle: "Dogmas • Apparitions • Saints • History",
                         action: {
                             showMarianLibraryView = true
                         }

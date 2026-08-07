@@ -35,6 +35,10 @@ struct MysteryCard: View {
                 }
             )
             .clipShape(RoundedRectangle(cornerRadius: 16))
+            // Clipping is visual only — without this, the unclipped .fill
+            // image still catches taps far outside the card and steals
+            // touches from neighbors (e.g. VIEW ALL above the grid).
+            .contentShape(RoundedRectangle(cornerRadius: 16))
             .overlay(alignment: .topTrailing) {
                 ZStack {
                     Circle()
