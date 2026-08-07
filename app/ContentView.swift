@@ -122,7 +122,11 @@ struct ContentView: View {
 
         case .prayerSession:
             if let meditationSet = router.loadedMeditationSet {
-                MysteryPrayerView(meditationSet: meditationSet)
+                MysteryPrayerView(
+                    meditationSet: meditationSet,
+                    startAtIndex: router.prayerStartIndex,
+                    startedAt: router.prayerStartedAt ?? Date()
+                )
             } else {
                 ProgressView("Loading...")
                     .tint(AppColors.gold)

@@ -27,6 +27,10 @@ struct HomeView: View {
     /// Controls whether the menu sheet is displayed
     @State private var showingMenu = false
 
+    /// Resume-card state while the interrupted session's set reloads
+    @State private var isResuming = false
+    @State private var resumeError: String?
+
     // MARK: - Body
 
     var body: some View {
@@ -78,6 +82,27 @@ struct HomeView: View {
                     .devotionalEntrance(delay: 0.24)
                     }
                 }
+                // An unfinished Rosary floats over the content until the
+                // user continues or dismisses it — impossible to miss.
+                .overlay(alignment: .top) {
+                    if let session = PrayerResumeService.shared.inProgress {
+                        ResumePrayerCard(
+                            session: session,
+                            isLoading: isResuming,
+                            errorMessage: resumeError,
+                            onContinue: resumeInterruptedPrayer,
+                            onDismiss: {
+                                withAnimation(.easeOut(duration: 0.25)) {
+                                    PrayerResumeService.shared.clear()
+                                }
+                            }
+                        )
+                        .padding(.horizontal, 20)
+                        .padding(.top, 10)
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                        .devotionalEntrance(delay: 0.04, drift: -10)
+                    }
+                }
             }
         }
         .sheet(isPresented: $showingMenu) {
@@ -94,6 +119,43 @@ struct HomeView: View {
         PrayerHistoryService(modelContext: modelContext)
     }
 
+    /// Reloads the interrupted session's meditation set and jumps back to
+    /// the saved mystery. Bundled and fallback sets resolve locally; API
+    /// sets are refetched (the in-memory cache doesn't survive relaunch).
+    private func resumeInterruptedPrayer() {
+        guard let session = PrayerResumeService.shared.inProgress,
+              !isResuming, router.path.isEmpty else { return }
+
+        isResuming = true
+        resumeError = nil
+
+        Task {
+            defer { isResuming = false }
+
+            let category = MysteryCategory(fromAPIString: session.category)
+            let set: MeditationSet?
+            if session.meditationSetId == LuminousMeditationData.setID {
+                set = LuminousMeditationData.set
+            } else if session.meditationSetId == 0 {
+                set = MockDataService.meditationSet(for: category ?? .joyful)
+            } else {
+                set = try? await APIService.shared.fetchMeditationSet(id: session.meditationSetId)
+            }
+
+            guard let set else {
+                resumeError = "Couldn't load — check your connection"
+                return
+            }
+            guard router.path.isEmpty else { return }
+
+            router.navigateToPrayerSession(
+                meditationSet: set,
+                startAtIndex: session.mysteryIndex,
+                startedAt: session.startedAt
+            )
+        }
+    }
+
     /// The featured mystery card - data loaded instantly from local storage.
     @ViewBuilder
     private var featuredMysterySection: some View {
@@ -105,6 +167,97 @@ struct HomeView: View {
                     router.navigateToMeditationSelection(category: viewModel.todaysCategory)
                 }
             )
+            // The card's breathing glow is a repeat-forever phaseAnimator,
+            // which otherwise hijacks frame changes — when the resume card
+            // inserts above, the card would keep painting at its old
+            // position. geometryGroup resolves position locally.
+            .geometryGroup()
+        }
+    }
+}
+
+// MARK: - ResumePrayerCard
+
+/// Offers to continue an interrupted Rosary right where it left off.
+struct ResumePrayerCard: View {
+    let session: InProgressPrayer
+    var isLoading: Bool
+    var errorMessage: String?
+    let onContinue: () -> Void
+    let onDismiss: () -> Void
+
+    private var mysteryLabel: String {
+        let categoryName = MysteryCategory(fromAPIString: session.category)?.displayName
+            ?? session.category.capitalized
+        return "\(Constants.ordinalWord(session.mysteryIndex + 1)) \(categoryName) Mystery"
+    }
+
+    var body: some View {
+        VStack(spacing: 8) {
+            Button(action: onContinue) {
+                HStack(spacing: 14) {
+                    AppIcon("ch-rosary", size: 26)
+                        .foregroundColor(AppColors.gold)
+
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("CONTINUE YOUR ROSARY")
+                            .font(AppFonts.labelFont(9))
+                            .tracking(2)
+                            .foregroundColor(AppColors.gold.opacity(0.8))
+
+                        Text(mysteryLabel)
+                            .font(AppFonts.headlineFont(16))
+                            .foregroundColor(AppColors.cream)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
+
+                        Text(session.setName)
+                            .font(AppFonts.italicFont(12))
+                            .foregroundColor(AppColors.textSecondary)
+                            .lineLimit(1)
+                    }
+
+                    Spacer()
+
+                    if isLoading {
+                        ProgressView()
+                            .tint(AppColors.gold)
+                    } else {
+                        AppIcon("ph-play-fill", size: 14)
+                            .foregroundColor(AppColors.background)
+                            .padding(10)
+                            .background(Circle().fill(AppColors.goldGradient))
+                    }
+                }
+                .padding(14)
+                .background(
+                    RoundedRectangle(cornerRadius: 14)
+                        .fill(AppColors.cardBackground)
+                        .shadow(color: .black.opacity(0.55), radius: 18, y: 8)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14)
+                        .strokeBorder(AppColors.gold.opacity(0.5), lineWidth: 1)
+                )
+                .contentShape(RoundedRectangle(cornerRadius: 14))
+            }
+            .buttonStyle(SacredCardButtonStyle())
+            .disabled(isLoading)
+            .accessibilityLabel("Continue your Rosary at the \(mysteryLabel)")
+            .overlay(alignment: .topTrailing) {
+                Button(action: onDismiss) {
+                    AppIcon("ph-x", size: 10)
+                        .foregroundColor(AppColors.textSecondary)
+                        .padding(8)
+                }
+                .accessibilityLabel("Dismiss unfinished Rosary")
+            }
+
+            if let errorMessage {
+                Text(errorMessage)
+                    .font(AppFonts.bodyFont(12))
+                    .foregroundColor(AppColors.textSecondary)
+            }
         }
     }
 }

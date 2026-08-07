@@ -53,6 +53,11 @@ final class AppRouter {
     /// to record. Carried the same way as `loadedMeditationSet`.
     var completedSessionDuration: Int?
 
+    /// Where a resumed session should start, carried like
+    /// `loadedMeditationSet`. Zero / nil for fresh sessions.
+    var prayerStartIndex: Int = 0
+    var prayerStartedAt: Date?
+
     // MARK: - Navigation Actions
 
     func navigateToAllMysteries() {
@@ -64,8 +69,14 @@ final class AppRouter {
         path.append(AppRoute.meditationSelection(category: category))
     }
 
-    func navigateToPrayerSession(meditationSet: MeditationSet) {
+    func navigateToPrayerSession(
+        meditationSet: MeditationSet,
+        startAtIndex: Int = 0,
+        startedAt: Date? = nil
+    ) {
         loadedMeditationSet = meditationSet
+        prayerStartIndex = startAtIndex
+        prayerStartedAt = startedAt
         path.append(AppRoute.prayerSession(meditationSetId: meditationSet.id))
     }
 
@@ -93,5 +104,7 @@ final class AppRouter {
         selectedCategory = nil
         loadedMeditationSet = nil
         completedSessionDuration = nil
+        prayerStartIndex = 0
+        prayerStartedAt = nil
     }
 }
