@@ -1,21 +1,22 @@
 //
-//  ConsecrationIntroView.swift
+//  ConsecrationDateSelectionView.swift
 //  Lumen Viae
 //
-//  Shown when the user has no active consecration.
-//  Introduces the 33-Day Total Consecration and allows the user to select
-//  a feast day to consecrate on. The start date is calculated automatically.
+//  The final onboarding step: choosing the consecration day. The user
+//  selects a Marian feast (Day 34) and the start date is calculated
+//  automatically — with a catch-up start when the feast's window has
+//  already begun, and a custom start for praying along with a book or
+//  group. Ported from the original single-page intro.
 //
 
 import SwiftUI
 
-// MARK: - ConsecrationIntroView
+// MARK: - ConsecrationDateSelectionView
 
-struct ConsecrationIntroView: View {
+struct ConsecrationDateSelectionView: View {
 
     // MARK: - Properties
 
-    @Binding var path: NavigationPath
     @Environment(ConsecrationViewModel.self) private var viewModel
 
     @State private var selectedFeast: MarianFeastDay? = nil
@@ -55,50 +56,72 @@ struct ConsecrationIntroView: View {
     // MARK: - Body
 
     var body: some View {
-        ZStack {
-            // Background
-            AppColors.appGradient
-                .ignoresSafeArea()
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 0) {
+                Spacer()
+                    .frame(height: 48)
 
-            ScrollView {
-                VStack(spacing: 32) {
-                    Spacer()
-                        .frame(height: 40)
+                VStack(spacing: 14) {
+                    Text("SELECT CONSECRATION DAY")
+                        .font(AppFonts.bodyFont(12))
+                        .tracking(3)
+                        .foregroundColor(AppColors.gold)
 
-                    // Hero Section
-                    heroSection
+                    Text("End on a Marian Feast")
+                        .font(AppFonts.headlineFont(26))
+                        .foregroundColor(AppColors.cream)
+                        .multilineTextAlignment(.center)
 
-                    // A finished consecration is honored, not forgotten
-                    if let completed = viewModel.completedProgress {
-                        completedBanner(completed)
-                    }
-
-                    // Description
-                    descriptionSection
-
-                    // The Four Phases
-                    phasesSection
-
-                    // Feast Day Selection
-                    feastDaySelectionSection
-
-                    // Begin Button
-                    if canBeginToday {
-                        beginButton
-                    } else if let feast = selectedFeast, let day = catchUpDay(for: feast) {
-                        catchUpButton(day: day)
-                    }
-
-                    // Custom start (begin at any day)
-                    customStartSection
-
-                    Spacer()
-                        .frame(height: 100)
+                    Text("The consecration traditionally concludes on a feast of Our Lady. Choose the feast — your 33 days of preparation count back from it.")
+                        .font(AppFonts.bodyFont(14))
+                        .foregroundColor(AppColors.textSecondary)
+                        .multilineTextAlignment(.center)
+                        .lineSpacing(4)
                 }
-                .padding(.horizontal, 24)
+
+                // A finished consecration is honored, not forgotten
+                if let completed = viewModel.completedProgress {
+                    Spacer()
+                        .frame(height: 24)
+                    completedBanner(completed)
+                }
+
+                Spacer()
+                    .frame(height: 28)
+
+                feastSelector
+
+                if showFeastPicker {
+                    Spacer()
+                        .frame(height: 12)
+                    feastPickerList
+                }
+
+                if let feast = selectedFeast {
+                    Spacer()
+                        .frame(height: 16)
+                    startDateInfo(for: feast)
+                }
+
+                Spacer()
+                    .frame(height: 28)
+
+                if canBeginToday {
+                    beginButton
+                } else if let feast = selectedFeast, let day = catchUpDay(for: feast) {
+                    catchUpButton(day: day)
+                }
+
+                Spacer()
+                    .frame(height: 28)
+
+                customStartSection
+
+                Spacer()
+                    .frame(height: 110)
             }
+            .padding(.horizontal, 24)
         }
-        .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             // Default to the nearest feast the user can act on today —
             // start or catch up — rather than one months away; fall back
@@ -108,34 +131,6 @@ struct ConsecrationIntroView: View {
                     $0.canStartToday() || catchUpDay(for: $0) != nil
                 } ?? sortedFeasts.first
             }
-        }
-    }
-
-    // MARK: - Hero Section
-
-    private var heroSection: some View {
-        VStack(spacing: 16) {
-            // Icon
-            AppIcon("ph-flame-fill", size: 56)
-                .foregroundStyle(
-                    LinearGradient(
-                        colors: [AppColors.gold, AppColors.goldLight],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
-
-            // Title
-            Text("33-Day Consecration")
-                .font(AppFonts.headlineFont(28))
-                .foregroundColor(AppColors.cream)
-                .multilineTextAlignment(.center)
-
-            // Subtitle
-            Text("Total Consecration to Jesus through Mary")
-                .font(AppFonts.italicFont(16))
-                .foregroundColor(AppColors.textSecondary)
-                .multilineTextAlignment(.center)
         }
     }
 
@@ -183,130 +178,45 @@ struct ConsecrationIntroView: View {
         )
     }
 
-    // MARK: - Description Section
+    // MARK: - Feast Selector
 
-    private var descriptionSection: some View {
-        VStack(spacing: 16) {
-            Text("A 33-day spiritual preparation to consecrate yourself entirely to Jesus Christ through the hands of the Blessed Virgin Mary.")
-                .font(AppFonts.bodyFont(16))
-                .foregroundColor(AppColors.cream.opacity(0.9))
-                .multilineTextAlignment(.center)
-                .lineSpacing(4)
-
-            Text("Each day includes prayers, spiritual reading, and journaling to deepen your relationship with Christ and Mary.")
-                .font(AppFonts.bodyFont(14))
-                .foregroundColor(AppColors.textSecondary)
-                .multilineTextAlignment(.center)
-                .lineSpacing(4)
-        }
-        .padding(.horizontal, 8)
-    }
-
-    // MARK: - Phases Section
-
-    private var phasesSection: some View {
-        VStack(spacing: 12) {
-            Text("THE JOURNEY")
-                .font(AppFonts.bodyFont(12))
-                .tracking(2)
-                .foregroundColor(AppColors.gold)
-
-            VStack(spacing: 8) {
-                phaseRow(number: "1-12", title: "Preparatory Period", subtitle: "Emptying of the World")
-                phaseRow(number: "13-19", title: "Week One", subtitle: "Knowledge of Self")
-                phaseRow(number: "20-26", title: "Week Two", subtitle: "Knowledge of Mary")
-                phaseRow(number: "27-33", title: "Week Three", subtitle: "Knowledge of Jesus")
-                phaseRow(number: "34", title: "Consecration Day", subtitle: "Total Consecration")
+    private var feastSelector: some View {
+        Button {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                showFeastPicker.toggle()
             }
-        }
-        .padding(20)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(AppColors.cardBackground.opacity(0.6))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(AppColors.gold.opacity(0.2), lineWidth: 1)
-                )
-        )
-    }
+        } label: {
+            HStack {
+                AppIcon("ph-calendar-dots", size: 18)
+                    .foregroundColor(AppColors.gold)
 
-    private func phaseRow(number: String, title: String, subtitle: String) -> some View {
-        HStack(spacing: 12) {
-            Text("Day \(number)")
-                .font(AppFonts.bodyFont(12))
-                .foregroundColor(AppColors.gold)
-                .frame(width: 60, alignment: .leading)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(selectedFeast?.name ?? "Select a Feast Day")
+                        .font(AppFonts.bodyFont(16))
+                        .foregroundColor(AppColors.cream)
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .font(AppFonts.bodyFont(14))
-                    .foregroundColor(AppColors.cream)
-                Text(subtitle)
-                    .font(AppFonts.bodyFont(12))
-                    .foregroundColor(AppColors.textSecondary)
-            }
-
-            Spacer()
-        }
-    }
-
-    // MARK: - Feast Day Selection
-
-    private var feastDaySelectionSection: some View {
-        VStack(spacing: 16) {
-            Text("SELECT CONSECRATION DAY")
-                .font(AppFonts.bodyFont(12))
-                .tracking(2)
-                .foregroundColor(AppColors.gold)
-
-            // Selected feast display
-            Button {
-                withAnimation(.easeInOut(duration: 0.2)) {
-                    showFeastPicker.toggle()
-                }
-            } label: {
-                HStack {
-                    AppIcon("ph-calendar-dots", size: 18)
-                        .foregroundColor(AppColors.gold)
-
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(selectedFeast?.name ?? "Select a Feast Day")
-                            .font(AppFonts.bodyFont(16))
-                            .foregroundColor(AppColors.cream)
-
-                        if let feast = selectedFeast, let date = feast.nextOccurrence() {
-                            Text(date, style: .date)
-                                .font(AppFonts.bodyFont(12))
-                                .foregroundColor(AppColors.textSecondary)
-                        }
+                    if let feast = selectedFeast, let date = feast.nextOccurrence() {
+                        Text(date, style: .date)
+                            .font(AppFonts.bodyFont(12))
+                            .foregroundColor(AppColors.textSecondary)
                     }
-
-                    Spacer()
-
-                    AppIcon("ph-caret-down", size: 14)
-                        .foregroundColor(AppColors.textSecondary)
-                        .rotationEffect(.degrees(showFeastPicker ? 180 : 0))
                 }
-                .padding(16)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(AppColors.cardBackground)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(AppColors.gold.opacity(0.3), lineWidth: 1)
-                        )
-                )
-            }
 
-            // Feast picker list
-            if showFeastPicker {
-                feastPickerList
-            }
+                Spacer()
 
-            // Start date info
-            if let feast = selectedFeast {
-                startDateInfo(for: feast)
+                AppIcon("ph-caret-down", size: 14)
+                    .foregroundColor(AppColors.textSecondary)
+                    .rotationEffect(.degrees(showFeastPicker ? 180 : 0))
             }
+            .padding(16)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(AppColors.cardBackground)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(AppColors.gold.opacity(0.3), lineWidth: 1)
+                    )
+            )
         }
     }
 
@@ -657,8 +567,9 @@ struct ConsecrationIntroView: View {
 // MARK: - Preview
 
 #Preview {
-    NavigationStack {
-        ConsecrationIntroView(path: .constant(NavigationPath()))
+    ZStack {
+        AppColors.appGradient.ignoresSafeArea()
+        ConsecrationDateSelectionView()
             .environment(ConsecrationViewModel())
     }
 }
