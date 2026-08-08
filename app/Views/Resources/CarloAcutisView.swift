@@ -158,7 +158,9 @@ struct CarloAcutisView: View {
                             .frame(width: flameFlicker ? 64 : 52, height: flameFlicker ? 64 : 52)
                             .blur(radius: 12)
 
-                        AppIcon("ph-flame-fill", size: 32)
+                        // A votive candle, not the streak flame — the
+                        // flame glyph stays exclusive to prayer streaks
+                        AppIcon("ch-candle", size: 36)
                             .scaleEffect(flameFlicker ? 1.07 : 0.94)
                             .foregroundStyle(
                                 LinearGradient(
@@ -172,7 +174,7 @@ struct CarloAcutisView: View {
                                 value: flameFlicker
                             )
                     } else {
-                        AppIcon("ph-flame", size: 30)
+                        AppIcon("ch-candle", size: 34)
                             .foregroundColor(AppColors.textSecondary.opacity(0.4))
                     }
                 }
@@ -238,7 +240,7 @@ struct CarloAcutisView: View {
                         intentionFocused = false
                     } label: {
                         HStack(spacing: 8) {
-                            AppIcon("ph-flame-fill", size: 15)
+                            AppIcon("ch-candle", size: 15)
                             Text("Light a Candle")
                                 .font(AppFonts.headlineFont(15))
                         }
@@ -342,7 +344,7 @@ struct CarloAcutisView: View {
 
             VStack(spacing: 12) {
                 devotionCard(
-                    icon: "ch-host",
+                    icon: "ch-monstrance",
                     title: "Daily Mass & Adoration",
                     text: "From his First Communion at age seven, Carlo never missed daily Mass, and he made time for Eucharistic adoration before or after it. \u{201C}When we face the sun we get a tan,\u{201D} he said, \u{201C}but when we stand before Jesus in the Eucharist we become saints.\u{201D}"
                 )

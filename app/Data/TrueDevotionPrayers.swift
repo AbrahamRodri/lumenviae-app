@@ -16,7 +16,7 @@ enum TrueDevotionPrayers {
     /// All ejaculatory prayers from True Devotion to Mary
     static let prayers = BilingualSection(
         title: "Ejaculatory Prayers",
-        icon: "ph-flame-fill",
+        icon: "ch-praying-hands",
         items: [
             BilingualPrayer(
                 title: "The Little Crown (Opening Versicle)",

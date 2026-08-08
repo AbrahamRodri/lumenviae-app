@@ -48,13 +48,17 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
         }
     }
 
-    /// SF Symbol name for visual representation
+    /// Icon for this category — the ONLY icon mapping for mystery
+    /// categories; every surface (pickers, journal, chips) reads this.
+    /// Star of Bethlehem for the Incarnation, crown of thorns for the
+    /// Passion, dawn for the Resurrection, the sun for the Mysteries of
+    /// Light, the Sacred Heart for Mary's sorrows.
     var iconName: String {
         switch self {
         case .joyful:      return "ph-star"
         case .sorrowful:   return "ch-crown-of-thorns"
         case .glorious:    return "ph-sun-horizon"
-        case .luminous:    return "ph-sparkle"
+        case .luminous:    return "ph-sun"
         case .sevenSorrows: return "ch-sacred-heart"
         }
     }

@@ -101,7 +101,10 @@ struct MenuView: View {
                         .padding(.horizontal, 20)
 
                     MenuItemButton(
-                        icon: "ph-flame",
+                        // Monstrance: Carlo's Eucharistic adoration —
+                        // the plain host glyph reads as an empty circle
+                        // at menu size
+                        icon: "ch-monstrance",
                         title: "St. Carlo Acutis",
                         subtitle: "Digital Altar",
                         action: {
