@@ -100,9 +100,13 @@ struct ConsecrationIntroView: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
-            // Default to first feast (Annunciation is traditional)
+            // Default to the nearest feast the user can act on today —
+            // start or catch up — rather than one months away; fall back
+            // to the next upcoming feast.
             if selectedFeast == nil {
-                selectedFeast = MarianFeastDay.find("annunciation")
+                selectedFeast = sortedFeasts.first {
+                    $0.canStartToday() || catchUpDay(for: $0) != nil
+                } ?? sortedFeasts.first
             }
         }
     }

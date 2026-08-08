@@ -97,7 +97,9 @@ struct ConsecrationMeditationView: View {
         HStack(alignment: .center) {
             // Back Button
             Button {
-                path.removeLast()
+                // Guard: a second tap during the pop animation would call
+                // removeLast() on an empty path and crash
+                if !path.isEmpty { path.removeLast() }
             } label: {
                 AppIcon("ph-caret-left", size: 16)
                     .foregroundColor(AppColors.cream.opacity(0.7))

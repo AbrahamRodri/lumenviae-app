@@ -95,7 +95,9 @@ struct ConsecrationJournalView: View {
         HStack(alignment: .center) {
             // Back Button
             Button {
-                path.removeLast()
+                // Guard: a second tap during the pop animation would call
+                // removeLast() on an empty path and crash
+                if !path.isEmpty { path.removeLast() }
             } label: {
                 AppIcon("ph-caret-left", size: 16)
                     .foregroundColor(AppColors.cream.opacity(0.7))
@@ -196,7 +198,7 @@ struct ConsecrationJournalView: View {
 
     private var completeButton: some View {
         Button {
-            viewModel.completeDay(journalEntry: journalText)
+            viewModel.completeDay(dayNumber: dayNumber, journalEntry: journalText)
 
             // Navigate based on day
             if isConsecrationDay {

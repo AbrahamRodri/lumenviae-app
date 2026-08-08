@@ -212,17 +212,25 @@ final class ConsecrationViewModel {
 
     // MARK: - Day Completion
 
-    /// Complete the current day with a journal entry
-    func completeDay(journalEntry: String) {
+    /// Complete a specific day with a journal entry. The day number comes
+    /// from the view that collected the reflection, not from `currentDay`,
+    /// so a stale or missing `currentDay` can never complete the wrong day.
+    func completeDay(dayNumber: Int, journalEntry: String) {
         guard let context = modelContext,
-              let day = currentDay,
               let progress = progress else { return }
 
         // Save journal entry
-        saveJournalEntry(journalEntry, for: day.dayNumber)
+        saveJournalEntry(journalEntry, for: dayNumber)
 
         // Mark day as complete
-        progress.completeDay(day.dayNumber)
+        progress.completeDay(dayNumber)
+
+        // Finishing Day 34 completes the consecration: surface it right
+        // away so the intro screen shows the completed banner without
+        // needing to leave and re-enter the tab.
+        if progress.isCompleted {
+            completedProgress = progress
+        }
 
         do {
             try context.save()
@@ -252,8 +260,11 @@ final class ConsecrationViewModel {
         }
     }
 
-    /// Save journal entry for a day
+    /// Save journal entry for a day. Blank reflections are skipped: they
+    /// would render as empty cards in the Journal tab, and overwriting an
+    /// existing entry with blank text on a review pass would lose it.
     private func saveJournalEntry(_ content: String, for dayNumber: Int) {
+        guard !content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
         guard let context = modelContext,
               let phase = ConsecrationPhase.phase(for: dayNumber) else { return }
 
