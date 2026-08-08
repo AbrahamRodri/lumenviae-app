@@ -207,6 +207,26 @@ private extension View {
     }
 }
 
+// MARK: - Static Slide
+
+/// Locks a slide to one static, non-scrolling page — the layout
+/// distributes itself with flexible spacers and everything fits. Only
+/// when the content genuinely cannot fit (very small devices, very
+/// large accessibility text) does it degrade to a scroll, so text is
+/// never clipped.
+private struct StaticSlide<Content: View>: View {
+    @ViewBuilder let content: Content
+
+    var body: some View {
+        ViewThatFits(in: .vertical) {
+            content
+            ScrollView(showsIndicators: false) {
+                content
+            }
+        }
+    }
+}
+
 // MARK: - Shared Step Chrome
 
 /// Gold gradient primary button used by every step
@@ -258,10 +278,9 @@ private struct ThresholdStepView: View {
     @State private var breathing = false
 
     var body: some View {
-        ScrollView(showsIndicators: false) {
+        StaticSlide {
             VStack(spacing: 0) {
-                Spacer()
-                    .frame(height: 64)
+                Spacer(minLength: 20)
 
                 // Breathing flame — the quiet, living center of the screen
                 ZStack {
@@ -288,8 +307,7 @@ private struct ThresholdStepView: View {
                 }
                 .staggeredReveal(delay: 0.1)
 
-                Spacer()
-                    .frame(height: 36)
+                Spacer(minLength: 24)
 
                 VStack(spacing: 14) {
                     StepLabel(text: "TOTUS TUUS")
@@ -305,8 +323,7 @@ private struct ThresholdStepView: View {
                 }
                 .staggeredReveal(delay: 0.35)
 
-                Spacer()
-                    .frame(height: 40)
+                Spacer(minLength: 24)
 
                 VStack(spacing: 12) {
                     Text("\u{201C}An easy, short, perfect and secure way of attaining union with our Lord.\u{201D}")
@@ -324,22 +341,18 @@ private struct ThresholdStepView: View {
 
                 // A finished consecration is honored, not forgotten
                 if viewModel.completedProgress != nil {
-                    Spacer()
-                        .frame(height: 28)
+                    Spacer(minLength: 16)
                     completedNote
                         .staggeredReveal(delay: 0.8)
                 }
 
-                Spacer()
-                    .frame(height: 48)
+                Spacer(minLength: 28)
 
                 OnboardingContinueButton(title: "Discover the Devotion", action: onContinue)
                     .staggeredReveal(delay: 0.95)
-
-                Spacer()
-                    .frame(height: 110)
             }
             .padding(.horizontal, 24)
+            .padding(.bottom, 104)
         }
     }
 
@@ -371,10 +384,9 @@ private struct DevotionStepView: View {
     let onContinue: () -> Void
 
     var body: some View {
-        ScrollView(showsIndicators: false) {
+        StaticSlide {
             VStack(spacing: 0) {
-                Spacer()
-                    .frame(height: 48)
+                Spacer(minLength: 20)
 
                 VStack(spacing: 14) {
                     StepLabel(text: "THE DEVOTION")
@@ -386,10 +398,9 @@ private struct DevotionStepView: View {
                 }
                 .staggeredReveal(delay: 0.1)
 
-                Spacer()
-                    .frame(height: 36)
+                Spacer(minLength: 24)
 
-                VStack(spacing: 24) {
+                VStack(spacing: 14) {
                     devotionParagraph(
                         icon: "ph-scroll",
                         text: "Around 1712, St. Louis de Montfort wrote True Devotion to Mary — a way of giving yourself entirely to Jesus Christ through the hands of His mother.",
@@ -409,33 +420,30 @@ private struct DevotionStepView: View {
                     )
                 }
 
-                Spacer()
-                    .frame(height: 48)
+                Spacer(minLength: 28)
 
                 OnboardingContinueButton(title: "Continue", action: onContinue)
                     .staggeredReveal(delay: 0.95)
-
-                Spacer()
-                    .frame(height: 110)
             }
             .padding(.horizontal, 24)
+            .padding(.bottom, 104)
         }
     }
 
     private func devotionParagraph(icon: String, text: String, delay: Double) -> some View {
-        HStack(alignment: .top, spacing: 16) {
+        HStack(alignment: .top, spacing: 14) {
             AppIcon(icon, size: 20)
                 .foregroundColor(AppColors.gold)
                 .frame(width: 28)
                 .padding(.top, 2)
 
             Text(text)
-                .font(AppFonts.bodyFont(15))
+                .font(AppFonts.bodyFont(14))
                 .foregroundColor(AppColors.cream.opacity(0.9))
-                .lineSpacing(5)
+                .lineSpacing(4)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(16)
+        .padding(14)
         .background(
             RoundedRectangle(cornerRadius: 14)
                 .fill(AppColors.cardBackground.opacity(0.6))
@@ -454,10 +462,9 @@ private struct RhythmStepView: View {
     let onContinue: () -> Void
 
     var body: some View {
-        ScrollView(showsIndicators: false) {
+        StaticSlide {
             VStack(spacing: 0) {
-                Spacer()
-                    .frame(height: 48)
+                Spacer(minLength: 20)
 
                 VStack(spacing: 14) {
                     StepLabel(text: "EACH DAY")
@@ -469,10 +476,9 @@ private struct RhythmStepView: View {
                 }
                 .staggeredReveal(delay: 0.1)
 
-                Spacer()
-                    .frame(height: 36)
+                Spacer(minLength: 24)
 
-                VStack(spacing: 16) {
+                VStack(spacing: 14) {
                     rhythmRow(
                         icon: "ph-hands-praying",
                         title: "Pray",
@@ -495,24 +501,20 @@ private struct RhythmStepView: View {
                     )
                 }
 
-                Spacer()
-                    .frame(height: 28)
+                Spacer(minLength: 20)
 
                 Text("Ten to fifteen unhurried minutes a day.")
                     .font(AppFonts.italicFont(15))
                     .foregroundColor(AppColors.textSecondary)
                     .staggeredReveal(delay: 0.9)
 
-                Spacer()
-                    .frame(height: 40)
+                Spacer(minLength: 28)
 
                 OnboardingContinueButton(title: "Continue", action: onContinue)
                     .staggeredReveal(delay: 1.05)
-
-                Spacer()
-                    .frame(height: 110)
             }
             .padding(.horizontal, 24)
+            .padding(.bottom, 104)
         }
     }
 
@@ -554,10 +556,9 @@ private struct JourneyStepView: View {
     let onContinue: () -> Void
 
     var body: some View {
-        ScrollView(showsIndicators: false) {
+        StaticSlide {
             VStack(spacing: 0) {
-                Spacer()
-                    .frame(height: 48)
+                Spacer(minLength: 20)
 
                 VStack(spacing: 14) {
                     StepLabel(text: "THE JOURNEY")
@@ -569,8 +570,7 @@ private struct JourneyStepView: View {
                 }
                 .staggeredReveal(delay: 0.1)
 
-                Spacer()
-                    .frame(height: 36)
+                Spacer(minLength: 24)
 
                 VStack(spacing: 10) {
                     ForEach(Array(ConsecrationPhase.allCases.enumerated()), id: \.element) { index, phase in
@@ -578,8 +578,7 @@ private struct JourneyStepView: View {
                     }
                 }
 
-                Spacer()
-                    .frame(height: 28)
+                Spacer(minLength: 20)
 
                 // No-guilt: the schedule serves the user, not the reverse
                 Text("Miss a day? Every day stays open — return whenever you can.")
@@ -588,8 +587,7 @@ private struct JourneyStepView: View {
                     .multilineTextAlignment(.center)
                     .staggeredReveal(delay: 1.15)
 
-                Spacer()
-                    .frame(height: 40)
+                Spacer(minLength: 28)
 
                 OnboardingContinueButton(
                     title: "Choose My Consecration Day",
@@ -597,11 +595,9 @@ private struct JourneyStepView: View {
                     action: onContinue
                 )
                 .staggeredReveal(delay: 1.3)
-
-                Spacer()
-                    .frame(height: 110)
             }
             .padding(.horizontal, 24)
+            .padding(.bottom, 104)
         }
     }
 
