@@ -275,39 +275,45 @@ private struct ThresholdStepView: View {
     let onContinue: () -> Void
 
     @Environment(ConsecrationViewModel.self) private var viewModel
-    @State private var breathing = false
+
+    /// The cathedral-window arch that frames the Coronation — the same
+    /// visual language as the Home hero
+    private var arch: GothicArchShape { GothicArchShape(riseRatio: 0.34) }
 
     var body: some View {
         StaticSlide {
             VStack(spacing: 0) {
-                Spacer(minLength: 20)
+                Spacer(minLength: 16)
 
-                // Breathing flame — the quiet, living center of the screen
-                ZStack {
-                    Circle()
-                        .fill(AppColors.gold.opacity(0.18))
-                        .frame(width: 130, height: 130)
-                        .blur(radius: 24)
-                        .scaleEffect(breathing ? 1.12 : 0.9)
+                // The Coronation of the Virgin (Velázquez): Mary crowned
+                // by the Trinity — the image of Totus Tuus, and the
+                // mystery this 33-day path ends on
+                arch
+                    .fill(AppColors.cardBackground)
+                    .frame(height: 350)
+                    .overlay(
+                        CachedAssetImage("glorious_coronation")
+                            .aspectRatio(contentMode: .fill)
+                            .overlay(Color.black.opacity(0.15))
+                    )
+                    .clipShape(arch)
+                    .overlay(
+                        arch.strokeBorder(AppColors.gold.opacity(0.5), lineWidth: 1)
+                    )
+                    .overlay(
+                        arch.inset(by: 5)
+                            .strokeBorder(AppColors.gold.opacity(0.2), lineWidth: 0.5)
+                    )
+                    .breathingGlow(
+                        AppColors.gold,
+                        radius: 18,
+                        dimOpacity: 0.10,
+                        brightOpacity: 0.22,
+                        period: 3.8
+                    )
+                    .staggeredReveal(delay: 0.1)
 
-                    AppIcon("ph-flame-fill", size: 64)
-                        .foregroundStyle(
-                            LinearGradient(
-                                colors: [AppColors.gold, AppColors.goldLight],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                        )
-                        .scaleEffect(breathing ? 1.05 : 0.96)
-                }
-                .onAppear {
-                    withAnimation(.easeInOut(duration: 2.6).repeatForever(autoreverses: true)) {
-                        breathing = true
-                    }
-                }
-                .staggeredReveal(delay: 0.1)
-
-                Spacer(minLength: 24)
+                Spacer(minLength: 28)
 
                 VStack(spacing: 14) {
                     StepLabel(text: "TOTUS TUUS")
@@ -321,35 +327,19 @@ private struct ThresholdStepView: View {
                         .font(AppFonts.italicFont(18))
                         .foregroundColor(AppColors.textSecondary)
                 }
-                .staggeredReveal(delay: 0.35)
-
-                Spacer(minLength: 24)
-
-                VStack(spacing: 12) {
-                    Text("\u{201C}An easy, short, perfect and secure way of attaining union with our Lord.\u{201D}")
-                        .font(AppFonts.italicFont(17))
-                        .foregroundColor(AppColors.cream.opacity(0.9))
-                        .multilineTextAlignment(.center)
-                        .lineSpacing(6)
-
-                    Text("St. Louis de Montfort, True Devotion to Mary")
-                        .font(AppFonts.bodyFont(12))
-                        .foregroundColor(AppColors.textSecondary)
-                }
-                .padding(.horizontal, 16)
-                .staggeredReveal(delay: 0.65)
+                .staggeredReveal(delay: 0.4)
 
                 // A finished consecration is honored, not forgotten
                 if viewModel.completedProgress != nil {
                     Spacer(minLength: 16)
                     completedNote
-                        .staggeredReveal(delay: 0.8)
+                        .staggeredReveal(delay: 0.55)
                 }
 
                 Spacer(minLength: 28)
 
                 OnboardingContinueButton(title: "Discover the Devotion", action: onContinue)
-                    .staggeredReveal(delay: 0.95)
+                    .staggeredReveal(delay: 0.7)
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 104)
