@@ -79,7 +79,7 @@ struct ConsecrationTabView: View {
         if viewModel.hasActiveConsecration {
             ConsecrationDayOverviewView(path: $path)
         } else {
-            ConsecrationIntroView(path: $path)
+            ConsecrationOnboardingView(path: $path)
         }
     }
 
