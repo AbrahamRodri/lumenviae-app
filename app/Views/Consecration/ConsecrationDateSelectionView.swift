@@ -2,11 +2,12 @@
 //  ConsecrationDateSelectionView.swift
 //  Lumen Viae
 //
-//  The final onboarding step: choosing the consecration day. The user
-//  selects a Marian feast (Day 34) and the start date is calculated
-//  automatically — with a catch-up start when the feast's window has
-//  already begun, and a custom start for praying along with a book or
-//  group. Ported from the original single-page intro.
+//  The final onboarding step: choosing the consecration day. One clean
+//  list of Marian feasts — actionable ones carry a chip — with a fixed
+//  bottom bar that always shows the resulting dates and the one action.
+//  Starting mid-preparation ("catch up") keeps Day 34 on the feast.
+//  A custom start (praying along with a book or group) lives in a sheet
+//  so the page itself stays quiet.
 //
 
 import SwiftUI
@@ -20,19 +21,33 @@ struct ConsecrationDateSelectionView: View {
     @Environment(ConsecrationViewModel.self) private var viewModel
 
     @State private var selectedFeast: MarianFeastDay? = nil
-    @State private var showFeastPicker: Bool = false
     @State private var showCustomStart: Bool = false
     @State private var customStartDay: Int = 1
 
-    // MARK: - Computed Properties
+    // MARK: - Feast Availability
+
+    /// What selecting a feast means today
+    private enum FeastAvailability {
+        case startToday(Date)      // today is Day 1
+        case catchUp(Int)          // window already open — join at this day
+        case waitUntil(Date)       // Day 1 is still in the future
+    }
 
     private var sortedFeasts: [MarianFeastDay] {
         MarianFeastDay.sortedByNextOccurrence()
     }
 
-    private var canBeginToday: Bool {
-        guard let feast = selectedFeast else { return false }
-        return feast.canStartToday()
+    private func availability(for feast: MarianFeastDay) -> FeastAvailability? {
+        if feast.canStartToday(), let start = feast.nextStartDate() {
+            return .startToday(start)
+        }
+        if let day = catchUpDay(for: feast) {
+            return .catchUp(day)
+        }
+        if let start = feast.nextStartDate() {
+            return .waitUntil(start)
+        }
+        return nil
     }
 
     /// Catch-up day for a feast whose 33-day preparation window has already
@@ -56,71 +71,31 @@ struct ConsecrationDateSelectionView: View {
     // MARK: - Body
 
     var body: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(spacing: 0) {
-                Spacer()
-                    .frame(height: 48)
+        VStack(spacing: 0) {
+            header
+                .padding(.top, 16)
+                .padding(.horizontal, 32)
 
-                VStack(spacing: 14) {
-                    Text("SELECT CONSECRATION DAY")
-                        .font(AppFonts.bodyFont(12))
-                        .tracking(3)
-                        .foregroundColor(AppColors.gold)
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 8) {
+                    if let completed = viewModel.completedProgress {
+                        completedNote(completed)
+                            .padding(.bottom, 8)
+                    }
 
-                    Text("End on a Marian Feast")
-                        .font(AppFonts.headlineFont(26))
-                        .foregroundColor(AppColors.cream)
-                        .multilineTextAlignment(.center)
+                    ForEach(sortedFeasts) { feast in
+                        feastRow(feast)
+                    }
 
-                    Text("The consecration traditionally concludes on a feast of Our Lady. Choose the feast — your 33 days of preparation count back from it.")
-                        .font(AppFonts.bodyFont(14))
-                        .foregroundColor(AppColors.textSecondary)
-                        .multilineTextAlignment(.center)
-                        .lineSpacing(4)
+                    customStartLink
+                        .padding(.top, 8)
                 }
-
-                // A finished consecration is honored, not forgotten
-                if let completed = viewModel.completedProgress {
-                    Spacer()
-                        .frame(height: 24)
-                    completedBanner(completed)
-                }
-
-                Spacer()
-                    .frame(height: 28)
-
-                feastSelector
-
-                if showFeastPicker {
-                    Spacer()
-                        .frame(height: 12)
-                    feastPickerList
-                }
-
-                if let feast = selectedFeast {
-                    Spacer()
-                        .frame(height: 16)
-                    startDateInfo(for: feast)
-                }
-
-                Spacer()
-                    .frame(height: 28)
-
-                if canBeginToday {
-                    beginButton
-                } else if let feast = selectedFeast, let day = catchUpDay(for: feast) {
-                    catchUpButton(day: day)
-                }
-
-                Spacer()
-                    .frame(height: 28)
-
-                customStartSection
-
-                Spacer()
-                    .frame(height: 110)
+                .padding(.horizontal, 24)
+                .padding(.top, 24)
+                .padding(.bottom, 16)
             }
-            .padding(.horizontal, 24)
+
+            bottomBar
         }
         .onAppear {
             // Default to the nearest feast the user can act on today —
@@ -128,127 +103,70 @@ struct ConsecrationDateSelectionView: View {
             // to the next upcoming feast.
             if selectedFeast == nil {
                 selectedFeast = sortedFeasts.first {
-                    $0.canStartToday() || catchUpDay(for: $0) != nil
+                    if let a = availability(for: $0) {
+                        switch a {
+                        case .waitUntil: return false
+                        default: return true
+                        }
+                    }
+                    return false
                 } ?? sortedFeasts.first
             }
         }
+        .sheet(isPresented: $showCustomStart) {
+            customStartSheet
+        }
     }
 
-    // MARK: - Completed Banner
+    // MARK: - Header
 
-    /// Shown when a past consecration was completed: honors the date and
-    /// frames starting again as a renewal.
-    private func completedBanner(_ progress: ConsecrationProgress) -> some View {
-        let dateText: String = {
-            guard let date = progress.completedAt else { return "" }
-            let formatter = DateFormatter()
-            formatter.dateStyle = .long
-            return formatter.string(from: date)
-        }()
+    private var header: some View {
+        VStack(spacing: 10) {
+            Text("Choose Your Feast")
+                .font(AppFonts.headlineFont(26))
+                .foregroundColor(AppColors.cream)
 
-        return VStack(spacing: 8) {
-            HStack(spacing: 8) {
-                AppIcon("ph-seal-check-fill", size: 16)
-                Text("Consecration Completed")
-                    .font(AppFonts.headlineFont(15))
-            }
-            .foregroundColor(AppColors.gold)
-
-            if !dateText.isEmpty {
-                Text("Totus tuus — consecrated \(dateText)")
-                    .font(AppFonts.italicFont(13))
-                    .foregroundColor(AppColors.cream.opacity(0.85))
-            }
-
-            Text("Many renew their consecration each year. You may begin the preparation again whenever you wish.")
-                .font(AppFonts.bodyFont(12))
+            Text("The consecration ends on a feast of Our Lady — your 33 days count back from it.")
+                .font(AppFonts.bodyFont(13))
                 .foregroundColor(AppColors.textSecondary)
                 .multilineTextAlignment(.center)
                 .lineSpacing(3)
         }
-        .frame(maxWidth: .infinity)
-        .padding(16)
-        .background(
-            RoundedRectangle(cornerRadius: 14)
-                .fill(AppColors.gold.opacity(0.08))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 14)
-                        .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: 1)
-                )
-        )
     }
 
-    // MARK: - Feast Selector
+    // MARK: - Completed Note
 
-    private var feastSelector: some View {
-        Button {
-            withAnimation(.easeInOut(duration: 0.2)) {
-                showFeastPicker.toggle()
-            }
-        } label: {
-            HStack {
-                AppIcon("ph-calendar-dots", size: 18)
-                    .foregroundColor(AppColors.gold)
+    /// One quiet line honoring a finished consecration
+    private func completedNote(_ progress: ConsecrationProgress) -> some View {
+        HStack(spacing: 6) {
+            AppIcon("ph-seal-check-fill", size: 13)
 
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(selectedFeast?.name ?? "Select a Feast Day")
-                        .font(AppFonts.bodyFont(16))
-                        .foregroundColor(AppColors.cream)
-
-                    if let feast = selectedFeast, let date = feast.nextOccurrence() {
-                        Text(date, style: .date)
-                            .font(AppFonts.bodyFont(12))
-                            .foregroundColor(AppColors.textSecondary)
-                    }
-                }
-
-                Spacer()
-
-                AppIcon("ph-caret-down", size: 14)
-                    .foregroundColor(AppColors.textSecondary)
-                    .rotationEffect(.degrees(showFeastPicker ? 180 : 0))
-            }
-            .padding(16)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(AppColors.cardBackground)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(AppColors.gold.opacity(0.3), lineWidth: 1)
-                    )
-            )
-        }
-    }
-
-    private var feastPickerList: some View {
-        VStack(spacing: 0) {
-            ForEach(sortedFeasts) { feast in
-                feastRow(feast)
-
-                if feast.id != sortedFeasts.last?.id {
-                    Divider()
-                        .background(AppColors.gold.opacity(0.2))
-                }
+            if let date = progress.completedAt {
+                Text("Consecrated \(date, style: .date) — renew whenever you wish")
+            } else {
+                Text("Consecration completed — renew whenever you wish")
             }
         }
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(AppColors.cardBackground)
-        )
+        .font(AppFonts.bodyFont(12))
+        .foregroundColor(AppColors.gold)
     }
+
+    // MARK: - Feast Rows
 
     private func feastRow(_ feast: MarianFeastDay) -> some View {
-        Button {
-            withAnimation(.easeInOut(duration: 0.2)) {
+        let isSelected = selectedFeast?.id == feast.id
+
+        return Button {
+            withAnimation(.easeInOut(duration: 0.15)) {
                 selectedFeast = feast
-                showFeastPicker = false
             }
         } label: {
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 3) {
                     Text(feast.name)
-                        .font(AppFonts.bodyFont(14))
-                        .foregroundColor(selectedFeast?.id == feast.id ? AppColors.gold : AppColors.cream)
+                        .font(AppFonts.bodyFont(15))
+                        .foregroundColor(AppColors.cream)
+                        .multilineTextAlignment(.leading)
 
                     if let date = feast.nextOccurrence() {
                         Text(date, style: .date)
@@ -259,132 +177,140 @@ struct ConsecrationDateSelectionView: View {
 
                 Spacer()
 
-                // Tag showing when user can start
-                if feast.canStartToday() {
-                    Text("Start Today")
-                        .font(AppFonts.bodyFont(10))
-                        .fontWeight(.semibold)
-                        .foregroundColor(AppColors.background)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(
-                            Capsule()
-                                .fill(AppColors.gold)
-                        )
-                } else if let day = catchUpDay(for: feast) {
-                    Text("Catch Up · Day \(day)")
-                        .font(AppFonts.bodyFont(10))
-                        .fontWeight(.semibold)
-                        .foregroundColor(AppColors.gold)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(
-                            Capsule()
-                                .stroke(AppColors.gold.opacity(0.6), lineWidth: 1)
-                        )
-                } else if let startDate = feast.nextStartDate() {
-                    let daysUntilStart = daysUntil(startDate)
-                    Text("in \(daysUntilStart) day\(daysUntilStart == 1 ? "" : "s")")
-                        .font(AppFonts.bodyFont(10))
-                        .foregroundColor(AppColors.textSecondary)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(
-                            Capsule()
-                                .stroke(AppColors.textSecondary.opacity(0.4), lineWidth: 1)
-                        )
-                }
-
-                if selectedFeast?.id == feast.id {
-                    AppIcon("ph-check", size: 14)
-                        .foregroundColor(AppColors.gold)
-                }
+                availabilityChip(for: feast)
             }
-            .padding(12)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(isSelected ? AppColors.gold.opacity(0.1) : AppColors.cardBackground.opacity(0.5))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .strokeBorder(
+                        isSelected ? AppColors.gold.opacity(0.7) : AppColors.gold.opacity(0.08),
+                        lineWidth: isSelected ? 1.5 : 1
+                    )
+            )
+        }
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+
+    /// A chip only when the feast is actionable today — everything else
+    /// stays quiet
+    @ViewBuilder
+    private func availabilityChip(for feast: MarianFeastDay) -> some View {
+        switch availability(for: feast) {
+        case .startToday:
+            Text("Today")
+                .font(AppFonts.bodyFont(11))
+                .fontWeight(.semibold)
+                .foregroundColor(AppColors.background)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 4)
+                .background(Capsule().fill(AppColors.gold))
+
+        case .catchUp(let day):
+            Text("Day \(day)")
+                .font(AppFonts.bodyFont(11))
+                .fontWeight(.semibold)
+                .foregroundColor(AppColors.gold)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 4)
+                .background(Capsule().strokeBorder(AppColors.gold.opacity(0.6), lineWidth: 1))
+
+        default:
+            EmptyView()
         }
     }
 
-    /// Calculate days until a given date
-    private func daysUntil(_ date: Date) -> Int {
-        let calendar = Calendar.current
-        let today = calendar.startOfDay(for: Date())
-        let target = calendar.startOfDay(for: date)
-        let components = calendar.dateComponents([.day], from: today, to: target)
-        return max(0, components.day ?? 0)
+    // MARK: - Custom Start Link
+
+    private var customStartLink: some View {
+        Button {
+            showCustomStart = true
+        } label: {
+            HStack(spacing: 6) {
+                Text("Start at any day instead")
+                    .font(AppFonts.bodyFont(14))
+                AppIcon("ph-caret-right", size: 11)
+            }
+            .foregroundColor(AppColors.textSecondary)
+            .padding(.vertical, 10)
+        }
     }
 
-    private func startDateInfo(for feast: MarianFeastDay) -> some View {
-        VStack(spacing: 8) {
-            if let startDate = feast.nextStartDate(), let feastDate = feast.nextOccurrence() {
-                HStack {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Day 1 (Start)")
-                            .font(AppFonts.bodyFont(10))
-                            .foregroundColor(AppColors.textSecondary)
-                        Text(startDate, style: .date)
-                            .font(AppFonts.bodyFont(14))
-                            .foregroundColor(AppColors.cream)
-                    }
+    // MARK: - Bottom Bar
 
-                    Spacer()
+    /// Always shows what the selection means — the resulting dates and
+    /// the one action
+    @ViewBuilder
+    private var bottomBar: some View {
+        if let feast = selectedFeast,
+           let avail = availability(for: feast),
+           let feastDate = feast.nextOccurrence() {
+            VStack(spacing: 12) {
+                summaryLine(for: avail, feastDate: feastDate)
+                actionButton(for: avail, feast: feast)
+            }
+            .padding(.horizontal, 24)
+            .padding(.top, 14)
+            .padding(.bottom, 104)
+            .overlay(alignment: .top) {
+                Rectangle()
+                    .fill(AppColors.gold.opacity(0.12))
+                    .frame(height: 1)
+            }
+        }
+    }
 
-                    AppIcon("ph-arrow-right", size: 15)
-                        .foregroundColor(AppColors.gold)
+    private func summaryLine(for avail: FeastAvailability, feastDate: Date) -> some View {
+        Group {
+            switch avail {
+            case .startToday:
+                Text("Day 1 · today   →   Day 34 · \(feastDate, style: .date)")
+            case .catchUp(let day):
+                Text("Day \(day) · today   →   Day 34 · \(feastDate, style: .date)")
+            case .waitUntil(let start):
+                Text("Day 1 · \(start, style: .date)   →   Day 34 · \(feastDate, style: .date)")
+            }
+        }
+        .font(AppFonts.bodyFont(12))
+        .foregroundColor(AppColors.textSecondary)
+    }
 
-                    Spacer()
+    @ViewBuilder
+    private func actionButton(for avail: FeastAvailability, feast: MarianFeastDay) -> some View {
+        switch avail {
+        case .startToday(let start):
+            goldButton("Begin Consecration") {
+                viewModel.startConsecration(on: start)
+            }
 
-                    VStack(alignment: .trailing, spacing: 2) {
-                        Text("Day 34 (Consecration)")
-                            .font(AppFonts.bodyFont(10))
-                            .foregroundColor(AppColors.textSecondary)
-                        Text(feastDate, style: .date)
-                            .font(AppFonts.bodyFont(14))
-                            .foregroundColor(AppColors.gold)
-                    }
-                }
-                .padding(16)
+        case .catchUp(let day):
+            goldButton("Begin Today at Day \(day)") {
+                viewModel.startConsecration(startingAt: day)
+            }
+
+        case .waitUntil(let start):
+            // Not actionable yet — state when it becomes so, quietly
+            Text("Begins \(start, style: .date)")
+                .font(AppFonts.headlineFont(16))
+                .foregroundColor(AppColors.textSecondary)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
                 .background(
                     RoundedRectangle(cornerRadius: 12)
                         .fill(AppColors.cardBackground.opacity(0.6))
                 )
-
-                if feast.canStartToday() {
-                    HStack(spacing: 6) {
-                        AppIcon("ph-check-circle-fill", size: 13)
-                            .foregroundColor(.green)
-                        Text("Today is the start date for this feast!")
-                            .font(AppFonts.bodyFont(12))
-                            .foregroundColor(.green)
-                    }
-                } else if let day = catchUpDay(for: feast) {
-                    HStack(spacing: 6) {
-                        AppIcon("ph-clock-counter-clockwise", size: 13)
-                            .foregroundColor(AppColors.gold)
-                        Text("Preparation is underway — begin today at Day \(day)")
-                            .font(AppFonts.bodyFont(12))
-                            .foregroundColor(AppColors.gold)
-                    }
-                } else {
-                    Text("You can begin on \(startDate, style: .date)")
-                        .font(AppFonts.bodyFont(12))
-                        .foregroundColor(AppColors.textSecondary)
-                }
-            }
         }
     }
 
-    // MARK: - Begin Button
-
-    private var beginButton: some View {
-        Button {
-            if let startDate = selectedFeast?.nextStartDate() {
-                viewModel.startConsecration(on: startDate)
-            }
-        } label: {
-            HStack {
-                Text("Begin Consecration")
+    private func goldButton(_ title: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 10) {
+                Text(title)
                     .font(AppFonts.headlineFont(16))
-
                 AppIcon("ph-arrow-right", size: 15)
             }
             .foregroundColor(AppColors.background)
@@ -401,157 +327,61 @@ struct ConsecrationDateSelectionView: View {
         }
     }
 
-    // MARK: - Catch-Up Button
+    // MARK: - Custom Start Sheet
 
-    /// Offered when the 33-day window for the selected feast has already begun.
-    /// Starting at a later day lets Day 34 still land on the feast.
-    private func catchUpButton(day: Int) -> some View {
-        VStack(spacing: 10) {
-            Button {
-                viewModel.startConsecration(startingAt: day)
-            } label: {
-                HStack {
-                    Text("Begin Today at Day \(day)")
-                        .font(AppFonts.headlineFont(16))
+    private var customStartSheet: some View {
+        ZStack {
+            AppColors.background
+                .ignoresSafeArea()
 
-                    AppIcon("ph-arrow-right", size: 15)
-                }
-                .foregroundColor(AppColors.background)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
-                .background(
-                    LinearGradient(
-                        colors: [AppColors.gold, AppColors.goldLight],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-            }
+            VStack(spacing: 14) {
+                Text("Start at Any Day")
+                    .font(AppFonts.headlineFont(20))
+                    .foregroundColor(AppColors.cream)
+                    .padding(.top, 28)
 
-            Text("The preparation for this feast has already begun. Start today at Day \(day) and your consecration day will still fall on the feast.")
-                .font(AppFonts.bodyFont(12))
-                .foregroundColor(AppColors.textSecondary)
-                .multilineTextAlignment(.center)
-                .lineSpacing(3)
-        }
-    }
-
-    // MARK: - Custom Start Section
-
-    /// Lets the user begin at any day of the 33-day preparation, independent
-    /// of feast alignment (e.g., following along in a book or group).
-    private var customStartSection: some View {
-        VStack(spacing: 16) {
-            // Divider with "OR"
-            HStack(spacing: 12) {
-                Rectangle()
-                    .fill(AppColors.gold.opacity(0.25))
-                    .frame(height: 1)
-                Text("OR")
-                    .font(AppFonts.bodyFont(11))
-                    .tracking(2)
+                Text("Praying along with a book or a group? Begin wherever they are.")
+                    .font(AppFonts.bodyFont(13))
                     .foregroundColor(AppColors.textSecondary)
-                Rectangle()
-                    .fill(AppColors.gold.opacity(0.25))
-                    .frame(height: 1)
-            }
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(3)
 
-            Button {
-                withAnimation(.easeInOut(duration: 0.2)) {
-                    showCustomStart.toggle()
+                Picker("Start Day", selection: $customStartDay) {
+                    ForEach(1...33, id: \.self) { day in
+                        Text("Day \(day)")
+                            .font(AppFonts.bodyFont(16))
+                            .foregroundColor(AppColors.cream)
+                            .tag(day)
+                    }
                 }
-            } label: {
-                HStack {
-                    AppIcon("ph-calendar-dots", size: 16)
-                        .foregroundColor(AppColors.gold)
+                .pickerStyle(.wheel)
+                .frame(height: 120)
+                .colorScheme(.dark)
 
-                    Text("Start at Any Day")
-                        .font(AppFonts.bodyFont(16))
-                        .foregroundColor(AppColors.cream)
+                VStack(spacing: 6) {
+                    if let phase = ConsecrationPhase.phase(for: customStartDay) {
+                        Text("\(phase.displayName) — \(phase.subtitle)")
+                            .font(AppFonts.italicFont(13))
+                            .foregroundColor(AppColors.gold.opacity(0.8))
+                    }
 
-                    Spacer()
-
-                    AppIcon("ph-caret-down", size: 14)
+                    Text("Consecration day: \(consecrationDate(startingAt: customStartDay), style: .date)")
+                        .font(AppFonts.bodyFont(12))
                         .foregroundColor(AppColors.textSecondary)
-                        .rotationEffect(.degrees(showCustomStart ? 180 : 0))
                 }
-                .padding(16)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(AppColors.cardBackground)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(AppColors.gold.opacity(0.3), lineWidth: 1)
-                        )
-                )
-            }
 
-            if showCustomStart {
-                customStartPicker
+                goldButton("Begin Today at Day \(customStartDay)") {
+                    showCustomStart = false
+                    viewModel.startConsecration(startingAt: customStartDay)
+                }
+                .padding(.top, 4)
+
+                Spacer()
             }
+            .padding(.horizontal, 24)
         }
-    }
-
-    private var customStartPicker: some View {
-        VStack(spacing: 16) {
-            // Day picker
-            Picker("Start Day", selection: $customStartDay) {
-                ForEach(1...33, id: \.self) { day in
-                    Text(customStartLabel(for: day))
-                        .font(AppFonts.bodyFont(16))
-                        .foregroundColor(AppColors.cream)
-                        .tag(day)
-                }
-            }
-            .pickerStyle(.wheel)
-            .frame(height: 120)
-            .colorScheme(.dark)
-
-            // Phase context for the chosen day
-            if let phase = ConsecrationPhase.phase(for: customStartDay) {
-                Text("\(phase.displayName) — \(phase.subtitle)")
-                    .font(AppFonts.italicFont(13))
-                    .foregroundColor(AppColors.gold.opacity(0.8))
-            }
-
-            // Resulting consecration date
-            Text("Your consecration day will be \(consecrationDate(startingAt: customStartDay), style: .date).")
-                .font(AppFonts.bodyFont(12))
-                .foregroundColor(AppColors.textSecondary)
-                .multilineTextAlignment(.center)
-
-            Button {
-                viewModel.startConsecration(startingAt: customStartDay)
-            } label: {
-                HStack {
-                    Text("Begin Today at Day \(customStartDay)")
-                        .font(AppFonts.headlineFont(16))
-
-                    AppIcon("ph-arrow-right", size: 15)
-                }
-                .foregroundColor(AppColors.background)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
-                .background(
-                    LinearGradient(
-                        colors: [AppColors.gold, AppColors.goldLight],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-            }
-        }
-        .padding(16)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(AppColors.cardBackground.opacity(0.6))
-        )
-    }
-
-    private func customStartLabel(for day: Int) -> String {
-        day == 1 ? "Day 1 — from the beginning" : "Day \(day)"
+        .presentationDetents([.height(440)])
+        .presentationDragIndicator(.visible)
     }
 
     /// The date Day 34 lands on when today counts as `day`.
