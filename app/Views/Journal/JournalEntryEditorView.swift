@@ -65,16 +65,10 @@ struct JournalEntryEditorView: View {
             : "Record your thoughts…"
     }
 
-    // Mirrors JournalEntry.categoryIcon so list and editor match
+    // Same source of truth as JournalEntry.categoryIcon — categories
+    // always render MysteryCategory.iconName
     private var categoryIcon: String {
-        switch lockedCategory {
-        case .joyful:      return "ph-sun"
-        case .sorrowful:   return "ph-cross"
-        case .glorious:    return "ph-sparkle"
-        case .luminous:    return "ph-sun-horizon"
-        case .sevenSorrows: return "ph-heart-fill"
-        case .none:        return "ph-book"
-        }
+        lockedCategory?.iconName ?? "ph-book"
     }
 
     private var formattedDate: String {

@@ -104,19 +104,15 @@ final class JournalEntry {
         return nil
     }
 
-    /// Icon name for the entry type
+    /// Icon name for the entry type. Categories defer to
+    /// `MysteryCategory.iconName` so the journal never shows a different
+    /// icon for a category than the rest of the app; the crown is the
+    /// consecration symbol app-wide (tab, menu, milestones).
     var categoryIcon: String {
         if isConsecrationEntry {
-            return "ph-flame-fill"
+            return "ph-crown-fill"
         }
-        switch category {
-        case .joyful:      return "ph-sun"
-        case .sorrowful:   return "ph-cross"
-        case .glorious:    return "ph-sparkle"
-        case .luminous:    return "ph-sun-horizon"
-        case .sevenSorrows: return "ph-heart-fill"
-        case .none:        return "ph-book"
-        }
+        return category?.iconName ?? "ph-book"
     }
 
     // MARK: - Init (Rosary)

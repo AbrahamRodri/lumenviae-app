@@ -262,11 +262,15 @@ struct SelectMeditationView: View {
     private func iconName(for setName: String) -> String? {
         let name = setName.lowercased()
         if name.contains("traditional") {
+            // The Church's traditional meditations
             return "ch-church"
         } else if name.contains("louis") || name.contains("montfort") {
-            return "ch-bible"
+            // Crown = de Montfort/consecration app-wide (True Devotion
+            // header, Consecrate tab)
+            return "ph-crown-fill"
         } else if name.contains("scriptural") {
-            return "ph-scroll"
+            // Scripture = the Bible glyph, as on Mysteries in Scripture
+            return "ch-bible"
         } else {
             return nil
         }

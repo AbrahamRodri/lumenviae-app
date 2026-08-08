@@ -105,7 +105,7 @@ struct MeditationOptionCard: View {
             title: "St. Louis de Montfort",
             description: "Deeply theological reflections aimed at total consecration through Mary.",
             labels: ["Saints", "Marian"],
-            iconName: "ch-bible",
+            iconName: "ph-crown-fill",
             onToggleFavorite: {}
         )
 
