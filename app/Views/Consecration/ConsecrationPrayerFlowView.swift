@@ -218,7 +218,9 @@ struct ConsecrationPrayerFlowView: View {
         }
         .toolbar(.hidden, for: .navigationBar)
         .onAppear {
-            currentIndex = 0
+            // currentIndex is intentionally NOT reset here: onAppear also
+            // fires when popping back from the meditation view, and the
+            // user should return to the prayer they left, not prayer 1.
             opacity = 1.0
             loadAudioIfAvailable()
         }
@@ -239,7 +241,9 @@ struct ConsecrationPrayerFlowView: View {
         HStack(alignment: .center) {
             // Close Button
             Button {
-                path.removeLast()
+                // A second tap during the pop animation would call
+                // removeLast() on an empty path and crash
+                if !path.isEmpty { path.removeLast() }
             } label: {
                 AppIcon("ph-x", size: 16)
                     .foregroundColor(AppColors.cream.opacity(0.7))
@@ -298,8 +302,10 @@ struct ConsecrationPrayerFlowView: View {
 
                     // Prayer Title Section
                     VStack(spacing: 12) {
-                        // Latin title (if available)
-                        if let latinTitle = prayer.latinTitle {
+                        // Latin title — skipped when it IS the main title
+                        // (Latin display modes), which would duplicate it
+                        if let latinTitle = prayer.latinTitle,
+                           latinTitle.caseInsensitiveCompare(prayer.title) != .orderedSame {
                             Text(latinTitle.uppercased())
                                 .font(AppFonts.bodyFont(11))
                                 .tracking(3)
@@ -407,7 +413,9 @@ struct ConsecrationPrayerFlowView: View {
                     }
 
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                        currentIndex += 1
+                        // Clamp: rapid taps queue multiple increments, and
+                        // running past the last prayer blanks the screen
+                        currentIndex = min(currentIndex + 1, prayers.count - 1)
                         withAnimation(.easeIn(duration: 0.2)) {
                             opacity = 1
                         }

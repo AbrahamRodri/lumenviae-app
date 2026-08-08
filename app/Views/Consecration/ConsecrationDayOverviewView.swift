@@ -42,11 +42,6 @@ struct ConsecrationDayOverviewView: View {
         viewModel.isDayCompleted(displayDayNumber)
     }
 
-    private var prayers: [ConsecrationPrayer] {
-        guard let phase = phase else { return [] }
-        return ConsecrationData.prayers(for: phase)
-    }
-
     private var consecrationDateFormatted: String {
         guard let progress = viewModel.progress else { return "" }
         let calendar = Calendar.current
@@ -157,9 +152,18 @@ struct ConsecrationDayOverviewView: View {
                     .font(.system(size: 72, weight: .light, design: .serif))
                     .foregroundColor(AppColors.cream)
 
-                Text("of 34")
-                    .font(AppFonts.bodyFont(16))
-                    .foregroundColor(AppColors.textSecondary)
+                // Day 34 is the consecration itself, past the 33 days of
+                // preparation — matching the "Day X of 33" language used
+                // everywhere else in the app.
+                if displayDayNumber == 34 {
+                    Text("Consecration Day")
+                        .font(AppFonts.italicFont(16))
+                        .foregroundColor(AppColors.gold)
+                } else {
+                    Text("of 33")
+                        .font(AppFonts.bodyFont(16))
+                        .foregroundColor(AppColors.textSecondary)
+                }
             }
 
             // Completed badge if applicable
