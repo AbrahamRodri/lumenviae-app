@@ -401,21 +401,27 @@ private struct DevotionStepView: View {
                 Spacer(minLength: 24)
 
                 VStack(spacing: 14) {
-                    devotionParagraph(
-                        icon: "ph-scroll",
-                        text: "Around 1712, St. Louis de Montfort wrote True Devotion to Mary — a way of giving yourself entirely to Jesus Christ through the hands of His mother.",
+                    // Icons are Christicons, chosen for meaning: the rosary
+                    // as the Marian way, the heart that receives the gift,
+                    // the baptismal candle behind the promise.
+                    devotionCard(
+                        icon: "ch-rosary",
+                        title: "The Way",
+                        text: "Give yourself entirely to Jesus Christ through the hands of His mother — the way St. Louis de Montfort taught in True Devotion to Mary.",
                         delay: 0.35
                     )
 
-                    devotionParagraph(
-                        icon: "ph-heart-fill",
-                        text: "Nothing is held back. Your prayers, works, joys, and sufferings are entrusted to Mary, who forms Christ in you as she formed Him in her womb.",
+                    devotionCard(
+                        icon: "ch-sacred-heart",
+                        title: "The Gift",
+                        text: "Your prayers, works, joys, and sufferings — all of it entrusted to Mary, who forms Christ in you.",
                         delay: 0.55
                     )
 
-                    devotionParagraph(
-                        icon: "ph-crown-fill",
-                        text: "St. John Paul II took his papal motto — Totus Tuus, \u{201C}totally yours\u{201D} — from Montfort's formula, calling this devotion \u{201C}a decisive turning point\u{201D} in his life.",
+                    devotionCard(
+                        icon: "ch-candle",
+                        title: "The Promise",
+                        text: "A perfect renewal of your baptismal vows — everything given back to God, nothing held back.",
                         delay: 0.75
                     )
                 }
@@ -430,27 +436,33 @@ private struct DevotionStepView: View {
         }
     }
 
-    private func devotionParagraph(icon: String, text: String, delay: Double) -> some View {
+    private func devotionCard(icon: String, title: String, text: String, delay: Double) -> some View {
         HStack(alignment: .top, spacing: 14) {
-            AppIcon(icon, size: 20)
+            AppIcon(icon, size: 22)
                 .foregroundColor(AppColors.gold)
-                .frame(width: 28)
-                .padding(.top, 2)
+                .frame(width: 44, height: 44)
+                .background(
+                    Circle()
+                        .fill(AppColors.gold.opacity(0.1))
+                        .overlay(Circle().stroke(AppColors.gold.opacity(0.25), lineWidth: 1))
+                )
 
-            Text(text)
-                .font(AppFonts.bodyFont(14))
-                .foregroundColor(AppColors.cream.opacity(0.9))
-                .lineSpacing(4)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(AppFonts.headlineFont(16))
+                    .foregroundColor(AppColors.cream)
+
+                Text(text)
+                    .font(AppFonts.bodyFont(14))
+                    .foregroundColor(AppColors.textSecondary)
+                    .lineSpacing(4)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(14)
         .background(
             RoundedRectangle(cornerRadius: 14)
                 .fill(AppColors.cardBackground.opacity(0.6))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 14)
-                        .stroke(AppColors.gold.opacity(0.15), lineWidth: 1)
-                )
         )
         .staggeredReveal(delay: delay)
     }
@@ -480,14 +492,14 @@ private struct RhythmStepView: View {
 
                 VStack(spacing: 14) {
                     rhythmRow(
-                        icon: "ph-hands-praying",
+                        icon: "ch-praying-hands",
                         title: "Pray",
                         text: "The prayers of the preparation — Veni Creator, Ave Maris Stella, the litanies — with chanted audio.",
                         delay: 0.35
                     )
 
                     rhythmRow(
-                        icon: "ph-book-open",
+                        icon: "ch-bible",
                         title: "Read",
                         text: "A short spiritual reading chosen for the day, from Scripture and True Devotion.",
                         delay: 0.55
@@ -503,7 +515,7 @@ private struct RhythmStepView: View {
 
                 Spacer(minLength: 20)
 
-                Text("Ten to fifteen unhurried minutes a day.")
+                Text("Ten to fifteen minutes a day.")
                     .font(AppFonts.italicFont(15))
                     .foregroundColor(AppColors.textSecondary)
                     .staggeredReveal(delay: 0.9)
@@ -563,7 +575,7 @@ private struct JourneyStepView: View {
                 VStack(spacing: 14) {
                     StepLabel(text: "THE JOURNEY")
 
-                    Text("Thirty-Three Days,\nFour Movements")
+                    Text("The Path to Consecration")
                         .font(AppFonts.headlineFont(26))
                         .foregroundColor(AppColors.cream)
                         .multilineTextAlignment(.center)
