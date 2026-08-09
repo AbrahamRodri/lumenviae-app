@@ -23,6 +23,7 @@ enum ConsecrationRoute: Hashable {
     case meditation(dayNumber: Int)
     case journal(dayNumber: Int)
     case completion
+    case trueDevotionReader
 }
 
 // MARK: - ConsecrationTabView
@@ -102,6 +103,9 @@ struct ConsecrationTabView: View {
 
         case .completion:
             ConsecrationCompletionView(path: $path)
+
+        case .trueDevotionReader:
+            TrueDevotionReaderView()
         }
     }
 }

@@ -52,7 +52,7 @@ struct appApp: App {
             }
         }
         .environment(userSettings)
-        .modelContainer(for: [PrayerSession.self, JournalEntry.self, ConsecrationProgress.self])
+        .modelContainer(for: [PrayerSession.self, JournalEntry.self, ConsecrationProgress.self, TrueDevotionReadingProgress.self])
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active {
                 resetAlternateIconIfNeeded()

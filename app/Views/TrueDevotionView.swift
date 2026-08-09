@@ -33,6 +33,12 @@ struct TrueDevotionView: View {
                         .padding(.bottom, 20)
                         .devotionalEntrance(delay: 0.08)
 
+                    // Read the complete book
+                    readFullBookCard
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 20)
+                        .devotionalEntrance(delay: 0.12)
+
                     // Words of the saint (tappable, cycles quotes)
                     MontfortQuoteCard()
                         .padding(.horizontal, 20)
@@ -131,6 +137,50 @@ struct TrueDevotionView: View {
                 .strokeBorder(AppColors.gold.opacity(0.2), lineWidth: 1)
         )
         .overlay(OrnateCornersOverlay(inset: 8, length: 12, opacity: 0.4))
+    }
+}
+
+// MARK: - Read Full Book Card
+
+extension TrueDevotionView {
+
+    /// Entry into the complete Faber translation with saved reading progress
+    private var readFullBookCard: some View {
+        NavigationLink {
+            TrueDevotionReaderView()
+        } label: {
+            HStack(spacing: 14) {
+                AppIcon("ph-book-open-fill", size: 24)
+                    .foregroundColor(AppColors.background)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("READ THE FULL BOOK")
+                        .font(AppFonts.labelFont(10))
+                        .tracking(2)
+                        .foregroundColor(AppColors.background.opacity(0.7))
+
+                    Text("The complete text, chapter by chapter")
+                        .font(AppFonts.headlineFont(16))
+                        .foregroundColor(AppColors.background)
+                        .multilineTextAlignment(.leading)
+                }
+
+                Spacer()
+
+                AppIcon("ph-caret-right", size: 16)
+                    .foregroundColor(AppColors.background.opacity(0.7))
+            }
+            .padding(16)
+            .background(
+                LinearGradient(
+                    colors: [AppColors.gold, AppColors.goldLight],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 14))
+        }
+        .buttonStyle(SacredCardButtonStyle())
     }
 }
 

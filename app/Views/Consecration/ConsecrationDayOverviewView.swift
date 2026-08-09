@@ -107,6 +107,13 @@ struct ConsecrationDayOverviewView: View {
                     // Start Button
                     startButton
 
+                    // Read the source text (root only)
+                    if dayNumber == nil {
+                        Spacer()
+                            .frame(height: 16)
+                        readTheBookCard
+                    }
+
                     // Restart / start over (root only)
                     if dayNumber == nil {
                         Spacer()
@@ -340,6 +347,42 @@ struct ConsecrationDayOverviewView: View {
         .accessibilityLabel(
             "Day \(day)\(completed ? ", completed" : "")\(isCurrent ? ", today" : "")\(accessible ? "" : ", locked")"
         )
+    }
+
+    // MARK: - Read the Book
+
+    /// The consecration draws on True Devotion — the full text is a tap
+    /// away for anyone who wants to go deeper than the daily readings.
+    private var readTheBookCard: some View {
+        Button {
+            path.append(ConsecrationRoute.trueDevotionReader)
+        } label: {
+            HStack(spacing: 16) {
+                AppIcon("ph-book-open", size: 24)
+                    .foregroundColor(AppColors.gold)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("THE SOURCE TEXT")
+                        .font(AppFonts.bodyFont(10))
+                        .tracking(1.5)
+                        .foregroundColor(AppColors.textSecondary)
+
+                    Text("Read True Devotion in full")
+                        .font(AppFonts.bodyFont(15))
+                        .foregroundColor(AppColors.cream)
+                }
+
+                Spacer()
+
+                AppIcon("ph-caret-right", size: 14)
+                    .foregroundColor(AppColors.gold.opacity(0.6))
+            }
+            .padding(16)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(AppColors.cardBackground.opacity(0.6))
+            )
+        }
     }
 
     // MARK: - Restart
