@@ -171,14 +171,7 @@ extension TrueDevotionView {
                     .foregroundColor(AppColors.background.opacity(0.7))
             }
             .padding(16)
-            .background(
-                LinearGradient(
-                    colors: [AppColors.gold, AppColors.goldLight],
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 14))
+            .goldCTABackground()
         }
         .buttonStyle(SacredCardButtonStyle())
     }

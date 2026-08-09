@@ -74,12 +74,15 @@ final class TrueDevotionReadingProgress {
         updatedAt = Date()
     }
 
-    func completedCount(of book: TrueDevotionBook) -> Int {
-        book.chapters.filter { isChapterCompleted($0.id) }.count
+    /// Counts against a set the caller already parsed. Reading
+    /// `completedChapterIDs` re-splits the stored string every time, so a
+    /// screen that checks many chapters should parse once and pass it here.
+    func completedCount(of book: TrueDevotionBook, using ids: Set<String>) -> Int {
+        book.chapters.reduce(0) { $0 + (ids.contains($1.id) ? 1 : 0) }
     }
 
-    func progressPercentage(of book: TrueDevotionBook) -> Double {
+    func progressPercentage(of book: TrueDevotionBook, using ids: Set<String>) -> Double {
         guard !book.chapters.isEmpty else { return 0 }
-        return Double(completedCount(of: book)) / Double(book.chapters.count)
+        return Double(completedCount(of: book, using: ids)) / Double(book.chapters.count)
     }
 }

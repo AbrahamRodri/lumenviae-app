@@ -27,6 +27,7 @@ struct appApp: App {
 
     init() {
         FontRegistrar.registerBundledFonts()
+        TrueDevotionBookData.preload()
     }
 
     var body: some Scene {
