@@ -17,7 +17,10 @@ struct TrueDevotionChapterReaderView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     @Environment(UserSettings.self) private var settings
-    @Query private var progressRecords: [TrueDevotionReadingProgress]
+
+    /// Surfaced to the user rather than dropped — losing someone's place in
+    /// a book they are praying through should never fail quietly.
+    @State private var saveError: String?
 
     /// Paragraph id currently at the top of the screen (scroll tracking)
     @State private var topParagraphID: Int?
@@ -28,6 +31,11 @@ struct TrueDevotionChapterReaderView: View {
     /// this gate it would silently record progress for a chapter the user
     /// never opened.
     @State private var hasInteracted = false
+
+    /// True once the end of the chapter has been on screen. A chapter short
+    /// enough to fit in one screenful is finished without any scrolling, so
+    /// leaving via the toolbar still has to count as having read it.
+    @State private var hasReachedEnd = false
 
     /// Sentinel id for the end-of-chapter block in the scroll layout
     private static let endBlockID = Int.max
@@ -49,7 +57,7 @@ struct TrueDevotionChapterReaderView: View {
                             .id(-1)
 
                         ForEach(chapter.paragraphs) { paragraph in
-                            paragraphView(paragraph, isFirst: paragraph.id == firstTextParagraphID(chapter))
+                            paragraphView(paragraph, isFirst: paragraph.id == chapter.firstTextParagraphID)
                                 .id(paragraph.id)
                         }
 
@@ -58,6 +66,7 @@ struct TrueDevotionChapterReaderView: View {
                             // Reading to the end is what marks the chapter
                             // read — no button press required.
                             .onAppear {
+                                hasReachedEnd = true
                                 if hasInteracted { finishChapter() }
                             }
                     }
@@ -79,7 +88,10 @@ struct TrueDevotionChapterReaderView: View {
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: { dismiss() }) {
+                Button {
+                    if hasReachedEnd { finishChapter() }
+                    dismiss()
+                } label: {
                     HStack(spacing: 6) {
                         AppIcon("ph-caret-left", size: 14)
                         Text("Contents")
@@ -93,23 +105,43 @@ struct TrueDevotionChapterReaderView: View {
         .onChange(of: topParagraphID) { _, newValue in
             recordPosition(newValue)
         }
-        .onDisappear {
-            try? modelContext.save()
+        .onDisappear(perform: save)
+        .alert(
+            "Something went wrong",
+            isPresented: Binding(
+                get: { saveError != nil },
+                set: { if !$0 { saveError = nil } }
+            )
+        ) {
+            Button("OK", role: .cancel) { saveError = nil }
+        } message: {
+            Text(saveError ?? "")
         }
     }
 
     // MARK: - Progress
 
-    /// The single reading-progress record, created on first use
+    /// Fetches the single reading-progress record straight from the context
+    /// rather than from a @Query snapshot. Scroll callbacks fire faster than
+    /// a @Query refreshes, so reading the snapshot would miss a record
+    /// inserted moments earlier and insert a duplicate on every event.
+    private func currentProgress() -> TrueDevotionReadingProgress? {
+        var descriptor = FetchDescriptor<TrueDevotionReadingProgress>(
+            sortBy: [SortDescriptor(\.updatedAt, order: .reverse)]
+        )
+        descriptor.fetchLimit = 1
+        return try? modelContext.fetch(descriptor).first
+    }
+
     private func ensureProgress() -> TrueDevotionReadingProgress {
-        if let existing = progressRecords.first { return existing }
+        if let existing = currentProgress() { return existing }
         let record = TrueDevotionReadingProgress()
         modelContext.insert(record)
         return record
     }
 
     private func restorePosition() {
-        guard let progress = progressRecords.first,
+        guard let progress = currentProgress(),
               progress.lastChapterID == chapterID,
               progress.lastParagraphIndex > 0,
               !progress.isChapterCompleted(chapterID) else { return }
@@ -120,18 +152,28 @@ struct TrueDevotionChapterReaderView: View {
     /// decided here: the end block is the last item, so it can never scroll
     /// up to the top and would never be reported.
     private func recordPosition(_ paragraphID: Int?) {
-        guard hasInteracted else { return }
-        guard let paragraphID, paragraphID >= 0, paragraphID != Self.endBlockID else { return }
+        guard hasInteracted, let paragraphID, paragraphID != Self.endBlockID else { return }
+        // The header sits above the first paragraph and carries id -1;
+        // reaching it means the reader is back at the start of the chapter.
+        let index = max(paragraphID, 0)
         let progress = ensureProgress()
         guard !progress.isChapterCompleted(chapterID) else { return }
-        progress.savePosition(chapterID: chapterID, paragraphIndex: paragraphID)
+        progress.savePosition(chapterID: chapterID, paragraphIndex: index)
     }
 
     private func finishChapter() {
         let progress = ensureProgress()
         progress.markChapterCompleted(chapterID)
         progress.savePosition(chapterID: chapterID, paragraphIndex: 0)
-        try? modelContext.save()
+        save()
+    }
+
+    private func save() {
+        do {
+            try modelContext.save()
+        } catch {
+            saveError = "Your place in the book could not be saved. \(error.localizedDescription)"
+        }
     }
 
     // MARK: - Header
@@ -165,10 +207,6 @@ struct TrueDevotionChapterReaderView: View {
     }
 
     // MARK: - Paragraphs
-
-    private func firstTextParagraphID(_ chapter: TrueDevotionChapter) -> Int? {
-        chapter.paragraphs.first { $0.kind == .text }?.id
-    }
 
     @ViewBuilder
     private func paragraphView(_ paragraph: TrueDevotionParagraph, isFirst: Bool) -> some View {
@@ -215,14 +253,7 @@ struct TrueDevotionChapterReaderView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
                     .padding(.horizontal, 16)
-                    .background(
-                        LinearGradient(
-                            colors: [AppColors.gold, AppColors.goldLight],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                    .goldCTABackground()
                 }
                 // Moving on covers the short chapters a reader finishes
                 // without ever needing to scroll.
@@ -247,15 +278,9 @@ struct TrueDevotionChapterReaderView: View {
                             .foregroundColor(AppColors.background)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 16)
-                            .background(
-                                LinearGradient(
-                                    colors: [AppColors.gold, AppColors.goldLight],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .clipShape(RoundedRectangle(cornerRadius: 14))
+                            .goldCTABackground()
                     }
+                    .buttonStyle(GoldCTAButtonStyle())
                     .padding(.top, 8)
                 }
             }

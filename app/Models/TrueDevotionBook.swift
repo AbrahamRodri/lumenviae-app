@@ -32,10 +32,6 @@ struct TrueDevotionBook: Decodable {
         guard let index = chapterIndex(id: id), index + 1 < chapters.count else { return nil }
         return chapters[index + 1]
     }
-
-    var totalWordCount: Int {
-        chapters.reduce(0) { $0 + $1.wordCount }
-    }
 }
 
 // MARK: - TrueDevotionPart
@@ -58,13 +54,28 @@ struct TrueDevotionChapter: Decodable, Identifiable {
     let title: String
     let paragraphs: [TrueDevotionParagraph]
 
-    var wordCount: Int {
-        paragraphs.reduce(0) { $0 + $1.text.split(separator: " ").count }
+    /// Rounded-up estimate at a contemplative ~200 words per minute.
+    /// Counted once while decoding — the chapter list asks every row for
+    /// this on each render, and counting words walks the whole book.
+    let estimatedMinutes: Int
+
+    /// The paragraph that gets the illuminated initial
+    let firstTextParagraphID: Int?
+
+    private enum CodingKeys: String, CodingKey {
+        case id, part, title, paragraphs
     }
 
-    /// Rounded-up estimate at a contemplative ~200 words per minute
-    var estimatedMinutes: Int {
-        max(1, Int((Double(wordCount) / 200.0).rounded(.up)))
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        part = try container.decode(Int.self, forKey: .part)
+        title = try container.decode(String.self, forKey: .title)
+        paragraphs = try container.decode([TrueDevotionParagraph].self, forKey: .paragraphs)
+
+        let words = paragraphs.reduce(0) { $0 + $1.text.split(separator: " ").count }
+        estimatedMinutes = max(1, Int((Double(words) / 200.0).rounded(.up)))
+        firstTextParagraphID = paragraphs.first { $0.kind == .text }?.id
     }
 }
 
@@ -90,6 +101,13 @@ enum TrueDevotionBookData {
     /// missing or corrupt, which is a build error rather than a runtime
     /// condition — views fall back to an empty state.
     static let book: TrueDevotionBook? = load()
+
+    /// Decodes the book off the main thread so the first tap into the
+    /// reader doesn't pay for parsing 280KB of JSON before it can draw.
+    /// Safe to call more than once; `book` is only ever decoded once.
+    static func preload() {
+        Task.detached(priority: .utility) { _ = book }
+    }
 
     private static func load() -> TrueDevotionBook? {
         guard let url = Bundle.main.url(forResource: "TrueDevotionBook", withExtension: "json") else {
