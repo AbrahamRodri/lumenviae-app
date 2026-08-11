@@ -169,10 +169,7 @@ mid-sentence means text was dropped at the seam.
 
 ## Readings still in doubt
 
-Judgement calls the sources could not settle. Each is worth a second look:
-
-- **introduction** — “hiding herself, even from herself; as well as from every other creature”  
-  Wording confirmed against the print; the semicolon is not recoverable from the OCR text layer. Only the page image can settle it.
+None outstanding.
 
 ## Readings settled
 
@@ -192,6 +189,10 @@ Closed out against a source — do not re-open these without new evidence:
   Confirmed "inseparable" — the sentence that follows repeats the word.
 - **consists** — “Men, says St. Augustine, make a vow at their Baptism”  
   Attribution confirmed as Augustine; the next sentence names him again.
+- **introduction** — “hiding herself, even from herself; as well as from every other creature”  
+  Wording confirmed against the print. The semicolon cannot be recovered from the OCR text layer and is not worth chasing — kept as shipped.
+- **motives** — “* Boudon says, in his Saint Esclavage, …—F. W. F.”  
+  Faber's own translator's footnote, kept in the body on purpose. Removing it would shift every later paragraph id in this chapter and move readers' saved places.
 
 The whole text has since been diffed word for word against a second independent
 copy of the same translation (ecatholic2000.com) and, where the two disagreed,
