@@ -40,9 +40,9 @@ struct PrayerCompletionView: View {
     @State private var showQuote = false
     @State private var showButtons = false
 
-    // Quote from MockDataService
-    private var quote: (text: String, author: String) {
-        MockDataService.todaysQuote
+    /// Deliberately not the home screen's line — see RosaryQuotes.
+    private var quote: RosaryQuote {
+        RosaryQuotes.afterPraying
     }
 
     var body: some View {
@@ -94,7 +94,8 @@ struct PrayerCompletionView: View {
                 // Quote card
                 CompletionQuoteCard(
                     quote: quote.text,
-                    author: quote.author
+                    author: quote.author,
+                    source: quote.source
                 )
                 .padding(.horizontal, 20)
                 .opacity(showQuote ? 1 : 0)
@@ -602,6 +603,7 @@ struct CompletionBadge: View {
 struct CompletionQuoteCard: View {
     let quote: String
     let author: String
+    var source: String? = nil
 
     var body: some View {
         VStack(spacing: 16) {
@@ -632,6 +634,14 @@ struct CompletionQuoteCard: View {
                 Rectangle()
                     .fill(AppColors.gold.opacity(0.5))
                     .frame(width: 24, height: 1)
+            }
+
+            if let source {
+                Text(source)
+                    .font(AppFonts.italicFont(11))
+                    .foregroundColor(AppColors.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.top, -6)
             }
         }
         .padding(.horizontal, 24)
