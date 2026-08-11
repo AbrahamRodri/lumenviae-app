@@ -6,60 +6,39 @@
 //  Shows overall progress, a continue-reading card that resumes the
 //  exact spot, and every chapter grouped by part with its read state.
 //
+//  Reading state is owned by TrueDevotionReaderViewModel; this view and the
+//  chapter reader below it only present it.
+//
 
 import SwiftUI
 import SwiftData
 
 struct TrueDevotionReaderView: View {
 
+    // MARK: - Properties
+
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
 
-    // Sorted so that if more than one record ever exists, every screen
-    // agrees on which one is current instead of picking arbitrarily.
-    @Query(sort: \TrueDevotionReadingProgress.updatedAt, order: .reverse)
-    private var progressRecords: [TrueDevotionReadingProgress]
+    /// Owned here and handed down explicitly, so every chapter pushed from
+    /// this screen — including the next-chapter chain — shares one instance.
+    @State private var viewModel = TrueDevotionReaderViewModel()
 
-    private var book: TrueDevotionBook? { TrueDevotionBookData.book }
-    private var progress: TrueDevotionReadingProgress? { progressRecords.first }
+    let library: TrueDevotionLibrary
 
-    /// Parsed once per render and threaded through the rows — the stored
-    /// form is a comma-separated string that re-splits on every read.
-    private var completedIDs: Set<String> { progress?.completedChapterIDs ?? [] }
+    init(library: TrueDevotionLibrary = .shared) {
+        self.library = library
+    }
+
+    // MARK: - Body
 
     var body: some View {
         ZStack {
             AppColors.appGradient
                 .ignoresSafeArea()
 
-            if let book {
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: 0) {
-                        header(book)
-                            .devotionalEntrance()
-
-                        if let progress, progress.hasStartedReading {
-                            progressSummary(book: book, progress: progress, completed: completedIDs)
-                                .padding(.horizontal, 20)
-                                .padding(.bottom, 16)
-                                .devotionalEntrance(delay: 0.08)
-                        }
-
-                        if let continueChapter = continueChapter(in: book) {
-                            continueCard(continueChapter)
-                                .padding(.horizontal, 20)
-                                .padding(.bottom, 28)
-                                .devotionalEntrance(delay: 0.12)
-                        }
-
-                        chapterList(book)
-                            .padding(.horizontal, 20)
-
-                        sourceNote(book)
-                            .padding(.horizontal, 32)
-                            .padding(.top, 28)
-                            .padding(.bottom, 40)
-                    }
-                }
+            if let book = library.book {
+                content(book)
             } else {
                 Text("The book could not be loaded.")
                     .font(AppFonts.bodyFont(15))
@@ -79,21 +58,52 @@ struct TrueDevotionReaderView: View {
                 }
             }
         }
+        .onAppear {
+            viewModel.setModelContext(modelContext)
+            viewModel.loadProgress()
+        }
+        .alert(
+            "Something went wrong",
+            isPresented: Binding(
+                get: { viewModel.errorMessage != nil },
+                set: { if !$0 { viewModel.errorMessage = nil } }
+            )
+        ) {
+            Button("OK", role: .cancel) { viewModel.errorMessage = nil }
+        } message: {
+            Text(viewModel.errorMessage ?? "")
+        }
     }
 
-    // MARK: - Continue Target
+    private func content(_ book: TrueDevotionBook) -> some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 0) {
+                header(book)
+                    .devotionalEntrance()
 
-    /// The chapter the continue card resumes: the one last opened if it is
-    /// unfinished, otherwise the first unfinished chapter.
-    private func continueChapter(in book: TrueDevotionBook) -> TrueDevotionChapter? {
-        guard let progress, progress.hasStartedReading else { return nil }
-        let completed = completedIDs
-        if let lastID = progress.lastChapterID,
-           !completed.contains(lastID),
-           let chapter = book.chapter(id: lastID) {
-            return chapter
+                if viewModel.hasStartedReading {
+                    progressSummary(book)
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 16)
+                        .devotionalEntrance(delay: 0.08)
+                }
+
+                if let continueChapter = viewModel.continueChapter(in: book) {
+                    continueCard(continueChapter)
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 28)
+                        .devotionalEntrance(delay: 0.12)
+                }
+
+                chapterList(book)
+                    .padding(.horizontal, 20)
+
+                sourceNote(book)
+                    .padding(.horizontal, 32)
+                    .padding(.top, 28)
+                    .padding(.bottom, 40)
+            }
         }
-        return book.chapters.first { !completed.contains($0.id) }
     }
 
     // MARK: - Header
@@ -124,12 +134,8 @@ struct TrueDevotionReaderView: View {
 
     // MARK: - Progress Summary
 
-    private func progressSummary(
-        book: TrueDevotionBook,
-        progress: TrueDevotionReadingProgress,
-        completed completedIDs: Set<String>
-    ) -> some View {
-        let completed = progress.completedCount(of: book, using: completedIDs)
+    private func progressSummary(_ book: TrueDevotionBook) -> some View {
+        let completed = viewModel.completedCount(of: book)
         let total = book.chapters.count
 
         return VStack(spacing: 8) {
@@ -140,7 +146,7 @@ struct TrueDevotionReaderView: View {
 
                     RoundedRectangle(cornerRadius: 3)
                         .fill(AppColors.gold)
-                        .frame(width: geometry.size.width * progress.progressPercentage(of: book, using: completedIDs))
+                        .frame(width: geometry.size.width * viewModel.progressPercentage(of: book))
                 }
             }
             .frame(height: 4)
@@ -157,7 +163,11 @@ struct TrueDevotionReaderView: View {
 
     private func continueCard(_ chapter: TrueDevotionChapter) -> some View {
         NavigationLink {
-            TrueDevotionChapterReaderView(chapterID: chapter.id)
+            TrueDevotionChapterReaderView(
+                chapterID: chapter.id,
+                viewModel: viewModel,
+                library: library
+            )
         } label: {
             HStack(spacing: 14) {
                 AppIcon("ph-book-open-fill", size: 22)
@@ -190,16 +200,14 @@ struct TrueDevotionReaderView: View {
     // MARK: - Chapter List
 
     private func chapterList(_ book: TrueDevotionBook) -> some View {
-        let completed = completedIDs
-
-        return VStack(spacing: 10) {
+        VStack(spacing: 10) {
             ForEach(Array(book.chapters.enumerated()), id: \.element.id) { index, chapter in
                 if let partTitle = partHeaderTitle(before: chapter, in: book) {
                     partHeader(partTitle)
                         .padding(.top, index == 0 ? 0 : 18)
                 }
 
-                chapterRow(chapter, isCompleted: completed.contains(chapter.id))
+                chapterRow(chapter)
                     .devotionalEntrance(delay: 0.16 + Double(index) * 0.03)
             }
         }
@@ -222,15 +230,16 @@ struct TrueDevotionReaderView: View {
             .padding(.top, 6)
     }
 
-    private func chapterRow(_ chapter: TrueDevotionChapter, isCompleted: Bool) -> some View {
-        // "In progress" means genuinely part-way through — a chapter merely
-        // opened at the top has nothing to resume and reads as unstarted.
-        let isInProgress = !isCompleted
-            && progress?.lastChapterID == chapter.id
-            && (progress?.lastParagraphIndex ?? 0) > 0
+    private func chapterRow(_ chapter: TrueDevotionChapter) -> some View {
+        let isCompleted = viewModel.isCompleted(chapter.id)
+        let isInProgress = viewModel.isInProgress(chapter.id)
 
         return NavigationLink {
-            TrueDevotionChapterReaderView(chapterID: chapter.id)
+            TrueDevotionChapterReaderView(
+                chapterID: chapter.id,
+                viewModel: viewModel,
+                library: library
+            )
         } label: {
             HStack(spacing: 14) {
                 AppIcon(

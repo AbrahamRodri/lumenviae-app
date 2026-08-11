@@ -3,15 +3,20 @@
 //  Lumen Viae
 //
 //  Models for the full text of St. Louis de Montfort's "True Devotion to
-//  the Blessed Virgin" (Fr. Faber's 1862 translation, public domain),
-//  decoded from the bundled TrueDevotionBook.json resource.
+//  the Blessed Virgin" (Fr. Faber's 1862 translation, public domain).
+//
+//  Loading lives in TrueDevotionLibrary; these are pure data. The text is
+//  generated from Tools/TrueDevotion — see the README there.
+//
+//  Declared nonisolated so the book can be decoded off the main actor at
+//  launch — these carry no UI state and are immutable once decoded.
 //
 
 import Foundation
 
 // MARK: - TrueDevotionBook
 
-struct TrueDevotionBook: Decodable {
+nonisolated struct TrueDevotionBook: Decodable {
     let title: String
     let author: String
     let translator: String
@@ -36,7 +41,7 @@ struct TrueDevotionBook: Decodable {
 
 // MARK: - TrueDevotionPart
 
-struct TrueDevotionPart: Decodable, Identifiable {
+nonisolated struct TrueDevotionPart: Decodable, Identifiable {
     /// 1 or 2; chapters with part 0 (the Introduction) belong to no part
     let number: Int
     let title: String
@@ -46,7 +51,7 @@ struct TrueDevotionPart: Decodable, Identifiable {
 
 // MARK: - TrueDevotionChapter
 
-struct TrueDevotionChapter: Decodable, Identifiable {
+nonisolated struct TrueDevotionChapter: Decodable, Identifiable {
     /// Stable slug ("introduction", "motives", …) — persisted in reading
     /// progress, so it must never change once shipped.
     let id: String
@@ -81,8 +86,8 @@ struct TrueDevotionChapter: Decodable, Identifiable {
 
 // MARK: - TrueDevotionParagraph
 
-struct TrueDevotionParagraph: Decodable, Identifiable, Equatable {
-    enum Kind: String, Decodable {
+nonisolated struct TrueDevotionParagraph: Decodable, Identifiable, Equatable {
+    nonisolated enum Kind: String, Decodable {
         case text
         case subheading
     }
@@ -93,33 +98,3 @@ struct TrueDevotionParagraph: Decodable, Identifiable, Equatable {
     let text: String
 }
 
-// MARK: - TrueDevotionBookData
-
-enum TrueDevotionBookData {
-
-    /// The decoded book, loaded once. Nil only if the bundled resource is
-    /// missing or corrupt, which is a build error rather than a runtime
-    /// condition — views fall back to an empty state.
-    static let book: TrueDevotionBook? = load()
-
-    /// Decodes the book off the main thread so the first tap into the
-    /// reader doesn't pay for parsing 280KB of JSON before it can draw.
-    /// Safe to call more than once; `book` is only ever decoded once.
-    static func preload() {
-        Task.detached(priority: .utility) { _ = book }
-    }
-
-    private static func load() -> TrueDevotionBook? {
-        guard let url = Bundle.main.url(forResource: "TrueDevotionBook", withExtension: "json") else {
-            assertionFailure("TrueDevotionBook.json missing from bundle")
-            return nil
-        }
-        do {
-            let data = try Data(contentsOf: url)
-            return try JSONDecoder().decode(TrueDevotionBook.self, from: data)
-        } catch {
-            assertionFailure("TrueDevotionBook.json failed to decode: \(error)")
-            return nil
-        }
-    }
-}
