@@ -232,10 +232,7 @@ struct DropCapText: View {
             let cap = Text(String(first))
                 .font(AppFonts.titleFont(capSize))
                 .foregroundColor(AppColors.gold)
-            let rest = Text(String(text.dropFirst()))
-                .font(AppFonts.readingFont(bodySize))
-                .foregroundColor(textColor)
-            Text("\(cap)\(rest)")
+            Text("\(cap)\(remainder)")
                 .lineSpacing(7)
         } else {
             Text(text)
@@ -243,6 +240,23 @@ struct DropCapText: View {
                 .foregroundColor(textColor)
                 .lineSpacing(7)
         }
+    }
+
+    /// The paragraph after the initial. When the illuminated initial is an
+    /// opening quotation mark, the closing mark is gilded to match it — a
+    /// lone cream quote answering a gold one reads as an oversight.
+    private var remainder: Text {
+        let rest = String(text.dropFirst())
+        let bodyFont = AppFonts.readingFont(bodySize)
+
+        guard text.first == "\u{201C}",
+              let close = rest.firstIndex(of: "\u{201D}") else {
+            return Text(rest).font(bodyFont).foregroundColor(textColor)
+        }
+
+        return Text(String(rest[..<close])).font(bodyFont).foregroundColor(textColor)
+            + Text(String(rest[close])).font(bodyFont).foregroundColor(AppColors.gold)
+            + Text(String(rest[rest.index(after: close)...])).font(bodyFont).foregroundColor(textColor)
     }
 }
 

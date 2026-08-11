@@ -104,6 +104,10 @@ struct MarianLibraryView: View {
         let title: String
         let subtitle: String
         let entries: [LibraryEntry]
+
+        /// Closing line for sections that only sample a larger tradition,
+        /// so the list never reads as the whole of it.
+        var footnote: String? = nil
     }
 
     struct LibraryEntry: Identifiable {
@@ -259,7 +263,7 @@ struct MarianLibraryView: View {
                 LibraryEntry(
                     title: "St. John Paul II",
                     detail: "1920-2005 — Totus Tuus",
-                    text: "His papal motto, Totus Tuus — \u{201C}totally yours\u{201D} — was taken directly from St. Louis de Montfort's formula of consecration. \u{201C}The Rosary is my favorite prayer,\u{201D} he said. In Rosarium Virginis Mariae (2002) he gave the Church the Luminous Mysteries, and in Redemptoris Mater he presented Mary as the model of the Church's pilgrimage of faith."
+                    text: "His papal motto, Totus Tuus — \u{201C}totally yours\u{201D} — was taken directly from St. Louis de Montfort's formula of consecration. In Rosarium Virginis Mariae (2002) he gave the Church the Luminous Mysteries, and in Redemptoris Mater he presented Mary as the model of the Church's pilgrimage of faith."
                 ),
                 LibraryEntry(
                     title: "St. Padre Pio",
@@ -292,7 +296,7 @@ struct MarianLibraryView: View {
                 LibraryEntry(
                     title: "The Rosary Popes",
                     detail: "Leo XIII to St. John Paul II",
-                    text: "Pope Leo XIII wrote eleven encyclicals on the Rosary — earning the name \u{201C}the Rosary Pope\u{201D} — and dedicated the month of October to it. At Fatima in 1917, Our Lady asked for the daily Rosary in every apparition. St. John Paul II crowned this heritage in Rosarium Virginis Mariae (2002), calling the Rosary his favorite prayer and proposing the Luminous Mysteries to the Church."
+                    text: "Pope Leo XIII wrote eleven encyclicals on the Rosary — earning the name \u{201C}the Rosary Pope\u{201D} — and dedicated the month of October to it. At Fatima in 1917, Our Lady asked for the daily Rosary in every apparition. St. John Paul II crowned this heritage in Rosarium Virginis Mariae (2002), proposing the Luminous Mysteries to the Church."
                 )
             ]
         ),
@@ -306,16 +310,6 @@ struct MarianLibraryView: View {
                     title: "Mediatrix of All Graces",
                     detail: "Mediatrix Omnium Gratiarum",
                     text: "All grace comes from Christ, the one Mediator between God and men (1 Timothy 2:5) — yet God willed that His grace should reach us through Mary. As she gave the world its Redeemer, so she dispenses what He won on Calvary. St. Bernard taught: \u{201C}God has willed that we should have nothing which does not pass through the hands of Mary.\u{201D} Leo XIII wrote that nothing of the immense treasury of grace is imparted to us except through her, and Benedict XV granted a feast of Mary, Mediatrix of All Graces, in 1921. Though not yet solemnly defined, many of the faithful pray for its definition as the fifth Marian dogma — and it is the keystone of St. Louis de Montfort's True Devotion."
-                ),
-                LibraryEntry(
-                    title: "Mystical Rose",
-                    detail: "Rosa Mystica",
-                    text: "Mary is the flower of humanity, the rose without thorns — conceived without sin. As the rose is the queen of flowers, she is the Queen of all creatures, and the beauty of her holiness draws souls to the fragrance of Christ."
-                ),
-                LibraryEntry(
-                    title: "Tower of David",
-                    detail: "Turris Davidica",
-                    text: "The tower of David was hung with a thousand shields for the defense of Jerusalem. Mary is the Church's defense: invincible in faith, terrible to the powers of darkness. \u{201C}Terrible as an army set in array\u{201D} (Canticles 6:3)."
                 ),
                 LibraryEntry(
                     title: "Morning Star",
@@ -332,7 +326,8 @@ struct MarianLibraryView: View {
                     detail: "Regina Pacis",
                     text: "Added to the Litany by Benedict XV amid the First World War, this title invokes Mary as mother of the Prince of Peace. Where her Rosary is prayed, hearts are pacified, families are healed, and nations find concord."
                 )
-            ]
+            ],
+            footnote: "\u{2026}and many more, sung in the Litany of Loreto."
         )
     ]
 
@@ -395,6 +390,12 @@ struct MarianLibraryView: View {
                                 .lineSpacing(5)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
+                    }
+
+                    if let footnote = section.footnote {
+                        Text(footnote)
+                            .font(AppFonts.italicFont(13))
+                            .foregroundColor(AppColors.gold.opacity(0.7))
                     }
                 }
                 .padding(.horizontal, 16)
