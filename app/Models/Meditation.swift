@@ -10,7 +10,7 @@
 import Foundation
 
 /// Meditation text for a specific mystery, with optional guided audio.
-struct Meditation: Codable, Identifiable, Hashable {
+struct Meditation: nonisolated Codable, Identifiable, Hashable {
 
     // MARK: - Properties
 

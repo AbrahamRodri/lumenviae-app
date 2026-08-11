@@ -177,7 +177,7 @@ struct SelectMeditationView: View {
             // Grouped / filtered sets
             ForEach(viewModel.sections) { section in
                 if let title = section.title {
-                    SectionHeading(title: title)
+                    SectionHeading(title: MeditationLabel.displayName(title))
                         .padding(.top, 4)
                 }
 
@@ -234,7 +234,7 @@ struct SelectMeditationView: View {
             HStack(spacing: 8) {
                 ForEach(viewModel.allLabels, id: \.self) { label in
                     LabelChip(
-                        title: label,
+                        title: MeditationLabel.displayName(label),
                         isSelected: viewModel.isSelected(label),
                         action: { viewModel.toggleLabel(label) }
                     )

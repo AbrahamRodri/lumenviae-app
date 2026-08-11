@@ -127,135 +127,149 @@ Return to Home
 
 ## App Tabs
 
-| Tab | Purpose | Status | Priority |
-|-----|---------|--------|----------|
-| Home | Daily mystery, featured prayer, quick access | UI Complete | P0 |
-| Journal | Reflection entries after prayer sessions | Not Started | P2 (blocked) |
-| Progress | Prayer streaks, statistics, achievements | Not Started | P1 |
-| Account | Preferences, audio settings, notifications | Design Complete | P1 |
+`AppTab` (in `Components/CustomTabBar.swift`) has five cases, but the bar shows
+four — Progress is reached from the streak flame in the home header instead, to
+keep the bar from crowding the raised Pray button.
 
-> **Note:** Journal is blocked until the web app API supports journal entries. Focus on core prayer flow first, then progress/settings, then journal last.
+| Tab | In the bar | Purpose |
+|-----|-----------|---------|
+| Home | Yes | Today's mysteries, resume card, mystery grid, daily quote |
+| Consecrate | Yes | The 33-day preparation for Marian consecration |
+| Journal | Yes | Reflections, searchable, stored on device |
+| Progress | No — home header flame | Streaks, prayer history, milestones |
+| Account | Yes | Theme, app icon, prayer language, reminders, offline downloads |
+
+The **Pray** button raised over the bar starts today's Rosary directly, resolving
+the day's mysteries and a meditation set without going through the picker.
+
+> Journal is **not** blocked on the API. Entries are a local SwiftData model
+> (`Models/JournalEntry.swift`); nothing is sent to the server.
 
 ### Account Screen Structure
 
-**User Profile**
-- Profile picture, name, membership status (Premium Member)
+**Appearance**
+- Theme (Marian Blue / Midnight / Candlelit) — re-themes the app live
+- App icon (four alternates)
 
 **Prayer Experience**
-- Audio Auto-play (toggle)
-- Gregorian Chant / Background ambiance (selection)
-- Text Size (slider: small ↔ large)
+- Text Size (slider)
+- Prayer Language (English / Latin / Latin & English / English & Latin)
+- Prayer image mode
 
 **Devotion**
-- Daily Reminders (toggle + time picker, e.g., "06:00 AM • Angelus")
-- Language (selection: "Latin & English", etc.)
+- Daily Reminders (toggle, time picker, sound picker)
+- What Draws You Here — the onboarding intentions, editable; decides which pool
+  of reminder copy is used
+
+**Offline**
+- Download for Offline — every meditation set and audio file
 
 **About**
 - About Lumen Viae
+- App Introduction (re-runs onboarding)
 - Privacy Policy
 - Help & Support
 
 **Footer**
-- App version (e.g., "Lumen Viae v1.0.0")
-- Tagline: "Ad Majorem Dei Gloriam"
+- App version, and the tagline "Ad Majorem Dei Gloriam"
 
 ## Architecture
 
-### Current Structure (UI Layer Only)
-
 ```
 app/
-├── appApp.swift              # App entry point (@main)
-├── ContentView.swift         # Root view with tab navigation
-├── HomeView.swift            # Main home screen
-├── SelectMeditationView.swift # Meditation type selection
-├── Constants.swift           # Colors, fonts, strings
-└── Components/
-    ├── CustomTabBar.swift
-    ├── HeaderView.swift
-    ├── MysteryCard.swift
-    ├── QuoteSection.swift
-    ├── MeditationOptionCard.swift
-    └── StreakWidget.swift
-```
-
-### Recommended Architecture (To Implement)
-
-```
-app/
-├── App/
-│   └── appApp.swift
-├── Models/
-│   ├── Mystery.swift         # Mystery data model
-│   ├── Prayer.swift          # Individual prayers (Our Father, Hail Mary, etc.)
-│   ├── Meditation.swift      # Meditation content
-│   ├── JournalEntry.swift    # User journal entries
-│   └── UserProgress.swift    # Streaks, stats
-├── ViewModels/
-│   ├── HomeViewModel.swift
-│   ├── PrayerViewModel.swift
-│   ├── JournalViewModel.swift
-│   └── ProgressViewModel.swift
+├── appApp.swift              # @main entry
+├── ContentView.swift         # Tab switch + the app's NavigationStack
+├── Constants.swift           # Strings, Color(hex:)
+├── Navigation/
+│   └── AppRouter.swift       # AppTab, AppRoute, navigation path
+├── Models/                   # API models, SwiftData models, enums
+│   ├── Mystery, Meditation, MeditationSet, MysteryCategory
+│   ├── JournalEntry, PrayerSession          (SwiftData)
+│   ├── Consecration{Day,Phase,Prayer,Progress}
+│   ├── TrueDevotionBook, TrueDevotionReadingProgress
+│   └── StreakMilestone, MarianFeastDay, BilingualConsecrationPrayer
+├── ViewModels/               # @Observable
+│   ├── HomeViewModel, MeditationSelectionViewModel
+│   ├── PrayerSessionViewModel, ConsecrationViewModel
+│   └── TrueDevotionReaderViewModel
 ├── Views/
-│   ├── Home/
-│   ├── Prayer/
-│   ├── Journal/
-│   ├── Progress/
-│   └── Account/
+│   ├── Home/ Meditation/ Prayer/ Journal/ Progress/ Account/
+│   ├── Consecration/         # 33-day preparation (own NavigationStack)
+│   ├── TrueDevotion/         # Book reader
+│   ├── Resources/            # How to Pray, Marian Library, Scripture, Carlo Acutis
+│   ├── Onboarding/           # 7-slide first run + RosaryMethodsView
+│   └── Launch/
+├── Components/               # CustomTabBar, HeaderView, MysteryCard,
+│                             # QuoteSection, MeditationOptionCard, MenuView,
+│                             # StreakWidget
+├── DesignSystem/             # Theme, Typography, AppIcon, Motion,
+│                             # SacredComponents (OrnamentDivider, DropCapText…)
+├── Data/                     # Bundled content, not code-adjacent constants
+│   ├── ConsecrationData, BilingualConsecrationPrayers, BilingualPrayer
+│   ├── MysteryData, LuminousMeditationData, TrueDevotionData/Prayers
+│   ├── ReminderMessages      # Notification copy pools
+│   └── RosaryQuotes          # Daily quotation catalog
 ├── Services/
-│   ├── APIService.swift      # Fetch mysteries, meditations, audio from web API
-│   ├── AudioService.swift    # Audio playback for guided prayers
-│   ├── CacheService.swift    # Local caching for offline support
-│   ├── StorageService.swift  # Local persistence (settings, progress)
-│   └── NotificationService.swift
-├── Components/
-└── Resources/
-    ├── Prayers/              # Prayer text content (JSON/plist)
-    ├── Meditations/          # Meditation content per mystery
-    └── Audio/                # Audio files for guided prayers
+│   ├── APIService            # HTTP client (https://lumenviae.fly.dev/api)
+│   ├── AudioService          # Narration and chant playback
+│   ├── OfflineContentService # Full offline download of text + audio
+│   ├── MeditationCacheService, ImageCacheService
+│   ├── PrayerHistoryService, PrayerResumeService, ScheduleService
+│   ├── FavoritesService, MeditationSetResolver, TrueDevotionLibrary
+│   ├── UserSettings          # Preferences + daily reminder scheduling
+│   └── MockDataService       # Preview/fallback fixtures only
+└── Resources/                # Fonts, TrueDevotionBook.json
 ```
 
-## Key Features to Implement
+### Concurrency
 
-### Phase 1: Core Prayer Flow
-- [ ] Data models for mysteries and prayers
-- [ ] API service to fetch content from web backend
-- [ ] HomeViewModel with dynamic day-based mystery
-- [ ] Navigation from Home → Select Meditation → Prayer Flow
-- [ ] Prayer screen with mystery display and bead tracking
-- [ ] Completion screen
+The target builds with `SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor` and
+`SWIFT_APPROACHABLE_CONCURRENCY = YES`. Consequences worth knowing before you
+write concurrent code here:
 
-### Phase 2: Persistence & Progress
-- [ ] Local caching for offline support
-- [ ] Local storage for prayer history
-- [ ] Streak tracking
-- [ ] Progress statistics
-- [ ] Progress tab UI
+- Every type is `@MainActor` unless it says otherwise. Pure data types that get
+  decoded off the main actor need `nonisolated` on the conformance
+  (`struct MeditationSet: nonisolated Codable`) or the whole type
+  (`nonisolated struct TrueDevotionBook`).
+- `nonisolated async` functions **inherit the caller's isolation** under
+  approachable concurrency — they do not automatically leave the main actor.
+  Use `@concurrent` when work genuinely must run off it.
 
-### Phase 3: Enhanced Experience
-- [ ] Audio streaming/playback from API
-- [ ] Auto-scrolling scripture text synced with audio (fade in/out, bottom-to-top)
-- [ ] Notifications/reminders
-- [ ] Account tab and preferences
-- [ ] Haptic feedback during prayer
+## Feature Status
 
-### Phase 4: Journal (After API Support)
-- [ ] Journal entries (requires web API update first)
-- [ ] Post-prayer reflection prompts
-- [ ] Journal history view
+### Built
 
-### Stretch Goals: Resource Library
-- [ ] Rosary how-to guide for beginners
-- [ ] Scripture references for each mystery
-- [ ] Saint quotes and reflections
-- [ ] Marian library (apparitions, devotions, history)
-- [ ] Feast day calendar
+- **Core prayer flow** — day-based mysteries, meditation picker with label
+  filtering and favorites, decade-by-decade prayer screen with bead tracking,
+  completion screen, and a resume card for an unfinished Rosary.
+- **Audio** — narration for meditations and chant for consecration prayers.
+- **Persistence** — prayer sessions and journal entries in SwiftData; settings,
+  favorites, and reading progress in UserDefaults.
+- **Progress** — streaks, history, and milestones, reached from the home
+  header's flame.
+- **Journal** — entries after a Rosary or consecration day; searchable, editable,
+  and entirely on device.
+- **33-day Consecration** — feast-day selection, per-day scripture and reading,
+  bilingual prayers, journal prompts, and a completion rite.
+- **True Devotion reader** — the full bundled book with per-chapter progress.
+- **Resource library** — How to Pray the Rosary (with Montfort's methods),
+  Finding the Mysteries in Scripture, the Marian Theology Library, and
+  St. Carlo Acutis.
+- **Reminders** — daily notification at a chosen time and sound, with copy drawn
+  from the pool matching the user's stated intentions.
+- **Offline** — user-initiated download of every set and audio file.
+- **Personalization** — three themes, four app icons, prayer language, text size.
+- **Onboarding** — seven slides, re-runnable from Account.
 
-### Stretch Goals: Schedule & Liturgical
-- [ ] User setting to switch between Traditional and Modern (Luminous) schedule
-- [ ] Liturgical calendar API integration
-- [ ] Dynamic Sunday mystery based on liturgical season
-- [ ] Feast day overrides (e.g., Marian feasts suggest specific mysteries)
+### Not built yet
+
+- Scriptural Rosary (a verse per bead rather than per mystery)
+- Auto-scrolling meditation text synced to audio
+- Haptic feedback during prayer
+- A setting to switch between the Traditional and Modern (Luminous Thursday)
+  schedules — `ScheduleService` is the seam for it
+- Liturgical calendar integration: seasonal Sundays, feast-day overrides
+- Server-side sync of journal entries or progress (everything is local)
 
 ## Design System
 
@@ -271,7 +285,13 @@ app/
 - **Headlines:** System serif, semibold
 - **Body:** System serif, regular
 - **Quotes/Scripture:** System serif, italic
-- **Custom fonts (to add):** Cinzel, Cormorant Garamond
+- **Bundled fonts:** Cinzel (Regular, SemiBold) for display; EB Garamond
+  (Regular, Medium, SemiBold, Italic, MediumItalic) for reading. Always go
+  through `AppFonts` — never `Font.custom` at a call site.
+
+> Colors above are the Midnight theme's. Backgrounds and card fills come from
+> the **active theme**, so read them from `AppColors`; only gold, gold light,
+> cream, and secondary text are fixed across themes.
 
 ### Visual Style
 - Dark, contemplative theme
@@ -283,26 +303,37 @@ app/
 ## Technical Notes
 
 - **Minimum iOS:** 17.0 (uses `@Observable` macro)
-- **Framework:** SwiftUI (no UIKit)
-- **State Management:** SwiftUI's `@State`, `@Observable`, `@Environment`
-- **Navigation:** Currently basic state-based; should migrate to `NavigationStack`
-- **Persistence:** Local caching only; primary data from API
+- **Framework:** SwiftUI (no UIKit views)
+- **State Management:** `@State`, `@Observable`, `@Environment`
+- **Navigation:** `NavigationStack` driven by `AppRouter` (`path` + `AppRoute`).
+  The consecration tab hosts its **own** stack as a sibling of the outer one —
+  nesting it silently drops the outer stack's destination table. Don't
+  "simplify" that.
+- **Persistence:** SwiftData for prayer sessions and journal entries;
+  UserDefaults for settings; Application Support for offline content.
 
 ### Data Architecture
 
-**Content comes from external API (web app backend):**
-- Mystery data (titles, scriptures, descriptions)
-- Meditation text content
-- Audio files for guided prayers
-- Saint information
+**From the API** (`https://lumenviae.fly.dev/api`):
+- Mysteries (titles, scriptures, descriptions)
+- Meditation sets and their meditation text
+- Meditation narration audio (presigned URLs, ~24h)
+- Consecration chant audio (presigned per prayer)
 
-**Local storage (on-device):**
-- User preferences/settings
-- Prayer streak & progress data
-- Cached API responses for offline use
-- Journal entries (future - when API supports it)
+**Bundled in the app** — doctrinal and stable, so it must work with no network:
+- Every Rosary prayer, English and Latin (`Data/BilingualPrayer.swift`)
+- The 33 consecration days and their prayers (`Data/ConsecrationData.swift`)
+- *True Devotion to Mary* (`Resources/TrueDevotionBook.json`)
+- The Marian library, the how-to guide, the daily quotes
 
-> **Note:** A companion web app exists with the content database. The iOS app will fetch content via API rather than bundling it locally. This allows content updates without app releases.
+**On device:**
+- Preferences (UserDefaults), favorites, reading progress
+- Prayer sessions and journal entries (SwiftData) — never sent to the server
+- Downloaded sets and audio (Application Support, excluded from iCloud backup)
+
+> A companion Phoenix web app owns the meditation content so it can be updated
+> without an app release. Anything the user must be able to pray without a
+> connection is bundled instead.
 
 ### Design Principles
 - **Build for flexibility:** Even though Luminous mysteries aren't in the default schedule, data models and UI should support all 4 mystery types equally. Schedule logic should be configurable, not hardcoded.
@@ -326,17 +357,19 @@ app/
 - **Standard meditation:** 1 per mystery (20 total for 4 mystery types)
 - **Saint meditations:** Variable per saint (aim for full sets of 5 per mystery type)
 - **Intentional meditations:** Sets of 5 mysteries sharing a theme/intention
-- **Labels (live in API):** Each meditation set carries a `labels: [String]` array (labels currently in use: Contemplative, Saints, Intentions). The iOS picker builds its multi-select filter chips from these and groups unfiltered browsing by each set's *first* label, so order labels primary-first. If a set arrives without `labels`, the picker gracefully falls back to a flat list. Favorites are on-device (not API).
+- **Labels (live in API):** Each meditation set carries a `labels: [String]` array. The controlled vocabulary lives in the web app (`LumenViae.Rosary.Labels`) and is currently Intentions, Saints, Scriptural, Contemplative, Considerations. The iOS picker builds its multi-select filter chips from these and groups unfiltered browsing by each set's *first* label, so order labels primary-first. If a set arrives without `labels`, the picker gracefully falls back to a flat list. Favorites are on-device (not API).
+- **Label wording is a display concern:** filtering and grouping match the raw API string, but the picker renders labels through `MeditationLabel.displayName` (`Models/MeditationSet.swift`). "Considerations" currently shows as **Reflections**. Rename in that map, not in the database.
 
-### Expected API Endpoints (coordinate with web app)
+### API Endpoints (as implemented in `APIService`)
 ```
-GET /mysteries                    # List all mystery types
-GET /mysteries/:type              # Get mysteries for a type (joyful, sorrowful, etc.)
-GET /mysteries/:type/:id          # Get single mystery with meditations
-GET /meditations/:mysteryId       # Get available meditations for a mystery
-GET /audio/:meditationId          # Stream audio for a meditation
-POST /journal (future)            # Save journal entry
+GET /mysteries[?category=]              # Mysteries, optionally by category
+GET /meditation-sets?category=:category # [MeditationSetSummary] for a category
+GET /meditation-sets/:id                # Full MeditationSet with meditations
+GET /prayers/:prayerId/audio            # Presigned chant URL for a consecration prayer
 ```
+Meditation audio arrives as an `audio_url` on each meditation rather than from a
+dedicated endpoint. There is no journal endpoint and none is planned — journal
+entries are local.
 
 ## Glossary
 

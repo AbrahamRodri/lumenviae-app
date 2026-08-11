@@ -34,7 +34,7 @@ struct MeditationOptionCard: View {
                             .minimumScaleFactor(0.85)
 
                         if !labels.isEmpty {
-                            Text(labels.joined(separator: "  ·  ").uppercased())
+                            Text(labels.map { MeditationLabel.displayName($0) }.joined(separator: "  ·  ").uppercased())
                                 .font(AppFonts.labelFont(10))
                                 .tracking(2)
                                 .foregroundColor(AppColors.accentSoft)

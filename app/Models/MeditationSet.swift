@@ -11,10 +11,32 @@
 
 import Foundation
 
+// MARK: - Label Display
+
+/// How API labels are worded in the picker.
+///
+/// Labels are matched and filtered as the raw, case-sensitive strings the
+/// API sends — this only changes what the user reads, so the app never has
+/// to wait on a backend relabel to say something better.
+enum MeditationLabel {
+
+    private static let displayNames: [String: String] = [
+        "Considerations": "Reflections"
+    ]
+
+    /// The user-facing wording for an API label.
+    static func displayName(_ label: String) -> String {
+        displayNames[label] ?? label
+    }
+}
+
 // MARK: - MeditationSet
 
 /// A complete meditation set with all meditations included (detail endpoint).
-struct MeditationSet: Codable, Identifiable, Hashable {
+///
+/// The `Codable` conformance is `nonisolated` — the module defaults to
+/// `@MainActor`, but offline reads decode these off the main actor.
+struct MeditationSet: nonisolated Codable, Identifiable, Hashable {
 
     // MARK: - Properties
 
@@ -60,7 +82,7 @@ struct MeditationSet: Codable, Identifiable, Hashable {
 
 /// A meditation set without the meditations array (list endpoint).
 /// When the user selects one, fetch the full MeditationSet by ID.
-struct MeditationSetSummary: Codable, Identifiable, Hashable {
+struct MeditationSetSummary: nonisolated Codable, Identifiable, Hashable {
 
     // MARK: - Properties
 

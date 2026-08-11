@@ -74,7 +74,8 @@ struct HomeView: View {
 
                     QuoteSection(
                         quote: viewModel.currentQuote.text,
-                        author: viewModel.currentQuote.author
+                        author: viewModel.currentQuote.author,
+                        source: viewModel.currentQuote.source
                     )
                     .padding(.horizontal, 20)
                     .padding(.top, 32)

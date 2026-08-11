@@ -1,22 +1,30 @@
 //
 //  QuoteSection.swift
-//  app
+//  Lumen Viae
 //
-//  Created by Abraham Rodriguez on 2/10/26.
+//  The daily quotation card on the home screen: an ornament rule above the
+//  words, the quote in reading italic, and the attribution in gold beneath,
+//  framed by a pair of corner accents on the diagonal.
 //
 
 import SwiftUI
 
 struct QuoteSection: View {
+
     let quote: String
     let author: String
 
+    /// The work the line comes from, when it can be cited.
+    let source: String?
+
     init(
-        quote: String = "\"There is no problem, I tell you, no matter how difficult it is, that we cannot resolve by the prayer of the Holy Rosary.\"",
-        author: String = "SISTER LUCIA OF FATIMA"
+        quote: String = RosaryQuotes.all[0].text,
+        author: String = RosaryQuotes.all[0].author,
+        source: String? = nil
     ) {
         self.quote = quote
         self.author = author
+        self.source = source
     }
 
     var body: some View {
@@ -25,19 +33,28 @@ struct QuoteSection: View {
             OrnamentDivider()
                 .frame(maxWidth: 210)
 
-            // Quote text
             Text(quote)
                 .font(AppFonts.readingItalicFont(18))
                 .foregroundColor(AppColors.cream.opacity(0.92))
                 .multilineTextAlignment(.center)
                 .lineSpacing(7)
+                .fixedSize(horizontal: false, vertical: true)
 
-            // Attribution
-            Text("— \(author)")
-                .font(AppFonts.labelFont(10))
-                .tracking(2.5)
-                .foregroundColor(AppColors.gold)
-                .padding(.top, 8)
+            VStack(spacing: 4) {
+                Text("— \(author)")
+                    .font(AppFonts.labelFont(10))
+                    .tracking(2.5)
+                    .foregroundColor(AppColors.gold)
+                    .multilineTextAlignment(.center)
+
+                if let source {
+                    Text(source)
+                        .font(AppFonts.italicFont(11))
+                        .foregroundColor(AppColors.textSecondary)
+                        .multilineTextAlignment(.center)
+                }
+            }
+            .padding(.top, 8)
         }
         .padding(.vertical, 36)
         .padding(.horizontal, 28)
@@ -55,6 +72,7 @@ struct QuoteSection: View {
                 .stroke(AppColors.gold.opacity(0.7), lineWidth: 1.5)
                 .frame(width: 20, height: 20)
                 .padding(8)
+                .accessibilityHidden(true)
         }
         .overlay(alignment: .bottomTrailing) {
             // Fine corner accent - bottom right (rotated)
@@ -63,7 +81,10 @@ struct QuoteSection: View {
                 .frame(width: 20, height: 20)
                 .rotationEffect(.degrees(180))
                 .padding(8)
+                .accessibilityHidden(true)
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(quote) — \(author)")
     }
 }
 
@@ -87,7 +108,17 @@ struct CornerAccent: Shape {
 }
 
 #Preview {
-    QuoteSection()
-        .padding()
-        .background(AppColors.background)
+    VStack(spacing: 24) {
+        QuoteSection(
+            quote: RosaryQuotes.all[10].text,
+            author: RosaryQuotes.all[10].author,
+            source: RosaryQuotes.all[10].source
+        )
+        QuoteSection(
+            quote: RosaryQuotes.all[9].text,
+            author: RosaryQuotes.all[9].author
+        )
+    }
+    .padding()
+    .background(AppColors.background)
 }

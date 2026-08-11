@@ -126,16 +126,35 @@ final class UserSettings {
         PrayerLanguage(rawValue: prayerLanguagePreference) ?? .both
     }
 
-    // MARK: - Onboarding Intention
+    // MARK: - Onboarding Intentions
 
-    /// What drew the user to the app, chosen during onboarding (may be empty).
-    var onboardingIntention: String = "" {
-        didSet { UserDefaults.standard.set(onboardingIntention, forKey: "userSettings.onboardingIntention") }
+    /// What drew the user to the app, chosen during onboarding and editable
+    /// in Account. May be empty (the slide is skippable). Raw values rather
+    /// than enum cases so the stored form survives a rename of the enum.
+    var onboardingIntentions: [String] = [] {
+        didSet {
+            UserDefaults.standard.set(onboardingIntentions, forKey: "userSettings.onboardingIntentions")
+            Task { await syncNotifications() }
+        }
     }
 
-    /// Resolved intention enum, if one was chosen
-    var intention: PrayerIntention? {
-        PrayerIntention(rawValue: onboardingIntention)
+    /// Resolved intentions, in the enum's own order so the reminder pools
+    /// interleave the same way no matter what order the user tapped them.
+    var intentions: [PrayerIntention] {
+        let chosen = Set(onboardingIntentions)
+        return PrayerIntention.allCases.filter { chosen.contains($0.rawValue) }
+    }
+
+    func hasIntention(_ intention: PrayerIntention) -> Bool {
+        onboardingIntentions.contains(intention.rawValue)
+    }
+
+    func toggleIntention(_ intention: PrayerIntention) {
+        if let index = onboardingIntentions.firstIndex(of: intention.rawValue) {
+            onboardingIntentions.remove(at: index)
+        } else {
+            onboardingIntentions.append(intention.rawValue)
+        }
     }
 
     // MARK: - Daily Reminders
@@ -205,8 +224,11 @@ final class UserSettings {
         if d.object(forKey: "userSettings.prayerImageMode") != nil {
             prayerImageMode = d.bool(forKey: "userSettings.prayerImageMode")
         }
-        if d.object(forKey: "userSettings.onboardingIntention") != nil {
-            onboardingIntention = d.string(forKey: "userSettings.onboardingIntention") ?? ""
+        if let stored = d.stringArray(forKey: "userSettings.onboardingIntentions") {
+            onboardingIntentions = stored
+        } else if let legacy = d.string(forKey: "userSettings.onboardingIntention"), !legacy.isEmpty {
+            // Migration: the intention used to be a single choice.
+            onboardingIntentions = [legacy]
         }
         if d.object(forKey: "userSettings.remindersEnabled") != nil {
             remindersEnabled = d.bool(forKey: "userSettings.remindersEnabled")
@@ -287,31 +309,38 @@ final class UserSettings {
         }
     }
 
-    /// Reminder copy rules: warm, short, invitational. Never mention the
-    /// streak, never imply the user is behind, never scold. The reminder
-    /// is a bell for the Angelus, not a debt collector.
-    private static let reminderMessages: [(title: String, body: String)] = [
-        ("A quiet moment awaits", "The Rosary is here whenever you are ready."),
-        ("The mysteries await", "A few minutes of stillness amid the day."),
-        ("Time for prayer, if you wish", "Peace begins with a single Ave."),
-        ("Your candle is ready", "Light it with a moment of prayer."),
-        ("Our Lady keeps a place for you", "Come sit with the mysteries a while."),
-        ("An invitation to stillness", "The beads are waiting, without hurry."),
-        ("Grace in the ordinary", "A decade of prayer can change the whole day.")
-    ]
-
     /// One request per weekday so the message varies day to day
     /// instead of repeating the same line every morning.
     private var reminderIdentifiers: [String] {
         (1...7).map { "lumenviae.dailyReminder.\($0)" }
     }
 
+    /// The week's messages, drawn from the pools the user's intentions
+    /// select. Seven slots; the pool is sampled round-robin so a
+    /// multi-intention week hears from each of them, and `offset` walks the
+    /// selection forward as the days pass so no weekday ossifies onto one
+    /// line. Falls back to the default pool when nothing was chosen.
+    private func reminderWeek(offset: Int) -> [ReminderMessage] {
+        let pool = ReminderMessage.pool(for: intentions)
+        guard !pool.isEmpty else { return [] }
+        return (0..<7).map { pool[(offset + $0) % pool.count] }
+    }
+
+    /// Days elapsed since the reference date — a rotation counter that needs
+    /// no storage and advances exactly once a day.
+    private var rotationOffset: Int {
+        Int(Date().timeIntervalSinceReferenceDate / 86_400)
+    }
+
     private func scheduleDailyReminder() {
         let center = UNUserNotificationCenter.current()
         center.removePendingNotificationRequests(withIdentifiers: reminderIdentifiers)
 
+        let week = reminderWeek(offset: rotationOffset)
+        guard week.count == 7 else { return }
+
         for weekday in 1...7 {
-            let message = Self.reminderMessages[(weekday - 1) % Self.reminderMessages.count]
+            let message = week[weekday - 1]
 
             let content = UNMutableNotificationContent()
             content.title = message.title

@@ -45,8 +45,8 @@ final class HomeViewModel {
         scheduleService.dayLabel
     }
 
-    /// Today's inspirational quote
-    var currentQuote: (text: String, author: String) {
-        MockDataService.todaysQuote
+    /// Today's quotation on the Rosary
+    var currentQuote: RosaryQuote {
+        RosaryQuotes.today
     }
 }

@@ -8,7 +8,7 @@
 import Foundation
 
 /// A single mystery of the Rosary (e.g., "The Annunciation").
-struct Mystery: Codable, Identifiable, Hashable {
+struct Mystery: nonisolated Codable, Identifiable, Hashable {
 
     // MARK: - Properties
 

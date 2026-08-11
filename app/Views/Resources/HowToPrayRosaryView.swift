@@ -48,13 +48,8 @@ struct HowToPrayRosaryView: View {
 
                     montfortSection
                         .padding(.horizontal, 20)
-                        .padding(.bottom, 32)
-                        .devotionalEntrance(delay: 0.3)
-
-                    scheduleSection
-                        .padding(.horizontal, 20)
                         .padding(.bottom, 48)
-                        .devotionalEntrance(delay: 0.36)
+                        .devotionalEntrance(delay: 0.3)
                 }
             }
         }
@@ -102,7 +97,7 @@ struct HowToPrayRosaryView: View {
 
     private var introduction: some View {
         DropCapText(
-            text: "The Rosary is a Scripture-based prayer in which we meditate on the great mysteries of the life of Jesus and Mary while praying familiar vocal prayers. The repetition is not the point — it is the quiet rhythm that frees the heart to contemplate. As St. John Paul II wrote, the Rosary is \"a compendium of the Gospel\" in which, with Mary, we contemplate the face of Christ.",
+            text: "The Rosary is a Scripture-based prayer in which we meditate on the great mysteries of the life of Jesus and Mary while praying familiar vocal prayers. The repetition is not the point — it is the quiet rhythm that frees the heart to contemplate. It is the whole Gospel in miniature: with Mary, we look upon the face of Christ.",
             bodySize: 15
         )
     }
@@ -120,10 +115,10 @@ struct HowToPrayRosaryView: View {
         RosaryStep(id: 2, title: "Pray the Apostles' Creed", detail: "Still holding the crucifix, profess the faith of the Church."),
         RosaryStep(id: 3, title: "Pray one Our Father", detail: "On the first large bead."),
         RosaryStep(id: 4, title: "Pray three Hail Marys", detail: "On the three small beads — traditionally offered for an increase in faith, hope, and charity."),
-        RosaryStep(id: 5, title: "Pray the Glory Be", detail: "On the next large bead (or the space before it)."),
+        RosaryStep(id: 5, title: "Pray the Glory Be", detail: "On the next large bead."),
         RosaryStep(id: 6, title: "Announce the first mystery", detail: "Name the mystery (e.g., \"The First Joyful Mystery: The Annunciation\"), pause to picture the scene, then pray one Our Father."),
         RosaryStep(id: 7, title: "Pray ten Hail Marys", detail: "On the ten small beads of the decade, while meditating on the mystery. Let the scene stay before your mind's eye."),
-        RosaryStep(id: 8, title: "Close the decade", detail: "Pray the Glory Be, and optionally the Fatima Prayer (\"O my Jesus...\")."),
+        RosaryStep(id: 8, title: "Close the decade", detail: "Pray the Glory Be, then the Fatima Prayer (\"O my Jesus...\"), recommended by Our Lady at Fatima."),
         RosaryStep(id: 9, title: "Repeat for all five mysteries", detail: "Announce each new mystery, then pray the Our Father, ten Hail Marys, Glory Be, and Fatima Prayer."),
         RosaryStep(id: 10, title: "Conclude", detail: "Pray the Hail, Holy Queen and the closing prayer, then finish with the Sign of the Cross.")
     ]
@@ -869,59 +864,6 @@ Per eundem Christum Dominum nostrum. Amen.
         }
     }
 
-    // MARK: - Schedule
-
-    private var scheduleSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("MYSTERIES BY DAY")
-                .font(AppFonts.bodyFont(12))
-                .tracking(2)
-                .foregroundColor(AppColors.gold)
-
-            VStack(spacing: 0) {
-                scheduleRow(day: "Sunday", mysteries: "Glorious")
-                Divider().background(AppColors.gold.opacity(0.15))
-                scheduleRow(day: "Monday", mysteries: "Joyful")
-                Divider().background(AppColors.gold.opacity(0.15))
-                scheduleRow(day: "Tuesday", mysteries: "Sorrowful")
-                Divider().background(AppColors.gold.opacity(0.15))
-                scheduleRow(day: "Wednesday", mysteries: "Glorious")
-                Divider().background(AppColors.gold.opacity(0.15))
-                scheduleRow(day: "Thursday", mysteries: "Joyful")
-                Divider().background(AppColors.gold.opacity(0.15))
-                scheduleRow(day: "Friday", mysteries: "Sorrowful")
-                Divider().background(AppColors.gold.opacity(0.15))
-                scheduleRow(day: "Saturday", mysteries: "Joyful")
-            }
-            .padding(.horizontal, 16)
-            .background(AppColors.cardBackground)
-            .cornerRadius(16)
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: 0.5)
-            )
-
-            Text("This is the traditional schedule. The Luminous Mysteries, added by Pope St. John Paul II in 2002, may be prayed on Thursdays, and any set may be prayed on any day.")
-                .font(AppFonts.bodyFont(12))
-                .foregroundColor(AppColors.textSecondary)
-                .lineSpacing(3)
-        }
-    }
-
-    private func scheduleRow(day: String, mysteries: String) -> some View {
-        HStack {
-            Text(day)
-                .font(AppFonts.bodyFont(15))
-                .foregroundColor(AppColors.cream)
-
-            Spacer()
-
-            Text(mysteries)
-                .font(AppFonts.italicFont(15))
-                .foregroundColor(AppColors.gold)
-        }
-        .padding(.vertical, 12)
-    }
 }
 
 // MARK: - Preview
