@@ -25,11 +25,7 @@ SCAN_URL = 'https://archive.org/details/treatiseontruede00grig'
 # Readings the proofreading pass could not settle from the scan alone. Each is
 # (chapter stem, phrase as shipped, what to check). Add to this list whenever a
 # judgement call is made, so the next person can re-examine it.
-UNCERTAIN = [
-    ('introduction', 'hiding herself, even from herself; as well as from every other creature',
-     'Wording confirmed against the print; the semicolon is not recoverable from the OCR '
-     'text layer. Only the page image can settle it.'),
-]
+UNCERTAIN = []
 
 # Readings checked against a source and closed out. Keeping them here stops the
 # next reader re-opening a question that has already been answered.
@@ -51,6 +47,12 @@ RESOLVED = [
      'Confirmed "inseparable" — the sentence that follows repeats the word.'),
     ('consists', 'Men, says St. Augustine, make a vow at their Baptism',
      'Attribution confirmed as Augustine; the next sentence names him again.'),
+    ('introduction', 'hiding herself, even from herself; as well as from every other creature',
+     'Wording confirmed against the print. The semicolon cannot be recovered from the '
+     'OCR text layer and is not worth chasing — kept as shipped.'),
+    ('motives', "* Boudon says, in his Saint Esclavage, …—F. W. F.",
+     "Faber's own translator's footnote, kept in the body on purpose. Removing it would "
+     "shift every later paragraph id in this chapter and move readers' saved places."),
 ]
 
 SCAN_DAMAGE = re.compile(r'[<>|@\\{}~^]|\s[a-z]\s[a-z]\s|\.\.\s')
