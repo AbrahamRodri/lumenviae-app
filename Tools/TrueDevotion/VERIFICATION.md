@@ -169,21 +169,36 @@ mid-sentence means text was dropped at the seam.
 
 ## Readings still in doubt
 
-Judgement calls made where the scan was unclear. Each is worth a second look:
+Judgement calls the sources could not settle. Each is worth a second look:
 
 - **introduction** — “hiding herself, even from herself; as well as from every other creature”  
-  Semicolon looks wrong for the sense; kept as printed. Confirm against the page.
-- **necessity** — “they will deliver themselves to her, body and soul”  
-  Scan is garbled here. "her" was chosen over "Mary" as the more usual Faber wording.
-- **necessity** — “Et scient quia Dominus dominabitur Jacob”  
-  Kept "Dominus" as printed; the Vulgate (Ps. 58:14) and the gloss below it read "Deus".
-- **necessity** — “My Well-beloved and My Spouse”  
-  Hyphen reconstructed after the de-hyphenation pass; compare the printed line.
+  Wording confirmed against the print; the semicolon is not recoverable from the OCR text layer. Only the page image can settle it.
 
-The proofreading pass covered all thirteen chapters, but its per-chapter notes
-were only captured for the two listed above. The remaining chapters were
-corrected without a surviving record of the judgement calls, so they deserve the
-closest reading.
+## Readings settled
+
+Closed out against a source — do not re-open these without new evidence:
+
+- **necessity** — “they will deliver themselves to her, body and soul”  
+  Print garbles the pronoun ("to Taya!"); "her" matches the French and is kept.
+- **necessity** — “Et scient quia Dominus dominabitur Jacob”  
+  The 1904 printing really does read "Dominus", glossed "God will rule Jacob". The divergence from the Vulgate is Faber's, not ours. Kept as printed.
+- **necessity** — “My Well-beloved and My Spouse”  
+  Wording confirmed verbatim against the print.
+- **discernment** — “or than Solomon for Bathsebee?”  
+  Was "Bethsabee" (Douay spelling); corrected to the printing's "Bathsebee".
+- **discernment** — “does not die it remains earth”  
+  Was "remains alone" (a closer rendering of "ipsum solum manet"); corrected to the printing's "remains earth", since this edition follows the print.
+- **motives** — “faithful and inseparable Spouse”  
+  Confirmed "inseparable" — the sentence that follows repeats the word.
+- **consists** — “Men, says St. Augustine, make a vow at their Baptism”  
+  Attribution confirmed as Augustine; the next sentence names him again.
+
+The whole text has since been diffed word for word against a second independent
+copy of the same translation (ecatholic2000.com) and, where the two disagreed,
+against the page scan itself: 45,419 of 46,674 word tokens identical, and every
+substantive disagreement resolved in favour of the printing. Punctuation and
+italics remain unverified — neither the OCR nor the web copy preserves them, so
+only the page images can settle those.
 
 ## Automated checks
 
