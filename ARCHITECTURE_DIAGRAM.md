@@ -1,5 +1,14 @@
 # Consecration to Mary - Architecture & Data Flow
 
+> **Status:** this is the original design document for the consecration feature.
+> The feature shipped, and some names here are from the design rather than the
+> code. The shipped entry point is `ConsecrationTabView`
+> (`app/Views/Consecration/`), which hosts its own `NavigationStack` as a
+> **sibling** of the app's stack in `ContentView` — nesting it inside the outer
+> stack drops that stack's `navigationDestination` table. `AppTab` has five
+> cases but the bar shows four; Progress is reached from the streak flame in the
+> home header. Read the flow diagrams below as intent, and the code as truth.
+
 ## App Navigation Structure
 
 ```
