@@ -40,8 +40,11 @@ struct OnboardingView: View {
     /// Selected daily reminder hour on the reminder slide (nil = none picked)
     @State private var selectedReminderHour: Int? = nil
 
-    /// Selected intention on the "What draws you here?" slide
-    @State private var selectedIntention: PrayerIntention? = nil
+    /// Selected intentions on the "What draws you here?" slide. Multi-select:
+    /// the choice drives which reminder pools the daily notification draws
+    /// from, and more than one reason can be true at once. Seeded from
+    /// settings so re-running onboarding from Account reflects the choice.
+    @State private var selectedIntentions: Set<PrayerIntention> = Set(UserSettings.shared.intentions)
 
     /// Selected prayer language on the language slide — seeded from settings
     /// so re-running onboarding from Account reflects the current choice
@@ -168,7 +171,7 @@ struct OnboardingView: View {
             isActive: currentPage == 2,
             content: {
                 VStack(alignment: .leading, spacing: 20) {
-                    Text("Every soul comes to the Rosary for a reason. Yours shapes how we welcome you.")
+                    Text("Every soul comes to the Rosary for a reason. Choose as many as are true — yours shape how we welcome you.")
                         .font(AppFonts.bodyFont(15))
                         .foregroundColor(AppColors.cream.opacity(0.8))
                         .lineSpacing(5)
@@ -178,10 +181,14 @@ struct OnboardingView: View {
                             SelectableOptionRow(
                                 label: option.intention.rawValue,
                                 detail: option.detail,
-                                isSelected: selectedIntention == option.intention
+                                isSelected: selectedIntentions.contains(option.intention)
                             ) {
                                 withAnimation(.easeInOut(duration: 0.2)) {
-                                    selectedIntention = option.intention
+                                    if selectedIntentions.contains(option.intention) {
+                                        selectedIntentions.remove(option.intention)
+                                    } else {
+                                        selectedIntentions.insert(option.intention)
+                                    }
                                 }
                             }
                         }
@@ -191,9 +198,10 @@ struct OnboardingView: View {
             },
             bottomContent: {
                 OnboardingNextButton(label: "Continue") {
-                    if let intention = selectedIntention {
-                        UserSettings.shared.onboardingIntention = intention.rawValue
-                    }
+                    UserSettings.shared.onboardingIntentions =
+                        PrayerIntention.allCases
+                            .filter { selectedIntentions.contains($0) }
+                            .map(\.rawValue)
                     withAnimation(.easeInOut(duration: 0.3)) { currentPage = 3 }
                 }
             }
@@ -373,10 +381,12 @@ struct OnboardingView: View {
 
     // MARK: - Slide 7: Begin or Learn More
 
-    /// Closing line personalized to the chosen intention —
-    /// the small "made for you" payoff at the end of onboarding.
+    /// Closing line personalized to the chosen intention — the small
+    /// "made for you" payoff at the end of onboarding. With several chosen,
+    /// the first in the enum's order speaks for them; the alternative is a
+    /// generic line, which is the one thing this slide exists to avoid.
     private var personalizedClosing: String {
-        switch selectedIntention {
+        switch PrayerIntention.allCases.first(where: { selectedIntentions.contains($0) }) {
         case .peace:
             return "May each decade bring stillness to your day. Your first quiet moment is one tap away."
         case .habit:

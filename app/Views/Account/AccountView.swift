@@ -13,6 +13,7 @@ struct AccountView: View {
     @State private var showPrivacyPolicy = false
     @State private var showHelpSupport = false
     @State private var showSoundPicker = false
+    @State private var showIntentionPicker = false
 
     var body: some View {
         ZStack {
@@ -105,6 +106,24 @@ struct AccountView: View {
                                 }
                                 .transition(.opacity.combined(with: .move(edge: .top)))
                             }
+
+                            Divider()
+                                .background(AppColors.gold.opacity(0.2))
+
+                            // Outside the reminders-on block on purpose: it
+                            // decides which reminder copy is sent, but it is
+                            // first of all something the user said about
+                            // themselves, and it has to stay changeable —
+                            // whoever came to learn the Rosary eventually has.
+                            ActionRow(
+                                icon: "ph-heart",
+                                title: "What Draws You Here",
+                                subtitle: userSettings.intentions.isEmpty
+                                    ? "Not set"
+                                    : userSettings.intentions.map(\.rawValue).joined(separator: " · ")
+                            ) {
+                                showIntentionPicker = true
+                            }
                         }
                         .animation(.easeInOut(duration: 0.2), value: userSettings.remindersEnabled)
                     }
@@ -167,6 +186,9 @@ struct AccountView: View {
         }
         .sheet(isPresented: $showSoundPicker) {
             ReminderSoundSheet()
+        }
+        .sheet(isPresented: $showIntentionPicker) {
+            PrayerIntentionSheet()
         }
     }
 }
