@@ -246,6 +246,25 @@ struct DropCapText: View {
     }
 }
 
+// MARK: - Gold CTA Background
+
+extension View {
+
+    /// The horizontal gold pill used for primary actions. Pairs with
+    /// `GoldCTAButtonStyle` for press feedback.
+    func goldCTABackground(cornerRadius: CGFloat = 14) -> some View {
+        self
+            .background(
+                LinearGradient(
+                    colors: [AppColors.gold, AppColors.goldLight],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+    }
+}
+
 // MARK: - Previews
 
 #Preview("Sacred components") {
