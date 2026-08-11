@@ -355,8 +355,10 @@ final class OfflineContentService {
             includingPropertiesForKeys: [.fileSizeKey]
         ) else { return 0 }
 
+        // nextObject() rather than for-in: DirectoryEnumerator's iterator is
+        // unavailable from async contexts.
         var total: Int64 = 0
-        for case let fileURL as URL in enumerator {
+        while let fileURL = enumerator.nextObject() as? URL {
             let size = (try? fileURL.resourceValues(forKeys: [.fileSizeKey]))?.fileSize ?? 0
             total += Int64(size)
         }
