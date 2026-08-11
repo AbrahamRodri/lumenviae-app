@@ -25,6 +25,11 @@ fastlane/test_output
 __pycache__/
 *.pyc
 
+# App Store screenshots. They live in ~/Documents/LumenViae Screenshots,
+# not here — tens of megabytes of PNG per set, and a set is regenerated
+# whenever the look changes. Keep them out of history.
+screenshots/
+
 # macOS
 .DS_Store
 *.swp
