@@ -21,6 +21,10 @@ fastlane/Preview.html
 fastlane/screenshots
 fastlane/test_output
 
+# Python (Tools/)
+__pycache__/
+*.pyc
+
 # macOS
 .DS_Store
 *.swp

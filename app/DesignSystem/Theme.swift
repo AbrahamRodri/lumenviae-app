@@ -139,7 +139,7 @@ final class ThemeManager {
 
     private init() {
         let stored = UserDefaults.standard.string(forKey: Self.storageKey) ?? ""
-        current = AppTheme(rawValue: stored) ?? .marianBlue
+        current = AppTheme(rawValue: stored) ?? .candlelit
     }
 }
 
