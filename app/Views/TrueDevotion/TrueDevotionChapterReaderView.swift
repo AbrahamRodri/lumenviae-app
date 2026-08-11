@@ -6,21 +6,22 @@
 //  paragraph at the top of the screen so reading resumes exactly where
 //  it left off, and marks the chapter read at the end.
 //
+//  Reading state belongs to TrueDevotionReaderViewModel, handed down from
+//  the contents screen so a whole session of chained chapters shares one.
+//
 
 import SwiftUI
-import SwiftData
 
 struct TrueDevotionChapterReaderView: View {
 
+    // MARK: - Properties
+
     let chapterID: String
+    let viewModel: TrueDevotionReaderViewModel
+    let library: TrueDevotionLibrary
 
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.modelContext) private var modelContext
     @Environment(UserSettings.self) private var settings
-
-    /// Surfaced to the user rather than dropped — losing someone's place in
-    /// a book they are praying through should never fail quietly.
-    @State private var saveError: String?
 
     /// Paragraph id currently at the top of the screen (scroll tracking)
     @State private var topParagraphID: Int?
@@ -40,10 +41,11 @@ struct TrueDevotionChapterReaderView: View {
     /// Sentinel id for the end-of-chapter block in the scroll layout
     private static let endBlockID = Int.max
 
-    private var book: TrueDevotionBook? { TrueDevotionBookData.book }
-    private var chapter: TrueDevotionChapter? { book?.chapter(id: chapterID) }
+    private var chapter: TrueDevotionChapter? { library.book?.chapter(id: chapterID) }
 
     private var readingFontSize: CGFloat { settings.meditationFontSize + 1 }
+
+    // MARK: - Body
 
     var body: some View {
         ZStack {
@@ -51,34 +53,7 @@ struct TrueDevotionChapterReaderView: View {
                 .ignoresSafeArea()
 
             if let chapter {
-                ScrollView(showsIndicators: false) {
-                    LazyVStack(alignment: .leading, spacing: 18) {
-                        chapterHeader(chapter)
-                            .id(-1)
-
-                        ForEach(chapter.paragraphs) { paragraph in
-                            paragraphView(paragraph, isFirst: paragraph.id == chapter.firstTextParagraphID)
-                                .id(paragraph.id)
-                        }
-
-                        endBlock(chapter)
-                            .id(Self.endBlockID)
-                            // Reading to the end is what marks the chapter
-                            // read — no button press required.
-                            .onAppear {
-                                hasReachedEnd = true
-                                if hasInteracted { finishChapter() }
-                            }
-                    }
-                    .scrollTargetLayout()
-                    .padding(.horizontal, 24)
-                    .padding(.bottom, 40)
-                }
-                .scrollPosition(id: $topParagraphID, anchor: .top)
-                .simultaneousGesture(
-                    DragGesture(minimumDistance: 1)
-                        .onChanged { _ in hasInteracted = true }
-                )
+                reader(chapter)
             } else {
                 Text("Chapter unavailable.")
                     .font(AppFonts.bodyFont(15))
@@ -89,7 +64,7 @@ struct TrueDevotionChapterReaderView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button {
-                    if hasReachedEnd { finishChapter() }
+                    if hasReachedEnd { viewModel.completeChapter(chapterID) }
                     dismiss()
                 } label: {
                     HStack(spacing: 6) {
@@ -101,86 +76,54 @@ struct TrueDevotionChapterReaderView: View {
                 }
             }
         }
-        .onAppear(perform: restorePosition)
+        .onAppear {
+            topParagraphID = viewModel.resumeParagraph(for: chapterID)
+        }
         .onChange(of: topParagraphID) { _, newValue in
-            recordPosition(newValue)
+            guard hasInteracted, let newValue, newValue != Self.endBlockID else { return }
+            // The header sits above the first paragraph and carries id -1;
+            // reaching it means the reader is back at the start.
+            viewModel.recordPosition(chapterID: chapterID, paragraphIndex: newValue)
         }
-        .onDisappear(perform: save)
-        .alert(
-            "Something went wrong",
-            isPresented: Binding(
-                get: { saveError != nil },
-                set: { if !$0 { saveError = nil } }
-            )
-        ) {
-            Button("OK", role: .cancel) { saveError = nil }
-        } message: {
-            Text(saveError ?? "")
-        }
+        .onDisappear { viewModel.save() }
     }
 
-    // MARK: - Progress
+    private func reader(_ chapter: TrueDevotionChapter) -> some View {
+        ScrollView(showsIndicators: false) {
+            LazyVStack(alignment: .leading, spacing: 18) {
+                chapterHeader(chapter)
+                    .id(-1)
 
-    /// Fetches the single reading-progress record straight from the context
-    /// rather than from a @Query snapshot. Scroll callbacks fire faster than
-    /// a @Query refreshes, so reading the snapshot would miss a record
-    /// inserted moments earlier and insert a duplicate on every event.
-    private func currentProgress() -> TrueDevotionReadingProgress? {
-        var descriptor = FetchDescriptor<TrueDevotionReadingProgress>(
-            sortBy: [SortDescriptor(\.updatedAt, order: .reverse)]
+                ForEach(chapter.paragraphs) { paragraph in
+                    paragraphView(paragraph, isFirst: paragraph.id == chapter.firstTextParagraphID)
+                        .id(paragraph.id)
+                }
+
+                endBlock(chapter)
+                    .id(Self.endBlockID)
+                    // Reading to the end is what marks the chapter read —
+                    // no button press required.
+                    .onAppear {
+                        hasReachedEnd = true
+                        if hasInteracted { viewModel.completeChapter(chapterID) }
+                    }
+            }
+            .scrollTargetLayout()
+            .padding(.horizontal, 24)
+            .padding(.bottom, 40)
+        }
+        .scrollPosition(id: $topParagraphID, anchor: .top)
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 1)
+                .onChanged { _ in hasInteracted = true }
         )
-        descriptor.fetchLimit = 1
-        return try? modelContext.fetch(descriptor).first
-    }
-
-    private func ensureProgress() -> TrueDevotionReadingProgress {
-        if let existing = currentProgress() { return existing }
-        let record = TrueDevotionReadingProgress()
-        modelContext.insert(record)
-        return record
-    }
-
-    private func restorePosition() {
-        guard let progress = currentProgress(),
-              progress.lastChapterID == chapterID,
-              progress.lastParagraphIndex > 0,
-              !progress.isChapterCompleted(chapterID) else { return }
-        topParagraphID = progress.lastParagraphIndex
-    }
-
-    /// Remembers the paragraph at the top of the screen. Completion is not
-    /// decided here: the end block is the last item, so it can never scroll
-    /// up to the top and would never be reported.
-    private func recordPosition(_ paragraphID: Int?) {
-        guard hasInteracted, let paragraphID, paragraphID != Self.endBlockID else { return }
-        // The header sits above the first paragraph and carries id -1;
-        // reaching it means the reader is back at the start of the chapter.
-        let index = max(paragraphID, 0)
-        let progress = ensureProgress()
-        guard !progress.isChapterCompleted(chapterID) else { return }
-        progress.savePosition(chapterID: chapterID, paragraphIndex: index)
-    }
-
-    private func finishChapter() {
-        let progress = ensureProgress()
-        progress.markChapterCompleted(chapterID)
-        progress.savePosition(chapterID: chapterID, paragraphIndex: 0)
-        save()
-    }
-
-    private func save() {
-        do {
-            try modelContext.save()
-        } catch {
-            saveError = "Your place in the book could not be saved. \(error.localizedDescription)"
-        }
     }
 
     // MARK: - Header
 
     private func chapterHeader(_ chapter: TrueDevotionChapter) -> some View {
         VStack(spacing: 10) {
-            if let partTitle = book?.parts.first(where: { $0.number == chapter.part })?.title {
+            if let partTitle = library.book?.parts.first(where: { $0.number == chapter.part })?.title {
                 Text(partTitle.uppercased())
                     .font(AppFonts.labelFont(10))
                     .tracking(2.5)
@@ -238,9 +181,13 @@ struct TrueDevotionChapterReaderView: View {
                 .padding(.horizontal, 30)
                 .padding(.top, 16)
 
-            if let next = book?.chapter(after: chapter.id) {
+            if let next = library.book?.chapter(after: chapter.id) {
                 NavigationLink {
-                    TrueDevotionChapterReaderView(chapterID: next.id)
+                    TrueDevotionChapterReaderView(
+                        chapterID: next.id,
+                        viewModel: viewModel,
+                        library: library
+                    )
                 } label: {
                     HStack(spacing: 10) {
                         Text("Next: \(next.title)")
@@ -257,7 +204,9 @@ struct TrueDevotionChapterReaderView: View {
                 }
                 // Moving on covers the short chapters a reader finishes
                 // without ever needing to scroll.
-                .simultaneousGesture(TapGesture().onEnded { finishChapter() })
+                .simultaneousGesture(TapGesture().onEnded {
+                    viewModel.completeChapter(chapterID)
+                })
             } else {
                 VStack(spacing: 10) {
                     Text("Finis")
@@ -270,7 +219,7 @@ struct TrueDevotionChapterReaderView: View {
                         .multilineTextAlignment(.center)
 
                     Button {
-                        finishChapter()
+                        viewModel.completeChapter(chapterID)
                         dismiss()
                     } label: {
                         Text("Back to Contents")
@@ -291,10 +240,15 @@ struct TrueDevotionChapterReaderView: View {
 
 // MARK: - Preview
 
+// A view model with no model context simply records nothing, so the reader
+// previews without a store — it no longer touches SwiftData itself.
 #Preview {
     NavigationStack {
-        TrueDevotionChapterReaderView(chapterID: "introduction")
+        TrueDevotionChapterReaderView(
+            chapterID: "introduction",
+            viewModel: TrueDevotionReaderViewModel(),
+            library: .shared
+        )
     }
     .environment(UserSettings.shared)
-    .modelContainer(for: [TrueDevotionReadingProgress.self])
 }
