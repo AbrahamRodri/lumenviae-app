@@ -98,9 +98,12 @@ extension View {
 // MARK: - Button Styles
 
 /// Press feedback for tappable cards: a quiet settle, no bounce.
+/// The whole label rectangle is tappable — without an explicit content
+/// shape, Spacers inside card labels leave dead zones a finger can miss.
 struct SacredCardButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .contentShape(Rectangle())
             .scaleEffect(configuration.isPressed ? 0.98 : 1)
             .opacity(configuration.isPressed ? 0.92 : 1)
             .animation(.easeOut(duration: 0.18), value: configuration.isPressed)
