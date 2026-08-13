@@ -146,7 +146,7 @@ struct MysteriesInScriptureView: View {
             Text(text)
                 .font(AppFonts.bodyFont(14))
                 .foregroundColor(AppColors.cream.opacity(0.9))
-                .lineSpacing(3)
+                .lineSpacing(5)
         }
     }
 
@@ -288,20 +288,20 @@ struct MysteriesInScriptureView: View {
             .buttonStyle(SacredCardButtonStyle())
 
             if isExpanded {
-                VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: 14) {
                     if let description = mystery.description {
                         Text(description)
-                            .font(AppFonts.bodyFont(14))
+                            .font(AppFonts.bodyFont(15))
                             .foregroundColor(AppColors.textSecondary)
-                            .lineSpacing(4)
+                            .lineSpacing(ReadingTypography.lineSpacing(for: 15))
                     }
 
                     if let verse = Self.keyVerses[key] {
                         Text("\u{201C}\(verse)\u{201D}")
                             .font(AppFonts.readingItalicFont(15))
                             .foregroundColor(AppColors.cream.opacity(0.9))
-                            .lineSpacing(5)
-                            .padding(.leading, 12)
+                            .lineSpacing(ReadingTypography.lineSpacing(for: 15))
+                            .padding(.leading, 14)
                             .overlay(alignment: .leading) {
                                 Rectangle()
                                     .fill(AppColors.gold.opacity(0.4))
@@ -311,9 +311,8 @@ struct MysteriesInScriptureView: View {
 
                     if let fruit = MysteryData.traditionalFruits[key] {
                         Text("Ask for: \(fruit.lowercased())")
-                            .font(AppFonts.italicFont(13))
+                            .font(AppFonts.italicFont(14))
                             .foregroundColor(AppColors.gold.opacity(0.85))
-                            .padding(.top, 2)
                     }
                 }
                 .padding(.horizontal, 18)
@@ -345,11 +344,11 @@ struct MysteriesInScriptureView: View {
             }
 
             Text("By tradition handed down through St. Bridget of Sweden, Our Lady promises seven graces to souls who honor her daily by meditating on her tears and sorrows:")
-                .font(AppFonts.bodyFont(13))
+                .font(AppFonts.bodyFont(14))
                 .foregroundColor(AppColors.textSecondary)
-                .lineSpacing(4)
+                .lineSpacing(5)
 
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: 10) {
                 graceRow(1, "Peace in their families.")
                 graceRow(2, "Enlightenment about the divine mysteries.")
                 graceRow(3, "Consolation in their pains, and her companionship in their work.")
@@ -378,9 +377,9 @@ struct MysteriesInScriptureView: View {
                 .frame(width: 16, alignment: .center)
 
             Text(text)
-                .font(AppFonts.bodyFont(13))
+                .font(AppFonts.bodyFont(14))
                 .foregroundColor(AppColors.cream.opacity(0.9))
-                .lineSpacing(3)
+                .lineSpacing(5)
         }
     }
 

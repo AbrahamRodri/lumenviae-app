@@ -51,63 +51,6 @@ struct ConsecrationPrayerFlowView: View {
         ConsecrationPhase.phase(for: dayNumber)
     }
 
-    // MARK: - Bilingual Formatting
-
-    @ViewBuilder
-    private func formattedPrayerText(_ content: String) -> some View {
-        let lines = content.components(separatedBy: "\n")
-        let isBilingual = settings.prayerLanguage == .both || settings.prayerLanguage == .latinUnderEnglish
-
-        if isBilingual {
-            formatBilingualPrayer(lines)
-        } else {
-            Text(content)
-                .font(AppFonts.bodyFont(18))
-                .foregroundColor(AppColors.cream.opacity(0.92))
-                .multilineTextAlignment(.center)
-                .lineSpacing(10)
-        }
-    }
-
-    @ViewBuilder
-    private func formatBilingualPrayer(_ lines: [String]) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            ForEach(Array(lines.enumerated()), id: \.offset) { _, line in
-                let trimmed = line.trimmingCharacters(in: .whitespaces)
-
-                if trimmed.isEmpty {
-                    Spacer().frame(height: 4)
-                } else if trimmed.contains("|||") {
-                    formatBilingualPair(trimmed)
-                } else {
-                    Text(trimmed)
-                        .font(AppFonts.bodyFont(18))
-                        .foregroundColor(AppColors.cream.opacity(0.92))
-                }
-            }
-        }
-    }
-
-    @ViewBuilder
-    private func formatBilingualPair(_ line: String) -> some View {
-        let parts = line.components(separatedBy: "|||")
-
-        VStack(alignment: .leading, spacing: 2) {
-            if parts.count >= 1 {
-                Text(parts[0].trimmingCharacters(in: .whitespaces))
-                    .font(AppFonts.bodyFont(18))
-                    .foregroundColor(AppColors.cream)
-            }
-            if parts.count >= 2 {
-                Text(parts[1].trimmingCharacters(in: .whitespaces))
-                    .font(AppFonts.bodyFont(14))
-                    .foregroundColor(AppColors.textSecondary.opacity(0.7))
-                    .italic()
-                    .padding(.leading, 12)
-            }
-        }
-    }
-
     // MARK: - Audio
 
     private func loadAudioIfAvailable() {
@@ -252,6 +195,9 @@ struct ConsecrationPrayerFlowView: View {
                         Circle()
                             .fill(AppColors.cardBackground)
                     )
+                    // 44pt hit target around the 36pt visual circle
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
             }
 
             Spacer()
@@ -263,7 +209,7 @@ struct ConsecrationPrayerFlowView: View {
 
             // Spacer for symmetry
             Color.clear
-                .frame(width: 36, height: 36)
+                .frame(width: 44, height: 44)
         }
         .padding(.horizontal, 20)
     }
@@ -355,9 +301,18 @@ struct ConsecrationPrayerFlowView: View {
                             .padding(.bottom, 24)
                     }
 
-                    // Prayer Text
-                    formattedPrayerText(prayer.content)
-                        .padding(.horizontal, 28)
+                    // Prayer Text — hymns stay centered in single-language
+                    // display; bilingual line pairs read down the left edge
+                    PrayerText(
+                        content: prayer.content,
+                        size: 18,
+                        alignment: settings.prayerLanguage.isBilingual ? .leading : .center
+                    )
+                    .frame(
+                        maxWidth: .infinity,
+                        alignment: settings.prayerLanguage.isBilingual ? .leading : .center
+                    )
+                    .padding(.horizontal, 28)
 
                     // Bottom padding for scroll
                     Spacer()

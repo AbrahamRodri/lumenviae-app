@@ -228,17 +228,19 @@ struct DropCapText: View {
     var textColor: Color = AppColors.cream
 
     var body: some View {
+        // Line spacing tracks the body size so enlarged text keeps its air
+        let spacing = ReadingTypography.lineSpacing(for: bodySize)
         if let first = text.first {
             let cap = Text(String(first))
                 .font(AppFonts.titleFont(capSize))
                 .foregroundColor(AppColors.gold)
             Text("\(cap)\(remainder)")
-                .lineSpacing(7)
+                .lineSpacing(spacing)
         } else {
             Text(text)
                 .font(AppFonts.readingFont(bodySize))
                 .foregroundColor(textColor)
-                .lineSpacing(7)
+                .lineSpacing(spacing)
         }
     }
 

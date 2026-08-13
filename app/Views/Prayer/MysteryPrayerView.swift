@@ -276,14 +276,16 @@ struct MysteryPrayerView: View {
                                 .padding(.top, 8)
                             }
 
-                            // Meditation content, opened by an illuminated initial
-                            DropCapText(
+                            // Meditation content, opened by an illuminated
+                            // initial; paragraph-aware so multi-paragraph
+                            // meditations keep their structure
+                            ReadingText(
                                 text: meditation.content,
-                                bodySize: userSettings.meditationFontSize,
-                                capSize: userSettings.meditationFontSize * 2.4,
+                                size: userSettings.meditationFontSize,
+                                showsDropCap: true,
                                 textColor: AppColors.cream.opacity(0.92)
                             )
-                            .multilineTextAlignment(.leading)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.horizontal, 26)
                             .padding(.vertical, 16)
                         }
@@ -461,9 +463,12 @@ struct PrayerHeaderButton: View {
         Button(action: action) {
             AppIcon(icon, size: size)
                 .foregroundColor(.white)
-                .padding(12)
+                .padding(13)
                 .background(Color.black.opacity(0.3))
                 .clipShape(Circle())
+                // Keep the hit area at the 44pt minimum even for small glyphs
+                .frame(minWidth: 44, minHeight: 44)
+                .contentShape(Circle())
         }
         .buttonStyle(GoldCTAButtonStyle())
         .accessibilityLabel(label)

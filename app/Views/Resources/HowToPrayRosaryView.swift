@@ -43,7 +43,7 @@ struct HowToPrayRosaryView: View {
 
                     prayersSection
                         .padding(.horizontal, 20)
-                        .padding(.bottom, 32)
+                        .padding(.bottom, 44)
                         .devotionalEntrance(delay: 0.24)
 
                     montfortSection
@@ -201,17 +201,17 @@ struct HowToPrayRosaryView: View {
                 )
                 .padding(.top, 8)
 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 5) {
                     Text(step.title)
                         .font(AppFonts.headlineFont(15))
                         .foregroundColor(isActive ? AppColors.gold : AppColors.cream)
 
                     Text(step.detail)
-                        .font(AppFonts.bodyFont(13))
+                        .font(AppFonts.bodyFont(14))
                         .foregroundColor(AppColors.textSecondary)
-                        .lineSpacing(3)
+                        .lineSpacing(5)
                 }
-                .padding(.vertical, 8)
+                .padding(.vertical, 10)
 
                 Spacer(minLength: 0)
             }
@@ -384,8 +384,7 @@ To thee do we send up our sighs,
 mourning and weeping in this valley of tears.
 Turn, then, most gracious advocate,
 thine eyes of mercy toward us,
-and after this, our exile,
-show unto us the blessed fruit of thy womb, Jesus.
+and after this, our exile, show unto us the blessed fruit of thy womb, Jesus.
 O clement, O loving, O sweet Virgin Mary.
 Pray for us, O holy Mother of God,
 that we may be made worthy of the promises of Christ.
@@ -398,8 +397,7 @@ Ad te suspiramus,
 gementes et flentes in hac lacrimarum valle.
 Eia ergo, advocata nostra,
 illos tuos misericordes oculos ad nos converte,
-et Iesum, benedictum fructum ventris tui,
-nobis post hoc exsilium ostende.
+et Iesum, benedictum fructum ventris tui, nobis post hoc exsilium ostende.
 O clemens, O pia, O dulcis Virgo Maria.
 Ora pro nobis, sancta Dei Genetrix,
 ut digni efficiamur promissionibus Christi.
@@ -417,8 +415,7 @@ O God, whose only-begotten Son,
 by His life, death and resurrection,
 has purchased for us the rewards of eternal life;
 grant, we beseech Thee,
-that meditating upon these mysteries
-of the most holy Rosary of the Blessed Virgin Mary,
+that meditating upon these mysteries of the most holy Rosary of the Blessed Virgin Mary,
 we may imitate what they contain
 and obtain what they promise,
 through the same Christ our Lord. Amen.
@@ -429,8 +426,7 @@ Deus, cuius Unigenitus
 per vitam, mortem et resurrectionem suam
 nobis salutis aeternae praemia comparavit;
 concede, quaesumus,
-ut haec mysteria
-sacratissimo beatae Mariae Virginis Rosario recolentes,
+ut haec mysteria sacratissimo beatae Mariae Virginis Rosario recolentes,
 et imitemur quod continent,
 et quod promittunt assequamur.
 Per eundem Christum Dominum nostrum. Amen.
@@ -501,57 +497,15 @@ Per eundem Christum Dominum nostrum. Amen.
         )
     }
 
-    /// Renders the prayer body in the user's preferred prayer language.
-    /// Bilingual modes show line pairs: primary language with the secondary
-    /// language in italic gold beneath it (same format as TrueDevotionView).
-    @ViewBuilder
+    /// Renders the prayer body in the user's preferred prayer language
+    /// through the shared prayer typography — verse lines, stanza air,
+    /// and the second language in quiet italic beneath its line.
     private func prayerContent(_ prayer: RosaryPrayer) -> some View {
-        let formatted = prayer.content.formatted(for: settings.prayerLanguage)
-        let lines = formatted.components(separatedBy: "\n")
-        let isBilingual = settings.prayerLanguage == .both || settings.prayerLanguage == .latinUnderEnglish
-
-        if isBilingual {
-            VStack(alignment: .leading, spacing: 6) {
-                ForEach(Array(lines.enumerated()), id: \.offset) { _, line in
-                    let trimmed = line.trimmingCharacters(in: .whitespaces)
-
-                    if trimmed.isEmpty {
-                        Spacer()
-                            .frame(height: 4)
-                    } else if trimmed.contains("|||") {
-                        let parts = trimmed.components(separatedBy: "|||")
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(parts[0].trimmingCharacters(in: .whitespaces))
-                                .font(AppFonts.bodyFont(15))
-                                .foregroundColor(AppColors.cream)
-                                .lineSpacing(4)
-                                .fixedSize(horizontal: false, vertical: true)
-
-                            if parts.count >= 2 {
-                                Text(parts[1].trimmingCharacters(in: .whitespaces))
-                                    .font(AppFonts.italicFont(13))
-                                    .foregroundColor(AppColors.gold.opacity(0.8))
-                                    .lineSpacing(4)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                        }
-                        .padding(.bottom, 4)
-                    } else {
-                        Text(trimmed)
-                            .font(AppFonts.bodyFont(15))
-                            .foregroundColor(AppColors.cream.opacity(0.9))
-                            .lineSpacing(4)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                }
-            }
-        } else {
-            Text(formatted)
-                .font(AppFonts.bodyFont(15))
-                .foregroundColor(AppColors.cream.opacity(0.9))
-                .lineSpacing(5)
-                .fixedSize(horizontal: false, vertical: true)
-        }
+        PrayerText(
+            content: prayer.content.formatted(for: settings.prayerLanguage),
+            size: 16
+        )
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     // MARK: - The Montfort Methods
@@ -623,18 +577,18 @@ Per eundem Christum Dominum nostrum. Amen.
     ]
 
     private var montfortSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 18) {
             Text("THE MONTFORT METHODS")
                 .font(AppFonts.bodyFont(12))
                 .tracking(2)
                 .foregroundColor(AppColors.gold)
 
             Text("St. Louis de Montfort, the great apostle of the Rosary, left several methods for praying it more fruitfully. Each uses the same beads and prayers — what changes is how deeply the mystery enters each prayer. He composed them for the fifteen traditional mysteries; the same spirit extends naturally to the Luminous Mysteries.")
-                .font(AppFonts.bodyFont(14))
+                .font(AppFonts.bodyFont(15))
                 .foregroundColor(AppColors.cream.opacity(0.9))
-                .lineSpacing(5)
+                .lineSpacing(ReadingTypography.lineSpacing(for: 15))
 
-            VStack(spacing: 12) {
+            VStack(spacing: 14) {
                 methodCard(
                     id: "offering",
                     title: "Offer Each Decade",
@@ -665,6 +619,28 @@ Per eundem Christum Dominum nostrum. Amen.
     private enum MontfortLineStyle {
         case petition
         case clause
+    }
+
+    /// One mystery and its grace set as a single running line —
+    /// "The Annunciation — a profound humility" — so long names wrap
+    /// naturally instead of stacking inside a cramped fixed column.
+    private func petitionLine(_ line: MontfortLine, style: MontfortLineStyle) -> some View {
+        let grace = style == .clause
+            ? Text("\u{201C}\(line.text)\u{201D}").font(AppFonts.italicFont(14))
+            : Text(line.text).font(AppFonts.bodyFont(14))
+
+        return (
+            Text(line.mystery)
+                .font(AppFonts.bodyFont(14))
+                .foregroundColor(AppColors.textSecondary)
+            + Text(" — ")
+                .font(AppFonts.bodyFont(14))
+                .foregroundColor(AppColors.gold.opacity(0.6))
+            + grace
+                .foregroundColor(AppColors.cream.opacity(0.92))
+        )
+        .lineSpacing(5)
+        .fixedSize(horizontal: false, vertical: true)
     }
 
     private func methodCard(
@@ -712,17 +688,17 @@ Per eundem Christum Dominum nostrum. Amen.
             .buttonStyle(SacredCardButtonStyle())
 
             if isExpanded {
-                VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: 14) {
                     Text(intro)
-                        .font(AppFonts.bodyFont(14))
+                        .font(AppFonts.bodyFont(15))
                         .foregroundColor(AppColors.cream.opacity(0.9))
-                        .lineSpacing(4)
+                        .lineSpacing(ReadingTypography.lineSpacing(for: 15))
 
                     Text(example)
-                        .font(AppFonts.readingItalicFont(14))
+                        .font(AppFonts.readingItalicFont(15))
                         .foregroundColor(AppColors.gold.opacity(0.9))
-                        .lineSpacing(4)
-                        .padding(.leading, 12)
+                        .lineSpacing(ReadingTypography.lineSpacing(for: 15))
+                        .padding(.leading, 14)
                         .overlay(alignment: .leading) {
                             Rectangle()
                                 .fill(AppColors.gold.opacity(0.4))
@@ -730,36 +706,26 @@ Per eundem Christum Dominum nostrum. Amen.
                         }
 
                     Text(outro)
-                        .font(AppFonts.bodyFont(14))
+                        .font(AppFonts.bodyFont(15))
                         .foregroundColor(AppColors.cream.opacity(0.9))
-                        .lineSpacing(4)
+                        .lineSpacing(ReadingTypography.lineSpacing(for: 15))
 
                     ForEach(groups) { group in
-                        VStack(alignment: .leading, spacing: 6) {
+                        VStack(alignment: .leading, spacing: 10) {
                             Text(group.title)
                                 .font(AppFonts.labelFont(10))
                                 .tracking(2)
                                 .foregroundColor(AppColors.gold.opacity(0.7))
-                                .padding(.top, 4)
+                                .padding(.top, 6)
 
                             ForEach(group.lines) { line in
-                                HStack(alignment: .top, spacing: 8) {
-                                    Text(line.mystery)
-                                        .font(AppFonts.bodyFont(13))
-                                        .foregroundColor(AppColors.textSecondary)
-                                        .frame(width: 140, alignment: .leading)
-
-                                    Text(lineStyle == .clause ? "\u{201C}\(line.text)\u{201D}" : line.text)
-                                        .font(lineStyle == .clause ? AppFonts.italicFont(13) : AppFonts.bodyFont(13))
-                                        .foregroundColor(AppColors.cream.opacity(0.9))
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                }
+                                petitionLine(line, style: lineStyle)
                             }
                         }
                     }
                 }
                 .padding(.horizontal, 16)
-                .padding(.bottom, 16)
+                .padding(.bottom, 18)
             }
         }
         .background(AppColors.cardBackground)
@@ -806,12 +772,12 @@ Per eundem Christum Dominum nostrum. Amen.
             .buttonStyle(SacredCardButtonStyle())
 
             if isExpanded {
-                VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: 14) {
                     Text("\u{201C}The Rosary without meditation on the sacred mysteries of our salvation would almost be a body without a soul.\u{201D}")
-                        .font(AppFonts.readingItalicFont(14))
+                        .font(AppFonts.readingItalicFont(15))
                         .foregroundColor(AppColors.gold.opacity(0.9))
-                        .lineSpacing(4)
-                        .padding(.leading, 12)
+                        .lineSpacing(ReadingTypography.lineSpacing(for: 15))
+                        .padding(.leading, 14)
                         .overlay(alignment: .leading) {
                             Rectangle()
                                 .fill(AppColors.gold.opacity(0.4))
@@ -852,15 +818,15 @@ Per eundem Christum Dominum nostrum. Amen.
     }
 
     private func montfortCounsel(title: String, text: String) -> some View {
-        VStack(alignment: .leading, spacing: 3) {
+        VStack(alignment: .leading, spacing: 4) {
             Text(title)
-                .font(AppFonts.semiboldBodyFont(14))
+                .font(AppFonts.semiboldBodyFont(15))
                 .foregroundColor(AppColors.cream)
 
             Text(text)
-                .font(AppFonts.bodyFont(13))
+                .font(AppFonts.bodyFont(14))
                 .foregroundColor(AppColors.textSecondary)
-                .lineSpacing(3)
+                .lineSpacing(5)
         }
     }
 

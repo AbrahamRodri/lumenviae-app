@@ -203,7 +203,8 @@ app/
 │                             # QuoteSection, MeditationOptionCard, MenuView,
 │                             # StreakWidget
 ├── DesignSystem/             # Theme, Typography, AppIcon, Motion,
-│                             # SacredComponents (OrnamentDivider, DropCapText…)
+│                             # SacredComponents (OrnamentDivider, DropCapText…),
+│                             # ReadingText (ReadingTypography, ReadingText, PrayerText)
 ├── Data/                     # Bundled content, not code-adjacent constants
 │   ├── ConsecrationData, BilingualConsecrationPrayers, BilingualPrayer
 │   ├── MysteryData, LuminousMeditationData, TrueDevotionData/Prayers
@@ -288,6 +289,13 @@ write concurrent code here:
 - **Bundled fonts:** Cinzel (Regular, SemiBold) for display; EB Garamond
   (Regular, Medium, SemiBold, Italic, MediumItalic) for reading. Always go
   through `AppFonts` — never `Font.custom` at a call site.
+- **Long-form text:** render through `ReadingText` (prose: paragraph splitting
+  on blank lines, `─────` rules become ornament dividers, optional drop cap)
+  or `PrayerText` (verse/stanza text, including the `|||` bilingual line-pair
+  format) in `DesignSystem/ReadingText.swift`. Spacing comes from
+  `ReadingTypography` and scales with the font size — don't hand-roll
+  `lineSpacing` magic numbers on reading surfaces. Reading blocks are 15–16pt
+  minimum in cards, 17–18pt in immersive readers; tap targets stay ≥44pt.
 
 > Colors above are the Midnight theme's. Backgrounds and card fills come from
 > the **active theme**, so read them from `AppColors`; only gold, gold light,

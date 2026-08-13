@@ -125,7 +125,7 @@ struct TrueDevotionView: View {
             Text("This devotion consists in giving ourselves entirely to Mary, in order to belong entirely to Jesus through her. It is a complete gift of self — body, soul, and all spiritual goods — both present and future, without reserve, and forever.")
                 .font(AppFonts.bodyFont(15))
                 .foregroundColor(AppColors.cream.opacity(0.9))
-                .lineSpacing(4)
+                .lineSpacing(ReadingTypography.lineSpacing(for: 15))
         }
         .padding(16)
         .background(
@@ -314,18 +314,20 @@ struct SectionCard: View {
 
 struct DevotionItemView: View {
     let item: DevotionItem
-    @Environment(UserSettings.self) private var settings
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 12) {
             Text(item.title)
                 .font(AppFonts.headlineFont(16))
                 .foregroundColor(AppColors.gold.opacity(0.9))
 
-            formattedContent
+            // The content arrives already resolved for the user's prayer
+            // language; PrayerText handles both the plain and the |||
+            // bilingual line format
+            PrayerText(content: item.content, size: 15)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(14)
+        .padding(16)
         .background(
             RoundedRectangle(cornerRadius: 10)
                 .fill(AppColors.cardBackground.opacity(0.5))
@@ -334,80 +336,6 @@ struct DevotionItemView: View {
             RoundedRectangle(cornerRadius: 10)
                 .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: 1)
         )
-    }
-
-    @ViewBuilder
-    private var formattedContent: some View {
-        let lines = item.content.components(separatedBy: "\n")
-
-        // Check if this is a bilingual prayer (both or latinUnderEnglish)
-        let isBilingual = settings.prayerLanguage == .both || settings.prayerLanguage == .latinUnderEnglish
-
-        if isBilingual {
-            // All prayers use the same line-by-line alternating format with ||| separator
-            formatRegularBilingualPrayer(lines)
-        } else {
-            // Single language - display normally
-            Text(item.content)
-                .font(AppFonts.bodyFont(14))
-                .foregroundColor(AppColors.cream.opacity(0.9))
-                .lineSpacing(3)
-                .fixedSize(horizontal: false, vertical: true)
-        }
-    }
-
-    /// Format regular prayers with line-by-line alternation
-    @ViewBuilder
-    private func formatRegularBilingualPrayer(_ lines: [String]) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            ForEach(Array(lines.enumerated()), id: \.offset) { index, line in
-                let trimmed = line.trimmingCharacters(in: .whitespaces)
-
-                if trimmed.isEmpty {
-                    // Empty line - add spacing
-                    Spacer()
-                        .frame(height: 4)
-                } else if trimmed.contains("|||") {
-                    // Line contains explicit bilingual marker
-                    formatBilingualPair(trimmed)
-                } else {
-                    // Regular single-language line (shouldn't happen in bilingual mode, but handle it)
-                    Text(trimmed)
-                        .font(AppFonts.bodyFont(14))
-                        .foregroundColor(AppColors.cream.opacity(0.9))
-                        .lineSpacing(3)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-            }
-        }
-    }
-
-    /// Format a single line containing both languages separated by |||
-    @ViewBuilder
-    private func formatBilingualPair(_ line: String) -> some View {
-        let parts = line.components(separatedBy: "|||")
-
-        VStack(alignment: .leading, spacing: 2) {
-            if parts.count >= 1 {
-                // Primary language (first part)
-                Text(parts[0].trimmingCharacters(in: .whitespaces))
-                    .font(AppFonts.bodyFont(16))
-                    .foregroundColor(AppColors.cream)
-                    .lineSpacing(4)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-
-            if parts.count >= 2 {
-                // Secondary language (second part)
-                Text(parts[1].trimmingCharacters(in: .whitespaces))
-                    .font(AppFonts.bodyFont(13))
-                    .foregroundColor(AppColors.textSecondary.opacity(0.8))
-                    .italic()
-                    .lineSpacing(3)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.leading, 8)
-            }
-        }
     }
 }
 
