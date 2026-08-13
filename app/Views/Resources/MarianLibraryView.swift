@@ -372,23 +372,24 @@ struct MarianLibraryView: View {
             .buttonStyle(SacredCardButtonStyle())
 
             if isExpanded {
-                VStack(alignment: .leading, spacing: 20) {
+                VStack(alignment: .leading, spacing: 26) {
                     ForEach(section.entries) { entry in
-                        VStack(alignment: .leading, spacing: 6) {
+                        VStack(alignment: .leading, spacing: 8) {
                             Text(entry.title)
                                 .font(AppFonts.headlineFont(15))
                                 .foregroundColor(AppColors.gold)
 
                             Text(entry.detail)
-                                .font(AppFonts.bodyFont(11))
+                                .font(AppFonts.bodyFont(12))
                                 .tracking(1)
                                 .foregroundColor(AppColors.textSecondary)
 
-                            Text(entry.text)
-                                .font(AppFonts.bodyFont(14))
-                                .foregroundColor(AppColors.cream.opacity(0.88))
-                                .lineSpacing(5)
-                                .fixedSize(horizontal: false, vertical: true)
+                            ReadingText(
+                                text: entry.text,
+                                size: 16,
+                                textColor: AppColors.cream.opacity(0.9)
+                            )
+                            .padding(.top, 2)
                         }
                     }
 
@@ -399,7 +400,7 @@ struct MarianLibraryView: View {
                     }
                 }
                 .padding(.horizontal, 16)
-                .padding(.bottom, 18)
+                .padding(.bottom, 20)
             }
         }
         .background(AppColors.cardBackground)

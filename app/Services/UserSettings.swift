@@ -19,6 +19,9 @@ enum PrayerLanguage: String, CaseIterable, Identifiable {
     case latinUnderEnglish = "English & Latin"
 
     var id: String { rawValue }
+
+    /// True when this mode shows a translation beneath each prayer line
+    var isBilingual: Bool { self == .both || self == .latinUnderEnglish }
 }
 
 // MARK: - Prayer Intention

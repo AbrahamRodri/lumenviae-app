@@ -312,16 +312,16 @@ struct CarloAcutisView: View {
     }
 
     private func bioBlock(title: String, text: String) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 8) {
             Text(title)
                 .font(AppFonts.headlineFont(16))
                 .foregroundColor(AppColors.cream)
 
-            Text(text)
-                .font(AppFonts.bodyFont(14))
-                .foregroundColor(AppColors.cream.opacity(0.85))
-                .lineSpacing(5)
-                .fixedSize(horizontal: false, vertical: true)
+            ReadingText(
+                text: text,
+                size: 16,
+                textColor: AppColors.cream.opacity(0.88)
+            )
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(16)
@@ -374,15 +374,15 @@ struct CarloAcutisView: View {
                     .foregroundColor(AppColors.gold)
             }
 
-            VStack(alignment: .leading, spacing: 5) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text(title)
                     .font(AppFonts.headlineFont(15))
                     .foregroundColor(AppColors.cream)
 
                 Text(text)
-                    .font(AppFonts.bodyFont(14))
-                    .foregroundColor(AppColors.cream.opacity(0.85))
-                    .lineSpacing(4)
+                    .font(AppFonts.bodyFont(15))
+                    .foregroundColor(AppColors.cream.opacity(0.88))
+                    .lineSpacing(ReadingTypography.lineSpacing(for: 15))
                     .fixedSize(horizontal: false, vertical: true)
             }
 
@@ -431,7 +431,7 @@ struct CarloAcutisView: View {
                                 .font(AppFonts.readingItalicFont(17))
                                 .foregroundColor(AppColors.cream)
                                 .multilineTextAlignment(.center)
-                                .lineSpacing(5)
+                                .lineSpacing(7)
 
                             Spacer(minLength: 0)
                         }
@@ -441,7 +441,7 @@ struct CarloAcutisView: View {
                     }
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
-                .frame(height: 190)
+                .frame(height: 200)
                 .background(AppColors.cardBackground.opacity(0.6))
                 .cornerRadius(14)
                 .overlay(
@@ -477,15 +477,17 @@ struct CarloAcutisView: View {
                 .tracking(2)
                 .foregroundColor(AppColors.gold)
 
-            Text("""
+            ReadingText(
+                text: """
 O God, who gave to the young Carlo Acutis a heart aflame with love for the Holy Eucharist, grant, we pray, that through his intercession we too may seek You above all things, live as originals and not photocopies, and one day share with him the joy of Your kingdom. Through Christ our Lord. Amen.
 
 St. Carlo Acutis, pray for us.
-""")
-                .font(AppFonts.bodyFont(15))
-                .foregroundColor(AppColors.cream.opacity(0.9))
-                .multilineTextAlignment(.center)
-                .lineSpacing(6)
+""",
+                size: 16,
+                textColor: AppColors.cream.opacity(0.92),
+                alignment: .center
+            )
+                .frame(maxWidth: .infinity)
                 .padding(20)
                 .background(
                     RoundedRectangle(cornerRadius: 16)

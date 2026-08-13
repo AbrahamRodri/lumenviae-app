@@ -90,7 +90,10 @@ struct TrueDevotionChapterReaderView: View {
 
     private func reader(_ chapter: TrueDevotionChapter) -> some View {
         ScrollView(showsIndicators: false) {
-            LazyVStack(alignment: .leading, spacing: 18) {
+            LazyVStack(
+                alignment: .leading,
+                spacing: ReadingTypography.paragraphSpacing(for: readingFontSize)
+            ) {
                 chapterHeader(chapter)
                     .id(-1)
 
@@ -167,7 +170,7 @@ struct TrueDevotionChapterReaderView: View {
                 Text(paragraph.text)
                     .font(AppFonts.readingFont(readingFontSize))
                     .foregroundColor(AppColors.cream.opacity(0.92))
-                    .lineSpacing(7)
+                    .lineSpacing(ReadingTypography.lineSpacing(for: readingFontSize))
                     .fixedSize(horizontal: false, vertical: true)
             }
         }

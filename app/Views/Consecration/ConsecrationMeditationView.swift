@@ -18,6 +18,10 @@ struct ConsecrationMeditationView: View {
 
     let dayNumber: Int
 
+    // MARK: - Environment
+
+    @Environment(UserSettings.self) private var settings
+
     // MARK: - Computed Properties
 
     private var day: ConsecrationDay? {
@@ -108,6 +112,9 @@ struct ConsecrationMeditationView: View {
                         Circle()
                             .fill(AppColors.cardBackground)
                     )
+                    // 44pt hit target around the 36pt visual circle
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
             }
 
             Spacer()
@@ -132,7 +139,7 @@ struct ConsecrationMeditationView: View {
 
             // Spacer for symmetry
             Color.clear
-                .frame(width: 36, height: 36)
+                .frame(width: 44, height: 44)
         }
         .padding(.horizontal, 20)
     }
@@ -187,11 +194,14 @@ struct ConsecrationMeditationView: View {
     // MARK: - Text
 
     private var meditationText: some View {
-        Text(day?.meditationText ?? "")
-            .font(AppFonts.bodyFont(17))
-            .foregroundColor(AppColors.cream.opacity(0.92))
-            .lineSpacing(10)
-            .multilineTextAlignment(.leading)
+        // Paragraph-aware: the readings carry real paragraph breaks and
+        // ───── section rules, and the size follows Account → Text Size
+        ReadingText(
+            text: day?.meditationText ?? "",
+            size: settings.meditationFontSize,
+            showsDropCap: true
+        )
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     // MARK: - Bottom Controls
@@ -231,5 +241,6 @@ struct ConsecrationMeditationView: View {
     NavigationStack {
         ConsecrationMeditationView(path: .constant(NavigationPath()), dayNumber: 1)
             .environment(ConsecrationViewModel())
+            .environment(UserSettings.shared)
     }
 }

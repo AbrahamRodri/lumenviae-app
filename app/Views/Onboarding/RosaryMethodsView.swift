@@ -59,7 +59,7 @@ struct RosaryMethodsView: View {
                         Text("There are several ways to pray the Rosary. Each method uses the same structure of mysteries and prayers, but brings a different focus or spiritual lens to the meditations.")
                             .font(AppFonts.bodyFont(15))
                             .foregroundColor(AppColors.textSecondary)
-                            .lineSpacing(5)
+                            .lineSpacing(ReadingTypography.lineSpacing(for: 15))
                             .multilineTextAlignment(.leading)
                             .padding(.horizontal, 24)
                             .padding(.top, 24)
@@ -140,11 +140,14 @@ private struct MethodDetailCard: View {
                 Spacer()
             }
 
-            // Description
-            Text(description)
-                .font(AppFonts.bodyFont(14))
-                .foregroundColor(isComingSoon ? AppColors.textSecondary.opacity(0.6) : AppColors.textSecondary)
-                .lineSpacing(5)
+            // Description — paragraph-aware, so the two-paragraph method
+            // notes keep a real break between them
+            ReadingText(
+                text: description,
+                size: 15,
+                style: .body,
+                textColor: isComingSoon ? AppColors.textSecondary.opacity(0.6) : AppColors.textSecondary
+            )
         }
         .padding(18)
         .background(AppColors.cardBackground)
