@@ -197,16 +197,59 @@ struct JournalView: View {
 
     private var journalList: some View {
         ScrollView(showsIndicators: false) {
-            VStack(spacing: 32) {
-                ForEach(groupedEntries, id: \.month) { group in
-                    monthSection(group)
-                }
+            if filteredEntries.isEmpty {
+                noResultsState
+            } else {
+                VStack(spacing: 32) {
+                    ForEach(groupedEntries, id: \.month) { group in
+                        monthSection(group)
+                    }
 
-                Spacer(minLength: 120)
+                    Spacer(minLength: 120)
+                }
+                .padding(.top, 24)
+                .padding(.horizontal, 20)
             }
-            .padding(.top, 24)
-            .padding(.horizontal, 20)
         }
+    }
+
+    /// Shown when a search matches nothing: name the query, offer a hint,
+    /// and give a way back out — never a silently blank page.
+    private var noResultsState: some View {
+        VStack(spacing: 16) {
+            AppIcon("ph-magnifying-glass", size: 40)
+                .foregroundColor(AppColors.gold.opacity(0.35))
+
+            VStack(spacing: 6) {
+                Text("Nothing matches \u{201C}\(searchText)\u{201D}")
+                    .font(AppFonts.semiboldBodyFont(16))
+                    .foregroundColor(AppColors.cream.opacity(0.85))
+                    .multilineTextAlignment(.center)
+
+                Text("Try a shorter word, or search by a mystery's name.")
+                    .font(AppFonts.bodyFont(14))
+                    .foregroundColor(AppColors.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(5)
+            }
+
+            Button {
+                withAnimation(.easeInOut(duration: 0.2)) { searchText = "" }
+            } label: {
+                Text("Clear Search")
+                    .font(AppFonts.bodyFont(14))
+                    .foregroundColor(AppColors.gold)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 10)
+                    .overlay(
+                        Capsule().strokeBorder(AppColors.gold.opacity(0.5), lineWidth: 1)
+                    )
+            }
+            .padding(.top, 4)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.top, 72)
+        .padding(.horizontal, 32)
     }
 
     private func monthSection(_ group: (month: String, entries: [JournalEntry])) -> some View {
