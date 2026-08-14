@@ -309,17 +309,17 @@ struct ConsecrationPrayerFlowView: View {
                             .padding(.bottom, 24)
                     }
 
-                    // Prayer Text — hymns stay centered in single-language
-                    // display; bilingual line pairs read down the left edge
+                    // Every prayer reads down the left edge, whatever the
+                    // display language. Centering single-language text put
+                    // the same prayer on two different designs depending on
+                    // a setting — and centered prose, which most of these
+                    // are, is the harder of the two to read.
                     PrayerText(
                         content: prayer.content,
                         size: 18,
-                        alignment: settings.prayerLanguage.isBilingual ? .leading : .center
+                        alignment: .leading
                     )
-                    .frame(
-                        maxWidth: .infinity,
-                        alignment: settings.prayerLanguage.isBilingual ? .leading : .center
-                    )
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 28)
 
                     // Bottom padding for scroll
