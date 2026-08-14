@@ -201,4 +201,16 @@ struct AppColors {
             endPoint: .bottom
         )
     }
+
+    /// The gold ramp a call-to-action is struck from: gold at the leading
+    /// edge brightening across to gold light. Horizontal rather than
+    /// vertical so a wide pill reads as one flat plate of gold instead of
+    /// a bar with a lit top edge.
+    static var goldCTAGradient: LinearGradient {
+        LinearGradient(
+            colors: [palette.gold, palette.goldLight],
+            startPoint: .leading,
+            endPoint: .trailing
+        )
+    }
 }

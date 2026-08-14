@@ -118,8 +118,11 @@ struct CustomTabBar: View {
             }
             .padding(.top, 12)
         }
-        // The color the app gradient bottoms out at, so the bar reads as
-        // the foot of the page instead of a card floating on top of it
+        // The fade above the bar carries on behind it, in the color the
+        // page gradient bottoms out at, all the way through the home
+        // indicator. So the page runs unbroken to the foot of the screen
+        // — no slab edge — while scrolling text still has something to
+        // dissolve into instead of sliding out crisply under the icons.
         .background(
             AppColors.backgroundDeep
                 .ignoresSafeArea()
@@ -206,22 +209,22 @@ struct PrayNowButton: View {
 
 /// A Latin cross drawn by hand — SF Symbols' "cross" is the medical
 /// cross, which reads as first-aid rather than faith.
+///
+/// Square-cut, not rounded: the corners are struck like carved stone or
+/// a printer's mark, which is the language the rest of the app is set in.
 struct LatinCross: Shape {
     func path(in rect: CGRect) -> Path {
         let bar = rect.width * 0.28
-        let corner = CGSize(width: bar * 0.3, height: bar * 0.3)
         var path = Path()
 
         // Upright
-        path.addRoundedRect(
-            in: CGRect(x: rect.midX - bar / 2, y: rect.minY, width: bar, height: rect.height),
-            cornerSize: corner
+        path.addRect(
+            CGRect(x: rect.midX - bar / 2, y: rect.minY, width: bar, height: rect.height)
         )
 
         // Crossbar, set at a third of the height
-        path.addRoundedRect(
-            in: CGRect(x: rect.minX, y: rect.minY + rect.height * 0.3 - bar / 2, width: rect.width, height: bar),
-            cornerSize: corner
+        path.addRect(
+            CGRect(x: rect.minX, y: rect.minY + rect.height * 0.3 - bar / 2, width: rect.width, height: bar)
         )
 
         return path

@@ -295,9 +295,14 @@ struct ResumePrayerCard: View {
 // MARK: - DayPrayerLabel
 
 /// The current day's prayer label with decorative gradient lines on each side,
-/// e.g. "━━━━ WEDNESDAY PRAYER ━━━━".
+/// e.g. "━━━━ WEDNESDAY PRAYER ━━━━". Also carries the consecration's
+/// countdown to the feast, which is the same ruled line at a quieter size.
 struct DayPrayerLabel: View {
     let label: String
+
+    var size: CGFloat = 11
+    var tracking: CGFloat = 3
+    var horizontalPadding: CGFloat = 40
 
     private var fadeInGradient: LinearGradient {
         LinearGradient(
@@ -324,8 +329,8 @@ struct DayPrayerLabel: View {
 
             // Day label text
             Text(label)
-                .font(AppFonts.labelFont(11))
-                .tracking(3)  // Letter spacing for elegance
+                .font(AppFonts.labelFont(size))
+                .tracking(tracking)  // Letter spacing for elegance
                 .foregroundColor(AppColors.gold)
                 .fixedSize()  // Prevent text from being compressed
 
@@ -334,7 +339,7 @@ struct DayPrayerLabel: View {
                 .fill(fadeOutGradient)
                 .frame(height: 1)
         }
-        .padding(.horizontal, 40)
+        .padding(.horizontal, horizontalPadding)
     }
 }
 
@@ -490,30 +495,11 @@ struct FeaturedMysteryCard: View {
         }
     }
 
-    /// Primary CTA button
+    /// Primary CTA button — the screen's one filled gold shape
     private var beginPrayerButton: some View {
-        Button(action: onBeginPrayer) {
-            HStack(spacing: 10) {
-                LatinCross()
-                    .fill(AppColors.background)
-                    .frame(width: 10, height: 14)
-                Text("BEGIN PRAYER")
-                    .font(AppFonts.labelFont(13))
-                    .tracking(2.5)
-            }
-            .foregroundColor(AppColors.background)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
-            .background(Capsule().fill(AppColors.goldGradient))
-            .overlay(
-                Capsule()
-                    .strokeBorder(AppColors.goldLight.opacity(0.6), lineWidth: 0.5)
-            )
-            .haloGlow(AppColors.gold, radius: 9, intensity: 0.3)
-        }
-        .buttonStyle(GoldCTAButtonStyle())
-        .padding(.horizontal, 20)
-        .padding(.top, 8)
+        GoldCTAButton(title: "Begin prayer", action: onBeginPrayer)
+            .padding(.horizontal, 20)
+            .padding(.top, 8)
     }
 
 }

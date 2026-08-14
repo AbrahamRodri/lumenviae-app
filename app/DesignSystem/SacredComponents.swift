@@ -269,14 +269,39 @@ extension View {
     /// `GoldCTAButtonStyle` for press feedback.
     func goldCTABackground(cornerRadius: CGFloat = 14) -> some View {
         self
-            .background(
-                LinearGradient(
-                    colors: [AppColors.gold, AppColors.goldLight],
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-            )
+            .background(AppColors.goldCTAGradient)
             .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+    }
+}
+
+// MARK: - Sacred Card
+
+extension View {
+
+    /// The app's card shell: a themed surface behind a fine gold
+    /// hairline. One place for it so every card on every screen carries
+    /// the same radius, fill, and rule weight.
+    func sacredCard(
+        vertical: CGFloat,
+        horizontal: CGFloat,
+        cornerRadius: CGFloat = 16
+    ) -> some View {
+        self
+            .padding(.vertical, vertical)
+            .padding(.horizontal, horizontal)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .fill(AppColors.cardBackground)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: 0.5)
+            )
+    }
+
+    func sacredCard(padding: CGFloat = 20, cornerRadius: CGFloat = 16) -> some View {
+        sacredCard(vertical: padding, horizontal: padding, cornerRadius: cornerRadius)
     }
 }
 

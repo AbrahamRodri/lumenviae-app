@@ -19,13 +19,21 @@ struct ConsecrationPrayerFlowView: View {
 
     let dayNumber: Int
 
+    /// The prayer to open on — the day overview lists them, and a tap
+    /// there should land on the prayer that was tapped.
+    init(path: Binding<NavigationPath>, dayNumber: Int, startIndex: Int = 0) {
+        self._path = path
+        self.dayNumber = dayNumber
+        self._currentIndex = State(initialValue: startIndex)
+    }
+
     // MARK: - Environment
 
     @Environment(UserSettings.self) private var settings
 
     // MARK: - State
 
-    @State private var currentIndex: Int = 0
+    @State private var currentIndex: Int
     @State private var opacity: Double = 1.0
     @State private var cachedAudioUrls: [String: String] = [:]
 
