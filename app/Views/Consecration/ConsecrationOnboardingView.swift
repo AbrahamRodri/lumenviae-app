@@ -342,7 +342,7 @@ private struct ThresholdStepView: View {
                     .staggeredReveal(delay: 0.7)
             }
             .padding(.horizontal, 24)
-            .padding(.bottom, 104)
+            .padding(.bottom, 120)
         }
     }
 
@@ -422,7 +422,7 @@ private struct DevotionStepView: View {
                     .staggeredReveal(delay: 0.95)
             }
             .padding(.horizontal, 24)
-            .padding(.bottom, 104)
+            .padding(.bottom, 120)
         }
     }
 
@@ -516,7 +516,7 @@ private struct RhythmStepView: View {
                     .staggeredReveal(delay: 1.05)
             }
             .padding(.horizontal, 24)
-            .padding(.bottom, 104)
+            .padding(.bottom, 120)
         }
     }
 
@@ -599,7 +599,7 @@ private struct JourneyStepView: View {
                 .staggeredReveal(delay: 1.3)
             }
             .padding(.horizontal, 24)
-            .padding(.bottom, 104)
+            .padding(.bottom, 120)
         }
     }
 
