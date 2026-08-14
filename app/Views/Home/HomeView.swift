@@ -107,7 +107,10 @@ struct HomeView: View {
                     }
                 )
                 // An unfinished Rosary floats over the content until the
-                // user continues or dismisses it — impossible to miss.
+                // user continues or dismisses it. It holds the top of the
+                // page and keeps its shadow, but it no longer shouts:
+                // returning to a Rosary should feel like an invitation,
+                // not a summons.
                 .overlay(alignment: .top) {
                     if let session = PrayerResumeService.shared.inProgress {
                         ResumePrayerCard(
