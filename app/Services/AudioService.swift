@@ -14,6 +14,7 @@
 import AVFoundation
 import Foundation
 import MediaPlayer
+import UIKit
 
 @Observable
 final class AudioService {
@@ -56,6 +57,12 @@ final class AudioService {
     private var nowPlayingTitle: String?
     private var nowPlayingSubtitle: String?
 
+    /// Asset name of the Lock Screen artwork, with the built artwork
+    /// cached — MPMediaItemArtwork construction isn't free and Now
+    /// Playing refreshes happen on every play/pause/seek.
+    private var nowPlayingArtworkAsset: String?
+    private var cachedArtwork: (asset: String, artwork: MPMediaItemArtwork)?
+
     // MARK: - Initialization
 
     private init() {
@@ -77,7 +84,9 @@ final class AudioService {
     /// (.playback plays even with the mute switch on).
     ///
     /// The session is NOT activated here — activation silences other
-    /// apps' audio, so it happens only when the user actually plays.
+    /// apps' audio. It happens when the user actually plays, or on load
+    /// for a caller that asks for `claimNowPlaying` (the prayer flow,
+    /// which must answer headphone presses before the first tap).
     private func setupAudioSession() {
         #if os(iOS)
         do {
@@ -153,6 +162,23 @@ final class AudioService {
         #endif
     }
 
+    // MARK: - Track Navigation (headphones / Lock Screen)
+
+    /// Hooks the prayer flow installs so AirPods presses and Lock Screen
+    /// arrows move between mysteries. While set, the Lock Screen shows
+    /// track arrows instead of the ±10s skips; when cleared (chant
+    /// playback, no flow active) the skips come back.
+    var onNextTrack: (() -> Void)? { didSet { updateTrackCommandAvailability() } }
+    var onPreviousTrack: (() -> Void)? { didSet { updateTrackCommandAvailability() } }
+
+    private func updateTrackCommandAvailability() {
+        let center = MPRemoteCommandCenter.shared()
+        center.nextTrackCommand.isEnabled = onNextTrack != nil
+        center.previousTrackCommand.isEnabled = onPreviousTrack != nil
+        center.skipForwardCommand.isEnabled = onNextTrack == nil
+        center.skipBackwardCommand.isEnabled = onPreviousTrack == nil
+    }
+
     // MARK: - Remote Commands (Lock Screen / headphones / watch)
 
     private func setupRemoteCommands() {
@@ -198,6 +224,21 @@ final class AudioService {
             self.seek(to: event.positionTime)
             return .success
         }
+
+        // AirPods double/triple presses arrive as track commands, not
+        // skips — without these, a double-tap does nothing at all.
+        center.nextTrackCommand.addTarget { [weak self] _ in
+            guard let self, let advance = self.onNextTrack else { return .noActionableNowPlayingItem }
+            advance()
+            return .success
+        }
+        center.previousTrackCommand.addTarget { [weak self] _ in
+            guard let self, let back = self.onPreviousTrack else { return .noActionableNowPlayingItem }
+            back()
+            return .success
+        }
+
+        updateTrackCommandAvailability()
     }
 
     // MARK: - Now Playing Info
@@ -210,7 +251,32 @@ final class AudioService {
         info[MPMediaItemPropertyPlaybackDuration] = duration
         info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
         info[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? 1.0 : 0.0
+        if let artwork = lockScreenArtwork() {
+            info[MPMediaItemPropertyArtwork] = artwork
+        }
         MPNowPlayingInfoCenter.default().nowPlayingInfo = info
+    }
+
+    /// Nominal bounds for Lock Screen artwork. The request handler hands
+    /// back the asset at its natural size and the system scales it.
+    private static let artworkBounds = CGSize(width: 1024, height: 1024)
+
+    /// The mystery's painting on the Lock Screen player.
+    ///
+    /// The image is loaded inside the request handler, which the system
+    /// calls lazily and off this path: decoding a full-screen painting
+    /// here would run on the main actor at exactly the moment the
+    /// artwork transition is animating on screen.
+    private func lockScreenArtwork() -> MPMediaItemArtwork? {
+        guard let asset = nowPlayingArtworkAsset else { return nil }
+        if let cached = cachedArtwork, cached.asset == asset {
+            return cached.artwork
+        }
+        let artwork = MPMediaItemArtwork(boundsSize: Self.artworkBounds) { _ in
+            UIImage(named: asset) ?? UIImage()
+        }
+        cachedArtwork = (asset, artwork)
+        return artwork
     }
 
     /// Cheap update of just position/rate after play/pause/seek.
@@ -227,9 +293,20 @@ final class AudioService {
     // MARK: - Loading Audio
 
     /// Loads audio from a URL string, skipping if the same URL is already
-    /// loaded. `title`/`subtitle` feed the Lock Screen metadata.
+    /// loaded. `title`/`subtitle`/`artworkAssetName` feed the Lock Screen.
+    ///
+    /// `claimNowPlaying` makes this the Now Playing app as soon as the
+    /// audio is ready, before any on-screen play — hands-off prayer needs
+    /// headphone presses to reach it. Callers that must not take the
+    /// route until the user presses play leave it off.
     @MainActor
-    func loadAudio(from urlString: String, title: String? = nil, subtitle: String? = nil) async {
+    func loadAudio(
+        from urlString: String,
+        title: String? = nil,
+        subtitle: String? = nil,
+        artworkAssetName: String? = nil,
+        claimNowPlaying: Bool = false
+    ) async {
         guard let url = URL(string: urlString) else {
             errorMessage = "Invalid audio URL"
             return
@@ -239,18 +316,22 @@ final class AudioService {
         if url == currentURL && player != nil {
             nowPlayingTitle = title ?? nowPlayingTitle
             nowPlayingSubtitle = subtitle ?? nowPlayingSubtitle
+            nowPlayingArtworkAsset = artworkAssetName ?? nowPlayingArtworkAsset
             updateNowPlayingInfo()
             return
         }
 
-        // reset() invalidates any in-flight load; claim our generation after.
-        reset()
+        // reset() invalidates any in-flight load; claim our generation
+        // after. Now Playing survives so switching mysteries doesn't
+        // collapse the Lock Screen player mid-session.
+        reset(preservingNowPlaying: true)
         let generation = loadGeneration
 
         isLoading = true
         currentURL = url
         nowPlayingTitle = title
         nowPlayingSubtitle = subtitle
+        nowPlayingArtworkAsset = artworkAssetName
 
         let playerItem = AVPlayerItem(url: url)
         player = AVPlayer(playerItem: playerItem)
@@ -296,7 +377,27 @@ final class AudioService {
         setupTimeObserver()
         setupNotifications(for: playerItem)
         updateNowPlayingInfo()
+
+        // Become the Now Playing app while the audio is merely ready:
+        // otherwise headphone play presses keep controlling whatever app
+        // played last until the user has once tapped play on screen, and
+        // the Lock Screen shows nothing to resume. Never claim the route
+        // while another app is actually playing.
+        if claimNowPlaying {
+            activateSessionIfIdle()
+        }
+
         isLoading = false
+    }
+
+    /// Activates the audio session when no other app is playing, so remote
+    /// commands route here before the first on-screen play.
+    private func activateSessionIfIdle() {
+        #if os(iOS)
+        let session = AVAudioSession.sharedInstance()
+        guard !session.isOtherAudioPlaying else { return }
+        try? session.setActive(true)
+        #endif
     }
 
     // MARK: - Playback Controls
@@ -363,7 +464,10 @@ final class AudioService {
     /// Stops playback and resets all state.
     ///
     /// Called when changing mysteries or leaving the prayer screen.
-    func reset() {
+    /// `preservingNowPlaying` keeps the Lock Screen player alive across
+    /// an in-flow change of track (the next load republishes over it);
+    /// leaving a flow entirely clears it.
+    func reset(preservingNowPlaying: Bool = false) {
         // Invalidate any in-flight load so its continuation can't mutate
         // the state this reset establishes.
         loadGeneration &+= 1
@@ -378,7 +482,9 @@ final class AudioService {
         isPlaying = false
         isLoading = false
         errorMessage = nil
-        MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
+        if !preservingNowPlaying {
+            MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
+        }
     }
 
     // MARK: - Time Observer

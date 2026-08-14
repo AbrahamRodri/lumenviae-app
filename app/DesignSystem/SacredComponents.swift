@@ -224,41 +224,40 @@ struct DropCapText: View {
 
     let text: String
     var bodySize: CGFloat = 17
-    var capSize: CGFloat = 40
     var textColor: Color = AppColors.cream
+
+    /// The initial shares the first line's text box, so its font metrics
+    /// set that line's height: much past 1.6× the body and the line grows
+    /// a visible hole beneath it, breaking the paragraph's rhythm. 1.6×
+    /// keeps the cap standing proud of the line — a versal initial —
+    /// while the leading stays even.
+    private var capSize: CGFloat { (bodySize * 1.6).rounded() }
+
+    private static let openingQuotes: Set<Character> = ["\u{201C}", "\u{2018}", "\"", "'"]
 
     var body: some View {
         // Line spacing tracks the body size so enlarged text keeps its air
-        let spacing = ReadingTypography.lineSpacing(for: bodySize)
-        if let first = text.first {
-            let cap = Text(String(first))
-                .font(AppFonts.titleFont(capSize))
-                .foregroundColor(AppColors.gold)
-            Text("\(cap)\(remainder)")
-                .lineSpacing(spacing)
-        } else {
-            Text(text)
-                .font(AppFonts.readingFont(bodySize))
-                .foregroundColor(textColor)
-                .lineSpacing(spacing)
-        }
+        composed.lineSpacing(ReadingTypography.lineSpacing(for: bodySize))
     }
 
-    /// The paragraph after the initial. When the illuminated initial is an
-    /// opening quotation mark, the closing mark is gilded to match it — a
-    /// lone cream quote answering a gold one reads as an oversight.
-    private var remainder: Text {
-        let rest = String(text.dropFirst())
-        let bodyFont = AppFonts.readingFont(bodySize)
-
-        guard text.first == "\u{201C}",
-              let close = rest.firstIndex(of: "\u{201D}") else {
-            return Text(rest).font(bodyFont).foregroundColor(textColor)
+    /// A paragraph that opens with a quotation gets no illumination at
+    /// all — an enlarged or gilded quote mark reads as a mistake, so
+    /// those paragraphs are set as plain reading text.
+    private var composed: Text {
+        guard let first = text.first, !Self.openingQuotes.contains(first) else {
+            return plain(text)
         }
+        return versal(first) + plain(String(text.dropFirst()))
+    }
 
-        return Text(String(rest[..<close])).font(bodyFont).foregroundColor(textColor)
-            + Text(String(rest[close])).font(bodyFont).foregroundColor(AppColors.gold)
-            + Text(String(rest[rest.index(after: close)...])).font(bodyFont).foregroundColor(textColor)
+    private func versal(_ letter: Character) -> Text {
+        Text(String(letter))
+            .font(AppFonts.titleFont(capSize))
+            .foregroundColor(AppColors.gold)
+    }
+
+    private func plain(_ s: String) -> Text {
+        Text(s).font(AppFonts.readingFont(bodySize)).foregroundColor(textColor)
     }
 }
 
