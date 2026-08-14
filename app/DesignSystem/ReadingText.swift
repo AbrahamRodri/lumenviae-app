@@ -69,11 +69,17 @@ struct ReadingText: View {
     var textColor: Color = AppColors.cream.opacity(0.92)
     var alignment: TextAlignment = .leading
 
-    private var paragraphs: [String] {
+    /// The paragraph split every reading surface uses. Exposed so a
+    /// caller that needs to address paragraphs individually — the prayer
+    /// reader's narration follow-along — indexes exactly what is drawn
+    /// here, instead of keeping a second copy of this rule in step.
+    static func paragraphs(of text: String) -> [String] {
         text.components(separatedBy: "\n\n")
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter { !$0.isEmpty }
     }
+
+    private var paragraphs: [String] { Self.paragraphs(of: text) }
 
     /// A hand-typed rule between sections of a reading
     private func isRule(_ paragraph: String) -> Bool {
@@ -99,7 +105,6 @@ struct ReadingText: View {
                     DropCapText(
                         text: paragraph,
                         bodySize: size,
-                        capSize: size * 2.4,
                         textColor: textColor
                     )
                     .fixedSize(horizontal: false, vertical: true)

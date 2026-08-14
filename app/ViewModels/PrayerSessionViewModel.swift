@@ -159,19 +159,106 @@ final class PrayerSessionViewModel {
     /// that expire, and local files play offline.
     @MainActor
     func loadCurrentAudio() async {
-        guard let meditation = currentMeditation else { return }
+        let generation = flowGeneration
 
         // hasAudio also rejects the empty-string URLs the server can emit
-        let source = OfflineContentService.shared.localAudioURL(meditationId: meditation.id)?.absoluteString
-            ?? (meditation.hasAudio ? meditation.audioUrl : nil)
+        let source = currentMeditation.flatMap { meditation in
+            OfflineContentService.shared.localAudioURL(meditationId: meditation.id)?.absoluteString
+                ?? (meditation.hasAudio ? meditation.audioUrl : nil)
+        }
 
-        guard let source else { return }
+        guard let meditation = currentMeditation, let source else {
+            // A mystery with no narration must not leave the previous
+            // one's player standing on the Lock Screen: resetAudioState
+            // preserved it for a load that is not coming.
+            pendingRemoteAutoplay = false
+            audioService.reset()
+            return
+        }
 
         await audioService.loadAudio(
             from: source,
             title: meditation.displayTitle,
-            subtitle: meditationSet.name
+            subtitle: meditationSet.name,
+            artworkAssetName: Constants.mysteryImageURL(
+                category: meditationSet.category,
+                index: currentMysteryIndex
+            ),
+            claimNowPlaying: true
         )
+
+        // The flow can be left while the asset loads — nothing this load
+        // published may outlive it.
+        guard generation == flowGeneration else {
+            audioService.reset()
+            audioService.deactivateSession()
+            return
+        }
+
+        let autoplay = pendingRemoteAutoplay
+        pendingRemoteAutoplay = false
+
+        // A failed load published no track for a remote command to act on.
+        guard audioService.errorMessage == nil else { return }
+
+        attachRemoteNavigation()
+
+        // A mystery reached from AirPods or the Lock Screen flows straight
+        // into its narration — the whole point of hands-off prayer.
+        if autoplay {
+            audioService.play()
+        }
+    }
+
+    // MARK: - Hands-Off Navigation
+
+    /// Set when a remote track command changes the mystery, so the next
+    /// load starts playing without the phone being touched.
+    private var pendingRemoteAutoplay = false
+
+    /// Bumped when the flow is left, so a load already in flight can tell
+    /// that it no longer owns the session.
+    private var flowGeneration = 0
+
+    /// The load a remote track command started. The view's `.task` is
+    /// cancelled for us when the screen goes away; this one is not.
+    private var remoteLoadTask: Task<Void, Never>?
+
+    /// Wires AirPods presses and Lock Screen arrows to mystery navigation.
+    /// Attached only once a track of ours is actually published: a track
+    /// command arriving before that belongs to whatever was Now Playing
+    /// before us, replayed at our freshly activated session, rather than
+    /// to a person praying.
+    ///
+    /// Completion stays on-screen only: advancing past the last mystery
+    /// from a remote is ignored rather than ending the Rosary.
+    ///
+    /// The handlers load the next audio themselves instead of leaning on
+    /// the view's task — with the phone locked, the view may not
+    /// re-evaluate, and the narration must continue regardless. In the
+    /// foreground the view's task also fires; the same-URL guard in
+    /// AudioService makes the second load a no-op.
+    private func attachRemoteNavigation() {
+        audioService.onNextTrack = { [weak self] in
+            guard let self, !self.isLastMystery else { return }
+            self.pendingRemoteAutoplay = true
+            self.currentMysteryIndex += 1
+            self.startRemoteLoad()
+        }
+        audioService.onPreviousTrack = { [weak self] in
+            guard let self, !self.isFirstMystery else { return }
+            self.pendingRemoteAutoplay = true
+            self.currentMysteryIndex -= 1
+            self.startRemoteLoad()
+        }
+    }
+
+    private func startRemoteLoad() {
+        remoteLoadTask?.cancel()
+        remoteLoadTask = Task { [weak self] in
+            guard !Task.isCancelled else { return }
+            await self?.loadCurrentAudio()
+        }
     }
 
     /// Error from the audio layer, surfaced next to the transport
@@ -199,9 +286,10 @@ final class PrayerSessionViewModel {
         audioService.skipBackward(seconds)
     }
 
-    /// Resets audio state when changing mysteries
+    /// Resets audio state when changing mysteries. The Lock Screen player
+    /// survives the gap — the next mystery's load republishes over it.
     private func resetAudioState() {
-        audioService.reset()
+        audioService.reset(preservingNowPlaying: true)
     }
 
     // MARK: - Completion
@@ -220,6 +308,16 @@ final class PrayerSessionViewModel {
     /// Stops any playing meditation audio and hands the audio session back
     /// to the system; call when leaving the prayer flow.
     func stopAudio() {
+        // Disown any load still in flight before tearing down, so it
+        // can't republish Now Playing or start narration over the screen
+        // the user just moved to.
+        flowGeneration &+= 1
+        remoteLoadTask?.cancel()
+        remoteLoadTask = nil
+        pendingRemoteAutoplay = false
+
+        audioService.onNextTrack = nil
+        audioService.onPreviousTrack = nil
         audioService.reset()
         audioService.deactivateSession()
     }
