@@ -53,7 +53,8 @@ struct HomeView: View {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 0) {
                         DayPrayerLabel(label: viewModel.dayLabel)
-                            .padding(.top, 16)
+                            // Starts clear of the dissolve below the header
+                            .padding(.top, 36)
                             .devotionalEntrance()
 
                     featuredMysterySection
@@ -78,11 +79,33 @@ struct HomeView: View {
                         source: viewModel.currentQuote.source
                     )
                     .padding(.horizontal, 20)
-                    .padding(.top, 32)
-                    .padding(.bottom, 100) // Extra space for tab bar
+                    .padding(.top, 40)
+                    .padding(.bottom, 120) // Clears the tab bar and its fade
                     .devotionalEntrance(delay: 0.24)
                     }
                 }
+                // Content dissolves as it rises toward the header instead of
+                // stopping at a hard line. The ramp is weighted late so the
+                // sliver of page visible above the resume card holds only a
+                // few percent of the text underneath — a linear fade leaves
+                // it legibly ghosting. The foot needs no fade: the tab bar
+                // carries its own. Masked before the resume card is laid
+                // over it, so that card stays fully crisp.
+                .mask(
+                    VStack(spacing: 0) {
+                        LinearGradient(
+                            stops: [
+                                .init(color: .clear, location: 0),
+                                .init(color: .black.opacity(0.04), location: 0.55),
+                                .init(color: .black, location: 1.0)
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .frame(height: 32)
+                        Rectangle().fill(.black)
+                    }
+                )
                 // An unfinished Rosary floats over the content until the
                 // user continues or dismisses it — impossible to miss.
                 .overlay(alignment: .top) {
@@ -166,11 +189,6 @@ struct HomeView: View {
                     router.navigateToMeditationSelection(category: viewModel.todaysCategory)
                 }
             )
-            // The card's breathing glow is a repeat-forever phaseAnimator,
-            // which otherwise hijacks frame changes — when the resume card
-            // inserts above, the card would keep painting at its old
-            // position. geometryGroup resolves position locally.
-            .geometryGroup()
         }
     }
 }
@@ -252,16 +270,19 @@ struct ResumePrayerCard: View {
                     }
                 }
                 .padding(14)
+                // Radius 16 and a 0.5pt hairline, matching the meditation
+                // cards — it floats, so it keeps its shadow, but the gold
+                // no longer shouts over the hero card behind it.
                 .background(
-                    RoundedRectangle(cornerRadius: 14)
+                    RoundedRectangle(cornerRadius: 16)
                         .fill(AppColors.cardBackground)
-                        .shadow(color: .black.opacity(0.55), radius: 18, y: 8)
+                        .shadow(color: .black.opacity(0.45), radius: 16, y: 6)
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: 14)
-                        .strokeBorder(AppColors.gold.opacity(0.5), lineWidth: 1)
+                    RoundedRectangle(cornerRadius: 16)
+                        .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: 0.5)
                 )
-                .contentShape(RoundedRectangle(cornerRadius: 14))
+                .contentShape(RoundedRectangle(cornerRadius: 16))
             }
             .buttonStyle(SacredCardButtonStyle())
             .accessibilityLabel("Continue your Rosary at the \(mysteryLabel)")
@@ -370,11 +391,11 @@ struct FeaturedMysteryCard: View {
             )
             .clipShape(arch)
             .overlay(
-                arch.strokeBorder(AppColors.gold.opacity(0.5), lineWidth: 1)
+                arch.strokeBorder(AppColors.gold.opacity(0.4), lineWidth: 1)
             )
             .overlay(
                 arch.inset(by: 5)
-                    .strokeBorder(AppColors.gold.opacity(0.2), lineWidth: 0.5)
+                    .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: 0.5)
             )
             .overlay(alignment: .bottom) {
                 VStack(spacing: 16) {
@@ -385,25 +406,43 @@ struct FeaturedMysteryCard: View {
                 }
                 .padding(.vertical, 24)
                 .padding(.horizontal, 16)
+                // Weighted stops rather than an even ramp: the scrim stays
+                // out of the way through the top third and only gathers
+                // where the words actually need ground, so more of the
+                // painting survives behind the title.
                 .background(
                     LinearGradient(
-                        colors: [
-                            Color.clear,
-                            AppColors.background.opacity(0.7),
-                            AppColors.background.opacity(0.95)
+                        stops: [
+                            .init(color: .clear, location: 0),
+                            .init(color: AppColors.background.opacity(0.5), location: 0.34),
+                            .init(color: AppColors.background.opacity(0.86), location: 0.66),
+                            .init(color: AppColors.background, location: 0.92)
                         ],
                         startPoint: .top,
                         endPoint: .bottom
                     )
                 )
             }
-            .breathingGlow(
-                AppColors.gold,
-                radius: 18,
-                dimOpacity: 0.10,
-                brightOpacity: 0.22,
-                period: 3.8
+            // The card runs edge to edge, so its foot would otherwise end on
+            // a rule straight across the screen — the arch's stroke closes
+            // its path along the bottom, and the scrim stops dead against
+            // the page gradient. Dissolving the last few points removes both
+            // at once: no border line, no step in tone. Applied before the
+            // halo so the glow itself isn't clipped.
+            .mask(
+                VStack(spacing: 0) {
+                    Rectangle().fill(.black)
+                    LinearGradient(
+                        colors: [.black, .clear],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: 16)
+                }
             )
+            // Steady, not pulsing — the same presence the Pray medallion
+            // and the narration transport carry.
+            .haloGlow(AppColors.gold, radius: 16, intensity: 0.18)
     }
 
     // MARK: - Subviews
@@ -418,11 +457,11 @@ struct FeaturedMysteryCard: View {
             .padding(.vertical, 8)
             .background(
                 Capsule()
-                    .fill(AppColors.background.opacity(0.8))
+                    .fill(AppColors.background.opacity(0.55))
             )
             .overlay(
                 Capsule()
-                    .strokeBorder(AppColors.goldLight.opacity(0.8), lineWidth: 0.5)
+                    .strokeBorder(AppColors.gold.opacity(0.45), lineWidth: 1)
             )
     }
 

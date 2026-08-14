@@ -2,9 +2,11 @@
 //  QuoteSection.swift
 //  Lumen Viae
 //
-//  The daily quotation card on the home screen: an ornament rule above the
-//  words, the quote in reading italic, and the attribution in gold beneath,
-//  framed by a pair of corner accents on the diagonal.
+//  The daily quotation on the home screen, set as a colophon rather than a
+//  card: an ornament rule above the words, the quote in reading italic, the
+//  attribution in gold, and a closing rule beneath. No box — a filled panel
+//  with a gold border and corner ticks read as a slab pasted onto the page,
+//  and the page itself is the frame.
 //
 
 import SwiftUI
@@ -28,7 +30,7 @@ struct QuoteSection: View {
     }
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 18) {
             // Ornamental rule in place of a plain icon
             OrnamentDivider()
                 .frame(maxWidth: 210)
@@ -54,56 +56,18 @@ struct QuoteSection: View {
                         .multilineTextAlignment(.center)
                 }
             }
-            .padding(.top, 8)
+            .padding(.top, 2)
+
+            // Closes the passage the way the rule above opened it, with
+            // no cross — the pair reads as ruling, not as a second altar
+            OrnamentDivider(showsCross: false, lineOpacity: 0.3)
+                .frame(maxWidth: 120)
+                .padding(.top, 4)
         }
-        .padding(.vertical, 36)
-        .padding(.horizontal, 28)
+        .padding(.horizontal, 14)
         .frame(maxWidth: .infinity)
-        .background(AppColors.quoteBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .overlay(
-            // Gold border
-            RoundedRectangle(cornerRadius: 12)
-                .strokeBorder(AppColors.gold.opacity(0.4), lineWidth: 1)
-        )
-        .overlay(alignment: .topLeading) {
-            // Fine corner accent - top left
-            CornerAccent()
-                .stroke(AppColors.gold.opacity(0.7), lineWidth: 1.5)
-                .frame(width: 20, height: 20)
-                .padding(8)
-                .accessibilityHidden(true)
-        }
-        .overlay(alignment: .bottomTrailing) {
-            // Fine corner accent - bottom right (rotated)
-            CornerAccent()
-                .stroke(AppColors.gold.opacity(0.7), lineWidth: 1.5)
-                .frame(width: 20, height: 20)
-                .rotationEffect(.degrees(180))
-                .padding(8)
-                .accessibilityHidden(true)
-        }
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(quote) — \(author)")
-    }
-}
-
-// MARK: - Corner Accent Shape
-
-/// A custom shape for the thick corner accents (L-shaped)
-struct CornerAccent: Shape {
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-
-        // Horizontal line from top-left going right
-        path.move(to: CGPoint(x: rect.minX, y: rect.minY))
-        path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
-
-        // Vertical line from top-left going down
-        path.move(to: CGPoint(x: rect.minX, y: rect.minY))
-        path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
-
-        return path
     }
 }
 

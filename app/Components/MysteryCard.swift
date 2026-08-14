@@ -24,9 +24,16 @@ struct MysteryCard: View {
                     if let cardImageName {
                         CachedAssetImage(cardImageName)
                             .aspectRatio(contentMode: .fill)
+                            // Weighted like the featured card's scrim: the
+                            // art stays clear through the top half and the
+                            // shading gathers only under the title
                             .overlay(
                                 LinearGradient(
-                                    colors: [.black.opacity(0.1), .black.opacity(0.6)],
+                                    stops: [
+                                        .init(color: .black.opacity(0.05), location: 0),
+                                        .init(color: .black.opacity(0.18), location: 0.5),
+                                        .init(color: .black.opacity(0.68), location: 1)
+                                    ],
                                     startPoint: .top,
                                     endPoint: .bottom
                                 )
@@ -65,7 +72,7 @@ struct MysteryCard: View {
             }
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(AppColors.gold.opacity(0.55), lineWidth: 0.5)
+                    .strokeBorder(AppColors.gold.opacity(0.35), lineWidth: 0.5)
             )
     }
 }

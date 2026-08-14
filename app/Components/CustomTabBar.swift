@@ -12,6 +12,11 @@
 //  starts today's Rosary directly, no selection screens. Progress has no
 //  tab; it opens via the streak flame in the home header.
 //
+//  The bar is the page's foot, not a slab laid over it: content dissolves
+//  into it through a fade, its surface is the same color the app gradient
+//  bottoms out at, and the only division is a gold hairline — the same
+//  one the reader's compact bar uses.
+//
 
 import SwiftUI
 
@@ -68,10 +73,32 @@ struct CustomTabBar: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Gold line above tab bar
+            // Scrolling content dissolves into the bar rather than being
+            // cut off behind it. Non-interactive, so the page underneath
+            // stays scrollable right up to the hairline.
+            LinearGradient(
+                colors: [AppColors.backgroundDeep.opacity(0), AppColors.backgroundDeep],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 52)
+            .allowsHitTesting(false)
+
+            barSurface
+        }
+        .sensoryFeedback(.selection, trigger: selectedTab)
+    }
+
+    /// The bar proper. Kept separate from the fade above it so the raised
+    /// Pray button anchors to the bar's own top edge — aligned to the
+    /// outer stack it would ride up on the gradient instead.
+    private var barSurface: some View {
+        VStack(spacing: 0) {
+            // The one division: a gold hairline, the same weight the
+            // reader's compact bar uses
             Rectangle()
-                .fill(AppColors.gold.opacity(0.5))
-                .frame(height: 1)
+                .fill(AppColors.gold.opacity(0.15))
+                .frame(height: 0.5)
 
             HStack(spacing: 0) {
                 ForEach(visibleTabs, id: \.self) { tab in
@@ -89,19 +116,19 @@ struct CustomTabBar: View {
                 Color.clear
                     .frame(width: 78, height: 1)
             }
-            .padding(.top, 10)
+            .padding(.top, 12)
         }
+        // The color the app gradient bottoms out at, so the bar reads as
+        // the foot of the page instead of a card floating on top of it
         .background(
-            AppColors.cardBackground
+            AppColors.backgroundDeep
                 .ignoresSafeArea()
-                .shadow(color: Color.black.opacity(0.3), radius: 10)
         )
         .overlay(alignment: .topTrailing) {
             PrayNowButton(isLoading: isLoadingPrayer, action: onPrayNow)
                 .padding(.trailing, 12)
                 .offset(y: -20)
         }
-        .sensoryFeedback(.selection, trigger: selectedTab)
     }
 }
 
@@ -114,6 +141,10 @@ struct CustomTabBar: View {
 ///
 /// Deliberately understated: it matches the app's dark-card / gold-line
 /// language instead of competing with the gold prayer CTAs above it.
+///
+/// Struck down to four layers — glow, face, rim, mark. The old inner
+/// hairline and radial sheen read as busy at 62pt once the bar around
+/// it went quiet.
 struct PrayNowButton: View {
     /// Shows a spinner in place of the cross while the meditation set loads
     var isLoading: Bool = false
@@ -125,37 +156,26 @@ struct PrayNowButton: View {
             ZStack {
                 // Faint, steady candle glow — presence, not pulsing
                 Circle()
-                    .fill(AppColors.gold.opacity(0.20))
-                    .frame(width: 72, height: 72)
-                    .blur(radius: 10)
+                    .fill(AppColors.gold.opacity(0.18))
+                    .frame(width: 74, height: 74)
+                    .blur(radius: 12)
 
-                // Dark medallion face, lit slightly from the upper left
+                // Flat medallion face, a shade above the bar it rises from
                 Circle()
-                    .fill(
-                        RadialGradient(
-                            colors: [AppColors.cardElevated, AppColors.cardBackground],
-                            center: UnitPoint(x: 0.35, y: 0.3),
-                            startRadius: 2,
-                            endRadius: 46
-                        )
-                    )
+                    .fill(AppColors.cardBackground)
                     .frame(width: 62, height: 62)
 
-                // Gold rim and inner hairline, like a struck medal
+                // A single struck rim
                 Circle()
                     .strokeBorder(
                         LinearGradient(
-                            colors: [AppColors.goldLight, AppColors.gold.opacity(0.7)],
+                            colors: [AppColors.goldLight, AppColors.gold.opacity(0.6)],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         ),
-                        lineWidth: 1.5
+                        lineWidth: 1
                     )
                     .frame(width: 62, height: 62)
-
-                Circle()
-                    .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: 0.5)
-                    .frame(width: 53, height: 53)
 
                 VStack(spacing: 4) {
                     if isLoading {
@@ -174,7 +194,7 @@ struct PrayNowButton: View {
                         .foregroundColor(AppColors.gold)
                 }
             }
-            .shadow(color: Color.black.opacity(0.4), radius: 8, y: 3)
+            .shadow(color: Color.black.opacity(0.35), radius: 10, y: 4)
         }
         .buttonStyle(GoldCTAButtonStyle())
         .disabled(isLoading)
@@ -257,9 +277,22 @@ struct TabBarItem: View {
 // MARK: - Preview
 
 #Preview {
-    VStack {
-        Spacer()
-        CustomTabBar(selectedTab: .constant(.home))
+    ZStack {
+        AppColors.appGradient.ignoresSafeArea()
+
+        // Ruled lines behind the bar, so the fade into it is visible
+        VStack(alignment: .leading, spacing: 14) {
+            ForEach(0..<18, id: \.self) { _ in
+                Rectangle()
+                    .fill(AppColors.cream.opacity(0.22))
+                    .frame(height: 10)
+            }
+        }
+        .padding(.horizontal, 24)
+
+        VStack {
+            Spacer()
+            CustomTabBar(selectedTab: .constant(.home))
+        }
     }
-    .background(AppColors.background)
 }
