@@ -74,6 +74,37 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
         }
     }
 
+    /// Where the card crop sits in each painting.
+    ///
+    /// A `.fill` crop keeps the middle of the canvas, which is right for
+    /// the paintings whose figures are centered. The Resurrection and the
+    /// Pietà are both tall canvases carrying their subject high — the
+    /// risen Christ in the upper third, the Pietà's halos and faces
+    /// around a fifth of the way down — so centering crops the subject
+    /// away and leaves a card of drapery and onlookers. Anchoring those
+    /// two to the top brings the subject back into the frame.
+    var cardImageAlignment: Alignment {
+        switch self {
+        case .glorious, .sevenSorrows: return .top
+        case .joyful, .sorrowful, .luminous: return .center
+        }
+    }
+
+    /// Fine adjustment on top of `cardImageAlignment`, in points, where
+    /// negative lifts the crop back toward the top of the canvas.
+    ///
+    /// Anchoring is coarse — it can only pick an edge — and the Pietà
+    /// overshoots it: pinned to the top of that very tall canvas the
+    /// halos land square in the middle of the card, which reads low
+    /// against the title. A small lift carries them into the upper
+    /// third where the eye expects them.
+    var cardImageOffset: CGFloat {
+        switch self {
+        case .sevenSorrows: return -48
+        case .joyful, .sorrowful, .glorious, .luminous: return 0
+        }
+    }
+
     /// Asset catalog image name for a specific mystery in this category,
     /// following the `mystery_<category>_<order>` convention.
     func imageName(for order: Int) -> String {

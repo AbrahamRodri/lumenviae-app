@@ -87,7 +87,9 @@ struct AllMysteriesView: View {
                         title: category.displayName,
                         subtitle: category.subtitle,
                         gradientColors: category.gradientColors,
-                        cardImageName: category.cardImageName
+                        cardImageName: category.cardImageName,
+                        imageAlignment: category.cardImageAlignment,
+                        imageOffset: category.cardImageOffset
                     )
                 }
                 .buttonStyle(.plain)
