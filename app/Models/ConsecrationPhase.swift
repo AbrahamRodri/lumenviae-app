@@ -102,6 +102,21 @@ enum ConsecrationPhase: String, Codable, CaseIterable, Hashable {
         }
     }
 
+    /// The painting that frames the day-overview arch. Each phase borrows
+    /// the mystery whose scene carries its work: the Jordan for the
+    /// emptying of self, Gethsemane for self-knowledge, the Annunciation
+    /// for Mary, the Upper Room for Christ, the Coronation for the day
+    /// the consecration is made.
+    var heroImageName: String {
+        switch self {
+        case .preparatory:      return "luminous_baptism"
+        case .knowledgeOfSelf:  return "sorrowful_agony"
+        case .knowledgeOfMary:  return "joyful_annunciation"
+        case .knowledgeOfJesus: return "luminous_eucharist"
+        case .consecrationDay:  return "glorious_coronation"
+        }
+    }
+
     /// Accent for progress indicators — the active theme's gold, quietly
     /// brightening as the 33 days advance. Reads through AppColors so all
     /// three themes stay coherent.

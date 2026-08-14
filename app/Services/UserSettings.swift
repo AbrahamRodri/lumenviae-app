@@ -99,14 +99,15 @@ final class UserSettings {
     // MARK: - Text Size
 
     /// Meditation content font size scale (0.0 = small, 1.0 = large).
-    /// Maps to a point-size range of 14–22 pt.
+    /// Maps to a point-size range of 16–24 pt.
     var textSizeScale: Double = 0.5 {
         didSet { UserDefaults.standard.set(textSizeScale, forKey: "userSettings.textSizeScale") }
     }
 
-    /// Resolved font size for meditation content
+    /// Resolved font size for meditation content. The middle of the range
+    /// — the default — is 20 pt: reading size, not caption size.
     var meditationFontSize: CGFloat {
-        CGFloat(14 + textSizeScale * 8) // 14–22 pt
+        CGFloat(16 + textSizeScale * 8) // 16–24 pt
     }
 
     // MARK: - Prayer View Mode

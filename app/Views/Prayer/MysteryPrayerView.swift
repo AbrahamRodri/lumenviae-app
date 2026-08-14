@@ -686,24 +686,15 @@ struct MysteryPrayerView: View {
     /// no other route to a decade already passed.
     private var navigationButtons: some View {
         HStack {
-            Button {
+            QuietGoldButton(
+                title: "Prev",
+                leadingIcon: "ph-arrow-left",
+                leadingIconSize: 11
+            ) {
                 withAnimation(.easeInOut(duration: 0.4)) {
                     viewModel.previousMystery()
                 }
-            } label: {
-                HStack(spacing: 6) {
-                    AppIcon("ph-arrow-left", size: 11)
-                    Text("PREV")
-                        .font(AppFonts.labelFont(11))
-                        .tracking(2)
-                }
-                .foregroundColor(AppColors.gold.opacity(0.7))
-                .padding(.horizontal, 18)
-                .padding(.vertical, 10)
-                .frame(minHeight: 44)
-                .contentShape(Capsule())
             }
-            .buttonStyle(GoldCTAButtonStyle())
             // Nothing to go back to on the first mystery: the control
             // leaves rather than sitting there greyed out
             .disabled(viewModel.isFirstMystery)
@@ -713,28 +704,25 @@ struct MysteryPrayerView: View {
 
             Spacer()
 
-            Button(action: handleNextMystery) {
-                HStack(spacing: 6) {
-                    Text(viewModel.isLastMystery ? "AMEN" : "NEXT")
-                        .font(AppFonts.labelFont(11))
-                        .tracking(2)
-                    AppIcon(viewModel.isLastMystery ? "ph-check" : "ph-arrow-right", size: 11)
-                }
-                .foregroundColor(viewModel.isLastMystery ? AppColors.background : AppColors.gold)
-                .padding(.horizontal, 18)
-                .padding(.vertical, 10)
-                .background {
-                    if viewModel.isLastMystery {
-                        Capsule()
-                            .fill(AppColors.goldGradient)
-                            .haloGlow(AppColors.gold, radius: 8, intensity: 0.3)
-                    }
-                }
-                .frame(minHeight: 44)
-                .contentShape(Capsule())
+            if viewModel.isLastMystery {
+                GoldCTAButton(
+                    title: "Amen",
+                    prominence: .inline,
+                    trailingIcon: "ph-check",
+                    fullWidth: false,
+                    action: handleNextMystery
+                )
+                .accessibilityLabel("Amen — finish the Rosary")
+            } else {
+                QuietGoldButton(
+                    title: "Next",
+                    trailingIcon: "ph-arrow-right",
+                    trailingIconSize: 11,
+                    color: AppColors.gold,
+                    action: handleNextMystery
+                )
+                .accessibilityLabel("Next mystery")
             }
-            .buttonStyle(GoldCTAButtonStyle())
-            .accessibilityLabel(viewModel.isLastMystery ? "Amen — finish the Rosary" : "Next mystery")
         }
         .padding(.horizontal, 20)
     }

@@ -19,7 +19,9 @@ import SwiftData
 /// Navigation routes within the Consecration tab
 enum ConsecrationRoute: Hashable {
     case dayOverview(dayNumber: Int)
-    case prayerFlow(dayNumber: Int)
+    /// `startIndex` opens the flow on a specific prayer — the day
+    /// overview lists them, and a tap should land on the one tapped.
+    case prayerFlow(dayNumber: Int, startIndex: Int)
     case meditation(dayNumber: Int)
     case journal(dayNumber: Int)
     case completion
@@ -92,8 +94,8 @@ struct ConsecrationTabView: View {
         case .dayOverview(let dayNumber):
             ConsecrationDayOverviewView(path: $path, dayNumber: dayNumber)
 
-        case .prayerFlow(let dayNumber):
-            ConsecrationPrayerFlowView(path: $path, dayNumber: dayNumber)
+        case .prayerFlow(let dayNumber, let startIndex):
+            ConsecrationPrayerFlowView(path: $path, dayNumber: dayNumber, startIndex: startIndex)
 
         case .meditation(let dayNumber):
             ConsecrationMeditationView(path: $path, dayNumber: dayNumber)

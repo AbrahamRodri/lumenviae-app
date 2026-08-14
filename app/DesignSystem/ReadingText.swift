@@ -21,14 +21,15 @@ import SwiftUI
 /// instead of tightening as it grows.
 enum ReadingTypography {
 
-    /// Space between wrapped lines of running prose
+    /// Space between wrapped lines of running prose. Generous — these
+    /// are pages to be prayed slowly, not scanned.
     static func lineSpacing(for size: CGFloat) -> CGFloat {
-        (size * 0.45).rounded()
+        (size * 0.55).rounded()
     }
 
     /// Space between paragraphs, over and above the line height
     static func paragraphSpacing(for size: CGFloat) -> CGFloat {
-        (size * 0.85).rounded()
+        (size * 0.95).rounded()
     }
 
     /// Space between verse lines rendered as separate views
