@@ -214,8 +214,11 @@ struct JournalEntryEditorView: View {
                         .foregroundColor(AppColors.textSecondary)
                 }
             } else {
-                // Free-form editable subject
-                VStack(alignment: .leading, spacing: 2) {
+                // Free-form editable subject. Italic text alone reads as
+                // a label, not a field — so it is written *on* something:
+                // a hairline that brightens under the caret, and a hint
+                // line led by a pencil that says what to do with it.
+                VStack(alignment: .leading, spacing: 5) {
                     TextField("General Reflection", text: $subjectText)
                         .font(AppFonts.italicFont(16))
                         .foregroundColor(AppColors.cream)
@@ -223,10 +226,23 @@ struct JournalEntryEditorView: View {
                         .focused($subjectFocused)
                         .submitLabel(.next)
                         .onSubmit { bodyFocused = true }
+                        .padding(.bottom, 3)
+                        .overlay(alignment: .bottom) {
+                            Rectangle()
+                                .fill(AppColors.gold.opacity(subjectFocused ? 0.75 : 0.3))
+                                .frame(height: subjectFocused ? 1.5 : 1)
+                        }
 
-                    Text("Mystery, topic, or leave blank")
-                        .font(AppFonts.bodyFont(11))
-                        .foregroundColor(AppColors.textSecondary.opacity(0.6))
+                    HStack(spacing: 5) {
+                        AppIcon("ph-pencil-simple", size: 10)
+                        Text(subjectFocused ? "Mystery, topic, or leave blank" : "Tap to name this entry")
+                            .font(AppFonts.bodyFont(11))
+                    }
+                    .foregroundColor(
+                        subjectFocused
+                            ? AppColors.textSecondary.opacity(0.6)
+                            : AppColors.gold.opacity(0.75)
+                    )
                 }
             }
 

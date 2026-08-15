@@ -17,12 +17,19 @@ import SwiftData
 // MARK: - ConsecrationRoute
 
 /// Navigation routes within the Consecration tab
+/// A step within a day: the reading, then each of its prayers. The
+/// dashboard can open any of them, and the flow itself moves between
+/// them — so the reading is the first step of the same screen rather
+/// than a cover that has to dismiss before the prayers can be pushed.
+enum ConsecrationDayStep: Hashable {
+    case reading
+    case prayer(Int)
+}
+
 enum ConsecrationRoute: Hashable {
     case dayOverview(dayNumber: Int)
-    /// `startIndex` opens the flow on a specific prayer — the day
-    /// overview lists them, and a tap should land on the one tapped.
-    case prayerFlow(dayNumber: Int, startIndex: Int)
-    case meditation(dayNumber: Int)
+    /// The day's reading and prayers as one flow, opened at any step.
+    case dayFlow(dayNumber: Int, step: ConsecrationDayStep)
     case journal(dayNumber: Int)
     case completion
     case trueDevotionReader
@@ -35,7 +42,12 @@ struct ConsecrationTabView: View {
     // MARK: - Properties
 
     @State private var viewModel = ConsecrationViewModel()
-    @State private var path = NavigationPath()
+
+    /// A typed stack rather than a `NavigationPath`. Every destination in
+    /// this tab is a `ConsecrationRoute`, and the journey grid needs to
+    /// read the top of the stack so that opening another day *replaces*
+    /// the day being read instead of piling identical screens on it.
+    @State private var path: [ConsecrationRoute] = []
 
     @Environment(\.modelContext) private var modelContext
 
@@ -94,11 +106,8 @@ struct ConsecrationTabView: View {
         case .dayOverview(let dayNumber):
             ConsecrationDayOverviewView(path: $path, dayNumber: dayNumber)
 
-        case .prayerFlow(let dayNumber, let startIndex):
-            ConsecrationPrayerFlowView(path: $path, dayNumber: dayNumber, startIndex: startIndex)
-
-        case .meditation(let dayNumber):
-            ConsecrationMeditationView(path: $path, dayNumber: dayNumber)
+        case .dayFlow(let dayNumber, let step):
+            ConsecrationDayFlowView(path: $path, dayNumber: dayNumber, startStep: step)
 
         case .journal(let dayNumber):
             ConsecrationJournalView(path: $path, dayNumber: dayNumber)

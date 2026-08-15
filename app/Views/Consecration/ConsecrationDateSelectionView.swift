@@ -201,14 +201,18 @@ struct ConsecrationDateSelectionView: View {
     @ViewBuilder
     private func availabilityChip(for feast: MarianFeastDay) -> some View {
         switch availability(for: feast) {
+        // A row chip is not a call to action, so it reads as one of a
+        // pair with its catch-up sibling rather than as a small gold
+        // button competing with the real one at the foot of the screen.
         case .startToday:
             Text("Today")
                 .font(AppFonts.bodyFont(11))
                 .fontWeight(.semibold)
-                .foregroundColor(AppColors.background)
+                .foregroundColor(AppColors.goldLight)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 4)
-                .background(Capsule().fill(AppColors.gold))
+                .background(Capsule().fill(AppColors.gold.opacity(0.15)))
+                .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.6), lineWidth: 1))
 
         case .catchUp(let day):
             Text("Day \(day)")
@@ -306,25 +310,10 @@ struct ConsecrationDateSelectionView: View {
         }
     }
 
+    /// Beginning the consecration is the screen's one act, and it comes
+    /// from the app's CTA system rather than a third copy of it.
     private func goldButton(_ title: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            HStack(spacing: 10) {
-                Text(title)
-                    .font(AppFonts.headlineFont(16))
-                AppIcon("ph-arrow-right", size: 15)
-            }
-            .foregroundColor(AppColors.background)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
-            .background(
-                LinearGradient(
-                    colors: [AppColors.gold, AppColors.goldLight],
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-        }
+        GoldCTAButton(title: title, action: action)
     }
 
     // MARK: - Custom Start Sheet
