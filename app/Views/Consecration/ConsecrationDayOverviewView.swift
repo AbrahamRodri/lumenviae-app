@@ -21,7 +21,7 @@ struct ConsecrationDayOverviewView: View {
 
     // MARK: - Properties
 
-    @Binding var path: NavigationPath
+    @Binding var path: [ConsecrationRoute]
 
     @Environment(ConsecrationViewModel.self) private var viewModel
     @Environment(UserSettings.self) private var settings
@@ -38,13 +38,18 @@ struct ConsecrationDayOverviewView: View {
     /// One phase open at a time in the journey; the current one on appear.
     @State private var openPhase: ConsecrationPhase?
     @State private var showRestartConfirm = false
-    @State private var showReadingSheet = false
 
-    /// The chant loaded into the shared player, so the chip knows whether
-    /// the audio that is playing is its own.
-    @State private var loadedChantId: String?
+    /// The bilingual order the user chose for their profile, remembered
+    /// so that stepping out to English and back to "Both" returns them
+    /// to their own order rather than the app's default.
+    @State private var profileBilingualOrder: PrayerLanguage = .latinUnderEnglish
 
-    private let audio = AudioService.shared
+    // No audio on this screen. The reading card carried a CHANT chip,
+    // which played the phase's first *prayer* — narration for the
+    // reading itself doesn't exist yet, so the control promised
+    // something the card couldn't deliver. The chants are still one tap
+    // away: every prayer that has one carries its own transport inside
+    // the day flow. When reading audio does land, it belongs here.
 
     // MARK: - Computed Properties
 
@@ -64,7 +69,7 @@ struct ConsecrationDayOverviewView: View {
         displayDayNumber == viewModel.todaysDayNumber
     }
 
-    private var keptCount: Int {
+    private var completedCount: Int {
         (1...33).filter { viewModel.isDayCompleted($0) }.count
     }
 
@@ -122,21 +127,9 @@ struct ConsecrationDayOverviewView: View {
                 viewModel.loadCurrentDay()
             }
             if openPhase == nil { openPhase = phase }
-        }
-        .onDisappear {
-            // The chant belongs to this screen; anything pushed over it
-            // (the prayer flow) loads its own audio.
-            if loadedChantId != nil {
-                audio.reset()
-                audio.deactivateSession()
-                loadedChantId = nil
+            if settings.prayerLanguage.isBilingual {
+                profileBilingualOrder = settings.prayerLanguage
             }
-        }
-        .fullScreenCover(isPresented: $showReadingSheet) {
-            ConsecrationReadingSheet(
-                dayNumber: displayDayNumber,
-                onContinue: continueToPrayers
-            )
         }
     }
 
@@ -164,9 +157,9 @@ struct ConsecrationDayOverviewView: View {
             )
             .overlay(alignment: .bottom) { heroContent }
             // The foot dissolves so the arch never closes on a rule drawn
-            // straight across the screen. Masked before the halo, so the
-            // glow itself isn't clipped — and applied to the arch-clipped
-            // view, so it follows the silhouette rather than a box.
+            // straight across the screen. No halo underneath it: a glow
+            // survives the mask and re-draws the very edge the mask
+            // exists to remove, as a bright band under the arch's foot.
             .mask(
                 VStack(spacing: 0) {
                     Rectangle().fill(.black)
@@ -178,7 +171,6 @@ struct ConsecrationDayOverviewView: View {
                     .frame(height: 16)
                 }
             )
-            .haloGlow(AppColors.gold, radius: 18, intensity: 0.16)
     }
 
     /// The phase's own hue laid over the painting, deepening downward
@@ -210,18 +202,14 @@ struct ConsecrationDayOverviewView: View {
                 .foregroundColor(AppColors.accentSoft)
                 .multilineTextAlignment(.center)
 
-            if let phase, phase != .consecrationDay {
-                weekBar(phase)
-            }
-
-            GoldCTAButton(
-                title: isToday ? "Begin today's prayer" : "Open day \(displayDayNumber)",
-                showsCross: isToday
-            ) {
-                showReadingSheet = true
+            // One act, full width. The week bar and its "DAY 3 OF 12
+            // THIS WEEK" used to sit here and said nothing the badge
+            // above and the journey below don't already say.
+            GoldCTAButton(title: heroActionTitle, showsCross: isToday && !isDayComplete) {
+                path.append(.dayFlow(dayNumber: displayDayNumber, step: .reading))
             }
             .padding(.horizontal, 12)
-            .padding(.top, 4)
+            .padding(.top, 6)
         }
         .padding(.top, 70)
         .padding(.horizontal, 16)
@@ -240,6 +228,17 @@ struct ConsecrationDayOverviewView: View {
                 endPoint: .bottom
             )
         )
+    }
+
+    private var isDayComplete: Bool {
+        viewModel.isDayCompleted(displayDayNumber)
+    }
+
+    /// A day already prayed doesn't need to be told it was; the journey
+    /// below counts it. The act just stops asking to be begun.
+    private var heroActionTitle: String {
+        if isDayComplete { return "Pray it again" }
+        return isToday ? "Begin today's prayer" : "Open day \(displayDayNumber)"
     }
 
     private var phaseBadge: some View {
@@ -272,53 +271,35 @@ struct ConsecrationDayOverviewView: View {
         return "\(phase.displayName.uppercased()) · DAY \(displayDayNumber) OF 33"
     }
 
-    /// One segment per day of the phase — kept, today, and the days ahead.
-    /// It replaces the 33-bead strand that used to sit here: the strand
-    /// only repeated the badge, and read as decoration.
-    private func weekBar(_ phase: ConsecrationPhase) -> some View {
-        VStack(spacing: 7) {
-            HStack(spacing: 4) {
-                ForEach(Array(phase.dayRange), id: \.self) { number in
-                    RoundedRectangle(cornerRadius: 2)
-                        .fill(AppColors.cream.opacity(0.16))
-                        .overlay {
-                            if viewModel.isDayCompleted(number) {
-                                RoundedRectangle(cornerRadius: 2)
-                                    .fill(AppColors.goldCTAGradient)
-                            } else if number == displayDayNumber {
-                                RoundedRectangle(cornerRadius: 2)
-                                    .fill(AppColors.gold.opacity(0.55))
-                            }
-                        }
-                        .frame(height: 3)
-                }
-            }
+    // MARK: - The Feast
 
-            Text("DAY \(day?.dayWithinPhase ?? 1) OF \(phase.dayCount) THIS WEEK")
-                .font(AppFonts.labelFont(9))
-                .tracking(2)
-                .foregroundColor(AppColors.cream.opacity(0.7))
-        }
-        .frame(width: 190)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Day \(day?.dayWithinPhase ?? 1) of \(phase.dayCount) this week")
-    }
-
-    // MARK: - Countdown
-
+    /// The feast the 33 days count toward, and its date. The countdown
+    /// that used to head this — "31 DAYS TO GO" — said the same thing
+    /// the badge above already says as "DAY 3 OF 33", one line apart.
     private var countdownSection: some View {
         VStack(spacing: 8) {
             DayPrayerLabel(
-                label: countdownLabel,
+                label: feastName,
                 size: 10,
                 tracking: 2.5,
                 horizontalPadding: 0
             )
 
-            Text(feastLine)
+            Text(feastDate)
                 .font(AppFonts.italicFont(14))
                 .foregroundColor(AppColors.textSecondary)
                 .multilineTextAlignment(.center)
+
+            // No guilt about a feast that came and went — the days
+            // already completed stand, and another feast is always coming.
+            if daysUntilConsecration < 0 {
+                Text("The days you completed still stand. Choose another feast whenever you're ready.")
+                    .font(AppFonts.italicFont(13))
+                    .foregroundColor(AppColors.textSecondary.opacity(0.85))
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, 2)
+            }
         }
     }
 
@@ -333,14 +314,6 @@ struct ConsecrationDayOverviewView: View {
         ).day ?? 0
     }
 
-    private var countdownLabel: String {
-        switch daysUntilConsecration {
-        case ...0: return "CONSECRATION TODAY"
-        case 1:    return "CONSECRATION TOMORROW"
-        case let days: return "\(days) DAYS TO GO"
-        }
-    }
-
     private static let feastDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "d MMMM yyyy"
@@ -350,18 +323,27 @@ struct ConsecrationDayOverviewView: View {
     /// The feast the 33 days count toward. It isn't stored — the start
     /// date was counted back from it — so it is recovered by matching the
     /// completion date against the Marian calendar.
-    private var feastLine: String {
-        guard let progress = viewModel.progress else { return "" }
-        let date = progress.expectedCompletionDate
-        let formatted = Self.feastDateFormatter.string(from: date)
-        let parts = Calendar.current.dateComponents([.month, .day], from: date)
-
-        if let feast = MarianFeastDay.all.first(where: {
+    private var feast: MarianFeastDay? {
+        guard let progress = viewModel.progress else { return nil }
+        let parts = Calendar.current.dateComponents(
+            [.month, .day],
+            from: progress.expectedCompletionDate
+        )
+        return MarianFeastDay.all.first {
             $0.month == parts.month && $0.day == parts.day
-        }) {
-            return "\(feast.name) · \(formatted)"
         }
-        return formatted
+    }
+
+    /// The ruled line over the date. A feast that has already gone by
+    /// says so here rather than as a countdown running backwards.
+    private var feastName: String {
+        if daysUntilConsecration < 0 { return "YOUR CONSECRATION DAY HAS PASSED" }
+        return (feast?.name ?? "Your consecration day").uppercased()
+    }
+
+    private var feastDate: String {
+        guard let progress = viewModel.progress else { return "" }
+        return Self.feastDateFormatter.string(from: progress.expectedCompletionDate)
     }
 
     // MARK: - Today's Reading
@@ -384,23 +366,15 @@ struct ConsecrationDayOverviewView: View {
                     .foregroundColor(AppColors.textSecondary)
             }
 
-            HStack(spacing: 12) {
-                QuietGoldButton(
-                    title: "Read in full",
-                    leadingIcon: "ph-book-open",
-                    trailingIcon: "ph-caret-right",
-                    size: 10,
-                    color: AppColors.gold,
-                    horizontalPadding: 0
-                ) {
-                    showReadingSheet = true
-                }
-
-                Spacer()
-
-                if chantPrayer != nil {
-                    chantChip
-                }
+            QuietGoldButton(
+                title: "Read in full",
+                leadingIcon: "ph-book-open",
+                trailingIcon: "ph-caret-right",
+                size: 10,
+                color: AppColors.gold,
+                horizontalPadding: 0
+            ) {
+                openDay(at: .reading)
             }
         }
         .sacredCard()
@@ -442,85 +416,6 @@ struct ConsecrationDayOverviewView: View {
         guard let text = day?.meditationText, !text.isEmpty else { return nil }
         let words = text.split(separator: " ").count
         return "\(max(1, Int((Double(words) / 200.0).rounded(.up)))) min"
-    }
-
-    // MARK: - Chant
-
-    /// The phase's first prayer that has a chant recording. Not every
-    /// phase has one, and the chip stays away when it doesn't.
-    private var chantPrayer: ConsecrationPrayer? {
-        guard let phase else { return nil }
-        return ConsecrationData
-            .prayers(for: phase, language: settings.prayerLanguage)
-            .first { $0.hasChantAudio }
-    }
-
-    private var isChanting: Bool {
-        loadedChantId != nil && audio.isPlaying
-    }
-
-    private var chantChip: some View {
-        Button(action: toggleChant) {
-            HStack(spacing: 8) {
-                ZStack {
-                    Circle()
-                        .fill(AppColors.goldCTAGradient)
-                        .frame(width: 26, height: 26)
-
-                    if audio.isLoading && loadedChantId == nil {
-                        SwiftUI.ProgressView()
-                            .controlSize(.mini)
-                            .tint(AppColors.background)
-                    } else {
-                        AppIcon(isChanting ? "ph-pause-fill" : "ph-play-fill", size: 11)
-                            .foregroundColor(AppColors.background)
-                    }
-                }
-
-                Text("CHANT")
-                    .font(AppFonts.labelFont(9))
-                    .tracking(2)
-                    .foregroundColor(AppColors.gold)
-            }
-            .padding(.leading, 10)
-            .padding(.trailing, 14)
-            .frame(minHeight: 44)
-            .background(Capsule().fill(AppColors.background.opacity(0.5)))
-            .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.3), lineWidth: 0.5))
-            .contentShape(Capsule())
-        }
-        .buttonStyle(GoldCTAButtonStyle())
-        .accessibilityLabel(isChanting ? "Pause the chant" : "Play the chant")
-    }
-
-    private func toggleChant() {
-        guard let prayer = chantPrayer else { return }
-
-        if loadedChantId == prayer.id {
-            audio.togglePlayback()
-            return
-        }
-
-        Task {
-            // A downloaded chant plays offline and skips the presign hop
-            if let local = OfflineContentService.shared.localPrayerAudioURL(prayerId: prayer.id) {
-                await audio.loadAudio(
-                    from: local.absoluteString,
-                    title: prayer.title,
-                    subtitle: "33-Day Consecration"
-                )
-            } else if let url = try? await APIService.shared.fetchPrayerAudioUrl(prayerId: prayer.id) {
-                await audio.loadAudio(
-                    from: url,
-                    title: prayer.title,
-                    subtitle: "33-Day Consecration"
-                )
-            } else {
-                return
-            }
-            loadedChantId = prayer.id
-            audio.play()
-        }
     }
 
     // MARK: - Prayers
@@ -575,12 +470,34 @@ struct ConsecrationDayOverviewView: View {
         .sacredCard()
     }
 
+    /// How a row reads under the chosen language. Latin means Latin —
+    /// the title itself, not an English title with a Latin footnote —
+    /// and the bilingual modes lead with whichever language the user's
+    /// own order puts first.
+    private func rowTitles(english: String, latin: String?) -> (primary: String, secondary: String?) {
+        let distinctLatin = latin.flatMap {
+            $0.caseInsensitiveCompare(english) == .orderedSame ? nil : $0
+        }
+
+        switch settings.prayerLanguage {
+        case .english:
+            return (english, nil)
+        case .latin:
+            return (distinctLatin ?? english, nil)
+        case .both:
+            // "Latin & English"
+            return (distinctLatin ?? english, distinctLatin == nil ? nil : english)
+        case .latinUnderEnglish:
+            // "English & Latin"
+            return (english, distinctLatin)
+        }
+    }
+
     private func prayerRow(english: String, latin: String?, at index: Int) -> some View {
-        Button {
-            viewModel.resetPrayers()
-            path.append(
-                ConsecrationRoute.prayerFlow(dayNumber: displayDayNumber, startIndex: index)
-            )
+        let titles = rowTitles(english: english, latin: latin)
+
+        return Button {
+            openDay(at: .prayer(index))
         } label: {
             HStack(spacing: 12) {
                 Circle()
@@ -588,15 +505,13 @@ struct ConsecrationDayOverviewView: View {
                     .frame(width: 6, height: 6)
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(english)
+                    Text(titles.primary)
                         .font(AppFonts.bodyFont(15))
                         .foregroundColor(AppColors.cream)
                         .multilineTextAlignment(.leading)
 
-                    if let latin,
-                       settings.prayerLanguage != .english,
-                       latin.caseInsensitiveCompare(english) != .orderedSame {
-                        Text(latin)
+                    if let secondary = titles.secondary {
+                        Text(secondary)
                             .font(AppFonts.italicFont(12))
                             .foregroundColor(AppColors.accentSoft)
                             .multilineTextAlignment(.leading)
@@ -632,14 +547,18 @@ struct ConsecrationDayOverviewView: View {
 
         return Button {
             guard !isSelected else { return }
-            settings.prayerLanguagePreference = language.rawValue
+            selectLanguage(language)
         } label: {
             Text(title.uppercased())
                 .font(AppFonts.labelFont(10))
                 .tracking(1.6)
                 .foregroundColor(isSelected ? AppColors.goldLight : AppColors.textSecondary)
+                // Three capsules sharing one row: at accessibility text
+                // sizes "English" is the first to run out of room
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
                 .frame(maxWidth: .infinity)
-                .frame(height: 34)
+                .frame(minHeight: 44)
                 .background(
                     Capsule().fill(
                         isSelected ? AppColors.cardElevated : AppColors.background.opacity(0.5)
@@ -654,6 +573,17 @@ struct ConsecrationDayOverviewView: View {
         }
         .buttonStyle(SacredCardButtonStyle())
         .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+
+    /// "Both" leads with English unless the user's own profile order is
+    /// Latin over English — in which case tapping it here restores that
+    /// order rather than silently overriding a choice made in Account.
+    private func selectLanguage(_ language: PrayerLanguage) {
+        guard language.isBilingual else {
+            settings.prayerLanguagePreference = language.rawValue
+            return
+        }
+        settings.prayerLanguagePreference = profileBilingualOrder.rawValue
     }
 
     // MARK: - Reflection
@@ -678,7 +608,7 @@ struct ConsecrationDayOverviewView: View {
                     color: AppColors.gold,
                     horizontalPadding: 0
                 ) {
-                    path.append(ConsecrationRoute.journal(dayNumber: displayDayNumber))
+                                path.append(.journal(dayNumber: displayDayNumber))
                 }
             }
             .sacredCard()
@@ -689,7 +619,7 @@ struct ConsecrationDayOverviewView: View {
 
     private var journeySection: some View {
         VStack(alignment: .leading, spacing: 14) {
-            CardHeading("Your journey", meta: "\(keptCount) of 33 kept")
+            CardHeading("Your journey", meta: "\(completedCount) of 33 complete")
 
             VStack(spacing: 0) {
                 ForEach(ConsecrationPhase.allCases.filter { $0 != .consecrationDay }, id: \.self) { phase in
@@ -705,13 +635,28 @@ struct ConsecrationDayOverviewView: View {
                                 openPhase = openPhase == phase ? nil : phase
                             }
                         },
-                        onSelectDay: { number in
-                            guard number != displayDayNumber else { return }
-                            path.append(ConsecrationRoute.dayOverview(dayNumber: number))
-                        }
+                        onSelectDay: openDay
                     )
                 }
             }
+        }
+    }
+
+    /// Opens another day of the 33 *in place of* the day being read
+    /// rather than on top of it. Browsing four days used to leave four
+    /// identical screens stacked, and reaching today from a past day
+    /// gave a second copy of the tab root — same screen, but with a back
+    /// chevron and no tab bar.
+    private func openDay(_ number: Int) {
+        guard number != displayDayNumber else { return }
+
+        if number == viewModel.todaysDayNumber {
+            // The root already is today; return to it.
+            path.removeAll()
+        } else if case .dayOverview = path.last {
+            path[path.count - 1] = .dayOverview(dayNumber: number)
+        } else {
+            path.append(.dayOverview(dayNumber: number))
         }
     }
 
@@ -719,7 +664,7 @@ struct ConsecrationDayOverviewView: View {
 
     private var sourceTextCard: some View {
         Button {
-            path.append(ConsecrationRoute.trueDevotionReader)
+                path.append(.trueDevotionReader)
         } label: {
             HStack(spacing: 14) {
                 AppIcon("ch-bible", size: 26)
@@ -788,7 +733,7 @@ struct ConsecrationDayOverviewView: View {
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("Your day progress will be erased so you can begin again. Journal reflections you have written are kept in your Journal.")
+            Text("Your day progress will be erased so you can begin again. Journal reflections you have written stay in your Journal.")
         }
     }
 
@@ -829,15 +774,11 @@ struct ConsecrationDayOverviewView: View {
 
     // MARK: - Navigation
 
-    /// The reading sheet hands off to the prayers. The push waits a beat
-    /// so the cover finishes dismissing over the stack it is pushing onto.
-    private func continueToPrayers() {
-        showReadingSheet = false
-        let target = displayDayNumber
-        DispatchQueue.main.async {
-            viewModel.resetPrayers()
-            path.append(ConsecrationRoute.prayerFlow(dayNumber: target, startIndex: 0))
-        }
+    /// Opens the day at a given step. The reading and the prayers are one
+    /// pushed screen, so there is no cover to dismiss first and no beat
+    /// where the dashboard shows through between them.
+    private func openDay(at step: ConsecrationDayStep) {
+        path.append(.dayFlow(dayNumber: displayDayNumber, step: step))
     }
 }
 
@@ -892,7 +833,7 @@ private struct JourneyPhaseRow: View {
     let onSelectDay: (Int) -> Void
 
     private var days: [Int] { Array(phase.dayRange) }
-    private var keptInPhase: Int { days.filter(isCompleted).count }
+    private var completedInPhase: Int { days.filter(isCompleted).count }
     private var isCurrent: Bool { phase.dayRange.contains(today) }
 
     var body: some View {
@@ -918,7 +859,7 @@ private struct JourneyPhaseRow: View {
 
                         Spacer(minLength: 4)
 
-                        Text("\(keptInPhase)/\(days.count)")
+                        Text("\(completedInPhase)/\(days.count)")
                             .font(AppFonts.bodyFont(11))
                             .foregroundColor(AppColors.textSecondary)
                     }
@@ -932,7 +873,7 @@ private struct JourneyPhaseRow: View {
                                 .fill(AppColors.goldCTAGradient)
                                 .frame(
                                     width: geometry.size.width
-                                        * (Double(keptInPhase) / Double(days.count))
+                                        * (Double(completedInPhase) / Double(days.count))
                                 )
                         }
                     }
@@ -942,14 +883,17 @@ private struct JourneyPhaseRow: View {
                 .frame(minHeight: 44)
             }
             .buttonStyle(SacredCardButtonStyle())
-            .accessibilityLabel("\(phase.displayName), \(keptInPhase) of \(days.count) kept")
+            .accessibilityLabel("\(phase.displayName), \(completedInPhase) of \(days.count) complete")
             .accessibilityHint(isExpanded ? "Collapses the days" : "Shows the days")
 
             if isExpanded {
+                // 44pt cells around the 30pt circles: the gap between
+                // them is the cell's own margin, so the row still reads
+                // as a quiet grid of numbers rather than a row of chips.
                 LazyVGrid(
-                    columns: [GridItem(.adaptive(minimum: 30, maximum: 30), spacing: 6)],
+                    columns: [GridItem(.adaptive(minimum: 44, maximum: 44), spacing: 0)],
                     alignment: .leading,
-                    spacing: 6
+                    spacing: 0
                 ) {
                     ForEach(days, id: \.self) { number in
                         dayCircle(number)
@@ -961,7 +905,7 @@ private struct JourneyPhaseRow: View {
     }
 
     private func dayCircle(_ number: Int) -> some View {
-        let kept = isCompleted(number)
+        let isDone = isCompleted(number)
         let isToday = number == today
         let reachable = canAccess(number)
 
@@ -970,10 +914,10 @@ private struct JourneyPhaseRow: View {
         } label: {
             Text("\(number)")
                 .font(AppFonts.bodyFont(12))
-                .foregroundColor(numberColor(kept: kept, isToday: isToday, reachable: reachable))
+                .foregroundColor(numberColor(isDone: isDone, isToday: isToday, reachable: reachable))
                 .frame(width: 30, height: 30)
                 .background {
-                    if kept {
+                    if isDone {
                         Circle().fill(AppColors.goldCTAGradient)
                     } else {
                         Circle().fill(AppColors.background.opacity(0.5))
@@ -982,7 +926,7 @@ private struct JourneyPhaseRow: View {
                 .overlay {
                     if isToday {
                         Circle().strokeBorder(AppColors.goldLight, lineWidth: 1)
-                    } else if !kept {
+                    } else if !isDone {
                         Circle().strokeBorder(AppColors.gold.opacity(0.25), lineWidth: 0.5)
                     }
                 }
@@ -994,17 +938,20 @@ private struct JourneyPhaseRow: View {
                             .padding(-3)
                     }
                 }
+                // The circle stays 30pt; the finger gets 44pt
+                .frame(width: 44, height: 44)
+                .contentShape(Rectangle())
         }
         .buttonStyle(SacredCardButtonStyle())
         // Days still ahead stay quiet rather than opening early
         .disabled(!reachable)
         .accessibilityLabel(
-            "Day \(number)\(kept ? ", kept" : "")\(isToday ? ", today" : "")\(reachable ? "" : ", not yet")"
+            "Day \(number)\(isDone ? ", complete" : "")\(isToday ? ", today" : "")\(reachable ? "" : ", not yet")"
         )
     }
 
-    private func numberColor(kept: Bool, isToday: Bool, reachable: Bool) -> Color {
-        if kept { return AppColors.background }
+    private func numberColor(isDone: Bool, isToday: Bool, reachable: Bool) -> Color {
+        if isDone { return AppColors.background }
         if isToday { return AppColors.goldLight }
         return AppColors.cream.opacity(reachable ? 0.45 : 0.25)
     }
@@ -1014,7 +961,7 @@ private struct JourneyPhaseRow: View {
 
 #Preview {
     NavigationStack {
-        ConsecrationDayOverviewView(path: .constant(NavigationPath()))
+        ConsecrationDayOverviewView(path: .constant([]))
             .environment(ConsecrationViewModel())
             .environment(UserSettings.shared)
     }

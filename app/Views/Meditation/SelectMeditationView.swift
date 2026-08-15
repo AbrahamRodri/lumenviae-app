@@ -32,34 +32,28 @@ struct SelectMeditationView: View {
 
     var body: some View {
         ZStack {
-            // Background gradient with category color fade
-            LinearGradient(
-                colors: [
-                    category.gradientColors.first ?? AppColors.cardBackground,
-                    AppColors.background,
-                    AppColors.backgroundDeep
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
+            // The theme's own gradient, as everywhere else. Fading the
+            // top into the category's color washed the header into an
+            // olive band — the Joyful and Luminous golds in particular
+            // sit right on top of the gold type they carry.
+            AppColors.appGradient
+                .ignoresSafeArea()
 
             VStack(spacing: 0) {
                 // Header
                 MeditationHeaderView(
                     category: category,
+                    setCount: viewModel.isLoading ? nil : viewModel.meditationSets.count,
                     onBack: { router.pop() }
                 )
 
                 // Content
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 16) {
-                        // Subtitle
-                        Text("Select a meditation set")
-                            .font(AppFonts.italicFont(18))
-                            .foregroundColor(AppColors.textSecondary)
-                            .padding(.top, 24)
-                            .padding(.bottom, 8)
+                        // The header names the screen; a second line
+                        // saying "select a meditation set" over a list of
+                        // meditation sets says nothing twice.
+                        Color.clear.frame(height: 8)
 
                         // Loading state
                         if viewModel.isLoading {
@@ -73,21 +67,14 @@ struct SelectMeditationView: View {
                                     .foregroundColor(AppColors.textSecondary)
                                     .multilineTextAlignment(.center)
 
-                                Button {
+                                GoldCTAButton(
+                                    title: "Try again",
+                                    prominence: .inline,
+                                    showsCross: false,
+                                    fullWidth: false
+                                ) {
                                     Task { await viewModel.retry() }
-                                } label: {
-                                    HStack(spacing: 8) {
-                                        AppIcon("ph-arrow-counter-clockwise", size: 13)
-                                        Text("TRY AGAIN")
-                                            .font(AppFonts.labelFont(12))
-                                            .tracking(2)
-                                    }
-                                    .foregroundColor(AppColors.background)
-                                    .padding(.horizontal, 24)
-                                    .padding(.vertical, 12)
-                                    .background(Capsule().fill(AppColors.goldGradient))
                                 }
-                                .buttonStyle(GoldCTAButtonStyle())
                             }
                             .padding(.top, 40)
                         } else {
@@ -116,18 +103,30 @@ struct SelectMeditationView: View {
 
             // Loading overlay when fetching full set
             if viewModel.isLoadingSet {
-                Color.black.opacity(0.5)
+                AppColors.background.opacity(0.72)
                     .ignoresSafeArea()
                     .overlay(
-                        VStack(spacing: 16) {
+                        VStack(spacing: 14) {
                             ProgressView()
                                 .tint(AppColors.gold)
-                                .scaleEffect(1.5)
-                            Text("Loading meditation...")
-                                .font(AppFonts.bodyFont(14))
-                                .foregroundColor(AppColors.cream)
+
+                            Text("PREPARING THE MEDITATIONS")
+                                .font(AppFonts.labelFont(10))
+                                .tracking(2.5)
+                                .foregroundColor(AppColors.textSecondary)
                         }
+                        .padding(.horizontal, 28)
+                        .padding(.vertical, 24)
+                        .background(
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(AppColors.cardBackground)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16)
+                                .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: 0.5)
+                        )
                     )
+                    .transition(.opacity)
             }
         }
         .navigationBarHidden(true)
@@ -164,10 +163,14 @@ struct SelectMeditationView: View {
                 labelChips
             }
 
-            // Favorites pinned above everything
+            // Pinned sets sit above everything
             if !viewModel.favoriteSets.isEmpty {
-                SectionHeading(title: "Favorites")
-                    .padding(.top, 4)
+                SectionHeading(
+                    title: "Pinned",
+                    icon: "ph-push-pin-fill",
+                    count: viewModel.favoriteSets.count
+                )
+                .padding(.top, 4)
 
                 ForEach(viewModel.favoriteSets) { meditationSet in
                     card(for: meditationSet)
@@ -177,8 +180,11 @@ struct SelectMeditationView: View {
             // Grouped / filtered sets
             ForEach(viewModel.sections) { section in
                 if let title = section.title {
-                    SectionHeading(title: MeditationLabel.displayName(title))
-                        .padding(.top, 4)
+                    SectionHeading(
+                        title: MeditationLabel.displayName(title),
+                        count: section.sets.count
+                    )
+                    .padding(.top, 4)
                 }
 
                 ForEach(section.sets) { meditationSet in
@@ -338,70 +344,107 @@ private struct LabelChip: View {
 private struct SectionHeading: View {
     let title: String
 
+    /// A leading glyph for sections that have one — the pin above the
+    /// sets the user pinned
+    var icon: String?
+
+    /// How many sets sit under this heading, on the right in italic —
+    /// the same meta the cards elsewhere in the app carry
+    var count: Int?
+
     var body: some View {
-        HStack(spacing: 12) {
-            Rectangle()
-                .fill(AppColors.gold.opacity(0.4))
-                .frame(height: 1)
-                .frame(maxWidth: 40)
+        HStack(spacing: 10) {
+            if let icon {
+                AppIcon(icon, size: 12)
+                    .foregroundColor(AppColors.gold)
+            }
 
             Text(title.uppercased())
-                .font(AppFonts.headlineFont(13))
-                .tracking(3)
+                .font(AppFonts.labelFont(10))
+                .tracking(2.5)
                 .foregroundColor(AppColors.gold)
                 .fixedSize()
 
             Rectangle()
-                .fill(AppColors.gold.opacity(0.4))
-                .frame(height: 1)
+                .fill(AppColors.gold.opacity(0.25))
+                .frame(height: 0.5)
                 .frame(maxWidth: .infinity)
+
+            if let count {
+                Text(count == 1 ? "1 set" : "\(count) sets")
+                    .font(AppFonts.italicFont(12))
+                    .foregroundColor(AppColors.textSecondary)
+                    .fixedSize()
+            }
         }
+        .accessibilityElement(children: .combine)
     }
 }
 
 // MARK: - Meditation Header View
 
+/// A working header for a chooser, not a hero for a landing page: the
+/// way back, what you are choosing within, and how much there is.
+///
+/// The old one centred a 30pt all-gold title under a day label and an
+/// ornament, taking a third of the screen before the first set — a
+/// title card in front of a list. This is a nav bar: the back control
+/// and the title on one line, the context beneath it, a hairline, and
+/// then the sets.
 struct MeditationHeaderView: View {
+
     let category: MysteryCategory
+
+    /// How many sets are on offer, once they have loaded
+    var setCount: Int?
+
     var onBack: () -> Void = {}
 
+    private var contextLine: String {
+        let days = category.daysPrayed
+        guard let setCount, setCount > 0 else { return days }
+        return "\(days)  ·  \(setCount == 1 ? "1 set" : "\(setCount) sets")"
+    }
+
     var body: some View {
-        VStack(spacing: 8) {
-            // Back button row
-            HStack {
+        VStack(spacing: 0) {
+            HStack(spacing: 10) {
                 Button(action: onBack) {
-                    AppIcon("ph-caret-left", size: 20)
+                    AppIcon("ph-caret-left", size: 18)
                         .foregroundColor(AppColors.gold)
-                        .frame(width: 40, height: 40)
+                        .frame(width: 44, height: 44)
                         .contentShape(Rectangle())
                 }
                 .accessibilityLabel("Back")
-                Spacer()
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("\(category.displayName) Mysteries")
+                        .font(AppFonts.headlineFont(22))
+                        .foregroundColor(AppColors.cream)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+
+                    Text(contextLine)
+                        .font(AppFonts.labelFont(9))
+                        .tracking(2)
+                        .foregroundColor(AppColors.gold.opacity(0.85))
+                        .lineLimit(1)
+                }
+
+                Spacer(minLength: 8)
+
+                // No trailing glyph: the category's own icon is a star,
+                // which in a list of pins reads as a control you can
+                // press rather than a label.
             }
-            .padding(.horizontal, 20)
-            .padding(.top, 8)
+            .padding(.horizontal, 12)
+            .padding(.top, 4)
+            .padding(.bottom, 12)
 
-            // Day label
-            Text(category.daysPrayed.uppercased())
-                .font(AppFonts.labelFont(10))
-                .tracking(4)
-                .foregroundColor(AppColors.gold)
-                .padding(.top, 16)
-
-            // Mystery title
-            Text("\(category.displayName.uppercased())\nMYSTERIES")
-                .font(AppFonts.headlineFont(30))
-                .tracking(2)
-                .foregroundColor(AppColors.gold)
-                .multilineTextAlignment(.center)
-                .minimumScaleFactor(0.85)
-
-            // Ornamental underline
-            OrnamentDivider(showsCross: false)
-                .frame(width: 160)
-                .padding(.top, 8)
+            Rectangle()
+                .fill(AppColors.gold.opacity(0.2))
+                .frame(height: 0.5)
         }
-        .padding(.bottom, 8)
     }
 }
 

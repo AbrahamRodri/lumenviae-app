@@ -18,6 +18,9 @@ struct MeditationOptionCard: View {
     /// or nil for a clean text-only card
     var iconName: String? = nil
 
+    /// Pinned to the top of the picker. A pin, not a star: the list
+    /// isn't rated, it's ordered — this set is the one you keep coming
+    /// back to, so it sits where you can reach it.
     var isFavorite: Bool = false
     var onToggleFavorite: (() -> Void)? = nil
     var onTap: (() -> Void)? = nil
@@ -25,7 +28,6 @@ struct MeditationOptionCard: View {
     var body: some View {
         Button(action: { onTap?() }) {
             VStack(alignment: .leading, spacing: 12) {
-                // Title row with favorite star
                 HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: 6) {
                         Text(title)
@@ -45,17 +47,19 @@ struct MeditationOptionCard: View {
 
                     if let onToggleFavorite {
                         Button(action: onToggleFavorite) {
-                            AppIcon(isFavorite ? "ph-star-fill" : "ph-star", size: 17)
-                                .foregroundColor(isFavorite ? AppColors.gold : AppColors.textSecondary.opacity(0.6))
-                                .frame(width: 36, height: 36)
+                            // Filled and gold when pinned, outline and
+                            // quiet when not — the set's own pairing.
+                            AppIcon(isFavorite ? "ph-push-pin-fill" : "ph-push-pin", size: 18)
+                                .foregroundColor(isFavorite ? AppColors.gold : AppColors.textSecondary.opacity(0.55))
+                                .frame(width: 44, height: 44)
                                 .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
-                        .accessibilityLabel(isFavorite ? "Remove from favorites" : "Add to favorites")
-                        // Balance the tap target's padding so the star
+                        .accessibilityLabel(isFavorite ? "Unpin this set" : "Pin this set to the top")
+                        // Balance the tap target's padding so the pin
                         // aligns with the card's edge visually
-                        .padding(.top, -8)
-                        .padding(.trailing, -8)
+                        .padding(.top, -12)
+                        .padding(.trailing, -12)
                     }
                 }
 
@@ -81,10 +85,16 @@ struct MeditationOptionCard: View {
                 RoundedRectangle(cornerRadius: 16)
                     .fill(AppColors.cardBackground)
             )
+            // A pinned set carries a brighter rim, so the pinned ones
+            // read as a group even once they're scrolled among the rest
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: 0.5)
+                    .strokeBorder(
+                        AppColors.gold.opacity(isFavorite ? 0.55 : 0.3),
+                        lineWidth: isFavorite ? 1 : 0.5
+                    )
             )
+            .animation(.easeOut(duration: 0.25), value: isFavorite)
         }
         .buttonStyle(SacredCardButtonStyle())
     }

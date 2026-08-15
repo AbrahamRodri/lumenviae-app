@@ -2,8 +2,12 @@
 //  ConsecrationCompletionView.swift
 //  Lumen Viae
 //
-//  Shown after completing Day 34 - the Act of Consecration.
-//  Celebrates the user's completion of the 33-Day journey.
+//  The end of the 33 days: the Act of Consecration is made.
+//
+//  It stands on the consecration day's own ground — the warm gold-dark
+//  the last week has been building toward — rather than inverting the
+//  app into a light field with dark text, which belonged to no other
+//  screen and left its own copy at about 2.4:1.
 //
 
 import SwiftUI
@@ -14,46 +18,34 @@ struct ConsecrationCompletionView: View {
 
     // MARK: - Properties
 
-    @Binding var path: NavigationPath
+    @Binding var path: [ConsecrationRoute]
 
-    @State private var showConfetti: Bool = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    @State private var sealShown = false
 
     // MARK: - Body
 
     var body: some View {
         ZStack {
-            // Background
-            LinearGradient(
-                colors: [
-                    Color(hex: "#D4AF37"),
-                    Color(hex: "#E8C547"),
-                    Color(hex: "#D4AF37"),
-                    AppColors.background
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
+            ConsecrationPhaseBackground(phase: .consecrationDay)
+                .ignoresSafeArea()
 
-            ScrollView {
-                VStack(spacing: 32) {
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 30) {
                     Spacer()
-                        .frame(height: 60)
+                        .frame(height: 50)
 
-                    // Celebration Icon
-                    celebrationIcon
+                    seal
 
-                    // Title
                     titleSection
+                        .devotionalEntrance(delay: 0.35)
 
-                    // Message
                     messageSection
+                        .devotionalEntrance(delay: 0.5)
 
-                    // Stats
-                    statsSection
-
-                    // Return Button
                     returnButton
+                        .devotionalEntrance(delay: 0.65)
 
                     Spacer()
                         .frame(height: 100)
@@ -62,41 +54,40 @@ struct ConsecrationCompletionView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
+        .toolbar(.hidden, for: .navigationBar)
+        .sensoryFeedback(.success, trigger: sealShown)
         .onAppear {
-            withAnimation(.easeInOut(duration: 0.5).delay(0.3)) {
-                showConfetti = true
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.6).delay(0.2)) {
+                sealShown = true
             }
         }
     }
 
-    // MARK: - Celebration Icon
+    // MARK: - Seal
 
-    private var celebrationIcon: some View {
+    private var seal: some View {
         ZStack {
-            // Outer glow
             Circle()
-                .fill(AppColors.goldLight.opacity(0.3))
-                .frame(width: 140, height: 140)
-                .blur(radius: 20)
+                .fill(AppColors.gold.opacity(0.16))
+                .frame(width: 132, height: 132)
+                .blur(radius: 18)
 
-            // Inner circle
             Circle()
-                .fill(
-                    LinearGradient(
-                        colors: [AppColors.cream, AppColors.goldLight],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-                .frame(width: 100, height: 100)
+                .fill(AppColors.goldCTAGradient)
+                .frame(width: 96, height: 96)
 
-            // Icon
-            AppIcon("ph-seal-check-fill", size: 50)
-                .foregroundColor(AppColors.gold)
+            Circle()
+                .strokeBorder(AppColors.goldLight.opacity(0.7), lineWidth: 0.5)
+                .frame(width: 96, height: 96)
+
+            AppIcon("ph-seal-check-fill", size: 44)
+                .foregroundColor(AppColors.background)
         }
-        .scaleEffect(showConfetti ? 1.0 : 0.5)
-        .opacity(showConfetti ? 1.0 : 0.0)
-        .animation(.spring(response: 0.6, dampingFraction: 0.6), value: showConfetti)
+        .haloGlow(AppColors.gold, radius: 16, intensity: 0.3)
+        // Reduce Motion keeps the seal, drops the spring
+        .scaleEffect(reduceMotion || sealShown ? 1 : 0.6)
+        .opacity(reduceMotion || sealShown ? 1 : 0)
+        .accessibilityHidden(true)
     }
 
     // MARK: - Title
@@ -106,95 +97,55 @@ struct ConsecrationCompletionView: View {
             Text("CONSECRATED")
                 .font(AppFonts.headlineFont(32))
                 .tracking(4)
-                .foregroundColor(AppColors.background)
+                .foregroundColor(AppColors.cream)
+                .multilineTextAlignment(.center)
+                .minimumScaleFactor(0.7)
+                .lineLimit(1)
 
-            Text("Total Consecration Complete")
-                .font(AppFonts.italicFont(18))
-                .foregroundColor(AppColors.background.opacity(0.8))
+            OrnamentDivider()
+                .frame(width: 170)
+
+            Text("Totus tuus ego sum")
+                .font(AppFonts.italicFont(17))
+                .foregroundColor(AppColors.goldLight)
+                .multilineTextAlignment(.center)
         }
-        .opacity(showConfetti ? 1.0 : 0.0)
-        .offset(y: showConfetti ? 0 : 20)
-        .animation(.easeOut(duration: 0.5).delay(0.4), value: showConfetti)
     }
 
     // MARK: - Message
 
     private var messageSection: some View {
         VStack(spacing: 16) {
-            Text("You have completed the 33-Day Total Consecration to Jesus through Mary.")
-                .font(AppFonts.bodyFont(16))
-                .foregroundColor(AppColors.background)
+            Text("You have made the Total Consecration to Jesus through Mary.")
+                .font(AppFonts.readingFont(17))
+                .foregroundColor(AppColors.cream.opacity(0.92))
+                .multilineTextAlignment(.center)
+                .lineSpacing(6)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Text("Renew it each year on this feast, and every day in your heart.")
+                .font(AppFonts.italicFont(14))
+                .foregroundColor(AppColors.textSecondary)
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
-
-            Text("May this consecration bear fruit in your life and draw you ever closer to Christ through the intercession of the Blessed Virgin Mary.")
-                .font(AppFonts.bodyFont(14))
-                .foregroundColor(AppColors.background.opacity(0.8))
-                .multilineTextAlignment(.center)
-                .lineSpacing(4)
+                .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(24)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(AppColors.cream.opacity(0.2))
-        )
-        .opacity(showConfetti ? 1.0 : 0.0)
-        .animation(.easeOut(duration: 0.5).delay(0.6), value: showConfetti)
+        .sacredCard()
     }
 
-    // MARK: - Stats
+    // MARK: - Return
 
-    private var statsSection: some View {
-        HStack(spacing: 24) {
-            statItem(value: "34", label: "Days")
-            statItem(value: "4", label: "Phases")
-            statItem(value: "1", label: "Consecration")
-        }
-        .padding(20)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(AppColors.background.opacity(0.3))
-        )
-        .opacity(showConfetti ? 1.0 : 0.0)
-        .animation(.easeOut(duration: 0.5).delay(0.8), value: showConfetti)
-    }
-
-    private func statItem(value: String, label: String) -> some View {
-        VStack(spacing: 4) {
-            Text(value)
-                .font(AppFonts.headlineFont(28))
-                .foregroundColor(AppColors.cream)
-
-            Text(label)
-                .font(AppFonts.bodyFont(12))
-                .foregroundColor(AppColors.cream.opacity(0.7))
+    /// The consecration itself was the finishing act, made a screen ago.
+    /// Leaving is not another one, so it goes quietly.
+    private var returnButton: some View {
+        QuietGoldButton(
+            title: "Return to the Consecrate tab",
+            size: 11,
+            color: AppColors.gold
+        ) {
+            path.removeAll()
         }
         .frame(maxWidth: .infinity)
-    }
-
-    // MARK: - Return Button
-
-    private var returnButton: some View {
-        Button {
-            // Return to the root of the consecration tab
-            path.removeLast(path.count)
-        } label: {
-            HStack {
-                AppIcon("ph-house", size: 16)
-
-                Text("Return Home")
-                    .font(AppFonts.headlineFont(16))
-            }
-            .foregroundColor(AppColors.gold)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(AppColors.background)
-            )
-        }
-        .opacity(showConfetti ? 1.0 : 0.0)
-        .animation(.easeOut(duration: 0.5).delay(1.0), value: showConfetti)
     }
 }
 
@@ -202,7 +153,7 @@ struct ConsecrationCompletionView: View {
 
 #Preview {
     NavigationStack {
-        ConsecrationCompletionView(path: .constant(NavigationPath()))
+        ConsecrationCompletionView(path: .constant([]))
             .environment(ConsecrationViewModel())
     }
 }
