@@ -26,6 +26,9 @@ struct ConsecrationReadingSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(UserSettings.self) private var settings
 
+    /// The reading now open, by `order`
+    @State private var currentReading: Int?
+
     private var day: ConsecrationDay? {
         ConsecrationData.day(dayNumber)
     }
@@ -44,35 +47,107 @@ struct ConsecrationReadingSheet: View {
             VStack(spacing: 0) {
                 topBar
 
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: 0) {
-                        header
-                            .padding(.horizontal, 26)
-                            .padding(.top, 18)
+                // The day's frame stays put; the readings turn beneath it.
+                header
+                    .padding(.horizontal, 26)
+                    .padding(.top, 10)
+                    .padding(.bottom, 4)
 
-                        if let text = day?.meditationText {
-                            ReadingText(
-                                text: text,
-                                size: settings.meditationFontSize,
-                                showsDropCap: true
-                            )
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.horizontal, 26)
-                            .padding(.top, 22)
+                let readings = day?.readings ?? []
 
-                            closing
-                                .padding(.horizontal, 26)
-                                .padding(.top, 22)
+                // Each reading is its own page. A day that opens on Luke
+                // and closes on Montfort is two texts, so it is two pages
+                // — not one scroll with a rule buried somewhere down it.
+                if readings.count > 1 {
+                    TabView(selection: $currentReading) {
+                        ForEach(readings) { reading in
+                            readingPage(reading).tag(reading.order)
                         }
-
-                        Spacer(minLength: 40)
                     }
+                    .tabViewStyle(.page(indexDisplayMode: .never))
+
+                    pageControl(readings)
+                } else if let only = readings.first {
+                    readingPage(only)
                 }
 
                 footer
             }
         }
         .devotionalEntrance(drift: 18)
+        .onAppear {
+            if currentReading == nil { currentReading = day?.readings.first?.order }
+        }
+    }
+
+    // MARK: - Reading Page
+
+    /// One reading, top to bottom: what it is, who wrote it, then the text
+    /// at reading size with its own illuminated initial.
+    private func readingPage(_ reading: ConsecrationReading) -> some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 14) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(reading.title.uppercased())
+                        .font(AppFonts.labelFont(10))
+                        .tracking(2)
+                        .foregroundColor(AppColors.gold)
+
+                    if let source = reading.source {
+                        Text(source)
+                            .font(AppFonts.italicFont(12))
+                            .foregroundColor(AppColors.textSecondary)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                ReadingText(
+                    text: reading.text,
+                    size: settings.meditationFontSize,
+                    showsDropCap: true
+                )
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                Spacer(minLength: 36)
+            }
+            .padding(.horizontal, 26)
+            .padding(.top, 18)
+        }
+    }
+
+    /// Which reading is open, and the way to the others
+    private func pageControl(_ readings: [ConsecrationReading]) -> some View {
+        let current = currentReading ?? readings.first?.order ?? 1
+
+        return HStack(spacing: 0) {
+            ForEach(readings) { reading in
+                let isCurrent = reading.order == current
+
+                Button {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        currentReading = reading.order
+                    }
+                } label: {
+                    Capsule()
+                        .fill(isCurrent ? AppColors.gold : AppColors.cream.opacity(0.22))
+                        .frame(width: isCurrent ? 18 : 6, height: 4)
+                        .frame(width: 34, height: 44)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(SacredCardButtonStyle())
+                .accessibilityLabel("Reading \(reading.order) of \(readings.count), \(reading.title)")
+                .accessibilityAddTraits(isCurrent ? [.isSelected] : [])
+            }
+
+            Spacer(minLength: 8)
+
+            Text("\(current) of \(readings.count)")
+                .font(AppFonts.italicFont(12))
+                .foregroundColor(AppColors.textSecondary)
+                .accessibilityHidden(true)
+        }
+        .padding(.horizontal, 26)
+        .animation(.easeOut(duration: 0.2), value: current)
     }
 
     // MARK: - Top Bar
@@ -126,24 +201,6 @@ struct ConsecrationReadingSheet: View {
                 .padding(.top, 2)
         }
         .frame(maxWidth: .infinity)
-    }
-
-    // MARK: - Closing
-
-    @ViewBuilder
-    private var closing: some View {
-        if let source = day?.meditationSource {
-            VStack(spacing: 14) {
-                OrnamentDivider()
-                    .frame(width: 180)
-
-                Text(source)
-                    .font(AppFonts.italicFont(13))
-                    .foregroundColor(AppColors.textSecondary)
-                    .multilineTextAlignment(.center)
-            }
-            .frame(maxWidth: .infinity)
-        }
     }
 
     // MARK: - Footer

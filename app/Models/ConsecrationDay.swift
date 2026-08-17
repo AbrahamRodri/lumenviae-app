@@ -24,18 +24,49 @@ struct ConsecrationDay: Codable, Identifiable, Hashable {
     /// Title/theme for the day (e.g., "Renouncing the Spirit of the World")
     let title: String
 
-    /// Title of today's meditation/spiritual reading
-    let meditationTitle: String
-
-    /// The spiritual writing/meditation text for this day
-    /// Note: Content varies every day - this is NOT the same as prayers
-    let meditationText: String
-
-    /// Source attribution for the meditation (e.g., "True Devotion, Ch. 3")
-    let meditationSource: String?
+    /// The day's readings, in the order the plan prescribes them. Most
+    /// days have two — a Gospel passage and a spiritual reading — each
+    /// with its own citation and attribution.
+    let readings: [ConsecrationReading]
 
     /// Reflection prompt for journaling
     let journalPrompt: String
+
+    // MARK: - Readings
+
+    /// Whether the day asks for more than one reading, which is what the
+    /// reading card uses to decide between a single page and a carousel.
+    var hasMultipleReadings: Bool { readings.count > 1 }
+
+    /// Total reading time for the day, summed from the per-reading
+    /// estimates counted when the readings were built.
+    var estimatedMinutes: Int {
+        readings.reduce(0) { $0 + $1.estimatedMinutes }
+    }
+
+    // MARK: - Single-Reading Compatibility
+    //
+    // The meditation and journal screens still present a day as one
+    // continuous page. These give them that view of it without a second
+    // copy of the text: the readings run together under the ornament rule
+    // `ReadingText` already draws for `─────`.
+
+    /// Every reading's citation, joined — "Luke 13:1-5 & True Devotion, Nos. 81-82"
+    var meditationTitle: String {
+        readings.map(\.title).joined(separator: " & ")
+    }
+
+    /// The readings run together, separated by the ornament rule
+    var meditationText: String {
+        readings.map(\.text).joined(separator: "\n\n─────\n\n")
+    }
+
+    /// Every distinct work the day draws on, in order of appearance
+    var meditationSource: String? {
+        var seen: Set<String> = []
+        let works = readings.compactMap(\.source).filter { seen.insert($0).inserted }
+        return works.isEmpty ? nil : works.joined(separator: " & ")
+    }
 
     // MARK: - Computed Properties
 

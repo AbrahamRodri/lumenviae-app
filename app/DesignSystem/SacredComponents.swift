@@ -54,6 +54,117 @@ struct GothicArchShape: InsettableShape {
     }
 }
 
+// MARK: - ArchHero
+
+/// The cathedral-window hero: a painting clipped into a lancet arch,
+/// double-struck in gold, its foot dissolved so the page runs on
+/// underneath, with the screen's own words standing on a weighted scrim.
+///
+/// One place for it so the home screen's featured mystery and the
+/// consecration's day overview stay the same object. The scrim stops are
+/// weighted rather than even — out of the way through the top third,
+/// gathering only where the words need ground, so more of the painting
+/// survives behind the title.
+struct ArchHero<Content: View>: View {
+
+    /// Asset name of the painting the arch frames
+    let imageName: String
+
+    var height: CGFloat = 410
+
+    /// Laid over the painting, under the scrim — a flat dim on the home
+    /// card, the phase's own hue on the consecration screen.
+    var tint: AnyShapeStyle = AnyShapeStyle(Color.black.opacity(0.25))
+
+    var spacing: CGFloat = 16
+
+    var contentPadding = EdgeInsets(top: 24, leading: 16, bottom: 24, trailing: 16)
+
+    @ViewBuilder let content: Content
+
+    private var arch: GothicArchShape { GothicArchShape(riseRatio: 0.34) }
+
+    var body: some View {
+        // Arch shape drives size; the image goes in .overlay so it never
+        // expands layout bounds, then everything clips to the arch.
+        arch
+            .fill(AppColors.cardBackground)
+            .frame(height: height)
+            .overlay(
+                CachedAssetImage(imageName)
+                    .aspectRatio(contentMode: .fill)
+                    .overlay(Rectangle().fill(tint))
+            )
+            .clipShape(arch)
+            .overlay(arch.strokeBorder(AppColors.gold.opacity(0.4), lineWidth: 1))
+            .overlay(
+                arch.inset(by: 5)
+                    .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: 0.5)
+            )
+            .overlay(alignment: .bottom) {
+                VStack(spacing: spacing) { content }
+                    .padding(contentPadding)
+                    .background(
+                        LinearGradient(
+                            stops: [
+                                .init(color: .clear, location: 0),
+                                .init(color: AppColors.background.opacity(0.5), location: 0.34),
+                                .init(color: AppColors.background.opacity(0.86), location: 0.66),
+                                .init(color: AppColors.background, location: 0.92)
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+            }
+            // The hero runs edge to edge, so its foot would otherwise end
+            // on a rule straight across the screen — the arch's stroke
+            // closes its path along the bottom, and the scrim stops dead
+            // against the page gradient. Dissolving the last few points
+            // removes both at once. Masked before the halo so the glow
+            // itself isn't clipped, and applied to the arch-clipped view
+            // so it follows the silhouette rather than a box.
+            .mask(
+                VStack(spacing: 0) {
+                    Rectangle().fill(.black)
+                    LinearGradient(
+                        colors: [.black, .clear],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: 16)
+                }
+            )
+            // Steady, not pulsing — the same presence the Pray medallion
+            // and the narration transport carry.
+            .haloGlow(AppColors.gold, radius: 16, intensity: 0.18)
+    }
+}
+
+// MARK: - HeroBadge
+
+/// The tracked gold kicker that rides above a hero's title — "JOYFUL
+/// MYSTERIES", "WEEK TWO · DAY 20 OF 33".
+struct HeroBadge: View {
+
+    let text: String
+
+    init(_ text: String) {
+        self.text = text
+    }
+
+    var body: some View {
+        Text(text)
+            .font(AppFonts.labelFont(9))
+            .tracking(2.5)
+            .foregroundColor(AppColors.goldLight)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .background(Capsule().fill(AppColors.background.opacity(0.55)))
+            .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.45), lineWidth: 1))
+    }
+}
+
 // MARK: - RosaryBeadProgress
 
 /// Progress rendered as a strand of rosary beads on a fine chain.

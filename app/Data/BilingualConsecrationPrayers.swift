@@ -12,15 +12,18 @@ import SwiftUI
 
 enum BilingualConsecrationPrayers {
 
-    /// Get all bilingual consecration prayers
-    static func allPrayers() -> [String: BilingualConsecrationPrayer] {
-        [
-            "veni_creator": veniCreator,
-            "ave_maris_stella": aveMaris,
-            "magnificat": magnificat,
-            "glory_be": gloryBe
-        ]
-    }
+    /// Every bilingual consecration prayer, keyed by id.
+    ///
+    /// Stored rather than rebuilt per call: the day overview asks for this
+    /// while resolving its prayer list and again for the chant, and every
+    /// `ConsecrationData.prayers(for:language:)` call reaches for it too,
+    /// so a function here rebuilds the dictionary several times per render.
+    static let allPrayers: [String: BilingualConsecrationPrayer] = [
+        "veni_creator": veniCreator,
+        "ave_maris_stella": aveMaris,
+        "magnificat": magnificat,
+        "glory_be": gloryBe
+    ]
 
     // MARK: - Individual Prayers
 

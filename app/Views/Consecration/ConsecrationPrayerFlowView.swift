@@ -25,6 +25,7 @@ struct ConsecrationPrayerFlowView: View {
         self._path = path
         self.dayNumber = dayNumber
         self._currentIndex = State(initialValue: startIndex)
+        self._visited = State(initialValue: [startIndex])
     }
 
     // MARK: - Environment
@@ -36,6 +37,13 @@ struct ConsecrationPrayerFlowView: View {
     @State private var currentIndex: Int
     @State private var opacity: Double = 1.0
     @State private var cachedAudioUrls: [String: String] = [:]
+
+    /// The prayers actually opened in this session. A tap on the day
+    /// overview can start the flow at any prayer, so "on the last one"
+    /// is not the same as "has prayed them all" — without this, opening
+    /// the Glory Be to reread it would hand the whole day on to the
+    /// meditation and mark it kept with three prayers never seen.
+    @State private var visited: Set<Int>
 
     private let audio = AudioService.shared
 
@@ -51,8 +59,21 @@ struct ConsecrationPrayerFlowView: View {
         return prayers[currentIndex]
     }
 
-    private var isLastPrayer: Bool {
-        currentIndex >= prayers.count - 1
+    /// Whether every prayer of the day has been opened. Only then does
+    /// the flow offer to move on to the meditation, which is what
+    /// eventually marks the day kept.
+    private var hasVisitedAll: Bool {
+        !prayers.isEmpty && visited.count >= prayers.count
+    }
+
+    /// The nearest prayer still unopened, searching forward and wrapping
+    /// — so someone who started mid-list is carried back up to the ones
+    /// above rather than stranded at the end of the day.
+    private var nextUnvisitedIndex: Int? {
+        guard !prayers.isEmpty else { return nil }
+        return (1...prayers.count)
+            .map { (currentIndex + $0) % prayers.count }
+            .first { !visited.contains($0) }
     }
 
     private var phase: ConsecrationPhase? {
@@ -172,6 +193,11 @@ struct ConsecrationPrayerFlowView: View {
             // currentIndex is intentionally NOT reset here: onAppear also
             // fires when popping back from the meditation view, and the
             // user should return to the prayer they left, not prayer 1.
+            //
+            // A start index past the end would leave a blank screen, so
+            // it falls back to the first prayer.
+            if currentIndex >= prayers.count { currentIndex = 0 }
+            visited.insert(currentIndex)
             opacity = 1.0
             loadAudioIfAvailable()
         }
@@ -181,6 +207,7 @@ struct ConsecrationPrayerFlowView: View {
             audio.deactivateSession()
         }
         .onChange(of: currentIndex) {
+            visited.insert(currentIndex)
             audio.reset()
             loadAudioIfAvailable()
         }
@@ -232,11 +259,13 @@ struct ConsecrationPrayerFlowView: View {
                 .tracking(2)
                 .foregroundColor(AppColors.textSecondary)
 
-            // Progress dots
+            // Progress dots — lit for the prayers actually opened, not
+            // for everything left of the cursor, which would show three
+            // prayers as prayed when the flow was opened on the fourth
             HStack(spacing: 6) {
                 ForEach(0..<prayers.count, id: \.self) { index in
                     Capsule()
-                        .fill(index <= currentIndex ? AppColors.gold : AppColors.cardBackground)
+                        .fill(visited.contains(index) ? AppColors.gold : AppColors.cardBackground)
                         .frame(width: index == currentIndex ? 20 : 8, height: 4)
                         .animation(.spring(response: 0.4, dampingFraction: 0.7), value: currentIndex)
                 }
@@ -358,53 +387,67 @@ struct ConsecrationPrayerFlowView: View {
     // MARK: - Bottom Controls
 
     private var bottomControls: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 14) {
             // Prayer counter
             Text("\(currentIndex + 1) of \(prayers.count)")
                 .font(AppFonts.bodyFont(12))
                 .foregroundColor(AppColors.textSecondary)
 
-            // Continue Button
-            Button {
-                if isLastPrayer {
-                    // Navigate to meditation
-                    path.append(ConsecrationRoute.meditation(dayNumber: dayNumber))
-                } else {
-                    // Animate transition to next prayer
-                    withAnimation(.easeOut(duration: 0.15)) {
-                        opacity = 0
-                    }
-
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                        // Clamp: rapid taps queue multiple increments, and
-                        // running past the last prayer blanks the screen
-                        currentIndex = min(currentIndex + 1, prayers.count - 1)
-                        withAnimation(.easeIn(duration: 0.2)) {
-                            opacity = 1
-                        }
-                    }
-                }
-            } label: {
-                HStack(spacing: 10) {
-                    Text(isLastPrayer ? "Continue to Meditation" : "Continue")
-                        .font(AppFonts.headlineFont(16))
-
-                    AppIcon(isLastPrayer ? "ph-book-open-fill" : "ph-arrow-right", size: 15)
-                        .font(.system(size: 14, weight: .semibold))
-                }
-                .foregroundColor(AppColors.background)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 18)
-                .background(
-                    LinearGradient(
-                        colors: [AppColors.gold, AppColors.goldLight],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-                .clipShape(RoundedRectangle(cornerRadius: 14))
-            }
+            // The day's one gold act — the app's single filled shape
+            GoldCTAButton(
+                title: hasVisitedAll ? "Continue to meditation" : "Continue",
+                showsCross: false,
+                trailingIcon: hasVisitedAll ? "ph-book-open" : "ph-arrow-right",
+                action: advance
+            )
             .padding(.horizontal, 24)
+
+            // A way back to the prayers above. It leaves rather than
+            // greying out, and matters most when the flow was opened
+            // partway down the day's list.
+            QuietGoldButton(
+                title: "Previous prayer",
+                leadingIcon: "ph-arrow-left",
+                leadingIconSize: 11,
+                size: 10,
+                action: retreat
+            )
+            .disabled(currentIndex == 0)
+            .opacity(currentIndex == 0 ? 0 : 1)
+            .accessibilityHidden(currentIndex == 0)
+        }
+    }
+
+    // MARK: - Navigation
+
+    private func advance() {
+        if hasVisitedAll {
+            path.append(ConsecrationRoute.meditation(dayNumber: dayNumber))
+        } else if let next = nextUnvisitedIndex {
+            move(to: next)
+        }
+    }
+
+    private func retreat() {
+        guard currentIndex > 0 else { return }
+        move(to: currentIndex - 1)
+    }
+
+    /// Fades the prayer out, swaps it, and fades the next one in.
+    private func move(to index: Int) {
+        guard !prayers.isEmpty else { return }
+
+        withAnimation(.easeOut(duration: 0.15)) {
+            opacity = 0
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+            // Clamp: rapid taps queue multiple moves, and running past
+            // either end blanks the screen
+            currentIndex = min(max(index, 0), prayers.count - 1)
+            withAnimation(.easeIn(duration: 0.2)) {
+                opacity = 1
+            }
         }
     }
 }

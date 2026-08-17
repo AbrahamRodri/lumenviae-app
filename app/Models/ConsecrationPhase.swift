@@ -76,6 +76,19 @@ enum ConsecrationPhase: String, Codable, CaseIterable, Hashable {
         dayRange.count
     }
 
+    /// What to call this stretch of days when counting through it. Only
+    /// the three middle phases are weeks — the preparatory period runs
+    /// twelve days, so "this week" would simply be untrue there.
+    var spanLabel: String {
+        switch self {
+        case .preparatory:     return "PREPARATION"
+        case .knowledgeOfSelf,
+             .knowledgeOfMary,
+             .knowledgeOfJesus: return "THIS WEEK"
+        case .consecrationDay:  return "CONSECRATION"
+        }
+    }
+
     // MARK: - Visual Styling
 
     /// Tint colors layered OVER the theme's own gradient (never a

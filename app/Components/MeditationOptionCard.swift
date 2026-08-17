@@ -76,15 +76,7 @@ struct MeditationOptionCard: View {
                     }
                 }
             }
-            .padding(20)
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(AppColors.cardBackground)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: 0.5)
-            )
+            .sacredCard()
         }
         .buttonStyle(SacredCardButtonStyle())
     }

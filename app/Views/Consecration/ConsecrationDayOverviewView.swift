@@ -44,6 +44,14 @@ struct ConsecrationDayOverviewView: View {
     /// the audio that is playing is its own.
     @State private var loadedChantId: String?
 
+    /// This chip's own fetch, rather than the shared player's `isLoading`
+    /// — the presign hop happens before any audio is handed over, so the
+    /// player is still idle while the chip is waiting.
+    @State private var isPreparingChant = false
+
+    /// Which reading the card's carousel is showing, by `order`
+    @State private var visibleReading: Int?
+
     private let audio = AudioService.shared
 
     // MARK: - Computed Properties
@@ -126,7 +134,12 @@ struct ConsecrationDayOverviewView: View {
         .onDisappear {
             // The chant belongs to this screen; anything pushed over it
             // (the prayer flow) loads its own audio.
-            if loadedChantId != nil {
+            //
+            // Presenting the reading also takes this view off screen and
+            // fires onDisappear — but the reading is this screen's own
+            // page, and a chant the user started should carry on behind
+            // it rather than cutting out mid-verse.
+            if loadedChantId != nil && !showReadingSheet {
                 audio.reset()
                 audio.deactivateSession()
                 loadedChantId = nil
@@ -142,47 +155,23 @@ struct ConsecrationDayOverviewView: View {
 
     // MARK: - Hero
 
-    /// The cathedral-window arch that frames the phase's painting
-    private var arch: GothicArchShape { GothicArchShape(riseRatio: 0.34) }
-
+    /// The same arch the home screen's featured mystery is set in — the
+    /// phase's painting in place of the mystery's, and the phase's hue
+    /// over it in place of a flat dim.
     private var heroSection: some View {
-        arch
-            .fill(AppColors.cardBackground)
-            .frame(height: 368)
-            .overlay(
-                CachedAssetImage(phase?.heroImageName ?? MysteryCategory.luminous.cardImageName)
-                    .aspectRatio(contentMode: .fill)
-                    .overlay(phaseTint)
-            )
-            .clipShape(arch)
-            .overlay(
-                arch.strokeBorder(AppColors.gold.opacity(0.4), lineWidth: 1)
-            )
-            .overlay(
-                arch.inset(by: 5)
-                    .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: 0.5)
-            )
-            .overlay(alignment: .bottom) { heroContent }
-            // The foot dissolves so the arch never closes on a rule drawn
-            // straight across the screen. Masked before the halo, so the
-            // glow itself isn't clipped — and applied to the arch-clipped
-            // view, so it follows the silhouette rather than a box.
-            .mask(
-                VStack(spacing: 0) {
-                    Rectangle().fill(.black)
-                    LinearGradient(
-                        colors: [.black, .clear],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .frame(height: 16)
-                }
-            )
-            .haloGlow(AppColors.gold, radius: 18, intensity: 0.16)
+        ArchHero(
+            imageName: phase?.heroImageName ?? MysteryCategory.luminous.cardImageName,
+            height: 368,
+            tint: AnyShapeStyle(phaseTint),
+            spacing: 13,
+            contentPadding: EdgeInsets(top: 70, leading: 16, bottom: 22, trailing: 16)
+        ) {
+            heroContent
+        }
     }
 
     /// The phase's own hue laid over the painting, deepening downward
-    private var phaseTint: some View {
+    private var phaseTint: LinearGradient {
         let colors = phase?.gradientColors ?? [AppColors.background, AppColors.background]
         return LinearGradient(
             colors: [
@@ -194,63 +183,43 @@ struct ConsecrationDayOverviewView: View {
         )
     }
 
+    @ViewBuilder
     private var heroContent: some View {
-        VStack(spacing: 13) {
-            phaseBadge
+        HeroBadge(badgeText)
 
-            Text(day?.title ?? phase?.subtitle ?? "")
-                .font(AppFonts.headlineFont(26))
-                .foregroundColor(AppColors.cream)
-                .multilineTextAlignment(.center)
-                .lineSpacing(4)
-                .minimumScaleFactor(0.8)
+        Text(day?.title ?? phase?.subtitle ?? "")
+            .font(AppFonts.headlineFont(26))
+            .foregroundColor(AppColors.cream)
+            .multilineTextAlignment(.center)
+            .lineSpacing(4)
+            .minimumScaleFactor(0.8)
 
-            Text(heroSubtitle)
-                .font(AppFonts.italicFont(14))
-                .foregroundColor(AppColors.accentSoft)
-                .multilineTextAlignment(.center)
+        Text(heroSubtitle)
+            .font(AppFonts.italicFont(14))
+            .foregroundColor(AppColors.accentSoft)
+            .multilineTextAlignment(.center)
 
-            if let phase, phase != .consecrationDay {
-                weekBar(phase)
-            }
-
-            GoldCTAButton(
-                title: isToday ? "Begin today's prayer" : "Open day \(displayDayNumber)",
-                showsCross: isToday
-            ) {
-                showReadingSheet = true
-            }
-            .padding(.horizontal, 12)
-            .padding(.top, 4)
+        if let phase, phase != .consecrationDay {
+            weekBar(phase)
         }
-        .padding(.top, 70)
-        .padding(.horizontal, 16)
-        .padding(.bottom, 22)
-        // The featured card's scrim, stop for stop: out of the way through
-        // the top third, gathering only where the words need ground.
-        .background(
-            LinearGradient(
-                stops: [
-                    .init(color: .clear, location: 0),
-                    .init(color: AppColors.background.opacity(0.5), location: 0.34),
-                    .init(color: AppColors.background.opacity(0.86), location: 0.66),
-                    .init(color: AppColors.background, location: 0.92)
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-        )
+
+        GoldCTAButton(
+            title: heroActionTitle,
+            showsCross: isToday
+        ) {
+            showReadingSheet = true
+        }
+        .padding(.horizontal, 12)
+        .padding(.top, 4)
     }
 
-    private var phaseBadge: some View {
-        Text(badgeText)
-            .font(AppFonts.labelFont(9))
-            .tracking(2.5)
-            .foregroundColor(AppColors.goldLight)
-            .padding(.horizontal, 15)
-            .padding(.vertical, 7)
-            .background(Capsule().fill(AppColors.background.opacity(0.55)))
-            .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.45), lineWidth: 1))
+    /// A day already kept opens for rereading, not for starting over —
+    /// the same distinction the old "Review Day" title drew.
+    private var heroActionTitle: String {
+        if viewModel.isDayCompleted(displayDayNumber) {
+            return isToday ? "Revisit today's prayer" : "Revisit day \(displayDayNumber)"
+        }
+        return isToday ? "Begin today's prayer" : "Open day \(displayDayNumber)"
     }
 
     /// The phase's focus under the day's theme — unless the day is the one
@@ -294,14 +263,19 @@ struct ConsecrationDayOverviewView: View {
                 }
             }
 
-            Text("DAY \(day?.dayWithinPhase ?? 1) OF \(phase.dayCount) THIS WEEK")
+            // "THIS WEEK" only where a week is what it is — the
+            // preparatory period runs twelve days, not seven.
+            Text("\(phase.spanLabel) · DAY \(day?.dayWithinPhase ?? 1) OF \(phase.dayCount)")
                 .font(AppFonts.labelFont(9))
                 .tracking(2)
                 .foregroundColor(AppColors.cream.opacity(0.7))
         }
         .frame(width: 190)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Day \(day?.dayWithinPhase ?? 1) of \(phase.dayCount) this week")
+        .accessibilityLabel(
+            "Day \(day?.dayWithinPhase ?? 1) of \(phase.dayCount) "
+            + (phase == .preparatory ? "of the preparation" : "this week")
+        )
     }
 
     // MARK: - Countdown
@@ -341,9 +315,14 @@ struct ConsecrationDayOverviewView: View {
         }
     }
 
+    /// `dateStyle` rather than a hand-written format: the feast date is
+    /// read, not parsed, so it has to follow the reader's region — a
+    /// fixed "d MMMM yyyy" prints 8 December 2026 to someone whose whole
+    /// phone says December 8, 2026.
     private static let feastDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "d MMMM yyyy"
+        formatter.dateStyle = .long
+        formatter.timeStyle = .none
         return formatter
     }()
 
@@ -367,21 +346,15 @@ struct ConsecrationDayOverviewView: View {
     // MARK: - Today's Reading
 
     private var readingCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            CardHeading(isToday ? "Today's reading" : "The reading", meta: readTimeLabel)
+        let readings = day?.readings ?? []
 
-            Text(day?.meditationTitle ?? "")
-                .font(AppFonts.headlineFont(17))
-                .foregroundColor(AppColors.cream)
-                .lineSpacing(3)
-                .fixedSize(horizontal: false, vertical: true)
+        return VStack(alignment: .leading, spacing: 12) {
+            CardHeading(readingHeading, meta: readTimeLabel)
 
-            readingPreview
-
-            if let source = day?.meditationSource {
-                Text(source)
-                    .font(AppFonts.italicFont(12))
-                    .foregroundColor(AppColors.textSecondary)
+            if readings.count > 1 {
+                readingCarousel(readings)
+            } else if let only = readings.first {
+                readingPage(only)
             }
 
             HStack(spacing: 12) {
@@ -406,42 +379,135 @@ struct ConsecrationDayOverviewView: View {
         .sacredCard()
     }
 
-    private var firstParagraph: String {
-        ReadingText.paragraphs(of: day?.meditationText ?? "").first ?? ""
+    /// Plural when the day asks for more than one reading — the heading is
+    /// the first thing that tells the user there are two.
+    private var readingHeading: String {
+        let plural = day?.hasMultipleReadings == true
+        if isToday {
+            return plural ? "Today's readings" : "Today's reading"
+        }
+        return plural ? "The readings" : "The reading"
     }
 
-    /// The opening paragraph, clamped where it would run past the card.
-    /// Short openings — some readings begin on a single verse — are left
-    /// whole rather than dissolved for the sake of a fade.
-    @ViewBuilder
-    private var readingPreview: some View {
-        let paragraph = firstParagraph
-        let text = ReadingText(text: paragraph, size: 18)
+    /// Total for the day, summed from the per-reading counts made when the
+    /// readings were built rather than on every render of this card.
+    private var readTimeLabel: String? {
+        guard let minutes = day?.estimatedMinutes, minutes > 0 else { return nil }
+        return "\(minutes) min"
+    }
 
-        if paragraph.count > 260 {
-            text
-                .frame(maxHeight: 132, alignment: .top)
-                .clipped()
+    // MARK: - Reading Carousel
+
+    /// Montfort's plan gives most days a Gospel passage *and* a spiritual
+    /// reading. They are separate texts, so they get separate pages rather
+    /// than being run together into one blob the user has to untangle.
+    private func readingCarousel(_ readings: [ConsecrationReading]) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 0) {
+                    ForEach(readings) { reading in
+                        readingPage(reading)
+                            .containerRelativeFrame(.horizontal)
+                            .id(reading.order)
+                    }
+                }
+                .scrollTargetLayout()
+            }
+            .scrollTargetBehavior(.paging)
+            .scrollPosition(id: $visibleReading, anchor: .center)
+
+            readingPageControl(readings)
+        }
+    }
+
+    /// The reading now open, and the way to the other one. Dots carry full
+    /// tap targets — a day has two or three readings, never enough for
+    /// 44pt each to crowd the card.
+    private func readingPageControl(_ readings: [ConsecrationReading]) -> some View {
+        let current = visibleReading ?? readings.first?.order ?? 1
+
+        return HStack(spacing: 0) {
+            ForEach(readings) { reading in
+                let isCurrent = reading.order == current
+
+                Button {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        visibleReading = reading.order
+                    }
+                } label: {
+                    Capsule()
+                        .fill(isCurrent ? AppColors.gold : AppColors.cream.opacity(0.22))
+                        .frame(width: isCurrent ? 18 : 6, height: 4)
+                        .frame(width: 34, height: 44)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(SacredCardButtonStyle())
+                .accessibilityLabel("Reading \(reading.order) of \(readings.count), \(reading.title)")
+                .accessibilityAddTraits(isCurrent ? [.isSelected] : [])
+            }
+
+            Spacer(minLength: 8)
+
+            Text("\(current) of \(readings.count)")
+                .font(AppFonts.italicFont(12))
+                .foregroundColor(AppColors.textSecondary)
+                .accessibilityHidden(true)
+        }
+        .animation(.easeOut(duration: 0.2), value: current)
+    }
+
+    /// One reading's page. Every page reserves the same number of lines so
+    /// the carousel doesn't change height as it moves — a card that grows
+    /// and shrinks under the thumb reads as a glitch.
+    private func readingPage(_ reading: ConsecrationReading) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(reading.title)
+                .font(AppFonts.headlineFont(17))
+                .foregroundColor(AppColors.cream)
+                .lineSpacing(3)
+                .lineLimit(2, reservesSpace: true)
+                .multilineTextAlignment(.leading)
+
+            Text(preview(of: reading))
+                .font(AppFonts.readingFont(17))
+                .foregroundColor(AppColors.cream.opacity(0.92))
+                .lineSpacing(ReadingTypography.lineSpacing(for: 17))
+                .lineLimit(5, reservesSpace: true)
+                .multilineTextAlignment(.leading)
+                // The last line dissolves instead of stopping on an
+                // ellipsis. Late enough that a short reading is untouched.
                 .mask(
                     LinearGradient(
                         stops: [
-                            .init(color: .black, location: 0.62),
+                            .init(color: .black, location: 0.78),
                             .init(color: .clear, location: 1)
                         ],
                         startPoint: .top,
                         endPoint: .bottom
                     )
                 )
-        } else {
-            text
+
+            HStack(spacing: 6) {
+                if let source = reading.source {
+                    Text(source)
+                    Text("·")
+                }
+                Text("\(reading.estimatedMinutes) min")
+            }
+            .font(AppFonts.italicFont(12))
+            .foregroundColor(AppColors.textSecondary)
+            .lineLimit(1)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    /// Reading time at the 200-words-a-minute the book reader uses
-    private var readTimeLabel: String? {
-        guard let text = day?.meditationText, !text.isEmpty else { return nil }
-        let words = text.split(separator: " ").count
-        return "\(max(1, Int((Double(words) / 200.0).rounded(.up)))) min"
+    /// The reading's opening, enough of it to be worth reading. Some
+    /// readings open on their own theme line — a few words — so the next
+    /// paragraph comes along rather than leaving the page half empty.
+    private func preview(of reading: ConsecrationReading) -> String {
+        ReadingText.paragraphs(of: reading.text)
+            .prefix(2)
+            .joined(separator: " ")
     }
 
     // MARK: - Chant
@@ -449,10 +515,7 @@ struct ConsecrationDayOverviewView: View {
     /// The phase's first prayer that has a chant recording. Not every
     /// phase has one, and the chip stays away when it doesn't.
     private var chantPrayer: ConsecrationPrayer? {
-        guard let phase else { return nil }
-        return ConsecrationData
-            .prayers(for: phase, language: settings.prayerLanguage)
-            .first { $0.hasChantAudio }
+        prayers.first { $0.hasChantAudio }
     }
 
     private var isChanting: Bool {
@@ -467,7 +530,7 @@ struct ConsecrationDayOverviewView: View {
                         .fill(AppColors.goldCTAGradient)
                         .frame(width: 26, height: 26)
 
-                    if audio.isLoading && loadedChantId == nil {
+                    if isPreparingChant {
                         SwiftUI.ProgressView()
                             .controlSize(.mini)
                             .tint(AppColors.background)
@@ -494,14 +557,18 @@ struct ConsecrationDayOverviewView: View {
     }
 
     private func toggleChant() {
-        guard let prayer = chantPrayer else { return }
+        guard let prayer = chantPrayer, !isPreparingChant else { return }
 
         if loadedChantId == prayer.id {
             audio.togglePlayback()
             return
         }
 
+        isPreparingChant = true
+
         Task {
+            defer { isPreparingChant = false }
+
             // A downloaded chant plays offline and skips the presign hop
             if let local = OfflineContentService.shared.localPrayerAudioURL(prayerId: prayer.id) {
                 await audio.loadAudio(
@@ -509,14 +576,23 @@ struct ConsecrationDayOverviewView: View {
                     title: prayer.title,
                     subtitle: "33-Day Consecration"
                 )
-            } else if let url = try? await APIService.shared.fetchPrayerAudioUrl(prayerId: prayer.id) {
-                await audio.loadAudio(
-                    from: url,
-                    title: prayer.title,
-                    subtitle: "33-Day Consecration"
-                )
             } else {
-                return
+                do {
+                    let url = try await APIService.shared.fetchPrayerAudioUrl(prayerId: prayer.id)
+                    await audio.loadAudio(
+                        from: url,
+                        title: prayer.title,
+                        subtitle: "33-Day Consecration"
+                    )
+                } catch {
+                    // A tap that does nothing at all reads as a broken
+                    // button; say why instead. The tab hosts the alert.
+                    viewModel.errorMessage =
+                        "The chant for \(prayer.title) couldn't be loaded. "
+                        + "Check your connection, or download the consecration "
+                        + "audio from Account to chant offline."
+                    return
+                }
             }
             loadedChantId = prayer.id
             audio.play()
@@ -534,20 +610,25 @@ struct ConsecrationDayOverviewView: View {
     /// with the Latin beneath it whatever the display language, so the
     /// list stays readable while the prayers themselves follow the
     /// preference.
-    private var prayerRows: [(prayer: ConsecrationPrayer, english: String, latin: String?)] {
+    /// The day's prayers, resolved once. Both this list and the chant
+    /// chip read it, and the prayer flow resolves the same call for the
+    /// same phase — so a row's position here is its position there.
+    private var prayers: [ConsecrationPrayer] {
         guard let phase else { return [] }
-        let bilingual = BilingualConsecrationPrayers.allPrayers()
+        return ConsecrationData.prayers(for: phase, language: settings.prayerLanguage)
+    }
 
-        return ConsecrationData
-            .prayers(for: phase, language: settings.prayerLanguage)
-            .map { prayer in
-                let record = bilingual[prayer.id]
-                return (
-                    prayer: prayer,
-                    english: record?.englishTitle ?? prayer.title,
-                    latin: record?.latinTitle ?? prayer.latinTitle
-                )
-            }
+    private var prayerRows: [(prayer: ConsecrationPrayer, english: String, latin: String?)] {
+        let bilingual = BilingualConsecrationPrayers.allPrayers
+
+        return prayers.map { prayer in
+            let record = bilingual[prayer.id]
+            return (
+                prayer: prayer,
+                english: record?.englishTitle ?? prayer.title,
+                latin: record?.latinTitle ?? prayer.latinTitle
+            )
+        }
     }
 
     private var prayersCard: some View {
@@ -615,11 +696,22 @@ struct ConsecrationDayOverviewView: View {
     }
 
     /// English / Latin / Both, bound to the app-wide prayer language.
+    ///
+    /// It writes the same preference the Account screen does, so the
+    /// caption says so — a tap here to glance at the Latin shouldn't
+    /// quietly re-language the user's Rosary as well.
     private var languageSelector: some View {
-        HStack(spacing: 6) {
-            languageCapsule("English", language: .english)
-            languageCapsule("Latin", language: .latin)
-            languageCapsule("Both", language: .both)
+        VStack(spacing: 8) {
+            HStack(spacing: 6) {
+                languageCapsule("English", language: .english)
+                languageCapsule("Latin", language: .latin)
+                languageCapsule("Both", language: .both)
+            }
+
+            Text("Sets the prayer language everywhere you pray")
+                .font(AppFonts.italicFont(11))
+                .foregroundColor(AppColors.textSecondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 
@@ -639,7 +731,7 @@ struct ConsecrationDayOverviewView: View {
                 .tracking(1.6)
                 .foregroundColor(isSelected ? AppColors.goldLight : AppColors.textSecondary)
                 .frame(maxWidth: .infinity)
-                .frame(height: 34)
+                .frame(height: 44)
                 .background(
                     Capsule().fill(
                         isSelected ? AppColors.cardElevated : AppColors.background.opacity(0.5)
@@ -667,7 +759,7 @@ struct ConsecrationDayOverviewView: View {
                 Text(prompt)
                     .font(AppFonts.readingItalicFont(17))
                     .foregroundColor(AppColors.cream.opacity(0.92))
-                    .lineSpacing(8)
+                    .lineSpacing(ReadingTypography.lineSpacing(for: 17))
                     .fixedSize(horizontal: false, vertical: true)
 
                 QuietGoldButton(
@@ -691,8 +783,11 @@ struct ConsecrationDayOverviewView: View {
         VStack(alignment: .leading, spacing: 14) {
             CardHeading("Your journey", meta: "\(keptCount) of 33 kept")
 
+            // Every phase, the consecration itself included — Day 34 is
+            // the one day of the thirty-four a user is most likely to
+            // want to return to, and filtering it out left no route back.
             VStack(spacing: 0) {
-                ForEach(ConsecrationPhase.allCases.filter { $0 != .consecrationDay }, id: \.self) { phase in
+                ForEach(ConsecrationPhase.allCases, id: \.self) { phase in
                     JourneyPhaseRow(
                         phase: phase,
                         today: viewModel.todaysDayNumber,
@@ -947,9 +1042,9 @@ private struct JourneyPhaseRow: View {
 
             if isExpanded {
                 LazyVGrid(
-                    columns: [GridItem(.adaptive(minimum: 30, maximum: 30), spacing: 6)],
+                    columns: [GridItem(.adaptive(minimum: 44, maximum: 44), spacing: 2)],
                     alignment: .leading,
-                    spacing: 6
+                    spacing: 2
                 ) {
                     ForEach(days, id: \.self) { number in
                         dayCircle(number)
@@ -971,7 +1066,7 @@ private struct JourneyPhaseRow: View {
             Text("\(number)")
                 .font(AppFonts.bodyFont(12))
                 .foregroundColor(numberColor(kept: kept, isToday: isToday, reachable: reachable))
-                .frame(width: 30, height: 30)
+                .frame(width: 32, height: 32)
                 .background {
                     if kept {
                         Circle().fill(AppColors.goldCTAGradient)
@@ -994,6 +1089,10 @@ private struct JourneyPhaseRow: View {
                             .padding(-3)
                     }
                 }
+                // The mark stays small and quiet; the target around it is
+                // full size. Thirty-four of these sit side by side, and
+                // this is the route back to a day someone missed.
+                .frame(width: 44, height: 44)
         }
         .buttonStyle(SacredCardButtonStyle())
         // Days still ahead stay quiet rather than opening early
