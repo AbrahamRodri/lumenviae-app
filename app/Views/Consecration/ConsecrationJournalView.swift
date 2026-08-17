@@ -2,8 +2,15 @@
 //  ConsecrationJournalView.swift
 //  Lumen Viae
 //
-//  Allows the user to write a reflection based on the day's prompt.
-//  Completing the journal marks the day as complete.
+//  The day's reflection, written on the same surface as every other
+//  journal entry in the app: the flat page, the tracked kicker, the
+//  subject chip, and the full-bleed writing area of
+//  `JournalEntryEditorView` — not a stack of cards of its own.
+//
+//  The one thing it keeps that the journal editor doesn't is the act at
+//  the foot. Saving a reflection and keeping a day of the consecration
+//  are not the same thing, and the day is completed whether or not a single
+//  word was written.
 //
 
 import SwiftUI
@@ -14,13 +21,24 @@ struct ConsecrationJournalView: View {
 
     // MARK: - Properties
 
-    @Binding var path: NavigationPath
+    @Binding var path: [ConsecrationRoute]
+
     @Environment(ConsecrationViewModel.self) private var viewModel
-    @FocusState private var isTextEditorFocused: Bool
+    @FocusState private var bodyFocused: Bool
 
     let dayNumber: Int
 
-    @State private var journalText: String = ""
+    @State private var text: String = ""
+
+    /// Flipped once the day is completed, so the haptic fires on the act
+    /// rather than on every keystroke
+    @State private var didCompleteDay = false
+
+    /// The day's index — the reflection is a place in the day like any
+    /// other, so it can be left for any other.
+    @State private var showDayIndex = false
+
+    @Environment(UserSettings.self) private var settings
 
     // MARK: - Computed Properties
 
@@ -36,41 +54,61 @@ struct ConsecrationJournalView: View {
         dayNumber == 34
     }
 
+    private var isAlreadyComplete: Bool {
+        viewModel.isDayCompleted(dayNumber)
+    }
+
+    /// The day's own question, in the slot the journal editor keeps for
+    /// its invitation to write
+    private var placeholderText: String {
+        day?.journalPrompt ?? "Record your thoughts…"
+    }
+
+    private var subjectLine: String {
+        day?.title ?? "Reflection"
+    }
+
+    private var contextLine: String {
+        guard let phase else { return "Day \(dayNumber)" }
+        if phase == .consecrationDay { return "Consecration Day" }
+        return "Day \(dayNumber) · \(phase.displayName)"
+    }
+
+    private static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM d"
+        return formatter
+    }()
+
+    private var formattedDate: String {
+        Self.dateFormatter.string(from: Date())
+    }
+
     // MARK: - Body
 
     var body: some View {
         ZStack {
-            // Background - use app gradient
-            ConsecrationPhaseBackground(phase: phase)
+            AppColors.appGradient
                 .ignoresSafeArea()
-                .onTapGesture {
-                    isTextEditorFocused = false
-                }
 
             VStack(spacing: 0) {
-                // Top Bar
-                topBar
-                    .padding(.top, 8)
+                editorHeader
 
-                // Content
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: 24) {
-                        Spacer()
-                            .frame(height: 20)
+                Divider()
+                    .background(AppColors.gold.opacity(0.2))
 
-                        // Prompt
-                        journalPrompt
+                subjectRow
+                    .padding(.horizontal, 20)
+                    .padding(.top, 16)
+                    .padding(.bottom, 8)
 
-                        // Text Editor
-                        journalEditor
+                Divider()
+                    .background(AppColors.gold.opacity(0.1))
 
-                        Spacer()
-                            .frame(height: 100)
-                    }
-                    .padding(.horizontal, 24)
-                }
+                editor
 
-                // Complete Button
+                characterCount
+
                 completeButton
                     .padding(.horizontal, 24)
                     .padding(.bottom, 16)
@@ -80,152 +118,208 @@ struct ConsecrationJournalView: View {
         .toolbar {
             ToolbarItem(placement: .keyboard) {
                 Button("Done") {
-                    isTextEditorFocused = false
+                    bodyFocused = false
                 }
             }
+        }
+        .sensoryFeedback(.success, trigger: didCompleteDay)
+        .sheet(isPresented: $showDayIndex) {
+            ConsecrationDayIndexSheet(
+                dayNumber: dayNumber,
+                prayers: dayPrayers,
+                current: .reflection,
+                isComplete: isAlreadyComplete,
+                onSelect: open
+            )
         }
         .onAppear {
-            journalText = viewModel.journalText
+            text = viewModel.journalText
+
+            // Straight to the body field, as the journal editor does —
+            // but only when there is nothing written yet, so returning to
+            // a completed day doesn't throw the keyboard over your own words.
+            guard text.isEmpty else { return }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                bodyFocused = true
+            }
         }
     }
 
-    // MARK: - Top Bar
+    // MARK: - Header
 
-    private var topBar: some View {
-        HStack(alignment: .center) {
-            // Back Button
-            Button {
-                // Guard: a second tap during the pop animation would call
+    private var editorHeader: some View {
+        HStack {
+            PrayerHeaderButton(icon: "ph-caret-left", size: 16, label: "Back to the prayers") {
+                // A second tap during the pop animation would call
                 // removeLast() on an empty path and crash
                 if !path.isEmpty { path.removeLast() }
+            }
+
+            Spacer()
+
+            // The same struck capsule the day flow's header carries, so
+            // the way into the day's index looks the same wherever you
+            // are in the day.
+            Button {
+                showDayIndex = true
             } label: {
-                AppIcon("ph-caret-left", size: 16)
-                    .foregroundColor(AppColors.cream.opacity(0.7))
-                    .frame(width: 36, height: 36)
-                    .background(
-                        Circle()
-                            .fill(AppColors.cardBackground)
-                    )
-            }
-
-            Spacer()
-
-            // Label
-            VStack(spacing: 4) {
-                Text("DAY \(dayNumber)")
-                    .font(AppFonts.bodyFont(10))
-                    .tracking(2)
-                    .foregroundColor(AppColors.textSecondary)
-
                 HStack(spacing: 6) {
-                    AppIcon("ph-note-pencil", size: 10)
                     Text("REFLECTION")
-                        .font(AppFonts.bodyFont(10))
-                        .tracking(1)
+                        .font(AppFonts.labelFont(10))
+                        .tracking(2)
+                        .foregroundColor(AppColors.cream.opacity(0.9))
+
+                    AppIcon("ph-caret-down", size: 9)
+                        .foregroundColor(AppColors.gold)
                 }
-                .foregroundColor(AppColors.gold)
+                .padding(.horizontal, 13)
+                .padding(.vertical, 6)
+                .background(Capsule().fill(AppColors.background.opacity(0.55)))
+                .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.35), lineWidth: 1))
+                .frame(minHeight: 44)
+                .contentShape(Rectangle())
             }
+            .buttonStyle(SacredCardButtonStyle())
+            .accessibilityLabel("Reflection")
+            .accessibilityHint("Opens the day's index")
 
             Spacer()
 
-            // Spacer for symmetry
+            // Balances the back button so the kicker stays centered
             Color.clear
-                .frame(width: 36, height: 36)
+                .frame(width: 44, height: 44)
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
     }
 
-    // MARK: - Prompt
+    // MARK: - Subject Row
 
-    private var journalPrompt: some View {
-        VStack(spacing: 12) {
-            Text("Today's Reflection")
-                .font(AppFonts.headlineFont(20))
-                .foregroundColor(AppColors.cream)
+    private var subjectRow: some View {
+        HStack(spacing: 10) {
+            AppIcon("ph-note-pencil", size: 13)
+                .foregroundColor(AppColors.gold.opacity(0.8))
 
-            Text(day?.journalPrompt ?? "Reflect on today's prayers and meditation.")
-                .font(AppFonts.italicFont(16))
-                .foregroundColor(AppColors.cream.opacity(0.8))
-                .multilineTextAlignment(.center)
-                .lineSpacing(4)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(subjectLine)
+                    .font(AppFonts.italicFont(16))
+                    .foregroundColor(AppColors.cream)
+                    .multilineTextAlignment(.leading)
+
+                Text(contextLine)
+                    .font(AppFonts.bodyFont(11))
+                    .foregroundColor(AppColors.textSecondary)
+            }
+
+            Spacer(minLength: 8)
+
+            Text(formattedDate)
+                .font(AppFonts.bodyFont(12))
+                .foregroundColor(AppColors.textSecondary)
         }
-        .padding(20)
-        .frame(maxWidth: .infinity)
+        .padding(12)
         .background(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: 10)
                 .fill(AppColors.cardBackground)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(AppColors.gold.opacity(0.2), lineWidth: 1)
+                    RoundedRectangle(cornerRadius: 10)
+                        .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: 1)
                 )
         )
+        .accessibilityElement(children: .combine)
     }
 
     // MARK: - Editor
 
-    private var journalEditor: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Your Thoughts")
-                .font(AppFonts.bodyFont(12))
-                .tracking(1)
-                .foregroundColor(AppColors.textSecondary)
+    private var editor: some View {
+        ZStack(alignment: .topLeading) {
+            if text.isEmpty {
+                Text(placeholderText)
+                    .font(AppFonts.italicFont(18))
+                    .foregroundColor(AppColors.textSecondary.opacity(0.5))
+                    .lineSpacing(5)
+                    .padding(.horizontal, 24)
+                    .padding(.top, 14)
+                    .allowsHitTesting(false)
+            }
 
-            TextEditor(text: $journalText)
-                .font(AppFonts.bodyFont(16))
+            TextEditor(text: $text)
+                .font(AppFonts.bodyFont(18))
                 .foregroundColor(AppColors.cream)
                 .scrollContentBackground(.hidden)
-                .focused($isTextEditorFocused)
-                .frame(minHeight: 200)
-                .padding(16)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(AppColors.cardBackground)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(
-                                    isTextEditorFocused
-                                        ? AppColors.gold
-                                        : AppColors.gold.opacity(0.2),
-                                    lineWidth: isTextEditorFocused ? 2 : 1
-                                )
-                        )
-                )
-                .animation(.easeInOut(duration: 0.2), value: isTextEditorFocused)
+                .background(Color.clear)
+                .padding(.horizontal, 20)
+                .focused($bodyFocused)
+                .lineSpacing(6)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private var characterCount: some View {
+        HStack {
+            Spacer()
+            Text("\(text.count) characters")
+                .font(AppFonts.bodyFont(12))
+                .foregroundColor(AppColors.textSecondary.opacity(0.4))
+                .padding(.trailing, 24)
+                .padding(.bottom, 8)
         }
     }
 
-    // MARK: - Complete Button
+    // MARK: - Day Index
 
-    private var completeButton: some View {
-        Button {
-            viewModel.completeDay(dayNumber: dayNumber, journalEntry: journalText)
+    private var dayPrayers: [ConsecrationPrayer] {
+        guard let phase else { return [] }
+        return ConsecrationData.prayers(for: phase, language: settings.prayerLanguage)
+    }
 
-            // Navigate based on day
-            if isConsecrationDay {
-                path.append(ConsecrationRoute.completion)
-            } else {
-                // Return to root (day overview)
-                path.removeLast(path.count)
-            }
-        } label: {
-            HStack {
-                AppIcon(isConsecrationDay ? "ph-sparkle" : "ph-check-circle-fill", size: 15)
+    /// Leaving the reflection for somewhere else in the day. Whatever
+    /// has been written is saved on the way out — walking back to a
+    /// prayer should never cost the user their words.
+    private func open(_ destination: ConsecrationDayDestination) {
+        guard destination != .reflection else { return }
 
-                Text(isConsecrationDay ? "Complete Consecration" : "Complete Day")
-                    .font(AppFonts.headlineFont(16))
-            }
-            .foregroundColor(AppColors.background)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 18)
-            .background(
-                LinearGradient(
-                    colors: [AppColors.gold, AppColors.goldLight],
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 14))
+        let step: ConsecrationDayStep = {
+            if case .prayer(let index) = destination { return .prayer(index) }
+            return .reading(0)
+        }()
+
+        viewModel.saveReflectionDraft(text, for: dayNumber)
+
+        // Drop this reflection, then open the step fresh. Replacing the
+        // day flow's route value rather than pushing another one keeps
+        // the stack from growing every time the index is used.
+        if !path.isEmpty { path.removeLast() }
+
+        if case .dayFlow(let existingDay, _) = path.last, existingDay == dayNumber {
+            path[path.count - 1] = .dayFlow(dayNumber: dayNumber, step: step)
+        } else {
+            path.append(.dayFlow(dayNumber: dayNumber, step: step))
         }
+    }
+
+    // MARK: - Complete
+
+    /// The day's finishing act, and the only filled gold shape in the
+    /// day's flow. Unlike the journal editor's Save, it is never
+    /// disabled: a day prayed without words written is still a day completed.
+    private var completeButton: some View {
+        GoldCTAButton(title: completeTitle, showsCross: !isAlreadyComplete) {
+            viewModel.completeDay(dayNumber: dayNumber, journalEntry: text)
+            didCompleteDay = true
+
+            if isConsecrationDay {
+                path.append(.completion)
+            } else {
+                // Back to the day, which now shows itself as complete
+                path.removeAll()
+            }
+        }
+    }
+
+    private var completeTitle: String {
+        if isConsecrationDay { return "Make my consecration" }
+        return isAlreadyComplete ? "Save this reflection" : "Complete this day"
     }
 }
 
@@ -233,7 +327,8 @@ struct ConsecrationJournalView: View {
 
 #Preview {
     NavigationStack {
-        ConsecrationJournalView(path: .constant(NavigationPath()), dayNumber: 1)
+        ConsecrationJournalView(path: .constant([]), dayNumber: 1)
             .environment(ConsecrationViewModel())
+            .environment(UserSettings.shared)
     }
 }

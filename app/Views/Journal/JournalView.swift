@@ -32,6 +32,11 @@ struct JournalView: View {
     @State private var searchText = ""
     @State private var entryPendingDelete: JournalEntry? = nil
 
+    /// Gallery (the drop-capped cards) or list (one line an entry).
+    /// Persisted, because it is a reading preference rather than a mood
+    /// — a long journal is browsed the same way every time.
+    @AppStorage("journal.usesListLayout") private var usesListLayout = false
+
     // MARK: - Computed
 
     private var filteredEntries: [JournalEntry] {
@@ -131,6 +136,8 @@ struct JournalView: View {
                 Spacer()
 
                 HStack(spacing: 18) {
+                    layoutToggle
+
                     // Search toggle
                     Button(action: { withAnimation { showingSearch.toggle() } }) {
                         AppIcon("ph-magnifying-glass", size: 18)
@@ -191,6 +198,48 @@ struct JournalView: View {
                 .fill(AppColors.gold.opacity(0.25))
                 .frame(height: 1)
         }
+    }
+
+    /// Gallery and list, as a pair of glyphs where the lit one is the
+    /// layout you are looking at.
+    private var layoutToggle: some View {
+        HStack(spacing: 12) {
+            layoutButton(
+                icon: "ph-list",
+                label: "List view",
+                isSelected: usesListLayout
+            ) {
+                usesListLayout = true
+            }
+
+            layoutButton(
+                icon: "ph-cards",
+                label: "Gallery view",
+                isSelected: !usesListLayout
+            ) {
+                usesListLayout = false
+            }
+        }
+        .accessibilityElement(children: .contain)
+    }
+
+    private func layoutButton(
+        icon: String,
+        label: String,
+        isSelected: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button {
+            guard !isSelected else { return }
+            withAnimation(.easeInOut(duration: 0.2)) { action() }
+        } label: {
+            AppIcon(icon, size: 17)
+                .foregroundColor(isSelected ? AppColors.gold : AppColors.textSecondary.opacity(0.55))
+                .frame(width: 30, height: 44)
+                .contentShape(Rectangle())
+        }
+        .accessibilityLabel(label)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
     // MARK: - List
@@ -274,8 +323,15 @@ struct JournalView: View {
 
             // Entry cards (swipe actions only work inside List, so
             // deletion lives in a long-press menu + the detail view)
-            ForEach(group.entries) { entry in
-                JournalEntryCard(entry: entry)
+            VStack(spacing: usesListLayout ? 0 : 16) {
+                ForEach(group.entries) { entry in
+                    Group {
+                        if usesListLayout {
+                            JournalEntryRow(entry: entry)
+                        } else {
+                            JournalEntryCard(entry: entry)
+                        }
+                    }
                     .onTapGesture { selectedEntry = entry }
                     .contextMenu {
                         Button(role: .destructive) {
@@ -284,6 +340,7 @@ struct JournalView: View {
                             Label("Delete", systemImage: "trash")
                         }
                     }
+                }
             }
         }
     }
@@ -403,6 +460,72 @@ struct JournalEntryCard: View {
                         .strokeBorder(AppColors.gold.opacity(0.2), lineWidth: 1)
                 )
         )
+    }
+}
+
+// MARK: - Journal Entry Row
+
+/// The list layout: one line an entry. Enough to find something —
+/// when it was written, what it was about, how it opens — and nothing
+/// more. The gallery card is where an entry is actually read from.
+struct JournalEntryRow: View {
+    let entry: JournalEntry
+
+    private var dateLabel: String {
+        let calendar = Calendar.current
+        if calendar.isDateInToday(entry.createdAt) { return "TODAY" }
+        if calendar.isDateInYesterday(entry.createdAt) { return "YESTERDAY" }
+        let f = DateFormatter()
+        f.dateFormat = "MMM d"
+        return f.string(from: entry.createdAt).uppercased()
+    }
+
+    /// The opening of the entry on a single line, with the newlines
+    /// flattened so a line break can't blank the preview.
+    private var opening: String {
+        entry.text
+            .replacingOccurrences(of: "\n", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 12) {
+                AppIcon(entry.categoryIcon, size: 13)
+                    .foregroundColor(AppColors.gold.opacity(0.8))
+                    .frame(width: 18)
+
+                VStack(alignment: .leading, spacing: 3) {
+                    HStack(spacing: 8) {
+                        Text(entry.subjectLabel)
+                            .font(AppFonts.italicFont(15))
+                            .foregroundColor(AppColors.cream)
+                            .lineLimit(1)
+
+                        Spacer(minLength: 8)
+
+                        Text(dateLabel)
+                            .font(AppFonts.bodyFont(10))
+                            .tracking(1.5)
+                            .foregroundColor(AppColors.gold.opacity(0.8))
+                            .fixedSize()
+                    }
+
+                    Text(opening)
+                        .font(AppFonts.bodyFont(13))
+                        .foregroundColor(AppColors.textSecondary)
+                        .lineLimit(1)
+                }
+            }
+            .padding(.vertical, 13)
+            .frame(minHeight: 56)
+            .contentShape(Rectangle())
+
+            Rectangle()
+                .fill(AppColors.gold.opacity(0.12))
+                .frame(height: 0.5)
+        }
+        .accessibilityElement(children: .combine)
     }
 }
 

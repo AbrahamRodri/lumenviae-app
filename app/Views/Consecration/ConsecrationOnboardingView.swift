@@ -33,7 +33,7 @@ struct ConsecrationOnboardingView: View {
 
     // MARK: - Properties
 
-    @Binding var path: NavigationPath
+    @Binding var path: [ConsecrationRoute]
     @Environment(ConsecrationViewModel.self) private var viewModel
 
     /// Once the introduction has been walked (or skipped), later visits
@@ -150,6 +150,9 @@ struct ConsecrationOnboardingView: View {
                             .foregroundColor(AppColors.cream.opacity(0.7))
                             .frame(width: 36, height: 36)
                             .background(Circle().fill(AppColors.cardBackground))
+                            // 44pt hit target around the 36pt circle
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
                     }
                     .accessibilityLabel("Back")
                 }
@@ -162,11 +165,16 @@ struct ConsecrationOnboardingView: View {
                     }
                     .font(AppFonts.bodyFont(14))
                     .foregroundColor(AppColors.textSecondary)
-                    .frame(height: 36)
+                    // Kept to one line so it can't run into the progress
+                    // dots centered behind it at accessibility sizes
+                    .lineLimit(1)
+                    .padding(.horizontal, 10)
+                    .frame(minHeight: 44)
+                    .contentShape(Rectangle())
                 }
             }
         }
-        .frame(height: 36)
+        .frame(minHeight: 44)
     }
 }
 
@@ -175,13 +183,18 @@ struct ConsecrationOnboardingView: View {
 /// Fades content in with a slight rise, on a delay — so each step's
 /// content arrives as a paced sequence rather than a wall.
 private struct StaggeredReveal: ViewModifier {
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     let delay: Double
     @State private var shown = false
 
     func body(content: Content) -> some View {
         content
             .opacity(shown ? 1 : 0)
-            .offset(y: shown ? 0 : 14)
+            // With Reduce Motion, only the fade runs — the same bargain
+            // DevotionalEntrance makes everywhere else in the app
+            .offset(y: shown || reduceMotion ? 0 : 14)
             .onAppear {
                 withAnimation(.easeOut(duration: 0.6).delay(delay)) {
                     shown = true
@@ -227,31 +240,22 @@ private struct StaticSlide<Content: View>: View {
 
 // MARK: - Shared Step Chrome
 
-/// Gold gradient primary button used by every step
+/// Each step's one act, drawn from the app's single CTA system rather
+/// than a private copy of it. The cross is kept for the step that
+/// actually commits to the devotion.
 private struct OnboardingContinueButton: View {
     let title: String
-    var icon: String = "ph-arrow-right"
+    var icon: String? = "ph-arrow-right"
+    var showsCross: Bool = false
     let action: () -> Void
 
     var body: some View {
-        Button(action: action) {
-            HStack(spacing: 10) {
-                Text(title)
-                    .font(AppFonts.headlineFont(16))
-                AppIcon(icon, size: 15)
-            }
-            .foregroundColor(AppColors.background)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 17)
-            .background(
-                LinearGradient(
-                    colors: [AppColors.gold, AppColors.goldLight],
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 14))
-        }
+        GoldCTAButton(
+            title: title,
+            showsCross: showsCross,
+            trailingIcon: icon,
+            action: action
+        )
     }
 }
 
@@ -336,7 +340,7 @@ private struct ThresholdStepView: View {
 
                 Spacer(minLength: 12)
 
-                OnboardingContinueButton(title: "Discover the Devotion", action: onContinue)
+                OnboardingContinueButton(title: "Discover the devotion", action: onContinue)
                     .staggeredReveal(delay: 0.7)
             }
             .padding(.horizontal, 24)
@@ -590,8 +594,9 @@ private struct JourneyStepView: View {
                 Spacer(minLength: 12)
 
                 OnboardingContinueButton(
-                    title: "Choose My Consecration Day",
-                    icon: "ph-calendar-dots",
+                    title: "Choose my consecration day",
+                    icon: nil,
+                    showsCross: true,
                     action: onContinue
                 )
                 .staggeredReveal(delay: 1.3)
@@ -654,7 +659,7 @@ private struct JourneyStepView: View {
 
 #Preview {
     NavigationStack {
-        ConsecrationOnboardingView(path: .constant(NavigationPath()))
+        ConsecrationOnboardingView(path: .constant([]))
             .environment(ConsecrationViewModel())
     }
 }

@@ -27,9 +27,6 @@ final class ConsecrationViewModel {
     /// The day currently being viewed/completed
     var currentDay: ConsecrationDay?
 
-    /// Current prayer index during prayer flow (0-based)
-    var currentPrayerIndex: Int = 0
-
     /// Text being entered in the journal
     var journalText: String = ""
 
@@ -61,42 +58,14 @@ final class ConsecrationViewModel {
         ConsecrationPhase.phase(for: todaysDayNumber)
     }
 
-    /// Prayers for the current day (based on phase)
-    var prayersForToday: [ConsecrationPrayer] {
-        guard let phase = currentPhase else { return [] }
-        return ConsecrationData.prayers(for: phase)
-    }
-
-    /// Overall progress percentage (0.0 to 1.0)
-    var progressPercentage: Double {
-        progress?.progressPercentage ?? 0.0
-    }
-
-    /// Number of completed days
-    var completedDaysCount: Int {
-        progress?.completedDays.count ?? 0
-    }
-
-    /// Days remaining in the consecration
-    var daysRemaining: Int {
-        progress?.daysRemaining ?? 34
-    }
-
-    /// The current prayer being displayed
-    var currentPrayer: ConsecrationPrayer? {
-        guard currentPrayerIndex < prayersForToday.count else { return nil }
-        return prayersForToday[currentPrayerIndex]
-    }
-
-    /// Whether there's a next prayer available
-    var hasNextPrayer: Bool {
-        currentPrayerIndex < prayersForToday.count - 1
-    }
-
-    /// Total number of prayers for today
-    var totalPrayers: Int {
-        prayersForToday.count
-    }
+    // The prayer-flow state that used to live here (currentPrayerIndex,
+    // prayersForToday, currentPrayer, hasNextPrayer, totalPrayers,
+    // nextPrayer, resetPrayers) is gone. Nothing read it — the flow owns
+    // its own index — and `prayersForToday` resolved through
+    // `ConsecrationData.prayers(for:)`, the lookup that silently drops
+    // every prayer living only in the bilingual set. For the Preparatory
+    // period that is all four of them, so the property would have
+    // returned an empty list to anything that ever trusted it.
 
     // MARK: - Initialization
 
@@ -166,7 +135,6 @@ final class ConsecrationViewModel {
     /// Load the day data for the current day number
     func loadCurrentDay() {
         currentDay = ConsecrationData.day(todaysDayNumber)
-        currentPrayerIndex = 0
         journalText = ""
 
         // Load existing journal entry if any
@@ -177,7 +145,6 @@ final class ConsecrationViewModel {
     func loadDay(_ dayNumber: Int) {
         guard canAccessDay(dayNumber) else { return }
         currentDay = ConsecrationData.day(dayNumber)
-        currentPrayerIndex = 0
 
         // Load existing journal entry if any
         loadJournalEntry(for: dayNumber)
@@ -191,23 +158,6 @@ final class ConsecrationViewModel {
     /// Check if a day has been completed
     func isDayCompleted(_ dayNumber: Int) -> Bool {
         progress?.isDayCompleted(dayNumber) ?? false
-    }
-
-    // MARK: - Prayer Flow
-
-    /// Advance to the next prayer
-    /// Returns true if advanced, false if no more prayers
-    func nextPrayer() -> Bool {
-        if hasNextPrayer {
-            currentPrayerIndex += 1
-            return true
-        }
-        return false
-    }
-
-    /// Reset prayer index to start
-    func resetPrayers() {
-        currentPrayerIndex = 0
     }
 
     // MARK: - Day Completion
@@ -237,6 +187,14 @@ final class ConsecrationViewModel {
         } catch {
             errorMessage = "Failed to complete day: \(error.localizedDescription)"
         }
+    }
+
+    /// Save a reflection without keeping the day. The day's index can
+    /// carry the user from the reflection back to a prayer mid-sentence,
+    /// and that move must never cost them what they had written.
+    func saveReflectionDraft(_ content: String, for dayNumber: Int) {
+        saveJournalEntry(content, for: dayNumber)
+        journalText = content
     }
 
     // MARK: - Journal Management
@@ -298,7 +256,6 @@ final class ConsecrationViewModel {
 
     /// Reset the view model state (e.g., when leaving the tab)
     func reset() {
-        currentPrayerIndex = 0
         journalText = ""
         errorMessage = nil
     }
@@ -317,7 +274,6 @@ final class ConsecrationViewModel {
             self.progress = nil
             self.currentDay = nil
             self.journalText = ""
-            self.currentPrayerIndex = 0
         } catch {
             errorMessage = "Failed to reset consecration: \(error.localizedDescription)"
         }

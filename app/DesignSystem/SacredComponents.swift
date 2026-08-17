@@ -80,6 +80,12 @@ struct ArchHero<Content: View>: View {
 
     var contentPadding = EdgeInsets(top: 24, leading: 16, bottom: 24, trailing: 16)
 
+    /// A glow survives the foot mask and re-draws the very edge the mask
+    /// exists to remove, as a bright band under the arch. Where the hero
+    /// sits directly on the page gradient that band is visible, so the
+    /// halo comes off.
+    var showsHalo: Bool = true
+
     @ViewBuilder let content: Content
 
     private var arch: GothicArchShape { GothicArchShape(riseRatio: 0.34) }
@@ -137,7 +143,21 @@ struct ArchHero<Content: View>: View {
             )
             // Steady, not pulsing — the same presence the Pray medallion
             // and the narration transport carry.
-            .haloGlow(AppColors.gold, radius: 16, intensity: 0.18)
+            .modifier(OptionalHalo(active: showsHalo))
+    }
+}
+
+/// `haloGlow` behind a switch, so a hero can drop it without the call
+/// site branching on two otherwise identical view trees.
+private struct OptionalHalo: ViewModifier {
+    let active: Bool
+
+    func body(content: Content) -> some View {
+        if active {
+            content.haloGlow(AppColors.gold, radius: 16, intensity: 0.18)
+        } else {
+            content
+        }
     }
 }
 
