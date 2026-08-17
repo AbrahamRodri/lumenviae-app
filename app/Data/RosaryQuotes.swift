@@ -63,11 +63,6 @@ enum RosaryQuotes {
             source: "October 13, 1917"
         ),
         RosaryQuote(
-            text: "The Rosary is a compendium of the entire Gospel.",
-            author: "Bl. Paul VI",
-            source: "Marialis Cultus"
-        ),
-        RosaryQuote(
             text: "When the Rosary is said well, it gives Jesus and Mary more glory and is more meritorious than any other prayer.",
             author: "St. Louis de Montfort",
             source: "The Secret of the Rosary"
