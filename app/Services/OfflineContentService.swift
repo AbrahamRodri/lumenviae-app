@@ -51,12 +51,30 @@ final class OfflineContentService {
     /// Only download and removal change the answer, and both refresh it.
     private(set) var hasContentOnDisk: Bool = false
 
+    /// Which meditations have their narration saved.
+    ///
+    /// Published rather than left as a `fileExists` probe so a surface
+    /// offering "Download"/"Remove download" tracks the library: wiping
+    /// everything from Account updates an open tray instead of leaving it
+    /// offering to remove a file that is gone.
+    private(set) var downloadedAudioIds: Set<Int> = []
+
     /// Re-reads the directories. Called at init and after any write.
-    private func refreshHasContentOnDisk() {
+    private func refreshDiskState() {
         let fm = FileManager.default
         let sets = (try? fm.contentsOfDirectory(atPath: setsDir.path)) ?? []
         let audio = (try? fm.contentsOfDirectory(atPath: audioDir.path)) ?? []
         hasContentOnDisk = !sets.isEmpty || !audio.isEmpty
+        // Same listing, so the saved-ids set costs no extra I/O
+        downloadedAudioIds = Set(audio.compactMap(Self.meditationId(fromAudioFile:)))
+    }
+
+    /// The id in `meditation_412.mp3`. Nil for a chant file, which shares
+    /// the directory under a `prayer_` prefix.
+    private nonisolated static func meditationId(fromAudioFile name: String) -> Int? {
+        let prefix = "meditation_", suffix = ".mp3"
+        guard name.hasPrefix(prefix), name.hasSuffix(suffix) else { return nil }
+        return Int(name.dropFirst(prefix.count).dropLast(suffix.count))
     }
 
     // MARK: - Manifest
@@ -93,7 +111,7 @@ final class OfflineContentService {
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
         root = base.appendingPathComponent("OfflineContent", isDirectory: true)
         createDirectories()
-        refreshHasContentOnDisk()
+        refreshDiskState()
 
         if let data = try? Data(contentsOf: manifestURL),
            let manifest = try? Self.decoder().decode(Manifest.self, from: data) {
@@ -219,7 +237,7 @@ final class OfflineContentService {
                 complete: failures == 0
             )
             try? await Self.writeJSON(manifest, to: manifestURL)
-            refreshHasContentOnDisk()
+            refreshDiskState()
 
             if failures == 0 {
                 state = .downloaded(at: manifest.downloadedAt, bytes: bytes)
@@ -229,7 +247,7 @@ final class OfflineContentService {
         } catch {
             // Stage 1 may already have written sets before the throw, so
             // re-read before trusting the cached flag.
-            refreshHasContentOnDisk()
+            refreshDiskState()
             if hasContentOnDisk {
                 let bytes = await Self.directorySize(of: root)
                 let manifest = Manifest(downloadedAt: Date(), bytes: bytes, setCount: 0, audioCount: 0, complete: false)
@@ -243,7 +261,7 @@ final class OfflineContentService {
     func removeAll() {
         try? FileManager.default.removeItem(at: root)
         createDirectories()
-        refreshHasContentOnDisk()
+        refreshDiskState()
         state = .idle
     }
 
@@ -310,6 +328,53 @@ final class OfflineContentService {
     func localPrayerAudioURL(prayerId: String) -> URL? {
         let url = prayerAudioURL(prayerId: prayerId)
         return FileManager.default.fileExists(atPath: url.path) ? url : nil
+    }
+
+    // MARK: - One Meditation's Narration
+
+    /// Meditations whose narration is being fetched right now.
+    ///
+    /// Kept apart from `state`, which belongs to the library-wide download:
+    /// saving one meditation from the player must not make Account report
+    /// that the whole library is downloading.
+    private(set) var downloadingAudioIds: Set<Int> = []
+
+    /// Whether this meditation's narration is already on disk.
+    func hasLocalAudio(meditationId: Int) -> Bool {
+        downloadedAudioIds.contains(meditationId)
+    }
+
+    /// Saves one meditation's narration for offline prayer.
+    ///
+    /// The presigned URL on a meditation expires in about a day, so this
+    /// takes whatever URL the caller is holding right now rather than
+    /// re-resolving one.
+    @discardableResult
+    func downloadAudio(meditationId: Int, from urlString: String) async -> Bool {
+        guard !downloadingAudioIds.contains(meditationId) else { return false }
+        guard !hasLocalAudio(meditationId: meditationId) else { return true }
+
+        createDirectories()
+        downloadingAudioIds.insert(meditationId)
+        defer { downloadingAudioIds.remove(meditationId) }
+
+        do {
+            try await Self.download(
+                with: downloadSession,
+                from: urlString,
+                to: meditationAudioURL(meditationId: meditationId)
+            )
+            refreshDiskState()
+            return true
+        } catch {
+            return false
+        }
+    }
+
+    /// Removes one meditation's saved narration.
+    func removeAudio(meditationId: Int) {
+        try? FileManager.default.removeItem(at: meditationAudioURL(meditationId: meditationId))
+        refreshDiskState()
     }
 
     // MARK: - Private Helpers

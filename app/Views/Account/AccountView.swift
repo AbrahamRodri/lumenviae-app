@@ -654,6 +654,7 @@ struct ToggleRow: View {
                 Text(title)
                     .font(AppFonts.bodyFont(16))
                     .foregroundColor(AppColors.cream)
+                    .fixedSize(horizontal: false, vertical: true)
 
                 if let subtitle = subtitle {
                     Text(subtitle)
@@ -1002,7 +1003,7 @@ struct PrivacyPolicySheet: View {
 
                         InfoBlock(
                             title: "Contact",
-                            text: "Questions about privacy? Reach us at support@lumenviae.app"
+                            text: "Questions about privacy? Reach us at \(Constants.supportEmail)"
                         )
                     }
                     .padding(.horizontal, 24)
@@ -1065,7 +1066,7 @@ struct HelpSupportSheet: View {
 
                         InfoBlock(
                             title: "Contact Us",
-                            text: "For other questions or feedback, email us at support@lumenviae.app — we'd love to hear from you."
+                            text: "For other questions or feedback, email us at \(Constants.supportEmail) — we'd love to hear from you."
                         )
                     }
                     .padding(.horizontal, 24)

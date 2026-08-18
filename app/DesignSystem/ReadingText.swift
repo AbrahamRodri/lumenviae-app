@@ -122,64 +122,6 @@ struct ReadingText: View {
     }
 }
 
-// MARK: - ReadingExcerpt
-
-/// The opening of a longer reading, shown where a whole page won't fit:
-/// a card's preview of the day's meditation, a set's first mystery. Long
-/// openings are clamped and dissolve at the foot; short ones are left
-/// whole rather than faded for the sake of a fade.
-struct ReadingExcerpt: View {
-
-    let text: String
-    var size: CGFloat = 18
-    var showsDropCap: Bool = false
-
-    /// Openings longer than this (in characters) are clamped
-    var clampsAfter: Int = 300
-
-    /// The height a clamped opening is held to before it dissolves
-    var maxHeight: CGFloat = 176
-
-    /// Gathers paragraphs from the start of `text` until there is enough
-    /// to hear the voice — some readings are set as verse, every line its
-    /// own paragraph, so stopping at the first blank line would leave a
-    /// caption. Uses the same paragraph split the reader draws.
-    static func opening(of text: String, targetLength: Int = 220, maxParagraphs: Int = 6) -> String? {
-        let paragraphs = ReadingText.paragraphs(of: text)
-        guard !paragraphs.isEmpty else { return nil }
-
-        var gathered: [String] = []
-        var length = 0
-        for paragraph in paragraphs {
-            gathered.append(paragraph)
-            length += paragraph.count
-            if length >= targetLength || gathered.count >= maxParagraphs { break }
-        }
-        return gathered.joined(separator: "\n\n")
-    }
-
-    var body: some View {
-        let reading = ReadingText(text: text, size: size, showsDropCap: showsDropCap)
-
-        if text.count > clampsAfter {
-            reading
-                .frame(maxHeight: maxHeight, alignment: .top)
-                .clipped()
-                .mask(
-                    LinearGradient(
-                        stops: [
-                            .init(color: .black, location: 0.6),
-                            .init(color: .clear, location: 1)
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
-        } else {
-            reading
-        }
-    }
-}
 
 // MARK: - PrayerText
 

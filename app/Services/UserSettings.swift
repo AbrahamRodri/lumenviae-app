@@ -118,6 +118,27 @@ final class UserSettings {
         didSet { UserDefaults.standard.set(prayerImageMode, forKey: "userSettings.prayerImageMode") }
     }
 
+    // MARK: - Reader
+
+    /// Whether the reader keeps pace with the narration on its own,
+    /// carrying the page from paragraph to paragraph as the voice reads.
+    ///
+    /// On by default — following along is the point of reading while
+    /// listening — but some people hold their own place, so it is a
+    /// toggle in the reader's text options rather than a fixed behavior.
+    var readerAutoScroll: Bool = true {
+        didSet { UserDefaults.standard.set(readerAutoScroll, forKey: "userSettings.readerAutoScroll") }
+    }
+
+    /// Whether the swipe-between-mysteries hint has been shown.
+    ///
+    /// The gesture is a shortcut for something the arrows already do, so
+    /// the hint is a courtesy, not an instruction — it appears on a first
+    /// Rosary and never again.
+    var hasSeenPrayerSwipeHint: Bool = false {
+        didSet { UserDefaults.standard.set(hasSeenPrayerSwipeHint, forKey: "userSettings.hasSeenPrayerSwipeHint") }
+    }
+
     // MARK: - Prayer Language
 
     /// Prayer language preference for devotional prayers
@@ -238,6 +259,10 @@ final class UserSettings {
         }
         if d.object(forKey: "userSettings.prayerLanguage") != nil {
             prayerLanguagePreference = d.string(forKey: "userSettings.prayerLanguage") ?? PrayerLanguage.both.rawValue
+        }
+        hasSeenPrayerSwipeHint = d.bool(forKey: "userSettings.hasSeenPrayerSwipeHint")
+        if d.object(forKey: "userSettings.readerAutoScroll") != nil {
+            readerAutoScroll = d.bool(forKey: "userSettings.readerAutoScroll")
         }
         if d.object(forKey: "userSettings.prayerImageMode") != nil {
             prayerImageMode = d.bool(forKey: "userSettings.prayerImageMode")

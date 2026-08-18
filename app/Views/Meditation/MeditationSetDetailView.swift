@@ -216,36 +216,35 @@ struct MeditationSetDetailView: View {
 
     // MARK: - The Opening
 
-    /// The opening lines of the first mystery — a taste of the voice — or,
-    /// until they arrive, the wait for them; or, if they never do, the
-    /// way to try again. A set that loaded with nothing to open says so
-    /// rather than waiting forever.
+    /// The first meditation, whole, under a heading that says what it is.
+    ///
+    /// It used to be a clamped excerpt with a drop cap under an ornament,
+    /// a kicker and a mystery name — three headings for four fading
+    /// lines, which read as the meditation itself cut off mid-thought
+    /// rather than as a sample of the set. Now the heading names it a
+    /// preview and the meditation runs its full length, so the page
+    /// scrolls you through one of the five before you commit to all of
+    /// them.
     @ViewBuilder
     private var opening: some View {
-        if let text = viewModel.openingText {
-            VStack(spacing: 22) {
-                OrnamentDivider(showsCross: false)
-                    .frame(width: 150)
+        if let previewText = viewModel.previewText {
+            VStack(alignment: .leading, spacing: 14) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("PREVIEW")
+                        .font(AppFonts.labelFont(9))
+                        .tracking(3)
+                        .foregroundColor(AppColors.gold)
 
-                VStack(spacing: 14) {
-                    VStack(spacing: 6) {
-                        Text(viewModel.firstMysteryLabel.uppercased())
-                            .font(AppFonts.labelFont(9))
-                            .tracking(2.5)
-                            .foregroundColor(AppColors.gold)
-                            .multilineTextAlignment(.center)
-
-                        if let mysteryName = viewModel.firstMeditation?.mystery?.name {
-                            Text(mysteryName)
-                                .font(AppFonts.headlineFont(17))
-                                .foregroundColor(AppColors.cream)
-                                .multilineTextAlignment(.center)
-                        }
-                    }
-
-                    ReadingExcerpt(text: text, size: 18, showsDropCap: true, clampsAfter: 380, maxHeight: 220)
+                    Text("The first meditation · \(viewModel.previewSubject)")
+                        .font(AppFonts.italicFont(14))
+                        .foregroundColor(AppColors.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
+
+                ReadingText(text: previewText, size: 17)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
         } else if viewModel.loadFailed {
             VStack(spacing: 10) {
                 Text("Couldn't load these meditations. The server may still be waking up.")

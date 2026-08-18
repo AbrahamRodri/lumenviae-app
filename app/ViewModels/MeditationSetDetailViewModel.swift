@@ -81,12 +81,23 @@ final class MeditationSetDetailViewModel {
     /// The first meditation of the set — the taste of its voice
     var firstMeditation: Meditation? { fullSet?.meditations?.first }
 
-    /// The opening of the first meditation, gathered as the reader
-    /// paragraphs it. Nil until the set loads, and nil for a set whose
-    /// first meditation is empty.
-    var openingText: String? {
-        guard let first = firstMeditation else { return nil }
-        return ReadingExcerpt.opening(of: first.content)
+    /// The first meditation in full, as the page previews it. Nil until
+    /// the set loads, and nil for a set whose first meditation is empty —
+    /// the one rule for "is there a preview", so the page never has to
+    /// decide for itself.
+    var previewText: String? {
+        guard let content = firstMeditation?.content,
+              !content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        else { return nil }
+        return content
+    }
+
+    /// The mystery the preview is drawn from, for the line under the
+    /// heading. Falls back to the ordinal when the mystery has no name of
+    /// its own to lend.
+    var previewSubject: String {
+        if let name = firstMeditation?.mystery?.name, !name.isEmpty { return name }
+        return firstMysteryLabel
     }
 
     /// "The First Sorrowful Mystery" — or, for the chaplet, "The First

@@ -98,6 +98,9 @@ struct Constants {
     static let appName = "LUMEN VIAE"
     static let appTagline = "LIGHT OF THE WAY"
 
+    /// Where questions, feedback, and privacy notes go.
+    static let supportEmail = "support@lumenviae.app"
+
     // MARK: Tab Bar Labels
 
     static let homeTab = "HOME"

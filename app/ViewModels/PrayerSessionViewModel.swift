@@ -317,13 +317,25 @@ final class PrayerSessionViewModel {
         audioService.errorMessage
     }
 
-    // Bare forwarders for togglePlayback/seek/skipForward/skipBackward used
-    // to sit here with no callers: the prayer transport drives playback
-    // through the `isPlaying` and `currentTime` bindings above, and the
-    // consecration flow talks to AudioService directly. The two bindings
-    // stay because their setters translate a write into a command — a
-    // binding straight to AudioService's stored properties would move the
-    // slider without seeking.
+    // A bare `togglePlayback` forwarder used to sit here with no callers:
+    // the prayer transport drives play/pause through the `isPlaying`
+    // binding above, and the consecration flow talks to AudioService
+    // directly. The two bindings stay because their setters translate a
+    // write into a command — a binding straight to AudioService's stored
+    // properties would move the slider without seeking.
+
+    /// Moves the narration on by `seconds`, stopping at the end of the
+    /// track. Clamping belongs to the playback layer, so the transport
+    /// and the VoiceOver rotor both go through it rather than each
+    /// spelling out their own `min`/`max`.
+    func skipForward(_ seconds: Double = 10) {
+        audioService.skipForward(seconds)
+    }
+
+    /// Moves the narration back by `seconds`, stopping at the beginning.
+    func skipBackward(_ seconds: Double = 10) {
+        audioService.skipBackward(seconds)
+    }
 
     /// Resets audio state when changing mysteries. The Lock Screen player
     /// survives the gap — the next mystery's load republishes over it.
