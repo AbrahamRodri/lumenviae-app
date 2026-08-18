@@ -59,7 +59,7 @@ final class PrayerSessionViewModel {
     }
 
     var isLoadingAudio: Bool {
-        audioService.isLoading
+        audioService.isLoading || audioService.isBuffering
     }
 
     // MARK: - Initialization
@@ -139,7 +139,13 @@ final class PrayerSessionViewModel {
         if isLastMystery {
             return false
         }
+        // Narration in progress carries into the next mystery. Without
+        // this, tapping NEXT mid-narration silently stopped the audio and
+        // only the Lock Screen / AirPods route kept playing — the same move
+        // behaved differently depending on where you made it.
+        pendingRemoteAutoplay = isPlaying
         currentMysteryIndex += 1
+        refreshTrackAvailability()
         resetAudioState()
         return true
     }
@@ -147,9 +153,23 @@ final class PrayerSessionViewModel {
     /// Returns to the previous mystery (no-op if on first mystery)
     func previousMystery() {
         if currentMysteryIndex > 0 {
+            pendingRemoteAutoplay = isPlaying
             currentMysteryIndex -= 1
+            refreshTrackAvailability()
             resetAudioState()
         }
+    }
+
+    /// Keeps the Lock Screen arrows in step with the index the moment it
+    /// moves, rather than only after the next load succeeds — a slow or
+    /// failed load used to strand the arrows on the previous mystery's
+    /// affordances.
+    private func refreshTrackAvailability() {
+        audioService.updateTrackNavigation(
+            owner: navigationOwner,
+            canGoNext: !isLastMystery,
+            canGoPrevious: !isFirstMystery
+        )
     }
 
     // MARK: - Audio Controls
@@ -168,11 +188,12 @@ final class PrayerSessionViewModel {
         }
 
         guard let meditation = currentMeditation, let source else {
-            // A mystery with no narration must not leave the previous
-            // one's player standing on the Lock Screen: resetAudioState
-            // preserved it for a load that is not coming.
+            // A mystery with no narration: stop the previous track, but keep
+            // the Lock Screen player and the track arrows alive so the user
+            // can still step past a silent mystery without unlocking.
             pendingRemoteAutoplay = false
-            audioService.reset()
+            audioService.reset(preservingNowPlaying: true)
+            attachRemoteNavigation()
             return
         }
 
@@ -184,24 +205,34 @@ final class PrayerSessionViewModel {
                 category: meditationSet.category,
                 index: currentMysteryIndex
             ),
+            album: meditationSet.name,
+            queueIndex: currentMysteryIndex,
+            queueCount: totalMysteries,
             claimNowPlaying: true
         )
 
         // The flow can be left while the asset loads — nothing this load
-        // published may outlive it.
+        // published may outlive it. Only tear down if we still own the
+        // service: another flow may have taken over while we awaited, and
+        // resetting then would kill *its* audio.
         guard generation == flowGeneration else {
-            audioService.reset()
-            audioService.deactivateSession()
+            if audioService.isTrackNavigationOwner(navigationOwner) {
+                audioService.clearTrackNavigation(owner: navigationOwner)
+                audioService.reset()
+                audioService.deactivateSession()
+            }
             return
         }
 
-        let autoplay = pendingRemoteAutoplay
+        let autoplay = pendingRemoteAutoplay && !audioService.consumeStopAtEndOfTrack()
         pendingRemoteAutoplay = false
 
-        // A failed load published no track for a remote command to act on.
-        guard audioService.errorMessage == nil else { return }
-
+        // Navigation is re-armed even after a failed load: the arrows are
+        // how a user escapes a mystery whose audio would not come.
         attachRemoteNavigation()
+
+        // A failed load published no track to start.
+        guard audioService.errorMessage == nil else { return }
 
         // A mystery reached from AirPods or the Lock Screen flows straight
         // into its narration — the whole point of hands-off prayer.
@@ -239,19 +270,39 @@ final class PrayerSessionViewModel {
     /// foreground the view's task also fires; the same-URL guard in
     /// AudioService makes the second load a no-op.
     private func attachRemoteNavigation() {
-        audioService.onNextTrack = { [weak self] in
-            guard let self, !self.isLastMystery else { return }
-            self.pendingRemoteAutoplay = true
-            self.currentMysteryIndex += 1
-            self.startRemoteLoad()
-        }
-        audioService.onPreviousTrack = { [weak self] in
-            guard let self, !self.isFirstMystery else { return }
-            self.pendingRemoteAutoplay = true
-            self.currentMysteryIndex -= 1
-            self.startRemoteLoad()
-        }
+        audioService.setTrackNavigation(
+            owner: navigationOwner,
+            canGoNext: !isLastMystery,
+            canGoPrevious: !isFirstMystery,
+            onNext: { [weak self] in
+                guard let self, !self.isLastMystery else { return }
+                self.pendingRemoteAutoplay = true
+                self.currentMysteryIndex += 1
+                self.refreshTrackAvailability()
+                self.onMysteryChanged?(self.currentMysteryIndex)
+                self.startRemoteLoad()
+            },
+            onPrevious: { [weak self] in
+                guard let self, !self.isFirstMystery else { return }
+                self.pendingRemoteAutoplay = true
+                self.currentMysteryIndex -= 1
+                self.refreshTrackAvailability()
+                self.onMysteryChanged?(self.currentMysteryIndex)
+                self.startRemoteLoad()
+            }
+        )
     }
+
+    /// Identity for track-navigation ownership on the shared AudioService,
+    /// so a consecration day cannot inherit this Rosary's arrows and a late
+    /// teardown here cannot disarm a flow that has since taken over.
+    private let navigationOwner = UUID()
+
+    /// Fires when a remote command (Lock Screen, AirPods) moves the mystery.
+    /// The view's `.task(id:)` does not re-run while the screen is locked, so
+    /// without this the resume snapshot never records a remote-driven move
+    /// and an interrupted Rosary reopens at the wrong mystery.
+    var onMysteryChanged: ((Int) -> Void)?
 
     private func startRemoteLoad() {
         remoteLoadTask?.cancel()
@@ -266,25 +317,13 @@ final class PrayerSessionViewModel {
         audioService.errorMessage
     }
 
-    /// Toggles play/pause state
-    func togglePlayback() {
-        audioService.togglePlayback()
-    }
-
-    /// Seeks to a specific time in seconds
-    func seek(to time: Double) {
-        audioService.seek(to: time)
-    }
-
-    /// Skips forward by specified seconds (default 10)
-    func skipForward(seconds: Double = 10) {
-        audioService.skipForward(seconds)
-    }
-
-    /// Skips backward by specified seconds (default 10)
-    func skipBackward(seconds: Double = 10) {
-        audioService.skipBackward(seconds)
-    }
+    // Bare forwarders for togglePlayback/seek/skipForward/skipBackward used
+    // to sit here with no callers: the prayer transport drives playback
+    // through the `isPlaying` and `currentTime` bindings above, and the
+    // consecration flow talks to AudioService directly. The two bindings
+    // stay because their setters translate a write into a command — a
+    // binding straight to AudioService's stored properties would move the
+    // slider without seeking.
 
     /// Resets audio state when changing mysteries. The Lock Screen player
     /// survives the gap — the next mystery's load republishes over it.
@@ -316,8 +355,12 @@ final class PrayerSessionViewModel {
         remoteLoadTask = nil
         pendingRemoteAutoplay = false
 
-        audioService.onNextTrack = nil
-        audioService.onPreviousTrack = nil
+        onMysteryChanged = nil
+
+        // Only tear down the shared service if this flow still owns it —
+        // a late teardown must not silence a flow the user has moved on to.
+        guard audioService.isTrackNavigationOwner(navigationOwner) else { return }
+        audioService.clearTrackNavigation(owner: navigationOwner)
         audioService.reset()
         audioService.deactivateSession()
     }

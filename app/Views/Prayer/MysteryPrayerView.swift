@@ -78,16 +78,21 @@ struct MysteryPrayerView: View {
         .simultaneousGesture(mysterySwipeGesture)
         .sensoryFeedback(.impact(weight: .light), trigger: viewModel.currentMysteryIndex)
         .task(id: viewModel.currentMysteryIndex) {
-            // Remember the position so an interrupted Rosary can resume.
-            // Only once the user has actually advanced — glancing at a
-            // set's first mystery and backing out must neither pin a
-            // resume card nor overwrite a genuinely interrupted session.
-            if viewModel.currentMysteryIndex > 0 {
+            saveResumePosition(at: viewModel.currentMysteryIndex)
+            // The Lock Screen and AirPods move the mystery while this view
+            // is not re-evaluating, so those moves report back here instead
+            // of relying on the task re-running.
+            //
+            // Captures value copies and a weak view model rather than the
+            // View: capturing `self` here would retain the struct, whose
+            // @State box holds the view model that owns this closure.
+            viewModel.onMysteryChanged = { [weak viewModel, meditationSet, sessionStartedAt] index in
+                guard index > 0, let viewModel else { return }
                 PrayerResumeService.shared.save(
                     setId: meditationSet.id,
                     setName: meditationSet.name,
                     category: meditationSet.category,
-                    mysteryIndex: viewModel.currentMysteryIndex,
+                    mysteryIndex: index,
                     startedAt: sessionStartedAt,
                     accumulatedSeconds: viewModel.sessionDuration
                 )
@@ -729,6 +734,22 @@ struct MysteryPrayerView: View {
 
     // MARK: - Helper Functions
 
+    /// Remembers the position so an interrupted Rosary can resume.
+    /// Only once the user has actually advanced — glancing at a set's first
+    /// mystery and backing out must neither pin a resume card nor overwrite
+    /// a genuinely interrupted session.
+    private func saveResumePosition(at index: Int) {
+        guard index > 0 else { return }
+        PrayerResumeService.shared.save(
+            setId: meditationSet.id,
+            setName: meditationSet.name,
+            category: meditationSet.category,
+            mysteryIndex: index,
+            startedAt: sessionStartedAt,
+            accumulatedSeconds: viewModel.sessionDuration
+        )
+    }
+
     private func handleNextMystery() {
         let advanced = withAnimation(.easeInOut(duration: 0.4)) {
             viewModel.nextMystery()
@@ -966,7 +987,15 @@ struct AudioControlsView: View {
     var isLoading: Bool = false
     var errorMessage: String? = nil
 
-    private var isReady: Bool { !isLoading && errorMessage == nil && totalTime > 0 }
+    /// Read directly so speed and the sleep timer stay in step with whatever
+    /// the Lock Screen or CarPlay did to them while this screen was away.
+    private var audio: AudioService { .shared }
+
+    /// A message about a *recoverable* failure (the session was busy, the
+    /// server reset) must not disable the button it tells the user to press.
+    /// Readiness therefore depends on there being a track with a duration,
+    /// not on the absence of a message.
+    private var isReady: Bool { !isLoading && totalTime > 0 }
 
     private var progress: Double {
         guard totalTime > 0 else { return 0 }
@@ -1088,7 +1117,65 @@ struct AudioControlsView: View {
                 .opacity(isReady ? 1 : 0.35)
                 .accessibilityLabel("Forward 10 seconds")
             }
+
+            secondaryControls
         }
+    }
+
+    /// Narration speed and the sleep timer.
+    ///
+    /// Deliberately quiet: gold is reserved for the finishing act, and on
+    /// this screen that is the play button. These sit under it as plain
+    /// labels so they are reachable without competing with the prayer.
+    @ViewBuilder
+    private var secondaryControls: some View {
+        HStack(spacing: 28) {
+            Button {
+                let rates = AudioService.supportedRates
+                let next = rates[((rates.firstIndex(of: audio.playbackRate) ?? 1) + 1) % rates.count]
+                audio.setPlaybackRate(next)
+            } label: {
+                Text(rateLabel)
+                    .font(AppFonts.bodyFont(13))
+                    .foregroundColor(AppColors.textSecondary)
+                    .frame(minWidth: 44, minHeight: 44)
+                    .contentShape(Rectangle())
+            }
+            .accessibilityLabel("Narration speed")
+            .accessibilityValue(rateLabel)
+            .accessibilityHint("Cycles through available speeds")
+
+            Button {
+                if audio.sleepTimerIsActive {
+                    audio.cancelSleepTimer()
+                } else {
+                    audio.stopAtEndOfCurrentTrack()
+                }
+            } label: {
+                HStack(spacing: 6) {
+                    Image(systemName: audio.sleepTimerIsActive ? "moon.fill" : "moon")
+                        .font(.system(size: 13, weight: .light))
+                    if audio.sleepTimerIsActive {
+                        Text("Ends after this")
+                            .font(AppFonts.bodyFont(13))
+                    }
+                }
+                .foregroundColor(audio.sleepTimerIsActive ? AppColors.gold : AppColors.textSecondary)
+                .frame(minHeight: 44)
+                .contentShape(Rectangle())
+            }
+            .accessibilityLabel(audio.sleepTimerIsActive
+                ? "Stop after this mystery, on. Double tap to keep praying."
+                : "Stop after this mystery")
+        }
+        .opacity(isReady ? 1 : 0.35)
+        .disabled(!isReady)
+    }
+
+    /// "1×" rather than "1.0×", but "1.25×" in full — %g drops trailing
+    /// zeros without rounding away a significant digit.
+    private var rateLabel: String {
+        "\(String(format: "%g", audio.playbackRate))×"
     }
 }
 

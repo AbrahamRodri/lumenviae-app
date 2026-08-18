@@ -64,6 +64,21 @@ struct ConsecrationDayFlowView: View {
     /// than sitting there dead — the prayer is still there to pray.
     @State private var audioError: String?
 
+    /// In-flight chant load, cancelled when the step changes so a stale
+    /// presign cannot land over the prayer now on screen.
+    @State private var audioLoadTask: Task<Void, Never>?
+
+    /// Identity for track-navigation ownership on the shared AudioService,
+    /// so this day cannot be driven by a Rosary's stale arrows and its own
+    /// teardown cannot disarm whatever flow the user moved on to.
+    @State private var navigationOwner = UUID()
+
+    /// Lock Screen artwork for the chants. The Coronation of Mary is the
+    /// nearest bundled image to the consecration's subject and matches the
+    /// crown used as the consecration symbol elsewhere; swap in dedicated
+    /// art here if one is ever added to the catalog.
+    private let dayArtworkAsset = "glorious_coronation"
+
     private let audio = AudioService.shared
 
     // MARK: - Day
@@ -164,12 +179,18 @@ struct ConsecrationDayFlowView: View {
             loadAudioIfAvailable()
         }
         .onDisappear {
+            audioLoadTask?.cancel()
+            audioLoadTask = nil
+            audio.clearTrackNavigation(owner: navigationOwner)
             audio.reset()
             // Hand the audio session back so other apps' audio can resume
             audio.deactivateSession()
         }
         .onChange(of: stepIndex) {
-            audio.reset()
+            // Preserve the Lock Screen player across a step change — the
+            // next chant republishes over it. Tearing it down collapsed the
+            // player between every prayer of the day.
+            audio.reset(preservingNowPlaying: true)
             audioError = nil
             loadAudioIfAvailable()
         }
@@ -262,15 +283,44 @@ struct ConsecrationDayFlowView: View {
 
     // MARK: - Audio
 
+    /// Wires the Lock Screen arrows and AirPods presses to the day's steps,
+    /// so a consecration can be prayed hands-off exactly like the Rosary.
+    /// Re-called on every step change to keep the end-of-day availability
+    /// honest.
+    private func attachChantNavigation() {
+        audio.setTrackNavigation(
+            owner: navigationOwner,
+            canGoNext: !isLastStep,
+            canGoPrevious: !isFirstStep,
+            onNext: { goToStep(stepIndex + 1) },
+            onPrevious: { goToStep(stepIndex - 1) }
+        )
+    }
+
     private func loadAudioIfAvailable() {
+        // Track navigation is installed even for a step with no chant, so
+        // the user can still move through the day from the Lock Screen.
+        attachChantNavigation()
+
         guard let prayer = currentPrayer, prayer.hasAudio else { return }
-        Task {
+
+        // A step change while a presign request is in flight would let the
+        // stale prayer's chant land over the one now on screen — the Fly.io
+        // machine can be cold and the client retries after 1.5s, so the
+        // window is seconds wide.
+        audioLoadTask?.cancel()
+        audioLoadTask = Task {
             // A downloaded chant plays offline and skips the presign hop
             if let local = OfflineContentService.shared.localPrayerAudioURL(prayerId: prayer.id) {
                 await audio.loadAudio(
                     from: local.absoluteString,
                     title: prayer.title,
-                    subtitle: "33-Day Consecration"
+                    subtitle: "33-Day Consecration",
+                    artworkAssetName: dayArtworkAsset,
+                    album: "Day \(dayNumber)",
+                    queueIndex: stepIndex,
+                    queueCount: steps.count,
+                    claimNowPlaying: true
                 )
                 return
             }
@@ -283,12 +333,19 @@ struct ConsecrationDayFlowView: View {
                     presignedUrl = try await APIService.shared.fetchPrayerAudioUrl(prayerId: prayer.id)
                     cachedAudioUrls[prayer.id] = presignedUrl
                 }
+                guard !Task.isCancelled, currentPrayer?.id == prayer.id else { return }
                 await audio.loadAudio(
                     from: presignedUrl,
                     title: prayer.title,
-                    subtitle: "33-Day Consecration"
+                    subtitle: "33-Day Consecration",
+                    artworkAssetName: dayArtworkAsset,
+                    album: "Day \(dayNumber)",
+                    queueIndex: stepIndex,
+                    queueCount: steps.count,
+                    claimNowPlaying: true
                 )
             } catch {
+                guard !Task.isCancelled else { return }
                 // The prayer reads perfectly well without the chant — say
                 // so once, quietly, rather than leaving a dead transport.
                 audioError = "The chant couldn't be loaded. The prayer is here to pray."

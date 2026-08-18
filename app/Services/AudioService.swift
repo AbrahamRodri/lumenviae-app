@@ -33,6 +33,10 @@ final class AudioService {
 
     var isLoading = false
 
+    /// True while the player is stalled waiting for data — a weak signal
+    /// mid-decade. Distinct from `isLoading`, which covers the initial load.
+    var isBuffering = false
+
     /// Error message if playback fails (nil on success)
     var errorMessage: String?
 
@@ -56,6 +60,23 @@ final class AudioService {
     /// Title/subtitle shown on the Lock Screen for the loaded audio
     private var nowPlayingTitle: String?
     private var nowPlayingSubtitle: String?
+
+    /// Album line and queue position ("Mystery 3 of 5") for the Lock Screen.
+    private var nowPlayingAlbum: String?
+    private var nowPlayingQueueIndex: Int?
+    private var nowPlayingQueueCount: Int?
+
+    /// KVO on the player's real transport state. `isPlaying` used to be a
+    /// hand-maintained Bool that only this class wrote, so after any
+    /// system-side stop — a stall, an interruption whose `.ended` never
+    /// arrives, a route loss — the transport and the Lock Screen kept
+    /// claiming "playing" over silence. These reconcile it with reality.
+    private var timeControlObservation: NSKeyValueObservation?
+    private var stallObservation: NSKeyValueObservation?
+
+    /// Deferred resume after an interruption that arrived without
+    /// `.shouldResume`. Cancellable so a user pause beats it.
+    private var pendingResumeTask: Task<Void, Never>?
 
     /// Asset name of the Lock Screen artwork, with the built artwork
     /// cached — MPMediaItemArtwork construction isn't free and Now
@@ -131,14 +152,37 @@ final class AudioService {
 
             switch type {
             case .began:
-                self.wasPlayingBeforeInterruption = self.isPlaying
+                // Sample the user's intent, not the transport: the system
+                // has usually already paused us, so `isPlaying` may have
+                // been reconciled to false before this handler runs.
+                self.wasPlayingBeforeInterruption = self.userIntendsPlayback
                 self.isPlaying = false
                 self.updateNowPlayingPlaybackState()
             case .ended:
                 let optionsValue = info[AVAudioSessionInterruptionOptionKey] as? UInt ?? 0
                 let options = AVAudioSession.InterruptionOptions(rawValue: optionsValue)
-                if options.contains(.shouldResume) && self.wasPlayingBeforeInterruption {
-                    self.play()
+                // `.shouldResume` is advisory and often absent after a short
+                // system interruption (a Maps turn prompt, a timer). For
+                // spoken prayer with the phone locked, not resuming ends the
+                // Rosary silently — so resume whenever we were the one
+                // playing. play() refuses safely if the session is still held.
+                if self.wasPlayingBeforeInterruption {
+                    if options.contains(.shouldResume) {
+                        self.play()
+                    } else {
+                        // Give the interrupter a moment to release the
+                        // session. Cancellable, so a user pause or a
+                        // headphone unplug in that window wins.
+                        self.pendingResumeTask?.cancel()
+                        self.pendingResumeTask = Task { @MainActor [weak self] in
+                            try? await Task.sleep(for: .milliseconds(300))
+                            guard let self, !Task.isCancelled,
+                                  self.wasPlayingBeforeInterruption else { return }
+                            self.play()
+                            self.wasPlayingBeforeInterruption = false
+                        }
+                        return
+                    }
                 }
                 self.wasPlayingBeforeInterruption = false
             @unknown default:
@@ -159,24 +203,102 @@ final class AudioService {
                   reason == .oldDeviceUnavailable else { return }
             self.pause()
         }
+
+        // The audio server can be reset out from under us. Every player and
+        // the session category die with it; without this the transport keeps
+        // claiming to play over a dead pipeline until the app is relaunched.
+        NotificationCenter.default.addObserver(
+            forName: AVAudioSession.mediaServicesWereResetNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self else { return }
+            // Every player and the session category die with the reset, so
+            // the old AVPlayer is unusable. Tear it down: leaving it
+            // installed made the same-URL guard in loadAudio short-circuit,
+            // and the "press play" this message asks for could never work.
+            self.setupAudioSession()
+            self.reset()
+            self.errorMessage = "Audio was interrupted by the system — reopen this mystery to continue"
+        }
         #endif
     }
 
     // MARK: - Track Navigation (headphones / Lock Screen)
 
-    /// Hooks the prayer flow installs so AirPods presses and Lock Screen
-    /// arrows move between mysteries. While set, the Lock Screen shows
-    /// track arrows instead of the ±10s skips; when cleared (chant
-    /// playback, no flow active) the skips come back.
-    var onNextTrack: (() -> Void)? { didSet { updateTrackCommandAvailability() } }
-    var onPreviousTrack: (() -> Void)? { didSet { updateTrackCommandAvailability() } }
+    /// Who currently owns track navigation.
+    ///
+    /// The service is a singleton and more than one flow drives it (the
+    /// Rosary and each consecration day). Without an owner token, a flow
+    /// that ends without tearing down leaves its closures installed, and
+    /// the next flow's AirPods press advances a Rosary the user already
+    /// left. Every install names an owner; only that owner can clear it.
+    private var trackNavigationOwner: AnyHashable?
+
+    private var onNextTrack: (() -> Void)?
+    private var onPreviousTrack: (() -> Void)?
+
+    /// Whether a next/previous step exists right now. The Lock Screen
+    /// arrows and AirPods presses are enabled from these, so pressing ⏭ on
+    /// the last mystery reports "no such content" instead of drawing a live
+    /// control that silently does nothing.
+    private var canGoNext = false
+    private var canGoPrevious = false
+
+    /// Installs track navigation for `owner`, replacing any previous owner's.
+    func setTrackNavigation(
+        owner: AnyHashable,
+        canGoNext: Bool,
+        canGoPrevious: Bool,
+        onNext: @escaping () -> Void,
+        onPrevious: @escaping () -> Void
+    ) {
+        trackNavigationOwner = owner
+        self.canGoNext = canGoNext
+        self.canGoPrevious = canGoPrevious
+        onNextTrack = onNext
+        onPreviousTrack = onPrevious
+        updateTrackCommandAvailability()
+    }
+
+    /// Updates only the end-of-set availability for the current owner.
+    func updateTrackNavigation(owner: AnyHashable, canGoNext: Bool, canGoPrevious: Bool) {
+        guard trackNavigationOwner == owner else { return }
+        self.canGoNext = canGoNext
+        self.canGoPrevious = canGoPrevious
+        updateTrackCommandAvailability()
+    }
+
+    /// Whether `owner` still holds track navigation — lets a flow tell
+    /// whether it is still the live one before tearing anything down.
+    func isTrackNavigationOwner(_ owner: AnyHashable) -> Bool {
+        trackNavigationOwner == owner
+    }
+
+    /// Removes track navigation, but only if `owner` still holds it — a
+    /// late teardown from an abandoned flow must not disarm the live one.
+    func clearTrackNavigation(owner: AnyHashable) {
+        guard trackNavigationOwner == owner else { return }
+        trackNavigationOwner = nil
+        onNextTrack = nil
+        onPreviousTrack = nil
+        canGoNext = false
+        canGoPrevious = false
+        updateTrackCommandAvailability()
+    }
 
     private func updateTrackCommandAvailability() {
         let center = MPRemoteCommandCenter.shared()
-        center.nextTrackCommand.isEnabled = onNextTrack != nil
-        center.previousTrackCommand.isEnabled = onPreviousTrack != nil
-        center.skipForwardCommand.isEnabled = onNextTrack == nil
-        center.skipBackwardCommand.isEnabled = onPreviousTrack == nil
+        let hasNavigation = trackNavigationOwner != nil
+
+        // Track arrows appear only where there is somewhere to go.
+        center.nextTrackCommand.isEnabled = hasNavigation && canGoNext
+        center.previousTrackCommand.isEnabled = hasNavigation && canGoPrevious
+
+        // ±10s stays available whenever a flow is not driving tracks, so a
+        // missed line can still be replayed from the Lock Screen.
+        center.skipForwardCommand.isEnabled = !hasNavigation
+        center.skipBackwardCommand.isEnabled = !hasNavigation
     }
 
     // MARK: - Remote Commands (Lock Screen / headphones / watch)
@@ -227,18 +349,190 @@ final class AudioService {
 
         // AirPods double/triple presses arrive as track commands, not
         // skips — without these, a double-tap does nothing at all.
+        // `.noSuchContent` at the ends: reporting `.success` for a press
+        // that did nothing tells iOS the gesture landed, so the user gets
+        // neither movement nor feedback.
         center.nextTrackCommand.addTarget { [weak self] _ in
             guard let self, let advance = self.onNextTrack else { return .noActionableNowPlayingItem }
+            guard self.canGoNext else { return .noSuchContent }
             advance()
             return .success
         }
         center.previousTrackCommand.addTarget { [weak self] _ in
             guard let self, let back = self.onPreviousTrack else { return .noActionableNowPlayingItem }
+            guard self.canGoPrevious else { return .noSuchContent }
             back()
             return .success
         }
 
+        // Press-and-hold scrubbing. Wired remotes, most Bluetooth car head
+        // units, and Apple TV send seekForward/seekBackward rather than the
+        // skip commands, so without these a hold gesture does nothing.
+        center.seekForwardCommand.addTarget { [weak self] event in
+            guard let self, self.player != nil,
+                  let event = event as? MPSeekCommandEvent else { return .noActionableNowPlayingItem }
+            self.handleSeekGesture(type: event.type, forward: true)
+            return .success
+        }
+        center.seekBackwardCommand.addTarget { [weak self] event in
+            guard let self, self.player != nil,
+                  let event = event as? MPSeekCommandEvent else { return .noActionableNowPlayingItem }
+            self.handleSeekGesture(type: event.type, forward: false)
+            return .success
+        }
+
+        // Narration speed, from the Lock Screen and CarPlay.
+        center.changePlaybackRateCommand.supportedPlaybackRates = Self.supportedRates.map(NSNumber.init)
+        center.changePlaybackRateCommand.addTarget { [weak self] event in
+            guard let self, self.player != nil,
+                  let event = event as? MPChangePlaybackRateCommandEvent else {
+                return .noActionableNowPlayingItem
+            }
+            self.setPlaybackRate(Double(event.playbackRate))
+            return .success
+        }
+
+        // Anything left at its default `isEnabled = true` with no target
+        // draws a live control that does nothing. Turn them off explicitly.
+        for unsupported in [
+            center.stopCommand,
+            center.changeRepeatModeCommand,
+            center.changeShuffleModeCommand,
+            center.likeCommand,
+            center.dislikeCommand,
+            center.bookmarkCommand,
+            center.ratingCommand,
+            center.enableLanguageOptionCommand,
+            center.disableLanguageOptionCommand
+        ] as [MPRemoteCommand] {
+            unsupported.isEnabled = false
+        }
+
         updateTrackCommandAvailability()
+    }
+
+    // MARK: - Playback Rate
+
+    /// Narration speeds offered on screen and to the system.
+    static let supportedRates: [Double] = [0.75, 1.0, 1.25, 1.5, 2.0]
+
+    private static let rateStorageKey = "userSettings.narrationRate"
+
+    /// Playback speed, persisted — a reader who needs 1.25x needs it every
+    /// time. Applied only while playing, since setting a non-zero rate on
+    /// an AVPlayer is itself a command to start playing.
+    private(set) var playbackRate: Double = {
+        let stored = UserDefaults.standard.double(forKey: "userSettings.narrationRate")
+        return AudioService.supportedRates.contains(stored) ? stored : 1.0
+    }()
+
+    func setPlaybackRate(_ rate: Double) {
+        let resolved = Self.supportedRates.contains(rate) ? rate : 1.0
+        playbackRate = resolved
+        UserDefaults.standard.set(resolved, forKey: Self.rateStorageKey)
+        if isPlaying { player?.rate = Float(resolved) }
+        updateNowPlayingPlaybackState()
+    }
+
+    // MARK: - Sleep Timer
+
+    /// When the sleep timer will fire, if one is running. Published so the
+    /// transport can show the remaining time.
+    private(set) var sleepTimerFiresAt: Date?
+
+    /// Set when the user asks playback to stop at the end of the current
+    /// track rather than at a wall-clock time.
+    private(set) var stopAtEndOfTrack = false
+
+    private var sleepTimerTask: Task<Void, Never>?
+
+    var sleepTimerIsActive: Bool { sleepTimerFiresAt != nil || stopAtEndOfTrack }
+
+    /// Fades out and pauses after `duration`. Praying yourself to sleep is
+    /// a normal way to use a rosary app; without this the narration plays
+    /// on all night and drains the battery.
+    func startSleepTimer(after duration: TimeInterval) {
+        cancelSleepTimer()
+        let fireDate = Date().addingTimeInterval(duration)
+        sleepTimerFiresAt = fireDate
+        sleepTimerTask = Task { @MainActor [weak self] in
+            try? await Task.sleep(for: .seconds(duration))
+            guard let self, !Task.isCancelled, self.sleepTimerFiresAt == fireDate else { return }
+            self.pause()
+            self.cancelSleepTimer()
+        }
+    }
+
+    /// Stops when the current narration finishes — the gentler option, and
+    /// the one that fits a Rosary: it never cuts a mystery in half.
+    ///
+    /// Its effect is to suppress the carry-over autoplay: the next mystery
+    /// still loads and stays ready, it just doesn't start speaking. Read by
+    /// `PrayerSessionViewModel.loadCurrentAudio`.
+    func stopAtEndOfCurrentTrack() {
+        cancelSleepTimer()
+        stopAtEndOfTrack = true
+    }
+
+    /// Whether a queued autoplay should be suppressed, consuming the
+    /// one-shot "stop after this" request.
+    func consumeStopAtEndOfTrack() -> Bool {
+        guard stopAtEndOfTrack else { return false }
+        cancelSleepTimer()
+        return true
+    }
+
+    func cancelSleepTimer() {
+        sleepTimerTask?.cancel()
+        sleepTimerTask = nil
+        sleepTimerFiresAt = nil
+        stopAtEndOfTrack = false
+    }
+
+    /// True while a press-and-hold scrub is running. The transport observer
+    /// checks it before reconciling `isPlaying`, so a scrub can never be
+    /// mistaken for the user starting or stopping playback.
+    private(set) var isScrubbing = false
+    private var wasPlayingBeforeSeek = false
+    private var scrubTask: Task<Void, Never>?
+
+    /// Press-and-hold scrub.
+    ///
+    /// Deliberately NOT done by assigning `player.rate`: these assets are
+    /// MP3, which AVFoundation cannot play in fast reverse, and a non-zero
+    /// rate is itself a command to start playing — so a hold-to-rewind
+    /// while paused would have begun playback, and the transport observer
+    /// would have laundered the scrub back into `isPlaying`. Stepping with
+    /// `seek` works in both directions and never changes play state.
+    private func handleSeekGesture(type: MPSeekCommandEventType, forward: Bool) {
+        switch type {
+        case .beginSeeking:
+            guard !isScrubbing else { return }
+            isScrubbing = true
+            wasPlayingBeforeSeek = isPlaying
+            scrubTask = Task { @MainActor [weak self] in
+                while let self, self.isScrubbing, !Task.isCancelled {
+                    let step: Double = forward ? 3 : -3
+                    self.seek(to: min(max(self.currentTime + step, 0), self.duration))
+                    try? await Task.sleep(for: .milliseconds(200))
+                }
+            }
+        case .endSeeking:
+            endScrub()
+        @unknown default:
+            endScrub()
+        }
+    }
+
+    private func endScrub() {
+        scrubTask?.cancel()
+        scrubTask = nil
+        guard isScrubbing else { return }
+        isScrubbing = false
+        // Restore exactly the state the gesture started in.
+        player?.rate = wasPlayingBeforeSeek ? Float(playbackRate) : 0
+        isPlaying = wasPlayingBeforeSeek
+        updateNowPlayingPlaybackState()
     }
 
     // MARK: - Now Playing Info
@@ -250,11 +544,24 @@ final class AudioService {
         info[MPMediaItemPropertyArtist] = nowPlayingSubtitle ?? "Lumen Viae"
         info[MPMediaItemPropertyPlaybackDuration] = duration
         info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
-        info[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? 1.0 : 0.0
+        info[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? playbackRate : 0.0
+        info[MPNowPlayingInfoPropertyDefaultPlaybackRate] = playbackRate
+        info[MPNowPlayingInfoPropertyMediaType] = MPNowPlayingInfoMediaType.audio.rawValue
+        info[MPNowPlayingInfoPropertyIsLiveStream] = false
+        if let album = nowPlayingAlbum {
+            info[MPMediaItemPropertyAlbumTitle] = album
+        }
+        // "3 of 5" on the Lock Screen, so a user stepping through with the
+        // arrows knows where in the Rosary they are without unlocking.
+        if let index = nowPlayingQueueIndex, let count = nowPlayingQueueCount {
+            info[MPNowPlayingInfoPropertyPlaybackQueueIndex] = index
+            info[MPNowPlayingInfoPropertyPlaybackQueueCount] = count
+        }
         if let artwork = lockScreenArtwork() {
             info[MPMediaItemPropertyArtwork] = artwork
         }
         MPNowPlayingInfoCenter.default().nowPlayingInfo = info
+        MPNowPlayingInfoCenter.default().playbackState = isPlaying ? .playing : .paused
     }
 
     /// Nominal bounds for Lock Screen artwork. The request handler hands
@@ -280,14 +587,20 @@ final class AudioService {
     }
 
     /// Cheap update of just position/rate after play/pause/seek.
+    ///
+    /// The elapsed/rate pair must be written together: iOS extrapolates the
+    /// Lock Screen scrubber from elapsed at the moment rate was set, so a
+    /// stale elapsed makes the scrubber drift or crawl over silence.
     private func updateNowPlayingPlaybackState() {
         guard var info = MPNowPlayingInfoCenter.default().nowPlayingInfo else {
             updateNowPlayingInfo()
             return
         }
         info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
-        info[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? 1.0 : 0.0
+        info[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? playbackRate : 0.0
+        info[MPNowPlayingInfoPropertyDefaultPlaybackRate] = playbackRate
         MPNowPlayingInfoCenter.default().nowPlayingInfo = info
+        MPNowPlayingInfoCenter.default().playbackState = isPlaying ? .playing : .paused
     }
 
     // MARK: - Loading Audio
@@ -305,6 +618,9 @@ final class AudioService {
         title: String? = nil,
         subtitle: String? = nil,
         artworkAssetName: String? = nil,
+        album: String? = nil,
+        queueIndex: Int? = nil,
+        queueCount: Int? = nil,
         claimNowPlaying: Bool = false
     ) async {
         guard let url = URL(string: urlString) else {
@@ -317,6 +633,9 @@ final class AudioService {
             nowPlayingTitle = title ?? nowPlayingTitle
             nowPlayingSubtitle = subtitle ?? nowPlayingSubtitle
             nowPlayingArtworkAsset = artworkAssetName ?? nowPlayingArtworkAsset
+            nowPlayingAlbum = album ?? nowPlayingAlbum
+            nowPlayingQueueIndex = queueIndex ?? nowPlayingQueueIndex
+            nowPlayingQueueCount = queueCount ?? nowPlayingQueueCount
             updateNowPlayingInfo()
             return
         }
@@ -332,12 +651,18 @@ final class AudioService {
         nowPlayingTitle = title
         nowPlayingSubtitle = subtitle
         nowPlayingArtworkAsset = artworkAssetName
+        nowPlayingAlbum = album
+        nowPlayingQueueIndex = queueIndex
+        nowPlayingQueueCount = queueCount
 
-        let playerItem = AVPlayerItem(url: url)
+        // One asset, shared by the player item and the duration load. Built
+        // separately, the same presigned URL was opened twice for every
+        // track — the player's fetch plus a throwaway asset's.
+        let asset = AVURLAsset(url: url)
+        let playerItem = AVPlayerItem(asset: asset)
         player = AVPlayer(playerItem: playerItem)
 
         do {
-            let asset = AVURLAsset(url: url)
             let cmDuration = try await asset.load(.duration)
 
             // A newer load (or a reset) owns the state now — hands off.
@@ -376,6 +701,7 @@ final class AudioService {
 
         setupTimeObserver()
         setupNotifications(for: playerItem)
+        observeTransportState(for: playerItem)
         updateNowPlayingInfo()
 
         // Become the Now Playing app while the audio is merely ready:
@@ -404,41 +730,102 @@ final class AudioService {
 
     /// Toggles between play and pause
     func togglePlayback() {
-        guard let player else { return }
-
-        if isPlaying {
-            player.pause()
-        } else {
-            reactivateSessionIfNeeded()
-            player.play()
-        }
-        isPlaying.toggle()
-        updateNowPlayingPlaybackState()
+        guard player != nil else { return }
+        if isPlaying { pause() } else { play() }
     }
 
-    /// Starts playback (no-op if already playing)
+    /// Starts playback (no-op if already playing).
+    ///
+    /// Refuses to claim a playing state the session never granted: if
+    /// activation fails the transport stays paused and says why, instead of
+    /// showing a pause icon over silence on screen and on the Lock Screen.
     func play() {
         guard let player, !isPlaying else { return }
-        reactivateSessionIfNeeded()
-        player.play()
+        userIntendsPlayback = true
+        guard reactivateSessionIfNeeded() else {
+            // Don't claim a playing state the session never granted, but do
+            // keep trying in the background — this is usually a phone call
+            // still letting go, and it resolves within a second.
+            isPlaying = false
+            retryActivationThenPlay()
+            updateNowPlayingPlaybackState()
+            return
+        }
+        errorMessage = nil
+        player.rate = Float(playbackRate)
         isPlaying = true
         updateNowPlayingPlaybackState()
     }
 
     /// Pauses playback (no-op if already paused)
     func pause() {
+        userIntendsPlayback = false
+        // A user pause outranks any resume still waiting on the session.
+        activationRetryTask?.cancel()
+        pendingResumeTask?.cancel()
         guard let player, isPlaying else { return }
         player.pause()
         isPlaying = false
+        isBuffering = false
         updateNowPlayingPlaybackState()
     }
 
-    /// An interruption can deactivate the session; reactivate before playing.
-    private func reactivateSessionIfNeeded() {
+    /// Reactivates the session, retrying the documented race where a just-
+    /// ended interruption has not finished tearing down its own session and
+    /// `setActive` throws `cannotInterruptOthers`. Swallowing that failure
+    /// is what made a post-phone-call resume produce silence.
+    ///
+    /// - Returns: whether the session is active and safe to play into.
+    @discardableResult
+    private func reactivateSessionIfNeeded() -> Bool {
         #if os(iOS)
-        try? AVAudioSession.sharedInstance().setActive(true)
+        do {
+            try AVAudioSession.sharedInstance().setActive(true)
+            return true
+        } catch {
+            #if DEBUG
+            print("AudioService: session activation failed: \(error)")
+            #endif
+            return false
+        }
+        #else
+        return true
         #endif
     }
+
+    /// Retries activation off the hot path.
+    ///
+    /// A just-ended interruption may not have finished releasing the session,
+    /// so the first `setActive` throws `cannotInterruptOthers`. Retrying must
+    /// NOT spin the main thread: this class is main-actor isolated, and the
+    /// very callbacks the retry waits on are delivered through the run loop
+    /// a `Thread.sleep` would have frozen.
+    private func retryActivationThenPlay() {
+        activationRetryTask?.cancel()
+        activationRetryTask = Task { @MainActor [weak self] in
+            for _ in 0..<3 {
+                try? await Task.sleep(for: .milliseconds(200))
+                guard let self, !Task.isCancelled, self.userIntendsPlayback else { return }
+                if self.reactivateSessionIfNeeded() {
+                    self.errorMessage = nil
+                    self.player?.rate = Float(self.playbackRate)
+                    self.isPlaying = true
+                    self.updateNowPlayingPlaybackState()
+                    return
+                }
+            }
+        }
+    }
+
+    private var activationRetryTask: Task<Void, Never>?
+
+    /// What the *user* asked for, as opposed to what the transport is doing.
+    ///
+    /// The transport observer reconciles `isPlaying` with reality, so by the
+    /// time an interruption handler ran, `isPlaying` had often already been
+    /// cleared by the system pausing us — and resume-after-a-call never
+    /// fired. Only explicit user-intent paths write this.
+    private var userIntendsPlayback = false
 
     /// Seeks to a specific time in seconds.
     func seek(to time: Double) {
@@ -475,15 +862,21 @@ final class AudioService {
         pause()
         removeTimeObserver()
         removeEndOfPlaybackObserver()
+        removeTransportObservations()
         player = nil
         currentURL = nil
         currentTime = 0
         duration = 0
         isPlaying = false
         isLoading = false
+        isBuffering = false
         errorMessage = nil
         if !preservingNowPlaying {
             MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
+            MPNowPlayingInfoCenter.default().playbackState = .stopped
+            nowPlayingAlbum = nil
+            nowPlayingQueueIndex = nil
+            nowPlayingQueueCount = nil
         }
     }
 
@@ -510,6 +903,70 @@ final class AudioService {
         }
     }
 
+    /// Reconciles `isPlaying` and the buffering flag with the player's real
+    /// transport state, and re-publishes Now Playing whenever it changes.
+    private func observeTransportState(for playerItem: AVPlayerItem) {
+        timeControlObservation = player?.observe(\.timeControlStatus, options: [.new]) { [weak self] player, _ in
+            Task { @MainActor [weak self] in
+                guard let self, self.player === player else { return }
+
+                // A scrub drives the transport on purpose; reconciling
+                // against it would let the gesture rewrite play state.
+                guard !self.isScrubbing else { return }
+
+                switch player.timeControlStatus {
+                case .playing:
+                    self.isBuffering = false
+                    if !self.isPlaying { self.isPlaying = true }
+                case .paused:
+                    self.isBuffering = false
+                    // A pause we did not ask for (interruption, route loss,
+                    // media reset) must show as paused, not as a lying
+                    // pause-icon over silence.
+                    if self.isPlaying { self.isPlaying = false }
+                case .waitingToPlayAtSpecifiedRate:
+                    // Still trying — the transport stays "playing" but the
+                    // UI says buffering rather than sitting mute, and the
+                    // Lock Screen is told rate 0 so its scrubber stops
+                    // crawling forward over silence.
+                    self.isBuffering = true
+                    self.publishStalledState()
+                    return
+                @unknown default:
+                    break
+                }
+                self.updateNowPlayingPlaybackState()
+            }
+        }
+
+        // A stall with an empty buffer on a weak signal would otherwise
+        // leave the Rosary silent with no explanation and nothing retrying.
+        stallObservation = playerItem.observe(\.isPlaybackBufferEmpty, options: [.new]) { [weak self] item, _ in
+            Task { @MainActor [weak self] in
+                guard let self, self.player?.currentItem === item else { return }
+                if item.isPlaybackBufferEmpty && self.isPlaying {
+                    self.isBuffering = true
+                }
+            }
+        }
+    }
+
+    /// Freezes the Lock Screen scrubber while buffering: rate 0 at the true
+    /// elapsed time, so it stops advancing over audio that isn't arriving.
+    private func publishStalledState() {
+        guard var info = MPNowPlayingInfoCenter.default().nowPlayingInfo else { return }
+        info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
+        info[MPNowPlayingInfoPropertyPlaybackRate] = 0.0
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = info
+    }
+
+    private func removeTransportObservations() {
+        timeControlObservation?.invalidate()
+        timeControlObservation = nil
+        stallObservation?.invalidate()
+        stallObservation = nil
+    }
+
     /// Must be called before releasing the player, otherwise
     /// the observer continues trying to update.
     private func removeTimeObserver() {
@@ -529,12 +986,24 @@ final class AudioService {
             object: item,
             queue: .main
         ) { [weak self] _ in
-            self?.isPlaying = false
-            self?.currentTime = 0
-            self?.player?.seek(to: .zero)
-            self?.updateNowPlayingPlaybackState()
+            guard let self else { return }
+            self.isPlaying = false
+            self.isBuffering = false
+            self.currentTime = 0
+            self.player?.seek(to: .zero)
+            // "Stop at the end of this one" is satisfied the moment the
+            // narration finishes; clear it so the next track plays normally.
+            if self.stopAtEndOfTrack { self.cancelSleepTimer() }
+            self.updateNowPlayingPlaybackState()
+            self.onTrackFinished?()
         }
     }
+
+    /// Fires when a track plays to its end. The prayer flow uses it to keep
+    /// the Lock Screen honest; it deliberately does NOT auto-advance — a
+    /// decade is a meditation plus ten Hail Marys, and the next mystery
+    /// begins when the person praying says so.
+    var onTrackFinished: (() -> Void)?
 
     private func removeEndOfPlaybackObserver() {
         if let observer = endOfPlaybackObserver {
