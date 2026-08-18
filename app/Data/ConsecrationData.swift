@@ -413,7 +413,7 @@ Examine your conscience, pray, practice renouncement of your own will; mortifica
 
 The spirit of the world consists essentially in the denial of the supreme dominion of God; a denial which is manifested in practice by sin and disobedience; thus it is principally opposed to the spirit of Christ, which is also that of Mary.
 
-It manifests itself by the concupiscence of the flesh, by the concupiscence of the eyes and by the pride of life. By disobedience to God's laws and the abuse of created things. Its works are: sin in all forms, then all else by which the devil leads to sin; works which bring error and darkness to the mind, and seduction and corruption to the will. Its pomps are the splendor and the charms employed by the devil to render sin alluring in persons, places and things.
+It manifests itself by the concupiscence of the flesh, by the concupiscence of the eyes and by the pride of life, and by disobedience to God's laws and the abuse of created things. Its works are: sin in all forms, then all else by which the devil leads to sin; works which bring error and darkness to the mind, and seduction and corruption to the will. Its pomps are the splendor and the charms employed by the devil to render sin alluring in persons, places and things.
 """,
                     source: nil
                 )
@@ -787,6 +787,8 @@ I became of all men the most humble and the most abject, that thou mightest over
                     order: 1,
                     title: "Luke 13:1-5",
                     text: """
+Examples inviting Repentance.
+
 And there were present, at that very time, some that told him of the Galileans, whose blood Pilate had mingled with their sacrifices. And he answering, said to them: Think you that these Galileans were sinners above all the men of Galilee, because they suffered such things? No, I say to you: but unless you shall do penance, you shall all likewise perish. Or those eighteen upon whom the tower fell in Siloe, and slew them: think you, that they also were debtors above all the men that dwelt in Jerusalem? No, I say to you; but except you do penance, you shall all likewise perish.
 """,
                     source: "Douay-Rheims Bible"
@@ -1066,7 +1068,7 @@ This devotion is a smooth, short, perfect and sure way of attaining union with o
 
 (a) This devotion is a smooth way. It is the path which Jesus Christ opened up in coming to us and in which there is no obstruction to prevent us reaching him. It is quite true that we can attain to divine union by other roads, but these involve many more crosses and exceptional setbacks and many difficulties that we cannot easily overcome.
 
-(b) This devotion is a short way to discover Jesus, either because it is a road we do not wander from, or because we walk along this road with greater ease and joy, and consequently with greater speed. We advance more in a brief period of submission to Mary and dependence on her than in whole years of self-will and self-reliance.
+(b) This devotion is a short way to discover Jesus, either because it is a road we do not wander from, or because, as we have just said, we walk along this road with greater ease and joy, and consequently with greater speed. We advance more in a brief period of submission to Mary and dependence on her than in whole years of self-will and self-reliance.
 
 (c) This devotion is a perfect way to reach our Lord and be united to him, for Mary is the most perfect and the most holy of all creatures, and Jesus, who came to us in a perfect manner, chose no other road for his great and wonderful journey. The Most High, the Incomprehensible One, the Inaccessible One, He who is, deigned to come down to us poor earthly creatures who are nothing at all. How was this done? The Most High God came down to us in a perfect way through the humble Virgin Mary, without losing anything of his divinity or holiness. It is likewise through Mary that we poor creatures must ascend to almighty God in a perfect manner without having anything to fear.
 
@@ -1162,7 +1164,7 @@ For in him alone dwells the entire fullness of the divinity and the complete ful
 
 We are given no other name under heaven by which we can be saved. God has laid no other foundation for our salvation, perfection and glory than Jesus. Every edifice which is not built on that firm rock, is founded upon shifting sands and will certainly fall sooner or later. Through him, with him and in him, we can do all things and render all honour and glory to the Father in the unity of the Holy Spirit; we can make ourselves perfect and be for our neighbour a fragrance of eternal life.
 
-If then we are establishing sound devotion to our Blessed Lady, it is only in order to establish devotion to our Lord more perfectly, by providing a smooth but certain way of reaching Jesus Christ. If devotion to our Lady distracted us from our Lord, we would have to reject it as an illusion of the devil. But this is far from being the case. This devotion is necessary, simply and solely because it is a way of reaching Jesus perfectly, loving him tenderly, and serving him faithfully.
+If then we are establishing sound devotion to our Blessed Lady, it is only in order to establish devotion to our Lord more perfectly, by providing a smooth but certain way of reaching Jesus Christ. If devotion to our Lady distracted us from our Lord, we would have to reject it as an illusion of the devil. But this is far from being the case. As I have already shown and will show again later on, this devotion is necessary, simply and solely because it is a way of reaching Jesus perfectly, loving him tenderly, and serving him faithfully.
 """,
                     source: "St. Louis de Montfort"
                 )
@@ -1312,7 +1314,7 @@ Love Him, and keep Him for thy friend, who, when all go away, will not forsake t
                     text: """
 There are some very sanctifying interior practices for those souls who feel called by the Holy Spirit to a high degree of perfection. They may be expressed in four words: doing everything through Mary, with Mary, in Mary, and for Mary, in order to do it more perfectly through Jesus, with Jesus, in Jesus, and for Jesus.
 
-Through Mary: we must obey her always and be led in all things by her spirit, which is the Holy Spirit of God. "Those who are led by the Spirit of God are children of God," says St. Paul. Those who are led by the spirit of Mary are children of Mary, and, consequently children of God.
+Through Mary: we must obey her always and be led in all things by her spirit, which is the Holy Spirit of God. "Those who are led by the Spirit of God are children of God," says St. Paul. Those who are led by the spirit of Mary are children of Mary, and, consequently children of God, as we have already shown. Among the many servants of Mary only those who are truly and faithfully devoted to her are led by her spirit. I have said that the spirit of Mary is the spirit of God because she was never led by her own spirit, but always by the spirit of God, who made himself master of her to such an extent that he became her very spirit. That is why St. Ambrose says, "May the soul of Mary be in each one of us to glorify the Lord. May the spirit of Mary be in each one of us to rejoice in God." Happy is the man who follows the example of the good Jesuit Brother Rodriguez, who died a holy death, because he will be completely possessed and governed by the spirit of Mary, a spirit which is gentle yet strong, zealous yet prudent, humble yet courageous, pure yet fruitful.
 
 With Mary: in all our actions we must look upon Mary, although a simple human being, as the perfect model of every virtue and perfection, fashioned by the Holy Spirit for us to imitate. In every action then we should consider how Mary performed it or how she would perform it if she were in our place. For this reason, we must examine and meditate on the great virtues she practised during her life, especially: 1) Her lively faith, by which she believed the angel's word without the least hesitation, and believed faithfully and constantly even to the foot of the Cross on Calvary. 2) Her deep humility, which made her prefer seclusion, maintain silence, submit to every eventuality and put herself in the last place.
 """,
@@ -1334,7 +1336,7 @@ With Mary: in all our actions we must look upon Mary, although a simple human be
                     text: """
 That the Blood of Christ and the Holy Scriptures Are Most Necessary unto a Faithful Soul.
 
-O most sweet Lord Jesus, how great is the pleasure of the devout soul that feasteth with Thee in Thy banquet; where there is set for her no other food to be eaten but Thyself, her only Beloved, and most to be desired above all the desires of her heart! For in this Sacrament I have Thee mystically present, hidden under another shape. For to look upon Thee in Thine own Divine brightness, mine eyes would not be able to endure; nor could even the whole world stand in the splendor of the glory of Thy majesty. Herein then Thou hast regard to my weakness, that Thou dost hide Thyself under this Sacrament.
+O most sweet Lord Jesus, how great is the pleasure of the devout soul that feasteth with Thee in Thy banquet; where there is set for her no other food to be eaten but Thyself, her only Beloved, and most to be desired above all the desires of her heart! To me also it would be indeed sweet, in Thy presence to pour forth tears from the very bottom of my heart, and with the grateful Magdalene to wash Thy feet with tears. But where is that devotion? Where that bountiful flowing of holy tears? Surely in the sight of Thee and Thy holy Angels, my whole heart ought to burn, and to weep for joy. For in this Sacrament I have Thee mystically present, hidden under another shape. For to look upon Thee in Thine own Divine brightness, mine eyes would not be able to endure; nor could even the whole world stand in the splendor of the glory of Thy majesty. Herein then Thou hast regard to my weakness, that Thou dost hide Thyself under this Sacrament.
 """,
                     source: "Thomas à Kempis"
                 ),
@@ -1342,7 +1344,9 @@ O most sweet Lord Jesus, how great is the pleasure of the devout soul that feast
                     order: 2,
                     title: "True Devotion, Nos. 261-265",
                     text: """
-In Mary: we must do everything in Mary. To understand this we must realise that the Blessed Virgin is the true earthly paradise of the new Adam and that the ancient paradise was only a symbol of her. There are in this earthly paradise untold riches, beauties, rarities and delights, which the new Adam, Jesus Christ, has left there. It is in this paradise that he "took his delights" for nine months, worked his wonders and displayed his riches with the magnificence of God himself. In this earthly paradise grows the real Tree of Life which bore our Lord, the fruit of Life. The Holy Spirit, speaking through the Fathers of the Church, also calls our Lady the Eastern Gate, through which the High Priest, Jesus Christ, enters and goes out into the world. Through this gate he entered the world the first time and through this same gate he will come the second time.
+In Mary: we must do everything in Mary. To understand this we must realise that the Blessed Virgin is the true earthly paradise of the new Adam and that the ancient paradise was only a symbol of her. There are in this earthly paradise untold riches, beauties, rarities and delights, which the new Adam, Jesus Christ, has left there. It is in this paradise that he "took his delights" for nine months, worked his wonders and displayed his riches with the magnificence of God himself. In this earthly paradise grows the real Tree of Life which bore our Lord, the fruit of Life, the tree of knowledge of good and evil, which bore the Light of the world. In this divine place there are trees planted by the hand of God and watered by his divine unction which have borne and continue to bear fruit that is pleasing to him. Only the Holy Spirit can teach us the truths that these material objects symbolise.
+
+The Holy Spirit, speaking through the Fathers of the Church, also calls our Lady the Eastern Gate, through which the High Priest, Jesus Christ, enters and goes out into the world. Through this gate he entered the world the first time and through this same gate he will come the second time.
 
 For Mary: finally, we must do everything for Mary. We take Mary for our proximate end, our mysterious intermediary and the easiest way of reaching Jesus. Relying on her protection, we should undertake and carry out great things for our noble Queen. We must defend her privileges when they are questioned and uphold her good name when it is under attack. We must attract everyone, if possible, to her service and to this true and sound devotion. As a reward for these little services, we should expect nothing in return save the honour of belonging to such a lovable Queen and the joy of being united through her to Jesus, her Son, by a bond that is indissoluble in time and in eternity.
 """,
@@ -1366,7 +1370,7 @@ Today is the day of your Total Consecration to Jesus through Mary.
 
 On the day of consecration, either fast, give alms, or offer a votive candle for the good of another (or all of the above); do some spiritual penance and approach consecration in the spirit of mortification.
 
-Go to Confession (or, if that is not possible, go during the 8 days prior) and then receive Communion with the intention of giving yourself to Jesus, as a slave of love, by the hands of Mary.
+Go to Confession (or, if that is not possible, go during the 8 days prior) and then receive Communion with the intention of giving yourself to Jesus, as a slave of love, by the hands of Mary. Try to receive Communion per the method described in the Supplement of the book, "True Devotion to the Blessed Virgin Mary" above.
 
 Then pray the words of the consecration. Copy them and have them with you at church; read them after the Mass — in front of the tabernacle would be fitting — and sign your copy of the Act of Consecration.
 """,
