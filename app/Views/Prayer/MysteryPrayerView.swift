@@ -1122,52 +1122,27 @@ struct AudioControlsView: View {
         }
     }
 
-    /// Narration speed and the sleep timer.
+    /// Narration speed.
     ///
     /// Deliberately quiet: gold is reserved for the finishing act, and on
-    /// this screen that is the play button. These sit under it as plain
-    /// labels so they are reachable without competing with the prayer.
+    /// this screen that is the play button. This sits under it as a plain
+    /// label, reachable without competing with the prayer.
     @ViewBuilder
     private var secondaryControls: some View {
-        HStack(spacing: 28) {
-            Button {
-                let rates = AudioService.supportedRates
-                let next = rates[((rates.firstIndex(of: audio.playbackRate) ?? 1) + 1) % rates.count]
-                audio.setPlaybackRate(next)
-            } label: {
-                Text(rateLabel)
-                    .font(AppFonts.bodyFont(13))
-                    .foregroundColor(AppColors.textSecondary)
-                    .frame(minWidth: 44, minHeight: 44)
-                    .contentShape(Rectangle())
-            }
-            .accessibilityLabel("Narration speed")
-            .accessibilityValue(rateLabel)
-            .accessibilityHint("Cycles through available speeds")
-
-            Button {
-                if audio.sleepTimerIsActive {
-                    audio.cancelSleepTimer()
-                } else {
-                    audio.stopAtEndOfCurrentTrack()
-                }
-            } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: audio.sleepTimerIsActive ? "moon.fill" : "moon")
-                        .font(.system(size: 13, weight: .light))
-                    if audio.sleepTimerIsActive {
-                        Text("Ends after this")
-                            .font(AppFonts.bodyFont(13))
-                    }
-                }
-                .foregroundColor(audio.sleepTimerIsActive ? AppColors.gold : AppColors.textSecondary)
-                .frame(minHeight: 44)
+        Button {
+            let rates = AudioService.supportedRates
+            let next = rates[((rates.firstIndex(of: audio.playbackRate) ?? 1) + 1) % rates.count]
+            audio.setPlaybackRate(next)
+        } label: {
+            Text(rateLabel)
+                .font(AppFonts.bodyFont(13))
+                .foregroundColor(AppColors.textSecondary)
+                .frame(minWidth: 44, minHeight: 44)
                 .contentShape(Rectangle())
-            }
-            .accessibilityLabel(audio.sleepTimerIsActive
-                ? "Stop after this mystery, on. Double tap to keep praying."
-                : "Stop after this mystery")
         }
+        .accessibilityLabel("Narration speed")
+        .accessibilityValue(rateLabel)
+        .accessibilityHint("Cycles through available speeds")
         .opacity(isReady ? 1 : 0.35)
         .disabled(!isReady)
     }

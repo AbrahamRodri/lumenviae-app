@@ -224,7 +224,7 @@ final class PrayerSessionViewModel {
             return
         }
 
-        let autoplay = pendingRemoteAutoplay && !audioService.consumeStopAtEndOfTrack()
+        let autoplay = pendingRemoteAutoplay
         pendingRemoteAutoplay = false
 
         // Navigation is re-armed even after a failed load: the arrows are

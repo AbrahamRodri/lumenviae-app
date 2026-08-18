@@ -434,61 +434,6 @@ final class AudioService {
         updateNowPlayingPlaybackState()
     }
 
-    // MARK: - Sleep Timer
-
-    /// When the sleep timer will fire, if one is running. Published so the
-    /// transport can show the remaining time.
-    private(set) var sleepTimerFiresAt: Date?
-
-    /// Set when the user asks playback to stop at the end of the current
-    /// track rather than at a wall-clock time.
-    private(set) var stopAtEndOfTrack = false
-
-    private var sleepTimerTask: Task<Void, Never>?
-
-    var sleepTimerIsActive: Bool { sleepTimerFiresAt != nil || stopAtEndOfTrack }
-
-    /// Fades out and pauses after `duration`. Praying yourself to sleep is
-    /// a normal way to use a rosary app; without this the narration plays
-    /// on all night and drains the battery.
-    func startSleepTimer(after duration: TimeInterval) {
-        cancelSleepTimer()
-        let fireDate = Date().addingTimeInterval(duration)
-        sleepTimerFiresAt = fireDate
-        sleepTimerTask = Task { @MainActor [weak self] in
-            try? await Task.sleep(for: .seconds(duration))
-            guard let self, !Task.isCancelled, self.sleepTimerFiresAt == fireDate else { return }
-            self.pause()
-            self.cancelSleepTimer()
-        }
-    }
-
-    /// Stops when the current narration finishes — the gentler option, and
-    /// the one that fits a Rosary: it never cuts a mystery in half.
-    ///
-    /// Its effect is to suppress the carry-over autoplay: the next mystery
-    /// still loads and stays ready, it just doesn't start speaking. Read by
-    /// `PrayerSessionViewModel.loadCurrentAudio`.
-    func stopAtEndOfCurrentTrack() {
-        cancelSleepTimer()
-        stopAtEndOfTrack = true
-    }
-
-    /// Whether a queued autoplay should be suppressed, consuming the
-    /// one-shot "stop after this" request.
-    func consumeStopAtEndOfTrack() -> Bool {
-        guard stopAtEndOfTrack else { return false }
-        cancelSleepTimer()
-        return true
-    }
-
-    func cancelSleepTimer() {
-        sleepTimerTask?.cancel()
-        sleepTimerTask = nil
-        sleepTimerFiresAt = nil
-        stopAtEndOfTrack = false
-    }
-
     /// True while a press-and-hold scrub is running. The transport observer
     /// checks it before reconciling `isPlaying`, so a scrub can never be
     /// mistaken for the user starting or stopping playback.
@@ -991,9 +936,6 @@ final class AudioService {
             self.isBuffering = false
             self.currentTime = 0
             self.player?.seek(to: .zero)
-            // "Stop at the end of this one" is satisfied the moment the
-            // narration finishes; clear it so the next track plays normally.
-            if self.stopAtEndOfTrack { self.cancelSleepTimer() }
             self.updateNowPlayingPlaybackState()
             self.onTrackFinished?()
         }
