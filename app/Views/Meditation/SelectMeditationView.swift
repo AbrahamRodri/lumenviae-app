@@ -4,20 +4,46 @@
 //
 //  Created by Abraham Rodriguez on 2/10/26.
 //
-//  The meditation picker. Scales from a handful of sets to a large
-//  library: favorited sets pin to the top, and when the API sends
-//  labels, a chip row lets the user combine them to narrow the list
-//  while unfiltered browsing groups sets by their primary label.
+//  The meditation picker, read as a shelf.
+//
+//  Kinds of meditation sit behind a filter button — most visits don't
+//  narrow by kind, and an always-visible chip row was competing with the
+//  sets themselves. The shelf reads two ways: a gallery of half-width
+//  tiles, or a plain ruled list. Pinned sets stay above whatever is
+//  showing. Tapping a set opens it — what it is, who wrote it, how the
+//  first mystery begins — before the Rosary starts.
 //
 
 import SwiftUI
+
+/// How the shelf is laid out. Remembered between visits — a view
+/// preference, not a devotion setting, so it stays out of UserSettings.
+enum MeditationPickerViewMode: String {
+    case gallery
+    case list
+}
 
 struct SelectMeditationView: View {
     @Environment(AppRouter.self) private var router
     @State private var viewModel: MeditationSelectionViewModel
 
-    /// The set whose detail load failed, driving the retry alert
-    @State private var failedSet: MeditationSetSummary?
+    /// Whether the kind-of-meditation tray is disclosed
+    @State private var isFilterOpen = false
+
+    /// Set on the tap that pushes a detail and cleared when the picker
+    /// reappears, so a double-tap before the transition covers the shelf
+    /// can't push the same screen twice.
+    @State private var isOpeningSet = false
+
+    /// List by default for now — with a handful of sets per category the
+    /// ruled list reads faster than half-empty tile rows.
+    @AppStorage("meditationPicker.viewMode")
+    private var viewMode: MeditationPickerViewMode = .list
+
+    private let columns = [
+        GridItem(.flexible(), spacing: 12),
+        GridItem(.flexible(), spacing: 12)
+    ]
 
     init(category: MysteryCategory) {
         self._viewModel = State(initialValue: MeditationSelectionViewModel(category: category))
@@ -40,45 +66,28 @@ struct SelectMeditationView: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
-                // Header
                 MeditationHeaderView(
                     category: category,
-                    setCount: viewModel.isLoading ? nil : viewModel.meditationSets.count,
                     onBack: { router.pop() }
                 )
 
-                // Content
                 ScrollView(showsIndicators: false) {
-                    VStack(spacing: 16) {
+                    VStack(spacing: 0) {
                         // The header names the screen; a second line
-                        // saying "select a meditation set" over a list of
+                        // saying "select a meditation set" over a shelf of
                         // meditation sets says nothing twice.
-                        Color.clear.frame(height: 8)
+                        Color.clear.frame(height: 20)
 
-                        // Loading state
                         if viewModel.isLoading {
                             ProgressView()
                                 .tint(AppColors.gold)
                                 .padding(.top, 40)
                         } else if let error = viewModel.errorMessage {
-                            VStack(spacing: 16) {
-                                Text(error)
-                                    .font(AppFonts.bodyFont(14))
-                                    .foregroundColor(AppColors.textSecondary)
-                                    .multilineTextAlignment(.center)
-
-                                GoldCTAButton(
-                                    title: "Try again",
-                                    prominence: .inline,
-                                    showsCross: false,
-                                    fullWidth: false
-                                ) {
-                                    Task { await viewModel.retry() }
-                                }
-                            }
-                            .padding(.top, 40)
+                            errorState(error)
+                        } else if viewModel.meditationSets.isEmpty {
+                            emptyCatalogState
                         } else {
-                            setList
+                            shelf
                                 .devotionalEntrance(delay: 0.05)
                         }
                     }
@@ -100,211 +109,283 @@ struct SelectMeditationView: View {
 
                 Spacer()
             }
-
-            // Loading overlay when fetching full set
-            if viewModel.isLoadingSet {
-                AppColors.background.opacity(0.72)
-                    .ignoresSafeArea()
-                    .overlay(
-                        VStack(spacing: 14) {
-                            ProgressView()
-                                .tint(AppColors.gold)
-
-                            Text("PREPARING THE MEDITATIONS")
-                                .font(AppFonts.labelFont(10))
-                                .tracking(2.5)
-                                .foregroundColor(AppColors.textSecondary)
-                        }
-                        .padding(.horizontal, 28)
-                        .padding(.vertical, 24)
-                        .background(
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(AppColors.cardBackground)
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 16)
-                                .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: 0.5)
-                        )
-                    )
-                    .transition(.opacity)
-            }
         }
         .navigationBarHidden(true)
+        .onAppear { isOpeningSet = false }
         .task {
             await viewModel.loadMeditationSets()
         }
-        // A set failed to load (cold server or offline): offer a retry
-        // instead of silently substituting content.
-        .alert(
-            "Couldn't load this meditation set",
-            isPresented: Binding(
-                get: { failedSet != nil },
-                set: { if !$0 { failedSet = nil } }
-            )
-        ) {
-            Button("Try Again") {
-                if let summary = failedSet {
-                    failedSet = nil
-                    Task { await selectMeditationSet(summary) }
-                }
-            }
-            Button("Cancel", role: .cancel) { failedSet = nil }
-        } message: {
-            Text("The server may still be waking up — it can take a few seconds. Downloading offline content in Account keeps every meditation available without a connection.")
-        }
     }
 
-    // MARK: - Set List
+    // MARK: - Shelf
 
-    private var setList: some View {
-        VStack(spacing: 16) {
-            // Label filter chips (only once the API sends labels)
+    private var shelf: some View {
+        VStack(spacing: 20) {
+            controlsRow
+
+            if isFilterOpen {
+                filterTray
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+            }
+
+            results
+        }
+        .animation(.easeOut(duration: 0.22), value: viewModel.selectedLabels)
+        .animation(.easeOut(duration: 0.22), value: isFilterOpen)
+        .animation(.easeOut(duration: 0.22), value: viewMode)
+    }
+
+    // MARK: - Controls
+
+    /// How many sets are showing, and how the shelf is read. The count
+    /// turns into "6 OF 14 SETS" whenever something is narrowing — that
+    /// second form is how the user knows a filter is on.
+    private var controlsRow: some View {
+        HStack(spacing: 6) {
+            Text(countLabel.uppercased())
+                .font(AppFonts.labelFont(10))
+                .tracking(2)
+                .foregroundColor(AppColors.textSecondary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+
+            Spacer(minLength: 8)
+
             if viewModel.hasLabels {
-                labelChips
-            }
-
-            // Pinned sets sit above everything
-            if !viewModel.favoriteSets.isEmpty {
-                SectionHeading(
-                    title: "Pinned",
-                    icon: "ph-push-pin-fill",
-                    count: viewModel.favoriteSets.count
+                ChromeToggle(
+                    icon: "ph-funnel",
+                    label: "Filter by kind",
+                    isOn: isFilterOpen || !viewModel.selectedLabels.isEmpty,
+                    badge: viewModel.selectedLabels.count,
+                    action: { isFilterOpen.toggle() }
                 )
-                .padding(.top, 4)
 
-                ForEach(viewModel.favoriteSets) { meditationSet in
-                    card(for: meditationSet)
-                }
+                // A hairline between the funnel and the layout pair —
+                // they do different jobs.
+                Rectangle()
+                    .fill(AppColors.gold.opacity(0.15))
+                    .frame(width: 1, height: 26)
+                    .padding(.horizontal, 3)
             }
 
-            // Grouped / filtered sets
-            ForEach(viewModel.sections) { section in
-                if let title = section.title {
-                    SectionHeading(
-                        title: MeditationLabel.displayName(title),
-                        count: section.sets.count
-                    )
-                    .padding(.top, 4)
-                }
+            ChromeToggle(
+                icon: "ph-cards",
+                label: "Gallery",
+                isOn: viewMode == .gallery,
+                action: { viewMode = .gallery }
+            )
 
-                ForEach(section.sets) { meditationSet in
-                    card(for: meditationSet)
-                }
-            }
-
-            // Filter matched nothing
-            if viewModel.filterCameUpEmpty && viewModel.favoriteSets.isEmpty {
-                VStack(spacing: 12) {
-                    Text("Nothing carries all of those labels")
-                        .font(AppFonts.italicFont(16))
-                        .foregroundColor(AppColors.textSecondary)
-
-                    Button(action: { withAnimation(.easeOut(duration: 0.2)) { viewModel.clearLabels() } }) {
-                        Text("Clear filters")
-                            .font(AppFonts.bodyFont(14))
-                            .tracking(1)
-                            .foregroundColor(AppColors.gold)
-                    }
-                }
-                .padding(.top, 32)
-            }
+            ChromeToggle(
+                icon: "ph-list",
+                label: "List",
+                isOn: viewMode == .list,
+                action: { viewMode = .list }
+            )
         }
-        .animation(.easeOut(duration: 0.2), value: viewModel.selectedLabels)
     }
 
-    private func card(for meditationSet: MeditationSetSummary) -> some View {
-        MeditationOptionCard(
-            title: meditationSet.name,
-            description: meditationSet.description ?? "",
-            labels: meditationSet.labels ?? [],
-            iconName: iconName(for: meditationSet.name),
-            isFavorite: viewModel.isFavorite(meditationSet),
-            onToggleFavorite: {
-                withAnimation(.easeOut(duration: 0.25)) {
-                    viewModel.toggleFavorite(meditationSet)
-                }
-            },
-            onTap: {
-                Task {
-                    await selectMeditationSet(meditationSet)
+    private var countLabel: String {
+        let total = viewModel.totalSetCount
+        let unit = total == 1 ? "set" : "sets"
+        return viewModel.isNarrowed
+            ? "\(viewModel.visibleSetCount) of \(total) \(unit)"
+            : "\(total) \(unit)"
+    }
+
+    /// Kinds of meditation, disclosed.
+    private var filterTray: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("KIND OF MEDITATION")
+                    .font(AppFonts.labelFont(10))
+                    .tracking(2.5)
+                    .foregroundColor(AppColors.gold)
+
+                Spacer()
+
+                if !viewModel.selectedLabels.isEmpty {
+                    // A 44pt target that takes no more room in the row
+                    // than its label, so the tray doesn't grow when it
+                    // appears.
+                    QuietGoldButton(
+                        title: "Clear",
+                        size: 10,
+                        tracking: 1.8,
+                        color: AppColors.gold.opacity(0.8),
+                        horizontalPadding: 0
+                    ) {
+                        viewModel.clearLabels()
+                    }
+                    .padding(.vertical, -12)
                 }
             }
-        )
-    }
+            // A floor, not a ceiling — the heading grows with the text size
+            .frame(minHeight: 20)
 
-    // MARK: - Label Chips
-
-    private var labelChips: some View {
-        VStack(spacing: 6) {
-            // All labels share the row width — nothing to scroll
-            HStack(spacing: 8) {
+            // Chips keep their own width and wrap — an adaptive grid cut
+            // them into equal columns, which shrank the long ones and left
+            // ragged gaps between the short.
+            ChipFlowLayout(spacing: 8) {
                 ForEach(viewModel.allLabels, id: \.self) { label in
-                    LabelChip(
+                    PickerChip(
                         title: MeditationLabel.displayName(label),
                         isSelected: viewModel.isSelected(label),
                         action: { viewModel.toggleLabel(label) }
                     )
                 }
             }
+        }
+        .sacredCard(vertical: 14, horizontal: 16)
+    }
 
-            if !viewModel.selectedLabels.isEmpty {
-                HStack {
-                    Spacer()
-                    Button(action: { withAnimation(.easeOut(duration: 0.2)) { viewModel.clearLabels() } }) {
-                        Text("Reset")
-                            .font(AppFonts.bodyFont(13))
-                            .tracking(1)
-                            .foregroundColor(AppColors.gold)
-                            .padding(.vertical, 4)
+    // MARK: - Results
+
+    private var results: some View {
+        VStack(spacing: 22) {
+            if !viewModel.pinnedSets.isEmpty {
+                group(title: "Pinned", sets: viewModel.pinnedSets)
+            }
+
+            ForEach(viewModel.sections) { section in
+                group(
+                    title: section.title.map { MeditationLabel.displayName($0) },
+                    sets: section.sets,
+                    // A headless remainder under the pinned group still
+                    // needs a rule between them in the list
+                    leadsWithRule: section.title == nil && !viewModel.pinnedSets.isEmpty
+                )
+            }
+
+            if viewModel.cameUpEmpty {
+                emptyState
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func group(
+        title: String?,
+        sets: [MeditationSetSummary],
+        leadsWithRule: Bool = false
+    ) -> some View {
+        VStack(spacing: viewMode == .gallery ? 14 : 6) {
+            if let title {
+                SectionHeading(title: title)
+            }
+
+            switch viewMode {
+            case .gallery:
+                LazyVGrid(columns: columns, spacing: 12) {
+                    ForEach(sets) { meditationSet in
+                        MeditationSetTile(
+                            title: meditationSet.name,
+                            labels: meditationSet.labels ?? [],
+                            isPinned: viewModel.isPinned(meditationSet),
+                            onTogglePin: {
+                                withAnimation(.easeOut(duration: 0.25)) {
+                                    viewModel.togglePin(meditationSet)
+                                }
+                            },
+                            onTap: { open(meditationSet) }
+                        )
                     }
-                    .buttonStyle(.plain)
+                }
+
+            case .list:
+                VStack(spacing: 0) {
+                    ForEach(Array(sets.enumerated()), id: \.element.id) { index, meditationSet in
+                        MeditationSetRow(
+                            title: meditationSet.name,
+                            labels: meditationSet.labels ?? [],
+                            isPinned: viewModel.isPinned(meditationSet),
+                            showsDivider: index > 0 || leadsWithRule,
+                            onTogglePin: {
+                                withAnimation(.easeOut(duration: 0.25)) {
+                                    viewModel.togglePin(meditationSet)
+                                }
+                            },
+                            onTap: { open(meditationSet) }
+                        )
+                    }
                 }
             }
         }
     }
 
-    // MARK: - Helpers
+    private var emptyState: some View {
+        VStack(spacing: 12) {
+            Text("No set carries all of those together")
+                .font(AppFonts.italicFont(16))
+                .foregroundColor(AppColors.textSecondary)
+                .multilineTextAlignment(.center)
 
-    private func iconName(for setName: String) -> String? {
-        let name = setName.lowercased()
-        if name.contains("traditional") {
-            // The Church's traditional meditations
-            return "ch-church"
-        } else if name.contains("louis") || name.contains("montfort") {
-            // Crown = de Montfort/consecration app-wide (True Devotion
-            // header, Consecrate tab)
-            return "ph-crown-fill"
-        } else if name.contains("scriptural") {
-            // Scripture = the Bible glyph, as on Mysteries in Scripture
-            return "ch-bible"
-        } else {
-            return nil
+            QuietGoldButton(
+                title: "Clear filters",
+                size: 10,
+                color: AppColors.gold
+            ) {
+                viewModel.clearLabels()
+            }
         }
+        .frame(maxWidth: .infinity)
+        .padding(.top, 32)
     }
 
-    private func selectMeditationSet(_ summary: MeditationSetSummary) async {
-        // A cold server can answer long after the user gave up and
-        // navigated away — never mutate navigation from a stale response.
-        // The generation token bumps on ANY path change (including system
-        // back-swipes), unlike a depth count, which can coincide across
-        // different screens.
-        let generation = router.generation
+    /// The catalog loaded and there is nothing in it yet for this
+    /// devotion — say so, and offer to look again.
+    private var emptyCatalogState: some View {
+        VStack(spacing: 12) {
+            Text("No meditations for the \(category.devotionTitle) yet.")
+                .font(AppFonts.italicFont(16))
+                .foregroundColor(AppColors.textSecondary)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
 
-        do {
-            let fullSet = try await viewModel.loadFullMeditationSet(id: summary.id)
-            guard router.generation == generation else { return }
-            router.navigateToPrayerSession(meditationSet: fullSet)
-        } catch {
-            guard router.generation == generation else { return }
-            failedSet = summary
+            QuietGoldButton(
+                title: "Try again",
+                leadingIcon: "ph-arrow-counter-clockwise",
+                leadingIconSize: 11,
+                size: 10,
+                color: AppColors.gold
+            ) {
+                Task { await viewModel.retry() }
+            }
         }
+        .frame(maxWidth: .infinity)
+        .padding(.top, 40)
+    }
+
+    /// Opens a set's detail once per visit to the shelf
+    private func open(_ meditationSet: MeditationSetSummary) {
+        guard !isOpeningSet else { return }
+        isOpeningSet = true
+        router.navigateToMeditationSetDetail(meditationSet)
+    }
+
+    private func errorState(_ error: String) -> some View {
+        VStack(spacing: 16) {
+            Text(error)
+                .font(AppFonts.bodyFont(14))
+                .foregroundColor(AppColors.textSecondary)
+                .multilineTextAlignment(.center)
+
+            GoldCTAButton(
+                title: "Try again",
+                prominence: .inline,
+                showsCross: false,
+                fullWidth: false
+            ) {
+                Task { await viewModel.retry() }
+            }
+        }
+        .padding(.top, 40)
     }
 }
 
-// MARK: - Label Chip
+// MARK: - Picker Chip
 
-/// One toggleable filter capsule in the label row
-private struct LabelChip: View {
+/// One toggleable capsule in the filter tray
+private struct PickerChip: View {
     let title: String
     let isSelected: Bool
     let action: () -> Void
@@ -312,14 +393,14 @@ private struct LabelChip: View {
     var body: some View {
         Button(action: action) {
             Text(title.uppercased())
-                .font(AppFonts.labelFont(11))
-                .tracking(2)
+                .font(AppFonts.labelFont(10))
+                .tracking(1.6)
                 .lineLimit(1)
-                .minimumScaleFactor(0.7)
+                .minimumScaleFactor(0.75)
                 .foregroundColor(isSelected ? AppColors.goldLight : AppColors.textSecondary)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 8)
-                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 15)
+                .padding(.vertical, 11)
+                .frame(minHeight: 44)
                 .background(
                     Capsule()
                         .fill(isSelected ? AppColors.cardElevated : AppColors.cardBackground.opacity(0.6))
@@ -327,13 +408,116 @@ private struct LabelChip: View {
                 .overlay(
                     Capsule()
                         .strokeBorder(
-                            isSelected ? AppColors.gold.opacity(0.7) : AppColors.gold.opacity(0.15),
+                            isSelected ? AppColors.gold.opacity(0.7) : AppColors.gold.opacity(0.18),
                             lineWidth: 1
                         )
                 )
+                .contentShape(Capsule())
         }
         .buttonStyle(.plain)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+}
+
+// MARK: - Chip Flow Layout
+
+/// Lays chips out left to right at their own width, wrapping to a new
+/// line when the next one won't fit.
+private struct ChipFlowLayout: Layout {
+    var spacing: CGFloat = 8
+
+    /// Fills the proposed width when there is one, so `placeSubviews`
+    /// arranges against exactly the width `sizeThatFits` did — a tight
+    /// content width fed back as bounds can differ by a floating-point
+    /// ulp and wrap the last chip of the widest row on placement only.
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let arrangement = arrange(subviews, in: proposal.width ?? .infinity)
+        if let width = proposal.width, width.isFinite {
+            return CGSize(width: width, height: arrangement.size.height)
+        }
+        return arrangement.size
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        let arrangement = arrange(subviews, in: proposal.width ?? bounds.width)
+        for (subview, origin) in zip(subviews, arrangement.origins) {
+            subview.place(
+                at: CGPoint(x: bounds.minX + origin.x, y: bounds.minY + origin.y),
+                proposal: .unspecified
+            )
+        }
+    }
+
+    private func arrange(_ subviews: Subviews, in width: CGFloat) -> (size: CGSize, origins: [CGPoint]) {
+        var origins: [CGPoint] = []
+        var x: CGFloat = 0
+        var y: CGFloat = 0
+        var rowHeight: CGFloat = 0
+        var maxX: CGFloat = 0
+
+        for subview in subviews {
+            let size = subview.sizeThatFits(.unspecified)
+            if x > 0, x + size.width > width {
+                x = 0
+                y += rowHeight + spacing
+                rowHeight = 0
+            }
+            origins.append(CGPoint(x: x, y: y))
+            x += size.width + spacing
+            rowHeight = max(rowHeight, size.height)
+            maxX = max(maxX, x - spacing)
+        }
+
+        return (CGSize(width: maxX, height: y + rowHeight), origins)
+    }
+}
+
+// MARK: - Chrome Toggle
+
+/// A 44pt chrome square: filter, gallery, list. An 11pt-radius fill
+/// inset 4pt so the target stays 44 while the shape reads ~36. Gold rim
+/// when active, with an optional count riding the corner.
+private struct ChromeToggle: View {
+    let icon: String
+    let label: String
+    let isOn: Bool
+    var badge: Int = 0
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            AppIcon(icon, size: 17)
+                .foregroundColor(isOn ? AppColors.goldLight : AppColors.textSecondary)
+                .frame(width: 44, height: 44)
+                .background(
+                    RoundedRectangle(cornerRadius: 11)
+                        .fill(isOn ? AppColors.cardElevated : AppColors.cardBackground.opacity(0.5))
+                        .padding(4)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 11)
+                        .strokeBorder(
+                            isOn ? AppColors.gold.opacity(0.7) : AppColors.gold.opacity(0.15),
+                            lineWidth: 1
+                        )
+                        .padding(4)
+                )
+                .overlay(alignment: .topTrailing) {
+                    if badge > 0 {
+                        Text("\(badge)")
+                            .font(AppFonts.labelFont(9))
+                            .foregroundColor(AppColors.background)
+                            .frame(minWidth: 16, minHeight: 16)
+                            .background(Circle().fill(AppColors.goldGradient))
+                            .padding(.top, -1)
+                            .padding(.trailing, -1)
+                    }
+                }
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(label)
+        .accessibilityAddTraits(isOn ? .isSelected : [])
     }
 }
 
@@ -344,38 +528,23 @@ private struct LabelChip: View {
 private struct SectionHeading: View {
     let title: String
 
-    /// A leading glyph for sections that have one — the pin above the
-    /// sets the user pinned
-    var icon: String?
-
-    /// How many sets sit under this heading, on the right in italic —
-    /// the same meta the cards elsewhere in the app carry
-    var count: Int?
-
     var body: some View {
-        HStack(spacing: 10) {
-            if let icon {
-                AppIcon(icon, size: 12)
-                    .foregroundColor(AppColors.gold)
-            }
+        HStack(spacing: 12) {
+            Rectangle()
+                .fill(AppColors.gold.opacity(0.4))
+                .frame(height: 1)
+                .frame(maxWidth: 40)
 
             Text(title.uppercased())
-                .font(AppFonts.labelFont(10))
-                .tracking(2.5)
+                .font(AppFonts.headlineFont(13))
+                .tracking(3)
                 .foregroundColor(AppColors.gold)
                 .fixedSize()
 
             Rectangle()
-                .fill(AppColors.gold.opacity(0.25))
-                .frame(height: 0.5)
+                .fill(AppColors.gold.opacity(0.4))
+                .frame(height: 1)
                 .frame(maxWidth: .infinity)
-
-            if let count {
-                Text(count == 1 ? "1 set" : "\(count) sets")
-                    .font(AppFonts.italicFont(12))
-                    .foregroundColor(AppColors.textSecondary)
-                    .fixedSize()
-            }
         }
         .accessibilityElement(children: .combine)
     }
@@ -384,27 +553,19 @@ private struct SectionHeading: View {
 // MARK: - Meditation Header View
 
 /// A working header for a chooser, not a hero for a landing page: the
-/// way back, what you are choosing within, and how much there is.
+/// way back and what you are choosing within.
 ///
 /// The old one centred a 30pt all-gold title under a day label and an
 /// ornament, taking a third of the screen before the first set — a
 /// title card in front of a list. This is a nav bar: the back control
 /// and the title on one line, the context beneath it, a hairline, and
-/// then the sets.
+/// then the sets. How many there are is said once, by the controls row
+/// over the shelf, where it also reports what a filter left.
 struct MeditationHeaderView: View {
 
     let category: MysteryCategory
 
-    /// How many sets are on offer, once they have loaded
-    var setCount: Int?
-
     var onBack: () -> Void = {}
-
-    private var contextLine: String {
-        let days = category.daysPrayed
-        guard let setCount, setCount > 0 else { return days }
-        return "\(days)  ·  \(setCount == 1 ? "1 set" : "\(setCount) sets")"
-    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -418,13 +579,13 @@ struct MeditationHeaderView: View {
                 .accessibilityLabel("Back")
 
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("\(category.displayName) Mysteries")
+                    Text(category.devotionTitle)
                         .font(AppFonts.headlineFont(22))
                         .foregroundColor(AppColors.cream)
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
 
-                    Text(contextLine)
+                    Text(category.daysPrayed)
                         .font(AppFonts.labelFont(9))
                         .tracking(2)
                         .foregroundColor(AppColors.gold.opacity(0.85))
@@ -456,20 +617,19 @@ struct MeditationHeaderView: View {
 }
 
 /// The full future experience: a large labeled catalog with two sets
-/// already favorited. Exercises chips (multi-select + horizontal
-/// scroll), section grouping, the pinned Favorites section, and the
-/// empty-filter state (try selecting "Scripture" + "Vocation").
+/// already pinned. Exercises the filter tray, section grouping, both
+/// view modes, and the empty state (try "Scriptural" + "Vocation").
 #Preview("Labeled catalog") {
     let sample: [MeditationSetSummary] = [
         MeditationSetSummary(
             id: 1, name: "Traditional Meditations", category: "joyful",
             description: "Classic meditations on the virtue of each mystery.",
-            labels: ["Traditional"]
+            labels: ["Contemplative"]
         ),
         MeditationSetSummary(
             id: 2, name: "Scriptural Rosary", category: "joyful",
             description: "A verse of Scripture to carry through every bead.",
-            labels: ["Traditional", "Scripture"]
+            labels: ["Scriptural"]
         ),
         MeditationSetSummary(
             id: 3, name: "St. Louis de Montfort", category: "joyful",
@@ -482,9 +642,9 @@ struct MeditationHeaderView: View {
             labels: ["Saints"]
         ),
         MeditationSetSummary(
-            id: 5, name: "St. John Paul II", category: "joyful",
-            description: "Contemplating the face of Christ with Mary.",
-            labels: ["Saints", "Marian"]
+            id: 5, name: "Bl. Anne Catherine Emmerich", category: "joyful",
+            description: "The mysteries as she was given to see them.",
+            labels: ["Saints", "Considerations"]
         ),
         MeditationSetSummary(
             id: 6, name: "St. Josemaría Escrivá", category: "joyful",
@@ -514,7 +674,7 @@ struct MeditationHeaderView: View {
         MeditationSetSummary(
             id: 11, name: "Lectio Divina Rosary", category: "joyful",
             description: "Slow, prayerful reading woven through the decades.",
-            labels: ["Scripture"]
+            labels: ["Scriptural"]
         ),
         MeditationSetSummary(
             id: 12, name: "Parish Mission Set", category: "joyful",
@@ -533,8 +693,8 @@ struct MeditationHeaderView: View {
     .environment(AppRouter())
 }
 
-/// Fallback when the API sends no labels: a flat list, no chips,
-/// with starring still available.
+/// Fallback when the API sends no labels: no filter button, a flat
+/// shelf, pinning still available.
 #Preview("Unlabeled catalog (fallback)") {
     let sample: [MeditationSetSummary] = [
         MeditationSetSummary(

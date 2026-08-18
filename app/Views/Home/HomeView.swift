@@ -224,9 +224,14 @@ struct ResumePrayerCard: View {
     let onDismiss: () -> Void
 
     private var mysteryLabel: String {
-        let categoryName = MysteryCategory(fromAPIString: session.category)?.displayName
-            ?? session.category.capitalized
-        return "\(Constants.ordinalWord(session.mysteryIndex + 1)) \(categoryName) Mystery"
+        let ordinal = session.mysteryIndex + 1
+        guard let category = MysteryCategory(fromAPIString: session.category) else {
+            return "\(Constants.ordinalWord(ordinal)) \(session.category.capitalized) Mystery"
+        }
+        // "The First Joyful Mystery" without its article, as the card
+        // reads it in running text
+        let label = category.mysteryLabel(ordinal: ordinal)
+        return label.hasPrefix("The ") ? String(label.dropFirst(4)) : label
     }
 
     var body: some View {
