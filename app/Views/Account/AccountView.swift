@@ -933,7 +933,7 @@ struct AboutSheet: View {
 
                         // Version
                         VStack(spacing: 4) {
-                            Text("Version 1.0.0")
+                            Text("Version \(Bundle.main.appVersion)")
                                 .font(AppFonts.bodyFont(13))
                                 .foregroundColor(AppColors.textSecondary)
 

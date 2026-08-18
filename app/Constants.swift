@@ -138,3 +138,13 @@ extension Color {
         )
     }
 }
+
+// MARK: - Bundle Version
+
+extension Bundle {
+
+    /// The marketing version from the Info.plist, e.g. "1.0.1".
+    var appVersion: String {
+        object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—"
+    }
+}
