@@ -277,19 +277,11 @@ struct ResumePrayerCard: View {
                             .background(Circle().fill(AppColors.goldGradient))
                     }
                 }
-                .padding(14)
-                // Radius 16 and a 0.5pt hairline, matching the meditation
-                // cards — it floats, so it keeps its shadow, but the gold
-                // no longer shouts over the hero card behind it.
-                .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(AppColors.cardBackground)
-                        .shadow(color: .black.opacity(0.45), radius: 16, y: 6)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: 0.5)
-                )
+                // The app's card shell — it floats, so it keeps its
+                // shadow, but the gold no longer shouts over the hero
+                // card behind it.
+                .sacredCard(padding: 14)
+                .shadow(color: .black.opacity(0.45), radius: 16, y: 6)
                 .contentShape(RoundedRectangle(cornerRadius: 16))
             }
             .buttonStyle(SacredCardButtonStyle())
@@ -388,95 +380,16 @@ struct FeaturedMysteryCard: View {
 
     // MARK: - Body
 
-    /// The cathedral-window arch that frames the mystery image
-    private var arch: GothicArchShape { GothicArchShape(riseRatio: 0.34) }
-
     var body: some View {
-        // Arch shape drives size; image goes in .overlay so it never
-        // expands layout bounds, then everything clips to the arch.
-        arch
-            .fill(AppColors.cardBackground)
-            .frame(height: 410)
-            .overlay(
-                CachedAssetImage(category.cardImageName)
-                    .aspectRatio(contentMode: .fill)
-                    .overlay(Color.black.opacity(0.25))
-            )
-            .clipShape(arch)
-            .overlay(
-                arch.strokeBorder(AppColors.gold.opacity(0.4), lineWidth: 1)
-            )
-            .overlay(
-                arch.inset(by: 5)
-                    .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: 0.5)
-            )
-            .overlay(alignment: .bottom) {
-                VStack(spacing: 16) {
-                    categoryBadge
-                    mysteryTitle
-                    scriptureReference
-                    beginPrayerButton
-                }
-                .padding(.vertical, 24)
-                .padding(.horizontal, 16)
-                // Weighted stops rather than an even ramp: the scrim stays
-                // out of the way through the top third and only gathers
-                // where the words actually need ground, so more of the
-                // painting survives behind the title.
-                .background(
-                    LinearGradient(
-                        stops: [
-                            .init(color: .clear, location: 0),
-                            .init(color: AppColors.background.opacity(0.5), location: 0.34),
-                            .init(color: AppColors.background.opacity(0.86), location: 0.66),
-                            .init(color: AppColors.background, location: 0.92)
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
-            }
-            // The card runs edge to edge, so its foot would otherwise end on
-            // a rule straight across the screen — the arch's stroke closes
-            // its path along the bottom, and the scrim stops dead against
-            // the page gradient. Dissolving the last few points removes both
-            // at once: no border line, no step in tone. Applied before the
-            // halo so the glow itself isn't clipped.
-            .mask(
-                VStack(spacing: 0) {
-                    Rectangle().fill(.black)
-                    LinearGradient(
-                        colors: [.black, .clear],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .frame(height: 16)
-                }
-            )
-            // Steady, not pulsing — the same presence the Pray medallion
-            // and the narration transport carry.
-            .haloGlow(AppColors.gold, radius: 16, intensity: 0.18)
+        ArchHero(imageName: category.cardImageName) {
+            HeroBadge("\(category.displayName.uppercased()) MYSTERIES")
+            mysteryTitle
+            scriptureReference
+            beginPrayerButton
+        }
     }
 
     // MARK: - Subviews
-
-    /// "JOYFUL MYSTERIES" badge - always available (uses category)
-    private var categoryBadge: some View {
-        Text("\(category.displayName.uppercased()) MYSTERIES")
-            .font(AppFonts.labelFont(9))
-            .tracking(2.5)
-            .foregroundColor(AppColors.goldLight)
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
-            .background(
-                Capsule()
-                    .fill(AppColors.background.opacity(0.55))
-            )
-            .overlay(
-                Capsule()
-                    .strokeBorder(AppColors.gold.opacity(0.45), lineWidth: 1)
-            )
-    }
 
     /// Mystery name
     private var mysteryTitle: some View {

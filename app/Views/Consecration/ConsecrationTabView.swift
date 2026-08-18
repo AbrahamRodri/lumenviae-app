@@ -17,12 +17,17 @@ import SwiftData
 // MARK: - ConsecrationRoute
 
 /// Navigation routes within the Consecration tab
-/// A step within a day: the reading, then each of its prayers. The
-/// dashboard can open any of them, and the flow itself moves between
+/// A step within a day: each of its readings, then each of its prayers.
+/// The dashboard can open any of them, and the flow itself moves between
 /// them — so the reading is the first step of the same screen rather
 /// than a cover that has to dismiss before the prayers can be pushed.
+///
+/// `reading` carries an index because most days have two: a Gospel
+/// passage and a spiritual reading. They are separate texts from
+/// separate works, so they are separate steps rather than one scroll
+/// with a rule buried somewhere down it.
 enum ConsecrationDayStep: Hashable {
-    case reading
+    case reading(Int)
     case prayer(Int)
 }
 

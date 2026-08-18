@@ -67,7 +67,7 @@ struct OnboardingView: View {
                             .animation(.easeInOut(duration: 0.25), value: currentPage)
                     }
                 }
-                .padding(.top, 60)
+                .padding(.top, 14)
                 .padding(.bottom, 8)
 
                 // Slides
@@ -176,7 +176,7 @@ struct OnboardingView: View {
                         .foregroundColor(AppColors.cream.opacity(0.8))
                         .lineSpacing(5)
 
-                    VStack(spacing: 12) {
+                    VStack(spacing: 10) {
                         ForEach(intentionOptions, id: \.intention) { option in
                             SelectableOptionRow(
                                 label: option.intention.rawValue,
@@ -260,7 +260,7 @@ struct OnboardingView: View {
 
                     LanguagePreviewCard(language: selectedLanguage)
 
-                    VStack(spacing: 12) {
+                    VStack(spacing: 10) {
                         ForEach(languageOptions, id: \.language) { option in
                             SelectableOptionRow(
                                 label: option.language.rawValue,
@@ -308,7 +308,7 @@ struct OnboardingView: View {
                         .foregroundColor(AppColors.cream.opacity(0.8))
                         .lineSpacing(5)
 
-                    VStack(spacing: 12) {
+                    VStack(spacing: 10) {
                         ForEach(reminderOptions, id: \.hour) { option in
                             SelectableOptionRow(
                                 label: option.label,
@@ -453,7 +453,27 @@ struct OnboardingView: View {
 
 // MARK: - OnboardingSlideLayout
 
-/// Reusable full-screen slide: icon + title scroll area + fixed bottom buttons.
+/// The chrome sizes a slide is set in. A slide takes the roomy metrics
+/// when they fit the screen and the tight ones when they don't, so a
+/// short phone loses air rather than gaining a scroll bar.
+private struct SlideMetrics {
+    let glow: CGFloat
+    let icon: CGFloat
+    let title: CGFloat
+    let spacing: CGFloat
+    let topPadding: CGFloat
+
+    static let roomy = SlideMetrics(glow: 96, icon: 56, title: 25, spacing: 22, topPadding: 8)
+    static let tight = SlideMetrics(glow: 74, icon: 42, title: 22, spacing: 14, topPadding: 0)
+}
+
+/// Reusable full-screen slide: icon, title, body, and fixed bottom buttons.
+///
+/// A slide is meant to be taken in at a glance — read it, choose, move on
+/// — so it is sized to the screen rather than scrolled. `ViewThatFits`
+/// keeps that promise: the roomy metrics first, the tight ones if the
+/// content is taller than the display, and a scroll only as the last
+/// resort, which in practice means the large accessibility text sizes.
 ///
 /// When `isActive` first becomes true (the slide is the visible page),
 /// the icon, title, body, and buttons fade in one after another —
@@ -472,60 +492,18 @@ private struct OnboardingSlideLayout<Content: View, Bottom: View>: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 28) {
-                    // Icon over a softly breathing gold glow
-                    ZStack {
-                        Circle()
-                            .fill(AppColors.gold.opacity(0.12))
-                            .frame(width: 110, height: 110)
-                            .blur(radius: 18)
-                            .phaseAnimator([1.0, 1.18, 1.0]) { view, scale in
-                                view.scaleEffect(scale)
-                            } animation: { _ in
-                                .easeInOut(duration: 2.4)
-                            }
-
-                        Group {
-                            if iconIsGradient {
-                                AppIcon(icon, size: 64)
-                                    .foregroundStyle(
-                                        LinearGradient(
-                                            colors: [AppColors.gold, AppColors.goldLight],
-                                            startPoint: .top,
-                                            endPoint: .bottom
-                                        )
-                                    )
-                            } else {
-                                AppIcon(icon, size: 64)
-                                    .foregroundColor(AppColors.gold)
-                            }
-                        }
-                    }
-                    .padding(.top, 20)
-                    .staggeredReveal(revealed, delay: 0)
-
-                    Text(title)
-                        .font(AppFonts.headlineFont(26))
-                        .foregroundColor(AppColors.cream)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 24)
-                        .staggeredReveal(revealed, delay: 0.12)
-
-                    content()
-                        .padding(.horizontal, 28)
-                        .staggeredReveal(revealed, delay: 0.24)
-
-                    Spacer(minLength: 20)
-                }
+            ViewThatFits(in: .vertical) {
+                slideBody(.roomy)
+                slideBody(.tight)
+                ScrollView(showsIndicators: false) { slideBody(.tight) }
             }
 
             // Fixed bottom — fades into gradient
             VStack {
                 bottomContent()
                     .padding(.horizontal, 28)
-                    .padding(.bottom, 44)
-                    .padding(.top, 16)
+                    .padding(.bottom, 20)
+                    .padding(.top, 14)
             }
             .background(
                 LinearGradient(
@@ -542,6 +520,62 @@ private struct OnboardingSlideLayout<Content: View, Bottom: View>: View {
         }
         .onChange(of: isActive) { _, nowActive in
             if nowActive { revealed = true }
+        }
+    }
+
+    /// The slide above the buttons. The spacers carry no ideal height, so
+    /// `ViewThatFits` measures the real content and only the chosen
+    /// variant spreads into whatever room is left.
+    private func slideBody(_ metrics: SlideMetrics) -> some View {
+        VStack(spacing: metrics.spacing) {
+            Spacer(minLength: 0)
+
+            iconBadge(metrics)
+                .padding(.top, metrics.topPadding)
+                .staggeredReveal(revealed, delay: 0)
+
+            Text(title)
+                .font(AppFonts.headlineFont(metrics.title))
+                .foregroundColor(AppColors.cream)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 24)
+                .staggeredReveal(revealed, delay: 0.12)
+
+            content()
+                .padding(.horizontal, 28)
+                .staggeredReveal(revealed, delay: 0.24)
+
+            Spacer(minLength: 0)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    /// Icon over a softly breathing gold glow
+    private func iconBadge(_ metrics: SlideMetrics) -> some View {
+        ZStack {
+            Circle()
+                .fill(AppColors.gold.opacity(0.12))
+                .frame(width: metrics.glow, height: metrics.glow)
+                .blur(radius: 18)
+                .phaseAnimator([1.0, 1.18, 1.0]) { view, scale in
+                    view.scaleEffect(scale)
+                } animation: { _ in
+                    .easeInOut(duration: 2.4)
+                }
+
+            if iconIsGradient {
+                AppIcon(icon, size: metrics.icon)
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [AppColors.gold, AppColors.goldLight],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+            } else {
+                AppIcon(icon, size: metrics.icon)
+                    .foregroundColor(AppColors.gold)
+            }
         }
     }
 }
@@ -734,7 +768,8 @@ private struct SelectableOptionRow: View {
                 Spacer()
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 14)
+            .padding(.vertical, 12)
+            .frame(minHeight: 44)
             .background(
                 RoundedRectangle(cornerRadius: 16)
                     .fill(AppColors.cardBackground.opacity(isSelected ? 1 : 0.5))
@@ -761,7 +796,7 @@ private struct OnboardingThemePicker: View {
     private var themeManager = ThemeManager.shared
 
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 10) {
             ForEach(AppTheme.allCases) { theme in
                 OnboardingThemeRow(
                     theme: theme,
@@ -870,14 +905,15 @@ private struct OnboardingThemeRow: View {
 private struct LanguagePreviewCard: View {
     let language: PrayerLanguage
 
-    /// Opening lines of the Ave Maria in both tongues
+    /// The opening line of the Ave Maria in both tongues. One line, not
+    /// the stanza — it has to show the shape of the format while leaving
+    /// the four choices below it on the same screen.
     private static let lines: [(latin: String, english: String)] = [
-        ("Ave Maria, gratia plena, Dominus tecum;", "Hail Mary, full of grace, the Lord is with thee;"),
-        ("benedicta tu in mulieribus,", "blessed art thou among women,")
+        ("Ave Maria, gratia plena, Dominus tecum;", "Hail Mary, full of grace, the Lord is with thee;")
     ]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 8) {
                 AppIcon("ph-hands-praying", size: 13)
                     .foregroundColor(AppColors.gold.opacity(0.85))
@@ -910,7 +946,7 @@ private struct LanguagePreviewCard: View {
             .transition(.opacity.combined(with: .offset(y: 8)))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(16)
+        .padding(12)
         .background(
             RoundedRectangle(cornerRadius: 16)
                 .fill(AppColors.quoteBackground)

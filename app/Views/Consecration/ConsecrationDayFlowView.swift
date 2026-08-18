@@ -33,7 +33,7 @@ struct ConsecrationDayFlowView: View {
     init(
         path: Binding<[ConsecrationRoute]>,
         dayNumber: Int,
-        startStep: ConsecrationDayStep = .reading
+        startStep: ConsecrationDayStep = .reading(0)
     ) {
         self._path = path
         self.dayNumber = dayNumber
@@ -81,13 +81,25 @@ struct ConsecrationDayFlowView: View {
         return ConsecrationData.prayers(for: phase, language: settings.prayerLanguage)
     }
 
-    /// The reading, then every prayer of the day
+    private var readings: [ConsecrationReading] {
+        day?.readings ?? []
+    }
+
+    /// Bounds-checked: a step index can outlive its day if the day
+    /// changes under the flow.
+    private func reading(at index: Int) -> ConsecrationReading? {
+        guard index >= 0, index < readings.count else { return nil }
+        return readings[index]
+    }
+
+    /// Every reading, then every prayer of the day
     private var steps: [ConsecrationDayStep] {
-        [.reading] + prayers.indices.map { ConsecrationDayStep.prayer($0) }
+        readings.indices.map { ConsecrationDayStep.reading($0) }
+            + prayers.indices.map { ConsecrationDayStep.prayer($0) }
     }
 
     private var currentStep: ConsecrationDayStep {
-        guard stepIndex >= 0, stepIndex < steps.count else { return .reading }
+        guard stepIndex >= 0, stepIndex < steps.count else { return .reading(0) }
         return steps[stepIndex]
     }
 
@@ -108,12 +120,22 @@ struct ConsecrationDayFlowView: View {
     /// What the quiet forward control says. "Next" is right between
     /// prayers; leaving the reading is better named by where it goes.
     private var forwardTitle: String {
-        currentStep == .reading ? "Prayers" : "Next"
+        isLastReadingStep ? "Prayers" : "Next"
+    }
+
+    /// True on the final reading, where forward leaves the readings for
+    /// the prayers rather than turning to another page of the same kind.
+    private var isLastReadingStep: Bool {
+        if case .reading(let index) = currentStep { return index == readings.count - 1 }
+        return false
     }
 
     private var accessibleStepName: String {
         switch currentStep {
-        case .reading: return "the reading"
+        case .reading(let index):
+            return readings.count > 1
+                ? "reading \(index + 1) of \(readings.count)"
+                : "the reading"
         case .prayer(let index): return "prayer \(index + 1) of \(prayers.count)"
         }
     }
@@ -182,7 +204,7 @@ struct ConsecrationDayFlowView: View {
         case .reading:
             goToStep(0)
         case .prayer(let index):
-            goToStep(index + 1)
+            goToStep(readings.count + index)
         case .reflection:
             path.append(.journal(dayNumber: dayNumber))
         }
@@ -362,8 +384,8 @@ struct ConsecrationDayFlowView: View {
                         .id("top")
 
                     switch currentStep {
-                    case .reading:
-                        readingStep
+                    case .reading(let index):
+                        readingStep(reading(at: index))
                     case .prayer:
                         if let prayer = currentPrayer {
                             prayerStep(prayer)
@@ -400,7 +422,12 @@ struct ConsecrationDayFlowView: View {
 
     // MARK: - Reading Step
 
-    private var readingStep: some View {
+    /// One reading, under the day's own frame. A day that opens on Luke
+    /// and closes on Montfort is two texts, so each gets its own step and
+    /// stands under its own citation — the reader is never left guessing
+    /// which work the words in front of them belong to.
+    @ViewBuilder
+    private func readingStep(_ reading: ConsecrationReading?) -> some View {
         VStack(spacing: 0) {
             VStack(spacing: 10) {
                 Text((phase?.subtitle ?? "").uppercased())
@@ -421,26 +448,30 @@ struct ConsecrationDayFlowView: View {
                 .frame(width: 150)
                 .padding(.vertical, 24)
 
-            ReadingText(
-                text: day?.meditationText ?? "",
-                size: settings.meditationFontSize,
-                showsDropCap: true
-            )
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 26)
+            if let reading {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(reading.title.uppercased())
+                        .font(AppFonts.labelFont(10))
+                        .tracking(2)
+                        .foregroundColor(AppColors.gold)
 
-            if let source = day?.meditationSource {
-                VStack(spacing: 14) {
-                    OrnamentDivider()
-                        .frame(width: 180)
-
-                    Text(source)
-                        .font(AppFonts.italicFont(13))
-                        .foregroundColor(AppColors.textSecondary)
-                        .multilineTextAlignment(.center)
+                    if let source = reading.source {
+                        Text(source)
+                            .font(AppFonts.italicFont(12))
+                            .foregroundColor(AppColors.textSecondary)
+                    }
                 }
-                .frame(maxWidth: .infinity)
-                .padding(.top, 22)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 26)
+                .padding(.bottom, 14)
+
+                ReadingText(
+                    text: reading.text,
+                    size: settings.meditationFontSize,
+                    showsDropCap: true
+                )
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 26)
             }
         }
     }
@@ -567,7 +598,7 @@ struct ConsecrationDayFlowView: View {
                 ) {
                     goToStep(stepIndex + 1)
                 }
-                .accessibilityLabel(currentStep == .reading ? "Go to the prayers" : "Next prayer")
+                .accessibilityLabel(isLastReadingStep ? "Go to the prayers" : "Next")
             }
         }
         .padding(.horizontal, 20)

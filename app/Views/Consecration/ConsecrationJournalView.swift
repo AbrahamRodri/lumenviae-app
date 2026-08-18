@@ -281,7 +281,7 @@ struct ConsecrationJournalView: View {
 
         let step: ConsecrationDayStep = {
             if case .prayer(let index) = destination { return .prayer(index) }
-            return .reading
+            return .reading(0)
         }()
 
         viewModel.saveReflectionDraft(text, for: dayNumber)

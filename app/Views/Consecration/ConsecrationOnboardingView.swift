@@ -43,9 +43,6 @@ struct ConsecrationOnboardingView: View {
 
     @State private var step: ConsecrationOnboardingStep = .threshold
 
-    /// Drives the slide direction of step transitions
-    @State private var movingForward = true
-
     /// Guards the initial returning-user jump so it doesn't re-fire when
     /// this view reappears after a push
     @State private var hasAppeared = false
@@ -81,6 +78,9 @@ struct ConsecrationOnboardingView: View {
                             .transition(stepTransition)
                     }
                 }
+                // Nothing may render outside the page's own width. Without
+                // this, a step mid-transition draws past the screen edge.
+                .clipped()
             }
         }
         .navigationBarTitleDisplayMode(.inline)
@@ -96,7 +96,6 @@ struct ConsecrationOnboardingView: View {
     // MARK: - Navigation
 
     private func advance(to newStep: ConsecrationOnboardingStep) {
-        movingForward = true
         withAnimation(.easeInOut(duration: 0.4)) {
             step = newStep
         }
@@ -107,30 +106,23 @@ struct ConsecrationOnboardingView: View {
 
     private func goBack() {
         guard let previous = ConsecrationOnboardingStep(rawValue: step.rawValue - 1) else { return }
-        movingForward = false
         withAnimation(.easeInOut(duration: 0.4)) {
             step = previous
         }
     }
 
     private func skipToChooser() {
-        movingForward = true
         withAnimation(.easeInOut(duration: 0.4)) {
             step = .chooseDay
         }
         hasSeenOnboarding = true
     }
 
+    /// Steps cross-fade in place — the page never travels sideways. A
+    /// sliding step reads as a swipeable carousel and invites a drag that
+    /// does nothing, since the only way through is the button.
     private var stepTransition: AnyTransition {
-        movingForward
-            ? .asymmetric(
-                insertion: .move(edge: .trailing).combined(with: .opacity),
-                removal: .move(edge: .leading).combined(with: .opacity)
-            )
-            : .asymmetric(
-                insertion: .move(edge: .leading).combined(with: .opacity),
-                removal: .move(edge: .trailing).combined(with: .opacity)
-            )
+        .opacity
     }
 
     // MARK: - Top Bar
@@ -227,6 +219,12 @@ private extension View {
 /// when the content genuinely cannot fit (very small devices, very
 /// large accessibility text) does it degrade to a scroll, so text is
 /// never clipped.
+///
+/// The spacers between a slide's blocks must carry small minimums for
+/// this to work: `ViewThatFits` measures the content's ideal height, and
+/// a `Spacer(minLength: 28)` adds all 28 of those points to that
+/// measurement whether or not the room is there. Generous gaps come from
+/// the spacers *expanding* into leftover space, not from their minimums.
 private struct StaticSlide<Content: View>: View {
     @ViewBuilder let content: Content
 
@@ -287,14 +285,14 @@ private struct ThresholdStepView: View {
     var body: some View {
         StaticSlide {
             VStack(spacing: 0) {
-                Spacer(minLength: 16)
+                Spacer(minLength: 10)
 
                 // The Coronation of the Virgin (Velázquez): Mary crowned
                 // by the Trinity — the image of Totus Tuus, and the
                 // mystery this 33-day path ends on
                 arch
                     .fill(AppColors.cardBackground)
-                    .frame(height: 350)
+                    .frame(height: 292)
                     .overlay(
                         CachedAssetImage("glorious_coronation")
                             .aspectRatio(contentMode: .fill)
@@ -317,30 +315,30 @@ private struct ThresholdStepView: View {
                     )
                     .staggeredReveal(delay: 0.1)
 
-                Spacer(minLength: 28)
+                Spacer(minLength: 12)
 
                 VStack(spacing: 14) {
                     StepLabel(text: "TOTUS TUUS")
 
                     Text("Total Consecration")
-                        .font(AppFonts.headlineFont(32))
+                        .font(AppFonts.headlineFont(28))
                         .foregroundColor(AppColors.cream)
                         .multilineTextAlignment(.center)
 
                     Text("to Jesus through Mary")
-                        .font(AppFonts.italicFont(18))
+                        .font(AppFonts.italicFont(17))
                         .foregroundColor(AppColors.textSecondary)
                 }
                 .staggeredReveal(delay: 0.4)
 
                 // A finished consecration is honored, not forgotten
                 if viewModel.completedProgress != nil {
-                    Spacer(minLength: 16)
+                    Spacer(minLength: 10)
                     completedNote
                         .staggeredReveal(delay: 0.55)
                 }
 
-                Spacer(minLength: 28)
+                Spacer(minLength: 12)
 
                 OnboardingContinueButton(title: "Discover the devotion", action: onContinue)
                     .staggeredReveal(delay: 0.7)
@@ -380,7 +378,7 @@ private struct DevotionStepView: View {
     var body: some View {
         StaticSlide {
             VStack(spacing: 0) {
-                Spacer(minLength: 20)
+                Spacer(minLength: 12)
 
                 VStack(spacing: 14) {
                     StepLabel(text: "THE DEVOTION")
@@ -392,7 +390,7 @@ private struct DevotionStepView: View {
                 }
                 .staggeredReveal(delay: 0.1)
 
-                Spacer(minLength: 24)
+                Spacer(minLength: 14)
 
                 VStack(spacing: 14) {
                     // Icons are Christicons, chosen for meaning: the rosary
@@ -420,7 +418,7 @@ private struct DevotionStepView: View {
                     )
                 }
 
-                Spacer(minLength: 28)
+                Spacer(minLength: 12)
 
                 OnboardingContinueButton(title: "Continue", action: onContinue)
                     .staggeredReveal(delay: 0.95)
@@ -470,7 +468,7 @@ private struct RhythmStepView: View {
     var body: some View {
         StaticSlide {
             VStack(spacing: 0) {
-                Spacer(minLength: 20)
+                Spacer(minLength: 12)
 
                 VStack(spacing: 14) {
                     StepLabel(text: "EACH DAY")
@@ -482,7 +480,7 @@ private struct RhythmStepView: View {
                 }
                 .staggeredReveal(delay: 0.1)
 
-                Spacer(minLength: 24)
+                Spacer(minLength: 14)
 
                 VStack(spacing: 14) {
                     rhythmRow(
@@ -507,14 +505,14 @@ private struct RhythmStepView: View {
                     )
                 }
 
-                Spacer(minLength: 20)
+                Spacer(minLength: 12)
 
                 Text("Ten to fifteen minutes a day.")
                     .font(AppFonts.italicFont(15))
                     .foregroundColor(AppColors.textSecondary)
                     .staggeredReveal(delay: 0.9)
 
-                Spacer(minLength: 28)
+                Spacer(minLength: 12)
 
                 OnboardingContinueButton(title: "Continue", action: onContinue)
                     .staggeredReveal(delay: 1.05)
@@ -564,7 +562,7 @@ private struct JourneyStepView: View {
     var body: some View {
         StaticSlide {
             VStack(spacing: 0) {
-                Spacer(minLength: 20)
+                Spacer(minLength: 12)
 
                 VStack(spacing: 14) {
                     StepLabel(text: "THE JOURNEY")
@@ -576,7 +574,7 @@ private struct JourneyStepView: View {
                 }
                 .staggeredReveal(delay: 0.1)
 
-                Spacer(minLength: 24)
+                Spacer(minLength: 14)
 
                 VStack(spacing: 10) {
                     ForEach(Array(ConsecrationPhase.allCases.enumerated()), id: \.element) { index, phase in
@@ -584,7 +582,7 @@ private struct JourneyStepView: View {
                     }
                 }
 
-                Spacer(minLength: 20)
+                Spacer(minLength: 12)
 
                 // No-guilt: the schedule serves the user, not the reverse
                 Text("Miss a day? Every day stays open — return whenever you can.")
@@ -593,7 +591,7 @@ private struct JourneyStepView: View {
                     .multilineTextAlignment(.center)
                     .staggeredReveal(delay: 1.15)
 
-                Spacer(minLength: 28)
+                Spacer(minLength: 12)
 
                 OnboardingContinueButton(
                     title: "Choose my consecration day",
