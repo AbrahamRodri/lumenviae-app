@@ -55,16 +55,21 @@ final class MeditationCacheService {
         do {
             let summaries = try await apiService.fetchMeditationSets(category: category)
 
-            let sets = try await withThrowingTaskGroup(of: MeditationSet.self) { group in
+            // Each set is fetched independently and a failure yields nil
+            // rather than throwing: one 404 or timed-out set must not
+            // discard every set that loaded, which is what a throwing
+            // group did — it propagated the first error and left the
+            // cache empty even when most of the catalog had arrived.
+            let sets = await withTaskGroup(of: MeditationSet?.self) { group in
                 for summary in summaries {
                     group.addTask { [apiService] in
-                        try await apiService.fetchMeditationSet(id: summary.id)
+                        try? await apiService.fetchMeditationSet(id: summary.id)
                     }
                 }
 
                 var results: [MeditationSet] = []
-                for try await set in group {
-                    results.append(set)
+                for await set in group {
+                    if let set { results.append(set) }
                 }
                 return results
             }

@@ -76,49 +76,58 @@ enum AppTheme: String, CaseIterable, Identifiable {
         }
     }
 
+    /// The theme's colors.
+    ///
+    /// Stored, not rebuilt: every `AppColors` accessor reaches through here,
+    /// and `Color(hex:)` scans a string per channel. Built on demand it cost
+    /// ten hex parses per color read — thousands per render across the app's
+    /// ~950 call sites — to hand back the same constants every time.
     var palette: ThemePalette {
         switch self {
-        case .marianBlue:
-            return ThemePalette(
-                background:     Color(hex: "0D1730"),
-                backgroundDeep: Color(hex: "070E1F"),
-                card:           Color(hex: "17284E"),
-                cardElevated:   Color(hex: "1E3260"),
-                quote:          Color(hex: "14213F"),
-                gold:           Color(hex: "D9B84A"),
-                goldLight:      Color(hex: "E9CC6E"),
-                cream:          Color(hex: "F4EFE2"),
-                textSecondary:  Color(hex: "93A5C8"),
-                accentSoft:     Color(hex: "8FA9D8")
-            )
-        case .midnight:
-            return ThemePalette(
-                background:     Color(hex: "131324"),
-                backgroundDeep: Color(hex: "0B0B16"),
-                card:           Color(hex: "1F1F38"),
-                cardElevated:   Color(hex: "29294A"),
-                quote:          Color(hex: "232340"),
-                gold:           Color(hex: "D4AF37"),
-                goldLight:      Color(hex: "E8C547"),
-                cream:          Color(hex: "F5F0E1"),
-                textSecondary:  Color(hex: "9C9CB5"),
-                accentSoft:     Color(hex: "ABABD6")
-            )
-        case .candlelit:
-            return ThemePalette(
-                background:     Color(hex: "0A0A15"),
-                backgroundDeep: Color(hex: "050509"),
-                card:           Color(hex: "151521"),
-                cardElevated:   Color(hex: "1E1E2E"),
-                quote:          Color(hex: "17172A"),
-                gold:           Color(hex: "E3BC5B"),
-                goldLight:      Color(hex: "F3D89A"),
-                cream:          Color(hex: "F6F1E4"),
-                textSecondary:  Color(hex: "8B8BA5"),
-                accentSoft:     Color(hex: "C9B98F")
-            )
+        case .marianBlue: return Self.marianBluePalette
+        case .midnight:   return Self.midnightPalette
+        case .candlelit:  return Self.candlelitPalette
         }
     }
+
+    private static let marianBluePalette = ThemePalette(
+        background:     Color(hex: "0D1730"),
+        backgroundDeep: Color(hex: "070E1F"),
+        card:           Color(hex: "17284E"),
+        cardElevated:   Color(hex: "1E3260"),
+        quote:          Color(hex: "14213F"),
+        gold:           Color(hex: "D9B84A"),
+        goldLight:      Color(hex: "E9CC6E"),
+        cream:          Color(hex: "F4EFE2"),
+        textSecondary:  Color(hex: "93A5C8"),
+        accentSoft:     Color(hex: "8FA9D8")
+    )
+
+    private static let midnightPalette = ThemePalette(
+        background:     Color(hex: "131324"),
+        backgroundDeep: Color(hex: "0B0B16"),
+        card:           Color(hex: "1F1F38"),
+        cardElevated:   Color(hex: "29294A"),
+        quote:          Color(hex: "232340"),
+        gold:           Color(hex: "D4AF37"),
+        goldLight:      Color(hex: "E8C547"),
+        cream:          Color(hex: "F5F0E1"),
+        textSecondary:  Color(hex: "9C9CB5"),
+        accentSoft:     Color(hex: "ABABD6")
+    )
+
+    private static let candlelitPalette = ThemePalette(
+        background:     Color(hex: "0A0A15"),
+        backgroundDeep: Color(hex: "050509"),
+        card:           Color(hex: "151521"),
+        cardElevated:   Color(hex: "1E1E2E"),
+        quote:          Color(hex: "17172A"),
+        gold:           Color(hex: "E3BC5B"),
+        goldLight:      Color(hex: "F3D89A"),
+        cream:          Color(hex: "F6F1E4"),
+        textSecondary:  Color(hex: "8B8BA5"),
+        accentSoft:     Color(hex: "C9B98F")
+    )
 }
 
 // MARK: - ThemeManager

@@ -71,10 +71,14 @@ struct JournalEntryEditorView: View {
         lockedCategory?.iconName ?? "ph-book"
     }
 
-    private var formattedDate: String {
+    private static let dateFormatter: DateFormatter = {
         let f = DateFormatter()
-        f.dateFormat = "MMM d"
-        return f.string(from: existingEntry?.createdAt ?? Date())
+        f.setLocalizedDateFormatFromTemplate("MMM d")
+        return f
+    }()
+
+    private var formattedDate: String {
+        Self.dateFormatter.string(from: existingEntry?.createdAt ?? Date())
     }
 
     // MARK: - Init

@@ -25,9 +25,6 @@ final class ImageCacheService: @unchecked Sendable {
     private var cache: [String: UIImage] = [:]
     private let lock = NSLock()
 
-    /// Whether preloading has completed
-    private(set) var isReady = false
-
     // MARK: - Image Names
 
     /// All mystery images used in the app: every per-mystery image from
@@ -71,7 +68,6 @@ final class ImageCacheService: @unchecked Sendable {
                 }
             }
         }
-        isReady = true
     }
 
     /// Gets a cached image, falling back to loading from assets if needed.

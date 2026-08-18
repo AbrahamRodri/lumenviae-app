@@ -121,31 +121,37 @@ final class PrayerHistoryService {
 
     // MARK: - Streak Calculation
 
+    /// The distinct days on which at least one Rosary was completed.
+    ///
+    /// One fetch, then set membership. The day-at-a-time walk this replaced
+    /// issued a separate predicate query per day, so a long streak cost
+    /// hundreds of round trips every time a screen asked for it.
+    private func prayerDays() -> Set<Date> {
+        let calendar = Calendar.current
+        return Set(allSessions().map { calendar.startOfDay(for: $0.completedAt) })
+    }
+
     /// Current consecutive days of prayer.
     ///
     /// A streak counts consecutive days where at least one Rosary was completed.
     /// Today counts if a prayer was done today; otherwise streak starts from yesterday.
     func currentStreak() -> Int {
         let calendar = Calendar.current
-        var currentDate = calendar.startOfDay(for: Date())
-        var streak = 0
+        let days = prayerDays()
+        guard !days.isEmpty else { return 0 }
 
-        // Check if prayed today
-        let todaySessions = sessions(on: currentDate)
-        if todaySessions.isEmpty {
-            // No prayer today - check if there's a streak ending yesterday
+        var currentDate = calendar.startOfDay(for: Date())
+
+        // No prayer today: a streak may still be running that ended yesterday.
+        if !days.contains(currentDate) {
             guard let yesterday = calendar.date(byAdding: .day, value: -1, to: currentDate) else {
                 return 0
             }
             currentDate = yesterday
         }
 
-        // Count consecutive days backwards
-        while true {
-            let daySessions = sessions(on: currentDate)
-            if daySessions.isEmpty {
-                break
-            }
+        var streak = 0
+        while days.contains(currentDate) {
             streak += 1
             guard let previousDay = calendar.date(byAdding: .day, value: -1, to: currentDate) else {
                 break
@@ -158,20 +164,10 @@ final class PrayerHistoryService {
 
     /// Longest streak ever achieved.
     func longestStreak() -> Int {
-        let sessions = allSessions()
-        guard !sessions.isEmpty else { return 0 }
+        let sortedDates = prayerDays().sorted()
+        guard !sortedDates.isEmpty else { return 0 }
 
         let calendar = Calendar.current
-
-        // Get unique prayer dates
-        var prayerDates = Set<Date>()
-        for session in sessions {
-            let dayStart = calendar.startOfDay(for: session.completedAt)
-            prayerDates.insert(dayStart)
-        }
-
-        // Sort dates
-        let sortedDates = prayerDates.sorted()
 
         var longestStreak = 1
         var currentStreak = 1

@@ -209,7 +209,7 @@ struct HowToPrayRosaryView: View {
                     Text(step.detail)
                         .font(AppFonts.bodyFont(14))
                         .foregroundColor(AppColors.textSecondary)
-                        .lineSpacing(5)
+                        .lineSpacing(ReadingTypography.lineSpacing(for: 14))
                 }
                 .padding(.vertical, 10)
 
@@ -639,7 +639,7 @@ Per eundem Christum Dominum nostrum. Amen.
             + grace
                 .foregroundColor(AppColors.cream.opacity(0.92))
         )
-        .lineSpacing(5)
+        .lineSpacing(ReadingTypography.lineSpacing(for: 14))
         .fixedSize(horizontal: false, vertical: true)
     }
 
@@ -826,7 +826,7 @@ Per eundem Christum Dominum nostrum. Amen.
             Text(text)
                 .font(AppFonts.bodyFont(14))
                 .foregroundColor(AppColors.textSecondary)
-                .lineSpacing(5)
+                .lineSpacing(ReadingTypography.lineSpacing(for: 14))
         }
     }
 

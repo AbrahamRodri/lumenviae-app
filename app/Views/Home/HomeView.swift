@@ -40,14 +40,7 @@ struct HomeView: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
-                // Reading `sessions` here registers the @Query dependency,
-                // so the flame refreshes the moment a Rosary is recorded.
-                HeaderView(
-                    onMenuTap: { showingMenu = true },
-                    streak: sessions.isEmpty ? 0 : historyService.currentStreak(),
-                    flameLit: sessions.isEmpty ? false : historyService.hasPrayedToday(),
-                    onFlameTap: { router.selectedTab = .progress }
-                )
+                header
 
                 // Scrollable content
                 ScrollView(showsIndicators: false) {
@@ -135,6 +128,11 @@ struct HomeView: View {
         .sheet(isPresented: $showingMenu) {
             MenuView(isPresented: $showingMenu)
         }
+        .onAppear {
+            if historyService == nil {
+                historyService = PrayerHistoryService(modelContext: modelContext)
+            }
+        }
     }
 
     // MARK: - Subviews
@@ -142,8 +140,27 @@ struct HomeView: View {
     /// History service for the header's streak flame.
     /// The @Query-backed `sessions` keeps the header live: when a Rosary
     /// is recorded, the query changes and the body (and flame) refresh.
-    private var historyService: PrayerHistoryService {
-        PrayerHistoryService(modelContext: modelContext)
+    ///
+    /// One instance per view, not one per read: as a computed property this
+    /// built a fresh service on every access, and the header reads it twice
+    /// a render.
+    @State private var historyService: PrayerHistoryService?
+
+    /// The header, with its streak and flame resolved in a single pass over
+    /// the history rather than one query apiece.
+    private var header: some View {
+        // Reading `sessions` here registers the @Query dependency, so the
+        // flame refreshes the moment a Rosary is recorded.
+        let hasSessions = !sessions.isEmpty
+        let streak = hasSessions ? (historyService?.currentStreak() ?? 0) : 0
+        let flameLit = hasSessions ? (historyService?.hasPrayedToday() ?? false) : false
+
+        return HeaderView(
+            onMenuTap: { showingMenu = true },
+            streak: streak,
+            flameLit: flameLit,
+            onFlameTap: { router.selectedTab = .progress }
+        )
     }
 
     /// Reloads the interrupted session's meditation set and jumps back to

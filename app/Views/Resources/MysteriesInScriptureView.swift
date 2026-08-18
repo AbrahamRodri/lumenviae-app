@@ -146,7 +146,7 @@ struct MysteriesInScriptureView: View {
             Text(text)
                 .font(AppFonts.bodyFont(14))
                 .foregroundColor(AppColors.cream.opacity(0.9))
-                .lineSpacing(5)
+                .lineSpacing(ReadingTypography.lineSpacing(for: 14))
         }
     }
 
@@ -346,7 +346,7 @@ struct MysteriesInScriptureView: View {
             Text("By tradition handed down through St. Bridget of Sweden, Our Lady promises seven graces to souls who honor her daily by meditating on her tears and sorrows:")
                 .font(AppFonts.bodyFont(14))
                 .foregroundColor(AppColors.textSecondary)
-                .lineSpacing(5)
+                .lineSpacing(ReadingTypography.lineSpacing(for: 14))
 
             VStack(alignment: .leading, spacing: 10) {
                 graceRow(1, "Peace in their families.")
@@ -379,7 +379,7 @@ struct MysteriesInScriptureView: View {
             Text(text)
                 .font(AppFonts.bodyFont(14))
                 .foregroundColor(AppColors.cream.opacity(0.9))
-                .lineSpacing(5)
+                .lineSpacing(ReadingTypography.lineSpacing(for: 14))
         }
     }
 

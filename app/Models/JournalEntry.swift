@@ -56,6 +56,15 @@ final class JournalEntry {
     /// The consecration phase raw value, nil for rosary entries
     var consecrationPhaseRaw: String?
 
+    /// Which consecration this reflection belongs to.
+    ///
+    /// Without it, a day number alone identified an entry — so a second
+    /// consecration opened Day 5 onto the *first* one's reflection and
+    /// overwrote it on save. Optional because entries written before this
+    /// existed carry no id; `ConsecrationViewModel` backfills them once,
+    /// matching each to the consecration whose 34-day window it falls in.
+    var consecrationId: UUID?
+
     // MARK: - Computed Properties
 
     /// The entry type
@@ -143,6 +152,7 @@ final class JournalEntry {
         text: String,
         consecrationDay: Int,
         consecrationPhase: ConsecrationPhase,
+        consecrationId: UUID? = nil,
         createdAt: Date = Date()
     ) {
         self.id = UUID()
@@ -150,6 +160,7 @@ final class JournalEntry {
         self.entryTypeRaw = JournalEntryType.consecration.rawValue
         self.consecrationDay = consecrationDay
         self.consecrationPhaseRaw = consecrationPhase.rawValue
+        self.consecrationId = consecrationId
         self.createdAt = createdAt
         // Rosary fields
         self.categoryRaw = nil

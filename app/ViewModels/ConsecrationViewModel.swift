@@ -95,6 +95,11 @@ final class ConsecrationViewModel {
             let results = try context.fetch(descriptor)
             progress = results.first { !$0.isCompleted }
             completedProgress = results.first { $0.isCompleted }
+
+            // Claim any reflections written before entries were scoped, so
+            // the day lookups below can match on id alone.
+            backfillUnscopedJournalEntries(against: results)
+
             loadCurrentDay()
         } catch {
             errorMessage = "Failed to load progress: \(error.localizedDescription)"
@@ -199,19 +204,30 @@ final class ConsecrationViewModel {
 
     // MARK: - Journal Management
 
-    /// Load existing journal entry for a day
-    private func loadJournalEntry(for dayNumber: Int) {
-        guard let context = modelContext else { return }
-
+    /// The reflection for one day of the *active* consecration.
+    ///
+    /// Scoped by `consecrationId`, not day number alone: a repeat journey
+    /// would otherwise open the previous one's Day N and overwrite it.
+    private func entryDescriptor(for dayNumber: Int, in consecrationId: UUID) -> FetchDescriptor<JournalEntry> {
         let consecrationTypeRaw = JournalEntryType.consecration.rawValue
-        let descriptor = FetchDescriptor<JournalEntry>(
+        return FetchDescriptor<JournalEntry>(
             predicate: #Predicate {
-                $0.entryTypeRaw == consecrationTypeRaw && $0.consecrationDay == dayNumber
+                $0.entryTypeRaw == consecrationTypeRaw
+                    && $0.consecrationDay == dayNumber
+                    && $0.consecrationId == consecrationId
             }
         )
+    }
+
+    /// Load existing journal entry for a day
+    private func loadJournalEntry(for dayNumber: Int) {
+        guard let context = modelContext, let progress else {
+            journalText = ""
+            return
+        }
 
         do {
-            let results = try context.fetch(descriptor)
+            let results = try context.fetch(entryDescriptor(for: dayNumber, in: progress.id))
             journalText = results.first?.text ?? ""
         } catch {
             journalText = ""
@@ -224,25 +240,19 @@ final class ConsecrationViewModel {
     private func saveJournalEntry(_ content: String, for dayNumber: Int) {
         guard !content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
         guard let context = modelContext,
+              let progress,
               let phase = ConsecrationPhase.phase(for: dayNumber) else { return }
 
-        // Check for existing entry
-        let consecrationTypeRaw = JournalEntryType.consecration.rawValue
-        let descriptor = FetchDescriptor<JournalEntry>(
-            predicate: #Predicate {
-                $0.entryTypeRaw == consecrationTypeRaw && $0.consecrationDay == dayNumber
-            }
-        )
-
         do {
-            let results = try context.fetch(descriptor)
+            let results = try context.fetch(entryDescriptor(for: dayNumber, in: progress.id))
             if let existing = results.first {
                 existing.text = content
             } else {
                 let newEntry = JournalEntry(
                     text: content,
                     consecrationDay: dayNumber,
-                    consecrationPhase: phase
+                    consecrationPhase: phase,
+                    consecrationId: progress.id
                 )
                 context.insert(newEntry)
             }
@@ -250,6 +260,42 @@ final class ConsecrationViewModel {
         } catch {
             errorMessage = "Failed to save journal: \(error.localizedDescription)"
         }
+    }
+
+    /// Assigns pre-scoping reflections to the consecration they were
+    /// written during.
+    ///
+    /// Entries predating `consecrationId` carry none, and a day number
+    /// alone can't tell two journeys apart. Each is matched to the
+    /// consecration whose 34-day window contains its creation date, and
+    /// otherwise to the earliest consecration — before this change only one
+    /// could exist at a time, so an unmatched entry belongs to the first.
+    /// Runs once: after it, no consecration entry has a nil id.
+    private func backfillUnscopedJournalEntries(against allProgress: [ConsecrationProgress]) {
+        guard let context = modelContext, !allProgress.isEmpty else { return }
+
+        let consecrationTypeRaw = JournalEntryType.consecration.rawValue
+        let descriptor = FetchDescriptor<JournalEntry>(
+            predicate: #Predicate {
+                $0.entryTypeRaw == consecrationTypeRaw && $0.consecrationId == nil
+            }
+        )
+
+        guard let orphans = try? context.fetch(descriptor), !orphans.isEmpty else { return }
+
+        let calendar = Calendar.current
+        let oldest = allProgress.min { $0.startDate < $1.startDate }
+
+        for entry in orphans {
+            let owner = allProgress.first { progress in
+                let start = calendar.startOfDay(for: progress.startDate)
+                guard let end = calendar.date(byAdding: .day, value: 34, to: start) else { return false }
+                return entry.createdAt >= start && entry.createdAt < end
+            }
+            entry.consecrationId = (owner ?? oldest)?.id
+        }
+
+        try? context.save()
     }
 
     // MARK: - Reset

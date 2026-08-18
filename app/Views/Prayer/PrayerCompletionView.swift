@@ -167,18 +167,18 @@ struct PrayerCompletionView: View {
         guard !hasRecordedSession else { return }
         guard let category = meditationSet.mysteryCategory else { return }
 
-        let session = PrayerSession(
+        // Recording goes through the service that owns prayer history —
+        // writing the model inline here left `recordSession` with no
+        // callers and split the write away from the layer doing the reads.
+        let service = PrayerHistoryService(modelContext: modelContext)
+        service.recordSession(
             category: category,
-            completedAt: Date(),
             durationSeconds: router.completedSessionDuration,
             meditationType: meditationSet.name
         )
-        modelContext.insert(session)
-        try? modelContext.save()
         hasRecordedSession = true
 
         // Compute progress feedback now that this session counts
-        let service = PrayerHistoryService(modelContext: modelContext)
         streakDays = service.currentStreak()
         totalRosaries = service.totalRosaries()
 

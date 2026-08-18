@@ -176,34 +176,12 @@ final class APIService {
         .dnsLookupFailed
     ]
 
-    /// Performs a single GET request and decodes the response.
-    private func fetchOnce<T: Codable>(url: URL, responseType: T.Type) async throws -> T {
-        do {
-            let (data, response) = try await session.data(from: url)
-
-            if let httpResponse = response as? HTTPURLResponse,
-               !(200...299).contains(httpResponse.statusCode) {
-                throw APIError.serverError(statusCode: httpResponse.statusCode)
-            }
-
-            return try decoder.decode(T.self, from: data)
-        } catch let error as APIError {
-            throw error
-        } catch let error as DecodingError {
-            throw APIError.decodingError(error)
-        } catch {
-            throw APIError.networkError(error)
-        }
-    }
-
-    /// Performs a POST request with a JSON body.
-    private func post<T: Codable, B: Encodable>(url: URL, body: B, responseType: T.Type) async throws -> T {
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
-        request.httpBody = try encoder.encode(body)
-
+    /// Runs a request, validates the status code, and decodes the body.
+    ///
+    /// The single place status checking and error mapping live, so a GET and
+    /// a POST can never disagree about what counts as a server error or how
+    /// a decoding failure is reported.
+    private func send<T: Codable>(_ request: URLRequest, responseType: T.Type) async throws -> T {
         do {
             let (data, response) = try await session.data(for: request)
 
@@ -220,5 +198,21 @@ final class APIService {
         } catch {
             throw APIError.networkError(error)
         }
+    }
+
+    /// Performs a single GET request and decodes the response.
+    private func fetchOnce<T: Codable>(url: URL, responseType: T.Type) async throws -> T {
+        try await send(URLRequest(url: url), responseType: responseType)
+    }
+
+    /// Performs a POST request with a JSON body.
+    private func post<T: Codable, B: Encodable>(url: URL, body: B, responseType: T.Type) async throws -> T {
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.httpBody = try encoder.encode(body)
+
+        return try await send(request, responseType: responseType)
     }
 }

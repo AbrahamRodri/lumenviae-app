@@ -229,7 +229,7 @@ private struct MontfortQuoteCard: View {
                     .font(AppFonts.readingItalicFont(16))
                     .foregroundColor(AppColors.cream)
                     .multilineTextAlignment(.center)
-                    .lineSpacing(5)
+                    .lineSpacing(ReadingTypography.lineSpacing(for: 16))
                     .fixedSize(horizontal: false, vertical: true)
                     .id(index)
                     .transition(.opacity)

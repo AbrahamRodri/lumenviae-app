@@ -44,11 +44,19 @@ final class OfflineContentService {
 
     /// Whether any downloaded files exist, regardless of `state` — drives
     /// the Remove affordance so partial downloads are never unreclaimable.
-    var hasContentOnDisk: Bool {
+    ///
+    /// Cached rather than computed: Account reads this from its body, and
+    /// enumerating both directories synchronously on every re-render stats
+    /// hundreds of files on the main thread once a library is downloaded.
+    /// Only download and removal change the answer, and both refresh it.
+    private(set) var hasContentOnDisk: Bool = false
+
+    /// Re-reads the directories. Called at init and after any write.
+    private func refreshHasContentOnDisk() {
         let fm = FileManager.default
         let sets = (try? fm.contentsOfDirectory(atPath: setsDir.path)) ?? []
         let audio = (try? fm.contentsOfDirectory(atPath: audioDir.path)) ?? []
-        return !sets.isEmpty || !audio.isEmpty
+        hasContentOnDisk = !sets.isEmpty || !audio.isEmpty
     }
 
     // MARK: - Manifest
@@ -85,6 +93,7 @@ final class OfflineContentService {
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
         root = base.appendingPathComponent("OfflineContent", isDirectory: true)
         createDirectories()
+        refreshHasContentOnDisk()
 
         if let data = try? Data(contentsOf: manifestURL),
            let manifest = try? Self.decoder().decode(Manifest.self, from: data) {
@@ -210,6 +219,7 @@ final class OfflineContentService {
                 complete: failures == 0
             )
             try? await Self.writeJSON(manifest, to: manifestURL)
+            refreshHasContentOnDisk()
 
             if failures == 0 {
                 state = .downloaded(at: manifest.downloadedAt, bytes: bytes)
@@ -217,6 +227,9 @@ final class OfflineContentService {
                 state = .failed("\(failures) file\(failures == 1 ? "" : "s") couldn't be downloaded. Try Again to finish — finished files are kept.")
             }
         } catch {
+            // Stage 1 may already have written sets before the throw, so
+            // re-read before trusting the cached flag.
+            refreshHasContentOnDisk()
             if hasContentOnDisk {
                 let bytes = await Self.directorySize(of: root)
                 let manifest = Manifest(downloadedAt: Date(), bytes: bytes, setCount: 0, audioCount: 0, complete: false)
@@ -230,6 +243,7 @@ final class OfflineContentService {
     func removeAll() {
         try? FileManager.default.removeItem(at: root)
         createDirectories()
+        refreshHasContentOnDisk()
         state = .idle
     }
 
@@ -257,23 +271,33 @@ final class OfflineContentService {
 
     /// One random stored set for a category, read and decoded off the main
     /// actor — quick-pray's offline fallback must not freeze the Pray tap.
-    nonisolated func storedRandomSet(category: MysteryCategory) async -> MeditationSet? {
-        let index = await indexURL(for: category)
-        let dir = await setsDir
+    ///
+    /// `@concurrent` is what actually gets it off the main actor: the caller
+    /// is @MainActor, and a plain `nonisolated async` function would inherit
+    /// that isolation and block the very tap this exists to keep responsive.
+    /// The URLs are resolved on the main actor first, then the disk work runs
+    /// on the pool.
+    func storedRandomSet(category: MysteryCategory) async -> MeditationSet? {
+        await Self.randomSet(indexURL: indexURL(for: category), setsDir: setsDir)
+    }
 
-        guard let data = try? Data(contentsOf: index),
-              let summaries = try? Self.decoder().decode([MeditationSetSummary].self, from: data) else {
+    @concurrent
+    private nonisolated static func randomSet(indexURL: URL, setsDir: URL) async -> MeditationSet? {
+        guard let data = try? Data(contentsOf: indexURL),
+              let summaries = try? decoder().decode([MeditationSetSummary].self, from: data) else {
             return nil
         }
 
-        let available = summaries.filter {
-            FileManager.default.fileExists(atPath: dir.appendingPathComponent("\($0.id).json").path)
-        }
-        guard let pick = available.randomElement() else { return nil }
+        // Same naming convention as `setURL(id:)` — kept in one expression
+        // so the on-disk layout can't drift between the two readers.
+        let file: (Int) -> URL = { setsDir.appendingPathComponent("\($0).json") }
 
-        let file = dir.appendingPathComponent("\(pick.id).json")
-        guard let setData = try? Data(contentsOf: file) else { return nil }
-        return try? Self.decoder().decode(MeditationSet.self, from: setData)
+        let available = summaries.filter {
+            FileManager.default.fileExists(atPath: file($0.id).path)
+        }
+        guard let pick = available.randomElement(),
+              let setData = try? Data(contentsOf: file(pick.id)) else { return nil }
+        return try? decoder().decode(MeditationSet.self, from: setData)
     }
 
     /// Local narration audio for a meditation, if downloaded.
@@ -325,20 +349,27 @@ final class OfflineContentService {
 
     // MARK: - Off-Main I/O
 
-    // nonisolated async: runs on the concurrency pool, never the main actor.
+    // @concurrent: these must leave the main actor. `nonisolated async` alone
+    // does not — under SWIFT_APPROACHABLE_CONCURRENCY an async function
+    // inherits its caller's isolation, and every caller here is @MainActor,
+    // so the encode/decode, the file writes, and the directory walk all ran
+    // on the main thread and froze the UI for the length of a download.
 
     private nonisolated static func decoder() -> JSONDecoder { JSONDecoder() }
 
+    @concurrent
     private nonisolated static func writeJSON<T: Encodable>(_ value: T, to url: URL) async throws {
         let data = try JSONEncoder().encode(value)
         try data.write(to: url, options: .atomic)
     }
 
+    @concurrent
     private nonisolated static func readJSON<T: Decodable>(_ type: T.Type, from url: URL) async -> T? {
         guard let data = try? Data(contentsOf: url) else { return nil }
         return try? JSONDecoder().decode(T.self, from: data)
     }
 
+    @concurrent
     private nonisolated static func download(with session: URLSession, from urlString: String, to destination: URL) async throws {
         guard let url = URL(string: urlString) else { throw URLError(.badURL) }
         let (temp, response) = try await session.download(from: url)
@@ -349,6 +380,7 @@ final class OfflineContentService {
         try FileManager.default.moveItem(at: temp, to: destination)
     }
 
+    @concurrent
     private nonisolated static func directorySize(of url: URL) async -> Int64 {
         guard let enumerator = FileManager.default.enumerator(
             at: url,

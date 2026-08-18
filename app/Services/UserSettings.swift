@@ -184,12 +184,26 @@ final class UserSettings {
         }
     }
 
-    /// Human-readable reminder time string, e.g. "6:00 AM"
+    /// Reused; also follows the device's 12/24-hour setting and locale,
+    /// which the hand-rolled "h:mm AM/PM" string this replaced could not —
+    /// it showed "6:00 PM" to a user whose phone reads 18:00 everywhere
+    /// else, and left "AM"/"PM" in English in every language.
+    private static let timeFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.timeStyle = .short
+        formatter.dateStyle = .none
+        return formatter
+    }()
+
+    /// Human-readable reminder time string, e.g. "6:00 AM" or "18:00"
     var reminderTimeLabel: String {
-        let hour = reminderHour % 12 == 0 ? 12 : reminderHour % 12
-        let minute = String(format: "%02d", reminderMinute)
-        let period = reminderHour < 12 ? "AM" : "PM"
-        return "\(hour):\(minute) \(period)"
+        var components = DateComponents()
+        components.hour = reminderHour
+        components.minute = reminderMinute
+        guard let date = Calendar.current.date(from: components) else {
+            return "\(reminderHour):\(String(format: "%02d", reminderMinute))"
+        }
+        return Self.timeFormatter.string(from: date)
     }
 
     /// Bundle file name of the chosen reminder sound

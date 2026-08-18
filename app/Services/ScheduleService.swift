@@ -40,10 +40,16 @@ struct ScheduleService {
         "\(dayName.uppercased()) PRAYER"
     }
 
+    /// Reused: `DateFormatter` init is expensive, and `dayName` is reached
+    /// from the home header on every render.
+    private static let weekdayFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.setLocalizedDateFormatFromTemplate("EEEE")
+        return formatter
+    }()
+
     /// Current day name (e.g., "Wednesday")
     static var dayName: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "EEEE"
-        return formatter.string(from: Date())
+        weekdayFormatter.string(from: Date())
     }
 }

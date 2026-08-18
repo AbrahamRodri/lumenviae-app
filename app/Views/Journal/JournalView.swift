@@ -47,10 +47,17 @@ struct JournalView: View {
         }
     }
 
+    /// Reused across renders — a fresh `DateFormatter` per grouping pass is
+    /// pure setup cost on a screen that re-renders as the user types.
+    private static let monthYearFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.setLocalizedDateFormatFromTemplate("MMMM yyyy")
+        return formatter
+    }()
+
     /// Entries grouped by "Month Year" label, in reverse chronological order
     private var groupedEntries: [(month: String, entries: [JournalEntry])] {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMMM yyyy"
+        let formatter = Self.monthYearFormatter
 
         var groups: [(month: String, entries: [JournalEntry])] = []
         var seen: [String: Int] = [:]
@@ -279,7 +286,7 @@ struct JournalView: View {
                     .font(AppFonts.bodyFont(14))
                     .foregroundColor(AppColors.textSecondary)
                     .multilineTextAlignment(.center)
-                    .lineSpacing(5)
+                    .lineSpacing(ReadingTypography.lineSpacing(for: 14))
             }
 
             Button {
@@ -400,17 +407,45 @@ struct JournalView: View {
 
 // MARK: - JournalEntryCard
 
+/// Date rendering shared by the journal's cards and its detail view.
+///
+/// The formatters are held rather than built per call: the short label is
+/// evaluated once per row per render, so a long journal was constructing a
+/// `DateFormatter` per entry every pass. The gallery card and the list row
+/// also carried byte-identical copies of `dateLabel`.
+private enum JournalDate {
+
+    private static let shortFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.setLocalizedDateFormatFromTemplate("MMM d")
+        return f
+    }()
+
+    private static let longFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateStyle = .long
+        f.timeStyle = .short
+        return f
+    }()
+
+    /// "TODAY" / "YESTERDAY", else a short uppercased date.
+    static func label(for date: Date) -> String {
+        let calendar = Calendar.current
+        if calendar.isDateInToday(date) { return "TODAY" }
+        if calendar.isDateInYesterday(date) { return "YESTERDAY" }
+        return shortFormatter.string(from: date).uppercased()
+    }
+
+    /// Full date and time, for the entry detail header.
+    static func full(for date: Date) -> String {
+        longFormatter.string(from: date)
+    }
+}
+
 struct JournalEntryCard: View {
     let entry: JournalEntry
 
-    private var dateLabel: String {
-        let calendar = Calendar.current
-        if calendar.isDateInToday(entry.createdAt) { return "TODAY" }
-        if calendar.isDateInYesterday(entry.createdAt) { return "YESTERDAY" }
-        let f = DateFormatter()
-        f.dateFormat = "MMM d"
-        return f.string(from: entry.createdAt).uppercased()
-    }
+    private var dateLabel: String { JournalDate.label(for: entry.createdAt) }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -471,14 +506,7 @@ struct JournalEntryCard: View {
 struct JournalEntryRow: View {
     let entry: JournalEntry
 
-    private var dateLabel: String {
-        let calendar = Calendar.current
-        if calendar.isDateInToday(entry.createdAt) { return "TODAY" }
-        if calendar.isDateInYesterday(entry.createdAt) { return "YESTERDAY" }
-        let f = DateFormatter()
-        f.dateFormat = "MMM d"
-        return f.string(from: entry.createdAt).uppercased()
-    }
+    private var dateLabel: String { JournalDate.label(for: entry.createdAt) }
 
     /// The opening of the entry on a single line, with the newlines
     /// flattened so a line break can't blank the preview.
@@ -577,12 +605,7 @@ struct JournalDetailView: View {
     @State private var showingEditor = false
     @State private var showingDeleteConfirm = false
 
-    private var dateString: String {
-        let f = DateFormatter()
-        f.dateStyle = .long
-        f.timeStyle = .short
-        return f.string(from: entry.createdAt)
-    }
+    private var dateString: String { JournalDate.full(for: entry.createdAt) }
 
     var body: some View {
         ZStack {
