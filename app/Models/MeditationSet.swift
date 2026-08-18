@@ -28,6 +28,12 @@ enum MeditationLabel {
     static func displayName(_ label: String) -> String {
         displayNames[label] ?? label
     }
+
+    /// A set's labels as one tracked line — "SAINTS  ·  REFLECTIONS" — the
+    /// way every shelf and hero renders them.
+    static func displayLine(_ labels: [String]) -> String {
+        labels.map(displayName).joined(separator: "  ·  ").uppercased()
+    }
 }
 
 // MARK: - MeditationSet

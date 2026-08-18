@@ -384,31 +384,9 @@ struct ConsecrationDayOverviewView: View {
         ReadingText.paragraphs(of: day?.meditationText ?? "").first ?? ""
     }
 
-    /// The opening paragraph, clamped where it would run past the card.
-    /// Short openings — some readings begin on a single verse — are left
-    /// whole rather than dissolved for the sake of a fade.
-    @ViewBuilder
+    /// The opening paragraph, clamped where it would run past the card
     private var readingPreview: some View {
-        let paragraph = firstParagraph
-        let text = ReadingText(text: paragraph, size: 18)
-
-        if paragraph.count > 260 {
-            text
-                .frame(maxHeight: 132, alignment: .top)
-                .clipped()
-                .mask(
-                    LinearGradient(
-                        stops: [
-                            .init(color: .black, location: 0.62),
-                            .init(color: .clear, location: 1)
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
-        } else {
-            text
-        }
+        ReadingExcerpt(text: firstParagraph, size: 18, clampsAfter: 260, maxHeight: 132)
     }
 
     /// Reading time at the 200-words-a-minute the book reader uses

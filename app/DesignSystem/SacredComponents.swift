@@ -281,10 +281,15 @@ extension View {
     /// The app's card shell: a themed surface behind a fine gold
     /// hairline. One place for it so every card on every screen carries
     /// the same radius, fill, and rule weight.
+    ///
+    /// `filled: false` keeps the padding and the rule but drops the
+    /// surface — an outline on the page for a section that should read
+    /// as a place rather than a slab.
     func sacredCard(
         vertical: CGFloat,
         horizontal: CGFloat,
-        cornerRadius: CGFloat = 16
+        cornerRadius: CGFloat = 16,
+        filled: Bool = true
     ) -> some View {
         self
             .padding(.vertical, vertical)
@@ -292,7 +297,7 @@ extension View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
                 RoundedRectangle(cornerRadius: cornerRadius)
-                    .fill(AppColors.cardBackground)
+                    .fill(filled ? AppColors.cardBackground : Color.clear)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius)
@@ -300,8 +305,8 @@ extension View {
             )
     }
 
-    func sacredCard(padding: CGFloat = 20, cornerRadius: CGFloat = 16) -> some View {
-        sacredCard(vertical: padding, horizontal: padding, cornerRadius: cornerRadius)
+    func sacredCard(padding: CGFloat = 20, cornerRadius: CGFloat = 16, filled: Bool = true) -> some View {
+        sacredCard(vertical: padding, horizontal: padding, cornerRadius: cornerRadius, filled: filled)
     }
 }
 
