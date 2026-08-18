@@ -377,7 +377,8 @@ struct MysteryPrayerView: View {
             // Mystery info — the title zone reserves two lines so one-line
             // titles don't shove everything else around between mysteries
             VStack(spacing: 7) {
-                Text("THE \(Constants.ordinalWord(viewModel.currentMysteryIndex + 1).uppercased()) \(meditationSet.mysteryCategory?.displayName.uppercased() ?? "") MYSTERY")
+                Text((meditationSet.mysteryCategory?.mysteryLabel(ordinal: viewModel.currentMysteryIndex + 1)
+                      ?? "The \(Constants.ordinalWord(viewModel.currentMysteryIndex + 1)) Mystery").uppercased())
                     .font(AppFonts.labelFont(10))
                     .tracking(2.5)
                     .foregroundColor(AppColors.gold)
@@ -513,7 +514,7 @@ struct MysteryPrayerView: View {
                 VStack(spacing: 16) {
                     // Title block — part of the page, not the chrome
                     MysteryInfoSection(
-                        mysteryType: meditationSet.mysteryCategory?.displayName ?? "",
+                        category: meditationSet.mysteryCategory,
                         mysteryNumber: viewModel.currentMysteryIndex + 1,
                         mysteryTitle: meditation.displayTitle
                     )
@@ -904,12 +905,17 @@ struct PrayerHeaderButton: View {
     let icon: String
     var size: CGFloat = 16
     var label: String
+
+    /// The glyph's color — white over artwork; gold when the button is a
+    /// toggle in its "on" state (a pinned set)
+    var tint: Color = .white
+
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
             AppIcon(icon, size: size)
-                .foregroundColor(.white)
+                .foregroundColor(tint)
                 .padding(13)
                 .background(Color.black.opacity(0.3))
                 .clipShape(Circle())
@@ -925,14 +931,16 @@ struct PrayerHeaderButton: View {
 // MARK: - Mystery Info Section
 
 struct MysteryInfoSection: View {
-    let mysteryType: String
+    let category: MysteryCategory?
     let mysteryNumber: Int
     let mysteryTitle: String
 
     var body: some View {
         VStack(spacing: 10) {
-            // Category label
-            Text("THE \(Constants.ordinalWord(mysteryNumber).uppercased()) \(mysteryType.uppercased()) MYSTERY")
+            // Category label — the category owns the noun, so the chaplet
+            // reads "Sorrow of Mary" here as it does everywhere else
+            Text((category?.mysteryLabel(ordinal: mysteryNumber)
+                  ?? "The \(Constants.ordinalWord(mysteryNumber)) Mystery").uppercased())
                 .font(AppFonts.labelFont(10))
                 .tracking(3)
                 .foregroundColor(AppColors.gold)

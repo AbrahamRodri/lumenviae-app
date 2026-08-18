@@ -3,7 +3,8 @@
 //  Lumen Viae
 //
 //  Centralized navigation via NavigationStack:
-//  Home → SelectMeditationView → MysteryPrayerView → PrayerCompletionView → Home.
+//  Home → SelectMeditationView → MeditationSetDetailView → MysteryPrayerView
+//       → PrayerCompletionView → Home.
 //
 
 import SwiftUI
@@ -17,6 +18,10 @@ enum AppRoute: Hashable {
 
     /// Meditation selection screen for a specific category
     case meditationSelection(category: MysteryCategory)
+
+    /// One meditation set, read before it is prayed: what it is and how
+    /// the first mystery opens. Loads the full set on the way.
+    case meditationSetDetail(summary: MeditationSetSummary)
 
     /// Prayer session (requires meditation set to be loaded first)
     case prayerSession(meditationSetId: Int)
@@ -87,6 +92,10 @@ final class AppRouter {
     func navigateToMeditationSelection(category: MysteryCategory) {
         selectedCategory = category
         path.append(AppRoute.meditationSelection(category: category))
+    }
+
+    func navigateToMeditationSetDetail(_ summary: MeditationSetSummary) {
+        path.append(AppRoute.meditationSetDetail(summary: summary))
     }
 
     func navigateToPrayerSession(
