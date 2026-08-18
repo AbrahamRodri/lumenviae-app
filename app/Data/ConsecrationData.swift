@@ -1387,11 +1387,13 @@ Once you have consecrated yourself to Jesus through Mary, live that consecration
 • Keep praying to develop a "great contempt" for the spirit of this world.
 • Maintain a special devotion to the Mystery of the Incarnation, through meditation, spiritual reading, and the Feasts of the Annunciation and the Nativity.
 • Frequently recite the Hail Mary, the Rosary, and the Magnificat.
+• Recite, every day if it is not inconvenient, the "Little Crown of the Blessed Virgin" — a series of Paters, Aves, and Glorias, one Ave for each star in the Virgin's Crown. St. Louis has a special way of praying the Little Crown, which is recommended.
 • Do everything through, with, in and for Mary for the sake of Jesus, with the prayer, "I am all thine, Immaculate One, with all that I have: in time and in eternity" in your heart and on your lips.
 • Associate yourself with Mary in a special way before, during, and after Communion.
+• Wear a little iron chain, around the neck, arm, waist, or ankle, as an outward sign and reminder of holy slavery. This practice is optional, but very recommended by St. Louis. The appearance of this chain is not further specified.
 • Renew the consecration once a year on the same date, following the same 33-day period of exercises. If desired, also renew it monthly with the prayer, "I am all thine and all I have is thine, O dear Jesus, through Mary, Thy holy Mother."
 """,
-                    source: "St. Louis de Montfort"
+                    source: nil
                 )
             ],
             journalPrompt: "Record your thoughts and feelings on this day of consecration. What are you giving to Jesus through Mary today?"
