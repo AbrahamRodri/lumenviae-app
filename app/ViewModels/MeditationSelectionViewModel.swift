@@ -2,13 +2,18 @@
 //  MeditationSelectionViewModel.swift
 //  Lumen Viae
 //
-//  State for the meditation selection screen: loads the list of meditation
-//  sets for a category, then the full set when the user picks one.
+//  State for the meditation picker: loads the list of meditation sets
+//  for a category and narrows it for display.
 //
-//  Browsing is label-driven: sets may carry descriptive labels from the API
-//  (e.g., ["Saints", "Marian"]). Labels become filter chips the user can
-//  combine, and the unfiltered list is grouped by each set's first label.
-//  Until the API sends labels, the picker is a simple flat list.
+//  Browsing is label-driven: sets may carry descriptive labels from the
+//  API (e.g., ["Saints", "Marian"]). Labels become the chips in the
+//  picker's filter tray — any number, combined; a set must carry all of
+//  them — and the unfiltered shelf is grouped by each set's first label.
+//  Pinned sets are lifted above whatever is showing. Until the API sends
+//  labels, the picker is a simple flat shelf.
+//
+//  Loading a full set (with its meditations) happens on the set's own
+//  detail screen — see MeditationSetDetailViewModel.
 //
 
 import Foundation
@@ -29,9 +34,6 @@ final class MeditationSelectionViewModel {
 
     /// Whether the initial list is loading
     var isLoading = false
-
-    /// Whether a specific set is being loaded (after user taps)
-    var isLoadingSet = false
 
     /// Error message if loading fails (nil on success)
     var errorMessage: String?
@@ -70,7 +72,7 @@ final class MeditationSelectionViewModel {
         return ordered
     }
 
-    /// Whether the catalog carries labels at all (drives chips visibility)
+    /// Whether the catalog carries labels at all (drives the filter button)
     var hasLabels: Bool { !allLabels.isEmpty }
 
     func isSelected(_ label: String) -> Bool {
@@ -99,8 +101,14 @@ final class MeditationSelectionViewModel {
         }
     }
 
-    /// Favorited sets within the current filter — pinned above everything
-    var favoriteSets: [MeditationSetSummary] {
+    /// True while anything is narrowing the shelf — drives the count line
+    var isNarrowed: Bool { !selectedLabels.isEmpty }
+
+    var visibleSetCount: Int { filteredSets.count }
+    var totalSetCount: Int { meditationSets.count }
+
+    /// Pinned sets within the current filter — lifted above everything
+    var pinnedSets: [MeditationSetSummary] {
         filteredSets.filter { favorites.isFavorite($0.id) }
     }
 
@@ -111,14 +119,14 @@ final class MeditationSelectionViewModel {
         var id: String { title ?? "•unlabeled" }
     }
 
-    /// Non-favorited sets arranged for display:
-    /// - Filter active (or no labels in catalog): one flat, untitled section.
-    /// - Browsing all with labels: grouped by primary label in
-    ///   first-appearance order; unlabeled sets close the list under "More".
+    /// Unpinned sets arranged for display:
+    /// - Narrowed (or no labels in catalog): one flat, untitled section.
+    /// - Browsing everything: grouped by primary label in first-appearance
+    ///   order; unlabeled sets close the list under "More".
     var sections: [Section] {
         let remaining = filteredSets.filter { !favorites.isFavorite($0.id) }
 
-        guard selectedLabels.isEmpty, hasLabels else {
+        guard !isNarrowed, hasLabels else {
             return remaining.isEmpty ? [] : [Section(title: nil, sets: remaining)]
         }
 
@@ -142,31 +150,17 @@ final class MeditationSelectionViewModel {
         return result
     }
 
-    /// True when an active filter matches nothing — drives the empty state
-    var filterCameUpEmpty: Bool {
-        !selectedLabels.isEmpty && filteredSets.isEmpty
-    }
+    /// True when the narrowing matches nothing — drives the empty state
+    var cameUpEmpty: Bool { isNarrowed && filteredSets.isEmpty }
 
-    // MARK: - Favorites
+    // MARK: - Pinning
 
-    func isFavorite(_ set: MeditationSetSummary) -> Bool {
+    func isPinned(_ set: MeditationSetSummary) -> Bool {
         favorites.isFavorite(set.id)
     }
 
-    func toggleFavorite(_ set: MeditationSetSummary) {
+    func togglePin(_ set: MeditationSetSummary) {
         favorites.toggle(set.id)
-    }
-
-    // MARK: - Computed Properties
-
-    /// Title for the screen header (e.g., "Joyful Mysteries")
-    var categoryTitle: String {
-        "\(category.displayName) Mysteries"
-    }
-
-    /// Subtitle showing traditional days (e.g., "Monday, Saturday")
-    var categorySubtitle: String {
-        category.daysPrayed
     }
 
     // MARK: - Data Loading
@@ -209,19 +203,5 @@ final class MeditationSelectionViewModel {
     func retry() async {
         meditationSets = []
         await loadMeditationSets()
-    }
-
-    /// Loads a complete meditation set when the user taps a set card.
-    ///
-    /// Resolution (bundled → API → offline download) lives in
-    /// MeditationSetResolver so this path can never diverge from the
-    /// resume flow. Throws so the view can offer a retry — it must never
-    /// silently substitute generic text under the tapped set's name.
-    @MainActor
-    func loadFullMeditationSet(id: Int) async throws -> MeditationSet {
-        isLoadingSet = true
-        defer { isLoadingSet = false }
-
-        return try await MeditationSetResolver.resolve(id: id, categoryHint: category.rawValue)
     }
 }

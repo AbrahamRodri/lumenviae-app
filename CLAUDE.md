@@ -18,11 +18,18 @@ Home Screen
         └── Tap any mystery card
             │
             ▼
-Select Meditation View
+Select Meditation View (the shelf)
     │
-    ├── Traditional Meditations
-    ├── St. Louis de Montfort
-    └── Scriptural Rosary
+    ├── Ruled list (default) or gallery of tiles (remembered), pinned sets on top
+    ├── Funnel button → "Kind of meditation" tray (label chips from the API)
+    └── Tap a set
+        │
+        ▼
+Meditation Set Detail (deliberately simple — the API says little about a set)
+    │
+    ├── Full-bleed artwork with a gradient, labels, name, category line
+    ├── The set's description, then the opening of the first mystery
+    └── "Pray with these meditations" (the screen's one gold act)
         │
         ▼
 Prayer Flow (5 Mysteries/Decades)
@@ -189,18 +196,19 @@ app/
 │   ├── TrueDevotionBook, TrueDevotionReadingProgress
 │   └── StreakMilestone, MarianFeastDay, BilingualConsecrationPrayer
 ├── ViewModels/               # @Observable
-│   ├── HomeViewModel, MeditationSelectionViewModel
+│   ├── HomeViewModel, MeditationSelectionViewModel, MeditationSetDetailViewModel
 │   ├── PrayerSessionViewModel, ConsecrationViewModel
 │   └── TrueDevotionReaderViewModel
 ├── Views/
-│   ├── Home/ Meditation/ Prayer/ Journal/ Progress/ Account/
+│   ├── Home/ Prayer/ Journal/ Progress/ Account/
+│   ├── Meditation/           # SelectMeditationView (the shelf), MeditationSetDetailView
 │   ├── Consecration/         # 33-day preparation (own NavigationStack)
 │   ├── TrueDevotion/         # Book reader
 │   ├── Resources/            # How to Pray, Marian Library, Scripture, Carlo Acutis
 │   ├── Onboarding/           # 7-slide first run + RosaryMethodsView
 │   └── Launch/
 ├── Components/               # CustomTabBar, HeaderView, MysteryCard,
-│                             # QuoteSection, MeditationOptionCard, MenuView,
+│                             # QuoteSection, MeditationSetTile (+Row), MenuView,
 │                             # StreakWidget
 ├── DesignSystem/             # Theme, Typography, AppIcon, Motion,
 │                             # SacredComponents (OrnamentDivider, DropCapText…),
@@ -240,8 +248,9 @@ write concurrent code here:
 
 ### Built
 
-- **Core prayer flow** — day-based mysteries, meditation picker with label
-  filtering and favorites, decade-by-decade prayer screen with bead tracking,
+- **Core prayer flow** — day-based mysteries, meditation picker (gallery or
+  list, a filter tray of API labels, pinned sets on top), a set detail step
+  before prayer, decade-by-decade prayer screen with bead tracking,
   completion screen, and a resume card for an unfinished Rosary.
 - **Audio** — narration for meditations and chant for consecration prayers.
 - **Persistence** — prayer sessions and journal entries in SwiftData; settings,

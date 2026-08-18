@@ -37,6 +37,27 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
         }
     }
 
+    /// The devotion's full title as a user reads it: "Joyful Mysteries",
+    /// "Seven Sorrows of Mary". One place for the noun, so the picker
+    /// header, the detail's context line and the prayer screen agree.
+    var devotionTitle: String {
+        switch self {
+        case .sevenSorrows: return "Seven Sorrows of Mary"
+        default: return "\(displayName) Mysteries"
+        }
+    }
+
+    /// The label for one decade by position: "The First Joyful Mystery",
+    /// or, for the chaplet, "The First Sorrow of Mary". Callers uppercase
+    /// or trim the article as their surface needs.
+    func mysteryLabel(ordinal number: Int) -> String {
+        let ordinal = Constants.ordinalWord(number)
+        switch self {
+        case .sevenSorrows: return "The \(ordinal) Sorrow of Mary"
+        default: return "The \(ordinal) \(displayName) Mystery"
+        }
+    }
+
     /// Subtitle describing the theological theme of this category
     var subtitle: String {
         switch self {

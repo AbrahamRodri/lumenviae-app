@@ -133,6 +133,9 @@ struct ContentView: View {
         case .meditationSelection(let category):
             SelectMeditationView(category: category)
 
+        case .meditationSetDetail(let summary):
+            MeditationSetDetailView(summary: summary)
+
         case .prayerSession:
             if let launch = router.pendingPrayer {
                 MysteryPrayerView(launch: launch)
