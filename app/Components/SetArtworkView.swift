@@ -28,16 +28,29 @@ struct SetArtworkView: View {
     /// The set's painting, or nil for a set that has none
     let artwork: SetArtwork?
 
-    /// The devotion, for the bundled painting the chain ends on
-    let category: MysteryCategory?
+    /// What the chain ends on when the set's painting isn't there
+    let fallback: Fallback
+
+    /// Where the chain ends. A set on its own page ends on the devotion's
+    /// painting, so the plate is never empty. A shelf of sets ends on
+    /// nothing: the same category painting repeated down every tile that
+    /// lacks its own would say nothing about any of them.
+    enum Fallback {
+        case categoryPainting(MysteryCategory?)
+        case nothing
+    }
 
     @State private var loaded: UIImage?
     @State private var failed = false
 
     init(setId: Int, artwork: SetArtwork?, category: MysteryCategory?) {
+        self.init(setId: setId, artwork: artwork, fallback: .categoryPainting(category))
+    }
+
+    init(setId: Int, artwork: SetArtwork?, fallback: Fallback) {
         self.setId = setId
         self.artwork = artwork
-        self.category = category
+        self.fallback = fallback
         // A revisited page finds its plate already decoded and shows it on
         // the first frame rather than after a fade.
         _loaded = State(initialValue: artwork.flatMap { ArtworkCache.shared.cached($0.url) })
@@ -53,7 +66,12 @@ struct SetArtworkView: View {
                         .transition(.opacity)
                 }
             } else {
-                categoryPainting
+                switch fallback {
+                case .categoryPainting(let category):
+                    categoryPainting(for: category)
+                case .nothing:
+                    Color.clear
+                }
             }
         }
         .animation(.easeOut(duration: 0.35), value: loaded != nil)
@@ -73,7 +91,7 @@ struct SetArtworkView: View {
     }
 
     /// The bundled painting for the devotion — the end of the chain
-    private var categoryPainting: some View {
+    private func categoryPainting(for category: MysteryCategory?) -> some View {
         let fallback = category ?? .joyful
         return CachedAssetImage(fallback.cardImageName, focal: fallback.cardFocalPoint)
     }

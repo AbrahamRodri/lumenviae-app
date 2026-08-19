@@ -286,6 +286,8 @@ struct SelectMeditationView: View {
                         MeditationSetTile(
                             title: meditationSet.name,
                             labels: meditationSet.labels ?? [],
+                            setId: meditationSet.id,
+                            artwork: meditationSet.artwork,
                             isPinned: viewModel.isPinned(meditationSet),
                             onTogglePin: {
                                 withAnimation(.easeOut(duration: 0.25)) {
@@ -303,6 +305,8 @@ struct SelectMeditationView: View {
                         MeditationSetRow(
                             title: meditationSet.name,
                             labels: meditationSet.labels ?? [],
+                            setId: meditationSet.id,
+                            artwork: meditationSet.artwork,
                             isPinned: viewModel.isPinned(meditationSet),
                             showsDivider: index > 0 || leadsWithRule,
                             onTogglePin: {
