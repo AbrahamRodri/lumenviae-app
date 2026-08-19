@@ -54,14 +54,6 @@ struct MysteryPrayerView: View {
     /// True while a tap on the artwork has cleared the chrome
     @State private var chromeHidden = false
 
-    /// The set's own painting, once its bytes are in hand. Nil while it
-    /// is on its way, and for a set that has none.
-    @State private var setPainting: UIImage?
-
-    /// The set's painting could not be fetched — the bundled paintings
-    /// take over for the rest of this Rosary
-    @State private var setPaintingFailed = false
-
     /// True while the meditation text is open over the player.
     ///
     /// Read straight off `prayerImageMode`, the persisted memory of which
@@ -92,11 +84,6 @@ struct MysteryPrayerView: View {
             startAtIndex: launch.startIndex,
             priorSeconds: launch.priorSeconds
         ))
-        // Arriving from the set's own page, the painting is already
-        // decoded — show it on the first frame rather than after a fade.
-        self._setPainting = State(initialValue: launch.meditationSet.artwork.flatMap {
-            ArtworkCache.shared.cached($0.url)
-        })
     }
 
     var body: some View {
@@ -164,9 +151,6 @@ struct MysteryPrayerView: View {
                 )
             }
             await viewModel.loadCurrentAudio()
-        }
-        .task(id: meditationSet.artwork?.url) {
-            await loadSetPainting()
         }
         .task {
             // A first Rosary only, and only once it has had a moment to
@@ -264,43 +248,18 @@ struct MysteryPrayerView: View {
 
     // MARK: - The Painting
 
-    /// The painting this mystery is prayed under.
-    ///
-    /// The set's own when it has one — the painting its curator chose for
-    /// the whole set, which then stays through all five mysteries the way
-    /// a record's sleeve stays through its tracks. Otherwise the bundled
-    /// painting for this mystery. Nil only while the set's painting is
-    /// still on its way (the plate holds the card fill, and the painting
-    /// fades in) or when there is nothing to draw at all.
+    /// The personal painting for the mystery currently being prayed.
+    /// A meditation set's artwork belongs only to its preview page; it
+    /// must never replace the mystery image in the player or reader.
     private var painting: PrayerPainting? {
-        if let artwork = meditationSet.artwork, !setPaintingFailed {
-            return setPainting.map { PrayerPainting.set(artwork, image: $0) }
-        }
-        return bundledPaintingName.flatMap(PrayerPainting.bundled)
+        bundledPaintingName.flatMap(PrayerPainting.bundled)
     }
 
-    /// The bundled painting for this mystery — the end of the chain, and
-    /// what the Lock Screen shows until the set's painting is decoded.
     private var bundledPaintingName: String? {
         Constants.mysteryImageURL(
             category: meditationSet.category,
             index: viewModel.currentMysteryIndex
         )
-    }
-
-    /// Fetches the set's painting, if it has one and it isn't in hand.
-    /// Runs once per set, not per mystery.
-    private func loadSetPainting() async {
-        guard let artwork = meditationSet.artwork, setPainting == nil else { return }
-        setPaintingFailed = false
-        let image = await ArtworkCache.shared.image(for: artwork, setId: meditationSet.id)
-        guard !Task.isCancelled else { return }
-        if let image {
-            setPainting = image
-            viewModel.refreshNowPlayingArtwork(image)
-        } else {
-            setPaintingFailed = true
-        }
     }
 
     /// What the ⋯ menus can do with the meditation on screen. Assembled
@@ -428,9 +387,6 @@ struct MysteryPrayerView: View {
             Spacer(minLength: 0)
         }
         .ignoresSafeArea(edges: .top)
-        // The set's painting arriving fades in over the plate rather than
-        // snapping — the same entrance the set's own page gives it
-        .animation(.easeInOut(duration: 0.35), value: setPainting == nil)
         // One layer for the crossfade. Without this the opacity transition
         // is applied leaf by leaf — the painting fades in on its own and
         // the frost and foot fade on top of it fade in on their own — so

@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import UIKit
 
 @Observable
 final class PrayerSessionViewModel {
@@ -273,7 +272,14 @@ final class PrayerSessionViewModel {
     /// found dead. Nil for a mystery with no narration.
     var currentRemoteAudioURL: String? {
         guard let meditation = currentMeditation, meditation.hasAudio else { return nil }
-        return freshAudioURLs[meditation.id]?.url ?? meditation.audioUrl
+        if let fresh = freshAudioURLs[meditation.id],
+           fresh.expiry.map({ $0 > Date() }) ?? true {
+            return fresh.url
+        }
+        // Do not offer a URL that the set has explicitly told us is dead.
+        // `loadCurrentAudio` will resolve a new one; until then the menu
+        // hides Download rather than starting a guaranteed-to-fail save.
+        return meditationSet.audioURLsHaveExpired ? nil : meditation.audioUrl
     }
 
     /// Where the narration comes from, in order: the copy on disk; a fresh
@@ -329,12 +335,9 @@ final class PrayerSessionViewModel {
     /// Hands one source to the player with this mystery's Lock Screen
     /// details. The same call for the first try and the refreshed one.
     ///
-    /// The Lock Screen shows what the player shows: the set's own painting
-    /// when the set has one and it is decoded, else the bundled painting
-    /// for this mystery. Only a painting already in hand is passed — the
-    /// narration must never wait on an image download — and the view
-    /// hands the set's painting over through `refreshNowPlayingArtwork`
-    /// the moment it lands.
+    /// The Lock Screen shows the current mystery's personal painting, just
+    /// like the player and reader. Set artwork is reserved for the set's
+    /// preview page and never overrides a mystery image.
     @MainActor
     private func load(_ url: String, for meditation: Meditation) async {
         await audioService.loadAudio(
@@ -345,22 +348,11 @@ final class PrayerSessionViewModel {
                 category: meditationSet.category,
                 index: currentMysteryIndex
             ),
-            artworkImage: meditationSet.artwork.flatMap { ArtworkCache.shared.cached($0.url) },
             album: meditationSet.name,
             queueIndex: currentMysteryIndex,
             queueCount: totalMysteries,
             claimNowPlaying: true
         )
-    }
-
-    /// The set's painting has arrived after the narration was published —
-    /// put it on the Lock Screen now rather than at the next mystery.
-    /// Only while this flow still owns the player; a Rosary left mid-
-    /// download must not repaint whatever is playing in its place.
-    @MainActor
-    func refreshNowPlayingArtwork(_ image: UIImage) {
-        guard audioService.isTrackNavigationOwner(navigationOwner) else { return }
-        audioService.updateNowPlayingArtwork(image: image)
     }
 
     /// The flow was left while a load was in flight. Only tear down if

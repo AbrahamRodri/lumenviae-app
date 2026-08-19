@@ -5,14 +5,11 @@
 //  The two readings of a meditation set on the picker's shelf.
 //
 //  MeditationSetTile is the gallery reading: a half-width tile carrying
-//  the set's name, its labels, and a pin — and, for a set that has one,
-//  its own painting as the tile's ground, the way the home grid's cards
-//  carry theirs. No glyph, and no stand-in art: a set without a painting
-//  is read by title on a plain card, rather than under the category's
-//  painting repeated down the shelf. MeditationSetRow is the same set with
-//  the tile taken away: type only, ruled off from its neighbour, with a
-//  small plate of the painting at its leading edge when there is one.
-//  The picker's toggle picks between them.
+//  the set's name, its labels, and a pin. No glyph and no artwork — the
+//  shelf is read by title, and a grid of icons was noisier than it was
+//  useful. MeditationSetRow is the same set with the tile taken away:
+//  type only, ruled off from its neighbour. The picker's toggle picks
+//  between them.
 //
 
 import SwiftUI
@@ -25,11 +22,6 @@ struct MeditationSetTile: View {
 
     /// Descriptive labels, shown as one tracked line under the title
     var labels: [String] = []
-
-    /// The set's own painting, when it has one. The API's id goes with
-    /// it so an offline copy can be found.
-    var setId: Int = 0
-    var artwork: SetArtwork? = nil
 
     /// Pinned to the top of the picker. A pin, not a star: the list
     /// isn't rated, it's ordered — this set is the one you keep coming
@@ -49,11 +41,7 @@ struct MeditationSetTile: View {
                     if let onTogglePin {
                         Button(action: onTogglePin) {
                             AppIcon(isPinned ? "ph-push-pin-fill" : "ph-push-pin", size: 15)
-                                .foregroundColor(
-                                    isPinned ? AppColors.gold
-                                        : artwork == nil ? AppColors.textSecondary.opacity(0.55)
-                                        : AppColors.cream.opacity(0.8)
-                                )
+                                .foregroundColor(isPinned ? AppColors.gold : AppColors.textSecondary.opacity(0.55))
                                 .frame(width: 44, height: 44)
                                 .contentShape(Rectangle())
                         }
@@ -79,43 +67,14 @@ struct MeditationSetTile: View {
                     Text(labelLine)
                         .font(AppFonts.labelFont(9.5))
                         .tracking(1.6)
-                        .foregroundColor(artwork == nil ? AppColors.accentSoft : AppColors.cream.opacity(0.8))
+                        .foregroundColor(AppColors.accentSoft)
                         .lineLimit(2)
                 }
             }
-            // Words over a painting get a breath of shadow, so a pale
-            // passage behind them can't take the title away
-            .shadow(color: .black.opacity(artwork == nil ? 0 : 0.55), radius: 4, y: 1)
             // A floor, not a ceiling: the tile grows with the text size
             // rather than letting a long title climb out of it.
             .frame(minHeight: 172, alignment: .bottomLeading)
-            // The card's own fill would sit over anything laid behind it, so
-            // a painted tile draws its ground here instead: the card fill,
-            // the painting over it, and a scrim that gathers only under the
-            // title — like the home grid's — so the painting stays clear
-            // through the top of the tile where nothing needs to be read.
-            // The card fill stays beneath so a painting that never arrives
-            // leaves a plain tile, not a hole in the shelf.
-            .sacredCard(padding: 14, filled: artwork == nil)
-            .background {
-                if let artwork {
-                    ZStack {
-                        AppColors.cardBackground
-                        SetArtworkView(setId: setId, artwork: artwork, fallback: .nothing)
-                        LinearGradient(
-                            stops: [
-                                .init(color: .black.opacity(0.08), location: 0),
-                                .init(color: .black.opacity(0.22), location: 0.45),
-                                .init(color: .black.opacity(0.72), location: 1)
-                            ],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    }
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
-                    .allowsHitTesting(false)
-                }
-            }
+            .sacredCard(padding: 14)
             // A pinned set carries a brighter rim, so the pinned ones read
             // as a group even once they're scrolled among the rest
             .overlay(
@@ -138,12 +97,6 @@ struct MeditationSetRow: View {
 
     let title: String
     var labels: [String] = []
-
-    /// The set's own painting, when it has one — a small plate at the
-    /// leading edge. Rows without one keep to type.
-    var setId: Int = 0
-    var artwork: SetArtwork? = nil
-
     var isPinned: Bool = false
     var showsDivider: Bool = true
     var onTogglePin: (() -> Void)? = nil
@@ -159,17 +112,6 @@ struct MeditationSetRow: View {
                 }
 
                 HStack(spacing: 14) {
-                    if let artwork {
-                        SetArtworkView(setId: setId, artwork: artwork, fallback: .nothing)
-                            .background(AppColors.cardBackground)
-                            .frame(width: 44, height: 44)
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .strokeBorder(AppColors.gold.opacity(0.25), lineWidth: 0.5)
-                            )
-                    }
-
                     VStack(alignment: .leading, spacing: 5) {
                         Text(title)
                             .font(AppFonts.headlineFont(16))
