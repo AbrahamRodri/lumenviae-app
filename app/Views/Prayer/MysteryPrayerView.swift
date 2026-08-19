@@ -252,7 +252,13 @@ struct MysteryPrayerView: View {
     /// A meditation set's artwork belongs only to its preview page; it
     /// must never replace the mystery image in the player or reader.
     private var painting: PrayerPainting? {
-        bundledPaintingName.flatMap(PrayerPainting.bundled)
+        // A closure, not the bare `PrayerPainting.bundled` reference:
+        // the module is MainActor by default, so that reference is a
+        // main-actor function value being handed to a nonisolated
+        // generic, which reads as a call from no actor at all. A
+        // closure literal isn't Sendable, so it inherits this view's
+        // isolation and the call stays on the main actor.
+        bundledPaintingName.flatMap { PrayerPainting.bundled($0) }
     }
 
     private var bundledPaintingName: String? {
