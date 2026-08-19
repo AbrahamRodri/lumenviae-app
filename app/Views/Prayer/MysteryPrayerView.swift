@@ -297,7 +297,7 @@ struct MysteryPrayerView: View {
         GeometryReader { geometry in
             VStack(spacing: 0) {
                 playerHeader
-                    .padding(.top, 8)
+                    .padding(.top, 12)
 
                 Spacer()
 
@@ -343,7 +343,7 @@ struct MysteryPrayerView: View {
         // Seated higher than the painting would like: the player's title,
         // scrubber, transport and utility row are four bands of chrome,
         // and they need ground of their own to sit on.
-        let seatedHeight = fullHeight * 0.78
+        let seatedHeight = fullHeight * 0.75
         let artHeight = chromeHidden ? fullHeight : seatedHeight
 
         return VStack(spacing: 0) {
@@ -364,6 +364,14 @@ struct MysteryPrayerView: View {
             Spacer(minLength: 0)
         }
         .ignoresSafeArea(edges: .top)
+        // One layer for the crossfade. Without this the opacity transition
+        // is applied leaf by leaf — the painting fades in on its own and
+        // the frost and foot fade on top of it fade in on their own — so
+        // halfway through the switch the sharp painting shows through its
+        // own fade with a hard edge at the foot, then the fade "comes
+        // back" as the transition finishes. Composited first, the
+        // transition fades the finished picture as a whole.
+        .compositingGroup()
         .id(viewModel.currentMysteryIndex)
         .transition(.opacity)
         .animation(.easeInOut(duration: 0.3), value: viewModel.currentMysteryIndex)
@@ -387,21 +395,6 @@ struct MysteryPrayerView: View {
             .aspectRatio(contentMode: .fill)
             .frame(width: width, height: height)
             .clipped()
-            // Seats the art on the background so it never ends on a hard
-            // line: a fade to the background color right at the image's
-            // foot, under the frost. Compact in contemplation — the art
-            // should feel full-bleed, just not edge-cut.
-            .overlay(
-                LinearGradient(
-                    stops: [
-                        .init(color: .clear, location: chromeHidden ? 0.88 : 0.74),
-                        .init(color: AppColors.background, location: 1.0)
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .allowsHitTesting(false)
-            )
             .overlay(
                 // Two staggered blur layers fake a progressive blur: the
                 // soft pass eases the sharp painting into the frost, the
@@ -427,6 +420,33 @@ struct MysteryPrayerView: View {
                 .allowsHitTesting(false),
                 alignment: .top
             )
+            // Seats the art on the background so it never ends on a hard
+            // line: one fade to the background color, laid over the sharp
+            // painting *and* its frost together. Earlier the frost sat
+            // above this fade and cut itself out with a short taper of its
+            // own at the foot — a bright blurred band held at full strength
+            // over an already-dark base, then dropped across ~50pt. Flat,
+            // steep, flat is exactly what the eye reads as a line. One long
+            // ramp over everything has no such step.
+            //
+            // It also finishes *before* the image's own edge and holds flat
+            // background through it: a ramp that only reaches full color on
+            // the last pixel still shows the last few percent of a bright
+            // foot (the Annunciation's cream cloud) as a line exactly where
+            // the image stops. Compact in contemplation — the art should
+            // feel full-bleed, just not edge-cut.
+            .overlay(
+                LinearGradient(
+                    stops: [
+                        .init(color: .clear, location: chromeHidden ? 0.86 : 0.70),
+                        .init(color: AppColors.background, location: 0.95),
+                        .init(color: AppColors.background, location: 1.0)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .allowsHitTesting(false)
+            )
             .clipped()
     }
 
@@ -445,15 +465,15 @@ struct MysteryPrayerView: View {
             .clipped()
             .blur(radius: radius)
             .mask(
-                // The frost tapers back out at the very foot — the blurred
-                // copy would otherwise re-cut the same hard edge the
-                // background fade underneath exists to remove.
+                // Held to the foot, not tapered back out: the background
+                // fade above covers the frost too, so the blurred copy
+                // can't re-cut the image's edge, and a second taper here
+                // would only add a step of its own.
                 LinearGradient(
                     stops: [
                         .init(color: .clear, location: from),
                         .init(color: .black, location: to),
-                        .init(color: .black, location: 0.92),
-                        .init(color: .clear, location: 1.0)
+                        .init(color: .black, location: 1.0)
                     ],
                     startPoint: .top,
                     endPoint: .bottom
@@ -534,11 +554,11 @@ struct MysteryPrayerView: View {
 
             transportRow(meditation: meditation)
                 .padding(.horizontal, 18)
-                .padding(.top, swipeHint == .showing ? 12 : 18)
+                .padding(.top, swipeHint == .showing ? 20 : 30)
 
             utilityRow
-                .padding(.top, 6)
-                .padding(.bottom, 6)
+                .padding(.top, 22)
+                .padding(.bottom, 16)
         }
     }
 
@@ -561,6 +581,7 @@ struct MysteryPrayerView: View {
                 .fixedSize(horizontal: false, vertical: true)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.bottom, 8)
         .id(viewModel.currentMysteryIndex)
         .transition(.opacity)
         .animation(.easeInOut(duration: 0.4), value: viewModel.currentMysteryIndex)
