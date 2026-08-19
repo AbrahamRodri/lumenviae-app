@@ -8,9 +8,9 @@
 //  the API, cropped around the focal point a curator chose → the
 //  category's bundled painting around its own focal point. Per-meditation
 //  artwork, when it arrives, slots in ahead of the set's; the view's
-//  callers never learn which link answered. The prayer flow makes the
-//  same first choice and a different last one — the bundled painting for
-//  the mystery being prayed — see `PrayerPainting`.
+//  callers never learn which link answered. This view is reserved for the
+//  meditation-set preview; the prayer flow always uses each mystery's own
+//  bundled painting — see `PrayerPainting`.
 //
 //  While the set's painting is on its way the plate is the card fill, and
 //  the painting fades in — never the category's painting first, which
@@ -41,6 +41,10 @@ struct SetArtworkView: View {
     }
 
     @State private var loaded: UIImage?
+    /// The URL `loaded` belongs to. SwiftUI can preserve this view's state
+    /// while a reused shelf cell receives a different set, so the image and
+    /// its identity must move together.
+    @State private var loadedURL: String?
     @State private var failed = false
 
     init(setId: Int, artwork: SetArtwork?, category: MysteryCategory?) {
@@ -53,7 +57,9 @@ struct SetArtworkView: View {
         self.fallback = fallback
         // A revisited page finds its plate already decoded and shows it on
         // the first frame rather than after a fade.
-        _loaded = State(initialValue: artwork.flatMap { ArtworkCache.shared.cached($0.url) })
+        let cached = artwork.flatMap { ArtworkCache.shared.cached($0.url) }
+        _loaded = State(initialValue: cached)
+        _loadedURL = State(initialValue: cached == nil ? nil : artwork?.url)
     }
 
     var body: some View {
@@ -61,7 +67,7 @@ struct SetArtworkView: View {
             if let artwork, !failed {
                 AppColors.cardBackground
 
-                if let loaded {
+                if let loaded, loadedURL == artwork.url {
                     FocalFill(uiImage: loaded, focal: artwork.focalPoint)
                         .transition(.opacity)
                 }
@@ -76,12 +82,27 @@ struct SetArtworkView: View {
         }
         .animation(.easeOut(duration: 0.35), value: loaded != nil)
         .task(id: artwork?.url) {
-            guard let artwork, loaded == nil else { return }
+            guard let artwork else {
+                loaded = nil
+                loadedURL = nil
+                failed = false
+                return
+            }
+
+            if loadedURL == artwork.url, loaded != nil { return }
+
+            // Do not leave the previous set's painting in a cell SwiftUI
+            // has reused while the new painting is being resolved.
+            loaded = ArtworkCache.shared.cached(artwork.url)
+            loadedURL = loaded == nil ? nil : artwork.url
             failed = false
+            if loaded != nil { return }
+
             let image = await ArtworkCache.shared.image(for: artwork, setId: setId)
             guard !Task.isCancelled else { return }
             if let image {
                 loaded = image
+                loadedURL = artwork.url
             } else {
                 failed = true
             }
@@ -100,7 +121,7 @@ struct SetArtworkView: View {
     /// painting on screen. The bundled fallbacks are decorative and stay
     /// hidden from VoiceOver, as they always were.
     private var accessibilityText: String? {
-        guard let artwork, !failed, loaded != nil else { return nil }
+        guard let artwork, !failed, loaded != nil, loadedURL == artwork.url else { return nil }
         guard let alt = artwork.alt, !alt.isEmpty else { return nil }
         return alt
     }

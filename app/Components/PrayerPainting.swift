@@ -7,9 +7,9 @@
 //  artwork, the reader's mini-player thumbnail and the Lock Screen, so the
 //  three can never show different pictures for one mystery.
 //
-//  Which painting: the set's own when the set has one — the painting its
-//  curator chose for the whole set — and otherwise the bundled painting
-//  for this mystery. `MysteryPrayerView` makes that choice once.
+//  The painting is always the current mystery's own bundled image. A
+//  meditation set's artwork belongs to its preview page and never replaces
+//  these personal mystery images in the prayer flow.
 //
 
 import SwiftUI
@@ -32,11 +32,5 @@ struct PrayerPainting: Equatable {
         ImageCacheService.shared.image(named: assetName).map {
             PrayerPainting(uiImage: $0, focal: .center)
         }
-    }
-
-    /// A set's painting once its bytes are in hand, cropped around the
-    /// point its curator chose.
-    static func set(_ artwork: SetArtwork, image: UIImage) -> PrayerPainting {
-        PrayerPainting(uiImage: image, focal: artwork.focalPoint)
     }
 }
