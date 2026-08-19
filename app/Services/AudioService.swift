@@ -84,6 +84,12 @@ final class AudioService {
     private var nowPlayingArtworkAsset: String?
     private var cachedArtwork: (asset: String, artwork: MPMediaItemArtwork)?
 
+    /// A painting already decoded by the caller — a set's own, fetched
+    /// from the API — which wins over the asset name when present. Kept
+    /// with its built artwork for the same reason as the asset's.
+    private var nowPlayingArtworkImage: UIImage?
+    private var cachedImageArtwork: (image: UIImage, artwork: MPMediaItemArtwork)?
+
     // MARK: - Initialization
 
     private init() {
@@ -482,6 +488,16 @@ final class AudioService {
 
     // MARK: - Now Playing Info
 
+    /// Swaps the Lock Screen painting for a track already published —
+    /// the set's painting arriving a moment after its narration loaded.
+    /// Nothing else about the track changes, so only the artwork moves.
+    @MainActor
+    func updateNowPlayingArtwork(image: UIImage) {
+        nowPlayingArtworkImage = image
+        guard player != nil else { return }
+        updateNowPlayingInfo()
+    }
+
     /// Publishes metadata to the Lock Screen / Control Center.
     private func updateNowPlayingInfo() {
         var info: [String: Any] = [:]
@@ -520,6 +536,15 @@ final class AudioService {
     /// here would run on the main actor at exactly the moment the
     /// artwork transition is animating on screen.
     private func lockScreenArtwork() -> MPMediaItemArtwork? {
+        if let image = nowPlayingArtworkImage {
+            if let cached = cachedImageArtwork, cached.image === image {
+                return cached.artwork
+            }
+            let artwork = MPMediaItemArtwork(boundsSize: image.size) { _ in image }
+            cachedImageArtwork = (image, artwork)
+            return artwork
+        }
+
         guard let asset = nowPlayingArtworkAsset else { return nil }
         if let cached = cachedArtwork, cached.asset == asset {
             return cached.artwork
@@ -563,6 +588,7 @@ final class AudioService {
         title: String? = nil,
         subtitle: String? = nil,
         artworkAssetName: String? = nil,
+        artworkImage: UIImage? = nil,
         album: String? = nil,
         queueIndex: Int? = nil,
         queueCount: Int? = nil,
@@ -578,6 +604,7 @@ final class AudioService {
             nowPlayingTitle = title ?? nowPlayingTitle
             nowPlayingSubtitle = subtitle ?? nowPlayingSubtitle
             nowPlayingArtworkAsset = artworkAssetName ?? nowPlayingArtworkAsset
+            nowPlayingArtworkImage = artworkImage ?? nowPlayingArtworkImage
             nowPlayingAlbum = album ?? nowPlayingAlbum
             nowPlayingQueueIndex = queueIndex ?? nowPlayingQueueIndex
             nowPlayingQueueCount = queueCount ?? nowPlayingQueueCount
@@ -596,6 +623,7 @@ final class AudioService {
         nowPlayingTitle = title
         nowPlayingSubtitle = subtitle
         nowPlayingArtworkAsset = artworkAssetName
+        nowPlayingArtworkImage = artworkImage
         nowPlayingAlbum = album
         nowPlayingQueueIndex = queueIndex
         nowPlayingQueueCount = queueCount

@@ -6,7 +6,7 @@
 //  for a category and narrows it for display.
 //
 //  Browsing is label-driven: sets may carry descriptive labels from the
-//  API (e.g., ["Saints", "Marian"]). Labels become the chips in the
+//  API (e.g., ["Saints", "Scriptural"]). Labels become the chips in the
 //  picker's filter tray — any number, combined; a set must carry all of
 //  them — and the unfiltered shelf is grouped by each set's first label.
 //  Pinned sets are lifted above whatever is showing. Until the API sends

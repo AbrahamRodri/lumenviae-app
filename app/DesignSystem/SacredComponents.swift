@@ -9,6 +9,69 @@
 
 import SwiftUI
 
+// MARK: - Smooth Ramps
+
+extension Gradient {
+
+    /// Smoothstep — 3t² − 2t³. Zero slope at both ends.
+    private static func smoothstep(_ t: CGFloat) -> CGFloat {
+        t * t * (3 - 2 * t)
+    }
+
+    /// Sample points for the ramps below. Dense enough that the straight
+    /// segments between them are shorter than the eye resolves.
+    private static let rampSamples: [CGFloat] = [
+        0, 0.12, 0.24, 0.36, 0.47, 0.58, 0.68, 0.77, 0.85, 0.92, 1
+    ]
+
+    /// A fade to `color` across `from`…`end` of a gradient's span, eased
+    /// so neither end is a line.
+    ///
+    /// Two things make an image's dissolve into the page visible, and
+    /// this addresses both:
+    ///
+    /// A two-stop ramp is smooth in the middle and has a **corner** at
+    /// each end. The eye reads a corner in a gradient as a line — a Mach
+    /// band — which is the very edge such a fade exists to remove. These
+    /// stops follow a smoothstep, so there is no corner to find.
+    ///
+    /// And `end` should land **before** the image's own edge, never on
+    /// it. Alpha is linear but sight is not: the last few percent of a
+    /// *dark* painting showing through is nothing, while the last few
+    /// percent of a bright cloud or a pale robe is a visible band right
+    /// where the image stops. Finishing the fade early and holding the
+    /// flat color through the edge costs a sliver of painting and makes
+    /// the seam unfindable at any brightness.
+    static func smoothFade(to color: Color, from: CGFloat, end: CGFloat = 1) -> Gradient {
+        Gradient(stops: rampSamples.map { t in
+            Gradient.Stop(
+                color: color.opacity(smoothstep(t)),
+                location: from + (end - from) * t
+            )
+        })
+    }
+
+    /// An eased mask ramping clear→black across `from`…`to`, then held to
+    /// the foot.
+    ///
+    /// Held, deliberately, rather than tapered back out. A frost that
+    /// fades away at the very bottom lets the **sharp** image underneath
+    /// re-emerge for the last couple of percent — and it only reads as a
+    /// seam over bright paint, where a two-percent return of a cream
+    /// cloud is a visible line and the same two percent of a dark robe is
+    /// nothing. Whatever covers the image below must be fully opaque
+    /// before this mask reaches the foot; then the mask's own hard edge
+    /// there is under it and cannot be seen.
+    static func smoothMask(from: CGFloat, to: CGFloat) -> Gradient {
+        Gradient(stops: rampSamples.map { t in
+            Gradient.Stop(
+                color: .black.opacity(smoothstep(t)),
+                location: from + (to - from) * t
+            )
+        })
+    }
+}
+
 // MARK: - GothicArchShape
 
 /// A pointed (lancet) arch: vertical sides that sweep into a peaked
@@ -80,10 +143,9 @@ struct ArchHero<Content: View>: View {
 
     var contentPadding = EdgeInsets(top: 24, leading: 16, bottom: 24, trailing: 16)
 
-    /// A glow survives the foot mask and re-draws the very edge the mask
-    /// exists to remove, as a bright band under the arch. Where the hero
-    /// sits directly on the page gradient that band is visible, so the
-    /// halo comes off.
+    /// Steady, not pulsing — the same presence the Pray medallion and the
+    /// narration transport carry. On by default; the consecration hero
+    /// keeps it off.
     var showsHalo: Bool = true
 
     @ViewBuilder let content: Content
@@ -112,12 +174,11 @@ struct ArchHero<Content: View>: View {
                     .padding(contentPadding)
                     .background(
                         LinearGradient(
-                            stops: [
-                                .init(color: .clear, location: 0),
-                                .init(color: AppColors.background.opacity(0.5), location: 0.34),
-                                .init(color: AppColors.background.opacity(0.86), location: 0.66),
-                                .init(color: AppColors.background, location: 0.92)
-                            ],
+                            gradient: .smoothFade(
+                                to: AppColors.background,
+                                from: 0,
+                                end: 0.82
+                            ),
                             startPoint: .top,
                             endPoint: .bottom
                         )
@@ -134,11 +195,18 @@ struct ArchHero<Content: View>: View {
                 VStack(spacing: 0) {
                     Rectangle().fill(.black)
                     LinearGradient(
-                        colors: [.black, .clear],
+                        stops: [
+                            .init(color: .black, location: 0),
+                            .init(color: .black.opacity(0.88), location: 0.18),
+                            .init(color: .black.opacity(0.62), location: 0.40),
+                            .init(color: .black.opacity(0.30), location: 0.64),
+                            .init(color: .black.opacity(0.09), location: 0.83),
+                            .init(color: .clear, location: 1)
+                        ],
                         startPoint: .top,
                         endPoint: .bottom
                     )
-                    .frame(height: 16)
+                    .frame(height: 26)
                 }
             )
             // Steady, not pulsing — the same presence the Pray medallion

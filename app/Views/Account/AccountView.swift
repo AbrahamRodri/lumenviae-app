@@ -927,7 +927,7 @@ struct AboutSheet: View {
 
                             InfoBlock(
                                 title: "Daily Schedule",
-                                text: "The traditional schedule assigns a set of mysteries to each day of the week: Joyful on Monday, Thursday, and Saturday; Sorrowful on Tuesday and Friday; Glorious on Sunday and Wednesday."
+                                text: "The traditional schedule assigns a set of mysteries to each day of the week: Joyful on Monday and Thursday; Sorrowful on Tuesday and Friday; Glorious on Wednesday and Saturday. Sunday follows the season — Joyful in Advent, Sorrowful in Lent, and Glorious the rest of the year."
                             )
                         }
                         .padding(.horizontal, 24)
@@ -1041,7 +1041,7 @@ struct HelpSupportSheet: View {
 
                         InfoBlock(
                             title: "What are the different mysteries?",
-                            text: "There are four sets of mysteries: Joyful (Monday, Thursday, Saturday), Sorrowful (Tuesday, Friday), and Glorious (Sunday, Wednesday). Luminous mysteries, added by Pope John Paul II, are available any day from the home grid."
+                            text: "There are four sets of mysteries: Joyful (Monday, Thursday), Sorrowful (Tuesday, Friday), and Glorious (Wednesday, Saturday). Sunday takes Joyful in Advent, Sorrowful in Lent, and Glorious otherwise. Luminous mysteries, added by Pope John Paul II, are available any day from the home grid."
                         )
 
                         InfoBlock(

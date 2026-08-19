@@ -35,14 +35,17 @@ struct SelectMeditationView: View {
     /// can't push the same screen twice.
     @State private var isOpeningSet = false
 
-    /// List by default for now — with a handful of sets per category the
-    /// ruled list reads faster than half-empty tile rows.
+    /// Gallery by default. The tiles are the browsing reading — they
+    /// carry air around each set and invite a tap into the set's own
+    /// page, where the painting and the voice are. The ruled list is the
+    /// scanning reading, for anyone who already knows what they're
+    /// after; the choice is remembered once it's made.
     @AppStorage("meditationPicker.viewMode")
-    private var viewMode: MeditationPickerViewMode = .list
+    private var viewMode: MeditationPickerViewMode = .gallery
 
     private let columns = [
-        GridItem(.flexible(), spacing: 12),
-        GridItem(.flexible(), spacing: 12)
+        GridItem(.flexible(), spacing: 16),
+        GridItem(.flexible(), spacing: 16)
     ]
 
     init(category: MysteryCategory) {
@@ -76,7 +79,7 @@ struct SelectMeditationView: View {
                         // The header names the screen; a second line
                         // saying "select a meditation set" over a shelf of
                         // meditation sets says nothing twice.
-                        Color.clear.frame(height: 20)
+                        Color.clear.frame(height: 30)
 
                         if viewModel.isLoading {
                             ProgressView()
@@ -92,14 +95,17 @@ struct SelectMeditationView: View {
                         }
                     }
                     .padding(.horizontal, 20)
-                    .padding(.bottom, 120)
+                    .padding(.bottom, 140)
                 }
+                // The shelf dissolves rather than stopping — raised and
+                // lengthened at the foot so the last row softens well
+                // before the tab bar instead of meeting it at an edge.
                 .mask(
                     LinearGradient(
                         stops: [
                             .init(color: .clear, location: 0),
-                            .init(color: .black, location: 0.05),
-                            .init(color: .black, location: 0.92),
+                            .init(color: .black, location: 0.07),
+                            .init(color: .black, location: 0.84),
                             .init(color: .clear, location: 1)
                         ],
                         startPoint: .top,
@@ -120,7 +126,7 @@ struct SelectMeditationView: View {
     // MARK: - Shelf
 
     private var shelf: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 30) {
             controlsRow
 
             if isFilterOpen {
@@ -235,13 +241,13 @@ struct SelectMeditationView: View {
                 }
             }
         }
-        .sacredCard(vertical: 14, horizontal: 16)
+        .sacredCard(vertical: 18, horizontal: 18)
     }
 
     // MARK: - Results
 
     private var results: some View {
-        VStack(spacing: 22) {
+        VStack(spacing: 34) {
             if !viewModel.pinnedSets.isEmpty {
                 group(title: "Pinned", sets: viewModel.pinnedSets)
             }
@@ -268,14 +274,14 @@ struct SelectMeditationView: View {
         sets: [MeditationSetSummary],
         leadsWithRule: Bool = false
     ) -> some View {
-        VStack(spacing: viewMode == .gallery ? 14 : 6) {
+        VStack(spacing: viewMode == .gallery ? 18 : 8) {
             if let title {
                 SectionHeading(title: title)
             }
 
             switch viewMode {
             case .gallery:
-                LazyVGrid(columns: columns, spacing: 12) {
+                LazyVGrid(columns: columns, spacing: 16) {
                     ForEach(sets) { meditationSet in
                         MeditationSetTile(
                             title: meditationSet.name,
@@ -618,7 +624,9 @@ struct MeditationHeaderView: View {
 
 /// The full future experience: a large labeled catalog with two sets
 /// already pinned. Exercises the filter tray, section grouping, both
-/// view modes, and the empty state (try "Scriptural" + "Vocation").
+/// view modes, and the empty state (try "Scriptural" + "Intentions").
+/// Labels are drawn only from the real vocabulary — Intentions, Saints,
+/// Scriptural, Contemplative, Considerations.
 #Preview("Labeled catalog") {
     let sample: [MeditationSetSummary] = [
         MeditationSetSummary(
@@ -634,7 +642,7 @@ struct MeditationHeaderView: View {
         MeditationSetSummary(
             id: 3, name: "St. Louis de Montfort", category: "joyful",
             description: "Total consecration through the hands of Mary.",
-            labels: ["Saints", "Marian"]
+            labels: ["Saints", "Contemplative"]
         ),
         MeditationSetSummary(
             id: 4, name: "St. Alphonsus Liguori", category: "joyful",
@@ -649,17 +657,17 @@ struct MeditationHeaderView: View {
         MeditationSetSummary(
             id: 6, name: "St. Josemaría Escrivá", category: "joyful",
             description: "Finding God in the ordinary moments of each mystery.",
-            labels: ["Saints", "Vocation"]
+            labels: ["Saints", "Considerations"]
         ),
         MeditationSetSummary(
             id: 7, name: "As a Father", category: "joyful",
             description: "The Joyful mysteries through the vocation of fatherhood.",
-            labels: ["Intentions", "Vocation"]
+            labels: ["Intentions"]
         ),
         MeditationSetSummary(
             id: 8, name: "As a Mother", category: "joyful",
             description: "Contemplating Mary's motherhood in your own.",
-            labels: ["Intentions", "Vocation", "Marian"]
+            labels: ["Intentions", "Contemplative"]
         ),
         MeditationSetSummary(
             id: 9, name: "In Times of Suffering", category: "joyful",

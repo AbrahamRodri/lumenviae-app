@@ -483,8 +483,14 @@ struct JournalEntryCard: View {
                 }
             }
 
-            // Drop-cap styled text preview
-            JournalDropCapText(text: entry.text)
+            // How the entry opens, set as a single run so the versal
+            // initial stays part of its own word.
+            DropCapText(
+                text: entry.previewText,
+                bodySize: 16,
+                textColor: AppColors.cream.opacity(0.85)
+            )
+            .lineLimit(4)
         }
         .padding(16)
         .background(
@@ -507,14 +513,6 @@ struct JournalEntryRow: View {
     let entry: JournalEntry
 
     private var dateLabel: String { JournalDate.label(for: entry.createdAt) }
-
-    /// The opening of the entry on a single line, with the newlines
-    /// flattened so a line break can't blank the preview.
-    private var opening: String {
-        entry.text
-            .replacingOccurrences(of: "\n", with: " ")
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -539,7 +537,7 @@ struct JournalEntryRow: View {
                             .fixedSize()
                     }
 
-                    Text(opening)
+                    Text(entry.previewText)
                         .font(AppFonts.bodyFont(13))
                         .foregroundColor(AppColors.textSecondary)
                         .lineLimit(1)
@@ -557,40 +555,25 @@ struct JournalEntryRow: View {
     }
 }
 
-// MARK: - Drop Cap Text
+// MARK: - Entry text for display
 
-struct JournalDropCapText: View {
-    let text: String
+extension JournalEntry {
 
-    private var firstLetter: String {
-        guard let first = text.first else { return "" }
-        return String(first).uppercased()
+    /// The entry's text as it is read: leading whitespace gone and the
+    /// first letter capitalised, so the illuminated initial is always a
+    /// capital even when the entry was typed in a hurry.
+    var displayText: String {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard let first = trimmed.first else { return trimmed }
+        return first.uppercased() + trimmed.dropFirst()
     }
 
-    private var remainingText: String {
-        guard text.count > 1 else { return "" }
-        return String(text.dropFirst())
-    }
-
-    var body: some View {
-        HStack(alignment: .top, spacing: 0) {
-            // Drop cap letter — fixedSize lets it breathe to its natural width
-            Text(firstLetter)
-                .font(.system(size: 24, weight: .light, design: .serif))
-                .foregroundColor(AppColors.gold)
-                .fixedSize()
-                .padding(.trailing, 6)
-                .padding(.bottom, 2)
-
-            // Rest of the text
-            Text(remainingText)
-                .font(AppFonts.bodyFont(16))
-                .foregroundColor(AppColors.cream.opacity(0.85))
-                .lineSpacing(4)
-                .lineLimit(4)
-                .multilineTextAlignment(.leading)
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
+    /// The opening of the entry as a single run, newlines flattened so a
+    /// line break can't blank a preview or spend one of its few lines.
+    var previewText: String {
+        displayText
+            .replacingOccurrences(of: "\n", with: " ")
+            .replacingOccurrences(of: "  +", with: " ", options: .regularExpression)
     }
 }
 
@@ -671,9 +654,15 @@ struct JournalDetailView: View {
                             .fill(AppColors.gold.opacity(0.2))
                             .frame(height: 1)
 
-                        // Full text with drop cap
-                        JournalDropCapText(text: entry.text)
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                        // The entry in full, as reading text: real
+                        // paragraphs, the first opening with a versal.
+                        ReadingText(
+                            text: entry.displayText,
+                            size: 17,
+                            showsDropCap: true,
+                            textColor: AppColors.cream.opacity(0.9)
+                        )
+                        .frame(maxWidth: .infinity, alignment: .leading)
 
                         Spacer(minLength: 80)
                     }

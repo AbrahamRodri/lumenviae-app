@@ -95,34 +95,22 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
         }
     }
 
-    /// Where the card crop sits in each painting.
+    /// Where the subject sits in each card painting, normalized to the
+    /// canvas — the point a crop should keep at any size. See `FocalFill`.
     ///
-    /// A `.fill` crop keeps the middle of the canvas, which is right for
-    /// the paintings whose figures are centered. The Resurrection and the
-    /// Pietà are both tall canvases carrying their subject high — the
-    /// risen Christ in the upper third, the Pietà's halos and faces
-    /// around a fifth of the way down — so centering crops the subject
-    /// away and leaves a card of drapery and onlookers. Anchoring those
-    /// two to the top brings the subject back into the frame.
-    var cardImageAlignment: Alignment {
+    /// The centred paintings are centred. The Resurrection and the Pietà
+    /// are both tall canvases carrying their subject high — the risen
+    /// Christ a fifth of the way down, the Pietà's halos and faces a
+    /// little under a third — so a centred crop leaves a card of drapery
+    /// and onlookers. Naming the point, rather than an edge plus a nudge
+    /// in points, is what lets the same painting crop right on a 160pt
+    /// card, a 260pt frontispiece and a 40pt thumbnail, and it is the rule
+    /// API artwork arrives with, so bundled fallbacks obey the same one.
+    var cardFocalPoint: UnitPoint {
         switch self {
-        case .glorious, .sevenSorrows: return .top
+        case .glorious:     return UnitPoint(x: 0.5, y: 0.22)
+        case .sevenSorrows: return UnitPoint(x: 0.5, y: 0.30)
         case .joyful, .sorrowful, .luminous: return .center
-        }
-    }
-
-    /// Fine adjustment on top of `cardImageAlignment`, in points, where
-    /// negative lifts the crop back toward the top of the canvas.
-    ///
-    /// Anchoring is coarse — it can only pick an edge — and the Pietà
-    /// overshoots it: pinned to the top of that very tall canvas the
-    /// halos land square in the middle of the card, which reads low
-    /// against the title. A small lift carries them into the upper
-    /// third where the eye expects them.
-    var cardImageOffset: CGFloat {
-        switch self {
-        case .sevenSorrows: return -48
-        case .joyful, .sorrowful, .glorious, .luminous: return 0
         }
     }
 
@@ -148,13 +136,14 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
         }
     }
 
-    /// Traditional days this mystery is prayed
+    /// Traditional days this mystery is prayed — the same rule as
+    /// `ScheduleService`, said in words. Sunday follows the season.
     var daysPrayed: String {
         switch self {
-        case .joyful:      return "Monday, Saturday"
-        case .sorrowful:   return "Tuesday, Friday"
-        case .glorious:    return "Wednesday, Sunday"
-        case .luminous:    return "Thursday"
+        case .joyful:      return "Monday, Thursday, Sundays of Advent"
+        case .sorrowful:   return "Tuesday, Friday, Sundays of Lent"
+        case .glorious:    return "Wednesday, Saturday, Sunday"
+        case .luminous:    return "Thursday (modern schedule)"
         case .sevenSorrows: return "Fridays, September 15"
         }
     }

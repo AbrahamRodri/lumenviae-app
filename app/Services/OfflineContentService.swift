@@ -4,19 +4,31 @@
 //
 //  User-initiated offline downloads: every meditation set (text) and every
 //  audio file (meditation narrations + consecration chants) saved to disk,
-//  so the whole app prays without a connection.
+//  so the whole app prays without a connection. One set at a time can be
+//  saved from its own page — same files, same directory, its own progress
+//  so it never masquerades as the library-wide download.
 //
 //  Layout under Application Support/OfflineContent/:
 //    sets/index_<category>.json   [MeditationSetSummary] per category
 //    sets/<id>.json               full MeditationSet
 //    audio/meditation_<id>.mp3    meditation narration
 //    audio/prayer_<slug>.mp3      consecration chant
+//    images/set_<id>_<hash>.jpg   the set's painting, named by the set and
+//                                 the hash the S3 key carries — a replaced
+//                                 painting is a different file name, so
+//                                 staleness is a lookup, never a HEAD
 //    manifest.json                download date, size, counts, completeness
 //
 //  Reads are fallbacks for when the API is unreachable, and audio is
 //  always served locally when present (the bundled URLs are 24-hour
 //  presigned links that expire). Heavy I/O runs off the main actor; the
 //  content directory is excluded from iCloud backup (it's re-downloadable).
+//
+//  Paintings came later than text and audio, and a library downloaded
+//  before them is deliberately not made stale by their arrival: every
+//  download skips what is already on disk, so tapping Download again
+//  fetches the few hundred KB of images and nothing else. No manifest
+//  version, no forced re-download of an audio library.
 //
 
 import Foundation
@@ -59,14 +71,22 @@ final class OfflineContentService {
     /// offering to remove a file that is gone.
     private(set) var downloadedAudioIds: Set<Int> = []
 
+    /// Which meditation sets have their text saved. Published for the
+    /// same reason as `downloadedAudioIds`: a set's own page offers to
+    /// save or remove it, and wiping the library from Account has to
+    /// reach that page rather than leave it claiming a saved copy.
+    private(set) var downloadedSetIds: Set<Int> = []
+
     /// Re-reads the directories. Called at init and after any write.
     private func refreshDiskState() {
         let fm = FileManager.default
         let sets = (try? fm.contentsOfDirectory(atPath: setsDir.path)) ?? []
         let audio = (try? fm.contentsOfDirectory(atPath: audioDir.path)) ?? []
-        hasContentOnDisk = !sets.isEmpty || !audio.isEmpty
-        // Same listing, so the saved-ids set costs no extra I/O
+        let images = (try? fm.contentsOfDirectory(atPath: imagesDir.path)) ?? []
+        hasContentOnDisk = !sets.isEmpty || !audio.isEmpty || !images.isEmpty
+        // Same listings, so the saved-id sets cost no extra I/O
         downloadedAudioIds = Set(audio.compactMap(Self.meditationId(fromAudioFile:)))
+        downloadedSetIds = Set(sets.compactMap(Self.setId(fromFile:)))
     }
 
     /// The id in `meditation_412.mp3`. Nil for a chant file, which shares
@@ -75,6 +95,13 @@ final class OfflineContentService {
         let prefix = "meditation_", suffix = ".mp3"
         guard name.hasPrefix(prefix), name.hasSuffix(suffix) else { return nil }
         return Int(name.dropFirst(prefix.count).dropLast(suffix.count))
+    }
+
+    /// The id in `27.json`. Nil for `index_joyful.json`, which shares the
+    /// directory and is a catalog rather than a set.
+    private nonisolated static func setId(fromFile name: String) -> Int? {
+        guard name.hasSuffix(".json") else { return nil }
+        return Int(name.dropLast(".json".count))
     }
 
     // MARK: - Manifest
@@ -94,6 +121,7 @@ final class OfflineContentService {
     private let root: URL
     private var setsDir: URL { root.appendingPathComponent("sets", isDirectory: true) }
     private var audioDir: URL { root.appendingPathComponent("audio", isDirectory: true) }
+    private var imagesDir: URL { root.appendingPathComponent("images", isDirectory: true) }
     private var manifestURL: URL { root.appendingPathComponent("manifest.json") }
 
     /// Dedicated session for audio files: fail a stalled connection in 30s
@@ -127,6 +155,7 @@ final class OfflineContentService {
     private func createDirectories() {
         try? FileManager.default.createDirectory(at: setsDir, withIntermediateDirectories: true)
         try? FileManager.default.createDirectory(at: audioDir, withIntermediateDirectories: true)
+        try? FileManager.default.createDirectory(at: imagesDir, withIntermediateDirectories: true)
         excludeFromBackup()
     }
 
@@ -193,9 +222,40 @@ final class OfflineContentService {
                 try await Self.writeJSON(summaries, to: indexURL(for: category))
             }
 
-            // Stage 2 — audio: narrations discovered above, plus chants.
-            // Its own monotonic counter; the denominator never moves.
             var failures = 0
+
+            // Stage 2 — artwork: the painting of every set that has one,
+            // skipped when its hash-named file is already here. A set
+            // without a painting costs nothing; a library downloaded
+            // before paintings existed picks them up here and re-fetches
+            // nothing else.
+            let artworkJobs = allSummaries.compactMap { summary -> (setId: Int, url: String, destination: URL)? in
+                guard let artwork = summary.artwork,
+                      let destination = artworkFileURL(setId: summary.id, remote: artwork.url)
+                else { return nil }
+                return (summary.id, artwork.url, destination)
+            }
+
+            if !artworkJobs.isEmpty {
+                var artDone = 0
+                state = .downloading(stage: "Artwork", completed: 0, total: artworkJobs.count)
+
+                for job in artworkJobs {
+                    if !FileManager.default.fileExists(atPath: job.destination.path) {
+                        do {
+                            try await Self.download(with: downloadSession, from: job.url, to: job.destination)
+                            retireOtherArtwork(setId: job.setId, keeping: job.destination)
+                        } catch {
+                            failures += 1
+                        }
+                    }
+                    artDone += 1
+                    state = .downloading(stage: "Artwork", completed: artDone, total: artworkJobs.count)
+                }
+            }
+
+            // Stage 3 — audio: narrations discovered above, plus chants.
+            // Its own monotonic counter; the denominator never moves.
             var audioDone = 0
             let audioTotal = audioJobs.count + chantIds.count
             state = .downloading(stage: "Audio", completed: 0, total: max(audioTotal, 1))
@@ -330,6 +390,155 @@ final class OfflineContentService {
         return FileManager.default.fileExists(atPath: url.path) ? url : nil
     }
 
+    /// The set's painting on disk, if the copy here is of *this* URL.
+    ///
+    /// The file is named by the hash the S3 key carries, so a painting the
+    /// curator has since replaced is simply not found under the new URL —
+    /// the caller fetches the new one and never shows the old plate for
+    /// the new record.
+    func localArtworkURL(setId: Int, remote: String) -> URL? {
+        guard let url = artworkFileURL(setId: setId, remote: remote) else { return nil }
+        return FileManager.default.fileExists(atPath: url.path) ? url : nil
+    }
+
+    // MARK: - One Set
+
+    /// How one set stands on this device, as its own page reads it.
+    enum SetOfflineState: Equatable {
+        /// Not saved — the page offers to save it
+        case available
+        /// Being saved, with the share of its files already down
+        case saving(fraction: Double)
+        /// Text and every narration it has are on disk
+        case saved
+        /// Some file didn't come down; finished ones were kept
+        case failed
+    }
+
+    /// Sets being saved right now, with their file counts. Kept apart
+    /// from `state`, which belongs to the library-wide download: saving
+    /// one set from its own page must not make Account report that the
+    /// whole library is downloading.
+    private(set) var savingSets: [Int: (completed: Int, total: Int)] = [:]
+
+    /// Sets whose last save left something behind
+    private(set) var failedSetIds: Set<Int> = []
+
+    /// Where this set stands.
+    ///
+    /// Saved means the text *and* every narration the set carries — a set
+    /// whose audio is missing is not one you can pray on a plane, so it
+    /// must not claim to be saved. A set with no audio at all is saved as
+    /// soon as its text is down.
+    func offlineState(for set: MeditationSet) -> SetOfflineState {
+        if let progress = savingSets[set.id] {
+            let fraction = progress.total > 0
+                ? Double(progress.completed) / Double(progress.total)
+                : 0
+            return .saving(fraction: fraction)
+        }
+
+        if downloadedSetIds.contains(set.id) && missingAudioIds(for: set).isEmpty {
+            return .saved
+        }
+
+        return failedSetIds.contains(set.id) ? .failed : .available
+    }
+
+    private func missingAudioIds(for set: MeditationSet) -> [Int] {
+        (set.meditations ?? [])
+            .filter(\.hasAudio)
+            .map(\.id)
+            .filter { !downloadedAudioIds.contains($0) }
+    }
+
+    /// Saves one set — its text, its painting if it has one, and every
+    /// narration it carries — for praying without a connection.
+    ///
+    /// The set is re-fetched first: presigned audio links live about a
+    /// day, and the copy the caller is holding may have come from a cache
+    /// old enough that they have expired. If that fetch fails the
+    /// caller's own copy is used, which still works for a set opened
+    /// moments ago.
+    @MainActor
+    func downloadSet(_ set: MeditationSet) async {
+        guard savingSets[set.id] == nil else { return }
+
+        createDirectories()
+        failedSetIds.remove(set.id)
+        savingSets[set.id] = (completed: 0, total: 1)
+        defer { savingSets[set.id] = nil }
+
+        let source = (try? await APIService.shared.fetchMeditationSet(id: set.id)) ?? set
+        let jobs = (source.meditations ?? []).compactMap { meditation -> (id: Int, url: String)? in
+            guard meditation.hasAudio, let url = meditation.audioUrl else { return nil }
+            return (meditation.id, url)
+        }
+        let artworkJob: (url: String, destination: URL)? = source.artwork.flatMap { artwork in
+            artworkFileURL(setId: source.id, remote: artwork.url).map { (artwork.url, $0) }
+        }
+
+        var completed = 0
+        let total = jobs.count + (artworkJob == nil ? 0 : 1) + 1
+        savingSets[set.id] = (completed: 0, total: total)
+
+        var failures = 0
+
+        do {
+            try await Self.writeJSON(source, to: setURL(id: source.id))
+        } catch {
+            failures += 1
+        }
+        completed += 1
+        savingSets[set.id] = (completed: completed, total: total)
+
+        if let artworkJob {
+            if !FileManager.default.fileExists(atPath: artworkJob.destination.path) {
+                do {
+                    try await Self.download(with: downloadSession, from: artworkJob.url, to: artworkJob.destination)
+                    retireOtherArtwork(setId: source.id, keeping: artworkJob.destination)
+                } catch {
+                    failures += 1
+                }
+            }
+            completed += 1
+            savingSets[set.id] = (completed: completed, total: total)
+        }
+
+        for job in jobs {
+            let destination = meditationAudioURL(meditationId: job.id)
+            if !FileManager.default.fileExists(atPath: destination.path) {
+                do {
+                    try await Self.download(with: downloadSession, from: job.url, to: destination)
+                } catch {
+                    failures += 1
+                }
+            }
+            completed += 1
+            savingSets[set.id] = (completed: completed, total: total)
+        }
+
+        refreshDiskState()
+        if failures > 0 { failedSetIds.insert(set.id) }
+    }
+
+    /// Removes one set's saved text and narrations.
+    ///
+    /// The category index still lists the set afterwards, which is
+    /// harmless — `storedSummaries` only offers sets whose body is
+    /// actually on disk, so the catalog heals itself on the next read.
+    func removeSet(_ set: MeditationSet) {
+        try? FileManager.default.removeItem(at: setURL(id: set.id))
+        for meditation in set.meditations ?? [] {
+            try? FileManager.default.removeItem(at: meditationAudioURL(meditationId: meditation.id))
+        }
+        for file in artworkFiles(setId: set.id) {
+            try? FileManager.default.removeItem(at: file)
+        }
+        failedSetIds.remove(set.id)
+        refreshDiskState()
+    }
+
     // MARK: - One Meditation's Narration
 
     /// Meditations whose narration is being fetched right now.
@@ -393,6 +602,41 @@ final class OfflineContentService {
 
     private func prayerAudioURL(prayerId: String) -> URL {
         audioDir.appendingPathComponent("prayer_\(prayerId).mp3")
+    }
+
+    /// `images/set_27_8f21c4d9e0b3a7f6.jpg` for
+    /// `…/lumenviae-images/sets/27/8f21c4d9e0b3a7f6.jpg`.
+    ///
+    /// The URL's last path component is a hash of the file, so the name
+    /// is the staleness check: a replaced painting asks for a file that is
+    /// not there. Nil for a URL with no usable file name — nothing is
+    /// saved under a name that could collide with another set's.
+    private func artworkFileURL(setId: Int, remote: String) -> URL? {
+        guard let url = URL(string: remote) else { return nil }
+        let stem = url.deletingPathExtension().lastPathComponent
+        let ext = url.pathExtension.isEmpty ? "jpg" : url.pathExtension
+        let safe = stem.unicodeScalars.allSatisfy { CharacterSet.alphanumerics.contains($0) || $0 == "-" || $0 == "_" }
+        guard !stem.isEmpty, safe else { return nil }
+        return imagesDir.appendingPathComponent("set_\(setId)_\(stem).\(ext)")
+    }
+
+    /// Every painting saved for one set — normally one, but a set whose
+    /// painting was replaced can briefly hold two.
+    private func artworkFiles(setId: Int) -> [URL] {
+        let prefix = "set_\(setId)_"
+        let names = (try? FileManager.default.contentsOfDirectory(atPath: imagesDir.path)) ?? []
+        return names
+            .filter { $0.hasPrefix(prefix) }
+            .map { imagesDir.appendingPathComponent($0) }
+    }
+
+    /// After a new painting lands for a set, the one it replaced goes —
+    /// the file names carry the set id, so the siblings are findable
+    /// without reading any JSON.
+    private func retireOtherArtwork(setId: Int, keeping current: URL) {
+        for file in artworkFiles(setId: setId) where file.lastPathComponent != current.lastPathComponent {
+            try? FileManager.default.removeItem(at: file)
+        }
     }
 
     /// Every consecration prayer slug that has chant audio. Uses the

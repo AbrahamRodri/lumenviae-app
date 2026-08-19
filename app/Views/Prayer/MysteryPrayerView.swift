@@ -54,6 +54,14 @@ struct MysteryPrayerView: View {
     /// True while a tap on the artwork has cleared the chrome
     @State private var chromeHidden = false
 
+    /// The set's own painting, once its bytes are in hand. Nil while it
+    /// is on its way, and for a set that has none.
+    @State private var setPainting: UIImage?
+
+    /// The set's painting could not be fetched — the bundled paintings
+    /// take over for the rest of this Rosary
+    @State private var setPaintingFailed = false
+
     /// True while the meditation text is open over the player.
     ///
     /// Read straight off `prayerImageMode`, the persisted memory of which
@@ -84,31 +92,48 @@ struct MysteryPrayerView: View {
             startAtIndex: launch.startIndex,
             priorSeconds: launch.priorSeconds
         ))
+        // Arriving from the set's own page, the painting is already
+        // decoded — show it on the first frame rather than after a fade.
+        self._setPainting = State(initialValue: launch.meditationSet.artwork.flatMap {
+            ArtworkCache.shared.cached($0.url)
+        })
     }
 
     var body: some View {
-        ZStack {
-            // Deliberately still while the reader rises over it. Scaling
-            // and fading it looked right in the abstract and stuttered in
-            // practice: the player holds two full-screen blurred copies
-            // of the painting, and animating its geometry re-rasterizes
-            // both on every frame of the transition. The reader's own
-            // slide carries the movement; the player just waits.
-            playerLayer
-                .allowsHitTesting(!readerOpen)
+        GeometryReader { geometry in
+            // The reader slides the whole height of the glass, not of its
+            // safe-area frame: its gradient bleeds past that frame at both
+            // ends, and `.move(edge: .bottom)` — which travels exactly one
+            // frame height — left a strip of it standing at the foot of
+            // the screen until the transition ended and it blinked out.
+            let screenHeight = geometry.size.height
+                + geometry.safeAreaInsets.top
+                + geometry.safeAreaInsets.bottom
 
-            if readerOpen, let meditation = viewModel.currentMeditation {
-                MeditationReaderView(
-                    meditation: meditation,
-                    mysteryKicker: mysteryKicker,
-                    artworkAsset: artworkAsset,
-                    viewModel: viewModel,
-                    actions: trackActions,
-                    onClose: { setReaderOpen(false) }
-                )
-                .transition(.move(edge: .bottom))
-                .zIndex(1)
+            ZStack {
+                // Deliberately still while the reader rises over it. Scaling
+                // and fading it looked right in the abstract and stuttered in
+                // practice: the player holds two full-screen blurred copies
+                // of the painting, and animating its geometry re-rasterizes
+                // both on every frame of the transition. The reader's own
+                // slide carries the movement; the player just waits.
+                playerLayer
+                    .allowsHitTesting(!readerOpen)
+
+                if readerOpen, let meditation = viewModel.currentMeditation {
+                    MeditationReaderView(
+                        meditation: meditation,
+                        mysteryKicker: mysteryKicker,
+                        painting: painting,
+                        viewModel: viewModel,
+                        actions: trackActions,
+                        onClose: { setReaderOpen(false) }
+                    )
+                    .transition(.offset(y: screenHeight))
+                    .zIndex(1)
+                }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         // A background rather than a bottom layer in the stack: a sibling
         // that ignores the safe area takes the safe area away from every
@@ -139,6 +164,9 @@ struct MysteryPrayerView: View {
                 )
             }
             await viewModel.loadCurrentAudio()
+        }
+        .task(id: meditationSet.artwork?.url) {
+            await loadSetPainting()
         }
         .task {
             // A first Rosary only, and only once it has had a moment to
@@ -234,11 +262,45 @@ struct MysteryPrayerView: View {
             ?? "The \(Constants.ordinalWord(viewModel.currentMysteryIndex + 1)) Mystery"
     }
 
-    private var artworkAsset: String? {
+    // MARK: - The Painting
+
+    /// The painting this mystery is prayed under.
+    ///
+    /// The set's own when it has one — the painting its curator chose for
+    /// the whole set, which then stays through all five mysteries the way
+    /// a record's sleeve stays through its tracks. Otherwise the bundled
+    /// painting for this mystery. Nil only while the set's painting is
+    /// still on its way (the plate holds the card fill, and the painting
+    /// fades in) or when there is nothing to draw at all.
+    private var painting: PrayerPainting? {
+        if let artwork = meditationSet.artwork, !setPaintingFailed {
+            return setPainting.map { PrayerPainting.set(artwork, image: $0) }
+        }
+        return bundledPaintingName.flatMap(PrayerPainting.bundled)
+    }
+
+    /// The bundled painting for this mystery — the end of the chain, and
+    /// what the Lock Screen shows until the set's painting is decoded.
+    private var bundledPaintingName: String? {
         Constants.mysteryImageURL(
             category: meditationSet.category,
             index: viewModel.currentMysteryIndex
         )
+    }
+
+    /// Fetches the set's painting, if it has one and it isn't in hand.
+    /// Runs once per set, not per mystery.
+    private func loadSetPainting() async {
+        guard let artwork = meditationSet.artwork, setPainting == nil else { return }
+        setPaintingFailed = false
+        let image = await ArtworkCache.shared.image(for: artwork, setId: meditationSet.id)
+        guard !Task.isCancelled else { return }
+        if let image {
+            setPainting = image
+            viewModel.refreshNowPlayingArtwork(image)
+        } else {
+            setPaintingFailed = true
+        }
     }
 
     /// What the ⋯ menus can do with the meditation on screen. Assembled
@@ -248,7 +310,7 @@ struct MysteryPrayerView: View {
         let title = meditation?.displayTitle ?? meditationSet.name
         return PrayerTrackActions(
             meditationId: meditation?.id ?? 0,
-            audioURL: meditation?.hasAudio == true ? meditation?.audioUrl : nil,
+            audioURL: viewModel.currentRemoteAudioURL,
             shareText: "\(title) — a meditation from \(meditationSet.name) on Lumen Viae",
             feedbackSubject: "Feedback: \(title) (\(meditationSet.name))",
             onAddReflection: { activeSheet = .journal },
@@ -348,14 +410,16 @@ struct MysteryPrayerView: View {
 
         return VStack(spacing: 0) {
             Group {
-                if let artworkAsset {
+                if let painting {
                     mysteryArtwork(
-                        artworkAsset,
+                        painting,
                         width: width,
                         height: artHeight,
                         frostHeight: seatedHeight
                     )
                 } else {
+                    // Nothing to draw yet — the set's painting is on its
+                    // way, or there is none and no bundled one either
                     Rectangle()
                         .fill(AppColors.cardBackground)
                         .frame(height: artHeight)
@@ -364,6 +428,9 @@ struct MysteryPrayerView: View {
             Spacer(minLength: 0)
         }
         .ignoresSafeArea(edges: .top)
+        // The set's painting arriving fades in over the plate rather than
+        // snapping — the same entrance the set's own page gives it
+        .animation(.easeInOut(duration: 0.35), value: setPainting == nil)
         // One layer for the crossfade. Without this the opacity transition
         // is applied leaf by leaf — the painting fades in on its own and
         // the frost and foot fade on top of it fade in on their own — so
@@ -384,17 +451,16 @@ struct MysteryPrayerView: View {
         }
     }
 
+    /// The painting filling the frame, cropped around its focal point —
+    /// the centre for a bundled painting, the curator's point for a set's.
     private func mysteryArtwork(
-        _ assetName: String,
+        _ painting: PrayerPainting,
         width: CGFloat,
         height: CGFloat,
         frostHeight: CGFloat
     ) -> some View {
-        Image(assetName)
-            .resizable()
-            .aspectRatio(contentMode: .fill)
+        FocalFill(image: painting.image, intrinsicSize: painting.intrinsicSize, focal: painting.focal)
             .frame(width: width, height: height)
-            .clipped()
             .overlay(
                 // Two staggered blur layers fake a progressive blur: the
                 // soft pass eases the sharp painting into the frost, the
@@ -407,9 +473,9 @@ struct MysteryPrayerView: View {
                 // tint, which drains the color the paintings carry —
                 // the deep blues in particular come back gray.
                 ZStack {
-                    blurLayer(assetName, width: width, height: frostHeight,
+                    blurLayer(painting, width: width, height: frostHeight,
                               radius: 5, from: 0.74, to: 0.88)
-                    blurLayer(assetName, width: width, height: frostHeight,
+                    blurLayer(painting, width: width, height: frostHeight,
                               radius: 13, from: 0.84, to: 0.95)
                 }
                 .frame(width: width, height: frostHeight)
@@ -451,18 +517,17 @@ struct MysteryPrayerView: View {
     }
 
     private func blurLayer(
-        _ assetName: String,
+        _ painting: PrayerPainting,
         width: CGFloat,
         height: CGFloat,
         radius: CGFloat,
         from: CGFloat,
         to: CGFloat
     ) -> some View {
-        Image(assetName)
-            .resizable()
-            .aspectRatio(contentMode: .fill)
+        // The same crop as the sharp painting above it, so the frost is
+        // that painting blurred and not a differently-framed copy
+        FocalFill(image: painting.image, intrinsicSize: painting.intrinsicSize, focal: painting.focal)
             .frame(width: width, height: height)
-            .clipped()
             .blur(radius: radius)
             .mask(
                 // Held to the foot, not tapered back out: the background

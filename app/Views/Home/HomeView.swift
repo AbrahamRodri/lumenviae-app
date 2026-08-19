@@ -509,8 +509,7 @@ struct SacredMysteriesSection: View {
                         subtitle: category.subtitle,
                         gradientColors: category.gradientColors,
                         cardImageName: category.cardImageName,
-                        imageAlignment: category.cardImageAlignment,
-                        imageOffset: category.cardImageOffset
+                        imageFocal: category.cardFocalPoint
                     )
                 }
                 .buttonStyle(SacredCardButtonStyle())

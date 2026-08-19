@@ -96,17 +96,30 @@ final class ImageCacheService: @unchecked Sendable {
 /// CachedAssetImage("joyful_annunciation")
 ///     .aspectRatio(contentMode: .fill)
 /// ```
+///
+/// With a focal point it fills its frame cropped around that point
+/// instead (see `FocalFill`), and needs no `aspectRatio` of its own:
+/// ```swift
+/// CachedAssetImage("seven_sorrows_pieta", focal: category.cardFocalPoint)
+///     .frame(height: 160)
+/// ```
 struct CachedAssetImage: View {
     let name: String
+    let focal: UnitPoint?
 
-    init(_ name: String) {
+    init(_ name: String, focal: UnitPoint? = nil) {
         self.name = name
+        self.focal = focal
     }
 
     var body: some View {
         if let uiImage = ImageCacheService.shared.image(named: name) {
-            Image(uiImage: uiImage)
-                .resizable()
+            if let focal {
+                FocalFill(uiImage: uiImage, focal: focal)
+            } else {
+                Image(uiImage: uiImage)
+                    .resizable()
+            }
         } else {
             // Missing asset: render a quiet themed surface instead of nothing
             LinearGradient(

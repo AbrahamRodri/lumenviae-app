@@ -6,6 +6,7 @@
 //  - GET  /mysteries[?category=]  - List mysteries
 //  - GET  /meditation-sets        - List meditation sets
 //  - GET  /meditation-sets/:id    - Get full meditation set
+//  - GET  /meditations/:id/audio  - Freshly signed narration URL + expiry
 //  - GET  /prayers/:id/audio      - Presigned audio URL
 //  - POST /completions            - Record prayer completion
 //
@@ -18,7 +19,12 @@ enum APIError: Error, LocalizedError {
     case invalidURL
     case networkError(Error)
     case decodingError(Error)
-    case serverError(statusCode: Int)
+
+    /// A non-2xx answer. `code` is the stable machine-readable code from
+    /// the API's error envelope (`not_found`, `validation_failed`,
+    /// `audio_unavailable`, …) when the body carried one; nil for a bare
+    /// status from a proxy or a body in some other shape.
+    case serverError(statusCode: Int, code: String? = nil)
 
     var errorDescription: String? {
         switch self {
@@ -28,7 +34,10 @@ enum APIError: Error, LocalizedError {
             return "Network error: \(error.localizedDescription)"
         case .decodingError(let error):
             return "Failed to decode response: \(error.localizedDescription)"
-        case .serverError(let statusCode):
+        case .serverError(let statusCode, let code):
+            if let code {
+                return "Server error \(statusCode) (\(code))"
+            }
             return "Server error with status code: \(statusCode)"
         }
     }
@@ -114,6 +123,22 @@ final class APIService {
         return try await fetch(url: url, responseType: MeditationSetDetailResponse.self).data
     }
 
+    // MARK: - Meditation Audio
+
+    /// Fetches a freshly signed narration URL for one meditation, with the
+    /// moment it expires. The URLs on a set live about a day; a stored or
+    /// long-held set asks here once they have passed instead of meeting
+    /// the expiry as a 403 partway through a decade.
+    func fetchMeditationAudio(meditationId: Int) async throws -> MeditationAudioResponse {
+        let urlString = "\(baseURL)/meditations/\(meditationId)/audio"
+
+        guard let url = URL(string: urlString) else {
+            throw APIError.invalidURL
+        }
+
+        return try await fetch(url: url, responseType: APIResponse<MeditationAudioResponse>.self).data
+    }
+
     // MARK: - Completions
 
     /// Records a prayer completion to the server when the user finishes all 5 mysteries.
@@ -185,9 +210,17 @@ final class APIService {
         do {
             let (data, response) = try await session.data(for: request)
 
+            // The status code decides; the body is only read for its
+            // error code. A 404 is a 404 whatever shape the envelope
+            // takes, and an envelope that fails to decode must never turn
+            // a server error into a decoding error.
             if let httpResponse = response as? HTTPURLResponse,
                !(200...299).contains(httpResponse.statusCode) {
-                throw APIError.serverError(statusCode: httpResponse.statusCode)
+                let envelope = try? decoder.decode(APIErrorEnvelope.self, from: data)
+                throw APIError.serverError(
+                    statusCode: httpResponse.statusCode,
+                    code: envelope?.error.code
+                )
             }
 
             return try decoder.decode(T.self, from: data)

@@ -141,9 +141,6 @@ struct ConsecrationDayOverviewView: View {
     /// The same arch the home screen's featured mystery is set in — the
     /// phase's painting in place of the mystery's, and the phase's hue
     /// over it in place of a flat dim.
-    ///
-    /// No halo here: a glow survives the foot mask and re-draws the very
-    /// edge the mask exists to remove, as a bright band under the arch.
     private var heroSection: some View {
         ArchHero(
             imageName: phase?.heroImageName ?? MysteryCategory.luminous.cardImageName,

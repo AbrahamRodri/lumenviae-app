@@ -20,16 +20,19 @@ Home Screen
             ▼
 Select Meditation View (the shelf)
     │
-    ├── Ruled list (default) or gallery of tiles (remembered), pinned sets on top
+    ├── Gallery of tiles (default) or ruled list (remembered), pinned sets on top
     ├── Funnel button → "Kind of meditation" tray (label chips from the API)
     └── Tap a set
         │
         ▼
-Meditation Set Detail (deliberately simple — the API says little about a set)
+Meditation Set Detail (set like a title page, not a product listing)
     │
-    ├── Full-bleed artwork with a gradient, labels, name, category line
-    ├── The set's description, then the opening of the first mystery
-    └── "Pray with these meditations" (the screen's one gold act)
+    ├── Labels kicker, ornament, name in Cinzel, painting in a lancet arch
+    ├── A ruled ledger of sections, each named in the left margin:
+    │   About this set · The meditations (numbered) · From (author, source)
+    ├── The first meditation in full, behind a quiet disclosure
+    └── "PRAY" (the screen's one gold act) — nothing set beneath it,
+        and never an estimated duration
         │
         ▼
 Prayer Flow (5 Mysteries/Decades)
@@ -54,19 +57,21 @@ Return to Home
 
 | Day | Mystery Type | Theme |
 |-----|--------------|-------|
-| Sunday | Glorious | Resurrection & Glory |
+| Sunday | By season — Joyful in Advent, Sorrowful in Lent, Glorious otherwise | |
 | Monday | Joyful | Christ's Early Life |
 | Tuesday | Sorrowful | Christ's Passion |
 | Wednesday | Glorious | Resurrection & Glory |
 | Thursday | Joyful | Christ's Early Life |
 | Friday | Sorrowful | Christ's Passion |
-| Saturday | Joyful | Christ's Early Life |
+| Saturday | Glorious | Resurrection & Glory |
 
 > **Note:** This is the traditional pre-2002 schedule. The Luminous Mysteries (added by Pope John Paul II) are available in the app but not part of the default daily rotation. Users can always manually select Luminous from the Sacred Mysteries grid.
+>
+> `ScheduleService` computes the seasons on device (Easter by Meeus/Jones/Butcher; Lent = Ash Wednesday up to Easter; Advent = the Sunday on or after Nov 27 through Dec 24) and is kept **identical to the server's `LumenViae.LiturgicalCalendar`** — Christmastide and Eastertide deliberately count as "ordinary" for this rule on both sides. Change the two together, along with the `days_prayed` rows and the site copy.
 
 **Stretch Goals:**
 - [ ] Setting to enable "Modern Schedule" (Thursday = Luminous)
-- [ ] Liturgical calendar integration (Sunday varies: Joyful during Advent/Christmas, Sorrowful during Lent, Glorious during Easter/Ordinary Time)
+- [ ] Feast-day overrides on top of the seasonal Sundays
 
 ### The Five Mysteries in Each Set
 
@@ -278,7 +283,7 @@ write concurrent code here:
 - Haptic feedback during prayer
 - A setting to switch between the Traditional and Modern (Luminous Thursday)
   schedules — `ScheduleService` is the seam for it
-- Liturgical calendar integration: seasonal Sundays, feast-day overrides
+- Feast-day overrides on the schedule (seasonal Sundays are built)
 - Server-side sync of journal entries or progress (everything is local)
 
 ## Design System
@@ -334,7 +339,13 @@ write concurrent code here:
 **From the API** (`https://lumenviae.fly.dev/api`):
 - Mysteries (titles, scriptures, descriptions)
 - Meditation sets and their meditation text
-- Meditation narration audio (presigned URLs, ~24h)
+- Set artwork: each set carries a flat `image_*` block — unsigned, immutable
+  URL, a normalized focal point, pixel size, alt text, attribution — all null
+  together when there is no painting. Read it through `SetArtwork`; draw it
+  through `SetArtworkView` (the fallback chain: set painting → category
+  painting) and `FocalFill` (one crop rule for every size)
+- Meditation narration audio (presigned URLs, ~24h; the set says when they
+  die in `audio_expires_at`, and `GET /meditations/:id/audio` re-signs one)
 - Consecration chant audio (presigned per prayer)
 
 **Bundled in the app** — doctrinal and stable, so it must work with no network:
@@ -346,7 +357,11 @@ write concurrent code here:
 **On device:**
 - Preferences (UserDefaults), favorites, reading progress
 - Prayer sessions and journal entries (SwiftData) — never sent to the server
-- Downloaded sets and audio (Application Support, excluded from iCloud backup)
+- Downloaded sets, audio, and set paintings (Application Support, excluded
+  from iCloud backup). Paintings are `images/set_<id>_<hash>.jpg`, so a
+  replaced painting is a missing file, never a HEAD; a library downloaded
+  before paintings existed is not made stale — Download again fetches only
+  what is absent
 
 > A companion Phoenix web app owns the meditation content so it can be updated
 > without an app release. Anything the user must be able to pray without a
@@ -381,12 +396,16 @@ write concurrent code here:
 ```
 GET /mysteries[?category=]              # Mysteries, optionally by category
 GET /meditation-sets?category=:category # [MeditationSetSummary] for a category
-GET /meditation-sets/:id                # Full MeditationSet with meditations
+GET /meditation-sets/:id                # Full MeditationSet with meditations + audio_expires_at
+GET /meditations/:id/audio              # Freshly signed narration URL + expires_at
 GET /prayers/:prayerId/audio            # Presigned chant URL for a consecration prayer
 ```
-Meditation audio arrives as an `audio_url` on each meditation rather than from a
-dedicated endpoint. There is no journal endpoint and none is planned — journal
-entries are local.
+Meditation audio arrives as an `audio_url` on each meditation; the prayer flow
+asks `/meditations/:id/audio` for a fresh one only once the set's have expired
+or a load has failed. Errors come in one envelope,
+`{ "error": { "code", "message", "details"? } }` — `APIService.send` decides on
+the status code and carries `code` on `APIError.serverError`. There is no
+journal endpoint and none is planned — journal entries are local.
 
 ## Glossary
 

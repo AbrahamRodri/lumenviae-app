@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 @Observable
 final class PrayerSessionViewModel {
@@ -175,19 +176,22 @@ final class PrayerSessionViewModel {
     // MARK: - Audio Controls
 
     /// Loads the audio file for the current meditation. Downloaded copies
-    /// win over the network — the bundled URLs are 24-hour presigned links
-    /// that expire, and local files play offline.
+    /// win over the network — the bundled URLs are presigned links that
+    /// expire, and local files play offline.
+    ///
+    /// A set's links are signed together and die together, about a day
+    /// on. The set says when (`audioExpiry`); a set held past that moment
+    /// — resumed from disk, or simply left open — asks the API for a fresh
+    /// link before loading rather than meeting the expiry as a 403. A set
+    /// that never said (stored before the field was kept) tries its own
+    /// link first and refreshes only if that load fails, so the common
+    /// case costs no extra round trip.
     @MainActor
     func loadCurrentAudio() async {
         let generation = flowGeneration
 
-        // hasAudio also rejects the empty-string URLs the server can emit
-        let source = currentMeditation.flatMap { meditation in
-            OfflineContentService.shared.localAudioURL(meditationId: meditation.id)?.absoluteString
-                ?? (meditation.hasAudio ? meditation.audioUrl : nil)
-        }
-
-        guard let meditation = currentMeditation, let source else {
+        guard let meditation = currentMeditation,
+              let source = await audioSource(for: meditation) else {
             // A mystery with no narration: stop the previous track, but keep
             // the Lock Screen player and the track arrows alive so the user
             // can still step past a silent mystery without unlocking.
@@ -197,31 +201,36 @@ final class PrayerSessionViewModel {
             return
         }
 
-        await audioService.loadAudio(
-            from: source,
-            title: meditation.displayTitle,
-            subtitle: meditationSet.name,
-            artworkAssetName: Constants.mysteryImageURL(
-                category: meditationSet.category,
-                index: currentMysteryIndex
-            ),
-            album: meditationSet.name,
-            queueIndex: currentMysteryIndex,
-            queueCount: totalMysteries,
-            claimNowPlaying: true
-        )
-
-        // The flow can be left while the asset loads — nothing this load
-        // published may outlive it. Only tear down if we still own the
-        // service: another flow may have taken over while we awaited, and
-        // resetting then would kill *its* audio.
+        // The flow can be left while a link is fetched or an asset
+        // loads — nothing this load published may outlive it.
         guard generation == flowGeneration else {
-            if audioService.isTrackNavigationOwner(navigationOwner) {
-                audioService.clearTrackNavigation(owner: navigationOwner)
-                audioService.reset()
-                audioService.deactivateSession()
-            }
+            tearDownIfStillOwner()
             return
+        }
+
+        await load(source.url, for: meditation)
+
+        guard generation == flowGeneration else {
+            tearDownIfStillOwner()
+            return
+        }
+
+        // A remote link that would not load may simply have outlived its
+        // signature — the set's own link is the stale one whenever the
+        // server never said when it would die. One fresh link, one more
+        // try; a link that was fresh and still failed is a real outage
+        // and is left to say so.
+        if audioService.errorMessage != nil, source.isRefreshable,
+           let fresh = await freshAudioURL(for: meditation) {
+            guard generation == flowGeneration else {
+                tearDownIfStillOwner()
+                return
+            }
+            await load(fresh, for: meditation)
+            guard generation == flowGeneration else {
+                tearDownIfStillOwner()
+                return
+            }
         }
 
         let autoplay = pendingRemoteAutoplay
@@ -238,6 +247,130 @@ final class PrayerSessionViewModel {
         // into its narration — the whole point of hands-off prayer.
         if autoplay {
             audioService.play()
+        }
+    }
+
+    // MARK: - Where the Narration Comes From
+
+    /// One narration's source, and whether a failed load is worth a
+    /// second try with a fresh link.
+    private struct AudioSource {
+        let url: String
+
+        /// True only for the set's own presigned link. A local file can't
+        /// be stale, and a link fetched fresh this session already is the
+        /// second try.
+        let isRefreshable: Bool
+    }
+
+    /// Fresh links fetched this session, with when they die. A mystery
+    /// stepped back to doesn't ask the server again while its link lives.
+    private var freshAudioURLs: [Int: (url: String, expiry: Date?)] = [:]
+
+    /// The best remote link for the current narration — the fresh one if
+    /// this session fetched it, else the set's own. What the tray's
+    /// "Download" saves, so it never saves from a link the player already
+    /// found dead. Nil for a mystery with no narration.
+    var currentRemoteAudioURL: String? {
+        guard let meditation = currentMeditation, meditation.hasAudio else { return nil }
+        return freshAudioURLs[meditation.id]?.url ?? meditation.audioUrl
+    }
+
+    /// Where the narration comes from, in order: the copy on disk; a fresh
+    /// link already fetched and still live; the set's own link while it is
+    /// not known to be dead; a fresh link once it is. Nil for a mystery
+    /// with no narration, or whose link is known dead and the server
+    /// couldn't replace it — which reads as silence, the same as offline.
+    @MainActor
+    private func audioSource(for meditation: Meditation) async -> AudioSource? {
+        if let local = OfflineContentService.shared.localAudioURL(meditationId: meditation.id) {
+            return AudioSource(url: local.absoluteString, isRefreshable: false)
+        }
+
+        // hasAudio also rejects the empty-string URLs the server can emit
+        guard meditation.hasAudio, let own = meditation.audioUrl else { return nil }
+
+        if let fresh = freshAudioURLs[meditation.id],
+           fresh.expiry.map({ $0 > Date() }) ?? true {
+            return AudioSource(url: fresh.url, isRefreshable: false)
+        }
+
+        if meditationSet.audioURLsHaveExpired {
+            if let fresh = await freshAudioURL(for: meditation) {
+                return AudioSource(url: fresh, isRefreshable: false)
+            }
+            // Known dead and not replaceable right now (offline, or the
+            // server is down): the link is still the only thing there is,
+            // and the load will say what it can. Asking again after it
+            // fails would only fail the same way.
+            return AudioSource(url: own, isRefreshable: false)
+        }
+
+        // Live as far as anyone knows. If the load says otherwise — the
+        // set never said when its links die, or the file behind the link
+        // has since been renamed on the server — one fresh link is worth
+        // a try before calling it an outage.
+        return AudioSource(url: own, isRefreshable: true)
+    }
+
+    /// A freshly signed link for one meditation from
+    /// `GET /api/meditations/:id/audio`, remembered for the session. Nil
+    /// when the server can't be reached or has withdrawn the meditation.
+    @MainActor
+    private func freshAudioURL(for meditation: Meditation) async -> String? {
+        guard let response = try? await apiService.fetchMeditationAudio(meditationId: meditation.id),
+              !response.audioUrl.isEmpty else {
+            return nil
+        }
+        freshAudioURLs[meditation.id] = (response.audioUrl, response.expiry)
+        return response.audioUrl
+    }
+
+    /// Hands one source to the player with this mystery's Lock Screen
+    /// details. The same call for the first try and the refreshed one.
+    ///
+    /// The Lock Screen shows what the player shows: the set's own painting
+    /// when the set has one and it is decoded, else the bundled painting
+    /// for this mystery. Only a painting already in hand is passed — the
+    /// narration must never wait on an image download — and the view
+    /// hands the set's painting over through `refreshNowPlayingArtwork`
+    /// the moment it lands.
+    @MainActor
+    private func load(_ url: String, for meditation: Meditation) async {
+        await audioService.loadAudio(
+            from: url,
+            title: meditation.displayTitle,
+            subtitle: meditationSet.name,
+            artworkAssetName: Constants.mysteryImageURL(
+                category: meditationSet.category,
+                index: currentMysteryIndex
+            ),
+            artworkImage: meditationSet.artwork.flatMap { ArtworkCache.shared.cached($0.url) },
+            album: meditationSet.name,
+            queueIndex: currentMysteryIndex,
+            queueCount: totalMysteries,
+            claimNowPlaying: true
+        )
+    }
+
+    /// The set's painting has arrived after the narration was published —
+    /// put it on the Lock Screen now rather than at the next mystery.
+    /// Only while this flow still owns the player; a Rosary left mid-
+    /// download must not repaint whatever is playing in its place.
+    @MainActor
+    func refreshNowPlayingArtwork(_ image: UIImage) {
+        guard audioService.isTrackNavigationOwner(navigationOwner) else { return }
+        audioService.updateNowPlayingArtwork(image: image)
+    }
+
+    /// The flow was left while a load was in flight. Only tear down if
+    /// we still own the service: another flow may have taken over while
+    /// we awaited, and resetting then would kill *its* audio.
+    private func tearDownIfStillOwner() {
+        if audioService.isTrackNavigationOwner(navigationOwner) {
+            audioService.clearTrackNavigation(owner: navigationOwner)
+            audioService.reset()
+            audioService.deactivateSession()
         }
     }
 

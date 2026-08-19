@@ -27,8 +27,9 @@ struct PrayerTrackActions {
     let meditationId: Int
 
     /// The presigned narration URL, when there is narration. Presigned
-    /// links last about a day, so the tray saves the one already in hand
-    /// rather than resolving a fresh one.
+    /// links last about a day, so the tray saves the one the player is
+    /// holding — refreshed already if the set's own had expired — rather
+    /// than resolving another.
     let audioURL: String?
 
     /// What Share hands off.

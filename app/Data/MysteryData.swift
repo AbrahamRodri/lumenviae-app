@@ -38,7 +38,7 @@ enum MysteryData {
             name: "The Annunciation",
             category: "joyful",
             order: 1,
-            daysPrayed: "Monday, Saturday",
+            daysPrayed: "Monday, Thursday, Sundays of Advent",
             description: "The Angel Gabriel announces to Mary that she will conceive and bear the Son of God.",
             scriptureReference: "Luke 1:26-38"
         ),
@@ -47,7 +47,7 @@ enum MysteryData {
             name: "The Visitation",
             category: "joyful",
             order: 2,
-            daysPrayed: "Monday, Saturday",
+            daysPrayed: "Monday, Thursday, Sundays of Advent",
             description: "Mary visits her cousin Elizabeth, who is pregnant with John the Baptist.",
             scriptureReference: "Luke 1:39-56"
         ),
@@ -56,7 +56,7 @@ enum MysteryData {
             name: "The Nativity",
             category: "joyful",
             order: 3,
-            daysPrayed: "Monday, Saturday",
+            daysPrayed: "Monday, Thursday, Sundays of Advent",
             description: "Jesus is born in Bethlehem and laid in a manger.",
             scriptureReference: "Luke 2:1-20"
         ),
@@ -65,7 +65,7 @@ enum MysteryData {
             name: "The Presentation",
             category: "joyful",
             order: 4,
-            daysPrayed: "Monday, Saturday",
+            daysPrayed: "Monday, Thursday, Sundays of Advent",
             description: "Mary and Joseph present the infant Jesus in the Temple.",
             scriptureReference: "Luke 2:22-38"
         ),
@@ -74,7 +74,7 @@ enum MysteryData {
             name: "The Finding in the Temple",
             category: "joyful",
             order: 5,
-            daysPrayed: "Monday, Saturday",
+            daysPrayed: "Monday, Thursday, Sundays of Advent",
             description: "The child Jesus is found teaching in the Temple after three days.",
             scriptureReference: "Luke 2:41-52"
         )
@@ -88,7 +88,7 @@ enum MysteryData {
             name: "The Agony in the Garden",
             category: "sorrowful",
             order: 1,
-            daysPrayed: "Tuesday, Friday",
+            daysPrayed: "Tuesday, Friday, Sundays of Lent",
             description: "Jesus prays in the Garden of Gethsemane, sweating blood in anguish.",
             scriptureReference: "Matthew 26:36-46"
         ),
@@ -97,7 +97,7 @@ enum MysteryData {
             name: "The Scourging at the Pillar",
             category: "sorrowful",
             order: 2,
-            daysPrayed: "Tuesday, Friday",
+            daysPrayed: "Tuesday, Friday, Sundays of Lent",
             description: "Jesus is bound to a pillar and scourged by Roman soldiers.",
             scriptureReference: "John 19:1"
         ),
@@ -106,7 +106,7 @@ enum MysteryData {
             name: "The Crowning with Thorns",
             category: "sorrowful",
             order: 3,
-            daysPrayed: "Tuesday, Friday",
+            daysPrayed: "Tuesday, Friday, Sundays of Lent",
             description: "Soldiers place a crown of thorns on Jesus' head and mock Him.",
             scriptureReference: "Matthew 27:27-31"
         ),
@@ -115,7 +115,7 @@ enum MysteryData {
             name: "The Carrying of the Cross",
             category: "sorrowful",
             order: 4,
-            daysPrayed: "Tuesday, Friday",
+            daysPrayed: "Tuesday, Friday, Sundays of Lent",
             description: "Jesus carries His cross to Calvary, falling three times.",
             scriptureReference: "John 19:17"
         ),
@@ -124,7 +124,7 @@ enum MysteryData {
             name: "The Crucifixion",
             category: "sorrowful",
             order: 5,
-            daysPrayed: "Tuesday, Friday",
+            daysPrayed: "Tuesday, Friday, Sundays of Lent",
             description: "Jesus is nailed to the cross and dies for the salvation of mankind.",
             scriptureReference: "John 19:18-30"
         )
@@ -138,7 +138,7 @@ enum MysteryData {
             name: "The Resurrection",
             category: "glorious",
             order: 1,
-            daysPrayed: "Wednesday, Sunday",
+            daysPrayed: "Wednesday, Saturday, Sunday",
             description: "Jesus rises from the dead on the third day.",
             scriptureReference: "Mark 16:1-8"
         ),
@@ -147,7 +147,7 @@ enum MysteryData {
             name: "The Ascension",
             category: "glorious",
             order: 2,
-            daysPrayed: "Wednesday, Sunday",
+            daysPrayed: "Wednesday, Saturday, Sunday",
             description: "Jesus ascends into Heaven forty days after His Resurrection.",
             scriptureReference: "Acts 1:9-11"
         ),
@@ -156,7 +156,7 @@ enum MysteryData {
             name: "The Descent of the Holy Spirit",
             category: "glorious",
             order: 3,
-            daysPrayed: "Wednesday, Sunday",
+            daysPrayed: "Wednesday, Saturday, Sunday",
             description: "The Holy Spirit descends upon the Apostles at Pentecost.",
             scriptureReference: "Acts 2:1-4"
         ),
@@ -165,7 +165,7 @@ enum MysteryData {
             name: "The Assumption",
             category: "glorious",
             order: 4,
-            daysPrayed: "Wednesday, Sunday",
+            daysPrayed: "Wednesday, Saturday, Sunday",
             description: "Mary is assumed body and soul into Heaven.",
             scriptureReference: "Revelation 12:1"
         ),
@@ -174,7 +174,7 @@ enum MysteryData {
             name: "The Coronation",
             category: "glorious",
             order: 5,
-            daysPrayed: "Wednesday, Sunday",
+            daysPrayed: "Wednesday, Saturday, Sunday",
             description: "Mary is crowned Queen of Heaven and Earth.",
             scriptureReference: "Revelation 12:1"
         )
@@ -188,7 +188,7 @@ enum MysteryData {
             name: "The Baptism in the Jordan",
             category: "luminous",
             order: 1,
-            daysPrayed: "Thursday",
+            daysPrayed: "Thursday (modern schedule)",
             description: "Jesus is baptized by John in the Jordan River.",
             scriptureReference: "Matthew 3:13-17"
         ),
@@ -197,7 +197,7 @@ enum MysteryData {
             name: "The Wedding at Cana",
             category: "luminous",
             order: 2,
-            daysPrayed: "Thursday",
+            daysPrayed: "Thursday (modern schedule)",
             description: "Jesus performs His first miracle, turning water into wine.",
             scriptureReference: "John 2:1-11"
         ),
@@ -206,7 +206,7 @@ enum MysteryData {
             name: "The Proclamation of the Kingdom",
             category: "luminous",
             order: 3,
-            daysPrayed: "Thursday",
+            daysPrayed: "Thursday (modern schedule)",
             description: "Jesus proclaims the Kingdom of God and calls all to conversion.",
             scriptureReference: "Mark 1:14-15"
         ),
@@ -215,7 +215,7 @@ enum MysteryData {
             name: "The Transfiguration",
             category: "luminous",
             order: 4,
-            daysPrayed: "Thursday",
+            daysPrayed: "Thursday (modern schedule)",
             description: "Jesus is transfigured on Mount Tabor, revealing His divine glory.",
             scriptureReference: "Matthew 17:1-8"
         ),
@@ -224,7 +224,7 @@ enum MysteryData {
             name: "The Institution of the Eucharist",
             category: "luminous",
             order: 5,
-            daysPrayed: "Thursday",
+            daysPrayed: "Thursday (modern schedule)",
             description: "Jesus institutes the Eucharist at the Last Supper.",
             scriptureReference: "Matthew 26:26-28"
         )

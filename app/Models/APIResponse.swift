@@ -38,6 +38,41 @@ struct PrayerAudioResponse: Codable {
     }
 }
 
+// MARK: - Meditation Audio Types
+
+/// Response from GET /api/meditations/:id/audio — a freshly signed
+/// narration URL and the moment it stops working (ISO 8601).
+struct MeditationAudioResponse: Codable {
+    let id: Int
+    let audioUrl: String
+    let expiresAt: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case audioUrl = "audio_url"
+        case expiresAt = "expires_at"
+    }
+
+    /// `expiresAt` as a date, when it parses
+    var expiry: Date? {
+        expiresAt.flatMap { try? Date($0, strategy: .iso8601) }
+    }
+}
+
+// MARK: - Error Envelope
+
+/// The one shape every API error now takes:
+/// `{ "error": { "code": "not_found", "message": "Not found", "details": {…} } }`.
+/// `code` is stable and safe to branch on; `message` is for humans and may
+/// change; `details` is present only when there is per-field information.
+struct APIErrorEnvelope: Decodable {
+    struct Body: Decodable {
+        let code: String
+        let message: String?
+    }
+    let error: Body
+}
+
 // MARK: - Completion Types
 
 /// Request body for POST /api/completions, sent when the user

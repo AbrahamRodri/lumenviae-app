@@ -23,7 +23,8 @@ struct MeditationReaderView: View {
     /// "The Fourth Joyful Mystery" — where the Rosary stands
     let mysteryKicker: String
 
-    let artworkAsset: String?
+    /// The painting the player is showing, for the mini player's thumbnail
+    let painting: PrayerPainting?
     let viewModel: PrayerSessionViewModel
 
     /// Everything the overflow menus need, assembled by the player so
@@ -47,6 +48,26 @@ struct MeditationReaderView: View {
     /// scroll clear of it instead of resting under it.
     @State private var pillHeight: CGFloat = 0
 
+    /// Where the title's last line ends, in screen points. The focus band
+    /// hangs off this rather than off fixed fractions of the screen: a
+    /// title that wraps to two lines carries the fade down with it, so
+    /// text still dissolves before it reaches the words above, and the
+    /// band is the same on every size of phone.
+    @State private var titleFoot: CGFloat = 0
+
+    /// How far the page has been pulled down toward the player, following
+    /// the finger. Stays wherever the finger left it when a pull closes
+    /// the reader, so the player's slide-away picks up from there instead
+    /// of snapping back to the top first.
+    @State private var pullOffset: CGFloat = 0
+
+    /// Whether the pull underway is allowed to move the page. Decided
+    /// once, from the first movement, and held for the rest of the
+    /// gesture: a pull that begins sideways belongs to the player's
+    /// swipe between mysteries, and one that begins on the text only
+    /// counts if the page was resting at its top.
+    @State private var pullArmed: Bool?
+
     var body: some View {
         ZStack {
             readerScroll
@@ -60,13 +81,13 @@ struct MeditationReaderView: View {
                 Spacer()
                 MiniPlayerPill(
                     title: meditation.displayTitle,
-                    artworkAsset: artworkAsset,
+                    painting: painting,
                     viewModel: viewModel,
                     onExpand: onClose,
                     onShowTray: { activeSheet = .tray }
                 )
                 .padding(.horizontal, 14)
-                .padding(.bottom, 6)
+                .padding(.bottom, 16)
                 .background(
                     GeometryReader { geo in
                         Color.clear.preference(key: PillHeightKey.self, value: geo.size.height)
@@ -78,7 +99,10 @@ struct MeditationReaderView: View {
         // the safe area takes the safe area away from the rest, and the
         // mini player has to clear the home indicator
         .background(AppColors.appGradient.ignoresSafeArea())
+        // The page follows a downward pull; the player shows beneath
+        .offset(y: pullOffset)
         .onPreferenceChange(PillHeightKey.self) { pillHeight = $0 }
+        .onPreferenceChange(TitleFootKey.self) { titleFoot = $0 }
         .sheet(item: $activeSheet, onDismiss: runPendingHandoff) { sheet in
             switch sheet {
             case .textOptions:
@@ -109,6 +133,59 @@ struct MeditationReaderView: View {
         action?()
     }
 
+    // MARK: - Pull to Close
+
+    /// How far down a pull has to travel before letting go closes the
+    /// reader — or, flicked, how far it would have travelled.
+    private static let closePullDistance: CGFloat = 120
+    private static let closeFlickDistance: CGFloat = 280
+
+    /// A pull let go short of the threshold settles back into place.
+    private static let settleMotion = Animation.spring(response: 0.34, dampingFraction: 0.86)
+
+    /// Pulling the page down toward the player, the way a sheet is sent
+    /// away. From the header it always counts; from the text (`fromText`)
+    /// only when the page was resting at its top, so a pull anywhere
+    /// lower is just the scroll it has always been.
+    ///
+    /// Closing is handed to the player, which animates the reader the
+    /// rest of the way off; the page stays where the finger left it so
+    /// that slide picks up mid-air. A gesture is a shortcut, never the
+    /// only way — the × and the pill still close the reader.
+    private func pullToClose(fromText: Bool) -> some Gesture {
+        DragGesture(minimumDistance: 10, coordinateSpace: .global)
+            .onChanged { value in
+                if pullArmed == nil {
+                    let t = value.translation
+                    // Downward and mostly vertical, or it is the player's
+                    // swipe between mysteries and not ours to move
+                    guard t.height > 0, t.height > abs(t.width) * 1.2 else {
+                        pullArmed = false
+                        return
+                    }
+                    pullArmed = fromText ? reader.isAtTop : true
+                }
+                guard pullArmed == true else { return }
+                pullOffset = max(0, value.translation.height)
+            }
+            .onEnded { value in
+                defer { pullArmed = nil }
+                guard pullArmed == true else { return }
+                let pulled = value.translation.height
+                let flung = value.predictedEndTranslation.height
+                if pulled > Self.closePullDistance || flung > Self.closeFlickDistance {
+                    onClose()
+                } else {
+                    withAnimation(Self.settleMotion) { pullOffset = 0 }
+                }
+            }
+    }
+
+    /// True while a pull has taken hold of the page; the scroll view
+    /// stands aside so the text isn't also rubber-banding under the
+    /// finger.
+    private var pulling: Bool { pullArmed == true && pullOffset > 0 }
+
     // MARK: - Header
 
     /// Close on the left, text options on the right, and between them the
@@ -118,6 +195,10 @@ struct MeditationReaderView: View {
     /// No artwork here. The painting is the player's; the reader is the
     /// text, and a thumbnail at the head of it is a second thing to look
     /// at where there should be one.
+    ///
+    /// The header keeps its shape while reading; the page dissolves as it
+    /// scrolls up beneath it (see `focusBand`) rather than the title
+    /// shrinking to make room.
     private var header: some View {
         VStack(spacing: 0) {
             HStack {
@@ -129,53 +210,37 @@ struct MeditationReaderView: View {
             }
             .padding(.horizontal, 10)
 
-            if reader.collapsed {
-                // Reading is underway: the name shrinks to a rule of small
-                // caps, the way the prayer flow has always kept its place
-                Text(meditation.displayTitle.uppercased())
-                    .font(AppFonts.labelFont(11))
-                    .tracking(2)
-                    .foregroundColor(AppColors.cream.opacity(0.85))
-                    .lineLimit(1)
-                    .padding(.horizontal, 64)
-                    .padding(.bottom, 10)
-                    .transition(.opacity)
-            } else {
-                VStack(spacing: 10) {
-                    Text(mysteryKicker.uppercased())
-                        .font(AppFonts.labelFont(10))
-                        .tracking(3)
-                        .foregroundColor(AppColors.gold)
-                        .multilineTextAlignment(.center)
+            VStack(spacing: 10) {
+                Text(mysteryKicker.uppercased())
+                    .font(AppFonts.labelFont(10))
+                    .tracking(3)
+                    .foregroundColor(AppColors.gold)
+                    .multilineTextAlignment(.center)
 
-                    Text(meditation.displayTitle)
-                        .font(AppFonts.headlineFont(25))
-                        .foregroundColor(AppColors.cream)
-                        .multilineTextAlignment(.center)
-                        .minimumScaleFactor(0.85)
-                        .padding(.horizontal, 28)
+                Text(meditation.displayTitle)
+                    .font(AppFonts.headlineFont(25))
+                    .foregroundColor(AppColors.cream)
+                    .multilineTextAlignment(.center)
+                    .minimumScaleFactor(0.85)
+                    .reportingFoot(TitleFootKey.self)
+                    .padding(.horizontal, 28)
 
-                    OrnamentDivider(showsCross: false)
-                        .frame(width: 150)
-                        .padding(.top, 4)
-                }
-                .padding(.top, 2)
-                .padding(.bottom, 14)
-                .transition(.opacity)
+                OrnamentDivider(showsCross: false)
+                    .frame(width: 150)
+                    .padding(.top, 4)
             }
+            .padding(.top, 6)
+            .padding(.bottom, 22)
         }
-        .padding(.top, 6)
-        .animation(.easeInOut(duration: 0.28), value: reader.collapsed)
+        .padding(.top, 10)
+        // The whole band is a handle, not just the glyphs in it
+        .contentShape(Rectangle())
+        .gesture(pullToClose(fromText: false))
     }
 
     // MARK: - The Page
 
     /// Room the page leaves for the floating header at rest.
-    ///
-    /// Deliberately not tied to `collapsed`: shrinking it on collapse
-    /// moves the content up, the scroll watcher reads that movement as
-    /// the reader scrolling back up, and the header expands again on the
-    /// same frame. Only the header resizes; the page keeps its place.
     private static let headerInset: CGFloat = 196
 
     private var readerScroll: some View {
@@ -211,6 +276,7 @@ struct MeditationReaderView: View {
                 .id(viewModel.currentMysteryIndex)
                 .transition(.opacity)
                 .animation(.easeInOut(duration: 0.4), value: viewModel.currentMysteryIndex)
+                // The iOS 17 scroll-offset path; see `onReaderPageOffsetChange`
                 .background(
                     GeometryReader { geo in
                         Color.clear.preference(
@@ -221,8 +287,12 @@ struct MeditationReaderView: View {
                 )
             }
             .coordinateSpace(name: "readerPage")
+            .scrollDisabled(pulling)
+            // Alongside the scroll, not instead of it: the gesture decides
+            // from its first movement whether this pull is the page's
+            .simultaneousGesture(pullToClose(fromText: true))
             .mask(focusBand)
-            .onPreferenceChange(ReaderPageOffsetKey.self) { reader.handleScroll(to: $0) }
+            .onReaderPageOffsetChange { reader.handleScroll(to: $0) }
             // Fresh mystery, fresh reading state — expanded header, and
             // follow-along no longer standing aside for a scroll the
             // reader made on the decade before
@@ -251,26 +321,43 @@ struct MeditationReaderView: View {
         if reduceTransparency {
             Rectangle().fill(.black)
         } else {
-            LinearGradient(
-                stops: [
-                    .init(color: .black.opacity(0), location: 0),
-                    // The ramp has to be finished by the time the page
-                    // begins, or the first line arrives already faded —
-                    // these track the header's foot, not a comfortable
-                    // distance below it
-                    .init(color: .black.opacity(0), location: reader.collapsed ? 0.11 : 0.20),
-                    .init(color: .black.opacity(0.45), location: reader.collapsed ? 0.15 : 0.245),
-                    .init(color: .black, location: reader.collapsed ? 0.19 : 0.285),
-                    .init(color: .black, location: 0.72),
-                    .init(color: .black.opacity(0.30), location: 0.86),
-                    .init(color: .black.opacity(0), location: 0.94)
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
+            GeometryReader { geometry in
+                let height = max(geometry.size.height, 1)
+                // The title's foot in the band's own space — or, before
+                // the first measurement lands, where a one-line title
+                // would put it
+                let foot = titleFoot > 0
+                    ? titleFoot - geometry.frame(in: .global).minY
+                    : height * 0.245
+
+                LinearGradient(
+                    stops: Self.focusStops(titleFoot: foot, height: height),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            }
             .ignoresSafeArea()
-            .animation(.easeInOut(duration: 0.28), value: reader.collapsed)
         }
+    }
+
+    /// The band's stops, hung from the title's last line. The ramp is
+    /// finished 33pt below that line — the page at rest begins further
+    /// down than this, so the first line never arrives already faded —
+    /// and nothing is left of the text 38pt above it, so what passes
+    /// under the words is a ghost. The foot of the band, where the page
+    /// dims behind the mini player, keeps to fractions of the screen.
+    private static func focusStops(titleFoot: CGFloat, height: CGFloat) -> [Gradient.Stop] {
+        let top = 0.72
+        func at(_ y: CGFloat) -> CGFloat { min(max(y / height, 0), top) }
+        return [
+            .init(color: .black.opacity(0), location: 0),
+            .init(color: .black.opacity(0), location: at(titleFoot - 38)),
+            .init(color: .black.opacity(0.45), location: at(titleFoot)),
+            .init(color: .black, location: at(titleFoot + 33)),
+            .init(color: .black, location: top),
+            .init(color: .black.opacity(0.30), location: 0.86),
+            .init(color: .black.opacity(0), location: 0.94)
+        ]
     }
 }
 
@@ -310,7 +397,7 @@ struct ReaderChromeButton: View {
 struct MiniPlayerPill: View {
 
     let title: String
-    let artworkAsset: String?
+    let painting: PrayerPainting?
     let viewModel: PrayerSessionViewModel
 
     /// Back to the full transport.
@@ -327,9 +414,8 @@ struct MiniPlayerPill: View {
             // their own hit areas
             Button(action: onExpand) {
                 HStack(spacing: 12) {
-                    if let artworkAsset {
-                        CachedAssetImage(artworkAsset)
-                            .aspectRatio(contentMode: .fill)
+                    if let painting {
+                        FocalFill(image: painting.image, intrinsicSize: painting.intrinsicSize, focal: painting.focal)
                             .frame(width: 40, height: 40)
                             .clipShape(RoundedRectangle(cornerRadius: 8))
                     }
@@ -530,22 +616,65 @@ nonisolated private struct ReaderPageOffsetKey: PreferenceKey {
     }
 }
 
+/// The bottom edge of the header's title, in screen points.
+nonisolated private struct TitleFootKey: PreferenceKey {
+    static var defaultValue: CGFloat { 0 }
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
+    }
+}
+
+private extension View {
+
+    /// Reports this view's bottom edge in screen points under `key`.
+    func reportingFoot<K: PreferenceKey>(_ key: K.Type) -> some View where K.Value == CGFloat {
+        background(
+            GeometryReader { geometry in
+                Color.clear.preference(key: key, value: geometry.frame(in: .global).maxY)
+            }
+        )
+    }
+
+    /// Reports where the page's top edge stands against the scroll
+    /// view's: 0 at rest, falling negative as reading scrolls down.
+    ///
+    /// Read off the scroll geometry itself where that API exists. The
+    /// older way — a `GeometryReader` behind the page measuring its
+    /// frame in the scroll view's named coordinate space — stopped
+    /// updating during scrolls on iOS 26, which silently froze the
+    /// header's collapse and follow-along's sense of the reader's hand.
+    /// It stays as the path for iOS 17, where it still works.
+    @ViewBuilder
+    func onReaderPageOffsetChange(_ action: @escaping (CGFloat) -> Void) -> some View {
+        if #available(iOS 18, *) {
+            onScrollGeometryChange(for: CGFloat.self) { geometry in
+                -(geometry.contentOffset.y + geometry.contentInsets.top)
+            } action: { _, offset in
+                action(offset)
+            }
+        } else {
+            onPreferenceChange(ReaderPageOffsetKey.self, perform: action)
+        }
+    }
+}
+
 // MARK: - ReaderScrollModel
 
-/// Reading bookkeeping: whether the header has collapsed, and how far
-/// the narration has carried the page.
+/// Reading bookkeeping: where the page stands, whether the reader's own
+/// hand moved it lately, and how far the narration has carried it.
 ///
 /// A model rather than view state because the scroll offset arrives on
 /// every frame of every scroll. As `@State` each of those writes
 /// invalidated the whole reader — re-splitting the meditation and
 /// rebuilding the page — to move numbers nothing in the body reads.
-/// Here only `collapsed` is observed, so only a real collapse redraws.
+/// Nothing here is observed; the view reads it only from gesture and
+/// narration callbacks.
 @Observable
 final class ReaderScrollModel {
 
-    /// True once reading has scrolled down far enough that the header
-    /// gives way to its compact form
-    var collapsed = false
+    /// True while the page rests at its top — the one place a downward
+    /// pull on the text means "back to the player" rather than "scroll".
+    @ObservationIgnored private(set) var isAtTop = true
 
     /// Last seen scroll offset, for scroll-direction detection
     @ObservationIgnored private var lastOffset: CGFloat = 0
@@ -570,7 +699,7 @@ final class ReaderScrollModel {
 
     /// A fresh mystery starts with fresh reading state.
     func reset() {
-        collapsed = false
+        isAtTop = true
         lastOffset = 0
         lastManualScrollAt = .distantPast
         lastAutoScrollAt = .distantPast
@@ -583,6 +712,10 @@ final class ReaderScrollModel {
     /// movement not caused by a recent follow-along animation counts as
     /// the reader's own scroll and pauses following.
     func handleScroll(to offset: CGFloat) {
+        // At rest the page's top sits at 0; scrolled into, it goes
+        // negative. A hair of slack so a settled page counts as at top.
+        isAtTop = offset >= -1
+
         if needsBaseline {
             needsBaseline = false
             lastOffset = offset

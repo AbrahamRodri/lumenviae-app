@@ -13,15 +13,10 @@ struct MysteryCard: View {
     let gradientColors: [Color]
     var cardImageName: String? = nil
 
-    /// Which part of the painting the card crop keeps. `.fill` centers by
-    /// default, which is wrong for canvases whose subject sits high in
-    /// the frame — see `MysteryCategory.cardImageAlignment`.
-    var imageAlignment: Alignment = .center
-
-    /// Fine vertical adjustment on top of `imageAlignment`, in points.
-    /// Offset is a render-time shift, so the crop moves without the
-    /// image's layout — and the scrim over it — moving with it.
-    var imageOffset: CGFloat = 0
+    /// Where the painting's subject sits, normalized to the canvas, so the
+    /// crop keeps it at this card's size and every other — see
+    /// `MysteryCategory.cardFocalPoint` and `FocalFill`.
+    var imageFocal: UnitPoint = .center
 
     var body: some View {
         // RoundedRectangle drives size; image goes in .overlay
@@ -29,16 +24,11 @@ struct MysteryCard: View {
         RoundedRectangle(cornerRadius: 16)
             .fill(LinearGradient(colors: gradientColors, startPoint: .top, endPoint: .bottom))
             .frame(height: 160)
-            .overlay(
-                Group {
-                    if let cardImageName {
-                        CachedAssetImage(cardImageName)
-                            .aspectRatio(contentMode: .fill)
-                            .offset(y: imageOffset)
-                    }
-                },
-                alignment: imageAlignment
-            )
+            .overlay {
+                if let cardImageName {
+                    CachedAssetImage(cardImageName, focal: imageFocal)
+                }
+            }
             .clipShape(RoundedRectangle(cornerRadius: 16))
             // Weighted like the featured card's scrim: the art stays clear
             // through the top half and the shading gathers only under the
