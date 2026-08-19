@@ -7,8 +7,9 @@
 //
 //  It opens over the player rather than replacing it, so the audio never
 //  stops to change surfaces — closing the reader puts the full transport
-//  back exactly where it was. The header collapses as reading gets
-//  underway, and a focus band keeps the eye on the lines being read.
+//  back exactly where it was — by the ×, the pill, or pulling the page
+//  down. The header holds still, and a focus band keeps the eye on the
+//  lines being read, dissolving the text before it reaches the title.
 //
 
 import SwiftUI
@@ -641,9 +642,9 @@ private extension View {
     /// Read off the scroll geometry itself where that API exists. The
     /// older way — a `GeometryReader` behind the page measuring its
     /// frame in the scroll view's named coordinate space — stopped
-    /// updating during scrolls on iOS 26, which silently froze the
-    /// header's collapse and follow-along's sense of the reader's hand.
-    /// It stays as the path for iOS 17, where it still works.
+    /// updating during scrolls on iOS 26, which silently froze
+    /// follow-along's sense of the reader's hand. It stays as the path
+    /// for iOS 17, where it still works.
     @ViewBuilder
     func onReaderPageOffsetChange(_ action: @escaping (CGFloat) -> Void) -> some View {
         if #available(iOS 18, *) {
@@ -707,10 +708,8 @@ final class ReaderScrollModel {
         needsBaseline = true
     }
 
-    /// Collapse the header when scrolling down into the text; bring it
-    /// back the moment the reader scrolls up, wherever they are. Any
-    /// movement not caused by a recent follow-along animation counts as
-    /// the reader's own scroll and pauses following.
+    /// Any movement not caused by a recent follow-along animation counts
+    /// as the reader's own scroll and pauses following.
     func handleScroll(to offset: CGFloat) {
         // At rest the page's top sits at 0; scrolled into, it goes
         // negative. A hair of slack so a settled page counts as at top.
@@ -727,16 +726,6 @@ final class ReaderScrollModel {
 
         if abs(delta) > 2, Date().timeIntervalSince(lastAutoScrollAt) > 1.5 {
             lastManualScrollAt = Date()
-        }
-
-        if offset >= -40 || delta > 6 {
-            if collapsed {
-                withAnimation(.easeInOut(duration: 0.25)) { collapsed = false }
-            }
-        } else if delta < -6 {
-            if !collapsed {
-                withAnimation(.easeInOut(duration: 0.25)) { collapsed = true }
-            }
         }
     }
 
