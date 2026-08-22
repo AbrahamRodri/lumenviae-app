@@ -49,12 +49,16 @@ struct MeditationReaderView: View {
     /// scroll clear of it instead of resting under it.
     @State private var pillHeight: CGFloat = 0
 
-    /// Where the title's last line ends, in screen points. The focus band
-    /// hangs off this rather than off fixed fractions of the screen: a
-    /// title that wraps to two lines carries the fade down with it, so
-    /// text still dissolves before it reaches the words above, and the
-    /// band is the same on every size of phone.
-    @State private var titleFoot: CGFloat = 0
+    /// What the floating header takes up, measured rather than assumed:
+    /// how tall it stands, and where its foot falls on the screen.
+    ///
+    /// The page's resting top and the focus band both hang off this
+    /// rather than off fixed numbers, so a title that wraps to two lines
+    /// carries the whole reading down with it — the text still begins
+    /// its own distance below the ornament, the dissolve still finishes
+    /// clear of the title's words, and the band is the same on every
+    /// size of phone.
+    @State private var headerMetrics = HeaderMetrics()
 
     /// How far the page has been pulled down toward the player, following
     /// the finger. Stays wherever the finger left it when a pull closes
@@ -103,7 +107,7 @@ struct MeditationReaderView: View {
         // The page follows a downward pull; the player shows beneath
         .offset(y: pullOffset)
         .onPreferenceChange(PillHeightKey.self) { pillHeight = $0 }
-        .onPreferenceChange(TitleFootKey.self) { titleFoot = $0 }
+        .onPreferenceChange(HeaderMetricsKey.self) { headerMetrics = $0 }
         .sheet(item: $activeSheet, onDismiss: runPendingHandoff) { sheet in
             switch sheet {
             case .textOptions:
@@ -223,7 +227,6 @@ struct MeditationReaderView: View {
                     .foregroundColor(AppColors.cream)
                     .multilineTextAlignment(.center)
                     .minimumScaleFactor(0.85)
-                    .reportingFoot(TitleFootKey.self)
                     .padding(.horizontal, 28)
 
                 OrnamentDivider(showsCross: false)
@@ -237,12 +240,26 @@ struct MeditationReaderView: View {
         // The whole band is a handle, not just the glyphs in it
         .contentShape(Rectangle())
         .gesture(pullToClose(fromText: false))
+        .measuringHeader()
     }
 
     // MARK: - The Page
 
-    /// Room the page leaves for the floating header at rest.
+    /// Clear space between the header's foot and the first line of the
+    /// reading. Held constant however tall the header stands, so a title
+    /// of two lines pushes the page down rather than crowding it.
+    private static let pageGap: CGFloat = 40
+
+    /// Room the page leaves for the header before the first measurement
+    /// lands — a one-line title's worth.
     private static let headerInset: CGFloat = 196
+
+    /// Where the reading begins, measured from the top of the scroll
+    /// view. The header shares that top edge, so its own height is the
+    /// whole of the inset.
+    private var pageTopInset: CGFloat {
+        headerMetrics.height > 0 ? headerMetrics.height + Self.pageGap : Self.headerInset
+    }
 
     private var readerScroll: some View {
         let fontSize = userSettings.meditationFontSize
@@ -270,7 +287,7 @@ struct MeditationReaderView: View {
                     }
                 }
                 .padding(.horizontal, 26)
-                .padding(.top, Self.headerInset)
+                .padding(.top, pageTopInset)
                 .padding(.bottom, pillHeight + 90)
                 // A new decade is a new page: re-identifying the content
                 // is what returns the reader to the top of it
@@ -324,15 +341,15 @@ struct MeditationReaderView: View {
         } else {
             GeometryReader { geometry in
                 let height = max(geometry.size.height, 1)
-                // The title's foot in the band's own space — or, before
-                // the first measurement lands, where a one-line title
+                // The header's foot in the band's own space — or, before
+                // the first measurement lands, where a one-line header
                 // would put it
-                let foot = titleFoot > 0
-                    ? titleFoot - geometry.frame(in: .global).minY
-                    : height * 0.245
+                let foot = headerMetrics.foot > 0
+                    ? headerMetrics.foot - geometry.frame(in: .global).minY
+                    : height * 0.25
 
                 LinearGradient(
-                    stops: Self.focusStops(titleFoot: foot, height: height),
+                    stops: Self.focusStops(headerFoot: foot, height: height),
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -341,20 +358,22 @@ struct MeditationReaderView: View {
         }
     }
 
-    /// The band's stops, hung from the title's last line. The ramp is
-    /// finished 33pt below that line — the page at rest begins further
-    /// down than this, so the first line never arrives already faded —
-    /// and nothing is left of the text 38pt above it, so what passes
-    /// under the words is a ghost. The foot of the band, where the page
-    /// dims behind the mini player, keeps to fractions of the screen.
-    private static func focusStops(titleFoot: CGFloat, height: CGFloat) -> [Gradient.Stop] {
+    /// The band's stops, hung from the header's foot. Nothing is left of
+    /// the text 44pt above that foot — which is under the ornament, below
+    /// the title's last line, so the words of the title are never read
+    /// through whatever is scrolling past them, however many lines they
+    /// run to. The ramp finishes 24pt below the foot, and the page at
+    /// rest begins further down still (`pageGap`), so the first line
+    /// never arrives already faded. The other end of the band, where the
+    /// page dims behind the mini player, keeps to fractions of the screen.
+    private static func focusStops(headerFoot: CGFloat, height: CGFloat) -> [Gradient.Stop] {
         let top = 0.72
         func at(_ y: CGFloat) -> CGFloat { min(max(y / height, 0), top) }
         return [
             .init(color: .black.opacity(0), location: 0),
-            .init(color: .black.opacity(0), location: at(titleFoot - 38)),
-            .init(color: .black.opacity(0.45), location: at(titleFoot)),
-            .init(color: .black, location: at(titleFoot + 33)),
+            .init(color: .black.opacity(0), location: at(headerFoot - 44)),
+            .init(color: .black.opacity(0.45), location: at(headerFoot - 10)),
+            .init(color: .black, location: at(headerFoot + 24)),
             .init(color: .black, location: top),
             .init(color: .black.opacity(0.30), location: 0.86),
             .init(color: .black.opacity(0), location: 0.94)
@@ -617,21 +636,41 @@ nonisolated private struct ReaderPageOffsetKey: PreferenceKey {
     }
 }
 
-/// The bottom edge of the header's title, in screen points.
-nonisolated private struct TitleFootKey: PreferenceKey {
-    static var defaultValue: CGFloat { 0 }
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = nextValue()
+/// How tall the reader's header stands, and where its bottom edge falls
+/// in screen points.
+nonisolated private struct HeaderMetrics: Equatable {
+    var height: CGFloat = 0
+    var foot: CGFloat = 0
+}
+
+nonisolated private struct HeaderMetricsKey: PreferenceKey {
+    static var defaultValue: HeaderMetrics { HeaderMetrics() }
+
+    /// Keeps the one real measurement rather than the last one seen. The
+    /// header is a middle child of the reader's stack, and the siblings
+    /// after it — the mini player — answer with the empty default; a
+    /// last-one-wins reduce lets that default overwrite the header and
+    /// leaves everything hung off it stuck on its fallback.
+    static func reduce(value: inout HeaderMetrics, nextValue: () -> HeaderMetrics) {
+        let next = nextValue()
+        if next.height > 0 { value = next }
     }
 }
 
 private extension View {
 
-    /// Reports this view's bottom edge in screen points under `key`.
-    func reportingFoot<K: PreferenceKey>(_ key: K.Type) -> some View where K.Value == CGFloat {
+    /// Reports this view's height and its bottom edge in screen points —
+    /// the header, for everything hung beneath it.
+    func measuringHeader() -> some View {
         background(
             GeometryReader { geometry in
-                Color.clear.preference(key: key, value: geometry.frame(in: .global).maxY)
+                Color.clear.preference(
+                    key: HeaderMetricsKey.self,
+                    value: HeaderMetrics(
+                        height: geometry.size.height,
+                        foot: geometry.frame(in: .global).maxY
+                    )
+                )
             }
         )
     }
