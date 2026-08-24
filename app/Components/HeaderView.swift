@@ -4,36 +4,20 @@
 //
 //  Created by Abraham Rodriguez on 2/10/26.
 //
-//  Home header: menu button, app name, and the streak flame — a small
-//  votive candle that burns bright once today's Rosary is prayed and
-//  rests as a dim ember otherwise. Tapping it opens the Progress page.
+//  Home header: the wordmark alone. The old menu button moved into the
+//  Me page's Library card, and the streak flame into its Prayer Streak
+//  card — the home screen keeps a single job: today's prayer.
 //
 
 import SwiftUI
 
 struct HeaderView: View {
-    var onMenuTap: (() -> Void)?
-
-    /// Current consecutive days of prayer (shown beneath the flame)
-    var streak: Int = 0
-
-    /// Whether today's Rosary is complete (the flame burns bright)
-    var flameLit: Bool = false
-
-    /// Called when the streak flame is tapped
-    var onFlameTap: (() -> Void)?
+    /// Opens Explore. A small glass in the corner, not a bar — the
+    /// header stays the wordmark's.
+    var onSearchTap: (() -> Void)?
 
     var body: some View {
-        HStack {
-            Button(action: { onMenuTap?() }) {
-                AppIcon("ph-list", size: 22)
-                    .foregroundColor(AppColors.cream)
-                    .frame(width: 44, height: 44)
-                    .contentShape(Rectangle())
-            }
-
-            Spacer()
-
+        ZStack {
             VStack(spacing: 2) {
                 Text(Constants.appName)
                     .font(AppFonts.titleFont(22))
@@ -45,12 +29,24 @@ struct HeaderView: View {
                     .tracking(2)
                     .foregroundColor(AppColors.textSecondary)
             }
+            .frame(maxWidth: .infinity)
 
-            Spacer()
+            if let onSearchTap {
+                HStack {
+                    Spacer()
 
-            StreakFlame(streak: streak, isLit: flameLit, onTap: { onFlameTap?() })
+                    Button(action: onSearchTap) {
+                        AppIcon("ph-magnifying-glass", size: 18)
+                            .foregroundColor(AppColors.gold.opacity(0.8))
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Search")
+                }
+            }
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 12)
         .padding(.top, 8)
     }
 }
@@ -213,10 +209,6 @@ struct StreakFlame: View {
 }
 
 #Preview {
-    VStack(spacing: 20) {
-        HeaderView(streak: 12, flameLit: true)
-        HeaderView(streak: 5, flameLit: false)
-        HeaderView(streak: 0, flameLit: false)
-    }
-    .background(AppColors.background)
+    HeaderView()
+        .background(AppColors.background)
 }

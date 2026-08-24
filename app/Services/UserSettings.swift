@@ -24,6 +24,18 @@ enum PrayerLanguage: String, CaseIterable, Identifiable {
     var isBilingual: Bool { self == .both || self == .latinUnderEnglish }
 }
 
+// MARK: - Missal Layout
+
+/// How the Daily Missal sets a bilingual passage: the translation
+/// beneath each line, or the two languages in facing columns like a
+/// printed hand missal.
+enum MissalLayout: String, CaseIterable, Identifiable {
+    case interlinear = "Line by Line"
+    case sideBySide = "Side by Side"
+
+    var id: String { rawValue }
+}
+
 // MARK: - Prayer Intention
 
 /// What draws the user to the Rosary, chosen during onboarding.
@@ -151,6 +163,22 @@ final class UserSettings {
         PrayerLanguage(rawValue: prayerLanguagePreference) ?? .both
     }
 
+    // MARK: - Missal Layout
+
+    /// Empty until the missal's first-open question has been answered,
+    /// so the missal knows to ask it
+    var missalLayoutPreference: String = "" {
+        didSet { UserDefaults.standard.set(missalLayoutPreference, forKey: "userSettings.missalLayout") }
+    }
+
+    /// Resolved missal layout enum
+    var missalLayout: MissalLayout {
+        MissalLayout(rawValue: missalLayoutPreference) ?? .interlinear
+    }
+
+    /// Whether the missal's first-open layout choice has been made
+    var hasChosenMissalLayout: Bool { !missalLayoutPreference.isEmpty }
+
     // MARK: - Onboarding Intentions
 
     /// What drew the user to the app, chosen during onboarding and editable
@@ -241,6 +269,111 @@ final class UserSettings {
         ReminderSound.all.first { $0.fileName == reminderSoundFile } ?? .default
     }
 
+    // MARK: - Personal Page (Me)
+
+    /// The name the Me page greets. Empty means the default salutation.
+    var displayName: String = "" {
+        didSet { UserDefaults.standard.set(displayName, forKey: "userSettings.displayName") }
+    }
+
+    /// The sections on the Me page, in the user's order. Only enabled
+    /// sections are stored; removing one deletes nothing underneath it —
+    /// a hidden streak keeps counting, hidden reflections keep saving.
+    var meWidgetsRaw: [String] = MeWidget.defaultOrder.map(\.rawValue) {
+        didSet { UserDefaults.standard.set(meWidgetsRaw, forKey: "userSettings.meWidgets") }
+    }
+
+    var meWidgets: [MeWidget] { MeWidget.decode(meWidgetsRaw) }
+
+    func setMeWidgets(_ widgets: [MeWidget]) {
+        meWidgetsRaw = widgets.map(\.rawValue)
+    }
+
+    // MARK: - Pray Button
+
+    /// What a quick tap of the raised Pray button does. Today's Rosary
+    /// unless the user chooses otherwise.
+    var prayQuickActionRaw: String = PrayerShortcut.todaysRosary.rawValue {
+        didSet { UserDefaults.standard.set(prayQuickActionRaw, forKey: "userSettings.prayQuickAction") }
+    }
+
+    var prayQuickAction: PrayerShortcut {
+        PrayerShortcut(rawValue: prayQuickActionRaw) ?? .todaysRosary
+    }
+
+    /// The acts in the Pray button's press-and-hold tray, in order.
+    var prayTrayRaw: [String] = [
+        PrayerShortcut.todaysRosary.rawValue,
+        PrayerShortcut.chooseMeditation.rawValue,
+        PrayerShortcut.mass.rawValue,
+        PrayerShortcut.office.rawValue
+    ] {
+        didSet { UserDefaults.standard.set(prayTrayRaw, forKey: "userSettings.prayTray") }
+    }
+
+    var prayTrayShortcuts: [PrayerShortcut] { PrayerShortcut.decode(prayTrayRaw) }
+
+    func setPrayTray(_ shortcuts: [PrayerShortcut]) {
+        prayTrayRaw = shortcuts.map(\.rawValue)
+    }
+
+    // MARK: - Rule of Prayer
+
+    /// The devotions in the user's daily rule, in order.
+    var ruleItemsRaw: [String] = [
+        PrayerShortcut.todaysRosary.rawValue,
+        PrayerShortcut.mass.rawValue
+    ] {
+        didSet { UserDefaults.standard.set(ruleItemsRaw, forKey: "userSettings.ruleItems") }
+    }
+
+    var ruleItems: [PrayerShortcut] { PrayerShortcut.decode(ruleItemsRaw) }
+
+    func setRuleItems(_ items: [PrayerShortcut]) {
+        ruleItemsRaw = items.map(\.rawValue)
+    }
+
+    /// Day stamp the manual rule checks belong to. Checks from an earlier
+    /// day are ignored rather than erased — the rule starts each morning
+    /// unmarked, and yesterday is never called a failure.
+    private var ruleCheckedDate: String = "" {
+        didSet { UserDefaults.standard.set(ruleCheckedDate, forKey: "userSettings.ruleCheckedDate") }
+    }
+
+    /// Raw values of rule items hand-checked today (the acts the app
+    /// cannot see finish on its own, like the Mass or an Office hour).
+    private var ruleCheckedRaw: [String] = [] {
+        didSet { UserDefaults.standard.set(ruleCheckedRaw, forKey: "userSettings.ruleChecked") }
+    }
+
+    private static let dayStampFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter
+    }()
+
+    private var todayStamp: String {
+        Self.dayStampFormatter.string(from: Date())
+    }
+
+    func isRuleChecked(_ item: PrayerShortcut) -> Bool {
+        ruleCheckedDate == todayStamp && ruleCheckedRaw.contains(item.rawValue)
+    }
+
+    func setRuleChecked(_ item: PrayerShortcut, _ done: Bool) {
+        if ruleCheckedDate != todayStamp {
+            ruleCheckedDate = todayStamp
+            ruleCheckedRaw = []
+        }
+        if done {
+            if !ruleCheckedRaw.contains(item.rawValue) {
+                ruleCheckedRaw.append(item.rawValue)
+            }
+        } else {
+            ruleCheckedRaw.removeAll { $0 == item.rawValue }
+        }
+    }
+
     /// Whether notification permission has been granted
     var notificationAuthorizationGranted: Bool = false
 
@@ -267,6 +400,9 @@ final class UserSettings {
         if d.object(forKey: "userSettings.prayerImageMode") != nil {
             prayerImageMode = d.bool(forKey: "userSettings.prayerImageMode")
         }
+        if d.object(forKey: "userSettings.missalLayout") != nil {
+            missalLayoutPreference = d.string(forKey: "userSettings.missalLayout") ?? ""
+        }
         if let stored = d.stringArray(forKey: "userSettings.onboardingIntentions") {
             onboardingIntentions = stored
         } else if let legacy = d.string(forKey: "userSettings.onboardingIntention"), !legacy.isEmpty {
@@ -284,6 +420,34 @@ final class UserSettings {
         }
         if d.object(forKey: "userSettings.reminderSound") != nil {
             reminderSoundFile = d.string(forKey: "userSettings.reminderSound") ?? ReminderSound.default.fileName
+        }
+        if let name = d.string(forKey: "userSettings.displayName") {
+            displayName = name
+        }
+        if let widgets = d.stringArray(forKey: "userSettings.meWidgets") {
+            meWidgetsRaw = widgets
+        }
+        if let quick = d.string(forKey: "userSettings.prayQuickAction") {
+            prayQuickActionRaw = quick
+        }
+        if let tray = d.stringArray(forKey: "userSettings.prayTray") {
+            prayTrayRaw = tray
+        }
+        if let rule = d.stringArray(forKey: "userSettings.ruleItems") {
+            ruleItemsRaw = rule
+        }
+        ruleCheckedDate = d.string(forKey: "userSettings.ruleCheckedDate") ?? ""
+        ruleCheckedRaw = d.stringArray(forKey: "userSettings.ruleChecked") ?? []
+
+        // One-time: the Library card replaced the home screen's menu
+        // button, so a page saved before it existed gains it once —
+        // after that, removing it is the user's choice and sticks.
+        if !d.bool(forKey: "userSettings.libraryCardMigrated") {
+            d.set(true, forKey: "userSettings.libraryCardMigrated")
+            if !meWidgetsRaw.contains(MeWidget.library.rawValue) {
+                let at = min(2, meWidgetsRaw.count)
+                meWidgetsRaw.insert(MeWidget.library.rawValue, at: at)
+            }
         }
 
         UNUserNotificationCenter.current().getNotificationSettings { settings in

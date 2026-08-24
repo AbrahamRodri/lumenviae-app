@@ -28,6 +28,23 @@ enum AppRoute: Hashable {
 
     /// Completion screen shown after finishing all mysteries
     case completion
+
+    /// Settings (the old Account screen), pushed from the Me page's gear
+    case settings
+
+    /// Explore: search and browse everything, from the home search bar
+    case explore
+
+    // Content destinations — pages, not tasks, so they slide in from
+    // the right rather than pulling up as sheets. Each draws its own
+    // Back pill and pops via `dismiss`.
+    case missal
+    case office
+    case trueDevotion
+    case howToPray
+    case scripture
+    case marianLibrary
+    case carloAcutis
 }
 
 // MARK: - PrayerLaunch
@@ -83,10 +100,35 @@ final class AppRouter {
     /// to record. Carried the same way as `pendingPrayer`.
     var completedSessionDuration: Int?
 
+    /// A devotional act asked for from anywhere — a Rule of Prayer row,
+    /// the Pray button's tray. ContentView watches this, performs it
+    /// (some acts present sheets only it can own), and clears it.
+    var shortcutRequest: PrayerShortcut?
+
+    /// Requests a devotional act. Runs on the next router observation
+    /// tick, wherever the user currently is.
+    func run(_ shortcut: PrayerShortcut) {
+        shortcutRequest = shortcut
+    }
+
     // MARK: - Navigation Actions
 
     func navigateToAllMysteries() {
         path.append(AppRoute.allMysteries)
+    }
+
+    func navigateToSettings() {
+        path.append(AppRoute.settings)
+    }
+
+    func navigateToExplore() {
+        path.append(AppRoute.explore)
+    }
+
+    /// Pushes any content destination. The named helpers above predate
+    /// this; new pages ride it directly.
+    func push(_ route: AppRoute) {
+        path.append(route)
     }
 
     func navigateToMeditationSelection(category: MysteryCategory) {

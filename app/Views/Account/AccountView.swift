@@ -8,10 +8,17 @@ import UIKit
 
 struct AccountView: View {
     @Environment(UserSettings.self) private var userSettings
+    @Environment(AppRouter.self) private var router
     @State private var showOnboarding = false
     @State private var showAbout = false
     @State private var showPrivacyPolicy = false
     @State private var showHelpSupport = false
+    @State private var showFeedback = false
+
+    /// Set by Help & Support's own feedback link. Presenting the form
+    /// into that sheet's dismissal drops it, so it is opened from
+    /// `onDismiss` instead — the same handoff the prayer tray uses.
+    @State private var feedbackAfterHelp = false
     @State private var showSoundPicker = false
     @State private var showIntentionPicker = false
 
@@ -22,10 +29,7 @@ struct AccountView: View {
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
-                    AccountHeaderView()
-
-                    ProfileSection()
-                        .padding(.top, 24)
+                    AccountHeaderView(onBack: { router.pop() })
 
                     // MARK: Appearance
                     AccountSection(title: "APPEARANCE") {
@@ -162,6 +166,17 @@ struct AccountView: View {
                             ActionRow(icon: "ph-question", title: "Help & Support") {
                                 showHelpSupport = true
                             }
+
+                            Divider()
+                                .background(AppColors.gold.opacity(0.2))
+
+                            ActionRow(
+                                icon: "ph-chat-teardrop-text",
+                                title: "Send Feedback",
+                                subtitle: "Report a problem or share an idea"
+                            ) {
+                                showFeedback = true
+                            }
                         }
                     }
                     .padding(.top, 24)
@@ -172,6 +187,7 @@ struct AccountView: View {
                 }
             }
         }
+        .navigationBarHidden(true)
         .sheet(isPresented: $showOnboarding) {
             OnboardingView(onComplete: { showOnboarding = false })
         }
@@ -181,8 +197,18 @@ struct AccountView: View {
         .sheet(isPresented: $showPrivacyPolicy) {
             PrivacyPolicySheet()
         }
-        .sheet(isPresented: $showHelpSupport) {
-            HelpSupportSheet()
+        .sheet(isPresented: $showHelpSupport, onDismiss: {
+            guard feedbackAfterHelp else { return }
+            feedbackAfterHelp = false
+            showFeedback = true
+        }) {
+            HelpSupportSheet(onGiveFeedback: {
+                feedbackAfterHelp = true
+                showHelpSupport = false
+            })
+        }
+        .sheet(isPresented: $showFeedback) {
+            FeedbackView()
         }
         .sheet(isPresented: $showSoundPicker) {
             ReminderSoundSheet()
@@ -403,50 +429,41 @@ struct AppIconPickerRows: View {
 // MARK: - Account Header
 
 struct AccountHeaderView: View {
-    var body: some View {
-        HStack {
-            Spacer()
+    /// Pops back to the Me page. Settings is a pushed screen (it slides
+    /// in from the right), so it draws its own back control like every
+    /// other pushed screen here.
+    var onBack: (() -> Void)?
 
-            Text("Account")
+    var body: some View {
+        ZStack {
+            Text("Settings")
                 .font(AppFonts.headlineFont(20))
                 .foregroundColor(AppColors.cream)
 
-            Spacer()
+            HStack {
+                if let onBack {
+                    Button(action: onBack) {
+                        AppIcon("ph-arrow-left", size: 18)
+                            .foregroundColor(AppColors.gold)
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Back")
+                }
+
+                Spacer()
+            }
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 12)
         .padding(.top, 8)
-        .padding(.bottom, 16)
+        .padding(.bottom, 8)
         .overlay(
             Rectangle()
                 .fill(AppColors.gold.opacity(0.2))
                 .frame(height: 0.5),
             alignment: .bottom
         )
-    }
-}
-
-// MARK: - Profile Section
-
-struct ProfileSection: View {
-    var body: some View {
-        VStack(spacing: 12) {
-            ZStack {
-                Circle()
-                    .fill(AppColors.cardBackground)
-                    .frame(width: 80, height: 80)
-
-                AppIcon("ph-user", size: 32)
-                    .foregroundColor(AppColors.textSecondary)
-            }
-            .overlay(
-                Circle()
-                    .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: 1)
-            )
-
-            Text("Faithful Pilgrim")
-                .font(AppFonts.headlineFont(20))
-                .foregroundColor(AppColors.cream)
-        }
     }
 }
 
@@ -1017,6 +1034,11 @@ struct PrivacyPolicySheet: View {
 // MARK: - Help & Support Sheet
 
 struct HelpSupportSheet: View {
+
+    /// Opens the feedback form. Run by the host once this sheet has
+    /// finished leaving.
+    let onGiveFeedback: () -> Void
+
     var body: some View {
         ZStack {
             AppColors.appGradient.ignoresSafeArea()
@@ -1056,7 +1078,7 @@ struct HelpSupportSheet: View {
 
                         InfoBlock(
                             title: "How do I adjust text size?",
-                            text: "Go to Account → Prayer Experience → Text Size. Drag the slider toward the larger \"A\" to increase the meditation text size."
+                            text: "Go to Me → Settings → Prayer Experience → Text Size. Drag the slider toward the larger \"A\" to increase the meditation text size."
                         )
 
                         InfoBlock(
@@ -1064,10 +1086,19 @@ struct HelpSupportSheet: View {
                             text: "Make sure notifications are enabled for Lumen Viae in your iPhone's Settings → Notifications. Then toggle Daily Reminders off and back on in the app to reschedule."
                         )
 
-                        InfoBlock(
-                            title: "Contact Us",
-                            text: "For other questions or feedback, email us at \(Constants.supportEmail) — we'd love to hear from you."
-                        )
+                        VStack(alignment: .leading, spacing: 12) {
+                            InfoBlock(
+                                title: "Contact Us",
+                                text: "Didn't find it here? Write to us in the app — we read every note."
+                            )
+
+                            QuietGoldButton(
+                                title: "Send feedback",
+                                leadingIcon: "ph-chat-teardrop-text",
+                                horizontalPadding: 0,
+                                action: onGiveFeedback
+                            )
+                        }
                     }
                     .padding(.horizontal, 24)
                     .padding(.bottom, 48)
@@ -1103,4 +1134,5 @@ private struct InfoBlock: View {
 #Preview {
     AccountView()
         .environment(UserSettings.shared)
+        .environment(AppRouter())
 }

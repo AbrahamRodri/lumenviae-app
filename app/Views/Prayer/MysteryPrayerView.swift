@@ -203,6 +203,14 @@ struct MysteryPrayerView: View {
                     .presentationDetents([.height(310)])
                     .presentationDragIndicator(.visible)
 
+            case .feedback:
+                FeedbackView(
+                    context: trackActions.feedbackContext,
+                    initialTopic: .meditations
+                )
+                .presentationDetents([.large])
+                .presentationDragIndicator(.visible)
+
             case .tray:
                 PrayerTrackTray(
                     actions: trackActions,
@@ -277,8 +285,12 @@ struct MysteryPrayerView: View {
             meditationId: meditation?.id ?? 0,
             audioURL: viewModel.currentRemoteAudioURL,
             shareText: "\(title) — a meditation from \(meditationSet.name) on Lumen Viae",
-            feedbackSubject: "Feedback: \(title) (\(meditationSet.name))",
+            feedbackContext: FeedbackContext(
+                meditationTitle: title,
+                setName: meditationSet.name
+            ),
             onAddReflection: { activeSheet = .journal },
+            onGiveFeedback: { activeSheet = .feedback },
             onEndSession: { router.popToRoot() }
         )
     }
@@ -756,6 +768,7 @@ private enum PlayerSheet: String, Identifiable {
     case journal
     case playback
     case tray
+    case feedback
 
     var id: String { rawValue }
 }

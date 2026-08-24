@@ -145,19 +145,74 @@ keep the bar from crowding the raised Pray button.
 
 | Tab | In the bar | Purpose |
 |-----|-----------|---------|
-| Home | Yes | Today's mysteries, resume card, mystery grid, daily quote |
+| Home | Yes | Search bar → Explore, today's mysteries, Today in the Church, mystery grid, quote |
 | Consecrate | Yes | The 33-day preparation for Marian consecration |
 | Journal | Yes | Reflections, searchable, stored on device |
-| Progress | No — home header flame | Streaks, prayer history, milestones |
-| Account | Yes | Theme, app icon, prayer language, reminders, offline downloads |
+| Progress | No — via Me | Streaks, prayer history, milestones ("Sacred Record") |
+| Me | Yes | The user's own arrangeable page; settings pushed behind its gear |
 
-The **Pray** button raised over the bar starts today's Rosary directly, resolving
-the day's mysteries and a meditation set without going through the picker.
+The **Pray** button raised over the bar runs the user's chosen quick act
+(today's Rosary by default), and **press-and-hold** opens a tray of their
+chosen devotions (`PrayShortcutTray`). The bar's Pray gap is a fifth
+equal slot, so the four labels keep one rhythm.
+
+The home header is the wordmark with a small search glass in the corner
+— no menu button, no flame. The old menu's destinations live in the Me
+page's **Library** card and on **Explore**; the streak lives in the Me
+page's **Prayer Streak** card, whose kicker carries the Sacred Record
+link (the only doors to the Progress page). **Today in the Church**
+closes the home page below the daily quote as `TodayInChurchSection` —
+an ordo leaf unlike other cards: the vestment colour as a full-width
+band across the card top, date and feast centered, and a diptych foot
+(THE MASS | THE OFFICE). The search glass pushes `AppRoute.explore`
+(`Views/Home/ExploreView.swift`): browse (mysteries / library / all
+meditation sets fetched per category) or search all three at once — the
+real search field lives on Explore, not on home.
+
+**Pages push, tasks sheet.** Content destinations — the Missal, the
+Office, True Devotion, How to Pray, In Scripture, the Marian Library,
+Carlo Acutis, Settings, Explore — are `AppRoute` cases that slide in
+from the right; each draws its own gold Back in its toolbar (so never
+apply `navigationBarHidden` to them). Sheets are reserved for tasks and
+trays: the Pray tray, the two editors, pickers, and the journal editor.
+The tab bar lays its four labels out content-sized with even gaps (not
+equal cells), padded clear of the raised Pray medallion.
 
 > Journal is **not** blocked on the API. Entries are a local SwiftData model
 > (`Models/JournalEntry.swift`); nothing is sent to the server.
 
-### Account Screen Structure
+### The Me Tab
+
+The old Account tab slot: a compact name header ("Faithful Pilgrim"
+until set, "Praying since…" from the first session, gear → Settings),
+then **cards the user arranges themselves** — add, remove, drag to
+reorder. Two separate editors, deliberately: `MePageEditorSheet` (name,
+page cards, Rule of Prayer) from "Edit page" or the rule's Edit; and
+`PrayButtonEditorSheet` (quick tap + hold menu, with a live preview of
+the button naming both gestures) from the tray's "Edit this menu" row.
+Removing a card hides a view, never data (a hidden streak keeps
+counting). The section vocabulary is `MeWidget`; the one-motion acts are
+`PrayerShortcut` (both in `Models/PrayerShortcut.swift`) — one enum
+feeds the quick tap, the hold tray, and the Rule of Prayer.
+
+Cards: **Rule of Prayer** (daily checklist — Rosary and consecration
+check themselves from real data; the Mass and Office are checked by
+hand, reset silently each morning, never carried over as failure),
+**Prayer Streak** (removable per the no-guilt principle), **Library**
+(a two-column shelf: Missal, Office, True Devotion, How to Pray, In
+Scripture, Marian Library, Carlo Acutis, Sacred Record — a one-time
+migration inserts it for pages saved before it existed),
+**Consecration** (the page's one votive-washed card), **Reflections**
+(journal entries set as quoted lines). Each card keeps the shared
+silhouette but its own interior character. Research behind the design:
+"The Oratory Brief" artifact. `MenuView` is no longer reachable and
+kept only as reference.
+
+### Settings Screen Structure
+
+`AccountView`, now pushed from the Me page's gear (`AppRoute.settings`) —
+its own screen sliding in from the right, custom back arrow, tab bar
+hidden. Contents unchanged:
 
 **Appearance**
 - Theme (Marian Blue / Midnight / Candlelit) — re-themes the app live
@@ -199,6 +254,7 @@ app/
 │   ├── JournalEntry, PrayerSession          (SwiftData)
 │   ├── Consecration{Day,Phase,Prayer,Progress}
 │   ├── TrueDevotionBook, TrueDevotionReadingProgress
+│   ├── PrayerShortcut                       # + MeWidget — personalization vocab
 │   └── StreakMilestone, MarianFeastDay, BilingualConsecrationPrayer
 ├── ViewModels/               # @Observable
 │   ├── HomeViewModel, MeditationSelectionViewModel, MeditationSetDetailViewModel
@@ -206,6 +262,8 @@ app/
 │   └── TrueDevotionReaderViewModel
 ├── Views/
 │   ├── Home/ Prayer/ Journal/ Progress/ Account/
+│   ├── Me/                   # MeView (My Oratory), MeWidgets,
+│   │                         # MeCustomizeSheet, PrayShortcutTray
 │   ├── Meditation/           # SelectMeditationView (the shelf), MeditationSetDetailView
 │   ├── Consecration/         # 33-day preparation (own NavigationStack)
 │   ├── TrueDevotion/         # Book reader
@@ -273,12 +331,64 @@ write concurrent code here:
 - **Reminders** — daily notification at a chosen time and sound, with copy drawn
   from the pool matching the user's stated intentions.
 - **Offline** — user-initiated download of every set and audio file.
-- **Personalization** — three themes, four app icons, prayer language, text size.
-- **Onboarding** — seven slides, re-runnable from Account.
+- **Personalization** — three themes, four app icons, prayer language, text
+  size; the Me tab's arrangeable "My Oratory" page (widgets, rule of prayer,
+  intentions, display name) and the configurable Pray button (quick act +
+  press-and-hold tray), all stored in UserDefaults via `UserSettings`.
+- **Onboarding** — eight slides, skippable, re-runnable from Account.
+- **Daily Missal** — the 1962 propers for any day plus the Ordo Missae, in the
+  resources menu. Served live by the third-party Missale Meum API
+  (`https://www.missalemeum.com/en/api/v5`, MIT, free to use) through
+  `MissalAPIService` — deliberately a separate client from `APIService` so a
+  third-party outage never looks like a Lumen Viae failure. Texts arrive as
+  `[english, latin]` pairs whose line counts align (both sides keep Divinum
+  Officium's line structure), so bilingual reading offers two layouts —
+  interlinear line pairs like the prayers, or side-by-side columns like a
+  printed hand missal — chosen in a forced first-open sheet and changed any
+  time from the Aa text options (`MissalLayout` in `UserSettings`). The
+  `|||` format is still not used here; pairing happens in the missal views.
+  Citations (`*Ps 138:17*`) and the ℣ ℟ ☩ marks are set in rubric red, and
+  the Introit, readings, and Canon open with a gold drop cap. Every fetched
+  day is cached in Application Support/Missal (excluded from backup) via
+  `MissalCacheService`, and after the first load the coming week, the Ordo,
+  and the year's calendar are prefetched quietly — a chapel with no signal
+  still gets the right page; days more than 30 back are pruned. The date in
+  the header opens `MissalCalendarSheet`: the next 35 days of the 1962
+  calendar (feast, class, vestment color, commemorations) plus a date-picker
+  jump. Commemorations also appear under the feast header, as a printed
+  missal notes them.
+- **Divine Office** — the pre-Vatican-II Breviarium Romanum (1960 rubrics,
+  the 1962 books), in the resources menu and as "The Office" beside "The
+  Mass" in the home band. Served by our own API's `/office/*` endpoints
+  (`GET /office/:date`, `/office/:date/:hour`, `/office/calendar/:year/:month`,
+  `/office/versions`), which the Phoenix app assembles from the Divinum
+  Officium engine and parses into JSON — so `OfficeAPIService` is still a
+  separate client from `APIService`: an upstream engine outage
+  (`office_unavailable`, retryable) must never look like the Rosary content
+  failing. The version and language ride as explicit query params, pinned
+  in `OfficeAPIService` (`rubrics-1960`, `english`) — a future version
+  setting threads through there, and every cache file name carries the
+  version. `DivineOfficeView` steps days with the missal's navigator and
+  lists the eight hours as a ruled ledger (bundled in `CanonicalHour` —
+  the ledger never waits on the network; today's page marks the present
+  hour with a gold dot); `OfficeHourView` reads one hour under the app's
+  prayer language and the missal's two bilingual layouts, reusing
+  `MissalPassageText`/`MissalPairedPassageText`/`MissalColumnPassageText`
+  (the Latin and vernacular cells keep the engine's line structure, so
+  they pair line for line), with prev/next hour at the foot of the page.
+  Hours and days cache in Application Support/Office via
+  `OfficeCacheService`; after the first load, today's and tomorrow's
+  hours are prefetched quietly and days more than 30 back are pruned.
+  `OfficeCalendarSheet` mirrors the missal's. Every hour names its source
+  — the texts are The Divinum Officium Project's work, and the footer
+  credits it.
 
 ### Not built yet
 
 - Scriptural Rosary (a verse per bead rather than per mystery)
+- A Divine Office version/language setting (Monastic, Dominican, and the
+  other rubrical versions the API's `/office/versions` already serves) —
+  `OfficeAPIService.version`/`.language` are the seam
 - Auto-scrolling meditation text synced to audio
 - Haptic feedback during prayer
 - A setting to switch between the Traditional and Modern (Luminous Thursday)

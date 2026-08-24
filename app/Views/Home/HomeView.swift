@@ -25,7 +25,9 @@ struct HomeView: View {
     @Query(sort: \PrayerSession.completedAt, order: .reverse) private var sessions: [PrayerSession]
 
     /// Controls whether the menu sheet is displayed
-    @State private var showingMenu = false
+
+    /// Today's celebration, for the band at the head of the page
+    @State private var todayInChurch = TodayInChurch()
 
     /// Resume-card state while the interrupted session's set reloads
     @State private var isResuming = false
@@ -45,10 +47,10 @@ struct HomeView: View {
                 // Scrollable content
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 0) {
+                        // Starts clear of the dissolve below the header
                         DayPrayerLabel(label: viewModel.dayLabel)
-                            // Starts clear of the dissolve below the header
-                            .padding(.top, 36)
-                            .devotionalEntrance()
+                            .padding(.top, 30)
+                            .devotionalEntrance(delay: 0.06)
 
                     featuredMysterySection
                         .padding(.top, 16)
@@ -73,8 +75,16 @@ struct HomeView: View {
                     )
                     .padding(.horizontal, 20)
                     .padding(.top, 40)
-                    .padding(.bottom, 120) // Clears the tab bar and its fade
                     .devotionalEntrance(delay: 0.24)
+
+                    // The Church's own day closes the page — the
+                    // bookshelf card after the quote: the Missal, the
+                    // Breviary, and True Devotion, each spine a door.
+                    TodayInChurchSection(today: todayInChurch)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 40)
+                    .padding(.bottom, 120) // Clears the tab bar and its fade
+                    .devotionalEntrance(delay: 0.28)
                     }
                 }
                 // Content dissolves as it rises toward the header instead of
@@ -125,8 +135,8 @@ struct HomeView: View {
                 }
             }
         }
-        .sheet(isPresented: $showingMenu) {
-            MenuView(isPresented: $showingMenu)
+        .task {
+            await todayInChurch.load()
         }
         .onAppear {
             if historyService == nil {
@@ -146,21 +156,11 @@ struct HomeView: View {
     /// a render.
     @State private var historyService: PrayerHistoryService?
 
-    /// The header, with its streak and flame resolved in a single pass over
-    /// the history rather than one query apiece.
+    /// The wordmark, with the search glass in the corner — the menu
+    /// lives in the Me page's Library card, the flame in its Prayer
+    /// Streak card.
     private var header: some View {
-        // Reading `sessions` here registers the @Query dependency, so the
-        // flame refreshes the moment a Rosary is recorded.
-        let hasSessions = !sessions.isEmpty
-        let streak = hasSessions ? (historyService?.currentStreak() ?? 0) : 0
-        let flameLit = hasSessions ? (historyService?.hasPrayedToday() ?? false) : false
-
-        return HeaderView(
-            onMenuTap: { showingMenu = true },
-            streak: streak,
-            flameLit: flameLit,
-            onFlameTap: { router.selectedTab = .progress }
-        )
+        HeaderView(onSearchTap: { router.navigateToExplore() })
     }
 
     /// Reloads the interrupted session's meditation set and jumps back to

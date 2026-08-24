@@ -64,8 +64,12 @@ struct CustomTabBar: View {
     /// Whether today's meditation set is still loading after a Pray tap
     var isLoadingPrayer: Bool = false
 
-    /// Starts today's Rosary directly (invoked by the raised Pray button)
+    /// Runs the user's chosen quick act (invoked by a tap of the raised
+    /// Pray button — today's Rosary unless they've chosen otherwise)
     var onPrayNow: () -> Void = {}
+
+    /// Opens the press-and-hold tray of the user's chosen devotions
+    var onPrayHold: () -> Void = {}
 
     /// Tabs shown in the bar. Progress is reachable via the home header's
     /// streak flame instead of a tab.
@@ -100,6 +104,11 @@ struct CustomTabBar: View {
                 .fill(AppColors.gold.opacity(0.15))
                 .frame(height: 0.5)
 
+            // Even gaps between content-sized tabs, not equal cells:
+            // CONSECRATE is four times ME's width, so equal cells pool
+            // air around the short labels and the bar reads lopsided.
+            // The trailing padding keeps the last tab clear of the
+            // raised Pray medallion.
             HStack(spacing: 0) {
                 ForEach(visibleTabs, id: \.self) { tab in
                     TabBarItem(
@@ -108,14 +117,15 @@ struct CustomTabBar: View {
                     ) {
                         selectedTab = tab
                     }
-                }
+                    .frame(minWidth: 44)
 
-                // Reserved space beneath the raised Pray button
-                // (fixed height — an unconstrained Color would expand
-                // vertically and stretch the whole bar)
-                Color.clear
-                    .frame(width: 78, height: 1)
+                    if tab != visibleTabs.last {
+                        Spacer(minLength: 8)
+                    }
+                }
             }
+            .padding(.leading, 20)
+            .padding(.trailing, 104)
             .padding(.top, 12)
         }
         // The fade above the bar carries on behind it, in the color the
@@ -128,9 +138,13 @@ struct CustomTabBar: View {
                 .ignoresSafeArea()
         )
         .overlay(alignment: .topTrailing) {
-            PrayNowButton(isLoading: isLoadingPrayer, action: onPrayNow)
-                .padding(.trailing, 12)
-                .offset(y: -20)
+            PrayNowButton(
+                isLoading: isLoadingPrayer,
+                action: onPrayNow,
+                onHold: onPrayHold
+            )
+            .padding(.trailing, 12)
+            .offset(y: -20)
         }
     }
 }
@@ -154,8 +168,20 @@ struct PrayNowButton: View {
 
     var action: () -> Void = {}
 
+    /// Opens the press-and-hold tray. A hold that fired must not also
+    /// fire the tap on release — the flag below swallows that one tap.
+    var onHold: () -> Void = {}
+
+    @State private var holdFired = false
+
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            if holdFired {
+                holdFired = false
+                return
+            }
+            action()
+        }) {
             ZStack {
                 // Faint, steady candle glow — presence, not pulsing
                 Circle()
@@ -201,7 +227,18 @@ struct PrayNowButton: View {
         }
         .buttonStyle(GoldCTAButtonStyle())
         .disabled(isLoading)
-        .accessibilityLabel(isLoading ? "Preparing today's Rosary" : "Pray today's Rosary")
+        .simultaneousGesture(
+            LongPressGesture(minimumDuration: 0.4)
+                .onEnded { _ in
+                    guard !isLoading else { return }
+                    holdFired = true
+                    onHold()
+                }
+        )
+        .sensoryFeedback(.impact(weight: .medium), trigger: holdFired) { _, new in new }
+        .accessibilityLabel(isLoading ? "Preparing prayer" : "Pray")
+        .accessibilityHint("Double-tap to begin. Touch and hold for more devotions.")
+        .accessibilityAction(named: "Open devotions tray") { onHold() }
     }
 }
 
@@ -268,7 +305,6 @@ struct TabBarItem: View {
                     .opacity(isSelected ? 1 : 0)
                     .scaleEffect(isSelected ? 1 : 0.3)
             }
-            .frame(maxWidth: .infinity)
             .animation(.easeOut(duration: 0.25), value: isSelected)
         }
         .buttonStyle(.plain)

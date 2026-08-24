@@ -9,7 +9,10 @@
 //  reading, a prayer row opens that prayer — so this is built to be
 //  entered anywhere and to walk in both directions from there. Swipe or
 //  use PREV/NEXT; the dots say where you are in the day. AMEN, on the
-//  last prayer, carries the day into its reflection.
+//  last prayer, carries the day into its reflection — which stands in
+//  this screen's place in the stack rather than on top of it, so
+//  leaving the reflection leaves the day rather than reversing back
+//  through the prayers that were just finished.
 //
 //  The reading used to be a full-screen cover owned by the dashboard,
 //  which meant continuing from it dismissed the cover, showed the
@@ -169,9 +172,9 @@ struct ConsecrationDayFlowView: View {
         .sensoryFeedback(.impact(weight: .light), trigger: stepIndex)
         .onAppear {
             // Resolving the start step needs `prayers`, which needs the
-            // environment — so it happens here rather than in init. It
-            // runs once: popping back from the reflection must return to
-            // the prayer the user left, not to the step they entered on.
+            // environment — so it happens here rather than in init, and
+            // is consumed once so a redraw can never drag the user back
+            // to the step they entered on.
             if let pending = pendingStart {
                 stepIndex = steps.firstIndex(of: pending) ?? 0
                 pendingStart = nil
@@ -227,7 +230,26 @@ struct ConsecrationDayFlowView: View {
         case .prayer(let index):
             goToStep(readings.count + index)
         case .reflection:
-            path.append(.journal(dayNumber: dayNumber))
+            openReflection()
+        }
+    }
+
+    /// The reflection is the day's last place, not a screen stacked on
+    /// top of its prayers — so it *replaces* the day flow in the stack
+    /// rather than piling on it.
+    ///
+    /// Stacking meant leaving the reflection dropped you back into the
+    /// prayer you had just finished, and then into the reading behind
+    /// it: three taps to get out of a day you had already closed. Now
+    /// one tap leaves the day, and the reflection's own index still
+    /// walks back to any reading or prayer.
+    private func openReflection() {
+        let reflection = ConsecrationRoute.journal(dayNumber: dayNumber)
+
+        if path.isEmpty {
+            path.append(reflection)
+        } else {
+            path[path.count - 1] = reflection
         }
     }
 
@@ -643,7 +665,7 @@ struct ConsecrationDayFlowView: View {
                     trailingIcon: "ph-check",
                     fullWidth: false
                 ) {
-                    path.append(.journal(dayNumber: dayNumber))
+                    openReflection()
                 }
                 .accessibilityLabel("Amen — finish the prayers and reflect")
             } else {

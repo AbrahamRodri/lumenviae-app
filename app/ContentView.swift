@@ -16,6 +16,20 @@ struct ContentView: View {
     /// Guards the Pray button against double-taps while a set loads
     @State private var isStartingPrayer = false
 
+    /// The Pray button's press-and-hold tray
+    @State private var showPrayTray = false
+
+    /// The act chosen in the tray, run once the tray has finished
+    /// leaving — an act that presents its own sheet (the Mass, the
+    /// Office) must not present into a dismissal.
+    @State private var pendingTrayShortcut: PrayerShortcut?
+
+    /// The tray asked for its editor; opened once the tray has left.
+    @State private var pendingTrayArrange = false
+
+    /// The Pray button's own editor (quick tap + hold menu)
+    @State private var showPrayEditor = false
+
     private var shouldShowTabBar: Bool {
         router.path.isEmpty && !isConsecrationNavigating
     }
@@ -57,7 +71,8 @@ struct ContentView: View {
                 CustomTabBar(
                     selectedTab: Bindable(router).selectedTab,
                     isLoadingPrayer: isStartingPrayer,
-                    onPrayNow: startTodaysPrayer
+                    onPrayNow: { perform(UserSettings.shared.prayQuickAction) },
+                    onPrayHold: { showPrayTray = true }
                 )
                     .ignoresSafeArea(.all, edges: .bottom)
                     .opacity(shouldShowTabBar ? 1 : 0)
@@ -71,19 +86,72 @@ struct ContentView: View {
                 isConsecrationNavigating = false
             }
         }
+        .onChange(of: router.shortcutRequest) { _, request in
+            guard let request else { return }
+            router.shortcutRequest = nil
+            perform(request)
+        }
+        .sheet(isPresented: $showPrayTray, onDismiss: {
+            if let shortcut = pendingTrayShortcut {
+                pendingTrayShortcut = nil
+                perform(shortcut)
+            }
+            if pendingTrayArrange {
+                pendingTrayArrange = false
+                showPrayEditor = true
+            }
+        }) {
+            PrayShortcutTray(
+                pendingShortcut: $pendingTrayShortcut,
+                pendingArrange: $pendingTrayArrange
+            )
+            .environment(UserSettings.shared)
+            .presentationDetents([.height(PrayShortcutTray.height(for: UserSettings.shared))])
+        }
+        .sheet(isPresented: $showPrayEditor) {
+            PrayButtonEditorSheet()
+                .environment(UserSettings.shared)
+        }
+    }
+
+    // MARK: - Shortcuts
+
+    /// Performs a devotional act — from the Pray button's tap, its tray,
+    /// or a Rule of Prayer row on the Me page.
+    private func perform(_ shortcut: PrayerShortcut) {
+        switch shortcut {
+        case .todaysRosary:
+            startPrayer(category: ScheduleService.categoryForToday())
+
+        case .sevenSorrows:
+            startPrayer(category: .sevenSorrows)
+
+        case .chooseMeditation:
+            guard router.path.isEmpty else { return }
+            router.selectedTab = .home
+            router.navigateToMeditationSelection(category: ScheduleService.categoryForToday())
+
+        case .mass:
+            router.push(.missal)
+
+        case .office:
+            router.push(.office)
+
+        case .consecration:
+            router.selectedTab = .consecration
+        }
     }
 
     // MARK: - Quick Prayer
 
-    /// Starts today's Rosary directly from the Pray button: resolves the
-    /// weekday's mystery category and picks a random meditation set from
-    /// the prefetched cache (falling back to the built-in traditional set),
-    /// then goes straight to prayer — no selection screens.
-    private func startTodaysPrayer() {
+    /// Starts a Rosary directly: picks a random meditation set for the
+    /// category from the prefetched cache (falling back to the built-in
+    /// traditional set), then goes straight to prayer — no selection
+    /// screens.
+    private func startPrayer(category: MysteryCategory) {
         guard !isStartingPrayer, router.path.isEmpty else { return }
         isStartingPrayer = true
 
-        let category = ScheduleService.categoryForToday()
         let generation = router.generation
 
         Task {
@@ -118,7 +186,7 @@ struct ContentView: View {
         case .progress:
             PrayerProgressView()
         case .account:
-            AccountView()
+            MeView()
         }
     }
 
@@ -151,6 +219,36 @@ struct ContentView: View {
                 ProgressView("Loading...")
                     .tint(AppColors.gold)
             }
+
+        case .settings:
+            AccountView()
+
+        case .explore:
+            ExploreView()
+
+        // Content pages that slide in. Each carries its own toolbar
+        // chrome (a gold Back in place of the hidden system button), so
+        // the bar must stay — hiding it would take their Back with it.
+        case .missal:
+            DailyMissalView()
+
+        case .office:
+            DivineOfficeView()
+
+        case .trueDevotion:
+            TrueDevotionView()
+
+        case .howToPray:
+            HowToPrayRosaryView()
+
+        case .scripture:
+            MysteriesInScriptureView()
+
+        case .marianLibrary:
+            MarianLibraryView()
+
+        case .carloAcutis:
+            CarloAcutisView()
         }
     }
 }
