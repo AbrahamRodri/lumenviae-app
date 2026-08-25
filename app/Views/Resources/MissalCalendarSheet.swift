@@ -2,8 +2,12 @@
 //  MissalCalendarSheet.swift
 //  Lumen Viae
 //
-//  "What feast is this Sunday?" — the coming weeks of the 1962
-//  calendar. Tap a day to open its Mass, or jump straight to any date.
+//  The date pill's sheet: one month of the 1962 calendar as a grid,
+//  each day carrying its vestment colour as a small dot. Tap a day to
+//  open its Mass; step months with the chevrons. Beneath the grid, the
+//  truth about offline — how much of the month is already on this
+//  device, and a way to save the rest.
+//
 //  The year's calendar is fetched once and kept on disk beside the
 //  cached propers.
 //
@@ -12,244 +16,379 @@ import SwiftUI
 
 struct MissalCalendarSheet: View {
 
-    /// How far ahead the list looks
-    private static let daysAhead = 35
-
     /// Called with the chosen date; the sheet dismisses itself.
     let onSelect: (Date) -> Void
 
     @Environment(\.dismiss) private var dismiss
 
-    @State private var rows: [Row] = []
-    @State private var isLoading = false
-    @State private var loadFailed = false
-    @State private var jumpDate = Calendar.current.startOfDay(for: .now)
+    /// First day of the displayed month
+    @State private var month: Date
+
+    /// The 1962 calendar, keyed "yyyy-MM-dd"
+    @State private var days: [String: MissalCalendarDay] = [:]
+
+    /// Years already loaded (or attempted) this presentation
+    @State private var loadedYears: Set<Int> = []
+
+    /// How many of the month's days are cached on disk
+    @State private var savedCount = 0
+
+    /// The day being read out under the grid — the one under the
+    /// finger while a cell is pressed, today's the rest of the time.
+    @State private var focused: Date?
+
+    /// The in-flight month download, if any
+    @State private var downloadTask: Task<Void, Never>?
+    @State private var isDownloading = false
 
     private let calendar = Calendar.current
 
-    private struct Row: Identifiable {
-        let date: Date
-        let day: MissalCalendarDay
-        var id: String { day.id }
+    init(onSelect: @escaping (Date) -> Void) {
+        self.onSelect = onSelect
+        let now = Calendar.current.startOfDay(for: .now)
+        let components = Calendar.current.dateComponents([.year, .month], from: now)
+        _month = State(initialValue: Calendar.current.date(from: components) ?? now)
     }
 
     // MARK: - Body
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            header
+        MissalSheetShell(title: "") {
+            VStack(spacing: 0) {
+                monthHeader
 
-            jumpRow
-                .padding(.horizontal, 24)
-                .padding(.top, 16)
+                OrnamentDivider()
+                    .frame(width: 118)
+                    .padding(.top, 4)
+                    .padding(.bottom, 16)
 
-            if isLoading && rows.isEmpty {
-                loadingState
-            } else if loadFailed && rows.isEmpty {
-                errorState
-            } else {
-                dayList
+                weekdayRow
+                    .padding(.bottom, 8)
+
+                dayGrid
+
+                feastLine
+                    .padding(.top, 12)
+
+                offlineRow
+                    .padding(.top, 16)
+                    .overlay(alignment: .top) {
+                        Rectangle()
+                            .fill(AppColors.gold.opacity(0.1))
+                            .frame(height: 0.5)
+                    }
+                    .padding(.top, 18)
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .background(AppColors.background.ignoresSafeArea())
-        .task { await loadCalendar() }
+        .task { await loadYears() }
+        .onChange(of: month) {
+            Task { await loadYears() }
+            refreshSavedCount()
+        }
+        .onAppear { refreshSavedCount() }
+        .onDisappear { downloadTask?.cancel() }
     }
 
-    // MARK: - Header
+    // MARK: - Month Header
 
-    private var header: some View {
+    private var monthHeader: some View {
         HStack {
-            VStack(alignment: .leading, spacing: 3) {
-                Text("THE 1962 CALENDAR")
-                    .font(AppFonts.labelFont(10))
-                    .tracking(2.5)
-                    .foregroundColor(AppColors.gold.opacity(0.7))
-
-                Text("The days ahead")
-                    .font(AppFonts.headlineFont(20))
-                    .foregroundColor(AppColors.cream)
+            PrayerHeaderButton(icon: "ph-caret-left", size: 14, label: "Previous month") {
+                step(by: -1)
             }
 
             Spacer()
 
-            Button {
-                dismiss()
-            } label: {
-                AppIcon("ph-x", size: 15)
-                    .foregroundColor(AppColors.textSecondary)
-                    .frame(width: 44, height: 44)
-                    .contentShape(Rectangle())
-            }
-            .accessibilityLabel("Close")
-        }
-        .padding(.leading, 24)
-        .padding(.trailing, 10)
-        .padding(.top, 14)
-    }
-
-    /// A date picker for anywhere the list doesn't reach
-    private var jumpRow: some View {
-        HStack {
-            Text("JUMP TO A DATE")
-                .font(AppFonts.labelFont(10))
-                .tracking(2)
+            Text(monthTitle)
+                .font(AppFonts.headlineFont(12))
+                .tracking(3.5)
                 .foregroundColor(AppColors.gold)
 
             Spacer()
 
-            DatePicker("Jump to a date", selection: $jumpDate, displayedComponents: .date)
-                .labelsHidden()
-                .datePickerStyle(.compact)
-                .tint(AppColors.gold)
-                .onChange(of: jumpDate) { _, newValue in
-                    choose(newValue)
-                }
+            PrayerHeaderButton(icon: "ph-caret-right", size: 14, label: "Next month") {
+                step(by: 1)
+            }
         }
     }
 
-    // MARK: - Day List
+    /// "AUGUST MMXXVI" — the month in words, the year in numerals a
+    /// missal would carve.
+    private var monthTitle: String {
+        let name = Self.monthFormatter.string(from: month).uppercased()
+        let year = calendar.component(.year, from: month)
+        return "\(name) \(Self.roman(year))"
+    }
 
-    private var dayList: some View {
-        ScrollView(showsIndicators: false) {
-            LazyVStack(alignment: .leading, spacing: 0) {
-                ForEach(rows) { row in
-                    dayRow(row)
+    private func step(by value: Int) {
+        guard let stepped = calendar.date(byAdding: .month, value: value, to: month) else { return }
+        downloadTask?.cancel()
+        isDownloading = false
+        month = stepped
+    }
 
-                    Rectangle()
-                        .fill(AppColors.gold.opacity(0.12))
-                        .frame(height: 0.5)
+    // MARK: - Weekdays
+
+    /// Weekday letters in the user's own week order
+    private var weekdayLetters: [String] {
+        let symbols = calendar.veryShortWeekdaySymbols
+        let first = calendar.firstWeekday - 1
+        return (0..<7).map { symbols[(first + $0) % 7] }
+    }
+
+    private var weekdayRow: some View {
+        HStack(spacing: 2) {
+            ForEach(Array(weekdayLetters.enumerated()), id: \.offset) { _, letter in
+                Text(letter)
+                    .font(AppFonts.labelFont(9))
+                    .tracking(1)
+                    .foregroundColor(AppColors.textSecondary)
+                    .frame(maxWidth: .infinity)
+            }
+        }
+        .accessibilityHidden(true)
+    }
+
+    // MARK: - Day Grid
+
+    /// The month's dates padded to full weeks — nil for the blank
+    /// leading and trailing cells.
+    private var gridDates: [Date?] {
+        guard let range = calendar.range(of: .day, in: .month, for: month) else { return [] }
+
+        let firstWeekday = calendar.component(.weekday, from: month)
+        let leading = (firstWeekday - calendar.firstWeekday + 7) % 7
+
+        var cells: [Date?] = Array(repeating: nil, count: leading)
+        for day in range {
+            cells.append(calendar.date(byAdding: .day, value: day - 1, to: month))
+        }
+        while cells.count % 7 != 0 {
+            cells.append(nil)
+        }
+        return cells
+    }
+
+    private var dayGrid: some View {
+        let columns = Array(repeating: GridItem(.flexible(), spacing: 2), count: 7)
+
+        return LazyVGrid(columns: columns, spacing: 2) {
+            ForEach(Array(gridDates.enumerated()), id: \.offset) { _, date in
+                if let date {
+                    dayCell(date)
+                } else {
+                    Color.clear.frame(height: 42)
                 }
             }
-            .padding(.horizontal, 24)
-            .padding(.top, 12)
-            .padding(.bottom, 32)
         }
     }
 
-    private func dayRow(_ row: Row) -> some View {
-        let vestment = row.day.colors?.first.flatMap { MissalVestment(rawValue: $0) }
-        let isSunday = calendar.component(.weekday, from: row.date) == 1
-        // Sundays and feasts stand out of the run of ferias
-        let isNotable = isSunday || (row.day.rank ?? 4) <= 2
+    private func dayCell(_ date: Date) -> some View {
+        let isToday = calendar.isDateInToday(date)
+        let entry = days[MissalAPIService.dayString(for: date)]
+        let vestment = entry?.colors?.first.flatMap { MissalVestment(rawValue: $0) }
 
         return Button {
-            choose(row.date)
+            onSelect(date)
+            dismiss()
         } label: {
-            HStack(spacing: 14) {
-                VStack(spacing: 1) {
-                    Text(Self.weekdayFormatter.string(from: row.date).uppercased())
-                        .font(AppFonts.labelFont(9))
-                        .tracking(1.5)
-                        .foregroundColor(isSunday ? AppColors.gold : AppColors.textSecondary)
+            VStack(spacing: 4) {
+                Text("\(calendar.component(.day, from: date))")
+                    .font(isToday ? AppFonts.semiboldBodyFont(14) : AppFonts.readingFont(14))
+                    .foregroundColor(isToday ? AppColors.gold : AppColors.cream)
 
-                    Text(Self.dayNumberFormatter.string(from: row.date))
-                        .font(AppFonts.headlineFont(16))
-                        .foregroundColor(AppColors.cream.opacity(isNotable ? 1 : 0.75))
-                }
-                .frame(width: 34)
-
-                if let vestment {
-                    Circle()
-                        .fill(vestment.swatch)
-                        .frame(width: 6, height: 6)
-                }
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(row.day.title)
-                        .font(AppFonts.bodyFont(15))
-                        .foregroundColor(isNotable ? AppColors.cream : AppColors.cream.opacity(0.75))
-                        .multilineTextAlignment(.leading)
-
-                    if let commemorations = row.day.commemorations, !commemorations.isEmpty {
-                        Text("Comm. \(commemorations.map(\.title).joined(separator: " · "))")
-                            .font(AppFonts.italicFont(12))
-                            .foregroundColor(AppColors.textSecondary)
-                            .multilineTextAlignment(.leading)
-                    }
-                }
-
-                Spacer(minLength: 8)
-
-                if let rankLabel = row.day.rankLabel {
-                    Text(rankLabel.uppercased())
-                        .font(AppFonts.labelFont(9))
-                        .tracking(1.2)
-                        .foregroundColor(AppColors.textSecondary.opacity(0.8))
-                }
+                Circle()
+                    .fill(vestment?.swatch ?? .clear)
+                    .frame(width: 5, height: 5)
+                    .opacity(isToday ? 1 : 0.65)
             }
-            .padding(.vertical, 12)
-            .frame(minHeight: 44)
+            .frame(maxWidth: .infinity)
+            .frame(height: 42)
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(isToday ? AppColors.gold.opacity(0.09) : Color.clear)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .strokeBorder(
+                        isToday ? AppColors.gold.opacity(0.55) : Color.clear,
+                        lineWidth: 0.5
+                    )
+            )
             .contentShape(Rectangle())
         }
         .buttonStyle(SacredCardButtonStyle())
+        // Reading the feast out under the grid on touch-down, not on a
+        // second tap: pressing a day names it, lifting opens it — the
+        // way a finger runs down the ribbon of a printed missal. One
+        // tap still opens the Mass.
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { _ in
+                    if focused != date { focused = date }
+                }
+        )
+        .accessibilityLabel(feastLabel(date, entry: entry))
     }
 
-    // MARK: - States
+    // MARK: - Feast Line
 
-    private var loadingState: some View {
-        VStack {
-            ProgressView()
-                .tint(AppColors.gold)
+    /// What the old day list answered — "what feast is this Sunday?" —
+    /// without a row per day: the calendar's own title for whichever
+    /// day is under the finger, today's until one is.
+    private var feastLine: some View {
+        let date = focused ?? Date()
+        let entry = days[MissalAPIService.dayString(for: date)]
+
+        return VStack(spacing: 3) {
+            Text(Self.feastDateFormatter.string(from: date).uppercased())
+                .font(AppFonts.labelFont(9))
+                .tracking(2)
+                .foregroundColor(AppColors.gold.opacity(0.7))
+
+            Text(entry?.title ?? "—")
+                .font(AppFonts.headlineFont(15))
+                .foregroundColor(AppColors.cream)
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
+                .minimumScaleFactor(0.75)
+                .fixedSize(horizontal: false, vertical: true)
         }
         .frame(maxWidth: .infinity)
-        .padding(.top, 60)
+        .frame(minHeight: 46)
+        .animation(.timingCurve(0, 0, 0.58, 1, duration: 0.18), value: date)
+        .accessibilityHidden(true)
     }
 
-    private var errorState: some View {
-        VStack(spacing: 12) {
-            Text("The calendar could not be reached.")
-                .font(AppFonts.italicFont(15))
-                .foregroundColor(AppColors.textSecondary)
+    /// The spoken name of a cell: the date, then the feast the calendar
+    /// gives it — a dot of colour tells a sighted reader nothing about
+    /// which feast it is, and told VoiceOver nothing at all.
+    private func feastLabel(_ date: Date, entry: MissalCalendarDay?) -> String {
+        let day = Self.accessibilityFormatter.string(from: date)
+        guard let title = entry?.title, !title.isEmpty else { return day }
+        return "\(day). \(title)"
+    }
 
-            QuietGoldButton(
-                title: "Try again",
-                leadingIcon: "ph-arrow-counter-clockwise",
-                leadingIconSize: 11,
-                size: 10,
-                color: AppColors.gold
-            ) {
-                Task { await loadCalendar() }
+    // MARK: - Offline
+
+    /// The month's offline standing, told honestly: what is saved, and
+    /// a way to save the rest. Propers for a date never change, so a
+    /// saved month is a settled matter.
+    private var offlineRow: some View {
+        HStack(spacing: 10) {
+            if monthFullySaved {
+                AppIcon("ph-check-circle-fill", size: 18)
+                    .foregroundColor(AppColors.gold.opacity(0.75))
+            }
+
+            VStack(alignment: .leading, spacing: 1) {
+                Text(offlineTitle)
+                    .font(AppFonts.bodyFont(14))
+                    .foregroundColor(AppColors.cream)
+
+                Text(offlineDetail)
+                    .font(AppFonts.bodyFont(12))
+                    .foregroundColor(AppColors.textSecondary)
+            }
+
+            Spacer(minLength: 8)
+
+            if isDownloading {
+                ProgressView()
+                    .tint(AppColors.gold)
+            } else if !monthFullySaved {
+                Button {
+                    downloadMonth()
+                } label: {
+                    Text("SAVE")
+                        .font(AppFonts.labelFont(9))
+                        .tracking(2)
+                        .foregroundColor(AppColors.gold)
+                        .frame(minWidth: 44, minHeight: 44)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(SacredCardButtonStyle())
+                .accessibilityLabel("Save \(Self.monthFormatter.string(from: month)) for offline")
             }
         }
-        .frame(maxWidth: .infinity)
-        .padding(.top, 50)
+        .frame(minHeight: 44)
     }
 
-    // MARK: - Loading
-
-    private func choose(_ date: Date) {
-        onSelect(date)
-        dismiss()
+    private var monthDayCount: Int {
+        calendar.range(of: .day, in: .month, for: month)?.count ?? 0
     }
 
-    private func loadCalendar() async {
-        guard rows.isEmpty else { return }
-        isLoading = true
-        loadFailed = false
+    private var monthFullySaved: Bool {
+        monthDayCount > 0 && savedCount >= monthDayCount
+    }
 
-        let today = calendar.startOfDay(for: .now)
-        let year = calendar.component(.year, from: today)
+    private var offlineTitle: String {
+        let name = Self.monthFormatter.string(from: month)
+        if monthFullySaved { return "\(name) is saved for offline" }
+        if savedCount > 0 { return "Part of \(name) is saved for offline" }
+        return "\(name) is not yet saved for offline"
+    }
 
-        var entries: [String: MissalCalendarDay] = [:]
-        for candidate in [year, year + 1] {
-            // The next year matters only when the horizon crosses Dec 31
-            guard candidate == year || calendar.component(.month, from: today) == 12 else { continue }
-            for day in await yearEntries(candidate) {
-                entries[day.id] = day
+    private var offlineDetail: String {
+        monthFullySaved
+            ? "\(monthDayCount) days · propers and the Ordinary"
+            : "\(savedCount) of \(monthDayCount) days on this device"
+    }
+
+    private func refreshSavedCount() {
+        savedCount = monthDates.filter {
+            MissalCacheService.shared.hasProper(for: MissalAPIService.dayString(for: $0))
+        }.count
+    }
+
+    private var monthDates: [Date] {
+        guard let range = calendar.range(of: .day, in: .month, for: month) else { return [] }
+        return range.compactMap { calendar.date(byAdding: .day, value: $0 - 1, to: month) }
+    }
+
+    /// Fetches the month's missing days one by one, quietly; whatever
+    /// lands before a failure stays saved.
+    private func downloadMonth() {
+        guard !isDownloading else { return }
+        isDownloading = true
+
+        let missing = monthDates
+            .map { MissalAPIService.dayString(for: $0) }
+            .filter { !MissalCacheService.shared.hasProper(for: $0) }
+
+        downloadTask = Task {
+            for day in missing {
+                guard !Task.isCancelled else { break }
+                if let fetched = try? await MissalAPIService.shared.fetchPropers(day: day) {
+                    MissalCacheService.shared.saveProper(fetched, for: day)
+                    // Count up rather than re-walk: `refreshSavedCount`
+                    // stats every day of the month, and calling it once
+                    // per download made saving a month O(days²) file
+                    // checks on the main actor. The sweep at the end
+                    // still settles the true figure.
+                    savedCount += 1
+                }
             }
+            if MissalCacheService.shared.loadOrdo() == nil,
+               let ordo = try? await MissalAPIService.shared.fetchOrdo() {
+                MissalCacheService.shared.saveOrdo(ordo)
+            }
+            isDownloading = false
+            refreshSavedCount()
         }
+    }
 
-        var built: [Row] = []
-        for offset in 0..<Self.daysAhead {
-            guard let date = calendar.date(byAdding: .day, value: offset, to: today),
-                  let day = entries[MissalAPIService.dayString(for: date)] else { continue }
-            built.append(Row(date: date, day: day))
+    // MARK: - Calendar Data
+
+    /// Loads the 1962 calendar for the visible month's year, once.
+    private func loadYears() async {
+        let year = calendar.component(.year, from: month)
+        guard !loadedYears.contains(year) else { return }
+        loadedYears.insert(year)
+
+        for day in await yearEntries(year) {
+            days[day.id] = day
         }
-
-        rows = built
-        loadFailed = built.isEmpty
-        isLoading = false
     }
 
     private func yearEntries(_ year: Int) async -> [MissalCalendarDay] {
@@ -265,17 +404,42 @@ struct MissalCalendarSheet: View {
 
     // MARK: - Formatters
 
-    private static let weekdayFormatter: DateFormatter = {
+    private static let monthFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "EEE"
+        formatter.dateFormat = "MMMM"
         return formatter
     }()
 
-    private static let dayNumberFormatter: DateFormatter = {
+    /// "TUESDAY · 25 AUGUST"
+    private static let feastDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "d"
+        formatter.dateFormat = "EEEE '·' d MMMM"
         return formatter
     }()
+
+    private static let accessibilityFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .full
+        return formatter
+    }()
+
+    /// 2026 → "MMXXVI"
+    private static func roman(_ number: Int) -> String {
+        let values: [(Int, String)] = [
+            (1000, "M"), (900, "CM"), (500, "D"), (400, "CD"),
+            (100, "C"), (90, "XC"), (50, "L"), (40, "XL"),
+            (10, "X"), (9, "IX"), (5, "V"), (4, "IV"), (1, "I")
+        ]
+        var remainder = max(0, number)
+        var result = ""
+        for (value, numeral) in values {
+            while remainder >= value {
+                result += numeral
+                remainder -= value
+            }
+        }
+        return result
+    }
 }
 
 // MARK: - Preview

@@ -249,6 +249,15 @@ struct ContentView: View {
 
         case .carloAcutis:
             CarloAcutisView()
+
+        case .spiritualReading:
+            SpiritualReadingView()
+
+        case .libraryBook(let id):
+            LibraryBookView(bookID: id)
+
+        case .libraryChapter(let bookID, let chapterIndex):
+            LibraryChapterReaderView(bookID: bookID, chapterIndex: chapterIndex)
         }
     }
 }

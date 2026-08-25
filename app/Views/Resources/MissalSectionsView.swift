@@ -35,12 +35,14 @@ enum MissalVestment: String {
         }
     }
 
+    /// Muted so they never compete with the gold — only ever a small
+    /// dot, never a field of colour.
     var swatch: Color {
         switch self {
-        case .white: return AppColors.cream
-        case .red: return Color(hex: "#b0524a")
-        case .green: return Color(hex: "#5e8b6a")
-        case .violet: return Color(hex: "#7d6b9e")
+        case .white: return Color(hex: "#EDE7D6")
+        case .red: return Color(hex: "#A0473F")
+        case .green: return Color(hex: "#4E6B4A")
+        case .violet: return Color(hex: "#6B5480")
         case .black: return Color(hex: "#54545f")
         case .rose: return Color(hex: "#c98a97")
         }
@@ -137,8 +139,35 @@ struct MissalSectionsView: View {
 
     // MARK: - Passage
 
-    @ViewBuilder
     private func passage(_ pair: [String], showsDropCap: Bool) -> some View {
+        MissalPassage(
+            pair: pair,
+            size: size,
+            language: language,
+            layout: layout,
+            showsDropCap: showsDropCap
+        )
+    }
+}
+
+// MARK: - MissalPassage
+
+/// One passage — an [english, latin] pair — set under the reader's
+/// language and layout. Interlinear: line by line when the two
+/// languages align, each line with its translation beneath it, the way
+/// the app's prayers read, and stacked passages when they don't. Side
+/// by side: facing columns, corresponding lines on the same row, like
+/// the page of a printed hand missal. Standing alone so the Daily
+/// Missal's reader sets its sections through the same pairing rules.
+struct MissalPassage: View {
+
+    let pair: [String]
+    let size: CGFloat
+    let language: PrayerLanguage
+    var layout: MissalLayout = .interlinear
+    var showsDropCap: Bool = false
+
+    var body: some View {
         let english = pair.first ?? ""
         let latin = pair.count > 1 ? pair[1] : english
 
@@ -148,19 +177,14 @@ struct MissalSectionsView: View {
         case .latin:
             MissalPassageText(text: latin, size: size, role: .primary, showsDropCap: showsDropCap)
         case .both:
-            bilingual(primary: latin, secondary: english, showsDropCap: showsDropCap)
+            bilingual(primary: latin, secondary: english)
         case .latinUnderEnglish:
-            bilingual(primary: english, secondary: latin, showsDropCap: showsDropCap)
+            bilingual(primary: english, secondary: latin)
         }
     }
 
-    /// Interlinear: line by line when the two languages align — each
-    /// line with its translation beneath it, the way the app's prayers
-    /// read — and stacked passages when they don't. Side by side: the
-    /// two languages in facing columns, corresponding lines on the same
-    /// row, like the page of a printed hand missal.
     @ViewBuilder
-    private func bilingual(primary: String, secondary: String, showsDropCap: Bool) -> some View {
+    private func bilingual(primary: String, secondary: String) -> some View {
         let paired = missalCanPair(primary, secondary)
 
         switch layout {
@@ -189,6 +213,7 @@ struct MissalSectionsView: View {
             VStack(alignment: .leading, spacing: (size * 0.55).rounded()) {
                 MissalPassageText(text: primary, size: size, role: .primary, showsDropCap: showsDropCap)
                 MissalPassageText(text: secondary, size: size, role: .secondary)
+                    .padding(.leading, 20)
             }
         }
     }
@@ -196,8 +221,9 @@ struct MissalSectionsView: View {
 
 // MARK: - Rubrication
 
-/// ℣, ℟, and the cross — the marks a missal prints in red
-private let missalRubricGlyphs: Set<Character> = ["℣", "℟", "☩", "✠"]
+/// ℣, ℟, and the cross — the marks a missal prints in red. One red for
+/// these marks and the vestment dots; everything else stays gold.
+private let missalRubricGlyphs: Set<Character> = ["℣", "℟", "✠"]
 
 private func missalRubricated(_ string: String) -> AttributedString {
     var attributed = AttributedString(string)
@@ -212,15 +238,62 @@ private func missalRubricated(_ string: String) -> AttributedString {
     return attributed
 }
 
+/// The source texts mark the sign of the cross unevenly — ☩ in the
+/// propers, a bare "+" in the Ordo. Both become the traditional ✠, the
+/// cross a printed missal sets, before anything is drawn or paired.
+private let missalCrossPattern = try? NSRegularExpression(pattern: #"(^|\s)\+\s*"#)
+
+private func missalNormalized(_ line: String) -> String {
+    var normalized = line
+    if normalized.contains("☩") {
+        normalized = normalized.replacingOccurrences(of: "☩", with: "✠")
+    }
+    guard normalized.contains("+"), let pattern = missalCrossPattern else { return normalized }
+
+    // Compiled once, not once per line: `replacingOccurrences(options:
+    // .regularExpression)` builds a fresh regex on every call, and every
+    // visible passage runs this over every one of its lines several
+    // times a pass of the reader's body.
+    return pattern.stringByReplacingMatches(
+        in: normalized,
+        range: NSRange(normalized.startIndex..., in: normalized),
+        withTemplate: "$1✠ "
+    )
+}
+
 /// A line wholly wrapped in asterisks — "*Ps 138:17*" — is a citation
 private func missalReference(in line: String) -> String? {
     guard line.count > 2, line.hasPrefix("*"), line.hasSuffix("*") else { return nil }
     return String(line.dropFirst().dropLast())
 }
 
+/// A citation, unwrapped — set as a small engraved caption in dim gold.
+/// The old red was outside the palette; the vestment reds stay for the
+/// vestment dots alone.
+struct MissalReferenceText: View {
+
+    let reference: String
+
+    /// The measure the passage around it is set at. A citation is
+    /// caption-sized, but it is still part of the reading: pinned to a
+    /// constant it became the one thing on the page that ignored the
+    /// missal's own text-size slider.
+    var size: CGFloat = 16
+
+    private var captionSize: CGFloat { max(10, (size - 4).rounded()) }
+
+    var body: some View {
+        Text(reference.uppercased())
+            .font(AppFonts.labelFont(captionSize))
+            .tracking(1.5)
+            .foregroundColor(AppColors.gold.opacity(0.72))
+            .fixedSize(horizontal: false, vertical: true)
+    }
+}
+
 private func missalLines(of text: String) -> [String] {
     text.components(separatedBy: "\n")
-        .map { $0.trimmingCharacters(in: .whitespaces) }
+        .map { missalNormalized($0.trimmingCharacters(in: .whitespaces)) }
         .filter { !$0.isEmpty }
 }
 
@@ -271,10 +344,11 @@ private func missalDropCapIndex(in pairs: [MissalLinePair]) -> Int? {
 // MARK: - MissalPassageText
 
 /// One passage of missal text. A line wholly wrapped in asterisks is a
-/// scripture reference ("*Ps 138:17*") and is set small in rubric red,
-/// the way a hand missal prints its citations; runs of ordinary lines
-/// share one Text so wrapped verses keep the reading rhythm, with the
-/// ℣ ℟ ☩ marks picked out in the same red.
+/// scripture reference ("*Ps 138:17*") and is set as small engraved
+/// caps in dim gold, the way a hand missal prints its citations; runs
+/// of ordinary lines share one Text so wrapped verses keep the reading
+/// rhythm, with the ℣ ℟ ✠ marks picked out in rubric red. (The sources'
+/// ☩ is normalized to ✠ by `missalLines` before anything is drawn.)
 struct MissalPassageText: View {
 
     enum Role {
@@ -296,7 +370,7 @@ struct MissalPassageText: View {
         case lines(String)
     }
 
-    private var fragments: [Fragment] {
+    private func makeFragments() -> [Fragment] {
         var result: [Fragment] = []
         var run: [String] = []
 
@@ -320,17 +394,20 @@ struct MissalPassageText: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: (size * 0.4).rounded()) {
+        // Built once per pass: `fragments` was a computed property read
+        // both here and by the drop-cap search, so every passage was cut
+        // into lines and normalized twice over.
+        let fragments = makeFragments()
+        let capIndex = dropCapIndex(in: fragments)
+
+        return VStack(alignment: .leading, spacing: (size * 0.4).rounded()) {
             ForEach(Array(fragments.enumerated()), id: \.offset) { index, fragment in
                 switch fragment {
                 case .reference(let reference):
-                    Text(reference)
-                        .font(AppFonts.italicFont(max(11, size - 4)))
-                        .foregroundColor(MissalRubric.red)
-                        .fixedSize(horizontal: false, vertical: true)
+                    MissalReferenceText(reference: reference, size: bodySize)
 
                 case .lines(let lines):
-                    if index == dropCapIndex {
+                    if index == capIndex {
                         DropCapText(text: lines, bodySize: bodySize, textColor: color)
                             .fixedSize(horizontal: false, vertical: true)
                     } else {
@@ -349,7 +426,7 @@ struct MissalPassageText: View {
     /// after a citation when there is one, the first run otherwise.
     /// Translations never carry one — the initial belongs to the text
     /// being prayed.
-    private var dropCapIndex: Int? {
+    private func dropCapIndex(in fragments: [Fragment]) -> Int? {
         guard showsDropCap, role == .primary else { return nil }
 
         var firstRun: Int?
@@ -395,24 +472,20 @@ struct MissalPairedPassageText: View {
     let size: CGFloat
     var showsDropCap: Bool = false
 
-    private var pairs: [MissalLinePair] { missalLinePairs(primary, secondary) }
-
-    private var dropCapIndex: Int? {
-        guard showsDropCap else { return nil }
-        return missalDropCapIndex(in: pairs)
-    }
-
     var body: some View {
-        VStack(
+        // Cut once per pass: `pairs` was a computed property read both
+        // here and by the drop-cap search, so every passage was split
+        // and normalized twice over.
+        let pairs = missalLinePairs(primary, secondary)
+        let dropCapIndex = showsDropCap ? missalDropCapIndex(in: pairs) : nil
+
+        return VStack(
             alignment: .leading,
             spacing: ReadingTypography.verseSpacing(for: size)
         ) {
             ForEach(Array(pairs.enumerated()), id: \.offset) { index, pair in
                 if let reference = pair.reference {
-                    Text(reference)
-                        .font(AppFonts.italicFont(max(11, size - 4)))
-                        .foregroundColor(MissalRubric.red)
-                        .fixedSize(horizontal: false, vertical: true)
+                    MissalReferenceText(reference: reference, size: size)
                 } else {
                     linePair(pair, showsDropCap: index == dropCapIndex)
                 }
@@ -437,11 +510,15 @@ struct MissalPairedPassageText: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
 
+            // The translation steps in from the margin — set under its
+            // line the way the handoff recommends, so the eye keeps the
+            // Latin as the text and the English as its shadow.
             Text(missalRubricated(pair.secondary))
                 .font(AppFonts.readingItalicFont(max(12, size - 2)))
                 .foregroundColor(AppColors.accentSoft)
                 .lineSpacing((size * 0.25).rounded())
                 .fixedSize(horizontal: false, vertical: true)
+                .padding(.leading, 20)
         }
     }
 }
@@ -460,15 +537,11 @@ struct MissalColumnPassageText: View {
 
     private var columnSize: CGFloat { max(13, size - 2) }
 
-    private var pairs: [MissalLinePair] { missalLinePairs(primary, secondary) }
-
-    private var dropCapIndex: Int? {
-        guard showsDropCap else { return nil }
-        return missalDropCapIndex(in: pairs)
-    }
-
     var body: some View {
-        Grid(
+        let pairs = missalLinePairs(primary, secondary)
+        let dropCapIndex = showsDropCap ? missalDropCapIndex(in: pairs) : nil
+
+        return Grid(
             alignment: .topLeading,
             horizontalSpacing: 18,
             verticalSpacing: ReadingTypography.verseSpacing(for: columnSize)
@@ -476,10 +549,7 @@ struct MissalColumnPassageText: View {
             ForEach(Array(pairs.enumerated()), id: \.offset) { index, pair in
                 if let reference = pair.reference {
                     // A lone view in a Grid spans both columns
-                    Text(reference)
-                        .font(AppFonts.italicFont(max(11, columnSize - 3)))
-                        .foregroundColor(MissalRubric.red)
-                        .fixedSize(horizontal: false, vertical: true)
+                    MissalReferenceText(reference: reference, size: columnSize)
                 } else {
                     GridRow {
                         primaryCell(pair.primary, showsDropCap: index == dropCapIndex)

@@ -84,15 +84,61 @@ struct MeditationReaderView: View {
 
             VStack(spacing: 0) {
                 Spacer()
-                MiniPlayerPill(
-                    title: meditation.displayTitle,
-                    painting: painting,
-                    viewModel: viewModel,
-                    onExpand: onClose,
-                    onShowTray: { activeSheet = .tray }
-                )
-                .padding(.horizontal, 14)
-                .padding(.bottom, 16)
+
+                // Band and pill measured together: the scroll clears the
+                // whole foot, so a long verse can't hide the last lines
+                // of the meditation behind it.
+                VStack(spacing: 0) {
+                    // The Scriptural Rosary rides here too. The view
+                    // model owns the decision, so the reader shows
+                    // exactly what the painting shows — the setting is
+                    // not a feature of one surface.
+                    if let verse = viewModel.currentScripturalVerse {
+                        ScripturalVerseBand(
+                            verse: verse,
+                            beadIndex: viewModel.currentBeadIndex,
+                            beadCount: viewModel.scripturalVerses.count,
+                            size: userSettings.meditationFontSize - 1,
+                            onAdvance: { viewModel.advanceBead() },
+                            onRetreat: { viewModel.retreatBead() }
+                        )
+                        .padding(.horizontal, 18)
+                        .padding(.bottom, 14)
+                        .sensoryFeedback(.selection, trigger: verse)
+                    }
+
+                    MiniPlayerPill(
+                        title: meditation.displayTitle,
+                        painting: painting,
+                        viewModel: viewModel,
+                        onExpand: onClose,
+                        onShowTray: { activeSheet = .tray }
+                    )
+                    .padding(.horizontal, 14)
+                    .padding(.bottom, 16)
+                }
+                // Only where there is a verse to protect: the pill alone
+                // has always floated over the scrolling text, and it
+                // reads fine. A verse does not — two texts through each
+                // other are worse than either — so the band stands on the
+                // page's own colour, with a short ramp above it that
+                // dissolves the meditation's last line into the page.
+                .background(alignment: .top) {
+                    if viewModel.currentScripturalVerse != nil {
+                        VStack(spacing: 0) {
+                            LinearGradient(
+                                gradient: .smoothFade(to: AppColors.background, from: 0),
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                            .frame(height: 30)
+
+                            AppColors.background
+                        }
+                        .padding(.top, -30)
+                        .ignoresSafeArea(edges: .bottom)
+                    }
+                }
                 .background(
                     GeometryReader { geo in
                         Color.clear.preference(key: PillHeightKey.self, value: geo.size.height)

@@ -36,6 +36,19 @@ enum MissalLayout: String, CaseIterable, Identifiable {
     var id: String { rawValue }
 }
 
+// MARK: - Missal Scope
+
+/// What the missal's page carries: the day's propers alone, or the
+/// propers with the Ordinary — Kyrie, Gloria, Preface, Canon — let
+/// into their places and set one tier quieter.
+enum MissalScope: String, CaseIterable, Identifiable {
+    case propersOnly = "Propers Only"
+    case full = "With the Ordinary"
+
+    var id: String { rawValue }
+}
+
+
 // MARK: - Prayer Intention
 
 /// What draws the user to the Rosary, chosen during onboarding.
@@ -142,6 +155,15 @@ final class UserSettings {
         didSet { UserDefaults.standard.set(readerAutoScroll, forKey: "userSettings.readerAutoScroll") }
     }
 
+    // MARK: - Scriptural Rosary
+
+    /// Whether each Hail Mary bead carries its own verse of Scripture —
+    /// the slower, more intensive form of the prayer. Off by default;
+    /// the plain Rosary is the app's first face.
+    var scripturalRosaryEnabled: Bool = false {
+        didSet { UserDefaults.standard.set(scripturalRosaryEnabled, forKey: "userSettings.scripturalRosary") }
+    }
+
     /// Whether the swipe-between-mysteries hint has been shown.
     ///
     /// The gesture is a shortcut for something the arrows already do, so
@@ -178,6 +200,40 @@ final class UserSettings {
 
     /// Whether the missal's first-open layout choice has been made
     var hasChosenMissalLayout: Bool { !missalLayoutPreference.isEmpty }
+
+    /// Propers alone, or the full Mass with the Ordinary interleaved
+    var missalScopeRaw: String = MissalScope.full.rawValue {
+        didSet { UserDefaults.standard.set(missalScopeRaw, forKey: "userSettings.missalScope") }
+    }
+
+    var missalScope: MissalScope {
+        MissalScope(rawValue: missalScopeRaw) ?? .full
+    }
+
+    /// The missal reader's own text scale (0 = small, 1 = large),
+    /// mapping to 15–21 pt. Its own slider rather than the app-wide one:
+    /// a hand missal is dense, and its comfortable sizes sit a step
+    /// below the meditation reader's.
+    var missalTextScale: Double = 1.0 / 3.0 {
+        didSet { UserDefaults.standard.set(missalTextScale, forKey: "userSettings.missalTextScale") }
+    }
+
+    /// Resolved missal reading size in points
+    var missalFontSize: CGFloat {
+        (15 + CGFloat(missalTextScale) * 6).rounded()
+    }
+
+    /// Whether the missal marks stand, sit and kneel in the text
+    var missalPostureCues: Bool = true {
+        didSet { UserDefaults.standard.set(missalPostureCues, forKey: "userSettings.missalPostureCues") }
+    }
+
+    /// Whether the missal reads as the sung (High) Mass: the Asperges on
+    /// Sundays and the incensing appear, and the Leonine prayers — said
+    /// after Low Mass — fall away.
+    var missalHighMass: Bool = false {
+        didSet { UserDefaults.standard.set(missalHighMass, forKey: "userSettings.missalHighMass") }
+    }
 
     // MARK: - Onboarding Intentions
 
@@ -400,9 +456,20 @@ final class UserSettings {
         if d.object(forKey: "userSettings.prayerImageMode") != nil {
             prayerImageMode = d.bool(forKey: "userSettings.prayerImageMode")
         }
+        scripturalRosaryEnabled = d.bool(forKey: "userSettings.scripturalRosary")
         if d.object(forKey: "userSettings.missalLayout") != nil {
             missalLayoutPreference = d.string(forKey: "userSettings.missalLayout") ?? ""
         }
+        if let scope = d.string(forKey: "userSettings.missalScope") {
+            missalScopeRaw = scope
+        }
+        if d.object(forKey: "userSettings.missalTextScale") != nil {
+            missalTextScale = d.double(forKey: "userSettings.missalTextScale")
+        }
+        if d.object(forKey: "userSettings.missalPostureCues") != nil {
+            missalPostureCues = d.bool(forKey: "userSettings.missalPostureCues")
+        }
+        missalHighMass = d.bool(forKey: "userSettings.missalHighMass")
         if let stored = d.stringArray(forKey: "userSettings.onboardingIntentions") {
             onboardingIntentions = stored
         } else if let legacy = d.string(forKey: "userSettings.onboardingIntention"), !legacy.isEmpty {

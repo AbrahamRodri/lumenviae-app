@@ -17,7 +17,61 @@ final class PrayerSessionViewModel {
     let meditationSet: MeditationSet
 
     /// Current mystery index (0-based, so 0-4 for 5 mysteries)
-    var currentMysteryIndex: Int = 0
+    ///
+    /// The bead resets in `didSet` rather than in each caller: the index
+    /// moves through `nextMystery`/`previousMystery` *and* directly from
+    /// the Lock Screen / AirPods closures, and a new decade must always
+    /// begin on its first bead.
+    var currentMysteryIndex: Int = 0 {
+        didSet { currentBeadIndex = 0 }
+    }
+
+    // MARK: - Scriptural Rosary
+
+    /// Which Hail Mary bead of the decade is being prayed (0-based).
+    /// Only meaningful when the Scriptural Rosary is on and this
+    /// mystery has a curated verse set.
+    var currentBeadIndex: Int = 0
+
+    /// One verse of Scripture per Hail Mary for the current mystery —
+    /// empty when none is curated for its key, and the prayer surface
+    /// simply shows no verse band.
+    ///
+    /// The category is lowercased on the way in: the API's strings are
+    /// lowercase today, but every other consumer normalizes
+    /// (`MysteryCategory.init(fromAPIString:)`, `Constants`), and a
+    /// single capitalized import would otherwise make the verses vanish
+    /// for one set while working for its neighbours.
+    var scripturalVerses: [ScripturalVerse] {
+        let category = (currentMystery?.category ?? meditationSet.category).lowercased()
+        let order = currentMystery?.order ?? (currentMysteryIndex + 1)
+        return ScripturalRosaryData.verses(category: category, order: order) ?? []
+    }
+
+    /// The verse under the hand right now — already folding in the
+    /// Prayer Experience setting, so every prayer surface asks one
+    /// question instead of each re-deriving whether to show a band.
+    /// This is what put the Scriptural Rosary on the painting and not
+    /// in the reader: the state was here, the decision was in one view.
+    var currentScripturalVerse: ScripturalVerse? {
+        guard UserSettings.shared.scripturalRosaryEnabled else { return nil }
+        let verses = scripturalVerses
+        guard verses.indices.contains(currentBeadIndex) else { return nil }
+        return verses[currentBeadIndex]
+    }
+
+    /// Prays the bead forward; the last bead holds rather than wrapping —
+    /// the decade itself is finished with the transport, not the strand.
+    func advanceBead() {
+        guard currentBeadIndex + 1 < scripturalVerses.count else { return }
+        currentBeadIndex += 1
+    }
+
+    /// Steps back one bead (no-op on the first)
+    func retreatBead() {
+        guard currentBeadIndex > 0 else { return }
+        currentBeadIndex -= 1
+    }
 
     // MARK: - Dependencies
 

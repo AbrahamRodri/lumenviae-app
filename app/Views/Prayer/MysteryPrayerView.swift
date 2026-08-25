@@ -576,6 +576,28 @@ struct MysteryPrayerView: View {
             titleBlock(meditation: meditation)
                 .padding(.horizontal, 22)
 
+            // The Scriptural Rosary: a verse for the bead under the hand.
+            // The view model decides whether there is one — the setting
+            // and a curated set for this mystery — so the reader asks the
+            // same question and gets the same answer.
+            if let verse = viewModel.currentScripturalVerse {
+                ScripturalVerseBand(
+                    verse: verse,
+                    beadIndex: viewModel.currentBeadIndex,
+                    beadCount: viewModel.scripturalVerses.count,
+                    size: userSettings.meditationFontSize - 1,
+                    onAdvance: { viewModel.advanceBead() },
+                    onRetreat: { viewModel.retreatBead() }
+                )
+                .padding(.horizontal, 22)
+                .padding(.top, 12)
+                // Keyed on the verse, not the bead index: moving mystery
+                // resets the bead to 0, and the root's own mystery haptic
+                // already marks that move — two in one frame read as a
+                // stumble on the app's quietest screen.
+                .sensoryFeedback(.selection, trigger: verse)
+            }
+
             if let errorMessage = viewModel.audioErrorMessage {
                 Text(errorMessage)
                     .font(AppFonts.bodyFont(12))

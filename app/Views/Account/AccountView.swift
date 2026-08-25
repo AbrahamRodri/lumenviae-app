@@ -29,7 +29,7 @@ struct AccountView: View {
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
-                    AccountHeaderView(onBack: { router.pop() })
+                    AccountHeaderView()
 
                     // MARK: Appearance
                     AccountSection(title: "APPEARANCE") {
@@ -55,6 +55,16 @@ struct AccountView: View {
 
                             PrayerLanguageRow(
                                 selectedLanguage: Bindable(userSettings).prayerLanguagePreference
+                            )
+
+                            Divider()
+                                .background(AppColors.gold.opacity(0.2))
+
+                            ToggleRow(
+                                icon: "ch-bible",
+                                title: "Scriptural Rosary",
+                                subtitle: "A verse of Scripture with every bead",
+                                isOn: Bindable(userSettings).scripturalRosaryEnabled
                             )
                         }
                     }
@@ -187,7 +197,22 @@ struct AccountView: View {
                 }
             }
         }
-        .navigationBarHidden(true)
+        // Settings is a pushed content page: the bar stays, and Back
+        // lives in it. Drawn inside the scroll view — as it was — the
+        // only way out of a screen this tall scrolled off the top.
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: { router.pop() }) {
+                    HStack(spacing: 6) {
+                        AppIcon("ph-caret-left", size: 14)
+                        Text("Back")
+                            .font(AppFonts.bodyFont(16))
+                    }
+                    .foregroundColor(AppColors.gold)
+                }
+            }
+        }
         .sheet(isPresented: $showOnboarding) {
             OnboardingView(onComplete: { showOnboarding = false })
         }
@@ -429,41 +454,23 @@ struct AppIconPickerRows: View {
 // MARK: - Account Header
 
 struct AccountHeaderView: View {
-    /// Pops back to the Me page. Settings is a pushed screen (it slides
-    /// in from the right), so it draws its own back control like every
-    /// other pushed screen here.
-    var onBack: (() -> Void)?
-
+    /// The page's own title. Back is not drawn here: Settings is a
+    /// pushed content page, so its Back belongs in the navigation bar,
+    /// where it stays put however far down the page the reader is.
     var body: some View {
-        ZStack {
-            Text("Settings")
-                .font(AppFonts.headlineFont(20))
-                .foregroundColor(AppColors.cream)
-
-            HStack {
-                if let onBack {
-                    Button(action: onBack) {
-                        AppIcon("ph-arrow-left", size: 18)
-                            .foregroundColor(AppColors.gold)
-                            .frame(width: 44, height: 44)
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel("Back")
-                }
-
-                Spacer()
-            }
-        }
-        .padding(.horizontal, 12)
-        .padding(.top, 8)
-        .padding(.bottom, 8)
-        .overlay(
-            Rectangle()
-                .fill(AppColors.gold.opacity(0.2))
-                .frame(height: 0.5),
-            alignment: .bottom
-        )
+        Text("Settings")
+            .font(AppFonts.headlineFont(20))
+            .foregroundColor(AppColors.cream)
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 12)
+            .padding(.top, 8)
+            .padding(.bottom, 8)
+            .overlay(
+                Rectangle()
+                    .fill(AppColors.gold.opacity(0.2))
+                    .frame(height: 0.5),
+                alignment: .bottom
+            )
     }
 }
 
