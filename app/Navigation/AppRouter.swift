@@ -45,6 +45,13 @@ enum AppRoute: Hashable {
     case scripture
     case marianLibrary
     case carloAcutis
+
+    /// The Spiritual Reading shelf, one of its books, and one chapter.
+    /// Books ride as catalog ids — the parsed content is loaded (and
+    /// cached) by LibraryService, never carried through the path.
+    case spiritualReading
+    case libraryBook(id: String)
+    case libraryChapter(bookID: String, chapterIndex: Int)
 }
 
 // MARK: - PrayerLaunch
@@ -168,6 +175,19 @@ final class AppRouter {
     func pop() {
         guard !path.isEmpty else { return }
         path.removeLast()
+    }
+
+    /// Goes to a tab from wherever the user is, clearing the stack first.
+    ///
+    /// Setting `selectedTab` alone only works from a page sitting at the
+    /// root: from a pushed one — Explore, say — the tab changes silently
+    /// underneath a screen that stays put, and the user meets the new tab
+    /// later, when they tap Back for something else.
+    func switchTo(_ tab: AppTab) {
+        if !path.isEmpty {
+            path.removeLast(path.count)
+        }
+        selectedTab = tab
     }
 
     /// Returns to the home screen and clears stored navigation state.

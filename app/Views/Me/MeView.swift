@@ -142,7 +142,11 @@ struct MeView: View {
             // Record, up in its kicker row.
             if let historyService {
                 VStack(alignment: .leading, spacing: 10) {
-                    HStack {
+                    HStack(spacing: 7) {
+                        AppIcon("ph-flame", size: 12)
+                            .foregroundColor(AppColors.gold.opacity(0.75))
+                            .accessibilityHidden(true)
+
                         Text("PRAYER STREAK")
                             .font(AppFonts.labelFont(10))
                             .tracking(2.5)
@@ -217,17 +221,20 @@ struct MeView: View {
 /// than its neighbors without breaking the shared silhouette.
 struct MeSection<Content: View, Accessory: View>: View {
     let title: String
+    var icon: String? = nil
     var washed: Bool = false
     @ViewBuilder let content: Content
     @ViewBuilder let accessory: Accessory
 
     init(
         title: String,
+        icon: String? = nil,
         washed: Bool = false,
         @ViewBuilder content: () -> Content,
         @ViewBuilder accessory: () -> Accessory = { EmptyView() }
     ) {
         self.title = title
+        self.icon = icon
         self.washed = washed
         self.content = content()
         self.accessory = accessory()
@@ -235,7 +242,15 @@ struct MeSection<Content: View, Accessory: View>: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            HStack {
+            HStack(spacing: 7) {
+                // A small glyph names the section before its word does —
+                // the page's cards each get a face, not just a label.
+                if let icon {
+                    AppIcon(icon, size: 12)
+                        .foregroundColor(AppColors.gold.opacity(0.75))
+                        .accessibilityHidden(true)
+                }
+
                 Text(title.uppercased())
                     .font(AppFonts.labelFont(10))
                     .tracking(2.5)

@@ -188,41 +188,64 @@ struct ArchHero<Content: View>: View {
             // on a rule straight across the screen — the arch's stroke
             // closes its path along the bottom, and the scrim stops dead
             // against the page gradient. Dissolving the last few points
-            // removes both at once. Masked before the halo so the glow
-            // itself isn't clipped, and applied to the arch-clipped view
-            // so it follows the silhouette rather than a box.
-            .mask(
-                VStack(spacing: 0) {
-                    Rectangle().fill(.black)
-                    LinearGradient(
-                        stops: [
-                            .init(color: .black, location: 0),
-                            .init(color: .black.opacity(0.88), location: 0.18),
-                            .init(color: .black.opacity(0.62), location: 0.40),
-                            .init(color: .black.opacity(0.30), location: 0.64),
-                            .init(color: .black.opacity(0.09), location: 0.83),
-                            .init(color: .clear, location: 1)
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .frame(height: 26)
-                }
-            )
+            // removes both at once. Applied to the arch-clipped view so
+            // it follows the silhouette rather than a box.
+            .mask(footDissolve)
             // Steady, not pulsing — the same presence the Pray medallion
-            // and the narration transport carry.
+            // and the narration transport carry. The halo bounds its own
+            // glow at the foot; see OptionalHalo.
             .modifier(OptionalHalo(active: showsHalo))
+    }
+
+    /// The foot's fade to nothing.
+    private var footDissolve: some View {
+        VStack(spacing: 0) {
+            Rectangle().fill(.black)
+            LinearGradient(
+                stops: [
+                    .init(color: .black, location: 0),
+                    .init(color: .black.opacity(0.88), location: 0.18),
+                    .init(color: .black.opacity(0.62), location: 0.40),
+                    .init(color: .black.opacity(0.30), location: 0.64),
+                    .init(color: .black.opacity(0.09), location: 0.83),
+                    .init(color: .clear, location: 1)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 26)
+        }
     }
 }
 
 /// `haloGlow` behind a switch, so a hero can drop it without the call
 /// site branching on two otherwise identical view trees.
+///
+/// The glow ends where its shape ends: a halo cast by a silhouette that
+/// dissolves at the foot still pools light below it, so the glow — and
+/// only the glow — is trimmed there. The trim is opaque rather than a
+/// second pass of the foot's own gradient: masking the same fade twice
+/// would multiply it by itself and steepen a hand-tuned dissolve.
 private struct OptionalHalo: ViewModifier {
     let active: Bool
 
+    private static let radius: CGFloat = 16
+
+    /// How far the glow may spread past the shape on the apex and sides.
+    /// `haloGlow`'s outer shadow reaches `radius * 2.2`; this leaves it
+    /// room and stays tied to the radius it belongs to.
+    private static var bleed: CGFloat { radius * 5 }
+
     func body(content: Content) -> some View {
         if active {
-            content.haloGlow(AppColors.gold, radius: 16, intensity: 0.18)
+            content
+                .haloGlow(AppColors.gold, radius: Self.radius, intensity: 0.18)
+                .mask(
+                    Rectangle()
+                        .fill(.black)
+                        .padding(.top, -Self.bleed)
+                        .padding(.horizontal, -Self.bleed)
+                )
         } else {
             content
         }

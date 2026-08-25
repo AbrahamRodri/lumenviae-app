@@ -63,12 +63,57 @@ struct ReadingText: View {
         case body
     }
 
-    let text: String
+    let paragraphs: [String]
     var size: CGFloat = 16
     var style: Style = .reading
     var showsDropCap: Bool = false
     var textColor: Color = AppColors.cream.opacity(0.92)
     var alignment: TextAlignment = .leading
+
+    /// Whether to build the paragraphs lazily. Off by default, because
+    /// most callers are cards that need the block's intrinsic height;
+    /// on for book-length chapters inside a scroll view, where an eager
+    /// stack would lay out every paragraph before the first can draw.
+    var isLazy: Bool = false
+
+    /// One block of prose, split into paragraphs on blank lines.
+    init(
+        text: String,
+        size: CGFloat = 16,
+        style: Style = .reading,
+        showsDropCap: Bool = false,
+        textColor: Color = AppColors.cream.opacity(0.92),
+        alignment: TextAlignment = .leading,
+        isLazy: Bool = false
+    ) {
+        self.init(
+            paragraphs: Self.paragraphs(of: text),
+            size: size, style: style, showsDropCap: showsDropCap,
+            textColor: textColor, alignment: alignment, isLazy: isLazy
+        )
+    }
+
+    /// Prose already in paragraphs — a parsed book chapter, say, whose
+    /// structure the parser established. Passing them through directly
+    /// spares joining a whole chapter into one string only to split it
+    /// apart again on every pass of the body.
+    init(
+        paragraphs: [String],
+        size: CGFloat = 16,
+        style: Style = .reading,
+        showsDropCap: Bool = false,
+        textColor: Color = AppColors.cream.opacity(0.92),
+        alignment: TextAlignment = .leading,
+        isLazy: Bool = false
+    ) {
+        self.paragraphs = paragraphs
+        self.size = size
+        self.style = style
+        self.showsDropCap = showsDropCap
+        self.textColor = textColor
+        self.alignment = alignment
+        self.isLazy = isLazy
+    }
 
     /// The paragraph split every reading surface uses. Exposed so a
     /// caller that needs to address paragraphs individually — the prayer
@@ -80,8 +125,6 @@ struct ReadingText: View {
             .filter { !$0.isEmpty }
     }
 
-    private var paragraphs: [String] { Self.paragraphs(of: text) }
-
     /// A hand-typed rule between sections of a reading
     private func isRule(_ paragraph: String) -> Bool {
         paragraph.count >= 3 && paragraph.allSatisfy { "─—–-—*_ ".contains($0) }
@@ -92,33 +135,45 @@ struct ReadingText: View {
     }
 
     var body: some View {
-        VStack(
-            alignment: alignment == .center ? .center : .leading,
-            spacing: ReadingTypography.paragraphSpacing(for: size)
-        ) {
-            ForEach(Array(paragraphs.enumerated()), id: \.offset) { index, paragraph in
-                if isRule(paragraph) {
-                    OrnamentDivider(showsCross: false)
-                        .frame(width: 140)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, (size * 0.3).rounded())
-                } else if showsDropCap && index == 0 {
-                    DropCapText(
-                        text: paragraph,
-                        bodySize: size,
-                        textColor: textColor
-                    )
-                    .fixedSize(horizontal: false, vertical: true)
-                } else {
-                    Text(paragraph)
-                        .font(font)
-                        .foregroundColor(textColor)
-                        .lineSpacing(ReadingTypography.lineSpacing(for: size))
-                        .fixedSize(horizontal: false, vertical: true)
-                }
+        Group {
+            if isLazy {
+                LazyVStack(
+                    alignment: alignment == .center ? .center : .leading,
+                    spacing: ReadingTypography.paragraphSpacing(for: size)
+                ) { paragraphStack }
+            } else {
+                VStack(
+                    alignment: alignment == .center ? .center : .leading,
+                    spacing: ReadingTypography.paragraphSpacing(for: size)
+                ) { paragraphStack }
             }
         }
         .multilineTextAlignment(alignment)
+    }
+
+    @ViewBuilder
+    private var paragraphStack: some View {
+        ForEach(Array(paragraphs.enumerated()), id: \.offset) { index, paragraph in
+            if isRule(paragraph) {
+                OrnamentDivider(showsCross: false)
+                    .frame(width: 140)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, (size * 0.3).rounded())
+            } else if showsDropCap && index == 0 {
+                DropCapText(
+                    text: paragraph,
+                    bodySize: size,
+                    textColor: textColor
+                )
+                .fixedSize(horizontal: false, vertical: true)
+            } else {
+                Text(paragraph)
+                    .font(font)
+                    .foregroundColor(textColor)
+                    .lineSpacing(ReadingTypography.lineSpacing(for: size))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
     }
 }
 

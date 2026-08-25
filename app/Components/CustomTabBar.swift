@@ -169,17 +169,36 @@ struct PrayNowButton: View {
     var action: () -> Void = {}
 
     /// Opens the press-and-hold tray. A hold that fired must not also
-    /// fire the tap on release — the flag below swallows that one tap.
+    /// fire the tap on release — the stamp below swallows that one tap.
     var onHold: () -> Void = {}
 
-    @State private var holdFired = false
+    /// When the last press-and-hold fired.
+    ///
+    /// A timestamp rather than a flag, because the release that was
+    /// meant to clear a flag often never reaches the button: `onHold`
+    /// presents the tray while the finger is still down, over the
+    /// medallion, so the touch is cancelled and the `Button` action
+    /// never runs. A flag left true then swallowed the next real tap —
+    /// the user pressed PRAY and nothing happened. A stamp ages out on
+    /// its own, so the worst case is one ignored tap inside a moment of
+    /// the hold, never a button that has to be pressed twice.
+    @State private var lastHoldAt: Date?
+
+    /// Bumped on every hold, so two holds in a row each get their
+    /// haptic — a boolean trigger fell silent the second time.
+    @State private var holdCount = 0
+
+    /// How long after a hold a tap is read as that hold's own release.
+    private static let holdSuppressionWindow: TimeInterval = 1.5
 
     var body: some View {
         Button(action: {
-            if holdFired {
-                holdFired = false
+            if let lastHoldAt,
+               Date().timeIntervalSince(lastHoldAt) < Self.holdSuppressionWindow {
+                self.lastHoldAt = nil
                 return
             }
+            lastHoldAt = nil
             action()
         }) {
             ZStack {
@@ -231,11 +250,12 @@ struct PrayNowButton: View {
             LongPressGesture(minimumDuration: 0.4)
                 .onEnded { _ in
                     guard !isLoading else { return }
-                    holdFired = true
+                    lastHoldAt = Date()
+                    holdCount += 1
                     onHold()
                 }
         )
-        .sensoryFeedback(.impact(weight: .medium), trigger: holdFired) { _, new in new }
+        .sensoryFeedback(.impact(weight: .medium), trigger: holdCount)
         .accessibilityLabel(isLoading ? "Preparing prayer" : "Pray")
         .accessibilityHint("Double-tap to begin. Touch and hold for more devotions.")
         .accessibilityAction(named: "Open devotions tray") { onHold() }

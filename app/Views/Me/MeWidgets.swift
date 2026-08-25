@@ -44,7 +44,7 @@ struct RuleOfPrayerCard: View {
     }
 
     var body: some View {
-        MeSection(title: "Rule of Prayer") {
+        MeSection(title: "Rule of Prayer", icon: "ch-rosary") {
             if settings.ruleItems.isEmpty {
                 emptyRule
             } else {
@@ -121,8 +121,14 @@ struct RuleOfPrayerCard: View {
     private func state(for item: PrayerShortcut) -> RuleState {
         switch item {
         case .todaysRosary:
-            return (historyService?.hasPrayedToday() ?? false)
-                ? .doneAutomatically : .awaitingAutomatic
+            // Any set of mysteries counts — praying the Luminous on a
+            // Monday is still today's Rosary. The chaplet does not: it
+            // has its own row here, and crediting a Rosary nobody prayed
+            // would tell the user "All offered today" over an unprayed
+            // line they cannot uncheck.
+            let prayedRosary = historyService?.sessions(on: Date())
+                .contains { $0.category != .sevenSorrows } ?? false
+            return prayedRosary ? .doneAutomatically : .awaitingAutomatic
 
         case .sevenSorrows:
             let prayed = historyService?.sessions(on: Date())
@@ -257,57 +263,106 @@ private struct RuleRow: View {
 // MARK: - Library
 
 /// The doors the home screen's old menu button used to open, plus the
-/// Sacred Record: a quiet two-column grid of small tiles, so the card
-/// reads as a shelf rather than another ledger.
+/// Sacred Record. Not nine identical tiles: the two liturgical books
+/// stand together as a diptych across the card's head — the same
+/// pairing the home shelf and Explore make — and the reading doors
+/// follow as a ruled index, a table of contents rather than a wall of
+/// boxes.
 struct LibraryCard: View {
 
     @Environment(AppRouter.self) private var router
 
     var body: some View {
-        MeSection(title: "Library") {
-            LazyVGrid(
-                columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)],
-                spacing: 10
-            ) {
+        MeSection(title: "Library", icon: "ph-book-open") {
+            VStack(spacing: 0) {
                 // Every door is a pushed page — content slides in from
                 // the right; sheets are kept for tasks, not places.
-                tile("ch-altar", "Daily Missal") { router.push(.missal) }
-                tile("ch-candle", "Divine Office") { router.push(.office) }
-                tile("ph-crown", "True Devotion") { router.push(.trueDevotion) }
-                tile("ch-rosary", "How to Pray") { router.push(.howToPray) }
-                tile("ch-bible", "In Scripture") { router.push(.scripture) }
-                tile("ph-heart", "Marian Library") { router.push(.marianLibrary) }
-                tile("ch-monstrance", "Carlo Acutis") { router.push(.carloAcutis) }
-                tile("ph-flame", "Sacred Record") { router.selectedTab = .progress }
+                HStack(spacing: 0) {
+                    diptychLeaf("ch-altar", "Daily Missal", "The Mass") {
+                        router.push(.missal)
+                    }
+
+                    Rectangle()
+                        .fill(AppColors.gold.opacity(0.22))
+                        .frame(width: 0.5)
+                        .padding(.vertical, 12)
+
+                    diptychLeaf("ch-candle", "Divine Office", "The Hours") {
+                        router.push(.office)
+                    }
+                }
+
+                Rectangle()
+                    .fill(AppColors.gold.opacity(0.18))
+                    .frame(height: 0.5)
+                    .padding(.horizontal, 12)
+
+                LazyVGrid(
+                    columns: [GridItem(.flexible(), spacing: 18), GridItem(.flexible(), spacing: 18)],
+                    spacing: 0
+                ) {
+                    indexRow("ph-crown", "True Devotion") { router.push(.trueDevotion) }
+                    indexRow("ph-book-open", "Spiritual Reading") { router.push(.spiritualReading) }
+                    indexRow("ch-rosary", "How to Pray") { router.push(.howToPray) }
+                    indexRow("ch-bible", "In Scripture") { router.push(.scripture) }
+                    indexRow("ph-heart", "Marian Library") { router.push(.marianLibrary) }
+                    indexRow("ch-monstrance", "Carlo Acutis") { router.push(.carloAcutis) }
+                    // `switchTo`, not a bare `selectedTab`: the card is
+                    // reachable from a Me page that has pushed Settings,
+                    // and a tab set under a pushed screen only shows up
+                    // later, when the reader taps Back for something else.
+                    indexRow("ph-flame", "Sacred Record") { router.switchTo(.progress) }
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 8)
             }
-            .padding(12)
         }
     }
 
-    private func tile(_ icon: String, _ title: String, action: @escaping () -> Void) -> some View {
+    private func diptychLeaf(
+        _ icon: String,
+        _ title: String,
+        _ subtitle: String,
+        action: @escaping () -> Void
+    ) -> some View {
         Button(action: action) {
-            HStack(spacing: 10) {
-                AppIcon(icon, size: 16)
+            VStack(spacing: 6) {
+                AppIcon(icon, size: 20)
                     .foregroundColor(AppColors.gold)
+
+                Text(title)
+                    .font(AppFonts.headlineFont(14))
+                    .foregroundColor(AppColors.cream)
+
+                Text(subtitle.uppercased())
+                    .font(AppFonts.labelFont(8))
+                    .tracking(2)
+                    .foregroundColor(AppColors.textSecondary)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("\(title). \(subtitle)")
+    }
+
+    private func indexRow(_ icon: String, _ title: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 9) {
+                AppIcon(icon, size: 14)
+                    .foregroundColor(AppColors.gold.opacity(0.85))
+                    .frame(width: 17)
 
                 Text(title)
                     .font(AppFonts.bodyFont(13))
                     .foregroundColor(AppColors.cream)
                     .lineLimit(1)
-                    .minimumScaleFactor(0.85)
+                    .minimumScaleFactor(0.8)
 
                 Spacer(minLength: 0)
             }
-            .padding(.horizontal, 12)
-            .frame(height: 48)
-            .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(AppColors.background.opacity(0.45))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 10)
-                    .strokeBorder(AppColors.gold.opacity(0.12), lineWidth: 0.5)
-            )
+            .frame(minHeight: 44)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
@@ -336,7 +391,7 @@ struct ConsecrationCard: View {
     }
 
     var body: some View {
-        MeSection(title: "Consecration", washed: true) {
+        MeSection(title: "Consecration", icon: "ph-crown", washed: true) {
             VStack(alignment: .leading, spacing: 12) {
                 if let active {
                     activeContent(active)
@@ -459,7 +514,7 @@ struct JournalCard: View {
     private var entries: [JournalEntry]
 
     var body: some View {
-        MeSection(title: "Reflections") {
+        MeSection(title: "Reflections", icon: "ph-note-pencil") {
             VStack(alignment: .leading, spacing: 0) {
                 if entries.isEmpty {
                     Text("Your reflections will gather here after prayer.")

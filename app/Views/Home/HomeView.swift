@@ -9,22 +9,14 @@
 //
 
 import SwiftUI
-import SwiftData
 
 // MARK: - HomeView
 
 struct HomeView: View {
 
     @Environment(AppRouter.self) private var router
+    @Environment(\.scenePhase) private var scenePhase
     @State private var viewModel = HomeViewModel()
-
-    /// SwiftData context for prayer history (streak data).
-    @Environment(\.modelContext) private var modelContext
-
-    /// Live query so the streak flame refreshes when a session is recorded.
-    @Query(sort: \PrayerSession.completedAt, order: .reverse) private var sessions: [PrayerSession]
-
-    /// Controls whether the menu sheet is displayed
 
     /// Today's celebration, for the band at the head of the page
     @State private var todayInChurch = TodayInChurch()
@@ -68,21 +60,26 @@ struct HomeView: View {
                     .padding(.top, 32)
                     .devotionalEntrance(delay: 0.16)
 
+                    // The Church's own day, between the mysteries and
+                    // the colophon: the Missal, the Breviary, and True
+                    // Devotion standing on their shelf, each spine a
+                    // door.
+                    TodayInChurchSection(today: todayInChurch)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 44)
+                    .devotionalEntrance(delay: 0.24)
+
+                    // The quote closes the page — it is set as a
+                    // colophon, and a page ends on its colophon, not on
+                    // furniture. Its ornament rules also draw the line
+                    // between the shelf and the page's foot.
                     QuoteSection(
                         quote: viewModel.currentQuote.text,
                         author: viewModel.currentQuote.author,
                         source: viewModel.currentQuote.source
                     )
                     .padding(.horizontal, 20)
-                    .padding(.top, 40)
-                    .devotionalEntrance(delay: 0.24)
-
-                    // The Church's own day closes the page — the
-                    // bookshelf card after the quote: the Missal, the
-                    // Breviary, and True Devotion, each spine a door.
-                    TodayInChurchSection(today: todayInChurch)
-                    .padding(.horizontal, 20)
-                    .padding(.top, 40)
+                    .padding(.top, 18)
                     .padding(.bottom, 120) // Clears the tab bar and its fade
                     .devotionalEntrance(delay: 0.28)
                     }
@@ -138,23 +135,16 @@ struct HomeView: View {
         .task {
             await todayInChurch.load()
         }
-        .onAppear {
-            if historyService == nil {
-                historyService = PrayerHistoryService(modelContext: modelContext)
-            }
+        // The feast is the one thing on this page that goes stale by the
+        // clock. Home does not rebuild on foreground, so it re-asks on
+        // the way back in; `load()` returns at once unless the day turned.
+        .onChange(of: scenePhase) { _, phase in
+            guard phase == .active else { return }
+            Task { await todayInChurch.load() }
         }
     }
 
     // MARK: - Subviews
-
-    /// History service for the header's streak flame.
-    /// The @Query-backed `sessions` keeps the header live: when a Rosary
-    /// is recorded, the query changes and the body (and flame) refresh.
-    ///
-    /// One instance per view, not one per read: as a computed property this
-    /// built a fresh service on every access, and the header reads it twice
-    /// a render.
-    @State private var historyService: PrayerHistoryService?
 
     /// The wordmark, with the search glass in the corner — the menu
     /// lives in the Me page's Library card, the flame in its Prayer

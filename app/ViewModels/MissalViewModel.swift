@@ -33,6 +33,11 @@ final class MissalViewModel {
     /// Which celebration is open when the day carries more than one
     var selectedIndex = 0
 
+    /// The Ordinary's sections, for the page that reads the full Mass.
+    /// Empty until loaded; the page quietly narrows to the propers
+    /// whenever the Ordo can't be had.
+    private(set) var ordo: [MissalSection] = []
+
     var isLoading = false
     var errorMessage: String?
 
@@ -144,6 +149,21 @@ final class MissalViewModel {
     func retry() async {
         cache[date] = nil
         await load()
+    }
+
+    /// The Ordo never changes: disk first, the network once.
+    @MainActor
+    func loadOrdo() async {
+        guard ordo.isEmpty else { return }
+
+        if let stored = diskCache.loadOrdo() {
+            ordo = stored
+            return
+        }
+        if let fetched = try? await api.fetchOrdo(), !fetched.isEmpty {
+            diskCache.saveOrdo(fetched)
+            ordo = fetched
+        }
     }
 
     // MARK: - Date Stepping
