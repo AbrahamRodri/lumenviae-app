@@ -230,72 +230,59 @@ struct LibraryTransportBar: View {
     }
 }
 
-// MARK: - Listen options
+// MARK: - Speed and sleep
 
-/// The two quiet controls that ride in the LISTEN header: how fast the
-/// voice reads, and when it should stop.
-struct LibraryListenOptions: View {
+/// The row in the player's foot that names the tray it raises, and
+/// shows at a glance what is set: the rate, and a moon that lights when
+/// a sleep timer is armed.
+struct LibrarySpeedSleepRow: View {
 
     let session: LibraryListeningSession
 
-    /// One tray at a time, carried as a value. Two chained
-    /// `.sheet(isPresented:)` modifiers on one view is the shape that
-    /// already produced an empty sheet elsewhere in this feature, and
-    /// these are now raised from inside another sheet.
-    @State private var tray: Tray?
-
-    private enum Tray: String, Identifiable {
-        case sleep, rate
-        var id: String { rawValue }
-    }
+    @State private var isRaised = false
 
     var body: some View {
-        HStack(spacing: 4) {
-            Button(action: { tray = .rate }) {
+        Button(action: { isRaised = true }) {
+            HStack {
+                Text("SPEED AND SLEEP TIMER")
+                    .font(AppFonts.labelFont(9))
+                    .tracking(2)
+                    .foregroundColor(AppColors.gold.opacity(0.6))
+
+                Spacer()
+
                 Text(Self.rateLabel(session.playbackRate))
                     .font(AppFonts.labelFont(10))
                     .tracking(1.2)
                     .foregroundColor(AppColors.gold.opacity(0.8))
-                    .frame(minWidth: 32, minHeight: 36)
-                    .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel("Reading speed, \(Self.rateLabel(session.playbackRate))")
 
-            Button(action: { tray = .sleep }) {
-                HStack(spacing: 5) {
-                    AppIcon("ph-moon-stars", size: 14)
-                        .foregroundColor(
-                            session.sleepTimer == nil
-                                ? AppColors.gold.opacity(0.6)
-                                : AppColors.goldLight
-                        )
+                AppIcon("ph-moon-stars", size: 14)
+                    .foregroundColor(
+                        session.sleepTimer == nil
+                            ? AppColors.gold.opacity(0.6)
+                            : AppColors.goldLight
+                    )
 
-                    if let label = sleepLabel {
-                        Text(label)
-                            .font(AppFonts.labelFont(9))
-                            .tracking(1)
-                            .foregroundColor(AppColors.goldLight)
-                            .monospacedDigit()
-                    }
+                if let label = sleepLabel {
+                    Text(label)
+                        .font(AppFonts.labelFont(9))
+                        .tracking(1)
+                        .foregroundColor(AppColors.goldLight)
+                        .monospacedDigit()
                 }
-                .frame(minWidth: 36, minHeight: 36)
-                .contentShape(Rectangle())
             }
-            .buttonStyle(.plain)
-            .accessibilityLabel(sleepAccessibilityLabel)
+            .padding(.vertical, 12)
+            .frame(minHeight: 44)
+            .contentShape(Rectangle())
         }
-        .sheet(item: $tray) { which in
-            switch which {
-            case .sleep:
-                LibrarySleepSheet(session: session)
-                    .presentationDetents([.height(360)])
-                    .presentationDragIndicator(.visible)
-            case .rate:
-                LibraryRateSheet(session: session)
-                    .presentationDetents([.height(360)])
-                    .presentationDragIndicator(.visible)
-            }
+        .buttonStyle(.plain)
+        .accessibilityLabel(
+            "Speed and sleep timer. \(Self.rateLabel(session.playbackRate)). \(sleepAccessibilityLabel)"
+        )
+        .sheet(isPresented: $isRaised) {
+            LibrarySpeedSleepSheet(session: session)
+                .presentationDetents([.height(430)])
+                .presentationDragIndicator(.visible)
         }
     }
 
@@ -326,70 +313,98 @@ struct LibraryListenOptions: View {
     }
 }
 
-// MARK: - Sleep sheet
-
-/// A ruled ledger, not a row of chips — and the first line is the one a
-/// person praying at night actually wants.
-struct LibrarySleepSheet: View {
+/// How fast the voice reads and when it should stop, in one tray whose
+/// first line names its purpose. The rates are pills; the sleep ledger
+/// keeps the line a person praying at night actually wants at its head.
+struct LibrarySpeedSleepSheet: View {
 
     let session: LibraryListeningSession
 
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        LibraryTraySheet(
-            title: "Stop the reading",
-            note: "The voice withdraws rather than being cut off."
-        ) {
-            row(
-                title: "At the end of this reading",
-                isOn: session.sleepTimer == .endOfTrack
-            ) { session.setSleepTimer(.endOfTrack); dismiss() }
+        ZStack {
+            AppColors.appGradient.ignoresSafeArea()
 
-            ForEach([15, 30, 60], id: \.self) { minutes in
-                row(
-                    title: minutes == 60 ? "In an hour" : "In \(minutes) minutes",
-                    isOn: session.sleepTimer == .after(minutes: minutes)
-                ) { session.setSleepTimer(.after(minutes: minutes)); dismiss() }
-            }
+            VStack(alignment: .leading, spacing: 0) {
+                Text("SPEED AND SLEEP TIMER")
+                    .font(AppFonts.labelFont(10))
+                    .tracking(2.5)
+                    .foregroundColor(AppColors.gold.opacity(0.8))
+                    .padding(.top, 24)
+                    .padding(.bottom, 14)
 
-            if session.sleepTimer != nil {
-                row(title: "Let it run on", isOn: false) {
-                    session.setSleepTimer(nil)
-                    dismiss()
+                HStack(spacing: 10) {
+                    ForEach(AudioService.supportedRates, id: \.self) { rate in
+                        ratePill(rate)
+                    }
                 }
-            }
-        }
-    }
+                .padding(.bottom, 16)
 
-    private func row(title: String, isOn: Bool, action: @escaping () -> Void) -> some View {
-        LibraryTrayRow(title: title, isOn: isOn, action: action)
-    }
-}
+                Rectangle()
+                    .fill(AppColors.gold.opacity(0.2))
+                    .frame(height: 0.5)
 
-// MARK: - Rate sheet
-
-struct LibraryRateSheet: View {
-
-    let session: LibraryListeningSession
-
-    @Environment(\.dismiss) private var dismiss
-
-    var body: some View {
-        LibraryTraySheet(
-            title: "Reading speed",
-            note: "LibriVox readers are volunteers, and they read at their own pace."
-        ) {
-            ForEach(AudioService.supportedRates, id: \.self) { rate in
                 LibraryTrayRow(
-                    title: LibraryListenOptions.rateLabel(rate),
-                    isOn: session.playbackRate == rate
-                ) {
-                    session.setRate(rate)
-                    dismiss()
+                    title: "At the end of this reading",
+                    isOn: session.sleepTimer == .endOfTrack
+                ) { session.setSleepTimer(.endOfTrack); dismiss() }
+
+                ForEach([15, 30, 60], id: \.self) { minutes in
+                    LibraryTrayRow(
+                        title: minutes == 60 ? "In an hour" : "In \(minutes) minutes",
+                        isOn: session.sleepTimer == .after(minutes: minutes)
+                    ) { session.setSleepTimer(.after(minutes: minutes)); dismiss() }
                 }
+
+                if session.sleepTimer != nil {
+                    LibraryTrayRow(title: "Let it run on", isOn: false) {
+                        session.setSleepTimer(nil)
+                        dismiss()
+                    }
+                }
+
+                Text("The voice withdraws rather than being cut off. LibriVox readers are volunteers, and they read at their own pace.")
+                    .font(AppFonts.italicFont(12))
+                    .foregroundColor(AppColors.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, 14)
+
+                Spacer(minLength: 0)
             }
+            .padding(.horizontal, 24)
         }
+    }
+
+    private func ratePill(_ rate: Double) -> some View {
+        let isOn = session.playbackRate == rate
+
+        return Button {
+            session.setRate(rate)
+        } label: {
+            Text(LibrarySpeedSleepRow.rateLabel(rate))
+                .font(AppFonts.labelFont(11))
+                .tracking(1)
+                .foregroundColor(isOn ? AppColors.background : AppColors.cream.opacity(0.85))
+                .frame(maxWidth: .infinity)
+                // 44, not 40: the shelf's tap targets stay at or above
+                // the floor the design system sets.
+                .frame(minHeight: 44)
+                .background(
+                    Capsule().fill(isOn ? AnyShapeStyle(AppColors.goldCTAGradient)
+                                        : AnyShapeStyle(Color.clear))
+                )
+                .overlay(
+                    Capsule().strokeBorder(
+                        AppColors.gold.opacity(isOn ? 0 : 0.35),
+                        lineWidth: 0.5
+                    )
+                )
+                .contentShape(Capsule())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Reading speed \(LibrarySpeedSleepRow.rateLabel(rate))")
+        .accessibilityAddTraits(isOn ? [.isSelected] : [])
     }
 }
 
@@ -572,7 +587,7 @@ struct LibraryPlayerSheet: View {
             AppColors.appGradient.ignoresSafeArea()
 
             VStack(alignment: .leading, spacing: 0) {
-                Text("THE READING")
+                Text("LISTENING TO THIS CHAPTER")
                     .font(AppFonts.labelFont(10))
                     .tracking(2.5)
                     .foregroundColor(AppColors.gold.opacity(0.8))
@@ -610,17 +625,7 @@ struct LibraryPlayerSheet: View {
                     .frame(height: 0.5)
                     .padding(.top, 20)
 
-                HStack {
-                    Text("HOW IT READS")
-                        .font(AppFonts.labelFont(9))
-                        .tracking(2)
-                        .foregroundColor(AppColors.gold.opacity(0.6))
-
-                    Spacer()
-
-                    LibraryListenOptions(session: session)
-                }
-                .padding(.top, 12)
+                LibrarySpeedSleepRow(session: session)
 
                 Spacer(minLength: 0)
             }

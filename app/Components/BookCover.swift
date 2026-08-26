@@ -38,7 +38,12 @@ extension LibraryBookInfo {
 
 struct BookCover: View {
 
-    let info: LibraryBookInfo
+    /// What the cloth says and wears. Usually a catalog entry, but True
+    /// Devotion — bundled, not on the Gutenberg shelf — binds itself the
+    /// same way, so the cover takes its three facts directly.
+    let title: String
+    let author: String
+    let bindingColor: Color
 
     /// Whether a reading is under way — the marker ribbon shows over
     /// the top edge.
@@ -50,6 +55,30 @@ struct BookCover: View {
     /// tells them apart is the cloth, not the words.
     var isLettered: Bool = true
 
+    init(
+        title: String,
+        author: String,
+        bindingColor: Color,
+        hasRibbon: Bool = false,
+        isLettered: Bool = true
+    ) {
+        self.title = title
+        self.author = author
+        self.bindingColor = bindingColor
+        self.hasRibbon = hasRibbon
+        self.isLettered = isLettered
+    }
+
+    init(info: LibraryBookInfo, hasRibbon: Bool = false, isLettered: Bool = true) {
+        self.init(
+            title: info.title,
+            author: info.author,
+            bindingColor: info.bindingColor,
+            hasRibbon: hasRibbon,
+            isLettered: isLettered
+        )
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             gilt
@@ -59,7 +88,7 @@ struct BookCover: View {
 
             if isLettered {
                 VStack(spacing: 10) {
-                    Text(info.title.uppercased())
+                    Text(title.uppercased())
                         .font(AppFonts.headlineFont(15))
                         .foregroundColor(AppColors.goldLight.opacity(0.95))
                         .tracking(1)
@@ -113,7 +142,7 @@ struct BookCover: View {
     }
 
     private var letteredAuthor: some View {
-        Text(info.author.uppercased())
+        Text(author.uppercased())
                 .font(AppFonts.labelFont(9))
                 // Modest tracking: on a narrow cover the letterspacing
                 // is what pushes a saint's name into an ellipsis
@@ -135,9 +164,9 @@ struct BookCover: View {
         ZStack {
             LinearGradient(
                 colors: [
-                    info.bindingColor.lightened(by: 0.10),
-                    info.bindingColor,
-                    info.bindingColor.darkened(by: 0.18)
+                    bindingColor.lightened(by: 0.10),
+                    bindingColor,
+                    bindingColor.darkened(by: 0.18)
                 ],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing

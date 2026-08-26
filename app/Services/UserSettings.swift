@@ -173,6 +173,17 @@ final class UserSettings {
         CGFloat(15 + readingTextScale * 11)
     }
 
+    /// How much the reader means to read each day — the shelf's daily
+    /// measure, shared by every book including True Devotion. A measure,
+    /// never a streak: see ReadingDayMeter.
+    var readingGoalRaw: String = ReadingGoal.quarterHour.rawValue {
+        didSet { UserDefaults.standard.set(readingGoalRaw, forKey: "userSettings.readingGoal") }
+    }
+
+    var readingGoal: ReadingGoal {
+        ReadingGoal.stored(readingGoalRaw) ?? .quarterHour
+    }
+
     /// The speed a given book's recording is played at.
     ///
     /// Per book, because the readers are volunteers and their paces are
@@ -531,6 +542,11 @@ final class UserSettings {
         }
         if d.object(forKey: "userSettings.readingTextScale") != nil {
             readingTextScale = d.double(forKey: "userSettings.readingTextScale")
+        }
+        if let goal = d.string(forKey: "userSettings.readingGoal") {
+            // Normalized on the way in, so a measure stored as its own
+            // sentence before the raw values became slugs is kept.
+            readingGoalRaw = (ReadingGoal.stored(goal) ?? .quarterHour).rawValue
         }
         if let widgets = d.stringArray(forKey: "userSettings.meWidgets") {
             meWidgetsRaw = widgets

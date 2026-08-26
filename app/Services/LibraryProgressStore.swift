@@ -97,6 +97,43 @@ enum LibraryProgressStore {
         save(context)
     }
 
+    // MARK: - Marks
+
+    /// The ribbons laid in one book, if its row still belongs to the
+    /// edition the catalog cuts today.
+    static func marks(for bookID: String, in context: ModelContext) -> [BookPassageMark] {
+        guard let row = row(for: bookID, in: context) else { return [] }
+        let fingerprint = LibraryCatalog.book(id: bookID)?.editionFingerprint ?? ""
+        guard fingerprint.isEmpty || row.editionFingerprint == fingerprint else { return [] }
+        return row.marks
+    }
+
+    /// Lays a ribbon on a paragraph, or lifts the one already there.
+    /// Returns whether the paragraph is marked afterwards.
+    @discardableResult
+    static func toggleMark(
+        bookID: String,
+        chapter: Int,
+        paragraph: Int,
+        in context: ModelContext
+    ) -> Bool {
+        let row = upsert(bookID: bookID, chapterIndex: chapter, in: context)
+        let mark = BookPassageMark(chapter: chapter, paragraph: paragraph)
+        var marks = row.marks
+        let nowMarked: Bool
+        if let index = marks.firstIndex(of: mark) {
+            marks.remove(at: index)
+            nowMarked = false
+        } else {
+            marks.append(mark)
+            nowMarked = true
+        }
+        row.marks = marks
+        row.updatedAt = Date()
+        save(context)
+        return nowMarked
+    }
+
     // MARK: - Listening
 
     /// Records where the voice is, at most every `commitInterval`
@@ -182,6 +219,8 @@ enum LibraryProgressStore {
         row.lastChapterTitle = ""
         row.lastReadAt = nil
         row.finishedChapterIndexesRaw = ""
+        // A mark's indices belonged to the old cutting too.
+        row.marksRaw = ""
     }
 
     /// Whether a book's stored reading place still belongs to the edition

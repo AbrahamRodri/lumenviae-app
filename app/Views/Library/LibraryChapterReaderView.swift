@@ -3,22 +3,24 @@
 //  Lumen Viae
 //
 //  One chapter of a Spiritual Reading book, set the way the app sets all
-//  its long-form text: ReadingText with a versal initial, at the size
-//  the reader chose for this shelf.
+//  its long-form text: ReadingText's rhythm with a versal initial, at
+//  the size the reader chose for this shelf.
 //
-//  Three things a page of a book needs that a page of a meditation does
-//  not, and all three are here: a way to know where you are (a hairline
-//  rule at the head, and "9 of 13" beside the chapter's name), a way to
-//  get somewhere else (the ☰ contents, and the foot's steppers, both in
-//  place — walking a hundred-and-fourteen-chapter book must not stack a
-//  hundred and fourteen screens), and a way to come back to the exact
-//  paragraph you stopped at, which for a book of the Confessions is the
-//  difference between resuming and starting again.
+//  The chrome is the reader's own — a Back capsule and a three-part
+//  capsule whose buttons are named (SIZE · MARK · CONTENTS) — and it
+//  withdraws when the reader scrolls into the prose, returning on the
+//  first upward pull. The place rule at the head never leaves. Like the
+//  missal, this is a page whose own chrome replaces the system bar.
 //
-//  The editor's footnotes are set as an apparatus at the foot, not as
-//  the author's prose. A chapter of the Story of a Soul carries
-//  thirty-four citations, and they used to read as though the saint had
-//  written them.
+//  A tap on a paragraph selects it and raises NOTE · MARK · SHARE. The
+//  words are kept strictly apart: a MARK is a ribbon on a page, nothing
+//  written, several per chapter; a NOTE is the passage plus the
+//  reader's own words, kept in the journal — the app's one store for
+//  what a reader keeps.
+//
+//  The editor's footnotes are set as an apparatus at the foot, and each
+//  marker in the prose is a small gold superscript a tap can raise —
+//  the note comes to the thumb without losing the line.
 //
 
 import SwiftUI
@@ -63,9 +65,32 @@ struct LibraryChapterReaderView: View {
     @State private var hasSettled = false
     @State private var didRestore = false
 
+    /// The paragraph the reader has selected — the NOTE · MARK · SHARE
+    /// capsule stands while one is.
+    @State private var selectedParagraph: Int?
+
+    /// The ribbons laid in this book, refreshed on every toggle.
+    @State private var marks: [BookPassageMark] = []
+
+    /// This edition's footnote marker, compiled once when the book
+    /// arrives — never per paragraph per pass.
+    @State private var noteRegex: NSRegularExpression?
+
+    /// The small engraved confirmation above the foot.
+    @State private var toast: String?
+
+    // Chrome withdrawal. The offset is measured on the whole content
+    // column in global coordinates — the missal learned that a marker
+    // inside the LazyVStack gets released mid-scroll and goes stale.
+    @State private var chromeHidden = false
+    @State private var lastScrollOffset: CGFloat?
+    @State private var contentTopAnchor: CGFloat?
+    @State private var scrollDownRun: CGFloat = 0
+    @State private var scrollUpRun: CGFloat = 0
+
     /// What the reader has put over the page. One at a time, and carried
-    /// as a value rather than three booleans: a `.sheet(isPresented:)`
-    /// whose content is built from *separate* state can be asked to draw
+    /// as a value rather than booleans: a `.sheet(isPresented:)` whose
+    /// content is built from *separate* state can be asked to draw
     /// before that state has landed, and hands back an empty white sheet.
     @State private var sheet: ReaderSheet?
     @State private var journalDraft = ""
@@ -77,12 +102,16 @@ struct LibraryChapterReaderView: View {
         /// was still fetching and opened an empty sheet.
         case contents(book: LibraryBook, info: LibraryBookInfo)
         case textOptions
-        /// The paragraph long-pressed, carried with the case so it can
+        /// The paragraph selected, carried with the case so it can
         /// never be missing when the sheet is built
         case keep(passage: String)
         /// The recording's own transport, the same one the book page
         /// raises — one player, reached from wherever the reader is
         case player
+        /// One of the editor's notes, raised from its marker
+        case footnote(number: Int, text: String)
+        /// The passage as a small setting, on its way out of the app
+        case share(passage: String)
 
         var id: String {
             switch self {
@@ -90,6 +119,8 @@ struct LibraryChapterReaderView: View {
             case .textOptions: return "text"
             case .keep: return "keep"
             case .player: return "player"
+            case .footnote: return "footnote"
+            case .share: return "share"
             }
         }
     }
@@ -107,6 +138,7 @@ struct LibraryChapterReaderView: View {
     @State private var followTarget: Int?
 
     private let session = LibraryListeningSession.shared
+    private let meter = ReadingDayMeter.shared
 
     init(bookID: String, chapterIndex: Int) {
         self.bookID = bookID
@@ -130,6 +162,22 @@ struct LibraryChapterReaderView: View {
             } else {
                 SwiftUI.ProgressView()
                     .tint(AppColors.gold)
+
+                // The reader's Back lives in `chrome`, inside
+                // `reader(chapter)`. While the text is still being
+                // fetched there is no chrome, and this page hides the
+                // system bar and its back-swipe with it — so without
+                // this a stalled Gutenberg fetch is a screen the reader
+                // cannot leave until the request times out.
+                VStack {
+                    HStack {
+                        ReaderBackCapsule { dismiss() }
+                        Spacer()
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 6)
             }
 
             // The recording, from inside the text. Only while this book's
@@ -150,22 +198,58 @@ struct LibraryChapterReaderView: View {
                 .animation(.easeOut(duration: 0.25), value: session.trackIndex)
             }
         }
+        // The floating capsule over a selected paragraph — 76 points
+        // above the foot, standing clear of the mini player when the
+        // voice is sounding.
+        .overlay(alignment: .bottom) {
+            if let selected = selectedParagraph, let chapter,
+               chapter.paragraphs.indices.contains(selected) {
+                PassageActionBar(
+                    isMarked: isMarked(selected),
+                    onNote: {
+                        journalDraft = ""
+                        sheet = .keep(passage: chapter.paragraphs[selected])
+                    },
+                    onMark: { toggleMark(at: selected) },
+                    onShare: { sheet = .share(passage: chapter.paragraphs[selected]) }
+                )
+                .padding(.bottom, session.isActive ? 142 : 76)
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+        }
+        .animation(.easeOut(duration: 0.25), value: selectedParagraph)
+        .readerToast($toast)
+        // The reader's chrome is its own — like the missal, this page
+        // hides the system bar deliberately.
         .navigationBarBackButtonHidden(true)
-        .toolbar { toolbar }
+        .toolbar(.hidden, for: .navigationBar)
         .task {
             await load()
             restorePlace()
             refreshFinished()
+            refreshMarks()
         }
-        .onAppear { session.enterScreen() }
+        .onAppear {
+            session.enterScreen()
+            meter.enterReader()
+        }
         .onDisappear {
             session.leaveScreen()
+            meter.leaveReader()
             recordPlace(force: true)
         }
         .onChange(of: scenePhase) { _, phase in
-            guard phase != .active else { return }
+            guard phase != .active else {
+                // Back in front of the reader: the day's clock was
+                // stopped on the way out, so it has to be re-armed.
+                meter.resume()
+                return
+            }
             recordPlace(force: true)
             session.persist(force: true)
+            // Stops the clock as well as committing it — a phone in a
+            // pocket with a chapter open is not reading.
+            meter.pause()
         }
         .sheet(item: $sheet) { which in
             switch which {
@@ -175,17 +259,21 @@ struct LibraryChapterReaderView: View {
                     book: book,
                     currentIndex: currentIndex,
                     finished: finishedChapters,
-                    onSelect: { go(to: $0) }
+                    marks: marks,
+                    onSelect: { go(to: $0) },
+                    onSelectMark: { chapter, paragraph in
+                        returnToMark(chapter: chapter, paragraph: paragraph)
+                    }
                 )
 
             case .textOptions:
                 LibraryTextOptionsSheet()
-                    .presentationDetents([.height(340)])
+                    .presentationDetents([.height(360)])
                     .presentationDragIndicator(.visible)
 
             case .player:
                 LibraryPlayerSheet(session: session)
-                    .presentationDetents([.height(420)])
+                    .presentationDetents([.height(430)])
                     .presentationDragIndicator(.visible)
 
             case .keep(let passage):
@@ -193,50 +281,30 @@ struct LibraryChapterReaderView: View {
                     passage: passage,
                     citation: citation,
                     draft: $journalDraft,
-                    onKeep: { keepAsReflection(passage) }
+                    onCopied: { toast = "Copied" },
+                    onKeep: {
+                        keepAsReflection(passage)
+                        toast = "Saved to your journal"
+                        selectedParagraph = nil
+                    }
                 )
-            }
-        }
-    }
+                .presentationDetents([.height(520), .large])
+                .presentationDragIndicator(.visible)
 
-    // MARK: - Toolbar
+            case .footnote(let number, let text):
+                LibraryFootnoteSheet(number: number, text: text)
+                    .presentationDetents([.height(280)])
+                    .presentationDragIndicator(.visible)
 
-    /// Back, and the two controls a book needs at hand: the contents,
-    /// and how big the type is.
-    @ToolbarContentBuilder
-    private var toolbar: some ToolbarContent {
-        ToolbarItem(placement: .navigationBarLeading) {
-            Button(action: { dismiss() }) {
-                HStack(spacing: 6) {
-                    AppIcon("ph-caret-left", size: 14)
-                    Text("Back")
-                        .font(AppFonts.bodyFont(16))
-                }
-                .foregroundColor(AppColors.gold)
-            }
-        }
-
-        ToolbarItem(placement: .navigationBarTrailing) {
-            HStack(spacing: 2) {
-                Button(action: { sheet = .textOptions }) {
-                    AppIcon("ph-text-aa", size: 17)
-                        .foregroundColor(AppColors.gold)
-                        .frame(width: 44, height: 44)
-                        .contentShape(Rectangle())
-                }
-                .accessibilityLabel("Reading size")
-
-                Button {
-                    guard let book, let info else { return }
-                    sheet = .contents(book: book, info: info)
-                } label: {
-                    AppIcon("ph-list", size: 16)
-                        .foregroundColor(AppColors.gold.opacity(book == nil ? 0.35 : 1))
-                        .frame(width: 44, height: 44)
-                        .contentShape(Rectangle())
-                }
-                .disabled(book == nil)
-                .accessibilityLabel("Contents")
+            case .share(let passage):
+                PassageShareSheet(
+                    passage: passage,
+                    citeLine: shareCiteLine,
+                    citation: citation,
+                    onCopied: { toast = "Copied" }
+                )
+                .presentationDetents([.height(560), .large])
+                .presentationDragIndicator(.visible)
             }
         }
     }
@@ -247,28 +315,50 @@ struct LibraryChapterReaderView: View {
         VStack(spacing: 0) {
             placeRule
 
-            ScrollView(showsIndicators: false) {
-                // One flat lazy stack, foot included. A lazy stack nested
-                // in an eager one reports a height that grows as its rows
-                // materialize, and everything below it drifts as the
-                // reader scrolls.
-                LazyVStack(alignment: .leading, spacing: 0) {
-                    chapterHeader(chapter)
-                        .padding(.bottom, 24)
-                        .id(-1)
+            ZStack(alignment: .top) {
+                ScrollView(showsIndicators: false) {
+                    // One flat lazy stack, foot included. A lazy stack
+                    // nested in an eager one reports a height that grows
+                    // as its rows materialize, and everything below it
+                    // drifts as the reader scrolls.
+                    LazyVStack(alignment: .leading, spacing: 0) {
+                        chapterHeader(chapter)
+                            .padding(.bottom, 24)
+                            .id(-1)
 
-                    paragraphs(of: chapter)
+                        paragraphs(of: chapter)
 
-                    if !chapter.notes.isEmpty {
-                        apparatus(chapter)
-                            .id(-2)
+                        if !chapter.notes.isEmpty {
+                            apparatus(chapter)
+                                .id(-2)
+                        }
+
+                        footNavigation
+                            .padding(.top, 36)
+                            .padding(.bottom, session.isActive ? 96 : 48)
+                            .id(-3)
                     }
-
-                    footNavigation
-                        .padding(.top, 36)
-                        .padding(.bottom, session.isActive ? 96 : 48)
-                        .id(-3)
-
+                    .padding(.horizontal, 24)
+                    .padding(.top, 64)
+                    .scrollTargetLayout()
+                    // The whole content column, in global coordinates —
+                    // its travel is the scroll, and it cannot go stale
+                    // the way a marker released by the lazy stack does.
+                    .onGeometryChange(for: CGFloat.self) { proxy in
+                        proxy.frame(in: .global).minY
+                    } action: { offset in
+                        handleScroll(offset)
+                    }
+                }
+                .scrollPosition(id: $topParagraph, anchor: .top)
+                // Outside the lazy content on purpose. As the last child
+                // of the LazyVStack this zero-size watcher was only
+                // realized once the reader had scrolled to the foot of
+                // the chapter — so follow-the-voice never started, and
+                // the one step it did take scrolled it back out of the
+                // viewport and derealized it. The prayer reader mounts
+                // its equivalent in an overlay for the same reason.
+                .overlay(alignment: .top) {
                     LibraryFollowWatcher(
                         session: session,
                         follow: follow,
@@ -281,11 +371,21 @@ struct LibraryChapterReaderView: View {
                         }
                     )
                 }
-                .padding(.horizontal, 24)
-                .padding(.top, 12)
-                .scrollTargetLayout()
+                .environment(\.openURL, OpenURLAction { url in
+                    guard url.scheme == "lumen-note" else { return .systemAction }
+                    if let host = url.host(), let number = Int(host) {
+                        openFootnote(number)
+                    }
+                    return .handled
+                })
+
+                chrome
+                    .padding(.horizontal, 16)
+                    .padding(.top, 6)
+                    .offset(y: chromeHidden ? -58 : 0)
+                    .opacity(chromeHidden ? 0 : 1)
+                    .allowsHitTesting(!chromeHidden)
             }
-            .scrollPosition(id: $topParagraph, anchor: .top)
         }
         .onChange(of: topParagraph) { _, paragraph in
             // The first reports come from the restore, not the reader's
@@ -312,11 +412,85 @@ struct LibraryChapterReaderView: View {
             hasSettled = false
             follow.reset()
             followTarget = nil
+            selectedParagraph = nil
             lastParagraphSeen = 0
             topParagraph = -1
+            setChrome(hidden: false)
             recordPlace(force: true)
             // A chapter stepped into in place is a chapter arrived at.
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { hasSettled = true }
+        }
+    }
+
+    // MARK: - Chrome
+
+    private var chrome: some View {
+        HStack(alignment: .top) {
+            ReaderBackCapsule { dismiss() }
+
+            Spacer()
+
+            ReaderChromeCapsule(buttons: [
+                ReaderCapsuleButton(id: "size", icon: "ph-text-aa", label: "SIZE") {
+                    sheet = .textOptions
+                },
+                ReaderCapsuleButton(id: "mark", icon: nil, label: markButtonLabel) {
+                    markCurrentParagraph()
+                },
+                ReaderCapsuleButton(id: "contents", icon: "ph-list", label: "CONTENTS") {
+                    guard let book, let info else { return }
+                    sheet = .contents(book: book, info: info)
+                }
+            ])
+        }
+    }
+
+    /// "MARK · 2" once this chapter holds ribbons, "MARK" before.
+    private var markButtonLabel: String {
+        let count = marks.filter { $0.chapter == currentIndex }.count
+        return count > 0 ? "MARK · \(count)" : "MARK"
+    }
+
+    /// Withdraws or returns the chrome. The place rule stays either way.
+    private func setChrome(hidden: Bool) {
+        guard chromeHidden != hidden else { return }
+        withAnimation(.easeOut(duration: 0.32)) {
+            chromeHidden = hidden
+        }
+        scrollDownRun = 0
+        scrollUpRun = 0
+    }
+
+    /// Reads the content column's travel: a sustained run downward
+    /// withdraws the chrome, the first real pull upward returns it, and
+    /// near the head of the chapter it always stands.
+    private func handleScroll(_ offset: CGFloat) {
+        guard let last = lastScrollOffset else {
+            lastScrollOffset = offset
+            contentTopAnchor = offset
+            return
+        }
+        let delta = offset - last
+        lastScrollOffset = offset
+
+        if let anchor = contentTopAnchor {
+            // A chapter step resets the scroll to its head; adopt the
+            // higher anchor so the rule below still means "near the top".
+            if offset > anchor { contentTopAnchor = offset }
+            if offset > anchor - 60 {
+                setChrome(hidden: false)
+                return
+            }
+        }
+
+        if delta < -2 {
+            scrollDownRun += -delta
+            scrollUpRun = 0
+            if scrollDownRun > 48 { setChrome(hidden: true) }
+        } else if delta > 2 {
+            scrollUpRun += delta
+            scrollDownRun = 0
+            if scrollUpRun > 16 { setChrome(hidden: false) }
         }
     }
 
@@ -355,7 +529,7 @@ struct LibraryChapterReaderView: View {
                 Spacer(minLength: 8)
 
                 if let book, book.chapters.count > 1 {
-                    Text("\(currentIndex + 1) of \(book.chapters.count)")
+                    Text("\(currentIndex + 1) OF \(book.chapters.count)")
                         .font(AppFonts.labelFont(9))
                         .tracking(1.5)
                         .foregroundColor(AppColors.textSecondary)
@@ -390,10 +564,11 @@ struct LibraryChapterReaderView: View {
 
     // MARK: - Hear this read
 
-    /// The seam from the text to the voice. Present only where a
-    /// recording actually reads this chapter, and honest about what it
-    /// can do: where one track holds ten chapters, it says so rather
-    /// than dropping the reader eight chapters early without a word.
+    /// The seam from the text to the voice, with what the recording
+    /// still holds said at the right. Present only where a recording
+    /// actually reads this chapter, and honest about what it can do:
+    /// where one track holds ten chapters, it says so rather than
+    /// dropping the reader eight chapters early without a word.
     @ViewBuilder
     private var hearThisRead: some View {
         if let info, let track = alignment.track(forChapter: currentIndex),
@@ -402,40 +577,63 @@ struct LibraryChapterReaderView: View {
             let opening = alignment.firstChapter(forTrack: track)
             let sounding = session.isSounding(track: track) && session.info?.id == info.id
 
-            Button {
-                if sounding {
-                    session.pause()
-                } else {
-                    prepareSession(info)
-                    session.toggle(track: track)
-                }
-            } label: {
-                HStack(spacing: 7) {
-                    AppIcon(sounding ? "ph-pause-fill" : "ph-speaker-high", size: 13)
-
-                    Text(sounding ? "PAUSE THE READING" : "HEAR THIS READ")
-                        .font(AppFonts.labelFont(10))
-                        .tracking(1.5)
-
-                    if !whole, !sounding, let opening, let from = book?.chapter(at: opening) {
-                        Text("· from \(from.heading)")
-                            .font(AppFonts.italicFont(11))
-                            .foregroundColor(AppColors.textSecondary)
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Button {
+                    if sounding {
+                        session.pause()
+                    } else {
+                        prepareSession(info)
+                        session.toggle(track: track)
                     }
+                } label: {
+                    HStack(spacing: 7) {
+                        AppIcon(sounding ? "ph-pause-fill" : "ph-speaker-high", size: 13)
+
+                        Text(sounding ? "PAUSE THE READING" : "HEAR THIS READ")
+                            .font(AppFonts.labelFont(10))
+                            .tracking(1.5)
+
+                        if !whole, !sounding, let opening, let from = book?.chapter(at: opening) {
+                            Text("· from \(from.heading)")
+                                .font(AppFonts.italicFont(11))
+                                .foregroundColor(AppColors.textSecondary)
+                        }
+                    }
+                    .foregroundColor(AppColors.gold)
+                    .padding(.vertical, 10)
+                    .frame(minHeight: 44)
+                    .contentShape(Rectangle())
                 }
-                .foregroundColor(AppColors.gold)
-                .padding(.vertical, 10)
-                .frame(minHeight: 44)
-                .contentShape(Rectangle())
+                .buttonStyle(.plain)
+                .accessibilityLabel(
+                    sounding ? "Pause the reading"
+                             : (whole ? "Hear this chapter read"
+                                      : "Hear this read, from the start of this recording")
+                )
+
+                Spacer(minLength: 8)
+
+                if let label = minutesLeftLabel(track: track) {
+                    Text(label)
+                        .font(AppFonts.labelFont(9))
+                        .tracking(1.5)
+                        .foregroundColor(AppColors.textSecondary)
+                }
             }
-            .buttonStyle(.plain)
-            .accessibilityLabel(
-                sounding ? "Pause the reading"
-                         : (whole ? "Hear this chapter read"
-                                  : "Hear this read, from the start of this recording")
-            )
             .padding(.top, 4)
         }
+    }
+
+    /// "18 MIN LEFT" — what the file still holds while it sounds, or its
+    /// whole length before it starts. A fact about the recording, never
+    /// a prediction about the reader.
+    private func minutesLeftLabel(track: Int) -> String? {
+        if session.isLoaded(track: track), session.duration > 0 {
+            let left = max(session.duration - session.currentTime, 0)
+            return "\(ReadingSpans.chipMinutes(left)) LEFT"
+        }
+        guard let seconds = sections[track].playtimeSeconds else { return nil }
+        return ReadingSpans.chipMinutes(seconds)
     }
 
     // MARK: - Body
@@ -447,36 +645,23 @@ struct LibraryChapterReaderView: View {
     @ViewBuilder
     private func paragraphs(of chapter: LibraryChapter) -> some View {
         ForEach(Array(chapter.paragraphs.enumerated()), id: \.offset) { index, paragraph in
-            Group {
-                if index == 0 {
-                    DropCapText(text: paragraph, bodySize: size)
-                } else {
-                    Text(paragraph)
-                        .font(AppFonts.readingFont(size))
-                        .foregroundColor(AppColors.cream.opacity(0.92))
-                        .lineSpacing(ReadingTypography.lineSpacing(for: size))
-                        .fixedSize(horizontal: false, vertical: true)
+            ReaderProseParagraph(
+                text: paragraph,
+                isFirst: index == 0,
+                size: size,
+                noteRegex: noteRegex,
+                isSelected: selectedParagraph == index,
+                isMarked: isMarked(index),
+                isFollowed: followTarget == index && selectedParagraph != index
+                    && session.canFollowText(chapterIndex: currentIndex),
+                onTap: {
+                    withAnimation(.easeOut(duration: 0.2)) {
+                        selectedParagraph = selectedParagraph == index ? nil : index
+                    }
                 }
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            )
             .padding(.bottom, ReadingTypography.paragraphSpacing(for: size))
             .id(index)
-            .contentShape(Rectangle())
-            // Paragraph-granular on purpose: the parser already made
-            // paragraphs first-class, and a paragraph of Kempis is the
-            // unit of thought. Drag handles over a custom text stack buy
-            // nothing a reader of this book wants.
-            .onLongPressGesture(minimumDuration: 0.4) {
-                journalDraft = ""
-                sheet = .keep(passage: paragraph)
-            }
-            // VoiceOver does not synthesize a long press on a paragraph
-            // of text, so without this the whole keep-and-copy path is
-            // closed to anyone using it.
-            .accessibilityAction(named: "Keep this passage") {
-                journalDraft = ""
-                sheet = .keep(passage: paragraph)
-            }
         }
     }
 
@@ -525,15 +710,33 @@ struct LibraryChapterReaderView: View {
                     footButton(label: next.heading, icon: "ph-caret-right", iconLeads: false) {
                         // Stepping on is how a reader says they finished
                         // this one. Additive; nothing is ever un-finished.
-                        LibraryProgressStore.markFinished(
-                            bookID: bookID, chapterIndex: currentIndex, in: modelContext
-                        )
-                        refreshFinished()
+                        complete(currentIndex)
                         go(to: currentIndex + 1)
                     }
                 }
             }
+            // Reaching the foot is the other way a chapter is finished,
+            // and the only one the last chapter of a book has — there is
+            // no next to step on to. Guarded by `hasSettled` so a
+            // chapter stepped into does not complete itself on the frame
+            // it lays out, while the scroll is still deep in the old one.
+            .onAppear {
+                guard hasSettled else { return }
+                complete(currentIndex)
+            }
         }
+    }
+
+    /// Marks a chapter read, counting it toward the day's measure only
+    /// the first time. `markFinished` is itself idempotent, but the
+    /// day's chapter count is not, so the guard has to sit here.
+    private func complete(_ index: Int) {
+        guard !finishedChapters.contains(index) else { return }
+        LibraryProgressStore.markFinished(
+            bookID: bookID, chapterIndex: index, in: modelContext
+        )
+        meter.noteChapterFinished()
+        refreshFinished()
     }
 
     private func footButton(
@@ -583,6 +786,9 @@ struct LibraryChapterReaderView: View {
                 }
                 .padding(.top, 4)
             }
+
+            ReaderBackCapsule { dismiss() }
+                .padding(.top, 12)
         }
     }
 
@@ -596,6 +802,11 @@ struct LibraryChapterReaderView: View {
             loadFailed = true
             return
         }
+
+        if noteRegex == nil, let pattern = info.parsing.notePattern {
+            noteRegex = try? NSRegularExpression(pattern: pattern)
+        }
+
         guard book == nil else { return }
         do {
             let loaded = try await LibraryService.shared.book(for: info)
@@ -639,6 +850,71 @@ struct LibraryChapterReaderView: View {
             alignment: alignment,
             context: modelContext
         )
+    }
+
+    // MARK: - Marks
+
+    private func isMarked(_ paragraph: Int) -> Bool {
+        marks.contains(BookPassageMark(chapter: currentIndex, paragraph: paragraph))
+    }
+
+    private func refreshMarks() {
+        marks = LibraryProgressStore.marks(for: bookID, in: modelContext)
+    }
+
+    /// The chrome's MARK: the paragraph the reader selected, or failing
+    /// that the one being read — tracked from the scroll position.
+    private func markCurrentParagraph() {
+        guard let chapter else { return }
+        let paragraph = selectedParagraph
+            ?? ((topParagraph ?? -1) >= 0 ? topParagraph! : lastParagraphSeen)
+        guard chapter.paragraphs.indices.contains(paragraph) else { return }
+        toggleMark(at: paragraph)
+    }
+
+    private func toggleMark(at paragraph: Int) {
+        let nowMarked = LibraryProgressStore.toggleMark(
+            bookID: bookID,
+            chapter: currentIndex,
+            paragraph: paragraph,
+            in: modelContext
+        )
+        refreshMarks()
+        toast = nowMarked ? "Marked" : "Mark removed"
+        if selectedParagraph == paragraph {
+            withAnimation(.easeOut(duration: 0.2)) { selectedParagraph = nil }
+        }
+    }
+
+    /// Back to a marked paragraph, from the contents sheet — stepping
+    /// the chapter first where the ribbon lies in another one.
+    private func returnToMark(chapter chapterTarget: Int, paragraph: Int) {
+        if chapterTarget == currentIndex {
+            withAnimation(.easeInOut(duration: 0.5)) { topParagraph = paragraph }
+            lastParagraphSeen = paragraph
+            return
+        }
+        go(to: chapterTarget)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+            topParagraph = paragraph
+            lastParagraphSeen = paragraph
+        }
+    }
+
+    // MARK: - Footnotes
+
+    /// The marker's own note: the one that opens with the same number,
+    /// or its position in the apparatus where the numbering restarts.
+    private func openFootnote(_ number: Int) {
+        guard let chapter, !chapter.notes.isEmpty else { return }
+
+        let found = chapter.notes.first { note in
+            let trimmed = note.trimmingCharacters(in: .whitespaces)
+            return trimmed.hasPrefix("[\(number)]") || trimmed.hasPrefix("(\(number))")
+        } ?? (chapter.notes.indices.contains(number - 1) ? chapter.notes[number - 1] : nil)
+
+        guard let found else { return }
+        sheet = .footnote(number: number, text: found)
     }
 
     // MARK: - The place
@@ -717,6 +993,12 @@ struct LibraryChapterReaderView: View {
         return line + ". Project Gutenberg."
     }
 
+    /// "St. Thérèse of Lisieux · Chapter I" — the share card's short cite.
+    private var shareCiteLine: String {
+        guard let info, let chapter else { return "" }
+        return "\(info.author) · \(chapter.heading)"
+    }
+
     /// A kept passage becomes a Reflection — the app already has one
     /// store for what a reader keeps, and it is the journal. No second
     /// highlights library, no colours, no review queue.
@@ -728,7 +1010,8 @@ struct LibraryChapterReaderView: View {
 
         let entry = JournalEntry(
             text: text,
-            mysteryTitle: chapter?.displayTitle ?? info.title
+            mysteryTitle: chapter?.displayTitle ?? info.title,
+            bookID: bookID
         )
         modelContext.insert(entry)
         try? modelContext.save()
@@ -798,7 +1081,7 @@ struct LibraryTextOptionsSheet: View {
     }
 }
 
-// MARK: - Keep a passage
+// MARK: - Note on a passage
 
 /// A passage on its way into the journal: the words as they stand, their
 /// citation, and room for the reader's own line underneath — which is
@@ -808,6 +1091,7 @@ struct LibraryKeepSheet: View {
     let passage: String
     let citation: String
     @Binding var draft: String
+    var onCopied: (() -> Void)? = nil
     let onKeep: () -> Void
 
     @Environment(\.dismiss) private var dismiss
@@ -819,7 +1103,7 @@ struct LibraryKeepSheet: View {
 
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 16) {
-                    Text("KEEP THIS")
+                    Text("NOTE ON THIS PASSAGE")
                         .font(AppFonts.labelFont(10))
                         .tracking(2.5)
                         .foregroundColor(AppColors.gold.opacity(0.8))
@@ -857,13 +1141,14 @@ struct LibraryKeepSheet: View {
                             horizontalPadding: 0
                         ) {
                             UIPasteboard.general.string = "\u{201C}\(passage)\u{201D}\n\n\(citation)"
+                            onCopied?()
                             dismiss()
                         }
 
                         Spacer()
 
                         QuietGoldButton(
-                            title: "Keep as a reflection",
+                            title: "Save to the journal",
                             trailingIcon: "ph-check",
                             size: 10,
                             color: AppColors.goldLight,
@@ -908,7 +1193,7 @@ struct LibraryKeepSheet: View {
 /// pace closely enough over one chapter and would be nonsense over a
 /// track holding ten of them. `LibraryTrackAlignment` is what knows the
 /// difference, and it refuses the cases it cannot do honestly.
-private struct LibraryFollowWatcher: View {
+struct LibraryFollowWatcher: View {
 
     let session: LibraryListeningSession
     let follow: ReaderScrollModel

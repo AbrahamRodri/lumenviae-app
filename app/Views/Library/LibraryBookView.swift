@@ -3,15 +3,14 @@
 //  Lumen Viae
 //
 //  One book of the Spiritual Reading shelf, set like a title page: the
-//  binding's own cloth washing down from the head, the author in
-//  engraved caps, the name in Cinzel, and one gold act — take it up, or
-//  take it up again where you left it.
+//  binding floating over its own halo of cloth-coloured light, one gold
+//  act — take it up, or take it up again where you left it — the day's
+//  measure, and one ledger of chapters that can be read or heard.
 //
-//  Below that the book keeps two ledgers, because a book can be held in
-//  two hands. The contents is what you read; the LISTEN ledger is what
-//  you hear. They are the same book, so they speak to each other: a
-//  track names the chapter it reads, a chapter can be handed to the
-//  voice, and the voice remembers where it stopped.
+//  The title and author are said once, on the cloth. The typographic
+//  imprint that used to repeat them under the cover is gone, and so is
+//  the full-width wash that sat every dark element on another dark
+//  element: the halo lights the cover only.
 //
 //  The recording itself belongs to `LibraryListeningSession`, which
 //  outlives this page — walking into a chapter must not silence the
@@ -29,6 +28,7 @@ struct LibraryBookView: View {
     @Environment(AppRouter.self) private var router
     @Environment(\.modelContext) private var modelContext
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(UserSettings.self) private var settings
 
     @State private var book: LibraryBook?
     @State private var loadFailed = false
@@ -40,6 +40,11 @@ struct LibraryBookView: View {
 
     @State private var sections: [LibriVoxSection] = []
 
+    /// How this book's tracks line up with its chapters — held here as
+    /// well as in the session, because the act's honest minutes are
+    /// computed from it.
+    @State private var alignment: LibraryTrackAlignment = .empty
+
     /// Whether the recording *failed* to arrive, as opposed to this book
     /// simply not having one. Told apart because they look identical
     /// otherwise, and a reader who came for the audiobook deserves to
@@ -47,6 +52,10 @@ struct LibraryBookView: View {
     @State private var tracksFailed = false
 
     @State private var progress: BookReadingProgress?
+
+    /// The reader's notes on this book, fetched when the page appears —
+    /// the notes row's count and the pull-up's rows.
+    @State private var notes: [JournalEntry] = []
 
     /// Which parts stand open. Seeded once when the book arrives: the
     /// part being read, or the first.
@@ -65,18 +74,19 @@ struct LibraryBookView: View {
     @State private var query = ""
     @State private var isSearching = false
 
-    /// What the page has put over itself. One case today; carried as a
-    /// value rather than a boolean so adding a second never repeats the
-    /// empty-sheet trap the reader hit.
+    /// What the page has put over itself. One at a time, carried as a
+    /// value rather than booleans so a sheet can never be asked to draw
+    /// before its state has landed.
     @State private var sheet: BookSheet?
 
     private enum BookSheet: String, Identifiable {
-        case player
+        case player, goal, notes
         var id: String { rawValue }
     }
 
     private let session = LibraryListeningSession.shared
     private let downloads = LibraryAudioDownloads.shared
+    private let meter = ReadingDayMeter.shared
 
     private var info: LibraryBookInfo? { LibraryCatalog.book(id: bookID) }
 
@@ -85,27 +95,15 @@ struct LibraryBookView: View {
             AppColors.appGradient
                 .ignoresSafeArea()
 
-            // The book's own cloth, washing down from the head of the
-            // page — the cover's identity carried through to its
-            // contents, one binding colour per book.
             if let info {
-                VStack(spacing: 0) {
-                    LinearGradient(
-                        stops: [
-                            .init(color: info.bindingColor.opacity(0.5), location: 0),
-                            .init(color: info.bindingColor.opacity(0.18), location: 0.55),
-                            .init(color: .clear, location: 1)
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .frame(height: 300)
-
-                    Spacer(minLength: 0)
-                }
-                .ignoresSafeArea()
-
                 content(info)
+            } else if loadFailed {
+                // `load()` sets `.unreadable` precisely when the catalog
+                // has no entry for this bookID — which is also when
+                // `info` is nil, so nested under `content(info)` this
+                // message could never be drawn and the reader got a
+                // blank gold page with no way to understand it.
+                unavailable
             }
 
             // The reading, kept at the foot of the page while it sounds,
@@ -132,6 +130,16 @@ struct LibraryBookView: View {
             case .player:
                 LibraryPlayerSheet(session: session)
                     .presentationDetents([.height(430)])
+                    .presentationDragIndicator(.visible)
+
+            case .goal:
+                ReadingGoalSheet()
+                    .presentationDetents([.height(400)])
+                    .presentationDragIndicator(.visible)
+
+            case .notes:
+                BookNotesSheet(notes: notes)
+                    .presentationDetents([.height(520), .large])
                     .presentationDragIndicator(.visible)
             }
         }
@@ -161,6 +169,7 @@ struct LibraryBookView: View {
         .onAppear {
             session.enterScreen()
             loadProgress()
+            loadNotes()
             isOpeningChapter = false
         }
         .onDisappear {
@@ -189,12 +198,17 @@ struct LibraryBookView: View {
                 if let book {
                     primaryAct(book)
                         .padding(.horizontal, 20)
-                        .padding(.bottom, 20)
+                        .padding(.bottom, 18)
                         .devotionalEntrance(delay: 0.05)
+
+                    goalSection(book)
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 20)
+                        .devotionalEntrance(delay: 0.1)
 
                     ledgerSection(book, info)
                         .padding(.horizontal, 20)
-                        .devotionalEntrance(delay: 0.1)
+                        .devotionalEntrance(delay: 0.15)
 
                     if let failure = session.failure {
                         quietNote(failure)
@@ -202,8 +216,14 @@ struct LibraryBookView: View {
                             .padding(.top, 18)
                     }
 
+                    if !notes.isEmpty {
+                        BookNotesRow(count: notes.count) { sheet = .notes }
+                            .padding(.horizontal, 20)
+                            .padding(.top, 10)
+                    }
+
                     if !sections.isEmpty {
-                        offlineRow(info)
+                        offlineSection(info)
                             .padding(.horizontal, 20)
                             .padding(.top, 22)
                     } else if tracksFailed {
@@ -226,94 +246,26 @@ struct LibraryBookView: View {
         }
     }
 
-    /// The head of the page, set as a title page rather than a record
-    /// card: the book itself standing in its own cloth — the cover the
-    /// reader just tapped, carried through so the page is recognizably
-    /// *that* book — and under it the imprint, ruled the way a printed
-    /// title page rules it.
-    ///
-    /// The marker ribbon on the cover is the same one the shelf and
-    /// Explore hang on a book with a reading under way, so the three
-    /// surfaces agree.
+    /// The head of the page: the book itself, floating over its halo.
+    /// Title and author are said once, on the cloth — nothing repeats
+    /// them beneath it.
     private func header(_ info: LibraryBookInfo) -> some View {
         VStack(spacing: 0) {
             BookCover(info: info, hasRibbon: hasReadingUnderWay)
-                .frame(width: 122)
-                .padding(.top, 22)
-                .padding(.bottom, 22)
-                .accessibilityHidden(true)
-
-            gilt
-                .padding(.horizontal, 56)
-                .padding(.bottom, 14)
-
-            Text(info.author.uppercased())
-                .font(AppFonts.labelFont(10))
-                .tracking(2.8)
-                .foregroundColor(AppColors.gold)
-                .multilineTextAlignment(.center)
-
-            Text(info.title)
-                .font(AppFonts.headlineFont(27))
-                .foregroundColor(AppColors.cream)
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.horizontal, 24)
-                .padding(.top, 8)
-
-            if let translator = info.translator {
-                Text("translated by \(translator)")
-                    .font(AppFonts.italicFont(14))
-                    .foregroundColor(AppColors.textSecondary)
-                    .padding(.top, 6)
-            }
-
-            gilt
-                .padding(.horizontal, 56)
-                .padding(.top, 16)
-
-            // The line that told the books apart on the shelf keeps
-            // telling this one's story here.
-            Text(info.blurb)
-                .font(AppFonts.italicFont(14))
-                .foregroundColor(AppColors.cream.opacity(0.8))
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.horizontal, 36)
-                .padding(.top, 16)
-
-            OrnamentDivider()
-                .padding(.horizontal, 40)
-                .padding(.top, 16)
+                .frame(width: 136)
+                .shadow(color: .black.opacity(0.55), radius: 15, y: 7)
+                // As a background the halo takes none of its 540 points
+                // in layout, and it scrolls away with the cover instead
+                // of clinging to the viewport.
+                .background {
+                    BookHalo(bindingColor: info.bindingColor)
+                }
+                .padding(.top, 18)
         }
         .frame(maxWidth: .infinity)
-        .padding(.bottom, 22)
-        .accessibilityElement(children: .combine)
+        .padding(.bottom, 24)
+        .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(info.title), \(info.author). \(info.blurb)")
-    }
-
-    /// The pair of gilt rules a bound book carries at head and tail,
-    /// fading out at the ends so they read as tooling rather than as the
-    /// page's own dividers.
-    private var gilt: some View {
-        VStack(spacing: 3) {
-            rule
-            rule
-        }
-        .accessibilityHidden(true)
-    }
-
-    private var rule: some View {
-        LinearGradient(
-            stops: [
-                .init(color: AppColors.gold.opacity(0), location: 0),
-                .init(color: AppColors.gold.opacity(0.5), location: 0.5),
-                .init(color: AppColors.gold.opacity(0), location: 1)
-            ],
-            startPoint: .leading,
-            endPoint: .trailing
-        )
-        .frame(height: 1)
     }
 
     private var hasReadingUnderWay: Bool {
@@ -324,53 +276,77 @@ struct LibraryBookView: View {
     // MARK: - The one gold act
 
     /// The screen's primary act, and the only filled gold shape on it:
-    /// open the book. Named for what it will actually do — a reader with
-    /// a marker is not beginning, they are going back.
+    /// open the book, at the exact chapter the marker holds — with how
+    /// far into it the reader already is, said against the recording's
+    /// own length where one exists.
     @ViewBuilder
     private func primaryAct(_ book: LibraryBook) -> some View {
         let resume = resumeChapter(book)
+        let opening = resume ?? book.chapters.first
 
-        VStack(spacing: 9) {
-            GoldCTAButton(title: actTitle(resume)) {
-                guard let opening = resume ?? book.chapters.first else { return }
-                openChapter(opening)
-            }
+        if let opening {
+            ContinueReadingAct(
+                kicker: resume == nil ? "BEGIN READING" : "CONTINUE READING",
+                destination: destination(for: opening),
+                fraction: resume == nil ? 0 : chapterFraction(opening),
+                meta: actMeta(for: opening, isResume: resume != nil),
+                action: { openChapter(opening) }
+            )
             .accessibilityHint(
                 resume.map { "Opens \($0.displayTitle)" } ?? "Opens the first chapter"
             )
-            // The marker ribbon of a book left open, hanging over the
-            // act that returns to it — the same ribbon the covers wear.
-            .overlay(alignment: .topTrailing) {
-                if resume != nil {
-                    RoundedRectangle(cornerRadius: 1.5)
-                        .fill(AppColors.goldLight)
-                        .frame(width: 8, height: 22)
-                        .offset(x: -26, y: -9)
-                        .shadow(color: .black.opacity(0.45), radius: 2, y: 1)
-                        .accessibilityHidden(true)
-                }
-            }
-
-            // Where the act leads, named under it rather than crammed
-            // into the pill: a chapter's own title is often a sentence.
-            if let resume, resume.title != nil, resume.title != resume.heading {
-                Text(resume.displayTitle)
-                    .font(AppFonts.italicFont(13))
-                    .foregroundColor(AppColors.textSecondary)
-                    .multilineTextAlignment(.center)
-                    .lineLimit(2)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.horizontal, 24)
-                    .accessibilityHidden(true)
-            }
         }
     }
 
-    /// "Begin reading" on a book not yet opened; on one with a place
-    /// kept, the place itself — the act says where it goes.
-    private func actTitle(_ resume: LibraryChapter?) -> String {
-        guard let resume else { return "Begin reading" }
-        return "Continue · \(resume.heading)"
+    /// "Chapter I · Earliest Memories" — or the heading alone where the
+    /// edition prints no title.
+    private func destination(for chapter: LibraryChapter) -> String {
+        if let title = chapter.title, title != chapter.heading {
+            return "\(chapter.heading) · \(title)"
+        }
+        return chapter.displayTitle
+    }
+
+    /// How far into a chapter the marker stands, by paragraph — the same
+    /// proportional honesty follow-the-voice uses.
+    private func chapterFraction(_ chapter: LibraryChapter) -> Double {
+        guard let progress, LibraryProgressStore.isCurrent(progress),
+              progress.lastChapterIndex == chapter.id,
+              !chapter.paragraphs.isEmpty else { return 0 }
+        return min(max(Double(progress.lastParagraphIndex) / Double(chapter.paragraphs.count), 0), 1)
+    }
+
+    /// "6 MIN IN · 18 MIN LEFT" — minutes taken from the recording's own
+    /// length, the one honest clock this shelf has. Where no recording
+    /// times this chapter, the meta stays quiet rather than guessing.
+    private func actMeta(for chapter: LibraryChapter, isResume: Bool) -> String? {
+        guard let seconds = chapterSeconds(chapter.id) else {
+            return isResume ? nil : "NOT YET OPENED"
+        }
+        let minutes = max(Int((seconds / 60).rounded()), 1)
+        guard isResume else { return "\(minutes) MIN · NOT YET OPENED" }
+
+        let fraction = chapterFraction(chapter)
+        let minutesIn = Int((fraction * Double(minutes)).rounded())
+        guard minutesIn > 0 else { return "\(minutes) MIN" }
+        return "\(minutesIn) MIN IN · \(max(minutes - minutesIn, 1)) MIN LEFT"
+    }
+
+    /// The recording's length for one chapter: its own tracks summed, or
+    /// its share of a track that gathers several chapters into one file.
+    private func chapterSeconds(_ chapter: Int) -> Double? {
+        guard !alignment.isEmpty else { return nil }
+        var total: Double = 0
+        var found = false
+
+        for (index, section) in sections.enumerated() {
+            guard let range = alignment.chapters(forTrack: index),
+                  range.contains(chapter),
+                  let seconds = section.playtimeSeconds else { continue }
+            total += seconds / Double(range.count)
+            found = true
+        }
+        return found ? total : nil
     }
 
     /// Where the reader left off, if the marker still belongs to this
@@ -380,31 +356,80 @@ struct LibraryBookView: View {
         return book.chapter(at: progress.lastChapterIndex)
     }
 
+    // MARK: - Today's goal
+
+    /// The day's measure, and under it what the whole book still holds —
+    /// both said against the recording's length, a fact about the files.
+    @ViewBuilder
+    private func goalSection(_ book: LibraryBook) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            TodaysGoalBand(
+                line: meter.goalLine(for: settings.readingGoal),
+                fraction: meter.fraction(toward: settings.readingGoal),
+                action: { sheet = .goal }
+            )
+
+            if let line = timeLeftLine(book) {
+                Text(line)
+                    .font(AppFonts.italicFont(12))
+                    .foregroundColor(AppColors.textSecondary)
+            }
+        }
+    }
+
+    /// "2 h 5 m read · 7 h 26 m left in the book", from the recording's
+    /// total length and the chapters read to their end. Absent where the
+    /// book has no recording to time it by.
+    private func timeLeftLine(_ book: LibraryBook) -> String? {
+        // Only the tracks the alignment actually maps to a chapter —
+        // the same tracks `chapterSeconds` can reach, so a finished book
+        // really does reach zero.
+        //
+        // A recording usually carries more than the text does. Thérèse's
+        // reading runs on through the Counsels, the Letters, the Prayers
+        // and the Poems that the catalog's `stopPattern` cuts away, and
+        // the Dolorous Passion's two appendices sit past its last
+        // chapter. Summed into the total, those left four hours and
+        // twenty minutes on the Story of a Soul that no amount of
+        // reading could take off the line.
+        let total = sections.enumerated().reduce(into: 0.0) { sum, pair in
+            guard alignment.chapters(forTrack: pair.offset) != nil,
+                  let seconds = pair.element.playtimeSeconds else { return }
+            sum += seconds
+        }
+        guard total > 60 else { return nil }
+
+        var done: Double = 0
+        if let progress, LibraryProgressStore.isCurrent(progress) {
+            for index in progress.finishedChapterIndexes {
+                done += chapterSeconds(index) ?? 0
+            }
+            if let current = book.chapter(at: progress.lastChapterIndex),
+               !progress.finishedChapterIndexes.contains(current.id),
+               let seconds = chapterSeconds(current.id) {
+                done += seconds * chapterFraction(current)
+            }
+        }
+
+        guard done > 60 else {
+            return "\(ReadingSpans.spell(total)) of reading in this book"
+        }
+        return "\(ReadingSpans.spell(done)) read · \(ReadingSpans.spell(max(total - done, 0))) left in the book"
+    }
+
     // MARK: - Contents
 
-    /// One ledger, not two.
-    ///
-    /// The contents and the recording used to stand as separate sections,
-    /// which for a book whose reader gave every chapter its own file
-    /// meant printing the same thirteen names twice on one page. They are
-    /// the same book: the chapter is the thing, and the voice is one of
-    /// the two ways to have it. So a chapter row carries the play control
-    /// where a recording begins at that chapter, and the recording has no
-    /// ledger of its own.
+    /// One ledger, not two: the chapter is the thing, and the voice is
+    /// one of the two ways to have it. The header states the rule the
+    /// rows follow.
     @ViewBuilder
     private func ledgerSection(_ book: LibraryBook, _ info: LibraryBookInfo) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 8) {
-                Text("CONTENTS")
+                Text("CONTENTS · \(book.chapters.count) CHAPTERS")
                     .font(AppFonts.labelFont(10))
                     .tracking(2.5)
-                    .foregroundColor(AppColors.gold.opacity(0.75))
-
-                if info.librivoxID != nil, !sections.isEmpty {
-                    AppIcon("ph-speaker-high", size: 11)
-                        .foregroundColor(AppColors.gold.opacity(0.5))
-                        .accessibilityHidden(true)
-                }
+                    .foregroundColor(AppColors.gold.opacity(0.85))
 
                 Spacer()
 
@@ -412,10 +437,15 @@ struct LibraryBookView: View {
                     isSearching.toggle()
                     if !isSearching { query = "" }
                 } label: {
-                    AppIcon(isSearching ? "ph-x" : "ph-magnifying-glass", size: 13)
-                        .foregroundColor(AppColors.gold.opacity(0.75))
-                        .frame(width: 36, height: 36)
-                        .contentShape(Rectangle())
+                    HStack(spacing: 6) {
+                        Text(isSearching ? "CLOSE" : "SEARCH")
+                            .font(AppFonts.labelFont(9))
+                            .tracking(1.8)
+                        AppIcon(isSearching ? "ph-x" : "ph-magnifying-glass", size: 13)
+                    }
+                    .foregroundColor(AppColors.gold.opacity(0.75))
+                    .padding(.vertical, 8)
+                    .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(isSearching ? "Close the search" : "Search inside this book")
@@ -424,6 +454,11 @@ struct LibraryBookView: View {
 
             if isSearching {
                 searchField
+                    .padding(.bottom, 6)
+            } else if !sections.isEmpty {
+                Text("Tap a chapter to read it. Tap its time to have it read aloud.")
+                    .font(AppFonts.italicFont(12))
+                    .foregroundColor(AppColors.textSecondary)
                     .padding(.bottom, 6)
             }
 
@@ -436,6 +471,7 @@ struct LibraryBookView: View {
                         LibraryProgressStore.isCurrent($0) ? $0.lastChapterIndex : nil
                     },
                     finished: finishedChapters,
+                    markCounts: markCounts,
                     listening: listening(for:),
                     expandedParts: $expandedParts,
                     onSelect: openChapter
@@ -450,12 +486,10 @@ struct LibraryBookView: View {
     /// reader gathered ten chapters into a file, and putting the same
     /// control on all ten rows would claim a precision the recording does
     /// not have; putting it on the first says exactly where the voice
-    /// starts. A reader partway into that span still hands the chapter to
-    /// the voice from inside the reader, where "Hear this read" names the
-    /// span it is joining.
+    /// starts.
     private func listening(for chapter: LibraryChapter) -> LibraryRowListening? {
-        guard let track = session.alignment.track(forChapter: chapter.id),
-              session.alignment.firstChapter(forTrack: track) == chapter.id,
+        guard let track = alignment.track(forChapter: chapter.id),
+              alignment.firstChapter(forTrack: track) == chapter.id,
               sections.indices.contains(track) else { return nil }
 
         let section = sections[track]
@@ -463,19 +497,38 @@ struct LibraryBookView: View {
             isSounding: session.isSounding(track: track),
             isLoaded: session.isLoaded(track: track),
             isLoading: session.isLoaded(track: track) && session.isLoading,
-            playtime: section.playtimeLabel,
+            playtimeSeconds: section.playtimeSeconds,
             resting: session.isLoaded(track: track)
                 ? nil : session.restingPosition(forTrack: section.id),
             save: downloads.state(bookID: bookID, sectionID: section.id),
-            onToggle: { session.toggle(track: track) },
+            onToggle: { hearChapter(chapter, track: track) },
             onSave: { downloads.save(bookID: bookID, section: section) },
             onRemove: { downloads.remove(bookID: bookID, sectionID: section.id) }
         )
     }
 
+    /// The chip's act: the reader opens at that chapter and the voice
+    /// starts. Tapping the chip of the chapter already sounding pauses
+    /// it where it stands.
+    private func hearChapter(_ chapter: LibraryChapter, track: Int) {
+        if session.isSounding(track: track) {
+            session.pause()
+            return
+        }
+        session.toggle(track: track)
+        openChapter(chapter)
+    }
+
     private var finishedChapters: Set<Int> {
         guard let progress, LibraryProgressStore.isCurrent(progress) else { return [] }
         return progress.finishedChapterIndexes
+    }
+
+    private var markCounts: [Int: Int] {
+        guard let progress, LibraryProgressStore.isCurrent(progress) else { return [:] }
+        return progress.marks.reduce(into: [:]) { counts, mark in
+            counts[mark.chapter, default: 0] += 1
+        }
     }
 
     private var searchField: some View {
@@ -494,7 +547,7 @@ struct LibraryBookView: View {
         .padding(.vertical, 9)
         .background(
             RoundedRectangle(cornerRadius: 10)
-                .fill(AppColors.cardBackground.opacity(0.7))
+                .fill(AppColors.gold.opacity(0.04))
         )
         .overlay(
             RoundedRectangle(cornerRadius: 10)
@@ -532,55 +585,68 @@ struct LibraryBookView: View {
 
     // MARK: - Keeping it on the device
 
-    /// The missal's own honest offline row, in the shelf's words: how
-    /// much of this recording is on the device, what it weighs, and the
-    /// way to fetch the rest — with the size named before it is spent,
-    /// never hidden behind one button.
+    /// The missal's honest offline line, under its own heading at the
+    /// foot: how much of this recording is on the device, what it
+    /// weighs, and the way to fetch the rest — the size named before it
+    /// is spent, never hidden behind one button.
     @ViewBuilder
-    private func offlineRow(_ info: LibraryBookInfo) -> some View {
+    private func offlineSection(_ info: LibraryBookInfo) -> some View {
         let tally = downloads.tally(bookID: bookID, sections: sections)
 
-        HStack(alignment: .firstTextBaseline, spacing: 10) {
-            Text(offlineLine(tally, total: sections.count))
-                .font(AppFonts.italicFont(12))
-                .foregroundColor(AppColors.textSecondary)
-                .fixedSize(horizontal: false, vertical: true)
+        VStack(alignment: .leading, spacing: 0) {
+            Rectangle()
+                .fill(AppColors.gold.opacity(0.15))
+                .frame(height: 0.5)
 
-            Spacer(minLength: 8)
+            Text("KEEP IT ON THIS DEVICE")
+                .font(AppFonts.labelFont(10))
+                .tracking(2.2)
+                .foregroundColor(AppColors.gold.opacity(0.85))
+                .padding(.top, 16)
 
-            if tally.isSaving {
-                QuietGoldButton(
-                    title: "Stop",
-                    size: 10,
-                    color: AppColors.gold.opacity(0.8),
-                    horizontalPadding: 0
-                ) {
-                    downloads.cancelAll(bookID: bookID, sections: sections)
+            HStack(alignment: .firstTextBaseline, spacing: 10) {
+                Text(offlineLine(tally, total: sections.count))
+                    .font(AppFonts.italicFont(12))
+                    .foregroundColor(AppColors.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Spacer(minLength: 8)
+
+                if tally.isSaving {
+                    QuietGoldButton(
+                        title: "Stop",
+                        size: 10,
+                        color: AppColors.gold.opacity(0.8),
+                        horizontalPadding: 0
+                    ) {
+                        downloads.cancelAll(bookID: bookID, sections: sections)
+                    }
+                    .padding(.vertical, -10)
+                } else if !tally.missing.isEmpty {
+                    QuietGoldButton(
+                        title: tally.savedCount == 0 ? "Save for offline" : "Save the rest",
+                        leadingIcon: "ph-download-simple",
+                        size: 10,
+                        color: AppColors.gold,
+                        horizontalPadding: 0
+                    ) {
+                        downloads.saveAll(bookID: bookID, sections: sections)
+                    }
+                    .padding(.vertical, -10)
+                } else {
+                    QuietGoldButton(
+                        title: "Remove",
+                        size: 10,
+                        color: AppColors.textSecondary,
+                        horizontalPadding: 0
+                    ) {
+                        downloads.removeAll(bookID: bookID, sections: sections)
+                    }
+                    .padding(.vertical, -10)
                 }
-                .padding(.vertical, -10)
-            } else if !tally.missing.isEmpty {
-                QuietGoldButton(
-                    title: tally.savedCount == 0 ? "Save for offline" : "Save the rest",
-                    size: 10,
-                    color: AppColors.gold,
-                    horizontalPadding: 0
-                ) {
-                    downloads.saveAll(bookID: bookID, sections: sections)
-                }
-                .padding(.vertical, -10)
-            } else {
-                QuietGoldButton(
-                    title: "Remove",
-                    size: 10,
-                    color: AppColors.textSecondary,
-                    horizontalPadding: 0
-                ) {
-                    downloads.removeAll(bookID: bookID, sections: sections)
-                }
-                .padding(.vertical, -10)
             }
+            .padding(.top, 8)
         }
-        .padding(.top, 14)
     }
 
     private func offlineLine(_ tally: LibraryAudioDownloads.Tally, total: Int) -> String {
@@ -758,14 +824,15 @@ struct LibraryBookView: View {
     private func adoptSession(_ info: LibraryBookInfo) {
         guard let book else { return }
         downloads.register(bookID: info.id, sections: sections)
+        alignment = LibraryTrackMap.align(
+            chapters: book.chapters,
+            sections: sections,
+            mapping: info.trackMapping
+        )
         session.adopt(
             info: info,
             sections: sections,
-            alignment: LibraryTrackMap.align(
-                chapters: book.chapters,
-                sections: sections,
-                mapping: info.trackMapping
-            ),
+            alignment: alignment,
             context: modelContext
         )
         offerCoverToLockScreen(info)
@@ -814,6 +881,17 @@ struct LibraryBookView: View {
     private func loadProgress() {
         progress = LibraryProgressStore.row(for: bookID, in: modelContext)
     }
+
+    /// The reader's notes on this book — kept in the journal, gathered
+    /// here for the notes row and its pull-up.
+    private func loadNotes() {
+        let id = bookID
+        let descriptor = FetchDescriptor<JournalEntry>(
+            predicate: #Predicate { $0.bookID == id },
+            sortBy: [SortDescriptor(\.createdAt, order: .reverse)]
+        )
+        notes = (try? modelContext.fetch(descriptor)) ?? []
+    }
 }
 
 // MARK: - Preview
@@ -822,5 +900,6 @@ struct LibraryBookView: View {
     NavigationStack {
         LibraryBookView(bookID: "imitation-of-christ")
             .environment(AppRouter())
+            .environment(UserSettings.shared)
     }
 }

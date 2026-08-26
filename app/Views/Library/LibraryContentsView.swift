@@ -7,11 +7,17 @@
 //  ☰ sheet that keeps a hundred-and-fourteen-chapter book from being a
 //  corridor with no doors.
 //
+//  Both taps on a row land in the reader; the only difference is
+//  whether the voice starts. The row itself opens the chapter silent,
+//  and its listen chip — the recording's own length, worn as a pill —
+//  opens it with the voice reading.
+//
 //  Marks, and what they mean, deliberately: a gold dot is where you are,
 //  a faint gold rule in the left margin is a chapter you have read to
-//  the end. Neither is a count. Knowing which doors you have been
-//  through is navigation; knowing you have been through forty-one per
-//  cent of them is a scoreboard, and this shelf does not keep one.
+//  the end, and a small ribbon with a count is the marks you laid in it.
+//  None is a score. Knowing which doors you have been through is
+//  navigation; knowing you have been through forty-one per cent of them
+//  is a scoreboard, and this shelf does not keep one.
 //
 
 import SwiftUI
@@ -57,6 +63,9 @@ struct LibraryContentsLedger: View {
 
     /// Chapters read to the end — a faint gold rule in the margin
     var finished: Set<Int> = []
+
+    /// How many ribbons lie in each chapter
+    var markCounts: [Int: Int] = [:]
 
     /// What each chapter's recording is doing, where one begins there.
     /// Absent for a book with no recording, and in the reader's index,
@@ -155,6 +164,7 @@ struct LibraryContentsLedger: View {
                 isCurrent: chapter.id == currentIndex,
                 isFinished: finished.contains(chapter.id),
                 isLast: chapter.id == chapters.last?.id,
+                markCount: markCounts[chapter.id] ?? 0,
                 listening: listening(chapter),
                 onSelect: onSelect
             )
@@ -177,9 +187,9 @@ struct LibraryRowListening {
     var isLoaded: Bool = false
     var isLoading: Bool = false
 
-    /// The recording's own length, as LibriVox states it — a fact about
-    /// the file, not an estimate of the reader
-    var playtime: String? = nil
+    /// The recording's own length in seconds, as LibriVox states it — a
+    /// fact about the file, never an estimate of the reader
+    var playtimeSeconds: Double? = nil
 
     /// Seconds in, where the voice was left mid-reading
     var resting: Double? = nil
@@ -187,6 +197,7 @@ struct LibraryRowListening {
     /// Whether the reading is on the device
     var save: LibraryAudioDownloads.State = .absent
 
+    /// Toggles the reading — the chip's own act
     var onToggle: () -> Void = {}
     var onSave: () -> Void = {}
     var onRemove: () -> Void = {}
@@ -201,19 +212,20 @@ struct LibraryChapterRow: View {
     var isFinished: Bool = false
     var isLast: Bool = false
 
+    /// How many ribbons lie in this chapter
+    var markCount: Int = 0
+
     /// A line of the chapter to show beneath the title — a search match
     var excerpt: AttributedString? = nil
 
-    /// Present where a recording begins at this chapter. The ledger is
-    /// one ledger: the chapter is the thing, and the voice is one of two
-    /// ways to have it.
+    /// Present where a recording begins at this chapter.
     var listening: LibraryRowListening? = nil
 
     let onSelect: (LibraryChapter) -> Void
 
     /// An edition that prints no chapter titles used to draw its heading
-    /// twice, once in the margin and once as the row's own text. Where
-    /// the two would say the same thing, the heading owns the row.
+    /// twice. Where the two would say the same thing, the heading owns
+    /// the row.
     private var hasDistinctTitle: Bool {
         guard let title = chapter.title else { return false }
         return title != chapter.heading
@@ -224,51 +236,16 @@ struct LibraryChapterRow: View {
             Button {
                 onSelect(chapter)
             } label: {
-                HStack(alignment: .firstTextBaseline, spacing: listening == nil ? 12 : 6) {
-                    if let listening {
-                        // Two acts on one row, each with its own target:
-                        // the row opens the chapter, this plays it.
-                        Button(action: listening.onToggle) {
-                            Group {
-                                if listening.isLoading {
-                                    SwiftUI.ProgressView()
-                                        .controlSize(.small)
-                                        .tint(AppColors.gold)
-                                } else {
-                                    AppIcon(
-                                        listening.isSounding ? "ph-pause-fill"
-                                            : (listening.isLoaded ? "ph-play-fill" : "ph-play"),
-                                        size: 13
-                                    )
-                                    .foregroundColor(AppColors.gold)
-                                }
-                            }
-                            .frame(width: 44, height: 44)
-                            .contentShape(Rectangle())
+                HStack(alignment: .center, spacing: 10) {
+                    VStack(alignment: .leading, spacing: 3) {
+                        if hasDistinctTitle {
+                            Text(chapter.heading.uppercased())
+                                .font(AppFonts.labelFont(10))
+                                .tracking(1.2)
+                                .foregroundColor(AppColors.gold.opacity(0.85))
+                                .lineLimit(1)
                         }
-                        .buttonStyle(.plain)
-                        .accessibilityLabel(
-                            listening.isSounding
-                                ? "Pause the reading of \(chapter.displayTitle)"
-                                : "Hear \(chapter.displayTitle) read"
-                        )
-                        .alignmentGuide(.firstTextBaseline) { $0[.bottom] - 12 }
-                    }
 
-                    if hasDistinctTitle {
-                        Text(chapter.heading.uppercased())
-                            // Fits "CHAPTER VIII" on one line. Wrapped, it
-                            // pushed the row taller than the divider knew
-                            // about and the two collided.
-                            .font(AppFonts.labelFont(10))
-                            .tracking(1.2)
-                            .foregroundColor(AppColors.gold.opacity(0.85))
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.75)
-                            .frame(width: listening == nil ? 92 : 78, alignment: .leading)
-                    }
-
-                    VStack(alignment: .leading, spacing: 4) {
                         Text(chapter.displayTitle)
                             .font(AppFonts.bodyFont(15))
                             .foregroundColor(AppColors.cream)
@@ -283,22 +260,33 @@ struct LibraryChapterRow: View {
                                 .multilineTextAlignment(.leading)
                         }
 
-                        if let line = recordingLine {
-                            Text(line)
+                        // Only where the voice was left part-way: the
+                        // exact place it rests, in the player's own hand.
+                        if let resting = listening?.resting {
+                            Text("\(LibraryListeningSession.time(resting)) in")
                                 .font(AppFonts.italicFont(12))
-                                .foregroundColor(
-                                    listening?.resting == nil
-                                        ? AppColors.textSecondary
-                                        : AppColors.goldLight.opacity(0.85)
-                                )
+                                .foregroundColor(AppColors.goldLight.opacity(0.85))
                         }
                     }
 
                     Spacer(minLength: 8)
 
+                    if markCount > 0 {
+                        HStack(spacing: 4) {
+                            MarkerRibbonShape()
+                                .fill(AppColors.goldLight)
+                                .frame(width: 7, height: 15)
+
+                            Text("\(markCount)")
+                                .font(AppFonts.labelFont(9))
+                                .foregroundColor(AppColors.goldLight.opacity(0.9))
+                        }
+                        .accessibilityLabel("\(markCount) marks")
+                    }
+
                     if let listening {
+                        listenChip(listening)
                         saveMark(listening)
-                            .alignmentGuide(.firstTextBaseline) { $0[.bottom] - 12 }
                     }
 
                     if isCurrent {
@@ -312,15 +300,12 @@ struct LibraryChapterRow: View {
                     }
                 }
                 .padding(.vertical, 12)
-                .padding(.leading, listening == nil ? 14 : 6)
+                .padding(.leading, 14)
                 .frame(minHeight: 44)
                 .fixedSize(horizontal: false, vertical: true)
                 .contentShape(Rectangle())
                 // The read-mark: a thin rule in the margin, the way a
-                // well-used book falls open. Never a checkbox — and drawn
-                // as an overlay rather than a sibling, because a
-                // baseline-aligned row has no baseline to give a bare
-                // rectangle, and it took the row's height with it.
+                // well-used book falls open. Never a checkbox.
                 .overlay(alignment: .leading) {
                     Rectangle()
                         .fill(isFinished ? AppColors.gold.opacity(0.45) : Color.clear)
@@ -333,6 +318,21 @@ struct LibraryChapterRow: View {
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(spokenLabel)
             .accessibilityAddTraits(isCurrent ? [.isSelected] : [])
+            // Only where a recording actually begins at this chapter.
+            // Registered unconditionally, VoiceOver offered "Hear this
+            // read" on every row of the ☰ index and on the nine rows in
+            // ten of a gathered track that draw no chip on purpose — an
+            // action that silently did nothing.
+            .accessibilityActions {
+                if let listening {
+                    Button("Hear this read") { listening.onToggle() }
+                    if case .saved = listening.save {
+                        Button("Remove from the device") { listening.onRemove() }
+                    } else if case .absent = listening.save {
+                        Button("Save this reading to the device") { listening.onSave() }
+                    }
+                }
+            }
 
             if !isLast {
                 Divider()
@@ -341,22 +341,14 @@ struct LibraryChapterRow: View {
         }
     }
 
-    /// "40 min", or "40 min · 31 min in" where the voice was left
-    /// part-way. A length is a fact about the file; nothing here
-    /// predicts how long the reader will take.
-    private var recordingLine: String? {
-        guard let listening else { return nil }
-        var parts: [String] = []
-        if let playtime = listening.playtime { parts.append(playtime) }
-        if let resting = listening.resting {
-            parts.append("\(LibraryListeningSession.elapsedLabel(resting)) in")
-        }
-        return parts.isEmpty ? nil : parts.joined(separator: " · ")
-    }
-
     /// A small arrow that fills to a solid mark once the reading is on
     /// the device, and turns as it arrives. Press and hold a saved one to
     /// give it back to the network.
+    ///
+    /// The one-chapter-at-a-time way in: the honest offline line beneath
+    /// the ledger offers the whole book, which for the Dolorous Passion
+    /// is about 188 MB. A reader who wants tonight's chapter before a
+    /// flight asks here.
     @ViewBuilder
     private func saveMark(_ listening: LibraryRowListening) -> some View {
         switch listening.save {
@@ -368,7 +360,7 @@ struct LibraryChapterRow: View {
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Save this reading to the device")
+            .accessibilityHidden(true)
 
         case .saving(let fraction):
             SwiftUI.ProgressView(value: fraction ?? 0)
@@ -376,7 +368,7 @@ struct LibraryChapterRow: View {
                 .controlSize(.mini)
                 .tint(AppColors.gold)
                 .frame(width: 44, height: 44)
-                .accessibilityLabel("Saving this reading")
+                .accessibilityHidden(true)
 
         case .saved:
             // Not a Button: a tap on one would have done nothing at all,
@@ -387,11 +379,59 @@ struct LibraryChapterRow: View {
                 .frame(width: 44, height: 44)
                 .contentShape(Rectangle())
                 .onLongPressGesture { listening.onRemove() }
-                .accessibilityElement()
-                .accessibilityLabel("Saved to the device")
-                .accessibilityAddTraits(.isStaticText)
-                .accessibilityAction(named: "Remove from the device") { listening.onRemove() }
+                .accessibilityHidden(true)
         }
+    }
+
+    /// The recording's length, worn as the row's second act: tap the
+    /// time to have the chapter read aloud. While it sounds, the chip
+    /// fills and offers the pause.
+    @ViewBuilder
+    private func listenChip(_ listening: LibraryRowListening) -> some View {
+        let sounding = listening.isSounding
+
+        Button(action: listening.onToggle) {
+            HStack(spacing: 6) {
+                if listening.isLoading {
+                    SwiftUI.ProgressView()
+                        .controlSize(.mini)
+                        .tint(AppColors.gold)
+                } else {
+                    AppIcon(sounding ? "ph-pause-fill" : "ph-play-fill", size: 10)
+                }
+
+                if let seconds = listening.playtimeSeconds {
+                    Text(ReadingSpans.chipMinutes(seconds))
+                        .font(AppFonts.labelFont(9))
+                        .tracking(1.2)
+                        .lineLimit(1)
+                        .fixedSize()
+                }
+            }
+            .foregroundColor(sounding ? AppColors.goldLight : AppColors.gold)
+            .padding(.vertical, 8)
+            .padding(.horizontal, 11)
+            .background(
+                Capsule().fill(sounding ? AppColors.gold.opacity(0.14) : Color.clear)
+            )
+            .overlay(
+                Capsule().strokeBorder(
+                    AppColors.gold.opacity(sounding ? 0.7 : 0.4),
+                    lineWidth: 0.5
+                )
+            )
+            // A 44-point target without a 44-point row: the chip's hit
+            // area reaches past its drawn pill.
+            .padding(.vertical, 8)
+            .contentShape(Rectangle())
+            .padding(.vertical, -8)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(
+            sounding
+                ? "Pause the reading of \(chapter.displayTitle)"
+                : "Hear \(chapter.displayTitle) read"
+        )
     }
 
     private var spokenLabel: String {
@@ -400,22 +440,35 @@ struct LibraryChapterRow: View {
         parts.append(chapter.displayTitle)
         if isCurrent { parts.append("where you are") }
         else if isFinished { parts.append("read") }
-        if let line = recordingLine { parts.append(line) }
+        if markCount > 0 { parts.append("\(markCount) marks") }
+        if let seconds = listening?.playtimeSeconds {
+            parts.append(ReadingSpans.chipMinutes(seconds).lowercased())
+        }
+        if let resting = listening?.resting {
+            parts.append("\(LibraryListeningSession.elapsedLabel(resting)) in")
+        }
         return parts.joined(separator: ". ")
     }
 }
 
 // MARK: - Contents sheet
 
-/// The ☰ sheet: the whole book from inside a chapter, with a search
-/// that finds the half-remembered line.
+/// The ☰ sheet: the whole book from inside a chapter, the pages that
+/// stood out, and a search that finds the half-remembered line.
 struct LibraryContentsSheet: View {
 
     let info: LibraryBookInfo
     let book: LibraryBook
     let currentIndex: Int
     var finished: Set<Int> = []
+
+    /// The ribbons laid in this book, for the YOUR MARKS section
+    var marks: [BookPassageMark] = []
+
     let onSelect: (Int) -> Void
+
+    /// Returns to a marked paragraph — chapter, then paragraph
+    var onSelectMark: ((Int, Int) -> Void)? = nil
 
     @Environment(\.dismiss) private var dismiss
 
@@ -427,6 +480,12 @@ struct LibraryContentsSheet: View {
     /// — a hundred and fourteen chapters at a time.
     @State private var runs: [LibraryPartRun] = []
 
+    private var markCounts: [Int: Int] {
+        marks.reduce(into: [:]) { counts, mark in
+            counts[mark.chapter, default: 0] += 1
+        }
+    }
+
     var body: some View {
         ZStack {
             AppColors.appGradient.ignoresSafeArea()
@@ -437,10 +496,15 @@ struct LibraryContentsSheet: View {
                         header
 
                         if query.isEmpty {
+                            if !marks.isEmpty {
+                                marksSection
+                            }
+
                             LibraryContentsLedger(
                                 runs: runs,
                                 currentIndex: currentIndex,
                                 finished: finished,
+                                markCounts: markCounts,
                                 expandedParts: $expandedParts,
                                 onSelect: { chapter in
                                     onSelect(chapter.id)
@@ -532,6 +596,82 @@ struct LibraryContentsSheet: View {
             RoundedRectangle(cornerRadius: 10)
                 .strokeBorder(AppColors.gold.opacity(0.18), lineWidth: 0.5)
         )
+    }
+
+    // MARK: Your marks
+
+    /// The pages that stood out: every ribbon in the book, each one a
+    /// door straight back to its paragraph.
+    private var marksSection: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(alignment: .firstTextBaseline, spacing: 10) {
+                Text("YOUR MARKS · \(marks.count)")
+                    .font(AppFonts.labelFont(10))
+                    .tracking(2.2)
+                    .foregroundColor(AppColors.gold.opacity(0.85))
+
+                Text("the pages that stood out")
+                    .font(AppFonts.italicFont(12))
+                    .foregroundColor(AppColors.textSecondary)
+            }
+            .padding(.top, 16)
+            .padding(.bottom, 4)
+
+            ForEach(Array(marks.enumerated()), id: \.offset) { _, mark in
+                markRow(mark)
+            }
+
+            Rectangle()
+                .fill(AppColors.gold.opacity(0.2))
+                .frame(height: 0.5)
+                .padding(.top, 10)
+        }
+    }
+
+    @ViewBuilder
+    private func markRow(_ mark: BookPassageMark) -> some View {
+        if let chapter = book.chapter(at: mark.chapter) {
+            Button {
+                onSelectMark?(mark.chapter, mark.paragraph)
+                dismiss()
+            } label: {
+                HStack(alignment: .firstTextBaseline, spacing: 10) {
+                    MarkerRibbonShape()
+                        .fill(AppColors.goldLight)
+                        .frame(width: 7, height: 15)
+                        .alignmentGuide(.firstTextBaseline) { $0[.bottom] - 2 }
+
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(chapter.heading.uppercased())
+                            .font(AppFonts.labelFont(9))
+                            .tracking(1.2)
+                            .foregroundColor(AppColors.gold.opacity(0.75))
+
+                        if chapter.paragraphs.indices.contains(mark.paragraph) {
+                            Text(openingWords(of: chapter.paragraphs[mark.paragraph]))
+                                .font(AppFonts.italicFont(13))
+                                .foregroundColor(AppColors.cream.opacity(0.85))
+                                .lineLimit(2)
+                                .multilineTextAlignment(.leading)
+                        }
+                    }
+
+                    Spacer(minLength: 8)
+
+                    AppIcon("ph-caret-right", size: 11)
+                        .foregroundColor(AppColors.textSecondary.opacity(0.5))
+                }
+                .padding(.vertical, 10)
+                .frame(minHeight: 44)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Mark in \(chapter.displayTitle). Returns to that passage.")
+        }
+    }
+
+    private func openingWords(of paragraph: String) -> String {
+        paragraph.count > 90 ? String(paragraph.prefix(90)) + "\u{2026}" : paragraph
     }
 
     // MARK: Search

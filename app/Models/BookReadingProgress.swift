@@ -19,6 +19,15 @@
 import Foundation
 import SwiftData
 
+// MARK: - BookPassageMark
+
+/// One ribbon: the paragraph it lies on, addressed by the indices of the
+/// current cutting of the edition.
+struct BookPassageMark: Hashable {
+    let chapter: Int
+    let paragraph: Int
+}
+
 @Model
 final class BookReadingProgress {
 
@@ -39,6 +48,16 @@ final class BookReadingProgress {
     /// pattern ConsecrationProgress and TrueDevotionReadingProgress both
     /// use. Feeds the contents ledger's quiet marks; never a score.
     var finishedChapterIndexesRaw: String = ""
+
+    /// The reader's marks — a ribbon laid on a paragraph, several per
+    /// chapter, collected book-wide. Stored as "chapter:paragraph" pairs,
+    /// comma-separated, the same flat storage the finished set uses.
+    ///
+    /// A mark is a place, not a note: nothing is written, and nothing is
+    /// counted. Like the reading place, a mark's indices only mean
+    /// something within one cutting of the edition, so `retire` lets
+    /// them go with it.
+    var marksRaw: String = ""
 
     /// What that chapter is called, as the book itself names it —
     /// "Chapter IX", "Prologue", "Book X".
@@ -104,6 +123,24 @@ final class BookReadingProgress {
 
     func isChapterFinished(_ index: Int) -> Bool {
         finishedChapterIndexes.contains(index)
+    }
+
+    /// The marked paragraphs, in the order they were laid.
+    var marks: [BookPassageMark] {
+        get {
+            guard !marksRaw.isEmpty else { return [] }
+            return marksRaw.split(separator: ",").compactMap { pair in
+                let parts = pair.split(separator: ":")
+                guard parts.count == 2,
+                      let chapter = Int(parts[0]),
+                      let paragraph = Int(parts[1]) else { return nil }
+                return BookPassageMark(chapter: chapter, paragraph: paragraph)
+            }
+        }
+        set {
+            marksRaw = newValue.map { "\($0.chapter):\($0.paragraph)" }
+                .joined(separator: ",")
+        }
     }
 
     /// Whether the reader has actually opened a chapter of this book.
