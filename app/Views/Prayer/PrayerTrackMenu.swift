@@ -35,22 +35,13 @@ struct PrayerTrackActions {
     /// What Share hands off.
     let shareText: String
 
-    /// Prefills the subject line so support knows which meditation the
-    /// note is about without asking.
-    let feedbackSubject: String
+    /// Names the meditation on screen inside the feedback form, so a
+    /// note about it never has to describe which one it was.
+    let feedbackContext: FeedbackContext
 
     let onAddReflection: () -> Void
+    let onGiveFeedback: () -> Void
     let onEndSession: () -> Void
-
-    /// A mailto for the feedback row. Nil only if the subject cannot be
-    /// escaped, which no real title does.
-    var feedbackURL: URL? {
-        var components = URLComponents()
-        components.scheme = "mailto"
-        components.path = Constants.supportEmail
-        components.queryItems = [URLQueryItem(name: "subject", value: feedbackSubject)]
-        return components.url
-    }
 }
 
 // MARK: - Placement
@@ -79,7 +70,6 @@ struct PrayerTrackTray: View {
     let placement: PrayerTrackPlacement
 
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.openURL) private var openURL
 
     /// The act to run once this tray has finished leaving, handed to the
     /// host that owns the sheet.
@@ -154,10 +144,10 @@ struct PrayerTrackTray: View {
             downloadRow(showsDivider: showsDivider)
 
         case .feedback:
+            // Handed off like the reflection editor: the form is another
+            // sheet, and presenting into this one's dismissal drops it.
             TrayRow(icon: "ph-chat-teardrop-text", title: "Give feedback", showsDivider: showsDivider) {
-                guard let url = actions.feedbackURL else { return }
-                dismiss()
-                openURL(url)
+                handoff(actions.onGiveFeedback)
             }
 
         case .share:
@@ -287,8 +277,12 @@ private struct TrayRowLabel: View {
                 meditationId: 1,
                 audioURL: "https://example.com/a.mp3",
                 shareText: "",
-                feedbackSubject: "",
+                feedbackContext: FeedbackContext(
+                    meditationTitle: "The Annunciation",
+                    setName: "Meditations of St. Alphonsus"
+                ),
                 onAddReflection: {},
+                onGiveFeedback: {},
                 onEndSession: {}
             ),
             placement: .player,

@@ -5,22 +5,33 @@
 //  First-run tutorial shown once on initial launch.
 //  Tracked via @AppStorage so it never appears again after completion.
 //
-//  Flow (7 slides — Headspace-style: few words, felt experience):
+//  Flow (8 slides — Headspace-style: few words, felt experience):
 //    1. Welcome           — an invitation, not a manual
 //    2. At your own pace  — a live demo of the five mysteries advancing;
 //                            meditations are read or played, prayer is
 //                            self-paced (no bead-level tracking is implied)
 //    3. Intention         — "What draws you here?" (self-segmentation;
 //                            creates ownership, personalizes the closing)
-//    4. Sanctuary         — pick a theme; tapping re-themes the whole app
+//    4. What else is here — the consecration, the journal, the record,
+//                            the library. Named once, plainly: they are
+//                            what people come back for, and a first run
+//                            that only shows the Rosary never finds them
+//    5. Sanctuary         — pick a theme; tapping re-themes the whole app
 //                            live, so onboarding itself is the preview
-//    5. Prayer language   — English, Latin, or bilingual, with a live
+//    6. Prayer language   — English, Latin, or bilingual, with a live
 //                            preview of the Hail Mary in the chosen format
-//    6. Daily reminder    — pick a prayer time with the value explained,
+//    7. Daily reminder    — pick a prayer time with the value explained,
 //                            which beats a cold permission prompt
-//    7. Begin             — closing line personalized to the intention
+//    8. The threshold     — the crucifix a Rosary is begun on, a closing
+//                            line personalized to the intention, and the
+//                            one concrete first step it implies
 //      • "Begin Prayer"                    → onComplete() → ContentView
 //      • "Methods of Praying the Rosary"   → sheet (RosaryMethodsView)
+//
+//  A quiet Skip rides beside the dots until the last slide. Nothing
+//  asked here is required — every choice has a sound default and lives
+//  in Account afterwards — so a user who feels held is a user lost for
+//  no gain.
 //
 //  Each slide's content fades in staggered (icon → title → body → buttons)
 //  the first time it becomes the active page.
@@ -50,35 +61,71 @@ struct OnboardingView: View {
     /// so re-running onboarding from Account reflects the current choice
     @State private var selectedLanguage: PrayerLanguage = UserSettings.shared.prayerLanguage
 
-    private let totalPages = 7
+    private let totalPages = 8
+
+    /// The paintings the eight slides are set against — a walk through
+    /// the mysteries in their own order, joyful to glorious, chosen for
+    /// what each slide is asking rather than for decoration:
+    ///
+    ///   the Annunciation for a beginning · the Visitation for a journey
+    ///   made at its own pace · the Finding in the Temple for what draws
+    ///   a soul to look · Cana for more than was asked for · the
+    ///   Transfiguration for choosing a light · Pentecost for tongues ·
+    ///   the Agony for "could you not watch one hour with me" · the
+    ///   Coronation for the send-off.
+    private static let backdrops = [
+        "joyful_annunciation",
+        "joyful_visitation",
+        "joyful_finding",
+        "luminous_cana",
+        "luminous_transfiguration",
+        "glorious_pentecost",
+        "sorrowful_agony",
+        "glorious_coronation"
+    ]
 
     var body: some View {
         ZStack {
             AppColors.appGradient
                 .ignoresSafeArea()
 
+            backdrop
+
             VStack(spacing: 0) {
-                // Page indicator dots
-                HStack(spacing: 8) {
-                    ForEach(0..<totalPages, id: \.self) { index in
-                        Capsule()
-                            .fill(index == currentPage ? AppColors.gold : AppColors.textSecondary.opacity(0.4))
-                            .frame(width: index == currentPage ? 20 : 8, height: 8)
-                            .animation(.easeInOut(duration: 0.25), value: currentPage)
+                // Where you are in the eight, told on a strand of beads
+                // rather than a row of dots — the app counts everything
+                // else this way, and a Rosary app's own progress should
+                // never look like anybody else's.
+                ZStack {
+                    RosaryBeadProgress(
+                        total: totalPages,
+                        completed: currentPage,
+                        activeIndex: currentPage,
+                        beadSize: 8
+                    )
+                    .frame(width: 190)
+                    .animation(.easeInOut(duration: 0.35), value: currentPage)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel("Step \(currentPage + 1) of \(totalPages)")
+
+                    HStack {
+                        Spacer()
+                        skipButton
                     }
                 }
-                .padding(.top, 14)
-                .padding(.bottom, 8)
+                .padding(.top, 18)
+                .padding(.bottom, 10)
 
                 // Slides
                 TabView(selection: $currentPage) {
                     slide1.tag(0)
                     slide2.tag(1)
                     intentionSlide.tag(2)
-                    themeSlide.tag(3)
-                    languageSlide.tag(4)
-                    reminderSlide.tag(5)
-                    finalSlide.tag(6)
+                    whatsInsideSlide.tag(3)
+                    themeSlide.tag(4)
+                    languageSlide.tag(5)
+                    reminderSlide.tag(6)
+                    finalSlide.tag(7)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
                 .animation(.easeInOut(duration: 0.3), value: currentPage)
@@ -86,6 +133,51 @@ struct OnboardingView: View {
         }
         .sheet(isPresented: $showMethodsSheet) {
             RosaryMethodsView()
+        }
+    }
+
+    /// The painting behind the slide, crossfading as you move through
+    /// the eight.
+    ///
+    /// Rebuilding the view on every page change is deliberate: each one
+    /// arrives at a slight scale and settles over several seconds, so
+    /// the artwork keeps drifting after the swipe has finished the way a
+    /// held shot does. Nothing loops — the motion belongs to arriving
+    /// somewhere, not to the screen sitting there.
+    private var backdrop: some View {
+        ZStack {
+            ForEach(0..<totalPages, id: \.self) { index in
+                if index == currentPage {
+                    OnboardingBackdrop(imageName: Self.backdrops[index])
+                        .transition(.opacity)
+                }
+            }
+        }
+        .animation(.easeInOut(duration: 0.9), value: currentPage)
+        .ignoresSafeArea()
+        .accessibilityHidden(true)
+    }
+
+    /// Nothing here is a gate. Someone who would rather look around
+    /// than be introduced leaves the setup in one tap and lands on the
+    /// last slide, where the app begins — every choice behind it has a
+    /// sound default and lives in Account afterwards.
+    @ViewBuilder
+    private var skipButton: some View {
+        if currentPage < totalPages - 1 {
+            Button {
+                withAnimation(.easeInOut(duration: 0.3)) { currentPage = totalPages - 1 }
+            } label: {
+                Text("Skip")
+                    .font(AppFonts.bodyFont(14))
+                    .foregroundColor(AppColors.textSecondary)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 12)
+                    .frame(minHeight: 44)
+                    .contentShape(Rectangle())
+            }
+            .transition(.opacity)
+            .accessibilityHint("Skips the rest of the introduction")
         }
     }
 
@@ -208,6 +300,49 @@ struct OnboardingView: View {
         )
     }
 
+    // MARK: - Slide 4: What Else Is Here
+
+    /// The parts of the app a first run never meets.
+    ///
+    /// The Rosary is the front door, and someone who only ever meets the
+    /// front door never finds the consecration, the journal, or the
+    /// library behind it — the three things people come back for. Named
+    /// once here, plainly, and never sold.
+    private var whatsInsideSlide: some View {
+        OnboardingSlideLayout(
+            icon: "ch-church",
+            iconIsGradient: true,
+            title: "More Than the Rosary",
+            isActive: currentPage == 3,
+            content: {
+                VStack(spacing: 22) {
+                    Text("The Rosary is the heart of it. Around it is everything else a devotion asks for.")
+                        .font(AppFonts.italicFont(16))
+                        .foregroundColor(AppColors.cream.opacity(0.9))
+                        .multilineTextAlignment(.center)
+                        .lineSpacing(5)
+
+                    VStack(spacing: 14) {
+                        SessionMomentRow(icon: "ph-crown", text: "The 33-day Consecration, a day at a time")
+                        SessionMomentRow(icon: "ph-note-pencil", text: "A journal that never leaves your device")
+                        SessionMomentRow(icon: "ph-flame", text: "A quiet record of the days you have prayed")
+                        SessionMomentRow(icon: "ch-bible", text: "True Devotion and the Marian library, in full")
+                    }
+
+                    Text("Downloaded once, all of it prays without a connection.")
+                        .font(AppFonts.italicFont(13))
+                        .foregroundColor(AppColors.textSecondary)
+                        .multilineTextAlignment(.center)
+                }
+            },
+            bottomContent: {
+                OnboardingNextButton(label: "Continue") {
+                    withAnimation(.easeInOut(duration: 0.3)) { currentPage = 4 }
+                }
+            }
+        )
+    }
+
     // MARK: - Slide 4: Theme ("Choose Your Sanctuary")
 
     private var themeSlide: some View {
@@ -215,7 +350,7 @@ struct OnboardingView: View {
             icon: "ch-window",
             iconIsGradient: true,
             title: "Choose Your Sanctuary",
-            isActive: currentPage == 3,
+            isActive: currentPage == 4,
             content: {
                 VStack(alignment: .leading, spacing: 20) {
                     Text("Every chapel has its own light. Choose the palette your prayers will live in — the whole app changes the moment you tap.")
@@ -229,7 +364,7 @@ struct OnboardingView: View {
             },
             bottomContent: {
                 OnboardingNextButton(label: "Continue") {
-                    withAnimation(.easeInOut(duration: 0.3)) { currentPage = 4 }
+                    withAnimation(.easeInOut(duration: 0.3)) { currentPage = 5 }
                 }
             }
         )
@@ -250,7 +385,7 @@ struct OnboardingView: View {
             icon: "ph-globe",
             iconIsGradient: false,
             title: "The Language of Prayer",
-            isActive: currentPage == 4,
+            isActive: currentPage == 5,
             content: {
                 VStack(alignment: .leading, spacing: 20) {
                     Text("Pray in English, in the Church's Latin, or in both together — line by line, one tongue above the other.")
@@ -280,7 +415,7 @@ struct OnboardingView: View {
             bottomContent: {
                 OnboardingNextButton(label: "Continue") {
                     UserSettings.shared.prayerLanguagePreference = selectedLanguage.rawValue
-                    withAnimation(.easeInOut(duration: 0.3)) { currentPage = 5 }
+                    withAnimation(.easeInOut(duration: 0.3)) { currentPage = 6 }
                 }
             }
         )
@@ -300,7 +435,7 @@ struct OnboardingView: View {
             icon: "ph-bell",
             iconIsGradient: false,
             title: "A Daily Call to Prayer",
-            isActive: currentPage == 5,
+            isActive: currentPage == 6,
             content: {
                 VStack(alignment: .leading, spacing: 20) {
                     Text("A consistent hour of prayer is the surest way to make the Rosary a daily habit. When would you like to be reminded?")
@@ -337,7 +472,7 @@ struct OnboardingView: View {
                             settings.reminderMinute = 0
                             settings.remindersEnabled = true
                         }
-                        withAnimation(.easeInOut(duration: 0.3)) { currentPage = 6 }
+                        withAnimation(.easeInOut(duration: 0.3)) { currentPage = 7 }
                     } label: {
                         HStack(spacing: 6) {
                             Text("Set Reminder")
@@ -367,7 +502,7 @@ struct OnboardingView: View {
 
                     Button {
                         UserSettings.shared.remindersEnabled = false
-                        withAnimation(.easeInOut(duration: 0.3)) { currentPage = 6 }
+                        withAnimation(.easeInOut(duration: 0.3)) { currentPage = 7 }
                     } label: {
                         Text("Not Now")
                             .font(AppFonts.bodyFont(15))
@@ -379,7 +514,17 @@ struct OnboardingView: View {
         )
     }
 
-    // MARK: - Slide 7: Begin or Learn More
+    // MARK: - Slide 8: The Threshold
+
+    /// The last slide is where the Rosary actually starts, so it is set
+    /// as the first moment of the prayer rather than as a summary of the
+    /// seven before it: the crucifix struck in gold, and the words said
+    /// while holding it.
+    ///
+    /// It was "Begin Your Journey" over a sunrise glyph — the title every
+    /// app in the store uses, under an icon that means nothing to anyone
+    /// praying. A Rosary is begun with the cross in your hand and the
+    /// Sign; the page can simply say so.
 
     /// Closing line personalized to the chosen intention — the small
     /// "made for you" payoff at the end of onboarding. With several chosen,
@@ -400,18 +545,45 @@ struct OnboardingView: View {
         }
     }
 
+    /// Where this particular soul might begin, drawn from what they said
+    /// draws them here.
+    ///
+    /// The intention question earns its keep by changing something the
+    /// user can see. A personalized closing line alone was thin payoff
+    /// for an answer given three slides earlier — this names the one
+    /// place to go next, and where in the app to find it.
+    private var firstStep: (icon: String, text: String) {
+        switch PrayerIntention.allCases.first(where: { selectedIntentions.contains($0) }) {
+        case .peace:
+            return ("ph-hands-praying", "One decade is a beginning. The Pray button opens today's mysteries.")
+        case .habit:
+            return ("ph-flame", "The flame on the home screen keeps your record. It starts with today.")
+        case .devotion:
+            return ("ph-crown", "When you are ready, the 33-day Consecration waits under Consecrate.")
+        case .learning:
+            return ("ch-bible", "Open the menu and read How to Pray the Rosary first — it takes five minutes.")
+        case nil:
+            return ("ph-hands-praying", "The Pray button opens today's mysteries whenever you are ready.")
+        }
+    }
+
     private var finalSlide: some View {
         OnboardingSlideLayout(
-            icon: "ph-sun-horizon",
+            icon: "",
             iconIsGradient: false,
-            title: "Begin Your Journey",
-            isActive: currentPage == 6,
+            usesCross: true,
+            title: "In the Name of the Father",
+            isActive: currentPage == 7,
             content: {
-                Text(personalizedClosing)
-                    .font(AppFonts.italicFont(16))
-                    .foregroundColor(AppColors.cream.opacity(0.85))
-                    .multilineTextAlignment(.center)
-                    .lineSpacing(6)
+                VStack(spacing: 22) {
+                    Text(personalizedClosing)
+                        .font(AppFonts.italicFont(16))
+                        .foregroundColor(AppColors.cream.opacity(0.85))
+                        .multilineTextAlignment(.center)
+                        .lineSpacing(6)
+
+                    FirstStepCard(icon: firstStep.icon, text: firstStep.text)
+                }
             },
             bottomContent: {
                 VStack(spacing: 14) {
@@ -451,6 +623,77 @@ struct OnboardingView: View {
     }
 }
 
+// MARK: - OnboardingBackdrop
+
+/// One painting behind one slide: the canvas, a scrim heavy enough to
+/// read against, and a vignette that closes the corners down so the
+/// slide sits in a pool of light rather than on a flat field.
+///
+/// Both the scrim and the vignette are mixed in the *theme's* own
+/// deep ground, so the sanctuary chosen on slide five changes the light
+/// falling on the artwork immediately — the theme slide previews itself
+/// on a Velázquez instead of on three swatches.
+private struct OnboardingBackdrop: View {
+
+    let imageName: String
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    /// Flipped on appear: the painting arrives a touch large and eases
+    /// down to its true size over several seconds. One way, once.
+    @State private var settled = false
+
+    var body: some View {
+        GeometryReader { geometry in
+            CachedAssetImage(imageName, focal: UnitPoint(x: 0.5, y: 0.34))
+                .frame(width: geometry.size.width, height: geometry.size.height)
+                .scaleEffect(settled || reduceMotion ? 1 : 1.12, anchor: .center)
+                .animation(reduceMotion ? nil : .easeOut(duration: 11), value: settled)
+                .clipped()
+                .overlay(scrim)
+                .overlay(vignette)
+        }
+        .onAppear { settled = true }
+    }
+
+    /// Weighted the way the home screen's hero weights its own: out of
+    /// the way through the top third, where the painting is left to be a
+    /// painting, then gathering steadily from the middle down until the
+    /// words and the act stand on near-solid ground.
+    ///
+    /// An even scrim was tried first and is the reason this comment
+    /// exists — it left the title sitting across somebody's face, which
+    /// is unreadable and disrespectful to the painting at once.
+    private var scrim: some View {
+        LinearGradient(
+            stops: [
+                .init(color: AppColors.backgroundDeep.opacity(0.66), location: 0),
+                .init(color: AppColors.backgroundDeep.opacity(0.40), location: 0.13),
+                .init(color: AppColors.backgroundDeep.opacity(0.46), location: 0.30),
+                .init(color: AppColors.backgroundDeep.opacity(0.72), location: 0.45),
+                .init(color: AppColors.backgroundDeep.opacity(0.88), location: 0.57),
+                .init(color: AppColors.backgroundDeep.opacity(0.95), location: 0.70),
+                .init(color: AppColors.backgroundDeep.opacity(0.98), location: 1)
+            ],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    }
+
+    private var vignette: some View {
+        RadialGradient(
+            colors: [
+                AppColors.backgroundDeep.opacity(0),
+                AppColors.backgroundDeep.opacity(0.35),
+                AppColors.backgroundDeep.opacity(0.78)
+            ],
+            center: .center,
+            startRadius: 90,
+            endRadius: 560
+        )
+    }
+}
+
 // MARK: - OnboardingSlideLayout
 
 /// The chrome sizes a slide is set in. A slide takes the roomy metrics
@@ -482,6 +725,12 @@ private struct OnboardingSlideLayout<Content: View, Bottom: View>: View {
 
     let icon: String
     let iconIsGradient: Bool
+
+    /// Strikes the app's own Latin cross in the medallion instead of a
+    /// glyph. For the last slide only, where the mark is not a label for
+    /// the page but the crucifix a Rosary is actually begun on.
+    var usesCross: Bool = false
+
     let title: String
     var isActive: Bool = true
     @ViewBuilder let content: () -> Content
@@ -543,9 +792,19 @@ private struct OnboardingSlideLayout<Content: View, Bottom: View>: View {
 
             content()
                 .padding(.horizontal, 28)
+                // Never let a line be squeezed to one row and cut with an
+                // ellipsis: a slide is measured by `ViewThatFits`, and
+                // without this a body text will silently compress rather
+                // than let the tight metrics — or the scroll — be chosen.
+                .fixedSize(horizontal: false, vertical: true)
                 .staggeredReveal(revealed, delay: 0.24)
 
+            // Capped, unlike the spacer above it: a slide with little on
+            // it settles low on the page, near the act, instead of
+            // floating in the middle of the painting. A tall slide
+            // collapses both and is unaffected.
             Spacer(minLength: 0)
+                .frame(maxHeight: 70)
         }
         .frame(maxWidth: .infinity)
     }
@@ -563,7 +822,31 @@ private struct OnboardingSlideLayout<Content: View, Bottom: View>: View {
                     .easeInOut(duration: 2.4)
                 }
 
-            if iconIsGradient {
+            // A struck disc under the glyph, the same shape the Pray
+            // medallion carries in the tab bar. Bare gold line-art over
+            // a painting reads as a mistake — on the welcome slide the
+            // mark landed in the angel's hand as though it were being
+            // offered to Our Lady. On its own ground it reads as a seal
+            // set on the page instead.
+            Circle()
+                .fill(AppColors.backgroundDeep.opacity(0.62))
+                .frame(width: metrics.glow * 0.82, height: metrics.glow * 0.82)
+                .overlay(
+                    Circle()
+                        .strokeBorder(AppColors.gold.opacity(0.35), lineWidth: 1)
+                )
+
+            if usesCross {
+                LatinCross()
+                    .fill(
+                        LinearGradient(
+                            colors: [AppColors.goldLight, AppColors.gold],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .frame(width: metrics.icon * 0.62, height: metrics.icon * 0.92)
+            } else if iconIsGradient {
                 AppIcon(icon, size: metrics.icon)
                     .foregroundStyle(
                         LinearGradient(
@@ -641,6 +924,46 @@ private struct SessionMomentRow: View {
 
             Spacer()
         }
+    }
+}
+
+/// The last slide's one concrete next step. Set in the same quoted
+/// ground as slide 2's demo, so it reads as something the app is
+/// telling you rather than another choice to make.
+private struct FirstStepCard: View {
+    let icon: String
+    let text: String
+
+    var body: some View {
+        HStack(spacing: 14) {
+            ZStack {
+                Circle()
+                    .fill(AppColors.gold.opacity(0.12))
+                    .frame(width: 34, height: 34)
+                AppIcon(icon, size: 15)
+                    .foregroundColor(AppColors.gold)
+            }
+
+            Text(text)
+                .font(AppFonts.bodyFont(15))
+                .foregroundColor(AppColors.cream.opacity(0.85))
+                .multilineTextAlignment(.leading)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Spacer(minLength: 0)
+        }
+        .padding(.vertical, 14)
+        .padding(.horizontal, 16)
+        .frame(maxWidth: .infinity)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(AppColors.quoteBackground)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .strokeBorder(AppColors.gold.opacity(0.2), lineWidth: 1)
+        )
+        .accessibilityElement(children: .combine)
     }
 }
 

@@ -24,6 +24,31 @@ enum PrayerLanguage: String, CaseIterable, Identifiable {
     var isBilingual: Bool { self == .both || self == .latinUnderEnglish }
 }
 
+// MARK: - Missal Layout
+
+/// How the Daily Missal sets a bilingual passage: the translation
+/// beneath each line, or the two languages in facing columns like a
+/// printed hand missal.
+enum MissalLayout: String, CaseIterable, Identifiable {
+    case interlinear = "Line by Line"
+    case sideBySide = "Side by Side"
+
+    var id: String { rawValue }
+}
+
+// MARK: - Missal Scope
+
+/// What the missal's page carries: the day's propers alone, or the
+/// propers with the Ordinary — Kyrie, Gloria, Preface, Canon — let
+/// into their places and set one tier quieter.
+enum MissalScope: String, CaseIterable, Identifiable {
+    case propersOnly = "Propers Only"
+    case full = "With the Ordinary"
+
+    var id: String { rawValue }
+}
+
+
 // MARK: - Prayer Intention
 
 /// What draws the user to the Rosary, chosen during onboarding.
@@ -130,6 +155,33 @@ final class UserSettings {
         didSet { UserDefaults.standard.set(readerAutoScroll, forKey: "userSettings.readerAutoScroll") }
     }
 
+    /// Reading size for the Spiritual Reading shelf, its own slider the
+    /// way the missal has its own — a book is read in a chapel and on a
+    /// bus, and sending someone four screens into Settings mid-chapter
+    /// is the worst version of this.
+    ///
+    /// The range reaches further at the top than the missal's 15–21: the
+    /// app draws its type through `Font.custom(_:size:)` and so opts out
+    /// of the system's Larger Text entirely, which makes these sliders
+    /// the only answer it offers.
+    var readingTextScale: Double = 0.4 {
+        didSet { UserDefaults.standard.set(readingTextScale, forKey: "userSettings.readingTextScale") }
+    }
+
+    /// Resolved reading size, 15–26 pt.
+    var readingFontSize: CGFloat {
+        CGFloat(15 + readingTextScale * 11)
+    }
+
+    // MARK: - Scriptural Rosary
+
+    /// Whether each Hail Mary bead carries its own verse of Scripture —
+    /// the slower, more intensive form of the prayer. Off by default;
+    /// the plain Rosary is the app's first face.
+    var scripturalRosaryEnabled: Bool = false {
+        didSet { UserDefaults.standard.set(scripturalRosaryEnabled, forKey: "userSettings.scripturalRosary") }
+    }
+
     /// Whether the swipe-between-mysteries hint has been shown.
     ///
     /// The gesture is a shortcut for something the arrows already do, so
@@ -149,6 +201,56 @@ final class UserSettings {
     /// Resolved prayer language enum
     var prayerLanguage: PrayerLanguage {
         PrayerLanguage(rawValue: prayerLanguagePreference) ?? .both
+    }
+
+    // MARK: - Missal Layout
+
+    /// Empty until the missal's first-open question has been answered,
+    /// so the missal knows to ask it
+    var missalLayoutPreference: String = "" {
+        didSet { UserDefaults.standard.set(missalLayoutPreference, forKey: "userSettings.missalLayout") }
+    }
+
+    /// Resolved missal layout enum
+    var missalLayout: MissalLayout {
+        MissalLayout(rawValue: missalLayoutPreference) ?? .interlinear
+    }
+
+    /// Whether the missal's first-open layout choice has been made
+    var hasChosenMissalLayout: Bool { !missalLayoutPreference.isEmpty }
+
+    /// Propers alone, or the full Mass with the Ordinary interleaved
+    var missalScopeRaw: String = MissalScope.full.rawValue {
+        didSet { UserDefaults.standard.set(missalScopeRaw, forKey: "userSettings.missalScope") }
+    }
+
+    var missalScope: MissalScope {
+        MissalScope(rawValue: missalScopeRaw) ?? .full
+    }
+
+    /// The missal reader's own text scale (0 = small, 1 = large),
+    /// mapping to 15–21 pt. Its own slider rather than the app-wide one:
+    /// a hand missal is dense, and its comfortable sizes sit a step
+    /// below the meditation reader's.
+    var missalTextScale: Double = 1.0 / 3.0 {
+        didSet { UserDefaults.standard.set(missalTextScale, forKey: "userSettings.missalTextScale") }
+    }
+
+    /// Resolved missal reading size in points
+    var missalFontSize: CGFloat {
+        (15 + CGFloat(missalTextScale) * 6).rounded()
+    }
+
+    /// Whether the missal marks stand, sit and kneel in the text
+    var missalPostureCues: Bool = true {
+        didSet { UserDefaults.standard.set(missalPostureCues, forKey: "userSettings.missalPostureCues") }
+    }
+
+    /// Whether the missal reads as the sung (High) Mass: the Asperges on
+    /// Sundays and the incensing appear, and the Leonine prayers — said
+    /// after Low Mass — fall away.
+    var missalHighMass: Bool = false {
+        didSet { UserDefaults.standard.set(missalHighMass, forKey: "userSettings.missalHighMass") }
     }
 
     // MARK: - Onboarding Intentions
@@ -241,6 +343,111 @@ final class UserSettings {
         ReminderSound.all.first { $0.fileName == reminderSoundFile } ?? .default
     }
 
+    // MARK: - Personal Page (Me)
+
+    /// The name the Me page greets. Empty means the default salutation.
+    var displayName: String = "" {
+        didSet { UserDefaults.standard.set(displayName, forKey: "userSettings.displayName") }
+    }
+
+    /// The sections on the Me page, in the user's order. Only enabled
+    /// sections are stored; removing one deletes nothing underneath it —
+    /// a hidden streak keeps counting, hidden reflections keep saving.
+    var meWidgetsRaw: [String] = MeWidget.defaultOrder.map(\.rawValue) {
+        didSet { UserDefaults.standard.set(meWidgetsRaw, forKey: "userSettings.meWidgets") }
+    }
+
+    var meWidgets: [MeWidget] { MeWidget.decode(meWidgetsRaw) }
+
+    func setMeWidgets(_ widgets: [MeWidget]) {
+        meWidgetsRaw = widgets.map(\.rawValue)
+    }
+
+    // MARK: - Pray Button
+
+    /// What a quick tap of the raised Pray button does. Today's Rosary
+    /// unless the user chooses otherwise.
+    var prayQuickActionRaw: String = PrayerShortcut.todaysRosary.rawValue {
+        didSet { UserDefaults.standard.set(prayQuickActionRaw, forKey: "userSettings.prayQuickAction") }
+    }
+
+    var prayQuickAction: PrayerShortcut {
+        PrayerShortcut(rawValue: prayQuickActionRaw) ?? .todaysRosary
+    }
+
+    /// The acts in the Pray button's press-and-hold tray, in order.
+    var prayTrayRaw: [String] = [
+        PrayerShortcut.todaysRosary.rawValue,
+        PrayerShortcut.chooseMeditation.rawValue,
+        PrayerShortcut.mass.rawValue,
+        PrayerShortcut.office.rawValue
+    ] {
+        didSet { UserDefaults.standard.set(prayTrayRaw, forKey: "userSettings.prayTray") }
+    }
+
+    var prayTrayShortcuts: [PrayerShortcut] { PrayerShortcut.decode(prayTrayRaw) }
+
+    func setPrayTray(_ shortcuts: [PrayerShortcut]) {
+        prayTrayRaw = shortcuts.map(\.rawValue)
+    }
+
+    // MARK: - Rule of Prayer
+
+    /// The devotions in the user's daily rule, in order.
+    var ruleItemsRaw: [String] = [
+        PrayerShortcut.todaysRosary.rawValue,
+        PrayerShortcut.mass.rawValue
+    ] {
+        didSet { UserDefaults.standard.set(ruleItemsRaw, forKey: "userSettings.ruleItems") }
+    }
+
+    var ruleItems: [PrayerShortcut] { PrayerShortcut.decode(ruleItemsRaw) }
+
+    func setRuleItems(_ items: [PrayerShortcut]) {
+        ruleItemsRaw = items.map(\.rawValue)
+    }
+
+    /// Day stamp the manual rule checks belong to. Checks from an earlier
+    /// day are ignored rather than erased — the rule starts each morning
+    /// unmarked, and yesterday is never called a failure.
+    private var ruleCheckedDate: String = "" {
+        didSet { UserDefaults.standard.set(ruleCheckedDate, forKey: "userSettings.ruleCheckedDate") }
+    }
+
+    /// Raw values of rule items hand-checked today (the acts the app
+    /// cannot see finish on its own, like the Mass or an Office hour).
+    private var ruleCheckedRaw: [String] = [] {
+        didSet { UserDefaults.standard.set(ruleCheckedRaw, forKey: "userSettings.ruleChecked") }
+    }
+
+    private static let dayStampFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter
+    }()
+
+    private var todayStamp: String {
+        Self.dayStampFormatter.string(from: Date())
+    }
+
+    func isRuleChecked(_ item: PrayerShortcut) -> Bool {
+        ruleCheckedDate == todayStamp && ruleCheckedRaw.contains(item.rawValue)
+    }
+
+    func setRuleChecked(_ item: PrayerShortcut, _ done: Bool) {
+        if ruleCheckedDate != todayStamp {
+            ruleCheckedDate = todayStamp
+            ruleCheckedRaw = []
+        }
+        if done {
+            if !ruleCheckedRaw.contains(item.rawValue) {
+                ruleCheckedRaw.append(item.rawValue)
+            }
+        } else {
+            ruleCheckedRaw.removeAll { $0 == item.rawValue }
+        }
+    }
+
     /// Whether notification permission has been granted
     var notificationAuthorizationGranted: Bool = false
 
@@ -267,6 +474,20 @@ final class UserSettings {
         if d.object(forKey: "userSettings.prayerImageMode") != nil {
             prayerImageMode = d.bool(forKey: "userSettings.prayerImageMode")
         }
+        scripturalRosaryEnabled = d.bool(forKey: "userSettings.scripturalRosary")
+        if d.object(forKey: "userSettings.missalLayout") != nil {
+            missalLayoutPreference = d.string(forKey: "userSettings.missalLayout") ?? ""
+        }
+        if let scope = d.string(forKey: "userSettings.missalScope") {
+            missalScopeRaw = scope
+        }
+        if d.object(forKey: "userSettings.missalTextScale") != nil {
+            missalTextScale = d.double(forKey: "userSettings.missalTextScale")
+        }
+        if d.object(forKey: "userSettings.missalPostureCues") != nil {
+            missalPostureCues = d.bool(forKey: "userSettings.missalPostureCues")
+        }
+        missalHighMass = d.bool(forKey: "userSettings.missalHighMass")
         if let stored = d.stringArray(forKey: "userSettings.onboardingIntentions") {
             onboardingIntentions = stored
         } else if let legacy = d.string(forKey: "userSettings.onboardingIntention"), !legacy.isEmpty {
@@ -284,6 +505,49 @@ final class UserSettings {
         }
         if d.object(forKey: "userSettings.reminderSound") != nil {
             reminderSoundFile = d.string(forKey: "userSettings.reminderSound") ?? ReminderSound.default.fileName
+        }
+        if let name = d.string(forKey: "userSettings.displayName") {
+            displayName = name
+        }
+        if d.object(forKey: "userSettings.readingTextScale") != nil {
+            readingTextScale = d.double(forKey: "userSettings.readingTextScale")
+        }
+        if let widgets = d.stringArray(forKey: "userSettings.meWidgets") {
+            meWidgetsRaw = widgets
+        }
+        if let quick = d.string(forKey: "userSettings.prayQuickAction") {
+            prayQuickActionRaw = quick
+        }
+        if let tray = d.stringArray(forKey: "userSettings.prayTray") {
+            prayTrayRaw = tray
+        }
+        if let rule = d.stringArray(forKey: "userSettings.ruleItems") {
+            ruleItemsRaw = rule
+        }
+        ruleCheckedDate = d.string(forKey: "userSettings.ruleCheckedDate") ?? ""
+        ruleCheckedRaw = d.stringArray(forKey: "userSettings.ruleChecked") ?? []
+
+        // One-time: the Library card replaced the home screen's menu
+        // button, so a page saved before it existed gains it once —
+        // after that, removing it is the user's choice and sticks.
+        // One-time: the Reading card arrived with the shelf's audio and
+        // place-keeping, so a page saved before it existed gains it once,
+        // under the Library card it belongs beside. After that, removing
+        // it is the user's choice and sticks.
+        if !d.bool(forKey: "userSettings.readingCardMigrated") {
+            d.set(true, forKey: "userSettings.readingCardMigrated")
+            if !meWidgetsRaw.contains(MeWidget.reading.rawValue) {
+                let after = meWidgetsRaw.firstIndex(of: MeWidget.library.rawValue).map { $0 + 1 }
+                meWidgetsRaw.insert(MeWidget.reading.rawValue, at: after ?? meWidgetsRaw.count)
+            }
+        }
+
+        if !d.bool(forKey: "userSettings.libraryCardMigrated") {
+            d.set(true, forKey: "userSettings.libraryCardMigrated")
+            if !meWidgetsRaw.contains(MeWidget.library.rawValue) {
+                let at = min(2, meWidgetsRaw.count)
+                meWidgetsRaw.insert(MeWidget.library.rawValue, at: at)
+            }
         }
 
         UNUserNotificationCenter.current().getNotificationSettings { settings in

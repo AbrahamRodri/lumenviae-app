@@ -98,8 +98,11 @@ struct Constants {
     static let appName = "LUMEN VIAE"
     static let appTagline = "LIGHT OF THE WAY"
 
-    /// Where questions, feedback, and privacy notes go.
-    static let supportEmail = "support@lumenviae.app"
+    /// Where questions, feedback, and privacy notes go. The same address
+    /// the web app publishes on its own feedback and privacy pages —
+    /// `lumenviae.app` has no mailbox behind it, so mail addressed there
+    /// went nowhere.
+    static let supportEmail = "rodriguez.abrahamdev@gmail.com"
 
     // MARK: Tab Bar Labels
 
@@ -107,7 +110,7 @@ struct Constants {
     static let consecrationTab = "CONSECRATE"
     static let journalTab = "JOURNAL"
     static let progressTab = "PROGRESS"
-    static let accountTab = "ACCOUNT"
+    static let accountTab = "ME"
 }
 
 // MARK: - Color Hex Support
@@ -149,5 +152,12 @@ extension Bundle {
     /// The marketing version from the Info.plist, e.g. "1.0.1".
     var appVersion: String {
         object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—"
+    }
+
+    /// The build number, e.g. "12". Paired with `appVersion` in feedback
+    /// so two reports from the same marketing version are still telling
+    /// apart.
+    var buildNumber: String {
+        object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "—"
     }
 }

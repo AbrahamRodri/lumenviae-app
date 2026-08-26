@@ -12,6 +12,11 @@
 //  are not the same thing, and the day is completed whether or not a single
 //  word was written.
 //
+//  In the stack, this screen stands *in place of* the day's readings and
+//  prayers rather than on top of them: the reflection is where a day
+//  ends, so leaving it leaves the day. The header's index still opens
+//  any reading or prayer of the day directly.
+//
 
 import SwiftUI
 
@@ -149,7 +154,12 @@ struct ConsecrationJournalView: View {
 
     private var editorHeader: some View {
         HStack {
-            PrayerHeaderButton(icon: "ph-caret-left", size: 16, label: "Back to the prayers") {
+            // The reflection stands in the day's place in the stack
+            // rather than on top of its prayers, so this leaves the day
+            // outright — the same act, and the same glyph, the day flow
+            // carries. Walking back to a prayer or the reading is the
+            // index's job, one tap away in the middle of this header.
+            PrayerHeaderButton(icon: "ph-x", size: 16, label: "Leave the day") {
                 // A second tap during the pop animation would call
                 // removeLast() on an empty path and crash
                 if !path.isEmpty { path.removeLast() }
@@ -286,9 +296,9 @@ struct ConsecrationJournalView: View {
 
         viewModel.saveReflectionDraft(text, for: dayNumber)
 
-        // Drop this reflection, then open the step fresh. Replacing the
-        // day flow's route value rather than pushing another one keeps
-        // the stack from growing every time the index is used.
+        // Drop this reflection, then open the step in its place. The day
+        // holds one place in the stack however you move around inside
+        // it, so the stack never grows from using the index.
         if !path.isEmpty { path.removeLast() }
 
         if case .dayFlow(let existingDay, _) = path.last, existingDay == dayNumber {

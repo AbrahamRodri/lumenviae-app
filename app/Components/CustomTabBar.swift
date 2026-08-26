@@ -64,8 +64,12 @@ struct CustomTabBar: View {
     /// Whether today's meditation set is still loading after a Pray tap
     var isLoadingPrayer: Bool = false
 
-    /// Starts today's Rosary directly (invoked by the raised Pray button)
+    /// Runs the user's chosen quick act (invoked by a tap of the raised
+    /// Pray button — today's Rosary unless they've chosen otherwise)
     var onPrayNow: () -> Void = {}
+
+    /// Opens the press-and-hold tray of the user's chosen devotions
+    var onPrayHold: () -> Void = {}
 
     /// Tabs shown in the bar. Progress is reachable via the home header's
     /// streak flame instead of a tab.
@@ -100,6 +104,11 @@ struct CustomTabBar: View {
                 .fill(AppColors.gold.opacity(0.15))
                 .frame(height: 0.5)
 
+            // Even gaps between content-sized tabs, not equal cells:
+            // CONSECRATE is four times ME's width, so equal cells pool
+            // air around the short labels and the bar reads lopsided.
+            // The trailing padding keeps the last tab clear of the
+            // raised Pray medallion.
             HStack(spacing: 0) {
                 ForEach(visibleTabs, id: \.self) { tab in
                     TabBarItem(
@@ -108,14 +117,15 @@ struct CustomTabBar: View {
                     ) {
                         selectedTab = tab
                     }
-                }
+                    .frame(minWidth: 44)
 
-                // Reserved space beneath the raised Pray button
-                // (fixed height — an unconstrained Color would expand
-                // vertically and stretch the whole bar)
-                Color.clear
-                    .frame(width: 78, height: 1)
+                    if tab != visibleTabs.last {
+                        Spacer(minLength: 8)
+                    }
+                }
             }
+            .padding(.leading, 20)
+            .padding(.trailing, 104)
             .padding(.top, 12)
         }
         // The fade above the bar carries on behind it, in the color the
@@ -128,9 +138,13 @@ struct CustomTabBar: View {
                 .ignoresSafeArea()
         )
         .overlay(alignment: .topTrailing) {
-            PrayNowButton(isLoading: isLoadingPrayer, action: onPrayNow)
-                .padding(.trailing, 12)
-                .offset(y: -20)
+            PrayNowButton(
+                isLoading: isLoadingPrayer,
+                action: onPrayNow,
+                onHold: onPrayHold
+            )
+            .padding(.trailing, 12)
+            .offset(y: -20)
         }
     }
 }
@@ -154,8 +168,39 @@ struct PrayNowButton: View {
 
     var action: () -> Void = {}
 
+    /// Opens the press-and-hold tray. A hold that fired must not also
+    /// fire the tap on release — the stamp below swallows that one tap.
+    var onHold: () -> Void = {}
+
+    /// When the last press-and-hold fired.
+    ///
+    /// A timestamp rather than a flag, because the release that was
+    /// meant to clear a flag often never reaches the button: `onHold`
+    /// presents the tray while the finger is still down, over the
+    /// medallion, so the touch is cancelled and the `Button` action
+    /// never runs. A flag left true then swallowed the next real tap —
+    /// the user pressed PRAY and nothing happened. A stamp ages out on
+    /// its own, so the worst case is one ignored tap inside a moment of
+    /// the hold, never a button that has to be pressed twice.
+    @State private var lastHoldAt: Date?
+
+    /// Bumped on every hold, so two holds in a row each get their
+    /// haptic — a boolean trigger fell silent the second time.
+    @State private var holdCount = 0
+
+    /// How long after a hold a tap is read as that hold's own release.
+    private static let holdSuppressionWindow: TimeInterval = 1.5
+
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            if let lastHoldAt,
+               Date().timeIntervalSince(lastHoldAt) < Self.holdSuppressionWindow {
+                self.lastHoldAt = nil
+                return
+            }
+            lastHoldAt = nil
+            action()
+        }) {
             ZStack {
                 // Faint, steady candle glow — presence, not pulsing
                 Circle()
@@ -201,7 +246,19 @@ struct PrayNowButton: View {
         }
         .buttonStyle(GoldCTAButtonStyle())
         .disabled(isLoading)
-        .accessibilityLabel(isLoading ? "Preparing today's Rosary" : "Pray today's Rosary")
+        .simultaneousGesture(
+            LongPressGesture(minimumDuration: 0.4)
+                .onEnded { _ in
+                    guard !isLoading else { return }
+                    lastHoldAt = Date()
+                    holdCount += 1
+                    onHold()
+                }
+        )
+        .sensoryFeedback(.impact(weight: .medium), trigger: holdCount)
+        .accessibilityLabel(isLoading ? "Preparing prayer" : "Pray")
+        .accessibilityHint("Double-tap to begin. Touch and hold for more devotions.")
+        .accessibilityAction(named: "Open devotions tray") { onHold() }
     }
 }
 
@@ -268,7 +325,6 @@ struct TabBarItem: View {
                     .opacity(isSelected ? 1 : 0)
                     .scaleEffect(isSelected ? 1 : 0.3)
             }
-            .frame(maxWidth: .infinity)
             .animation(.easeOut(duration: 0.25), value: isSelected)
         }
         .buttonStyle(.plain)

@@ -10,6 +10,8 @@ import SwiftUI
 struct MenuView: View {
     @Binding var isPresented: Bool
     @Environment(AppRouter.self) private var router
+    @State private var showDailyMissalView = false
+    @State private var showDivineOfficeView = false
     @State private var showTrueDevotionView = false
     @State private var showHowToPrayView = false
     @State private var showMysteriesInScriptureView = false
@@ -48,6 +50,32 @@ struct MenuView: View {
 
                 // Menu Items
                 VStack(alignment: .leading, spacing: 0) {
+                    MenuItemButton(
+                        icon: "ch-altar",
+                        title: "The Daily Missal",
+                        subtitle: "Traditional Latin Mass • 1962 Missal",
+                        action: {
+                            showDailyMissalView = true
+                        }
+                    )
+
+                    Divider()
+                        .background(AppColors.gold.opacity(0.2))
+                        .padding(.horizontal, 20)
+
+                    MenuItemButton(
+                        icon: "ch-candle",
+                        title: "The Divine Office",
+                        subtitle: "The canonical hours • 1962 Breviary",
+                        action: {
+                            showDivineOfficeView = true
+                        }
+                    )
+
+                    Divider()
+                        .background(AppColors.gold.opacity(0.2))
+                        .padding(.horizontal, 20)
+
                     MenuItemButton(
                         icon: "ph-crown",
                         title: "True Devotion to Mary",
@@ -132,6 +160,12 @@ struct MenuView: View {
                 .padding(.horizontal, 20)
                 .padding(.bottom, 24)
                 }
+            }
+            .navigationDestination(isPresented: $showDailyMissalView) {
+                DailyMissalView()
+            }
+            .navigationDestination(isPresented: $showDivineOfficeView) {
+                DivineOfficeView()
             }
             .navigationDestination(isPresented: $showTrueDevotionView) {
                 TrueDevotionView()

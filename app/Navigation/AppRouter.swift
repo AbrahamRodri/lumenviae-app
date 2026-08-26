@@ -28,6 +28,30 @@ enum AppRoute: Hashable {
 
     /// Completion screen shown after finishing all mysteries
     case completion
+
+    /// Settings (the old Account screen), pushed from the Me page's gear
+    case settings
+
+    /// Explore: search and browse everything, from the home search bar
+    case explore
+
+    // Content destinations — pages, not tasks, so they slide in from
+    // the right rather than pulling up as sheets. Each draws its own
+    // Back pill and pops via `dismiss`.
+    case missal
+    case office
+    case trueDevotion
+    case howToPray
+    case scripture
+    case marianLibrary
+    case carloAcutis
+
+    /// The Spiritual Reading shelf, one of its books, and one chapter.
+    /// Books ride as catalog ids — the parsed content is loaded (and
+    /// cached) by LibraryService, never carried through the path.
+    case spiritualReading
+    case libraryBook(id: String)
+    case libraryChapter(bookID: String, chapterIndex: Int)
 }
 
 // MARK: - PrayerLaunch
@@ -83,10 +107,35 @@ final class AppRouter {
     /// to record. Carried the same way as `pendingPrayer`.
     var completedSessionDuration: Int?
 
+    /// A devotional act asked for from anywhere — a Rule of Prayer row,
+    /// the Pray button's tray. ContentView watches this, performs it
+    /// (some acts present sheets only it can own), and clears it.
+    var shortcutRequest: PrayerShortcut?
+
+    /// Requests a devotional act. Runs on the next router observation
+    /// tick, wherever the user currently is.
+    func run(_ shortcut: PrayerShortcut) {
+        shortcutRequest = shortcut
+    }
+
     // MARK: - Navigation Actions
 
     func navigateToAllMysteries() {
         path.append(AppRoute.allMysteries)
+    }
+
+    func navigateToSettings() {
+        path.append(AppRoute.settings)
+    }
+
+    func navigateToExplore() {
+        path.append(AppRoute.explore)
+    }
+
+    /// Pushes any content destination. The named helpers above predate
+    /// this; new pages ride it directly.
+    func push(_ route: AppRoute) {
+        path.append(route)
     }
 
     func navigateToMeditationSelection(category: MysteryCategory) {
@@ -126,6 +175,19 @@ final class AppRouter {
     func pop() {
         guard !path.isEmpty else { return }
         path.removeLast()
+    }
+
+    /// Goes to a tab from wherever the user is, clearing the stack first.
+    ///
+    /// Setting `selectedTab` alone only works from a page sitting at the
+    /// root: from a pushed one — Explore, say — the tab changes silently
+    /// underneath a screen that stays put, and the user meets the new tab
+    /// later, when they tap Back for something else.
+    func switchTo(_ tab: AppTab) {
+        if !path.isEmpty {
+            path.removeLast(path.count)
+        }
+        selectedTab = tab
     }
 
     /// Returns to the home screen and clears stored navigation state.

@@ -133,9 +133,9 @@ Return to Home
 
    > This allows the same mystery to speak to different life circumstances and vocations.
 
-**Secondary (Stretch Goal):**
+**Secondary:**
 
-4. **Scriptural Rosary** - A scripture verse for each bead (not just each mystery). This is a more intensive, slower form of prayer. Lower priority for initial release.
+4. **Scriptural Rosary** - A scripture verse for each bead (not just each mystery). This is a more intensive, slower form of prayer. **Built** as a Prayer Experience setting rather than a meditation type: when on, the player carries a verse band (see the Built list below).
 
 ## App Tabs
 
@@ -145,19 +145,85 @@ keep the bar from crowding the raised Pray button.
 
 | Tab | In the bar | Purpose |
 |-----|-----------|---------|
-| Home | Yes | Today's mysteries, resume card, mystery grid, daily quote |
+| Home | Yes | Search bar → Explore, today's mysteries, Today in the Church, mystery grid, quote |
 | Consecrate | Yes | The 33-day preparation for Marian consecration |
 | Journal | Yes | Reflections, searchable, stored on device |
-| Progress | No — home header flame | Streaks, prayer history, milestones |
-| Account | Yes | Theme, app icon, prayer language, reminders, offline downloads |
+| Progress | No — via Me | Streaks, prayer history, milestones ("Sacred Record") |
+| Me | Yes | The user's own arrangeable page; settings pushed behind its gear |
 
-The **Pray** button raised over the bar starts today's Rosary directly, resolving
-the day's mysteries and a meditation set without going through the picker.
+The **Pray** button raised over the bar runs the user's chosen quick act
+(today's Rosary by default), and **press-and-hold** opens a tray of their
+chosen devotions (`PrayShortcutTray`). The bar's Pray gap is a fifth
+equal slot, so the four labels keep one rhythm.
+
+The home header is the wordmark with a small search glass in the corner
+— no menu button, no flame. The old menu's destinations live in the Me
+page's **Library** card and on **Explore**; the streak lives in the Me
+page's **Prayer Streak** card, whose kicker carries the Sacred Record
+link (the only doors to the Progress page). **Today in the Church**
+closes the home page below the daily quote as `TodayInChurchSection` —
+an ordo leaf unlike other cards: the vestment colour as a full-width
+band across the card top, date and feast centered, and a diptych foot
+(THE MASS | THE OFFICE). The search glass pushes `AppRoute.explore`
+(`Views/Home/ExploreView.swift`): at rest it browses — an epigraph
+(Mt 7:7), the five devotions as a ruled ledger, the library shelf —
+and typing searches mysteries, library doors, and meditation sets at
+once. The set index is fetched quietly for search but deliberately
+never listed on the browse page, and the field is deliberately not
+auto-focused: the page is a place first, a search second. The real
+search field lives on Explore, not on home.
+
+**Pages push, tasks sheet.** Content destinations — the Missal, the
+Office, True Devotion, Spiritual Reading (the shelf, its books, their
+chapters), How to Pray, In Scripture, the Marian Library,
+Carlo Acutis, Settings, Explore — are `AppRoute` cases that slide in
+from the right; each draws its own gold Back in its toolbar (so never
+apply `navigationBarHidden` to them). The one exception is the Daily
+Missal, whose collapsing header is its own chrome, back button
+included — it hides the system bar deliberately. Sheets are reserved for tasks and
+trays: the Pray tray, the two editors, pickers, and the journal editor.
+The tab bar lays its four labels out content-sized with even gaps (not
+equal cells), padded clear of the raised Pray medallion.
 
 > Journal is **not** blocked on the API. Entries are a local SwiftData model
 > (`Models/JournalEntry.swift`); nothing is sent to the server.
 
-### Account Screen Structure
+### The Me Tab
+
+The old Account tab slot: a compact name header ("Faithful Pilgrim"
+until set, "Praying since…" from the first session, gear → Settings),
+then **cards the user arranges themselves** — add, remove, drag to
+reorder. Two separate editors, deliberately: `MePageEditorSheet` (name,
+page cards, Rule of Prayer) from "Edit page" or the rule's Edit; and
+`PrayButtonEditorSheet` (quick tap + hold menu, with a live preview of
+the button naming both gestures) from the tray's "Edit this menu" row.
+Removing a card hides a view, never data (a hidden streak keeps
+counting). The section vocabulary is `MeWidget`; the one-motion acts are
+`PrayerShortcut` (both in `Models/PrayerShortcut.swift`) — one enum
+feeds the quick tap, the hold tray, and the Rule of Prayer.
+
+Cards: **Rule of Prayer** (daily checklist — Rosary and consecration
+check themselves from real data; the Mass and Office are checked by
+hand, reset silently each morning, never carried over as failure),
+**Prayer Streak** (removable per the no-guilt principle), **Library**
+(a two-column shelf: Missal, Office, True Devotion, Spiritual Reading,
+How to Pray, In Scripture, Marian Library, Carlo Acutis, Sacred Record — a one-time
+migration inserts it for pages saved before it existed),
+**Reading** (the book left face-down: its cloth, the chapter the eye
+left, how far into the recording the voice left, and "Take it up" —
+one book, the most recent, never a "currently reading" list; a one-time
+migration inserts it beside Library),
+**Consecration** (the page's one votive-washed card), **Reflections**
+(journal entries set as quoted lines). Each card keeps the shared
+silhouette but its own interior character. Research behind the design:
+"The Oratory Brief" artifact. `MenuView` is no longer reachable and
+kept only as reference.
+
+### Settings Screen Structure
+
+`AccountView`, now pushed from the Me page's gear (`AppRoute.settings`) —
+its own screen sliding in from the right, custom back arrow, tab bar
+hidden. Contents unchanged:
 
 **Appearance**
 - Theme (Marian Blue / Midnight / Candlelit) — re-themes the app live
@@ -199,6 +265,9 @@ app/
 │   ├── JournalEntry, PrayerSession          (SwiftData)
 │   ├── Consecration{Day,Phase,Prayer,Progress}
 │   ├── TrueDevotionBook, TrueDevotionReadingProgress
+│   ├── LibraryBook           # + catalog entry, parsing rules, LibriVox models
+│   ├── BookReadingProgress                  (SwiftData)
+│   ├── PrayerShortcut                       # + MeWidget — personalization vocab
 │   └── StreakMilestone, MarianFeastDay, BilingualConsecrationPrayer
 ├── ViewModels/               # @Observable
 │   ├── HomeViewModel, MeditationSelectionViewModel, MeditationSetDetailViewModel
@@ -206,9 +275,13 @@ app/
 │   └── TrueDevotionReaderViewModel
 ├── Views/
 │   ├── Home/ Prayer/ Journal/ Progress/ Account/
+│   ├── Me/                   # MeView (My Oratory), MeWidgets,
+│   │                         # MeCustomizeSheet, PrayShortcutTray
 │   ├── Meditation/           # SelectMeditationView (the shelf), MeditationSetDetailView
 │   ├── Consecration/         # 33-day preparation (own NavigationStack)
 │   ├── TrueDevotion/         # Book reader
+│   ├── Library/              # Spiritual Reading shelf, book page, chapter
+│   │                         # reader, contents sheet, transport
 │   ├── Resources/            # How to Pray, Marian Library, Scripture, Carlo Acutis
 │   ├── Onboarding/           # 7-slide first run + RosaryMethodsView
 │   └── Launch/
@@ -221,6 +294,8 @@ app/
 ├── Data/                     # Bundled content, not code-adjacent constants
 │   ├── ConsecrationData, BilingualConsecrationPrayers, BilingualPrayer
 │   ├── MysteryData, LuminousMeditationData, TrueDevotionData/Prayers
+│   ├── ScripturalRosaryData  # GENERATED by Tools/ScripturalRosary — 249 Douay verses
+│   ├── LibraryCatalog        # Spiritual Reading shelf: sources + cutting rules
 │   ├── ReminderMessages      # Notification copy pools
 │   └── RosaryQuotes          # Daily quotation catalog
 ├── Services/
@@ -230,6 +305,12 @@ app/
 │   ├── MeditationCacheService, ImageCacheService
 │   ├── PrayerHistoryService, PrayerResumeService, ScheduleService
 │   ├── FavoritesService, MeditationSetResolver, TrueDevotionLibrary
+│   ├── LibraryService        # Gutenberg text + LibriVox tracks, disk cache
+│   ├── LibraryBookParser     # Cuts a Gutenberg edition into chapters
+│   ├── LibraryTrackMap       # Ties LibriVox tracks to parsed chapters
+│   ├── LibraryListeningSession # The shelf's one voice, above the views
+│   ├── LibraryProgressStore  # Every read/write of a reading place
+│   ├── LibraryAudioDownloads # Per-track offline recordings
 │   ├── UserSettings          # Preferences + daily reminder scheduling
 │   └── MockDataService       # Preview/fallback fixtures only
 └── Resources/                # Fonts, TrueDevotionBook.json
@@ -273,13 +354,205 @@ write concurrent code here:
 - **Reminders** — daily notification at a chosen time and sound, with copy drawn
   from the pool matching the user's stated intentions.
 - **Offline** — user-initiated download of every set and audio file.
-- **Personalization** — three themes, four app icons, prayer language, text size.
-- **Onboarding** — seven slides, re-runnable from Account.
+- **Personalization** — three themes, four app icons, prayer language, text
+  size (app-wide, plus the missal's and the reading shelf's own); the Me tab's arrangeable "My Oratory" page (widgets, rule of prayer,
+  intentions, display name) and the configurable Pray button (quick act +
+  press-and-hold tray), all stored in UserDefaults via `UserSettings`.
+- **Onboarding** — eight slides, skippable, re-runnable from Account.
+- **Daily Missal** — the 1962 propers for any day, in the resources menu,
+  as one scroll surface under a single collapsing header (the "App missal
+  page revision" handoff). Served live by the third-party Missale Meum API
+  (`https://www.missalemeum.com/en/api/v5`, MIT, free to use) through
+  `MissalAPIService` — deliberately a separate client from `APIService` so a
+  third-party outage never looks like a Lumen Viae failure. The header is
+  the screen's own chrome — circular back / ☰ / Aa buttons with a date pill
+  absolutely centred — so this is the one pushed page that hides the system
+  bar. The day is still stepped a page at a time: ‹ › ride at the foot of
+  the feast plate with TODAY between them, and "Return to today" takes
+  that slot once the reader has wandered.
+  Its feast plate (temporal line, title, vestment dot + class,
+  commemorations, day navigator) collapses on scroll with hysteresis (96 down / 44 back,
+  driven by `onGeometryChange` in global coords — GeometryReader
+  *preferences* do not fire during scrolls here) and crossfades the date
+  pill into the feast's name; a jump-to-section rail, a 1pt progress line,
+  and optional posture cues (STAND · SIT · KNEEL) ride below, with the
+  active section spied from each section's reported top. Section metadata —
+  Latin/English names, posture, proper-vs-Ordinary tier — is bundled in
+  `Data/MissalOrderData.swift`, keyed by the API's section ids; unknown
+  sections (Candlemas rites, Holy Week) degrade to plain propers. The
+  Ordinary is placed by **station** — propers and Ordinary parts share one
+  ordered scale and are merged — rather than hung off named proper
+  sections, so a day the API serves without a Prefatio still reaches its
+  Sanctus (reading the Ordo's Common Preface in place of the day's) and
+  one without a Communio still gets its Canon. A section's tier
+  (`isProper`) decides only the diamond stud, never whether it is drawn,
+  so "Propers only" keeps the day's own Preface. The Aa
+  sheet sets language (writes the app-wide prayer language), stacked or
+  side-by-side bilingual layout (side-by-side forces Both), a
+  missal-specific text size slider (15–21pt, `missalTextScale`, which the
+  citations follow too), posture
+  cues, a High Mass toggle, and Contents: "With the Ordinary" (default)
+  lays the **entire Ordinary** through the propers — Asperges (sung Sunday
+  Mass) through the Last Gospel and the Leonine prayers — with the
+  variable parts computed per day as best the data allows: Gloria falls
+  away with violet/black/rose vestments, Credo belongs to Sundays and
+  ranks I–II, Asperges and incensing to High Mass, the Leonine prayers to
+  Low. The Ordo's Preface section is split so the day's own Preface
+  stands between the Sursum Corda dialogue and the Sanctus; the Our
+  Father carries its "Admonished by Thy saving precepts" introduction;
+  the Offertory verse opens with the Ordinary's ℣ ℟ dialogue. The Ordo's
+  single-sided rubric commentary and its "– Introit in today Mass –"
+  placeholders are left out entirely. The propers' diamond stud is the
+  only tier mark — nothing is dimmed. "Propers only" keeps the day's own
+  texts alone (body, rail, ☰ index, progress denominator). The forced
+  first-open layout question is unchanged. Texts arrive as
+  `[english, latin]` pairs whose line counts align, pairing as before in
+  the shared `MissalPassage*` views (also used by the Office and the Ordo
+  page; the section list is built once per real change into `@State`, not
+  derived in the body, which the scroll invalidates every frame); in stacked mode the translation is indented 20pt under its line.
+  Citations (`*Ps 138:17*`) are small engraved caps in dim gold
+  (`MissalReferenceText`); ℣ ℟ ✠ are rubric red (`MissalRubric.red`, the
+  muted vestment red); the sources' ☩ and bare `+` cross marks are
+  normalised to the traditional ✠ in `missalLines`. The versal opens the
+  day's Introit — the first proper, never the Ordinary before it, never
+  in columns. Motion uses the design system's ease-out
+  (cubic-bezier 0,0,0.58,1); the scroll offset is measured on the whole
+  content column (a marker inside the LazyVStack gets released
+  mid-scroll and goes stale) and section tops in content-space
+  coordinates, which scrolling never moves. The ☰ button
+  raises the Ordo Missæ index sheet (active dot, proper diamonds, postures,
+  tap to jump); the colophon ("ITE, MISSA EST") still links the full
+  `OrdoMissaeView`. The date pill opens `MissalCalendarSheet`, now a month
+  grid — "AUGUST MMXXVI", vestment dot per day from the year calendar,
+  today ringed in gold, month chevrons — over a feast readout naming
+  whichever day is under the finger (today's until one is: pressing a day
+  names it, lifting opens it), with an honest offline row
+  beneath: how many of the month's days are cached, and SAVE to fetch the
+  rest. Every fetched day is cached in Application Support/Missal (excluded
+  from backup) via `MissalCacheService`, and after the first load the
+  coming week, the Ordo, and the year's calendar are prefetched quietly —
+  a chapel with no signal still gets the right page; days more than 30 back
+  are pruned.
+- **Divine Office** — the pre-Vatican-II Breviarium Romanum (1960 rubrics,
+  the 1962 books), in the resources menu and as "The Office" beside "The
+  Mass" in the home band. Served by our own API's `/office/*` endpoints
+  (`GET /office/:date`, `/office/:date/:hour`, `/office/calendar/:year/:month`,
+  `/office/versions`), which the Phoenix app assembles from the Divinum
+  Officium engine and parses into JSON — so `OfficeAPIService` is still a
+  separate client from `APIService`: an upstream engine outage
+  (`office_unavailable`, retryable) must never look like the Rosary content
+  failing. The version and language ride as explicit query params, pinned
+  in `OfficeAPIService` (`rubrics-1960`, `english`) — a future version
+  setting threads through there, and every cache file name carries the
+  version. `DivineOfficeView` steps days with the missal's navigator and
+  lists the eight hours as a ruled ledger (bundled in `CanonicalHour` —
+  the ledger never waits on the network; today's page marks the present
+  hour with a gold dot); `OfficeHourView` reads one hour under the app's
+  prayer language and the missal's two bilingual layouts, reusing
+  `MissalPassageText`/`MissalPairedPassageText`/`MissalColumnPassageText`
+  (the Latin and vernacular cells keep the engine's line structure, so
+  they pair line for line), with prev/next hour at the foot of the page.
+  Hours and days cache in Application Support/Office via
+  `OfficeCacheService`; after the first load, today's and tomorrow's
+  hours are prefetched quietly and days more than 30 back are pruned.
+  `OfficeCalendarSheet` mirrors the missal's. Every hour names its source
+  — the texts are The Divinum Officium Project's work, and the footer
+  credits it.
+
+- **Scriptural Rosary** — a verse of Scripture for every Hail Mary bead,
+  behind a Prayer Experience toggle (off by default; the plain Rosary is
+  the app's first face). When on, and when the mystery has a curated set,
+  the player grows a verse band between the title and the transport: a
+  10-bead strand (7 for the Seven Sorrows), the Douay-Rheims citation,
+  and the verse on a gold rule — tap to pray the bead forward, long-press
+  to step back; moving the mystery resets to the first bead (a `didSet`
+  on `currentMysteryIndex`, so the Lock Screen path resets it too). The
+  249 verses are **bundled** (`Data/ScripturalRosaryData.swift`, keyed
+  `"<category>_<order>"` like MysteryData's fruits) — prayer must never
+  need a signal. The file is GENERATED by `Tools/ScripturalRosary/generate.py`
+  from the Original Douay-Rheims API (thedouayrheims.com, CC0): the
+  curated verse references live in the script; edit there and rerun,
+  never hand-edit the Swift. Narrative mysteries walk their Gospel scene;
+  the Assumption and Coronation use the liturgy's own typology
+  (Canticles, Psalms, Judith, Ecclesiasticus, the Apocalypse).
+- **Spiritual Reading** — a curated shelf of public-domain classics
+  (Imitation of Christ, Story of a Soul, Confessions, Dolorous Passion)
+  reached from the Me Library card and Explore. Nothing is bundled: the
+  text is fetched from Project Gutenberg the first time a book is opened,
+  cut into chapters on device (`LibraryBookParser`, per-edition rules in
+  `Data/LibraryCatalog.swift` — Gutenberg serves CRLF, the parser
+  normalizes it), and cached in Application Support/Library with a
+  versioned filename (`LibraryService`, a separate client per the
+  third-party rule).
+
+  **The cutting rules are checked against the real editions, chapter by
+  chapter — do not change one without re-running it.** `startPattern`
+  says where the book proper begins (without it, Taylor's contents page
+  opens a false chapter that swallows the whole preface); `stopPattern`
+  where it ends; `dropPattern` removes a printer's mark; `notePattern`
+  names a footnote marker, and matched paragraphs are lifted out of the
+  prose into `LibraryChapter.notes` and set as an apparatus at the
+  chapter's foot (176 citations in the Imitation, 166 in the Story of a
+  Soul, thirty-four in one chapter alone). `chapterTitles` supplies
+  titles for an edition that prints none — Pusey's thirteen books.
+  Every one of these rides in `editionFingerprint`, so correcting one
+  book retires that book's cached parse and no other's.
+
+  The four books cut to: Imitation 114 chapters under four part
+  headers; Story of a Soul the Prologue, chapters I–XI, and the
+  Epilogue (13); Confessions 13 books; Dolorous Passion "To the
+  Reader", nine Meditations, the Introduction, and chapters I–LXVI (77).
+
+  **Audio is tied to the text** by `LibraryTrackMap`, from the catalog's
+  `trackMapping`: `.sequential` where a recording gives each chapter its
+  own file (Thérèse, Emmerich — 1:1, verified track for track),
+  `.bookChapterRanges` where one file holds many ("Book 3 - Chapters
+  21-30", Kempis), `.bookSpans` where one book needs several files
+  (Augustine, LibriVox 2601 — **the Pusey reading**, matching the text;
+  the other complete Confessions is Outler's and must never be offered
+  as the voice of this one). The alignment decides what the UI may
+  claim: a track that reads one whole chapter offers "READ ALONG" bare,
+  one that holds ten says "from Chapter XXI" rather than pretending the
+  voice starts where the reader is. A DEBUG assertion prints any
+  chapter left unmapped — a volunteer re-cutting their ledger is the
+  way this drifts.
+
+  `LibraryListeningSession` owns playback **above the views**: a screen
+  counts itself in and out (`enterScreen`/`leaveScreen`), and the
+  reading ends when the last library screen is gone — never on a single
+  view's `onDisappear`, which fires for a push, doesn't fire when a
+  screen is torn out from under a pushed one, and fires spuriously for a
+  cancelled back-swipe. It holds the shared player with a token, so a
+  Rosary that claims the player simply silences this session's readouts.
+
+  `BookReadingProgress` keeps **both places** — the chapter and
+  paragraph the eye left, and the track and second the voice left — plus
+  the `editionFingerprint` the reading place was made against, so a rules
+  change lets go of an index that no longer means what it meant. All
+  reads and writes go through `LibraryProgressStore` (reading written
+  straight through, listening throttled to 5s and forced on pause, track
+  change, leaving, and backgrounding).
+
+  Reader: `ReadingText` sizing from its own `readingTextScale` (15–26pt,
+  the Aa), a versal initial, a hairline place rule, "9 of 13", a ☰
+  contents sheet with search, prev/next stepping in place so a
+  114-chapter book never stacks 114 screens, paragraph-level resume via
+  `.scrollPosition(id:)`, long-press a paragraph to keep it as a
+  Reflection (the journal is the app's one store for what a reader
+  keeps — there is no highlights library), and follow-the-voice
+  auto-scroll where the sounding track reads this whole chapter.
+  Recordings can be saved per track (`LibraryAudioDownloads`, background
+  URLSession) behind the missal's honest offline line — "1 of 13
+  readings saved · 11 MB · about 188 MB more". Never a percentage, never
+  a streak, never a count of what is unread.
 
 ### Not built yet
 
-- Scriptural Rosary (a verse per bead rather than per mystery)
-- Auto-scrolling meditation text synced to audio
+- A Divine Office version/language setting (Monastic, Dominican, and the
+  other rubrical versions the API's `/office/versions` already serves) —
+  `OfficeAPIService.version`/`.language` are the seam
+- Auto-scrolling meditation text synced to audio (the Spiritual Reading
+  reader has it; the prayer reader's is proportional too)
 - Haptic feedback during prayer
 - A setting to switch between the Traditional and Modern (Luminous Thursday)
   schedules — `ScheduleService` is the seam for it
