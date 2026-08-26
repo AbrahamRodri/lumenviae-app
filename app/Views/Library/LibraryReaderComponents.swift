@@ -333,8 +333,12 @@ struct ReaderBackCapsule: View {
             .foregroundColor(AppColors.gold)
             .padding(.horizontal, 14)
             .frame(minHeight: 44)
-            .background(Capsule().fill(Color.black.opacity(0.32)))
-            .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.16), lineWidth: 0.5))
+            // Opaque, not a wash. At a third of black the prose ran
+            // straight through the capsule and neither could be read —
+            // worst exactly where the chrome sits over restored text.
+            .background(Capsule().fill(AppColors.background))
+            .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.28), lineWidth: 0.5))
+            .shadow(color: .black.opacity(0.5), radius: 10, y: 3)
             .contentShape(Capsule())
         }
         .buttonStyle(.plain)
@@ -392,14 +396,17 @@ struct ReaderChromeCapsule: View {
                 .accessibilityLabel(button.label.capitalized)
             }
         }
+        // Opaque, for the same reason the back capsule is: this rides
+        // over the prose, and a translucent fill left both illegible.
         .background(
             RoundedRectangle(cornerRadius: 18)
-                .fill(Color.black.opacity(0.32))
+                .fill(AppColors.background)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 18)
-                .strokeBorder(AppColors.gold.opacity(0.16), lineWidth: 0.5)
+                .strokeBorder(AppColors.gold.opacity(0.28), lineWidth: 0.5)
         )
+        .shadow(color: .black.opacity(0.5), radius: 10, y: 3)
     }
 }
 
@@ -421,7 +428,6 @@ struct ReaderProseParagraph: View {
 
     var isSelected: Bool = false
     var isMarked: Bool = false
-    var isFollowed: Bool = false
 
     let onTap: () -> Void
 
@@ -432,8 +438,8 @@ struct ReaderProseParagraph: View {
             .lineSpacing(ReadingTypography.lineSpacing(for: size))
             .fixedSize(horizontal: false, vertical: true)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, isSelected || isFollowed ? 8 : 0)
-            .padding(.vertical, isSelected || isFollowed ? 6 : 0)
+            .padding(.horizontal, isSelected ? 8 : 0)
+            .padding(.vertical, isSelected ? 6 : 0)
             .background {
                 if isSelected {
                     RoundedRectangle(cornerRadius: 10)
@@ -442,13 +448,10 @@ struct ReaderProseParagraph: View {
                             RoundedRectangle(cornerRadius: 10)
                                 .strokeBorder(AppColors.gold.opacity(0.28), lineWidth: 0.5)
                         )
-                } else if isFollowed {
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(AppColors.gold.opacity(0.06))
                 }
             }
-            .padding(.horizontal, isSelected || isFollowed ? -8 : 0)
-            .padding(.vertical, isSelected || isFollowed ? -6 : 0)
+            .padding(.horizontal, isSelected ? -8 : 0)
+            .padding(.vertical, isSelected ? -6 : 0)
             .overlay(alignment: .topTrailing) {
                 if isMarked {
                     MarkerRibbonShape()

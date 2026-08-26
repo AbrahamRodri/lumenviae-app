@@ -195,7 +195,7 @@ struct ExploreView: View {
     private var readingShelf: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(alignment: .top, spacing: 14) {
-                coverTile(Self.trueDevotionBook) { router.push(.trueDevotion) }
+                coverTile(LibraryCatalog.trueDevotionDisplay) { router.push(.trueDevotionBook) }
 
                 ForEach(LibraryCatalog.books) { book in
                     coverTile(book, hasRibbon: readingIDs.contains(book.id)) {
@@ -226,17 +226,6 @@ struct ExploreView: View {
             "\(info.title), \(info.author)\(hasRibbon ? ". Reading under way." : "")"
         )
     }
-
-    /// Montfort's book wears its cover here like the shelf's own four —
-    /// display identity only; the door opens the bundled reader.
-    private static let trueDevotionBook = LibraryBookInfo(
-        id: "true-devotion",
-        title: "True Devotion to Mary",
-        author: "St. Louis de Montfort",
-        blurb: "Montfort's consecration to Jesus through Mary.",
-        gutenbergID: 0,
-        parsing: LibraryParsingRules(chapterPattern: "")
-    )
 
     /// The page's reason for being, in the Gospel's own words.
     private var epigraph: some View {
@@ -363,7 +352,9 @@ struct ExploreView: View {
             LibraryEntry(icon: "ch-candle", title: "Divine Office",
                          matchText: "divine office breviary hours matins lauds prime terce sext none vespers compline") { router.push(.office) },
             LibraryEntry(icon: "ph-crown", title: "True Devotion",
-                         matchText: "true devotion to mary montfort book") { router.push(.trueDevotion) },
+                         matchText: "true devotion to mary montfort book") { router.push(.trueDevotionBook) },
+            LibraryEntry(icon: "ph-scroll", title: "The Devotion in Summary",
+                         matchText: "true devotion summary marks false devotions montfort") { router.push(.trueDevotion) },
             LibraryEntry(icon: "ph-book-open", title: "Spiritual Reading",
                          matchText: "spiritual reading books imitation of christ story of a soul confessions augustine dolorous passion emmerich therese kempis library") { router.push(.spiritualReading) },
             LibraryEntry(icon: "ch-rosary", title: "How to Pray",

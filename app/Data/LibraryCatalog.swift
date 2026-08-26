@@ -41,7 +41,14 @@ enum LibraryCatalog {
             translator: "William Benham",
             blurb: "Four books on following Christ, read daily by the faithful for six hundred years.",
             gutenbergID: 1653,
-            librivoxID: 575,
+            // No recording offered. LibriVox 575 exists, but it gathers
+            // ten chapters into a file ("Book 3 - Chapters 21-30"), and
+            // the Imitation's chapters are short enough that a listen
+            // control on a chapter row would start a reading of nine
+            // others alongside it. Offering nothing is honest; offering
+            // a control that lands somewhere else is not. Restoring it
+            // means a per-chapter recording, not a remapping.
+            librivoxID: nil,
             trackMapping: .bookChapterRanges,
             parsing: LibraryParsingRules(
                 chapterPattern: #"^CHAPTER [IVXLC]+$"#,
@@ -189,4 +196,22 @@ enum LibraryCatalog {
     static func book(id: String) -> LibraryBookInfo? {
         books.first { $0.id == id }
     }
+
+    /// True Devotion's display identity — the cloth it wears wherever
+    /// books stand in a row.
+    ///
+    /// Deliberately *not* in `books`: that list is what gets fetched
+    /// from Gutenberg and cut on device, and this book is bundled. It
+    /// lives here anyway so there is one place that says what Montfort's
+    /// book looks like. It had been written out separately on Explore
+    /// and again in the reader, and a binding changed in one of them
+    /// would have left the two disagreeing.
+    static let trueDevotionDisplay = LibraryBookInfo(
+        id: "true-devotion",
+        title: "True Devotion to Mary",
+        author: "St. Louis de Montfort",
+        blurb: "Montfort's consecration to Jesus through Mary.",
+        gutenbergID: 0,
+        parsing: LibraryParsingRules(chapterPattern: "")
+    )
 }
