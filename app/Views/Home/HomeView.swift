@@ -69,6 +69,14 @@ struct HomeView: View {
                     .padding(.top, 44)
                     .devotionalEntrance(delay: 0.24)
 
+                    // The books, after the Church's own day and before
+                    // the colophon: what is being read is a quieter
+                    // thing than what is being prayed, and belongs
+                    // nearer the foot of the page than the head.
+                    ReadingShelfSection()
+                        .padding(.top, 40)
+                        .devotionalEntrance(delay: 0.26)
+
                     // The quote closes the page — it is set as a
                     // colophon, and a page ends on its colophon, not on
                     // furniture. Its ornament rules also draw the line

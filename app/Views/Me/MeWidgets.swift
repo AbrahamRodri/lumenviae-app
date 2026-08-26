@@ -280,25 +280,78 @@ struct ReadingCard: View {
     @Query(sort: \BookReadingProgress.updatedAt, order: .reverse)
     private var progress: [BookReadingProgress]
 
-    /// The most recently touched book that the catalog still carries.
-    private var current: (row: BookReadingProgress, info: LibraryBookInfo)? {
-        for row in progress {
-            if let info = LibraryCatalog.book(id: row.bookID) { return (row, info) }
+    /// Which book's face is showing. Nil until the reader slides.
+    @State private var shown: String?
+
+    /// Every book with a reading under way, most recently touched first —
+    /// the query's own order. Books the catalog no longer carries fall
+    /// out here rather than drawing a face with no cloth.
+    private var underWay: [(row: BookReadingProgress, info: LibraryBookInfo)] {
+        progress.compactMap { row in
+            guard let info = LibraryCatalog.book(id: row.bookID) else { return nil }
+            return (row, info)
         }
-        return nil
     }
 
     var body: some View {
         MeSection(title: "Reading", icon: "ph-book-open-fill") {
             Group {
-                if let current {
-                    open(current.row, current.info)
-                } else {
-                    invitation
+                switch underWay.count {
+                case 0:
+                    invitation.padding(16)
+                case 1:
+                    open(underWay[0].row, underWay[0].info).padding(16)
+                default:
+                    shelf
                 }
             }
-            .padding(16)
         }
+    }
+
+    // MARK: More than one under way
+
+    /// The books slide, newest first. Still one book at a time on the
+    /// page — an oratory has a book open on the prie-dieu, not a list of
+    /// them — but a reader keeping two or three at once can reach the
+    /// others without going to the shelf.
+    private var shelf: some View {
+        VStack(spacing: 0) {
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(spacing: 0) {
+                    ForEach(underWay, id: \.row.bookID) { entry in
+                        open(entry.row, entry.info)
+                            .padding(16)
+                            .containerRelativeFrame(.horizontal)
+                            .id(entry.row.bookID)
+                    }
+                }
+                .scrollTargetLayout()
+            }
+            .scrollTargetBehavior(.viewAligned)
+            .scrollPosition(id: $shown)
+
+            dots
+        }
+    }
+
+    /// Which of them is showing, and how many there are. Not a count of
+    /// anything owed — the books are simply beside each other.
+    private var dots: some View {
+        let showing = shown ?? underWay.first?.row.bookID
+
+        return HStack(spacing: 6) {
+            ForEach(underWay, id: \.row.bookID) { entry in
+                Circle()
+                    .fill(
+                        entry.row.bookID == showing
+                            ? AppColors.gold.opacity(0.9)
+                            : AppColors.gold.opacity(0.22)
+                    )
+                    .frame(width: 5, height: 5)
+            }
+        }
+        .padding(.bottom, 14)
+        .accessibilityHidden(true)
     }
 
     // MARK: A book under way
@@ -460,7 +513,7 @@ struct LibraryCard: View {
                     columns: [GridItem(.flexible(), spacing: 18), GridItem(.flexible(), spacing: 18)],
                     spacing: 0
                 ) {
-                    indexRow("ph-crown", "True Devotion") { router.push(.trueDevotion) }
+                    indexRow("ph-crown", "True Devotion") { router.push(.trueDevotionBook) }
                     indexRow("ph-book-open", "Spiritual Reading") { router.push(.spiritualReading) }
                     indexRow("ch-rosary", "How to Pray") { router.push(.howToPray) }
                     indexRow("ch-bible", "In Scripture") { router.push(.scripture) }

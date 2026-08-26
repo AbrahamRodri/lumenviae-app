@@ -264,12 +264,29 @@ struct TrueDevotionChapterReaderView: View {
                         .onChanged { _ in hasInteracted = true }
                 )
 
+                // A short fall of the page's own ground behind the
+                // chrome. The capsules are opaque, so they are legible —
+                // but prose still travels under them, and a line cut in
+                // half by a floating button reads as a glitch. Here it
+                // fades into the page instead.
+                LinearGradient(
+                    colors: [
+                        AppColors.background,
+                        AppColors.background.opacity(0.92),
+                        AppColors.background.opacity(0)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 104)
+                .frame(maxHeight: .infinity, alignment: .top)
+                .ignoresSafeArea(edges: .top)
+                .allowsHitTesting(false)
+                .accessibilityHidden(true)
+
                 chrome
                     .padding(.horizontal, 16)
                     .padding(.top, 6)
-                    .offset(y: chromeHidden ? -58 : 0)
-                    .opacity(chromeHidden ? 0 : 1)
-                    .allowsHitTesting(!chromeHidden)
             }
         }
         .onChange(of: currentChapterID) { _, newID in
@@ -313,6 +330,10 @@ struct TrueDevotionChapterReaderView: View {
 
     private var chrome: some View {
         HStack(alignment: .top) {
+            // Stays. This page hides the system bar and the back-swipe
+            // with it, so the way out must never have to be summoned:
+            // having to scroll up before Back would appear was a trap
+            // wearing the clothes of restraint. Only the tools withdraw.
             ReaderBackCapsule {
                 if hasReachedEnd { complete(currentChapterID) }
                 dismiss()
@@ -331,6 +352,9 @@ struct TrueDevotionChapterReaderView: View {
                     sheet = .contents
                 }
             ])
+            .offset(y: chromeHidden ? -58 : 0)
+            .opacity(chromeHidden ? 0 : 1)
+            .allowsHitTesting(!chromeHidden)
         }
     }
 

@@ -238,6 +238,9 @@ struct ContentView: View {
         case .trueDevotion:
             TrueDevotionView()
 
+        case .trueDevotionBook:
+            TrueDevotionReaderView()
+
         case .howToPray:
             HowToPrayRosaryView()
 

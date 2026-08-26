@@ -128,15 +128,6 @@ struct LibraryChapterReaderView: View {
     @State private var sections: [LibriVoxSection] = []
     @State private var alignment: LibraryTrackAlignment = .empty
 
-    /// Keeps the page in step with the voice, and stands aside for a few
-    /// seconds whenever the reader's own hand moves it. Shared with the
-    /// prayer flow's reader, which solved this first.
-    @State private var follow = ReaderScrollModel()
-
-    /// The paragraph follow-along last moved the page to, so its own
-    /// movement is never mistaken for the reader's hand.
-    @State private var followTarget: Int?
-
     private let session = LibraryListeningSession.shared
     private let meter = ReadingDayMeter.shared
 
@@ -351,26 +342,6 @@ struct LibraryChapterReaderView: View {
                     }
                 }
                 .scrollPosition(id: $topParagraph, anchor: .top)
-                // Outside the lazy content on purpose. As the last child
-                // of the LazyVStack this zero-size watcher was only
-                // realized once the reader had scrolled to the foot of
-                // the chapter — so follow-the-voice never started, and
-                // the one step it did take scrolled it back out of the
-                // viewport and derealized it. The prayer reader mounts
-                // its equivalent in an overlay for the same reason.
-                .overlay(alignment: .top) {
-                    LibraryFollowWatcher(
-                        session: session,
-                        follow: follow,
-                        chapterIndex: currentIndex,
-                        paragraphCount: chapter.paragraphs.count,
-                        isEnabled: settings.readerAutoScroll,
-                        move: { target in
-                            followTarget = target
-                            topParagraph = target
-                        }
-                    )
-                }
                 .environment(\.openURL, OpenURLAction { url in
                     guard url.scheme == "lumen-note" else { return .systemAction }
                     if let host = url.host(), let number = Int(host) {
@@ -379,12 +350,29 @@ struct LibraryChapterReaderView: View {
                     return .handled
                 })
 
+                // A short fall of the page's own ground behind the
+                // chrome. The capsules are opaque, so they are legible —
+                // but prose still travels under them, and a line cut in
+                // half by a floating button reads as a glitch. Here it
+                // fades into the page instead.
+                LinearGradient(
+                    colors: [
+                        AppColors.background,
+                        AppColors.background.opacity(0.92),
+                        AppColors.background.opacity(0)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 104)
+                .frame(maxHeight: .infinity, alignment: .top)
+                .ignoresSafeArea(edges: .top)
+                .allowsHitTesting(false)
+                .accessibilityHidden(true)
+
                 chrome
                     .padding(.horizontal, 16)
                     .padding(.top, 6)
-                    .offset(y: chromeHidden ? -58 : 0)
-                    .opacity(chromeHidden ? 0 : 1)
-                    .allowsHitTesting(!chromeHidden)
             }
         }
         .onChange(of: topParagraph) { _, paragraph in
@@ -402,16 +390,10 @@ struct LibraryChapterReaderView: View {
                 // -2 and -3 are the foot: the reader is past the last
                 // paragraph, so the last one seen is still their place.
             }
-            // A move the reader made themselves quiets follow-along for a
-            // few seconds — otherwise reading ahead of the voice is
-            // undone a second later.
-            if paragraph != followTarget { follow.noteManualMove() }
             recordPlace()
         }
         .onChange(of: currentIndex) { _, _ in
             hasSettled = false
-            follow.reset()
-            followTarget = nil
             selectedParagraph = nil
             lastParagraphSeen = 0
             topParagraph = -1
@@ -426,6 +408,10 @@ struct LibraryChapterReaderView: View {
 
     private var chrome: some View {
         HStack(alignment: .top) {
+            // Stays. This page hides the system bar and the back-swipe
+            // with it, so the way out must never have to be summoned:
+            // having to scroll up before Back would appear was a trap
+            // wearing the clothes of restraint. Only the tools withdraw.
             ReaderBackCapsule { dismiss() }
 
             Spacer()
@@ -442,6 +428,9 @@ struct LibraryChapterReaderView: View {
                     sheet = .contents(book: book, info: info)
                 }
             ])
+            .offset(y: chromeHidden ? -58 : 0)
+            .opacity(chromeHidden ? 0 : 1)
+            .allowsHitTesting(!chromeHidden)
         }
     }
 
@@ -652,8 +641,6 @@ struct LibraryChapterReaderView: View {
                 noteRegex: noteRegex,
                 isSelected: selectedParagraph == index,
                 isMarked: isMarked(index),
-                isFollowed: followTarget == index && selectedParagraph != index
-                    && session.canFollowText(chapterIndex: currentIndex),
                 onTap: {
                     withAnimation(.easeOut(duration: 0.2)) {
                         selectedParagraph = selectedParagraph == index ? nil : index
@@ -1059,21 +1046,6 @@ struct LibraryTextOptionsSheet: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .accessibilityHidden(true)
 
-                Divider()
-                    .background(AppColors.gold.opacity(0.15))
-
-                Toggle(isOn: $settings.readerAutoScroll) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Follow the voice")
-                            .font(AppFonts.bodyFont(15))
-                            .foregroundColor(AppColors.cream)
-
-                        Text("The page keeps pace while a recording reads.")
-                            .font(AppFonts.italicFont(12))
-                            .foregroundColor(AppColors.textSecondary)
-                    }
-                }
-                .tint(AppColors.gold)
             }
             .padding(.top, 20)
         }
@@ -1177,49 +1149,3 @@ struct LibraryKeepSheet: View {
 }
 
 
-// MARK: - Following the voice
-
-/// Carries the page along with the recording, paragraph by paragraph.
-///
-/// Reads `currentTime` in its own body on purpose: observed from the
-/// reader, the twice-a-second tick would make the whole chapter a
-/// dependency of the clock. Here it invalidates a zero-size view and
-/// writes outward only when the paragraph actually changes.
-///
-/// Only where the sounding track reads this whole chapter and nothing
-/// else. Without per-word timings the mapping is proportional —
-/// paragraph N of M at N/M of the recording — which tracks a reader's
-/// pace closely enough over one chapter and would be nonsense over a
-/// track holding ten of them. `LibraryTrackAlignment` is what knows the
-/// difference, and it refuses the cases it cannot do honestly.
-struct LibraryFollowWatcher: View {
-
-    let session: LibraryListeningSession
-    let follow: ReaderScrollModel
-    let chapterIndex: Int
-    let paragraphCount: Int
-    let isEnabled: Bool
-    let move: (Int) -> Void
-
-    var body: some View {
-        Color.clear
-            .frame(width: 0, height: 0)
-            .allowsHitTesting(false)
-            .accessibilityHidden(true)
-            .onChange(of: session.currentTime) { _, time in
-                guard isEnabled, paragraphCount > 0,
-                      session.canFollowText(chapterIndex: chapterIndex),
-                      session.duration > 0 else { return }
-
-                let fraction = min(max(time / session.duration, 0), 1)
-                guard let target = follow.paragraphToFollow(
-                    fraction: fraction,
-                    paragraphCount: paragraphCount
-                ) else { return }
-
-                withAnimation(.easeInOut(duration: 1.0)) {
-                    move(target)
-                }
-            }
-    }
-}

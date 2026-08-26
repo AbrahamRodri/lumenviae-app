@@ -875,6 +875,17 @@ struct LibraryBookView: View {
         guard !isOpeningChapter else { return }
         isOpeningChapter = true
         router.push(.libraryChapter(bookID: bookID, chapterIndex: chapter.id))
+
+        // Released on a timer, not by `onAppear`. The latch is only here
+        // to swallow a double-tap inside one frame, but tying its
+        // release to the return trip meant that any push which did not
+        // actually happen — or any return where `onAppear` did not fire,
+        // which this codebase knows it cannot promise — left the act
+        // dead for the rest of the page's life, with no way to revive it
+        // but leaving the book entirely.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+            isOpeningChapter = false
+        }
     }
 
     /// The place marker, fetched directly — one small row at most.

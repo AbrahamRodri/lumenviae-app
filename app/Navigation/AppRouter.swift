@@ -40,7 +40,14 @@ enum AppRoute: Hashable {
     // Back pill and pops via `dismiss`.
     case missal
     case office
+    /// Montfort's devotion in summary — what it is, its marks, the false
+    /// devotions, the ejaculatory prayers. A topic page, not the book.
     case trueDevotion
+    /// The book itself, set like every other book on the shelf. Kept
+    /// apart from `trueDevotion` because a book cover must open a book:
+    /// a reader who taps the cloth wants the text, not an article about
+    /// it.
+    case trueDevotionBook
     case howToPray
     case scripture
     case marianLibrary

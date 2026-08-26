@@ -93,12 +93,16 @@ struct TrueDevotionView: View {
                 .breathingGlow(AppColors.gold)
                 .padding(.top, 24)
 
-            Text("True Devotion to Mary")
+            // Named apart from the book. Both used to be called "True
+            // Devotion to Mary", so a reader who wanted the text and a
+            // reader who wanted the teaching arrived at the same title
+            // and could not tell which they had.
+            Text("The Devotion in Summary")
                 .font(AppFonts.headlineFont(26))
                 .foregroundColor(AppColors.cream)
                 .multilineTextAlignment(.center)
 
-            Text("St. Louis de Montfort")
+            Text("True Devotion to Mary · St. Louis de Montfort")
                 .font(AppFonts.italicFont(16))
                 .foregroundColor(AppColors.gold.opacity(0.8))
 
