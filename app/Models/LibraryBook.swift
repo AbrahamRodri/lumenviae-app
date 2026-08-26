@@ -48,6 +48,18 @@ nonisolated struct LibraryBookInfo: Identifiable, Hashable {
     /// and the voice without losing their place.
     var trackMapping: LibraryTrackMapping = .none
 
+    /// The speed this reader is best heard at, as the shelf's opening
+    /// offer for this book.
+    ///
+    /// LibriVox readers are volunteers and their paces differ enormously
+    /// — one Story of a Soul runs under seven hours and another runs
+    /// nearly fourteen. A reader who has to slow down or speed up every
+    /// book by hand is being asked to fix the catalog's homework. The
+    /// reader's own choice for a book is remembered and outranks this
+    /// from then on, and this never touches the speed of the Rosary's
+    /// narration, which is a different voice at a different pace.
+    var preferredRate: Double = 1.0
+
     /// How this edition's plain text is cut into chapters
     let parsing: LibraryParsingRules
 

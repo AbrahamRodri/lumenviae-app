@@ -266,37 +266,84 @@ nonisolated enum LibraryTrackMap {
         var chapterToTrack = [Int?](repeating: nil, count: chapters.count)
         var trackToChapters: [Int: ClosedRange<Int>] = [:]
 
-        // Resolved against the feed's own section numbers rather than
-        // array position. The track list is filtered for a usable URL
-        // before it gets here, so one section LibriVox served without one
-        // would slide every following chapter by one — silently, with
-        // nothing to notice it by. Position is only the fallback for a
-        // feed that gives no numbers at all.
-        var trackOfNumber: [Int: Int] = [:]
-        for (position, section) in sections.enumerated() {
-            guard let raw = section.sectionNumber, let number = Int(raw) else { continue }
-            if trackOfNumber[number] == nil { trackOfNumber[number] = position }
-        }
-        let numbered = trackOfNumber.count == sections.count
-        let first = trackOfNumber.keys.min() ?? 0
+        // A reading is not always one file. Susan Morin needed two for
+        // Thérèse's Epilogue and titled them "…Part 1" and "…Part 2", so
+        // the tracks are grouped by what the reader called them before
+        // anything is counted: one group is one reading, however many
+        // files it took. Without this the second half belongs to no
+        // chapter, and the first half claims to be the whole of one —
+        // which is what follow-along would then pace the page against.
+        let groups = Self.groupedByContinuation(sections)
 
         for index in chapters.indices {
-            var track: Int?
-            if numbered {
-                track = trackOfNumber[first + index + offset]
-            } else {
-                let position = index + offset
-                track = sections.indices.contains(position) ? position : nil
+            let position = index + offset
+            guard groups.indices.contains(position) else { continue }
+            for track in groups[position] {
+                trackToChapters[track] = index...index
             }
-            guard let resolved = track, sections.indices.contains(resolved) else { continue }
-            chapterToTrack[index] = resolved
-            trackToChapters[resolved] = index...index
+            chapterToTrack[index] = groups[position].first
         }
         return LibraryTrackAlignment(
             chapterToTrack: chapterToTrack,
             trackToChapters: trackToChapters
         )
     }
+
+    /// Consecutive tracks that are parts of one reading, gathered.
+    ///
+    /// The test is the volunteer's own labelling — a trailing "Part 2"
+    /// over the same title as the track before it — which is the same
+    /// evidence the range and span strategies read. A recording with no
+    /// such titles comes back as one group per track, so this is a no-op
+    /// for every book that does not need it.
+    private static func groupedByContinuation(_ sections: [LibriVoxSection]) -> [[Int]] {
+        var groups: [[Int]] = []
+        var previousBase: String?
+
+        for (index, section) in sections.enumerated() {
+            let title = section.title ?? ""
+            let part = Self.continuationPart(of: title)
+
+            if let part, part > 1, let previousBase,
+               Self.baseTitle(of: title) == previousBase, !groups.isEmpty {
+                groups[groups.count - 1].append(index)
+            } else {
+                groups.append([index])
+                previousBase = Self.baseTitle(of: title)
+            }
+        }
+        return groups
+    }
+
+    /// The number in a trailing "Part 2" / "Pt. 2", or nil.
+    private static func continuationPart(of title: String) -> Int? {
+        guard let regex = Self.partRegex else { return nil }
+        let range = NSRange(title.startIndex..., in: title)
+        guard let match = regex.firstMatch(in: title, range: range),
+              let bounds = Range(match.range(at: 1), in: title) else { return nil }
+        return Int(title[bounds])
+    }
+
+    /// The title with any trailing part number taken off, folded for
+    /// comparison — these titles are hand-typed, and this one carries
+    /// five spaces before "Part 1".
+    private static func baseTitle(of title: String) -> String {
+        let stripped = Self.partRegex.map {
+            $0.stringByReplacingMatches(
+                in: title,
+                range: NSRange(title.startIndex..., in: title),
+                withTemplate: ""
+            )
+        } ?? title
+        return stripped
+            .replacingOccurrences(of: #"\s+"#, with: " ", options: .regularExpression)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased()
+    }
+
+    private static let partRegex = try? NSRegularExpression(
+        pattern: #"(?i)[\s,\-–—]*\bp(?:ar)?t\.?\s*(\d+)\s*$"#
+    )
 
     // MARK: Book + chapter ranges
 

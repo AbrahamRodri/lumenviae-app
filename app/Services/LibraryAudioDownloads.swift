@@ -110,6 +110,18 @@ final class LibraryAudioDownloads {
             guard let url = section.streamURL else { continue }
             delegate.identityByURL[url] = (bookID, section.id)
         }
+
+        // Anything saved for this book that the ledger no longer carries
+        // is a reading from a recording the catalog has since replaced.
+        // It can never be played again and nothing else will ever ask
+        // about it, so it would sit in Application Support — where iOS
+        // does not purge and the reader cannot reach — forever.
+        let wanted = Set(sections.map { Self.fileName(bookID: bookID, sectionID: $0.id) })
+        let prefix = "\(bookID)_"
+        for name in savedBytes.keys where name.hasPrefix(prefix) && !wanted.contains(name) {
+            try? FileManager.default.removeItem(at: directory.appendingPathComponent(name))
+            savedBytes[name] = nil
+        }
     }
 
     // MARK: - Reading the state

@@ -505,7 +505,10 @@ write concurrent code here:
 
   **Audio is tied to the text** by `LibraryTrackMap`, from the catalog's
   `trackMapping`: `.sequential` where a recording gives each chapter its
-  own file (Thérèse, Emmerich — 1:1, verified track for track),
+  own file (Thérèse, Emmerich — 1:1, verified track for track; an
+  `offset` covers front-matter tracks the text does not carry, and
+  consecutive files a reader labelled "Part 1"/"Part 2" are gathered back
+  into one reading),
   `.bookChapterRanges` where one file holds many ("Book 3 - Chapters
   21-30", Kempis), `.bookSpans` where one book needs several files
   (Augustine, LibriVox 2601 — **the Pusey reading**, matching the text;
@@ -516,6 +519,19 @@ write concurrent code here:
   voice starts where the reader is. A DEBUG assertion prints any
   chapter left unmapped — a volunteer re-cutting their ledger is the
   way this drifts.
+
+  A book may also name the speed its reader is best heard at
+  (`preferredRate` — Thérèse's is 1.5, because Susan Morin's reading runs
+  thirteen hours and forty minutes). That is the shelf's opening offer;
+  the reader's own choice per book is remembered and outranks it. It is
+  kept apart from the app-wide narration speed —
+  `AudioService.setPlaybackRate(_:remember:)`, restored on `stop()` — so
+  a slow LibriVox volunteer never sets the pace of a Rosary.
+
+  The track ledger is cached under the **`librivoxID`**, not the edition
+  fingerprint: swapping a recording has to retire the previous
+  recording's ledger, and keyed on the edition it did not, so every
+  chapter pointed at the wrong track.
 
   `LibraryListeningSession` owns playback **above the views**: a screen
   counts itself in and out (`enterScreen`/`leaveScreen`), and the

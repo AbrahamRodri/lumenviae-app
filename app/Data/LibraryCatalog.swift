@@ -69,8 +69,20 @@ enum LibraryCatalog {
             translator: "Thomas N. Taylor",
             blurb: "The autobiography of the Little Flower — her little way, written under obedience.",
             gutenbergID: 16772,
-            librivoxID: 3229,
-            trackMapping: .sequential(offset: 0),
+            // Version 2 (LibriVox 8021), read solo by Susan Morin from
+            // Taylor's translation — the same English as the text, which
+            // is the only kind of recording this shelf will offer. She
+            // reads it slowly: thirteen hours and forty minutes against
+            // the other recording's six and fifty-five, so the book opens
+            // at one and a half and the reader can take it from there.
+            //
+            // Her Prologue is track 1 (track 0 is the dedication and
+            // preface, which the text does not carry), so the offset is
+            // one; her Epilogue takes two files, which the grouping in
+            // LibraryTrackMap gathers back into one reading.
+            librivoxID: 8021,
+            trackMapping: .sequential(offset: 1),
+            preferredRate: 1.5,
             parsing: LibraryParsingRules(
                 chapterPattern: #"^(PROLOGUE|CHAPTER [IVXLC]+|EPILOGUE)\b.*$"#,
                 startPattern: #"^PROLOGUE: THE PARENTAGE"#,

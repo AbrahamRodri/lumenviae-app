@@ -148,6 +148,14 @@ final class LibraryListeningSession {
         }
         self.sections = sections
         self.alignment = alignment
+
+        // This book's speed, not the app's. A reader who set 1.25x for
+        // the Rosary's meditations has not thereby chosen a speed for
+        // Susan Morin, and vice versa.
+        audio.setPlaybackRate(
+            UserSettings.shared.readingRate(for: info.id, default: info.preferredRate),
+            remember: false
+        )
     }
 
     /// Reads the last listening place off the book's row, so a ledger
@@ -317,7 +325,9 @@ final class LibraryListeningSession {
     }
 
     func setRate(_ rate: Double) {
-        audio.setPlaybackRate(rate)
+        guard let info else { return }
+        audio.setPlaybackRate(rate, remember: false)
+        UserSettings.shared.setReadingRate(rate, for: info.id)
     }
 
     func setSleepTimer(_ timer: AudioService.SleepTimer?) {
@@ -433,6 +443,8 @@ final class LibraryListeningSession {
         persist(force: true)
         audio.clearTrackNavigation(owner: token)
         audio.reset()
+        // Hand the app-wide narration speed back with the player.
+        audio.restoreRememberedRate()
         audio.deactivateSession()
 
         info = nil

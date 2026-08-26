@@ -173,6 +173,26 @@ final class UserSettings {
         CGFloat(15 + readingTextScale * 11)
     }
 
+    /// The speed a given book's recording is played at.
+    ///
+    /// Per book, because the readers are volunteers and their paces are
+    /// nothing alike, and kept apart from the app-wide narration speed
+    /// so a slow LibriVox reader never sets the pace of a Rosary. The
+    /// catalog's `preferredRate` is the opening offer; once the reader
+    /// chooses for themselves, their choice is what returns.
+    func readingRate(for bookID: String, default preferred: Double) -> Double {
+        let stored = UserDefaults.standard.double(forKey: Self.readingRateKey(bookID))
+        return AudioService.supportedRates.contains(stored) ? stored : preferred
+    }
+
+    func setReadingRate(_ rate: Double, for bookID: String) {
+        UserDefaults.standard.set(rate, forKey: Self.readingRateKey(bookID))
+    }
+
+    private static func readingRateKey(_ bookID: String) -> String {
+        "userSettings.readingRate.\(bookID)"
+    }
+
     // MARK: - Scriptural Rosary
 
     /// Whether each Hail Mary bead carries its own verse of Scripture —
