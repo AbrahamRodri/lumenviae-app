@@ -114,15 +114,26 @@ final class LibraryService {
 
     // MARK: - Cache keys
 
-    /// A book's cache filename, carrying everything that decides what
-    /// the parsed result looks like: the edition and its cutting rules,
-    /// as well as the shelf-wide version. Swap a `gutenbergID` or fix a
-    /// `chapterPattern` in the catalog and the old file is simply no
-    /// longer asked for.
+    /// A cache filename carrying everything that decides what is in it.
+    ///
+    /// For the text that is the edition and its cutting rules, in
+    /// `editionFingerprint`: swap a `gutenbergID` or fix a
+    /// `chapterPattern` and the old file is simply no longer asked for.
+    ///
+    /// The track ledger is decided by something else entirely — which
+    /// recording the catalog names — so it is keyed on that instead.
+    /// Keyed on the edition, swapping `librivoxID` left the *previous*
+    /// recording's ledger in place, and every chapter then pointed at
+    /// the wrong track.
     private func cacheURL(prefix: String, info: LibraryBookInfo) -> URL {
-        directory.appendingPathComponent(
-            "\(prefix)_\(info.id)_\(Self.cacheVersion)_\(info.editionFingerprint).json"
-        )
+        directory.appendingPathComponent(Self.cacheName(prefix: prefix, info: info))
+    }
+
+    private static func cacheName(prefix: String, info: LibraryBookInfo) -> String {
+        let key = prefix == "audio"
+            ? String(info.librivoxID ?? 0)
+            : info.editionFingerprint
+        return "\(prefix)_\(info.id)_\(cacheVersion)_\(key).json"
     }
 
     // MARK: - Books
@@ -180,12 +191,7 @@ final class LibraryService {
     /// The file names the current catalog asks for.
     private static func wantedFileNames(in directory: URL) -> Set<String> {
         Set(LibraryCatalog.books.flatMap { info in
-            [directory.appendingPathComponent(
-                "book_\(info.id)_\(cacheVersion)_\(info.editionFingerprint).json"
-             ).lastPathComponent,
-             directory.appendingPathComponent(
-                "audio_\(info.id)_\(cacheVersion)_\(info.editionFingerprint).json"
-             ).lastPathComponent]
+            [cacheName(prefix: "book", info: info), cacheName(prefix: "audio", info: info)]
         })
     }
 

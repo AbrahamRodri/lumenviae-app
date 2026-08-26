@@ -444,12 +444,28 @@ final class AudioService {
         return AudioService.supportedRates.contains(stored) ? stored : 1.0
     }()
 
-    func setPlaybackRate(_ rate: Double) {
+    /// Sets the speed of whatever is playing.
+    ///
+    /// `remember` writes it as the app-wide narration speed. A flow that
+    /// keeps its own — the Spiritual Reading shelf, where the speed
+    /// belongs to the book and its reader — passes false, so choosing
+    /// 1.5x for a slow LibriVox volunteer does not also speed up the
+    /// Rosary's meditations.
+    func setPlaybackRate(_ rate: Double, remember: Bool = true) {
         let resolved = Self.supportedRates.contains(rate) ? rate : 1.0
         playbackRate = resolved
-        UserDefaults.standard.set(resolved, forKey: Self.rateStorageKey)
+        if remember {
+            UserDefaults.standard.set(resolved, forKey: Self.rateStorageKey)
+        }
         if isPlaying { player?.rate = Float(resolved) }
         updateNowPlayingPlaybackState()
+    }
+
+    /// Puts the app-wide narration speed back, for a flow that borrowed
+    /// the transport at a speed of its own.
+    func restoreRememberedRate() {
+        let stored = UserDefaults.standard.double(forKey: Self.rateStorageKey)
+        setPlaybackRate(Self.supportedRates.contains(stored) ? stored : 1.0, remember: false)
     }
 
     // MARK: - Sleep Timer
