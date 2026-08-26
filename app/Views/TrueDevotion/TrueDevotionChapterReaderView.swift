@@ -623,13 +623,12 @@ struct TrueDevotionChapterReaderView: View {
     /// one store for what a reader keeps.
     private func keepAsReflection(_ passage: String) {
         guard let book = library.book else { return }
-        let body = journalDraft.trimmingCharacters(in: .whitespacesAndNewlines)
-        var text = "\u{201C}\(passage)\u{201D}\n\n\(citation)"
-        if !body.isEmpty { text += "\n\n\(body)" }
 
-        let entry = JournalEntry(
-            text: text,
-            mysteryTitle: chapter?.title ?? book.title,
+        let entry = JournalEntry.note(
+            passage: passage,
+            citation: citation,
+            comment: journalDraft,
+            subject: chapter?.title ?? book.title,
             bookID: TrueDevotionBook.noteBookID
         )
         modelContext.insert(entry)

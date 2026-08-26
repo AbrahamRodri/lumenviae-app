@@ -178,9 +178,20 @@ Office, True Devotion, Spiritual Reading (the shelf, its books, their
 chapters), How to Pray, In Scripture, the Marian Library,
 Carlo Acutis, Settings, Explore — are `AppRoute` cases that slide in
 from the right; each draws its own gold Back in its toolbar (so never
-apply `navigationBarHidden` to them). The one exception is the Daily
-Missal, whose collapsing header is its own chrome, back button
-included — it hides the system bar deliberately. Sheets are reserved for tasks and
+apply `navigationBarHidden` to them). The exceptions are the pages
+whose chrome is their own: the Daily Missal, whose collapsing header
+carries its back button, and the two **chapter readers** (Spiritual
+Reading and True Devotion), which withdraw their chrome as the page
+moves and carry a floating `ReaderBackCapsule` instead. Their title
+pages — the shelf, a book page, True Devotion's own — keep the system
+bar and the gold Back like everything else; only the reading surface
+hides it.
+
+A page that hides the system bar hides the back-swipe with it, so it
+owes a way out from **every** branch it can draw, not just the loaded
+one. A spinner or an "unavailable" message with no Back is a screen
+only a force-quit leaves; both readers had one, and both now carry the
+capsule in those branches too. Sheets are reserved for tasks and
 trays: the Pray tray, the two editors, pickers, and the journal editor.
 The tab bar lays its four labels out content-sized with even gaps (not
 equal cells), padded clear of the raised Pray medallion.
@@ -553,14 +564,45 @@ write concurrent code here:
   the Aa), a versal initial, a hairline place rule, "9 of 13", a ☰
   contents sheet with search, prev/next stepping in place so a
   114-chapter book never stacks 114 screens, paragraph-level resume via
-  `.scrollPosition(id:)`, long-press a paragraph to keep it as a
-  Reflection (the journal is the app's one store for what a reader
-  keeps — there is no highlights library), and follow-the-voice
-  auto-scroll where the sounding track reads this whole chapter.
+  `.scrollPosition(id:)`, and follow-the-voice auto-scroll where the
+  sounding track reads this whole chapter. Its watcher is mounted in an
+  overlay, never inside the lazy content — as the last child of the
+  LazyVStack it was only built once the reader had already scrolled
+  past the whole chapter, so following never started.
   Recordings can be saved per track (`LibraryAudioDownloads`, background
   URLSession) behind the missal's honest offline line — "1 of 13
-  readings saved · 11 MB · about 188 MB more". Never a percentage, never
-  a streak, never a count of what is unread.
+  readings saved · 11 MB · about 188 MB more".
+
+  **Two ways to keep a page, and they are not the same act.** Select a
+  paragraph and the capsule offers NOTE, MARK, SHARE.
+
+  A **note** is something the reader wrote, and the journal is still
+  the app's one store for that — `keepAsReflection` composes the
+  passage, its citation and the reader's own words into a
+  `JournalEntry` carrying `bookID`. The three parts are stored as
+  fields (`bookPassage`, `bookCitation`), not inferred by splitting
+  the text: the text is what `JournalEntryEditorView` edits, and
+  parsing it back apart meant an edited note lost its shape.
+
+  A **mark** is a place and nothing else — no colour, no note, no
+  count against the reader, and no review queue. It exists so a reader
+  can walk back to a page that struck them. Marks are *not* a
+  highlights library and must not grow into one.
+
+  The two differ in durability, and honestly so: a mark on the shelf
+  is a chapter and paragraph index, meaningful only inside one cutting
+  of an edition, so `retire` lets marks go with the reading place when
+  a catalog rule changes. True Devotion's marks are keyed by stable
+  chapter slugs and never need retiring. Journal notes hold the
+  passage text itself and outlive every re-cut.
+
+  Never a percentage, never a streak, never a count of chapters left
+  unread. Time against a **recording** is allowed, because it is a
+  fact about a file rather than a judgement of the reader — "2 h 5 m
+  read · 7 h 26 m left in the book" is drawn only from tracks the
+  alignment maps to a chapter, so a finished book really does reach
+  zero. A words-per-minute estimate is never allowed: True Devotion
+  has no recording, so its act stays quiet rather than guessing.
 
 ### Not built yet
 

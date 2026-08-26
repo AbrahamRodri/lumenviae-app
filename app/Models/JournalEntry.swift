@@ -55,6 +55,19 @@ final class JournalEntry {
     /// Nil for every entry that is not a note on a passage.
     var bookID: String?
 
+    /// The passage as the book set it, and the citation it carries.
+    ///
+    /// Held as fields rather than read back out of `text`. The three
+    /// parts are composed into `text` so the entry reads as one
+    /// reflection in the journal — but `text` is also what
+    /// `JournalEntryEditorView` hands the reader to edit, and an entry
+    /// re-parsed by splitting on blank lines lost its shape the moment
+    /// anyone touched it: the citation would render as the reader's own
+    /// comment, or a passage carrying a blank line would shift every
+    /// part along by one.
+    var bookPassage: String?
+    var bookCitation: String?
+
     // MARK: - Consecration Properties
 
     /// The consecration day number (1-34), nil for rosary entries
@@ -153,6 +166,37 @@ final class JournalEntry {
         self.createdAt = createdAt
         self.consecrationDay = nil
         self.consecrationPhaseRaw = nil
+    }
+
+    // MARK: - Init (A page kept from a book)
+
+    /// A passage kept from the shelf or from True Devotion.
+    ///
+    /// The parts are held as fields *and* composed into `text`: `text`
+    /// is what the journal shows and what the editor lets the reader
+    /// rewrite, while the fields are what a book page reads back, so
+    /// editing the reflection can never scramble the passage or hand
+    /// the citation to the wrong slot.
+    static func note(
+        passage: String,
+        citation: String,
+        comment: String = "",
+        subject: String,
+        bookID: String
+    ) -> JournalEntry {
+        var text = "\u{201C}\(passage)\u{201D}"
+        if !citation.isEmpty { text += "\n\n\(citation)" }
+        let body = comment.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !body.isEmpty { text += "\n\n\(body)" }
+
+        let entry = JournalEntry(
+            text: text,
+            mysteryTitle: subject,
+            bookID: bookID
+        )
+        entry.bookPassage = passage
+        entry.bookCitation = citation.isEmpty ? nil : citation
+        return entry
     }
 
     // MARK: - Init (Consecration)
