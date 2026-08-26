@@ -14,10 +14,20 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ExploreView: View {
 
     @Environment(AppRouter.self) private var router
+
+    /// Which books have a reading under way — their covers wear the
+    /// marker ribbon here as they do on the shelf itself. The same book
+    /// must not carry a marker on one surface and none on another.
+    @Query private var reading: [BookReadingProgress]
+
+    private var readingIDs: Set<String> {
+        Set(reading.filter { $0.hasReadingPlace || $0.hasResumableTrack }.map(\.bookID))
+    }
 
     @State private var query = ""
 
@@ -188,7 +198,9 @@ struct ExploreView: View {
                 coverTile(Self.trueDevotionBook) { router.push(.trueDevotion) }
 
                 ForEach(LibraryCatalog.books) { book in
-                    coverTile(book) { router.push(.libraryBook(id: book.id)) }
+                    coverTile(book, hasRibbon: readingIDs.contains(book.id)) {
+                        router.push(.libraryBook(id: book.id))
+                    }
                 }
             }
             .padding(.horizontal, 20)
@@ -199,14 +211,20 @@ struct ExploreView: View {
         .padding(.horizontal, -20)
     }
 
-    private func coverTile(_ info: LibraryBookInfo, action: @escaping () -> Void) -> some View {
+    private func coverTile(
+        _ info: LibraryBookInfo,
+        hasRibbon: Bool = false,
+        action: @escaping () -> Void
+    ) -> some View {
         Button(action: action) {
-            BookCover(info: info)
+            BookCover(info: info, hasRibbon: hasRibbon)
                 .frame(width: 106)
                 .contentShape(RoundedRectangle(cornerRadius: 6))
         }
         .buttonStyle(SacredCardButtonStyle())
-        .accessibilityLabel("\(info.title), \(info.author)")
+        .accessibilityLabel(
+            "\(info.title), \(info.author)\(hasRibbon ? ". Reading under way." : "")"
+        )
     }
 
     /// Montfort's book wears its cover here like the shelf's own four —

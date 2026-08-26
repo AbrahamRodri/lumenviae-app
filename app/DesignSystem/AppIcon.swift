@@ -27,7 +27,11 @@ struct AppIcon: View {
     }
 
     var body: some View {
-        Image(name)
+        // Decorative on purpose: without this SwiftUI derives a label
+        // from the asset name and VoiceOver announces "ph book open".
+        // Every glyph in the app either sits inside a control that
+        // carries its own label, or beside the text it decorates.
+        Image(decorative: name)
             .renderingMode(.template)
             .resizable()
             .scaledToFit()

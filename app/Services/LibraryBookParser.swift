@@ -7,10 +7,12 @@
 //
 //  Gutenberg plain text is hard-wrapped at ~72 columns with blank
 //  lines between paragraphs, opens with a licensing header, and closes
-//  with a licensing footer. The parser trims both, walks the body
-//  matching the edition's heading patterns, rejects contents-page
-//  lines by body length, lifts each chapter's printed title, and
-//  unwraps the hard-wrapped lines into whole paragraphs.
+//  with a licensing footer. The parser trims both, drops the front
+//  matter at the edition's `startPattern`, walks the body matching the
+//  edition's heading patterns, rejects contents-page lines by body
+//  length, lifts each chapter's printed title, unwraps the hard-wrapped
+//  lines into whole paragraphs, and lifts the editor's footnotes out of
+//  the prose into an apparatus of their own.
 //
 //  Deterministic by design: the same text and rules always cut the
 //  same chapters, so a chapter index is a stable identity for caching
@@ -31,13 +33,24 @@ nonisolated enum LibraryBookParser {
         let body = stripGutenbergEnvelope(from: text)
             .replacingOccurrences(of: "\r\n", with: "\n")
             .replacingOccurrences(of: "\r", with: "\n")
-        let lines = body.components(separatedBy: "\n").map {
+        var lines = body.components(separatedBy: "\n").map {
             $0.trimmingCharacters(in: .whitespaces)
+        }
+
+        // Everything above the book proper — half-title, imprimatur,
+        // table of contents, publisher's matter — is dropped before a
+        // single pattern is matched. The matching line is kept: it is
+        // usually the first heading.
+        if let startPattern = rules.startPattern,
+           let startRegex = try? NSRegularExpression(pattern: startPattern),
+           let first = lines.firstIndex(where: { matches(startRegex, $0) }) {
+            lines = Array(lines[first...])
         }
 
         let chapterRegex = try? NSRegularExpression(pattern: rules.chapterPattern)
         let partRegex = rules.partPattern.flatMap { try? NSRegularExpression(pattern: $0) }
         let stopRegex = rules.stopPattern.flatMap { try? NSRegularExpression(pattern: $0) }
+        let dropRegex = rules.dropPattern.flatMap { try? NSRegularExpression(pattern: $0) }
 
         var raw: [(heading: String, part: String?, lines: [String])] = []
         var current: (heading: String, part: String?, lines: [String])?
@@ -63,11 +76,23 @@ nonisolated enum LibraryBookParser {
             if let stopRegex, bodyHasBegun, matches(stopRegex, line) {
                 break
             }
+            // A printer's mark, not text: dropped wherever it falls, so
+            // "END OF THE AUTOBIOGRAPHY" is not set as a paragraph in
+            // the middle of the prose.
+            if let dropRegex, matches(dropRegex, line) { continue }
             if let partRegex, matches(partRegex, line) {
                 if let finished = current { raw.append(finished) }
-                current = nil
-                openLength = 0
                 part = titleCased(line)
+                // The part opens a unit of its own rather than closing
+                // the book's ear: everything printed between a part
+                // heading and its first chapter used to fall through the
+                // `current != nil` guard and be dropped. For three of the
+                // Imitation's books that was only a subtitle, which
+                // `minimumChapterLength` discards again below — but Book
+                // IV opens with à Kempis's own exhortation to Holy
+                // Communion, in every printed edition and in none of ours.
+                current = (heading: line, part: part, lines: [])
+                openLength = 0
                 continue
             }
             if let chapterRegex, matches(chapterRegex, line) {
@@ -97,21 +122,48 @@ nonisolated enum LibraryBookParser {
             // No inline title: the first short block after the heading
             // is the chapter's printed title. A long first block is
             // simply the body beginning (Confessions prints none).
+            //
+            // Where the edition sets a title across more than one block
+            // (`titleRunsToBlankGap`), keep taking blocks while exactly
+            // one blank line separates them — the gap before the body is
+            // wider — and join them into one title.
             if title == nil {
-                var index = contentLines.startIndex
-                while index < contentLines.endIndex, contentLines[index].isEmpty {
-                    index += 1
+                var lifted: [String] = []
+                var cursor = contentLines.startIndex
+
+                while true {
+                    var index = cursor
+                    var gap = 0
+                    while index < contentLines.endIndex, contentLines[index].isEmpty {
+                        index += 1
+                        gap += 1
+                    }
+                    // A second block only continues the title when the
+                    // blank run before it is a single line.
+                    if !lifted.isEmpty, !(rules.titleRunsToBlankGap && gap == 1) { break }
+
+                    var block: [String] = []
+                    var end = index
+                    while end < contentLines.endIndex, !contentLines[end].isEmpty {
+                        block.append(contentLines[end])
+                        end += 1
+                    }
+                    let joined = block.joined(separator: " ")
+                    guard !joined.isEmpty, joined.count <= 140 else { break }
+
+                    // Each printed block ends with its own full stop;
+                    // joined as they stand they read "…Falls of Jesus..
+                    // The Daughters of Jerusalem".
+                    lifted.append(
+                        joined.hasSuffix(".") ? String(joined.dropLast()) : joined
+                    )
+                    cursor = end
+                    if !rules.titleRunsToBlankGap { break }
                 }
-                var block: [String] = []
-                var end = index
-                while end < contentLines.endIndex, !contentLines[end].isEmpty {
-                    block.append(contentLines[end])
-                    end += 1
-                }
-                let joined = block.joined(separator: " ")
-                if !joined.isEmpty, joined.count <= 140 {
-                    title = joined
-                    contentLines.removeSubrange(contentLines.startIndex..<end)
+
+                if !lifted.isEmpty {
+                    title = lifted.joined(separator: ". ")
+                    contentLines.removeSubrange(contentLines.startIndex..<cursor)
                 }
             }
 
@@ -121,12 +173,23 @@ nonisolated enum LibraryBookParser {
                 title = lifted
             }
 
+            // An edition that prints no titles gets the curated ones,
+            // and a misprinted heading gets its correction.
+            title = info.title(forChapter: chapters.count, printed: title)
+            heading = info.heading(forChapter: chapters.count, printed: heading)
+
+            let (prose, notes) = split(
+                paragraphs: paragraphs(from: contentLines),
+                notePattern: rules.notePattern
+            )
+
             chapters.append(LibraryChapter(
                 id: chapters.count,
                 part: candidate.part,
                 heading: heading,
                 title: title,
-                paragraphs: paragraphs(from: contentLines)
+                paragraphs: prose,
+                notes: notes
             ))
         }
 
@@ -136,13 +199,24 @@ nonisolated enum LibraryBookParser {
     // MARK: - Pieces
 
     /// Everything between the *** START and *** END licensing markers.
+    ///
+    /// Gutenberg has served both "OF THE PROJECT GUTENBERG EBOOK" and
+    /// "OF THIS PROJECT GUTENBERG EBOOK" over the years, so both are
+    /// matched. Missing the end marker appends eighteen kilobytes of
+    /// licence to the last chapter.
     private static func stripGutenbergEnvelope(from text: String) -> String {
         var body = text
-        if let start = body.range(of: "*** START OF THE PROJECT GUTENBERG EBOOK"),
+        if let start = body.range(
+            of: #"\*\*\* START OF TH(E|IS) PROJECT GUTENBERG EBOOK"#,
+            options: .regularExpression
+           ),
            let lineEnd = body.range(of: "\n", range: start.upperBound..<body.endIndex) {
             body = String(body[lineEnd.upperBound...])
         }
-        if let end = body.range(of: "*** END OF THE PROJECT GUTENBERG EBOOK") {
+        if let end = body.range(
+            of: #"\*\*\* END OF TH(E|IS) PROJECT GUTENBERG EBOOK"#,
+            options: .regularExpression
+           ) {
             body = String(body[..<end.lowerBound])
         }
         return body
@@ -180,16 +254,107 @@ nonisolated enum LibraryBookParser {
         return String(line[r])
     }
 
-    /// "THE FIRST BOOK" → "The First Book", leaving roman numerals as
-    /// they stand.
+    /// "THE FIRST BOOK" → "The First Book"; "PAULINE ENTERS THE CARMEL"
+    /// → "Pauline Enters the Carmel". Roman numerals stand as printed,
+    /// and the small words a title-setter leaves lowercase are left
+    /// lowercase — unless they open or close the line, where even an
+    /// article is capitalized ("A Victim of Divine Love").
     private static func titleCased(_ line: String) -> String {
-        line.split(separator: " ").map { word -> String in
-            let w = String(word)
-            if w.range(of: #"^[IVXLC]+\.?,?$"#, options: .regularExpression) != nil {
-                return w
+        let words = line.split(separator: " ").map(String.init)
+        guard !words.isEmpty else { return line }
+
+        return words.enumerated().map { index, word -> String in
+            if word.range(of: #"^[IVXLC]+\.?,?$"#, options: .regularExpression) != nil {
+                return word
             }
-            return w.localizedCapitalized
+            let cased = word.localizedCapitalized
+            guard index > 0, index < words.count - 1 else { return cased }
+
+            let bare = cased
+                .trimmingCharacters(in: CharacterSet.letters.inverted)
+                .lowercased()
+            return smallWords.contains(bare) ? cased.lowercased() : cased
         }.joined(separator: " ")
+    }
+
+    /// The words a printer sets lowercase inside a title. Conjunctions,
+    /// articles, and the short prepositions — nothing longer, so
+    /// "Through" and "Against" keep their capitals.
+    private static let smallWords: Set<String> = [
+        "a", "an", "and", "as", "at", "but", "by", "for", "from", "in",
+        "into", "nor", "of", "on", "or", "over", "the", "to", "unto",
+        "upon", "with"
+    ]
+
+    // MARK: - Footnotes
+
+    /// Separates the editor's apparatus from the author's text.
+    ///
+    /// A paragraph that opens with this edition's footnote marker is a
+    /// note; the rest is the book. Notes keep their printed order, and a
+    /// paragraph carrying several notes at once — Benham sets a whole
+    /// chapter's citations on one line — is split at each marker.
+    private static func split(
+        paragraphs: [String],
+        notePattern: String?
+    ) -> (prose: [String], notes: [String]) {
+        guard let notePattern,
+              let marker = try? NSRegularExpression(pattern: notePattern),
+              let opening = try? NSRegularExpression(pattern: "^(?:\(notePattern))")
+        else { return (paragraphs, []) }
+
+        var prose: [String] = []
+        var notes: [String] = []
+
+        for paragraph in paragraphs {
+            guard matches(opening, paragraph) else {
+                prose.append(paragraph)
+                continue
+            }
+            notes.append(contentsOf: divide(paragraph, at: marker))
+        }
+        return (prose, notes)
+    }
+
+    /// Cuts one paragraph at every footnote marker it carries.
+    ///
+    /// Not at every *match*: Taylor gives the Psalms in both numberings,
+    /// so "Ps. 88[89]:1" carries a bracketed number that is no footnote
+    /// at all. A real marker opens the paragraph or follows a space, and
+    /// its number is the one after the last — footnotes run 1, 2, 3.
+    /// Both tests together leave the alternative verse numbers alone.
+    private static func divide(_ paragraph: String, at marker: NSRegularExpression) -> [String] {
+        let range = NSRange(paragraph.startIndex..., in: paragraph)
+        let found = marker.matches(in: paragraph, range: range)
+            .compactMap { match -> (start: String.Index, number: Int)? in
+                guard let bounds = Range(match.range, in: paragraph) else { return nil }
+                let digits = paragraph[bounds].filter(\.isNumber)
+                guard let number = Int(digits) else { return nil }
+                return (bounds.lowerBound, number)
+            }
+        guard let opening = found.first, opening.start == paragraph.startIndex else {
+            return [paragraph]
+        }
+
+        var starts: [String.Index] = [opening.start]
+        var expected = opening.number + 1
+        for candidate in found.dropFirst() {
+            guard candidate.number == expected else { continue }
+            let before = paragraph.index(before: candidate.start)
+            guard paragraph[before] == " " else { continue }
+            starts.append(candidate.start)
+            expected += 1
+        }
+        guard starts.count > 1 else { return [paragraph] }
+
+        var pieces: [String] = []
+        for (index, start) in starts.enumerated() {
+            let end = index + 1 < starts.count ? starts[index + 1] : paragraph.endIndex
+            let piece = String(paragraph[start..<end])
+                .trimmingCharacters(in: .whitespaces)
+            if !piece.isEmpty { pieces.append(piece) }
+        }
+        return pieces
     }
 
     /// Blank-line blocks become paragraphs; the hard-wrapped lines of

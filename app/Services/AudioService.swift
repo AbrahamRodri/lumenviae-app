@@ -244,6 +244,10 @@ final class AudioService {
     private var onNextTrack: (() -> Void)?
     private var onPreviousTrack: (() -> Void)?
 
+    /// What to do when a track reaches its end — owned by the same token
+    /// as the arrows, and cleared with them.
+    private var onTrackFinished: (() -> Void)?
+
     /// Whether a next/previous step exists right now. The Lock Screen
     /// arrows and AirPods presses are enabled from these, so pressing ⏭ on
     /// the last mystery reports "no such content" instead of drawing a live
@@ -252,18 +256,25 @@ final class AudioService {
     private var canGoPrevious = false
 
     /// Installs track navigation for `owner`, replacing any previous owner's.
+    /// `onFinish` runs when a track plays to its end, and only while this
+    /// owner still holds navigation. The prayer flow leaves it nil — a
+    /// decade is a meditation plus ten Hail Marys, and the next mystery
+    /// begins when the person praying says so — while a recording of a
+    /// book is a reading, which runs on to the next track by itself.
     func setTrackNavigation(
         owner: AnyHashable,
         canGoNext: Bool,
         canGoPrevious: Bool,
         onNext: @escaping () -> Void,
-        onPrevious: @escaping () -> Void
+        onPrevious: @escaping () -> Void,
+        onFinish: (() -> Void)? = nil
     ) {
         trackNavigationOwner = owner
         self.canGoNext = canGoNext
         self.canGoPrevious = canGoPrevious
         onNextTrack = onNext
         onPreviousTrack = onPrevious
+        onTrackFinished = onFinish
         updateTrackCommandAvailability()
     }
 
@@ -288,6 +299,7 @@ final class AudioService {
         trackNavigationOwner = nil
         onNextTrack = nil
         onPreviousTrack = nil
+        onTrackFinished = nil
         canGoNext = false
         canGoPrevious = false
         updateTrackCommandAvailability()
@@ -440,6 +452,93 @@ final class AudioService {
         updateNowPlayingPlaybackState()
     }
 
+    // MARK: - Sleep Timer
+
+    /// How a sleep timer ends: at a chosen span, or when the reading
+    /// being played reaches its own end.
+    enum SleepTimer: Equatable {
+        case after(minutes: Int)
+        case endOfTrack
+    }
+
+    /// The armed timer, or nil. Observed, so a view can draw the moon
+    /// filled and name what it is waiting for.
+    private(set) var sleepTimer: SleepTimer?
+
+    /// Seconds left before the fade begins — nil when nothing is armed,
+    /// and nil for `.endOfTrack`, whose end is the track's own.
+    private(set) var sleepRemaining: Int?
+
+    private var sleepTask: Task<Void, Never>?
+
+    /// Arms (or re-arms) the sleep timer. Passing nil disarms it.
+    ///
+    /// A devotional recording is not guillotined: the last four seconds
+    /// fade out, so the voice withdraws rather than being cut off, and
+    /// the volume is restored afterwards so the next play is not silent.
+    func setSleepTimer(_ timer: SleepTimer?) {
+        sleepTask?.cancel()
+        sleepTask = nil
+        sleepTimer = timer
+        sleepRemaining = nil
+
+        guard let timer else { return }
+        guard case .after(let minutes) = timer else {
+            // `.endOfTrack` needs no clock — the end-of-playback observer
+            // already fires there, and `handleSleepAtTrackEnd` reads it.
+            return
+        }
+
+        sleepRemaining = minutes * 60
+        sleepTask = Task { @MainActor [weak self] in
+            while let self, let left = self.sleepRemaining, left > 0 {
+                // A paused reading does not burn its timer down — and it
+                // does not wake the main actor once a second either,
+                // which an armed hour would have done three thousand
+                // times over.
+                let step: Duration = self.isPlaying ? .seconds(1) : .seconds(5)
+                try? await Task.sleep(for: step)
+                guard !Task.isCancelled, self.sleepTimer != nil else { return }
+                guard self.isPlaying else { continue }
+                self.sleepRemaining = max(0, left - 1)
+            }
+            guard let self, !Task.isCancelled, self.sleepTimer != nil else { return }
+            await self.fadeOutAndPause()
+        }
+    }
+
+    /// Whether a `.endOfTrack` timer should stop the reading here rather
+    /// than letting it run on. Read by the flow that owns track stepping.
+    func consumeEndOfTrackSleep() -> Bool {
+        guard sleepTimer == .endOfTrack else { return false }
+        setSleepTimer(nil)
+        return true
+    }
+
+    /// Withdraws the voice over four seconds, then pauses and restores
+    /// the volume for next time.
+    ///
+    /// Disarming the timer during the fade calls it off entirely: the
+    /// volume comes back and the reading runs on. Falling through to
+    /// `pause()` here stopped a reading a second after the reader had
+    /// explicitly asked it to keep going.
+    private func fadeOutAndPause() async {
+        let steps = 16
+        for step in 0..<steps {
+            guard !Task.isCancelled, sleepTimer != nil else {
+                player?.volume = 1
+                return
+            }
+            player?.volume = Float(1.0 - Double(step + 1) / Double(steps))
+            try? await Task.sleep(for: .milliseconds(250))
+        }
+        pause()
+        player?.volume = 1
+        sleepTimer = nil
+        sleepRemaining = nil
+        sleepTask = nil
+    }
+
     /// True while a press-and-hold scrub is running. The transport observer
     /// checks it before reconciling `isPlaying`, so a scrub can never be
     /// mistaken for the user starting or stopping playback.
@@ -582,7 +681,16 @@ final class AudioService {
     /// audio is ready, before any on-screen play — hands-off prayer needs
     /// headphone presses to reach it. Callers that must not take the
     /// route until the user presses play leave it off.
+    ///
+    /// Returns whether *this* call left the audio ready to play. A caller
+    /// cannot tell that from the service's own state afterwards: a load
+    /// superseded by a newer one returns silently, and the newer one has
+    /// already zeroed `duration` and cleared `errorMessage` on its way
+    /// past — so "no error and no duration" reads identically to a real
+    /// network failure. Judging by that is how a stale load came to
+    /// report the live one as unreachable.
     @MainActor
+    @discardableResult
     func loadAudio(
         from urlString: String,
         title: String? = nil,
@@ -592,11 +700,12 @@ final class AudioService {
         album: String? = nil,
         queueIndex: Int? = nil,
         queueCount: Int? = nil,
-        claimNowPlaying: Bool = false
-    ) async {
+        claimNowPlaying: Bool = false,
+        startAt: Double = 0
+    ) async -> Bool {
         guard let url = URL(string: urlString) else {
             errorMessage = "Invalid audio URL"
-            return
+            return false
         }
 
         // Skip if same URL already loaded
@@ -608,8 +717,19 @@ final class AudioService {
             nowPlayingAlbum = album ?? nowPlayingAlbum
             nowPlayingQueueIndex = queueIndex ?? nowPlayingQueueIndex
             nowPlayingQueueCount = queueCount ?? nowPlayingQueueCount
+            // The same track handed over again with a place to resume
+            // from still has to go there. This branch never touches the
+            // transport, so without the seek a resume into the track
+            // already loaded would silently start from wherever the
+            // playhead happened to be.
+            if startAt > 0, duration > 0, startAt < duration - 1 {
+                seek(to: startAt)
+            }
             updateNowPlayingInfo()
-            return
+            // Ready only once the duration is known — a second call for a
+            // track whose first load is still in flight is not a failure,
+            // but it is not ready either.
+            return duration > 0
         }
 
         // reset() invalidates any in-flight load; claim our generation
@@ -639,7 +759,7 @@ final class AudioService {
             let cmDuration = try await asset.load(.duration)
 
             // A newer load (or a reset) owns the state now — hands off.
-            guard generation == loadGeneration else { return }
+            guard generation == loadGeneration else { return false }
 
             duration = CMTimeGetSeconds(cmDuration)
             if duration.isNaN || duration.isInfinite {
@@ -651,15 +771,15 @@ final class AudioService {
             guard duration > 0 else {
                 reset()
                 errorMessage = "Audio unavailable — try again later"
-                return
+                return false
             }
         } catch {
             // Superseded loads exit without touching the newer load's state.
-            guard generation == loadGeneration else { return }
+            guard generation == loadGeneration else { return false }
             isLoading = false
 
             // Cancelled while current (view going away): quiet exit.
-            if Task.isCancelled { return }
+            if Task.isCancelled { return false }
 
             // The asset is unreachable (offline, or an expired link) —
             // tear down so the UI shows the failure instead of a dead
@@ -669,7 +789,21 @@ final class AudioService {
             #endif
             reset()
             errorMessage = "Audio unavailable — check your connection"
-            return
+            return false
+        }
+
+        // Where the voice left off. Seeking before the observers are
+        // installed keeps `currentTime` from reporting 0 for a beat and
+        // publishing a Lock Screen playhead at the head of a track the
+        // reader is resuming forty minutes in.
+        if startAt > 0, startAt < duration - 1 {
+            await player?.seek(
+                to: CMTime(seconds: startAt, preferredTimescale: 600),
+                toleranceBefore: .zero,
+                toleranceAfter: .zero
+            )
+            guard generation == loadGeneration else { return false }
+            currentTime = startAt
         }
 
         setupTimeObserver()
@@ -687,6 +821,7 @@ final class AudioService {
         }
 
         isLoading = false
+        return true
     }
 
     /// Activates the audio session when no other app is playing, so remote
@@ -833,6 +968,17 @@ final class AudioService {
         loadGeneration &+= 1
 
         pause()
+        // An in-flow track change preserves the sleep timer along with the
+        // Lock Screen player: "stop in fifteen minutes" means fifteen
+        // minutes, not fifteen minutes or the end of this file, whichever
+        // comes first. Leaving the flow entirely clears it.
+        if !preservingNowPlaying {
+            sleepTask?.cancel()
+            sleepTask = nil
+            sleepTimer = nil
+            sleepRemaining = nil
+        }
+        player?.volume = 1
         removeTimeObserver()
         removeEndOfPlaybackObserver()
         removeTransportObservations()
@@ -965,15 +1111,15 @@ final class AudioService {
             self.currentTime = 0
             self.player?.seek(to: .zero)
             self.updateNowPlayingPlaybackState()
+            // Only the flow that currently owns track navigation is told.
+            // Ungated, a handler left behind by a flow the user walked out
+            // of stays installed on the singleton, and the next flow's
+            // track ending calls it: a recording begun on the shelf an
+            // hour ago would start playing over a Rosary.
+            guard self.trackNavigationOwner != nil else { return }
             self.onTrackFinished?()
         }
     }
-
-    /// Fires when a track plays to its end. The prayer flow uses it to keep
-    /// the Lock Screen honest; it deliberately does NOT auto-advance — a
-    /// decade is a meditation plus ten Hail Marys, and the next mystery
-    /// begins when the person praying says so.
-    var onTrackFinished: (() -> Void)?
 
     private func removeEndOfPlaybackObserver() {
         if let observer = endOfPlaybackObserver {

@@ -260,6 +260,165 @@ private struct RuleRow: View {
     }
 }
 
+// MARK: - Reading
+
+/// The book left face-down on the table.
+///
+/// An oratory is a room arranged by the one who prays in it, and a room
+/// like that has a book open on the prie-dieu. One book — the most
+/// recent — never a "Currently Reading (3)" list: that is library
+/// management, and this is a chapel.
+///
+/// It names both places, because a book can be held in two hands: the
+/// chapter the eye left, and — when there is one — the reading the voice
+/// left mid-way. "Take it up" resumes whichever was more recent.
+struct ReadingCard: View {
+
+    @Environment(AppRouter.self) private var router
+    @Environment(\.modelContext) private var modelContext
+
+    @Query(sort: \BookReadingProgress.updatedAt, order: .reverse)
+    private var progress: [BookReadingProgress]
+
+    /// The most recently touched book that the catalog still carries.
+    private var current: (row: BookReadingProgress, info: LibraryBookInfo)? {
+        for row in progress {
+            if let info = LibraryCatalog.book(id: row.bookID) { return (row, info) }
+        }
+        return nil
+    }
+
+    var body: some View {
+        MeSection(title: "Reading", icon: "ph-book-open-fill") {
+            Group {
+                if let current {
+                    open(current.row, current.info)
+                } else {
+                    invitation
+                }
+            }
+            .padding(16)
+        }
+    }
+
+    // MARK: A book under way
+
+    private func open(_ row: BookReadingProgress, _ info: LibraryBookInfo) -> some View {
+        HStack(alignment: .top, spacing: 14) {
+            // The book's own cloth, small — you know which book it is
+            // before you have read a word of the card.
+            BookCover(info: info, isLettered: false)
+                .frame(width: 54)
+                .accessibilityHidden(true)
+
+            VStack(alignment: .leading, spacing: 5) {
+                Text(info.author.uppercased())
+                    .font(AppFonts.labelFont(9))
+                    .tracking(2)
+                    .foregroundColor(AppColors.gold.opacity(0.8))
+                    .lineLimit(1)
+
+                Text(info.title)
+                    .font(AppFonts.headlineFont(16))
+                    .foregroundColor(AppColors.cream)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                if let place = chapterLine(row) {
+                    Text(place)
+                        .font(AppFonts.italicFont(13))
+                        .foregroundColor(AppColors.textSecondary)
+                        .lineLimit(1)
+                }
+
+                if row.hasResumableTrack {
+                    HStack(spacing: 5) {
+                        AppIcon("ph-speaker-high", size: 11)
+                        Text("\(LibraryListeningSession.elapsedLabel(row.lastTrackSeconds)) into the reading")
+                            .font(AppFonts.italicFont(12))
+                    }
+                    .foregroundColor(AppColors.goldLight.opacity(0.85))
+                }
+
+                QuietGoldButton(
+                    title: "Take it up",
+                    trailingIcon: "ph-caret-right",
+                    size: 10,
+                    color: AppColors.gold,
+                    horizontalPadding: 0
+                ) {
+                    takeUp(row, info)
+                }
+                .padding(.vertical, -10)
+                .padding(.top, 4)
+            }
+
+            Spacer(minLength: 0)
+        }
+        .accessibilityElement(children: .combine)
+    }
+
+    /// "Chapter IX" — the chapter's own label, recorded with the place
+    /// so the card never has to fetch and parse a whole book to name it,
+    /// and never has to count. Absent for a place from a superseded
+    /// cutting of the edition, or from before labels were stored.
+    private func chapterLine(_ row: BookReadingProgress) -> String? {
+        guard LibraryProgressStore.isCurrent(row), !row.lastChapterTitle.isEmpty
+        else { return nil }
+        return row.lastChapterTitle
+    }
+
+    /// Resumes whichever hand the book was last held in.
+    private func takeUp(_ row: BookReadingProgress, _ info: LibraryBookInfo) {
+        let listened = row.lastListenedAt ?? .distantPast
+        let read = row.lastReadAt ?? .distantPast
+
+        if row.hasResumableTrack, listened > read {
+            // The recording lives on the book page, where its ledger and
+            // its transport are.
+            router.push(.libraryBook(id: info.id))
+        } else if LibraryProgressStore.isCurrent(row) {
+            router.push(.libraryChapter(bookID: info.id, chapterIndex: row.lastChapterIndex))
+        } else {
+            router.push(.libraryBook(id: info.id))
+        }
+    }
+
+    // MARK: Nothing open yet
+
+    /// A real empty state, not a blank frame: the shelf itself, and the
+    /// three words written on it.
+    private var invitation: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 8) {
+                ForEach(LibraryCatalog.books.prefix(4)) { book in
+                    BookCover(info: book, isLettered: false)
+                        .frame(width: 40)
+                }
+            }
+            .accessibilityHidden(true)
+
+            Text("Tolle, lege — take up and read")
+                .font(AppFonts.italicFont(14))
+                .foregroundColor(AppColors.cream.opacity(0.85))
+
+            QuietGoldButton(
+                title: "The shelf",
+                trailingIcon: "ph-caret-right",
+                size: 10,
+                color: AppColors.gold,
+                horizontalPadding: 0
+            ) {
+                router.push(.spiritualReading)
+            }
+            .padding(.vertical, -10)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Nothing open yet. Take up and read.")
+    }
+}
+
 // MARK: - Library
 
 /// The doors the home screen's old menu button used to open, plus the

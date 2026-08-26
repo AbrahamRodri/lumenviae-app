@@ -179,6 +179,10 @@ struct MeView: View {
             LibraryCard()
                 .padding(.horizontal, 20)
 
+        case .reading:
+            ReadingCard()
+                .padding(.horizontal, 20)
+
         case .consecration:
             ConsecrationCard()
                 .padding(.horizontal, 20)

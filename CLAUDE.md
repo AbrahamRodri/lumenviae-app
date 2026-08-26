@@ -209,6 +209,10 @@ hand, reset silently each morning, never carried over as failure),
 (a two-column shelf: Missal, Office, True Devotion, Spiritual Reading,
 How to Pray, In Scripture, Marian Library, Carlo Acutis, Sacred Record — a one-time
 migration inserts it for pages saved before it existed),
+**Reading** (the book left face-down: its cloth, the chapter the eye
+left, how far into the recording the voice left, and "Take it up" —
+one book, the most recent, never a "currently reading" list; a one-time
+migration inserts it beside Library),
 **Consecration** (the page's one votive-washed card), **Reflections**
 (journal entries set as quoted lines). Each card keeps the shared
 silhouette but its own interior character. Research behind the design:
@@ -276,7 +280,8 @@ app/
 │   ├── Meditation/           # SelectMeditationView (the shelf), MeditationSetDetailView
 │   ├── Consecration/         # 33-day preparation (own NavigationStack)
 │   ├── TrueDevotion/         # Book reader
-│   ├── Library/              # Spiritual Reading shelf, book page, chapter reader
+│   ├── Library/              # Spiritual Reading shelf, book page, chapter
+│   │                         # reader, contents sheet, transport
 │   ├── Resources/            # How to Pray, Marian Library, Scripture, Carlo Acutis
 │   ├── Onboarding/           # 7-slide first run + RosaryMethodsView
 │   └── Launch/
@@ -302,6 +307,10 @@ app/
 │   ├── FavoritesService, MeditationSetResolver, TrueDevotionLibrary
 │   ├── LibraryService        # Gutenberg text + LibriVox tracks, disk cache
 │   ├── LibraryBookParser     # Cuts a Gutenberg edition into chapters
+│   ├── LibraryTrackMap       # Ties LibriVox tracks to parsed chapters
+│   ├── LibraryListeningSession # The shelf's one voice, above the views
+│   ├── LibraryProgressStore  # Every read/write of a reading place
+│   ├── LibraryAudioDownloads # Per-track offline recordings
 │   ├── UserSettings          # Preferences + daily reminder scheduling
 │   └── MockDataService       # Preview/fallback fixtures only
 └── Resources/                # Fonts, TrueDevotionBook.json
@@ -346,7 +355,7 @@ write concurrent code here:
   from the pool matching the user's stated intentions.
 - **Offline** — user-initiated download of every set and audio file.
 - **Personalization** — three themes, four app icons, prayer language, text
-  size; the Me tab's arrangeable "My Oratory" page (widgets, rule of prayer,
+  size (app-wide, plus the missal's and the reading shelf's own); the Me tab's arrangeable "My Oratory" page (widgets, rule of prayer,
   intentions, display name) and the configurable Pray button (quick act +
   press-and-hold tray), all stored in UserDefaults via `UserSettings`.
 - **Onboarding** — eight slides, skippable, re-runnable from Account.
@@ -474,19 +483,76 @@ write concurrent code here:
   `Data/LibraryCatalog.swift` — Gutenberg serves CRLF, the parser
   normalizes it), and cached in Application Support/Library with a
   versioned filename (`LibraryService`, a separate client per the
-  third-party rule). LibriVox recordings stream through `AudioService`
-  from a Listen ledger when the catalog names a recording id. A
-  `BookReadingProgress` SwiftData row (one per book, written only on
-  real chapter opens) powers the book page's Continue card. Reader:
-  `ReadingText` with a drop cap, prev/next stepping in place so a
-  114-chapter book never stacks 114 screens.
+  third-party rule).
+
+  **The cutting rules are checked against the real editions, chapter by
+  chapter — do not change one without re-running it.** `startPattern`
+  says where the book proper begins (without it, Taylor's contents page
+  opens a false chapter that swallows the whole preface); `stopPattern`
+  where it ends; `dropPattern` removes a printer's mark; `notePattern`
+  names a footnote marker, and matched paragraphs are lifted out of the
+  prose into `LibraryChapter.notes` and set as an apparatus at the
+  chapter's foot (176 citations in the Imitation, 166 in the Story of a
+  Soul, thirty-four in one chapter alone). `chapterTitles` supplies
+  titles for an edition that prints none — Pusey's thirteen books.
+  Every one of these rides in `editionFingerprint`, so correcting one
+  book retires that book's cached parse and no other's.
+
+  The four books cut to: Imitation 114 chapters under four part
+  headers; Story of a Soul the Prologue, chapters I–XI, and the
+  Epilogue (13); Confessions 13 books; Dolorous Passion "To the
+  Reader", nine Meditations, the Introduction, and chapters I–LXVI (77).
+
+  **Audio is tied to the text** by `LibraryTrackMap`, from the catalog's
+  `trackMapping`: `.sequential` where a recording gives each chapter its
+  own file (Thérèse, Emmerich — 1:1, verified track for track),
+  `.bookChapterRanges` where one file holds many ("Book 3 - Chapters
+  21-30", Kempis), `.bookSpans` where one book needs several files
+  (Augustine, LibriVox 2601 — **the Pusey reading**, matching the text;
+  the other complete Confessions is Outler's and must never be offered
+  as the voice of this one). The alignment decides what the UI may
+  claim: a track that reads one whole chapter offers "READ ALONG" bare,
+  one that holds ten says "from Chapter XXI" rather than pretending the
+  voice starts where the reader is. A DEBUG assertion prints any
+  chapter left unmapped — a volunteer re-cutting their ledger is the
+  way this drifts.
+
+  `LibraryListeningSession` owns playback **above the views**: a screen
+  counts itself in and out (`enterScreen`/`leaveScreen`), and the
+  reading ends when the last library screen is gone — never on a single
+  view's `onDisappear`, which fires for a push, doesn't fire when a
+  screen is torn out from under a pushed one, and fires spuriously for a
+  cancelled back-swipe. It holds the shared player with a token, so a
+  Rosary that claims the player simply silences this session's readouts.
+
+  `BookReadingProgress` keeps **both places** — the chapter and
+  paragraph the eye left, and the track and second the voice left — plus
+  the `editionFingerprint` the reading place was made against, so a rules
+  change lets go of an index that no longer means what it meant. All
+  reads and writes go through `LibraryProgressStore` (reading written
+  straight through, listening throttled to 5s and forced on pause, track
+  change, leaving, and backgrounding).
+
+  Reader: `ReadingText` sizing from its own `readingTextScale` (15–26pt,
+  the Aa), a versal initial, a hairline place rule, "9 of 13", a ☰
+  contents sheet with search, prev/next stepping in place so a
+  114-chapter book never stacks 114 screens, paragraph-level resume via
+  `.scrollPosition(id:)`, long-press a paragraph to keep it as a
+  Reflection (the journal is the app's one store for what a reader
+  keeps — there is no highlights library), and follow-the-voice
+  auto-scroll where the sounding track reads this whole chapter.
+  Recordings can be saved per track (`LibraryAudioDownloads`, background
+  URLSession) behind the missal's honest offline line — "1 of 13
+  readings saved · 11 MB · about 188 MB more". Never a percentage, never
+  a streak, never a count of what is unread.
 
 ### Not built yet
 
 - A Divine Office version/language setting (Monastic, Dominican, and the
   other rubrical versions the API's `/office/versions` already serves) —
   `OfficeAPIService.version`/`.language` are the seam
-- Auto-scrolling meditation text synced to audio
+- Auto-scrolling meditation text synced to audio (the Spiritual Reading
+  reader has it; the prayer reader's is proportional too)
 - Haptic feedback during prayer
 - A setting to switch between the Traditional and Modern (Luminous Thursday)
   schedules — `ScheduleService` is the seam for it

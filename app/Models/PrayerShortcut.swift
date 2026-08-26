@@ -86,19 +86,21 @@ enum MeWidget: String, CaseIterable, Identifiable {
     case rule = "rule"
     case streak = "streak"
     case library = "library"
+    case reading = "reading"
     case consecration = "consecration"
     case journal = "journal"
 
     var id: String { rawValue }
 
     /// The sections a fresh install shows, in order.
-    static let defaultOrder: [MeWidget] = [.rule, .streak, .library, .consecration, .journal]
+    static let defaultOrder: [MeWidget] = [.rule, .streak, .library, .reading, .consecration, .journal]
 
     var title: String {
         switch self {
         case .rule:         return "Rule of Prayer"
         case .streak:       return "Prayer Streak"
         case .library:      return "Library"
+        case .reading:      return "Reading"
         case .consecration: return "Consecration"
         case .journal:      return "Reflections"
         }
@@ -110,6 +112,7 @@ enum MeWidget: String, CaseIterable, Identifiable {
         case .rule:         return "Your daily devotions as a checklist"
         case .streak:       return "Your streak and this week's prayer"
         case .library:      return "The missal, office, books, and guides"
+        case .reading:      return "The book you have open, and where you left it"
         case .consecration: return "Your place on the 33-day path"
         case .journal:      return "Your latest journal entries"
         }
@@ -120,6 +123,7 @@ enum MeWidget: String, CaseIterable, Identifiable {
         case .rule:         return "ph-scroll"
         case .streak:       return "ph-flame"
         case .library:      return "ph-book"
+        case .reading:      return "ph-book-open-fill"
         case .consecration: return "ph-crown"
         case .journal:      return "ph-book-open"
         }

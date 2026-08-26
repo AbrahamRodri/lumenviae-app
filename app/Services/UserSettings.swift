@@ -155,6 +155,24 @@ final class UserSettings {
         didSet { UserDefaults.standard.set(readerAutoScroll, forKey: "userSettings.readerAutoScroll") }
     }
 
+    /// Reading size for the Spiritual Reading shelf, its own slider the
+    /// way the missal has its own — a book is read in a chapel and on a
+    /// bus, and sending someone four screens into Settings mid-chapter
+    /// is the worst version of this.
+    ///
+    /// The range reaches further at the top than the missal's 15–21: the
+    /// app draws its type through `Font.custom(_:size:)` and so opts out
+    /// of the system's Larger Text entirely, which makes these sliders
+    /// the only answer it offers.
+    var readingTextScale: Double = 0.4 {
+        didSet { UserDefaults.standard.set(readingTextScale, forKey: "userSettings.readingTextScale") }
+    }
+
+    /// Resolved reading size, 15–26 pt.
+    var readingFontSize: CGFloat {
+        CGFloat(15 + readingTextScale * 11)
+    }
+
     // MARK: - Scriptural Rosary
 
     /// Whether each Hail Mary bead carries its own verse of Scripture —
@@ -491,6 +509,9 @@ final class UserSettings {
         if let name = d.string(forKey: "userSettings.displayName") {
             displayName = name
         }
+        if d.object(forKey: "userSettings.readingTextScale") != nil {
+            readingTextScale = d.double(forKey: "userSettings.readingTextScale")
+        }
         if let widgets = d.stringArray(forKey: "userSettings.meWidgets") {
             meWidgetsRaw = widgets
         }
@@ -509,6 +530,18 @@ final class UserSettings {
         // One-time: the Library card replaced the home screen's menu
         // button, so a page saved before it existed gains it once —
         // after that, removing it is the user's choice and sticks.
+        // One-time: the Reading card arrived with the shelf's audio and
+        // place-keeping, so a page saved before it existed gains it once,
+        // under the Library card it belongs beside. After that, removing
+        // it is the user's choice and sticks.
+        if !d.bool(forKey: "userSettings.readingCardMigrated") {
+            d.set(true, forKey: "userSettings.readingCardMigrated")
+            if !meWidgetsRaw.contains(MeWidget.reading.rawValue) {
+                let after = meWidgetsRaw.firstIndex(of: MeWidget.library.rawValue).map { $0 + 1 }
+                meWidgetsRaw.insert(MeWidget.reading.rawValue, at: after ?? meWidgetsRaw.count)
+            }
+        }
+
         if !d.bool(forKey: "userSettings.libraryCardMigrated") {
             d.set(true, forKey: "userSettings.libraryCardMigrated")
             if !meWidgetsRaw.contains(MeWidget.library.rawValue) {

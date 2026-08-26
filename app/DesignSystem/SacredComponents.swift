@@ -465,8 +465,16 @@ struct DropCapText: View {
     /// A paragraph that opens with a quotation gets no illumination at
     /// all — an enlarged or gilded quote mark reads as a mistake, so
     /// those paragraphs are set as plain reading text.
+    ///
+    /// Nor is a short opening block illuminated. Book IV of the
+    /// Imitation prints "The Voice of the Disciple" above the prose, and
+    /// eighteen of its chapters open on a rubric like it; a gilded
+    /// versal on four words, with the real first sentence left plain
+    /// below, reads as a misprint. Under eighty characters is a rubric
+    /// or a response, never the opening of a chapter.
     private var composed: Text {
-        guard let first = text.first, !Self.openingQuotes.contains(first) else {
+        guard text.count >= 80, let first = text.first,
+              !Self.openingQuotes.contains(first) else {
             return plain(text)
         }
         return versal(first) + plain(String(text.dropFirst()))

@@ -21,7 +21,7 @@ struct SpiritualReadingView: View {
     @Query private var progress: [BookReadingProgress]
 
     private var readingIDs: Set<String> {
-        Set(progress.map(\.bookID))
+        Set(progress.filter { $0.hasReadingPlace || $0.hasResumableTrack }.map(\.bookID))
     }
 
     var body: some View {

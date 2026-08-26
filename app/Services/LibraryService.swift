@@ -69,15 +69,21 @@ final class LibraryService {
 
     /// Fetches in flight, so two openings of one book share a download
     /// rather than racing each other through Gutenberg's throttle.
-    private var inFlightBooks: [String: Task<LibraryBook, Error>] = [:]
-    private var inFlightTracks: [String: Task<[LibriVoxSection], Error>] = [:]
+    ///
+    /// Each entry carries a token so a `defer` can tell its own task from
+    /// a newer one for the same id. Nothing suspends between installing
+    /// an entry and registering its defer today, so no newer task can be
+    /// there — but one added `await` would make a stale defer evict a
+    /// live task, and the next caller would download the book again.
+    private var inFlightBooks: [String: (token: UUID, task: Task<LibraryBook, Error>)] = [:]
+    private var inFlightTracks: [String: (token: UUID, task: Task<[LibriVoxSection], Error>)] = [:]
 
     /// Cache-parse version, carried in every filename so a change to
     /// the parsed shape — or a fixed parse — can never be read as the
     /// old one. Per-edition changes ride in `cacheKey` below rather than
     /// here: correcting one book's cutting rules must invalidate that
     /// book without discarding the other three.
-    private static let cacheVersion = "v3"
+    private static let cacheVersion = "v4"
 
     private let session: URLSession
     private let directory: URL
@@ -96,7 +102,14 @@ final class LibraryService {
         values.isExcludedFromBackup = true
         try? url.setResourceValues(values)
 
-        pruneOrphans()
+        // Off the main actor and off the launch path: this is a directory
+        // listing plus a handful of deletes, and `LibraryService.shared` is
+        // first touched from a view that is about to draw.
+        let cacheDirectory = directory
+        let wanted = Self.wantedFileNames(in: cacheDirectory)
+        Task.detached(priority: .utility) {
+            await Self.pruneOrphans(in: cacheDirectory, wanted: wanted)
+        }
     }
 
     // MARK: - Cache keys
@@ -117,7 +130,7 @@ final class LibraryService {
     /// The parsed book: memory, then disk, then the network.
     func book(for info: LibraryBookInfo) async throws -> LibraryBook {
         if let loaded = books[info.id] { return loaded }
-        if let running = inFlightBooks[info.id] { return try await running.value }
+        if let running = inFlightBooks[info.id] { return try await running.task.value }
 
         let url = cacheURL(prefix: "book", info: info)
         let session = session
@@ -125,8 +138,9 @@ final class LibraryService {
             if let cached: LibraryBook = await Self.readJSON(at: url) { return cached }
             return try await Self.fetchAndParse(info: info, session: session, cacheURL: url)
         }
-        inFlightBooks[info.id] = task
-        defer { inFlightBooks[info.id] = nil }
+        let token = UUID()
+        inFlightBooks[info.id] = (token, task)
+        defer { if inFlightBooks[info.id]?.token == token { inFlightBooks[info.id] = nil } }
 
         let loaded = try await task.value
         // One book resident at a time; the disk cache makes reopening
@@ -142,7 +156,7 @@ final class LibraryService {
     func trackList(for info: LibraryBookInfo) async throws -> [LibriVoxSection] {
         guard let librivoxID = info.librivoxID else { return [] }
         if let loaded = trackLists[info.id] { return loaded }
-        if let running = inFlightTracks[info.id] { return try await running.value }
+        if let running = inFlightTracks[info.id] { return try await running.task.value }
 
         let url = cacheURL(prefix: "audio", info: info)
         let session = session
@@ -152,8 +166,9 @@ final class LibraryService {
                 librivoxID: librivoxID, session: session, cacheURL: url
             )
         }
-        inFlightTracks[info.id] = task
-        defer { inFlightTracks[info.id] = nil }
+        let token = UUID()
+        inFlightTracks[info.id] = (token, task)
+        defer { if inFlightTracks[info.id]?.token == token { inFlightTracks[info.id] = nil } }
 
         let sections = try await task.value
         trackLists[info.id] = sections
@@ -162,22 +177,40 @@ final class LibraryService {
 
     // MARK: - Pruning
 
+    /// The file names the current catalog asks for.
+    private static func wantedFileNames(in directory: URL) -> Set<String> {
+        Set(LibraryCatalog.books.flatMap { info in
+            [directory.appendingPathComponent(
+                "book_\(info.id)_\(cacheVersion)_\(info.editionFingerprint).json"
+             ).lastPathComponent,
+             directory.appendingPathComponent(
+                "audio_\(info.id)_\(cacheVersion)_\(info.editionFingerprint).json"
+             ).lastPathComponent]
+        })
+    }
+
     /// Sweeps cache files no current catalog entry asks for — earlier
     /// versions, retired editions, books dropped from the shelf. Without
     /// it every version bump strands its predecessor in Application
     /// Support, which iOS never purges and the user cannot reach.
-    private func pruneOrphans() {
-        let wanted = Set(LibraryCatalog.books.flatMap { info in
-            [cacheURL(prefix: "book", info: info).lastPathComponent,
-             cacheURL(prefix: "audio", info: info).lastPathComponent]
-        })
-        guard let files = try? FileManager.default.contentsOfDirectory(
-            atPath: directory.path
-        ) else { return }
+    ///
+    /// Orphans are kept for thirty days, the missal's own rule. Correcting
+    /// an edition's cutting rules retires every reader's cached parse at
+    /// once, and deleting those files the instant the new build launches
+    /// is how a reader on a plane loses four books that worked yesterday
+    /// with nothing able to replace them.
+    @concurrent
+    private nonisolated static func pruneOrphans(in directory: URL, wanted: Set<String>) async {
+        let manager = FileManager.default
+        guard let files = try? manager.contentsOfDirectory(atPath: directory.path) else { return }
+        let cutoff = Date().addingTimeInterval(-30 * 24 * 60 * 60)
 
         for file in files where !wanted.contains(file) {
             guard file.hasPrefix("book_") || file.hasPrefix("audio_") else { continue }
-            try? FileManager.default.removeItem(at: directory.appendingPathComponent(file))
+            let url = directory.appendingPathComponent(file)
+            let modified = (try? manager.attributesOfItem(atPath: url.path)[.modificationDate]) as? Date
+            guard let modified, modified < cutoff else { continue }
+            try? manager.removeItem(at: url)
         }
     }
 
@@ -194,11 +227,25 @@ final class LibraryService {
         session: URLSession,
         cacheURL: URL
     ) async throws -> LibraryBook {
-        let textURL = info.textURL
+        var request = URLRequest(url: info.textURL)
+        // Gutenberg throttles unidentified clients hardest, and an
+        // identified one is simply good manners toward a free archive.
+        request.setValue("LumenViae/1.0 (iOS; Catholic prayer app)", forHTTPHeaderField: "User-Agent")
+
         let data: Data
         do {
-            let (fetched, response) = try await session.data(from: textURL)
+            let (fetched, response) = try await session.data(for: request)
             guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
+                throw LibraryError.unreachable
+            }
+            // A block page, a rate-limit notice, or a maintenance page —
+            // Gutenberg serves these as HTML, sometimes with a 200. The
+            // parser would cut zero chapters from them and the reader
+            // would be told this edition has changed shape and will
+            // return in a coming update: wrong, and unfixable by them.
+            // A real edition is plain text and hundreds of kilobytes.
+            let type = http.value(forHTTPHeaderField: "Content-Type")?.lowercased() ?? ""
+            guard type.contains("text/plain"), fetched.count > 50_000 else {
                 throw LibraryError.unreachable
             }
             data = fetched
@@ -208,10 +255,12 @@ final class LibraryService {
 
         // Gutenberg serves UTF-8 today; Latin-1 is the one legacy shape
         // worth catching, because the lossy path would cache mojibake
-        // rather than fail.
+        // rather than fail. (Latin-1 decoding never fails, so it is the
+        // end of the chain.)
         let text = String(data: data, encoding: .utf8)
             ?? String(data: data, encoding: .isoLatin1)
-            ?? String(decoding: data, as: UTF8.self)
+            ?? ""
+
         let book = LibraryBookParser.parse(text: text, info: info)
         // A clean download the parser couldn't cut is not a network
         // failure, and retrying it only re-downloads the book.

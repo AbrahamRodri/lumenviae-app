@@ -793,6 +793,16 @@ final class ReaderScrollModel {
         needsBaseline = true
     }
 
+    /// The reader moved the page themselves. Following stands aside for
+    /// a few seconds afterwards.
+    ///
+    /// The offset-based path below serves a reader that reports its
+    /// scroll position; a reader driven by `scrollPosition(id:)` has no
+    /// offset to report and says so directly.
+    func noteManualMove() {
+        lastManualScrollAt = Date()
+    }
+
     /// Any movement not caused by a recent follow-along animation counts
     /// as the reader's own scroll and pauses following.
     func handleScroll(to offset: CGFloat) {

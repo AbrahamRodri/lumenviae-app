@@ -44,41 +44,45 @@ struct BookCover: View {
     /// the top edge.
     var hasRibbon: Bool = false
 
+    /// Whether the cover is lettered. Off below about fifty points,
+    /// where a title in Cinzel can only shrink to a column of single
+    /// glyphs: at that size these are books seen across a room, and what
+    /// tells them apart is the cloth, not the words.
+    var isLettered: Bool = true
+
     var body: some View {
         VStack(spacing: 0) {
             gilt
-                .padding(.top, 12)
+                .padding(.top, isLettered ? 12 : 8)
 
             Spacer(minLength: 8)
 
-            VStack(spacing: 10) {
-                Text(info.title.uppercased())
-                    .font(AppFonts.headlineFont(15))
-                    .foregroundColor(AppColors.goldLight.opacity(0.95))
-                    .tracking(1)
-                    .multilineTextAlignment(.center)
-                    .lineLimit(4)
-                    .minimumScaleFactor(0.7)
-                    .padding(.horizontal, 18)
+            if isLettered {
+                VStack(spacing: 10) {
+                    Text(info.title.uppercased())
+                        .font(AppFonts.headlineFont(15))
+                        .foregroundColor(AppColors.goldLight.opacity(0.95))
+                        .tracking(1)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(4)
+                        .minimumScaleFactor(0.7)
+                        .padding(.horizontal, 18)
 
+                    diamond
+                }
+            } else {
                 diamond
             }
 
             Spacer(minLength: 8)
 
-            Text(info.author.uppercased())
-                .font(AppFonts.labelFont(8))
-                // Modest tracking: on a narrow cover the letterspacing
-                // is what pushes a saint's name into an ellipsis
-                .tracking(1.1)
-                .foregroundColor(AppColors.gold.opacity(0.7))
-                .lineLimit(1)
-                .minimumScaleFactor(0.55)
-                .padding(.horizontal, 10)
+            if isLettered {
+                letteredAuthor
+            }
 
             gilt
-                .padding(.top, 10)
-                .padding(.bottom, 12)
+                .padding(.top, isLettered ? 10 : 0)
+                .padding(.bottom, isLettered ? 12 : 8)
         }
         .frame(maxWidth: .infinity)
         .aspectRatio(0.70, contentMode: .fit)
@@ -87,7 +91,7 @@ struct BookCover: View {
             // The double hairline frame of a tooled binding
             RoundedRectangle(cornerRadius: 3)
                 .strokeBorder(AppColors.gold.opacity(0.35), lineWidth: 0.6)
-                .padding(6)
+                .padding(isLettered ? 6 : 4)
         )
         .clipShape(RoundedRectangle(cornerRadius: 6))
         .overlay(
@@ -106,6 +110,22 @@ struct BookCover: View {
             }
         }
         .shadow(color: .black.opacity(0.35), radius: 7, y: 5)
+    }
+
+    private var letteredAuthor: some View {
+        Text(info.author.uppercased())
+                .font(AppFonts.labelFont(9))
+                // Modest tracking: on a narrow cover the letterspacing
+                // is what pushes a saint's name into an ellipsis
+                .tracking(1.1)
+                // Gold at 0.7 over these four cloths measures 3.3–3.8:1,
+                // under the 4.5:1 floor, and a 0.55 scale factor let it
+                // shrink to four and a half points. Gold light at 0.9
+                // reaches 5.4–6.7:1, and the floor is now 7.2pt.
+                .foregroundColor(AppColors.goldLight.opacity(0.9))
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+                .padding(.horizontal, 8)
     }
 
     /// The cloth itself: the binding colour lit from the upper left,
