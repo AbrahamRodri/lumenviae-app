@@ -1004,13 +1004,12 @@ struct LibraryChapterReaderView: View {
     /// highlights library, no colours, no review queue.
     private func keepAsReflection(_ passage: String) {
         guard let info else { return }
-        let body = journalDraft.trimmingCharacters(in: .whitespacesAndNewlines)
-        var text = "\u{201C}\(passage)\u{201D}\n\n\(citation)"
-        if !body.isEmpty { text += "\n\n\(body)" }
 
-        let entry = JournalEntry(
-            text: text,
-            mysteryTitle: chapter?.displayTitle ?? info.title,
+        let entry = JournalEntry.note(
+            passage: passage,
+            citation: citation,
+            comment: journalDraft,
+            subject: chapter?.displayTitle ?? info.title,
             bookID: bookID
         )
         modelContext.insert(entry)

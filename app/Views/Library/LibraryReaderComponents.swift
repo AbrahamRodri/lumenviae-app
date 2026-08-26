@@ -932,12 +932,18 @@ struct BookNotesSheet: View {
     }
 
     /// One note: the passage, the reader's own words, and when.
-    /// The entry's text is the journal's own composition — passage,
-    /// citation, comment, blank-line separated — so it is read back
-    /// the same way.
+    ///
+    /// Read from the entry's own fields where it has them. Splitting
+    /// `text` on blank lines is kept only for notes written before
+    /// those fields existed: `text` is what the journal editor rewrites,
+    /// so a note edited there would otherwise come back with its
+    /// citation shown as the reader's comment.
     private func noteRow(_ note: JournalEntry) -> some View {
         let parts = note.text.components(separatedBy: "\n\n")
-        let quote = parts.first ?? note.text
+        let quote = note.bookPassage.map { "\u{201C}\($0)\u{201D}" }
+            ?? parts.first
+            ?? note.text
+        let citation = note.bookCitation ?? (parts.count > 1 ? parts[1] : nil)
         let comment = parts.count > 2 ? parts[2...].joined(separator: "\n\n") : nil
 
         return VStack(alignment: .leading, spacing: 8) {
@@ -956,8 +962,8 @@ struct BookNotesSheet: View {
             }
 
             HStack(spacing: 8) {
-                if parts.count > 1 {
-                    Text(parts[1])
+                if let citation, !citation.isEmpty {
+                    Text(citation)
                         .font(AppFonts.labelFont(9))
                         .tracking(1.2)
                         .foregroundColor(AppColors.gold.opacity(0.6))
