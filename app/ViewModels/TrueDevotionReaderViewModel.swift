@@ -30,6 +30,10 @@ final class TrueDevotionReaderViewModel {
     /// Paragraph index last at the top of that chapter
     private(set) var lastParagraphIndex: Int = 0
 
+    /// The ribbons laid in this book — a mark is a place, nothing
+    /// written. Parsed once and kept in memory like the completed set.
+    private(set) var marks: [(chapterID: String, paragraph: Int)] = []
+
     /// Surfaced to the reader rather than dropped — losing someone's place in
     /// a book they are praying through should never fail quietly.
     var errorMessage: String?
@@ -73,6 +77,7 @@ final class TrueDevotionReaderViewModel {
         completedChapterIDs = progress?.completedChapterIDs ?? []
         lastChapterID = progress?.lastChapterID
         lastParagraphIndex = progress?.lastParagraphIndex ?? 0
+        marks = progress?.marks ?? []
     }
 
     /// The record, created on first write. Never called from a read path, so
@@ -141,6 +146,27 @@ final class TrueDevotionReaderViewModel {
         guard let record = ensureProgress() else { return }
         record.savePosition(chapterID: chapterID, paragraphIndex: max(paragraphIndex, 0))
         refreshPublishedState()
+    }
+
+    // MARK: - Marks
+
+    func isMarked(chapterID: String, paragraph: Int) -> Bool {
+        marks.contains { $0.chapterID == chapterID && $0.paragraph == paragraph }
+    }
+
+    func markCount(forChapter chapterID: String) -> Int {
+        marks.filter { $0.chapterID == chapterID }.count
+    }
+
+    /// Lays a ribbon, or lifts the one already there. Returns whether
+    /// the paragraph is marked afterwards.
+    @discardableResult
+    func toggleMark(chapterID: String, paragraph: Int) -> Bool {
+        guard let record = ensureProgress() else { return false }
+        let nowMarked = record.toggleMark(chapterID: chapterID, paragraph: paragraph)
+        refreshPublishedState()
+        save()
+        return nowMarked
     }
 
     func completeChapter(_ chapterID: String) {

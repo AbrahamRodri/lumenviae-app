@@ -48,6 +48,13 @@ final class JournalEntry {
     /// Whether this was written mid-prayer (true) or post-prayer (false)
     var isMidPrayer: Bool
 
+    // MARK: - Reading Properties
+
+    /// The library book a kept passage came from ("story-of-a-soul",
+    /// "true-devotion"), so a book page can gather its own notes.
+    /// Nil for every entry that is not a note on a passage.
+    var bookID: String?
+
     // MARK: - Consecration Properties
 
     /// The consecration day number (1-34), nil for rosary entries
@@ -132,6 +139,7 @@ final class JournalEntry {
         mysteryTitle: String? = nil,
         mysteryIndex: Int? = nil,
         isMidPrayer: Bool = false,
+        bookID: String? = nil,
         createdAt: Date = Date()
     ) {
         self.id = UUID()
@@ -141,6 +149,7 @@ final class JournalEntry {
         self.mysteryTitle = mysteryTitle
         self.mysteryIndex = mysteryIndex
         self.isMidPrayer = isMidPrayer
+        self.bookID = bookID
         self.createdAt = createdAt
         self.consecrationDay = nil
         self.consecrationPhaseRaw = nil
