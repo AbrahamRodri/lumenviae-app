@@ -231,33 +231,57 @@ struct TodaysGoalBand: View {
 
     /// A 38-point dial whose ring fills as the day's reading does —
     /// the section's icon and its progress at once.
+    /// The measure as a ring being filled.
+    ///
+    /// Drawn as a stroked arc rather than the wedge it used to be: an
+    /// angular gradient with hard stops has a visible seam where its two
+    /// ends meet, no cap, and no way to round the leading edge, and the
+    /// hole had to be punched with a disc of the page's own colour that
+    /// only matched on one theme.
+    ///
+    /// Three states, and each has to be legible at a glance:
+    ///
+    /// - **Nothing yet** — the track alone, but drawn at a weight you can
+    ///   actually see. It used to sit at a tenth of cream, which read as
+    ///   an empty hole rather than as a measure waiting to be filled.
+    /// - **Under way** — the arc from twelve o'clock, clockwise, with a
+    ///   round leading cap so even a minute or two shows as something.
+    /// - **Met** — the ring closed, a check inside it, and a breath of
+    ///   gold behind. Nothing else in the band changes when the day's
+    ///   measure is reached, so the dial has to say it by itself.
     private var dial: some View {
         let f = min(max(fraction, 0), 1)
+        let met = f >= 1
 
-        return Circle()
-            .fill(
-                AngularGradient(
-                    stops: [
-                        .init(color: AppColors.goldLight, location: 0),
-                        .init(color: AppColors.goldLight, location: f),
-                        .init(color: AppColors.cream.opacity(0.1), location: f),
-                        .init(color: AppColors.cream.opacity(0.1), location: 1)
-                    ],
-                    center: .center,
-                    angle: .degrees(-90)
+        return ZStack {
+            // The whole measure, always visible — the dial reads as a
+            // thing to be filled before anything has filled it.
+            Circle()
+                .stroke(AppColors.gold.opacity(0.3), lineWidth: 3)
+
+            Circle()
+                .trim(from: 0, to: f)
+                .stroke(
+                    met ? AppColors.goldLight : AppColors.gold,
+                    style: StrokeStyle(lineWidth: 3, lineCap: .round)
                 )
-            )
-            .frame(width: 38, height: 38)
-            .overlay(
-                Circle()
-                    .fill(AppColors.background)
-                    .frame(width: 20, height: 20)
-            )
-            .overlay(
-                Circle().strokeBorder(AppColors.gold.opacity(0.4), lineWidth: 0.5)
-            )
-            .shadow(color: AppColors.gold.opacity(0.12), radius: 6)
-            .accessibilityHidden(true)
+                // Trim starts at three o'clock; a measure starts at the
+                // top.
+                .rotationEffect(.degrees(-90))
+
+            if met {
+                AppIcon("ph-check", size: 14)
+                    .foregroundColor(AppColors.goldLight)
+                    .transition(.scale(scale: 0.5).combined(with: .opacity))
+            }
+        }
+        .frame(width: 34, height: 34)
+        .shadow(
+            color: AppColors.goldLight.opacity(met ? 0.35 : 0),
+            radius: met ? 7 : 0
+        )
+        .animation(.easeOut(duration: 0.45), value: f)
+        .accessibilityHidden(true)
     }
 }
 

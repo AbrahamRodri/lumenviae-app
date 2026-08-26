@@ -203,16 +203,32 @@ struct TodayInChurchSection: View {
                     router.push(.office)
                 }
 
-                // Mid-consecration, the blue book is the user's own copy
-                // — its tail carries their day, and it opens their
-                // preparation. Otherwise it is Montfort's, and opens
-                // the reader.
+                // Two books share this place on the shelf, and the spine
+                // says which one it is.
+                //
+                // Mid-consecration it is the user's own copy of the
+                // preparation: it carries their day and opens the
+                // Consecrate tab. It used to say TRUE DEVOTION there
+                // too, which named the book while opening the
+                // thirty-three days — so a reader who wanted Montfort's
+                // text tapped it and landed in an experience.
+                //
+                // Otherwise it is Montfort's book, and opens the book.
                 ShelfSpine(
-                    title: ["TRUE", "DEVOTION"],
+                    title: activeConsecration != nil
+                        ? ["TOTAL", "CONSECRATION"]
+                        : ["TRUE", "DEVOTION"],
                     tail: activeConsecration.map { "DAY \(min($0.currentDayNumber, 33))" } ?? "MONTFORT",
                     leather: Color(hex: "16244A"),
                     width: 72, height: 220,
-                    titleSize: 11.5, titleTracking: 3.0,
+                    // CONSECRATION is half again as long as DEVOTION,
+                    // and `minimumScaleFactor` shrinks glyphs without
+                    // shrinking tracking — twelve letters at three
+                    // points of it overran the rules and the word came
+                    // out as CONSECRATI…. The longer title is set
+                    // tighter and a shade smaller so it fits whole.
+                    titleSize: activeConsecration != nil ? 10 : 11.5,
+                    titleTracking: activeConsecration != nil ? 1.5 : 3.0,
                     giltOpacity: (0.45, 0.22),
                     litStop: 0.11,
                     ruleInset: 8,
@@ -223,12 +239,12 @@ struct TodayInChurchSection: View {
                         size: CGSize(width: 5, height: 14),
                         edge: .trailing, inset: 18, rise: 12
                     ),
-                    accessibility: activeConsecration.map { "True Devotion, day \(min($0.currentDayNumber, 33))" } ?? "True Devotion, the book"
+                    accessibility: activeConsecration.map { "Total Consecration, day \(min($0.currentDayNumber, 33))" } ?? "True Devotion, the book"
                 ) {
                     if activeConsecration != nil {
                         router.selectedTab = .consecration
                     } else {
-                        router.push(.trueDevotion)
+                        router.push(.trueDevotionBook)
                     }
                 }
             }
