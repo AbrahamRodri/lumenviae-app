@@ -179,13 +179,14 @@ chapters), How to Pray, In Scripture, the Marian Library,
 Carlo Acutis, Settings, Explore — are `AppRoute` cases that slide in
 from the right; each draws its own gold Back in its toolbar (so never
 apply `navigationBarHidden` to them). The exceptions are the pages
-whose chrome is their own: the Daily Missal, whose collapsing header
-carries its back button, and the two **chapter readers** (Spiritual
-Reading and True Devotion), which withdraw their chrome as the page
-moves and carry a floating `ReaderBackCapsule` instead. Their title
-pages — the shelf, a book page, True Devotion's own — keep the system
-bar and the gold Back like everything else; only the reading surface
-hides it.
+whose chrome is their own: the Daily Missal and the Office's hour
+reader, whose collapsing headers carry their back button, and the two
+**chapter readers** (Spiritual Reading and True Devotion), which
+withdraw their chrome as the page moves and carry a floating
+`ReaderBackCapsule` instead. Their title pages — the shelf, a book
+page, True Devotion's own, the Office's ledger of hours — keep the
+system bar and the gold Back like everything else; only the reading
+surface hides it.
 
 A page that hides the system bar hides the back-swipe with it, so it
 owes a way out from **every** branch it can draw, not just the loaded
@@ -293,7 +294,9 @@ app/
 │   ├── TrueDevotion/         # Book reader
 │   ├── Library/              # Spiritual Reading shelf, book page, chapter
 │   │                         # reader, contents sheet, transport
-│   ├── Resources/            # How to Pray, Marian Library, Scripture, Carlo Acutis
+│   ├── Resources/            # How to Pray, Marian Library, Scripture, Carlo Acutis,
+│   │                         # the Missal and the Office (+ LiturgicalMonthGrid,
+│   │                         # the month grid both calendars draw)
 │   ├── Onboarding/           # 7-slide first run + RosaryMethodsView
 │   └── Launch/
 ├── Components/               # CustomTabBar, HeaderView, MysteryCard,
@@ -400,8 +403,8 @@ write concurrent code here:
   so "Propers only" keeps the day's own Preface. The Aa
   sheet sets language (writes the app-wide prayer language), stacked or
   side-by-side bilingual layout (side-by-side forces Both), a
-  missal-specific text size slider (15–21pt, `missalTextScale`, which the
-  citations follow too), posture
+  text size slider for the liturgical books (15–21pt, `missalTextScale`,
+  which the citations and the Office's hours follow too), posture
   cues, a High Mass toggle, and Contents: "With the Ordinary" (default)
   lays the **entire Ordinary** through the propers — Asperges (sung Sunday
   Mass) through the Last Gospel and the Leonine prayers — with the
@@ -455,20 +458,65 @@ write concurrent code here:
   failing. The version and language ride as explicit query params, pinned
   in `OfficeAPIService` (`rubrics-1960`, `english`) — a future version
   setting threads through there, and every cache file name carries the
-  version. `DivineOfficeView` steps days with the missal's navigator and
-  lists the eight hours as a ruled ledger (bundled in `CanonicalHour` —
-  the ledger never waits on the network; today's page marks the present
-  hour with a gold dot); `OfficeHourView` reads one hour under the app's
-  prayer language and the missal's two bilingual layouts, reusing
+  version. `DivineOfficeView` keeps its own leaf — the `OrdoMasthead`,
+  deliberately not the missal's collapsing chrome, because a page of
+  eight rows has nothing to collapse — and lists the hours as a ruled
+  ledger (bundled in `CanonicalHour`; the ledger never waits on the
+  network, and today's page marks the present hour with a gold dot).
+
+  **`OfficeHourView` is the missal's reader.** It hides the system bar
+  and carries the same chrome: Back / ☰ / Aa, a date pill that
+  crossfades into the hour's name as the plate collapses (96 down /
+  44 back), a jump-to-section rail, a 1pt progress line, and the
+  active section spied from each section's reported top — the same
+  `onGeometryChange` machinery, measured in the same content-space
+  coordinates, for the same reasons. `OfficeReaderSection` cuts the
+  hour into addressable sections (`OfficeSectionView` draws one), so
+  the ☰ index and the rail can name and reach them; an unnamed section
+  is a continuation and is drawn but never listed. A jump to the
+  **last** section anchors `.bottom`, not `.top`: the Conclusio is ten
+  lines, cannot rise to the header, and a lazily built column answers
+  that request by scrolling past its own end into blank.
+
+  Its sheets are the missal's, minus what the breviary has no data
+  for: `OfficeReadingSheet` (language, stacked/side-by-side, size) on
+  `MissalSheetShell`/`MissalSheetChip` — no posture cues, no Ordinary
+  scope, no High Mass — and `OfficeIndexSheet`, whose detent is
+  computed from its own row count. The reading size is
+  `missalTextScale`: the two are the same kind of page, and the sheet
+  says so. Text still draws through
   `MissalPassageText`/`MissalPairedPassageText`/`MissalColumnPassageText`
   (the Latin and vernacular cells keep the engine's line structure, so
-  they pair line for line), with prev/next hour at the foot of the page.
+  they pair line for line). The versal opens the hour's first words
+  **only when they are words** — an hour beginning "℣. Deus in
+  adiutórium" would otherwise gild the versicle mark. The leaf closes
+  on the scribe's `explicit` ("EXPLICIUNT LAUDES"), never on
+  "Benedicamus Domino", which the Conclusio prints three lines above.
+
+  `OfficeCalendarSheet` is the missal's month grid, and literally so:
+  both sheets draw **`LiturgicalMonthGrid`** (roman-numeral month,
+  chevrons, the weeks, the press-a-day-to-name-it readout) and supply
+  only the three things that differ — the day's mark, what the day is
+  called, and the offline row. They were two copies of the same four
+  hundred lines, which is how the same defect came to be fixed twice.
+  The office names no vestment colour, so each day is marked by
+  **rank** instead (`OfficeRank`, parsed from "I. classis"), a gold dot
+  that burns brighter for the greater feasts and not at all for a
+  feria. A day counts as saved only when all eight of its hours are on
+  disk — half a day is no use in a chapel with no signal.
+
+  A month is recorded as loaded only once it has **arrived**: marking
+  it before the fetch left a month that failed permanently blank, with
+  every retry returning on the guard and nothing saying why. A month
+  that cannot be reached says so and offers Try again. Stepping the
+  month puts down any save in flight, and a download reports only while
+  it still holds the token it started with.
+
   Hours and days cache in Application Support/Office via
   `OfficeCacheService`; after the first load, today's and tomorrow's
   hours are prefetched quietly and days more than 30 back are pruned.
-  `OfficeCalendarSheet` mirrors the missal's. Every hour names its source
-  — the texts are The Divinum Officium Project's work, and the footer
-  credits it.
+  Every hour names its source — the texts are The Divinum Officium
+  Project's work, and the footer credits it.
 
 - **Scriptural Rosary** — a verse of Scripture for every Hail Mary bead,
   behind a Prayer Experience toggle (off by default; the plain Rosary is
@@ -565,10 +613,17 @@ write concurrent code here:
   contents sheet with search, prev/next stepping in place so a
   114-chapter book never stacks 114 screens, paragraph-level resume via
   `.scrollPosition(id:)`, and follow-the-voice auto-scroll where the
-  sounding track reads this whole chapter. Its watcher is mounted in an
-  overlay, never inside the lazy content — as the last child of the
-  LazyVStack it was only built once the reader had already scrolled
-  past the whole chapter, so following never started.
+  sounding track reads this whole chapter — `canFollowText` is the
+  test, and it is false over a track holding ten chapters or a chapter
+  split across five. The mapping is proportional (paragraph N of M at
+  N/M of the reading), the same rule the prayer reader follows, since
+  LibriVox gives no per-word timings. The page yields to the hand: any
+  scroll the reader makes stops following for four seconds, and
+  following's own travel is stamped so it is never mistaken for one.
+  Its watcher is mounted in an overlay, never inside the lazy content —
+  as the last child of the LazyVStack it would only be built once the
+  reader had already scrolled past the whole chapter, so following
+  would never start.
   Recordings can be saved per track (`LibraryAudioDownloads`, background
   URLSession) behind the missal's honest offline line — "1 of 13
   readings saved · 11 MB · about 188 MB more".
@@ -609,8 +664,9 @@ write concurrent code here:
 - A Divine Office version/language setting (Monastic, Dominican, and the
   other rubrical versions the API's `/office/versions` already serves) —
   `OfficeAPIService.version`/`.language` are the seam
-- Auto-scrolling meditation text synced to audio (the Spiritual Reading
-  reader has it; the prayer reader's is proportional too)
+- Auto-scroll *synced* to audio, word by word. Both readers follow
+  proportionally instead — the prayer reader and the Spiritual Reading
+  reader — because neither the narration nor LibriVox carries timings
 - Haptic feedback during prayer
 - A setting to switch between the Traditional and Modern (Luminous Thursday)
   schedules — `ScheduleService` is the seam for it

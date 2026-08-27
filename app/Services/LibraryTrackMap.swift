@@ -57,8 +57,26 @@ nonisolated enum LibraryNumerals {
     }
 
     /// Roman numerals as the two sources print them — uppercase, with
-    /// an optional trailing period. Deliberately strict: a lowercase
-    /// "i" is the English word, and "MIX" is a title.
+    /// an optional trailing period.
+    ///
+    /// Three tests, because these strings are chapter headings and
+    /// volunteer-typed track titles, and an all-caps heading is full of
+    /// words spelled in the very letters a numeral uses.
+    ///
+    /// Case: a lowercase "i" is the English word, not one.
+    ///
+    /// Canonical form: the value is rendered back and must match what
+    /// was read. "DID" scans as 999 and "CIVIL" as 143 under the
+    /// subtractive rule, but neither is how 999 or 143 is written, so
+    /// both are words. This also rejects the malformed numerals a
+    /// printer never sets — "IIII", "IM", "VV".
+    ///
+    /// Magnitude: canonical form alone is not enough, because some
+    /// words *are* numerals — "MIX" is exactly how 1009 is written. No
+    /// book on this shelf runs past 114 chapters and no part past 13,
+    /// so a reading beyond `plausibleLimit` is a word that happens to
+    /// scan. Without this the Imitation's alignment can hand a reader
+    /// the wrong track and say nothing.
     static func roman(_ token: String) -> Int? {
         let cleaned = token.trimmingCharacters(in: CharacterSet(charactersIn: ".,:;"))
         guard !cleaned.isEmpty, cleaned == cleaned.uppercased() else { return nil }
@@ -77,7 +95,33 @@ nonisolated enum LibraryNumerals {
                 previous = value
             }
         }
-        return total > 0 ? total : nil
+        guard total > 0, total <= plausibleLimit else { return nil }
+        guard numeral(for: total) == cleaned else { return nil }
+        return total
+    }
+
+    /// The largest number a chapter, book, or track span on this shelf
+    /// can honestly name. The Imitation's 114 chapters are the longest
+    /// run; the bound is set well clear of it and well under the
+    /// four-figure readings that words produce.
+    private static let plausibleLimit = 200
+
+    /// A number as it would actually be printed — the yardstick
+    /// `roman` measures a candidate against.
+    private static func numeral(for number: Int) -> String {
+        let values: [(Int, String)] = [
+            (100, "C"), (90, "XC"), (50, "L"), (40, "XL"),
+            (10, "X"), (9, "IX"), (5, "V"), (4, "IV"), (1, "I")
+        ]
+        var remainder = number
+        var result = ""
+        for (value, numeral) in values {
+            while remainder >= value {
+                result += numeral
+                remainder -= value
+            }
+        }
+        return result
     }
 
     /// "First" → 1 and "One" → 1, through the thirteen books of the

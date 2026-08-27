@@ -148,14 +148,38 @@ final class LibraryListeningSession {
         }
         self.sections = sections
         self.alignment = alignment
+    }
 
-        // This book's speed, not the app's. A reader who set 1.25x for
-        // the Rosary's meditations has not thereby chosen a speed for
-        // Susan Morin, and vice versa.
+    /// This book's speed, not the app's. A reader who set 1.25x for the
+    /// Rosary's meditations has not thereby chosen a speed for Susan
+    /// Morin, and vice versa.
+    ///
+    /// Applied when the player is actually taken, never on adopting a
+    /// book. `setPlaybackRate` retunes whatever is sounding, so doing it
+    /// as a side effect of opening a book page reached across a Rosary
+    /// that had the player and read the rest of its meditations at
+    /// Thérèse's 1.5x.
+    private func applyReadingRate(for info: LibraryBookInfo) {
         audio.setPlaybackRate(
             UserSettings.shared.readingRate(for: info.id, default: info.preferredRate),
             remember: false
         )
+        borrowedRate = true
+    }
+
+    /// Whether this session has set a playback rate that is not the
+    /// app's own, so `stop()` knows there is something to hand back —
+    /// and never "restores" a rate it did not borrow.
+    private var borrowedRate = false
+
+    /// Gives the app-wide narration speed back, once, whether or not
+    /// this session still holds the player. A Rosary that claimed the
+    /// player mid-reading inherited this book's pace, and leaving the
+    /// shelf is the moment to undo that.
+    private func returnBorrowedRate() {
+        guard borrowedRate else { return }
+        borrowedRate = false
+        audio.restoreRememberedRate()
     }
 
     /// Reads the last listening place off the book's row, so a ledger
@@ -190,6 +214,10 @@ final class LibraryListeningSession {
         // down — reset() zeroes currentTime, and the position must be
         // taken before that, never after.
         persist(force: true)
+
+        // Taking the player is the moment this book's pace becomes the
+        // app's, and the only moment it may.
+        applyReadingRate(for: info)
 
         let resume = seconds ?? restingPosition(forTrack: section.id) ?? 0
         failure = nil
@@ -250,9 +278,29 @@ final class LibraryListeningSession {
     private func startCommitting() {
         commitTicker?.cancel()
         commitTicker = Task { @MainActor [weak self] in
+            // Ending rather than idling matters: a Rosary claiming the
+            // player, or a sleep timer consumed at a reading's end, both
+            // stop playback without coming through `pause()`, and a
+            // ticker that merely skipped those turns went on waking
+            // every second for the life of the app.
+            //
+            // Not on the first quiet turn, though. `play()` starts this
+            // immediately after asking the player to sound, and an audio
+            // session still being let go by a phone call leaves
+            // `isPlaying` false for about a second while it retries. A
+            // few turns' grace outlasts that; a stop outlasts the grace.
+            var quietTurns = 0
+
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(1))
-                guard let self, !Task.isCancelled, self.isPlaying else { continue }
+                guard let self, !Task.isCancelled else { return }
+
+                guard self.isPlaying else {
+                    quietTurns += 1
+                    if quietTurns >= 4 { return }
+                    continue
+                }
+                quietTurns = 0
                 self.persist()
             }
         }
@@ -327,6 +375,9 @@ final class LibraryListeningSession {
     func setRate(_ rate: Double) {
         guard let info else { return }
         audio.setPlaybackRate(rate, remember: false)
+        // Chosen for this book alone, so it is borrowed like any other
+        // reading pace and handed back when the shelf is left.
+        borrowedRate = true
         UserSettings.shared.setReadingRate(rate, for: info.id)
     }
 
@@ -389,7 +440,6 @@ final class LibraryListeningSession {
 
         LibraryProgressStore.recordListening(
             bookID: info.id,
-            chapterIndex: alignment.firstChapter(forTrack: trackIndex) ?? 0,
             trackID: section.id,
             trackIndex: trackIndex,
             seconds: seconds,
@@ -434,17 +484,22 @@ final class LibraryListeningSession {
         playGeneration &+= 1
 
         guard audio.isTrackNavigationOwner(token) else {
+            // Another flow holds the player, so there is nothing here to
+            // tear down — but the pace may still be this book's, and it
+            // has to go back whoever is speaking now.
+            returnBorrowedRate()
             info = nil
             sections = []
             alignment = .empty
             trackIndex = nil
+            failure = nil
             return
         }
         persist(force: true)
         audio.clearTrackNavigation(owner: token)
         audio.reset()
         // Hand the app-wide narration speed back with the player.
-        audio.restoreRememberedRate()
+        returnBorrowedRate()
         audio.deactivateSession()
 
         info = nil
