@@ -65,6 +65,14 @@ struct LibraryChapterReaderView: View {
     @State private var hasSettled = false
     @State private var didRestore = false
 
+    /// The wait that arms `hasSettled`, held so a chapter stepped past
+    /// can cancel it. Three taps of Next inside the settling window used
+    /// to leave three timers running, and the first to fire armed
+    /// settling for a chapter still laying out — which let the foot's
+    /// `onAppear` mark a chapter finished, and count it toward the day's
+    /// measure, without it ever being read.
+    @State private var settleTask: Task<Void, Never>?
+
     /// The paragraph the reader has selected — the NOTE · MARK · SHARE
     /// capsule stands while one is.
     @State private var selectedParagraph: Int?
@@ -78,6 +86,23 @@ struct LibraryChapterReaderView: View {
 
     /// The small engraved confirmation above the foot.
     @State private var toast: String?
+
+    // Following the voice. Only ever while a track that reads *this
+    // whole chapter* is sounding — over a track holding ten chapters
+    // there is nothing honest to pace the page against.
+
+    /// The paragraph following last drove to, so it never asks twice
+    /// for the same one.
+    @State private var followTarget: Int?
+
+    /// When following last moved the page, so its own animated travel
+    /// is not read back as the reader's hand.
+    @State private var followMovedAt = Date.distantPast
+
+    /// When the reader last moved the page themselves. Following stands
+    /// aside for a few seconds afterwards: the voice may read on, but
+    /// the page belongs to whoever last touched it.
+    @State private var readerMovedAt = Date.distantPast
 
     // Chrome withdrawal. The offset is measured on the whole content
     // column in global coordinates — the missal learned that a marker
@@ -103,24 +128,29 @@ struct LibraryChapterReaderView: View {
         case contents(book: LibraryBook, info: LibraryBookInfo)
         case textOptions
         /// The paragraph selected, carried with the case so it can
-        /// never be missing when the sheet is built
-        case keep(passage: String)
+        /// never be missing when the sheet is built — with its index,
+        /// which is what tells one selection from another.
+        case keep(paragraph: Int, passage: String)
         /// The recording's own transport, the same one the book page
         /// raises — one player, reached from wherever the reader is
         case player
         /// One of the editor's notes, raised from its marker
         case footnote(number: Int, text: String)
         /// The passage as a small setting, on its way out of the app
-        case share(passage: String)
+        case share(paragraph: Int, passage: String)
 
+        /// Identity carries the payload, not just the case.
+        /// `.sheet(item:)` rebuilds on a change of `id` alone, so two
+        /// footnotes sharing one id meant tapping note VII while note
+        /// III was up left note III on screen.
         var id: String {
             switch self {
             case .contents: return "contents"
             case .textOptions: return "text"
-            case .keep: return "keep"
+            case .keep(let paragraph, _): return "keep-\(paragraph)"
             case .player: return "player"
-            case .footnote: return "footnote"
-            case .share: return "share"
+            case .footnote(let number, _): return "footnote-\(number)"
+            case .share(let paragraph, _): return "share-\(paragraph)"
             }
         }
     }
@@ -199,10 +229,10 @@ struct LibraryChapterReaderView: View {
                     isMarked: isMarked(selected),
                     onNote: {
                         journalDraft = ""
-                        sheet = .keep(passage: chapter.paragraphs[selected])
+                        sheet = .keep(paragraph: selected, passage: chapter.paragraphs[selected])
                     },
                     onMark: { toggleMark(at: selected) },
-                    onShare: { sheet = .share(passage: chapter.paragraphs[selected]) }
+                    onShare: { sheet = .share(paragraph: selected, passage: chapter.paragraphs[selected]) }
                 )
                 .padding(.bottom, session.isActive ? 142 : 76)
                 .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -228,6 +258,9 @@ struct LibraryChapterReaderView: View {
             session.leaveScreen()
             meter.leaveReader()
             recordPlace(force: true)
+            // A wait that outlives the page would arm settling for a
+            // chapter no longer on screen.
+            settleTask?.cancel()
         }
         .onChange(of: scenePhase) { _, phase in
             guard phase != .active else {
@@ -267,7 +300,7 @@ struct LibraryChapterReaderView: View {
                     .presentationDetents([.height(430)])
                     .presentationDragIndicator(.visible)
 
-            case .keep(let passage):
+            case .keep(_, let passage):
                 LibraryKeepSheet(
                     passage: passage,
                     citation: citation,
@@ -287,7 +320,7 @@ struct LibraryChapterReaderView: View {
                     .presentationDetents([.height(280)])
                     .presentationDragIndicator(.visible)
 
-            case .share(let passage):
+            case .share(_, let passage):
                 PassageShareSheet(
                     passage: passage,
                     citeLine: shareCiteLine,
@@ -375,11 +408,24 @@ struct LibraryChapterReaderView: View {
                     .padding(.top, 6)
             }
         }
+        // The voice's watcher. Zero-sized and mounted here rather than
+        // as the last child of the LazyVStack: down there it is only
+        // built once the reader has already scrolled past the whole
+        // chapter, so following would never start until it was pointless.
+        .overlay { voiceFollower }
         .onChange(of: topParagraph) { _, paragraph in
             // The first reports come from the restore, not the reader's
             // hand. Only once the page has settled does a scroll mean
             // "this is my place now".
             guard hasSettled else { return }
+
+            // Whose hand moved the page. Following's own travel reports
+            // through here too — including the paragraphs it passes over
+            // on the way — so anything inside its animation window is
+            // taken as its own and nothing else is.
+            if Date().timeIntervalSince(followMovedAt) > Self.followTravel {
+                readerMovedAt = Date()
+            }
 
             if let paragraph {
                 if paragraph >= 0 {
@@ -394,13 +440,16 @@ struct LibraryChapterReaderView: View {
         }
         .onChange(of: currentIndex) { _, _ in
             hasSettled = false
+            followTarget = nil
+            followMovedAt = .distantPast
+            readerMovedAt = .distantPast
             selectedParagraph = nil
             lastParagraphSeen = 0
             topParagraph = -1
             setChrome(hidden: false)
             recordPlace(force: true)
             // A chapter stepped into in place is a chapter arrived at.
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { hasSettled = true }
+            armSettling(after: 0.35)
         }
     }
 
@@ -939,7 +988,75 @@ struct LibraryChapterReaderView: View {
         // Arriving *is* reading; the paragraph only becomes the reader's
         // own once the restore scroll has landed and settled.
         recordPlace(force: true)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) { hasSettled = true }
+        armSettling(after: 0.45)
+    }
+
+    // MARK: - Following the voice
+
+    /// How long following's own travel takes. A change of place
+    /// reported inside this window is its own; anything later is a hand.
+    private static let followTravel: TimeInterval = 1.4
+
+    /// How long the page stays the reader's own after they move it.
+    private static let followYields: TimeInterval = 4
+
+    /// A zero-size view whose only work is to watch the player's clock.
+    ///
+    /// Kept out of the text's own hierarchy so a redraw a second costs
+    /// nothing but this: invalidating a view with no size, which writes
+    /// outward only when the paragraph actually changes.
+    private var voiceFollower: some View {
+        Color.clear
+            .frame(width: 0, height: 0)
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
+            .onChange(of: session.currentTime) { _, time in
+                followVoice(at: time)
+            }
+    }
+
+    /// Keeps the page with the voice, where the two can honestly be kept
+    /// together.
+    ///
+    /// Only a track that reads this whole chapter and nothing else may
+    /// drive the page: over a file holding ten chapters, or a chapter
+    /// split across five files, there is no honest mapping and the page
+    /// stays still. Without per-word timings the mapping is proportional
+    /// — paragraph N of M at N/M of the reading — which tracks a
+    /// LibriVox reader's pace closely enough to keep the eye near the
+    /// voice, and is the same rule the prayer reader follows.
+    private func followVoice(at time: Double) {
+        guard hasSettled, selectedParagraph == nil else { return }
+        guard session.canFollowText(chapterIndex: currentIndex) else { return }
+        guard Date().timeIntervalSince(readerMovedAt) > Self.followYields else { return }
+
+        let duration = session.duration
+        guard duration > 0, let count = chapter?.paragraphs.count, count > 0 else { return }
+
+        let fraction = min(max(time / duration, 0), 1)
+        let target = min(count - 1, Int(fraction * Double(count)))
+        guard target != followTarget else { return }
+
+        followTarget = target
+        followMovedAt = Date()
+        withAnimation(.easeInOut(duration: Self.followTravel)) {
+            topParagraph = target
+        }
+    }
+
+    /// Waits for the page to stop moving, then lets the place marker and
+    /// the chapter-finished check believe what they see.
+    ///
+    /// Cancels any wait already running, so only the newest chapter can
+    /// arm settling. A reader tapping through chapters faster than the
+    /// window is a reader who has read none of them.
+    private func armSettling(after seconds: Double) {
+        settleTask?.cancel()
+        settleTask = Task { @MainActor in
+            try? await Task.sleep(for: .seconds(seconds))
+            guard !Task.isCancelled else { return }
+            hasSettled = true
+        }
     }
 
     /// Records where the eye is. Never from view construction — SwiftUI

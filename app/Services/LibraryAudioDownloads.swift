@@ -111,6 +111,16 @@ final class LibraryAudioDownloads {
             delegate.identityByURL[url] = (bookID, section.id)
         }
 
+        // An empty ledger is never evidence that a recording was
+        // replaced. LibriVox can answer 200 with no sections at all —
+        // a schema change, an empty cached ledger — and the book page
+        // calls this on that answer as readily as on a good one. Pruning
+        // against nothing deletes every reading the reader deliberately
+        // saved, which for the Dolorous Passion is three hundred
+        // megabytes and no way back. Absence of a list is not a list of
+        // absences: with nothing to compare against, keep everything.
+        guard !sections.isEmpty else { return }
+
         // Anything saved for this book that the ledger no longer carries
         // is a reading from a recording the catalog has since replaced.
         // It can never be played again and nothing else will ever ask

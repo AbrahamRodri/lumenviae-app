@@ -56,9 +56,10 @@ enum LibraryProgressStore {
         let row = upsert(bookID: bookID, chapterIndex: chapterIndex, in: context)
         row.lastChapterIndex = chapterIndex
         row.lastParagraphIndex = max(0, paragraphIndex)
-        // This, and only this, is what opens a reading place.
-        row.lastReadAt = Date()
         if !chapterTitle.isEmpty { row.lastChapterTitle = chapterTitle }
+        // This, and only this, is what opens a reading place: every
+        // surface naming where the reader *read* gates on `lastReadAt`,
+        // and a row made by a listening write must not carry one.
         row.lastReadAt = Date()
         row.updatedAt = Date()
         save(context)
@@ -138,9 +139,13 @@ enum LibraryProgressStore {
 
     /// Records where the voice is, at most every `commitInterval`
     /// seconds unless `force` — pausing, changing track, leaving.
+    ///
+    /// Deliberately takes no chapter. A listening write never claims
+    /// one, so accepting an index here would be a parameter that looks
+    /// load-bearing and is thrown away — and the next caller to rely on
+    /// it would compile, run, and record nothing.
     static func recordListening(
         bookID: String,
-        chapterIndex: Int,
         trackID: String,
         trackIndex: Int,
         seconds: Double,
@@ -152,9 +157,9 @@ enum LibraryProgressStore {
         guard force || Date().timeIntervalSince(lastCommit) >= commitInterval else { return }
         lastCommit = Date()
 
-        // A listening write never claims a chapter: the index it has is
-        // whichever chapter the track aligns with, not one the reader
-        // opened. `-1` on a fresh row leaves `hasReadingPlace` false.
+        // The chapter a track aligns with is not a chapter the reader
+        // opened, so a fresh row starts at `-1` and `hasReadingPlace`
+        // stays false until something actually reads.
         let row = upsert(bookID: bookID, chapterIndex: -1, in: context)
         row.lastTrackID = trackID
         row.lastTrackIndex = trackIndex
