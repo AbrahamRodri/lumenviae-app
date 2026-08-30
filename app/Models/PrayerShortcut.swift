@@ -60,7 +60,7 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
         case .chooseMeditation: return "ph-cards"
         case .sevenSorrows:     return "ph-heart"
         case .mass:             return "ch-altar"
-        case .office:           return "ch-candle"
+        case .office:           return "ph-clock"
         case .consecration:     return "ph-crown"
         }
     }

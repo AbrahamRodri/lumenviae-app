@@ -31,7 +31,7 @@ struct ContentView: View {
     @State private var showPrayEditor = false
 
     private var shouldShowTabBar: Bool {
-        router.path.isEmpty && !isConsecrationNavigating
+        router.path.isEmpty && !isConsecrationNavigating && !router.chapelArranging
     }
 
     // MARK: - Body
@@ -185,8 +185,8 @@ struct ContentView: View {
             JournalView()
         case .progress:
             PrayerProgressView()
-        case .account:
-            MeView()
+        case .chapel:
+            MyChapelView()
         }
     }
 
@@ -222,6 +222,9 @@ struct ContentView: View {
 
         case .settings:
             AccountView()
+
+        case .about:
+            AboutView()
 
         case .explore:
             ExploreView()

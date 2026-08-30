@@ -142,24 +142,33 @@ struct JournalView: View {
 
                 Spacer()
 
+                // With nothing written yet there is nothing to lay out,
+                // search, or scroll past — and the empty state already
+                // carries its own "Write First Entry". Four controls over
+                // a blank page, three of them inert and two of them gold,
+                // was the page arguing with itself.
                 HStack(spacing: 18) {
-                    layoutToggle
+                    if !entries.isEmpty {
+                        layoutToggle
 
-                    // Search toggle
-                    Button(action: { withAnimation { showingSearch.toggle() } }) {
-                        AppIcon("ph-magnifying-glass", size: 18)
-                            .foregroundColor(AppColors.gold)
-                    }
-
-                    // New general entry
-                    Button(action: { showingNewEntry = true }) {
-                        ZStack {
-                            Circle()
-                                .fill(AppColors.gold)
-                                .frame(width: 40, height: 40)
-                            AppIcon("ph-pencil-simple", size: 16)
-                                .foregroundColor(AppColors.background)
+                        // Search toggle
+                        Button(action: { withAnimation { showingSearch.toggle() } }) {
+                            AppIcon("ph-magnifying-glass", size: 18)
+                                .foregroundColor(AppColors.gold)
                         }
+                        .accessibilityLabel("Search reflections")
+
+                        // New general entry
+                        Button(action: { showingNewEntry = true }) {
+                            ZStack {
+                                Circle()
+                                    .fill(AppColors.gold)
+                                    .frame(width: 40, height: 40)
+                                AppIcon("ph-pencil-simple", size: 16)
+                                    .foregroundColor(AppColors.background)
+                            }
+                        }
+                        .accessibilityLabel("New entry")
                     }
                 }
             }

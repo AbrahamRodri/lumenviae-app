@@ -142,25 +142,38 @@ struct StreakWidget: View {
 struct FlameOrb: View {
     let isLit: Bool
 
+    /// Orb diameter. The streak card burns at 50; the Chapel's flame
+    /// tile sets it smaller or larger to fit its two layouts. The halo's
+    /// blur scales with it, so a smaller orb is a smaller drawing rather
+    /// than the same smear around less flame.
+    var size: CGFloat = 50
+
+    /// The breathing and the flicker are ambient — they say nothing the
+    /// still orb doesn't. The flame stands unmoving when motion is
+    /// reduced, on the Chapel page and on the streak card alike.
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    private var animates: Bool { isLit && !reduceMotion }
+
     var body: some View {
         ZStack {
             // Soft glow halo, breathing when lit
             Circle()
                 .fill(AppColors.gold.opacity(isLit ? 0.35 : 0.10))
-                .frame(width: 50, height: 50)
-                .blur(radius: 6)
+                .frame(width: size, height: size)
+                .blur(radius: size * 0.12)
                 .phaseAnimator([1.0, 1.15, 1.0]) { view, scale in
-                    view.scaleEffect(isLit ? scale : 1.0)
+                    view.scaleEffect(animates ? scale : 1.0)
                 } animation: { _ in
                     .easeInOut(duration: 1.6)
                 }
 
             Circle()
                 .fill(AppColors.gold.opacity(isLit ? 0.22 : 0.12))
-                .frame(width: 50, height: 50)
+                .frame(width: size, height: size)
 
             // Flickering flame
-            AppIcon("ph-flame-fill", size: 22)
+            AppIcon("ph-flame-fill", size: (size * 0.44).rounded())
                 .foregroundStyle(
                     isLit
                         ? LinearGradient(
@@ -176,7 +189,7 @@ struct FlameOrb: View {
                 )
                 .phaseAnimator([1.0, 1.08, 0.96, 1.05]) { view, scale in
                     view
-                        .scaleEffect(isLit ? scale : 1.0, anchor: .bottom)
+                        .scaleEffect(animates ? scale : 1.0, anchor: .bottom)
                 } animation: { _ in
                     .easeInOut(duration: 0.5)
                 }

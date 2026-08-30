@@ -225,13 +225,13 @@ final class UserSettings {
     // MARK: - Prayer Language
 
     /// Prayer language preference for devotional prayers
-    var prayerLanguagePreference: String = PrayerLanguage.both.rawValue {
+    var prayerLanguagePreference: String = PrayerLanguage.english.rawValue {
         didSet { UserDefaults.standard.set(prayerLanguagePreference, forKey: "userSettings.prayerLanguage") }
     }
 
     /// Resolved prayer language enum
     var prayerLanguage: PrayerLanguage {
-        PrayerLanguage(rawValue: prayerLanguagePreference) ?? .both
+        PrayerLanguage(rawValue: prayerLanguagePreference) ?? .english
     }
 
     // MARK: - Missal Layout
@@ -287,12 +287,20 @@ final class UserSettings {
     // MARK: - Onboarding Intentions
 
     /// What drew the user to the app, chosen during onboarding and editable
-    /// in Account. May be empty (the slide is skippable). Raw values rather
+    /// in Settings. May be empty (the slide is skippable). Raw values rather
     /// than enum cases so the stored form survives a rename of the enum.
+    ///
+    /// Intentions only decide which pool the reminder copy is drawn from, so
+    /// a change here reschedules what is already permitted and never asks for
+    /// permission. It used to call `syncNotifications()`, which — with
+    /// `remindersEnabled` defaulting to true — put the system prompt on the
+    /// "What Draws You Here?" slide, three slides before the one that
+    /// explains it, and left a user who declined there with a reminder slide
+    /// that appeared to work and never fired.
     var onboardingIntentions: [String] = [] {
         didSet {
             UserDefaults.standard.set(onboardingIntentions, forKey: "userSettings.onboardingIntentions")
-            Task { await syncNotifications() }
+            Task { await refreshNotificationsWithoutPrompting() }
         }
     }
 
@@ -392,6 +400,34 @@ final class UserSettings {
 
     func setMeWidgets(_ widgets: [MeWidget]) {
         meWidgetsRaw = widgets.map(\.rawValue)
+    }
+
+    // MARK: - Chapel
+
+    /// The Chapel page's layout: every tile's order, width, and whether
+    /// it stands on the page or waits in the tray. Encoded per tile as
+    /// "id:span:on"; unknown ids are dropped on decode, and tiles newer
+    /// than the stored layout gain their default placement.
+    var chapelLayoutRaw: [String] = ChapelPlacement.defaultLayout.map(\.encoded) {
+        didSet { UserDefaults.standard.set(chapelLayoutRaw, forKey: "userSettings.chapelLayout") }
+    }
+
+    var chapelLayout: [ChapelPlacement] { ChapelPlacement.decode(chapelLayoutRaw) }
+
+    func setChapelLayout(_ layout: [ChapelPlacement]) {
+        chapelLayoutRaw = layout.map(\.encoded)
+    }
+
+    /// Whether the user has arranged the Chapel once, by any route.
+    /// Until then the page carries its one-time coach ribbon.
+    var chapelCoached: Bool = false {
+        didSet { UserDefaults.standard.set(chapelCoached, forKey: "userSettings.chapelCoached") }
+    }
+
+    /// The chant the Chapel's chant tile last held, so the piece the
+    /// user keeps close to hand stays the one they chose.
+    var chapelChantID: String = "" {
+        didSet { UserDefaults.standard.set(chapelChantID, forKey: "userSettings.chapelChant") }
     }
 
     // MARK: - Pray Button
@@ -496,7 +532,7 @@ final class UserSettings {
             textSizeScale = d.double(forKey: "userSettings.textSizeScale")
         }
         if d.object(forKey: "userSettings.prayerLanguage") != nil {
-            prayerLanguagePreference = d.string(forKey: "userSettings.prayerLanguage") ?? PrayerLanguage.both.rawValue
+            prayerLanguagePreference = d.string(forKey: "userSettings.prayerLanguage") ?? PrayerLanguage.english.rawValue
         }
         hasSeenPrayerSwipeHint = d.bool(forKey: "userSettings.hasSeenPrayerSwipeHint")
         if d.object(forKey: "userSettings.readerAutoScroll") != nil {
@@ -586,6 +622,31 @@ final class UserSettings {
             }
         }
 
+        chapelCoached = d.bool(forKey: "userSettings.chapelCoached")
+        if let chant = d.string(forKey: "userSettings.chapelChant") {
+            chapelChantID = chant
+        }
+        if let chapel = d.stringArray(forKey: "userSettings.chapelLayout") {
+            chapelLayoutRaw = chapel
+        } else if let widgets = d.stringArray(forKey: "userSettings.meWidgets") {
+            // One-time: the Chapel took the Me page's slot, so an
+            // arrangement made there carries over — the same sections in
+            // the same order, sections they removed waiting in the tray.
+            // The chant tile is new; it joins the page in its default
+            // place at the end.
+            chapelLayoutRaw = Self.chapelLayout(
+                fromMeWidgets: Self.meWidgetsAsShown(widgets)
+            ).map(\.encoded)
+
+            // `didSet` does not fire for assignments made inside this
+            // type's own init, so the key has to be written by hand.
+            // Without it the branch above never finds a stored layout,
+            // the migration re-derives on every launch, and the day
+            // MeWidget goes away every un-arranged page resets to
+            // default.
+            d.set(chapelLayoutRaw, forKey: "userSettings.chapelLayout")
+        }
+
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             DispatchQueue.main.async {
                 self.notificationAuthorizationGranted =
@@ -593,6 +654,61 @@ final class UserSettings {
                     settings.authorizationStatus == .provisional
             }
         }
+    }
+
+    // MARK: - Me → Chapel migration
+
+    /// The Me page's widget order as the user actually saw it.
+    ///
+    /// The Library and Reading cards were each added by a one-time
+    /// migration above, which mutates `meWidgetsRaw` — but that
+    /// assignment happens inside `init`, where `didSet` is suppressed,
+    /// so the insert never reached disk while its `…Migrated` flag did.
+    /// Anyone who has launched a previous build therefore has a stored
+    /// array missing cards their page was showing them, and the flag
+    /// that would fix it is already spent. Reapplying the same two
+    /// rules here is what makes the migration carry over the page they
+    /// had rather than a page they never saw.
+    private static func meWidgetsAsShown(_ raw: [String]) -> [String] {
+        var widgets = raw
+        if !widgets.contains(MeWidget.library.rawValue) {
+            widgets.insert(MeWidget.library.rawValue, at: min(2, widgets.count))
+        }
+        if !widgets.contains(MeWidget.reading.rawValue) {
+            let after = widgets.firstIndex(of: MeWidget.library.rawValue).map { $0 + 1 }
+            widgets.insert(MeWidget.reading.rawValue, at: after ?? widgets.count)
+        }
+        return widgets
+    }
+
+    /// The old Me page's section order, restated as a Chapel layout.
+    /// Every widget maps to a tile at full width; widgets the user had
+    /// removed start in the tray.
+    private static func chapelLayout(fromMeWidgets raw: [String]) -> [ChapelPlacement] {
+        let mapping: [MeWidget: ChapelTile] = [
+            .rule: .rule,
+            .streak: .flame,
+            .library: .library,
+            .reading: .reading,
+            .consecration: .consecration,
+            .journal: .reflections
+        ]
+
+        var layout: [ChapelPlacement] = MeWidget.decode(raw).compactMap { widget in
+            mapping[widget].map { ChapelPlacement(tile: $0, span: 2, on: true) }
+        }
+
+        let placed = Set(layout.map(\.tile))
+        for fallback in ChapelPlacement.defaultLayout where !placed.contains(fallback.tile) {
+            // A section absent from their page stays absent — into the
+            // tray — except the chant, which no Me page could have had.
+            layout.append(ChapelPlacement(
+                tile: fallback.tile,
+                span: fallback.tile == .flame ? 1 : 2,
+                on: fallback.tile == .chant
+            ))
+        }
+        return layout
     }
 
     // MARK: - Notifications
@@ -630,13 +746,15 @@ final class UserSettings {
         scheduleDailyReminder()
     }
 
-    /// Re-syncs scheduled reminders with stored settings at launch and on
-    /// foreground. Never prompts for permission — the request stays where
-    /// the user can see why (onboarding or the Account toggle). Needed
-    /// because property observers don't fire during `init`, so nothing
-    /// else schedules reminders for a user who never touches the toggle.
+    /// Re-syncs scheduled reminders with stored settings — at launch, on
+    /// foreground, and whenever something changes the *content* of a
+    /// reminder rather than the user's intent to receive one. Never prompts:
+    /// the request belongs on the reminder slide and the Settings toggle,
+    /// where the user can see what is being asked and why. Needed at launch
+    /// because property observers don't fire during `init`, so nothing else
+    /// schedules reminders for a user who never touches the toggle.
     @MainActor
-    func syncNotificationsAtLaunch() async {
+    func refreshNotificationsWithoutPrompting() async {
         let settings = await UNUserNotificationCenter.current().notificationSettings()
         notificationAuthorizationGranted =
             settings.authorizationStatus == .authorized ||

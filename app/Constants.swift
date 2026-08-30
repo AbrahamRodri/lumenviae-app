@@ -110,7 +110,7 @@ struct Constants {
     static let consecrationTab = "CONSECRATE"
     static let journalTab = "JOURNAL"
     static let progressTab = "PROGRESS"
-    static let accountTab = "ME"
+    static let chapelTab = "CHAPEL"
 }
 
 // MARK: - Color Hex Support

@@ -48,12 +48,22 @@ final class AudioService {
     private var timeObserver: Any?
 
     /// Currently loaded audio URL (for avoiding redundant loads)
-    private var currentURL: URL?
+    /// Readable so a surface that shares the player (the Chapel's chant
+    /// tile) can tell whether the loaded audio is still its own — a
+    /// Rosary that claims the player simply silences that tile's readouts.
+    private(set) var currentURL: URL?
 
     /// Monotonic load token. Each loadAudio call claims a new generation;
     /// after every await it checks it still owns the current one, so a
     /// superseded or cancelled load can never mutate the newer load's state.
-    private var loadGeneration = 0
+    ///
+    /// Readable because the URL alone is not ownership: two flows can load
+    /// the same file (the consecration's chants and the Chapel's chant tile
+    /// are the same three recordings), and a surface that pinned its claim
+    /// to the URL would narrate and drive playback it never started. Pairing
+    /// the URL with the generation it was loaded under is what distinguishes
+    /// "still mine" from "the same file, someone else's".
+    private(set) var loadGeneration = 0
 
     private var endOfPlaybackObserver: NSObjectProtocol?
 

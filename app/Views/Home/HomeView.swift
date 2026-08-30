@@ -154,11 +154,14 @@ struct HomeView: View {
 
     // MARK: - Subviews
 
-    /// The wordmark, with the search glass in the corner — the menu
-    /// lives in the Me page's Library card, the flame in its Prayer
-    /// Streak card.
+    /// The wordmark, framed by the glass on the left and the app's two
+    /// chrome doors on the right. The flame stays in the Chapel.
     private var header: some View {
-        HeaderView(onSearchTap: { router.navigateToExplore() })
+        HeaderView(
+            onSearchTap: { router.navigateToExplore() },
+            onSettingsTap: { router.navigateToSettings() },
+            onAboutTap: { router.push(.about) }
+        )
     }
 
     /// Reloads the interrupted session's meditation set and jumps back to
@@ -429,8 +432,15 @@ struct FeaturedMysteryCard: View {
     }
 
     /// Primary CTA button — the screen's one filled gold shape
+    /// "Begin the Rosary", the same words the Chapel's focus block uses
+    /// for the same act. Home said "Begin prayer", the Chapel said
+    /// "Begin the Rosary", and the raised medallion says "Pray" — three
+    /// names on two screens for one thing. The medallion keeps "Pray"
+    /// because it is the *configurable* act: a tap runs whatever the user
+    /// chose, a hold opens the tray. This button is today's Rosary and
+    /// nothing else, so it says so.
     private var beginPrayerButton: some View {
-        GoldCTAButton(title: "Begin prayer", action: onBeginPrayer)
+        GoldCTAButton(title: "Begin the Rosary", action: onBeginPrayer)
             .padding(.horizontal, 20)
             .padding(.top, 8)
     }

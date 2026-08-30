@@ -69,7 +69,7 @@ struct PrayerProgressView: View {
 
     private var headerSection: some View {
         VStack(spacing: 4) {
-            Text("Sacred Record")
+            Text("Prayer Record")
                 .font(AppFonts.italicFont(32))
                 .foregroundColor(AppColors.cream)
 

@@ -95,9 +95,12 @@ struct ConsecrationDayOverviewView: View {
                             .devotionalEntrance(delay: 0.08)
                     }
 
+                    // The day in the order it is prayed: the prayers,
+                    // then the reading they ask light for, then the
+                    // reflection that closes it.
                     VStack(spacing: 16) {
-                        readingCard
                         prayersCard
+                        readingCard
                         reflectionCard
                     }
                     .padding(.horizontal, 20)
@@ -186,8 +189,12 @@ struct ConsecrationDayOverviewView: View {
         // One act, full width. The week bar and its "DAY 3 OF 12
         // THIS WEEK" used to sit here and said nothing the badge
         // above and the journey below don't already say.
+        //
+        // It enters the day at its beginning, which is its first prayer.
+        // The reading is reached by walking there, or opened directly
+        // from the reading card below.
         GoldCTAButton(title: heroActionTitle, showsCross: isToday && !isDayComplete) {
-            path.append(.dayFlow(dayNumber: displayDayNumber, step: .reading(0)))
+            path.append(.dayFlow(dayNumber: displayDayNumber, step: .prayer(0)))
         }
         .padding(.horizontal, 12)
         .padding(.top, 6)

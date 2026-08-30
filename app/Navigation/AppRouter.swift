@@ -29,8 +29,13 @@ enum AppRoute: Hashable {
     /// Completion screen shown after finishing all mysteries
     case completion
 
-    /// Settings (the old Account screen), pushed from the Me page's gear
+    /// Settings — every toggle and preference — pushed from the Chapel
+    /// day strip's faders
     case settings
+
+    /// The app's colophon: about, introduction, privacy, help, feedback.
+    /// Pushed from the Chapel day strip's ☰.
+    case about
 
     /// Explore: search and browse everything, from the home search bar
     case explore
@@ -92,7 +97,16 @@ final class AppRouter {
     /// Async flows capture the generation before awaiting and refuse to
     /// navigate if it moved — a stale response must never mutate the stack.
     var path = NavigationPath() {
-        didSet { generation &+= 1 }
+        didSet {
+            generation &+= 1
+            // Arrange mode borrows the tab bar's place, so it must never
+            // outlive the page that owns it. `onDisappear` cannot be
+            // trusted to end it — it doesn't fire when a root screen is
+            // torn out from under a pushed one, which is exactly what a
+            // push from the Chapel does — and a stranded `true` hides the
+            // bar app-wide with no gesture that brings it back.
+            endChapelArranging()
+        }
     }
 
     /// Monotonic token identifying the current navigation state.
@@ -102,7 +116,14 @@ final class AppRouter {
     ///
     /// Lives on the router (not ContentView-local state) so any view can
     /// switch tabs — e.g. the home header's streak flame jumps to Progress.
-    var selectedTab: AppTab = .home
+    var selectedTab: AppTab = .home {
+        didSet {
+            // Leaving the Chapel ends its arranging, for the same reason
+            // a push does — and `switchTo` from the root never touches
+            // `path`, so this is the only place that sees it.
+            if oldValue != selectedTab { endChapelArranging() }
+        }
+    }
 
     /// Currently selected mystery category, persisted across the navigation flow.
     var selectedCategory: MysteryCategory?
@@ -118,6 +139,22 @@ final class AppRouter {
     /// the Pray button's tray. ContentView watches this, performs it
     /// (some acts present sheets only it can own), and clears it.
     var shortcutRequest: PrayerShortcut?
+
+    /// Whether the Chapel page is in arrange mode. Lives on the router
+    /// because ContentView owns the tab bar, and while arranging the
+    /// bar's place belongs to the Chapel's tray.
+    ///
+    /// The router — not the page — is what guarantees it ends: any
+    /// navigation clears it, so no route out of the Chapel can leave the
+    /// tab bar hidden.
+    var chapelArranging = false
+
+    /// Ends arrange mode if it is running. Idempotent, and safe to call
+    /// from a property observer.
+    private func endChapelArranging() {
+        guard chapelArranging else { return }
+        chapelArranging = false
+    }
 
     /// Requests a devotional act. Runs on the next router observation
     /// tick, wherever the user currently is.

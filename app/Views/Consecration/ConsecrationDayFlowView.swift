@@ -2,22 +2,27 @@
 //  ConsecrationDayFlowView.swift
 //  Lumen Viae
 //
-//  The day itself: the reading, then each of its prayers, as one screen
+//  The day itself: each of its prayers, then the reading, as one screen
 //  you move through rather than a chain of screens that push each other.
 //
+//  The prayers come first because the day's plan asks for them first:
+//  the Veni Creator and the Ave Maris Stella are said to ask for the
+//  light the reading is then read by. A day that opened on the text and
+//  prayed afterwards had that backwards.
+//
 //  The Consecrate dashboard lets you enter anywhere — the hero opens the
-//  reading, a prayer row opens that prayer — so this is built to be
-//  entered anywhere and to walk in both directions from there. Swipe or
-//  use PREV/NEXT; the dots say where you are in the day. AMEN, on the
-//  last prayer, carries the day into its reflection — which stands in
-//  this screen's place in the stack rather than on top of it, so
-//  leaving the reflection leaves the day rather than reversing back
-//  through the prayers that were just finished.
+//  first prayer, a prayer row opens that prayer, the reading card opens
+//  the reading — so this is built to be entered anywhere and to walk in
+//  both directions from there. Swipe or use PREV/NEXT; the dots say
+//  where you are in the day. AMEN, on the last step, carries the day
+//  into its reflection — which stands in this screen's place in the
+//  stack rather than on top of it, so leaving the reflection leaves the
+//  day rather than reversing back through everything just finished.
 //
 //  The reading used to be a full-screen cover owned by the dashboard,
 //  which meant continuing from it dismissed the cover, showed the
-//  dashboard for a beat, and only then pushed the prayers. Making it the
-//  first step here removes that flash entirely.
+//  dashboard for a beat, and only then pushed the prayers. Making it a
+//  step of this screen removes that flash entirely.
 //
 
 import SwiftUI
@@ -36,7 +41,7 @@ struct ConsecrationDayFlowView: View {
     init(
         path: Binding<[ConsecrationRoute]>,
         dayNumber: Int,
-        startStep: ConsecrationDayStep = .reading(0)
+        startStep: ConsecrationDayStep = .prayer(0)
     ) {
         self._path = path
         self.dayNumber = dayNumber
@@ -110,14 +115,14 @@ struct ConsecrationDayFlowView: View {
         return readings[index]
     }
 
-    /// Every reading, then every prayer of the day
+    /// Every prayer, then every reading of the day
     private var steps: [ConsecrationDayStep] {
-        readings.indices.map { ConsecrationDayStep.reading($0) }
-            + prayers.indices.map { ConsecrationDayStep.prayer($0) }
+        prayers.indices.map { ConsecrationDayStep.prayer($0) }
+            + readings.indices.map { ConsecrationDayStep.reading($0) }
     }
 
     private var currentStep: ConsecrationDayStep {
-        guard stepIndex >= 0, stepIndex < steps.count else { return .reading(0) }
+        guard stepIndex >= 0, stepIndex < steps.count else { return .prayer(0) }
         return steps[stepIndex]
     }
 
@@ -136,15 +141,16 @@ struct ConsecrationDayFlowView: View {
     }
 
     /// What the quiet forward control says. "Next" is right between
-    /// prayers; leaving the reading is better named by where it goes.
+    /// prayers; leaving the prayers is better named by where it goes.
     private var forwardTitle: String {
-        isLastReadingStep ? "Prayers" : "Next"
+        guard isLastPrayerStep else { return "Next" }
+        return readings.count > 1 ? "Readings" : "Reading"
     }
 
-    /// True on the final reading, where forward leaves the readings for
-    /// the prayers rather than turning to another page of the same kind.
-    private var isLastReadingStep: Bool {
-        if case .reading(let index) = currentStep { return index == readings.count - 1 }
+    /// True on the final prayer, where forward leaves the prayers for
+    /// the reading rather than turning to another page of the same kind.
+    private var isLastPrayerStep: Bool {
+        if case .prayer(let index) = currentStep { return index == prayers.count - 1 }
         return false
     }
 
@@ -225,10 +231,10 @@ struct ConsecrationDayFlowView: View {
     /// prayers are steps of this screen; the reflection is its own.
     private func open(_ destination: ConsecrationDayDestination) {
         switch destination {
-        case .reading:
-            goToStep(0)
         case .prayer(let index):
-            goToStep(readings.count + index)
+            goToStep(index)
+        case .reading:
+            goToStep(prayers.count)
         case .reflection:
             openReflection()
         }
@@ -272,7 +278,7 @@ struct ConsecrationDayFlowView: View {
 
     /// Horizontal swipe moves through the day. The angle gate keeps
     /// vertical reading scrolls from ever counting, and a forward swipe
-    /// on the last prayer does nothing — the day is carried into its
+    /// on the last step does nothing — the day is carried into its
     /// reflection only by the explicit AMEN tap.
     private var stepSwipeGesture: some Gesture {
         DragGesture(minimumDistance: 30)
@@ -638,8 +644,7 @@ struct ConsecrationDayFlowView: View {
 
     /// Two bare controls separated only by brightness, exactly as the
     /// Rosary flow carries them — and AMEN given a form of its own, so
-    /// the single gold shape on screen is the act that finishes the day's
-    /// prayers.
+    /// the single gold shape on screen is the act that closes the day.
     private var navigationButtons: some View {
         HStack {
             QuietGoldButton(
@@ -649,8 +654,8 @@ struct ConsecrationDayFlowView: View {
             ) {
                 goToStep(stepIndex - 1)
             }
-            // Nothing to go back to on the reading: the control leaves
-            // rather than sitting there greyed out
+            // Nothing to go back to on the first prayer: the control
+            // leaves rather than sitting there greyed out
             .disabled(isFirstStep)
             .opacity(isFirstStep ? 0 : 1)
             .accessibilityHidden(isFirstStep)
@@ -667,7 +672,7 @@ struct ConsecrationDayFlowView: View {
                 ) {
                     openReflection()
                 }
-                .accessibilityLabel("Amen — finish the prayers and reflect")
+                .accessibilityLabel("Amen — close the day and reflect")
             } else {
                 QuietGoldButton(
                     title: forwardTitle,
@@ -677,7 +682,7 @@ struct ConsecrationDayFlowView: View {
                 ) {
                     goToStep(stepIndex + 1)
                 }
-                .accessibilityLabel(isLastReadingStep ? "Go to the prayers" : "Next")
+                .accessibilityLabel(isLastPrayerStep ? "Go to the reading" : "Next")
             }
         }
         .padding(.horizontal, 20)

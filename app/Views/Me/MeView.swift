@@ -25,7 +25,7 @@ struct MeView: View {
     @Environment(AppRouter.self) private var router
     @Environment(\.modelContext) private var modelContext
 
-    /// Re-renders the page as sessions land, same as Sacred Record
+    /// Re-renders the page as sessions land, same as Prayer Record
     @Query(sort: \PrayerSession.completedAt, order: .reverse)
     private var sessions: [PrayerSession]
 
@@ -155,7 +155,7 @@ struct MeView: View {
                         Spacer()
 
                         QuietGoldButton(
-                            title: "Sacred Record",
+                            title: "Prayer Record",
                             trailingIcon: "ph-caret-right",
                             size: 9,
                             color: AppColors.gold.opacity(0.8),

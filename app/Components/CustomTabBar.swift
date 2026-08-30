@@ -7,10 +7,11 @@
 //  Custom tab bar (instead of TabView) so it can match the design system
 //  and hide during the prayer flow.
 //
-//  Layout: four tabs (Home, Consecrate, Journal, Account) plus a raised
+//  Layout: four tabs (Home, Consecrate, Journal, Chapel) plus a raised
 //  "Pray" button in the bottom-right — the prime action position. It
 //  starts today's Rosary directly, no selection screens. Progress has no
-//  tab; it opens via the streak flame in the home header.
+//  tab; it opens from the Chapel's flame tile, or from Settings →
+//  Devotion → Prayer Record when the flame is stowed in the tray.
 //
 //  The bar is the page's foot, not a slab laid over it: content dissolves
 //  into it through a fade, its surface is the same color the app gradient
@@ -28,7 +29,7 @@ enum AppTab: CaseIterable {
     case consecration
     case journal
     case progress
-    case account
+    case chapel
 
     var title: String {
         switch self {
@@ -36,22 +37,23 @@ enum AppTab: CaseIterable {
         case .consecration: return Constants.consecrationTab
         case .journal:      return Constants.journalTab
         case .progress:     return Constants.progressTab
-        case .account:      return Constants.accountTab
+        case .chapel:       return Constants.chapelTab
         }
     }
 
-    /// Asset icon shown when the tab is at rest (Phosphor light weight)
+    /// Asset icon shown when the tab is at rest. The Chapel keeps the
+    /// window glyph — a place the user goes into, not an account.
     var icon: String {
         switch self {
         case .home:         return "ph-house"
         case .consecration: return "ph-crown"
         case .journal:      return "ph-book-open"
         case .progress:     return "ph-flame"
-        case .account:      return "ph-user"
+        case .chapel:       return "ch-window"
         }
     }
 
-    /// Asset icon shown when the tab is selected (Phosphor fill weight)
+    /// Asset icon shown when the tab is selected (the fill weight)
     var selectedIcon: String { icon + "-fill" }
 }
 
@@ -71,9 +73,9 @@ struct CustomTabBar: View {
     /// Opens the press-and-hold tray of the user's chosen devotions
     var onPrayHold: () -> Void = {}
 
-    /// Tabs shown in the bar. Progress is reachable via the home header's
-    /// streak flame instead of a tab.
-    private let visibleTabs: [AppTab] = [.home, .consecration, .journal, .account]
+    /// Tabs shown in the bar. Progress is reachable from the Chapel's
+    /// flame tile, and from Settings when the flame is stowed.
+    private let visibleTabs: [AppTab] = [.home, .consecration, .journal, .chapel]
 
     var body: some View {
         VStack(spacing: 0) {

@@ -4,9 +4,15 @@
 //
 //  Created by Abraham Rodriguez on 2/10/26.
 //
-//  Home header: the wordmark alone. The old menu button moved into the
-//  Me page's Library card, and the streak flame into its Prayer Streak
-//  card — the home screen keeps a single job: today's prayer.
+//  Home header: the wordmark, framed by the app's own chrome. The glass
+//  opens Explore on the left; the faders and the colophon sit on the
+//  right. Those two used to ride in the Chapel's day strip, which is a
+//  reading of the liturgical day and had no business also being the only
+//  door to the app's settings — a page-level strip carrying app-level
+//  chrome, findable only by whoever thought to look there.
+//
+//  The streak flame is not here: it lives in the Chapel, on the page the
+//  user arranges.
 //
 
 import SwiftUI
@@ -15,6 +21,12 @@ struct HeaderView: View {
     /// Opens Explore. A small glass in the corner, not a bar — the
     /// header stays the wordmark's.
     var onSearchTap: (() -> Void)?
+
+    /// Opens Settings.
+    var onSettingsTap: (() -> Void)?
+
+    /// Opens About — the app's colophon.
+    var onAboutTap: (() -> Void)?
 
     var body: some View {
         ZStack {
@@ -31,23 +43,41 @@ struct HeaderView: View {
             }
             .frame(maxWidth: .infinity)
 
-            if let onSearchTap {
-                HStack {
-                    Spacer()
+            // The glass keeps the left so the wordmark stays framed
+            // rather than crowded into one corner by three glyphs.
+            HStack(spacing: 0) {
+                if let onSearchTap {
+                    glyph("ph-magnifying-glass", "Search", action: onSearchTap)
+                }
 
-                    Button(action: onSearchTap) {
-                        AppIcon("ph-magnifying-glass", size: 18)
-                            .foregroundColor(AppColors.gold.opacity(0.8))
-                            .frame(width: 44, height: 44)
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel("Search")
+                Spacer(minLength: 0)
+
+                if let onSettingsTap {
+                    glyph("ph-faders", "Settings", action: onSettingsTap)
+                }
+
+                if let onAboutTap {
+                    glyph("ph-info", "About Lumen Viae", action: onAboutTap)
                 }
             }
         }
         .padding(.horizontal, 12)
         .padding(.top, 8)
+    }
+
+    private func glyph(
+        _ icon: String,
+        _ label: String,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            AppIcon(icon, size: 18)
+                .foregroundColor(AppColors.gold.opacity(0.8))
+                .frame(width: 44, height: 44)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(label)
     }
 }
 

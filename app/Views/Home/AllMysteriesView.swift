@@ -40,6 +40,7 @@ struct AllMysteriesView: View {
                     Spacer(minLength: 100)
                 }
             }
+            .topChromeFade()
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {

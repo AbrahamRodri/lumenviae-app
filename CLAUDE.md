@@ -140,27 +140,31 @@ Return to Home
 ## App Tabs
 
 `AppTab` (in `Components/CustomTabBar.swift`) has five cases, but the bar shows
-four — Progress is reached from the streak flame in the home header instead, to
-keep the bar from crowding the raised Pray button.
+four — Progress is reached from the Chapel's flame tile (and Settings) instead,
+to keep the bar from crowding the raised Pray button.
 
 | Tab | In the bar | Purpose |
 |-----|-----------|---------|
 | Home | Yes | Search bar → Explore, today's mysteries, Today in the Church, mystery grid, quote |
 | Consecrate | Yes | The 33-day preparation for Marian consecration |
 | Journal | Yes | Reflections, searchable, stored on device |
-| Progress | No — via Me | Streaks, prayer history, milestones ("Sacred Record") |
-| Me | Yes | The user's own arrangeable page; settings pushed behind its gear |
+| Progress | No — via Chapel | Streaks, prayer history, milestones ("Prayer Record") |
+| Chapel | Yes | My Chapel — the user's arrangeable page (Settings and About live in the home masthead) |
 
 The **Pray** button raised over the bar runs the user's chosen quick act
 (today's Rosary by default), and **press-and-hold** opens a tray of their
 chosen devotions (`PrayShortcutTray`). The bar's Pray gap is a fifth
 equal slot, so the four labels keep one rhythm.
 
-The home header is the wordmark with a small search glass in the corner
-— no menu button, no flame. The old menu's destinations live in the Me
-page's **Library** card and on **Explore**; the streak lives in the Me
-page's **Prayer Streak** card, whose kicker carries the Sacred Record
-link (the only doors to the Progress page). **Today in the Church**
+The home header is the wordmark framed by the app's chrome: the search
+glass on the left, **ph-faders → Settings** and **ph-info → About** on
+the right. No flame — the streak lives in the Chapel's own Prayer Streak
+tile, whose kicker carries the Prayer Record link (with Settings →
+Devotion, the only doors to the Progress page). Settings and About sat
+in the Chapel's day strip until that strip was left to read the
+liturgical day alone: app-level chrome on a page-level strip was
+findable only by whoever thought to look there. The Chapel's foot still
+names both in words. **Today in the Church**
 closes the home page below the daily quote as `TodayInChurchSection` —
 an ordo leaf unlike other cards: the vestment colour as a full-width
 band across the card top, date and feast centered, and a diptych foot
@@ -200,68 +204,88 @@ equal cells), padded clear of the raised Pray medallion.
 > Journal is **not** blocked on the API. Entries are a local SwiftData model
 > (`Models/JournalEntry.swift`); nothing is sent to the server.
 
-### The Me Tab
+### The Chapel Tab
 
-The old Account tab slot: a compact name header ("Faithful Pilgrim"
-until set, "Praying since…" from the first session, gear → Settings),
-then **cards the user arranges themselves** — add, remove, drag to
-reorder. Two separate editors, deliberately: `MePageEditorSheet` (name,
-page cards, Rule of Prayer) from "Edit page" or the rule's Edit; and
-`PrayButtonEditorSheet` (quick tap + hold menu, with a live preview of
-the button naming both gestures) from the tray's "Edit this menu" row.
-Removing a card hides a view, never data (a hidden streak keeps
-counting). The section vocabulary is `MeWidget`; the one-motion acts are
-`PrayerShortcut` (both in `Models/PrayerShortcut.swift`) — one enum
-feeds the quick tap, the hold tray, and the Rule of Prayer.
+The old Me/Account tab slot, rebuilt as **My Chapel**
+(`Views/Chapel/MyChapelView.swift`, from the "My Chapel" design
+handoff): a page the user arranges **in place** — no customize sheet.
+Two ideas drive it: a single focus at the top (the first unoffered act
+on the rule, set large with the page's one gold CTA, advancing on its
+own as acts are offered — derived, never stored), and an arrangeable
+tile grid below. Long-press 450ms anywhere (cancelled by >8pt of
+movement), the coach ribbon's "Show me" (one-time,
+`userSettings.chapelCoached`), or the foot's "Arrange this page" all
+enter arrange mode: tiles sway ±0.5°, gain a ✕ badge (in the row gap
+above for frameless tiles, at the corner for outlined ones), the tab
+bar yields to a tray (`router.chapelArranging` is how ContentView
+knows), and tiles can be dragged (a ghost leans up to ±9° into the
+travel; a dashed slot opens at the landing), tapped to switch between
+their **two authored layouts** (full `span 2` / half `span 1` — each a
+different drawing, never the full squeezed), or put away. Nothing is
+deleted: the tray always holds what's off the page, and a stowed flame
+keeps counting. All ambient motion quiets under Reduce Motion.
 
-Cards: **Rule of Prayer** (daily checklist — Rosary and consecration
-check themselves from real data; the Mass and Office are checked by
-hand, reset silently each morning, never carried over as failure),
-**Prayer Streak** (removable per the no-guilt principle), **Library**
-(a two-column shelf: Missal, Office, True Devotion, Spiritual Reading,
-How to Pray, In Scripture, Marian Library, Carlo Acutis, Sacred Record — a one-time
-migration inserts it for pages saved before it existed),
-**Reading** (the book left face-down: its cloth, the chapter the eye
-left, how far into the recording the voice left, and "Take it up" —
-one book, the most recent, never a "currently reading" list; a one-time
-migration inserts it beside Library),
-**Consecration** (the page's one votive-washed card), **Reflections**
-(journal entries set as quoted lines). Each card keeps the shared
-silhouette but its own interior character. Research behind the design:
-"The Oratory Brief" artifact. `MenuView` is no longer reachable and
-kept only as reference.
+Above the grid, fixed: a day strip (liturgical-colour diamond from the
+missal vestment + weekday · feast via `TodayInChurch`) and the focus
+block. The strip carries no app chrome — it reads the day, and the room
+that buys is what lets a long feast set in full. Tiles (vocabulary `Models/ChapelTile.swift`;
+layout persists as `userSettings.chapelLayout`, validated against known
+ids on decode, with a one-time migration from the old `meWidgets`
+order): **Today** (the rule as a ledger — the "Something else" escape
+scrolls to it, the ledger *is* the picker; manual acts toggle on tap,
+watched acts open themselves; Rosary/chaplet/consecration check from
+real data, Mass/Office by hand, reset each morning), **Consecration**
+(de Montfort's four preparations as a segmented path, tracks weighted
+12/7/7/7 days), **Reading** (the open book + "also reading" spines),
+**Library** (an open-book spread: liturgy leaf, reading leaf,
+Augustine's colophon), **Chant** (the app's three chant recordings —
+Veni Creator, Ave Maris Stella, Magnificat — through the shared
+AudioService; the ⋯ opens the chant sheet), **Reflections** (latest
+journal entry under an illuminated versal), **Prayer Streak** (the
+flame; stands directly under Today, because a record of days prayed
+belongs beside the day it records and onboarding's closing line promises
+it is being kept; tapping it opens the Prayer Record). Three visual
+registers, deliberately: frameless (Today, Consecration, Library,
+Chant), outlined (Reading, Reflections, Flame at 20pt radius), and no
+filled card surfaces on the page — `surface-card` only in the tray and
+chant sheet.
 
-### Settings Screen Structure
+The rule's *membership* is edited in `RuleEditorSheet` (Settings →
+Devotion → Rule of Prayer, and the Chapel's empty-rule invitations);
+`PrayButtonEditorSheet` (quick tap + hold menu) still opens from the
+Pray tray's "Edit this menu" row. The one-motion acts remain
+`PrayerShortcut`. Prayer Record's standing doors are the flame tile and
+Settings → Devotion. The old Me page (`Views/Me/MeView.swift`,
+`MeWidgets.swift`, `MePageEditorSheet`) is no longer reachable and kept
+only as reference, like `MenuView`; research behind the original design:
+"The Oratory Brief" artifact.
 
-`AccountView`, now pushed from the Me page's gear (`AppRoute.settings`) —
-its own screen sliding in from the right, custom back arrow, tab bar
-hidden. Contents unchanged:
+### Settings & About Screens
 
-**Appearance**
-- Theme (Marian Blue / Midnight / Candlelit) — re-themes the app live
-- App icon (four alternates)
+Split in two, each behind its own door in the Chapel day strip, so the
+informational pages are never the settings page's attic:
 
-**Prayer Experience**
-- Text Size (slider)
-- Prayer Language (English / Latin / Latin & English / English & Latin)
-- Prayer image mode
+**`AccountView`** (`AppRoute.settings`, the home masthead's **ph-faders**) — every
+toggle and choice, set in the Chapel's own voice: a Cinzel plate
+("Settings / How your chapel is kept."), then outlined sections with
+glyph-led kickers (`AccountSection` — no filled card surfaces, same as
+the page they serve):
 
-**Devotion**
-- Daily Reminders (toggle, time picker, sound picker)
-- What Draws You Here — the onboarding intentions, editable; decides which pool
-  of reminder copy is used
+- **Appearance** — theme (re-themes live), app icon (four alternates)
+- **Prayer Experience** — text size, prayer language (English by
+  default; the app's first face is the one most users read), Scriptural
+  Rosary
+- **Devotion** — Rule of Prayer (→ `RuleEditorSheet`), Prayer Record,
+  Daily Reminders (toggle, time, sound), What Draws You Here (decides
+  the reminder copy pool)
+- **Offline** — download every meditation set and audio file
 
-**Offline**
-- Download for Offline — every meditation set and audio file
-
-**About**
-- About Lumen Viae
-- App Introduction (re-runs onboarding)
-- Privacy Policy
-- Help & Support
-
-**Footer**
-- App version, and the tagline "Ad Majorem Dei Gloriam"
+**`AboutView`** (`AppRoute.about`, the home masthead's **ph-info**) — the app's
+colophon: the wordmark as masthead, then About Lumen Viae, App
+Introduction (re-runs onboarding), Privacy Policy, Help & Support, Send
+Feedback, and the footer (version, "Ad Majorem Dei Gloriam"). The sheets
+it presents still live in AccountView.swift alongside the shared row
+components (`ActionRow`, `ToggleRow`, `AccountFooter`…).
 
 ## Architecture
 
@@ -275,6 +299,7 @@ app/
 ├── Models/                   # API models, SwiftData models, enums
 │   ├── Mystery, Meditation, MeditationSet, MysteryCategory
 │   ├── JournalEntry, PrayerSession          (SwiftData)
+│   ├── ChapelTile            # + ChapelPlacement — the Chapel page's vocabulary
 │   ├── Consecration{Day,Phase,Prayer,Progress}
 │   ├── TrueDevotionBook, TrueDevotionReadingProgress
 │   ├── LibraryBook           # + catalog entry, parsing rules, LibriVox models
@@ -287,8 +312,12 @@ app/
 │   └── TrueDevotionReaderViewModel
 ├── Views/
 │   ├── Home/ Prayer/ Journal/ Progress/ Account/
-│   ├── Me/                   # MeView (My Oratory), MeWidgets,
-│   │                         # MeCustomizeSheet, PrayShortcutTray
+│   ├── Chapel/               # MyChapelView (the tab), ChapelGrid (arrange
+│   │                         # machinery), ChapelTiles, ChapelChant
+│   ├── Me/                   # Legacy (unreachable, reference only): MeView,
+│   │                         # MeWidgets. Still live: MeCustomizeSheet's
+│   │                         # RuleEditorSheet + editor furniture,
+│   │                         # PrayButtonEditorSheet, PrayShortcutTray
 │   ├── Meditation/           # SelectMeditationView (the shelf), MeditationSetDetailView
 │   ├── Consecration/         # 33-day preparation (own NavigationStack)
 │   ├── TrueDevotion/         # Book reader
@@ -369,8 +398,9 @@ write concurrent code here:
   from the pool matching the user's stated intentions.
 - **Offline** — user-initiated download of every set and audio file.
 - **Personalization** — three themes, four app icons, prayer language, text
-  size (app-wide, plus the missal's and the reading shelf's own); the Me tab's arrangeable "My Oratory" page (widgets, rule of prayer,
-  intentions, display name) and the configurable Pray button (quick act +
+  size (app-wide, plus the missal's and the reading shelf's own); the Chapel
+  tab's arrange-in-place page (tile order, full/half widths, the tray, rule
+  of prayer, intentions) and the configurable Pray button (quick act +
   press-and-hold tray), all stored in UserDefaults via `UserSettings`.
 - **Onboarding** — eight slides, skippable, re-runnable from Account.
 - **Daily Missal** — the 1962 propers for any day, in the resources menu,
@@ -701,6 +731,25 @@ write concurrent code here:
 > Colors above are the Midnight theme's. Backgrounds and card fills come from
 > the **active theme**, so read them from `AppColors`; only gold, gold light,
 > cream, and secondary text are fixed across themes.
+
+### Icons
+
+Two families in `Assets.xcassets/Icons`, both drawn through `AppIcon`
+(never `Image(...)` at a call site) and both rendered as templates:
+**`ph-*`** are Phosphor, and **`ch-*`** are the app's own devotional
+glyphs — `stroke-width="1.5"`, round caps and joins, on a 24×24 viewBox.
+A new `ch-*` icon must be stroked at that weight or it stands heavier
+than everything beside it. Note that `qlmanage` cannot preview these
+faithfully: it renders a stroke-only SVG blank and *fills* path data
+meant to be stroked, so check a new glyph in the running app.
+
+One meaning per glyph. The same door wears the same icon everywhere it
+appears — the Missal is `ch-altar` on every surface, the Office
+`ph-clock`, the Marian Library `ch-lily` — and a glyph standing for a
+devotion is the one that devotion's own iconography uses:
+`ch-sacred-heart` is Christ's and belongs to the Sacred Heart alone,
+while the Seven Sorrows take `ch-sorrowful-heart`, Mary's heart pierced
+by Simeon's sword.
 
 ### Visual Style
 - Dark, contemplative theme

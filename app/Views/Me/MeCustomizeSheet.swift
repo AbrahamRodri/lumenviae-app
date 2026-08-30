@@ -128,8 +128,52 @@ struct MePageEditorSheet: View {
 
     // MARK: - Rule of Prayer
 
-    @ViewBuilder
     private var ruleSections: some View {
+        RuleEditorSections()
+    }
+}
+
+// MARK: - RuleEditorSheet
+
+/// The Rule of Prayer's own editor: which devotions are on the daily
+/// checklist, and in what order. Opened from Settings and from the
+/// Chapel's empty-rule invitations — the Chapel page itself is arranged
+/// in place and needs no sheet.
+struct RuleEditorSheet: View {
+
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        ZStack {
+            AppColors.appGradient.ignoresSafeArea()
+
+            VStack(spacing: 0) {
+                EditorHeader(
+                    title: "Rule of Prayer",
+                    subtitle: "The devotions you mean to offer each day.",
+                    onDone: { dismiss() }
+                )
+
+                List {
+                    RuleEditorSections()
+                }
+                .listStyle(.insetGrouped)
+                .scrollContentBackground(.hidden)
+                .environment(\.editMode, .constant(.active))
+            }
+        }
+    }
+}
+
+// MARK: - RuleEditorSections
+
+/// The rule's list sections, shared by the page editor and the
+/// standalone rule sheet.
+struct RuleEditorSections: View {
+
+    @Environment(UserSettings.self) private var settings
+
+    var body: some View {
         let enabled = settings.ruleItems
         let available = PrayerShortcut.allCases.filter { $0.isRuleEligible && !enabled.contains($0) }
 

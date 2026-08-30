@@ -2,12 +2,13 @@
 //  ConsecrationDayIndex.swift
 //  Lumen Viae
 //
-//  The day's index: the reading, every prayer by name, and the
-//  reflection — reachable from any of them.
+//  The day's index: every prayer by name, the reading, and the
+//  reflection — reachable from any of them, and in the order the day
+//  itself walks them.
 //
 //  The dashboard lets you enter a day anywhere, so the day itself has to
 //  let you go anywhere once you're inside it. Without this the only way
-//  from the fourth prayer back to the reading is four taps of PREV, and
+//  from the reading back to the first prayer is four taps of PREV, and
 //  the only way to the reflection is to walk to the end.
 //
 //  It hangs off the progress dots in each screen's header, which are the
@@ -21,8 +22,8 @@ import SwiftUI
 
 /// Anywhere within a day that the index can send you.
 enum ConsecrationDayDestination: Hashable {
-    case reading
     case prayer(Int)
+    case reading
     case reflection
 }
 
@@ -70,13 +71,6 @@ struct ConsecrationDayIndexSheet: View {
                         .padding(.top, 26)
                         .padding(.bottom, 18)
 
-                    row(
-                        title: "The reading",
-                        detail: day?.title,
-                        icon: "ph-book-open",
-                        destination: .reading
-                    )
-
                     ForEach(Array(prayers.enumerated()), id: \.element.id) { index, prayer in
                         row(
                             title: prayer.title,
@@ -87,6 +81,13 @@ struct ConsecrationDayIndexSheet: View {
                             destination: .prayer(index)
                         )
                     }
+
+                    row(
+                        title: "The reading",
+                        detail: day?.title,
+                        icon: "ph-book-open",
+                        destination: .reading
+                    )
 
                     row(
                         title: "The reflection",

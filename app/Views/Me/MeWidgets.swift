@@ -475,7 +475,7 @@ struct ReadingCard: View {
 // MARK: - Library
 
 /// The doors the home screen's old menu button used to open, plus the
-/// Sacred Record. Not nine identical tiles: the two liturgical books
+/// Prayer Record. Not nine identical tiles: the two liturgical books
 /// stand together as a diptych across the card's head — the same
 /// pairing the home shelf and Explore make — and the reading doors
 /// follow as a ruled index, a table of contents rather than a wall of
@@ -517,13 +517,13 @@ struct LibraryCard: View {
                     indexRow("ph-book-open", "Spiritual Reading") { router.push(.spiritualReading) }
                     indexRow("ch-rosary", "How to Pray") { router.push(.howToPray) }
                     indexRow("ch-bible", "In Scripture") { router.push(.scripture) }
-                    indexRow("ph-heart", "Marian Library") { router.push(.marianLibrary) }
+                    indexRow("ch-lily", "Marian Library") { router.push(.marianLibrary) }
                     indexRow("ch-monstrance", "Carlo Acutis") { router.push(.carloAcutis) }
                     // `switchTo`, not a bare `selectedTab`: the card is
                     // reachable from a Me page that has pushed Settings,
                     // and a tab set under a pushed screen only shows up
                     // later, when the reader taps Back for something else.
-                    indexRow("ph-flame", "Sacred Record") { router.switchTo(.progress) }
+                    indexRow("ph-flame", "Prayer Record") { router.switchTo(.progress) }
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 8)

@@ -187,10 +187,6 @@ struct PlaybackSettingsSheet: View {
                 .padding(.horizontal, 24)
                 .padding(.top, 18)
 
-            backgroundMusicSection
-                .padding(.horizontal, 24)
-                .padding(.top, 26)
-
             Spacer(minLength: 20)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -227,31 +223,11 @@ struct PlaybackSettingsSheet: View {
         }
     }
 
-    private var backgroundMusicSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("BACKGROUND MUSIC")
-                .font(AppFonts.labelFont(10))
-                .tracking(2.5)
-                .foregroundColor(AppColors.gold)
-
-            ToggleRow(
-                icon: "ph-music-note",
-                title: "Chant beneath the narration",
-                subtitle: "Coming soon",
-                isOn: .constant(false)
-            )
-            .background(
-                RoundedRectangle(cornerRadius: 14)
-                    .fill(AppColors.cardBackground)
-            )
-            // Dimmed and inert as one piece, so the row reads as a
-            // promise rather than a control that ignores you
-            .opacity(0.45)
-            .allowsHitTesting(false)
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel("Background music, coming soon")
-        }
-    }
+    // A "BACKGROUND MUSIC" section stood here holding one dimmed,
+    // untappable row that said "Coming soon" — the whole section was a
+    // promise rather than a control. A sheet the user opened mid-Rosary
+    // is the wrong place to advertise unbuilt work; bring the section
+    // back with the feature, not before it.
 
     /// "1×" rather than "1.0×", but "1.25×" in full — %g drops trailing
     /// zeros without rounding away a significant digit.

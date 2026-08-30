@@ -60,6 +60,7 @@ struct MysteriesInScriptureView: View {
                         .frame(height: 48)
                 }
             }
+            .topChromeFade()
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {

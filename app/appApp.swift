@@ -59,7 +59,7 @@ struct appApp: App {
                 resetAlternateIconIfNeeded()
                 // Fires at launch too: keeps scheduled reminders in step
                 // with stored settings and OS-level permission changes.
-                Task { await userSettings.syncNotificationsAtLaunch() }
+                Task { await userSettings.refreshNotificationsWithoutPrompting() }
             }
         }
     }

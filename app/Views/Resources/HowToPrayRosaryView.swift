@@ -52,6 +52,7 @@ struct HowToPrayRosaryView: View {
                         .devotionalEntrance(delay: 0.3)
                 }
             }
+            .topChromeFade()
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {

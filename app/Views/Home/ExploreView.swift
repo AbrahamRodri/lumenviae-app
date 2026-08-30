@@ -349,7 +349,7 @@ struct ExploreView: View {
         [
             LibraryEntry(icon: "ch-altar", title: "Daily Missal",
                          matchText: "daily missal mass 1962 propers latin") { router.push(.missal) },
-            LibraryEntry(icon: "ch-candle", title: "Divine Office",
+            LibraryEntry(icon: "ph-clock", title: "Divine Office",
                          matchText: "divine office breviary hours matins lauds prime terce sext none vespers compline") { router.push(.office) },
             LibraryEntry(icon: "ph-crown", title: "True Devotion",
                          matchText: "true devotion to mary montfort book") { router.push(.trueDevotionBook) },
@@ -361,11 +361,11 @@ struct ExploreView: View {
                          matchText: "how to pray the rosary guide montfort methods") { router.push(.howToPray) },
             LibraryEntry(icon: "ch-bible", title: "In Scripture",
                          matchText: "mysteries in scripture bible verses") { router.push(.scripture) },
-            LibraryEntry(icon: "ph-heart", title: "Marian Library",
+            LibraryEntry(icon: "ch-lily", title: "Marian Library",
                          matchText: "marian theology library dogmas apparitions saints") { router.push(.marianLibrary) },
             LibraryEntry(icon: "ch-monstrance", title: "Carlo Acutis",
                          matchText: "carlo acutis eucharist digital altar saint") { router.push(.carloAcutis) },
-            LibraryEntry(icon: "ph-flame", title: "Sacred Record",
+            LibraryEntry(icon: "ph-flame", title: "Prayer Record",
                          matchText: "sacred record progress streak history calendar") { router.switchTo(.progress) }
         ]
     }
@@ -561,14 +561,14 @@ struct ExploreView: View {
     /// The guides and references as a ruled index — bare lines on the
     /// page, a book's own table of contents rather than a wall of
     /// boxes. The liturgical books and the reading shelf have their own
-    /// sections above; the Sacred Record is the user's own book, not a
+    /// sections above; the Prayer Record is the user's own book, not a
     /// thing to discover, so it stays off the browse page — typed
     /// search still finds its door, and the Me page keeps its real one.
     private var studyEntries: [LibraryEntry] {
         let housed = [
             "Daily Missal", "Divine Office",
             "True Devotion", "Spiritual Reading",
-            "Sacred Record"
+            "Prayer Record"
         ]
         return libraryEntries.filter { !housed.contains($0.title) }
     }

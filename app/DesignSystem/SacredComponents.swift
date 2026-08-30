@@ -561,3 +561,59 @@ extension View {
     .frame(maxWidth: .infinity)
     .background(AppColors.background)
 }
+
+// MARK: - Chrome fade
+
+/// Dissolves the top of a scrolling page so content passes *behind* the
+/// floating Back button and the status bar instead of colliding with them.
+///
+/// Pushed pages here draw a gold Back in the toolbar with no bar material
+/// behind it, so without this a settings row slides up until its label sits
+/// inside the word "Back" and its toggle sits under the battery. The set
+/// detail page had solved this privately with its own mask; this is the
+/// same idea, in one place, in the weight the home page already uses.
+struct TopChromeFade: ViewModifier {
+
+    /// Height of the dissolve — deep enough to cover the Back capsule the
+    /// toolbar draws over the scroll.
+    var height: CGFloat = 48
+
+    /// How far to hold at-rest content clear of the band. Matches `height`
+    /// on a pushed page, whose Back capsule overlays the scroll. A tab root
+    /// has no such capsule and its content already begins below the status
+    /// bar, so it passes 0 and takes the dissolve alone.
+    var inset: CGFloat = 48
+
+    func body(content: Content) -> some View {
+        content
+            // The band is for content *travelling* under the chrome, not
+            // for content sitting at rest. Without this inset the first
+            // thing on the page — which on several of these pages is the
+            // title — begins inside the dissolve and renders as a ghost
+            // before anyone has scrolled at all.
+            .contentMargins(.top, inset, for: .scrollContent)
+            .mask(
+                VStack(spacing: 0) {
+                    LinearGradient(
+                        stops: [
+                            .init(color: .clear, location: 0),
+                            .init(color: .black.opacity(0.06), location: 0.55),
+                            .init(color: .black, location: 1.0)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: height)
+
+                    Rectangle().fill(.black)
+                }
+            )
+    }
+}
+
+extension View {
+    /// See `TopChromeFade`.
+    func topChromeFade(height: CGFloat = 48, inset: CGFloat? = nil) -> some View {
+        modifier(TopChromeFade(height: height, inset: inset ?? height))
+    }
+}

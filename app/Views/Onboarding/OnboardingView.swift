@@ -457,25 +457,72 @@ struct OnboardingView: View {
                         }
                     }
 
-                    Text("You can change or disable this anytime in Account.")
-                        .font(AppFonts.italicFont(13))
-                        .foregroundColor(AppColors.textSecondary)
+                    // The system prompt is raised by this slide's own button,
+                    // so a refusal happens in plain sight. This line keeps it
+                    // in sight afterwards rather than letting the user leave
+                    // believing an hour was set that can never ring.
+                    if UserSettings.shared.notificationAuthorizationDenied {
+                        HStack(alignment: .top, spacing: 8) {
+                            AppIcon("ph-bell", size: 13)
+                                .foregroundColor(AppColors.textSecondary)
+                                .padding(.top, 2)
+
+                            Text("Notifications are turned off for Lumen Viae. Turn them on in the Settings app, or set an hour later from Settings → Devotion.")
+                                .font(AppFonts.italicFont(13))
+                                .foregroundColor(AppColors.textSecondary)
+                                .lineSpacing(3)
+                        }
+                    } else {
+                        Text("You can change or disable this anytime in Settings.")
+                            .font(AppFonts.italicFont(13))
+                            .foregroundColor(AppColors.textSecondary)
+                    }
                 }
                 .multilineTextAlignment(.leading)
             },
             bottomContent: {
                 VStack(spacing: 14) {
                     Button {
-                        if let hour = selectedReminderHour {
+                        // Already refused: there is no hour left to set,
+                        // so the button's only remaining job is to move on.
+                        // Without this it would re-run the sync, be told
+                        // "denied" again, and refuse to advance — a slide
+                        // with a live button and no way forward.
+                        if UserSettings.shared.notificationAuthorizationDenied {
+                            withAnimation(.easeInOut(duration: 0.3)) { currentPage = 7 }
+                            return
+                        }
+                        guard let hour = selectedReminderHour else {
+                            withAnimation(.easeInOut(duration: 0.3)) { currentPage = 7 }
+                            return
+                        }
+                        // Hold this slide until the system has asked and
+                        // been answered. The property observers raise the
+                        // same request on their own, but they do it in a
+                        // detached Task, so the dialog landed on the *next*
+                        // slide — over "In the Name of the Father", with
+                        // nothing on screen explaining what was being
+                        // asked. Awaiting it here keeps the question on the
+                        // slide that poses it, and lets the refusal line
+                        // above appear before the user moves on.
+                        Task {
                             let settings = UserSettings.shared
                             settings.reminderHour = hour
                             settings.reminderMinute = 0
                             settings.remindersEnabled = true
+                            await settings.syncNotifications()
+                            // A refusal earns a beat. The line above now
+                            // says what happened and where to undo it;
+                            // sliding straight on would hide it, which is
+                            // how this slide used to send people away
+                            // believing an hour was set.
+                            guard !settings.notificationAuthorizationDenied else { return }
+                            withAnimation(.easeInOut(duration: 0.3)) { currentPage = 7 }
                         }
-                        withAnimation(.easeInOut(duration: 0.3)) { currentPage = 7 }
                     } label: {
                         HStack(spacing: 6) {
-                            Text("Set Reminder")
+                            Text(UserSettings.shared.notificationAuthorizationDenied
+                                 ? "Continue" : "Set Reminder")
                                 .font(AppFonts.headlineFont(17))
                             AppIcon("ph-caret-right", size: 13)
                         }
@@ -557,11 +604,11 @@ struct OnboardingView: View {
         case .peace:
             return ("ph-hands-praying", "One decade is a beginning. The Pray button opens today's mysteries.")
         case .habit:
-            return ("ph-flame", "The flame on the home screen keeps your record. It starts with today.")
+            return ("ph-flame", "Your Chapel keeps the flame — a record of the days you have prayed. It starts with today.")
         case .devotion:
             return ("ph-crown", "When you are ready, the 33-day Consecration waits under Consecrate.")
         case .learning:
-            return ("ch-bible", "Open the menu and read How to Pray the Rosary first — it takes five minutes.")
+            return ("ch-bible", "Your Chapel's Library holds How to Pray the Rosary. Start there — it takes five minutes.")
         case nil:
             return ("ph-hands-praying", "The Pray button opens today's mysteries whenever you are ready.")
         }
@@ -590,7 +637,12 @@ struct OnboardingView: View {
                     Button {
                         onComplete()
                     } label: {
-                        Text("Begin Prayer")
+                        // This opens the app; it does not start a Rosary.
+                        // Labelled "Begin Prayer", it landed the user on a
+                        // home screen carrying its own "Begin Prayer"
+                        // button — the same words twice, the first of them
+                        // untrue.
+                        Text("Enter")
                             .font(AppFonts.headlineFont(17))
                             .foregroundColor(AppColors.background)
                             .frame(maxWidth: .infinity)

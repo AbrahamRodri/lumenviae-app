@@ -46,6 +46,7 @@ struct MarianLibraryView: View {
                     .padding(.bottom, 48)
                 }
             }
+            .topChromeFade()
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {

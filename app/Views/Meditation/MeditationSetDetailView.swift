@@ -124,7 +124,7 @@ struct MeditationSetDetailView: View {
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("The server may still be waking up — it can take a few seconds. Downloading offline content in Account keeps every meditation available without a connection.")
+            Text("The server may still be waking up — it can take a few seconds. Downloading offline content in Settings keeps every meditation available without a connection.")
         }
     }
 

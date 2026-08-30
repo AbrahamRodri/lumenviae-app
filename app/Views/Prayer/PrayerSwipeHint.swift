@@ -25,7 +25,11 @@ struct PrayerSwipeHint: View {
 
     var body: some View {
         HStack(spacing: 9) {
-            Text("Swipe left for the next mystery")
+            // Names the act before the gesture. The screen shows a
+            // painting and a transport and nothing that says the decade
+            // is prayed on the user's own beads; onboarding says it once,
+            // eight slides before they get here, and never again.
+            Text("Pray the decade, then swipe left")
                 .font(AppFonts.labelFont(9))
                 .tracking(2)
                 .foregroundColor(AppColors.cream.opacity(0.6))

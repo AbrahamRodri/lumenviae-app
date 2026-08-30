@@ -6,21 +6,15 @@
 import SwiftUI
 import UIKit
 
+/// The Chapel's preferences — every toggle and choice, reached from the
+/// day strip's faders. The informational pages (about, privacy, help)
+/// live on their own leaf, AboutView, behind the strip's ☰.
 struct AccountView: View {
     @Environment(UserSettings.self) private var userSettings
     @Environment(AppRouter.self) private var router
-    @State private var showOnboarding = false
-    @State private var showAbout = false
-    @State private var showPrivacyPolicy = false
-    @State private var showHelpSupport = false
-    @State private var showFeedback = false
-
-    /// Set by Help & Support's own feedback link. Presenting the form
-    /// into that sheet's dismissal drops it, so it is opened from
-    /// `onDismiss` instead — the same handoff the prayer tray uses.
-    @State private var feedbackAfterHelp = false
     @State private var showSoundPicker = false
     @State private var showIntentionPicker = false
+    @State private var showRuleEditor = false
 
     var body: some View {
         ZStack {
@@ -32,21 +26,21 @@ struct AccountView: View {
                     AccountHeaderView()
 
                     // MARK: Appearance
-                    AccountSection(title: "APPEARANCE") {
+                    AccountSection(title: "Appearance", icon: "ph-sparkle") {
                         ThemePickerRows()
                     }
-                    .padding(.top, 24)
+                    .padding(.top, 30)
 
                     // MARK: App Icon
                     if AppIconPickerRows.isEnabled {
-                        AccountSection(title: "APP ICON") {
+                        AccountSection(title: "App Icon", icon: "ph-image") {
                             AppIconPickerRows()
                         }
-                        .padding(.top, 24)
+                        .padding(.top, 30)
                     }
 
                     // MARK: Prayer Experience
-                    AccountSection(title: "PRAYER EXPERIENCE") {
+                    AccountSection(title: "Prayer Experience", icon: "ch-rosary") {
                         VStack(spacing: 0) {
                             TextSizeRow(value: Bindable(userSettings).textSizeScale)
 
@@ -68,11 +62,41 @@ struct AccountView: View {
                             )
                         }
                     }
-                    .padding(.top, 24)
+                    .padding(.top, 30)
 
                     // MARK: Devotion
-                    AccountSection(title: "DEVOTION") {
+                    AccountSection(title: "Devotion", icon: "ph-scroll") {
                         VStack(spacing: 0) {
+                            // The Chapel page is arranged in place, so
+                            // these are the standing doors to the two
+                            // things arranging can't reach: what is ON
+                            // the rule, and the record of prayer — kept
+                            // here so stowing the flame tile never
+                            // strands the Prayer Record.
+                            ActionRow(
+                                icon: "ph-scroll",
+                                title: "Rule of Prayer",
+                                subtitle: userSettings.ruleItems.isEmpty
+                                    ? "No devotions chosen yet"
+                                    : userSettings.ruleItems.map(\.title).joined(separator: " · ")
+                            ) {
+                                showRuleEditor = true
+                            }
+
+                            Divider()
+                                .background(AppColors.gold.opacity(0.2))
+
+                            ActionRow(
+                                icon: "ph-flame",
+                                title: "Prayer Record",
+                                subtitle: "Your streaks, history, and milestones"
+                            ) {
+                                router.switchTo(.progress)
+                            }
+
+                            Divider()
+                                .background(AppColors.gold.opacity(0.2))
+
                             ToggleRow(
                                 icon: "ph-bell",
                                 title: "Daily Reminders",
@@ -144,58 +168,15 @@ struct AccountView: View {
                     .padding(.top, 24)
 
                     // MARK: Offline
-                    AccountSection(title: "OFFLINE") {
+                    AccountSection(title: "Offline", icon: "ph-download-simple") {
                         OfflineContentRows()
                     }
-                    .padding(.top, 24)
+                    .padding(.top, 30)
 
-                    // MARK: About
-                    AccountSection(title: "ABOUT") {
-                        VStack(spacing: 0) {
-                            ActionRow(icon: "ph-info", title: "About Lumen Viae") {
-                                showAbout = true
-                            }
-
-                            Divider()
-                                .background(AppColors.gold.opacity(0.2))
-
-                            ActionRow(icon: "ph-book-open", title: "App Introduction") {
-                                showOnboarding = true
-                            }
-
-                            Divider()
-                                .background(AppColors.gold.opacity(0.2))
-
-                            ActionRow(icon: "ph-shield", title: "Privacy Policy") {
-                                showPrivacyPolicy = true
-                            }
-
-                            Divider()
-                                .background(AppColors.gold.opacity(0.2))
-
-                            ActionRow(icon: "ph-question", title: "Help & Support") {
-                                showHelpSupport = true
-                            }
-
-                            Divider()
-                                .background(AppColors.gold.opacity(0.2))
-
-                            ActionRow(
-                                icon: "ph-chat-teardrop-text",
-                                title: "Send Feedback",
-                                subtitle: "Report a problem or share an idea"
-                            ) {
-                                showFeedback = true
-                            }
-                        }
-                    }
-                    .padding(.top, 24)
-
-                    AccountFooter()
-                        .padding(.top, 48)
-                        .padding(.bottom, 120)
+                    Spacer(minLength: 120)
                 }
             }
+            .topChromeFade()
         }
         // Settings is a pushed content page: the bar stays, and Back
         // lives in it. Drawn inside the scroll view — as it was — the
@@ -213,30 +194,12 @@ struct AccountView: View {
                 }
             }
         }
-        .sheet(isPresented: $showOnboarding) {
-            OnboardingView(onComplete: { showOnboarding = false })
-        }
-        .sheet(isPresented: $showAbout) {
-            AboutSheet()
-        }
-        .sheet(isPresented: $showPrivacyPolicy) {
-            PrivacyPolicySheet()
-        }
-        .sheet(isPresented: $showHelpSupport, onDismiss: {
-            guard feedbackAfterHelp else { return }
-            feedbackAfterHelp = false
-            showFeedback = true
-        }) {
-            HelpSupportSheet(onGiveFeedback: {
-                feedbackAfterHelp = true
-                showHelpSupport = false
-            })
-        }
-        .sheet(isPresented: $showFeedback) {
-            FeedbackView()
-        }
         .sheet(isPresented: $showSoundPicker) {
             ReminderSoundSheet()
+        }
+        .sheet(isPresented: $showRuleEditor) {
+            RuleEditorSheet()
+                .environment(userSettings)
         }
         .sheet(isPresented: $showIntentionPicker) {
             PrayerIntentionSheet()
@@ -454,49 +417,70 @@ struct AppIconPickerRows: View {
 // MARK: - Account Header
 
 struct AccountHeaderView: View {
-    /// The page's own title. Back is not drawn here: Settings is a
-    /// pushed content page, so its Back belongs in the navigation bar,
-    /// where it stays put however far down the page the reader is.
+    /// The page's plate, set in the Chapel's own voice: a large Cinzel
+    /// title over one italic line, closed with the ornament rule. Back
+    /// is not drawn here: Settings is a pushed content page, so its Back
+    /// belongs in the navigation bar, where it stays put however far
+    /// down the page the reader is.
     var body: some View {
-        Text("Settings")
-            .font(AppFonts.headlineFont(20))
-            .foregroundColor(AppColors.cream)
-            .frame(maxWidth: .infinity)
-            .padding(.horizontal, 12)
-            .padding(.top, 8)
-            .padding(.bottom, 8)
-            .overlay(
-                Rectangle()
-                    .fill(AppColors.gold.opacity(0.2))
-                    .frame(height: 0.5),
-                alignment: .bottom
-            )
+        VStack(spacing: 10) {
+            Text("Settings")
+                .font(AppFonts.headlineFont(30))
+                .foregroundColor(AppColors.cream)
+
+            Text("How your chapel is kept.")
+                .font(AppFonts.italicFont(14))
+                .foregroundColor(AppColors.textSecondary)
+
+            OrnamentDivider()
+                .frame(width: 120)
+                .padding(.top, 6)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.top, 10)
     }
 }
 
 // MARK: - Account Section Container
 
+/// A settings section in the Chapel's outlined register: a glyph-led
+/// kicker in engraved caps, the rows behind a bare gold hairline — no
+/// filled card surfaces, same as the page the settings serve.
 struct AccountSection<Content: View>: View {
     let title: String
+    var icon: String? = nil
     @ViewBuilder let content: Content
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(title)
-                .font(AppFonts.labelFont(11))
-                .tracking(2)
-                .foregroundColor(AppColors.textSecondary)
-                .padding(.horizontal, 20)
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 7) {
+                if let icon {
+                    AppIcon(icon, size: 12)
+                        .foregroundColor(AppColors.gold.opacity(0.75))
+                        .accessibilityHidden(true)
+                }
+
+                Text(title.uppercased())
+                    .font(AppFonts.labelFont(10))
+                    .tracking(2.5)
+                    .foregroundColor(AppColors.gold.opacity(0.75))
+            }
 
             content
-                .background(AppColors.cardBackground)
-                .cornerRadius(16)
+                // The card fill is gone, but the corner still has to
+                // cut: rows carry their own highlights, and the reminder
+                // rows slide in and out on a transition. `cornerRadius`
+                // was doing this clipping as a side effect — dropping it
+                // for the outlined register left square fills inside a
+                // rounded hairline and let the animating rows escape the
+                // section entirely.
+                .clipShape(RoundedRectangle(cornerRadius: 16))
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)
-                        .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: 0.5)
+                        .strokeBorder(AppColors.gold.opacity(0.24), lineWidth: 0.5)
                 )
-                .padding(.horizontal, 20)
         }
+        .padding(.horizontal, 20)
     }
 }
 
@@ -521,7 +505,7 @@ struct OfflineContentRows: View {
             switch service.state {
             case .idle:
                 ActionRow(
-                    icon: "ph-arrow-counter-clockwise",
+                    icon: "ph-download-simple",
                     title: "Download for Offline",
                     subtitle: "Every meditation and audio file, ready without a connection"
                 ) {
@@ -895,7 +879,7 @@ struct AccountFooter: View {
             AppIcon("ch-church", size: 28)
                 .foregroundColor(AppColors.gold.opacity(0.5))
 
-            Text("Lumen Viae v1.0.0")
+            Text("Lumen Viae v\(Bundle.main.appVersion)")
                 .font(AppFonts.bodyFont(12))
                 .foregroundColor(AppColors.textSecondary)
 
@@ -1085,7 +1069,7 @@ struct HelpSupportSheet: View {
 
                         InfoBlock(
                             title: "How do I adjust text size?",
-                            text: "Go to Me → Settings → Prayer Experience → Text Size. Drag the slider toward the larger \"A\" to increase the meditation text size."
+                            text: "Open the Chapel, tap the sliders at the top of the page, then Prayer Experience → Text Size. Drag the slider toward the larger \"A\" to increase the meditation text size."
                         )
 
                         InfoBlock(

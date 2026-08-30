@@ -79,8 +79,8 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
         case .joyful:      return "ph-star"
         case .sorrowful:   return "ch-crown-of-thorns"
         case .glorious:    return "ph-sun-horizon"
-        case .luminous:    return "ph-sun"
-        case .sevenSorrows: return "ch-sacred-heart"
+        case .luminous:    return "ph-sparkle"
+        case .sevenSorrows: return "ch-sorrowful-heart"
         }
     }
 

@@ -149,7 +149,7 @@ struct MenuView: View {
                         .fill(AppColors.gold.opacity(0.2))
                         .frame(height: 1)
 
-                    Text("Lumen Viae v1.0.0")
+                    Text("Lumen Viae v\(Bundle.main.appVersion)")
                         .font(AppFonts.bodyFont(12))
                         .foregroundColor(AppColors.textSecondary)
 

@@ -17,10 +17,10 @@ import SwiftData
 // MARK: - ConsecrationRoute
 
 /// Navigation routes within the Consecration tab
-/// A step within a day: each of its readings, then each of its prayers.
+/// A step within a day: each of its prayers, then each of its readings.
 /// The dashboard can open any of them, and the flow itself moves between
-/// them — so the reading is the first step of the same screen rather
-/// than a cover that has to dismiss before the prayers can be pushed.
+/// them — so the reading is a step of the same screen rather than a
+/// cover that has to dismiss before the prayers can be pushed.
 ///
 /// `reading` carries an index because most days have two: a Gospel
 /// passage and a spiritual reading. They are separate texts from
