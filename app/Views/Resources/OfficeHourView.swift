@@ -3,11 +3,22 @@
 //  Lumen Viae
 //
 //  One canonical hour, read in full — Lauds at dawn, Compline before
-//  sleep — under the missal's own reader. The header holds the hour on
-//  a plate that gives way as the reader moves into the text, leaving
-//  the hour's name in the chrome, a jump-to-section rail, and a hair of
-//  progress. Three controls do the rest: the day (the date pill), the
-//  hour's index (☰), and reading settings (Aa).
+//  sleep — under the missal's own reader.
+//
+//  The hour is named in the bar and nowhere else on the screen. Beneath
+//  it the day is stated once, in two lines: the date with the day's
+//  class, and the feast. An earlier draft repeated the hour as a 28pt
+//  heading under a bar already reading TERCE, carried the full Latin
+//  day-title, set a TERTIA · III. CLASSIS row, and hung a ‹ TODAY ›
+//  stepper below all of it — four ways of saying what the bar and one
+//  line already say. The chrome above the text is now two lines and a
+//  rail, and the reading begins about a third of the way up the screen
+//  instead of halfway down.
+//
+//  The date is kept here, unlike the landing, because the reader can be
+//  opened on another day from the landing's calendar and has no other
+//  way of saying which day's office you are in. It is a statement, not
+//  a control: the day is chosen on the landing.
 //
 //  Matins runs to nine psalms and nine lessons. Without a rail and an
 //  index it is a thumb's length of scrolling to find the Te Deum, which
@@ -37,7 +48,6 @@ struct OfficeHourView: View {
     private enum OfficeSheet: String, Identifiable {
         case reading
         case index
-        case calendar
 
         var id: String { rawValue }
     }
@@ -53,16 +63,18 @@ struct OfficeHourView: View {
     /// every frame of every scroll would otherwise re-walk.
     @State private var readerSections: [OfficeReaderSection] = []
 
-    /// Header collapse, driven by scroll offset with hysteresis —
-    /// collapse past 96, expand back under 44 — so the boundary never
-    /// flutters.
+    /// Header collapse, driven by scroll offset with hysteresis so the
+    /// boundary never flutters. The thresholds are taken from the
+    /// plate's own height rather than the missal's 96/44: this plate is
+    /// two lines, and a fixed 96 would have left the text sliding under
+    /// a plate that was still standing.
     @State private var collapsed = false
 
     /// Index into `readerSections` of the section under the header
     @State private var activeSectionIndex = 0
 
-    /// Natural height of the hour plate — the part that collapses
-    @State private var plateHeight: CGFloat = 150
+    /// Natural height of the day plate — the part that collapses
+    @State private var plateHeight: CGFloat = 60
 
     /// Measured height of the rail-and-progress block under the plate
     @State private var railBlockHeight: CGFloat = 70
@@ -122,22 +134,17 @@ struct OfficeHourView: View {
 
     /// The day's place in the calendar — the hour's own copy once it has
     /// landed, the ledger's until then, so the plate is complete before
-    /// the text arrives.
+    /// the text arrives. Read for the day's class only.
     private var celebration: OfficeCelebration? {
         office?.celebration ?? viewModel.day?.celebration
     }
 
-    private var tempora: String? {
-        guard let line = nonEmpty(office?.tempora) ?? nonEmpty(viewModel.day?.detail?.text) else {
-            return nil
-        }
-        // "Commemoratio ad Laudes tantum:S. Zephyrini" — the engine sets
-        // its own colons closed up. Opened, not otherwise touched.
-        return line.replacingOccurrences(
-            of: ":(?=\\S)",
-            with: ": ",
-            options: .regularExpression
-        )
+    /// The feast, in English where the missal can supply it — the
+    /// breviary names the day only in Latin, and the chrome above the
+    /// text is English throughout. Falls back to the engine's own
+    /// wording rather than leaving the plate half-empty.
+    private var feastTitle: String? {
+        viewModel.feastTitle ?? celebration?.title
     }
 
     /// The design system's --ease-out — cubic-bezier(0, 0, 0.58, 1).
@@ -178,14 +185,6 @@ struct OfficeHourView: View {
                     pendingJump = target
                 }
                 .presentationDetents([.height(indexSheetHeight)])
-                .presentationDragIndicator(.hidden)
-                .presentationCornerRadius(22)
-
-            case .calendar:
-                OfficeCalendarSheet { chosen in
-                    Task { await viewModel.jump(to: chosen) }
-                }
-                .presentationDetents([.height(560)])
                 .presentationDragIndicator(.hidden)
                 .presentationCornerRadius(22)
             }
@@ -242,7 +241,14 @@ struct OfficeHourView: View {
 
     private func handleScrollOffset(_ markerGlobalMinY: CGFloat) {
         scrolledPastTop = headerFootGlobal - markerGlobalMinY
-        let shouldCollapse = collapsed ? scrolledPastTop > 44 : scrolledPastTop > 96
+        // The missal's 0.64 / 0.29 of the plate, which on its 150pt
+        // plate is the 96 / 44 that page was tuned at. Floored, so a
+        // plate measured at zero before its first layout cannot collapse
+        // the header on the very first pixel of scroll.
+        let plate = max(24, plateHeight)
+        let shouldCollapse = collapsed
+            ? scrolledPastTop > plate * 0.29
+            : scrolledPastTop > plate * 0.64
         if shouldCollapse != collapsed {
             collapsed = shouldCollapse
         }
@@ -320,60 +326,25 @@ struct OfficeHourView: View {
         .padding(.horizontal, 12)
         .frame(height: Self.chromeHeight)
         // Centred on the screen, not flexed between the buttons — the
-        // two right-hand buttons would otherwise pull the pill left.
-        .overlay { chromeCenter }
+        // two right-hand buttons would otherwise pull the title left.
+        .overlay { hourTitle }
     }
 
-    /// The date pill and the collapsed hour share the centre slot and
-    /// crossfade as the header collapses.
-    private var chromeCenter: some View {
-        ZStack {
-            datePill
-                .opacity(collapsed ? 0 : 1)
-                .animation(anim(0.24), value: collapsed)
-                .allowsHitTesting(!collapsed)
-
-            collapsedTitle
-                .opacity(collapsed ? 1 : 0)
-                .offset(y: collapsed ? 0 : 5)
-                .animation(anim(0.26), value: collapsed)
-                .allowsHitTesting(false)
-        }
-    }
-
-    private var datePill: some View {
-        Button {
-            sheet = .calendar
-        } label: {
-            HStack(spacing: 9) {
-                Text(Self.pillDateFormatter.string(from: viewModel.date).uppercased())
-                    .font(AppFonts.labelFont(9.5))
-                    .tracking(1.6)
-
-                AppIcon("ph-caret-down", size: 11)
-            }
-            .foregroundColor(AppColors.gold)
-            .lineLimit(1)
-            .padding(.horizontal, 15)
-            .frame(height: 30)
-            .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.28), lineWidth: 0.5))
-            .frame(minHeight: 44)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(GoldCTAButtonStyle())
-        .accessibilityLabel("Choose a day")
-    }
-
-    private var collapsedTitle: some View {
+    /// The hour, named here and nowhere else on the screen. It no longer
+    /// crossfades with anything: the plate beneath states the day, the
+    /// bar states the hour, and neither has to take turns.
+    private var hourTitle: some View {
         Text(hour.label.uppercased())
             .font(AppFonts.labelFont(12.5))
             .tracking(2.5)
             .foregroundColor(AppColors.cream)
             .lineLimit(1)
             .frame(maxWidth: 210)
+            .allowsHitTesting(false)
+            .accessibilityAddTraits(.isHeader)
     }
 
-    // MARK: - Hour Plate
+    // MARK: - Day Plate
 
     /// The collapsing band: measured at its natural height, then framed
     /// to zero when collapsed.
@@ -394,122 +365,41 @@ struct OfficeHourView: View {
             .animation(anim(0.34), value: collapsed)
     }
 
-    /// What stands on the plate. Unlike the missal's, it never has to
-    /// wait: the hour and the day are known before a single line of text
-    /// is fetched, so only the feast beneath them arrives late.
+    /// The day, in two lines. Never has to wait for the text: the date
+    /// is known before a line is fetched, and the day's class and feast
+    /// come from the ledger's own copy until the hour lands with its.
     private var plateContent: some View {
-        VStack(spacing: 18) {
-            VStack(spacing: 10) {
-                if let tempora {
-                    Text(tempora.uppercased())
-                        .font(AppFonts.labelFont(8.5))
-                        .tracking(2)
-                        .foregroundColor(AppColors.textSecondary)
-                        .lineLimit(2)
-                        .multilineTextAlignment(.center)
-                        .minimumScaleFactor(0.7)
-                }
+        VStack(spacing: 5) {
+            Text(dayLine)
+                .font(AppFonts.labelFont(9.5))
+                .tracking(2.4)
+                .foregroundColor(AppColors.gold.opacity(0.7))
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
 
-                Text(hour.label)
-                    .font(AppFonts.titleFont(28))
-                    .foregroundColor(AppColors.textPrimary)
+            if let feastTitle {
+                Text(feastTitle)
+                    .font(AppFonts.italicFont(14.5))
+                    .foregroundColor(AppColors.accentSoft)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
-
-                rubricRow
-
-                if let celebration {
-                    Text(celebration.title)
-                        .font(AppFonts.italicFont(13))
-                        .foregroundColor(AppColors.textSecondary)
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
             }
-
-            // Turning the leaf: the same day at yesterday's or
-            // tomorrow's hour, and the way back for a reader who has
-            // wandered. The hours themselves are stepped at the foot of
-            // the page — a different axis, and it belongs where the
-            // reading ends.
-            dayStepRow
         }
-        .padding(.top, 20)
-        .padding(.horizontal, 20)
+        .padding(.top, 8)
+        .padding(.horizontal, 24)
         .frame(maxWidth: .infinity)
-        .animation(anim(0.3), value: celebration?.title ?? "")
+        .animation(anim(0.3), value: feastTitle ?? "")
     }
 
-    /// The hour's place in the sky beside its breviary name, then the
-    /// day's class — the missal's vestment row, in the currency the
-    /// office actually has.
-    private var rubricRow: some View {
-        HStack(spacing: 9) {
-            Circle()
-                .fill(hour.skyColor)
-                .frame(width: 7, height: 7)
-                .shadow(color: hour.skyColor.opacity(0.45), radius: 3)
-
-            Text(hour.latinName.uppercased())
-                .font(AppFonts.labelFont(9))
-                .tracking(2.5)
-                .foregroundColor(AppColors.textSecondary)
-
-            if celebration?.rank != nil {
-                Rectangle()
-                    .fill(AppColors.gold.opacity(0.25))
-                    .frame(width: 1, height: 9)
-            }
-
-            if let rank = celebration?.rank {
-                Text(rank.uppercased())
-                    .font(AppFonts.labelFont(9))
-                    .tracking(2.5)
-                    .foregroundColor(AppColors.textSecondary)
-            }
+    /// "THURSDAY, 27 AUGUST  ·  THIRD CLASS" — the day's class in
+    /// English, mapped from the engine's Latin rather than printed as it
+    /// arrived. A feria carries no class and the line is just the date.
+    private var dayLine: String {
+        let date = Self.plateDateFormatter.string(from: viewModel.date)
+        guard let rank = OfficeRank(celebration?.rank).englishLabel else {
+            return date.uppercased()
         }
-    }
-
-    private var dayStepRow: some View {
-        HStack(spacing: 0) {
-            dayStepButton(icon: "ph-caret-left", label: "Previous day", days: -1)
-
-            Spacer(minLength: 8)
-
-            if viewModel.isToday {
-                Text("TODAY")
-                    .font(AppFonts.labelFont(9))
-                    .tracking(2.5)
-                    .foregroundColor(AppColors.gold.opacity(0.6))
-            } else {
-                QuietGoldButton(
-                    title: "Return to today",
-                    leadingIcon: "ph-arrow-counter-clockwise",
-                    leadingIconSize: 10,
-                    size: 10
-                ) {
-                    Task { await viewModel.goToToday() }
-                }
-            }
-
-            Spacer(minLength: 8)
-
-            dayStepButton(icon: "ph-caret-right", label: "Next day", days: 1)
-        }
-        .frame(maxWidth: .infinity)
-    }
-
-    private func dayStepButton(icon: String, label: String, days: Int) -> some View {
-        Button {
-            Task { await viewModel.step(by: days) }
-        } label: {
-            AppIcon(icon, size: 15)
-                .foregroundColor(AppColors.gold.opacity(0.8))
-                .frame(width: 44, height: 44)
-                .contentShape(Rectangle())
-        }
-        .buttonStyle(SacredCardButtonStyle())
-        .accessibilityLabel(label)
+        return "\(date)  ·  \(rank)".uppercased()
     }
 
     // MARK: - Rail and Progress
@@ -561,6 +451,18 @@ struct OfficeHourView: View {
                 withAnimation(anim(0.3)) {
                     proxy.scrollTo(index, anchor: UnitPoint(x: 0.22, y: 0.5))
                 }
+            }
+            // The rail reads as scrollable without a scrollbar: the
+            // last name runs out under the page's own colour instead of
+            // stopping at the margin.
+            .overlay(alignment: .trailing) {
+                LinearGradient(
+                    colors: [AppColors.background.opacity(0), AppColors.background],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+                .frame(width: 52)
+                .allowsHitTesting(false)
             }
         }
     }
@@ -781,16 +683,10 @@ struct OfficeHourView: View {
 
     // MARK: - Helpers
 
-    private func nonEmpty(_ string: String?) -> String? {
-        guard let trimmed = string?.trimmingCharacters(in: .whitespacesAndNewlines),
-              !trimmed.isEmpty else { return nil }
-        return trimmed
-    }
-
-    /// "TUESDAY · 25 AUGUST"
-    private static let pillDateFormatter: DateFormatter = {
+    /// "Thursday, 27 August"
+    private static let plateDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "EEEE '·' d MMMM"
+        formatter.dateFormat = "EEEE, d MMMM"
         return formatter
     }()
 }
