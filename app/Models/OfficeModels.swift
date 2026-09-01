@@ -76,18 +76,82 @@ nonisolated enum CanonicalHour: String, CaseIterable, Codable, Identifiable {
         }
     }
 
+    /// The hour named in English with the part of day it belongs to —
+    /// "Terce, the mid-morning hour". `timeOfDay` says the same thing in
+    /// the ledger's telegraphic register; this is the sentence form the
+    /// home ledger and the arch read in.
+    var dayPart: String {
+        switch self {
+        case .matins: return "the hour of the night"
+        case .lauds: return "the hour of dawn"
+        case .prime: return "the early morning hour"
+        case .terce: return "the mid-morning hour"
+        case .sext: return "the midday hour"
+        case .nones: return "the mid-afternoon hour"
+        case .vespers: return "the evening hour"
+        case .compline: return "the hour before sleep"
+        }
+    }
+
+    /// "Terce, the mid-morning hour"
+    var namedDayPart: String { "\(label), \(dayPart)" }
+
+    /// The clock hour at which this hour's traditional time begins.
+    ///
+    /// One table, and everything else is derived from it: which hour is
+    /// present, when it lapses, and the words the arch says it lapses
+    /// in. Written as eight separate expressions they agreed only by
+    /// accident, and would have parted the first time one was touched.
+    ///
+    /// Fixed clock times, not true solar hours — the boundaries a
+    /// breviary's own rubrics assume.
+    var beginsAtClockHour: Int {
+        switch self {
+        case .matins: return 0
+        case .lauds: return 5
+        case .prime: return 7
+        case .terce: return 9
+        case .sext: return 12
+        case .nones: return 14
+        case .vespers: return 16
+        case .compline: return 19
+        }
+    }
+
     /// The hour whose traditional time holds the given clock hour — a
     /// quiet suggestion for the ledger, never a gate.
     static func present(atClockHour clockHour: Int) -> CanonicalHour {
+        allCases.last { $0.beginsAtClockHour <= clockHour } ?? .compline
+    }
+
+    /// The hour that follows this one, wrapping from Compline back to
+    /// Matins. Distinct from `next`, which stops at the end of the day
+    /// because the reader's foot-of-page stepping should not roll over
+    /// into tomorrow.
+    var following: CanonicalHour {
+        let all = Self.allCases
+        let index = all.firstIndex(of: self) ?? 0
+        return all[(index + 1) % all.count]
+    }
+
+    /// "until Sext at noon" — why this hour is the one being prayed and
+    /// when it lapses.
+    var lapses: String {
+        let hour = following
+        return "until \(hour.label) at \(Self.clockWord(hour.beginsAtClockHour))"
+    }
+
+    /// The clock said the way a breviary would say it, in words.
+    private static func clockWord(_ clockHour: Int) -> String {
         switch clockHour {
-        case 0...4: return .matins
-        case 5...6: return .lauds
-        case 7...8: return .prime
-        case 9...11: return .terce
-        case 12...13: return .sext
-        case 14...15: return .nones
-        case 16...18: return .vespers
-        default: return .compline
+        case 0: return "midnight"
+        case 12: return "noon"
+        default:
+            let names = [
+                "twelve", "one", "two", "three", "four", "five",
+                "six", "seven", "eight", "nine", "ten", "eleven"
+            ]
+            return names[clockHour % 12]
         }
     }
 

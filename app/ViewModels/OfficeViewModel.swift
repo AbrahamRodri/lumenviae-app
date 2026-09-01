@@ -45,6 +45,34 @@ final class OfficeViewModel {
     /// Days fetched this session, keyed by their start-of-day date
     private var dayCache: [Date: OfficeDay] = [:]
 
+    /// The open day as the missal has it.
+    ///
+    /// The breviary supplies neither of the two things the office's own
+    /// chrome needs. It names no vestment colour — the engine carries a
+    /// day's class but no silk — and it names the day only in Latin
+    /// ("S. Raymundi Nonnati Confessoris"), while Latin belongs in the
+    /// prayer text and not above it. Both are read from the missal's
+    /// propers for the same date, which the app already fetches and
+    /// keeps on disk, and which follow the same 1962 calendar: under
+    /// these rubrics the Office and the Mass are of the same day.
+    ///
+    /// Optional in every sense: silent on failure, never awaited by the
+    /// page, and simply absent when the missal cannot be reached. The
+    /// plate then falls back to the breviary's own Latin and reads
+    /// "THIRD CLASS" where it would have read "THIRD CLASS · WHITE".
+    private(set) var missalDay: MissalProper?
+
+    private var missalCache: [Date: MissalProper] = [:]
+
+    var vestment: MissalVestment? {
+        missalDay?.info.colors?.first.flatMap { MissalVestment(rawValue: $0) }
+    }
+
+    /// The day's feast, in English where it can be had.
+    var feastTitle: String? {
+        missalDay?.info.title ?? day?.celebration?.title
+    }
+
     /// Hours fetched this session, keyed by "day/hour"
     private var hourCache: [String: OfficeHour] = [:]
 
@@ -67,9 +95,13 @@ final class OfficeViewModel {
 
     /// The hour whose traditional time holds the present moment —
     /// marked in the ledger only when the open day is today.
+    ///
+    /// Read from the shared clock rather than off `Date()`, so the mark
+    /// walks down the strand on the hour instead of waiting for
+    /// something else to redraw the page.
     var presentHour: CanonicalHour? {
         guard isToday else { return nil }
-        return CanonicalHour.present(atClockHour: calendar.component(.hour, from: .now))
+        return CanonicalClock.shared.hour
     }
 
     private static let displayFormatter: DateFormatter = {
@@ -82,6 +114,8 @@ final class OfficeViewModel {
 
     @MainActor
     func load() async {
+        loadMissalDay()
+
         if let cached = dayCache[date] {
             day = cached
             dayUnavailable = false
@@ -218,6 +252,47 @@ final class OfficeViewModel {
     private func open(_ newDate: Date) {
         date = calendar.startOfDay(for: newDate)
         day = dayCache[date]
+        missalDay = missalCache[date]
         dayUnavailable = false
+    }
+
+    // MARK: - The Day, as the Missal has it
+
+    /// Reads the missal's propers for the open day — the disk first, the
+    /// network only if it must. Never awaited by `load`: the feast plate
+    /// must not wait on a third-party service for a name it already has
+    /// in Latin and an ornament it can do without.
+    @MainActor
+    private func loadMissalDay() {
+        let requested = date
+
+        if let held = missalCache[requested] {
+            missalDay = held
+            return
+        }
+
+        let dayKey = MissalAPIService.dayString(for: requested)
+
+        if let stored = MissalCacheService.shared.loadProper(for: dayKey)?.first {
+            record(stored, for: requested)
+            return
+        }
+
+        Task { [weak self] in
+            guard let fetched = try? await MissalAPIService.shared.fetchPropers(day: dayKey),
+                  let first = fetched.first else { return }
+            MissalCacheService.shared.saveProper(fetched, for: dayKey)
+            self?.record(first, for: requested)
+        }
+    }
+
+    @MainActor
+    private func record(_ proper: MissalProper, for requested: Date) {
+        missalCache[requested] = proper
+        // A slow answer for a day the reader has already stepped away
+        // from still caches, but must not name the open page.
+        if requested == date {
+            missalDay = proper
+        }
     }
 }

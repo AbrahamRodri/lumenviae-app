@@ -4,14 +4,27 @@
 //
 //  The Divine Office: the pre-Vatican II Breviarium Romanum under the
 //  1960 rubrics, served by the Lumen Viae API from the Divinum Officium
-//  engine. A day is stepped like turning pages — the same navigator as
-//  the missal — and its eight canonical hours wait in a ruled ledger,
-//  each named in English with the breviary's own name and its
-//  traditional time beside it.
+//  engine.
 //
-//  The ledger never waits on the network: the hours are the hours. Only
-//  the day's calendar line travels, and when it cannot be reached the
-//  page says so quietly and leaves every hour tappable.
+//  The screen has one purpose — get the reader into the hour that is
+//  current, in one tap — so the hour it is now is lifted out of the
+//  eight and set in a lit lancet arch with the page's single gold act
+//  beneath it. Every other card in the app is a 16pt rectangle; making
+//  this one an arch means the eye lands on it before reading a word.
+//
+//  The eight still stand below, grouped the way a breviary groups them
+//  and strung on one strand of light, each bead in the colour of its own
+//  time of day — the strand runs dark through bright and back to dark
+//  over the course of a day.
+//
+//  English in the chrome. The engine answers in Latin ("III. classis",
+//  "S. Josephi Calasanctii Confessoris") and Latin belongs in the prayer
+//  text, not above it, so the rank is mapped client-side.
+//
+//  Nothing here waits on the network: the hours are the hours, and the
+//  arch's choice of hour is read from the clock. Only the day's feast
+//  travels, and when it cannot be reached the page says so quietly and
+//  leaves every hour tappable.
 //
 
 import SwiftUI
@@ -19,10 +32,32 @@ import SwiftUI
 struct DivineOfficeView: View {
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
 
     @State private var viewModel = OfficeViewModel()
     @State private var openHour: CanonicalHour?
     @State private var showCalendar = false
+
+    private var clock = CanonicalClock.shared
+
+    /// Whether the three group headings render. With them off the eight
+    /// read as one continuous strand.
+    private let showHourGroups = true
+
+    // MARK: - Groups
+
+    /// The hours as a breviary groups them
+    private struct HourGroup: Identifiable {
+        let heading: String
+        let hours: [CanonicalHour]
+        var id: String { heading }
+    }
+
+    private static let groups: [HourGroup] = [
+        HourGroup(heading: "THE NIGHT AND THE DAWN", hours: [.matins, .lauds]),
+        HourGroup(heading: "THE LITTLE HOURS", hours: [.prime, .terce, .sext, .nones]),
+        HourGroup(heading: "EVENING AND NIGHT", hours: [.vespers, .compline])
+    ]
 
     // MARK: - Body
 
@@ -34,9 +69,6 @@ struct DivineOfficeView: View {
             content
         }
         .navigationBarBackButtonHidden(true)
-        // The bar's controls stand on the masthead's own surface, as on
-        // the missal — no floating glass capsules where the leaf runs up
-        // behind them.
         .toolbar {
             if #available(iOS 26.0, *) {
                 ToolbarItem(placement: .navigationBarLeading) { backButton }
@@ -44,10 +76,15 @@ struct DivineOfficeView: View {
 
                 ToolbarItem(placement: .principal) { bookName }
                     .sharedBackgroundVisibility(.hidden)
+
+                ToolbarItem(placement: .navigationBarTrailing) { calendarButton }
+                    .sharedBackgroundVisibility(.hidden)
             } else {
                 ToolbarItem(placement: .navigationBarLeading) { backButton }
 
                 ToolbarItem(placement: .principal) { bookName }
+
+                ToolbarItem(placement: .navigationBarTrailing) { calendarButton }
             }
         }
         .sheet(isPresented: $showCalendar) {
@@ -63,6 +100,11 @@ struct DivineOfficeView: View {
         }
         .task {
             await viewModel.load()
+        }
+        // The hour's own timer may have slept through a suspension, and
+        // the arch must be right the instant the page is seen.
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { clock.refresh() }
         }
     }
 
@@ -87,79 +129,94 @@ struct DivineOfficeView: View {
     /// straight onto the day's leaf, as the missal does.
     private var bookName: some View {
         Text("THE DIVINE OFFICE")
-            .font(AppFonts.labelFont(10))
+            .font(AppFonts.labelFont(10.5))
             .tracking(2.5)
-            .foregroundColor(AppColors.gold.opacity(0.7))
+            .foregroundColor(AppColors.gold.opacity(0.75))
+    }
+
+    /// The only day-switching control on the screen. An earlier draft
+    /// also carried a `‹ Thursday, 27 August ›` stepper with a TODAY
+    /// caption; it was cut, because this button already does that job
+    /// and the stepper cost most of the first screenful. The landing
+    /// shows today; the sheet is how you go elsewhere.
+    private var calendarButton: some View {
+        Button {
+            showCalendar = true
+        } label: {
+            AppIcon("ph-calendar-dots", size: 17)
+                .foregroundColor(AppColors.gold)
+                .frame(width: 44, height: 44, alignment: .trailing)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(SacredCardButtonStyle())
+        .accessibilityLabel("Choose a day")
     }
 
     // MARK: - Content
 
     private var content: some View {
         ScrollView(showsIndicators: false) {
-            LazyVStack(alignment: .leading, spacing: 0) {
-                // The leaf runs edge to edge; only the ledger below it
-                // keeps the page margin.
-                OrdoMasthead(
-                    dateLabel: viewModel.dateLabel,
-                    isToday: viewModel.isToday,
-                    onStep: { days in Task { await viewModel.step(by: days) } },
-                    onCalendar: { showCalendar = true },
-                    onToday: { Task { await viewModel.goToToday() } }
-                ) {
-                    mastheadFeast
-                }
-                .padding(.bottom, 24)
-
-                hoursLedger
+            VStack(alignment: .leading, spacing: 0) {
+                feastPlate
                     .padding(.horizontal, 24)
+                    .devotionalEntrance(delay: 0.04)
 
-                endBlock
+                theHourNow
                     .padding(.horizontal, 24)
+                    .padding(.top, 26)
+                    .devotionalEntrance(delay: 0.12)
+
+                hourGroups
+                    .padding(.horizontal, 24)
+                    .padding(.top, 14)
+
+                colophon
+                    .padding(.horizontal, 24)
+                    .padding(.top, 26)
+                    .devotionalEntrance(delay: 0.36)
             }
-            .padding(.bottom, 40)
+            .padding(.bottom, 44)
         }
+        // The arch carries the page's one gold shape, and without this
+        // it travels up through the bar and sits lit behind the status
+        // bar. The same dissolve every other pushed page uses, at the
+        // same depth: a shallower inset leaves the feast at rest
+        // *inside* the band, ghosting before anyone has scrolled — the
+        // failure the modifier's own inset exists to prevent.
+        .topChromeFade()
     }
 
-    // MARK: - Day Header
+    // MARK: - Feast Plate
 
-    /// What stands on the leaf: the day's place in the calendar, once
-    /// known. Loading and failure live inside the same object, so the
-    /// ledger below never moves while the day travels.
+    /// The day, named in English and centred. Loading and failure live
+    /// in the same place, so the arch below never moves while the day
+    /// travels.
     @ViewBuilder
-    private var mastheadFeast: some View {
-        VStack(spacing: 9) {
-            if let day = viewModel.day {
-                if let tempora = day.detail?.text {
-                    Text(tempora.uppercased())
-                        .font(AppFonts.labelFont(10))
-                        .tracking(2)
-                        .foregroundColor(AppColors.gold.opacity(0.7))
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
+    private var feastPlate: some View {
+        VStack(spacing: 6) {
+            if let feast = viewModel.feastTitle {
+                Text(feast)
+                    .font(AppFonts.headlineFont(21))
+                    .lineSpacing(21 * 0.25)
+                    .foregroundColor(AppColors.cream)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
 
-                if let celebration = day.celebration {
-                    Text(celebration.title)
-                        .font(AppFonts.headlineFont(26))
-                        .foregroundColor(AppColors.cream)
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
+                if let line = dayClassLine(viewModel.day?.celebration?.rank) {
+                    HStack(spacing: 9) {
+                        if let vestment = viewModel.vestment {
+                            Circle()
+                                .fill(vestment.swatch)
+                                .frame(width: 6, height: 6)
+                                .shadow(color: vestment.swatch.opacity(0.45), radius: 1.5)
+                        }
 
-                    if let rank = celebration.rank {
-                        Text(rank.uppercased())
-                            .font(AppFonts.labelFont(10))
-                            .tracking(2)
+                        Text(line)
+                            .font(AppFonts.labelFont(9.5))
+                            .tracking(2.2)
                             .foregroundColor(AppColors.textSecondary)
+                            .multilineTextAlignment(.center)
                     }
-                }
-
-                if let note = day.note {
-                    Text(note)
-                        .font(AppFonts.italicFont(13))
-                        .foregroundColor(AppColors.textSecondary)
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding(.horizontal, 12)
                 }
             } else if viewModel.isLoadingDay {
                 ProgressView()
@@ -183,29 +240,159 @@ struct DivineOfficeView: View {
             }
         }
         .frame(maxWidth: .infinity)
+        .animation(.easeOut(duration: 0.35), value: viewModel.feastTitle)
     }
 
-    // MARK: - Hours Ledger
+    /// "THIRD CLASS  ·  WHITE" — whichever parts the day carries. The
+    /// office names no colour of its own; the missal's propers for the
+    /// same date supply it when they can be reached.
+    private func dayClassLine(_ rank: String?) -> String? {
+        let parts = [
+            OfficeRank(rank).englishLabel,
+            viewModel.vestment?.name
+        ].compactMap { $0 }
 
-    /// The eight canonical hours as the arc of a day. Each row carries a
-    /// sky mark — a small disc in the colour of its own hour, night
-    /// through dawn through noon and back to night — so the ledger reads
-    /// as time, not as eight identical lines. On today's page the
-    /// present hour's mark is ringed and lit.
-    private var hoursLedger: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            ForEach(CanonicalHour.allCases) { hour in
-                hourRow(hour)
+        return parts.isEmpty ? nil : parts.joined(separator: "  ·  ").uppercased()
+    }
 
-                if hour != CanonicalHour.allCases.last {
-                    // The rule stops short of the sky marks, so the
-                    // column of discs reads as one strand
-                    Rectangle()
-                        .fill(AppColors.gold.opacity(0.1))
-                        .frame(height: 0.5)
-                        .padding(.leading, 34)
+    // MARK: - The Hour Now
+
+    /// The screen's one lit element, and its whole purpose.
+    ///
+    /// Deliberately not a card. One ornament per idea, so it carries no
+    /// corner ticks, no second border, and no divider inside it — the
+    /// arch itself is the ornament.
+    private var theHourNow: some View {
+        let hour = clock.hour
+
+        return ZStack {
+            arch
+                .overlay {
+                    GothicArchShape(riseRatio: Self.archRise)
+                        .strokeBorder(AppColors.gold.opacity(0.42), lineWidth: 1)
+                }
+
+            VStack(spacing: 0) {
+                HStack(spacing: 9) {
+                    LitHourDot(size: 8, box: 14, glow: 5)
+
+                    Text("THE HOUR NOW")
+                        .font(AppFonts.labelFont(9.5))
+                        .tracking(2.8)
+                        .foregroundColor(AppColors.gold.opacity(0.92))
+                }
+
+                Text(hour.label)
+                    .font(AppFonts.headlineFont(34))
+                    .foregroundColor(AppColors.cream)
+                    .padding(.top, 9)
+                    .id(hour)
+                    .transition(.opacity)
+
+                // Why this hour is the one being prayed, and when it
+                // lapses
+                Text("\(hour.timeOfDay)  ·  \(hour.lapses)")
+                    .font(AppFonts.italicFont(14))
+                    .foregroundColor(AppColors.accentSoft)
+                    .multilineTextAlignment(.center)
+                    .padding(.top, 3)
+
+                Spacer(minLength: 12)
+
+                GoldCTAButton(title: "Pray \(hour.label)", showsCross: false) {
+                    openHour = hour
                 }
             }
+            .padding(.top, 26)
+            .padding(.horizontal, 22)
+            .padding(.bottom, 22)
+        }
+        .frame(height: 212)
+        .animation(.easeOut(duration: 0.4), value: hour)
+        .accessibilityElement(children: .contain)
+    }
+
+    /// 44 on a 354pt plate — a shallower lancet than the featured card's
+    /// 0.34, so the arch reads as a plate rather than a window.
+    private static let archRise: CGFloat = 44 / 354
+
+    /// The plate: the card surface under a gold sheen, its halo following
+    /// the arch silhouette rather than a rectangle. Steady — the arch's
+    /// glow does not breathe; only the lit NOW mark may.
+    private var arch: some View {
+        GothicArchShape(riseRatio: Self.archRise)
+            .fill(AppColors.cardBackground)
+            .overlay {
+                GothicArchShape(riseRatio: Self.archRise)
+                    .fill(
+                        LinearGradient(
+                            stops: [
+                                .init(color: AppColors.gold.opacity(0.14), location: 0),
+                                .init(color: AppColors.gold.opacity(0.035), location: 0.48),
+                                .init(color: AppColors.gold.opacity(0.012), location: 1)
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+            }
+            .haloGlow(AppColors.gold, radius: 24, intensity: 0.157)
+    }
+
+    // MARK: - The Eight Hours
+
+    private var hourGroups: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            ForEach(Array(Self.groups.enumerated()), id: \.element.id) { index, group in
+                if showHourGroups {
+                    groupHeading(group.heading)
+                }
+
+                strand(group.hours)
+                    .devotionalEntrance(delay: 0.2 + Double(index) * 0.08)
+            }
+        }
+    }
+
+    private func groupHeading(_ title: String) -> some View {
+        HStack(spacing: 12) {
+            Text(title)
+                .font(AppFonts.labelFont(9))
+                .tracking(2.6)
+                .foregroundColor(AppColors.textSecondary.opacity(0.8))
+                .fixedSize()
+
+            LinearGradient(
+                colors: [AppColors.gold.opacity(0.2), AppColors.gold.opacity(0)],
+                startPoint: .leading,
+                endPoint: .trailing
+            )
+            .frame(height: 1)
+        }
+        .padding(.top, 22)
+        .padding(.bottom, 4)
+    }
+
+    /// One group's hours, threaded on a single line of light. The line
+    /// stops short of the first and last beads so the strand reads as
+    /// hanging between them rather than running off the page.
+    private func strand(_ hours: [CanonicalHour]) -> some View {
+        VStack(spacing: 0) {
+            ForEach(hours) { hour in
+                hourRow(hour)
+            }
+        }
+        .background {
+            // Threaded behind the beads, stopping short of the first and
+            // last so the strand hangs between them rather than running
+            // off the page.
+            Rectangle()
+                .fill(AppColors.gold.opacity(0.14))
+                .frame(width: 1)
+                .padding(.vertical, 26)
+                .padding(.leading, 8.5)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                .accessibilityHidden(true)
         }
     }
 
@@ -216,14 +403,14 @@ struct DivineOfficeView: View {
             openHour = hour
         } label: {
             HStack(spacing: 16) {
-                skyMark(for: hour, lit: isPresent)
+                bead(for: hour, lit: isPresent)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(hour.label)
-                        .font(AppFonts.headlineFont(17))
-                        .foregroundColor(AppColors.cream.opacity(isPresent ? 1 : 0.85))
+                        .font(AppFonts.headlineFont(16.5))
+                        .foregroundColor(AppColors.cream.opacity(0.9))
 
-                    Text("\(hour.latinName) · \(hour.timeOfDay)")
+                    Text(hour.timeOfDay)
                         .font(AppFonts.italicFont(12))
                         .foregroundColor(AppColors.textSecondary)
                 }
@@ -232,56 +419,61 @@ struct DivineOfficeView: View {
 
                 if isPresent {
                     Text("NOW")
-                        .font(AppFonts.labelFont(8))
+                        .font(AppFonts.labelFont(8.5))
                         .tracking(2)
                         .foregroundColor(AppColors.gold.opacity(0.85))
                 }
 
-                AppIcon("ph-caret-right", size: 12)
-                    .foregroundColor(AppColors.textSecondary.opacity(0.6))
+                AppIcon("ph-caret-right", size: 11)
+                    .foregroundColor(AppColors.gold.opacity(0.45))
             }
-            .padding(.vertical, 13)
-            .frame(minHeight: 44)
+            .padding(.vertical, 12)
+            .frame(minHeight: 52)
             .contentShape(Rectangle())
         }
         .buttonStyle(SacredCardButtonStyle())
-        .accessibilityLabel(isPresent ? "\(hour.label), the present hour" : hour.label)
+        .accessibilityLabel(isPresent ? "\(hour.label), the hour now" : hour.label)
     }
 
-    /// The hour's place in the sky: its own colour, ringed in gold and
-    /// glowing when it is the hour being prayed now.
-    private func skyMark(for hour: CanonicalHour, lit: Bool) -> some View {
+    /// The hour's place in the day, said as a colour, punching a hole in
+    /// the strand it hangs on. Ringed and lit when it is the hour being
+    /// prayed now.
+    private func bead(for hour: CanonicalHour, lit: Bool) -> some View {
         ZStack {
             Circle()
-                .fill(hour.skyColor.opacity(lit ? 1 : 0.8))
-                .frame(width: 10, height: 10)
+                .fill(hour.skyColor)
+                .frame(width: 9, height: 9)
+                .background {
+                    Circle()
+                        .fill(AppColors.background)
+                        .frame(width: 15, height: 15)
+                }
 
             if lit {
                 Circle()
                     .strokeBorder(AppColors.goldLight, lineWidth: 1)
-                    .frame(width: 16, height: 16)
+                    .frame(width: 17, height: 17)
+                    .shadow(color: AppColors.gold.opacity(0.5), radius: 2.5)
             }
         }
         .frame(width: 18, height: 18)
-        .shadow(color: lit ? AppColors.gold.opacity(0.5) : .clear, radius: 4)
         .accessibilityHidden(true)
     }
 
-    // MARK: - End Block
+    // MARK: - Colophon
 
-    private var endBlock: some View {
+    private var colophon: some View {
         VStack(spacing: 16) {
             OrnamentDivider()
                 .padding(.horizontal, 30)
-                .padding(.top, 24)
 
             Text("Breviarium Romanum 1962 · texts served by The Divinum Officium Project")
                 .font(AppFonts.bodyFont(11))
+                .lineSpacing(11 * 0.5)
                 .foregroundColor(AppColors.textSecondary.opacity(0.8))
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity)
         }
-        .padding(.bottom, 12)
     }
 }
 

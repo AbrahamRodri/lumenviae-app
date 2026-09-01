@@ -39,6 +39,19 @@ extension CanonicalHour {
     }
 }
 
+// MARK: - LitHourMark
+
+/// The disc that marks the hour being prayed *now* — on the home
+/// ledger's Office row and in the arch's crown.
+///
+/// Held apart from the eight sky colours deliberately. Those say *which*
+/// hour; this one says *now*, and Compline marking itself in its own
+/// night blue would leave the one unlit mark on the page it was put
+/// there to light.
+enum LitHourMark {
+    static let disc = Color(hex: "#d9b96a")
+}
+
 // MARK: - The Scribe's Close
 
 extension CanonicalHour {
@@ -100,6 +113,20 @@ enum OfficeRank {
         case .first: return 5.5
         case .second: return 5
         default: return 4
+        }
+    }
+
+    /// The class in English. The engine answers in Latin ("III.
+    /// classis"), and Latin belongs in the prayer text, not in the
+    /// chrome above it — so the landing and the reader both name the day
+    /// through here rather than printing what arrived.
+    var englishLabel: String? {
+        switch self {
+        case .first: return "First class"
+        case .second: return "Second class"
+        case .third: return "Third class"
+        case .fourth: return "Fourth class"
+        case .feria: return nil
         }
     }
 }

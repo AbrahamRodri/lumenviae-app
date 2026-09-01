@@ -9,6 +9,9 @@
 //  - "ph-*-fill" Phosphor fill weight — selected/active states
 //  - "ch-*"      Christicons (free commercial) — rosary, chalice,
 //                monstrance, and other deeply Catholic glyphs
+//  - "lv-*"      Drawn for this app where neither family read correctly
+//                at 17pt. Stroked at 1.15 on a 24 viewBox to sit level
+//                with Phosphor light, not at the ch-* family's 1.5.
 //
 //  All assets are template-rendered, so tint with .foregroundColor
 //  or .foregroundStyle exactly like an SF Symbol.

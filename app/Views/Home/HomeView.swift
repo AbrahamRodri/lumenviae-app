@@ -5,7 +5,8 @@
 //  Created by Abraham Rodriguez on 2/10/26.
 //
 //  Home screen: header, day label, featured mystery card,
-//  Sacred Mysteries grid, and daily quote.
+//  Sacred Mysteries grid, Today's Prayer, the reading shelf, and the
+//  daily quote as its colophon.
 //
 
 import SwiftUI
@@ -60,11 +61,10 @@ struct HomeView: View {
                     .padding(.top, 32)
                     .devotionalEntrance(delay: 0.16)
 
-                    // The Church's own day, between the mysteries and
-                    // the colophon: the Missal, the Breviary, and True
-                    // Devotion standing on their shelf, each spine a
-                    // door.
-                    TodayInChurchSection(today: todayInChurch)
+                    // The day's three practices, between the mysteries
+                    // and the colophon: the Mass, the Office, and the
+                    // preparation, each standing on its own live fact.
+                    TodaysPrayerSection(today: todayInChurch)
                     .padding(.horizontal, 20)
                     .padding(.top, 44)
                     .devotionalEntrance(delay: 0.24)
@@ -148,6 +148,10 @@ struct HomeView: View {
         // the way back in; `load()` returns at once unless the day turned.
         .onChange(of: scenePhase) { _, phase in
             guard phase == .active else { return }
+            // The feast turns at midnight; the canonical hour turns
+            // eight times a day, and its own timer may have slept
+            // through a suspension.
+            CanonicalClock.shared.refresh()
             Task { await todayInChurch.load() }
         }
     }

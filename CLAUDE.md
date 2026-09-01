@@ -145,7 +145,7 @@ to keep the bar from crowding the raised Pray button.
 
 | Tab | In the bar | Purpose |
 |-----|-----------|---------|
-| Home | Yes | Search bar → Explore, today's mysteries, Today in the Church, mystery grid, quote |
+| Home | Yes | Search bar → Explore, today's mysteries, mystery grid, Today's Prayer, the reading shelf, quote |
 | Consecrate | Yes | The 33-day preparation for Marian consecration |
 | Journal | Yes | Reflections, searchable, stored on device |
 | Progress | No — via Chapel | Streaks, prayer history, milestones ("Prayer Record") |
@@ -164,11 +164,28 @@ Devotion, the only doors to the Progress page). Settings and About sat
 in the Chapel's day strip until that strip was left to read the
 liturgical day alone: app-level chrome on a page-level strip was
 findable only by whoever thought to look there. The Chapel's foot still
-names both in words. **Today in the Church**
-closes the home page below the daily quote as `TodayInChurchSection` —
-an ordo leaf unlike other cards: the vestment colour as a full-width
-band across the card top, date and feast centered, and a diptych foot
-(THE MASS | THE OFFICE). The search glass pushes `AppRoute.explore`
+names both in words.
+
+**Today's Prayer** (`Components/TodaysPrayerSection.swift`) stands
+between the Sacred Mysteries grid and the reading shelf: a header line,
+the feast with its class and vestment dot, then three ruled rows on the
+bare page — no card, no panel, no fill. The Mass, the Divine Office,
+and the Total Consecration, given equal standing. It is named for the
+user's prayer and **not** "Today in the Church", because the
+consecration is a private devotion and not a liturgical observance;
+`TodayInChurch` (the observable) still supplies the day and is shared
+with the Chapel's day strip. Every row has the same four parts —
+medallion, name, one plain line, the row's own live fact, chevron — so
+the eye reads down the column of facts: the day's silk as a 4×24 bar,
+the hour that is passing as a lit dot and NOW, the day of the
+preparation over a 46pt hair. Row 3 before any consecration is begun
+keeps its place, its icon and its weight and offers BEGIN — **no state
+in this section may shame the user**: no "0 days", no "missed", no
+empty track. The block replaced a shelf of three bound volumes whose
+third spine opened True Devotion when no consecration was under way;
+that book is now reached from Explore and the Chapel's Library tile.
+
+The search glass pushes `AppRoute.explore`
 (`Views/Home/ExploreView.swift`): at rest it browses — an epigraph
 (Mt 7:7), the five devotions as a ruled ledger, the library shelf —
 and typing searches mysteries, library doors, and meditation sets at
@@ -488,19 +505,72 @@ write concurrent code here:
   failing. The version and language ride as explicit query params, pinned
   in `OfficeAPIService` (`rubrics-1960`, `english`) — a future version
   setting threads through there, and every cache file name carries the
-  version. `DivineOfficeView` keeps its own leaf — the `OrdoMasthead`,
-  deliberately not the missal's collapsing chrome, because a page of
-  eight rows has nothing to collapse — and lists the hours as a ruled
-  ledger (bundled in `CanonicalHour`; the ledger never waits on the
-  network, and today's page marks the present hour with a gold dot).
+  version.
+
+  **`DivineOfficeView` opens on the hour it is now.** The page has one
+  purpose — the present hour reachable in one tap, and obvious at a
+  glance which hour that is — so that hour is lifted out of the eight
+  into a lit **lancet arch** (`GothicArchShape(riseRatio: 44/354)`, the
+  shallower rise, with the app's standard two-shadow halo applied to the
+  *shape* rather than a rounded rect). Every other card in the app is a
+  16pt rectangle; the arch is why the eye lands there first. It carries
+  the page's one filled gold act ("Pray Compline"), and **no corner
+  ticks, second border, or ornament divider inside it** — one ornament
+  per idea. Its halo is steady; only the lit NOW mark may pulse.
+
+  Beneath it the eight stand in three groups — the night and the dawn,
+  the little hours, evening and night — each strung on one strand of
+  gold, each bead in its hour's own `skyColor`, so the strand runs dark
+  through bright and back to dark over the day. Group headings ride
+  behind `showHourGroups`; with them off the eight read as one strand.
+  The bar carries Back, the book's name, and **`ph-calendar-dots` as the
+  only day-switching control** — an earlier draft's
+  `‹ Thursday, 27 August ›` stepper was cut for costing most of the
+  first screenful, and must not come back. The ledger never waits on the
+  network: the hours are the hours, and the arch's choice of hour is
+  read from the clock.
+
+  **English in the chrome, on both Office screens.** The engine answers
+  in Latin — "III. classis", "S. Raymundi Nonnati Confessoris" — and
+  Latin belongs in the prayer text, not above it. The class is mapped
+  client-side (`OfficeRank.englishLabel`), and the feast name and the
+  vestment colour, neither of which the breviary carries at all, are
+  read from the **missal's** propers for the same date
+  (`OfficeViewModel.missalDay`): the same 1962 calendar, already fetched
+  and on disk. Silent and never awaited — with the missal unreachable
+  the plate falls back to the breviary's own Latin and drops the colour.
+
+  **`CanonicalClock`** (a `Services/` singleton) is the one place that
+  says which hour it is now. It sleeps to each boundary rather than
+  ticking, and refreshes on foreground; the home ledger's Office row,
+  the arch, and the strand's NOW mark all read it, so they roll over
+  together. `CanonicalHour.beginsAtClockHour` is the single boundary
+  table — `present(atClockHour:)` and the arch's "until Sext at noon"
+  are both derived from it, because written separately they agreed only
+  by accident. Boundaries are fixed clock times, not solar hours.
 
   **`OfficeHourView` is the missal's reader.** It hides the system bar
-  and carries the same chrome: Back / ☰ / Aa, a date pill that
-  crossfades into the hour's name as the plate collapses (96 down /
-  44 back), a jump-to-section rail, a 1pt progress line, and the
-  active section spied from each section's reported top — the same
-  `onGeometryChange` machinery, measured in the same content-space
-  coordinates, for the same reasons. `OfficeReaderSection` cuts the
+  and carries the same chrome: Back / ☰ / Aa, a jump-to-section rail
+  (faded 52pt at its right edge so it reads as scrollable), a 1pt
+  progress line, and the active section spied from each section's
+  reported top — the same `onGeometryChange` machinery, measured in the
+  same content-space coordinates, for the same reasons.
+
+  **The hour is named in the bar and nowhere else on the screen**, and
+  the day is stated once beneath it, in two lines: the date with the
+  day's class, then the feast. An earlier draft repeated the hour as a
+  28pt heading under a bar already reading TERCE, carried the full Latin
+  day-title, set a `TERTIA · III. CLASSIS` row, and hung a `‹ TODAY ›`
+  stepper below all of it. All four are gone and must not come back —
+  the chrome above the text is two lines and a rail, and the reading
+  begins about a third of the way up the screen instead of halfway down.
+  The date is kept *here* (unlike the landing) because the reader can be
+  opened on another day and has no other way of saying which day's
+  office you are in; it is a statement, not a control — **the day is
+  chosen on the landing**, and the reader carries no calendar. The
+  two-line plate still collapses, at 0.64 / 0.29 of **its own measured
+  height** rather than the missal's fixed 96/44: on a 46pt plate a fixed
+  96 left the text sliding under a plate that was still standing. `OfficeReaderSection` cuts the
   hour into addressable sections (`OfficeSectionView` draws one), so
   the ☰ index and the rail can name and reach them; an unnamed section
   is a continuation and is drawn but never listed. A jump to the
