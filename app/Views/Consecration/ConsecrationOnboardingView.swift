@@ -241,18 +241,16 @@ private struct StaticSlide<Content: View>: View {
 // MARK: - Shared Step Chrome
 
 /// Each step's one act, drawn from the app's single CTA system rather
-/// than a private copy of it. The cross is kept for the step that
-/// actually commits to the devotion.
+/// than a private copy of it: every step goes on, so every step's act
+/// carries the same arrow.
 private struct OnboardingContinueButton: View {
     let title: String
     var icon: String? = "ph-arrow-right"
-    var showsCross: Bool = false
     let action: () -> Void
 
     var body: some View {
         GoldCTAButton(
             title: title,
-            showsCross: showsCross,
             trailingIcon: icon,
             action: action
         )
@@ -595,8 +593,6 @@ private struct JourneyStepView: View {
 
                 OnboardingContinueButton(
                     title: "Choose my consecration day",
-                    icon: nil,
-                    showsCross: true,
                     action: onContinue
                 )
                 .staggeredReveal(delay: 1.3)

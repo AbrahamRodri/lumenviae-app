@@ -201,6 +201,16 @@ final class AppRouter {
         chapelArranging = false
     }
 
+    /// Begins arrange mode from wherever on the Chapel it is asked for —
+    /// a hold on the page, on a tile, on the quiet parts of a tile full
+    /// of doors, or the coach ribbon and the foot. Idempotent.
+    func beginChapelArranging() {
+        guard !chapelArranging else { return }
+        withAnimation(.easeOut(duration: 0.25)) {
+            chapelArranging = true
+        }
+    }
+
     /// Requests a devotional act. Runs on the next router observation
     /// tick, wherever the user currently is.
     func run(_ shortcut: PrayerShortcut) {

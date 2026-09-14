@@ -292,13 +292,13 @@ struct LibraryChapterReaderView: View {
 
             case .textOptions:
                 LibraryTextOptionsSheet()
-                    .presentationDetents([.height(360)])
+                    .presentationDetents([.height(400)])
                     .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
 
             case .player:
                 LibraryPlayerSheet(session: session)
-                    .presentationDetents([.height(430)])
+                    .presentationDetents([.height(460)])
                     .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
 
@@ -320,7 +320,7 @@ struct LibraryChapterReaderView: View {
 
             case .footnote(let number, let text):
                 LibraryFootnoteSheet(number: number, text: text)
-                    .presentationDetents([.height(280)])
+                    .presentationDetents([.height(320)])
                     .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
 
@@ -1142,34 +1142,19 @@ struct LibraryTextOptionsSheet: View {
         @Bindable var settings = settings
 
         LibraryTraySheet(
-            title: "Reading size",
+            title: "Reading Size",
             note: "Applies to the books on this shelf."
         ) {
-            VStack(alignment: .leading, spacing: 18) {
-                HStack(spacing: 14) {
-                    Text("A")
-                        .font(AppFonts.readingFont(14))
-                        .foregroundColor(AppColors.textSecondary)
+            SheetSizeSlider(scale: $settings.readingTextScale)
 
-                    Slider(value: $settings.readingTextScale, in: 0...1)
-                        .tint(AppColors.gold)
-
-                    Text("A")
-                        .font(AppFonts.readingFont(24))
-                        .foregroundColor(AppColors.cream)
-                }
-                .accessibilityElement(children: .combine)
-                .accessibilityLabel("Reading size")
-
-                Text("Whosoever followeth Me shall not walk in darkness.")
-                    .font(AppFonts.readingFont(settings.readingFontSize))
-                    .foregroundColor(AppColors.cream.opacity(0.92))
-                    .lineSpacing(ReadingTypography.lineSpacing(for: settings.readingFontSize))
-                    .fixedSize(horizontal: false, vertical: true)
-                    .accessibilityHidden(true)
-
-            }
-            .padding(.top, 20)
+            Text("Whosoever followeth Me shall not walk in darkness.")
+                .font(AppFonts.readingFont(settings.readingFontSize))
+                .foregroundColor(AppColors.cream.opacity(0.92))
+                .lineSpacing(ReadingTypography.lineSpacing(for: settings.readingFontSize))
+                .fixedSize(horizontal: false, vertical: true)
+                .accessibilityHidden(true)
+                .padding(.horizontal, SheetMetrics.gutter)
+                .padding(.top, 18)
         }
     }
 }
@@ -1191,17 +1176,11 @@ struct LibraryKeepSheet: View {
     @FocusState private var isWriting: Bool
 
     var body: some View {
-        ZStack {
-            AppColors.appGradient.ignoresSafeArea()
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 0) {
+                SheetHeader(title: "Note on This Passage")
 
-            ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 16) {
-                    Text("NOTE ON THIS PASSAGE")
-                        .font(AppFonts.labelFont(10))
-                        .tracking(2.5)
-                        .foregroundColor(AppColors.gold.opacity(0.8))
-                        .padding(.top, 22)
-
                     Text("\u{201C}\(passage)\u{201D}")
                         .font(AppFonts.readingItalicFont(16))
                         .foregroundColor(AppColors.cream.opacity(0.92))
@@ -1255,9 +1234,10 @@ struct LibraryKeepSheet: View {
 
                     Spacer(minLength: 24)
                 }
-                .padding(.horizontal, 24)
+                .padding(.horizontal, SheetMetrics.gutter)
             }
         }
+        .sheetGround()
     }
 }
 

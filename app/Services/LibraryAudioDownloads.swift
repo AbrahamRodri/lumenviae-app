@@ -381,7 +381,9 @@ private final class DownloadDelegate: NSObject, URLSessionDownloadDelegate, @unc
         )
         try? manager.removeItem(at: destination)
 
-        var moved = false
+        // Settled before the hand-off, not mutated across it: a `var`
+        // captured by the main-actor Task is an error under Swift 6.
+        let moved: Bool
         do {
             try manager.moveItem(at: location, to: destination)
             moved = true
@@ -389,6 +391,7 @@ private final class DownloadDelegate: NSObject, URLSessionDownloadDelegate, @unc
             #if DEBUG
             print("LibraryAudioDownloads: couldn't file the download — \(error)")
             #endif
+            moved = false
         }
         let bytes = moved
             ? ((try? manager.attributesOfItem(atPath: destination.path)[.size]) as? Int64 ?? 0)

@@ -187,7 +187,7 @@ struct TrueDevotionChapterReaderView: View {
 
             case .textOptions:
                 LibraryTextOptionsSheet()
-                    .presentationDetents([.height(360)])
+                    .presentationDetents([.height(400)])
                     .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
 
@@ -680,128 +680,70 @@ struct TrueDevotionContentsSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        ZStack {
-            AppColors.appGradient.ignoresSafeArea()
-
-            ScrollViewReader { proxy in
-                ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 0) {
-                        header
-
-                        if !viewModel.marks.isEmpty {
-                            marksSection
-                        }
-
-                        if let book = library.book {
-                            ledger(book)
-                        }
-
-                        Spacer(minLength: 40)
+        ScrollViewReader { proxy in
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 0) {
+                    SheetHeader(kicker: library.book?.title, title: "Contents") {
+                        place
                     }
-                    .padding(.horizontal, 22)
+
+                    if !viewModel.marks.isEmpty {
+                        marksSection
+                    }
+
+                    if let book = library.book {
+                        ledger(book)
+                    }
+
+                    Spacer(minLength: 40)
                 }
-                .onAppear {
-                    DispatchQueue.main.async {
-                        proxy.scrollTo(currentChapterID, anchor: .center)
-                    }
+            }
+            .onAppear {
+                DispatchQueue.main.async {
+                    proxy.scrollTo(currentChapterID, anchor: .center)
                 }
             }
         }
+        .sheetGround()
     }
 
-    private var header: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 10) {
-                Text("CONTENTS")
-                    .font(AppFonts.labelFont(10))
-                    .tracking(2.5)
-                    .foregroundColor(AppColors.gold.opacity(0.8))
-
-                Spacer()
-
-                if let book = library.book,
-                   let index = book.chapterIndex(id: currentChapterID) {
-                    Text("\(index + 1) of \(book.chapters.count)")
-                        .font(AppFonts.labelFont(10))
-                        .tracking(1.5)
-                        .foregroundColor(AppColors.textSecondary)
-                }
-            }
-            .padding(.top, 22)
-
-            Rectangle()
-                .fill(AppColors.gold.opacity(0.2))
-                .frame(height: AppLine.hairline)
+    /// Where the reader stands in the book, level with the kicker
+    @ViewBuilder
+    private var place: some View {
+        if let book = library.book,
+           let index = book.chapterIndex(id: currentChapterID) {
+            Text("\(index + 1) of \(book.chapters.count)".uppercased())
+                .font(AppFonts.labelFont(9))
+                .tracking(1.5)
+                .foregroundColor(AppColors.textSecondary)
+                .fixedSize()
+                .accessibilityLabel("Chapter \(index + 1) of \(book.chapters.count)")
         }
-        .padding(.bottom, 4)
     }
 
     private var marksSection: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HStack(alignment: .firstTextBaseline, spacing: 10) {
-                Text("YOUR MARKS · \(viewModel.marks.count)")
-                    .font(AppFonts.labelFont(10))
-                    .tracking(2.2)
-                    .foregroundColor(AppColors.gold.opacity(0.85))
-
-                Text("the pages that stood out")
-                    .font(AppFonts.italicFont(12))
-                    .foregroundColor(AppColors.textSecondary)
-            }
-            .padding(.top, 16)
-            .padding(.bottom, 4)
+            SheetSectionLabel("Your marks · \(viewModel.marks.count)")
 
             ForEach(Array(viewModel.marks.enumerated()), id: \.offset) { _, mark in
                 markRow(mark.chapterID, paragraph: mark.paragraph)
             }
-
-            Rectangle()
-                .fill(AppColors.gold.opacity(0.2))
-                .frame(height: AppLine.hairline)
-                .padding(.top, 10)
         }
     }
 
     @ViewBuilder
     private func markRow(_ chapterID: String, paragraph: Int) -> some View {
         if let book = library.book, let chapter = book.chapter(id: chapterID) {
-            Button {
+            LibraryMarkSheetRow(
+                place: chapter.title,
+                words: (chapter.paragraphs.first(where: { $0.id == paragraph })?.text).map { text in
+                    text.count > 90 ? String(text.prefix(90)) + "\u{2026}" : text
+                },
+                spokenLabel: "Mark in \(chapter.title). Returns to that passage."
+            ) {
                 onSelectMark?(chapterID, paragraph)
                 dismiss()
-            } label: {
-                HStack(alignment: .firstTextBaseline, spacing: 10) {
-                    MarkerRibbonShape()
-                        .fill(AppColors.goldLight)
-                        .frame(width: 7, height: 15)
-                        .alignmentGuide(.firstTextBaseline) { $0[.bottom] - 2 }
-
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text(chapter.title.uppercased())
-                            .font(AppFonts.labelFont(9))
-                            .tracking(1.2)
-                            .foregroundColor(AppColors.gold.opacity(0.75))
-                            .lineLimit(1)
-
-                        if let text = chapter.paragraphs.first(where: { $0.id == paragraph })?.text {
-                            Text(text.count > 90 ? String(text.prefix(90)) + "\u{2026}" : text)
-                                .font(AppFonts.italicFont(13))
-                                .foregroundColor(AppColors.cream.opacity(0.85))
-                                .lineLimit(2)
-                                .multilineTextAlignment(.leading)
-                        }
-                    }
-
-                    Spacer(minLength: 8)
-
-                    AppIcon("ph-caret-right", size: 11)
-                        .foregroundColor(AppColors.textSecondary.opacity(0.5))
-                }
-                .padding(.vertical, 10)
-                .frame(minHeight: 44)
-                .contentShape(Rectangle())
             }
-            .buttonStyle(.plain)
-            .accessibilityLabel("Mark in \(chapter.title). Returns to that passage.")
         }
     }
 
@@ -809,17 +751,14 @@ struct TrueDevotionContentsSheet: View {
         VStack(alignment: .leading, spacing: 0) {
             ForEach(Array(book.chapters.enumerated()), id: \.element.id) { index, chapter in
                 if let partTitle = partHeaderTitle(before: chapter, in: book) {
-                    Text(partTitle.uppercased())
-                        .font(AppFonts.labelFont(10))
-                        .tracking(2)
-                        .foregroundColor(AppColors.gold.opacity(0.75))
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.8)
-                        .padding(.top, index == 0 ? 10 : 18)
-                        .padding(.bottom, 4)
+                    SheetSectionLabel(partTitle)
+                } else if index == 0, !viewModel.marks.isEmpty {
+                    // The marks need a heading to end on where the book
+                    // opens on chapters that belong to no part
+                    SheetSectionLabel("Chapters")
                 }
 
-                chapterRow(chapter, isLast: index == book.chapters.count - 1)
+                chapterRow(chapter)
                     .id(chapter.id)
             }
         }
@@ -832,56 +771,34 @@ struct TrueDevotionContentsSheet: View {
         return book.parts.first { $0.number == chapter.part }?.title
     }
 
-    private func chapterRow(_ chapter: TrueDevotionChapter, isLast: Bool) -> some View {
+    private func chapterRow(_ chapter: TrueDevotionChapter) -> some View {
         let isCompleted = viewModel.isCompleted(chapter.id)
         let isCurrent = chapter.id == currentChapterID
 
-        return VStack(spacing: 0) {
-            Button {
-                onSelect(chapter.id)
-                dismiss()
-            } label: {
-                HStack(spacing: 10) {
-                    Text(chapter.title)
-                        .font(AppFonts.bodyFont(15))
-                        .foregroundColor(AppColors.cream)
-                        .multilineTextAlignment(.leading)
-                        .fixedSize(horizontal: false, vertical: true)
-
-                    Spacer(minLength: 8)
-
-                    if isCurrent {
-                        Circle()
-                            .fill(AppColors.goldLight)
-                            .frame(width: 6, height: 6)
-                    } else {
-                        AppIcon("ph-caret-right", size: 11)
-                            .foregroundColor(AppColors.textSecondary.opacity(0.5))
-                    }
-                }
-                .padding(.vertical, 12)
-                .padding(.leading, 14)
-                .frame(minHeight: 44)
-                .contentShape(Rectangle())
-                .overlay(alignment: .leading) {
-                    Rectangle()
-                        .fill(isCompleted ? AppColors.gold.opacity(0.45) : Color.clear)
-                        .frame(width: 2)
-                        .padding(.vertical, 8)
-                        .accessibilityHidden(true)
-                }
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel(
-                "\(chapter.title)\(isCurrent ? ", where you are" : isCompleted ? ", read" : "")"
+        return Button {
+            onSelect(chapter.id)
+            dismiss()
+        } label: {
+            SheetRow(
+                chapter.title,
+                accessory: isCurrent ? .label("Here") : .caret,
+                isLit: isCurrent
             )
-            .accessibilityAddTraits(isCurrent ? [.isSelected] : [])
-
-            if !isLast {
-                Divider()
-                    .background(AppColors.gold.opacity(0.15))
+            // The read-mark, in the gutter: a thin rule, never a checkbox
+            .overlay(alignment: .leading) {
+                Rectangle()
+                    .fill(isCompleted ? AppColors.gold.opacity(0.45) : Color.clear)
+                    .frame(width: 2)
+                    .padding(.vertical, 10)
+                    .padding(.leading, 12)
+                    .accessibilityHidden(true)
             }
         }
+        .buttonStyle(SacredCardButtonStyle())
+        .accessibilityLabel(
+            "\(chapter.title)\(isCurrent ? ", where you are" : isCompleted ? ", read" : "")"
+        )
+        .accessibilityAddTraits(isCurrent ? [.isSelected] : [])
     }
 }
 

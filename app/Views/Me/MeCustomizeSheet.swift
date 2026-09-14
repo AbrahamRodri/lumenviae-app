@@ -144,24 +144,19 @@ struct RuleEditorSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        ZStack {
-            AppColors.appGradient.ignoresSafeArea()
+        VStack(spacing: 0) {
+            EditorHeader(
+                title: "Rule of Prayer",
+                subtitle: "The devotions you mean to offer each day.",
+                onDone: { dismiss() }
+            )
 
-            VStack(spacing: 0) {
-                EditorHeader(
-                    title: "Rule of Prayer",
-                    subtitle: "The devotions you mean to offer each day.",
-                    onDone: { dismiss() }
-                )
-
-                List {
-                    RuleEditorSections()
-                }
-                .listStyle(.insetGrouped)
-                .scrollContentBackground(.hidden)
-                .environment(\.editMode, .constant(.active))
+            List {
+                RuleEditorSections()
             }
+            .editorList()
         }
+        .sheetGround()
     }
 }
 
@@ -181,10 +176,10 @@ struct RuleEditorSections: View {
             ForEach(enabled) { item in
                 EditorRow(
                     icon: item.icon,
-                    title: item.title,
+                    title: item.actName,
                     detail: nil
                 ) {
-                    EditorRemoveButton(label: "Remove \(item.title) from your rule") {
+                    EditorRemoveButton(label: "Remove \(item.actName) from your rule") {
                         withAnimation(Motion.settle) {
                             settings.setRuleItems(enabled.filter { $0 != item })
                         }
@@ -199,7 +194,7 @@ struct RuleEditorSections: View {
         } header: {
             EditorSectionHeader("Your rule of prayer")
         } footer: {
-            EditorSectionFooter("The devotions on your daily checklist. Each day starts fresh — yesterday is never held against you.")
+            EditorSectionFooter("The devotions on your daily checklist. While a consecration is under way it joins the rule on its own. Each day starts fresh — yesterday is never held against you.")
         }
 
         if !available.isEmpty {
@@ -207,9 +202,9 @@ struct RuleEditorSections: View {
                 ForEach(available) { item in
                     EditorAddRow(
                         icon: item.icon,
-                        title: item.title,
+                        title: item.actName,
                         detail: item.subtitle,
-                        accessibilityLabel: "Add \(item.title) to your rule"
+                        accessibilityLabel: "Add \(item.actName) to your rule"
                     ) {
                         withAnimation(Motion.settle) {
                             settings.setRuleItems(enabled + [item])
@@ -225,47 +220,46 @@ struct RuleEditorSections: View {
 
 // MARK: - Shared editor furniture
 
-/// Sheet header used by both editors: grab handle, a plain title, one
-/// line saying what the sheet edits, and Done.
+/// Sheet header used by the editors and the chant sheet: a sheet's
+/// heading, one line saying what the sheet edits, and Done. The drag
+/// indicator is the system's, from `sheetGround()` at the sheet's root.
 struct EditorHeader: View {
     let title: String
     let subtitle: String
     let onDone: () -> Void
 
     var body: some View {
-        VStack(spacing: 8) {
-            Capsule()
-                .fill(AppColors.gold.opacity(0.3))
-                .frame(width: 40, height: 4)
-                .padding(.top, 12)
-
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(title)
-                        .font(AppFonts.headlineFont(24))
-                        .foregroundColor(AppColors.cream)
-
-                    Text(subtitle)
-                        .font(AppFonts.italicFont(13))
-                        .foregroundColor(AppColors.textSecondary)
-                }
-
-                Spacer()
-
-                QuietGoldButton(
-                    title: "Done",
-                    size: 10,
-                    color: AppColors.gold,
-                    horizontalPadding: 0,
-                    action: onDone
-                )
-            }
-            .padding(.horizontal, 24)
-            .padding(.top, 8)
+        SheetHeader(title: title, lead: subtitle) {
+            SheetHeaderAction(title: "Done", action: onDone)
         }
     }
 }
 
+extension View {
+    /// An editor's list, set as a sheet's ruled rows on the gradient.
+    /// Grouped rather than plain: a plain list pins its section headers,
+    /// and a pinned header lays the system's own bar across the page.
+    /// Always in edit mode, so the kept rows carry their grabbers.
+    func editorList() -> some View {
+        self
+            .listStyle(.grouped)
+            .scrollContentBackground(.hidden)
+            .environment(\.editMode, .constant(.active))
+    }
+
+    /// One row of an editor's list: full width, no fill, and no system
+    /// separator — `SheetRow` keeps the gutter and draws its own rule.
+    func editorListRow() -> some View {
+        self
+            .listRowInsets(EdgeInsets())
+            .listRowBackground(Color.clear)
+            .listRowSeparator(.hidden)
+    }
+}
+
+/// A section's name, in `SheetSectionLabel`'s type. Drawn here rather
+/// than reused because a list header takes its margins from its row
+/// insets, not from padding of its own.
 struct EditorSectionHeader: View {
     let title: String
 
@@ -273,12 +267,21 @@ struct EditorSectionHeader: View {
 
     var body: some View {
         Text(title.uppercased())
-            .font(AppFonts.labelFont(10))
-            .tracking(2)
-            .foregroundColor(AppColors.gold.opacity(0.7))
+            .font(AppFonts.labelFont(9))
+            .tracking(2.5)
+            .foregroundColor(AppColors.gold.opacity(0.75))
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .listRowInsets(EdgeInsets(
+                top: 20,
+                leading: SheetMetrics.gutter,
+                bottom: 8,
+                trailing: SheetMetrics.gutter
+            ))
+            .accessibilityAddTraits(.isHeader)
     }
 }
 
+/// A section's note, in `SheetNote`'s type
 struct EditorSectionFooter: View {
     let text: String
 
@@ -286,8 +289,17 @@ struct EditorSectionFooter: View {
 
     var body: some View {
         Text(text)
-            .font(AppFonts.italicFont(12))
+            .font(AppFonts.italicFont(13))
             .foregroundColor(AppColors.textSecondary)
+            .multilineTextAlignment(.leading)
+            .fixedSize(horizontal: false, vertical: true)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .listRowInsets(EdgeInsets(
+                top: 10,
+                leading: SheetMetrics.gutter,
+                bottom: 6,
+                trailing: SheetMetrics.gutter
+            ))
     }
 }
 
@@ -300,28 +312,10 @@ struct EditorRow<Accessory: View>: View {
     @ViewBuilder let accessory: Accessory
 
     var body: some View {
-        HStack(spacing: 14) {
-            AppIcon(icon, size: 17)
-                .foregroundColor(AppColors.gold)
-                .frame(width: 22)
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .font(AppFonts.bodyFont(15))
-                    .foregroundColor(AppColors.cream)
-
-                if let detail {
-                    Text(detail)
-                        .font(AppFonts.bodyFont(11))
-                        .foregroundColor(AppColors.textSecondary)
-                }
-            }
-
-            Spacer()
-
+        SheetRow(title, detail: detail, icon: icon, detailLineLimit: nil) {
             accessory
         }
-        .listRowBackground(AppColors.cardBackground)
+        .editorListRow()
     }
 }
 
@@ -335,32 +329,14 @@ struct EditorAddRow: View {
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 14) {
-                AppIcon(icon, size: 17)
-                    .foregroundColor(AppColors.gold.opacity(0.6))
-                    .frame(width: 22)
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(title)
-                        .font(AppFonts.bodyFont(15))
-                        .foregroundColor(AppColors.cream.opacity(0.85))
-
-                    if let detail {
-                        Text(detail)
-                            .font(AppFonts.bodyFont(11))
-                            .foregroundColor(AppColors.textSecondary)
-                    }
-                }
-
-                Spacer()
-
+            SheetRow(title, detail: detail, icon: icon, detailLineLimit: nil) {
                 AppIcon("ph-caret-up", size: 13)
                     .foregroundColor(AppColors.gold.opacity(0.5))
+                    .accessibilityHidden(true)
             }
-            .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
-        .listRowBackground(AppColors.cardBackground.opacity(0.6))
+        .buttonStyle(SacredCardButtonStyle())
+        .editorListRow()
         .accessibilityLabel(accessibilityLabel)
     }
 }

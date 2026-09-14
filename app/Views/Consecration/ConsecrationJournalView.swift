@@ -314,7 +314,9 @@ struct ConsecrationJournalView: View {
     /// day's flow. Unlike the journal editor's Save, it is never
     /// disabled: a day prayed without words written is still a day completed.
     private var completeButton: some View {
-        GoldCTAButton(title: completeTitle, showsCross: !isAlreadyComplete) {
+        // A check for the act that completes the day; saving a reflection
+        // on a day already complete completes nothing
+        GoldCTAButton(title: completeTitle, trailingIcon: isAlreadyComplete ? nil : "ph-check") {
             viewModel.completeDay(dayNumber: dayNumber, journalEntry: text)
             didCompleteDay = true
 

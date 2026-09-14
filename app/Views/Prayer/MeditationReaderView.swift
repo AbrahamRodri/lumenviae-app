@@ -178,11 +178,10 @@ struct MeditationReaderView: View {
                     placement: placement,
                     pendingHandoff: $pendingHandoff
                 )
-                    .presentationDetents([
-                        .height(prayerTrayHeight(for: placement, actions: actions))
-                    ])
+                    // The tray opens as tall as it measures
+                    // (`fittedSheetDetent`)
                     .presentationDragIndicator(.visible)
-                    .presentationBackground(AppColors.cardBackground)
+                    .presentationBackground(AppColors.background)
             }
         }
     }
@@ -590,82 +589,39 @@ struct ReaderTextOptionsSheet: View {
     /// would be a promise the screen can't keep.
     var showsNarrationOptions = true
 
-    /// The sheet's height, for its detent — the size slider alone, or
-    /// the slider and the narration row.
+    /// The sheet's height, for its detent — the header and the size
+    /// slider alone, or those and the narration row under its label.
     static func height(showsNarrationOptions: Bool) -> CGFloat {
-        showsNarrationOptions ? 300 : 190
+        showsNarrationOptions ? 306 : 196
     }
 
     var body: some View {
         @Bindable var settings = userSettings
 
         return VStack(alignment: .leading, spacing: 0) {
-            HStack {
-                Text("Text")
-                    .font(AppFonts.headlineFont(20))
-                    .foregroundColor(AppColors.cream)
-                Spacer()
-                ReaderChromeButton(
-                    icon: "ph-x",
-                    size: 15,
-                    tint: AppColors.textSecondary,
-                    label: "Close",
-                    action: dismiss.callAsFunction
-                )
+            SheetHeader(title: "Text") {
+                SheetHeaderAction(title: "Done") { dismiss() }
             }
-            .padding(.leading, 24)
-            .padding(.trailing, 10)
-            .padding(.top, 14)
 
-            VStack(alignment: .leading, spacing: 10) {
-                Text("SIZE")
-                    .font(AppFonts.labelFont(10))
-                    .tracking(2.5)
-                    .foregroundColor(AppColors.gold)
-
-                HStack(spacing: 14) {
-                    Text("A")
-                        .font(AppFonts.readingFont(13))
-                        .foregroundColor(AppColors.textSecondary)
-
-                    Slider(value: $settings.textSizeScale, in: 0...1)
-                        .tint(AppColors.gold)
-                        .accessibilityLabel("Text size")
-
-                    Text("A")
-                        .font(AppFonts.readingFont(24))
-                        .foregroundColor(AppColors.cream)
-                }
-            }
-            .padding(.horizontal, 24)
-            .padding(.top, 18)
+            SheetSizeSlider(label: "Size", scale: $settings.textSizeScale)
 
             if showsNarrationOptions {
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("WHILE LISTENING")
-                        .font(AppFonts.labelFont(10))
-                        .tracking(2.5)
-                        .foregroundColor(AppColors.gold)
+                SheetSectionLabel("While listening")
 
-                    ToggleRow(
-                        icon: "ph-text-align-left",
-                        title: "Follow the narration",
-                        subtitle: "The page keeps pace with the voice",
-                        isOn: $settings.readerAutoScroll
-                    )
-                    .background(
-                        RoundedRectangle(cornerRadius: 14)
-                            .fill(AppColors.cardBackground)
-                    )
-                }
-                .padding(.horizontal, 24)
-                .padding(.top, 24)
+                SheetToggleRow(
+                    title: "Follow the narration",
+                    detail: "The page keeps pace with the voice",
+                    icon: "ph-text-align-left",
+                    isOn: $settings.readerAutoScroll,
+                    showsDivider: false,
+                    detailLineLimit: 1
+                )
             }
 
             Spacer(minLength: 16)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .background(AppColors.background.ignoresSafeArea())
+        .sheetGround()
     }
 }
 

@@ -281,7 +281,7 @@ struct LibrarySpeedSleepRow: View {
         )
         .sheet(isPresented: $isRaised) {
             LibrarySpeedSleepSheet(session: session)
-                .presentationDetents([.height(430)])
+                .presentationDetents([.height(590)])
                 .presentationDragIndicator(.visible)
                 .presentationBackground(AppColors.background)
         }
@@ -324,56 +324,39 @@ struct LibrarySpeedSleepSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        ZStack {
-            AppColors.appGradient.ignoresSafeArea()
+        LibraryTraySheet(
+            title: "Speed and Sleep",
+            note: "The voice withdraws rather than being cut off. LibriVox readers are volunteers, and they read at their own pace."
+        ) {
+            SheetSectionLabel("Speed")
 
-            VStack(alignment: .leading, spacing: 0) {
-                Text("SPEED AND SLEEP TIMER")
-                    .font(AppFonts.labelFont(10))
-                    .tracking(2.5)
-                    .foregroundColor(AppColors.gold.opacity(0.8))
-                    .padding(.top, 24)
-                    .padding(.bottom, 14)
-
-                HStack(spacing: 10) {
-                    ForEach(AudioService.supportedRates, id: \.self) { rate in
-                        ratePill(rate)
-                    }
+            HStack(spacing: 10) {
+                ForEach(AudioService.supportedRates, id: \.self) { rate in
+                    ratePill(rate)
                 }
-                .padding(.bottom, 16)
-
-                Rectangle()
-                    .fill(AppColors.gold.opacity(0.2))
-                    .frame(height: AppLine.hairline)
-
-                LibraryTrayRow(
-                    title: "At the end of this reading",
-                    isOn: session.sleepTimer == .endOfTrack
-                ) { session.setSleepTimer(.endOfTrack); dismiss() }
-
-                ForEach([15, 30, 60], id: \.self) { minutes in
-                    LibraryTrayRow(
-                        title: minutes == 60 ? "In an hour" : "In \(minutes) minutes",
-                        isOn: session.sleepTimer == .after(minutes: minutes)
-                    ) { session.setSleepTimer(.after(minutes: minutes)); dismiss() }
-                }
-
-                if session.sleepTimer != nil {
-                    LibraryTrayRow(title: "Let it run on", isOn: false) {
-                        session.setSleepTimer(nil)
-                        dismiss()
-                    }
-                }
-
-                Text("The voice withdraws rather than being cut off. LibriVox readers are volunteers, and they read at their own pace.")
-                    .font(AppFonts.italicFont(12))
-                    .foregroundColor(AppColors.textSecondary)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.top, 14)
-
-                Spacer(minLength: 0)
             }
-            .padding(.horizontal, 24)
+            .padding(.horizontal, SheetMetrics.gutter)
+
+            SheetSectionLabel("Sleep timer")
+
+            LibraryTrayRow(
+                title: "At the end of this reading",
+                isOn: session.sleepTimer == .endOfTrack
+            ) { session.setSleepTimer(.endOfTrack); dismiss() }
+
+            ForEach([15, 30, 60], id: \.self) { minutes in
+                LibraryTrayRow(
+                    title: minutes == 60 ? "In an hour" : "In \(minutes) minutes",
+                    isOn: session.sleepTimer == .after(minutes: minutes)
+                ) { session.setSleepTimer(.after(minutes: minutes)); dismiss() }
+            }
+
+            if session.sleepTimer != nil {
+                LibraryTrayRow(title: "Let it run on", isOn: false) {
+                    session.setSleepTimer(nil)
+                    dismiss()
+                }
+            }
         }
     }
 
@@ -411,47 +394,38 @@ struct LibrarySpeedSleepSheet: View {
 
 // MARK: - Tray furniture
 
-/// The shared shape of the shelf's small trays: a kicker, a rule, ruled
-/// rows, and one quiet line of explanation at the foot.
+/// The shared shape of the shelf's small trays, in the app's one sheet
+/// grammar (`SheetChrome`): a header, the tray's rows or its one control,
+/// and one quiet line of explanation at the foot.
+///
+/// The content stands full width: a `SheetRow` carries its own gutter,
+/// and a control that is not a row sets itself on `SheetMetrics.gutter`.
 struct LibraryTraySheet<Content: View>: View {
 
+    var kicker: String? = nil
     let title: String
+    var lead: String? = nil
     var note: String? = nil
     @ViewBuilder let content: Content
 
     var body: some View {
-        ZStack {
-            AppColors.appGradient.ignoresSafeArea()
+        VStack(alignment: .leading, spacing: 0) {
+            SheetHeader(kicker: kicker, title: title, lead: lead)
 
-            VStack(alignment: .leading, spacing: 0) {
-                Text(title.uppercased())
-                    .font(AppFonts.labelFont(10))
-                    .tracking(2.5)
-                    .foregroundColor(AppColors.gold.opacity(0.8))
-                    .padding(.top, 24)
-                    .padding(.bottom, 12)
+            content
 
-                Rectangle()
-                    .fill(AppColors.gold.opacity(0.2))
-                    .frame(height: AppLine.hairline)
-
-                content
-
-                if let note {
-                    Text(note)
-                        .font(AppFonts.italicFont(12))
-                        .foregroundColor(AppColors.textSecondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding(.top, 14)
-                }
-
-                Spacer(minLength: 0)
+            if let note {
+                SheetNote(note)
             }
-            .padding(.horizontal, 24)
+
+            Spacer(minLength: 0)
         }
+        .sheetGround()
     }
 }
 
+/// One choice in a tray: a ruled `SheetRow`, lit and checked where it is
+/// the one set.
 struct LibraryTrayRow: View {
 
     let title: String
@@ -459,30 +433,10 @@ struct LibraryTrayRow: View {
     let action: () -> Void
 
     var body: some View {
-        VStack(spacing: 0) {
-            Button(action: action) {
-                HStack(spacing: 12) {
-                    Text(title)
-                        .font(AppFonts.bodyFont(16))
-                        .foregroundColor(isOn ? AppColors.goldLight : AppColors.cream)
-
-                    Spacer(minLength: 8)
-
-                    if isOn {
-                        AppIcon("ph-check", size: 13)
-                            .foregroundColor(AppColors.goldLight)
-                    }
-                }
-                .padding(.vertical, 14)
-                .frame(minHeight: 48)
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-
-            Rectangle()
-                .fill(AppColors.gold.opacity(0.12))
-                .frame(height: AppLine.hairline)
+        Button(action: action) {
+            SheetRow(title, accessory: isOn ? .check : .none, isLit: isOn)
         }
+        .buttonStyle(SacredCardButtonStyle())
         .accessibilityAddTraits(isOn ? [.isSelected] : [])
     }
 }
@@ -584,17 +538,15 @@ struct LibraryPlayerSheet: View {
     }
 
     var body: some View {
-        ZStack {
-            AppColors.appGradient.ignoresSafeArea()
+        VStack(alignment: .leading, spacing: 0) {
+            // The reading sounding is the sheet's title; the book stands
+            // beside its cover beneath, so neither name is set twice.
+            SheetHeader(
+                kicker: "Listening to this chapter",
+                title: section?.title ?? session.info?.title ?? "The reading"
+            )
 
             VStack(alignment: .leading, spacing: 0) {
-                Text("LISTENING TO THIS CHAPTER")
-                    .font(AppFonts.labelFont(10))
-                    .tracking(2.5)
-                    .foregroundColor(AppColors.gold.opacity(0.8))
-                    .padding(.top, 24)
-                    .padding(.bottom, 16)
-
                 if let info = session.info {
                     HStack(alignment: .center, spacing: 14) {
                         BookCover(info: info, isLettered: false)
@@ -602,11 +554,15 @@ struct LibraryPlayerSheet: View {
                             .accessibilityHidden(true)
 
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(section?.title ?? info.title)
-                                .font(AppFonts.headlineFont(16))
-                                .foregroundColor(AppColors.cream)
-                                .lineLimit(2)
-                                .fixedSize(horizontal: false, vertical: true)
+                            // Where no titled reading is loaded the header
+                            // already carries the book's name
+                            if section?.title != nil {
+                                Text(info.title)
+                                    .font(AppFonts.headlineFont(16))
+                                    .foregroundColor(AppColors.cream)
+                                    .lineLimit(2)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
 
                             Text(info.author)
                                 .font(AppFonts.italicFont(13))
@@ -627,10 +583,11 @@ struct LibraryPlayerSheet: View {
                     .padding(.top, 20)
 
                 LibrarySpeedSleepRow(session: session)
-
-                Spacer(minLength: 0)
             }
-            .padding(.horizontal, 24)
+            .padding(.horizontal, SheetMetrics.gutter)
+
+            Spacer(minLength: 0)
         }
+        .sheetGround()
     }
 }

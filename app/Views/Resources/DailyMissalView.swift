@@ -42,9 +42,14 @@ struct DailyMissalView: View {
     @State private var showAbout = false
     @State private var showOrdoPage = false
 
-    /// Header collapse, driven by scroll offset with hysteresis —
-    /// collapse past 96, expand back under 44 — so the boundary never
-    /// flutters.
+    /// How far the text has risen under the header — read by the plate
+    /// alone, which collapses point for point with it
+    @State private var scroll = ReaderScrollOffset()
+
+    /// Whether the feast's name has taken the date pill's place in the
+    /// chrome. Unlike the plate this is a crossfade, so it keeps its
+    /// hysteresis — half the plate gone to show, under a third to hide —
+    /// and never flutters at the boundary.
     @State private var collapsed = false
 
     /// Index into `readerSections` of the section under the header
@@ -86,6 +91,11 @@ struct DailyMissalView: View {
     /// The chrome row's height (its circular buttons are 44pt)
     private static let chromeHeight: CGFloat = 44
 
+    /// How far the chrome's centre slot stands in from each edge: the
+    /// right-hand pair of buttons and their margin (12 + 44 + 4 + 44),
+    /// and a breath. Held on both sides so the slot stays centred.
+    private static let chromeCenterInset: CGFloat = 112
+
     // MARK: - Derived
 
     private var readingSize: CGFloat { settings.missalFontSize }
@@ -97,8 +107,8 @@ struct DailyMissalView: View {
     private var collapsedHeaderHeight: CGFloat { Self.chromeHeight + railBlockHeight }
 
     /// Everything the page's section list is built from. Rebuilding is
-    /// keyed on this rather than derived in the body: the header writes
-    /// `scrolledPastTop` on every frame of every scroll, and deriving
+    /// keyed on this rather than derived in the body: the scroll offset
+    /// is written on every frame of every scroll, and deriving
     /// the whole Mass there re-walked the propers and scanned the Ordo
     /// sixty times a second. The Ordo's arrival is part of the key —
     /// it lands after the first render and changes what every section
@@ -171,8 +181,8 @@ struct DailyMissalView: View {
             switch presented {
             case .reading:
                 MissalReadingSheet(preferredBilingual: $preferredBilingual)
-                    .presentationDetents([.height(620)])
-                    .presentationDragIndicator(.hidden)
+                    .presentationDetents([.height(690)])
+                    .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
                     .presentationCornerRadius(22)
 
@@ -184,7 +194,7 @@ struct DailyMissalView: View {
                     pendingJump = target
                 }
                 .presentationDetents([.fraction(0.8)])
-                .presentationDragIndicator(.hidden)
+                .presentationDragIndicator(.visible)
                 .presentationBackground(AppColors.background)
                 .presentationCornerRadius(22)
 
@@ -193,7 +203,7 @@ struct DailyMissalView: View {
                     Task { await viewModel.jump(to: chosen) }
                 }
                 .presentationDetents([.height(640)])
-                .presentationDragIndicator(.hidden)
+                .presentationDragIndicator(.visible)
                 .presentationBackground(AppColors.background)
                 .presentationCornerRadius(22)
             }
@@ -269,12 +279,15 @@ struct DailyMissalView: View {
     /// lazily built section is always corrected by its settling layout.
     @State private var sectionTops: [Int: CGFloat] = [:]
 
-    /// How far the content's top has risen past the header's foot
-    @State private var scrolledPastTop: CGFloat = 0
-
     private func handleScrollOffset(_ markerGlobalMinY: CGFloat) {
-        scrolledPastTop = headerFootGlobal - markerGlobalMinY
-        let shouldCollapse = collapsed ? scrolledPastTop > 44 : scrolledPastTop > 96
+        let pastTop = headerFootGlobal - markerGlobalMinY
+        if pastTop != scroll.pastTop {
+            scroll.pastTop = pastTop
+        }
+        // Floored, so a plate measured at zero before its first layout
+        // cannot swap the pill out on the first pixel of scroll.
+        let plate = max(24, plateHeight)
+        let shouldCollapse = collapsed ? pastTop > plate * 0.3 : pastTop > plate * 0.5
         if shouldCollapse != collapsed {
             collapsed = shouldCollapse
         }
@@ -289,7 +302,7 @@ struct DailyMissalView: View {
     /// The active section is the last one whose top has risen into the
     /// band just under the collapsed header.
     private func refreshActiveSection() {
-        let limit = scrolledPastTop + 33
+        let limit = scroll.pastTop + 33
         let active = sectionTops.filter { $0.value < limit }.keys.max() ?? 0
         if active != activeSectionIndex {
             activeSectionIndex = active
@@ -300,7 +313,9 @@ struct DailyMissalView: View {
 
     private var header: some View {
         VStack(spacing: 0) {
+            // Above the plate, which passes up under it as it collapses
             chromeRow
+                .zIndex(1)
             plate
             railBlock
         }
@@ -343,8 +358,10 @@ struct DailyMissalView: View {
         .padding(.horizontal, 12)
         .frame(height: Self.chromeHeight)
         // Centred on the screen, not flexed between the buttons — the
-        // two right-hand buttons would otherwise pull the pill left.
-        .overlay { chromeCenter }
+        // two right-hand buttons would otherwise pull the pill left —
+        // and held clear of them, so a long date shrinks before it can
+        // run under ☰.
+        .overlay { chromeCenter.padding(.horizontal, Self.chromeCenterInset) }
     }
 
     /// The date pill and the collapsed title share the centre slot and
@@ -372,12 +389,13 @@ struct DailyMissalView: View {
                 Text(Self.pillDateFormatter.string(from: viewModel.date).uppercased())
                     .font(AppFonts.labelFont(9.5))
                     .tracking(1.6)
+                    .minimumScaleFactor(0.8)
 
                 AppIcon("ph-caret-down", size: 11)
             }
             .foregroundColor(AppColors.gold)
             .lineLimit(1)
-            .padding(.horizontal, 15)
+            .padding(.horizontal, 13)
             .frame(height: 30)
             .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.28), lineWidth: AppLine.hairline))
             .frame(minHeight: 44)
@@ -393,41 +411,35 @@ struct DailyMissalView: View {
             .tracking(2.5)
             .foregroundColor(AppColors.cream)
             .lineLimit(1)
-            .frame(maxWidth: 210)
+            .minimumScaleFactor(0.8)
     }
 
     // MARK: - Feast Plate
 
-    /// The collapsing band: measured at its natural height, then framed
-    /// to zero when collapsed — the CSS max-height collapse, in layout.
+    /// The collapsing band, taken away by the scroll itself — see
+    /// `CollapsingReaderPlate`.
     private var plate: some View {
-        plateContent
-            .frame(maxWidth: .infinity)
-            .fixedSize(horizontal: false, vertical: true)
-            .onGeometryChange(for: CGFloat.self) { proxy in
-                proxy.size.height
-            } action: { height in
-                plateHeight = height
-            }
-            .opacity(collapsed ? 0 : 1)
-            .animation(anim(0.24), value: collapsed)
-            .frame(height: collapsed ? 0 : plateHeight, alignment: .top)
-            .clipped()
-            .offset(y: collapsed ? -10 : 0)
-            .animation(anim(0.34), value: collapsed)
+        CollapsingReaderPlate(offset: scroll, naturalHeight: $plateHeight) {
+            plateContent
+        }
     }
 
     /// What stands on the plate: the feast, or the reason there isn't
     /// one yet — loading and failure live inside the same slot, so the
     /// page never breaks its shape while the day travels.
+    ///
+    /// Kept to the feast's name and one row under it. The plate once
+    /// stacked the temporal line, the name, the vestment and class, and
+    /// the day arrows with TODAY between them, each 18 points apart, and
+    /// stood taller than a third of the reading's first screen.
     private var plateContent: some View {
-        VStack(spacing: 18) {
+        VStack(spacing: 0) {
             if let info = viewModel.selectedProper?.info {
                 feastPlate(info)
             } else if viewModel.isLoading {
                 ProgressView()
                     .tint(AppColors.gold)
-                    .padding(.vertical, 24)
+                    .padding(.vertical, 14)
             } else if let error = viewModel.errorMessage {
                 errorState(error)
             } else {
@@ -436,35 +448,40 @@ struct DailyMissalView: View {
 
             // Turning the leaf. The date pill opens the month, but a
             // missal is read a day at a time and yesterday and tomorrow
-            // should cost one tap, not a sheet — and a reader who has
-            // wandered needs the way back to today.
+            // should cost one tap, not a sheet.
             dayStepRow
+                .padding(.top, 2)
+
+            // A reader who has wandered needs the way back to today.
+            // Only then does the plate grow a line for it.
+            if !viewModel.isToday {
+                QuietGoldButton(
+                    title: "Return to today",
+                    leadingIcon: "ph-arrow-counter-clockwise",
+                    leadingIconSize: 10,
+                    size: 10
+                ) {
+                    Task { await viewModel.goToToday() }
+                }
+            }
         }
-        .padding(.top, 20)
+        .padding(.top, 8)
         .padding(.horizontal, 20)
         .frame(maxWidth: .infinity)
         // A new day's feast eases onto the plate rather than snapping.
         .animation(anim(0.3), value: viewModel.selectedProper?.id ?? "")
     }
 
+    /// The feast's name, and what it commemorates. No kicker over the
+    /// name: the temporal line ("XIV Sunday after Pentecost") stood
+    /// there, and the date pill already says which day this is.
     @ViewBuilder
     private func feastPlate(_ info: MissalInfo) -> some View {
-        if let tempora = nonEmpty(info.tempora) {
-            Text(tempora.uppercased())
-                .font(AppFonts.labelFont(8.5))
-                .tracking(2)
-                .foregroundColor(AppColors.textSecondary)
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
-        }
-
         Text(info.title)
-            .font(AppFonts.titleFont(28))
+            .font(AppFonts.titleFont(26))
             .foregroundColor(AppColors.textPrimary)
             .multilineTextAlignment(.center)
             .fixedSize(horizontal: false, vertical: true)
-
-        rubricRow(info)
 
         if let commemorations = info.commemorations, !commemorations.isEmpty {
             Text("Commemoration of \(commemorations.map(\.title).joined(separator: " and "))")
@@ -472,10 +489,12 @@ struct DailyMissalView: View {
                 .foregroundColor(AppColors.textSecondary)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
+                .padding(.top, 6)
         }
     }
 
-    /// The vestment as a lit dot beside its name, then the 1962 class.
+    /// The vestment as a lit dot beside its name, then the 1962 class —
+    /// between the day arrows, where TODAY once stood on a row of its own.
     @ViewBuilder
     private func rubricRow(_ info: MissalInfo) -> some View {
         let rank = info.rankLabel
@@ -506,32 +525,23 @@ struct DailyMissalView: View {
                     .foregroundColor(AppColors.textSecondary)
             }
         }
+        .lineLimit(1)
+        .minimumScaleFactor(0.8)
     }
 
-    /// Yesterday and tomorrow at the edges, and the way home between
-    /// them. It rides on the plate rather than in the chrome row: the
-    /// centre slot there is already the date pill's, and squeezing two
-    /// more controls beside it would crowd the pill into an ellipsis.
+    /// Yesterday and tomorrow at the edges, and the day's vestment and
+    /// class between them. It rides on the plate rather than in the
+    /// chrome row: the centre slot there is already the date pill's, and
+    /// squeezing two more controls beside it would crowd the pill into
+    /// an ellipsis.
     private var dayStepRow: some View {
         HStack(spacing: 0) {
             dayStepButton(icon: "ph-caret-left", label: "Previous day", days: -1)
 
             Spacer(minLength: 8)
 
-            if viewModel.isToday {
-                Text("TODAY")
-                    .font(AppFonts.labelFont(9))
-                    .tracking(2.5)
-                    .foregroundColor(AppColors.gold.opacity(0.6))
-            } else {
-                QuietGoldButton(
-                    title: "Return to today",
-                    leadingIcon: "ph-arrow-counter-clockwise",
-                    leadingIconSize: 10,
-                    size: 10
-                ) {
-                    Task { await viewModel.goToToday() }
-                }
+            if let info = viewModel.selectedProper?.info {
+                rubricRow(info)
             }
 
             Spacer(minLength: 8)
@@ -855,10 +865,10 @@ struct DailyMissalView: View {
         return trimmed
     }
 
-    /// "TUESDAY · 25 AUGUST"
+    /// "TUE · 25 AUG" — the long form ran under the ☰ button
     private static let pillDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "EEEE '·' d MMMM"
+        formatter.dateFormat = "EEE '·' d MMM"
         return formatter
     }()
 }

@@ -102,72 +102,95 @@ struct ContinueReadingAct: View {
 
     let action: () -> Void
 
-    private var ink: Color { AppColors.background }
-
     var body: some View {
         Button(action: action) {
-            VStack(alignment: .leading, spacing: 9) {
-                HStack(spacing: 8) {
-                    MarkerRibbonShape()
-                        .fill(ink.opacity(0.5))
-                        .frame(width: 7, height: 16)
-
-                    Text(kicker)
-                        .font(AppFonts.labelFont(10))
-                        .tracking(2.5)
-                        .foregroundColor(ink.opacity(0.72))
-
-                    Spacer(minLength: 8)
-
-                    AppIcon("ph-caret-right", size: 13)
-                        .foregroundColor(ink.opacity(0.55))
-                }
-
-                Text(destination)
-                    .font(AppFonts.headlineFont(16))
-                    .foregroundColor(ink)
-                    .lineLimit(2)
-                    .multilineTextAlignment(.leading)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                HStack(spacing: 12) {
-                    GeometryReader { geometry in
-                        ZStack(alignment: .leading) {
-                            Capsule().fill(ink.opacity(0.18))
-                            Capsule()
-                                .fill(ink.opacity(0.45))
-                                .frame(width: max(geometry.size.width * fraction, 0))
-                        }
-                    }
-                    .frame(height: 2)
-
-                    if let meta {
-                        Text(meta)
-                            .font(AppFonts.labelFont(8.5))
-                            .tracking(1.4)
-                            .foregroundColor(ink.opacity(0.7))
-                            .lineLimit(1)
-                            .fixedSize()
-                    }
-                }
-            }
-            .padding(.top, 13)
-            .padding(.horizontal, 17)
-            .padding(.bottom, 12)
-            .background(
-                RoundedRectangle(cornerRadius: 18)
-                    .fill(AppColors.goldCTAGradient)
+            ContinueReadingActLabel(
+                kicker: kicker,
+                destination: destination,
+                fraction: fraction,
+                meta: meta
             )
-            .overlay(
-                RoundedRectangle(cornerRadius: 18)
-                    .strokeBorder(AppColors.goldLight.opacity(0.6), lineWidth: AppLine.hairline)
-            )
-            .contentShape(RoundedRectangle(cornerRadius: 18))
-            .haloGlow(AppColors.gold, radius: 9, intensity: 0.3)
         }
         .buttonStyle(GoldCTAButtonStyle())
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(kicker.capitalized): \(destination)")
+    }
+}
+
+/// The act's face apart from its button, so a `NavigationLink` can
+/// carry it as its label and push what it names. True Devotion's page
+/// once wrapped the whole button in a link and switched the button's
+/// hit testing off to keep the two from fighting — but a link is a
+/// button too, and a label that takes no hits leaves it nothing to
+/// press: the act drew, and did nothing when tapped.
+struct ContinueReadingActLabel: View {
+
+    let kicker: String
+    let destination: String
+    let fraction: Double
+    let meta: String?
+
+    private var ink: Color { AppColors.background }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 9) {
+            HStack(spacing: 8) {
+                MarkerRibbonShape()
+                    .fill(ink.opacity(0.5))
+                    .frame(width: 7, height: 16)
+
+                Text(kicker)
+                    .font(AppFonts.labelFont(10))
+                    .tracking(2.5)
+                    .foregroundColor(ink.opacity(0.72))
+
+                Spacer(minLength: 8)
+
+                AppIcon("ph-caret-right", size: 13)
+                    .foregroundColor(ink.opacity(0.55))
+            }
+
+            Text(destination)
+                .font(AppFonts.headlineFont(16))
+                .foregroundColor(ink)
+                .lineLimit(2)
+                .multilineTextAlignment(.leading)
+                .fixedSize(horizontal: false, vertical: true)
+
+            HStack(spacing: 12) {
+                GeometryReader { geometry in
+                    ZStack(alignment: .leading) {
+                        Capsule().fill(ink.opacity(0.18))
+                        Capsule()
+                            .fill(ink.opacity(0.45))
+                            .frame(width: max(geometry.size.width * fraction, 0))
+                    }
+                }
+                .frame(height: 2)
+
+                if let meta {
+                    Text(meta)
+                        .font(AppFonts.labelFont(8.5))
+                        .tracking(1.4)
+                        .foregroundColor(ink.opacity(0.7))
+                        .lineLimit(1)
+                        .fixedSize()
+                }
+            }
+        }
+        .padding(.top, 13)
+        .padding(.horizontal, 17)
+        .padding(.bottom, 12)
+        .background(
+            RoundedRectangle(cornerRadius: 18)
+                .fill(AppColors.goldCTAGradient)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 18)
+                .strokeBorder(AppColors.goldLight.opacity(0.6), lineWidth: AppLine.hairline)
+        )
+        .contentShape(RoundedRectangle(cornerRadius: 18))
+        .haloGlow(AppColors.gold, radius: 9, intensity: 0.3)
     }
 }
 
@@ -296,45 +319,21 @@ struct ReadingGoalSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        ZStack {
-            AppColors.appGradient.ignoresSafeArea()
-
-            VStack(alignment: .leading, spacing: 0) {
-                Text("HOW MUCH YOU MEAN TO READ EACH DAY")
-                    .font(AppFonts.labelFont(10))
-                    .tracking(2.5)
-                    .foregroundColor(AppColors.gold.opacity(0.8))
-                    .padding(.top, 24)
-                    .padding(.bottom, 8)
-
-                Text("Spiritual reading asks for a little every day rather than an evening every month.")
-                    .font(AppFonts.italicFont(13))
-                    .foregroundColor(AppColors.cream.opacity(0.72))
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.bottom, 14)
-
-                Rectangle()
-                    .fill(AppColors.gold.opacity(0.2))
-                    .frame(height: AppLine.hairline)
-
-                ForEach(ReadingGoal.allCases) { goal in
-                    LibraryTrayRow(
-                        title: goal.title,
-                        isOn: settings.readingGoal == goal
-                    ) {
-                        settings.readingGoalRaw = goal.rawValue
-                        dismiss()
-                    }
+        LibraryTraySheet(
+            kicker: "Today's goal",
+            title: "How Much to Read",
+            lead: "Spiritual reading asks for a little every day rather than an evening every month.",
+            note: "A missed day is never counted against you."
+        ) {
+            ForEach(ReadingGoal.allCases) { goal in
+                LibraryTrayRow(
+                    title: goal.title,
+                    isOn: settings.readingGoal == goal
+                ) {
+                    settings.readingGoalRaw = goal.rawValue
+                    dismiss()
                 }
-
-                Text("A missed day is never counted against you.")
-                    .font(AppFonts.italicFont(12))
-                    .foregroundColor(AppColors.textSecondary)
-                    .padding(.top, 14)
-
-                Spacer(minLength: 0)
             }
-            .padding(.horizontal, 24)
         }
     }
 }
@@ -698,30 +697,19 @@ struct LibraryFootnoteSheet: View {
     let text: String
 
     var body: some View {
-        ZStack {
-            AppColors.appGradient.ignoresSafeArea()
+        VStack(alignment: .leading, spacing: 0) {
+            SheetHeader(kicker: "The editor's", title: "Footnote \(number)")
 
-            VStack(alignment: .leading, spacing: 14) {
-                Text("FOOTNOTE \(number) · THE EDITOR'S")
-                    .font(AppFonts.labelFont(10))
-                    .tracking(2.5)
-                    .foregroundColor(AppColors.gold.opacity(0.8))
-                    .padding(.top, 24)
+            Text(text)
+                .font(AppFonts.bodyFont(15))
+                .foregroundColor(AppColors.cream.opacity(0.88))
+                .lineSpacing(ReadingTypography.lineSpacing(for: 15) * 0.6)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, SheetMetrics.gutter)
 
-                Rectangle()
-                    .fill(AppColors.gold.opacity(0.2))
-                    .frame(height: AppLine.hairline)
-
-                Text(text)
-                    .font(AppFonts.bodyFont(15))
-                    .foregroundColor(AppColors.cream.opacity(0.88))
-                    .lineSpacing(ReadingTypography.lineSpacing(for: 15) * 0.6)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                Spacer(minLength: 0)
-            }
-            .padding(.horizontal, 24)
+            Spacer(minLength: 0)
         }
+        .sheetGround()
     }
 }
 
@@ -747,17 +735,11 @@ struct PassageShareSheet: View {
     }
 
     var body: some View {
-        ZStack {
-            AppColors.appGradient.ignoresSafeArea()
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 0) {
+                SheetHeader(title: "Share This Passage")
 
-            ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 18) {
-                    Text("SHARE THIS PASSAGE")
-                        .font(AppFonts.labelFont(10))
-                        .tracking(2.5)
-                        .foregroundColor(AppColors.gold.opacity(0.8))
-                        .padding(.top, 24)
-
                     card
 
                     HStack(spacing: 12) {
@@ -797,9 +779,10 @@ struct PassageShareSheet: View {
 
                     Spacer(minLength: 24)
                 }
-                .padding(.horizontal, 24)
+                .padding(.horizontal, SheetMetrics.gutter)
             }
         }
+        .sheetGround()
         .onAppear { render() }
     }
 
@@ -921,41 +904,27 @@ struct BookNotesSheet: View {
     }()
 
     var body: some View {
-        ZStack {
-            AppColors.appGradient.ignoresSafeArea()
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 0) {
+                SheetHeader(
+                    kicker: "On this book",
+                    title: "Your Notes",
+                    lead: "Passages you wrote something about. Each one is in your journal as well."
+                )
 
-            ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 0) {
-                    Text("YOUR NOTES ON THIS BOOK")
-                        .font(AppFonts.labelFont(10))
-                        .tracking(2.5)
-                        .foregroundColor(AppColors.gold.opacity(0.8))
-                        .padding(.top, 24)
-                        .padding(.bottom, 8)
+                // Quoted passages, not choices: set on the gutter and
+                // ruled apart rather than drawn as rows
+                ForEach(notes) { note in
+                    noteRow(note)
+                        .padding(.horizontal, SheetMetrics.gutter)
 
-                    Text("Passages you wrote something about. Each one is in your journal as well.")
-                        .font(AppFonts.italicFont(13))
-                        .foregroundColor(AppColors.cream.opacity(0.72))
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding(.bottom, 14)
-
-                    Rectangle()
-                        .fill(AppColors.gold.opacity(0.2))
-                        .frame(height: AppLine.hairline)
-
-                    ForEach(notes) { note in
-                        noteRow(note)
-
-                        Rectangle()
-                            .fill(AppColors.gold.opacity(0.12))
-                            .frame(height: AppLine.hairline)
-                    }
-
-                    Spacer(minLength: 40)
+                    SheetRule()
                 }
-                .padding(.horizontal, 24)
+
+                Spacer(minLength: 40)
             }
         }
+        .sheetGround()
     }
 
     /// One note: the passage, the reader's own words, and when.

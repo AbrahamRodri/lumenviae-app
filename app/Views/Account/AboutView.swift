@@ -16,6 +16,10 @@ struct AboutView: View {
     @Environment(AppRouter.self) private var router
 
     @State private var showOnboarding = false
+
+    /// The step the re-run introduction ended on, taken once it has gone
+    @State private var onboardingFirstStep: OnboardingFirstStep?
+
     @State private var showAbout = false
     @State private var showPrivacyPolicy = false
     @State private var showHelpSupport = false
@@ -62,9 +66,24 @@ struct AboutView: View {
                 }
             }
         }
-        .sheet(isPresented: $showOnboarding) {
-            OnboardingView(onComplete: { showOnboarding = false })
-                .presentationBackground(AppColors.background)
+        // Full screen, not a sheet: the introduction is the app's first
+        // face, and behind a sheet's inset top, rounded rim and drag-away
+        // it read as a panel over the settings rather than the thing a
+        // new reader sees. Re-running it shows what first run shows.
+        .fullScreenCover(isPresented: $showOnboarding, onDismiss: {
+            // The introduction's last button names a first step; it is
+            // taken from the root once the cover has gone, since this page
+            // sits on the stack and today's Rosary only starts from home
+            guard let step = onboardingFirstStep else { return }
+            onboardingFirstStep = nil
+            router.popToRoot()
+            step.perform(with: router)
+        }) {
+            OnboardingView(onComplete: { step in
+                onboardingFirstStep = step
+                showOnboarding = false
+            })
+            .presentationBackground(AppColors.background)
         }
         .sheet(isPresented: $showAbout) {
             AboutSheet()
@@ -123,12 +142,17 @@ struct AboutView: View {
                     showAbout = true
                 }
 
+                // The introduction is the first run's own screen, kept
+                // here for development only: a reader has seen it, and a
+                // door to see it again is a door they have no use for.
+                #if DEBUG
                 Divider()
                     .background(AppColors.gold.opacity(0.2))
 
                 ActionRow(icon: "ph-book-open", title: "App Introduction") {
                     showOnboarding = true
                 }
+                #endif
 
                 Divider()
                     .background(AppColors.gold.opacity(0.2))

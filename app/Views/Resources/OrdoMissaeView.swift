@@ -59,7 +59,7 @@ struct OrdoMissaeView: View {
         }
         .sheet(isPresented: $showTextOptions) {
             MissalTextSizeSheet()
-                .presentationDetents([.height(300)])
+                .presentationDetents([.height(330)])
                 .presentationBackground(AppColors.background)
         }
         .task { await load() }
@@ -153,7 +153,6 @@ struct OrdoMissaeView: View {
             GoldCTAButton(
                 title: "Try again",
                 prominence: .inline,
-                showsCross: false,
                 fullWidth: false
             ) {
                 Task { await load() }

@@ -528,16 +528,39 @@ struct JournalEntryCard: View {
                 }
             }
 
-            // How the entry opens, set as a single run so the versal
-            // initial stays part of its own word. No length floor: a
-            // three-word entry still opens on its gold letter.
-            DropCapText(
-                text: entry.previewText,
-                bodySize: 16,
-                textColor: AppColors.cream.opacity(0.85),
-                minimumLength: 0
-            )
-            .lineLimit(4)
+            if let kept = entry.keptPassage {
+                // A page kept from a book: the passage as a quotation,
+                // and the reader's own words beneath it where there are
+                // any. The card has no room for the citation; the row
+                // above already names the chapter.
+                VStack(alignment: .leading, spacing: 10) {
+                    QuotedPassageText(
+                        passage: kept.passage,
+                        size: 15,
+                        textColor: AppColors.cream.opacity(0.85),
+                        lineLimit: 3
+                    )
+
+                    if !kept.comment.isEmpty {
+                        Text(kept.comment.replacingOccurrences(of: "\n", with: " "))
+                            .font(AppFonts.readingFont(15))
+                            .foregroundColor(AppColors.cream.opacity(0.72))
+                            .lineSpacing(3)
+                            .lineLimit(2)
+                    }
+                }
+            } else {
+                // How the entry opens, set as a single run so the versal
+                // initial stays part of its own word. No length floor: a
+                // three-word entry still opens on its gold letter.
+                DropCapText(
+                    text: entry.previewText,
+                    bodySize: 16,
+                    textColor: AppColors.cream.opacity(0.85),
+                    minimumLength: 0
+                )
+                .lineLimit(4)
+            }
         }
         .padding(16)
         .background(
@@ -701,16 +724,43 @@ struct JournalDetailView: View {
                             .fill(AppColors.gold.opacity(0.2))
                             .frame(height: 1)
 
-                        // The entry in full, as reading text: real
-                        // paragraphs, the first opening with a versal.
-                        ReadingText(
-                            text: entry.displayText,
-                            size: 17,
-                            showsDropCap: true,
-                            dropCapMinimumLength: 0,
-                            textColor: AppColors.cream.opacity(0.9)
-                        )
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                        if let kept = entry.keptPassage {
+                            // A page kept from a book, in three parts: the
+                            // passage set apart as a quotation with its
+                            // citation, then the reader's own words as
+                            // reading text — theirs is the paragraph that
+                            // opens on the versal.
+                            QuotedPassageText(
+                                passage: kept.passage,
+                                citation: kept.citation,
+                                size: 17,
+                                textColor: AppColors.cream.opacity(0.9)
+                            )
+                            .frame(maxWidth: .infinity, alignment: .leading)
+
+                            if !kept.comment.isEmpty {
+                                ReadingText(
+                                    text: kept.comment,
+                                    size: 17,
+                                    showsDropCap: true,
+                                    dropCapMinimumLength: 0,
+                                    textColor: AppColors.cream.opacity(0.9)
+                                )
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.top, 8)
+                            }
+                        } else {
+                            // The entry in full, as reading text: real
+                            // paragraphs, the first opening with a versal.
+                            ReadingText(
+                                text: entry.displayText,
+                                size: 17,
+                                showsDropCap: true,
+                                dropCapMinimumLength: 0,
+                                textColor: AppColors.cream.opacity(0.9)
+                            )
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        }
 
                         Spacer(minLength: 80)
                     }

@@ -60,6 +60,28 @@ enum PrayerIntention: String, CaseIterable, Identifiable {
     case learning = "Learning the Rosary"
 
     var id: String { rawValue }
+
+    /// What the choice is called on screen. The raw value is what is
+    /// stored, so the wording lives here and can change without losing
+    /// anyone's answer.
+    var displayName: String {
+        switch self {
+        case .peace:    return "Finding Peace"
+        case .habit:    return "Praying Every Day"
+        case .devotion: return "Growing Closer to Mary"
+        case .learning: return "Learning the Rosary"
+        }
+    }
+
+    /// The line under the name, shared by onboarding and Settings
+    var detail: String {
+        switch self {
+        case .peace:    return "Stillness in a busy life"
+        case .habit:    return "To make the Rosary part of each day"
+        case .devotion: return "To love Our Lady more"
+        case .learning: return "New to it, or coming back after a while"
+        }
+    }
 }
 
 // MARK: - Reminder Sound
@@ -158,6 +180,19 @@ final class UserSettings {
     /// prayed, so the setting does not reach it.
     var prayOnBeads: Bool = true {
         didSet { UserDefaults.standard.set(prayOnBeads, forKey: "userSettings.prayOnBeads") }
+    }
+
+    /// What `prayOnBeads` is called wherever it is offered — Settings, the
+    /// player's playback sheet, the set's title page. It had three names
+    /// ("Pray on the Beads", "Pray on the beads", "Bead counter") and three
+    /// explanations, none of which said what a person would see.
+    static let beadCounterTitle = "Bead counter"
+
+    /// What the counter does, said as what appears on the screen.
+    static func beadCounterDetail(isOn: Bool) -> String {
+        isOn
+            ? "The beads unlock after each meditation. Swipe down for each Hail Mary."
+            : "No beads on screen. Keep count on your own rosary."
     }
 
     // MARK: - Reader
@@ -474,16 +509,29 @@ final class UserSettings {
 
     /// The devotions in the user's daily rule, in order.
     var ruleItemsRaw: [String] = [
-        PrayerShortcut.todaysRosary.rawValue,
-        PrayerShortcut.mass.rawValue
+        PrayerShortcut.todaysRosary.rawValue
     ] {
         didSet { UserDefaults.standard.set(ruleItemsRaw, forKey: "userSettings.ruleItems") }
     }
 
-    var ruleItems: [PrayerShortcut] { PrayerShortcut.decode(ruleItemsRaw) }
+    /// The rule as the Chapel may ask about it. An act a stored rule
+    /// carries that is no longer eligible — the Mass and the Office,
+    /// until they have a schedule — is passed over rather than erased,
+    /// so it returns the day the app can keep it.
+    var ruleItems: [PrayerShortcut] {
+        PrayerShortcut.decode(ruleItemsRaw).filter(\.isRuleEligible)
+    }
 
+    /// Writes the rule back. Acts a stored rule carries that are not
+    /// eligible today — the Mass and the Office — are kept on disk behind
+    /// the chosen ones, so editing the rule never erases what the app
+    /// has only put aside.
     func setRuleItems(_ items: [PrayerShortcut]) {
-        ruleItemsRaw = items.map(\.rawValue)
+        let chosen = items.map(\.rawValue)
+        let kept = ruleItemsRaw.filter { raw in
+            !chosen.contains(raw) && PrayerShortcut(rawValue: raw)?.isRuleEligible == false
+        }
+        ruleItemsRaw = chosen + kept
     }
 
     /// Day stamp the manual rule checks belong to. Checks from an earlier
@@ -722,21 +770,23 @@ final class UserSettings {
             .journal: .reflections
         ]
 
-        var layout: [ChapelPlacement] = MeWidget.decode(raw).compactMap { widget in
+        let layout: [ChapelPlacement] = MeWidget.decode(raw).compactMap { widget in
             mapping[widget].map { ChapelPlacement(tile: $0, span: 2, on: true) }
         }
 
-        let placed = Set(layout.map(\.tile))
-        for fallback in ChapelPlacement.defaultLayout where !placed.contains(fallback.tile) {
-            // A section absent from their page stays absent — into the
-            // tray — except the chant, which no Me page could have had.
-            layout.append(ChapelPlacement(
+        // A section absent from their page stays absent — into the tray
+        // — except the chant, which no Me page could have had. The
+        // liturgy follows the Library it was cut out of: on the page if
+        // their Library card was, in the tray if they had removed it. A
+        // streak they had removed waits in the tray as a half, so it comes
+        // back small rather than across the whole page.
+        return ChapelPlacement.completing(layout) { fallback in
+            ChapelPlacement(
                 tile: fallback.tile,
-                span: fallback.tile == .flame ? 1 : 2,
+                span: fallback.tile == .flame ? 1 : fallback.span,
                 on: fallback.tile == .chant
-            ))
+            )
         }
-        return layout
     }
 
     // MARK: - Notifications

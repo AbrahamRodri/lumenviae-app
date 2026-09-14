@@ -30,12 +30,13 @@ extension View {
 }
 
 /// A two-column flow: a span-2 tile takes the whole row; consecutive
-/// span-1 tiles share one, top-aligned. Rows never pack densely — the
+/// span-1 tiles share one, and are stretched to it, so two halves side
+/// by side always end on the same line. Rows never pack densely — the
 /// order the user set is the order the eye reads.
 nonisolated struct ChapelGridLayout: Layout {
 
     var columnGap: CGFloat = 16
-    var rowGap: CGFloat = 30
+    var rowGap: CGFloat = 28
 
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         // An unspecified proposal is a question about ideal size, not an
@@ -76,11 +77,20 @@ nonisolated struct ChapelGridLayout: Layout {
         var frames: [CGRect] = []
         var rowTop: CGFloat = 0
         var rowHeight: CGFloat = 0
+        var rowStart = 0
         var column = 0
 
+        // Every tile in a row is given the row's height: each tile's
+        // shell fills what it is offered and pins its foot to the floor,
+        // so a short half beside a tall one ends where the tall one does
+        // rather than leaving a ragged bottom.
         func closeRow() {
+            for index in rowStart..<frames.count {
+                frames[index].size.height = rowHeight
+            }
             rowTop += rowHeight + rowGap
             rowHeight = 0
+            rowStart = frames.count
             column = 0
         }
 
@@ -106,6 +116,9 @@ nonisolated struct ChapelGridLayout: Layout {
                 column = 1
             }
         }
+
+        // A half left alone on the last row keeps its own height
+        if rowStart < frames.count { closeRow() }
 
         return frames
     }
@@ -149,9 +162,9 @@ struct ChapelSway: ViewModifier {
 
 // MARK: - ChapelRemoveBadge
 
-/// The ✕ that puts a section away. Carded tiles hang it at the corner;
-/// frameless tiles have no corner, so theirs sits in the row gap above,
-/// clear of the kicker glyph.
+/// The ✕ that puts a section away, hung at the shell's top-left corner
+/// — below the kicker, which stands on the page above the shell and
+/// would otherwise sit under the badge.
 struct ChapelRemoveBadge: View {
 
     let tile: ChapelTile
@@ -177,8 +190,8 @@ struct ChapelRemoveBadge: View {
         }
         .buttonStyle(.plain)
         .offset(
-            x: (tile.isFrameless ? -2 : -7) - 11,
-            y: (tile.isFrameless ? -24 : -7) - 11
+            x: -7 - 11,
+            y: ChapelTileMetrics.shellTop - 7 - 11
         )
         .accessibilityLabel("Put \(tile.title) away")
     }

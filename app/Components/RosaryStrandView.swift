@@ -45,17 +45,47 @@ struct RosaryStrandView: View {
     /// Bumped each time a decade turns; the ripple answers it
     var turnPulse: Int = 0
 
-    /// Room for the Our Father labels beside the bead column
+    /// The bead under the hand, named beside it: a line or two of small
+    /// capitals in the margin at the window's middle, where the eye and
+    /// the thumb already are, its count rolling as the beads pass. Nil
+    /// where the screen names the bead elsewhere — the Scriptural
+    /// Rosary's column does — and the row keeps its own numeral.
+    var activeLabel: [String]? = nil
+
+    /// Greyed and still: the meditation under the hand has not yet been
+    /// heard, and the beads open after it. The name beside the bead gives
+    /// way to when they open, and a small lock stands on the bead under
+    /// the hand. Unlocking colours the string where it hangs.
+    var locked: Bool = false
+
+    /// What stands beside the bead under the hand while the strand is locked
+    static let lockedLines = ["Opens after", "the meditation"]
+
+    /// Room for the numerals beside the bead column
     static let width: CGFloat = 150
+
+    /// Room past the bead column at the trailing edge, for what the
+    /// beads throw beyond their own circle: the ring under the hand and
+    /// its halo, and the ripple as a decade turns, which grows to more
+    /// than twice the column's width. The window's edge once ran down
+    /// the middle of the bead column, and cut the right half off both.
+    static let trailingRoom: CGFloat = 24
 
     /// One bead's length of string
     static let rowHeight: CGFloat = 34
 
+    /// Where the window begins, measured from the top of the glass. The
+    /// Scriptural Rosary hangs the head of its reading level with it, so
+    /// the two agree by construction.
+    static func windowTop(fullHeight: CGFloat) -> CGFloat {
+        fullHeight * 0.24
+    }
+
     /// The column the beads are centred in, at the trailing edge
     static let beadColumn: CGFloat = 24
 
-    /// Between a label's end and the bead column
-    private static let labelGap: CGFloat = 30
+    /// Between a numeral's end and the bead column
+    private static let labelGap: CGFloat = 14
 
     var body: some View {
         // The string is drawn top-down but read bottom-up: the last bead
@@ -69,7 +99,9 @@ struct RosaryStrandView: View {
             Rectangle()
                 .fill(AppColors.gold.opacity(0.22))
                 .frame(width: 1, height: height)
-                .padding(.trailing, Self.beadColumn / 2 - 0.5)
+                .padding(.trailing, Self.beadColumn / 2 - 0.5 + Self.trailingRoom)
+                .saturation(locked ? 0 : 1)
+                .opacity(locked ? 0.85 : 1)
 
             VStack(spacing: 0) {
                 ForEach((0..<strand.count).reversed(), id: \.self) { index in
@@ -77,6 +109,13 @@ struct RosaryStrandView: View {
                 }
             }
             .offset(y: restingOffset + dragOffset)
+            .padding(.trailing, Self.trailingRoom)
+            // Locked, every bead is drawn grey — the whole string plainly
+            // there and plainly waiting. Grey alone, not dimmed far: at
+            // under half strength the beads vanished into a bright painting
+            // and the strand read as missing again
+            .saturation(locked ? 0 : 1)
+            .opacity(locked ? 0.8 : 1)
             // The slide to the next bead is always this spring, however
             // the move was made — a swipe, a tap on the bead row, the
             // Lock Screen — so the string has one way of moving
@@ -87,8 +126,46 @@ struct RosaryStrandView: View {
             DecadeTurnRipple(trigger: turnPulse)
                 .frame(width: Self.beadColumn, height: Self.rowHeight)
                 .offset(y: height / 2 - Self.rowHeight / 2)
+                .padding(.trailing, Self.trailingRoom)
+
+            // The bead's name stands still at the window's middle while
+            // the rows slide beneath it — one view from bead to bead, so
+            // its count rolls instead of the words being torn down with
+            // the row that carried them
+            if let lines = locked && activeLabel != nil ? Self.lockedLines : activeLabel {
+                VStack(alignment: .trailing, spacing: 2) {
+                    ForEach(Array(lines.enumerated()), id: \.offset) { _, line in
+                        Text(line.uppercased())
+                            .font(AppFonts.labelFont(9))
+                            .tracking(1.4)
+                            .foregroundColor(locked ? AppColors.cream.opacity(0.8) : AppColors.goldLight.opacity(0.95))
+                            .lineLimit(1)
+                            .fixedSize()
+                            .contentTransition(.numericText())
+                    }
+                }
+                .shadow(color: .black.opacity(0.55), radius: 4, y: 1)
+                .frame(height: Self.rowHeight)
+                .offset(y: height / 2 - Self.rowHeight / 2)
+                .padding(.trailing, Self.trailingRoom + Self.beadColumn + Self.labelGap)
+                .animation(Motion.words, value: lines)
+            }
+
+            // The lock, on the bead under the hand, while the meditation
+            // is still being heard
+            if locked {
+                StrandLockGlyph()
+                    .foregroundColor(AppColors.cream.opacity(0.92))
+                    .frame(width: Self.beadColumn, height: Self.rowHeight)
+                    .offset(y: height / 2 - Self.rowHeight / 2)
+                    .padding(.trailing, Self.trailingRoom)
+                    .transition(.opacity)
+            }
         }
-        .frame(width: Self.width, height: height, alignment: .topTrailing)
+        // Locking and unlocking ease in and out; the slide keeps its own
+        // spring, closer to the rows it moves
+        .animation(.easeOut(duration: 0.5), value: locked)
+        .frame(width: Self.width + Self.trailingRoom, height: height, alignment: .topTrailing)
         .clipped()
         .mask(
             LinearGradient(
@@ -128,10 +205,12 @@ struct RosaryStrandView: View {
         return HStack(spacing: 0) {
             Spacer(minLength: 0)
 
-            if let label = strand.strandLabel(at: index) {
+            // The active row's numeral yields to the name drawn over it
+            if index != activeIndex || activeLabel == nil,
+               let label = strand.strandLabel(at: index) {
                 Text(label.uppercased())
-                    .font(AppFonts.labelFont(7.5))
-                    .tracking(1.5)
+                    .font(AppFonts.labelFont(9))
+                    .tracking(1.2)
                     .foregroundColor(AppColors.gold.opacity(0.75))
                     .lineLimit(1)
                     .fixedSize()
@@ -157,6 +236,43 @@ struct RosaryStrandView: View {
     }
 }
 
+// MARK: - Lock
+
+/// A small padlock, drawn rather than imaged — the icon set has no lock —
+/// at the weight of the strand's own lines.
+private struct StrandLockGlyph: View {
+    var body: some View {
+        VStack(spacing: -1) {
+            LockShackle()
+                .stroke(style: StrokeStyle(lineWidth: 1.3, lineCap: .round))
+                .frame(width: 6, height: 5.5)
+
+            RoundedRectangle(cornerRadius: 1.5)
+                .frame(width: 9, height: 7)
+        }
+        .shadow(color: .black.opacity(0.6), radius: 2)
+        .accessibilityHidden(true)
+    }
+}
+
+/// The lock's shackle: two uprights joined by a half circle.
+private struct LockShackle: Shape {
+    func path(in rect: CGRect) -> Path {
+        let radius = rect.width / 2
+        var path = Path()
+        path.move(to: CGPoint(x: rect.minX, y: rect.maxY))
+        path.addLine(to: CGPoint(x: rect.minX, y: rect.minY + radius))
+        path.addRelativeArc(
+            center: CGPoint(x: rect.midX, y: rect.minY + radius),
+            radius: radius,
+            startAngle: .degrees(180),
+            delta: .degrees(180)
+        )
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+        return path
+    }
+}
+
 // MARK: - Decade Turn Ripple
 
 /// One ring, leaving the bead under the hand as the decade turns:
@@ -173,12 +289,16 @@ private struct DecadeTurnRipple: View {
     }
 
     var body: some View {
-        Circle()
+        // Read once, outside the animator's closure, which is Sendable
+        // and may not touch main-actor state
+        let still = reduceMotion
+
+        return Circle()
             .strokeBorder(AppColors.goldLight, lineWidth: 1)
             .frame(width: 22, height: 22)
             .keyframeAnimator(initialValue: Ring(), trigger: trigger) { view, ring in
                 view
-                    .scaleEffect(reduceMotion ? 1 : ring.scale)
+                    .scaleEffect(still ? 1 : ring.scale)
                     .opacity(ring.opacity)
             } keyframes: { _ in
                 KeyframeTrack(\.scale) {
@@ -236,33 +356,75 @@ extension View {
     /// two-thirds, its middle — where the active bead rests — a little
     /// above the screen's centre, clear of the controls at the foot.
     ///
+    /// The bead column's centre stands 38 points in from the glass —
+    /// the window's frame reaches past it by `trailingRoom`, so the
+    /// padding is what remains.
+    ///
     /// - Parameters:
     ///   - fullHeight: The glass, top to bottom, safe areas included.
     ///   - topInset: The safe area above this view, so the window can be
     ///     placed against the glass rather than against the inset frame.
     ///   - dragOffset: How far a swipe under way has drawn the string.
     ///   - turnPulse: Bumped when a decade turns, for the ripple.
+    ///   - activeLabel: The bead under the hand, named beside it; see
+    ///     `RosaryStrandView.activeLabel`.
+    ///   - locked: Greyed and still until the meditation has been heard;
+    ///     see `RosaryStrandView.locked`.
+    ///   - onAmen: Finishes the Rosary. Present only on the final bead,
+    ///     where AMEN — the one act that ends a Rosary — hangs under the
+    ///     bead's name, at the hand that just prayed it. The strand is a
+    ///     readout and takes no touches; the button is laid beside it,
+    ///     not on it.
     func rosaryStrand(
         _ strand: RosaryStrand,
         activeIndex: Int,
         fullHeight: CGFloat,
         topInset: CGFloat,
         dragOffset: CGFloat = 0,
-        turnPulse: Int = 0
+        turnPulse: Int = 0,
+        activeLabel: [String]? = nil,
+        locked: Bool = false,
+        onAmen: (() -> Void)? = nil
     ) -> some View {
-        let windowTop = fullHeight * 0.24
+        let windowTop = max(RosaryStrandView.windowTop(fullHeight: fullHeight) - topInset, 0)
         let windowHeight = fullHeight * 0.435
+        // The bead column's centre stands this far in from the glass
+        let beadInset: CGFloat = 26
 
         return overlay(alignment: .topTrailing) {
-            RosaryStrandView(
-                strand: strand,
-                activeIndex: activeIndex,
-                height: windowHeight,
-                dragOffset: dragOffset,
-                turnPulse: turnPulse
-            )
-            .padding(.top, max(windowTop - topInset, 0))
-            .padding(.trailing, 26)
+            ZStack(alignment: .topTrailing) {
+                RosaryStrandView(
+                    strand: strand,
+                    activeIndex: activeIndex,
+                    height: windowHeight,
+                    dragOffset: dragOffset,
+                    turnPulse: turnPulse,
+                    activeLabel: activeLabel,
+                    locked: locked
+                )
+                .padding(.top, windowTop)
+                .padding(.trailing, beadInset - RosaryStrandView.trailingRoom)
+                // A readout, never a control: the beads, the string and
+                // the bead's name let every touch through to the painting
+                // beneath, and only the AMEN laid beside them takes one
+                .allowsHitTesting(false)
+
+                if let onAmen {
+                    GoldCTAButton(
+                        title: "Amen",
+                        prominence: .inline,
+                        trailingIcon: "ph-check",
+                        fullWidth: false,
+                        action: onAmen
+                    )
+                    .accessibilityLabel("Amen — finish the Rosary")
+                    // Under the active row, clear of the name above it
+                    .padding(.top, windowTop + windowHeight / 2 + RosaryStrandView.rowHeight / 2 + 6)
+                    .padding(.trailing, beadInset + RosaryStrandView.beadColumn / 2 + 14)
+                    .transition(.scale(scale: 0.92).combined(with: .opacity))
+                }
+            }
+            .animation(Motion.settle, value: onAmen != nil)
         }
     }
 }

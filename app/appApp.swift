@@ -23,6 +23,9 @@ struct appApp: App {
     /// True after the user completes onboarding once
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
 
+    /// The step onboarding's last button named, handed to the app to take
+    @State private var onboardingFirstStep: OnboardingFirstStep?
+
     private let userSettings = UserSettings.shared
 
     init() {
@@ -34,10 +37,11 @@ struct appApp: App {
         WindowGroup {
             if isLaunched {
                 if hasSeenOnboarding {
-                    ContentView()
+                    ContentView(onboardingFirstStep: $onboardingFirstStep)
                         .transition(.opacity)
                 } else {
-                    OnboardingView {
+                    OnboardingView { step in
+                        onboardingFirstStep = step
                         withAnimation(.easeInOut(duration: 0.4)) {
                             hasSeenOnboarding = true
                         }

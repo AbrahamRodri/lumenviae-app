@@ -207,7 +207,13 @@ final class ScripturalRosaryViewModel {
         }
 
         if isDecadePrayed {
-            return BeadReading(reference: nil, text: Self.gloryBe(in: UserSettings.shared.prayerLanguage), footnote: nil)
+            let language = UserSettings.shared.prayerLanguage
+            return BeadReading(
+                reference: nil,
+                text: Self.gloryBe(in: language),
+                footnote: nil,
+                closingPrayer: Self.fatimaPrayer(in: language)
+            )
         }
 
         let verses = verses
@@ -223,12 +229,14 @@ final class ScripturalRosaryViewModel {
     /// one paragraph, not a bilingual pair, so the two-language modes
     /// read it in English.
     private static func gloryBe(in language: PrayerLanguage) -> String {
-        switch language {
-        case .latin:
-            return "Gloria Patri, et Filio, et Spiritui Sancto. Sicut erat in principio, et nunc, et semper, et in saecula saeculorum. Amen."
-        case .english, .both, .latinUnderEnglish:
-            return "Glory be to the Father, and to the Son, and to the Holy Spirit. As it was in the beginning, is now, and ever shall be, world without end. Amen."
-        }
+        RosaryPrayerText.gloryBe.paragraph(in: language)
+    }
+
+    /// The Fatima Prayer, said after the Glory Be of every decade as Our
+    /// Lady asked at Fatima — the bundled text How to Pray teaches, in the
+    /// language the doxology is set in.
+    private static func fatimaPrayer(in language: PrayerLanguage) -> String {
+        RosaryPrayerText.fatimaPrayer.paragraph(in: language)
     }
 
     // MARK: - Session
@@ -242,8 +250,9 @@ final class ScripturalRosaryViewModel {
 
 // MARK: - BeadReading
 
-/// What one bead says: a citation in small caps, the passage, and — on
-/// the Our Father bead — the fruit to ask for beneath it.
+/// What one bead says: a citation in small caps, the passage, on the
+/// Our Father bead the fruit to ask for beneath it, and on the closing
+/// bead the Fatima Prayer after the doxology.
 struct BeadReading: Hashable {
     /// "Luke 1:28"; the mystery's own passage on the Our Father bead;
     /// nothing on the Glory Be
@@ -253,4 +262,8 @@ struct BeadReading: Hashable {
 
     /// A line set like the citation, under the text
     let footnote: String?
+
+    /// A second prayer said on the same bead, set as a paragraph of its
+    /// own beneath the first — the Fatima Prayer after the Glory Be
+    var closingPrayer: String? = nil
 }

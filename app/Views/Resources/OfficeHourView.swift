@@ -63,12 +63,9 @@ struct OfficeHourView: View {
     /// every frame of every scroll would otherwise re-walk.
     @State private var readerSections: [OfficeReaderSection] = []
 
-    /// Header collapse, driven by scroll offset with hysteresis so the
-    /// boundary never flutters. The thresholds are taken from the
-    /// plate's own height rather than the missal's 96/44: this plate is
-    /// two lines, and a fixed 96 would have left the text sliding under
-    /// a plate that was still standing.
-    @State private var collapsed = false
+    /// How far the text has risen under the header — read by the plate
+    /// alone, which collapses point for point with it
+    @State private var scroll = ReaderScrollOffset()
 
     /// Index into `readerSections` of the section under the header
     @State private var activeSectionIndex = 0
@@ -88,9 +85,6 @@ struct OfficeHourView: View {
     /// Each section's top measured against the content itself — values
     /// that scrolling never moves.
     @State private var sectionTops: [Int: CGFloat] = [:]
-
-    /// How far the content's top has risen past the header's foot
-    @State private var scrolledPastTop: CGFloat = 0
 
     /// The bilingual order restored when "Both" is re-chosen here, so a
     /// switch to Latin and back never overrides the order set in Account.
@@ -126,10 +120,12 @@ struct OfficeHourView: View {
 
     /// The index sheet stands as tall as its own ledger: Prime keeps six
     /// sections and Matins fifteen, and a fixed detent leaves the short
-    /// hours mostly empty sheet.
+    /// hours mostly empty sheet. A row is two lines (the Latin name over
+    /// the English) at 64; the sheet's header, the list's foot and the
+    /// home indicator's inset take the rest.
     private var indexSheetHeight: CGFloat {
         let rows = CGFloat(readerSections.named.count)
-        return min(660, max(300, rows * 60 + 130))
+        return min(660, max(320, rows * 64 + 170))
     }
 
     /// The day's place in the calendar — the hour's own copy once it has
@@ -172,8 +168,8 @@ struct OfficeHourView: View {
             switch presented {
             case .reading:
                 OfficeReadingSheet(preferredBilingual: $preferredBilingual)
-                    .presentationDetents([.height(400)])
-                    .presentationDragIndicator(.hidden)
+                    .presentationDetents([.height(470)])
+                    .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
                     .presentationCornerRadius(22)
 
@@ -186,7 +182,7 @@ struct OfficeHourView: View {
                     pendingJump = target
                 }
                 .presentationDetents([.height(indexSheetHeight)])
-                .presentationDragIndicator(.hidden)
+                .presentationDragIndicator(.visible)
                 .presentationBackground(AppColors.background)
                 .presentationCornerRadius(22)
             }
@@ -242,17 +238,9 @@ struct OfficeHourView: View {
     private var headerFootGlobal: CGFloat { headerGlobalTop + collapsedHeaderHeight }
 
     private func handleScrollOffset(_ markerGlobalMinY: CGFloat) {
-        scrolledPastTop = headerFootGlobal - markerGlobalMinY
-        // The missal's 0.64 / 0.29 of the plate, which on its 150pt
-        // plate is the 96 / 44 that page was tuned at. Floored, so a
-        // plate measured at zero before its first layout cannot collapse
-        // the header on the very first pixel of scroll.
-        let plate = max(24, plateHeight)
-        let shouldCollapse = collapsed
-            ? scrolledPastTop > plate * 0.29
-            : scrolledPastTop > plate * 0.64
-        if shouldCollapse != collapsed {
-            collapsed = shouldCollapse
+        let pastTop = headerFootGlobal - markerGlobalMinY
+        if pastTop != scroll.pastTop {
+            scroll.pastTop = pastTop
         }
         refreshActiveSection()
     }
@@ -265,7 +253,7 @@ struct OfficeHourView: View {
     /// The active section is the last one whose top has risen into the
     /// band just under the collapsed header.
     private func refreshActiveSection() {
-        let limit = scrolledPastTop + 33
+        let limit = scroll.pastTop + 33
         let active = sectionTops.filter { $0.value < limit }.keys.max() ?? 0
         if active != activeSectionIndex {
             activeSectionIndex = active
@@ -277,15 +265,16 @@ struct OfficeHourView: View {
     private func resetSectionTracking() {
         sectionTops = [:]
         activeSectionIndex = 0
-        collapsed = false
-        scrolledPastTop = 0
+        scroll.pastTop = 0
     }
 
     // MARK: - Header
 
     private var header: some View {
         VStack(spacing: 0) {
+            // Above the plate, which passes up under it as it collapses
             chromeRow
+                .zIndex(1)
             plate
             railBlock
         }
@@ -348,23 +337,12 @@ struct OfficeHourView: View {
 
     // MARK: - Day Plate
 
-    /// The collapsing band: measured at its natural height, then framed
-    /// to zero when collapsed.
+    /// The collapsing band, taken away by the scroll itself — see
+    /// `CollapsingReaderPlate`.
     private var plate: some View {
-        plateContent
-            .frame(maxWidth: .infinity)
-            .fixedSize(horizontal: false, vertical: true)
-            .onGeometryChange(for: CGFloat.self) { proxy in
-                proxy.size.height
-            } action: { height in
-                plateHeight = height
-            }
-            .opacity(collapsed ? 0 : 1)
-            .animation(anim(0.24), value: collapsed)
-            .frame(height: collapsed ? 0 : plateHeight, alignment: .top)
-            .clipped()
-            .offset(y: collapsed ? -10 : 0)
-            .animation(anim(0.34), value: collapsed)
+        CollapsingReaderPlate(offset: scroll, naturalHeight: $plateHeight) {
+            plateContent
+        }
     }
 
     /// The day, in two lines. Never has to wait for the text: the date

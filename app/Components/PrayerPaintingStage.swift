@@ -269,10 +269,29 @@ struct PrayerPaintingStage: View {
 
     /// Lighter than a hard fade — the frosted band underneath does half
     /// the legibility work, so more painting shows through.
+    ///
+    /// The head carries a shade of its own. The set's name in small gold
+    /// capitals and the × stand over whatever the top of the painting
+    /// happens to be — sky, gold cloud, a lit wall — and there the name
+    /// could all but disappear. The shade is darkest under the status bar
+    /// and the title and dissolves to nothing a fifth of the way down,
+    /// before the scene begins; never a band with an edge.
     private var scrimOverlay: some View {
         VStack(spacing: 0) {
+            LinearGradient(
+                stops: [
+                    .init(color: AppColors.background.opacity(0.72), location: 0),
+                    .init(color: AppColors.background.opacity(0.5), location: 0.45),
+                    .init(color: AppColors.background.opacity(0.18), location: 0.75),
+                    .init(color: .clear, location: 1)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: fullHeight * 0.22)
+
             Spacer()
-                .frame(height: fullHeight * 0.44)
+                .frame(height: fullHeight * 0.22)
 
             LinearGradient(
                 stops: [

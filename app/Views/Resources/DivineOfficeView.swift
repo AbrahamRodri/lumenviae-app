@@ -92,7 +92,7 @@ struct DivineOfficeView: View {
                 Task { await viewModel.jump(to: chosen) }
             }
             .presentationDetents([.height(560)])
-            .presentationDragIndicator(.hidden)
+            .presentationDragIndicator(.visible)
             .presentationBackground(AppColors.background)
             .presentationCornerRadius(22)
         }
@@ -300,7 +300,7 @@ struct DivineOfficeView: View {
 
                 Spacer(minLength: 12)
 
-                GoldCTAButton(title: "Pray \(hour.label)", showsCross: false) {
+                GoldCTAButton(title: "Pray \(hour.label)") {
                     openHour = hour
                 }
             }

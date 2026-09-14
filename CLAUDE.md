@@ -28,6 +28,7 @@ Select Meditation View (the shelf)
         ▼
 Meditation Set Detail (set like a title page, not a product listing)
     │
+    ├── Header: Back · the "Bead counter" switch · pin
     ├── Labels kicker, ornament, name in Cinzel, painting in a lancet arch
     ├── A ruled ledger of sections, each named in the left margin:
     │   About this set · The meditations (numbered) · From (author, source)
@@ -174,18 +175,29 @@ as well, and that duplicate was removed; the foot is the arrange
 control and the imprint, nothing else.
 
 **Today's Prayer** (`Components/TodaysPrayerSection.swift`) stands
-between the Sacred Mysteries grid and the reading shelf: a header line,
-the feast with its class and vestment dot, then three ruled rows on the
-bare page — no card, no panel, no fill. The Mass, the Divine Office,
+between the Sacred Mysteries grid and the reading shelf: a section heading in the home page's own voice ("Today's Prayer" in
+Cinzel 19, the date where the other sections keep their link), the Total Consecration first, under the section's name, then the feast as a subsection
+of it — its name in small engraved capitals over a hairline running to
+the edge, the way a card names one of its parts — heading the Mass and
+the Office. Set large in the reading italic, the feast read as a second
+section title. The preparation
+is the user's own devotion, kept whatever day it is, and no part of the
+Church's calendar, so it stands apart from the feast and above it. Three ruled rows on the bare page — no card,
+no panel, no fill. The Mass, the Divine Office,
 and the Total Consecration, given equal standing. It is named for the
 user's prayer and **not** "Today in the Church", because the
 consecration is a private devotion and not a liturgical observance;
 `TodayInChurch` (the observable) still supplies the day and is shared
-with the Chapel's day strip. Every row has the same four parts —
-medallion, name, one plain line, the row's own live fact, chevron — so
-the eye reads down the column of facts: the day's silk as a 4×24 bar,
-the hour that is passing as a lit dot and NOW, the day of the
-preparation over a 46pt hair. Row 3 before any consecration is begun
+with the Chapel's day strip. Every row has the same parts — the door's
+own glyph (`ch-altar`, `ph-clock`, `ch-consecration`, the same as on
+every other surface), name, the row's own live fact, chevron — so the
+eye reads down the column of facts: the day's class and colour in words beside its silk, a 4×24 bar
+("II CLASS · RED", which once stood under the feast as a caption to
+the whole section), the
+hour it is as a lit dot and its name (TERCE), the day of the
+preparation over a 46pt hair. There is no line under the names: a plain
+sentence under each once said what the row was, and the section took
+longer to read for it. Row 3 before any consecration is begun
 keeps its place, its icon and its weight and offers BEGIN — **no state
 in this section may shame the user**: no "0 days", no "missed", no
 empty track. The block replaced a shelf of three bound volumes whose
@@ -238,10 +250,10 @@ Two ideas drive it: a single focus at the top (the first unoffered act
 on the rule, set large with the page's one gold CTA, advancing on its
 own as acts are offered — derived, never stored), and an arrangeable
 tile grid below. Long-press 450ms anywhere (cancelled by >8pt of
-movement), the coach ribbon's "Show me" (one-time,
+movement) — on the page, on a tile that opens on a tap, or on the
+quiet parts of a tile full of doors — the coach ribbon's "Show me" (one-time,
 `userSettings.chapelCoached`), or the foot's "Arrange this page" all
-enter arrange mode: tiles sway ±0.5°, gain a ✕ badge (in the row gap
-above for frameless tiles, at the corner for outlined ones), the tab
+enter arrange mode: tiles sway ±0.5°, gain a ✕ badge at the corner of their shell, the tab
 bar yields to a tray (`router.chapelArranging` is how ContentView
 knows), and tiles can be dragged (a ghost leans up to ±9° into the
 travel; a dashed slot opens at the landing), tapped to switch between
@@ -256,46 +268,102 @@ block. The strip carries no app chrome — it reads the day, and the room
 that buys is what lets a long feast set in full. Tiles (vocabulary `Models/ChapelTile.swift`;
 layout persists as `userSettings.chapelLayout`, validated against known
 ids on decode, with a one-time migration from the old `meWidgets`
-order): **Today** (the rule as a ledger, and the picker itself — the
-focus block above it carried a "CHOOSE ANOTHER" jump down to this tile
-and no longer does, since the ledger is a scroll away on the same page;
-manual acts toggle on tap,
-watched acts open themselves; Rosary/chaplet/consecration check from
-real data, Mass/Office by hand, reset each morning), **Consecration**
-(de Montfort's four preparations as a segmented path, tracks weighted
-12/7/7/7 days), **Reading** (the open book + "also reading" spines),
-**Library** (Explore's three sections over Augustine's colophon, so one
-vocabulary names one set of doors: **The Liturgy** — Missal and
-Breviary — and **Spiritual Reading** — True Devotion and the shelf —
-stand as the two leaves of an open book hinged on the gold fold, and
-**The Study** — How to Pray, In Scripture, the Marian Library, Carlo
-Acutis — is a ruled two-column index at the foot. A heading on this
-tile must be true of every door beneath it: How to Pray and In Scripture
-once sat under The Liturgy, then the books sat under The Study, and each
-made a heading a lie. "Reading" was the obvious name for the books and
-the wrong one, since Spiritual Reading is a door inside it. The half
-tile keeps the two liturgical books and makes "6 more on the shelf" a
-door to Explore rather than a note), **Chant** (the app's three chant recordings —
-Veni Creator, Ave Maris Stella, Magnificat — through the shared
-AudioService; the ⋯ opens the chant sheet), **Reflections** (latest
-journal entry under an illuminated versal), **Prayer Streak** (the
+order; a tile newer than a stored layout is inserted in its default
+place, not appended): **Today** (the rule as a ledger, and the picker
+itself — the focus block above it carried a "CHOOSE ANOTHER" jump down
+to this tile and no longer does, since the ledger is a scroll away on
+the same page; it opens on one italic line saying what a rule is, and
+every row shows at its trailing edge what a tap does — OFFERED with the
+seal, BEGIN › / CONTINUE › until then, every act on the rule being one the
+app watches finish (the row marked by hand went out with the acts that
+needed it); the Rosary, the Scriptural Rosary, the
+chaplet and the consecration day check from real data, reset each
+morning; the half is a figure "2 / 4" over a row
+of tappable cells), **Consecration** (de Montfort's four preparations
+as a segmented road, tracks weighted 12/7/7/7 days, the day's own
+title as the foot note), **Reading** (the open book with the author
+over the title, the other books under way standing as spines beside
+it — tap a spine, or swipe the face, to bring that book forward; the
+tile is not one door, because made one, every spine opened the book in
+front of it and the rest could not be reached; the half's cover carries its ribbon and diamond; empty,
+the shelf's cloths and "Tolle, lege"), **Liturgy** (new — the Missal
+and the Breviary as a diptych, each leaf a door, over the day's feast;
+split out of the Library so one heading is true of everything beneath
+it; a layout saved before it existed seats it beside the Library, at
+the Library's width, and on the page only if the Library is —
+`ChapelPlacement.completing`, which the Me migration shares), **Library** (six doors in two columns — True Devotion, Spiritual
+Reading, the Marian Library | How to Pray, In Scripture, Carlo Acutis —
+over Augustine's line and THE SHELF; the half keeps the first two and
+makes FOUR MORE a door to Explore), **Chant** (the app's three chant
+recordings — Veni Creator, Ave Maris Stella, Magnificat — through the
+shared AudioService; the elapsed time rides the kicker at full width
+and the transport row at half, said once either way; ALL CHANTS opens
+the chant sheet), **Reflections** (latest journal entry under an
+illuminated versal, or its gilded opening mark when it opens on a
+quotation (`VersalCut.opensOnQuotation`: a lone apostrophe, 'Tis, is
+no quotation), or beside a rule of gold fading down when it opens on
+no letter; a passage kept from a book is quoted without its citation,
+and any other entry is the journal's `previewText`, newlines flattened), **Prayer Streak** (the
 flame; stands directly under Today, because a record of days prayed
 belongs beside the day it records and onboarding's closing line promises
-it is being kept; tapping it opens the Prayer Record). Three visual
-registers, deliberately: frameless (Today, Consecration, Library,
-Chant), outlined (Reading, Reflections, Flame at 20pt radius), and no
-filled card surfaces on the page — `surface-card` only in the tray and
-chant sheet. The default order alternates the two — Today, Streak,
-Consecration, Reading, Chant, Reflections, Library — so no two
-hairline sections run together and no two cards stack; the live
-sections lead and the Library, the page's index of doors, stands last,
-its colophon the right last line before the foot's imprint. The day
-strip wraps a long feast to a second line rather than cutting it
-mid-word, and the flame card's week rides on its kicker line so the
-streak's own name never has to.
+it is being kept; the kicker says "Lit today" or "Not yet today", never
+"missed"; the streak's figure is captioned "In a row" and the week is
+drawn beneath it as a small Sunday-to-Saturday calendar, each day's
+initial over its bead and today ringed — "This week" under the figure
+with bare dots beside it read as one confused count; the whole tile
+opens the Prayer Record).
+
+**One anatomy for every tile, at both spans** (the "Chapel Tiles"
+handoff, `ChapelTileFrame` in `Views/Chapel/ChapelTiles.swift`): a
+kicker on the page above the shell — 12pt glyph, Cinzel 10 tracked 2.5
+at `gold@0.75`, a trailing italic note at 12 — the same sizes at both
+spans so a pair of halves shares one title line (a half's label
+truncates before its note does, and the flame's reads STREAK there);
+one 16pt hairline shell at `gold@0.24`, no fill, no shadow, 14/16/6
+padding at full and 12/14/4 at half (list-style bodies sit closer to
+the top edge); the tile's body; and a foot pinned to the shell's floor
+by a Spacer — full: italic note left, gold text act right (`labelFont
+10`, tracking 2, caret 9, 44pt tall); half: the act alone, left-aligned,
+drawn 32 tall and answering to 44. The grid's rows **stretch**
+(`ChapelGridLayout` gives every tile in a row the row's height, and the
+shell fills it), so two halves always end on the same line; the row gap
+is 28, the column gap 16. Halves are left-aligned, never centred, and
+lead with one figure — Cinzel 26 with the denominator at 15 in
+`cream@0.45` ("12 days", "Day 14 / 33", "2 / 4") — or a headline at
+14–15, then one italic line. Kicker, shell and foot are one door
+(`onTap` — a tap and a hold as two gestures rather than a Button, so a
+hold that arranges the page never also opens the tile on release)
+except where the body has doors of its own — the Today rows
+and cells, the Liturgy leaves, the Library doors, the chant's play disc
+— where only the foot's act is a control (`onAct`). The ✕ badge hangs
+at the shell's corner, below the kicker. The page once drew three
+registers (ruled, outlined at 16, outlined at 20) with kickers on some
+tiles and not others and centred halves beside left-aligned ones, and
+the tiles fought; none of that may come back. No filled card surfaces
+on the page — `surface-card` only in the tray and chant sheet. The
+default order is Today, Streak, Consecration, Reading, Chant,
+Reflections, Liturgy, Library: the live sections lead, and the two
+indexes of doors stand last, the Library's colophon the right last line
+before the foot's imprint. The day strip wraps a long feast to a second
+line rather than cutting it mid-word.
+
+**The rule's vocabulary** (`PrayerShortcut.isRuleEligible`): the
+Rosary, the Scriptural Rosary and Seven Sorrows can be chosen. "A
+Meditation" was briefly eligible, marked by hand, and is not: browsing
+the picker is a doorway to the Rosary, not a devotion beside it. **The Mass and the Office are
+off the rule** until the app can keep a day's schedule for them — a
+rule may only carry what the Chapel can ask about honestly; a stored
+rule that names them keeps them on disk and passes over them on read.
+**The Consecration is not chosen but never absent**: while a
+preparation is under way `MyChapelView.resolvedActs` inserts it second,
+under the Rosary, and it leaves when the preparation is done. Two of
+the handoff's recommendations are deliberately not built: hiding the
+Consecration tile while the act is on the rule would mean its road was
+never seen, and merging Liturgy into Library at half width is a
+different page from the one drawn.
 
 The rule's *membership* is edited in `RuleEditorSheet` (Settings →
-Devotion → Rule of Prayer, and the Chapel's empty-rule invitations);
+Devotion → Rule of Prayer, and the Chapel's EDIT RULE foot act);
 `PrayButtonEditorSheet` (quick tap + hold menu) still opens from the
 Pray tray's "Edit this menu" row. The one-motion acts remain
 `PrayerShortcut`. Prayer Record's standing doors are the flame tile and
@@ -320,14 +388,20 @@ the page they serve):
   default; the app's first face is the one most users read), Pray on
   the Beads (the meditation player's strand; see the Core prayer flow)
 - **Devotion** — Rule of Prayer (→ `RuleEditorSheet`), Prayer Record,
-  Daily Reminders (toggle, time, sound), What Draws You Here (decides
+  Daily Reminders (toggle, time, sound), What Brings You to the Rosary (decides
   the reminder copy pool)
 - **Offline** — download every meditation set and audio file
 
 **`AboutView`** (`AppRoute.about`, the home masthead's **ph-info**) — the app's
-colophon: the wordmark as masthead, then About Lumen Viae, App
-Introduction (re-runs onboarding), Privacy Policy, Help & Support, Send
-Feedback, and the footer (version, "Ad Majorem Dei Gloriam"). The sheets
+colophon: the wordmark as masthead, then About Lumen Viae, Privacy
+Policy, Help & Support, Send Feedback, and the footer (version, "Ad
+Majorem Dei Gloriam"). **App Introduction** — which re-runs onboarding —
+stands above Privacy Policy behind `#if DEBUG`: it is for development,
+since a reader has seen the introduction and needs no door back to it.
+It runs in a **`fullScreenCover`**, never a sheet; onboarding is the
+app's first face, and a sheet's inset top, rounded rim and drag-away
+made the re-run a panel over the settings instead of the screen a new
+reader meets. The sheets
 it presents still live in AccountView.swift alongside the shared row
 components (`ActionRow`, `ToggleRow`, `AccountFooter`…).
 
@@ -373,7 +447,7 @@ app/
 │   ├── Resources/            # How to Pray, Marian Library, Scripture, Carlo Acutis,
 │   │                         # the Missal and the Office (+ LiturgicalMonthGrid,
 │   │                         # the month grid both calendars draw)
-│   ├── Onboarding/           # 7-slide first run + RosaryMethodsView
+│   ├── Onboarding/           # 8-slide first run + RosaryMethodsView
 │   └── Launch/
 ├── Components/               # CustomTabBar, HeaderView, MysteryCard,
 │                             # QuoteSection, MeditationSetTile (+Row), MenuView,
@@ -442,22 +516,61 @@ write concurrent code here:
   `.selection`), and there are no arrows between mysteries and no
   horizontal swipe — nothing but the beads moves the Rosary forward.
   The meditation belongs to the Our Father bead (heard or read there);
-  the ten Hail Marys are prayed with only the count beside you, in
-  `BeadStatusRow` — OUR FATHER · a cue ("Listen to the meditation, then
-  swipe down for the first Hail Mary") — which also taps forward and
-  holds back, and is what the reader carries in place of the strand.
-  The Glory Be has no bead of its own: it is drawn on the next decade's
-  Our Father bead, and after the last decade on one final bead labelled
-  GLORY BE · AMEN, where the cue gives way to the AMEN button. A swipe
-  never finishes a Rosary. The arithmetic — decade length, a bead's
-  linear index, labels, numerals — is `Models/RosaryStrand.swift`, used
-  by both view models; `BeadPosition` (mystery + bead) is what the one
-  haptic keys on, so a step across a decade's end ticks once.
+  the ten Hail Marys are prayed with only the count beside you — beside
+  the bead itself. The strand names the bead under the hand in its own
+  margin at the window's middle (`RosaryStrandView.activeLabel`: OUR
+  FATHER · HAIL MARY / 4 OF 10 · GLORY BE & / FATIMA PRAYER, the count
+  rolling as one fixed view while the rows slide beneath it), and the
+  Our Father beads carry only their numeral — the words "OUR FATHER"
+  beside every one of them ran a hundred points into whatever stood to
+  the strand's left. The player's foot — title, transport, utility row —
+  changes nothing from bead to bead: a `BeadStatusRow` once stood there
+  above the transport and re-wrapped its cue on every swipe, shoving the
+  controls, and now the row is the reader's alone, which has no strand.
+  **The beads unlock once the meditation has been heard.** The strand
+  always hangs at the edge, but on a mystery's Our Father it is greyed,
+  still and locked — a small drawn lock on the bead under the hand, and
+  OPENS AFTER / THE MEDITATION in place of the bead's name
+  (`RosaryStrandView.locked`) — until the narration plays to its end
+  (`PrayerSessionViewModel.beadsUnlocked`, fed by AudioService's
+  end-of-track callback, which in the prayer flow only ever notes this
+  and never moves the Rosary on). Locked, a swipe only tugs the string
+  and lets it back, and the rotor's bead actions do nothing; unlocking
+  colours it where it hangs, with the decade ripple and a light tick. It
+  unlocks at once where there is nothing to wait for — a meditation with
+  no narration, or narration that would not load — and stays unlocked
+  for the mystery once the hand has moved past the Our Father. The
+  reader's bead row is never locked: reading the meditation is the other
+  way of praying it. An earlier cut hid the strand until the meditation
+  was heard, and switching the counter on mid-meditation then seemed to
+  do nothing. The setting has one name and one explanation wherever it
+  is offered — Settings, the playback sheet, the set's title page —
+  `UserSettings.beadCounterTitle` ("Bead counter") and
+  `beadCounterDetail(isOn:)`; it had three names and none said what would
+  appear. `ToggleRow` answers a tap anywhere on the row, not only on its
+  switch. The one-time `PrayerSwipeHint` ("Swipe down for the next
+  bead") waits for the beads to unlock, floating over the painting above
+  the controls so its coming and going moves nothing. The Glory Be has no bead of its own: it is drawn
+  on the next decade's Our Father bead, and after the last decade on one
+  final bead labelled AMEN, where the AMEN button hangs under the bead's
+  name beside the strand (`rosaryStrand(onAmen:)`) — the one thing at
+  the strand that takes a touch; the strand itself never does. A swipe
+  never finishes a Rosary. A decade closes on the Glory Be and the
+  Fatima Prayer together, as Our Lady asked, so the closing bead is
+  named for both. The strand's window keeps `trailingRoom` past the bead
+  column for the ring's halo and the decade ripple, which the window's
+  edge once cut in half. The arithmetic — decade length, a bead's linear
+  index, labels, numerals — is `Models/RosaryStrand.swift`, used by both
+  view models; `BeadPosition` (mystery + bead) is what the one haptic
+  keys on, so a step across a decade's end ticks once.
 
   **The beads are optional on the meditation's player**
   (`userSettings.prayOnBeads`, on by default; Settings → Prayer
-  Experience → "Pray on the Beads", and the player's ⚙ playback sheet
-  so it can be changed mid-Rosary). Off, the player is the
+  Experience → "Pray on the Beads", the player's ⚙ playback sheet so it
+  can be changed mid-Rosary, and a pill in the set title page's header
+  — "Bead counter" beside a real switch, so it is chosen before PRAY;
+  an earlier pill said ON THE BEADS in small capitals and read as a
+  label nobody knew to tap). Off, the player is the
   decade-at-a-time screen it was for a hand that keeps its own count:
   the mystery strand in the header, arrows flanking the transport (→
   becomes the AMEN check on the last mystery), a horizontal swipe
@@ -476,7 +589,20 @@ write concurrent code here:
 - **Journal** — entries after a Rosary or consecration day; searchable, editable,
   and entirely on device.
 - **33-day Consecration** — feast-day selection, per-day scripture and reading,
-  bilingual prayers, journal prompts, and a completion rite.
+  bilingual prayers, journal prompts, and a completion rite. The tab's day page
+  (`ConsecrationDayOverviewView`) is a column of gold-hairline cards. **Your
+  journey** is one of them: the road of the five periods across the top,
+  each segment as long as its days (the day of consecration given the
+  width of three) with the days kept filled in gold and today's period
+  marked beneath, then one period at a time — its name, its title, "Days
+  13–19 · 3 of 7 prayed", and its days seven to a row. It opens on the
+  period of the day being read; the others are a tap away on the road or
+  the arrows beside the name. It replaced five stacked rows on the bare
+  page, which crowded it. **The book behind this consecration** is Montfort's
+  own cloth (`BookCover` with `LibraryCatalog.trueDevotionDisplay`, the
+  ribbon once reading is under way), its title and author, and OPEN THE
+  BOOK / CONTINUE READING — never a percentage read, and never a Bible
+  glyph, which named the wrong book.
 - **True Devotion reader** — the full bundled book with per-chapter progress.
 - **Resource library** — How to Pray the Rosary (with Montfort's methods),
   Finding the Mysteries in Scripture, the Marian Theology Library, and
@@ -489,7 +615,49 @@ write concurrent code here:
   tab's arrange-in-place page (tile order, full/half widths, the tray, rule
   of prayer, intentions) and the configurable Pray button (quick act +
   press-and-hold tray), all stored in UserDefaults via `UserSettings`.
-- **Onboarding** — eight slides, skippable, re-runnable from Account.
+- **Onboarding** — eight slides, skippable, re-runnable from About
+  (`Views/Onboarding/OnboardingView.swift`). The order asks before it
+  shows and gives before it asks: welcome → what brings you to the
+  Rosary → on the beads or without them (`userSettings.prayOnBeads`,
+  the Settings toggle's own words), each shown working in one fixed
+  slot: the players' own `RosaryStrandView` to swipe, or arrows stepping
+  a mystery at a time → what the app holds for the reasons chosen →
+  colors → language → a reminder with evening already chosen ("Remind
+  Me at 8 PM") → the Sign of the Cross, whose button takes the first
+  step it names (today's Rosary, or How to Pray for someone learning)
+  through `OnboardingFirstStep`. The paintings hang in the top of the
+  glass and dissolve to clear, so no word is set across a face.
+
+  **The pages travel and nothing else does.** The painting and the dark
+  ground under the words are one layer each, standing still while the
+  slides pass over them, and both are drawn from where the pages
+  actually stand (`OnboardingStage.progress`, in page units, measured
+  off the scroll) rather than from the slide that has settled — so the
+  painting crossfades under the thumb instead of after the swipe. The
+  slides sit in a paging `ScrollView`, not a `TabView`, for that
+  measurement, `.viewAligned(limitBehavior: .always)` so a flick can
+  never skip a question, and the eight paintings are masked **once**
+  over the pair being crossfaded, never one mask each, or the painting
+  underneath reads through the dissolve and pops as it leaves. Skip is
+  the one move that is not a scroll: six slides whipping past the eye
+  is no transition, so the pages are put down and taken up on the other
+  side while the paintings dissolve. The ground was once drawn behind
+  each slide's own words, 60pt wider than the slide so it would have no
+  edge; side by side during a swipe, two of them overlapped in the
+  gutter and read as a black band between the slides. One ground,
+  interpolated between the slide being left and the one arriving.
+  `ViewThatFits`'s scrolling last resort takes
+  `.scrollBounceBehavior(.basedOnSize)`: a scroll view with nothing to
+  scroll still swallows the sideways drag that turns the page, and the
+  beads slide, the tallest of the eight, could not be swiped off.
+
+  The copy
+  is plain on purpose: say what a thing is before anything beautiful
+  about it, the Church's own names in full (Total Consecration, *True
+  Devotion to Mary*), Scripture from the Douay-Rheims with its
+  numbering, and noon is the only reminder hour that claims the Angelus.
+  Intention wording lives in `PrayerIntention.displayName`/`detail`;
+  the raw values are what is stored and never change.
 - **Daily Missal** — the 1962 propers for any day, in the resources menu,
   as one scroll surface under a single collapsing header (the "App missal
   page revision" handoff). Served live by the third-party Missale Meum API
@@ -498,14 +666,27 @@ write concurrent code here:
   third-party outage never looks like a Lumen Viae failure. The header is
   the screen's own chrome — circular back / ☰ / Aa buttons with a date pill
   absolutely centred — so this is the one pushed page that hides the system
-  bar. The day is still stepped a page at a time: ‹ › ride at the foot of
-  the feast plate with TODAY between them, and "Return to today" takes
-  that slot once the reader has wandered.
-  Its feast plate (temporal line, title, vestment dot + class,
-  commemorations, day navigator) collapses on scroll with hysteresis (96 down / 44 back,
-  driven by `onGeometryChange` in global coords — GeometryReader
-  *preferences* do not fire during scrolls here) and crossfades the date
-  pill into the feast's name; a jump-to-section rail, a 1pt progress line,
+  bar. The date pill reads "MON · 14 SEP" and its slot is inset clear of
+  the ☰/Aa pair on both sides — the long form ran under ☰. The day is
+  still stepped a page at a time: ‹ › ride at the foot of the feast plate
+  with the vestment dot and class between them, and "Return to today"
+  adds a line beneath only once the reader has wandered.
+  Its feast plate is the title (and commemorations) over that one row —
+  no temporal-line kicker, and no separate rubric row; the plate once
+  stacked all four 18pt apart and stood a third of the first screen.
+  It **collapses with the scroll itself** (`CollapsingReaderPlate`, shared
+  with the Office): its height is the scroll offset point for point, so
+  the rail rides on the reading's first line until the plate is gone,
+  cut from the top as it passes under the chrome. The offset is measured
+  by `onGeometryChange` in global coords (GeometryReader *preferences* do
+  not fire during scrolls here) and kept in `ReaderScrollOffset`, an
+  observable only the plate reads, so a scroll frame redraws the plate
+  and not the Mass. It once collapsed on a threshold-triggered animation
+  (96 down / 44 back): the text slid under a plate that stood still, then
+  the rail leapt a plate's height while the plate's words hung fading
+  behind it — never bring that back. Only the chrome's crossfade of the
+  date pill into the feast's name keeps a threshold, with hysteresis at
+  half / a third of the plate; a jump-to-section rail, a 1pt progress line,
   and optional posture cues (STAND · SIT · KNEEL) ride below, with the
   active section spied from each section's reported top. Section metadata —
   Latin/English names, posture, proper-vs-Ordinary tier — is bundled in
@@ -638,9 +819,9 @@ write concurrent code here:
   opened on another day and has no other way of saying which day's
   office you are in; it is a statement, not a control — **the day is
   chosen on the landing**, and the reader carries no calendar. The
-  two-line plate still collapses, at 0.64 / 0.29 of **its own measured
-  height** rather than the missal's fixed 96/44: on a 46pt plate a fixed
-  96 left the text sliding under a plate that was still standing. `OfficeReaderSection` cuts the
+  two-line plate collapses with the scroll, point for point, through the
+  missal's `CollapsingReaderPlate` — no thresholds to tune to a plate's
+  height, since the plate's own height is the whole travel. `OfficeReaderSection` cuts the
   hour into addressable sections (`OfficeSectionView` draws one), so
   the ☰ index and the rail can name and reach them; an unnamed section
   is a continuation and is drawn but never listed. A jump to the
@@ -732,32 +913,48 @@ write concurrent code here:
   **`ScripturalRosaryPrayerView`** is the handoff's 3a: the mystery's
   painting edge to edge under a veil (`PrayerPaintingStage(style:
   .veiled)` — 55% opacity, a gradient darkest at head and foot, lifted
-  with the chrome), the verse standing in the middle of it on the left
-  (kicker of two lines, the verse in italic at the reading size + 3,
-  citation · bead count, the cue), and the same strand the meditation's
-  player hangs at the right edge (`RosaryStrandView`). Positions run
-  Our Father → ten Hail Marys → Glory Be: the Our Father bead announces
-  the mystery (its description, passage and fruit), each Hail Mary
-  carries its verse, and the decade prayed the column reads the
-  doxology (Latin when Latin alone is the prayer language) under GLORY
-  BE · DECADE COMPLETE, with the next mystery named in the cue. **Swipe
-  down for the next bead, up for the one before; the decade turns on
-  its own** — there are no arrows and no swipe between mysteries. An
-  earlier draft walked the beads with two arrows, and before that a
-  gold disc stood between them; both are gone, and must not come back:
-  nothing but the beads moves the Rosary forward. The column still taps
-  forward and long-presses back (VoiceOver cannot swipe), and the one
-  haptic keys on `beadPosition`. The header is × · SCRIPTURAL ROSARY ·
-  Aa (`ReaderTextOptionsSheet` without its narration section); the foot
-  is the still mystery strand over "FIRST OF FIVE MYSTERIES" and the ⋯
-  tray with no download row. The handoff drew a play disc in that foot
-  because it was made against the verse-band-on-the-player snapshot;
-  this devotion has no narration, so there is none. On the last bead
-  the cue gives way to AMEN; no narration, no reader, no audio session;
-  completion records locally through `CompletedPrayer` (the completion
-  screen takes that value now, not a set) and never posts to the API.
-  An interrupted one resumes from Home's card (`InProgressPrayer.kind`),
-  on its own screen, at its bead.
+  with the chrome), the reading as a column on the left, and the same
+  strand the meditation's player hangs at the right edge
+  (`RosaryStrandView`). **The column is anchored, and only its words
+  change.** It hangs level with the first bead of the strand's window
+  (`readingTop`, from `RosaryStrandView.windowTop`) and never moves: a
+  head of the bead's name in small capitals (rolling) over the
+  mystery's name in the display face with two lines' room kept whether
+  it needs them or not, then one slot for the bead's words — the verse
+  in the Medium face at the reading size + 1 (the italic thinned to
+  hairlines over the painting), its citation, the fruit on an Our
+  Father, a cue only where it is news — which is one view identified by
+  the bead and **crossfades whole** over the one leaving, in a ZStack
+  with nothing beneath it. An earlier draft centred the column on the
+  glass and let each Text change under its own `contentTransition`: a
+  longer verse pushed the whole column up, the lines re-wrapped
+  mid-fade, and the words were unreadable for as long as the animation
+  lasted. Where the Rosary stands is said once, under the five beads at
+  the foot (THE FIRST JOYFUL MYSTERY), and the cue speaks only on the
+  first bead of the Rosary and the decade prayed, where the next mystery
+  is named so the turn is expected — a cue repeated fifty times is
+  chrome. Positions run Our Father → ten Hail Marys → Glory Be: the Our
+  Father bead announces the mystery (its description, passage and
+  fruit), each Hail Mary carries its verse, and the decade prayed the
+  column reads the doxology and then the Fatima Prayer (Latin when Latin
+  alone is the prayer language; `BeadReading.closingPrayer`) under GLORY
+  BE & FATIMA PRAYER. **Swipe down for the next bead, up for the one
+  before; the decade turns on its own** — there are no arrows and no
+  swipe between mysteries. An earlier draft walked the beads with two
+  arrows, and before that a gold disc stood between them; both are
+  gone, and must not come back: nothing but the beads moves the Rosary
+  forward. The column still taps forward and long-presses back
+  (VoiceOver cannot swipe), and the one haptic keys on `beadPosition`.
+  The header is × · SCRIPTURAL ROSARY · Aa (`ReaderTextOptionsSheet`
+  without its narration section); the foot is the still mystery strand
+  over the mystery's ordinal name and the ⋯ tray with no download row.
+  The handoff drew a play disc in that foot because it was made against
+  the verse-band-on-the-player snapshot; this devotion has no narration,
+  so there is none. On the last bead the cue gives way to AMEN; no
+  narration, no reader, no audio session; completion records locally
+  through `CompletedPrayer` (the completion screen takes that value now,
+  not a set) and never posts to the API. An interrupted one resumes from
+  Home's card (`InProgressPrayer.kind`), on its own screen, at its bead.
 
   The 249 verses are **bundled** (`Data/ScripturalRosaryData.swift`,
   keyed `"<category>_<order>"` like MysteryData's fruits) — prayer must
@@ -871,7 +1068,21 @@ write concurrent code here:
   `JournalEntry` carrying `bookID`. The three parts are stored as
   fields (`bookPassage`, `bookCitation`), not inferred by splitting
   the text: the text is what `JournalEntryEditorView` edits, and
-  parsing it back apart meant an edited note lost its shape.
+  parsing it back apart meant an edited note lost its shape. On the
+  journal's page and card the entry is taken apart again
+  (`JournalEntry.keptPassage`, which falls back to the plain text if
+  the reader has rewritten the passage) and the passage is set as a
+  quotation (`Components/QuotedPassageText.swift`): the opening mark
+  alone gilded, large in the display face and hung in the margin the
+  way a pull quote's is, the words flush beside it in the italic, the
+  citation under a dash without its rights note, and the reader's own
+  words beneath as reading text — theirs is the paragraph that opens on
+  the versal. `DropCapText` itself now gilds the opening mark of any
+  paragraph that begins on a quotation — a journal entry that opens on
+  a saying, a chapter that opens on a verse — instead of hanging a
+  small mark before a gilded letter, which fell one character too late
+  and read as a misprint; `QuotedPassageText` is that same drawing in
+  the italic, with a citation.
 
   A **mark** is a place and nothing else — no colour, no note, no
   count against the reader, and no review queue. It exists so a reader
@@ -974,9 +1185,18 @@ than everything beside it. Note that `qlmanage` cannot preview these
 faithfully: it renders a stroke-only SVG blank and *fills* path data
 meant to be stroked, so check a new glyph in the running app.
 
+A gold act's glyph names the act (`GoldCTAButton(glyph:)`): play for one
+that begins a prayer, a trailing chevron for one that goes on to a page, a
+trailing check for one that completes something. A Latin cross once led
+every page-level act and named nothing; the cross now stands on the tab
+bar's Pray medallion alone. The `OrnamentDivider`'s centre cross is an
+ornament, not a control, and stays.
+
 One meaning per glyph. The same door wears the same icon everywhere it
 appears — the Missal is `ch-altar` on every surface, the Office
-`ph-clock`, the Marian Library `ch-lily` — and a glyph standing for a
+`ph-clock`, the Marian Library `ch-lily`, the Consecration
+`ch-consecration` (the Marian monogram, a cross over an M; the crown is
+True Devotion's alone) — and a glyph standing for a
 devotion is the one that devotion's own iconography uses:
 `ch-sacred-heart` is Christ's and belongs to the Sacred Heart alone,
 while the Seven Sorrows take `ch-sorrowful-heart`, Mary's heart pierced
@@ -1005,7 +1225,12 @@ Three rules, learned the hard way:
   Re-identifying a block with `.id()` to fade it is wrong inside a
   `VStack`: the old and new blocks are laid out *together* for the
   length of the transition, and the foot stands twice as tall for half
-  a second.
+  a second. The exception is a **block of several lines that changes
+  wholesale** — a bead's verse — where `contentTransition` re-wraps the
+  lines as they fade and nothing can be read until it is over: that
+  block is one view identified by what it shows, crossfading inside a
+  `ZStack` slot with nothing laid out beneath it, so its height can
+  change without moving anything.
 - **Exclusive branches share a slot.** Two views that replace each other
   (`if loading … else …`, a `switch` over states, browse ⇄ results) are
   wrapped in a `ZStack` with `.transition(.opacity)` on each branch and
@@ -1058,12 +1283,29 @@ transition entirely.
   strength and swelled wherever a rounded corner's curve flattened into
   the edge, so a card's border read thick at its corners and faint along
   its sides. Never write `lineWidth: 0.5` or `frame(height: 0.5)`.
-- **Every `.sheet` carries `.presentationBackground(AppColors.background)`**
-  (the prayer trays use `cardBackground`). A sheet's own container is the
+- **Every `.sheet` carries `.presentationBackground(AppColors.background)`**. A sheet's own container is the
   system's white; the content's dark ground is clipped by the same
   rounded rim, and at that rim's anti-aliased edge the white shows
   through as a hairline around the top of every tray. The background
   goes on the sheet's content view, beside its detents.
+- **Every sheet is set in one grammar** (`DesignSystem/SheetChrome.swift`,
+  taken from the consecration day's index, which read well where the
+  others did not): `.sheetGround()` — the page gradient, the system drag
+  indicator (never a grabber drawn by hand), and the background above —
+  then `SheetHeader`, a gold kicker over the Cinzel title with room under
+  the indicator (the kicker says where or when, the title what), then
+  ruled `SheetRow`s: glyph, name, italic line, and at the trailing edge a
+  caret, a check, a small tracked state (HERE, QUICK TAP, PLAYING) or the
+  row's own control. The current or chosen row is lit on a faint wash of
+  gold; no filled card stands around the rows. Groups take
+  `SheetSectionLabel`, explanations `SheetNote`, header acts
+  `SheetHeaderAction` (DONE, CLOSE, CANCEL — never a ✕ in a disc). A sheet
+  that is something other than a list — the month grids, the journal and
+  feedback forms, the reading and footnote pages, the share card, the
+  now-playing transport — keeps its own body and takes the ground and the
+  header only. The Missal's one-time layout question keeps its indicator
+  hidden, because it cannot be dragged away and a grabber would say it
+  could.
 
 ### Visual Style
 - Dark, contemplative theme

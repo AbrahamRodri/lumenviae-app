@@ -313,28 +313,20 @@ struct ConsecrationDateSelectionView: View {
     /// Beginning the consecration is the screen's one act, and it comes
     /// from the app's CTA system rather than a third copy of it.
     private func goldButton(_ title: String, action: @escaping () -> Void) -> some View {
-        GoldCTAButton(title: title, action: action)
+        GoldCTAButton(title: title, glyph: .chevron, action: action)
     }
 
     // MARK: - Custom Start Sheet
 
     private var customStartSheet: some View {
-        ZStack {
-            AppColors.background
-                .ignoresSafeArea()
+        VStack(alignment: .leading, spacing: 0) {
+            SheetHeader(
+                kicker: "Total Consecration",
+                title: "Start at Any Day",
+                lead: "Praying along with a book or a group? Begin wherever they are."
+            )
 
             VStack(spacing: 14) {
-                Text("Start at Any Day")
-                    .font(AppFonts.headlineFont(20))
-                    .foregroundColor(AppColors.cream)
-                    .padding(.top, 28)
-
-                Text("Praying along with a book or a group? Begin wherever they are.")
-                    .font(AppFonts.bodyFont(13))
-                    .foregroundColor(AppColors.textSecondary)
-                    .multilineTextAlignment(.center)
-                    .lineSpacing(3)
-
                 Picker("Start Day", selection: $customStartDay) {
                     ForEach(1...33, id: \.self) { day in
                         Text("Day \(day)")
@@ -364,14 +356,16 @@ struct ConsecrationDateSelectionView: View {
                     viewModel.startConsecration(startingAt: customStartDay)
                 }
                 .padding(.top, 4)
-
-                Spacer()
             }
-            .padding(.horizontal, 24)
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, SheetMetrics.gutter)
+
+            Spacer(minLength: 0)
         }
-        .presentationDetents([.height(440)])
-        .presentationDragIndicator(.visible)
-        .presentationBackground(AppColors.background)
+        .sheetGround()
+        // Taller than the 440 it had: the sheet header keeps room above
+        // its kicker for the drag indicator
+        .presentationDetents([.height(490)])
     }
 
     /// The date Day 34 lands on when today counts as `day`.

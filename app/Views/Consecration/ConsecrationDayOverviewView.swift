@@ -6,10 +6,10 @@
 //  phase's own painting.
 //
 //  Built in the home screen's language — an arch-framed hero with real
-//  artwork, a ruled countdown to the feast, gold-hairline cards for the
-//  reading, the prayers and the reflection, and the journey as four
-//  collapsible phase rows rather than a strand of numbered circles that
-//  ran off the edge of the screen.
+//  artwork, a ruled countdown to the feast, and gold-hairline cards for
+//  the prayers, the reading, the reflection, the journey and the book.
+//  The journey is one card: the road of the five periods, and one period
+//  at a time beneath it. The book is Montfort's own cloth, laid on the page.
 //
 
 import SwiftUI
@@ -35,8 +35,9 @@ struct ConsecrationDayOverviewView: View {
 
     // MARK: - State
 
-    /// One phase open at a time in the journey; the current one on appear.
-    @State private var openPhase: ConsecrationPhase?
+    /// The period the journey card shows: the day's own on appear, and
+    /// any other a tap away on its road or its arrows.
+    @State private var shownPhase: ConsecrationPhase?
     @State private var showRestartConfirm = false
 
     /// The bilingual order the user chose for their profile, remembered
@@ -132,7 +133,7 @@ struct ConsecrationDayOverviewView: View {
             } else {
                 viewModel.loadCurrentDay()
             }
-            if openPhase == nil { openPhase = phase }
+            if shownPhase == nil { shownPhase = phase }
             if settings.prayerLanguage.isBilingual {
                 profileBilingualOrder = settings.prayerLanguage
             }
@@ -193,7 +194,9 @@ struct ConsecrationDayOverviewView: View {
         // It enters the day at its beginning, which is its first prayer.
         // The reading is reached by walking there, or opened directly
         // from the reading card below.
-        GoldCTAButton(title: heroActionTitle, showsCross: isToday && !isDayComplete) {
+        // Play only for today's prayer not yet prayed — the one act here
+        // that begins a prayer rather than revisiting a day
+        GoldCTAButton(title: heroActionTitle, glyph: isToday && !isDayComplete ? .play : .none) {
             path.append(.dayFlow(dayNumber: displayDayNumber, step: .prayer(0)))
         }
         .padding(.horizontal, 12)
@@ -664,29 +667,133 @@ struct ConsecrationDayOverviewView: View {
 
     // MARK: - Your Journey
 
+    /// The 33 days as one card, in the page's own register: the road of
+    /// the five periods across the top — each as long as its days, the
+    /// days kept filled in gold, the period shown ringed — then that one
+    /// period beneath it: its name, its span, and its days.
+    ///
+    /// It opens on the period of the day being read, and the others are a
+    /// tap away, on the road itself or the arrows beside the period's
+    /// name. It replaces five stacked rows on the bare page — a label, a
+    /// subtitle, a count and a bar in each, one of them opened into a grid
+    /// — which crowded the foot of the page and never read as one thing.
     private var journeySection: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        let shown = shownPhase ?? phase ?? .preparatory
+
+        return VStack(alignment: .leading, spacing: 6) {
             CardHeading("Your journey", meta: "\(completedCount) of 33 complete")
 
-            VStack(spacing: 0) {
-                ForEach(ConsecrationPhase.allCases, id: \.self) { phase in
-                    JourneyPhaseRow(
-                        phase: phase,
-                        today: viewModel.todaysDayNumber,
-                        selected: displayDayNumber,
-                        isExpanded: openPhase == phase,
-                        isCompleted: viewModel.isDayCompleted,
-                        canAccess: viewModel.canAccessDay,
-                        onToggle: {
-                            withAnimation(.easeOut(duration: 0.25)) {
-                                openPhase = openPhase == phase ? nil : phase
-                            }
-                        },
-                        onSelectDay: openDay
-                    )
-                }
+            JourneyRoad(
+                shown: shown,
+                today: viewModel.todaysDayNumber,
+                isCompleted: viewModel.isDayCompleted,
+                onSelect: showPhase
+            )
+
+            periodStepper(shown)
+
+            // The days change wholesale with the period, so they crossfade
+            // as one block in their own slot rather than reflowing cell by cell
+            ZStack(alignment: .top) {
+                JourneyDays(
+                    phase: shown,
+                    today: viewModel.todaysDayNumber,
+                    selected: displayDayNumber,
+                    isCompleted: viewModel.isDayCompleted,
+                    canAccess: viewModel.canAccessDay,
+                    onSelectDay: openDay
+                )
+                .id(shown)
+                .transition(.opacity)
             }
+            .frame(maxWidth: .infinity)
+            // A week of 44-point days is 308 points, wider than the card's
+            // content on a 375-point phone. The grid may reach into the
+            // card's own margin rather than spill past it or shrink its
+            // cells below a finger's width.
+            .padding(.horizontal, -10)
+            .padding(.top, 6)
         }
+        .sacredCard()
+    }
+
+    private func showPhase(_ target: ConsecrationPhase) {
+        guard target != shownPhase else { return }
+        withAnimation(Motion.crossfade) {
+            shownPhase = target
+        }
+    }
+
+    /// The period by name between the ways to its neighbours. Its title
+    /// keeps two lines' room whatever it needs, so stepping from "Knowledge
+    /// of Self" to the preparatory period's long title moves nothing below.
+    private func periodStepper(_ shown: ConsecrationPhase) -> some View {
+        let all = ConsecrationPhase.allCases
+        let index = all.firstIndex(of: shown) ?? 0
+        let previous = index > 0 ? all[index - 1] : nil
+        let next = index < all.count - 1 ? all[index + 1] : nil
+        let isNow = shown.dayRange.contains(viewModel.todaysDayNumber)
+
+        return HStack(alignment: .center, spacing: 0) {
+            stepperArrow("ph-caret-left", to: previous)
+
+            VStack(spacing: 5) {
+                Text((isNow ? "\(shown.displayName) · Now" : shown.displayName).uppercased())
+                    .font(AppFonts.labelFont(9.5))
+                    .tracking(2.2)
+                    .foregroundColor(isNow ? AppColors.goldLight : AppColors.gold)
+                    .lineLimit(1)
+                    .contentTransition(.opacity)
+
+                Text(shown.subtitle)
+                    .font(AppFonts.headlineFont(16))
+                    .foregroundColor(AppColors.cream)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2, reservesSpace: true)
+                    .minimumScaleFactor(0.85)
+                    .contentTransition(.opacity)
+
+                Text(periodSpan(shown))
+                    .font(AppFonts.italicFont(12.5))
+                    .foregroundColor(AppColors.textSecondary)
+                    .lineLimit(1)
+                    .contentTransition(.opacity)
+            }
+            .frame(maxWidth: .infinity)
+            .accessibilityElement(children: .combine)
+
+            stepperArrow("ph-caret-right", to: next)
+        }
+    }
+
+    /// A step to the neighbouring period. At either end there is nowhere
+    /// to go, so the arrow is not drawn rather than drawn dim — and it
+    /// keeps its room, so the period's name stays centred.
+    private func stepperArrow(_ icon: String, to target: ConsecrationPhase?) -> some View {
+        Button {
+            if let target { showPhase(target) }
+        } label: {
+            AppIcon(icon, size: 13)
+                .foregroundColor(AppColors.gold)
+                .frame(width: 44, height: 44)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(QuietGlyphButtonStyle())
+        .opacity(target == nil ? 0 : 1)
+        .disabled(target == nil)
+        .accessibilityHidden(target == nil)
+        .accessibilityLabel(target.map { "Show \($0.displayName)" } ?? "")
+    }
+
+    /// "Days 13–19 · 3 of 7 prayed" — the period's span, and what has been
+    /// kept in it. A period still ahead says so, and never counts days no
+    /// one has yet reached.
+    private func periodSpan(_ phase: ConsecrationPhase) -> String {
+        let range = phase.dayRange
+        let span = range.count == 1 ? "Day \(range.lowerBound)" : "Days \(range.lowerBound)–\(range.upperBound)"
+        guard range.lowerBound <= viewModel.todaysDayNumber else { return "\(span) · still ahead" }
+        let kept = range.filter { viewModel.isDayCompleted($0) }.count
+        return kept > 0 ? "\(span) · \(kept) of \(range.count) prayed" : span
     }
 
     /// Opens another day of the 33 *in place of* the day being read
@@ -707,56 +814,80 @@ struct ConsecrationDayOverviewView: View {
         }
     }
 
-    // MARK: - Source Text
+    // MARK: - The Book
 
+    /// Montfort's book, laid on the page as a book: its own cloth — the
+    /// binding the shelf and its title page give it, with the marker
+    /// ribbon once a reading is under way — beside its name and its
+    /// author, closing on the act that opens it.
+    ///
+    /// It was a row of type under a Bible glyph, which named the wrong book
+    /// and read as one more link rather than a volume to take up. It no
+    /// longer counts a percentage read either: where the reader is is a
+    /// place, not a score.
     private var sourceTextCard: some View {
-        Button {
-                path.append(.trueDevotionReader)
+        let started = readingProgress.first?.hasStartedReading ?? false
+        let book = TrueDevotionLibrary.shared.book
+        let display = LibraryCatalog.trueDevotionDisplay
+        let title = book?.title ?? display.title
+        let author = book?.author ?? display.author
+
+        return Button {
+            path.append(.trueDevotionReader)
         } label: {
-            HStack(spacing: 14) {
-                AppIcon("ch-bible", size: 26)
-                    .foregroundColor(AppColors.gold)
+            VStack(alignment: .leading, spacing: 16) {
+                CardHeading("The book behind this consecration", meta: bookPlaceLabel)
 
-                VStack(alignment: .leading, spacing: 3) {
-                    Text("THE SOURCE TEXT")
-                        .font(AppFonts.labelFont(9))
-                        .tracking(2)
+                HStack(alignment: .center, spacing: 20) {
+                    BookCover(info: display, hasRibbon: started, isLettered: false)
+                        .frame(width: 64)
+                        // The cloth's own colour glowing faintly behind
+                        // it, as the book's title page sets it
+                        .shadow(color: display.bindingColor.opacity(0.7), radius: 14)
+
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(title)
+                            .font(AppFonts.headlineFont(18))
+                            .foregroundColor(AppColors.cream)
+                            .multilineTextAlignment(.leading)
+                            .fixedSize(horizontal: false, vertical: true)
+
+                        Text(author)
+                            .font(AppFonts.italicFont(14))
+                            .foregroundColor(AppColors.accentSoft)
+
+                        HStack(spacing: 8) {
+                            AppIcon("ph-book-open", size: 13)
+                            Text(started ? "CONTINUE READING" : "OPEN THE BOOK")
+                                .font(AppFonts.labelFont(10))
+                                .tracking(2)
+                            AppIcon("ph-caret-right", size: 9)
+                        }
                         .foregroundColor(AppColors.gold)
+                        .padding(.top, 8)
+                    }
 
-                    Text("Read True Devotion in full")
-                        .font(AppFonts.headlineFont(16))
-                        .foregroundColor(AppColors.cream)
-                        .multilineTextAlignment(.leading)
-
-                    Text(readingProgressLabel)
-                        .font(AppFonts.italicFont(12))
-                        .foregroundColor(AppColors.textSecondary)
-                        .multilineTextAlignment(.leading)
+                    Spacer(minLength: 0)
                 }
-
-                Spacer(minLength: 8)
-
-                AppIcon("ph-caret-right", size: 11)
-                    .foregroundColor(AppColors.gold.opacity(0.6))
             }
-            .sacredCard(padding: 16)
+            .sacredCard()
         }
         .buttonStyle(SacredCardButtonStyle())
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(title), \(author). \(bookPlaceLabel ?? "")")
+        .accessibilityHint(started ? "Continues reading" : "Opens the book")
     }
 
-    private var readingProgressLabel: String {
-        guard let book = TrueDevotionLibrary.shared.book else {
-            return "St. Louis de Montfort"
-        }
+    /// Where the reader is in the book — the chapter they left, of how
+    /// many — or, before a page is turned, how many chapters it holds.
+    private var bookPlaceLabel: String? {
+        guard let book = TrueDevotionLibrary.shared.book else { return nil }
         let total = book.chapters.count
-        let completed = readingProgress.first?.completedChapterIDs ?? []
-        let read = book.chapters.filter { completed.contains($0.id) }.count
-
-        guard read > 0 else {
-            return "\(total) chapters · St. Louis de Montfort"
+        if let last = readingProgress.first?.lastChapterID,
+           let index = book.chapters.firstIndex(where: { $0.id == last }) {
+            return "Chapter \(index + 1) of \(total)"
         }
-        let percent = Int((Double(read) / Double(total) * 100).rounded())
-        return "Chapter \(min(read + 1, total)) of \(total) · \(percent)% read"
+        return "\(total) chapters"
     }
 
     // MARK: - Restart
@@ -862,93 +993,119 @@ struct CardHeading: View {
     }
 }
 
-// MARK: - JourneyPhaseRow
+// MARK: - JourneyRoad
 
-/// One phase of the 33 days: a quiet line with a hairline progress bar
-/// that opens into its own days. This replaces both the 33-bead strand
-/// and the row of numbered circles, which clipped at the screen edge and
-/// never said which week a day belonged to.
-private struct JourneyPhaseRow: View {
+/// The five periods as one road, each segment as long as its days: the
+/// days kept filled in gold, the period shown drawn taller and ringed.
+/// Each segment is the way to its period. The day of consecration is one
+/// day, and is given the width of three so it can be seen and reached.
+private struct JourneyRoad: View {
+
+    let shown: ConsecrationPhase
+    let today: Int
+    let isCompleted: (Int) -> Bool
+    let onSelect: (ConsecrationPhase) -> Void
+
+    private static let gap: CGFloat = 5
+
+    private static func weight(_ phase: ConsecrationPhase) -> Int {
+        max(phase.dayCount, 3)
+    }
+
+    var body: some View {
+        GeometryReader { geometry in
+            let phases = ConsecrationPhase.allCases
+            let totalWeight = phases.reduce(0) { $0 + Self.weight($1) }
+            let unit = (geometry.size.width - Self.gap * CGFloat(phases.count - 1)) / CGFloat(totalWeight)
+
+            HStack(spacing: Self.gap) {
+                ForEach(phases, id: \.self) { phase in
+                    segment(phase, width: CGFloat(Self.weight(phase)) * unit)
+                }
+            }
+        }
+        .frame(height: 44)
+    }
+
+    private func segment(_ phase: ConsecrationPhase, width: CGFloat) -> some View {
+        let days = Array(phase.dayRange)
+        let kept = days.filter(isCompleted).count
+        let fraction = CGFloat(kept) / CGFloat(max(days.count, 1))
+        let isShown = phase == shown
+        let isNow = phase.dayRange.contains(today)
+
+        return Button {
+            onSelect(phase)
+        } label: {
+            Capsule()
+                .fill(AppColors.cream.opacity(isShown ? 0.16 : 0.08))
+                .overlay(alignment: .leading) {
+                    Capsule()
+                        .fill(AppColors.goldCTAGradient)
+                        .frame(width: width * fraction)
+                }
+                .clipShape(Capsule())
+                .frame(width: width, height: isShown ? 8 : 5)
+                .overlay {
+                    if isShown {
+                        Capsule()
+                            .strokeBorder(AppColors.goldLight.opacity(0.75), lineWidth: 1)
+                            .padding(-3.5)
+                    }
+                }
+                // Today's period carries a small mark beneath its road,
+                // so the way back to it is never lost
+                .overlay(alignment: .bottom) {
+                    if isNow {
+                        Circle()
+                            .fill(AppColors.goldLight)
+                            .frame(width: 4, height: 4)
+                            .offset(y: 11)
+                    }
+                }
+                .frame(width: width, height: 44)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(phase.displayName)
+        .accessibilityValue("\(isNow ? "Now. " : "")\(kept) of \(days.count) prayed")
+        .accessibilityAddTraits(isShown ? .isSelected : [])
+    }
+}
+
+// MARK: - JourneyDays
+
+/// One period's days, seven to a row as a week is: kept days filled in
+/// gold, today ringed, the day being read ringed again outside its edge,
+/// and days still ahead quiet and closed.
+private struct JourneyDays: View {
 
     let phase: ConsecrationPhase
     let today: Int
     let selected: Int
-    let isExpanded: Bool
     let isCompleted: (Int) -> Bool
     let canAccess: (Int) -> Bool
-    let onToggle: () -> Void
     let onSelectDay: (Int) -> Void
 
     private var days: [Int] { Array(phase.dayRange) }
-    private var completedInPhase: Int { days.filter(isCompleted).count }
-    private var isCurrent: Bool { phase.dayRange.contains(today) }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Rectangle()
-                .fill(AppColors.gold.opacity(0.15))
-                .frame(height: AppLine.hairline)
+        // As many columns as the period has days, up to a week, and the
+        // grid centred: seven fill the row, and the day of consecration
+        // stands alone in the middle rather than at the left edge
+        let columns = min(days.count, 7)
 
-            Button(action: onToggle) {
-                VStack(alignment: .leading, spacing: 5) {
-                    HStack(alignment: .firstTextBaseline, spacing: 8) {
-                        Text(phase.displayName.uppercased())
-                            .font(AppFonts.labelFont(9))
-                            .tracking(2)
-                            .foregroundColor(isCurrent ? AppColors.gold : AppColors.textSecondary)
-                            .fixedSize()
-
-                        Text(phase.subtitle)
-                            .font(AppFonts.italicFont(13))
-                            .foregroundColor(isCurrent ? AppColors.cream : AppColors.textSecondary)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.8)
-
-                        Spacer(minLength: 4)
-
-                        Text("\(completedInPhase)/\(days.count)")
-                            .font(AppFonts.bodyFont(11))
-                            .foregroundColor(AppColors.textSecondary)
-                    }
-
-                    GeometryReader { geometry in
-                        ZStack(alignment: .leading) {
-                            RoundedRectangle(cornerRadius: 2)
-                                .fill(AppColors.cream.opacity(0.1))
-
-                            RoundedRectangle(cornerRadius: 2)
-                                .fill(AppColors.goldCTAGradient)
-                                .frame(
-                                    width: geometry.size.width
-                                        * (Double(completedInPhase) / Double(days.count))
-                                )
-                        }
-                    }
-                    .frame(height: 3)
-                }
-                .padding(.vertical, 13)
-                .frame(minHeight: 44)
-            }
-            .buttonStyle(SacredCardButtonStyle())
-            .accessibilityLabel("\(phase.displayName), \(completedInPhase) of \(days.count) complete")
-            .accessibilityHint(isExpanded ? "Collapses the days" : "Shows the days")
-
-            if isExpanded {
-                // 44pt cells around the 30pt circles: the gap between
-                // them is the cell's own margin, so the row still reads
-                // as a quiet grid of numbers rather than a row of chips.
-                LazyVGrid(
-                    columns: [GridItem(.adaptive(minimum: 44, maximum: 44), spacing: 0)],
-                    alignment: .leading,
-                    spacing: 0
-                ) {
-                    ForEach(days, id: \.self) { number in
-                        dayCircle(number)
-                    }
-                }
-                .padding(.bottom, 13)
+        LazyVGrid(
+            columns: Array(repeating: GridItem(.fixed(44), spacing: 0), count: columns),
+            alignment: .leading,
+            spacing: 0
+        ) {
+            ForEach(days, id: \.self) { number in
+                dayCircle(number)
             }
         }
+        .frame(width: CGFloat(columns) * 44)
+        .frame(maxWidth: .infinity)
     }
 
     private func dayCircle(_ number: Int) -> some View {
@@ -960,9 +1117,9 @@ private struct JourneyPhaseRow: View {
             onSelectDay(number)
         } label: {
             Text("\(number)")
-                .font(AppFonts.bodyFont(12))
+                .font(AppFonts.bodyFont(12.5))
                 .foregroundColor(numberColor(isDone: isDone, isToday: isToday, reachable: reachable))
-                .frame(width: 30, height: 30)
+                .frame(width: 32, height: 32)
                 .background {
                     if isDone {
                         Circle().fill(AppColors.goldCTAGradient)
@@ -985,7 +1142,7 @@ private struct JourneyPhaseRow: View {
                             .padding(-3)
                     }
                 }
-                // The circle stays 30pt; the finger gets 44pt
+                // The circle stays 32pt; the finger gets 44pt
                 .frame(width: 44, height: 44)
                 .contentShape(Rectangle())
         }
@@ -1000,7 +1157,7 @@ private struct JourneyPhaseRow: View {
     private func numberColor(isDone: Bool, isToday: Bool, reachable: Bool) -> Color {
         if isDone { return AppColors.background }
         if isToday { return AppColors.goldLight }
-        return AppColors.cream.opacity(reachable ? 0.45 : 0.25)
+        return AppColors.cream.opacity(reachable ? 0.5 : 0.25)
     }
 }
 

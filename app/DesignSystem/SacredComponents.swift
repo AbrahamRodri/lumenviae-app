@@ -552,7 +552,11 @@ struct DropCapText: View {
 
     var body: some View {
         if text.count >= minimumLength, let cut = VersalCut.of(text) {
-            illuminated(cut)
+            if cut.opensOnQuotation {
+                gildedQuotation(cut)
+            } else {
+                illuminated(cut)
+            }
         } else {
             plain(text)
         }
@@ -574,10 +578,10 @@ struct DropCapText: View {
     /// line's: a versal standing proud of the line, and the leading
     /// beneath it the same as everywhere else on the page.
     ///
-    /// A quotation mark the paragraph opens on is hung before the
-    /// initial at the body size, and the letter after it is the one
-    /// illuminated — a gilded quote mark reads as a mistake, but a
-    /// passage kept from a book still deserves its versal.
+    /// A paragraph that opens on a quotation is `gildedQuotation`. One
+    /// that opens on an apostrophe — an elision, 'Tis — comes here: the
+    /// mark stays at the body size, hung before the initial, and the
+    /// letter it belongs to takes the gold.
     private func illuminated(_ cut: VersalCut) -> some View {
         let leadWidth = cut.lead.isEmpty
             ? 0
@@ -601,6 +605,22 @@ struct DropCapText: View {
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(text)
+    }
+
+    /// A paragraph that opens on a quotation: the opening mark itself
+    /// is the illumination (`GildedQuotationMark`), and the words stand
+    /// flush beside it as typed, closing mark and all. The mark used to be
+    /// hung small before a gilded letter, and the gilding fell one
+    /// character too late: a small “ and then a great gold B read as a
+    /// misprint on every journal entry that began with a saying.
+    private func gildedQuotation(_ cut: VersalCut) -> some View {
+        Text(cut.wordsAfterLead)
+            .font(AppFonts.readingFont(bodySize))
+            .foregroundColor(textColor)
+            .lineSpacing(ReadingTypography.lineSpacing(for: bodySize))
+            .gildedQuotationMark(cut.lead, bodySize: bodySize)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(text)
     }
 
     /// The advance of a run — a quotation mark, a space — in the body face
@@ -638,18 +658,63 @@ struct DropCapText: View {
 /// dash is gilded nowhere.
 struct VersalCut {
 
-    /// Opening quotation marks, hung before the initial. Usually empty.
+    /// The marks the paragraph opens on, before its first letter. Usually
+    /// empty. When they open a quotation (`opensOnQuotation`) the mark
+    /// itself is gilded in place of a letter; an apostrophe is hung small
+    /// before the letter instead.
     let lead: String
 
     /// The versal, capitalised — an initial is always a capital
     let letter: String
 
+    /// The versal's letter as it was typed
+    let typedLetter: String
+
     /// The paragraph after the versal
     let rest: String
+
+    /// The paragraph after its opening marks, exactly as typed: the words
+    /// that stand beside a gilded quotation mark, which is no versal and
+    /// leaves the first letter its own case
+    var wordsAfterLead: String { typedLetter + rest }
 
     private static let openingQuotes: Set<Character> = [
         "\u{201C}", "\u{2018}", "\"", "'", "«", "‹"
     ]
+
+    /// Marks that open a quotation and nothing else
+    private static let quotationOnly: Set<Character> = ["\u{201C}", "\"", "«", "‹"]
+
+    /// Words an apostrophe opens by standing in for their first letters.
+    /// A mark before one of these belongs to the word, never a quotation.
+    private static let elisions: Set<String> = [
+        "tis", "twas", "twere", "twill", "twould", "twixt",
+        "em", "neath", "gainst", "mongst", "til", "cause"
+    ]
+
+    /// Whether the paragraph truly opens on a quotation, so the mark is
+    /// the thing to gild. A double mark or a guillemet always does. A
+    /// single mark does only when a closing one answers it — a ’ or '
+    /// that ends a word rather than sitting inside one — because a lone
+    /// apostrophe opens an elision ('Tis, ‘twas) and gilded large it
+    /// read as a stray mark.
+    ///
+    /// The elision is recognised by its word first: a plural possessive
+    /// later in the sentence ("'Tis the saints' feast") ends a word just
+    /// as a closing mark does, and was taken for one.
+    var opensOnQuotation: Bool {
+        guard !lead.isEmpty else { return false }
+        if lead.contains(where: { Self.quotationOnly.contains($0) }) { return true }
+        let firstWord = wordsAfterLead.prefix { $0.isLetter }.lowercased()
+        if Self.elisions.contains(firstWord) { return false }
+        let characters = Array(rest)
+        for (index, character) in characters.enumerated() where character == "\u{2019}" || character == "'" {
+            let next = index + 1 < characters.count ? characters[index + 1] : nil
+            // Inside a word (don’t) the mark is followed by a letter
+            if !(next?.isLetter ?? false) { return true }
+        }
+        return false
+    }
 
     /// Nil when the paragraph does not open on a letter (after any
     /// quotation marks): such a paragraph is set plain.
@@ -665,8 +730,54 @@ struct VersalCut {
         return VersalCut(
             lead: lead,
             letter: String(trimmed[index]).uppercased(),
+            typedLetter: String(trimmed[index]),
             rest: String(trimmed[trimmed.index(after: index)...])
         )
+    }
+}
+
+// MARK: - GildedQuotationMark
+
+/// The opening quotation mark gilded in place of a versal: large, in the
+/// display face, hung in the margin beside the words the way a pull
+/// quote's is. One drawing for `DropCapText` (a paragraph that opens on a
+/// saying) and `QuotedPassageText` (a passage kept from a book), so the
+/// two stand the same size on the same page.
+///
+/// Cinzel's quotation mark fills only the upper third of its em, so it is
+/// set at twice a versal's proportion to stand as large as a versal does,
+/// and lifted so its ink hangs level with the first line's.
+struct GildedQuotationMark: View {
+    var mark: String = "\u{201C}"
+    let bodySize: CGFloat
+
+    static func size(bodySize: CGFloat) -> CGFloat {
+        (bodySize * 3.2).rounded()
+    }
+
+    /// The margin the mark hangs in; the words begin past it
+    static func margin(bodySize: CGFloat) -> CGFloat {
+        (size(bodySize: bodySize) * 0.42).rounded()
+    }
+
+    var body: some View {
+        let size = Self.size(bodySize: bodySize)
+
+        Text(mark)
+            .font(AppFonts.titleFont(size))
+            .foregroundColor(AppColors.gold)
+            .offset(y: -(size * 0.14).rounded())
+            .accessibilityHidden(true)
+    }
+}
+
+extension View {
+    /// Hangs a gilded opening mark in this block's leading margin
+    func gildedQuotationMark(_ mark: String = "\u{201C}", bodySize: CGFloat) -> some View {
+        padding(.leading, GildedQuotationMark.margin(bodySize: bodySize))
+            .overlay(alignment: .topLeading) {
+                GildedQuotationMark(mark: mark, bodySize: bodySize)
+            }
     }
 }
 

@@ -61,15 +61,11 @@ struct ConsecrationDayIndexSheet: View {
 
     var body: some View {
         ZStack {
-            AppColors.appGradient
-                .ignoresSafeArea()
-
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
-                    header
-                        .padding(.horizontal, 24)
-                        .padding(.top, 26)
-                        .padding(.bottom, 18)
+                    // The app's sheets are all set after this one; the
+                    // header and rows now live in `SheetChrome` for them
+                    SheetHeader(kicker: dayLabel, title: day?.title ?? "")
 
                     ForEach(Array(prayers.enumerated()), id: \.element.id) { index, prayer in
                         row(
@@ -100,27 +96,8 @@ struct ConsecrationDayIndexSheet: View {
                 }
             }
         }
+        .sheetGround()
         .presentationDetents([.medium, .large])
-        .presentationDragIndicator(.visible)
-        .presentationBackground(AppColors.background)
-    }
-
-    // MARK: - Header
-
-    private var header: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(dayLabel)
-                .font(AppFonts.labelFont(9))
-                .tracking(2.5)
-                .foregroundColor(AppColors.gold)
-
-            Text(day?.title ?? "")
-                .font(AppFonts.headlineFont(22))
-                .foregroundColor(AppColors.cream)
-                .multilineTextAlignment(.leading)
-                .fixedSize(horizontal: false, vertical: true)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     // MARK: - Row
@@ -139,50 +116,13 @@ struct ConsecrationDayIndexSheet: View {
             dismiss()
             onSelect(destination)
         } label: {
-            HStack(spacing: 14) {
-                AppIcon(icon, size: 15)
-                    .foregroundColor(isCurrent ? AppColors.goldLight : AppColors.gold.opacity(0.55))
-                    .frame(width: 22)
-
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(title)
-                        .font(AppFonts.bodyFont(16))
-                        .foregroundColor(isCurrent ? AppColors.goldLight : AppColors.cream)
-                        .multilineTextAlignment(.leading)
-
-                    if let detail, !detail.isEmpty {
-                        Text(detail)
-                            .font(AppFonts.italicFont(12))
-                            .foregroundColor(AppColors.textSecondary)
-                            .lineLimit(1)
-                            .multilineTextAlignment(.leading)
-                    }
-                }
-
-                Spacer(minLength: 8)
-
-                if isCurrent {
-                    Text("HERE")
-                        .font(AppFonts.labelFont(8))
-                        .tracking(1.5)
-                        .foregroundColor(AppColors.goldLight)
-                } else {
-                    AppIcon("ph-caret-right", size: 10)
-                        .foregroundColor(AppColors.gold.opacity(0.4))
-                }
-            }
-            .padding(.horizontal, 24)
-            .padding(.vertical, 13)
-            .frame(minHeight: 52)
-            .background(
-                isCurrent ? AppColors.gold.opacity(0.07) : Color.clear
+            SheetRow(
+                title,
+                detail: detail,
+                icon: icon,
+                accessory: isCurrent ? .label("Here") : .caret,
+                isLit: isCurrent
             )
-            .overlay(alignment: .bottom) {
-                Rectangle()
-                    .fill(AppColors.gold.opacity(0.1))
-                    .frame(height: AppLine.hairline)
-                    .padding(.horizontal, 24)
-            }
         }
         .buttonStyle(SacredCardButtonStyle())
         .accessibilityLabel(title)

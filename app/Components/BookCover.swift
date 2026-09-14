@@ -207,7 +207,9 @@ struct BookCover: View {
 
 // MARK: - Shade helpers
 
-private extension Color {
+/// The cloth's own lighting — shared with the Chapel's Reading tile, so
+/// every cover in the app is lit from the same corner.
+extension Color {
 
     /// A slightly lighter or darker cast of the same cloth, mixed in
     /// sRGB against white or black.

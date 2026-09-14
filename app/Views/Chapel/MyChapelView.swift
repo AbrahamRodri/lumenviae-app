@@ -308,25 +308,31 @@ struct MyChapelView: View {
         consecrations.first { !$0.isCompleted }
     }
 
-    /// The user's rule as today sees it. Acts the app can watch finish
-    /// (the Rosary, the chaplet, the consecration day) check themselves;
-    /// the Mass and the Office are checked by hand.
+    /// The user's rule as today sees it. Every act on it is one the app
+    /// watches finish — the Rosary, the Scriptural Rosary, the chaplet,
+    /// the consecration day — and checks itself.
+    ///
+    /// The Consecration is not chosen for the rule but joins it of its
+    /// own accord while a preparation is under way — second, under the
+    /// Rosary, where the design places it — and leaves when the
+    /// preparation is done. The Mass, the Office and a meditation chosen
+    /// by hand are off the rule (`PrayerShortcut.isRuleEligible`), and
+    /// the row marked by hand went with them.
     private var resolvedActs: [ChapelAct] {
-        settings.ruleItems.map { item in
-            ChapelAct(
-                shortcut: item,
-                subtitle: subtitle(for: item),
-                done: isDone(item),
-                manual: isManual(item)
+        var acts = settings.ruleItems.map { item in
+            ChapelAct(shortcut: item, subtitle: subtitle(for: item), done: isDone(item))
+        }
+        if activeConsecration != nil {
+            acts.insert(
+                ChapelAct(
+                    shortcut: .consecration,
+                    subtitle: subtitle(for: .consecration),
+                    done: isDone(.consecration)
+                ),
+                at: min(1, acts.count)
             )
         }
-    }
-
-    private func isManual(_ item: PrayerShortcut) -> Bool {
-        switch item {
-        case .mass, .office, .chooseMeditation: return true
-        case .todaysRosary, .sevenSorrows, .scripturalRosary, .consecration: return false
-        }
+        return acts
     }
 
     private func isDone(_ item: PrayerShortcut) -> Bool {
@@ -352,28 +358,34 @@ struct MyChapelView: View {
             return progress.isDayCompleted(progress.currentDayNumber)
 
         case .mass, .office, .chooseMeditation:
-            return settings.isRuleChecked(item)
+            // Never on the rule (`isRuleEligible`)
+            return false
         }
     }
 
+    /// The row's second line: the live fact about the act, short enough
+    /// to sit under its name on one line of the ledger.
     private func subtitle(for item: PrayerShortcut) -> String {
         switch item {
         case .todaysRosary:
             return ScheduleService.categoryForToday().devotionTitle
+        case .scripturalRosary:
+            return "\(ScheduleService.categoryForToday().devotionTitle) · in Scripture"
         case .consecration:
             guard let progress = activeConsecration else { return "Not yet begun" }
-            return "Day \(min(progress.currentDayNumber, 33)) of 33"
-        default:
+            let day = progress.currentDayNumber
+            guard day <= 33 else { return "The day of consecration" }
+            return "Day \(day) of 33 · \(ChapelConsecrationTile.phaseName(day: day))"
+        case .sevenSorrows:
+            return "Chaplet"
+        case .chooseMeditation, .mass, .office:
+            // Never on the rule (`isRuleEligible`)
             return item.subtitle
         }
     }
 
     private func handleAct(_ act: ChapelAct) {
-        if act.manual {
-            settings.setRuleChecked(act.shortcut, !act.done)
-        } else {
-            router.run(act.shortcut)
-        }
+        router.run(act.shortcut)
     }
 
     // MARK: - Focus block
@@ -413,7 +425,7 @@ struct MyChapelView: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .contentTransition(.opacity)
 
-            GoldCTAButton(title: focusAction(acts: acts, next: next), fullWidth: false) {
+            GoldCTAButton(title: focusAction(acts: acts, next: next), glyph: .chevron, fullWidth: false) {
                 performFocusAction(acts: acts, next: next)
             }
             .padding(.top, 8)
@@ -569,9 +581,10 @@ struct MyChapelView: View {
 
     private func grid(acts: [ChapelAct]) -> some View {
         let entries = gridEntries
-        // The frameless tiles have no edge of their own, so the gap is
-        // the only thing that says where one ends and the next begins.
-        return ChapelGridLayout(columnGap: 16, rowGap: 46) {
+        // Every tile stands in its own shell now, so the gap closes to
+        // the design's 28. It was 46 while the frameless tiles had no
+        // edge of their own but the gap to say where they ended.
+        return ChapelGridLayout(columnGap: 16, rowGap: 28) {
             ForEach(Array(entries.enumerated()), id: \.element.id) { index, placement in
                 cell(placement, index: index, acts: acts)
                     .chapelSpan(placement.span)
@@ -644,6 +657,12 @@ struct MyChapelView: View {
             ChapelConsecrationTile(span: placement.span)
         case .reading:
             ChapelReadingTile(span: placement.span)
+        case .liturgy:
+            ChapelLiturgyTile(
+                span: placement.span,
+                dayLine: dayLine,
+                feast: today.feastTitle
+            )
         case .library:
             ChapelLibraryTile(span: placement.span)
         case .chant:
@@ -715,10 +734,7 @@ struct MyChapelView: View {
     // MARK: - Arrange mode
 
     private func enterArrange() {
-        guard !arranging else { return }
-        withAnimation(.easeOut(duration: 0.25)) {
-            router.chapelArranging = true
-        }
+        router.beginChapelArranging()
     }
 
     private func endArrange() {

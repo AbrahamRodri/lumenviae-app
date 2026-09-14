@@ -153,41 +153,48 @@ struct MissalReaderSectionView: View {
 
 // MARK: - MissalSheetShell
 
-/// The shared shell of the missal's bottom sheets: gold handle,
-/// engraved title, ornament, then whatever the sheet holds. An empty
-/// title leaves the head to the sheet itself — the calendar sets a
-/// month stepper there instead.
+/// The shared shell of the missal's and the breviary's bottom sheets,
+/// set in the app's one sheet grammar (`SheetChrome`): the system's
+/// indicator over the page gradient, a kicker and title, then whatever
+/// the sheet holds. An empty title leaves the head to the sheet itself —
+/// the calendars set a month stepper there instead.
+///
+/// The shell draws no side margin. Ruled rows run edge to edge so the
+/// lit row's wash does, and carry the gutter themselves; anything else
+/// the sheet holds pads itself to `SheetMetrics.gutter`.
 struct MissalSheetShell<Content: View>: View {
 
+    let kicker: String?
     let title: String
-    @ViewBuilder let content: () -> Content
+    let content: () -> Content
+
+    init(
+        kicker: String? = nil,
+        title: String,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.kicker = kicker
+        self.title = title
+        self.content = content
+    }
+
+    /// A sheet that draws its own head needs only the indicator's
+    /// clearance: the calendars' chevrons carry their own 44pt of air.
+    private static var bareHeadTop: CGFloat { 24 }
 
     var body: some View {
-        VStack(spacing: 0) {
-            Capsule()
-                .fill(AppColors.gold.opacity(0.38))
-                .frame(width: 30, height: 2)
-                .padding(.top, 10)
-                .padding(.bottom, 14)
-
-            if !title.isEmpty {
-                VStack(spacing: 10) {
-                    Text(title.uppercased())
-                        .font(AppFonts.headlineFont(11))
-                        .tracking(3.5)
-                        .foregroundColor(AppColors.gold)
-
-                    OrnamentDivider()
-                        .frame(width: 118)
-                }
-                .padding(.bottom, 18)
+        VStack(alignment: .leading, spacing: 0) {
+            if title.isEmpty {
+                Color.clear
+                    .frame(height: Self.bareHeadTop)
+            } else {
+                SheetHeader(kicker: kicker, title: title)
             }
 
             content()
         }
-        .padding(.horizontal, 20)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .background(AppColors.cardBackground.ignoresSafeArea())
+        .sheetGround()
     }
 }
 
@@ -225,6 +232,50 @@ struct MissalSheetChip: View {
     }
 }
 
+// MARK: - MissalSheetChipGroup
+
+/// One choice in an Aa sheet: its name, then its chips in a row on the
+/// gutter. The missal's sheet and the breviary's each drew their own
+/// copy of this; a setting both books share is offered one way.
+struct MissalSheetChipGroup<Chips: View>: View {
+
+    let label: String
+    let chips: () -> Chips
+
+    init(_ label: String, @ViewBuilder chips: @escaping () -> Chips) {
+        self.label = label
+        self.chips = chips
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            SheetSectionLabel(label)
+
+            HStack(spacing: 8) {
+                chips()
+            }
+            .padding(.horizontal, SheetMetrics.gutter)
+        }
+    }
+}
+
+// MARK: - MissalProperDiamond
+
+/// The propers' diamond stud, as the index and its legend draw it: the
+/// one mark that sets a proper apart from the Ordinary.
+private struct MissalProperDiamond: View {
+
+    var isLit = false
+
+    var body: some View {
+        Rectangle()
+            .fill(isLit ? AppColors.goldLight : AppColors.gold.opacity(0.85))
+            .frame(width: 5, height: 5)
+            .rotationEffect(.degrees(45))
+            .accessibilityHidden(true)
+    }
+}
+
 // MARK: - MissalReadingSheet
 
 /// The Aa sheet: language, bilingual layout, contents, text size, and
@@ -241,10 +292,10 @@ struct MissalReadingSheet: View {
     var body: some View {
         @Bindable var settings = settings
 
-        return MissalSheetShell(title: "Reading") {
+        return MissalSheetShell(kicker: "Daily Missal", title: "Reading") {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
-                    chipGroup("Language") {
+                    MissalSheetChipGroup("Language") {
                         MissalSheetChip(
                             title: "Latin",
                             isSelected: settings.prayerLanguage == .latin
@@ -261,7 +312,7 @@ struct MissalReadingSheet: View {
                         ) { chooseBoth() }
                     }
 
-                    chipGroup("Latin and English") {
+                    MissalSheetChipGroup("Latin and English") {
                         MissalSheetChip(
                             title: "Stacked",
                             isSelected: settings.missalLayout == .interlinear
@@ -275,7 +326,7 @@ struct MissalReadingSheet: View {
                         ) { chooseSideBySide() }
                     }
 
-                    chipGroup("Contents") {
+                    MissalSheetChipGroup("Contents") {
                         MissalSheetChip(
                             title: "Propers only",
                             isSelected: settings.missalScope == .propersOnly
@@ -291,7 +342,12 @@ struct MissalReadingSheet: View {
                         }
                     }
 
-                    sizeSlider($settings.missalTextScale)
+                    SheetSizeSlider(scale: $settings.missalTextScale)
+
+                    // The two switches stand as a ruled ledger beneath the
+                    // controls, each saying what it does to the page
+                    SheetRule()
+                        .padding(.top, 22)
 
                     toggleRow(
                         title: "Posture cues",
@@ -333,84 +389,23 @@ struct MissalReadingSheet: View {
 
     // MARK: - Pieces
 
-    private func chipGroup<Chips: View>(
-        _ label: String,
-        @ViewBuilder chips: () -> Chips
-    ) -> some View {
-        VStack(alignment: .leading, spacing: 9) {
-            Text(label.uppercased())
-                .font(AppFonts.labelFont(9))
-                .tracking(2.5)
-                .foregroundColor(AppColors.textSecondary)
-
-            HStack(spacing: 8) {
-                chips()
-            }
-        }
-        .padding(.bottom, 20)
-    }
-
-    /// The reader's size slider — the same control every other reading
-    /// surface offers, bound to the missal's own scale.
-    private func sizeSlider(_ scale: Binding<Double>) -> some View {
-        VStack(alignment: .leading, spacing: 9) {
-            Text("TEXT SIZE")
-                .font(AppFonts.labelFont(9))
-                .tracking(2.5)
-                .foregroundColor(AppColors.textSecondary)
-
-            HStack(spacing: 14) {
-                Text("A")
-                    .font(AppFonts.readingFont(13))
-                    .foregroundColor(AppColors.textSecondary)
-
-                Slider(value: scale, in: 0...1)
-                    .tint(AppColors.gold)
-                    .accessibilityLabel("Text size")
-
-                Text("A")
-                    .font(AppFonts.readingFont(24))
-                    .foregroundColor(AppColors.cream)
-            }
-        }
-        .padding(.bottom, 6)
-    }
-
+    /// A switch in the sheet's row grammar: the setting's name, what it
+    /// does to the page in full (never cut to a line), and the switch at
+    /// the trailing edge.
     private func toggleRow(title: String, detail: String, isOn: Binding<Bool>) -> some View {
-        HStack(spacing: 14) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title.uppercased())
-                    .font(AppFonts.labelFont(12))
-                    .tracking(1.5)
-                    .foregroundColor(AppColors.cream)
-
-                Text(detail)
-                    .font(AppFonts.bodyFont(13))
-                    .foregroundColor(AppColors.textSecondary)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-
-            Spacer(minLength: 8)
-
-            Toggle(title, isOn: isOn)
-                .labelsHidden()
-                .tint(AppColors.gold.opacity(0.55))
-        }
-        .frame(minHeight: 44)
-        .padding(.top, 16)
-        .overlay(alignment: .top) {
-            Rectangle()
-                .fill(AppColors.gold.opacity(0.1))
-                .frame(height: AppLine.hairline)
-        }
-        .padding(.top, 4)
+        SheetToggleRow(
+            title: title,
+            detail: detail,
+            isOn: isOn,
+            tint: AppColors.gold.opacity(0.55)
+        )
     }
 }
 
 // MARK: - MissalIndexSheet
 
 /// The ☰ sheet: every visible section as a ruled ledger — the active
-/// one marked with a lit dot, propers with their diamond — a tap jumps
+/// one lit and marked HERE, propers with their diamond — a tap jumps
 /// the page there and puts the sheet away.
 struct MissalIndexSheet: View {
 
@@ -421,7 +416,7 @@ struct MissalIndexSheet: View {
     let onJump: (String) -> Void
 
     var body: some View {
-        MissalSheetShell(title: "Ordo Missæ") {
+        MissalSheetShell(kicker: "Daily Missal", title: "Ordo Missæ") {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
                     ForEach(Array(sections.enumerated()), id: \.element.id) { index, section in
@@ -442,64 +437,160 @@ struct MissalIndexSheet: View {
             onJump(section.id)
             dismiss()
         } label: {
-            HStack(spacing: 11) {
-                Circle()
-                    .fill(isActive ? AppColors.gold : Color.clear)
-                    .frame(width: 5, height: 5)
-                    .shadow(color: isActive ? AppColors.gold.opacity(0.6) : .clear, radius: 4)
-
-                Rectangle()
-                    .fill(section.isProper ? AppColors.gold.opacity(0.85) : Color.clear)
-                    .frame(width: 4, height: 4)
-                    .rotationEffect(.degrees(45))
-
-                VStack(alignment: .leading, spacing: 1) {
-                    Text(section.latinName.uppercased())
-                        .font(AppFonts.labelFont(13))
-                        .tracking(1.5)
-                        .foregroundColor(isActive ? AppColors.gold : AppColors.cream)
-
-                    if section.latinName.caseInsensitiveCompare(section.englishName) != .orderedSame {
-                        Text(section.englishName)
-                            .font(AppFonts.bodyFont(13))
-                            .foregroundColor(AppColors.textSecondary)
-                    }
-                }
-
-                Spacer(minLength: 8)
-
-                if let posture = section.posture {
-                    Text(posture.rawValue.uppercased())
-                        .font(AppFonts.labelFont(8.5))
-                        .tracking(2)
-                        .foregroundColor(AppColors.gold.opacity(0.42))
-                }
-            }
-            .padding(.vertical, 13)
-            .frame(minHeight: 44)
-            .contentShape(Rectangle())
+            MissalIndexRow(section: section, isActive: isActive)
         }
         .buttonStyle(SacredCardButtonStyle())
-        .overlay(alignment: .bottom) {
-            Rectangle()
-                .fill(AppColors.gold.opacity(0.1))
-                .frame(height: AppLine.hairline)
-        }
         .accessibilityAddTraits(isActive ? .isSelected : [])
     }
 
+    /// The legend keeps its diamond in the rows' mark column, so the mark
+    /// it explains stands where the marks above it do, and its words
+    /// under the rows' names.
     private var legend: some View {
-        HStack(spacing: 9) {
-            Rectangle()
-                .fill(AppColors.gold.opacity(0.85))
-                .frame(width: 4, height: 4)
-                .rotationEffect(.degrees(45))
+        SheetNote("Marked parts are proper to today; the rest is the Ordinary.")
+            .padding(.leading, MissalIndexRow.nameInset)
+            .overlay(alignment: .topLeading) {
+                MissalProperDiamond()
+                    .frame(width: MissalIndexRow.markColumn, height: 18)
+                    .padding(.leading, SheetMetrics.gutter)
+                    .padding(.top, 14)
+            }
+    }
+}
 
-            Text("Marked parts are proper to today; the rest is the Ordinary.")
-                .font(AppFonts.bodyFont(12.5))
-                .foregroundColor(AppColors.textSecondary)
+// MARK: - MissalIndexRow
+
+/// One row of the Ordo's index, in `SheetRow`'s measure — gutter, mark
+/// column, name over an italic line, the lit wash, the rule — built here
+/// because its leading mark is the propers' diamond, which is the
+/// missal's own mark and not a glyph `SheetRow` can take by name. The
+/// row being read says HERE; every other row keeps its posture as a
+/// quiet state at the trailing edge.
+private struct MissalIndexRow: View {
+
+    let section: MissalReaderSection
+    let isActive: Bool
+
+    /// SheetRow's glyph column and the space after it
+    static let markColumn: CGFloat = 22
+    static let markSpacing: CGFloat = 14
+
+    /// How far past the gutter a row's name begins
+    static var nameInset: CGFloat { markColumn + markSpacing }
+
+    private var showsBothNames: Bool {
+        !section.englishName.isEmpty
+            && section.latinName.caseInsensitiveCompare(section.englishName) != .orderedSame
+    }
+
+    var body: some View {
+        HStack(spacing: Self.markSpacing) {
+            ZStack {
+                if section.isProper {
+                    MissalProperDiamond(isLit: isActive)
+                }
+            }
+            .frame(width: Self.markColumn)
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(section.latinName)
+                    .font(AppFonts.bodyFont(16))
+                    .foregroundColor(isActive ? AppColors.goldLight : AppColors.cream)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                if showsBothNames {
+                    Text(section.englishName)
+                        .font(AppFonts.italicFont(13))
+                        .foregroundColor(AppColors.textSecondary)
+                        .multilineTextAlignment(.leading)
+                        .lineLimit(1)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            if isActive {
+                SheetRowAccessoryView(accessory: .label("Here"))
+            } else if let posture = section.posture {
+                Text(posture.rawValue.uppercased())
+                    .font(AppFonts.labelFont(8))
+                    .tracking(1.5)
+                    .foregroundColor(AppColors.gold.opacity(0.42))
+                    .lineLimit(1)
+                    .fixedSize()
+            }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.top, 16)
+        .padding(.horizontal, SheetMetrics.gutter)
+        .padding(.vertical, 11)
+        .frame(minHeight: SheetMetrics.rowMinHeight)
+        .background(isActive ? AppColors.gold.opacity(0.07) : Color.clear)
+        .overlay(alignment: .bottom) {
+            SheetRule()
+        }
+        .contentShape(Rectangle())
+    }
+}
+
+// MARK: - Collapsing Plate
+
+/// How far a reader's text has risen past the foot of its header. It
+/// lives in its own observable, not the reader's `@State`, so that the
+/// plate — the one view that reads it — is the one view drawn again on
+/// every frame of a scroll, and the Mass beneath it is not.
+@Observable
+final class ReaderScrollOffset {
+    var pastTop: CGFloat = 0
+}
+
+/// How much of a collapsing plate's top edge dissolves as it passes
+/// under the chrome. At file scope because a generic type can hold no
+/// static stored property of its own.
+private let readerPlateEdgeFade: CGFloat = 14
+
+/// The missal's and the Office's header plate, collapsed by the scroll
+/// itself. The plate's height is taken point for point from how far the
+/// text has risen, so the rail beneath it rides on the first line of
+/// the reading and the two travel as one surface until the plate is
+/// gone. It is cut from the top, the way a page passes under a bar, and
+/// dissolves as it goes.
+///
+/// It once collapsed on its own clock: an animation set off when the
+/// scroll crossed a threshold. Until then the text slid under a plate
+/// that stood still, and after it the rail leapt a plate's height while
+/// the plate's words hung behind it fading — the header answered the
+/// finger a beat late in both directions. Direct manipulation, so it
+/// stays under Reduce Motion.
+struct CollapsingReaderPlate<Content: View>: View {
+
+    let offset: ReaderScrollOffset
+
+    /// The plate's natural height, measured here and kept by the reader,
+    /// whose content column leaves the same room at its head
+    @Binding var naturalHeight: CGFloat
+
+    @ViewBuilder let content: Content
+
+    var body: some View {
+        let risen: CGFloat = min(max(offset.pastTop, 0), naturalHeight)
+        let progress: Double = naturalHeight > 0 ? Double(risen / naturalHeight) : 0
+
+        content
+            .frame(maxWidth: .infinity)
+            .fixedSize(horizontal: false, vertical: true)
+            .onGeometryChange(for: CGFloat.self) { proxy in
+                proxy.size.height
+            } action: { height in
+                naturalHeight = height
+            }
+            .opacity(1 - min(1, progress * 1.25))
+            .frame(height: naturalHeight - risen, alignment: .bottom)
+            .mask {
+                VStack(spacing: 0) {
+                    LinearGradient(colors: [.clear, .black], startPoint: .top, endPoint: .bottom)
+                        .frame(height: min(readerPlateEdgeFade, risen))
+                    Color.black
+                }
+            }
+            .allowsHitTesting(progress < 0.5)
     }
 }

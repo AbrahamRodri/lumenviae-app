@@ -16,28 +16,23 @@ struct PrayButtonEditorSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        ZStack {
-            AppColors.appGradient.ignoresSafeArea()
+        VStack(spacing: 0) {
+            EditorHeader(
+                title: "Pray Button",
+                subtitle: "What a tap begins, and what a hold offers.",
+                onDone: { dismiss() }
+            )
 
-            VStack(spacing: 0) {
-                EditorHeader(
-                    title: "Pray Button",
-                    subtitle: "What a tap begins, and what a hold offers.",
-                    onDone: { dismiss() }
-                )
+            List {
+                previewSection
 
-                List {
-                    previewSection
+                quickTapSection
 
-                    quickTapSection
-
-                    holdSections
-                }
-                .listStyle(.insetGrouped)
-                .scrollContentBackground(.hidden)
-                .environment(\.editMode, .constant(.active))
+                holdSections
             }
+            .editorList()
         }
+        .sheetGround()
     }
 
     // MARK: - Preview
@@ -81,8 +76,9 @@ struct PrayButtonEditorSheet: View {
 
                 Spacer(minLength: 0)
             }
+            .padding(.horizontal, SheetMetrics.gutter)
             .padding(.vertical, 10)
-            .listRowBackground(AppColors.cardBackground)
+            .editorListRow()
         }
     }
 
@@ -103,39 +99,25 @@ struct PrayButtonEditorSheet: View {
                 Button {
                     settings.prayQuickActionRaw = shortcut.rawValue
                 } label: {
-                    HStack(spacing: 14) {
-                        AppIcon(shortcut.icon, size: 17)
-                            .foregroundColor(AppColors.gold)
-                            .frame(width: 22)
-
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(shortcut.title)
-                                .font(AppFonts.bodyFont(15))
-                                .foregroundColor(
-                                    settings.prayQuickAction == shortcut
-                                        ? AppColors.gold : AppColors.cream
-                                )
-
-                            Text(shortcut.subtitle)
-                                .font(AppFonts.bodyFont(11))
-                                .foregroundColor(AppColors.textSecondary)
-                        }
-
-                        Spacer()
-
+                    SheetRow(
+                        shortcut.title,
+                        detail: shortcut.subtitle,
+                        icon: shortcut.icon,
+                        isLit: settings.prayQuickAction == shortcut,
+                        detailLineLimit: nil
+                    ) {
                         if settings.prayQuickAction == shortcut {
                             AppIcon("ph-check-circle-fill", size: 20)
-                                .foregroundColor(AppColors.gold)
+                                .foregroundColor(AppColors.goldLight)
                         } else {
                             Circle()
                                 .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: 1.2)
                                 .frame(width: 20, height: 20)
                         }
                     }
-                    .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
-                .listRowBackground(AppColors.cardBackground)
+                .buttonStyle(SacredCardButtonStyle())
+                .editorListRow()
                 .accessibilityAddTraits(settings.prayQuickAction == shortcut ? .isSelected : [])
             }
         } header: {

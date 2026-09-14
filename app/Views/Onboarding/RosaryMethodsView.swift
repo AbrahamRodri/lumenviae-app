@@ -2,8 +2,8 @@
 //  RosaryMethodsView.swift
 //  Lumen Viae
 //
-//  Presented as a sheet from the onboarding "Methods of Praying the Rosary" button.
-//  Explains the different meditation styles available in the app.
+//  Presented as a sheet from onboarding's "Kinds of Meditation" link.
+//  Explains the kinds of meditation set the library carries.
 //
 //  The cards are the kinds the library actually carries — the labels the
 //  picker filters by, in the wording `MeditationLabel.displayName` gives
@@ -12,6 +12,9 @@
 //  meditations that have not been written, and a bead-by-bead Scriptural
 //  Rosary promised as coming soon: three things a new reader would have
 //  gone looking for and not found.
+//
+//  It was titled "Methods of Praying the Rosary", which it is not: the
+//  Rosary is prayed one way, and these are the words kept beside it.
 //
 
 import SwiftUI
@@ -45,105 +48,74 @@ struct RosaryMethodsView: View {
             label: "Considerations",
             icon: "ch-rosary",
             title: "A reading and a prayer",
-            description: "A brief reflection on the mystery, and often a prayer to close it — the words of preachers and doctors of the Church, read in a minute and carried through the decade.\n\nSt. Alphonsus Liguori · Ven. Fulton J. Sheen · St. John Henry Newman · St. Thomas Aquinas"
+            description: "A short reflection on the mystery, often with a prayer at the end. The words come from preachers and Doctors of the Church. Read it once, then keep it in mind through the decade.\n\nSt. Alphonsus Liguori · Ven. Fulton J. Sheen · St. John Henry Newman · St. Thomas Aquinas"
         ),
         MeditationKind(
             label: "Contemplative",
             icon: "ch-candle",
             title: "Inside the scene",
-            description: "Longer passages that set you within the mystery rather than beside it — what was seen, heard, and felt there. Read slowly; there is no need to reach the end of the page before the decade does.\n\nBl. Anne Catherine Emmerich · Ven. Mary of Agreda · St. Ignatius of Loyola · Fr. Frederick William Faber"
+            description: "Longer passages that place you within the mystery: what was seen, heard, and felt there. Read slowly. You do not need to finish the page before the decade ends.\n\nBl. Anne Catherine Emmerich · Ven. Mary of Agreda · St. Ignatius of Loyola · Fr. Frederick William Faber"
         ),
         MeditationKind(
             label: "Saints",
             icon: "ph-user",
-            title: "In a saint's own voice",
-            description: "Marks a set whose voice is a saint of the Church, so it stands beside the other kinds rather than apart from them.\n\nA set of St. Alphonsus's reflections carries this mark and Reflections both."
+            title: "In a saint's own words",
+            description: "A set written by a saint of the Church carries this label as well as its own kind.\n\nA set of St. Alphonsus's reflections, for example, is marked both Saints and Reflections."
         ),
         MeditationKind(
             label: "Scriptural",
             icon: "ch-bible",
             title: "The Gospel first",
-            description: "The passage itself, then a few lines of meditation on it.\n\nThis is the shape the Seven Sorrows take, where the Gospel carries the whole of the scene. For a verse on every bead, the Scriptural Rosary has a page of its own in Explore."
+            description: "The Scripture passage for the mystery, then a few lines of meditation on it.\n\nThe Seven Sorrows are set this way, because the Gospel tells the whole scene. For a verse on every bead, open the Scriptural Rosary from Explore."
         )
     ]
 
     var body: some View {
-        ZStack {
-            AppColors.appGradient
-                .ignoresSafeArea()
+        VStack(spacing: 0) {
+            SheetHeader(kicker: "Meditation sets", title: "Kinds of Meditation") {
+                SheetHeaderAction(title: "Close") { dismiss() }
+            }
 
-            VStack(spacing: 0) {
-                // Header
-                HStack {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("METHODS OF PRAYING")
-                            .font(AppFonts.headlineFont(11))
-                            .tracking(3)
-                            .foregroundColor(AppColors.gold)
+            // Content
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 0) {
+                    // Intro
+                    Text("The Rosary is always the same prayer: the same mysteries in the same order, with ten Hail Marys for each. A meditation set gives you words to think about while you pray.\n\nEach set has one meditation for each mystery: five for the Rosary, or seven for the Seven Sorrows.")
+                        .font(AppFonts.bodyFont(15))
+                        .foregroundColor(AppColors.textSecondary)
+                        .lineSpacing(ReadingTypography.lineSpacing(for: 15))
+                        .multilineTextAlignment(.leading)
+                        .padding(.horizontal, 24)
+                        // The header keeps its own room beneath it
+                        .padding(.top, 8)
+                        .padding(.bottom, 28)
 
-                        Text("The Rosary")
-                            .font(AppFonts.headlineFont(24))
-                            .foregroundColor(AppColors.cream)
-                    }
-
-                    Spacer()
-
-                    Button {
-                        dismiss()
-                    } label: {
-                        AppIcon("ph-x", size: 14)
-                            .foregroundColor(AppColors.textSecondary)
-                            .padding(10)
-                            .background(AppColors.cardBackground)
-                            .clipShape(Circle())
-                    }
-                }
-                .padding(.horizontal, 24)
-                .padding(.top, 28)
-                .padding(.bottom, 20)
-
-                Divider()
-                    .background(AppColors.gold.opacity(0.2))
-
-                // Content
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: 0) {
-                        // Intro
-                        Text("The Rosary is always the same prayer: the same mysteries, in the same order, with the same Aves between them. What changes is the voice you keep beside you while you pray them.\n\nEvery set holds a meditation for each mystery — five of them, or seven for the Seven Sorrows.")
-                            .font(AppFonts.bodyFont(15))
-                            .foregroundColor(AppColors.textSecondary)
-                            .lineSpacing(ReadingTypography.lineSpacing(for: 15))
-                            .multilineTextAlignment(.leading)
-                            .padding(.horizontal, 24)
-                            .padding(.top, 24)
-                            .padding(.bottom, 28)
-
-                        // Method cards
-                        VStack(spacing: 16) {
-                            ForEach(kinds) { kind in
-                                MethodDetailCard(
-                                    icon: kind.icon,
-                                    tag: MeditationLabel.displayName(kind.label),
-                                    title: kind.title,
-                                    description: kind.description
-                                )
-                            }
+                    // Method cards
+                    VStack(spacing: 16) {
+                        ForEach(kinds) { kind in
+                            MethodDetailCard(
+                                icon: kind.icon,
+                                tag: MeditationLabel.displayName(kind.label),
+                                title: kind.title,
+                                description: kind.description
+                            )
                         }
-                        .padding(.horizontal, 20)
-
-                        // Where the kinds are actually met
-                        Text("Open a mystery and you arrive at its shelf, where every set waits under its own painting. The funnel filters them by these kinds, and anything you pin is held at the top for next time. Each meditation can be read, or heard where a set carries narration.")
-                            .font(AppFonts.bodyFont(15))
-                            .foregroundColor(AppColors.textSecondary)
-                            .lineSpacing(ReadingTypography.lineSpacing(for: 15))
-                            .multilineTextAlignment(.leading)
-                            .padding(.horizontal, 24)
-                            .padding(.top, 28)
-                            .padding(.bottom, 40)
                     }
+                    .padding(.horizontal, 20)
+
+                    // Where the kinds are actually met
+                    Text("Open a mystery to see its meditation sets, each under its own painting. The filter button sorts them by these kinds, and a set you pin stays at the top. You can read each meditation, or listen when a set has narration.")
+                        .font(AppFonts.bodyFont(15))
+                        .foregroundColor(AppColors.textSecondary)
+                        .lineSpacing(ReadingTypography.lineSpacing(for: 15))
+                        .multilineTextAlignment(.leading)
+                        .padding(.horizontal, 24)
+                        .padding(.top, 28)
+                        .padding(.bottom, 40)
                 }
             }
         }
+        .sheetGround()
     }
 }
 
@@ -169,7 +141,7 @@ private struct MethodDetailCard: View {
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(tag.uppercased())
-                        .font(.system(size: 10, weight: .semibold, design: .serif))
+                        .font(AppFonts.labelFont(10))
                         .tracking(2)
                         .foregroundColor(AppColors.gold.opacity(0.7))
 

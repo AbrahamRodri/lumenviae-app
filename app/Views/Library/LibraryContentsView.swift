@@ -53,10 +53,21 @@ struct LibraryPartRun: Identifiable {
 
 // MARK: - Contents ledger
 
+/// Where a ledger is drawn. The book page keeps its own ruled list; the
+/// reader's ☰ sheet sets the same chapters as the app's sheet rows
+/// (`SheetChrome`), so its index reads like every other sheet's.
+enum LibraryContentsStyle {
+    case page
+    case sheet
+}
+
 /// The ruled ledger itself, without any chrome around it.
 struct LibraryContentsLedger: View {
 
     let runs: [LibraryPartRun]
+
+    /// The page's list by default; the ☰ sheet asks for its own rows
+    var style: LibraryContentsStyle = .page
 
     /// Where the reader is now — a gold dot
     var currentIndex: Int?
@@ -113,45 +124,90 @@ struct LibraryContentsLedger: View {
                 expandedParts.insert(run.id)
             }
         } label: {
-            HStack(spacing: 12) {
-                Text((run.title ?? "").uppercased())
-                    .font(AppFonts.labelFont(11))
-                    .tracking(2.5)
-                    .foregroundColor(AppColors.gold.opacity(isOpen ? 0.95 : 0.75))
-                    .fixedSize()
-
-                if holdsCurrent, !isOpen {
-                    Circle()
-                        .fill(AppColors.goldLight)
-                        .frame(width: 5, height: 5)
-                }
-
-                Rectangle()
-                    .fill(
-                        LinearGradient(
-                            colors: [AppColors.gold.opacity(0.3), AppColors.gold.opacity(0)],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .frame(height: 1)
-
-                Text("\(run.chapters.count)")
-                    .font(AppFonts.labelFont(10))
-                    .tracking(1)
-                    .foregroundColor(AppColors.textSecondary.opacity(0.8))
-
-                AppIcon(isOpen ? "ph-caret-up" : "ph-caret-down", size: 10)
-                    .foregroundColor(AppColors.gold.opacity(0.6))
-                    .animation(.easeOut(duration: 0.2), value: isOpen)
+            switch style {
+            case .page:
+                pagePartLabel(run, isOpen: isOpen, holdsCurrent: holdsCurrent)
+            case .sheet:
+                sheetPartLabel(run, isOpen: isOpen, holdsCurrent: holdsCurrent)
             }
-            .padding(.vertical, 14)
-            .frame(minHeight: 44)
-            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .accessibilityLabel("\(run.title ?? "Part"), \(run.chapters.count) chapters")
         .accessibilityHint(isOpen ? "Closes this part's chapters" : "Opens this part's chapters")
+    }
+
+    /// The book page's part heading: engraved caps over a fading rule
+    private func pagePartLabel(_ run: LibraryPartRun, isOpen: Bool, holdsCurrent: Bool) -> some View {
+        HStack(spacing: 12) {
+            Text((run.title ?? "").uppercased())
+                .font(AppFonts.labelFont(11))
+                .tracking(2.5)
+                .foregroundColor(AppColors.gold.opacity(isOpen ? 0.95 : 0.75))
+                .fixedSize()
+
+            if holdsCurrent, !isOpen {
+                Circle()
+                    .fill(AppColors.goldLight)
+                    .frame(width: 5, height: 5)
+            }
+
+            Rectangle()
+                .fill(
+                    LinearGradient(
+                        colors: [AppColors.gold.opacity(0.3), AppColors.gold.opacity(0)],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .frame(height: 1)
+
+            Text("\(run.chapters.count)")
+                .font(AppFonts.labelFont(10))
+                .tracking(1)
+                .foregroundColor(AppColors.textSecondary.opacity(0.8))
+
+            AppIcon(isOpen ? "ph-caret-up" : "ph-caret-down", size: 10)
+                .foregroundColor(AppColors.gold.opacity(0.6))
+                .animation(.easeOut(duration: 0.2), value: isOpen)
+        }
+        .padding(.vertical, 14)
+        .frame(minHeight: 44)
+        .contentShape(Rectangle())
+    }
+
+    /// The sheet's part heading: a `SheetSectionLabel` that still folds,
+    /// with the part's size and its caret at the trailing edge
+    private func sheetPartLabel(_ run: LibraryPartRun, isOpen: Bool, holdsCurrent: Bool) -> some View {
+        HStack(spacing: 10) {
+            Text((run.title ?? "").uppercased())
+                .font(AppFonts.labelFont(9))
+                .tracking(2.5)
+                .foregroundColor(AppColors.gold.opacity(isOpen ? 0.95 : 0.75))
+                .multilineTextAlignment(.leading)
+                .fixedSize(horizontal: false, vertical: true)
+
+            if holdsCurrent, !isOpen {
+                Circle()
+                    .fill(AppColors.goldLight)
+                    .frame(width: 5, height: 5)
+            }
+
+            Spacer(minLength: 8)
+
+            Text("\(run.chapters.count)")
+                .font(AppFonts.labelFont(9))
+                .tracking(1)
+                .foregroundColor(AppColors.textSecondary.opacity(0.8))
+
+            AppIcon(isOpen ? "ph-caret-up" : "ph-caret-down", size: 10)
+                .foregroundColor(AppColors.gold.opacity(0.6))
+                .animation(.easeOut(duration: 0.2), value: isOpen)
+        }
+        .padding(.horizontal, SheetMetrics.gutter)
+        .padding(.top, 20)
+        .padding(.bottom, 8)
+        .frame(minHeight: 44)
+        .contentShape(Rectangle())
     }
 
     // MARK: Chapter rows
@@ -161,6 +217,7 @@ struct LibraryContentsLedger: View {
         ForEach(chapters) { chapter in
             LibraryChapterRow(
                 chapter: chapter,
+                style: style,
                 isCurrent: chapter.id == currentIndex,
                 isFinished: finished.contains(chapter.id),
                 isLast: chapter.id == chapters.last?.id,
@@ -208,6 +265,10 @@ struct LibraryRowListening {
 struct LibraryChapterRow: View {
 
     let chapter: LibraryChapter
+
+    /// The page's row by default; the ☰ sheet draws a `SheetRow`
+    var style: LibraryContentsStyle = .page
+
     var isCurrent: Bool = false
     var isFinished: Bool = false
     var isLast: Bool = false
@@ -232,6 +293,15 @@ struct LibraryChapterRow: View {
     }
 
     var body: some View {
+        switch style {
+        case .page: pageRow
+        case .sheet: sheetRow
+        }
+    }
+
+    // MARK: Page row
+
+    private var pageRow: some View {
         VStack(spacing: 0) {
             Button {
                 onSelect(chapter)
@@ -339,6 +409,82 @@ struct LibraryChapterRow: View {
                     .background(AppColors.gold.opacity(0.15))
             }
         }
+    }
+
+    // MARK: Sheet row
+
+    /// The ☰ sheet's row: the chapter's name, its heading beneath where
+    /// the edition prints a distinct one, the ribbons laid in it, and HERE
+    /// lit where the reader is. No listen chip — in the index a row is
+    /// only a door.
+    private var sheetRow: some View {
+        Button {
+            onSelect(chapter)
+        } label: {
+            VStack(alignment: .leading, spacing: 0) {
+                SheetRow(
+                    chapter.displayTitle,
+                    detail: hasDistinctTitle ? chapter.heading : nil,
+                    isLit: isCurrent,
+                    showsDivider: excerpt == nil
+                ) {
+                    HStack(spacing: 10) {
+                        if markCount > 0 {
+                            sheetMarkRibbon
+                        }
+
+                        SheetRowAccessoryView(accessory: isCurrent ? .label("Here") : .caret)
+                    }
+                }
+
+                // A search match's line, under the row in its own hand:
+                // `SheetRow` takes plain strings, and the gold on the
+                // matched words is how the eye finds the line. Pulled up
+                // into the row's foot; its wash is laid after the pull so
+                // it meets the row's rather than doubling over it.
+                if let excerpt {
+                    Text(excerpt)
+                        .font(AppFonts.italicFont(13))
+                        .foregroundColor(AppColors.textSecondary)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, SheetMetrics.gutter)
+                        .padding(.bottom, 12)
+                        .padding(.top, -7)
+                        .background(isCurrent ? AppColors.gold.opacity(0.07) : Color.clear)
+                        .overlay(alignment: .bottom) { SheetRule() }
+                }
+            }
+            // The read-mark, in the gutter: a thin rule, the way a
+            // well-used book falls open. Never a checkbox.
+            .overlay(alignment: .leading) {
+                Rectangle()
+                    .fill(isFinished ? AppColors.gold.opacity(0.45) : Color.clear)
+                    .frame(width: 2)
+                    .padding(.vertical, 10)
+                    .padding(.leading, 12)
+                    .accessibilityHidden(true)
+            }
+        }
+        .buttonStyle(SacredCardButtonStyle())
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(spokenLabel)
+        .accessibilityAddTraits(isCurrent ? [.isSelected] : [])
+    }
+
+    /// The ribbons laid in this chapter, beside the row's caret
+    private var sheetMarkRibbon: some View {
+        HStack(spacing: 4) {
+            MarkerRibbonShape()
+                .fill(AppColors.goldLight)
+                .frame(width: 7, height: 15)
+
+            Text("\(markCount)")
+                .font(AppFonts.labelFont(9))
+                .foregroundColor(AppColors.goldLight.opacity(0.9))
+        }
+        .accessibilityHidden(true)
     }
 
     /// A small arrow that fills to a solid mark once the reading is on
@@ -451,6 +597,41 @@ struct LibraryChapterRow: View {
     }
 }
 
+// MARK: - A mark, in a sheet
+
+/// One ribbon in a contents sheet's YOUR MARKS: where it lies, the words
+/// it marks, and a door straight back to its paragraph. Shared by the
+/// shelf's ☰ sheet and True Devotion's, which keep their marks the same
+/// way and differ only in how a chapter is named.
+struct LibraryMarkSheetRow: View {
+
+    /// The chapter the ribbon lies in
+    let place: String
+
+    /// The paragraph's opening words, where the paragraph still exists
+    let words: String?
+
+    let spokenLabel: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            SheetRow(place, detail: words, detailLineLimit: 2) {
+                HStack(spacing: 10) {
+                    MarkerRibbonShape()
+                        .fill(AppColors.goldLight)
+                        .frame(width: 7, height: 15)
+                        .accessibilityHidden(true)
+
+                    SheetRowAccessoryView(accessory: .caret)
+                }
+            }
+        }
+        .buttonStyle(SacredCardButtonStyle())
+        .accessibilityLabel(spokenLabel)
+    }
+}
+
 // MARK: - Contents sheet
 
 /// The ☰ sheet: the whole book from inside a chapter, the pages that
@@ -487,80 +668,73 @@ struct LibraryContentsSheet: View {
     }
 
     var body: some View {
-        ZStack {
-            AppColors.appGradient.ignoresSafeArea()
+        ScrollViewReader { proxy in
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 0) {
+                    SheetHeader(kicker: info.title, title: "Contents") {
+                        place
+                    }
 
-            ScrollViewReader { proxy in
-                ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 0) {
-                        header
+                    // Deliberately not auto-focused: the page is a place
+                    // first and a search second, the same restraint
+                    // Explore keeps.
+                    searchField
+                        .padding(.horizontal, SheetMetrics.gutter)
+                        .padding(.bottom, 12)
 
-                        if query.isEmpty {
-                            if !marks.isEmpty {
-                                marksSection
+                    if query.isEmpty {
+                        if !marks.isEmpty {
+                            marksSection
+
+                            // A book with no parts has no heading of its
+                            // own to end the marks on
+                            if runs.count == 1 {
+                                SheetSectionLabel("Chapters")
                             }
-
-                            LibraryContentsLedger(
-                                runs: runs,
-                                currentIndex: currentIndex,
-                                finished: finished,
-                                markCounts: markCounts,
-                                expandedParts: $expandedParts,
-                                onSelect: { chapter in
-                                    onSelect(chapter.id)
-                                    dismiss()
-                                }
-                            )
-                        } else {
-                            results
                         }
 
-                        Spacer(minLength: 40)
+                        LibraryContentsLedger(
+                            runs: runs,
+                            style: .sheet,
+                            currentIndex: currentIndex,
+                            finished: finished,
+                            markCounts: markCounts,
+                            expandedParts: $expandedParts,
+                            onSelect: { chapter in
+                                onSelect(chapter.id)
+                                dismiss()
+                            }
+                        )
+                    } else {
+                        results
                     }
-                    .padding(.horizontal, 22)
+
+                    Spacer(minLength: 40)
                 }
-                .onAppear {
-                    if runs.isEmpty { runs = LibraryPartRun.runs(of: book) }
-                    seedExpansion()
-                    // Open on the chapter being read, not at the head of
-                    // a book the reader is sixty chapters into.
-                    DispatchQueue.main.async {
-                        proxy.scrollTo(currentIndex, anchor: .center)
-                    }
+            }
+            .onAppear {
+                if runs.isEmpty { runs = LibraryPartRun.runs(of: book) }
+                seedExpansion()
+                // Open on the chapter being read, not at the head of
+                // a book the reader is sixty chapters into.
+                DispatchQueue.main.async {
+                    proxy.scrollTo(currentIndex, anchor: .center)
                 }
             }
         }
+        .sheetGround()
     }
 
     // MARK: Header
 
-    private var header: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 10) {
-                Text("CONTENTS")
-                    .font(AppFonts.labelFont(10))
-                    .tracking(2.5)
-                    .foregroundColor(AppColors.gold.opacity(0.8))
-
-                Spacer()
-
-                Text("\(currentIndex + 1) of \(book.chapters.count)")
-                    .font(AppFonts.labelFont(10))
-                    .tracking(1.5)
-                    .foregroundColor(AppColors.textSecondary)
-            }
-            .padding(.top, 22)
-
-            // Deliberately not auto-focused: the page is a place first
-            // and a search second, the same restraint Explore keeps.
-            searchField
-
-            Rectangle()
-                .fill(AppColors.gold.opacity(0.2))
-                .frame(height: AppLine.hairline)
-                .padding(.top, 4)
-        }
-        .padding(.bottom, 4)
+    /// Where the reader stands in the book, level with the kicker
+    private var place: some View {
+        Text("\(currentIndex + 1) of \(book.chapters.count)".uppercased())
+            .font(AppFonts.labelFont(9))
+            .tracking(1.5)
+            .foregroundColor(AppColors.textSecondary)
+            .fixedSize()
+            .accessibilityLabel("Chapter \(currentIndex + 1) of \(book.chapters.count)")
     }
 
     private var searchField: some View {
@@ -604,69 +778,27 @@ struct LibraryContentsSheet: View {
     /// door straight back to its paragraph.
     private var marksSection: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HStack(alignment: .firstTextBaseline, spacing: 10) {
-                Text("YOUR MARKS · \(marks.count)")
-                    .font(AppFonts.labelFont(10))
-                    .tracking(2.2)
-                    .foregroundColor(AppColors.gold.opacity(0.85))
-
-                Text("the pages that stood out")
-                    .font(AppFonts.italicFont(12))
-                    .foregroundColor(AppColors.textSecondary)
-            }
-            .padding(.top, 16)
-            .padding(.bottom, 4)
+            SheetSectionLabel("Your marks · \(marks.count)")
 
             ForEach(Array(marks.enumerated()), id: \.offset) { _, mark in
                 markRow(mark)
             }
-
-            Rectangle()
-                .fill(AppColors.gold.opacity(0.2))
-                .frame(height: AppLine.hairline)
-                .padding(.top, 10)
         }
     }
 
     @ViewBuilder
     private func markRow(_ mark: BookPassageMark) -> some View {
         if let chapter = book.chapter(at: mark.chapter) {
-            Button {
+            LibraryMarkSheetRow(
+                place: chapter.heading,
+                words: chapter.paragraphs.indices.contains(mark.paragraph)
+                    ? openingWords(of: chapter.paragraphs[mark.paragraph])
+                    : nil,
+                spokenLabel: "Mark in \(chapter.displayTitle). Returns to that passage."
+            ) {
                 onSelectMark?(mark.chapter, mark.paragraph)
                 dismiss()
-            } label: {
-                HStack(alignment: .firstTextBaseline, spacing: 10) {
-                    MarkerRibbonShape()
-                        .fill(AppColors.goldLight)
-                        .frame(width: 7, height: 15)
-                        .alignmentGuide(.firstTextBaseline) { $0[.bottom] - 2 }
-
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text(chapter.heading.uppercased())
-                            .font(AppFonts.labelFont(9))
-                            .tracking(1.2)
-                            .foregroundColor(AppColors.gold.opacity(0.75))
-
-                        if chapter.paragraphs.indices.contains(mark.paragraph) {
-                            Text(openingWords(of: chapter.paragraphs[mark.paragraph]))
-                                .font(AppFonts.italicFont(13))
-                                .foregroundColor(AppColors.cream.opacity(0.85))
-                                .lineLimit(2)
-                                .multilineTextAlignment(.leading)
-                        }
-                    }
-
-                    Spacer(minLength: 8)
-
-                    AppIcon("ph-caret-right", size: 11)
-                        .foregroundColor(AppColors.textSecondary.opacity(0.5))
-                }
-                .padding(.vertical, 10)
-                .frame(minHeight: 44)
-                .contentShape(Rectangle())
             }
-            .buttonStyle(.plain)
-            .accessibilityLabel("Mark in \(chapter.displayTitle). Returns to that passage.")
         }
     }
 
@@ -690,12 +822,14 @@ struct LibraryContentsSheet: View {
                     .font(AppFonts.italicFont(13))
                     .foregroundColor(AppColors.textSecondary)
             }
-            .padding(.top, 28)
+            .padding(.horizontal, SheetMetrics.gutter)
+            .padding(.top, 16)
         } else {
             LazyVStack(alignment: .leading, spacing: 0) {
                 ForEach(found, id: \.chapter.id) { match in
                     LibraryChapterRow(
                         chapter: match.chapter,
+                        style: .sheet,
                         isCurrent: match.chapter.id == currentIndex,
                         isFinished: finished.contains(match.chapter.id),
                         isLast: match.chapter.id == found.last?.chapter.id,

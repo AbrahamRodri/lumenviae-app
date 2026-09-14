@@ -151,10 +151,10 @@ struct OfficeReadingSheet: View {
     var body: some View {
         @Bindable var settings = settings
 
-        return MissalSheetShell(title: "Reading") {
+        return MissalSheetShell(kicker: "Divine Office", title: "Reading") {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
-                    chipGroup("Language") {
+                    MissalSheetChipGroup("Language") {
                         MissalSheetChip(
                             title: "Latin",
                             isSelected: settings.prayerLanguage == .latin
@@ -171,7 +171,7 @@ struct OfficeReadingSheet: View {
                         ) { chooseBoth() }
                     }
 
-                    chipGroup("Latin and English") {
+                    MissalSheetChipGroup("Latin and English") {
                         MissalSheetChip(
                             title: "Stacked",
                             isSelected: settings.missalLayout == .interlinear
@@ -185,13 +185,10 @@ struct OfficeReadingSheet: View {
                         ) { chooseSideBySide() }
                     }
 
-                    sizeSlider($settings.missalTextScale)
+                    SheetSizeSlider(scale: $settings.missalTextScale)
 
-                    Text("The breviary and the missal are set the same way — these settings belong to both books.")
-                        .font(AppFonts.bodyFont(12))
-                        .foregroundColor(AppColors.textSecondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding(.top, 18)
+                    SheetNote("The breviary and the missal are set the same way — these settings belong to both books.")
+                        .padding(.top, 8)
                 }
                 .padding(.bottom, 36)
             }
@@ -218,54 +215,12 @@ struct OfficeReadingSheet: View {
             settings.prayerLanguagePreference = preferredBilingual.rawValue
         }
     }
-
-    // MARK: - Pieces
-
-    private func chipGroup<Chips: View>(
-        _ label: String,
-        @ViewBuilder chips: () -> Chips
-    ) -> some View {
-        VStack(alignment: .leading, spacing: 9) {
-            Text(label.uppercased())
-                .font(AppFonts.labelFont(9))
-                .tracking(2.5)
-                .foregroundColor(AppColors.textSecondary)
-
-            HStack(spacing: 8) {
-                chips()
-            }
-        }
-        .padding(.bottom, 20)
-    }
-
-    private func sizeSlider(_ scale: Binding<Double>) -> some View {
-        VStack(alignment: .leading, spacing: 9) {
-            Text("TEXT SIZE")
-                .font(AppFonts.labelFont(9))
-                .tracking(2.5)
-                .foregroundColor(AppColors.textSecondary)
-
-            HStack(spacing: 14) {
-                Text("A")
-                    .font(AppFonts.readingFont(13))
-                    .foregroundColor(AppColors.textSecondary)
-
-                Slider(value: scale, in: 0...1)
-                    .tint(AppColors.gold)
-                    .accessibilityLabel("Text size")
-
-                Text("A")
-                    .font(AppFonts.readingFont(24))
-                    .foregroundColor(AppColors.cream)
-            }
-        }
-    }
 }
 
 // MARK: - OfficeIndexSheet
 
 /// The ☰ sheet: the hour's named sections as a ruled ledger — the one
-/// being read marked with a lit dot — a tap jumps the page there and
+/// being read lit and marked HERE — a tap jumps the page there and
 /// puts the sheet away. Matins runs to nine lessons and nine psalms;
 /// without this the only way back to the Te Deum is a thumb.
 struct OfficeIndexSheet: View {
@@ -278,7 +233,7 @@ struct OfficeIndexSheet: View {
     let onJump: (String) -> Void
 
     var body: some View {
-        MissalSheetShell(title: hour.latinName) {
+        MissalSheetShell(kicker: "Divine Office", title: hour.latinName) {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
                     let reading = readingIndex
@@ -303,43 +258,20 @@ struct OfficeIndexSheet: View {
             && !section.latinName.isEmpty
             && section.latinName.caseInsensitiveCompare(section.englishName) != .orderedSame
 
+        // No caret on the other rows: the missal's index carries none
+        // either, and the two ledgers are one kind of page
         return Button {
             onJump(section.id)
             dismiss()
         } label: {
-            HStack(spacing: 11) {
-                Circle()
-                    .fill(isActive ? AppColors.gold : Color.clear)
-                    .frame(width: 5, height: 5)
-                    .shadow(color: isActive ? AppColors.gold.opacity(0.6) : .clear, radius: 4)
-
-                VStack(alignment: .leading, spacing: 1) {
-                    Text((section.latinName.isEmpty ? section.englishName : section.latinName).uppercased())
-                        .font(AppFonts.labelFont(13))
-                        .tracking(1.5)
-                        .foregroundColor(isActive ? AppColors.gold : AppColors.cream)
-                        .multilineTextAlignment(.leading)
-
-                    if showsBothNames {
-                        Text(section.englishName)
-                            .font(AppFonts.bodyFont(13))
-                            .foregroundColor(AppColors.textSecondary)
-                            .multilineTextAlignment(.leading)
-                    }
-                }
-
-                Spacer(minLength: 8)
-            }
-            .padding(.vertical, 13)
-            .frame(minHeight: 44)
-            .contentShape(Rectangle())
+            SheetRow(
+                section.latinName.isEmpty ? section.englishName : section.latinName,
+                detail: showsBothNames ? section.englishName : nil,
+                accessory: isActive ? .label("Here") : .none,
+                isLit: isActive
+            )
         }
         .buttonStyle(SacredCardButtonStyle())
-        .overlay(alignment: .bottom) {
-            Rectangle()
-                .fill(AppColors.gold.opacity(0.1))
-                .frame(height: AppLine.hairline)
-        }
         .accessibilityAddTraits(isActive ? .isSelected : [])
     }
 }

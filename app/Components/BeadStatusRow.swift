@@ -61,7 +61,6 @@ struct BeadStatusRow: View {
                     GoldCTAButton(
                         title: "Amen",
                         prominence: .inline,
-                        showsCross: false,
                         trailingIcon: "ph-check",
                         fullWidth: false,
                         action: onAmen

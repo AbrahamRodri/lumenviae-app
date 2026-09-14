@@ -340,37 +340,14 @@ nunc et in hora mortis nostrae. Amen.
             id: "glory_be",
             title: "The Glory Be",
             latinTitle: "Gloria Patri",
-            content: BilingualText(
-                english: """
-Glory be to the Father, and to the Son, and to the Holy Spirit.
-As it was in the beginning, is now, and ever shall be,
-world without end. Amen.
-""",
-                latin: """
-Gloria Patri, et Filio, et Spiritui Sancto.
-Sicut erat in principio, et nunc, et semper,
-et in saecula saeculorum. Amen.
-"""
-            )
+            // Shared with the Scriptural Rosary's closing bead
+            content: RosaryPrayerText.gloryBe
         ),
         RosaryPrayer(
             id: "fatima_prayer",
             title: "The Fatima Prayer",
             latinTitle: "Oratio Fatimae",
-            content: BilingualText(
-                english: """
-O my Jesus, forgive us our sins,
-save us from the fires of hell,
-and lead all souls to heaven,
-especially those in most need of Thy mercy. Amen.
-""",
-                latin: """
-Domine Iesu, dimitte nobis debita nostra,
-salva nos ab igne inferiori,
-perduc in caelum omnes animas,
-praesertim eas, quae misericordiae tuae maxime indigent. Amen.
-"""
-            )
+            content: RosaryPrayerText.fatimaPrayer
         ),
         RosaryPrayer(
             id: "hail_holy_queen",

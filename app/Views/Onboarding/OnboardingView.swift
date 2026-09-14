@@ -2,893 +2,1181 @@
 //  OnboardingView.swift
 //  Lumen Viae
 //
-//  First-run tutorial shown once on initial launch.
-//  Tracked via @AppStorage so it never appears again after completion.
+//  First-run introduction, shown once on first launch and re-runnable
+//  from About.
 //
-//  Flow (8 slides — Headspace-style: few words, felt experience):
-//    1. Welcome           — an invitation, not a manual
-//    2. At your own pace  — a live demo of the five mysteries advancing;
-//                            meditations are read or played, prayer is
-//                            self-paced (no bead-level tracking is implied)
-//    3. Intention         — "What draws you here?" (self-segmentation;
-//                            creates ownership, personalizes the closing)
-//    4. What else is here — the consecration, the journal, the record,
-//                            the library. Named once, plainly: they are
-//                            what people come back for, and a first run
-//                            that only shows the Rosary never finds them
-//    5. Sanctuary         — pick a theme; tapping re-themes the whole app
-//                            live, so onboarding itself is the preview
-//    6. Prayer language   — English, Latin, or bilingual, with a live
-//                            preview of the Hail Mary in the chosen format
-//    7. Daily reminder    — pick a prayer time with the value explained,
-//                            which beats a cold permission prompt
-//    8. The threshold     — the crucifix a Rosary is begun on, a closing
-//                            line personalized to the intention, and the
-//                            one concrete first step it implies
-//      • "Begin Prayer"                    → onComplete() → ContentView
-//      • "Methods of Praying the Rosary"   → sheet (RosaryMethodsView)
+//  The order follows two things good first runs have in common: ask
+//  what the person came for before showing them anything, and give
+//  before asking. The notification question comes only after they have
+//  prayed a few beads on the strand.
 //
-//  A quiet Skip rides beside the dots until the last slide. Nothing
-//  asked here is required — every choice has a sound default and lives
-//  in Account afterwards — so a user who feels held is a user lost for
-//  no gain.
+//    1. Welcome        what the app is, in one sentence
+//    2. Intention      "What brings you to the Rosary?" Multi-select;
+//                      it picks the reminder copy, slide four, and the
+//                      last slide's first act
+//    3. The beads      on the beads or without them, each shown working:
+//                      the strand swiped a bead at a time, or arrows
+//                      stepping a mystery at a time for a hand that keeps
+//                      its own count (userSettings.prayOnBeads)
+//    4. For you        what the app holds for the reasons chosen, in
+//                      place of a tour of everything
+//    5. Colors         the theme; the whole app re-themes as you tap
+//    6. Language       English, Latin, or both, previewed on the Ave
+//    7. Reminder       an hour already chosen (evening), so the act is
+//                      one tap and says exactly what it will do
+//    8. The threshold  the cross and the Sign; the button does the first
+//                      step it names, or the user looks around first
 //
-//  Each slide's content fades in staggered (icon → title → body → buttons)
-//  the first time it becomes the active page.
+//  The strand of progress opens with its first bead already lit: a count
+//  that starts at zero reads as a long way still to go.
+//
+//  The words are plain on purpose. Each line says what a thing is or does
+//  before it says anything beautiful about it, uses the Church's own
+//  terms ("today's mysteries", "Total Consecration"), and quotes the
+//  Douay-Rheims with its own numbering. No durations, no streaks, and
+//  nothing said on Our Lady's behalf.
+//
+//  A quiet Skip rides beside the strand until the last slide. Nothing
+//  asked here is required: every choice has a sound default and lives in
+//  Settings afterwards.
+//
+//  The pages travel and nothing else does. The painting behind the slides
+//  and the dark ground under their words are one layer each, standing
+//  still while the slides pass over them, and both are drawn from where
+//  the pages actually stand (`OnboardingStage.progress`, in page units)
+//  rather than from the page that has settled — so the painting
+//  crossfades under the thumb instead of waiting for the swipe to finish.
 //
 
 import SwiftUI
+
+// MARK: - OnboardingFirstStep
+
+/// What the last slide's button does once the introduction is over.
+/// Carried out by whoever presented onboarding, because only the app's
+/// own router can reach the Rosary or a page.
+enum OnboardingFirstStep: Equatable {
+    /// Today's mysteries, straight to prayer
+    case todaysRosary
+    /// How to Pray the Rosary
+    case howToPray
+
+    func perform(with router: AppRouter) {
+        switch self {
+        case .todaysRosary: router.run(.todaysRosary)
+        case .howToPray:    router.push(.howToPray)
+        }
+    }
+}
+
+// MARK: - OnboardingPage
+
+/// The eight slides, in order. At file scope because the slide layout and
+/// the stage behind it are each told which slide they are drawing.
+private enum OnboardingPage: Int, CaseIterable {
+    case welcome, intention, beads, forYou, colors, language, reminder, threshold
+}
+
+// MARK: - OnboardingStage
+
+/// Where the words of one slide stand on the glass. Nonisolated because
+/// `onGeometryChange` measures off the main actor.
+private nonisolated struct WordsExtent: Equatable {
+    var top: CGFloat
+    var bottom: CGFloat
+
+    func interpolated(to other: WordsExtent, amount: CGFloat) -> WordsExtent {
+        WordsExtent(
+            top: top + (other.top - top) * amount,
+            bottom: bottom + (other.bottom - bottom) * amount
+        )
+    }
+}
+
+/// Where the pages stand, and where each slide's words stand on them.
+///
+/// Observed rather than held as view state so that a value changing on
+/// every frame of a swipe redraws only the two layers that read it — the
+/// painting and the ground under the words — and no slide.
+@Observable
+private final class OnboardingStage {
+
+    /// The pages' position in page units: 2.4 means the third slide is
+    /// two fifths of the way off to the left.
+    var progress: CGFloat = 0
+
+    /// The slides with any part of them on the glass: the one being left
+    /// and the one arriving. Kept whole, so a slide is not rebuilt on
+    /// every frame of a swipe.
+    var visiblePages: ClosedRange<Int> = 0...0
+
+    /// Where each slide's words stand, reported by the slide itself
+    var wordExtents: [Int: WordsExtent] = [:]
+
+    func isVisible(_ page: OnboardingPage) -> Bool {
+        visiblePages.contains(page.rawValue)
+    }
+
+    /// The ground's extent for where the pages stand now: the slide being
+    /// left and the one arriving, interpolated, so the dark breathes with
+    /// the swipe instead of stepping at the end of it.
+    var wordExtent: WordsExtent? {
+        let low = Int(progress.rounded(.down))
+        let high = Int(progress.rounded(.up))
+        guard let from = wordExtents[low] ?? wordExtents[high],
+              let to = wordExtents[high] ?? wordExtents[low] else { return nil }
+        return from.interpolated(to: to, amount: progress - CGFloat(low))
+    }
+}
 
 // MARK: - OnboardingView
 
 struct OnboardingView: View {
 
-    var onComplete: () -> Void
+    /// Called with the step the user chose on the last slide, or nil when
+    /// they would rather look around first.
+    var onComplete: (OnboardingFirstStep?) -> Void
 
-    @State private var currentPage = 0
+    private typealias Page = OnboardingPage
+
+    /// The one space the words are measured in and the ground is drawn in
+    static let stageSpace = "onboarding-stage"
+
+    @State private var stage = OnboardingStage()
+
+    /// The slide the pages have settled on, or are past the middle of
+    @State private var currentPage = Page.welcome.rawValue
+
+    /// What the scroll is told to show, for the acts that turn the page
+    @State private var scrolledPage: Int? = Page.welcome.rawValue
+
+    /// Set while the pages are put down for a jump across several of
+    /// them (Skip), and taken up again on the other side
+    @State private var pagesVeiled = false
+
     @State private var showMethodsSheet = false
 
-    /// Selected daily reminder hour on the reminder slide (nil = none picked)
-    @State private var selectedReminderHour: Int? = nil
+    /// The reminder hour, chosen before the slide is ever seen. Most
+    /// people keep a default, and one already set turns the slide's act
+    /// into a single tap that says what it will do, where an empty choice
+    /// left a grey button that could not be pressed. Nil keeps a re-run's
+    /// existing reminder at its own time (`initialReminderHour`).
+    @State private var selectedReminderHour: Int? = OnboardingView.initialReminderHour
 
-    /// Selected intentions on the "What draws you here?" slide. Multi-select:
-    /// the choice drives which reminder pools the daily notification draws
-    /// from, and more than one reason can be true at once. Seeded from
-    /// settings so re-running onboarding from Account reflects the choice.
+    /// The time of a reminder already kept at an hour none of the slide's
+    /// three choices name, offered first so a re-run can leave it be
+    private let keptReminderTime: String? = OnboardingView.initialReminderHour == nil
+        ? UserSettings.shared.reminderTimeLabel
+        : nil
+
+    /// Seeded from settings so re-running onboarding reflects the choice
     @State private var selectedIntentions: Set<PrayerIntention> = Set(UserSettings.shared.intentions)
 
-    /// Selected prayer language on the language slide — seeded from settings
-    /// so re-running onboarding from Account reflects the current choice
+    /// Seeded from settings so re-running onboarding reflects the choice
     @State private var selectedLanguage: PrayerLanguage = UserSettings.shared.prayerLanguage
 
-    private let totalPages = 8
+    /// Whether the player hangs the strand. On unless the user has turned
+    /// it off; chosen on the beads slide, where both ways are shown working.
+    @State private var praysOnBeads = UserSettings.shared.prayOnBeads
 
-    /// The paintings the eight slides are set against — a walk through
-    /// the mysteries in their own order, joyful to glorious, chosen for
-    /// what each slide is asking rather than for decoration:
-    ///
-    ///   the Annunciation for a beginning · the Visitation for a journey
-    ///   made at its own pace · the Finding in the Temple for what draws
-    ///   a soul to look · Cana for more than was asked for · the
-    ///   Transfiguration for choosing a light · Pentecost for tongues ·
-    ///   the Agony for "could you not watch one hour with me" · the
-    ///   Coronation for the send-off.
-    private static let backdrops = [
-        "joyful_annunciation",
-        "joyful_visitation",
-        "joyful_finding",
-        "luminous_cana",
-        "luminous_transfiguration",
-        "glorious_pentecost",
-        "sorrowful_agony",
-        "glorious_coronation"
-    ]
+    private var totalPages: Int { Page.allCases.count }
 
     var body: some View {
         ZStack {
             AppColors.appGradient
                 .ignoresSafeArea()
 
-            backdrop
+            OnboardingBackdrop(stage: stage)
+
+            OnboardingWordGround(stage: stage)
 
             VStack(spacing: 0) {
-                // Where you are in the eight, told on a strand of beads
-                // rather than a row of dots — the app counts everything
-                // else this way, and a Rosary app's own progress should
-                // never look like anybody else's.
-                ZStack {
-                    RosaryBeadProgress(
-                        total: totalPages,
-                        completed: currentPage,
-                        activeIndex: currentPage,
-                        beadSize: 8
-                    )
-                    .frame(width: 190)
-                    .animation(.easeInOut(duration: 0.35), value: currentPage)
-                    .accessibilityElement(children: .ignore)
-                    .accessibilityLabel("Step \(currentPage + 1) of \(totalPages)")
+                header
 
-                    HStack {
-                        Spacer()
-                        skipButton
-                    }
-                }
-                .padding(.top, 18)
-                .padding(.bottom, 10)
-
-                // Slides
-                TabView(selection: $currentPage) {
-                    slide1.tag(0)
-                    slide2.tag(1)
-                    intentionSlide.tag(2)
-                    whatsInsideSlide.tag(3)
-                    themeSlide.tag(4)
-                    languageSlide.tag(5)
-                    reminderSlide.tag(6)
-                    finalSlide.tag(7)
-                }
-                .tabViewStyle(.page(indexDisplayMode: .never))
-                .animation(.easeInOut(duration: 0.3), value: currentPage)
+                pages
             }
         }
+        .coordinateSpace(.named(Self.stageSpace))
         .sheet(isPresented: $showMethodsSheet) {
             RosaryMethodsView()
                 .presentationBackground(AppColors.background)
         }
+        // Saved as they change rather than on Continue, so a user who
+        // swipes past a slide keeps what they chose on it
+        .onChange(of: selectedIntentions) { _, chosen in
+            UserSettings.shared.onboardingIntentions =
+                PrayerIntention.allCases.filter { chosen.contains($0) }.map(\.rawValue)
+        }
+        .onChange(of: selectedLanguage) { _, language in
+            UserSettings.shared.prayerLanguagePreference = language.rawValue
+        }
+        .onChange(of: praysOnBeads) { _, onBeads in
+            UserSettings.shared.prayOnBeads = onBeads
+        }
     }
 
-    /// The painting behind the slide, crossfading as you move through
-    /// the eight.
+    // MARK: - The Pages
+
+    /// The slides, laid side by side and turned by the hand.
     ///
-    /// Rebuilding the view on every page change is deliberate: each one
-    /// arrives at a slight scale and settles over several seconds, so
-    /// the artwork keeps drifting after the swipe has finished the way a
-    /// held shot does. Nothing loops — the motion belongs to arriving
-    /// somewhere, not to the screen sitting there.
-    private var backdrop: some View {
-        ZStack {
-            ForEach(0..<totalPages, id: \.self) { index in
-                if index == currentPage {
-                    OnboardingBackdrop(imageName: Self.backdrops[index])
-                        .transition(.opacity)
+    /// A paging scroll rather than a `TabView`, because the stage behind
+    /// them is drawn from where the pages actually stand: a TabView's
+    /// selection changes only once the swipe has settled, and the painting
+    /// began its crossfade after the finger had already finished.
+    private var pages: some View {
+        ScrollView(.horizontal) {
+            HStack(spacing: 0) {
+                ForEach(Page.allCases, id: \.self) { page in
+                    slide(page)
+                        .containerRelativeFrame([.horizontal, .vertical])
+                        .id(page.rawValue)
                 }
             }
+            .scrollTargetLayout()
+            .onGeometryChange(for: CGFloat.self) { proxy in
+                let pageWidth = proxy.size.width / CGFloat(totalPages)
+                guard pageWidth > 0 else { return 0 }
+                return -proxy.frame(in: .scrollView(axis: .horizontal)).minX / pageWidth
+            } action: { measured in
+                pagesMoved(to: measured)
+            }
         }
-        .animation(.easeInOut(duration: 0.9), value: currentPage)
-        .ignoresSafeArea()
-        .accessibilityHidden(true)
+        // One slide to a swipe, however hard it is thrown: paging alone
+        // carries its momentum on and a flick can skip a slide, and no
+        // question here may be passed over by accident.
+        .scrollTargetBehavior(.viewAligned(limitBehavior: .always))
+        .scrollIndicators(.hidden)
+        .scrollPosition(id: $scrolledPage)
+        .opacity(pagesVeiled ? 0 : 1)
     }
 
-    /// Nothing here is a gate. Someone who would rather look around
-    /// than be introduced leaves the setup in one tap and lands on the
-    /// last slide, where the app begins — every choice behind it has a
-    /// sound default and lives in Account afterwards.
+    @ViewBuilder
+    private func slide(_ page: Page) -> some View {
+        switch page {
+        case .welcome:   welcomeSlide
+        case .intention: intentionSlide
+        case .beads:     beadsSlide
+        case .forYou:    forYouSlide
+        case .colors:    colorsSlide
+        case .language:  languageSlide
+        case .reminder:  reminderSlide
+        case .threshold: thresholdSlide
+        }
+    }
+
+    /// The pages have moved: tell the stage, and note which slide is
+    /// being read and which are on the glass at all.
+    private func pagesMoved(to measured: CGFloat) {
+        let position = min(max(measured, 0), CGFloat(totalPages - 1))
+
+        // A jump across several pages (Skip) arrives as one step. A swipe
+        // never moves that far in a frame, so the paintings can tell the
+        // two apart: they cross-dissolve for a jump and follow the finger
+        // for a swipe.
+        if abs(position - stage.progress) > 1.05 {
+            withAnimation(Motion.decadeTurn) { stage.progress = position }
+        } else {
+            stage.progress = position
+        }
+
+        let settled = Int(position.rounded())
+        if settled != currentPage { currentPage = settled }
+
+        let arriving = Int(position.rounded(.down))...Int(position.rounded(.up))
+        if arriving != stage.visiblePages { stage.visiblePages = arriving }
+    }
+
+    /// Turns to a slide. A neighbour is scrolled to; anything further off
+    /// — Skip, from the first slide to the last — would whip six slides
+    /// past the eye, so the pages are put down and taken up again on the
+    /// other side while the paintings dissolve between them.
+    private func go(to page: Page) {
+        let target = page.rawValue
+        guard target != currentPage else { return }
+
+        guard abs(target - currentPage) > 1 else {
+            withAnimation(Motion.travel(0.4)) { scrolledPage = target }
+            return
+        }
+
+        withAnimation(Motion.ease(0.2), completionCriteria: .logicallyComplete) {
+            pagesVeiled = true
+        } completion: {
+            var cut = Transaction()
+            cut.disablesAnimations = true
+            withTransaction(cut) { scrolledPage = target }
+
+            withAnimation(Motion.ease(0.34).delay(0.08)) { pagesVeiled = false }
+        }
+    }
+
+    // MARK: - Chrome
+
+    /// Where you are, told on a strand of beads rather than a row of dots:
+    /// the app counts everything else this way. The bead of the slide
+    /// you are on is already lit.
+    private var header: some View {
+        ZStack {
+            RosaryBeadProgress(
+                total: totalPages,
+                completed: currentPage + 1,
+                activeIndex: currentPage,
+                beadSize: 8
+            )
+            .frame(width: 190)
+            .animation(.easeInOut(duration: 0.35), value: currentPage)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Step \(currentPage + 1) of \(totalPages)")
+
+            HStack {
+                Spacer()
+                skipButton
+            }
+        }
+        // Clear of the clock and the island above it: at 18 the strand
+        // was crowded against the status bar rather than standing under it.
+        .padding(.top, 34)
+        .padding(.bottom, 10)
+    }
+
     @ViewBuilder
     private var skipButton: some View {
-        if currentPage < totalPages - 1 {
+        if currentPage < Page.threshold.rawValue {
             Button {
-                withAnimation(.easeInOut(duration: 0.3)) { currentPage = totalPages - 1 }
+                go(to: .threshold)
             } label: {
                 Text("Skip")
-                    .font(AppFonts.bodyFont(14))
-                    .foregroundColor(AppColors.textSecondary)
+                    .font(AppFonts.bodyFont(15))
+                    .foregroundColor(AppColors.cream.opacity(0.85))
+                    .shadow(color: .black.opacity(0.6), radius: 4, y: 1)
                     .padding(.horizontal, 20)
-                    .padding(.vertical, 12)
                     .frame(minHeight: 44)
                     .contentShape(Rectangle())
             }
+            .buttonStyle(QuietGlyphButtonStyle())
             .transition(.opacity)
-            .accessibilityHint("Skips the rest of the introduction")
+            .accessibilityHint("Skips to the end of the introduction")
         }
     }
 
-    // MARK: - Slide 1: Welcome (an invitation, not a manual)
+    private func continueButton(_ title: String, to page: Page) -> some View {
+        GoldCTAButton(title: title, glyph: .chevron, action: {
+            go(to: page)
+        })
+    }
 
-    private var slide1: some View {
+    // MARK: - 1. Welcome
+
+    private var welcomeSlide: some View {
         OnboardingSlideLayout(
-            icon: "ch-rosary",
-            iconIsGradient: true,
             title: "Lumen Viae",
-            isActive: currentPage == 0,
-            content: {
-                VStack(spacing: 18) {
-                    Text("LIGHT OF THE WAY")
-                        .font(AppFonts.labelFont(11))
-                        .tracking(4)
-                        .foregroundColor(AppColors.gold)
-
-                    Text("A quiet place to pray the Rosary — scripture, meditation, and stillness, one mystery at a time.")
-                        .font(AppFonts.italicFont(17))
-                        .foregroundColor(AppColors.cream.opacity(0.9))
-                        .multilineTextAlignment(.center)
-                        .lineSpacing(6)
-                        .padding(.horizontal, 8)
-                }
-            },
-            bottomContent: {
-                OnboardingNextButton(label: "Begin") {
-                    withAnimation(.easeInOut(duration: 0.3)) { currentPage = 1 }
-                }
-            }
-        )
+            titleNote: "Light of the Way",
+            page: .welcome,
+            stage: stage
+        ) {
+            OnboardingLead(
+                "A quiet place to pray the Rosary, with Scripture and a meditation on each mystery.",
+                italic: true
+            )
+        } bottomContent: {
+            continueButton("Begin", to: .intention)
+        }
     }
 
-    // MARK: - Slide 2: At Your Own Pace (shown, not told)
-
-    private var slide2: some View {
-        OnboardingSlideLayout(
-            icon: "ph-hands-praying",
-            iconIsGradient: false,
-            title: "At Your Own Pace",
-            isActive: currentPage == 1,
-            content: {
-                VStack(spacing: 26) {
-                    Text("Each mystery brings its meditation. You pray, and move on when you're ready.")
-                        .font(AppFonts.italicFont(16))
-                        .foregroundColor(AppColors.cream.opacity(0.9))
-                        .multilineTextAlignment(.center)
-                        .lineSpacing(5)
-
-                    MysteryPaceDemoView(isActive: currentPage == 1)
-
-                    VStack(spacing: 14) {
-                        SessionMomentRow(icon: "ph-calendar-dots", text: "Today's mystery, chosen for you")
-                        SessionMomentRow(icon: "ph-book-open",     text: "A meditation for each — read or listen")
-                        SessionMomentRow(icon: "ph-note-pencil",   text: "A quiet reflection to close")
-                    }
-                }
-            },
-            bottomContent: {
-                OnboardingNextButton(label: "Next") {
-                    withAnimation(.easeInOut(duration: 0.3)) { currentPage = 2 }
-                }
-            }
-        )
-    }
-
-    // MARK: - Slide 3: Intention ("What draws you here?")
-
-    /// Intention presets: the enum case plus a warm detail line.
-    private let intentionOptions: [(intention: PrayerIntention, detail: String)] = [
-        (.peace, "Quiet moments in a busy life"),
-        (.habit, "A faithful daily rhythm of prayer"),
-        (.devotion, "Deepen your Marian devotion"),
-        (.learning, "New to the Rosary, or returning after a while")
-    ]
+    // MARK: - 2. Intention
 
     private var intentionSlide: some View {
         OnboardingSlideLayout(
-            icon: "ph-heart",
-            iconIsGradient: true,
-            title: "What Draws You Here?",
-            isActive: currentPage == 2,
-            content: {
-                VStack(alignment: .leading, spacing: 20) {
-                    Text("Every soul comes to the Rosary for a reason. Choose as many as are true — yours shape how we welcome you.")
-                        .font(AppFonts.bodyFont(15))
-                        .foregroundColor(AppColors.cream.opacity(0.8))
-                        .lineSpacing(5)
+            title: "What Brings You to the Rosary?",
+            page: .intention,
+            stage: stage
+        ) {
+            VStack(spacing: 18) {
+                OnboardingLead("Choose any that fit. Your answers shape your reminders and where we suggest you begin.")
 
-                    VStack(spacing: 10) {
-                        ForEach(intentionOptions, id: \.intention) { option in
-                            SelectableOptionRow(
-                                label: option.intention.rawValue,
-                                detail: option.detail,
-                                isSelected: selectedIntentions.contains(option.intention)
-                            ) {
-                                withAnimation(.easeInOut(duration: 0.2)) {
-                                    if selectedIntentions.contains(option.intention) {
-                                        selectedIntentions.remove(option.intention)
-                                    } else {
-                                        selectedIntentions.insert(option.intention)
-                                    }
+                VStack(spacing: 10) {
+                    ForEach(PrayerIntention.allCases) { intention in
+                        SelectableOptionRow(
+                            label: intention.displayName,
+                            detail: intention.detail,
+                            isSelected: selectedIntentions.contains(intention)
+                        ) {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                if selectedIntentions.contains(intention) {
+                                    selectedIntentions.remove(intention)
+                                } else {
+                                    selectedIntentions.insert(intention)
                                 }
                             }
                         }
                     }
                 }
-                .multilineTextAlignment(.leading)
-            },
-            bottomContent: {
-                OnboardingNextButton(label: "Continue") {
-                    UserSettings.shared.onboardingIntentions =
-                        PrayerIntention.allCases
-                            .filter { selectedIntentions.contains($0) }
-                            .map(\.rawValue)
-                    withAnimation(.easeInOut(duration: 0.3)) { currentPage = 3 }
-                }
+                .sensoryFeedback(.selection, trigger: selectedIntentions)
             }
-        )
+        } bottomContent: {
+            continueButton("Continue", to: .beads)
+        }
     }
 
-    // MARK: - Slide 4: What Else Is Here
+    // MARK: - 3. The Beads
 
-    /// The parts of the app a first run never meets.
-    ///
-    /// The Rosary is the front door, and someone who only ever meets the
-    /// front door never finds the consecration, the journal, or the
-    /// library behind it — the three things people come back for. Named
-    /// once here, plainly, and never sold.
-    private var whatsInsideSlide: some View {
+    /// The prayer screen's one new idea, tried rather than described, and
+    /// chosen rather than imposed. On the beads, a strand moves under the
+    /// thumb a bead at a time and turns to the next mystery by itself.
+    /// Without them, the player moves a mystery at a time for a hand that
+    /// keeps its own count. Whichever is chosen is the one shown working,
+    /// in the same slot, so the slide never grows or jumps as it changes.
+    /// The same setting as Settings' "Pray on the Beads", in its words.
+    private var beadsSlide: some View {
         OnboardingSlideLayout(
-            icon: "ch-church",
-            iconIsGradient: true,
-            title: "More Than the Rosary",
-            isActive: currentPage == 3,
-            content: {
-                VStack(spacing: 22) {
-                    Text("The Rosary is the heart of it. Around it is everything else a devotion asks for.")
-                        .font(AppFonts.italicFont(16))
-                        .foregroundColor(AppColors.cream.opacity(0.9))
-                        .multilineTextAlignment(.center)
-                        .lineSpacing(5)
+            title: praysOnBeads ? "One Bead at a Time" : "One Mystery at a Time",
+            page: .beads,
+            stage: stage
+        ) {
+            VStack(spacing: 18) {
+                OnboardingLead(praysOnBeads
+                    ? "Hear the meditation, then swipe down for each bead. When a decade ends, the next mystery begins on its own."
+                    : "Move a mystery at a time, and count the Hail Marys on your own rosary.")
+                    .contentTransition(.opacity)
+                    .animation(Motion.crossfade, value: praysOnBeads)
 
-                    VStack(spacing: 14) {
-                        SessionMomentRow(icon: "ph-crown", text: "The 33-day Consecration, a day at a time")
-                        SessionMomentRow(icon: "ph-note-pencil", text: "A journal that never leaves your device")
-                        SessionMomentRow(icon: "ph-flame", text: "A quiet record of the days you have prayed")
-                        SessionMomentRow(icon: "ch-bible", text: "True Devotion and the Marian library, in full")
+                ZStack {
+                    if praysOnBeads {
+                        BeadStrandDemo()
+                            .transition(.opacity)
+                    } else {
+                        MysteryStepDemo()
+                            .transition(.opacity)
+                    }
+                }
+                .frame(height: BeadStrandDemo.height)
+                .animation(Motion.crossfade, value: praysOnBeads)
+
+                VStack(spacing: 10) {
+                    SelectableOptionRow(
+                        label: "On the Beads",
+                        detail: "The app counts each Hail Mary with you",
+                        isSelected: praysOnBeads
+                    ) {
+                        withAnimation(.easeInOut(duration: 0.25)) { praysOnBeads = true }
                     }
 
-                    Text("Downloaded once, all of it prays without a connection.")
-                        .font(AppFonts.italicFont(13))
-                        .foregroundColor(AppColors.textSecondary)
-                        .multilineTextAlignment(.center)
+                    SelectableOptionRow(
+                        label: "Without the Beads",
+                        detail: "You keep your own count on a rosary",
+                        isSelected: !praysOnBeads
+                    ) {
+                        withAnimation(.easeInOut(duration: 0.25)) { praysOnBeads = false }
+                    }
                 }
-            },
-            bottomContent: {
-                OnboardingNextButton(label: "Continue") {
-                    withAnimation(.easeInOut(duration: 0.3)) { currentPage = 4 }
-                }
+                .sensoryFeedback(.selection, trigger: praysOnBeads)
             }
-        )
+        } bottomContent: {
+            continueButton("Continue", to: .forYou)
+        }
     }
 
-    // MARK: - Slide 4: Theme ("Choose Your Sanctuary")
+    // MARK: - 4. For You
 
-    private var themeSlide: some View {
-        OnboardingSlideLayout(
-            icon: "ch-window",
-            iconIsGradient: true,
-            title: "Choose Your Sanctuary",
-            isActive: currentPage == 4,
-            content: {
-                VStack(alignment: .leading, spacing: 20) {
-                    Text("Every chapel has its own light. Choose the palette your prayers will live in — the whole app changes the moment you tap.")
-                        .font(AppFonts.bodyFont(15))
-                        .foregroundColor(AppColors.cream.opacity(0.8))
-                        .lineSpacing(5)
-
-                    OnboardingThemePicker()
-                }
-                .multilineTextAlignment(.leading)
-            },
-            bottomContent: {
-                OnboardingNextButton(label: "Continue") {
-                    withAnimation(.easeInOut(duration: 0.3)) { currentPage = 5 }
-                }
-            }
-        )
+    private var primaryIntention: PrayerIntention? {
+        PrayerIntention.allCases.first { selectedIntentions.contains($0) }
     }
 
-    // MARK: - Slide 5: Prayer Language ("The Language of Prayer")
+    /// One thing the app offers, drawn as a line with its glyph
+    private struct Offer: Hashable {
+        let icon: String
+        let text: String
+    }
 
-    /// Language presets: the enum case plus a one-line description of the format.
-    private let languageOptions: [(language: PrayerLanguage, detail: String)] = [
-        (.english, "Every prayer in English"),
-        (.latin, "The Church's ancient tongue"),
-        (.both, "Latin leads, English beneath each line"),
-        (.latinUnderEnglish, "English leads, Latin beneath each line")
+    /// What the app holds for each reason, most useful first. Named
+    /// plainly, with the full names a newcomer can look up, never the
+    /// app's own shorthand (Consecrate, the flame, the Chapel).
+    private static func offers(for intention: PrayerIntention) -> [Offer] {
+        switch intention {
+        case .peace:
+            return [
+                Offer(icon: "ph-book-open", text: "A meditation on each mystery, to read or to hear"),
+                Offer(icon: "ch-bible", text: "The Scriptural Rosary, with a verse for every bead"),
+                Offer(icon: "ph-note-pencil", text: "A private journal, kept only on your phone")
+            ]
+        case .habit:
+            return [
+                Offer(icon: "ph-calendar-dots", text: "Today's mysteries, set by the traditional weekday order"),
+                Offer(icon: "ph-bell", text: "One gentle reminder a day, at the hour you choose"),
+                Offer(icon: "ph-flame", text: "A quiet record of the days you pray")
+            ]
+        case .devotion:
+            return [
+                Offer(icon: "ch-consecration", text: "St. Louis de Montfort's 33-day preparation for Total Consecration"),
+                Offer(icon: "ph-crown", text: "True Devotion to Mary, the complete book"),
+                Offer(icon: "ch-sorrowful-heart", text: "The Chaplet of the Seven Sorrows")
+            ]
+        case .learning:
+            return [
+                Offer(icon: "ch-rosary", text: "How to Pray the Rosary, step by step"),
+                Offer(icon: "ph-hands-praying", text: "Every prayer written out, in English or in Latin"),
+                Offer(icon: "ph-book-open", text: "A meditation on each mystery, to read or to hear")
+            ]
+        }
+    }
+
+    private static let generalOffers = [
+        Offer(icon: "ph-calendar-dots", text: "Today's mysteries, set by the traditional weekday order"),
+        Offer(icon: "ph-book-open", text: "A meditation on each mystery, to read or to hear"),
+        Offer(icon: "ch-consecration", text: "St. Louis de Montfort's 33-day preparation for Total Consecration"),
+        Offer(icon: "ch-altar", text: "The 1962 Missal and the Divine Office for each day")
     ]
+
+    /// With several reasons chosen, each one's best line comes first, so
+    /// no reason is crowded out by another's second and third.
+    private var offers: [Offer] {
+        let lists = PrayerIntention.allCases
+            .filter { selectedIntentions.contains($0) }
+            .map { Self.offers(for: $0) }
+        guard !lists.isEmpty else { return Self.generalOffers }
+
+        var chosen: [Offer] = []
+        for rank in 0..<3 {
+            for list in lists where rank < list.count && !chosen.contains(list[rank]) {
+                chosen.append(list[rank])
+            }
+        }
+        return Array(chosen.prefix(4))
+    }
+
+    private var forYouCopy: (title: String, lead: String) {
+        switch primaryIntention {
+        case .peace:
+            return ("Stillness in a Busy Day", "Pray one mystery at a time, with words to rest your mind on.")
+        case .habit:
+            return ("A Rosary Every Day", "The day's prayer is set out for you each morning.")
+        case .devotion:
+            return ("Closer to Our Lady", "Pray with Mary, and learn from the saints who loved her.")
+        case .learning:
+            return ("Learning the Rosary", "Everything you need to begin is here.")
+        case nil:
+            return ("What You Will Find", "The Rosary is at the heart of the app. Around it are other prayers of the Church.")
+        }
+    }
+
+    private var forYouSlide: some View {
+        OnboardingSlideLayout(
+            title: forYouCopy.title,
+            page: .forYou,
+            stage: stage
+        ) {
+            VStack(spacing: 22) {
+                OnboardingLead(forYouCopy.lead)
+
+                VStack(alignment: .leading, spacing: 14) {
+                    ForEach(offers, id: \.self) { offer in
+                        OfferRow(icon: offer.icon, text: offer.text)
+                    }
+                }
+            }
+        } bottomContent: {
+            VStack(spacing: 4) {
+                continueButton("Continue", to: .colors)
+
+                QuietGoldButton(title: "Kinds of Meditation", trailingIcon: "ph-caret-right") {
+                    showMethodsSheet = true
+                }
+                .frame(minHeight: 44)
+            }
+        }
+    }
+
+    // MARK: - 5. Colors
+
+    private var colorsSlide: some View {
+        OnboardingSlideLayout(
+            title: "Choose Your Colors",
+            page: .colors,
+            stage: stage
+        ) {
+            VStack(spacing: 18) {
+                OnboardingLead("Pick the colors you find easiest to pray with. The whole app changes as you tap.")
+
+                OnboardingThemePicker()
+            }
+        } bottomContent: {
+            continueButton("Continue", to: .language)
+        }
+    }
+
+    // MARK: - 6. Language
+
+    private func detail(for language: PrayerLanguage) -> String {
+        switch language {
+        case .english:           return "Every prayer in English"
+        case .latin:             return "The traditional language of the Roman liturgy"
+        case .both:              return "Latin first, English beneath each line"
+        case .latinUnderEnglish: return "English first, Latin beneath each line"
+        }
+    }
+
+    /// Three choices, not four. English-first pairing is kept for Settings
+    /// and shown here only to someone who has already chosen it, so a
+    /// re-run never hides the choice they made.
+    private var languageChoices: [PrayerLanguage] {
+        PrayerLanguage.allCases.filter { $0 != .latinUnderEnglish || selectedLanguage == .latinUnderEnglish }
+    }
 
     private var languageSlide: some View {
         OnboardingSlideLayout(
-            icon: "ph-globe",
-            iconIsGradient: false,
-            title: "The Language of Prayer",
-            isActive: currentPage == 5,
-            content: {
-                VStack(alignment: .leading, spacing: 20) {
-                    Text("Pray in English, in the Church's Latin, or in both together — line by line, one tongue above the other.")
-                        .font(AppFonts.bodyFont(15))
-                        .foregroundColor(AppColors.cream.opacity(0.8))
-                        .lineSpacing(5)
+            title: "Choose a Language",
+            page: .language,
+            stage: stage
+        ) {
+            VStack(spacing: 16) {
+                OnboardingLead("Pray in English, in Latin, or in both, with each line paired with its translation.")
 
-                    LanguagePreviewCard(language: selectedLanguage)
+                LanguagePreviewCard(language: selectedLanguage)
 
-                    VStack(spacing: 10) {
-                        ForEach(languageOptions, id: \.language) { option in
-                            SelectableOptionRow(
-                                label: option.language.rawValue,
-                                detail: option.detail,
-                                isSelected: selectedLanguage == option.language
-                            ) {
-                                withAnimation(.easeInOut(duration: 0.25)) {
-                                    selectedLanguage = option.language
-                                }
+                VStack(spacing: 10) {
+                    ForEach(languageChoices) { language in
+                        SelectableOptionRow(
+                            label: language.rawValue,
+                            detail: detail(for: language),
+                            isSelected: selectedLanguage == language
+                        ) {
+                            withAnimation(.easeInOut(duration: 0.25)) {
+                                selectedLanguage = language
                             }
                         }
                     }
-                    .sensoryFeedback(.selection, trigger: selectedLanguage)
                 }
-                .multilineTextAlignment(.leading)
-            },
-            bottomContent: {
-                OnboardingNextButton(label: "Continue") {
-                    UserSettings.shared.prayerLanguagePreference = selectedLanguage.rawValue
-                    withAnimation(.easeInOut(duration: 0.3)) { currentPage = 6 }
-                }
+                .sensoryFeedback(.selection, trigger: selectedLanguage)
             }
-        )
+        } bottomContent: {
+            continueButton("Continue", to: .reminder)
+        }
     }
 
-    // MARK: - Slide 6: Daily Reminder
+    // MARK: - 7. Reminder
 
-    /// Reminder presets: label, description, and hour (24h).
-    private let reminderOptions: [(label: String, detail: String, hour: Int)] = [
-        ("Morning", "Begin the day in prayer — 6:00 AM", 6),
-        ("Midday", "The Angelus hour — 12:00 PM", 12),
-        ("Evening", "Close the day in peace — 8:00 PM", 20)
+    /// Label, the hour as the button says it, the row's detail, and the
+    /// hour (24h). Noon is an hour of the Angelus; morning and evening are
+    /// not tied to it, so they do not claim it.
+    private static let reminderOptions: [(label: String, spoken: String, detail: String, hour: Int)] = [
+        ("Morning", "6 AM", "6 AM, to begin the day with prayer", 6),
+        ("Noon", "Noon", "12 PM, when the Angelus bells ring", 12),
+        ("Evening", "8 PM", "8 PM, to end the day with prayer", 20)
     ]
 
+    /// The reminder slide's first choice. A first run offers evening. A
+    /// re-run starts from the reminder already kept — its hour when it is
+    /// one of the three, nil (keep it as it is) when it is not — because
+    /// one tap on the slide's act would otherwise move a 6:45 AM reminder
+    /// to 8 PM.
+    private static var initialReminderHour: Int? {
+        let settings = UserSettings.shared
+        guard UserDefaults.standard.bool(forKey: "hasSeenOnboarding"),
+              settings.remindersEnabled else { return 20 }
+        let offered = settings.reminderMinute == 0
+            && reminderOptions.contains { $0.hour == settings.reminderHour }
+        return offered ? settings.reminderHour : nil
+    }
+
     private var reminderSlide: some View {
-        OnboardingSlideLayout(
-            icon: "ph-bell",
-            iconIsGradient: false,
-            title: "A Daily Call to Prayer",
-            isActive: currentPage == 6,
-            content: {
-                VStack(alignment: .leading, spacing: 20) {
-                    Text("A consistent hour of prayer is the surest way to make the Rosary a daily habit. When would you like to be reminded?")
-                        .font(AppFonts.bodyFont(15))
-                        .foregroundColor(AppColors.cream.opacity(0.8))
-                        .lineSpacing(5)
+        let denied = UserSettings.shared.notificationAuthorizationDenied
+        let spoken = selectedReminderHour
+            .flatMap { hour in Self.reminderOptions.first { $0.hour == hour }?.spoken }
+            ?? keptReminderTime
+            ?? ""
 
-                    VStack(spacing: 10) {
-                        ForEach(reminderOptions, id: \.hour) { option in
-                            SelectableOptionRow(
-                                label: option.label,
-                                detail: option.detail,
-                                isSelected: selectedReminderHour == option.hour
-                            ) {
-                                withAnimation(.easeInOut(duration: 0.2)) {
-                                    selectedReminderHour = option.hour
-                                }
+        return OnboardingSlideLayout(
+            title: "A Daily Reminder",
+            page: .reminder,
+            stage: stage
+        ) {
+            VStack(spacing: 18) {
+                OnboardingLead("Choose a time, and we will send one gentle reminder each day.")
+
+                VStack(spacing: 10) {
+                    if let keptReminderTime {
+                        SelectableOptionRow(
+                            label: "Your Current Time",
+                            detail: "\(keptReminderTime), as you set it",
+                            isSelected: selectedReminderHour == nil
+                        ) {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                selectedReminderHour = nil
                             }
                         }
                     }
 
-                    // The system prompt is raised by this slide's own button,
-                    // so a refusal happens in plain sight. This line keeps it
-                    // in sight afterwards rather than letting the user leave
-                    // believing an hour was set that can never ring.
-                    if UserSettings.shared.notificationAuthorizationDenied {
-                        HStack(alignment: .top, spacing: 8) {
-                            AppIcon("ph-bell", size: 13)
-                                .foregroundColor(AppColors.textSecondary)
-                                .padding(.top, 2)
-
-                            Text("Notifications are turned off for Lumen Viae. Turn them on in the Settings app, or set an hour later from Settings → Devotion.")
-                                .font(AppFonts.italicFont(13))
-                                .foregroundColor(AppColors.textSecondary)
-                                .lineSpacing(3)
-                        }
-                    } else {
-                        Text("You can change or disable this anytime in Settings.")
-                            .font(AppFonts.italicFont(13))
-                            .foregroundColor(AppColors.textSecondary)
-                    }
-                }
-                .multilineTextAlignment(.leading)
-            },
-            bottomContent: {
-                VStack(spacing: 14) {
-                    Button {
-                        // Already refused: there is no hour left to set,
-                        // so the button's only remaining job is to move on.
-                        // Without this it would re-run the sync, be told
-                        // "denied" again, and refuse to advance — a slide
-                        // with a live button and no way forward.
-                        if UserSettings.shared.notificationAuthorizationDenied {
-                            withAnimation(.easeInOut(duration: 0.3)) { currentPage = 7 }
-                            return
-                        }
-                        guard let hour = selectedReminderHour else {
-                            withAnimation(.easeInOut(duration: 0.3)) { currentPage = 7 }
-                            return
-                        }
-                        // Hold this slide until the system has asked and
-                        // been answered. The property observers raise the
-                        // same request on their own, but they do it in a
-                        // detached Task, so the dialog landed on the *next*
-                        // slide — over "In the Name of the Father", with
-                        // nothing on screen explaining what was being
-                        // asked. Awaiting it here keeps the question on the
-                        // slide that poses it, and lets the refusal line
-                        // above appear before the user moves on.
-                        Task {
-                            let settings = UserSettings.shared
-                            settings.reminderHour = hour
-                            settings.reminderMinute = 0
-                            settings.remindersEnabled = true
-                            await settings.syncNotifications()
-                            // A refusal earns a beat. The line above now
-                            // says what happened and where to undo it;
-                            // sliding straight on would hide it, which is
-                            // how this slide used to send people away
-                            // believing an hour was set.
-                            guard !settings.notificationAuthorizationDenied else { return }
-                            withAnimation(.easeInOut(duration: 0.3)) { currentPage = 7 }
-                        }
-                    } label: {
-                        HStack(spacing: 6) {
-                            Text(UserSettings.shared.notificationAuthorizationDenied
-                                 ? "Continue" : "Set Reminder")
-                                .font(AppFonts.headlineFont(17))
-                            AppIcon("ph-caret-right", size: 13)
-                        }
-                        .foregroundColor(selectedReminderHour == nil ? AppColors.textSecondary : AppColors.background)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(
-                            Group {
-                                if selectedReminderHour == nil {
-                                    RoundedRectangle(cornerRadius: 30)
-                                        .fill(AppColors.cardBackground)
-                                } else {
-                                    LinearGradient(
-                                        colors: [AppColors.gold, AppColors.goldLight],
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    )
-                                    .clipShape(RoundedRectangle(cornerRadius: 30))
-                                }
+                    ForEach(Self.reminderOptions, id: \.hour) { option in
+                        SelectableOptionRow(
+                            label: option.label,
+                            detail: option.detail,
+                            isSelected: selectedReminderHour == option.hour
+                        ) {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                selectedReminderHour = option.hour
                             }
-                        )
-                    }
-                    .disabled(selectedReminderHour == nil)
-
-                    Button {
-                        UserSettings.shared.remindersEnabled = false
-                        withAnimation(.easeInOut(duration: 0.3)) { currentPage = 7 }
-                    } label: {
-                        Text("Not Now")
-                            .font(AppFonts.bodyFont(15))
-                            .foregroundColor(AppColors.gold)
-                            .padding(.vertical, 12)
+                        }
                     }
                 }
+                .sensoryFeedback(.selection, trigger: selectedReminderHour)
+
+                // The system prompt is raised by this slide's own button,
+                // so a refusal happens in plain sight. This line keeps it
+                // in sight afterwards rather than letting the user leave
+                // believing an hour was set that can never ring.
+                Text(denied
+                     ? "Notifications are off for Lumen Viae. Turn them on in the Settings app, then choose a time in Settings, under Devotion."
+                     : "You can change the time or turn it off in Settings.")
+                    .font(AppFonts.italicFont(14))
+                    .foregroundColor(AppColors.cream.opacity(0.62))
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
             }
-        )
-    }
+        } bottomContent: {
+            VStack(spacing: 4) {
+                GoldCTAButton(
+                    title: denied ? "Continue" : "Remind Me at \(spoken)",
+                    action: reminderAct
+                )
 
-    // MARK: - Slide 8: The Threshold
-
-    /// The last slide is where the Rosary actually starts, so it is set
-    /// as the first moment of the prayer rather than as a summary of the
-    /// seven before it: the crucifix struck in gold, and the words said
-    /// while holding it.
-    ///
-    /// It was "Begin Your Journey" over a sunrise glyph — the title every
-    /// app in the store uses, under an icon that means nothing to anyone
-    /// praying. A Rosary is begun with the cross in your hand and the
-    /// Sign; the page can simply say so.
-
-    /// Closing line personalized to the chosen intention — the small
-    /// "made for you" payoff at the end of onboarding. With several chosen,
-    /// the first in the enum's order speaks for them; the alternative is a
-    /// generic line, which is the one thing this slide exists to avoid.
-    private var personalizedClosing: String {
-        switch PrayerIntention.allCases.first(where: { selectedIntentions.contains($0) }) {
-        case .peace:
-            return "May each decade bring stillness to your day. Your first quiet moment is one tap away."
-        case .habit:
-            return "Faithfulness grows one day at a time — and your streak begins with today's prayer."
-        case .devotion:
-            return "Mary walks with you through every mystery. She has been waiting for you."
-        case .learning:
-            return "Every soul that prays began with a single Ave. The app will hold your place at every bead."
-        case nil:
-            return "Each prayer is a step closer to grace. Begin now, or take a moment to explore the different ways to pray the Rosary."
+                QuietGoldButton(title: "Not Now") {
+                    UserSettings.shared.remindersEnabled = false
+                    go(to: .threshold)
+                }
+                .frame(minHeight: 44)
+            }
         }
     }
 
-    /// Where this particular soul might begin, drawn from what they said
-    /// draws them here.
-    ///
-    /// The intention question earns its keep by changing something the
-    /// user can see. A personalized closing line alone was thin payoff
-    /// for an answer given three slides earlier — this names the one
-    /// place to go next, and where in the app to find it.
-    private var firstStep: (icon: String, text: String) {
-        switch PrayerIntention.allCases.first(where: { selectedIntentions.contains($0) }) {
-        case .peace:
-            return ("ph-hands-praying", "One decade is a beginning. The Pray button opens today's mysteries.")
-        case .habit:
-            return ("ph-flame", "Your Chapel keeps the flame — a record of the days you have prayed. It starts with today.")
-        case .devotion:
-            return ("ph-crown", "When you are ready, the 33-day Consecration waits under Consecrate.")
-        case .learning:
-            return ("ch-bible", "Your Chapel's Library holds How to Pray the Rosary. Start there — it takes five minutes.")
-        case nil:
-            return ("ph-hands-praying", "The Pray button opens today's mysteries whenever you are ready.")
+    private func reminderAct() {
+        // Already refused: there is no hour left to set, so the button's
+        // only remaining job is to move on.
+        guard !UserSettings.shared.notificationAuthorizationDenied else {
+            go(to: .threshold)
+            return
+        }
+        // Hold this slide until the system has asked and been answered.
+        // Raised from a property observer's detached Task, the dialog
+        // landed on the next slide, with nothing on screen explaining what
+        // was being asked.
+        Task {
+            let settings = UserSettings.shared
+            // Nil keeps the time the reminder already had
+            if let hour = selectedReminderHour {
+                settings.reminderHour = hour
+                settings.reminderMinute = 0
+            }
+            settings.remindersEnabled = true
+            await settings.syncNotifications()
+            // A refusal earns a beat: the line on the slide now says what
+            // happened and where to undo it.
+            guard !settings.notificationAuthorizationDenied else { return }
+            go(to: .threshold)
         }
     }
 
-    private var finalSlide: some View {
+    // MARK: - 8. The Threshold
+
+    /// A Rosary is begun with the cross in your hand and the Sign, so the
+    /// last slide is set as the first moment of the prayer: the crucifix,
+    /// and the words said while holding it.
+    ///
+    /// Its button does what it says. "Enter" used to land the user on the
+    /// home screen and leave them to find the Rosary; now it opens today's
+    /// mysteries, or, for someone learning, the guide to praying them.
+    private var firstStep: (title: String, glyph: GoldCTAButton.Glyph, step: OnboardingFirstStep) {
+        selectedIntentions.contains(.learning)
+            ? ("Learn How to Pray It", .chevron, .howToPray)
+            : ("Pray Today's Rosary", .play, .todaysRosary)
+    }
+
+    /// The closing line for the reason given. Learning speaks first when it
+    /// is among them, because its first step is different from the rest.
+    private var closingLine: String {
+        if selectedIntentions.contains(.learning) {
+            // Only a promise the chosen way of praying keeps
+            return praysOnBeads
+                ? "Everyone who prays the Rosary began with one Hail Mary. The app counts the beads for you."
+                : "Everyone who prays the Rosary began with one Hail Mary."
+        }
+        switch primaryIntention {
+        case .peace:
+            return "May each decade bring you stillness. Today's mysteries are ready when you are."
+        case .habit:
+            return "Faithfulness grows one day at a time. Begin with today's mysteries."
+        case .devotion:
+            return "With Mary, we look on the face of Christ in every mystery."
+        case .learning, nil:
+            return "Today's mysteries are ready when you are."
+        }
+    }
+
+    private var thresholdSlide: some View {
         OnboardingSlideLayout(
-            icon: "",
-            iconIsGradient: false,
-            usesCross: true,
             title: "In the Name of the Father",
-            isActive: currentPage == 7,
-            content: {
-                VStack(spacing: 22) {
-                    Text(personalizedClosing)
-                        .font(AppFonts.italicFont(16))
-                        .foregroundColor(AppColors.cream.opacity(0.85))
-                        .multilineTextAlignment(.center)
-                        .lineSpacing(6)
+            usesCross: true,
+            page: .threshold,
+            stage: stage
+        ) {
+            VStack(spacing: 16) {
+                Text("and of the Son, and of the Holy Ghost. Amen.")
+                    .font(AppFonts.italicFont(16))
+                    .foregroundColor(AppColors.accentSoft)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+                    // No ornament divider beneath: its own small cross
+                    // stood under the struck one, two crosses for one idea
+                    .padding(.bottom, 6)
 
-                    FirstStepCard(icon: firstStep.icon, text: firstStep.text)
-                }
-            },
-            bottomContent: {
-                VStack(spacing: 14) {
-                    Button {
-                        onComplete()
-                    } label: {
-                        // This opens the app; it does not start a Rosary.
-                        // Labelled "Begin Prayer", it landed the user on a
-                        // home screen carrying its own "Begin Prayer"
-                        // button — the same words twice, the first of them
-                        // untrue.
-                        Text("Enter")
-                            .font(AppFonts.headlineFont(17))
-                            .foregroundColor(AppColors.background)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 16)
-                            .background(
-                                LinearGradient(
-                                    colors: [AppColors.gold, AppColors.goldLight],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .cornerRadius(30)
-                    }
-
-                    Button {
-                        showMethodsSheet = true
-                    } label: {
-                        HStack(spacing: 6) {
-                            Text("Methods of Praying the Rosary")
-                                .font(AppFonts.bodyFont(15))
-                                .foregroundColor(AppColors.gold)
-                            AppIcon("ph-caret-right", size: 12)
-                                .foregroundColor(AppColors.gold)
-                        }
-                        .padding(.vertical, 12)
-                    }
-                }
+                OnboardingLead(closingLine, italic: true)
             }
-        )
+        } bottomContent: {
+            VStack(spacing: 4) {
+                GoldCTAButton(title: firstStep.title, glyph: firstStep.glyph) {
+                    onComplete(firstStep.step)
+                }
+
+                QuietGoldButton(title: "Look Around First") {
+                    onComplete(nil)
+                }
+                .frame(minHeight: 44)
+            }
+        }
     }
 }
 
 // MARK: - OnboardingBackdrop
 
-/// One painting behind one slide: the canvas, a scrim heavy enough to
-/// read against, and a vignette that closes the corners down so the
-/// slide sits in a pool of light rather than on a flat field.
+/// The paintings behind the slides: one layer, standing still while the
+/// pages travel over it, crossfading from where the pages actually are
+/// rather than from the page that has settled.
 ///
-/// Both the scrim and the vignette are mixed in the *theme's* own
-/// deep ground, so the sanctuary chosen on slide five changes the light
-/// falling on the artwork immediately — the theme slide previews itself
-/// on a Velázquez instead of on three swatches.
+/// They used to fill the whole screen under a scrim, and the words were
+/// set across the painting wherever they happened to fall: the title over
+/// somebody's face, the cross medallion on Our Lady's. Hung high and
+/// dissolved to clear, a painting keeps its faces in the light and the
+/// words stand on the page's own dark ground. It ends in nothing, never
+/// in a flat colour, because the page beneath is a different shade at
+/// every height.
 private struct OnboardingBackdrop: View {
 
-    let imageName: String
+    let stage: OnboardingStage
 
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// How far down the glass a painting hangs before it has gone
+    static let reach: CGFloat = 0.72
 
-    /// Flipped on appear: the painting arrives a touch large and eases
-    /// down to its true size over several seconds. One way, once.
-    @State private var settled = false
+    /// The paintings the slides are set against, chosen for what each
+    /// slide asks: the Annunciation for a beginning · the Finding in the
+    /// Temple for what a soul comes looking for · the Visitation for a
+    /// journey made step by step · Cana for more than was asked for · the
+    /// Transfiguration for choosing a light · Pentecost for tongues · the
+    /// Agony for "could you not watch one hour with me" · the Coronation
+    /// for the send-off.
+    private static let paintings: [OnboardingPage: String] = [
+        .welcome: "joyful_annunciation",
+        .intention: "joyful_finding",
+        .beads: "joyful_visitation",
+        .forYou: "luminous_cana",
+        .colors: "luminous_transfiguration",
+        .language: "glorious_pentecost",
+        .reminder: "sorrowful_agony",
+        .threshold: "glorious_coronation"
+    ]
+
+    /// The painting being left, at full strength, with the one arriving
+    /// over it at the fraction of the way the pages have come.
+    private struct Layer: Identifiable {
+        let id: Int
+        let name: String
+        let opacity: Double
+    }
+
+    private var layers: [Layer] {
+        let low = Int(stage.progress.rounded(.down))
+        let high = Int(stage.progress.rounded(.up))
+        let arriving = Double(stage.progress - CGFloat(low))
+
+        var stacked: [Layer] = []
+        if let name = painting(low) {
+            stacked.append(Layer(id: low, name: name, opacity: 1))
+        }
+        if high != low, arriving > 0.001, let name = painting(high) {
+            stacked.append(Layer(id: high, name: name, opacity: arriving))
+        }
+        return stacked
+    }
+
+    private func painting(_ index: Int) -> String? {
+        OnboardingPage(rawValue: index).flatMap { Self.paintings[$0] }
+    }
 
     var body: some View {
         GeometryReader { geometry in
-            CachedAssetImage(imageName, focal: UnitPoint(x: 0.5, y: 0.34))
-                .frame(width: geometry.size.width, height: geometry.size.height)
-                .scaleEffect(settled || reduceMotion ? 1 : 1.12, anchor: .center)
-                .animation(reduceMotion ? nil : .easeOut(duration: 11), value: settled)
-                .clipped()
-                .overlay(scrim)
-                .overlay(vignette)
+            ZStack(alignment: .top) {
+                ForEach(layers) { layer in
+                    OnboardingPainting(
+                        imageName: layer.name,
+                        size: CGSize(
+                            width: geometry.size.width,
+                            height: geometry.size.height * Self.reach
+                        )
+                    )
+                    .opacity(layer.opacity)
+                    .transition(.opacity)
+                }
+            }
+            .frame(width: geometry.size.width, height: geometry.size.height, alignment: .top)
+            // One dissolve over the pair, never one each: masked
+            // separately, the painting underneath read through the
+            // dissolve even where the one arriving was already opaque,
+            // and it popped as it left.
+            .mask(alignment: .top) {
+                LinearGradient(
+                    // Gone well before the slide's longest body reaches
+                    // up into it: the busier paintings (the
+                    // Transfiguration's crowd, Cana's table) read
+                    // through the words at anything later
+                    gradient: Gradient.smoothDissolve(from: 0.32, to: 0.9),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: geometry.size.height * Self.reach)
+            }
         }
-        .onAppear { settled = true }
+        .ignoresSafeArea()
+        .accessibilityHidden(true)
+    }
+}
+
+/// One painting, hung in the top of the glass.
+///
+/// Built afresh each time it comes into view on purpose: it arrives a
+/// touch large and settles over several seconds, so the artwork keeps
+/// drifting after the swipe has finished, the way a held shot does.
+private struct OnboardingPainting: View {
+
+    let imageName: String
+    let size: CGSize
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    /// Flipped on appear: one way, once.
+    @State private var settled = false
+
+    var body: some View {
+        CachedAssetImage(imageName, focal: UnitPoint(x: 0.5, y: 0.3))
+            .frame(width: size.width, height: size.height)
+            .scaleEffect(settled || reduceMotion ? 1 : 1.08, anchor: .top)
+            .animation(reduceMotion ? nil : .easeOut(duration: 11), value: settled)
+            .clipped()
+            .overlay(veil)
+            .onAppear { settled = true }
     }
 
-    /// Weighted the way the home screen's hero weights its own: out of
-    /// the way through the top third, where the painting is left to be a
-    /// painting, then gathering steadily from the middle down until the
-    /// words and the act stand on near-solid ground.
-    ///
-    /// An even scrim was tried first and is the reason this comment
-    /// exists — it left the title sitting across somebody's face, which
-    /// is unreadable and disrespectful to the painting at once.
-    private var scrim: some View {
+    /// Mixed in the theme's own deep ground, so the colors chosen on slide
+    /// five change the light on the painting at once. Heaviest at the
+    /// head, where the strand of progress and Skip are read against it.
+    private var veil: some View {
         LinearGradient(
             stops: [
-                .init(color: AppColors.backgroundDeep.opacity(0.66), location: 0),
-                .init(color: AppColors.backgroundDeep.opacity(0.40), location: 0.13),
-                .init(color: AppColors.backgroundDeep.opacity(0.46), location: 0.30),
-                .init(color: AppColors.backgroundDeep.opacity(0.72), location: 0.45),
-                .init(color: AppColors.backgroundDeep.opacity(0.88), location: 0.57),
-                .init(color: AppColors.backgroundDeep.opacity(0.95), location: 0.70),
-                .init(color: AppColors.backgroundDeep.opacity(0.98), location: 1)
+                .init(color: AppColors.backgroundDeep.opacity(0.6), location: 0),
+                .init(color: AppColors.backgroundDeep.opacity(0.16), location: 0.2),
+                .init(color: AppColors.backgroundDeep.opacity(0.2), location: 0.5),
+                .init(color: AppColors.backgroundDeep.opacity(0.55), location: 1)
             ],
             startPoint: .top,
             endPoint: .bottom
         )
     }
+}
 
-    private var vignette: some View {
-        RadialGradient(
-            colors: [
-                AppColors.backgroundDeep.opacity(0),
-                AppColors.backgroundDeep.opacity(0.35),
-                AppColors.backgroundDeep.opacity(0.78)
-            ],
-            center: .center,
-            startRadius: 90,
-            endRadius: 560
-        )
+// MARK: - OnboardingWordGround
+
+/// The page's own dark under the words, as one layer that stands still
+/// while the pages travel over it.
+///
+/// It used to be drawn behind each slide's own words, sixty points wider
+/// than the slide on either side so that it would have no edge for the
+/// eye to find. Side by side during a swipe, two of them overlapped in
+/// the gutter, and the overlap read as a black band standing between the
+/// slides — one of them arriving, besides, before its slide did. There is
+/// one ground now, and its head and foot are interpolated between the
+/// slide being left and the one arriving, so it breathes with the swipe
+/// instead of sliding with it.
+///
+/// Darkest from just above the title, where the painting is still strong,
+/// and dissolved to nothing at both ends, because the page beneath it is
+/// a different shade at every height.
+private struct OnboardingWordGround: View {
+
+    let stage: OnboardingStage
+
+    /// How far above the words the dark begins, and how far past their
+    /// foot it has gone
+    private static let rise: CGFloat = 90
+    private static let fall: CGFloat = 40
+
+    @State private var appeared = false
+
+    var body: some View {
+        GeometryReader { geometry in
+            if let extent = stage.wordExtent {
+                let top = extent.top - Self.rise
+
+                LinearGradient(
+                    stops: [
+                        .init(color: AppColors.backgroundDeep.opacity(0), location: 0),
+                        .init(color: AppColors.backgroundDeep.opacity(0.78), location: 0.2),
+                        .init(color: AppColors.backgroundDeep.opacity(0.7), location: 0.75),
+                        .init(color: AppColors.backgroundDeep.opacity(0), location: 1)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(
+                    width: geometry.size.width,
+                    height: max(extent.bottom + Self.fall - top, 0)
+                )
+                .offset(y: top)
+            }
+        }
+        .opacity(appeared ? 1 : 0)
+        .animation(.easeOut(duration: 0.55), value: appeared)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+        .onAppear { appeared = true }
     }
 }
 
 // MARK: - OnboardingSlideLayout
 
-/// The chrome sizes a slide is set in. A slide takes the roomy metrics
-/// when they fit the screen and the tight ones when they don't, so a
-/// short phone loses air rather than gaining a scroll bar.
+/// The sizes a slide is set in. A slide takes the roomy metrics when they
+/// fit the screen and the tight ones when they don't, so a short phone
+/// loses air rather than gaining a scroll bar.
 private struct SlideMetrics {
-    let glow: CGFloat
-    let icon: CGFloat
     let title: CGFloat
     let spacing: CGFloat
-    let topPadding: CGFloat
+    let cross: CGFloat
 
-    static let roomy = SlideMetrics(glow: 96, icon: 56, title: 25, spacing: 22, topPadding: 8)
-    static let tight = SlideMetrics(glow: 74, icon: 42, title: 22, spacing: 14, topPadding: 0)
+    static let roomy = SlideMetrics(title: 27, spacing: 16, cross: 40)
+    static let tight = SlideMetrics(title: 23, spacing: 11, cross: 30)
 }
 
-/// Reusable full-screen slide: icon, title, body, and fixed bottom buttons.
+/// A slide: title, body, and fixed buttons at the foot.
 ///
-/// A slide is meant to be taken in at a glance — read it, choose, move on
-/// — so it is sized to the screen rather than scrolled. `ViewThatFits`
-/// keeps that promise: the roomy metrics first, the tight ones if the
-/// content is taller than the display, and a scroll only as the last
-/// resort, which in practice means the large accessibility text sizes.
+/// The body settles at the foot of the page, beside its act, and the room
+/// above it is left to the painting. A slide is meant to be taken in at a
+/// glance, so it is sized to the screen rather than scrolled:
+/// `ViewThatFits` tries the roomy metrics, then the tight ones, and
+/// scrolls only as the last resort (the largest accessibility text sizes).
 ///
-/// When `isActive` first becomes true (the slide is the visible page),
-/// the icon, title, body, and buttons fade in one after another —
-/// a small moment of theater that keeps each slide feeling alive.
+/// Everything is centred. Some slides once set a left-aligned paragraph
+/// under a centred title, and the page read as two layouts at once.
 private struct OnboardingSlideLayout<Content: View, Bottom: View>: View {
 
-    let icon: String
-    let iconIsGradient: Bool
-
-    /// Strikes the app's own Latin cross in the medallion instead of a
-    /// glyph. For the last slide only, where the mark is not a label for
-    /// the page but the crucifix a Rosary is actually begun on.
-    var usesCross: Bool = false
-
     let title: String
-    var isActive: Bool = true
-    @ViewBuilder let content: () -> Content
-    @ViewBuilder let bottomContent: () -> Bottom
+
+    /// Small capitals under the title (the welcome's translation)
+    let titleNote: String?
+
+    /// Strikes the Latin cross above the title. The last slide only,
+    /// where it is the crucifix a Rosary is begun on.
+    let usesCross: Bool
+
+    /// Which slide this is. It tells the stage where its words stand —
+    /// the dark ground under them is drawn there, once for all eight —
+    /// and reads back from it whether the slide is on the glass yet.
+    let page: OnboardingPage
+    let stage: OnboardingStage
+
+    let content: () -> Content
+    let bottomContent: () -> Bottom
+
+    init(
+        title: String,
+        titleNote: String? = nil,
+        usesCross: Bool = false,
+        page: OnboardingPage,
+        stage: OnboardingStage,
+        @ViewBuilder content: @escaping () -> Content,
+        @ViewBuilder bottomContent: @escaping () -> Bottom
+    ) {
+        self.title = title
+        self.titleNote = titleNote
+        self.usesCross = usesCross
+        self.page = page
+        self.stage = stage
+        self.content = content
+        self.bottomContent = bottomContent
+    }
 
     /// True once this slide has played its entrance (plays only once)
     @State private var revealed = false
+
+    /// True once any part of the slide is on the glass. The entrance
+    /// plays as the slide arrives rather than once it has landed: a slide
+    /// that waits for the swipe to settle comes in blank and fills
+    /// afterwards, in plain sight.
+    private var isArriving: Bool { stage.isVisible(page) }
 
     var body: some View {
         VStack(spacing: 0) {
             ViewThatFits(in: .vertical) {
                 slideBody(.roomy)
                 slideBody(.tight)
+                // The last resort, for the largest accessibility text
+                // sizes. It must not bounce when the words already fit:
+                // a scroll view with nothing to scroll still swallows the
+                // sideways drag that turns the page, and the beads slide,
+                // the tallest of the eight, could not be swiped off.
                 ScrollView(showsIndicators: false) { slideBody(.tight) }
+                    .scrollBounceBehavior(.basedOnSize)
             }
 
-            // Fixed bottom — fades into gradient
-            VStack {
-                bottomContent()
-                    .padding(.horizontal, 28)
-                    .padding(.bottom, 20)
-                    .padding(.top, 14)
-            }
-            .background(
-                LinearGradient(
-                    colors: [Color.clear, AppColors.background.opacity(0.95)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea(edges: .bottom)
-            )
-            .staggeredReveal(revealed, delay: 0.36)
+            // No ground of its own. A fade to the page colour used to sit
+            // behind the buttons and showed as a band across every slide:
+            // the page beneath is darker than that colour at the foot.
+            //
+            // The slide is sized to the paging scroll view's container,
+            // which runs under the home indicator, so the act has to ask
+            // for that clearance itself: without it the button sat on the
+            // very edge of the glass with the indicator across its foot.
+            bottomContent()
+                .padding(.horizontal, 28)
+                .padding(.top, 12)
+                .padding(.bottom, 10)
+                .safeAreaPadding(.bottom)
+                .staggeredReveal(revealed, delay: 0.3)
         }
         .onAppear {
-            if isActive { revealed = true }
+            if isArriving { revealed = true }
         }
-        .onChange(of: isActive) { _, nowActive in
-            if nowActive { revealed = true }
+        .onChange(of: isArriving) { _, arriving in
+            if arriving { revealed = true }
         }
     }
 
-    /// The slide above the buttons. The spacers carry no ideal height, so
-    /// `ViewThatFits` measures the real content and only the chosen
-    /// variant spreads into whatever room is left.
     private func slideBody(_ metrics: SlideMetrics) -> some View {
         VStack(spacing: metrics.spacing) {
             Spacer(minLength: 0)
 
-            iconBadge(metrics)
-                .padding(.top, metrics.topPadding)
-                .staggeredReveal(revealed, delay: 0)
+            // Where the words stand is reported rather than shaded here:
+            // the painting's fade is fixed to the glass, but a slide's
+            // words are not — a tall one (four choices, a preview)
+            // reaches up into the crowd of the Transfiguration or Cana's
+            // table, and the faces read through the title. The one ground
+            // follows the words of whichever slides are on the glass.
+            words(metrics)
+                .reportsWordExtent { stage.wordExtents[page.rawValue] = $0 }
 
-            Text(title)
-                .font(AppFonts.headlineFont(metrics.title))
-                .foregroundColor(AppColors.cream)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 24)
-                .staggeredReveal(revealed, delay: 0.12)
-
-            content()
-                .padding(.horizontal, 28)
-                // Never let a line be squeezed to one row and cut with an
-                // ellipsis: a slide is measured by `ViewThatFits`, and
-                // without this a body text will silently compress rather
-                // than let the tight metrics — or the scroll — be chosen.
-                .fixedSize(horizontal: false, vertical: true)
-                .staggeredReveal(revealed, delay: 0.24)
-
-            // Capped, unlike the spacer above it: a slide with little on
-            // it settles low on the page, near the act, instead of
-            // floating in the middle of the painting. A tall slide
-            // collapses both and is unaffected.
             Spacer(minLength: 0)
-                .frame(maxHeight: 70)
+                .frame(maxHeight: 26)
         }
         .frame(maxWidth: .infinity)
     }
 
-    /// Icon over a softly breathing gold glow
-    private func iconBadge(_ metrics: SlideMetrics) -> some View {
-        ZStack {
-            Circle()
-                .fill(AppColors.gold.opacity(0.12))
-                .frame(width: metrics.glow, height: metrics.glow)
-                .blur(radius: 18)
-                .phaseAnimator([1.0, 1.18, 1.0]) { view, scale in
-                    view.scaleEffect(scale)
-                } animation: { _ in
-                    .easeInOut(duration: 2.4)
-                }
-
-            // A struck disc under the glyph, the same shape the Pray
-            // medallion carries in the tab bar. Bare gold line-art over
-            // a painting reads as a mistake — on the welcome slide the
-            // mark landed in the angel's hand as though it were being
-            // offered to Our Lady. On its own ground it reads as a seal
-            // set on the page instead.
-            Circle()
-                .fill(AppColors.backgroundDeep.opacity(0.62))
-                .frame(width: metrics.glow * 0.82, height: metrics.glow * 0.82)
-                .overlay(
-                    Circle()
-                        .strokeBorder(AppColors.gold.opacity(0.35), lineWidth: 1)
-                )
-
+    private func words(_ metrics: SlideMetrics) -> some View {
+        VStack(spacing: metrics.spacing) {
             if usesCross {
                 LatinCross()
                     .fill(
@@ -898,21 +1186,41 @@ private struct OnboardingSlideLayout<Content: View, Bottom: View>: View {
                             endPoint: .bottom
                         )
                     )
-                    .frame(width: metrics.icon * 0.62, height: metrics.icon * 0.92)
-            } else if iconIsGradient {
-                AppIcon(icon, size: metrics.icon)
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [AppColors.gold, AppColors.goldLight],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    )
-            } else {
-                AppIcon(icon, size: metrics.icon)
-                    .foregroundColor(AppColors.gold)
+                    .frame(width: metrics.cross * 0.64, height: metrics.cross)
+                    .shadow(color: AppColors.gold.opacity(0.45), radius: 12)
+                    .padding(.bottom, 2)
+                    .staggeredReveal(revealed, delay: 0)
             }
+
+            VStack(spacing: 10) {
+                Text(title)
+                    .font(AppFonts.headlineFont(metrics.title))
+                    .foregroundColor(AppColors.cream)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .contentTransition(.opacity)
+                    .animation(Motion.crossfade, value: title)
+
+                if let titleNote {
+                    Text(titleNote.uppercased())
+                        .font(AppFonts.labelFont(11))
+                        .tracking(4)
+                        .foregroundColor(AppColors.gold)
+                }
+            }
+            .shadow(color: AppColors.backgroundDeep.opacity(0.9), radius: 10)
+            .padding(.horizontal, 24)
+            .staggeredReveal(revealed, delay: 0.08)
+
+            content()
+                .padding(.horizontal, 28)
+                // Never let a line be squeezed to one row and cut with an
+                // ellipsis: without this a body text silently compresses
+                // rather than let the tight metrics, or the scroll, be chosen.
+                .fixedSize(horizontal: false, vertical: true)
+                .staggeredReveal(revealed, delay: 0.18)
         }
+        .frame(maxWidth: .infinity)
     }
 }
 
@@ -926,38 +1234,69 @@ private extension View {
             .offset(y: revealed ? 0 : 14)
             .animation(.easeOut(duration: 0.55).delay(delay), value: revealed)
     }
+
+    /// Reports where a slide's words stand on the glass.
+    func reportsWordExtent(_ report: @escaping (WordsExtent) -> Void) -> some View {
+        modifier(WordExtentReporter(report: report))
+    }
+}
+
+/// Tells the stage where one slide's words stand, measured in the stage's
+/// own space so that the ground under them can be drawn once for all
+/// eight slides.
+///
+/// The report waits on the view appearing: `ViewThatFits` measures
+/// candidates it does not draw, and a slide set in metrics that were
+/// never chosen must not be the one the ground is sized to.
+private struct WordExtentReporter: ViewModifier {
+
+    let report: (WordsExtent) -> Void
+
+    @State private var measured: WordsExtent?
+    @State private var drawn = false
+
+    func body(content: Content) -> some View {
+        content
+            .onGeometryChange(for: WordsExtent.self) { proxy in
+                let frame = proxy.frame(in: .named(OnboardingView.stageSpace))
+                return WordsExtent(top: frame.minY, bottom: frame.maxY)
+            } action: { extent in
+                measured = extent
+                if drawn { report(extent) }
+            }
+            .onAppear {
+                drawn = true
+                if let measured { report(measured) }
+            }
+    }
 }
 
 // MARK: - Supporting Components
 
-private struct OnboardingNextButton: View {
-    let label: String
-    let action: () -> Void
+/// A slide's lead sentence, centred under its title
+private struct OnboardingLead: View {
+    let text: String
+    var italic = false
+
+    init(_ text: String, italic: Bool = false) {
+        self.text = text
+        self.italic = italic
+    }
 
     var body: some View {
-        Button(action: action) {
-            HStack(spacing: 6) {
-                Text(label)
-                    .font(AppFonts.headlineFont(17))
-                AppIcon("ph-caret-right", size: 13)
-            }
-            .foregroundColor(AppColors.background)
+        Text(text)
+            .font(italic ? AppFonts.italicFont(17) : AppFonts.bodyFont(16))
+            .foregroundColor(AppColors.cream.opacity(0.9))
+            .multilineTextAlignment(.center)
+            .lineSpacing(ReadingTypography.lineSpacing(for: 16) * 0.7)
+            .fixedSize(horizontal: false, vertical: true)
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
-            .background(
-                LinearGradient(
-                    colors: [AppColors.gold, AppColors.goldLight],
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-            )
-            .cornerRadius(30)
-        }
+            .shadow(color: AppColors.backgroundDeep.opacity(0.9), radius: 8)
     }
 }
 
-/// Slide 2 — one quiet moment of the session: circled icon + a short line.
-private struct SessionMomentRow: View {
+/// One thing the app offers: a glyph in its disc and a line beside it
+private struct OfferRow: View {
     let icon: String
     let text: String
 
@@ -966,153 +1305,280 @@ private struct SessionMomentRow: View {
             ZStack {
                 Circle()
                     .fill(AppColors.gold.opacity(0.12))
-                    .frame(width: 34, height: 34)
-                AppIcon(icon, size: 15)
+                    .frame(width: 36, height: 36)
+                AppIcon(icon, size: 16)
                     .foregroundColor(AppColors.gold)
             }
 
             Text(text)
-                .font(AppFonts.bodyFont(15))
-                .foregroundColor(AppColors.cream.opacity(0.85))
-
-            Spacer()
-        }
-    }
-}
-
-/// The last slide's one concrete next step. Set in the same quoted
-/// ground as slide 2's demo, so it reads as something the app is
-/// telling you rather than another choice to make.
-private struct FirstStepCard: View {
-    let icon: String
-    let text: String
-
-    var body: some View {
-        HStack(spacing: 14) {
-            ZStack {
-                Circle()
-                    .fill(AppColors.gold.opacity(0.12))
-                    .frame(width: 34, height: 34)
-                AppIcon(icon, size: 15)
-                    .foregroundColor(AppColors.gold)
-            }
-
-            Text(text)
-                .font(AppFonts.bodyFont(15))
-                .foregroundColor(AppColors.cream.opacity(0.85))
+                .font(AppFonts.bodyFont(16))
+                .foregroundColor(AppColors.cream.opacity(0.88))
                 .multilineTextAlignment(.leading)
                 .fixedSize(horizontal: false, vertical: true)
 
             Spacer(minLength: 0)
         }
-        .padding(.vertical, 14)
-        .padding(.horizontal, 16)
-        .frame(maxWidth: .infinity)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(AppColors.quoteBackground)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(AppColors.gold.opacity(0.2), lineWidth: 1)
-        )
         .accessibilityElement(children: .combine)
     }
 }
 
-/// Slide 2's show-don't-tell: the five mysteries advancing one by one,
-/// the way a session actually moves — a meditation per mystery, prayed
-/// at your own pace. Loops while the slide is visible; holds a still
-/// frame when inactive or Reduce Motion is on.
-private struct MysteryPaceDemoView: View {
-    let isActive: Bool
+/// Slide three: the strand the prayer screen hangs, working.
+///
+/// The same `RosaryStrandView` and the same arithmetic as both players, so
+/// what is learned here is exactly what happens there: swipe down for the
+/// next bead, up for the one before, the Glory Be said on the next
+/// decade's Our Father bead, and the mystery turning on its own with the
+/// ripple and the medium beat. The Joyful Mysteries, as the familiar set.
+private struct BeadStrandDemo: View {
 
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    private static let strand = RosaryStrand(decades: 5, hailMarys: 10)
 
-    /// Seconds each mystery lingers in the demo
-    private static let mysteryInterval: Double = 2.4
+    /// Six beads' length of string in the window. The slide's demo slot is
+    /// held to it in both ways of praying, so choosing never moves the page.
+    static let height = RosaryStrandView.rowHeight * 6
 
-    /// The Joyful mysteries, as a familiar example set
     private static let mysteries = [
         "The Annunciation",
         "The Visitation",
         "The Nativity",
         "The Presentation",
-        "Finding Jesus in the Temple"
+        "The Finding in the Temple"
     ]
 
-    private static let ordinals = ["FIRST", "SECOND", "THIRD", "FOURTH", "FIFTH"]
+    private static let ordinals = ["First", "Second", "Third", "Fourth", "Fifth"]
+
+    @State private var mystery = 0
+    @State private var bead = 0
+    @State private var dragOffset: CGFloat = 0
+    @State private var turnPulse = 0
+
+    /// False until the first bead is moved; until then the column says
+    /// what to do instead of what to pray
+    @State private var hasMoved = false
+
+    private var strand: RosaryStrand { Self.strand }
+    private var position: BeadPosition { BeadPosition(mystery: mystery, bead: bead) }
+    private var isAtStart: Bool { mystery == 0 && bead == 0 }
+    private var isAtEnd: Bool { mystery == strand.decades - 1 && bead == strand.decadeLength }
 
     var body: some View {
-        Group {
-            if isActive && !reduceMotion {
-                TimelineView(.periodic(from: .now, by: Self.mysteryInterval)) { context in
-                    let tick = Int(context.date.timeIntervalSinceReferenceDate / Self.mysteryInterval)
-                    demo(current: tick % 5)
-                }
-            } else {
-                demo(current: 1)
+        HStack(alignment: .center, spacing: 8) {
+            reading
+
+            RosaryStrandView(
+                strand: strand,
+                activeIndex: strand.index(mystery: mystery, bead: bead),
+                height: Self.height,
+                dragOffset: dragOffset,
+                turnPulse: turnPulse,
+                activeLabel: strand.labelLines(bead: bead)
+            )
+        }
+        .frame(height: Self.height)
+        .contentShape(Rectangle())
+        // Simultaneous, so a sideways swipe begun on the beads still
+        // turns the onboarding page
+        .simultaneousGesture(swipe)
+        .onTapGesture { step(forward: true) }
+        .sensoryFeedback(.selection, trigger: position)
+        .sensoryFeedback(.impact(weight: .medium), trigger: turnPulse)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Practice beads. The \(Self.ordinals[mystery]) Joyful Mystery, \(strand.label(bead: bead))")
+        .accessibilityHint("Swipe up or down to move between beads")
+        .accessibilityAdjustableAction { direction in
+            switch direction {
+            case .increment: step(forward: true)
+            case .decrement: step(forward: false)
+            @unknown default: break
             }
         }
-        .padding(.vertical, 18)
-        .padding(.horizontal, 16)
-        .frame(maxWidth: .infinity)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(AppColors.quoteBackground)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(AppColors.gold.opacity(0.2), lineWidth: 1)
-        )
     }
 
-    private func demo(current: Int) -> some View {
-        VStack(spacing: 14) {
-            // Five mystery markers — prayed ones filled, the current one lit
-            HStack(spacing: 14) {
-                ForEach(0..<5, id: \.self) { index in
-                    let isReached = index <= current
-                    let isCurrent = index == current
+    /// The mystery, and the first words of the prayer on this bead. Both
+    /// hold their room whatever they say, so nothing moves as they change.
+    private var reading: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("The \(Self.ordinals[mystery]) Joyful Mystery".uppercased())
+                .font(AppFonts.labelFont(9))
+                .tracking(2)
+                .foregroundColor(AppColors.gold)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+                .contentTransition(.opacity)
 
-                    Circle()
-                        .fill(isReached ? AnyShapeStyle(AppColors.goldGradient) : AnyShapeStyle(AppColors.cardElevated))
-                        .overlay(
-                            Circle().strokeBorder(
-                                AppColors.gold.opacity(isReached ? 0.8 : 0.25),
-                                lineWidth: 1
-                            )
-                        )
-                        .frame(width: 13, height: 13)
-                        .scaleEffect(isCurrent ? 1.3 : 1)
-                        .shadow(color: AppColors.gold.opacity(isCurrent ? 0.6 : 0), radius: 6)
+            Text(Self.mysteries[mystery])
+                .font(AppFonts.headlineFont(17))
+                .foregroundColor(AppColors.cream)
+                .lineLimit(2, reservesSpace: true)
+                .contentTransition(.opacity)
+
+            ZStack(alignment: .topLeading) {
+                Text(hasMoved ? openingWords : "Try it here. Swipe down on the beads.")
+                    .font(AppFonts.italicFont(15))
+                    .foregroundColor(AppColors.cream.opacity(hasMoved ? 0.8 : 0.62))
+                    .lineLimit(4, reservesSpace: true)
+                    .id(hasMoved ? prayerKind : "hint")
+                    .transition(.opacity)
+            }
+        }
+        .animation(Motion.words, value: position)
+        .animation(Motion.crossfade, value: hasMoved)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var prayerKind: String {
+        if bead == 0 { return "our-father" }
+        return bead > strand.hailMarys ? "glory-be" : "hail-mary"
+    }
+
+    private var openingWords: String {
+        switch prayerKind {
+        case "our-father": return "Our Father, who art in heaven, hallowed be thy name."
+        case "glory-be":   return "Glory be to the Father, and to the Son, and to the Holy Ghost."
+        default:           return "Hail Mary, full of grace, the Lord is with thee."
+        }
+    }
+
+    private var swipe: some Gesture {
+        DragGesture(minimumDistance: 10)
+            .onChanged { value in
+                let travel = value.translation.height
+                guard abs(travel) > abs(value.translation.width) else { return }
+                dragOffset = RosaryStrandView.follow(travel, resisted: travel > 0 ? isAtEnd : isAtStart)
+            }
+            .onEnded { value in
+                let travel = value.translation.height
+                let isVertical = abs(travel) > abs(value.translation.width)
+                if isVertical, travel > 28, !isAtEnd {
+                    step(forward: true)
+                } else if isVertical, travel < -28, !isAtStart {
+                    step(forward: false)
+                } else {
+                    withAnimation(Motion.beadSettle) { dragOffset = 0 }
                 }
             }
-            .animation(.spring(response: 0.45, dampingFraction: 0.7), value: current)
+    }
 
-            // The mystery now open, as the prayer screen presents it
-            VStack(spacing: 4) {
-                Text("THE \(Self.ordinals[current]) MYSTERY")
-                    .font(AppFonts.labelFont(9))
-                    .tracking(2.5)
-                    .foregroundColor(AppColors.gold)
-
-                Text(Self.mysteries[current])
-                    .font(AppFonts.headlineFont(17))
-                    .foregroundColor(AppColors.cream)
+    /// One bead along the string. From a decade's Glory Be the hand moves
+    /// to the next mystery on the same bead, so the string stays put and
+    /// the ripple marks the turn.
+    private func step(forward: Bool) {
+        withAnimation(Motion.beadSlide) {
+            dragOffset = 0
+            if forward {
+                guard !isAtEnd else { return }
+                if bead < strand.decadeLength {
+                    bead += 1
+                } else {
+                    mystery += 1
+                    bead = 0
+                    turnPulse += 1
+                }
+            } else {
+                guard !isAtStart else { return }
+                if bead > 0 {
+                    bead -= 1
+                } else {
+                    mystery -= 1
+                    bead = strand.decadeLength
+                }
             }
-            .id(current)
-            .transition(.opacity.combined(with: .offset(y: 6)))
-
-            Text("Meditate, pray the decade, continue when ready")
-                .font(AppFonts.italicFont(12))
-                .foregroundColor(AppColors.textSecondary)
+            hasMoved = true
         }
-        .animation(.easeOut(duration: 0.4), value: current)
     }
 }
 
-/// Selectable option row shared by the intention and reminder slides.
+/// Slide three without the beads: the decade-at-a-time screen, for a hand
+/// that keeps its own count. Arrows step between the mysteries, as they
+/// flank the player's transport, and nothing counts the Hail Marys.
+private struct MysteryStepDemo: View {
+
+    private static let mysteries = [
+        "The Annunciation",
+        "The Visitation",
+        "The Nativity",
+        "The Presentation",
+        "The Finding in the Temple"
+    ]
+
+    private static let ordinals = ["First", "Second", "Third", "Fourth", "Fifth"]
+
+    @State private var mystery = 0
+
+    var body: some View {
+        VStack(spacing: 18) {
+            // The five mysteries as a strand of their own, prayed ones lit
+            HStack(spacing: 14) {
+                ForEach(0..<Self.mysteries.count, id: \.self) { index in
+                    RosaryBead(
+                        state: index < mystery ? .prayed : (index == mystery ? .active : .ahead),
+                        size: 13
+                    )
+                }
+            }
+            .animation(Motion.beadSlide, value: mystery)
+
+            VStack(spacing: 6) {
+                Text("The \(Self.ordinals[mystery]) Joyful Mystery".uppercased())
+                    .font(AppFonts.labelFont(9))
+                    .tracking(2)
+                    .foregroundColor(AppColors.gold)
+                    .contentTransition(.opacity)
+
+                Text(Self.mysteries[mystery])
+                    .font(AppFonts.headlineFont(19))
+                    .foregroundColor(AppColors.cream)
+                    .contentTransition(.opacity)
+            }
+            .animation(Motion.words, value: mystery)
+
+            HStack(spacing: 16) {
+                arrow("ph-caret-left", label: "Previous mystery", enabled: mystery > 0) {
+                    mystery -= 1
+                }
+
+                Text("Ten Hail Marys, counted on your own rosary")
+                    .font(AppFonts.italicFont(15))
+                    .foregroundColor(AppColors.cream.opacity(0.72))
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity)
+
+                arrow("ph-caret-right", label: "Next mystery", enabled: mystery < Self.mysteries.count - 1) {
+                    mystery += 1
+                }
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .sensoryFeedback(.selection, trigger: mystery)
+    }
+
+    private func arrow(
+        _ icon: String,
+        label: String,
+        enabled: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button {
+            withAnimation(Motion.settle) { action() }
+        } label: {
+            AppIcon(icon, size: 16)
+                .foregroundColor(AppColors.gold)
+                .frame(width: 44, height: 44)
+                .background(
+                    Circle()
+                        .strokeBorder(AppColors.gold.opacity(0.35), lineWidth: AppLine.hairline)
+                )
+                .contentShape(Circle())
+        }
+        .buttonStyle(QuietGlyphButtonStyle())
+        .disabled(!enabled)
+        .opacity(enabled ? 1 : 0.35)
+        .accessibilityLabel(label)
+    }
+}
+
+/// A choice on the intention, beads, language, and reminder slides.
 private struct SelectableOptionRow: View {
     let label: String
     let detail: String
@@ -1128,7 +1594,7 @@ private struct SelectableOptionRow: View {
                         .transition(.scale(scale: 0.4).combined(with: .opacity))
                 } else {
                     AppIcon("ph-circle", size: 20)
-                        .foregroundColor(AppColors.textSecondary.opacity(0.6))
+                        .foregroundColor(AppColors.cream.opacity(0.4))
                 }
 
                 VStack(alignment: .leading, spacing: 2) {
@@ -1137,35 +1603,38 @@ private struct SelectableOptionRow: View {
                         .foregroundColor(AppColors.cream)
 
                     Text(detail)
-                        .font(AppFonts.bodyFont(13))
-                        .foregroundColor(AppColors.textSecondary)
+                        .font(AppFonts.bodyFont(14))
+                        .foregroundColor(AppColors.cream.opacity(0.66))
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
 
-                Spacer()
+                Spacer(minLength: 0)
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 12)
+            .padding(.vertical, 11)
             .frame(minHeight: 44)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(AppColors.cardBackground.opacity(isSelected ? 1 : 0.5))
-                    .shadow(color: AppColors.gold.opacity(isSelected ? 0.22 : 0), radius: 12, x: 0, y: 3)
+                    .fill(AppColors.cardBackground.opacity(isSelected ? 0.92 : 0.62))
+                    .shadow(color: AppColors.gold.opacity(isSelected ? 0.2 : 0), radius: 12, x: 0, y: 3)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
                     .strokeBorder(
-                        isSelected ? AppColors.gold.opacity(0.6) : AppColors.gold.opacity(0.15),
-                        lineWidth: 1
+                        AppColors.gold.opacity(isSelected ? 0.6 : 0.2),
+                        lineWidth: AppLine.hairline
                     )
             )
         }
         .buttonStyle(SacredCardButtonStyle())
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }
 
-/// Theme slide — the three sanctuary palettes. Selecting one re-themes
-/// the entire app instantly (ThemeManager is @Observable and every color
-/// flows through AppColors), so the onboarding itself is the live preview.
+/// The three palettes. Selecting one re-themes the entire app instantly
+/// (ThemeManager is @Observable and every colour flows through
+/// AppColors), so the onboarding itself is the live preview.
 private struct OnboardingThemePicker: View {
 
     /// Observed so the checkmark moves the moment the theme changes
@@ -1184,31 +1653,49 @@ private struct OnboardingThemePicker: View {
                 }
             }
 
-            // A verse in the voice of the chosen sanctuary — the small
-            // reward for trying each one.
-            Text(verse(for: themeManager.current))
-                .font(AppFonts.italicFont(14))
-                .foregroundColor(AppColors.accentSoft)
-                .multilineTextAlignment(.center)
-                .frame(maxWidth: .infinity)
-                .padding(.top, 10)
-                .id(themeManager.current)
-                .transition(.opacity.combined(with: .offset(y: 6)))
+            // A line for each palette, the small reward for trying them.
+            // One slot, crossfading, with its room held for two lines so
+            // the rows above never move.
+            ZStack {
+                verse(for: themeManager.current)
+                    .id(themeManager.current)
+                    .transition(.opacity)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.top, 8)
+            .animation(Motion.crossfade, value: themeManager.current)
         }
         .sensoryFeedback(.selection, trigger: themeManager.current)
     }
 
-    private func verse(for theme: AppTheme) -> String {
+    /// Scripture in the Douay-Rheims, with its own numbering, as the
+    /// rest of the app quotes it
+    private func words(for theme: AppTheme) -> (text: String, source: String) {
         switch theme {
-        case .marianBlue: return "“Tota pulchra es, Maria” — you are all fair, O Mary."
-        case .midnight:   return "“Be still, and know that I am God.” — Psalm 46"
-        case .candlelit:  return "“Your word is a lamp to my feet.” — Psalm 119"
+        case .marianBlue: return ("“Tota pulchra es, Maria.” Thou art all fair, O Mary.", "Antiphon of the Immaculate Conception")
+        case .midnight:   return ("“Be still and see that I am God.”", "Psalm 45:11")
+        case .candlelit:  return ("“Thy word is a lamp to my feet.”", "Psalm 118:105")
+        }
+    }
+
+    private func verse(for theme: AppTheme) -> some View {
+        let words = words(for: theme)
+        return VStack(spacing: 6) {
+            Text(words.text)
+                .font(AppFonts.italicFont(15))
+                .foregroundColor(AppColors.accentSoft)
+                .multilineTextAlignment(.center)
+                .lineLimit(2, reservesSpace: true)
+
+            Text(words.source.uppercased())
+                .font(AppFonts.labelFont(9))
+                .tracking(2)
+                .foregroundColor(AppColors.gold.opacity(0.7))
         }
     }
 }
 
-/// A single theme choice: swatch trio, name, character line, and check —
-/// the same card treatment as SelectableOptionRow.
+/// A single theme choice: swatch trio, name, character line, and check.
 private struct OnboardingThemeRow: View {
     let theme: AppTheme
     let isSelected: Bool
@@ -1217,15 +1704,18 @@ private struct OnboardingThemeRow: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: 14) {
-                // Swatch trio: background, card, and gold — the stack
-                // fans open and the gold "lights" when this theme is chosen
+                // Swatch trio: background, card, and gold. The stack fans
+                // open and the gold lights when this theme is chosen. It
+                // fans inside a fixed width, so the names beside every row
+                // stand on one line whichever row is chosen.
                 HStack(spacing: isSelected ? 3 : -8) {
                     swatch(theme.palette.background)
                     swatch(theme.palette.card)
                     swatch(theme.palette.gold)
                         .shadow(color: theme.palette.gold.opacity(isSelected ? 0.7 : 0), radius: 6)
                 }
-                .animation(.spring(response: 0.4, dampingFraction: 0.65), value: isSelected)
+                .frame(width: 78, alignment: .leading)
+                .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isSelected)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(theme.displayName)
@@ -1233,11 +1723,12 @@ private struct OnboardingThemeRow: View {
                         .foregroundColor(AppColors.cream)
 
                     Text(theme.detail)
-                        .font(AppFonts.bodyFont(13))
-                        .foregroundColor(AppColors.textSecondary)
+                        .font(AppFonts.bodyFont(14))
+                        .foregroundColor(AppColors.cream.opacity(0.66))
+                        .fixedSize(horizontal: false, vertical: true)
                 }
 
-                Spacer()
+                Spacer(minLength: 0)
 
                 if isSelected {
                     AppIcon("ph-check-circle-fill", size: 20)
@@ -1245,48 +1736,45 @@ private struct OnboardingThemeRow: View {
                         .transition(.scale(scale: 0.4).combined(with: .opacity))
                 } else {
                     AppIcon("ph-circle", size: 20)
-                        .foregroundColor(AppColors.textSecondary.opacity(0.6))
+                        .foregroundColor(AppColors.cream.opacity(0.4))
                 }
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 14)
+            .padding(.vertical, 13)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(AppColors.cardBackground.opacity(isSelected ? 1 : 0.5))
-                    .shadow(color: AppColors.gold.opacity(isSelected ? 0.22 : 0), radius: 12, x: 0, y: 3)
+                    .fill(AppColors.cardBackground.opacity(isSelected ? 0.92 : 0.62))
+                    .shadow(color: AppColors.gold.opacity(isSelected ? 0.2 : 0), radius: 12, x: 0, y: 3)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
                     .strokeBorder(
-                        isSelected ? AppColors.gold.opacity(0.6) : AppColors.gold.opacity(0.15),
-                        lineWidth: 1
+                        AppColors.gold.opacity(isSelected ? 0.6 : 0.2),
+                        lineWidth: AppLine.hairline
                     )
             )
         }
         .buttonStyle(SacredCardButtonStyle())
-        .accessibilityLabel("\(theme.displayName) theme")
+        .accessibilityLabel("\(theme.displayName) colors")
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
     private func swatch(_ color: Color) -> some View {
         Circle()
             .fill(color)
             .frame(width: 24, height: 24)
-            .overlay(Circle().strokeBorder(AppColors.cream.opacity(0.25), lineWidth: 1))
+            .overlay(Circle().strokeBorder(AppColors.cream.opacity(0.25), lineWidth: AppLine.hairline))
     }
 }
 
-/// Language slide — live preview of the Hail Mary's opening lines,
-/// rendered in the same line-by-line format the prayer screens use,
-/// so each option shows exactly what it means before it's chosen.
+/// The opening of the Hail Mary in the chosen format, laid out as the
+/// prayer screens lay it, so each choice shows what it means before it
+/// is made.
 private struct LanguagePreviewCard: View {
     let language: PrayerLanguage
 
-    /// The opening line of the Ave Maria in both tongues. One line, not
-    /// the stanza — it has to show the shape of the format while leaving
-    /// the four choices below it on the same screen.
-    private static let lines: [(latin: String, english: String)] = [
-        ("Ave Maria, gratia plena, Dominus tecum;", "Hail Mary, full of grace, the Lord is with thee;")
-    ]
+    private static let latin = "Ave Maria, gratia plena, Dominus tecum."
+    private static let english = "Hail Mary, full of grace, the Lord is with thee."
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -1295,89 +1783,60 @@ private struct LanguagePreviewCard: View {
                     .foregroundColor(AppColors.gold.opacity(0.85))
 
                 Text("The Hail Mary")
-                    .font(AppFonts.italicFont(12))
-                    .foregroundColor(AppColors.textSecondary)
+                    .font(AppFonts.italicFont(14))
+                    .foregroundColor(AppColors.cream.opacity(0.62))
 
                 Spacer()
+            }
 
-                // Mode chip — the dot order mirrors which tongue leads
-                Text(badge)
-                    .font(AppFonts.headlineFont(10))
-                    .tracking(1.1)
-                    .foregroundColor(AppColors.gold)
-                    .padding(.horizontal, 9)
-                    .padding(.vertical, 4)
-                    .background(Capsule().fill(AppColors.gold.opacity(0.12)))
-                    .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.25), lineWidth: 1))
+            ZStack(alignment: .topLeading) {
+                lines
                     .id(language)
-                    .transition(.opacity.combined(with: .scale(scale: 0.8)))
+                    .transition(.opacity)
             }
-
-            VStack(alignment: .leading, spacing: 8) {
-                ForEach(Array(Self.lines.enumerated()), id: \.offset) { _, line in
-                    linePair(latin: line.latin, english: line.english)
-                }
-            }
-            .id(language)
-            .transition(.opacity.combined(with: .offset(y: 8)))
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(12)
+        .padding(14)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(AppColors.quoteBackground)
+                .fill(AppColors.quoteBackground.opacity(0.9))
         )
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(AppColors.gold.opacity(0.2), lineWidth: 1)
+                .strokeBorder(AppColors.gold.opacity(0.2), lineWidth: AppLine.hairline)
         )
-        .animation(.easeOut(duration: 0.3), value: language)
+        .animation(Motion.crossfade, value: language)
     }
 
-    /// Compact label for the active mode, e.g. "LATIN · ENGLISH"
-    private var badge: String {
-        switch language {
-        case .english:           return "ENGLISH"
-        case .latin:             return "LATIN"
-        case .both:              return "LATIN · ENGLISH"
-        case .latinUnderEnglish: return "ENGLISH · LATIN"
-        }
-    }
-
-    /// One line of the prayer in the chosen format
     @ViewBuilder
-    private func linePair(latin: String, english: String) -> some View {
+    private var lines: some View {
         switch language {
         case .english:
-            singleLine(english)
+            primary(Self.english)
         case .latin:
-            singleLine(latin)
+            primary(Self.latin)
         case .both:
-            bilingualPair(primary: latin, secondary: english)
+            pair(primary: Self.latin, secondary: Self.english)
         case .latinUnderEnglish:
-            bilingualPair(primary: english, secondary: latin)
+            pair(primary: Self.english, secondary: Self.latin)
         }
     }
 
-    private func singleLine(_ text: String) -> some View {
+    private func primary(_ text: String) -> some View {
         Text(text)
-            .font(AppFonts.bodyFont(15))
+            .font(AppFonts.bodyFont(16))
             .foregroundColor(AppColors.cream)
             .fixedSize(horizontal: false, vertical: true)
     }
 
-    private func bilingualPair(primary: String, secondary: String) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(primary)
-                .font(AppFonts.bodyFont(15))
-                .foregroundColor(AppColors.cream)
-                .fixedSize(horizontal: false, vertical: true)
+    private func pair(primary: String, secondary: String) -> some View {
+        VStack(alignment: .leading, spacing: 3) {
+            self.primary(primary)
 
             Text(secondary)
-                .font(AppFonts.bodyFont(13))
-                .foregroundColor(AppColors.textSecondary.opacity(0.8))
-                .italic()
-                .padding(.leading, 8)
+                .font(AppFonts.italicFont(14))
+                .foregroundColor(AppColors.cream.opacity(0.62))
+                .padding(.leading, 10)
                 .fixedSize(horizontal: false, vertical: true)
         }
     }
@@ -1386,5 +1845,5 @@ private struct LanguagePreviewCard: View {
 // MARK: - Preview
 
 #Preview {
-    OnboardingView(onComplete: {})
+    OnboardingView(onComplete: { _ in })
 }

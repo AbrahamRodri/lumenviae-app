@@ -60,10 +60,8 @@ struct AccountView: View {
                             // that keeps its own count
                             ToggleRow(
                                 icon: "ch-rosary",
-                                title: "Pray on the Beads",
-                                subtitle: userSettings.prayOnBeads
-                                    ? "Swipe through each Hail Mary; the mystery turns on its own"
-                                    : "Move a mystery at a time, counting on your own rosary",
+                                title: UserSettings.beadCounterTitle,
+                                subtitle: UserSettings.beadCounterDetail(isOn: userSettings.prayOnBeads),
                                 isOn: Bindable(userSettings).prayOnBeads
                             )
                         }
@@ -161,10 +159,10 @@ struct AccountView: View {
                             // whoever came to learn the Rosary eventually has.
                             ActionRow(
                                 icon: "ph-heart",
-                                title: "What Draws You Here",
+                                title: "What Brings You to the Rosary",
                                 subtitle: userSettings.intentions.isEmpty
                                     ? "Not set"
-                                    : userSettings.intentions.map(\.rawValue).joined(separator: " · ")
+                                    : userSettings.intentions.map(\.displayName).joined(separator: " · ")
                             ) {
                                 showIntentionPicker = true
                             }
@@ -679,32 +677,51 @@ struct ToggleRow: View {
     @Binding var isOn: Bool
 
     var body: some View {
-        HStack(spacing: 16) {
-            AppIcon(icon, size: 18)
-                .foregroundColor(AppColors.textSecondary)
-                .frame(width: 24)
+        // The whole row is the switch: a tap on the words once did
+        // nothing, which read as a setting that would not change. The
+        // switch is drawn but takes no touches of its own — left live
+        // inside a row that also answered taps, a tap on it reached both,
+        // and the setting flipped twice and stayed where it was.
+        Button {
+            withAnimation(Motion.settle) { isOn.toggle() }
+        } label: {
+            HStack(spacing: 16) {
+                AppIcon(icon, size: 18)
+                    .foregroundColor(AppColors.textSecondary)
+                    .frame(width: 24)
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .font(AppFonts.bodyFont(16))
-                    .foregroundColor(AppColors.cream)
-                    .fixedSize(horizontal: false, vertical: true)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(AppFonts.bodyFont(16))
+                        .foregroundColor(AppColors.cream)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
 
-                if let subtitle = subtitle {
-                    Text(subtitle)
-                        .font(AppFonts.bodyFont(12))
-                        .foregroundColor(AppColors.textSecondary)
+                    if let subtitle = subtitle {
+                        Text(subtitle)
+                            .font(AppFonts.bodyFont(12))
+                            .foregroundColor(AppColors.textSecondary)
+                            .multilineTextAlignment(.leading)
+                    }
                 }
+
+                Spacer()
+
+                Toggle(title, isOn: $isOn)
+                    .labelsHidden()
+                    .tint(AppColors.gold)
+                    .allowsHitTesting(false)
             }
-
-            Spacer()
-
-            Toggle("", isOn: $isOn)
-                .labelsHidden()
-                .tint(AppColors.gold)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .contentShape(Rectangle())
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 14)
+        .buttonStyle(.plain)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(title)
+        .accessibilityValue(isOn ? "On" : "Off")
+        .accessibilityHint(subtitle ?? "")
+        .accessibilityAddTraits(.isToggle)
     }
 }
 
@@ -920,67 +937,60 @@ struct AccountFooter: View {
 
 struct AboutSheet: View {
     var body: some View {
-        ZStack {
-            AppColors.appGradient.ignoresSafeArea()
+        // The app's colophon keeps its centred masthead rather than a
+        // sheet header: the wordmark is the page's subject, not a label
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 32) {
+                // Icon
+                VStack(spacing: 16) {
+                    AppIcon("ch-rosary", size: 52)
+                        .foregroundColor(AppColors.gold)
 
-            VStack(spacing: 0) {
-                // Handle
-                Capsule()
-                    .fill(AppColors.gold.opacity(0.3))
-                    .frame(width: 40, height: 4)
-                    .padding(.top, 12)
+                    Text("Lumen Viae")
+                        .font(AppFonts.headlineFont(28))
+                        .foregroundColor(AppColors.cream)
 
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: 32) {
-                        // Icon
-                        VStack(spacing: 16) {
-                            AppIcon("ch-rosary", size: 52)
-                                .foregroundColor(AppColors.gold)
-
-                            Text("Lumen Viae")
-                                .font(AppFonts.headlineFont(28))
-                                .foregroundColor(AppColors.cream)
-
-                            Text("Light of the Way")
-                                .font(AppFonts.italicFont(16))
-                                .foregroundColor(AppColors.gold.opacity(0.8))
-                        }
-                        .padding(.top, 32)
-
-                        // Description
-                        VStack(alignment: .leading, spacing: 16) {
-                            InfoBlock(
-                                title: "Our Mission",
-                                text: "Lumen Viae is a Catholic Rosary companion designed to deepen your prayer life. Through guided meditations, scripture, and reflection, the app accompanies you through all five mysteries of the Rosary — Joyful, Sorrowful, Glorious, and Luminous."
-                            )
-
-                            InfoBlock(
-                                title: "How to Pray the Rosary",
-                                text: "Each Rosary consists of five decades (mysteries). For each mystery, meditate on the scene, pray one Our Father, ten Hail Marys, and a Glory Be. The app guides you through all five, with optional meditations from saints and scripture."
-                            )
-
-                            InfoBlock(
-                                title: "Daily Schedule",
-                                text: "The traditional schedule assigns a set of mysteries to each day of the week: Joyful on Monday and Thursday; Sorrowful on Tuesday and Friday; Glorious on Wednesday and Saturday. Sunday follows the season — Joyful in Advent, Sorrowful in Lent, and Glorious the rest of the year."
-                            )
-                        }
-                        .padding(.horizontal, 24)
-
-                        // Version
-                        VStack(spacing: 4) {
-                            Text("Version \(Bundle.main.appVersion)")
-                                .font(AppFonts.bodyFont(13))
-                                .foregroundColor(AppColors.textSecondary)
-
-                            Text("Ad Majorem Dei Gloriam")
-                                .font(AppFonts.italicFont(13))
-                                .foregroundColor(AppColors.gold.opacity(0.6))
-                        }
-                        .padding(.bottom, 48)
-                    }
+                    Text("Light of the Way")
+                        .font(AppFonts.italicFont(16))
+                        .foregroundColor(AppColors.gold.opacity(0.8))
                 }
+                // The room the hand-drawn grabber and its gap once took
+                .padding(.top, 48)
+
+                // Description
+                VStack(alignment: .leading, spacing: 16) {
+                    InfoBlock(
+                        title: "Our Mission",
+                        text: "Lumen Viae is a Catholic Rosary companion designed to deepen your prayer life. Through guided meditations, scripture, and reflection, the app accompanies you through all five mysteries of the Rosary — Joyful, Sorrowful, Glorious, and Luminous."
+                    )
+
+                    InfoBlock(
+                        title: "How to Pray the Rosary",
+                        text: "Each Rosary consists of five decades (mysteries). For each mystery, meditate on the scene, pray one Our Father, ten Hail Marys, and a Glory Be. The app guides you through all five, with optional meditations from saints and scripture."
+                    )
+
+                    InfoBlock(
+                        title: "Daily Schedule",
+                        text: "The traditional schedule assigns a set of mysteries to each day of the week: Joyful on Monday and Thursday; Sorrowful on Tuesday and Friday; Glorious on Wednesday and Saturday. Sunday follows the season — Joyful in Advent, Sorrowful in Lent, and Glorious the rest of the year."
+                    )
+                }
+                .padding(.horizontal, SheetMetrics.gutter)
+
+                // Version
+                VStack(spacing: 4) {
+                    Text("Version \(Bundle.main.appVersion)")
+                        .font(AppFonts.bodyFont(13))
+                        .foregroundColor(AppColors.textSecondary)
+
+                    Text("Ad Majorem Dei Gloriam")
+                        .font(AppFonts.italicFont(13))
+                        .foregroundColor(AppColors.gold.opacity(0.6))
+                }
+                .padding(.bottom, 48)
             }
+            .frame(maxWidth: .infinity)
         }
+        .sheetGround()
     }
 }
 
@@ -988,63 +998,51 @@ struct AboutSheet: View {
 
 struct PrivacyPolicySheet: View {
     var body: some View {
-        ZStack {
-            AppColors.appGradient.ignoresSafeArea()
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 0) {
+                SheetHeader(
+                    kicker: "Lumen Viae",
+                    title: "Privacy Policy",
+                    lead: "Last updated: February 2026"
+                )
 
-            VStack(spacing: 0) {
-                Capsule()
-                    .fill(AppColors.gold.opacity(0.3))
-                    .frame(width: 40, height: 4)
-                    .padding(.top, 12)
+                VStack(alignment: .leading, spacing: 28) {
+                    InfoBlock(
+                        title: "Data We Collect",
+                        text: "Lumen Viae collects minimal data to provide the prayer experience. This includes your prayer history (mystery type, date, duration) stored locally on your device, and optional journal entries stored locally. No personal information is required to use the app."
+                    )
 
-                ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 28) {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Privacy Policy")
-                                .font(AppFonts.headlineFont(26))
-                                .foregroundColor(AppColors.cream)
+                    InfoBlock(
+                        title: "Local Storage",
+                        text: "All prayer records, journal entries, and preferences are stored locally on your device using Apple's SwiftData framework. This data never leaves your device unless you explicitly back it up through iCloud (governed by Apple's privacy policy)."
+                    )
 
-                            Text("Last updated: February 2026")
-                                .font(AppFonts.bodyFont(13))
-                                .foregroundColor(AppColors.textSecondary)
-                        }
-                        .padding(.top, 32)
+                    InfoBlock(
+                        title: "Network Requests",
+                        text: "The app fetches meditation content and audio from our secure server (lumenviae.fly.dev). No personal identifiers are sent in these requests. We do not use analytics SDKs or third-party tracking."
+                    )
 
-                        InfoBlock(
-                            title: "Data We Collect",
-                            text: "Lumen Viae collects minimal data to provide the prayer experience. This includes your prayer history (mystery type, date, duration) stored locally on your device, and optional journal entries stored locally. No personal information is required to use the app."
-                        )
+                    InfoBlock(
+                        title: "Notifications",
+                        text: "If you enable daily reminders, the app schedules local notifications on your device. These are processed entirely on-device by iOS. We do not use push notification services."
+                    )
 
-                        InfoBlock(
-                            title: "Local Storage",
-                            text: "All prayer records, journal entries, and preferences are stored locally on your device using Apple's SwiftData framework. This data never leaves your device unless you explicitly back it up through iCloud (governed by Apple's privacy policy)."
-                        )
+                    InfoBlock(
+                        title: "Children's Privacy",
+                        text: "This app is suitable for all ages. We do not knowingly collect any personal data from users of any age."
+                    )
 
-                        InfoBlock(
-                            title: "Network Requests",
-                            text: "The app fetches meditation content and audio from our secure server (lumenviae.fly.dev). No personal identifiers are sent in these requests. We do not use analytics SDKs or third-party tracking."
-                        )
-
-                        InfoBlock(
-                            title: "Notifications",
-                            text: "If you enable daily reminders, the app schedules local notifications on your device. These are processed entirely on-device by iOS. We do not use push notification services."
-                        )
-
-                        InfoBlock(
-                            title: "Children's Privacy",
-                            text: "This app is suitable for all ages. We do not knowingly collect any personal data from users of any age."
-                        )
-
-                        InfoBlock(
-                            title: "Contact",
-                            text: "Questions about privacy? Reach us at \(Constants.supportEmail)"
-                        )
-                    }
-                    .padding(.horizontal, 24)
-                    .padding(.bottom, 48)
+                    InfoBlock(
+                        title: "Contact",
+                        text: "Questions about privacy? Reach us at \(Constants.supportEmail)"
+                    )
                 }
+                .padding(.horizontal, SheetMetrics.gutter)
+                .padding(.top, 8)
+                .padding(.bottom, 48)
             }
         }
+        .sheetGround()
     }
 }
 
@@ -1057,71 +1055,61 @@ struct HelpSupportSheet: View {
     let onGiveFeedback: () -> Void
 
     var body: some View {
-        ZStack {
-            AppColors.appGradient.ignoresSafeArea()
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 0) {
+                SheetHeader(kicker: "Lumen Viae", title: "Help & Support")
 
-            VStack(spacing: 0) {
-                Capsule()
-                    .fill(AppColors.gold.opacity(0.3))
-                    .frame(width: 40, height: 4)
-                    .padding(.top, 12)
+                VStack(alignment: .leading, spacing: 28) {
+                    InfoBlock(
+                        title: "How do I begin praying?",
+                        text: "From the home screen, tap \"Begin Prayer\" on the featured mystery card, or tap any mystery from the grid below. You'll be guided through a short meditation before the Rosary begins."
+                    )
 
-                ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 28) {
-                        Text("Help & Support")
-                            .font(AppFonts.headlineFont(26))
-                            .foregroundColor(AppColors.cream)
-                            .padding(.top, 32)
+                    InfoBlock(
+                        title: "What are the different mysteries?",
+                        text: "There are four sets of mysteries: Joyful (Monday, Thursday), Sorrowful (Tuesday, Friday), and Glorious (Wednesday, Saturday). Sunday takes Joyful in Advent, Sorrowful in Lent, and Glorious otherwise. Luminous mysteries, added by Pope John Paul II, are available any day from the home grid."
+                    )
 
+                    InfoBlock(
+                        title: "How does audio work?",
+                        text: "If a meditation set includes guided audio, playback controls will appear during the prayer. Tap the play button to start. Use the skip buttons to move forward or backward 10 seconds."
+                    )
+
+                    InfoBlock(
+                        title: "Why are some meditations unavailable?",
+                        text: "Meditation content is fetched from our server. If you're offline or content hasn't been added yet, some sets may not be available. Check your internet connection and try again."
+                    )
+
+                    InfoBlock(
+                        title: "How do I adjust text size?",
+                        text: "Open the Chapel, tap the sliders at the top of the page, then Prayer Experience → Text Size. Drag the slider toward the larger \"A\" to increase the meditation text size."
+                    )
+
+                    InfoBlock(
+                        title: "Daily reminders aren't working",
+                        text: "Make sure notifications are enabled for Lumen Viae in your iPhone's Settings → Notifications. Then toggle Daily Reminders off and back on in the app to reschedule."
+                    )
+
+                    VStack(alignment: .leading, spacing: 12) {
                         InfoBlock(
-                            title: "How do I begin praying?",
-                            text: "From the home screen, tap \"Begin Prayer\" on the featured mystery card, or tap any mystery from the grid below. You'll be guided through a short meditation before the Rosary begins."
+                            title: "Contact Us",
+                            text: "Didn't find it here? Write to us in the app — we read every note."
                         )
 
-                        InfoBlock(
-                            title: "What are the different mysteries?",
-                            text: "There are four sets of mysteries: Joyful (Monday, Thursday), Sorrowful (Tuesday, Friday), and Glorious (Wednesday, Saturday). Sunday takes Joyful in Advent, Sorrowful in Lent, and Glorious otherwise. Luminous mysteries, added by Pope John Paul II, are available any day from the home grid."
+                        QuietGoldButton(
+                            title: "Send feedback",
+                            leadingIcon: "ph-chat-teardrop-text",
+                            horizontalPadding: 0,
+                            action: onGiveFeedback
                         )
-
-                        InfoBlock(
-                            title: "How does audio work?",
-                            text: "If a meditation set includes guided audio, playback controls will appear during the prayer. Tap the play button to start. Use the skip buttons to move forward or backward 10 seconds."
-                        )
-
-                        InfoBlock(
-                            title: "Why are some meditations unavailable?",
-                            text: "Meditation content is fetched from our server. If you're offline or content hasn't been added yet, some sets may not be available. Check your internet connection and try again."
-                        )
-
-                        InfoBlock(
-                            title: "How do I adjust text size?",
-                            text: "Open the Chapel, tap the sliders at the top of the page, then Prayer Experience → Text Size. Drag the slider toward the larger \"A\" to increase the meditation text size."
-                        )
-
-                        InfoBlock(
-                            title: "Daily reminders aren't working",
-                            text: "Make sure notifications are enabled for Lumen Viae in your iPhone's Settings → Notifications. Then toggle Daily Reminders off and back on in the app to reschedule."
-                        )
-
-                        VStack(alignment: .leading, spacing: 12) {
-                            InfoBlock(
-                                title: "Contact Us",
-                                text: "Didn't find it here? Write to us in the app — we read every note."
-                            )
-
-                            QuietGoldButton(
-                                title: "Send feedback",
-                                leadingIcon: "ph-chat-teardrop-text",
-                                horizontalPadding: 0,
-                                action: onGiveFeedback
-                            )
-                        }
                     }
-                    .padding(.horizontal, 24)
-                    .padding(.bottom, 48)
                 }
+                .padding(.horizontal, SheetMetrics.gutter)
+                .padding(.top, 8)
+                .padding(.bottom, 48)
             }
         }
+        .sheetGround()
     }
 }
 

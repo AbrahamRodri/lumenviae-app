@@ -264,7 +264,7 @@ struct ScripturalRosaryView: View {
 
     /// The act, alone. Nothing is set beneath it.
     private var prayFoot: some View {
-        GoldCTAButton(title: "Pray", showsCross: false) {
+        GoldCTAButton(title: "Pray") {
             router.push(.scripturalRosaryPrayer(ScripturalRosaryLaunch(category: category)))
         }
         .padding(.horizontal, 32)

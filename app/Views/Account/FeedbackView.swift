@@ -208,8 +208,6 @@ struct FeedbackView: View {
 
     var body: some View {
         ZStack {
-            AppColors.appGradient.ignoresSafeArea()
-
             switch stage {
             case .writing:
                 form
@@ -220,6 +218,7 @@ struct FeedbackView: View {
             }
         }
         .animation(.easeInOut(duration: 0.25), value: stage)
+        .sheetGround()
         .onAppear {
             // Guard the seed: this sheet's body can be built more than
             // once, and a second pass must not reset a topic the writer
@@ -252,8 +251,6 @@ struct FeedbackView: View {
         VStack(spacing: 0) {
             header
 
-            Divider().background(AppColors.gold.opacity(0.2))
-
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 22) {
                     if let context {
@@ -265,7 +262,8 @@ struct FeedbackView: View {
                     messageField
                 }
                 .padding(.horizontal, 20)
-                .padding(.top, 20)
+                // The header keeps its own room beneath it
+                .padding(.top, 8)
                 .padding(.bottom, 24)
             }
             .scrollDismissesKeyboard(.interactively)
@@ -273,34 +271,12 @@ struct FeedbackView: View {
         .safeAreaInset(edge: .bottom) { sendBar }
     }
 
+    /// The sheet grammar's header. Cancel is the header's quiet act; Send
+    /// stays the form's one gold act in the bar at its foot.
     private var header: some View {
-        HStack {
-            Button { dismiss() } label: {
-                Text("Cancel")
-                    .font(AppFonts.bodyFont(16))
-                    .foregroundColor(AppColors.textSecondary)
-                    .frame(minHeight: 44)
-                    .contentShape(Rectangle())
-            }
-
-            Spacer()
-
-            Text("FEEDBACK")
-                .font(AppFonts.bodyFont(11))
-                .tracking(3)
-                .foregroundColor(AppColors.gold)
-
-            Spacer()
-
-            // Balances the kicker against Cancel, so the title sits
-            // centered rather than shouldered to one side
-            Text("Cancel")
-                .font(AppFonts.bodyFont(16))
-                .hidden()
-                .accessibilityHidden(true)
+        SheetHeader(kicker: "Lumen Viae", title: "Send Feedback") {
+            SheetHeaderAction(title: "Cancel") { dismiss() }
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 10)
     }
 
     /// What you were praying when you opened this, stated rather than
@@ -451,7 +427,7 @@ struct FeedbackView: View {
         VStack(spacing: 0) {
             Divider().background(AppColors.gold.opacity(0.12))
 
-            GoldCTAButton(title: "Send", showsCross: false, trailingIcon: nil) {
+            GoldCTAButton(title: "Send", trailingIcon: nil) {
                 send()
             }
             .disabled(!canSend)
@@ -484,7 +460,7 @@ struct FeedbackView: View {
 
             Spacer()
 
-            GoldCTAButton(title: "Done", showsCross: false) { dismiss() }
+            GoldCTAButton(title: "Done") { dismiss() }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 24)
         }
@@ -515,7 +491,7 @@ struct FeedbackView: View {
 
             Spacer()
 
-            GoldCTAButton(title: "Done", showsCross: false) { dismiss() }
+            GoldCTAButton(title: "Done") { dismiss() }
                 .padding(.horizontal, 20)
 
             QuietGoldButton(title: "Back to my note") { stage = .writing }

@@ -13,7 +13,7 @@
 //  Stored as raw strings in UserDefaults; a stored id this build no
 //  longer knows is dropped on decode rather than corrupting the layout,
 //  and a tile the build knows but the store doesn't gains its default
-//  placement at the end.
+//  placement, in its default place.
 //
 
 import Foundation
@@ -25,6 +25,7 @@ enum ChapelTile: String, CaseIterable, Identifiable {
     case rule = "rule"
     case consecration = "consecration"
     case reading = "reading"
+    case liturgy = "liturgy"
     case library = "library"
     case chant = "chant"
     case reflections = "reflections"
@@ -37,10 +38,21 @@ enum ChapelTile: String, CaseIterable, Identifiable {
         case .rule:         return "Today"
         case .consecration: return "Consecration"
         case .reading:      return "Reading"
+        case .liturgy:      return "Liturgy"
         case .library:      return "Library"
         case .chant:        return "Chant"
         case .reflections:  return "Reflections"
         case .flame:        return "Prayer Streak"
+        }
+    }
+
+    /// The kicker's name at half width, where a long one would leave no
+    /// room beside it for its note. The tray and the ghost keep the
+    /// full name.
+    var shortTitle: String {
+        switch self {
+        case .flame: return "Streak"
+        default:     return title
         }
     }
 
@@ -50,31 +62,36 @@ enum ChapelTile: String, CaseIterable, Identifiable {
         case .rule:         return "Your rule of prayer, act by act"
         case .consecration: return "Your place on the 33-day preparation"
         case .reading:      return "The book you have open"
-        case .library:      return "The missal, office, books, and guides"
+        case .liturgy:      return "The Mass and the Hours of the day"
+        case .library:      return "The books, the guides, and the saints"
         case .chant:        return "Sung prayer, kept close to hand"
         case .reflections:  return "Your latest journal entries"
         case .flame:        return "Your streak and this week's prayer"
         }
     }
 
+    /// The tile this one was cut out of, where it was. A stored layout
+    /// that predates it seats it beside that tile, at that tile's width,
+    /// and only if that tile is on the page: the Liturgy's two doors
+    /// lived in the Library, and a reader who put the Library away had
+    /// put the Missal and the Office away with it.
+    var cutFrom: ChapelTile? {
+        switch self {
+        case .liturgy: return .library
+        default:       return nil
+        }
+    }
+
     var icon: String {
         switch self {
         case .rule:         return "ph-scroll"
-        case .consecration: return "ph-crown"
-        case .reading:      return "ph-book-open-fill"
+        case .consecration: return "ch-consecration"
+        case .reading:      return "ph-book-open"
+        case .liturgy:      return "ch-altar"
         case .library:      return "ph-book"
         case .chant:        return "ph-music-note"
         case .reflections:  return "ph-note-pencil"
         case .flame:        return "ph-flame"
-        }
-    }
-
-    /// Tiles ruled straight onto the page, with no card corner to hang
-    /// chrome off — their ✕ badge rides in the row gap above instead.
-    var isFrameless: Bool {
-        switch self {
-        case .rule, .consecration, .library, .chant: return true
-        case .reading, .reflections, .flame:         return false
         }
     }
 }
@@ -106,13 +123,10 @@ extension ChapelPlacement {
     /// made that promise point at an empty page. The tray earns its keep
     /// from the first section a user puts away.
     ///
-    /// The order alternates the page's two registers — ruled, outlined,
-    /// ruled, outlined — so no two hairline sections run together and no
-    /// two cards stack. The live sections come first, in the order a day
-    /// meets them: the acts, the record of them, the preparation under
-    /// way, the book left open, the chant, the reader's own words. The
-    /// Library stands last: it is the page's index of doors rather than
-    /// a thing that changes, and Augustine's colophon at its foot is the
+    /// The live sections come first, in the order a day meets them: the
+    /// acts, the record of them, the preparation under way, the book left
+    /// open, the chant, the reader's own words. The two indexes of doors
+    /// stand last — the Liturgy, then the Library, whose colophon is the
     /// right last line before the imprint.
     static let defaultLayout: [ChapelPlacement] = [
         ChapelPlacement(tile: .rule, span: 2, on: true),
@@ -121,6 +135,7 @@ extension ChapelPlacement {
         ChapelPlacement(tile: .reading, span: 2, on: true),
         ChapelPlacement(tile: .chant, span: 2, on: true),
         ChapelPlacement(tile: .reflections, span: 2, on: true),
+        ChapelPlacement(tile: .liturgy, span: 2, on: true),
         ChapelPlacement(tile: .library, span: 2, on: true)
     ]
 
@@ -131,7 +146,7 @@ extension ChapelPlacement {
 
     static func decode(_ raw: [String]) -> [ChapelPlacement] {
         var seen: Set<ChapelTile> = []
-        var layout: [ChapelPlacement] = raw.compactMap { entry in
+        let layout: [ChapelPlacement] = raw.compactMap { entry in
             let parts = entry.split(separator: ":")
             guard parts.count == 3,
                   let tile = ChapelTile(rawValue: String(parts[0])),
@@ -146,11 +161,43 @@ extension ChapelPlacement {
         }
 
         // A tile this build knows that the stored layout doesn't (a new
-        // section) arrives in its default place: on the page if the
-        // default puts it there, in the tray otherwise.
-        for fallback in defaultLayout where !seen.contains(fallback.tile) {
-            layout.append(fallback)
+        // section) arrives as its default placement puts it
+        return completing(layout)
+    }
+
+    /// Seats every tile `layout` lacks, each in its default place —
+    /// before the first tile the default order puts after it — so a new
+    /// section lands beside its neighbours rather than at the foot of a
+    /// page arranged before it existed.
+    ///
+    /// `placing` decides a newcomer's placement from its default; the
+    /// stored layout takes it as it is, and the Me page's migration puts
+    /// what that page never showed in the tray. A tile cut out of
+    /// another (`cutFrom`) then takes that tile's width and whether it
+    /// is out, as that tile stands in the finished layout.
+    static func completing(
+        _ layout: [ChapelPlacement],
+        placing: (ChapelPlacement) -> ChapelPlacement = { $0 }
+    ) -> [ChapelPlacement] {
+        let present = Set(layout.map(\.tile))
+        var result = layout
+
+        for (position, fallback) in defaultLayout.enumerated() where !present.contains(fallback.tile) {
+            var placement = placing(fallback)
+
+            if let source = fallback.tile.cutFrom {
+                let sourcePlacement = layout.first { $0.tile == source }
+                    ?? defaultLayout.first { $0.tile == source }.map(placing)
+                if let sourcePlacement {
+                    placement.span = sourcePlacement.span
+                    placement.on = sourcePlacement.on
+                }
+            }
+
+            let followers = Set(defaultLayout[(position + 1)...].map(\.tile))
+            let at = result.firstIndex { followers.contains($0.tile) } ?? result.count
+            result.insert(placement, at: at)
         }
-        return layout
+        return result
     }
 }

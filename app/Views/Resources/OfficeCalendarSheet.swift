@@ -66,6 +66,8 @@ struct OfficeCalendarSheet: View {
                 dayMark: { date, _ in dayMark(date) },
                 offline: { offlineRow }
             )
+            // The shell draws no margin; the grid keeps the sheets' gutter
+            .padding(.horizontal, SheetMetrics.gutter)
         }
         .task { await loadMonth() }
         .onChange(of: month) {

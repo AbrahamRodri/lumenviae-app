@@ -77,7 +77,7 @@ struct TrueDevotionReaderView: View {
             switch which {
             case .goal:
                 ReadingGoalSheet()
-                    .presentationDetents([.height(400)])
+                    .presentationDetents([.height(450)])
                     .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
 
@@ -197,15 +197,16 @@ struct TrueDevotionReaderView: View {
                     library: library
                 )
             } label: {
-                // The act block draws itself; the link only carries it.
-                ContinueReadingAct(
+                // The act's face alone — the link is the button. Wrapping
+                // the whole act button here with its hit testing off
+                // left the link nothing to press, and the tap fell
+                // through to the page.
+                ContinueReadingActLabel(
                     kicker: viewModel.hasStartedReading ? "CONTINUE READING" : "BEGIN READING",
                     destination: opening.title,
                     fraction: chapterFraction(opening),
-                    meta: actMeta(for: opening),
-                    action: {}
+                    meta: actMeta(for: opening)
                 )
-                .allowsHitTesting(false)
             }
             .buttonStyle(GoldCTAButtonStyle())
             .accessibilityLabel("Continue reading: \(opening.title)")

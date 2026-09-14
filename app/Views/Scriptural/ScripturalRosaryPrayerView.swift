@@ -3,23 +3,33 @@
 //  Lumen Viae
 //
 //  The Scriptural Rosary prayed: a verse of Scripture for every bead,
-//  standing in the middle of the mystery's painting, with the whole
-//  Rosary hanging as one strand at the right edge.
+//  set over the mystery's painting, with the whole Rosary hanging as
+//  one strand at the right edge.
 //
 //  The bead is the unit. Swipe down and the string slides a bead, the
 //  next verse taking the last one's place; swipe up and the bead before
 //  returns. Our Father beads are larger and carry the decade's numeral,
 //  so the next mystery is seen approaching up the string several beads
 //  before it arrives, and the turn is simply what happens when that
-//  bead comes to hand — the painting and the kicker change with it.
-//  Nothing else moves the Rosary forward: no arrows, no swipe between
-//  mysteries. On the last bead of all the cue gives way to AMEN, and
-//  finishing is always that deliberate tap, never a swipe.
+//  bead comes to hand — the painting and the mystery's name change with
+//  it. Nothing else moves the Rosary forward: no arrows, no swipe
+//  between mysteries. On the last bead of all the cue gives way to
+//  AMEN, and finishing is always that deliberate tap, never a swipe.
+//
+//  The reading is a column hung beneath the header and anchored there:
+//  the bead's name, the mystery's name, and under them the words for
+//  the bead, which crossfade in place as one block while everything
+//  above them holds still. An earlier draft centred the column on the
+//  glass and let each Text change under its own crossfade: a longer
+//  verse pushed the whole column up, the lines re-wrapped mid-fade,
+//  and the words were unreadable for exactly as long as the animation
+//  lasted. Where the Rosary stands is said once, under the beads at
+//  the foot; the cue says what to do only where that is news.
 //
 //  The same stage the meditation's player prays on (`PrayerPaintingStage`,
-//  veiled rather than seated, since the verse stands over the middle
-//  of the picture), the same strand, the same rule. What differs is
-//  what each bead carries: here, its verse.
+//  veiled rather than seated, since the words stand over the picture),
+//  the same strand, the same rule. What differs is what each bead
+//  carries: here, its verse.
 //
 //  Tapping the painting clears the chrome, verse and all, for
 //  contemplation; the way out is the × at the top left, always.
@@ -59,8 +69,6 @@ struct ScripturalRosaryPrayerView: View {
     /// Bumped each time the decade turns; the strand's ripple answers
     @State private var turnPulse = 0
 
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-
     /// When the devotion originally began (carried through resumes for
     /// snapshot continuity; never used for duration)
     private let sessionStartedAt: Date
@@ -81,21 +89,26 @@ struct ScripturalRosaryPrayerView: View {
                 + geometry.safeAreaInsets.top
                 + geometry.safeAreaInsets.bottom
 
-            ZStack {
-                // The verse, standing in the middle of the picture
-                verseColumn
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+            VStack(spacing: 0) {
+                // The reading, hung level with the top of the strand's
+                // window: the head of the column never moves, and a
+                // bead's words change beneath it with nothing further
+                // down to shove
+                readingColumn
+                    .padding(.top, readingTop(fullHeight: fullHeight, topInset: geometry.safeAreaInsets.top))
 
-                VStack(spacing: 0) {
-                    header
-                        .padding(.top, 12)
+                Spacer(minLength: 0)
 
-                    Spacer()
-
-                    foot
-                }
+                foot
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            // Laid over the column rather than stacked above it, so the
+            // column's place is read from the glass alone and never waits
+            // on the header being measured
+            .overlay(alignment: .top) {
+                header
+                    .padding(.top, 12)
+            }
             .overlay {
                 // The Rosary's one strand, hung at the right edge where the
                 // meditation's player hangs it too. Inside the chrome layer
@@ -185,11 +198,9 @@ struct ScripturalRosaryPrayerView: View {
                     placement: .player,
                     pendingHandoff: $pendingHandoff
                 )
-                .presentationDetents([
-                    .height(prayerTrayHeight(for: .player, actions: trackActions))
-                ])
+                // The tray opens as tall as it measures (`fittedSheetDetent`)
                 .presentationDragIndicator(.visible)
-                .presentationBackground(AppColors.cardBackground)
+                .presentationBackground(AppColors.background)
             }
         }
     }
@@ -307,57 +318,53 @@ struct ScripturalRosaryPrayerView: View {
         .padding(.horizontal, 16)
     }
 
-    // MARK: - The Verse
+    // MARK: - The Reading
 
-    /// The room the verse is given: the strand and its labels take the
-    /// right of the screen, so the words stop well short of it.
-    private static let verseTrailingInset: CGFloat = 150
+    /// The header's reach below the safe area — its 12pt top padding and
+    /// its 44pt buttons — and a little air. The column never begins
+    /// higher than this, whatever the glass.
+    private static let headerClearance: CGFloat = 12 + 44 + 14
 
-    /// The verse's size follows the Prayer Experience text size the Aa
-    /// sets, standing a little above the reading size — it is the only
-    /// thing on the screen, and a verse is read at arm's length.
-    private var verseSize: CGFloat {
-        userSettings.meditationFontSize + 3
+    /// Where the column begins: its head stands level with the top of
+    /// the strand's window, both read from `RosaryStrandView.windowTop`,
+    /// so they agree by construction. An earlier cut aimed at "the first
+    /// bead", which is wherever the string's resting offset happens to
+    /// leave one, and measured the header to get there, so the column
+    /// jumped once when the measurement came in.
+    private func readingTop(fullHeight: CGFloat, topInset: CGFloat) -> CGFloat {
+        max(RosaryStrandView.windowTop(fullHeight: fullHeight) - topInset, Self.headerClearance)
     }
 
-    /// Where the Rosary stands, the words for the bead, and what the
-    /// bead is. Crossfades as one between beads; the strand beside it
-    /// moves its own bead.
+    /// The room the words are given at the right: the strand's beads
+    /// and their numerals take the edge, and the words stop short of
+    /// them. Measured from the glass, as the strand is.
+    private static let readingTrailingInset: CGFloat = 104
+
+    /// The words' size follows the Prayer Experience text size the Aa
+    /// sets, a point above the reading size. Set in the Medium face:
+    /// the italic thinned to hairlines over the painting, and a verse
+    /// read at arm's length over a picture needs its weight.
+    private var verseSize: CGFloat {
+        userSettings.meditationFontSize + 1
+    }
+
+    /// Between the quote leading and the prose leading: a verse of
+    /// eight lines reads as one paragraph without the lines touching
+    private var verseLeading: CGFloat {
+        (verseSize * 0.4).rounded()
+    }
+
+    /// The bead, the mystery, and the words for the bead — a column
+    /// whose head holds still while the words beneath it change.
     ///
-    /// Every line crossfades in place — the kicker with the decade, the
-    /// verse and its citation with the bead — rather than the column
-    /// being torn down and rebuilt: a re-identified column is laid out
-    /// twice over for the length of its transition, and its height
-    /// would jump on every swipe.
-    private var verseColumn: some View {
-        let reading = viewModel.reading
-
-        return VStack(alignment: .leading, spacing: 18) {
-            // Two lines, set the same: where the Rosary stands in gold,
-            // the mystery's name beneath it in cream
-            VStack(alignment: .leading, spacing: 6) {
-                Text(viewModel.mysteryKicker.uppercased())
-                    .foregroundColor(AppColors.gold)
-                    .contentTransition(.opacity)
-                Text((viewModel.currentMystery?.name ?? "").uppercased())
-                    .foregroundColor(AppColors.cream.opacity(0.8))
-                    .contentTransition(.opacity)
-            }
-            .font(AppFonts.labelFont(10))
-            .tracking(2.5)
-            .fixedSize(horizontal: false, vertical: true)
-            .beadWordsArrival(trigger: viewModel.currentMysteryIndex, from: travel, still: reduceMotion, distance: 8)
-            .animation(Motion.decadeTurn, value: viewModel.currentMysteryIndex)
-
-            beadWords(reading)
-                // Dims as the finger draws the string, and arrives from
-                // the side the string came from once the bead has changed
-                .opacity(1 - wordsDim)
-                .beadWordsArrival(trigger: viewModel.beadPosition, from: travel, still: reduceMotion)
-                .animation(Motion.words, value: viewModel.beadPosition)
+    /// The words are the tap target, not the gutter beside them: a tap
+    /// in the strand's column belongs to the painting.
+    private var readingColumn: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            columnHead
+            beadWordsSlot
         }
-        // The words are the tap target, not the gutter beside them: a
-        // tap in the strand's column belongs to the painting
+        .frame(maxWidth: .infinity, alignment: .leading)
         .contentShape(Rectangle())
         .onTapGesture(perform: prayForward)
         .onLongPressGesture(perform: prayBack)
@@ -366,137 +373,156 @@ struct ScripturalRosaryPrayerView: View {
         .accessibilityHint(viewModel.isLastBeadOfRosary ? "" : "Tap for the next bead")
         .accessibilityAction(named: "Next bead", prayForward)
         .accessibilityAction(named: "Previous bead", prayBack)
-        .padding(.leading, 30)
-        .padding(.trailing, Self.verseTrailingInset)
+        .padding(.leading, 28)
+        .padding(.trailing, Self.readingTrailingInset)
     }
 
-    /// What the bead says: the verse, its citation and count, the fruit
-    /// on the Our Father, and what to do next — or AMEN.
-    private func beadWords(_ reading: BeadReading) -> some View {
-        VStack(alignment: .leading, spacing: 18) {
-            Text(reading.text)
-                .font(AppFonts.readingItalicFont(verseSize))
+    /// The bead under the hand in small capitals, and the mystery's
+    /// name beneath it in the display face — the same kicker-and-title
+    /// the meditation's player sets, with the bead as the kicker. The
+    /// name keeps two lines' room whether it needs them or not, so the
+    /// words below never move when a longer name arrives with the
+    /// decade; with a one-line name the second line is the air before
+    /// the verse.
+    private var columnHead: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(viewModel.beadLabel.uppercased())
+                .font(AppFonts.labelFont(9.5))
+                .tracking(2)
+                .foregroundColor(AppColors.gold.opacity(0.9))
+                .lineLimit(1)
+                .shadow(color: .black.opacity(0.5), radius: 4, y: 1)
+                .contentTransition(.numericText(countsDown: travel == .back))
+                .animation(Motion.words, value: viewModel.beadPosition)
+
+            Text(viewModel.currentMystery?.name ?? "")
+                .font(AppFonts.headlineFont(20))
                 .foregroundColor(AppColors.cream)
-                .lineSpacing(ReadingTypography.quoteLineSpacing(for: verseSize))
-                .shadow(color: .black.opacity(0.5), radius: 10, y: 1)
+                .lineLimit(2, reservesSpace: true)
+                .minimumScaleFactor(0.85)
+                .multilineTextAlignment(.leading)
+                .shadow(color: .black.opacity(0.5), radius: 6, y: 1)
+                .contentTransition(.opacity)
+                .animation(Motion.decadeTurn, value: viewModel.currentMysteryIndex)
+        }
+    }
+
+    /// One slot for the words of whichever bead is under the hand. The
+    /// words for a bead — its verse, its citation, the fruit on an Our
+    /// Father, the cue where there is one — are one view identified by
+    /// the bead, and the bead changing crossfades the whole block in
+    /// place over the one leaving: nothing reflows, nothing slides.
+    /// Letting each Text change under its own crossfade re-wrapped the
+    /// lines as they faded, which cannot be read for as long as it
+    /// lasts; the block is also what dims as the finger draws the
+    /// string, so a move is felt before it is made.
+    private var beadWordsSlot: some View {
+        ZStack(alignment: .topLeading) {
+            beadWords(viewModel.reading)
+                .id(viewModel.beadPosition)
+                .transition(.opacity)
+        }
+        .frame(maxWidth: .infinity, alignment: .topLeading)
+        .animation(Motion.crossfade, value: viewModel.beadPosition)
+        .opacity(1 - wordsDim)
+    }
+
+    /// What the bead says: the verse, its citation, the fruit on the Our
+    /// Father, and what to do next where that is news — or AMEN.
+    private func beadWords(_ reading: BeadReading) -> some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text(reading.text)
+                .font(AppFonts.bodyFont(verseSize))
+                .foregroundColor(AppColors.cream)
+                .lineSpacing(verseLeading)
+                .shadow(color: .black.opacity(0.55), radius: 6, y: 1)
                 .multilineTextAlignment(.leading)
                 .fixedSize(horizontal: false, vertical: true)
-                .contentTransition(.opacity)
 
-            // The citation and the bead, on one line where the column
-            // is wide enough for both, and on two where it is not — a
-            // long citation beside a long count would otherwise be cut
-            // to "HAIL MARY · 1 OF…"
-            ViewThatFits(in: .horizontal) {
-                HStack(spacing: 14) {
-                    citation(reading.reference)
-                    Text(beadCount.uppercased())
-                        .foregroundColor(AppColors.cream.opacity(0.6))
-                        .lineLimit(1)
-                        .fixedSize()
-                        .contentTransition(.numericText(countsDown: travel == .back))
-                }
-
-                VStack(alignment: .leading, spacing: 8) {
-                    citation(reading.reference)
-                    Text(beadCount.uppercased())
-                        .foregroundColor(AppColors.cream.opacity(0.6))
-                        .lineLimit(1)
-                        .contentTransition(.numericText(countsDown: travel == .back))
-                }
+            // The Fatima Prayer after the Glory Be: a paragraph of its
+            // own, set the same, with a paragraph's air above it
+            if let closing = reading.closingPrayer {
+                Text(closing)
+                    .font(AppFonts.bodyFont(verseSize))
+                    .foregroundColor(AppColors.cream)
+                    .lineSpacing(verseLeading)
+                    .shadow(color: .black.opacity(0.55), radius: 6, y: 1)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, 4)
             }
-            .font(AppFonts.labelFont(9))
-            .tracking(1.5)
+
+            if let reference = reading.reference {
+                Text(reference.uppercased())
+                    .font(AppFonts.labelFont(9.5))
+                    .tracking(1.5)
+                    .foregroundColor(AppColors.gold.opacity(0.85))
+                    .lineLimit(1)
+            }
 
             if let footnote = reading.footnote {
                 Text(footnote.uppercased())
                     .font(AppFonts.labelFont(9))
                     .tracking(1.5)
-                    .foregroundColor(AppColors.textSecondary)
+                    .foregroundColor(AppColors.cream.opacity(0.55))
                     .fixedSize(horizontal: false, vertical: true)
-                    .transition(.opacity)
             }
 
-            // What to do next — or, on the last bead of all, AMEN. One
-            // slot for both, so they crossfade over each other
-            ZStack(alignment: .leading) {
-                if viewModel.isLastBeadOfRosary {
-                    GoldCTAButton(
-                        title: "Amen",
-                        prominence: .inline,
-                        showsCross: false,
-                        trailingIcon: "ph-check",
-                        fullWidth: false,
-                        action: finishRosary
-                    )
-                    .accessibilityLabel("Amen — finish the Rosary")
-                    .transition(.scale(scale: 0.92).combined(with: .opacity))
-                } else {
-                    Text(beadCue)
-                        .font(AppFonts.bodyFont(15))
-                        .foregroundColor(AppColors.cream.opacity(0.6))
-                        .lineSpacing(3)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .contentTransition(.opacity)
-                        .transition(.opacity)
-                }
-            }
-            .padding(.top, 6)
-        }
-    }
-
-    /// The citation and its hairline, or nothing on the Glory Be, which
-    /// has none.
-    @ViewBuilder
-    private func citation(_ reference: String?) -> some View {
-        if let reference {
-            HStack(spacing: 14) {
-                Text(reference.uppercased())
-                    .foregroundColor(AppColors.gold.opacity(0.85))
-                    .lineLimit(1)
-                    .fixedSize()
-                    .contentTransition(.opacity)
-
-                Rectangle()
-                    .fill(AppColors.gold.opacity(0.4))
-                    .frame(width: 1, height: 10)
+            // On the last bead of all, AMEN — the one act that finishes
+            // a Rosary; a swipe never does
+            if viewModel.isLastBeadOfRosary {
+                GoldCTAButton(
+                    title: "Amen",
+                    prominence: .inline,
+                    trailingIcon: "ph-check",
+                    fullWidth: false,
+                    action: finishRosary
+                )
+                .accessibilityLabel("Amen — finish the Rosary")
+                .padding(.top, 8)
+            } else if let cue = beadCue {
+                Text(cue)
+                    .font(AppFonts.bodyFont(15))
+                    .foregroundColor(AppColors.cream.opacity(0.6))
+                    .lineSpacing(3)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, 4)
             }
         }
     }
 
-    /// The bead in words, beside the citation: OUR FATHER, HAIL MARY ·
-    /// 4 OF 10, and DECADE COMPLETE where the Glory Be is said.
-    private var beadCount: String {
-        viewModel.isDecadePrayed ? "Decade complete" : viewModel.beadLabel
-    }
-
-    /// What to do on the bead under the hand. The decade prayed, the
-    /// next mystery is named so the turn is expected.
-    private var beadCue: String {
+    /// What to do on the bead under the hand, only where it is news: on
+    /// the first bead of the Rosary, how the beads are moved; the decade
+    /// prayed, the next mystery by name, so the turn is expected. Every
+    /// other bead says nothing — a cue repeated fifty times is chrome.
+    private var beadCue: String? {
         if viewModel.isDecadePrayed {
             let next = viewModel.category.mysteryLabel(ordinal: viewModel.currentMysteryIndex + 2)
             return "\(next) follows on the next swipe."
         }
-        if viewModel.currentBeadIndex == 0 {
-            return "Swipe down for the first Hail Mary"
+        if viewModel.isFirstBeadOfRosary {
+            return "Swipe down for the first Hail Mary, and up for the bead before."
         }
-        return "Swipe down for the next bead · swipe up to go back"
+        return nil
     }
 
     private var accessibilityText: String {
         let reading = viewModel.reading
-        var parts = [viewModel.mysteryKicker, viewModel.currentMystery?.name ?? "", beadCount]
-        if let reference = reading.reference { parts.append(reference) }
+        var parts = [viewModel.beadLabel, viewModel.currentMystery?.name ?? ""]
         if !reading.text.isEmpty { parts.append(reading.text) }
+        if let closing = reading.closingPrayer { parts.append(closing) }
+        if let reference = reading.reference { parts.append(reference) }
         if let footnote = reading.footnote { parts.append(footnote) }
+        if let cue = beadCue { parts.append(cue) }
         return parts.filter { !$0.isEmpty }.joined(separator: ". ")
     }
 
     // MARK: - Foot
 
-    /// Where the Rosary stands among its mysteries, and the ⋯. The
-    /// strand of mysteries reports position only — the strand at the
-    /// edge carries the living bead, so this one keeps still.
+    /// Where the Rosary stands among its mysteries — the five beads and
+    /// the mystery's ordinal name, said here and nowhere else — and the
+    /// ⋯. The strand of mysteries reports position only; the strand at
+    /// the edge carries the living bead, so this one keeps still.
     private var foot: some View {
         VStack(spacing: 18) {
             VStack(spacing: 8) {
@@ -509,10 +535,7 @@ struct ScripturalRosaryPrayerView: View {
                 )
                 .frame(width: 130)
 
-                Text(viewModel.strand.standing(
-                    mystery: viewModel.currentMysteryIndex,
-                    category: viewModel.category
-                ).uppercased())
+                Text(viewModel.mysteryKicker.uppercased())
                     .font(AppFonts.labelFont(8.5))
                     .tracking(2)
                     .foregroundColor(AppColors.gold.opacity(0.75))

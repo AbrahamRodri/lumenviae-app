@@ -37,7 +37,14 @@ final class PrayerSessionViewModel {
     /// Only walked when the player is prayed on the beads
     /// (`UserSettings.prayOnBeads`); with the beads off it rests on the
     /// Our Father and the mystery alone is moved.
-    var currentBeadIndex: Int = 0
+    var currentBeadIndex: Int = 0 {
+        // A hand that has moved past the Our Father — the reader's bead
+        // row is never locked — has its beads for good: stepping back
+        // onto the Our Father never locks them again
+        didSet {
+            if currentBeadIndex > 0 { unlockedMysteries.insert(currentMysteryIndex) }
+        }
+    }
 
     /// Hail Marys in a decade: ten, or seven for a sorrow of the chaplet.
     var hailMarys: Int {
@@ -79,6 +86,37 @@ final class PrayerSessionViewModel {
     /// The last mystery's Glory Be — the final bead, where AMEN stands
     var isLastBeadOfRosary: Bool {
         isLastMystery && isDecadePrayed
+    }
+
+    // MARK: - When the Beads Unlock
+
+    /// Mysteries whose beads have unlocked this session: the meditation
+    /// heard to its end, the hand moved past the Our Father in the reader,
+    /// or nothing to hear in the first place.
+    private(set) var unlockedMysteries: Set<Int> = []
+
+    /// Whether the strand may be moved for the mystery under the hand.
+    /// The meditation is prayed first: on a mystery's Our Father the
+    /// strand hangs where it always does, greyed and locked, until the
+    /// narration has played to its end — so the count never runs beside a
+    /// voice still speaking, and the beads are seen waiting rather than
+    /// missing.
+    ///
+    /// Nothing is held behind a wait that cannot end. A meditation with no
+    /// narration, or one whose narration would not load, is unlocked at
+    /// once; a narration can be skipped to its end; and the reader's bead
+    /// row moves on regardless, because reading the meditation is the
+    /// other way of praying it.
+    var beadsUnlocked: Bool {
+        guard let meditation = currentMeditation,
+              meditation.hasAudio,
+              audioErrorMessage == nil else { return true }
+        return currentBeadIndex > 0 || unlockedMysteries.contains(currentMysteryIndex)
+    }
+
+    /// The narration of the mystery under the hand has played to its end.
+    private func meditationHeard() {
+        unlockedMysteries.insert(currentMysteryIndex)
     }
 
     /// Prays the strand forward as one continuous line: the next bead,
@@ -174,6 +212,9 @@ final class PrayerSessionViewModel {
         // the Our Father; clamped to the decade so a snapshot from a
         // longer decade can't land past its Glory Be
         self.currentBeadIndex = min(max(startAtBead, 0), strand.gloryBe)
+        // Observers do not run inside the type's own init: a Rosary
+        // resumed past an Our Father is past its meditation
+        if currentBeadIndex > 0 { unlockedMysteries.insert(currentMysteryIndex) }
     }
 
     // MARK: - Computed Properties
@@ -293,6 +334,8 @@ final class PrayerSessionViewModel {
             pendingRemoteAutoplay = false
             audioService.reset(preservingNowPlaying: true)
             attachRemoteNavigation()
+            // Nothing to hear, so nothing to wait for before the beads
+            meditationHeard()
             return
         }
 
@@ -510,6 +553,11 @@ final class PrayerSessionViewModel {
                 self.refreshTrackAvailability()
                 self.onMysteryChanged?(self.currentMysteryIndex)
                 self.startRemoteLoad()
+            },
+            // The one thing the end of a meditation does in the prayer
+            // flow: its beads come up. It never moves the Rosary on
+            onFinish: { [weak self] in
+                self?.meditationHeard()
             }
         )
     }

@@ -140,6 +140,14 @@ final class ChapelChantPlayer {
         return "\(Self.clock(audio.currentTime)) of \(Self.clock(audio.duration))"
     }
 
+    /// "1:12" — how far into the recording, once it is loaded and ours.
+    /// The tile's kicker carries it at full width and the transport row
+    /// at half, so the time is said once either way.
+    var elapsedLabel: String? {
+        guard ownsPlayback, audio.duration > 0 else { return nil }
+        return Self.clock(audio.currentTime)
+    }
+
     static func clock(_ seconds: Double) -> String {
         let whole = max(0, Int(seconds.rounded(.down)))
         return "\(whole / 60):\(String(format: "%02d", whole % 60))"
@@ -267,8 +275,7 @@ final class ChapelChantPlayer {
 // MARK: - ChapelChantSheet
 
 /// The chant sheet: the piece by name, its opening words, a transport,
-/// and the short list of every recording. One of the two surfaces on
-/// the Chapel page allowed a card fill.
+/// and the short list of every recording, set as a sheet's ruled rows.
 struct ChapelChantSheet: View {
 
     let player: ChapelChantPlayer
@@ -276,17 +283,15 @@ struct ChapelChantSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        ZStack {
-            AppColors.appGradient.ignoresSafeArea()
+        VStack(spacing: 0) {
+            EditorHeader(
+                title: "Chant",
+                subtitle: "Sung prayer, kept close to hand.",
+                onDone: { dismiss() }
+            )
 
-            VStack(spacing: 0) {
-                EditorHeader(
-                    title: "Chant",
-                    subtitle: "Sung prayer, kept close to hand.",
-                    onDone: { dismiss() }
-                )
-
-                ScrollView(showsIndicators: false) {
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 20) {
                     VStack(spacing: 20) {
                         Text(player.current.latinTitle)
                             .font(AppFonts.headlineFont(21))
@@ -310,17 +315,18 @@ struct ChapelChantSheet: View {
 
                         OrnamentDivider()
                             .frame(width: 140)
-
-                        list
                     }
                     .padding(.horizontal, 26)
-                    .padding(.bottom, 40)
+
+                    // Outside the player's margin: the rows keep the
+                    // sheet's own gutter, as every sheet's rows do
+                    list
                 }
+                .padding(.bottom, 40)
             }
         }
+        .sheetGround()
         .presentationDetents([.medium, .large])
-        .presentationDragIndicator(.hidden)
-        .presentationBackground(AppColors.background)
     }
 
     // MARK: Transport
@@ -375,46 +381,23 @@ struct ChapelChantSheet: View {
         VStack(spacing: 0) {
             ForEach(ChapelChantPiece.catalog) { piece in
                 Button(action: { player.play(piece) }) {
-                    HStack(spacing: 13) {
-                        AppIcon("ph-music-note", size: 14)
-                            .foregroundColor(
-                                piece == player.current
-                                    ? AppColors.goldLight
-                                    : AppColors.gold.opacity(0.7)
-                            )
-                            .frame(width: 18)
-
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(piece.latinTitle)
-                                .font(AppFonts.bodyFont(15))
-                                .foregroundColor(AppColors.cream)
-
-                            Text(piece.detail)
-                                .font(AppFonts.bodyFont(11.5))
-                                .foregroundColor(AppColors.textSecondary)
-                        }
-
-                        Spacer(minLength: 0)
-
+                    // Lit for the piece the tile holds; the speaker says
+                    // whether it is sounding
+                    SheetRow(
+                        piece.latinTitle,
+                        detail: piece.detail,
+                        icon: "ph-music-note",
+                        isLit: piece == player.current
+                    ) {
                         if piece == player.current, player.isPlaying {
                             AppIcon("ph-speaker-high", size: 13)
                                 .foregroundColor(AppColors.goldLight)
                         }
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 10)
-                    .frame(minHeight: 52)
-                    .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(SacredCardButtonStyle())
                 .accessibilityLabel("Sing \(piece.latinTitle). \(piece.detail)")
             }
         }
-        .background(AppColors.cardBackground)
-        .cornerRadius(16)
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: AppLine.hairline)
-        )
     }
 }

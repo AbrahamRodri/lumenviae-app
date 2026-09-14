@@ -57,9 +57,21 @@ struct GoldCTAButton: View {
     var prominence: Prominence = .page
     var silhouette: Silhouette = .pill
 
-    /// The Latin cross that leads a page-level act. Never SF Symbols'
-    /// medical cross.
-    var showsCross: Bool = true
+    /// What a page-level act's glyph says it does. A Latin cross once led
+    /// every such act, and it named nothing — a cross before "Complete
+    /// this day" and before "Pray with a Meditation" alike. Now the glyph
+    /// is the act: play for one that begins a prayer, a chevron for one
+    /// that goes on to a page. The cross is kept for the tab bar's Pray
+    /// medallion alone, which is the app's mark as much as a control.
+    enum Glyph {
+        case none
+        /// Leads the title: this begins a prayer
+        case play
+        /// Follows the title: this goes on to a page
+        case chevron
+    }
+
+    var glyph: Glyph = .none
 
     /// Trailing glyph for the inline variant (`ph-check`, `ph-arrow-right`)
     var trailingIcon: String?
@@ -82,10 +94,8 @@ struct GoldCTAButton: View {
 
     private var label: some View {
         HStack(spacing: prominence == .page ? 10 : 6) {
-            if showsCross && prominence == .page {
-                LatinCross()
-                    .fill(foreground)
-                    .frame(width: 10, height: 14)
+            if prominence == .page, glyph == .play {
+                AppIcon("ph-play-fill", size: 11)
             }
 
             Text(title.uppercased())
@@ -97,6 +107,8 @@ struct GoldCTAButton: View {
 
             if let trailingIcon {
                 AppIcon(trailingIcon, size: 11)
+            } else if prominence == .page, glyph == .chevron {
+                AppIcon("ph-caret-right", size: 11)
             }
         }
         .foregroundColor(foreground)
@@ -327,11 +339,11 @@ private struct HaloModifier: ViewModifier {
 #Preview("Call to action") {
     ScrollView {
         VStack(spacing: 20) {
-            GoldCTAButton(title: "Begin prayer") {}
+            GoldCTAButton(title: "Begin prayer", glyph: .play) {}
 
-            GoldCTAButton(title: "Continue to prayers", showsCross: false) {}
+            GoldCTAButton(title: "Continue to prayers", glyph: .chevron) {}
 
-            GoldCTAButton(title: "Begin prayer") {}
+            GoldCTAButton(title: "Begin prayer", glyph: .play) {}
                 .disabled(true)
 
             HStack {
@@ -354,9 +366,9 @@ private struct HaloModifier: ViewModifier {
                 horizontalPadding: 0
             ) {}
 
-            GoldCTAButton(title: "Votive", fill: .votive, showsCross: false) {}
-            GoldCTAButton(title: "Outline", fill: .outline, showsCross: false) {}
-            GoldCTAButton(title: "Engraved", fill: .engraved, showsCross: false) {}
+            GoldCTAButton(title: "Votive", fill: .votive) {}
+            GoldCTAButton(title: "Outline", fill: .outline) {}
+            GoldCTAButton(title: "Engraved", fill: .engraved) {}
         }
         .padding(20)
     }

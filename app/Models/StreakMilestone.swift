@@ -59,7 +59,7 @@ struct StreakMilestone: Identifiable, Equatable {
         StreakMilestone(
             days: 33,
             name: "Consecration",
-            icon: "ph-crown",
+            icon: "ch-consecration",
             blessing: "Thirty-three days — the length of St. Louis de Montfort's total consecration."
         ),
         StreakMilestone(

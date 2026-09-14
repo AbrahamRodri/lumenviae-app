@@ -22,10 +22,15 @@
 //  edge and the bead — not the mystery — is the unit the hand moves
 //  through. The meditation belongs to the Our Father bead: it is heard
 //  or read there, and the ten Hail Marys are prayed with only the
-//  count beside you. Swipe down and the next bead comes to hand; the
-//  mystery turns on its own when the next Our Father arrives. There
-//  are no arrows between mysteries, because nothing but the beads moves
-//  the Rosary forward.
+//  count beside you — beside the bead itself, in the strand's margin,
+//  where the eye and the thumb are. Swipe down and the next bead comes
+//  to hand; the mystery turns on its own when the next Our Father
+//  arrives. There are no arrows between mysteries, because nothing but
+//  the beads moves the Rosary forward, and on the final bead AMEN hangs
+//  under the bead's name. The foot holds only the title, the
+//  narration's transport and the utility row, and nothing on it changes
+//  from bead to bead: a status row that once stood above the transport
+//  re-wrapped its cue on every swipe and shoved the controls with it.
 //
 //  Off the beads, the player moves a decade at a time, for a hand that
 //  keeps its own count on a rosary: swiping left/right moves between
@@ -56,9 +61,15 @@ struct MysteryPrayerView: View {
     /// the hint's own timer, a move between mysteries, and a tap on the
     /// painting all race for it, and the race has to settle once.
     ///
-    /// Only the decade-at-a-time player teaches the swipe; on the beads
-    /// the cue beside the bead's name says what to do.
+    /// Both players teach their swipe once: left between mysteries off
+    /// the beads, down a bead on them. On the beads the hint floats over
+    /// the painting above the controls, so its coming and going never
+    /// moves them.
     @State private var swipeHint: SwipeHintPhase = .pending
+
+    /// The bead controls' measured height, so the hint can stand just
+    /// above them
+    @State private var controlsHeight: CGFloat = 0
 
     enum SwipeHintPhase {
         /// Waiting for the screen to settle
@@ -73,8 +84,7 @@ struct MysteryPrayerView: View {
     @State private var chromeHidden = false
 
     /// How far a swipe under way has drawn the strand, in points. The
-    /// string follows the finger, and the words under it dim a little
-    /// as it goes, so a move is felt before it is made.
+    /// string follows the finger, so a move is felt before it is made.
     @State private var strandDrag: CGFloat = 0
 
     /// Whether the drag under way is the strand's. Decided once, from
@@ -154,7 +164,7 @@ struct MysteryPrayerView: View {
                         viewModel: viewModel,
                         actions: trackActions,
                         showsBeadRow: onBeads,
-                        beadCue: beadCue(for: meditation, on: .reader),
+                        beadCue: readerBeadCue(for: meditation),
                         beadCountsDown: travel == .back,
                         onFinish: finishRosary,
                         onClose: { setReaderOpen(false) }
@@ -205,15 +215,20 @@ struct MysteryPrayerView: View {
             }
             await viewModel.loadCurrentAudio()
         }
-        // A bead prayed is a place to come back to, the same as a decade
-        .onChange(of: viewModel.currentBeadIndex) { saveResumePosition() }
-        .task {
-            // A first Rosary only, off the beads only, and only once it
-            // has had a moment to settle — arriving with the screen would
-            // read as chrome
-            guard !onBeads, !userSettings.hasSeenPrayerSwipeHint else { return }
-            try? await Task.sleep(for: .seconds(1.6))
-            guard !Task.isCancelled, swipeHint == .pending, !onBeads else { return }
+        // A bead prayed is a place to come back to, the same as a decade;
+        // and a bead moved means the hint has done its work
+        .onChange(of: viewModel.currentBeadIndex) {
+            saveResumePosition()
+            dismissSwipeHint()
+        }
+        .task(id: swipeHintMayShow) {
+            // A first Rosary only, and only once there is something to
+            // swipe and it has had a moment to settle — arriving with the
+            // screen, or over a meditation still being heard, would read
+            // as chrome
+            guard swipeHintMayShow, !userSettings.hasSeenPrayerSwipeHint else { return }
+            try? await Task.sleep(for: .seconds(onBeads ? 0.8 : 1.6))
+            guard !Task.isCancelled, swipeHint == .pending else { return }
             // Spent the moment it is shown, not when it is dismissed:
             // this is the first Rosary a person ever prays, and leaving
             // the flow early should not earn them a second showing
@@ -236,6 +251,15 @@ struct MysteryPrayerView: View {
         .onChange(of: viewModel.currentMysteryIndex) {
             dismissSwipeHint()
             turnPulse += 1
+        }
+        // The meditation heard, the locked strand comes alive where it
+        // hangs: a ripple leaves the bead under the hand, and a light tick
+        // says the beads are now the hand's
+        .onChange(of: viewModel.beadsUnlocked) { wasUnlocked, isUnlocked in
+            if celebratesUnlock(from: wasUnlocked, to: isUnlocked) { turnPulse += 1 }
+        }
+        .sensoryFeedback(trigger: viewModel.beadsUnlocked) { wasUnlocked, isUnlocked in
+            celebratesUnlock(from: wasUnlocked, to: isUnlocked) ? .impact(weight: .light) : nil
         }
         .onDisappear {
             // Leaving the prayer flow (close, completion, or back) must not
@@ -280,13 +304,27 @@ struct MysteryPrayerView: View {
                     placement: .player,
                     pendingHandoff: $pendingHandoff
                 )
-                    .presentationDetents([
-                        .height(prayerTrayHeight(for: .player, actions: trackActions))
-                    ])
+                    // The tray opens as tall as it measures
+                    // (`fittedSheetDetent`)
                     .presentationDragIndicator(.visible)
-                    .presentationBackground(AppColors.cardBackground)
+                    .presentationBackground(AppColors.background)
             }
         }
+    }
+
+    /// Whether the beads coming up earn the ripple and the tick: on the
+    /// beads, newly unlocked, and because the meditation was heard. Beads
+    /// opened because the narration would not load are only opened —
+    /// nothing was heard, and the error beside them is no occasion for a
+    /// flourish.
+    private func celebratesUnlock(from wasUnlocked: Bool, to isUnlocked: Bool) -> Bool {
+        onBeads && isUnlocked && !wasUnlocked && viewModel.audioErrorMessage == nil
+    }
+
+    /// Whether the swipe hint has anything to teach yet: off the beads the
+    /// page is swiped at once; on them, once the beads unlock.
+    private var swipeHintMayShow: Bool {
+        !onBeads || viewModel.beadsUnlocked
     }
 
     /// Takes the hint off screen. Safe to call more than once — its own
@@ -317,31 +355,26 @@ struct MysteryPrayerView: View {
             ?? "The \(Constants.ordinalWord(viewModel.currentMysteryIndex + 1)) Mystery"
     }
 
-    /// Which surface a cue is written for. The player is swiped; in
-    /// the reader a vertical swipe is the page scrolling, so there the
-    /// bead row is tapped, and the cue must say so.
-    private enum CueSurface {
-        case player
-        case reader
-    }
-
-    /// What to do on the bead under the hand. The meditation is heard
-    /// or read on the Our Father; the Hail Marys are only counted; the
-    /// decade prayed, the next mystery is named so the turn is expected.
-    /// Nil on the final bead, where AMEN stands in the cue's place.
-    private func beadCue(for meditation: Meditation, on surface: CueSurface) -> String? {
+    /// What to do on the bead under the hand, for the reader's bead row
+    /// — in the reader a vertical swipe is the page scrolling, so the
+    /// row is tapped, and the cue says so. The player carries no cue:
+    /// the bead is named beside the strand, and the one-time hint
+    /// teaches the swipe. The meditation is heard or read on the Our
+    /// Father; the Hail Marys are only counted; the decade prayed, the
+    /// next mystery is named so the turn is expected. Nil on the final
+    /// bead, where AMEN stands in the cue's place.
+    private func readerBeadCue(for meditation: Meditation) -> String? {
         if viewModel.isLastBeadOfRosary { return nil }
-        let move = surface == .player ? "swipe down" : "tap"
         if viewModel.isDecadePrayed {
             let next = meditationSet.mysteryCategory?.mysteryLabel(ordinal: viewModel.currentMysteryIndex + 2)
                 ?? "The \(Constants.ordinalWord(viewModel.currentMysteryIndex + 2)) Mystery"
-            return "\(next) follows on the next \(surface == .player ? "swipe" : "tap")."
+            return "\(next) follows on the next tap."
         }
         if viewModel.currentBeadIndex == 0 {
             let act = meditation.hasAudio ? "Listen to" : "Read"
-            return "\(act) the meditation, then \(move) for the first Hail Mary"
+            return "\(act) the meditation, then tap for the first Hail Mary"
         }
-        return surface == .player ? "Swipe down for the next bead" : "Tap for the next bead"
+        return "Tap for the next bead"
     }
 
     // MARK: - The Painting
@@ -409,7 +442,10 @@ struct MysteryPrayerView: View {
                 guard dragArmed == true else { return }
                 // At either end of the Rosary the string gives only a
                 // little, and comes back
-                let resisted = t.height > 0 ? viewModel.isLastBeadOfRosary : viewModel.isFirstBeadOfRosary
+                // Locked until the meditation is heard, the string gives the
+                // same little it gives at either end of the Rosary
+                let resisted = beadsLocked
+                    || (t.height > 0 ? viewModel.isLastBeadOfRosary : viewModel.isFirstBeadOfRosary)
                 strandDrag = RosaryStrandView.follow(t.height, resisted: resisted)
             }
             .onEnded { value in
@@ -450,12 +486,6 @@ struct MysteryPrayerView: View {
         withAnimation(Motion.beadSettle) { strandDrag = 0 }
     }
 
-    /// How much the words under the strand have dimmed as the finger
-    /// draws it — gone by a bead's length
-    private var wordsDim: Double {
-        min(abs(strandDrag) / RosaryStrandView.rowHeight, 1) * 0.45
-    }
-
     /// Left for the next mystery, right for the one before. The angle
     /// gate keeps vertical reading scrolls from ever counting, and a
     /// forward swipe on the last mystery does nothing.
@@ -486,8 +516,16 @@ struct MysteryPrayerView: View {
     /// One bead forward along the strand. The swipe, the bead row and
     /// the reader's row all come here. On the final bead there is
     /// nowhere to go — the string settles, and only AMEN finishes.
+    /// The strand hangs locked until the meditation under the hand has been
+    /// heard: a swipe only tugs it and lets it back, and the rotor's bead
+    /// actions leave it where it is. The reader's bead row, which moves the
+    /// view model directly, is never locked.
+    private var beadsLocked: Bool {
+        onBeads && !viewModel.beadsUnlocked
+    }
+
     private func prayForward() {
-        guard !viewModel.isLastBeadOfRosary else {
+        guard !viewModel.isLastBeadOfRosary, !beadsLocked else {
             settleStrand()
             return
         }
@@ -501,7 +539,7 @@ struct MysteryPrayerView: View {
     /// One bead back along the strand, into the previous decade from
     /// an Our Father. On the first bead the string only settles.
     private func prayBack() {
-        guard !viewModel.isFirstBeadOfRosary else {
+        guard !viewModel.isFirstBeadOfRosary, !beadsLocked else {
             settleStrand()
             return
         }
@@ -529,16 +567,37 @@ struct MysteryPrayerView: View {
                 if let meditation = viewModel.currentMeditation {
                     if onBeads {
                         beadControls(meditation: meditation)
+                            .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { controlsHeight = $0 }
                     } else {
                         decadeControls(meditation: meditation)
                     }
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .overlay(alignment: .bottom) {
+                // The beads' one-time hint floats over the painting just
+                // above the controls, so the controls never move for it
+                if onBeads, swipeHint == .showing {
+                    PrayerSwipeHint(onBeads: true)
+                        // Clear of the frost's darkest band, where a
+                        // capsule set right against the controls was
+                        // lost against the ground
+                        .padding(.bottom, controlsHeight + 36)
+                        .transition(.opacity)
+                }
+            }
             .overlay {
                 // The Rosary's one strand, hung at the right edge, sliding
-                // a bead at a time under the hand. Inside the chrome layer
-                // so it goes with the chrome when the painting is tapped.
+                // a bead at a time under the hand, with the bead's name
+                // beside it and AMEN under that on the final bead. Inside
+                // the chrome layer so it goes with the chrome when the
+                // painting is tapped. The strand takes no touches of its
+                // own; only the AMEN does.
+                //
+                // On a mystery whose meditation has not yet been heard it
+                // hangs greyed and locked (`beadsUnlocked`), named for when
+                // it opens, and does not move under the finger; the
+                // narration's end brings it to life where it hangs.
                 if onBeads {
                     Color.clear
                         .rosaryStrand(
@@ -547,9 +606,11 @@ struct MysteryPrayerView: View {
                             fullHeight: fullHeight,
                             topInset: geometry.safeAreaInsets.top,
                             dragOffset: strandDrag,
-                            turnPulse: turnPulse
+                            turnPulse: turnPulse,
+                            activeLabel: viewModel.strand.labelLines(bead: viewModel.currentBeadIndex),
+                            locked: !viewModel.beadsUnlocked,
+                            onAmen: viewModel.isLastBeadOfRosary ? { finishRosary() } : nil
                         )
-                        .allowsHitTesting(false)
                 }
             }
             .opacity(chromeHidden ? 0 : 1)
@@ -615,33 +676,26 @@ struct MysteryPrayerView: View {
     // MARK: - Controls, on the Beads
 
     /// The foot of the player prayed on the beads: the name of what is
-    /// playing, the bead under the hand and its cue, the narration's
-    /// transport, and the utility row. No arrows — the beads are the
-    /// only way forward.
+    /// playing, the narration's transport, and the utility row — and
+    /// nothing that changes from bead to bead. The bead itself is named
+    /// beside the strand. No arrows — the beads are the only way
+    /// forward; a hand that cannot swipe prays them through the title's
+    /// rotor actions.
     private func beadControls(meditation: Meditation) -> some View {
-        let amen: (() -> Void)? = viewModel.isLastBeadOfRosary ? { finishRosary() } : nil
-
-        return VStack(spacing: 0) {
+        VStack(spacing: 0) {
             titleBlock(meditation: meditation, showsMysteryName: true)
-                // Clear of the strand's labels at the right edge
+                // Clear of the strand at the right edge
                 .padding(.trailing, 100)
                 .padding(.horizontal, 22)
-
-            BeadStatusRow(
-                label: viewModel.beadLabel,
-                cue: beadCue(for: meditation, on: .player),
-                onAmen: amen,
-                countsDown: travel == .back,
-                onAdvance: prayForward,
-                onRetreat: prayBack
-            )
-            .padding(.horizontal, 22)
-            .padding(.top, 14)
-            // Dims as the finger draws the string, and arrives from the
-            // side the string came from once the bead has changed
-            .opacity(1 - wordsDim)
-            .beadWordsArrival(trigger: viewModel.beadPosition, from: travel, still: reduceMotion)
-            .animation(Motion.words, value: viewModel.beadPosition)
+                .accessibilityElement(children: .combine)
+                .accessibilityValue(viewModel.beadLabel)
+                .accessibilityHint(
+                    beadsLocked
+                        ? "The beads unlock when the meditation ends"
+                        : (viewModel.isLastBeadOfRosary ? "" : "Swipe down, or use the actions, for the next bead")
+                )
+                .accessibilityAction(named: "Next bead", prayForward)
+                .accessibilityAction(named: "Previous bead", prayBack)
 
             if let errorMessage = viewModel.audioErrorMessage {
                 Text(errorMessage)
@@ -665,6 +719,7 @@ struct MysteryPrayerView: View {
                 .padding(.top, meditation.hasAudio ? 18 : 12)
                 .padding(.bottom, 16)
         }
+        .padding(.top, 6)
         .animation(Motion.decadeTurn, value: meditation.hasAudio)
     }
 

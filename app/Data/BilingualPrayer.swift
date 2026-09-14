@@ -73,6 +73,59 @@ struct BilingualText {
     }
 }
 
+extension BilingualText {
+    /// One language's text as a single paragraph, its lines joined — for a
+    /// screen that sets a prayer as one block rather than line by line.
+    /// Latin when Latin alone is chosen, English otherwise.
+    func paragraph(in language: PrayerLanguage) -> String {
+        let source = language == .latin ? latin : english
+        return source
+            .components(separatedBy: .newlines)
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+            .joined(separator: " ")
+    }
+}
+
+// MARK: - The Rosary's Prayers
+
+/// The prayers of the beads that more than one screen sets out — How to
+/// Pray's cards, and the Scriptural Rosary's closing bead — kept once so
+/// the two never say them differently. The lines break where How to Pray
+/// breaks them; a screen that sets a prayer as one block joins them
+/// (`BilingualText.paragraph(in:)`).
+enum RosaryPrayerText {
+
+    static let gloryBe = BilingualText(
+        english: """
+Glory be to the Father, and to the Son, and to the Holy Spirit.
+As it was in the beginning, is now, and ever shall be,
+world without end. Amen.
+""",
+        latin: """
+Gloria Patri, et Filio, et Spiritui Sancto.
+Sicut erat in principio, et nunc, et semper,
+et in saecula saeculorum. Amen.
+"""
+    )
+
+    /// Said after the Glory Be of every decade, as Our Lady asked at Fatima
+    static let fatimaPrayer = BilingualText(
+        english: """
+O my Jesus, forgive us our sins,
+save us from the fires of hell,
+and lead all souls to heaven,
+especially those in most need of Thy mercy. Amen.
+""",
+        latin: """
+Domine Iesu, dimitte nobis debita nostra,
+salva nos ab igne inferiori,
+perduc in caelum omnes animas,
+praesertim eas, quae misericordiae tuae maxime indigent. Amen.
+"""
+    )
+}
+
 // MARK: - BilingualPrayer
 
 /// A prayer with bilingual content

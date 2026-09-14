@@ -129,13 +129,13 @@ struct LibraryBookView: View {
             switch which {
             case .player:
                 LibraryPlayerSheet(session: session)
-                    .presentationDetents([.height(430)])
+                    .presentationDetents([.height(460)])
                     .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
 
             case .goal:
                 ReadingGoalSheet()
-                    .presentationDetents([.height(400)])
+                    .presentationDetents([.height(450)])
                     .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
 

@@ -61,18 +61,47 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
         switch self {
         case .todaysRosary:     return "ch-rosary"
         case .chooseMeditation: return "ph-cards"
-        case .sevenSorrows:     return "ph-heart"
+        // Mary's heart pierced by Simeon's sword, the devotion's own
+        // image; the plain heart meant nothing in particular
+        case .sevenSorrows:     return "ch-sorrowful-heart"
         case .scripturalRosary: return "ch-bible"
         case .mass:             return "ch-altar"
         case .office:           return "ph-clock"
-        case .consecration:     return "ph-crown"
+        case .consecration:     return "ch-consecration"
         }
     }
 
-    /// Whether this act belongs in a daily Rule of Prayer. Browsing the
-    /// picker is a doorway, not a devotion — it stays off the rule.
+    /// The act's name as the rule and the Chapel's focus block set it —
+    /// "The Rosary", not "Today's Rosary": on a daily rule every act is
+    /// today's, and the shorter name is the one that fits a ledger row.
+    var actName: String {
+        switch self {
+        case .todaysRosary:     return "The Rosary"
+        case .chooseMeditation: return "A Meditation"
+        case .sevenSorrows:     return "Seven Sorrows"
+        case .scripturalRosary: return "Scriptural Rosary"
+        case .mass:             return "The Mass"
+        case .office:           return "The Office"
+        case .consecration:     return "Consecration"
+        }
+    }
+
+    /// Whether this act can be chosen for a daily Rule of Prayer.
+    ///
+    /// The Mass and the Office stay off it until the app can keep a
+    /// day's schedule for them — a rule may only carry what the Chapel
+    /// can ask about honestly. The Consecration is not chosen either,
+    /// but is never absent: while a preparation is under way it stands
+    /// on the rule of its own accord. Browsing the picker for a
+    /// meditation is a doorway to the Rosary, not a devotion beside it,
+    /// so it is not a rule of its own.
     var isRuleEligible: Bool {
-        self != .chooseMeditation
+        switch self {
+        case .todaysRosary, .scripturalRosary, .sevenSorrows:
+            return true
+        case .mass, .office, .consecration, .chooseMeditation:
+            return false
+        }
     }
 
     /// Decodes a stored list, dropping values this build doesn't know.
@@ -128,7 +157,7 @@ enum MeWidget: String, CaseIterable, Identifiable {
         case .streak:       return "ph-flame"
         case .library:      return "ph-book"
         case .reading:      return "ph-book-open-fill"
-        case .consecration: return "ph-crown"
+        case .consecration: return "ch-consecration"
         case .journal:      return "ph-book-open"
         }
     }

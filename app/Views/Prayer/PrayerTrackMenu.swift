@@ -53,17 +53,11 @@ enum PrayerTrackPlacement {
     case reader(onExpand: () -> Void)
 }
 
-/// Height for the tray's detent, so it never opens with a field of empty
-/// card under the last row. Counts the same list the tray draws — a row
-/// added or hidden in one place would otherwise clip silently in the
-/// other.
-func prayerTrayHeight(for placement: PrayerTrackPlacement, actions: PrayerTrackActions) -> CGFloat {
-    CGFloat(PrayerTrackTray.rows(for: placement, actions: actions).count)
-        * PrayerTrackTray.rowHeight + PrayerTrackTray.topPadding + PrayerTrackTray.bottomPadding
-}
-
 // MARK: - Tray
 
+/// The tray opens as tall as it measures (`fittedSheetDetent`), so it
+/// never stands on a field of empty ground under its last row, and never
+/// cuts one off — its hosts set no detent of their own.
 struct PrayerTrackTray: View {
 
     let actions: PrayerTrackActions
@@ -75,16 +69,18 @@ struct PrayerTrackTray: View {
     /// host that owns the sheet.
     @Binding var pendingHandoff: (() -> Void)?
 
-    static let rowHeight: CGFloat = 56
-
-    /// Room above the first row, for the drag indicator.
-    static let topPadding: CGFloat = 26
+    static let rowHeight: CGFloat = SheetMetrics.rowMinHeight
 
     /// Slack under the last row, so it clears the home indicator.
     static let bottomPadding: CGFloat = 20
 
-    /// The acts this tray offers, in order. The single source for both
-    /// what is drawn and how tall the sheet opens.
+    /// A first guess at the tray's height, for the frame before it has
+    /// been measured: a header, the rows, and the slack under them
+    private static func estimatedHeight(rows: Int) -> CGFloat {
+        100 + CGFloat(rows) * rowHeight + bottomPadding
+    }
+
+    /// The acts this tray offers, in order.
     static func rows(
         for placement: PrayerTrackPlacement,
         actions: PrayerTrackActions
@@ -121,13 +117,23 @@ struct PrayerTrackTray: View {
         let rows = Self.rows(for: placement, actions: actions)
 
         VStack(spacing: 0) {
+            // The set over the meditation the acts are about, free to wrap.
+            // The sheet measures what it holds, so a meditation's longer
+            // name ("The Descent of the Holy Spirit upon the Apostles") is
+            // set in full; it was once shrunk and cut to fit a header of
+            // counted height.
+            SheetHeader(
+                kicker: actions.feedbackContext.setName,
+                title: actions.feedbackContext.meditationTitle
+            )
+
             ForEach(Array(rows.enumerated()), id: \.offset) { index, row in
                 view(for: row, showsDivider: index < rows.count - 1)
             }
         }
-        .padding(.top, Self.topPadding)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .background(AppColors.cardBackground.ignoresSafeArea())
+        .padding(.bottom, Self.bottomPadding)
+        .fittedSheetDetent(estimate: Self.estimatedHeight(rows: rows.count))
+        .sheetGround()
     }
 
     // MARK: - Rows
@@ -212,8 +218,7 @@ struct PrayerTrackTray: View {
 
 // MARK: - Tray Row
 
-/// One act in the tray: a gold glyph, the name of the act, and a
-/// hairline under it in the same gold the rest of the app rules with.
+/// One act in the tray, as a sheet's ruled row.
 private struct TrayRow: View {
 
     let icon: String
@@ -226,7 +231,7 @@ private struct TrayRow: View {
         Button(action: action) {
             TrayRowLabel(icon: icon, title: title, showsDivider: showsDivider)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(SacredCardButtonStyle())
         .disabled(!isEnabled)
         .opacity(isEnabled ? 1 : 0.45)
     }
@@ -242,29 +247,9 @@ private struct TrayRowLabel: View {
     var showsDivider: Bool = true
 
     var body: some View {
-        VStack(spacing: 0) {
-            HStack(spacing: 16) {
-                AppIcon(icon, size: 20)
-                    .foregroundColor(AppColors.gold)
-                    .frame(width: 24)
-
-                Text(title)
-                    .font(AppFonts.bodyFont(16))
-                    .foregroundColor(AppColors.cream)
-
-                Spacer()
-            }
-            .padding(.horizontal, 24)
+        // Acts, not doors: nothing stands at the trailing edge
+        SheetRow(title, icon: icon, accessory: .none, showsDivider: showsDivider)
             .frame(height: PrayerTrackTray.rowHeight)
-            .contentShape(Rectangle())
-
-            if showsDivider {
-                Rectangle()
-                    .fill(AppColors.gold.opacity(0.10))
-                    .frame(height: AppLine.hairline)
-                    .padding(.leading, 64)
-            }
-        }
     }
 }
 
@@ -278,7 +263,7 @@ private struct TrayRowLabel: View {
                 audioURL: "https://example.com/a.mp3",
                 shareText: "",
                 feedbackContext: FeedbackContext(
-                    meditationTitle: "The Annunciation",
+                    meditationTitle: "The Descent of the Holy Spirit upon the Apostles",
                     setName: "Meditations of St. Alphonsus"
                 ),
                 onAddReflection: {},
@@ -288,7 +273,5 @@ private struct TrayRowLabel: View {
             placement: .player,
             pendingHandoff: .constant(nil)
         )
-        .presentationDetents([.height(270)])
-        .presentationBackground(AppColors.cardBackground)
     }
 }

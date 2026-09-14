@@ -135,11 +135,11 @@ final class JournalEntry {
 
     /// Icon name for the entry type. Categories defer to
     /// `MysteryCategory.iconName` so the journal never shows a different
-    /// icon for a category than the rest of the app; the crown is the
-    /// consecration symbol app-wide (tab, menu, milestones).
+    /// icon for a category than the rest of the app; the Marian monogram
+    /// is the consecration symbol app-wide (tab, home, milestones).
     var categoryIcon: String {
         if isConsecrationEntry {
-            return "ph-crown-fill"
+            return "ch-consecration-fill"
         }
         return category?.iconName ?? "ph-book"
     }
@@ -220,5 +220,78 @@ final class JournalEntry {
         self.mysteryTitle = nil
         self.mysteryIndex = nil
         self.isMidPrayer = false
+    }
+}
+
+
+// MARK: - A page kept from a book, taken apart again
+
+/// A kept passage as the page sets it: the passage, its citation, and
+/// whatever the reader added — three parts, drawn three ways.
+struct KeptPassage {
+    let passage: String
+
+    /// "St. Louis de Montfort, True Devotion…, Chapter I" — the stored
+    /// citation without its leading dash and its rights note, which
+    /// belong on a share card and not on a journal page
+    let citation: String?
+
+    /// The reader's own words, possibly none
+    let comment: String
+}
+
+extension JournalEntry {
+
+    /// The entry as a kept passage, or nil for an entry that is not one
+    /// — or one whose passage the reader has since rewritten in the
+    /// editor, which is then shown as they left it. The passage and
+    /// citation come from their own fields; the comment is what remains
+    /// of `text` once the composed parts are lifted out of it.
+    var keptPassage: KeptPassage? {
+        guard let stored = bookPassage else { return nil }
+        let passage = stored.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !passage.isEmpty else { return nil }
+
+        // `note` composed the text from the passage exactly as it was
+        // kept, whitespace and all, so that is tried before the trimmed
+        // form — trimmed alone, a passage kept with a trailing newline
+        // never matched and lost its quotation
+        var rest = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        let openings = [stored, passage].flatMap { ["\u{201C}\($0)\u{201D}", $0] }
+        guard let opening = openings.first(where: { rest.hasPrefix($0) }) else { return nil }
+        rest.removeFirst(opening.count)
+
+        // The citation is set apart only while it still stands in the
+        // text as it was kept. One the reader has since edited stays in
+        // their words as they left it, rather than being printed twice
+        var citation: String?
+        if let storedCitation = bookCitation?.trimmingCharacters(in: .whitespacesAndNewlines),
+           !storedCitation.isEmpty,
+           let range = rest.range(of: storedCitation) {
+            rest.removeSubrange(range)
+            citation = Self.pageCitation(storedCitation)
+        }
+
+        return KeptPassage(
+            passage: passage,
+            citation: citation,
+            comment: rest.trimmingCharacters(in: .whitespacesAndNewlines)
+        )
+    }
+
+    /// The citation as the page prints it. The reader's keep composes
+    /// "— Author, Title, Chapter (trans. X). Public domain." for the
+    /// share card; on the page the dash is drawn by the block and the
+    /// rights note is nobody's reflection.
+    private static func pageCitation(_ stored: String) -> String? {
+        var line = Substring(stored)
+        while let first = line.first, "—–- ".contains(first) {
+            line = line.dropFirst()
+        }
+        if let range = line.range(of: "Public domain.", options: [.backwards, .caseInsensitive]) {
+            line = line[..<range.lowerBound]
+        }
+        let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
     }
 }

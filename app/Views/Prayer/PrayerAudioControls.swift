@@ -167,69 +167,43 @@ struct PlaybackSettingsSheet: View {
     /// the Lock Screen or CarPlay last set.
     private var audio: AudioService { .shared }
 
-    /// The sheet's height, for its detent
-    static let height: CGFloat = 372
+    /// The sheet's height, for its detent: the header, the speeds under
+    /// their label, and the bead counter's row, whose line can run to
+    /// three
+    static let height: CGFloat = 350
 
     var body: some View {
         @Bindable var settings = userSettings
 
         return VStack(alignment: .leading, spacing: 0) {
-            HStack {
-                Text("Playback")
-                    .font(AppFonts.headlineFont(20))
-                    .foregroundColor(AppColors.cream)
-                Spacer()
-                ReaderChromeButton(
-                    icon: "ph-x",
-                    size: 15,
-                    tint: AppColors.textSecondary,
-                    label: "Close",
-                    action: dismiss.callAsFunction
-                )
+            SheetHeader(title: "Playback") {
+                SheetHeaderAction(title: "Done") { dismiss() }
             }
-            .padding(.leading, 24)
-            .padding(.trailing, 10)
-            .padding(.top, 14)
+
+            SheetSectionLabel("Speed")
 
             speedSection
-                .padding(.horizontal, 24)
-                .padding(.top, 18)
+                .padding(.horizontal, SheetMetrics.gutter)
 
-            VStack(alignment: .leading, spacing: 10) {
-                Text("THE BEADS")
-                    .font(AppFonts.labelFont(10))
-                    .tracking(2.5)
-                    .foregroundColor(AppColors.gold)
+            SheetSectionLabel("The beads")
 
-                ToggleRow(
-                    icon: "ch-rosary",
-                    title: "Pray on the beads",
-                    subtitle: settings.prayOnBeads
-                        ? "Swipe down through each Hail Mary"
-                        : "Move a mystery at a time",
-                    isOn: $settings.prayOnBeads
-                )
-                .background(
-                    RoundedRectangle(cornerRadius: 14)
-                        .fill(AppColors.cardBackground)
-                )
-            }
-            .padding(.horizontal, 24)
-            .padding(.top, 24)
+            // The whole row answers, as it does in Settings
+            SheetToggleRow(
+                title: UserSettings.beadCounterTitle,
+                detail: UserSettings.beadCounterDetail(isOn: settings.prayOnBeads),
+                icon: "ch-rosary",
+                isOn: $settings.prayOnBeads,
+                showsDivider: false
+            )
 
             Spacer(minLength: 20)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .background(AppColors.background.ignoresSafeArea())
+        .sheetGround()
     }
 
     private var speedSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("SPEED")
-                .font(AppFonts.labelFont(10))
-                .tracking(2.5)
-                .foregroundColor(AppColors.gold)
-
+        VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 8) {
                 ForEach(AudioService.supportedRates, id: \.self) { rate in
                     let selected = audio.playbackRate == rate

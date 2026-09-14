@@ -64,6 +64,8 @@ struct MissalCalendarSheet: View {
                 dayMark: { date, isToday in dayMark(date, isToday: isToday) },
                 offline: { offlineRow }
             )
+            // The shell draws no margin; the grid keeps the sheets' gutter
+            .padding(.horizontal, SheetMetrics.gutter)
         }
         .task { await loadYears() }
         .onChange(of: month) {

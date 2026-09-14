@@ -3,15 +3,25 @@
 //  Lumen Viae
 //
 //  The Pray button's press-and-hold tray: the user's chosen devotions,
-//  each one motion away — the Me page in miniature, under the thumb.
+//  each one motion away, under the thumb.
 //
-//  Like the prayer flow's track menu, it is a tray of the app's own
-//  making rather than a system context menu, which would land on the
-//  gold-and-candlelight bar as a piece of another app.
+//  Set in the app's one sheet grammar (`DesignSystem/SheetChrome.swift`),
+//  taken from the consecration day's index: a kicker and a title with
+//  room above them, then a ruled list of glyph, name, italic line, and
+//  caret. The tray used to open on a hand-drawn grabber twelve points
+//  from its top edge with the first row pressed up beneath it, and no
+//  heading at all.
+//
+//  The row the Pray button's own tap runs is lit, and says so (QUICK
+//  TAP), the way the index lights the prayer you are on. It is the one
+//  thing about this menu nobody could otherwise see.
 //
 //  Rows dismiss first and act second (the same pendingHandoff pattern
 //  the prayer tray uses) so an act that presents its own sheet — the
 //  Mass, the Office — never tries to present into a dismissal.
+//
+//  The tray opens as tall as it measures (`fittedSheetDetent`); its host
+//  sets no detent of its own.
 //
 
 import SwiftUI
@@ -30,86 +40,85 @@ struct PrayShortcutTray: View {
     @Environment(\.dismiss) private var dismiss
 
     static let rowHeight: CGFloat = 64
-    static let arrangeRowHeight: CGFloat = 48
-    static let topPadding: CGFloat = 26
-    static let bottomPadding: CGFloat = 20
+    static let arrangeRowHeight: CGFloat = 56
+    static let bottomPadding: CGFloat = 14
 
-    /// The tray's natural height for its detent — rows plus the arrange
-    /// row, so it never opens onto empty card.
-    static func height(for settings: UserSettings) -> CGFloat {
-        CGFloat(settings.prayTrayShortcuts.count) * rowHeight
-            + arrangeRowHeight + topPadding + bottomPadding
+    /// A first guess at the tray's height, for the frame before it has
+    /// been measured: a header, the rows, and the arrange row
+    private var estimatedHeight: CGFloat {
+        100
+            + CGFloat(settings.prayTrayShortcuts.count) * Self.rowHeight
+            + Self.arrangeRowHeight
+            + Self.bottomPadding
     }
 
     var body: some View {
-        ZStack {
-            AppColors.appGradient.ignoresSafeArea()
+        VStack(alignment: .leading, spacing: 0) {
+            SheetHeader(
+                kicker: Date.now.formatted(.dateTime.weekday(.wide).month(.wide).day()),
+                title: "Your Devotions"
+            )
 
-            VStack(spacing: 0) {
-                Capsule()
-                    .fill(AppColors.gold.opacity(0.3))
-                    .frame(width: 40, height: 4)
-                    .padding(.top, 12)
-                    .padding(.bottom, 10)
-
-                ForEach(Array(settings.prayTrayShortcuts.enumerated()), id: \.element) { index, shortcut in
-                    Button {
-                        pendingShortcut = shortcut
-                        dismiss()
-                    } label: {
-                        HStack(spacing: 16) {
-                            AppIcon(shortcut.icon, size: 19)
-                                .foregroundColor(AppColors.gold)
-                                .frame(width: 26)
-
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(shortcut.title)
-                                    .font(AppFonts.bodyFont(16))
-                                    .foregroundColor(AppColors.cream)
-
-                                Text(subtitle(for: shortcut))
-                                    .font(AppFonts.bodyFont(12))
-                                    .foregroundColor(AppColors.textSecondary)
-                            }
-
-                            Spacer()
-                        }
-                        .padding(.horizontal, 24)
-                        .frame(height: Self.rowHeight)
-                        .contentShape(Rectangle())
-                    }
-                    // The rows settle under the thumb like every card in
-                    // the app, and arrive one after another as the tray
-                    // rises — the Pray button's second gesture should
+            ForEach(Array(settings.prayTrayShortcuts.enumerated()), id: \.element) { index, shortcut in
+                row(shortcut, isQuickTap: shortcut == settings.prayQuickAction)
+                    // The rows arrive one after another as the tray
+                    // rises: the Pray button's second gesture should
                     // feel as alive as its first
-                    .buttonStyle(SacredCardButtonStyle())
                     .devotionalEntrance(delay: 0.05 + 0.05 * Double(index), drift: 8)
-                }
-
-                // The tray's own door to its editor — edited in place,
-                // not in buried settings
-                Button {
-                    pendingArrange = true
-                    dismiss()
-                } label: {
-                    HStack(spacing: 10) {
-                        AppIcon("ph-pencil-simple", size: 13)
-
-                        Text("EDIT THIS MENU")
-                            .font(AppFonts.labelFont(10))
-                            .tracking(2)
-                    }
-                    .foregroundColor(AppColors.gold.opacity(0.7))
-                    .frame(maxWidth: .infinity)
-                    .frame(height: Self.arrangeRowHeight)
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(QuietGlyphButtonStyle())
-                .devotionalEntrance(delay: 0.05 + 0.05 * Double(settings.prayTrayShortcuts.count), drift: 8)
-
-                Spacer(minLength: 0)
             }
+
+            arrangeRow
+                .devotionalEntrance(
+                    delay: 0.05 + 0.05 * Double(settings.prayTrayShortcuts.count),
+                    drift: 8
+                )
         }
+        .padding(.bottom, Self.bottomPadding)
+        .fittedSheetDetent(estimate: estimatedHeight)
+        .sheetGround()
+    }
+
+    // MARK: - Rows
+
+    private func row(_ shortcut: PrayerShortcut, isQuickTap: Bool) -> some View {
+        Button {
+            pendingShortcut = shortcut
+            dismiss()
+        } label: {
+            SheetRow(
+                shortcut.title,
+                detail: subtitle(for: shortcut),
+                icon: shortcut.icon,
+                accessory: isQuickTap ? .label("Quick tap") : .caret,
+                isLit: isQuickTap
+            )
+            .frame(height: Self.rowHeight)
+        }
+        .buttonStyle(SacredCardButtonStyle())
+        .accessibilityLabel(shortcut.title)
+        .accessibilityHint(isQuickTap ? "Also what a tap on the Pray button does" : "")
+    }
+
+    /// The tray's own door to its editor — edited in place, not in
+    /// buried settings
+    private var arrangeRow: some View {
+        Button {
+            pendingArrange = true
+            dismiss()
+        } label: {
+            HStack(spacing: 8) {
+                AppIcon("ph-pencil-simple", size: 12)
+
+                Text("EDIT THIS MENU")
+                    .font(AppFonts.labelFont(10))
+                    .tracking(2)
+            }
+            .foregroundColor(AppColors.gold.opacity(0.75))
+            .frame(maxWidth: .infinity)
+            .frame(height: Self.arrangeRowHeight)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(QuietGlyphButtonStyle())
     }
 
     /// The Rosary's line names the day's mysteries; the rest carry
@@ -134,7 +143,5 @@ struct PrayShortcutTray: View {
                 pendingArrange: .constant(false)
             )
             .environment(UserSettings.shared)
-            .presentationDetents([.height(PrayShortcutTray.height(for: UserSettings.shared))])
-            .presentationBackground(AppColors.background)
         }
 }

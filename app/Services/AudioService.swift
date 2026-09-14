@@ -267,10 +267,12 @@ final class AudioService {
 
     /// Installs track navigation for `owner`, replacing any previous owner's.
     /// `onFinish` runs when a track plays to its end, and only while this
-    /// owner still holds navigation. The prayer flow leaves it nil — a
-    /// decade is a meditation plus ten Hail Marys, and the next mystery
-    /// begins when the person praying says so — while a recording of a
-    /// book is a reading, which runs on to the next track by itself.
+    /// owner still holds navigation. The prayer flow uses it only to note
+    /// that a meditation has been heard, which is when its beads come up,
+    /// and never to move on — a decade is a meditation plus ten Hail
+    /// Marys, and the next mystery begins when the person praying says
+    /// so — while a recording of a book is a reading, which runs on to
+    /// the next track by itself.
     func setTrackNavigation(
         owner: AnyHashable,
         canGoNext: Bool,

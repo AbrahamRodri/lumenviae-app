@@ -396,7 +396,6 @@ struct SelectMeditationView: View {
             GoldCTAButton(
                 title: "Try again",
                 prominence: .inline,
-                showsCross: false,
                 fullWidth: false
             ) {
                 Task { await viewModel.retry() }

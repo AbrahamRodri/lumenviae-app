@@ -46,7 +46,7 @@ enum AppTab: CaseIterable {
     var icon: String {
         switch self {
         case .home:         return "ph-house"
-        case .consecration: return "ph-crown"
+        case .consecration: return "ch-consecration"
         case .journal:      return "ph-book-open"
         case .progress:     return "ph-flame"
         case .chapel:       return "ch-window"

@@ -25,70 +25,32 @@ struct ReminderSoundSheet: View {
     @State private var previewingFile: String?
 
     var body: some View {
-        ZStack {
-            AppColors.appGradient
-                .ignoresSafeArea()
+        // Scrolls so the last sound is never cut on a small phone, where
+        // the header and four rows stand taller than the medium detent
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 0) {
+                SheetHeader(
+                    kicker: "Daily reminder",
+                    title: "Reminder Sound",
+                    lead: "Tap a sound to hear it and make it yours."
+                )
 
-            VStack(spacing: 0) {
-                // Handle
-                Capsule()
-                    .fill(AppColors.gold.opacity(0.3))
-                    .frame(width: 40, height: 4)
-                    .padding(.top, 12)
-
-                VStack(spacing: 24) {
-                    // Header
-                    VStack(spacing: 10) {
-                        AppIcon("ph-speaker-high", size: 32)
-                            .foregroundColor(AppColors.gold)
-
-                        Text("Reminder Sound")
-                            .font(AppFonts.headlineFont(22))
-                            .foregroundColor(AppColors.cream)
-
-                        Text("Tap a sound to hear it and make it yours.")
-                            .font(AppFonts.italicFont(14))
-                            .foregroundColor(AppColors.textSecondary)
+                ForEach(ReminderSound.all) { sound in
+                    ReminderSoundRow(
+                        sound: sound,
+                        isSelected: userSettings.reminderSound == sound,
+                        isPlaying: previewingFile == sound.fileName
+                    ) {
+                        userSettings.reminderSoundFile = sound.fileName
+                        preview(sound)
                     }
-                    .padding(.top, 28)
-
-                    // Sound options
-                    VStack(spacing: 0) {
-                        ForEach(Array(ReminderSound.all.enumerated()), id: \.element.id) { index, sound in
-                            ReminderSoundRow(
-                                sound: sound,
-                                isSelected: userSettings.reminderSound == sound,
-                                isPlaying: previewingFile == sound.fileName
-                            ) {
-                                userSettings.reminderSoundFile = sound.fileName
-                                preview(sound)
-                            }
-
-                            if index < ReminderSound.all.count - 1 {
-                                Divider()
-                                    .background(AppColors.gold.opacity(0.2))
-                            }
-                        }
-                    }
-                    .background(AppColors.cardBackground)
-                    .cornerRadius(16)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: AppLine.hairline)
-                    )
-                    .padding(.horizontal, 20)
-
-                    Text("All sounds are public domain recordings.")
-                        .font(AppFonts.bodyFont(12))
-                        .foregroundColor(AppColors.textSecondary)
-
-                    Spacer()
                 }
+
+                SheetNote("All sounds are public domain recordings.")
             }
         }
+        .sheetGround()
         .presentationDetents([.medium])
-        .presentationDragIndicator(.hidden)
-        .presentationBackground(AppColors.background)
         .onDisappear {
             player?.stop()
         }
@@ -122,8 +84,9 @@ struct ReminderSoundSheet: View {
 
 // MARK: - ReminderSoundRow
 
-/// A selectable sound option: name, character line, and a state icon —
-/// gold checkmark when chosen, animated speaker while previewing.
+/// A selectable sound option, as a sheet row: glyph, name, character
+/// line, and at the trailing edge the check when chosen — or, while its
+/// sample plays, the animated speaker in its place.
 private struct ReminderSoundRow: View {
     let sound: ReminderSound
     let isSelected: Bool
@@ -132,37 +95,22 @@ private struct ReminderSoundRow: View {
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 14) {
-                AppIcon(sound.icon, size: 16)
-                    .foregroundColor(isSelected ? AppColors.gold : AppColors.textSecondary)
-                    .frame(width: 24)
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(sound.displayName)
-                        .font(AppFonts.headlineFont(16))
-                        .foregroundColor(AppColors.cream)
-
-                    Text(sound.detail)
-                        .font(AppFonts.bodyFont(13))
-                        .foregroundColor(AppColors.textSecondary)
-                }
-
-                Spacer()
-
+            SheetRow(
+                sound.displayName,
+                detail: sound.detail,
+                icon: sound.icon,
+                isLit: isSelected
+            ) {
                 if isPlaying {
                     AppIcon("ph-speaker-high-fill", size: 16)
                         .foregroundColor(AppColors.goldLight)
                         .symbolEffect(.variableColor.iterative, options: .repeating)
                 } else if isSelected {
-                    AppIcon("ph-check-circle-fill", size: 18)
-                        .foregroundColor(AppColors.gold)
+                    SheetRowAccessoryView(accessory: .check)
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 14)
-            .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(SacredCardButtonStyle())
     }
 }
 

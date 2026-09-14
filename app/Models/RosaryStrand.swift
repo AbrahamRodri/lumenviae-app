@@ -81,28 +81,35 @@ struct RosaryStrand: Hashable {
     // MARK: - Names
 
     /// What the bead under the hand is called: the prayer said on it.
+    /// A decade closes on the Glory Be and the Fatima Prayer together,
+    /// as Our Lady asked at Fatima, so the closing bead is named for both.
     func label(bead: Int) -> String {
         if bead <= 0 { return "Our Father" }
-        if bead > hailMarys { return "Glory Be" }
+        if bead > hailMarys { return "Glory Be & Fatima Prayer" }
         return "Hail Mary · \(bead) of \(hailMarys)"
     }
 
-    /// The label beside a bead on the drawn strand, where one is drawn:
-    /// the Our Father beads carry the decade they open, the final bead
-    /// the Rosary's end.
-    func strandLabel(at index: Int) -> String? {
-        switch bead(at: index) {
-        case .ourFather(let decade): return "Our Father · \(Self.roman(decade + 1))"
-        case .hailMary: return nil
-        case .amen: return "Glory Be · Amen"
-        }
+    /// The same name broken for the strand's margin, where a line is a
+    /// dozen characters: the prayer, then its count or its companion.
+    func labelLines(bead: Int) -> [String] {
+        if bead <= 0 { return ["Our Father"] }
+        if bead > hailMarys { return ["Glory Be &", "Fatima Prayer"] }
+        return ["Hail Mary", "\(bead) of \(hailMarys)"]
     }
 
-    /// "First of five mysteries" — where the Rosary stands, in words.
-    func standing(mystery: Int, category: MysteryCategory) -> String {
-        let ordinal = Constants.ordinalWord(mystery + 1)
-        let noun = category == .sevenSorrows ? "sorrows" : "mysteries"
-        return "\(ordinal) of \(Self.numberWord(decades)) \(noun)"
+    /// The label beside a bead on the drawn strand, where one is drawn:
+    /// the Our Father beads carry the numeral of the decade they open,
+    /// the final bead the Rosary's end. A numeral alone — the bead's
+    /// size and its gold ring already say it is an Our Father, and the
+    /// words spelt out beside every one of them ran a hundred points
+    /// into the reading, sliding under its last words as the string
+    /// moved.
+    func strandLabel(at index: Int) -> String? {
+        switch bead(at: index) {
+        case .ourFather(let decade): return Self.roman(decade + 1)
+        case .hailMary: return nil
+        case .amen: return "Amen"
+        }
     }
 
     /// I through X, which is as far as any string here runs.
@@ -110,11 +117,5 @@ struct RosaryStrand: Hashable {
         let numerals = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"]
         guard number >= 1, number <= numerals.count else { return "\(number)" }
         return numerals[number - 1]
-    }
-
-    private static func numberWord(_ number: Int) -> String {
-        let words = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"]
-        guard number >= 1, number <= words.count else { return "\(number)" }
-        return words[number - 1]
     }
 }

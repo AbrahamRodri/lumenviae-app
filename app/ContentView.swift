@@ -10,6 +10,11 @@ import SwiftUI
 // MARK: - ContentView
 struct ContentView: View {
 
+    /// The first step onboarding's last button named — today's Rosary, or
+    /// the guide to praying it — taken once, as the app first appears, and
+    /// cleared as it is taken so no later appearance takes it again
+    var onboardingFirstStep: Binding<OnboardingFirstStep?> = .constant(nil)
+
     @State private var router = AppRouter()
     @State private var isConsecrationNavigating: Bool = false
 
@@ -126,6 +131,17 @@ struct ContentView: View {
             router.shortcutRequest = nil
             perform(request)
         }
+        .task {
+            // Cleared before the wait, as it is taken, so no later
+            // appearance — another window on the same app state — finds a
+            // step left to take again
+            guard let step = onboardingFirstStep.wrappedValue else { return }
+            onboardingFirstStep.wrappedValue = nil
+            // After the introduction's fade, so the first page is seen
+            // arriving rather than skipped
+            try? await Task.sleep(for: .milliseconds(450))
+            step.perform(with: router)
+        }
         .sheet(isPresented: $showPrayTray, onDismiss: {
             if let shortcut = pendingTrayShortcut {
                 pendingTrayShortcut = nil
@@ -141,7 +157,7 @@ struct ContentView: View {
                 pendingArrange: $pendingTrayArrange
             )
             .environment(UserSettings.shared)
-            .presentationDetents([.height(PrayShortcutTray.height(for: UserSettings.shared))])
+            // The tray opens as tall as it measures (`fittedSheetDetent`)
             .presentationBackground(AppColors.background)
         }
         .sheet(isPresented: $showPrayEditor) {

@@ -87,7 +87,9 @@ struct HomeView: View {
                         source: viewModel.currentQuote.source
                     )
                     .padding(.horizontal, 20)
-                    .padding(.top, 18)
+                    // The same air the page's other sections stand apart
+                    // by; at 18 the colophon sat on the shelf's covers
+                    .padding(.top, 40)
                     .padding(.bottom, 120) // Clears the tab bar and its fade
                     .devotionalEntrance(delay: 0.34)
                     }
@@ -469,7 +471,8 @@ struct FeaturedMysteryCard: View {
     /// *configurable* act: a tap runs whatever the user chose, a hold
     /// opens the tray.
     private var beginPrayerButton: some View {
-        GoldCTAButton(title: "Pray with a Meditation", action: onBeginPrayer)
+        // Goes on to the shelf of meditations, so a chevron, not play
+        GoldCTAButton(title: "Pray with a Meditation", glyph: .chevron, action: onBeginPrayer)
             .padding(.horizontal, 20)
             .padding(.top, 8)
     }

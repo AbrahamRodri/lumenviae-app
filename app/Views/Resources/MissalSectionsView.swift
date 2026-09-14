@@ -630,49 +630,44 @@ struct MissalLayoutChoiceSheet: View {
     private var chosen: MissalLayout { selection ?? .interlinear }
 
     var body: some View {
-        VStack(spacing: 0) {
-            Text("THE DAILY MISSAL")
-                .font(AppFonts.labelFont(10))
-                .tracking(2.5)
-                .foregroundColor(AppColors.gold.opacity(0.7))
-                .padding(.top, 30)
-
-            Text("How should the translation read?")
-                .font(AppFonts.headlineFont(22))
-                .foregroundColor(AppColors.cream)
-                .multilineTextAlignment(.center)
-                .padding(.top, 10)
-                .padding(.horizontal, 32)
+        // Set as every other sheet is — kicker over title, flush left on
+        // the gutter. Everything beneath is full width (the toggles, the
+        // specimen, the button), so nothing asks the column to be centred.
+        VStack(alignment: .leading, spacing: 0) {
+            SheetHeader(
+                kicker: "The Daily Missal",
+                title: "How should the translation read?"
+            )
 
             HStack(spacing: 10) {
                 capsule(.interlinear, "Line by line")
                 capsule(.sideBySide, "Side by side")
             }
-            .padding(.horizontal, 24)
-            .padding(.top, 24)
+            .padding(.horizontal, SheetMetrics.gutter)
+            .padding(.top, 8)
 
             specimen
-                .padding(.horizontal, 24)
+                .padding(.horizontal, SheetMetrics.gutter)
                 .padding(.top, 20)
 
             Spacer(minLength: 12)
 
-            Text("You can change this any time from the Aa button.")
-                .font(AppFonts.bodyFont(12))
-                .foregroundColor(AppColors.textSecondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 32)
+            SheetNote("You can change this any time from the Aa button.")
 
-            GoldCTAButton(title: "Read the Mass", showsCross: false) {
+            GoldCTAButton(title: "Read the Mass") {
                 settings.missalLayoutPreference = chosen.rawValue
                 dismiss()
             }
-            .padding(.horizontal, 24)
-            .padding(.top, 14)
+            .padding(.horizontal, SheetMetrics.gutter)
             .padding(.bottom, 20)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(AppColors.background.ignoresSafeArea())
+        // The sheets' ground without `sheetGround()`'s indicator: this
+        // question cannot be dragged away, and a grabber would promise
+        // that it could.
+        .background(AppColors.appGradient.ignoresSafeArea())
+        .presentationDragIndicator(.hidden)
+        .presentationBackground(AppColors.background)
         .onAppear {
             if settings.hasChosenMissalLayout { selection = settings.missalLayout }
         }
@@ -771,59 +766,23 @@ struct MissalTextSizeSheet: View {
     var body: some View {
         @Bindable var settings = userSettings
 
-        return VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                Text("Text")
-                    .font(AppFonts.headlineFont(20))
-                    .foregroundColor(AppColors.cream)
-
-                Spacer()
-
-                Button {
-                    dismiss()
-                } label: {
-                    AppIcon("ph-x", size: 15)
-                        .foregroundColor(AppColors.textSecondary)
-                        .frame(width: 44, height: 44)
-                        .contentShape(Rectangle())
-                }
-                .accessibilityLabel("Close")
+        return VStack(alignment: .leading, spacing: 0) {
+            SheetHeader(kicker: "Ordo Missæ", title: "Text") {
+                SheetHeaderAction(title: "Done") { dismiss() }
             }
 
-            Text("SIZE")
-                .font(AppFonts.labelFont(10))
-                .tracking(2.5)
-                .foregroundColor(AppColors.gold)
+            SheetSizeSlider(label: "Size", scale: $settings.textSizeScale)
 
-            HStack(spacing: 14) {
-                Text("A")
-                    .font(AppFonts.readingFont(13))
-                    .foregroundColor(AppColors.textSecondary)
-
-                Slider(value: $settings.textSizeScale, in: 0...1)
-                    .tint(AppColors.gold)
-                    .accessibilityLabel("Text size")
-
-                Text("A")
-                    .font(AppFonts.readingFont(24))
-                    .foregroundColor(AppColors.cream)
-            }
-
-            Text("TRANSLATION")
-                .font(AppFonts.labelFont(10))
-                .tracking(2.5)
-                .foregroundColor(AppColors.gold)
-                .padding(.top, 20)
+            SheetSectionLabel("Translation")
 
             HStack(spacing: 6) {
                 layoutCapsule("Line by line", layout: .interlinear)
                 layoutCapsule("Side by side", layout: .sideBySide)
             }
+            .padding(.horizontal, SheetMetrics.gutter)
         }
-        .padding(.horizontal, 24)
-        .padding(.top, 14)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .background(AppColors.background.ignoresSafeArea())
+        .sheetGround()
     }
 
     private func layoutCapsule(_ title: String, layout: MissalLayout) -> some View {
