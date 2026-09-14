@@ -131,16 +131,19 @@ struct LibraryBookView: View {
                 LibraryPlayerSheet(session: session)
                     .presentationDetents([.height(430)])
                     .presentationDragIndicator(.visible)
+                    .presentationBackground(AppColors.background)
 
             case .goal:
                 ReadingGoalSheet()
                     .presentationDetents([.height(400)])
                     .presentationDragIndicator(.visible)
+                    .presentationBackground(AppColors.background)
 
             case .notes:
                 BookNotesSheet(notes: notes)
                     .presentationDetents([.height(520), .large])
                     .presentationDragIndicator(.visible)
+                    .presentationBackground(AppColors.background)
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -551,7 +554,7 @@ struct LibraryBookView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 10)
-                .strokeBorder(AppColors.gold.opacity(0.18), lineWidth: 0.5)
+                .strokeBorder(AppColors.gold.opacity(0.18), lineWidth: AppLine.hairline)
         )
     }
 
@@ -596,7 +599,7 @@ struct LibraryBookView: View {
         VStack(alignment: .leading, spacing: 0) {
             Rectangle()
                 .fill(AppColors.gold.opacity(0.15))
-                .frame(height: 0.5)
+                .frame(height: AppLine.hairline)
 
             Text("KEEP IT ON THIS DEVICE")
                 .font(AppFonts.labelFont(10))

@@ -607,10 +607,13 @@ struct ConsecrationDayFlowView: View {
             // language. Centering single-language text put the same
             // prayer on two designs depending on a setting — and centered
             // prose, which most of these are, is the harder to read.
+            // The prose prayers open on a versal, like the reading after
+            // them; the hymns and litanies have their own shapes.
             PrayerText(
                 content: prayer.content,
                 size: settings.meditationFontSize,
-                alignment: .leading
+                alignment: .leading,
+                showsDropCap: true
             )
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 28)
@@ -762,7 +765,7 @@ private struct ChantTransportBar: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 14)
-                    .strokeBorder(AppColors.gold.opacity(0.25), lineWidth: 0.5)
+                    .strokeBorder(AppColors.gold.opacity(0.25), lineWidth: AppLine.hairline)
             )
 
             if let errorMessage {

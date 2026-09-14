@@ -22,12 +22,12 @@ enum TrueDevotionPrayers {
                 title: "The Little Crown (Opening Versicle)",
                 content: BilingualText(
                     english: """
-V. Grant me to praise thee, O Sacred Virgin.
-R. Give me strength against thine enemies.
+℣. Grant me to praise thee, O Sacred Virgin.
+℟. Give me strength against thine enemies.
 """,
                     latin: """
-V. Dignare me laudare te, Virgo sacrata.
-R. Da mihi virtutem contra hostes tuos.
+℣. Dignare me laudare te, Virgo sacrata.
+℟. Da mihi virtutem contra hostes tuos.
 """
                 )
             ),
@@ -61,7 +61,7 @@ In plenitudine virtutis tuae,
 In veritate virtutum tuarum,
 In perfectione viarum tuarum,
 In communione mysteriorum tuorum;
-Domina omnem adversam potestatem
+Dominare omni adversae potestati
 In Spiritu tuo, ad gloriam Patris.
 Amen.
 """

@@ -40,7 +40,7 @@ enum MissalVestment: String {
     var swatch: Color {
         switch self {
         case .white: return Color(hex: "#EDE7D6")
-        case .red: return Color(hex: "#A0473F")
+        case .red: return Rubric.red
         case .green: return Color(hex: "#4E6B4A")
         case .violet: return Color(hex: "#6B5480")
         case .black: return Color(hex: "#54545f")
@@ -51,11 +51,11 @@ enum MissalVestment: String {
 
 // MARK: - MissalRubric
 
-/// Rubric red — the mark color of a printed missal. One red for the
-/// vestment dot, the citations, and the ℣ ℟ ☩ marks, so the page reads
-/// as one palette.
+/// Rubric red — the mark colour of a printed missal. The design
+/// system's `Rubric.red`, named here for the missal's own pages: one
+/// red for the vestment dot, the ℣ ℟ ✠ marks and the Office's notes.
 enum MissalRubric {
-    static let red = MissalVestment.red.swatch
+    static let red = Rubric.red
 }
 
 // MARK: - MissalSectionsView
@@ -221,22 +221,8 @@ struct MissalPassage: View {
 
 // MARK: - Rubrication
 
-/// ℣, ℟, and the cross — the marks a missal prints in red. One red for
-/// these marks and the vestment dots; everything else stays gold.
-private let missalRubricGlyphs: Set<Character> = ["℣", "℟", "✠"]
-
-private func missalRubricated(_ string: String) -> AttributedString {
-    var attributed = AttributedString(string)
-    var index = attributed.startIndex
-    while index < attributed.endIndex {
-        let next = attributed.characters.index(after: index)
-        if missalRubricGlyphs.contains(attributed.characters[index]) {
-            attributed[index..<next].foregroundColor = MissalRubric.red
-        }
-        index = next
-    }
-    return attributed
-}
+// ℣ ℟ ✠ are coloured by `Rubric.rubricated` (DesignSystem/ReadingText),
+// the same helper every prayer surface uses.
 
 /// The source texts mark the sign of the cross unevenly — ☩ in the
 /// propers, a bare "+" in the Ordo. Both become the traditional ✠, the
@@ -411,7 +397,7 @@ struct MissalPassageText: View {
                         DropCapText(text: lines, bodySize: bodySize, textColor: color)
                             .fixedSize(horizontal: false, vertical: true)
                     } else {
-                        Text(missalRubricated(lines))
+                        Text(Rubric.rubricated(lines))
                             .font(font)
                             .foregroundColor(color)
                             .lineSpacing(ReadingTypography.lineSpacing(for: bodySize))
@@ -503,7 +489,7 @@ struct MissalPairedPassageText: View {
                 )
                 .fixedSize(horizontal: false, vertical: true)
             } else {
-                Text(missalRubricated(pair.primary))
+                Text(Rubric.rubricated(pair.primary))
                     .font(AppFonts.readingFont(size))
                     .foregroundColor(AppColors.cream.opacity(0.92))
                     .lineSpacing((size * 0.3).rounded())
@@ -513,7 +499,7 @@ struct MissalPairedPassageText: View {
             // The translation steps in from the margin — set under its
             // line the way the handoff recommends, so the eye keeps the
             // Latin as the text and the English as its shadow.
-            Text(missalRubricated(pair.secondary))
+            Text(Rubric.rubricated(pair.secondary))
                 .font(AppFonts.readingItalicFont(max(12, size - 2)))
                 .foregroundColor(AppColors.accentSoft)
                 .lineSpacing((size * 0.25).rounded())
@@ -569,7 +555,7 @@ struct MissalColumnPassageText: View {
                     textColor: AppColors.cream.opacity(0.92)
                 )
             } else {
-                Text(missalRubricated(text))
+                Text(Rubric.rubricated(text))
                     .font(AppFonts.readingFont(columnSize))
                     .foregroundColor(AppColors.cream.opacity(0.92))
                     .lineSpacing((columnSize * 0.35).rounded())
@@ -580,7 +566,7 @@ struct MissalColumnPassageText: View {
     }
 
     private func secondaryCell(_ text: String) -> some View {
-        Text(missalRubricated(text))
+        Text(Rubric.rubricated(text))
             .font(AppFonts.readingItalicFont(columnSize))
             .foregroundColor(AppColors.accentSoft)
             .lineSpacing((columnSize * 0.3).rounded())
@@ -765,7 +751,7 @@ struct MissalLayoutChoiceSheet: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 14)
-                .strokeBorder(AppColors.gold.opacity(0.18), lineWidth: 0.5)
+                .strokeBorder(AppColors.gold.opacity(0.18), lineWidth: AppLine.hairline)
         )
         .animation(.easeInOut(duration: 0.3), value: chosen)
         .accessibilityLabel("Preview of the \(chosen == .interlinear ? "line by line" : "side by side") setting")

@@ -87,7 +87,7 @@ struct MePageEditorSheet: View {
                     detail: widget.detail
                 ) {
                     EditorRemoveButton(label: "Remove \(widget.title)") {
-                        withAnimation {
+                        withAnimation(Motion.settle) {
                             settings.setMeWidgets(enabled.filter { $0 != widget })
                         }
                     }
@@ -113,7 +113,7 @@ struct MePageEditorSheet: View {
                         detail: widget.detail,
                         accessibilityLabel: "Add \(widget.title) to your page"
                     ) {
-                        withAnimation {
+                        withAnimation(Motion.settle) {
                             settings.setMeWidgets(enabled + [widget])
                         }
                     }
@@ -185,7 +185,7 @@ struct RuleEditorSections: View {
                     detail: nil
                 ) {
                     EditorRemoveButton(label: "Remove \(item.title) from your rule") {
-                        withAnimation {
+                        withAnimation(Motion.settle) {
                             settings.setRuleItems(enabled.filter { $0 != item })
                         }
                     }
@@ -211,7 +211,7 @@ struct RuleEditorSections: View {
                         detail: item.subtitle,
                         accessibilityLabel: "Add \(item.title) to your rule"
                     ) {
-                        withAnimation {
+                        withAnimation(Motion.settle) {
                             settings.setRuleItems(enabled + [item])
                         }
                     }

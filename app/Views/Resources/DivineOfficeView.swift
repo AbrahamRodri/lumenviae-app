@@ -93,6 +93,7 @@ struct DivineOfficeView: View {
             }
             .presentationDetents([.height(560)])
             .presentationDragIndicator(.hidden)
+            .presentationBackground(AppColors.background)
             .presentationCornerRadius(22)
         }
         .navigationDestination(item: $openHour) { hour in

@@ -135,6 +135,11 @@ struct RuleOfPrayerCard: View {
                 .contains { $0.category == .sevenSorrows } ?? false
             return prayed ? .doneAutomatically : .awaitingAutomatic
 
+        case .scripturalRosary:
+            let prayed = historyService?.sessions(on: Date())
+                .contains { $0.meditationType == ScripturalRosaryViewModel.devotionName } ?? false
+            return prayed ? .doneAutomatically : .awaitingAutomatic
+
         case .consecration:
             guard let progress = activeConsecration else {
                 return .awaitingAutomatic
@@ -496,7 +501,7 @@ struct LibraryCard: View {
 
                     Rectangle()
                         .fill(AppColors.gold.opacity(0.22))
-                        .frame(width: 0.5)
+                        .frame(width: AppLine.hairline)
                         .padding(.vertical, 12)
 
                     diptychLeaf("ch-candle", "Divine Office", "The Hours") {
@@ -506,7 +511,7 @@ struct LibraryCard: View {
 
                 Rectangle()
                     .fill(AppColors.gold.opacity(0.18))
-                    .frame(height: 0.5)
+                    .frame(height: AppLine.hairline)
                     .padding(.horizontal, 12)
 
                 LazyVGrid(

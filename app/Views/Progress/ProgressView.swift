@@ -35,24 +35,32 @@ struct PrayerProgressView: View {
                 .ignoresSafeArea()
 
             ScrollView(showsIndicators: false) {
+                // The page arrives the way every other pushed page does:
+                // section by section, each a beat after the last
                 VStack(spacing: 32) {
                     // Header
                     headerSection
+                        .devotionalEntrance()
 
                     // Streak card (flame, week dots, next milestone)
                     streakSection
+                        .devotionalEntrance(delay: 0.08)
 
                     // Month Navigation
                     monthNavigationSection
+                        .devotionalEntrance(delay: 0.16)
 
                     // Calendar
                     calendarCard
+                        .devotionalEntrance(delay: 0.24)
 
                     // Devotions Offered
                     devotionsSection
+                        .devotionalEntrance(delay: 0.32)
 
                     // Quote
                     quoteSection
+                        .devotionalEntrance(delay: 0.4)
 
                     Spacer(minLength: 120)
                 }
@@ -102,7 +110,11 @@ struct PrayerProgressView: View {
             Button(action: previousMonth) {
                 AppIcon("ph-caret-left", size: 16)
                     .foregroundColor(AppColors.gold)
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
             }
+            .buttonStyle(QuietGlyphButtonStyle())
+            .accessibilityLabel("Previous month")
 
             Spacer()
 
@@ -110,18 +122,25 @@ struct PrayerProgressView: View {
                 Text(monthName)
                     .font(AppFonts.headlineFont(24))
                     .foregroundColor(AppColors.cream)
+                    .contentTransition(.opacity)
 
                 Text(yearString)
                     .font(AppFonts.italicFont(14))
                     .foregroundColor(AppColors.gold.opacity(0.8))
+                    .contentTransition(.opacity)
             }
+            .animation(Motion.crossfade, value: displayedMonth)
 
             Spacer()
 
             Button(action: nextMonth) {
                 AppIcon("ph-caret-right", size: 16)
                     .foregroundColor(AppColors.gold)
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
             }
+            .buttonStyle(QuietGlyphButtonStyle())
+            .accessibilityLabel("Next month")
         }
         .padding(.horizontal, 8)
     }
@@ -147,13 +166,13 @@ struct PrayerProgressView: View {
     }
 
     private func previousMonth() {
-        withAnimation {
+        withAnimation(Motion.crossfade) {
             displayedMonth = Calendar.current.date(byAdding: .month, value: -1, to: displayedMonth) ?? displayedMonth
         }
     }
 
     private func nextMonth() {
-        withAnimation {
+        withAnimation(Motion.crossfade) {
             displayedMonth = Calendar.current.date(byAdding: .month, value: 1, to: displayedMonth) ?? displayedMonth
         }
     }
@@ -183,9 +202,12 @@ struct PrayerProgressView: View {
                         isToday: day.isToday,
                         prayerCount: day.prayerCount
                     )
+                    // A new month's cells crossfade over the old in place
+                    .transition(.opacity)
                 }
             }
         }
+        .animation(Motion.crossfade, value: displayedMonth)
         .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 16)
@@ -344,7 +366,10 @@ struct PrayerProgressView: View {
 // MARK: - CalendarDay Model
 
 struct CalendarDay: Identifiable {
-    let id = UUID()
+    /// The date is the identity. A fresh UUID per build meant every
+    /// body pass minted forty-two new cells, so the calendar could never
+    /// animate from one month to the next — or from one render to it.
+    var id: Date { date }
     let dayNumber: Int
     let isCurrentMonth: Bool
     let isToday: Bool
@@ -423,6 +448,8 @@ struct DevotionRow: View {
             Text("\(count)")
                 .font(AppFonts.headlineFont(18))
                 .foregroundColor(AppColors.gold)
+                .contentTransition(.numericText())
+                .animation(Motion.crossfade, value: count)
         }
         .padding(.vertical, 14)
     }

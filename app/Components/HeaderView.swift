@@ -43,21 +43,24 @@ struct HeaderView: View {
             }
             .frame(maxWidth: .infinity)
 
-            // The glass keeps the left so the wordmark stays framed
-            // rather than crowded into one corner by three glyphs.
+            // Settings and About keep the left, together, as the two
+            // doors to the app's own pages; the glass stands alone on
+            // the right, under the thumb, as the page's one act. Two
+            // and one, so the wordmark stays framed rather than crowded
+            // into a corner by three glyphs.
             HStack(spacing: 0) {
-                if let onSearchTap {
-                    glyph("ph-magnifying-glass", "Search", action: onSearchTap)
-                }
-
-                Spacer(minLength: 0)
-
                 if let onSettingsTap {
                     glyph("ph-faders", "Settings", action: onSettingsTap)
                 }
 
                 if let onAboutTap {
                     glyph("ph-info", "About Lumen Viae", action: onAboutTap)
+                }
+
+                Spacer(minLength: 0)
+
+                if let onSearchTap {
+                    glyph("ph-magnifying-glass", "Search", action: onSearchTap)
                 }
             }
         }
@@ -76,7 +79,7 @@ struct HeaderView: View {
                 .frame(width: 44, height: 44)
                 .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(QuietGlyphButtonStyle())
         .accessibilityLabel(label)
     }
 }
@@ -93,6 +96,7 @@ struct HeaderView: View {
 ///
 /// At rest: lit gold when today's Rosary is done, a dim ember when not.
 struct StreakFlame: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let streak: Int
     let isLit: Bool
     var onTap: (() -> Void)?
@@ -143,7 +147,7 @@ struct StreakFlame: View {
                                 CubicKeyframe(1.0, duration: 0.4)
                             }
                         }
-                        .transition(.scale(scale: 0.3).combined(with: .opacity))
+                        .transition(reduceMotion ? .opacity : .scale(scale: 0.3).combined(with: .opacity))
                 }
 
                 // Act II & III: the flame — briefly aglow, then at rest
@@ -181,14 +185,17 @@ struct StreakFlame: View {
                                 .foregroundColor(isLit ? AppColors.goldLight : AppColors.gold.opacity(0.6))
                         }
                     }
-                    .transition(.scale(scale: 0.5).combined(with: .opacity))
+                    .transition(reduceMotion ? .opacity : .scale(scale: 0.5).combined(with: .opacity))
                 }
             }
             .frame(width: 44, height: 44)
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
-        .onAppear(perform: runIntro)
+        .buttonStyle(QuietGlyphButtonStyle())
+        // A task rather than timers: it is cancelled with the view, so
+        // leaving Home mid-sequence never lands a hand-off on a header
+        // that is no longer there
+        .task { await runIntro() }
         .accessibilityLabel(streakAccessibilityLabel)
     }
 
@@ -210,25 +217,34 @@ struct StreakFlame: View {
     }
 
     /// Plays the load-time sequence once: pulse → flame glow → still.
-    private func runIntro() {
+    /// Under Reduce Motion the number simply gives way to the flame by
+    /// a crossfade, with no pulse and no glow.
+    private func runIntro() async {
         // Nothing to announce without a streak — rest quietly from the start
         guard streak > 0, showingNumber else { return }
+
+        if reduceMotion {
+            try? await Task.sleep(for: .seconds(1.2))
+            guard !Task.isCancelled else { return }
+            withAnimation(Motion.crossfade) { showingNumber = false }
+            return
+        }
 
         pulseTrigger.toggle()
 
         // Hand off: the number becomes the flame, glowing warmly
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.9) {
-            withAnimation(.spring(response: 0.45, dampingFraction: 0.7)) {
-                showingNumber = false
-                glowing = true
-            }
+        try? await Task.sleep(for: .seconds(1.9))
+        guard !Task.isCancelled else { return }
+        withAnimation(.spring(response: 0.45, dampingFraction: 0.7)) {
+            showingNumber = false
+            glowing = true
+        }
 
-            // Settle: the glow fades and the icon goes still for good
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
-                withAnimation(.easeOut(duration: 0.9)) {
-                    glowing = false
-                }
-            }
+        // Settle: the glow fades and the icon goes still for good
+        try? await Task.sleep(for: .seconds(1.3))
+        guard !Task.isCancelled else { return }
+        withAnimation(.easeOut(duration: 0.9)) {
+            glowing = false
         }
     }
 

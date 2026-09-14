@@ -29,12 +29,14 @@ struct ChapelChantPiece: Identifiable, Equatable {
     var id: String { prayer.id }
     var latinTitle: String { prayer.latinTitle }
 
-    /// The chant's opening words, for the sheet's epigraph.
+    /// The chant's opening words, for the sheet's epigraph — without the
+    /// asterisk that points the Magnificat's verse for the page.
     var firstLine: String {
         prayer.content.latin
             .split(separator: "\n")
             .map { $0.trimmingCharacters(in: .whitespaces) }
-            .first { !$0.isEmpty } ?? prayer.englishTitle
+            .first { !$0.isEmpty }?
+            .replacingOccurrences(of: " * ", with: " ") ?? prayer.englishTitle
     }
 
     static func == (lhs: ChapelChantPiece, rhs: ChapelChantPiece) -> Bool {
@@ -318,6 +320,7 @@ struct ChapelChantSheet: View {
         }
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.hidden)
+        .presentationBackground(AppColors.background)
     }
 
     // MARK: Transport
@@ -411,7 +414,7 @@ struct ChapelChantSheet: View {
         .cornerRadius(16)
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: 0.5)
+                .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: AppLine.hairline)
         )
     }
 }

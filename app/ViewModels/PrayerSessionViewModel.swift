@@ -21,56 +21,93 @@ final class PrayerSessionViewModel {
     /// The bead resets in `didSet` rather than in each caller: the index
     /// moves through `nextMystery`/`previousMystery` *and* directly from
     /// the Lock Screen / AirPods closures, and a new decade must always
-    /// begin on its first bead.
+    /// begin on its Our Father bead.
     var currentMysteryIndex: Int = 0 {
         didSet { currentBeadIndex = 0 }
     }
 
-    // MARK: - Scriptural Rosary
+    // MARK: - The Beads
 
-    /// Which Hail Mary bead of the decade is being prayed (0-based).
-    /// Only meaningful when the Scriptural Rosary is on and this
-    /// mystery has a curated verse set.
+    /// Which bead of the decade is under the hand: 0 is the Our Father
+    /// bead, 1 through `hailMarys` that Hail Mary, and one past the last
+    /// the decade prayed — the Glory Be. Kept here rather than in a view
+    /// because the Rosary is prayed on two surfaces, and the count must
+    /// be the same on both.
+    ///
+    /// Only walked when the player is prayed on the beads
+    /// (`UserSettings.prayOnBeads`); with the beads off it rests on the
+    /// Our Father and the mystery alone is moved.
     var currentBeadIndex: Int = 0
 
-    /// One verse of Scripture per Hail Mary for the current mystery —
-    /// empty when none is curated for its key, and the prayer surface
-    /// simply shows no verse band.
+    /// Hail Marys in a decade: ten, or seven for a sorrow of the chaplet.
+    var hailMarys: Int {
+        let category = currentMystery?.mysteryCategory ?? meditationSet.mysteryCategory
+        return category == .sevenSorrows ? 7 : 10
+    }
+
+    /// The whole Rosary as one string, for the strand at the screen's
+    /// edge and for where on it the hand is.
+    var strand: RosaryStrand {
+        RosaryStrand(decades: totalMysteries, hailMarys: hailMarys)
+    }
+
+    /// Where the hand is on the string
+    var strandIndex: Int {
+        strand.index(mystery: currentMysteryIndex, bead: currentBeadIndex)
+    }
+
+    /// Where the hand is, as one value, for the screen's haptic
+    var beadPosition: BeadPosition {
+        BeadPosition(mystery: currentMysteryIndex, bead: currentBeadIndex)
+    }
+
+    /// What the bead under the hand is called
+    var beadLabel: String {
+        strand.label(bead: currentBeadIndex)
+    }
+
+    /// True once every bead of the decade has been prayed.
+    var isDecadePrayed: Bool {
+        currentBeadIndex > hailMarys
+    }
+
+    /// The very first bead of the Rosary — nothing to step back to
+    var isFirstBeadOfRosary: Bool {
+        isFirstMystery && currentBeadIndex == 0
+    }
+
+    /// The last mystery's Glory Be — the final bead, where AMEN stands
+    var isLastBeadOfRosary: Bool {
+        isLastMystery && isDecadePrayed
+    }
+
+    /// Prays the strand forward as one continuous line: the next bead,
+    /// or past the Glory Be the next mystery's Our Father — the decade
+    /// turns on its own when its beads are prayed, and the narration
+    /// for the new mystery follows the same path it always has.
     ///
-    /// The category is lowercased on the way in: the API's strings are
-    /// lowercase today, but every other consumer normalizes
-    /// (`MysteryCategory.init(fromAPIString:)`, `Constants`), and a
-    /// single capitalized import would otherwise make the verses vanish
-    /// for one set while working for its neighbours.
-    var scripturalVerses: [ScripturalVerse] {
-        let category = (currentMystery?.category ?? meditationSet.category).lowercased()
-        let order = currentMystery?.order ?? (currentMysteryIndex + 1)
-        return ScripturalRosaryData.verses(category: category, order: order) ?? []
-    }
-
-    /// The verse under the hand right now — already folding in the
-    /// Prayer Experience setting, so every prayer surface asks one
-    /// question instead of each re-deriving whether to show a band.
-    /// This is what put the Scriptural Rosary on the painting and not
-    /// in the reader: the state was here, the decision was in one view.
-    var currentScripturalVerse: ScripturalVerse? {
-        guard UserSettings.shared.scripturalRosaryEnabled else { return nil }
-        let verses = scripturalVerses
-        guard verses.indices.contains(currentBeadIndex) else { return nil }
-        return verses[currentBeadIndex]
-    }
-
-    /// Prays the bead forward; the last bead holds rather than wrapping —
-    /// the decade itself is finished with the transport, not the strand.
-    func advanceBead() {
-        guard currentBeadIndex + 1 < scripturalVerses.count else { return }
+    /// - Returns: `false` on the last mystery's Glory Be. The Rosary is
+    ///   finished only by the AMEN tap, never by the move that reaches
+    ///   it, so the caller does nothing with a `false` from a swipe.
+    func prayForward() -> Bool {
+        if isDecadePrayed { return nextMystery() }
         currentBeadIndex += 1
+        return true
     }
 
-    /// Steps back one bead (no-op on the first)
-    func retreatBead() {
-        guard currentBeadIndex > 0 else { return }
-        currentBeadIndex -= 1
+    /// Steps the strand back one: the previous bead, or from an Our
+    /// Father the previous mystery's Glory Be. No-op on the first bead
+    /// of the Rosary.
+    func prayBack() {
+        if currentBeadIndex > 0 {
+            currentBeadIndex -= 1
+            return
+        }
+        guard !isFirstMystery else { return }
+        // The index's own `didSet` lands on the Our Father; the strand
+        // is walked backwards, so the hand belongs on the Glory Be
+        previousMystery()
+        currentBeadIndex = strand.gloryBe
     }
 
     // MARK: - Dependencies
@@ -121,6 +158,7 @@ final class PrayerSessionViewModel {
     init(
         meditationSet: MeditationSet,
         startAtIndex: Int = 0,
+        startAtBead: Int = 0,
         priorSeconds: Int = 0,
         apiService: APIService = .shared,
         audioService: AudioService = .shared
@@ -132,6 +170,10 @@ final class PrayerSessionViewModel {
 
         let upperBound = max((meditationSet.meditations?.count ?? 5) - 1, 0)
         self.currentMysteryIndex = min(max(startAtIndex, 0), upperBound)
+        // After the mystery, whose `didSet` would put the hand back on
+        // the Our Father; clamped to the decade so a snapshot from a
+        // longer decade can't land past its Glory Be
+        self.currentBeadIndex = min(max(startAtBead, 0), strand.gloryBe)
     }
 
     // MARK: - Computed Properties

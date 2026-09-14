@@ -23,8 +23,14 @@ struct ConsecrationPhaseBackground: View {
                     startPoint: .top,
                     endPoint: .bottom
                 )
+                // The tint of a new phase dawns over the last one's
+                // rather than cutting to it, keyed on the phase itself
+                // so two screens of one day never re-fade
+                .id(phase)
+                .transition(.opacity)
             }
         }
+        .animation(Motion.decadeTurn, value: phase)
         .ignoresSafeArea()
     }
 }

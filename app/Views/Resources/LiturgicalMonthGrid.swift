@@ -65,7 +65,13 @@ struct LiturgicalMonthGrid<DayMark: View, Offline: View>: View {
             weekdayRow
                 .padding(.bottom, 8)
 
-            dayGrid
+            // One slot for the month leaving and the month arriving, so
+            // stepping the month is a crossfade of the whole grid
+            ZStack {
+                dayGrid
+                    .id(month)
+                    .transition(.opacity)
+            }
 
             feastLine
                 .padding(.top, 12)
@@ -75,7 +81,7 @@ struct LiturgicalMonthGrid<DayMark: View, Offline: View>: View {
                 .overlay(alignment: .top) {
                     Rectangle()
                         .fill(AppColors.gold.opacity(0.1))
-                        .frame(height: 0.5)
+                        .frame(height: AppLine.hairline)
                 }
                 .padding(.top, 18)
         }
@@ -95,6 +101,7 @@ struct LiturgicalMonthGrid<DayMark: View, Offline: View>: View {
                 .font(AppFonts.headlineFont(12))
                 .tracking(3.5)
                 .foregroundColor(AppColors.gold)
+                .contentTransition(.opacity)
 
             Spacer()
 
@@ -114,7 +121,7 @@ struct LiturgicalMonthGrid<DayMark: View, Offline: View>: View {
 
     private func step(by value: Int) {
         guard let stepped = calendar.date(byAdding: .month, value: value, to: month) else { return }
-        month = stepped
+        withAnimation(Motion.crossfade) { month = stepped }
     }
 
     // MARK: - Weekdays
@@ -182,7 +189,7 @@ struct LiturgicalMonthGrid<DayMark: View, Offline: View>: View {
                 RoundedRectangle(cornerRadius: 10)
                     .strokeBorder(
                         isToday ? AppColors.gold.opacity(0.55) : Color.clear,
-                        lineWidth: 0.5
+                        lineWidth: AppLine.hairline
                     )
             )
             .contentShape(Rectangle())

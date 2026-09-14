@@ -63,7 +63,7 @@ struct MysteryCard: View {
                 ZStack {
                     Circle()
                         .fill(AppColors.background.opacity(0.25))
-                        .overlay(Circle().strokeBorder(AppColors.gold.opacity(0.8), lineWidth: 0.5))
+                        .overlay(Circle().strokeBorder(AppColors.gold.opacity(0.8), lineWidth: AppLine.hairline))
                         .frame(width: 28, height: 28)
                     AppIcon("ph-arrow-right", size: 12)
                         .foregroundColor(AppColors.gold)
@@ -85,7 +85,7 @@ struct MysteryCard: View {
             }
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(AppColors.gold.opacity(0.35), lineWidth: 0.5)
+                    .strokeBorder(AppColors.gold.opacity(0.35), lineWidth: AppLine.hairline)
             )
     }
 }

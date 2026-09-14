@@ -81,18 +81,29 @@ struct SelectMeditationView: View {
                         // meditation sets says nothing twice.
                         Color.clear.frame(height: 30)
 
-                        if viewModel.isLoading {
-                            ProgressView()
-                                .tint(AppColors.gold)
-                                .padding(.top, 40)
-                        } else if let error = viewModel.errorMessage {
-                            errorState(error)
-                        } else if viewModel.meditationSets.isEmpty {
-                            emptyCatalogState
-                        } else {
-                            shelf
-                                .devotionalEntrance(delay: 0.05)
+                        // One slot for the spinner and what replaces it,
+                        // so the shelf arriving is a crossfade over the
+                        // spinner rather than a cut beneath it
+                        ZStack(alignment: .top) {
+                            if viewModel.isLoading {
+                                ProgressView()
+                                    .tint(AppColors.gold)
+                                    .padding(.top, 40)
+                                    .transition(.opacity)
+                            } else if let error = viewModel.errorMessage {
+                                errorState(error)
+                                    .transition(.opacity)
+                            } else if viewModel.meditationSets.isEmpty {
+                                emptyCatalogState
+                                    .transition(.opacity)
+                            } else {
+                                shelf
+                                    .devotionalEntrance(delay: 0.05)
+                                    .transition(.opacity)
+                            }
                         }
+                        .animation(Motion.crossfade, value: viewModel.isLoading)
+                        .animation(Motion.crossfade, value: viewModel.errorMessage)
                     }
                     .padding(.horizontal, 20)
                     .padding(.bottom, 140)
@@ -136,9 +147,9 @@ struct SelectMeditationView: View {
 
             results
         }
-        .animation(.easeOut(duration: 0.22), value: viewModel.selectedLabels)
-        .animation(.easeOut(duration: 0.22), value: isFilterOpen)
-        .animation(.easeOut(duration: 0.22), value: viewMode)
+        .animation(Motion.crossfade, value: viewModel.selectedLabels)
+        .animation(Motion.crossfade, value: isFilterOpen)
+        .animation(Motion.crossfade, value: viewMode)
     }
 
     // MARK: - Controls
@@ -154,6 +165,7 @@ struct SelectMeditationView: View {
                 .foregroundColor(AppColors.textSecondary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
+                .contentTransition(.numericText())
 
             Spacer(minLength: 8)
 
@@ -290,12 +302,13 @@ struct SelectMeditationView: View {
                             artwork: meditationSet.artwork,
                             isPinned: viewModel.isPinned(meditationSet),
                             onTogglePin: {
-                                withAnimation(.easeOut(duration: 0.25)) {
+                                withAnimation(Motion.settle) {
                                     viewModel.togglePin(meditationSet)
                                 }
                             },
                             onTap: { open(meditationSet) }
                         )
+                        .transition(.opacity)
                     }
                 }
 
@@ -310,12 +323,13 @@ struct SelectMeditationView: View {
                             isPinned: viewModel.isPinned(meditationSet),
                             showsDivider: index > 0 || leadsWithRule,
                             onTogglePin: {
-                                withAnimation(.easeOut(duration: 0.25)) {
+                                withAnimation(Motion.settle) {
                                     viewModel.togglePin(meditationSet)
                                 }
                             },
                             onTap: { open(meditationSet) }
                         )
+                        .transition(.opacity)
                     }
                 }
             }
@@ -423,8 +437,11 @@ private struct PickerChip: View {
                         )
                 )
                 .contentShape(Capsule())
+                // The chip carries its own settle, so it reads the same
+                // wherever the tray is drawn
+                .animation(Motion.settle, value: isSelected)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(QuietGlyphButtonStyle())
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }
@@ -521,11 +538,15 @@ private struct ChromeToggle: View {
                             .background(Circle().fill(AppColors.goldGradient))
                             .padding(.top, -1)
                             .padding(.trailing, -1)
+                            .contentTransition(.numericText())
+                            .transition(.scale(scale: 0.5).combined(with: .opacity))
                     }
                 }
                 .contentShape(Rectangle())
+                .animation(Motion.settle, value: isOn)
+                .animation(Motion.settle, value: badge)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(QuietGlyphButtonStyle())
         .accessibilityLabel(label)
         .accessibilityAddTraits(isOn ? .isSelected : [])
     }
@@ -614,7 +635,7 @@ struct MeditationHeaderView: View {
 
             Rectangle()
                 .fill(AppColors.gold.opacity(0.2))
-                .frame(height: 0.5)
+                .frame(height: AppLine.hairline)
         }
     }
 }

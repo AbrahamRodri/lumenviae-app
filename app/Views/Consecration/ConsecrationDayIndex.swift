@@ -102,6 +102,7 @@ struct ConsecrationDayIndexSheet: View {
         }
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
+        .presentationBackground(AppColors.background)
     }
 
     // MARK: - Header
@@ -179,7 +180,7 @@ struct ConsecrationDayIndexSheet: View {
             .overlay(alignment: .bottom) {
                 Rectangle()
                     .fill(AppColors.gold.opacity(0.1))
-                    .frame(height: 0.5)
+                    .frame(height: AppLine.hairline)
                     .padding(.horizontal, 24)
             }
         }

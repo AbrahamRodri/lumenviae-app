@@ -42,7 +42,7 @@ struct OrdoMasthead<Feast: View>: View {
 
                 Rectangle()
                     .fill(AppColors.gold.opacity(0.14))
-                    .frame(height: 0.5)
+                    .frame(height: AppLine.hairline)
                     .padding(.horizontal, 24)
 
                 feast

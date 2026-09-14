@@ -8,6 +8,55 @@
 
 import SwiftUI
 
+// MARK: - Motion Vocabulary
+
+/// The app's named motions, so two screens doing the same thing move
+/// the same way. Springs settle and never bounce; curves are short.
+/// Reach for one of these before writing a duration at a call site.
+enum Motion {
+
+    /// A bead drawn to the hand: the strand slides one bead's length
+    /// and settles, with a little weight and no bounce.
+    static let beadSlide = Animation.spring(response: 0.42, dampingFraction: 0.82)
+
+    /// A strand let go short of the next bead, coming back to rest.
+    static let beadSettle = Animation.spring(response: 0.36, dampingFraction: 0.74)
+
+    /// Words changing under a hand that has just moved: a bead's name,
+    /// its verse, its cue.
+    static let words = Animation.easeOut(duration: 0.3)
+
+    /// The decade turning — the painting, the kicker and the title
+    /// crossfading to the next mystery.
+    static let decadeTurn = Animation.easeInOut(duration: 0.45)
+
+    /// Chrome cleared from a painting, or brought back.
+    static let chrome = Animation.easeInOut(duration: 0.35)
+
+    /// A panel or reader arriving over a screen, with some weight
+    /// behind it.
+    static let panel = Animation.spring(response: 0.42, dampingFraction: 0.86)
+
+    /// Something small settling into place after a press or a toggle.
+    static let settle = Animation.spring(response: 0.32, dampingFraction: 0.8)
+
+    /// A quiet crossfade for content that changes in place.
+    static let crossfade = Animation.easeInOut(duration: 0.28)
+
+    /// The design system's ease-out — cubic-bezier(0, 0, 0.58, 1) —
+    /// for chrome that collapses, fades or slides as the page moves.
+    /// Nothing springs past its mark.
+    static func ease(_ duration: Double) -> Animation {
+        .timingCurve(0, 0, 0.58, 1, duration: duration)
+    }
+
+    /// Ease-in-out for travel — a jump to a section leaves as gently
+    /// as it arrives.
+    static func travel(_ duration: Double) -> Animation {
+        .timingCurve(0.42, 0, 0.58, 1, duration: duration)
+    }
+}
+
 // MARK: - Devotional Entrance
 
 /// Fades content in with a gentle upward drift. Stagger sections by
@@ -110,12 +159,25 @@ struct SacredCardButtonStyle: ButtonStyle {
     }
 }
 
-/// Press feedback for gold call-to-action pills.
+/// Press feedback for gold call-to-action pills. The same beat as the
+/// card press — one press, one speed, wherever it lands.
 struct GoldCTAButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(configuration.isPressed ? 0.97 : 1)
             .brightness(configuration.isPressed ? -0.06 : 0)
-            .animation(.easeOut(duration: 0.16), value: configuration.isPressed)
+            .animation(.easeOut(duration: 0.18), value: configuration.isPressed)
+    }
+}
+
+/// Press feedback for a bare glyph — the header's search glass, a
+/// month arrow, a row's chevron: it dims and draws in a little under
+/// the finger, so chrome taps never feel dead.
+struct QuietGlyphButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.9 : 1)
+            .opacity(configuration.isPressed ? 0.6 : 1)
+            .animation(.easeOut(duration: 0.18), value: configuration.isPressed)
     }
 }

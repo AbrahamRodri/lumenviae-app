@@ -11,8 +11,9 @@ Lumen Viae is an iOS app built with SwiftUI that guides users through praying th
 ```
 Home Screen
     │
-    ├── Featured Mystery Card ("Begin Prayer")
+    ├── Featured card: today's mysteries ("Pray with a Meditation")
     │   └── Goes to: Select Meditation View
+    │       (its quiet line, "The Scriptural Rosary", goes to that title page)
     │
     └── Sacred Mysteries Grid (Joyful, Sorrowful, Glorious, Luminous)
         └── Tap any mystery card
@@ -39,6 +40,10 @@ Prayer Flow (5 Mysteries/Decades)
     │
     ├── 1st Mystery → 2nd Mystery → 3rd Mystery → 4th Mystery → 5th Mystery
     │   (Each mystery: Meditation + 10 Hail Marys + Glory Be)
+    │   On the beads (default): one strand at the right edge, swipe down
+    │   a bead at a time, the mystery turns on its own. Off the beads
+    │   (Settings → Prayer Experience): arrows and a swipe between
+    │   mysteries, no strand.
     │
     ▼
 Completion Screen
@@ -135,7 +140,7 @@ Return to Home
 
 **Secondary:**
 
-4. **Scriptural Rosary** - A scripture verse for each bead (not just each mystery). This is a more intensive, slower form of prayer. **Built** as a Prayer Experience setting rather than a meditation type: when on, the player carries a verse band (see the Built list below).
+4. **Scriptural Rosary** - A scripture verse for each bead (not just each mystery). This is a more intensive, slower form of prayer. **Built** as a devotion of its own rather than a meditation type or a setting: its own title page and prayer screen, reached from Explore, the Pray tray, and In Scripture (see the Built list below). The meditation's player prays on the same strand, without the verses.
 
 ## App Tabs
 
@@ -156,15 +161,17 @@ The **Pray** button raised over the bar runs the user's chosen quick act
 chosen devotions (`PrayShortcutTray`). The bar's Pray gap is a fifth
 equal slot, so the four labels keep one rhythm.
 
-The home header is the wordmark framed by the app's chrome: the search
-glass on the left, **ph-faders → Settings** and **ph-info → About** on
-the right. No flame — the streak lives in the Chapel's own Prayer Streak
+The home header is the wordmark framed by the app's chrome:
+**ph-faders → Settings** and **ph-info → About** together on the left,
+the search glass alone on the right. No flame — the streak lives in the Chapel's own Prayer Streak
 tile, whose kicker carries the Prayer Record link (with Settings →
 Devotion, the only doors to the Progress page). Settings and About sat
 in the Chapel's day strip until that strip was left to read the
 liturgical day alone: app-level chrome on a page-level strip was
-findable only by whoever thought to look there. The Chapel's foot still
-names both in words.
+findable only by whoever thought to look there. The masthead is now the
+**only** door to either — the Chapel's foot used to name them in words
+as well, and that duplicate was removed; the foot is the arrange
+control and the imprint, nothing else.
 
 **Today's Prayer** (`Components/TodaysPrayerSection.swift`) stands
 between the Sacred Mysteries grid and the reading shelf: a header line,
@@ -187,7 +194,8 @@ that book is now reached from Explore and the Chapel's Library tile.
 
 The search glass pushes `AppRoute.explore`
 (`Views/Home/ExploreView.swift`): at rest it browses — an epigraph
-(Mt 7:7), the five devotions as a ruled ledger, the library shelf —
+(Mt 7:7), the five devotions as a ruled ledger with the Scriptural
+Rosary's door beneath them, the library shelf —
 and typing searches mysteries, library doors, and meditation sets at
 once. The set index is fetched quietly for search but deliberately
 never listed on the browse page, and the field is deliberately not
@@ -248,14 +256,26 @@ block. The strip carries no app chrome — it reads the day, and the room
 that buys is what lets a long feast set in full. Tiles (vocabulary `Models/ChapelTile.swift`;
 layout persists as `userSettings.chapelLayout`, validated against known
 ids on decode, with a one-time migration from the old `meWidgets`
-order): **Today** (the rule as a ledger — the "Something else" escape
-scrolls to it, the ledger *is* the picker; manual acts toggle on tap,
+order): **Today** (the rule as a ledger, and the picker itself — the
+focus block above it carried a "CHOOSE ANOTHER" jump down to this tile
+and no longer does, since the ledger is a scroll away on the same page;
+manual acts toggle on tap,
 watched acts open themselves; Rosary/chaplet/consecration check from
 real data, Mass/Office by hand, reset each morning), **Consecration**
 (de Montfort's four preparations as a segmented path, tracks weighted
 12/7/7/7 days), **Reading** (the open book + "also reading" spines),
-**Library** (an open-book spread: liturgy leaf, reading leaf,
-Augustine's colophon), **Chant** (the app's three chant recordings —
+**Library** (Explore's three sections over Augustine's colophon, so one
+vocabulary names one set of doors: **The Liturgy** — Missal and
+Breviary — and **Spiritual Reading** — True Devotion and the shelf —
+stand as the two leaves of an open book hinged on the gold fold, and
+**The Study** — How to Pray, In Scripture, the Marian Library, Carlo
+Acutis — is a ruled two-column index at the foot. A heading on this
+tile must be true of every door beneath it: How to Pray and In Scripture
+once sat under The Liturgy, then the books sat under The Study, and each
+made a heading a lie. "Reading" was the obvious name for the books and
+the wrong one, since Spiritual Reading is a door inside it. The half
+tile keeps the two liturgical books and makes "6 more on the shelf" a
+door to Explore rather than a note), **Chant** (the app's three chant recordings —
 Veni Creator, Ave Maris Stella, Magnificat — through the shared
 AudioService; the ⋯ opens the chant sheet), **Reflections** (latest
 journal entry under an illuminated versal), **Prayer Streak** (the
@@ -265,7 +285,14 @@ it is being kept; tapping it opens the Prayer Record). Three visual
 registers, deliberately: frameless (Today, Consecration, Library,
 Chant), outlined (Reading, Reflections, Flame at 20pt radius), and no
 filled card surfaces on the page — `surface-card` only in the tray and
-chant sheet.
+chant sheet. The default order alternates the two — Today, Streak,
+Consecration, Reading, Chant, Reflections, Library — so no two
+hairline sections run together and no two cards stack; the live
+sections lead and the Library, the page's index of doors, stands last,
+its colophon the right last line before the foot's imprint. The day
+strip wraps a long feast to a second line rather than cutting it
+mid-word, and the flame card's week rides on its kicker line so the
+streak's own name never has to.
 
 The rule's *membership* is edited in `RuleEditorSheet` (Settings →
 Devotion → Rule of Prayer, and the Chapel's empty-rule invitations);
@@ -290,8 +317,8 @@ the page they serve):
 
 - **Appearance** — theme (re-themes live), app icon (four alternates)
 - **Prayer Experience** — text size, prayer language (English by
-  default; the app's first face is the one most users read), Scriptural
-  Rosary
+  default; the app's first face is the one most users read), Pray on
+  the Beads (the meditation player's strand; see the Core prayer flow)
 - **Devotion** — Rule of Prayer (→ `RuleEditorSheet`), Prayer Record,
   Daily Reminders (toggle, time, sound), What Draws You Here (decides
   the reminder copy pool)
@@ -317,6 +344,7 @@ app/
 │   ├── Mystery, Meditation, MeditationSet, MysteryCategory
 │   ├── JournalEntry, PrayerSession          (SwiftData)
 │   ├── ChapelTile            # + ChapelPlacement — the Chapel page's vocabulary
+│   ├── RosaryStrand          # + BeadPosition — the whole Rosary as one string
 │   ├── Consecration{Day,Phase,Prayer,Progress}
 │   ├── TrueDevotionBook, TrueDevotionReadingProgress
 │   ├── LibraryBook           # + catalog entry, parsing rules, LibriVox models
@@ -325,10 +353,12 @@ app/
 │   └── StreakMilestone, MarianFeastDay, BilingualConsecrationPrayer
 ├── ViewModels/               # @Observable
 │   ├── HomeViewModel, MeditationSelectionViewModel, MeditationSetDetailViewModel
-│   ├── PrayerSessionViewModel, ConsecrationViewModel
+│   ├── PrayerSessionViewModel, ScripturalRosaryViewModel, ConsecrationViewModel
 │   └── TrueDevotionReaderViewModel
 ├── Views/
 │   ├── Home/ Prayer/ Journal/ Progress/ Account/
+│   ├── Scriptural/           # ScripturalRosaryView (the title page),
+│   │                         # ScripturalRosaryPrayerView (the prayer)
 │   ├── Chapel/               # MyChapelView (the tab), ChapelGrid (arrange
 │   │                         # machinery), ChapelTiles, ChapelChant
 │   ├── Me/                   # Legacy (unreachable, reference only): MeView,
@@ -347,7 +377,8 @@ app/
 │   └── Launch/
 ├── Components/               # CustomTabBar, HeaderView, MysteryCard,
 │                             # QuoteSection, MeditationSetTile (+Row), MenuView,
-│                             # StreakWidget
+│                             # StreakWidget, PrayerPaintingStage (the player's
+│                             # ground), RosaryStrandView, BeadStatusRow
 ├── DesignSystem/             # Theme, Typography, AppIcon, Motion,
 │                             # SacredComponents (OrnamentDivider, DropCapText…),
 │                             # ReadingText (ReadingTypography, ReadingText, PrayerText)
@@ -398,6 +429,45 @@ write concurrent code here:
   list, a filter tray of API labels, pinned sets on top), a set detail step
   before prayer, decade-by-decade prayer screen with bead tracking,
   completion screen, and a resume card for an unfinished Rosary.
+
+  **The bead is the unit** (the "Bead-First Rosary Prayer Flow" handoff).
+  The whole Rosary hangs as one strand at the right edge of the player
+  (`RosaryStrandView`, hung by `.rosaryStrand(_:)` at the same place on
+  both players): prayed beads run off below the hand, the bead under the
+  hand rests at the window's middle, and the beads to come descend from
+  above, Our Father beads larger and carrying their numeral so the next
+  decade is seen approaching. It is a readout, never tappable. Swipe
+  **down** for the next bead, up for the one before; the decade turns
+  on its own when the next Our Father arrives (medium haptic; a bead is
+  `.selection`), and there are no arrows between mysteries and no
+  horizontal swipe — nothing but the beads moves the Rosary forward.
+  The meditation belongs to the Our Father bead (heard or read there);
+  the ten Hail Marys are prayed with only the count beside you, in
+  `BeadStatusRow` — OUR FATHER · a cue ("Listen to the meditation, then
+  swipe down for the first Hail Mary") — which also taps forward and
+  holds back, and is what the reader carries in place of the strand.
+  The Glory Be has no bead of its own: it is drawn on the next decade's
+  Our Father bead, and after the last decade on one final bead labelled
+  GLORY BE · AMEN, where the cue gives way to the AMEN button. A swipe
+  never finishes a Rosary. The arithmetic — decade length, a bead's
+  linear index, labels, numerals — is `Models/RosaryStrand.swift`, used
+  by both view models; `BeadPosition` (mystery + bead) is what the one
+  haptic keys on, so a step across a decade's end ticks once.
+
+  **The beads are optional on the meditation's player**
+  (`userSettings.prayOnBeads`, on by default; Settings → Prayer
+  Experience → "Pray on the Beads", and the player's ⚙ playback sheet
+  so it can be changed mid-Rosary). Off, the player is the
+  decade-at-a-time screen it was for a hand that keeps its own count:
+  the mystery strand in the header, arrows flanking the transport (→
+  becomes the AMEN check on the last mystery), a horizontal swipe
+  between mysteries (live in the reader too, which has no arrows), the
+  one-time `PrayerSwipeHint`, and no strand or bead row. The Scriptural
+  Rosary is a verse per bead and has no other way to be prayed, so the
+  setting does not reach it. Resume keeps `(mysteryIndex, beadIndex)`
+  (`InProgressPrayer.beadIndex`, optional for older snapshots).
+  The painting, its frost and its scrim are `PrayerPaintingStage`,
+  shared with the Scriptural Rosary, which uses its `.veiled` style.
 - **Audio** — narration for meditations and chant for consecration prayers.
 - **Persistence** — prayer sessions and journal entries in SwiftData; settings,
   favorites, and reading progress in UserDefaults.
@@ -619,21 +689,85 @@ write concurrent code here:
   Project's work, and the footer credits it.
 
 - **Scriptural Rosary** — a verse of Scripture for every Hail Mary bead,
-  behind a Prayer Experience toggle (off by default; the plain Rosary is
-  the app's first face). When on, and when the mystery has a curated set,
-  the player grows a verse band between the title and the transport: a
-  10-bead strand (7 for the Seven Sorrows), the Douay-Rheims citation,
-  and the verse on a gold rule — tap to pray the bead forward, long-press
-  to step back; moving the mystery resets to the first bead (a `didSet`
-  on `currentMysteryIndex`, so the Lock Screen path resets it too). The
-  249 verses are **bundled** (`Data/ScripturalRosaryData.swift`, keyed
-  `"<category>_<order>"` like MysteryData's fruits) — prayer must never
-  need a signal. The file is GENERATED by `Tools/ScripturalRosary/generate.py`
-  from the Original Douay-Rheims API (thedouayrheims.com, CC0): the
-  curated verse references live in the script; edit there and rerun,
-  never hand-edit the Swift. Narrative mysteries walk their Gospel scene;
-  the Assumption and Coronation use the liturgy's own typology
-  (Canticles, Psalms, Judith, Ecclesiasticus, the Apocalypse).
+  as a devotion of its own (`Views/Scriptural/`). It was a Prayer
+  Experience toggle that grew a verse band on the meditation's player;
+  that put two readings on one screen, and a person who wanted the
+  Gospel on the beads had to find a switch in Settings to get it. Now
+  it has its own doors and its own two screens, and the toggle is gone.
+
+  **Doors:** THE SCRIPTURAL ROSARY, the quiet line under PRAY WITH A
+  MEDITATION on the home page's featured card (the button was "Begin
+  the Rosary" until this line stood under it, and then two lines said
+  "Rosary" without saying how they differed; each now names what will
+  be on the beads, and the Chapel's focus block says the same words for
+  the same act; the line opens the title page with the day's mysteries
+  chosen — named, because an earlier "Or pray it in Scripture" read as
+  a footnote to the button). The card itself is TODAY'S MYSTERIES over
+  the devotion's name — it used to headline the first of the five
+  mysteries with its passage, which made one decade the subject of a
+  button that prays all of them — and nothing stands between the title
+  and the button; the row beneath the five mysteries
+  on Explore (and typed search); the `PrayerShortcut.scripturalRosary`
+  act — Pray tray, quick tap, Rule of Prayer, the Chapel's focus — which
+  goes straight to the day's mysteries the way Today's Rosary does; and
+  "Or pray the Scriptural Rosary" inside In Scripture's how-to card. The
+  act stands second in the tray by default, and a tray saved before it
+  existed is given it once, under Today's Rosary
+  (`userSettings.prayTrayOfferedScriptural`) — a devotion that is only
+  in Explore is one nobody finds, which is how the home link and the
+  tray row came to be. The Chapel's rule
+  counts it by name (`ScripturalRosaryViewModel.devotionName`, which is
+  what `PrayerSession.meditationType` records); it also counts as the
+  day's Rosary, since it is one.
+
+  **`ScripturalRosaryView`** is the title page, set like a meditation
+  set's: kicker, ornament, name, the chosen mysteries' painting in the
+  arch, then a ledger — About, The mysteries (the picker: a bead per
+  set, today's marked TODAY and chosen to begin with, nothing
+  remembered), The first decade (the first mystery and its first
+  verse), From (Douay-Rheims) — and PRAY alone at the foot on
+  `PrayFootScrim`. `SetSection` and the scrim are shared with the set
+  detail rather than copied.
+
+  **`ScripturalRosaryPrayerView`** is the handoff's 3a: the mystery's
+  painting edge to edge under a veil (`PrayerPaintingStage(style:
+  .veiled)` — 55% opacity, a gradient darkest at head and foot, lifted
+  with the chrome), the verse standing in the middle of it on the left
+  (kicker of two lines, the verse in italic at the reading size + 3,
+  citation · bead count, the cue), and the same strand the meditation's
+  player hangs at the right edge (`RosaryStrandView`). Positions run
+  Our Father → ten Hail Marys → Glory Be: the Our Father bead announces
+  the mystery (its description, passage and fruit), each Hail Mary
+  carries its verse, and the decade prayed the column reads the
+  doxology (Latin when Latin alone is the prayer language) under GLORY
+  BE · DECADE COMPLETE, with the next mystery named in the cue. **Swipe
+  down for the next bead, up for the one before; the decade turns on
+  its own** — there are no arrows and no swipe between mysteries. An
+  earlier draft walked the beads with two arrows, and before that a
+  gold disc stood between them; both are gone, and must not come back:
+  nothing but the beads moves the Rosary forward. The column still taps
+  forward and long-presses back (VoiceOver cannot swipe), and the one
+  haptic keys on `beadPosition`. The header is × · SCRIPTURAL ROSARY ·
+  Aa (`ReaderTextOptionsSheet` without its narration section); the foot
+  is the still mystery strand over "FIRST OF FIVE MYSTERIES" and the ⋯
+  tray with no download row. The handoff drew a play disc in that foot
+  because it was made against the verse-band-on-the-player snapshot;
+  this devotion has no narration, so there is none. On the last bead
+  the cue gives way to AMEN; no narration, no reader, no audio session;
+  completion records locally through `CompletedPrayer` (the completion
+  screen takes that value now, not a set) and never posts to the API.
+  An interrupted one resumes from Home's card (`InProgressPrayer.kind`),
+  on its own screen, at its bead.
+
+  The 249 verses are **bundled** (`Data/ScripturalRosaryData.swift`,
+  keyed `"<category>_<order>"` like MysteryData's fruits) — prayer must
+  never need a signal. The file is GENERATED by
+  `Tools/ScripturalRosary/generate.py` from the Original Douay-Rheims
+  API (thedouayrheims.com, CC0): the curated verse references live in
+  the script; edit there and rerun, never hand-edit the Swift.
+  Narrative mysteries walk their Gospel scene; the Assumption and
+  Coronation use the liturgy's own typology (Canticles, Psalms, Judith,
+  Ecclesiasticus, the Apocalypse).
 - **Spiritual Reading** — a curated shelf of public-domain classics
   (Imitation of Christ, Story of a Soul, Confessions, Dolorous Passion)
   reached from the Me Library card and Explore. Nothing is bundled: the
@@ -767,7 +901,6 @@ write concurrent code here:
 - Auto-scroll *synced* to audio, word by word. Both readers follow
   proportionally instead — the prayer reader and the Spiritual Reading
   reader — because neither the narration nor LibriVox carries timings
-- Haptic feedback during prayer
 - A setting to switch between the Traditional and Modern (Luminous Thursday)
   schedules — `ScheduleService` is the seam for it
 - Feast-day overrides on the schedule (seasonal Sundays are built)
@@ -791,12 +924,40 @@ write concurrent code here:
   (Regular, Medium, SemiBold, Italic, MediumItalic) for reading. Always go
   through `AppFonts` — never `Font.custom` at a call site.
 - **Long-form text:** render through `ReadingText` (prose: paragraph splitting
-  on blank lines, `─────` rules become ornament dividers, optional drop cap)
+  on blank lines, `─────` rules become ornament dividers, a paragraph opening
+  `# ` is the reading's own title — set in the display face, never as a first
+  sentence, and never given the versal, which falls to the prose beneath it —
+  optional drop cap)
   or `PrayerText` (verse/stanza text, including the `|||` bilingual line-pair
   format) in `DesignSystem/ReadingText.swift`. Spacing comes from
   `ReadingTypography` and scales with the font size — don't hand-roll
   `lineSpacing` magic numbers on reading surfaces. Reading blocks are 15–16pt
   minimum in cards, 17–18pt in immersive readers; tap targets stay ≥44pt.
+- **Prayers are set in a prayer-book grammar** that `PrayerText` reads from
+  the text itself (`PrayerMarkup`, same file), so a prayer is written the way
+  a printed book prints it and never as a wall of text: ℣ ℟ ✠ in rubric red
+  (`Rubric.red`, the missal's vestment red, shared with the missal and the
+  Office); a litany states its response once at the head of each group after
+  its ℟ — "Holy Mary, ℟. pray for us." — and every invocation beneath answers
+  it, the invocations one to a line and the response stepped back into
+  italic; a canticle's verses are pointed at the mediant with ` * ` (the
+  asterisk red, the verse broken there, the second half hung in); a line in
+  [square brackets] is a rubric ("[Let us pray.]"); a stanza of one long line
+  is prose, takes the reading face, and the first such paragraph can open on
+  a versal (`showsDropCap`); a stanza of short lines is verse at the tighter
+  quote leading. The consecration's prayers (`Data/BilingualConsecrationPrayers.swift`,
+  `Data/ConsecrationData.swift`) are written in it, with the Liber's accents
+  on the Latin. The English and Latin of a bilingual prayer pair **line for
+  line, blank lines included**, or the bilingual modes fall back to two
+  blocks. The Litany of the Holy Ghost, Montfort's two prayers and the Act of
+  Consecration exist in English alone — no Latin has been invented for them,
+  and none should be.
+- **The versal (`DropCapText`) is laid over a first-line indent**, never set
+  in the first line's text box: Cinzel's descent at 1.6× the body is twice
+  EB Garamond's, and in the line it opened a hole under the first line of
+  every reading that opened on one. The indent is a single space kerned to
+  the measured width of the letter, and the initial's baseline sits on the
+  first line's.
 
 > Colors above are the Midnight theme's. Backgrounds and card fills come from
 > the **active theme**, so read them from `AppColors`; only gold, gold light,
@@ -820,6 +981,89 @@ devotion is the one that devotion's own iconography uses:
 `ch-sacred-heart` is Christ's and belongs to the Sacred Heart alone,
 while the Seven Sorrows take `ch-sorrowful-heart`, Mary's heart pierced
 by Simeon's sword.
+
+### Motion
+
+`DesignSystem/Motion.swift` holds the app's named motions — the `Motion`
+enum — and every call site should reach for one before writing a
+duration: `beadSlide` and `beadSettle` (the strand), `words` (a bead's
+name, verse or cue changing), `decadeTurn` (painting, kicker and title
+crossfading to the next mystery), `chrome`, `panel` (a reader or tray
+arriving), `settle` (a press or toggle landing), `crossfade` (content
+changing in place), and `ease(_:)`/`travel(_:)` — the design system's
+cubic-bezier curves the missal and office readers use. Springs settle
+and never bounce; the two press styles (`SacredCardButtonStyle`,
+`GoldCTAButtonStyle`) share one beat, and bare glyphs — the header's
+glass, a month arrow, a tab — take `QuietGlyphButtonStyle` so no chrome
+tap feels dead.
+
+Three rules, learned the hard way:
+
+- **Words that change crossfade in place.** A `Text` whose value changes
+  gets `.contentTransition(.opacity)` (or `.numericText()` for a count,
+  which rolls its digits) under an `.animation(Motion.crossfade, value:)`.
+  Re-identifying a block with `.id()` to fade it is wrong inside a
+  `VStack`: the old and new blocks are laid out *together* for the
+  length of the transition, and the foot stands twice as tall for half
+  a second.
+- **Exclusive branches share a slot.** Two views that replace each other
+  (`if loading … else …`, a `switch` over states, browse ⇄ results) are
+  wrapped in a `ZStack` with `.transition(.opacity)` on each branch and
+  `.animation(…, value:)` on the stack, so they crossfade over each
+  other. A `@ViewBuilder` branch that emits *several* views must be
+  wrapped in its own `VStack` inside the slot, or the `ZStack` stacks
+  its sections on top of one another (Explore did this once).
+- **A tab turns through the ground, never across it.** `ContentView`'s
+  `tabTurn` fades the leaving page out fast and the arriving page in a
+  beat later (with a 6pt rise), over `AppColors.appGradient` laid
+  *inside* the NavigationStack: while neither page is opaque the
+  stack's own white background shows through, and a crossfade of two
+  full pages ghosted one through the other. **Never fade a view that
+  holds its own NavigationStack** — its white ground blends to grey;
+  the Consecration tab arrives whole under a veil of the gradient that
+  lifts (`consecrationArrivals`) instead.
+- **Reduce Motion is honoured** at every scripted sequence (the Home
+  header's streak intro, the completion badge) and every drift: scale,
+  blur and offset fall away, timings shorten, crossfades remain. Direct
+  manipulation — the strand following a finger — is not motion and
+  stays.
+
+The player's motion: the strand **follows the finger** while a swipe is
+under way (`RosaryStrandView.follow`, a tanh curve reaching about one
+bead's length, a third of that at either end of the Rosary), the words
+under it dim as it goes, and on release the string slides the rest of
+the way on `Motion.beadSlide` while the ring passes from the bead
+leaving the hand to the one arriving — `RosaryBead` is one view whose
+parts light and dim, never three views swapped. Let go short of a bead,
+the string comes back on `beadSettle`. The new bead's words arrive from
+the side the string came from (`beadWordsArrival`, a keyframe nudge
+rather than a transition, so old and new words move the same way
+whichever way the last move went). The decade turning — the one move
+where the strand itself stays put, since the Glory Be is said on the
+next decade's Our Father bead — sends a ripple out from the bead under
+the hand (`DecadeTurnRipple`), and the strand is let down from above
+when the screen opens.
+
+**Verify motion with a recording, not screenshots**: `Tools/MotionSheet`
+lays a simulator recording out as a contact sheet of timestamped frames.
+Single screenshots run at three or four a second and miss a 0.3s
+transition entirely.
+
+### Lines and Edges
+
+- **Every hairline is `AppLine.hairline`** (`DesignSystem/Theme.swift`):
+  two device pixels, whatever the screen's scale. The app once drew its
+  card borders and rules at `0.5` — a pixel and a half on a 3× screen,
+  which can never sit on the pixel grid: it straddled two rows at half
+  strength and swelled wherever a rounded corner's curve flattened into
+  the edge, so a card's border read thick at its corners and faint along
+  its sides. Never write `lineWidth: 0.5` or `frame(height: 0.5)`.
+- **Every `.sheet` carries `.presentationBackground(AppColors.background)`**
+  (the prayer trays use `cardBackground`). A sheet's own container is the
+  system's white; the content's dark ground is clipped by the same
+  rounded rim, and at that rim's anti-aliased edge the white shows
+  through as a hairline around the top of every tray. The background
+  goes on the sheet's content view, beside its detents.
 
 ### Visual Style
 - Dark, contemplative theme

@@ -32,10 +32,12 @@ struct AllMysteriesView: View {
                     // Header
                     headerSection
                         .padding(.top, 16)
+                        .devotionalEntrance()
 
                     // All mystery categories in a grid
                     mysteryGrid
                         .padding(.horizontal, 20)
+                        .devotionalEntrance(delay: 0.1)
 
                     Spacer(minLength: 100)
                 }
@@ -92,7 +94,8 @@ struct AllMysteriesView: View {
                         imageFocal: category.cardFocalPoint
                     )
                 }
-                .buttonStyle(.plain)
+                // The same settle the cards have on Home
+                .buttonStyle(SacredCardButtonStyle())
             }
         }
     }

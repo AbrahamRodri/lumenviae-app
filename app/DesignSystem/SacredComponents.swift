@@ -70,6 +70,26 @@ extension Gradient {
             )
         })
     }
+
+    /// The inverse of `smoothMask`: held black from the top, an eased
+    /// ramp black→clear across `from`…`to`, then clear to the foot.
+    ///
+    /// For a plate that has to end in **nothing** rather than in a flat
+    /// color — a painting sitting on a page whose color it cannot know.
+    /// `to` should land before the foot, so the last stretch is pure
+    /// page and there is no edge anywhere for the eye to find.
+    static func smoothDissolve(from: CGFloat, to: CGFloat) -> Gradient {
+        Gradient(
+            stops: [Gradient.Stop(color: .black, location: 0)]
+                + rampSamples.map { t in
+                    Gradient.Stop(
+                        color: .black.opacity(1 - smoothstep(t)),
+                        location: from + (to - from) * t
+                    )
+                }
+                + [Gradient.Stop(color: .clear, location: 1)]
+        )
+    }
 }
 
 // MARK: - GothicArchShape
@@ -120,14 +140,24 @@ struct GothicArchShape: InsettableShape {
 // MARK: - ArchHero
 
 /// The cathedral-window hero: a painting clipped into a lancet arch,
-/// double-struck in gold, its foot dissolved so the page runs on
-/// underneath, with the screen's own words standing on a weighted scrim.
+/// double-struck in gold, dissolving into the page beneath the screen's
+/// own words.
 ///
 /// One place for it so the home screen's featured mystery and the
-/// consecration's day overview stay the same object. The scrim stops are
-/// weighted rather than even — out of the way through the top third,
-/// gathering only where the words need ground, so more of the painting
-/// survives behind the title.
+/// consecration's day overview stay the same object.
+///
+/// **Nothing opaque may reach the foot.** The hero sits on the app
+/// gradient, which is a different color at every height and under every
+/// scroll, and an earlier draft ended in a slab of flat `background`
+/// under the words with a short fade at the very bottom. Wherever that
+/// slab landed on a darker stretch of the gradient it read as a lighter
+/// band with a soft edge — and it landed somewhere different every time
+/// the card's content grew or the phone changed, which is why the line
+/// kept coming back after being "fixed". So the painting, its tint and
+/// its rim are one plate, and the plate is masked to **nothing** across
+/// its lower part, finishing before the foot; the words stand on the
+/// page itself and are never masked. There is no flat color to mismatch,
+/// so there is no edge to find, at any height, in any theme.
 struct ArchHero<Content: View>: View {
 
     /// Asset name of the painting the arch frames
@@ -135,9 +165,17 @@ struct ArchHero<Content: View>: View {
 
     var height: CGFloat = 410
 
-    /// Laid over the painting, under the scrim — a flat dim on the home
-    /// card, the phase's own hue on the consecration screen.
-    var tint: AnyShapeStyle = AnyShapeStyle(Color.black.opacity(0.25))
+    /// Laid over the painting, inside the plate — so it dissolves with
+    /// it. A dim that deepens downward on the home card, so the words
+    /// have ground where the painting is still showing through; the
+    /// phase's own hue on the consecration screen.
+    var tint: AnyShapeStyle = AnyShapeStyle(
+        LinearGradient(
+            colors: [Color.black.opacity(0.18), Color.black.opacity(0.62)],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    )
 
     var spacing: CGFloat = 16
 
@@ -153,8 +191,29 @@ struct ArchHero<Content: View>: View {
     private var arch: GothicArchShape { GothicArchShape(riseRatio: 0.34) }
 
     var body: some View {
-        // Arch shape drives size; the image goes in .overlay so it never
-        // expands layout bounds, then everything clips to the arch.
+        ZStack(alignment: .bottom) {
+            plate
+                .mask(plateDissolve)
+                // Steady, not pulsing — the same presence the Pray
+                // medallion and the narration transport carry. On the
+                // plate alone: applied over the words too, the words
+                // would be the only opaque thing low on the card and
+                // would grow a glow of their own.
+                .modifier(OptionalHalo(active: showsHalo))
+
+            // The words, on the page itself. No scrim: the plate's own
+            // tint deepens where they stand, and by the button the
+            // painting is all but gone.
+            VStack(spacing: spacing) { content }
+                .padding(contentPadding)
+        }
+        .frame(height: height)
+    }
+
+    /// The painting in its arch, its tint, and the two gold rims — one
+    /// layer, so one mask dissolves all of it together. The image goes
+    /// in .overlay so it never expands layout bounds.
+    private var plate: some View {
         arch
             .fill(AppColors.cardBackground)
             .frame(height: height)
@@ -167,54 +226,21 @@ struct ArchHero<Content: View>: View {
             .overlay(arch.strokeBorder(AppColors.gold.opacity(0.4), lineWidth: 1))
             .overlay(
                 arch.inset(by: 5)
-                    .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: 0.5)
+                    .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: AppLine.hairline)
             )
-            .overlay(alignment: .bottom) {
-                VStack(spacing: spacing) { content }
-                    .padding(contentPadding)
-                    .background(
-                        LinearGradient(
-                            gradient: .smoothFade(
-                                to: AppColors.background,
-                                from: 0,
-                                end: 0.82
-                            ),
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    )
-            }
-            // The hero runs edge to edge, so its foot would otherwise end
-            // on a rule straight across the screen — the arch's stroke
-            // closes its path along the bottom, and the scrim stops dead
-            // against the page gradient. Dissolving the last few points
-            // removes both at once. Applied to the arch-clipped view so
-            // it follows the silhouette rather than a box.
-            .mask(footDissolve)
-            // Steady, not pulsing — the same presence the Pray medallion
-            // and the narration transport carry. The halo bounds its own
-            // glow at the foot; see OptionalHalo.
-            .modifier(OptionalHalo(active: showsHalo))
     }
 
-    /// The foot's fade to nothing.
-    private var footDissolve: some View {
-        VStack(spacing: 0) {
-            Rectangle().fill(.black)
-            LinearGradient(
-                stops: [
-                    .init(color: .black, location: 0),
-                    .init(color: .black.opacity(0.88), location: 0.18),
-                    .init(color: .black.opacity(0.62), location: 0.40),
-                    .init(color: .black.opacity(0.30), location: 0.64),
-                    .init(color: .black.opacity(0.09), location: 0.83),
-                    .init(color: .clear, location: 1)
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .frame(height: 26)
-        }
+    /// Whole through the arch's upper third, then an eased fade to
+    /// nothing that finishes a tenth short of the foot. The plate is
+    /// still three-quarters there behind the title and a fifth there
+    /// behind the button; the last stretch is pure page. See the type's
+    /// note for why it must be nothing and not a color.
+    private var plateDissolve: some View {
+        LinearGradient(
+            gradient: .smoothDissolve(from: 0.32, to: 0.90),
+            startPoint: .top,
+            endPoint: .bottom
+        )
     }
 }
 
@@ -222,10 +248,10 @@ struct ArchHero<Content: View>: View {
 /// site branching on two otherwise identical view trees.
 ///
 /// The glow ends where its shape ends: a halo cast by a silhouette that
-/// dissolves at the foot still pools light below it, so the glow — and
-/// only the glow — is trimmed there. The trim is opaque rather than a
-/// second pass of the foot's own gradient: masking the same fade twice
-/// would multiply it by itself and steepen a hand-tuned dissolve.
+/// dissolves toward the foot still pools light below it, so the glow —
+/// and only the glow — is trimmed there. The trim is opaque rather than
+/// a second pass of the plate's own dissolve: masking the same fade
+/// twice would multiply it by itself and steepen a hand-tuned ramp.
 private struct OptionalHalo: ViewModifier {
     let active: Bool
 
@@ -294,6 +320,11 @@ struct RosaryBeadProgress: View {
 
     var beadSize: CGFloat = 9
 
+    /// Whether the active bead breathes. Off where another strand on the
+    /// same screen already carries the living bead — two things
+    /// breathing on one page is one too many.
+    var breathes: Bool = true
+
     var body: some View {
         HStack(spacing: 0) {
             ForEach(0..<total, id: \.self) { index in
@@ -310,48 +341,98 @@ struct RosaryBeadProgress: View {
         .accessibilityLabel("Progress: \(completed) of \(total)")
     }
 
-    @ViewBuilder
     private func bead(at index: Int) -> some View {
-        if index < completed {
-            Circle()
-                .fill(AppColors.goldGradient)
-                .frame(width: beadSize, height: beadSize)
-                .shadow(color: AppColors.gold.opacity(0.55), radius: 3)
-        } else if index == activeIndex {
-            ActiveBead(size: beadSize)
-        } else {
-            Circle()
-                .strokeBorder(AppColors.textSecondary.opacity(0.4), lineWidth: 1)
-                .background(Circle().fill(AppColors.background.opacity(0.9)))
-                .frame(width: beadSize, height: beadSize)
-        }
+        RosaryBead(
+            state: index < completed ? .prayed : (index == activeIndex ? .active : .ahead),
+            size: beadSize,
+            breathes: breathes
+        )
     }
 }
 
-/// The bead currently being prayed: ringed in bright gold and
-/// breathing slowly (still, when Reduce Motion is on).
-private struct ActiveBead: View {
+// MARK: - RosaryBead
+
+/// Where one bead stands: already prayed, under the hand, or still to
+/// come.
+enum RosaryBeadState {
+    case prayed
+    case active
+    case ahead
+}
+
+/// One bead of a strand, drawn the same way wherever a strand is drawn —
+/// the mysteries across the player's head, the whole Rosary at its
+/// edge, the mysteries offered on the Scriptural Rosary's page.
+///
+/// One view whose parts light and dim, rather than three views swapped
+/// by state: a bead leaving the hand fills gold as its ring fades onto
+/// the next, under whatever animation the move was made with. Swapped
+/// views would blink from one state to the other and the strand would
+/// read as a counter rather than a string.
+struct RosaryBead: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    let size: CGFloat
+
+    let state: RosaryBeadState
+    var size: CGFloat = 9
+
+    /// An Our Father bead on the long strand: larger than its Hail
+    /// Marys, and ringed in gold rather than grey while still to come,
+    /// so the next decade can be seen approaching up the string.
+    var isOurFather: Bool = false
+
+    /// Whether the active bead breathes (see `RosaryBeadProgress`)
+    var breathes: Bool = true
 
     var body: some View {
-        let core = ZStack {
-            Circle()
-                .fill(AppColors.gold.opacity(0.35))
-            Circle()
-                .strokeBorder(AppColors.goldLight, lineWidth: 1.2)
-        }
-        .frame(width: size + 3, height: size + 3)
-        .shadow(color: AppColors.gold.opacity(0.5), radius: 4)
+        let active = state == .active
+        let prayed = state == .prayed
+        let ahead = state == .ahead
+        let drawn = active ? size + 3 : size
 
-        if reduceMotion {
-            core
-        } else {
-            core.phaseAnimator([1.0, 1.18, 1.0]) { view, scale in
-                view.scaleEffect(scale)
-            } animation: { _ in
-                .easeInOut(duration: 1.4)
+        ZStack {
+            // Still to come: an outline on a dark fill
+            Circle()
+                .fill(AppColors.background.opacity(0.9))
+                .overlay(
+                    Circle().strokeBorder(
+                        isOurFather ? AppColors.gold.opacity(0.6) : AppColors.textSecondary.opacity(0.4),
+                        lineWidth: isOurFather ? 1.2 : 1
+                    )
+                )
+                .opacity(ahead ? 1 : 0)
+
+            // Prayed: a gold disc
+            Circle()
+                .fill(AppColors.goldGradient)
+                .opacity(prayed ? 1 : 0)
+
+            // Under the hand: a bright ring on a lit fill
+            ZStack {
+                Circle()
+                    .fill(AppColors.gold.opacity(0.35))
+                Circle()
+                    .strokeBorder(AppColors.goldLight, lineWidth: 1.2)
             }
+            .opacity(active ? 1 : 0)
+        }
+        .frame(width: drawn, height: drawn)
+        .shadow(
+            color: AppColors.gold.opacity(active ? 0.5 : (prayed ? 0.55 : 0)),
+            radius: active ? (isOurFather ? 6 : 4) : (prayed ? (isOurFather ? 5 : 3) : 0)
+        )
+        // Breathing slowly while under the hand — still when Reduce
+        // Motion is on, or where the screen has asked for a still bead.
+        // Toggled by `repeating` rather than by wrapping the view, so the
+        // bead keeps its identity and the fades above are never cut off
+        // by the ring arriving.
+        .keyframeAnimator(
+            initialValue: 1.0,
+            repeating: active && breathes && !reduceMotion
+        ) { view, scale in
+            view.scaleEffect(scale)
+        } keyframes: { _ in
+            CubicKeyframe(1.18, duration: 0.7)
+            CubicKeyframe(1.0, duration: 0.7)
         }
     }
 }
@@ -448,46 +529,144 @@ struct DropCapText: View {
     var bodySize: CGFloat = 17
     var textColor: Color = AppColors.cream
 
-    /// The initial shares the first line's text box, so its font metrics
-    /// set that line's height: much past 1.6× the body and the line grows
-    /// a visible hole beneath it, breaking the paragraph's rhythm. 1.6×
-    /// keeps the cap standing proud of the line — a versal initial —
-    /// while the leading stays even.
+    /// Below this many characters the opening is set plain. Book IV of
+    /// the Imitation prints "The Voice of the Disciple" above the prose,
+    /// and eighteen of its chapters open on a rubric like it; a gilded
+    /// versal on four words, with the real first sentence left plain
+    /// below, reads as a misprint. A reader's own journal entry is the
+    /// exception — three words of thanks still open on their letter —
+    /// and passes 0.
+    var minimumLength: Int = 80
+
+    /// The versal against the body — standing proud of the first line
+    /// by more than half its height, as a versal initial should. It is
+    /// no longer part of that line's text box (see `illuminated`), so
+    /// its size no longer costs the paragraph its rhythm.
     private var capSize: CGFloat { (bodySize * 1.6).rounded() }
 
-    private static let openingQuotes: Set<Character> = ["\u{201C}", "\u{2018}", "\"", "'"]
+    /// Air between the initial's ink and the first line's words — a
+    /// hair, as a printed versal sits against its word. Measured from
+    /// the ink, not the advance: the letter's own side bearing at 1.6×
+    /// the body was already a visible gap before any gutter was added.
+    private var gutter: CGFloat { (bodySize * 0.1).rounded() }
 
     var body: some View {
-        // Line spacing tracks the body size so enlarged text keeps its air
-        composed.lineSpacing(ReadingTypography.lineSpacing(for: bodySize))
-    }
-
-    /// A paragraph that opens with a quotation gets no illumination at
-    /// all — an enlarged or gilded quote mark reads as a mistake, so
-    /// those paragraphs are set as plain reading text.
-    ///
-    /// Nor is a short opening block illuminated. Book IV of the
-    /// Imitation prints "The Voice of the Disciple" above the prose, and
-    /// eighteen of its chapters open on a rubric like it; a gilded
-    /// versal on four words, with the real first sentence left plain
-    /// below, reads as a misprint. Under eighty characters is a rubric
-    /// or a response, never the opening of a chapter.
-    private var composed: Text {
-        guard text.count >= 80, let first = text.first,
-              !Self.openingQuotes.contains(first) else {
-            return plain(text)
+        if text.count >= minimumLength, let cut = VersalCut.of(text) {
+            illuminated(cut)
+        } else {
+            plain(text)
         }
-        return versal(first) + plain(String(text.dropFirst()))
     }
 
-    private func versal(_ letter: Character) -> Text {
-        Text(String(letter))
-            .font(AppFonts.titleFont(capSize))
-            .foregroundColor(AppColors.gold)
+    private func plain(_ string: String) -> some View {
+        Text(string)
+            .font(AppFonts.readingFont(bodySize))
+            .foregroundColor(textColor)
+            .lineSpacing(ReadingTypography.lineSpacing(for: bodySize))
     }
 
-    private func plain(_ s: String) -> Text {
-        Text(s).font(AppFonts.readingFont(bodySize)).foregroundColor(textColor)
+    /// The initial once shared the first line's text box, and its
+    /// descent — twice the body's at this size — opened a hole beneath
+    /// that one line that no other line had, in every reading that
+    /// opened on a versal. Now the paragraph is set on its own, its
+    /// first line indented by exactly the initial's width, and the
+    /// initial is laid over the indent with its baseline on the first
+    /// line's: a versal standing proud of the line, and the leading
+    /// beneath it the same as everywhere else on the page.
+    ///
+    /// A quotation mark the paragraph opens on is hung before the
+    /// initial at the body size, and the letter after it is the one
+    /// illuminated — a gilded quote mark reads as a mistake, but a
+    /// passage kept from a book still deserves its versal.
+    private func illuminated(_ cut: VersalCut) -> some View {
+        let leadWidth = cut.lead.isEmpty
+            ? 0
+            : width(of: cut.lead, font: "EBGaramond-Regular", size: bodySize)
+        let indent = inkExtent(of: cut.letter, font: "Cinzel-Regular", size: capSize) + gutter
+        let space = width(of: " ", font: "EBGaramond-Regular", size: bodySize)
+
+        return ZStack(alignment: Alignment(horizontal: .leading, vertical: .firstTextBaseline)) {
+            // A single space, kerned out to the indent: the one way a
+            // SwiftUI Text indents its first line and no other
+            (Text(cut.lead) + Text(" ").kerning(max(0, indent - space)) + Text(cut.rest))
+                .font(AppFonts.readingFont(bodySize))
+                .foregroundColor(textColor)
+                .lineSpacing(ReadingTypography.lineSpacing(for: bodySize))
+
+            Text(cut.letter)
+                .font(AppFonts.titleFont(capSize))
+                .foregroundColor(AppColors.gold)
+                .padding(.leading, leadWidth)
+                .accessibilityHidden(true)
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(text)
+    }
+
+    /// The advance of a run — a quotation mark, a space — in the body face
+    private func width(of string: String, font name: String, size: CGFloat) -> CGFloat {
+        guard let font = UIFont(name: name, size: size) else { return size * 0.7 }
+        return (string as NSString).size(withAttributes: [.font: font]).width
+    }
+
+    /// How far the letter's ink reaches from its origin: its left side
+    /// bearing plus the width of the glyph itself, without the right
+    /// side bearing an advance would add. Measured, because an I and an
+    /// M are half an em apart and the indent has to fit the letter it
+    /// holds — and fit it closely.
+    private func inkExtent(of letter: String, font name: String, size: CGFloat) -> CGFloat {
+        guard let font = UIFont(name: name, size: size) else { return size * 0.7 }
+        let characters = Array(letter.utf16)
+        var glyphs = [CGGlyph](repeating: 0, count: characters.count)
+        guard CTFontGetGlyphsForCharacters(font, characters, &glyphs, characters.count),
+              let glyph = glyphs.first else {
+            return width(of: letter, font: name, size: size)
+        }
+        var bounds = CGRect.zero
+        CTFontGetBoundingRectsForGlyphs(font, .horizontal, [glyph], &bounds, 1)
+        return max(bounds.maxX, 0)
+    }
+}
+
+// MARK: - VersalCut
+
+/// How a paragraph opens, cut for illumination: the quotation marks it
+/// may open on, the letter that takes the versal, and everything after.
+/// One rule for every versal in the app — the readers', the journal's,
+/// the Chapel's Reflections tile — so an entry that opens on a letter
+/// is gilded everywhere it is shown, and one that opens on a digit or a
+/// dash is gilded nowhere.
+struct VersalCut {
+
+    /// Opening quotation marks, hung before the initial. Usually empty.
+    let lead: String
+
+    /// The versal, capitalised — an initial is always a capital
+    let letter: String
+
+    /// The paragraph after the versal
+    let rest: String
+
+    private static let openingQuotes: Set<Character> = [
+        "\u{201C}", "\u{2018}", "\"", "'", "«", "‹"
+    ]
+
+    /// Nil when the paragraph does not open on a letter (after any
+    /// quotation marks): such a paragraph is set plain.
+    static func of(_ text: String) -> VersalCut? {
+        let trimmed = text.drop { $0.isWhitespace }
+        var lead = ""
+        var index = trimmed.startIndex
+        while index < trimmed.endIndex, openingQuotes.contains(trimmed[index]) {
+            lead.append(trimmed[index])
+            index = trimmed.index(after: index)
+        }
+        guard index < trimmed.endIndex, trimmed[index].isLetter else { return nil }
+        return VersalCut(
+            lead: lead,
+            letter: String(trimmed[index]).uppercased(),
+            rest: String(trimmed[trimmed.index(after: index)...])
+        )
     }
 }
 
@@ -531,7 +710,7 @@ extension View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius)
-                    .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: 0.5)
+                    .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline)
             )
     }
 

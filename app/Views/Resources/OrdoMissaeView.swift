@@ -60,6 +60,7 @@ struct OrdoMissaeView: View {
         .sheet(isPresented: $showTextOptions) {
             MissalTextSizeSheet()
                 .presentationDetents([.height(300)])
+                .presentationBackground(AppColors.background)
         }
         .task { await load() }
     }

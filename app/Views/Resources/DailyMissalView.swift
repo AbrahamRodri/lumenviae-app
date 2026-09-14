@@ -148,13 +148,13 @@ struct DailyMissalView: View {
     /// Nothing bounces, nothing springs past its mark, and everything
     /// stills under Reduce Motion.
     private func anim(_ duration: Double) -> Animation? {
-        reduceMotion ? nil : .timingCurve(0, 0, 0.58, 1, duration: duration)
+        reduceMotion ? nil : Motion.ease(duration)
     }
 
     /// Ease-in-out for travel — the jump to a section leaves as gently
     /// as it arrives.
     private func travelAnim(_ duration: Double) -> Animation? {
-        reduceMotion ? nil : .timingCurve(0.42, 0, 0.58, 1, duration: duration)
+        reduceMotion ? nil : Motion.travel(duration)
     }
 
     // MARK: - Body
@@ -173,6 +173,7 @@ struct DailyMissalView: View {
                 MissalReadingSheet(preferredBilingual: $preferredBilingual)
                     .presentationDetents([.height(620)])
                     .presentationDragIndicator(.hidden)
+                    .presentationBackground(AppColors.background)
                     .presentationCornerRadius(22)
 
             case .index:
@@ -184,6 +185,7 @@ struct DailyMissalView: View {
                 }
                 .presentationDetents([.fraction(0.8)])
                 .presentationDragIndicator(.hidden)
+                .presentationBackground(AppColors.background)
                 .presentationCornerRadius(22)
 
             case .calendar:
@@ -192,6 +194,7 @@ struct DailyMissalView: View {
                 }
                 .presentationDetents([.height(640)])
                 .presentationDragIndicator(.hidden)
+                .presentationBackground(AppColors.background)
                 .presentationCornerRadius(22)
             }
         }
@@ -201,6 +204,7 @@ struct DailyMissalView: View {
         .sheet(isPresented: $showLayoutChoice) {
             MissalLayoutChoiceSheet()
                 .presentationDetents([.height(560)])
+                .presentationBackground(AppColors.background)
                 .interactiveDismissDisabled()
         }
         .navigationDestination(isPresented: $showOrdoPage) {
@@ -375,7 +379,7 @@ struct DailyMissalView: View {
             .lineLimit(1)
             .padding(.horizontal, 15)
             .frame(height: 30)
-            .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.28), lineWidth: 0.5))
+            .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.28), lineWidth: AppLine.hairline))
             .frame(minHeight: 44)
             .contentShape(Rectangle())
         }

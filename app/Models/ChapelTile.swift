@@ -105,14 +105,23 @@ extension ChapelPlacement {
     /// is that the flame is keeping it. It used to wait in the tray, which
     /// made that promise point at an empty page. The tray earns its keep
     /// from the first section a user puts away.
+    ///
+    /// The order alternates the page's two registers — ruled, outlined,
+    /// ruled, outlined — so no two hairline sections run together and no
+    /// two cards stack. The live sections come first, in the order a day
+    /// meets them: the acts, the record of them, the preparation under
+    /// way, the book left open, the chant, the reader's own words. The
+    /// Library stands last: it is the page's index of doors rather than
+    /// a thing that changes, and Augustine's colophon at its foot is the
+    /// right last line before the imprint.
     static let defaultLayout: [ChapelPlacement] = [
         ChapelPlacement(tile: .rule, span: 2, on: true),
         ChapelPlacement(tile: .flame, span: 2, on: true),
         ChapelPlacement(tile: .consecration, span: 2, on: true),
         ChapelPlacement(tile: .reading, span: 2, on: true),
-        ChapelPlacement(tile: .library, span: 2, on: true),
         ChapelPlacement(tile: .chant, span: 2, on: true),
-        ChapelPlacement(tile: .reflections, span: 2, on: true)
+        ChapelPlacement(tile: .reflections, span: 2, on: true),
+        ChapelPlacement(tile: .library, span: 2, on: true)
     ]
 
     /// "rule:2:1" — id, span, on.

@@ -261,7 +261,7 @@ private struct MontfortQuoteCard: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 14)
-                    .strokeBorder(AppColors.gold.opacity(0.25), lineWidth: 0.5)
+                    .strokeBorder(AppColors.gold.opacity(0.25), lineWidth: AppLine.hairline)
             )
         }
         .buttonStyle(SacredCardButtonStyle())

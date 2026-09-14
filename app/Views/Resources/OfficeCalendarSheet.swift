@@ -345,5 +345,6 @@ struct OfficeCalendarSheet: View {
         .sheet(isPresented: .constant(true)) {
             OfficeCalendarSheet { _ in }
                 .presentationDetents([.height(560)])
+                .presentationBackground(AppColors.background)
         }
 }

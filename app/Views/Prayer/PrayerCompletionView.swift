@@ -16,9 +16,14 @@ struct PrayerCompletionView: View {
     @Environment(AppRouter.self) private var router
     @Environment(\.modelContext) private var modelContext
 
-    let meditationSet: MeditationSet
+    /// What was prayed: the mysteries, the name the record keeps, and
+    /// how long it took. A value rather than the set, because the
+    /// Scriptural Rosary finishes here too and has no set.
+    let completed: CompletedPrayer
 
     /// Whether the session has been recorded (to prevent duplicates)
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     @State private var hasRecordedSession = false
 
     /// Controls the post-prayer journal editor sheet
@@ -49,7 +54,7 @@ struct PrayerCompletionView: View {
         ZStack {
             // Full-screen background image
             CompletionBackgroundImage(
-                gradientColors: meditationSet.mysteryCategory?.gradientColors ?? []
+                gradientColors: completed.category?.gradientColors ?? []
             )
 
             // Golden motes drifting upward, like incense in candlelight
@@ -147,25 +152,42 @@ struct PrayerCompletionView: View {
         .onAppear {
             recordPrayerSession()
 
-            withAnimation(.easeOut(duration: 0.8).delay(1.5)) { showQuote = true }
-            withAnimation(.easeOut(duration: 0.8).delay(2.1)) { showButtons = true }
+            // The quote and the acts follow the badge's reveal. Under
+            // Reduce Motion the reveal is a crossfade, so they come
+            // sooner — nobody should wait three seconds for a button
+            // to appear on a screen that is not moving
+            let quoteAt = reduceMotion ? 0.5 : 1.5
+            let buttonsAt = reduceMotion ? 0.8 : 2.1
+            withAnimation(.easeOut(duration: 0.8).delay(quoteAt)) { showQuote = true }
+            withAnimation(.easeOut(duration: 0.8).delay(buttonsAt)) { showButtons = true }
+        }
+        // The chip (and its success haptic) lands after the badge's
+        // reveal sequence: bloom → ring draws → check → title. A task
+        // rather than a timer, so leaving early cancels it
+        .task {
+            try? await Task.sleep(for: .seconds(reduceMotion ? 0.7 : 1.8))
+            guard !Task.isCancelled else { return }
+            withAnimation(reduceMotion ? Motion.crossfade : .spring(response: 0.6, dampingFraction: 0.7)) {
+                showStreakChip = true
+            }
         }
         .sheet(isPresented: $showingJournalEditor) {
             JournalEntryEditorView(
-                category: meditationSet.mysteryCategory,
+                category: completed.category,
                 mysteryTitle: nil,
                 mysteryIndex: nil,
                 isMidPrayer: false
             )
             .presentationDetents([.large])
             .presentationDragIndicator(.visible)
+            .presentationBackground(AppColors.background)
         }
     }
 
     /// Records the completed prayer session to SwiftData.
     private func recordPrayerSession() {
         guard !hasRecordedSession else { return }
-        guard let category = meditationSet.mysteryCategory else { return }
+        guard let category = completed.category else { return }
 
         // Recording goes through the service that owns prayer history —
         // writing the model inline here left `recordSession` with no
@@ -173,8 +195,8 @@ struct PrayerCompletionView: View {
         let service = PrayerHistoryService(modelContext: modelContext)
         service.recordSession(
             category: category,
-            durationSeconds: router.completedSessionDuration,
-            meditationType: meditationSet.name
+            durationSeconds: completed.durationSeconds,
+            meditationType: completed.devotionName
         )
         hasRecordedSession = true
 
@@ -188,13 +210,6 @@ struct PrayerCompletionView: View {
             reachedMilestone = StreakMilestone.milestone(reachedAt: streakDays)
         }
 
-        // The chip (and its success haptic) lands after the badge's
-        // reveal sequence: bloom → ring draws → check → title.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
-            withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
-                showStreakChip = true
-            }
-        }
     }
 }
 
@@ -254,6 +269,8 @@ struct SacredParticles: View {
 /// A soft radial light that blooms outward behind the badge —
 /// the first beat of the completion sequence.
 struct GlowBloom: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     @State private var bloomed = false
 
     var body: some View {
@@ -271,10 +288,10 @@ struct GlowBloom: View {
                 )
             )
             .frame(width: 300, height: 300)
-            .scaleEffect(bloomed ? 1 : 0.15)
+            .scaleEffect(bloomed || reduceMotion ? 1 : 0.15)
             .opacity(bloomed ? 1 : 0)
             .onAppear {
-                withAnimation(.easeOut(duration: 1.6).delay(0.1)) {
+                withAnimation(.easeOut(duration: reduceMotion ? 0.8 : 1.6).delay(0.1)) {
                     bloomed = true
                 }
             }
@@ -286,6 +303,8 @@ struct GlowBloom: View {
 /// Fine rays of gold light turning almost imperceptibly behind the
 /// badge — a monstrance-like halo rather than confetti.
 struct RadiantRays: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     @State private var angle: Angle = .degrees(0)
     @State private var visible = false
 
@@ -310,9 +329,12 @@ struct RadiantRays: View {
         .opacity(visible ? 0.7 : 0)
         .blur(radius: 1)
         .onAppear {
-            withAnimation(.easeIn(duration: 1.8).delay(0.6)) {
+            withAnimation(.easeIn(duration: reduceMotion ? 0.8 : 1.8).delay(reduceMotion ? 0.2 : 0.6)) {
                 visible = true
             }
+            // The slow wheel of rays turns only for those who asked for
+            // motion; still, they are simply light
+            guard !reduceMotion else { return }
             withAnimation(.linear(duration: 75).repeatForever(autoreverses: false)) {
                 angle = .degrees(360)
             }
@@ -531,6 +553,8 @@ struct CompletionHeader: View {
 ///   1.0s  the checkmark arrives; rings of light resonate outward
 ///   1.2s  the title emerges from light (blur) into focus
 struct CompletionBadge: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
 
     /// Circle stroke progress (0 → 1 draws it closed)
     @State private var circleProgress: CGFloat = 0
@@ -581,10 +605,17 @@ struct CompletionBadge: View {
                     .foregroundColor(AppColors.gold)
             }
             .opacity(showTitle ? 1 : 0)
-            .blur(radius: showTitle ? 0 : 8)
-            .offset(y: showTitle ? 0 : 10)
+            .blur(radius: showTitle || reduceMotion ? 0 : 8)
+            .offset(y: showTitle || reduceMotion ? 0 : 10)
         }
         .onAppear {
+            if reduceMotion {
+                // The same three beats, closer together, each a plain fade
+                withAnimation(.easeInOut(duration: 0.5).delay(0.1)) { circleProgress = 1 }
+                withAnimation(Motion.crossfade.delay(0.4)) { showCheck = true }
+                withAnimation(Motion.crossfade.delay(0.5)) { showTitle = true }
+                return
+            }
             withAnimation(.easeInOut(duration: 0.9).delay(0.2)) {
                 circleProgress = 1
             }
@@ -660,6 +691,10 @@ struct CompletionQuoteCard: View {
 // MARK: - Preview
 
 #Preview {
-    PrayerCompletionView(meditationSet: MockDataService.meditationSet(for: .joyful))
+    PrayerCompletionView(completed: CompletedPrayer(
+        category: .joyful,
+        devotionName: MockDataService.meditationSet(for: .joyful).name,
+        durationSeconds: 900
+    ))
         .environment(AppRouter())
 }

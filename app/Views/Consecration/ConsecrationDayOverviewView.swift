@@ -508,7 +508,7 @@ struct ConsecrationDayOverviewView: View {
                     if index > 0 {
                         Rectangle()
                             .fill(AppColors.gold.opacity(0.15))
-                            .frame(height: 0.5)
+                            .frame(height: AppLine.hairline)
                     }
                     prayerRow(english: row.english, latin: row.latin, at: index)
                 }
@@ -887,7 +887,7 @@ private struct JourneyPhaseRow: View {
         VStack(alignment: .leading, spacing: 0) {
             Rectangle()
                 .fill(AppColors.gold.opacity(0.15))
-                .frame(height: 0.5)
+                .frame(height: AppLine.hairline)
 
             Button(action: onToggle) {
                 VStack(alignment: .leading, spacing: 5) {
@@ -974,7 +974,7 @@ private struct JourneyPhaseRow: View {
                     if isToday {
                         Circle().strokeBorder(AppColors.goldLight, lineWidth: 1)
                     } else if !isDone {
-                        Circle().strokeBorder(AppColors.gold.opacity(0.25), lineWidth: 0.5)
+                        Circle().strokeBorder(AppColors.gold.opacity(0.25), lineWidth: AppLine.hairline)
                     }
                 }
                 // The day being read carries a ring outside its own edge

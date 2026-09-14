@@ -294,11 +294,13 @@ struct LibraryChapterReaderView: View {
                 LibraryTextOptionsSheet()
                     .presentationDetents([.height(360)])
                     .presentationDragIndicator(.visible)
+                    .presentationBackground(AppColors.background)
 
             case .player:
                 LibraryPlayerSheet(session: session)
                     .presentationDetents([.height(430)])
                     .presentationDragIndicator(.visible)
+                    .presentationBackground(AppColors.background)
 
             case .keep(_, let passage):
                 LibraryKeepSheet(
@@ -314,11 +316,13 @@ struct LibraryChapterReaderView: View {
                 )
                 .presentationDetents([.height(520), .large])
                 .presentationDragIndicator(.visible)
+                .presentationBackground(AppColors.background)
 
             case .footnote(let number, let text):
                 LibraryFootnoteSheet(number: number, text: text)
                     .presentationDetents([.height(280)])
                     .presentationDragIndicator(.visible)
+                    .presentationBackground(AppColors.background)
 
             case .share(_, let passage):
                 PassageShareSheet(
@@ -329,6 +333,7 @@ struct LibraryChapterReaderView: View {
                 )
                 .presentationDetents([.height(560), .large])
                 .presentationDragIndicator(.visible)
+                .presentationBackground(AppColors.background)
             }
         }
     }

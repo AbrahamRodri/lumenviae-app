@@ -133,6 +133,7 @@ struct OnboardingView: View {
         }
         .sheet(isPresented: $showMethodsSheet) {
             RosaryMethodsView()
+                .presentationBackground(AppColors.background)
         }
     }
 

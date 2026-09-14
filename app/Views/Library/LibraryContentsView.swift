@@ -417,7 +417,7 @@ struct LibraryChapterRow: View {
             .overlay(
                 Capsule().strokeBorder(
                     AppColors.gold.opacity(sounding ? 0.7 : 0.4),
-                    lineWidth: 0.5
+                    lineWidth: AppLine.hairline
                 )
             )
             // A 44-point target without a 44-point row: the chip's hit
@@ -557,7 +557,7 @@ struct LibraryContentsSheet: View {
 
             Rectangle()
                 .fill(AppColors.gold.opacity(0.2))
-                .frame(height: 0.5)
+                .frame(height: AppLine.hairline)
                 .padding(.top, 4)
         }
         .padding(.bottom, 4)
@@ -594,7 +594,7 @@ struct LibraryContentsSheet: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 10)
-                .strokeBorder(AppColors.gold.opacity(0.18), lineWidth: 0.5)
+                .strokeBorder(AppColors.gold.opacity(0.18), lineWidth: AppLine.hairline)
         )
     }
 
@@ -623,7 +623,7 @@ struct LibraryContentsSheet: View {
 
             Rectangle()
                 .fill(AppColors.gold.opacity(0.2))
-                .frame(height: 0.5)
+                .frame(height: AppLine.hairline)
                 .padding(.top, 10)
         }
     }

@@ -152,6 +152,25 @@ final class ThemeManager {
     }
 }
 
+// MARK: - AppLine
+
+/// The app's line weights.
+enum AppLine {
+
+    /// A hairline: two device pixels, whatever the screen's scale.
+    ///
+    /// The app drew its rules and card borders at half a point, which
+    /// on a 3× screen is a pixel and a half and can never sit on the
+    /// pixel grid — it straddles two rows at half strength, and swells
+    /// wherever a rounded corner's curve flattens into the edge, so a
+    /// card's border read thick at its corners and faint along its
+    /// sides, and a rule read as a smear. Two whole pixels are crisp
+    /// and the same weight end to end, at about the same darkness.
+    static var hairline: CGFloat {
+        2 / max(UITraitCollection.current.displayScale, 1)
+    }
+}
+
 // MARK: - AppColors
 
 /// Theme-aware color accessors. Call sites keep the familiar

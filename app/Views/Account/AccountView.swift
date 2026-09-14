@@ -54,11 +54,17 @@ struct AccountView: View {
                             Divider()
                                 .background(AppColors.gold.opacity(0.2))
 
+                            // The beads on the meditation's player are a
+                            // way of praying, not a requirement: off, the
+                            // player moves a decade at a time for a hand
+                            // that keeps its own count
                             ToggleRow(
-                                icon: "ch-bible",
-                                title: "Scriptural Rosary",
-                                subtitle: "A verse of Scripture with every bead",
-                                isOn: Bindable(userSettings).scripturalRosaryEnabled
+                                icon: "ch-rosary",
+                                title: "Pray on the Beads",
+                                subtitle: userSettings.prayOnBeads
+                                    ? "Swipe through each Hail Mary; the mystery turns on its own"
+                                    : "Move a mystery at a time, counting on your own rosary",
+                                isOn: Bindable(userSettings).prayOnBeads
                             )
                         }
                     }
@@ -163,7 +169,8 @@ struct AccountView: View {
                                 showIntentionPicker = true
                             }
                         }
-                        .animation(.easeInOut(duration: 0.2), value: userSettings.remindersEnabled)
+                        .animation(Motion.crossfade, value: userSettings.remindersEnabled)
+                        .animation(Motion.crossfade, value: userSettings.notificationAuthorizationDenied)
                     }
                     .padding(.top, 24)
 
@@ -200,6 +207,7 @@ struct AccountView: View {
         .sheet(isPresented: $showRuleEditor) {
             RuleEditorSheet()
                 .environment(userSettings)
+                .presentationBackground(AppColors.background)
         }
         .sheet(isPresented: $showIntentionPicker) {
             PrayerIntentionSheet()
@@ -251,11 +259,11 @@ private struct ThemeRow: View {
                 HStack(spacing: -6) {
                     Circle()
                         .fill(theme.palette.background)
-                        .overlay(Circle().strokeBorder(AppColors.gold.opacity(0.5), lineWidth: 0.5))
+                        .overlay(Circle().strokeBorder(AppColors.gold.opacity(0.5), lineWidth: AppLine.hairline))
                         .frame(width: 20, height: 20)
                     Circle()
                         .fill(theme.palette.card)
-                        .overlay(Circle().strokeBorder(AppColors.gold.opacity(0.3), lineWidth: 0.5))
+                        .overlay(Circle().strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline))
                         .frame(width: 20, height: 20)
                     Circle()
                         .fill(theme.palette.gold)
@@ -355,7 +363,7 @@ struct AppIconPickerRows: View {
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                             .overlay(
                                 RoundedRectangle(cornerRadius: 10)
-                                    .strokeBorder(AppColors.gold.opacity(0.4), lineWidth: 0.5)
+                                    .strokeBorder(AppColors.gold.opacity(0.4), lineWidth: AppLine.hairline)
                             )
 
                         VStack(alignment: .leading, spacing: 2) {
@@ -400,14 +408,14 @@ struct AppIconPickerRows: View {
         guard selection != option.alternateName else { return }
         let previous = selection
 
-        withAnimation(.easeOut(duration: 0.25)) {
+        withAnimation(Motion.settle) {
             selection = option.alternateName
         }
 
         UIApplication.shared.setAlternateIconName(option.alternateName) { error in
             if error != nil {
                 DispatchQueue.main.async {
-                    withAnimation { selection = previous }
+                    withAnimation(Motion.settle) { selection = previous }
                 }
             }
         }
@@ -477,7 +485,7 @@ struct AccountSection<Content: View>: View {
                 .clipShape(RoundedRectangle(cornerRadius: 16))
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)
-                        .strokeBorder(AppColors.gold.opacity(0.24), lineWidth: 0.5)
+                        .strokeBorder(AppColors.gold.opacity(0.24), lineWidth: AppLine.hairline)
                 )
         }
         .padding(.horizontal, 20)
@@ -492,6 +500,16 @@ struct OfflineContentRows: View {
 
     private var service = OfflineContentService.shared
 
+    /// Which of the four the rows are in, ignoring the live count
+    private static func stage(of state: OfflineContentService.State) -> Int {
+        switch state {
+        case .idle: return 0
+        case .downloading: return 1
+        case .downloaded: return 2
+        case .failed: return 3
+        }
+    }
+
     @State private var showRemoveConfirm = false
 
     private static let byteFormatter: ByteCountFormatter = {
@@ -501,20 +519,25 @@ struct OfflineContentRows: View {
     }()
 
     var body: some View {
-        VStack(spacing: 0) {
+        // One slot for the four states, so idle → downloading → available
+        // crossfade over one another rather than the rows being torn
+        // down and rebuilt around a live count
+        ZStack(alignment: .top) {
             switch service.state {
             case .idle:
-                ActionRow(
-                    icon: "ph-download-simple",
-                    title: "Download for Offline",
-                    subtitle: "Every meditation and audio file, ready without a connection"
-                ) {
-                    Task { await service.downloadAll() }
-                }
+                VStack(spacing: 0) {
+                    ActionRow(
+                        icon: "ph-download-simple",
+                        title: "Download for Offline",
+                        subtitle: "Every meditation and audio file, ready without a connection"
+                    ) {
+                        Task { await service.downloadAll() }
+                    }
 
-                // Leftover files with no manifest should still be removable
-                if service.hasContentOnDisk {
-                    removeRow
+                    // Leftover files with no manifest should still be removable
+                    if service.hasContentOnDisk {
+                        removeRow
+                    }
                 }
 
             case .downloading(let stage, let completed, let total):
@@ -539,6 +562,8 @@ struct OfflineContentRows: View {
                         .font(AppFonts.headlineFont(15))
                         .foregroundColor(AppColors.gold)
                         .monospacedDigit()
+                        .contentTransition(.numericText())
+                        .animation(Motion.crossfade, value: completed)
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 14)
@@ -619,6 +644,7 @@ struct OfflineContentRows: View {
                 }
             }
         }
+        .animation(Motion.crossfade, value: Self.stage(of: service.state))
         .confirmationDialog(
             "Remove offline downloads?",
             isPresented: $showRemoveConfirm,
