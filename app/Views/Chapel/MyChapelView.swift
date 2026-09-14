@@ -119,51 +119,58 @@ struct MyChapelView: View {
 
             halo
 
-            ScrollViewReader { proxy in
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: 30) {
-                        dayStrip
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 30) {
+                    dayStrip
 
-                        focusBlock(acts: acts, next: next, scrollProxy: proxy)
+                    focusBlock(acts: acts, next: next)
 
-                        OrnamentDivider()
-                            .padding(.horizontal, 28)
-                            .padding(.top, -4)
+                    OrnamentDivider()
+                        .padding(.horizontal, 28)
+                        .padding(.top, -4)
 
-                        if !arranging && !settings.chapelCoached {
-                            coachRibbon
-                        }
-
-                        grid(acts: acts)
-                            .padding(.horizontal, 20)
-
-                        if !arranging {
-                            footControl
-                        }
+                    if !arranging && !settings.chapelCoached {
+                        coachRibbon
+                            .transition(.opacity.combined(with: .scale(scale: 0.96)))
                     }
-                    .padding(.top, 12)
-                    .padding(.bottom, 190)
-                    // Press and hold the page itself. Behind the
-                    // content, not over it: as a `simultaneousGesture`
-                    // on the ScrollView this recognized *alongside*
-                    // every control, so holding "Begin the Rosary" for
-                    // half a second both entered arrange mode and
-                    // started a Rosary. A control now wins its own
-                    // touch, and only the page between them arranges.
-                    .background {
-                        Color.clear
-                            .contentShape(Rectangle())
-                            .onLongPressGesture(minimumDuration: 0.45, maximumDistance: 8) {
-                                enterArrange()
-                            }
+
+                    grid(acts: acts)
+                        .padding(.horizontal, 20)
+
+                    if !arranging {
+                        footControl
+                            .transition(.opacity.combined(with: .scale(scale: 0.96)))
                     }
                 }
-                // A tab root: no Back capsule to clear, so no inset — the
-                // day strip keeps its place at the top. The dissolve is
-                // only so a scrolled ledger row stops colliding with the
-                // clock and the battery on its way off the page.
-                .topChromeFade(height: 40, inset: 0)
+                .padding(.bottom, 190)
+                // Press and hold the page itself. Behind the
+                // content, not over it: as a `simultaneousGesture`
+                // on the ScrollView this recognized *alongside*
+                // every control, so holding the Rosary's gold act for
+                // half a second both entered arrange mode and
+                // started a Rosary. A control now wins its own
+                // touch, and only the page between them arranges.
+                .background {
+                    Color.clear
+                        .contentShape(Rectangle())
+                        .onLongPressGesture(minimumDuration: 0.45, maximumDistance: 8) {
+                            enterArrange()
+                        }
+                }
             }
+            // The dissolve is so a scrolled ledger row stops colliding
+            // with the clock and the battery on its way off the page —
+            // but it takes whatever sits in it, and with no inset the
+            // day strip came to rest *inside* the band and read at
+            // about seven-tenths opacity before anyone had scrolled. A
+            // tab root has no Back capsule to clear, which is why this
+            // once passed 0; the band is there either way, so the strip
+            // is held clear of it like the first line on every other
+            // page. Shallower than a pushed page's 48, because there is
+            // no capsule to cover: 32 is enough to dissolve a row under
+            // the clock, and every point beyond it is dead room above
+            // the day.
+            .topChromeFade(height: 32)
 
             if arranging {
                 trayOverlay
@@ -200,6 +207,7 @@ struct MyChapelView: View {
         }
         .sheet(isPresented: $showRuleEditor) {
             RuleEditorSheet()
+                .presentationBackground(AppColors.background)
         }
     }
 
@@ -240,26 +248,35 @@ struct MyChapelView: View {
 
     // MARK: - Day strip
 
-    /// The liturgical day, marked with the day's colour, and the door to
-    /// Settings. Fixed — never arrangeable.
+    /// The liturgical day, marked with the day's colour. Fixed — never
+    /// arrangeable — and carrying no chrome of its own.
     private var dayStrip: some View {
         HStack(alignment: .center, spacing: 12) {
-            HStack(spacing: 9) {
+            HStack(alignment: .firstTextBaseline, spacing: 9) {
                 Rectangle()
                     .fill(today.vestment?.swatch ?? AppColors.gold.opacity(0.45))
                     .frame(width: 7, height: 7)
                     .rotationEffect(.degrees(45))
+                    // Sat on the first line's baseline, so a wrapped
+                    // feast keeps the diamond beside its opening word
+                    .alignmentGuide(.firstTextBaseline) { $0[.bottom] - 1 }
                     .accessibilityHidden(true)
 
                 // Tracked Cinzel resists compression, and a long feast
                 // ("Beheading of St. John the Baptist") widened the whole
                 // page — the frame holds the line to the room it has.
+                // Held to two lines rather than one: the strip's whole
+                // job is to read the day, and "Nativity of the Blessed
+                // Virgin Ma…" does not read it. A feast that overruns
+                // wraps at a word instead.
                 Text(dayLine.uppercased())
                     .font(AppFonts.labelFont(9))
                     .tracking(2.5)
+                    .lineSpacing(4)
                     .foregroundColor(AppColors.gold.opacity(0.75))
-                    .lineLimit(1)
+                    .lineLimit(2)
                     .truncationMode(.tail)
+                    .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
 
@@ -269,7 +286,8 @@ struct MyChapelView: View {
             // app-level chrome and now live in the home masthead, where
             // a first-time user actually looks for them; this strip is
             // left to read the liturgical day, which is its whole job.
-            // The page's foot still names both in words.
+            // The foot named both in words for a while as well, and that
+            // duplicate is gone too — the masthead is the one door.
         }
         .frame(minHeight: 44)
         .padding(.horizontal, 20)
@@ -307,7 +325,7 @@ struct MyChapelView: View {
     private func isManual(_ item: PrayerShortcut) -> Bool {
         switch item {
         case .mass, .office, .chooseMeditation: return true
-        case .todaysRosary, .sevenSorrows, .consecration: return false
+        case .todaysRosary, .sevenSorrows, .scripturalRosary, .consecration: return false
         }
     }
 
@@ -321,6 +339,13 @@ struct MyChapelView: View {
         case .sevenSorrows:
             return historyService?.sessions(on: Date())
                 .contains { $0.category == .sevenSorrows } ?? false
+
+        case .scripturalRosary:
+            // Its own row, by name: a Rosary prayed with a meditation
+            // does not offer this one, though this one counts as the
+            // day's Rosary above
+            return historyService?.sessions(on: Date())
+                .contains { $0.meditationType == ScripturalRosaryViewModel.devotionName } ?? false
 
         case .consecration:
             guard let progress = activeConsecration else { return false }
@@ -355,12 +380,10 @@ struct MyChapelView: View {
 
     /// Everything the focus block says, derived from the first unoffered
     /// act — never stored.
-    private func focusBlock(
-        acts: [ChapelAct],
-        next: ChapelAct?,
-        scrollProxy: ScrollViewProxy
-    ) -> some View {
+    private func focusBlock(acts: [ChapelAct], next: ChapelAct?) -> some View {
         let ruleEmpty = acts.isEmpty
+
+        let title = focusTitle(acts: acts, next: next)
 
         return VStack(spacing: 13) {
             Text(focusKicker(acts: acts, next: next).uppercased())
@@ -371,13 +394,15 @@ struct MyChapelView: View {
                         ? AppColors.gold
                         : AppColors.gold.opacity(0.7)
                 )
+                .contentTransition(.opacity)
 
-            Text(focusTitle(acts: acts, next: next))
+            Text(title)
                 .font(AppFonts.headlineFont(38))
                 .foregroundColor(AppColors.cream)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
                 .minimumScaleFactor(0.7)
+                .contentTransition(.opacity)
 
             Text(focusDetail(acts: acts, next: next))
                 .font(AppFonts.readingItalicFont(15.5))
@@ -386,36 +411,16 @@ struct MyChapelView: View {
                 .lineSpacing(5)
                 .frame(maxWidth: 272)
                 .fixedSize(horizontal: false, vertical: true)
+                .contentTransition(.opacity)
 
             GoldCTAButton(title: focusAction(acts: acts, next: next), fullWidth: false) {
                 performFocusAction(acts: acts, next: next)
             }
             .padding(.top, 8)
-
-            if !ruleEmpty, ruleTileOnPage {
-                Button {
-                    withAnimation(.easeOut(duration: 0.45)) {
-                        scrollProxy.scrollTo(
-                            "tile-\(ChapelTile.rule.rawValue)",
-                            anchor: UnitPoint(x: 0.5, y: 0.08)
-                        )
-                    }
-                } label: {
-                    HStack(spacing: 8) {
-                        Text("CHOOSE ANOTHER")
-                            .font(AppFonts.labelFont(9.5))
-                            .tracking(2)
-                        AppIcon("ph-caret-down", size: 9)
-                    }
-                    .foregroundColor(AppColors.gold.opacity(0.75))
-                    .padding(.top, 6)
-                    .frame(minHeight: 44)
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Choose another. Shows the day's ledger.")
-            }
         }
+        // An act offered, the next one takes the block: the page's one
+        // real change of state is a crossfade, never a hard swap
+        .animation(Motion.crossfade, value: title)
         .padding(.horizontal, 28)
         .padding(.top, -18)
         // While arranging, the page is being rearranged, not read. The
@@ -423,10 +428,6 @@ struct MyChapelView: View {
         // gold act is the largest target on the page and would otherwise
         // navigate away mid-arrange.
         .allowsHitTesting(!arranging)
-    }
-
-    private var ruleTileOnPage: Bool {
-        settings.chapelLayout.contains { $0.tile == .rule && $0.on }
     }
 
     private func focusKicker(acts: [ChapelAct], next: ChapelAct?) -> String {
@@ -451,6 +452,8 @@ struct MyChapelView: View {
             return "The \(ScheduleService.categoryForToday().devotionTitle), with meditations drawn from the saints."
         case .sevenSorrows:
             return "The chaplet of Our Lady's seven sorrows, prayed on her own beads."
+        case .scripturalRosary:
+            return "The \(ScheduleService.categoryForToday().devotionTitle), with a verse of the Gospel on every bead."
         case .mass:
             return "The propers of the day, from the 1962 Missal, with the Ordinary in its place."
         case .office:
@@ -519,7 +522,7 @@ struct MyChapelView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 14)
-                .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: 0.5)
+                .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline)
         )
         .padding(.horizontal, 20)
         .padding(.top, -6)
@@ -566,7 +569,9 @@ struct MyChapelView: View {
 
     private func grid(acts: [ChapelAct]) -> some View {
         let entries = gridEntries
-        return ChapelGridLayout(columnGap: 16, rowGap: 30) {
+        // The frameless tiles have no edge of their own, so the gap is
+        // the only thing that says where one ends and the next begins.
+        return ChapelGridLayout(columnGap: 16, rowGap: 46) {
             ForEach(Array(entries.enumerated()), id: \.element.id) { index, placement in
                 cell(placement, index: index, acts: acts)
                     .chapelSpan(placement.span)
@@ -689,21 +694,6 @@ struct MyChapelView: View {
                 .foregroundColor(AppColors.textSecondary)
                 .padding(.top, -8)
 
-            // Settings and About are reached from the day strip's two
-            // glyphs, which name themselves to VoiceOver and to nobody
-            // else. These are the same two doors, in words, where a
-            // colophon would carry them.
-            HStack(spacing: 10) {
-                footLink("Settings") { router.navigateToSettings() }
-
-                Text("·")
-                    .font(AppFonts.labelFont(10))
-                    .foregroundColor(AppColors.textSecondary.opacity(0.6))
-
-                footLink("About") { router.push(.about) }
-            }
-            .padding(.top, 10)
-
             // The page's imprint — the version at the foot of the
             // user's own page, where a flyleaf carries its printing.
             VStack(spacing: 3) {
@@ -720,19 +710,6 @@ struct MyChapelView: View {
         }
         .padding(.horizontal, 40)
         .padding(.top, -6)
-    }
-
-    /// One named door in the foot, set in the page's own small-caps.
-    private func footLink(_ title: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Text(title.uppercased())
-                .font(AppFonts.labelFont(10))
-                .tracking(2)
-                .foregroundColor(AppColors.gold.opacity(0.75))
-                .frame(minHeight: 44)
-                .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
     }
 
     // MARK: - Arrange mode

@@ -17,7 +17,22 @@ import Foundation
 
 /// A snapshot of an unfinished Rosary session.
 struct InProgressPrayer: Codable, Equatable {
-    /// Meditation set ID (negative = bundled local set, 0 = built-in fallback)
+
+    /// Which prayer the snapshot belongs to. Optional because snapshots
+    /// written before the Scriptural Rosary existed carry no kind, and
+    /// every one of them was a meditation set.
+    enum Kind: String, Codable {
+        case meditationSet = "meditation_set"
+        case scripturalRosary = "scriptural_rosary"
+    }
+
+    let kind: Kind?
+
+    /// True for a Scriptural Rosary, which resumes on its own screen
+    var isScripturalRosary: Bool { kind == .scripturalRosary }
+
+    /// Meditation set ID (negative = bundled local set, 0 = built-in
+    /// fallback). Meaningless for a Scriptural Rosary, which has no set.
     let meditationSetId: Int
 
     /// Set name for display ("St. Louis de Montfort")
@@ -28,6 +43,12 @@ struct InProgressPrayer: Codable, Equatable {
 
     /// 0-based index of the mystery the user was on
     let mysteryIndex: Int
+
+    /// The bead of that decade the hand was on — 0 the Our Father, then
+    /// each Hail Mary, then the Glory Be. Optional because snapshots
+    /// written before the beads were walked carry none, and every one
+    /// of them began its decade on the Our Father.
+    let beadIndex: Int?
 
     /// When the devotion originally began (display only — never used
     /// for duration, which would count interruption gaps as prayer)
@@ -74,18 +95,22 @@ final class PrayerResumeService {
 
     /// Records the user's current position; called as the prayer advances.
     func save(
+        kind: InProgressPrayer.Kind = .meditationSet,
         setId: Int,
         setName: String,
         category: String,
         mysteryIndex: Int,
+        beadIndex: Int = 0,
         startedAt: Date,
         accumulatedSeconds: Int
     ) {
         let snapshot = InProgressPrayer(
+            kind: kind,
             meditationSetId: setId,
             setName: setName,
             category: category,
             mysteryIndex: mysteryIndex,
+            beadIndex: beadIndex,
             startedAt: startedAt,
             accumulatedSeconds: accumulatedSeconds,
             savedAt: Date()

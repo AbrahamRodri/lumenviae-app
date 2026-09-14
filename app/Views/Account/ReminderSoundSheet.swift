@@ -74,7 +74,7 @@ struct ReminderSoundSheet: View {
                     .cornerRadius(16)
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
-                            .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: 0.5)
+                            .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: AppLine.hairline)
                     )
                     .padding(.horizontal, 20)
 
@@ -88,6 +88,7 @@ struct ReminderSoundSheet: View {
         }
         .presentationDetents([.medium])
         .presentationDragIndicator(.hidden)
+        .presentationBackground(AppColors.background)
         .onDisappear {
             player?.stop()
         }

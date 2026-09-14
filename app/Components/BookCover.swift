@@ -125,7 +125,7 @@ struct BookCover: View {
         .clipShape(RoundedRectangle(cornerRadius: 6))
         .overlay(
             RoundedRectangle(cornerRadius: 6)
-                .strokeBorder(AppColors.gold.opacity(0.25), lineWidth: 0.5)
+                .strokeBorder(AppColors.gold.opacity(0.25), lineWidth: AppLine.hairline)
         )
         .overlay(alignment: .topTrailing) {
             if hasRibbon {

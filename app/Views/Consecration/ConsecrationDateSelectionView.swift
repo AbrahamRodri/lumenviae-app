@@ -157,7 +157,7 @@ struct ConsecrationDateSelectionView: View {
         let isSelected = selectedFeast?.id == feast.id
 
         return Button {
-            withAnimation(.easeInOut(duration: 0.15)) {
+            withAnimation(Motion.settle) {
                 selectedFeast = feast
             }
         } label: {
@@ -371,6 +371,7 @@ struct ConsecrationDateSelectionView: View {
         }
         .presentationDetents([.height(440)])
         .presentationDragIndicator(.visible)
+        .presentationBackground(AppColors.background)
     }
 
     /// The date Day 34 lands on when today counts as `day`.

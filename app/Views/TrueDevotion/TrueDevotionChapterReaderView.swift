@@ -189,6 +189,7 @@ struct TrueDevotionChapterReaderView: View {
                 LibraryTextOptionsSheet()
                     .presentationDetents([.height(360)])
                     .presentationDragIndicator(.visible)
+                    .presentationBackground(AppColors.background)
 
             case .keep(let passage):
                 LibraryKeepSheet(
@@ -204,6 +205,7 @@ struct TrueDevotionChapterReaderView: View {
                 )
                 .presentationDetents([.height(520), .large])
                 .presentationDragIndicator(.visible)
+                .presentationBackground(AppColors.background)
 
             case .share(let passage):
                 PassageShareSheet(
@@ -214,6 +216,7 @@ struct TrueDevotionChapterReaderView: View {
                 )
                 .presentationDetents([.height(560), .large])
                 .presentationDragIndicator(.visible)
+                .presentationBackground(AppColors.background)
             }
         }
     }
@@ -728,7 +731,7 @@ struct TrueDevotionContentsSheet: View {
 
             Rectangle()
                 .fill(AppColors.gold.opacity(0.2))
-                .frame(height: 0.5)
+                .frame(height: AppLine.hairline)
         }
         .padding(.bottom, 4)
     }
@@ -754,7 +757,7 @@ struct TrueDevotionContentsSheet: View {
 
             Rectangle()
                 .fill(AppColors.gold.opacity(0.2))
-                .frame(height: 0.5)
+                .frame(height: AppLine.hairline)
                 .padding(.top, 10)
         }
     }

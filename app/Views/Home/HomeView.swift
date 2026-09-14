@@ -43,11 +43,11 @@ struct HomeView: View {
                         // Starts clear of the dissolve below the header
                         DayPrayerLabel(label: viewModel.dayLabel)
                             .padding(.top, 30)
-                            .devotionalEntrance(delay: 0.06)
+                            .devotionalEntrance(delay: 0.04)
 
                     featuredMysterySection
                         .padding(.top, 16)
-                        .devotionalEntrance(delay: 0.08)
+                        .devotionalEntrance(delay: 0.10)
 
                     SacredMysteriesSection(
                         categories: viewModel.allCategories,
@@ -67,7 +67,7 @@ struct HomeView: View {
                     TodaysPrayerSection(today: todayInChurch)
                     .padding(.horizontal, 20)
                     .padding(.top, 44)
-                    .devotionalEntrance(delay: 0.24)
+                    .devotionalEntrance(delay: 0.22)
 
                     // The books, after the Church's own day and before
                     // the colophon: what is being read is a quieter
@@ -75,7 +75,7 @@ struct HomeView: View {
                     // nearer the foot of the page than the head.
                     ReadingShelfSection()
                         .padding(.top, 40)
-                        .devotionalEntrance(delay: 0.26)
+                        .devotionalEntrance(delay: 0.34)
 
                     // The quote closes the page — it is set as a
                     // colophon, and a page ends on its colophon, not on
@@ -89,7 +89,7 @@ struct HomeView: View {
                     .padding(.horizontal, 20)
                     .padding(.top, 18)
                     .padding(.bottom, 120) // Clears the tab bar and its fade
-                    .devotionalEntrance(delay: 0.28)
+                    .devotionalEntrance(delay: 0.34)
                     }
                 }
                 // Content dissolves as it rises toward the header instead of
@@ -175,6 +175,20 @@ struct HomeView: View {
         guard let session = PrayerResumeService.shared.inProgress,
               !isResuming, router.path.isEmpty else { return }
 
+        // The Scriptural Rosary is bundled whole: nothing to load, and
+        // its own screen to return to
+        if session.isScripturalRosary {
+            guard let category = MysteryCategory(fromAPIString: session.category) else { return }
+            router.push(.scripturalRosaryPrayer(ScripturalRosaryLaunch(
+                category: category,
+                startIndex: session.mysteryIndex,
+                startBead: session.beadIndex ?? 0,
+                priorSeconds: session.accumulatedSeconds,
+                startedAt: session.startedAt
+            )))
+            return
+        }
+
         isResuming = true
         resumeError = nil
         let generation = router.generation
@@ -197,24 +211,26 @@ struct HomeView: View {
             router.navigateToPrayerSession(
                 meditationSet: set,
                 startAtIndex: session.mysteryIndex,
+                startAtBead: session.beadIndex ?? 0,
                 priorSeconds: session.accumulatedSeconds,
                 startedAt: session.startedAt
             )
         }
     }
 
-    /// The featured mystery card - data loaded instantly from local storage.
+    /// The day's mysteries, set large — the schedule is computed on
+    /// device, so there is nothing to wait for.
     @ViewBuilder
     private var featuredMysterySection: some View {
-        if let mystery = viewModel.featuredMystery {
-            FeaturedMysteryCard(
-                category: viewModel.todaysCategory,
-                mystery: mystery,
-                onBeginPrayer: {
-                    router.navigateToMeditationSelection(category: viewModel.todaysCategory)
-                }
-            )
-        }
+        FeaturedMysteryCard(
+            category: viewModel.todaysCategory,
+            onBeginPrayer: {
+                router.navigateToMeditationSelection(category: viewModel.todaysCategory)
+            },
+            onPrayInScripture: {
+                router.push(.scripturalRosary)
+            }
+        )
     }
 }
 
@@ -259,14 +275,17 @@ struct ResumePrayerCard: View {
                 Text(errorMessage)
                     .font(AppFonts.bodyFont(12))
                     .foregroundColor(AppColors.textSecondary)
+                    .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
+        .animation(Motion.crossfade, value: isLoading)
+        .animation(Motion.crossfade, value: errorMessage)
     }
 
     private var continueButton: some View {
         Button(action: onContinue) {
                 HStack(spacing: 14) {
-                    AppIcon("ch-rosary", size: 26)
+                    AppIcon(session.isScripturalRosary ? "ch-bible" : "ch-rosary", size: 26)
                         .foregroundColor(AppColors.gold)
 
                     VStack(alignment: .leading, spacing: 3) {
@@ -289,14 +308,20 @@ struct ResumePrayerCard: View {
 
                     Spacer()
 
-                    if isLoading {
-                        ProgressView()
-                            .tint(AppColors.gold)
-                    } else {
-                        AppIcon("ph-play-fill", size: 14)
-                            .foregroundColor(AppColors.background)
-                            .padding(10)
-                            .background(Circle().fill(AppColors.goldGradient))
+                    // The play disc gives way to the spinner by a
+                    // crossfade, not a swap, while the set loads
+                    ZStack {
+                        if isLoading {
+                            ProgressView()
+                                .tint(AppColors.gold)
+                                .transition(.opacity.combined(with: .scale(scale: 0.7)))
+                        } else {
+                            AppIcon("ph-play-fill", size: 14)
+                                .foregroundColor(AppColors.background)
+                                .padding(10)
+                                .background(Circle().fill(AppColors.goldGradient))
+                                .transition(.opacity.combined(with: .scale(scale: 0.7)))
+                        }
                     }
                 }
                 // The app's card shell — it floats, so it keeps its
@@ -364,89 +389,112 @@ struct DayPrayerLabel: View {
 
 // MARK: - FeaturedMysteryCard
 
-/// A large, prominent card showcasing today's featured mystery.
+/// The day's mysteries, set large in the arch: a kicker saying they are
+/// today's, the devotion's name, and the two ways to pray it.
+///
+/// The card used to headline the *first* mystery of the five — "The
+/// Annunciation", its passage beneath — which made one decade the
+/// card's subject when the button prays all of them. It now names the
+/// devotion the button begins. Nothing stands between the title and
+/// the button: the days the mysteries are prayed were tried there and
+/// cut, since the label above the arch already says which day it is.
 ///
 /// Background image fills the card via `.overlay` so it never
-/// affects layout sizing. Text content sits at the bottom over
-/// a gradient scrim for readability.
+/// affects layout sizing.
 ///
 /// ## Layout
 /// ```
 /// ┌─────────────────────────────┐
 /// │                             │
-/// │      [mystery image]        │  ← Full-bleed photo
+/// │      [mystery image]        │  ← Full-bleed painting
 /// │   ╭─────────────────────╮   │
-/// │   │  JOYFUL MYSTERIES   │   │  ← Category badge
+/// │   │  TODAY'S MYSTERIES  │   │  ← Kicker
 /// │   ╰─────────────────────╯   │
 /// │                             │
-/// │     The Annunciation        │  ← Mystery title
-/// │       Luke 1:26-38          │  ← Scripture reference
+/// │  The Sorrowful Mysteries    │  ← The devotion
 /// │                             │
 /// │   ┌───────────────────┐     │
-/// │   │   BEGIN PRAYER    │     │  ← CTA button
+/// │   │ PRAY WITH A MEDIT…│     │  ← The one gold act
 /// │   └───────────────────┘     │
+/// │   THE SCRIPTURAL ROSARY ›   │  ← The other way to pray it
 /// └─────────────────────────────┘
 /// ```
 struct FeaturedMysteryCard: View {
 
     // MARK: - Properties
 
-    /// The mystery category (Joyful, Sorrowful, etc.)
+    /// The day's mystery category (Joyful, Sorrowful, etc.)
     let category: MysteryCategory
-
-    /// The mystery to display (loaded instantly from local data)
-    let mystery: Mystery
 
     /// Action triggered when "Begin Prayer" is tapped
     var onBeginPrayer: () -> Void = {}
+
+    /// The quiet line under it: the same mysteries, prayed a verse to a
+    /// bead — the Scriptural Rosary's door on the home page
+    var onPrayInScripture: () -> Void = {}
 
     // MARK: - Body
 
     var body: some View {
         ArchHero(imageName: category.cardImageName) {
-            HeroBadge("\(category.displayName.uppercased()) MYSTERIES")
-            mysteryTitle
-            scriptureReference
+            HeroBadge("TODAY'S MYSTERIES")
+            devotionTitle
             beginPrayerButton
+            prayInScriptureLink
         }
     }
 
     // MARK: - Subviews
 
-    /// Mystery name
-    private var mysteryTitle: some View {
-        Text(mystery.name)
+    /// The devotion's name — "The Sorrowful Mysteries" — the thing the
+    /// button beneath begins.
+    private var devotionTitle: some View {
+        Text("The \(category.devotionTitle)")
             .font(AppFonts.headlineFont(24))
             .foregroundColor(AppColors.cream)
             .multilineTextAlignment(.center)
             .minimumScaleFactor(0.85)
     }
 
-    /// Scripture reference
-    @ViewBuilder
-    private var scriptureReference: some View {
-        if let reference = mystery.scriptureReference {
-            Text(reference)
-                .font(AppFonts.italicFont(16))
-                .foregroundColor(AppColors.accentSoft)
-                .multilineTextAlignment(.center)
-                .lineSpacing(4)
-                .padding(.horizontal, 8)
-        }
-    }
-
-    /// Primary CTA button — the screen's one filled gold shape
-    /// "Begin the Rosary", the same words the Chapel's focus block uses
-    /// for the same act. Home said "Begin prayer", the Chapel said
-    /// "Begin the Rosary", and the raised medallion says "Pray" — three
-    /// names on two screens for one thing. The medallion keeps "Pray"
-    /// because it is the *configurable* act: a tap runs whatever the user
-    /// chose, a hold opens the tray. This button is today's Rosary and
-    /// nothing else, so it says so.
+    /// Primary CTA button — the screen's one filled gold shape, in the
+    /// same words the Chapel's focus block uses for the same act.
+    ///
+    /// It says what will be on the beads. It read "Begin the Rosary"
+    /// until the Scriptural Rosary's line came to stand under it, and
+    /// then two lines said "Rosary" and neither said how the two
+    /// differed: this one opens the shelf of meditation sets, the line
+    /// beneath opens the Gospel on the beads. Named by the meditation,
+    /// the pair read as two ways of praying the same mysteries. The
+    /// raised medallion still says "Pray", because it is the
+    /// *configurable* act: a tap runs whatever the user chose, a hold
+    /// opens the tray.
     private var beginPrayerButton: some View {
-        GoldCTAButton(title: "Begin the Rosary", action: onBeginPrayer)
+        GoldCTAButton(title: "Pray with a Meditation", action: onBeginPrayer)
             .padding(.horizontal, 20)
             .padding(.top, 8)
+    }
+
+    /// The Scriptural Rosary, offered where the day's mysteries are
+    /// offered. The card already names the passage the mystery is drawn
+    /// from; this is the way to pray that passage a verse to a bead. It
+    /// used to be reachable only from Explore and the Pray tray, and a
+    /// devotion nobody can find from the home page is not a devotion the
+    /// app has. Quiet gold, under the one filled act, never beside it.
+    ///
+    /// Named, not described: an earlier "Or pray it in Scripture" read
+    /// as a footnote to the button above it, and a door should say where
+    /// it goes.
+    private var prayInScriptureLink: some View {
+        QuietGoldButton(
+            title: "The Scriptural Rosary",
+            trailingIcon: "ph-caret-right",
+            size: 10,
+            color: AppColors.gold.opacity(0.85),
+            action: onPrayInScripture
+        )
+        // The button keeps its 44pt target; the stack's rhythm keeps
+        // its own spacing
+        .padding(.vertical, -8)
     }
 
 }

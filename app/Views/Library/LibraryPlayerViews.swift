@@ -283,6 +283,7 @@ struct LibrarySpeedSleepRow: View {
             LibrarySpeedSleepSheet(session: session)
                 .presentationDetents([.height(430)])
                 .presentationDragIndicator(.visible)
+                .presentationBackground(AppColors.background)
         }
     }
 
@@ -343,7 +344,7 @@ struct LibrarySpeedSleepSheet: View {
 
                 Rectangle()
                     .fill(AppColors.gold.opacity(0.2))
-                    .frame(height: 0.5)
+                    .frame(height: AppLine.hairline)
 
                 LibraryTrayRow(
                     title: "At the end of this reading",
@@ -397,7 +398,7 @@ struct LibrarySpeedSleepSheet: View {
                 .overlay(
                     Capsule().strokeBorder(
                         AppColors.gold.opacity(isOn ? 0 : 0.35),
-                        lineWidth: 0.5
+                        lineWidth: AppLine.hairline
                     )
                 )
                 .contentShape(Capsule())
@@ -432,7 +433,7 @@ struct LibraryTraySheet<Content: View>: View {
 
                 Rectangle()
                     .fill(AppColors.gold.opacity(0.2))
-                    .frame(height: 0.5)
+                    .frame(height: AppLine.hairline)
 
                 content
 
@@ -480,7 +481,7 @@ struct LibraryTrayRow: View {
 
             Rectangle()
                 .fill(AppColors.gold.opacity(0.12))
-                .frame(height: 0.5)
+                .frame(height: AppLine.hairline)
         }
         .accessibilityAddTraits(isOn ? [.isSelected] : [])
     }
@@ -553,7 +554,7 @@ struct LibraryMiniPlayer: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .stroke(AppColors.gold.opacity(0.14), lineWidth: 0.5)
+                .stroke(AppColors.gold.opacity(0.14), lineWidth: AppLine.hairline)
         )
         .accessibilityElement(children: .contain)
     }
@@ -622,7 +623,7 @@ struct LibraryPlayerSheet: View {
 
                 Rectangle()
                     .fill(AppColors.gold.opacity(0.15))
-                    .frame(height: 0.5)
+                    .frame(height: AppLine.hairline)
                     .padding(.top, 20)
 
                 LibrarySpeedSleepRow(session: session)

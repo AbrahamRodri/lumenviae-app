@@ -91,6 +91,9 @@ struct GoldCTAButton: View {
             Text(title.uppercased())
                 .font(AppFonts.labelFont(prominence == .page ? 13 : 11))
                 .tracking(prominence == .page ? 2.5 : 2)
+                // A button whose act changes — "Pray" to "Continue" —
+                // crossfades its word rather than swapping it
+                .contentTransition(.opacity)
 
             if let trailingIcon {
                 AppIcon(trailingIcon, size: 11)
@@ -106,6 +109,7 @@ struct GoldCTAButton: View {
         .contentShape(shape)
         .modifier(HaloModifier(color: AppColors.gold, radius: haloRadius, intensity: haloIntensity))
         .opacity(isEnabled ? 1 : 0.35)
+        .animation(Motion.settle, value: isEnabled)
     }
 
     // MARK: - Skin
@@ -156,7 +160,7 @@ struct GoldCTAButton: View {
     private var rim: some View {
         switch fill {
         case .solid:
-            shape.strokeBorder(AppColors.goldLight.opacity(0.6), lineWidth: 0.5)
+            shape.strokeBorder(AppColors.goldLight.opacity(0.6), lineWidth: AppLine.hairline)
         case .votive:
             shape.strokeBorder(AppColors.gold.opacity(0.55), lineWidth: 1)
         case .outline:
@@ -191,6 +195,44 @@ struct GoldCTAButton: View {
         case .solid: return 0.3
         case .votive, .outline, .engraved: return 0.14
         }
+    }
+}
+
+// MARK: - PrayFootScrim
+
+/// The ground under a page-level act fixed at the foot of a scrolling
+/// title page — the set detail's PRAY, the Scriptural Rosary's.
+///
+/// The scrim under the act must have no findable edge. Two things give
+/// one away. A short ramp shows the eye where it starts, so this one
+/// runs the full height of the band in many stops rather than three.
+/// And a scrim tinted with `background` lightens the page it covers —
+/// the app gradient is already running down toward `backgroundDeep` by
+/// the foot of the screen — which reads as a band. Tinting it in
+/// `backgroundDeep` instead only ever deepens, and lands on exactly the
+/// color the page itself ends on.
+struct PrayFootScrim: View {
+
+    var body: some View {
+        LinearGradient(
+            stops: [
+                .init(color: AppColors.backgroundDeep.opacity(0), location: 0),
+                .init(color: AppColors.backgroundDeep.opacity(0.04), location: 0.12),
+                .init(color: AppColors.backgroundDeep.opacity(0.14), location: 0.24),
+                .init(color: AppColors.backgroundDeep.opacity(0.32), location: 0.36),
+                .init(color: AppColors.backgroundDeep.opacity(0.56), location: 0.47),
+                .init(color: AppColors.backgroundDeep.opacity(0.78), location: 0.57),
+                .init(color: AppColors.backgroundDeep.opacity(0.93), location: 0.67),
+                .init(color: AppColors.backgroundDeep, location: 0.78),
+                .init(color: AppColors.backgroundDeep, location: 1)
+            ],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+        .ignoresSafeArea(edges: .bottom)
+        // The fade is ground for the button, not a control: drags that
+        // begin in it must still scroll the page beneath.
+        .allowsHitTesting(false)
     }
 }
 

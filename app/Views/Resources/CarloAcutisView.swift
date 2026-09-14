@@ -329,7 +329,7 @@ struct CarloAcutisView: View {
         .cornerRadius(14)
         .overlay(
             RoundedRectangle(cornerRadius: 14)
-                .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: 0.5)
+                .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: AppLine.hairline)
         )
     }
 
@@ -393,7 +393,7 @@ struct CarloAcutisView: View {
         .cornerRadius(14)
         .overlay(
             RoundedRectangle(cornerRadius: 14)
-                .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: 0.5)
+                .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: AppLine.hairline)
         )
     }
 
@@ -446,7 +446,7 @@ struct CarloAcutisView: View {
                 .cornerRadius(14)
                 .overlay(
                     RoundedRectangle(cornerRadius: 14)
-                        .strokeBorder(AppColors.gold.opacity(0.2), lineWidth: 0.5)
+                        .strokeBorder(AppColors.gold.opacity(0.2), lineWidth: AppLine.hairline)
                 )
                 .overlay(OrnateCornersOverlay(inset: 8, length: 12, opacity: 0.35))
 

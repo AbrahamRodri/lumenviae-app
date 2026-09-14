@@ -145,7 +145,7 @@ struct HowToPrayRosaryView: View {
             .cornerRadius(16)
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: 0.5)
+                    .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: AppLine.hairline)
             )
 
             Text("Tap a step to follow along as you learn — the strand keeps your place.")
@@ -494,7 +494,7 @@ Per eundem Christum Dominum nostrum. Amen.
         .cornerRadius(14)
         .overlay(
             RoundedRectangle(cornerRadius: 14)
-                .strokeBorder(AppColors.gold.opacity(isExpanded ? 0.35 : 0.15), lineWidth: 0.5)
+                .strokeBorder(AppColors.gold.opacity(isExpanded ? 0.35 : 0.15), lineWidth: AppLine.hairline)
         )
     }
 
@@ -733,7 +733,7 @@ Per eundem Christum Dominum nostrum. Amen.
         .cornerRadius(14)
         .overlay(
             RoundedRectangle(cornerRadius: 14)
-                .strokeBorder(AppColors.gold.opacity(isExpanded ? 0.35 : 0.15), lineWidth: 0.5)
+                .strokeBorder(AppColors.gold.opacity(isExpanded ? 0.35 : 0.15), lineWidth: AppLine.hairline)
         )
     }
 
@@ -814,7 +814,7 @@ Per eundem Christum Dominum nostrum. Amen.
         .cornerRadius(14)
         .overlay(
             RoundedRectangle(cornerRadius: 14)
-                .strokeBorder(AppColors.gold.opacity(isExpanded ? 0.35 : 0.15), lineWidth: 0.5)
+                .strokeBorder(AppColors.gold.opacity(isExpanded ? 0.35 : 0.15), lineWidth: AppLine.hairline)
         )
     }
 

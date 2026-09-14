@@ -34,12 +34,15 @@ struct AboutView: View {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
                     masthead
+                        .devotionalEntrance()
 
                     ledger
                         .padding(.top, 30)
+                        .devotionalEntrance(delay: 0.08)
 
                     AccountFooter()
                         .padding(.top, 48)
+                        .devotionalEntrance(delay: 0.16)
 
                     Spacer(minLength: 120)
                 }
@@ -61,12 +64,15 @@ struct AboutView: View {
         }
         .sheet(isPresented: $showOnboarding) {
             OnboardingView(onComplete: { showOnboarding = false })
+                .presentationBackground(AppColors.background)
         }
         .sheet(isPresented: $showAbout) {
             AboutSheet()
+                .presentationBackground(AppColors.background)
         }
         .sheet(isPresented: $showPrivacyPolicy) {
             PrivacyPolicySheet()
+                .presentationBackground(AppColors.background)
         }
         .sheet(isPresented: $showHelpSupport, onDismiss: {
             guard feedbackAfterHelp else { return }
@@ -77,9 +83,11 @@ struct AboutView: View {
                 feedbackAfterHelp = true
                 showHelpSupport = false
             })
+            .presentationBackground(AppColors.background)
         }
         .sheet(isPresented: $showFeedback) {
             FeedbackView()
+                .presentationBackground(AppColors.background)
         }
     }
 

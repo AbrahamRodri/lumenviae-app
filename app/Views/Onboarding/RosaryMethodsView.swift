@@ -63,7 +63,7 @@ struct RosaryMethodsView: View {
             label: "Scriptural",
             icon: "ch-bible",
             title: "The Gospel first",
-            description: "The passage itself, then a few lines of meditation on it.\n\nThis is the shape the Seven Sorrows take, where the Gospel carries the whole of the scene."
+            description: "The passage itself, then a few lines of meditation on it.\n\nThis is the shape the Seven Sorrows take, where the Gospel carries the whole of the scene. For a verse on every bead, the Scriptural Rosary has a page of its own in Explore."
         )
     ]
 
@@ -196,7 +196,7 @@ private struct MethodDetailCard: View {
         .cornerRadius(16)
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: 0.5)
+                .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: AppLine.hairline)
         )
     }
 }

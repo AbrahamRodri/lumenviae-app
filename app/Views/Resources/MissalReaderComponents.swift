@@ -215,7 +215,7 @@ struct MissalSheetChip: View {
                 .background(Capsule().fill(isSelected ? AppColors.gold.opacity(0.1) : Color.clear))
                 .overlay(Capsule().strokeBorder(
                     AppColors.gold.opacity(isSelected ? 0.5 : 0.16),
-                    lineWidth: 0.5
+                    lineWidth: AppLine.hairline
                 ))
                 .contentShape(Capsule())
                 .animation(.timingCurve(0, 0, 0.58, 1, duration: 0.18), value: isSelected)
@@ -401,7 +401,7 @@ struct MissalReadingSheet: View {
         .overlay(alignment: .top) {
             Rectangle()
                 .fill(AppColors.gold.opacity(0.1))
-                .frame(height: 0.5)
+                .frame(height: AppLine.hairline)
         }
         .padding(.top, 4)
     }
@@ -483,7 +483,7 @@ struct MissalIndexSheet: View {
         .overlay(alignment: .bottom) {
             Rectangle()
                 .fill(AppColors.gold.opacity(0.1))
-                .frame(height: 0.5)
+                .frame(height: AppLine.hairline)
         }
         .accessibilityAddTraits(isActive ? .isSelected : [])
     }

@@ -149,13 +149,13 @@ struct OfficeHourView: View {
 
     /// The design system's --ease-out — cubic-bezier(0, 0, 0.58, 1).
     private func anim(_ duration: Double) -> Animation? {
-        reduceMotion ? nil : .timingCurve(0, 0, 0.58, 1, duration: duration)
+        reduceMotion ? nil : Motion.ease(duration)
     }
 
     /// Ease-in-out for travel — the jump to a section leaves as gently
     /// as it arrives.
     private func travelAnim(_ duration: Double) -> Animation? {
-        reduceMotion ? nil : .timingCurve(0.42, 0, 0.58, 1, duration: duration)
+        reduceMotion ? nil : Motion.travel(duration)
     }
 
     // MARK: - Body
@@ -174,6 +174,7 @@ struct OfficeHourView: View {
                 OfficeReadingSheet(preferredBilingual: $preferredBilingual)
                     .presentationDetents([.height(400)])
                     .presentationDragIndicator(.hidden)
+                    .presentationBackground(AppColors.background)
                     .presentationCornerRadius(22)
 
             case .index:
@@ -186,6 +187,7 @@ struct OfficeHourView: View {
                 }
                 .presentationDetents([.height(indexSheetHeight)])
                 .presentationDragIndicator(.hidden)
+                .presentationBackground(AppColors.background)
                 .presentationCornerRadius(22)
             }
         }

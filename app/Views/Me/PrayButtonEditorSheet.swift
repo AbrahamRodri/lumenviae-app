@@ -160,7 +160,7 @@ struct PrayButtonEditorSheet: View {
                     detail: shortcut.subtitle
                 ) {
                     EditorRemoveButton(label: "Remove \(shortcut.title) from the menu") {
-                        withAnimation {
+                        withAnimation(Motion.settle) {
                             settings.setPrayTray(enabled.filter { $0 != shortcut })
                         }
                     }
@@ -186,7 +186,7 @@ struct PrayButtonEditorSheet: View {
                         detail: shortcut.subtitle,
                         accessibilityLabel: "Add \(shortcut.title) to the menu"
                     ) {
-                        withAnimation {
+                        withAnimation(Motion.settle) {
                             settings.setPrayTray(enabled + [shortcut])
                         }
                     }

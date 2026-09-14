@@ -64,6 +64,48 @@ enum AppRoute: Hashable {
     case spiritualReading
     case libraryBook(id: String)
     case libraryChapter(bookID: String, chapterIndex: Int)
+
+    /// The Scriptural Rosary: its title page, where the mysteries are
+    /// chosen, and the prayer itself. Everything the prayer needs is
+    /// Hashable, so it rides in the path rather than out of band.
+    case scripturalRosary
+    case scripturalRosaryPrayer(ScripturalRosaryLaunch)
+}
+
+// MARK: - ScripturalRosaryLaunch
+
+/// Everything the Scriptural Rosary needs at launch: which mysteries,
+/// and — resuming — where it stood and how long it had been prayed.
+struct ScripturalRosaryLaunch: Hashable {
+    let category: MysteryCategory
+
+    /// 0-based mystery index to start at (non-zero when resuming)
+    var startIndex: Int = 0
+
+    /// The bead of that decade to start on (non-zero when resuming)
+    var startBead: Int = 0
+
+    /// Seconds already prayed in earlier segments of a resumed session
+    var priorSeconds: Int = 0
+
+    /// When the devotion originally began (display/snapshot continuity)
+    var startedAt: Date = Date()
+}
+
+// MARK: - CompletedPrayer
+
+/// What a finished prayer was, for the completion screen to record and
+/// to set its scene by: the mysteries, and the name the record keeps —
+/// a meditation set's, or the Scriptural Rosary's. One value instead of
+/// the set itself, because the Scriptural Rosary has no set.
+struct CompletedPrayer {
+    let category: MysteryCategory?
+
+    /// How the Prayer Record names what was prayed
+    let devotionName: String
+
+    /// Seconds actually spent praying, or nil when not timed
+    let durationSeconds: Int?
 }
 
 // MARK: - PrayerLaunch
@@ -76,6 +118,9 @@ struct PrayerLaunch {
 
     /// 0-based mystery index to start at (non-zero when resuming)
     var startIndex: Int = 0
+
+    /// The bead of that decade to start on (non-zero when resuming)
+    var startBead: Int = 0
 
     /// Seconds already prayed in earlier segments of a resumed session
     var priorSeconds: Int = 0
@@ -131,9 +176,9 @@ final class AppRouter {
     /// The pending prayer session's payload (set, start position, timing).
     var pendingPrayer: PrayerLaunch?
 
-    /// How long the just-finished session took, for the completion screen
-    /// to record. Carried the same way as `pendingPrayer`.
-    var completedSessionDuration: Int?
+    /// The just-finished prayer, for the completion screen to record.
+    /// Carried the same way as `pendingPrayer`.
+    var completedPrayer: CompletedPrayer?
 
     /// A devotional act asked for from anywhere — a Rule of Prayer row,
     /// the Pray button's tray. ContentView watches this, performs it
@@ -194,12 +239,14 @@ final class AppRouter {
     func navigateToPrayerSession(
         meditationSet: MeditationSet,
         startAtIndex: Int = 0,
+        startAtBead: Int = 0,
         priorSeconds: Int = 0,
         startedAt: Date? = nil
     ) {
         pendingPrayer = PrayerLaunch(
             meditationSet: meditationSet,
             startIndex: startAtIndex,
+            startBead: startAtBead,
             priorSeconds: priorSeconds,
             startedAt: startedAt ?? Date()
         )
@@ -208,8 +255,8 @@ final class AppRouter {
 
     /// Shows the completion screen in place of the prayer session, so a
     /// finished Rosary can't be navigated back into and recorded twice.
-    func navigateToCompletion(durationSeconds: Int? = nil) {
-        completedSessionDuration = durationSeconds
+    func navigateToCompletion(_ completed: CompletedPrayer) {
+        completedPrayer = completed
         if !path.isEmpty {
             path.removeLast()
         }
@@ -242,6 +289,6 @@ final class AppRouter {
         path.removeLast(path.count)
         selectedCategory = nil
         pendingPrayer = nil
-        completedSessionDuration = nil
+        completedPrayer = nil
     }
 }

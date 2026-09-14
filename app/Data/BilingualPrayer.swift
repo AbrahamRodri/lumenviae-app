@@ -58,8 +58,10 @@ struct BilingualText {
             } else if primaryTrimmed.isEmpty {
                 // Only primary is empty - skip this line pair
                 continue
-            } else if secondaryTrimmed.isEmpty {
-                // Only secondary is empty - use primary only
+            } else if secondaryTrimmed.isEmpty
+                        || primaryTrimmed.caseInsensitiveCompare(secondaryTrimmed) == .orderedSame {
+                // Only secondary is empty, or the two are the same word —
+                // "Amen." under "Amen." — so the line stands alone
                 result.append(primaryTrimmed)
             } else {
                 // Both have content - combine with separator

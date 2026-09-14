@@ -86,11 +86,18 @@ struct JournalView: View {
                 // Navigation header
                 journalHeader
 
-                if entries.isEmpty {
-                    emptyState
-                } else {
-                    journalList
+                // The first entry written turns the empty page into the
+                // list by a crossfade, never a cut
+                ZStack(alignment: .top) {
+                    if entries.isEmpty {
+                        emptyState
+                            .transition(.opacity)
+                    } else {
+                        journalList
+                            .transition(.opacity)
+                    }
                 }
+                .animation(Motion.crossfade, value: entries.isEmpty)
             }
         }
         // New entry sheet
@@ -98,12 +105,14 @@ struct JournalView: View {
             JournalEntryEditorView(isMidPrayer: false)
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
+                .presentationBackground(AppColors.background)
         }
         // Detail / edit sheet
         .sheet(item: $selectedEntry) { entry in
             JournalDetailView(entry: entry)
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
+                .presentationBackground(AppColors.background)
         }
         // Long-press delete confirmation
         .confirmationDialog(
@@ -150,13 +159,18 @@ struct JournalView: View {
                 HStack(spacing: 18) {
                     if !entries.isEmpty {
                         layoutToggle
+                            .transition(.opacity)
 
                         // Search toggle
-                        Button(action: { withAnimation { showingSearch.toggle() } }) {
+                        Button(action: { withAnimation(Motion.panel) { showingSearch.toggle() } }) {
                             AppIcon("ph-magnifying-glass", size: 18)
                                 .foregroundColor(AppColors.gold)
+                                .frame(width: 30, height: 44)
+                                .contentShape(Rectangle())
                         }
+                        .buttonStyle(QuietGlyphButtonStyle())
                         .accessibilityLabel("Search reflections")
+                        .transition(.opacity)
 
                         // New general entry
                         Button(action: { showingNewEntry = true }) {
@@ -188,10 +202,12 @@ struct JournalView: View {
                         .tint(AppColors.gold)
 
                     if !searchText.isEmpty {
-                        Button(action: { searchText = "" }) {
+                        Button(action: { withAnimation(Motion.crossfade) { searchText = "" } }) {
                             AppIcon("ph-x-circle", size: 16)
                                 .foregroundColor(AppColors.textSecondary)
                         }
+                        .buttonStyle(QuietGlyphButtonStyle())
+                        .transition(.opacity.combined(with: .scale(scale: 0.6)))
                     }
                 }
                 .padding(.horizontal, 14)
@@ -247,13 +263,14 @@ struct JournalView: View {
     ) -> some View {
         Button {
             guard !isSelected else { return }
-            withAnimation(.easeInOut(duration: 0.2)) { action() }
+            withAnimation(Motion.crossfade) { action() }
         } label: {
             AppIcon(icon, size: 17)
                 .foregroundColor(isSelected ? AppColors.gold : AppColors.textSecondary.opacity(0.55))
                 .frame(width: 30, height: 44)
                 .contentShape(Rectangle())
         }
+        .buttonStyle(QuietGlyphButtonStyle())
         .accessibilityLabel(label)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
@@ -262,19 +279,28 @@ struct JournalView: View {
 
     private var journalList: some View {
         ScrollView(showsIndicators: false) {
-            if filteredEntries.isEmpty {
-                noResultsState
-            } else {
-                VStack(spacing: 32) {
-                    ForEach(groupedEntries, id: \.month) { group in
-                        monthSection(group)
-                    }
+            // A search that narrows to nothing fades to the empty
+            // message in place of the list, and back
+            ZStack(alignment: .top) {
+                if filteredEntries.isEmpty {
+                    noResultsState
+                        .transition(.opacity)
+                } else {
+                    VStack(spacing: 32) {
+                        ForEach(groupedEntries, id: \.month) { group in
+                            monthSection(group)
+                                .transition(.opacity)
+                        }
 
-                    Spacer(minLength: 120)
+                        Spacer(minLength: 120)
+                    }
+                    .padding(.top, 24)
+                    .padding(.horizontal, 20)
+                    .transition(.opacity)
                 }
-                .padding(.top, 24)
-                .padding(.horizontal, 20)
             }
+            .animation(Motion.crossfade, value: filteredEntries.isEmpty)
+            .animation(Motion.crossfade, value: searchText)
         }
     }
 
@@ -299,7 +325,7 @@ struct JournalView: View {
             }
 
             Button {
-                withAnimation(.easeInOut(duration: 0.2)) { searchText = "" }
+                withAnimation(Motion.crossfade) { searchText = "" }
             } label: {
                 Text("Clear Search")
                     .font(AppFonts.bodyFont(14))
@@ -326,10 +352,16 @@ struct JournalView: View {
                     .frame(height: 1)
                     .frame(maxWidth: 40)
 
+                // The month keeps its one line and the rule beside it
+                // yields: without this the stack splits the width
+                // between the two flexible children, and "SEPTEMBER
+                // 2026" folds its year under itself
                 Text(group.month)
                     .font(AppFonts.headlineFont(14))
                     .tracking(3)
                     .foregroundColor(AppColors.gold)
+                    .lineLimit(1)
+                    .fixedSize()
 
                 Rectangle()
                     .fill(AppColors.gold.opacity(0.4))
@@ -341,11 +373,15 @@ struct JournalView: View {
             // deletion lives in a long-press menu + the detail view)
             VStack(spacing: usesListLayout ? 0 : 16) {
                 ForEach(group.entries) { entry in
-                    Group {
+                    // Row and card share a slot so the layout toggle
+                    // crossfades each entry rather than popping it
+                    ZStack(alignment: .top) {
                         if usesListLayout {
                             JournalEntryRow(entry: entry)
+                                .transition(.opacity)
                         } else {
                             JournalEntryCard(entry: entry)
+                                .transition(.opacity)
                         }
                     }
                     .onTapGesture { selectedEntry = entry }
@@ -407,7 +443,7 @@ struct JournalView: View {
     // MARK: - Actions
 
     private func deleteEntry(_ entry: JournalEntry) {
-        withAnimation {
+        withAnimation(Motion.crossfade) {
             modelContext.delete(entry)
         }
         try? modelContext.save()
@@ -493,11 +529,13 @@ struct JournalEntryCard: View {
             }
 
             // How the entry opens, set as a single run so the versal
-            // initial stays part of its own word.
+            // initial stays part of its own word. No length floor: a
+            // three-word entry still opens on its gold letter.
             DropCapText(
                 text: entry.previewText,
                 bodySize: 16,
-                textColor: AppColors.cream.opacity(0.85)
+                textColor: AppColors.cream.opacity(0.85),
+                minimumLength: 0
             )
             .lineLimit(4)
         }
@@ -558,7 +596,7 @@ struct JournalEntryRow: View {
 
             Rectangle()
                 .fill(AppColors.gold.opacity(0.12))
-                .frame(height: 0.5)
+                .frame(height: AppLine.hairline)
         }
         .accessibilityElement(children: .combine)
     }
@@ -669,6 +707,7 @@ struct JournalDetailView: View {
                             text: entry.displayText,
                             size: 17,
                             showsDropCap: true,
+                            dropCapMinimumLength: 0,
                             textColor: AppColors.cream.opacity(0.9)
                         )
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -689,6 +728,7 @@ struct JournalDetailView: View {
             )
             .presentationDetents([.large])
             .presentationDragIndicator(.visible)
+            .presentationBackground(AppColors.background)
         }
         .confirmationDialog("Delete this reflection?", isPresented: $showingDeleteConfirm, titleVisibility: .visible) {
             Button("Delete", role: .destructive) {

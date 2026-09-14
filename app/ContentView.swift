@@ -30,6 +30,11 @@ struct ContentView: View {
     /// The Pray button's own editor (quick tap + hold menu)
     @State private var showPrayEditor = false
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    /// Bumped each time the Consecration tab is chosen; its veil answers
+    @State private var consecrationArrivals = 0
+
     private var shouldShowTabBar: Bool {
         router.path.isEmpty && !isConsecrationNavigating && !router.chapelArranging
     }
@@ -48,6 +53,13 @@ struct ContentView: View {
                 // transition — the next push then fails with "no matching
                 // navigationDestination" and the screen won't open again.
                 ZStack {
+                    // The ground the tabs turn over. While one page has
+                    // dipped and the next has not yet risen, nothing else
+                    // is opaque here — and the stack's own background is
+                    // white, which showed as a grey flash on every switch
+                    AppColors.appGradient
+                        .ignoresSafeArea()
+
                     tabContent
                 }
                 .navigationDestination(for: AppRoute.self) { route in
@@ -64,6 +76,24 @@ struct ContentView: View {
                 ConsecrationTabView(onNavigationChange: { isNavigating in
                     isConsecrationNavigating = isNavigating
                 })
+                // Never faded: this view holds its own NavigationStack,
+                // whose system background is white, and fading the whole
+                // stack blended that white over the dark ground as a
+                // grey flash. It arrives whole, from under a veil of the
+                // app's ground that lifts — the same beat as `tabTurn`
+                // without any alpha over the stack
+                .transition(.identity)
+                .overlay {
+                    AppColors.appGradient
+                        .ignoresSafeArea()
+                        .allowsHitTesting(false)
+                        .keyframeAnimator(initialValue: 1.0, trigger: consecrationArrivals) { view, opacity in
+                            view.opacity(opacity)
+                        } keyframes: { _ in
+                            MoveKeyframe(1)
+                            CubicKeyframe(0, duration: 0.2)
+                        }
+                }
             }
 
             VStack {
@@ -77,13 +107,18 @@ struct ContentView: View {
                     .ignoresSafeArea(.all, edges: .bottom)
                     .opacity(shouldShowTabBar ? 1 : 0)
                     .offset(y: shouldShowTabBar ? 0 : 100)
-                    .animation(.easeInOut(duration: 0.25), value: shouldShowTabBar)
+                    .animation(Motion.panel, value: shouldShowTabBar)
             }
         }
+        // A tab change turns like a page — see `tabTurn`. The transaction
+        // only needs to be animated; each side carries its own timing
+        .animation(.easeOut(duration: 0.2), value: router.selectedTab)
         .environment(router)
         .onChange(of: router.selectedTab) { _, newTab in
             if newTab != .consecration {
                 isConsecrationNavigating = false
+            } else {
+                consecrationArrivals += 1
             }
         }
         .onChange(of: router.shortcutRequest) { _, request in
@@ -107,10 +142,12 @@ struct ContentView: View {
             )
             .environment(UserSettings.shared)
             .presentationDetents([.height(PrayShortcutTray.height(for: UserSettings.shared))])
+            .presentationBackground(AppColors.background)
         }
         .sheet(isPresented: $showPrayEditor) {
             PrayButtonEditorSheet()
                 .environment(UserSettings.shared)
+                .presentationBackground(AppColors.background)
         }
     }
 
@@ -125,6 +162,15 @@ struct ContentView: View {
 
         case .sevenSorrows:
             startPrayer(category: .sevenSorrows)
+
+        case .scripturalRosary:
+            // Straight to the day's mysteries, as Today's Rosary goes —
+            // the title page, where the mysteries are chosen, is Explore's
+            // door, not the Pray button's
+            guard router.path.isEmpty else { return }
+            router.push(.scripturalRosaryPrayer(
+                ScripturalRosaryLaunch(category: ScheduleService.categoryForToday())
+            ))
 
         case .chooseMeditation:
             guard router.path.isEmpty else { return }
@@ -176,18 +222,40 @@ struct ContentView: View {
         switch router.selectedTab {
         case .home:
             HomeView()
+                .transition(tabTurn)
         case .consecration:
             // Rendered as a sibling of the NavigationStack (see body) —
             // its own stack must never nest inside this one.
             AppColors.background
                 .ignoresSafeArea()
+                .transition(tabTurn)
         case .journal:
             JournalView()
+                .transition(tabTurn)
         case .progress:
             PrayerProgressView()
+                .transition(tabTurn)
         case .chapel:
             MyChapelView()
+                .transition(tabTurn)
         }
+    }
+
+    /// How a tab changes: the page leaving dips into the background
+    /// first, quickly, and only then does the page arriving rise into
+    /// place — a fade *through* the ground rather than a crossfade.
+    /// Two full pages fading over each other ghosted Home's painting
+    /// through the Chapel's ledger for a quarter of a second; a hard
+    /// cut is what iOS does itself and reads as a jolt on a page whose
+    /// sections then drift in. This is the beat between: the whole turn
+    /// is under a quarter of a second and nothing is ever seen twice.
+    /// Under Reduce Motion the arriving page only fades.
+    private var tabTurn: AnyTransition {
+        let rise: AnyTransition = reduceMotion ? .opacity : .opacity.combined(with: .offset(y: 6))
+        return .asymmetric(
+            insertion: rise.animation(.easeOut(duration: 0.18).delay(0.06)),
+            removal: .opacity.animation(.easeIn(duration: 0.08))
+        )
     }
 
     // MARK: - Navigation Destinations
@@ -213,8 +281,8 @@ struct ContentView: View {
             }
 
         case .completion:
-            if let meditationSet = router.pendingPrayer?.meditationSet {
-                PrayerCompletionView(meditationSet: meditationSet)
+            if let completed = router.completedPrayer {
+                PrayerCompletionView(completed: completed)
             } else {
                 ProgressView("Loading...")
                     .tint(AppColors.gold)
@@ -264,6 +332,14 @@ struct ContentView: View {
 
         case .libraryChapter(let bookID, let chapterIndex):
             LibraryChapterReaderView(bookID: bookID, chapterIndex: chapterIndex)
+
+        case .scripturalRosary:
+            ScripturalRosaryView()
+
+        // A player, like the meditation's: it hides the bar and carries
+        // its own way out
+        case .scripturalRosaryPrayer(let launch):
+            ScripturalRosaryPrayerView(launch: launch)
         }
     }
 }

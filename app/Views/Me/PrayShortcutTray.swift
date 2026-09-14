@@ -52,7 +52,7 @@ struct PrayShortcutTray: View {
                     .padding(.top, 12)
                     .padding(.bottom, 10)
 
-                ForEach(settings.prayTrayShortcuts) { shortcut in
+                ForEach(Array(settings.prayTrayShortcuts.enumerated()), id: \.element) { index, shortcut in
                     Button {
                         pendingShortcut = shortcut
                         dismiss()
@@ -78,7 +78,12 @@ struct PrayShortcutTray: View {
                         .frame(height: Self.rowHeight)
                         .contentShape(Rectangle())
                     }
-                    .buttonStyle(.plain)
+                    // The rows settle under the thumb like every card in
+                    // the app, and arrive one after another as the tray
+                    // rises — the Pray button's second gesture should
+                    // feel as alive as its first
+                    .buttonStyle(SacredCardButtonStyle())
+                    .devotionalEntrance(delay: 0.05 + 0.05 * Double(index), drift: 8)
                 }
 
                 // The tray's own door to its editor — edited in place,
@@ -99,7 +104,8 @@ struct PrayShortcutTray: View {
                     .frame(height: Self.arrangeRowHeight)
                     .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(QuietGlyphButtonStyle())
+                .devotionalEntrance(delay: 0.05 + 0.05 * Double(settings.prayTrayShortcuts.count), drift: 8)
 
                 Spacer(minLength: 0)
             }
@@ -129,5 +135,6 @@ struct PrayShortcutTray: View {
             )
             .environment(UserSettings.shared)
             .presentationDetents([.height(PrayShortcutTray.height(for: UserSettings.shared))])
+            .presentationBackground(AppColors.background)
         }
 }

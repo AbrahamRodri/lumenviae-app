@@ -59,13 +59,25 @@ struct ExploreView: View {
                 searchHeader
 
                 ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 28) {
+                    // Browsing and searching share one slot, so typing
+                    // the first letter crossfades the shelf into results
+                    // rather than cutting to them — and each keystroke
+                    // after that fades sections in and out in place
+                    ZStack(alignment: .top) {
                         if trimmedQuery.isEmpty {
-                            browseContent
+                            // The browse page is several sections; they
+                            // keep their column inside the slot
+                            VStack(alignment: .leading, spacing: 28) {
+                                browseContent
+                            }
+                            .transition(.opacity)
                         } else {
                             searchResults
+                                .transition(.opacity)
                         }
                     }
+                    .animation(Motion.crossfade, value: trimmedQuery)
+                    .animation(Motion.crossfade, value: isLoadingSets)
                     .padding(.horizontal, 20)
                     .padding(.top, 20)
                     .padding(.bottom, 40)
@@ -170,7 +182,15 @@ struct ExploreView: View {
         epigraph
 
         section("The Mysteries") {
-            mysteryLedger(MysteryCategory.allCases)
+            VStack(spacing: 10) {
+                mysteryLedger(MysteryCategory.allCases)
+
+                // Beneath the five: the other way of praying them. A
+                // door of its own, because it is a devotion of its own —
+                // the mysteries above open the shelf of meditations;
+                // this opens the Rosary prayed on the Gospel's words.
+                scripturalBanner
+            }
         }
 
         // Each kind of door carries its own shape: the two liturgical
@@ -245,7 +265,6 @@ struct ExploreView: View {
 
     // MARK: - Search results
 
-    @ViewBuilder
     private var searchResults: some View {
         let needle = trimmedQuery.lowercased()
 
@@ -256,6 +275,7 @@ struct ExploreView: View {
         let libraryHits = libraryEntries.filter { $0.matchText.lowercased().contains(needle) }
         let setHits = sets.filter { matches($0, needle: needle) }
 
+        return ZStack(alignment: .top) {
         if categories.isEmpty && libraryHits.isEmpty && setHits.isEmpty {
             if isLoadingSets {
                 // The set index can be seconds away on a cold server.
@@ -271,6 +291,7 @@ struct ExploreView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.top, 60)
+                .transition(.opacity)
             } else {
                 VStack(spacing: 8) {
                     Text("Nothing found")
@@ -302,27 +323,35 @@ struct ExploreView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.top, 60)
+                .transition(.opacity)
             }
         } else {
-            if !categories.isEmpty {
-                section("The Mysteries") {
-                    mysteryLedger(categories)
+            VStack(alignment: .leading, spacing: 28) {
+                if !categories.isEmpty {
+                    section("The Mysteries") {
+                        mysteryLedger(categories)
+                    }
+                    .transition(.opacity)
                 }
-            }
 
-            if !libraryHits.isEmpty {
-                section("The Library") {
-                    tileGrid(libraryHits.map { entry in
-                        ExploreTile(icon: entry.icon, title: entry.title, action: entry.action)
-                    })
+                if !libraryHits.isEmpty {
+                    section("The Library") {
+                        tileGrid(libraryHits.map { entry in
+                            ExploreTile(icon: entry.icon, title: entry.title, action: entry.action)
+                        })
+                    }
+                    .transition(.opacity)
                 }
-            }
 
-            if !setHits.isEmpty {
-                section("Meditations") {
-                    setRows(setHits)
+                if !setHits.isEmpty {
+                    section("Meditations") {
+                        setRows(setHits)
+                    }
+                    .transition(.opacity)
                 }
             }
+            .transition(.opacity)
+        }
         }
     }
 
@@ -357,6 +386,8 @@ struct ExploreView: View {
                          matchText: "true devotion summary marks false devotions montfort") { router.push(.trueDevotion) },
             LibraryEntry(icon: "ph-book-open", title: "Spiritual Reading",
                          matchText: "spiritual reading books imitation of christ story of a soul confessions augustine dolorous passion emmerich therese kempis library") { router.push(.spiritualReading) },
+            LibraryEntry(icon: "ch-bible", title: "Scriptural Rosary",
+                         matchText: "scriptural rosary verse every bead gospel douay rheims bible") { router.push(.scripturalRosary) },
             LibraryEntry(icon: "ch-rosary", title: "How to Pray",
                          matchText: "how to pray the rosary guide montfort methods") { router.push(.howToPray) },
             LibraryEntry(icon: "ch-bible", title: "In Scripture",
@@ -488,13 +519,67 @@ struct ExploreView: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 14)
-                    .strokeBorder(AppColors.gold.opacity(0.2), lineWidth: 0.5)
+                    .strokeBorder(AppColors.gold.opacity(0.2), lineWidth: AppLine.hairline)
             )
             .contentShape(RoundedRectangle(cornerRadius: 14))
         }
         .buttonStyle(SacredCardButtonStyle())
         // The subtitle is half the row; an override would drop it
         .accessibilityLabel("\(category.devotionTitle). \(category.subtitle)")
+    }
+
+    /// The Scriptural Rosary's door, in the ledger's own shape: the arch
+    /// holds the Gospel's glyph rather than a painting, and the row
+    /// stands on the card ground rather than a category's colours,
+    /// because it belongs to no one set of mysteries.
+    private var scripturalBanner: some View {
+        Button {
+            router.push(.scripturalRosary)
+        } label: {
+            HStack(spacing: 14) {
+                GothicArchShape(riseRatio: 0.42)
+                    .fill(AppColors.background.opacity(0.6))
+                    .frame(width: 44, height: 56)
+                    .overlay(
+                        AppIcon("ch-bible", size: 20)
+                            .foregroundColor(AppColors.gold)
+                    )
+                    .overlay(
+                        GothicArchShape(riseRatio: 0.42)
+                            .strokeBorder(AppColors.gold.opacity(0.5), lineWidth: 0.8)
+                    )
+                    .accessibilityHidden(true)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("The Scriptural Rosary")
+                        .font(AppFonts.headlineFont(16))
+                        .foregroundColor(AppColors.cream)
+
+                    Text("A verse for every bead")
+                        .font(AppFonts.italicFont(12))
+                        .foregroundColor(AppColors.textSecondary)
+                }
+
+                Spacer(minLength: 8)
+
+                AppIcon("ph-caret-right", size: 13)
+                    .foregroundColor(AppColors.textSecondary.opacity(0.6))
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+            .frame(minHeight: 44)
+            .background(
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(AppColors.cardBackground)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 14)
+                    .strokeBorder(AppColors.gold.opacity(0.2), lineWidth: AppLine.hairline)
+            )
+            .contentShape(RoundedRectangle(cornerRadius: 14))
+        }
+        .buttonStyle(SacredCardButtonStyle())
+        .accessibilityLabel("The Scriptural Rosary. A verse for every bead")
     }
 
     // MARK: - The Liturgy
@@ -511,7 +596,7 @@ struct ExploreView: View {
 
             Rectangle()
                 .fill(AppColors.gold.opacity(0.25))
-                .frame(width: 0.5)
+                .frame(width: AppLine.hairline)
                 .padding(.vertical, 14)
 
             diptychLeaf(
@@ -524,7 +609,7 @@ struct ExploreView: View {
         .cornerRadius(16)
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(AppColors.gold.opacity(0.2), lineWidth: 0.5)
+                .strokeBorder(AppColors.gold.opacity(0.2), lineWidth: AppLine.hairline)
         )
     }
 
@@ -568,7 +653,7 @@ struct ExploreView: View {
         let housed = [
             "Daily Missal", "Divine Office",
             "True Devotion", "Spiritual Reading",
-            "Prayer Record"
+            "Scriptural Rosary", "Prayer Record"
         ]
         return libraryEntries.filter { !housed.contains($0.title) }
     }
@@ -598,7 +683,7 @@ struct ExploreView: View {
 
                         Rectangle()
                             .fill(AppColors.gold.opacity(0.14))
-                            .frame(height: 0.5)
+                            .frame(height: AppLine.hairline)
                     }
                     .contentShape(Rectangle())
                 }
@@ -651,7 +736,7 @@ struct ExploreView: View {
         .cornerRadius(16)
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: 0.5)
+                .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: AppLine.hairline)
         )
     }
 
@@ -743,7 +828,7 @@ private struct ExploreTile: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
-                    .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: 0.5)
+                    .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: AppLine.hairline)
             )
             .contentShape(Rectangle())
         }

@@ -20,6 +20,7 @@ import SwiftUI
 struct MysteriesInScriptureView: View {
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(AppRouter.self) private var router
     @State private var selectedCategory: MysteryCategory = .joyful
     @State private var expandedMysteries: Set<Int> = []
 
@@ -123,6 +124,23 @@ struct MysteriesInScriptureView: View {
             howToStep(number: "I", text: "Read the verse slowly — let one word or phrase settle.")
             howToStep(number: "II", text: "Picture the scene, and place yourself within it beside Mary.")
             howToStep(number: "III", text: "Ask for the fruit of the mystery, then begin the decade.")
+
+            // The page reads one verse before each decade; the Scriptural
+            // Rosary reads one on every bead, and it has a door here
+            // because this is where a reader learns to want it
+            QuietGoldButton(
+                title: "Or pray the Scriptural Rosary",
+                leadingIcon: "ch-bible",
+                leadingIconSize: 12,
+                trailingIcon: "ph-caret-right",
+                size: 10,
+                color: AppColors.gold,
+                horizontalPadding: 0
+            ) {
+                router.push(.scripturalRosary)
+            }
+            .padding(.top, 2)
+            .padding(.bottom, -8)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(16)
@@ -132,7 +150,7 @@ struct MysteriesInScriptureView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 14)
-                .strokeBorder(AppColors.gold.opacity(0.2), lineWidth: 0.5)
+                .strokeBorder(AppColors.gold.opacity(0.2), lineWidth: AppLine.hairline)
         )
         .overlay(OrnateCornersOverlay(inset: 8, length: 12, opacity: 0.4))
     }
@@ -325,7 +343,7 @@ struct MysteriesInScriptureView: View {
         .cornerRadius(16)
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(AppColors.gold.opacity(isExpanded ? 0.35 : 0.15), lineWidth: 0.5)
+                .strokeBorder(AppColors.gold.opacity(isExpanded ? 0.35 : 0.15), lineWidth: AppLine.hairline)
         )
     }
 
@@ -365,7 +383,7 @@ struct MysteriesInScriptureView: View {
         .cornerRadius(16)
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(AppColors.gold.opacity(0.25), lineWidth: 0.5)
+                .strokeBorder(AppColors.gold.opacity(0.25), lineWidth: AppLine.hairline)
         )
         .overlay(OrnateCornersOverlay(inset: 8, length: 12, opacity: 0.4))
     }
@@ -434,4 +452,5 @@ struct MysteriesInScriptureView: View {
     NavigationStack {
         MysteriesInScriptureView()
     }
+    .environment(AppRouter())
 }

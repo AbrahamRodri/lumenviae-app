@@ -304,7 +304,7 @@ private struct ThresholdStepView: View {
                     )
                     .overlay(
                         arch.inset(by: 5)
-                            .strokeBorder(AppColors.gold.opacity(0.2), lineWidth: 0.5)
+                            .strokeBorder(AppColors.gold.opacity(0.2), lineWidth: AppLine.hairline)
                     )
                     .breathingGlow(
                         AppColors.gold,

@@ -143,6 +143,23 @@ final class UserSettings {
         didSet { UserDefaults.standard.set(prayerImageMode, forKey: "userSettings.prayerImageMode") }
     }
 
+    // MARK: - The Beads
+
+    /// Whether the meditation's player is prayed on the beads: the whole
+    /// Rosary as one strand at the screen's edge, a swipe down for each
+    /// Hail Mary, the mystery turning on its own when the next Our
+    /// Father arrives. Off, the player is the decade-at-a-time screen it
+    /// was — the meditation, its narration, and arrows between the
+    /// mysteries — for a hand that keeps its own count on a rosary.
+    ///
+    /// On by default: the beads are the experience as designed, and the
+    /// toggle exists so nobody is made to pray a way they don't. The
+    /// Scriptural Rosary is a verse per bead and has no other way to be
+    /// prayed, so the setting does not reach it.
+    var prayOnBeads: Bool = true {
+        didSet { UserDefaults.standard.set(prayOnBeads, forKey: "userSettings.prayOnBeads") }
+    }
+
     // MARK: - Reader
 
     /// Whether the reader keeps pace with the narration on its own,
@@ -202,15 +219,6 @@ final class UserSettings {
 
     private static func readingRateKey(_ bookID: String) -> String {
         "userSettings.readingRate.\(bookID)"
-    }
-
-    // MARK: - Scriptural Rosary
-
-    /// Whether each Hail Mary bead carries its own verse of Scripture —
-    /// the slower, more intensive form of the prayer. Off by default;
-    /// the plain Rosary is the app's first face.
-    var scripturalRosaryEnabled: Bool = false {
-        didSet { UserDefaults.standard.set(scripturalRosaryEnabled, forKey: "userSettings.scripturalRosary") }
     }
 
     /// Whether the swipe-between-mysteries hint has been shown.
@@ -442,9 +450,13 @@ final class UserSettings {
         PrayerShortcut(rawValue: prayQuickActionRaw) ?? .todaysRosary
     }
 
-    /// The acts in the Pray button's press-and-hold tray, in order.
+    /// The acts in the Pray button's press-and-hold tray, in order. The
+    /// Scriptural Rosary stands second, under the Rosary it is a way of
+    /// praying: the tray is where a person looks for a devotion, and a
+    /// devotion that isn't there is one they never find.
     var prayTrayRaw: [String] = [
         PrayerShortcut.todaysRosary.rawValue,
+        PrayerShortcut.scripturalRosary.rawValue,
         PrayerShortcut.chooseMeditation.rawValue,
         PrayerShortcut.mass.rawValue,
         PrayerShortcut.office.rawValue
@@ -538,10 +550,12 @@ final class UserSettings {
         if d.object(forKey: "userSettings.readerAutoScroll") != nil {
             readerAutoScroll = d.bool(forKey: "userSettings.readerAutoScroll")
         }
+        if d.object(forKey: "userSettings.prayOnBeads") != nil {
+            prayOnBeads = d.bool(forKey: "userSettings.prayOnBeads")
+        }
         if d.object(forKey: "userSettings.prayerImageMode") != nil {
             prayerImageMode = d.bool(forKey: "userSettings.prayerImageMode")
         }
-        scripturalRosaryEnabled = d.bool(forKey: "userSettings.scripturalRosary")
         if d.object(forKey: "userSettings.missalLayout") != nil {
             missalLayoutPreference = d.string(forKey: "userSettings.missalLayout") ?? ""
         }
@@ -592,6 +606,20 @@ final class UserSettings {
         }
         if let tray = d.stringArray(forKey: "userSettings.prayTray") {
             prayTrayRaw = tray
+        }
+        // One-time: the Scriptural Rosary arrived after trays were first
+        // saved. A tray that never held it gets it once, in its default
+        // place under Today's Rosary — the same act lighting up everywhere
+        // that a fresh install gets. Taken out afterwards, it stays out.
+        let scripturalKey = "userSettings.prayTrayOfferedScriptural"
+        if !d.bool(forKey: scripturalKey) {
+            let scriptural = PrayerShortcut.scripturalRosary.rawValue
+            if !prayTrayRaw.contains(scriptural) {
+                let after = prayTrayRaw.firstIndex(of: PrayerShortcut.todaysRosary.rawValue)
+                    .map { $0 + 1 } ?? 0
+                prayTrayRaw.insert(scriptural, at: after)
+            }
+            d.set(true, forKey: scripturalKey)
         }
         if let rule = d.stringArray(forKey: "userSettings.ruleItems") {
             ruleItemsRaw = rule

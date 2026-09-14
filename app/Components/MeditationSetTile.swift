@@ -48,7 +48,7 @@ struct MeditationSetTile: View {
                     Spacer()
                     if let onTogglePin {
                         Button(action: onTogglePin) {
-                            AppIcon(isPinned ? "ph-push-pin-fill" : "ph-push-pin", size: 15)
+                            PinGlyph(isPinned: isPinned, size: 15)
                                 .foregroundColor(
                                     isPinned ? AppColors.gold
                                         : artwork == nil ? AppColors.textSecondary.opacity(0.55)
@@ -122,7 +122,7 @@ struct MeditationSetTile: View {
                 RoundedRectangle(cornerRadius: 16)
                     .strokeBorder(AppColors.gold.opacity(isPinned ? 0.55 : 0), lineWidth: 1)
             )
-            .animation(.easeOut(duration: 0.25), value: isPinned)
+            .animation(Motion.settle, value: isPinned)
         }
         .buttonStyle(SacredCardButtonStyle())
     }
@@ -155,7 +155,7 @@ struct MeditationSetRow: View {
                 if showsDivider {
                     Rectangle()
                         .fill(AppColors.gold.opacity(0.15))
-                        .frame(height: 0.5)
+                        .frame(height: AppLine.hairline)
                 }
 
                 HStack(spacing: 14) {
@@ -166,7 +166,7 @@ struct MeditationSetRow: View {
                             .clipShape(RoundedRectangle(cornerRadius: 8))
                             .overlay(
                                 RoundedRectangle(cornerRadius: 8)
-                                    .strokeBorder(AppColors.gold.opacity(0.25), lineWidth: 0.5)
+                                    .strokeBorder(AppColors.gold.opacity(0.25), lineWidth: AppLine.hairline)
                             )
                     }
 
@@ -189,12 +189,12 @@ struct MeditationSetRow: View {
 
                     if let onTogglePin {
                         Button(action: onTogglePin) {
-                            AppIcon(isPinned ? "ph-push-pin-fill" : "ph-push-pin", size: 14)
+                            PinGlyph(isPinned: isPinned, size: 14)
                                 .foregroundColor(isPinned ? AppColors.gold : AppColors.textSecondary.opacity(0.55))
                                 .frame(width: 44, height: 44)
                                 .contentShape(Rectangle())
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(QuietGlyphButtonStyle())
                         .accessibilityLabel(isPinned ? "Unpin this set" : "Pin this set to the top")
                         // The row's own padding keeps its height; the
                         // target overhangs it invisibly.
@@ -212,8 +212,29 @@ struct MeditationSetRow: View {
                 .frame(minHeight: 44)
                 .contentShape(Rectangle())
             }
+            // The same pin, the same settle, in the list as in the gallery
+            .animation(Motion.settle, value: isPinned)
         }
         .buttonStyle(SacredCardButtonStyle())
+    }
+}
+
+// MARK: - PinGlyph
+
+/// The pin, outline or filled, crossfading between the two rather than
+/// swapping assets — one glyph that fills, the way the bead does.
+struct PinGlyph: View {
+    let isPinned: Bool
+    var size: CGFloat = 15
+
+    var body: some View {
+        ZStack {
+            AppIcon("ph-push-pin", size: size)
+                .opacity(isPinned ? 0 : 1)
+            AppIcon("ph-push-pin-fill", size: size)
+                .opacity(isPinned ? 1 : 0)
+                .scaleEffect(isPinned ? 1 : 0.7)
+        }
     }
 }
 

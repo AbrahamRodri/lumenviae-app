@@ -62,7 +62,7 @@ struct TodaysPrayerSection: View {
             rows
                 .padding(.top, 18)
         }
-        .animation(.easeOut(duration: 0.35), value: today.title)
+        .animation(Motion.crossfade, value: today.title)
         .accessibilityElement(children: .contain)
     }
 
@@ -157,7 +157,7 @@ struct TodaysPrayerSection: View {
     private var rowDivider: some View {
         Rectangle()
             .fill(AppColors.gold.opacity(0.1))
-            .frame(height: 0.5)
+            .frame(height: AppLine.hairline)
             .padding(.leading, 50)
             .accessibilityHidden(true)
     }
@@ -213,7 +213,7 @@ struct TodaysPrayerSection: View {
         }
         .id(hour)
         .transition(.opacity)
-        .animation(.easeOut(duration: 0.4), value: hour)
+        .animation(Motion.crossfade, value: hour)
     }
 
     // MARK: Row 3 — Total Consecration
@@ -241,9 +241,11 @@ struct TodaysPrayerSection: View {
                         .font(AppFonts.labelFont(11))
                         .tracking(1.5)
                         .foregroundColor(AppColors.goldLight)
+                        .contentTransition(.numericText())
 
                     ProgressHair(fraction: Double(day) / 33)
                 }
+                .animation(Motion.crossfade, value: day)
             } else {
                 Text("BEGIN")
                     .font(AppFonts.labelFont(9))
@@ -311,7 +313,7 @@ private struct LedgerRow<Fact: View>: View {
             .foregroundColor(AppColors.gold)
             .frame(width: 34, height: 34)
             .background(Circle().fill(AppColors.gold.opacity(0.05)))
-            .overlay(Circle().strokeBorder(AppColors.gold.opacity(0.35), lineWidth: 0.5))
+            .overlay(Circle().strokeBorder(AppColors.gold.opacity(0.35), lineWidth: AppLine.hairline))
             .accessibilityHidden(true)
     }
 }

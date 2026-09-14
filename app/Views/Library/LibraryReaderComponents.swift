@@ -160,7 +160,7 @@ struct ContinueReadingAct: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 18)
-                    .strokeBorder(AppColors.goldLight.opacity(0.6), lineWidth: 0.5)
+                    .strokeBorder(AppColors.goldLight.opacity(0.6), lineWidth: AppLine.hairline)
             )
             .contentShape(RoundedRectangle(cornerRadius: 18))
             .haloGlow(AppColors.gold, radius: 9, intensity: 0.3)
@@ -217,10 +217,10 @@ struct TodaysGoalBand: View {
             .padding(.vertical, 15)
             .frame(maxWidth: .infinity)
             .overlay(alignment: .top) {
-                Rectangle().fill(AppColors.gold.opacity(0.18)).frame(height: 0.5)
+                Rectangle().fill(AppColors.gold.opacity(0.18)).frame(height: AppLine.hairline)
             }
             .overlay(alignment: .bottom) {
-                Rectangle().fill(AppColors.gold.opacity(0.18)).frame(height: 0.5)
+                Rectangle().fill(AppColors.gold.opacity(0.18)).frame(height: AppLine.hairline)
             }
             .contentShape(Rectangle())
         }
@@ -315,7 +315,7 @@ struct ReadingGoalSheet: View {
 
                 Rectangle()
                     .fill(AppColors.gold.opacity(0.2))
-                    .frame(height: 0.5)
+                    .frame(height: AppLine.hairline)
 
                 ForEach(ReadingGoal.allCases) { goal in
                     LibraryTrayRow(
@@ -361,7 +361,7 @@ struct ReaderBackCapsule: View {
             // straight through the capsule and neither could be read —
             // worst exactly where the chrome sits over restored text.
             .background(Capsule().fill(AppColors.background))
-            .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.28), lineWidth: 0.5))
+            .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.28), lineWidth: AppLine.hairline))
             .shadow(color: .black.opacity(0.5), radius: 10, y: 3)
             .contentShape(Capsule())
         }
@@ -392,7 +392,7 @@ struct ReaderChromeCapsule: View {
                 if index > 0 {
                     Rectangle()
                         .fill(AppColors.gold.opacity(0.18))
-                        .frame(width: 0.5, height: 26)
+                        .frame(width: AppLine.hairline, height: 26)
                 }
 
                 Button(action: button.action) {
@@ -428,7 +428,7 @@ struct ReaderChromeCapsule: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 18)
-                .strokeBorder(AppColors.gold.opacity(0.28), lineWidth: 0.5)
+                .strokeBorder(AppColors.gold.opacity(0.28), lineWidth: AppLine.hairline)
         )
         .shadow(color: .black.opacity(0.5), radius: 10, y: 3)
     }
@@ -470,7 +470,7 @@ struct ReaderProseParagraph: View {
                         .fill(AppColors.gold.opacity(0.09))
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
-                                .strokeBorder(AppColors.gold.opacity(0.28), lineWidth: 0.5)
+                                .strokeBorder(AppColors.gold.opacity(0.28), lineWidth: AppLine.hairline)
                         )
                 }
             }
@@ -614,14 +614,14 @@ struct PassageActionBar: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 22)
-                .strokeBorder(AppColors.gold.opacity(0.25), lineWidth: 0.5)
+                .strokeBorder(AppColors.gold.opacity(0.25), lineWidth: AppLine.hairline)
         )
     }
 
     private var divider: some View {
         Rectangle()
             .fill(AppColors.gold.opacity(0.18))
-            .frame(width: 0.5, height: 22)
+            .frame(width: AppLine.hairline, height: 22)
     }
 
     private func action(icon: String, label: String, handler: @escaping () -> Void) -> some View {
@@ -660,7 +660,7 @@ private struct ReaderToastModifier: ViewModifier {
                     .padding(.horizontal, 16)
                     .padding(.vertical, 10)
                     .background(Capsule().fill(Color.black.opacity(0.5)))
-                    .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.25), lineWidth: 0.5))
+                    .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.25), lineWidth: AppLine.hairline))
                     .padding(.bottom, 120)
                     .transition(.opacity)
                     .task {
@@ -710,7 +710,7 @@ struct LibraryFootnoteSheet: View {
 
                 Rectangle()
                     .fill(AppColors.gold.opacity(0.2))
-                    .frame(height: 0.5)
+                    .frame(height: AppLine.hairline)
 
                 Text(text)
                     .font(AppFonts.bodyFont(15))
@@ -862,12 +862,12 @@ struct PassageShareCard: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 11)
-                .strokeBorder(AppColors.gold.opacity(0.18), lineWidth: 0.5)
+                .strokeBorder(AppColors.gold.opacity(0.18), lineWidth: AppLine.hairline)
                 .padding(8)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: 0.5)
+                .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline)
         )
     }
 }
@@ -941,14 +941,14 @@ struct BookNotesSheet: View {
 
                     Rectangle()
                         .fill(AppColors.gold.opacity(0.2))
-                        .frame(height: 0.5)
+                        .frame(height: AppLine.hairline)
 
                     ForEach(notes) { note in
                         noteRow(note)
 
                         Rectangle()
                             .fill(AppColors.gold.opacity(0.12))
-                            .frame(height: 0.5)
+                            .frame(height: AppLine.hairline)
                     }
 
                     Spacer(minLength: 40)

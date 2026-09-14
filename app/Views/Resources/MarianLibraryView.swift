@@ -408,7 +408,7 @@ struct MarianLibraryView: View {
         .cornerRadius(16)
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(AppColors.gold.opacity(isExpanded ? 0.35 : 0.15), lineWidth: 0.5)
+                .strokeBorder(AppColors.gold.opacity(isExpanded ? 0.35 : 0.15), lineWidth: AppLine.hairline)
         )
     }
 }

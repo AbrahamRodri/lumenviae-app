@@ -150,22 +150,30 @@ struct NarrationPlayControl: View {
 
 // MARK: - Playback Settings
 
-/// The tray beside the reader button: how fast the voice reads, and the
-/// background music that isn't built yet.
+/// The tray beside the reader button: how fast the voice reads, and
+/// whether the player is prayed on the beads.
 ///
-/// The music row ships disabled rather than hidden on purpose — it is
-/// the honest shape of the tray, and hiding it would mean redrawing the
-/// tray the day it lands.
+/// The beads toggle lives here as well as in Settings because this is
+/// the one settings surface the player has: someone who finds the
+/// strand is not for them mid-Rosary should not have to leave the
+/// Rosary to say so, and someone who turned it off should be able to
+/// find it again from the same place.
 struct PlaybackSettingsSheet: View {
 
+    @Environment(UserSettings.self) private var userSettings
     @Environment(\.dismiss) private var dismiss
 
     /// Read straight from the service so the tray agrees with whatever
     /// the Lock Screen or CarPlay last set.
     private var audio: AudioService { .shared }
 
+    /// The sheet's height, for its detent
+    static let height: CGFloat = 372
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        @Bindable var settings = userSettings
+
+        return VStack(alignment: .leading, spacing: 0) {
             HStack {
                 Text("Playback")
                     .font(AppFonts.headlineFont(20))
@@ -186,6 +194,28 @@ struct PlaybackSettingsSheet: View {
             speedSection
                 .padding(.horizontal, 24)
                 .padding(.top, 18)
+
+            VStack(alignment: .leading, spacing: 10) {
+                Text("THE BEADS")
+                    .font(AppFonts.labelFont(10))
+                    .tracking(2.5)
+                    .foregroundColor(AppColors.gold)
+
+                ToggleRow(
+                    icon: "ch-rosary",
+                    title: "Pray on the beads",
+                    subtitle: settings.prayOnBeads
+                        ? "Swipe down through each Hail Mary"
+                        : "Move a mystery at a time",
+                    isOn: $settings.prayOnBeads
+                )
+                .background(
+                    RoundedRectangle(cornerRadius: 14)
+                        .fill(AppColors.cardBackground)
+                )
+            }
+            .padding(.horizontal, 24)
+            .padding(.top, 24)
 
             Spacer(minLength: 20)
         }
@@ -254,6 +284,8 @@ struct PlaybackSettingsSheet: View {
 #Preview("Settings") {
     Color.black.sheet(isPresented: .constant(true)) {
         PlaybackSettingsSheet()
-            .presentationDetents([.height(330)])
+            .presentationDetents([.height(PlaybackSettingsSheet.height)])
+            .presentationBackground(AppColors.background)
+            .environment(UserSettings.shared)
     }
 }

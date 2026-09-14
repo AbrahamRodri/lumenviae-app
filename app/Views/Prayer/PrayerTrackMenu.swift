@@ -261,7 +261,7 @@ private struct TrayRowLabel: View {
             if showsDivider {
                 Rectangle()
                     .fill(AppColors.gold.opacity(0.10))
-                    .frame(height: 0.5)
+                    .frame(height: AppLine.hairline)
                     .padding(.leading, 64)
             }
         }

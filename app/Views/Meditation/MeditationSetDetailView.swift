@@ -72,8 +72,8 @@ struct MeditationSetDetailView: View {
                     .padding(.top, 62)
                     .padding(.bottom, 200)
                 }
-                .animation(.easeOut(duration: 0.3), value: viewModel.isLoading)
-                .animation(.easeOut(duration: 0.25), value: showsPreview)
+                .animation(Motion.crossfade, value: viewModel.isLoading)
+                .animation(Motion.crossfade, value: showsPreview)
                 // Scrolled content softens away behind the back and pin
                 // rather than running under them at full strength.
                 .mask(
@@ -145,7 +145,7 @@ struct MeditationSetDetailView: View {
                     label: viewModel.isPinned ? "Unpin these meditations" : "Pin these meditations to the top",
                     tint: viewModel.isPinned ? AppColors.gold : .white
                 ) {
-                    withAnimation(.easeOut(duration: 0.2)) { viewModel.togglePin() }
+                    withAnimation(Motion.settle) { viewModel.togglePin() }
                 }
             }
             .padding(.horizontal, 16)
@@ -320,50 +320,71 @@ struct MeditationSetDetailView: View {
     private var offlineSection: some View {
         if let state = viewModel.offlineState {
             SetSection(label: "Offline") {
-                switch state {
-                case .available:
-                    offlineButton(
-                        title: "Save on this device",
-                        icon: "ph-download-simple",
-                        color: AppColors.gold
-                    )
-
-                case .saving(let fraction):
-                    savingIndicator(fraction: fraction)
-
-                case .saved:
-                    VStack(alignment: .leading, spacing: 6) {
-                        HStack(spacing: 8) {
-                            AppIcon("ph-check-circle", size: 14)
-                                .foregroundColor(AppColors.gold.opacity(0.8))
-
-                            Text("Saved on this device")
-                                .font(AppFonts.readingFont(15))
-                                .foregroundColor(AppColors.cream.opacity(0.92))
-                        }
-
+                // One slot for the four states, so save → saving → saved
+                // crossfade over one another instead of the row being
+                // torn down and rebuilt
+                ZStack(alignment: .topLeading) {
+                    switch state {
+                    case .available:
                         offlineButton(
-                            title: "Remove",
-                            icon: "ph-trash",
-                            color: AppColors.textSecondary
-                        )
-                    }
-
-                case .failed:
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("Some of it didn't come down. What finished was kept.")
-                            .font(AppFonts.italicFont(14))
-                            .foregroundColor(AppColors.textSecondary)
-                            .fixedSize(horizontal: false, vertical: true)
-
-                        offlineButton(
-                            title: "Try again",
-                            icon: "ph-arrow-counter-clockwise",
+                            title: "Save on this device",
+                            icon: "ph-download-simple",
                             color: AppColors.gold
                         )
+                        .transition(.opacity)
+
+                    case .saving(let fraction):
+                        savingIndicator(fraction: fraction)
+                            .transition(.opacity)
+
+                    case .saved:
+                        VStack(alignment: .leading, spacing: 6) {
+                            HStack(spacing: 8) {
+                                AppIcon("ph-check-circle", size: 14)
+                                    .foregroundColor(AppColors.gold.opacity(0.8))
+
+                                Text("Saved on this device")
+                                    .font(AppFonts.readingFont(15))
+                                    .foregroundColor(AppColors.cream.opacity(0.92))
+                            }
+
+                            offlineButton(
+                                title: "Remove",
+                                icon: "ph-trash",
+                                color: AppColors.textSecondary
+                            )
+                        }
+                        .transition(.opacity)
+
+                    case .failed:
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("Some of it didn't come down. What finished was kept.")
+                                .font(AppFonts.italicFont(14))
+                                .foregroundColor(AppColors.textSecondary)
+                                .fixedSize(horizontal: false, vertical: true)
+
+                            offlineButton(
+                                title: "Try again",
+                                icon: "ph-arrow-counter-clockwise",
+                                color: AppColors.gold
+                            )
+                        }
+                        .transition(.opacity)
                     }
                 }
+                .animation(Motion.crossfade, value: Self.offlineStage(of: state))
             }
+        }
+    }
+
+    /// Which of the four the offline row is in, ignoring how far along
+    /// a save is — the bar animates its own progress
+    private static func offlineStage(of state: OfflineContentService.SetOfflineState) -> Int {
+        switch state {
+        case .available: return 0
+        case .saving: return 1
+        case .saved: return 2
+        case .failed: return 3
         }
     }
 
@@ -404,7 +425,7 @@ struct MeditationSetDetailView: View {
                 }
             }
             .frame(height: 2)
-            .animation(.easeOut(duration: 0.3), value: fraction)
+            .animation(Motion.ease(0.3), value: fraction)
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Saving on this device, \(Int(fraction * 100)) percent")
@@ -425,6 +446,9 @@ struct MeditationSetDetailView: View {
             VStack(alignment: .leading, spacing: 0) {
                 sectionRule
 
+                // The line and the meditation share one slot: opening is
+                // the text rising in over the line as the page makes room
+                ZStack(alignment: .topLeading) {
                 if showsPreview {
                     VStack(alignment: .leading, spacing: 14) {
                         Text("The first meditation  ·  \(viewModel.previewSubject)")
@@ -448,6 +472,7 @@ struct MeditationSetDetailView: View {
                     }
                     .padding(.top, 20)
                     .padding(.bottom, 8)
+                    .transition(.opacity.combined(with: .offset(y: -8)))
                 } else {
                     QuietGoldButton(
                         title: "Read the first meditation",
@@ -461,6 +486,8 @@ struct MeditationSetDetailView: View {
                         showsPreview = true
                     }
                     .padding(.vertical, 6)
+                    .transition(.opacity)
+                }
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -506,7 +533,7 @@ struct MeditationSetDetailView: View {
     private var sectionRule: some View {
         Rectangle()
             .fill(AppColors.gold.opacity(0.18))
-            .frame(height: 0.5)
+            .frame(height: AppLine.hairline)
     }
 
     // MARK: - Pray
@@ -522,37 +549,7 @@ struct MeditationSetDetailView: View {
         .padding(.horizontal, 32)
         .padding(.top, 96)
         .padding(.bottom, 22)
-        .background(
-            // The scrim under the act must have no findable edge.
-            //
-            // Two things give one away. A short ramp shows the eye where
-            // it starts, so this one runs the full height of the band in
-            // many stops rather than three. And a scrim tinted with
-            // `background` lightens the page it covers here — the app
-            // gradient is already running down toward `backgroundDeep`
-            // by the foot of the screen — which reads as a band. Tinting
-            // it in `backgroundDeep` instead only ever deepens, and lands
-            // on exactly the color the page itself ends on.
-            LinearGradient(
-                stops: [
-                    .init(color: AppColors.backgroundDeep.opacity(0), location: 0),
-                    .init(color: AppColors.backgroundDeep.opacity(0.04), location: 0.12),
-                    .init(color: AppColors.backgroundDeep.opacity(0.14), location: 0.24),
-                    .init(color: AppColors.backgroundDeep.opacity(0.32), location: 0.36),
-                    .init(color: AppColors.backgroundDeep.opacity(0.56), location: 0.47),
-                    .init(color: AppColors.backgroundDeep.opacity(0.78), location: 0.57),
-                    .init(color: AppColors.backgroundDeep.opacity(0.93), location: 0.67),
-                    .init(color: AppColors.backgroundDeep, location: 0.78),
-                    .init(color: AppColors.backgroundDeep, location: 1)
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea(edges: .bottom)
-            // The fade is ground for the button, not a control: drags that
-            // begin in it must still scroll the page beneath.
-            .allowsHitTesting(false)
-        )
+        .background(PrayFootScrim())
     }
 
     private var preparingOverlay: some View {
@@ -576,7 +573,7 @@ struct MeditationSetDetailView: View {
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)
-                        .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: 0.5)
+                        .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline)
                 )
             )
     }
@@ -612,13 +609,14 @@ struct MeditationSetDetailView: View {
 
 // MARK: - SetSection
 
-/// One entry in the page's ledger: a hairline, the section's name set in
-/// gold caps down the left margin, and its content beside it.
+/// One entry in a title page's ledger: a hairline, the section's name
+/// set in gold caps down the left margin, and its content beside it.
+/// Shared with the Scriptural Rosary's page, which is set the same way.
 ///
 /// The two columns fold into one under the accessibility text sizes — a
 /// 74pt margin that has grown to fit 30pt caps leaves nothing for the
 /// reading beside it.
-private struct SetSection<Content: View>: View {
+struct SetSection<Content: View>: View {
 
     let label: String
     @ViewBuilder let content: Content
@@ -635,7 +633,7 @@ private struct SetSection<Content: View>: View {
         VStack(alignment: .leading, spacing: 0) {
             Rectangle()
                 .fill(AppColors.gold.opacity(0.18))
-                .frame(height: 0.5)
+                .frame(height: AppLine.hairline)
 
             Group {
                 if isStacked {

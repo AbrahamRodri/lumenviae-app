@@ -338,7 +338,7 @@ struct OfficeIndexSheet: View {
         .overlay(alignment: .bottom) {
             Rectangle()
                 .fill(AppColors.gold.opacity(0.1))
-                .frame(height: 0.5)
+                .frame(height: AppLine.hairline)
         }
         .accessibilityAddTraits(isActive ? .isSelected : [])
     }
@@ -365,6 +365,7 @@ struct OfficeIndexSheet: View {
                 onJump: { _ in }
             )
             .presentationDetents([.fraction(0.8)])
+            .presentationBackground(AppColors.background)
         }
         .environment(UserSettings.shared)
 }

@@ -79,11 +79,13 @@ struct TrueDevotionReaderView: View {
                 ReadingGoalSheet()
                     .presentationDetents([.height(400)])
                     .presentationDragIndicator(.visible)
+                    .presentationBackground(AppColors.background)
 
             case .notes:
                 BookNotesSheet(notes: notes)
                     .presentationDetents([.height(520), .large])
                     .presentationDragIndicator(.visible)
+                    .presentationBackground(AppColors.background)
             }
         }
         .navigationBarBackButtonHidden(true)

@@ -77,7 +77,7 @@ struct ConsecrationCompletionView: View {
                 .frame(width: 96, height: 96)
 
             Circle()
-                .strokeBorder(AppColors.goldLight.opacity(0.7), lineWidth: 0.5)
+                .strokeBorder(AppColors.goldLight.opacity(0.7), lineWidth: AppLine.hairline)
                 .frame(width: 96, height: 96)
 
             AppIcon("ph-seal-check-fill", size: 44)

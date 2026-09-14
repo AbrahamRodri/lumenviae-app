@@ -163,7 +163,7 @@ struct ChapelRemoveBadge: View {
                 Circle()
                     .fill(AppColors.backgroundDeep)
                 Circle()
-                    .strokeBorder(AppColors.gold.opacity(0.5), lineWidth: 0.5)
+                    .strokeBorder(AppColors.gold.opacity(0.5), lineWidth: AppLine.hairline)
                 AppIcon("ph-x", size: 10)
                     .foregroundColor(AppColors.gold.opacity(0.8))
             }
@@ -357,7 +357,7 @@ struct ChapelTray: View {
         .cornerRadius(16)
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: 0.5)
+                .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: AppLine.hairline)
         )
     }
 

@@ -32,6 +32,22 @@ struct MeditationReaderView: View {
     /// both surfaces offer the same acts.
     let actions: PrayerTrackActions
 
+    /// Whether the Rosary is being prayed on the beads. The reader then
+    /// carries the bead's name and cue above the pill — the strand is
+    /// the player's, but the count is the same on both surfaces.
+    let showsBeadRow: Bool
+
+    /// What to do on the bead under the hand, written by the player so
+    /// both surfaces say the same thing. Nil on the final bead.
+    let beadCue: String?
+
+    /// True when the hand last stepped back, so the count rolls down
+    let beadCountsDown: Bool
+
+    /// Finishes the Rosary — AMEN on the final bead. The player owns
+    /// the completion, so the reader hands the tap up to it.
+    let onFinish: () -> Void
+
     /// Back to the player. Never ends the session.
     let onClose: () -> Void
 
@@ -45,9 +61,11 @@ struct MeditationReaderView: View {
     /// dismissal drops the new presentation.
     @State private var pendingHandoff: (() -> Void)?
 
-    /// Measured height of the mini player, so the last paragraph can
-    /// scroll clear of it instead of resting under it.
-    @State private var pillHeight: CGFloat = 0
+    /// What the foot takes up — the bead row and the mini player
+    /// together — measured rather than assumed: how tall it stands, and
+    /// where its top falls on the screen. The last paragraph scrolls
+    /// clear of it, and the page dissolves before it reaches it.
+    @State private var footMetrics = FootMetrics()
 
     /// What the floating header takes up, measured rather than assumed:
     /// how tall it stands, and where its foot falls on the screen.
@@ -85,26 +103,33 @@ struct MeditationReaderView: View {
             VStack(spacing: 0) {
                 Spacer()
 
-                // Band and pill measured together: the scroll clears the
-                // whole foot, so a long verse can't hide the last lines
-                // of the meditation behind it.
+                // Bead row and pill measured together: the scroll clears
+                // the whole foot, so the last lines of the meditation
+                // never rest under either.
                 VStack(spacing: 0) {
-                    // The Scriptural Rosary rides here too. The view
-                    // model owns the decision, so the reader shows
-                    // exactly what the painting shows — the setting is
-                    // not a feature of one surface.
-                    if let verse = viewModel.currentScripturalVerse {
-                        ScripturalVerseBand(
-                            verse: verse,
-                            beadIndex: viewModel.currentBeadIndex,
-                            beadCount: viewModel.scripturalVerses.count,
-                            size: userSettings.meditationFontSize - 1,
-                            onAdvance: { viewModel.advanceBead() },
-                            onRetreat: { viewModel.retreatBead() }
+                    // The bead under the hand rides here too, over the
+                    // dimmed foot of the page the way the pill does. The
+                    // view model owns the count, so the reader shows
+                    // exactly what the painting shows; a tap on the row
+                    // prays the bead forward, since the page's own scroll
+                    // is what a vertical swipe means here.
+                    if showsBeadRow {
+                        let amen: (() -> Void)? = viewModel.isLastBeadOfRosary ? { onFinish() } : nil
+                        BeadStatusRow(
+                            label: viewModel.beadLabel,
+                            cue: beadCue,
+                            onAmen: amen,
+                            countsDown: beadCountsDown,
+                            onAdvance: {
+                                withAnimation(Motion.beadSlide) { _ = viewModel.prayForward() }
+                            },
+                            onRetreat: {
+                                withAnimation(Motion.beadSlide) { viewModel.prayBack() }
+                            }
                         )
-                        .padding(.horizontal, 18)
-                        .padding(.bottom, 14)
-                        .sensoryFeedback(.selection, trigger: verse)
+                        .padding(.horizontal, 22)
+                        .padding(.bottom, 6)
+                        .animation(Motion.words, value: viewModel.beadPosition)
                     }
 
                     MiniPlayerPill(
@@ -117,31 +142,15 @@ struct MeditationReaderView: View {
                     .padding(.horizontal, 14)
                     .padding(.bottom, 16)
                 }
-                // Only where there is a verse to protect: the pill alone
-                // has always floated over the scrolling text, and it
-                // reads fine. A verse does not — two texts through each
-                // other are worse than either — so the band stands on the
-                // page's own colour, with a short ramp above it that
-                // dissolves the meditation's last line into the page.
-                .background(alignment: .top) {
-                    if viewModel.currentScripturalVerse != nil {
-                        VStack(spacing: 0) {
-                            LinearGradient(
-                                gradient: .smoothFade(to: AppColors.background, from: 0),
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                            .frame(height: 30)
-
-                            AppColors.background
-                        }
-                        .padding(.top, -30)
-                        .ignoresSafeArea(edges: .bottom)
-                    }
-                }
                 .background(
                     GeometryReader { geo in
-                        Color.clear.preference(key: PillHeightKey.self, value: geo.size.height)
+                        Color.clear.preference(
+                            key: FootMetricsKey.self,
+                            value: FootMetrics(
+                                height: geo.size.height,
+                                top: geo.frame(in: .global).minY
+                            )
+                        )
                     }
                 )
             }
@@ -152,14 +161,15 @@ struct MeditationReaderView: View {
         .background(AppColors.appGradient.ignoresSafeArea())
         // The page follows a downward pull; the player shows beneath
         .offset(y: pullOffset)
-        .onPreferenceChange(PillHeightKey.self) { pillHeight = $0 }
+        .onPreferenceChange(FootMetricsKey.self) { footMetrics = $0 }
         .onPreferenceChange(HeaderMetricsKey.self) { headerMetrics = $0 }
         .sheet(item: $activeSheet, onDismiss: runPendingHandoff) { sheet in
             switch sheet {
             case .textOptions:
                 ReaderTextOptionsSheet()
-                    .presentationDetents([.height(300)])
+                    .presentationDetents([.height(ReaderTextOptionsSheet.height(showsNarrationOptions: true))])
                     .presentationDragIndicator(.visible)
+                    .presentationBackground(AppColors.background)
 
             case .tray:
                 let placement = PrayerTrackPlacement.reader(onExpand: onClose)
@@ -192,7 +202,7 @@ struct MeditationReaderView: View {
     private static let closeFlickDistance: CGFloat = 280
 
     /// A pull let go short of the threshold settles back into place.
-    private static let settleMotion = Animation.spring(response: 0.34, dampingFraction: 0.86)
+    private static let settleMotion = Motion.settle
 
     /// Pulling the page down toward the player, the way a sheet is sent
     /// away. From the header it always counts; from the text (`fromText`)
@@ -334,7 +344,7 @@ struct MeditationReaderView: View {
                 }
                 .padding(.horizontal, 26)
                 .padding(.top, pageTopInset)
-                .padding(.bottom, pillHeight + 90)
+                .padding(.bottom, footMetrics.height + 90)
                 // A new decade is a new page: re-identifying the content
                 // is what returns the reader to the top of it
                 .id(viewModel.currentMysteryIndex)
@@ -390,12 +400,19 @@ struct MeditationReaderView: View {
                 // The header's foot in the band's own space — or, before
                 // the first measurement lands, where a one-line header
                 // would put it
+                let bandTop = geometry.frame(in: .global).minY
                 let foot = headerMetrics.foot > 0
-                    ? headerMetrics.foot - geometry.frame(in: .global).minY
+                    ? headerMetrics.foot - bandTop
                     : height * 0.25
+                // Where the bead row and pill begin, in the same space —
+                // or, before they are measured, where the pill alone
+                // would stand
+                let footTop = footMetrics.top > 0
+                    ? footMetrics.top - bandTop
+                    : height * 0.86
 
                 LinearGradient(
-                    stops: Self.focusStops(headerFoot: foot, height: height),
+                    stops: Self.focusStops(headerFoot: foot, footTop: footTop, height: height),
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -410,19 +427,27 @@ struct MeditationReaderView: View {
     /// through whatever is scrolling past them, however many lines they
     /// run to. The ramp finishes 24pt below the foot, and the page at
     /// rest begins further down still (`pageGap`), so the first line
-    /// never arrives already faded. The other end of the band, where the
-    /// page dims behind the mini player, keeps to fractions of the screen.
-    private static func focusStops(headerFoot: CGFloat, height: CGFloat) -> [Gradient.Stop] {
-        let top = 0.72
-        func at(_ y: CGFloat) -> CGFloat { min(max(y / height, 0), top) }
+    /// never arrives already faded.
+    ///
+    /// The other end hangs from the foot block the same way: the page
+    /// is gone a few points above the bead row, so its cue is never
+    /// read through the paragraph scrolling behind it, and the dissolve
+    /// keeps its length by starting higher when the foot stands taller.
+    /// The pill alone used to let the page show through at 30% behind
+    /// it; a row of words above the pill cannot.
+    private static func focusStops(headerFoot: CGFloat, footTop: CGFloat, height: CGFloat) -> [Gradient.Stop] {
+        let end = min(max((footTop - 4) / height, 0), 1)
+        let lit = min(0.72, max((footTop - 110) / height, 0.3))
+        let mid = max(min((footTop - 40) / height, end), lit)
+        func at(_ y: CGFloat) -> CGFloat { min(max(y / height, 0), lit) }
         return [
             .init(color: .black.opacity(0), location: 0),
             .init(color: .black.opacity(0), location: at(headerFoot - 44)),
             .init(color: .black.opacity(0.45), location: at(headerFoot - 10)),
             .init(color: .black, location: at(headerFoot + 24)),
-            .init(color: .black, location: top),
-            .init(color: .black.opacity(0.30), location: 0.86),
-            .init(color: .black.opacity(0), location: 0.94)
+            .init(color: .black, location: lit),
+            .init(color: .black.opacity(0.30), location: mid),
+            .init(color: .black.opacity(0), location: end)
         ]
     }
 }
@@ -533,7 +558,7 @@ struct MiniPlayerPill: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .stroke(AppColors.gold.opacity(0.14), lineWidth: 0.5)
+                .stroke(AppColors.gold.opacity(0.14), lineWidth: AppLine.hairline)
         )
         // The pill is chrome for the page behind it, not a list of
         // separate landmarks to swipe through
@@ -559,6 +584,17 @@ struct ReaderTextOptionsSheet: View {
 
     @Environment(UserSettings.self) private var userSettings
     @Environment(\.dismiss) private var dismiss
+
+    /// Whether the "while listening" section is drawn. The Scriptural
+    /// Rosary has no narration to follow, and a toggle for one there
+    /// would be a promise the screen can't keep.
+    var showsNarrationOptions = true
+
+    /// The sheet's height, for its detent — the size slider alone, or
+    /// the slider and the narration row.
+    static func height(showsNarrationOptions: Bool) -> CGFloat {
+        showsNarrationOptions ? 300 : 190
+    }
 
     var body: some View {
         @Bindable var settings = userSettings
@@ -604,25 +640,27 @@ struct ReaderTextOptionsSheet: View {
             .padding(.horizontal, 24)
             .padding(.top, 18)
 
-            VStack(alignment: .leading, spacing: 10) {
-                Text("WHILE LISTENING")
-                    .font(AppFonts.labelFont(10))
-                    .tracking(2.5)
-                    .foregroundColor(AppColors.gold)
+            if showsNarrationOptions {
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("WHILE LISTENING")
+                        .font(AppFonts.labelFont(10))
+                        .tracking(2.5)
+                        .foregroundColor(AppColors.gold)
 
-                ToggleRow(
-                    icon: "ph-text-align-left",
-                    title: "Follow the narration",
-                    subtitle: "The page keeps pace with the voice",
-                    isOn: $settings.readerAutoScroll
-                )
-                .background(
-                    RoundedRectangle(cornerRadius: 14)
-                        .fill(AppColors.cardBackground)
-                )
+                    ToggleRow(
+                        icon: "ph-text-align-left",
+                        title: "Follow the narration",
+                        subtitle: "The page keeps pace with the voice",
+                        isOn: $settings.readerAutoScroll
+                    )
+                    .background(
+                        RoundedRectangle(cornerRadius: 14)
+                            .fill(AppColors.cardBackground)
+                    )
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 24)
             }
-            .padding(.horizontal, 24)
-            .padding(.top, 24)
 
             Spacer(minLength: 16)
         }
@@ -840,9 +878,20 @@ final class ReaderScrollModel {
     }
 }
 
-nonisolated private struct PillHeightKey: PreferenceKey {
-    static var defaultValue: CGFloat { 0 }
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = max(value, nextValue())
+/// How tall the reader's foot — bead row and pill — stands, and where
+/// its top edge falls in screen points.
+nonisolated private struct FootMetrics: Equatable {
+    var height: CGFloat = 0
+    var top: CGFloat = 0
+}
+
+nonisolated private struct FootMetricsKey: PreferenceKey {
+    static var defaultValue: FootMetrics { FootMetrics() }
+
+    /// Keeps the one real measurement rather than the last one seen,
+    /// for the same reason the header's key does.
+    static func reduce(value: inout FootMetrics, nextValue: () -> FootMetrics) {
+        let next = nextValue()
+        if next.height > 0 { value = next }
     }
 }

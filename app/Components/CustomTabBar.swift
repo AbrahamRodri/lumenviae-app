@@ -104,7 +104,7 @@ struct CustomTabBar: View {
             // reader's compact bar uses
             Rectangle()
                 .fill(AppColors.gold.opacity(0.15))
-                .frame(height: 0.5)
+                .frame(height: AppLine.hairline)
 
             // Even gaps between content-sized tabs, not equal cells:
             // CONSECRATE is four times ME's width, so equal cells pool
@@ -228,15 +228,22 @@ struct PrayNowButton: View {
                     .frame(width: 62, height: 62)
 
                 VStack(spacing: 4) {
-                    if isLoading {
-                        ProgressView()
-                            .tint(AppColors.gold)
-                            .frame(width: 14, height: 20)
-                    } else {
-                        LatinCross()
-                            .fill(AppColors.goldGradient)
-                            .frame(width: 14, height: 20)
+                    // The cross gives way to the spinner and back by a
+                    // crossfade, never a swap: this is the app's first
+                    // button, mid-press
+                    ZStack {
+                        if isLoading {
+                            ProgressView()
+                                .tint(AppColors.gold)
+                                .transition(.opacity.combined(with: .scale(scale: 0.7)))
+                        } else {
+                            LatinCross()
+                                .fill(AppColors.goldGradient)
+                                .transition(.opacity.combined(with: .scale(scale: 0.7)))
+                        }
                     }
+                    .frame(width: 14, height: 20)
+                    .animation(Motion.crossfade, value: isLoading)
 
                     Text("PRAY")
                         .font(AppFonts.labelFont(8.5))
@@ -327,9 +334,9 @@ struct TabBarItem: View {
                     .opacity(isSelected ? 1 : 0)
                     .scaleEffect(isSelected ? 1 : 0.3)
             }
-            .animation(.easeOut(duration: 0.25), value: isSelected)
+            .animation(Motion.settle, value: isSelected)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(QuietGlyphButtonStyle())
         .accessibilityLabel(tab.title)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
