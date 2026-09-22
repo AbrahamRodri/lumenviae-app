@@ -11,7 +11,12 @@
 //  Layout under Application Support/OfflineContent/:
 //    sets/index_<category>.json   [MeditationSetSummary] per category
 //    sets/<id>.json               full MeditationSet
-//    audio/meditation_<id>.mp3    meditation narration
+//    audio/meditation_<id>_<voice>.mp3
+//                                 meditation narration, one file per voice
+//                                 it has been saved in (an older
+//                                 meditation_<id>.mp3 is renamed to the
+//                                 male voice at launch, which is what it
+//                                 always was)
 //    audio/prayer_<slug>.mp3      consecration chant
 //    images/set_<id>_<hash>.jpg   the set's painting, named by the set and
 //                                 the hash the S3 key carries — a replaced
@@ -29,6 +34,16 @@
 //  download skips what is already on disk, so tapping Download again
 //  fetches the few hundred KB of images and nothing else. No manifest
 //  version, no forced re-download of an audio library.
+//
+//  Voices came later still. The library download saves each meditation
+//  in the voice the person has chosen (a set that lacks that voice is
+//  saved in its default), so a library is one voice deep - a second voice
+//  would double a download that is already hundreds of megabytes.
+//  Changing the voice afterwards makes the library "incomplete" in the
+//  new voice, and Download again fetches only the new voice's files.
+//  When the chosen voice is not on disk the player still prefers any
+//  saved voice over the network, because a Rosary on a plane in the
+//  other voice beats silence.
 //
 
 import Foundation
@@ -63,16 +78,22 @@ final class OfflineContentService {
     /// Only download and removal change the answer, and both refresh it.
     private(set) var hasContentOnDisk: Bool = false
 
-    /// Which meditations have their narration saved.
+    /// Which (meditation, voice) narrations are saved.
     ///
     /// Published rather than left as a `fileExists` probe so a surface
     /// offering "Download"/"Remove download" tracks the library: wiping
     /// everything from Account updates an open tray instead of leaving it
     /// offering to remove a file that is gone.
-    private(set) var downloadedAudioIds: Set<Int> = []
+    private(set) var downloadedAudio: Set<AudioKey> = []
+
+    /// One saved narration: a meditation in a voice.
+    struct AudioKey: Hashable {
+        let meditationId: Int
+        let voice: String
+    }
 
     /// Which meditation sets have their text saved. Published for the
-    /// same reason as `downloadedAudioIds`: a set's own page offers to
+    /// same reason as `downloadedAudio`: a set's own page offers to
     /// save or remove it, and wiping the library from Account has to
     /// reach that page rather than leave it claiming a saved copy.
     private(set) var downloadedSetIds: Set<Int> = []
@@ -85,16 +106,41 @@ final class OfflineContentService {
         let images = (try? fm.contentsOfDirectory(atPath: imagesDir.path)) ?? []
         hasContentOnDisk = !sets.isEmpty || !audio.isEmpty || !images.isEmpty
         // Same listings, so the saved-id sets cost no extra I/O
-        downloadedAudioIds = Set(audio.compactMap(Self.meditationId(fromAudioFile:)))
+        downloadedAudio = Set(audio.compactMap(Self.audioKey(fromAudioFile:)))
         downloadedSetIds = Set(sets.compactMap(Self.setId(fromFile:)))
     }
 
-    /// The id in `meditation_412.mp3`. Nil for a chant file, which shares
-    /// the directory under a `prayer_` prefix.
-    private nonisolated static func meditationId(fromAudioFile name: String) -> Int? {
+    /// The meditation and voice in `meditation_412_female.mp3`. Nil for a
+    /// chant file, which shares the directory under a `prayer_` prefix,
+    /// and for anything else that is not a narration.
+    private nonisolated static func audioKey(fromAudioFile name: String) -> AudioKey? {
         let prefix = "meditation_", suffix = ".mp3"
         guard name.hasPrefix(prefix), name.hasSuffix(suffix) else { return nil }
-        return Int(name.dropFirst(prefix.count).dropLast(suffix.count))
+        let stem = name.dropFirst(prefix.count).dropLast(suffix.count)
+        guard let underscore = stem.lastIndex(of: "_"),
+              let id = Int(stem[..<underscore]) else { return nil }
+        let voice = String(stem[stem.index(after: underscore)...])
+        return voice.isEmpty ? nil : AudioKey(meditationId: id, voice: voice)
+    }
+
+    /// Files saved before voices were named `meditation_<id>.mp3`, and
+    /// every one of them was the original (male) voice. Renaming them once
+    /// keeps those downloads instead of orphaning a few hundred megabytes
+    /// the person chose to keep.
+    private func migrateLegacyAudioNames() {
+        let fm = FileManager.default
+        let names = (try? fm.contentsOfDirectory(atPath: audioDir.path)) ?? []
+        for name in names {
+            let prefix = "meditation_", suffix = ".mp3"
+            guard name.hasPrefix(prefix), name.hasSuffix(suffix),
+                  let id = Int(name.dropFirst(prefix.count).dropLast(suffix.count)) else { continue }
+            let destination = meditationAudioURL(meditationId: id, voice: NarrationVoice.legacyVoice)
+            if fm.fileExists(atPath: destination.path) {
+                try? fm.removeItem(at: audioDir.appendingPathComponent(name))
+            } else {
+                try? fm.moveItem(at: audioDir.appendingPathComponent(name), to: destination)
+            }
+        }
     }
 
     /// The id in `27.json`. Nil for `index_joyful.json`, which shares the
@@ -139,6 +185,7 @@ final class OfflineContentService {
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
         root = base.appendingPathComponent("OfflineContent", isDirectory: true)
         createDirectories()
+        migrateLegacyAudioNames()
         refreshDiskState()
 
         if let data = try? Data(contentsOf: manifestURL),
@@ -191,6 +238,7 @@ final class OfflineContentService {
 
             let allSummaries = summariesByCategory.values.flatMap { $0 }
             let chantIds = Self.consecrationChantIds()
+            let voice = NarrationVoiceCatalog.shared.chosenSlug
 
             var textDone = 0
             state = .downloading(stage: "Meditations", completed: 0, total: allSummaries.count)
@@ -208,9 +256,12 @@ final class OfflineContentService {
                     try await Self.writeJSON(set, to: file)
                 }
 
-                for meditation in set.meditations ?? [] where meditation.hasAudio {
-                    if let urlString = meditation.audioUrl {
-                        audioJobs.append((urlString, meditationAudioURL(meditationId: meditation.id)))
+                for meditation in set.meditations ?? [] {
+                    if let narration = meditation.playableNarration(preferring: voice) {
+                        audioJobs.append((
+                            narration.audioUrl,
+                            meditationAudioURL(meditationId: meditation.id, voice: narration.voice)
+                        ))
                     }
                 }
 
@@ -378,10 +429,25 @@ final class OfflineContentService {
         return try? decoder().decode(MeditationSet.self, from: setData)
     }
 
-    /// Local narration audio for a meditation, if downloaded.
-    func localAudioURL(meditationId: Int) -> URL? {
-        let url = meditationAudioURL(meditationId: meditationId)
+    /// Local narration audio for a meditation in one voice, if downloaded.
+    func localAudioURL(meditationId: Int, voice: String) -> URL? {
+        let url = meditationAudioURL(meditationId: meditationId, voice: voice)
         return FileManager.default.fileExists(atPath: url.path) ? url : nil
+    }
+
+    /// Any saved narration of a meditation, with the voice it is in, when
+    /// the one asked for is not on disk. For playing what there is rather
+    /// than nothing; the caller decides whether that beats the network.
+    func anyLocalAudio(meditationId: Int) -> (url: URL, voice: String)? {
+        let saved = downloadedAudio
+            .filter { $0.meditationId == meditationId }
+            .sorted { $0.voice < $1.voice }
+        for key in saved {
+            if let url = localAudioURL(meditationId: key.meditationId, voice: key.voice) {
+                return (url, key.voice)
+            }
+        }
+        return nil
     }
 
     /// Local chant audio for a consecration prayer, if downloaded.
@@ -426,10 +492,10 @@ final class OfflineContentService {
 
     /// Where this set stands.
     ///
-    /// Saved means the text *and* every narration the set carries — a set
-    /// whose audio is missing is not one you can pray on a plane, so it
-    /// must not claim to be saved. A set with no audio at all is saved as
-    /// soon as its text is down.
+    /// Saved means the text *and* every narration the set carries, in the
+    /// voice this person hears — a set whose audio is missing is not one
+    /// you can pray on a plane, so it must not claim to be saved. A set
+    /// with no audio at all is saved as soon as its text is down.
     func offlineState(for set: MeditationSet) -> SetOfflineState {
         if let progress = savingSets[set.id] {
             let fraction = progress.total > 0
@@ -446,10 +512,13 @@ final class OfflineContentService {
     }
 
     private func missingAudioIds(for set: MeditationSet) -> [Int] {
-        (set.meditations ?? [])
-            .filter(\.hasAudio)
-            .map(\.id)
-            .filter { !downloadedAudioIds.contains($0) }
+        let voice = NarrationVoiceCatalog.shared.chosenSlug
+        return (set.meditations ?? [])
+            .compactMap { meditation -> Int? in
+                guard let narration = meditation.playableNarration(preferring: voice) else { return nil }
+                let key = AudioKey(meditationId: meditation.id, voice: narration.voice)
+                return downloadedAudio.contains(key) ? nil : meditation.id
+            }
     }
 
     /// Saves one set — its text, its painting if it has one, and every
@@ -470,9 +539,10 @@ final class OfflineContentService {
         defer { savingSets[set.id] = nil }
 
         let source = (try? await APIService.shared.fetchMeditationSet(id: set.id)) ?? set
-        let jobs = (source.meditations ?? []).compactMap { meditation -> (id: Int, url: String)? in
-            guard meditation.hasAudio, let url = meditation.audioUrl else { return nil }
-            return (meditation.id, url)
+        let voice = NarrationVoiceCatalog.shared.chosenSlug
+        let jobs = (source.meditations ?? []).compactMap { meditation -> (id: Int, voice: String, url: String)? in
+            guard let narration = meditation.playableNarration(preferring: voice) else { return nil }
+            return (meditation.id, narration.voice, narration.audioUrl)
         }
         let artworkJob: (url: String, destination: URL)? = source.artwork.flatMap { artwork in
             artworkFileURL(setId: source.id, remote: artwork.url).map { (artwork.url, $0) }
@@ -506,7 +576,7 @@ final class OfflineContentService {
         }
 
         for job in jobs {
-            let destination = meditationAudioURL(meditationId: job.id)
+            let destination = meditationAudioURL(meditationId: job.id, voice: job.voice)
             if !FileManager.default.fileExists(atPath: destination.path) {
                 do {
                     try await Self.download(with: downloadSession, from: job.url, to: destination)
@@ -530,7 +600,9 @@ final class OfflineContentService {
     func removeSet(_ set: MeditationSet) {
         try? FileManager.default.removeItem(at: setURL(id: set.id))
         for meditation in set.meditations ?? [] {
-            try? FileManager.default.removeItem(at: meditationAudioURL(meditationId: meditation.id))
+            for file in audioFiles(meditationId: meditation.id) {
+                try? FileManager.default.removeItem(at: file)
+            }
         }
         for file in artworkFiles(setId: set.id) {
             try? FileManager.default.removeItem(at: file)
@@ -541,37 +613,44 @@ final class OfflineContentService {
 
     // MARK: - One Meditation's Narration
 
-    /// Meditations whose narration is being fetched right now.
+    /// Narrations being fetched right now.
     ///
     /// Kept apart from `state`, which belongs to the library-wide download:
     /// saving one meditation from the player must not make Account report
     /// that the whole library is downloading.
-    private(set) var downloadingAudioIds: Set<Int> = []
+    private(set) var downloadingAudio: Set<AudioKey> = []
 
-    /// Whether this meditation's narration is already on disk.
-    func hasLocalAudio(meditationId: Int) -> Bool {
-        downloadedAudioIds.contains(meditationId)
+    /// Whether this meditation's narration in `voice` is already on disk.
+    func hasLocalAudio(meditationId: Int, voice: String) -> Bool {
+        downloadedAudio.contains(AudioKey(meditationId: meditationId, voice: voice))
     }
 
-    /// Saves one meditation's narration for offline prayer.
+    /// Whether this meditation's narration in `voice` is being fetched.
+    func isDownloadingAudio(meditationId: Int, voice: String) -> Bool {
+        downloadingAudio.contains(AudioKey(meditationId: meditationId, voice: voice))
+    }
+
+    /// Saves one meditation's narration, in one voice, for offline prayer.
     ///
     /// The presigned URL on a meditation expires in about a day, so this
     /// takes whatever URL the caller is holding right now rather than
-    /// re-resolving one.
+    /// re-resolving one - and the voice that URL really is, which the
+    /// caller knows and the URL does not say.
     @discardableResult
-    func downloadAudio(meditationId: Int, from urlString: String) async -> Bool {
-        guard !downloadingAudioIds.contains(meditationId) else { return false }
-        guard !hasLocalAudio(meditationId: meditationId) else { return true }
+    func downloadAudio(meditationId: Int, voice: String, from urlString: String) async -> Bool {
+        let key = AudioKey(meditationId: meditationId, voice: voice)
+        guard !downloadingAudio.contains(key) else { return false }
+        guard !downloadedAudio.contains(key) else { return true }
 
         createDirectories()
-        downloadingAudioIds.insert(meditationId)
-        defer { downloadingAudioIds.remove(meditationId) }
+        downloadingAudio.insert(key)
+        defer { downloadingAudio.remove(key) }
 
         do {
             try await Self.download(
                 with: downloadSession,
                 from: urlString,
-                to: meditationAudioURL(meditationId: meditationId)
+                to: meditationAudioURL(meditationId: meditationId, voice: voice)
             )
             refreshDiskState()
             return true
@@ -580,9 +659,9 @@ final class OfflineContentService {
         }
     }
 
-    /// Removes one meditation's saved narration.
-    func removeAudio(meditationId: Int) {
-        try? FileManager.default.removeItem(at: meditationAudioURL(meditationId: meditationId))
+    /// Removes one meditation's saved narration in one voice.
+    func removeAudio(meditationId: Int, voice: String) {
+        try? FileManager.default.removeItem(at: meditationAudioURL(meditationId: meditationId, voice: voice))
         refreshDiskState()
     }
 
@@ -596,8 +675,15 @@ final class OfflineContentService {
         setsDir.appendingPathComponent("\(id).json")
     }
 
-    private func meditationAudioURL(meditationId: Int) -> URL {
-        audioDir.appendingPathComponent("meditation_\(meditationId).mp3")
+    private func meditationAudioURL(meditationId: Int, voice: String) -> URL {
+        audioDir.appendingPathComponent("meditation_\(meditationId)_\(voice).mp3")
+    }
+
+    /// Every voice of one meditation saved here.
+    private func audioFiles(meditationId: Int) -> [URL] {
+        downloadedAudio
+            .filter { $0.meditationId == meditationId }
+            .map { meditationAudioURL(meditationId: $0.meditationId, voice: $0.voice) }
     }
 
     private func prayerAudioURL(prayerId: String) -> URL {

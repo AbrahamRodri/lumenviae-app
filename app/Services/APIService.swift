@@ -7,6 +7,8 @@
 //  - GET  /meditation-sets        - List meditation sets
 //  - GET  /meditation-sets/:id    - Get full meditation set
 //  - GET  /meditations/:id/audio  - Freshly signed narration URL + expiry
+//                                   (?voice=slug for one voice)
+//  - GET  /voices                 - The narration voices, default first
 //  - GET  /prayers/:id/audio      - Presigned audio URL
 //  - POST /completions            - Record prayer completion
 //
@@ -129,14 +131,32 @@ final class APIService {
     /// moment it expires. The URLs on a set live about a day; a stored or
     /// long-held set asks here once they have passed instead of meeting
     /// the expiry as a 403 partway through a decade.
-    func fetchMeditationAudio(meditationId: Int) async throws -> MeditationAudioResponse {
-        let urlString = "\(baseURL)/meditations/\(meditationId)/audio"
+    ///
+    /// `voice` names the narration voice; nil asks for the server's
+    /// default, or whichever voice has recorded the meditation when the
+    /// default has not.
+    func fetchMeditationAudio(meditationId: Int, voice: String? = nil) async throws -> MeditationAudioResponse {
+        var urlString = "\(baseURL)/meditations/\(meditationId)/audio"
+        if let voice, !voice.isEmpty {
+            urlString += "?voice=\(voice)"
+        }
 
         guard let url = URL(string: urlString) else {
             throw APIError.invalidURL
         }
 
         return try await fetch(url: url, responseType: APIResponse<MeditationAudioResponse>.self).data
+    }
+
+    // MARK: - Voices
+
+    /// Fetches the narration voices, default first.
+    func fetchVoices() async throws -> [NarrationVoice] {
+        guard let url = URL(string: "\(baseURL)/voices") else {
+            throw APIError.invalidURL
+        }
+
+        return try await fetch(url: url, responseType: VoicesResponse.self).data
     }
 
     // MARK: - Completions

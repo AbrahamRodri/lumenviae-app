@@ -215,6 +215,12 @@ struct MysteryPrayerView: View {
             }
             await viewModel.loadCurrentAudio()
         }
+        // The voice changed under the Rosary - from the playback sheet,
+        // or Settings on another screen - so the mystery under the hand
+        // is heard again in the new one, carrying on if it was playing
+        .onChange(of: userSettings.narrationVoiceSlug) {
+            Task { await viewModel.narrationVoiceChanged() }
+        }
         // A bead prayed is a place to come back to, the same as a decade;
         // and a bead moved means the hint has done its work
         .onChange(of: viewModel.currentBeadIndex) {
@@ -407,6 +413,7 @@ struct MysteryPrayerView: View {
         return PrayerTrackActions(
             meditationId: meditation?.id ?? 0,
             audioURL: viewModel.currentRemoteAudioURL,
+            voice: viewModel.currentNarrationVoice,
             shareText: "\(title) — a meditation from \(meditationSet.name) on Lumen Viae",
             feedbackContext: FeedbackContext(
                 meditationTitle: title,

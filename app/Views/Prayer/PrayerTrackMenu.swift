@@ -32,6 +32,11 @@ struct PrayerTrackActions {
     /// than resolving another.
     let audioURL: String?
 
+    /// The voice `audioURL` is in, so a download is saved under the
+    /// voice it really is rather than the one the person asked for
+    /// (which a meditation may not have been recorded in).
+    let voice: String
+
     /// What Share hands off.
     let shareText: String
 
@@ -104,13 +109,13 @@ struct PrayerTrackTray: View {
     private var offline: OfflineContentService { .shared }
 
     private var isDownloading: Bool {
-        offline.downloadingAudioIds.contains(actions.meditationId)
+        offline.isDownloadingAudio(meditationId: actions.meditationId, voice: actions.voice)
     }
 
     /// Read from the service rather than kept alongside it, so wiping the
     /// library from Account settles this row too.
     private var isSaved: Bool {
-        offline.hasLocalAudio(meditationId: actions.meditationId)
+        offline.hasLocalAudio(meditationId: actions.meditationId, voice: actions.voice)
     }
 
     var body: some View {
@@ -184,7 +189,7 @@ struct PrayerTrackTray: View {
     private func downloadRow(showsDivider: Bool) -> some View {
         if isSaved {
             TrayRow(icon: "ph-trash", title: "Remove download", showsDivider: showsDivider) {
-                offline.removeAudio(meditationId: actions.meditationId)
+                offline.removeAudio(meditationId: actions.meditationId, voice: actions.voice)
                 dismiss()
             }
         } else if let audioURL = actions.audioURL {
@@ -197,6 +202,7 @@ struct PrayerTrackTray: View {
                 Task {
                     await offline.downloadAudio(
                         meditationId: actions.meditationId,
+                        voice: actions.voice,
                         from: audioURL
                     )
                 }
@@ -261,6 +267,7 @@ private struct TrayRowLabel: View {
             actions: PrayerTrackActions(
                 meditationId: 1,
                 audioURL: "https://example.com/a.mp3",
+                voice: "female",
                 shareText: "",
                 feedbackContext: FeedbackContext(
                     meditationTitle: "The Descent of the Holy Spirit upon the Apostles",

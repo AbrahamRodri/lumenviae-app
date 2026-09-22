@@ -150,14 +150,14 @@ struct NarrationPlayControl: View {
 
 // MARK: - Playback Settings
 
-/// The tray beside the reader button: how fast the voice reads, and
-/// whether the player is prayed on the beads.
+/// The tray beside the reader button: which voice reads, how fast it
+/// reads, and whether the player is prayed on the beads.
 ///
-/// The beads toggle lives here as well as in Settings because this is
-/// the one settings surface the player has: someone who finds the
-/// strand is not for them mid-Rosary should not have to leave the
-/// Rosary to say so, and someone who turned it off should be able to
-/// find it again from the same place.
+/// The voice and the beads toggle live here as well as in Settings
+/// because this is the one settings surface the player has: someone
+/// who finds the strand, or the narrator, is not for them mid-Rosary
+/// should not have to leave the Rosary to say so, and someone who
+/// changed it should be able to find it again from the same place.
 struct PlaybackSettingsSheet: View {
 
     @Environment(UserSettings.self) private var userSettings
@@ -167,10 +167,12 @@ struct PlaybackSettingsSheet: View {
     /// the Lock Screen or CarPlay last set.
     private var audio: AudioService { .shared }
 
-    /// The sheet's height, for its detent: the header, the speeds under
-    /// their label, and the bead counter's row, whose line can run to
-    /// three
-    static let height: CGFloat = 350
+    private var voices: NarrationVoiceCatalog { .shared }
+
+    /// The sheet's height, for its detent: the header, the voices and
+    /// the speeds under their labels, and the bead counter's row, whose
+    /// line can run to three
+    static let height: CGFloat = 430
 
     var body: some View {
         @Bindable var settings = userSettings
@@ -179,6 +181,11 @@ struct PlaybackSettingsSheet: View {
             SheetHeader(title: "Playback") {
                 SheetHeaderAction(title: "Done") { dismiss() }
             }
+
+            SheetSectionLabel("Voice")
+
+            voiceSection
+                .padding(.horizontal, SheetMetrics.gutter)
 
             SheetSectionLabel("Speed")
 
@@ -200,6 +207,33 @@ struct PlaybackSettingsSheet: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .sheetGround()
+    }
+
+    /// The voices as capsules, the way the speeds are: two or three
+    /// words that fit one row, and a choice that takes effect on the
+    /// narration playing, which the player hears through the settings
+    /// change.
+    private var voiceSection: some View {
+        HStack(spacing: 8) {
+            ForEach(voices.voices) { voice in
+                let selected = voices.chosenSlug == voice.slug
+                Button {
+                    voices.choose(voice)
+                } label: {
+                    Text(voice.name)
+                        .font(AppFonts.bodyFont(14))
+                        .foregroundColor(selected ? AppColors.background : AppColors.cream.opacity(0.75))
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 44)
+                        .background(
+                            Capsule()
+                                .fill(selected ? AppColors.goldLight : AppColors.cardElevated)
+                        )
+                }
+                .accessibilityLabel(voice.displayName)
+                .accessibilityAddTraits(selected ? [.isSelected] : [])
+            }
+        }
     }
 
     private var speedSection: some View {

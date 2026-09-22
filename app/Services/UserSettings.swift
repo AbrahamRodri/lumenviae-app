@@ -195,6 +195,30 @@ final class UserSettings {
             : "No beads on screen. Keep count on your own rosary."
     }
 
+    // MARK: - Narration Voice
+
+    /// The slug of the voice the meditations are heard in - "female",
+    /// "male" - or nil for whatever the server calls its default. Stored
+    /// as the slug rather than an index so a voice added or reordered on
+    /// the server never silently changes anyone's choice.
+    ///
+    /// Read through `narrationVoice` from `NarrationVoiceCatalog`, which
+    /// resolves nil and a slug the server no longer offers to a voice that
+    /// exists.
+    var narrationVoiceSlug: String? = nil {
+        didSet {
+            if let narrationVoiceSlug {
+                UserDefaults.standard.set(narrationVoiceSlug, forKey: "userSettings.narrationVoice")
+            } else {
+                UserDefaults.standard.removeObject(forKey: "userSettings.narrationVoice")
+            }
+        }
+    }
+
+    /// What the voice setting is called wherever it is offered - Settings
+    /// and the player's playback sheet.
+    static let narrationVoiceTitle = "Narration voice"
+
     // MARK: - Reader
 
     /// Whether the reader keeps pace with the narration on its own,
@@ -597,6 +621,9 @@ final class UserSettings {
         hasSeenPrayerSwipeHint = d.bool(forKey: "userSettings.hasSeenPrayerSwipeHint")
         if d.object(forKey: "userSettings.readerAutoScroll") != nil {
             readerAutoScroll = d.bool(forKey: "userSettings.readerAutoScroll")
+        }
+        if let voice = d.string(forKey: "userSettings.narrationVoice"), !voice.isEmpty {
+            narrationVoiceSlug = voice
         }
         if d.object(forKey: "userSettings.prayOnBeads") != nil {
             prayOnBeads = d.bool(forKey: "userSettings.prayOnBeads")

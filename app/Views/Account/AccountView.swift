@@ -54,6 +54,14 @@ struct AccountView: View {
                             Divider()
                                 .background(AppColors.gold.opacity(0.2))
 
+                            // Who reads the meditations. The same choice
+                            // stands in the player's playback sheet, so a
+                            // Rosary need not be left to change it
+                            NarrationVoiceRow()
+
+                            Divider()
+                                .background(AppColors.gold.opacity(0.2))
+
                             // The beads on the meditation's player are a
                             // way of praying, not a requirement: off, the
                             // player moves a decade at a time for a hand
@@ -858,6 +866,77 @@ struct PrayerLanguageRow: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
+    }
+}
+
+// MARK: - Narration Voice Row
+
+/// The voice the meditations are read in, set like the prayer language:
+/// the name over the choices, each a row with a check on the chosen one.
+/// The list is the server's (`NarrationVoiceCatalog`), so a voice added
+/// there appears here without an app update.
+struct NarrationVoiceRow: View {
+
+    private var catalog: NarrationVoiceCatalog { .shared }
+
+    var body: some View {
+        VStack(spacing: 12) {
+            HStack(spacing: 16) {
+                AppIcon("ph-speaker-high", size: 18)
+                    .foregroundColor(AppColors.textSecondary)
+                    .frame(width: 24)
+
+                Text(UserSettings.narrationVoiceTitle)
+                    .font(AppFonts.bodyFont(16))
+                    .foregroundColor(AppColors.cream)
+
+                Spacer()
+            }
+
+            VStack(spacing: 8) {
+                ForEach(catalog.voices) { voice in
+                    let selected = catalog.chosenSlug == voice.slug
+                    Button(action: {
+                        catalog.choose(voice)
+                    }) {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(voice.displayName)
+                                    .font(AppFonts.bodyFont(15))
+                                    .foregroundColor(selected ? AppColors.gold : AppColors.cream)
+
+                                if let description = voice.description, !description.isEmpty {
+                                    Text(description)
+                                        .font(AppFonts.bodyFont(13))
+                                        .foregroundColor(AppColors.textSecondary)
+                                }
+                            }
+
+                            Spacer()
+
+                            if selected {
+                                AppIcon("ph-check", size: 14)
+                                    .foregroundColor(AppColors.gold)
+                            }
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 10)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(
+                                    selected
+                                        ? AppColors.gold.opacity(0.15)
+                                        : AppColors.cardBackground.opacity(0.3)
+                                )
+                        )
+                    }
+                    .accessibilityAddTraits(selected ? [.isSelected] : [])
+                }
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 14)
+        .task { await catalog.refresh() }
     }
 }
 

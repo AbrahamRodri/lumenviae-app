@@ -385,8 +385,10 @@ the page they serve):
 
 - **Appearance** — theme (re-themes live), app icon (four alternates)
 - **Prayer Experience** — text size, prayer language (English by
-  default; the app's first face is the one most users read), Pray on
-  the Beads (the meditation player's strand; see the Core prayer flow)
+  default; the app's first face is the one most users read), the
+  narration voice (`NarrationVoiceRow`, the server's list; the same
+  choice stands in the player's playback sheet), Pray on the Beads (the
+  meditation player's strand; see the Core prayer flow)
 - **Devotion** — Rule of Prayer (→ `RuleEditorSheet`), Prayer Record,
   Daily Reminders (toggle, time, sound), What Brings You to the Rosary (decides
   the reminder copy pool)
@@ -582,6 +584,22 @@ write concurrent code here:
   The painting, its frost and its scrim are `PrayerPaintingStage`,
   shared with the Scriptural Rosary, which uses its `.veiled` style.
 - **Audio** — narration for meditations and chant for consecration prayers.
+
+  **Narration comes in voices.** Each meditation carries `narrations`
+  (`[Narration]`: a voice slug and a presigned URL, the server's default
+  first) beside the legacy `audio_url`, which is the default voice's
+  URL. The voices themselves come from `GET /api/voices`
+  (`NarrationVoiceCatalog`, refreshed on foreground and kept in
+  UserDefaults, with the built-in pair as the first-launch list), and
+  the choice is `UserSettings.narrationVoiceSlug`, resolved through the
+  catalog so a withdrawn voice falls back to the default. The player
+  reads the chosen voice at every load (`PrayerSessionViewModel.
+  audioSource`), plays the meditation's default when it lacks the
+  chosen one, refreshes links with `?voice=`, and reloads the mystery
+  under the hand when the choice changes mid-Rosary. Offline files are
+  `meditation_<id>_<voice>.mp3`; the library download saves one voice
+  (the chosen one) per meditation, and a copy in another voice is
+  played before silence when no link will.
 - **Persistence** — prayer sessions and journal entries in SwiftData; settings,
   favorites, and reading progress in UserDefaults.
 - **Progress** — streaks, history, and milestones, reached from the home
@@ -1389,12 +1407,13 @@ transition entirely.
 GET /mysteries[?category=]              # Mysteries, optionally by category
 GET /meditation-sets?category=:category # [MeditationSetSummary] for a category
 GET /meditation-sets/:id                # Full MeditationSet with meditations + audio_expires_at
-GET /meditations/:id/audio              # Freshly signed narration URL + expires_at
+GET /meditations/:id/audio[?voice=]     # Freshly signed narration URL + voice + expires_at
+GET /voices                             # [NarrationVoice], default first
 GET /prayers/:prayerId/audio            # Presigned chant URL for a consecration prayer
 ```
-Meditation audio arrives as an `audio_url` on each meditation; the prayer flow
-asks `/meditations/:id/audio` for a fresh one only once the set's have expired
-or a load has failed. Errors come in one envelope,
+Meditation audio arrives as `narrations` (one per voice) plus the legacy
+`audio_url` on each meditation; the prayer flow asks `/meditations/:id/audio`
+for a fresh one only once the set's have expired or a load has failed. Errors come in one envelope,
 `{ "error": { "code", "message", "details"? } }` — `APIService.send` decides on
 the status code and carries `code` on `APIError.serverError`. There is no
 journal endpoint and none is planned — journal entries are local.

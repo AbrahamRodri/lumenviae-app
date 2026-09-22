@@ -41,17 +41,23 @@ struct PrayerAudioResponse: Codable {
 // MARK: - Meditation Audio Types
 
 /// Response from GET /api/meditations/:id/audio — a freshly signed
-/// narration URL and the moment it stops working (ISO 8601).
+/// narration URL, the voice it is in, and the moment it stops working
+/// (ISO 8601). `voice` is optional only because a server that predates
+/// voices did not send it; it is then the legacy voice.
 struct MeditationAudioResponse: Codable {
     let id: Int
+    let voice: String?
     let audioUrl: String
     let expiresAt: String?
 
     enum CodingKeys: String, CodingKey {
-        case id
+        case id, voice
         case audioUrl = "audio_url"
         case expiresAt = "expires_at"
     }
+
+    /// The voice this URL plays, never nil
+    var resolvedVoice: String { voice ?? NarrationVoice.legacyVoice }
 
     /// `expiresAt` as a date, when it parses
     var expiry: Date? {

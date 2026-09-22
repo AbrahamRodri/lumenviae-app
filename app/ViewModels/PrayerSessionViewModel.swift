@@ -359,12 +359,23 @@ final class PrayerSessionViewModel {
         // try; a link that was fresh and still failed is a real outage
         // and is left to say so.
         if audioService.errorMessage != nil, source.isRefreshable,
-           let fresh = await freshAudioURL(for: meditation) {
+           let fresh = await freshAudioURL(for: meditation, voice: refreshVoice(for: meditation)) {
             guard generation == flowGeneration else {
                 tearDownIfStillOwner()
                 return
             }
             await load(fresh, for: meditation)
+            guard generation == flowGeneration else {
+                tearDownIfStillOwner()
+                return
+            }
+        }
+
+        // No link would play - most often no signal. A copy saved in
+        // another voice is still this meditation, and still a Rosary.
+        if audioService.errorMessage != nil, !source.url.hasPrefix("file:"),
+           let saved = OfflineContentService.shared.anyLocalAudio(meditationId: meditation.id) {
+            await load(saved.url.absoluteString, for: meditation)
             guard generation == flowGeneration else {
                 tearDownIfStillOwner()
                 return
@@ -401,74 +412,146 @@ final class PrayerSessionViewModel {
         let isRefreshable: Bool
     }
 
-    /// Fresh links fetched this session, with when they die. A mystery
-    /// stepped back to doesn't ask the server again while its link lives.
-    private var freshAudioURLs: [Int: (url: String, expiry: Date?)] = [:]
+    /// The voice the person hears, read at each load so a change made in
+    /// the playback sheet takes effect on the next mystery - or at once,
+    /// through `narrationVoiceChanged()`.
+    private var chosenVoice: String { NarrationVoiceCatalog.shared.chosenSlug }
+
+    /// The narration of one meditation in the chosen voice, or in the
+    /// voice the meditation has when it lacks the chosen one.
+    private func narration(for meditation: Meditation) -> Narration? {
+        meditation.playableNarration(preferring: chosenVoice)
+    }
+
+    /// The voice the current mystery is actually heard in - the chosen
+    /// one, unless this meditation was never recorded in it. What the
+    /// tray's "Download" files its copy under.
+    var currentNarrationVoice: String {
+        guard let meditation = currentMeditation else { return chosenVoice }
+        if let answered = freshVoices[meditation.id],
+           freshURL(for: meditation, voice: refreshVoice(for: meditation)) != nil {
+            return answered
+        }
+        return narration(for: meditation)?.voice ?? chosenVoice
+    }
+
+    /// The voice to ask the server for when refreshing a link. A set that
+    /// names its voices is asked for the one being played; a set stored
+    /// before voices knows only its legacy link, so it is asked for the
+    /// chosen voice, which the server has by now - and falls back from
+    /// on its own when it has not.
+    private func refreshVoice(for meditation: Meditation) -> String {
+        meditation.narrations == nil ? chosenVoice : (narration(for: meditation)?.voice ?? chosenVoice)
+    }
+
+    /// Fresh links fetched this session, by meditation and voice, with
+    /// when they die. A mystery stepped back to doesn't ask the server
+    /// again while its link lives.
+    private var freshAudioURLs: [OfflineContentService.AudioKey: (url: String, expiry: Date?)] = [:]
+
+    /// The voice each refreshed link turned out to be in, when the server
+    /// said. A legacy set asked for the chosen voice may be answered in
+    /// another, and the tray should file a download under the truth.
+    private var freshVoices: [Int: String] = [:]
+
+    private func freshURL(for meditation: Meditation, voice: String) -> String? {
+        guard let fresh = freshAudioURLs[.init(meditationId: meditation.id, voice: voice)],
+              fresh.expiry.map({ $0 > Date() }) ?? true else { return nil }
+        return fresh.url
+    }
 
     /// The best remote link for the current narration — the fresh one if
     /// this session fetched it, else the set's own. What the tray's
     /// "Download" saves, so it never saves from a link the player already
     /// found dead. Nil for a mystery with no narration.
     var currentRemoteAudioURL: String? {
-        guard let meditation = currentMeditation, meditation.hasAudio else { return nil }
-        if let fresh = freshAudioURLs[meditation.id],
-           fresh.expiry.map({ $0 > Date() }) ?? true {
-            return fresh.url
+        guard let meditation = currentMeditation,
+              let narration = narration(for: meditation) else { return nil }
+        if let fresh = freshURL(for: meditation, voice: refreshVoice(for: meditation)) {
+            return fresh
         }
         // Do not offer a URL that the set has explicitly told us is dead.
         // `loadCurrentAudio` will resolve a new one; until then the menu
         // hides Download rather than starting a guaranteed-to-fail save.
-        return meditationSet.audioURLsHaveExpired ? nil : meditation.audioUrl
+        return meditationSet.audioURLsHaveExpired ? nil : narration.audioUrl
     }
 
-    /// Where the narration comes from, in order: the copy on disk; a fresh
-    /// link already fetched and still live; the set's own link while it is
-    /// not known to be dead; a fresh link once it is. Nil for a mystery
-    /// with no narration, or whose link is known dead and the server
-    /// couldn't replace it — which reads as silence, the same as offline.
+    /// Where the narration comes from, in order: the copy on disk in the
+    /// voice being heard; a fresh link already fetched and still live;
+    /// the set's own link while it is not known to be dead; a fresh link
+    /// once it is; and, when no link can be had, any voice saved on disk
+    /// - a Rosary on a plane in the other voice beats silence. Nil for a
+    /// mystery with no narration, or whose link is known dead and the
+    /// server couldn't replace it — which reads as silence, the same as
+    /// offline.
     @MainActor
     private func audioSource(for meditation: Meditation) async -> AudioSource? {
-        if let local = OfflineContentService.shared.localAudioURL(meditationId: meditation.id) {
+        let offline = OfflineContentService.shared
+
+        // A stored set from before voices names no voice; what is on disk
+        // for it is the legacy voice, and `playableNarration` says so.
+        guard let narration = narration(for: meditation) else {
+            if let saved = offline.anyLocalAudio(meditationId: meditation.id) {
+                return AudioSource(url: saved.url.absoluteString, isRefreshable: false)
+            }
+            return nil
+        }
+
+        if let local = offline.localAudioURL(meditationId: meditation.id, voice: narration.voice) {
             return AudioSource(url: local.absoluteString, isRefreshable: false)
         }
 
-        // hasAudio also rejects the empty-string URLs the server can emit
-        guard meditation.hasAudio, let own = meditation.audioUrl else { return nil }
-
-        if let fresh = freshAudioURLs[meditation.id],
-           fresh.expiry.map({ $0 > Date() }) ?? true {
-            return AudioSource(url: fresh.url, isRefreshable: false)
+        if let fresh = freshURL(for: meditation, voice: refreshVoice(for: meditation)) {
+            return AudioSource(url: fresh, isRefreshable: false)
         }
 
         if meditationSet.audioURLsHaveExpired {
-            if let fresh = await freshAudioURL(for: meditation) {
+            if let fresh = await freshAudioURL(for: meditation, voice: refreshVoice(for: meditation)) {
                 return AudioSource(url: fresh, isRefreshable: false)
             }
             // Known dead and not replaceable right now (offline, or the
-            // server is down): the link is still the only thing there is,
-            // and the load will say what it can. Asking again after it
-            // fails would only fail the same way.
-            return AudioSource(url: own, isRefreshable: false)
+            // server is down): a copy in another voice, if one was saved,
+            // is the one thing that will play. Failing that the link is
+            // still the only thing there is, and the load will say what
+            // it can. Asking again after it fails would only fail the
+            // same way.
+            if let saved = offline.anyLocalAudio(meditationId: meditation.id) {
+                return AudioSource(url: saved.url.absoluteString, isRefreshable: false)
+            }
+            return AudioSource(url: narration.audioUrl, isRefreshable: false)
         }
 
         // Live as far as anyone knows. If the load says otherwise — the
         // set never said when its links die, or the file behind the link
         // has since been renamed on the server — one fresh link is worth
         // a try before calling it an outage.
-        return AudioSource(url: own, isRefreshable: true)
+        return AudioSource(url: narration.audioUrl, isRefreshable: true)
     }
 
-    /// A freshly signed link for one meditation from
+    /// A freshly signed link for one meditation in one voice from
     /// `GET /api/meditations/:id/audio`, remembered for the session. Nil
     /// when the server can't be reached or has withdrawn the meditation.
     @MainActor
-    private func freshAudioURL(for meditation: Meditation) async -> String? {
-        guard let response = try? await apiService.fetchMeditationAudio(meditationId: meditation.id),
+    private func freshAudioURL(for meditation: Meditation, voice: String) async -> String? {
+        guard let response = try? await apiService.fetchMeditationAudio(meditationId: meditation.id, voice: voice),
               !response.audioUrl.isEmpty else {
             return nil
         }
-        freshAudioURLs[meditation.id] = (response.audioUrl, response.expiry)
+        // Keyed by the voice asked for, which is what the lookups use;
+        // the voice that came back is what a download would be in.
+        freshAudioURLs[.init(meditationId: meditation.id, voice: voice)] =
+            (response.audioUrl, response.expiry)
+        freshVoices[meditation.id] = response.resolvedVoice
         return response.audioUrl
+    }
+
+    /// The person chose another voice mid-Rosary. The mystery under the
+    /// hand is loaded again in it, and carries on playing if it was.
+    @MainActor
+    func narrationVoiceChanged() async {
+        pendingRemoteAutoplay = isPlaying
+        resetAudioState()
+        await loadCurrentAudio()
     }
 
     /// Hands one source to the player with this mystery's Lock Screen

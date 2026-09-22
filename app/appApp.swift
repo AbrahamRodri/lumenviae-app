@@ -64,6 +64,9 @@ struct appApp: App {
                 // Fires at launch too: keeps scheduled reminders in step
                 // with stored settings and OS-level permission changes.
                 Task { await userSettings.refreshNotificationsWithoutPrompting() }
+                // The voice picker's list, kept current the same way: a
+                // voice added on the server appears on the next foreground
+                Task { await NarrationVoiceCatalog.shared.refresh() }
             }
         }
     }
