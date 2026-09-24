@@ -375,6 +375,8 @@ extension View {
     ///     bead's name, at the hand that just prayed it. The strand is a
     ///     readout and takes no touches; the button is laid beside it,
     ///     not on it.
+    ///   - amenBeckons: The last prayer has been said aloud and AMEN is
+    ///     the one thing left; it glows for it (`beckoning`).
     func rosaryStrand(
         _ strand: RosaryStrand,
         activeIndex: Int,
@@ -384,7 +386,8 @@ extension View {
         turnPulse: Int = 0,
         activeLabel: [String]? = nil,
         locked: Bool = false,
-        onAmen: (() -> Void)? = nil
+        onAmen: (() -> Void)? = nil,
+        amenBeckons: Bool = false
     ) -> some View {
         let windowTop = max(RosaryStrandView.windowTop(fullHeight: fullHeight) - topInset, 0)
         let windowHeight = fullHeight * 0.435
@@ -418,6 +421,7 @@ extension View {
                         action: onAmen
                     )
                     .accessibilityLabel("Amen — finish the Rosary")
+                    .beckoning(amenBeckons)
                     // Under the active row, clear of the name above it
                     .padding(.top, windowTop + windowHeight / 2 + RosaryStrandView.rowHeight / 2 + 6)
                     .padding(.trailing, beadInset + RosaryStrandView.beadColumn / 2 + 14)

@@ -1,7 +1,104 @@
 # Guided Rosary — Experience Modes
 
-> Working notes. Nothing here is built yet. Captures the direction for letting users
-> choose *how much* of the Rosary the app prays for them, and how far customization goes.
+> Working notes. Captures the direction for letting users choose *how much* of the
+> Rosary the app prays for them, and how far customization goes.
+>
+> **What is built (September 2026).** The Full mode exists as the spoken Rosary, one
+> setting (`UserSettings.prayAloud`, "Pray aloud", off by default) rather than a named
+> mode. With it on, the meditation's player and the Scriptural Rosary say every prayer
+> aloud and move the beads with the voice:
+>
+> - `SpokenRosaryScript` (Models/SpokenRosary.swift) is the pure script builder of §5.
+>   Its segments are prayers, announcements, meditations and (Scriptural Rosary) a verse
+>   before each Hail Mary. It builds the four Rosaries and the Seven Sorrows chaplet in
+>   its Servite form (Act of Contrition; seven Hail Marys and a Glory Be to each sorrow,
+>   no Fatima Prayer; three Hail Marys for Our Lady's tears and the chaplet's own
+>   closing prayer).
+> - Optional prayers after the Rosary's closing prayer are settings: for the Holy
+>   Father's intentions (Our Father, Hail Mary, Glory Be), the Memorare and the Prayer
+>   to Saint Michael, said in that order. Not the chaplet.
+> - `SpokenRosaryPlayer` is the sequencer of §6, a chained player above `AudioService`
+>   with a pause between segments; headphones and the Lock Screen skip a decade.
+> - `RosaryAudioPack` is the prayer pack of §6-7: each voice's clips, synthesised with
+>   ElevenLabs rather than recorded by a person (twelve prayers, an announcement per
+>   mystery, the Scriptural Rosary's verses), served by
+>   `GET /api/rosary/audio` and kept on disk. The offline library download fetches it
+>   for the chosen voice.
+> - Resume keeps the script step (`SpokenStep` on the resume snapshot), so an
+>   interrupted spoken Rosary comes back on the prayer it stopped at.
+> - Completions report `prayed_aloud`.
+>
+> Speed is built: the playback rate, chosen on the set's title page (`RosarySetupCard`)
+> and in the player's playback sheet, applied by `AudioService`. In progress in the
+> working tree on 24 Sept: a plain spoken Rosary without meditations, "The Rosary Aloud"
+> (`AppRoute.rosaryAloud`, `PrayerShortcut.rosaryAloud`).
+>
+> Not built: Custom mode and presets, ambiance, Latin audio, pacing by silence (pause
+> lengths are fixed), and user-authored prayers. The rest of this document is the
+> original plan; the status table below says which parts of it still stand.
+
+---
+
+## Status (24 Sept 2026)
+
+What became of every mode, switch, suggestion, question and phase below, checked against
+the code on this date. Pointers are to the working tree that day, where some of the files
+named (the spoken Rosary, `RosarySetupCard`, the Rosary Aloud) were not yet committed.
+
+**Decision pending, and the largest.** [ROSARY_RESEARCH_NOTES.md](ROSARY_RESEARCH_NOTES.md)
+(Part I §3, Part III §4, Part IV) says the fixed prayers must be a human voice, "always, no
+exceptions", and that a synthetic voice be labelled plainly. Every clip the spoken Rosary
+plays is synthesised with ElevenLabs (backend `config/config.exs` `:narration_voices`,
+`lib/lumen_viae/rosary/voices.ex`, `docs/SPOKEN_ROSARY.md`), and nothing a reader sees in
+the app says the voices are synthetic. The owner has to choose: retire the rule and label
+the voices, or treat the shipped voices as interim until human recordings replace them.
+
+**Also pending: anything that needs to know who a user is.** The app has no accounts and
+sends no identifier (backend `docs/COMPLETION_ANALYTICS.md`: "no account, device or install
+identifier"). Presets synced to an account (§10) and audio generated and stored per user
+(§8, Phase E) would need a user identity, and the research notes promise "No account
+needed to pray" (Part III §15).
+
+| Item | Status | Where it stands |
+|---|---|---|
+| §2 Simple | BUILT | Pray aloud off, the default; not named as a mode, and the bead counter (on by default) counts every Hail Mary |
+| §2 Full | BUILT | `UserSettings.prayAloud`, "Pray aloud"; the Rosary Aloud (`AppRoute.rosaryAloud`) in progress |
+| §2 Custom and presets | OPEN | |
+| §3.1 onboarding choice | OPEN | none of the eight onboarding slides offers it |
+| §3.2 Settings | BUILT | Settings → Prayer Experience: Pray aloud, the voice, the closing prayers |
+| §3.3 pre-prayer sheet | BUILT | `RosarySetupCard` on the set's and the Scriptural Rosary's title pages: voice, speed, Pray aloud, bead counter, closing prayers |
+| §4 Voice switches | PARTIAL | one Pray aloud switch, not per prayer; voice choice built (`GET /api/voices`); no Latin or bilingual audio |
+| §4 Pacing switches | PARTIAL | speed built; lead-and-respond and silence lengths open |
+| §4 Structure switches | PARTIAL | Holy Father, Memorare, Saint Michael after the closing prayer (`RosaryClosingExtra`); no opening-prayers toggle, Litany of Loreto, bead-attached intentions or announcement styles |
+| §4 Sound switches | OPEN | no ambiance, no decade chime |
+| §4 Screen switches | PARTIAL | image/reading (`prayerImageMode`) and bead position (the bead counter) built; no keep-awake switch |
+| §5–§7 segment model, audio architecture, recording burden | SUPERSEDED | built differently; see the note at the head of §5 |
+| §6 two audio buses | OPEN | waits on ambiance |
+| §6 resume at the start of an interrupted prayer | OPEN | after a call `AudioService` resumes where it stopped, mid-word |
+| §7 rotating Hail Mary takes | OPEN | one clip per voice |
+| §7 Latin | OPEN | needs a decision on pronunciation and a listening pass (`docs/SPOKEN_ROSARY.md`) |
+| §8 paid tier for voices | DECISION PENDING | voice choice already ships free; there is no StoreKit or purchase code |
+| §8 user-authored prayers and per-user generated audio | DECISION PENDING | none built; per-user audio needs a user identity |
+| §9.1 lead-and-respond | OPEN | |
+| §9.2 pace control | PARTIAL | speed built; the three-stop silence pace open; the app's pauses differ from the website's (ROSARY_RESEARCH_NOTES III §5) |
+| §9.3 time estimate | REJECTED | the app never shows a duration (CLAUDE.md) |
+| §9.4 named presets | OPEN | Drive Time's "no interaction required" is rejected; the Guided Rosary (How to Pray) is close to Learning, read rather than spoken |
+| §9.5 Full as an accessibility feature | PARTIAL | prays through with the phone in a pocket; "no interaction required to complete" is rejected |
+| §9.6 drive time | PARTIAL | Lock Screen and headphone decade skip built; CarPlay needs Apple's entitlement; zero-interaction completion rejected |
+| §9.7 bead position as a location | BUILT | the strand's "HAIL MARY / 4 OF 10" |
+| §9.8 decade chime | OPEN | |
+| §9.9 Apple Watch | OPEN | |
+| §9.10 existing users stay on Simple | BUILT | Pray aloud is off by default; there is no one-time invitation |
+| §10 prayer audio as its own resource | BUILT | `GET /api/rosary/audio?voice=&include=` |
+| §10 scripts server-defined or client-built | BUILT | client-built `SpokenRosaryScript`; the server's `PrayerAudio.script/3` is a hand-kept mirror |
+| §10 where presets live | SUPERSEDED | there are no presets; syncing would need an account (pending) |
+| §10 one voice or two | BUILT | two, Female (the default) and Male |
+| §10 own offline flow or extend | BUILT | extends `OfflineContentService` |
+| §11 Phase A | BUILT | `SpokenSegment`, `SpokenRosaryScript`; Simple as a script superseded |
+| §11 Phase B | PARTIAL | built with two voices, not one; no onboarding slide |
+| §11 Phase C | PARTIAL | speed and the pre-prayer choice built; lead-and-respond, pace, presets, chime, ambiance open |
+| §11 Phase D | PARTIAL | optional closing prayers built; presets, bead intentions, Latin and bilingual voices open |
+| §11 Phase E | OPEN | per-user audio decision pending |
 
 ---
 
@@ -16,11 +113,13 @@ the phone down."
 
 ## 2. The three modes
 
-### Simple *(what exists today — becomes the named default)*
+### Simple *(what the app does with Pray aloud off, the default; never named as a mode)*
 - Mystery artwork + meditation text.
 - Meditation audio optional, per the existing `AudioService`.
 - Prayers (Our Father, Hail Marys, Glory Be) are prayed by the user, unspoken, self-paced.
-- No bead tracking. The app never counts Aves for you.
+- Bead tracking is the user's choice. The bead counter (`UserSettings.prayOnBeads`, on by
+  default) counts every Hail Mary on the strand ("HAIL MARY / 4 OF 10"); off, the player
+  is the decade-at-a-time screen with arrows and no count.
 
 ### Full
 - Every part of the Rosary is spoken aloud, start to finish:
@@ -47,6 +146,9 @@ the phone down."
    Two cards, Simple vs Full, each with a one-line felt description and a short
    audio taste (a few seconds of a Hail Mary) so the difference is *heard*, not read.
    Custom is not offered here — mentioned only as "you can shape this later."
+   *Not built. The onboarding (app/Views/Onboarding/OnboardingView.swift) has eight
+   slides — welcome, intention, beads, forYou, colors, language, reminder, threshold — with
+   no "At your own pace" slide and no Simple/Full choice.*
 2. **Account → Prayer Experience** — change the default mode, manage presets.
 3. **Pre-prayer sheet** — after picking a meditation set, before the flow starts:
    the active preset with a one-tap change. This is the important one; the mode a
@@ -98,6 +200,13 @@ The inventory of switches, roughly in the order they matter:
 
 ## 5. The structural change this requires
 
+> *Superseded (24 Sept 2026). §5–§7 are the plan; the spoken Rosary was built differently.
+> The source of truth is `app/Models/SpokenRosary.swift` (the script),
+> `app/Services/SpokenRosaryPlayer.swift` (the sequencer), `app/Services/RosaryAudioPack.swift`
+> (the clips, kept on disk) and the backend's `docs/SPOKEN_ROSARY.md`. The unit of the prayer
+> flow is now the bead (`app/Models/RosaryStrand.swift`, `BeadPosition`), and the hand-prayed
+> player is not a script, so there is no single engine for both.*
+
 Today the unit of the prayer flow is a **meditation**. `PrayerSessionViewModel` walks
 an array of 5 meditations, and `AudioService` loads one file at a time.
 
@@ -118,20 +227,30 @@ A **RosaryScript** is then just `[Segment]`, generated from
 `(meditationSet, preset, language)`. Notes:
 
 - Generation is pure and testable — no audio, no views. Worth building first.
-- A script for a standard Rosary is ~70 segments. Fine.
+- A script for a standard Rosary said aloud is 85 segments with the meditations (80
+  without them, 130 in the Scriptural Rosary). Fine.
 - The Simple experience is expressible as a script too (5 meditation segments, no
   prayer segments), which means **one engine, not two code paths**.
+  *Superseded: the hand-prayed player walks the beads (`RosaryStrand`); the spoken script
+  runs beside it and moves the same hand.*
 - Resume (`PrayerResumeService`) moves from mystery-index to segment-index. Existing
   saved resumes should map forward gracefully — treat an old mystery index as the
-  first segment of that decade.
+  first segment of that decade. *Built differently: the snapshot keeps `mysteryIndex` and
+  `beadIndex`, and a spoken Rosary also its script step (`spokenStep`).*
 - Scripts should eventually be **server-defined** so new formats (a Lenten script, a
   Divine Mercy chaplet, a scriptural Rosary) can ship without an app release. Matches
   the existing content-driven principle. Ship v1 with the script builder client-side,
-  but shape the model so it can be decoded from the API later.
+  but shape the model so it can be decoded from the API later. *Superseded: the script is
+  built on the device; the backend keeps a hand-written copy (`PrayerAudio.script/3`) for
+  the website, and the two must agree.*
 
 ---
 
 ## 6. Audio architecture notes
+
+*Superseded — see the note at the head of §5. The sequencer (a chained player with a pause
+after each segment, not `AVQueuePlayer`), the prefetch and the Now Playing session were
+built; the second bus and resuming at the start of an interrupted prayer were not.*
 
 `AudioService` today is a single `AVPlayer` singleton with one loaded URL. Full mode needs:
 
@@ -158,22 +277,30 @@ A **RosaryScript** is then just `[Segment]`, generated from
 
 ## 7. Recording burden — the real cost
 
+*Superseded — there are no recording sessions. Each voice is synthesised with ElevenLabs:
+288 clips, about 67,000 characters (`docs/SPOKEN_ROSARY.md`). The counts below are corrected.*
+
 Naive counting says a Full Rosary needs hundreds of files. It doesn't, if the script
 model is right:
 
 **Recorded once per (voice × language):**
 - Sign of the Cross, Creed, Our Father, Hail Mary, Glory Be, Fatima Prayer,
   Hail Holy Queen, closing prayer, St. Michael, Memorare
-- ≈ 10 files. The Hail Mary is played 53 times from one recording.
+- 12 files: these ten, and the Seven Sorrows chaplet's Act of Contrition and closing
+  prayer. English only so far. The Hail Mary is played 53 times from one clip.
 
 **Recorded once per voice, content-specific:**
 - Mystery announcements: 20 (+7 Seven Sorrows)
-- Optional intention lines ("for the intentions of the Holy Father…"): a handful
+- Optional intention lines ("for the intentions of the Holy Father…"): none. The prayers
+  for the Holy Father reuse the Our Father, Hail Mary and Glory Be, and the intention is a
+  caption on the screen.
+- The Scriptural Rosary's verses: 249, one for each Hail Mary bead (not counted in the
+  original plan).
 
 **Already exists:** meditation audio, per meditation set, via the current pipeline.
 
-So a complete voice is roughly **35–40 files**, not hundreds. That makes multiple voices
-economically real. Notes:
+So a complete voice is **39 files** for the prayers and announcements, as estimated, and
+**288** with the verses. That makes multiple voices economically real. Notes:
 
 - Identical repeated audio for all 10 Hail Marys can feel mechanical. Consider recording
   2–3 takes and rotating, or accept it — most recorded Rosaries do exactly this.
@@ -192,6 +319,12 @@ economically real. Notes:
 - **Never gate the prayer.** Simple and Full should both be free with a default voice.
   Locking "the app will pray with you" behind a paywall is the wrong business for this app.
 
+*Decision pending (24 Sept 2026): voice choice already ships free — `GET /api/voices`,
+`NarrationVoiceRow` in Settings, the voice choice in the player's playback sheet and on the
+set's title page — and there is no StoreKit or purchase code, so charging for voices now
+would take away something free. ROSARY_RESEARCH_NOTES (Part I §8, Part III §15) argues
+against paywalls.*
+
 ### User-authored prayers + generated audio *(the long-term ask)*
 
 The stated goal: users add their own prayers/intentions, and paying users get audio
@@ -202,6 +335,8 @@ generated automatically. Notes for when that lands:
 - Without audio, a user prayer in Full mode still works: display it and hold silence for
   a set duration, or fall back to on-device speech synthesis.
 - **Generated audio** = TTS at the server, stored per user, cached on device.
+  *Decision pending: storing audio per user needs a user identity, and the app has none
+  (backend `docs/COMPLETION_ANALYTICS.md`: "no account, device or install identifier").*
   - Needs a pronunciation lexicon for sacred vocabulary (Ave, Maria, Iesu, Deiparae,
     "thy", proper names of saints). Off-the-shelf TTS mangles these.
   - Needs a *preview and regenerate* step before it's saved. Users will not accept a
@@ -231,12 +366,14 @@ Things worth considering that weren't in the original sketch:
    satisfaction than any additional feature here.
 3. **Show the time estimate before starting.** "About 24 minutes with this setup."
    Removes the main reason people don't start.
+   *Rejected: the app never shows a duration — see CLAUDE.md ("never an estimated duration").*
 4. **Ship a small set of named presets rather than an empty custom builder.** People
    don't want to configure 20 switches; they want to recognize themselves:
    - *Guided* — everything spoken, unhurried
    - *Lead & Respond* — app leads, you answer
    - *Quiet* — meditations only, decade chime (today's Simple + a bell)
-   - *Drive Time* — audio-only, screen off, no interaction required
+   - *Drive Time* — audio-only, screen off, no interaction required *(rejected in part:
+     recording the Rosary is one AMEN tap; see 5)*
    - *Family* — spoken, speaker-friendly, larger text, lead-and-respond
    - *Learning* — fully spoken with brief plain-language explanation of what's happening
      and why, pairing with the existing "How to Pray the Rosary" content. Strong onboarding
@@ -247,9 +384,12 @@ Things worth considering that weren't in the original sketch:
    post-stroke users can pray a complete Rosary with the phone in a pocket. Worth naming
    explicitly in the App Store listing, and worth holding to a real standard —
    full VoiceOver labeling, no interaction required to complete a session.
+   *Rejected in part: the Rosary is never finished by the player; recording it is one AMEN
+   tap (app/Services/SpokenRosaryPlayer.swift: "a completion is something a person does").*
 6. **Drive time is a genuine use case.** Many people pray the Rosary in the car. That
    means: zero-interaction completion, robust Lock Screen controls, CarPlay eventually,
-   and never a modal that blocks playback.
+   and never a modal that blocks playback. *Rejected in part: zero-interaction completion,
+   as in 5. CarPlay needs Apple to grant the CarPlay audio entitlement first.*
 7. **Bead position, carefully.** Full mode makes bead-level position *knowable* for the
    first time. Show it as a location ("3rd decade, 7th bead"), never as a completion
    metric, and never surface an abandoned session as a failure. Same no-guilt rule.
@@ -268,14 +408,19 @@ Things worth considering that weren't in the original sketch:
 
 - Does the backend own prayer audio as its own resource (`/prayers/audio?voice=&lang=`),
   separate from meditation sets? Probably yes — different lifecycle, different caching.
+  *Answered: yes — `GET /api/rosary/audio?voice=&include=` (English only, so no `lang`).*
 - Are scripts server-defined from the start, or client-built in v1? *(Leaning client-built
-  first, model shaped for server delivery.)*
+  first, model shaped for server delivery.)* *Answered: client-built (`SpokenRosaryScript`),
+  with a hand-kept mirror on the server, `PrayerAudio.script/3`, for the website.*
 - Where do presets live — device-only like favorites, or synced to the account?
   Device-only is simpler and consistent with current behavior; syncing matters the moment
-  a user pays for generated audio.
+  a user pays for generated audio. *Moot for now: there are no presets, and every choice is
+  kept on the device. Syncing needs an account (decision pending).*
 - One voice at launch, or male + female? One good voice beats two mediocre ones.
+  *Answered: two, Female (the default) and Male.*
 - Does Full mode need its own offline download flow, or does it extend
-  `OfflineContentService`? *(Extend.)*
+  `OfflineContentService`? *(Extend.)* *Answered: extended — `OfflineContentService.downloadAll`
+  fills the `RosaryAudioPack` for the chosen voice.*
 
 ---
 
@@ -284,6 +429,7 @@ Things worth considering that weren't in the original sketch:
 **Phase A — foundations**
 Segment + RosaryScript model, script builder, existing Simple flow re-expressed as a
 script. No user-visible change. This is the whole bet; get it right.
+*Built, except that Simple was never re-expressed as a script (superseded; see §5).*
 
 **Phase B — Full mode**
 One voice, English. Sequencer + prefetch. Onboarding choice slide. Account setting.

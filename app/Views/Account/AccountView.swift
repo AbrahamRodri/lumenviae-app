@@ -6,9 +6,9 @@
 import SwiftUI
 import UIKit
 
-/// The Chapel's preferences — every toggle and choice, reached from the
-/// day strip's faders. The informational pages (about, privacy, help)
-/// live on their own leaf, AboutView, behind the strip's ☰.
+/// The app's preferences — every toggle and choice, reached from the
+/// home masthead's faders. The informational pages (about, privacy,
+/// help) live on their own leaf, AboutView, behind the ⓘ beside them.
 struct AccountView: View {
     @Environment(UserSettings.self) private var userSettings
     @Environment(AppRouter.self) private var router
@@ -72,6 +72,38 @@ struct AccountView: View {
                                 subtitle: UserSettings.beadCounterDetail(isOn: userSettings.prayOnBeads),
                                 isOn: Bindable(userSettings).prayOnBeads
                             )
+
+                            Divider()
+                                .background(AppColors.gold.opacity(0.2))
+
+                            // The whole Rosary said aloud, in the voice
+                            // chosen above: every prayer, the beads moving
+                            // with it, for prayer with the phone put away
+                            ToggleRow(
+                                icon: "ph-hands-praying",
+                                title: UserSettings.prayAloudTitle,
+                                subtitle: UserSettings.prayAloudDetail(isOn: userSettings.prayAloud, onBeads: userSettings.prayOnBeads),
+                                isOn: Bindable(userSettings).prayAloud
+                            )
+
+                            // Prayers after the Rosary's closing prayer,
+                            // each off until chosen: said aloud with the
+                            // rest, and shown in the guided Rosary. The
+                            // Seven Sorrows chaplet closes in its own way
+                            ForEach(RosaryClosingExtra.allCases, id: \.self) { extra in
+                                Divider()
+                                    .background(AppColors.gold.opacity(0.2))
+
+                                ToggleRow(
+                                    icon: extra.icon,
+                                    title: extra.title,
+                                    subtitle: extra.detail,
+                                    isOn: Binding(
+                                        get: { userSettings.isChosen(extra) },
+                                        set: { userSettings.setChosen(extra, $0) }
+                                    )
+                                )
+                            }
                         }
                     }
                     .padding(.top, 30)

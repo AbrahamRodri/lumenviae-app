@@ -69,9 +69,10 @@ struct MeditationSetDetailView: View {
                             .padding(.top, 34)
                             .devotionalEntrance(delay: 0.16)
                     }
-                    // Clears the header chrome above and the fixed act below
+                    // Clears the header chrome above, and the choices and
+                    // the act fixed below
                     .padding(.top, 62)
-                    .padding(.bottom, 200)
+                    .padding(.bottom, 260)
                 }
                 .animation(Motion.crossfade, value: viewModel.isLoading)
                 .animation(Motion.crossfade, value: showsPreview)
@@ -131,20 +132,14 @@ struct MeditationSetDetailView: View {
 
     // MARK: - Chrome
 
-    /// Back on the left, the pin on the right, and between them the way
-    /// the Rosary will be prayed — chosen here, before PRAY, rather than
-    /// discovered in the player's ⚙ sheet once the beads are already
-    /// moving.
+    /// Back on the left, the pin on the right. How the Rosary will be
+    /// prayed is chosen at the foot, just above PRAY (`RosarySetupCard`).
     private var headerChrome: some View {
         VStack {
             HStack {
                 PrayerHeaderButton(icon: "ph-caret-left", size: 16, label: "Back") {
                     router.pop()
                 }
-
-                Spacer()
-
-                beadsToggle
 
                 Spacer()
 
@@ -161,97 +156,6 @@ struct MeditationSetDetailView: View {
             .padding(.top, 8)
 
             Spacer()
-        }
-    }
-
-    /// The bead counter: a strand of beads to swipe through, or a mystery
-    /// at a time with the count kept on your own rosary. The same
-    /// `prayOnBeads` the player's ⚙ sheet and Settings → Prayer Experience
-    /// keep, so a choice made anywhere holds everywhere.
-    ///
-    /// It is drawn as a switch, named in plain words. An earlier pill
-    /// named the way it would pray in small capitals ("ON THE BEADS"),
-    /// which read as a label until it was tapped — nothing said it could
-    /// be changed. The system switch that replaced it said so, but its
-    /// white knob on a solid gold track was the one stock control on the
-    /// page and the loudest thing in the header; solid gold belongs to
-    /// PRAY. `BeadSwitch` keeps the shape anyone knows as a switch and
-    /// draws it in the app's own hand. The whole pill is the target; the
-    /// switch inside it is only the drawing.
-    private var beadsToggle: some View {
-        let onBeads = settings.prayOnBeads
-
-        return Button {
-            withAnimation(Motion.settle) { settings.prayOnBeads.toggle() }
-        } label: {
-            HStack(spacing: 8) {
-                AppIcon("ch-rosary", size: 14)
-                    .foregroundColor(onBeads ? AppColors.gold : AppColors.cream.opacity(0.6))
-
-                Text(UserSettings.beadCounterTitle)
-                    .font(AppFonts.bodyFont(15))
-                    .foregroundColor(AppColors.cream.opacity(onBeads ? 1 : 0.75))
-                    .lineLimit(1)
-                    .fixedSize()
-
-                BeadSwitch(isOn: onBeads)
-                    .padding(.leading, 4)
-            }
-            .padding(.leading, 14)
-            .padding(.trailing, 10)
-            .frame(height: 44)
-            .background(Capsule().fill(Color.black.opacity(0.3)))
-            .contentShape(Capsule())
-        }
-        .buttonStyle(GoldCTAButtonStyle())
-        .animation(Motion.settle, value: onBeads)
-        .accessibilityLabel(UserSettings.beadCounterTitle)
-        .accessibilityValue(onBeads ? "On" : "Off")
-        .accessibilityHint(UserSettings.beadCounterDetail(isOn: onBeads))
-        .accessibilityAddTraits(.isToggle)
-    }
-
-    /// A switch in the app's own hand: a hairline track with a bead for
-    /// its knob. On, the bead is lit with the same gold sheen as a prayed
-    /// bead on the strand and rests at the right on a track washed with
-    /// gold; off, it is a hollow bead at the left on a track barely there.
-    /// The knob travels with `Motion.settle`, so the change is seen, not
-    /// just the result.
-    private struct BeadSwitch: View {
-        let isOn: Bool
-
-        private let width: CGFloat = 42
-        private let height: CGFloat = 24
-        private let knob: CGFloat = 18
-
-        var body: some View {
-            let travel = (width - knob) / 2 - 3
-
-            ZStack {
-                Capsule()
-                    .fill(isOn ? AppColors.gold.opacity(0.2) : Color.white.opacity(0.05))
-                    .overlay(
-                        Capsule().strokeBorder(
-                            isOn ? AppColors.gold.opacity(0.75) : AppColors.cream.opacity(0.3),
-                            lineWidth: AppLine.hairline
-                        )
-                    )
-
-                Circle()
-                    .fill(isOn ? AnyShapeStyle(AppColors.goldGradient) : AnyShapeStyle(AppColors.cream.opacity(0.12)))
-                    .overlay(
-                        Circle().strokeBorder(
-                            isOn ? Color.clear : AppColors.cream.opacity(0.6),
-                            lineWidth: 1
-                        )
-                    )
-                    .frame(width: knob, height: knob)
-                    .shadow(color: isOn ? AppColors.gold.opacity(0.5) : .clear, radius: 4)
-                    .offset(x: isOn ? travel : -travel)
-            }
-            .frame(width: width, height: height)
-            .animation(Motion.settle, value: isOn)
-            .accessibilityHidden(true)
         }
     }
 
@@ -638,18 +542,25 @@ struct MeditationSetDetailView: View {
 
     // MARK: - Pray
 
-    /// The act, alone. Nothing is set beneath it — a count or a running
-    /// time there turns the page's one invitation into a label on a
-    /// product.
+    /// How the Rosary will be prayed, and the act. The choices stand
+    /// just above PRAY so they are the last thing read before beginning,
+    /// with whatever was chosen last already set. Nothing is set beneath
+    /// the button — a count or a running time there turns the page's one
+    /// invitation into a label on a product.
     private var prayFoot: some View {
-        GoldCTAButton(title: "Pray") {
-            pray()
+        VStack(spacing: 16) {
+            RosarySetupCard(category: viewModel.category)
+                .padding(.horizontal, 32)
+
+            GoldCTAButton(title: "Pray") {
+                pray()
+            }
+            .disabled(!viewModel.hasMeditations)
+            .padding(.horizontal, 32)
         }
-        .disabled(!viewModel.hasMeditations)
-        .padding(.horizontal, 32)
-        .padding(.top, 96)
+        .padding(.top, 72)
         .padding(.bottom, 22)
-        .background(PrayFootScrim())
+        .background(PrayFootGround())
     }
 
     private var preparingOverlay: some View {

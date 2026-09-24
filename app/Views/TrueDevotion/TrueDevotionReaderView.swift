@@ -225,12 +225,12 @@ struct TrueDevotionReaderView: View {
 
     /// Whether the book has been opened — and nothing more.
     ///
-    /// `estimatedMinutes` is words divided by two hundred, a guess about
-    /// the reader rather than a fact about anything, so it must not be
-    /// set under the act as though it were a clock. The shelf's own
-    /// `actMeta` refuses the same guess: it quotes a recording's length
-    /// or stays quiet. True Devotion is bundled text with no recording,
-    /// so here it stays quiet.
+    /// A reading time here could only be words divided by some pace, a
+    /// guess about the reader rather than a fact about anything, so none
+    /// is set — not under the act, and not on the contents' rows. The
+    /// shelf's own `actMeta` refuses the same guess: it quotes a
+    /// recording's length or stays quiet. True Devotion is bundled text
+    /// with no recording, so here it stays quiet.
     private func actMeta(for chapter: TrueDevotionChapter) -> String? {
         viewModel.hasStartedReading ? nil : "NOT YET OPENED"
     }
@@ -377,12 +377,6 @@ struct TrueDevotionReaderView: View {
                         }
                     }
 
-                    Text("\(chapter.estimatedMinutes) MIN")
-                        .font(AppFonts.labelFont(9))
-                        .tracking(1.2)
-                        .foregroundColor(AppColors.textSecondary.opacity(0.8))
-                        .fixedSize()
-
                     if isCurrent {
                         Circle()
                             .fill(AppColors.goldLight)
@@ -424,7 +418,6 @@ struct TrueDevotionReaderView: View {
         var parts = [chapter.title]
         if isCurrent { parts.append("where you are") }
         else if isCompleted { parts.append("read") }
-        parts.append("\(chapter.estimatedMinutes) minutes")
         return parts.joined(separator: ". ")
     }
 

@@ -190,6 +190,14 @@ struct ExploreView: View {
                 // the mysteries above open the shelf of meditations;
                 // this opens the Rosary prayed on the Gospel's words.
                 scripturalBanner
+
+                // And the Rosary with nothing between its prayers but
+                // the voice saying them
+                aloudBanner
+
+                // For someone who has never prayed it: the course, where
+                // a newcomer looks first rather than at the page's foot
+                newcomerDoor
             }
         }
 
@@ -274,9 +282,24 @@ struct ExploreView: View {
         }
         let libraryHits = libraryEntries.filter { $0.matchText.lowercased().contains(needle) }
         let setHits = sets.filter { matches($0, needle: needle) }
+        // The library's own readings — Lourdes, Kolbe, the marks of true
+        // devotion — found by name or by their dating line. A shelf's
+        // own title answers only when no reading does: matched as well,
+        // "carlo" listed every one of St. Carlo's readings and buried
+        // the one asked for.
+        let shelved = LibraryReadings.shelves.flatMap { shelf in
+            shelf.entries.map { ReadingHit(shelf: shelf, reading: $0) }
+        }
+        let namedHits = shelved.filter {
+            $0.reading.title.lowercased().contains(needle)
+                || $0.reading.detail.lowercased().contains(needle)
+        }
+        let readingHits = namedHits.isEmpty
+            ? shelved.filter { $0.shelf.title.lowercased().contains(needle) }
+            : namedHits
 
         return ZStack(alignment: .top) {
-        if categories.isEmpty && libraryHits.isEmpty && setHits.isEmpty {
+        if categories.isEmpty && libraryHits.isEmpty && readingHits.isEmpty && setHits.isEmpty {
             if isLoadingSets {
                 // The set index can be seconds away on a cold server.
                 // Saying nothing matched before it lands is a confident
@@ -343,6 +366,30 @@ struct ExploreView: View {
                     .transition(.opacity)
                 }
 
+                if !readingHits.isEmpty {
+                    section("Readings") {
+                        VStack(alignment: .leading, spacing: 0) {
+                            // Each row wears its shelf's glyph, so a
+                            // Carlo reading and a Marian one are told
+                            // apart before their names are read
+                            ForEach(readingHits.prefix(Self.readingLimit)) { hit in
+                                LedgerDoorRow(title: hit.reading.title, note: hit.reading.detail, icon: hit.shelf.icon) {
+                                    router.push(.libraryReading(id: hit.reading.id))
+                                }
+                            }
+
+                            // A cut list says so, and how to narrow it
+                            if readingHits.count > Self.readingLimit {
+                                Text("And \(readingHits.count - Self.readingLimit) more — add a word to narrow the search.")
+                                    .font(AppFonts.italicFont(13))
+                                    .foregroundColor(AppColors.textSecondary)
+                                    .padding(.top, 8)
+                            }
+                        }
+                    }
+                    .transition(.opacity)
+                }
+
                 if !setHits.isEmpty {
                     section("Meditations") {
                         setRows(setHits)
@@ -353,6 +400,16 @@ struct ExploreView: View {
             .transition(.opacity)
         }
         }
+    }
+
+    /// How many readings a search lists before it says how many more
+    private static let readingLimit = 12
+
+    /// A reading found, with the shelf it stands on
+    private struct ReadingHit: Identifiable {
+        let shelf: ReadingShelf
+        let reading: LibraryReading
+        var id: String { reading.id }
     }
 
     private func matches(_ summary: MeditationSetSummary, needle: String) -> Bool {
@@ -388,9 +445,13 @@ struct ExploreView: View {
                          matchText: "spiritual reading books imitation of christ story of a soul confessions augustine dolorous passion emmerich therese kempis library") { router.push(.spiritualReading) },
             LibraryEntry(icon: "ch-bible", title: "Scriptural Rosary",
                          matchText: "scriptural rosary verse every bead gospel douay rheims bible") { router.push(.scripturalRosary) },
+            LibraryEntry(icon: PrayerShortcut.rosaryAloud.icon, title: "The Rosary Aloud",
+                         matchText: "rosary aloud said spoken audio listen voice hear prayers learn by ear") { router.push(.rosaryAloud) },
             LibraryEntry(icon: "ch-rosary", title: "How to Pray",
                          matchText: "how to pray the rosary guide montfort methods") { router.push(.howToPray) },
-            LibraryEntry(icon: "ch-bible", title: "In Scripture",
+            // Not the Gospel glyph: that is the Scriptural Rosary's, and
+            // the two doors stood side by side wearing the same one
+            LibraryEntry(icon: "lv-breviary", title: "In Scripture",
                          matchText: "mysteries in scripture bible verses") { router.push(.scripture) },
             LibraryEntry(icon: "ch-lily", title: "Marian Library",
                          matchText: "marian theology library dogmas apparitions saints") { router.push(.marianLibrary) },
@@ -533,15 +594,41 @@ struct ExploreView: View {
     /// stands on the card ground rather than a category's colours,
     /// because it belongs to no one set of mysteries.
     private var scripturalBanner: some View {
-        Button {
+        devotionBanner(
+            icon: PrayerShortcut.scripturalRosary.icon,
+            title: "The Scriptural Rosary",
+            detail: "A verse for every bead"
+        ) {
             router.push(.scripturalRosary)
-        } label: {
+        }
+    }
+
+    /// The Rosary Aloud's door, in the same shape beside it: another way
+    /// of praying whichever mysteries, so it too stands on the card
+    /// ground, and its arch holds its own glyph.
+    private var aloudBanner: some View {
+        devotionBanner(
+            icon: PrayerShortcut.rosaryAloud.icon,
+            title: "The Rosary Aloud",
+            detail: "Every prayer said aloud"
+        ) {
+            router.push(.rosaryAloud)
+        }
+    }
+
+    private func devotionBanner(
+        icon: String,
+        title: String,
+        detail: String,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
             HStack(spacing: 14) {
                 GothicArchShape(riseRatio: 0.42)
                     .fill(AppColors.background.opacity(0.6))
                     .frame(width: 44, height: 56)
                     .overlay(
-                        AppIcon("ch-bible", size: 20)
+                        AppIcon(icon, size: 20)
                             .foregroundColor(AppColors.gold)
                     )
                     .overlay(
@@ -551,11 +638,11 @@ struct ExploreView: View {
                     .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("The Scriptural Rosary")
+                    Text(title)
                         .font(AppFonts.headlineFont(16))
                         .foregroundColor(AppColors.cream)
 
-                    Text("A verse for every bead")
+                    Text(detail)
                         .font(AppFonts.italicFont(12))
                         .foregroundColor(AppColors.textSecondary)
                 }
@@ -579,13 +666,54 @@ struct ExploreView: View {
             .contentShape(RoundedRectangle(cornerRadius: 14))
         }
         .buttonStyle(SacredCardButtonStyle())
-        .accessibilityLabel("The Scriptural Rosary. A verse for every bead")
+        .accessibilityLabel("\(title). \(detail)")
+    }
+
+    /// A quiet line under the devotions for someone who has never
+    /// prayed the Rosary: no card and no gold fill — a door, not a
+    /// banner, beside the five that are. The glyph is How to Pray's own.
+    private var newcomerDoor: some View {
+        Button {
+            router.push(.howToPray)
+        } label: {
+            HStack(spacing: 12) {
+                AppIcon("ch-rosary", size: 16)
+                    .foregroundColor(AppColors.gold.opacity(0.85))
+                    .frame(width: 20)
+
+                Text("New to the Rosary?")
+                    .font(AppFonts.italicFont(15))
+                    .foregroundColor(AppColors.cream.opacity(0.85))
+
+                Spacer(minLength: 8)
+
+                HStack(spacing: 5) {
+                    Text("HOW TO PRAY")
+                        .font(AppFonts.labelFont(9))
+                        .tracking(1.5)
+                    AppIcon("ph-caret-right", size: 8)
+                }
+                .foregroundColor(AppColors.gold.opacity(0.85))
+            }
+            .padding(.horizontal, 14)
+            .frame(minHeight: 44)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("New to the Rosary? How to Pray")
     }
 
     // MARK: - The Liturgy
 
     /// The Mass and the Office side by side on one card — a diptych,
     /// hinged on a centre rule, the same pairing the home shelf makes.
+    ///
+    /// The card is its leaves' height and no more. The hinge was a bare
+    /// `Rectangle` with a width and no height, and a shape takes all the
+    /// height it is offered — the one flexible thing in the card — so
+    /// the card could stand far taller than the two short leaves in it,
+    /// a blank band under the names. The hinge has its own height now,
+    /// and the card is held to what its leaves need.
     private var liturgyDiptych: some View {
         HStack(spacing: 0) {
             diptychLeaf(
@@ -596,15 +724,16 @@ struct ExploreView: View {
 
             Rectangle()
                 .fill(AppColors.gold.opacity(0.25))
-                .frame(width: AppLine.hairline)
-                .padding(.vertical, 14)
+                .frame(width: AppLine.hairline, height: 48)
 
+            // The Office's glyph everywhere is the clock of its hours
             diptychLeaf(
-                icon: "ch-candle",
+                icon: "ph-clock",
                 title: "Divine Office",
                 subtitle: "The Hours"
             ) { router.push(.office) }
         }
+        .fixedSize(horizontal: false, vertical: true)
         .background(AppColors.cardBackground)
         .cornerRadius(16)
         .overlay(
@@ -648,12 +777,16 @@ struct ExploreView: View {
     /// boxes. The liturgical books and the reading shelf have their own
     /// sections above; the Prayer Record is the user's own book, not a
     /// thing to discover, so it stays off the browse page — typed
-    /// search still finds its door, and the Me page keeps its real one.
+    /// search still finds its door, and the Chapel's Prayer Streak tile
+    /// and Settings → Devotion keep the real ones.
+    /// How to Pray stands under the mysteries, where a newcomer looks,
+    /// and the two other ways of praying them stand there too.
     private var studyEntries: [LibraryEntry] {
         let housed = [
             "Daily Missal", "Divine Office",
             "True Devotion", "Spiritual Reading",
-            "Scriptural Rosary", "Prayer Record"
+            "Scriptural Rosary", "The Rosary Aloud",
+            "Prayer Record", "How to Pray"
         ]
         return libraryEntries.filter { !housed.contains($0.title) }
     }
@@ -799,8 +932,8 @@ struct ExploreView: View {
 
 // MARK: - ExploreTile
 
-/// A small door: icon and name in a quiet cell, the same shelf language
-/// as the Me page's Library card.
+/// A small door: icon and name in a quiet cell — how a library door
+/// found by typed search is set.
 private struct ExploreTile: View {
     let icon: String
     let title: String

@@ -20,6 +20,72 @@ they are specific, angry, and about the actual product.
 
 ---
 
+## Status (24 Sept 2026)
+
+Parts I and II are research and stand as written. Parts III and IV were recommendations;
+this table says what became of each, checked against the code on this date. Pointers are to
+the working tree that day, where some of the files named (the spoken Rosary, the Guided
+Rosary, How to Pray's data) were not yet committed.
+
+**Decision pending, and the largest.** Part I §3, Part III §4 and Part IV say the fixed
+prayers must be a human voice, "always, no exceptions", and that a synthetic voice be
+labelled plainly. The spoken Rosary as built synthesises every fixed prayer and every
+announcement with ElevenLabs (backend `config/config.exs` `:narration_voices`,
+`lib/lumen_viae/rosary/voices.ex`, `docs/SPOKEN_ROSARY.md`), and nothing a reader sees in
+the app says the voices are synthetic. The owner has to choose: retire the rule and label
+the voices, or treat the shipped voices as interim until human recordings replace them.
+
+| Recommendation | Status | Where it stands |
+|---|---|---|
+| III §1 "My own beads" mode | PARTIAL | Bead counter off (`prayOnBeads = false`); the mystery is not announced aloud there, and nothing advances on its own (a narration ending never moves the Rosary on, by design, so auto-timing needs a decision) |
+| III §2 bead rail always visible | BUILT | `RosaryStrandView`, bead counter on by default |
+| III §2 differentiated haptics | PARTIAL | `.selection` per bead, a medium impact on a new decade; no distinct Glory Be pattern |
+| III §2 chain/click sound | OPEN | |
+| III §2 handedness setting | OPEN | the strand is fixed at the right edge |
+| III §2 walk back down the pendant | PARTIAL | the spoken Rosary's pendant (`PendantPlace`) returns to the cross for the last Sign of the Cross; the hand-prayed strand ends on AMEN |
+| III §3 never restart: meditation player, Scriptural Rosary | BUILT | `PrayerResumeService` keeps `mysteryIndex`, `beadIndex`, `spokenStep` for 24 hours, so a Rosary split across the day resumes |
+| III §3 never restart: Guided Rosary | OPEN | `GuidedRosaryView` (~L132-136): a red destructive "Leave", and it begins again |
+| III §3 resume at the start of the interrupted prayer | OPEN | after a call `AudioService` resumes where it stopped, mid-word |
+| III §4 human voices only for the fixed prayers | DECISION PENDING | see above: every fixed prayer is ElevenLabs, unlabelled |
+| III §4 Latin read by someone who can pronounce it | OPEN | no Latin audio (`docs/SPOKEN_ROSARY.md`, "Not built") |
+| III §5 silence where the tradition puts it | PARTIAL | fixed pauses, and the app's and the website's differ (note under §5) |
+| III §5 three named paces | OPEN | only a playback speed (`AudioService.setPlaybackRate`) |
+| III §5 time estimate before starting | REJECTED | the app never shows a duration (CLAUDE.md) |
+| III §6 Scriptural Rosary | BUILT | `app/Views/Scriptural/`, 249 bundled Douay-Rheims verses |
+| III §6 Montfort's clause in the Hail Mary | OPEN | taught in `app/Data/HowToPrayData.swift` (`montfort_methods`), not shown in the player |
+| III §6 pray for what distracted me | OPEN | |
+| III §6 preparatory intention screen | OPEN | |
+| III §7 "does it still count?" reassurance | PARTIAL | How to Pray's Questions Beginners Ask (a wandering mind, losing count, one decade); nothing on falling asleep |
+| III §7 indulgences page | OPEN | |
+| III §7 no restart prompt, no red anything | PARTIAL | held in the players; the Guided Rosary's Leave is red and starts over |
+| III §8 replace infinite streaks | SUPERSEDED | an open-ended streak was kept ("In a row"), shame-free, with devotional milestones (`app/Models/StreakMilestone.swift`) |
+| III §8 Five First Saturdays | OPEN | named only in the Marian Library's Fatima reading |
+| III §8 Living Rosary | DECISION PENDING | a group feature needs a user identity, and the app has none |
+| III §8 Rosary Confraternity | OPEN | a Marian Library reading, no weekly tracker |
+| III §8 54-day novena | PARTIAL | a streak milestone at 54 days, not a bounded tracker |
+| III §9 one-decade entry point | OPEN | How to Pray answers "Can I pray just one decade?"; there is no entry point |
+| III §9 family ladder | OPEN | |
+| III §9 splitting across the day | BUILT | resume holds for 24 hours |
+| III §10 zero taps to today's mysteries | BUILT | the Pray button's quick act, today's Rosary by default |
+| III §10 complete without looking | PARTIAL | Pray aloud prays it through eyes-free; recording it is still the AMEN tap |
+| III §10 Lock Screen controls | BUILT | skip moves a decade (`SpokenRosaryPlayer`) |
+| III §10 CarPlay | OPEN | needs Apple to grant the CarPlay audio entitlement |
+| III §11 night mode | OPEN | |
+| III §11 recorded as prayed with no interaction | REJECTED | the player never finishes a Rosary; AMEN is a tap |
+| III §12 accessibility | PARTIAL | VoiceOver bead actions, app-wide text size, Pray aloud; no large-print mode |
+| III §13 family & group mode | OPEN | no lead-and-respond, speaker mix or ladder |
+| III §14 guard the focus | SUPERSEDED | the app now holds much more than the Rosary; the guard is the Pray button's one-tap quick act |
+| III §15 say the promises out loud | DECISION PENDING | "We don't track what you pray for" is not met as worded (note under §15) |
+| IV no synthetic voice on the Hail Mary | DECISION PENDING | as III §4 |
+| IV don't gate prayer behind a lock screen | BUILT | held: nothing is gated |
+| IV don't import Duolingo | SUPERSEDED | a streak was kept on no-guilt terms; see III §8 |
+| IV don't chase celebrity voices | BUILT | held: two unnamed voices, Female and Male |
+| IV don't add a content catalog | SUPERSEDED | see III §14 |
+| IV nothing that makes a scrupulous person restart | PARTIAL | the Guided Rosary starts over when left |
+| IV don't get a prayer text wrong | OPEN | a standing rule; no proofreading source is recorded beside `app/Data/RosaryPrayers.swift` |
+
+---
+
 ## Part I — What people complain about
 
 ### 1. Losing your place. This is the number one complaint, by volume.
@@ -166,9 +232,11 @@ The Catholic tradition has specific, concrete remedies — all of them buildable
 | **Set the intention first** | Universal counsel | Naming who you're praying for makes it "personal and urgent" |
 
 Note that we already ship two of these: mystery artwork, and de Montfort's Second Method is
-already documented in [HowToPrayRosaryView.swift](app/Views/Resources/HowToPrayRosaryView.swift).
-They're documented but not *operational* — the app explains the method and then doesn't help
-you do it.
+already documented in [HowToPrayData.swift](app/Data/HowToPrayData.swift) (the
+`montfort_methods` shelf, "A Word Within Each Hail Mary"; it once lived in
+HowToPrayRosaryView.swift). They're documented but not *operational* — the app explains the
+method and then doesn't help you do it. *(24 Sept 2026: the Scriptural Rosary has since been
+built; Montfort's clause is still not shown in the player's Hail Mary.)*
 
 ### Staying awake
 
@@ -268,6 +336,9 @@ Hard requirement, not a feature:
 
 ### 4. Human voices only for the fixed prayers
 
+*Decision pending (24 Sept 2026): the spoken Rosary synthesises every fixed prayer with
+ElevenLabs and does not say so to the reader. See the status table at the top.*
+
 Revises the plan in the other doc. Reviewers detect and resent synthetic and non-Catholic
 cadence in the Hail Mary. Rules:
 - Every fixed prayer recorded by a practicing Catholic reader, at prayer pace, not
@@ -285,14 +356,25 @@ cadence in the Hail Mary. Rules:
 - Between decades.
 - **Never inside a prayer.**
 
+*Partial (24 Sept 2026): each clip is one whole prayer, so no silence falls inside one, but
+the pauses are fixed and the app's and the website's have drifted apart, although
+`docs/SPOKEN_ROSARY.md` says the two scripts must agree. App (`SpokenSegment.pauseAfter`,
+app/Models/SpokenRosary.swift): 1.2 s after an announcement, 2.0 s after a meditation, 0.9 s
+after every prayer (so 0.9 s between decades), 0.8 s after a verse. Website
+(`PrayerAudio.script/3`, backend lib/lumen_viae/rosary/prayer_audio.ex): 1.5 s after an
+announcement and after a meditation, 0.7 s after most prayers, 1.5 s after the opening Glory
+Be, the closing prayer and each optional prayer, 2.0 s after each decade's last prayer.*
+
 Three named paces, and a visible time estimate before starting ("about 24 minutes").
+*Rejected: the app never shows a duration — see CLAUDE.md ("never an estimated duration").*
 
 ### 6. Make the traditional distraction remedies operational
 
 We document them; we should run them.
 
-- **Scriptural Rosary** — already on the roadmap as a "stretch goal." This research moves it
-  up: it's the most-cited traditional remedy for the app's most-cited spiritual problem.
+- **Scriptural Rosary** — built, as a devotion of its own (`app/Views/Scriptural/`, a verse
+  for every Hail Mary from 249 bundled Douay-Rheims verses). This research moved it up: it's
+  the most-cited traditional remedy for the app's most-cited spiritual problem.
 - **De Montfort's Second Method** — a per-decade clause shown in the Hail Mary itself
   ("…blessed is the fruit of thy womb, Jesus *agonizing in the garden*"). Cheap: 20 short
   phrases. High impact, and directly attributable to a saint the app already features.
@@ -315,6 +397,10 @@ We document them; we should run them.
   restart. No counter that implies a partial Rosary was wasted. No red anything.
 
 ### 8. Replace infinite streaks with bounded Catholic devotions
+
+*Superseded: the app kept an open-ended streak ("In a row"), with no-guilt rules and
+devotional milestones (`app/Models/StreakMilestone.swift`). The devotions below are still open;
+the Living Rosary would need a user identity the app does not have (decision pending).*
 
 The critique of gamified prayer is being made *by Catholics, about Catholic apps* — streaks
 imported from Duolingo, "a vision of happiness as gradually increasing control over one's
@@ -354,6 +440,8 @@ Each of these is a better retention mechanic than a streak *and* is doctrinally 
 
 - Dimmed, warm, minimal.
 - If the session ends with no interaction, it is recorded as prayed and nothing scolds.
+  *Rejected: the Rosary is never finished by the player; recording it is one AMEN tap
+  (app/Services/SpokenRosaryPlayer.swift). "Nothing scolds" stands.*
 - The guardian angel tradition belongs in that copy — it's warm, it's ours, and it's exactly
   the reassurance the moment calls for.
 
@@ -372,6 +460,9 @@ interaction at all.
 
 ### 14. Guard the focus
 
+*Superseded: the app now holds the Missal, the Office, Spiritual Reading, the Marian Library
+and True Devotion; the guard became the Pray button's one-tap quick act.*
+
 The largest competitor's most-cited weakness is that you can't easily find the Rosary inside
 it. Our advantage is being about one thing. Worth an explicit internal metric: **taps and
 seconds from cold launch to the first Ave.**
@@ -386,19 +477,30 @@ short, plain statement in the app is a genuine differentiator:
 
 Only ship it if all four stay true.
 
+*Decision pending (24 Sept 2026): the fourth is not met as worded. The app posts each
+completed meditation-set Rosary (`meditation_set_id`, `prayed_aloud`) to
+`POST /api/completions` (`APIService.recordCompletion`); the server keeps a city, region and
+country looked up from the request's address, and the address truncated, with no account,
+device or install identifier (backend `docs/COMPLETION_ANALYTICS.md`). It also accepts a
+time zone and locale, which the app does not send. The in-app Privacy Policy
+(`PrivacyPolicySheet`, AccountView.swift) says prayer records never leave the device. The
+other three hold today: there is no purchase code, no account and no ads.*
+
 ---
 
 ## Part IV — What not to do
 
 - **Don't put a synthetic voice on the Hail Mary.** Reviewers hear it and hold it against you.
+  *Decision pending: the shipped Hail Mary is ElevenLabs. See the status table at the top.*
 - **Don't gate prayer behind a lock screen.** *Rosary Lock* works for some people, but
   coercion is a different value proposition than invitation, and it contradicts the app's
   stated posture. If a phone-use bridge is ever wanted, make it an offer, not a lock.
 - **Don't import Duolingo.** Catholic writers are already criticizing streak mechanics in
-  Catholic apps by name.
+  Catholic apps by name. *Superseded: a streak was kept, on no-guilt terms; see Part III §8.*
 - **Don't chase celebrity voices.** It's a spending war with a well-funded incumbent, and it
   carries reputational risk that has already burned others in this category.
 - **Don't add a content catalog.** The complaint about the biggest app is that it has one.
+  *Superseded: the app now holds a library beside the Rosary; see Part III §14.*
 - **Don't build anything that could make a scrupulous person restart.** Ever.
 - **Don't get a prayer text wrong.** Proofread every fixed prayer against an authoritative
   source before it's recorded or shipped.

@@ -29,15 +29,16 @@ enum AppRoute: Hashable {
     /// Completion screen shown after finishing all mysteries
     case completion
 
-    /// Settings — every toggle and preference — pushed from the Chapel
-    /// day strip's faders
+    /// Settings — every toggle and preference — pushed from the home
+    /// masthead's faders
     case settings
 
     /// The app's colophon: about, introduction, privacy, help, feedback.
-    /// Pushed from the Chapel day strip's ☰.
+    /// Pushed from the home masthead's ⓘ.
     case about
 
-    /// Explore: search and browse everything, from the home search bar
+    /// Explore: search and browse everything, from the home masthead's
+    /// search glass
     case explore
 
     // Content destinations — pages, not tasks, so they slide in from
@@ -54,8 +55,29 @@ enum AppRoute: Hashable {
     /// it.
     case trueDevotionBook
     case howToPray
+    /// A whole Rosary a step at a time, every word on the page and the
+    /// bead under the fingers drawn — for someone praying it for the
+    /// first time
+    case guidedRosary(MysteryCategory)
+    /// One lesson of How to Pray: 0 the beads and the order, 1 the
+    /// prayers, 2 the mysteries
+    case rosaryLesson(Int)
     case scripture
+    /// One mystery's passage of Scripture, stepped in place through its
+    /// set — reached from In Scripture
+    case mysteryInScripture(category: MysteryCategory, order: Int)
     case marianLibrary
+    /// One short reading of the library — a Marian Library entry, a
+    /// chapter of St. Carlo's life — by its id (`LibraryReadings`),
+    /// stepped in place along its shelf
+    case libraryReading(id: String)
+    /// A prayer the library leads to — the Litany, a hymn, a prayer of
+    /// the Rosary — on a page of its own, by the id `DevotionPrayers.find`
+    /// looks up
+    case devotionPrayer(id: String)
+    /// The Missal opened on a given day rather than today — a feast
+    /// named elsewhere in the app
+    case missalDay(Date)
     case carloAcutis
 
     /// The Spiritual Reading shelf, one of its books, and one chapter.
@@ -70,6 +92,10 @@ enum AppRoute: Hashable {
     /// Hashable, so it rides in the path rather than out of band.
     case scripturalRosary
     case scripturalRosaryPrayer(ScripturalRosaryLaunch)
+
+    /// The Rosary Aloud's title page. It prays on the Scriptural Rosary's
+    /// screens (`ScripturalRosaryLaunch.form`), so only the door is its own.
+    case rosaryAloud
 }
 
 // MARK: - ScripturalRosaryLaunch
@@ -78,6 +104,10 @@ enum AppRoute: Hashable {
 /// and — resuming — where it stood and how long it had been prayed.
 struct ScripturalRosaryLaunch: Hashable {
     let category: MysteryCategory
+
+    /// What the beads carry: a verse each, or the prayer itself said
+    /// aloud. Defaults to the Scriptural Rosary, whose doors came first.
+    var form: SpokenForm = .scriptural
 
     /// 0-based mystery index to start at (non-zero when resuming)
     var startIndex: Int = 0
@@ -90,6 +120,22 @@ struct ScripturalRosaryLaunch: Hashable {
 
     /// When the devotion originally began (display/snapshot continuity)
     var startedAt: Date = Date()
+}
+
+// MARK: - SpokenForm
+
+/// The two devotions the Scriptural Rosary's screens pray. They share
+/// a title page, a player, the strand and the spoken Rosary beneath
+/// it, and differ in what a Hail Mary bead holds.
+enum SpokenForm: String, Hashable, Codable {
+    /// A verse of Scripture for every Hail Mary, the Rosary said aloud
+    /// only if `UserSettings.prayAloud` is on
+    case scriptural
+
+    /// The Rosary Aloud: every prayer said by the voice, the beads
+    /// moving with it, and the prayer being said set in full on its bead.
+    /// Aloud whatever the setting, since that is the whole of it.
+    case plain
 }
 
 // MARK: - CompletedPrayer
@@ -160,7 +206,7 @@ final class AppRouter {
     /// The currently selected bottom tab.
     ///
     /// Lives on the router (not ContentView-local state) so any view can
-    /// switch tabs — e.g. the home header's streak flame jumps to Progress.
+    /// switch tabs — e.g. the Chapel's Prayer Streak tile jumps to Progress.
     var selectedTab: AppTab = .home {
         didSet {
             // Leaving the Chapel ends its arranging, for the same reason

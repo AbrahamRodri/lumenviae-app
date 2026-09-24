@@ -59,11 +59,6 @@ nonisolated struct TrueDevotionChapter: Decodable, Identifiable {
     let title: String
     let paragraphs: [TrueDevotionParagraph]
 
-    /// Rounded-up estimate at a contemplative ~200 words per minute.
-    /// Counted once while decoding — the chapter list asks every row for
-    /// this on each render, and counting words walks the whole book.
-    let estimatedMinutes: Int
-
     /// The paragraph that gets the illuminated initial
     let firstTextParagraphID: Int?
 
@@ -77,9 +72,6 @@ nonisolated struct TrueDevotionChapter: Decodable, Identifiable {
         part = try container.decode(Int.self, forKey: .part)
         title = try container.decode(String.self, forKey: .title)
         paragraphs = try container.decode([TrueDevotionParagraph].self, forKey: .paragraphs)
-
-        let words = paragraphs.reduce(0) { $0 + $1.text.split(separator: " ").count }
-        estimatedMinutes = max(1, Int((Double(words) / 200.0).rounded(.up)))
         firstTextParagraphID = paragraphs.first { $0.kind == .text }?.id
     }
 }

@@ -70,7 +70,7 @@ For Mary: We do all our actions out of love for Mary as our final end, after Jes
             DevotionItem(
                 title: "The Slavery of Love",
                 content: """
-St. Louis de Montfort calls this devotion a "slavery of love" - the voluntary giving of ourselves entirely to Mary, who is the Mother of God.
+St. Louis de Montfort calls this devotion a "slavery of love" — the voluntary giving of ourselves entirely to Mary, who is the Mother of God.
 
 This slavery is:
 • The most perfect way to give ourselves to Jesus Christ
@@ -83,7 +83,7 @@ This slavery is:
             DevotionItem(
                 title: "Mary as the Mold of God",
                 content: """
-St. Louis de Montfort teaches that Mary is the "mold of God" - the perfect vessel in which Jesus was formed.
+St. Louis de Montfort teaches that Mary is the "mold of God" — the perfect vessel in which Jesus was formed.
 
 Just as Jesus was formed in Mary, so we too must be formed in Mary to become true images of Christ. Only in her can we be transformed into other Christs without danger of deception or pride.
 """
@@ -127,7 +127,7 @@ The exterior practice includes:
             DevotionItem(
                 title: "Interior",
                 content: """
-True devotion to Mary is interior - it comes from the mind and the heart. It flows from:
+True devotion to Mary is interior — it comes from the mind and the heart. It flows from:
 
 • The esteem we have for her
 • The high idea we have formed of her greatness
@@ -137,7 +137,7 @@ True devotion to Mary is interior - it comes from the mind and the heart. It flo
             DevotionItem(
                 title: "Tender",
                 content: """
-True devotion to Mary is tender - it is full of confidence in her, like a child's confidence in a loving mother.
+True devotion to Mary is tender — it is full of confidence in her, like a child's confidence in a loving mother.
 
 It makes us fly to her in all our bodily and spiritual needs with great simplicity, trust, and tenderness.
 """
@@ -145,7 +145,7 @@ It makes us fly to her in all our bodily and spiritual needs with great simplici
             DevotionItem(
                 title: "Holy",
                 content: """
-True devotion to Mary is holy - it leads us to avoid sin and to imitate her virtues, particularly:
+True devotion to Mary is holy — it leads us to avoid sin and to imitate her virtues, particularly:
 
 • Her profound humility
 • Her lively faith
@@ -161,7 +161,7 @@ True devotion to Mary is holy - it leads us to avoid sin and to imitate her virt
             DevotionItem(
                 title: "Constant",
                 content: """
-True devotion to Mary is constant - it strengthens us in good and does not let us easily abandon our spiritual exercises.
+True devotion to Mary is constant — it strengthens us in good and does not let us easily abandon our spiritual exercises.
 
 It makes us courageous in opposing the world, the flesh, and the devil. A true child of Mary is not inconstant or scrupulous.
 """
@@ -169,7 +169,7 @@ It makes us courageous in opposing the world, the flesh, and the devil. A true c
             DevotionItem(
                 title: "Disinterested",
                 content: """
-True devotion to Mary is disinterested - it inspires us to seek God alone in Mary, and not ourselves.
+True devotion to Mary is disinterested — it inspires us to seek God alone in Mary, and not ourselves.
 
 The true subject of Mary does not serve her for temporal or eternal reward, but solely because she has a right to be served, and God alone in her.
 """
@@ -378,22 +378,91 @@ We seek to imitate Mary's:
             )
         ]
     )
+}
 
-    // MARK: - All Sections
+// MARK: - The Teaching, as Readings
 
-    /// Get all sections with the specified prayer language preference
-    static func allSections(prayerLanguage: PrayerLanguage = .both) -> [DevotionSection] {
-        // Use the efficient bilingual prayer structure that generates format dynamically
-        let prayerSection = TrueDevotionPrayers.prayers.toDevotionSection(for: prayerLanguage)
+extension TrueDevotionData {
 
-        return [
-            foundations,
-            keyPrinciples,
-            marksOfTrueDevotion,
-            falseDevotions,
-            benefits,
-            prayerSection,
-            spirit
+    /// Montfort's doctrine as the library's readings — one page to a
+    /// part, each item of the part set under its own heading — read and
+    /// stepped through in `LibraryReadingView`.
+    static let teaching = ReadingShelf(
+        id: "true_devotion_teaching",
+        icon: "ph-crown",
+        title: "The Devotion in Summary",
+        marginLabel: "The\nteaching",
+        subtitle: "Montfort's doctrine, a part at a time",
+        entries: [
+            reading(
+                foundations,
+                id: "td_foundations",
+                detail: "Where the devotion begins and ends",
+                intro: "Everything in True Devotion rests on one rule: that Jesus Christ is the end of every devotion, and that Mary is the way God Himself chose to come to us, and so the surest way for us to go to Him.",
+                quote: ReadingQuote(
+                    text: "It was through the Blessed Virgin Mary that Jesus came into the world, and it is also through her that He must reign in the world.",
+                    citation: "True Devotion, n. 1"
+                )
+            ),
+            reading(
+                keyPrinciples,
+                id: "td_principles",
+                detail: "What the consecration gives, and how it is lived",
+                intro: "The perfect consecration is a gift of everything — body and soul, goods and merits — to Jesus through Mary, and then a life lived in it: every act done through her, with her, in her and for her.",
+                quote: ReadingQuote(
+                    text: "The more one is consecrated to Mary, the more one is consecrated to Jesus Christ.",
+                    citation: "True Devotion, n. 120"
+                )
+            ),
+            reading(
+                marksOfTrueDevotion,
+                id: "td_marks",
+                detail: "Interior, tender, holy, constant, disinterested",
+                intro: "Montfort gives five marks by which true devotion to Our Lady can be told from its counterfeits. Each is a question a soul can put to itself.",
+                quote: nil
+            ),
+            reading(
+                falseDevotions,
+                id: "td_false",
+                detail: "Seven kinds of false devotee",
+                intro: "Before he teaches the true devotion, Montfort names seven false ones, so that no one mistakes a habit, a feeling or a bargain for love of the Mother of God.",
+                quote: nil
+            ),
+            reading(
+                benefits,
+                id: "td_benefits",
+                detail: "What the devotion works in a soul",
+                intro: "The fruits Montfort promises are not rewards for a technique; they are what happens to a soul that has given itself away and has nothing left to fear for.",
+                quote: nil
+            ),
+            reading(
+                spirit,
+                id: "td_spirit",
+                detail: "Humility, confidence, love, imitation",
+                intro: "The devotion is lived in a spirit before it is kept in practices: the spirit of a child toward its mother.",
+                quote: nil
+            )
         ]
+    )
+
+    private static func reading(
+        _ section: DevotionSection,
+        id: String,
+        detail: String,
+        intro: String,
+        quote: ReadingQuote?
+    ) -> LibraryReading {
+        LibraryReading(
+            id: id,
+            title: section.title,
+            detail: detail,
+            paragraphs: [intro],
+            quote: quote,
+            doors: [
+                .page(.trueDevotionBook, icon: "ph-crown", title: "True Devotion to Mary", note: "The book, in the Faber translation"),
+                .act(.consecration, note: "The thirty-three days of preparation")
+            ],
+            parts: section.items.map { ReadingPart(title: $0.title, text: $0.content) }
+        )
     }
 }

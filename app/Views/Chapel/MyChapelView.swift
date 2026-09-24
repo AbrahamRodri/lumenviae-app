@@ -353,6 +353,11 @@ struct MyChapelView: View {
             return historyService?.sessions(on: Date())
                 .contains { $0.meditationType == ScripturalRosaryViewModel.devotionName } ?? false
 
+        case .rosaryAloud:
+            // The same, by its own name
+            return historyService?.sessions(on: Date())
+                .contains { $0.meditationType == ScripturalRosaryViewModel.aloudDevotionName } ?? false
+
         case .consecration:
             guard let progress = activeConsecration else { return false }
             return progress.isDayCompleted(progress.currentDayNumber)
@@ -371,6 +376,8 @@ struct MyChapelView: View {
             return ScheduleService.categoryForToday().devotionTitle
         case .scripturalRosary:
             return "\(ScheduleService.categoryForToday().devotionTitle) · in Scripture"
+        case .rosaryAloud:
+            return "\(ScheduleService.categoryForToday().devotionTitle) · said aloud"
         case .consecration:
             guard let progress = activeConsecration else { return "Not yet begun" }
             let day = progress.currentDayNumber
@@ -466,6 +473,8 @@ struct MyChapelView: View {
             return "The chaplet of Our Lady's seven sorrows, prayed on her own beads."
         case .scripturalRosary:
             return "The \(ScheduleService.categoryForToday().devotionTitle), with a verse of the Gospel on every bead."
+        case .rosaryAloud:
+            return "The \(ScheduleService.categoryForToday().devotionTitle), every prayer said aloud and the beads moving with the voice."
         case .mass:
             return "The propers of the day, from the 1962 Missal, with the Ordinary in its place."
         case .office:

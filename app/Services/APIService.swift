@@ -53,7 +53,17 @@ final class APIService {
 
     // MARK: - Configuration
 
-    private let baseURL = "https://lumenviae.fly.dev/api"
+    private let baseURL: String = {
+        #if DEBUG
+        // A debug build can be pointed at a server on this Mac, to try an
+        // endpoint before it is deployed:
+        // SIMCTL_CHILD_LUMEN_VIAE_API_BASE_URL=http://localhost:8080/api
+        if let override = ProcessInfo.processInfo.environment["LUMEN_VIAE_API_BASE_URL"], !override.isEmpty {
+            return override
+        }
+        #endif
+        return "https://lumenviae.fly.dev/api"
+    }()
     private let session: URLSession
 
     private let decoder: JSONDecoder = {
@@ -162,15 +172,18 @@ final class APIService {
     // MARK: - Completions
 
     /// Records a prayer completion to the server when the user finishes all 5 mysteries.
+    /// `prayedAloud` says whether the Rosary was said aloud by the spoken
+    /// Rosary (`UserSettings.prayAloud`) rather than prayed along with the
+    /// meditation alone.
     @discardableResult
-    func recordCompletion(meditationSetId: Int) async throws -> CompletionResponse {
+    func recordCompletion(meditationSetId: Int, prayedAloud: Bool = false) async throws -> CompletionResponse {
         let urlString = "\(baseURL)/completions"
 
         guard let url = URL(string: urlString) else {
             throw APIError.invalidURL
         }
 
-        let request = CompletionRequest(meditationSetId: meditationSetId)
+        let request = CompletionRequest(meditationSetId: meditationSetId, prayedAloud: prayedAloud)
         return try await post(url: url, body: request, responseType: APIResponse<CompletionResponse>.self).data
     }
 
@@ -186,6 +199,32 @@ final class APIService {
         }
 
         return try await fetch(url: url, responseType: APIResponse<PrayerAudioResponse>.self).data.audioUrl
+    }
+
+    // MARK: - The Spoken Rosary
+
+    /// Fetches one voice's spoken-Rosary manifest: the fixed prayers, the
+    /// mystery announcements and, unless left out, the Scriptural
+    /// Rosary's verses — each with a signed link.
+    ///
+    /// `include` narrows the kinds ("prayers", "announcements",
+    /// "verses"); a meditation Rosary has no use for 249 verse links.
+    func fetchRosaryAudio(voice: String?, include: [String]? = nil) async throws -> RosaryAudioManifest {
+        var components = URLComponents(string: "\(baseURL)/rosary/audio")
+        var query: [URLQueryItem] = []
+        if let voice, !voice.isEmpty {
+            query.append(URLQueryItem(name: "voice", value: voice))
+        }
+        if let include, !include.isEmpty {
+            query.append(URLQueryItem(name: "include", value: include.joined(separator: ",")))
+        }
+        components?.queryItems = query.isEmpty ? nil : query
+
+        guard let url = components?.url else {
+            throw APIError.invalidURL
+        }
+
+        return try await fetch(url: url, responseType: RosaryAudioResponse.self).data
     }
 
     // MARK: - Private Helpers

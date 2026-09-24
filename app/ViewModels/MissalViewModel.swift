@@ -46,9 +46,11 @@ final class MissalViewModel {
 
     // MARK: - Initialization
 
-    init(api: MissalAPIService = .shared) {
+    /// `date` opens the missal on a day other than today — a feast named
+    /// elsewhere in the app.
+    init(api: MissalAPIService = .shared, date: Date? = nil) {
         self.api = api
-        self.date = Calendar.current.startOfDay(for: .now)
+        self.date = Calendar.current.startOfDay(for: date ?? .now)
     }
 
     // MARK: - Derived

@@ -160,8 +160,8 @@ struct HomeView: View {
 
     // MARK: - Subviews
 
-    /// The wordmark, framed by the glass on the left and the app's two
-    /// chrome doors on the right. The flame stays in the Chapel.
+    /// The wordmark, framed by the app's two chrome doors on the left and
+    /// the glass on the right. The flame stays in the Chapel.
     private var header: some View {
         HeaderView(
             onSearchTap: { router.navigateToExplore() },
@@ -177,12 +177,14 @@ struct HomeView: View {
         guard let session = PrayerResumeService.shared.inProgress,
               !isResuming, router.path.isEmpty else { return }
 
-        // The Scriptural Rosary is bundled whole: nothing to load, and
-        // its own screen to return to
-        if session.isScripturalRosary {
+        // The Scriptural Rosary and the Rosary Aloud are bundled whole:
+        // nothing to load, and their own screen to return to, in the
+        // form they were being prayed in
+        if let form = session.spokenForm {
             guard let category = MysteryCategory(fromAPIString: session.category) else { return }
             router.push(.scripturalRosaryPrayer(ScripturalRosaryLaunch(
                 category: category,
+                form: form,
                 startIndex: session.mysteryIndex,
                 startBead: session.beadIndex ?? 0,
                 priorSeconds: session.accumulatedSeconds,
@@ -231,6 +233,9 @@ struct HomeView: View {
             },
             onPrayInScripture: {
                 router.push(.scripturalRosary)
+            },
+            onPrayAloud: {
+                router.push(.rosaryAloud)
             }
         )
     }
@@ -255,6 +260,15 @@ struct ResumePrayerCard: View {
         // reads it in running text
         let label = category.mysteryLabel(ordinal: ordinal)
         return label.hasPrefix("The ") ? String(label.dropFirst(4)) : label
+    }
+
+    /// The door's own glyph for what is being resumed
+    private var resumeGlyph: String {
+        switch session.spokenForm {
+        case .scriptural: return PrayerShortcut.scripturalRosary.icon
+        case .plain: return PrayerShortcut.rosaryAloud.icon
+        case nil: return "ch-rosary"
+        }
     }
 
     var body: some View {
@@ -287,7 +301,7 @@ struct ResumePrayerCard: View {
     private var continueButton: some View {
         Button(action: onContinue) {
                 HStack(spacing: 14) {
-                    AppIcon(session.isScripturalRosary ? "ch-bible" : "ch-rosary", size: 26)
+                    AppIcon(resumeGlyph, size: 26)
                         .foregroundColor(AppColors.gold)
 
                     VStack(alignment: .leading, spacing: 3) {
@@ -418,7 +432,7 @@ struct DayPrayerLabel: View {
 /// │   ┌───────────────────┐     │
 /// │   │ PRAY WITH A MEDIT…│     │  ← The one gold act
 /// │   └───────────────────┘     │
-/// │   THE SCRIPTURAL ROSARY ›   │  ← The other way to pray it
+/// │ SCRIPTURAL ROSARY › · ROSARY ALOUD › │  ← The other ways to pray it
 /// └─────────────────────────────┘
 /// ```
 struct FeaturedMysteryCard: View {
@@ -435,6 +449,10 @@ struct FeaturedMysteryCard: View {
     /// bead — the Scriptural Rosary's door on the home page
     var onPrayInScripture: () -> Void = {}
 
+    /// Beside it: the same mysteries with every prayer said aloud — the
+    /// Rosary Aloud's door on the home page
+    var onPrayAloud: () -> Void = {}
+
     // MARK: - Body
 
     var body: some View {
@@ -442,7 +460,7 @@ struct FeaturedMysteryCard: View {
             HeroBadge("TODAY'S MYSTERIES")
             devotionTitle
             beginPrayerButton
-            prayInScriptureLink
+            otherWaysToPray
         }
     }
 
@@ -487,17 +505,63 @@ struct FeaturedMysteryCard: View {
     /// Named, not described: an earlier "Or pray it in Scripture" read
     /// as a footnote to the button above it, and a door should say where
     /// it goes.
-    private var prayInScriptureLink: some View {
+    ///
+    /// The Rosary Aloud stands beside it on the same line, a second quiet
+    /// door rather than a second line: two lines of small capitals under
+    /// the button made the card a menu. Where the pair will not fit on
+    /// one line — a narrow phone, a large text size — they drop their
+    /// articles first, and only then stand one over the other.
+    private var otherWaysToPray: some View {
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: 0) {
+                scriptureLink("The Scriptural Rosary")
+                separator
+                aloudLink("The Rosary Aloud")
+            }
+            HStack(spacing: 0) {
+                scriptureLink("Scriptural Rosary")
+                separator
+                aloudLink("Rosary Aloud")
+            }
+            VStack(spacing: -16) {
+                scriptureLink("The Scriptural Rosary")
+                aloudLink("The Rosary Aloud")
+            }
+        }
+        // The buttons keep their 44pt targets; the stack's rhythm keeps
+        // its own spacing
+        .padding(.vertical, -8)
+    }
+
+    private func scriptureLink(_ title: String) -> some View {
         QuietGoldButton(
-            title: "The Scriptural Rosary",
+            title: title,
             trailingIcon: "ph-caret-right",
             size: 10,
             color: AppColors.gold.opacity(0.85),
+            horizontalPadding: 10,
             action: onPrayInScripture
         )
-        // The button keeps its 44pt target; the stack's rhythm keeps
-        // its own spacing
-        .padding(.vertical, -8)
+    }
+
+    private func aloudLink(_ title: String) -> some View {
+        QuietGoldButton(
+            title: title,
+            trailingIcon: "ph-caret-right",
+            size: 10,
+            color: AppColors.gold.opacity(0.85),
+            horizontalPadding: 10,
+            action: onPrayAloud
+        )
+    }
+
+    /// A small diamond between the two doors, the app's own stop
+    private var separator: some View {
+        Rectangle()
+            .fill(AppColors.gold.opacity(0.45))
+            .frame(width: 3.5, height: 3.5)
+            .rotationEffect(.degrees(45))
+            .accessibilityHidden(true)
     }
 
 }

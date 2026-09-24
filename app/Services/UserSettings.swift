@@ -195,6 +195,77 @@ final class UserSettings {
             : "No beads on screen. Keep count on your own rosary."
     }
 
+    // MARK: - The Rosary Said Aloud
+
+    /// Whether the player says the whole Rosary aloud — the Creed, every
+    /// Our Father, Hail Mary and Glory Be, the announcements, and in the
+    /// Scriptural Rosary each bead's verse — moving the beads with the
+    /// voice, so it can be prayed with the phone in a pocket. Off until
+    /// chosen: someone who prays along with the meditation alone should
+    /// not find the app praying over them.
+    var prayAloud: Bool = false {
+        didSet { UserDefaults.standard.set(prayAloud, forKey: "userSettings.prayAloud") }
+    }
+
+    /// What `prayAloud` is called wherever it is offered — the set's
+    /// page, the playback sheet, Settings and the Scriptural Rosary —
+    /// one name, so it is recognised as one switch. What it does is the
+    /// detail's to say.
+    static let prayAloudTitle = "Pray aloud"
+
+    /// What it does, said as what is heard. With the bead counter off
+    /// there are no beads on the screen to move, so the words say what
+    /// is shown instead; the Scriptural Rosary always has its beads.
+    static func prayAloudDetail(isOn: Bool, onBeads: Bool = true) -> String {
+        switch (isOn, onBeads) {
+        case (true, true):
+            return "Every prayer is said aloud, and the beads move with the voice."
+        case (true, false):
+            return "Every prayer is said aloud, and the screen names each one as it is said."
+        case (false, _):
+            return "Only the meditation is read aloud. You say the prayers yourself."
+        }
+    }
+
+    // MARK: - After the Rosary
+
+    /// Prayers some add after the Rosary's closing prayer, each off until
+    /// chosen (`RosaryClosingExtra`). Said aloud by the spoken Rosary and
+    /// shown in the guided Rosary; never added to the Seven Sorrows
+    /// chaplet.
+    var prayForHolyFather: Bool = false {
+        didSet { UserDefaults.standard.set(prayForHolyFather, forKey: "userSettings.prayForHolyFather") }
+    }
+
+    var prayMemorare: Bool = false {
+        didSet { UserDefaults.standard.set(prayMemorare, forKey: "userSettings.prayMemorare") }
+    }
+
+    var praySaintMichael: Bool = false {
+        didSet { UserDefaults.standard.set(praySaintMichael, forKey: "userSettings.praySaintMichael") }
+    }
+
+    /// The chosen closing prayers, in the order they are said
+    var closingExtras: [RosaryClosingExtra] {
+        RosaryClosingExtra.allCases.filter { isChosen($0) }
+    }
+
+    func isChosen(_ extra: RosaryClosingExtra) -> Bool {
+        switch extra {
+        case .holyFather: return prayForHolyFather
+        case .memorare: return prayMemorare
+        case .stMichael: return praySaintMichael
+        }
+    }
+
+    func setChosen(_ extra: RosaryClosingExtra, _ isOn: Bool) {
+        switch extra {
+        case .holyFather: prayForHolyFather = isOn
+        case .memorare: prayMemorare = isOn
+        case .stMichael: praySaintMichael = isOn
+        }
+    }
+
     // MARK: - Narration Voice
 
     /// The slug of the voice the meditations are heard in - "female",
@@ -512,10 +583,12 @@ final class UserSettings {
     /// The acts in the Pray button's press-and-hold tray, in order. The
     /// Scriptural Rosary stands second, under the Rosary it is a way of
     /// praying: the tray is where a person looks for a devotion, and a
-    /// devotion that isn't there is one they never find.
+    /// devotion that isn't there is one they never find. The Rosary
+    /// Aloud stands under it, another way of praying the same beads.
     var prayTrayRaw: [String] = [
         PrayerShortcut.todaysRosary.rawValue,
         PrayerShortcut.scripturalRosary.rawValue,
+        PrayerShortcut.rosaryAloud.rawValue,
         PrayerShortcut.chooseMeditation.rawValue,
         PrayerShortcut.mass.rawValue,
         PrayerShortcut.office.rawValue
@@ -628,6 +701,10 @@ final class UserSettings {
         if d.object(forKey: "userSettings.prayOnBeads") != nil {
             prayOnBeads = d.bool(forKey: "userSettings.prayOnBeads")
         }
+        prayAloud = d.bool(forKey: "userSettings.prayAloud")
+        prayForHolyFather = d.bool(forKey: "userSettings.prayForHolyFather")
+        prayMemorare = d.bool(forKey: "userSettings.prayMemorare")
+        praySaintMichael = d.bool(forKey: "userSettings.praySaintMichael")
         if d.object(forKey: "userSettings.prayerImageMode") != nil {
             prayerImageMode = d.bool(forKey: "userSettings.prayerImageMode")
         }
@@ -696,6 +773,19 @@ final class UserSettings {
             }
             d.set(true, forKey: scripturalKey)
         }
+        // The same, once, for the Rosary Aloud: under the Scriptural
+        // Rosary if the tray still holds it, else under Today's Rosary
+        let aloudKey = "userSettings.prayTrayOfferedAloud"
+        if !d.bool(forKey: aloudKey) {
+            let aloud = PrayerShortcut.rosaryAloud.rawValue
+            if !prayTrayRaw.contains(aloud) {
+                let after = (prayTrayRaw.firstIndex(of: PrayerShortcut.scripturalRosary.rawValue)
+                    ?? prayTrayRaw.firstIndex(of: PrayerShortcut.todaysRosary.rawValue))
+                    .map { $0 + 1 } ?? 0
+                prayTrayRaw.insert(aloud, at: after)
+            }
+            d.set(true, forKey: aloudKey)
+        }
         if let rule = d.stringArray(forKey: "userSettings.ruleItems") {
             ruleItemsRaw = rule
         }
@@ -736,7 +826,8 @@ final class UserSettings {
             // arrangement made there carries over — the same sections in
             // the same order, sections they removed waiting in the tray.
             // The chant tile is new; it joins the page in its default
-            // place at the end.
+            // place, ahead of the tiles that follow it in the default
+            // order (`ChapelPlacement.completing`).
             chapelLayoutRaw = Self.chapelLayout(
                 fromMeWidgets: Self.meWidgetsAsShown(widgets)
             ).map(\.encoded)

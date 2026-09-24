@@ -24,12 +24,25 @@ struct InProgressPrayer: Codable, Equatable {
     enum Kind: String, Codable {
         case meditationSet = "meditation_set"
         case scripturalRosary = "scriptural_rosary"
+        /// The Rosary Aloud, which prays on the Scriptural Rosary's
+        /// screens and must come back as itself, not as a verse a bead
+        case rosaryAloud = "rosary_aloud"
     }
 
     let kind: Kind?
 
     /// True for a Scriptural Rosary, which resumes on its own screen
     var isScripturalRosary: Bool { kind == .scripturalRosary }
+
+    /// The form a Rosary prayed on the Scriptural Rosary's screens comes
+    /// back in; nil for a meditation set's
+    var spokenForm: SpokenForm? {
+        switch kind {
+        case .scripturalRosary: return .scriptural
+        case .rosaryAloud: return .plain
+        case .meditationSet, nil: return nil
+        }
+    }
 
     /// Meditation set ID (negative = bundled local set, 0 = built-in
     /// fallback). Meaningless for a Scriptural Rosary, which has no set.
@@ -49,6 +62,12 @@ struct InProgressPrayer: Codable, Equatable {
     /// written before the beads were walked carry none, and every one
     /// of them began its decade on the Our Father.
     let beadIndex: Int?
+
+    /// The prayer a Rosary said aloud had reached in its script, so it
+    /// resumes there rather than at the start of the bead. Nil for a
+    /// Rosary prayed by hand, and in snapshots written before the
+    /// spoken Rosary.
+    var spokenStep: SpokenStep? = nil
 
     /// When the devotion originally began (display only — never used
     /// for duration, which would count interruption gaps as prayer)
@@ -104,17 +123,85 @@ final class PrayerResumeService {
         startedAt: Date,
         accumulatedSeconds: Int
     ) {
-        let snapshot = InProgressPrayer(
+        // The voice's place in the script is kept across the bead's own
+        // saves while a spoken Rosary of this same prayer is running; a
+        // Rosary prayed by hand has no place in a script
+        let previous = self.snapshot
+        let samePrayer = previous.map {
+            $0.kind ?? .meditationSet == kind && $0.meditationSetId == setId && $0.category == category
+        } ?? false
+        let step = spokenStepIsLive && samePrayer ? previous?.spokenStep : nil
+
+        let fresh = InProgressPrayer(
             kind: kind,
             meditationSetId: setId,
             setName: setName,
             category: category,
             mysteryIndex: mysteryIndex,
             beadIndex: beadIndex,
+            spokenStep: step,
             startedAt: startedAt,
             accumulatedSeconds: accumulatedSeconds,
             savedAt: Date()
         )
+        write(fresh)
+    }
+
+    // MARK: - The Rosary Said Aloud
+
+    /// Whether a spoken Rosary is running in this launch, keeping the
+    /// snapshot's `spokenStep` current
+    private var spokenStepIsLive = false
+
+    /// The spoken Rosary has begun a step. Kept on the snapshot of the
+    /// same prayer, if the prayer has saved one yet; the opening prayers,
+    /// said before the first bead, leave nothing to resume.
+    func updateSpokenStep(
+        _ step: SpokenStep,
+        kind: InProgressPrayer.Kind,
+        setId: Int,
+        category: String
+    ) {
+        spokenStepIsLive = true
+        guard var current = snapshot,
+              current.kind ?? .meditationSet == kind,
+              current.meditationSetId == setId,
+              current.category == category,
+              current.spokenStep != step else { return }
+        current.spokenStep = step
+        write(current)
+    }
+
+    /// The spoken Rosary has stopped. Leaving the screen keeps the step
+    /// to resume at; turning praying aloud off forgets it, since the
+    /// hand now keeps the place.
+    func endSpokenSteps(forgettingStep: Bool) {
+        spokenStepIsLive = false
+        guard forgettingStep, var current = snapshot, current.spokenStep != nil else { return }
+        current.spokenStep = nil
+        write(current)
+    }
+
+    /// The step a resumed Rosary said aloud stopped on: only for the same
+    /// prayer, in the decade being resumed, and no earlier than its bead.
+    func spokenStep(
+        kind: InProgressPrayer.Kind,
+        setId: Int,
+        category: String,
+        mysteryIndex: Int,
+        beadIndex: Int
+    ) -> SpokenStep? {
+        guard let current = inProgress,
+              current.kind ?? .meditationSet == kind,
+              current.meditationSetId == setId,
+              current.category == category,
+              let step = current.spokenStep,
+              step.mystery == mysteryIndex,
+              step.bead >= beadIndex else { return nil }
+        return step
+    }
+
+    private func write(_ snapshot: InProgressPrayer) {
         self.snapshot = snapshot
         if let data = try? JSONEncoder().encode(snapshot) {
             UserDefaults.standard.set(data, forKey: Self.storageKey)

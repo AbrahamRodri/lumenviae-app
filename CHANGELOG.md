@@ -10,6 +10,42 @@ entries are written in the imperative and carry a commit reference, and a
 change that was made and then undone inside the same release is not listed
 at all — only the net difference from the version before it.
 
+## Unreleased
+
+### Added
+
+- Pray the whole Rosary aloud (`UserSettings.prayAloud`, "Pray aloud", off
+  by default): in the meditation's player and the Scriptural Rosary every
+  prayer, announcement and, in the Scriptural Rosary, each bead's verse is
+  said in the chosen narration voice, the beads move with the voice, and
+  the pendant stands in for the painting during the opening and closing
+  prayers. Recordings come from `GET /api/rosary/audio` and are kept on the
+  device per voice
+- Pray the Seven Sorrows as the traditional Servite chaplet when said
+  aloud: the Sign of the Cross and the Act of Contrition; for each sorrow
+  an Our Father, seven Hail Marys and a Glory Be, with no Fatima Prayer;
+  three Hail Marys in honor of Our Lady's tears, the chaplet's closing
+  prayer and the Sign of the Cross. The chaplet's Glory Be bead no longer
+  names the Fatima Prayer, and the Scriptural Rosary's chaplet no longer
+  shows it
+- Add optional closing prayers for the four Rosaries, each a setting in
+  Settings and on a set's page, said after the closing prayer in this
+  order: an Our Father, Hail Mary and Glory Be for the Holy Father's
+  intentions, the Memorare, and the Prayer to Saint Michael
+- Add the Act of Contrition, the chaplet's closing prayer, the Memorare and
+  the Prayer to Saint Michael, in English and Latin, to the bundled prayers
+- Download the spoken Rosary's recordings in the chosen voice with the
+  offline library, so the first Rosary said aloud needs no connection
+- Resume an interrupted spoken Rosary on the prayer it stopped at, not
+  only at its bead
+- Report `prayed_aloud` with each completion
+
+### Changed
+
+- Reuse the spoken Rosary's saved manifest while its signed links live, and
+  fetch a new one before downloading once they have expired; offline, say
+  the Rosary from the recordings already on disk
+
 ## 2.0 - 2026-08-19
 
 The prayer flow became two surfaces, the meditation picker became a shelf
@@ -26,9 +62,9 @@ with a page of its own, and meditation sets gained their own sacred art.
   ledger of sections, and one gold PRAY. The full set loads behind the page
   so the button is instant (636b28c, 52f6b7d)
 - Draw each meditation set under its own painting, from the API's
-  `image_*` block: on the shelf's tiles and rows, on the set's page, and
-  in the Lock Screen artwork. A set without one is read by title rather
-  than under a stand-in (52f6b7d, 6f11682, bdfda7c)
+  `image_*` block: on the shelf's tiles and rows and on the set's page. A
+  set without one is read by title rather than under a stand-in (52f6b7d,
+  6f11682, bdfda7c)
 - Add `FocalFill`, one crop rule that fills any frame around a curator's
   focal point, so bundled and API paintings obey the same formula as the
   admin preview (52f6b7d)
@@ -76,9 +112,11 @@ with a page of its own, and meditation sets gained their own sacred art.
 
 ### Removed
 
-- Remove the sleep timer. With no auto-advance, narration already rests at
-  the end of every mystery, so "stop after this" could only suppress a
-  carry-over — too thin a job for a control on a prayer screen (c2adebe)
+- Remove the sleep timer. The meditation's own narration never advances on
+  its own, so it already rests at the end of every mystery, and "stop after
+  this" could only suppress a carry-over — too thin a job for a control on a
+  prayer screen. (The spoken Rosary, added later, does advance on its own;
+  it ends at the last Amen and is paused like any other audio) (c2adebe)
 
 ### Fixed
 

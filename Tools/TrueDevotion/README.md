@@ -24,16 +24,21 @@ python3 Tools/TrueDevotion/build_book.py
 python3 Tools/TrueDevotion/verify_book.py
 ```
 
-`build_book.py` refuses to write if a chapter is missing or a paragraph still
-carries scan damage. See [VERIFICATION.md](VERIFICATION.md) for the per-chapter
-proofing checklist and the readings still in doubt.
+`build_book.py` refuses to write if a chapter file is missing or empty, or if a
+printed page's running head survives in a paragraph (`PAGE-HEAD`). Characters
+that look like scan damage are only flagged: it prints each one as `SUSPECT`
+for a person to check, and writes the JSON regardless. See
+[VERIFICATION.md](VERIFICATION.md) for the per-chapter proofing checklist and
+the readings still in doubt.
 
 ## Two things that must not change
 
 Chapter ids (the `.txt` filenames, listed in `build_book.py`) and paragraph order
-within a chapter are both persisted in every reader's saved place. Renaming a
-chapter or inserting a paragraph mid-file silently moves people's bookmarks.
-Appending to the end of a chapter is safe.
+within a chapter are both persisted on every reader's device: in their saved
+place, and in their marks, which are stored as `chapterID:paragraph` pairs
+(`TrueDevotionReadingProgress`). Renaming a chapter or inserting a paragraph
+mid-file silently moves people's saved places and marks alike. Appending to the
+end of a chapter is safe.
 
 ## Format
 

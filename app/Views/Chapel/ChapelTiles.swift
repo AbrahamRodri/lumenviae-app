@@ -51,6 +51,7 @@ struct ChapelAct: Identifiable {
         case .chooseMeditation: return "Choose a Meditation"
         case .sevenSorrows:     return "Begin the Chaplet"
         case .scripturalRosary: return "Begin the Scriptural Rosary"
+        case .rosaryAloud:      return "Begin the Rosary Aloud"
         case .mass:             return "Begin the Mass"
         case .office:           return "Begin the Office"
         case .consecration:     return "Continue the Preparation"
@@ -1827,7 +1828,7 @@ struct ChapelLibraryTile: View {
 
     private static let right: [Door] = [
         ("ch-rosary", "How to Pray", .howToPray),
-        ("ch-bible", "In Scripture", .scripture),
+        ("lv-breviary", "In Scripture", .scripture),
         ("ch-monstrance", "Carlo Acutis", .carloAcutis)
     ]
 

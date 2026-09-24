@@ -38,12 +38,6 @@ struct ConsecrationDay: Codable, Identifiable, Hashable {
     /// reading card uses to decide between a single page and a carousel.
     var hasMultipleReadings: Bool { readings.count > 1 }
 
-    /// Total reading time for the day, summed from the per-reading
-    /// estimates counted when the readings were built.
-    var estimatedMinutes: Int {
-        readings.reduce(0) { $0 + $1.estimatedMinutes }
-    }
-
     // MARK: - Single-Reading Compatibility
     //
     // The meditation and journal screens still present a day as one

@@ -7,8 +7,9 @@
 //  their own page.
 //
 //  One enum feeds three surfaces — the Pray button's quick tap, the
-//  press-and-hold tray beneath it, and the Rule of Prayer on the Me
-//  page — so an act added to the app lights up everywhere at once.
+//  press-and-hold tray beneath it, and the Rule of Prayer on the
+//  Chapel's Today tile — so an act added to the app lights up
+//  everywhere at once.
 //
 //  Stored by raw string in UserDefaults; an unrecognized value (from a
 //  newer or older build) is silently dropped rather than crashing the
@@ -25,6 +26,7 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
     case chooseMeditation = "choose_meditation"
     case sevenSorrows = "seven_sorrows"
     case scripturalRosary = "scriptural_rosary"
+    case rosaryAloud = "rosary_aloud"
     case mass = "mass"
     case office = "office"
     case consecration = "consecration"
@@ -37,6 +39,7 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
         case .chooseMeditation: return "Choose a Meditation"
         case .sevenSorrows:     return "Seven Sorrows"
         case .scripturalRosary: return "The Scriptural Rosary"
+        case .rosaryAloud:      return "The Rosary Aloud"
         case .mass:             return "The Mass"
         case .office:           return "The Divine Office"
         case .consecration:     return "The Consecration"
@@ -51,6 +54,7 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
         case .chooseMeditation: return "Browse the day's meditation sets"
         case .sevenSorrows:     return "The chaplet of Our Lady's sorrows"
         case .scripturalRosary: return "A verse of Scripture for every bead"
+        case .rosaryAloud:      return "Every prayer said aloud, bead by bead"
         case .mass:             return "Today's propers · 1962 Missal"
         case .office:           return "The canonical hours · 1962 Breviary"
         case .consecration:     return "The 33-day preparation"
@@ -65,6 +69,10 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
         // image; the plain heart meant nothing in particular
         case .sevenSorrows:     return "ch-sorrowful-heart"
         case .scripturalRosary: return "ch-bible"
+        // The speaker, which elsewhere only ever marks a thing that
+        // sounds — a chant, a chapter read aloud — and never another
+        // devotion's door: this devotion is the one that sounds
+        case .rosaryAloud:      return "ph-speaker-high"
         case .mass:             return "ch-altar"
         case .office:           return "ph-clock"
         case .consecration:     return "ch-consecration"
@@ -80,6 +88,7 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
         case .chooseMeditation: return "A Meditation"
         case .sevenSorrows:     return "Seven Sorrows"
         case .scripturalRosary: return "Scriptural Rosary"
+        case .rosaryAloud:      return "The Rosary Aloud"
         case .mass:             return "The Mass"
         case .office:           return "The Office"
         case .consecration:     return "Consecration"
@@ -94,10 +103,11 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
     /// but is never absent: while a preparation is under way it stands
     /// on the rule of its own accord. Browsing the picker for a
     /// meditation is a doorway to the Rosary, not a devotion beside it,
-    /// so it is not a rule of its own.
+    /// so it is not a rule of its own. The Rosary Aloud is: the Chapel
+    /// watches it finish by name, as it does the Scriptural Rosary.
     var isRuleEligible: Bool {
         switch self {
-        case .todaysRosary, .scripturalRosary, .sevenSorrows:
+        case .todaysRosary, .scripturalRosary, .rosaryAloud, .sevenSorrows:
             return true
         case .mass, .office, .consecration, .chooseMeditation:
             return false

@@ -107,7 +107,7 @@ struct CustomTabBar: View {
                 .frame(height: AppLine.hairline)
 
             // Even gaps between content-sized tabs, not equal cells:
-            // CONSECRATE is four times ME's width, so equal cells pool
+            // CONSECRATE is over twice HOME's width, so equal cells pool
             // air around the short labels and the bar reads lopsided.
             // The trailing padding keeps the last tab clear of the
             // raised Pray medallion.

@@ -37,6 +37,10 @@ struct RosaryStrand: Hashable {
     /// Hail Marys in each decade
     let hailMarys: Int
 
+    /// Whether each decade closes with the Fatima Prayer after its Glory
+    /// Be — the Rosary's decades do; the sorrows of the chaplet do not
+    var saysFatimaPrayer: Bool = true
+
     /// One decade's beads: its Our Father and its Hail Marys
     var decadeLength: Int { hailMarys + 1 }
 
@@ -81,11 +85,13 @@ struct RosaryStrand: Hashable {
     // MARK: - Names
 
     /// What the bead under the hand is called: the prayer said on it.
-    /// A decade closes on the Glory Be and the Fatima Prayer together,
-    /// as Our Lady asked at Fatima, so the closing bead is named for both.
+    /// A decade of the Rosary closes on the Glory Be and the Fatima
+    /// Prayer together, as Our Lady asked at Fatima, so the closing bead
+    /// is named for both; a sorrow of the chaplet closes on the Glory Be
+    /// alone.
     func label(bead: Int) -> String {
         if bead <= 0 { return "Our Father" }
-        if bead > hailMarys { return "Glory Be & Fatima Prayer" }
+        if bead > hailMarys { return saysFatimaPrayer ? "Glory Be & Fatima Prayer" : "Glory Be" }
         return "Hail Mary · \(bead) of \(hailMarys)"
     }
 
@@ -93,7 +99,7 @@ struct RosaryStrand: Hashable {
     /// dozen characters: the prayer, then its count or its companion.
     func labelLines(bead: Int) -> [String] {
         if bead <= 0 { return ["Our Father"] }
-        if bead > hailMarys { return ["Glory Be &", "Fatima Prayer"] }
+        if bead > hailMarys { return saysFatimaPrayer ? ["Glory Be &", "Fatima Prayer"] : ["Glory Be"] }
         return ["Hail Mary", "\(bead) of \(hailMarys)"]
     }
 

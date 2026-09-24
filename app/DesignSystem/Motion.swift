@@ -144,6 +144,25 @@ extension View {
     }
 }
 
+// MARK: - Beckoning
+
+extension View {
+
+    /// Draws the eye to the one control left to press — AMEN once the
+    /// last prayer has been said aloud — with a candlelight glow that
+    /// breathes a little quicker than the beads, so it reads as waiting
+    /// rather than decoration. Nothing at all while `active` is false.
+    @ViewBuilder
+    func beckoning(_ active: Bool) -> some View {
+        if active {
+            breathingGlow(AppColors.gold, radius: 14, dimOpacity: 0.2, brightOpacity: 0.85, period: 1.4)
+                .transition(.opacity)
+        } else {
+            self
+        }
+    }
+}
+
 // MARK: - Button Styles
 
 /// Press feedback for tappable cards: a quiet settle, no bounce.

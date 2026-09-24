@@ -3,14 +3,26 @@
 //  Lumen Viae
 //
 //  ═══════════════════════════════════════════════════════════════════════════
-//  ST. CARLO ACUTIS - DIGITAL ALTAR
+//  ST. CARLO ACUTIS
 //  ═══════════════════════════════════════════════════════════════════════════
 //
-//  A digital altar for St. Carlo Acutis, the first millennial saint:
-//  - His life and witness
-//  - His words
-//  - A votive candle the user can light with a prayer intention
-//    (stored locally via AppStorage)
+//  A saint's page, built around a young man rather than a doctrine:
+//
+//  - His photograph, full-bleed, dissolving into the page, his name set
+//    over it.
+//  - A saying for today — one of his, the same all day — with another a
+//    tap away.
+//  - His life as a dated timeline, 1991 to his canonisation in 2025, each
+//    moment opening its chapter (`CarloAcutisData.life`).
+//  - Live a day as he did: his rule — daily Mass, Adoration, the
+//    Rosary, weekly Confession, his guardian angel — each with the door
+//    to keep it with him today.
+//  - The shrine at the foot: a votive candle for an intention (kept on
+//    the device for a day, and put out whenever the reader wishes), the
+//    prayer for his intercession, and where and when he is kept. The
+//    candle is the page's one gold act; the rule's acts are quiet.
+//
+//  Content lives in `Data/CarloAcutisData.swift`.
 //
 //  ═══════════════════════════════════════════════════════════════════════════
 
@@ -22,6 +34,9 @@ import UIKit
 struct CarloAcutisView: View {
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(AppRouter.self) private var router
+    @Environment(UserSettings.self) private var settings
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     // Votive candle state, persisted locally
     @AppStorage("carloAltar.candleLitAt") private var candleLitAt: Double = 0
@@ -31,6 +46,8 @@ struct CarloAcutisView: View {
     @State private var flameFlicker: Bool = false
     @FocusState private var intentionFocused: Bool
 
+    @State private var sayingIndex = CarloAcutisData.sayingOfTheDay()
+
     /// A candle stays lit for 24 hours
     private var isCandleLit: Bool {
         guard candleLitAt > 0 else { return false }
@@ -39,40 +56,36 @@ struct CarloAcutisView: View {
     }
 
     var body: some View {
-        ZStack {
-            AppColors.appGradient
-                .ignoresSafeArea()
+        GeometryReader { geometry in
+            ZStack(alignment: .top) {
+                AppColors.appGradient
+                    .ignoresSafeArea()
 
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 0) {
-                    header
-                        .devotionalEntrance()
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 0) {
+                        hero(width: geometry.size.width, topInset: geometry.safeAreaInsets.top)
 
-                    altarSection
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 32)
-                        .devotionalEntrance(delay: 0.08)
+                        sayingForToday
+                            .padding(.horizontal, 30)
+                            .padding(.top, 8)
+                            .devotionalEntrance(delay: 0.1)
 
-                    bioSection
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 32)
-                        .devotionalEntrance(delay: 0.16)
+                        sectionTitle("His Life", kicker: "London · Milan · Assisi")
+                        lifeTimeline
+                            .padding(.horizontal, 24)
 
-                    devotionsSection
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 32)
-                        .devotionalEntrance(delay: 0.24)
+                        sectionTitle("Live a Day as He Did", kicker: "His rule of life")
+                        ruleOfLife
+                            .padding(.horizontal, 20)
 
-                    quotesSection
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 32)
-                        .devotionalEntrance(delay: 0.3)
-
-                    prayerSection
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 48)
-                        .devotionalEntrance(delay: 0.36)
+                        sectionTitle("The Shrine", kicker: "A candle, a prayer")
+                        shrine
+                            .padding(.horizontal, 20)
+                            .padding(.bottom, 56)
+                    }
                 }
+                .ignoresSafeArea(edges: .top)
+                .scrollDismissesKeyboard(.interactively)
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -90,414 +103,446 @@ struct CarloAcutisView: View {
         }
         .onAppear {
             draftIntention = intention
-            flameFlicker = true
         }
     }
 
-    // MARK: - Header
+    // MARK: - Hero
 
-    private var header: some View {
-        VStack(spacing: 12) {
-            carloPortrait
-                .haloGlow(AppColors.gold, radius: 14, intensity: 0.35)
-                .padding(.top, 24)
+    /// His photograph edge to edge, dissolving into the page — never onto
+    /// a flat band — with his name over its foot
+    private func hero(width: CGFloat, topInset: CGFloat) -> some View {
+        let height = min(width * 1.2, 520) + topInset
 
-            Text("St. Carlo Acutis")
-                .font(AppFonts.headlineFont(26))
-                .foregroundColor(AppColors.cream)
-
-            Text("1991 – 2006 • The First Millennial Saint")
-                .font(AppFonts.italicFont(15))
-                .foregroundColor(AppColors.gold.opacity(0.8))
-
-            OrnamentDivider()
-                .padding(.horizontal, 40)
-                .padding(.top, 8)
-        }
-        .padding(.bottom, 24)
-    }
-
-    /// Prefers the real photograph when a `carlo_acutis` image is present
-    /// in the asset catalog, framed in gold like a devotional portrait;
-    /// otherwise falls back to the drawn medallion.
-    @ViewBuilder
-    private var carloPortrait: some View {
-        if UIImage(named: "carlo_acutis") != nil {
-            Image("carlo_acutis")
-                .resizable()
-                .scaledToFit()
-                .frame(height: 210)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .strokeBorder(AppColors.gold.opacity(0.7), lineWidth: 1.5)
-                )
-                .accessibilityLabel("Photograph of St. Carlo Acutis")
-        } else {
-            StCarloIcon(size: 100)
-        }
-    }
-
-    // MARK: - Altar (Votive Candle)
-
-    private var altarSection: some View {
-        VStack(spacing: 20) {
-            Text("DIGITAL ALTAR")
-                .font(AppFonts.bodyFont(12))
-                .tracking(3)
-                .foregroundColor(AppColors.gold)
-
-            // Candle
-            VStack(spacing: 0) {
-                // Flame
-                ZStack {
-                    if isCandleLit {
-                        // Glow
-                        Circle()
-                            .fill(AppColors.goldLight.opacity(0.25))
-                            .frame(width: flameFlicker ? 64 : 52, height: flameFlicker ? 64 : 52)
-                            .blur(radius: 12)
-
-                        // A votive candle, not the streak flame — the
-                        // flame glyph stays exclusive to prayer streaks
-                        AppIcon("ch-candle", size: 36)
-                            .scaleEffect(flameFlicker ? 1.07 : 0.94)
-                            .foregroundStyle(
-                                LinearGradient(
-                                    colors: [AppColors.goldLight, .orange],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                            )
-                            .animation(
-                                .easeInOut(duration: 0.9).repeatForever(autoreverses: true),
-                                value: flameFlicker
-                            )
-                    } else {
-                        AppIcon("ch-candle", size: 34)
-                            .foregroundColor(AppColors.textSecondary.opacity(0.4))
-                    }
-                }
-                .frame(height: 64)
-
-                // Candle body
-                RoundedRectangle(cornerRadius: 6)
-                    .fill(
-                        LinearGradient(
-                            colors: [AppColors.cream.opacity(0.9), AppColors.cream.opacity(0.6)],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    )
-                    .frame(width: 44, height: 90)
-            }
-
-            if isCandleLit {
-                VStack(spacing: 8) {
-                    Text("Your candle is lit")
-                        .font(AppFonts.italicFont(15))
-                        .foregroundColor(AppColors.gold)
-
-                    if !intention.isEmpty {
-                        Text("\u{201C}\(intention)\u{201D}")
-                            .font(AppFonts.bodyFont(14))
-                            .foregroundColor(AppColors.cream.opacity(0.85))
-                            .multilineTextAlignment(.center)
-                            .lineSpacing(4)
-                    }
-
-                    Text("St. Carlo Acutis, pray for this intention.")
-                        .font(AppFonts.bodyFont(12))
-                        .foregroundColor(AppColors.textSecondary)
-                }
-            } else {
-                VStack(spacing: 12) {
-                    TextField(
-                        "",
-                        text: $draftIntention,
-                        prompt: Text("Your prayer intention (optional)")
-                            .font(AppFonts.bodyFont(14))
-                            .foregroundColor(AppColors.textSecondary),
-                        axis: .vertical
-                    )
-                    .font(AppFonts.bodyFont(14))
-                    .foregroundColor(AppColors.cream)
-                    .focused($intentionFocused)
-                    .lineLimit(2...4)
-                    .padding(12)
-                    .background(
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(AppColors.background.opacity(0.5))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .strokeBorder(AppColors.gold.opacity(0.25), lineWidth: 1)
-                            )
-                    )
-
-                    Button {
-                        intention = draftIntention.trimmingCharacters(in: .whitespacesAndNewlines)
-                        candleLitAt = Date().timeIntervalSince1970
-                        intentionFocused = false
-                    } label: {
-                        HStack(spacing: 8) {
-                            AppIcon("ch-candle", size: 15)
-                            Text("Light a Candle")
-                                .font(AppFonts.headlineFont(15))
-                        }
-                        .foregroundColor(AppColors.background)
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 12)
-                        .background(
-                            Capsule()
-                                .fill(
-                                    LinearGradient(
-                                        colors: [AppColors.gold, AppColors.goldLight],
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    )
-                                )
-                        )
-                    }
-
-                    Text("Your candle burns for 24 hours. The intention stays on your device.")
-                        .font(AppFonts.bodyFont(11))
-                        .foregroundColor(AppColors.textSecondary)
-                        .multilineTextAlignment(.center)
+        return ZStack(alignment: .bottomLeading) {
+            Group {
+                if UIImage(named: "carlo_acutis") != nil {
+                    CachedAssetImage("carlo_acutis", focal: UnitPoint(x: 0.5, y: 0.25))
+                } else {
+                    StCarloIcon(size: width * 0.5)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
-        }
-        .frame(maxWidth: .infinity)
-        .padding(24)
-        .background(
-            RoundedRectangle(cornerRadius: 20)
-                .fill(AppColors.cardBackground.opacity(0.7))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 20)
-                        .strokeBorder(AppColors.gold.opacity(0.25), lineWidth: 1)
+            .frame(width: width, height: height)
+            .clipped()
+            .mask(
+                LinearGradient(
+                    stops: [
+                        .init(color: .black, location: 0),
+                        .init(color: .black, location: 0.55),
+                        .init(color: .clear, location: 1)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
                 )
-        )
-    }
-
-    // MARK: - Biography
-
-    private var bioSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("HIS LIFE")
-                .font(AppFonts.bodyFont(12))
-                .tracking(2)
-                .foregroundColor(AppColors.gold)
-
-            VStack(alignment: .leading, spacing: 14) {
-                bioBlock(
-                    title: "An Ordinary Boy",
-                    text: "Carlo Acutis was born in London on May 3, 1991, and grew up in Milan, Italy. He loved soccer, video games, and computer programming — an entirely ordinary teenager, with one extraordinary secret: from the day of his First Communion he never missed daily Mass. \u{201C}The Eucharist,\u{201D} he said, \u{201C}is my highway to heaven.\u{201D}"
-                )
-
-                bioBlock(
-                    title: "God's Programmer",
-                    text: "Self-taught in web design, Carlo spent two and a half years building an online exhibition cataloguing the Church's Eucharistic miracles — over one hundred and thirty of them, from Lanciano to Buenos Aires. The exhibition has since traveled to thousands of parishes on five continents. He used his screen time for heaven."
-                )
-
-                bioBlock(
-                    title: "The Offering",
-                    text: "In October 2006, Carlo was diagnosed with acute leukemia. He offered his sufferings for the Pope and for the Church, saying: \u{201C}I am happy to die because I have lived my life without wasting even a minute of it on anything unpleasing to God.\u{201D} He died on October 12, 2006, at fifteen years old, and was buried in Assisi in jeans and sneakers."
-                )
-
-                bioBlock(
-                    title: "The First Millennial Saint",
-                    text: "Carlo was beatified in Assisi on October 10, 2020, and canonized by Pope Leo XIV on September 7, 2025 — the first saint who grew up with the internet. His body rests in the Sanctuary of the Spoliation in Assisi, visible to pilgrims through a glass tomb. His feast day is October 12."
-                )
-            }
-        }
-    }
-
-    private func bioBlock(title: String, text: String) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(title)
-                .font(AppFonts.headlineFont(16))
-                .foregroundColor(AppColors.cream)
-
-            ReadingText(
-                text: text,
-                size: 16,
-                textColor: AppColors.cream.opacity(0.88)
             )
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(16)
-        .background(AppColors.cardBackground)
-        .cornerRadius(14)
-        .overlay(
-            RoundedRectangle(cornerRadius: 14)
-                .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: AppLine.hairline)
-        )
-    }
+            .accessibilityLabel("Photograph of St. Carlo Acutis")
 
-    // MARK: - His Devotions
+            VStack(alignment: .leading, spacing: 8) {
+                Text("SAINT · 1991 \u{2013} 2006")
+                    .font(AppFonts.labelFont(10))
+                    .tracking(3)
+                    .foregroundColor(AppColors.goldLight)
 
-    private var devotionsSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("HIS DEVOTIONS")
-                .font(AppFonts.bodyFont(12))
-                .tracking(2)
-                .foregroundColor(AppColors.gold)
-
-            VStack(spacing: 12) {
-                devotionCard(
-                    icon: "ch-monstrance",
-                    title: "Daily Mass & Adoration",
-                    text: "From his First Communion at age seven, Carlo never missed daily Mass, and he made time for Eucharistic adoration before or after it. \u{201C}When we face the sun we get a tan,\u{201D} he said, \u{201C}but when we stand before Jesus in the Eucharist we become saints.\u{201D}"
-                )
-
-                devotionCard(
-                    icon: "ch-rosary",
-                    title: "The Daily Rosary",
-                    text: "Every day Carlo kept what he called his appointment with Our Lady. He called the Rosary \u{201C}the shortest ladder to climb to heaven\u{201D} — and this app's daily Rosary is a way to climb it with him."
-                )
-
-                devotionCard(
-                    icon: "ph-hands-praying",
-                    title: "Weekly Confession",
-                    text: "Carlo went to confession every week. Like a hot-air balloon that rises by dropping small weights, he explained, the soul rises to God by letting go of even venial sins."
-                )
-            }
-        }
-    }
-
-    private func devotionCard(icon: String, title: String, text: String) -> some View {
-        HStack(alignment: .top, spacing: 14) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(AppColors.gold.opacity(0.12))
-                    .frame(width: 42, height: 42)
-                AppIcon(icon, size: 20)
-                    .foregroundColor(AppColors.gold)
-            }
-
-            VStack(alignment: .leading, spacing: 6) {
-                Text(title)
-                    .font(AppFonts.headlineFont(15))
+                Text("Carlo Acutis")
+                    .font(AppFonts.titleFont(40))
                     .foregroundColor(AppColors.cream)
+                    .shadow(color: .black.opacity(0.6), radius: 10, y: 2)
 
-                Text(text)
-                    .font(AppFonts.bodyFont(15))
-                    .foregroundColor(AppColors.cream.opacity(0.88))
-                    .lineSpacing(ReadingTypography.lineSpacing(for: 15))
+                Text("The first saint of the millennial generation · feast, \(CarloAcutisData.feast.dateLabel)")
+                    .font(AppFonts.readingItalicFont(16))
+                    .foregroundColor(AppColors.cream.opacity(0.8))
                     .fixedSize(horizontal: false, vertical: true)
             }
-
-            Spacer(minLength: 0)
+            .padding(.horizontal, 24)
+            .padding(.bottom, 8)
+            .devotionalEntrance(delay: 0.05)
         }
-        .padding(16)
-        .background(AppColors.cardBackground)
-        .cornerRadius(14)
-        .overlay(
-            RoundedRectangle(cornerRadius: 14)
-                .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: AppLine.hairline)
-        )
+        .frame(width: width, height: height)
     }
 
-    // MARK: - Quotes
+    // MARK: - A Saying for Today
 
-    private let quotes: [String] = [
-        "The Eucharist is my highway to heaven.",
-        "All people are born as originals, but many die as photocopies.",
-        "To always be close to Jesus, that's my life plan.",
-        "Our aim has to be the infinite and not the finite. The infinite is our homeland. We have always been expected in Heaven.",
-        "Sadness is looking at ourselves; happiness is looking towards God.",
-        "The Virgin Mary is the only woman in my life.",
-        "The Rosary is the shortest ladder to climb to heaven.",
-        "Continuously ask your guardian angel for help. Your guardian angel has to become your best friend."
-    ]
+    private var sayingForToday: some View {
+        VStack(spacing: 14) {
+            Text("A SAYING FOR TODAY")
+                .font(AppFonts.labelFont(9))
+                .tracking(2.6)
+                .foregroundColor(AppColors.gold.opacity(0.8))
 
-    @State private var quoteIndex: Int = 0
+            ZStack {
+                Text("\u{201C}\(CarloAcutisData.sayings[sayingIndex])\u{201D}")
+                    .font(AppFonts.readingItalicFont(22))
+                    .foregroundColor(AppColors.cream)
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(6)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .id(sayingIndex)
+                    .transition(.opacity)
+            }
+            .frame(maxWidth: .infinity)
+            .animation(Motion.crossfade, value: sayingIndex)
 
-    private var quotesSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("IN HIS WORDS")
-                .font(AppFonts.bodyFont(12))
-                .tracking(2)
-                .foregroundColor(AppColors.gold)
+            QuietGoldButton(
+                title: "Another",
+                leadingIcon: "ph-arrow-counter-clockwise",
+                leadingIconSize: 10,
+                size: 9.5
+            ) {
+                sayingIndex = (sayingIndex + 1) % CarloAcutisData.sayings.count
+            }
+        }
+    }
 
-            VStack(spacing: 14) {
-                TabView(selection: $quoteIndex) {
-                    ForEach(Array(quotes.enumerated()), id: \.offset) { index, quote in
-                        VStack(spacing: 12) {
-                            Text("\u{275D}")
-                                .font(.system(size: 26))
-                                .foregroundColor(AppColors.gold.opacity(0.6))
+    // MARK: - Section Titles
 
-                            Text(quote)
-                                .font(AppFonts.readingItalicFont(17))
-                                .foregroundColor(AppColors.cream)
-                                .multilineTextAlignment(.center)
-                                .lineSpacing(7)
+    private func sectionTitle(_ title: String, kicker: String) -> some View {
+        VStack(spacing: 8) {
+            OrnamentDivider()
+                .frame(width: 120)
+                .padding(.bottom, 10)
+
+            Text(kicker.uppercased())
+                .font(AppFonts.labelFont(9))
+                .tracking(2.6)
+                .foregroundColor(AppColors.gold.opacity(0.8))
+
+            Text(title)
+                .font(AppFonts.titleFont(25))
+                .foregroundColor(AppColors.cream)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.top, 52)
+        .padding(.bottom, 24)
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isHeader)
+    }
+
+    // MARK: - His Life
+
+    /// The years down the left in Cinzel, the moments beside them, one
+    /// gold line binding them
+    private var lifeTimeline: some View {
+        let moments = CarloAcutisData.timeline
+
+        return VStack(alignment: .leading, spacing: 0) {
+            ForEach(Array(moments.enumerated()), id: \.offset) { index, moment in
+                Button {
+                    router.push(.libraryReading(id: moment.readingID))
+                } label: {
+                    HStack(alignment: .top, spacing: 14) {
+                        Text(moment.year)
+                            .font(AppFonts.titleFont(moment.year.count > 4 ? 13 : 19))
+                            .foregroundColor(moment.year == "2025" ? AppColors.goldLight : AppColors.gold)
+                            .frame(width: 58, alignment: .trailing)
+                            .padding(.top, moment.year.count > 4 ? 4 : 0)
+
+                        ZStack(alignment: .top) {
+                            Rectangle()
+                                .fill(AppColors.gold.opacity(0.3))
+                                .frame(width: 1)
+                                .padding(.top, index == 0 ? 8 : 0)
+                                .frame(maxHeight: index == moments.count - 1 ? 8 : .infinity, alignment: .top)
+
+                            Circle()
+                                .fill(moment.year == "2025" ? AppColors.goldLight : AppColors.background)
+                                .overlay(Circle().strokeBorder(AppColors.goldLight, lineWidth: 1.2))
+                                .frame(width: 11, height: 11)
+                                .padding(.top, 5)
+                        }
+                        .frame(width: 11)
+                        .frame(maxHeight: .infinity, alignment: .top)
+
+                        VStack(alignment: .leading, spacing: 4) {
+                            HStack(alignment: .firstTextBaseline) {
+                                Text(moment.title)
+                                    .font(AppFonts.readingFont(18))
+                                    .foregroundColor(AppColors.cream)
+
+                                Spacer(minLength: 8)
+
+                                AppIcon("ph-caret-right", size: 10)
+                                    .foregroundColor(AppColors.gold.opacity(0.5))
+                            }
+
+                            Text(moment.line)
+                                .font(AppFonts.readingItalicFont(14))
+                                .foregroundColor(AppColors.textSecondary)
+                                .lineSpacing(2)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        .padding(.bottom, 24)
+                    }
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityElement(children: .combine)
+                .accessibilityAddTraits(.isButton)
+            }
+        }
+    }
+
+    // MARK: - His Rule of Life
+
+    /// His habits as one card — each with how often he kept it, and,
+    /// where the app holds it, the act to keep it with him today
+    private var ruleOfLife: some View {
+        let shape = RoundedRectangle(cornerRadius: 22, style: .continuous)
+
+        return VStack(spacing: 0) {
+            ForEach(Array(CarloAcutisData.rule.enumerated()), id: \.offset) { index, habit in
+                HStack(spacing: 14) {
+                    Button {
+                        router.push(.libraryReading(id: habit.readingID))
+                    } label: {
+                        HStack(spacing: 14) {
+                            ZStack {
+                                Circle()
+                                    .fill(AppColors.gold.opacity(0.12))
+                                    .frame(width: 44, height: 44)
+                                AppIcon(habit.icon, size: 20)
+                                    .foregroundColor(AppColors.goldLight)
+                            }
+
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(habit.often.uppercased())
+                                    .font(AppFonts.labelFont(8.5))
+                                    .tracking(1.8)
+                                    .foregroundColor(AppColors.gold.opacity(0.8))
+
+                                Text(habit.name)
+                                    .font(AppFonts.readingFont(17))
+                                    .foregroundColor(AppColors.cream)
+                            }
 
                             Spacer(minLength: 0)
                         }
-                        .padding(.horizontal, 24)
-                        .padding(.top, 18)
-                        .tag(index)
+                        .contentShape(Rectangle())
                     }
-                }
-                .tabViewStyle(.page(indexDisplayMode: .never))
-                .frame(height: 200)
-                .background(AppColors.cardBackground.opacity(0.6))
-                .cornerRadius(14)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 14)
-                        .strokeBorder(AppColors.gold.opacity(0.2), lineWidth: AppLine.hairline)
-                )
-                .overlay(OrnateCornersOverlay(inset: 8, length: 12, opacity: 0.35))
+                    .buttonStyle(.plain)
+                    .accessibilityElement(children: .combine)
+                    .accessibilityAddTraits(.isButton)
 
-                // Custom gold page dots
-                HStack(spacing: 6) {
-                    ForEach(0..<quotes.count, id: \.self) { i in
-                        Circle()
-                            .fill(i == quoteIndex ? AppColors.gold : AppColors.gold.opacity(0.25))
-                            .frame(width: 5, height: 5)
+                    if let act = habit.act, let title = habit.actTitle {
+                        // Quiet, not filled: the candle below is the
+                        // page's one gold act
+                        QuietGoldButton(
+                            title: title,
+                            trailingIcon: "ph-caret-right",
+                            size: 9.5,
+                            tracking: 1.6,
+                            horizontalPadding: 0
+                        ) {
+                            router.run(act)
+                        }
+                        .fixedSize()
+                    } else {
+                        AppIcon("ph-caret-right", size: 11)
+                            .foregroundColor(AppColors.gold.opacity(0.5))
                     }
                 }
-                .animation(.easeInOut(duration: 0.2), value: quoteIndex)
+                .padding(.vertical, 12)
+                .overlay(alignment: .bottom) {
+                    if index < CarloAcutisData.rule.count - 1 {
+                        Rectangle()
+                            .fill(AppColors.gold.opacity(0.12))
+                            .frame(height: AppLine.hairline)
+                            .padding(.leading, 58)
+                    }
+                }
             }
-
-            Text("Swipe to read more")
-                .font(AppFonts.bodyFont(11))
-                .foregroundColor(AppColors.textSecondary)
-                .frame(maxWidth: .infinity, alignment: .center)
         }
+        .padding(.horizontal, 18)
+        .padding(.vertical, 8)
+        .background(
+            shape.fill(
+                LinearGradient(
+                    colors: [AppColors.cardBackground.opacity(0.9), AppColors.cardBackground.opacity(0.4)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
+        )
+        .overlay(shape.strokeBorder(AppColors.gold.opacity(0.22), lineWidth: AppLine.hairline))
     }
 
-    // MARK: - Prayer
+    // MARK: - The Shrine
 
-    private var prayerSection: some View {
-        VStack(spacing: 16) {
-            Text("PRAYER FOR HIS INTERCESSION")
-                .font(AppFonts.bodyFont(12))
-                .tracking(2)
-                .foregroundColor(AppColors.gold)
+    /// The candle, lit or waiting, in its own warm light; the line to
+    /// write an intention on; the prayer; and his feast and tomb
+    private var shrine: some View {
+        let shape = RoundedRectangle(cornerRadius: 26, style: .continuous)
 
-            ReadingText(
-                text: """
-O God, who gave to the young Carlo Acutis a heart aflame with love for the Holy Eucharist, grant, we pray, that through his intercession we too may seek You above all things, live as originals and not photocopies, and one day share with him the joy of Your kingdom. Through Christ our Lord. Amen.
+        return VStack(spacing: 22) {
+            candle
+                .padding(.top, 8)
 
-St. Carlo Acutis, pray for us.
-""",
-                size: 16,
-                textColor: AppColors.cream.opacity(0.92),
-                alignment: .center
-            )
-                .frame(maxWidth: .infinity)
-                .padding(20)
-                .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(AppColors.cardBackground)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 16)
-                                .strokeBorder(AppColors.gold.opacity(0.2), lineWidth: 1)
-                        )
+            VStack(spacing: 6) {
+                Text(isCandleLit ? "Your candle is lit" : "Light a candle")
+                    .font(AppFonts.titleFont(20))
+                    .foregroundColor(isCandleLit ? AppColors.goldLight : AppColors.cream)
+                    .contentTransition(.opacity)
+
+                Text(isCandleLit ? "St. Carlo Acutis, pray for this intention." : "For an intention of your own. It burns for a day, and stays on your device.")
+                    .font(AppFonts.readingItalicFont(14))
+                    .foregroundColor(AppColors.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .contentTransition(.opacity)
+            }
+
+            ZStack {
+                if isCandleLit {
+                    VStack(spacing: 6) {
+                        if !intention.isEmpty {
+                            Text("\u{201C}\(intention)\u{201D}")
+                                .font(AppFonts.readingItalicFont(17))
+                                .foregroundColor(AppColors.cream.opacity(0.9))
+                                .multilineTextAlignment(.center)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+
+                        // Puts the candle out and gives the line back with
+                        // the intention still on it, so to change it is
+                        // to put it out, rewrite it, and light it again
+                        QuietGoldButton(title: "Put out", size: 9.5, horizontalPadding: 0) {
+                            withAnimation(Motion.crossfade) {
+                                draftIntention = intention
+                                candleLitAt = 0
+                            }
+                        }
+                    }
+                    .transition(.opacity)
+                } else {
+                    VStack(spacing: 16) {
+                        VStack(spacing: 6) {
+                            TextField(
+                                "",
+                                text: $draftIntention,
+                                prompt: Text("Your intention (optional)")
+                                    .font(AppFonts.readingItalicFont(16))
+                                    .foregroundColor(AppColors.textSecondary.opacity(0.8)),
+                                axis: .vertical
+                            )
+                            .font(AppFonts.readingFont(16))
+                            .foregroundColor(AppColors.cream)
+                            .multilineTextAlignment(.center)
+                            .tint(AppColors.gold)
+                            .focused($intentionFocused)
+                            .lineLimit(1...4)
+
+                            Rectangle()
+                                .fill(AppColors.gold.opacity(intentionFocused ? 0.5 : 0.25))
+                                .frame(height: AppLine.hairline)
+                        }
+
+                        GoldCTAButton(title: "Light the candle", fullWidth: false) {
+                            withAnimation(Motion.crossfade) {
+                                intention = draftIntention.trimmingCharacters(in: .whitespacesAndNewlines)
+                                candleLitAt = Date().timeIntervalSince1970
+                            }
+                            intentionFocused = false
+                        }
+                    }
+                    .transition(.opacity)
+                }
+            }
+            .animation(Motion.crossfade, value: isCandleLit)
+
+            Rectangle()
+                .fill(AppColors.gold.opacity(0.18))
+                .frame(height: AppLine.hairline)
+                .padding(.horizontal, 20)
+
+            VStack(alignment: .leading, spacing: 12) {
+                Text("A PRAYER FOR HIS INTERCESSION")
+                    .font(AppFonts.labelFont(9))
+                    .tracking(2.2)
+                    .foregroundColor(AppColors.gold.opacity(0.85))
+
+                PrayerText(
+                    content: CarloAcutisData.prayer,
+                    size: max(16, settings.meditationFontSize - 3),
+                    alignment: .leading
                 )
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            HStack(spacing: 10) {
+                AppIcon("ch-church", size: 14)
+                    .foregroundColor(AppColors.gold)
+                Text("His feast day is \(CarloAcutisData.feast.dateLabel), the day he died. His tomb is in the Sanctuary of the Spoliation, Assisi.")
+                    .font(AppFonts.readingItalicFont(13.5))
+                    .foregroundColor(AppColors.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.bottom, 6)
         }
+        .padding(22)
+        .background(
+            ZStack {
+                shape.fill(AppColors.cardBackground.opacity(0.45))
+                shape.fill(
+                    RadialGradient(
+                        colors: [Color.orange.opacity(isCandleLit ? 0.16 : 0.05), .clear],
+                        center: UnitPoint(x: 0.5, y: 0.12),
+                        startRadius: 4,
+                        endRadius: 260
+                    )
+                )
+            }
+        )
+        .overlay(shape.strokeBorder(AppColors.gold.opacity(0.22), lineWidth: AppLine.hairline))
+    }
+
+    /// A taper with its flame, lit or cold
+    private var candle: some View {
+        VStack(spacing: 2) {
+            ZStack {
+                if isCandleLit {
+                    Circle()
+                        .fill(AppColors.goldLight.opacity(0.25))
+                        .frame(width: flameFlicker ? 74 : 60, height: flameFlicker ? 74 : 60)
+                        .blur(radius: 14)
+
+                    // A votive candle, not the streak flame — the flame
+                    // glyph stays exclusive to prayer streaks
+                    AppIcon("ch-candle", size: 36)
+                        .scaleEffect(flameFlicker ? 1.06 : 0.95)
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [AppColors.goldLight, .orange],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                        // Started whenever the flame is drawn — on arriving
+                        // at a lit candle, and on lighting one here — and
+                        // stilled with it, so a relit candle flickers again
+                        .onAppear { flameFlicker = !reduceMotion }
+                        .onDisappear { flameFlicker = false }
+                } else {
+                    AppIcon("ch-candle", size: 34)
+                        .foregroundColor(AppColors.textSecondary.opacity(0.4))
+                }
+            }
+            .frame(width: 80, height: 70)
+            .animation(
+                reduceMotion ? nil : .easeInOut(duration: 0.9).repeatForever(autoreverses: true),
+                value: flameFlicker
+            )
+
+            RoundedRectangle(cornerRadius: 5)
+                .fill(
+                    LinearGradient(
+                        colors: [AppColors.cream.opacity(0.9), AppColors.cream.opacity(0.55)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+                .frame(width: 38, height: 84)
+        }
+        .accessibilityHidden(true)
     }
 }
 
@@ -624,6 +669,8 @@ private struct SmileShape: Shape {
 #Preview {
     NavigationStack {
         CarloAcutisView()
+            .environment(AppRouter())
+            .environment(UserSettings.shared)
     }
 }
 

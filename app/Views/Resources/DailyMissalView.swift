@@ -27,7 +27,14 @@ struct DailyMissalView: View {
 
     // MARK: - State
 
-    @State private var viewModel = MissalViewModel()
+    @State private var viewModel: MissalViewModel
+
+    /// `openingOn` opens the missal on that day's Mass instead of today's
+    /// — a feast named in the Marian Library, say. The reader steps and
+    /// returns to today from there as ever.
+    init(openingOn date: Date? = nil) {
+        _viewModel = State(initialValue: MissalViewModel(date: date))
+    }
 
     private enum MissalSheet: String, Identifiable {
         case reading

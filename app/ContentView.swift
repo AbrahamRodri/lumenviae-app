@@ -170,7 +170,8 @@ struct ContentView: View {
     // MARK: - Shortcuts
 
     /// Performs a devotional act — from the Pray button's tap, its tray,
-    /// or a Rule of Prayer row on the Me page.
+    /// or anything that asks the router (`AppRouter.run`): the Chapel's
+    /// focus and Today rows, a library reading's Pray door.
     private func perform(_ shortcut: PrayerShortcut) {
         switch shortcut {
         case .todaysRosary:
@@ -187,6 +188,14 @@ struct ContentView: View {
             router.push(.scripturalRosaryPrayer(
                 ScripturalRosaryLaunch(category: ScheduleService.categoryForToday())
             ))
+
+        case .rosaryAloud:
+            // The same: the day's mysteries, and the voice begins
+            guard router.path.isEmpty else { return }
+            router.push(.scripturalRosaryPrayer(ScripturalRosaryLaunch(
+                category: ScheduleService.categoryForToday(),
+                form: .plain
+            )))
 
         case .chooseMeditation:
             guard router.path.isEmpty else { return }
@@ -319,6 +328,9 @@ struct ContentView: View {
         case .missal:
             DailyMissalView()
 
+        case .missalDay(let date):
+            DailyMissalView(openingOn: date)
+
         case .office:
             DivineOfficeView()
 
@@ -331,11 +343,29 @@ struct ContentView: View {
         case .howToPray:
             HowToPrayRosaryView()
 
+        case .guidedRosary(let category):
+            GuidedRosaryView(category: category)
+
+        case .rosaryLesson(let lesson):
+            // One identity per lesson: Continue swaps a lesson for the
+            // next in one tick, which would otherwise update the page in
+            // place — still scrolled, and never appearing to be marked
+            RosaryLessonView(lesson: lesson).id(lesson)
+
         case .scripture:
             MysteriesInScriptureView()
 
+        case .mysteryInScripture(let category, let order):
+            MysteryPassageView(category: category, order: order)
+
         case .marianLibrary:
             MarianLibraryView()
+
+        case .libraryReading(let id):
+            LibraryReadingView(entryID: id)
+
+        case .devotionPrayer(let id):
+            DevotionPrayerView(prayerID: id)
 
         case .carloAcutis:
             CarloAcutisView()
@@ -351,6 +381,9 @@ struct ContentView: View {
 
         case .scripturalRosary:
             ScripturalRosaryView()
+
+        case .rosaryAloud:
+            ScripturalRosaryView(form: .plain)
 
         // A player, like the meditation's: it hides the bar and carries
         // its own way out

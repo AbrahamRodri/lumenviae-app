@@ -3,10 +3,10 @@
 //  Lumen Viae
 //
 //  The app's colophon — everything about the app rather than for the
-//  user's practice: what Lumen Viae is, the introduction, the privacy
-//  policy, help, and feedback. Reached from the Chapel day strip's ☰,
-//  the way the faders reach Settings, so neither page has to be the
-//  other's attic.
+//  user's practice: what Lumen Viae is, the introduction (debug builds
+//  only), the privacy policy, help, and feedback. Reached from the home
+//  masthead's ⓘ, beside the faders that reach Settings, so neither page
+//  has to be the other's attic.
 //
 
 import SwiftUI

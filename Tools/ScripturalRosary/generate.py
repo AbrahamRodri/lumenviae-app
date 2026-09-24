@@ -11,7 +11,7 @@ own liturgy has always read of Our Lady — Canticles, the Psalms,
 Judith, Ecclesiasticus, the Apocalypse.
 
 Usage:
-    python3 generate.py            # downloads books into cache/, writes the Swift file
+    python3 generate.py            # downloads books into cache/, writes the Swift file and the JSON
     python3 generate.py --check    # regenerate and diff against the checked-in file
 
 Book JSONs are cached in cache/ (gitignored); delete it to re-download.
@@ -27,6 +27,10 @@ from pathlib import Path
 TOOL_DIR = Path(__file__).resolve().parent
 CACHE = TOOL_DIR / "cache"
 OUTPUT = TOOL_DIR.parent.parent / "app" / "Data" / "ScripturalRosaryData.swift"
+# The same verses as data, for the Lumen Viae server, which records each
+# one as narration for the spoken Scriptural Rosary. Copy it to the
+# server's priv/rosary_audio/scriptural_rosary.json whenever it changes.
+JSON_OUTPUT = TOOL_DIR / "scriptural_rosary.json"
 BASE_URL = "https://thedouayrheims.com/data/odr"
 
 # Slug -> the name a reference line prints. Douay-Rheims names throughout.
@@ -288,10 +292,32 @@ def swift_escape(s: str) -> str:
     return s.replace("\\", "\\\\").replace('"', '\\"')
 
 
-def generate() -> str:
+def collect() -> dict:
+    """Every mystery's verses in bead order: {key: [(reference, text)]}."""
     slugs = {ref[0] for refs in REFERENCES.values() for ref in refs}
     books = {slug: load_book(slug) for slug in sorted(slugs)}
 
+    verses = {}
+    for key, refs in REFERENCES.items():
+        verses[key] = []
+        for entry in refs:
+            slug, ch, first = entry[0], entry[1], entry[2]
+            last = entry[3] if len(entry) == 4 else None
+            span = f"{first}-{last}" if last else f"{first}"
+            ref = f"{BOOK_NAMES[slug]} {ch}:{span}"
+            verses[key].append((ref, verse_text(books, slug, ch, first, last)))
+    return verses
+
+
+def generate_json(verses: dict) -> str:
+    data = {
+        key: [{"reference": ref, "text": text} for ref, text in pairs]
+        for key, pairs in verses.items()
+    }
+    return json.dumps(data, ensure_ascii=False, indent=2) + "\n"
+
+
+def generate(verses: dict) -> str:
     lines = []
     lines.append("//")
     lines.append("//  ScripturalRosaryData.swift")
@@ -334,15 +360,9 @@ def generate() -> str:
     lines.append("")
     lines.append("    static let all: [String: [ScripturalVerse]] = [")
 
-    for key in REFERENCES:
-        refs = REFERENCES[key]
+    for key, pairs in verses.items():
         lines.append(f'        "{key}": [')
-        for entry in refs:
-            slug, ch, first = entry[0], entry[1], entry[2]
-            last = entry[3] if len(entry) == 4 else None
-            span = f"{first}-{last}" if last else f"{first}"
-            ref = f"{BOOK_NAMES[slug]} {ch}:{span}"
-            text = verse_text(books, slug, ch, first, last)
+        for ref, text in pairs:
             lines.append(
                 f'            ScripturalVerse(reference: "{ref}", '
                 f'text: "{swift_escape(text)}"),'
@@ -361,7 +381,9 @@ def main():
                         help="regenerate and diff against the checked-in file")
     args = parser.parse_args()
 
-    output = generate()
+    verses = collect()
+    output = generate(verses)
+    json_output = generate_json(verses)
     counts = {k: len(v) for k, v in REFERENCES.items()}
     total = sum(counts.values())
     print(f"{len(REFERENCES)} mysteries, {total} verses")
@@ -375,11 +397,16 @@ def main():
         current = OUTPUT.read_text(encoding="utf-8") if OUTPUT.exists() else ""
         if current != output:
             raise SystemExit(f"{OUTPUT} is stale — rerun generate.py")
+        current_json = JSON_OUTPUT.read_text(encoding="utf-8") if JSON_OUTPUT.exists() else ""
+        if current_json != json_output:
+            raise SystemExit(f"{JSON_OUTPUT} is stale — rerun generate.py")
         print("up to date")
         return
 
     OUTPUT.write_text(output, encoding="utf-8")
     print(f"wrote {OUTPUT}")
+    JSON_OUTPUT.write_text(json_output, encoding="utf-8")
+    print(f"wrote {JSON_OUTPUT}")
 
 
 if __name__ == "__main__":

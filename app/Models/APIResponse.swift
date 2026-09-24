@@ -86,8 +86,12 @@ struct APIErrorEnvelope: Decodable {
 struct CompletionRequest: Encodable {
     let meditationSetId: Int
 
+    /// True when the Rosary was said aloud by the spoken Rosary
+    let prayedAloud: Bool
+
     enum CodingKeys: String, CodingKey {
         case meditationSetId = "meditation_set_id"
+        case prayedAloud = "prayed_aloud"
     }
 }
 

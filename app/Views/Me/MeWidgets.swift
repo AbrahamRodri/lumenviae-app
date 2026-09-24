@@ -140,6 +140,11 @@ struct RuleOfPrayerCard: View {
                 .contains { $0.meditationType == ScripturalRosaryViewModel.devotionName } ?? false
             return prayed ? .doneAutomatically : .awaitingAutomatic
 
+        case .rosaryAloud:
+            let prayed = historyService?.sessions(on: Date())
+                .contains { $0.meditationType == ScripturalRosaryViewModel.aloudDevotionName } ?? false
+            return prayed ? .doneAutomatically : .awaitingAutomatic
+
         case .consecration:
             guard let progress = activeConsecration else {
                 return .awaitingAutomatic

@@ -2,8 +2,26 @@
 //  TrueDevotionView.swift
 //  Lumen Viae
 //
-//  A comprehensive reference guide displaying the key aspects, principles,
-//  and ejaculatory prayers from St. Louis de Montfort's True Devotion to Mary.
+//  The Devotion in Summary: St. Louis de Montfort's True Devotion to
+//  Mary, digested — a companion to the book, laid out like one.
+//
+//  - The book's own cloth over its halo, beside this page's title —
+//    the book named in the byline under it — an epigraph from the book,
+//    and the two doors a reader wants: read the book, or go to the
+//    Total Consecration.
+//  - "In one sentence": the whole devotion, said once, large.
+//  - The contents, set like a printed book's — the six parts of the
+//    teaching (`TrueDevotionData.teaching`) with Roman numerals and dot
+//    leaders, each opening its reading.
+//  - The short prayers of the devotion as cards swiped through, each
+//    whole in the reader's prayer language.
+//  - His sayings, one to a card, swiped through.
+//
+//  Named apart from the book. Both used to be called "True Devotion to
+//  Mary", so a reader who wanted the text and a reader who wanted the
+//  teaching arrived at the same title and could not tell which they had.
+//  The large title is this page's own, for the same reason: set large
+//  beside the cloth, the book's title made the page read as the book.
 //
 
 import SwiftUI
@@ -13,61 +31,38 @@ import SwiftUI
 struct TrueDevotionView: View {
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(AppRouter.self) private var router
     @Environment(UserSettings.self) private var settings
-    @State private var expandedSections: Set<UUID> = []
 
     var body: some View {
         ZStack {
             AppColors.appGradient
                 .ignoresSafeArea()
 
-            ScrollView {
-                VStack(spacing: 0) {
-                    // Header
-                    header
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 0) {
+                    bookHeader
+                        .padding(.horizontal, 24)
                         .devotionalEntrance()
 
-                    // Introduction
-                    introduction
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 20)
+                    oneSentence
+                        .padding(.horizontal, 24)
+                        .padding(.top, 44)
                         .devotionalEntrance(delay: 0.08)
 
-                    // Read the complete book
-                    readFullBookCard
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 20)
-                        .devotionalEntrance(delay: 0.12)
+                    heading("Contents", note: "The teaching, part by part")
+                    contents
+                        .padding(.horizontal, 24)
 
-                    // Words of the saint (tappable, cycles quotes)
-                    MontfortQuoteCard()
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 28)
-                        .devotionalEntrance(delay: 0.16)
+                    heading("Short Prayers", note: "To say through the day")
+                    prayerCards
 
-                    // Sections
-                    VStack(spacing: 16) {
-                        ForEach(Array(TrueDevotionData.allSections(prayerLanguage: settings.prayerLanguage).enumerated()), id: \.element.id) { index, section in
-                            SectionCard(
-                                section: section,
-                                isExpanded: expandedSections.contains(section.id),
-                                toggleExpanded: {
-                                    withAnimation(.easeInOut(duration: 0.3)) {
-                                        if expandedSections.contains(section.id) {
-                                            expandedSections.remove(section.id)
-                                        } else {
-                                            expandedSections.insert(section.id)
-                                        }
-                                    }
-                                }
-                            )
-                            .devotionalEntrance(delay: 0.2 + Double(index) * 0.06)
-                        }
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 32)
+                    heading("In His Words", note: "St. Louis de Montfort")
+                    sayingCards
+                        .padding(.bottom, 56)
                 }
             }
+            .topChromeFade()
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {
@@ -84,262 +79,325 @@ struct TrueDevotionView: View {
         }
     }
 
-    // MARK: - Header
+    // MARK: - The Book
 
-    private var header: some View {
-        VStack(spacing: 12) {
-            AppIcon("ph-crown-fill", size: 36)
-                .foregroundColor(AppColors.gold)
-                .breathingGlow(AppColors.gold)
-                .padding(.top, 24)
+    /// The cloth beside this page's title and the book's byline, an
+    /// epigraph from the book, and the two doors
+    private var bookHeader: some View {
+        VStack(alignment: .leading, spacing: 24) {
+            HStack(alignment: .center, spacing: 20) {
+                Button {
+                    router.push(.trueDevotionBook)
+                } label: {
+                    BookCover(
+                        title: LibraryCatalog.trueDevotionDisplay.title,
+                        author: LibraryCatalog.trueDevotionDisplay.author,
+                        bindingColor: TrueDevotionBook.bindingColor
+                    )
+                    .frame(width: 112)
+                    .shadow(color: .black.opacity(0.55), radius: 15, y: 7)
+                    .background {
+                        BookHalo(bindingColor: TrueDevotionBook.bindingColor)
+                            .allowsHitTesting(false)
+                    }
+                }
+                .buttonStyle(SacredCardButtonStyle())
+                .accessibilityLabel("True Devotion to Mary. Opens the book.")
 
-            // Named apart from the book. Both used to be called "True
-            // Devotion to Mary", so a reader who wanted the text and a
-            // reader who wanted the teaching arrived at the same title
-            // and could not tell which they had.
-            Text("The Devotion in Summary")
-                .font(AppFonts.headlineFont(26))
-                .foregroundColor(AppColors.cream)
-                .multilineTextAlignment(.center)
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("A COMPANION TO THE BOOK")
+                        .font(AppFonts.labelFont(9))
+                        .tracking(2.4)
+                        .foregroundColor(AppColors.gold)
+                        .fixedSize(horizontal: false, vertical: true)
 
-            Text("True Devotion to Mary · St. Louis de Montfort")
-                .font(AppFonts.italicFont(16))
-                .foregroundColor(AppColors.gold.opacity(0.8))
+                    Text("The Devotion in Summary")
+                        .font(AppFonts.titleFont(24))
+                        .foregroundColor(AppColors.cream)
+                        .fixedSize(horizontal: false, vertical: true)
 
-            OrnamentDivider()
-                .padding(.horizontal, 40)
-                .padding(.top, 8)
-        }
-        .padding(.bottom, 24)
-    }
+                    // The book is named here, under the page's title
+                    Text("From \(LibraryCatalog.trueDevotionDisplay.title)\n\(LibraryCatalog.trueDevotionDisplay.author) · c. 1712")
+                        .font(AppFonts.readingItalicFont(15))
+                        .foregroundColor(AppColors.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .accessibilityElement(children: .combine)
+                .accessibilityAddTraits(.isHeader)
+            }
+            .padding(.top, 20)
 
-    // MARK: - Introduction
-
-    private var introduction: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("About This Devotion")
-                .font(AppFonts.headlineFont(18))
-                .foregroundColor(AppColors.gold)
-
-            DropCapText(
-                text: "True Devotion to Mary is a total consecration to Jesus Christ through the hands of Mary. St. Louis de Montfort describes it as an easy, short, perfect, and secure way to union with Our Lord — the path by which we become saints.",
-                bodySize: 15
+            // Not the book's first line (n. 1): Part I of the contents
+            // opens on that saying, and the page quoted it twice. This one
+            // stood among his sayings below, and has left them for here.
+            QuotedPassageText(
+                passage: Self.epigraph.text,
+                citation: Self.epigraph.source,
+                size: 17
             )
+            .padding(.leading, 16)
 
-            Text("This devotion consists in giving ourselves entirely to Mary, in order to belong entirely to Jesus through her. It is a complete gift of self — body, soul, and all spiritual goods — both present and future, without reserve, and forever.")
-                .font(AppFonts.bodyFont(15))
-                .foregroundColor(AppColors.cream.opacity(0.9))
-                .lineSpacing(ReadingTypography.lineSpacing(for: 15))
-        }
-        .padding(16)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(AppColors.cardBackground.opacity(0.6))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .strokeBorder(AppColors.gold.opacity(0.2), lineWidth: 1)
-        )
-        .overlay(OrnateCornersOverlay(inset: 8, length: 12, opacity: 0.4))
-    }
-}
-
-// MARK: - Read Full Book Card
-
-extension TrueDevotionView {
-
-    /// Entry into the complete Faber translation with saved reading progress
-    private var readFullBookCard: some View {
-        NavigationLink {
-            TrueDevotionReaderView()
-        } label: {
-            HStack(spacing: 14) {
-                AppIcon("ph-book-open-fill", size: 24)
-                    .foregroundColor(AppColors.background)
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("READ THE FULL BOOK")
-                        .font(AppFonts.labelFont(10))
-                        .tracking(2)
-                        .foregroundColor(AppColors.background.opacity(0.7))
-
-                    Text("The complete text, chapter by chapter")
-                        .font(AppFonts.headlineFont(16))
-                        .foregroundColor(AppColors.background)
-                        .multilineTextAlignment(.leading)
+            VStack(spacing: 6) {
+                // The page's one filled act; it goes on to a page
+                GoldCTAButton(title: "Read the Book", glyph: .chevron) {
+                    router.push(.trueDevotionBook)
                 }
 
-                Spacer()
+                // The quieter door, and it leaves this stack for another
+                // tab, so it says so rather than switching silently
+                VStack(spacing: 2) {
+                    QuietGoldButton(
+                        title: "The Total Consecration",
+                        leadingIcon: PrayerShortcut.consecration.icon,
+                        trailingIcon: "ph-caret-right",
+                        size: 10
+                    ) {
+                        router.run(.consecration)
+                    }
+                    .overlay(
+                        Capsule()
+                            .strokeBorder(AppColors.gold.opacity(0.4), lineWidth: AppLine.hairline)
+                    )
 
-                AppIcon("ph-caret-right", size: 16)
-                    .foregroundColor(AppColors.background.opacity(0.7))
+                    Text("Opens the Consecrate tab")
+                        .font(AppFonts.readingItalicFont(14))
+                        .foregroundColor(AppColors.textSecondary)
+                }
+                .padding(.top, 6)
+                .frame(maxWidth: .infinity)
             }
-            .padding(16)
-            .goldCTABackground()
         }
-        .buttonStyle(SacredCardButtonStyle())
     }
-}
 
-// MARK: - MontfortQuoteCard
+    // MARK: - In One Sentence
 
-/// A tappable card that cycles through well-known lines of St. Louis
-/// de Montfort with a gentle cross-fade. Tap to hear another word.
-private struct MontfortQuoteCard: View {
+    private var oneSentence: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("IN ONE SENTENCE")
+                .font(AppFonts.labelFont(9.5))
+                .tracking(2.8)
+                .foregroundColor(AppColors.gold.opacity(0.9))
 
-    private struct SaintQuote {
+            Text("Give yourself entirely to Mary — body and soul, goods and merits, without reserve and for ever — so as to belong entirely to Jesus through her.")
+                .font(AppFonts.readingItalicFont(22))
+                .foregroundColor(AppColors.cream)
+                .lineSpacing(6)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Text("Montfort calls it an easy, short, perfect and secure way to union with Our Lord. What follows is his teaching, a part at a time.")
+                .font(AppFonts.readingFont(16))
+                .foregroundColor(AppColors.textSecondary)
+                .lineSpacing(3)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    // MARK: - Headings
+
+    private func heading(_ title: String, note: String) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(title)
+                .font(AppFonts.titleFont(22))
+                .foregroundColor(AppColors.cream)
+
+            Text(note)
+                .font(AppFonts.readingItalicFont(14.5))
+                .foregroundColor(AppColors.textSecondary)
+        }
+        .padding(.horizontal, 24)
+        .padding(.top, 52)
+        .padding(.bottom, 18)
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isHeader)
+    }
+
+    // MARK: - Contents
+
+    /// A book's contents page: numeral, title, dot leaders, and how many
+    /// parts the reading holds
+    private var contents: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            ForEach(Array(TrueDevotionData.teaching.entries.enumerated()), id: \.element.id) { index, reading in
+                Button {
+                    router.push(.libraryReading(id: reading.id))
+                } label: {
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack(alignment: .lastTextBaseline, spacing: 8) {
+                            Text(LiturgicalCalendarFormat.roman(index + 1))
+                                .font(AppFonts.titleFont(15))
+                                .foregroundColor(AppColors.gold)
+                                .frame(width: 30, alignment: .leading)
+
+                            Text(Self.shortTitle(reading.title))
+                                .font(AppFonts.readingFont(17))
+                                .foregroundColor(AppColors.cream)
+                                .layoutPriority(1)
+
+                            DotLeader()
+                                .frame(height: 2)
+                                .frame(minWidth: 16)
+
+                            // Said in words: a bare figure after a dot
+                            // leader reads as a page number
+                            Text("\(reading.parts.count) \(reading.parts.count == 1 ? "part" : "parts")".uppercased())
+                                .font(AppFonts.labelFont(8.5))
+                                .tracking(1.5)
+                                .foregroundColor(AppColors.gold.opacity(0.8))
+                                .fixedSize()
+                        }
+
+                        Text(reading.detail)
+                            .font(AppFonts.readingItalicFont(14))
+                            .foregroundColor(AppColors.textSecondary)
+                            .padding(.leading, 38)
+                    }
+                    .padding(.vertical, 11)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityElement(children: .combine)
+                .accessibilityAddTraits(.isButton)
+            }
+        }
+    }
+
+    /// "Key Principles of True Devotion" → "Key Principles"
+    private static func shortTitle(_ title: String) -> String {
+        for suffix in [" of True Devotion to Mary", " of True Devotion", " of This Devotion", " of the Devotion", " to Avoid"] {
+            if title.hasSuffix(suffix) { return String(title.dropLast(suffix.count)) }
+        }
+        return title
+    }
+
+    // MARK: - Prayers
+
+    /// The short prayers as cards, swiped through
+    private var prayerCards: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(alignment: .top, spacing: 12) {
+                ForEach(TrueDevotionPrayers.prayers.items) { prayer in
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text(prayer.title.uppercased())
+                            .font(AppFonts.labelFont(8.5))
+                            .tracking(1.8)
+                            .foregroundColor(AppColors.gold.opacity(0.9))
+                            .fixedSize(horizontal: false, vertical: true)
+
+                        PrayerText(
+                            content: prayer.formattedContent(for: settings.prayerLanguage),
+                            size: 16,
+                            alignment: .leading
+                        )
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .frame(width: 262, alignment: .topLeading)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(18)
+                    .background(
+                        RoundedRectangle(cornerRadius: 20, style: .continuous)
+                            .fill(
+                                LinearGradient(
+                                    colors: [TrueDevotionBook.bindingColor.opacity(0.55), AppColors.cardBackground.opacity(0.4)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20, style: .continuous)
+                            .strokeBorder(AppColors.gold.opacity(0.22), lineWidth: AppLine.hairline)
+                    )
+                }
+            }
+            .padding(.horizontal, 20)
+            .scrollTargetLayout()
+        }
+        .scrollTargetBehavior(.viewAligned)
+    }
+
+    // MARK: - Sayings
+
+    private struct Saying {
         let text: String
         let source: String
     }
 
-    private static let quotes: [SaintQuote] = [
-        SaintQuote(
-            text: "It was through the Blessed Virgin Mary that Jesus Christ came into the world, and it is also through her that He must reign in the world.",
-            source: "True Devotion, n. 1"
-        ),
-        SaintQuote(
-            text: "God the Father gathered all the waters together and called them the seas; He gathered all His graces together and called them Mary.",
-            source: "True Devotion, n. 23"
-        ),
-        SaintQuote(
+    /// The page's epigraph, under the title
+    private static let epigraph = Saying(
+        text: "God the Father gathered all the waters together and called them the seas; He gathered all His graces together and called them Mary.",
+        source: "True Devotion, n. 23"
+    )
+
+    private static let sayings: [Saying] = [
+        Saying(
             text: "Mary is the safest, easiest, shortest and most perfect way of approaching Jesus.",
             source: "True Devotion, n. 55"
         ),
-        SaintQuote(
+        Saying(
+            text: "The more one is consecrated to Mary, the more one is consecrated to Jesus Christ.",
+            source: "True Devotion, n. 120"
+        ),
+        Saying(
             text: "Happy, indeed sublimely happy, is the person to whom the Holy Spirit reveals the secret of Mary.",
             source: "The Secret of Mary, n. 20"
         ),
-        SaintQuote(
-            text: "Totus tuus ego sum, et omnia mea tua sunt. — I am all Thine, and all that I have is Thine.",
+        Saying(
+            text: "I am all Thine, and all that I have is Thine.",
             source: "The Formula of Consecration"
         )
     ]
 
-    @State private var index: Int = 0
+    private var sayingCards: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(alignment: .top, spacing: 12) {
+                ForEach(Self.sayings, id: \.text) { saying in
+                    VStack(alignment: .leading, spacing: 14) {
+                        Text("\u{201C}")
+                            .font(AppFonts.titleFont(44))
+                            .foregroundColor(AppColors.goldLight)
+                            .frame(height: 26, alignment: .top)
 
-    var body: some View {
-        Button {
-            withAnimation(.easeInOut(duration: 0.45)) {
-                index = (index + 1) % Self.quotes.count
-            }
-        } label: {
-            VStack(spacing: 10) {
-                Text("WORDS OF THE SAINT")
-                    .font(AppFonts.labelFont(10))
-                    .tracking(3)
-                    .foregroundColor(AppColors.gold.opacity(0.7))
+                        Text(saying.text)
+                            .font(AppFonts.readingItalicFont(18))
+                            .foregroundColor(AppColors.cream)
+                            .lineSpacing(5)
+                            .fixedSize(horizontal: false, vertical: true)
 
-                Text("\u{201C}\(Self.quotes[index].text)\u{201D}")
-                    .font(AppFonts.readingItalicFont(16))
-                    .foregroundColor(AppColors.cream)
-                    .multilineTextAlignment(.center)
-                    .lineSpacing(ReadingTypography.lineSpacing(for: 16))
-                    .fixedSize(horizontal: false, vertical: true)
-                    .id(index)
-                    .transition(.opacity)
+                        Spacer(minLength: 0)
 
-                Text("— \(Self.quotes[index].source)")
-                    .font(AppFonts.bodyFont(12))
-                    .foregroundColor(AppColors.textSecondary)
-                    .id("src\(index)")
-                    .transition(.opacity)
-
-                HStack(spacing: 5) {
-                    ForEach(0..<Self.quotes.count, id: \.self) { i in
-                        Circle()
-                            .fill(i == index ? AppColors.gold : AppColors.gold.opacity(0.25))
-                            .frame(width: 4, height: 4)
+                        Text(saying.source.uppercased())
+                            .font(AppFonts.labelFont(8.5))
+                            .tracking(1.6)
+                            .foregroundColor(AppColors.gold.opacity(0.75))
                     }
+                    .frame(width: 250, alignment: .topLeading)
+                    .frame(minHeight: 210, alignment: .topLeading)
+                    .padding(20)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20, style: .continuous)
+                            .strokeBorder(AppColors.gold.opacity(0.28), lineWidth: AppLine.hairline)
+                    )
                 }
-                .padding(.top, 2)
             }
-            .frame(maxWidth: .infinity)
-            .padding(18)
-            .background(
-                RoundedRectangle(cornerRadius: 14)
-                    .fill(AppColors.cardBackground.opacity(0.7))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 14)
-                    .strokeBorder(AppColors.gold.opacity(0.25), lineWidth: AppLine.hairline)
-            )
+            .padding(.horizontal, 20)
+            .scrollTargetLayout()
         }
-        .buttonStyle(SacredCardButtonStyle())
-        .accessibilityHint("Tap to read another quote")
+        .scrollTargetBehavior(.viewAligned)
     }
 }
 
-// MARK: - SectionCard
+// MARK: - DotLeader
 
-struct SectionCard: View {
-    let section: DevotionSection
-    let isExpanded: Bool
-    let toggleExpanded: () -> Void
-
+/// The dotted line a printed contents page runs from a title to its page
+private struct DotLeader: View {
     var body: some View {
-        VStack(spacing: 0) {
-            // Section Header
-            Button(action: toggleExpanded) {
-                HStack(spacing: 12) {
-                    AppIcon(section.icon, size: 20)
-                        .foregroundColor(AppColors.gold)
-                        .frame(width: 28)
-
-                    Text(section.title)
-                        .font(AppFonts.headlineFont(17))
-                        .foregroundColor(AppColors.cream)
-                        .multilineTextAlignment(.leading)
-
-                    Spacer()
-
-                    AppIcon("ph-caret-right", size: 14)
-                        .foregroundColor(AppColors.gold.opacity(0.6))
-                        .rotationEffect(.degrees(isExpanded ? 90 : 0))
-                }
-                .padding(16)
-                .background(AppColors.cardBackground)
-                .cornerRadius(12)
+        GeometryReader { geometry in
+            Path { path in
+                path.move(to: CGPoint(x: 0, y: geometry.size.height / 2))
+                path.addLine(to: CGPoint(x: geometry.size.width, y: geometry.size.height / 2))
             }
-
-            // Section Content
-            if isExpanded {
-                VStack(spacing: 12) {
-                    ForEach(section.items) { item in
-                        DevotionItemView(item: item)
-                    }
-                }
-                .padding(.top, 12)
-            }
+            .stroke(AppColors.gold.opacity(0.35), style: StrokeStyle(lineWidth: 1.2, lineCap: .round, dash: [0.5, 5]))
         }
-    }
-}
-
-// MARK: - DevotionItemView
-
-struct DevotionItemView: View {
-    let item: DevotionItem
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(item.title)
-                .font(AppFonts.headlineFont(16))
-                .foregroundColor(AppColors.gold.opacity(0.9))
-
-            // The content arrives already resolved for the user's prayer
-            // language; PrayerText handles both the plain and the |||
-            // bilingual line format
-            PrayerText(content: item.content, size: 15)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(16)
-        .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(AppColors.cardBackground.opacity(0.5))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 10)
-                .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: 1)
-        )
     }
 }
 
@@ -348,5 +406,7 @@ struct DevotionItemView: View {
 #Preview {
     NavigationStack {
         TrueDevotionView()
+            .environment(AppRouter())
+            .environment(UserSettings.shared)
     }
 }

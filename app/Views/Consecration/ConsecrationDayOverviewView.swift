@@ -315,7 +315,7 @@ struct ConsecrationDayOverviewView: View {
         let readings = day?.readings ?? []
 
         return VStack(alignment: .leading, spacing: 12) {
-            CardHeading(readingHeading, meta: readTimeLabel)
+            CardHeading(readingHeading)
 
             if readings.count > 1 {
                 readingCarousel(readings)
@@ -345,13 +345,6 @@ struct ConsecrationDayOverviewView: View {
             return plural ? "Today's readings" : "Today's reading"
         }
         return plural ? "The readings" : "The reading"
-    }
-
-    /// Total for the day, summed from the per-reading counts made when the
-    /// readings were built rather than on every render of this card.
-    private var readTimeLabel: String? {
-        guard let minutes = day?.estimatedMinutes, minutes > 0 else { return nil }
-        return "\(minutes) min"
     }
 
     // MARK: - Reading Carousel
@@ -445,16 +438,14 @@ struct ConsecrationDayOverviewView: View {
                     )
                 )
 
-            HStack(spacing: 6) {
-                if let source = reading.source {
-                    Text(source)
-                    Text("·")
-                }
-                Text("\(reading.estimatedMinutes) min")
+            // What the reading is and where it comes from — never how long
+            // it would take, which is a guess about the reader.
+            if let source = reading.source {
+                Text(source)
+                    .font(AppFonts.italicFont(12))
+                    .foregroundColor(AppColors.textSecondary)
+                    .lineLimit(1)
             }
-            .font(AppFonts.italicFont(12))
-            .foregroundColor(AppColors.textSecondary)
-            .lineLimit(1)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }

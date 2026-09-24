@@ -35,6 +35,13 @@
 //  fetches the few hundred KB of images and nothing else. No manifest
 //  version, no forced re-download of an audio library.
 //
+//  The spoken Rosary's recordings (RosaryAudioPack) are fetched last, in
+//  the chosen voice, into OfflineContent/rosary/<voice>/ - the pack's own
+//  layout and its own download logic - so the first Rosary said aloud
+//  prays without a connection. They are a convenience on top of the
+//  library: a pack that cannot be had never marks the library as failed,
+//  and the pack fetches whatever it lacks when next prayed aloud.
+//
 //  Voices came later still. The library download saves each meditation
 //  in the voice the person has chosen (a set that lacks that voice is
 //  saved in its default), so a library is one voice deep - a second voice
@@ -335,6 +342,18 @@ final class OfflineContentService {
                 }
                 audioDone += 1
                 state = .downloading(stage: "Audio", completed: audioDone, total: audioTotal)
+            }
+
+            // Stage 4 — the spoken Rosary: every prayer, announcement and
+            // verse in the chosen voice, through the pack's own download.
+            // Best-effort: a failure here leaves the rest of the library
+            // complete, and the pack tries again when next prayed aloud.
+            state = .downloading(stage: "Spoken Prayers", completed: 0, total: 1)
+            _ = try? await RosaryAudioPack.shared.prepare(
+                voice: voice,
+                clips: SpokenRosaryScript.everyClip()
+            ) { [weak self] done, total in
+                self?.state = .downloading(stage: "Spoken Prayers", completed: done, total: max(total, 1))
             }
 
             // Manifest is written for partial runs too, so a relaunch

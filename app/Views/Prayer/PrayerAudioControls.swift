@@ -120,7 +120,10 @@ struct NarrationPlayControl: View {
     var diameter: CGFloat = 64
 
     var body: some View {
+        // After the last Amen said aloud there is nothing left to play;
+        // the button stands aside, and AMEN is what glows
         let ready = !viewModel.isLoadingAudio && viewModel.totalDuration > 0
+            && !viewModel.isSpokenFinished
 
         NarrationPlayButton(
             isPlaying: viewModel.isPlaying,
@@ -130,6 +133,8 @@ struct NarrationPlayControl: View {
             viewModel.isPlaying.toggle()
         }
         .disabled(!ready)
+        .opacity(viewModel.isSpokenFinished ? 0.35 : 1)
+        .animation(Motion.crossfade, value: viewModel.isSpokenFinished)
         // With no scrubber on screen there is nothing else for VoiceOver
         // to read position from, or to seek with
         .accessibilityValue(
@@ -151,7 +156,8 @@ struct NarrationPlayControl: View {
 // MARK: - Playback Settings
 
 /// The tray beside the reader button: which voice reads, how fast it
-/// reads, and whether the player is prayed on the beads.
+/// reads, whether the player is prayed on the beads, and whether the
+/// whole Rosary is said aloud.
 ///
 /// The voice and the beads toggle live here as well as in Settings
 /// because this is the one settings surface the player has: someone
@@ -163,16 +169,10 @@ struct PlaybackSettingsSheet: View {
     @Environment(UserSettings.self) private var userSettings
     @Environment(\.dismiss) private var dismiss
 
-    /// Read straight from the service so the tray agrees with whatever
-    /// the Lock Screen or CarPlay last set.
-    private var audio: AudioService { .shared }
-
-    private var voices: NarrationVoiceCatalog { .shared }
-
     /// The sheet's height, for its detent: the header, the voices and
-    /// the speeds under their labels, and the bead counter's row, whose
-    /// line can run to three
-    static let height: CGFloat = 430
+    /// the speeds under their labels, and the rows for the bead counter
+    /// and for praying aloud, whose lines can run to three
+    static let height: CGFloat = 530
 
     var body: some View {
         @Bindable var settings = userSettings
@@ -184,12 +184,12 @@ struct PlaybackSettingsSheet: View {
 
             SheetSectionLabel("Voice")
 
-            voiceSection
+            NarrationVoiceChoice()
                 .padding(.horizontal, SheetMetrics.gutter)
 
             SheetSectionLabel("Speed")
 
-            speedSection
+            PlaybackSpeedChoice()
                 .padding(.horizontal, SheetMetrics.gutter)
 
             SheetSectionLabel("The beads")
@@ -200,6 +200,14 @@ struct PlaybackSettingsSheet: View {
                 detail: UserSettings.beadCounterDetail(isOn: settings.prayOnBeads),
                 icon: "ch-rosary",
                 isOn: $settings.prayOnBeads,
+                showsDivider: true
+            )
+
+            SheetToggleRow(
+                title: UserSettings.prayAloudTitle,
+                detail: UserSettings.prayAloudDetail(isOn: settings.prayAloud, onBeads: settings.prayOnBeads),
+                icon: "ph-hands-praying",
+                isOn: $settings.prayAloud,
                 showsDivider: false
             )
 
@@ -209,11 +217,28 @@ struct PlaybackSettingsSheet: View {
         .sheetGround()
     }
 
-    /// The voices as capsules, the way the speeds are: two or three
-    /// words that fit one row, and a choice that takes effect on the
-    /// narration playing, which the player hears through the settings
-    /// change.
-    private var voiceSection: some View {
+    // A "BACKGROUND MUSIC" section stood here holding one dimmed,
+    // untappable row that said "Coming soon" — the whole section was a
+    // promise rather than a control. A sheet the user opened mid-Rosary
+    // is the wrong place to advertise unbuilt work; bring the section
+    // back with the feature, not before it.
+}
+
+// MARK: - Choices Shared With the Set's Page
+
+/// The voices as capsules, the way the speeds are: two or three words
+/// that fit one row. A choice takes effect on the narration playing,
+/// which the player hears through the settings change. Shared by the
+/// playback sheet and the set's page, so the choice looks the same
+/// wherever it is made.
+struct NarrationVoiceChoice: View {
+
+    /// Capsule height: 44 in the sheet, a little less on the set's page
+    var height: CGFloat = 44
+
+    private var voices: NarrationVoiceCatalog { .shared }
+
+    var body: some View {
         HStack(spacing: 8) {
             ForEach(voices.voices) { voice in
                 let selected = voices.chosenSlug == voice.slug
@@ -224,7 +249,7 @@ struct PlaybackSettingsSheet: View {
                         .font(AppFonts.bodyFont(14))
                         .foregroundColor(selected ? AppColors.background : AppColors.cream.opacity(0.75))
                         .frame(maxWidth: .infinity)
-                        .frame(height: 44)
+                        .frame(height: height)
                         .background(
                             Capsule()
                                 .fill(selected ? AppColors.goldLight : AppColors.cardElevated)
@@ -235,41 +260,43 @@ struct PlaybackSettingsSheet: View {
             }
         }
     }
+}
 
-    private var speedSection: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            HStack(spacing: 8) {
-                ForEach(AudioService.supportedRates, id: \.self) { rate in
-                    let selected = audio.playbackRate == rate
-                    Button {
-                        audio.setPlaybackRate(rate)
-                    } label: {
-                        Text(Self.rateLabel(rate))
-                            .font(AppFonts.bodyFont(14))
-                            .foregroundColor(selected ? AppColors.background : AppColors.cream.opacity(0.75))
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 44)
-                            .background(
-                                Capsule()
-                                    .fill(selected ? AppColors.goldLight : AppColors.cardElevated)
-                            )
-                    }
-                    .accessibilityLabel("\(Self.rateLabel(rate)) speed")
-                    .accessibilityAddTraits(selected ? [.isSelected] : [])
+/// The speeds, read straight from the service so the row agrees with
+/// whatever the Lock Screen or CarPlay last set. Choosing one before the
+/// Rosary begins is remembered, and the first narration plays at it.
+struct PlaybackSpeedChoice: View {
+
+    var height: CGFloat = 44
+
+    private var audio: AudioService { .shared }
+
+    var body: some View {
+        HStack(spacing: 8) {
+            ForEach(AudioService.supportedRates, id: \.self) { rate in
+                let selected = audio.playbackRate == rate
+                Button {
+                    audio.setPlaybackRate(rate)
+                } label: {
+                    Text(Self.rateLabel(rate))
+                        .font(AppFonts.bodyFont(14))
+                        .foregroundColor(selected ? AppColors.background : AppColors.cream.opacity(0.75))
+                        .frame(maxWidth: .infinity)
+                        .frame(height: height)
+                        .background(
+                            Capsule()
+                                .fill(selected ? AppColors.goldLight : AppColors.cardElevated)
+                        )
                 }
+                .accessibilityLabel("\(Self.rateLabel(rate)) speed")
+                .accessibilityAddTraits(selected ? [.isSelected] : [])
             }
         }
     }
 
-    // A "BACKGROUND MUSIC" section stood here holding one dimmed,
-    // untappable row that said "Coming soon" — the whole section was a
-    // promise rather than a control. A sheet the user opened mid-Rosary
-    // is the wrong place to advertise unbuilt work; bring the section
-    // back with the feature, not before it.
-
     /// "1×" rather than "1.0×", but "1.25×" in full — %g drops trailing
     /// zeros without rounding away a significant digit.
-    private static func rateLabel(_ rate: Double) -> String {
+    static func rateLabel(_ rate: Double) -> String {
         "\(String(format: "%g", rate))×"
     }
 }

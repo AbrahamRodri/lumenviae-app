@@ -819,7 +819,7 @@ struct OnboardingView: View {
             stage: stage
         ) {
             VStack(spacing: 16) {
-                Text("and of the Son, and of the Holy Ghost. Amen.")
+                Text("and of the Son, and of the Holy Spirit. Amen.")
                     .font(AppFonts.italicFont(16))
                     .foregroundColor(AppColors.accentSoft)
                     .multilineTextAlignment(.center)
@@ -1434,7 +1434,7 @@ private struct BeadStrandDemo: View {
     private var openingWords: String {
         switch prayerKind {
         case "our-father": return "Our Father, who art in heaven, hallowed be thy name."
-        case "glory-be":   return "Glory be to the Father, and to the Son, and to the Holy Ghost."
+        case "glory-be":   return "Glory be to the Father, and to the Son, and to the Holy Spirit."
         default:           return "Hail Mary, full of grace, the Lord is with thee."
         }
     }

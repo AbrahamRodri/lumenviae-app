@@ -3,12 +3,25 @@
 //  Lumen Viae
 //
 //  ═══════════════════════════════════════════════════════════════════════════
-//  MARIAN THEOLOGY LIBRARY
+//  THE MARIAN LIBRARY
 //  ═══════════════════════════════════════════════════════════════════════════
 //
-//  A reference library on the Blessed Virgin Mary: the four Marian dogmas,
-//  Mary in Scripture, approved apparitions, and the witness of the Marian
-//  saints in their own words.
+//  A reference library on Our Lady, laid out the way each of its shelves
+//  is best browsed rather than as one list:
+//
+//  - The Marian year leads: the next feast of Our Lady as a feature, in
+//    its painting, and the whole year beneath it as a strip of dates —
+//    touching a date features that feast.
+//  - The four dogmas stand as four numbered tiles in Marian blue.
+//  - Mary in Scripture is a thread from Genesis to the Apocalypse.
+//  - The apparitions are cards led by their year, swiped through.
+//  - The saints are a chronology: each life a bar across nine centuries,
+//    so Bernard and Kolbe are seen where they stand in time.
+//  - The Rosary's history is a short chronicle in four chapters.
+//  - Her titles are set as a litany, and lead to the Litany itself.
+//
+//  Every entry opens its reading (`LibraryReadingView`). Content lives in
+//  `Data/MarianLibraryData.swift`.
 //
 //  ═══════════════════════════════════════════════════════════════════════════
 
@@ -19,7 +32,18 @@ import SwiftUI
 struct MarianLibraryView: View {
 
     @Environment(\.dismiss) private var dismiss
-    @State private var expandedSections: Set<String> = []
+    @Environment(AppRouter.self) private var router
+
+    /// The feast shown in the feature — the next one until another date
+    /// is touched
+    @State private var featured: KeptFeast? = MarianLibraryData.nextFeast()
+
+    /// The year from the next feast onward, wrapping at December
+    private let year: [KeptFeast] = MarianLibraryData.feasts.sorted {
+        ($0.nextDate() ?? .distantFuture) < ($1.nextDate() ?? .distantFuture)
+    }
+
+    private static let marianBlue = Color(hex: "2e3d66")
 
     var body: some View {
         ZStack {
@@ -27,23 +51,41 @@ struct MarianLibraryView: View {
                 .ignoresSafeArea()
 
             ScrollView(showsIndicators: false) {
-                VStack(spacing: 0) {
-                    header
+                VStack(alignment: .leading, spacing: 0) {
+                    masthead
+                        .padding(.horizontal, 24)
                         .devotionalEntrance()
 
-                    introduction
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 28)
-                        .devotionalEntrance(delay: 0.08)
-
-                    VStack(spacing: 14) {
-                        ForEach(Array(Self.sections.enumerated()), id: \.element.id) { index, section in
-                            sectionCard(section)
-                                .devotionalEntrance(delay: 0.16 + Double(index) * 0.06)
-                        }
+                    if let featured {
+                        feastFeature(featured)
+                            .padding(.horizontal, 20)
+                            .padding(.top, 22)
+                            .devotionalEntrance(delay: 0.06)
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 48)
+
+                    yearStrip
+                        .padding(.top, 16)
+                        .devotionalEntrance(delay: 0.1)
+
+                    shelfHeading(MarianLibraryData.dogmas)
+                    dogmaGrid
+
+                    shelfHeading(MarianLibraryData.scripture)
+                    scriptureThread
+
+                    shelfHeading(MarianLibraryData.apparitions)
+                    apparitionCards
+
+                    shelfHeading(MarianLibraryData.saints)
+                    saintsChronology
+
+                    shelfHeading(MarianLibraryData.rosary)
+                    rosaryChronicle
+
+                    shelfHeading(MarianLibraryData.titles)
+                    titlesLitany
+
+                    Color.clear.frame(height: 56)
                 }
             }
             .topChromeFade()
@@ -63,353 +105,720 @@ struct MarianLibraryView: View {
         }
     }
 
-    // MARK: - Header
+    // MARK: - Masthead
 
-    private var header: some View {
-        VStack(spacing: 12) {
-            AppIcon("ph-heart-fill", size: 36)
+    private var masthead: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("DE MARIA NUMQUAM SATIS")
+                .font(AppFonts.labelFont(9.5))
+                .tracking(3)
                 .foregroundColor(AppColors.gold)
-                .breathingGlow(AppColors.gold)
-                .padding(.top, 24)
 
-            Text("Marian Theology Library")
-                .font(AppFonts.headlineFont(26))
+            Text("The Marian Library")
+                .font(AppFonts.titleFont(31))
                 .foregroundColor(AppColors.cream)
-                .multilineTextAlignment(.center)
+                .minimumScaleFactor(0.7)
 
-            Text("De Maria Numquam Satis")
-                .font(AppFonts.italicFont(16))
-                .foregroundColor(AppColors.gold.opacity(0.8))
-
-            OrnamentDivider()
-                .padding(.horizontal, 40)
-                .padding(.top, 8)
+            Text("Of Mary, there is never enough. Her feasts, her dogmas, her appearings, and the saints who loved her.")
+                .font(AppFonts.readingItalicFont(16))
+                .foregroundColor(AppColors.textSecondary)
+                .lineSpacing(3)
+                .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(.bottom, 24)
+        .padding(.top, 12)
     }
 
-    // MARK: - Introduction
+    // MARK: - The Marian Year
 
-    private var introduction: some View {
-        DropCapText(
-            text: "\u{201C}Of Mary, there is never enough.\u{201D} Everything the Church teaches about Mary points to her Son: each dogma safeguards a truth about Christ, each apparition calls the world back to Him, and each Marian saint found in her the surest way to Him. Explore the Church's rich teaching below.",
-            bodySize: 15
-        )
+    /// The featured feast, in its painting: its date, its name, how soon,
+    /// and its doors — the day's Mass, and the library's reading of it.
+    private func feastFeature(_ feast: KeptFeast) -> some View {
+        let date = feast.nextDate()
+        let isToday = feast.isToday()
+        let reading = MarianLibraryData.reading(for: feast)
+        let shape = RoundedRectangle(cornerRadius: 22, style: .continuous)
+
+        return ZStack(alignment: .bottomLeading) {
+            CachedAssetImage(MarianLibraryData.painting(for: feast), focal: UnitPoint(x: 0.5, y: 0.3))
+                .id(feast.name)
+                .transition(.opacity)
+
+            LinearGradient(
+                stops: [
+                    .init(color: .black.opacity(0.05), location: 0),
+                    .init(color: .black.opacity(0.35), location: 0.45),
+                    .init(color: .black.opacity(0.88), location: 1)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text(isToday ? "TODAY · A FEAST OF OUR LADY" : whenLabel(date))
+                    .font(AppFonts.labelFont(9))
+                    .tracking(2.4)
+                    .foregroundColor(AppColors.goldLight)
+
+                Text(feast.name)
+                    .font(AppFonts.titleFont(26))
+                    .foregroundColor(.white)
+                    .lineSpacing(3)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Text(feast.keptBy.map { "\(feast.dateLabel) · kept in \($0)" } ?? feast.dateLabel)
+                    .font(AppFonts.readingItalicFont(15))
+                    .foregroundColor(.white.opacity(0.8))
+
+                // Side by side where they fit; a reading with a long name
+                // ("READ · BEHOLD THY MOTHER") sets them one above the other
+                // rather than squeezing either
+                ViewThatFits(in: .horizontal) {
+                    HStack(spacing: 10) {
+                        featureActs(feast, date: date, isToday: isToday, reading: reading)
+                    }
+                    VStack(alignment: .leading, spacing: 8) {
+                        featureActs(feast, date: date, isToday: isToday, reading: reading)
+                    }
+                }
+                .padding(.top, 6)
+            }
+            .padding(20)
+            .id("text-\(feast.name)")
+            .transition(.opacity)
+        }
+        .frame(height: 320)
+        .frame(maxWidth: .infinity)
+        .clipShape(shape)
+        .overlay(shape.strokeBorder(AppColors.gold.opacity(0.35), lineWidth: AppLine.hairline))
+        .animation(Motion.crossfade, value: feast.name)
+        .accessibilityElement(children: .contain)
     }
 
-    // MARK: - Section Model
-
-    struct LibrarySection: Identifiable {
-        let id: String
-        let icon: String
-        let title: String
-        let subtitle: String
-        let entries: [LibraryEntry]
-
-        /// Closing line for sections that only sample a larger tradition,
-        /// so the list never reads as the whole of it.
-        var footnote: String? = nil
+    private func whenLabel(_ date: Date?) -> String {
+        guard let date else { return "A FEAST OF OUR LADY" }
+        let days = Calendar.current.dateComponents([.day], from: Calendar.current.startOfDay(for: .now), to: date).day ?? 0
+        switch days {
+        case 1: return "TOMORROW"
+        case 2...45: return "IN \(days) DAYS"
+        default: return "COMING IN \(Self.month.string(from: date).uppercased())"
+        }
     }
 
-    struct LibraryEntry: Identifiable {
-        var id: String { title }
-        let title: String
-        let detail: String
-        let text: String
+    private static let month: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMMM"
+        return formatter
+    }()
+
+    /// The day's Mass, and the library's reading of the feast — named for
+    /// where it leads when the reading stands under another name
+    @ViewBuilder
+    private func featureActs(_ feast: KeptFeast, date: Date?, isToday: Bool, reading: (id: String, name: String?)?) -> some View {
+        if feast.inMissal, let date {
+            featureButton(isToday ? "Today's Mass" : "The day's Mass", icon: "ch-altar", filled: true) {
+                router.push(.missalDay(date))
+            }
+        }
+        if let reading {
+            featureButton(reading.name.map { "Read · \($0)" } ?? "Read", icon: "ph-book-open", filled: false) {
+                router.push(.libraryReading(id: reading.id))
+            }
+        }
     }
 
-    // MARK: - Content
+    private func featureButton(_ title: String, icon: String, filled: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 7) {
+                AppIcon(icon, size: 13)
+                Text(title.uppercased())
+                    .font(AppFonts.labelFont(10))
+                    .tracking(1.8)
+                    .lineLimit(1)
+                    .fixedSize()
+            }
+            .foregroundColor(filled ? AppColors.background : AppColors.goldLight)
+            .padding(.horizontal, 16)
+            .frame(height: 44)
+            .background(
+                Capsule().fill(filled ? AppColors.goldLight : Color.black.opacity(0.35))
+            )
+            .overlay(Capsule().strokeBorder(AppColors.goldLight.opacity(filled ? 0 : 0.6), lineWidth: 1))
+            .contentShape(Capsule())
+        }
+        .buttonStyle(GoldCTAButtonStyle())
+    }
 
-    static let sections: [LibrarySection] = [
-        LibrarySection(
-            id: "dogmas",
-            icon: "ph-crown-fill",
-            title: "The Four Marian Dogmas",
-            subtitle: "What the Church solemnly teaches",
-            entries: [
-                LibraryEntry(
-                    title: "Mother of God (Theotokos)",
-                    detail: "Council of Ephesus, A.D. 431",
-                    text: "Mary is truly the Mother of God, because the Son she conceived and bore is truly God. The Council of Ephesus defended this title against Nestorius: the child of Mary is one divine Person, the eternal Word. Every other Marian truth flows from this one. As St. Louis de Montfort writes, God the Son \u{201C}became man for our salvation, but in Mary and by Mary.\u{201D}"
-                ),
-                LibraryEntry(
-                    title: "Perpetual Virginity",
-                    detail: "Lateran Council, A.D. 649",
-                    text: "Mary was a virgin before, during, and after the birth of Christ — Semper Virgo, ever-virgin. Her virginity is the sign of her total, undivided gift of self to God, and of the divine origin of her Son. The Fathers of the Church saw it prefigured in the burning bush and the closed gate of Ezekiel's temple."
-                ),
-                LibraryEntry(
-                    title: "The Immaculate Conception",
-                    detail: "Bl. Pius IX, Ineffabilis Deus, 1854",
-                    text: "From the first instant of her conception, Mary was preserved free from all stain of original sin, by a singular grace of God and in view of the merits of Jesus Christ. She is the New Eve, full of grace. Four years after the definition, Our Lady confirmed it at Lourdes, telling St. Bernadette: \u{201C}I am the Immaculate Conception.\u{201D}"
-                ),
-                LibraryEntry(
-                    title: "The Assumption",
-                    detail: "Ven. Pius XII, Munificentissimus Deus, 1950",
-                    text: "When the course of her earthly life was finished, Mary was assumed body and soul into heavenly glory. She already shares fully in her Son's Resurrection, anticipating what is promised to all the members of His Body. Assumed into heaven, she is crowned Queen of heaven and earth — the mystery contemplated in the fifth Glorious Mystery."
-                )
-            ]
-        ),
-        LibrarySection(
-            id: "scripture",
-            icon: "ch-bible",
-            title: "Mary in Scripture",
-            subtitle: "From Genesis to the Apocalypse",
-            entries: [
-                LibraryEntry(
-                    title: "The New Eve",
-                    detail: "Genesis 3:15",
-                    text: "\u{201C}I will put enmities between thee and the woman, and thy seed and her seed: she shall crush thy head.\u{201D} The Fathers called this the Protoevangelium — the first gospel. Where Eve's disobedience helped bring death, Mary's obedient \u{201C}fiat\u{201D} helped bring Life. St. Irenaeus wrote in the second century: \u{201C}The knot of Eve's disobedience was untied by Mary's obedience.\u{201D}"
-                ),
-                LibraryEntry(
-                    title: "The Ark of the Covenant",
-                    detail: "2 Kings 6 & Luke 1:39-56",
-                    text: "St. Luke deliberately echoes David's journey with the Ark in his account of the Visitation: the Ark went up to the hill country of Judah, David danced before it, and it remained three months in the house of Obededom. Mary goes to the hill country, John leaps in Elizabeth's womb, and she stays three months. The Ark carried the Law, the manna, and Aaron's rod; Mary carried the Lawgiver, the Bread of Life, and the eternal High Priest."
-                ),
-                LibraryEntry(
-                    title: "The Queen Mother",
-                    detail: "3 Kings 2:19-20 & Apocalypse 12:1",
-                    text: "In the kingdom of David, the queen was not the king's wife but his mother — the Gebirah — who sat enthroned at his right hand and interceded for the people. Solomon told Bathsheba: \u{201C}Ask, my mother, for I must not turn away thy face.\u{201D} Christ, Son of David, honors His mother the same way. St. John sees her in heaven: \u{201C}a woman clothed with the sun... and on her head a crown of twelve stars.\u{201D}"
-                ),
-                LibraryEntry(
-                    title: "The Wedding at Cana",
-                    detail: "John 2:1-11",
-                    text: "Mary's intercession obtains Christ's first miracle, and her last recorded words in Scripture are a rule of life for every Christian: \u{201C}Whatsoever he shall say to you, do ye.\u{201D} At Cana as at Calvary, Jesus calls her \u{201C}Woman\u{201D} — the Woman of Genesis 3:15, the New Eve, mother of all the living."
-                ),
-                LibraryEntry(
-                    title: "Behold Thy Mother",
-                    detail: "John 19:26-27",
-                    text: "From the Cross, Jesus gave His mother to the beloved disciple: \u{201C}Behold thy mother. And from that hour, the disciple took her to his own.\u{201D} The Church has always read this as a gift to every disciple. Consecration to Mary is simply taking her into our own home, as St. John did."
-                )
-            ]
-        ),
-        LibrarySection(
-            id: "apparitions",
-            icon: "ph-sun",
-            title: "Approved Apparitions",
-            subtitle: "When Heaven visited earth",
-            entries: [
-                LibraryEntry(
-                    title: "Our Lady of Guadalupe",
-                    detail: "Mexico, 1531 — St. Juan Diego",
-                    text: "Appearing as a young mestiza woman on Tepeyac hill, Our Lady left her image miraculously imprinted on Juan Diego's tilma, which remains intact to this day. \u{201C}Am I not here, I who am your Mother?\u{201D} she asked him. Within a decade, millions of Aztecs entered the Church. She is Patroness of the Americas and of the unborn."
-                ),
-                LibraryEntry(
-                    title: "The Miraculous Medal",
-                    detail: "Paris, 1830 — St. Catherine Labouré",
-                    text: "In the chapel of the Rue du Bac, Our Lady showed St. Catherine the design of a medal with the prayer: \u{201C}O Mary, conceived without sin, pray for us who have recourse to thee.\u{201D} The graces attached to the medal were so abundant that the faithful named it \u{201C}miraculous.\u{201D} It prepared the world for the dogma of the Immaculate Conception."
-                ),
-                LibraryEntry(
-                    title: "Our Lady of La Salette",
-                    detail: "France, 1846 — Mélanie Calvat & Maximin Giraud",
-                    text: "On a mountain high in the French Alps, two shepherd children found a beautiful Lady seated and weeping, light streaming from a crucifix at her breast. She grieved over blasphemy and the abandonment of Sunday worship, calling her people to conversion: \u{201C}If my people will not submit, I shall be forced to let fall the arm of my Son.\u{201D} The apparition was approved in 1851."
-                ),
-                LibraryEntry(
-                    title: "Our Lady of Lourdes",
-                    detail: "France, 1858 — St. Bernadette Soubirous",
-                    text: "In eighteen apparitions at the grotto of Massabielle, Our Lady called for penance and prayer for sinners, and a spring of healing water broke forth at her word. Asked her name, she replied: \u{201C}I am the Immaculate Conception.\u{201D} Lourdes remains one of the great places of pilgrimage and healing in the world."
-                ),
-                LibraryEntry(
-                    title: "Our Lady of Pontmain",
-                    detail: "France, 1871",
-                    text: "As the Prussian army advanced on Laval during the Franco-Prussian War, Our Lady of Hope appeared above a village barn to a group of children, smiling in a starry mantle while the townsfolk prayed the Rosary. Letters formed in gold beneath her feet: \u{201C}But pray, my children. God will hear you in a little while. My Son allows Himself to be touched.\u{201D} The army halted that night, and the armistice followed within days."
-                ),
-                LibraryEntry(
-                    title: "Our Lady of Knock",
-                    detail: "Ireland, 1879",
-                    text: "On a rainy August evening, Our Lady appeared in silence at the gable of the parish church, with St. Joseph, St. John the Evangelist, and the Lamb of God upon an altar surrounded by angels. Fifteen villagers watched and prayed the Rosary for two hours. The silent apparition speaks of the Eucharist: Mary always stands beside the Lamb."
-                ),
-                LibraryEntry(
-                    title: "Our Lady of Fatima",
-                    detail: "Portugal, 1917 — Sts. Jacinta & Francisco, Ven. Lucia",
-                    text: "Appearing to three shepherd children six times, Our Lady asked for the daily Rosary, penance for sinners, and devotion to her Immaculate Heart. On October 13, some 70,000 people witnessed the Miracle of the Sun. \u{201C}My Immaculate Heart will triumph,\u{201D} she promised."
-                ),
-                LibraryEntry(
-                    title: "Beauraing & Banneux",
-                    detail: "Belgium, 1932-1933",
-                    text: "At Beauraing, Our Lady with the golden heart appeared thirty-three times to five children, asking: \u{201C}Do you love my Son? Do you love me? Then sacrifice yourself for me.\u{201D} Weeks later at Banneux, she appeared to Mariette Beco as the Virgin of the Poor, leading the child to a spring \u{201C}reserved for all nations — to relieve the sick.\u{201D}"
-                )
-            ]
-        ),
-        LibrarySection(
-            id: "saints",
-            icon: "ph-hands-praying",
-            title: "The Marian Saints",
-            subtitle: "In their own words",
-            entries: [
-                LibraryEntry(
-                    title: "St. Bernard of Clairvaux",
-                    detail: "1090-1153 — Doctor of the Church",
-                    text: "\u{201C}In dangers, in doubts, in difficulties, think of Mary, call upon Mary... If you follow her, you cannot go astray; if you pray to her, you cannot despair; if you think of her, you cannot err. If she holds you, you cannot fall; if she protects you, you need not fear; if she guides you, you will never tire.\u{201D} — Homily in Praise of the Virgin Mother"
-                ),
-                LibraryEntry(
-                    title: "St. Dominic",
-                    detail: "1170-1221 — Founder of the Order of Preachers",
-                    text: "\u{201C}Arm yourself with prayer rather than a sword; wear humility rather than fine clothes.\u{201D} Tradition, handed down through Bl. Alan de la Roche, holds that Our Lady gave St. Dominic the Rosary around 1214 as the weapon against the Albigensian heresy: where preaching alone had failed, her Psalter — 150 Hail Marys echoing the 150 Psalms — converted thousands. His Order of Preachers has carried the Rosary to the world ever since."
-                ),
-                LibraryEntry(
-                    title: "St. Louis de Montfort",
-                    detail: "1673-1716 — Apostle of Total Consecration",
-                    text: "\u{201C}The more one is consecrated to Mary, the more one is consecrated to Jesus... She is the safest, easiest, shortest and most perfect way of approaching Jesus.\u{201D} His True Devotion to Mary, written around 1712 and hidden for over a century, teaches the total consecration practiced in this app's 33-day preparation."
-                ),
-                LibraryEntry(
-                    title: "St. Alphonsus Liguori",
-                    detail: "1696-1787 — Doctor of the Church",
-                    text: "\u{201C}Mary being in heaven nearer to God and more united to Him, knows our miseries better, compassionates them more, and can more efficaciously help us.\u{201D} His book The Glories of Mary remains one of the greatest works ever written on Our Lady — a verse-by-verse meditation on the Hail, Holy Queen."
-                ),
-                LibraryEntry(
-                    title: "St. Maximilian Kolbe",
-                    detail: "1894-1941 — Martyr of Auschwitz",
-                    text: "\u{201C}Never be afraid of loving the Blessed Virgin too much. You can never love her more than Jesus did.\u{201D} Founder of the Militia Immaculatae, he gave his life in exchange for a fellow prisoner at Auschwitz, dying with the Immaculata's name on his lips."
-                ),
-                LibraryEntry(
-                    title: "St. John Paul II",
-                    detail: "1920-2005 — Totus Tuus",
-                    text: "His papal motto, Totus Tuus — \u{201C}totally yours\u{201D} — was taken directly from St. Louis de Montfort's formula of consecration. In Rosarium Virginis Mariae (2002) he gave the Church the Luminous Mysteries, and in Redemptoris Mater he presented Mary as the model of the Church's pilgrimage of faith."
-                ),
-                LibraryEntry(
-                    title: "St. Padre Pio",
-                    detail: "1887-1968 — Stigmatist of San Giovanni Rotondo",
-                    text: "\u{201C}The Rosary is the weapon for these times.\u{201D} He prayed it almost without ceasing, calling his beads \u{201C}the weapon\u{201D} and Our Lady \u{201C}the little Madonna.\u{201D} His last words counseled: \u{201C}Love Our Lady and make her loved; always recite the Rosary.\u{201D}"
-                )
-            ]
-        ),
-        LibrarySection(
-            id: "rosary_history",
-            icon: "ch-rosary",
-            title: "The Rosary Through History",
-            subtitle: "Eight centuries of Our Lady's Psalter",
-            entries: [
-                LibraryEntry(
-                    title: "Our Lady's Psalter",
-                    detail: "Medieval origins",
-                    text: "The Rosary grew out of the monastic praying of the 150 Psalms. Lay brothers and the faithful who could not read the Latin Psalter prayed 150 Hail Marys in their place, counted on knotted cords and strings of beads — and so the Rosary came to be called Our Lady's Psalter. Meditation on the life of Christ was gradually joined to the beads, until vocal prayer and contemplation became one."
-                ),
-                LibraryEntry(
-                    title: "St. Dominic and the Confraternity",
-                    detail: "1214 — Bl. Alan de la Roche, 15th century",
-                    text: "Tradition holds that Our Lady gave the Rosary to St. Dominic as the weapon against the Albigensian heresy. Two centuries later the Dominican Bl. Alan de la Roche revived the devotion, preached its fifteen mysteries, and established the Confraternity of the Rosary, which spread it through all of Christendom. The Fifteen Promises of Our Lady to those who pray the Rosary have been handed down through him as a treasured pious tradition."
-                ),
-                LibraryEntry(
-                    title: "Lepanto and the Feast of the Rosary",
-                    detail: "October 7, 1571 — Pope St. Pius V",
-                    text: "As the Christian fleet met the Ottoman navy at Lepanto, Pope St. Pius V — a Dominican — called all of Europe to pray the Rosary, and the Confraternities processed in Rome as the battle raged. Victory was won against all odds, and the Pope, attributing it to Our Lady, instituted the feast of Our Lady of Victory — kept ever since on October 7 as the feast of the Most Holy Rosary. October remains the month of the Rosary."
-                ),
-                LibraryEntry(
-                    title: "The Rosary Popes",
-                    detail: "Leo XIII to St. John Paul II",
-                    text: "Pope Leo XIII wrote eleven encyclicals on the Rosary — earning the name \u{201C}the Rosary Pope\u{201D} — and dedicated the month of October to it. At Fatima in 1917, Our Lady asked for the daily Rosary in every apparition. St. John Paul II crowned this heritage in Rosarium Virginis Mariae (2002), proposing the Luminous Mysteries to the Church."
-                )
-            ]
-        ),
-        LibrarySection(
-            id: "titles",
-            icon: "ph-star-fill",
-            title: "Titles of Our Lady",
-            subtitle: "From the Litany and sacred Tradition",
-            entries: [
-                LibraryEntry(
-                    title: "Mediatrix of All Graces",
-                    detail: "Mediatrix Omnium Gratiarum",
-                    text: "All grace comes from Christ, the one Mediator between God and men (1 Timothy 2:5) — yet God willed that His grace should reach us through Mary. As she gave the world its Redeemer, so she dispenses what He won on Calvary. St. Bernard taught: \u{201C}God has willed that we should have nothing which does not pass through the hands of Mary.\u{201D} Leo XIII wrote that nothing of the immense treasury of grace is imparted to us except through her, and Benedict XV granted a feast of Mary, Mediatrix of All Graces, in 1921. Though not yet solemnly defined, many of the faithful pray for its definition as the fifth Marian dogma — and it is the keystone of St. Louis de Montfort's True Devotion."
-                ),
-                LibraryEntry(
-                    title: "Morning Star",
-                    detail: "Stella Matutina",
-                    text: "The morning star rises before the sun and announces the day. Mary rose before Christ, the Sun of Justice, and her appearing announced the dawn of salvation. Sailors steered by the star of the sea — Ave Maris Stella — and souls steer to Christ by her."
-                ),
-                LibraryEntry(
-                    title: "Gate of Heaven",
-                    detail: "Janua Caeli",
-                    text: "Through Mary, God came down to us; through Mary, we ascend to God. St. Louis de Montfort calls her the Eastern Gate through which the High Priest entered the world — and the gate through which He will come again."
-                ),
-                LibraryEntry(
-                    title: "Queen of Peace",
-                    detail: "Regina Pacis",
-                    text: "Added to the Litany by Benedict XV amid the First World War, this title invokes Mary as mother of the Prince of Peace. Where her Rosary is prayed, hearts are pacified, families are healed, and nations find concord."
-                )
-            ],
-            footnote: "\u{2026}and many more, sung in the Litany of Loreto."
-        )
-    ]
+    /// Every feast of Our Lady from the next onward, a date to a tile.
+    /// Touching one features it above. The chosen tile is ringed, not
+    /// filled: the feature's Mass stands just above it as the page's one
+    /// gold act, and two gold fills a few points apart read as two.
+    private var yearStrip: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 10) {
+                ForEach(year, id: \.self) { feast in
+                    let chosen = feast == featured
 
-    // MARK: - Section Card
+                    Button {
+                        withAnimation(Motion.crossfade) { featured = feast }
+                    } label: {
+                        VStack(spacing: 4) {
+                            Text(Self.monthLabel(feast))
+                                .font(AppFonts.labelFont(8.5))
+                                .tracking(1.6)
+                                .foregroundColor(chosen ? AppColors.goldLight : AppColors.gold.opacity(0.8))
 
-    private func sectionCard(_ section: LibrarySection) -> some View {
-        let isExpanded = expandedSections.contains(section.id)
+                            Text("\(feast.day)")
+                                .font(AppFonts.titleFont(28))
+                                .foregroundColor(chosen ? AppColors.goldLight : AppColors.cream)
+
+                            // Two lines, a touch smaller before it would
+                            // cut a name: "Most Holy Rosary", whole
+                            Text(Self.shortName(feast))
+                                .font(AppFonts.readingItalicFont(11.5))
+                                .foregroundColor(chosen ? AppColors.cream : AppColors.textSecondary)
+                                .multilineTextAlignment(.center)
+                                .lineLimit(2)
+                                .minimumScaleFactor(0.85)
+                                .frame(height: 34, alignment: .top)
+                        }
+                        .padding(.horizontal, 6)
+                        .frame(width: 100, height: 118)
+                        .background(
+                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                .fill(chosen ? AppColors.gold.opacity(0.12) : AppColors.cardBackground.opacity(0.55))
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                .strokeBorder(
+                                    chosen ? AppColors.goldLight.opacity(0.85) : AppColors.gold.opacity(0.2),
+                                    lineWidth: chosen ? 1 : AppLine.hairline
+                                )
+                        )
+                    }
+                    .buttonStyle(SacredCardButtonStyle())
+                    .accessibilityLabel("\(feast.name), \(feast.dateLabel)")
+                    .accessibilityAddTraits(chosen ? [.isSelected] : [])
+                }
+            }
+            .padding(.horizontal, 20)
+        }
+    }
+
+    private static func monthLabel(_ feast: KeptFeast) -> String {
+        let symbols = Calendar.current.shortMonthSymbols
+        return symbols.indices.contains(feast.month - 1) ? symbols[feast.month - 1].uppercased() : ""
+    }
+
+    /// "The Most Holy Rosary" → "Most Holy Rosary"
+    private static func shortName(_ feast: KeptFeast) -> String {
+        feast.name.hasPrefix("The ") ? String(feast.name.dropFirst(4)) : feast.name
+    }
+
+    // MARK: - Shelf Heading
+
+    private func shelfHeading(_ shelf: ReadingShelf) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 12) {
+                AppIcon(shelf.icon, size: 15)
+                    .foregroundColor(AppColors.gold)
+
+                Rectangle()
+                    .fill(
+                        LinearGradient(
+                            colors: [AppColors.gold.opacity(0.35), AppColors.gold.opacity(0)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .frame(height: AppLine.hairline)
+            }
+
+            Text(shelf.title)
+                .font(AppFonts.titleFont(22))
+                .foregroundColor(AppColors.cream)
+                .padding(.top, 6)
+
+            Text(shelf.subtitle)
+                .font(AppFonts.readingItalicFont(15))
+                .foregroundColor(AppColors.textSecondary)
+        }
+        .padding(.horizontal, 24)
+        .padding(.top, 48)
+        .padding(.bottom, 18)
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isHeader)
+    }
+
+    // MARK: - The Dogmas
+
+    /// Four tiles in Marian blue, each led by its numeral
+    private var dogmaGrid: some View {
+        LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
+            ForEach(Array(MarianLibraryData.dogmas.entries.enumerated()), id: \.element.id) { index, entry in
+                Button {
+                    router.push(.libraryReading(id: entry.id))
+                } label: {
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text(ReadingShelf.numeral(index + 1))
+                            .font(AppFonts.titleFont(34))
+                            .foregroundColor(AppColors.goldLight)
+
+                        Spacer(minLength: 8)
+
+                        Text(entry.title)
+                            .font(AppFonts.titleFont(16))
+                            .foregroundColor(AppColors.cream)
+                            .lineSpacing(2)
+                            .fixedSize(horizontal: false, vertical: true)
+
+                        Text(Self.dogmaDate(entry))
+                            .font(AppFonts.readingItalicFont(12.5))
+                            .foregroundColor(AppColors.cream.opacity(0.65))
+                            .fixedSize(horizontal: false, vertical: true)
+                            .padding(.top, 4)
+                    }
+                    .frame(maxWidth: .infinity, minHeight: 134, alignment: .topLeading)
+                    .padding(16)
+                    .background(
+                        RoundedRectangle(cornerRadius: 18, style: .continuous)
+                            .fill(
+                                LinearGradient(
+                                    colors: [Self.marianBlue, Self.marianBlue.opacity(0.45)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 18, style: .continuous)
+                            .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline)
+                    )
+                    .contentShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                }
+                .buttonStyle(SacredCardButtonStyle())
+                .accessibilityLabel("\(entry.title). \(entry.detail)")
+            }
+        }
+        .padding(.horizontal, 20)
+    }
+
+    /// "Theotokos · Council of Ephesus, A.D. 431" → "Council of Ephesus, A.D. 431"
+    private static func dogmaDate(_ entry: LibraryReading) -> String {
+        entry.detail.components(separatedBy: " · ").last ?? entry.detail
+    }
+
+    // MARK: - Mary in Scripture
+
+    /// A thread down the page from Genesis to the Apocalypse, each
+    /// reading a knot on it under its citation
+    private var scriptureThread: some View {
+        let entries = MarianLibraryData.scripture.entries
 
         return VStack(alignment: .leading, spacing: 0) {
-            Button {
-                withAnimation(.easeInOut(duration: 0.25)) {
-                    if isExpanded {
-                        expandedSections.remove(section.id)
-                    } else {
-                        expandedSections.insert(section.id)
-                    }
-                }
-            } label: {
-                HStack(spacing: 14) {
-                    AppIcon(section.icon, size: 18)
-                        .foregroundColor(AppColors.gold)
-                        .frame(width: 26)
+            ForEach(Array(entries.enumerated()), id: \.element.id) { index, entry in
+                Button {
+                    router.push(.libraryReading(id: entry.id))
+                } label: {
+                    HStack(alignment: .top, spacing: 16) {
+                        VStack(alignment: .leading, spacing: 5) {
+                            Text(entry.detail.uppercased())
+                                .font(AppFonts.labelFont(8.5))
+                                .tracking(1.6)
+                                .foregroundColor(AppColors.gold.opacity(0.85))
 
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(section.title)
-                            .font(AppFonts.headlineFont(17))
-                            .foregroundColor(AppColors.cream)
+                            HStack(alignment: .firstTextBaseline) {
+                                Text(entry.title)
+                                    .font(AppFonts.readingFont(18))
+                                    .foregroundColor(AppColors.cream)
 
-                        Text(section.subtitle)
-                            .font(AppFonts.italicFont(13))
-                            .foregroundColor(AppColors.textSecondary)
-                    }
+                                Spacer(minLength: 8)
 
-                    Spacer()
+                                AppIcon("ph-caret-right", size: 10)
+                                    .foregroundColor(AppColors.gold.opacity(0.5))
+                            }
 
-                    AppIcon("ph-caret-down", size: 13)
-                        .foregroundColor(AppColors.gold)
-                        .rotationEffect(.degrees(isExpanded ? 180 : 0))
-                }
-                .padding(16)
-            }
-            .buttonStyle(SacredCardButtonStyle())
-
-            if isExpanded {
-                VStack(alignment: .leading, spacing: 26) {
-                    ForEach(section.entries) { entry in
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text(entry.title)
-                                .font(AppFonts.headlineFont(15))
-                                .foregroundColor(AppColors.gold)
-
-                            Text(entry.detail)
-                                .font(AppFonts.bodyFont(12))
-                                .tracking(1)
-                                .foregroundColor(AppColors.textSecondary)
-
-                            ReadingText(
-                                text: entry.text,
-                                size: 16,
-                                textColor: AppColors.cream.opacity(0.9)
-                            )
-                            .padding(.top, 2)
+                            if let quote = entry.quote {
+                                Text(quote.text)
+                                    .font(AppFonts.readingItalicFont(14.5))
+                                    .foregroundColor(AppColors.textSecondary)
+                                    .lineSpacing(3)
+                                    .lineLimit(2)
+                            }
                         }
-                    }
+                        .padding(.bottom, 26)
 
-                    if let footnote = section.footnote {
-                        Text(footnote)
-                            .font(AppFonts.italicFont(13))
-                            .foregroundColor(AppColors.gold.opacity(0.7))
+                        Spacer(minLength: 0)
                     }
+                    .padding(.leading, 28)
+                    .background(alignment: .topLeading) {
+                        ZStack(alignment: .top) {
+                            Rectangle()
+                                .fill(AppColors.gold.opacity(0.3))
+                                .frame(width: 1)
+                                .padding(.top, index == 0 ? 6 : 0)
+                                .frame(maxHeight: index == entries.count - 1 ? 6 : .infinity, alignment: .top)
+
+                            Circle()
+                                .fill(AppColors.background)
+                                .overlay(Circle().strokeBorder(AppColors.goldLight, lineWidth: 1.2))
+                                .frame(width: 11, height: 11)
+                        }
+                        .frame(width: 11)
+                        .frame(maxHeight: .infinity, alignment: .top)
+                    }
+                    .contentShape(Rectangle())
                 }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 20)
+                .buttonStyle(.plain)
+                .accessibilityElement(children: .combine)
+                .accessibilityAddTraits(.isButton)
             }
         }
-        .background(AppColors.cardBackground)
-        .cornerRadius(16)
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(AppColors.gold.opacity(isExpanded ? 0.35 : 0.15), lineWidth: AppLine.hairline)
-        )
+        .padding(.horizontal, 24)
+    }
+
+    // MARK: - The Apparitions
+
+    /// Cards led by their year, swiped through in the order Heaven came
+    private var apparitionCards: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    ForEach(MarianLibraryData.apparitions.entries) { entry in
+                        apparitionCard(entry)
+                    }
+                }
+                .padding(.horizontal, 20)
+                .scrollTargetLayout()
+            }
+            .scrollTargetBehavior(.viewAligned)
+
+            if let footnote = MarianLibraryData.apparitions.footnote {
+                Text(footnote)
+                    .font(AppFonts.readingItalicFont(13))
+                    .foregroundColor(AppColors.gold.opacity(0.6))
+                    .lineSpacing(3)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.horizontal, 24)
+            }
+        }
+    }
+
+    private func apparitionCard(_ entry: LibraryReading) -> some View {
+        let place = Self.placeAndYear(entry.detail)
+        let shape = RoundedRectangle(cornerRadius: 18, style: .continuous)
+
+        return Button {
+            router.push(.libraryReading(id: entry.id))
+        } label: {
+            VStack(alignment: .leading, spacing: 0) {
+                Text(place.year)
+                    .font(AppFonts.titleFont(place.year.count > 4 ? 26 : 38))
+                    .foregroundColor(AppColors.goldLight)
+                    .minimumScaleFactor(0.6)
+                    .lineLimit(1)
+
+                Text(place.place.uppercased())
+                    .font(AppFonts.labelFont(9))
+                    .tracking(2)
+                    .foregroundColor(AppColors.gold.opacity(0.8))
+                    .padding(.top, 2)
+
+                Spacer(minLength: 12)
+
+                Text(entry.title)
+                    .font(AppFonts.titleFont(17))
+                    .foregroundColor(AppColors.cream)
+                    .lineSpacing(2)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                if let witness = place.witness {
+                    Text(witness)
+                        .font(AppFonts.readingItalicFont(13))
+                        .foregroundColor(AppColors.textSecondary)
+                        .lineLimit(2)
+                        .padding(.top, 4)
+                }
+            }
+            .frame(width: 176, height: 184, alignment: .topLeading)
+            .padding(18)
+            .background(
+                shape.fill(
+                    LinearGradient(
+                        colors: [AppColors.cardBackground, AppColors.cardBackground.opacity(0.35)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+            )
+            .overlay(shape.strokeBorder(AppColors.gold.opacity(0.22), lineWidth: AppLine.hairline))
+            .contentShape(shape)
+        }
+        .buttonStyle(SacredCardButtonStyle())
+        .accessibilityLabel("\(entry.title), \(entry.detail)")
+    }
+
+    /// "France, 1858 · St. Bernadette Soubirous" → ("France", "1858", "St. Bernadette Soubirous")
+    private static func placeAndYear(_ detail: String) -> (place: String, year: String, witness: String?) {
+        let parts = detail.components(separatedBy: " · ")
+        let head = parts[0].components(separatedBy: ", ")
+        let year = head.count > 1 ? head.last ?? "" : ""
+        let place = head.count > 1 ? head.dropLast().joined(separator: ", ") : head[0]
+        return (place, year, parts.count > 1 ? parts[1] : nil)
+    }
+
+    // MARK: - The Saints
+
+    /// Each saint's life as a bar across the centuries, so the whole
+    /// tradition is seen at once and each in its place
+    private var saintsChronology: some View {
+        let lower = 1050.0
+        let upper = 2030.0
+
+        return VStack(alignment: .leading, spacing: 0) {
+            // The century rule
+            GeometryReader { geometry in
+                ForEach([1100, 1300, 1500, 1700, 1900], id: \.self) { century in
+                    let x = (Double(century) - lower) / (upper - lower) * geometry.size.width
+
+                    Text(verbatim: "\(century)")
+                        .font(AppFonts.labelFont(8))
+                        .foregroundColor(AppColors.textSecondary.opacity(0.7))
+                        .position(x: x, y: 6)
+                }
+            }
+            .frame(height: 14)
+            .padding(.bottom, 8)
+
+            ForEach(MarianLibraryData.saints.entries) { entry in
+                let span = Self.lifespan(entry.detail)
+
+                Button {
+                    router.push(.libraryReading(id: entry.id))
+                } label: {
+                    VStack(alignment: .leading, spacing: 7) {
+                        HStack(alignment: .firstTextBaseline) {
+                            Text(entry.title)
+                                .font(AppFonts.readingFont(17))
+                                .foregroundColor(AppColors.cream)
+
+                            Spacer(minLength: 8)
+
+                            AppIcon("ph-caret-right", size: 10)
+                                .foregroundColor(AppColors.gold.opacity(0.5))
+                        }
+
+                        GeometryReader { geometry in
+                            let width = geometry.size.width
+                            let start = (span.start - lower) / (upper - lower) * width
+                            let end = (span.end - lower) / (upper - lower) * width
+
+                            ZStack(alignment: .leading) {
+                                Rectangle()
+                                    .fill(AppColors.gold.opacity(0.14))
+                                    .frame(height: AppLine.hairline)
+
+                                Capsule()
+                                    .fill(AppColors.goldGradient)
+                                    .frame(width: max(6, end - start), height: 5)
+                                    .offset(x: start)
+                            }
+                            .frame(height: 8)
+                        }
+                        .frame(height: 8)
+
+                        Text(entry.detail)
+                            .font(AppFonts.readingItalicFont(13))
+                            .foregroundColor(AppColors.textSecondary)
+                    }
+                    .padding(.vertical, 12)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityElement(children: .combine)
+                .accessibilityAddTraits(.isButton)
+            }
+        }
+        .padding(.horizontal, 24)
+    }
+
+    /// "1090–1153 · Doctor of the Church" → (1090, 1153)
+    private static func lifespan(_ detail: String) -> (start: Double, end: Double) {
+        let years = detail.components(separatedBy: " · ")[0]
+            .components(separatedBy: CharacterSet(charactersIn: "\u{2013}-"))
+            .compactMap { Double($0.trimmingCharacters(in: .whitespaces)) }
+        guard years.count == 2 else { return (1900, 2000) }
+        return (years[0], years[1])
+    }
+
+    // MARK: - The Rosary Through History
+
+    private var rosaryChronicle: some View {
+        let entries = MarianLibraryData.rosary.entries
+
+        return VStack(alignment: .leading, spacing: 0) {
+            ForEach(Array(entries.enumerated()), id: \.element.id) { index, entry in
+                Button {
+                    router.push(.libraryReading(id: entry.id))
+                } label: {
+                    HStack(alignment: .firstTextBaseline, spacing: 16) {
+                        Text(ReadingShelf.numeral(index + 1))
+                            .font(AppFonts.titleFont(20))
+                            .foregroundColor(AppColors.gold)
+                            .frame(width: 34, alignment: .leading)
+
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(entry.title)
+                                .font(AppFonts.readingFont(17))
+                                .foregroundColor(AppColors.cream)
+                                .fixedSize(horizontal: false, vertical: true)
+
+                            Text(entry.detail)
+                                .font(AppFonts.readingItalicFont(13))
+                                .foregroundColor(AppColors.textSecondary)
+                        }
+
+                        Spacer(minLength: 8)
+
+                        AppIcon("ph-caret-right", size: 10)
+                            .foregroundColor(AppColors.gold.opacity(0.5))
+                    }
+                    .padding(.vertical, 14)
+                    .contentShape(Rectangle())
+                    .overlay(alignment: .bottom) {
+                        if index < entries.count - 1 {
+                            Rectangle()
+                                .fill(AppColors.gold.opacity(0.14))
+                                .frame(height: AppLine.hairline)
+                        }
+                    }
+                }
+                .buttonStyle(.plain)
+                .accessibilityElement(children: .combine)
+                .accessibilityAddTraits(.isButton)
+            }
+        }
+        .padding(.horizontal, 24)
+    }
+
+    // MARK: - Her Titles
+
+    /// Set as a litany is set: the Latin title, the English beneath, one
+    /// to a line, down the middle of the page — and then the Litany.
+    private var titlesLitany: some View {
+        VStack(spacing: 22) {
+            ForEach(MarianLibraryData.titles.entries) { entry in
+                Button {
+                    router.push(.libraryReading(id: entry.id))
+                } label: {
+                    VStack(spacing: 5) {
+                        Text(entry.detail.components(separatedBy: " · ")[0])
+                            .font(AppFonts.readingItalicFont(21))
+                            .foregroundColor(AppColors.goldLight)
+
+                        // The English title carries the row's quiet caret,
+                        // centred with it, so the litany still reads as a
+                        // litany and each line as a door
+                        HStack(spacing: 6) {
+                            Text(entry.title.uppercased())
+                                .font(AppFonts.labelFont(9.5))
+                                .tracking(2.4)
+                                .foregroundColor(AppColors.cream.opacity(0.8))
+
+                            AppIcon("ph-caret-right", size: 8)
+                                .foregroundColor(AppColors.gold.opacity(0.5))
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(minHeight: 44)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityElement(children: .combine)
+                .accessibilityAddTraits(.isButton)
+            }
+
+            Text("\u{2726}")
+                .font(.system(size: 10))
+                .foregroundColor(AppColors.gold.opacity(0.6))
+
+            VStack(spacing: 10) {
+                prayerDoor("Pray the Litany of Loreto", id: "litany_loreto")
+                HStack(spacing: 10) {
+                    prayerDoor("Ave Maris Stella", id: "ave_maris_stella")
+                    prayerDoor("The Magnificat", id: "magnificat")
+                }
+            }
+        }
+        .padding(.horizontal, 24)
+    }
+
+    private func prayerDoor(_ title: String, id: String) -> some View {
+        Button {
+            router.push(.devotionPrayer(id: id))
+        } label: {
+            HStack(spacing: 8) {
+                AppIcon("ph-hands-praying", size: 13)
+                Text(title.uppercased())
+                    .font(AppFonts.labelFont(9.5))
+                    .tracking(1.8)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+            .foregroundColor(AppColors.goldLight)
+            .frame(maxWidth: .infinity)
+            .frame(height: 46)
+            .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.45), lineWidth: 1))
+            .contentShape(Capsule())
+        }
+        .buttonStyle(GoldCTAButtonStyle())
+    }
+}
+
+// MARK: - LedgerDoorRow
+
+/// One row of the library's ledger: a name in the reading face, its
+/// italic line beneath, and a caret — a door to a page.
+struct LedgerDoorRow: View {
+    let title: String
+    let note: String?
+    var icon: String? = nil
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(alignment: .center, spacing: 12) {
+                if let icon {
+                    AppIcon(icon, size: 16)
+                        .foregroundColor(AppColors.gold.opacity(0.85))
+                        .frame(width: 20)
+                }
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(title)
+                        .font(AppFonts.readingFont(16))
+                        .foregroundColor(AppColors.cream.opacity(0.92))
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    if let note, !note.isEmpty {
+                        Text(note)
+                            .font(AppFonts.readingItalicFont(13))
+                            .foregroundColor(AppColors.textSecondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+
+                Spacer(minLength: 8)
+
+                AppIcon("ph-caret-right", size: 11)
+                    .foregroundColor(AppColors.gold.opacity(0.5))
+            }
+            .padding(.vertical, 10)
+            .frame(minHeight: 44)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isButton)
     }
 }
 
@@ -418,5 +827,6 @@ struct MarianLibraryView: View {
 #Preview {
     NavigationStack {
         MarianLibraryView()
+            .environment(AppRouter())
     }
 }

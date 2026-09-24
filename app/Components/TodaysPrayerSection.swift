@@ -10,8 +10,8 @@
 //
 //  Named for the user's prayer rather than the Church's calendar,
 //  because the Total Consecration is a private devotion and not a
-//  liturgical observance — the third row would otherwise be filed under
-//  a heading it does not belong to.
+//  liturgical observance — its row would otherwise be filed under a
+//  heading it does not belong to.
 //
 //  Every row carries the same three parts — the door's own glyph, its
 //  name, and the row's own live fact — so the eye reads down the column
@@ -171,7 +171,7 @@ struct TodaysPrayerSection: View {
             .accessibilityHidden(true)
     }
 
-    // MARK: Row 1 — The Mass
+    // MARK: Row 2 — The Mass
 
     private var massRow: some View {
         LedgerRow(
@@ -219,7 +219,7 @@ struct TodaysPrayerSection: View {
         return parts.isEmpty ? nil : parts.joined(separator: " · ").uppercased()
     }
 
-    // MARK: Row 2 — The Divine Office
+    // MARK: Row 3 — The Divine Office
 
     private var officeRow: some View {
         let hour = clock.hour
@@ -249,7 +249,7 @@ struct TodaysPrayerSection: View {
         .animation(Motion.crossfade, value: hour)
     }
 
-    // MARK: Row 3 — Total Consecration
+    // MARK: Row 1 — Total Consecration
 
     /// Nothing is greyed out and nothing is hidden. A user who has never
     /// begun sees an invitation in the same place, at the same weight —
