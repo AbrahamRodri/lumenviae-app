@@ -362,6 +362,11 @@ struct MyChapelView: View {
             guard let progress = activeConsecration else { return false }
             return progress.isDayCompleted(progress.currentDayNumber)
 
+        // Offered when prayed through to its Amen on the pray-along
+        // screen; the Angelus counts once, at whichever bell
+        case .morningPrayers, .angelus, .nightPrayers:
+            return item.prayerOrderID.map { PrayerBookStore.shared.wasOffered($0) } ?? false
+
         case .mass, .office, .chooseMeditation:
             // Never on the rule (`isRuleEligible`)
             return false
@@ -385,6 +390,13 @@ struct MyChapelView: View {
             return "Day \(day) of 33 · \(ChapelConsecrationTile.phaseName(day: day))"
         case .sevenSorrows:
             return "Chaplet"
+        case .morningPrayers:
+            return "On rising · \(PrayerBook.order(PrayerBook.morningOrderID)?.prayers().count ?? 0) prayers"
+        case .angelus:
+            return "At six, noon and six"
+        case .nightPrayers:
+            let antiphon = PrayerBook.antiphon(on: Date())
+            return "Before sleep · \(PrayerBook.prayer(antiphon.prayerID)?.latinTitle ?? "Our Lady's antiphon")"
         case .chooseMeditation, .mass, .office:
             // Never on the rule (`isRuleEligible`)
             return item.subtitle
@@ -485,6 +497,14 @@ struct MyChapelView: View {
                 ?? "The 33-day preparation to Jesus through Mary."
         case .chooseMeditation:
             return "Browse the day's meditation sets and choose one to pray."
+        case .morningPrayers:
+            return "The day offered before it is begun: the Morning Offering, the acts of faith, hope and love."
+        case .angelus:
+            return PrayerBook.isEastertide(Date())
+                ? "Queen of Heaven, rejoice — the Easter antiphon, said in the Angelus's place."
+                : "The Angel of the Lord declared unto Mary — the Incarnation remembered at the bell."
+        case .nightPrayers:
+            return "The day examined and given back, closing on Our Lady's antiphon."
         }
     }
 
@@ -682,6 +702,8 @@ struct MyChapelView: View {
             )
         case .reflections:
             ChapelReflectionsTile(span: placement.span)
+        case .prayers:
+            ChapelPrayerBookTile(span: placement.span)
         case .flame:
             ChapelFlameTile(
                 span: placement.span,

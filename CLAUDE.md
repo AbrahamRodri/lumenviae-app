@@ -183,9 +183,15 @@ running to the edge, the way a card names one of its parts — heading the Mass 
 the Office. Set large in the reading italic, the feast read as a second
 section title. The preparation
 is the user's own devotion, kept whatever day it is, and no part of the
-Church's calendar, so it stands apart from the feast and above it. Three ruled rows on the bare page — no card,
+Church's calendar, so it stands apart from the feast and above it. Beside
+it, and for the same reason, stands **the hour's prayers**: the Prayer
+Book's order for the hour it is (Morning Prayers until eleven, the
+Angelus until eight, Night Prayers after), its fact ON RISING · AT NOON
+· AT SIX · BEFORE SLEEP, or OFFERED once prayed to its Amen — never
+"missed"; it opens the Prayer Book, which opens on that same order.
+Four ruled rows on the bare page — no card,
 no panel, no fill. The Mass, the Divine Office,
-and the Total Consecration, given equal standing. It is named for the
+the Total Consecration and the hour's prayers, given equal standing. It is named for the
 user's prayer and **not** "Today in the Church", because the
 consecration is a private devotion and not a liturgical observance;
 `TodayInChurch` (the observable) still supplies the day and is shared
@@ -357,14 +363,19 @@ tiles and not others and centred halves beside left-aligned ones, and
 the tiles fought; none of that may come back. No filled card surfaces
 on the page — `AppColors.cardBackground` only in the tray, the chant
 sheet, and the chant tile's play disc. The
-default order is Today, Streak, Consecration, Reading, Chant,
+default order is Today, Streak, Consecration, Prayer Book (the hour's
+order over the reader's ribbons, `ChapelPrayerBookTile`), Reading, Chant,
 Reflections, Liturgy, Library: the live sections lead, and the two
 indexes of doors stand last, the Library's colophon the right last line
 before the foot's imprint. The day strip wraps a long feast to a second
 line rather than cutting it mid-word.
 
 **The rule's vocabulary** (`PrayerShortcut.isRuleEligible`): the
-Rosary, the Scriptural Rosary and Seven Sorrows can be chosen. "A
+Rosary, the Scriptural Rosary, the Rosary Aloud and Seven Sorrows can be
+chosen, and the Prayer Book's three orders of the day — Morning Prayers,
+the Angelus, Night Prayers — which the pray-along screen marks offered
+at their Amen (`PrayerBookStore.wasOffered`), so the Chapel can ask
+about them honestly. "A
 Meditation" was briefly eligible, marked by hand, and is not: browsing
 the picker is a doorway to the Rosary, not a devotion beside it. **The Mass and the Office are
 off the rule** until the app can keep a day's schedule for them — a
@@ -461,6 +472,7 @@ app/
 │   ├── LibraryBook           # + catalog entry, parsing rules, LibriVox models
 │   ├── BookReadingProgress                                (SwiftData)
 │   ├── PrayerShortcut                       # + MeWidget — personalization vocab
+│   ├── PrayerBook            # BookPrayer, chapters, orders of prayer, seasons
 │   └── StreakMilestone, MarianFeastDay, BilingualConsecrationPrayer
 ├── ViewModels/               # @Observable
 │   ├── HomeViewModel, MeditationSelectionViewModel, MeditationSetDetailViewModel
@@ -484,6 +496,8 @@ app/
 │   ├── TrueDevotion/         # Its contents page and chapter reader
 │   ├── Library/              # Spiritual Reading shelf, book page, chapter
 │   │                         # reader, contents sheet, transport
+│   ├── PrayerBook/           # The Prayer Book: title page, chapter, order
+│   │                         # page, prayer page, pray-along, learn by heart
 │   ├── Resources/            # How to Pray (+ RosaryLessonView, GuidedRosaryView),
 │   │                         # Marian Library, In Scripture, Carlo Acutis,
 │   │                         # LibraryReadingView, the Missal and the Office
@@ -1330,6 +1344,63 @@ write concurrent code here:
   day, toward a goal the reader set — a dial for today only, reset
   silently each morning, never carried forward, chained into a streak or
   counted against anyone.
+
+- **The Prayer Book** — the Church's common prayers, bundled, reached
+  from home (Today's Prayer's hour row), Explore (its own section, and
+  search finds prayers by name, Latin name or words), the Chapel's
+  Prayer Book tile, the Pray tray (the Angelus, offered once) and every
+  existing door to a prayer (`.devotionPrayer(id:)` now opens
+  `BookPrayerView`). `Models/PrayerBook.swift` is the model: twelve
+  **chapters** (the First Prayers, Our Lady — twenty prayers — Our Lord,
+  the Blessed Sacrament, the Holy Ghost, Angels and Saints, Through the
+  Day, Penance, the Faithful Departed, the Church, the Litanies, Short
+  Prayers), and eleven **orders of prayer** said together — Morning
+  Prayers, the Angelus, Night Prayers, At Table, Before Mass, After
+  Communion, Before Confession, After Confession, a Visit to the Blessed
+  Sacrament, For the Holy Souls, In Time of Trouble. The texts are
+  `Data/PrayerBook/*.swift` (`PrayerBookTexts`), in `PrayerText`'s
+  grammar, English always and Latin only where the Church prays in
+  Latin, paired line for line; the Rosary's and the consecration's
+  prayers are joined in by id (`BookPrayer.bundled`), never copied. Hymn
+  translations are plain literal renderings, not Caswall or Hopkins.
+
+  **The book opens on the hour** (`PrayerBook.dayOrder(at:)`), lit, with
+  the page's one gold act, over the day's three hours on one strand. The
+  seasons are computed: the Angelus is the Regina Cæli from Easter to the
+  Saturday after Pentecost, and Night Prayers close on the Marian
+  antiphon the season sings (`PrayerBook.antiphon(on:)` — Alma
+  Redemptoris, Ave Regina Cælorum, Regina Cæli, Salve Regina), which the
+  Our Lady chapter marks OF THE SEASON.
+
+  **Praying** is `PrayAlongView` (`.prayAlong(PrayAlongLaunch)`, a
+  player: bar hidden, its own ×): one prayer at a time, a strand of beads
+  for the order's prayers, aloud or in silence (`PrayerBookStore.
+  praysAloud`, remembered). Aloud, each prayer is the server's ElevenLabs
+  recording in the chosen narration voice (below), the stanza being said
+  lit and followed by proportion, the next prayer turning in after a
+  breath; the Angelus rings `church_bell.caf`. An order prayed to its
+  Amen is offered for the day — nothing is carried forward. **Keeping**
+  is a silk ribbon (`RibbonToggle`, `PrayerBookStore.ribbons`) — the
+  kept prayers stand on the book's first page and the Chapel tile.
+  **Learning** is `LearnByHeartSheet`: four steps (read, some hidden,
+  first letters, by heart), in English or Latin, a hidden word shown by a
+  touch, and at the end the reader's own BY HEART mark — never scored.
+  **The Angelus bell** (Settings → Devotion) rings at 6, noon and 6
+  (`PrayerBookStore.setAngelusBell`), and a tap on it opens the Angelus
+  (`PrayerNotificationRouter`, which claims only its own notifications).
+
+  **The recordings** are `LumenViae.Rosary.PrayerAudio`'s `book` kind,
+  served by `GET /rosary/audio?include=book` and kept by
+  `RosaryAudioPack` (`ClipID.book`) beside the spoken Rosary's; a prayer
+  the Rosary also says plays its `prayers` recording, and a prayer not yet
+  recorded in the chosen voice plays in the default voice
+  (`PrayAlongVoice.prepare`), as a meditation does. The words reach
+  the server as `Tools/PrayerBook/prayer_book.json`, written by
+  `Tools/PrayerBook/export.py` (litany responses said after every
+  invocation, marks and gestures silent) and copied verbatim to the
+  server's `priv/rosary_audio/`: change a prayer, re-export, copy, record
+  (`mix lumen_viae.generate_rosary_audio --kind book`) before deploying.
+  The library download fetches the book's recordings too.
 
 ### Not built yet
 

@@ -55,6 +55,9 @@ struct ChapelAct: Identifiable {
         case .mass:             return "Begin the Mass"
         case .office:           return "Begin the Office"
         case .consecration:     return "Continue the Preparation"
+        case .morningPrayers:   return "Pray Morning Prayers"
+        case .angelus:          return PrayerBook.isEastertide(Date()) ? "Pray the Regina Cæli" : "Pray the Angelus"
+        case .nightPrayers:     return "Pray Night Prayers"
         }
     }
 
@@ -1528,8 +1531,8 @@ struct ChapelReadingTile: View {
         }
     }
 
-    /// Resumes whichever hand the book was last held in — the same rule
-    /// the Me page's reading card followed.
+    /// Resumes whichever hand the book was last held in: the voice if it
+    /// was heard since the page was last read, else the page itself.
     private func takeUp(_ row: BookReadingProgress, _ info: LibraryBookInfo) {
         let listened = row.lastListenedAt ?? .distantPast
         let read = row.lastReadAt ?? .distantPast

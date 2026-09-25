@@ -68,6 +68,13 @@ struct TodaysPrayerSection: View {
             consecrationRow
                 .padding(.top, 8)
 
+            rowDivider
+
+            // The hour's own prayers from the Prayer Book — the user's
+            // devotion as the preparation is, so it stands beside it and
+            // above the Church's day
+            hourRow
+
             // Then the Church's day, a part of this section rather than a
             // section of its own: its feast named over a rule, and the
             // two liturgical books that keep it beneath
@@ -247,6 +254,54 @@ struct TodaysPrayerSection: View {
         .id(hour)
         .transition(.opacity)
         .animation(Motion.crossfade, value: hour)
+    }
+
+    // MARK: Row 1b — The hour's prayers
+
+    /// The Prayer Book's order for the hour it is — Morning Prayers, the
+    /// Angelus, Night Prayers — and OFFERED once it has been prayed to
+    /// its Amen today. Opens the book, which opens on this same order.
+    /// Never "missed": an hour gone by is simply not this row any more.
+    private var hourRow: some View {
+        // Read so the row rolls over with the clock, as the Office's does
+        _ = clock.hour
+        let now = Date()
+        let order = PrayerBook.dayOrder(at: now)
+        let offered = PrayerBookStore.shared.wasOffered(order.id, on: now)
+        let moment = Self.hourMoment(now)
+
+        return LedgerRow(
+            icon: order.icon,
+            name: order.title(on: now),
+            accessibility: "\(order.title(on: now)), \(offered ? "offered today" : moment.lowercased())"
+        ) {
+            HStack(spacing: 6) {
+                if offered {
+                    AppIcon("ph-seal-check-fill", size: 11)
+                        .foregroundColor(AppColors.gold)
+                }
+                Text(offered ? "OFFERED" : moment)
+                    .font(AppFonts.labelFont(9))
+                    .tracking(2)
+                    .foregroundColor(AppColors.gold.opacity(0.9))
+                    .lineLimit(1)
+                    .fixedSize()
+                    .contentTransition(.opacity)
+            }
+            .animation(Motion.crossfade, value: offered)
+        } action: {
+            router.push(.prayerBook)
+        }
+    }
+
+    /// The hour said the way the row's other facts are: short capitals
+    private static func hourMoment(_ date: Date) -> String {
+        switch Calendar.current.component(.hour, from: date) {
+        case 4..<11:  return "ON RISING"
+        case 11..<15: return "AT NOON"
+        case 15..<20: return "AT SIX"
+        default:      return "BEFORE SLEEP"
+        }
     }
 
     // MARK: Row 1 — Total Consecration

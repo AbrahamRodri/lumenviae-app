@@ -44,6 +44,8 @@ final class RosaryAudioPack {
         case prayer(String)
         case announcement(String)
         case verse(String, Int)
+        /// One of the Prayer Book's prayers, by its id
+        case book(String)
 
         /// Nil for a meditation, which is the set's narration, not the pack's
         init?(segment: SpokenSegment) {
@@ -61,6 +63,7 @@ final class RosaryAudioPack {
             case .prayer: return "prayers"
             case .announcement: return "announcements"
             case .verse: return "verses"
+            case .book: return "book"
             }
         }
     }
@@ -243,6 +246,7 @@ final class RosaryAudioPack {
         let keepsSaved = (fetched.prayers == nil && saved.prayers != nil)
             || (fetched.announcements == nil && saved.announcements != nil)
             || (fetched.verses == nil && saved.verses != nil)
+            || (fetched.book == nil && saved.book != nil)
         let expiresAt: String?
         if keepsSaved {
             switch (saved.expiry, fetched.expiry) {
@@ -258,7 +262,8 @@ final class RosaryAudioPack {
             expiresAt: expiresAt,
             prayers: fetched.prayers ?? saved.prayers,
             announcements: fetched.announcements ?? saved.announcements,
-            verses: fetched.verses ?? saved.verses
+            verses: fetched.verses ?? saved.verses,
+            book: fetched.book ?? saved.book
         )
     }
 
@@ -277,6 +282,7 @@ final class RosaryAudioPack {
             case "prayers": return manifest.prayers != nil
             case "announcements": return manifest.announcements != nil
             case "verses": return manifest.verses != nil
+            case "book": return manifest.book != nil
             default: return false
             }
         }
@@ -315,6 +321,7 @@ final class RosaryAudioPack {
             case "prayers": named = Set((manifest.prayers ?? [:]).values.map(\.file))
             case "announcements": named = Set((manifest.announcements ?? [:]).values.map(\.file))
             case "verses": named = Set((manifest.verses ?? [:]).values.flatMap { $0.map(\.file) })
+            case "book": named = Set((manifest.book ?? [:]).values.map(\.file))
             default: continue
             }
             let dir = voiceDir.appendingPathComponent(kind, isDirectory: true)
@@ -356,6 +363,8 @@ final class RosaryAudioPack {
         case .verse(let key, let number):
             guard let verses = manifest.verses?[key], verses.indices.contains(number - 1) else { return nil }
             return verses[number - 1]
+        case .book(let prayerId):
+            return manifest.book?[prayerId]
         }
     }
 

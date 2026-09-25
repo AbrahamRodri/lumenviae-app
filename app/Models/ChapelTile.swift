@@ -30,6 +30,7 @@ enum ChapelTile: String, CaseIterable, Identifiable {
     case chant = "chant"
     case reflections = "reflections"
     case flame = "flame"
+    case prayers = "prayers"
 
     var id: String { rawValue }
 
@@ -43,6 +44,7 @@ enum ChapelTile: String, CaseIterable, Identifiable {
         case .chant:        return "Chant"
         case .reflections:  return "Reflections"
         case .flame:        return "Prayer Streak"
+        case .prayers:      return "Prayer Book"
         }
     }
 
@@ -52,6 +54,7 @@ enum ChapelTile: String, CaseIterable, Identifiable {
     var shortTitle: String {
         switch self {
         case .flame: return "Streak"
+        case .prayers: return "Prayers"
         default:     return title
         }
     }
@@ -67,6 +70,7 @@ enum ChapelTile: String, CaseIterable, Identifiable {
         case .chant:        return "Sung prayer, kept close to hand"
         case .reflections:  return "Your latest journal entries"
         case .flame:        return "Your streak and this week's prayer"
+        case .prayers:      return "The hour's prayers, and the ones you keep"
         }
     }
 
@@ -92,6 +96,7 @@ enum ChapelTile: String, CaseIterable, Identifiable {
         case .chant:        return "ph-music-note"
         case .reflections:  return "ph-note-pencil"
         case .flame:        return "ph-flame"
+        case .prayers:      return "ch-praying-hands"
         }
     }
 }
@@ -132,6 +137,7 @@ extension ChapelPlacement {
         ChapelPlacement(tile: .rule, span: 2, on: true),
         ChapelPlacement(tile: .flame, span: 2, on: true),
         ChapelPlacement(tile: .consecration, span: 2, on: true),
+        ChapelPlacement(tile: .prayers, span: 2, on: true),
         ChapelPlacement(tile: .reading, span: 2, on: true),
         ChapelPlacement(tile: .chant, span: 2, on: true),
         ChapelPlacement(tile: .reflections, span: 2, on: true),

@@ -96,6 +96,19 @@ enum AppRoute: Hashable {
     /// The Rosary Aloud's title page. It prays on the Scriptural Rosary's
     /// screens (`ScripturalRosaryLaunch.form`), so only the door is its own.
     case rosaryAloud
+
+    /// The Prayer Book: its title page, which opens on the order of
+    /// prayer for the hour it is; one of its chapters; and an order of
+    /// prayer's own page — Morning Prayers, Before Confession. A single
+    /// prayer's page is `devotionPrayer(id:)`, which every door to a
+    /// prayer in the app already uses.
+    case prayerBook
+    case prayerBookChapter(id: String)
+    case prayerOrder(id: String)
+
+    /// Prayers said one after another on a screen of their own, aloud or
+    /// in silence. A player: it hides the bar and carries its own way out.
+    case prayAlong(PrayAlongLaunch)
 }
 
 // MARK: - ScripturalRosaryLaunch

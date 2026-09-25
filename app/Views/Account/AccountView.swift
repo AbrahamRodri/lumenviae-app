@@ -192,6 +192,24 @@ struct AccountView: View {
                             Divider()
                                 .background(AppColors.gold.opacity(0.2))
 
+                            // The church bell at six, noon and six, opening
+                            // the Angelus when it is tapped — its own
+                            // reminder, apart from the daily one above
+                            ToggleRow(
+                                icon: "ph-bell",
+                                title: "The Angelus Bell",
+                                subtitle: PrayerBookStore.shared.angelusBellDenied
+                                    ? "Notifications are turned off for Lumen Viae"
+                                    : "Rings at 6 am, noon and 6 pm",
+                                isOn: Binding(
+                                    get: { PrayerBookStore.shared.angelusBell },
+                                    set: { on in Task { await PrayerBookStore.shared.setAngelusBell(on) } }
+                                )
+                            )
+
+                            Divider()
+                                .background(AppColors.gold.opacity(0.2))
+
                             // Outside the reminders-on block on purpose: it
                             // decides which reminder copy is sent, but it is
                             // first of all something the user said about

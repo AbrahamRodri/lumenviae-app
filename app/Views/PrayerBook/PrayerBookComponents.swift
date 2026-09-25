@@ -1,0 +1,447 @@
+//
+//  PrayerBookComponents.swift
+//  Lumen Viae
+//
+//  The Prayer Book's own furniture: the silk ribbon a prayer is kept
+//  with, the contents page's dot leader, the ruled prayer row, the tile
+//  an order of prayer stands on, and the strip of the day's three hours.
+//
+
+import SwiftUI
+
+// MARK: - The Ribbon
+
+/// A silk marker hanging from the head of the page, cut in a swallowtail
+/// at its foot — what a printed missal keeps its places with.
+struct RibbonShape: Shape {
+    /// How deep the swallowtail's notch is cut, as a share of the width
+    var notch: CGFloat = 0.55
+
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        let cut = rect.width * notch
+        path.move(to: CGPoint(x: rect.minX, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+        path.addLine(to: CGPoint(x: rect.midX, y: rect.maxY - cut))
+        path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+        path.closeSubpath()
+        return path
+    }
+}
+
+/// The ribbon drawn at rest or kept: a faint gold outline when the
+/// prayer is not kept, a length of red silk when it is.
+struct RibbonMark: View {
+    let kept: Bool
+    var width: CGFloat = 12
+    var restLength: CGFloat = 18
+    var keptLength: CGFloat = 28
+
+    var body: some View {
+        ZStack(alignment: .top) {
+            RibbonShape()
+                .fill(Rubric.red.opacity(kept ? 1 : 0))
+            RibbonShape()
+                .stroke(
+                    kept ? AppColors.gold.opacity(0.35) : AppColors.gold.opacity(0.6),
+                    lineWidth: AppLine.hairline * 1.5
+                )
+        }
+        .frame(width: width, height: kept ? keptLength : restLength)
+        .shadow(color: .black.opacity(kept ? 0.35 : 0), radius: 2, y: 1)
+        .frame(height: keptLength, alignment: .top)
+    }
+}
+
+/// The prayer page's ribbon: tap to keep the prayer, and it drops into
+/// the book; tap again to take it out. What a ribbon does is said once
+/// in words as it drops.
+struct RibbonToggle: View {
+    let prayerID: String
+    var onChange: (Bool) -> Void = { _ in }
+
+    private var store = PrayerBookStore.shared
+
+    init(prayerID: String, onChange: @escaping (Bool) -> Void = { _ in }) {
+        self.prayerID = prayerID
+        self.onChange = onChange
+    }
+
+    var body: some View {
+        let kept = store.isKept(prayerID)
+        Button {
+            withAnimation(.spring(response: 0.42, dampingFraction: 0.72)) {
+                store.toggleRibbon(prayerID)
+            }
+            onChange(store.isKept(prayerID))
+        } label: {
+            // Centred as a bookmark in the toolbar's round glass: a
+            // ribbon hung from the top of the circle read as a letter
+            RibbonMark(kept: kept, width: 12, restLength: 19, keptLength: 22)
+                .frame(width: 44, height: 44)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(QuietGlyphButtonStyle())
+        .sensoryFeedback(.selection, trigger: kept)
+        .accessibilityLabel(kept ? "Kept with a ribbon" : "Keep this prayer with a ribbon")
+        .accessibilityHint(kept ? "Takes the ribbon out" : "It will wait on the Prayer Book's first page")
+    }
+}
+
+// MARK: - Dot Leader
+
+/// The dotted line a printed contents page runs from a title to its page
+struct PrayerBookDotLeader: View {
+    var body: some View {
+        GeometryReader { geometry in
+            Path { path in
+                path.move(to: CGPoint(x: 0, y: geometry.size.height / 2))
+                path.addLine(to: CGPoint(x: geometry.size.width, y: geometry.size.height / 2))
+            }
+            .stroke(AppColors.gold.opacity(0.35), style: StrokeStyle(lineWidth: 1.2, lineCap: .round, dash: [0.5, 5]))
+        }
+        .frame(height: 2)
+    }
+}
+
+// MARK: - Section heading
+
+/// A section of the book's pages: a small engraved label over a hairline
+/// that runs to the edge, with an optional quiet link.
+struct PrayerBookSectionHeading: View {
+    let title: String
+    var note: String? = nil
+    var link: (String, () -> Void)? = nil
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(alignment: .firstTextBaseline) {
+                Text(title)
+                    .font(AppFonts.headlineFont(19))
+                    .foregroundColor(AppColors.goldLight)
+                    .accessibilityAddTraits(.isHeader)
+
+                Spacer(minLength: 8)
+
+                if let link {
+                    Button(action: link.1) {
+                        HStack(spacing: 5) {
+                            Text(link.0.uppercased())
+                                .font(AppFonts.labelFont(9.5))
+                                .tracking(2)
+                            AppIcon("ph-caret-right", size: 9)
+                        }
+                        .foregroundColor(AppColors.gold.opacity(0.8))
+                        .frame(minHeight: 44)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(QuietGlyphButtonStyle())
+                }
+            }
+
+            if let note {
+                Text(note)
+                    .font(AppFonts.readingItalicFont(14))
+                    .foregroundColor(AppColors.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+    }
+}
+
+// MARK: - Prayer Row
+
+/// One prayer in a ruled list: its name, its Latin, and the reader's own
+/// marks at the trailing edge — a ribbon if kept, BY HEART if known,
+/// and whatever the list wants to say of it (OF THE SEASON).
+struct BookPrayerRow: View {
+    let prayer: BookPrayer
+    var number: Int? = nil
+    var badge: String? = nil
+    var showsRule: Bool = true
+    let action: () -> Void
+
+    private var store = PrayerBookStore.shared
+
+    init(
+        prayer: BookPrayer,
+        number: Int? = nil,
+        badge: String? = nil,
+        showsRule: Bool = true,
+        action: @escaping () -> Void
+    ) {
+        self.prayer = prayer
+        self.number = number
+        self.badge = badge
+        self.showsRule = showsRule
+        self.action = action
+    }
+
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 0) {
+                HStack(alignment: .center, spacing: 14) {
+                    if let number {
+                        Text(LiturgicalCalendarFormat.roman(number))
+                            .font(AppFonts.titleFont(13))
+                            .foregroundColor(AppColors.gold.opacity(0.85))
+                            .frame(width: 30, alignment: .leading)
+                    }
+
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(prayer.title)
+                            .font(AppFonts.readingFont(17))
+                            .foregroundColor(AppColors.cream)
+                            .multilineTextAlignment(.leading)
+                            .fixedSize(horizontal: false, vertical: true)
+
+                        if let latin = prayer.latinTitle, latin != prayer.title {
+                            Text(latin)
+                                .font(AppFonts.readingItalicFont(13.5))
+                                .foregroundColor(AppColors.textSecondary)
+                                .lineLimit(1)
+                        }
+                    }
+
+                    Spacer(minLength: 8)
+
+                    HStack(spacing: 10) {
+                        if let badge {
+                            Text(badge.uppercased())
+                                .font(AppFonts.labelFont(8))
+                                .tracking(1.6)
+                                .foregroundColor(AppColors.gold)
+                                .fixedSize()
+                        }
+                        if store.isByHeart(prayer.id) {
+                            ByHeartMark()
+                        }
+                        if store.isKept(prayer.id) {
+                            RibbonMark(kept: true, width: 7, restLength: 12, keptLength: 16)
+                                .accessibilityLabel("Kept")
+                        }
+                        AppIcon("ph-caret-right", size: 11)
+                            .foregroundColor(AppColors.gold.opacity(0.5))
+                    }
+                }
+                .padding(.vertical, 12)
+                .frame(minHeight: 56)
+
+                if showsRule {
+                    Rectangle()
+                        .fill(AppColors.gold.opacity(0.12))
+                        .frame(height: AppLine.hairline)
+                }
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(SacredCardButtonStyle())
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isButton)
+    }
+}
+
+/// "BY HEART" beside a sealed check — the reader's own mark, never a score
+struct ByHeartMark: View {
+    var body: some View {
+        HStack(spacing: 4) {
+            AppIcon("ph-seal-check-fill", size: 11)
+            Text("BY HEART")
+                .font(AppFonts.labelFont(7.5))
+                .tracking(1.4)
+        }
+        .foregroundColor(AppColors.gold.opacity(0.85))
+        .fixedSize()
+        .accessibilityLabel("Known by heart")
+    }
+}
+
+// MARK: - Order Tile
+
+/// An order of prayer standing on the page: its glyph, when it is
+/// prayed, its name, and how many prayers it holds. Outlined, never
+/// filled, as every surface of the Chapel is.
+struct PrayerOrderTile: View {
+    let order: PrayerOrder
+    let action: () -> Void
+
+    private var store = PrayerBookStore.shared
+
+    init(order: PrayerOrder, action: @escaping () -> Void) {
+        self.order = order
+        self.action = action
+    }
+
+    var body: some View {
+        let offered = store.wasOffered(order.id)
+        let count = order.prayers().count
+
+        Button(action: action) {
+            VStack(alignment: .leading, spacing: 0) {
+                HStack(alignment: .top) {
+                    AppIcon(order.icon, size: 20)
+                        .foregroundColor(AppColors.gold)
+                    Spacer()
+                    if offered {
+                        AppIcon("ph-seal-check-fill", size: 14)
+                            .foregroundColor(AppColors.gold.opacity(0.85))
+                            .accessibilityLabel("Offered today")
+                    }
+                }
+
+                Spacer(minLength: 14)
+
+                Text(order.occasion.uppercased())
+                    .font(AppFonts.labelFont(8))
+                    .tracking(1.8)
+                    .foregroundColor(AppColors.gold.opacity(0.7))
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Text(order.title(on: Date()))
+                    .font(AppFonts.headlineFont(15))
+                    .foregroundColor(AppColors.cream)
+                    .multilineTextAlignment(.leading)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.85)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, 5)
+
+                Text(count == 1 ? "One prayer" : "\(count) prayers")
+                    .font(AppFonts.readingItalicFont(12.5))
+                    .foregroundColor(AppColors.textSecondary)
+                    .padding(.top, 3)
+            }
+            .padding(14)
+            .frame(maxWidth: .infinity, minHeight: 138, alignment: .topLeading)
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(AppColors.gold.opacity(0.24), lineWidth: AppLine.hairline)
+            )
+            .contentShape(RoundedRectangle(cornerRadius: 16))
+        }
+        .buttonStyle(SacredCardButtonStyle())
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(order.title(on: Date())), \(order.occasion), \(count) prayers\(offered ? ", offered today" : "")")
+        .accessibilityAddTraits(.isButton)
+    }
+}
+
+// MARK: - The Day's Three Hours
+
+/// Morning, the Angelus and Night as three stations on one line: the
+/// hour it is lit, an hour offered today sealed, and each a door.
+struct PrayerHoursStrip: View {
+    let now: Date
+    let onSelect: (PrayerOrder) -> Void
+
+    private var store = PrayerBookStore.shared
+
+    init(now: Date, onSelect: @escaping (PrayerOrder) -> Void) {
+        self.now = now
+        self.onSelect = onSelect
+    }
+
+    var body: some View {
+        let current = PrayerBook.dayOrder(at: now)
+        HStack(spacing: 0) {
+            ForEach(Array(PrayerBook.dayOrders.enumerated()), id: \.element.id) { index, order in
+                if index > 0 {
+                    Rectangle()
+                        .fill(AppColors.gold.opacity(0.18))
+                        .frame(height: AppLine.hairline)
+                        .frame(maxWidth: .infinity)
+                        .padding(.bottom, 26)
+                }
+                station(order, lit: order.id == current.id)
+            }
+        }
+    }
+
+    private func station(_ order: PrayerOrder, lit: Bool) -> some View {
+        let offered = store.wasOffered(order.id, on: now)
+        return Button { onSelect(order) } label: {
+            VStack(spacing: 8) {
+                ZStack {
+                    Circle()
+                        .strokeBorder(AppColors.gold.opacity(lit ? 0.9 : 0.3), lineWidth: lit ? 1.2 : AppLine.hairline)
+                        .background(Circle().fill(AppColors.gold.opacity(lit ? 0.12 : 0)))
+                        .frame(width: 40, height: 40)
+                        .shadow(color: AppColors.gold.opacity(lit ? 0.45 : 0), radius: 8)
+                    AppIcon(offered ? "ph-seal-check-fill" : order.icon, size: 17)
+                        .foregroundColor(AppColors.gold.opacity(lit || offered ? 1 : 0.55))
+                }
+                Text(shortName(order).uppercased())
+                    .font(AppFonts.labelFont(8.5))
+                    .tracking(1.6)
+                    .foregroundColor(lit ? AppColors.goldLight : AppColors.textSecondary)
+                    .fixedSize()
+            }
+            .frame(minWidth: 64, minHeight: 44)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(QuietGlyphButtonStyle())
+        .accessibilityLabel("\(order.title(on: now))\(lit ? ", now" : "")\(offered ? ", offered today" : "")")
+    }
+
+    private func shortName(_ order: PrayerOrder) -> String {
+        switch order.id {
+        case PrayerBook.morningOrderID: return "Morning"
+        case PrayerBook.angelusOrderID: return PrayerBook.isEastertide(now) ? "Regina Cæli" : "Angelus"
+        default: return "Night"
+        }
+    }
+}
+
+// MARK: - Plain words
+
+/// A prayer's words with the book's marks taken out — for learning it by
+/// heart, where a ℣ or a rubric is not something to memorise.
+enum PrayerWords {
+
+    /// The prayer's lines as they are said, stanza by stanza: rubrics
+    /// dropped, ℣ ℟ ✠ and the mediant's asterisk removed, and a litany's
+    /// response said after every invocation beneath its head.
+    static func stanzas(of text: String) -> [[String]] {
+        var result: [[String]] = []
+        var current: [String] = []
+        var response: String?
+
+        func flush() {
+            if !current.isEmpty { result.append(current) }
+            current = []
+            response = nil
+        }
+
+        for raw in text.components(separatedBy: "\n") {
+            let line = raw.trimmingCharacters(in: .whitespaces)
+            if line.isEmpty { flush(); continue }
+            if PrayerMarkup.isRubric(line) { continue }
+
+            if PrayerMarkup.isLitany(line) {
+                let parts = PrayerMarkup.litanyParts(line)
+                response = parts.response
+                current.append(clean("\(parts.invocation) \(parts.response)"))
+            } else if let response, !line.hasPrefix("℣"), !line.hasPrefix("℟") {
+                current.append(clean("\(line) \(response)"))
+            } else {
+                current.append(clean(line))
+            }
+        }
+        flush()
+        return result.filter { !$0.isEmpty }
+    }
+
+    private static func clean(_ line: String) -> String {
+        line
+            .replacingOccurrences(of: "℣.", with: "")
+            .replacingOccurrences(of: "℟.", with: "")
+            .replacingOccurrences(of: "℣", with: "")
+            .replacingOccurrences(of: "℟", with: "")
+            .replacingOccurrences(of: "✠", with: "")
+            .replacingOccurrences(of: " * ", with: " ")
+            .replacingOccurrences(of: "  ", with: " ")
+            .trimmingCharacters(in: .whitespaces)
+    }
+}

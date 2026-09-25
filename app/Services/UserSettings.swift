@@ -564,12 +564,15 @@ final class UserSettings {
     /// Scriptural Rosary stands second, under the Rosary it is a way of
     /// praying: the tray is where a person looks for a devotion, and a
     /// devotion that isn't there is one they never find. The Rosary
-    /// Aloud stands under it, another way of praying the same beads.
+    /// Aloud stands under it, another way of praying the same beads. The
+    /// Angelus stands after the Rosary's acts: the Prayer Book's one act
+    /// a person may want at any of three bells a day.
     var prayTrayRaw: [String] = [
         PrayerShortcut.todaysRosary.rawValue,
         PrayerShortcut.scripturalRosary.rawValue,
         PrayerShortcut.rosaryAloud.rawValue,
         PrayerShortcut.chooseMeditation.rawValue,
+        PrayerShortcut.angelus.rawValue,
         PrayerShortcut.mass.rawValue,
         PrayerShortcut.office.rawValue
     ] {
@@ -718,6 +721,17 @@ final class UserSettings {
                 prayTrayRaw.insert(aloud, at: after)
             }
             d.set(true, forKey: aloudKey)
+        }
+        // The same, once, for the Angelus: before the Mass if the tray
+        // holds it, else at the end
+        let angelusKey = "userSettings.prayTrayOfferedAngelus"
+        if !d.bool(forKey: angelusKey) {
+            let angelus = PrayerShortcut.angelus.rawValue
+            if !prayTrayRaw.contains(angelus) {
+                let at = prayTrayRaw.firstIndex(of: PrayerShortcut.mass.rawValue) ?? prayTrayRaw.count
+                prayTrayRaw.insert(angelus, at: at)
+            }
+            d.set(true, forKey: angelusKey)
         }
         if let rule = d.stringArray(forKey: "userSettings.ruleItems") {
             ruleItemsRaw = rule

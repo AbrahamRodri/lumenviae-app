@@ -201,6 +201,12 @@ struct ExploreView: View {
             }
         }
 
+        // The Prayer Book: the day's three hours on one line, the hour it
+        // is lit, and the orders kept for an occasion as a row to hand
+        section("The Prayer Book", link: ("Open", { router.push(.prayerBook) })) {
+            prayerBookShelf
+        }
+
         // Each kind of door carries its own shape: the two liturgical
         // books as a diptych — the same pairing the home page's shelf
         // makes — the books to read as a row of standing covers, and
@@ -297,9 +303,19 @@ struct ExploreView: View {
         let readingHits = namedHits.isEmpty
             ? shelved.filter { $0.shelf.title.lowercased().contains(needle) }
             : namedHits
+        // The Prayer Book's orders by name or occasion, and its prayers
+        // by name, Latin name, or — for a word of four letters or more —
+        // their words
+        let orderHits = PrayerBook.orders.filter {
+            $0.title(on: Date()).lowercased().contains(needle)
+                || $0.occasion.lowercased().contains(needle)
+                || $0.latinTitle.lowercased().contains(needle)
+        }
+        let prayerHits = PrayerBook.search(needle)
 
         return ZStack(alignment: .top) {
-        if categories.isEmpty && libraryHits.isEmpty && readingHits.isEmpty && setHits.isEmpty {
+        if categories.isEmpty && libraryHits.isEmpty && readingHits.isEmpty && setHits.isEmpty
+            && orderHits.isEmpty && prayerHits.isEmpty {
             if isLoadingSets {
                 // The set index can be seconds away on a cold server.
                 // Saying nothing matched before it lands is a confident
@@ -390,6 +406,34 @@ struct ExploreView: View {
                     .transition(.opacity)
                 }
 
+                if !orderHits.isEmpty || !prayerHits.isEmpty {
+                    section("Prayers") {
+                        VStack(alignment: .leading, spacing: 0) {
+                            ForEach(orderHits) { order in
+                                LedgerDoorRow(title: order.title(on: Date()), note: order.occasion, icon: order.icon) {
+                                    router.push(.prayerOrder(id: order.id))
+                                }
+                            }
+                            ForEach(prayerHits.prefix(Self.readingLimit)) { prayer in
+                                LedgerDoorRow(
+                                    title: prayer.title,
+                                    note: prayer.latinTitle ?? PrayerBook.homeChapter(of: prayer.id)?.title,
+                                    icon: PrayerBook.homeChapter(of: prayer.id)?.icon
+                                ) {
+                                    router.push(.devotionPrayer(id: prayer.id))
+                                }
+                            }
+                            if prayerHits.count > Self.readingLimit {
+                                Text("And \(prayerHits.count - Self.readingLimit) more — add a word to narrow the search.")
+                                    .font(AppFonts.italicFont(13))
+                                    .foregroundColor(AppColors.textSecondary)
+                                    .padding(.top, 8)
+                            }
+                        }
+                    }
+                    .transition(.opacity)
+                }
+
                 if !setHits.isEmpty {
                     section("Meditations") {
                         setRows(setHits)
@@ -457,6 +501,8 @@ struct ExploreView: View {
                          matchText: "marian theology library dogmas apparitions saints") { router.push(.marianLibrary) },
             LibraryEntry(icon: "ch-monstrance", title: "Carlo Acutis",
                          matchText: "carlo acutis eucharist digital altar saint") { router.push(.carloAcutis) },
+            LibraryEntry(icon: "ch-praying-hands", title: "The Prayer Book",
+                         matchText: "prayer book prayers enchiridion morning night angelus grace confession examination conscience mass communion litany litanies marian our lady latin novena") { router.push(.prayerBook) },
             LibraryEntry(icon: "ph-flame", title: "Prayer Record",
                          matchText: "sacred record progress streak history calendar") { router.switchTo(.progress) }
         ]
@@ -701,6 +747,48 @@ struct ExploreView: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel("New to the Rosary? How to Pray")
+    }
+
+    // MARK: - The Prayer Book
+
+    /// The day's three hours, the hour it is lit, over the orders kept for
+    /// an occasion as a row of small plates
+    private var prayerBookShelf: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            PrayerHoursStrip(now: Date()) { order in
+                router.push(.prayerOrder(id: order.id))
+            }
+            .frame(maxWidth: .infinity)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 10) {
+                    ForEach(PrayerBook.occasionOrders) { order in
+                        Button {
+                            router.push(.prayerOrder(id: order.id))
+                        } label: {
+                            HStack(spacing: 8) {
+                                AppIcon(order.icon, size: 14)
+                                    .foregroundColor(AppColors.gold)
+                                Text(order.title(on: Date()))
+                                    .font(AppFonts.readingFont(15))
+                                    .foregroundColor(AppColors.cream)
+                                    .lineLimit(1)
+                            }
+                            .padding(.horizontal, 14)
+                            .frame(minHeight: 44)
+                            .overlay(
+                                Capsule()
+                                    .strokeBorder(AppColors.gold.opacity(0.28), lineWidth: AppLine.hairline)
+                            )
+                            .contentShape(Capsule())
+                        }
+                        .buttonStyle(SacredCardButtonStyle())
+                    }
+                }
+                .padding(.horizontal, 20)
+            }
+            .padding(.horizontal, -20)
+        }
     }
 
     // MARK: - The Liturgy

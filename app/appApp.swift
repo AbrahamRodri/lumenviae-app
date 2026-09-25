@@ -11,6 +11,7 @@
 import SwiftUI
 import SwiftData
 import UIKit
+import UserNotifications
 
 @main
 struct appApp: App {
@@ -31,6 +32,10 @@ struct appApp: App {
     init() {
         FontRegistrar.registerBundledFonts()
         TrueDevotionLibrary.preload()
+        // Before launch finishes, so a tap on the Angelus bell that
+        // launched the app is heard
+        UNUserNotificationCenter.current().delegate = PrayerNotificationRouter.shared
+        PrayerBookStore.shared.refreshAngelusBell()
     }
 
     var body: some Scene {

@@ -131,6 +131,12 @@ struct ContentView: View {
             router.shortcutRequest = nil
             perform(request)
         }
+        // The Angelus bell's notification, tapped: straight to the Angelus
+        .onChange(of: PrayerBookStore.shared.angelusRequested, initial: true) { _, requested in
+            guard requested else { return }
+            PrayerBookStore.shared.angelusRequested = false
+            perform(.angelus)
+        }
         .task {
             // Cleared before the wait, as it is taken, so no later
             // appearance — another window on the same app state — finds a
@@ -210,6 +216,12 @@ struct ContentView: View {
 
         case .consecration:
             router.selectedTab = .consecration
+
+        // The Prayer Book's orders of the day, straight to prayer
+        case .morningPrayers, .angelus, .nightPrayers:
+            if let id = shortcut.prayerOrderID, let order = PrayerBook.order(id) {
+                router.push(.prayAlong(.order(order)))
+            }
         }
     }
 
@@ -364,8 +376,10 @@ struct ContentView: View {
         case .libraryReading(let id):
             LibraryReadingView(entryID: id)
 
+        // Every door to a prayer in the app opens it in the Prayer Book,
+        // where it can be kept, prayed aloud, and learned by heart
         case .devotionPrayer(let id):
-            DevotionPrayerView(prayerID: id)
+            BookPrayerView(prayerID: id)
 
         case .carloAcutis:
             CarloAcutisView()
@@ -389,6 +403,19 @@ struct ContentView: View {
         // its own way out
         case .scripturalRosaryPrayer(let launch):
             ScripturalRosaryPrayerView(launch: launch)
+
+        case .prayerBook:
+            PrayerBookView()
+
+        case .prayerBookChapter(let id):
+            PrayerBookChapterView(chapterID: id)
+
+        case .prayerOrder(let id):
+            PrayerOrderView(orderID: id)
+
+        // A player, like the Rosary's
+        case .prayAlong(let launch):
+            PrayAlongView(launch: launch)
         }
     }
 }

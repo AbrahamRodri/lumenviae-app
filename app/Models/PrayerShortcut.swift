@@ -30,6 +30,10 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
     case mass = "mass"
     case office = "office"
     case consecration = "consecration"
+    // The Prayer Book's three orders of the day
+    case morningPrayers = "morning_prayers"
+    case angelus = "angelus"
+    case nightPrayers = "night_prayers"
 
     var id: String { rawValue }
 
@@ -43,6 +47,9 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
         case .mass:             return "The Mass"
         case .office:           return "The Divine Office"
         case .consecration:     return "The Consecration"
+        case .morningPrayers:   return "Morning Prayers"
+        case .angelus:          return PrayerBook.isEastertide(Date()) ? "The Regina Cæli" : "The Angelus"
+        case .nightPrayers:     return "Night Prayers"
         }
     }
 
@@ -58,6 +65,9 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
         case .mass:             return "Today's propers · 1962 Missal"
         case .office:           return "The canonical hours · 1962 Breviary"
         case .consecration:     return "The 33-day preparation"
+        case .morningPrayers:   return "The day offered before it is begun"
+        case .angelus:          return "At six, noon and six, when the bell rings"
+        case .nightPrayers:     return "The day examined, and Our Lady's antiphon"
         }
     }
 
@@ -76,6 +86,9 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
         case .mass:             return "ch-altar"
         case .office:           return "ph-clock"
         case .consecration:     return "ch-consecration"
+        case .morningPrayers:   return "ph-sun-horizon"
+        case .angelus:          return "ph-bell"
+        case .nightPrayers:     return "ph-moon-stars"
         }
     }
 
@@ -92,6 +105,19 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
         case .mass:             return "The Mass"
         case .office:           return "The Office"
         case .consecration:     return "Consecration"
+        case .morningPrayers:   return "Morning Prayers"
+        case .angelus:          return PrayerBook.isEastertide(Date()) ? "Regina Cæli" : "The Angelus"
+        case .nightPrayers:     return "Night Prayers"
+        }
+    }
+
+    /// The Prayer Book's order this act prays, if it is one
+    var prayerOrderID: String? {
+        switch self {
+        case .morningPrayers: return PrayerBook.morningOrderID
+        case .angelus:        return PrayerBook.angelusOrderID
+        case .nightPrayers:   return PrayerBook.nightOrderID
+        default:              return nil
         }
     }
 
@@ -108,6 +134,10 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
     var isRuleEligible: Bool {
         switch self {
         case .todaysRosary, .scripturalRosary, .rosaryAloud, .sevenSorrows:
+            return true
+        // Prayed through to their Amen on the pray-along screen, which
+        // marks them offered — so the Chapel can ask about them honestly
+        case .morningPrayers, .angelus, .nightPrayers:
             return true
         case .mass, .office, .consecration, .chooseMeditation:
             return false

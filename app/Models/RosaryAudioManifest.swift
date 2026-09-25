@@ -39,8 +39,13 @@ struct RosaryAudioManifest: Codable, Equatable {
     /// The verses for each mystery, in bead order, under the same key
     let verses: [String: [RosaryAudioClip]]?
 
+    /// The Prayer Book's prayers, keyed by the book's prayer ids
+    /// (`PrayerBook`). Served only when asked for (`include=book`); the
+    /// prayers the Rosary also says are `prayers`, recorded once.
+    var book: [String: RosaryAudioClip]? = nil
+
     enum CodingKeys: String, CodingKey {
-        case voice, version, prayers, announcements, verses
+        case voice, version, prayers, announcements, verses, book
         case expiresAt = "expires_at"
     }
 
