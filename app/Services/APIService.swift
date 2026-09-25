@@ -9,7 +9,9 @@
 //  - GET  /meditations/:id/audio  - Freshly signed narration URL + expiry
 //                                   (?voice=slug for one voice)
 //  - GET  /voices                 - The narration voices, default first
-//  - GET  /prayers/:id/audio      - Presigned audio URL
+//  - GET  /prayers/:id/audio      - Presigned chant URL for a prayer
+//  - GET  /rosary/audio           - The spoken Rosary's clips, signed
+//                                   (?voice=slug, &include=kinds)
 //  - POST /completions            - Record prayer completion
 //
 

@@ -155,20 +155,4 @@ struct BilingualSection: Identifiable {
         self.icon = icon
         self.items = items
     }
-
-    /// Convert to DevotionSection for display
-    /// Note: Uses a stable ID derived from this section's ID to ensure consistent identity across renders
-    func toDevotionSection(for language: PrayerLanguage) -> DevotionSection {
-        DevotionSection(
-            id: self.id, // Use the same ID so expanded state persists
-            title: title,
-            icon: icon,
-            items: items.map { prayer in
-                DevotionItem(
-                    title: prayer.title,
-                    content: prayer.formattedContent(for: language)
-                )
-            }
-        )
-    }
 }

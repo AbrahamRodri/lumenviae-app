@@ -133,10 +133,13 @@ from the web app's vocabulary (`LumenViae.Rosary.Labels`): Considerations
 (shown as **Reflections**), Contemplative, Saints, Scriptural, Intentions —
 see Content Requirements below. As of Sept 2026 the Saints sets are
 Liguori, Ignatius, Chrysostom, Newman, Augustine and Aquinas, beside
-Sheen, Emmerich, Agreda, Faber, Guéranger and the Servants of Mary; **no
-set carries Intentions yet** — vocation sets ("As a Father", "In Times of
-Suffering") are a content goal, not something to build UI for. The quick
-act's "today's Rosary" picks one of the day's sets at random.
+Sheen, Emmerich, Agreda, Faber, Guéranger and the Servants of Mary. **No
+set carries Intentions**: the backend's curation guide
+(`docs/MEDITATION_CURATION_GUIDE.md`) admits only verbatim text from
+public-domain editions, so originally written vocation sets ("As a
+Father", "In Times of Suffering") are not planned — don't build UI that
+waits for them. The quick act's "today's Rosary" picks one of the day's
+sets at random.
 
 The **Scriptural Rosary** — a verse for every Hail Mary — is not a kind of
 meditation but a devotion of its own, with its own title page and prayer
@@ -612,10 +615,11 @@ write concurrent code here:
   way of praying it. An earlier cut hid the strand until the meditation
   was heard, and switching the counter on mid-meditation then seemed to
   do nothing. The setting has one name and one explanation wherever it
-  is offered — Settings, the playback sheet, the set's title page —
+  is a switch — Settings, the playback sheet, the set's title page —
   `UserSettings.beadCounterTitle` ("Bead counter") and
   `beadCounterDetail(isOn:)`; it had three names and none said what would
-  appear. `ToggleRow` answers a tap anywhere on the row, not only on its
+  appear. Onboarding alone asks it as a choice between two ways of
+  praying ("On the Beads" / "Without the Beads"), each shown working. `ToggleRow` answers a tap anywhere on the row, not only on its
   switch. The one-time `PrayerSwipeHint` ("Swipe down for the next
   bead") waits for the beads to unlock, floating over the painting above
   the controls so its coming and going moves nothing. The Glory Be has no bead of its own: it is drawn
@@ -1316,11 +1320,9 @@ write concurrent code here:
   read · 7 h 26 m left in the book" is drawn only from tracks the
   alignment maps to a chapter, so a finished book really does reach
   zero. A words-per-minute estimate is never allowed: True Devotion
-  has no recording, so its act stays quiet rather than guessing. (Two
-  places still break this and are bugs, not precedents: True Devotion's
-  contents ledger prints each chapter's `estimatedMinutes` as "N MIN",
-  and the consecration day page prints a reading's "N min" — both
-  words ÷ 200.)
+  has no recording, so its act stays quiet rather than guessing — and
+  neither True Devotion's contents nor the consecration day page print a
+  reading time (both once did, words ÷ 200; removed Sept 2026).
 
   The one figure the shelf does keep is **the day's measure**
   (`ReadingDayMeter`, TODAY'S GOAL on a book's page and True Devotion's,
@@ -1385,9 +1387,11 @@ default to Candlelit**:
   sentence, and never given the versal, which falls to the prose beneath it —
   optional drop cap)
   or `PrayerText` (verse/stanza text, including the `|||` bilingual line-pair
-  format) in `DesignSystem/ReadingText.swift`. Spacing comes from
-  `ReadingTypography` and scales with the font size — don't hand-roll
-  `lineSpacing` magic numbers on reading surfaces. Reading blocks are 15–16pt
+  format) in `DesignSystem/ReadingText.swift`. Long-form reading —
+  `ReadingText`, `PrayerText`, and the book readers' `ReaderProseParagraph`
+  — takes its spacing from `ReadingTypography`, which scales with the font
+  size; short blocks (a title, a card's blurb, a verse under a heading)
+  set their own `lineSpacing`. Reading blocks are 15–16pt
   minimum in cards, 17–18pt in immersive readers; tap targets stay ≥44pt.
 - **Prayers are set in a prayer-book grammar** that `PrayerText` reads from
   the text itself (`PrayerMarkup`, same file), so a prayer is written the way
@@ -1418,16 +1422,19 @@ default to Candlelit**:
 ### Icons
 
 Three families in `Assets.xcassets/Icons`, all drawn through `AppIcon`
-(never `Image(...)` at a call site) and all rendered as templates:
+(never `Image("ph-…")` at a call site) and all rendered as templates:
 **`ph-*`** are Phosphor (light, plus `ph-*-fill`); **`ch-*`** are
 Christicons, the devotional glyphs — `stroke-width="1.5"`, round caps and
 joins, on a 24×24 viewBox, except the `-fill` variants and the two
-filled hearts; and **`lv-*`** are drawn for this app (`lv-breviary`,
-`lv-chalice`). A new stroked `ch-*` icon must be stroked at 1.5 or it
-stands heavier than everything beside it. The `lv-*` glyphs were drawn
-at 1.15 to sit level with Phosphor light (`AppIcon.swift` says so), but
-`lv-breviary` has since been redrawn at 1.5 — settle which weight the
-family keeps before drawing another. Note that `qlmanage` cannot preview these
+filled hearts; and **`lv-*`** are drawn for this app, each at the weight
+of the family it sits beside — `lv-chalice` at 1.15 to sit level with
+Phosphor light, `lv-breviary` at 1.5 to sit with the `ch-*` glyphs. A
+new stroked `ch-*` icon must be stroked at 1.5 or it stands heavier than
+everything beside it. SF Symbols appear only where the system's own
+vocabulary is the point — the transport's ±10s skips (glyphs that
+carry a number), the spoken Rosary's failure notice, the Prayer Record
+calendar's prayed-day marker, swipe and menu actions
+(`Label(…, systemImage:)`) — never as a devotional or door glyph. Note that `qlmanage` cannot preview these
 faithfully: it renders a stroke-only SVG blank and *fills* path data
 meant to be stroked, so check a new glyph in the running app.
 
@@ -1439,42 +1446,48 @@ every page-level act and named nothing; the cross now stands on the tab
 bar's Pray medallion alone. The `OrnamentDivider`'s centre cross is an
 ornament, not a control, and stays.
 
-One meaning per glyph. The same door wears the same icon everywhere it
-appears — the Missal is `ch-altar` on every surface, the Office
-`ph-clock`, the Marian Library `ch-lily`, In Scripture `lv-breviary`
-(the Scriptural Rosary keeps `ch-bible`), the Marian dogmas
-`ph-star-fill`, the saints `ph-user`, the Consecration
+One glyph per door. The same door wears the same icon everywhere it
+appears — the Missal is `ch-altar` on every surface (the Liturgy tile,
+which holds the Missal and the Office together, wears it too), the
+Office `ph-clock`, the Marian Library `ch-lily`, In Scripture
+`lv-breviary` (the Scriptural Rosary keeps `ch-bible`), the Marian
+dogmas `ph-star-fill`, the saints `ph-user`, the Consecration
 `ch-consecration` (the Marian monogram, a cross over an M; the crown is
-True Devotion's alone) — and a glyph standing for a
-devotion is the one that devotion's own iconography uses:
-`ch-sacred-heart` is Christ's and belongs to the Sacred Heart alone,
-while the Seven Sorrows take `ch-sorrowful-heart`, Mary's heart pierced
-by Simeon's sword. (The code does not yet keep this everywhere: as of
-Sept 2026 `ch-sacred-heart` marks True Devotion's "The Spirit of This
-Devotion" and the consecration onboarding's "The Gift"; `ch-lily` also
-marks the Memorare, Our Lady's Psalter and the Cana reading; `ph-clock`
-also marks the reminder-time row. Fix those; don't copy them.)
+True Devotion's alone). A door's glyph may also mark content of its own
+kind inside a page, never a different door: `ch-lily` is Mary's lily,
+so it also marks the Memorare, Our Lady's Psalter and the Cana reading;
+`ph-clock` is the hours, so it also marks the reminder's time. A glyph
+standing for a devotion is the one that devotion's own iconography
+uses: the Seven Sorrows take `ch-sorrowful-heart`, Mary's heart pierced
+by Simeon's sword, wherever they appear; `ch-sacred-heart`, the heart
+aflame, marks the heart of the Marian consecration — True Devotion's
+"The Spirit of This Devotion" and the consecration onboarding's "The
+Gift".
 
 ### Motion
 
 `DesignSystem/Motion.swift` holds the app's named motions — the `Motion`
-enum — and a call site should reach for one before writing a duration
-(about a hundred literal `.easeOut(duration:)`-style calls predate this
-and remain, most in onboarding, the Chapel and the completion screen;
-don't add to them): `beadSlide` and `beadSettle` (the strand), `words` (a bead's
+enum. A motion that recurs — a press, a crossfade, a panel arriving,
+anything the prayer screens do — takes a named one; a choreographed
+one-off sequence (onboarding's slides, the Chapel's arrange mode, the
+completion screen's seal, a reader's fades) times itself with literal
+curves, as about a hundred call sites do. The named motions:
+`beadSlide` and `beadSettle` (the strand), `words` (a bead's
 name, verse or cue changing), `decadeTurn` (painting, kicker and title
 crossfading to the next mystery), `chrome`, `panel` (a reader or tray
 arriving), `settle` (a press or toggle landing), `crossfade` (content
 changing in place), and `ease(_:)`/`travel(_:)` — the design system's
-cubic-bezier curves the missal and office readers use. Springs settle
-and barely overshoot (damping ≥ 0.74 — the milestone celebration's 0.5
-"bounce" on the completion screen, the consecration completion and the
-streak widget are the exceptions to fix, not follow); the two press styles (`SacredCardButtonStyle`,
+cubic-bezier curves the missal and office readers use. Springs settle:
+the named ones damp at 0.74–0.86 and any other at 0.7 or more, so they
+barely overshoot. Only a celebration bounces — the milestone card and
+the seal's check on the completion screen, the consecration's
+completion, the streak widget's flame (damping 0.5–0.65); nothing a
+person uses to pray does. The two press styles (`SacredCardButtonStyle`,
 `GoldCTAButtonStyle`) share one beat, and bare glyphs — the header's
 glass, a month arrow, a tab — take `QuietGlyphButtonStyle` so no chrome
 tap feels dead.
 
-Three rules, learned the hard way:
+Four rules, learned the hard way:
 
 - **Words that change crossfade in place.** A `Text` whose value changes
   gets `.contentTransition(.opacity)` (or `.numericText()` for a count,
@@ -1540,9 +1553,11 @@ transition entirely.
   which can never sit on the pixel grid: it straddled two rows at half
   strength and swelled wherever a rounded corner's curve flattened into
   the edge, so a card's border read thick at its corners and faint along
-  its sides. Never write a fractional literal line width —
-  `lineWidth: 0.5`, `frame(height: 0.5)`, or the 0.6s and 0.8s that
-  still survive in `BookCover`, `PendantCrossView` and `ExploreView`.
+  its sides. Never write `lineWidth: 0.5` or `frame(height: 0.5)` for a
+  rule or a border. A stroke that is part of a *drawing* rather than a
+  rule — the tooled frame on a book's cloth (`BookCover`), the pendant
+  cross's metalwork (`PendantCrossView`), the rim of Explore's small
+  arched paintings — is drawn at the weight the drawing needs (0.6–0.8).
 - **Every `.sheet` carries `.presentationBackground(AppColors.background)`**. A sheet's own container is the
   system's white; the content's dark ground is clipped by the same
   rounded rim, and at that rim's anti-aliased edge the white shows

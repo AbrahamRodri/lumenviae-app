@@ -63,8 +63,8 @@ final class BookReadingProgress {
     /// "Chapter IX", "Prologue", "Book X".
     ///
     /// Stored rather than derived because the surfaces that want to name
-    /// a reader's place — the Me page's card above all — must not have to
-    /// fetch and parse a whole book to draw one line. An index alone
+    /// a reader's place — the Chapel's Reading tile above all — must not
+    /// have to fetch and parse a whole book to draw one line. An index alone
     /// would have them counting: the Story of a Soul's tenth unit is
     /// Chapter IX, because a Prologue stands before it.
     var lastChapterTitle: String = ""

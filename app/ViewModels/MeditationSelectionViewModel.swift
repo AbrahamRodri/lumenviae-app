@@ -190,8 +190,10 @@ final class MeditationSelectionViewModel {
             }
         }
 
+        // The bundled luminous set stands after the server's, and is
+        // there even with no signal and nothing downloaded
         if category == .luminous {
-            meditationSets.insert(LuminousMeditationData.summary, at: 0)
+            meditationSets.append(LuminousMeditationData.summary)
             errorMessage = nil
         }
 

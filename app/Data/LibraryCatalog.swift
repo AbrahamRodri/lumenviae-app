@@ -26,14 +26,12 @@ enum LibraryCatalog {
 
         // Benham's translation, cut on its own "CHAPTER I" headings
         // under the four "THE FIRST BOOK" part headers: 25 + 12 + 59 +
-        // 18 = 114 chapters, exactly as à Kempis wrote them. Benham
-        // gathers each chapter's scripture citations onto one line at
-        // its foot, marked "(1)", so they are lifted into the apparatus
-        // and split there.
-        //
-        // The recording gathers ten chapters to a file and says so in
-        // its titles ("Book 3 - Chapters 21-30"), so a chapter resolves
-        // to the file that holds it.
+        // 18 = 114 chapters, exactly as à Kempis wrote them, plus the
+        // exhortation to Holy Communion that opens Book IV before its
+        // first chapter — 115 units, the exhortation one of its own (see
+        // LibraryBookParser). Benham gathers each chapter's scripture
+        // citations onto one line at its foot, marked "(1)", so they are
+        // lifted into the apparatus and split there.
         LibraryBookInfo(
             id: "imitation-of-christ",
             title: "The Imitation of Christ",
@@ -60,10 +58,12 @@ enum LibraryCatalog {
         // Taylor's translation. The autobiography proper is the Prologue
         // (Thérèse's parentage and birth), the eleven chapters she
         // wrote, and the Prioress's Epilogue on her death — thirteen
-        // units, which is exactly what the recording holds, track for
+        // units, each with its own reading in the recording, track for
         // track. What follows the Epilogue — the Counsels, the letters,
         // the prayers, the poems — is an appendix this reader cannot
-        // set, and the recording does not carry it either.
+        // set, so `stopPattern` ends the text before it. The recording
+        // does carry it, as tracks 15–21; those tracks map to no chapter
+        // and are never offered.
         //
         // `startPattern` is load-bearing: without it the contents page's
         // own "EPILOGUE" line opens a false chapter that swallows the

@@ -10,8 +10,9 @@
 //  - "ch-*"      Christicons (free commercial) — rosary, chalice,
 //                monstrance, and other deeply Catholic glyphs
 //  - "lv-*"      Drawn for this app where neither family read correctly
-//                at 17pt. Stroked at 1.15 on a 24 viewBox to sit level
-//                with Phosphor light, not at the ch-* family's 1.5.
+//                at 17pt, on a 24 viewBox, each stroked at the weight of
+//                the family it sits beside: lv-chalice at 1.15, level
+//                with Phosphor light; lv-breviary at 1.5, with ch-*.
 //
 //  All assets are template-rendered, so tint with .foregroundColor
 //  or .foregroundStyle exactly like an SF Symbol.

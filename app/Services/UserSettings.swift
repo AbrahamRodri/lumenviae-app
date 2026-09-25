@@ -520,26 +520,6 @@ final class UserSettings {
         ReminderSound.all.first { $0.fileName == reminderSoundFile } ?? .default
     }
 
-    // MARK: - Personal Page (Me)
-
-    /// The name the Me page greets. Empty means the default salutation.
-    var displayName: String = "" {
-        didSet { UserDefaults.standard.set(displayName, forKey: "userSettings.displayName") }
-    }
-
-    /// The sections on the Me page, in the user's order. Only enabled
-    /// sections are stored; removing one deletes nothing underneath it —
-    /// a hidden streak keeps counting, hidden reflections keep saving.
-    var meWidgetsRaw: [String] = MeWidget.defaultOrder.map(\.rawValue) {
-        didSet { UserDefaults.standard.set(meWidgetsRaw, forKey: "userSettings.meWidgets") }
-    }
-
-    var meWidgets: [MeWidget] { MeWidget.decode(meWidgetsRaw) }
-
-    func setMeWidgets(_ widgets: [MeWidget]) {
-        meWidgetsRaw = widgets.map(\.rawValue)
-    }
-
     // MARK: - Chapel
 
     /// The Chapel page's layout: every tile's order, width, and whether
@@ -631,47 +611,6 @@ final class UserSettings {
         ruleItemsRaw = chosen + kept
     }
 
-    /// Day stamp the manual rule checks belong to. Checks from an earlier
-    /// day are ignored rather than erased — the rule starts each morning
-    /// unmarked, and yesterday is never called a failure.
-    private var ruleCheckedDate: String = "" {
-        didSet { UserDefaults.standard.set(ruleCheckedDate, forKey: "userSettings.ruleCheckedDate") }
-    }
-
-    /// Raw values of rule items hand-checked today (the acts the app
-    /// cannot see finish on its own, like the Mass or an Office hour).
-    private var ruleCheckedRaw: [String] = [] {
-        didSet { UserDefaults.standard.set(ruleCheckedRaw, forKey: "userSettings.ruleChecked") }
-    }
-
-    private static let dayStampFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        return formatter
-    }()
-
-    private var todayStamp: String {
-        Self.dayStampFormatter.string(from: Date())
-    }
-
-    func isRuleChecked(_ item: PrayerShortcut) -> Bool {
-        ruleCheckedDate == todayStamp && ruleCheckedRaw.contains(item.rawValue)
-    }
-
-    func setRuleChecked(_ item: PrayerShortcut, _ done: Bool) {
-        if ruleCheckedDate != todayStamp {
-            ruleCheckedDate = todayStamp
-            ruleCheckedRaw = []
-        }
-        if done {
-            if !ruleCheckedRaw.contains(item.rawValue) {
-                ruleCheckedRaw.append(item.rawValue)
-            }
-        } else {
-            ruleCheckedRaw.removeAll { $0 == item.rawValue }
-        }
-    }
-
     /// Whether notification permission has been granted
     var notificationAuthorizationGranted: Bool = false
 
@@ -739,9 +678,6 @@ final class UserSettings {
         if d.object(forKey: "userSettings.reminderSound") != nil {
             reminderSoundFile = d.string(forKey: "userSettings.reminderSound") ?? ReminderSound.default.fileName
         }
-        if let name = d.string(forKey: "userSettings.displayName") {
-            displayName = name
-        }
         if d.object(forKey: "userSettings.readingTextScale") != nil {
             readingTextScale = d.double(forKey: "userSettings.readingTextScale")
         }
@@ -749,9 +685,6 @@ final class UserSettings {
             // Normalized on the way in, so a measure stored as its own
             // sentence before the raw values became slugs is kept.
             readingGoalRaw = (ReadingGoal.stored(goal) ?? .quarterHour).rawValue
-        }
-        if let widgets = d.stringArray(forKey: "userSettings.meWidgets") {
-            meWidgetsRaw = widgets
         }
         if let quick = d.string(forKey: "userSettings.prayQuickAction") {
             prayQuickActionRaw = quick
@@ -788,31 +721,6 @@ final class UserSettings {
         }
         if let rule = d.stringArray(forKey: "userSettings.ruleItems") {
             ruleItemsRaw = rule
-        }
-        ruleCheckedDate = d.string(forKey: "userSettings.ruleCheckedDate") ?? ""
-        ruleCheckedRaw = d.stringArray(forKey: "userSettings.ruleChecked") ?? []
-
-        // One-time: the Library card replaced the home screen's menu
-        // button, so a page saved before it existed gains it once —
-        // after that, removing it is the user's choice and sticks.
-        // One-time: the Reading card arrived with the shelf's audio and
-        // place-keeping, so a page saved before it existed gains it once,
-        // under the Library card it belongs beside. After that, removing
-        // it is the user's choice and sticks.
-        if !d.bool(forKey: "userSettings.readingCardMigrated") {
-            d.set(true, forKey: "userSettings.readingCardMigrated")
-            if !meWidgetsRaw.contains(MeWidget.reading.rawValue) {
-                let after = meWidgetsRaw.firstIndex(of: MeWidget.library.rawValue).map { $0 + 1 }
-                meWidgetsRaw.insert(MeWidget.reading.rawValue, at: after ?? meWidgetsRaw.count)
-            }
-        }
-
-        if !d.bool(forKey: "userSettings.libraryCardMigrated") {
-            d.set(true, forKey: "userSettings.libraryCardMigrated")
-            if !meWidgetsRaw.contains(MeWidget.library.rawValue) {
-                let at = min(2, meWidgetsRaw.count)
-                meWidgetsRaw.insert(MeWidget.library.rawValue, at: at)
-            }
         }
 
         chapelCoached = d.bool(forKey: "userSettings.chapelCoached")
@@ -854,15 +762,14 @@ final class UserSettings {
 
     /// The Me page's widget order as the user actually saw it.
     ///
-    /// The Library and Reading cards were each added by a one-time
-    /// migration above, which mutates `meWidgetsRaw` — but that
-    /// assignment happens inside `init`, where `didSet` is suppressed,
-    /// so the insert never reached disk while its `…Migrated` flag did.
-    /// Anyone who has launched a previous build therefore has a stored
-    /// array missing cards their page was showing them, and the flag
-    /// that would fix it is already spent. Reapplying the same two
-    /// rules here is what makes the migration carry over the page they
-    /// had rather than a page they never saw.
+    /// The Library and Reading cards were each added to a stored page
+    /// by a one-time migration in an earlier build's `init` — but inside
+    /// `init` `didSet` is suppressed, so the insert never reached disk
+    /// while its `…Migrated` flag did. Anyone who launched one of those
+    /// builds therefore has a stored array missing cards their page was
+    /// showing them. Reapplying the same two rules here is what makes
+    /// the migration carry over the page they had rather than a page
+    /// they never saw.
     private static func meWidgetsAsShown(_ raw: [String]) -> [String] {
         var widgets = raw
         if !widgets.contains(MeWidget.library.rawValue) {

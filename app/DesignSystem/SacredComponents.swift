@@ -781,19 +781,6 @@ extension View {
     }
 }
 
-// MARK: - Gold CTA Background
-
-extension View {
-
-    /// The horizontal gold pill used for primary actions. Pairs with
-    /// `GoldCTAButtonStyle` for press feedback.
-    func goldCTABackground(cornerRadius: CGFloat = 14) -> some View {
-        self
-            .background(AppColors.goldCTAGradient)
-            .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
-    }
-}
-
 // MARK: - Sacred Card
 
 extension View {

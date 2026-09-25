@@ -524,8 +524,7 @@ final class LibraryListeningSession {
 
     /// How far into a reading the voice had got — "31 min", "1 hr 5
     /// min", "a minute". A bare span, so a caller can set it in its own
-    /// sentence: "31 min in" in the ledger, "31 min into the reading" on
-    /// the Me page.
+    /// sentence: "31 min in" in the contents ledger.
     static func elapsedLabel(_ seconds: Double) -> String {
         let minutes = Int(seconds) / 60
         if minutes < 1 { return "a minute" }

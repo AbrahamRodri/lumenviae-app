@@ -3,8 +3,8 @@
 //  Lumen Viae
 //
 //  The vocabulary of the app's personalization: the devotional acts a
-//  user can reach in one motion, and the sections they can lay out on
-//  their own page.
+//  user can reach in one motion, and the old Me page's sections, which
+//  the Chapel's migration still reads.
 //
 //  One enum feeds three surfaces — the Pray button's quick tap, the
 //  press-and-hold tray beneath it, and the Rule of Prayer on the
@@ -122,55 +122,18 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
 
 // MARK: - MeWidget
 
-/// A section the user can place on their Me page, in their own order.
-/// A stored raw value this build no longer knows (a removed section) is
-/// dropped on decode rather than crashing the layout.
-enum MeWidget: String, CaseIterable, Identifiable {
+/// A section of the old Me page, which the Chapel replaced. Nothing
+/// draws these any more: they are kept so the Chapel's one-time
+/// migration (`UserSettings.chapelLayout(fromMeWidgets:)`) can read an
+/// arrangement stored under `userSettings.meWidgets`. A stored raw value
+/// this build no longer knows is dropped on decode.
+enum MeWidget: String {
     case rule = "rule"
     case streak = "streak"
     case library = "library"
     case reading = "reading"
     case consecration = "consecration"
     case journal = "journal"
-
-    var id: String { rawValue }
-
-    /// The sections a fresh install shows, in order.
-    static let defaultOrder: [MeWidget] = [.rule, .streak, .library, .reading, .consecration, .journal]
-
-    var title: String {
-        switch self {
-        case .rule:         return "Rule of Prayer"
-        case .streak:       return "Prayer Streak"
-        case .library:      return "Library"
-        case .reading:      return "Reading"
-        case .consecration: return "Consecration"
-        case .journal:      return "Reflections"
-        }
-    }
-
-    /// One line in the editor explaining what the section shows.
-    var detail: String {
-        switch self {
-        case .rule:         return "Your daily devotions as a checklist"
-        case .streak:       return "Your streak and this week's prayer"
-        case .library:      return "The missal, office, books, and guides"
-        case .reading:      return "The book you have open, and where you left it"
-        case .consecration: return "Your place on the 33-day path"
-        case .journal:      return "Your latest journal entries"
-        }
-    }
-
-    var icon: String {
-        switch self {
-        case .rule:         return "ph-scroll"
-        case .streak:       return "ph-flame"
-        case .library:      return "ph-book"
-        case .reading:      return "ph-book-open-fill"
-        case .consecration: return "ch-consecration"
-        case .journal:      return "ph-book-open"
-        }
-    }
 
     static func decode(_ raw: [String]) -> [MeWidget] {
         raw.compactMap(MeWidget.init(rawValue:))

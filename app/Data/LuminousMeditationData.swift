@@ -2,11 +2,13 @@
 //  LuminousMeditationData.swift
 //  Lumen Viae
 //
-//  A bundled "Traditional Meditations" set for the Luminous Mysteries.
-//  The backend has no luminous content yet, so this local set keeps the
-//  picker and prayer flow working. It uses negative IDs so it can never
-//  collide with server-assigned sets; when luminous sets land in the API,
-//  this file can be removed and the picker will simply show them instead.
+//  A bundled "Traditional Meditations" set for the Luminous Mysteries,
+//  written when the backend had no luminous content. The API now serves
+//  four luminous sets; the picker lists this one after them
+//  (`MeditationSelectionViewModel.loadMeditationSets`), and with no
+//  signal and nothing downloaded it is the one luminous set that prays.
+//  It uses negative IDs so it can never collide with server-assigned
+//  sets.
 //
 
 import Foundation

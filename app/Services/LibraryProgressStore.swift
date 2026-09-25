@@ -3,9 +3,10 @@
 //  Lumen Viae
 //
 //  Every read and write of a Spiritual Reading place marker, in one
-//  place. The shelf, the book page, the reader, the player, and the Me
-//  page all touch the same row, and having each of them hand-roll its
-//  own FetchDescriptor is how the two places drift apart.
+//  place. The shelf, the book page, the reader, the player, and the
+//  Chapel's Reading tile all touch the same row, and having each of
+//  them hand-roll its own FetchDescriptor is how the two places drift
+//  apart.
 //
 //  Writing policy matters here. The reading place moves when a chapter
 //  is opened or scrolled — rarely, so it is written straight through.
@@ -33,8 +34,8 @@ enum LibraryProgressStore {
         return try? context.fetch(descriptor).first
     }
 
-    /// Every book with a place marker, most recently touched first —
-    /// what the Me page's Reading card draws on.
+    /// Every book with a place marker, most recently touched first.
+    /// Nothing calls this now; the Me page's Reading card once did.
     static func all(in context: ModelContext) -> [BookReadingProgress] {
         let descriptor = FetchDescriptor<BookReadingProgress>(
             sortBy: [SortDescriptor(\.updatedAt, order: .reverse)]
@@ -230,7 +231,7 @@ enum LibraryProgressStore {
 
     /// Whether a book's stored reading place still belongs to the edition
     /// the catalog cuts today. Read before trusting a marker on a surface
-    /// that never writes one — the Me page's card, the shelf's ribbons.
+    /// that never writes one — the Chapel's Reading tile, the shelf's ribbons.
     static func isCurrent(_ row: BookReadingProgress) -> Bool {
         guard row.hasReadingPlace else { return false }
         guard let fingerprint = LibraryCatalog.book(id: row.bookID)?.editionFingerprint
