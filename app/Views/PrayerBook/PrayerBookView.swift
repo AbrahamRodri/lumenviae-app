@@ -22,12 +22,45 @@ struct PrayerBookView: View {
 
     @State private var now = Date()
     @State private var query = ""
+    @FocusState private var searching: Bool
+
+    private static let contentsAnchor = "contents"
 
     private var trimmedQuery: String {
         query.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     var body: some View {
+        ScrollViewReader { proxy in
+            page
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        // The book's most common errand is one prayer by
+                        // name, and its field stands at the foot of a long
+                        // page; the glass goes straight there
+                        Button { findAPrayer(proxy) } label: {
+                            AppIcon("ph-magnifying-glass", size: 18)
+                                .foregroundColor(AppColors.gold)
+                                .frame(width: 44, height: 44)
+                        }
+                        .buttonStyle(QuietGlyphButtonStyle())
+                        .accessibilityLabel("Find a prayer")
+                    }
+                }
+        }
+    }
+
+    private func findAPrayer(_ proxy: ScrollViewProxy) {
+        withAnimation(Motion.ease(0.45)) {
+            proxy.scrollTo(Self.contentsAnchor, anchor: UnitPoint(x: 0.5, y: 0.08))
+        }
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(350))
+            searching = true
+        }
+    }
+
+    private var page: some View {
         ZStack {
             AppColors.appGradient.ignoresSafeArea()
 
@@ -60,6 +93,7 @@ struct PrayerBookView: View {
 
                     contents
                         .padding(.top, 44)
+                        .id(Self.contentsAnchor)
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 56)
@@ -307,6 +341,7 @@ struct PrayerBookView: View {
             .tint(AppColors.gold)
             .autocorrectionDisabled()
             .submitLabel(.search)
+            .focused($searching)
 
             if !query.isEmpty {
                 Button { query = "" } label: {

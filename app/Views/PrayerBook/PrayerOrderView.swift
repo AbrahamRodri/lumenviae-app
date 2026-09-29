@@ -209,6 +209,9 @@ struct PrayerOrderView: View {
             .accessibilityAddTraits(.isButton)
 
             GoldCTAButton(title: "Pray", glyph: .play) {
+                // The switch stands just above PRAY, so what it shows is
+                // the reader's answer; the pray-along screen won't ask
+                store.chooseAloud(store.praysAloud)
                 router.push(.prayAlong(.order(order, on: now)))
             }
         }

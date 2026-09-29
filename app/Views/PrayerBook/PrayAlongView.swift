@@ -14,7 +14,10 @@
 //  on Amen, and an order prayed to its Amen is offered for the day —
 //  which the rule of prayer and the Chapel read.
 //
-//  The Angelus rings the church bell as it begins and as it ends.
+//  The Angelus rings the church bell as it begins and as it ends — when
+//  it is prayed aloud. In silence the book makes no sound at all, and
+//  until the reader has once said which it is to be, it asks before it
+//  makes any (`PrayAloudChoiceSheet`).
 //
 
 import SwiftUI
@@ -36,6 +39,7 @@ struct PrayAlongView: View {
     @State private var finished = false
     @State private var bellSwing = false
     @State private var advanceTask: Task<Void, Never>?
+    @State private var asksHowToPray = false
 
     /// The page fades out, the next prayer is put in its place and the
     /// scroll set back to the head unseen, and it fades in — the old
@@ -55,7 +59,14 @@ struct PrayAlongView: View {
 
     private var isLast: Bool { index >= prayers.count - 1 }
 
-    private var aloud: Bool { store.praysAloud }
+    /// Silent until the reader has said the book may speak
+    private var aloud: Bool { store.hasChosenAloud && store.praysAloud }
+
+    /// A single prayer is named once, by its own title on the page; the
+    /// head says whose book it is instead of saying the title twice
+    private var kicker: String {
+        prayers.count > 1 ? launch.title : "The Prayer Book"
+    }
 
     private var isAngelus: Bool {
         launch.orderID == PrayerBook.angelusOrderID
@@ -112,6 +123,18 @@ struct PrayAlongView: View {
         }
         .navigationBarHidden(true)
         .animation(Motion.crossfade, value: finished)
+        // Asked once, before the book's first sound; undismissable, since
+        // answering is the only way through, and the speaker at the head
+        // of the page owns the choice afterward
+        .sheet(isPresented: $asksHowToPray, onDismiss: startSounding) {
+            PrayAloudChoiceSheet { chosen in
+                store.chooseAloud(chosen)
+                asksHowToPray = false
+            }
+            .presentationDetents([.height(340)])
+            .presentationBackground(AppColors.background)
+            .interactiveDismissDisabled()
+        }
         .onAppear(perform: begin)
         .onDisappear(perform: end)
         .onChange(of: voice.progress) { _, progress in
@@ -130,7 +153,7 @@ struct PrayAlongView: View {
             Spacer(minLength: 8)
 
             VStack(spacing: 3) {
-                Text(launch.title.uppercased())
+                Text(kicker.uppercased())
                     .font(AppFonts.labelFont(9.5))
                     .tracking(2.5)
                     .foregroundColor(AppColors.gold)
@@ -269,6 +292,11 @@ struct PrayAlongView: View {
                 .opacity(pageOpacity)
             }
             .scrollBounceBehavior(.basedOnSize)
+            // The words dissolve as they pass under the head and the
+            // beads rather than being cut through mid-line at the scroll's
+            // edge. No inset: the title already stands 26pt down, clear
+            // of the band at rest.
+            .topChromeFade(height: 22, inset: 0)
             .onChange(of: litStanza) { _, lit in
                 guard let lit, aloud else { return }
                 withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.7)) {
@@ -369,8 +397,15 @@ struct PrayAlongView: View {
 
     private var transport: some View {
         HStack(spacing: 34) {
-            transportButton("ph-skip-forward-fill", flipped: true, label: "Previous prayer", enabled: index > 0) {
-                goTo(index - 1)
+            if prayers.count > 1 {
+                transportButton("ph-skip-forward-fill", flipped: true, label: "Previous prayer", enabled: index > 0) {
+                    goTo(index - 1)
+                }
+            } else {
+                // A single prayer has nowhere to go back to; the space
+                // stays so the play disc keeps the middle
+                Color.clear.frame(width: 48, height: 48)
+                    .accessibilityHidden(true)
             }
 
             Button {
@@ -427,8 +462,16 @@ struct PrayAlongView: View {
     @ViewBuilder
     private var silentFoot: some View {
         if isLast {
-            GoldCTAButton(title: "Amen", trailingIcon: "ph-check", fullWidth: true) {
-                finish()
+            // The way back stays beside Amen, as it stands beside NEXT
+            HStack(spacing: 12) {
+                if index > 0 {
+                    transportButton("ph-caret-left", flipped: false, label: "Previous prayer", enabled: true) {
+                        goTo(index - 1)
+                    }
+                }
+                GoldCTAButton(title: "Amen", trailingIcon: "ph-check", fullWidth: true) {
+                    finish()
+                }
             }
         } else if let next = prayers[safe: index + 1] {
             HStack(spacing: 12) {
@@ -540,8 +583,19 @@ struct PrayAlongView: View {
         voice.onNext = { if !isLast { goTo(index + 1) } }
         voice.onPrevious = { if index > 0 { goTo(index - 1) } }
 
+        if store.hasChosenAloud {
+            startSounding()
+        } else {
+            asksHowToPray = true
+        }
+    }
+
+    /// The page's first sound, once the reader has said the book may
+    /// make one: the Angelus's bell, then the voice. In silence, nothing.
+    private func startSounding() {
+        guard aloud, !finished else { return }
         if isAngelus { ringBell() }
-        if aloud { startVoice() }
+        startVoice()
     }
 
     private func end() {
@@ -568,9 +622,9 @@ struct PrayAlongView: View {
     }
 
     private func toggleAloud() {
-        store.praysAloud.toggle()
+        store.chooseAloud(!aloud)
         advanceTask?.cancel()
-        if store.praysAloud {
+        if aloud {
             startVoice()
         } else {
             voice.stop()
@@ -620,7 +674,7 @@ struct PrayAlongView: View {
         if let orderID = launch.orderID {
             store.markOffered(orderID)
         }
-        if isAngelus { ringBell() }
+        if isAngelus, aloud { ringBell() }
         finished = true
     }
 
@@ -692,6 +746,59 @@ struct PrayAlongView: View {
             }
             return max(count, 1)
         }
+    }
+}
+
+// MARK: - Aloud, or in silence
+
+/// The book's one question, asked the first time it would speak: read
+/// aloud, or kept to the page. Two rows and nothing to confirm — the
+/// row is the answer. It cannot be dragged away, so it shows no grabber.
+struct PrayAloudChoiceSheet: View {
+    let onChoose: (Bool) -> Void
+
+    private var voices = NarrationVoiceCatalog.shared
+
+    init(onChoose: @escaping (Bool) -> Void) {
+        self.onChoose = onChoose
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            SheetHeader(
+                kicker: "The Prayer Book",
+                title: "Aloud, or in silence?",
+                lead: "The book can read each prayer to you, the page following the voice, or leave the words to you."
+            )
+
+            Button { onChoose(true) } label: {
+                SheetRow(
+                    "Aloud",
+                    detail: "Read to you in the \(voices.chosenVoice.name.lowercased()) voice",
+                    icon: "ph-speaker-high"
+                )
+            }
+            .buttonStyle(SacredCardButtonStyle())
+
+            Button { onChoose(false) } label: {
+                SheetRow(
+                    "In silence",
+                    detail: "For the pew, or beside someone asleep",
+                    icon: "ph-book-open",
+                    showsDivider: false
+                )
+            }
+            .buttonStyle(SacredCardButtonStyle())
+
+            SheetNote("The speaker at the top of the page changes this whenever you like.")
+
+            Spacer(minLength: 0)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        // The sheets' ground without `sheetGround()`'s indicator, as the
+        // missal's first question is set
+        .background(AppColors.appGradient.ignoresSafeArea())
+        .presentationDragIndicator(.hidden)
     }
 }
 

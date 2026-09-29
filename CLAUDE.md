@@ -1377,7 +1377,10 @@ write concurrent code here:
   translations are plain literal renderings, not Caswall or Hopkins.
 
   **The book opens on the hour** (`PrayerBook.dayOrder(at:)`), lit, with
-  the page's one gold act, over the day's three hours on one strand. The
+  the page's one gold act, over the day's three hours on one strand. Its
+  search field stands at the foot of the contents, a long page down, so
+  the bar carries a search glass that scrolls there and focuses it —
+  finding one prayer by name is the book's commonest errand. The
   seasons are computed: the Angelus is the Regina Cæli from Easter to the
   Saturday after Pentecost, and Night Prayers close on the Marian
   antiphon the season sings (`PrayerBook.antiphon(on:)` — Alma
@@ -1387,11 +1390,24 @@ write concurrent code here:
   **Praying** is `PrayAlongView` (`.prayAlong(PrayAlongLaunch)`, a
   player: bar hidden, its own ×): one prayer at a time, a strand of beads
   for the order's prayers, aloud or in silence (`PrayerBookStore.
-  praysAloud`, remembered). Aloud, each prayer is the server's ElevenLabs
+  praysAloud`, remembered). **The book asks before its first sound**
+  (`PrayAloudChoiceSheet`, once, until `hasChosenAloud`): these are
+  prayers for the pew, the tabernacle and the bedside, and it once began
+  reading the examination of conscience aloud the moment PRAY was
+  touched. The order page's switch stands just above its PRAY, so
+  praying from there answers the question with what the switch shows;
+  afterwards the speaker at the head of the page owns the choice. Aloud,
+  each prayer is the server's ElevenLabs
   recording in the chosen narration voice (below), the stanza being said
   lit and followed by proportion, the next prayer turning in after a
-  breath; the Angelus rings `church_bell.caf`. An order prayed to its
-  Amen is offered for the day — nothing is carried forward. **Keeping**
+  breath; the Angelus rings `church_bell.caf` — aloud only, since in
+  silence the book makes no sound at all. The page's words dissolve
+  under its head and beads (`topChromeFade`, no inset) rather than being
+  cut mid-line. An order prayed to its Amen is offered for the book's
+  day, which turns at four in the morning (`PrayerBook.dayBeginsAtHour`)
+  as the hours do, not at midnight: Night Prayers said at half past
+  twelve are that night's, and the next evening still asks for its own.
+  Nothing is carried forward. **Keeping**
   is a silk ribbon (`RibbonToggle`, `PrayerBookStore.ribbons`) — the
   kept prayers stand on the book's first page and the Chapel tile.
   **Learning** is `LearnByHeartSheet`: four steps (read, some hidden,
