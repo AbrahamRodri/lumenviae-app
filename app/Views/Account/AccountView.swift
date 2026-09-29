@@ -1232,7 +1232,7 @@ struct HelpSupportSheet: View {
 
                     InfoBlock(
                         title: "What are the different mysteries?",
-                        text: "There are four sets of mysteries: Joyful (Monday, Thursday), Sorrowful (Tuesday, Friday), and Glorious (Wednesday, Saturday). Sunday takes Joyful in Advent, Sorrowful in Lent, and Glorious otherwise. Luminous mysteries, added by Pope John Paul II, are available any day from the home grid, and the modern schedule (Settings, under Devotion) gives them Thursday."
+                        text: "There are four sets of mysteries. On the traditional schedule: Joyful (Monday, Thursday), Sorrowful (Tuesday, Friday), and Glorious (Wednesday, Saturday). Sunday takes Joyful in Advent, Sorrowful in Lent, and Glorious otherwise. Luminous mysteries, added by Pope John Paul II, can be prayed any day from View All beside the home grid. The modern schedule (Settings, under Devotion) gives them Thursday and moves the Joyful to Saturday."
                     )
 
                     InfoBlock(

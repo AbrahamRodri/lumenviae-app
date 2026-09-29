@@ -37,6 +37,7 @@ struct MysteryScheduleRow: View {
         .accessibilityAddTraits(.isButton)
         .sheet(isPresented: $showSheet) {
             MysteryScheduleSheet()
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
     }
 }
