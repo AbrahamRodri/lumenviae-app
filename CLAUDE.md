@@ -425,9 +425,14 @@ the page they serve):
   default; the app's first face is the one most users read), the
   narration voice (`NarrationVoiceRow`, the server's list; the same
   choice stands in the player's playback sheet), Bead counter (the
-  meditation player's strand; see the Core prayer flow), Pray aloud
-  (the spoken Rosary), and the prayers after the Rosary (Holy Father,
-  Memorare, St Michael)
+  meditation player's strand; see the Core prayer flow), and Pray aloud
+  (the spoken Rosary)
+- **After the Rosary** — the prayers after the Rosary (Holy Father,
+  Memorare, St Michael), under their own heading and the set page's
+  note: they are said aloud after the closing prayer, and only when
+  every prayer is — nothing else reads them. Set as three more switches
+  among the ways of praying, they read as prayers added to every
+  Rosary, and a silent Rosary never said them
 - **Devotion** — Rule of Prayer (→ `RuleEditorSheet`), Prayer Record,
   Daily Reminders (toggle, time, sound), What Brings You to the Rosary (decides
   the reminder copy pool)
@@ -856,7 +861,10 @@ write concurrent code here:
   from the pool matching the user's stated intentions.
 - **Offline** — user-initiated download of every set, its narration in the
   chosen voice, its painting, and the spoken Rosary's recordings for that
-  voice.
+  voice. A set saved from its own page takes the spoken prayers of its
+  mysteries too, every prayer after the Rosary included
+  (`OfflineContentService.spokenClips(for:)`): it once said "Saved on
+  this device" and then, with Pray aloud on, would not begin on a plane.
 - **Personalization** — three themes, prayer language, text
   size (app-wide, plus the missal's and the reading shelf's own); the Chapel
   tab's arrange-in-place page (tile order, full/half widths, the tray, rule
@@ -1215,8 +1223,44 @@ write concurrent code here:
   (`UserSettings.prayAloud`) and the ⋯ tray with no download row. There
   is no meditation narration and no reader; said aloud, the spoken
   Rosary (see API Endpoints below) reads each verse before its Hail Mary,
-  and a play disc and caption stand above the strand while it does. On
-  the last bead the cue gives way to AMEN; completion records locally
+  and a play disc and caption stand above the strand while it does.
+
+  **On the pendant a move is a prayer.** While the opening and closing
+  prayers are said aloud there is no bead of the strand to move to, so
+  the swipe, the column's tap and hold, and the rotor step the voice a
+  prayer on or back (`ScripturalRosaryViewModel.stepSpokenPrayer`); a
+  move back from the first bead goes into the opening prayers, and a
+  move on from the last bead, while its Glory Be or Fatima Prayer is
+  still being said, into the closing ones. The beads were once held
+  still there, and the Creed — two minutes of every Rosary said aloud —
+  could be neither passed over by someone who prays it daily nor said
+  again after a knock at the door. The pendant hangs clear of the foot
+  (`PendantStage(bottomLimit:)`, measured from the foot's top): placed
+  by fractions of the glass alone, the cross's foot stood on the play
+  disc. Through the closing prayers AMEN stands under the prayer's name,
+  as it stood on the last bead; it once vanished for the Hail, Holy Queen
+  and came back only after the last Amen.
+
+  **The Rosary Aloud sets every prayer as it is said, the pendant's
+  too.** It is this screen (`SpokenForm.plain`), and its column carries
+  the prayer where the Scriptural Rosary's carries the verse. The Creed,
+  the Hail, Holy Queen, the closing prayer and the prayers after the
+  Rosary once showed only their names — the prayers someone learning by
+  ear knows least. Now each is set like the decades' Our Father (where
+  it stands, what it is, the words), with the pendant hung beside it in
+  the strand's own place and at the strand's scale
+  (`PendantStage(trailingColumn:)`); laid under the words, even dimmed,
+  the cross ran through the Creed's lines. A rubric line ("[Let us
+  pray.]") is set as a rubric, red and italic and out of its brackets,
+  since the voice does not say it. The Rosary Aloud's prayers come down
+  as far as they must to be on the page whole (`prayerMinimumScale`) —
+  at 0.7 the Our Father was cut off at "who trespass a…" at the largest
+  sizes — and the Creed closes its lines up as well once it cannot fit
+  at the decades' leading. At the system's accessibility sizes the
+  longest are still cut short: the column has fixed room and the swipe
+  owns the vertical drag, so it cannot scroll.
+
+  On the last bead the cue gives way to AMEN; completion records locally
   through `CompletedPrayer` (the completion screen takes that value now,
   not a set) and never posts to the API. An interrupted one resumes from
   Home's card (`InProgressPrayer.kind`), on its own screen, at its bead.
