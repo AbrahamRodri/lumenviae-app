@@ -69,7 +69,7 @@ struct AccountView: View {
                             ToggleRow(
                                 icon: "ch-rosary",
                                 title: UserSettings.beadCounterTitle,
-                                subtitle: UserSettings.beadCounterDetail(isOn: userSettings.prayOnBeads),
+                                subtitle: UserSettings.beadCounterDetail(isOn: userSettings.prayOnBeads, aloud: userSettings.prayAloud),
                                 isOn: Bindable(userSettings).prayOnBeads
                             )
 
@@ -85,15 +85,22 @@ struct AccountView: View {
                                 subtitle: UserSettings.prayAloudDetail(isOn: userSettings.prayAloud, onBeads: userSettings.prayOnBeads),
                                 isOn: Bindable(userSettings).prayAloud
                             )
+                        }
+                    }
+                    .padding(.top, 30)
 
-                            // Prayers after the Rosary's closing prayer,
-                            // each off until chosen: said aloud with the
-                            // rest, and shown in the guided Rosary. The
-                            // Seven Sorrows chaplet closes in its own way
+                    // MARK: After the Rosary
+                    // Prayers after the Rosary's closing prayer, each off
+                    // until chosen. Only the voice says them — nothing
+                    // else reads these switches — so they stand under
+                    // their own heading with the set page's note, rather
+                    // than as three more switches among the ways of
+                    // praying, where they read as prayers added to every
+                    // Rosary. The Seven Sorrows chaplet closes in its
+                    // own way and never says them
+                    AccountSection(title: "After the Rosary", icon: "ph-hands-praying") {
+                        VStack(spacing: 0) {
                             ForEach(RosaryClosingExtra.allCases, id: \.self) { extra in
-                                Divider()
-                                    .background(AppColors.gold.opacity(0.2))
-
                                 ToggleRow(
                                     icon: extra.icon,
                                     title: extra.title,
@@ -103,7 +110,22 @@ struct AccountView: View {
                                         set: { userSettings.setChosen(extra, $0) }
                                     )
                                 )
+
+                                Divider()
+                                    .background(AppColors.gold.opacity(0.2))
                             }
+
+                            // The set page's note, and while Pray aloud is
+                            // off, where to find it
+                            Text(userSettings.prayAloud
+                                 ? "Said aloud after the closing prayer."
+                                 : "Said aloud after the closing prayer, when every prayer is said aloud. Pray aloud is under Prayer Experience, above.")
+                                .font(AppFonts.italicFont(13))
+                                .foregroundColor(AppColors.textSecondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 14)
                         }
                     }
                     .padding(.top, 30)
@@ -259,14 +281,17 @@ struct AccountView: View {
         }
         .sheet(isPresented: $showSoundPicker) {
             ReminderSoundSheet()
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
         .sheet(isPresented: $showRuleEditor) {
             RuleEditorSheet()
                 .environment(userSettings)
                 .presentationBackground(AppColors.background)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
         .sheet(isPresented: $showIntentionPicker) {
             PrayerIntentionSheet()
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
     }
 }
@@ -1132,33 +1157,36 @@ struct PrivacyPolicySheet: View {
                 SheetHeader(
                     kicker: "Lumen Viae",
                     title: "Privacy Policy",
-                    lead: "Last updated: February 2026"
+                    lead: "Last updated: September 2026"
                 )
 
+                // Keep in step with PrivacyInfo.xcprivacy and App Store
+                // Connect's App Privacy answers: what reaches us is
+                // APIService.recordCompletion, and nothing else.
                 VStack(alignment: .leading, spacing: 28) {
                     InfoBlock(
-                        title: "Data We Collect",
-                        text: "Lumen Viae collects minimal data to provide the prayer experience. This includes your prayer history (mystery type, date, duration) stored locally on your device, and optional journal entries stored locally. No personal information is required to use the app."
+                        title: "What Stays on Your Phone",
+                        text: "Almost everything. Your journal, your prayer record and streak, your place in every book, your Chapel and your settings are kept on this device and never sent to us. They leave it only in your iPhone's own iCloud Backup, if you have it on, under Apple's privacy policy."
                     )
 
                     InfoBlock(
-                        title: "Local Storage",
-                        text: "All prayer records, journal entries, and preferences are stored locally on your device using Apple's SwiftData framework. This data never leaves your device unless you explicitly back it up through iCloud (governed by Apple's privacy policy)."
+                        title: "What Reaches Us",
+                        text: "One short note, when you finish a meditation set's Rosary: which set it was, and whether Pray aloud was on. Our server keeps it with the time and an approximate city, region and country, looked up through ipapi.co from the address your phone connects from, and keeps that address only in a shortened form. No name, account or device identifier goes with it, so two Rosaries prayed on one phone look like two prayed by strangers. We use these notes only to learn which meditations are prayed, and roughly where. The Scriptural Rosary and the guided Rosary send nothing, and nothing else reaches us unless you write to us."
                     )
 
                     InfoBlock(
-                        title: "Network Requests",
-                        text: "The app fetches meditation content and audio from our secure server (lumenviae.fly.dev). No personal identifiers are sent in these requests. We do not use analytics SDKs or third-party tracking."
+                        title: "What the App Fetches",
+                        text: "Meditations, narration and the Divine Office come from our own server; the Missal from Missale Meum; the reading shelf's books and recordings from Project Gutenberg and LibriVox. Each receives the request itself, as any website does, and nothing more. The app carries no analytics or advertising code from anyone else, and nothing is used to track you."
                     )
 
                     InfoBlock(
-                        title: "Notifications",
-                        text: "If you enable daily reminders, the app schedules local notifications on your device. These are processed entirely on-device by iOS. We do not use push notification services."
+                        title: "Reminders",
+                        text: "Daily reminders and the Angelus bell are scheduled on your phone by iOS. We send no push notifications."
                     )
 
                     InfoBlock(
                         title: "Children's Privacy",
-                        text: "This app is suitable for all ages. We do not knowingly collect any personal data from users of any age."
+                        text: "The app is suitable for all ages. It asks no one for a name, an email or an account, and nothing it sends can tell us who you are."
                     )
 
                     InfoBlock(

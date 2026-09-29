@@ -87,6 +87,7 @@ struct ChantView: View {
         .sheet(isPresented: $showsScore) {
             if let chant {
                 ChantScoreSheet(chant: chant)
+                    .dynamicTypeSize(...DynamicTypeSize.appMaximum)
             }
         }
     }

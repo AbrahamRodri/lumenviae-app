@@ -145,6 +145,10 @@ struct RosaryStrandView: View {
                     }
                 }
                 .shadow(color: .black.opacity(0.55), radius: 4, y: 1)
+                // The window is a fixed 150 points and clips; past this
+                // size its longest names ("THE MEDITATION", beside the
+                // lock) lost their first letter at the window's edge
+                .dynamicTypeSize(...DynamicTypeSize.xLarge)
                 .frame(height: Self.rowHeight)
                 .offset(y: height / 2 - Self.rowHeight / 2)
                 .padding(.trailing, Self.trailingRoom + Self.beadColumn + Self.labelGap)

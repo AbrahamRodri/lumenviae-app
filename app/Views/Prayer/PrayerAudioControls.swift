@@ -121,9 +121,15 @@ struct NarrationPlayControl: View {
 
     var body: some View {
         // After the last Amen said aloud there is nothing left to play;
-        // the button stands aside, and AMEN is what glows
-        let ready = !viewModel.isLoadingAudio && viewModel.totalDuration > 0
-            && !viewModel.isSpokenFinished
+        // the button stands aside, and AMEN is what glows. Said aloud,
+        // the Rosary is ready whenever it is not finished: a prayer
+        // stepped to while paused has no recording loaded until play is
+        // pressed, and gated on a track's length the button stood lit
+        // and did nothing, with no other way to go on
+        let aloud = viewModel.isPrayingAloud
+        let ready = aloud
+            ? !viewModel.isSpokenFinished
+            : !viewModel.isLoadingAudio && viewModel.totalDuration > 0
 
         NarrationPlayButton(
             isPlaying: viewModel.isPlaying,
@@ -137,16 +143,23 @@ struct NarrationPlayControl: View {
         .animation(Motion.crossfade, value: viewModel.isSpokenFinished)
         // With no scrubber on screen there is nothing else for VoiceOver
         // to read position from, or to seek with
+        // Said aloud, the prayer being said rather than a clock that runs
+        // a few seconds and starts again at every prayer
         .accessibilityValue(
-            ready
-                ? "\(NarrationClock.spoken(viewModel.currentTime)) of \(NarrationClock.spoken(viewModel.totalDuration))"
-                : "Not ready"
+            !ready ? "Not ready"
+                : aloud ? (viewModel.spokenCaption ?? "")
+                : "\(NarrationClock.spoken(viewModel.currentTime)) of \(NarrationClock.spoken(viewModel.totalDuration))"
         )
-        .accessibilityHint(ready ? "Swipe up or down to move through the narration" : "")
+        .accessibilityHint(ready ? (aloud ? "Swipe up or down for the next or previous prayer" : "Swipe up or down to move through the narration") : "")
+        // Said aloud, a prayer at a swipe, so the value read out is the
+        // one moved: fifteen seconds ran a Hail Mary off its end while it
+        // played, and did nothing to be heard while it was paused
         .accessibilityAdjustableAction { direction in
             switch direction {
-            case .increment: viewModel.skipForward(15)
-            case .decrement: viewModel.skipBackward(15)
+            case .increment:
+                if aloud { viewModel.stepSpokenPrayer(forward: true) } else { viewModel.skipForward(15) }
+            case .decrement:
+                if aloud { viewModel.stepSpokenPrayer(forward: false) } else { viewModel.skipBackward(15) }
             @unknown default: break
             }
         }
@@ -156,8 +169,8 @@ struct NarrationPlayControl: View {
 // MARK: - Playback Settings
 
 /// The tray beside the reader button: which voice reads, how fast it
-/// reads, whether the player is prayed on the beads, and whether the
-/// whole Rosary is said aloud.
+/// reads, whether the whole Rosary is said aloud, and whether the player
+/// is prayed on the beads.
 ///
 /// The voice and the beads toggle live here as well as in Settings
 /// because this is the one settings surface the player has: someone
@@ -174,46 +187,60 @@ struct PlaybackSettingsSheet: View {
     /// and for praying aloud, whose lines can run to three
     static let height: CGFloat = 530
 
+    /// The detents the player gives it: its own height, or at the
+    /// accessibility text sizes the whole glass, where the rows once
+    /// stood crushed into 530 points, one switch's name over another's
+    static func detents(for size: DynamicTypeSize) -> Set<PresentationDetent> {
+        size.isAccessibilitySize ? [.large] : [.height(height)]
+    }
+
     var body: some View {
         @Bindable var settings = userSettings
 
-        return VStack(alignment: .leading, spacing: 0) {
-            SheetHeader(title: "Playback") {
-                SheetHeaderAction(title: "Done") { dismiss() }
+        // Scrolls only when the words outgrow the sheet
+        return ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                SheetHeader(title: "Playback") {
+                    SheetHeaderAction(title: "Done") { dismiss() }
+                }
+
+                SheetSectionLabel("Voice")
+
+                NarrationVoiceChoice()
+                    .padding(.horizontal, SheetMetrics.gutter)
+
+                SheetSectionLabel("Speed")
+
+                PlaybackSpeedChoice()
+                    .padding(.horizontal, SheetMetrics.gutter)
+
+                // The same section, in the same order, as the set's page
+                // (`RosarySetupSheet`): Pray aloud once stood here under
+                // "The beads", after the counter, and the two sheets that
+                // hold the same two switches described them differently
+                SheetSectionLabel("The prayers")
+
+                // The whole row answers, as it does in Settings
+                SheetToggleRow(
+                    title: UserSettings.prayAloudTitle,
+                    detail: UserSettings.prayAloudDetail(isOn: settings.prayAloud, onBeads: settings.prayOnBeads),
+                    icon: "ph-hands-praying",
+                    isOn: $settings.prayAloud,
+                    showsDivider: true
+                )
+
+                SheetToggleRow(
+                    title: UserSettings.beadCounterTitle,
+                    detail: UserSettings.beadCounterDetail(isOn: settings.prayOnBeads, aloud: settings.prayAloud),
+                    icon: "ch-rosary",
+                    isOn: $settings.prayOnBeads,
+                    showsDivider: false
+                )
             }
-
-            SheetSectionLabel("Voice")
-
-            NarrationVoiceChoice()
-                .padding(.horizontal, SheetMetrics.gutter)
-
-            SheetSectionLabel("Speed")
-
-            PlaybackSpeedChoice()
-                .padding(.horizontal, SheetMetrics.gutter)
-
-            SheetSectionLabel("The beads")
-
-            // The whole row answers, as it does in Settings
-            SheetToggleRow(
-                title: UserSettings.beadCounterTitle,
-                detail: UserSettings.beadCounterDetail(isOn: settings.prayOnBeads),
-                icon: "ch-rosary",
-                isOn: $settings.prayOnBeads,
-                showsDivider: true
-            )
-
-            SheetToggleRow(
-                title: UserSettings.prayAloudTitle,
-                detail: UserSettings.prayAloudDetail(isOn: settings.prayAloud, onBeads: settings.prayOnBeads),
-                icon: "ph-hands-praying",
-                isOn: $settings.prayAloud,
-                showsDivider: false
-            )
-
-            Spacer(minLength: 20)
+            .frame(maxWidth: .infinity, alignment: .topLeading)
+            .padding(.bottom, 20)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .scrollBounceBehavior(.basedOnSize)
         .sheetGround()
     }
 
@@ -226,8 +253,8 @@ struct PlaybackSettingsSheet: View {
 
 // MARK: - Choices Shared With the Set's Page
 
-/// The voices as capsules, the way the speeds are: two or three words
-/// that fit one row. A choice takes effect on the narration playing,
+/// The voices as capsules: two or three words that fit one row, each a
+/// choice of its own. A choice takes effect on the narration playing,
 /// which the player hears through the settings change. Shared by the
 /// playback sheet and the set's page, so the choice looks the same
 /// wherever it is made.
@@ -248,6 +275,9 @@ struct NarrationVoiceChoice: View {
                     Text(voice.name)
                         .font(AppFonts.bodyFont(14))
                         .foregroundColor(selected ? AppColors.background : AppColors.cream.opacity(0.75))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                        .padding(.horizontal, 8)
                         .frame(maxWidth: .infinity)
                         .frame(height: height)
                         .background(
@@ -259,45 +289,153 @@ struct NarrationVoiceChoice: View {
                 .accessibilityAddTraits(selected ? [.isSelected] : [])
             }
         }
+        .dynamicTypeSize(...Self.largestCapsuleType)
     }
+
+    /// How large the words in a row of choices may grow. Past this the
+    /// speed row's "0.75×" was cut to "0…." — a choice no one could
+    /// read — so the voices and the speed stop growing here, and their
+    /// words shrink a little rather than cut.
+    static let largestCapsuleType = DynamicTypeSize.accessibility1
 }
 
-/// The speeds, read straight from the service so the row agrees with
-/// whatever the Lock Screen or CarPlay last set. Choosing one before the
-/// Rosary begins is remembered, and the first narration plays at it.
+/// The narration's speed on a slider, 0.7× to 1.7× in twentieths,
+/// its value beside it and a quiet way back to 1× at its end. Five fixed
+/// capsules once stood here, and a voice a little too slow at 1× and a
+/// little too quick at 1.25× had nowhere between them to go.
+///
+/// The value is read straight from the service, so the slider agrees
+/// with whatever the Lock Screen or CarPlay last set. A drag is heard as
+/// it goes when something is playing, and kept only when the finger
+/// lifts; a speed chosen before the Rosary begins is the one its first
+/// narration plays at.
 struct PlaybackSpeedChoice: View {
-
-    var height: CGFloat = 44
 
     private var audio: AudioService { .shared }
 
+    /// The speed under the thumb while it is dragged; the service's own
+    /// otherwise
+    @State private var draft: Double?
+
+    /// Whether a finger is on the thumb. The slider goes on setting its
+    /// value for a moment after the finger lifts, as the thumb settles:
+    /// taken as a drag, those last values were left in `draft`, never
+    /// kept, and the sheet named a speed the voice was not saying, with
+    /// the 1× beside it seeming to do nothing
+    @State private var isEditing = false
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    private var shown: Double { draft ?? audio.playbackRate }
+
     var body: some View {
-        HStack(spacing: 8) {
-            ForEach(AudioService.supportedRates, id: \.self) { rate in
-                let selected = audio.playbackRate == rate
-                Button {
-                    audio.setPlaybackRate(rate)
-                } label: {
-                    Text(Self.rateLabel(rate))
-                        .font(AppFonts.bodyFont(14))
-                        .foregroundColor(selected ? AppColors.background : AppColors.cream.opacity(0.75))
-                        .frame(maxWidth: .infinity)
-                        .frame(height: height)
-                        .background(
-                            Capsule()
-                                .fill(selected ? AppColors.goldLight : AppColors.cardElevated)
-                        )
-                }
-                .accessibilityLabel("\(Self.rateLabel(rate)) speed")
-                .accessibilityAddTraits(selected ? [.isSelected] : [])
+        HStack(spacing: 10) {
+            HStack(spacing: 12) {
+                Text(Self.rateLabel(shown))
+                    .font(AppFonts.bodyFont(16))
+                    .monospacedDigit()
+                    .foregroundColor(AppColors.cream)
+                    .lineLimit(1)
+                    .frame(minWidth: 50, alignment: .leading)
+
+                Slider(
+                    value: Binding(
+                        get: { shown },
+                        set: { raw in
+                            let rate = Self.detented(raw)
+                            guard isEditing else {
+                                // Outside a drag, kept at once
+                                if rate != audio.playbackRate { audio.setPlaybackRate(rate) }
+                                return
+                            }
+                            draft = rate
+                            // Heard as it is dragged, kept on release
+                            if audio.isPlaying { audio.setPlaybackRate(rate, remember: false) }
+                        }
+                    ),
+                    in: AudioService.rateRange,
+                    onEditingChanged: { editing in
+                        isEditing = editing
+                        guard !editing else { return }
+                        if let draft { audio.setPlaybackRate(draft) }
+                        draft = nil
+                    }
+                )
+                .tint(AppColors.gold)
+                // The system's unlit track all but vanishes on this
+                // ground, and at the slow end the thumb stood alone with
+                // nothing to say where it could go
+                .background(
+                    Capsule()
+                        .fill(AppColors.cream.opacity(0.16))
+                        .frame(height: 4)
+                )
             }
+            // One adjustable element for VoiceOver, a quarter at a step:
+            // a twentieth at a swipe was a long way from one end to the other
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Narration speed")
+            .accessibilityValue(Self.spokenRate(shown))
+            .accessibilityAdjustableAction { direction in
+                switch direction {
+                case .increment:
+                    draft = nil
+                    audio.setPlaybackRate((shown * 4).rounded(.down) / 4 + 0.25)
+                case .decrement:
+                    draft = nil
+                    audio.setPlaybackRate((shown * 4).rounded(.up) / 4 - 0.25)
+                @unknown default: break
+                }
+            }
+
+            // Outlined, so it reads as the way back rather than as the
+            // slider's far end; always there, only faded at 1×, so the
+            // track never changes length under the thumb
+            Button {
+                withAnimation(reduceMotion ? nil : Motion.settle) {
+                    draft = nil
+                    audio.setPlaybackRate(1)
+                }
+            } label: {
+                Text("1×")
+                    .font(AppFonts.bodyFont(14))
+                    .foregroundColor(AppColors.gold)
+                    .lineLimit(1)
+                    .padding(.horizontal, 12)
+                    .frame(minWidth: 48, minHeight: 30)
+                    .overlay(
+                        Capsule().strokeBorder(AppColors.gold.opacity(0.45), lineWidth: AppLine.hairline)
+                    )
+                    .frame(minHeight: 44)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(QuietGlyphButtonStyle())
+            .disabled(shown == 1)
+            .opacity(shown == 1 ? 0.3 : 1)
+            .accessibilityLabel("Back to normal speed")
+            .accessibilityHidden(shown == 1)
         }
+        .frame(minHeight: 44)
+        // The thumb landing on 1× is felt, the one speed with a name
+        .sensoryFeedback(.selection, trigger: shown == 1) { wasOne, isOne in isOne && !wasOne }
+        .dynamicTypeSize(...NarrationVoiceChoice.largestCapsuleType)
+    }
+
+    /// Within a hair of 1× the thumb settles on it; everywhere else it
+    /// keeps to the twentieths
+    static func detented(_ raw: Double) -> Double {
+        abs(raw - 1) < 0.04 ? 1 : AudioService.resolvedRate(raw)
     }
 
     /// "1×" rather than "1.0×", but "1.25×" in full — %g drops trailing
     /// zeros without rounding away a significant digit.
     static func rateLabel(_ rate: Double) -> String {
         "\(String(format: "%g", rate))×"
+    }
+
+    /// What VoiceOver says: "1.25 times", or at 1× "normal speed"
+    static func spokenRate(_ rate: Double) -> String {
+        rate == 1 ? "Normal speed" : "\(String(format: "%g", rate)) times"
     }
 }
 

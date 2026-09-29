@@ -165,11 +165,15 @@ struct ContentView: View {
             .environment(UserSettings.shared)
             // The tray opens as tall as it measures (`fittedSheetDetent`)
             .presentationBackground(AppColors.background)
+            // A sheet takes its text size from the phone, not from the
+            // root, so it carries the app's cap itself
+            .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
         .sheet(isPresented: $showPrayEditor) {
             PrayButtonEditorSheet()
                 .environment(UserSettings.shared)
                 .presentationBackground(AppColors.background)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
     }
 

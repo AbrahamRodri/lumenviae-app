@@ -609,8 +609,13 @@ final class OfflineContentService {
             artworkFileURL(setId: source.id, remote: artwork.url).map { (artwork.url, $0) }
         }
 
+        // The spoken Rosary for the set's mysteries: a set saved for a
+        // journey is prayed aloud on it too, when Pray aloud is on or is
+        // turned on on the way
+        let spokenClips = source.mysteryCategory.map(Self.spokenClips(for:))
+
         var completed = 0
-        let total = jobs.count + (artworkJob == nil ? 0 : 1) + 1
+        let total = jobs.count + (artworkJob == nil ? 0 : 1) + (spokenClips == nil ? 0 : 1) + 1
         savingSets[set.id] = (completed: 0, total: total)
 
         var failures = 0
@@ -649,8 +654,38 @@ final class OfflineContentService {
             savingSets[set.id] = (completed: completed, total: total)
         }
 
+        // Saved before, a set said "Saved on this device" and then, with
+        // Pray aloud on, would not begin on a plane: only the library
+        // download fetched the spoken prayers. The pack skips what it
+        // already has, and a clip it cannot fetch is said from an older
+        // copy or passed over, so only no answer at all counts against
+        // the set
+        if let spokenClips {
+            do {
+                _ = try await RosaryAudioPack.shared.prepare(voice: voice, clips: spokenClips)
+            } catch {
+                failures += 1
+            }
+            completed += 1
+            savingSets[set.id] = (completed: completed, total: total)
+        }
+
         refreshDiskState()
         if failures > 0 { failedSetIds.insert(set.id) }
+    }
+
+    /// Every recording a Rosary of these mysteries can say aloud around
+    /// a set's meditations: the prayers, the announcements, and each
+    /// prayer after the Rosary, so one chosen on the way is on disk too
+    private static func spokenClips(for category: MysteryCategory) -> Set<RosaryAudioPack.ClipID> {
+        let keys = MysteryData.mysteries(for: category).map { "\($0.category.lowercased())_\($0.order)" }
+        return SpokenRosaryScript.clips(in: SpokenRosaryScript.build(
+            category: category,
+            mysteryKeys: keys,
+            hailMarys: category == .sevenSorrows ? 7 : 10,
+            style: .meditation,
+            extras: RosaryClosingExtra.allCases
+        ))
     }
 
     /// Removes one set's saved text and narrations.

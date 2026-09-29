@@ -184,12 +184,14 @@ struct TrueDevotionChapterReaderView: View {
                         returnToMark(chapterID: chapterID, paragraph: paragraph)
                     }
                 )
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
 
             case .textOptions:
                 LibraryTextOptionsSheet()
                     .presentationDetents([.height(400)])
                     .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
+                    .dynamicTypeSize(...DynamicTypeSize.appMaximum)
 
             case .keep(let passage):
                 LibraryKeepSheet(
@@ -206,6 +208,7 @@ struct TrueDevotionChapterReaderView: View {
                 .presentationDetents([.height(520), .large])
                 .presentationDragIndicator(.visible)
                 .presentationBackground(AppColors.background)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
 
             case .share(let passage):
                 PassageShareSheet(
@@ -217,6 +220,7 @@ struct TrueDevotionChapterReaderView: View {
                 .presentationDetents([.height(560), .large])
                 .presentationDragIndicator(.visible)
                 .presentationBackground(AppColors.background)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
             }
         }
     }

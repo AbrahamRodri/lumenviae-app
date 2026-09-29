@@ -2,15 +2,56 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<!-- Nothing is collected and nothing is tracked: the journal, the
-	     prayer record and every preference stay on the device, and the
-	     app has no account, no analytics and no advertising. -->
+	<!-- Nothing is tracked. The journal, the prayer record, reading
+	     places and every preference stay on the device, and the app has
+	     no account and no advertising.
+
+	     One thing is collected: when a meditation set's Rosary is
+	     finished, APIService.recordCompletion posts the set's id and
+	     whether it was prayed aloud (POST /completions). The server keeps
+	     that with the time and a city, region and country looked up from
+	     the request's address, which it stores only truncated (the
+	     backend's docs/COMPLETION_ANALYTICS.md). No account, device or
+	     install identifier goes with it, so neither type is linked to the
+	     person. The Scriptural Rosary and the Guided Rosary never post.
+	     Keep this, the in-app Privacy Policy (PrivacyPolicySheet) and App
+	     Store Connect's App Privacy answers in step. -->
 	<key>NSPrivacyTracking</key>
 	<false/>
 	<key>NSPrivacyTrackingDomains</key>
 	<array/>
 	<key>NSPrivacyCollectedDataTypes</key>
-	<array/>
+	<array>
+		<dict>
+			<!-- Which set was finished, and whether aloud. -->
+			<key>NSPrivacyCollectedDataType</key>
+			<string>NSPrivacyCollectedDataTypeProductInteraction</string>
+			<key>NSPrivacyCollectedDataTypeLinked</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypeTracking</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypePurposes</key>
+			<array>
+				<string>NSPrivacyCollectedDataTypePurposeAnalytics</string>
+			</array>
+		</dict>
+		<dict>
+			<!-- The city, region and country looked up from the request's
+			     address, and the address itself truncated to its /24
+			     (IPv4) or /48 (IPv6). Apple counts a stored address as
+			     the data type it is used for. -->
+			<key>NSPrivacyCollectedDataType</key>
+			<string>NSPrivacyCollectedDataTypeCoarseLocation</string>
+			<key>NSPrivacyCollectedDataTypeLinked</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypeTracking</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypePurposes</key>
+			<array>
+				<string>NSPrivacyCollectedDataTypePurposeAnalytics</string>
+			</array>
+		</dict>
+	</array>
 
 	<!-- The required-reason APIs the app actually calls. Adding one here
 	     that is not called is as wrong as leaving one out; check against
