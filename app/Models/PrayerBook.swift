@@ -464,6 +464,11 @@ enum PrayerBook {
         return orders.filter { !day.contains($0.id) }
     }
 
+    /// The hour the book's day begins. Morning Prayers are said from
+    /// four, and Night Prayers said after midnight belong to the night
+    /// before, not to the day they spill into.
+    static let dayBeginsAtHour = 4
+
     /// Which of the day's three orders the hour belongs to: the morning
     /// until eleven, the Angelus through the noon and evening bells
     /// until eight, and night after that.
@@ -471,7 +476,7 @@ enum PrayerBook {
         let hour = calendar.component(.hour, from: date)
         let id: String
         switch hour {
-        case 4..<11:  id = morningOrderID
+        case dayBeginsAtHour..<11:  id = morningOrderID
         case 11..<20: id = angelusOrderID
         default:      id = nightOrderID
         }
@@ -482,7 +487,7 @@ enum PrayerBook {
     static func dayOrderMoment(at date: Date = Date(), calendar: Calendar = .current) -> String {
         let hour = calendar.component(.hour, from: date)
         switch hour {
-        case 4..<11:  return "On rising"
+        case dayBeginsAtHour..<11:  return "On rising"
         case 11..<15: return "At noon"
         case 15..<20: return "At six in the evening"
         default:      return "Before sleep"
