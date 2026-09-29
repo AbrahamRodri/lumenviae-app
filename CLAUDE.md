@@ -1253,9 +1253,12 @@ write concurrent code here:
   thirteen hours and forty minutes). That is the shelf's opening offer;
   the reader's own choice per book is remembered and outranks it. It is
   kept apart from the app-wide narration speed —
-  `AudioService.setPlaybackRate(_:remember:)`, given back when the
-  listening session stops (`AudioService.restoreRememberedRate()`) — so
-  a slow LibriVox volunteer never sets the pace of a Rosary.
+  `AudioService.setPlaybackRate(_:remember:borrower:)`, lent to the
+  session by its track-navigation token and given back the moment
+  another flow takes the arrows (`setTrackNavigation`), or when the
+  listening session stops (`restoreRememberedRate(from:)`, which leaves
+  a speed some other flow has borrowed since) — so a slow LibriVox
+  volunteer never sets the pace of a Rosary.
 
   The track ledger is cached under the **`librivoxID`**, not the edition
   fingerprint: swapping a recording has to retire the previous
@@ -1433,7 +1436,8 @@ write concurrent code here:
   recording for its Veni Creator, Ave Maris Stella, Magnificat, litanies
   and Glory Be, with a SCORE door and the credit beneath it; it reads
   the shared player only while that player is sounding the day's own
-  chant (a load generation, as `ChantPlayer` keeps), and it loads ahead
+  chant (the file, the load generation and the arrows, as `ChantPlayer`
+  keeps), and it loads ahead
   only when nothing else is sounding — a chant the library is singing
   keeps the player, and its Lock Screen arrows, until the day's own play
   is pressed, where loading ahead silenced it the moment the day opened.
@@ -1478,10 +1482,18 @@ write concurrent code here:
   **`ChantPlayer`** (`Services/`) is the library's hold on the shared
   AudioService, above the views like `LibraryListeningSession`: one chant
   at a time for the tile, the library, the pages and the Lock Screen
-  (whose arrows step through the library), claimed by file and load
-  generation so another flow taking the player is never narrated as its
-  own. Its practice rate is borrowed, never remembered as the app's
-  narration speed, and handed back in `relinquish()`. Earlier builds
+  (whose arrows step through the library), claimed so another flow
+  taking the player is never narrated as its own. The claim is the file,
+  the load generation **and** the Lock Screen arrows, as the
+  consecration day's is: a second load of the file
+  already in the player is no new load and keeps the generation, so a
+  day that took the library's Veni Creator once left both believing they
+  held it, and closing one silenced the other. Each takes the arrows
+  when it claims the file, and one that finds the file loaded but not
+  its own loads it afresh, from the top. Its practice rate is borrowed
+  (by its navigation token), never remembered as the app's narration
+  speed, and handed back in `relinquish()` or as soon as another flow
+  takes the arrows. Earlier builds
   saved the unlicensed chants offline as `prayer_<slug>.mp3`;
   `OfflineContentService.retireUnlicensedChants()` deletes them once at
   launch (`appApp.init`) and corrects the saved library's size.

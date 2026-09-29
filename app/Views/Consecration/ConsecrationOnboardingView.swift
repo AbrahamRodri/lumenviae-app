@@ -505,9 +505,11 @@ private struct RhythmStepView: View {
 
                 Spacer(minLength: 12)
 
-                Text("Ten to fifteen minutes a day.")
+                // What a day holds, never how long it takes
+                Text("The same three, on each of the thirty-three days.")
                     .font(AppFonts.italicFont(15))
                     .foregroundColor(AppColors.textSecondary)
+                    .multilineTextAlignment(.center)
                     .staggeredReveal(delay: 0.9)
 
                 Spacer(minLength: 12)

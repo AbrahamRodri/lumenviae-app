@@ -201,8 +201,10 @@ struct ConsecrationDayFlowView: View {
         .onDisappear {
             audioLoadTask?.cancel()
             audioLoadTask = nil
+            // Asked before the arrows are given up, which ownership needs
+            let owned = ownsAudio
             audio.clearTrackNavigation(owner: navigationOwner)
-            if ownsAudio {
+            if owned {
                 audio.reset()
                 // Hand the audio session back so other apps' audio can resume
                 audio.deactivateSession()
@@ -356,10 +358,17 @@ struct ConsecrationDayFlowView: View {
         currentPrayer.flatMap(chant(for:))
     }
 
-    /// Whether the shared player is still sounding the chant this day loaded
+    /// Whether the shared player is still sounding the chant this day loaded.
+    ///
+    /// The arrows as well as the file and generation: the Chant Library
+    /// sings some of the same recordings, and a second load of the file
+    /// already loaded is no new load, so by file and generation alone the
+    /// day and the library both held it and closing one silenced the
+    /// other. The arrows go to whoever claimed it last.
     private var ownsAudio: Bool {
         guard let loadedChantURL, let loadedGeneration else { return false }
         return audio.currentURL == loadedChantURL && audio.loadGeneration == loadedGeneration
+            && audio.isTrackNavigationOwner(navigationOwner)
     }
 
     private func loadAudioIfAvailable(thenPlay: Bool = false) {
@@ -378,6 +387,13 @@ struct ConsecrationDayFlowView: View {
         // A step change while a load is in flight would let the stale
         // prayer's chant land over the one now on screen.
         audioLoadTask?.cancel()
+
+        // The same recording the library left in the player, paused part
+        // way: loaded afresh, so the day's chant begins at its top
+        if audio.currentURL == url, !ownsAudio {
+            audio.reset(preservingNowPlaying: true)
+        }
+
         isLoadingChant = true
         audioLoadTask = Task {
             defer { isLoadingChant = false }

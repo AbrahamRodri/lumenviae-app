@@ -162,7 +162,8 @@ final class LibraryListeningSession {
     private func applyReadingRate(for info: LibraryBookInfo) {
         audio.setPlaybackRate(
             UserSettings.shared.readingRate(for: info.id, default: info.preferredRate),
-            remember: false
+            remember: false,
+            borrower: token
         )
         borrowedRate = true
     }
@@ -173,13 +174,15 @@ final class LibraryListeningSession {
     private var borrowedRate = false
 
     /// Gives the app-wide narration speed back, once, whether or not
-    /// this session still holds the player. A Rosary that claimed the
-    /// player mid-reading inherited this book's pace, and leaving the
-    /// shelf is the moment to undo that.
+    /// this session still holds the player — if the speed is still this
+    /// book's. A Rosary that claims the player mid-reading takes the
+    /// arrows, and the app's speed comes back with them
+    /// (`AudioService.setTrackNavigation`); a chant slowed since keeps
+    /// its own.
     private func returnBorrowedRate() {
         guard borrowedRate else { return }
         borrowedRate = false
-        audio.restoreRememberedRate()
+        audio.restoreRememberedRate(from: token)
     }
 
     /// Reads the last listening place off the book's row, so a ledger
@@ -374,7 +377,7 @@ final class LibraryListeningSession {
 
     func setRate(_ rate: Double) {
         guard let info else { return }
-        audio.setPlaybackRate(rate, remember: false)
+        audio.setPlaybackRate(rate, remember: false, borrower: token)
         // Chosen for this book alone, so it is borrowed like any other
         // reading pace and handed back when the shelf is left.
         borrowedRate = true

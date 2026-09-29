@@ -8,8 +8,9 @@
 //  library is singing.
 //
 //  It remembers which file it loaded and the load generation it loaded
-//  under; everything it claims about playback is conditioned on both still
-//  being the player's — so when another flow (a Rosary, a book, a
+//  under, and holds the Lock Screen arrows; everything it claims about
+//  playback is conditioned on all three still being its — so when another
+//  flow (a Rosary, a book, a
 //  consecration day singing the very same recording) takes the player,
 //  its progress line and pause glyph quietly return to rest instead of
 //  narrating someone else's audio.
@@ -50,8 +51,9 @@ final class ChantPlayer {
     private var loadedURL: URL?
 
     /// The player's load generation at the moment this chant took it.
-    /// Any other flow's `loadAudio` resets the player and bumps this,
-    /// which is what lets go of the claim.
+    /// Another flow's `loadAudio` of a different file resets the player
+    /// and bumps this; one of the same file takes the arrows instead.
+    /// Either lets go of the claim (`ownsPlayback`).
     private var loadedGeneration: Int?
 
     private var loadCount = 0
@@ -79,11 +81,17 @@ final class ChantPlayer {
     ///
     /// The URL alone will not do: the consecration flow loads some of the
     /// same files, so a player that went by URL would claim a chant a
-    /// consecration day started. The generation is what makes it an
-    /// answer about ownership rather than about the file.
+    /// consecration day started. Nor will the generation alone: a second
+    /// load of the file already loaded is not a new load, so a day that
+    /// took the Veni Creator from the library kept its generation, and
+    /// both believed they held it — closing the day then silenced the
+    /// library's chant. The Lock Screen arrows go to whoever claimed the
+    /// file last, so holding them is what settles it, as it does for the
+    /// Prayer Book's player.
     var ownsPlayback: Bool {
         guard let loadedURL, let loadedGeneration else { return false }
         return audio.currentURL == loadedURL && audio.loadGeneration == loadedGeneration
+            && audio.isTrackNavigationOwner(navigationOwner)
     }
 
     var isPlaying: Bool { ownsPlayback && audio.isPlaying }
@@ -181,11 +189,19 @@ final class ChantPlayer {
 
             guard self.audio.loadGeneration == generationAtRequest else { return }
 
+            // The file already in the player, but someone else's (a
+            // consecration day's Veni Creator): loaded afresh, so the
+            // chant begins at its top rather than where the day left it
+            if self.audio.currentURL == url, !self.ownsPlayback {
+                self.audio.reset(preservingNowPlaying: true)
+            }
+
             // Take the transport at chant's own pace. A Rosary read at
             // 2× has not thereby chosen a speed for sung Latin, so the
             // rate is borrowed rather than remembered, and handed back
-            // in `relinquish()`.
-            self.audio.setPlaybackRate(self.rate, remember: false)
+            // in `relinquish()` — or as soon as another flow takes the
+            // arrows from the chant.
+            self.audio.setPlaybackRate(self.rate, remember: false, borrower: self.navigationOwner)
             self.borrowedRate = true
 
             let ready = await self.audio.loadAudio(
@@ -232,7 +248,7 @@ final class ChantPlayer {
     func setRate(_ newRate: Double) {
         rate = newRate
         guard ownsPlayback else { return }
-        audio.setPlaybackRate(newRate, remember: false)
+        audio.setPlaybackRate(newRate, remember: false, borrower: navigationOwner)
         borrowedRate = true
     }
 
@@ -282,10 +298,11 @@ final class ChantPlayer {
     }
 
     /// Hands the app-wide narration speed back, once, whether or not
-    /// this player still holds the transport.
+    /// this player still holds the transport — unless another flow has
+    /// set a speed of its own since, which is its to keep.
     private func releaseRate() {
         guard borrowedRate else { return }
         borrowedRate = false
-        audio.restoreRememberedRate()
+        audio.restoreRememberedRate(from: navigationOwner)
     }
 }
