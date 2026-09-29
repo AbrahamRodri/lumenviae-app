@@ -41,6 +41,12 @@ struct PrayAlongView: View {
     @State private var advanceTask: Task<Void, Never>?
     @State private var asksHowToPray = false
 
+    /// Whether the page is on screen. Recordings still being fetched when
+    /// it closes, or a prayer still turning in, must not go on to speak
+    /// from a page nobody can see: the first fetch can take a while, and
+    /// a voice begun after × would pray the whole order on from nowhere
+    @State private var isShowing = false
+
     /// The page fades out, the next prayer is put in its place and the
     /// scroll set back to the head unseen, and it fades in — the old
     /// title never flashes over the new prayer
@@ -592,6 +598,7 @@ struct PrayAlongView: View {
     // MARK: - Moving
 
     private func begin() {
+        isShowing = true
         UIApplication.shared.isIdleTimerDisabled = true
         voice.onFinish = { scheduleAdvance() }
         voice.onNext = { if !isLast { goTo(index + 1) } }
@@ -607,12 +614,13 @@ struct PrayAlongView: View {
     /// The page's first sound, once the reader has said the book may
     /// make one: the Angelus's bell, then the voice. In silence, nothing.
     private func startSounding() {
-        guard aloud, !finished else { return }
+        guard isShowing, aloud, !finished else { return }
         if isAngelus { ringBell() }
         startVoice()
     }
 
     private func end() {
+        isShowing = false
         advanceTask?.cancel()
         voice.stop()
         AngelusBellSound.shared.silence()
@@ -624,7 +632,7 @@ struct PrayAlongView: View {
             if case .ready = voice.state {} else {
                 await voice.prepare(prayers)
             }
-            guard aloud, !finished else { return }
+            guard isShowing, aloud, !finished else { return }
             await playCurrent()
         }
     }
@@ -676,7 +684,7 @@ struct PrayAlongView: View {
             try? await Task.sleep(for: .milliseconds(150))
             index = target
             withAnimation(.easeOut(duration: 0.26)) { pageOpacity = 1 }
-            if aloud, case .ready = voice.state {
+            if isShowing, aloud, case .ready = voice.state {
                 await playCurrent()
             }
         }

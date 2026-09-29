@@ -5,21 +5,29 @@
 //  One chapter of the Prayer Book: its numeral and name, its Latin, the
 //  line that says what it holds, and its prayers as a ruled list, each
 //  with the reader's own marks. The foot turns to the chapter before or
-//  after, as a book's pages do.
+//  after, as a book's pages do — in place, the way a prayer's page steps
+//  along its chapter: the page fades out, the chapter is swapped and the
+//  scroll put back to the top unseen, and it fades in. It once popped
+//  this page and pushed the next in one tick, and SwiftUI updated the
+//  page where it stood: the next chapter opened scrolled to wherever the
+//  last was left, its name and first prayers above the screen.
 //
 
 import SwiftUI
 
 struct PrayerBookChapterView: View {
 
-    let chapterID: String
-
     @Environment(AppRouter.self) private var router
+
+    /// The chapter on the page — starts as the one pushed, and moves on
+    /// when the foot turns the page
+    @State private var chapterID: String
+    @State private var pageOpacity: Double = 1
 
     private var chapter: PrayerBookChapter? { PrayerBook.chapter(chapterID) }
 
     init(chapterID: String) {
-        self.chapterID = chapterID
+        _chapterID = State(initialValue: chapterID)
     }
 
     var body: some View {
@@ -27,25 +35,30 @@ struct PrayerBookChapterView: View {
             AppColors.appGradient.ignoresSafeArea()
 
             if let chapter {
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: 0) {
-                        header(chapter)
-                            .padding(.horizontal, 28)
-                            .padding(.top, 8)
-                            .devotionalEntrance()
+                ScrollViewReader { proxy in
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 0) {
+                            Color.clear.frame(height: 0).id("top")
 
-                        list(chapter)
-                            .padding(.horizontal, 20)
-                            .padding(.top, 26)
-                            .devotionalEntrance(delay: 0.06)
+                            header(chapter)
+                                .padding(.horizontal, 28)
+                                .padding(.top, 8)
+                                .devotionalEntrance()
 
-                        turner(chapter)
-                            .padding(.horizontal, 20)
-                            .padding(.top, 34)
-                            .padding(.bottom, 48)
+                            list(chapter)
+                                .padding(.horizontal, 20)
+                                .padding(.top, 26)
+                                .devotionalEntrance(delay: 0.06)
+
+                            turner(chapter, proxy: proxy)
+                                .padding(.horizontal, 20)
+                                .padding(.top, 34)
+                                .padding(.bottom, 48)
+                        }
+                        .opacity(pageOpacity)
                     }
+                    .topChromeFade()
                 }
-                .topChromeFade()
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -113,7 +126,7 @@ struct PrayerBookChapterView: View {
     }
 
     @ViewBuilder
-    private func turner(_ chapter: PrayerBookChapter) -> some View {
+    private func turner(_ chapter: PrayerBookChapter, proxy: ScrollViewProxy) -> some View {
         let chapters = PrayerBook.chapters
         if let i = chapters.firstIndex(where: { $0.id == chapter.id }) {
             VStack(spacing: 14) {
@@ -123,11 +136,11 @@ struct PrayerBookChapterView: View {
 
                 HStack(alignment: .top) {
                     if i > 0 {
-                        turnButton(chapters[i - 1], forward: false)
+                        turnButton(chapters[i - 1], forward: false, proxy: proxy)
                     }
                     Spacer(minLength: 12)
                     if i < chapters.count - 1 {
-                        turnButton(chapters[i + 1], forward: true)
+                        turnButton(chapters[i + 1], forward: true, proxy: proxy)
                     }
                 }
             }
@@ -136,10 +149,9 @@ struct PrayerBookChapterView: View {
 
     /// The next chapter replaces this one rather than stacking on it, so
     /// Back always returns to the book's first page
-    private func turnButton(_ target: PrayerBookChapter, forward: Bool) -> some View {
+    private func turnButton(_ target: PrayerBookChapter, forward: Bool, proxy: ScrollViewProxy) -> some View {
         Button {
-            router.pop()
-            router.push(.prayerBookChapter(id: target.id))
+            turn(to: target.id, proxy: proxy)
         } label: {
             VStack(alignment: forward ? .trailing : .leading, spacing: 4) {
                 HStack(spacing: 5) {
@@ -163,6 +175,21 @@ struct PrayerBookChapterView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(SacredCardButtonStyle())
+    }
+
+    /// Fades the page out, swaps the chapter and puts the scroll back to
+    /// the top unseen, then fades in — never a flash of the old chapter
+    private func turn(to id: String, proxy: ScrollViewProxy) {
+        withAnimation(.easeIn(duration: 0.14)) { pageOpacity = 0 }
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(150))
+            chapterID = id
+            proxy.scrollTo("top", anchor: .top)
+            withAnimation(.easeOut(duration: 0.24)) { pageOpacity = 1 }
+            // A new chapter is a new page to VoiceOver too, as it was
+            // when the turn pushed one: it starts again at the header
+            AccessibilityNotification.ScreenChanged(nil).post()
+        }
     }
 }
 

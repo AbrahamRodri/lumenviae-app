@@ -4,7 +4,8 @@
 //
 //  The Prayer Book's own furniture: the silk ribbon a prayer is kept
 //  with, the contents page's dot leader, the ruled prayer row, the tile
-//  an order of prayer stands on, and the strip of the day's three hours.
+//  an order of prayer stands on, the strip of the day's three hours, and
+//  the schedule a surface naming the hour's order redraws on.
 //
 
 import SwiftUI
@@ -332,6 +333,19 @@ struct PrayerOrderTile: View {
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(order.title(on: Date())), \(order.occasion), \(count) prayers\(offered ? ", offered today" : "")")
         .accessibilityAddTraits(.isButton)
+    }
+}
+
+// MARK: - When the Hour Turns
+
+/// Redraws a surface that names the book's hour — home's row, the
+/// Chapel's tile — at the moments that hour turns (`PrayerBook.nextTurn`).
+/// They are not the Office's hours, which `CanonicalClock` wakes for, and
+/// read off the canonical clock alone home said THE ANGELUS · AT SIX
+/// until midnight while the book itself opened on Night Prayers.
+nonisolated struct PrayerBookHourSchedule: TimelineSchedule {
+    func entries(from startDate: Date, mode: TimelineScheduleMode) -> UnfoldFirstSequence<Date> {
+        sequence(first: startDate) { PrayerBook.nextTurn(after: $0) }
     }
 }
 

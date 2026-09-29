@@ -1378,9 +1378,17 @@ write concurrent code here:
 
   **The book opens on the hour** (`PrayerBook.dayOrder(at:)`), lit, with
   the page's one gold act, over the day's three hours on one strand. Its
-  search field stands at the foot of the contents, a long page down, so
+  search field heads the contents, a long page down, so
   the bar carries a search glass that scrolls there and focuses it —
-  finding one prayer by name is the book's commonest errand. The
+  finding one prayer by name is the book's commonest errand. The book's
+  hour turns at four, eleven, three and eight (`PrayerBook.nextTurn`),
+  none of them an hour of the Office, so the surfaces that name it
+  elsewhere — home's hour row, the Chapel's Prayer Book tile — redraw on
+  `PrayerBookHourSchedule` rather than on `CanonicalClock`, which slept
+  through them and kept home on the Angelus until midnight. A chapter's
+  foot turns to the next chapter in place, as a prayer's page steps
+  along its chapter; it once popped and pushed a route in one tick, and
+  the next chapter opened scrolled to wherever the last was left. The
   seasons are computed: the Angelus is the Regina Cæli from Easter to the
   Saturday after Pentecost, and Night Prayers close on the Marian
   antiphon the season sings (`PrayerBook.antiphon(on:)` — Alma
@@ -1680,9 +1688,10 @@ transition entirely.
   that is something other than a list — the month grids, the journal and
   feedback forms, the reading and footnote pages, the share card, the
   now-playing transport — keeps its own body and takes the ground and the
-  header only. The Missal's one-time layout question keeps its indicator
-  hidden, because it cannot be dragged away and a grabber would say it
-  could.
+  header only. The Missal's one-time layout question and the Prayer
+  Book's question before it first speaks (`PrayAloudChoiceSheet`) keep
+  their indicators hidden, because neither can be dragged away and a
+  grabber would say it could.
 
 ### Visual Style
 - Dark, contemplative theme on the page gradient (`AppColors.appGradient`)
