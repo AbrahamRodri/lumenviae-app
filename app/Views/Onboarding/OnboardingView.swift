@@ -49,6 +49,7 @@
 //
 
 import SwiftUI
+import UserNotifications
 
 // MARK: - OnboardingFirstStep
 
@@ -162,6 +163,9 @@ struct OnboardingView: View {
     /// left a grey button that could not be pressed. Nil keeps a re-run's
     /// existing reminder at its own time (`initialReminderHour`).
     @State private var selectedReminderHour: Int? = OnboardingView.initialReminderHour
+
+    /// True once the reminder slide's act or its Not Now has been pressed
+    @State private var reminderAnswered = false
 
     /// The time of a reminder already kept at an hour none of the slide's
     /// three choices name, offered first so a re-run can leave it be
@@ -745,6 +749,7 @@ struct OnboardingView: View {
                 )
 
                 QuietGoldButton(title: "Not Now") {
+                    reminderAnswered = true
                     UserSettings.shared.remindersEnabled = false
                     go(to: .threshold)
                 }
@@ -754,6 +759,7 @@ struct OnboardingView: View {
     }
 
     private func reminderAct() {
+        reminderAnswered = true
         // Already refused: there is no hour left to set, so the button's
         // only remaining job is to move on.
         guard !UserSettings.shared.notificationAuthorizationDenied else {
@@ -777,6 +783,22 @@ struct OnboardingView: View {
             // happened and where to undo it.
             guard !settings.notificationAuthorizationDenied else { return }
             go(to: .threshold)
+        }
+    }
+
+    /// A reminder is on until someone says otherwise, and the permission
+    /// it needs is asked for on the reminder slide alone. Skipped or
+    /// swiped past, that question was never put, and Settings would show
+    /// a reminder switched on that could never ring. It is put off
+    /// instead, honestly; the Settings switch asks when it is turned on.
+    /// A reminder the phone already allows is left as it is.
+    private func settleUnaskedReminder() {
+        guard !reminderAnswered else { return }
+        Task {
+            let status = await UNUserNotificationCenter.current()
+                .notificationSettings().authorizationStatus
+            guard status == .notDetermined else { return }
+            UserSettings.shared.remindersEnabled = false
         }
     }
 
@@ -838,10 +860,12 @@ struct OnboardingView: View {
         } bottomContent: {
             VStack(spacing: 4) {
                 GoldCTAButton(title: firstStep.title, glyph: firstStep.glyph) {
+                    settleUnaskedReminder()
                     onComplete(firstStep.step)
                 }
 
                 QuietGoldButton(title: "Look Around First") {
+                    settleUnaskedReminder()
                     onComplete(nil)
                 }
                 .frame(minHeight: 44)
