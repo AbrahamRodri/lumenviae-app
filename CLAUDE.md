@@ -676,9 +676,9 @@ write concurrent code here:
   Pray aloud under "The beads", after the counter. At the accessibility
   text sizes it opens the whole glass high and scrolls
   (`PlaybackSettingsSheet.detents(for:)`) — at 530 points its rows stood
-  crushed, one switch's name over the other's — and the voice and speed
-  capsules stop growing at `accessibility1` and shrink their words a
-  little rather than cut "0.75×" to "0….".
+  crushed, one switch's name over the other's — and the voice capsules
+  and the speed stop growing at `accessibility1` and shrink their words
+  a little rather than cut "0.75×" to "0….".
 
   With the bead counter off, the player is the
   decade-at-a-time screen it was for a hand that keeps its own count:
@@ -708,6 +708,30 @@ write concurrent code here:
   `meditation_<id>_<voice>.mp3`; the library download saves one voice
   (the chosen one) per meditation, and a copy in another voice is
   played before silence when no link will.
+
+  **The narration's speed is a slider** (`PlaybackSpeedChoice`, in the
+  playback sheet and the HOW YOU'LL PRAY sheet): 0.7× to 1.7×
+  (`AudioService.rateRange` — slower the voice drags, faster the
+  prayers run together) in twentieths, its value beside it
+  ("1.15×"), a soft catch at 1× felt as a tick, and an outlined 1× at
+  its far end as the way back, faded but never gone, so the track keeps
+  its length under the thumb. A drag is heard as it goes when something
+  is playing and stored only when the finger lifts
+  (`userSettings.narrationRate`); VoiceOver adjusts it a quarter at a
+  step and reads "1.25 times". Five capsules stood there once, and a
+  voice a little slow at 1× and a little quick at 1.25× had nothing
+  between. `AudioService.resolvedRate` brings any speed into range and
+  onto the twentieths wherever one is read or set — it used to turn
+  anything off the preset list into 1× — and the remembered speed keeps
+  to 0.7×–1.7×, while a speed borrowed with `remember: false` (a book on
+  the Spiritual Reading shelf) may still reach the shelf's 2×. The Lock
+  Screen and CarPlay, which draw their speed control from a list, and
+  the shelf keep the presets (`supportedRates`); 2× chosen on the Lock
+  Screen during a Rosary plays at 1.7×. The spoken Rosary's breaths
+  between prayers are wall-clock pauses and do not follow the speed:
+  a Hail Mary runs about 21 seconds at 0.7× and 8.6 at 1.7×, each with
+  its 0.9-second breath, which is a twentieth of the prayer at the one
+  end and a tenth at the other.
 - **Persistence** — SwiftData holds prayer sessions, journal entries,
   consecration progress, and reading progress (True Devotion's and the
   shelf's) — the five `@Model`s registered in `appApp`; UserDefaults holds

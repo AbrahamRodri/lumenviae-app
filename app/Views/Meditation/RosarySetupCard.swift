@@ -142,8 +142,8 @@ enum RosarySetup {
 
 // MARK: - RosarySetupSheet
 
-/// The choices, in the sheet grammar: the voice and speed as capsules,
-/// then ruled rows each with its own switch
+/// The choices, in the sheet grammar: the voices as capsules, the speed on
+/// its slider, then ruled rows each with its own switch
 private struct RosarySetupSheet: View {
 
     let category: MysteryCategory?
