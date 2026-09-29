@@ -204,6 +204,7 @@ struct MyChapelView: View {
         .sheet(isPresented: $showRuleEditor) {
             RuleEditorSheet()
                 .presentationBackground(AppColors.background)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
     }
 

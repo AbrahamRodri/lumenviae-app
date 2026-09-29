@@ -106,6 +106,7 @@ struct JournalView: View {
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
                 .presentationBackground(AppColors.background)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
         // Detail / edit sheet
         .sheet(item: $selectedEntry) { entry in
@@ -113,6 +114,7 @@ struct JournalView: View {
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
                 .presentationBackground(AppColors.background)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
         // Long-press delete confirmation
         .confirmationDialog(
@@ -779,6 +781,7 @@ struct JournalDetailView: View {
             .presentationDetents([.large])
             .presentationDragIndicator(.visible)
             .presentationBackground(AppColors.background)
+            .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
         .confirmationDialog("Delete this reflection?", isPresented: $showingDeleteConfirm, titleVisibility: .visible) {
             Button("Delete", role: .destructive) {

@@ -97,6 +97,7 @@ struct BookPrayerView: View {
                     .environment(settings)
                     .presentationDetents([.large])
                     .presentationBackground(AppColors.background)
+                    .dynamicTypeSize(...DynamicTypeSize.appMaximum)
             }
         }
     }

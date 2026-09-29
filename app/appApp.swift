@@ -43,26 +43,32 @@ struct appApp: App {
 
     var body: some Scene {
         WindowGroup {
-            if isLaunched {
-                if hasSeenOnboarding {
-                    ContentView(onboardingFirstStep: $onboardingFirstStep)
-                        .transition(.opacity)
-                } else {
-                    OnboardingView { step in
-                        onboardingFirstStep = step
-                        withAnimation(.easeInOut(duration: 0.4)) {
-                            hasSeenOnboarding = true
+            Group {
+                if isLaunched {
+                    if hasSeenOnboarding {
+                        ContentView(onboardingFirstStep: $onboardingFirstStep)
+                            .transition(.opacity)
+                    } else {
+                        OnboardingView { step in
+                            onboardingFirstStep = step
+                            withAnimation(.easeInOut(duration: 0.4)) {
+                                hasSeenOnboarding = true
+                            }
                         }
+                        .transition(.opacity)
                     }
-                    .transition(.opacity)
-                }
-            } else {
-                LaunchView {
-                    withAnimation(.easeInOut(duration: 0.4)) {
-                        isLaunched = true
+                } else {
+                    LaunchView {
+                        withAnimation(.easeInOut(duration: 0.4)) {
+                            isLaunched = true
+                        }
                     }
                 }
             }
+            // The phone's Larger Text is followed up to the app's cap and
+            // no further. Sheets and covers don't inherit this; each one
+            // carries the same modifier on its content.
+            .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
         .environment(userSettings)
         .modelContainer(for: [PrayerSession.self, JournalEntry.self, ConsecrationProgress.self, TrueDevotionReadingProgress.self, BookReadingProgress.self])
