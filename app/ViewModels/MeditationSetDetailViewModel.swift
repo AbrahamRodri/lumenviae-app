@@ -55,6 +55,64 @@ final class MeditationSetDetailViewModel {
         summary.description.flatMap { $0.isEmpty ? nil : $0 }
     }
 
+    /// The line under the set's name, in the title block over the
+    /// choices: its description, when that opens on a sentence short
+    /// enough to stand as a subtitle. The descriptions run from one line
+    /// to six, and six there pushed the choices under PRAY.
+    var subtitle: String? { Self.subtitle(from: description) }
+
+    /// The description in full, for the ledger beneath the choices — or
+    /// nil when the subtitle has already said all of it
+    var about: String? { Self.about(description: description, subtitle: subtitle) }
+
+    /// Longer than this, a first sentence is a paragraph set in italic
+    static let subtitleLimit = 110
+
+    static func subtitle(from description: String?) -> String? {
+        guard let text = description?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !text.isEmpty else { return nil }
+        let first = firstSentence(of: text)
+        return first.count <= subtitleLimit ? first : nil
+    }
+
+    static func about(description: String?, subtitle: String?) -> String? {
+        guard let text = description?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !text.isEmpty else { return nil }
+        return text == subtitle ? nil : text
+    }
+
+    /// The text up to its first full stop. Not the system's sentence
+    /// tokenizer, which ends a sentence at "St." and at "Fulton J." —
+    /// the two things the name of a set is likeliest to hold. A stop
+    /// ends the sentence only when a space follows it and the word it
+    /// closes is neither an initial, a title nor an abbreviation with
+    /// stops of its own ("S.J.").
+    static func firstSentence(of text: String) -> String {
+        var from = text.startIndex
+        while let stop = text[from...].firstIndex(where: { ".!?".contains($0) }) {
+            let next = text.index(after: stop)
+            guard next < text.endIndex else { break }
+            from = next
+            guard text[next].isWhitespace else { continue }
+            if text[stop] == "." {
+                let wordStart = text[..<stop].lastIndex(where: \.isWhitespace).map { text.index(after: $0) }
+                    ?? text.startIndex
+                let word = text[wordStart..<stop]
+                    .trimmingCharacters(in: CharacterSet.alphanumerics.inverted.subtracting(CharacterSet(charactersIn: ".")))
+                    .lowercased()
+                if word.count <= 1 || word.contains(".") || Self.abbreviations.contains(word) { continue }
+            }
+            return String(text[...stop]).trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        return text
+    }
+
+    /// Words a full stop follows without ending anything
+    private static let abbreviations: Set<String> = [
+        "st", "ste", "sts", "bl", "ven", "fr", "br", "sr", "dr", "mr", "mrs",
+        "rev", "msgr", "mgr", "mt", "vol", "vols", "no", "trans", "ed", "eds", "cf", "ch", "ps"
+    ]
+
     var labels: [String] { summary.labels ?? [] }
 
     /// Where the set sits: "Sorrowful Mysteries · Tuesday, Friday"
