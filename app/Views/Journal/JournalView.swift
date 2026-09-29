@@ -207,8 +207,14 @@ struct JournalView: View {
                         Button(action: { withAnimation(Motion.crossfade) { searchText = "" } }) {
                             AppIcon("ph-x-circle", size: 16)
                                 .foregroundColor(AppColors.textSecondary)
+                                // Answers to 44 without standing taller
+                                // than the field it clears
+                                .frame(width: 44, height: 44)
+                                .contentShape(Rectangle())
                         }
                         .buttonStyle(QuietGlyphButtonStyle())
+                        .padding(-14)
+                        .accessibilityLabel("Clear search")
                         .transition(.opacity.combined(with: .scale(scale: 0.6)))
                     }
                 }
@@ -669,28 +675,39 @@ struct JournalDetailView: View {
 
             VStack(spacing: 0) {
                 // Header
+                // Each glyph answers to 44; the paddings are the old ones
+                // less the frames' slack, so the glyphs stand where they did
                 HStack {
                     Button(action: { dismiss() }) {
                         AppIcon("ph-caret-left", size: 16)
                             .foregroundColor(AppColors.gold)
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
                     }
+                    .accessibilityLabel("Back")
 
                     Spacer()
 
-                    HStack(spacing: 20) {
+                    HStack(spacing: 0) {
                         Button(action: { showingEditor = true }) {
                             AppIcon("ph-pencil-simple", size: 16)
                                 .foregroundColor(AppColors.gold)
+                                .frame(width: 44, height: 44)
+                                .contentShape(Rectangle())
                         }
+                        .accessibilityLabel("Edit entry")
 
                         Button(action: { showingDeleteConfirm = true }) {
                             AppIcon("ph-trash", size: 16)
                                 .foregroundColor(AppColors.textSecondary)
+                                .frame(width: 44, height: 44)
+                                .contentShape(Rectangle())
                         }
+                        .accessibilityLabel("Delete entry")
                     }
                 }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 16)
+                .padding(.horizontal, 6)
+                .padding(.vertical, 2)
 
                 Rectangle()
                     .fill(AppColors.gold.opacity(0.2))
