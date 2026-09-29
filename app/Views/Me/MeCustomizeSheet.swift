@@ -57,7 +57,7 @@ struct RuleEditorSections: View {
         let available = PrayerShortcut.allCases.filter { $0.isRuleEligible && !enabled.contains($0) }
 
         Section {
-            ForEach(enabled) { item in
+            ForEach(enabled, id: \.keptRowID) { item in
                 EditorRow(
                     icon: item.icon,
                     title: item.actName,
@@ -83,7 +83,7 @@ struct RuleEditorSections: View {
 
         if !available.isEmpty {
             Section {
-                ForEach(available) { item in
+                ForEach(available, id: \.addRowID) { item in
                     EditorAddRow(
                         icon: item.icon,
                         title: item.actName,
@@ -103,6 +103,16 @@ struct RuleEditorSections: View {
 }
 
 // MARK: - Shared editor furniture
+
+extension PrayerShortcut {
+    /// A devotion's row in an editor's kept section and in its add
+    /// section are two rows, not one row moving. Keyed by the devotion
+    /// alone, List carried the add row across when it was tapped, and
+    /// the new kept row came without its grabber until the sheet was
+    /// opened again.
+    var keptRowID: String { "kept." + rawValue }
+    var addRowID: String { "add." + rawValue }
+}
 
 /// Sheet header used by the editors and the chant sheet: a sheet's
 /// heading, one line saying what the sheet edits, and Done. The drag

@@ -135,7 +135,7 @@ struct PrayButtonEditorSheet: View {
         let available = PrayerShortcut.allCases.filter { !enabled.contains($0) }
 
         Section {
-            ForEach(enabled) { shortcut in
+            ForEach(enabled, id: \.keptRowID) { shortcut in
                 EditorRow(
                     icon: shortcut.icon,
                     title: shortcut.title,
@@ -161,7 +161,7 @@ struct PrayButtonEditorSheet: View {
 
         if !available.isEmpty {
             Section {
-                ForEach(available) { shortcut in
+                ForEach(available, id: \.addRowID) { shortcut in
                     EditorAddRow(
                         icon: shortcut.icon,
                         title: shortcut.title,
