@@ -57,6 +57,10 @@ struct RosaryLessonView: View {
     @State private var anatomyID = RosaryMap.anatomy[0].id
     @State private var activeStep = 1
 
+    /// A step chosen below one whose words are open, to be brought to
+    /// the top of the page where the proxy lives
+    @State private var stepTarget: Int?
+
     // Lesson II — how many lines of each prayer are showing, keyed by
     // prayer id; absent means the prayer is shown whole
     @State private var practice: [String: Int] = [:]
@@ -114,6 +118,11 @@ struct RosaryLessonView: View {
                     guard let target else { return }
                     practiceTarget = nil
                     bringToTop(Self.cardAnchor(target), proxy: proxy)
+                }
+                .onChange(of: stepTarget) { _, target in
+                    guard let target else { return }
+                    stepTarget = nil
+                    bringToTop(Self.stepAnchor(target), proxy: proxy)
                 }
             }
         }
@@ -178,6 +187,10 @@ struct RosaryLessonView: View {
 
     private static func cardAnchor(_ prayerID: String) -> String {
         "lesson-prayer-\(prayerID)"
+    }
+
+    private static func stepAnchor(_ stepID: Int) -> String {
+        "lesson-step-\(stepID)"
     }
 
     // MARK: - Header
@@ -320,6 +333,7 @@ struct RosaryLessonView: View {
 
             ForEach(HowToPrayData.steps) { step in
                 stepRow(step)
+                    .id(Self.stepAnchor(step.id))
             }
         }
     }
@@ -330,7 +344,15 @@ struct RosaryLessonView: View {
         let isLast = step.id == HowToPrayData.steps.count
 
         return Button {
+            // The open step's words fold away as this one's open. Folding
+            // above it, they once carried the step chosen a card's height
+            // up from under the finger — the Hail Mary's is two hundred
+            // points — so the page brings it to the top instead, as "Say
+            // it with me" does
+            let foldsAbove = step.id > activeStep
+                && HowToPrayData.steps.first(where: { $0.id == activeStep })?.prayerIDs.isEmpty == false
             withAnimation(Motion.crossfade) { activeStep = step.id }
+            if foldsAbove { stepTarget = step.id }
         } label: {
             HStack(alignment: .top, spacing: 14) {
                 ZStack {
@@ -689,11 +711,11 @@ struct RosaryLessonView: View {
 
                         Text(category.devotionTitle)
                             .font(AppFonts.titleFont(22))
-                            .foregroundColor(.white)
+                            .foregroundColor(AppColors.textPrimary)
 
                         Text(category.subtitle)
                             .font(AppFonts.readingItalicFont(14))
-                            .foregroundColor(.white.opacity(0.8))
+                            .foregroundColor(AppColors.textPrimary.opacity(0.8))
                     }
                     .padding(16)
                 }

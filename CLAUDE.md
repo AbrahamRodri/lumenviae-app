@@ -862,7 +862,9 @@ write concurrent code here:
   finger and left the next prayer in its place), and the veiled line is
   itself the way on — a tap reveals it, where the eye already is —
   beside Next line, which stays for VoiceOver and for anyone who looks
-  for it. In This week, TODAY stands under the day's name so today's
+  for it. Choosing a later step in Lesson I's order brings it to the
+  top the same way, since the open step's words fold away above it. In
+  This week, TODAY stands under the day's name so today's
   set is never cut to "Sorrowful Myster…". The front page lights the
   first lesson not yet opened as NEXT. The path ends on **Your First Rosary**, the guided
   Rosary (`GuidedRosaryView`, `.guidedRosary(MysteryCategory)`); beneath it, Questions

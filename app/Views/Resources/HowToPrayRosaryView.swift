@@ -141,6 +141,7 @@ struct HowToPrayRosaryView: View {
                 .foregroundColor(AppColors.cream)
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
+                .accessibilityAddTraits(.isHeader)
 
             TravellingRosary()
                 .frame(width: 200)
@@ -178,6 +179,7 @@ struct HowToPrayRosaryView: View {
                 .foregroundColor(AppColors.gold.opacity(0.85))
                 .padding(.leading, 4)
                 .padding(.bottom, 16)
+                .accessibilityAddTraits(.isHeader)
 
             ForEach(RosaryLesson.allCases, id: \.rawValue) { lesson in
                 let isNext = lesson == next
@@ -350,6 +352,9 @@ struct HowToPrayRosaryView: View {
                     .foregroundColor(AppColors.cream)
                     .fixedSize(horizontal: false, vertical: true)
             }
+            // One heading to VoiceOver's rotor, as the lessons' are
+            .accessibilityElement(children: .combine)
+            .accessibilityAddTraits(.isHeader)
             .padding(.horizontal, 24)
 
             VStack(spacing: 0) {
@@ -419,6 +424,8 @@ struct HowToPrayRosaryView: View {
                     .font(AppFonts.titleFont(20))
                     .foregroundColor(AppColors.cream)
             }
+            .accessibilityElement(children: .combine)
+            .accessibilityAddTraits(.isHeader)
             .padding(.horizontal, 24)
 
             LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
