@@ -132,18 +132,21 @@ struct LibraryBookView: View {
                     .presentationDetents([.height(460)])
                     .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
+                    .dynamicTypeSize(...DynamicTypeSize.appMaximum)
 
             case .goal:
                 ReadingGoalSheet()
                     .presentationDetents([.height(450)])
                     .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
+                    .dynamicTypeSize(...DynamicTypeSize.appMaximum)
 
             case .notes:
                 BookNotesSheet(notes: notes)
                     .presentationDetents([.height(520), .large])
                     .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
+                    .dynamicTypeSize(...DynamicTypeSize.appMaximum)
             }
         }
         .navigationBarBackButtonHidden(true)

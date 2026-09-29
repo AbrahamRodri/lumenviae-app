@@ -1500,8 +1500,9 @@ write concurrent code here:
   prayers for the pew, the tabernacle and the bedside, and it once began
   reading the examination of conscience aloud the moment PRAY was
   touched. It cannot be dragged away, so both answers must always be in
-  reach: at the accessibility text sizes it stands full height and
-  scrolls (held to 340 points, its rows were drawn over each other). The
+  reach: it scrolls, and would stand full height at the accessibility
+  text sizes the app no longer reaches (held to 340 points there, its
+  rows were drawn over each other). The
   order page's switch stands just above its PRAY, so
   praying from there answers the question with what the switch shows;
   afterwards the speaker at the head of the page owns the choice. Aloud,
@@ -1679,6 +1680,25 @@ default to Candlelit**:
   size; short blocks (a title, a card's blurb, a verse under a heading)
   set their own `lineSpacing`. Reading blocks are 15–16pt
   minimum in cards, 17–18pt in immersive readers; tap targets stay ≥44pt.
+- **The text follows the phone's Larger Text up to `.xLarge` and no
+  further.** Every `AppFonts` face is `Font.custom(_:size:)`, which
+  scales with the body style, so the whole app grows with the phone's
+  setting until the root's `.dynamicTypeSize(...DynamicTypeSize.appMaximum)`
+  (`appApp`; the constant is in `DesignSystem/Typography.swift`) holds it.
+  Past that the display type broke mid-word and the pages stopped reading
+  as designed; `.xxLarge` was tried first and still cut the home page's
+  Today's Prayer rows short. At every accessibility size (AX1–AX5) the app
+  draws exactly as at `.xLarge`, so no layout is designed for those sizes:
+  the `isAccessibilitySize` and `>= .accessibility1` branches that remain
+  (the Chant Library, a set's ledger, the Prayer Book's grid and its
+  aloud-or-silence sheet) are unreachable, kept only in case the cap is
+  ever lifted. A sheet or a cover takes its text size from the phone, not
+  from the view that presents it, so each one carries the same modifier on
+  its content (see Lines and Edges). A book's cloth (`BookCover`) holds its
+  lettering at Large, since the lettering is sized to the cloth. The
+  readers' own Aa sizes are separate and stand on top of the phone's: the
+  meditation text's 16–24, the missal's and the Office's 15–21, the
+  shelf's 15–26.
 - **Prayers are set in a prayer-book grammar** that `PrayerText` reads from
   the text itself (`PrayerMarkup`, same file), so a prayer is written the way
   a printed book prints it and never as a wall of text: ℣ ℟ ✠ in rubric red
@@ -1849,6 +1869,11 @@ transition entirely.
   rounded rim, and at that rim's anti-aliased edge the white shows
   through as a hairline around the top of every tray. The background
   goes on the sheet's content view, beside its detents.
+- **Every `.sheet` and `.fullScreenCover` carries
+  `.dynamicTypeSize(...DynamicTypeSize.appMaximum)`** on its content,
+  beside its background. A presentation takes its text size from the
+  phone rather than from the root, so without it a sheet opened at an
+  accessibility size drew at AX5 over a page drawn at `.xLarge`.
 - **Every sheet is set in one grammar** (`DesignSystem/SheetChrome.swift`,
   taken from the consecration day's index, which read well where the
   others did not): `.sheetGround()` — the page gradient, the system drag
@@ -1902,6 +1927,13 @@ transition entirely.
   consecration progress and reading progress; UserDefaults for settings,
   favorites and the resume snapshot; Application Support for offline
   content and the Missal, Office and Library caches.
+- **Tests:** Swift Testing suites in `appTests/` (the `appTests` target: a
+  synchronized group, hosted by the app, `@testable import app`), run from
+  the shared `app` scheme — `xcodebuild test -project app.xcodeproj -scheme
+  app -destination 'platform=iOS Simulator,id=<udid>'` on a simulator of
+  your own. Pure logic only (the strand's arithmetic, the seasons, the
+  chant catalog, the spoken script, the Prayer Book's line pairing); there
+  is no UI-test target.
 
 ### Data Architecture
 

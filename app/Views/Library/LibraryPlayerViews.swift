@@ -284,6 +284,7 @@ struct LibrarySpeedSleepRow: View {
                 .presentationDetents([.height(590)])
                 .presentationDragIndicator(.visible)
                 .presentationBackground(AppColors.background)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
     }
 

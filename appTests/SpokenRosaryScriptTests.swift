@@ -8,12 +8,6 @@
 //  optional closing prayers, the Scriptural Rosary's verses, and that
 //  every recording a script asks for is one the server's manifest names.
 //
-//  NOTE: the project has no unit test target yet. This folder sits
-//  outside the `app` synchronized group so it is not compiled into the
-//  app. To run it, add a Unit Testing Bundle target named `appTests`
-//  hosted in `app` (File > New > Target), pointing its synchronized
-//  folder at `appTests/`.
-//
 
 import Testing
 @testable import app
@@ -231,6 +225,10 @@ struct SpokenRosaryScriptTests {
             let category = String(key[..<separator])
             let count = ScripturalRosaryData.verses(category: category, order: order)?.count ?? 0
             return (1...max(count, 1)).contains(number) && count > 0
+        case .book:
+            // The Prayer Book's recordings are fetched on their own; a
+            // spoken Rosary plays the Rosary's, never the book's
+            return false
         }
     }
 

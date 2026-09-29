@@ -171,6 +171,7 @@ struct OfficeHourView: View {
                     .presentationDetents([.height(470)])
                     .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
+                    .dynamicTypeSize(...DynamicTypeSize.appMaximum)
                     .presentationCornerRadius(22)
 
             case .index:
@@ -184,6 +185,7 @@ struct OfficeHourView: View {
                 .presentationDetents([.height(indexSheetHeight)])
                 .presentationDragIndicator(.visible)
                 .presentationBackground(AppColors.background)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
                 .presentationCornerRadius(22)
             }
         }

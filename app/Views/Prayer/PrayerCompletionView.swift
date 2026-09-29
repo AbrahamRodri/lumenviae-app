@@ -181,6 +181,7 @@ struct PrayerCompletionView: View {
             .presentationDetents([.large])
             .presentationDragIndicator(.visible)
             .presentationBackground(AppColors.background)
+            .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
     }
 
