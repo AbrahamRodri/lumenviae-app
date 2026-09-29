@@ -115,6 +115,7 @@ struct ConsecrationDateSelectionView: View {
         }
         .sheet(isPresented: $showCustomStart) {
             customStartSheet
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
     }
 

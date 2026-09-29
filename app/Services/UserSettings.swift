@@ -308,9 +308,10 @@ final class UserSettings {
     /// is the worst version of this.
     ///
     /// The range reaches further at the top than the missal's 15–21: the
-    /// app draws its type through `Font.custom(_:size:)` and so opts out
-    /// of the system's Larger Text entirely, which makes these sliders
-    /// the only answer it offers.
+    /// app follows the system's Larger Text only up to
+    /// `DynamicTypeSize.appMaximum`, which makes these sliders the answer
+    /// it offers past that. (`Font.custom(_:size:)` does scale with the
+    /// body style; the cap, not the font, is what holds the type.)
     var readingTextScale: Double = 0.4 {
         didSet { UserDefaults.standard.set(readingTextScale, forKey: "userSettings.readingTextScale") }
     }

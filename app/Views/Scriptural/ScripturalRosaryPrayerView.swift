@@ -264,6 +264,7 @@ struct ScripturalRosaryPrayerView: View {
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
                 .presentationBackground(AppColors.background)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
 
             case .text:
                 ReaderTextOptionsSheet(showsNarrationOptions: false)
@@ -272,6 +273,7 @@ struct ScripturalRosaryPrayerView: View {
                     ])
                     .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
+                    .dynamicTypeSize(...DynamicTypeSize.appMaximum)
 
             case .feedback:
                 FeedbackView(
@@ -281,6 +283,7 @@ struct ScripturalRosaryPrayerView: View {
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
                 .presentationBackground(AppColors.background)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
 
             case .tray:
                 PrayerTrackTray(
@@ -291,6 +294,7 @@ struct ScripturalRosaryPrayerView: View {
                 // The tray opens as tall as it measures (`fittedSheetDetent`)
                 .presentationDragIndicator(.visible)
                 .presentationBackground(AppColors.background)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
             }
         }
     }

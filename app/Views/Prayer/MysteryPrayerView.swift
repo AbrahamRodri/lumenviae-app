@@ -296,12 +296,14 @@ struct MysteryPrayerView: View {
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
                 .presentationBackground(AppColors.background)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
 
             case .playback:
                 PlaybackSettingsSheet()
                     .presentationDetents([.height(PlaybackSettingsSheet.height)])
                     .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
+                    .dynamicTypeSize(...DynamicTypeSize.appMaximum)
 
             case .feedback:
                 FeedbackView(
@@ -311,6 +313,7 @@ struct MysteryPrayerView: View {
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
                 .presentationBackground(AppColors.background)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
 
             case .tray:
                 PrayerTrackTray(
@@ -322,6 +325,7 @@ struct MysteryPrayerView: View {
                     // (`fittedSheetDetent`)
                     .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
+                    .dynamicTypeSize(...DynamicTypeSize.appMaximum)
             }
         }
     }

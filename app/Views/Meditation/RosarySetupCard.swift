@@ -94,6 +94,7 @@ struct RosarySetupCard: View {
             RosarySetupSheet(category: category, kind: kind)
                 .presentationDetents([.large])
                 .sheetGround()
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
     }
 

@@ -170,6 +170,7 @@ struct MeditationReaderView: View {
                     .presentationDetents([.height(ReaderTextOptionsSheet.height(showsNarrationOptions: true))])
                     .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
+                    .dynamicTypeSize(...DynamicTypeSize.appMaximum)
 
             case .tray:
                 let placement = PrayerTrackPlacement.reader(onExpand: onClose)
@@ -182,6 +183,7 @@ struct MeditationReaderView: View {
                     // (`fittedSheetDetent`)
                     .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
+                    .dynamicTypeSize(...DynamicTypeSize.appMaximum)
             }
         }
     }
