@@ -261,7 +261,7 @@ enum PrayerBook {
     static let chapters: [PrayerBookChapter] = [
         PrayerBookChapter(
             id: "first", numeral: "I", title: "The First Prayers", latinTitle: "Orationes Primæ",
-            icon: "ph-hands-praying",
+            icon: "ch-praying-hands",
             epigraph: "Learned at a mother's knee, and said until the last day.",
             prayerIDs: ["sign_of_cross", "our_father", "hail_mary", "glory_be", "apostles_creed",
                         "nicene_creed", "act_of_faith", "act_of_hope", "act_of_charity",
@@ -279,7 +279,7 @@ enum PrayerBook {
         ),
         PrayerBookChapter(
             id: "our_lord", numeral: "III", title: "Our Lord", latinTitle: "De Domino Nostro",
-            icon: "ch-crown-of-thorns",
+            icon: "ch-chi-rho",
             epigraph: "To Christ, Who is the way to the Father.",
             prayerIDs: ["anima_christi", "en_ego", "jesus_prayer", "st_richard", "suscipe",
                         "o_jesus_living_in_mary", "litany_holy_name", "litany_sacred_heart"]
@@ -294,27 +294,27 @@ enum PrayerBook {
         ),
         PrayerBookChapter(
             id: "holy_ghost", numeral: "V", title: "The Holy Ghost", latinTitle: "De Spiritu Sancto",
-            icon: "ph-bird",
+            icon: "ch-dove",
             epigraph: "Asked for light before any work of the soul.",
             prayerIDs: ["come_holy_ghost", "veni_creator", "veni_sancte_spiritus"]
         ),
         PrayerBookChapter(
             id: "saints", numeral: "VI", title: "Angels and Saints", latinTitle: "De Angelis et Sanctis",
-            icon: "ph-user",
+            icon: "lv-saint",
             epigraph: "The friends of God, asked to pray for us.",
             prayerIDs: ["angele_dei", "st_michael_prayer", "ad_te_beate_ioseph", "litany_st_joseph",
                         "st_patrick_breastplate"]
         ),
         PrayerBookChapter(
             id: "day", numeral: "VII", title: "Through the Day", latinTitle: "Per Diem",
-            icon: "ph-sun-horizon",
+            icon: "lv-hourglass",
             epigraph: "On rising, at table, at evening, and at the day's end.",
             prayerIDs: ["morning_offering", "benedictus", "grace_before", "grace_after",
                         "visita_quaesumus", "examen", "in_manus_tuas", "nunc_dimittis"]
         ),
         PrayerBookChapter(
             id: "penance", numeral: "VIII", title: "Penance", latinTitle: "De Pænitentia",
-            icon: "ph-chat-teardrop-text",
+            icon: "ch-keys",
             epigraph: "For the examination, the confession, and the thanks after it.",
             prayerIDs: ["before_confession", "examination_of_conscience", "the_confession",
                         "confiteor", "act_of_contrition", "miserere", "after_confession", "beati_quorum"]
@@ -333,14 +333,14 @@ enum PrayerBook {
         ),
         PrayerBookChapter(
             id: "litanies", numeral: "XI", title: "The Litanies", latinTitle: "Litaniæ",
-            icon: "ph-list",
+            icon: "lv-procession-cross",
             epigraph: "Titles called out one after another, and a response to every one.",
             prayerIDs: ["litany_loreto", "litany_holy_name", "litany_sacred_heart", "litany_st_joseph",
                         "litany_of_humility"]
         ),
         PrayerBookChapter(
             id: "short", numeral: "XII", title: "Short Prayers", latinTitle: "Iaculatoriæ",
-            icon: "ph-sparkle",
+            icon: "lv-dart",
             epigraph: "A breath of prayer, said in passing through the day.",
             prayerIDs: ["jmj", "sweet_heart", "jesus_meek", "my_jesus_mercy", "pardon_prayer",
                         "miraculous_medal", "blessed_be_conception", "totus_tuus", "requiem_aeternam"]
@@ -367,7 +367,7 @@ enum PrayerBook {
     static let orders: [PrayerOrder] = [
         PrayerOrder(
             id: morningOrderID, title: "Morning Prayers", latinTitle: "Preces Matutinæ",
-            icon: "ph-sun-horizon", occasion: "On rising",
+            icon: "lv-rooster", occasion: "On rising",
             detail: "The day offered before it is begun.",
             prayerIDs: { _ in
                 ["sign_of_cross", "morning_offering", "our_father", "hail_mary", "glory_be",
@@ -376,13 +376,13 @@ enum PrayerBook {
         ),
         PrayerOrder(
             id: angelusOrderID, title: "The Angelus", latinTitle: "Angelus Domini",
-            icon: "ph-bell", occasion: "At six, noon and six",
+            icon: "lv-bell", occasion: "At six, noon and six",
             detail: "The Incarnation remembered three times a day, when the bell rings.",
             prayerIDs: { date in [isEastertide(date) ? "regina_caeli" : "angelus"] }
         ),
         PrayerOrder(
             id: nightOrderID, title: "Night Prayers", latinTitle: "Preces Vespertinæ",
-            icon: "ph-moon-stars", occasion: "Before sleep",
+            icon: "lv-lamp", occasion: "Before sleep",
             detail: "The day examined and given back, closing on Our Lady's antiphon.",
             prayerIDs: { date in
                 ["sign_of_cross", "examen", "act_of_contrition", "in_manus_tuas",
@@ -391,7 +391,7 @@ enum PrayerBook {
         ),
         PrayerOrder(
             id: "table", title: "At Table", latinTitle: "Benedictio Mensæ",
-            icon: "ph-leaf", occasion: "Before and after meals",
+            icon: "ch-bread", occasion: "Before and after meals",
             detail: "Grace before the meal, and thanks when it is done.",
             prayerIDs: { _ in ["grace_before", "grace_after"] }
         ),
@@ -414,7 +414,7 @@ enum PrayerBook {
         ),
         PrayerOrder(
             id: "before_confession", title: "Before Confession", latinTitle: "Ante Confessionem",
-            icon: "ph-chat-teardrop-text", occasion: "Before going in",
+            icon: "ch-keys", occasion: "Before going in",
             detail: "Light to see, the commandments to see by, and sorrow for what is seen.",
             prayerIDs: { _ in
                 ["sign_of_cross", "come_holy_ghost", "before_confession",
@@ -423,7 +423,7 @@ enum PrayerBook {
         ),
         PrayerOrder(
             id: "after_confession", title: "After Confession", latinTitle: "Post Confessionem",
-            icon: "ph-sparkle", occasion: "Kneeling afterwards",
+            icon: "ch-keys", occasion: "Kneeling afterwards",
             detail: "The penance said, and thanks given for mercy.",
             prayerIDs: { _ in ["after_confession", "beati_quorum", "hail_mary"] }
         ),

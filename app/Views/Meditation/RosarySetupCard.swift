@@ -181,7 +181,7 @@ private struct RosarySetupSheet: View {
                             isOn: settings.prayAloud,
                             onBeads: kind == .scriptural || settings.prayOnBeads
                         ),
-                        icon: "ph-hands-praying",
+                        icon: "ch-praying-hands",
                         isOn: $settings.prayAloud
                     )
                 }
@@ -189,7 +189,7 @@ private struct RosarySetupSheet: View {
                     switchRow(
                         UserSettings.beadCounterTitle,
                         detail: UserSettings.beadCounterDetail(isOn: settings.prayOnBeads, aloud: settings.prayAloud),
-                        icon: "ch-rosary",
+                        icon: "lv-rosary",
                         isOn: $settings.prayOnBeads
                     )
                 }

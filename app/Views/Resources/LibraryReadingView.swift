@@ -385,12 +385,12 @@ struct LibraryReadingView: View {
             ForEach(doors, id: \.self) { door in
                 switch door {
                 case .mysteries(let category, let note):
-                    LedgerDoorRow(title: category.devotionTitle, note: note, icon: "ch-rosary") {
+                    LedgerDoorRow(title: category.devotionTitle, note: note, icon: "lv-rosary") {
                         router.navigateToMeditationSelection(category: category)
                     }
 
                 case .prayer(let id, let note):
-                    LedgerDoorRow(title: Self.prayerTitle(id, language: settings.prayerLanguage), note: note, icon: "ph-hands-praying") {
+                    LedgerDoorRow(title: Self.prayerTitle(id, language: settings.prayerLanguage), note: note, icon: "ch-praying-hands") {
                         router.push(.devotionPrayer(id: id))
                     }
 

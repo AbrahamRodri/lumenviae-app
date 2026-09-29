@@ -73,11 +73,11 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
 
     var icon: String {
         switch self {
-        case .todaysRosary:     return "ch-rosary"
+        case .todaysRosary:     return "lv-rosary"
         case .chooseMeditation: return "ph-cards"
         // Mary's heart pierced by Simeon's sword, the devotion's own
         // image; the plain heart meant nothing in particular
-        case .sevenSorrows:     return "ch-sorrowful-heart"
+        case .sevenSorrows:     return "lv-pierced-heart"
         case .scripturalRosary: return "ch-bible"
         // The speaker, which elsewhere only ever marks a thing that
         // sounds — a chant, a chapter read aloud — and never another
@@ -86,9 +86,9 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
         case .mass:             return "ch-altar"
         case .office:           return "ph-clock"
         case .consecration:     return "ch-consecration"
-        case .morningPrayers:   return "ph-sun-horizon"
-        case .angelus:          return "ph-bell"
-        case .nightPrayers:     return "ph-moon-stars"
+        case .morningPrayers:   return "lv-rooster"
+        case .angelus:          return "lv-bell"
+        case .nightPrayers:     return "lv-lamp"
         }
     }
 

@@ -59,8 +59,8 @@ SECTIONS = [
     ("The hours: Prayer Book orders, Pray tray, Rule of Prayer", [
         ("Morning Prayers", "ph-sun-horizon", "lv-rooster",
          "A weather-app sunrise. Now the cock of Lauds: Ambrose's Aeterne rerum Conditor, “gallo canente spes redit”."),
-        ("The Angelus, its bell setting, the pray-along bell", "ph-bell", "lv-bell",
-         "It was the same bell as Daily Reminders, one row above it in Settings. Now a church bell on its yoke, the “Gabriel's bell” the Angelus rang."),
+        ("The Angelus, its bell setting, the pray-along bell, the Church Bells sound", "ph-bell", "lv-bell",
+         "It was the same bell as Daily Reminders, one row above it in Settings. Now a church bell on its yoke, the “Gabriel's bell” the Angelus rang. The Altar Bell sound keeps the hand bell."),
         ("Night Prayers (Preces Vespertinæ)", "ph-moon-stars", "lv-lamp",
          "On an iPhone a moon means Do Not Disturb. Now the lamp lit at evening: Vespers was the lucernarium, the lighting of the lamps."),
         ("At Table", "ph-leaf", "ch-bread",

@@ -26,7 +26,7 @@ struct AccountView: View {
                     AccountHeaderView()
 
                     // MARK: Appearance
-                    AccountSection(title: "Appearance", icon: "ph-sparkle") {
+                    AccountSection(title: "Appearance", icon: "ph-palette") {
                         ThemePickerRows()
                     }
                     .padding(.top, 30)
@@ -40,7 +40,7 @@ struct AccountView: View {
                     }
 
                     // MARK: Prayer Experience
-                    AccountSection(title: "Prayer Experience", icon: "ch-rosary") {
+                    AccountSection(title: "Prayer Experience", icon: "lv-rosary") {
                         VStack(spacing: 0) {
                             TextSizeRow(value: Bindable(userSettings).textSizeScale)
 
@@ -67,7 +67,7 @@ struct AccountView: View {
                             // player moves a decade at a time for a hand
                             // that keeps its own count
                             ToggleRow(
-                                icon: "ch-rosary",
+                                icon: "lv-rosary",
                                 title: UserSettings.beadCounterTitle,
                                 subtitle: UserSettings.beadCounterDetail(isOn: userSettings.prayOnBeads, aloud: userSettings.prayAloud),
                                 isOn: Bindable(userSettings).prayOnBeads
@@ -80,7 +80,7 @@ struct AccountView: View {
                             // chosen above: every prayer, the beads moving
                             // with it, for prayer with the phone put away
                             ToggleRow(
-                                icon: "ph-hands-praying",
+                                icon: "ch-praying-hands",
                                 title: UserSettings.prayAloudTitle,
                                 subtitle: UserSettings.prayAloudDetail(isOn: userSettings.prayAloud, onBeads: userSettings.prayOnBeads),
                                 isOn: Bindable(userSettings).prayAloud
@@ -98,7 +98,7 @@ struct AccountView: View {
                     // praying, where they read as prayers added to every
                     // Rosary. The Seven Sorrows chaplet closes in its
                     // own way and never says them
-                    AccountSection(title: "After the Rosary", icon: "ph-hands-praying") {
+                    AccountSection(title: "After the Rosary", icon: "ch-praying-hands") {
                         VStack(spacing: 0) {
                             ForEach(RosaryClosingExtra.allCases, id: \.self) { extra in
                                 ToggleRow(
@@ -218,7 +218,7 @@ struct AccountView: View {
                             // the Angelus when it is tapped — its own
                             // reminder, apart from the daily one above
                             ToggleRow(
-                                icon: "ph-bell",
+                                icon: "lv-bell",
                                 title: "The Angelus Bell",
                                 subtitle: PrayerBookStore.shared.angelusBellDenied
                                     ? "Notifications are turned off for Lumen Viae"
@@ -1097,7 +1097,7 @@ struct AboutSheet: View {
             VStack(spacing: 32) {
                 // Icon
                 VStack(spacing: 16) {
-                    AppIcon("ch-rosary", size: 52)
+                    AppIcon("lv-rosary", size: 52)
                         .foregroundColor(AppColors.gold)
 
                     Text("Lumen Viae")

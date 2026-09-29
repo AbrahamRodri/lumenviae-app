@@ -109,7 +109,7 @@ struct ReminderSound: Identifiable, Equatable {
             fileName: "church_bell.caf",
             displayName: "Church Bells",
             detail: "A full peal of church bells",
-            icon: "ph-bell-fill"
+            icon: "lv-bell"
         ),
         ReminderSound(
             fileName: "altar_bell.caf",

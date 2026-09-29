@@ -244,7 +244,7 @@ struct BookPrayerView: View {
 
             QuietGoldButton(
                 title: store.isByHeart(prayer.id) ? "Say it by heart again" : "Learn it by heart",
-                leadingIcon: "ph-sparkle",
+                leadingIcon: "ph-heart",
                 leadingIconSize: 12
             ) {
                 showsLearn = true

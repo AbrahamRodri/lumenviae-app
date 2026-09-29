@@ -36,7 +36,7 @@ struct LaunchView: View {
                 Spacer()
 
                 // App icon/logo — a rosary, glowing like a votive candle
-                AppIcon("ch-rosary", size: 88)
+                AppIcon("lv-rosary", size: 88)
                     .foregroundStyle(
                         LinearGradient(
                             colors: [AppColors.goldLight, AppColors.gold],

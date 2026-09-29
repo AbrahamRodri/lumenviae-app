@@ -224,7 +224,7 @@ struct PlaybackSettingsSheet: View {
                 SheetToggleRow(
                     title: UserSettings.prayAloudTitle,
                     detail: UserSettings.prayAloudDetail(isOn: settings.prayAloud, onBeads: settings.prayOnBeads),
-                    icon: "ph-hands-praying",
+                    icon: "ch-praying-hands",
                     isOn: $settings.prayAloud,
                     showsDivider: true
                 )
@@ -232,7 +232,7 @@ struct PlaybackSettingsSheet: View {
                 SheetToggleRow(
                     title: UserSettings.beadCounterTitle,
                     detail: UserSettings.beadCounterDetail(isOn: settings.prayOnBeads, aloud: settings.prayAloud),
-                    icon: "ch-rosary",
+                    icon: "lv-rosary",
                     isOn: $settings.prayOnBeads,
                     showsDivider: false
                 )

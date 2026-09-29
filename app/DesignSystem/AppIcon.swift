@@ -7,12 +7,13 @@
 //  Icon sets:
 //  - "ph-*"      Phosphor light weight (MIT) — general UI
 //  - "ph-*-fill" Phosphor fill weight — selected/active states
-//  - "ch-*"      Christicons (free commercial) — rosary, chalice,
-//                monstrance, and other deeply Catholic glyphs
-//  - "lv-*"      Drawn for this app where neither family read correctly
-//                at 17pt, on a 24 viewBox, each stroked at the weight of
-//                the family it sits beside: lv-chalice at 1.15, level
-//                with Phosphor light; lv-breviary at 1.5, with ch-*.
+//  - "ch-*"      Christicons (free commercial) — chalice, monstrance,
+//                keys, dove and other deeply Catholic glyphs
+//  - "lv-*"      Drawn for this app where neither family read correctly,
+//                on a 24 viewBox at 1.5, the weight of the ch-* glyphs
+//                they stand beside: the rosary, the hours' rooster, bell
+//                and lamp, the mysteries' marks. Tools/IconAudit/draw.py
+//                writes them; edit there, never the SVG.
 //
 //  All assets are template-rendered, so tint with .foregroundColor
 //  or .foregroundStyle exactly like an SF Symbol.
@@ -45,9 +46,9 @@ struct AppIcon: View {
 
 #Preview {
     HStack(spacing: 16) {
-        AppIcon("ph-hands-praying", size: 24)
+        AppIcon("ch-praying-hands", size: 24)
         AppIcon("ph-crown", size: 24)
-        AppIcon("ch-rosary", size: 24)
+        AppIcon("lv-rosary", size: 24)
         AppIcon("ch-chalice", size: 24)
         AppIcon("ph-flame-fill", size: 24)
     }

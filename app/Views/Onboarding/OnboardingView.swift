@@ -511,12 +511,12 @@ struct OnboardingView: View {
             return [
                 Offer(icon: "ch-consecration", text: "St. Louis de Montfort's 33-day preparation for Total Consecration"),
                 Offer(icon: "ph-crown", text: "True Devotion to Mary, the complete book"),
-                Offer(icon: "ch-sorrowful-heart", text: "The Chaplet of the Seven Sorrows")
+                Offer(icon: "lv-pierced-heart", text: "The Chaplet of the Seven Sorrows")
             ]
         case .learning:
             return [
-                Offer(icon: "ch-rosary", text: "How to Pray the Rosary, step by step"),
-                Offer(icon: "ph-hands-praying", text: "Every prayer written out, in English or in Latin"),
+                Offer(icon: "lv-rosary", text: "How to Pray the Rosary, step by step"),
+                Offer(icon: "ch-praying-hands", text: "Every prayer written out, in English or in Latin"),
                 Offer(icon: "ph-book-open", text: "A meditation on each mystery, to read or to hear")
             ]
         }
@@ -1781,7 +1781,7 @@ private struct LanguagePreviewCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 8) {
-                AppIcon("ph-hands-praying", size: 13)
+                AppIcon("ch-praying-hands", size: 13)
                     .foregroundColor(AppColors.gold.opacity(0.85))
 
                 Text("The Hail Mary")

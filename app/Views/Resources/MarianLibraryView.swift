@@ -757,7 +757,7 @@ struct MarianLibraryView: View {
             router.push(.devotionPrayer(id: id))
         } label: {
             HStack(spacing: 8) {
-                AppIcon("ph-hands-praying", size: 13)
+                AppIcon("ch-praying-hands", size: 13)
                 Text(title.uppercased())
                     .font(AppFonts.labelFont(9.5))
                     .tracking(1.8)

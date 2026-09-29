@@ -222,9 +222,9 @@ enum CarloAcutisData {
     static let rule: [Habit] = [
         Habit(icon: "ch-altar", name: "Holy Mass", often: "Daily", readingID: "carlo_mass", act: .mass, actTitle: "The day's Mass"),
         Habit(icon: "ch-monstrance", name: "Adoration", often: "Daily", readingID: "carlo_mass", act: nil, actTitle: nil),
-        Habit(icon: "ch-rosary", name: "The Rosary", often: "Daily", readingID: "carlo_rosary", act: .todaysRosary, actTitle: "Pray it"),
-        Habit(icon: "ph-hands-praying", name: "Confession", often: "Weekly", readingID: "carlo_confession", act: nil, actTitle: nil),
-        Habit(icon: "ph-sparkle", name: "His guardian angel", often: "Always", readingID: "carlo_angel", act: nil, actTitle: nil)
+        Habit(icon: "lv-rosary", name: "The Rosary", often: "Daily", readingID: "carlo_rosary", act: .todaysRosary, actTitle: "Pray it"),
+        Habit(icon: "ch-keys", name: "Confession", often: "Weekly", readingID: "carlo_confession", act: nil, actTitle: nil),
+        Habit(icon: "ch-angel", name: "His guardian angel", often: "Always", readingID: "carlo_angel", act: nil, actTitle: nil)
     ]
 
     /// One saying a day, the same all day

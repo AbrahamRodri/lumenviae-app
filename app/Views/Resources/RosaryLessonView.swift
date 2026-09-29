@@ -407,7 +407,7 @@ struct RosaryLessonView: View {
             if practiceLineList(prayer).count > 1 {
                 HStack(spacing: 10) {
                     if revealed == nil {
-                        practiceButton("Say it with me", icon: "ph-hands-praying", outlined: true) {
+                        practiceButton("Say it with me", icon: "ch-praying-hands", outlined: true) {
                             practice[prayer.id] = 1
                         }
                     } else {

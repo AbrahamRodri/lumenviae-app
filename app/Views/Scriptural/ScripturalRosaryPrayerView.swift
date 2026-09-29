@@ -899,7 +899,7 @@ struct ScripturalRosaryPrayerView: View {
                 // The Rosary Aloud has no such choice to offer
                 if !viewModel.isPlain {
                     SetupTogglePill(
-                        icon: "ph-hands-praying",
+                        icon: "ch-praying-hands",
                         title: UserSettings.prayAloudTitle,
                         isOn: Bindable(userSettings).prayAloud,
                         hint: UserSettings.prayAloudDetail(isOn: userSettings.prayAloud)
