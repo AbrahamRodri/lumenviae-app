@@ -304,17 +304,29 @@ struct PrayerProgressView: View {
                 .font(AppFonts.italicFont(20))
                 .foregroundColor(AppColors.gold)
 
+            // Only what has been offered is listed: a column of noughts
+            // on a first visit read as a tally of what was not prayed
+            let offered = devotionRows.filter { $0.count > 0 }
             VStack(spacing: 0) {
-                ForEach(Array(devotionRows.enumerated()), id: \.offset) { index, row in
-                    DevotionRow(
-                        name: row.name,
-                        count: row.count,
-                        color: row.color
-                    )
+                if offered.isEmpty {
+                    Text("Each Rosary you pray is kept here, by its mysteries.")
+                        .font(AppFonts.italicFont(15))
+                        .foregroundColor(AppColors.textSecondary)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                } else {
+                    ForEach(Array(offered.enumerated()), id: \.element.name) { index, row in
+                        DevotionRow(
+                            name: row.name,
+                            count: row.count,
+                            color: row.color
+                        )
 
-                    if index < devotionRows.count - 1 {
-                        Divider()
-                            .background(AppColors.gold.opacity(0.2))
+                        if index < offered.count - 1 {
+                            Divider()
+                                .background(AppColors.gold.opacity(0.2))
+                        }
                     }
                 }
             }
