@@ -1903,6 +1903,13 @@ transition entirely.
   consecration progress and reading progress; UserDefaults for settings,
   favorites and the resume snapshot; Application Support for offline
   content and the Missal, Office and Library caches.
+- **Tests:** Swift Testing suites in `appTests/` (the `appTests` target: a
+  synchronized group, hosted by the app, `@testable import app`), run from
+  the shared `app` scheme — `xcodebuild test -project app.xcodeproj -scheme
+  app -destination 'platform=iOS Simulator,id=<udid>'` on a simulator of
+  your own. Pure logic only (the strand's arithmetic, the seasons, the
+  chant catalog, the spoken script, the Prayer Book's line pairing); there
+  is no UI-test target.
 
 ### Data Architecture
 
