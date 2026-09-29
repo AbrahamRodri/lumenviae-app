@@ -263,9 +263,15 @@ struct TodaysPrayerSection: View {
     /// its Amen today. Opens the book, which opens on this same order.
     /// Never "missed": an hour gone by is simply not this row any more.
     private var hourRow: some View {
-        // Read so the row rolls over with the clock, as the Office's does
-        _ = clock.hour
-        let now = Date()
+        // Redrawn when the book's hour turns, which is never when the
+        // Office's does: on the canonical clock alone the row kept the
+        // Angelus from eight until midnight
+        TimelineView(PrayerBookHourSchedule()) { context in
+            hourRow(at: context.date)
+        }
+    }
+
+    private func hourRow(at now: Date) -> some View {
         let order = PrayerBook.dayOrder(at: now)
         let offered = PrayerBookStore.shared.wasOffered(order.id, on: now)
         let moment = Self.hourMoment(now)

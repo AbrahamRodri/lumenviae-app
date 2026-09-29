@@ -98,11 +98,17 @@ struct LearnByHeartSheet: View {
                     ForEach(Array(lines.enumerated()), id: \.offset) { s, stanza in
                         VStack(alignment: .leading, spacing: 10) {
                             ForEach(Array(stanza.enumerated()), id: \.offset) { l, line in
+                                let whole = !hidesAny(line, keyPrefix: "\(s).\(l)")
                                 WordFlow(spacing: 6, lineSpacing: 8) {
                                     ForEach(Array(words(line).enumerated()), id: \.offset) { w, word in
                                         wordView(word, key: "\(s).\(l).\(w)", position: w)
                                     }
                                 }
+                                // A line with nothing hidden is read as a
+                                // line; word by word, VoiceOver made the
+                                // reader step through every word of it
+                                .accessibilityElement(children: whole ? .ignore : .contain)
+                                .accessibilityLabel(whole ? line : "")
                             }
                         }
                     }
@@ -175,6 +181,13 @@ struct LearnByHeartSheet: View {
 
     private func letters(_ word: String) -> String {
         word.filter { $0.isLetter }
+    }
+
+    /// Whether any word of the line is still hidden
+    private func hidesAny(_ line: String, keyPrefix: String) -> Bool {
+        words(line).enumerated().contains { w, word in
+            hides(word, position: w) && !revealed.contains("\(keyPrefix).\(w)")
+        }
     }
 
     @ViewBuilder
