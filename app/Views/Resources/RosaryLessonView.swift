@@ -780,7 +780,8 @@ struct RosaryLessonView: View {
                   ScheduleService.category(for: day) == category else { return nil }
             return weekdayFormatter.string(from: day)
         }
-        if category == .luminous { return "Any day you choose" }
+        // Outside the traditional rotation; Thursday's on the modern one
+        if category == .luminous, names.isEmpty { return "Any day you choose" }
         let sundays: String
         switch category {
         case .joyful:    sundays = "Sundays of Advent"

@@ -23,18 +23,17 @@ struct Mystery: nonisolated Codable, Identifiable, Hashable {
     /// Position within the category (1-5 for standard mysteries)
     let order: Int
 
-    /// Days this mystery is traditionally prayed (e.g., "Monday, Saturday")
-    let daysPrayed: String?
-
     /// Brief description of the mystery
     let description: String?
 
     /// Bible reference (e.g., "Luke 1:26-38")
     let scriptureReference: String?
 
+    /// The server's `days_prayed` is not read: it carries older days
+    /// than the app's schedule, and the days follow the user's own
+    /// schedule besides (`daysPrayed`).
     enum CodingKeys: String, CodingKey {
         case id, name, category, order, description
-        case daysPrayed = "days_prayed"
         case scriptureReference = "scripture_reference"
     }
 
@@ -43,6 +42,12 @@ struct Mystery: nonisolated Codable, Identifiable, Hashable {
     /// The category as a type-safe enum, nil if the string doesn't match a known value.
     var mysteryCategory: MysteryCategory? {
         MysteryCategory(fromAPIString: category)
+    }
+
+    /// The days this mystery is prayed on the user's schedule
+    /// (e.g., "Monday, Saturday, Sundays of Advent"), its set's days
+    var daysPrayed: String? {
+        mysteryCategory?.daysPrayed
     }
 
     /// Human-readable ordinal (e.g., "First") for "The First Joyful Mystery" labels.
