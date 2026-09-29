@@ -667,7 +667,18 @@ write concurrent code here:
   and the prayers after the Rosary. The choices once stood open on the
   page as a filled card of capsules and switches, three of them gold,
   laid over the painting above PRAY; the title page read as a settings
-  form. Keep them in the sheet.
+  form. Keep them in the sheet. The line says only "Read in silence"
+  for a Scriptural Rosary read in silence — it named a voice and a
+  speed for a Rosary nobody hears — and the Rosary Aloud's sheet, which
+  has no switch for the prayers, has no heading for them either. The
+  player's playback sheet (the faders) holds the same two switches
+  under the same heading, THE PRAYERS, Pray aloud first; it once filed
+  Pray aloud under "The beads", after the counter. At the accessibility
+  text sizes it opens the whole glass high and scrolls
+  (`PlaybackSettingsSheet.detents(for:)`) — at 530 points its rows stood
+  crushed, one switch's name over the other's — and the voice capsules
+  and the speed stop growing at `accessibility1` and shrink their words
+  a little rather than cut "0.75×" to "0….".
 
   With the bead counter off, the player is the
   decade-at-a-time screen it was for a hand that keeps its own count:
@@ -709,6 +720,30 @@ write concurrent code here:
   `meditation_<id>_<voice>.mp3`; the library download saves one voice
   (the chosen one) per meditation, and a copy in another voice is
   played before silence when no link will.
+
+  **The narration's speed is a slider** (`PlaybackSpeedChoice`, in the
+  playback sheet and the HOW YOU'LL PRAY sheet): 0.7× to 1.7×
+  (`AudioService.rateRange` — slower the voice drags, faster the
+  prayers run together) in twentieths, its value beside it
+  ("1.15×"), a soft catch at 1× felt as a tick, and an outlined 1× at
+  its far end as the way back, faded but never gone, so the track keeps
+  its length under the thumb. A drag is heard as it goes when something
+  is playing and stored only when the finger lifts
+  (`userSettings.narrationRate`); VoiceOver adjusts it a quarter at a
+  step and reads "1.25 times". Five capsules stood there once, and a
+  voice a little slow at 1× and a little quick at 1.25× had nothing
+  between. `AudioService.resolvedRate` brings any speed into range and
+  onto the twentieths wherever one is read or set — it used to turn
+  anything off the preset list into 1× — and the remembered speed keeps
+  to 0.7×–1.7×, while a speed borrowed with `remember: false` (a book on
+  the Spiritual Reading shelf) may still reach the shelf's 2×. The Lock
+  Screen and CarPlay, which draw their speed control from a list, and
+  the shelf keep the presets (`supportedRates`); 2× chosen on the Lock
+  Screen during a Rosary plays at 1.7×. The spoken Rosary's breaths
+  between prayers are wall-clock pauses and do not follow the speed:
+  a Hail Mary runs about 21 seconds at 0.7× and 8.6 at 1.7×, each with
+  its 0.9-second breath, which is a twentieth of the prayer at the one
+  end and a tenth at the other.
 - **Persistence** — SwiftData holds prayer sessions, journal entries,
   consecration progress, and reading progress (True Devotion's and the
   shelf's) — the five `@Model`s registered in `appApp`; UserDefaults holds
@@ -1796,6 +1831,32 @@ three small beads, the chain and the centrepiece, lit as the voice climbs
 (`PendantPlace` on each script segment) - `PendantTitleBlock` names the
 prayer in place of the mystery's title, and the decade strand comes in
 with the first mystery. The Lock Screen shows the cross, rendered once.
+On the meditation's player prayed on the beads, the closing prayers are
+said with the strand still hung, for its AMEN, so the stage is drawn wider
+and moved left (`pendantShiftBesideStrand`) and the cross hangs in the
+column the strand leaves - centred, its arms ran under the bead's name and
+the AMEN - and the final bead is named CLOSING PRAYERS
+(`PrayerSessionViewModel.spokenBeadLines`), where the Glory Be's name went
+on through the Hail, Holy Queen. After the last Amen the pendant stays
+(`SpokenRosaryPlayer.pendant` shows the script's last segment once
+finished), so the Rosary ends on the cross it began on, AMEN beckoning and
+the next-prayer button faded; the last mystery's painting once came back
+under it. The pendant is fitted above the foot, and gives up height at the
+largest text sizes, where the prayer's name stood across the cross.
+While the voice says the opening prayers, or waits on its recordings, it
+holds the hand (`PrayerSessionViewModel.voiceHoldsHand`): the strand, the
+reader's bead row, the rotor's bead actions and the decade arrows stand
+still, and only the player's previous and next prayer buttons move the
+Rosary - one tap on the reader's row once skipped the Creed, the first
+mystery's announcement and its meditation, and the → arrow the whole first
+decade. On arrival PRAY is the word to begin, and the voice begins; turned
+on mid-Rosary from the playback sheet, Pray aloud carries on only if the
+meditation was playing, and otherwise waits at the hand's place for play,
+as a new voice does. The reader follows the voice only while it is on the
+meditation (`isHearingMeditation`) - its page once ran top to bottom under
+every Hail Mary, and back - and its bead row names what is said (OPENING
+PRAYERS · The Apostles' Creed, THE MYSTERY, MEDITATION) with no cue to tap,
+since the voice moves the beads.
 The script's order is the server's (`PrayerAudio.script/3`), and the
 recorded prayer ids are twelve: the Rosary's eight plus
 `act_of_contrition`, `sorrows_closing_prayer`, `memorare` and
@@ -1815,7 +1876,19 @@ also fills the pack for the chosen voice (`SpokenRosaryScript.everyClip()`),
 best-effort, so the first spoken Rosary prays offline. The pack reuses its
 saved manifest while the links have more than five minutes to live and
 refetches before downloading once they do not; offline it says what is on
-disk. Resume keeps the script step (`SpokenStep` on `InProgressPrayer`,
+disk, and with nothing saved in the chosen voice it says the Rosary in a
+voice it has (the default first) rather than not at all, as a meditation
+saved in another voice plays before silence. A meditation that will not
+load is given the silent player's two fallbacks before it is passed over
+(`SpokenRosaryHost.spokenMeditationFallbackURL`): a fresh link, then a copy
+saved in another voice. A recording broken off by an interruption is taken
+back on its next play - to its first word when it is under a minute (a
+prayer, a verse), five seconds otherwise - and resume after an interruption
+reads whether playback is wanted now, so a recording heard to its end never
+comes back. While the spoken Rosary owns track navigation it also takes
+Lock Screen and headphone play and pause, and headphones pulled out
+(`setTrackNavigation(onTransport:)`), and a stream that fails part-way is
+passed over (`onFail`). Resume keeps the script step (`SpokenStep` on `InProgressPrayer`,
 kept current through `SpokenRosaryHost.spokenRosaryReached`), used only if
 the rebuilt script still has that prayer at that place. Completions post
 `prayed_aloud` (`POST /completions`).

@@ -111,6 +111,11 @@ enum RosarySetup {
 
     /// "Female voice · 1× · Every prayer aloud · On the beads"
     static func line(kind: RosarySetupKind, category: MysteryCategory?, settings: UserSettings) -> String {
+        // A Scriptural Rosary read in silence is heard in no voice at no
+        // speed: the line named both for a Rosary nobody hears
+        if kind == .scriptural, !settings.prayAloud {
+            return "Read in silence"
+        }
         var parts = [
             "\(NarrationVoiceCatalog.shared.chosenVoice.name) voice",
             PlaybackSpeedChoice.rateLabel(AudioService.shared.playbackRate)
@@ -137,8 +142,8 @@ enum RosarySetup {
 
 // MARK: - RosarySetupSheet
 
-/// The choices, in the sheet grammar: the voice and speed as capsules,
-/// then ruled rows each with its own switch
+/// The choices, in the sheet grammar: the voices as capsules, the speed on
+/// its slider, then ruled rows each with its own switch
 private struct RosarySetupSheet: View {
 
     let category: MysteryCategory?
@@ -164,10 +169,11 @@ private struct RosarySetupSheet: View {
                 PlaybackSpeedChoice()
                     .padding(.horizontal, SheetMetrics.gutter)
 
-                SheetSectionLabel("The prayers")
                 // The Rosary Aloud has no switch here: a Rosary said
-                // aloud is the whole of it, so its note stands alone
+                // aloud is the whole of it, and the label once stood
+                // over nothing
                 if kind != .plain {
+                    SheetSectionLabel("The prayers")
                     switchRow(
                         UserSettings.prayAloudTitle,
                         detail: UserSettings.prayAloudDetail(
@@ -186,7 +192,6 @@ private struct RosarySetupSheet: View {
                         isOn: $settings.prayOnBeads
                     )
                 }
-
 
                 if category != .sevenSorrows {
                     SheetSectionLabel("After the Rosary")

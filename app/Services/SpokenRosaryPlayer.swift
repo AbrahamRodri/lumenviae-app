@@ -33,6 +33,10 @@ protocol SpokenRosaryHost: AnyObject {
     /// The narrated meditation for a decade, or nil for none
     func spokenMeditationURL(decade: Int) async -> String?
 
+    /// Somewhere else to hear a decade's meditation after `failed` would
+    /// not load, or nil to pass over it
+    func spokenMeditationFallbackURL(decade: Int, failed: String) async -> String?
+
     /// What the Lock Screen calls the Rosary: the set, or the devotion
     var spokenRosaryTitle: String { get }
 
@@ -45,6 +49,12 @@ protocol SpokenRosaryHost: AnyObject {
     /// The voice has begun a step of the script, or the hand has moved
     /// it to one: the place to come back to after an interruption
     func spokenRosaryReached(_ step: SpokenStep)
+}
+
+extension SpokenRosaryHost {
+    /// A Rosary with no meditations — the Scriptural Rosary, the Rosary
+    /// Aloud — has nothing to fall back to
+    func spokenMeditationFallbackURL(decade: Int, failed: String) async -> String? { nil }
 }
 
 @Observable
@@ -94,13 +104,17 @@ final class SpokenRosaryPlayer {
     /// The opening or closing prayer under way, for the pendant the screen
     /// draws in place of a mystery's painting. Shown while the recordings
     /// are still being fetched too, so a Rosary begun from the cross
-    /// opens on the cross.
+    /// opens on the cross; and kept after the last Amen, so it ends on
+    /// the cross too, rather than the last mystery's painting coming
+    /// back under the closing prayers once they are over.
     var pendant: SpokenPendant? {
+        let shown: SpokenSegment?
         switch phase {
-        case .preparing, .running, .finished: break
+        case .preparing, .running: shown = currentSegment
+        case .finished: shown = script.last
         case .idle, .failed: return nil
         }
-        guard let segment = currentSegment, segment.phase != .decade,
+        guard let segment = shown, segment.phase != .decade,
               case .prayer(let id) = segment.kind else { return nil }
         return SpokenPendant(
             phase: segment.phase,
@@ -434,19 +448,20 @@ final class SpokenRosaryPlayer {
 
         installNavigation()
 
-        let onPendant = segment.phase != .decade
-        let ready = await audio.loadAudio(
-            from: url,
-            title: title(for: segment),
-            subtitle: host?.spokenRosaryTitle,
-            artworkAssetName: onPendant ? nil : host?.spokenArtwork(decade: segment.mystery),
-            artworkImage: onPendant ? PendantArtwork.lockScreenImage : nil,
-            album: host?.spokenRosaryTitle,
-            queueIndex: segment.mystery,
-            queueCount: (script.last?.mystery ?? 0) + 1,
-            claimNowPlaying: true
-        )
+        var ready = await load(url, for: segment)
         guard saying == generation else { return }
+
+        // A meditation that would not load — a link past its signature,
+        // or no signal — has one more source before it is passed over: a
+        // fresh link, or a copy saved on the device in another voice, the
+        // same two the silent player falls back on
+        if !ready, segment.kind == .meditation,
+           let fallback = await host?.spokenMeditationFallbackURL(decade: segment.mystery, failed: url),
+           fallback != url {
+            guard saying == generation else { return }
+            ready = await load(fallback, for: segment)
+            guard saying == generation else { return }
+        }
         isFetching = false
 
         guard ready else {
@@ -465,6 +480,24 @@ final class SpokenRosaryPlayer {
         }
         audio.play()
         letAppSleep()
+    }
+
+    /// Hands one recording to the shared player, named for the Lock
+    /// Screen: the prayer, and the pendant or the mystery's painting
+    @MainActor
+    private func load(_ url: String, for segment: SpokenSegment) async -> Bool {
+        let onPendant = segment.phase != .decade
+        return await audio.loadAudio(
+            from: url,
+            title: title(for: segment),
+            subtitle: host?.spokenRosaryTitle,
+            artworkAssetName: onPendant ? nil : host?.spokenArtwork(decade: segment.mystery),
+            artworkImage: onPendant ? PendantArtwork.lockScreenImage : nil,
+            album: host?.spokenRosaryTitle,
+            queueIndex: segment.mystery,
+            queueCount: (script.last?.mystery ?? 0) + 1,
+            claimNowPlaying: true
+        )
     }
 
     /// Tells the host where in the script the Rosary now stands
