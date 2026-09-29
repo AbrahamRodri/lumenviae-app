@@ -1739,6 +1739,13 @@ transition entirely.
 
 ### Visual Style
 - Dark, contemplative theme on the page gradient (`AppColors.appGradient`)
+- The app declares itself dark (`UIUserInterfaceStyle`, set as
+  `INFOPLIST_KEY_UIUserInterfaceStyle = Dark` in the target's build
+  settings), so the system's own chrome — the status bar, keyboards,
+  alerts and dialogs, pickers and menus, a sheet's system parts, the
+  launch screen — is dark whatever the phone's own appearance; all
+  three themes are dark, and a phone set to Light once styled that
+  chrome for a light app over dark pages
 - Gold accents for sacred/important elements; one filled gold act per screen
 - Ruled ledgers and 16pt hairline outlines at `gold@0.24` on the bare
   page — filled card surfaces only where a section above says so (the
