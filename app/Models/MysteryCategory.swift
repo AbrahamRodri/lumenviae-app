@@ -4,7 +4,8 @@
 //
 //  The Rosary mystery categories, with display properties (colors, icons, days).
 //  Raw values match the API strings. Luminous mysteries (added 2002) are not
-//  part of the traditional daily rotation but are available in the app.
+//  part of the traditional daily rotation — only of the modern one, a
+//  setting — but are available in the app either way.
 //
 
 import SwiftUI
@@ -136,15 +137,15 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
         }
     }
 
-    /// Traditional days this mystery is prayed — the same rule as
-    /// `ScheduleService`, said in words. Sunday follows the season.
+    /// The days this mystery is prayed on the user's schedule, said in
+    /// words by `ScheduleService` so the words and the rule cannot part.
+    /// Sunday follows the season. The Luminous, outside the traditional
+    /// rotation, and the chaplet, outside both, say when they are kept.
     var daysPrayed: String {
+        if let days = ScheduleService.daysPrayed(self) { return days }
         switch self {
-        case .joyful:      return "Monday, Thursday, Sundays of Advent"
-        case .sorrowful:   return "Tuesday, Friday, Sundays of Lent"
-        case .glorious:    return "Wednesday, Saturday, Sunday"
-        case .luminous:    return "Thursday (modern schedule)"
         case .sevenSorrows: return "Fridays, September 15"
+        default:            return "Thursday (modern schedule)"
         }
     }
 

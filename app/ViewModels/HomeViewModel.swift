@@ -12,9 +12,6 @@ final class HomeViewModel {
 
     // MARK: - State
 
-    /// Today's mystery category based on the traditional schedule.
-    let todaysCategory: MysteryCategory
-
     /// Mystery categories for the home screen grid (excludes Luminous, includes Seven Sorrows).
     let allCategories: [MysteryCategory] = MysteryCategory.homeCategories
 
@@ -26,10 +23,16 @@ final class HomeViewModel {
 
     init(scheduleService: ScheduleService.Type = ScheduleService.self) {
         self.scheduleService = scheduleService
-        self.todaysCategory = scheduleService.categoryForToday()
     }
 
     // MARK: - Computed Properties
+
+    /// Today's mystery category, on the schedule the user keeps. Read
+    /// fresh rather than kept: Settings is pushed over home, and a
+    /// schedule changed there has to be on the card when Back returns.
+    var todaysCategory: MysteryCategory {
+        scheduleService.categoryForToday()
+    }
 
     /// Day label for the header (e.g., "WEDNESDAY PRAYER")
     var dayLabel: String {
