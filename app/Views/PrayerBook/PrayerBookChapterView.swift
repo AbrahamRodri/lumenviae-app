@@ -157,7 +157,9 @@ struct PrayerBookChapterView: View {
                     .multilineTextAlignment(forward ? .trailing : .leading)
             }
             .frame(maxWidth: 170, alignment: forward ? .trailing : .leading)
-            .frame(minHeight: 44)
+            // Hung from the top, so the two kickers share a line when
+            // one title wraps and the other does not
+            .frame(minHeight: 44, alignment: .top)
             .contentShape(Rectangle())
         }
         .buttonStyle(SacredCardButtonStyle())

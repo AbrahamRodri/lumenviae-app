@@ -17,6 +17,7 @@ struct PrayerBookView: View {
 
     @Environment(AppRouter.self) private var router
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.dynamicTypeSize) private var typeSize
 
     private var store = PrayerBookStore.shared
 
@@ -166,10 +167,13 @@ struct PrayerBookView: View {
                 .foregroundColor(AppColors.goldLight)
                 .shadow(color: AppColors.gold.opacity(0.5), radius: 10)
 
+            // Two lines at most, so a large text size shrinks the name
+            // rather than breaking it mid-word ("Angel / us")
             Text(title)
                 .font(AppFonts.titleFont(30))
                 .foregroundColor(AppColors.cream)
                 .multilineTextAlignment(.center)
+                .lineLimit(2)
                 .minimumScaleFactor(0.7)
 
             Text(order.detail)
@@ -221,8 +225,13 @@ struct PrayerBookView: View {
                 note: "A few prayers said one after another, for the moments that ask for them."
             )
 
+            // One column at the accessibility sizes, where two cut the
+            // orders' names short
             LazyVGrid(
-                columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)],
+                columns: Array(
+                    repeating: GridItem(.flexible(), spacing: 12),
+                    count: typeSize.isAccessibilitySize ? 1 : 2
+                ),
                 spacing: 12
             ) {
                 ForEach(PrayerBook.occasionOrders) { order in
@@ -347,10 +356,13 @@ struct PrayerBookView: View {
                 Button { query = "" } label: {
                     AppIcon("ph-x-circle", size: 15)
                         .foregroundColor(AppColors.textSecondary)
-                        .frame(width: 30, height: 30)
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("Clear")
+                // The glyph keeps its place; only the target grows
+                .padding(.trailing, -7)
+                .accessibilityLabel("Clear the search")
             }
         }
         .padding(.horizontal, 14)

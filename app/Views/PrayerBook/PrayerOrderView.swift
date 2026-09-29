@@ -21,6 +21,7 @@ struct PrayerOrderView: View {
     private var voices = NarrationVoiceCatalog.shared
 
     @State private var now = Date()
+    @State private var footHeight: CGFloat = 0
 
     init(orderID: String) {
         self.orderID = orderID
@@ -55,12 +56,16 @@ struct PrayerOrderView: View {
                                 .padding(.top, 18)
                         }
 
-                        Color.clear.frame(height: 240)
+                        // Room to scroll the last prayer clear of the
+                        // foot, measured: at the larger text sizes the
+                        // foot outgrows a fixed 240 and hid the last row
+                        Color.clear.frame(height: max(240, footHeight))
                     }
                 }
                 .topChromeFade()
 
                 foot(order)
+                    .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { footHeight = $0 }
             }
         }
         .navigationBarBackButtonHidden(true)

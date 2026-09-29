@@ -1394,7 +1394,10 @@ write concurrent code here:
   (`PrayAloudChoiceSheet`, once, until `hasChosenAloud`): these are
   prayers for the pew, the tabernacle and the bedside, and it once began
   reading the examination of conscience aloud the moment PRAY was
-  touched. The order page's switch stands just above its PRAY, so
+  touched. It cannot be dragged away, so both answers must always be in
+  reach: at the accessibility text sizes it stands full height and
+  scrolls (held to 340 points, its rows were drawn over each other). The
+  order page's switch stands just above its PRAY, so
   praying from there answers the question with what the switch shows;
   afterwards the speaker at the head of the page owns the choice. Aloud,
   each prayer is the server's ElevenLabs

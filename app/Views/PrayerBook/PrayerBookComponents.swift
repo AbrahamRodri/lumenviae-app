@@ -182,25 +182,30 @@ struct BookPrayerRow: View {
         Button(action: action) {
             VStack(spacing: 0) {
                 HStack(alignment: .center, spacing: 14) {
-                    if let number {
-                        Text(LiturgicalCalendarFormat.roman(number))
-                            .font(AppFonts.titleFont(13))
-                            .foregroundColor(AppColors.gold.opacity(0.85))
-                            .frame(width: 30, alignment: .leading)
-                    }
+                    // The numeral stands on the title's line, as the
+                    // contents page sets it — centred on the row, it
+                    // floated between the title and its Latin
+                    HStack(alignment: .firstTextBaseline, spacing: 14) {
+                        if let number {
+                            Text(LiturgicalCalendarFormat.roman(number))
+                                .font(AppFonts.titleFont(13))
+                                .foregroundColor(AppColors.gold.opacity(0.85))
+                                .frame(width: 30, alignment: .leading)
+                        }
 
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text(prayer.title)
-                            .font(AppFonts.readingFont(17))
-                            .foregroundColor(AppColors.cream)
-                            .multilineTextAlignment(.leading)
-                            .fixedSize(horizontal: false, vertical: true)
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(prayer.title)
+                                .font(AppFonts.readingFont(17))
+                                .foregroundColor(AppColors.cream)
+                                .multilineTextAlignment(.leading)
+                                .fixedSize(horizontal: false, vertical: true)
 
-                        if let latin = prayer.latinTitle, latin != prayer.title {
-                            Text(latin)
-                                .font(AppFonts.readingItalicFont(13.5))
-                                .foregroundColor(AppColors.textSecondary)
-                                .lineLimit(1)
+                            if let latin = prayer.latinTitle, latin != prayer.title {
+                                Text(latin)
+                                    .font(AppFonts.readingItalicFont(13.5))
+                                    .foregroundColor(AppColors.textSecondary)
+                                    .lineLimit(1)
+                            }
                         }
                     }
 
@@ -292,18 +297,20 @@ struct PrayerOrderTile: View {
 
                 Spacer(minLength: 14)
 
+                // Three lines, not two: at the larger text sizes a name
+                // like After Communion was cut to "After Comm…"
                 Text(order.occasion.uppercased())
                     .font(AppFonts.labelFont(8))
                     .tracking(1.8)
                     .foregroundColor(AppColors.gold.opacity(0.7))
-                    .lineLimit(2)
+                    .lineLimit(3)
                     .fixedSize(horizontal: false, vertical: true)
 
                 Text(order.title(on: Date()))
                     .font(AppFonts.headlineFont(15))
                     .foregroundColor(AppColors.cream)
                     .multilineTextAlignment(.leading)
-                    .lineLimit(2)
+                    .lineLimit(3)
                     .minimumScaleFactor(0.85)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.top, 5)
@@ -343,18 +350,27 @@ struct PrayerHoursStrip: View {
         self.onSelect = onSelect
     }
 
+    /// The station's disc, which the links between stations meet
+    private static let disc: CGFloat = 40
+
     var body: some View {
         let current = PrayerBook.dayOrder(at: now)
-        HStack(spacing: 0) {
+        // Hung from the top, so each link meets the discs at their
+        // centres however tall the names beneath them grow
+        HStack(alignment: .top, spacing: 0) {
             ForEach(Array(PrayerBook.dayOrders.enumerated()), id: \.element.id) { index, order in
                 if index > 0 {
                     Rectangle()
                         .fill(AppColors.gold.opacity(0.18))
                         .frame(height: AppLine.hairline)
-                        .frame(maxWidth: .infinity)
-                        .padding(.bottom, 26)
+                        .frame(minWidth: 16, maxWidth: .infinity)
+                        .padding(.top, (Self.disc - AppLine.hairline) / 2)
                 }
+                // Before the links: the names take the width they need,
+                // less a little air between them, and the links have
+                // what is left
                 station(order, lit: order.id == current.id)
+                    .layoutPriority(1)
             }
         }
     }
@@ -367,16 +383,19 @@ struct PrayerHoursStrip: View {
                     Circle()
                         .strokeBorder(AppColors.gold.opacity(lit ? 0.9 : 0.3), lineWidth: lit ? 1.2 : AppLine.hairline)
                         .background(Circle().fill(AppColors.gold.opacity(lit ? 0.12 : 0)))
-                        .frame(width: 40, height: 40)
+                        .frame(width: Self.disc, height: Self.disc)
                         .shadow(color: AppColors.gold.opacity(lit ? 0.45 : 0), radius: 8)
                     AppIcon(offered ? "ph-seal-check-fill" : order.icon, size: 17)
                         .foregroundColor(AppColors.gold.opacity(lit || offered ? 1 : 0.55))
                 }
+                // Gives way at the larger text sizes rather than running
+                // off the edge of the screen and into its neighbour
                 Text(shortName(order).uppercased())
                     .font(AppFonts.labelFont(8.5))
                     .tracking(1.6)
                     .foregroundColor(lit ? AppColors.goldLight : AppColors.textSecondary)
-                    .fixedSize()
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
             }
             .frame(minWidth: 64, minHeight: 44)
             .contentShape(Rectangle())

@@ -37,7 +37,7 @@ struct PrayAlongView: View {
     @State private var index: Int
     @State private var litStanza: Int?
     @State private var finished = false
-    @State private var bellSwing = false
+    @State private var bellRings = 0
     @State private var advanceTask: Task<Void, Never>?
     @State private var asksHowToPray = false
 
@@ -98,6 +98,8 @@ struct PrayAlongView: View {
             .allowsHitTesting(false)
 
             if let prayer {
+                // Under the Amen's veil the page is still drawn, but
+                // VoiceOver should find only the Amen
                 VStack(spacing: 0) {
                     header
                     if prayers.count > 1 {
@@ -106,12 +108,14 @@ struct PrayAlongView: View {
                     }
                     pageScroll(prayer)
                 }
+                .accessibilityHidden(finished)
 
                 VStack {
                     Spacer()
                     foot
                 }
                 .ignoresSafeArea(edges: .bottom)
+                .accessibilityHidden(finished)
             } else {
                 missing
             }
@@ -131,7 +135,6 @@ struct PrayAlongView: View {
                 store.chooseAloud(chosen)
                 asksHowToPray = false
             }
-            .presentationDetents([.height(340)])
             .presentationBackground(AppColors.background)
             .interactiveDismissDisabled()
         }
@@ -237,13 +240,24 @@ struct PrayAlongView: View {
 
                     VStack(spacing: 12) {
                         if isAngelus {
+                            // Hangs upright, and swings only while it
+                            // rings: it once rested at one end of its
+                            // swing, so in silence it hung askew
                             AppIcon("ph-bell", size: 26)
                                 .foregroundColor(AppColors.gold)
-                                .rotationEffect(.degrees(bellSwing ? 14 : -14), anchor: .top)
-                                .animation(
-                                    reduceMotion ? nil : .easeInOut(duration: 0.55).repeatCount(5, autoreverses: true),
-                                    value: bellSwing
-                                )
+                                .keyframeAnimator(initialValue: 0.0, trigger: bellRings) { bell, angle in
+                                    bell.rotationEffect(.degrees(angle), anchor: .top)
+                                } keyframes: { _ in
+                                    KeyframeTrack {
+                                        CubicKeyframe(14, duration: 0.3)
+                                        CubicKeyframe(-14, duration: 0.55)
+                                        CubicKeyframe(14, duration: 0.55)
+                                        CubicKeyframe(-12, duration: 0.55)
+                                        CubicKeyframe(8, duration: 0.5)
+                                        CubicKeyframe(-4, duration: 0.45)
+                                        CubicKeyframe(0, duration: 0.4)
+                                    }
+                                }
                                 .padding(.bottom, 2)
                                 .accessibilityHidden(true)
                         }
@@ -680,7 +694,7 @@ struct PrayAlongView: View {
 
     private func ringBell() {
         AngelusBellSound.shared.ring()
-        bellSwing.toggle()
+        if !reduceMotion { bellRings += 1 }
     }
 
     // MARK: - Following the voice
@@ -754,8 +768,15 @@ struct PrayAlongView: View {
 /// The book's one question, asked the first time it would speak: read
 /// aloud, or kept to the page. Two rows and nothing to confirm — the
 /// row is the answer. It cannot be dragged away, so it shows no grabber.
+///
+/// Answering is the only way out, so both answers must always be in
+/// reach: at the accessibility text sizes the sheet stands full height,
+/// and it scrolls. Held to 340 points there, its header was cut off and
+/// the two rows were drawn over each other.
 struct PrayAloudChoiceSheet: View {
     let onChoose: (Bool) -> Void
+
+    @Environment(\.dynamicTypeSize) private var typeSize
 
     private var voices = NarrationVoiceCatalog.shared
 
@@ -764,40 +785,44 @@ struct PrayAloudChoiceSheet: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            SheetHeader(
-                kicker: "The Prayer Book",
-                title: "Aloud, or in silence?",
-                lead: "The book can read each prayer to you, the page following the voice, or leave the words to you."
-            )
-
-            Button { onChoose(true) } label: {
-                SheetRow(
-                    "Aloud",
-                    detail: "Read to you in the \(voices.chosenVoice.name.lowercased()) voice",
-                    icon: "ph-speaker-high"
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 0) {
+                SheetHeader(
+                    kicker: "The Prayer Book",
+                    title: "Aloud, or in silence?",
+                    lead: "The book can read each prayer to you, the page following the voice, or leave the words to you."
                 )
+
+                Button { onChoose(true) } label: {
+                    SheetRow(
+                        "Aloud",
+                        detail: "Read to you in the \(voices.chosenVoice.name.lowercased()) voice",
+                        icon: "ph-speaker-high",
+                        detailLineLimit: nil
+                    )
+                }
+                .buttonStyle(SacredCardButtonStyle())
+
+                Button { onChoose(false) } label: {
+                    SheetRow(
+                        "In silence",
+                        detail: "For the pew, or beside someone asleep",
+                        icon: "ph-book-open",
+                        showsDivider: false,
+                        detailLineLimit: nil
+                    )
+                }
+                .buttonStyle(SacredCardButtonStyle())
+
+                SheetNote("The speaker at the top of the page changes this whenever you like.")
             }
-            .buttonStyle(SacredCardButtonStyle())
-
-            Button { onChoose(false) } label: {
-                SheetRow(
-                    "In silence",
-                    detail: "For the pew, or beside someone asleep",
-                    icon: "ph-book-open",
-                    showsDivider: false
-                )
-            }
-            .buttonStyle(SacredCardButtonStyle())
-
-            SheetNote("The speaker at the top of the page changes this whenever you like.")
-
-            Spacer(minLength: 0)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .scrollBounceBehavior(.basedOnSize)
         // The sheets' ground without `sheetGround()`'s indicator, as the
         // missal's first question is set
         .background(AppColors.appGradient.ignoresSafeArea())
+        .presentationDetents(typeSize.isAccessibilitySize ? [.large] : [.height(340)])
         .presentationDragIndicator(.hidden)
     }
 }
