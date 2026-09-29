@@ -10,7 +10,7 @@ entries are written in the imperative and carry a commit reference, and a
 change that was made and then undone inside the same release is not listed
 at all — only the net difference from the version before it.
 
-## Unreleased
+## 4.0 - Unreleased
 
 The Rosary can be said aloud, the Church's common prayers and her chant
 gained books of their own, and How to Pray became a course.
