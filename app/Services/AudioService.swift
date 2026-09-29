@@ -62,7 +62,10 @@ final class AudioService {
     /// are the same three recordings), and a surface that pinned its claim
     /// to the URL would narrate and drive playback it never started. Pairing
     /// the URL with the generation it was loaded under is what distinguishes
-    /// "still mine" from "the same file, someone else's".
+    /// "still mine" from "the same file, someone else's" — except that a
+    /// load of the file already loaded is skipped and keeps the
+    /// generation, so a surface sharing files with another also asks
+    /// whether it still holds the track navigation (`isTrackNavigationOwner`).
     private(set) var loadGeneration = 0
 
     private var endOfPlaybackObserver: NSObjectProtocol?
@@ -328,6 +331,10 @@ final class AudioService {
         onFail: (() -> Void)? = nil,
         onTransport: ((TransportRequest) -> Void)? = nil
     ) {
+        // A speed lent to the flow before is not this one's
+        if let rateBorrower, rateBorrower != owner {
+            restoreRememberedRate()
+        }
         trackNavigationOwner = owner
         self.canGoNext = canGoNext
         self.canGoPrevious = canGoPrevious
@@ -516,19 +523,31 @@ final class AudioService {
         return AudioService.supportedRates.contains(stored) ? stored : 1.0
     }()
 
+    /// The flow the transport's speed is lent to, named by its
+    /// track-navigation owner, while it runs at a speed of its own.
+    ///
+    /// The speed is that flow's only while it holds the arrows: another
+    /// flow taking them gets the app's own speed back
+    /// (`setTrackNavigation`). Lent with no end but the lender's own
+    /// hand-back, a chant practised at 0.75x slowed the next Rosary's
+    /// meditations, and every one after it, until the app was relaunched.
+    private var rateBorrower: AnyHashable?
+
     /// Sets the speed of whatever is playing.
     ///
     /// `remember` writes it as the app-wide narration speed. A flow that
     /// keeps its own — the Spiritual Reading shelf, where the speed
-    /// belongs to the book and its reader — passes false, so choosing
+    /// belongs to the book and its reader, or a chant slowed to be
+    /// learned — passes false and names itself as `borrower`, so choosing
     /// 1.5x for a slow LibriVox volunteer does not also speed up the
     /// Rosary's meditations.
-    func setPlaybackRate(_ rate: Double, remember: Bool = true) {
+    func setPlaybackRate(_ rate: Double, remember: Bool = true, borrower: AnyHashable? = nil) {
         let resolved = Self.supportedRates.contains(rate) ? rate : 1.0
         playbackRate = resolved
         if remember {
             UserDefaults.standard.set(resolved, forKey: Self.rateStorageKey)
         }
+        rateBorrower = remember ? nil : borrower
         if isPlaying { player?.rate = Float(resolved) }
         updateNowPlayingPlaybackState()
     }
@@ -538,6 +557,13 @@ final class AudioService {
     func restoreRememberedRate() {
         let stored = UserDefaults.standard.double(forKey: Self.rateStorageKey)
         setPlaybackRate(Self.supportedRates.contains(stored) ? stored : 1.0, remember: false)
+    }
+
+    /// Hands the app's speed back for `borrower`, and only if the speed is
+    /// still its loan: a flow that borrowed since keeps its own.
+    func restoreRememberedRate(from borrower: AnyHashable) {
+        guard rateBorrower == borrower else { return }
+        restoreRememberedRate()
     }
 
     // MARK: - Sleep Timer

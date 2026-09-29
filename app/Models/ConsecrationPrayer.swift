@@ -21,14 +21,9 @@ struct ConsecrationPrayer: Codable, Identifiable, Hashable {
     /// Latin title if applicable (e.g., "Veni Creator Spiritus")
     let latinTitle: String?
 
-    /// Full text of the prayer
+    /// Full text of the prayer. A prayer that is sung has its chant in the
+    /// Chant Library (`ChantCatalog.chants(forPrayer:)`), found by its id.
     let content: String
-
-    /// URL for audio recording of the prayer (optional)
-    let audioUrl: String?
-
-    /// Whether this prayer has a chant audio recording available via the API
-    let hasChantAudio: Bool
 
     // MARK: - Initializer
 
@@ -36,16 +31,12 @@ struct ConsecrationPrayer: Codable, Identifiable, Hashable {
         id: String,
         title: String,
         latinTitle: String? = nil,
-        content: String,
-        audioUrl: String? = nil,
-        hasChantAudio: Bool = false
+        content: String
     ) {
         self.id = id
         self.title = title
         self.latinTitle = latinTitle
         self.content = content
-        self.audioUrl = audioUrl
-        self.hasChantAudio = hasChantAudio
     }
 
     // MARK: - Computed Properties
@@ -54,23 +45,5 @@ struct ConsecrationPrayer: Codable, Identifiable, Hashable {
     var displayTitle: String {
         latinTitle ?? title
     }
-
-    /// Whether this prayer has audio available
-    var hasAudio: Bool {
-        audioUrl != nil || hasChantAudio
-    }
 }
 
-// MARK: - ChantRecordings
-
-/// Whether the chant recordings are connected. They are not, for now:
-/// the three files the app sang — the Veni Creator, the Ave Maris
-/// Stella and the Magnificat — came with no licence behind them, so
-/// nothing fetches, downloads or plays a chant. Every place a chant
-/// would sound still stands (the Chapel's tile and sheet, the
-/// consecration's transport) and says it is coming soon. Connecting
-/// licensed recordings is this switch, and the server's keys behind
-/// `/prayers/:id/audio`.
-enum ChantRecordings {
-    static let areConnected = false
-}

@@ -419,6 +419,12 @@ struct ContentView: View {
         // A player, like the Rosary's
         case .prayAlong(let launch):
             PrayAlongView(launch: launch)
+
+        case .chantLibrary:
+            ChantLibraryView()
+
+        case .chant(let id):
+            ChantView(chantID: id)
         }
     }
 }

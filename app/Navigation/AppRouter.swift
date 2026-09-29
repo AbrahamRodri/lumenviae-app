@@ -109,6 +109,12 @@ enum AppRoute: Hashable {
     /// Prayers said one after another on a screen of their own, aloud or
     /// in silence. A player: it hides the bar and carries its own way out.
     case prayAlong(PrayAlongLaunch)
+
+    /// The Chant Library — every chant the app carries, with its
+    /// recording and its score — and one chant's own page, where it is
+    /// heard, read and practised.
+    case chantLibrary
+    case chant(id: String)
 }
 
 // MARK: - ScripturalRosaryLaunch

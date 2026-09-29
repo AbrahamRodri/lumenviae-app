@@ -233,7 +233,8 @@ struct BookPrayerView: View {
         }
     }
 
-    /// Pray it — the page's one gold act — and learn it by heart
+    /// Pray it — the page's one gold act — learn it by heart, and, where
+    /// the Church sings it, hear it sung with its score beside it
     private func acts(_ prayer: BookPrayer) -> some View {
         VStack(spacing: 6) {
             GoldCTAButton(title: "Pray", glyph: .play) {
@@ -246,6 +247,19 @@ struct BookPrayerView: View {
                 leadingIconSize: 12
             ) {
                 showsLearn = true
+            }
+
+            // The first setting (a simple tone before a solemn one); the
+            // chant's page offers the others
+            if let chant = ChantCatalog.chants(forPrayer: prayer.id).first {
+                QuietGoldButton(
+                    title: "Sing it in chant",
+                    leadingIcon: "ph-music-note",
+                    leadingIconSize: 12
+                ) {
+                    router.push(.chant(id: chant.id))
+                }
+                .accessibilityHint("Opens the Gregorian chant, with its recording and its score")
             }
         }
     }
