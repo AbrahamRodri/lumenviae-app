@@ -665,7 +665,7 @@ struct OnboardingView: View {
             ]
         case .learning:
             return [
-                Offer(icon: "ch-rosary", text: "How to Pray the Rosary, step by step"),
+                Offer(icon: "ch-rosary", text: "How to Pray the Rosary in three short lessons, then Your First Rosary, guided"),
                 Offer(icon: "ph-hands-praying", text: "Every prayer written out, in English or in Latin"),
                 Offer(icon: "ph-book-open", text: "A meditation on each mystery, to read or to hear")
             ]
@@ -781,7 +781,7 @@ struct OnboardingView: View {
             stage: stage
         ) {
             VStack(spacing: 16) {
-                OnboardingLead("Pray in English, in Latin, or in both, with each line paired with its translation.")
+                OnboardingLead("Pray in English, in Latin, or in both, with the English beneath each line of Latin.")
 
                 LanguagePreviewCard(language: selectedLanguage)
 
@@ -873,12 +873,16 @@ struct OnboardingView: View {
                 .sensoryFeedback(.selection, trigger: selectedReminderHour)
 
                 // The system prompt is raised by this slide's own button,
-                // so a refusal happens in plain sight. This line keeps it
-                // in sight afterwards rather than letting the user leave
+                // so a refusal happens in plain sight. Until then the line
+                // says the question is coming, so the iPhone's own words
+                // are expected rather than sprung; afterwards it keeps a
+                // refusal in sight rather than letting the user leave
                 // believing an hour was set that can never ring.
                 Text(denied
                      ? "Notifications are off for Lumen Viae. Turn them on in the Settings app, then choose a time in Settings, under Devotion."
-                     : "You can change the time or turn it off in Settings.")
+                     : UserSettings.shared.notificationAuthorizationGranted
+                        ? "You can change the time or turn it off in Settings."
+                        : "Your iPhone will then ask once whether Lumen Viae may send it. You can change the time or turn it off in Settings.")
                     .font(AppFonts.italicFont(14))
                     .foregroundColor(AppColors.cream.opacity(0.62))
                     .multilineTextAlignment(.center)
