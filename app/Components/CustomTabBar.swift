@@ -120,6 +120,7 @@ struct CustomTabBar: View {
                         selectedTab = tab
                     }
                     .frame(minWidth: 44)
+                    .firstUseTourStop(tab == .chapel ? .chapel : nil)
 
                     if tab != visibleTabs.last {
                         Spacer(minLength: 8)
@@ -145,6 +146,7 @@ struct CustomTabBar: View {
                 action: onPrayNow,
                 onHold: onPrayHold
             )
+            .firstUseTourStop(.pray)
             .padding(.trailing, 12)
             .offset(y: -20)
         }

@@ -62,6 +62,7 @@ struct HeaderView: View {
 
                 if let onSearchTap {
                     glyph("ph-magnifying-glass", "Search", action: onSearchTap)
+                        .firstUseTourStop(.explore)
                 }
             }
         }

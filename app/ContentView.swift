@@ -40,6 +40,15 @@ struct ContentView: View {
     /// Bumped each time the Consecration tab is chosen; its veil answers
     @State private var consecrationArrivals = 0
 
+    /// A version's notes, owed to someone who knew the version before;
+    /// and the door chosen in them, taken once the sheet has left
+    @State private var whatsNewRelease: WhatsNewRelease?
+    @State private var pendingWhatsNewRoute: AppRoute?
+
+    /// A new reader's first look at the home page (`FirstUseTour`).
+    /// Computed, so the memberwise init keeps its one argument.
+    private var firstUseTour: FirstUseTour { FirstUseTour.shared }
+
     private var shouldShowTabBar: Bool {
         router.path.isEmpty && !isConsecrationNavigating && !router.chapelArranging
     }
@@ -114,6 +123,11 @@ struct ContentView: View {
                     .offset(y: shouldShowTabBar ? 0 : 100)
                     .animation(Motion.panel, value: shouldShowTabBar)
             }
+
+            if firstUseTour.isRunning {
+                FirstUseTourOverlay(tour: firstUseTour)
+                    .transition(.opacity)
+            }
         }
         // A tab change turns like a page — see `tabTurn`. The transaction
         // only needs to be animated; each side carries its own timing
@@ -174,6 +188,42 @@ struct ContentView: View {
                 .environment(UserSettings.shared)
                 .presentationBackground(AppColors.background)
                 .dynamicTypeSize(...DynamicTypeSize.appMaximum)
+        }
+        // What's New, or a new reader's tour: each once, on the home page
+        // itself and never over a prayer, so asked again whenever the
+        // home page comes back into view
+        .task { await presentFirstLook(after: .milliseconds(900)) }
+        .onChange(of: router.path.isEmpty) { _, isEmpty in
+            if isEmpty { Task { await presentFirstLook(after: .milliseconds(600)) } }
+        }
+        .onChange(of: router.selectedTab) { _, tab in
+            if tab == .home { Task { await presentFirstLook(after: .milliseconds(400)) } }
+        }
+        .sheet(item: $whatsNewRelease, onDismiss: {
+            guard let route = pendingWhatsNewRoute else { return }
+            pendingWhatsNewRoute = nil
+            router.push(route)
+        }) { release in
+            WhatsNewSheet(release: release) { route in
+                pendingWhatsNewRoute = route
+                whatsNewRelease = nil
+            }
+            .dynamicTypeSize(...DynamicTypeSize.appMaximum)
+        }
+    }
+
+    /// Shows what is owed, once the home page has settled: a version's
+    /// notes to someone updating, or the tour to a new reader
+    private func presentFirstLook(after wait: Duration) async {
+        try? await Task.sleep(for: wait)
+        guard router.path.isEmpty, router.selectedTab == .home, !router.chapelArranging,
+              !showPrayTray, !showPrayEditor, whatsNewRelease == nil,
+              !firstUseTour.isRunning else { return }
+        if let release = WhatsNewStore.shared.due {
+            WhatsNewStore.shared.markSeen()
+            whatsNewRelease = release
+        } else if firstUseTour.isDue {
+            withAnimation(Motion.crossfade) { firstUseTour.begin() }
         }
     }
 
