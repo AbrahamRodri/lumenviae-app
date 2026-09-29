@@ -28,7 +28,11 @@ struct ChapelPrayerBookTile: View {
     }
 
     var body: some View {
-        if span == 2 { full } else { half }
+        // Redrawn when the book's hour turns: the Chapel keeps no clock,
+        // and the tile went on offering the order it was first drawn with
+        TimelineView(PrayerBookHourSchedule()) { _ in
+            if span == 2 { full } else { half }
+        }
     }
 
     private var order: PrayerOrder { PrayerBook.dayOrder(at: Date()) }

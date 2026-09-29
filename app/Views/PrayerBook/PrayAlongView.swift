@@ -14,7 +14,10 @@
 //  on Amen, and an order prayed to its Amen is offered for the day —
 //  which the rule of prayer and the Chapel read.
 //
-//  The Angelus rings the church bell as it begins and as it ends.
+//  The Angelus rings the church bell as it begins and as it ends — when
+//  it is prayed aloud. In silence the book makes no sound at all, and
+//  until the reader has once said which it is to be, it asks before it
+//  makes any (`PrayAloudChoiceSheet`).
 //
 
 import SwiftUI
@@ -34,8 +37,15 @@ struct PrayAlongView: View {
     @State private var index: Int
     @State private var litStanza: Int?
     @State private var finished = false
-    @State private var bellSwing = false
+    @State private var bellRings = 0
     @State private var advanceTask: Task<Void, Never>?
+    @State private var asksHowToPray = false
+
+    /// Whether the page is on screen. Recordings still being fetched when
+    /// it closes, or a prayer still turning in, must not go on to speak
+    /// from a page nobody can see: the first fetch can take a while, and
+    /// a voice begun after × would pray the whole order on from nowhere
+    @State private var isShowing = false
 
     /// The page fades out, the next prayer is put in its place and the
     /// scroll set back to the head unseen, and it fades in — the old
@@ -55,7 +65,14 @@ struct PrayAlongView: View {
 
     private var isLast: Bool { index >= prayers.count - 1 }
 
-    private var aloud: Bool { store.praysAloud }
+    /// Silent until the reader has said the book may speak
+    private var aloud: Bool { store.hasChosenAloud && store.praysAloud }
+
+    /// A single prayer is named once, by its own title on the page; the
+    /// head says whose book it is instead of saying the title twice
+    private var kicker: String {
+        prayers.count > 1 ? launch.title : "The Prayer Book"
+    }
 
     private var isAngelus: Bool {
         launch.orderID == PrayerBook.angelusOrderID
@@ -87,6 +104,8 @@ struct PrayAlongView: View {
             .allowsHitTesting(false)
 
             if let prayer {
+                // Under the Amen's veil the page is still drawn, but
+                // VoiceOver should find only the Amen
                 VStack(spacing: 0) {
                     header
                     if prayers.count > 1 {
@@ -95,12 +114,14 @@ struct PrayAlongView: View {
                     }
                     pageScroll(prayer)
                 }
+                .accessibilityHidden(finished)
 
                 VStack {
                     Spacer()
                     foot
                 }
                 .ignoresSafeArea(edges: .bottom)
+                .accessibilityHidden(finished)
             } else {
                 missing
             }
@@ -112,6 +133,17 @@ struct PrayAlongView: View {
         }
         .navigationBarHidden(true)
         .animation(Motion.crossfade, value: finished)
+        // Asked once, before the book's first sound; undismissable, since
+        // answering is the only way through, and the speaker at the head
+        // of the page owns the choice afterward
+        .sheet(isPresented: $asksHowToPray, onDismiss: startSounding) {
+            PrayAloudChoiceSheet { chosen in
+                store.chooseAloud(chosen)
+                asksHowToPray = false
+            }
+            .presentationBackground(AppColors.background)
+            .interactiveDismissDisabled()
+        }
         .onAppear(perform: begin)
         .onDisappear(perform: end)
         .onChange(of: voice.progress) { _, progress in
@@ -130,7 +162,7 @@ struct PrayAlongView: View {
             Spacer(minLength: 8)
 
             VStack(spacing: 3) {
-                Text(launch.title.uppercased())
+                Text(kicker.uppercased())
                     .font(AppFonts.labelFont(9.5))
                     .tracking(2.5)
                     .foregroundColor(AppColors.gold)
@@ -214,13 +246,24 @@ struct PrayAlongView: View {
 
                     VStack(spacing: 12) {
                         if isAngelus {
+                            // Hangs upright, and swings only while it
+                            // rings: it once rested at one end of its
+                            // swing, so in silence it hung askew
                             AppIcon("ph-bell", size: 26)
                                 .foregroundColor(AppColors.gold)
-                                .rotationEffect(.degrees(bellSwing ? 14 : -14), anchor: .top)
-                                .animation(
-                                    reduceMotion ? nil : .easeInOut(duration: 0.55).repeatCount(5, autoreverses: true),
-                                    value: bellSwing
-                                )
+                                .keyframeAnimator(initialValue: 0.0, trigger: bellRings) { bell, angle in
+                                    bell.rotationEffect(.degrees(angle), anchor: .top)
+                                } keyframes: { _ in
+                                    KeyframeTrack {
+                                        CubicKeyframe(14, duration: 0.3)
+                                        CubicKeyframe(-14, duration: 0.55)
+                                        CubicKeyframe(14, duration: 0.55)
+                                        CubicKeyframe(-12, duration: 0.55)
+                                        CubicKeyframe(8, duration: 0.5)
+                                        CubicKeyframe(-4, duration: 0.45)
+                                        CubicKeyframe(0, duration: 0.4)
+                                    }
+                                }
                                 .padding(.bottom, 2)
                                 .accessibilityHidden(true)
                         }
@@ -269,6 +312,11 @@ struct PrayAlongView: View {
                 .opacity(pageOpacity)
             }
             .scrollBounceBehavior(.basedOnSize)
+            // The words dissolve as they pass under the head and the
+            // beads rather than being cut through mid-line at the scroll's
+            // edge. No inset: the title already stands 26pt down, clear
+            // of the band at rest.
+            .topChromeFade(height: 22, inset: 0)
             .onChange(of: litStanza) { _, lit in
                 guard let lit, aloud else { return }
                 withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.7)) {
@@ -369,8 +417,15 @@ struct PrayAlongView: View {
 
     private var transport: some View {
         HStack(spacing: 34) {
-            transportButton("ph-skip-forward-fill", flipped: true, label: "Previous prayer", enabled: index > 0) {
-                goTo(index - 1)
+            if prayers.count > 1 {
+                transportButton("ph-skip-forward-fill", flipped: true, label: "Previous prayer", enabled: index > 0) {
+                    goTo(index - 1)
+                }
+            } else {
+                // A single prayer has nowhere to go back to; the space
+                // stays so the play disc keeps the middle
+                Color.clear.frame(width: 48, height: 48)
+                    .accessibilityHidden(true)
             }
 
             Button {
@@ -427,8 +482,16 @@ struct PrayAlongView: View {
     @ViewBuilder
     private var silentFoot: some View {
         if isLast {
-            GoldCTAButton(title: "Amen", trailingIcon: "ph-check", fullWidth: true) {
-                finish()
+            // The way back stays beside Amen, as it stands beside NEXT
+            HStack(spacing: 12) {
+                if index > 0 {
+                    transportButton("ph-caret-left", flipped: false, label: "Previous prayer", enabled: true) {
+                        goTo(index - 1)
+                    }
+                }
+                GoldCTAButton(title: "Amen", trailingIcon: "ph-check", fullWidth: true) {
+                    finish()
+                }
             }
         } else if let next = prayers[safe: index + 1] {
             HStack(spacing: 12) {
@@ -535,16 +598,29 @@ struct PrayAlongView: View {
     // MARK: - Moving
 
     private func begin() {
+        isShowing = true
         UIApplication.shared.isIdleTimerDisabled = true
         voice.onFinish = { scheduleAdvance() }
         voice.onNext = { if !isLast { goTo(index + 1) } }
         voice.onPrevious = { if index > 0 { goTo(index - 1) } }
 
+        if store.hasChosenAloud {
+            startSounding()
+        } else {
+            asksHowToPray = true
+        }
+    }
+
+    /// The page's first sound, once the reader has said the book may
+    /// make one: the Angelus's bell, then the voice. In silence, nothing.
+    private func startSounding() {
+        guard isShowing, aloud, !finished else { return }
         if isAngelus { ringBell() }
-        if aloud { startVoice() }
+        startVoice()
     }
 
     private func end() {
+        isShowing = false
         advanceTask?.cancel()
         voice.stop()
         AngelusBellSound.shared.silence()
@@ -556,7 +632,7 @@ struct PrayAlongView: View {
             if case .ready = voice.state {} else {
                 await voice.prepare(prayers)
             }
-            guard aloud, !finished else { return }
+            guard isShowing, aloud, !finished else { return }
             await playCurrent()
         }
     }
@@ -568,9 +644,9 @@ struct PrayAlongView: View {
     }
 
     private func toggleAloud() {
-        store.praysAloud.toggle()
+        store.chooseAloud(!aloud)
         advanceTask?.cancel()
-        if store.praysAloud {
+        if aloud {
             startVoice()
         } else {
             voice.stop()
@@ -608,7 +684,7 @@ struct PrayAlongView: View {
             try? await Task.sleep(for: .milliseconds(150))
             index = target
             withAnimation(.easeOut(duration: 0.26)) { pageOpacity = 1 }
-            if aloud, case .ready = voice.state {
+            if isShowing, aloud, case .ready = voice.state {
                 await playCurrent()
             }
         }
@@ -620,13 +696,13 @@ struct PrayAlongView: View {
         if let orderID = launch.orderID {
             store.markOffered(orderID)
         }
-        if isAngelus { ringBell() }
+        if isAngelus, aloud { ringBell() }
         finished = true
     }
 
     private func ringBell() {
         AngelusBellSound.shared.ring()
-        bellSwing.toggle()
+        if !reduceMotion { bellRings += 1 }
     }
 
     // MARK: - Following the voice
@@ -692,6 +768,70 @@ struct PrayAlongView: View {
             }
             return max(count, 1)
         }
+    }
+}
+
+// MARK: - Aloud, or in silence
+
+/// The book's one question, asked the first time it would speak: read
+/// aloud, or kept to the page. Two rows and nothing to confirm — the
+/// row is the answer. It cannot be dragged away, so it shows no grabber.
+///
+/// Answering is the only way out, so both answers must always be in
+/// reach: at the accessibility text sizes the sheet stands full height,
+/// and it scrolls. Held to 340 points there, its header was cut off and
+/// the two rows were drawn over each other.
+struct PrayAloudChoiceSheet: View {
+    let onChoose: (Bool) -> Void
+
+    @Environment(\.dynamicTypeSize) private var typeSize
+
+    private var voices = NarrationVoiceCatalog.shared
+
+    init(onChoose: @escaping (Bool) -> Void) {
+        self.onChoose = onChoose
+    }
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 0) {
+                SheetHeader(
+                    kicker: "The Prayer Book",
+                    title: "Aloud, or in silence?",
+                    lead: "The book can read each prayer to you, the page following the voice, or leave the words to you."
+                )
+
+                Button { onChoose(true) } label: {
+                    SheetRow(
+                        "Aloud",
+                        detail: "Read to you in the \(voices.chosenVoice.name.lowercased()) voice",
+                        icon: "ph-speaker-high",
+                        detailLineLimit: nil
+                    )
+                }
+                .buttonStyle(SacredCardButtonStyle())
+
+                Button { onChoose(false) } label: {
+                    SheetRow(
+                        "In silence",
+                        detail: "For the pew, or beside someone asleep",
+                        icon: "ph-book-open",
+                        showsDivider: false,
+                        detailLineLimit: nil
+                    )
+                }
+                .buttonStyle(SacredCardButtonStyle())
+
+                SheetNote("The speaker at the top of the page changes this whenever you like.")
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .scrollBounceBehavior(.basedOnSize)
+        // The sheets' ground without `sheetGround()`'s indicator, as the
+        // missal's first question is set
+        .background(AppColors.appGradient.ignoresSafeArea())
+        .presentationDetents(typeSize.isAccessibilitySize ? [.large] : [.height(340)])
+        .presentationDragIndicator(.hidden)
     }
 }
 

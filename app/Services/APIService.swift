@@ -9,7 +9,6 @@
 //  - GET  /meditations/:id/audio  - Freshly signed narration URL + expiry
 //                                   (?voice=slug for one voice)
 //  - GET  /voices                 - The narration voices, default first
-//  - GET  /prayers/:id/audio      - Presigned chant URL for a prayer
 //  - GET  /rosary/audio           - The spoken Rosary's clips, signed
 //                                   (?voice=slug, &include=kinds)
 //  - POST /completions            - Record prayer completion
@@ -187,20 +186,6 @@ final class APIService {
 
         let request = CompletionRequest(meditationSetId: meditationSetId, prayedAloud: prayedAloud)
         return try await post(url: url, body: request, responseType: APIResponse<CompletionResponse>.self).data
-    }
-
-    // MARK: - Prayer Audio
-
-    /// Fetches a presigned S3 URL for a consecration prayer's chant audio
-    /// (e.g., prayerId "veni_creator").
-    func fetchPrayerAudioUrl(prayerId: String) async throws -> String {
-        let urlString = "\(baseURL)/prayers/\(prayerId)/audio"
-
-        guard let url = URL(string: urlString) else {
-            throw APIError.invalidURL
-        }
-
-        return try await fetch(url: url, responseType: APIResponse<PrayerAudioResponse>.self).data.audioUrl
     }
 
     // MARK: - The Spoken Rosary

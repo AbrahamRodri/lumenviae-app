@@ -215,10 +215,12 @@ The search glass pushes `AppRoute.explore`
 (Mt 7:7), the five devotions as a ruled ledger with the Scriptural
 Rosary's door beneath them and a quiet "New to the Rosary? · How to
 Pray" door under that (How to Pray was the fourth item of The Study at
-the foot of the page, where a newcomer never reached it); then The
+the foot of the page, where a newcomer never reached it); then the
+Prayer Book, Sung Prayer (tonight's antiphon of Our Lady, played where
+it stands, over the door to the Chant Library), The
 Liturgy (Missal | Office), the Spiritual Reading shelf, and The Study's
-ruled index — and typing searches mysteries, library doors, library readings and
-meditation sets at once. The set index is fetched quietly for search but deliberately
+ruled index — and typing searches mysteries, library doors, library readings,
+chants and meditation sets at once. The set index is fetched quietly for search but deliberately
 never listed on the browse page, and the field is deliberately not
 auto-focused: the page is a place first, a search second. The real
 search field lives on Explore, not on home.
@@ -226,7 +228,7 @@ search field lives on Explore, not on home.
 **Pages push, tasks sheet.** Content destinations — the Missal, the
 Office, True Devotion, Spiritual Reading (the shelf, its books, their
 chapters), How to Pray, In Scripture, the Marian Library,
-Carlo Acutis, Settings, Explore — are `AppRoute` cases that slide in
+Carlo Acutis, the Chant Library and a chant's page, Settings, Explore — are `AppRoute` cases that slide in
 from the right; each draws its own gold Back in its toolbar (so never
 apply `navigationBarHidden` to them). The exceptions are the pages
 whose chrome is their own: the Daily Missal and the Office's hour
@@ -250,7 +252,7 @@ one. A spinner or an "unavailable" message with no Back is a screen
 only a force-quit leaves; both readers had one, and both now carry the
 capsule in those branches too. Sheets are for tasks, trays and short
 asides — the Pray tray, the editors, pickers, the journal editor, How
-you'll pray, the calendars, reading options, the chant sheet, and
+you'll pray, the calendars, reading options, a chant's score, and
 About's three short texts; a destination with onward doors of its own
 is pushed.
 The tab bar lays its four labels out content-sized with even gaps (not
@@ -312,11 +314,12 @@ the Library's width, and on the page only if the Library is —
 `ChapelPlacement.completing`, which the Me migration shares), **Library** (six doors in two columns — True Devotion, Spiritual
 Reading, the Marian Library | How to Pray, In Scripture, Carlo Acutis —
 over Augustine's line and THE SHELF; the half keeps the first two and
-makes FOUR MORE a door to Explore), **Chant** (the app's three chant
-recordings — Veni Creator, Ave Maris Stella, Magnificat — through the
-shared AudioService; the elapsed time rides the kicker at full width
-and the transport row at half, said once either way; ALL CHANTS opens
-the chant sheet. **Disconnected for now** — see Audio below), **Reflections** (latest journal entry under an
+makes FOUR MORE a door to Explore), **Chant** (the Chant Library's
+player: the chant it last sang, or the antiphon of the season until it
+has sung one — its disc plays it, its name opens the chant's page, and
+CHANT LIBRARY (LIBRARY at half) opens the library; the elapsed time
+rides the kicker at full width and the transport row at half, said once
+either way), **Reflections** (latest journal entry under an
 illuminated versal, or its gilded opening mark when it opens on a
 quotation (`VersalCut.opensOnQuotation`: a lone apostrophe, 'Tis, is
 no quotation), or beside a rule of gold fading down when it opens on
@@ -353,7 +356,7 @@ lead with one figure — Cinzel 26 with the denominator at 15 in
 hold that arranges the page never also opens the tile on release)
 except where the body has doors of its own — the Today rows
 and cells, the Reading tile's face and spines, the Liturgy leaves, the
-Library doors, the chant's play disc — where only the foot's act is a
+Library doors, the chant's play disc and name — where only the foot's act is a
 control (`onAct`). The Today tile has no foot act at all; its EDIT rides
 the kicker (`onEdit`), since a foot act there read as one more BEGIN
 row. The ✕ badge hangs
@@ -361,8 +364,8 @@ at the shell's corner, below the kicker. The page once drew three
 registers (ruled, outlined at 16, outlined at 20) with kickers on some
 tiles and not others and centred halves beside left-aligned ones, and
 the tiles fought; none of that may come back. No filled card surfaces
-on the page — `AppColors.cardBackground` only in the tray, the chant
-sheet, and the chant tile's play disc. The
+on the page — `AppColors.cardBackground` only in the tray and the
+chant's play disc (`ChantPlayDisc`). The
 default order is Today, Streak, Consecration, Prayer Book (the hour's
 order over the reader's ribbons, `ChapelPrayerBookTile`), Reading, Chant,
 Reflections, Liturgy, Library: the live sections lead, and the two
@@ -473,6 +476,8 @@ app/
 │   ├── BookReadingProgress                                (SwiftData)
 │   ├── PrayerShortcut                       # + MeWidget — personalization vocab
 │   ├── PrayerBook            # BookPrayer, chapters, orders of prayer, seasons
+│   ├── Chant                 # Chant, ChantScorePart, ChantGroup, ChantCatalog
+│   ├── ChantScoreDrawing     # A score's drawing, read from .lvscore; SVG path data
 │   └── StreakMilestone, MarianFeastDay, BilingualConsecrationPrayer
 ├── ViewModels/               # @Observable
 │   ├── HomeViewModel, MeditationSelectionViewModel, MeditationSetDetailViewModel
@@ -484,7 +489,9 @@ app/
 │   ├── Scriptural/           # ScripturalRosaryView (the title page),
 │   │                         # ScripturalRosaryPrayerView (the prayer)
 │   ├── Chapel/               # MyChapelView (the tab), ChapelGrid (arrange
-│   │                         # machinery), ChapelTiles, ChapelChant
+│   │                         # machinery), ChapelTiles
+│   ├── Chant/                # ChantLibraryView, ChantView (a chant's page),
+│   │                         # ChantScoreSheet, ChantComponents
 │   ├── Me/                   # Legacy, unreachable but still compiled: MeView,
 │   │                         # MeWidgets. Still live: MeCustomizeSheet's
 │   │                         # RuleEditorSheet + editor furniture,
@@ -522,6 +529,7 @@ app/
 │   ├── ConsecrationData, BilingualConsecrationPrayers, BilingualPrayer
 │   ├── MysteryData, LuminousMeditationData, TrueDevotionData/Prayers
 │   ├── ScripturalRosaryData  # GENERATED by Tools/ScripturalRosary — 249 Douay verses
+│   ├── ChantCatalogData      # GENERATED by Tools/Chants — the 64 chants
 │   ├── LibraryCatalog        # Spiritual Reading shelf: sources + cutting rules
 │   ├── MissalOrderData       # The Mass's sections: names, postures, tiers, day rules
 │   ├── ReminderMessages      # Notification copy pools
@@ -532,6 +540,7 @@ app/
 ├── Services/
 │   ├── APIService            # HTTP client (https://lumenviae.fly.dev/api)
 │   ├── AudioService          # Narration and chant playback
+│   ├── ChantPlayer           # The Chant Library's hold on it, above the views
 │   ├── SpokenRosaryPlayer    # The whole Rosary said aloud, above AudioService
 │   ├── RosaryAudioPack       # The spoken Rosary's recordings, fetched and kept
 │   ├── OfflineContentService # Full offline download of text + audio
@@ -552,7 +561,9 @@ app/
 │   ├── UserSettings          # Preferences + daily reminder scheduling
 │   └── MockDataService       # Preview/fallback fixtures only
 └── Resources/                # Fonts, TrueDevotionBook.json (GENERATED by
-                              # Tools/TrueDevotion), the four reminder sounds
+                              # Tools/TrueDevotion), the four reminder sounds,
+                              # Chants/ (GENERATED by Tools/Chants: <id>.m4a
+                              # and Scores/<name>.lvscore)
 ```
 
 ### Concurrency
@@ -680,19 +691,8 @@ write concurrent code here:
   (`InProgressPrayer.beadIndex`, optional for older snapshots).
   The painting, its frost and its scrim are `PrayerPaintingStage`,
   shared with the Scriptural Rosary, which uses its `.veiled` style.
-- **Audio** — narration for meditations and chant for consecration prayers.
-
-  **The chants are disconnected** (`ChantRecordings.areConnected`, in
-  `Models/ConsecrationPrayer.swift`, is `false`, Sept 2026): the three
-  files on S3 had no licence — the Magnificat was a YouTube download.
-  Nothing fetches, downloads or plays a chant, and chant files already
-  saved offline are deleted at launch. Every chant place still stands —
-  the Chapel's tile and sheet, the consecration's transport — and says
-  COMING SOON. Candidate recordings, verified for licence or official
-  upload, are in the "Lumen Viae Chant Picks" artifact
-  (claude.ai/artifact/FVKgCZ9T9rMWveQ55zLWgN). YouTube cannot stand in
-  for the audio: its terms forbid audio-only, background and offline
-  play, so an embed would be a visible video player, not this transport.
+- **Audio** — narration for meditations, and chant from the Chant
+  Library (below).
 
   **Narration comes in voices.** Each meditation carries `narrations`
   (`[Narration]`: a voice slug and a presigned URL, the server's default
@@ -1291,9 +1291,12 @@ write concurrent code here:
   thirteen hours and forty minutes). That is the shelf's opening offer;
   the reader's own choice per book is remembered and outranks it. It is
   kept apart from the app-wide narration speed —
-  `AudioService.setPlaybackRate(_:remember:)`, given back when the
-  listening session stops (`AudioService.restoreRememberedRate()`) — so
-  a slow LibriVox volunteer never sets the pace of a Rosary.
+  `AudioService.setPlaybackRate(_:remember:borrower:)`, lent to the
+  session by its track-navigation token and given back the moment
+  another flow takes the arrows (`setTrackNavigation`), or when the
+  listening session stops (`restoreRememberedRate(from:)`, which leaves
+  a speed some other flow has borrowed since) — so a slow LibriVox
+  volunteer never sets the pace of a Rosary.
 
   The track ledger is cached under the **`librivoxID`**, not the edition
   fingerprint: swapping a recording has to retire the previous
@@ -1415,7 +1418,18 @@ write concurrent code here:
   translations are plain literal renderings, not Caswall or Hopkins.
 
   **The book opens on the hour** (`PrayerBook.dayOrder(at:)`), lit, with
-  the page's one gold act, over the day's three hours on one strand. The
+  the page's one gold act, over the day's three hours on one strand. Its
+  search field heads the contents, a long page down, so
+  the bar carries a search glass that scrolls there and focuses it —
+  finding one prayer by name is the book's commonest errand. The book's
+  hour turns at four, eleven, three and eight (`PrayerBook.nextTurn`),
+  none of them an hour of the Office, so the surfaces that name it
+  elsewhere — home's hour row, the Chapel's Prayer Book tile — redraw on
+  `PrayerBookHourSchedule` rather than on `CanonicalClock`, which slept
+  through them and kept home on the Angelus until midnight. A chapter's
+  foot turns to the next chapter in place, as a prayer's page steps
+  along its chapter; it once popped and pushed a route in one tick, and
+  the next chapter opened scrolled to wherever the last was left. The
   seasons are computed: the Angelus is the Regina Cæli from Easter to the
   Saturday after Pentecost, and Night Prayers close on the Marian
   antiphon the season sings (`PrayerBook.antiphon(on:)` — Alma
@@ -1425,11 +1439,27 @@ write concurrent code here:
   **Praying** is `PrayAlongView` (`.prayAlong(PrayAlongLaunch)`, a
   player: bar hidden, its own ×): one prayer at a time, a strand of beads
   for the order's prayers, aloud or in silence (`PrayerBookStore.
-  praysAloud`, remembered). Aloud, each prayer is the server's ElevenLabs
+  praysAloud`, remembered). **The book asks before its first sound**
+  (`PrayAloudChoiceSheet`, once, until `hasChosenAloud`): these are
+  prayers for the pew, the tabernacle and the bedside, and it once began
+  reading the examination of conscience aloud the moment PRAY was
+  touched. It cannot be dragged away, so both answers must always be in
+  reach: at the accessibility text sizes it stands full height and
+  scrolls (held to 340 points, its rows were drawn over each other). The
+  order page's switch stands just above its PRAY, so
+  praying from there answers the question with what the switch shows;
+  afterwards the speaker at the head of the page owns the choice. Aloud,
+  each prayer is the server's ElevenLabs
   recording in the chosen narration voice (below), the stanza being said
   lit and followed by proportion, the next prayer turning in after a
-  breath; the Angelus rings `church_bell.caf`. An order prayed to its
-  Amen is offered for the day — nothing is carried forward. **Keeping**
+  breath; the Angelus rings `church_bell.caf` — aloud only, since in
+  silence the book makes no sound at all. The page's words dissolve
+  under its head and beads (`topChromeFade`, no inset) rather than being
+  cut mid-line. An order prayed to its Amen is offered for the book's
+  day, which turns at four in the morning (`PrayerBook.dayBeginsAtHour`)
+  as the hours do, not at midnight: Night Prayers said at half past
+  twelve are that night's, and the next evening still asks for its own.
+  Nothing is carried forward. **Keeping**
   is a silk ribbon (`RibbonToggle`, `PrayerBookStore.ribbons`) — the
   kept prayers stand on the book's first page and the Chapel tile.
   **Learning** is `LearnByHeartSheet`: four steps (read, some hidden,
@@ -1451,6 +1481,87 @@ write concurrent code here:
   server's `priv/rosary_audio/`: change a prayer, re-export, copy, record
   (`mix lumen_viae.generate_rosary_audio --kind book`) before deploying.
   The library download fetches the book's recordings too.
+
+- **The Chant Library** — the Church's own songs, each with its
+  recording and its score, bundled so they sound in a chapel with no
+  signal: 64 chants in twelve shelves (Our Lady, the Rosary and the
+  Angelus, the Blessed Sacrament, the Holy Ghost, the Sacred Heart and
+  the Holy Name, praise, the saints, the four seasons, the dead). The
+  library (`ChantLibraryView`, `.chantLibrary`) opens on the antiphon
+  of Our Lady the season sings tonight (`ChantCatalog.antiphonOfTheSeason`,
+  from `PrayerBook.antiphon(on:)`), and each row plays where it stands or
+  opens the chant's page (`ChantView`, `.chant(id:)`): the names and when
+  it is sung, a transport with the practice a chant is learned by — SLOW
+  (0.75×), REPEAT, FROM THE TOP — the score, ENLARGE for a zoomable
+  full-screen score (`ChantScoreSheet`), the prayer in words and its
+  other settings as doors, and the credit. Doors: the Chapel's Chant tile,
+  Explore (Sung Prayer, and search), and **"Sing it in chant"** on any
+  Prayer Book page whose prayer has a chant (a quiet act under Learn it
+  by heart). The consecration day's transport plays the same bundled
+  recording for its Veni Creator, Ave Maris Stella, Magnificat, litanies
+  and Glory Be, with a SCORE door and the credit beneath it; it reads
+  the shared player only while that player is sounding the day's own
+  chant (the file, the load generation and the arrows, as `ChantPlayer`
+  keeps), and it loads ahead
+  only when nothing else is sounding — a chant the library is singing
+  keeps the player, and its Lock Screen arrows, until the day's own play
+  is pressed, where loading ahead silenced it the moment the day opened.
+
+  **Everything is Verbum Gloriae's** (verbumgloriae.es), a Spanish
+  apostolate of Gregorian chant: one cantor's voice, sung for learning,
+  and engraved scores. **Licence:** their copyleft licence
+  (verbumgloriae.es/licencia-copyleft), covering everything they publish
+  on the site and their YouTube channel — share, adapt, any purpose,
+  commercial included, *no attribution required*; the one condition is
+  that an adaptation is shared under the same licence (their own
+  gloss: CC "ShareAlike" 4.0 without BY). The app's files are
+  adaptations — the Ogg recordings re-encoded as HE-AAC, the SVG scores
+  rewritten as recolourable drawings — so they carry that licence, and
+  `ChantCatalog.credit`/`licenceNote` say so wherever a chant plays (the
+  chant page, the library, the consecration transport). Each chant's own
+  source page is its `sourceURL`. Nothing else may be added to the library
+  without the same record: the three chants the app sang before (Sept
+  2026) were files on S3 with no licence — the Magnificat a YouTube
+  download — and were disconnected for it. Older builds still fetch those
+  files through `GET /prayers/:id/audio`; the server's `PrayerController`
+  still signs them until it is changed.
+
+  **The files are GENERATED by `Tools/Chants/generate.py`** from the
+  curated `Tools/Chants/chants.json` (which chants, their English titles
+  and lines, the prayers each sings): recordings as `Resources/Chants/
+  <id>.m4a` (mono HE-AAC 32 kbps — four hours of chant ship in the app,
+  about 59 MB), scores as `Resources/Chants/Scores/<name>.lvscore`, and
+  `Data/ChantCatalogData.swift`. Never hand-edit them; edit the JSON and
+  rerun (it needs ffmpeg and macOS's afconvert). **Scores are not asset
+  catalog images**: the catalog stores SVG uncompressed (30 MB) and CoreSVG
+  would not read every one, so the generator rewrites each SVG as its
+  ordered drawing operations — fills in ink and red, the white shapes
+  that erase, stroked staff lines — DEFLATE-compressed (6.6 MB), which
+  `ChantScoreDrawing` reads (its own SVG path-data parser, arcs included)
+  and `ChantScoreImage` replays on a Canvas: the notes in cream, the
+  initials in `Rubric.red`, vector at any zoom. A score with live text or
+  transforms stops the generator rather than ship half-drawn (Maria Mater
+  Gratiæ was left out for its live text; the Litany of Loreto's Easter
+  collect is served by the site as a 404 and is skipped).
+
+  **`ChantPlayer`** (`Services/`) is the library's hold on the shared
+  AudioService, above the views like `LibraryListeningSession`: one chant
+  at a time for the tile, the library, the pages and the Lock Screen
+  (whose arrows step through the library), claimed so another flow
+  taking the player is never narrated as its own. The claim is the file,
+  the load generation **and** the Lock Screen arrows, as the
+  consecration day's is: a second load of the file
+  already in the player is no new load and keeps the generation, so a
+  day that took the library's Veni Creator once left both believing they
+  held it, and closing one silenced the other. Each takes the arrows
+  when it claims the file, and one that finds the file loaded but not
+  its own loads it afresh, from the top. Its practice rate is borrowed
+  (by its navigation token), never remembered as the app's narration
+  speed, and handed back in `relinquish()` or as soon as another flow
+  takes the arrows. Earlier builds
+  saved the unlicensed chants offline as `prayer_<slug>.mp3`;
+  `OfflineContentService.retireUnlicensedChants()` deletes them once at
+  launch (`appApp.init`) and corrects the saved library's size.
 
 ### Not built yet
 
@@ -1705,16 +1816,24 @@ transition entirely.
   that is something other than a list — the month grids, the journal and
   feedback forms, the reading and footnote pages, the share card, the
   now-playing transport — keeps its own body and takes the ground and the
-  header only. The Missal's one-time layout question keeps its indicator
-  hidden, because it cannot be dragged away and a grabber would say it
-  could.
+  header only. The Missal's one-time layout question and the Prayer
+  Book's question before it first speaks (`PrayAloudChoiceSheet`) keep
+  their indicators hidden, because neither can be dragged away and a
+  grabber would say it could.
 
 ### Visual Style
 - Dark, contemplative theme on the page gradient (`AppColors.appGradient`)
+- The app declares itself dark (`UIUserInterfaceStyle`, set as
+  `INFOPLIST_KEY_UIUserInterfaceStyle = Dark` in the target's build
+  settings), so the system's own chrome — the status bar, keyboards,
+  alerts and dialogs, pickers and menus, a sheet's system parts, the
+  launch screen — is dark whatever the phone's own appearance; all
+  three themes are dark, and a phone set to Light once styled that
+  chrome for a light app over dark pages
 - Gold accents for sacred/important elements; one filled gold act per screen
 - Ruled ledgers and 16pt hairline outlines at `gold@0.24` on the bare
   page — filled card surfaces only where a section above says so (the
-  Chapel's tray, the chant sheet)
+  Chapel's tray, the chant's play disc)
 - Heroes and plates dissolve to clear, never to a flat slab
 - Minimalist, distraction-free UI for prayer focus
 
@@ -1747,7 +1866,6 @@ transition entirely.
   painting) and `FocalFill` (one crop rule for every size)
 - Meditation narration audio (presigned URLs, ~24h; the set says when they
   die in `audio_expires_at`, and `GET /meditations/:id/audio` re-signs one)
-- Consecration chant audio (presigned per prayer) — disconnected, see Audio
 - The spoken Rosary's clips, per voice (`GET /rosary/audio`)
 
 **From other sources** (each through its own client, so their outages
@@ -1769,6 +1887,8 @@ LibriVox.
   which is still in copyright)
 - The Scriptural Rosary's 249 verses, the Marian Library, How to Pray, In
   Scripture, St. Carlo, the daily quotes
+- The Chant Library: 64 recordings and their scores (`Resources/Chants`,
+  GENERATED by `Tools/Chants` from Verbum Gloriae, copyleft)
 
 **On device:**
 - Preferences, favorites and the resume snapshot (UserDefaults)
@@ -1792,7 +1912,7 @@ LibriVox.
 
 ## Content Requirements
 
-> **Note:** Meditation sets, their narration and the chant are managed in the web app and served by the API; everything under "Bundled in the app" above ships in the app.
+> **Note:** Meditation sets and their narration are managed in the web app and served by the API; everything under "Bundled in the app" above ships in the app, the chants included.
 
 ### Meditation Content Structure (from API)
 - **Sets:** five meditations each (seven for the Seven Sorrows), in all
@@ -1808,7 +1928,6 @@ GET /meditation-sets?category=:category # [MeditationSetSummary] for a category
 GET /meditation-sets/:id                # Full MeditationSet with meditations + audio_expires_at
 GET /meditations/:id/audio[?voice=]     # Freshly signed narration URL + voice + expires_at
 GET /voices                             # [NarrationVoice], default first
-GET /prayers/:prayerId/audio            # Presigned chant URL (not called while chants are disconnected)
 GET /rosary/audio[?voice=][&include=]   # The spoken Rosary: prayers, announcements, verses
 POST /completions                       # { meditation_set_id, prayed_aloud } — a finished set's Rosary
 ```
