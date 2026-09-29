@@ -464,6 +464,11 @@ enum PrayerBook {
         return orders.filter { !day.contains($0.id) }
     }
 
+    /// The hour the book's day begins. Morning Prayers are said from
+    /// four, and Night Prayers said after midnight belong to the night
+    /// before, not to the day they spill into.
+    nonisolated static let dayBeginsAtHour = 4
+
     /// Which of the day's three orders the hour belongs to: the morning
     /// until eleven, the Angelus through the noon and evening bells
     /// until eight, and night after that.
@@ -471,7 +476,7 @@ enum PrayerBook {
         let hour = calendar.component(.hour, from: date)
         let id: String
         switch hour {
-        case 4..<11:  id = morningOrderID
+        case dayBeginsAtHour..<11:  id = morningOrderID
         case 11..<20: id = angelusOrderID
         default:      id = nightOrderID
         }
@@ -479,14 +484,31 @@ enum PrayerBook {
     }
 
     /// The hour's order said as a kicker — "AT NOON", "BEFORE SLEEP"
-    static func dayOrderMoment(at date: Date = Date(), calendar: Calendar = .current) -> String {
+    nonisolated static func dayOrderMoment(at date: Date = Date(), calendar: Calendar = .current) -> String {
         let hour = calendar.component(.hour, from: date)
         switch hour {
-        case 4..<11:  return "On rising"
+        case dayBeginsAtHour..<11:  return "On rising"
         case 11..<15: return "At noon"
         case 15..<20: return "At six in the evening"
         default:      return "Before sleep"
         }
+    }
+
+    /// The next moment the book's hour turns — the order for the hour, or
+    /// the moment it names, giving way: four, eleven, three and eight
+    /// o'clock. Read off `dayOrderMoment` itself, whose turns include
+    /// `dayOrder`'s and the book's day's, so the three can never disagree.
+    /// None of them is an hour of the Office, so `CanonicalClock` sleeps
+    /// through every one.
+    nonisolated static func nextTurn(after date: Date, calendar: Calendar = .current) -> Date {
+        let moment = dayOrderMoment(at: date, calendar: calendar)
+        var hour = calendar.dateInterval(of: .hour, for: date)?.start ?? date
+        for _ in 0..<24 {
+            guard let next = calendar.date(byAdding: .hour, value: 1, to: hour) else { break }
+            hour = next
+            if dayOrderMoment(at: hour, calendar: calendar) != moment { return hour }
+        }
+        return date.addingTimeInterval(3600)
     }
 
     // MARK: Seasons

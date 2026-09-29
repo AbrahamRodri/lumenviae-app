@@ -3,7 +3,7 @@
 //  Lumen Viae
 //
 //  User-initiated offline downloads: every meditation set (text) and every
-//  audio file (meditation narrations + consecration chants) saved to disk,
+//  audio file (meditation narrations) saved to disk,
 //  so the whole app prays without a connection. One set at a time can be
 //  saved from its own page — same files, same directory, its own progress
 //  so it never masquerades as the library-wide download.
@@ -17,7 +17,11 @@
 //                                 meditation_<id>.mp3 is renamed to the
 //                                 male voice at launch, which is what it
 //                                 always was)
-//    audio/prayer_<slug>.mp3      consecration chant
+//                                 (the prayer_<slug>.mp3 chants earlier
+//                                 builds saved here had no licence; the
+//                                 Chant Library is bundled with the app,
+//                                 and they are deleted once at launch —
+//                                 `retireUnlicensedChants`)
 //    images/set_<id>_<hash>.jpg   the set's painting, named by the set and
 //                                 the hash the S3 key carries — a replaced
 //                                 painting is a different file name, so
@@ -117,9 +121,8 @@ final class OfflineContentService {
         downloadedSetIds = Set(sets.compactMap(Self.setId(fromFile:)))
     }
 
-    /// The meditation and voice in `meditation_412_female.mp3`. Nil for a
-    /// chant file, which shares the directory under a `prayer_` prefix,
-    /// and for anything else that is not a narration.
+    /// The meditation and voice in `meditation_412_female.mp3`. Nil for
+    /// anything else that is not a narration.
     private nonisolated static func audioKey(fromAudioFile name: String) -> AudioKey? {
         let prefix = "meditation_", suffix = ".mp3"
         guard name.hasPrefix(prefix), name.hasSuffix(suffix) else { return nil }
@@ -150,17 +153,52 @@ final class OfflineContentService {
         }
     }
 
-    /// Chant files saved while the recordings were connected. With them
-    /// disconnected (`ChantRecordings`), copies already on the device go
-    /// too, rather than wait in the library for a player that no longer
-    /// reaches for them.
-    private func retireDisconnectedChants() {
-        guard !ChantRecordings.areConnected else { return }
+    /// The chants earlier builds saved with the library (`prayer_<slug>.mp3`
+    /// — the Veni Creator, the Ave Maris Stella, the Magnificat), which had
+    /// no licence behind them. Nothing reads them now: the Chant Library is
+    /// bundled with the app. They go once, at launch (`appApp` calls this
+    /// before anything opens the library), and the saved library's size and
+    /// count are told the truth — only those two numbers in the manifest
+    /// are touched, so whatever else it records stands.
+    static func retireUnlicensedChants() {
+        let key = "offline.retiredUnlicensedChants"
+        let defaults = UserDefaults.standard
+        guard !defaults.bool(forKey: key) else { return }
+        defer { defaults.set(true, forKey: key) }
+
         let fm = FileManager.default
-        let names = (try? fm.contentsOfDirectory(atPath: audioDir.path)) ?? []
+        let root = Self.contentRoot
+        let audio = root.appendingPathComponent("audio", isDirectory: true)
+        let names = (try? fm.contentsOfDirectory(atPath: audio.path)) ?? []
+        var freed: Int64 = 0
+        var removed = 0
         for name in names where name.hasPrefix("prayer_") {
-            try? fm.removeItem(at: audioDir.appendingPathComponent(name))
+            let file = audio.appendingPathComponent(name)
+            let size = (try? fm.attributesOfItem(atPath: file.path)[.size] as? NSNumber)?.int64Value ?? 0
+            guard (try? fm.removeItem(at: file)) != nil else { continue }
+            freed += size
+            removed += 1
         }
+
+        let manifest = root.appendingPathComponent("manifest.json")
+        guard removed > 0,
+              let data = try? Data(contentsOf: manifest),
+              var fields = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
+        else { return }
+        if let bytes = (fields["bytes"] as? NSNumber)?.int64Value {
+            fields["bytes"] = max(0, bytes - freed)
+        }
+        if let count = (fields["audioCount"] as? NSNumber)?.intValue {
+            fields["audioCount"] = max(0, count - removed)
+        }
+        if let rewritten = try? JSONSerialization.data(withJSONObject: fields) {
+            try? rewritten.write(to: manifest, options: .atomic)
+        }
+    }
+
+    private static var contentRoot: URL {
+        FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("OfflineContent", isDirectory: true)
     }
 
     /// The id in `27.json`. Nil for `index_joyful.json`, which shares the
@@ -202,11 +240,10 @@ final class OfflineContentService {
     // MARK: - Init
 
     private init() {
-        let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-        root = base.appendingPathComponent("OfflineContent", isDirectory: true)
+        root = Self.contentRoot
         createDirectories()
         migrateLegacyAudioNames()
-        retireDisconnectedChants()
+        Self.retireUnlicensedChants()
         refreshDiskState()
 
         if let data = try? Data(contentsOf: manifestURL),
@@ -258,7 +295,6 @@ final class OfflineContentService {
             }
 
             let allSummaries = summariesByCategory.values.flatMap { $0 }
-            let chantIds = Self.consecrationChantIds()
             let voice = NarrationVoiceCatalog.shared.chosenSlug
 
             var textDone = 0
@@ -326,30 +362,17 @@ final class OfflineContentService {
                 }
             }
 
-            // Stage 3 — audio: narrations discovered above, plus chants.
+            // Stage 3 — audio: the narrations discovered above. (The
+            // chants are bundled with the app and need no download.)
             // Its own monotonic counter; the denominator never moves.
             var audioDone = 0
-            let audioTotal = audioJobs.count + chantIds.count
+            let audioTotal = audioJobs.count
             state = .downloading(stage: "Audio", completed: 0, total: max(audioTotal, 1))
 
             for job in audioJobs {
                 if !FileManager.default.fileExists(atPath: job.destination.path) {
                     do {
                         try await Self.download(with: downloadSession, from: job.url, to: job.destination)
-                    } catch {
-                        failures += 1
-                    }
-                }
-                audioDone += 1
-                state = .downloading(stage: "Audio", completed: audioDone, total: audioTotal)
-            }
-
-            for prayerId in chantIds {
-                let destination = prayerAudioURL(prayerId: prayerId)
-                if !FileManager.default.fileExists(atPath: destination.path) {
-                    do {
-                        let presigned = try await APIService.shared.fetchPrayerAudioUrl(prayerId: prayerId)
-                        try await Self.download(with: downloadSession, from: presigned, to: destination)
                     } catch {
                         failures += 1
                     }
@@ -492,14 +515,6 @@ final class OfflineContentService {
             }
         }
         return nil
-    }
-
-    /// Local chant audio for a consecration prayer, if downloaded — and
-    /// never while the recordings are disconnected.
-    func localPrayerAudioURL(prayerId: String) -> URL? {
-        guard ChantRecordings.areConnected else { return nil }
-        let url = prayerAudioURL(prayerId: prayerId)
-        return FileManager.default.fileExists(atPath: url.path) ? url : nil
     }
 
     /// The set's painting on disk, if the copy here is of *this* URL.
@@ -767,10 +782,6 @@ final class OfflineContentService {
             .map { meditationAudioURL(meditationId: $0.meditationId, voice: $0.voice) }
     }
 
-    private func prayerAudioURL(prayerId: String) -> URL {
-        audioDir.appendingPathComponent("prayer_\(prayerId).mp3")
-    }
-
     /// `images/set_27_8f21c4d9e0b3a7f6.jpg` for
     /// `…/lumenviae-images/sets/27/8f21c4d9e0b3a7f6.jpg`.
     ///
@@ -804,25 +815,6 @@ final class OfflineContentService {
         for file in artworkFiles(setId: setId) where file.lastPathComponent != current.lastPathComponent {
             try? FileManager.default.removeItem(at: file)
         }
-    }
-
-    /// Every consecration prayer slug that has chant audio. Uses the
-    /// language-aware prayer list — the same one the prayer flow renders —
-    /// because that's where the bilingual chants (and their audio flags)
-    /// are merged in.
-    private static func consecrationChantIds() -> [String] {
-        // Nothing to save while no chant recording is connected
-        guard ChantRecordings.areConnected else { return [] }
-        var seen = Set<String>()
-        var result: [String] = []
-        for phase in ConsecrationPhase.allCases {
-            for prayer in ConsecrationData.prayers(for: phase, language: .both) where prayer.hasAudio {
-                if seen.insert(prayer.id).inserted {
-                    result.append(prayer.id)
-                }
-            }
-        }
-        return result
     }
 
     // MARK: - Off-Main I/O

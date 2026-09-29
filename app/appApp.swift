@@ -36,6 +36,9 @@ struct appApp: App {
         // launched the app is heard
         UNUserNotificationCenter.current().delegate = PrayerNotificationRouter.shared
         PrayerBookStore.shared.refreshAngelusBell()
+        // Once: the unlicensed chants earlier builds saved offline go,
+        // whether or not the offline library is ever opened again
+        OfflineContentService.retireUnlicensedChants()
     }
 
     var body: some Scene {

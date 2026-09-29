@@ -408,7 +408,10 @@ struct ContentView: View {
             PrayerBookView()
 
         case .prayerBookChapter(let id):
-            PrayerBookChapterView(chapterID: id)
+            // One identity per chapter pushed. The foot turns to the next
+            // chapter inside the page itself (`PrayerBookChapterView.turn`),
+            // never by swapping routes
+            PrayerBookChapterView(chapterID: id).id(id)
 
         case .prayerOrder(let id):
             PrayerOrderView(orderID: id)
@@ -416,6 +419,12 @@ struct ContentView: View {
         // A player, like the Rosary's
         case .prayAlong(let launch):
             PrayAlongView(launch: launch)
+
+        case .chantLibrary:
+            ChantLibraryView()
+
+        case .chant(let id):
+            ChantView(chantID: id)
         }
     }
 }

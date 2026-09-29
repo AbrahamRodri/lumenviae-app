@@ -30,6 +30,8 @@ struct BookPrayerView: View {
     @State private var pageOpacity: Double = 1
     @State private var showsLearn = false
     @State private var keptNote: String?
+    /// The last thing the ribbon said, held while its words fade out
+    @State private var lastKeptNote = " "
 
     init(prayerID: String) {
         self.prayerID = prayerID
@@ -84,7 +86,7 @@ struct BookPrayerView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 RibbonToggle(prayerID: currentID) { kept in
                     say(kept
-                        ? "Kept with a ribbon. It waits on the Prayer Book's first page."
+                        ? "Kept. It waits on the Prayer Book's first page."
                         : "The ribbon is taken out.")
                 }
             }
@@ -171,15 +173,31 @@ struct BookPrayerView: View {
             }
 
             if let origin = prayer.origin {
+                // What the ribbon says stands in the origin's place for a
+                // moment, laid over it rather than under it. Given a line
+                // of its own it pushed the whole page down, and back up
+                // three seconds later — under a reader scrolled to PRAY,
+                // who then touched the wrong act.
                 Text(origin.uppercased())
                     .font(AppFonts.labelFont(8.5))
                     .tracking(1.8)
                     .foregroundColor(AppColors.textSecondary)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
-            }
-
-            if let keptNote {
+                    .frame(maxWidth: .infinity)
+                    .opacity(keptNote == nil ? 1 : 0)
+                    .overlay {
+                        Text(lastKeptNote)
+                            .font(AppFonts.readingItalicFont(13.5))
+                            .foregroundColor(AppColors.gold.opacity(0.9))
+                            .multilineTextAlignment(.center)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .opacity(keptNote == nil ? 0 : 1)
+                            .accessibilityHidden(true)
+                    }
+            } else if let keptNote {
                 Text(keptNote)
                     .font(AppFonts.readingItalicFont(13.5))
                     .foregroundColor(AppColors.gold.opacity(0.9))
@@ -215,7 +233,8 @@ struct BookPrayerView: View {
         }
     }
 
-    /// Pray it — the page's one gold act — and learn it by heart
+    /// Pray it — the page's one gold act — learn it by heart, and, where
+    /// the Church sings it, hear it sung with its score beside it
     private func acts(_ prayer: BookPrayer) -> some View {
         VStack(spacing: 6) {
             GoldCTAButton(title: "Pray", glyph: .play) {
@@ -228,6 +247,19 @@ struct BookPrayerView: View {
                 leadingIconSize: 12
             ) {
                 showsLearn = true
+            }
+
+            // The first setting (a simple tone before a solemn one); the
+            // chant's page offers the others
+            if let chant = ChantCatalog.chants(forPrayer: prayer.id).first {
+                QuietGoldButton(
+                    title: "Sing it in chant",
+                    leadingIcon: "ph-music-note",
+                    leadingIconSize: 12
+                ) {
+                    router.push(.chant(id: chant.id))
+                }
+                .accessibilityHint("Opens the Gregorian chant, with its recording and its score")
             }
         }
     }
@@ -313,7 +345,9 @@ struct BookPrayerView: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxWidth: 160, alignment: forward ? .trailing : .leading)
-            .frame(minHeight: 44)
+            // Hung from the top, so BEFORE and NEXT share a line when
+            // one title wraps and the other does not
+            .frame(minHeight: 44, alignment: .top)
             .contentShape(Rectangle())
         }
         .buttonStyle(SacredCardButtonStyle())
@@ -344,7 +378,11 @@ struct BookPrayerView: View {
     }
 
     private func say(_ note: String) {
+        lastKeptNote = note
         keptNote = note
+        // Heard as well as seen: the words above are hidden from
+        // VoiceOver, and scrolled down the page they are out of sight
+        AccessibilityNotification.Announcement(note).post()
         Task { @MainActor in
             try? await Task.sleep(for: .seconds(3))
             if keptNote == note { keptNote = nil }
@@ -396,18 +434,23 @@ struct LanguageChips: View {
                         }
                     }
                 } label: {
+                    // Side room so the names never run together at the
+                    // larger text sizes, and the whole 44-point band
+                    // answers a touch, not only the 32-point chip
                     Text(choice.label.uppercased())
                         .font(AppFonts.labelFont(9))
                         .tracking(2)
                         .foregroundColor(on ? AppColors.goldLight : AppColors.gold.opacity(0.65))
+                        .padding(.horizontal, 8)
                         .frame(minWidth: 74, minHeight: 32)
                         .background(
                             Capsule().fill(on ? AppColors.gold.opacity(0.16) : Color.clear)
                         )
-                        .contentShape(Capsule())
+                        .frame(minHeight: 44)
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-                .frame(minHeight: 44)
+                .accessibilityLabel(choice.label)
                 .accessibilityAddTraits(on ? .isSelected : [])
             }
         }

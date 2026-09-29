@@ -36,6 +36,7 @@ final class PrayerBookStore {
         byHeart = Set(defaults.stringArray(forKey: Key.byHeart) ?? [])
         offered = (defaults.dictionary(forKey: Key.offered) as? [String: String]) ?? [:]
         praysAloud = defaults.object(forKey: Key.aloud) as? Bool ?? true
+        hasChosenAloud = defaults.object(forKey: Key.aloud) != nil
         angelusBell = defaults.bool(forKey: Key.angelusBell)
     }
 
@@ -94,9 +95,19 @@ final class PrayerBookStore {
         return formatter
     }()
 
+    /// The book's day, not the calendar's: it turns at four in the
+    /// morning, so Night Prayers said at half past twelve are offered for
+    /// the night they close, and the next evening's page still asks for
+    /// that evening's.
     private static func stamp(_ date: Date) -> String {
+        let calendar = Calendar.current
+        var day = date
+        if calendar.component(.hour, from: date) < PrayerBook.dayBeginsAtHour,
+           let before = calendar.date(byAdding: .day, value: -1, to: date) {
+            day = before
+        }
         dayFormatter.timeZone = .current
-        return dayFormatter.string(from: date)
+        return dayFormatter.string(from: day)
     }
 
     /// An order prayed through to its Amen. The rule of prayer asks
@@ -111,10 +122,26 @@ final class PrayerBookStore {
 
     // MARK: - Praying Aloud
 
-    /// Whether the pray-along screen speaks the prayers. On unless the
-    /// reader turns it off; the last choice stands.
+    /// Whether the pray-along screen speaks the prayers. Aloud until the
+    /// reader says otherwise; the last choice stands.
     var praysAloud: Bool {
-        didSet { defaults.set(praysAloud, forKey: Key.aloud) }
+        didSet {
+            defaults.set(praysAloud, forKey: Key.aloud)
+            hasChosenAloud = true
+        }
+    }
+
+    /// Whether the reader has ever said how the book should pray. Until
+    /// they have, the pray-along screen asks before it makes a sound —
+    /// these are prayers said in the pew, before the tabernacle and
+    /// beside someone asleep, and a voice nobody asked for is no way to
+    /// begin them.
+    private(set) var hasChosenAloud: Bool
+
+    /// The reader's answer, from the question itself, the order page's
+    /// switch, or the speaker at the head of the pray-along page
+    func chooseAloud(_ aloud: Bool) {
+        praysAloud = aloud
     }
 
     // MARK: - The Angelus Bell

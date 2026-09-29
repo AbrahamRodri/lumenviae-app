@@ -207,6 +207,12 @@ struct ExploreView: View {
             prayerBookShelf
         }
 
+        // The Church's songs: tonight's antiphon of Our Lady, to play
+        // where it stands, over the door to the whole library
+        section("Sung Prayer", link: ("The library", { router.push(.chantLibrary) })) {
+            chantShelf
+        }
+
         // Each kind of door carries its own shape: the two liturgical
         // books as a diptych — the same pairing the home page's shelf
         // makes — the books to read as a row of standing covers, and
@@ -312,10 +318,11 @@ struct ExploreView: View {
                 || $0.latinTitle.lowercased().contains(needle)
         }
         let prayerHits = PrayerBook.search(needle)
+        let chantHits = ChantCatalog.search(needle)
 
         return ZStack(alignment: .top) {
         if categories.isEmpty && libraryHits.isEmpty && readingHits.isEmpty && setHits.isEmpty
-            && orderHits.isEmpty && prayerHits.isEmpty {
+            && orderHits.isEmpty && prayerHits.isEmpty && chantHits.isEmpty {
             if isLoadingSets {
                 // The set index can be seconds away on a cold server.
                 // Saying nothing matched before it lands is a confident
@@ -434,6 +441,25 @@ struct ExploreView: View {
                     .transition(.opacity)
                 }
 
+                if !chantHits.isEmpty {
+                    section("Chants") {
+                        VStack(alignment: .leading, spacing: 0) {
+                            ForEach(chantHits.prefix(Self.readingLimit)) { chant in
+                                ChantLibraryRow(chant: chant, player: ChantPlayer.shared) {
+                                    router.push(.chant(id: chant.id))
+                                }
+                            }
+                            if chantHits.count > Self.readingLimit {
+                                Text("And \(chantHits.count - Self.readingLimit) more — add a word to narrow the search.")
+                                    .font(AppFonts.italicFont(13))
+                                    .foregroundColor(AppColors.textSecondary)
+                                    .padding(.top, 8)
+                            }
+                        }
+                    }
+                    .transition(.opacity)
+                }
+
                 if !setHits.isEmpty {
                     section("Meditations") {
                         setRows(setHits)
@@ -503,6 +529,8 @@ struct ExploreView: View {
                          matchText: "carlo acutis eucharist digital altar saint") { router.push(.carloAcutis) },
             LibraryEntry(icon: "ch-praying-hands", title: "The Prayer Book",
                          matchText: "prayer book prayers enchiridion morning night angelus grace confession examination conscience mass communion litany litanies marian our lady latin novena") { router.push(.prayerBook) },
+            LibraryEntry(icon: "ph-music-note", title: "The Chant Library",
+                         matchText: "chant chants gregorian sung song songs hymn hymns latin score scores music antiphon sing") { router.push(.chantLibrary) },
             LibraryEntry(icon: "ph-flame", title: "Prayer Record",
                          matchText: "sacred record progress streak history calendar") { router.switchTo(.progress) }
         ]
@@ -751,6 +779,25 @@ struct ExploreView: View {
 
     // MARK: - The Prayer Book
 
+    /// Tonight's antiphon of Our Lady, to play where it stands, over the
+    /// door to the whole Chant Library
+    private var chantShelf: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            if let antiphon = ChantCatalog.antiphonOfTheSeason() {
+                ChantLibraryRow(chant: antiphon, player: ChantPlayer.shared) {
+                    router.push(.chant(id: antiphon.id))
+                }
+            }
+            LedgerDoorRow(
+                title: "The Chant Library",
+                note: "\(ChantCatalog.all.count) chants of the Church, each with its recording and its score",
+                icon: "ph-music-note"
+            ) {
+                router.push(.chantLibrary)
+            }
+        }
+    }
+
     /// The day's three hours, the hour it is lit, over the orders kept for
     /// an occasion as a row of small plates
     private var prayerBookShelf: some View {
@@ -874,7 +921,7 @@ struct ExploreView: View {
             "Daily Missal", "Divine Office",
             "True Devotion", "Spiritual Reading",
             "Scriptural Rosary", "The Rosary Aloud",
-            "Prayer Record", "How to Pray"
+            "Prayer Record", "How to Pray", "The Chant Library"
         ]
         return libraryEntries.filter { !housed.contains($0.title) }
     }
