@@ -8,9 +8,6 @@
 //  relative moves from each path's own origin, arcs that land where the
 //  data says, flags written with no separator.
 //
-//  NOTE: like SpokenRosaryScriptTests, this runs once an `appTests` unit
-//  testing target exists (see that file's note).
-//
 
 import CoreGraphics
 import Foundation

@@ -7,9 +7,6 @@
 //  right antiphon of Our Lady and the Regina Cæli in Eastertide, and the
 //  voice asks for the Rosary's recordings where the Rosary has them.
 //
-//  NOTE: like SpokenRosaryScriptTests, this runs once an `appTests` unit
-//  testing target exists (see that file's note).
-//
 
 import Foundation
 import Testing
