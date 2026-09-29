@@ -136,6 +136,14 @@ private final class OnboardingStage {
     /// Where each slide's words stand, reported by the slide itself
     var wordExtents: [OnboardingPage: WordsExtent] = [:]
 
+    /// The place the pages have settled on, or are past the middle of
+    var settledIndex = 0
+
+    /// A slide a button has turned to, whose title VoiceOver should read
+    /// once it arrives. A turn made by the hand asks for nothing: the
+    /// reader is already where they meant to be.
+    var focusRequest: OnboardingPage?
+
     init(sequence: [OnboardingPage]) {
         self.sequence = sequence
     }
@@ -341,6 +349,7 @@ struct OnboardingView: View {
 
         let settled = Int(position.rounded())
         if settled != currentPage { currentPage = settled }
+        if settled != stage.settledIndex { stage.settledIndex = settled }
 
         let arriving = Int(position.rounded(.down))...Int(position.rounded(.up))
         if arriving != stage.visiblePages { stage.visiblePages = arriving }
@@ -352,6 +361,7 @@ struct OnboardingView: View {
     /// other side while the paintings dissolve between them.
     private func go(to page: Page) {
         guard let target = stage.index(of: page), target != currentPage else { return }
+        stage.focusRequest = page
 
         guard abs(target - currentPage) > 1 else {
             withAnimation(Motion.travel(0.4)) { scrolledPage = page.rawValue }
@@ -1284,6 +1294,13 @@ private struct OnboardingSlideLayout<Content: View, Bottom: View>: View {
     /// True once this slide has played its entrance (plays only once)
     @State private var revealed = false
 
+    /// VoiceOver's place, moved to the title when a button has turned the
+    /// page here. Left alone, it stayed on the Continue that had just
+    /// been pressed, a page away and off the glass.
+    @AccessibilityFocusState private var titleFocused: Bool
+
+    private var isSettledHere: Bool { stage.index(of: page) == stage.settledIndex }
+
     /// True once any part of the slide is on the glass. The entrance
     /// plays as the slide arrives rather than once it has landed: a slide
     /// that waits for the swipe to settle comes in blank and fills
@@ -1324,6 +1341,11 @@ private struct OnboardingSlideLayout<Content: View, Bottom: View>: View {
         }
         .onChange(of: isArriving) { _, arriving in
             if arriving { revealed = true }
+        }
+        .onChange(of: isSettledHere) { _, here in
+            guard here, stage.focusRequest == page else { return }
+            stage.focusRequest = nil
+            titleFocused = true
         }
     }
 
@@ -1379,6 +1401,8 @@ private struct OnboardingSlideLayout<Content: View, Bottom: View>: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .contentTransition(.opacity)
                     .animation(Motion.crossfade, value: title)
+                    .accessibilityAddTraits(.isHeader)
+                    .accessibilityFocused($titleFocused)
 
                 if let titleNote {
                     Text(titleNote.uppercased())
@@ -1408,15 +1432,34 @@ private struct OnboardingSlideLayout<Content: View, Bottom: View>: View {
 private extension View {
     /// Fades and floats content in after `delay` once `revealed` is true.
     func staggeredReveal(_ revealed: Bool, delay: Double) -> some View {
-        self
-            .opacity(revealed ? 1 : 0)
-            .offset(y: revealed ? 0 : 14)
-            .animation(.easeOut(duration: 0.55).delay(delay), value: revealed)
+        modifier(StaggeredReveal(revealed: revealed, delay: delay))
     }
 
     /// Reports where a slide's words stand on the glass.
     func reportsWordExtent(_ report: @escaping (WordsExtent) -> Void) -> some View {
         modifier(WordExtentReporter(report: report))
+    }
+}
+
+/// A slide's parts arriving one after another, each rising a little as it
+/// fades in. Under Reduce Motion the rise and the stagger fall away and
+/// the fade is shorter; the crossfade itself remains.
+private struct StaggeredReveal: ViewModifier {
+    let revealed: Bool
+    let delay: Double
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    func body(content: Content) -> some View {
+        content
+            .opacity(revealed ? 1 : 0)
+            .offset(y: revealed || reduceMotion ? 0 : 14)
+            .animation(
+                reduceMotion
+                    ? .easeOut(duration: 0.3)
+                    : .easeOut(duration: 0.55).delay(delay),
+                value: revealed
+            )
     }
 }
 
