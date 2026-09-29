@@ -59,7 +59,6 @@ struct ConsecrationDayFlowView: View {
 
     /// The step to open on, consumed once on first appearance
     @State private var pendingStart: ConsecrationDayStep?
-    @State private var cachedAudioUrls: [String: String] = [:]
 
     /// The day's index — every step of the day, reachable from any of them
     @State private var showDayIndex = false
@@ -68,13 +67,25 @@ struct ConsecrationDayFlowView: View {
     /// the header can carry a small play control in its place
     @State private var transportScrolledAway = false
 
-    /// A chant that could not be fetched. The transport says so rather
-    /// than sitting there dead — the prayer is still there to pray.
+    /// A chant that would not play. The transport says so rather than
+    /// sitting there dead — the prayer is still there to pray.
     @State private var audioError: String?
 
     /// In-flight chant load, cancelled when the step changes so a stale
-    /// presign cannot land over the prayer now on screen.
+    /// load cannot land over the prayer now on screen.
     @State private var audioLoadTask: Task<Void, Never>?
+    @State private var isLoadingChant = false
+
+    /// The file this day loaded and the player's load generation when it
+    /// did. The transport reads the shared player only while both are
+    /// still the player's: a player some other flow left paused, loading
+    /// or failed is not this day's chant, and must not draw a pause glyph,
+    /// a spinner or an error here, or be scrubbed from here.
+    @State private var loadedChantURL: URL?
+    @State private var loadedGeneration: Int?
+
+    /// The chant whose score is open over the day
+    @State private var scoreChant: Chant?
 
     /// Identity for track-navigation ownership on the shared AudioService,
     /// so this day cannot be driven by a Rosary's stale arrows and its own
@@ -191,17 +202,26 @@ struct ConsecrationDayFlowView: View {
             audioLoadTask?.cancel()
             audioLoadTask = nil
             audio.clearTrackNavigation(owner: navigationOwner)
-            audio.reset()
-            // Hand the audio session back so other apps' audio can resume
-            audio.deactivateSession()
+            if ownsAudio {
+                audio.reset()
+                // Hand the audio session back so other apps' audio can resume
+                audio.deactivateSession()
+            }
         }
         .onChange(of: stepIndex) {
             // Preserve the Lock Screen player across a step change — the
             // next chant republishes over it. Tearing it down collapsed the
             // player between every prayer of the day.
-            audio.reset(preservingNowPlaying: true)
+            if ownsAudio { audio.reset(preservingNowPlaying: true) }
+            loadedChantURL = nil
+            loadedGeneration = nil
             audioError = nil
             loadAudioIfAvailable()
+        }
+        .sheet(item: $scoreChant) { chant in
+            // The score alone: the day's own transport goes on sounding
+            // beneath it
+            ChantScoreSheet(chant: chant, showsTransport: false)
         }
         .onChange(of: steps.count) { _, newCount in
             // Changing the prayer language can change the set; never
@@ -325,75 +345,100 @@ struct ConsecrationDayFlowView: View {
         )
     }
 
-    private func loadAudioIfAvailable() {
+    /// The chant this prayer is sung to, from the Chant Library — the
+    /// same bundled recording its page plays, so the day sounds in a
+    /// chapel with no signal.
+    private func chant(for prayer: ConsecrationPrayer) -> Chant? {
+        ChantCatalog.chants(forPrayer: prayer.id).first
+    }
+
+    private var currentChant: Chant? {
+        currentPrayer.flatMap(chant(for:))
+    }
+
+    /// Whether the shared player is still sounding the chant this day loaded
+    private var ownsAudio: Bool {
+        guard let loadedChantURL, let loadedGeneration else { return false }
+        return audio.currentURL == loadedChantURL && audio.loadGeneration == loadedGeneration
+    }
+
+    private func loadAudioIfAvailable(thenPlay: Bool = false) {
         // Track navigation is installed even for a step with no chant, so
         // the user can still move through the day from the Lock Screen.
         attachChantNavigation()
 
-        // A chant with no recording connected stands on the page as
-        // coming soon; there is nothing to fetch
-        guard let prayer = currentPrayer, prayer.hasAudio, ChantRecordings.areConnected else { return }
+        guard let prayer = currentPrayer, let chant = chant(for: prayer), let url = chant.audioURL else { return }
 
-        // A step change while a presign request is in flight would let the
-        // stale prayer's chant land over the one now on screen — the Fly.io
-        // machine can be cold and the client retries after 1.5s, so the
-        // window is seconds wide.
+        // A step change while a load is in flight would let the stale
+        // prayer's chant land over the one now on screen.
         audioLoadTask?.cancel()
+        isLoadingChant = true
         audioLoadTask = Task {
-            // A downloaded chant plays offline and skips the presign hop
-            if let local = OfflineContentService.shared.localPrayerAudioURL(prayerId: prayer.id) {
-                await audio.loadAudio(
-                    from: local.absoluteString,
-                    title: prayer.title,
-                    subtitle: "33-Day Consecration",
-                    artworkAssetName: dayArtworkAsset,
-                    album: "Day \(dayNumber)",
-                    queueIndex: stepIndex,
-                    queueCount: steps.count,
-                    claimNowPlaying: true
-                )
-                return
-            }
-
-            do {
-                let presignedUrl: String
-                if let cached = cachedAudioUrls[prayer.id] {
-                    presignedUrl = cached
-                } else {
-                    presignedUrl = try await APIService.shared.fetchPrayerAudioUrl(prayerId: prayer.id)
-                    cachedAudioUrls[prayer.id] = presignedUrl
-                }
-                guard !Task.isCancelled, currentPrayer?.id == prayer.id else { return }
-                await audio.loadAudio(
-                    from: presignedUrl,
-                    title: prayer.title,
-                    subtitle: "33-Day Consecration",
-                    artworkAssetName: dayArtworkAsset,
-                    album: "Day \(dayNumber)",
-                    queueIndex: stepIndex,
-                    queueCount: steps.count,
-                    claimNowPlaying: true
-                )
-            } catch {
-                guard !Task.isCancelled else { return }
+            defer { isLoadingChant = false }
+            let ready = await audio.loadAudio(
+                from: url.absoluteString,
+                title: prayer.title,
+                subtitle: "33-Day Consecration",
+                artworkAssetName: dayArtworkAsset,
+                album: "Day \(dayNumber)",
+                queueIndex: stepIndex,
+                queueCount: steps.count,
+                claimNowPlaying: true
+            )
+            guard !Task.isCancelled, currentPrayer?.id == prayer.id else { return }
+            guard ready || audio.currentURL == url else {
                 // The prayer reads perfectly well without the chant — say
                 // so once, quietly, rather than leaving a dead transport.
-                audioError = "The chant couldn't be loaded. The prayer is here to pray."
+                audioError = "The chant couldn't be played. The prayer is here to pray."
+                return
             }
+            loadedChantURL = url
+            loadedGeneration = audio.loadGeneration
+            if thenPlay { audio.play() }
         }
     }
 
-    private var audioPlayer: some View {
-        ChantTransportBar(
-            isComingSoon: !ChantRecordings.areConnected,
-            isPlaying: audio.isPlaying,
-            isLoading: audio.isLoading,
-            currentTime: audio.currentTime,
-            duration: audio.duration,
-            errorMessage: audioError ?? audio.errorMessage,
-            onToggle: { audio.togglePlayback() },
-            onSeek: { audio.seek(to: $0) }
-        )
+    private func audioPlayer(_ chant: Chant) -> some View {
+        let owns = ownsAudio
+        return VStack(spacing: 6) {
+            ChantTransportBar(
+                isPlaying: owns && audio.isPlaying,
+                isLoading: isLoadingChant,
+                currentTime: owns ? audio.currentTime : 0,
+                duration: owns && audio.duration > 0 ? audio.duration : chant.duration,
+                errorMessage: audioError ?? (owns ? audio.errorMessage : nil),
+                isReady: owns,
+                onToggle: {
+                    // A player another flow took back is loaded afresh,
+                    // then played, rather than toggled on someone else
+                    if ownsAudio { audio.togglePlayback() } else { loadAudioIfAvailable(thenPlay: true) }
+                },
+                onSeek: { if ownsAudio { audio.seek(to: $0) } }
+            )
+
+            HStack(alignment: .center, spacing: 12) {
+                Text(ChantCatalog.credit)
+                    .font(AppFonts.readingItalicFont(12))
+                    .foregroundColor(AppColors.textSecondary)
+                    .lineLimit(2)
+
+                Spacer(minLength: 8)
+
+                Button {
+                    scoreChant = chant
+                } label: {
+                    Text("SCORE")
+                        .font(AppFonts.labelFont(9))
+                        .tracking(2)
+                        .foregroundColor(AppColors.gold.opacity(0.85))
+                        .frame(minWidth: 44, minHeight: 44)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(QuietGlyphButtonStyle())
+                .accessibilityLabel("Show the score")
+            }
+            .padding(.horizontal, 4)
+        }
     }
 
     // MARK: - Top Bar
@@ -438,26 +483,26 @@ struct ConsecrationDayFlowView: View {
     /// True once the chant's transport has scrolled above the page and
     /// the prayer actually has one to reach.
     private var showsMiniTransport: Bool {
-        transportScrolledAway && currentPrayer?.hasAudio == true && ChantRecordings.areConnected
+        transportScrolledAway && currentChant != nil
     }
 
     private var miniTransportButton: some View {
         Button {
-            audio.togglePlayback()
+            if ownsAudio { audio.togglePlayback() } else { loadAudioIfAvailable(thenPlay: true) }
         } label: {
             ZStack {
                 Circle()
                     .fill(AppColors.goldCTAGradient)
                     .frame(width: 30, height: 30)
 
-                AppIcon(audio.isPlaying ? "ph-pause-fill" : "ph-play-fill", size: 11)
+                AppIcon(ownsAudio && audio.isPlaying ? "ph-pause-fill" : "ph-play-fill", size: 11)
                     .foregroundColor(AppColors.background)
             }
             .frame(width: 44, height: 44)
             .contentShape(Circle())
         }
         .buttonStyle(GoldCTAButtonStyle())
-        .accessibilityLabel(audio.isPlaying ? "Pause the chant" : "Play the chant")
+        .accessibilityLabel(ownsAudio && audio.isPlaying ? "Pause the chant" : "Play the chant")
     }
 
     // MARK: - Step Content
@@ -590,8 +635,8 @@ struct ConsecrationDayFlowView: View {
                 .frame(width: 150)
                 .padding(.vertical, 24)
 
-            if prayer.hasAudio {
-                audioPlayer
+            if let chant = chant(for: prayer) {
+                audioPlayer(chant)
                     .padding(.horizontal, 20)
                     .padding(.bottom, 24)
                     // Reports where the transport is, so the header can
@@ -717,17 +762,17 @@ nonisolated private struct TransportOffsetKey: PreferenceKey {
 /// gold hairline, tracked label type, and the single filled gold circle
 /// the app gives to a play control.
 ///
-/// Coming soon, it keeps its place and its shape — the play control
-/// dimmed and inert, the times given over to COMING SOON — so the page
-/// reads the same on the day a recording is connected.
+/// It reads the shared player only through what the day hands it, and
+/// the day hands it the player's state only while the player is sounding
+/// the day's own chant (`isReady`).
 private struct ChantTransportBar: View {
 
-    let isComingSoon: Bool
     let isPlaying: Bool
     let isLoading: Bool
     let currentTime: Double
     let duration: Double
     let errorMessage: String?
+    let isReady: Bool
     let onToggle: () -> Void
     let onSeek: (Double) -> Void
 
@@ -735,7 +780,7 @@ private struct ChantTransportBar: View {
     /// doesn't fight the time observer under the user's finger
     @State private var scrubbing: Double?
 
-    private var isReady: Bool { duration > 0 && errorMessage == nil }
+    private var canScrub: Bool { isReady && duration > 0 && errorMessage == nil }
 
     private var displayedTime: Double {
         scrubbing ?? currentTime
@@ -753,18 +798,11 @@ private struct ChantTransportBar: View {
 
                 VStack(spacing: 6) {
                     scrubber
-                        // Nothing to find a place in until there is a recording
-                        .accessibilityHidden(isComingSoon)
 
                     HStack {
-                        if isComingSoon {
-                            Text("COMING SOON")
-                            Spacer()
-                        } else {
-                            Text(Self.time(displayedTime))
-                            Spacer()
-                            Text(Self.time(duration))
-                        }
+                        Text(Self.time(displayedTime))
+                        Spacer()
+                        Text(Self.time(duration))
                     }
                     .font(AppFonts.labelFont(9))
                     .tracking(1.5)
@@ -814,14 +852,14 @@ private struct ChantTransportBar: View {
                     .fill(AppColors.goldLight)
                     .frame(width: knob, height: knob)
                     .offset(x: (width - knob) * progress)
-                    .opacity(isReady ? 1 : 0.4)
+                    .opacity(canScrub ? 1 : 0.4)
             }
             .frame(height: 20)
             .contentShape(Rectangle())
             .gesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { value in
-                        guard isReady else { return }
+                        guard canScrub else { return }
                         let fraction = min(max(value.location.x / width, 0), 1)
                         scrubbing = fraction * duration
                     }
@@ -836,7 +874,7 @@ private struct ChantTransportBar: View {
         .accessibilityLabel("Chant position")
         .accessibilityValue("\(Self.time(displayedTime)) of \(Self.time(duration))")
         .accessibilityAdjustableAction { direction in
-            guard isReady else { return }
+            guard canScrub else { return }
             let step = 15.0
             switch direction {
             case .increment: onSeek(min(duration, currentTime + step))
@@ -866,13 +904,8 @@ private struct ChantTransportBar: View {
             .contentShape(Circle())
         }
         .buttonStyle(GoldCTAButtonStyle())
-        .disabled(isLoading || isComingSoon)
-        .opacity(isComingSoon ? 0.4 : 1)
-        .accessibilityLabel(
-            isComingSoon ? "The chant is coming soon"
-                : isLoading ? "Loading the chant"
-                : (isPlaying ? "Pause the chant" : "Play the chant")
-        )
+        .disabled(isLoading)
+        .accessibilityLabel(isLoading ? "Loading the chant" : (isPlaying ? "Pause the chant" : "Play the chant"))
     }
 
     private static func time(_ seconds: Double) -> String {

@@ -47,9 +47,8 @@ struct MyChapelView: View {
     /// The chant's hold on the shared player outlives this view: a tab
     /// switch tears the page down, and a chant left singing with its
     /// transport deallocated could not be paused from anywhere.
-    private let chantPlayer = ChapelChantPlayer.shared
+    private let chantPlayer = ChantPlayer.shared
 
-    @State private var showChantSheet = false
     @State private var showRuleEditor = false
 
     /// The flame tile's three numbers, recomputed when a prayer lands
@@ -202,9 +201,6 @@ struct MyChapelView: View {
             if !active { cancelCarry() }
         }
         .task { await today.load() }
-        .sheet(isPresented: $showChantSheet) {
-            ChapelChantSheet(player: chantPlayer)
-        }
         .sheet(isPresented: $showRuleEditor) {
             RuleEditorSheet()
                 .presentationBackground(AppColors.background)
@@ -698,7 +694,8 @@ struct MyChapelView: View {
             ChapelChantTile(
                 span: placement.span,
                 player: chantPlayer,
-                onOpenSheet: { showChantSheet = true }
+                onOpenChant: { router.push(.chant(id: chantPlayer.current.id)) },
+                onOpenLibrary: { router.push(.chantLibrary) }
             )
         case .reflections:
             ChapelReflectionsTile(span: placement.span)
@@ -788,9 +785,9 @@ struct MyChapelView: View {
     /// holds it, and what it shows keeps counting underneath.
     private func putAway(_ tile: ChapelTile) {
         // A counter can keep counting out of sight; a sound cannot. The
-        // chant tile is the only transport for its own audio, so putting
-        // it away has to hand the player back rather than leave a chant
-        // singing with nothing in the app able to stop it.
+        // chant tile is the page's transport for its own audio, so putting
+        // it away hands the player back rather than leave a chant singing
+        // with nothing on the page able to stop it.
         if tile == .chant { chantPlayer.relinquish() }
 
         withAnimation(.easeOut(duration: 0.26)) {

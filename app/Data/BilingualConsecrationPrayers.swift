@@ -117,8 +117,7 @@ Deo Patri sit glória,
 et Fílio, qui a mórtuis
 surréxit, ac Paráclito,
 in sæculórum sæcula. Amen.
-""",
-        hasChantAudio: true
+"""
     )
 
     static let aveMaris = BilingualConsecrationPrayer(
@@ -196,8 +195,7 @@ Sit laus Deo Patri,
 summo Christo decus,
 Spirítui Sancto,
 tribus honor unus. Amen.
-""",
-        hasChantAudio: true
+"""
     )
 
     // MARK: - Canticle
@@ -241,8 +239,7 @@ Sicut locútus est ad patres nostros, * Abraham et sémini ejus in sæcula.
 
 Glória Patri, et Fílio, * et Spirítui Sancto.
 Sicut erat in princípio, et nunc, et semper, * et in sæcula sæculórum. Amen.
-""",
-        hasChantAudio: true
+"""
     )
 
     // MARK: - Doxology

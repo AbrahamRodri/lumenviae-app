@@ -1892,25 +1892,28 @@ struct ChapelLibraryTile: View {
 
 // MARK: - Chant
 
-/// Sung prayer kept close to hand: a round play control, the piece by
-/// name, and a scrub line. The foot's act opens the chant sheet, the
-/// only place the piece can be changed. While no recording is connected
-/// the disc rests, dimmed, and the line under the name says so.
+/// Sung prayer kept close to hand: a round play control, the chant by
+/// name, and a scrub line. The name opens the chant's own page (its score,
+/// its practice); the foot's act opens the Chant Library, where another
+/// is chosen. The tile holds whatever the library last sang, or the
+/// antiphon of the season until it has sung anything.
 struct ChapelChantTile: View {
 
     let span: Int
-    let player: ChapelChantPlayer
-    let onOpenSheet: () -> Void
+    let player: ChantPlayer
+    let onOpenChant: () -> Void
+    let onOpenLibrary: () -> Void
+
+    private var chant: Chant { player.current }
 
     var body: some View {
         if span == 2 { full } else { half }
     }
 
-    /// What stands under the piece's name: that it is coming soon, then
-    /// a failure to reach it, then its one line of description.
+    /// What stands under the chant's name: a failure to play it, else
+    /// when it is sung.
     private var statusLine: String {
-        guard player.isConnected else { return "Recording coming soon" }
-        return player.errorMessage ?? player.current.detail
+        player.errorMessage ?? chant.setting.map { "\($0) · \(chant.detail)" } ?? chant.detail
     }
 
     private var full: some View {
@@ -1918,29 +1921,40 @@ struct ChapelChantTile: View {
             tile: .chant,
             span: 2,
             note: player.elapsedLabel,
-            act: "All chants",
-            onAct: onOpenSheet
+            act: "Chant library",
+            onAct: onOpenLibrary
         ) {
             HStack(spacing: 14) {
-                playDisc(size: 46, iconSize: 15)
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(player.current.latinTitle.uppercased())
-                        .font(AppFonts.labelFont(10))
-                        .tracking(2.5)
-                        .foregroundColor(AppColors.gold)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.8)
-
-                    // The error outranks the detail: a chant that could
-                    // not be reached should say so where its name is
-                    Text(statusLine)
-                        .font(AppFonts.italicFont(13))
-                        .foregroundColor(AppColors.textSecondary)
-                        .lineLimit(1)
+                ChantPlayDisc(
+                    isPlaying: player.isPlaying,
+                    isLoading: player.isLoading,
+                    size: 46,
+                    label: chant.latinTitle
+                ) {
+                    player.togglePlayback()
                 }
 
-                Spacer(minLength: 0)
+                Button(action: onOpenChant) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(chant.latinTitle.uppercased())
+                            .font(AppFonts.labelFont(10))
+                            .tracking(2.5)
+                            .foregroundColor(AppColors.gold)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
+
+                        Text(statusLine)
+                            .font(AppFonts.italicFont(13))
+                            .foregroundColor(AppColors.textSecondary)
+                            .lineLimit(2)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .frame(minHeight: 44)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityElement(children: .combine)
+                .accessibilityHint("Opens the chant with its score")
             }
 
             scrubLine
@@ -1953,26 +1967,42 @@ struct ChapelChantTile: View {
         ChapelTileFrame(
             tile: .chant,
             span: 1,
-            act: "All chants",
-            onAct: onOpenSheet
+            act: "Library",
+            onAct: onOpenLibrary
         ) {
-            Text(player.current.latinTitle)
-                .font(AppFonts.headlineFont(15))
-                .foregroundColor(AppColors.cream)
-                .lineLimit(2)
-                .minimumScaleFactor(0.85)
-                .fixedSize(horizontal: false, vertical: true)
+            Button(action: onOpenChant) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(chant.latinTitle)
+                        .font(AppFonts.headlineFont(15))
+                        .foregroundColor(AppColors.cream)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.85)
+                        .fixedSize(horizontal: false, vertical: true)
 
-            Text(statusLine)
-                .font(AppFonts.italicFont(12.5))
-                .foregroundColor(AppColors.textSecondary)
-                .lineLimit(1)
-                .padding(.top, 4)
+                    Text(chant.setting ?? chant.englishTitle)
+                        .font(AppFonts.italicFont(12.5))
+                        .foregroundColor(AppColors.textSecondary)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityElement(children: .combine)
+            .accessibilityHint("Opens the chant with its score")
 
             // The time is said once, here on the transport row, and
             // not in the kicker as well
-            HStack(spacing: 10) {
-                playDisc(size: 36, iconSize: 14)
+            HStack(spacing: 8) {
+                ChantPlayDisc(
+                    isPlaying: player.isPlaying,
+                    isLoading: player.isLoading,
+                    size: 36,
+                    label: chant.latinTitle
+                ) {
+                    player.togglePlayback()
+                }
 
                 scrubLine
 
@@ -1984,53 +2014,9 @@ struct ChapelChantTile: View {
                         .lineLimit(1)
                 }
             }
-            .padding(.top, 8)
-            .padding(.bottom, 4)
+            .padding(.top, 4)
+            .padding(.bottom, 2)
         }
-    }
-
-    private func playDisc(size: CGFloat, iconSize: CGFloat) -> some View {
-        Button(action: { player.togglePlayback() }) {
-            ZStack {
-                Circle()
-                    .fill(AppColors.cardBackground)
-                Circle()
-                    .strokeBorder(AppColors.goldLight, lineWidth: 1)
-
-                // Play, pause and the spinner crossfade over one
-                // another rather than swapping under the thumb
-                ZStack {
-                    if player.isLoading {
-                        ProgressView()
-                            .tint(AppColors.goldLight)
-                            .scaleEffect(0.8)
-                            .transition(.opacity.combined(with: .scale(scale: 0.7)))
-                    } else if player.isPlaying {
-                        AppIcon("ph-pause-fill", size: iconSize)
-                            .foregroundColor(AppColors.goldLight)
-                            .transition(.opacity.combined(with: .scale(scale: 0.7)))
-                    } else {
-                        AppIcon("ph-play-fill", size: iconSize)
-                            .foregroundColor(AppColors.goldLight)
-                            .transition(.opacity.combined(with: .scale(scale: 0.7)))
-                    }
-                }
-                .animation(Motion.crossfade, value: player.isLoading)
-                .animation(Motion.crossfade, value: player.isPlaying)
-            }
-            .frame(width: size, height: size)
-            .shadow(color: AppColors.gold.opacity(player.isConnected ? 0.3 : 0), radius: 9)
-            .shadow(color: AppColors.gold.opacity(player.isConnected ? 0.15 : 0), radius: 20)
-        }
-        .buttonStyle(GoldCTAButtonStyle())
-        .disabled(!player.isConnected)
-        .opacity(player.isConnected ? 1 : 0.4)
-        .accessibilityLabel(
-            !player.isConnected ? "\(player.current.latinTitle), coming soon"
-                : player.isPlaying
-                    ? "Pause \(player.current.latinTitle)"
-                    : "Sing \(player.current.latinTitle)"
-        )
     }
 
     private var scrubLine: some View {
