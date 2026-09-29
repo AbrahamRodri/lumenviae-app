@@ -279,11 +279,19 @@ struct ResumePrayerCard: View {
                 continueButton
                     .disabled(isLoading)
 
+                // The glyph stays small in the corner; the touch around it
+                // is the 44 points any control is owed, reaching out over
+                // the page's margin rather than in over the play disc,
+                // which a touch meant for it must never dismiss. At 26 it
+                // was the easiest thing on the card to miss
                 Button(action: onDismiss) {
                     AppIcon("ph-x", size: 10)
                         .foregroundColor(AppColors.textSecondary)
-                        .padding(8)
+                        .offset(x: -11, y: 1)
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
                 }
+                .offset(x: 20, y: -10)
                 .accessibilityLabel("Dismiss unfinished Rosary")
             }
 
@@ -339,6 +347,9 @@ struct ResumePrayerCard: View {
                                 .transition(.opacity.combined(with: .scale(scale: 0.7)))
                         }
                     }
+                    // A step in from the corner, clear of the dismiss
+                    // touch that hangs there
+                    .padding(.trailing, 6)
                 }
                 // The app's card shell — it floats, so it keeps its
                 // shadow, but the gold no longer shouts over the hero

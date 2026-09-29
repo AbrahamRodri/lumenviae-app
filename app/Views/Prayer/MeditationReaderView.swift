@@ -522,7 +522,9 @@ struct MiniPlayerPill: View {
             .buttonStyle(.plain)
             .accessibilityLabel("Back to the player")
 
-            if viewModel.currentMeditation?.hasAudio == true {
+            // The same rule as the player's transport: a mystery with no
+            // narration still has the Rosary's own voice to pause
+            if viewModel.currentMeditation?.hasAudio == true || viewModel.isPrayingAloud {
                 Button {
                     viewModel.isPlaying.toggle()
                 } label: {
@@ -647,7 +649,10 @@ private struct ReaderNarrationWatcher: View {
             .allowsHitTesting(false)
             .accessibilityHidden(true)
             .onChange(of: viewModel.currentTime) { _, time in
-                guard viewModel.isPlaying, viewModel.totalDuration > 0, paragraphCount > 0 else { return }
+                // Only the meditation's own voice: said aloud, the clock
+                // is a Hail Mary's or the Creed's as often as not
+                guard viewModel.isPlaying, viewModel.isHearingMeditation,
+                      viewModel.totalDuration > 0, paragraphCount > 0 else { return }
 
                 // Without per-word timings the mapping is proportional —
                 // paragraph N of M at N/M of the audio — which tracks

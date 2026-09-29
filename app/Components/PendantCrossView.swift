@@ -530,13 +530,31 @@ struct PendantStage: View {
     /// Where it hangs from, as a fraction of the glass from the top
     var topFraction: CGFloat = 0.1
 
+    /// The lowest the cross may reach, in points from the top of the
+    /// glass: the top of whatever the screen sets beneath it. The
+    /// fractions alone know nothing of the controls, and the cross's
+    /// foot once stood on the play disc. Nil gives it its whole share.
+    var bottomLimit: CGFloat? = nil
+
+    /// Hung in a column this wide at the trailing edge — where the strand
+    /// hangs through the decades — beside the words of the prayer being
+    /// said, rather than in the middle of the glass under them. Nil hangs
+    /// it in the middle.
+    var trailingColumn: CGFloat? = nil
+
     var body: some View {
+        let top = fullHeight * topFraction
+        let share = fullHeight * heightFraction
+        let height = bottomLimit.map { max(min(share, $0 - top), 0) } ?? share
+        // The glow the pendant stands in, centred on it
+        let glowX = trailingColumn.map { width > 0 ? (width - $0 / 2) / width : 0.5 } ?? 0.5
+
         ZStack(alignment: .top) {
             AppColors.background
 
             RadialGradient(
                 colors: [Metal.body.opacity(0.16), AppColors.background.opacity(0)],
-                center: UnitPoint(x: 0.5, y: 0.36),
+                center: UnitPoint(x: glowX, y: 0.36),
                 startRadius: 0,
                 endRadius: fullHeight * 0.55
             )
@@ -546,9 +564,12 @@ struct PendantStage: View {
                 isClosing: pendant.phase == .closing,
                 isChaplet: pendant.isChaplet
             )
-            .frame(height: fullHeight * heightFraction)
-            .padding(.top, fullHeight * topFraction)
-            .frame(maxWidth: .infinity)
+            // In a column it is as wide as the column allows, at the
+            // strand's own scale; in the middle, as tall as its share
+            .frame(maxWidth: trailingColumn.map { max($0 - 12, 0) }, maxHeight: height, alignment: .top)
+            .frame(width: trailingColumn)
+            .padding(.top, top)
+            .frame(maxWidth: .infinity, alignment: trailingColumn == nil ? .center : .trailing)
         }
         .frame(width: width, height: fullHeight)
         .ignoresSafeArea()
