@@ -323,7 +323,7 @@ struct ReadingGoalSheet: View {
             kicker: "Today's goal",
             title: "How Much to Read",
             lead: "Spiritual reading asks for a little every day rather than an evening every month.",
-            note: "A missed day is never counted against you."
+            note: "A day without reading is never counted against you."
         ) {
             ForEach(ReadingGoal.allCases) { goal in
                 LibraryTrayRow(
