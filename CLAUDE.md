@@ -63,21 +63,21 @@ Return to Home
 
 ### Mystery Types & Schedule
 
-**Default Schedule (Traditional):**
+**The two schedules** (Settings → Devotion → Daily Mysteries; Traditional unless chosen):
 
-| Day | Mystery Type | Theme |
-|-----|--------------|-------|
-| Sunday | By season — Joyful in Advent, Sorrowful in Lent, Glorious otherwise | |
-| Monday | Joyful | Christ's Early Life |
-| Tuesday | Sorrowful | Christ's Passion |
-| Wednesday | Glorious | Resurrection & Glory |
-| Thursday | Joyful | Christ's Early Life |
-| Friday | Sorrowful | Christ's Passion |
-| Saturday | Glorious | Resurrection & Glory |
+| Day | Traditional (default) | Modern (RVM 38, 2002) |
+|-----|-----------------------|-----------------------|
+| Sunday | By season — Joyful in Advent, Sorrowful in Lent, Glorious otherwise | The same |
+| Monday | Joyful | Joyful |
+| Tuesday | Sorrowful | Sorrowful |
+| Wednesday | Glorious | Glorious |
+| Thursday | Joyful | **Luminous** |
+| Friday | Sorrowful | Sorrowful |
+| Saturday | Glorious | **Joyful** |
 
-> **Note:** This is the traditional pre-2002 schedule. The Luminous Mysteries (added by Pope John Paul II) are available in the app but not part of the default daily rotation. Users can always choose Luminous from the grid's VIEW ALL page or from Explore.
+> **Note:** Traditional is the pre-2002 schedule and the default; no install's day changes unless its user chooses Modern. The Luminous Mysteries are always available from the grid's VIEW ALL page or from Explore. **Modern keeps the seasonal Sunday:** RVM 38 gives Sunday to the Glorious but leaves room for the liturgical season, and with the custom kept the two schedules differ only on Thursday and Saturday, which is how the sheet describes them. The choice is `UserSettings.mysteryScheduleRaw` (`MysterySchedule`, raw values `traditional`/`modern`), read by `ScheduleService.category(for:)` as a default argument, so every surface that names or opens "today's mysteries" follows it without passing it along. **It is a per-user client preference:** the server's `LiturgicalCalendar` and the web copy keep the traditional schedule and are not changed by it. A debug build can be launched on another day with `SIMCTL_CHILD_LUMEN_VIAE_TODAY=2026-10-01` (`ScheduleService.today`).
 >
-> `ScheduleService` computes the seasons on device (Easter by Meeus/Jones/Butcher; Lent = Ash Wednesday up to Easter; Advent = the Sunday on or after Nov 27 through Dec 24) and is kept **identical to the server's `LumenViae.LiturgicalCalendar`** — Christmastide and Eastertide deliberately count as "ordinary" for this rule on both sides. Change the two together, along with the site copy (the web app's home, dashboard and category pages) and the day names the app shows (`MysteryCategory.daysPrayed`, `MysteryData`'s per-mystery `daysPrayed`). The server's `mysteries.days_prayed` column is not read by the app, and as of Sept 2026 it (and `priv/repo/seeds.exs`) still carries older, non-traditional days — fix it there before anything shows it.
+> `ScheduleService` computes the seasons on device (Easter by Meeus/Jones/Butcher; Lent = Ash Wednesday up to Easter; Advent = the Sunday on or after Nov 27 through Dec 24) and its **Traditional** schedule is kept **identical to the server's `LumenViae.LiturgicalCalendar`** — Christmastide and Eastertide deliberately count as "ordinary" for this rule on both sides. Change the two together, along with the site copy (the web app's home, dashboard and category pages). The day names the app shows (`MysteryCategory.daysPrayed`, and `Mystery.daysPrayed`, which reads it) are computed from the rule by `ScheduleService.daysPrayed`, so they follow whichever schedule is chosen; `MysteryData` no longer carries them. The server's `mysteries.days_prayed` column is not decoded by the app, and as of Sept 2026 it (and `priv/repo/seeds.exs`) still carries older, non-traditional days — fix it there before anything shows it.
 
 ### The Mysteries of Each Set
 
@@ -437,8 +437,9 @@ the page they serve):
   among the ways of praying, they read as prayers added to every
   Rosary, and a silent Rosary never said them
 - **Devotion** — Rule of Prayer (→ `RuleEditorSheet`), Prayer Record,
-  Daily Reminders (toggle, time, sound), What Brings You to the Rosary (decides
-  the reminder copy pool)
+  Daily Mysteries (Traditional | Modern → `MysteryScheduleSheet`, the row
+  under Rule of Prayer), Daily Reminders (toggle, time, sound), What Brings
+  You to the Rosary (decides the reminder copy pool)
 - **Offline** — download every meditation set and audio file
 
 **`AboutView`** (`AppRoute.about`, the home masthead's **ph-info**) — the app's
@@ -1627,8 +1628,6 @@ write concurrent code here:
 - Auto-scroll *synced* to audio, word by word. Both readers follow
   proportionally instead — the prayer reader and the Spiritual Reading
   reader — because neither the narration nor LibriVox carries timings
-- A setting to switch between the Traditional and Modern (Luminous Thursday)
-  schedules — `ScheduleService` is the seam for it
 - Feast-day overrides on the schedule (seasonal Sundays are built)
 - Server-side sync of journal entries or progress. The journal, streaks,
   history and reading places live only on the device; the one thing sent
@@ -1956,7 +1955,7 @@ LibriVox.
 
 ### Design Principles
 - **Build for flexibility:** Even though Luminous mysteries aren't in the default schedule, data models and UI should support all five categories (the Seven Sorrows included) equally. Schedule logic should be configurable, not hardcoded.
-- **Separation of concerns:** Keep schedule/calendar logic in `ScheduleService`, the one place a Modern schedule or feast-day overrides would go.
+- **Separation of concerns:** Keep schedule/calendar logic in `ScheduleService`, which holds both weekly schedules and is the one place feast-day overrides would go.
 - **Content-driven:** Mystery data (titles, scriptures, meditations) should be stored as data files, not hardcoded in views.
 
 ## Content Requirements

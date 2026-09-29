@@ -623,6 +623,20 @@ final class UserSettings {
         ruleItemsRaw = chosen + kept
     }
 
+    // MARK: - Daily Mysteries
+
+    /// Which weekly schedule gives the day its mysteries: the
+    /// traditional one unless the user chooses St. John Paul II's, with
+    /// the Luminous on Thursday. Only the app reads it; the server and
+    /// the website keep the traditional schedule. See ScheduleService.
+    var mysteryScheduleRaw: String = MysterySchedule.traditional.rawValue {
+        didSet { UserDefaults.standard.set(mysteryScheduleRaw, forKey: "userSettings.mysterySchedule") }
+    }
+
+    var mysterySchedule: MysterySchedule {
+        MysterySchedule(rawValue: mysteryScheduleRaw) ?? .traditional
+    }
+
     /// Whether notification permission has been granted
     var notificationAuthorizationGranted: Bool = false
 
@@ -745,6 +759,9 @@ final class UserSettings {
         }
         if let rule = d.stringArray(forKey: "userSettings.ruleItems") {
             ruleItemsRaw = rule
+        }
+        if let schedule = d.string(forKey: "userSettings.mysterySchedule") {
+            mysteryScheduleRaw = schedule
         }
 
         chapelCoached = d.bool(forKey: "userSettings.chapelCoached")
