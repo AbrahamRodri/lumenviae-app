@@ -609,8 +609,10 @@ write concurrent code here:
   the bead itself. The strand names the bead under the hand in its own
   margin at the window's middle (`RosaryStrandView.activeLabel`: OUR
   FATHER · HAIL MARY / 4 OF 10 · GLORY BE & / FATIMA PRAYER, the count
-  rolling as one fixed view while the rows slide beneath it), and the
-  Our Father beads carry only their numeral — the words "OUR FATHER"
+  rolling as one fixed view while the rows slide beneath it, and
+  growing no larger than `xLarge`, since the window is a fixed 150
+  points and clips — at the app's `xxLarge` THE MEDITATION lost its T),
+  and the Our Father beads carry only their numeral — the words "OUR FATHER"
   beside every one of them ran a hundred points into whatever stood to
   the strand's left. The player's foot — title, transport, utility row —
   changes nothing from bead to bead: a `BeadStatusRow` once stood there
@@ -636,11 +638,17 @@ write concurrent code here:
   do nothing. The setting has one name and one explanation wherever it
   is a switch — Settings, the playback sheet, the set's title page —
   `UserSettings.beadCounterTitle` ("Bead counter") and
-  `beadCounterDetail(isOn:)`; it had three names and none said what would
-  appear. Onboarding alone asks it as a choice between two ways of
+  `beadCounterDetail(isOn:aloud:)`; it had three names and none said what
+  would appear. With Pray aloud on it says the voice moves the beads: it
+  once told a person to wait for the meditation and swipe, one row under a
+  switch that said the voice would move them. Onboarding alone asks it as a choice between two ways of
   praying ("On the Beads" / "Without the Beads"), each shown working. `ToggleRow` answers a tap anywhere on the row, not only on its
   switch. The one-time `PrayerSwipeHint` ("Swipe down for the next
-  bead") waits for the beads to unlock, floating over the painting above
+  bead") waits for the beads to unlock and for the voice to let go of
+  the hand (`voiceHoldsHand`) — said aloud the beads count as unlocked
+  from the first word, and the one showing was spent over the Sign of the
+  Cross, across the pendant's foot, where a swipe does nothing — floating
+  over the painting above
   the controls so its coming and going moves nothing. The Glory Be has no bead of its own: it is drawn
   on the next decade's Our Father bead, and after the last decade on one
   final bead labelled AMEN, where the AMEN button hangs under the bead's
@@ -734,7 +742,10 @@ write concurrent code here:
   its far end as the way back, faded but never gone, so the track keeps
   its length under the thumb. A drag is heard as it goes when something
   is playing and stored only when the finger lifts
-  (`userSettings.narrationRate`); VoiceOver adjusts it a quarter at a
+  (`userSettings.narrationRate`); what the slider sets once the finger
+  is off it, as the thumb settles, is stored at once — taken as a drag,
+  it was never kept, and the sheet named a speed the voice was not
+  saying, with the 1× beside it seeming to do nothing; VoiceOver adjusts it a quarter at a
   step and reads "1.25 times". Five capsules stood there once, and a
   voice a little slow at 1× and a little quick at 1.25× had nothing
   between. `AudioService.resolvedRate` brings any speed into range and
@@ -1885,7 +1896,10 @@ on through the Hail, Holy Queen. After the last Amen the pendant stays
 (`SpokenRosaryPlayer.pendant` shows the script's last segment once
 finished), so the Rosary ends on the cross it began on, AMEN beckoning and
 the next-prayer button faded; the last mystery's painting once came back
-under it. The pendant is fitted above the foot, and gives up height at the
+under it. Until then the play button is ready whenever the Rosary is said
+aloud (`NarrationPlayControl`): a prayer stepped to while paused, or Pray
+aloud turned on mid-Rosary, has no recording loaded until play is pressed,
+and gated on a track's length the button stood lit and did nothing. The pendant is fitted above the foot, and gives up height at the
 largest text sizes, where the prayer's name stood across the cross.
 While the voice says the opening prayers, or waits on its recordings, it
 holds the hand (`PrayerSessionViewModel.voiceHoldsHand`): the strand, the

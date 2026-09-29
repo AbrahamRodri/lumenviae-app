@@ -358,9 +358,12 @@ struct MysteryPrayerView: View {
     }
 
     /// Whether the swipe hint has anything to teach yet: off the beads the
-    /// page is swiped at once; on them, once the beads unlock.
+    /// page is swiped at once; on them, once the beads unlock. Never while
+    /// the voice holds the hand: said aloud, the beads count as unlocked
+    /// from the first word, and the one showing was spent over the Sign of
+    /// the Cross, across the pendant's foot, where a swipe does nothing.
     private var swipeHintMayShow: Bool {
-        !onBeads || viewModel.beadsUnlocked
+        (!onBeads || viewModel.beadsUnlocked) && !voiceHoldsStrand
     }
 
     /// Takes the hint off screen. Safe to call more than once — its own

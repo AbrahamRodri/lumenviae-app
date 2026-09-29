@@ -121,9 +121,15 @@ struct NarrationPlayControl: View {
 
     var body: some View {
         // After the last Amen said aloud there is nothing left to play;
-        // the button stands aside, and AMEN is what glows
-        let ready = !viewModel.isLoadingAudio && viewModel.totalDuration > 0
-            && !viewModel.isSpokenFinished
+        // the button stands aside, and AMEN is what glows. Said aloud,
+        // the Rosary is ready whenever it is not finished: a prayer
+        // stepped to while paused has no recording loaded until play is
+        // pressed, and gated on a track's length the button stood lit
+        // and did nothing, with no other way to go on
+        let aloud = viewModel.isPrayingAloud
+        let ready = aloud
+            ? !viewModel.isSpokenFinished
+            : !viewModel.isLoadingAudio && viewModel.totalDuration > 0
 
         NarrationPlayButton(
             isPlaying: viewModel.isPlaying,
@@ -137,12 +143,14 @@ struct NarrationPlayControl: View {
         .animation(Motion.crossfade, value: viewModel.isSpokenFinished)
         // With no scrubber on screen there is nothing else for VoiceOver
         // to read position from, or to seek with
+        // Said aloud, the prayer being said rather than a clock that runs
+        // a few seconds and starts again at every prayer
         .accessibilityValue(
-            ready
-                ? "\(NarrationClock.spoken(viewModel.currentTime)) of \(NarrationClock.spoken(viewModel.totalDuration))"
-                : "Not ready"
+            !ready ? "Not ready"
+                : aloud ? (viewModel.spokenCaption ?? "")
+                : "\(NarrationClock.spoken(viewModel.currentTime)) of \(NarrationClock.spoken(viewModel.totalDuration))"
         )
-        .accessibilityHint(ready ? "Swipe up or down to move through the narration" : "")
+        .accessibilityHint(ready && !aloud ? "Swipe up or down to move through the narration" : "")
         .accessibilityAdjustableAction { direction in
             switch direction {
             case .increment: viewModel.skipForward(15)
@@ -218,7 +226,7 @@ struct PlaybackSettingsSheet: View {
 
                 SheetToggleRow(
                     title: UserSettings.beadCounterTitle,
-                    detail: UserSettings.beadCounterDetail(isOn: settings.prayOnBeads),
+                    detail: UserSettings.beadCounterDetail(isOn: settings.prayOnBeads, aloud: settings.prayAloud),
                     icon: "ch-rosary",
                     isOn: $settings.prayOnBeads,
                     showsDivider: false
@@ -286,7 +294,7 @@ struct NarrationVoiceChoice: View {
     static let largestCapsuleType = DynamicTypeSize.accessibility1
 }
 
-/// The narration's speed on a slider, half speed to double in twentieths,
+/// The narration's speed on a slider, 0.7× to 1.7× in twentieths,
 /// its value beside it and a quiet way back to 1× at its end. Five fixed
 /// capsules once stood here, and a voice a little too slow at 1× and a
 /// little too quick at 1.25× had nowhere between them to go.
@@ -303,6 +311,13 @@ struct PlaybackSpeedChoice: View {
     /// The speed under the thumb while it is dragged; the service's own
     /// otherwise
     @State private var draft: Double?
+
+    /// Whether a finger is on the thumb. The slider goes on setting its
+    /// value for a moment after the finger lifts, as the thumb settles:
+    /// taken as a drag, those last values were left in `draft`, never
+    /// kept, and the sheet named a speed the voice was not saying, with
+    /// the 1× beside it seeming to do nothing
+    @State private var isEditing = false
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -323,6 +338,11 @@ struct PlaybackSpeedChoice: View {
                         get: { shown },
                         set: { raw in
                             let rate = Self.detented(raw)
+                            guard isEditing else {
+                                // Outside a drag, kept at once
+                                if rate != audio.playbackRate { audio.setPlaybackRate(rate) }
+                                return
+                            }
                             draft = rate
                             // Heard as it is dragged, kept on release
                             if audio.isPlaying { audio.setPlaybackRate(rate, remember: false) }
@@ -330,9 +350,10 @@ struct PlaybackSpeedChoice: View {
                     ),
                     in: AudioService.rateRange,
                     onEditingChanged: { editing in
-                        guard !editing, let draft else { return }
-                        audio.setPlaybackRate(draft)
-                        self.draft = nil
+                        isEditing = editing
+                        guard !editing else { return }
+                        if let draft { audio.setPlaybackRate(draft) }
+                        draft = nil
                     }
                 )
                 .tint(AppColors.gold)
@@ -346,14 +367,18 @@ struct PlaybackSpeedChoice: View {
                 )
             }
             // One adjustable element for VoiceOver, a quarter at a step:
-            // a twentieth at a swipe was a long way from 1× to 2×
+            // a twentieth at a swipe was a long way from one end to the other
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Narration speed")
             .accessibilityValue(Self.spokenRate(shown))
             .accessibilityAdjustableAction { direction in
                 switch direction {
-                case .increment: audio.setPlaybackRate((shown * 4).rounded(.down) / 4 + 0.25)
-                case .decrement: audio.setPlaybackRate((shown * 4).rounded(.up) / 4 - 0.25)
+                case .increment:
+                    draft = nil
+                    audio.setPlaybackRate((shown * 4).rounded(.down) / 4 + 0.25)
+                case .decrement:
+                    draft = nil
+                    audio.setPlaybackRate((shown * 4).rounded(.up) / 4 - 0.25)
                 @unknown default: break
                 }
             }
@@ -363,6 +388,7 @@ struct PlaybackSpeedChoice: View {
             // track never changes length under the thumb
             Button {
                 withAnimation(reduceMotion ? nil : Motion.settle) {
+                    draft = nil
                     audio.setPlaybackRate(1)
                 }
             } label: {

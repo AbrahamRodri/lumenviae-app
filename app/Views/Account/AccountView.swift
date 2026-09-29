@@ -69,7 +69,7 @@ struct AccountView: View {
                             ToggleRow(
                                 icon: "ch-rosary",
                                 title: UserSettings.beadCounterTitle,
-                                subtitle: UserSettings.beadCounterDetail(isOn: userSettings.prayOnBeads),
+                                subtitle: UserSettings.beadCounterDetail(isOn: userSettings.prayOnBeads, aloud: userSettings.prayAloud),
                                 isOn: Bindable(userSettings).prayOnBeads
                             )
 

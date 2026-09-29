@@ -187,7 +187,7 @@ private struct RosarySetupSheet: View {
                 if kind == .meditation {
                     switchRow(
                         UserSettings.beadCounterTitle,
-                        detail: UserSettings.beadCounterDetail(isOn: settings.prayOnBeads),
+                        detail: UserSettings.beadCounterDetail(isOn: settings.prayOnBeads, aloud: settings.prayAloud),
                         icon: "ch-rosary",
                         isOn: $settings.prayOnBeads
                     )
