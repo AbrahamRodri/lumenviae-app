@@ -755,7 +755,10 @@ write concurrent code here:
   the Spiritual Reading shelf) may still reach the shelf's 2×. The Lock
   Screen and CarPlay, which draw their speed control from a list, and
   the shelf keep the presets (`supportedRates`); 2× chosen on the Lock
-  Screen during a Rosary plays at 1.7×. The spoken Rosary's breaths
+  Screen during a Rosary plays at 1.7×; chosen there while a book or a
+  chant plays at a speed of its own, it is that flow's loan, never the
+  app's — taken as the app's, a LibriVox reading set the Rosary's pace,
+  and a book asked for at 2× played at 1.7×. The spoken Rosary's breaths
   between prayers are wall-clock pauses and do not follow the speed:
   a Hail Mary runs about 21 seconds at 0.7× and 8.6 at 1.7×, each with
   its 0.9-second breath, which is a twentieth of the prayer at the one
@@ -2018,7 +2021,11 @@ the next-prayer button faded; the last mystery's painting once came back
 under it. Until then the play button is ready whenever the Rosary is said
 aloud (`NarrationPlayControl`): a prayer stepped to while paused, or Pray
 aloud turned on mid-Rosary, has no recording loaded until play is pressed,
-and gated on a track's length the button stood lit and did nothing. The pendant is fitted above the foot, and gives up height at the
+and gated on a track's length the button stood lit and did nothing. Under
+VoiceOver the button reads the prayer being said, and a swipe up or down
+on it steps a prayer, as the buttons beside it do; its fifteen seconds ran
+a Hail Mary off its end while it played, and did nothing to be heard while
+it was paused. The pendant is fitted above the foot, and gives up height at the
 largest text sizes, where the prayer's name stood across the cross.
 While the voice says the opening prayers, or waits on its recordings, it
 holds the hand (`PrayerSessionViewModel.voiceHoldsHand`): the strand, the
@@ -2065,7 +2072,15 @@ reads whether playback is wanted now, so a recording heard to its end never
 comes back. While the spoken Rosary owns track navigation it also takes
 Lock Screen and headphone play and pause, and headphones pulled out
 (`setTrackNavigation(onTransport:)`), and a stream that fails part-way is
-passed over (`onFail`). Resume keeps the script step (`SpokenStep` on `InProgressPrayer`,
+passed over (`onFail`). A move of the hand, a prayer step or a Lock Screen
+arrow while the voice goes on is said once, for the place it came to
+(`SpokenRosaryPlayer.sayCurrentSoon`), and counts as the Rosary going on
+from that moment, so a pause right after it holds; the recording it
+replaces, still sounding while the next is found, is never taken as the
+new prayer's end. Walked back across a decade's end - two moves in one
+turn - the Glory Be was once cut off after a breath, and a meditation
+stepped onto while its link was fetched was cut off two seconds in, when
+the announcement before it ended. Resume keeps the script step (`SpokenStep` on `InProgressPrayer`,
 kept current through `SpokenRosaryHost.spokenRosaryReached`), used only if
 the rebuilt script still has that prayer at that place. Completions post
 `prayed_aloud` (`POST /completions`).

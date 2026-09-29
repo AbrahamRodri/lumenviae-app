@@ -150,11 +150,16 @@ struct NarrationPlayControl: View {
                 : aloud ? (viewModel.spokenCaption ?? "")
                 : "\(NarrationClock.spoken(viewModel.currentTime)) of \(NarrationClock.spoken(viewModel.totalDuration))"
         )
-        .accessibilityHint(ready && !aloud ? "Swipe up or down to move through the narration" : "")
+        .accessibilityHint(ready ? (aloud ? "Swipe up or down for the next or previous prayer" : "Swipe up or down to move through the narration") : "")
+        // Said aloud, a prayer at a swipe, so the value read out is the
+        // one moved: fifteen seconds ran a Hail Mary off its end while it
+        // played, and did nothing to be heard while it was paused
         .accessibilityAdjustableAction { direction in
             switch direction {
-            case .increment: viewModel.skipForward(15)
-            case .decrement: viewModel.skipBackward(15)
+            case .increment:
+                if aloud { viewModel.stepSpokenPrayer(forward: true) } else { viewModel.skipForward(15) }
+            case .decrement:
+                if aloud { viewModel.stepSpokenPrayer(forward: false) } else { viewModel.skipBackward(15) }
             @unknown default: break
             }
         }

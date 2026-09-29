@@ -478,14 +478,22 @@ final class AudioService {
             return .success
         }
 
-        // Narration speed, from the Lock Screen and CarPlay.
+        // Narration speed, from the Lock Screen and CarPlay. While a flow
+        // plays at a speed of its own — a book, a chant being learned —
+        // the speed chosen there is that flow's too: taken as the app's,
+        // it set the Rosary's pace from a LibriVox reading, and held a
+        // book asked for at 2× to the narration's 1.7×.
         center.changePlaybackRateCommand.supportedPlaybackRates = Self.supportedRates.map(NSNumber.init)
         center.changePlaybackRateCommand.addTarget { [weak self] event in
             guard let self, self.player != nil,
                   let event = event as? MPChangePlaybackRateCommandEvent else {
                 return .noActionableNowPlayingItem
             }
-            self.setPlaybackRate(Double(event.playbackRate))
+            if let borrower = self.rateBorrower {
+                self.setPlaybackRate(Double(event.playbackRate), remember: false, borrower: borrower)
+            } else {
+                self.setPlaybackRate(Double(event.playbackRate))
+            }
             return .success
         }
 

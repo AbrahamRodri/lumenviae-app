@@ -312,7 +312,7 @@ final class SpokenRosaryPlayer {
         guard phase == .running, !isFetching else { return }
         if restartOnResume {
             restartOnResume = false
-            Task { await sayCurrent() }
+            sayCurrentSoon()
         } else if heldInPause || inPause {
             heldInPause = false
             advance(after: 0)
@@ -321,7 +321,7 @@ final class SpokenRosaryPlayer {
         } else {
             // The recording was taken from under the Rosary while it
             // was paused; the prayer is said again from its start
-            Task { await sayCurrent() }
+            sayCurrentSoon()
         }
     }
 
@@ -351,7 +351,7 @@ final class SpokenRosaryPlayer {
         reportStep()
 
         if wasPlaying {
-            Task { await sayCurrent() }
+            sayCurrentSoon()
         } else {
             audio.reset(preservingNowPlaying: true)
             restartOnResume = true
@@ -384,7 +384,7 @@ final class SpokenRosaryPlayer {
         reportStep()
 
         if wasPlaying {
-            Task { await sayCurrent() }
+            sayCurrentSoon()
         } else {
             audio.reset(preservingNowPlaying: true)
             restartOnResume = true
@@ -409,6 +409,23 @@ final class SpokenRosaryPlayer {
     }
 
     // MARK: - Saying the Script
+
+    /// Says the segment at the place just set, unless the place moves
+    /// again before the saying begins. The Rosary is going on from here,
+    /// so it counts as finding its next prayer at once: a pause before
+    /// the task runs holds it. The hand walked back across a decade's
+    /// end is two moves in one turn, and both sayings once ran for the
+    /// second place: the one that found its recording still loading
+    /// passed over it, and the Glory Be was cut off after a breath.
+    @MainActor
+    private func sayCurrentSoon() {
+        let asked = generation
+        isFetching = true
+        Task { [weak self] in
+            guard let self, asked == self.generation else { return }
+            await self.sayCurrent()
+        }
+    }
 
     @MainActor
     private func sayCurrent() async {
@@ -570,14 +587,19 @@ final class SpokenRosaryPlayer {
             canGoPrevious: decade > 0 || currentSegment?.phase != .opening,
             onNext: { [weak self] in self?.skipDecade(forward: true) },
             onPrevious: { [weak self] in self?.skipDecade(forward: false) },
+            // Not while the next prayer is being found: the recording that
+            // ended is the one it replaces, still sounding after the hand
+            // moved on, and taken as the new prayer's end it passed over
+            // the new prayer a breath after it began
             onFinish: { [weak self] in
-                guard let self, let segment = self.currentSegment else { return }
+                guard let self, !self.isFetching, let segment = self.currentSegment else { return }
                 self.advance(after: segment.pauseAfter)
             },
             // A recording that stops part-way — a streamed meditation
             // losing its signal — is passed over like one never had
             onFail: { [weak self] in
-                self?.advance(after: 0.3)
+                guard let self, !self.isFetching else { return }
+                self.advance(after: 0.3)
             },
             // Play and pause from the Lock Screen and the headphones, and
             // headphones pulled out, are the Rosary's, not the recording's:
@@ -630,7 +652,7 @@ final class SpokenRosaryPlayer {
         } else {
             index = SpokenRosaryScript.startIndex(in: script, mystery: target, bead: 0, includingOpening: false)
         }
-        Task { await sayCurrent() }
+        sayCurrentSoon()
     }
 
     /// The Lock Screen's line: the prayer, or on the announcement and the
