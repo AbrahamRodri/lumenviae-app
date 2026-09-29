@@ -1433,7 +1433,10 @@ write concurrent code here:
   recording for its Veni Creator, Ave Maris Stella, Magnificat, litanies
   and Glory Be, with a SCORE door and the credit beneath it; it reads
   the shared player only while that player is sounding the day's own
-  chant (a load generation, as `ChantPlayer` keeps).
+  chant (a load generation, as `ChantPlayer` keeps), and it loads ahead
+  only when nothing else is sounding — a chant the library is singing
+  keeps the player, and its Lock Screen arrows, until the day's own play
+  is pressed, where loading ahead silenced it the moment the day opened.
 
   **Everything is Verbum Gloriae's** (verbumgloriae.es), a Spanish
   apostolate of Gregorian chant: one cantor's voice, sung for learning,

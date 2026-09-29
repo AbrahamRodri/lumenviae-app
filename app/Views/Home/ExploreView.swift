@@ -779,8 +779,8 @@ struct ExploreView: View {
 
     // MARK: - The Prayer Book
 
-    /// The day's three hours, the hour it is lit, over the orders kept for
-    /// an occasion as a row of small plates
+    /// Tonight's antiphon of Our Lady, to play where it stands, over the
+    /// door to the whole Chant Library
     private var chantShelf: some View {
         VStack(alignment: .leading, spacing: 0) {
             if let antiphon = ChantCatalog.antiphonOfTheSeason() {
@@ -798,6 +798,8 @@ struct ExploreView: View {
         }
     }
 
+    /// The day's three hours, the hour it is lit, over the orders kept for
+    /// an occasion as a row of small plates
     private var prayerBookShelf: some View {
         VStack(alignment: .leading, spacing: 16) {
             PrayerHoursStrip(now: Date()) { order in

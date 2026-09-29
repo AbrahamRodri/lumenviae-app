@@ -113,17 +113,22 @@ struct ChantPlayDisc: View {
                     .strokeBorder(AppColors.goldLight, lineWidth: 1)
 
                 // Play, pause and the spinner crossfade over one another
-                // rather than swapping under the thumb
+                // rather than swapping under the thumb: three branches
+                // sharing one slot, as the tile's own disc drew them
                 ZStack {
                     if isLoading {
                         ProgressView()
                             .tint(AppColors.goldLight)
                             .scaleEffect(0.8)
                             .transition(.opacity)
-                    } else {
-                        AppIcon(isPlaying ? "ph-pause-fill" : "ph-play-fill", size: size * 0.32)
+                    } else if isPlaying {
+                        AppIcon("ph-pause-fill", size: size * 0.32)
                             .foregroundColor(AppColors.goldLight)
-                            .contentTransition(.opacity)
+                            .transition(.opacity)
+                    } else {
+                        AppIcon("ph-play-fill", size: size * 0.32)
+                            .foregroundColor(AppColors.goldLight)
+                            .transition(.opacity)
                     }
                 }
                 .animation(Motion.crossfade, value: isLoading)
@@ -136,7 +141,10 @@ struct ChantPlayDisc: View {
             .contentShape(Circle())
         }
         .buttonStyle(GoldCTAButtonStyle())
-        .accessibilityLabel(isPlaying ? "Pause \(label)" : "Play \(label)")
+        .accessibilityLabel(
+            isLoading ? "Loading \(label)"
+                : isPlaying ? "Pause \(label)" : "Play \(label)"
+        )
     }
 }
 
@@ -206,6 +214,8 @@ struct ChantScrubber: View {
 struct ChantCredit: View {
     var compact = false
 
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     var body: some View {
         VStack(alignment: compact ? .leading : .center, spacing: 8) {
             Text(ChantCatalog.credit)
@@ -220,25 +230,32 @@ struct ChantCredit: View {
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
 
-                HStack(spacing: 18) {
-                    Link(destination: ChantCatalog.sourceSite) {
-                        Text("VERBUMGLORIAE.ES")
-                            .font(AppFonts.labelFont(9))
-                            .tracking(2)
-                            .foregroundColor(AppColors.gold.opacity(0.8))
-                            .frame(minHeight: 44)
-                    }
-                    Link(destination: ChantCatalog.licenceURL) {
-                        Text("THE LICENCE")
-                            .font(AppFonts.labelFont(9))
-                            .tracking(2)
-                            .foregroundColor(AppColors.gold.opacity(0.8))
-                            .frame(minHeight: 44)
-                    }
+                // One above the other under the accessibility sizes, where
+                // side by side broke the site's name mid-word
+                let links = dynamicTypeSize >= .accessibility1
+                    ? AnyLayout(VStackLayout(spacing: 0))
+                    : AnyLayout(HStackLayout(spacing: 18))
+                links {
+                    creditLink("VERBUMGLORIAE.ES", to: ChantCatalog.sourceSite)
+                        .accessibilityLabel("Verbum Gloriae's website")
+                    creditLink("THE LICENCE", to: ChantCatalog.licenceURL)
+                        .accessibilityLabel("The licence")
                 }
             }
         }
         .frame(maxWidth: .infinity, alignment: compact ? .leading : .center)
+    }
+
+    private func creditLink(_ title: String, to url: URL) -> some View {
+        Link(destination: url) {
+            Text(title)
+                .font(AppFonts.labelFont(9))
+                .tracking(2)
+                .foregroundColor(AppColors.gold.opacity(0.8))
+                .lineLimit(1)
+                .minimumScaleFactor(0.6)
+                .frame(minHeight: 44)
+        }
     }
 }
 
@@ -256,6 +273,9 @@ struct ChantPracticeChip: View {
                 .font(AppFonts.labelFont(9))
                 .tracking(2)
                 .foregroundColor(isOn ? AppColors.goldLight : AppColors.gold.opacity(0.65))
+                // A word, never broken across two lines of a capsule
+                .lineLimit(1)
+                .fixedSize()
                 .padding(.horizontal, 14)
                 .frame(minHeight: 32)
                 .background(Capsule().fill(isOn ? AppColors.gold.opacity(0.16) : Color.clear))
@@ -264,6 +284,8 @@ struct ChantPracticeChip: View {
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        // The word as written, not the capitals, so it is read as a word
+        .accessibilityLabel(title)
         .accessibilityAddTraits(isOn ? [.isSelected] : [])
         .sensoryFeedback(.selection, trigger: isOn)
     }

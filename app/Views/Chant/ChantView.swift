@@ -117,7 +117,7 @@ struct ChantView: View {
                 .foregroundColor(AppColors.cream.opacity(0.7))
                 .multilineTextAlignment(.center)
 
-            if let setting = chant.setting {
+            if let setting = chant.distinctSetting {
                 Text(setting.uppercased())
                     .font(AppFonts.labelFont(8.5))
                     .tracking(2)
@@ -184,37 +184,25 @@ struct ChantView: View {
             }
 
             // Practice: a slower pace, the chant again when it ends, and
-            // back to the top for another try at a phrase
-            HStack(spacing: 10) {
-                ChantPracticeChip(title: "Slow", isOn: player.rate < 1) {
-                    player.setRate(player.rate < 1 ? 1.0 : 0.75)
+            // back to the top for another try at a phrase. One row while
+            // it fits; at larger text the chips keep a row of their own
+            // rather than break SLOW and REPEAT mid-word.
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 10) {
+                    practiceChips
+                    Spacer(minLength: 0)
+                    fromTheTop(holds: holds)
                 }
-                .accessibilityHint("Plays at three-quarters speed, for learning")
-
-                ChantPracticeChip(title: "Repeat", isOn: player.repeats) {
-                    player.repeats.toggle()
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack(spacing: 10) { practiceChips }
+                    fromTheTop(holds: holds)
                 }
-                .accessibilityHint("Sings the chant again from the top when it ends")
-
-                Spacer(minLength: 0)
-
-                Button {
-                    player.restart()
-                } label: {
-                    HStack(spacing: 6) {
-                        AppIcon("ph-arrow-counter-clockwise", size: 12)
-                        Text("FROM THE TOP")
-                            .font(AppFonts.labelFont(9))
-                            .tracking(2)
-                    }
-                    .foregroundColor(AppColors.gold.opacity(holds ? 0.8 : 0.35))
-                    .frame(minHeight: 44)
-                    .contentShape(Rectangle())
+                VStack(alignment: .leading, spacing: 2) {
+                    practiceChips
+                    fromTheTop(holds: holds)
                 }
-                .buttonStyle(QuietGlyphButtonStyle())
-                .disabled(!holds)
-                .accessibilityLabel("Start the chant again from the top")
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
@@ -224,15 +212,51 @@ struct ChantView: View {
         )
     }
 
+    @ViewBuilder
+    private var practiceChips: some View {
+        ChantPracticeChip(title: "Slow", isOn: player.rate < 1) {
+            player.setRate(player.rate < 1 ? 1.0 : 0.75)
+        }
+        .accessibilityHint("Plays at three-quarters speed, for learning")
+
+        ChantPracticeChip(title: "Repeat", isOn: player.repeats) {
+            player.repeats.toggle()
+        }
+        .accessibilityHint("Sings the chant again from the top when it ends")
+    }
+
+    private func fromTheTop(holds: Bool) -> some View {
+        Button {
+            player.restart()
+        } label: {
+            HStack(spacing: 6) {
+                AppIcon("ph-arrow-counter-clockwise", size: 12)
+                Text("FROM THE TOP")
+                    .font(AppFonts.labelFont(9))
+                    .tracking(2)
+                    .lineLimit(1)
+            }
+            .foregroundColor(AppColors.gold.opacity(holds ? 0.8 : 0.35))
+            .frame(minHeight: 44)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(QuietGlyphButtonStyle())
+        .disabled(!holds)
+        .accessibilityLabel("Start the chant again from the top")
+    }
+
     // MARK: - Score
 
     private func score(_ chant: Chant) -> some View {
         VStack(alignment: .leading, spacing: 16) {
+            // Both words shrink a little before either breaks mid-word
             HStack(spacing: 10) {
                 Text("THE SCORE")
                     .font(AppFonts.labelFont(8.5))
                     .tracking(2)
                     .foregroundColor(AppColors.gold.opacity(0.75))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
                 Rectangle()
                     .fill(AppColors.gold.opacity(0.18))
                     .frame(height: AppLine.hairline)
@@ -243,6 +267,8 @@ struct ChantView: View {
                         .font(AppFonts.labelFont(9))
                         .tracking(2)
                         .foregroundColor(AppColors.gold.opacity(0.8))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.6)
                         .frame(minWidth: 44, minHeight: 44)
                         .contentShape(Rectangle())
                 }

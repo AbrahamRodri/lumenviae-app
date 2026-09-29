@@ -200,7 +200,14 @@ struct ChantLibraryRow: View {
     let player: ChantPlayer
     let open: () -> Void
 
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     private var sounding: Bool { player.isPlaying(chant) }
+
+    /// Under the accessibility sizes the length leaves its column for a
+    /// line under the names, which it squeezed until "Redemptoris" broke
+    /// mid-word
+    private var lengthBelow: Bool { dynamicTypeSize >= .accessibility1 }
 
     var body: some View {
         HStack(spacing: 12) {
@@ -226,15 +233,13 @@ struct ChantLibraryRow: View {
                             .font(AppFonts.readingItalicFont(13.5))
                             .foregroundColor(AppColors.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)
+
+                        if lengthBelow { length }
                     }
 
                     Spacer(minLength: 8)
 
-                    Text(chant.durationLabel)
-                        .font(AppFonts.labelFont(9))
-                        .tracking(1)
-                        .foregroundColor(AppColors.textSecondary)
-                        .monospacedDigit()
+                    if !lengthBelow { length }
 
                     AppIcon("ph-caret-right", size: 10)
                         .foregroundColor(AppColors.gold.opacity(0.45))
@@ -256,8 +261,17 @@ struct ChantLibraryRow: View {
         }
     }
 
+    private var length: some View {
+        Text(chant.durationLabel)
+            .font(AppFonts.labelFont(9))
+            .tracking(1)
+            .foregroundColor(AppColors.textSecondary)
+            .monospacedDigit()
+            .lineLimit(1)
+    }
+
     private var subtitle: String {
-        if let setting = chant.setting {
+        if let setting = chant.distinctSetting {
             return "\(chant.englishTitle) · \(setting.lowercased())"
         }
         return chant.englishTitle

@@ -363,6 +363,12 @@ struct ConsecrationDayFlowView: View {
     }
 
     private func loadAudioIfAvailable(thenPlay: Bool = false) {
+        // Something else sounding — a chant the library is singing — keeps
+        // the player, and its Lock Screen arrows, until the day's own play
+        // is pressed. Loaded ahead, the day's chant silenced it the moment
+        // the day opened, though nobody had asked the day to sing.
+        if !thenPlay, audio.isPlaying, !ownsAudio { return }
+
         // Track navigation is installed even for a step with no chant, so
         // the user can still move through the day from the Lock Screen.
         attachChantNavigation()
@@ -417,10 +423,12 @@ struct ConsecrationDayFlowView: View {
             )
 
             HStack(alignment: .center, spacing: 12) {
+                // Wraps rather than truncates: at the largest text sizes a
+                // two-line limit cut the singers' name off
                 Text(ChantCatalog.credit)
                     .font(AppFonts.readingItalicFont(12))
                     .foregroundColor(AppColors.textSecondary)
-                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
 
                 Spacer(minLength: 8)
 
