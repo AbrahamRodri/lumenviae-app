@@ -470,9 +470,10 @@ struct OnboardingView: View {
 
                 VStack(spacing: 10) {
                     ForEach(PrayerIntention.allCases) { intention in
-                        SelectableOptionRow(
+                        OnboardingChoiceCard(
                             label: intention.displayName,
                             detail: intention.detail,
+                            mark: .check,
                             isSelected: selectedIntentions.contains(intention)
                         ) {
                             withAnimation(.easeInOut(duration: 0.2)) {
@@ -787,7 +788,7 @@ struct OnboardingView: View {
 
                 VStack(spacing: 10) {
                     ForEach(languageChoices) { language in
-                        SelectableOptionRow(
+                        OnboardingChoiceCard(
                             label: language.rawValue,
                             detail: detail(for: language),
                             isSelected: selectedLanguage == language
@@ -847,7 +848,7 @@ struct OnboardingView: View {
 
                 VStack(spacing: 10) {
                     if let keptReminderTime {
-                        SelectableOptionRow(
+                        OnboardingChoiceCard(
                             label: "Your Current Time",
                             detail: "\(keptReminderTime), as you set it",
                             isSelected: selectedReminderHour == nil
@@ -859,7 +860,7 @@ struct OnboardingView: View {
                     }
 
                     ForEach(Self.reminderOptions, id: \.hour) { option in
-                        SelectableOptionRow(
+                        OnboardingChoiceCard(
                             label: option.label,
                             detail: option.detail,
                             isSelected: selectedReminderHour == option.hour
@@ -1603,14 +1604,38 @@ private struct DecadeVoicePreview: View {
     }
 }
 
-/// A choice on the voice and beads slides, drawn as the "Rosary ways to
-/// pray" handoff draws it: the name over one italic line, a radio at the
-/// trailing edge, and the chosen card washed in gold.
+/// A choice on any slide, drawn as the "Rosary ways to pray" handoff
+/// draws the voice and beads slides' choices: the name over one italic
+/// line, a mark at the trailing edge, and the chosen card washed in gold.
+/// One card for every slide, so a question reads the same whichever slide
+/// asks it.
 private struct OnboardingChoiceCard: View {
+
+    /// A radio where one choice excludes the others; a check where any
+    /// number may be chosen (the reasons for coming)
+    enum Mark {
+        case radio, check
+    }
+
     let label: String
     let detail: String
+    let mark: Mark
     let isSelected: Bool
     let action: () -> Void
+
+    init(
+        label: String,
+        detail: String,
+        mark: Mark = .radio,
+        isSelected: Bool,
+        action: @escaping () -> Void
+    ) {
+        self.label = label
+        self.detail = detail
+        self.mark = mark
+        self.isSelected = isSelected
+        self.action = action
+    }
 
     var body: some View {
         Button(action: action) {
@@ -1628,14 +1653,19 @@ private struct OnboardingChoiceCard: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                // Selected: a thick ring in gold light. Unselected: a
-                // fine one in gold.
-                Circle()
-                    .strokeBorder(
-                        isSelected ? AppColors.goldLight : AppColors.gold.opacity(0.35),
-                        lineWidth: isSelected ? 5 : 1.2
-                    )
-                    .frame(width: 18, height: 18)
+                switch mark {
+                case .radio:
+                    OnboardingRadio(isOn: isSelected)
+                case .check:
+                    if isSelected {
+                        AppIcon("ph-check-circle-fill", size: 20)
+                            .foregroundColor(AppColors.gold)
+                            .transition(.scale(scale: 0.4).combined(with: .opacity))
+                    } else {
+                        AppIcon("ph-circle", size: 20)
+                            .foregroundColor(AppColors.gold.opacity(0.35))
+                    }
+                }
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
@@ -1653,6 +1683,21 @@ private struct OnboardingChoiceCard: View {
         .buttonStyle(SacredCardButtonStyle())
         .animation(Motion.ease(0.25), value: isSelected)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+}
+
+/// The handoff's radio: a thick ring in gold light when chosen, a fine
+/// one in gold when not
+private struct OnboardingRadio: View {
+    let isOn: Bool
+
+    var body: some View {
+        Circle()
+            .strokeBorder(
+                isOn ? AppColors.goldLight : AppColors.gold.opacity(0.35),
+                lineWidth: isOn ? 5 : 1.2
+            )
+            .frame(width: 18, height: 18)
     }
 }
 
@@ -1939,60 +1984,6 @@ private struct MysteryStepDemo: View {
     }
 }
 
-/// A choice on the intention, beads, language, and reminder slides.
-private struct SelectableOptionRow: View {
-    let label: String
-    let detail: String
-    let isSelected: Bool
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 14) {
-                if isSelected {
-                    AppIcon("ph-check-circle-fill", size: 20)
-                        .foregroundColor(AppColors.gold)
-                        .transition(.scale(scale: 0.4).combined(with: .opacity))
-                } else {
-                    AppIcon("ph-circle", size: 20)
-                        .foregroundColor(AppColors.cream.opacity(0.4))
-                }
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(label)
-                        .font(AppFonts.headlineFont(16))
-                        .foregroundColor(AppColors.cream)
-
-                    Text(detail)
-                        .font(AppFonts.bodyFont(14))
-                        .foregroundColor(AppColors.cream.opacity(0.66))
-                        .multilineTextAlignment(.leading)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-
-                Spacer(minLength: 0)
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 11)
-            .frame(minHeight: 44)
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(AppColors.cardBackground.opacity(isSelected ? 0.92 : 0.62))
-                    .shadow(color: AppColors.gold.opacity(isSelected ? 0.2 : 0), radius: 12, x: 0, y: 3)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(
-                        AppColors.gold.opacity(isSelected ? 0.6 : 0.2),
-                        lineWidth: AppLine.hairline
-                    )
-            )
-        }
-        .buttonStyle(SacredCardButtonStyle())
-        .accessibilityAddTraits(isSelected ? .isSelected : [])
-    }
-}
-
 /// The three palettes. Selecting one re-themes the entire app instantly
 /// (ThemeManager is @Observable and every colour flows through
 /// AppColors), so the onboarding itself is the live preview.
@@ -2080,42 +2071,35 @@ private struct OnboardingThemeRow: View {
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(theme.displayName)
-                        .font(AppFonts.headlineFont(16))
+                        .font(AppFonts.titleFont(14))
                         .foregroundColor(AppColors.cream)
 
                     Text(theme.detail)
-                        .font(AppFonts.bodyFont(14))
-                        .foregroundColor(AppColors.cream.opacity(0.66))
+                        .font(AppFonts.italicFont(13))
+                        .foregroundColor(AppColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
 
                 Spacer(minLength: 0)
 
-                if isSelected {
-                    AppIcon("ph-check-circle-fill", size: 20)
-                        .foregroundColor(AppColors.gold)
-                        .transition(.scale(scale: 0.4).combined(with: .opacity))
-                } else {
-                    AppIcon("ph-circle", size: 20)
-                        .foregroundColor(AppColors.cream.opacity(0.4))
-                }
+                OnboardingRadio(isOn: isSelected)
             }
+            // The same card as every other choice in the introduction
             .padding(.horizontal, 16)
-            .padding(.vertical, 13)
+            .padding(.vertical, 10)
+            .frame(minHeight: 60)
             .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(AppColors.cardBackground.opacity(isSelected ? 0.92 : 0.62))
-                    .shadow(color: AppColors.gold.opacity(isSelected ? 0.2 : 0), radius: 12, x: 0, y: 3)
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(isSelected ? AppColors.gold.opacity(0.07) : AppColors.cardBackground)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(
-                        AppColors.gold.opacity(isSelected ? 0.6 : 0.2),
-                        lineWidth: AppLine.hairline
-                    )
+                RoundedRectangle(cornerRadius: 14)
+                    .strokeBorder(AppColors.gold.opacity(isSelected ? 0.7 : 0.18), lineWidth: 1)
             )
+            .contentShape(RoundedRectangle(cornerRadius: 14))
         }
         .buttonStyle(SacredCardButtonStyle())
+        .animation(Motion.ease(0.25), value: isSelected)
         .accessibilityLabel("\(theme.displayName) colors")
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
