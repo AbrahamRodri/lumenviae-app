@@ -1894,9 +1894,11 @@ city/region/country looked up from the request's IP through a third-party
 service, and the IP truncated to /24 — no account, device or install
 identifier (the backend's `docs/COMPLETION_ANALYTICS.md`). The Scriptural
 Rosary and the Guided Rosary never post. The privacy manifest
-(`PrivacyInfo.xcprivacy`, "Nothing is collected") and the in-app privacy
-text (prayer records "never leave your device") do not yet say this — keep
-the three in step with any change to what is sent.
+(`PrivacyInfo.xcprivacy`: Product Interaction and Coarse Location, not
+linked, not tracking, for Analytics) and the in-app Privacy Policy
+(`PrivacyPolicySheet` in `Views/Account/AccountView.swift`, "What Reaches
+Us") say so, and App Store Connect's App Privacy answers must match them —
+keep the three in step with any change to what is sent.
 The spoken Rosary (`UserSettings.prayAloud`, off by default) says every
 prayer aloud and moves the beads with the voice, in both the meditation's
 player and the Scriptural Rosary. `SpokenRosaryScript` (Models/SpokenRosary)
