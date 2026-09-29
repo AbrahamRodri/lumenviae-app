@@ -298,6 +298,92 @@ enum GuidedRosary {
     }
 }
 
+// MARK: - Where the Guide Was Left
+
+extension GuidedRosary {
+
+    /// Where a Rosary prayed with the guide was left, so an interruption
+    /// — a call, a knock at the door, the app closed — doesn't send a
+    /// beginner back to the Sign of the Cross twenty minutes in. Kept
+    /// once the Sign and the Creed are behind the fingers — the point at
+    /// which leaving asks first — for a day, as the Rosary's own resume
+    /// is; let go at the Amen, when the guide is begun again, or when
+    /// the hand goes back to the start.
+    struct Place: Codable, Equatable {
+        let category: MysteryCategory
+
+        /// The step the fingers were on (`steps(for:)`)
+        let step: Int
+
+        /// Seconds prayed before the guide was left, so the Prayer Record
+        /// counts the praying and not the gap
+        let prayedSeconds: Int
+
+        let savedAt: Date
+
+        /// Nobody picks up the third decade two days later
+        static let expiry: TimeInterval = 24 * 60 * 60
+
+        /// The place kept in `data`, if one is and it is still worth
+        /// offering
+        init?(_ data: Data?, now: Date = .now) {
+            guard let data,
+                  let place = try? JSONDecoder().decode(Place.self, from: data),
+                  now.timeIntervalSince(place.savedAt) <= Self.expiry,
+                  GuidedRosary.isGuidable(place.category),
+                  GuidedRosary.steps(for: place.category).indices.contains(place.step) else { return nil }
+            self = place
+        }
+
+        init(category: MysteryCategory, step: Int, prayedSeconds: Int, savedAt: Date = .now) {
+            self.category = category
+            self.step = step
+            self.prayedSeconds = prayedSeconds
+            self.savedAt = savedAt
+        }
+
+        var data: Data? { try? JSONEncoder().encode(self) }
+
+        /// The part of the Rosary the place is in, as the welcome names
+        /// it: "The Third Sorrowful Mystery", or the opening or closing
+        /// prayers
+        var partName: String {
+            let steps = GuidedRosary.steps(for: category)
+            guard steps.indices.contains(step) else { return "" }
+            let here = steps[step]
+            if let decade = here.decade {
+                let mystery = MysteryData.mysteries(for: category)[decade]
+                return "The \(mystery.ordinalName) \(category.displayName) Mystery"
+            }
+            return here.isClosing ? "The closing prayers" : "The opening prayers"
+        }
+
+        /// The bead within that part: "The Crowning with Thorns · 4 of
+        /// 10", "Small bead · 2 of 3", "The centrepiece"
+        var beadName: String {
+            let steps = GuidedRosary.steps(for: category)
+            guard steps.indices.contains(step) else { return "" }
+            let here = steps[step]
+            if let decade = here.decade {
+                let mystery = MysteryData.mysteries(for: category)[decade]
+                if case .loopSmall(_, let bead) = here.part {
+                    return "\(mystery.name) · \(bead + 1) of 10"
+                }
+                return mystery.name
+            }
+            return here.place
+        }
+    }
+
+    /// The UserDefaults key the place is kept under (read through
+    /// `@AppStorage`, so How to Pray's path sees it change)
+    static let placeKey = "guidedRosary.place"
+
+    /// The first step worth keeping, and the first from which leaving
+    /// asks: the Our Father on the first large bead
+    static let firstKeptStep = 2
+}
+
 private extension String {
     /// "The Annunciation" → "the Annunciation", for use mid-sentence
     var lowercasedArticle: String {
