@@ -778,10 +778,26 @@ write concurrent code here:
   marked with a check, never scored): I The Beads and the Order, II The
   Prayers (cards with how often each is said and "Say it with me", a
   line at a time), III The Mysteries (painted cards, how to dwell on
-  one, this week). Continue replaces one lesson with the next, and the
-  destination carries `.id(lesson)`: without it SwiftUI updated the page
-  in place, so the next lesson opened halfway down and its `onAppear`
-  never ran, and it was never marked opened. The front page lights the
+  one, this week). Continue turns to the next lesson **in place**, the
+  way a library reading steps along its shelf (`RosaryLessonView.
+  turnPage`): the page fades out, the lesson is swapped with the scroll
+  put back to the top unseen, it fades in, and the new lesson is marked
+  opened (`.task(id: lesson)`). It once popped the lesson and pushed the
+  next in one tick, and on a phone in the Light appearance the page that
+  arrived kept a pale Back capsule and black status-bar text over the
+  dark page for as long as it was open — don't bring the route swap
+  back. (Before that, a swap without `.id(lesson)` updated the page
+  still scrolled halfway down and never marked it; the destination
+  keeps its `.id`.) Coming back from the guide, which hides the bar,
+  left the front page's status bar black the same way, so both course
+  pages pin `.toolbarColorScheme(.dark, for: .navigationBar)`. "Say it with me"
+  brings the prayer's card up under the chrome as it shrinks to its
+  first line (a long one, the Creed, once collapsed out from under the
+  finger and left the next prayer in its place), and the veiled line is
+  itself the way on — a tap reveals it, where the eye already is —
+  beside Next line, which stays for VoiceOver and for anyone who looks
+  for it. In This week, TODAY stands under the day's name so today's
+  set is never cut to "Sorrowful Myster…". The front page lights the
   first lesson not yet opened as NEXT. The path ends on **Your First Rosary**, the guided
   Rosary (`GuidedRosaryView`, `.guidedRosary(MysteryCategory)`); beneath it, Questions
   Beginners Ask (`HowToPrayData.questions`) and Montfort's counsel. The
@@ -794,7 +810,29 @@ write concurrent code here:
   prayer in full, each mystery announced on its own step with painting
   and fruit). The guide moves by Back and Next buttons, never a gesture
   to discover, and its Amen records "A Guided Rosary" through the
-  completion screen, so it counts as the day's Rosary.
+  completion screen, so it counts as the day's Rosary. With VoiceOver
+  on, each step announces where it is as it arrives — the focus stays on
+  Next, so a step once arrived in silence.
+
+  **The guide keeps its place** (`GuidedRosary.Place`, UserDefaults
+  `guidedRosary.place`, read through `@AppStorage`): a first Rosary is
+  twenty minutes, and a call or a knock at the door — or the app closed
+  — once meant the Sign of the Cross again, which the leave alert even
+  said. It is kept from the Our Father on the first large bead, the step
+  from which ✕ asks first (`firstKeptStep`), for a day as the Rosary's
+  own resume is, with the seconds already prayed so the Prayer Record
+  counts the praying and not the gap; it is let go at the Amen, on Begin
+  again, when the hand comes back to the start, and when another
+  Rosary is begun. The welcome of the same mysteries says YOUR PLACE IS
+  KEPT over a ruled row naming the part and the bead ("The First
+  Sorrowful Mystery / The Agony in the Garden · 3 of 10"), the drawing
+  lights that bead, and the foot is Begin again (in Back's slot) beside
+  Continue — stacked, the quiet one over the act, where the largest text
+  sizes will not fit them side by side. The course's last station and
+  Lesson III's foot say the same and open those mysteries. A place in
+  other mysteries is not offered on a welcome of these: the welcome
+  says which mysteries will be prayed. It is not Home's resume card and
+  must not become one — the guide is How to Pray's.
 
   Prayers get a page of their own through `.devotionPrayer(id:)`
   (`DevotionPrayerView`), found by `DevotionPrayers.find` across the
@@ -1629,6 +1667,12 @@ transition entirely.
   rule — the tooled frame on a book's cloth (`BookCover`), the pendant
   cross's metalwork (`PendantCrossView`), the rim of Explore's small
   arched paintings — is drawn at the weight the drawing needs (0.6–0.8).
+- **A pushed page's scroll runs to the screen's foot.** `topChromeFade`
+  (`DesignSystem/SacredComponents.swift`) dissolves the scroll under the
+  Back capsule with a mask, and the mask ignores the bottom safe area:
+  sized to the safe area, it once cut every page that uses it off in a
+  hard line above the home indicator, a title or a gold button halved
+  over a flat band.
 - **Every `.sheet` carries `.presentationBackground(AppColors.background)`**. A sheet's own container is the
   system's white; the content's dark ground is clipped by the same
   rounded rim, and at that rim's anti-aliased edge the white shows
