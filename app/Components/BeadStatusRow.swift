@@ -27,7 +27,8 @@ struct BeadStatusRow: View {
     /// "Our Father", "Hail Mary · 4 of 10", "Glory Be" — set in caps
     let label: String
 
-    /// What to do next. Nil on the final bead, where AMEN stands instead.
+    /// What to do next. Nil on the final bead, where AMEN stands instead,
+    /// and wherever there is nothing to say.
     let cue: String?
 
     /// Finishes the Rosary. Present only on the final bead.
@@ -49,9 +50,14 @@ struct BeadStatusRow: View {
                 .fixedSize()
                 .contentTransition(.numericText(countsDown: countsDown))
 
+            // Standing between the name and what follows it, so it goes
+            // when nothing does — a Rosary said aloud, whose voice moves
+            // the beads, has no cue on most of them — without the row
+            // shifting as it comes and goes
             Rectangle()
                 .fill(AppColors.gold.opacity(0.4))
                 .frame(width: 1, height: 10)
+                .opacity(onAmen == nil && cue == nil ? 0 : 1)
 
             // One slot for the cue and for AMEN, so the two crossfade
             // over each other rather than standing side by side for the

@@ -156,8 +156,8 @@ struct NarrationPlayControl: View {
 // MARK: - Playback Settings
 
 /// The tray beside the reader button: which voice reads, how fast it
-/// reads, whether the player is prayed on the beads, and whether the
-/// whole Rosary is said aloud.
+/// reads, whether the whole Rosary is said aloud, and whether the player
+/// is prayed on the beads.
 ///
 /// The voice and the beads toggle live here as well as in Settings
 /// because this is the one settings surface the player has: someone
@@ -174,46 +174,60 @@ struct PlaybackSettingsSheet: View {
     /// and for praying aloud, whose lines can run to three
     static let height: CGFloat = 530
 
+    /// The detents the player gives it: its own height, or at the
+    /// accessibility text sizes the whole glass, where the rows once
+    /// stood crushed into 530 points, one switch's name over another's
+    static func detents(for size: DynamicTypeSize) -> Set<PresentationDetent> {
+        size.isAccessibilitySize ? [.large] : [.height(height)]
+    }
+
     var body: some View {
         @Bindable var settings = userSettings
 
-        return VStack(alignment: .leading, spacing: 0) {
-            SheetHeader(title: "Playback") {
-                SheetHeaderAction(title: "Done") { dismiss() }
+        // Scrolls only when the words outgrow the sheet
+        return ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                SheetHeader(title: "Playback") {
+                    SheetHeaderAction(title: "Done") { dismiss() }
+                }
+
+                SheetSectionLabel("Voice")
+
+                NarrationVoiceChoice()
+                    .padding(.horizontal, SheetMetrics.gutter)
+
+                SheetSectionLabel("Speed")
+
+                PlaybackSpeedChoice()
+                    .padding(.horizontal, SheetMetrics.gutter)
+
+                // The same section, in the same order, as the set's page
+                // (`RosarySetupSheet`): Pray aloud once stood here under
+                // "The beads", after the counter, and the two sheets that
+                // hold the same two switches described them differently
+                SheetSectionLabel("The prayers")
+
+                // The whole row answers, as it does in Settings
+                SheetToggleRow(
+                    title: UserSettings.prayAloudTitle,
+                    detail: UserSettings.prayAloudDetail(isOn: settings.prayAloud, onBeads: settings.prayOnBeads),
+                    icon: "ph-hands-praying",
+                    isOn: $settings.prayAloud,
+                    showsDivider: true
+                )
+
+                SheetToggleRow(
+                    title: UserSettings.beadCounterTitle,
+                    detail: UserSettings.beadCounterDetail(isOn: settings.prayOnBeads),
+                    icon: "ch-rosary",
+                    isOn: $settings.prayOnBeads,
+                    showsDivider: false
+                )
             }
-
-            SheetSectionLabel("Voice")
-
-            NarrationVoiceChoice()
-                .padding(.horizontal, SheetMetrics.gutter)
-
-            SheetSectionLabel("Speed")
-
-            PlaybackSpeedChoice()
-                .padding(.horizontal, SheetMetrics.gutter)
-
-            SheetSectionLabel("The beads")
-
-            // The whole row answers, as it does in Settings
-            SheetToggleRow(
-                title: UserSettings.beadCounterTitle,
-                detail: UserSettings.beadCounterDetail(isOn: settings.prayOnBeads),
-                icon: "ch-rosary",
-                isOn: $settings.prayOnBeads,
-                showsDivider: true
-            )
-
-            SheetToggleRow(
-                title: UserSettings.prayAloudTitle,
-                detail: UserSettings.prayAloudDetail(isOn: settings.prayAloud, onBeads: settings.prayOnBeads),
-                icon: "ph-hands-praying",
-                isOn: $settings.prayAloud,
-                showsDivider: false
-            )
-
-            Spacer(minLength: 20)
+            .frame(maxWidth: .infinity, alignment: .topLeading)
+            .padding(.bottom, 20)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .scrollBounceBehavior(.basedOnSize)
         .sheetGround()
     }
 
@@ -248,6 +262,9 @@ struct NarrationVoiceChoice: View {
                     Text(voice.name)
                         .font(AppFonts.bodyFont(14))
                         .foregroundColor(selected ? AppColors.background : AppColors.cream.opacity(0.75))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                        .padding(.horizontal, 8)
                         .frame(maxWidth: .infinity)
                         .frame(height: height)
                         .background(
@@ -259,6 +276,7 @@ struct NarrationVoiceChoice: View {
                 .accessibilityAddTraits(selected ? [.isSelected] : [])
             }
         }
+        .dynamicTypeSize(...PlaybackSpeedChoice.largestCapsuleType)
     }
 }
 
@@ -281,6 +299,9 @@ struct PlaybackSpeedChoice: View {
                     Text(Self.rateLabel(rate))
                         .font(AppFonts.bodyFont(14))
                         .foregroundColor(selected ? AppColors.background : AppColors.cream.opacity(0.75))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                        .padding(.horizontal, 4)
                         .frame(maxWidth: .infinity)
                         .frame(height: height)
                         .background(
@@ -292,7 +313,14 @@ struct PlaybackSpeedChoice: View {
                 .accessibilityAddTraits(selected ? [.isSelected] : [])
             }
         }
+        .dynamicTypeSize(...Self.largestCapsuleType)
     }
+
+    /// How large a capsule's words may grow. Five speeds share one row
+    /// of a phone's width, and past this "0.75×" was cut to "0…." — a
+    /// choice no one could read. The capsules stop growing here, and the
+    /// words shrink a little rather than cut.
+    static let largestCapsuleType = DynamicTypeSize.accessibility1
 
     /// "1×" rather than "1.0×", but "1.25×" in full — %g drops trailing
     /// zeros without rounding away a significant digit.
