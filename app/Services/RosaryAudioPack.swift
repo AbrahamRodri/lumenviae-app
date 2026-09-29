@@ -343,6 +343,15 @@ final class RosaryAudioPack {
         return String(file[..<dash])
     }
 
+    /// The file to play for a recording prepared earlier: the one handed
+    /// out, or — once a later preparation (the Prayer Book, the library
+    /// download) has pruned it for a newer copy — the copy that replaced
+    /// it. A Rosary holds its files from its first word to its last, and
+    /// a file pruned under it made every later Hail Mary silent.
+    static func copyOnDisk(_ local: URL) -> URL? {
+        FileManager.default.fileExists(atPath: local.path) ? local : olderCopy(of: local)
+    }
+
     /// Another copy of the same recording already on disk — the one the
     /// file at `local` replaces — if there is one
     private static func olderCopy(of local: URL) -> URL? {

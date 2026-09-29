@@ -456,6 +456,9 @@ extension ScripturalRosaryViewModel: SpokenRosaryHost {
     func restartSpoken() async {
         guard let spoken else { return }
         let keepGoing = spoken.isPlayingOrAboutTo || spokenFailure != nil
+        // Taken up at the prayer being said, not at its bead, which the
+        // opening and closing prayers share
+        resumeStep = spoken.currentStep
         spoken.stop()
         self.spoken = nil
         await setPrayAloud(true, autoplay: keepGoing)

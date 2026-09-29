@@ -22,6 +22,7 @@
 //
 
 import Foundation
+import UIKit
 
 /// What the player needs from the screen it prays for.
 @MainActor
@@ -106,12 +107,28 @@ final class SpokenRosaryPlayer {
             prayerID: id,
             title: segment.caption,
             place: segment.place,
-            isChaplet: !script.contains { $0.kind == .prayer("apostles_creed") }
+            isChaplet: isChaplet
         )
+    }
+
+    /// The Seven Sorrows chaplet, which opens without the Creed. Fixed
+    /// by the script, so found once rather than on every read of the
+    /// pendant, which the screen makes on every draw.
+    private let isChaplet: Bool
+
+    /// Where the Rosary stands: what the host keeps to come back to
+    var currentStep: SpokenStep? {
+        guard let segment = currentSegment else { return nil }
+        return SpokenStep(index: index, mystery: segment.mystery, bead: segment.bead, caption: segment.caption)
     }
 
     /// Between two segments, in the breath before the next begins
     private(set) var inPause = false
+
+    /// Finding and loading the segment about to be said: a meditation's
+    /// link can take a round trip. The Rosary is going on, not paused,
+    /// and a pause here must hold it.
+    private var isFetching = false
 
     /// Paused by the person during that breath, so resuming goes on to
     /// the next segment rather than replaying the last
@@ -136,11 +153,12 @@ final class SpokenRosaryPlayer {
         return isPlaying
     }
 
-    /// Whether the Rosary is being said right now — speaking, or in the
-    /// breath between two prayers. What the play button shows.
+    /// Whether the Rosary is being said right now — speaking, finding
+    /// the next prayer, or in the breath between two. What the play
+    /// button shows.
     var isPlaying: Bool {
         guard phase == .running else { return false }
-        return audio.isPlaying || audio.isLoading || (inPause && !heldInPause)
+        return isFetching || (inPause && !heldInPause) || (ownsPlayer && audio.isPlaying)
     }
 
     // MARK: - Dependencies
@@ -162,6 +180,23 @@ final class SpokenRosaryPlayer {
 
     private var advanceTask: Task<Void, Never>?
 
+    /// The load that put this Rosary's recording in the shared player
+    private var loadedGeneration: Int?
+
+    /// Whether the shared player still holds this Rosary's recording.
+    /// The system's audio reset, or another screen's recording, can take
+    /// it; a play pressed then has to say the prayer again, not ask a
+    /// player that is gone.
+    private var ownsPlayer: Bool {
+        loadedGeneration == audio.loadGeneration && audio.currentURL != nil
+    }
+
+    /// Keeps the app running through the silence between two prayers.
+    /// Nothing plays in the breath, and a locked phone whose app has
+    /// stopped playing may suspend it there, the next prayer waiting
+    /// until the phone is woken.
+    private var betweenPrayers: UIBackgroundTaskIdentifier = .invalid
+
     init(
         script: [SpokenSegment],
         host: SpokenRosaryHost,
@@ -172,6 +207,7 @@ final class SpokenRosaryPlayer {
         self.host = host
         self.audio = audio
         self.pack = pack
+        self.isChaplet = !script.contains { $0.kind == .prayer("apostles_creed") }
     }
 
     // MARK: - Starting
@@ -190,6 +226,7 @@ final class SpokenRosaryPlayer {
         generation &+= 1
         let started = generation
         advanceTask?.cancel()
+        isFetching = false
         playsWhenReady = autoplay
 
         let needed = SpokenRosaryScript.clips(in: script)
@@ -232,30 +269,45 @@ final class SpokenRosaryPlayer {
 
     // MARK: - Transport
 
-    /// Pauses mid-prayer, or holds in the breath between two
+    /// Pauses mid-prayer, holds in the breath between two, or holds the
+    /// next prayer while it is still being found
     @MainActor
     func pause() {
         guard phase == .running else { return }
         if inPause {
             advanceTask?.cancel()
             heldInPause = true
-        } else {
-            audio.pause()
+        } else if isFetching {
+            // Nothing is sounding yet, so the prayer on its way is let
+            // go and said from its start when resumed
+            generation &+= 1
+            isFetching = false
+            restartOnResume = true
+            audio.reset(preservingNowPlaying: true)
         }
+        // Always, even with nothing sounding: the transport's own idea
+        // that playback is wanted must go too, or an interruption ending
+        // later brings a voice back over a Rosary paused here
+        audio.pause()
+        letAppSleep()
     }
 
     /// Resumes where it paused: mid-prayer, or on to the next one
     @MainActor
     func resume() {
-        guard phase == .running else { return }
+        guard phase == .running, !isFetching else { return }
         if restartOnResume {
             restartOnResume = false
             Task { await sayCurrent() }
         } else if heldInPause || inPause {
             heldInPause = false
             advance(after: 0)
-        } else {
+        } else if ownsPlayer {
             audio.play()
+        } else {
+            // The recording was taken from under the Rosary while it
+            // was paused; the prayer is said again from its start
+            Task { await sayCurrent() }
         }
     }
 
@@ -334,6 +386,8 @@ final class SpokenRosaryPlayer {
         advanceTask = nil
         inPause = false
         heldInPause = false
+        isFetching = false
+        letAppSleep()
         if phase != .finished { phase = .idle }
         guard audio.isTrackNavigationOwner(owner) else { return }
         audio.clearTrackNavigation(owner: owner)
@@ -353,6 +407,7 @@ final class SpokenRosaryPlayer {
             return
         }
 
+        isFetching = true
         host?.spokenRosaryMoved(mystery: segment.mystery, bead: segment.bead)
         reportStep()
 
@@ -361,12 +416,18 @@ final class SpokenRosaryPlayer {
         case .meditation:
             url = await host?.spokenMeditationURL(decade: segment.mystery)
         default:
-            url = RosaryAudioPack.ClipID(segment: segment).flatMap { files[$0] }?.absoluteString
+            // The file handed out when the Rosary began, or the newer
+            // copy that has since replaced it on disk
+            url = RosaryAudioPack.ClipID(segment: segment)
+                .flatMap { files[$0] }
+                .flatMap(RosaryAudioPack.copyOnDisk)?
+                .absoluteString
         }
         guard saying == generation else { return }
 
         // A recording that could not be had is passed over, not waited on
         guard let url else {
+            isFetching = false
             advance(after: 0.3)
             return
         }
@@ -386,25 +447,31 @@ final class SpokenRosaryPlayer {
             claimNowPlaying: true
         )
         guard saying == generation else { return }
+        isFetching = false
 
         guard ready else {
             advance(after: 0.3)
             return
         }
+        loadedGeneration = audio.loadGeneration
 
-        // The same recording twice in a row — ten Hail Marys — is not
-        // loaded again; it was left at its start when it ended, so play
-        // simply says it once more
+        // Every prayer is said from its first word. The same recording
+        // twice in a row — ten Hail Marys — is not loaded again, and
+        // when the hand moves on from one Hail Mary to the next while it
+        // is still being said, that recording is mid-way; left there,
+        // the voice carried on with the old one under the new one's name
+        if audio.isPlaying || audio.currentTime > 0 {
+            audio.seek(to: 0)
+        }
         audio.play()
+        letAppSleep()
     }
 
     /// Tells the host where in the script the Rosary now stands
     @MainActor
     private func reportStep() {
-        guard let segment = currentSegment else { return }
-        host?.spokenRosaryReached(SpokenStep(
-            index: index, mystery: segment.mystery, bead: segment.bead, caption: segment.caption
-        ))
+        guard let step = currentStep else { return }
+        host?.spokenRosaryReached(step)
     }
 
     /// The breath after a segment, then the next one
@@ -412,6 +479,7 @@ final class SpokenRosaryPlayer {
     private func advance(after seconds: Double) {
         let saying = generation
         inPause = true
+        keepAppAwake()
         advanceTask?.cancel()
         advanceTask = Task { [weak self] in
             if seconds > 0 {
@@ -426,11 +494,32 @@ final class SpokenRosaryPlayer {
     @MainActor
     private func finish() {
         inPause = false
+        isFetching = false
         phase = .finished
+        letAppSleep()
         if let last = script.last {
             host?.spokenRosaryMoved(mystery: last.mystery, bead: last.bead)
         }
         audio.updateTrackNavigation(owner: owner, canGoNext: false, canGoPrevious: true)
+    }
+
+    // MARK: - Between Prayers
+
+    @MainActor
+    private func keepAppAwake() {
+        guard betweenPrayers == .invalid else { return }
+        betweenPrayers = UIApplication.shared.beginBackgroundTask(withName: "Spoken Rosary") { [weak self] in
+            self?.letAppSleep()
+        }
+    }
+
+    /// The voice is sounding again, or the Rosary has paused or ended:
+    /// there is no silence left to hold the app awake through
+    @MainActor
+    private func letAppSleep() {
+        guard betweenPrayers != .invalid else { return }
+        UIApplication.shared.endBackgroundTask(betweenPrayers)
+        betweenPrayers = .invalid
     }
 
     // MARK: - Headphones and the Lock Screen
@@ -451,13 +540,37 @@ final class SpokenRosaryPlayer {
             onFinish: { [weak self] in
                 guard let self, let segment = self.currentSegment else { return }
                 self.advance(after: segment.pauseAfter)
+            },
+            // A recording that stops part-way — a streamed meditation
+            // losing its signal — is passed over like one never had
+            onFail: { [weak self] in
+                self?.advance(after: 0.3)
+            },
+            // Play and pause from the Lock Screen and the headphones, and
+            // headphones pulled out, are the Rosary's, not the recording's:
+            // in the breath between prayers nothing is playing to pause
+            onTransport: { [weak self] request in
+                guard let self else { return }
+                switch request {
+                case .play: self.resume()
+                case .pause: self.pause()
+                case .toggle: self.togglePlayback()
+                }
             }
         )
     }
 
     @MainActor
     private func skipDecade(forward: Bool) {
-        guard let segment = currentSegment else { return }
+        // After the last Amen the place rests past the script's end, so
+        // the Lock Screen's back arrow, still lit there, found nothing to
+        // step back from. It steps back from the closing prayers instead:
+        // to the last decade's beginning
+        if phase == .finished, !forward, !script.isEmpty {
+            phase = .running
+            index = script.count - 1
+        }
+        guard phase == .running, let segment = currentSegment else { return }
         let target: Int
         switch (segment.phase, forward) {
         case (.opening, true): target = 0

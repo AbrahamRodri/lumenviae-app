@@ -616,6 +616,11 @@ final class PrayerSessionViewModel {
         // recordings: begun again in the new one, playing only if it was
         if let spoken {
             let keepGoing = spoken.isPlayingOrAboutTo
+            // Taken up at the prayer being said, not at its bead: every
+            // opening prayer rests on the first bead and every closing one
+            // on the last, so a new voice chosen during the Hail, Holy
+            // Queen went back to the fifth decade's Glory Be
+            resumeStep = spoken.currentStep
             stopSpoken()
             await startSpoken(autoplay: keepGoing)
             return

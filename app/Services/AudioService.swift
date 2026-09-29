@@ -66,6 +66,7 @@ final class AudioService {
     private(set) var loadGeneration = 0
 
     private var endOfPlaybackObserver: NSObjectProtocol?
+    private var failedPlaybackObserver: NSObjectProtocol?
 
     /// Title/subtitle shown on the Lock Screen for the loaded audio
     private var nowPlayingTitle: String?
@@ -113,6 +114,9 @@ final class AudioService {
         if let observer = endOfPlaybackObserver {
             NotificationCenter.default.removeObserver(observer)
         }
+        if let observer = failedPlaybackObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
     }
 
     // MARK: - Audio Session Setup
@@ -147,9 +151,19 @@ final class AudioService {
         #endif
     }
 
-    /// Whether audio was actually playing when an interruption began, so
-    /// `.ended` never auto-resumes audio the user had deliberately paused.
-    private var wasPlayingBeforeInterruption = false
+    /// A recording was broken off mid-word by an interruption, so the next
+    /// play — the interruption's own resume, or a tap — takes it back to
+    /// where its words can be picked up again (`rewindAfterInterruption`).
+    private var rewindOnResume = false
+
+    /// Recordings this short — a prayer, a verse, an announcement — are
+    /// said again from their first word after an interruption. A voice
+    /// coming back in the middle of a Hail Mary is not a Hail Mary.
+    private static let restartWholeRecordingUnder: Double = 60
+
+    /// How far a longer recording — a meditation, a chapter — steps back
+    /// after an interruption, so the sentence it broke off is heard whole.
+    private static let interruptionRewind: Double = 5
 
     /// Interruptions (calls, Siri) pause the player under us — keep
     /// `isPlaying` truthful so the UI never shows a pause icon over
@@ -168,13 +182,24 @@ final class AudioService {
 
             switch type {
             case .began:
-                // Sample the user's intent, not the transport: the system
+                // Read the user's intent, not the transport: the system
                 // has usually already paused us, so `isPlaying` may have
                 // been reconciled to false before this handler runs.
-                self.wasPlayingBeforeInterruption = self.userIntendsPlayback
+                if self.userIntendsPlayback, self.player != nil, self.currentTime > 0 {
+                    self.rewindOnResume = true
+                }
                 self.isPlaying = false
                 self.updateNowPlayingPlaybackState()
             case .ended:
+                // Resumed only if playback is still wanted *now*. Intent
+                // is read here rather than remembered from `.began`: a
+                // recording that had already played to its end is not
+                // wanted back (a meditation heard, the beads being
+                // prayed in silence, used to start again after every
+                // phone call), and a flow that asked to play during the
+                // interruption — the spoken Rosary moving on to its next
+                // prayer — is.
+                guard self.userIntendsPlayback else { return }
                 let optionsValue = info[AVAudioSessionInterruptionOptionKey] as? UInt ?? 0
                 let options = AVAudioSession.InterruptionOptions(rawValue: optionsValue)
                 // `.shouldResume` is advisory and often absent after a short
@@ -182,25 +207,19 @@ final class AudioService {
                 // spoken prayer with the phone locked, not resuming ends the
                 // Rosary silently — so resume whenever we were the one
                 // playing. play() refuses safely if the session is still held.
-                if self.wasPlayingBeforeInterruption {
-                    if options.contains(.shouldResume) {
+                if options.contains(.shouldResume) {
+                    self.play()
+                } else {
+                    // Give the interrupter a moment to release the
+                    // session. Cancellable, so a user pause or a
+                    // headphone unplug in that window wins.
+                    self.pendingResumeTask?.cancel()
+                    self.pendingResumeTask = Task { @MainActor [weak self] in
+                        try? await Task.sleep(for: .milliseconds(300))
+                        guard let self, !Task.isCancelled, self.userIntendsPlayback else { return }
                         self.play()
-                    } else {
-                        // Give the interrupter a moment to release the
-                        // session. Cancellable, so a user pause or a
-                        // headphone unplug in that window wins.
-                        self.pendingResumeTask?.cancel()
-                        self.pendingResumeTask = Task { @MainActor [weak self] in
-                            try? await Task.sleep(for: .milliseconds(300))
-                            guard let self, !Task.isCancelled,
-                                  self.wasPlayingBeforeInterruption else { return }
-                            self.play()
-                            self.wasPlayingBeforeInterruption = false
-                        }
-                        return
                     }
                 }
-                self.wasPlayingBeforeInterruption = false
             @unknown default:
                 break
             }
@@ -217,7 +236,11 @@ final class AudioService {
                   let reasonValue = info[AVAudioSessionRouteChangeReasonKey] as? UInt,
                   let reason = AVAudioSession.RouteChangeReason(rawValue: reasonValue),
                   reason == .oldDeviceUnavailable else { return }
-            self.pause()
+            if let owner = self.onTransportRequest {
+                owner(.pause)
+            } else {
+                self.pause()
+            }
         }
 
         // The audio server can be reset out from under us. Every player and
@@ -258,6 +281,24 @@ final class AudioService {
     /// as the arrows, and cleared with them.
     private var onTrackFinished: (() -> Void)?
 
+    /// What to do when a track stops part-way and cannot go on
+    private var onTrackFailed: (() -> Void)?
+
+    /// A play or pause from outside the screen — the Lock Screen, the
+    /// headphones, headphones pulled out — asked of the transport.
+    enum TransportRequest {
+        case play
+        case pause
+        case toggle
+    }
+
+    /// The owner's own handling of those requests, when it keeps a
+    /// transport of its own above this one. The spoken Rosary does: in
+    /// the breath between two prayers nothing here is playing, so a pause
+    /// taken here did nothing and the next prayer began anyway — through
+    /// the phone's speaker, if the headphones had just come out.
+    private var onTransportRequest: ((TransportRequest) -> Void)?
+
     /// Whether a next/previous step exists right now. The Lock Screen
     /// arrows and AirPods presses are enabled from these, so pressing ⏭ on
     /// the last mystery reports "no such content" instead of drawing a live
@@ -273,13 +314,19 @@ final class AudioService {
     /// Marys, and the next mystery begins when the person praying says
     /// so — while a recording of a book is a reading, which runs on to
     /// the next track by itself.
+    ///
+    /// `onFail` runs when a track stops part-way and cannot go on, and
+    /// `onTransport`, when given, takes play and pause from outside the
+    /// screen in place of this service's own.
     func setTrackNavigation(
         owner: AnyHashable,
         canGoNext: Bool,
         canGoPrevious: Bool,
         onNext: @escaping () -> Void,
         onPrevious: @escaping () -> Void,
-        onFinish: (() -> Void)? = nil
+        onFinish: (() -> Void)? = nil,
+        onFail: (() -> Void)? = nil,
+        onTransport: ((TransportRequest) -> Void)? = nil
     ) {
         trackNavigationOwner = owner
         self.canGoNext = canGoNext
@@ -287,6 +334,8 @@ final class AudioService {
         onNextTrack = onNext
         onPreviousTrack = onPrevious
         onTrackFinished = onFinish
+        onTrackFailed = onFail
+        onTransportRequest = onTransport
         updateTrackCommandAvailability()
     }
 
@@ -312,6 +361,8 @@ final class AudioService {
         onNextTrack = nil
         onPreviousTrack = nil
         onTrackFinished = nil
+        onTrackFailed = nil
+        onTransportRequest = nil
         canGoNext = false
         canGoPrevious = false
         updateTrackCommandAvailability()
@@ -336,18 +387,27 @@ final class AudioService {
     private func setupRemoteCommands() {
         let center = MPRemoteCommandCenter.shared()
 
+        // An owner with a transport of its own answers first — even with
+        // no track loaded, since a spoken Rosary paused between prayers
+        // has let its last one go and still has everything to resume.
         center.playCommand.addTarget { [weak self] _ in
-            guard let self, self.player != nil else { return .noActionableNowPlayingItem }
+            guard let self else { return .noActionableNowPlayingItem }
+            if let owner = self.onTransportRequest { owner(.play); return .success }
+            guard self.player != nil else { return .noActionableNowPlayingItem }
             self.play()
             return .success
         }
         center.pauseCommand.addTarget { [weak self] _ in
-            guard let self, self.player != nil else { return .noActionableNowPlayingItem }
+            guard let self else { return .noActionableNowPlayingItem }
+            if let owner = self.onTransportRequest { owner(.pause); return .success }
+            guard self.player != nil else { return .noActionableNowPlayingItem }
             self.pause()
             return .success
         }
         center.togglePlayPauseCommand.addTarget { [weak self] _ in
-            guard let self, self.player != nil else { return .noActionableNowPlayingItem }
+            guard let self else { return .noActionableNowPlayingItem }
+            if let owner = self.onTransportRequest { owner(.toggle); return .success }
+            guard self.player != nil else { return .noActionableNowPlayingItem }
             self.togglePlayback()
             return .success
         }
@@ -878,6 +938,10 @@ final class AudioService {
     func play() {
         guard let player, !isPlaying else { return }
         userIntendsPlayback = true
+        if rewindOnResume {
+            rewindOnResume = false
+            rewindAfterInterruption()
+        }
         guard reactivateSessionIfNeeded() else {
             // Don't claim a playing state the session never granted, but do
             // keep trying in the background — this is usually a phone call
@@ -963,9 +1027,25 @@ final class AudioService {
     /// fired. Only explicit user-intent paths write this.
     private var userIntendsPlayback = false
 
+    /// Takes a recording broken off by an interruption back to where it
+    /// can be heard whole: a short one from its first word, a long one a
+    /// few seconds before the break. Apple's own advice for spoken audio,
+    /// and the difference between a prayer resumed and a prayer cut in
+    /// half.
+    private func rewindAfterInterruption() {
+        guard duration > 0 else { return }
+        let target = duration <= Self.restartWholeRecordingUnder
+            ? 0
+            : max(currentTime - Self.interruptionRewind, 0)
+        guard target < currentTime else { return }
+        seek(to: target)
+    }
+
     /// Seeks to a specific time in seconds.
     func seek(to time: Double) {
         guard let player else { return }
+        // A place chosen after an interruption is the place to resume
+        rewindOnResume = false
         let cmTime = CMTime(seconds: time, preferredTimescale: 600)
         player.seek(to: cmTime)
         currentTime = time
@@ -1018,6 +1098,7 @@ final class AudioService {
         isLoading = false
         isBuffering = false
         errorMessage = nil
+        rewindOnResume = false
         if !preservingNowPlaying {
             MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
             MPNowPlayingInfoCenter.default().playbackState = .stopped
@@ -1138,6 +1219,11 @@ final class AudioService {
             self.isBuffering = false
             self.currentTime = 0
             self.player?.seek(to: .zero)
+            // A recording heard to its end is no longer wanted sounding:
+            // an interruption from here on has nothing to give back. A
+            // flow that plays on asks again with its next play().
+            self.userIntendsPlayback = false
+            self.rewindOnResume = false
             self.updateNowPlayingPlaybackState()
             // Only the flow that currently owns track navigation is told.
             // Ungated, a handler left behind by a flow the user walked out
@@ -1147,6 +1233,27 @@ final class AudioService {
             guard self.trackNavigationOwner != nil else { return }
             self.onTrackFinished?()
         }
+
+        // A stream that dies part-way — a weak signal under a streamed
+        // meditation — never reaches its end, so without this the
+        // transport sat on a failed item and a spoken Rosary waiting for
+        // the end waited for good. Said as a failure, the item let go so
+        // the same link loads afresh next time, and the owner told.
+        failedPlaybackObserver = NotificationCenter.default.addObserver(
+            forName: .AVPlayerItemFailedToPlayToEndTime,
+            object: item,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self else { return }
+            self.isPlaying = false
+            self.isBuffering = false
+            self.userIntendsPlayback = false
+            self.currentURL = nil
+            self.errorMessage = "Audio stopped — check your connection"
+            self.updateNowPlayingPlaybackState()
+            guard self.trackNavigationOwner != nil else { return }
+            self.onTrackFailed?()
+        }
     }
 
     private func removeEndOfPlaybackObserver() {
@@ -1154,5 +1261,9 @@ final class AudioService {
             NotificationCenter.default.removeObserver(observer)
         }
         endOfPlaybackObserver = nil
+        if let observer = failedPlaybackObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+        failedPlaybackObserver = nil
     }
 }
