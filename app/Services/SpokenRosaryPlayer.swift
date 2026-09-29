@@ -33,6 +33,10 @@ protocol SpokenRosaryHost: AnyObject {
     /// The narrated meditation for a decade, or nil for none
     func spokenMeditationURL(decade: Int) async -> String?
 
+    /// Somewhere else to hear a decade's meditation after `failed` would
+    /// not load, or nil to pass over it
+    func spokenMeditationFallbackURL(decade: Int, failed: String) async -> String?
+
     /// What the Lock Screen calls the Rosary: the set, or the devotion
     var spokenRosaryTitle: String { get }
 
@@ -45,6 +49,12 @@ protocol SpokenRosaryHost: AnyObject {
     /// The voice has begun a step of the script, or the hand has moved
     /// it to one: the place to come back to after an interruption
     func spokenRosaryReached(_ step: SpokenStep)
+}
+
+extension SpokenRosaryHost {
+    /// A Rosary with no meditations — the Scriptural Rosary, the Rosary
+    /// Aloud — has nothing to fall back to
+    func spokenMeditationFallbackURL(decade: Int, failed: String) async -> String? { nil }
 }
 
 @Observable
@@ -94,13 +104,17 @@ final class SpokenRosaryPlayer {
     /// The opening or closing prayer under way, for the pendant the screen
     /// draws in place of a mystery's painting. Shown while the recordings
     /// are still being fetched too, so a Rosary begun from the cross
-    /// opens on the cross.
+    /// opens on the cross; and kept after the last Amen, so it ends on
+    /// the cross too, rather than the last mystery's painting coming
+    /// back under the closing prayers once they are over.
     var pendant: SpokenPendant? {
+        let shown: SpokenSegment?
         switch phase {
-        case .preparing, .running, .finished: break
+        case .preparing, .running: shown = currentSegment
+        case .finished: shown = script.last
         case .idle, .failed: return nil
         }
-        guard let segment = currentSegment, segment.phase != .decade,
+        guard let segment = shown, segment.phase != .decade,
               case .prayer(let id) = segment.kind else { return nil }
         return SpokenPendant(
             phase: segment.phase,
@@ -298,7 +312,7 @@ final class SpokenRosaryPlayer {
         guard phase == .running, !isFetching else { return }
         if restartOnResume {
             restartOnResume = false
-            Task { await sayCurrent() }
+            sayCurrentSoon()
         } else if heldInPause || inPause {
             heldInPause = false
             advance(after: 0)
@@ -307,7 +321,7 @@ final class SpokenRosaryPlayer {
         } else {
             // The recording was taken from under the Rosary while it
             // was paused; the prayer is said again from its start
-            Task { await sayCurrent() }
+            sayCurrentSoon()
         }
     }
 
@@ -337,7 +351,7 @@ final class SpokenRosaryPlayer {
         reportStep()
 
         if wasPlaying {
-            Task { await sayCurrent() }
+            sayCurrentSoon()
         } else {
             audio.reset(preservingNowPlaying: true)
             restartOnResume = true
@@ -370,7 +384,7 @@ final class SpokenRosaryPlayer {
         reportStep()
 
         if wasPlaying {
-            Task { await sayCurrent() }
+            sayCurrentSoon()
         } else {
             audio.reset(preservingNowPlaying: true)
             restartOnResume = true
@@ -395,6 +409,23 @@ final class SpokenRosaryPlayer {
     }
 
     // MARK: - Saying the Script
+
+    /// Says the segment at the place just set, unless the place moves
+    /// again before the saying begins. The Rosary is going on from here,
+    /// so it counts as finding its next prayer at once: a pause before
+    /// the task runs holds it. The hand walked back across a decade's
+    /// end is two moves in one turn, and both sayings once ran for the
+    /// second place: the one that found its recording still loading
+    /// passed over it, and the Glory Be was cut off after a breath.
+    @MainActor
+    private func sayCurrentSoon() {
+        let asked = generation
+        isFetching = true
+        Task { [weak self] in
+            guard let self, asked == self.generation else { return }
+            await self.sayCurrent()
+        }
+    }
 
     @MainActor
     private func sayCurrent() async {
@@ -434,19 +465,20 @@ final class SpokenRosaryPlayer {
 
         installNavigation()
 
-        let onPendant = segment.phase != .decade
-        let ready = await audio.loadAudio(
-            from: url,
-            title: title(for: segment),
-            subtitle: host?.spokenRosaryTitle,
-            artworkAssetName: onPendant ? nil : host?.spokenArtwork(decade: segment.mystery),
-            artworkImage: onPendant ? PendantArtwork.lockScreenImage : nil,
-            album: host?.spokenRosaryTitle,
-            queueIndex: segment.mystery,
-            queueCount: (script.last?.mystery ?? 0) + 1,
-            claimNowPlaying: true
-        )
+        var ready = await load(url, for: segment)
         guard saying == generation else { return }
+
+        // A meditation that would not load — a link past its signature,
+        // or no signal — has one more source before it is passed over: a
+        // fresh link, or a copy saved on the device in another voice, the
+        // same two the silent player falls back on
+        if !ready, segment.kind == .meditation,
+           let fallback = await host?.spokenMeditationFallbackURL(decade: segment.mystery, failed: url),
+           fallback != url {
+            guard saying == generation else { return }
+            ready = await load(fallback, for: segment)
+            guard saying == generation else { return }
+        }
         isFetching = false
 
         guard ready else {
@@ -465,6 +497,24 @@ final class SpokenRosaryPlayer {
         }
         audio.play()
         letAppSleep()
+    }
+
+    /// Hands one recording to the shared player, named for the Lock
+    /// Screen: the prayer, and the pendant or the mystery's painting
+    @MainActor
+    private func load(_ url: String, for segment: SpokenSegment) async -> Bool {
+        let onPendant = segment.phase != .decade
+        return await audio.loadAudio(
+            from: url,
+            title: title(for: segment),
+            subtitle: host?.spokenRosaryTitle,
+            artworkAssetName: onPendant ? nil : host?.spokenArtwork(decade: segment.mystery),
+            artworkImage: onPendant ? PendantArtwork.lockScreenImage : nil,
+            album: host?.spokenRosaryTitle,
+            queueIndex: segment.mystery,
+            queueCount: (script.last?.mystery ?? 0) + 1,
+            claimNowPlaying: true
+        )
     }
 
     /// Tells the host where in the script the Rosary now stands
@@ -537,14 +587,19 @@ final class SpokenRosaryPlayer {
             canGoPrevious: decade > 0 || currentSegment?.phase != .opening,
             onNext: { [weak self] in self?.skipDecade(forward: true) },
             onPrevious: { [weak self] in self?.skipDecade(forward: false) },
+            // Not while the next prayer is being found: the recording that
+            // ended is the one it replaces, still sounding after the hand
+            // moved on, and taken as the new prayer's end it passed over
+            // the new prayer a breath after it began
             onFinish: { [weak self] in
-                guard let self, let segment = self.currentSegment else { return }
+                guard let self, !self.isFetching, let segment = self.currentSegment else { return }
                 self.advance(after: segment.pauseAfter)
             },
             // A recording that stops part-way — a streamed meditation
             // losing its signal — is passed over like one never had
             onFail: { [weak self] in
-                self?.advance(after: 0.3)
+                guard let self, !self.isFetching else { return }
+                self.advance(after: 0.3)
             },
             // Play and pause from the Lock Screen and the headphones, and
             // headphones pulled out, are the Rosary's, not the recording's:
@@ -597,7 +652,7 @@ final class SpokenRosaryPlayer {
         } else {
             index = SpokenRosaryScript.startIndex(in: script, mystery: target, bead: 0, includingOpening: false)
         }
-        Task { await sayCurrent() }
+        sayCurrentSoon()
     }
 
     /// The Lock Screen's line: the prayer, or on the announcement and the

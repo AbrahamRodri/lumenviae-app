@@ -84,14 +84,19 @@ struct AboutView: View {
                 showOnboarding = false
             })
             .presentationBackground(AppColors.background)
+            // A cover takes its text size from the phone, not from this
+            // page, so it carries the app's cap itself
+            .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
         .sheet(isPresented: $showAbout) {
             AboutSheet()
                 .presentationBackground(AppColors.background)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
         .sheet(isPresented: $showPrivacyPolicy) {
             PrivacyPolicySheet()
                 .presentationBackground(AppColors.background)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
         .sheet(isPresented: $showHelpSupport, onDismiss: {
             guard feedbackAfterHelp else { return }
@@ -103,10 +108,12 @@ struct AboutView: View {
                 showHelpSupport = false
             })
             .presentationBackground(AppColors.background)
+            .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
         .sheet(isPresented: $showFeedback) {
             FeedbackView()
                 .presentationBackground(AppColors.background)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
     }
 

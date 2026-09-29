@@ -188,11 +188,20 @@ final class UserSettings {
     /// explanations, none of which said what a person would see.
     static let beadCounterTitle = "Bead counter"
 
-    /// What the counter does, said as what appears on the screen.
-    static func beadCounterDetail(isOn: Bool) -> String {
-        isOn
-            ? "The beads unlock after each meditation. Swipe down for each Hail Mary."
-            : "No beads on screen. Keep count on your own rosary."
+    /// What the counter does, said as what appears on the screen. With
+    /// every prayer said aloud the beads are never locked and the voice
+    /// moves them, so the row beneath Pray aloud once told a person to
+    /// wait for the meditation and swipe, one line under a switch that
+    /// said the voice would move the beads.
+    static func beadCounterDetail(isOn: Bool, aloud: Bool = false) -> String {
+        switch (isOn, aloud) {
+        case (true, false):
+            return "The beads unlock after each meditation. Swipe down for each Hail Mary."
+        case (true, true):
+            return "The beads hang at the edge of the screen and move with the voice."
+        case (false, _):
+            return "No beads on screen. Keep count on your own rosary."
+        }
     }
 
     // MARK: - The Rosary Said Aloud
@@ -308,9 +317,10 @@ final class UserSettings {
     /// is the worst version of this.
     ///
     /// The range reaches further at the top than the missal's 15–21: the
-    /// app draws its type through `Font.custom(_:size:)` and so opts out
-    /// of the system's Larger Text entirely, which makes these sliders
-    /// the only answer it offers.
+    /// app follows the system's Larger Text only up to
+    /// `DynamicTypeSize.appMaximum`, which makes these sliders the answer
+    /// it offers past that. (`Font.custom(_:size:)` does scale with the
+    /// body style; the cap, not the font, is what holds the type.)
     var readingTextScale: Double = 0.4 {
         didSet { UserDefaults.standard.set(readingTextScale, forKey: "userSettings.readingTextScale") }
     }

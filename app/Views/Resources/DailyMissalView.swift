@@ -191,6 +191,7 @@ struct DailyMissalView: View {
                     .presentationDetents([.height(690)])
                     .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
+                    .dynamicTypeSize(...DynamicTypeSize.appMaximum)
                     .presentationCornerRadius(22)
 
             case .index:
@@ -203,6 +204,7 @@ struct DailyMissalView: View {
                 .presentationDetents([.fraction(0.8)])
                 .presentationDragIndicator(.visible)
                 .presentationBackground(AppColors.background)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
                 .presentationCornerRadius(22)
 
             case .calendar:
@@ -212,6 +214,7 @@ struct DailyMissalView: View {
                 .presentationDetents([.height(640)])
                 .presentationDragIndicator(.visible)
                 .presentationBackground(AppColors.background)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
                 .presentationCornerRadius(22)
             }
         }
@@ -222,6 +225,7 @@ struct DailyMissalView: View {
             MissalLayoutChoiceSheet()
                 .presentationDetents([.height(560)])
                 .presentationBackground(AppColors.background)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
                 .interactiveDismissDisabled()
         }
         .navigationDestination(isPresented: $showOrdoPage) {

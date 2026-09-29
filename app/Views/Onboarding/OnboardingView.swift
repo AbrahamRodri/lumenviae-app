@@ -200,6 +200,7 @@ struct OnboardingView: View {
         .sheet(isPresented: $showMethodsSheet) {
             RosaryMethodsView()
                 .presentationBackground(AppColors.background)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
         // Saved as they change rather than on Continue, so a user who
         // swipes past a slide keeps what they chose on it

@@ -113,6 +113,11 @@ struct BookCover: View {
                 .padding(.top, isLettered ? 10 : 0)
                 .padding(.bottom, isLettered ? 12 : 8)
         }
+        // The lettering is sized to the cloth, not to the reader's text:
+        // the cover keeps its proportion whatever the phone's text size,
+        // and grown past Large, DEVOTION and IMITATION no longer fit a
+        // line and broke mid-word
+        .dynamicTypeSize(...DynamicTypeSize.large)
         .frame(maxWidth: .infinity)
         .aspectRatio(0.70, contentMode: .fit)
         .background(cloth)

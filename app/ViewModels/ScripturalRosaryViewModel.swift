@@ -498,6 +498,58 @@ extension ScripturalRosaryViewModel: SpokenRosaryHost {
     /// draws the pendant and names the prayer in place of the mystery
     var spokenPendant: SpokenPendant? { spoken?.pendant }
 
+    /// The words of the prayer being said on the pendant, line by line,
+    /// in the Rosary Aloud, which sets every prayer on the screen as it
+    /// is said — the Creed and the Hail, Holy Queen most of all, the
+    /// prayers someone learning by ear knows least. Latin when Latin
+    /// alone is chosen, as the decades' prayers are. The screen joins
+    /// them into one paragraph and sets a rubric line ("[Let us pray.]")
+    /// as a rubric. Nil in the Scriptural Rosary, whose column carries
+    /// Scripture, not the prayers.
+    var spokenPendantLines: [String]? {
+        guard isPlain, let pendant = spokenPendant,
+              let content = DevotionPrayers.find(pendant.prayerID)?.content else { return nil }
+        let source = UserSettings.shared.prayerLanguage == .latin ? content.latin : content.english
+        let lines = source
+            .components(separatedBy: .newlines)
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+        return lines.isEmpty ? nil : lines
+    }
+
+    /// Steps the voice one prayer on or back — on the pendant, where
+    /// there is no bead of the strand to move the hand to, and from the
+    /// first bead back into the opening prayers.
+    ///
+    /// - Returns: whether the Rosary moved, so a step past either end
+    ///   of the script is not felt as one
+    @MainActor
+    @discardableResult
+    func stepSpokenPrayer(forward: Bool) -> Bool {
+        guard let spoken else { return false }
+        let before = spoken.currentStep
+        spoken.stepPrayer(forward: forward)
+        return spoken.currentStep != before
+    }
+
+    /// Whether a move back from the first bead of the Rosary returns to
+    /// the opening prayers: while the voice is saying the first decade,
+    /// whose opening the script always carries
+    var canStepBackIntoOpening: Bool {
+        guard let spoken, spoken.phase == .running,
+              let segment = spoken.currentSegment, segment.phase == .decade else { return false }
+        return isFirstBeadOfRosary && spoken.script.first?.phase == .opening
+    }
+
+    /// Whether a move on from the last bead goes on to the closing
+    /// prayers: while the voice is still saying the last decade's Glory
+    /// Be or Fatima Prayer, where the strand has no bead left to give
+    var canStepOnIntoClosing: Bool {
+        guard let spoken, spoken.phase == .running,
+              let segment = spoken.currentSegment, segment.phase == .decade else { return false }
+        return isLastBeadOfRosary
+    }
+
     var isSpeaking: Bool { spoken?.isPlaying ?? false }
 
     @MainActor

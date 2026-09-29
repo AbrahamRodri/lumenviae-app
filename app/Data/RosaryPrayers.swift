@@ -196,9 +196,11 @@ and to amend my life. Amen.
             latinContent: """
 Deus meus, ex toto corde paenitet me omnium meorum peccatorum,
 eaque detestor, quia peccando, non solum poenas a Te iuste statutas promeritus sum,
-sed praesertim quia offendi Te, summum bonum, ac dignum qui super omnia diligaris.
+sed praesertim quia offendi Te,
+summum bonum, ac dignum qui super omnia diligaris.
 Ideo firmiter propono, adiuvante gratia Tua,
-de cetero me non peccaturum peccandique occasiones proximas fugiturum. Amen.
+de cetero me non peccaturum
+peccandique occasiones proximas fugiturum. Amen.
 """
         ),
         BilingualConsecrationPrayer(
@@ -224,7 +226,8 @@ Interveniat pro nobis, quaesumus, Domine Iesu Christe, nunc et in hora mortis no
 apud tuam clementiam beata Virgo Maria, Mater tua,
 cuius sacratissimam animam in hora tuae passionis doloris gladius pertransivit.
 Per te, Iesu Christe, Salvator mundi,
-qui cum Patre et Spiritu Sancto vivis et regnas in saecula saeculorum. Amen.
+qui cum Patre et Spiritu Sancto vivis et regnas
+in saecula saeculorum. Amen.
 """
         ),
         BilingualConsecrationPrayer(

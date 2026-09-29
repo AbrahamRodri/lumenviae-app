@@ -136,6 +136,7 @@ struct ConsecrationJournalView: View {
                 isComplete: isAlreadyComplete,
                 onSelect: open
             )
+            .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
         .onAppear {
             text = viewModel.journalText

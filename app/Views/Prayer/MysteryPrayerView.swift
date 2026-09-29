@@ -102,6 +102,7 @@ struct MysteryPrayerView: View {
     @State private var turnPulse = 0
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     /// True while the meditation text is open over the player.
     ///
@@ -123,6 +124,27 @@ struct MysteryPrayerView: View {
     /// The room the outer transport arrows are given on each side. Fixed
     /// and equal so the play button sits dead center.
     private static let transportSlotWidth: CGFloat = 52
+
+    /// How far left of centre the pendant hangs while the strand hangs
+    /// beside it: its cross's arms end clear of the AMEN, the leftmost
+    /// thing the strand lays out
+    private static let pendantShiftBesideStrand: CGFloat = 60
+
+    /// Where the pendant hangs from, and how much of the glass it may
+    /// take when the foot leaves it the room
+    private static let pendantTopFraction: CGFloat = 0.165
+    private static let pendantHeightFraction: CGFloat = 0.46
+
+    /// The pendant's height, fitted above the foot. Placed by fractions
+    /// of the glass alone, at the largest text sizes its cross stood
+    /// behind the prayer's name, the foot having grown up over it; it
+    /// now gives up height to the foot rather than room, and at every
+    /// other size it hangs as it always has.
+    private func pendantHeightFraction(fullHeight: CGFloat, controlsTop: CGFloat) -> CGFloat {
+        guard controlsHeight > 0, fullHeight > 0 else { return Self.pendantHeightFraction }
+        let room = controlsTop - fullHeight * Self.pendantTopFraction - 16
+        return min(Self.pendantHeightFraction, max(room, 0) / fullHeight)
+    }
 
     init(launch: PrayerLaunch) {
         self.meditationSet = launch.meditationSet
@@ -296,12 +318,14 @@ struct MysteryPrayerView: View {
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
                 .presentationBackground(AppColors.background)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
 
             case .playback:
                 PlaybackSettingsSheet()
-                    .presentationDetents([.height(PlaybackSettingsSheet.height)])
+                    .presentationDetents(PlaybackSettingsSheet.detents(for: dynamicTypeSize))
                     .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
+                    .dynamicTypeSize(...DynamicTypeSize.appMaximum)
 
             case .feedback:
                 FeedbackView(
@@ -311,6 +335,7 @@ struct MysteryPrayerView: View {
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
                 .presentationBackground(AppColors.background)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
 
             case .tray:
                 PrayerTrackTray(
@@ -322,6 +347,7 @@ struct MysteryPrayerView: View {
                     // (`fittedSheetDetent`)
                     .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
+                    .dynamicTypeSize(...DynamicTypeSize.appMaximum)
             }
         }
     }
@@ -336,9 +362,12 @@ struct MysteryPrayerView: View {
     }
 
     /// Whether the swipe hint has anything to teach yet: off the beads the
-    /// page is swiped at once; on them, once the beads unlock.
+    /// page is swiped at once; on them, once the beads unlock. Never while
+    /// the voice holds the hand: said aloud, the beads count as unlocked
+    /// from the first word, and the one showing was spent over the Sign of
+    /// the Cross, across the pendant's foot, where a swipe does nothing.
     private var swipeHintMayShow: Bool {
-        !onBeads || viewModel.beadsUnlocked
+        (!onBeads || viewModel.beadsUnlocked) && !voiceHoldsStrand
     }
 
     /// Takes the hint off screen. Safe to call more than once — its own
@@ -377,7 +406,16 @@ struct MysteryPrayerView: View {
     /// Father; the Hail Marys are only counted; the decade prayed, the
     /// next mystery is named so the turn is expected. Nil on the final
     /// bead, where AMEN stands in the cue's place.
+    ///
+    /// Said aloud, the voice moves the beads and there is nothing to be
+    /// told to tap: the cue names the opening prayer being said, which
+    /// the bead's own name ("Opening prayers") cannot, and is otherwise
+    /// silent — it once told a person to tap for the first Hail Mary
+    /// while the voice was saying the Creed.
     private func readerBeadCue(for meditation: Meditation) -> String? {
+        if viewModel.isPrayingAloud {
+            return viewModel.spokenPendant.map(\.title)
+        }
         if viewModel.isLastBeadOfRosary { return nil }
         if viewModel.isDecadePrayed {
             let next = meditationSet.mysteryCategory?.mysteryLabel(ordinal: viewModel.currentMysteryIndex + 2)
@@ -551,11 +589,11 @@ struct MysteryPrayerView: View {
     /// said on the pendant, or the recordings are still being fetched.
     /// The player's own previous and next prayer buttons still move it.
     private var voiceHoldsStrand: Bool {
-        viewModel.spokenStatus != nil || isOnOpeningPendant
+        viewModel.voiceHoldsHand
     }
 
     private func prayForward() {
-        guard !viewModel.isLastBeadOfRosary, !beadsLocked else {
+        guard !viewModel.isLastBeadOfRosary, !beadsLocked, !voiceHoldsStrand else {
             settleStrand()
             return
         }
@@ -569,7 +607,7 @@ struct MysteryPrayerView: View {
     /// One bead back along the strand, into the previous decade from
     /// an Our Father. On the first bead the string only settles.
     private func prayBack() {
-        guard !viewModel.isFirstBeadOfRosary, !beadsLocked else {
+        guard !viewModel.isFirstBeadOfRosary, !beadsLocked, !voiceHoldsStrand else {
             settleStrand()
             return
         }
@@ -600,6 +638,7 @@ struct MysteryPrayerView: View {
                             .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { controlsHeight = $0 }
                     } else {
                         decadeControls(meditation: meditation)
+                            .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { controlsHeight = $0 }
                     }
                 }
             }
@@ -661,13 +700,25 @@ struct MysteryPrayerView: View {
                 // mystery's, and its painting arrives with its decade.
                 ZStack {
                     if let pendant = viewModel.spokenPendant {
+                        // The closing prayers are said with the strand
+                        // still hung, for the AMEN at its final bead, and
+                        // centred the cross's arms ran under the bead's
+                        // name and the AMEN. The stage is drawn wider and
+                        // moved left, so the cross hangs in the column the
+                        // strand leaves and its glow runs unbroken to the
+                        // glass's edge.
+                        let shift = onBeads && pendant.phase == .closing ? Self.pendantShiftBesideStrand : 0
                         PendantStage(
                             pendant: pendant,
-                            width: geometry.size.width,
+                            width: geometry.size.width + shift * 2,
                             fullHeight: fullHeight,
-                            heightFraction: 0.46,
-                            topFraction: 0.165
+                            heightFraction: pendantHeightFraction(
+                                fullHeight: fullHeight,
+                                controlsTop: geometry.safeAreaInsets.top + geometry.size.height - controlsHeight
+                            ),
+                            topFraction: Self.pendantTopFraction
                         )
+                        .offset(x: -shift)
                         .transition(.opacity)
                     } else {
                         PrayerPaintingStage(
@@ -806,10 +857,13 @@ struct MysteryPrayerView: View {
         .opacity(ready ? 1 : 0.35)
     }
 
-    /// Forward ten seconds, or on a prayer when said aloud
+    /// Forward ten seconds, or on a prayer when said aloud — and after
+    /// the last Amen, where there is no prayer left to go on to, faded
     private func forwardTransportButton(size: CGFloat) -> some View {
         let aloud = viewModel.isPrayingAloud
-        let ready = aloud ? viewModel.spokenStatus == nil : transportReady
+        let ready = aloud
+            ? viewModel.spokenStatus == nil && !viewModel.isSpokenFinished
+            : transportReady
         return TransportButton(
             icon: .symbol(aloud ? "forward.end" : "goforward.10"),
             size: aloud ? size - 4 : size,
@@ -887,8 +941,10 @@ struct MysteryPrayerView: View {
                 travel = .back
                 withAnimation(Motion.decadeTurn) { viewModel.previousMystery() }
             }
-            .disabled(viewModel.isFirstMystery)
-            .opacity(viewModel.isFirstMystery ? 0.25 : 1)
+            // Faded too while the voice holds the hand, as the swipe
+            // stands still then (`voiceHoldsStrand`)
+            .disabled(viewModel.isFirstMystery || voiceHoldsStrand)
+            .opacity(viewModel.isFirstMystery || voiceHoldsStrand ? 0.25 : 1)
             .accessibilityHidden(viewModel.isFirstMystery)
             .frame(width: Self.transportSlotWidth)
 
@@ -916,6 +972,10 @@ struct MysteryPrayerView: View {
                 label: viewModel.isLastMystery ? "Amen — finish the Rosary" : "Next mystery",
                 action: handleNextMystery
             )
+            // During the opening prayers said aloud the next mystery was
+            // the second: the arrow skipped the first decade whole
+            .disabled(voiceHoldsStrand)
+            .opacity(voiceHoldsStrand ? 0.25 : 1)
             // The last Amen said aloud: the check is the one thing left,
             // and it glows for it rather than a line saying so
             .beckoning(viewModel.isSpokenFinished)
