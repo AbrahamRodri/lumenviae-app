@@ -4,9 +4,9 @@
 
 Lumen Viae guides you through the Rosary with meditations drawn from the saints,
 keeps the days you pray, and carries a small library of Catholic devotion around
-it: the 33-day consecration to Mary, the 1962 Missal and the Divine Office, and a
-shelf of spiritual classics. It is built for the quiet: dark, gold-lit, and free
-of anything that hurries you.
+it: the 33-day consecration to Mary, the 1962 Missal and the Divine Office, a
+prayer book, a library of chant, and a shelf of spiritual classics. It is built
+for the quiet: dark, gold-lit, and free of anything that hurries you.
 
 ---
 
@@ -16,7 +16,8 @@ of anything that hurries you.
 
 Pick a set of mysteries — Joyful, Sorrowful, Glorious, Luminous, or the Seven
 Sorrows of Mary — then a meditation to pray them with. Home proposes the day's
-mysteries on the traditional schedule, Sunday following the season. The raised
+mysteries on the traditional schedule, Sunday following the season, or on the
+modern one (the Luminous on Thursday) if you choose it in Settings. The raised
 **Pray** button runs your chosen act in one tap (today's Rosary unless you pick
 another); press and hold it for a tray of the devotions you keep.
 
@@ -45,7 +46,7 @@ voice and set in full on its bead.
 ### Choose your meditations
 
 Meditation sets come from the Lumen Viae API, shown as a gallery or a ruled list,
-filtered by label (Contemplative, Saints, Reflections, Intentions, Scriptural),
+filtered by label (Contemplative, Saints, Reflections, Scriptural),
 pinned to the top at will, and each opened on a title page before it is prayed.
 Authors include St. Alphonsus Liguori, St. John Henry Newman, Bl. Anne Catherine
 Emmerich, Ven. Fulton J. Sheen, and others.
@@ -57,21 +58,24 @@ feast, and the app counts back 33 days of preparation ending on its eve, leaving
 the act of consecration for the feast itself. Each day has readings from
 Scripture, the *Imitation of Christ* and *True Devotion*, the prayers of its
 period (in English, Latin, or both), and a journal prompt. The Veni Creator, the
-Ave Maris Stella and the Magnificat have chant recordings.
+Ave Maris Stella, the Magnificat, the Glory Be and the litanies of Loreto and of
+the Holy Name can be heard sung, from the Chant Library.
 
 ### Home, Explore, and the Chapel
 
 Home holds the day's mysteries, a grid of the Joyful, Sorrowful and Glorious
 Mysteries and the Seven Sorrows (the Luminous under View All), and **Today's
-Prayer**: the Total Consecration, then the day's feast over the Mass and the
-Office. Settings and About stand in the masthead; the search glass opens
-**Explore**, which browses the devotions and the library and searches mysteries,
-library pages, short readings and every meditation set at once.
+Prayer**: the Total Consecration and the hour's prayers from the Prayer Book,
+then the day's feast over the Mass and the Office. Settings and About stand in
+the masthead; the search glass opens **Explore**, which browses the devotions
+and the library and searches mysteries, library pages, short readings, prayers,
+chants and every meditation set at once.
 
 **The Chapel** tab is a page you arrange in place: the next act of your rule of
 prayer at the top, then tiles to reorder, set full or half width, or put away in
-a tray — **Today** (the rule), **Prayer Streak**, **Consecration**, **Reading**,
-**Chant**, **Reflections**, **Liturgy** and **Library**. Long-press to arrange.
+a tray — **Today** (the rule), **Prayer Streak**, **Consecration**, **Prayer
+Book**, **Reading**, **Chant**, **Reflections**, **Liturgy** and **Library**.
+Long-press to arrange.
 
 ### The Mass and the Office
 
@@ -81,6 +85,25 @@ Missale Meum API. The **Divine Office** is the Breviarium Romanum under the 1960
 rubrics, eight hours, opening on the hour it is now; its texts come from the
 app's own `/office` API, which assembles them from a self-hosted Divinum Officium
 engine. Both keep the days they fetch and fetch the coming days ahead.
+
+### The Prayer Book
+
+The Church's common prayers, bundled: twelve chapters, from the first prayers to
+the litanies, in English and, where the Church prays in Latin, in Latin too; and
+eleven orders of prayer said together, among them Morning Prayers, the Angelus
+and Night Prayers. The book opens on the order for the hour. An order is prayed
+along one prayer at a time, in silence or aloud in your narration voice; a prayer
+can be kept with a ribbon, learned by heart, or heard in chant where it has one.
+The Angelus bell (Settings → Devotion) rings at six, noon and six.
+
+### The Chant Library
+
+Sixty-four chants in twelve shelves, from the antiphons of Our Lady to the chants
+for the dead, each with its recording and its score, bundled so they sound
+without a connection. The library opens on the antiphon of Our Lady the season
+sings; a chant's page slows it for learning, repeats it, and enlarges its score.
+The recordings and scores are Verbum Gloriae's, shared under their copyleft
+licence.
 
 ### Spiritual reading
 
@@ -126,9 +149,12 @@ page of its own, leading on to a feast, a prayer, or the next reading.
   copy follows what you said drew you to the Rosary
   (`app/Data/ReminderMessages.swift`) and never mentions streaks.
 - **Offline downloads** — every meditation set with its painting and narration,
-  the consecration chants, and the spoken Rosary's recordings. With them and the
-  bundled prayers, verses and books, the Rosary prays without a connection; the
-  Missal, the Office and the shelf keep whatever they have fetched.
+  and the spoken Rosary's and the Prayer Book's recordings. With them and the
+  bundled prayers, verses, chants and books, the Rosary prays without a
+  connection; the Missal, the Office and the shelf keep whatever they have fetched.
+- **A first-run introduction** of eight slides, skippable, asks what brings you to
+  the Rosary, whether you pray on the beads, and your colours, language and
+  reminder; each can be changed later in Settings.
 
 ---
 
@@ -155,15 +181,18 @@ app/
 │   ├── Consecration/         33-day preparation (its own NavigationStack)
 │   ├── TrueDevotion/         Book reader
 │   ├── Library/              Spiritual Reading: shelf, book, chapter reader
+│   ├── PrayerBook/           The Prayer Book: chapters, orders, praying along
+│   ├── Chant/                The Chant Library, a chant's page, its score
 │   ├── Resources/            How to Pray, the guided Rosary, In Scripture, the
 │   │                         Marian Library, Carlo Acutis, the Missal, the Office
 │   ├── Journal/ Progress/ Account/ Onboarding/ Launch/
-│   └── Me/                   Legacy, unreachable (its editors and tray still used)
+│   └── Me/                   The rule editor, the Pray button's editor and tray
 ├── Components/               Tab bar, header, cards, the bead strand
 ├── DesignSystem/             Theme, Typography, AppIcon, Motion, ReadingText
-├── Data/                     Bundled prayers, mysteries, verses, consecration
+├── Data/                     Bundled prayers, mysteries, verses, consecration,
+│                             the Prayer Book, the chant catalog
 ├── Services/                 API clients, audio, caches, offline, settings
-└── Resources/                Fonts, True Devotion JSON, reminder sounds
+└── Resources/                Fonts, True Devotion JSON, reminder sounds, chants
 ```
 
 ### Where the data lives
@@ -177,25 +206,27 @@ app that owns the meditation content, so it can change without an app release:
 | `GET /meditation-sets/:id` | A full set: meditations, painting, narration links |
 | `GET /meditations/:id/audio` | A freshly signed narration link (`?voice=`) |
 | `GET /voices` | The narration voices, default first |
-| `GET /prayers/:id/audio` | A consecration chant |
-| `GET /rosary/audio` | The spoken Rosary's recordings for one voice |
+| `GET /rosary/audio` | The spoken Rosary's and the Prayer Book's recordings for one voice |
 | `GET /office/…` | A day, an hour, or a month of the Divine Office |
 | `POST /completions` | An anonymous note that a Rosary was finished |
 
 **Elsewhere** — the Missal from the Missale Meum API, the shelf's texts from
 Project Gutenberg and its recordings from LibriVox. The Scriptural Rosary's
-verses came from thedouayrheims.com at generation time; the app never calls it.
+verses came from thedouayrheims.com, and the chants from Verbum Gloriae, at
+generation time; the app never calls either.
 
 **Bundled** — every Rosary prayer in English and Latin, the mysteries themselves
 (names, scripture, descriptions and fruits, in `Data/MysteryData.swift`; the app
 does not fetch them), the Scriptural Rosary's verses, the 33 days of preparation
-and the day of consecration, *True Devotion*, the resource pages and the quotes.
+and the day of consecration, *True Devotion*, the Prayer Book, the Chant
+Library's recordings and scores, the resource pages and the quotes.
 
 **On device** — SwiftData holds prayer sessions, journal entries, consecration
 progress, and reading progress in *True Devotion* and the shelf. `UserDefaults`
 holds settings, pinned sets and the unfinished-Rosary snapshot. Application
 Support holds the offline sets, narration and paintings, the Missal, Office and
-Library caches, and the spoken Rosary's recordings, all excluded from backup.
+Library caches, and the spoken Rosary's and the Prayer Book's recordings, all
+excluded from backup.
 
 ### Notable services
 
@@ -204,7 +235,9 @@ Library caches, and the spoken Rosary's recordings, all excluded from backup.
 | `APIService` | HTTP client for the Lumen Viae API |
 | `AudioService` | Narration and chant playback, Lock Screen and AirPods |
 | `SpokenRosaryPlayer` | Prays the Rosary aloud, moving the beads with the voice |
-| `RosaryAudioPack` | The spoken Rosary's recordings, fetched per voice and kept |
+| `RosaryAudioPack` | The spoken Rosary's and the Prayer Book's recordings, fetched per voice and kept |
+| `ChantPlayer` | The Chant Library's hold on the shared player |
+| `PrayerBookStore` | The Prayer Book's ribbons, prayers known by heart, the day's offered orders, the Angelus bell |
 | `NarrationVoiceCatalog` | The server's narration voices and the one chosen |
 | `OfflineContentService` | User-initiated download of sets, paintings and audio |
 | `MeditationCacheService` | Prefetches the day's sets so Pray starts at once |
@@ -223,10 +256,13 @@ Library caches, and the spoken Rosary's recordings, all excluded from backup.
 
 Requires Xcode 26 or later. Open `app.xcodeproj` and run the `app` scheme; the
 deployment target is iOS 17.0. No package manager, no secrets, and nothing is
-generated at build time — `Data/ScripturalRosaryData.swift` and
+generated at build time — `Data/ScripturalRosaryData.swift`,
+`Data/ChantCatalogData.swift`, `Resources/Chants/` and
 `Resources/TrueDevotionBook.json` are generated by the scripts in `Tools/` and
 checked in. New `.swift` files under `app/` are picked up by Xcode's
 file-system-synchronized groups; there is nothing to add to the project file.
+The unit tests, Swift Testing suites in `appTests/`, run from the same scheme
+(Product → Test, or `xcodebuild test`); there are no UI tests.
 
 The API is public. The app's only write is the anonymous completion, which
 carries the set and whether it was prayed aloud, and no identifier. A debug build
@@ -252,8 +288,8 @@ never hardcode a hex. The main tokens (full palettes in
 
 Type is Cinzel for display and EB Garamond for reading, wrapped by `AppFonts`;
 long text goes through `ReadingText` and `PrayerText`. Icons are Phosphor
-(`ph-*`) and the app's own devotional glyphs (`ch-*`, `lv-*`) in the asset
-catalog, drawn through `AppIcon`.
+(`ph-*`), Christicons for the devotional glyphs (`ch-*`), and a few drawn for
+the app (`lv-*`), in the asset catalog, drawn through `AppIcon`.
 
 ---
 
@@ -265,6 +301,8 @@ catalog, drawn through `AppIcon`.
 - [`ROSARY_RESEARCH_NOTES.md`](ROSARY_RESEARCH_NOTES.md) — user research on Rosary apps and praying the Rosary
 - [`Tools/TrueDevotion/`](Tools/TrueDevotion/README.md) — the *True Devotion* text pipeline
 - [`Tools/ScripturalRosary/`](Tools/ScripturalRosary/generate.py) — generates the Scriptural Rosary's verses
+- [`Tools/Chants/`](Tools/Chants/generate.py) — generates the Chant Library's recordings, scores and catalog
+- [`Tools/PrayerBook/`](Tools/PrayerBook/export.py) — exports the Prayer Book's words for the server to record
 - [`Tools/MotionSheet/`](Tools/MotionSheet/README.md) — a simulator recording as a contact sheet, for judging motion
 
 ---

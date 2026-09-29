@@ -13,7 +13,7 @@ Home Screen
     │
     ├── Featured card: today's mysteries ("Pray with a Meditation")
     │   └── Goes to: Select Meditation View
-    │       (its quiet line, "The Scriptural Rosary", goes to that title page)
+    │       (its quiet line, "The Scriptural Rosary · The Rosary Aloud", opens either title page)
     │
     └── Sacred Mysteries Grid (Joyful, Sorrowful, Glorious, Seven Sorrows;
         its VIEW ALL page adds Luminous)
@@ -32,7 +32,7 @@ Meditation Set Detail (set like a title page, not a product listing)
     ├── Header: Back · pin
     ├── Labels kicker, ornament, name in Cinzel, painting in a lancet arch
     ├── A ruled ledger of sections, each named in the left margin:
-    │   About this set · The meditations (numbered) · From (author, source)
+    │   About this set · The meditations (numbered) · From (author, source) · Offline
     ├── The first meditation in full, behind a quiet disclosure
     ├── HOW YOU'LL PRAY — one quiet ruled line naming what is set
     │   (voice · speed · aloud · beads), opening the choices in a sheet
@@ -133,7 +133,7 @@ from the web app's vocabulary (`LumenViae.Rosary.Labels`): Considerations
 (shown as **Reflections**), Contemplative, Saints, Scriptural, Intentions —
 see Content Requirements below. As of Sept 2026 the Saints sets are
 Liguori, Ignatius, Chrysostom, Newman, Augustine and Aquinas, beside
-Sheen, Emmerich, Agreda, Faber, Guéranger and the Servants of Mary. **No
+Sheen, Emmerich, Agreda, Faber and Guéranger. **No
 set carries Intentions**: the backend's curation guide
 (`docs/MEDITATION_CURATION_GUIDE.md`) admits only verbatim text from
 public-domain editions, so originally written vocation sets ("As a
@@ -196,7 +196,7 @@ user's prayer and **not** "Today in the Church", because the
 consecration is a private devotion and not a liturgical observance;
 `TodayInChurch` (the observable) still supplies the day and is shared
 with the Chapel's day strip. Every row has the same parts — the door's
-own glyph (`ch-altar`, `ph-clock`, `ch-consecration`, the same as on
+own glyph (`ch-altar`, `ph-clock`, `ch-consecration`, the hour's order's own, the same as on
 every other surface), name, the row's own live fact, chevron — so the
 eye reads down the column of facts: the day's class and colour in words beside its silk, a 4×24 bar
 ("II CLASS · RED", which once stood under the feast as a caption to
@@ -207,20 +207,20 @@ sentence under each once said what the row was, and the section took
 longer to read for it. The consecration row, before any consecration is
 begun, keeps its place, its icon and its weight and offers BEGIN — **no state
 in this section may shame the user**: no "0 days", no "missed", no
-empty track. True Devotion is reached from Explore and the Chapel's
+empty track. True Devotion is reached from the reading shelf below, Explore and the Chapel's
 Library tile, not from here.
 
 The search glass pushes `AppRoute.explore`
 (`Views/Home/ExploreView.swift`): at rest it browses — an epigraph
-(Mt 7:7), the five devotions as a ruled ledger with the Scriptural
-Rosary's door beneath them and a quiet "New to the Rosary? · How to
+(Mt 7:7), the five devotions as painted banners with the Scriptural
+Rosary's and the Rosary Aloud's doors beneath them and a quiet "New to the Rosary? · How to
 Pray" door under that (How to Pray was the fourth item of The Study at
 the foot of the page, where a newcomer never reached it); then the
 Prayer Book, Sung Prayer (tonight's antiphon of Our Lady, played where
 it stands, over the door to the Chant Library), The
 Liturgy (Missal | Office), the Spiritual Reading shelf, and The Study's
 ruled index — and typing searches mysteries, library doors, library readings,
-chants and meditation sets at once. The set index is fetched quietly for search but deliberately
+chants, the Prayer Book's orders and prayers, and meditation sets at once. The set index is fetched quietly for search but deliberately
 never listed on the browse page, and the field is deliberately not
 auto-focused: the page is a place first, a search second. The real
 search field lives on Explore, not on home.
@@ -240,11 +240,11 @@ page, True Devotion's own, the Office's ledger of hours — keep the
 system bar and the gold Back like everything else; only the reading
 surface hides it. Also drawing their own chrome (bar hidden, Back on
 the page): the meditation shelf and a set's title page, the Scriptural
-Rosary's title page, the Guided Rosary, and the prayer and completion
+Rosary's and the Rosary Aloud's title page, the Guided Rosary, the Prayer Book's pray-along, and the prayer and completion
 screens. A page may hide the bar only if it draws its own Back in every
 branch. Not every push is an `AppRoute`: True Devotion's chapters are
-closure `NavigationLink`s and the Office's hours a
-`navigationDestination(item:)`.
+closure `NavigationLink`s, the Office's hours a
+`navigationDestination(item:)`, and the Missal's Ordo page a `navigationDestination(isPresented:)`.
 
 A page that hides the system bar hides the back-swipe with it, so it
 owes a way out from **every** branch it can draw, not just the loaded
@@ -296,12 +296,12 @@ the same page; it opens on one italic line saying what a rule is, and
 every row shows at its trailing edge what a tap does — OFFERED with the
 seal, BEGIN › / CONTINUE › until then, every act on the rule being one the
 app watches finish (the row marked by hand went out with the acts that
-needed it); the Rosary, the Scriptural Rosary, the
-chaplet and the consecration day check from real data, reset each
+needed it); the Rosary, the Scriptural Rosary, the Rosary Aloud, the
+chaplet and the consecration day check from real data, and the Prayer Book's three orders from their Amen (`PrayerBookStore.wasOffered`), reset each
 morning; the half is a figure "2 / 4" over a row
 of tappable cells), **Consecration** (de Montfort's four preparations
 as a segmented road, tracks weighted 12/7/7/7 days, the day's own
-title as the foot note), **Reading** (the open book with the author
+title as the foot note), **Prayer Book** (`ChapelPrayerBookTile`: the order for the hour it is, the reader's kept ribbons beneath it, PRAY at its foot; the half is the hour's order alone), **Reading** (the open book with the author
 over the title, the other books under way standing as spines beside
 it — tap a spine, or swipe the face, to bring that book forward; the
 tile is not one door, because made one, every spine opened the book in
@@ -339,7 +339,7 @@ handoff, `ChapelTileFrame` in `Views/Chapel/ChapelTiles.swift`): a
 kicker on the page above the shell — 12pt glyph, Cinzel 10 tracked 2.5
 at `gold@0.75`, a trailing italic note at 12 — the same sizes at both
 spans so a pair of halves shares one title line (a half's label
-truncates before its note does, and the flame's reads STREAK there);
+truncates before its note does; the flame's reads STREAK there, the Prayer Book's PRAYERS);
 one 16pt hairline shell at `gold@0.24`, no fill, no shadow, 14/16/6
 padding at full and 12/14/4 at half (list-style bodies sit closer to
 the top edge); the tile's body; and a foot pinned to the shell's floor
@@ -356,7 +356,7 @@ lead with one figure — Cinzel 26 with the denominator at 15 in
 hold that arranges the page never also opens the tile on release)
 except where the body has doors of its own — the Today rows
 and cells, the Reading tile's face and spines, the Liturgy leaves, the
-Library doors, the chant's play disc and name — where only the foot's act is a
+Library doors, the chant's play disc and name, the Prayer Book's order and ribbons at full width — where only the foot's act is a
 control (`onAct`). The Today tile has no foot act at all; its EDIT rides
 the kicker (`onEdit`), since a foot act there read as one more BEGIN
 row. The ✕ badge hangs
@@ -398,13 +398,13 @@ Devotion → Rule of Prayer, and the EDIT on the Today tile's title line);
 Pray tray's "Edit this menu" row. The one-motion acts remain
 `PrayerShortcut`. Prayer Record's standing doors are the flame tile and
 Settings → Devotion (Explore's search also finds it). The old Me page
-(`Views/Me/MeView.swift`, `MeWidgets.swift`, `MePageEditorSheet`) and
-`Components/MenuView.swift` are unreachable — called only from their own
-previews — but they still **compile and ship** (about 1,400 lines) and
-keep Me-only API alive (`isRuleChecked`/`setRuleChecked`). They are not a
-source of truth: a grep that lands in them (a `navigateToSettings()`, a
-Prayer Record door) describes nothing a user can reach. The real
-reference is git (`ed21006^`); research behind the original design: "The
+(`MeView`, `MeWidgets`, `MePageEditorSheet`) and `Components/MenuView.swift`
+were retired in `9be67c6`, with the Me-only API they kept alive
+(`isRuleChecked`/`setRuleChecked`). What outlived them is live:
+`Views/Me/` holds the rule editor (`MeCustomizeSheet.swift`, still named
+for the page), `PrayButtonEditorSheet` and `PrayShortcutTray`, and
+`MeWidget` is kept only for the Chapel's one-time migration. The old
+page's reference is git (`ed21006^`); research behind the original design: "The
 Oratory Brief" artifact.
 
 ### Settings & About Screens
@@ -438,7 +438,7 @@ the page they serve):
   Rosary, and a silent Rosary never said them
 - **Devotion** — Rule of Prayer (→ `RuleEditorSheet`), Prayer Record,
   Daily Mysteries (Traditional | Modern → `MysteryScheduleSheet`, the row
-  under Rule of Prayer), Daily Reminders (toggle, time, sound), What Brings
+  under Rule of Prayer), Daily Reminders (toggle, time, sound), The Angelus Bell, What Brings
   You to the Rosary (decides the reminder copy pool)
 - **Offline** — download every meditation set and audio file
 
@@ -452,7 +452,7 @@ It runs in a **`fullScreenCover`**, never a sheet; onboarding is the
 app's first face, and a sheet's inset top, rounded rim and drag-away
 made the re-run a panel over the settings instead of the screen a new
 reader meets. The sheets
-it presents still live in AccountView.swift alongside the shared row
+it presents still live in AccountView.swift (the feedback form in FeedbackView.swift) alongside the shared row
 components (`ActionRow`, `ToggleRow`, `AccountFooter`…).
 
 ## Architecture
@@ -480,7 +480,7 @@ app/
 │   ├── TrueDevotionReadingProgress                        (SwiftData)
 │   ├── LibraryBook           # + catalog entry, parsing rules, LibriVox models
 │   ├── BookReadingProgress                                (SwiftData)
-│   ├── PrayerShortcut                       # + MeWidget — personalization vocab
+│   ├── PrayerShortcut                       # + MeWidget (read only by the Chapel's migration)
 │   ├── PrayerBook            # BookPrayer, chapters, orders of prayer, seasons
 │   ├── Chant                 # Chant, ChantScorePart, ChantGroup, ChantCatalog
 │   ├── ChantScoreDrawing     # A score's drawing, read from .lvscore; SVG path data
@@ -495,11 +495,10 @@ app/
 │   ├── Scriptural/           # ScripturalRosaryView (the title page),
 │   │                         # ScripturalRosaryPrayerView (the prayer)
 │   ├── Chapel/               # MyChapelView (the tab), ChapelGrid (arrange
-│   │                         # machinery), ChapelTiles
+│   │                         # machinery), ChapelTiles, ChapelPrayerBookTile
 │   ├── Chant/                # ChantLibraryView, ChantView (a chant's page),
 │   │                         # ChantScoreSheet, ChantComponents
-│   ├── Me/                   # Legacy, unreachable but still compiled: MeView,
-│   │                         # MeWidgets. Still live: MeCustomizeSheet's
+│   ├── Me/                   # What outlived the retired Me page: MeCustomizeSheet's
 │   │                         # RuleEditorSheet + editor furniture,
 │   │                         # PrayButtonEditorSheet, PrayShortcutTray
 │   ├── Meditation/           # SelectMeditationView (the shelf), MeditationSetDetailView,
@@ -524,8 +523,7 @@ app/
 │                             # BookCover, QuotedPassageText, PrayerPainting(Stage)
 │                             # (the player's ground), RosaryStrandView,
 │                             # BeadStatusRow (the reader's), RosaryDiagram,
-│                             # PendantCrossView, OrdoMasthead;
-│                             # MenuView is legacy, unreachable
+│                             # PendantCrossView, OrdoMasthead
 ├── DesignSystem/             # Theme, Typography, AppIcon, Motion,
 │                             # CallToAction (GoldCTAButton, QuietGoldButton,
 │                             # PrayFootScrim), SheetChrome, FocalFill,
@@ -541,6 +539,7 @@ app/
 │   ├── ReminderMessages      # Notification copy pools
 │   ├── RosaryQuotes          # Daily quotation catalog
 │   ├── RosaryPrayers         # The Rosary's prayers + DevotionPrayers lookup
+│   ├── PrayerBook/           # The Prayer Book's texts (PrayerBookTexts), by chapter
 │   └── MarianLibraryData, CarloAcutisData, HowToPrayData,
 │       MysteriesInScriptureData   # The resource pages' content
 ├── Services/
@@ -549,6 +548,8 @@ app/
 │   ├── ChantPlayer           # The Chant Library's hold on it, above the views
 │   ├── SpokenRosaryPlayer    # The whole Rosary said aloud, above AudioService
 │   ├── RosaryAudioPack       # The spoken Rosary's recordings, fetched and kept
+│   ├── PrayerBookStore       # Ribbons, by heart, orders offered, aloud, the Angelus bell
+│   ├── PrayerBookAudio       # PrayAlongVoice (the book said aloud), AngelusBellSound
 │   ├── OfflineContentService # Full offline download of text + audio
 │   ├── NarrationVoiceCatalog # The server's voices, kept in UserDefaults
 │   ├── MeditationCacheService, ImageCacheService, ArtworkCache
@@ -586,10 +587,12 @@ write concurrent code here:
   approachable concurrency — they do not automatically leave the main actor.
   Use `@concurrent` when work genuinely must run off it (the offline
   download, the library's parse and audio downloads, the rosary pack and
-  the artwork cache all do).
-- SwiftUI may read a `Layout`, a `LayoutValueKey`, or an animatable
-  value off the main actor, so those types are marked `nonisolated`
-  (`ChapelGridLayout`, `ChapelSpanKey`, onboarding's `WordsExtent`);
+  the artwork cache all do, and so does a chant score's read from disk).
+- SwiftUI may read a `Layout`, a `LayoutValueKey`, or a value
+  `onGeometryChange` measures off the main actor, so those types are marked
+  `nonisolated` (`ChapelGridLayout`, `ChapelSpanKey`, the Prayer Book's
+  `WordFlow`, onboarding's `WordsExtent`; the meditation shelf's
+  `ChipFlowLayout` still lacks it);
   under default MainActor isolation a new one needs the same, and the
   Swift 5 mode below won't insist on it.
 - The target is still in the **Swift 5 language mode** (`SWIFT_VERSION =
@@ -814,7 +817,7 @@ write concurrent code here:
   in its view.
 
   **Short readings are one type.** A Marian Library entry, a chapter of
-  St. Carlo's life, one of Montfort's methods and a part of the
+  St. Carlo's life, one of Montfort's methods, a beginner's question and a part of the
   Devotion in Summary are all `LibraryReading`s on `ReadingShelf`s
   (`Models/LibraryReading.swift`; `LibraryReadings.locate(id:)` is the
   one lookup), pushed as `.libraryReading(id:)` and drawn by
@@ -833,8 +836,8 @@ write concurrent code here:
   flashed before the new one; and it once re-identified the page with
   `.id()` inside the ScrollView, laying the two out together. A Read more
   door to a reading on **another** shelf pushes, so Back returns to the
-  reading it came from; the last door always leads home to the reading's
-  own library. Explore's search finds readings by title or dating line,
+  reading it came from; on the Marian Library's and St. Carlo's shelves the
+  last door leads home to the reading's own library. Explore's search finds readings by title or dating line,
   and by shelf only when nothing matches by name. A reading that only
   informs is a card; add a door.
 
@@ -864,7 +867,7 @@ write concurrent code here:
   completion screen, so it counts as the day's Rosary.
 
   Prayers get a page of their own through `.devotionPrayer(id:)`
-  (`DevotionPrayerView`), found by `DevotionPrayers.find` across the
+  (`BookPrayerView`, the Prayer Book's page), found by `PrayerBook.prayer`, else `DevotionPrayers.find`, across the
   Rosary's prayers (`Data/RosaryPrayers.swift`, which How to Pray sets
   under each step of its bead chain) and the consecration's hymns and
   litanies. In Scripture's mysteries open `MysteryPassageView`
@@ -875,7 +878,7 @@ write concurrent code here:
 - **Reminders** — daily notification at a chosen time and sound, with copy drawn
   from the pool matching the user's stated intentions.
 - **Offline** — user-initiated download of every set, its narration in the
-  chosen voice, its painting, and the spoken Rosary's recordings for that
+  chosen voice, its painting, and the spoken Rosary's and the Prayer Book's recordings for that
   voice. A set saved from its own page takes the spoken prayers of its
   mysteries too, every prayer after the Rosary included
   (`OfflineContentService.spokenClips(for:)`): it once said "Saved on
@@ -1128,7 +1131,7 @@ write concurrent code here:
   "Benedicamus Domino", which the Conclusio prints three lines above.
 
   `OfficeCalendarSheet` is the missal's month grid, and literally so:
-  both sheets draw **`LiturgicalMonthGrid`** (the month in words over the
+  both sheets draw **`LiturgicalMonthGrid`** (the month in words beside the
   year in Roman numerals, chevrons, the weeks, the press-a-day-to-name-it readout) and supply
   only the three things that differ — the day's mark, what the day is
   called, and the offline row. They were two copies of the same four
@@ -1338,7 +1341,7 @@ write concurrent code here:
   claim: a track that reads one whole chapter offers HEAR THIS READ
   bare, one that holds more than this chapter adds "· from" and the
   chapter it starts at, rather than pretending the voice starts where the
-  reader is. A DEBUG assertion prints any
+  reader is. A DEBUG-only log prints any
   chapter left unmapped — a volunteer re-cutting their ledger is the
   way this drifts.
 
@@ -1642,7 +1645,7 @@ write concurrent code here:
 
 ### Colors
 
-Every colour — gold included — comes from the active theme's
+Every theme colour — gold included — comes from the active theme's
 `ThemePalette` (`DesignSystem/Theme.swift`), read through `AppColors`;
 never write a hex at a call site. Only `AppColors.textPrimary` (white) is
 the same in every theme. There are three themes, and **new installs
@@ -1832,13 +1835,13 @@ Four rules, learned the hard way:
 
 The player's motion: the strand **follows the finger** while a swipe is
 under way (`RosaryStrandView.follow`, a tanh curve reaching about one
-bead's length, a third of that at either end of the Rosary), the words
-under it dim as it goes, and on release the string slides the rest of
+bead's length, a third of that at either end of the Rosary), the Scriptural
+Rosary's words dim as it goes, and on release the string slides the rest of
 the way on `Motion.beadSlide` while the ring passes from the bead
 leaving the hand to the one arriving — `RosaryBead` is one view whose
 parts light and dim, never three views swapped. Let go short of a bead,
-the string comes back on `beadSettle`. The new bead's words arrive from
-the side the string came from (`beadWordsArrival`, a keyframe nudge
+the string comes back on `beadSettle`. At a decade's turn the mystery's
+name arrives from the side the string came from (`beadWordsArrival`, a keyframe nudge
 rather than a transition, so old and new words move the same way
 whichever way the last move went). The decade turning — the one move
 where the strand itself stays put, since the Glory Be is said on the
@@ -1917,7 +1920,8 @@ transition entirely.
   `@concurrent`, approachable concurrency).
 - **Framework:** SwiftUI throughout; the one UIKit view is the system mail
   composer (`MailComposeSheet` in the feedback form). UIKit is imported
-  elsewhere only for `UIImage`, `UIApplication`, `UIPasteboard` and `UIFont`.
+  elsewhere only for values and services (`UIImage`, `UIApplication`,
+  `UIPasteboard`, `UIFont`, `UIColor`, `UIDevice`, the image renderer), never a view.
 - **State Management:** `@State`, `@Observable`, `@Environment`
 - **Navigation:** `NavigationStack` driven by `AppRouter` (`path` + `AppRoute`).
   The consecration tab hosts its **own** stack as a sibling of the outer one —
@@ -1946,7 +1950,7 @@ transition entirely.
   painting) and `FocalFill` (one crop rule for every size)
 - Meditation narration audio (presigned URLs, ~24h; the set says when they
   die in `audio_expires_at`, and `GET /meditations/:id/audio` re-signs one)
-- The spoken Rosary's clips, per voice (`GET /rosary/audio`)
+- The spoken Rosary's and the Prayer Book's recordings, per voice (`GET /rosary/audio`)
 
 **From other sources** (each through its own client, so their outages
 never look like ours): the Missal from Missale Meum, the Office from our
@@ -1966,7 +1970,8 @@ LibriVox.
   hand-edit, and never swap in the modern Montfort Fathers translation,
   which is still in copyright)
 - The Scriptural Rosary's 249 verses, the Marian Library, How to Pray, In
-  Scripture, St. Carlo, the daily quotes
+  Scripture, St. Carlo, the daily quotes, the Prayer Book's prayers
+  (`Data/PrayerBook`)
 - The Chant Library: 64 recordings and their scores (`Resources/Chants`,
   GENERATED by `Tools/Chants` from Verbum Gloriae, copyleft)
 
@@ -1996,8 +2001,8 @@ LibriVox.
 
 ### Meditation Content Structure (from API)
 - **Sets:** five meditations each (seven for the Seven Sorrows), in all
-  five categories. As of Sept 2026 there are 25: Joyful 6, Sorrowful 5,
-  Glorious 5, Luminous 4, Seven Sorrows 5.
+  five categories. As of Sept 2026 there are 23: Joyful 6, Sorrowful 5,
+  Glorious 5, Luminous 4, Seven Sorrows 3.
 - **Labels (live in API):** Each meditation set carries a `labels: [String]` array. The controlled vocabulary lives in the web app (`LumenViae.Rosary.Labels`) and is currently Intentions, Saints, Scriptural, Contemplative, Considerations. The iOS picker builds its multi-select filter chips from these and groups unfiltered browsing by each set's *first* label, so order labels primary-first. If a set arrives without `labels`, the picker gracefully falls back to a flat list. Favorites are on-device (not API).
 - **Label wording is a display concern:** filtering and grouping match the raw API string, but the picker renders labels through `MeditationLabel.displayName` (`Models/MeditationSet.swift`). "Considerations" currently shows as **Reflections**. Rename in that map, not in the database.
 
@@ -2008,7 +2013,7 @@ GET /meditation-sets?category=:category # [MeditationSetSummary] for a category
 GET /meditation-sets/:id                # Full MeditationSet with meditations + audio_expires_at
 GET /meditations/:id/audio[?voice=]     # Freshly signed narration URL + voice + expires_at
 GET /voices                             # [NarrationVoice], default first
-GET /rosary/audio[?voice=][&include=]   # The spoken Rosary: prayers, announcements, verses
+GET /rosary/audio[?voice=][&include=]   # Recorded prayers: the spoken Rosary's (prayers, announcements, verses) and the Prayer Book's (include=book)
 POST /completions                       # { meditation_set_id, prayed_aloud } — a finished set's Rosary
 ```
 **The completion is the app's one write, and it is not nothing.** When a
