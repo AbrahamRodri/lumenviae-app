@@ -60,3 +60,17 @@ struct ConsecrationPrayer: Codable, Identifiable, Hashable {
         audioUrl != nil || hasChantAudio
     }
 }
+
+// MARK: - ChantRecordings
+
+/// Whether the chant recordings are connected. They are not, for now:
+/// the three files the app sang — the Veni Creator, the Ave Maris
+/// Stella and the Magnificat — came with no licence behind them, so
+/// nothing fetches, downloads or plays a chant. Every place a chant
+/// would sound still stands (the Chapel's tile and sheet, the
+/// consecration's transport) and says it is coming soon. Connecting
+/// licensed recordings is this switch, and the server's keys behind
+/// `/prayers/:id/audio`.
+enum ChantRecordings {
+    static let areConnected = false
+}

@@ -316,7 +316,7 @@ makes FOUR MORE a door to Explore), **Chant** (the app's three chant
 recordings — Veni Creator, Ave Maris Stella, Magnificat — through the
 shared AudioService; the elapsed time rides the kicker at full width
 and the transport row at half, said once either way; ALL CHANTS opens
-the chant sheet), **Reflections** (latest journal entry under an
+the chant sheet. **Disconnected for now** — see Audio below), **Reflections** (latest journal entry under an
 illuminated versal, or its gilded opening mark when it opens on a
 quotation (`VersalCut.opensOnQuotation`: a lone apostrophe, 'Tis, is
 no quotation), or beside a rule of gold fading down when it opens on
@@ -681,6 +681,18 @@ write concurrent code here:
   The painting, its frost and its scrim are `PrayerPaintingStage`,
   shared with the Scriptural Rosary, which uses its `.veiled` style.
 - **Audio** — narration for meditations and chant for consecration prayers.
+
+  **The chants are disconnected** (`ChantRecordings.areConnected`, in
+  `Models/ConsecrationPrayer.swift`, is `false`, Sept 2026): the three
+  files on S3 had no licence — the Magnificat was a YouTube download.
+  Nothing fetches, downloads or plays a chant, and chant files already
+  saved offline are deleted at launch. Every chant place still stands —
+  the Chapel's tile and sheet, the consecration's transport — and says
+  COMING SOON. Candidate recordings, verified for licence or official
+  upload, are in the "Lumen Viae Chant Picks" artifact
+  (claude.ai/artifact/FVKgCZ9T9rMWveQ55zLWgN). YouTube cannot stand in
+  for the audio: its terms forbid audio-only, background and offline
+  play, so an embed would be a visible video player, not this transport.
 
   **Narration comes in voices.** Each meditation carries `narrations`
   (`[Narration]`: a voice slug and a presigned URL, the server's default
@@ -1691,7 +1703,7 @@ transition entirely.
   painting) and `FocalFill` (one crop rule for every size)
 - Meditation narration audio (presigned URLs, ~24h; the set says when they
   die in `audio_expires_at`, and `GET /meditations/:id/audio` re-signs one)
-- Consecration chant audio (presigned per prayer)
+- Consecration chant audio (presigned per prayer) — disconnected, see Audio
 - The spoken Rosary's clips, per voice (`GET /rosary/audio`)
 
 **From other sources** (each through its own client, so their outages
@@ -1752,7 +1764,7 @@ GET /meditation-sets?category=:category # [MeditationSetSummary] for a category
 GET /meditation-sets/:id                # Full MeditationSet with meditations + audio_expires_at
 GET /meditations/:id/audio[?voice=]     # Freshly signed narration URL + voice + expires_at
 GET /voices                             # [NarrationVoice], default first
-GET /prayers/:prayerId/audio            # Presigned chant URL for a consecration prayer
+GET /prayers/:prayerId/audio            # Presigned chant URL (not called while chants are disconnected)
 GET /rosary/audio[?voice=][&include=]   # The spoken Rosary: prayers, announcements, verses
 POST /completions                       # { meditation_set_id, prayed_aloud } — a finished set's Rosary
 ```

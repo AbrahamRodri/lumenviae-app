@@ -330,7 +330,9 @@ struct ConsecrationDayFlowView: View {
         // the user can still move through the day from the Lock Screen.
         attachChantNavigation()
 
-        guard let prayer = currentPrayer, prayer.hasAudio else { return }
+        // A chant with no recording connected stands on the page as
+        // coming soon; there is nothing to fetch
+        guard let prayer = currentPrayer, prayer.hasAudio, ChantRecordings.areConnected else { return }
 
         // A step change while a presign request is in flight would let the
         // stale prayer's chant land over the one now on screen — the Fly.io
@@ -383,6 +385,7 @@ struct ConsecrationDayFlowView: View {
 
     private var audioPlayer: some View {
         ChantTransportBar(
+            isComingSoon: !ChantRecordings.areConnected,
             isPlaying: audio.isPlaying,
             isLoading: audio.isLoading,
             currentTime: audio.currentTime,
@@ -435,7 +438,7 @@ struct ConsecrationDayFlowView: View {
     /// True once the chant's transport has scrolled above the page and
     /// the prayer actually has one to reach.
     private var showsMiniTransport: Bool {
-        transportScrolledAway && currentPrayer?.hasAudio == true
+        transportScrolledAway && currentPrayer?.hasAudio == true && ChantRecordings.areConnected
     }
 
     private var miniTransportButton: some View {
@@ -713,8 +716,13 @@ nonisolated private struct TransportOffsetKey: PreferenceKey {
 /// centrepiece. It keeps the page's own language: background ground,
 /// gold hairline, tracked label type, and the single filled gold circle
 /// the app gives to a play control.
+///
+/// Coming soon, it keeps its place and its shape — the play control
+/// dimmed and inert, the times given over to COMING SOON — so the page
+/// reads the same on the day a recording is connected.
 private struct ChantTransportBar: View {
 
+    let isComingSoon: Bool
     let isPlaying: Bool
     let isLoading: Bool
     let currentTime: Double
@@ -745,11 +753,18 @@ private struct ChantTransportBar: View {
 
                 VStack(spacing: 6) {
                     scrubber
+                        // Nothing to find a place in until there is a recording
+                        .accessibilityHidden(isComingSoon)
 
                     HStack {
-                        Text(Self.time(displayedTime))
-                        Spacer()
-                        Text(Self.time(duration))
+                        if isComingSoon {
+                            Text("COMING SOON")
+                            Spacer()
+                        } else {
+                            Text(Self.time(displayedTime))
+                            Spacer()
+                            Text(Self.time(duration))
+                        }
                     }
                     .font(AppFonts.labelFont(9))
                     .tracking(1.5)
@@ -851,8 +866,13 @@ private struct ChantTransportBar: View {
             .contentShape(Circle())
         }
         .buttonStyle(GoldCTAButtonStyle())
-        .disabled(isLoading)
-        .accessibilityLabel(isLoading ? "Loading the chant" : (isPlaying ? "Pause the chant" : "Play the chant"))
+        .disabled(isLoading || isComingSoon)
+        .opacity(isComingSoon ? 0.4 : 1)
+        .accessibilityLabel(
+            isComingSoon ? "The chant is coming soon"
+                : isLoading ? "Loading the chant"
+                : (isPlaying ? "Pause the chant" : "Play the chant")
+        )
     }
 
     private static func time(_ seconds: Double) -> String {

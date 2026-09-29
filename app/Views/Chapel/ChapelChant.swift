@@ -11,6 +11,11 @@
 //  catalog: adding a recording to the consecration adds it to the
 //  Chapel's tile.
 //
+//  While `ChantRecordings.areConnected` is off, the tile and the sheet
+//  still name every piece and a piece can still be chosen, but nothing
+//  loads: the play control rests, dimmed, and says the recording is
+//  coming soon.
+//
 //  The player is the shared AudioService. The tile never owns it: a
 //  Rosary that claims the player simply silences this tile's readouts,
 //  which go by whether the loaded URL is still the one this tile loaded.
@@ -128,6 +133,10 @@ final class ChapelChantPlayer {
 
     var isPlaying: Bool { ownsPlayback && audio.isPlaying }
 
+    /// Whether there is a recording to sing at all. Off, the tile and
+    /// the sheet say the chant is coming soon instead of offering play.
+    var isConnected: Bool { ChantRecordings.areConnected }
+
     /// 0…1 through the recording, or 0 when the player is elsewhere.
     var progress: Double {
         guard ownsPlayback, audio.duration > 0 else { return 0 }
@@ -166,6 +175,10 @@ final class ChapelChantPlayer {
     func play(_ piece: ChapelChantPiece) {
         current = piece
         UserSettings.shared.chapelChantID = piece.id
+
+        // Choosing a piece still holds it on the tile; there is just no
+        // recording to reach for it yet
+        guard isConnected else { return }
 
         loadCount += 1
         let token = loadCount
@@ -307,7 +320,11 @@ struct ChapelChantSheet: View {
 
                         transport
 
-                        if let error = player.errorMessage {
+                        if !player.isConnected {
+                            Text("The recordings are coming soon.")
+                                .font(AppFonts.italicFont(12))
+                                .foregroundColor(AppColors.textSecondary)
+                        } else if let error = player.errorMessage {
                             Text(error)
                                 .font(AppFonts.italicFont(12))
                                 .foregroundColor(AppColors.textSecondary)
@@ -349,10 +366,15 @@ struct ChapelChantSheet: View {
                     }
                 }
                 .frame(width: 52, height: 52)
-                .haloGlow(AppColors.gold, radius: 10, intensity: 0.3)
+                .haloGlow(AppColors.gold, radius: 10, intensity: player.isConnected ? 0.3 : 0)
             }
             .buttonStyle(GoldCTAButtonStyle())
-            .accessibilityLabel(player.isPlaying ? "Pause the chant" : "Sing the chant")
+            .disabled(!player.isConnected)
+            .opacity(player.isConnected ? 1 : 0.4)
+            .accessibilityLabel(
+                !player.isConnected ? "The chant is coming soon"
+                    : (player.isPlaying ? "Pause the chant" : "Sing the chant")
+            )
 
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
@@ -389,14 +411,23 @@ struct ChapelChantSheet: View {
                         icon: "ph-music-note",
                         isLit: piece == player.current
                     ) {
-                        if piece == player.current, player.isPlaying {
+                        if !player.isConnected {
+                            Text("COMING SOON")
+                                .font(AppFonts.labelFont(9))
+                                .tracking(1.5)
+                                .foregroundColor(AppColors.textSecondary)
+                        } else if piece == player.current, player.isPlaying {
                             AppIcon("ph-speaker-high", size: 13)
                                 .foregroundColor(AppColors.goldLight)
                         }
                     }
                 }
                 .buttonStyle(SacredCardButtonStyle())
-                .accessibilityLabel("Sing \(piece.latinTitle). \(piece.detail)")
+                .accessibilityLabel(
+                    player.isConnected
+                        ? "Sing \(piece.latinTitle). \(piece.detail)"
+                        : "\(piece.latinTitle). \(piece.detail). Coming soon."
+                )
             }
         }
     }

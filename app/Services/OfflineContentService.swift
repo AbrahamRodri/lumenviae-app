@@ -150,6 +150,19 @@ final class OfflineContentService {
         }
     }
 
+    /// Chant files saved while the recordings were connected. With them
+    /// disconnected (`ChantRecordings`), copies already on the device go
+    /// too, rather than wait in the library for a player that no longer
+    /// reaches for them.
+    private func retireDisconnectedChants() {
+        guard !ChantRecordings.areConnected else { return }
+        let fm = FileManager.default
+        let names = (try? fm.contentsOfDirectory(atPath: audioDir.path)) ?? []
+        for name in names where name.hasPrefix("prayer_") {
+            try? fm.removeItem(at: audioDir.appendingPathComponent(name))
+        }
+    }
+
     /// The id in `27.json`. Nil for `index_joyful.json`, which shares the
     /// directory and is a catalog rather than a set.
     private nonisolated static func setId(fromFile name: String) -> Int? {
@@ -193,6 +206,7 @@ final class OfflineContentService {
         root = base.appendingPathComponent("OfflineContent", isDirectory: true)
         createDirectories()
         migrateLegacyAudioNames()
+        retireDisconnectedChants()
         refreshDiskState()
 
         if let data = try? Data(contentsOf: manifestURL),
@@ -480,8 +494,10 @@ final class OfflineContentService {
         return nil
     }
 
-    /// Local chant audio for a consecration prayer, if downloaded.
+    /// Local chant audio for a consecration prayer, if downloaded — and
+    /// never while the recordings are disconnected.
     func localPrayerAudioURL(prayerId: String) -> URL? {
+        guard ChantRecordings.areConnected else { return nil }
         let url = prayerAudioURL(prayerId: prayerId)
         return FileManager.default.fileExists(atPath: url.path) ? url : nil
     }
@@ -760,6 +776,8 @@ final class OfflineContentService {
     /// because that's where the bilingual chants (and their audio flags)
     /// are merged in.
     private static func consecrationChantIds() -> [String] {
+        // Nothing to save while no chant recording is connected
+        guard ChantRecordings.areConnected else { return [] }
         var seen = Set<String>()
         var result: [String] = []
         for phase in ConsecrationPhase.allCases {

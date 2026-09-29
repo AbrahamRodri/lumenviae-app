@@ -1894,7 +1894,8 @@ struct ChapelLibraryTile: View {
 
 /// Sung prayer kept close to hand: a round play control, the piece by
 /// name, and a scrub line. The foot's act opens the chant sheet, the
-/// only place the piece can be changed.
+/// only place the piece can be changed. While no recording is connected
+/// the disc rests, dimmed, and the line under the name says so.
 struct ChapelChantTile: View {
 
     let span: Int
@@ -1903,6 +1904,13 @@ struct ChapelChantTile: View {
 
     var body: some View {
         if span == 2 { full } else { half }
+    }
+
+    /// What stands under the piece's name: that it is coming soon, then
+    /// a failure to reach it, then its one line of description.
+    private var statusLine: String {
+        guard player.isConnected else { return "Recording coming soon" }
+        return player.errorMessage ?? player.current.detail
     }
 
     private var full: some View {
@@ -1926,7 +1934,7 @@ struct ChapelChantTile: View {
 
                     // The error outranks the detail: a chant that could
                     // not be reached should say so where its name is
-                    Text(player.errorMessage ?? player.current.detail)
+                    Text(statusLine)
                         .font(AppFonts.italicFont(13))
                         .foregroundColor(AppColors.textSecondary)
                         .lineLimit(1)
@@ -1955,7 +1963,7 @@ struct ChapelChantTile: View {
                 .minimumScaleFactor(0.85)
                 .fixedSize(horizontal: false, vertical: true)
 
-            Text(player.errorMessage ?? player.current.detail)
+            Text(statusLine)
                 .font(AppFonts.italicFont(12.5))
                 .foregroundColor(AppColors.textSecondary)
                 .lineLimit(1)
@@ -2011,14 +2019,17 @@ struct ChapelChantTile: View {
                 .animation(Motion.crossfade, value: player.isPlaying)
             }
             .frame(width: size, height: size)
-            .shadow(color: AppColors.gold.opacity(0.3), radius: 9)
-            .shadow(color: AppColors.gold.opacity(0.15), radius: 20)
+            .shadow(color: AppColors.gold.opacity(player.isConnected ? 0.3 : 0), radius: 9)
+            .shadow(color: AppColors.gold.opacity(player.isConnected ? 0.15 : 0), radius: 20)
         }
         .buttonStyle(GoldCTAButtonStyle())
+        .disabled(!player.isConnected)
+        .opacity(player.isConnected ? 1 : 0.4)
         .accessibilityLabel(
-            player.isPlaying
-                ? "Pause \(player.current.latinTitle)"
-                : "Sing \(player.current.latinTitle)"
+            !player.isConnected ? "\(player.current.latinTitle), coming soon"
+                : player.isPlaying
+                    ? "Pause \(player.current.latinTitle)"
+                    : "Sing \(player.current.latinTitle)"
         )
     }
 
