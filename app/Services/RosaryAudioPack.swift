@@ -219,8 +219,30 @@ final class RosaryAudioPack {
             return (merged, false)
         } catch {
             if let saved { return (saved, true) }
+            // Never prayed aloud in this voice, and no connection to fetch
+            // it: the Rosary is said in a voice the device already has,
+            // rather than not at all — as a meditation saved in another
+            // voice plays before silence. A new voice chosen on the way
+            // to a flight once left the pack saying it needed the
+            // internet, with the other voice's recordings on disk.
+            if let other = savedManifestInAnotherVoice(than: voice, kinds: kinds) {
+                return (other, true)
+            }
             throw PackError.unavailable
         }
+    }
+
+    /// The manifest saved for some other voice that holds every kind asked
+    /// for, the default voice's first
+    private func savedManifestInAnotherVoice(than voice: String, kinds: [String]) -> RosaryAudioManifest? {
+        let saved = (try? FileManager.default.contentsOfDirectory(atPath: root.path)) ?? []
+        let preferred = NarrationVoiceCatalog.shared.defaultVoice.slug
+        return saved
+            .filter { $0 != voice }
+            .sorted { ($0 == preferred ? 0 : 1) < ($1 == preferred ? 0 : 1) }
+            .lazy
+            .compactMap { self.savedManifest(voice: $0) }
+            .first { Self.covers($0, kinds: kinds) }
     }
 
     /// A voice the server no longer knows (a stale voice list) is a 400;

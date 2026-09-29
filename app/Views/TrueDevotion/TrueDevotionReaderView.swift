@@ -80,12 +80,14 @@ struct TrueDevotionReaderView: View {
                     .presentationDetents([.height(450)])
                     .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
+                    .dynamicTypeSize(...DynamicTypeSize.appMaximum)
 
             case .notes:
                 BookNotesSheet(notes: notes)
                     .presentationDetents([.height(520), .large])
                     .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
+                    .dynamicTypeSize(...DynamicTypeSize.appMaximum)
             }
         }
         .navigationBarBackButtonHidden(true)

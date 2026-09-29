@@ -61,6 +61,7 @@ struct OrdoMissaeView: View {
             MissalTextSizeSheet()
                 .presentationDetents([.height(330)])
                 .presentationBackground(AppColors.background)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
         .task { await load() }
     }

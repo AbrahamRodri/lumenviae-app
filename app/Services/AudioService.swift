@@ -478,14 +478,22 @@ final class AudioService {
             return .success
         }
 
-        // Narration speed, from the Lock Screen and CarPlay.
+        // Narration speed, from the Lock Screen and CarPlay. While a flow
+        // plays at a speed of its own — a book, a chant being learned —
+        // the speed chosen there is that flow's too: taken as the app's,
+        // it set the Rosary's pace from a LibriVox reading, and held a
+        // book asked for at 2× to the narration's 1.7×.
         center.changePlaybackRateCommand.supportedPlaybackRates = Self.supportedRates.map(NSNumber.init)
         center.changePlaybackRateCommand.addTarget { [weak self] event in
             guard let self, self.player != nil,
                   let event = event as? MPChangePlaybackRateCommandEvent else {
                 return .noActionableNowPlayingItem
             }
-            self.setPlaybackRate(Double(event.playbackRate))
+            if let borrower = self.rateBorrower {
+                self.setPlaybackRate(Double(event.playbackRate), remember: false, borrower: borrower)
+            } else {
+                self.setPlaybackRate(Double(event.playbackRate))
+            }
             return .success
         }
 
@@ -510,8 +518,31 @@ final class AudioService {
 
     // MARK: - Playback Rate
 
-    /// Narration speeds offered on screen and to the system.
+    /// The speeds offered as presets: to the system, which draws the Lock
+    /// Screen's and CarPlay's speed control from a list, and on the
+    /// Spiritual Reading shelf. The narration's own slider reaches every
+    /// speed in `rateRange`, and the service takes any of them.
     static let supportedRates: [Double] = [0.75, 1.0, 1.25, 1.5, 2.0]
+
+    /// Every speed the narration can be set to, and the bounds of the one
+    /// remembered: slower than 0.7× the voice drags, faster than 1.7× the
+    /// prayers run into one another
+    static let rateRange: ClosedRange<Double> = 0.7...1.7
+
+    /// The widest a speed borrowed for a while may go — the reading
+    /// shelf's presets reach 2× for a slow LibriVox volunteer — so the
+    /// narration's bounds never cut short a book's own speed
+    private static let borrowedRateRange: ClosedRange<Double> = 0.5...2.0
+
+    /// Any speed brought into a range and onto its twentieths — 1.15×,
+    /// never 1.1500000001× — and a speed that is none at all (a key never
+    /// written reads back as 0) taken as 1×. A speed off the preset list
+    /// once became 1× wherever it was read.
+    static func resolvedRate(_ rate: Double, in range: ClosedRange<Double> = rateRange) -> Double {
+        guard rate.isFinite, rate > 0 else { return 1.0 }
+        let clamped = min(max(rate, range.lowerBound), range.upperBound)
+        return (clamped * 20).rounded() / 20
+    }
 
     private static let rateStorageKey = "userSettings.narrationRate"
 
@@ -519,8 +550,7 @@ final class AudioService {
     /// time. Applied only while playing, since setting a non-zero rate on
     /// an AVPlayer is itself a command to start playing.
     private(set) var playbackRate: Double = {
-        let stored = UserDefaults.standard.double(forKey: "userSettings.narrationRate")
-        return AudioService.supportedRates.contains(stored) ? stored : 1.0
+        AudioService.resolvedRate(UserDefaults.standard.double(forKey: "userSettings.narrationRate"))
     }()
 
     /// The flow the transport's speed is lent to, named by its
@@ -542,7 +572,7 @@ final class AudioService {
     /// 1.5x for a slow LibriVox volunteer does not also speed up the
     /// Rosary's meditations.
     func setPlaybackRate(_ rate: Double, remember: Bool = true, borrower: AnyHashable? = nil) {
-        let resolved = Self.supportedRates.contains(rate) ? rate : 1.0
+        let resolved = Self.resolvedRate(rate, in: remember ? Self.rateRange : Self.borrowedRateRange)
         playbackRate = resolved
         if remember {
             UserDefaults.standard.set(resolved, forKey: Self.rateStorageKey)
@@ -555,8 +585,7 @@ final class AudioService {
     /// Puts the app-wide narration speed back, for a flow that borrowed
     /// the transport at a speed of its own.
     func restoreRememberedRate() {
-        let stored = UserDefaults.standard.double(forKey: Self.rateStorageKey)
-        setPlaybackRate(Self.supportedRates.contains(stored) ? stored : 1.0, remember: false)
+        setPlaybackRate(Self.resolvedRate(UserDefaults.standard.double(forKey: Self.rateStorageKey)), remember: false)
     }
 
     /// Hands the app's speed back for `borrower`, and only if the speed is

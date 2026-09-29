@@ -224,6 +224,7 @@ struct ConsecrationDayFlowView: View {
             // The score alone: the day's own transport goes on sounding
             // beneath it
             ChantScoreSheet(chant: chant, showsTransport: false)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
         .onChange(of: steps.count) { _, newCount in
             // Changing the prayer language can change the set; never
@@ -238,6 +239,7 @@ struct ConsecrationDayFlowView: View {
                 isComplete: viewModel.isDayCompleted(dayNumber),
                 onSelect: open
             )
+            .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
     }
 

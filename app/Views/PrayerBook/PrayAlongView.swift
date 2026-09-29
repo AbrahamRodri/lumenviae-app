@@ -142,6 +142,7 @@ struct PrayAlongView: View {
                 asksHowToPray = false
             }
             .presentationBackground(AppColors.background)
+            .dynamicTypeSize(...DynamicTypeSize.appMaximum)
             .interactiveDismissDisabled()
         }
         .onAppear(perform: begin)
