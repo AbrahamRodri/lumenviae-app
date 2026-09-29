@@ -333,6 +333,10 @@ struct OnboardingView: View {
                 skipButton
             }
         }
+        // Skip's height, kept after Skip has gone: sized by its contents,
+        // the head shrank to the strand on the last slide and the strand
+        // rose eight points as the page arrived.
+        .frame(minHeight: 44)
         // Clear of the clock and the island above it: at 18 the strand
         // was crowded against the status bar rather than standing under it.
         .padding(.top, 34)
