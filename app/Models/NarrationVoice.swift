@@ -44,9 +44,16 @@ struct NarrationVoice: nonisolated Codable, Identifiable, Hashable {
     /// the same order. A picker that could show nothing offline would be
     /// a picker that sometimes vanished.
     static let builtIn: [NarrationVoice] = [
-        NarrationVoice(slug: "female", name: "Female", description: "A gentle, emotive narrator", isDefault: true),
-        NarrationVoice(slug: "male", name: "Male", description: "A calm, measured narrator", isDefault: false)
+        NarrationVoice(slug: "frederick", name: "Male", description: "A warm, reverent narrator", isDefault: true),
+        NarrationVoice(slug: "female", name: "Female", description: "A gentle, emotive narrator", isDefault: false)
     ]
+
+    /// Voices the server has retired, each with the voice that took its
+    /// place. Someone who chose the original male narrator chose a male
+    /// voice, so the choice moves to his successor rather than to
+    /// whatever the default happens to be. The retired voice's saved
+    /// files keep their names and still play when nothing else is saved.
+    static let successors: [String: String] = ["male": "frederick"]
 }
 
 /// Response from GET /api/voices

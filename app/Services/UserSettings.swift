@@ -268,8 +268,8 @@ final class UserSettings {
 
     // MARK: - Narration Voice
 
-    /// The slug of the voice the meditations are heard in - "female",
-    /// "male" - or nil for whatever the server calls its default. Stored
+    /// The slug of the voice the meditations are heard in - "frederick",
+    /// "female" - or nil for whatever the server calls its default. Stored
     /// as the slug rather than an index so a voice added or reordered on
     /// the server never silently changes anyone's choice.
     ///
@@ -638,7 +638,8 @@ final class UserSettings {
             readerAutoScroll = d.bool(forKey: "userSettings.readerAutoScroll")
         }
         if let voice = d.string(forKey: "userSettings.narrationVoice"), !voice.isEmpty {
-            narrationVoiceSlug = voice
+            // A retired voice's choice carries over to its successor
+            narrationVoiceSlug = NarrationVoice.successors[voice] ?? voice
         }
         if d.object(forKey: "userSettings.prayOnBeads") != nil {
             prayOnBeads = d.bool(forKey: "userSettings.prayOnBeads")
