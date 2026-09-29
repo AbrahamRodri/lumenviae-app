@@ -281,14 +281,17 @@ struct AccountView: View {
         }
         .sheet(isPresented: $showSoundPicker) {
             ReminderSoundSheet()
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
         .sheet(isPresented: $showRuleEditor) {
             RuleEditorSheet()
                 .environment(userSettings)
                 .presentationBackground(AppColors.background)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
         .sheet(isPresented: $showIntentionPicker) {
             PrayerIntentionSheet()
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
     }
 }

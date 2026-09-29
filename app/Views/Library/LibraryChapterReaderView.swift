@@ -289,18 +289,21 @@ struct LibraryChapterReaderView: View {
                         returnToMark(chapter: chapter, paragraph: paragraph)
                     }
                 )
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
 
             case .textOptions:
                 LibraryTextOptionsSheet()
                     .presentationDetents([.height(400)])
                     .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
+                    .dynamicTypeSize(...DynamicTypeSize.appMaximum)
 
             case .player:
                 LibraryPlayerSheet(session: session)
                     .presentationDetents([.height(460)])
                     .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
+                    .dynamicTypeSize(...DynamicTypeSize.appMaximum)
 
             case .keep(_, let passage):
                 LibraryKeepSheet(
@@ -317,12 +320,14 @@ struct LibraryChapterReaderView: View {
                 .presentationDetents([.height(520), .large])
                 .presentationDragIndicator(.visible)
                 .presentationBackground(AppColors.background)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
 
             case .footnote(let number, let text):
                 LibraryFootnoteSheet(number: number, text: text)
                     .presentationDetents([.height(320)])
                     .presentationDragIndicator(.visible)
                     .presentationBackground(AppColors.background)
+                    .dynamicTypeSize(...DynamicTypeSize.appMaximum)
 
             case .share(_, let passage):
                 PassageShareSheet(
@@ -334,6 +339,7 @@ struct LibraryChapterReaderView: View {
                 .presentationDetents([.height(560), .large])
                 .presentationDragIndicator(.visible)
                 .presentationBackground(AppColors.background)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
             }
         }
     }

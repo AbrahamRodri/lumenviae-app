@@ -42,6 +42,27 @@ enum FontRegistrar {
     }
 }
 
+// MARK: - Largest Text
+
+extension DynamicTypeSize {
+
+    /// The largest the app's text is allowed to grow. Every `AppFonts`
+    /// face is `Font.custom(_:size:)`, which scales with the body style,
+    /// so the whole app follows the phone's Larger Text setting — up to
+    /// here and no further. At the accessibility sizes the display type
+    /// broke mid-word and the pages stopped reading as designed, and
+    /// xxLarge still cut the home page's rows short, so the cap is one
+    /// step below it.
+    ///
+    /// Applied at the root (`appApp`) as
+    /// `.dynamicTypeSize(...DynamicTypeSize.appMaximum)`. A sheet or a
+    /// cover takes its text size from the phone rather than from the
+    /// view that presents it, so each presentation's content carries
+    /// the same modifier. The readers' own Aa sizes are separate and
+    /// stand on top of it.
+    static let appMaximum: DynamicTypeSize = .xLarge
+}
+
 // MARK: - App Fonts
 
 struct AppFonts {
