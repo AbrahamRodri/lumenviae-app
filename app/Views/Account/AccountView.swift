@@ -85,15 +85,22 @@ struct AccountView: View {
                                 subtitle: UserSettings.prayAloudDetail(isOn: userSettings.prayAloud, onBeads: userSettings.prayOnBeads),
                                 isOn: Bindable(userSettings).prayAloud
                             )
+                        }
+                    }
+                    .padding(.top, 30)
 
-                            // Prayers after the Rosary's closing prayer,
-                            // each off until chosen: said aloud with the
-                            // rest, and shown in the guided Rosary. The
-                            // Seven Sorrows chaplet closes in its own way
+                    // MARK: After the Rosary
+                    // Prayers after the Rosary's closing prayer, each off
+                    // until chosen. Only the voice says them — nothing
+                    // else reads these switches — so they stand under
+                    // their own heading with the set page's note, rather
+                    // than as three more switches among the ways of
+                    // praying, where they read as prayers added to every
+                    // Rosary. The Seven Sorrows chaplet closes in its
+                    // own way and never says them
+                    AccountSection(title: "After the Rosary", icon: "ph-hands-praying") {
+                        VStack(spacing: 0) {
                             ForEach(RosaryClosingExtra.allCases, id: \.self) { extra in
-                                Divider()
-                                    .background(AppColors.gold.opacity(0.2))
-
                                 ToggleRow(
                                     icon: extra.icon,
                                     title: extra.title,
@@ -103,7 +110,22 @@ struct AccountView: View {
                                         set: { userSettings.setChosen(extra, $0) }
                                     )
                                 )
+
+                                Divider()
+                                    .background(AppColors.gold.opacity(0.2))
                             }
+
+                            // The set page's note, and while Pray aloud is
+                            // off, where to find it
+                            Text(userSettings.prayAloud
+                                 ? "Said aloud after the closing prayer."
+                                 : "Said aloud after the closing prayer, when every prayer is said aloud. Pray aloud is under Prayer Experience, above.")
+                                .font(AppFonts.italicFont(13))
+                                .foregroundColor(AppColors.textSecondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 14)
                         }
                     }
                     .padding(.top, 30)
