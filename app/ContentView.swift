@@ -136,8 +136,10 @@ struct ContentView: View {
             guard requested else { return }
             PrayerBookStore.shared.angelusRequested = false
             // Never beneath a pray-along already open, or its first-time
-            // question: the bell has been heard, and the prayer is kept
-            guard !PrayerBookStore.shared.isPrayingAlong else { return }
+            // question: the bell has been heard, and the prayer is kept.
+            // A pray-along lives only on this stack, so at its root none
+            // is open, whatever the book was told
+            guard router.path.isEmpty || !PrayerBookStore.shared.isPrayingAlong else { return }
             perform(.angelus)
         }
         .task {

@@ -47,6 +47,9 @@ struct PrayAlongView: View {
     /// a voice begun after × would pray the whole order on from nowhere
     @State private var isShowing = false
 
+    /// This screen, as the book counts the pray-alongs open
+    @State private var screenID = UUID()
+
     /// The page fades out, the next prayer is put in its place and the
     /// scroll set back to the head unseen, and it fades in — the old
     /// title never flashes over the new prayer
@@ -608,7 +611,7 @@ struct PrayAlongView: View {
 
     private func begin() {
         isShowing = true
-        store.prayAlongOpened()
+        store.prayAlongOpened(screenID)
         UIApplication.shared.isIdleTimerDisabled = true
         voice.onFinish = { scheduleAdvance() }
         voice.onNext = { if !isLast { goTo(index + 1) } }
@@ -631,7 +634,7 @@ struct PrayAlongView: View {
 
     private func end() {
         isShowing = false
-        store.prayAlongClosed()
+        store.prayAlongClosed(screenID)
         advanceTask?.cancel()
         voice.stop()
         AngelusBellSound.shared.silence()
