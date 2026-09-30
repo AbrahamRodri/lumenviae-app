@@ -159,13 +159,13 @@ struct MarianLibraryView: View {
 
                 Text(feast.name)
                     .font(AppFonts.titleFont(26))
-                    .foregroundColor(.white)
+                    .foregroundColor(AppColors.textPrimary)
                     .lineSpacing(3)
                     .fixedSize(horizontal: false, vertical: true)
 
                 Text(feast.keptBy.map { "\(feast.dateLabel) · kept in \($0)" } ?? feast.dateLabel)
                     .font(AppFonts.readingItalicFont(15))
-                    .foregroundColor(.white.opacity(0.8))
+                    .foregroundColor(AppColors.textPrimary.opacity(0.8))
 
                 // Side by side where they fit; a reading with a long name
                 // ("READ · BEHOLD THY MOTHER") sets them one above the other
