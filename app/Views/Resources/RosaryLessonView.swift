@@ -701,7 +701,22 @@ struct RosaryLessonView: View {
                         .frame(maxWidth: .infinity)
                         .clipped()
 
-                    LinearGradient(colors: [.clear, .black.opacity(0.75)], startPoint: .top, endPoint: .bottom)
+                    // Weighted like the mystery cards' scrim, the top of
+                    // the painting kept clear, but gathering higher: the
+                    // days, the name and the set's line take the lower half
+                    // here, and on a straight ramp the gold days stood on
+                    // the Annunciation's and the Resurrection's light at a
+                    // third of the shade
+                    LinearGradient(
+                        stops: [
+                            .init(color: .black.opacity(0.05), location: 0),
+                            .init(color: .black.opacity(0.24), location: 0.28),
+                            .init(color: .black.opacity(0.66), location: 0.52),
+                            .init(color: .black.opacity(0.82), location: 1)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
 
                     VStack(alignment: .leading, spacing: 3) {
                         Text(Self.days(for: category).uppercased())
