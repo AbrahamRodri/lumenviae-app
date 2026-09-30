@@ -599,3 +599,41 @@ struct PrayAlongLaunch: Hashable {
         PrayAlongLaunch(orderID: nil, prayerIDs: [prayer.id], title: prayer.title)
     }
 }
+
+// MARK: - PrayerBookAudio
+
+/// The Prayer Book's one choice as Settings sets it, under the Rosary's
+/// Audio and in the same pill: whether the book speaks at all
+/// (`PrayerBookStore.praysAloud`). The two are kept apart on purpose.
+/// The Rosary's decides whether its voice leads every prayer or reads
+/// the meditation alone; this one whether the book makes a sound, for
+/// prayers said in the pew, before the tabernacle and beside someone
+/// asleep.
+enum PrayerBookAudio {
+
+    /// The book's own name, so the row is never read as a second Audio
+    static let title = "Prayer Book"
+
+    /// The Prayer Book's door glyph
+    static let icon = "ch-praying-hands"
+
+    /// The quieter way first, as the setting's `false`, as the Rosary's
+    /// pills set theirs
+    static let options: [RosaryChoice.Option] = [
+        RosaryChoice.Option(value: false, name: "In Silence"),
+        RosaryChoice.Option(value: true, name: "Aloud"),
+    ]
+
+    /// What the chosen option does. Until the reader has answered, the
+    /// pill shows the default, Aloud, but the book has not yet spoken:
+    /// it asks the first time (`PrayAloudChoiceSheet`), so the line
+    /// says that instead.
+    static func note(for aloud: Bool, answered: Bool = true) -> String {
+        guard answered else {
+            return "Not yet chosen. The book asks the first time you pray along."
+        }
+        return aloud
+            ? "Each prayer is said aloud as you pray along."
+            : "The prayers stand on the page. You say them."
+    }
+}

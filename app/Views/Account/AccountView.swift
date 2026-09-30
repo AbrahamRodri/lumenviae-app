@@ -84,6 +84,33 @@ struct AccountView: View {
                                 choice: .audio,
                                 value: Bindable(userSettings).prayAloud
                             )
+
+                            Divider()
+                                .background(AppColors.gold.opacity(0.2))
+
+                            // The Prayer Book's own: whether it speaks at
+                            // all. Apart from the Rosary's Audio on
+                            // purpose — that one says what the voice
+                            // reads, this one whether the book makes a
+                            // sound. Before any answer it shows the
+                            // default and says the book will ask; only a
+                            // tap here answers the question
+                            RosaryChoiceSettingsRow(
+                                icon: PrayerBookAudio.icon,
+                                title: PrayerBookAudio.title,
+                                options: PrayerBookAudio.options,
+                                value: Binding(
+                                    get: { PrayerBookStore.shared.praysAloud },
+                                    set: { PrayerBookStore.shared.chooseAloud($0) }
+                                ),
+                                isAnswered: PrayerBookStore.shared.hasChosenAloud,
+                                note: { aloud in
+                                    PrayerBookAudio.note(
+                                        for: aloud,
+                                        answered: PrayerBookStore.shared.hasChosenAloud
+                                    )
+                                }
+                            )
                         }
                     }
                     .padding(.top, 30)

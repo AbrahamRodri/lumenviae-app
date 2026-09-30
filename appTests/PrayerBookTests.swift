@@ -4,8 +4,9 @@
 //
 //  The Prayer Book: every chapter and order names prayers the book
 //  carries, English and Latin pair line for line, the seasons choose the
-//  right antiphon of Our Lady and the Regina Cæli in Eastertide, and the
-//  voice asks for the Rosary's recordings where the Rosary has them.
+//  right antiphon of Our Lady and the Regina Cæli in Eastertide, the
+//  voice asks for the Rosary's recordings where the Rosary has them, and
+//  the book's Aloud or In Silence is answered only by being chosen.
 //
 
 import Foundation
@@ -84,5 +85,46 @@ struct PrayerBookTests {
         let lines = PrayerWords.stanzas(of: loreto.english).flatMap { $0 }
         #expect(lines.contains("Holy Mother of God, pray for us."))
         #expect(!lines.contains { $0.contains("℟") })
+    }
+
+    // MARK: - Aloud, or in Silence
+
+    /// A store on a defaults suite of its own, emptied first
+    private func freshStore(_ name: String) -> (PrayerBookStore, UserDefaults) {
+        let defaults = UserDefaults(suiteName: name)!
+        defaults.removePersistentDomain(forName: name)
+        return (PrayerBookStore(defaults: defaults), defaults)
+    }
+
+    @Test func untilAnsweredTheBookShowsAloudButHasNotBeenTold() {
+        let (store, _) = freshStore("PrayerBookTests.unanswered")
+        // Read as Settings reads it, to draw the pill
+        #expect(store.praysAloud)
+        #expect(!store.hasChosenAloud)
+    }
+
+    @Test(arguments: [false, true])
+    func choosingEitherWayAnswersTheQuestionForGood(aloud: Bool) {
+        let name = "PrayerBookTests.chosen.\(aloud)"
+        let (store, defaults) = freshStore(name)
+        store.chooseAloud(aloud)
+        #expect(store.praysAloud == aloud)
+        #expect(store.hasChosenAloud)
+
+        // And the next launch remembers it, so the question is not asked
+        let next = PrayerBookStore(defaults: defaults)
+        #expect(next.praysAloud == aloud)
+        #expect(next.hasChosenAloud)
+    }
+
+    @Test func settingsNamesTheBooksChoiceAsItsOwn() {
+        #expect(PrayerBookAudio.title != RosaryChoice.audio.title)
+        #expect(PrayerBookAudio.options.map(\.name) == ["In Silence", "Aloud"])
+        #expect(PrayerBookAudio.options.map(\.value) == [false, true])
+        let notes = [
+            PrayerBookAudio.note(for: false), PrayerBookAudio.note(for: true),
+            PrayerBookAudio.note(for: true, answered: false),
+        ]
+        #expect(Set(notes).count == notes.count)
     }
 }

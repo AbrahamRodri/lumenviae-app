@@ -503,6 +503,11 @@ struct RosaryChoicePill: View {
     let options: [RosaryChoice.Option]
     @Binding var value: Bool
 
+    /// False while the setting still stands at its default, never
+    /// answered — the Prayer Book's, before it has asked. The lit option
+    /// is only the default then, so a tap on it answers too.
+    var isAnswered: Bool = true
+
     var body: some View {
         HStack(spacing: 0) {
             ForEach(options, id: \.value) { option in
@@ -514,7 +519,7 @@ struct RosaryChoicePill: View {
             Capsule()
                 .strokeBorder(AppColors.gold.opacity(0.18), lineWidth: 1)
         )
-        .sensoryFeedback(.selection, trigger: value)
+        .sensoryFeedback(.selection, trigger: [value, isAnswered])
         .accessibilityRepresentation {
             Picker(title, selection: $value) {
                 ForEach(options, id: \.value) { option in
@@ -523,14 +528,28 @@ struct RosaryChoicePill: View {
             }
             .pickerStyle(.segmented)
         }
+        // A segmented picker does nothing when its selected segment is
+        // chosen again, so while the lit option is only the default,
+        // VoiceOver is offered it as an action of its own
+        .accessibilityActions {
+            if !isAnswered, let lit = options.first(where: { $0.value == value }) {
+                Button("Choose \(lit.name)") { answer(with: lit.value) }
+            }
+        }
+    }
+
+    /// The reader's choice. Written even when it is the value already
+    /// shown, since while unanswered that write is the answer.
+    private func answer(with chosen: Bool) {
+        withAnimation(Motion.choice) { value = chosen }
     }
 
     private func segment(_ option: RosaryChoice.Option) -> some View {
         let on = option.value == value
 
         return Button {
-            guard !on else { return }
-            withAnimation(Motion.choice) { value = option.value }
+            guard !on || !isAnswered else { return }
+            answer(with: option.value)
         } label: {
             Text(option.name.uppercased())
                 .font(AppFonts.labelFont(10))
@@ -567,10 +586,19 @@ struct RosaryChoicePill: View {
 /// Counting holds only while the voice reads the meditation alone, so
 /// with the Whole Rosary its row stands dimmed and says why, rather than
 /// leaving a choice that changes nothing.
+///
+/// The Prayer Book's Aloud or In Silence stands beneath them as the same
+/// row, in its own words (`PrayerBookAudio`), so the two read as one
+/// family and never as one setting.
 struct RosaryChoiceSettingsRow: View {
 
-    let choice: RosaryChoice
+    let icon: String
+    let title: String
+    let options: [RosaryChoice.Option]
     @Binding var value: Bool
+
+    /// What the chosen option does
+    let note: (Bool) -> String
 
     /// False while another choice makes this one moot
     var isAvailable: Bool = true
@@ -578,29 +606,64 @@ struct RosaryChoiceSettingsRow: View {
     /// What the row says while it is not available
     var unavailableNote: String = "With the Whole Rosary, the voice moves the beads on the screen."
 
+    /// False while the setting stands at a default nobody chose
+    /// (`RosaryChoicePill.isAnswered`)
+    var isAnswered: Bool = true
+
+    /// One of the Rosary's two choices, in `RosaryChoice`'s words
+    init(choice: RosaryChoice, value: Binding<Bool>, isAvailable: Bool = true) {
+        self.init(
+            icon: choice.icon,
+            title: choice.title,
+            options: choice.options(for: .meditation),
+            value: value,
+            isAvailable: isAvailable,
+            note: { choice.note(for: $0) }
+        )
+    }
+
+    init(
+        icon: String,
+        title: String,
+        options: [RosaryChoice.Option],
+        value: Binding<Bool>,
+        isAvailable: Bool = true,
+        isAnswered: Bool = true,
+        note: @escaping (Bool) -> String
+    ) {
+        self.icon = icon
+        self.title = title
+        self.options = options
+        self._value = value
+        self.isAvailable = isAvailable
+        self.isAnswered = isAnswered
+        self.note = note
+    }
+
     var body: some View {
         HStack(alignment: .top, spacing: 16) {
-            AppIcon(choice.icon, size: 18)
+            AppIcon(icon, size: 18)
                 .foregroundColor(AppColors.textSecondary)
                 .frame(width: 24)
                 .padding(.top, 2)
                 .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 10) {
-                Text(choice.title)
+                Text(title)
                     .font(AppFonts.bodyFont(16))
                     .foregroundColor(AppColors.cream)
                     .accessibilityHidden(true)
 
                 RosaryChoicePill(
-                    title: choice.title,
-                    options: choice.options(for: .meditation),
-                    value: $value
+                    title: title,
+                    options: options,
+                    value: $value,
+                    isAnswered: isAnswered
                 )
                 .disabled(!isAvailable)
                 .opacity(isAvailable ? 1 : 0.4)
 
-                Text(isAvailable ? choice.note(for: value) : unavailableNote)
+                Text(isAvailable ? note(value) : unavailableNote)
                     .font(AppFonts.bodyFont(12))
                     .foregroundColor(AppColors.textSecondary)
                     .multilineTextAlignment(.leading)
@@ -612,6 +675,7 @@ struct RosaryChoiceSettingsRow: View {
         .padding(.vertical, 14)
         .animation(Motion.choice, value: value)
         .animation(Motion.choice, value: isAvailable)
+        .animation(Motion.choice, value: isAnswered)
     }
 }
 

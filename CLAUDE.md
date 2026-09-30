@@ -518,7 +518,15 @@ the page they serve):
   keep the rows the Bead counter and Pray aloud switches stood in, and
   their order; a switch could say only on or off, not which of two ways.
   Counting stands dimmed under the Whole Rosary, saying why: the voice
-  moves the beads on the screen then
+  moves the beads on the screen then. Beneath them stands the **Prayer
+  Book** row, In Silence | Aloud, in the same row and pill
+  (`PrayerBookAudio`), which sets `PrayerBookStore.praysAloud`. It is
+  kept apart from Audio on purpose: the Rosary's choice decides whether
+  the voice leads every prayer or reads the meditation alone, the
+  book's whether it speaks at all. Until the reader answers, the pill
+  shows the default, Aloud, and its line says the book will ask.
+  Drawing the row answers nothing; a tap on either segment does, the lit
+  one too
 - **After the Rosary** — the prayers after the Rosary (Holy Father,
   Memorare, St Michael), under their own heading and the Voice & speed sheet's
   note: they are said aloud after the closing prayer, and only when
@@ -1892,7 +1900,10 @@ write concurrent code here:
   rows were drawn over each other). The
   order page's switch stands just above its PRAY, so
   praying from there answers the question with what the switch shows;
-  afterwards the speaker at the head of the page owns the choice. Aloud,
+  afterwards the speaker at the head of the page owns the choice. The
+  same choice stands in Settings → Prayer Experience as the Prayer Book
+  row, and a choice made there answers the question before it is asked;
+  it never follows the Rosary's Audio. Aloud,
   each prayer is the server's ElevenLabs
   recording in the chosen narration voice (below), the stanza being said
   lit and followed by proportion, the next prayer turning in after a

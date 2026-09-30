@@ -836,7 +836,7 @@ struct PrayAloudChoiceSheet: View {
                 }
                 .buttonStyle(SacredCardButtonStyle())
 
-                SheetNote("The speaker at the top of the page changes this whenever you like.")
+                SheetNote("The speaker at the top of the page changes this whenever you like, and so does Settings.")
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
