@@ -194,7 +194,14 @@ struct ContentView: View {
         // home page comes back into view
         .task { await presentFirstLook(after: .milliseconds(900)) }
         .onChange(of: router.path.isEmpty) { _, isEmpty in
-            if isEmpty { Task { await presentFirstLook(after: .milliseconds(600)) } }
+            if isEmpty {
+                Task { await presentFirstLook(after: .milliseconds(600)) }
+            } else if firstUseTour.isRunning {
+                // Something opened over the home page with the tour up —
+                // the Angelus bell's notification, a shortcut. The tour
+                // never stands over a prayer; it waits for home again.
+                firstUseTour.pause()
+            }
         }
         .onChange(of: router.selectedTab) { _, tab in
             if tab == .home { Task { await presentFirstLook(after: .milliseconds(400)) } }
@@ -216,9 +223,12 @@ struct ContentView: View {
     /// notes to someone updating, or the tour to a new reader
     private func presentFirstLook(after wait: Duration) async {
         try? await Task.sleep(for: wait)
+        // Not while a Rosary is loading either: the introduction's "Pray
+        // Today's Rosary" fetches its set before it pushes, and on a cold
+        // server the tour began first and the prayer opened under it
         guard router.path.isEmpty, router.selectedTab == .home, !router.chapelArranging,
               !showPrayTray, !showPrayEditor, whatsNewRelease == nil,
-              !firstUseTour.isRunning else { return }
+              !isStartingPrayer, !firstUseTour.isRunning else { return }
         if let release = WhatsNewStore.shared.due {
             WhatsNewStore.shared.markSeen()
             whatsNewRelease = release

@@ -109,6 +109,14 @@ final class FirstUseTour {
         }
     }
 
+    /// Stands the tour aside without ending it, when something opens over
+    /// the home page while it runs (a notification's prayer, a shortcut, a
+    /// Rosary still loading when it began). Still owed, it begins again
+    /// from its first stop the next time the home page is in view.
+    func pause() {
+        stop = nil
+    }
+
     /// Ends the tour, at its last stop or on purpose, for good
     func end() {
         stop = nil
