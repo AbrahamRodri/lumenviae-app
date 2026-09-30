@@ -765,7 +765,12 @@ struct MysteryPrayerView: View {
                             ),
                             topFraction: Self.pendantTopFraction,
                             chromeHidden: chromeHidden,
-                            onTap: toggleChrome
+                            // As the painting's tap: the hint goes with
+                            // the controls rather than coming back with them
+                            onTap: {
+                                dismissSwipeHint()
+                                toggleChrome()
+                            }
                         )
                         .offset(x: -shift)
                         .transition(.opacity)
