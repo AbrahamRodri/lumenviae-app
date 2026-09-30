@@ -10,6 +10,13 @@
 //  - Remote commands (headphones, AirPods, watch): play, pause, skip, scrub
 //  - Interruption handling (calls, Siri) and headphone-unplug pausing
 //
+//  Who holds the player is a claim (`AudioClaim`, `claim(_:rate:ifIdle:
+//  onRevoked:)`): one object that is ownership, revoked with notice when
+//  another flow takes the player. Flows not yet moved to claims drive it
+//  through the older surface — `setTrackNavigation(owner:)`, `loadAudio`,
+//  `rateBorrower` — and either of those taking the player revokes the
+//  current claim, so the two kinds of owner never both believe they hold it.
+//
 
 import AVFoundation
 import Foundation
@@ -106,7 +113,22 @@ final class AudioService {
 
     // MARK: - Initialization
 
-    private init() {
+    /// Whether this instance speaks to the system — the audio session, the
+    /// Lock Screen's commands and Now Playing. The app's one player does;
+    /// an instance made for a test of the claims does not, so it can be
+    /// driven without taking the real session or the real Lock Screen.
+    private let integratesWithSystem: Bool
+
+    /// Where the app's narration speed is kept
+    private let defaults: UserDefaults
+
+    init(integratesWithSystem: Bool = true, defaults: UserDefaults = .standard) {
+        self.integratesWithSystem = integratesWithSystem
+        self.defaults = defaults
+        let stored = Self.resolvedRate(defaults.double(forKey: Self.rateStorageKey))
+        self.playbackRate = stored
+        self.appRate = stored
+        guard integratesWithSystem else { return }
         setupAudioSession()
         setupRemoteCommands()
         setupSessionObservers()
@@ -146,6 +168,7 @@ final class AudioService {
     /// Hands the audio session back to the system so other apps' audio can
     /// resume. Call when leaving a prayer flow, not between mysteries.
     func deactivateSession() {
+        guard integratesWithSystem else { return }
         #if os(iOS)
         try? AVAudioSession.sharedInstance().setActive(
             false,
@@ -331,6 +354,11 @@ final class AudioService {
         onFail: (() -> Void)? = nil,
         onTransport: ((TransportRequest) -> Void)? = nil
     ) {
+        // A flow taking the arrows takes the player: a claim held by
+        // anyone else is at an end, with notice
+        if let holder, holder.token != owner {
+            revoke(holder)
+        }
         // A speed lent to the flow before is not this one's
         if let rateBorrower, rateBorrower != owner {
             restoreRememberedRate()
@@ -376,6 +404,7 @@ final class AudioService {
     }
 
     private func updateTrackCommandAvailability() {
+        guard integratesWithSystem else { return }
         let center = MPRemoteCommandCenter.shared()
         let hasNavigation = trackNavigationOwner != nil
 
@@ -546,12 +575,17 @@ final class AudioService {
 
     private static let rateStorageKey = "userSettings.narrationRate"
 
-    /// Playback speed, persisted — a reader who needs 1.25x needs it every
-    /// time. Applied only while playing, since setting a non-zero rate on
-    /// an AVPlayer is itself a command to start playing.
-    private(set) var playbackRate: Double = {
-        AudioService.resolvedRate(UserDefaults.standard.double(forKey: "userSettings.narrationRate"))
-    }()
+    /// The speed of whatever is playing — the app's own, or one a flow has
+    /// borrowed. Applied only while playing, since setting a non-zero rate
+    /// on an AVPlayer is itself a command to start playing.
+    private(set) var playbackRate: Double
+
+    /// The app's narration speed, persisted — a reader who needs 1.25x
+    /// needs it every time. It is what the speed controls show and set,
+    /// whoever holds the player: a chant slowed to 0.75x for practice
+    /// once showed there as the narration's speed, and dragging the
+    /// slider retuned the chant.
+    private(set) var appRate: Double
 
     /// The flow the transport's speed is lent to, named by its
     /// track-navigation owner, while it runs at a speed of its own.
@@ -575,9 +609,35 @@ final class AudioService {
         let resolved = Self.resolvedRate(rate, in: remember ? Self.rateRange : Self.borrowedRateRange)
         playbackRate = resolved
         if remember {
-            UserDefaults.standard.set(resolved, forKey: Self.rateStorageKey)
+            appRate = resolved
+            defaults.set(resolved, forKey: Self.rateStorageKey)
         }
         rateBorrower = remember ? nil : borrower
+        if isPlaying { player?.rate = Float(resolved) }
+        updateNowPlayingPlaybackState()
+    }
+
+    /// Sets the app's narration speed, as its controls do: kept, and heard
+    /// at once — unless the player is running at a speed a flow borrowed,
+    /// which is that flow's to keep. The app's speed comes back when its
+    /// claim ends.
+    func setAppRate(_ rate: Double) {
+        let resolved = Self.resolvedRate(rate)
+        appRate = resolved
+        defaults.set(resolved, forKey: Self.rateStorageKey)
+        guard rateBorrower == nil else { return }
+        playbackRate = resolved
+        if isPlaying { player?.rate = Float(resolved) }
+        updateNowPlayingPlaybackState()
+    }
+
+    /// The app's speed as the slider is dragged: heard as it goes when the
+    /// player runs at the app's speed, and kept only by `setAppRate` when
+    /// the finger lifts. Never retunes a borrowed speed, nor clears it.
+    func previewAppRate(_ rate: Double) {
+        guard rateBorrower == nil else { return }
+        let resolved = Self.resolvedRate(rate)
+        playbackRate = resolved
         if isPlaying { player?.rate = Float(resolved) }
         updateNowPlayingPlaybackState()
     }
@@ -585,7 +645,7 @@ final class AudioService {
     /// Puts the app-wide narration speed back, for a flow that borrowed
     /// the transport at a speed of its own.
     func restoreRememberedRate() {
-        setPlaybackRate(Self.resolvedRate(UserDefaults.standard.double(forKey: Self.rateStorageKey)), remember: false)
+        setPlaybackRate(appRate, remember: false)
     }
 
     /// Hands the app's speed back for `borrower`, and only if the speed is
@@ -593,6 +653,161 @@ final class AudioService {
     func restoreRememberedRate(from borrower: AnyHashable) {
         guard rateBorrower == borrower else { return }
         restoreRememberedRate()
+    }
+
+    // MARK: - Claims
+
+    /// The claim that holds the player, or nil while a flow without one
+    /// drives it (or nothing does). There is at most one.
+    private(set) var holder: AudioClaim?
+
+    /// The claim whose load put the current item in the player, by its
+    /// serial — nil for an item a flow without a claim loaded, or none.
+    /// A claim holds an item only while it holds the player and this is
+    /// its serial; the URL alone could not say so, since two flows load
+    /// the same recordings (the consecration's chants are the library's).
+    private var itemOwnerSerial: Int?
+
+    private var nextClaimSerial = 0
+
+    /// Takes the player for a flow, and ends whatever claim held it: that
+    /// claim is told (`onRevoked`), its borrowed speed goes back, and its
+    /// Lock Screen arrows and callbacks come off.
+    ///
+    /// `rate` is the speed the flow plays at: the app's own, or one it
+    /// borrows until its claim ends. `ifIdle` declines — returns nil and
+    /// leaves the player as it is — while anything is playing: a
+    /// consecration day does not take the player from a chant the library
+    /// is singing until its own play is pressed.
+    func claim(
+        _ kind: AudioOwnerKind,
+        rate: AudioRatePolicy = .app,
+        ifIdle: Bool = false,
+        onRevoked: @escaping () -> Void = {}
+    ) -> AudioClaim? {
+        if ifIdle, isPlaying { return nil }
+        if let holder { revoke(holder) }
+        // Arrows a flow without a claim left on the Lock Screen go with the
+        // player: they would step a flow that is no longer sounding
+        if let owner = trackNavigationOwner { clearTrackNavigation(owner: owner) }
+        nextClaimSerial += 1
+        let claim = AudioClaim(
+            service: self,
+            serial: nextClaimSerial,
+            kind: kind,
+            ratePolicy: rate,
+            onRevoked: onRevoked
+        )
+        holder = claim
+        switch rate {
+        case .app:
+            if rateBorrower != nil { restoreRememberedRate() }
+        case .borrowed(let borrowed):
+            setPlaybackRate(borrowed, remember: false, borrower: claim.token)
+        }
+        return claim
+    }
+
+    /// Whether `claim` holds the player and the item in it is its own
+    func holdsItem(_ claim: AudioClaim) -> Bool {
+        holder === claim && itemOwnerSerial == claim.serial && currentURL != nil
+    }
+
+    /// Ends `claim` because another flow took the player. Its arrows and
+    /// its speed go first, so the notice finds the player already let go.
+    private func revoke(_ claim: AudioClaim) {
+        guard holder === claim else { return }
+        holder = nil
+        clearTrackNavigation(owner: claim.token)
+        if case .borrowed = claim.ratePolicy {
+            restoreRememberedRate(from: claim.token)
+        }
+        claim.onRevoked()
+    }
+
+    /// Ends `claim` at its own hand: its item stopped and the session given
+    /// back if the item is its own, its arrows off, the app's speed back.
+    /// Nothing at all for a claim already ended — a flow that took the
+    /// player since is not silenced by a late teardown.
+    func release(_ claim: AudioClaim) {
+        guard holder === claim else { return }
+        let hadItem = holdsItem(claim)
+        holder = nil
+        if hadItem {
+            reset()
+            deactivateSession()
+        }
+        clearTrackNavigation(owner: claim.token)
+        if case .borrowed = claim.ratePolicy {
+            restoreRememberedRate(from: claim.token)
+        }
+    }
+
+    /// Loads a recording for `claim`. A recording already in the player
+    /// but loaded by someone else is loaded afresh, from its top: a claim
+    /// never inherits another's item, paused wherever it was left.
+    @MainActor
+    func load(
+        for claim: AudioClaim,
+        url: URL,
+        title: String?,
+        subtitle: String?,
+        artworkAssetName: String?,
+        album: String?,
+        queueIndex: Int?,
+        queueCount: Int?,
+        claimNowPlaying: Bool,
+        startAt: Double
+    ) async -> Bool {
+        guard holder === claim else { return false }
+        if url == currentURL, player != nil, itemOwnerSerial != claim.serial {
+            reset(preservingNowPlaying: true)
+        }
+        let ready = await performLoad(
+            from: url.absoluteString,
+            title: title,
+            subtitle: subtitle,
+            artworkAssetName: artworkAssetName,
+            artworkImage: nil,
+            album: album,
+            queueIndex: queueIndex,
+            queueCount: queueCount,
+            claimNowPlaying: claimNowPlaying,
+            startAt: startAt,
+            claim: claim
+        )
+        return ready && holder === claim
+    }
+
+    /// The claim's speed changed: a borrowed one stays borrowed, at the
+    /// new speed; the app's is set as the app's
+    func setRate(_ rate: Double, for claim: AudioClaim) {
+        guard holder === claim else { return }
+        switch claim.ratePolicy {
+        case .borrowed:
+            claim.ratePolicy = .borrowed(rate)
+            setPlaybackRate(rate, remember: false, borrower: claim.token)
+        case .app:
+            setAppRate(rate)
+        }
+    }
+
+    /// Puts the claim's Lock Screen arrows and transport handling on the
+    /// player, or takes them off, while it holds the player
+    func installNavigation(for claim: AudioClaim) {
+        guard holder === claim else { return }
+        guard let navigation = claim.navigation else {
+            clearTrackNavigation(owner: claim.token)
+            return
+        }
+        setTrackNavigation(
+            owner: claim.token,
+            canGoNext: navigation.canGoNext,
+            canGoPrevious: navigation.canGoPrevious,
+            onNext: navigation.onNext,
+            onPrevious: navigation.onPrevious,
+            onTransport: claim.onTransport
+        )
     }
 
     // MARK: - Sleep Timer
@@ -742,6 +957,7 @@ final class AudioService {
 
     /// Publishes metadata to the Lock Screen / Control Center.
     private func updateNowPlayingInfo() {
+        guard integratesWithSystem else { return }
         var info: [String: Any] = [:]
         info[MPMediaItemPropertyTitle] = nowPlayingTitle ?? "Meditation"
         info[MPMediaItemPropertyArtist] = nowPlayingSubtitle ?? "Lumen Viae"
@@ -804,6 +1020,7 @@ final class AudioService {
     /// Lock Screen scrubber from elapsed at the moment rate was set, so a
     /// stale elapsed makes the scrubber drift or crawl over silence.
     private func updateNowPlayingPlaybackState() {
+        guard integratesWithSystem else { return }
         guard var info = MPNowPlayingInfoCenter.default().nowPlayingInfo else {
             updateNowPlayingInfo()
             return
@@ -832,6 +1049,10 @@ final class AudioService {
     /// past — so "no error and no duration" reads identically to a real
     /// network failure. Judging by that is how a stale load came to
     /// report the live one as unreachable.
+    ///
+    /// For a flow that holds no claim: loading takes the player, so a claim
+    /// held by anyone is at an end, with notice. A flow with a claim loads
+    /// through it (`AudioClaim.load`).
     @MainActor
     @discardableResult
     func loadAudio(
@@ -846,6 +1067,40 @@ final class AudioService {
         claimNowPlaying: Bool = false,
         startAt: Double = 0
     ) async -> Bool {
+        if let holder { revoke(holder) }
+        return await performLoad(
+            from: urlString,
+            title: title,
+            subtitle: subtitle,
+            artworkAssetName: artworkAssetName,
+            artworkImage: artworkImage,
+            album: album,
+            queueIndex: queueIndex,
+            queueCount: queueCount,
+            claimNowPlaying: claimNowPlaying,
+            startAt: startAt,
+            claim: nil
+        )
+    }
+
+    /// The load itself, for a flow without a claim or through one. A load
+    /// carries its claim through every await, as it carries its generation:
+    /// a claim ended while its recording was still arriving drops the
+    /// recording rather than leaving it in the player for nobody.
+    @MainActor
+    private func performLoad(
+        from urlString: String,
+        title: String?,
+        subtitle: String?,
+        artworkAssetName: String?,
+        artworkImage: UIImage?,
+        album: String?,
+        queueIndex: Int?,
+        queueCount: Int?,
+        claimNowPlaying: Bool,
+        startAt: Double,
+        claim: AudioClaim?
+    ) async -> Bool {
         guard let url = URL(string: urlString) else {
             errorMessage = "Invalid audio URL"
             return false
@@ -853,6 +1108,7 @@ final class AudioService {
 
         // Skip if same URL already loaded
         if url == currentURL && player != nil {
+            itemOwnerSerial = claim?.serial
             nowPlayingTitle = title ?? nowPlayingTitle
             nowPlayingSubtitle = subtitle ?? nowPlayingSubtitle
             nowPlayingArtworkAsset = artworkAssetName ?? nowPlayingArtworkAsset
@@ -883,6 +1139,7 @@ final class AudioService {
 
         isLoading = true
         currentURL = url
+        itemOwnerSerial = claim?.serial
         nowPlayingTitle = title
         nowPlayingSubtitle = subtitle
         nowPlayingArtworkAsset = artworkAssetName
@@ -903,6 +1160,12 @@ final class AudioService {
 
             // A newer load (or a reset) owns the state now — hands off.
             guard generation == loadGeneration else { return false }
+            // The claim this load was for has ended: the recording is
+            // nobody's now
+            if let claim, holder !== claim {
+                reset()
+                return false
+            }
 
             duration = CMTimeGetSeconds(cmDuration)
             if duration.isNaN || duration.isInfinite {
@@ -920,6 +1183,10 @@ final class AudioService {
             // Superseded loads exit without touching the newer load's state.
             guard generation == loadGeneration else { return false }
             isLoading = false
+            if let claim, holder !== claim {
+                reset()
+                return false
+            }
 
             // Cancelled while current (view going away): quiet exit.
             if Task.isCancelled { return false }
@@ -946,6 +1213,10 @@ final class AudioService {
                 toleranceAfter: .zero
             )
             guard generation == loadGeneration else { return false }
+            if let claim, holder !== claim {
+                reset()
+                return false
+            }
             currentTime = startAt
         }
 
@@ -970,6 +1241,7 @@ final class AudioService {
     /// Activates the audio session when no other app is playing, so remote
     /// commands route here before the first on-screen play.
     private func activateSessionIfIdle() {
+        guard integratesWithSystem else { return }
         #if os(iOS)
         let session = AVAudioSession.sharedInstance()
         guard !session.isOtherAudioPlaying else { return }
@@ -1147,6 +1419,7 @@ final class AudioService {
         removeTransportObservations()
         player = nil
         currentURL = nil
+        itemOwnerSerial = nil
         currentTime = 0
         duration = 0
         isPlaying = false
@@ -1154,7 +1427,7 @@ final class AudioService {
         isBuffering = false
         errorMessage = nil
         rewindOnResume = false
-        if !preservingNowPlaying {
+        if !preservingNowPlaying, integratesWithSystem {
             MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
             MPNowPlayingInfoCenter.default().playbackState = .stopped
             nowPlayingAlbum = nil
@@ -1237,7 +1510,7 @@ final class AudioService {
     /// Freezes the Lock Screen scrubber while buffering: rate 0 at the true
     /// elapsed time, so it stops advancing over audio that isn't arriving.
     private func publishStalledState() {
-        guard var info = MPNowPlayingInfoCenter.default().nowPlayingInfo else { return }
+        guard integratesWithSystem, var info = MPNowPlayingInfoCenter.default().nowPlayingInfo else { return }
         info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
         info[MPNowPlayingInfoPropertyPlaybackRate] = 0.0
         MPNowPlayingInfoCenter.default().nowPlayingInfo = info
@@ -1269,24 +1542,7 @@ final class AudioService {
             object: item,
             queue: .main
         ) { [weak self] _ in
-            guard let self else { return }
-            self.isPlaying = false
-            self.isBuffering = false
-            self.currentTime = 0
-            self.player?.seek(to: .zero)
-            // A recording heard to its end is no longer wanted sounding:
-            // an interruption from here on has nothing to give back. A
-            // flow that plays on asks again with its next play().
-            self.userIntendsPlayback = false
-            self.rewindOnResume = false
-            self.updateNowPlayingPlaybackState()
-            // Only the flow that currently owns track navigation is told.
-            // Ungated, a handler left behind by a flow the user walked out
-            // of stays installed on the singleton, and the next flow's
-            // track ending calls it: a recording begun on the shelf an
-            // hour ago would start playing over a Rosary.
-            guard self.trackNavigationOwner != nil else { return }
-            self.onTrackFinished?()
+            self?.itemDidPlayToEnd()
         }
 
         // A stream that dies part-way — a weak signal under a streamed
@@ -1299,16 +1555,54 @@ final class AudioService {
             object: item,
             queue: .main
         ) { [weak self] _ in
-            guard let self else { return }
-            self.isPlaying = false
-            self.isBuffering = false
-            self.userIntendsPlayback = false
-            self.currentURL = nil
-            self.errorMessage = "Audio stopped — check your connection"
-            self.updateNowPlayingPlaybackState()
-            guard self.trackNavigationOwner != nil else { return }
-            self.onTrackFailed?()
+            self?.itemDidFail()
         }
+    }
+
+    /// The item in the player played to its end.
+    func itemDidPlayToEnd() {
+        isPlaying = false
+        isBuffering = false
+        currentTime = 0
+        player?.seek(to: .zero)
+        // A recording heard to its end is no longer wanted sounding:
+        // an interruption from here on has nothing to give back. A
+        // flow that plays on asks again with its next play().
+        userIntendsPlayback = false
+        rewindOnResume = false
+        updateNowPlayingPlaybackState()
+        // Told to whoever loaded the item: its claim, while it still holds
+        // the player, and nobody once it does not. Told to the arrows'
+        // holder instead, a chant's end once reached a flow that had
+        // taken the arrows without loading anything.
+        if let owner = itemOwnerSerial {
+            if let holder, holder.serial == owner { holder.onFinish?() }
+            return
+        }
+        // A flow without a claim: only the one that currently owns track
+        // navigation is told. Ungated, a handler left behind by a flow the
+        // user walked out of stays installed on the singleton, and the
+        // next flow's track ending calls it: a recording begun on the shelf
+        // an hour ago would start playing over a Rosary.
+        guard trackNavigationOwner != nil else { return }
+        onTrackFinished?()
+    }
+
+    /// The item in the player stopped part-way and cannot go on.
+    func itemDidFail() {
+        isPlaying = false
+        isBuffering = false
+        userIntendsPlayback = false
+        currentURL = nil
+        errorMessage = "Audio stopped — check your connection"
+        updateNowPlayingPlaybackState()
+        if let owner = itemOwnerSerial {
+            itemOwnerSerial = nil
+            if let holder, holder.serial == owner { holder.onFail?() }
+            return
+        }
+        guard trackNavigationOwner != nil else { return }
+        onTrackFailed?()
     }
 
     private func removeEndOfPlaybackObserver() {
