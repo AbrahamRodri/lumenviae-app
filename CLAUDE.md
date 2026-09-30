@@ -882,7 +882,16 @@ write concurrent code here:
   never comes: they come back by themselves at the last mystery, where
   AMEN waits (on the Scriptural Rosary's screen too). The Scriptural
   Rosary is counted by hand too (below). Resume keeps `(mysteryIndex, beadIndex)`
-  (`InProgressPrayer.beadIndex`, optional for older snapshots).
+  (`InProgressPrayer.beadIndex`, optional for older snapshots), once a
+  bead or a decade has moved; counted by hand no bead moves on the first
+  mystery to say the Rosary has begun, so it is kept for Home's card
+  once it has been prayed a minute
+  (`PrayerResumeService.firstMysteryBegunAfter`, which the Scriptural
+  Rosary shares), and again when the phone locks or the Rosary is left
+  after that. Opened and backed out of, it pins nothing, as on the beads.
+  Said aloud the voice moves the beads on the screen, so this never
+  applies while the voice holds the hand. It once could not be taken up
+  again before the second mystery.
   The painting, its frost and its scrim are `PrayerPaintingStage`,
   shared with the Scriptural Rosary, which uses its `.veiled` style.
   A tap on the painting — or on the pendant, while the opening and
@@ -1635,7 +1644,8 @@ write concurrent code here:
   finish the Rosary": an action called Next mystery must not finish it.
   Counted by hand, no bead moves on the first mystery to say the Rosary
   has begun, so it is kept for Home's card once it has been prayed a
-  minute (`firstMysteryBegunAfter`), and again when the phone locks or
+  minute (`PrayerResumeService.firstMysteryBegunAfter`, shared with the
+  meditation's player), and again when the phone locks or
   the Rosary is left after that; opened and backed out of, it pins
   nothing, as on the screen. It once could not be taken up again before
   the second mystery. The Scriptural Rosary once counted only on the
