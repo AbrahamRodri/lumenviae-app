@@ -40,10 +40,10 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .todaysRosary:     return "Today's Rosary"
-        case .chooseMeditation: return "Choose a Meditation"
+        case .chooseMeditation: return "Today's Mysteries"
         case .sevenSorrows:     return "Seven Sorrows"
         case .scripturalRosary: return "The Scriptural Rosary"
-        case .rosaryAloud:      return "The Rosary Aloud"
+        case .rosaryAloud:      return "The Holy Rosary"
         case .mass:             return "The Mass"
         case .office:           return "The Divine Office"
         case .consecration:     return "The Consecration"
@@ -53,15 +53,15 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
         }
     }
 
-    /// The static line under the title. The Rosary's is dynamic (the
-    /// day's mysteries) and computed where the schedule is known.
+    /// The static line under the title. The Rosary's forms name the
+    /// day's mysteries where the schedule is known (`trayDetail`).
     var subtitle: String {
         switch self {
         case .todaysRosary:     return "The day's mysteries, straight to prayer"
-        case .chooseMeditation: return "Browse the day's meditation sets"
+        case .chooseMeditation: return "Every way to pray them"
         case .sevenSorrows:     return "The chaplet of Our Lady's sorrows"
-        case .scripturalRosary: return "A verse of Scripture for every bead"
-        case .rosaryAloud:      return "Every prayer said aloud, bead by bead"
+        case .scripturalRosary: return "A verse of the Gospel for every bead"
+        case .rosaryAloud:      return "Every prayer said aloud, nothing read between"
         case .mass:             return "Today's propers · 1962 Missal"
         case .office:           return "The canonical hours · 1962 Breviary"
         case .consecration:     return "The 33-day preparation"
@@ -71,10 +71,27 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
         }
     }
 
+    /// The line under the title in the Pray tray, where the Rosary's
+    /// forms each say whose mysteries they are — and Today's Rosary,
+    /// what the voice will do — in the same words as the mysteries' page
+    func trayDetail(today: MysteryCategory, praysAloud: Bool) -> String {
+        switch self {
+        case .todaysRosary:
+            return "\(today.devotionTitle) · \(praysAloud ? "whole Rosary aloud" : "meditation aloud")"
+        case .scripturalRosary:
+            return "\(today.devotionTitle) · a verse for every bead"
+        case .rosaryAloud:
+            return "\(today.devotionTitle) · every prayer aloud"
+        default:
+            return subtitle
+        }
+    }
+
     var icon: String {
         switch self {
         case .todaysRosary:     return "ch-rosary"
-        case .chooseMeditation: return "ph-cards"
+        // The mysteries' page, where the Rosary's forms are chosen
+        case .chooseMeditation: return "ph-book-open"
         // Mary's heart pierced by Simeon's sword, the devotion's own
         // image; the plain heart meant nothing in particular
         case .sevenSorrows:     return "ch-sorrowful-heart"
@@ -98,10 +115,10 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
     var actName: String {
         switch self {
         case .todaysRosary:     return "The Rosary"
-        case .chooseMeditation: return "A Meditation"
+        case .chooseMeditation: return "Today's Mysteries"
         case .sevenSorrows:     return "Seven Sorrows"
         case .scripturalRosary: return "Scriptural Rosary"
-        case .rosaryAloud:      return "The Rosary Aloud"
+        case .rosaryAloud:      return "The Holy Rosary"
         case .mass:             return "The Mass"
         case .office:           return "The Office"
         case .consecration:     return "Consecration"
@@ -129,7 +146,7 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
     /// but is never absent: while a preparation is under way it stands
     /// on the rule of its own accord. Browsing the picker for a
     /// meditation is a doorway to the Rosary, not a devotion beside it,
-    /// so it is not a rule of its own. The Rosary Aloud is: the Chapel
+    /// so it is not a rule of its own. The Holy Rosary is: the Chapel
     /// watches it finish by name, as it does the Scriptural Rosary.
     var isRuleEligible: Bool {
         switch self {

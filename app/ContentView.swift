@@ -269,8 +269,8 @@ struct ContentView: View {
 
         case .scripturalRosary:
             // Straight to the day's mysteries, as Today's Rosary goes —
-            // the title page, where the mysteries are chosen, is Explore's
-            // door, not the Pray button's
+            // its own page, where the mysteries are chosen, is the
+            // mysteries' page's door, not the Pray button's
             guard router.path.isEmpty else { return }
             router.push(.scripturalRosaryPrayer(
                 ScripturalRosaryLaunch(category: ScheduleService.categoryForToday())
@@ -474,11 +474,11 @@ struct ContentView: View {
         case .libraryChapter(let bookID, let chapterIndex):
             LibraryChapterReaderView(bookID: bookID, chapterIndex: chapterIndex)
 
-        case .scripturalRosary:
-            ScripturalRosaryView()
+        case .scripturalRosary(let category):
+            ScripturalRosaryView(category: category)
 
-        case .rosaryAloud:
-            ScripturalRosaryView(form: .plain)
+        case .rosaryAloud(let category):
+            ScripturalRosaryView(category: category, form: .plain)
 
         // A player, like the meditation's: it hides the bar and carries
         // its own way out

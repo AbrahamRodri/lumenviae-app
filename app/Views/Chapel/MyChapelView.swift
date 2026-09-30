@@ -376,10 +376,9 @@ struct MyChapelView: View {
         switch item {
         case .todaysRosary:
             return ScheduleService.categoryForToday().devotionTitle
-        case .scripturalRosary:
-            return "\(ScheduleService.categoryForToday().devotionTitle) · in Scripture"
-        case .rosaryAloud:
-            return "\(ScheduleService.categoryForToday().devotionTitle) · said aloud"
+        // In the words the Pray tray uses for the same acts
+        case .scripturalRosary, .rosaryAloud:
+            return item.trayDetail(today: ScheduleService.categoryForToday(), praysAloud: true)
         case .consecration:
             guard let progress = activeConsecration else { return "Not yet begun" }
             let day = progress.currentDayNumber

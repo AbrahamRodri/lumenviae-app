@@ -121,15 +121,13 @@ struct PrayShortcutTray: View {
         .buttonStyle(QuietGlyphButtonStyle())
     }
 
-    /// The Rosary's line names the day's mysteries; the rest carry
-    /// their standing line.
+    /// The Rosary's forms name the day's mysteries, and Today's Rosary
+    /// what the voice will do; the rest carry their standing line.
     private func subtitle(for shortcut: PrayerShortcut) -> String {
-        switch shortcut {
-        case .todaysRosary:
-            return ScheduleService.categoryForToday().devotionTitle
-        default:
-            return shortcut.subtitle
-        }
+        shortcut.trayDetail(
+            today: ScheduleService.categoryForToday(),
+            praysAloud: settings.prayAloud
+        )
     }
 }
 

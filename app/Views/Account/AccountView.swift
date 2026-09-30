@@ -62,28 +62,27 @@ struct AccountView: View {
                             Divider()
                                 .background(AppColors.gold.opacity(0.2))
 
-                            // The beads on the meditation's player are a
-                            // way of praying, not a requirement: off, the
-                            // player moves a decade at a time for a hand
-                            // that keeps its own count
-                            ToggleRow(
-                                icon: "ch-rosary",
-                                title: UserSettings.beadCounterTitle,
-                                subtitle: UserSettings.beadCounterDetail(isOn: userSettings.prayOnBeads, aloud: userSettings.prayAloud),
-                                isOn: Bindable(userSettings).prayOnBeads
+                            // Counting: the beads on the screen are a way
+                            // of praying, not a requirement — on your own
+                            // rosary the player moves a mystery at a time.
+                            // Moot with the Whole Rosary, whose voice moves
+                            // the beads on the screen
+                            RosaryChoiceSettingsRow(
+                                choice: .counting,
+                                value: Bindable(userSettings).prayOnBeads,
+                                isAvailable: !userSettings.prayAloud
                             )
 
                             Divider()
                                 .background(AppColors.gold.opacity(0.2))
 
-                            // The whole Rosary said aloud, in the voice
-                            // chosen above: every prayer, the beads moving
-                            // with it, for prayer with the phone put away
-                            ToggleRow(
-                                icon: "ph-hands-praying",
-                                title: UserSettings.prayAloudTitle,
-                                subtitle: UserSettings.prayAloudDetail(isOn: userSettings.prayAloud, onBeads: userSettings.prayOnBeads),
-                                isOn: Bindable(userSettings).prayAloud
+                            // Audio: the meditation alone, or the Whole
+                            // Rosary said aloud in the voice chosen above,
+                            // the beads moving with it, for prayer with the
+                            // phone put away
+                            RosaryChoiceSettingsRow(
+                                choice: .audio,
+                                value: Bindable(userSettings).prayAloud
                             )
                         }
                     }
@@ -115,11 +114,11 @@ struct AccountView: View {
                                     .background(AppColors.gold.opacity(0.2))
                             }
 
-                            // The set page's note, and while Pray aloud is
-                            // off, where to find it
+                            // The set page's note, and while the Whole
+                            // Rosary is not chosen, where to choose it
                             Text(userSettings.prayAloud
                                  ? "Said aloud after the closing prayer."
-                                 : "Said aloud after the closing prayer, when every prayer is said aloud. Pray aloud is under Prayer Experience, above.")
+                                 : "Said aloud after the closing prayer, with the Whole Rosary. Audio is under Prayer Experience, above.")
                                 .font(AppFonts.italicFont(13))
                                 .foregroundColor(AppColors.textSecondary)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -1179,7 +1178,7 @@ struct PrivacyPolicySheet: View {
 
                     InfoBlock(
                         title: "What Reaches Us",
-                        text: "One short note, when you finish a meditation set's Rosary: which set it was, and whether Pray aloud was on. Our server keeps it with the time and an approximate city, region and country, looked up through ipapi.co from the address your phone connects from, and keeps that address only in a shortened form. No name, account or device identifier goes with it, so two Rosaries prayed on one phone look like two prayed by strangers. We use these notes only to learn which meditations are prayed, and roughly where. The Scriptural Rosary and the guided Rosary send nothing, and nothing else reaches us unless you write to us."
+                        text: "One short note, when you finish a meditation set's Rosary: which set it was, and whether it was said aloud as the Whole Rosary. Our server keeps it with the time and an approximate city, region and country, looked up through ipapi.co from the address your phone connects from, and keeps that address only in a shortened form. No name, account or device identifier goes with it, so two Rosaries prayed on one phone look like two prayed by strangers. We use these notes only to learn which meditations are prayed, and roughly where. The Scriptural Rosary, the Holy Rosary and the guided Rosary send nothing, and nothing else reaches us unless you write to us."
                     )
 
                     InfoBlock(
@@ -1227,7 +1226,7 @@ struct HelpSupportSheet: View {
                 VStack(alignment: .leading, spacing: 28) {
                     InfoBlock(
                         title: "How do I begin praying?",
-                        text: "From the home screen, tap \"Begin Prayer\" on the featured mystery card, or tap any mystery from the grid below. You'll be guided through a short meditation before the Rosary begins."
+                        text: "From the home screen, tap \"Pray the Rosary\" under today's mysteries, or tap any mystery in the grid below. On the page that opens, choose a meditation set, or one of the other ways to pray: the Scriptural Rosary, with a verse for every bead, or the Holy Rosary, with no meditation. Its own page shows how you'll pray, the audio and the counting, just above Pray."
                     )
 
                     InfoBlock(
@@ -1237,7 +1236,7 @@ struct HelpSupportSheet: View {
 
                     InfoBlock(
                         title: "How does audio work?",
-                        text: "If a meditation set includes guided audio, playback controls will appear during the prayer. Tap the play button to start. Use the skip buttons to move forward or backward 10 seconds."
+                        text: "Choose it on the Rosary's own page before you pray, or in Settings under Prayer Experience: Meditation Only reads the meditation aloud and leaves the prayers to you, and Whole Rosary says every prayer aloud, the beads moving with the voice. During the prayer, the play button starts and pauses the voice, and the skip buttons move 10 seconds forward or back."
                     )
 
                     InfoBlock(
@@ -1247,7 +1246,7 @@ struct HelpSupportSheet: View {
 
                     InfoBlock(
                         title: "How do I adjust text size?",
-                        text: "Open the Chapel, tap the sliders at the top of the page, then Prayer Experience → Text Size. Drag the slider toward the larger \"A\" to increase the meditation text size."
+                        text: "On the home screen, tap the sliders at the top left, then Prayer Experience → Text Size. Drag the slider toward the larger \"A\" to increase the meditation text size."
                     )
 
                     InfoBlock(

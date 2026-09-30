@@ -169,10 +169,10 @@ struct NarrationPlayControl: View {
 // MARK: - Playback Settings
 
 /// The tray beside the reader button: which voice reads, how fast it
-/// reads, whether the whole Rosary is said aloud, and whether the player
-/// is prayed on the beads.
+/// reads, and the Rosary's two choices — Audio, and while the voice
+/// reads the meditation alone, Counting.
 ///
-/// The voice and the beads toggle live here as well as in Settings
+/// The voice and the choices live here as well as in Settings
 /// because this is the one settings surface the player has: someone
 /// who finds the strand, or the narrator, is not for them mid-Rosary
 /// should not have to leave the Rosary to say so, and someone who
@@ -183,9 +183,9 @@ struct PlaybackSettingsSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     /// The sheet's height, for its detent: the header, the voices and
-    /// the speeds under their labels, and the rows for the bead counter
-    /// and for praying aloud, whose lines can run to three
-    static let height: CGFloat = 530
+    /// the speeds under their labels, and the two choices with their
+    /// notes
+    static let height: CGFloat = 600
 
     /// The detents the player gives it: its own height, or at the
     /// accessibility text sizes the whole glass, where the rows once
@@ -214,28 +214,25 @@ struct PlaybackSettingsSheet: View {
                 PlaybackSpeedChoice()
                     .padding(.horizontal, SheetMetrics.gutter)
 
-                // The same section, in the same order, as the set's page
-                // (`RosarySetupSheet`): Pray aloud once stood here under
-                // "The beads", after the counter, and the two sheets that
-                // hold the same two switches described them differently
-                SheetSectionLabel("The prayers")
-
-                // The whole row answers, as it does in Settings
-                SheetToggleRow(
-                    title: UserSettings.prayAloudTitle,
-                    detail: UserSettings.prayAloudDetail(isOn: settings.prayAloud, onBeads: settings.prayOnBeads),
-                    icon: "ph-hands-praying",
-                    isOn: $settings.prayAloud,
-                    showsDivider: true
-                )
-
-                SheetToggleRow(
-                    title: UserSettings.beadCounterTitle,
-                    detail: UserSettings.beadCounterDetail(isOn: settings.prayOnBeads, aloud: settings.prayAloud),
-                    icon: "ch-rosary",
-                    isOn: $settings.prayOnBeads,
-                    showsDivider: false
-                )
+                // The two choices as the set's page sets them (`RosaryChoiceGroup`),
+                // in the same order and the same words, so a change made
+                // mid-Rosary is recognised as the one made before PRAY.
+                // Counting stands only while the voice reads the
+                // meditation alone: with the Whole Rosary it moves the
+                // beads on the screen itself
+                VStack(spacing: 0) {
+                    ForEach(RosaryChoice.offered(for: .meditation, aloud: settings.prayAloud), id: \.self) { choice in
+                        RosaryChoiceGroup(
+                            choice: choice,
+                            form: .meditation,
+                            value: choice == .audio ? $settings.prayAloud : $settings.prayOnBeads
+                        )
+                        .transition(RosaryChoiceGroup.comingAndGoing)
+                    }
+                }
+                .padding(.horizontal, SheetMetrics.gutter)
+                .padding(.top, 14)
+                .animation(Motion.choice, value: settings.prayAloud)
             }
             .frame(maxWidth: .infinity, alignment: .topLeading)
             .padding(.bottom, 20)

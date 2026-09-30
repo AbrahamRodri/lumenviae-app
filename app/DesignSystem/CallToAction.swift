@@ -249,8 +249,9 @@ struct PrayFootScrim: View {
 }
 
 /// The ground for a title page's foot that carries more than PRAY — the
-/// HOW YOU'LL PRAY line above it. The scrim is spent over the air above
-/// the line, so the line and the act stand on the page's own deep ground
+/// Prayer Book's aloud-or-silent switch above it. The scrim is spent over
+/// the air above the line, so the line and the act stand on the page's
+/// own deep ground
 /// (the gradient ends in it, so there is no edge). Stretched over the
 /// whole foot, as it is under PRAY alone, the fade was still half clear
 /// where the line sits, and the ledger read through it.

@@ -542,6 +542,17 @@ struct PendantStage: View {
     /// it in the middle.
     var trailingColumn: CGFloat? = nil
 
+    /// Whether a tap has cleared the chrome, for what a tap says it does
+    var chromeHidden: Bool = false
+
+    /// A tap on the pendant, which the host gives the meaning a tap on
+    /// the painting has: clearing the chrome, or bringing it back. The
+    /// pendant stands where the painting stood, and it once took no tap:
+    /// with the chrome cleared over the painting, the voice reaching the
+    /// closing prayers left nothing on the screen that could bring it
+    /// back, and × and AMEN out of reach.
+    var onTap: (() -> Void)? = nil
+
     var body: some View {
         let top = fullHeight * topFraction
         let share = fullHeight * heightFraction
@@ -572,6 +583,16 @@ struct PendantStage: View {
             .frame(maxWidth: .infinity, alignment: trailingColumn == nil ? .center : .trailing)
         }
         .frame(width: width, height: fullHeight)
+        .contentShape(Rectangle())
+        .onTapGesture { onTap?() }
+        .allowsHitTesting(onTap != nil)
+        // Where the voice is on it, as the pendant itself says
+        .modifier(StageTapAccessibility(
+            label: pendant.place.map { "The pendant. \($0.name)" } ?? "The pendant",
+            chromeHidden: chromeHidden,
+            action: { onTap?() }
+        ))
+        .accessibilityHidden(onTap == nil)
         .ignoresSafeArea()
     }
 }

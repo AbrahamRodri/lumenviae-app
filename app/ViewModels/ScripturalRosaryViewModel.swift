@@ -28,9 +28,11 @@ final class ScripturalRosaryViewModel {
     /// one string, kept here.
     static let devotionName = "Scriptural Rosary"
 
-    /// The Rosary Aloud's name in the Prayer Record, kept apart from the
+    /// The Holy Rosary's name in the Prayer Record, kept apart from the
     /// Scriptural Rosary's so the Chapel's rule can tell the two apart.
     /// Both count as the day's Rosary, which is read from the mysteries.
+    /// It keeps the devotion's old name, "The Rosary Aloud": the Record
+    /// already holds days prayed under it, and the rule matches by it.
     static let aloudDevotionName = "The Rosary Aloud"
 
     // MARK: - State
@@ -48,10 +50,14 @@ final class ScripturalRosaryViewModel {
     }
 
     /// The devotion's name as the screens set it: the header, the Lock
-    /// Screen, a share
+    /// Screen, a share, the resume card. The Holy Rosary's is kept here as
+    /// well, for a card saved while it was still recorded under its old
+    /// name (`aloudDevotionName`), which the Prayer Record keeps.
     var displayName: String {
-        isPlain ? "The Rosary Aloud" : "The Scriptural Rosary"
+        isPlain ? Self.holyRosaryName : "The Scriptural Rosary"
     }
+
+    static let holyRosaryName = "The Holy Rosary"
 
     /// Which snapshot an interrupted one is kept as, so it comes back
     /// as itself
@@ -258,13 +264,18 @@ final class ScripturalRosaryViewModel {
     }
 
     /// What the bead under the hand says.
+    var reading: BeadReading { reading(bead: currentBeadIndex) }
+
+    /// What a bead of the current decade says. Counted on one's own
+    /// rosary, the whole decade is set at once, a bead's words after
+    /// another's.
     ///
     /// The Our Father bead announces the mystery — its scene, its
     /// passage, and the fruit to ask for — the way a decade is announced
     /// aloud before the beads begin. Each Hail Mary carries its verse.
     /// The decade prayed, the doxology closes it.
-    var reading: BeadReading {
-        if currentBeadIndex <= 0 {
+    func reading(bead: Int) -> BeadReading {
+        if bead <= 0 {
             guard let mystery = currentMystery else {
                 return BeadReading(reference: nil, text: "", footnote: nil)
             }
@@ -287,7 +298,7 @@ final class ScripturalRosaryViewModel {
             )
         }
 
-        if isDecadePrayed {
+        if bead > hailMarys {
             let language = UserSettings.shared.prayerLanguage
             return BeadReading(
                 reference: nil,
@@ -306,10 +317,10 @@ final class ScripturalRosaryViewModel {
         }
 
         let verses = verses
-        guard verses.indices.contains(currentBeadIndex - 1) else {
+        guard verses.indices.contains(bead - 1) else {
             return BeadReading(reference: nil, text: "", footnote: nil)
         }
-        let verse = verses[currentBeadIndex - 1]
+        let verse = verses[bead - 1]
         return BeadReading(reference: verse.reference, text: verse.text, footnote: nil)
     }
 
@@ -402,7 +413,12 @@ extension ScripturalRosaryViewModel: SpokenRosaryHost {
             )
             let player = SpokenRosaryPlayer(script: script, host: self)
             spoken = player
-            let step = resumeStep
+            // The step an interrupted Rosary stopped on, only while the
+            // hand still stands where it stopped: turned on after the hand
+            // has moved on, the voice would take it back there
+            let step = resumeStep.flatMap {
+                $0.mystery == currentMysteryIndex && $0.bead == currentBeadIndex ? $0 : nil
+            }
             resumeStep = nil
             await player.start(
                 mystery: currentMysteryIndex,

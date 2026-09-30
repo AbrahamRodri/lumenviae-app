@@ -2,32 +2,35 @@
 //  MeditationSetDetailView.swift
 //  Lumen Viae
 //
-//  One meditation set, read before it is prayed.
+//  One meditation set, confirmed before it is prayed.
 //
-//  The page is set like a title page rather than a product listing: the
-//  labels as a kicker, an ornament, the set's name in Cinzel, and the
-//  painting under it in a lancet arch — the frontispiece. Beneath that,
-//  a ruled ledger of short sections, each named in gold down the left
-//  margin: what the set is, the meditations it holds, whose voice they
-//  are, and whether it's saved on the device. The first one waits behind
-//  a quiet line for anyone who wants to hear that voice before
-//  committing to five of it.
+//  The Rosary's own page (`RosaryConfirmPage`), shared with the
+//  Scriptural Rosary and the Holy Rosary: the set's painting dissolving
+//  into the page, its mysteries as the kicker, its name in Cinzel and a
+//  line from its description, then YOUR ROSARY TODAY — Audio, Counting
+//  while the voice reads the meditation alone, and the voice and its
+//  speed — over PRAY.
+//
+//  Past the choices, a ruled ledger of short sections named in gold
+//  down the left margin: the rest of what the set is, the meditations it
+//  holds, whose voice they are, whether it's saved on the device, and
+//  the first meditation behind a quiet line for anyone who wants to hear
+//  that voice before committing to five of it. The page's first screen
+//  is the confirmation; the ledger is there for whoever scrolls.
 //
 //  One gold act at the foot begins the Rosary, and nothing rides under
 //  it — no count, and never a duration. A Rosary is not a podcast.
 //
 //  The full set loads behind the page so the button is instant. The
 //  list comes from bundled data until it lands, so the page is never a
-//  blank waiting on a cold server. The frontispiece is the set's own
-//  painting when the API carries one, and the category's otherwise —
-//  `SetArtworkView` decides, cropped around the point its curator chose.
+//  blank waiting on a cold server. The painting is the set's own when
+//  the API carries one, and the category's otherwise — `SetArtworkView`
+//  decides, cropped around the point its curator chose.
 //
-
 import SwiftUI
 
 struct MeditationSetDetailView: View {
     @Environment(AppRouter.self) private var router
-    @Environment(UserSettings.self) private var settings
     @State private var viewModel: MeditationSetDetailViewModel
 
     /// True from a "Pray" tap until the set is in hand — the preparing
@@ -51,63 +54,27 @@ struct MeditationSetDetailView: View {
     }
 
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                AppColors.appGradient
-                    .ignoresSafeArea()
-
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: 0) {
-                        titling
-                            .devotionalEntrance()
-
-                        frontispiece(width: artworkWidth(for: geometry))
-                            .padding(.top, 26)
-                            .devotionalEntrance(delay: 0.08)
-
-                        sections
-                            .padding(.top, 34)
-                            .devotionalEntrance(delay: 0.16)
-                    }
-                    // Clears the header chrome above, and the choices and
-                    // the act fixed below
-                    .padding(.top, 62)
-                    .padding(.bottom, 260)
-                }
+        RosaryConfirmPage(
+            kicker: viewModel.category.map { "The \($0.devotionTitle)" } ?? "The Rosary",
+            title: viewModel.name,
+            subtitle: viewModel.subtitle,
+            prayEnabled: viewModel.hasMeditations,
+            preparing: isPreparingToPray && viewModel.fullSet == nil ? "Preparing the meditations" : nil,
+            onBack: { router.pop() },
+            onPray: pray
+        ) {
+            SetArtworkView(
+                setId: viewModel.summary.id,
+                artwork: viewModel.artwork,
+                category: viewModel.category
+            )
+        } choices: {
+            RosaryChoicesSection(form: .meditation, category: viewModel.category)
+        } ledger: {
+            sections
                 .animation(Motion.crossfade, value: viewModel.isLoading)
                 .animation(Motion.crossfade, value: showsPreview)
-                // Scrolled content softens away behind the back and pin
-                // rather than running under them at full strength.
-                .mask(
-                    LinearGradient(
-                        stops: [
-                            .init(color: .clear, location: 0),
-                            .init(color: .black, location: 0.075),
-                            .init(color: .black, location: 1)
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
-
-                // The one act, fixed at the foot
-                VStack {
-                    Spacer()
-                    prayFoot
-                }
-
-                // Sits under the header buttons: Back stays reachable while
-                // the set is fetched, so a cold server never traps the user
-                // here for the length of a timeout.
-                if isPreparingToPray && viewModel.fullSet == nil {
-                    preparingOverlay
-                        .transition(.opacity)
-                }
-
-                headerChrome
-            }
         }
-        .navigationBarHidden(true)
         .task {
             await viewModel.load()
         }
@@ -130,116 +97,15 @@ struct MeditationSetDetailView: View {
         }
     }
 
-    // MARK: - Chrome
-
-    /// Back on the left, the pin on the right. How the Rosary will be
-    /// prayed is chosen at the foot, just above PRAY (`RosarySetupCard`).
-    private var headerChrome: some View {
-        VStack {
-            HStack {
-                PrayerHeaderButton(icon: "ph-caret-left", size: 16, label: "Back") {
-                    router.pop()
-                }
-
-                Spacer()
-
-                PrayerHeaderButton(
-                    icon: viewModel.isPinned ? "ph-push-pin-fill" : "ph-push-pin",
-                    size: 16,
-                    label: viewModel.isPinned ? "Unpin these meditations" : "Pin these meditations to the top",
-                    tint: viewModel.isPinned ? AppColors.gold : .white
-                ) {
-                    withAnimation(Motion.settle) { viewModel.togglePin() }
-                }
-            }
-            .padding(.horizontal, 16)
-            .padding(.top, 8)
-
-            Spacer()
-        }
-    }
-
-    // MARK: - Titling
-
-    /// Kicker, ornament, name — the title page, centered and quiet.
-    private var titling: some View {
-        VStack(spacing: 16) {
-            if !viewModel.labels.isEmpty {
-                Text(MeditationLabel.displayLine(viewModel.labels))
-                    .font(AppFonts.labelFont(9.5))
-                    .tracking(3)
-                    .foregroundColor(AppColors.gold)
-                    .multilineTextAlignment(.center)
-            }
-
-            OrnamentDivider()
-                .frame(width: 150)
-
-            Text(viewModel.name)
-                .font(AppFonts.titleFont(29))
-                .foregroundColor(AppColors.cream)
-                .multilineTextAlignment(.center)
-                .lineSpacing(6)
-                .minimumScaleFactor(0.6)
-                .fixedSize(horizontal: false, vertical: true)
-        }
-        .padding(.horizontal, 28)
-        .frame(maxWidth: .infinity)
-    }
-
-    // MARK: - Frontispiece
-
-    /// A little over half the width, so the painting sits inside the page
-    /// as a plate rather than taking it over; capped so an iPad doesn't
-    /// blow it up to a poster.
-    private func artworkWidth(for geometry: GeometryProxy) -> CGFloat {
-        min(geometry.size.width * 0.56, 260)
-    }
-
-    /// The painting in a lancet arch, unframed — the shape is the frame.
-    /// Proportioned as a cathedral window: a little taller than it is
-    /// wide, so the arch reads as an arch and not as a rounded box.
-    ///
-    /// The set's own painting when it has one, cropped around the point
-    /// its curator chose; the category's otherwise. A painting that came
-    /// with a credit carries it beneath the plate, the way a museum plate
-    /// does — small, and only when there is one.
-    private func frontispiece(width: CGFloat) -> some View {
-        let arch = GothicArchShape(riseRatio: 0.34)
-
-        return VStack(spacing: 12) {
-            arch
-                .fill(AppColors.cardBackground)
-                .frame(width: width, height: width * 1.22)
-                .overlay(
-                    SetArtworkView(
-                        setId: viewModel.summary.id,
-                        artwork: viewModel.artwork,
-                        category: viewModel.category
-                    )
-                )
-                .clipShape(arch)
-
-            if let credit = viewModel.artworkCredit {
-                Text(credit)
-                    .font(AppFonts.italicFont(12))
-                    .foregroundColor(AppColors.textSecondary.opacity(0.8))
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.horizontal, 28)
-            }
-        }
-    }
-
     // MARK: - The Ledger
 
     /// Short sections down the page, each named in the left margin and
     /// ruled off from the one above.
     private var sections: some View {
         VStack(spacing: 0) {
-            if let description = viewModel.description {
+            if let about = viewModel.about {
                 SetSection(label: "About\nthis set") {
-                    ReadingText(text: description, size: 16)
+                    ReadingText(text: about, size: 16)
                 }
             }
 
@@ -251,11 +117,21 @@ struct MeditationSetDetailView: View {
                 SetSection(label: "From") { attribution }
             }
 
+            // The painting's credit, the way a museum plate carries one —
+            // small, and only when the painting came with one
+            if let credit = viewModel.artworkCredit {
+                SetSection(label: "The\npainting") {
+                    Text(credit)
+                        .font(AppFonts.italicFont(14))
+                        .foregroundColor(AppColors.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+
             offlineSection
 
             firstMeditationSection
         }
-        .padding(.horizontal, 24)
     }
 
     /// The meditations this set holds, numbered the way a missal numbers
@@ -541,53 +417,6 @@ struct MeditationSetDetailView: View {
     }
 
     // MARK: - Pray
-
-    /// How the Rosary will be prayed, and the act. The choices stand
-    /// just above PRAY so they are the last thing read before beginning,
-    /// with whatever was chosen last already set. Nothing is set beneath
-    /// the button — a count or a running time there turns the page's one
-    /// invitation into a label on a product.
-    private var prayFoot: some View {
-        VStack(spacing: 16) {
-            RosarySetupCard(category: viewModel.category)
-                .padding(.horizontal, 32)
-
-            GoldCTAButton(title: "Pray") {
-                pray()
-            }
-            .disabled(!viewModel.hasMeditations)
-            .padding(.horizontal, 32)
-        }
-        .padding(.top, 72)
-        .padding(.bottom, 22)
-        .background(PrayFootGround())
-    }
-
-    private var preparingOverlay: some View {
-        AppColors.background.opacity(0.72)
-            .ignoresSafeArea()
-            .overlay(
-                VStack(spacing: 14) {
-                    ProgressView()
-                        .tint(AppColors.gold)
-
-                    Text("PREPARING THE MEDITATIONS")
-                        .font(AppFonts.labelFont(10))
-                        .tracking(2.5)
-                        .foregroundColor(AppColors.textSecondary)
-                }
-                .padding(.horizontal, 28)
-                .padding(.vertical, 24)
-                .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(AppColors.cardBackground)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline)
-                )
-            )
-    }
 
     /// Starts the Rosary with this set. If the full set is still loading,
     /// waits on that same load; a cold server can answer long after the

@@ -175,33 +175,30 @@ final class UserSettings {
     /// mysteries — for a hand that keeps its own count on a rosary.
     ///
     /// On by default: the beads are the experience as designed, and the
-    /// toggle exists so nobody is made to pray a way they don't. The
-    /// Scriptural Rosary is a verse per bead and has no other way to be
-    /// prayed, so the setting does not reach it.
+    /// choice exists so nobody is made to pray a way they don't. It
+    /// reaches the Scriptural Rosary too, which off the beads sets a
+    /// decade's verses together and moves a mystery at a time. It holds
+    /// only while the voice reads the meditation alone: with every
+    /// prayer said aloud the voice moves the beads on the screen
+    /// (`RosaryForm.countsOnScreen`).
     var prayOnBeads: Bool = true {
         didSet { UserDefaults.standard.set(prayOnBeads, forKey: "userSettings.prayOnBeads") }
     }
 
     /// What `prayOnBeads` is called wherever it is offered — Settings, the
-    /// player's playback sheet, the set's title page. It had three names
-    /// ("Pray on the Beads", "Pray on the beads", "Bead counter") and three
-    /// explanations, none of which said what a person would see.
-    static let beadCounterTitle = "Bead counter"
+    /// player's playback sheet, a Rosary's own page, onboarding: Counting,
+    /// On My Rosary or On the Screen (`RosaryChoice.counting`). It had
+    /// three names ("Pray on the Beads", "Pray on the beads", "Bead
+    /// counter") and three explanations, none of which said what a person
+    /// would see.
+    static var beadCounterTitle: String { RosaryChoice.counting.title }
 
-    /// What the counter does, said as what appears on the screen. With
-    /// every prayer said aloud the beads are never locked and the voice
-    /// moves them, so the row beneath Pray aloud once told a person to
-    /// wait for the meditation and swipe, one line under a switch that
-    /// said the voice would move the beads.
+    /// What the chosen way of counting does, said as what appears on the
+    /// screen. Offered only while the voice reads the meditation alone —
+    /// with every prayer said aloud the voice moves the beads on the
+    /// screen — so `aloud` no longer changes the words.
     static func beadCounterDetail(isOn: Bool, aloud: Bool = false) -> String {
-        switch (isOn, aloud) {
-        case (true, false):
-            return "The beads unlock after each meditation. Swipe down for each Hail Mary."
-        case (true, true):
-            return "The beads hang at the edge of the screen and move with the voice."
-        case (false, _):
-            return "No beads on screen. Keep count on your own rosary."
-        }
+        RosaryChoice.counting.note(for: isOn)
     }
 
     // MARK: - The Rosary Said Aloud
@@ -216,24 +213,17 @@ final class UserSettings {
         didSet { UserDefaults.standard.set(prayAloud, forKey: "userSettings.prayAloud") }
     }
 
-    /// What `prayAloud` is called wherever it is offered — the set's
-    /// page, the playback sheet, Settings and the Scriptural Rosary —
-    /// one name, so it is recognised as one switch. What it does is the
-    /// detail's to say.
-    static let prayAloudTitle = "Pray aloud"
+    /// What `prayAloud` is called wherever it is offered — a Rosary's own
+    /// page, the playback sheet, Settings, onboarding: Audio, Meditation
+    /// Only or Whole Rosary (`RosaryChoice.audio`) — one name, so it is
+    /// recognised as one choice. What it does is the detail's to say.
+    static var prayAloudTitle: String { RosaryChoice.audio.title }
 
-    /// What it does, said as what is heard. With the bead counter off
-    /// there are no beads on the screen to move, so the words say what
-    /// is shown instead; the Scriptural Rosary always has its beads.
+    /// What the chosen audio does, said as what is heard. Whole Rosary
+    /// always counts on the screen, the voice moving the beads, so
+    /// `onBeads` no longer changes the words.
     static func prayAloudDetail(isOn: Bool, onBeads: Bool = true) -> String {
-        switch (isOn, onBeads) {
-        case (true, true):
-            return "Every prayer is said aloud, and the beads move with the voice."
-        case (true, false):
-            return "Every prayer is said aloud, and the screen names each one as it is said."
-        case (false, _):
-            return "Only the meditation is read aloud. You say the prayers yourself."
-        }
+        RosaryChoice.audio.note(for: isOn)
     }
 
     // MARK: - After the Rosary

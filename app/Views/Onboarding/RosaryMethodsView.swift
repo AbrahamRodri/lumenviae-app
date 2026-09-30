@@ -66,7 +66,7 @@ struct RosaryMethodsView: View {
             label: "Scriptural",
             icon: "ch-bible",
             title: "The Gospel first",
-            description: "The Scripture passage for the mystery, then a few lines of meditation on it.\n\nThe Seven Sorrows are set this way, because the Gospel tells the whole scene. For a verse on every bead, open the Scriptural Rosary from Explore."
+            description: "The Scripture passage for the mystery, then a few lines of meditation on it.\n\nThe Seven Sorrows are set this way, because the Gospel tells the whole scene. For a verse on every bead, choose The Scriptural Rosary on any mysteries' page, above its meditation sets."
         )
     ]
 

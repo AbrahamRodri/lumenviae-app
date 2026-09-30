@@ -438,7 +438,7 @@ struct HowToPrayRosaryView: View {
                     router.push(.libraryReading(id: "psalter"))
                 }
                 deeperTile(icon: "ch-bible", title: "The Scriptural Rosary", note: "A verse for every bead") {
-                    router.push(.scripturalRosary)
+                    router.push(.scripturalRosary(ScheduleService.categoryForToday()))
                 }
                 deeperTile(icon: "lv-breviary", title: "In Scripture", note: "Each mystery's passage") {
                     router.push(.scripture)
