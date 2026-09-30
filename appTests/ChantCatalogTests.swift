@@ -77,6 +77,14 @@ struct ChantCatalogTests {
         }
     }
 
+    @Test func theScrubberSaysTheTime() {
+        #expect(ChantPlayer.spoken(65) == "1 minute 5 seconds")
+        #expect(ChantPlayer.spoken(200) == "3 minutes 20 seconds")
+        #expect(ChantPlayer.spoken(60) == "1 minute")
+        #expect(ChantPlayer.spoken(1.9) == "1 second")
+        #expect(ChantPlayer.spoken(0) == "0 seconds")
+    }
+
     // MARK: - Path data
 
     private func bounds(_ data: String) -> CGRect {

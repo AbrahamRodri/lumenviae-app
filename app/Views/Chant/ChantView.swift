@@ -161,7 +161,7 @@ struct ChantView: View {
                 }
 
                 VStack(spacing: 4) {
-                    ChantScrubber(progress: progress, isEnabled: holds) { fraction in
+                    ChantScrubber(progress: progress, duration: total, isEnabled: holds) { fraction in
                         player.seek(toFraction: fraction)
                     }
                     HStack {

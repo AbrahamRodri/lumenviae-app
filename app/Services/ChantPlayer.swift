@@ -139,6 +139,19 @@ final class ChantPlayer {
         return "\(whole / 60):\(String(format: "%02d", whole % 60))"
     }
 
+    /// "1 minute 5 seconds" — the clock as VoiceOver should say it, where
+    /// "1:05" is read out as a ratio or an hour.
+    static func spoken(_ seconds: Double) -> String {
+        let whole = max(0, Int(seconds.rounded(.down)))
+        let minutes = whole / 60
+        let rest = whole % 60
+        let minuteWords = minutes == 1 ? "1 minute" : "\(minutes) minutes"
+        let secondWords = rest == 1 ? "1 second" : "\(rest) seconds"
+        if minutes == 0 { return secondWords }
+        if rest == 0 { return minuteWords }
+        return "\(minuteWords) \(secondWords)"
+    }
+
     // MARK: - Acts
 
     /// Play or pause the chant the tile holds.

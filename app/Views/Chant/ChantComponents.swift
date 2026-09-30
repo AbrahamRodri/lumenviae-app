@@ -196,11 +196,18 @@ struct ChantPlayDisc: View {
 // MARK: - ChantScrubber
 
 /// A gold hairline the finger can drag along — the consecration
-/// transport's scrubber, at the weight of a rule.
+/// transport's scrubber, at the weight of a rule. VoiceOver hears where it
+/// stands as time, "1 minute 5 seconds of 3 minutes 20 seconds", and
+/// moves it ten seconds at a swipe.
 struct ChantScrubber: View {
     let progress: Double
+    /// The recording's length, in seconds
+    let duration: Double
     let isEnabled: Bool
     let onSeek: (Double) -> Void
+
+    /// How far a swipe up or down moves the chant
+    private static let step: Double = 10
 
     @State private var dragging: Double?
 
@@ -239,12 +246,13 @@ struct ChantScrubber: View {
         .frame(height: 24)
         .accessibilityElement()
         .accessibilityLabel("Position in the chant")
-        .accessibilityValue("\(Int((shown * 100).rounded())) percent")
+        .accessibilityValue("\(ChantPlayer.spoken(shown * duration)) of \(ChantPlayer.spoken(duration))")
         .accessibilityAdjustableAction { direction in
-            guard isEnabled else { return }
+            guard isEnabled, duration > 0 else { return }
+            let step = Self.step / duration
             switch direction {
-            case .increment: onSeek(min(1, progress + 0.05))
-            case .decrement: onSeek(max(0, progress - 0.05))
+            case .increment: onSeek(min(1, progress + step))
+            case .decrement: onSeek(max(0, progress - step))
             @unknown default: break
             }
         }

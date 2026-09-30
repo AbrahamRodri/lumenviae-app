@@ -255,7 +255,11 @@ struct ChantScoreSheet: View {
                     player.toggle(chant)
                 }
 
-                ChantScrubber(progress: holds ? player.progress : 0, isEnabled: holds) { fraction in
+                ChantScrubber(
+                    progress: holds ? player.progress : 0,
+                    duration: holds ? player.duration : chant.duration,
+                    isEnabled: holds
+                ) { fraction in
                     player.seek(toFraction: fraction)
                 }
 
