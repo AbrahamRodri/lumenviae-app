@@ -923,6 +923,25 @@ struct OnboardingView: View {
         // was being asked.
         Task {
             let settings = UserSettings.shared
+
+            // The system's question first, asked once. Each setting below
+            // syncs the reminder as it changes, and set while the question
+            // was still open each put a request of its own: the system
+            // answered all but the one it showed with "not allowed", and
+            // those switched the chosen reminder off while the slide moved
+            // on as though it were set.
+            let center = UNUserNotificationCenter.current()
+            if await center.notificationSettings().authorizationStatus == .notDetermined {
+                let granted = (try? await center.requestAuthorization(options: [.alert, .sound, .badge])) ?? false
+                guard granted else {
+                    // As a refusal always has: the reminder put off, and
+                    // the slide's line saying where to undo it
+                    settings.remindersEnabled = false
+                    await settings.refreshNotificationsWithoutPrompting()
+                    return
+                }
+            }
+
             // Nil keeps the time the reminder already had
             if let hour = selectedReminderHour {
                 settings.reminderHour = hour
