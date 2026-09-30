@@ -5,7 +5,8 @@
 //  Ownership of the shared player as a claim: one holder at a time, a new
 //  claim ending the old with notice, a borrowed speed coming back however
 //  a claim ends, the app's speed controls never retuning a borrowed one,
-//  a claim declining while something plays when asked to, the older
+//  a claim declining while the player is in use when asked to — a
+//  chant a phone call has stopped included — the older
 //  surface ending a claim when it takes the player, end-of-track told to
 //  the claim that loaded the item and never to a flow that took the arrows
 //  without loading it, a load dropped when its claim ends mid-way, and a
@@ -94,6 +95,42 @@ struct AudioClaimTests {
         let day = service.claim(.consecration, ifIdle: true)
         #expect(day != nil)
         #expect(!chant.isCurrent)
+    }
+
+    @Test func aChantStoppedByACallIsStillInUse() async {
+        let service = makeService()
+        let chant = service.claim(.chant)!
+        #expect(await chant.load(recording))
+        // Played and at once taken by a call, in one turn of the main
+        // actor, so nothing is heard: the transport stops, the intent stays
+        chant.play()
+        service.interruptionBegan()
+        #expect(!service.isPlaying)
+        #expect(service.isInUse)
+        #expect(service.claim(.consecration, ifIdle: true) == nil)
+        #expect(chant.isCurrent)
+
+        // Paused by hand, it is no longer in use, and the day may take it
+        service.pause()
+        #expect(!service.isInUse)
+        let day = service.claim(.consecration, ifIdle: true)
+        #expect(day != nil)
+        #expect(!chant.isCurrent)
+        day?.release()
+    }
+
+    @Test func aChantHeardToItsEndIsNotInUse() async {
+        let service = makeService()
+        let chant = service.claim(.chant)!
+        #expect(await chant.load(recording))
+        chant.play()
+        service.itemDidPlayToEnd()
+        #expect(!service.isInUse)
+        // A call after the end has nothing to give back
+        service.interruptionBegan()
+        #expect(!service.isInUse)
+        #expect(service.claim(.consecration, ifIdle: true) != nil)
+        service.reset()
     }
 
     // MARK: - Speed
