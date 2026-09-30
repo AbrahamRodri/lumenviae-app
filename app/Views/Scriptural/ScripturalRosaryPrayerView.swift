@@ -303,6 +303,11 @@ struct ScripturalRosaryPrayerView: View {
         .onChange(of: viewModel.isLastBeadOfRosary) { _, last in
             if last { showChrome() }
         }
+        // Counted on one's own rosary the bead never moves, so the last
+        // bead never comes: the last mystery is where AMEN waits
+        .onChange(of: !countsOnScreen && viewModel.isLastMystery) { _, last in
+            if last { showChrome() }
+        }
         // Leaving the Rosary must not leave it being said over other screens
         .onDisappear {
             viewModel.stopSpeaking()

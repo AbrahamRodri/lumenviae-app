@@ -274,6 +274,11 @@ struct MysteryPrayerView: View {
         .onChange(of: viewModel.isLastBeadOfRosary) { _, last in
             if last { showChrome() }
         }
+        // Off the beads the bead never moves, so the last bead never
+        // comes: the last mystery is where AMEN waits
+        .onChange(of: !onBeads && viewModel.isLastMystery) { _, last in
+            if last { showChrome() }
+        }
         // The voice changed under the Rosary - from the playback sheet,
         // or Settings on another screen - so the mystery under the hand
         // is heard again in the new one, carrying on if it was playing
