@@ -903,7 +903,7 @@ struct ChapelFlameTile: View {
     private func weekStrip(letterSize: CGFloat, dot: CGFloat, ring: CGFloat) -> some View {
         HStack(spacing: 0) {
             ForEach(Array(weekStatus.enumerated()), id: \.offset) { _, day in
-                let isToday = Calendar.current.isDateInToday(day.date)
+                let isToday = PrayerDay.isToday(day.date)
                 VStack(spacing: 5) {
                     Text(Self.dayInitial.string(from: day.date).uppercased())
                         .font(AppFonts.labelFont(letterSize))

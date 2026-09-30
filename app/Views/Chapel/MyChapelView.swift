@@ -44,6 +44,11 @@ struct MyChapelView: View {
     @State private var historyService: PrayerHistoryService?
     @State private var today = TodayInChurch()
 
+    /// Today's prayer day, which turns at four in the morning, not at
+    /// midnight (`PrayerDay`). Read by the rule's checks, so the focus, the
+    /// Today tile and the flame roll over at four while the page is open.
+    private var dayClock: PrayerDayClock { PrayerDayClock.shared }
+
     /// The chant's hold on the shared player outlives this view: a tab
     /// switch tears the page down, and a chant left singing with its
     /// transport deallocated could not be paused from anywhere.
@@ -186,6 +191,7 @@ struct MyChapelView: View {
             refreshFlameStats()
         }
         .onChange(of: sessions.count) { _, _ in refreshFlameStats() }
+        .onChange(of: dayClock.today) { _, _ in refreshFlameStats() }
         .onDisappear {
             // Leaving the tab mid-arrange must give the tab bar back.
             // The router enforces this too — any navigation ends it —
@@ -338,26 +344,30 @@ struct MyChapelView: View {
     }
 
     private func isDone(_ item: PrayerShortcut) -> Bool {
+        // Read first, whatever the act, so every row answers to the
+        // day's turn at four — the Prayer Book's orders as well, which
+        // ask the store about the moment itself
+        let day = dayClock.today
         switch item {
         case .todaysRosary:
             // Any set of mysteries counts; the chaplet has its own row.
-            return historyService?.sessions(on: Date())
+            return historyService?.sessions(onPrayerDay: day)
                 .contains { $0.category != .sevenSorrows } ?? false
 
         case .sevenSorrows:
-            return historyService?.sessions(on: Date())
+            return historyService?.sessions(onPrayerDay: day)
                 .contains { $0.category == .sevenSorrows } ?? false
 
         case .scripturalRosary:
             // Its own row, by name: a Rosary prayed with a meditation
             // does not offer this one, though this one counts as the
             // day's Rosary above
-            return historyService?.sessions(on: Date())
+            return historyService?.sessions(onPrayerDay: day)
                 .contains { $0.meditationType == ScripturalRosaryViewModel.devotionName } ?? false
 
         case .rosaryAloud:
             // The same, by its own name
-            return historyService?.sessions(on: Date())
+            return historyService?.sessions(onPrayerDay: day)
                 .contains { $0.meditationType == ScripturalRosaryViewModel.aloudDevotionName } ?? false
 
         case .consecration:

@@ -77,7 +77,7 @@ struct StreakWidget: View {
                         WeekDayDot(
                             date: day.date,
                             didPray: day.didPray,
-                            isToday: Calendar.current.isDateInToday(day.date)
+                            isToday: PrayerDay.isToday(day.date)
                         )
                         .frame(maxWidth: .infinity)
                         .scaleEffect(dotsAppeared ? 1 : 0.4)

@@ -106,11 +106,12 @@ extension InProgressPrayer {
 
     /// Whether `act` — from the Pray button, its tray, or the Chapel —
     /// takes this Rosary up where it stopped rather than beginning
-    /// another over it: the same form, left off today. A Rosary left
-    /// last night is not today's; Home's card still offers it until it
-    /// expires.
-    func isContinued(by act: PrayerShortcut, now: Date = Date(), calendar: Calendar = .current) -> Bool {
-        self.act == act && calendar.isDate(savedAt, inSameDayAs: now)
+    /// another over it: the same form, left off today — the prayer day
+    /// (`PrayerDay`), so a Rosary left at half past eleven is still
+    /// tonight's at half past twelve. A Rosary left last night is not
+    /// today's; Home's card still offers it until it expires.
+    func isContinued(by act: PrayerShortcut, now: Date = PrayerDay.now, calendar: Calendar = .current) -> Bool {
+        self.act == act && PrayerDay.isSameDay(savedAt, now, calendar: calendar)
     }
 
     /// Where it stopped, as running text: "Third Joyful Mystery",
@@ -254,7 +255,7 @@ final class PrayerResumeService {
     }
 
     /// The unfinished Rosary `act` would take up today, if there is one
-    func continuation(for act: PrayerShortcut, now: Date = Date()) -> InProgressPrayer? {
+    func continuation(for act: PrayerShortcut, now: Date = PrayerDay.now) -> InProgressPrayer? {
         guard let session = inProgress, session.isContinued(by: act, now: now) else { return nil }
         return session
     }

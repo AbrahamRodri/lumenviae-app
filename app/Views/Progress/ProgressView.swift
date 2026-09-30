@@ -24,7 +24,15 @@ struct PrayerProgressView: View {
     // MARK: - State
 
     @State private var service: PrayerHistoryService?
-    @State private var displayedMonth: Date = Date()
+
+    /// Opens on the month of today's prayer day: at 12:30 AM on the first,
+    /// the month that closed last night
+    @State private var displayedMonth: Date = PrayerDay.today()
+
+    /// Today's prayer day, which turns at four in the morning; read here
+    /// so the page's today — the ringed cell, the flame, the week — turns
+    /// with it while the page is open
+    private var dayClock: PrayerDayClock { PrayerDayClock.shared }
 
     // MARK: - Body
 
@@ -217,7 +225,7 @@ struct PrayerProgressView: View {
 
     private func generateCalendarData() -> [CalendarDay] {
         let calendar = Calendar.current
-        let today = calendar.startOfDay(for: Date())
+        let today = dayClock.today
 
         // Get first day of displayed month
         let components = calendar.dateComponents([.year, .month], from: displayedMonth)
@@ -279,14 +287,13 @@ struct PrayerProgressView: View {
         return days
     }
 
-    /// Pre-builds a [startOfDay: count] lookup from all sessions.
+    /// Pre-builds a [prayer day: count] lookup from all sessions: a Rosary
+    /// finished at 12:30 AM is marked on the day before (`PrayerDay`).
     /// O(n) once, instead of O(n) per calendar cell.
     private var prayerCountsByDay: [Date: Int] {
-        let cal = Calendar.current
         var counts: [Date: Int] = [:]
         for session in sessions {
-            let day = cal.startOfDay(for: session.completedAt)
-            counts[day, default: 0] += 1
+            counts[PrayerDay.day(of: session.completedAt), default: 0] += 1
         }
         return counts
     }

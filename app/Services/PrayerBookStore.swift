@@ -95,28 +95,23 @@ final class PrayerBookStore {
         return formatter
     }()
 
-    /// The book's day, not the calendar's: it turns at four in the
-    /// morning, so Night Prayers said at half past twelve are offered for
-    /// the night they close, and the next evening's page still asks for
-    /// that evening's.
+    /// The prayer day (`PrayerDay`), not the calendar's: it turns at four
+    /// in the morning, so Night Prayers said at half past twelve are
+    /// offered for the night they close, and the next evening's page still
+    /// asks for that evening's — the same day a Rosary said beside them
+    /// counts for. Stored as its date, as it always was.
     private static func stamp(_ date: Date) -> String {
-        let calendar = Calendar.current
-        var day = date
-        if calendar.component(.hour, from: date) < PrayerBook.dayBeginsAtHour,
-           let before = calendar.date(byAdding: .day, value: -1, to: date) {
-            day = before
-        }
         dayFormatter.timeZone = .current
-        return dayFormatter.string(from: day)
+        return dayFormatter.string(from: PrayerDay.day(of: date))
     }
 
     /// An order prayed through to its Amen. The rule of prayer asks
     /// about the day's three by this.
-    func markOffered(_ orderID: String, on date: Date = Date()) {
+    func markOffered(_ orderID: String, on date: Date = PrayerDay.now) {
         offered[orderID] = Self.stamp(date)
     }
 
-    func wasOffered(_ orderID: String, on date: Date = Date()) -> Bool {
+    func wasOffered(_ orderID: String, on date: Date = PrayerDay.now) -> Bool {
         offered[orderID] == Self.stamp(date)
     }
 

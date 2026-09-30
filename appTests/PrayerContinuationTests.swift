@@ -90,11 +90,14 @@ struct PrayerContinuationTests {
         #expect(!joyful.isContinued(by: .sevenSorrows, now: at(29, 8), calendar: calendar))
     }
 
-    /// Left last night, it is not today's: the act begins today's Rosary,
-    /// and Home's card still offers last night's until it expires
+    /// Left last night, it is not today's once the prayer day has turned,
+    /// at four: the act begins today's Rosary, and Home's card still
+    /// offers last night's until it expires. Before four it is still
+    /// tonight's, and is taken up.
     @Test func aRosaryLeftYesterdayIsNotTakenUp() {
         let session = rosary(.meditationSet, .glorious, savedAt: at(28, 23, 50))
-        #expect(!session.isContinued(by: .todaysRosary, now: at(29, 0, 10), calendar: calendar))
+        #expect(session.isContinued(by: .todaysRosary, now: at(29, 0, 10), calendar: calendar))
+        #expect(!session.isContinued(by: .todaysRosary, now: at(29, 4, 10), calendar: calendar))
     }
 
     @Test func actsThatAreNotTheRosaryTakeUpNothing() {

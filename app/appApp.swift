@@ -85,6 +85,9 @@ struct appApp: App {
                 // The voice picker's list, kept current the same way: a
                 // voice added on the server appears on the next foreground
                 Task { await NarrationVoiceCatalog.shared.refresh() }
+                // A clock asleep through a suspension may wake late: the
+                // prayer day must be right the moment the page is seen
+                PrayerDayClock.shared.refresh()
             }
         }
     }
