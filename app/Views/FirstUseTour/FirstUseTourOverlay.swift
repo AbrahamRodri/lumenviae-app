@@ -141,7 +141,9 @@ struct FirstUseTourOverlay: View {
                     color: AppColors.goldLight,
                     horizontalPadding: 0
                 ) {
-                    tour.advance()
+                    withAnimation(reduceMotion ? Motion.crossfade : Motion.travel(0.45)) {
+                        tour.advance()
+                    }
                 }
                 .frame(minHeight: 44)
             }
