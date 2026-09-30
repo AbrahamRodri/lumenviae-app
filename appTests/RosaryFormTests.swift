@@ -74,6 +74,7 @@ struct RosaryFormTests {
 
     @Test func readingTheMeditationAloneCountsWhereChosen() {
         #expect(!RosaryForm.meditation.countsOnScreen(aloud: false, onBeads: false))
+        #expect(RosaryForm.meditation.countsOnScreen(aloud: false, onBeads: true))
         #expect(!RosaryForm.scriptural.countsOnScreen(aloud: false, onBeads: false))
         #expect(RosaryForm.scriptural.countsOnScreen(aloud: false, onBeads: true))
         // The Holy Rosary is said aloud whatever the setting
