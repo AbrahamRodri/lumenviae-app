@@ -483,7 +483,11 @@ struct ExploreView: View {
         if summary.name.lowercased().contains(needle) { return true }
         if let author = summary.author, author.lowercased().contains(needle) { return true }
         if let source = summary.source, source.lowercased().contains(needle) { return true }
-        if let labels = summary.labels, labels.contains(where: { $0.lowercased().contains(needle) }) { return true }
+        // By the label the shelf shows ("Gospel", "Reflections") as well
+        // as the one the server stores
+        if let labels = summary.labels, labels.contains(where: {
+            $0.lowercased().contains(needle) || MeditationLabel.displayName($0).lowercased().contains(needle)
+        }) { return true }
         if let category = MysteryCategory(rawValue: summary.category),
            category.devotionTitle.lowercased().contains(needle) { return true }
         return false
