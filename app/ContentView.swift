@@ -135,6 +135,9 @@ struct ContentView: View {
         .onChange(of: PrayerBookStore.shared.angelusRequested, initial: true) { _, requested in
             guard requested else { return }
             PrayerBookStore.shared.angelusRequested = false
+            // Never beneath a pray-along already open, or its first-time
+            // question: the bell has been heard, and the prayer is kept
+            guard !PrayerBookStore.shared.isPrayingAlong else { return }
             perform(.angelus)
         }
         .task {

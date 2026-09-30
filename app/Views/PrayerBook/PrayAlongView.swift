@@ -68,10 +68,14 @@ struct PrayAlongView: View {
     /// Silent until the reader has said the book may speak
     private var aloud: Bool { store.hasChosenAloud && store.praysAloud }
 
-    /// A single prayer is named once, by its own title on the page; the
-    /// head says whose book it is instead of saying the title twice
+    /// A single prayer is named once, by its own title on the page, so
+    /// the head does not say the title twice. An order of one prayer —
+    /// the Angelus — says when it is prayed, as its own page does ("AT
+    /// SIX, NOON AND SIX"); a prayer opened alone says whose book it is
     private var kicker: String {
-        prayers.count > 1 ? launch.title : "The Prayer Book"
+        if prayers.count > 1 { return launch.title }
+        if let id = launch.orderID, let order = PrayerBook.order(id) { return order.occasion }
+        return "The Prayer Book"
     }
 
     private var isAngelus: Bool {
@@ -114,6 +118,9 @@ struct PrayAlongView: View {
                     }
                     pageScroll(prayer)
                 }
+                // Gone from beneath the Amen rather than dimmed: under the
+                // cover alone the prayer's words showed through it
+                .opacity(finished ? 0 : 1)
                 .accessibilityHidden(finished)
 
                 VStack {
@@ -121,6 +128,7 @@ struct PrayAlongView: View {
                     foot
                 }
                 .ignoresSafeArea(edges: .bottom)
+                .opacity(finished ? 0 : 1)
                 .accessibilityHidden(finished)
             } else {
                 missing
@@ -600,6 +608,7 @@ struct PrayAlongView: View {
 
     private func begin() {
         isShowing = true
+        store.prayAlongOpened()
         UIApplication.shared.isIdleTimerDisabled = true
         voice.onFinish = { scheduleAdvance() }
         voice.onNext = { if !isLast { goTo(index + 1) } }
@@ -622,6 +631,7 @@ struct PrayAlongView: View {
 
     private func end() {
         isShowing = false
+        store.prayAlongClosed()
         advanceTask?.cancel()
         voice.stop()
         AngelusBellSound.shared.silence()

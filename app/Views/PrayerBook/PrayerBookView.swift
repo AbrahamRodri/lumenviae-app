@@ -118,6 +118,16 @@ struct PrayerBookView: View {
             if phase == .active { now = Date() }
         }
         .onAppear { now = Date() }
+        // Left open across one of the book's hours — four, eleven, three,
+        // eight — the page turns with it, on the timeline home's row and
+        // the Chapel's tile keep; it once kept the old hour's order lit
+        .background {
+            TimelineView(PrayerBookHourSchedule()) { context in
+                Color.clear.onChange(of: context.date) { _, date in
+                    withAnimation(Motion.crossfade) { now = date }
+                }
+            }
+        }
     }
 
     // MARK: - Masthead

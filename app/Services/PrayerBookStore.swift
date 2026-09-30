@@ -156,6 +156,18 @@ final class PrayerBookStore {
     /// opens the Angelus and clears it
     var angelusRequested = false
 
+    /// How many pray-along screens are open: one, or none. The bell's
+    /// notification opens the Angelus only when none is — it once pushed
+    /// a second pray-along beneath one being prayed, or beneath its
+    /// first-time "Aloud, or in silence?" question, unseen until closed
+    private(set) var openPrayAlongs = 0
+
+    var isPrayingAlong: Bool { openPrayAlongs > 0 }
+
+    func prayAlongOpened() { openPrayAlongs += 1 }
+
+    func prayAlongClosed() { openPrayAlongs = max(0, openPrayAlongs - 1) }
+
     static let angelusHours = [6, 12, 18]
     static let angelusCategory = "LUMEN_ANGELUS"
 
