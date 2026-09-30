@@ -387,7 +387,9 @@ struct RosaryChoicesSection: View {
                 title: row.title,
                 value: RosaryInfoRow.voiceValue(
                     voice: NarrationVoiceCatalog.shared.chosenVoice.name,
-                    rate: PlaybackSpeedChoice.rateLabel(AudioService.shared.playbackRate)
+                    // The app's speed, which a chant or a book sounding
+                    // meanwhile may have borrowed the player from
+                    rate: PlaybackSpeedChoice.rateLabel(AudioService.shared.appRate)
                 ),
                 hint: "Choose the voice and its speed"
             ) {

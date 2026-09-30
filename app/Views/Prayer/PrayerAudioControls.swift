@@ -323,7 +323,10 @@ struct PlaybackSpeedChoice: View {
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    private var shown: Double { draft ?? audio.playbackRate }
+    /// The app's narration speed — what this slider sets — rather than
+    /// the player's live one, which a chant or a book may have borrowed:
+    /// read live, it showed a chant's 0.75× as the narration's speed
+    private var shown: Double { draft ?? audio.appRate }
 
     var body: some View {
         HStack(spacing: 10) {
@@ -342,19 +345,21 @@ struct PlaybackSpeedChoice: View {
                             let rate = Self.detented(raw)
                             guard isEditing else {
                                 // Outside a drag, kept at once
-                                if rate != audio.playbackRate { audio.setPlaybackRate(rate) }
+                                if rate != audio.appRate { audio.setAppRate(rate) }
                                 return
                             }
                             draft = rate
-                            // Heard as it is dragged, kept on release
-                            if audio.isPlaying { audio.setPlaybackRate(rate, remember: false) }
+                            // Heard as it is dragged, kept on release —
+                            // never over a speed another flow borrowed,
+                            // which a preview once retuned and cleared
+                            if audio.isPlaying { audio.previewAppRate(rate) }
                         }
                     ),
                     in: AudioService.rateRange,
                     onEditingChanged: { editing in
                         isEditing = editing
                         guard !editing else { return }
-                        if let draft { audio.setPlaybackRate(draft) }
+                        if let draft { audio.setAppRate(draft) }
                         draft = nil
                     }
                 )
@@ -377,10 +382,10 @@ struct PlaybackSpeedChoice: View {
                 switch direction {
                 case .increment:
                     draft = nil
-                    audio.setPlaybackRate((shown * 4).rounded(.down) / 4 + 0.25)
+                    audio.setAppRate((shown * 4).rounded(.down) / 4 + 0.25)
                 case .decrement:
                     draft = nil
-                    audio.setPlaybackRate((shown * 4).rounded(.up) / 4 - 0.25)
+                    audio.setAppRate((shown * 4).rounded(.up) / 4 - 0.25)
                 @unknown default: break
                 }
             }
@@ -391,7 +396,7 @@ struct PlaybackSpeedChoice: View {
             Button {
                 withAnimation(reduceMotion ? nil : Motion.settle) {
                     draft = nil
-                    audio.setPlaybackRate(1)
+                    audio.setAppRate(1)
                 }
             } label: {
                 Text("1×")
