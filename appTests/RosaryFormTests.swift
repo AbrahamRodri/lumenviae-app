@@ -87,10 +87,17 @@ struct RosaryFormTests {
 
     // MARK: - The Rows Beneath
 
-    @Test func eachFormCarriesItsRows() {
-        #expect(RosaryInfoRow.rows(for: .meditation) == [.voice])
-        #expect(RosaryInfoRow.rows(for: .scriptural) == [.mysteries, .voice])
-        #expect(RosaryInfoRow.rows(for: .holy) == [.audio, .mysteries, .voice])
+    @Test(arguments: [false, true])
+    func eachFormCarriesItsRows(aloud: Bool) {
+        #expect(RosaryInfoRow.rows(for: .meditation, aloud: aloud) == [.voice])
+        #expect(RosaryInfoRow.rows(for: .holy, aloud: aloud) == [.audio, .mysteries, .voice])
+    }
+
+    /// Read in silence, nothing in the Scriptural Rosary is spoken, so it
+    /// has no voice and no speed to choose
+    @Test func theScripturalRosaryOffersAVoiceOnlyWhenItSpeaks() {
+        #expect(RosaryInfoRow.rows(for: .scriptural, aloud: false) == [.mysteries])
+        #expect(RosaryInfoRow.rows(for: .scriptural, aloud: true) == [.mysteries, .voice])
     }
 
     @Test func theRowsSayWhatIsSet() {

@@ -39,7 +39,8 @@ Rosary's and the Holy Rosary's are the same page)
     │   │   Scriptural Rosary; none in the Holy Rosary, always aloud)
     │   ├── Counting: On My Rosary | On the Screen — only while the Whole
     │   │   Rosary is not chosen
-    │   └── Rows: Mysteries (not for a set), Voice & speed
+    │   └── Rows: Mysteries (not for a set), Voice & speed (not while
+    │       the Scriptural Rosary is read in silence)
     ├── Past the choices, a ledger for whoever scrolls (a set's meditations,
     │   source, offline copy, first meditation)
     └── "PRAY" (the screen's one gold act) — nothing set beneath it,
@@ -815,7 +816,12 @@ write concurrent code here:
   mysteries; "Joyful · today", to a sheet of the five sets and the
   chaplet, where a tap chooses and closes) and Voice & speed ("Male · 1×",
   to a sheet holding the voice, the speed and, but for the chaplet, the
-  prayers after the Rosary). The Holy Rosary offers no choice: its audio
+  prayers after the Rosary). The Scriptural Rosary read in silence has
+  no Voice & speed row (`RosaryInfoRow.rows(for:aloud:)`): nothing is
+  spoken, and the prayers after the Rosary are said only aloud. It comes
+  back with the Whole Rosary. A set's page keeps the row in either mode,
+  since its meditation is always read aloud, and so does the Holy
+  Rosary's. The Holy Rosary offers no choice: its audio
   is a plain row, "Whole Rosary · pause anytime". The words for every
   option and note are `RosaryChoice`'s, read by the pages, Settings and
   the playback sheet; onboarding sets the same names and notes from its
@@ -837,7 +843,8 @@ write concurrent code here:
   A choice's arrival and departure are timed apart
   (`RosaryChoiceGroup.comingAndGoing`): Counting, leaving, is gone before
   the rows beneath close over its place, and arriving waits for them to
-  make room. As one plain fade on the rows' own 0.25s the rows slid
+  make room; the Scriptural Rosary's Voice & speed row comes and goes on
+  the same timing. As one plain fade on the rows' own 0.25s the rows slid
   through it while it was still half there. The pill itself passes its lit
   segment on `Motion.choice` (`ease(0.25)`, the design system's ease-out),
   with no spring, and a segment presses with `SacredCardButtonStyle`, a

@@ -155,12 +155,15 @@ enum RosaryInfoRow: Hashable {
     /// Who reads, and how fast
     case voice
 
-    /// The rows a form's page carries, in order. A meditation set
-    /// belongs to its mysteries, so its page has no Mysteries row.
-    static func rows(for form: RosaryForm) -> [RosaryInfoRow] {
+    /// The rows a form's page carries, in order, with `aloud` the Audio
+    /// choice. A meditation set belongs to its mysteries, so its page has
+    /// no Mysteries row. The Scriptural Rosary read in silence has no
+    /// voice to choose, so no Voice & speed row either; a set's
+    /// meditation is always read aloud, so its row stays.
+    static func rows(for form: RosaryForm, aloud: Bool) -> [RosaryInfoRow] {
         switch form {
         case .meditation: return [.voice]
-        case .scriptural: return [.mysteries, .voice]
+        case .scriptural: return aloud ? [.mysteries, .voice] : [.mysteries]
         case .holy: return [.audio, .mysteries, .voice]
         }
     }

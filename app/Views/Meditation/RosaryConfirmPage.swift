@@ -333,8 +333,12 @@ struct RosaryChoicesSection: View {
                     .transition(RosaryChoiceGroup.comingAndGoing)
             }
 
-            ForEach(RosaryInfoRow.rows(for: form), id: \.self) { row in
+            // Voice & speed comes and goes with the Scriptural Rosary's
+            // Audio, on Counting's timing, since nothing is spoken when
+            // its verses are read in silence
+            ForEach(RosaryInfoRow.rows(for: form, aloud: settings.prayAloud), id: \.self) { row in
                 infoRow(row)
+                    .transition(RosaryChoiceGroup.comingAndGoing)
             }
         }
         .animation(Motion.choice, value: settings.prayAloud)
@@ -442,10 +446,11 @@ struct RosaryChoiceGroup: View {
     @Binding var value: Bool
 
     /// How a choice arrives and leaves beneath another — Counting, as the
-    /// Audio above it changes. Leaving, it is gone before the rows below
-    /// close over its place; arriving, it waits for them to make room. As
-    /// one plain fade on the rows' own timing, the rows slid through the
-    /// choice while it was still half there, words over words.
+    /// Audio above it changes, and the Scriptural Rosary's Voice & speed
+    /// row with it. Leaving, it is gone before the rows below close over
+    /// its place; arriving, it waits for them to make room. As one plain
+    /// fade on the rows' own timing, the rows slid through the choice
+    /// while it was still half there, words over words.
     static let comingAndGoing: AnyTransition = .asymmetric(
         insertion: .opacity.animation(Motion.choice.delay(0.14)),
         removal: .opacity.animation(Motion.ease(0.1))
