@@ -2038,20 +2038,47 @@ default to Candlelit**:
 
 Three families in `Assets.xcassets/Icons`, all drawn through `AppIcon`
 (never `Image("ph-…")` at a call site) and all rendered as templates:
-**`ph-*`** are Phosphor (light, plus `ph-*-fill`); **`ch-*`** are
-Christicons, the devotional glyphs — `stroke-width="1.5"`, round caps and
-joins, on a 24×24 viewBox, except the `-fill` variants and the two
-filled hearts; and **`lv-*`** are drawn for this app, each at the weight
-of the family it sits beside — `lv-chalice` at 1.15 to sit level with
-Phosphor light, `lv-breviary` at 1.5 to sit with the `ch-*` glyphs. A
-new stroked `ch-*` icon must be stroked at 1.5 or it stands heavier than
-everything beside it. SF Symbols appear only where the system's own
-vocabulary is the point — the transport's ±10s skips (glyphs that
-carry a number), the spoken Rosary's failure notice, the Prayer Record
-calendar's prayed-day marker, swipe and menu actions
-(`Label(…, systemImage:)`) — never as a devotional or door glyph. Note that `qlmanage` cannot preview these
-faithfully: it renders a stroke-only SVG blank and *fills* path data
-meant to be stroked, so check a new glyph in the running app.
+
+- **`ph-*`** are Phosphor Light (MIT), plus `ph-*-fill` for a selected
+  tab: the app's chrome — carets, ×, search, transport, faders, the
+  readers' controls — at the weight of 1.125 on a 24 grid.
+- **`ch-*`** are the devotional glyphs, `stroke-width="1.5"`, round caps
+  and joins, on a 24×24 viewBox. Most are Christicons (christicons.com,
+  its licence page: free for commercial use and to modify, no
+  attribution; never redistributed as a set, and never the primary
+  element of a logo or brand mark — so never the app icon's subject).
+  `ch-lily`, `ch-consecration`(`-fill`), `ch-sacred-heart` and
+  `ch-window-fill` were drawn for this app and only share the prefix.
+  The published set has 61 glyphs; the ones not vendored are worth
+  checking before drawing a new one.
+- **`lv-*`** are drawn for this app where no glyph with real meaning
+  existed, at 1.5 to stand with the `ch-*` glyphs. All but
+  `lv-breviary` are written by `Tools/IconAudit/draw.py` — edit a glyph
+  there and rerun it, never the SVG. `lv-star` is Christicons' star with
+  its four short rays left off (with them it read as a sparkle), and
+  `lv-stella-maris` and `lv-jordan` set that star and Christicons' dove
+  over the same waves.
+
+The rule the icon audit (Sept 2026, `Tools/IconAudit/contact-sheet.png`)
+holds every glyph to: one metaphor per concept, taken from the Church's
+own iconography, legible at 12–16pt, the Chapel kickers' size. Never the
+vocabulary of other apps standing in for a devotion — a sparkle ("new",
+"AI"), a sun or sunrise (weather), a moon (Do Not Disturb), a rating
+star, a prize medal or laurel (gamification), an account avatar, a chat
+bubble, the ☰ list. Where no emblem is traditional (the Luminous
+Mysteries date from 2002) take the first scene's. Known and unsettled:
+Phosphor Light is a third lighter than the 1.5 glyphs, so a list that
+mixes a Phosphor door (True Devotion's crown, the Office's clock, the
+Chant's note, the scroll, the flame) with `ch-*` glyphs stands uneven.
+
+SF Symbols appear only where the system's own vocabulary is the point —
+the transport's ±10s skips (glyphs that carry a number), the spoken
+Rosary's failure notice, the Prayer Record calendar's prayed-day marker,
+swipe and menu actions (`Label(…, systemImage:)`) — never as a devotional
+or door glyph. Note that `qlmanage` cannot preview these faithfully: it
+renders a stroke-only SVG blank and *fills* path data meant to be
+stroked, so check a new glyph in the running app, or render it in a
+browser as `make_sheet.py` does.
 
 A gold act's glyph names the act: `GoldCTAButton(glyph: .play)` for one
 that begins a prayer, `.chevron` (trailing) for one that goes on to a
@@ -2059,25 +2086,62 @@ page, and a trailing check (`trailingIcon: "ph-check"`) for one that
 completes something. A Latin cross once led
 every page-level act and named nothing; the cross now stands on the tab
 bar's Pray medallion alone. The `OrnamentDivider`'s centre cross is an
-ornament, not a control, and stays.
+ornament, not a control, and stays; `lv-lozenge` is its diamond stud,
+for a flourish set beside a word (MILESTONE REACHED), and means nothing.
 
 One glyph per door. The same door wears the same icon everywhere it
-appears — the Missal is `ch-altar` on every surface (the Liturgy tile,
-which holds the Missal and the Office together, wears it too), the
-Office `ph-clock`, the Marian Library `ch-lily`, In Scripture
-`lv-breviary` (the Scriptural Rosary keeps `ch-bible`), the Marian
-dogmas `ph-star-fill`, the saints `ph-user`, the Consecration
-`ch-consecration` (the Marian monogram, a cross over an M; the crown is
-True Devotion's alone). A door's glyph may also mark content of its own
-kind inside a page, never a different door: `ch-lily` is Mary's lily,
-so it also marks the Memorare, Our Lady's Psalter and the Cana reading;
-`ph-clock` is the hours, so it also marks the reminder's time. A glyph
-standing for a devotion is the one that devotion's own iconography
-uses: the Seven Sorrows take `ch-sorrowful-heart`, Mary's heart pierced
-by Simeon's sword, wherever they appear; `ch-sacred-heart`, the heart
-aflame, marks the heart of the Marian consecration — True Devotion's
-"The Spirit of This Devotion" and the consecration onboarding's "The
-Gift".
+appears:
+
+- **Doors** — the Rosary `lv-rosary` (beads, medal and crucifix: a ring
+  over a cross, as `ch-rosary` drew it, is the sign ♀); the Missal
+  `ch-altar` on every surface (the Liturgy tile, which holds the Missal
+  and the Office together, wears it too); the Office `ph-clock`; the
+  Marian Library `ch-lily`; In Scripture `lv-breviary` (the Scriptural
+  Rosary keeps `ch-bible`); the Prayer Book `ch-praying-hands`, the one
+  praying-hands glyph (it also marks a prayer's door and Pray aloud);
+  the Consecration `ch-consecration` (the Marian monogram, a cross over
+  an M; the crown is True Devotion's alone).
+- **The mysteries** (`MysteryCategory.iconName`) — Joyful `lv-star`,
+  the Star of Bethlehem; Sorrowful `lv-crown-of-thorns`, a plaited
+  ring; Glorious `lv-banner`, the Resurrection's vexillum; Luminous
+  `lv-jordan`, the dove over the Jordan; the Seven Sorrows
+  `lv-pierced-heart`, Mary's heart pierced by Simeon's sword, wherever
+  they appear.
+- **The hours** — Morning Prayers `lv-rooster` (the cock of Lauds'
+  hymn, *Aeterne rerum Conditor*), the Angelus `lv-bell` (a church bell
+  on its yoke, as is the Church Bells sound; `ph-bell` is the Daily
+  Reminders' notification bell and the Altar Bell sound), Night Prayers
+  `lv-lamp` (Vespers was the *lucernarium*, the lighting of the lamps).
+  The moon is left to the reader's sleep timer.
+- **The Prayer Book's chapters** — Our Lord `ch-chi-rho`, the Holy
+  Ghost `ch-dove`, Angels and Saints `lv-saint` (every saint: the Marian
+  Saints shelf, a saint's reading, the Saints kind of meditation),
+  Through the Day `lv-hourglass`, Penance `ch-keys` (the keys of
+  absolution; the confession orders and Carlo's confession too), the
+  Litanies `lv-procession-cross` (they were sung in procession), Short
+  Prayers `lv-dart` (*iaculatoriæ*, prayers darted out).
+- **The Marian Library's shelves**, whose glyph the doors to their
+  readings wear — the dogmas `lv-twelve-stars` (Apoc 12:1), Scripture
+  `ch-bible`, the apparitions `lv-rose`, the saints `lv-saint`, the
+  Rosary `lv-rosary`, her titles `lv-stella-maris`.
+- **Milestones** — a count is its numeral (③ ⑦ ⑨); a named devotion its
+  sign (33 `ch-consecration`, 54 `lv-rosary`, 100 `lv-wheat`, 365
+  `ch-chi-rho`). Never a prize medal.
+
+A door's glyph may also mark content of its own kind inside a page,
+never a different door: `ch-lily` is Mary's lily, so it also marks the
+Memorare, Our Lady's Psalter and the Cana reading; `ph-clock` is the
+hours, so it also marks the reminder's time. A glyph standing for a
+devotion is the one that devotion's own iconography uses:
+`ch-sacred-heart`, the heart aflame, marks the heart of the Marian
+consecration — True Devotion's "The Spirit of This Devotion" and the
+consecration onboarding's "The Gift".
+
+Known clash, not yet settled: Today's Mysteries (the Pray tray's row,
+`PrayerShortcut.chooseMeditation`) wears `ph-book-open` as the "Rosary
+ways to pray" handoff specified, which Spiritual Reading's door and the
+Journal tab also wear. The Rosary's two choices wear `ph-speaker-high`
+(Audio) and `lv-rosary` (Counting), from `RosaryChoice`.
 
 ### Motion
 
