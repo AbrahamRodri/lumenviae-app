@@ -210,6 +210,20 @@ nonisolated struct LibraryParsingRules: Hashable {
     /// it is the table of contents naming one. 500 characters rejects
     /// every contents line without touching any real chapter.
     var minimumChapterLength: Int = 500
+
+    /// A paragraph as it is quoted: without its footnote markers. On
+    /// the page each marker is a link to the chapter's apparatus; in a
+    /// note, on a share card or in a mark's excerpt there is no
+    /// apparatus, and "hidden manna.(2)" is noise.
+    func quotable(_ paragraph: String) -> String {
+        guard let notePattern,
+              let regex = try? NSRegularExpression(pattern: notePattern) else { return paragraph }
+        let range = NSRange(paragraph.startIndex..., in: paragraph)
+        return regex
+            .stringByReplacingMatches(in: paragraph, range: range, withTemplate: "")
+            .replacingOccurrences(of: "  ", with: " ")
+            .trimmingCharacters(in: .whitespaces)
+    }
 }
 
 // MARK: - LibraryTrackMapping
