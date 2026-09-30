@@ -188,6 +188,13 @@ struct ContentView: View {
     /// or anything that asks the router (`AppRouter.run`): the Chapel's
     /// focus and Today rows, a library reading's Pray door.
     private func perform(_ shortcut: PrayerShortcut) {
+        // The Consecration tab stands above this stack with a stack of its
+        // own, so an act pushed here while it was chosen — the Pray
+        // button there, the Angelus bell tapped — went on beneath it,
+        // unseen, and took the tab bar with it
+        if shortcut != .consecration, router.selectedTab == .consecration {
+            router.selectedTab = .home
+        }
         switch shortcut {
         case .todaysRosary:
             startPrayer(category: ScheduleService.categoryForToday())
