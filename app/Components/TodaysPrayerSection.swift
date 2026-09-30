@@ -371,10 +371,15 @@ private struct LedgerRow<Fact: View>: View {
             HStack(spacing: 16) {
                 medallion
 
+                // A door's name is never cut: beside a long fact
+                // ("The Divine Office" by COMPLINE) or at the larger text
+                // sizes it takes a second line, as the Chapel's day
+                // strip does for a long feast
                 Text(name)
                     .font(AppFonts.headlineFont(16.5))
                     .foregroundColor(AppColors.cream)
-                    .lineLimit(1)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
 
                 Spacer(minLength: 8)
 
