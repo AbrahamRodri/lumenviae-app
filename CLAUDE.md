@@ -593,6 +593,7 @@ app/
 ├── Services/
 │   ├── APIService            # HTTP client (https://lumenviae.fly.dev/api)
 │   ├── AudioService          # Narration and chant playback
+│   ├── AudioClaim            # Who holds the player: one claim at a time
 │   ├── ChantPlayer           # The Chant Library's hold on it, above the views
 │   ├── SpokenRosaryPlayer    # The whole Rosary said aloud, above AudioService
 │   ├── RosaryAudioPack       # The spoken Rosary's recordings, fetched and kept
@@ -850,15 +851,63 @@ write concurrent code here:
   (the chosen one) per meditation, and a copy in another voice is
   played before silence when no link will.
 
+  **Who holds the player is a claim** (`Services/AudioClaim.swift`).
+  Every flow sounds through the one `AudioService`, and each used to
+  decide for itself whether the player was still its own — from the file
+  it loaded, the load generation it loaded under, and whether it held the
+  Lock Screen arrows — and was never told when it had been displaced. A
+  flow now asks `AudioService.claim(_:rate:ifIdle:onRevoked:)` for the
+  player. One claim holds it at a time: a new claim, or an older flow's
+  `loadAudio` or `setTrackNavigation`, ends the one before with notice
+  (`onRevoked`), and a claim takes off the arrows an older flow left,
+  which is how that flow learns it has lost the player
+  (`isTrackNavigationOwner`). The flow loads, plays, seeks and reads
+  through its claim, and once the item in the player is not the one it
+  loaded (`holdsItem`) every act is a no-op and every readout is at rest,
+  so no surface narrates or drives someone else's audio; two claims that
+  load the same recording are two loads, the second from its top. A load
+  whose claim ends while the recording is still arriving drops it rather
+  than leave it in the player for nobody. A speed the claim borrowed
+  (`AudioRatePolicy.borrowed`) comes back however the claim ends, unless
+  another flow has borrowed one since. `ifIdle` declines only while
+  something is playing: a recording paused, still loading, or stopped by
+  a phone call counts as idle. The end of an item, or its failure, is
+  told to the claim whose load put it in the player (`onFinish`,
+  `onFail`), and only while that claim still holds it — told to whoever
+  held the arrows, a chant's end once reached a flow that had taken them
+  without loading anything. `release()` stops the claim's own item, or
+  puts away the empty player its own `unload` left between steps, and
+  gives the audio session back; a claim already ended releases nothing.
+  Kept for the item alone, every consecration day whose chant was heard
+  ended on a reading with the Veni Creator still on the Lock Screen over
+  nothing, and the session held. The Chant Library and the consecration
+  day hold claims. The prayer flow, the spoken Rosary, the reading shelf
+  and the Prayer Book still use the older surface — owner tokens for the
+  arrows (`setTrackNavigation(owner:)`),
+  `setPlaybackRate(_:remember:borrower:)`, `currentURL` and
+  `loadGeneration` — which keeps working beside claims until each moves.
+  `appTests/AudioClaimTests.swift` covers how claims are given, ended
+  and released, and the seam with the older surface, on a service of its
+  own that keeps off the Lock Screen and the audio session
+  (`AudioService(integratesWithSystem: false, defaults:)`) — though
+  `play()` on it would still activate the session, so a test loads and
+  never plays.
+
   **The narration's speed is a slider** (`PlaybackSpeedChoice`, in the
   playback sheet and the Voice & speed sheet): 0.7× to 1.7×
   (`AudioService.rateRange` — slower the voice drags, faster the
   prayers run together) in twentieths, its value beside it
   ("1.15×"), a soft catch at 1× felt as a tick, and an outlined 1× at
   its far end as the way back, faded but never gone, so the track keeps
-  its length under the thumb. A drag is heard as it goes when something
-  is playing and stored only when the finger lifts
-  (`userSettings.narrationRate`); what the slider sets once the finger
+  its length under the thumb. The slider shows and sets the app's own
+  speed (`AudioService.appRate`, `setAppRate`), never a speed a chant or
+  a book borrowed, and the Voice & speed row on the Rosary's own page
+  names the same speed: a drag is heard as it goes when something is playing at the
+  app's speed (`previewAppRate`), and stored only when the finger lifts
+  (`userSettings.narrationRate`); under a borrowed speed it is stored and
+  not heard, and the loan plays on until it ends — a drag once retuned a
+  slowed chant and cleared its loan, and the sheet named the chant's
+  0.75× as the app's. What the slider sets once the finger
   is off it, as the thumb settles, is stored at once — taken as a drag,
   it was never kept, and the sheet named a speed the voice was not
   saying, with the 1× beside it seeming to do nothing; VoiceOver adjusts it a quarter at a
@@ -1623,7 +1672,9 @@ write concurrent code here:
   kept apart from the app-wide narration speed —
   `AudioService.setPlaybackRate(_:remember:borrower:)`, lent to the
   session by its track-navigation token and given back the moment
-  another flow takes the arrows (`setTrackNavigation`), or when the
+  another flow takes the arrows (`setTrackNavigation`) or claims the
+  player (`AudioClaim`; a claim with a pace of its own lends that one
+  instead, and the app's comes back when it ends), or when the
   listening session stops (`restoreRememberedRate(from:)`, which leaves
   a speed some other flow has borrowed since) — so a slow LibriVox
   volunteer never sets the pace of a Rosary.
@@ -1832,12 +1883,17 @@ write concurrent code here:
   by heart). The consecration day's transport plays the same bundled
   recording for its Veni Creator, Ave Maris Stella, Magnificat, litanies
   and Glory Be, with a SCORE door and the credit beneath it; it reads
-  the shared player only while that player is sounding the day's own
-  chant (the file, the load generation and the arrows, as `ChantPlayer`
-  keeps), and it loads ahead
-  only when nothing else is sounding — a chant the library is singing
-  keeps the player, and its Lock Screen arrows, until the day's own play
-  is pressed, where loading ahead silenced it the moment the day opened.
+  and drives the shared player only through its own claim, taken on a
+  step with a chant. A step with none takes nothing, and the Lock Screen
+  stays with whatever holds it (it once took the arrows there, over audio
+  it had never loaded); a claim the day already holds from a step before
+  keeps its arrows, so the day can still be stepped from the Lock Screen.
+  It loads ahead only when nothing else is playing (`ifIdle`) — a chant
+  the library is singing keeps the player, and its Lock Screen arrows,
+  until the day's own play is pressed, where loading ahead silenced it
+  the moment the day opened; a chant left paused is taken. The claim
+  plays at the app's narration speed, not a pace of its own, and leaving
+  the day releases it.
 
   **Everything is Verbum Gloriae's** (verbumgloriae.es), a Spanish
   apostolate of Gregorian chant: one cantor's voice, sung for learning,
@@ -1913,18 +1969,20 @@ write concurrent code here:
   **`ChantPlayer`** (`Services/`) is the library's hold on the shared
   AudioService, above the views like `LibraryListeningSession`: one chant
   at a time for the tile, the library, the pages and the Lock Screen
-  (whose arrows step through the library), claimed so another flow
-  taking the player is never narrated as its own. The claim is the file,
-  the load generation **and** the Lock Screen arrows, as the
-  consecration day's is: a second load of the file
-  already in the player is no new load and keeps the generation, so a
-  day that took the library's Veni Creator once left both believing they
-  held it, and closing one silenced the other. Each takes the arrows
-  when it claims the file, and one that finds the file loaded but not
-  its own loads it afresh, from the top. Its practice rate is borrowed
-  (by its navigation token), never remembered as the app's narration
-  speed, and handed back in `relinquish()` or as soon as another flow
-  takes the arrows. Earlier builds
+  (whose arrows step through the library). It holds the player by a
+  claim (`AudioClaim`), taken at the tap, so another flow taking the
+  player is never narrated as its own: the progress line and the pause
+  glyph read the claim, and come to rest when it ends. The consecration
+  day holds a claim of its own, and a recording the two share — the Veni
+  Creator — is two loads, the second from its top. Decided by the file
+  and the load generation, as it once was, a second load of the file
+  already in the player was no new load, so both believed they held it
+  and closing one silenced the other. Its practice pace is borrowed
+  (`.borrowed(rate)`), never remembered as the app's narration speed,
+  and comes back however the claim ends — `relinquish()`, or another
+  flow taking the player. Repeat is the claim's `onFinish`, told only
+  for the chant the library loaded, and only while its claim holds the
+  player. Earlier builds
   saved the unlicensed chants offline as `prayer_<slug>.mp3`;
   `OfflineContentService.retireUnlicensedChants()` deletes them once at
   launch (`appApp.init`) and corrects the saved library's size.
