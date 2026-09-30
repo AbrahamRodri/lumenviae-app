@@ -56,11 +56,9 @@ struct RosaryFormTests {
         #expect(RosaryChoice.counting.note(for: false, form: .scriptural) == RosaryChoice.counting.note(for: false))
     }
 
-    @Test func settingsSharedWordingIsTheChoicesWording() {
-        #expect(UserSettings.prayAloudTitle == "Audio")
-        #expect(UserSettings.beadCounterTitle == "Counting")
-        #expect(UserSettings.prayAloudDetail(isOn: true) == RosaryChoice.audio.note(for: true))
-        #expect(UserSettings.beadCounterDetail(isOn: false) == RosaryChoice.counting.note(for: false))
+    @Test func theChoicesAreCalledAudioAndCounting() {
+        #expect(RosaryChoice.audio.title == "Audio")
+        #expect(RosaryChoice.counting.title == "Counting")
     }
 
     // MARK: - Where the Beads Are Counted

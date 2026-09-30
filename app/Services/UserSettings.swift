@@ -180,25 +180,10 @@ final class UserSettings {
     /// decade's verses together and moves a mystery at a time. It holds
     /// only while the voice reads the meditation alone: with every
     /// prayer said aloud the voice moves the beads on the screen
-    /// (`RosaryForm.countsOnScreen`).
+    /// (`RosaryForm.countsOnScreen`). Wherever it is offered it is called
+    /// Counting, On My Rosary or On the Screen (`RosaryChoice.counting`).
     var prayOnBeads: Bool = true {
         didSet { UserDefaults.standard.set(prayOnBeads, forKey: "userSettings.prayOnBeads") }
-    }
-
-    /// What `prayOnBeads` is called wherever it is offered — Settings, the
-    /// player's playback sheet, a Rosary's own page, onboarding: Counting,
-    /// On My Rosary or On the Screen (`RosaryChoice.counting`). It had
-    /// three names ("Pray on the Beads", "Pray on the beads", "Bead
-    /// counter") and three explanations, none of which said what a person
-    /// would see.
-    static var beadCounterTitle: String { RosaryChoice.counting.title }
-
-    /// What the chosen way of counting does, said as what appears on the
-    /// screen. Offered only while the voice reads the meditation alone —
-    /// with every prayer said aloud the voice moves the beads on the
-    /// screen — so `aloud` no longer changes the words.
-    static func beadCounterDetail(isOn: Bool, aloud: Bool = false) -> String {
-        RosaryChoice.counting.note(for: isOn)
     }
 
     // MARK: - The Rosary Said Aloud
@@ -208,22 +193,10 @@ final class UserSettings {
     /// Scriptural Rosary each bead's verse — moving the beads with the
     /// voice, so it can be prayed with the phone in a pocket. Off until
     /// chosen: someone who prays along with the meditation alone should
-    /// not find the app praying over them.
+    /// not find the app praying over them. Wherever it is offered it is
+    /// called Audio, Meditation Only or Whole Rosary (`RosaryChoice.audio`).
     var prayAloud: Bool = false {
         didSet { UserDefaults.standard.set(prayAloud, forKey: "userSettings.prayAloud") }
-    }
-
-    /// What `prayAloud` is called wherever it is offered — a Rosary's own
-    /// page, the playback sheet, Settings, onboarding: Audio, Meditation
-    /// Only or Whole Rosary (`RosaryChoice.audio`) — one name, so it is
-    /// recognised as one choice. What it does is the detail's to say.
-    static var prayAloudTitle: String { RosaryChoice.audio.title }
-
-    /// What the chosen audio does, said as what is heard. Whole Rosary
-    /// always counts on the screen, the voice moving the beads, so
-    /// `onBeads` no longer changes the words.
-    static func prayAloudDetail(isOn: Bool, onBeads: Bool = true) -> String {
-        RosaryChoice.audio.note(for: isOn)
     }
 
     // MARK: - After the Rosary
