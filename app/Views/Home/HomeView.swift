@@ -318,7 +318,9 @@ struct ResumePrayerCard: View {
                             .lineLimit(1)
                             .minimumScaleFactor(0.8)
 
-                        Text(session.setName)
+                        // A Holy Rosary saved before it was renamed was
+                        // kept under its old name, The Rosary Aloud
+                        Text(session.spokenForm == .plain ? ScripturalRosaryViewModel.holyRosaryName : session.setName)
                             .font(AppFonts.italicFont(12))
                             .foregroundColor(AppColors.textSecondary)
                             .lineLimit(1)

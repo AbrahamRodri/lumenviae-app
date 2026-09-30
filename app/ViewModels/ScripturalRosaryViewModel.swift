@@ -50,10 +50,14 @@ final class ScripturalRosaryViewModel {
     }
 
     /// The devotion's name as the screens set it: the header, the Lock
-    /// Screen, a share
+    /// Screen, a share, the resume card. The Holy Rosary's is kept here as
+    /// well, for a card saved while it was still recorded under its old
+    /// name (`aloudDevotionName`), which the Prayer Record keeps.
     var displayName: String {
-        isPlain ? "The Holy Rosary" : "The Scriptural Rosary"
+        isPlain ? Self.holyRosaryName : "The Scriptural Rosary"
     }
+
+    static let holyRosaryName = "The Holy Rosary"
 
     /// Which snapshot an interrupted one is kept as, so it comes back
     /// as itself

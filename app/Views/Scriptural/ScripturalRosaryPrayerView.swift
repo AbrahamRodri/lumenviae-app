@@ -270,7 +270,7 @@ struct ScripturalRosaryPrayerView: View {
                 PrayerResumeService.shared.save(
                     kind: viewModel.resumeKind,
                     setId: 0,
-                    setName: viewModel.devotionName,
+                    setName: viewModel.displayName,
                     category: viewModel.category.rawValue,
                     mysteryIndex: index,
                     beadIndex: viewModel.currentBeadIndex,
@@ -388,7 +388,7 @@ struct ScripturalRosaryPrayerView: View {
                 : "\(shareLine) · \(mysteryName), the Scriptural Rosary on Lumen Viae",
             feedbackContext: FeedbackContext(
                 meditationTitle: mysteryName,
-                setName: viewModel.devotionName
+                setName: viewModel.displayName
             ),
             onAddReflection: { activeSheet = .journal },
             onGiveFeedback: { activeSheet = .feedback },
@@ -1334,7 +1334,7 @@ struct ScripturalRosaryPrayerView: View {
         PrayerResumeService.shared.save(
             kind: viewModel.resumeKind,
             setId: 0,
-            setName: viewModel.devotionName,
+            setName: viewModel.displayName,
             category: viewModel.category.rawValue,
             mysteryIndex: mystery,
             beadIndex: bead,
