@@ -515,7 +515,8 @@ app/
 │   │                         # LibraryReadingView, the Missal and the Office
 │   │                         # (+ LiturgicalMonthGrid, the month grid both
 │   │                         # calendars draw)
-│   ├── Onboarding/           # 8-slide first run + RosaryMethodsView
+│   ├── Onboarding/           # 9-slide first run (8 said aloud) + RosaryMethodsView
+│   ├── WhatsNew/ FirstUseTour/ # the two first looks, once each
 │   └── Launch/
 ├── Components/               # CustomTabBar, HeaderView, MysteryCard, QuoteSection,
 │                             # MeditationSetTile (+Row), StreakWidget,
@@ -933,19 +934,40 @@ write concurrent code here:
   What brings the user to the Rosary is chosen in onboarding and Settings
   → Devotion. (The app-icon picker is built but switched off; see
   Settings.)
-- **Onboarding** — eight slides, skippable, re-runnable from About in
-  debug builds (`Views/Onboarding/OnboardingView.swift`). The order asks before it
+- **Onboarding** — nine slides (eight when the whole Rosary is said
+  aloud), skippable, re-runnable from About in debug builds
+  (`Views/Onboarding/OnboardingView.swift`). The order asks before it
   shows and gives before it asks: welcome → what brings you to the
-  Rosary → on the beads or without them (`userSettings.prayOnBeads`,
-  asked as "On the Beads" / "Without the Beads" — Settings calls the
-  same switch the Bead counter), each shown working in one fixed
-  slot: the players' own `RosaryStrandView` to swipe, or arrows stepping
-  a mystery at a time → what the app holds for the reasons chosen →
-  colors → language → a reminder with evening already chosen ("Remind
-  Me at 8 PM") → the Sign of the Cross, whose button takes the first
-  step it names (today's Rosary, or How to Pray for someone learning)
-  through `OnboardingFirstStep`. The paintings hang in the top of the
-  glass and dissolve to clear, so no word is set across a face.
+  Rosary → **what you'll hear** (Meditation Only, the default, or Whole
+  Rosary — `userSettings.prayAloud` — over a decade's four parts marked
+  VOICE or YOU) → **where you'll count** (On the Screen, the default, or
+  On My Rosary — `userSettings.prayOnBeads`, which Settings calls the
+  Bead counter), each shown working in one fixed slot: the players' own
+  `RosaryStrandView` to swipe, or arrows stepping a mystery at a time →
+  what the app holds for the reasons chosen → colors → language → a
+  reminder with evening already chosen ("Remind Me at 8 PM"), which says
+  before it is pressed that the iPhone will then ask → the Sign of the
+  Cross, whose button takes the first step it names (today's Rosary, or
+  How to Pray for someone learning) through `OnboardingFirstStep`. The
+  two MAKE IT YOURS slides are the "Rosary ways to pray" handoff's, in
+  its words, which the Rosary's pages and Settings share. The beads
+  slide stands only with Meditation Only: with the whole Rosary aloud
+  the voice moves the beads, so there is nothing to choose, and the
+  first slide's kicker drops its "1 of 2". Every
+  position — the strand of progress, the paintings, the ground under the
+  words — is a place in `OnboardingStage.sequence`, never a slide's own
+  number, and a painting is known by its slide, so the beads slide can
+  come and go while the voice slide is read without a painting or a
+  ground belonging to the wrong page. Every choice sits on one card
+  (`OnboardingChoiceCard`: a radio where one choice excludes the
+  others, a check for the reasons), and a lead whose words change with a
+  choice holds the height of its longest sentence (`OnboardingLeadSlot`)
+  so nothing beneath it moves. A reminder never asked about is left
+  off: a first run that skips or swipes past the reminder slide turns
+  `remindersEnabled` off while notifications are still undetermined, so
+  Settings never shows a reminder switched on that cannot ring. The
+  paintings hang in the top of the glass and dissolve to clear, so no
+  word is set across a face.
 
   **The pages travel and nothing else does.** The painting and the dark
   ground under the words are one layer each, standing still while the
@@ -955,7 +977,7 @@ write concurrent code here:
   painting crossfades under the thumb instead of after the swipe. The
   slides sit in a paging `ScrollView`, not a `TabView`, for that
   measurement, `.viewAligned(limitBehavior: .always)` so a flick can
-  never skip a question, and the eight paintings are masked **once**
+  never skip a question, and the paintings are masked **once**
   over the pair being crossfaded, never one mask each, or the painting
   underneath reads through the dissolve and pops as it leaves. Skip is
   the one move that is not a scroll: six slides whipping past the eye
@@ -968,7 +990,12 @@ write concurrent code here:
   `ViewThatFits`'s scrolling last resort takes
   `.scrollBounceBehavior(.basedOnSize)`: a scroll view with nothing to
   scroll still swallows the sideways drag that turns the page, and the
-  beads slide, the tallest of the eight, could not be swiped off.
+  beads slide, the tallest of them, could not be swiped off. The head
+  keeps Skip's height after Skip has gone, or the strand rose as the
+  last slide arrived. Slide titles are headings, and a slide a button
+  turns to takes VoiceOver to its title (`focusRequest`); a turn made by
+  the hand leaves VoiceOver where it is. The slides' staggered entrance
+  drops its rise under Reduce Motion and keeps the fade.
 
   The copy
   is plain on purpose: say what a thing is before anything beautiful
@@ -977,6 +1004,61 @@ write concurrent code here:
   numbering, and noon is the only reminder hour that claims the Angelus.
   Intention wording lives in `PrayerIntention.displayName`/`detail`;
   the raw values are what is stored and never change.
+- **What's New and the first-use tour** — the two first looks, one for
+  each kind of reader, each shown once, on the home page itself (never
+  over a prayer, never while a page is pushed or a tray is up), decided
+  in `ContentView.presentFirstLook`. **What's New**
+  (`Views/WhatsNew/`) is for someone updating: `WhatsNewStore.
+  decideAtLaunch()` runs in `appApp.init`, before the introduction can
+  finish, and owes the notes only to an install that had already
+  finished it and whose `whatsNew.lastVersionSeen` differs from the
+  bundle's CFBundleShortVersionString — so a new install records its
+  version and never sees them. The sheet is the sheet grammar: the
+  version as kicker ("LUMEN VIAE 4.0") over "What's New", one ruled row
+  per thing added — its own glyph and name, one plain line, a caret —
+  each row a door that closes the sheet and pushes its page, and one
+  gold Continue; it stands only as tall as its notes and Continue (a
+  measured detent), not full height over an empty band. No counts, no
+  durations, no marketing gloss. The version is marked seen the moment
+  the sheet is shown. **To write the next version's notes**, add a
+  `WhatsNewRelease` to `WhatsNewRelease.all` whose `version` is the new
+  MARKETING_VERSION exactly ("4.1"); a version with no entry shows
+  nothing (a point release included) and is still recorded as seen, and
+  someone who skips a version sees only the notes of the one they
+  arrive at. The 4.0 notes name what CHANGELOG.md's 4.0 section adds —
+  the Prayer Book, the Chant Library, the Rosary said aloud (with the
+  speed slider), and How to Pray with Your First Rosary — and not the
+  Scriptural Rosary or the voices, which came in 3.0; if a named
+  devotion is renamed or its route moves, change its row too. **The
+  first-use tour** (`Views/FirstUseTour/`) is for a new reader: marked
+  due (`firstUseTour.due`) when the introduction is first finished, and
+  begun once home is reached — if the introduction's first step opened a
+  prayer, or a prayer is still being fetched, it waits for the reader to
+  come back; if anything pushes a page while it runs (a notification, a
+  shortcut) it stands aside (`pause()`), still owed, and begins again
+  from its first stop when home returns. Four coach marks over the real
+  controls, one at a time: today's Rosary (the featured card), the Pray
+  button (a tap and a hold), the Chapel tab, and Explore's glass, which
+  is also where the Prayer Book is named. Each control reports where it
+  stands with one appended modifier, `.firstUseTourStop(_:)` (HomeView,
+  HeaderView, CustomTabBar); move a control and its stop follows it, and
+  a stop scrolled off the glass keeps its card on the glass rather than
+  sending it, and "Leave the tour", off the screen. The page is dimmed in
+  the theme's deep ground with the control left in the light and ringed
+  in gold, and hidden from VoiceOver while the tour runs; a small card
+  beside it carries the tour's strand of beads, one or two plain
+  sentences, a quiet NEXT (DONE on the last) and a quiet "Leave the
+  tour"; its acts are never filled gold, because home keeps its own one.
+  A tap elsewhere does nothing, so it cannot be lost by accident, and
+  leaving or finishing ends it for good. The light travels from control
+  to control (the step is taken in `withAnimation`: the implicit
+  animation alone left the lit window jumping); under Reduce Motion one
+  mark fades out and the next fades in. Chosen over a deck of cards
+  before the app because tutorials read before the app is seen do not
+  help people use it (NN/g, "Mobile Tutorials: Wasted Effort or
+  Efficiency Boost?"), and help given on the control itself, one at a
+  time, does (NN/g, "Instructional Overlays and Coach Marks"; Apple HIG,
+  "Offering help").
 - **Daily Missal** — the 1962 propers for any day, reached from Today's
   Prayer on home, Explore, the Chapel's Liturgy tile and the Pray tray
   (and on a given day through `.missalDay(Date)`), as one scroll surface
