@@ -981,7 +981,12 @@ extension PrayerSessionViewModel: SpokenRosaryHost {
         let player = SpokenRosaryPlayer(script: script, host: self, audio: audioService)
         spoken = player
         isPrayedAloud = true
-        let step = resumeStep
+        // The step an interrupted Rosary stopped on, only while the hand
+        // still stands where it stopped: turned on after the hand has
+        // moved on, the voice would take it back there
+        let step = resumeStep.flatMap {
+            $0.mystery == currentMysteryIndex && $0.bead == currentBeadIndex ? $0 : nil
+        }
         resumeStep = nil
         await player.start(
             mystery: currentMysteryIndex,
