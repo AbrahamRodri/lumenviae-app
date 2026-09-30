@@ -297,6 +297,10 @@ private struct ThresholdStepView: View {
                             .overlay(Color.black.opacity(0.15))
                     )
                     .clipShape(arch)
+                    // The clip is drawn, not hit-tested: the filled painting
+                    // stood above the arch and took Skip's taps from it.
+                    // The arch is a picture, never a control
+                    .allowsHitTesting(false)
                     .overlay(
                         arch.strokeBorder(AppColors.gold.opacity(0.5), lineWidth: 1)
                     )
