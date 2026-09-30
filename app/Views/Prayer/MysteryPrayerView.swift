@@ -105,6 +105,7 @@ struct MysteryPrayerView: View {
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @Environment(\.scenePhase) private var scenePhase
 
     /// True while the meditation text is open over the player.
     ///
@@ -291,6 +292,22 @@ struct MysteryPrayerView: View {
             saveResumePosition()
             dismissSwipeHint()
         }
+        // Off the beads the bead never moves, so nothing says the first
+        // mystery has begun: a minute on it does, and it is kept then —
+        // and again as the phone locks or the Rosary is left, should
+        // either come first. Opened and backed out of, it pins nothing,
+        // as on the beads. Said aloud the voice moves the beads on the
+        // screen, so this never waits on the voice.
+        .task(id: !onBeads && viewModel.currentMysteryIndex == 0) {
+            guard !onBeads, viewModel.currentMysteryIndex == 0 else { return }
+            let left = PrayerResumeService.firstMysteryBegunAfter - viewModel.sessionDuration
+            if left > 0 { try? await Task.sleep(for: .seconds(left)) }
+            guard !Task.isCancelled else { return }
+            keepFirstMysteryIfBegun()
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .background { keepFirstMysteryIfBegun() }
+        }
         .task(id: swipeHintMayShow) {
             // A first Rosary only, and only once there is something to
             // swipe and it has had a moment to settle — arriving with the
@@ -332,6 +349,7 @@ struct MysteryPrayerView: View {
             celebratesUnlock(from: wasUnlocked, to: isUnlocked) ? .impact(weight: .light) : nil
         }
         .onDisappear {
+            keepFirstMysteryIfBegun()
             // Leaving the prayer flow (close, completion, or back) must not
             // leave meditation audio playing over other screens.
             viewModel.stopAudio()
@@ -1201,10 +1219,12 @@ struct MysteryPrayerView: View {
     /// Only once the user has actually advanced — a decade or a bead —
     /// glancing at a set's first mystery and backing out must neither
     /// pin a resume card nor overwrite a genuinely interrupted session.
-    private func saveResumePosition() {
+    /// Off the beads, where no bead moves, the first mystery is kept by
+    /// `keepFirstMysteryIfBegun` instead.
+    private func saveResumePosition(evenAtTheStart: Bool = false) {
         let mystery = viewModel.currentMysteryIndex
         let bead = viewModel.currentBeadIndex
-        guard mystery > 0 || bead > 0 else { return }
+        guard mystery > 0 || bead > 0 || evenAtTheStart else { return }
         PrayerResumeService.shared.save(
             setId: meditationSet.id,
             setName: meditationSet.name,
@@ -1214,6 +1234,16 @@ struct MysteryPrayerView: View {
             startedAt: sessionStartedAt,
             accumulatedSeconds: viewModel.sessionDuration
         )
+    }
+
+    /// Keeps the first mystery as the place to resume, when the Rosary is
+    /// prayed off the beads and has been prayed there a while
+    /// (`PrayerResumeService.firstMysteryBegunAfter`)
+    private func keepFirstMysteryIfBegun() {
+        guard !onBeads,
+              viewModel.currentMysteryIndex == 0,
+              viewModel.sessionDuration >= PrayerResumeService.firstMysteryBegunAfter else { return }
+        saveResumePosition(evenAtTheStart: true)
     }
 
     /// The arrow's move off the beads: the next mystery, or from the

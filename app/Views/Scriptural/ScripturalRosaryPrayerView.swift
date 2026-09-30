@@ -263,7 +263,8 @@ struct ScripturalRosaryPrayerView: View {
         // nothing, as on the screen.
         .task(id: !countsOnScreen && viewModel.currentMysteryIndex == 0) {
             guard !countsOnScreen, viewModel.currentMysteryIndex == 0 else { return }
-            try? await Task.sleep(for: .seconds(Self.firstMysteryBegunAfter))
+            let left = PrayerResumeService.firstMysteryBegunAfter - viewModel.sessionDuration
+            if left > 0 { try? await Task.sleep(for: .seconds(left)) }
             guard !Task.isCancelled else { return }
             keepFirstMysteryIfBegun()
         }
@@ -1368,17 +1369,13 @@ struct ScripturalRosaryPrayerView: View {
         )
     }
 
-    /// How long the first mystery is prayed on one's own rosary before it
-    /// counts as begun: long enough that a Rosary opened and closed again
-    /// pins no card, short of a decade's Our Father and first Hail Marys
-    private static let firstMysteryBegunAfter: Double = 60
-
     /// Keeps the first mystery as the place to resume, when the Rosary is
     /// counted on one's own rosary and has been prayed there a while
+    /// (`PrayerResumeService.firstMysteryBegunAfter`)
     private func keepFirstMysteryIfBegun() {
         guard !countsOnScreen,
               viewModel.currentMysteryIndex == 0,
-              viewModel.sessionDuration >= Int(Self.firstMysteryBegunAfter) else { return }
+              viewModel.sessionDuration >= PrayerResumeService.firstMysteryBegunAfter else { return }
         saveResumePosition(evenAtTheStart: true)
     }
 

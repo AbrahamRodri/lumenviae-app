@@ -152,6 +152,13 @@ final class PrayerResumeService {
     /// 3rd mystery two days later.
     private static let expiry: TimeInterval = 24 * 60 * 60
 
+    /// How many seconds a Rosary counted on one's own rosary is prayed on
+    /// its first mystery before it counts as begun and is kept to resume,
+    /// since no bead moves there to say so: long enough that a Rosary
+    /// opened and closed again pins no card, short of a decade's Our
+    /// Father and first Hail Marys. Both players keep it.
+    static let firstMysteryBegunAfter = 60
+
     private init() {
         load()
     }
