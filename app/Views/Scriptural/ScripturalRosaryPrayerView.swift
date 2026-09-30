@@ -67,6 +67,7 @@ import SwiftUI
 struct ScripturalRosaryPrayerView: View {
     @Environment(AppRouter.self) private var router
     @Environment(UserSettings.self) private var userSettings
+    @Environment(\.scenePhase) private var scenePhase
     @State private var viewModel: ScripturalRosaryViewModel
 
     /// The one sheet this screen presents at a time.
@@ -255,6 +256,20 @@ struct ScripturalRosaryPrayerView: View {
         .sensoryFeedback(.selection, trigger: prayerStepPulse)
         // A bead prayed is a place to come back to, the same as a decade
         .onChange(of: viewModel.beadPosition, initial: true) { saveResumePosition() }
+        // Counted on one's own rosary, the first decade is one place and no
+        // bead moves to say it has begun: a minute on it does, so it is
+        // kept then — and again as the phone locks or the Rosary is left,
+        // should either come first. Opened and backed out of, it pins
+        // nothing, as on the screen.
+        .task(id: !countsOnScreen && viewModel.currentMysteryIndex == 0) {
+            guard !countsOnScreen, viewModel.currentMysteryIndex == 0 else { return }
+            try? await Task.sleep(for: .seconds(Self.firstMysteryBegunAfter))
+            guard !Task.isCancelled else { return }
+            keepFirstMysteryIfBegun()
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .background { keepFirstMysteryIfBegun() }
+        }
         // The decade turning, which the strand marks with a ripple
         .onChange(of: viewModel.currentMysteryIndex) { turnPulse += 1 }
         // The whole Rosary said aloud, or not: on arrival, and whenever
@@ -310,6 +325,7 @@ struct ScripturalRosaryPrayerView: View {
         }
         // Leaving the Rosary must not leave it being said over other screens
         .onDisappear {
+            keepFirstMysteryIfBegun()
             viewModel.stopSpeaking()
         }
         // Exactly one `.sheet` on this view — two stacked here would have
@@ -1336,10 +1352,10 @@ struct ScripturalRosaryPrayerView: View {
     /// once the user has actually advanced — a decade or a bead —
     /// opening the first mystery and backing out must neither pin a
     /// resume card nor overwrite a genuinely interrupted session.
-    private func saveResumePosition() {
+    private func saveResumePosition(evenAtTheStart: Bool = false) {
         let mystery = viewModel.currentMysteryIndex
         let bead = viewModel.currentBeadIndex
-        guard mystery > 0 || bead > 0 else { return }
+        guard mystery > 0 || bead > 0 || evenAtTheStart else { return }
         PrayerResumeService.shared.save(
             kind: viewModel.resumeKind,
             setId: 0,
@@ -1350,6 +1366,20 @@ struct ScripturalRosaryPrayerView: View {
             startedAt: sessionStartedAt,
             accumulatedSeconds: viewModel.sessionDuration
         )
+    }
+
+    /// How long the first mystery is prayed on one's own rosary before it
+    /// counts as begun: long enough that a Rosary opened and closed again
+    /// pins no card, short of a decade's Our Father and first Hail Marys
+    private static let firstMysteryBegunAfter: Double = 60
+
+    /// Keeps the first mystery as the place to resume, when the Rosary is
+    /// counted on one's own rosary and has been prayed there a while
+    private func keepFirstMysteryIfBegun() {
+        guard !countsOnScreen,
+              viewModel.currentMysteryIndex == 0,
+              viewModel.sessionDuration >= Int(Self.firstMysteryBegunAfter) else { return }
+        saveResumePosition(evenAtTheStart: true)
     }
 
     /// Completed all mysteries — the record is local only; there is no
