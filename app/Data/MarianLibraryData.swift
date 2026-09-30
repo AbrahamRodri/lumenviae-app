@@ -96,7 +96,7 @@ enum MarianLibraryData {
 
     static let dogmas = ReadingShelf(
         id: "dogmas",
-        icon: "ph-star-fill",
+        icon: "lv-twelve-stars",
         title: "The Four Marian Dogmas",
         marginLabel: "The\ndogmas",
         subtitle: "What the Church solemnly teaches",
@@ -151,7 +151,7 @@ enum MarianLibraryData {
                 painting: "joyful_annunciation",
                 feast: KeptFeast(month: 12, day: 8, name: "The Immaculate Conception"),
                 doors: [
-                    .page(.libraryReading(id: "lourdes"), icon: "ph-sun", title: "Our Lady of Lourdes", note: "Where she gave the dogma its name")
+                    .page(.libraryReading(id: "lourdes"), icon: "lv-rose", title: "Our Lady of Lourdes", note: "Where she gave the dogma its name")
                 ]
             ),
             LibraryReading(
@@ -277,7 +277,7 @@ enum MarianLibraryData {
 
     static let apparitions = ReadingShelf(
         id: "apparitions",
-        icon: "ph-sun",
+        icon: "lv-rose",
         title: "Approved Apparitions",
         marginLabel: "Apparitions",
         subtitle: "When Heaven visited earth",
@@ -312,7 +312,7 @@ enum MarianLibraryData {
                 ),
                 feast: KeptFeast(month: 11, day: 27, name: "Our Lady of the Miraculous Medal", inMissal: false, keptBy: "the Vincentian family"),
                 doors: [
-                    .page(.libraryReading(id: "immaculate_conception"), icon: "ph-star-fill", title: "The Immaculate Conception", note: "The dogma the medal prepared")
+                    .page(.libraryReading(id: "immaculate_conception"), icon: "lv-twelve-stars", title: "The Immaculate Conception", note: "The dogma the medal prepared")
                 ]
             ),
             LibraryReading(
@@ -345,7 +345,7 @@ enum MarianLibraryData {
                 ),
                 feast: KeptFeast(month: 2, day: 11, name: "Our Lady of Lourdes"),
                 doors: [
-                    .page(.libraryReading(id: "immaculate_conception"), icon: "ph-star-fill", title: "The Immaculate Conception", note: "The name she gave herself")
+                    .page(.libraryReading(id: "immaculate_conception"), icon: "lv-twelve-stars", title: "The Immaculate Conception", note: "The name she gave herself")
                 ]
             ),
             LibraryReading(
@@ -393,7 +393,7 @@ enum MarianLibraryData {
                 ),
                 feast: KeptFeast(month: 8, day: 22, name: "The Immaculate Heart of Mary"),
                 doors: [
-                    .page(.howToPray, icon: "ch-rosary", title: "How to Pray the Rosary", note: "Every day, as she asked")
+                    .page(.howToPray, icon: "lv-rosary", title: "How to Pray the Rosary", note: "Every day, as she asked")
                 ]
             ),
             LibraryReading(
@@ -418,7 +418,7 @@ enum MarianLibraryData {
 
     static let saints = ReadingShelf(
         id: "saints",
-        icon: "ph-user",
+        icon: "lv-saint",
         title: "The Marian Saints",
         marginLabel: "The\nsaints",
         subtitle: "In their own words",
@@ -454,7 +454,7 @@ enum MarianLibraryData {
                 ),
                 feast: KeptFeast(month: 8, day: 4, name: "St. Dominic"),
                 doors: [
-                    .page(.libraryReading(id: "dominic_confraternity"), icon: "ch-rosary", title: "St. Dominic and the Confraternity", note: "The Rosary Through History")
+                    .page(.libraryReading(id: "dominic_confraternity"), icon: "lv-rosary", title: "St. Dominic and the Confraternity", note: "The Rosary Through History")
                 ]
             ),
             LibraryReading(
@@ -538,7 +538,7 @@ enum MarianLibraryData {
                 ),
                 feast: KeptFeast(month: 9, day: 23, name: "St. Pio of Pietrelcina", inMissal: false),
                 doors: [
-                    .page(.howToPray, icon: "ch-rosary", title: "How to Pray the Rosary", note: "\u{201C}Always recite the Rosary\u{201D}")
+                    .page(.howToPray, icon: "lv-rosary", title: "How to Pray the Rosary", note: "\u{201C}Always recite the Rosary\u{201D}")
                 ]
             )
         ]
@@ -548,7 +548,7 @@ enum MarianLibraryData {
 
     static let rosary = ReadingShelf(
         id: "rosary_history",
-        icon: "ch-rosary",
+        icon: "lv-rosary",
         title: "The Rosary Through History",
         marginLabel: "The\nRosary",
         subtitle: "Eight centuries of Our Lady's Psalter",
@@ -567,7 +567,7 @@ enum MarianLibraryData {
                     citation: "Luke 1:28, the Angel's greeting"
                 ),
                 doors: [
-                    .page(.howToPray, icon: "ch-rosary", title: "How to Pray the Rosary", note: "The prayers, bead by bead")
+                    .page(.howToPray, icon: "lv-rosary", title: "How to Pray the Rosary", note: "The prayers, bead by bead")
                 ]
             ),
             LibraryReading(
@@ -584,7 +584,7 @@ enum MarianLibraryData {
                     citation: "The first of the Fifteen Promises, from Bl. Alan de la Roche"
                 ),
                 doors: [
-                    .page(.libraryReading(id: "dominic"), icon: "ph-user", title: "St. Dominic", note: "The Marian Saints")
+                    .page(.libraryReading(id: "dominic"), icon: "lv-saint", title: "St. Dominic", note: "The Marian Saints")
                 ]
             ),
             LibraryReading(
@@ -602,7 +602,7 @@ enum MarianLibraryData {
                 ),
                 feast: KeptFeast(month: 10, day: 7, name: "The Most Holy Rosary"),
                 doors: [
-                    .page(.libraryReading(id: "help_of_christians"), icon: "ph-star", title: "Help of Christians", note: "The title Lepanto gave the Litany")
+                    .page(.libraryReading(id: "help_of_christians"), icon: "lv-stella-maris", title: "Help of Christians", note: "The title Lepanto gave the Litany")
                 ]
             ),
             LibraryReading(
@@ -627,7 +627,7 @@ enum MarianLibraryData {
 
     static let titles = ReadingShelf(
         id: "titles",
-        icon: "ph-star",
+        icon: "lv-stella-maris",
         title: "Titles of Our Lady",
         marginLabel: "Her\ntitles",
         subtitle: "From the Litany and sacred Tradition",
@@ -695,7 +695,7 @@ enum MarianLibraryData {
                 ),
                 feast: KeptFeast(month: 5, day: 24, name: "Mary, Help of Christians", inMissal: false, keptBy: "the Salesians and many dioceses"),
                 doors: [
-                    .page(.libraryReading(id: "lepanto"), icon: "ch-rosary", title: "Lepanto", note: "The Rosary Through History")
+                    .page(.libraryReading(id: "lepanto"), icon: "lv-rosary", title: "Lepanto", note: "The Rosary Through History")
                 ]
             ),
             LibraryReading(
@@ -712,7 +712,7 @@ enum MarianLibraryData {
                     citation: "Our Lady at Fatima, 13 May 1917"
                 ),
                 doors: [
-                    .page(.libraryReading(id: "fatima"), icon: "ph-sun", title: "Our Lady of Fatima", note: "Approved Apparitions")
+                    .page(.libraryReading(id: "fatima"), icon: "lv-rose", title: "Our Lady of Fatima", note: "Approved Apparitions")
                 ]
             )
         ],

@@ -1844,7 +1844,7 @@ struct ChapelLibraryTile: View {
     ]
 
     private static let right: [Door] = [
-        ("ch-rosary", "How to Pray", .howToPray),
+        ("lv-rosary", "How to Pray", .howToPray),
         ("lv-breviary", "In Scripture", .scripture),
         ("ch-monstrance", "Carlo Acutis", .carloAcutis)
     ]

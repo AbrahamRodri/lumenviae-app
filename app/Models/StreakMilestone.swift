@@ -47,7 +47,7 @@ struct StreakMilestone: Identifiable, Equatable {
         StreakMilestone(
             days: 7,
             name: "A Faithful Week",
-            icon: "ph-sun",
+            icon: "ph-number-circle-seven",
             blessing: "Seven days — every mystery of the week visited in prayer."
         ),
         StreakMilestone(
@@ -65,19 +65,19 @@ struct StreakMilestone: Identifiable, Equatable {
         StreakMilestone(
             days: 54,
             name: "54-Day Novena",
-            icon: "ph-medal",
+            icon: "lv-rosary",
             blessing: "The great Rosary Novena complete — 27 days in petition, 27 in thanksgiving."
         ),
         StreakMilestone(
             days: 100,
             name: "Hundredfold",
-            icon: "ph-leaf",
+            icon: "lv-wheat",
             blessing: "Some seed fell on good soil and brought forth fruit a hundredfold."
         ),
         StreakMilestone(
             days: 365,
             name: "A Year of Grace",
-            icon: "ph-sparkle",
+            icon: "ch-chi-rho",
             blessing: "A full year of daily prayer. Ad majorem Dei gloriam."
         )
     ]

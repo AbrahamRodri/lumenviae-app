@@ -303,7 +303,7 @@ struct HowToPrayRosaryView: View {
                     .frame(width: 48, height: 48)
                     .shadow(color: AppColors.gold.opacity(0.5), radius: 10)
 
-                AppIcon("ch-rosary", size: 20)
+                AppIcon("lv-rosary", size: 20)
                     .foregroundColor(AppColors.background)
             }
             .frame(width: 48)
@@ -430,7 +430,7 @@ struct HowToPrayRosaryView: View {
 
             LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
                 ForEach(HowToPrayData.methods.entries) { reading in
-                    deeperTile(icon: "ch-rosary", title: reading.title, note: reading.detail) {
+                    deeperTile(icon: "lv-rosary", title: reading.title, note: reading.detail) {
                         router.push(.libraryReading(id: reading.id))
                     }
                 }

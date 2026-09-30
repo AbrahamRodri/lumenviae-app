@@ -221,7 +221,7 @@ struct ResumePrayerCard: View {
         switch session.spokenForm {
         case .scriptural: return PrayerShortcut.scripturalRosary.icon
         case .plain: return PrayerShortcut.rosaryAloud.icon
-        case nil: return "ch-rosary"
+        case nil: return "lv-rosary"
         }
     }
 

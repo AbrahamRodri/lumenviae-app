@@ -526,7 +526,7 @@ struct ExploreView: View {
                          matchText: "scriptural rosary verse every bead gospel douay rheims bible") { openTodaysMysteries() },
             LibraryEntry(icon: PrayerShortcut.rosaryAloud.icon, title: "The Holy Rosary",
                          matchText: "holy rosary aloud said spoken audio listen voice hear prayers learn by ear no meditation") { openTodaysMysteries() },
-            LibraryEntry(icon: "ch-rosary", title: "How to Pray",
+            LibraryEntry(icon: "lv-rosary", title: "How to Pray",
                          matchText: "how to pray the rosary guide montfort methods") { router.push(.howToPray) },
             // Not the Gospel glyph: that is the Scriptural Rosary's, and
             // the two doors stood side by side wearing the same one
@@ -680,7 +680,7 @@ struct ExploreView: View {
             router.push(.howToPray)
         } label: {
             HStack(spacing: 12) {
-                AppIcon("ch-rosary", size: 16)
+                AppIcon("lv-rosary", size: 16)
                     .foregroundColor(AppColors.gold.opacity(0.85))
                     .frame(width: 20)
 

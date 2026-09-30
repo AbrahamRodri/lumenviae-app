@@ -379,7 +379,7 @@ struct MilestoneCelebrationCard: View {
     var body: some View {
         VStack(spacing: 10) {
             HStack(spacing: 8) {
-                AppIcon("ph-sparkle-fill", size: 12)
+                AppIcon("lv-lozenge", size: 12)
                     .foregroundColor(AppColors.goldLight)
                     .scaleEffect(celebrate ? 1 : 0.5)
                     .animation(.spring(response: 0.5, dampingFraction: 0.5), value: celebrate)
@@ -389,7 +389,7 @@ struct MilestoneCelebrationCard: View {
                     .tracking(3)
                     .foregroundColor(AppColors.goldLight)
 
-                AppIcon("ph-sparkle-fill", size: 12)
+                AppIcon("lv-lozenge", size: 12)
                     .foregroundColor(AppColors.goldLight)
                     .scaleEffect(celebrate ? 1 : 0.5)
                     .animation(.spring(response: 0.5, dampingFraction: 0.5).delay(0.08), value: celebrate)
@@ -465,7 +465,7 @@ struct StreakCelebrationChip: View {
                 .frame(width: 1, height: 14)
 
             HStack(spacing: 6) {
-                AppIcon("ch-rosary", size: 14)
+                AppIcon("lv-rosary", size: 14)
                     .foregroundColor(AppColors.goldLight)
 
                 Text(totalRosaries == 1 ? "1 ROSARY OFFERED" : "\(totalRosaries) ROSARIES OFFERED")

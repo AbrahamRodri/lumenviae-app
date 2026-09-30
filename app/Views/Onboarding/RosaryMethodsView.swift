@@ -46,7 +46,7 @@ struct RosaryMethodsView: View {
     private let kinds: [MeditationKind] = [
         MeditationKind(
             label: "Considerations",
-            icon: "ch-rosary",
+            icon: "lv-rosary",
             title: "A reading and a prayer",
             description: "A short reflection on the mystery, often with a prayer at the end. The words come from preachers and Doctors of the Church. Read it once, then keep it in mind through the decade.\n\nSt. Alphonsus Liguori · Ven. Fulton J. Sheen · St. John Henry Newman · St. Thomas Aquinas"
         ),
@@ -58,7 +58,7 @@ struct RosaryMethodsView: View {
         ),
         MeditationKind(
             label: "Saints",
-            icon: "ph-user",
+            icon: "lv-saint",
             title: "In a saint's own words",
             description: "A set written by a saint of the Church carries this label as well as its own kind.\n\nA set of St. Alphonsus's reflections, for example, is marked both Saints and Reflections."
         ),
