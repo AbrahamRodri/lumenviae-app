@@ -507,7 +507,9 @@ struct OnboardingView: View {
     /// handoff's, which the Rosary's own pages and Settings share.
     private var voiceSlide: some View {
         OnboardingSlideLayout(
-            kicker: "Make it yours · 1 of 2",
+            // With the whole Rosary said aloud the beads question stands
+            // aside, and "1 of 2" promised a second that never came
+            kicker: praysAloud ? "Make it yours" : "Make it yours · 1 of 2",
             title: "What You'll Hear",
             page: .voice,
             stage: stage
@@ -1398,6 +1400,8 @@ private struct OnboardingSlideLayout<Content: View, Bottom: View>: View {
                         .tracking(2.5)
                         .foregroundColor(AppColors.gold)
                         .multilineTextAlignment(.center)
+                        .contentTransition(.opacity)
+                        .animation(Motion.crossfade, value: kicker)
                 }
 
                 Text(title)
