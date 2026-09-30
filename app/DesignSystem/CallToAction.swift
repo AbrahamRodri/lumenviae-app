@@ -216,8 +216,11 @@ struct GoldCTAButton: View {
 
 // MARK: - PrayFootScrim
 
-/// The ground under a page-level act fixed at the foot of a scrolling
-/// title page — the set detail's PRAY, the Scriptural Rosary's.
+/// The long fade under a page-level act fixed at the foot of a scrolling
+/// title page, which now stands only in the Prayer Book's `PrayFootGround`.
+/// It once stood under PRAY on every Rosary's page; the Rosary's own page
+/// (`RosaryConfirmPage`) has a ground that turns solid faster, since its
+/// ledger read through this one beneath the button.
 ///
 /// The scrim under the act must have no findable edge. Two things give
 /// one away. A short ramp shows the eye where it starts, so this one
@@ -257,7 +260,7 @@ struct PrayFootScrim: View {
 /// the air above the line, so the line and the act stand on the page's
 /// own deep ground
 /// (the gradient ends in it, so there is no edge). Stretched over the
-/// whole foot, as it is under PRAY alone, the fade was still half clear
+/// whole foot, as it once was under PRAY alone, the fade was still half clear
 /// where the line sits, and the ledger read through it.
 struct PrayFootGround: View {
 

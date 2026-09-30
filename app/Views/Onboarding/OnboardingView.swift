@@ -578,8 +578,10 @@ struct OnboardingView: View {
     /// one's own rosary, the player moves a mystery at a time for a hand
     /// that keeps its own count. Whichever is chosen is the one shown
     /// working, in the same slot, so the slide never grows or jumps as it
-    /// changes. The same setting Settings calls the Bead counter
-    /// (`UserSettings.beadCounterTitle`), in the handoff's words.
+    /// changes. The same setting Settings and a Rosary's own page call
+    /// Counting (`RosaryChoice.counting`); the slide sets its names and
+    /// notes from its own copy of the handoff's words, so change the two
+    /// together.
     ///
     /// Asked only when the voice reads the meditation alone: with the
     /// whole Rosary aloud, the voice moves the beads on the screen.
