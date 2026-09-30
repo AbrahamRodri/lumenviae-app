@@ -62,6 +62,20 @@ struct AccountView: View {
                             Divider()
                                 .background(AppColors.gold.opacity(0.2))
 
+                            // Audio: the meditation alone, or the Whole
+                            // Rosary said aloud in the voice chosen above,
+                            // the beads moving with it, for prayer with the
+                            // phone put away. First, as the Rosary's own
+                            // page sets it, since it decides whether
+                            // Counting is offered at all
+                            RosaryChoiceSettingsRow(
+                                choice: .audio,
+                                value: Bindable(userSettings).prayAloud
+                            )
+
+                            Divider()
+                                .background(AppColors.gold.opacity(0.2))
+
                             // Counting: the beads on the screen are a way
                             // of praying, not a requirement — on your own
                             // rosary the player moves a mystery at a time.
@@ -71,18 +85,6 @@ struct AccountView: View {
                                 choice: .counting,
                                 value: Bindable(userSettings).prayOnBeads,
                                 isAvailable: !userSettings.prayAloud
-                            )
-
-                            Divider()
-                                .background(AppColors.gold.opacity(0.2))
-
-                            // Audio: the meditation alone, or the Whole
-                            // Rosary said aloud in the voice chosen above,
-                            // the beads moving with it, for prayer with the
-                            // phone put away
-                            RosaryChoiceSettingsRow(
-                                choice: .audio,
-                                value: Bindable(userSettings).prayAloud
                             )
 
                             Divider()

@@ -511,12 +511,14 @@ the page they serve):
 - **Prayer Experience** — text size, prayer language (English by
   default; the app's first face is the one most users read), the
   narration voice (`NarrationVoiceRow`, the server's list; the same
-  choice stands in the player's playback sheet), then Counting and
-  Audio — the Rosary's two choices, each a pill of its two named options
+  choice stands in the player's playback sheet), then Audio and
+  Counting — the Rosary's two choices, each a pill of its two named options
   over a line saying what the chosen one does
   (`RosaryChoiceSettingsRow`, the same pill as a Rosary's own page). They
-  keep the rows the Bead counter and Pray aloud switches stood in, and
-  their order; a switch could say only on or off, not which of two ways.
+  keep the rows the Bead counter and Pray aloud switches stood in; a
+  switch could say only on or off, not which of two ways. Audio comes
+  first, as on the Rosary's own page, since it decides whether Counting
+  is offered at all; Counting once came first, in the switches' order.
   Counting stands dimmed under the Whole Rosary, saying why: the voice
   moves the beads on the screen then. Beneath them stands the **Prayer
   Book** row, In Silence | Aloud, in the same row and pill
