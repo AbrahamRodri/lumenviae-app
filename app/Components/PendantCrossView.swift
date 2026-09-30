@@ -586,7 +586,12 @@ struct PendantStage: View {
         .contentShape(Rectangle())
         .onTapGesture { onTap?() }
         .allowsHitTesting(onTap != nil)
-        .modifier(StageTapAccessibility(label: "The rosary's pendant", chromeHidden: chromeHidden))
+        // Where the voice is on it, as the pendant itself says
+        .modifier(StageTapAccessibility(
+            label: pendant.place.map { "The pendant. \($0.name)" } ?? "The pendant",
+            chromeHidden: chromeHidden,
+            action: { onTap?() }
+        ))
         .accessibilityHidden(onTap == nil)
         .ignoresSafeArea()
     }
