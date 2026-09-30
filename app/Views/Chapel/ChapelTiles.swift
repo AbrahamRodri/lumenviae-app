@@ -48,10 +48,10 @@ struct ChapelAct: Identifiable {
     var focusAction: String {
         switch shortcut {
         case .todaysRosary:     return "Pray with a Meditation"
-        case .chooseMeditation: return "Choose a Meditation"
+        case .chooseMeditation: return "Open Today's Mysteries"
         case .sevenSorrows:     return "Begin the Chaplet"
         case .scripturalRosary: return "Begin the Scriptural Rosary"
-        case .rosaryAloud:      return "Begin the Rosary Aloud"
+        case .rosaryAloud:      return "Begin the Holy Rosary"
         case .mass:             return "Begin the Mass"
         case .office:           return "Begin the Office"
         case .consecration:     return "Continue the Preparation"

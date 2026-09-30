@@ -25,8 +25,12 @@ import Foundation
 /// to wait on a backend relabel to say something better.
 enum MeditationLabel {
 
+    /// "Scriptural" reads as Gospel so that one thing on a mysteries' page
+    /// is called Scriptural — the Scriptural Rosary above the sets — and a
+    /// set that sets the Gospel beside its meditations is not taken for it
     private static let displayNames: [String: String] = [
-        "Considerations": "Reflections"
+        "Considerations": "Reflections",
+        "Scriptural": "Gospel"
     ]
 
     /// The user-facing wording for an API label.
