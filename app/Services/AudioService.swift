@@ -208,14 +208,7 @@ final class AudioService {
 
             switch type {
             case .began:
-                // Read the user's intent, not the transport: the system
-                // has usually already paused us, so `isPlaying` may have
-                // been reconciled to false before this handler runs.
-                if self.userIntendsPlayback, self.player != nil, self.currentTime > 0 {
-                    self.rewindOnResume = true
-                }
-                self.isPlaying = false
-                self.updateNowPlayingPlaybackState()
+                self.interruptionBegan()
             case .ended:
                 // Resumed only if playback is still wanted *now*. Intent
                 // is read here rather than remembered from `.began`: a
@@ -670,22 +663,44 @@ final class AudioService {
 
     private var nextClaimSerial = 0
 
+    /// The system has taken the audio — a phone call, Siri, a navigation
+    /// prompt. The transport stops; what was wanted sounding stays wanted
+    /// (`userIntendsPlayback`), for the interruption's end to give back.
+    func interruptionBegan() {
+        // Read the user's intent, not the transport: the system has
+        // usually already paused us, so `isPlaying` may have been
+        // reconciled to false before this runs.
+        if userIntendsPlayback, player != nil, currentTime > 0 {
+            rewindOnResume = true
+        }
+        isPlaying = false
+        updateNowPlayingPlaybackState()
+    }
+
+    /// Whether the player is in use: sounding, or silent only because the
+    /// system has taken the audio for a while and will hand it back. A
+    /// chant stopped by a phone call is still the chant's.
+    var isInUse: Bool { isPlaying || userIntendsPlayback }
+
     /// Takes the player for a flow, and ends whatever claim held it: that
     /// claim is told (`onRevoked`), its borrowed speed goes back, and its
     /// Lock Screen arrows and callbacks come off.
     ///
     /// `rate` is the speed the flow plays at: the app's own, or one it
     /// borrows until its claim ends. `ifIdle` declines — returns nil and
-    /// leaves the player as it is — while anything is playing: a
-    /// consecration day does not take the player from a chant the library
-    /// is singing until its own play is pressed.
+    /// leaves the player as it is — while the player is in use
+    /// (`isInUse`): a consecration day does not take the player from a
+    /// chant the library is singing until its own play is pressed, nor
+    /// from one a phone call has stopped, which the call's end resumes.
+    /// Declining on `isPlaying` alone, a day opened during the call took
+    /// the player and the chant never came back.
     func claim(
         _ kind: AudioOwnerKind,
         rate: AudioRatePolicy = .app,
         ifIdle: Bool = false,
         onRevoked: @escaping () -> Void = {}
     ) -> AudioClaim? {
-        if ifIdle, isPlaying { return nil }
+        if ifIdle, isInUse { return nil }
         if let holder { revoke(holder) }
         // Arrows a flow without a claim left on the Lock Screen go with the
         // player: they would step a flow that is no longer sounding
