@@ -71,6 +71,9 @@ struct HowToPrayRosaryView: View {
 
     @AppStorage(RosaryLesson.seenKey) private var seenLessons: String = ""
 
+    /// Where the guided Rosary was left, if it was (`GuidedRosary.Place`)
+    @AppStorage(GuidedRosary.placeKey) private var keptPlaceData: Data?
+
     var body: some View {
         ZStack {
             AppColors.appGradient
@@ -106,6 +109,7 @@ struct HowToPrayRosaryView: View {
             }
             .topChromeFade()
         }
+        .toolbarColorScheme(.dark, for: .navigationBar)
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
@@ -137,6 +141,7 @@ struct HowToPrayRosaryView: View {
                 .foregroundColor(AppColors.cream)
                 .multilineTextAlignment(.center)
                 .lineSpacing(4)
+                .accessibilityAddTraits(.isHeader)
 
             TravellingRosary()
                 .frame(width: 200)
@@ -174,6 +179,7 @@ struct HowToPrayRosaryView: View {
                 .foregroundColor(AppColors.gold.opacity(0.85))
                 .padding(.leading, 4)
                 .padding(.bottom, 16)
+                .accessibilityAddTraits(.isHeader)
 
             ForEach(RosaryLesson.allCases, id: \.rawValue) { lesson in
                 let isNext = lesson == next
@@ -284,9 +290,13 @@ struct HowToPrayRosaryView: View {
     }
 
     /// The course's end: the first Rosary, the page's one gold act —
-    /// named next once all three lessons have been opened
+    /// named next once all three lessons have been opened. A Rosary left
+    /// part-way is said to be kept, and the act goes on with it, in the
+    /// mysteries it was being prayed in.
     private func finalStation(isNext: Bool) -> some View {
-        HStack(alignment: .top, spacing: 16) {
+        let kept = GuidedRosary.Place(keptPlaceData)
+
+        return HStack(alignment: .top, spacing: 16) {
             ZStack {
                 Circle()
                     .fill(AppColors.goldGradient)
@@ -300,7 +310,7 @@ struct HowToPrayRosaryView: View {
 
             VStack(alignment: .leading, spacing: 10) {
                 VStack(alignment: .leading, spacing: 5) {
-                    Text(isNext ? "NEXT" : "THEN")
+                    Text(kept != nil ? "YOUR PLACE IS KEPT" : (isNext ? "NEXT" : "THEN"))
                         .font(AppFonts.labelFont(8.5))
                         .tracking(2)
                         .foregroundColor(AppColors.gold.opacity(0.8))
@@ -316,8 +326,8 @@ struct HowToPrayRosaryView: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
 
-                GoldCTAButton(title: "Begin", glyph: .play, fullWidth: false) {
-                    router.push(.guidedRosary(ScheduleService.categoryForToday()))
+                GoldCTAButton(title: kept != nil ? "Continue" : "Begin", glyph: .play, fullWidth: false) {
+                    router.push(.guidedRosary(kept?.category ?? ScheduleService.categoryForToday()))
                 }
                 .padding(.top, 4)
             }
@@ -342,6 +352,9 @@ struct HowToPrayRosaryView: View {
                     .foregroundColor(AppColors.cream)
                     .fixedSize(horizontal: false, vertical: true)
             }
+            // One heading to VoiceOver's rotor, as the lessons' are
+            .accessibilityElement(children: .combine)
+            .accessibilityAddTraits(.isHeader)
             .padding(.horizontal, 24)
 
             VStack(spacing: 0) {
@@ -411,6 +424,8 @@ struct HowToPrayRosaryView: View {
                     .font(AppFonts.titleFont(20))
                     .foregroundColor(AppColors.cream)
             }
+            .accessibilityElement(children: .combine)
+            .accessibilityAddTraits(.isHeader)
             .padding(.horizontal, 24)
 
             LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {

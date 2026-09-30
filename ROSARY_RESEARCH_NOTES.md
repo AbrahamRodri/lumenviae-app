@@ -45,7 +45,7 @@ the voices, or treat the shipped voices as interim until human recordings replac
 | III §2 walk back down the pendant | PARTIAL | the spoken Rosary's pendant (`PendantPlace`) returns to the cross for the last Sign of the Cross; the hand-prayed strand ends on AMEN |
 | III §3 never restart: meditation player, Scriptural Rosary | BUILT | `PrayerResumeService` keeps `mysteryIndex`, `beadIndex`, `spokenStep` for 24 hours, so a Rosary split across the day resumes |
 | III §3 never restart: Guided Rosary | OPEN | `GuidedRosaryView` (~L132-136): a red destructive "Leave", and it begins again |
-| III §3 resume at the start of the interrupted prayer | OPEN | after a call `AudioService` resumes where it stopped, mid-word |
+| III §3 resume at the start of the interrupted prayer | BUILT | on 29 Sept: after a call `AudioService` says a recording under a minute again from its first word, and steps a longer one back five seconds (`rewindAfterInterruption`) |
 | III §4 human voices only for the fixed prayers | DECISION PENDING | see above: every fixed prayer is ElevenLabs, unlabelled |
 | III §4 Latin read by someone who can pronounce it | OPEN | no Latin audio (`docs/SPOKEN_ROSARY.md`, "Not built") |
 | III §5 silence where the tradition puts it | PARTIAL | fixed pauses, and the app's and the website's differ (note under §5) |
