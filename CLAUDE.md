@@ -704,12 +704,10 @@ write concurrent code here:
   do nothing. The setting has one name and one explanation wherever it
   is offered — Counting, On My Rosary or On the Screen: on a Rosary's
   own page, in the playback sheet and in Settings from
-  `RosaryChoice.counting` (`UserSettings.beadCounterTitle` and
-  `beadCounterDetail` survive as wrappers over it, and nothing calls
-  them), and in onboarding's "Where Will You Count?" from its own copy of
-  the same words; it had three names ("Pray on the Beads", "Bead
-  counter" and the pill's ON THE BEADS) and none said what would
-  appear. It is offered
+  `RosaryChoice.counting`, and in onboarding's "Where Will You Count?"
+  from its own copy of the same words; it had three names ("Pray on the
+  Beads", "Bead counter" and the pill's ON THE BEADS) and none said what
+  would appear. It is offered
   only while the voice reads the meditation alone: with the Whole Rosary
   the voice moves the beads on the screen whatever Counting says
   (`RosaryForm.countsOnScreen`, which both players read), so a counter
@@ -870,9 +868,13 @@ write concurrent code here:
   whose claim ends while the recording is still arriving drops it rather
   than leave it in the player for nobody. A speed the claim borrowed
   (`AudioRatePolicy.borrowed`) comes back however the claim ends, unless
-  another flow has borrowed one since. `ifIdle` declines only while
-  something is playing: a recording paused, still loading, or stopped by
-  a phone call counts as idle. The end of an item, or its failure, is
+  another flow has borrowed one since. `ifIdle` declines while the
+  player is in use (`AudioService.isInUse`): something playing, or a
+  recording a phone call has stopped, which the player takes up again
+  when the call ends. A recording paused by hand, still loading, or heard
+  to its end counts as idle. Counted as idle through a call, a chant the
+  library was singing was taken by a consecration day opened meanwhile,
+  and never came back. The end of an item, or its failure, is
   told to the claim whose load put it in the player (`onFinish`,
   `onFail`), and only while that claim still holds it — told to whoever
   held the arrows, a chant's end once reached a flow that had taken them
@@ -892,7 +894,8 @@ write concurrent code here:
   own that keeps off the Lock Screen and the audio session
   (`AudioService(integratesWithSystem: false, defaults:)`) — though
   `play()` on it would still activate the session, so a test loads and
-  never plays.
+  plays only where it needs the wish to play (a chant stopped by a call),
+  stopping in the same turn of the main actor, so nothing is heard.
 
   **The narration's speed is a slider** (`PlaybackSpeedChoice`, in the
   playback sheet and the Voice & speed sheet): 0.7× to 1.7×
@@ -1057,7 +1060,12 @@ write concurrent code here:
   own resume is, with the seconds already prayed so the Prayer Record
   counts the praying and not the gap; it is let go at the Amen, on Begin
   again, when the hand comes back to the start, and when another
-  Rosary is begun. The welcome of the same mysteries says YOUR PLACE IS
+  Rosary is begun. It keeps the guide's length and the bead its step
+  stood on (`Place.stepCount`, `Place.bead`, from `RosaryPart.key`), and
+  is offered back only while both still match: a build that adds or
+  moves a step would otherwise resume a kept place on another bead. A
+  place kept before either was stored is offered while its step is in
+  range. The welcome of the same mysteries says YOUR PLACE IS
   KEPT over a ruled row naming the part and the bead ("The First
   Sorrowful Mystery / The Agony in the Garden · 3 of 10"), the drawing
   lights that bead, and the foot is Begin again (in Back's slot) beside
@@ -1555,8 +1563,13 @@ write concurrent code here:
   scroll. To VoiceOver the column carries Next mystery and Previous
   mystery, and on the last mystery the forward action is named "Amen —
   finish the Rosary": an action called Next mystery must not finish it.
-  The Scriptural Rosary once counted only on the screen; its verses are
-  as much for the hand that keeps its own count.
+  Counted by hand, no bead moves on the first mystery to say the Rosary
+  has begun, so it is kept for Home's card once it has been prayed a
+  minute (`firstMysteryBegunAfter`), and again when the phone locks or
+  the Rosary is left after that; opened and backed out of, it pins
+  nothing, as on the screen. It once could not be taken up again before
+  the second mystery. The Scriptural Rosary once counted only on the
+  screen; its verses are as much for the hand that keeps its own count.
 
   **On the pendant a move is a prayer.** While the opening and closing
   prayers are said aloud there is no bead of the strand to move to, so
@@ -1889,12 +1902,15 @@ write concurrent code here:
   stays with whatever holds it (it once took the arrows there, over audio
   it had never loaded); a claim the day already holds from a step before
   keeps its arrows, so the day can still be stepped from the Lock Screen.
-  It loads ahead only when nothing else is playing (`ifIdle`) — a chant
-  the library is singing keeps the player, and its Lock Screen arrows,
-  until the day's own play is pressed, where loading ahead silenced it
-  the moment the day opened; a chant left paused is taken. The claim
-  plays at the app's narration speed, not a pace of its own, and leaving
-  the day releases it.
+  It loads ahead only while the player is not in use (`ifIdle`) — a
+  chant the library is singing, or one a phone call has stopped, keeps
+  the player, and its Lock Screen arrows, until the day's own play is
+  pressed, where loading ahead silenced it the moment the day opened; a
+  chant left paused is taken. The day's chants are sung at 1×, as the
+  Chant Library first plays them (`ConsecrationDayFlowView.chantRate`, a
+  borrowed pace): a Rosary read at 1.5× has not chosen a speed for sung
+  Latin, and the app's narration speed comes back untouched when the
+  claim ends. Leaving the day releases it.
 
   **Everything is Verbum Gloriae's** (verbumgloriae.es), a Spanish
   apostolate of Gregorian chant: one cantor's voice, sung for learning,
