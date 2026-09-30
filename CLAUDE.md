@@ -2227,6 +2227,16 @@ Phosphor Light is a third lighter than the 1.5 glyphs, so a list that
 mixes a Phosphor door (True Devotion's crown, the Office's clock, the
 Chant's note, the scroll, the flame) with `ch-*` glyphs stands uneven.
 
+The app icon (`AppIcon.appiconset/AppIcon-1024.png`) is a painting run
+to all four edges, with no rim or dark corners of its own: iOS draws the
+rounded mask, and a rim painted inside it read as a second frame. Its
+monogram is the Miraculous Medal's, an M with a bar and a cross rising
+from it (the M's legs once crossed into an X under the cross), and the
+crown is twelve stars (Apoc 12:1). It is made from
+`Tools/IconAudit/app-icon/original-1024.png` by `fix_icon.py`, which
+writes the catalog's PNG; change the script and rerun it rather than
+painting over the PNG.
+
 SF Symbols appear only where the system's own vocabulary is the point —
 the transport's ±10s skips (glyphs that carry a number), the spoken
 Rosary's failure notice, the Prayer Record calendar's prayed-day marker,
@@ -2295,11 +2305,18 @@ devotion is the one that devotion's own iconography uses:
 consecration — True Devotion's "The Spirit of This Devotion" and the
 consecration onboarding's "The Gift".
 
-Known clash, not yet settled: Today's Mysteries (the Pray tray's row,
-`PrayerShortcut.chooseMeditation`) wears `ph-book-open` as the "Rosary
-ways to pray" handoff specified, which Spiritual Reading's door and the
-Journal tab also wear. The Rosary's two choices wear `ph-speaker-high`
-(Audio) and `lv-rosary` (Counting), from `RosaryChoice`.
+Today's Mysteries (the Pray tray's row, `PrayerShortcut.chooseMeditation`)
+is the one door whose glyph follows the day: it wears the day's own
+mysteries' emblem (`MysteryCategory.iconName`, through
+`PrayerShortcut.icon(today:)` and `ScheduleService.categoryForToday()`,
+so the schedule and Sunday's season decide it, as they decide the row's
+subtitle) — the banner on a Wednesday, the star on a Monday. The row
+names those mysteries and opens their page. It wore `ph-book-open`, as
+the "Rosary ways to pray" handoff specified, which Spiritual Reading's
+door and the Journal tab also wear; a new fixed glyph, a triptych, was
+drawn and passed over (`Tools/IconAudit/candidates/`). The Rosary's two
+choices wear `ph-speaker-high` (Audio) and `lv-rosary` (Counting), from
+`RosaryChoice`.
 
 ### Motion
 
