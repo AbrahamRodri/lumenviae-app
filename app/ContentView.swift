@@ -363,9 +363,9 @@ struct ContentView: View {
             GuidedRosaryView(category: category)
 
         case .rosaryLesson(let lesson):
-            // One identity per lesson: Continue swaps a lesson for the
-            // next in one tick, which would otherwise update the page in
-            // place — still scrolled, and never appearing to be marked
+            // One identity per lesson pushed from the course's path.
+            // Continue turns to the next lesson inside the page itself
+            // (`RosaryLessonView.turnPage`), never by swapping routes
             RosaryLessonView(lesson: lesson).id(lesson)
 
         case .scripture:
