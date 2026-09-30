@@ -729,11 +729,18 @@ final class AudioService {
     /// back if the item is its own, its arrows off, the app's speed back.
     /// Nothing at all for a claim already ended — a flow that took the
     /// player since is not silenced by a late teardown.
+    ///
+    /// A player holding no recording is put away too: it is what the
+    /// claim's own `unload` left between two steps, with the Lock Screen
+    /// entry kept for a next load that is now not coming. A consecration
+    /// day ends on its readings, which have no chant, so kept for its
+    /// item alone, every day whose chant was heard left the Veni Creator
+    /// on the Lock Screen over nothing, and the session held.
     func release(_ claim: AudioClaim) {
         guard holder === claim else { return }
-        let hadItem = holdsItem(claim)
+        let putAway = holdsItem(claim) || currentURL == nil
         holder = nil
-        if hadItem {
+        if putAway {
             reset()
             deactivateSession()
         }

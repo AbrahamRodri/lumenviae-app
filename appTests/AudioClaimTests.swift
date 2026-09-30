@@ -7,7 +7,10 @@
 //  a claim ends, the app's speed controls never retuning a borrowed one,
 //  a claim declining while something plays when asked to, the older
 //  surface ending a claim when it takes the player, end-of-track told to
-//  the claim that loaded the item, and a release that stops only its own.
+//  the claim that loaded the item and never to a flow that took the arrows
+//  without loading it, a load dropped when its claim ends mid-way, and a
+//  release that stops only its own item, or the empty player its own
+//  unload left.
 //
 //  Each test drives a service of its own that does not speak to the
 //  system (no audio session, no Lock Screen), with its speed kept in a
@@ -34,6 +37,14 @@ struct AudioClaimTests {
 
     private func navigation() -> AudioNavigation {
         AudioNavigation(canGoNext: true, canGoPrevious: false, onNext: {}, onPrevious: {})
+    }
+
+    /// Until a load begun in a task is on its way, so a test can end its
+    /// claim while the recording is still arriving rather than before
+    /// the load has begun at all
+    private func untilLoading(_ service: AudioService) async {
+        for _ in 0..<50 where !service.isLoading { await Task.yield() }
+        #expect(service.isLoading)
     }
 
     // MARK: - One holder
@@ -288,11 +299,57 @@ struct AudioClaimTests {
         let service = makeService()
         let chant = service.claim(.chant)!
         let loading = Task { await chant.load(self.recording) }
-        await Task.yield()
+        await untilLoading(service)
         _ = service.claim(.consecration)
         #expect(await loading.value == false)
         #expect(!chant.holdsItem)
         #expect(service.currentURL == nil)
+    }
+
+    // MARK: - The seam with the older surface
+
+    @Test func aLoadIsDroppedWhenTheOlderSurfaceTakesTheArrowsMeanwhile() async {
+        // The reading shelf takes the arrows first and loads a beat later,
+        // so nothing newer has been loaded to supersede the claim's load
+        let service = makeService()
+        let chant = service.claim(.chant)!
+        let loading = Task { await chant.load(self.recording) }
+        await untilLoading(service)
+        service.setTrackNavigation(owner: "book", canGoNext: true, canGoPrevious: true, onNext: {}, onPrevious: {})
+        #expect(await loading.value == false)
+        #expect(service.currentURL == nil)
+        #expect(!service.isLoading)
+        #expect(service.isTrackNavigationOwner("book"))
+    }
+
+    @Test func aClaimsItemEndIsNotToldToAFlowThatTookTheArrowsWithoutLoadingIt() async {
+        let service = makeService()
+        var revoked = 0
+        let chant = service.claim(.chant, rate: .borrowed(0.75), onRevoked: { revoked += 1 })!
+        var chantFinished = 0
+        chant.onFinish = { chantFinished += 1 }
+        #expect(await chant.load(recording))
+
+        var rosaryFinished = 0
+        service.setTrackNavigation(
+            owner: "rosary", canGoNext: false, canGoPrevious: false,
+            onNext: {}, onPrevious: {}, onFinish: { rosaryFinished += 1 }
+        )
+        // Ended once, its speed back once, and the arrows the Rosary's
+        #expect(revoked == 1)
+        #expect(service.playbackRate == 1.25)
+        #expect(service.isTrackNavigationOwner("rosary"))
+
+        // The chant still in the player plays out: the Rosary never
+        // loaded it, and the claim that did no longer holds the player
+        service.itemDidPlayToEnd()
+        #expect(chantFinished == 0)
+        #expect(rosaryFinished == 0)
+
+        // A late release from the chant leaves the Rosary's arrows be
+        chant.release()
+        #expect(service.isTrackNavigationOwner("rosary"))
+        #expect(revoked == 1)
     }
 
     // MARK: - Release
@@ -315,6 +372,29 @@ struct AudioClaimTests {
         #expect(await day.load(recording))
         chant.release()
         #expect(day.holdsItem)
+    }
+
+    @Test func releaseAfterItsOwnUnloadPutsThePlayerAway() async {
+        // A consecration day: a chant heard, then a reading with none, then
+        // the day left. The unload keeps the Lock Screen entry for a next
+        // load; the release must not keep it for one that is not coming.
+        // A service apart from the system has no Lock Screen to read, so
+        // the sleep timer — kept across a step, cleared when a flow is
+        // left entirely — says which of the two the player was given.
+        let service = makeService()
+        let day = service.claim(.consecration)!
+        #expect(await day.load(recording))
+        service.setSleepTimer(.endOfTrack)
+
+        day.unload(preservingNowPlaying: true)
+        #expect(service.sleepTimer == .endOfTrack)
+        #expect(!day.holdsItem)
+
+        let generation = service.loadGeneration
+        day.release()
+        #expect(service.sleepTimer == nil)
+        #expect(service.loadGeneration > generation)
+        #expect(service.holder == nil)
     }
 
     @Test func aResetFromElsewhereLeavesTheClaimHoldingNothing() async {

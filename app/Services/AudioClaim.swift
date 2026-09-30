@@ -199,9 +199,10 @@ final class AudioClaim {
 
     // MARK: - Release
 
-    /// Ends the claim at the flow's own hand: its item stopped and the
-    /// audio session given back, its arrows off, the app's speed back.
-    /// Safe to call twice, and after the claim was ended by another flow.
+    /// Ends the claim at the flow's own hand: its item stopped (or the
+    /// empty player its own `unload` left put away) and the audio session
+    /// given back, its arrows off, the app's speed back. Safe to call
+    /// twice, and after the claim was ended by another flow.
     func release() {
         service?.release(self)
     }
