@@ -282,6 +282,11 @@ struct JournalEntryEditorView: View {
         // Resolve final subject title
         let finalTitle: String? = {
             if let locked = lockedMysteryTitle { return locked }
+            // A subject locked to a set of mysteries is named by them.
+            // The free-form field is never shown, so what it holds is
+            // only its placeholder — saved, "General Reflection" stood in
+            // the journal over every reflection written after a Rosary
+            if isSubjectLocked { return nil }
             let s = subjectText.trimmingCharacters(in: .whitespacesAndNewlines)
             return s.isEmpty ? nil : s
         }()

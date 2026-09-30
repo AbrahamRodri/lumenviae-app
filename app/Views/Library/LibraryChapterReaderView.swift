@@ -229,10 +229,10 @@ struct LibraryChapterReaderView: View {
                     isMarked: isMarked(selected),
                     onNote: {
                         journalDraft = ""
-                        sheet = .keep(paragraph: selected, passage: chapter.paragraphs[selected])
+                        sheet = .keep(paragraph: selected, passage: quotable(chapter.paragraphs[selected]))
                     },
                     onMark: { toggleMark(at: selected) },
-                    onShare: { sheet = .share(paragraph: selected, passage: chapter.paragraphs[selected]) }
+                    onShare: { sheet = .share(paragraph: selected, passage: quotable(chapter.paragraphs[selected])) }
                 )
                 .padding(.bottom, session.isActive ? 142 : 76)
                 .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -1112,6 +1112,10 @@ struct LibraryChapterReaderView: View {
     private var shareCiteLine: String {
         guard let info, let chapter else { return "" }
         return "\(info.author) · \(chapter.heading)"
+    }
+
+    private func quotable(_ paragraph: String) -> String {
+        info?.parsing.quotable(paragraph) ?? paragraph
     }
 
     /// A kept passage becomes a Reflection — the app already has one

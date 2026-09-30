@@ -803,7 +803,8 @@ struct LibraryContentsSheet: View {
     }
 
     private func openingWords(of paragraph: String) -> String {
-        paragraph.count > 90 ? String(paragraph.prefix(90)) + "\u{2026}" : paragraph
+        let words = info.parsing.quotable(paragraph)
+        return words.count > 90 ? String(words.prefix(90)) + "\u{2026}" : words
     }
 
     // MARK: Search
