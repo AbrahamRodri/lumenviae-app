@@ -76,21 +76,17 @@ struct ConsecrationDayFlowView: View {
     @State private var audioLoadTask: Task<Void, Never>?
     @State private var isLoadingChant = false
 
-    /// The file this day loaded and the player's load generation when it
-    /// did. The transport reads the shared player only while both are
-    /// still the player's: a player some other flow left paused, loading
-    /// or failed is not this day's chant, and must not draw a pause glyph,
-    /// a spinner or an error here, or be scrubbed from here.
-    @State private var loadedChantURL: URL?
-    @State private var loadedGeneration: Int?
+    /// The day's claim on the shared player, taken for a step with a
+    /// chant. The transport reads and drives the player only through it,
+    /// so a player some other flow left paused, loading or failed is not
+    /// this day's chant, and draws no pause glyph, spinner or error here;
+    /// the day's teardown cannot silence whatever flow the user moved on
+    /// to; and its Lock Screen arrows are the day's only while it holds
+    /// the player.
+    @State private var audioClaim: AudioClaim?
 
     /// The chant whose score is open over the day
     @State private var scoreChant: Chant?
-
-    /// Identity for track-navigation ownership on the shared AudioService,
-    /// so this day cannot be driven by a Rosary's stale arrows and its own
-    /// teardown cannot disarm whatever flow the user moved on to.
-    @State private var navigationOwner = UUID()
 
     /// Lock Screen artwork for the chants. The Coronation of Mary is the
     /// nearest bundled image to the consecration's subject and matches the
@@ -201,22 +197,17 @@ struct ConsecrationDayFlowView: View {
         .onDisappear {
             audioLoadTask?.cancel()
             audioLoadTask = nil
-            // Asked before the arrows are given up, which ownership needs
-            let owned = ownsAudio
-            audio.clearTrackNavigation(owner: navigationOwner)
-            if owned {
-                audio.reset()
-                // Hand the audio session back so other apps' audio can resume
-                audio.deactivateSession()
-            }
+            // The day's chant stopped and the audio session handed back so
+            // other apps' audio can resume — if the player is still the
+            // day's; nothing at all if another flow has taken it since
+            audioClaim?.release()
+            audioClaim = nil
         }
         .onChange(of: stepIndex) {
             // Preserve the Lock Screen player across a step change — the
             // next chant republishes over it. Tearing it down collapsed the
             // player between every prayer of the day.
-            if ownsAudio { audio.reset(preservingNowPlaying: true) }
-            loadedChantURL = nil
-            loadedGeneration = nil
+            audioClaim?.unload(preservingNowPlaying: true)
             audioError = nil
             loadAudioIfAvailable()
         }
@@ -339,9 +330,8 @@ struct ConsecrationDayFlowView: View {
     /// so a consecration can be prayed hands-off exactly like the Rosary.
     /// Re-called on every step change to keep the end-of-day availability
     /// honest.
-    private func attachChantNavigation() {
-        audio.setTrackNavigation(
-            owner: navigationOwner,
+    private func attachChantNavigation(to claim: AudioClaim) {
+        claim.navigation = AudioNavigation(
             canGoNext: !isLastStep,
             canGoPrevious: !isFirstStep,
             onNext: { goToStep(stepIndex + 1) },
@@ -360,47 +350,50 @@ struct ConsecrationDayFlowView: View {
         currentPrayer.flatMap(chant(for:))
     }
 
-    /// Whether the shared player is still sounding the chant this day loaded.
-    ///
-    /// The arrows as well as the file and generation: the Chant Library
-    /// sings some of the same recordings, and a second load of the file
-    /// already loaded is no new load, so by file and generation alone the
-    /// day and the library both held it and closing one silenced the
-    /// other. The arrows go to whoever claimed it last.
-    private var ownsAudio: Bool {
-        guard let loadedChantURL, let loadedGeneration else { return false }
-        return audio.currentURL == loadedChantURL && audio.loadGeneration == loadedGeneration
-            && audio.isTrackNavigationOwner(navigationOwner)
-    }
+    /// Whether the shared player is still sounding the chant this day
+    /// loaded: its claim holds the player, and the item is the one it
+    /// loaded. The Chant Library sings some of the same recordings; by
+    /// file and load generation, as this was once decided, the day and the
+    /// library both held a recording they shared, and closing one silenced
+    /// the other.
+    private var ownsAudio: Bool { audioClaim?.holdsItem ?? false }
 
     private func loadAudioIfAvailable(thenPlay: Bool = false) {
+        // A step with no chant takes nothing: the Lock Screen stays with
+        // whatever holds it. It once took the arrows here anyway, over
+        // audio it never loaded. The day's own claim from a step before
+        // keeps its arrows, so the day can still be stepped from there.
+        guard let prayer = currentPrayer, let chant = chant(for: prayer), let url = chant.audioURL else {
+            if let claim = audioClaim, claim.isCurrent { attachChantNavigation(to: claim) }
+            return
+        }
+
         // Something else sounding — a chant the library is singing — keeps
         // the player, and its Lock Screen arrows, until the day's own play
-        // is pressed. Loaded ahead, the day's chant silenced it the moment
-        // the day opened, though nobody had asked the day to sing.
-        if !thenPlay, audio.isPlaying, !ownsAudio { return }
-
-        // Track navigation is installed even for a step with no chant, so
-        // the user can still move through the day from the Lock Screen.
-        attachChantNavigation()
-
-        guard let prayer = currentPrayer, let chant = chant(for: prayer), let url = chant.audioURL else { return }
+        // is pressed (`ifIdle`). Loaded ahead, the day's chant silenced it
+        // the moment the day opened, though nobody had asked the day to sing.
+        let claim: AudioClaim
+        if let held = audioClaim, held.isCurrent {
+            claim = held
+        } else {
+            guard let taken = audio.claim(.consecration, ifIdle: !thenPlay) else { return }
+            claim = taken
+            audioClaim = taken
+        }
+        attachChantNavigation(to: claim)
 
         // A step change while a load is in flight would let the stale
         // prayer's chant land over the one now on screen.
         audioLoadTask?.cancel()
 
         // The same recording the library left in the player, paused part
-        // way: loaded afresh, so the day's chant begins at its top
-        if audio.currentURL == url, !ownsAudio {
-            audio.reset(preservingNowPlaying: true)
-        }
-
+        // way, is loaded afresh by the claim, so the day's chant begins at
+        // its top
         isLoadingChant = true
         audioLoadTask = Task {
             defer { isLoadingChant = false }
-            let ready = await audio.loadAudio(
-                from: url.absoluteString,
+            let ready = await claim.load(
+                url,
                 title: prayer.title,
                 subtitle: "33-Day Consecration",
                 artworkAssetName: dayArtworkAsset,
@@ -409,35 +402,35 @@ struct ConsecrationDayFlowView: View {
                 queueCount: steps.count,
                 claimNowPlaying: true
             )
-            guard !Task.isCancelled, currentPrayer?.id == prayer.id else { return }
-            guard ready || audio.currentURL == url else {
+            // Another step, or another flow took the player meanwhile:
+            // nothing to say
+            guard !Task.isCancelled, currentPrayer?.id == prayer.id, claim.isCurrent else { return }
+            guard ready || claim.holdsItem else {
                 // The prayer reads perfectly well without the chant — say
                 // so once, quietly, rather than leaving a dead transport.
                 audioError = "The chant couldn't be played. The prayer is here to pray."
                 return
             }
-            loadedChantURL = url
-            loadedGeneration = audio.loadGeneration
-            if thenPlay { audio.play() }
+            if thenPlay { claim.play() }
         }
     }
 
     private func audioPlayer(_ chant: Chant) -> some View {
-        let owns = ownsAudio
+        let loaded = audioClaim?.duration ?? 0
         return VStack(spacing: 6) {
             ChantTransportBar(
-                isPlaying: owns && audio.isPlaying,
+                isPlaying: audioClaim?.isPlaying ?? false,
                 isLoading: isLoadingChant,
-                currentTime: owns ? audio.currentTime : 0,
-                duration: owns && audio.duration > 0 ? audio.duration : chant.duration,
-                errorMessage: audioError ?? (owns ? audio.errorMessage : nil),
-                isReady: owns,
+                currentTime: audioClaim?.currentTime ?? 0,
+                duration: loaded > 0 ? loaded : chant.duration,
+                errorMessage: audioError ?? audioClaim?.errorMessage,
+                isReady: ownsAudio,
                 onToggle: {
                     // A player another flow took back is loaded afresh,
                     // then played, rather than toggled on someone else
-                    if ownsAudio { audio.togglePlayback() } else { loadAudioIfAvailable(thenPlay: true) }
+                    if ownsAudio { audioClaim?.togglePlayback() } else { loadAudioIfAvailable(thenPlay: true) }
                 },
-                onSeek: { if ownsAudio { audio.seek(to: $0) } }
+                onSeek: { audioClaim?.seek(to: $0) }
             )
 
             HStack(alignment: .center, spacing: 12) {
@@ -514,21 +507,21 @@ struct ConsecrationDayFlowView: View {
 
     private var miniTransportButton: some View {
         Button {
-            if ownsAudio { audio.togglePlayback() } else { loadAudioIfAvailable(thenPlay: true) }
+            if ownsAudio { audioClaim?.togglePlayback() } else { loadAudioIfAvailable(thenPlay: true) }
         } label: {
             ZStack {
                 Circle()
                     .fill(AppColors.goldCTAGradient)
                     .frame(width: 30, height: 30)
 
-                AppIcon(ownsAudio && audio.isPlaying ? "ph-pause-fill" : "ph-play-fill", size: 11)
+                AppIcon(audioClaim?.isPlaying == true ? "ph-pause-fill" : "ph-play-fill", size: 11)
                     .foregroundColor(AppColors.background)
             }
             .frame(width: 44, height: 44)
             .contentShape(Circle())
         }
         .buttonStyle(GoldCTAButtonStyle())
-        .accessibilityLabel(ownsAudio && audio.isPlaying ? "Pause the chant" : "Play the chant")
+        .accessibilityLabel(audioClaim?.isPlaying == true ? "Pause the chant" : "Play the chant")
     }
 
     // MARK: - Step Content
