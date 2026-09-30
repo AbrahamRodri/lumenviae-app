@@ -575,6 +575,7 @@ app/
 │                             # CallToAction (GoldCTAButton, QuietGoldButton,
 │                             # PrayFootScrim + PrayFootGround, the Prayer
 │                             # Book's), SheetChrome, FocalFill,
+│                             # FixedColors (the colours a thing wears),
 │                             # SacredComponents (OrnamentDivider, DropCapText…),
 │                             # ReadingText (ReadingTypography, ReadingText, PrayerText)
 ├── Data/                     # Bundled content, not code-adjacent constants
@@ -2012,7 +2013,13 @@ write concurrent code here:
 Every theme colour — gold included — comes from the active theme's
 `ThemePalette` (`DesignSystem/Theme.swift`), read through `AppColors`;
 never write a hex at a call site. Only `AppColors.textPrimary` (white) is
-the same in every theme. There are three themes, and **new installs
+the same in every theme. A colour that belongs to a thing rather than to
+the page — a vestment's dot, the sky at each hour of the Office, a set of
+mysteries' card, a stage of the consecration, a book's cloth, St. Carlo's
+portrait — is the same in every theme too, like `Rubric.red` and
+`AppColors.marianBlue`, and is written once, named, in
+`DesignSystem/FixedColors.swift`. Any other hex belongs to a theme's
+palette, or is one of those two. There are three themes, and **new installs
 default to Candlelit**:
 
 | Token | Candlelit (default) | Midnight | Marian Blue |
@@ -2141,7 +2148,9 @@ browser as `make_sheet.py` does.
 A gold act's glyph names the act: `GoldCTAButton(glyph: .play)` for one
 that begins a prayer, `.chevron` (trailing) for one that goes on to a
 page, and a trailing check (`trailingIcon: "ph-check"`) for one that
-completes something. A Latin cross once led
+completes something. Play leads the word at either prominence: the
+guided Rosary's inline Begin and Continue once trailed theirs, the one
+Begin in the course that did. A Latin cross once led
 every page-level act and named nothing; the cross now stands on the tab
 bar's Pray medallion alone. The `OrnamentDivider`'s centre cross is an
 ornament, not a control, and stays; `lv-lozenge` is its diamond stud,
