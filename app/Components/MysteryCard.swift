@@ -94,7 +94,7 @@ struct MysteryCard: View {
     MysteryCard(
         title: "Joyful",
         subtitle: "The Incarnation",
-        gradientColors: [Color(hex: "3d3522"), Color(hex: "2a2518")],
+        gradientColors: MysteryCategory.joyful.gradientColors,
         cardImageName: "joyful_annunciation"
     )
     .padding()

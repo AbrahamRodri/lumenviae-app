@@ -16,29 +16,6 @@
 
 import SwiftUI
 
-// MARK: - Sky Colours
-
-/// Each hour's place in the day, said as a colour — night indigo for
-/// Matins, dawn rose for Lauds, the sun's gold through the day hours,
-/// dusk violet for Vespers, and night again at Compline. A display
-/// concern, so it lives with the pages rather than in the model. The
-/// swatches are muted to sit on the dark ground, like the vestment
-/// swatches — a mark, not a flag.
-extension CanonicalHour {
-    var skyColor: Color {
-        switch self {
-        case .matins:   return Color(hex: "#454568")  // deep night
-        case .lauds:    return Color(hex: "#a06b7a")  // first light
-        case .prime:    return Color(hex: "#c99a5e")  // early sun
-        case .terce:    return Color(hex: "#d9b96a")  // morning gold
-        case .sext:     return Color(hex: "#e3cf8a")  // noon
-        case .nones:    return Color(hex: "#c98d56")  // afternoon amber
-        case .vespers:  return Color(hex: "#8a6b9e")  // dusk violet
-        case .compline: return Color(hex: "#3a3a5e")  // night
-        }
-    }
-}
-
 // MARK: - LitHourMark
 
 /// The disc that marks the hour being prayed *now* — on the home

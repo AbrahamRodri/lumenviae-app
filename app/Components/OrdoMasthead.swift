@@ -150,7 +150,7 @@ struct OrdoMasthead<Feast: View>: View {
             OrdoMasthead(
                 dateLabel: "Tuesday, August 25",
                 isToday: true,
-                band: Color(hex: "#b0524a"),
+                band: MissalVestment.red.swatch,
                 onStep: { _ in }, onCalendar: {}, onToday: {}
             ) {
                 VStack(spacing: 8) {

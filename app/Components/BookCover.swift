@@ -10,29 +10,12 @@
 //  edge of any book with a reading under way, the same ribbon language
 //  as the home screen's standing volumes.
 //
-//  The binding colours are display, not catalog data — they live here
-//  with the cover that wears them.
+//  The binding colours are display, not catalog data — they live with
+//  the app's other fixed colours (`LibraryBookInfo.bindingColor`, in
+//  FixedColors.swift).
 //
 
 import SwiftUI
-
-// MARK: - Binding colours
-
-extension LibraryBookInfo {
-
-    /// The book's cloth: muted and dark enough to sit on the page
-    /// ground, distinct enough to name the book from across the room.
-    var bindingColor: Color {
-        switch id {
-        case "imitation-of-christ":       return Color(hex: "44301e")  // old leather
-        case "story-of-a-soul":           return Color(hex: "5e3140")  // rose-brown
-        case "confessions-of-st-augustine": return Color(hex: "3d3a24") // bronze-olive
-        case "dolorous-passion":          return Color(hex: "342a52")  // passion violet
-        case "true-devotion":             return AppColors.marianBlue
-        default:                          return Color(hex: "252542")
-        }
-    }
-}
 
 // MARK: - BookCover
 

@@ -556,11 +556,11 @@ struct StCarloIcon: View {
 
     var size: CGFloat = 96
 
-    // Palette
-    private let skin = Color(hex: "EAC0A2")
-    private let hair = Color(hex: "4A3222")
-    private let polo = Color(hex: "A93B32")
-    private let poloDark = Color(hex: "8E2F28")
+    // Palette (`StCarloPalette`, with the app's other fixed colours)
+    private let skin = StCarloPalette.skin
+    private let hair = StCarloPalette.hair
+    private let polo = StCarloPalette.polo
+    private let poloDark = StCarloPalette.poloDark
 
     var body: some View {
         ZStack {

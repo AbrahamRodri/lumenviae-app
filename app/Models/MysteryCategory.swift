@@ -120,22 +120,6 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
         "mystery_\(rawValue)_\(order)"
     }
 
-    /// Gradient colors for card backgrounds (top → bottom)
-    var gradientColors: [Color] {
-        switch self {
-        case .joyful:
-            return [Color(hex: "3d3522"), Color(hex: "2a2518")]
-        case .sorrowful:
-            return [Color(hex: "3a2530"), Color(hex: "2a1520")]
-        case .glorious:
-            return [Color(hex: "2a3a4a"), Color(hex: "1a2a3a")]
-        case .luminous:
-            return [Color(hex: "4a3a2a"), Color(hex: "3a2a1a")]
-        case .sevenSorrows:
-            return [Color(hex: "2a2a4a"), Color(hex: "1a1a3a")]
-        }
-    }
-
     /// The days this mystery is prayed on the user's schedule, said in
     /// words by `ScheduleService` so the words and the rule cannot part.
     /// Sunday follows the season. The Luminous, outside the traditional

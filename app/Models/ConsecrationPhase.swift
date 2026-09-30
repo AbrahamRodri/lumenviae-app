@@ -78,30 +78,6 @@ enum ConsecrationPhase: String, Codable, CaseIterable, Hashable {
 
     // MARK: - Visual Styling
 
-    /// Tint colors layered OVER the theme's own gradient (never a
-    /// standalone background, which would freeze one theme's palette) —
-    /// a quiet hue journey: penitential violet-navy, deep navy, Marian
-    /// blue, then warming toward gold as the consecration nears.
-    var gradientColors: [Color] {
-        switch self {
-        case .preparatory:
-            // Emptying of self: dark violet-tinged navy
-            return [Color(hex: "#1D1832"), Color(hex: "#100D1F")]
-        case .knowledgeOfSelf:
-            // Introspection: deep navy
-            return [Color(hex: "#141E38"), Color(hex: "#0C1222")]
-        case .knowledgeOfMary:
-            // Marian blue cast
-            return [Color(hex: "#16264D"), Color(hex: "#0D142A")]
-        case .knowledgeOfJesus:
-            // Warming toward gold
-            return [Color(hex: "#2A2318"), Color(hex: "#14101E")]
-        case .consecrationDay:
-            // Rich dark gold, matching the mystery-card gradient family
-            return [Color(hex: "#3D3522"), Color(hex: "#1A1408")]
-        }
-    }
-
     /// The painting that frames the day-overview arch. Each phase borrows
     /// the mystery whose scene carries its work: the Jordan for the
     /// emptying of self, Gethsemane for self-knowledge, the Annunciation
