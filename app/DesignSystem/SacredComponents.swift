@@ -884,6 +884,11 @@ struct TopChromeFade: ViewModifier {
 
                     Rectangle().fill(.black)
                 }
+                // Down past the home indicator: a scroll's content runs
+                // on under it, and a mask that stopped at the safe area
+                // cut every page off in a hard line a finger's width
+                // above the screen's foot — a title, a button, halved
+                .ignoresSafeArea(edges: .bottom)
             )
     }
 }

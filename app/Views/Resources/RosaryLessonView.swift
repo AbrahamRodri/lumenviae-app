@@ -16,32 +16,64 @@
 //      A set, or a day of the week, opens your first Rosary on those
 //      mysteries: the course's own last step, never a page outside it.
 //
-//  The foot moves on to the next lesson — replacing this one, so the
-//  course never stacks — and after the last, to the first Rosary. The
-//  destination carries the lesson as its identity (ContentView), and a
-//  lesson is marked seen whenever the lesson shown changes, so one that
-//  arrives by Continue gets its check like one opened from the path.
+//  The foot moves on to the next lesson in place, the way a library
+//  reading steps along its shelf: the page fades out, the lesson is
+//  swapped and the scroll put back to the top unseen, and it fades in —
+//  so the course never stacks and Back always returns to its front. It
+//  once popped this page and pushed the next in one tick, and on a phone
+//  in the Light appearance the page that arrived kept a pale Back capsule
+//  and black status-bar text over the dark page for as long as it was
+//  open. A lesson is marked seen whenever the lesson shown changes, so
+//  one that arrives by Continue gets its check like one opened from the
+//  path. After the last, the foot goes on to the first Rosary.
 //
 
 import SwiftUI
 
 struct RosaryLessonView: View {
 
-    let lesson: Int
-
     @Environment(\.dismiss) private var dismiss
     @Environment(AppRouter.self) private var router
     @Environment(UserSettings.self) private var settings
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @AppStorage(RosaryLesson.seenKey) private var seenLessons: String = ""
+
+    /// Where the guided Rosary was left, if it was (`GuidedRosary.Place`)
+    @AppStorage(GuidedRosary.placeKey) private var keptPlaceData: Data?
+
+    /// The lesson on the page — starts as the one pushed, and moves on
+    /// when Continue turns the page
+    @State private var lesson: Int
+
+    /// Lowered while Continue turns the page, so the swap happens unseen
+    @State private var pageVisible = true
+
+    /// The lesson a turn is heading to; set by the foot, taken up where
+    /// the scroll proxy lives
+    @State private var turnTarget: Int?
 
     // Lesson I
     @State private var anatomyID = RosaryMap.anatomy[0].id
     @State private var activeStep = 1
 
+    /// A step chosen below one whose words are open, to be brought to
+    /// the top of the page where the proxy lives
+    @State private var stepTarget: Int?
+
     // Lesson II — how many lines of each prayer are showing, keyed by
     // prayer id; absent means the prayer is shown whole
     @State private var practice: [String: Int] = [:]
+
+    /// A prayer whose practice has just begun, to be brought to the top
+    /// of the page where the proxy lives
+    @State private var practiceTarget: String?
+
+    init(lesson: Int) {
+        _lesson = State(initialValue: lesson)
+    }
+
+    private static let topAnchor = "lesson-top"
 
     private var current: RosaryLesson { RosaryLesson(rawValue: lesson) ?? .beads }
 
@@ -50,29 +82,51 @@ struct RosaryLessonView: View {
             AppColors.appGradient
                 .ignoresSafeArea()
 
-            ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 0) {
-                    header
-                        .padding(.horizontal, 24)
-                        .devotionalEntrance()
+            ScrollViewReader { proxy in
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 0) {
+                        Color.clear
+                            .frame(height: 1)
+                            .id(Self.topAnchor)
 
-                    Group {
-                        switch current {
-                        case .beads:     beadsLesson
-                        case .prayers:   prayersLesson
-                        case .mysteries: mysteriesLesson
+                        header
+                            .padding(.horizontal, 24)
+                            .devotionalEntrance()
+
+                        Group {
+                            switch current {
+                            case .beads:     beadsLesson
+                            case .prayers:   prayersLesson
+                            case .mysteries: mysteriesLesson
+                            }
                         }
-                    }
-                    .devotionalEntrance(delay: 0.08)
+                        .devotionalEntrance(delay: 0.08)
 
-                    foot
-                        .padding(.horizontal, 24)
-                        .padding(.top, 44)
-                        .padding(.bottom, 56)
+                        foot
+                            .padding(.horizontal, 24)
+                            .padding(.top, 44)
+                            .padding(.bottom, 56)
+                    }
+                    .opacity(pageVisible ? 1 : 0)
+                }
+                .topChromeFade()
+                .onChange(of: turnTarget) { _, target in
+                    guard let target else { return }
+                    turnPage(to: target, proxy: proxy)
+                }
+                .onChange(of: practiceTarget) { _, target in
+                    guard let target else { return }
+                    practiceTarget = nil
+                    bringToTop(Self.cardAnchor(target), proxy: proxy)
+                }
+                .onChange(of: stepTarget) { _, target in
+                    guard let target else { return }
+                    stepTarget = nil
+                    bringToTop(Self.stepAnchor(target), proxy: proxy)
                 }
             }
-            .topChromeFade()
         }
+        .toolbarColorScheme(.dark, for: .navigationBar)
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
@@ -89,6 +143,54 @@ struct RosaryLessonView: View {
         .task(id: lesson) {
             seenLessons = RosaryLesson.marking(lesson, in: seenLessons)
         }
+    }
+
+    // MARK: - Turning the Page
+
+    /// Out, swap and scroll unseen, in. The swap runs with animations
+    /// disabled, so the jump to the top is one nobody watches and the
+    /// next lesson is laid out alone, from its own first line.
+    private func turnPage(to next: Int, proxy: ScrollViewProxy) {
+        withAnimation(Motion.ease(0.16)) {
+            pageVisible = false
+        } completion: {
+            var still = Transaction()
+            still.disablesAnimations = true
+            withTransaction(still) {
+                lesson = next
+                anatomyID = RosaryMap.anatomy[0].id
+                activeStep = 1
+                practice = [:]
+                proxy.scrollTo(Self.topAnchor, anchor: .top)
+            }
+            turnTarget = nil
+            withAnimation(Motion.ease(0.28)) {
+                pageVisible = true
+            }
+            // A new lesson is a new page to VoiceOver too, as it was
+            // when Continue pushed one: it starts again at the header
+            AccessibilityNotification.ScreenChanged(nil).post()
+        }
+    }
+
+    /// Brings a part of the page up under the chrome — travelling there
+    /// on the design system's ease, or at once under Reduce Motion
+    private func bringToTop(_ anchor: String, proxy: ScrollViewProxy) {
+        if reduceMotion {
+            proxy.scrollTo(anchor, anchor: .top)
+        } else {
+            withAnimation(Motion.ease(0.35)) {
+                proxy.scrollTo(anchor, anchor: .top)
+            }
+        }
+    }
+
+    private static func cardAnchor(_ prayerID: String) -> String {
+        "lesson-prayer-\(prayerID)"
+    }
+
+    private static func stepAnchor(_ stepID: Int) -> String {
+        "lesson-step-\(stepID)"
     }
 
     // MARK: - Header
@@ -231,6 +333,7 @@ struct RosaryLessonView: View {
 
             ForEach(HowToPrayData.steps) { step in
                 stepRow(step)
+                    .id(Self.stepAnchor(step.id))
             }
         }
     }
@@ -241,7 +344,15 @@ struct RosaryLessonView: View {
         let isLast = step.id == HowToPrayData.steps.count
 
         return Button {
+            // The open step's words fold away as this one's open. Folding
+            // above it, they once carried the step chosen a card's height
+            // up from under the finger — the Hail Mary's is two hundred
+            // points — so the page brings it to the top instead, as "Say
+            // it with me" does
+            let foldsAbove = step.id > activeStep
+                && HowToPrayData.steps.first(where: { $0.id == activeStep })?.prayerIDs.isEmpty == false
             withAnimation(Motion.crossfade) { activeStep = step.id }
+            if foldsAbove { stepTarget = step.id }
         } label: {
             HStack(alignment: .top, spacing: 14) {
                 ZStack {
@@ -338,6 +449,7 @@ struct RosaryLessonView: View {
                 ForEach(Self.prayerOrder, id: \.self) { id in
                     if let prayer = DevotionPrayers.find(id) {
                         prayerCard(prayer)
+                            .id(Self.cardAnchor(id))
                     }
                 }
             }
@@ -407,8 +519,13 @@ struct RosaryLessonView: View {
             if practiceLineList(prayer).count > 1 {
                 HStack(spacing: 10) {
                     if revealed == nil {
+                        // The prayer shrinks to its first line, and the
+                        // page follows it up: a long one — the Creed, the
+                        // Hail, Holy Queen — once collapsed from under the
+                        // finger and left the next prayer in its place
                         practiceButton("Say it with me", icon: "ph-hands-praying", outlined: true) {
                             practice[prayer.id] = 1
+                            practiceTarget = prayer.id
                         }
                     } else {
                         let total = practiceLineList(prayer).count
@@ -419,6 +536,7 @@ struct RosaryLessonView: View {
                         } else {
                             practiceButton("Again", icon: "ph-arrow-counter-clockwise", outlined: true) {
                                 practice[prayer.id] = 1
+                                practiceTarget = prayer.id
                             }
                         }
                         practiceButton("Show all", icon: nil, outlined: false) {
@@ -466,7 +584,10 @@ struct RosaryLessonView: View {
             .joined(separator: " ")
     }
 
-    /// The lines given so far, the next one waiting as a veiled bar
+    /// The lines given so far, the next one waiting as a veiled bar. The
+    /// bar is itself the way on: it stands where the next line will
+    /// appear, so the finger goes where the eye already is, instead of
+    /// chasing Next line down the card a line at a time.
     private func practiceLines(_ prayer: BilingualConsecrationPrayer, revealed: Int) -> some View {
         let lines = practiceLineList(prayer)
 
@@ -479,16 +600,26 @@ struct RosaryLessonView: View {
                         .fixedSize(horizontal: false, vertical: true)
                         .transition(.opacity)
                 } else if index == revealed {
-                    HStack(spacing: 8) {
-                        Capsule()
-                            .fill(AppColors.gold.opacity(0.18))
-                            .frame(height: 12)
-                        Text("say it, then reveal")
-                            .font(AppFonts.readingItalicFont(14))
-                            .foregroundColor(AppColors.textSecondary.opacity(0.8))
-                            .fixedSize()
+                    Button {
+                        withAnimation(Motion.crossfade) {
+                            practice[prayer.id] = revealed + 1
+                        }
+                    } label: {
+                        HStack(spacing: 8) {
+                            Capsule()
+                                .fill(AppColors.gold.opacity(0.18))
+                                .frame(height: 12)
+                            Text("say it, then reveal")
+                                .font(AppFonts.readingItalicFont(14))
+                                .foregroundColor(AppColors.textSecondary.opacity(0.8))
+                                .fixedSize()
+                        }
+                        .frame(minHeight: 44)
+                        .contentShape(Rectangle())
                     }
-                    .padding(.vertical, 4)
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Reveal the next line")
+                    .accessibilityHint("Say it first, then check it")
                 }
             }
         }
@@ -580,11 +711,11 @@ struct RosaryLessonView: View {
 
                         Text(category.devotionTitle)
                             .font(AppFonts.titleFont(22))
-                            .foregroundColor(.white)
+                            .foregroundColor(AppColors.textPrimary)
 
                         Text(category.subtitle)
                             .font(AppFonts.readingItalicFont(14))
-                            .foregroundColor(.white.opacity(0.8))
+                            .foregroundColor(AppColors.textPrimary.opacity(0.8))
                     }
                     .padding(16)
                 }
@@ -710,10 +841,23 @@ struct RosaryLessonView: View {
                     router.push(.guidedRosary(category))
                 } label: {
                     HStack(spacing: 12) {
-                        Text(Self.weekdayFormatter.string(from: day))
-                            .font(AppFonts.readingFont(16))
-                            .foregroundColor(isToday ? AppColors.goldLight : AppColors.cream.opacity(0.75))
-                            .frame(width: 96, alignment: .leading)
+                        // TODAY stands under the day's name, not beside
+                        // the set's: at the row's end it took the room of
+                        // the one name on the list that mattered, and cut
+                        // it to "Sorrowful Myster…"
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(Self.weekdayFormatter.string(from: day))
+                                .font(AppFonts.readingFont(16))
+                                .foregroundColor(isToday ? AppColors.goldLight : AppColors.cream.opacity(0.75))
+
+                            if isToday {
+                                Text("TODAY")
+                                    .font(AppFonts.labelFont(9))
+                                    .tracking(2)
+                                    .foregroundColor(AppColors.gold)
+                            }
+                        }
+                        .frame(width: 96, alignment: .leading)
 
                         AppIcon(category.iconName, size: 15)
                             .foregroundColor(AppColors.gold.opacity(isToday ? 1 : 0.75))
@@ -725,13 +869,6 @@ struct RosaryLessonView: View {
                             .minimumScaleFactor(0.85)
 
                         Spacer(minLength: 6)
-
-                        if isToday {
-                            Text("TODAY")
-                                .font(AppFonts.labelFont(10))
-                                .tracking(2)
-                                .foregroundColor(AppColors.gold)
-                        }
 
                         AppIcon("ph-caret-right", size: 11)
                             .foregroundColor(AppColors.gold.opacity(0.55))
@@ -779,12 +916,17 @@ struct RosaryLessonView: View {
                     .foregroundColor(AppColors.cream)
 
                 GoldCTAButton(title: "Continue", glyph: .chevron, fullWidth: false) {
-                    router.pop()
-                    router.push(.rosaryLesson(next.rawValue))
+                    // One turn at a time
+                    guard turnTarget == nil else { return }
+                    turnTarget = next.rawValue
                 }
                 .padding(.top, 4)
             } else {
-                Text("THE COURSE IS DONE")
+                // As on the course's path: a Rosary left part-way is
+                // said to be kept, and the act goes on with it
+                let kept = GuidedRosary.Place(keptPlaceData)
+
+                Text(kept != nil ? "YOUR PLACE IS KEPT" : "THE COURSE IS DONE")
                     .font(AppFonts.labelFont(9))
                     .tracking(2.4)
                     .foregroundColor(AppColors.gold.opacity(0.8))
@@ -793,9 +935,9 @@ struct RosaryLessonView: View {
                     .font(AppFonts.titleFont(20))
                     .foregroundColor(AppColors.cream)
 
-                GoldCTAButton(title: "Begin", glyph: .play, fullWidth: false) {
+                GoldCTAButton(title: kept != nil ? "Continue" : "Begin", glyph: .play, fullWidth: false) {
                     router.pop()
-                    router.push(.guidedRosary(ScheduleService.categoryForToday()))
+                    router.push(.guidedRosary(kept?.category ?? ScheduleService.categoryForToday()))
                 }
                 .padding(.top, 4)
             }
