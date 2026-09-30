@@ -533,14 +533,34 @@ final class UserSettings {
         PrayerShortcut(rawValue: prayQuickActionRaw) ?? .todaysRosary
     }
 
-    /// The acts in the Pray button's press-and-hold tray, in order. The
-    /// Scriptural Rosary stands second, under the Rosary it is a way of
-    /// praying: the tray is where a person looks for a devotion, and a
-    /// devotion that isn't there is one they never find. The Rosary
-    /// Aloud stands under it, another way of praying the same beads. The
-    /// Angelus stands after the Rosary's acts: the Prayer Book's one act
-    /// a person may want at any of three bells a day.
-    var prayTrayRaw: [String] = [
+    /// The acts in the Pray button's press-and-hold tray, in order: the
+    /// tray saved, else the default this install was given
+    /// (`unsavedPrayTray`)
+    var prayTrayRaw: [String] = UserSettings.defaultPrayTray {
+        didSet { UserDefaults.standard.set(prayTrayRaw, forKey: "userSettings.prayTray") }
+    }
+
+    /// The tray a new install is given. Today's Mysteries stands second,
+    /// under Today's Rosary, as the "Rosary ways to pray" design sets it:
+    /// the day's mysteries' page is where every form of the Rosary is
+    /// chosen. The Scriptural Rosary and the Holy Rosary follow, other
+    /// ways of praying the same beads: the tray is where a person looks
+    /// for a devotion, and a devotion that isn't there is one they never
+    /// find. The Angelus stands after the Rosary's acts: the Prayer
+    /// Book's one act a person may want at any of three bells a day.
+    nonisolated static let defaultPrayTray: [String] = [
+        PrayerShortcut.todaysRosary.rawValue,
+        PrayerShortcut.chooseMeditation.rawValue,
+        PrayerShortcut.scripturalRosary.rawValue,
+        PrayerShortcut.rosaryAloud.rawValue,
+        PrayerShortcut.angelus.rawValue,
+        PrayerShortcut.mass.rawValue,
+        PrayerShortcut.office.rawValue
+    ]
+
+    /// The default before Today's Mysteries moved up: the Rosary's other
+    /// forms first, Today's Mysteries under them
+    nonisolated static let earlierDefaultPrayTray: [String] = [
         PrayerShortcut.todaysRosary.rawValue,
         PrayerShortcut.scripturalRosary.rawValue,
         PrayerShortcut.rosaryAloud.rawValue,
@@ -548,8 +568,14 @@ final class UserSettings {
         PrayerShortcut.angelus.rawValue,
         PrayerShortcut.mass.rawValue,
         PrayerShortcut.office.rawValue
-    ] {
-        didSet { UserDefaults.standard.set(prayTrayRaw, forKey: "userSettings.prayTray") }
+    ]
+
+    /// The tray for an install with none saved. A new install is given
+    /// the default; one whose reader has already finished the
+    /// introduction has been shown the earlier default, and keeps it, so
+    /// a change of default reaches new installs alone.
+    nonisolated static func unsavedPrayTray(hasSeenOnboarding: Bool) -> [String] {
+        hasSeenOnboarding ? earlierDefaultPrayTray : defaultPrayTray
     }
 
     var prayTrayShortcuts: [PrayerShortcut] { PrayerShortcut.decode(prayTrayRaw) }
@@ -682,11 +708,19 @@ final class UserSettings {
         }
         if let tray = d.stringArray(forKey: "userSettings.prayTray") {
             prayTrayRaw = tray
+        } else {
+            // Saved at once, so the tray an install is given stays its
+            // own when the default changes. The introduction is read as
+            // What's New reads it (`WhatsNewStore.decideAtLaunch`)
+            let tray = Self.unsavedPrayTray(hasSeenOnboarding: d.bool(forKey: "hasSeenOnboarding"))
+            prayTrayRaw = tray
+            d.set(tray, forKey: "userSettings.prayTray")
         }
         // One-time: the Scriptural Rosary arrived after trays were first
-        // saved. A tray that never held it gets it once, in its default
-        // place under Today's Rosary — the same act lighting up everywhere
-        // that a fresh install gets. Taken out afterwards, it stays out.
+        // saved. A tray that never held it gets it once, under Today's
+        // Rosary — the same act lighting up everywhere that a fresh
+        // install gets. Taken out afterwards, it stays out. Every default
+        // tray already holds it, so none is given it twice.
         let scripturalKey = "userSettings.prayTrayOfferedScriptural"
         if !d.bool(forKey: scripturalKey) {
             let scriptural = PrayerShortcut.scripturalRosary.rawValue

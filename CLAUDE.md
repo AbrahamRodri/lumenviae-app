@@ -1532,9 +1532,14 @@ write concurrent code here:
   prays all of them — and nothing stands between the title and the
   button. (The Chapel's focus block still says Pray with a Meditation
   for Today's Rosary: its act goes straight to a set's Rosary, where
-  home's goes to the page.) The act stands second in the
-  tray by default, and a tray saved before it existed is given it once,
-  under Today's Rosary (`userSettings.prayTrayOfferedScriptural`). The
+  home's goes to the page.) A new install's tray has it third, under
+  Today's Rosary and Today's Mysteries (`UserSettings.defaultPrayTray`,
+  the "Rosary ways to pray" design's order), and a tray saved before it
+  existed is given it once, under Today's Rosary
+  (`userSettings.prayTrayOfferedScriptural`). An install keeps the tray
+  it has: with none saved, it saves the default at launch, or, if its
+  reader had finished the introduction before the change, the earlier
+  order, this act second and Today's Mysteries fourth. The
   Chapel's rule counts it by name (`ScripturalRosaryViewModel.devotionName`,
   which is what `PrayerSession.meditationType` records); it also counts
   as the day's Rosary, since it is one.
