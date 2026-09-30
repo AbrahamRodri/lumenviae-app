@@ -53,6 +53,10 @@ struct GuidedRosaryView: View {
 
     @State private var confirmingLeave = false
 
+    /// Whether the step has been scrolled up from its top: the top edge's
+    /// fade runs longer then, so a painting passes under it softly
+    @State private var scrolledFromTop = false
+
     /// Where the guide was last left (`GuidedRosary.Place`)
     @AppStorage(GuidedRosary.placeKey) private var keptPlaceData: Data?
 
@@ -134,6 +138,11 @@ struct GuidedRosaryView: View {
                                 .padding(.top, 18)
                                 .padding(.bottom, 40)
                             }
+                            .onGeometryChange(for: Bool.self) { proxy in
+                                proxy.frame(in: .scrollView).minY < -4
+                            } action: { scrolled in
+                                withAnimation(Motion.ease(0.3)) { scrolledFromTop = scrolled }
+                            }
                         }
                         .mask(
                             LinearGradient(
@@ -147,6 +156,27 @@ struct GuidedRosaryView: View {
                                 endPoint: .bottom
                             )
                         )
+                        // Scrolled, the top edge fades over a longer, eased
+                        // run as well: under the short one alone, an
+                        // announcement's painting was cut off in a hard
+                        // line. At rest the run is nothing, so the step's
+                        // first line stands clear of it.
+                        .mask(alignment: .top) {
+                            VStack(spacing: 0) {
+                                LinearGradient(
+                                    stops: [
+                                        .init(color: .clear, location: 0),
+                                        .init(color: .black.opacity(0.35), location: 0.45),
+                                        .init(color: .black, location: 1)
+                                    ],
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                                .frame(height: scrolledFromTop ? 56 : 0)
+
+                                Color.black
+                            }
+                        }
                         .onChange(of: index) {
                             proxy.scrollTo(Self.topAnchor, anchor: .top)
                         }
