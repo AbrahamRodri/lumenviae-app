@@ -11,7 +11,7 @@ timestamps.
 swiftc -O Tools/MotionSheet/sheet.swift -o /tmp/sheetx
 
 # Record while driving the simulator, then stop with SIGINT
-xcrun simctl io <udid> recordVideo --codec h264 --force /tmp/take.mov &
+xcrun simctl io <udid> recordVideo --codec=h264 --force /tmp/take.mov &
 # ...perform the gesture...
 kill -INT %1
 
@@ -20,5 +20,5 @@ kill -INT %1
 ```
 
 Frames are pulled with `AVAssetImageGenerator` at zero tolerance, so the
-timestamps are exact. Eight columns of 150pt thumbnails reads well; use a
+timestamps are exact. Eight columns of 150px thumbnails reads well; use a
 0.04–0.05s step for a transition, 0.1s for a longer sequence.
