@@ -238,6 +238,7 @@ struct HomeView: View {
                 router.push(.rosaryAloud)
             }
         )
+        .firstUseTourStop(.today)
     }
 }
 

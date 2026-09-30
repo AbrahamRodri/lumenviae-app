@@ -39,6 +39,9 @@ struct appApp: App {
         // Once: the unlicensed chants earlier builds saved offline go,
         // whether or not the offline library is ever opened again
         OfflineContentService.retireUnlicensedChants()
+        // Before the introduction can finish: an install that had not
+        // finished it by now is new, and this version is no news to it
+        WhatsNewStore.shared.decideAtLaunch()
     }
 
     var body: some Scene {
@@ -51,6 +54,7 @@ struct appApp: App {
                     } else {
                         OnboardingView { step in
                             onboardingFirstStep = step
+                            FirstUseTour.shared.markDue()
                             withAnimation(.easeInOut(duration: 0.4)) {
                                 hasSeenOnboarding = true
                             }
