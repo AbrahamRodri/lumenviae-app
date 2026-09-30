@@ -89,23 +89,37 @@ nonisolated struct ChantScoreDrawing: @unchecked Sendable {
 
 // MARK: - ChantScoreStore
 
-/// Scores parsed once and kept: the biggest (the Lauda Sion, the litanies)
-/// are a hundred thousand numbers, read off the main actor.
+/// Scores parsed once and kept a while: the biggest (the Lauda Sion, the
+/// litanies) are a hundred thousand numbers, read off the main actor.
+/// Kept in an NSCache, bounded to the scores a reader moves between — a
+/// chant's parts, the page before it, the sheet over it — and let go when
+/// the system runs short of memory: with every score read and held, the
+/// paths came to some 60 to 75 MB.
 @MainActor
 final class ChantScoreStore {
 
     static let shared = ChantScoreStore()
 
-    private var cache: [String: ChantScoreDrawing] = [:]
+    /// NSCache holds objects, so each drawing is boxed
+    private final class Entry {
+        let drawing: ChantScoreDrawing
+        init(_ drawing: ChantScoreDrawing) { self.drawing = drawing }
+    }
+
+    private let cache: NSCache<NSString, Entry> = {
+        let cache = NSCache<NSString, Entry>()
+        cache.countLimit = 32
+        return cache
+    }()
 
     func cached(_ file: String) -> ChantScoreDrawing? {
-        cache[file]
+        cache.object(forKey: file as NSString)?.drawing
     }
 
     func load(_ file: String) async -> ChantScoreDrawing? {
-        if let hit = cache[file] { return hit }
+        if let hit = cached(file) { return hit }
         let drawing = await Self.read(file)
-        if let drawing { cache[file] = drawing }
+        if let drawing { cache.setObject(Entry(drawing), forKey: file as NSString) }
         return drawing
     }
 
