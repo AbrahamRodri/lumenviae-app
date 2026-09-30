@@ -9,6 +9,7 @@ the colour here is only a placeholder.
 
     python3 Tools/IconAudit/draw.py            # every glyph, into the asset catalog
     python3 Tools/IconAudit/draw.py lv-rose    # just the one
+    python3 Tools/IconAudit/draw.py --candidates  # glyphs under review, to candidates/
 
 Edit a glyph here and rerun; never hand-edit the installed SVG.
 """
@@ -472,6 +473,25 @@ def lozenge():
     )
 
 
+def triptych():
+    """An altarpiece of three lancet panels on a base, the centre one
+    taller: the mysteries as they were painted for the Rosary's altars,
+    and as the mysteries' page lays them out. A candidate for Today's
+    Mysteries, not chosen: the row wears the day's own emblem instead."""
+    return svg(
+        path("M3.6 19V12.8C3.6 11.3 4.5 10.1 6 9.2C7.5 10.1 8.4 11.3 8.4 12.8V19Z"),
+        path("M9.6 19V9C9.6 7.1 10.6 5.7 12 4.5C13.4 5.7 14.4 7.1 14.4 9V19Z"),
+        path("M15.6 19V12.8C15.6 11.3 16.5 10.1 18 9.2C19.5 10.1 20.4 11.3 20.4 12.8V19Z"),
+        path("M2.6 21.2H21.4"),
+    )
+
+
+# Drawn for review and not installed until one is chosen
+CANDIDATES = {
+    "lv-triptych": triptych,
+}
+
+
 GLYPHS = {
     "lv-rosary": rosary,
     "lv-crown-of-thorns": crown_of_thorns,
@@ -516,6 +536,14 @@ def install(name, text):
 
 
 def main():
+    if "--candidates" in sys.argv:
+        folder = os.path.join(HERE, "candidates")
+        os.makedirs(folder, exist_ok=True)
+        for name, draw in CANDIDATES.items():
+            with open(os.path.join(folder, f"{name}.svg"), "w") as fh:
+                fh.write(draw())
+        print(f"{len(CANDIDATES)} candidates")
+        return
     only = sys.argv[1:]
     for name, draw in GLYPHS.items():
         if not only or name in only:

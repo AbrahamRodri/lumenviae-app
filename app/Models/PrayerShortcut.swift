@@ -87,11 +87,21 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
         }
     }
 
+    /// The act's glyph today, on the user's schedule and in the season
     var icon: String {
+        icon(today: ScheduleService.categoryForToday())
+    }
+
+    /// The act's glyph on a day whose mysteries are `today`. Every act
+    /// wears its own sign but Today's Mysteries, which wears the day's
+    /// mysteries' own emblem: the row names them, and the page it opens
+    /// is theirs. It wore the open book, which the reading shelf's door
+    /// and the Journal tab wear too.
+    func icon(today: MysteryCategory) -> String {
         switch self {
         case .todaysRosary:     return "lv-rosary"
         // The mysteries' page, where the Rosary's forms are chosen
-        case .chooseMeditation: return "ph-book-open"
+        case .chooseMeditation: return today.iconName
         // Mary's heart pierced by Simeon's sword, the devotion's own
         // image; the plain heart meant nothing in particular
         case .sevenSorrows:     return "lv-pierced-heart"
