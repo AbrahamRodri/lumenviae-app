@@ -19,7 +19,7 @@ import subprocess
 HERE = os.path.dirname(os.path.abspath(__file__))
 ICONS = os.path.join(HERE, "..", "..", "app", "Assets.xcassets", "Icons")
 RETIRED = os.path.join(HERE, "retired")
-APP_ICON = os.path.normpath(os.path.join(HERE, "..", "..", "app", "Assets.xcassets", "AppIcon.appiconset", "AppIcon-1024.png"))
+APP_ICON = os.path.join(HERE, "app-icon", "original-1024.png")  # the icon the audit found
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
 # (place, current, proposed, reason)
@@ -181,11 +181,11 @@ h2{{font:600 13px Georgia,serif;color:#E3BC5B;letter-spacing:.14em;text-transfor
 <div class="chips">{retiring}</div>
 <h2>Kept, for their plain uses (their devotional uses are replaced above)</h2>
 <div class="chips">{kept}</div>
-<h2>The app icon: proposals only, nothing changed</h2>
+<h2>The app icon: the proposals, and what came of them</h2>
 <div class="appicon"><img src="file://{APP_ICON}"><ul>
-<li>Remove the baked-in rounded frame and the dark corners. <span>iOS masks the icon's corners itself, so the artwork draws a second, inner rim inside the system's.</span></li>
-<li>Draw the monogram correctly. <span>The M's legs cross into an X under the cross. The Miraculous Medal's monogram is an M with a bar and a cross rising from it, which is what ch-consecration draws.</span></li>
-<li>Count the crown to exactly twelve stars (Apoc 12:1).</li>
+<li>Remove the baked-in rounded frame and the dark corners. <span>Done (Sept 30): the painting now runs to the square's edges. See app-icon-before-after.png.</span></li>
+<li>Draw the monogram correctly. <span>Done: the X is gone, and the cross stands on the bar, as the Miraculous Medal's does.</span></li>
+<li>Count the crown to twelve stars. <span>It already had twelve (one behind the veil). This proposal was an estimate made before counting, and the crown was left alone.</span></li>
 <li>The three alternate icons are switched off. If they come back, drop their scattered “twinkle” stars, which are the same vocabulary as the sparkles retired above.</li>
 <li>Keep the wordmark. <span>It is set in Cinzel as type, with no glyph in it.</span></li>
 </ul></div>
