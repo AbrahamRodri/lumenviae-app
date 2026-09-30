@@ -75,8 +75,8 @@ struct Chant: Identifiable, Hashable {
         return "\(whole / 60):\(String(format: "%02d", whole % 60))"
     }
 
-    /// The setting, where the English title does not already say it:
-    /// "Hail Mary, the antiphon" is not also "· antiphon" beneath it.
+    /// The setting, where the English title does not already say it: a
+    /// title naming its own setting is not also "· antiphon" beneath it.
     var distinctSetting: String? {
         guard let setting, !englishTitle.localizedCaseInsensitiveContains(setting) else { return nil }
         return setting

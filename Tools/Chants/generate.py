@@ -32,8 +32,20 @@ The selection is curated in chants.json. For each chant this script:
 Usage:
     python3 generate.py            # fetch what is missing, build, write
     FFMPEG=/path/to/ffmpeg python3 generate.py
+    python3 generate.py --keep-assets
 
 Requires ffmpeg (brew install ffmpeg, or set FFMPEG) and macOS's afconvert.
+
+A recording already in the app is kept as it is — delete it to take a
+new one — so its source is neither fetched nor encoded, and ffmpeg is
+needed only for a chant that has none.
+
+--keep-assets rebuilds the catalog alone — titles, captions, the order of
+the shelves — from the chant pages, reusing the scores already in the
+app as well: nothing is downloaded but the pages, nothing is re-encoded
+or redrawn, and neither ffmpeg nor the cache of source files is needed. A
+score the app does not already hold is left out, as a score the site no
+longer serves is.
 Never hand-edit the generated Swift; edit chants.json and rerun.
 """
 
@@ -84,7 +96,18 @@ def page_url(entry: dict) -> str:
 
 def page_html(entry: dict) -> str:
     key = (entry.get("page") or f"project/{entry['slug']}").replace("/", "_")
-    return fetch(page_url(entry), CACHE / "pages" / f"{key}.html").read_text("utf-8", "replace")
+    text = fetch(page_url(entry), CACHE / "pages" / f"{key}.html").read_text("utf-8", "replace")
+    if "Partitura" in text:
+        return text
+    # Since September 2026 the site serves its chant pages with the header
+    # alone; WordPress's REST API still returns each page's content, as the
+    # page builder's shortcodes, with the same files and the same alt text
+    kind, slug = ("pages", entry["page"].rsplit("/", 1)[-1]) if entry.get("page") else ("project", entry["slug"])
+    api = f"{SITE}/wp-json/wp/v2/{kind}?slug={slug}"
+    found = json.loads(fetch(api, CACHE / "pages" / f"{key}.json").read_text("utf-8"))
+    if not found:
+        sys.exit(f"{entry['id']}: no page at {page_url(entry)} or {api}")
+    return found[0]["content"]["rendered"]
 
 
 def find_audio(entry: dict, text: str) -> str:
@@ -103,8 +126,13 @@ def find_audio(entry: dict, text: str) -> str:
 def find_scores(entry: dict, text: str) -> list:
     """(url, caption) for every score on the page, in page order, once each."""
     found, seen = [], set()
-    for m in re.finditer(r'<img[^>]*src="([^"]+\.svg)"[^>]*alt="([^"]*)"', text):
-        url, alt = m.group(1), html.unescape(m.group(2)).strip()
+    images = re.compile(
+        r'<img[^>]*src="([^"]+\.svg)"[^>]*alt="([^"]*)"'
+        # The same image as a builder shortcode, its quotes typeset as »
+        r'|et_pb_image src=»([^»\s]+\.svg)» alt=»(.*?)»(?=\s[a-z_]+=|\])')
+    for m in images.finditer(text):
+        url = m.group(1) or m.group(3)
+        alt = html.unescape(m.group(2) if m.group(1) else m.group(4)).strip()
         if not alt.lower().startswith("partitura") or url in seen:
             continue
         seen.add(url)
@@ -132,16 +160,30 @@ CAPTION_WORDS = [
 
 
 def caption(alt: str, entry: dict) -> str:
+    """The name a score part is shown under: the words it begins with, in
+    Latin, and none of the site's own filing — no Spanish article or kind
+    ("la secuencia", "himno"), no tone ("simple", "solemne"), no melody
+    number ("Tantum ergo I"), no litany named again on its own page, and
+    no editor's note."""
     quoted = re.search(r"«\s*(.+?)\s*»", alt)
     if quoted:
         text = quoted.group(1)
     else:
-        text = re.sub(r"^Partitura\s+(del?|de la|de los|de las)?\s*", "", alt, flags=re.I).strip()
+        text = re.sub(r"^Partitura\s+(de la|de los|de las|del|de)?\s*", "", alt, flags=re.I).strip()
         for pattern, english in CAPTION_WORDS:
             if re.search(pattern, text, re.I):
                 return english
-        text = re.sub(r"\s+en tono (simple|solemne)$", "", text, flags=re.I)
+    text = re.sub(r"^(canto|himno|secuencia|antífona)\s+", "", text, flags=re.I)
+    text = re.sub(r"\s+de las (Letanías|Litaniae)\b.*$", "", text, flags=re.I)
+    text = re.sub(r"^(los )?Kyries\b", "Kyrie eleison", text)
+    text = re.sub(r"\s+y los Kyries$", ", Kyrie eleison", text)
+    text = re.sub(r",\s*corregida\b.*$", "", text, flags=re.I)
+    text = re.sub(r"\s*\([^)]*\)$", "", text)
+    text = re.sub(r"\s+(en tono\s+)?(simple|solemne)$", "", text, flags=re.I)
+    text = re.sub(r"\s+(I|1)$", "", text)
+    text = re.sub(r"^Oratio\s+", "Oremus. ", text)
     text = re.sub(r"^Oremus\.\s*", "Oremus. ", text)
+    text = text.replace("...", "…")
     return text.strip().rstrip(".")
 
 
@@ -306,6 +348,20 @@ def write_score(name: str, text: str):
 
 # ---------------------------------------------------------------- audio
 
+def duration_of(recording: Path) -> float:
+    info = subprocess.run(["afinfo", str(recording)], capture_output=True, text=True).stdout
+    return float(re.search(r"estimated duration: ([\d.]+)", info).group(1))
+
+
+def kept_aspect(name: str) -> float:
+    """The width over the height of a score already written, read from
+    its viewBox, as score_ops measured it."""
+    packed = (SCORES_OUT / f"{name}.lvscore").read_bytes()
+    text = zlib.decompress(packed, -15).decode("utf-8")
+    vb = [float(x) for x in text.split("\n")[1].split()]
+    return vb[2] / vb[3]
+
+
 def encode(src: Path, dest: Path) -> float:
     if not FFMPEG:
         sys.exit("ffmpeg not found: brew install ffmpeg, or set FFMPEG")
@@ -318,8 +374,7 @@ def encode(src: Path, dest: Path) -> float:
         subprocess.run(["afconvert", "-f", "m4af", "-d", CODEC, "-b", str(BITRATE),
                         str(wav), str(dest)], check=True)
         wav.unlink(missing_ok=True)
-    info = subprocess.run(["afinfo", str(dest)], capture_output=True, text=True).stdout
-    return float(re.search(r"estimated duration: ([\d.]+)", info).group(1))
+    return duration_of(dest)
 
 
 # ---------------------------------------------------------------- swift
@@ -337,12 +392,14 @@ def main():
     if len(ids) != len(set(ids)):
         sys.exit("duplicate chant ids in chants.json")
     groups = {g["id"] for g in manifest["groups"]}
+    keep = "--keep-assets" in sys.argv[1:]
 
-    if SCORES_OUT.exists():
-        shutil.rmtree(SCORES_OUT)
-    for stale in AUDIO_OUT.glob("*.m4a") if AUDIO_OUT.exists() else []:
-        if stale.stem not in ids:
-            stale.unlink()
+    if not keep:
+        if SCORES_OUT.exists():
+            shutil.rmtree(SCORES_OUT)
+        for stale in AUDIO_OUT.glob("*.m4a") if AUDIO_OUT.exists() else []:
+            if stale.stem not in ids:
+                stale.unlink()
 
     written_assets = {}
     built = []
@@ -351,12 +408,23 @@ def main():
             sys.exit(f"{entry['id']}: unknown group {entry['group']}")
         text = page_html(entry)
         audio_url = find_audio(entry, text)
-        src = fetch(audio_url, CACHE / "files" / audio_url.split("/uploads/")[1])
-        duration = encode(src, AUDIO_OUT / f"{entry['id']}.m4a")
+        recording = AUDIO_OUT / f"{entry['id']}.m4a"
+        if recording.exists():
+            duration = duration_of(recording)
+        elif keep:
+            sys.exit(f"{entry['id']}: no recording in the app to keep; run without --keep-assets")
+        else:
+            src = fetch(audio_url, CACHE / "files" / audio_url.split("/uploads/")[1])
+            duration = encode(src, recording)
 
         parts = []
         for url, alt in find_scores(entry, text):
             name = score_name(url)
+            if keep and name not in written_assets:
+                if not (SCORES_OUT / f"{name}.lvscore").exists():
+                    print(f"  ! {entry['id']}: score not in the app, left out: {url}")
+                    continue
+                written_assets[name] = kept_aspect(name)
             if name not in written_assets:
                 try:
                     svg = fetch(url, CACHE / "files" / url.split("/uploads/")[1])

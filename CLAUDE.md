@@ -1594,8 +1594,9 @@ write concurrent code here:
   from `PrayerBook.antiphon(on:)`), and each row plays where it stands or
   opens the chant's page (`ChantView`, `.chant(id:)`): the names and when
   it is sung, a transport with the practice a chant is learned by — SLOW
-  (0.75×), REPEAT, FROM THE TOP — the score, ENLARGE for a zoomable
-  full-screen score (`ChantScoreSheet`), the prayer in words and its
+  (0.75×), REPEAT, FROM THE TOP — the score, ENLARGE for a full-screen
+  score (`ChantScoreSheet`) that a pinch or a double tap brings closer
+  about the phrase under the finger, the prayer in words and its
   other settings as doors, and the credit. Doors: the Chapel's Chant tile,
   Explore (Sung Prayer, and search), and **"Sing it in chant"** on any
   Prayer Book page whose prayer has a chant (a quiet act under Learn it
@@ -1636,17 +1637,49 @@ write concurrent code here:
   <id>.m4a` (mono HE-AAC 32 kbps — four hours of chant ship in the app,
   about 59 MB), scores as `Resources/Chants/Scores/<name>.lvscore`, and
   `Data/ChantCatalogData.swift`. Never hand-edit them; edit the JSON and
-  rerun (it needs ffmpeg and macOS's afconvert). **Scores are not asset
+  rerun (ffmpeg and macOS's afconvert are needed only for a recording the
+  app does not have yet: one already there is kept, its source neither
+  fetched nor encoded). A change to titles or captions alone reruns with
+  `--keep-assets`, which reuses the scores too and downloads only the
+  chant pages. Since Sept 2026 the site serves those pages with the
+  header alone, and the generator reads each page's content from
+  WordPress's REST API instead — the page builder's shortcodes, with the
+  same files and alt text. A part's caption is the Latin words it begins
+  with, stripped of the site's filing ("simple", "solemne", "la
+  secuencia", a melody's "I", a litany named again on its own page, an
+  editor's note), and `ChantCatalogTests` fails if any comes back. **Scores are not asset
   catalog images**: the catalog stores SVG uncompressed (30 MB) and CoreSVG
   would not read every one, so the generator rewrites each SVG as its
   ordered drawing operations — fills in ink and red, the white shapes
   that erase, stroked staff lines — DEFLATE-compressed (6.6 MB), which
   `ChantScoreDrawing` reads (its own SVG path-data parser, arcs included)
   and `ChantScoreImage` replays on a Canvas: the notes in cream, the
-  initials in `Rubric.red`, vector at any zoom. A score with live text or
+  initials in `Rubric.red`, vector at any zoom. Parsed, the paths are kept
+  in an NSCache of 32 scores (`ChantScoreStore`) that lets them go when
+  memory runs short; held every one, they came to some 60 to 75 MB. A score with live text or
   transforms stops the generator rather than ship half-drawn (Maria Mater
   Gratiæ was left out for its live text; the Litany of Loreto's Easter
   collect is served by the site as a 404 and is skipped).
+
+  **The enlarged score zooms about the phrase under the finger.** A pinch
+  scales the drawing as the fingers move and lays the score out afresh at
+  its new width when they lift, so the engraving is sharp again at the
+  size it is read; a double tap animates the same way. Laid out afresh
+  with nothing more, the score grew from its top-left corner and carried
+  the phrase being read off the glass. The captions and the gaps between
+  parts keep their height at any zoom, so a point on the whole score does
+  not scale with it: the sheet keeps the part and the point on that
+  part's engraving (`ChantScoreMark`) and scrolls it back under the finger
+  once the mark reports where the new layout put it — scrolled any
+  sooner, it landed on the old layout. Where the scroll view's edge holds
+  the score back (always across, coming back to the width of the glass),
+  the double tap's scaling is drawn about the point that brings the
+  score to where it will rest, not the tapped one. The page's and the
+  sheet's transports are views of their own (`ChantTransport`,
+  `ChantScoreSheetTransport`): read in the page's body, the progress they
+  show twice a second re-evaluated the page, score and all, on every
+  tick. The scrubber is heard as time ("1 minute 5 seconds of 3 minutes
+  20 seconds"), ten seconds at a swipe.
 
   **`ChantPlayer`** (`Services/`) is the library's hold on the shared
   AudioService, above the views like `LibraryListeningSession`: one chant

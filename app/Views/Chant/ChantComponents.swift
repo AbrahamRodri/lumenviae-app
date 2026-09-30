@@ -69,15 +69,35 @@ struct ChantScoreImage: View {
 
 // MARK: - ChantScoreView
 
+/// A place on a score that survives its being laid out at another width:
+/// a part, and a point on that part's engraving as a fraction of it. The
+/// captions between the parts keep their height at any zoom, so a point
+/// on the whole score does not scale with it; a point on one engraving
+/// does.
+struct ChantScoreMark: Equatable {
+    let part: Int
+    let unit: UnitPoint
+}
+
 /// Every part of a chant's score in order, each named when there is
 /// more than one (the hymn, then its versicle, then its collect).
 struct ChantScoreView: View {
     let parts: [ChantScorePart]
     var spacing: CGFloat = 26
 
+    /// For the enlarged score: where each part's engraving stands, in the
+    /// score's own coordinates (`space`); a mark to scroll to; and word
+    /// that the mark stands where the score is now laid out
+    var onPartFrame: ((Int, CGRect) -> Void)?
+    var mark: ChantScoreMark?
+    var onMarkPlaced: (() -> Void)?
+
+    static let space = "ChantScoreView.space"
+    static let markID = "ChantScoreView.mark"
+
     var body: some View {
         VStack(alignment: .leading, spacing: spacing) {
-            ForEach(Array(parts.enumerated()), id: \.offset) { _, part in
+            ForEach(Array(parts.enumerated()), id: \.offset) { index, part in
                 VStack(alignment: .leading, spacing: 10) {
                     if parts.count > 1 {
                         Text(part.caption.uppercased())
@@ -87,9 +107,34 @@ struct ChantScoreView: View {
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     ChantScoreImage(part: part)
+                        .overlay {
+                            if let mark, mark.part == index {
+                                GeometryReader { geometry in
+                                    Color.clear
+                                        .frame(width: 1, height: 1)
+                                        .id(Self.markID)
+                                        .onGeometryChange(for: CGRect.self) { geometry in
+                                            geometry.frame(in: .named(Self.space))
+                                        } action: { _ in
+                                            onMarkPlaced?()
+                                        }
+                                        .position(
+                                            x: mark.unit.x * geometry.size.width,
+                                            y: mark.unit.y * geometry.size.height
+                                        )
+                                }
+                                .accessibilityHidden(true)
+                            }
+                        }
+                        .onGeometryChange(for: CGRect.self) { geometry in
+                            geometry.frame(in: .named(Self.space))
+                        } action: { frame in
+                            onPartFrame?(index, frame)
+                        }
                 }
             }
         }
+        .coordinateSpace(.named(Self.space))
     }
 }
 
@@ -151,11 +196,18 @@ struct ChantPlayDisc: View {
 // MARK: - ChantScrubber
 
 /// A gold hairline the finger can drag along — the consecration
-/// transport's scrubber, at the weight of a rule.
+/// transport's scrubber, at the weight of a rule. VoiceOver hears where it
+/// stands as time, "1 minute 5 seconds of 3 minutes 20 seconds", and
+/// moves it ten seconds at a swipe.
 struct ChantScrubber: View {
     let progress: Double
+    /// The recording's length, in seconds
+    let duration: Double
     let isEnabled: Bool
     let onSeek: (Double) -> Void
+
+    /// How far a swipe up or down moves the chant
+    private static let step: Double = 10
 
     @State private var dragging: Double?
 
@@ -194,12 +246,13 @@ struct ChantScrubber: View {
         .frame(height: 24)
         .accessibilityElement()
         .accessibilityLabel("Position in the chant")
-        .accessibilityValue("\(Int((shown * 100).rounded())) percent")
+        .accessibilityValue("\(ChantPlayer.spoken(shown * duration)) of \(ChantPlayer.spoken(duration))")
         .accessibilityAdjustableAction { direction in
-            guard isEnabled else { return }
+            guard isEnabled, duration > 0 else { return }
+            let step = Self.step / duration
             switch direction {
-            case .increment: onSeek(min(1, progress + 0.05))
-            case .decrement: onSeek(max(0, progress - 0.05))
+            case .increment: onSeek(min(1, progress + step))
+            case .decrement: onSeek(max(0, progress - step))
             @unknown default: break
             }
         }

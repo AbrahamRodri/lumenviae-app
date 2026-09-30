@@ -66,6 +66,25 @@ struct ChantCatalogTests {
         #expect(ChantCatalog.search("HAIL, HOLY").contains { $0.id.hasPrefix("salve_regina") })
     }
 
+    @Test func captionsNameThePartNotTheSitesFiling() {
+        // Spanish kinds and articles, tones, litanies named again on their
+        // own page, melody numbers, editors' notes
+        let filing = /(?i)\b(simple|solemne|secuencia|himno|canto|antífona|letanías|litaniae|corregida|los|las|del)\b|\s(I|1)$|\.\.\./
+        for chant in ChantCatalog.all {
+            for part in chant.score {
+                #expect(part.caption.firstMatch(of: filing) == nil, "\(chant.id): \(part.caption)")
+            }
+        }
+    }
+
+    @Test func theScrubberSaysTheTime() {
+        #expect(ChantPlayer.spoken(65) == "1 minute 5 seconds")
+        #expect(ChantPlayer.spoken(200) == "3 minutes 20 seconds")
+        #expect(ChantPlayer.spoken(60) == "1 minute")
+        #expect(ChantPlayer.spoken(1.9) == "1 second")
+        #expect(ChantPlayer.spoken(0) == "0 seconds")
+    }
+
     // MARK: - Path data
 
     private func bounds(_ data: String) -> CGRect {

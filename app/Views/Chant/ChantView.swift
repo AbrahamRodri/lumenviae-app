@@ -24,8 +24,6 @@ struct ChantView: View {
 
     @Environment(AppRouter.self) private var router
 
-    private var player = ChantPlayer.shared
-
     @State private var showsScore = false
 
     init(chantID: String) {
@@ -45,7 +43,7 @@ struct ChantView: View {
                             .padding(.horizontal, 28)
                             .devotionalEntrance()
 
-                        transport(chant)
+                        ChantTransport(chant: chant)
                             .padding(.horizontal, 24)
                             .padding(.top, 28)
 
@@ -139,111 +137,6 @@ struct ChantView: View {
     private func kicker(_ chant: Chant) -> String {
         let group = chant.group?.title ?? "Chant"
         return "The Chant Library · \(group)".uppercased()
-    }
-
-    // MARK: - Transport
-
-    private func transport(_ chant: Chant) -> some View {
-        let holds = player.holds(chant)
-        let progress = holds ? player.progress : 0
-        let elapsed = holds ? player.currentTime : 0
-        let total = holds ? player.duration : chant.duration
-
-        return VStack(spacing: 14) {
-            HStack(spacing: 16) {
-                ChantPlayDisc(
-                    isPlaying: player.isPlaying(chant),
-                    isLoading: player.current.id == chant.id && player.isLoading,
-                    size: 56,
-                    label: chant.latinTitle
-                ) {
-                    player.toggle(chant)
-                }
-
-                VStack(spacing: 4) {
-                    ChantScrubber(progress: progress, isEnabled: holds) { fraction in
-                        player.seek(toFraction: fraction)
-                    }
-                    HStack {
-                        Text(ChantPlayer.clock(elapsed))
-                            .contentTransition(.numericText())
-                        Spacer()
-                        Text(ChantPlayer.clock(total))
-                    }
-                    .font(AppFonts.labelFont(9))
-                    .tracking(1.5)
-                    .foregroundColor(AppColors.textSecondary)
-                    .monospacedDigit()
-                    .accessibilityHidden(true)
-                }
-            }
-
-            if let error = player.current.id == chant.id ? player.errorMessage : nil {
-                Text(error)
-                    .font(AppFonts.italicFont(12.5))
-                    .foregroundColor(AppColors.textSecondary)
-            }
-
-            // Practice: a slower pace, the chant again when it ends, and
-            // back to the top for another try at a phrase. One row while
-            // it fits; at larger text the chips keep a row of their own
-            // rather than break SLOW and REPEAT mid-word.
-            ViewThatFits(in: .horizontal) {
-                HStack(spacing: 10) {
-                    practiceChips
-                    Spacer(minLength: 0)
-                    fromTheTop(holds: holds)
-                }
-                VStack(alignment: .leading, spacing: 2) {
-                    HStack(spacing: 10) { practiceChips }
-                    fromTheTop(holds: holds)
-                }
-                VStack(alignment: .leading, spacing: 2) {
-                    practiceChips
-                    fromTheTop(holds: holds)
-                }
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 14)
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(AppColors.gold.opacity(0.24), lineWidth: AppLine.hairline)
-        )
-    }
-
-    @ViewBuilder
-    private var practiceChips: some View {
-        ChantPracticeChip(title: "Slow", isOn: player.rate < 1) {
-            player.setRate(player.rate < 1 ? 1.0 : 0.75)
-        }
-        .accessibilityHint("Plays at three-quarters speed, for learning")
-
-        ChantPracticeChip(title: "Repeat", isOn: player.repeats) {
-            player.repeats.toggle()
-        }
-        .accessibilityHint("Sings the chant again from the top when it ends")
-    }
-
-    private func fromTheTop(holds: Bool) -> some View {
-        Button {
-            player.restart()
-        } label: {
-            HStack(spacing: 6) {
-                AppIcon("ph-arrow-counter-clockwise", size: 12)
-                Text("FROM THE TOP")
-                    .font(AppFonts.labelFont(9))
-                    .tracking(2)
-                    .lineLimit(1)
-            }
-            .foregroundColor(AppColors.gold.opacity(holds ? 0.8 : 0.35))
-            .frame(minHeight: 44)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(QuietGlyphButtonStyle())
-        .disabled(!holds)
-        .accessibilityLabel("Start the chant again from the top")
     }
 
     // MARK: - Score
@@ -341,6 +234,125 @@ struct ChantView: View {
                 content()
             }
         }
+    }
+}
+
+// MARK: - ChantTransport
+
+/// The chant page's transport: play, the scrubber and the time, and the
+/// practice row. A view of its own so that the recording's progress, read
+/// twice a second, redraws the transport alone — read in the page's body,
+/// it redrew the title, the doors and every part of the score with it.
+private struct ChantTransport: View {
+    let chant: Chant
+
+    private var player = ChantPlayer.shared
+
+    init(chant: Chant) {
+        self.chant = chant
+    }
+
+    var body: some View {
+        let holds = player.holds(chant)
+        let progress = holds ? player.progress : 0
+        let elapsed = holds ? player.currentTime : 0
+        let total = holds ? player.duration : chant.duration
+
+        return VStack(spacing: 14) {
+            HStack(spacing: 16) {
+                ChantPlayDisc(
+                    isPlaying: player.isPlaying(chant),
+                    isLoading: player.current.id == chant.id && player.isLoading,
+                    size: 56,
+                    label: chant.latinTitle
+                ) {
+                    player.toggle(chant)
+                }
+
+                VStack(spacing: 4) {
+                    ChantScrubber(progress: progress, duration: total, isEnabled: holds) { fraction in
+                        player.seek(toFraction: fraction)
+                    }
+                    HStack {
+                        Text(ChantPlayer.clock(elapsed))
+                            .contentTransition(.numericText())
+                        Spacer()
+                        Text(ChantPlayer.clock(total))
+                    }
+                    .font(AppFonts.labelFont(9))
+                    .tracking(1.5)
+                    .foregroundColor(AppColors.textSecondary)
+                    .monospacedDigit()
+                    .accessibilityHidden(true)
+                }
+            }
+
+            if let error = player.current.id == chant.id ? player.errorMessage : nil {
+                Text(error)
+                    .font(AppFonts.italicFont(12.5))
+                    .foregroundColor(AppColors.textSecondary)
+            }
+
+            // Practice: a slower pace, the chant again when it ends, and
+            // back to the top for another try at a phrase. One row while
+            // it fits; at larger text the chips keep a row of their own
+            // rather than break SLOW and REPEAT mid-word.
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 10) {
+                    practiceChips
+                    Spacer(minLength: 0)
+                    fromTheTop(holds: holds)
+                }
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack(spacing: 10) { practiceChips }
+                    fromTheTop(holds: holds)
+                }
+                VStack(alignment: .leading, spacing: 2) {
+                    practiceChips
+                    fromTheTop(holds: holds)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 14)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .strokeBorder(AppColors.gold.opacity(0.24), lineWidth: AppLine.hairline)
+        )
+    }
+
+    @ViewBuilder
+    private var practiceChips: some View {
+        ChantPracticeChip(title: "Slow", isOn: player.rate < 1) {
+            player.setRate(player.rate < 1 ? 1.0 : 0.75)
+        }
+        .accessibilityHint("Plays at three-quarters speed, for learning")
+
+        ChantPracticeChip(title: "Repeat", isOn: player.repeats) {
+            player.repeats.toggle()
+        }
+        .accessibilityHint("Sings the chant again from the top when it ends")
+    }
+
+    private func fromTheTop(holds: Bool) -> some View {
+        Button {
+            player.restart()
+        } label: {
+            HStack(spacing: 6) {
+                AppIcon("ph-arrow-counter-clockwise", size: 12)
+                Text("FROM THE TOP")
+                    .font(AppFonts.labelFont(9))
+                    .tracking(2)
+                    .lineLimit(1)
+            }
+            .foregroundColor(AppColors.gold.opacity(holds ? 0.8 : 0.35))
+            .frame(minHeight: 44)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(QuietGlyphButtonStyle())
+        .disabled(!holds)
+        .accessibilityLabel("Start the chant again from the top")
     }
 }
 
