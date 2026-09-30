@@ -29,9 +29,9 @@
 > - Completions report `prayed_aloud`.
 >
 > Speed is built: the playback rate, chosen on the set's title page (`RosarySetupCard`)
-> and in the player's playback sheet, applied by `AudioService`. In progress in the
-> working tree on 24 Sept: a plain spoken Rosary without meditations, "The Rosary Aloud"
-> (`AppRoute.rosaryAloud`, `PrayerShortcut.rosaryAloud`).
+> and in the player's playback sheet, applied by `AudioService`. Also built: a plain
+> spoken Rosary without meditations, "The Rosary Aloud" (`AppRoute.rosaryAloud`,
+> `PrayerShortcut.rosaryAloud`), which prays on the Scriptural Rosary's screens.
 >
 > Not built: Custom mode and presets, ambiance, Latin audio, pacing by silence (pause
 > lengths are fixed), and user-authored prayers. The rest of this document is the
@@ -62,7 +62,7 @@ needed to pray" (Part III §15).
 | Item | Status | Where it stands |
 |---|---|---|
 | §2 Simple | BUILT | Pray aloud off, the default; not named as a mode, and the bead counter (on by default) counts every Hail Mary |
-| §2 Full | BUILT | `UserSettings.prayAloud`, "Pray aloud"; the Rosary Aloud (`AppRoute.rosaryAloud`) in progress |
+| §2 Full | BUILT | `UserSettings.prayAloud`, "Pray aloud"; the Rosary Aloud (`AppRoute.rosaryAloud`) |
 | §2 Custom and presets | OPEN | |
 | §3.1 onboarding choice | OPEN | none of the eight onboarding slides offers it |
 | §3.2 Settings | BUILT | Settings → Prayer Experience: Pray aloud, the voice, the closing prayers |
@@ -74,7 +74,7 @@ needed to pray" (Part III §15).
 | §4 Screen switches | PARTIAL | image/reading (`prayerImageMode`) and bead position (the bead counter) built; no keep-awake switch |
 | §5–§7 segment model, audio architecture, recording burden | SUPERSEDED | built differently; see the note at the head of §5 |
 | §6 two audio buses | OPEN | waits on ambiance |
-| §6 resume at the start of an interrupted prayer | OPEN | after a call `AudioService` resumes where it stopped, mid-word |
+| §6 resume at the start of an interrupted prayer | BUILT | on 29 Sept: after a call `AudioService` says a recording under a minute again from its first word, and steps a longer one back five seconds (`rewindAfterInterruption`) |
 | §7 rotating Hail Mary takes | OPEN | one clip per voice |
 | §7 Latin | OPEN | needs a decision on pronunciation and a listening pass (`docs/SPOKEN_ROSARY.md`) |
 | §8 paid tier for voices | DECISION PENDING | voice choice already ships free; there is no StoreKit or purchase code |
@@ -92,7 +92,7 @@ needed to pray" (Part III §15).
 | §10 prayer audio as its own resource | BUILT | `GET /api/rosary/audio?voice=&include=` |
 | §10 scripts server-defined or client-built | BUILT | client-built `SpokenRosaryScript`; the server's `PrayerAudio.script/3` is a hand-kept mirror |
 | §10 where presets live | SUPERSEDED | there are no presets; syncing would need an account (pending) |
-| §10 one voice or two | BUILT | two, Female (the default) and Male |
+| §10 one voice or two | BUILT | two, Male (the default since 29 Sept) and Female |
 | §10 own offline flow or extend | BUILT | extends `OfflineContentService` |
 | §11 Phase A | BUILT | `SpokenSegment`, `SpokenRosaryScript`; Simple as a script superseded |
 | §11 Phase B | PARTIAL | built with two voices, not one; no onboarding slide |
@@ -250,7 +250,8 @@ A **RosaryScript** is then just `[Segment]`, generated from
 
 *Superseded — see the note at the head of §5. The sequencer (a chained player with a pause
 after each segment, not `AVQueuePlayer`), the prefetch and the Now Playing session were
-built; the second bus and resuming at the start of an interrupted prayer were not.*
+built; the second bus was not. Resuming at the start of an interrupted prayer was built
+later (`AudioService.rewindAfterInterruption`).*
 
 `AudioService` today is a single `AVPlayer` singleton with one loaded URL. Full mode needs:
 
@@ -417,7 +418,7 @@ Things worth considering that weren't in the original sketch:
   a user pays for generated audio. *Moot for now: there are no presets, and every choice is
   kept on the device. Syncing needs an account (decision pending).*
 - One voice at launch, or male + female? One good voice beats two mediocre ones.
-  *Answered: two, Female (the default) and Male.*
+  *Answered: two, Male (the default) and Female.*
 - Does Full mode need its own offline download flow, or does it extend
   `OfflineContentService`? *(Extend.)* *Answered: extended — `OfflineContentService.downloadAll`
   fills the `RosaryAudioPack` for the chosen voice.*
