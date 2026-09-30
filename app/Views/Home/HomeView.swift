@@ -506,7 +506,9 @@ struct SacredMysteriesSection: View {
 
     // MARK: - Properties
 
-    /// Mystery categories to display on home (Joyful, Sorrowful, Glorious, Seven Sorrows)
+    /// The sets the week prays on the user's schedule, then the Seven
+    /// Sorrows (`HomeViewModel.allCategories`): four on the traditional
+    /// schedule, five with the Luminous on the modern one
     let categories: [MysteryCategory]
 
     /// Callback when a category card is tapped
@@ -550,31 +552,44 @@ struct SacredMysteriesSection: View {
         .padding(.horizontal, 20)
     }
 
-    /// 2x2 grid of mystery category cards
+    /// The cards two to a row. An odd count gives its last card the whole
+    /// row: on the modern schedule the week's four Rosaries stand as a
+    /// square, and the Seven Sorrows, a chaplet rather than one of the
+    /// week's sets, spans the row beneath them, where a half-width card
+    /// beside an empty cell read as a gap in the page.
     private var mysteryGrid: some View {
-        LazyVGrid(
-            columns: [
-                GridItem(.flexible(), spacing: 16),
-                GridItem(.flexible(), spacing: 16)
-            ],
-            spacing: 16
-        ) {
-            ForEach(categories, id: \.self) { category in
-                Button {
-                    onSelectCategory?(category)
-                } label: {
-                    MysteryCard(
-                        title: category.displayName,
-                        subtitle: category.subtitle,
-                        gradientColors: category.gradientColors,
-                        cardImageName: category.cardImageName,
-                        imageFocal: category.cardFocalPoint
-                    )
+        VStack(spacing: 16) {
+            ForEach(rows, id: \.self) { row in
+                HStack(spacing: 16) {
+                    ForEach(row, id: \.self) { category in
+                        card(for: category)
+                    }
                 }
-                .buttonStyle(SacredCardButtonStyle())
             }
         }
         .padding(.horizontal, 20)
+    }
+
+    /// The categories two at a time, in order
+    private var rows: [[MysteryCategory]] {
+        stride(from: 0, to: categories.count, by: 2).map { start in
+            Array(categories[start..<min(start + 2, categories.count)])
+        }
+    }
+
+    private func card(for category: MysteryCategory) -> some View {
+        Button {
+            onSelectCategory?(category)
+        } label: {
+            MysteryCard(
+                title: category.displayName,
+                subtitle: category.subtitle,
+                gradientColors: category.gradientColors,
+                cardImageName: category.cardImageName,
+                imageFocal: category.cardFocalPoint
+            )
+        }
+        .buttonStyle(SacredCardButtonStyle())
     }
 }
 

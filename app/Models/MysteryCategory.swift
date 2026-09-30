@@ -22,10 +22,8 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
 
     // MARK: - Category Groups
 
-    /// Categories shown on the home screen grid (traditional mysteries + Seven Sorrows)
-    static let homeCategories: [MysteryCategory] = [.joyful, .sorrowful, .glorious, .sevenSorrows]
-
-    /// All mystery categories including Luminous (for "View All" screen)
+    /// All mystery categories including Luminous (for "View All" screen).
+    /// The home grid's are the schedule's (`ScheduleService.weekCategories`).
     static let allCategories: [MysteryCategory] = [.joyful, .sorrowful, .glorious, .luminous, .sevenSorrows]
 
     // MARK: - Display Properties

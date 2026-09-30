@@ -98,6 +98,24 @@ struct ScheduleService {
         }
     }
 
+    // MARK: - The Week's Sets
+
+    /// The sets a schedule's week prays, in the week's order from Monday:
+    /// Joyful, Sorrowful, Glorious, and in the modern one the Luminous,
+    /// Thursday's. Sunday's seasons add none the weekdays have not. The
+    /// home page's grid is these, then the Seven Sorrows.
+    static func weekCategories(
+        in schedule: MysterySchedule = UserSettings.shared.mysterySchedule
+    ) -> [MysteryCategory] {
+        var sets: [MysteryCategory] = []
+        for weekday in 2...7 {
+            if let category = weekdayCategory(weekday, in: schedule), !sets.contains(category) {
+                sets.append(category)
+            }
+        }
+        return sets
+    }
+
     /// Sunday's mysteries: the same in both schedules
     private static func sundayCategory(in season: Season) -> MysteryCategory {
         switch season {
