@@ -39,6 +39,11 @@ struct ScripturalRosaryView: View {
     /// A verse to a bead, or the Holy Rosary
     private let form: SpokenForm
 
+    /// Set once PRAY has pushed the prayer, and cleared when the page
+    /// shows again, so a double tap before the push covers the page
+    /// cannot open the Rosary twice — as the mysteries' page guards its sets
+    @State private var isOpening = false
+
     init(category: MysteryCategory = ScheduleService.categoryForToday(), form: SpokenForm = .scriptural) {
         self.form = form
         _category = State(initialValue: category)
@@ -55,6 +60,8 @@ struct ScripturalRosaryView: View {
                 : "One verse of Scripture for every Hail Mary.",
             onBack: { router.pop() },
             onPray: {
+                guard !isOpening else { return }
+                isOpening = true
                 router.push(.scripturalRosaryPrayer(ScripturalRosaryLaunch(category: category, form: form)))
             }
         ) {
@@ -72,6 +79,7 @@ struct ScripturalRosaryView: View {
             sections
                 .animation(Motion.crossfade, value: category)
         }
+        .onAppear { isOpening = false }
     }
 
     // MARK: - The Ledger
