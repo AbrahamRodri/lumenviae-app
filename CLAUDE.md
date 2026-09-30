@@ -85,6 +85,49 @@ Return to Home
 >
 > `ScheduleService` computes the seasons on device (Easter by Meeus/Jones/Butcher; Lent = Ash Wednesday up to Easter; Advent = the Sunday on or after Nov 27 through Dec 24) and its **Traditional** schedule is kept **identical to the server's `LumenViae.LiturgicalCalendar`** — Christmastide and Eastertide deliberately count as "ordinary" for this rule on both sides. Change the two together, along with the site copy (the web app's home, dashboard and category pages). The day names the app shows (`MysteryCategory.daysPrayed`, and `Mystery.daysPrayed`, which reads it) are computed from the rule by `ScheduleService.daysPrayed`, so they follow whichever schedule is chosen; `MysteryData` no longer carries them. The server's `mysteries.days_prayed` column is not decoded by the app, and as of Sept 2026 it (and `priv/repo/seeds.exs`) still carries older, non-traditional days — fix it there before anything shows it.
 
+### The Prayer Day
+
+**Everything prayed is counted on one day, and it turns at four in the
+morning, not at midnight** (`Models/PrayerDay.swift`, built on
+`PrayerBook.dayBeginsAtHour`, the one constant). Night Prayers and a
+late Rosary belong to the evening they close: said at half past twelve,
+both count for the day before, and the day that follows still asks for
+its own. The Rosary's history had turned at midnight and the Prayer
+Book's offered at four, so a Rosary and Night Prayers said together
+after midnight landed on two days, and the Chapel showed one offered
+and the other not.
+
+The prayer day decides the history and the streak
+(`PrayerHistoryService`: `sessions(on:)` is the prayer day an instant
+falls in, `sessions(onPrayerDay:)` a day by its date), the Prayer
+Record's calendar, week row and TODAY, the Chapel's Today tile, focus
+and flame ("Lit today", the week's ring), `StreakWidget`, milestones,
+the Pray button's Continue (`InProgressPrayer.isContinued`), and the
+Prayer Book's offered (`PrayerBookStore`). A prayer day is named by its
+calendar date's midnight — 12:30 AM on a Wednesday is Tuesday's, named
+Tuesday 00:00 — so it drops into a calendar grid and a `Set<Date>`;
+`PrayerDay.interval(of:)` runs from four to four, 23 hours when the
+clocks spring forward within it and 25 when they fall back, and the turn
+is read off the wall clock, so both changes leave it at four. Sessions
+are stored with the moment they ended, as they always were, and counted
+into days on read: nothing stored changes, and past history is recounted
+by the rule. `PrayerDayClock` holds today's prayer day as
+`CanonicalClock` holds the hour — asleep to the next turn, refreshed on
+foreground — and the Chapel and the Prayer Record read it, so they roll
+over at four while they are open; home's hour row already redraws at
+four on `PrayerBookHourSchedule`.
+
+**What the Church's calendar decides stays on the calendar day:** which
+mysteries are today's (so a Rosary begun at 12:30 AM on a Wednesday
+prays Wednesday's mysteries and counts for Tuesday), the Missal's and
+the Office's dates, the liturgical seasons and feasts (the Chapel's day
+strip, which at 1 AM names the new day's feast over a Chapel still
+counting the evening's prayers), the consecration's day numbering, the
+journal's TODAY, and the day's reading measure (`ReadingDayMeter`),
+which is reading rather than prayer. The Rosary's resume and the guided
+Rosary's kept place expire after 24 hours, not at a day's turn, and are
+unchanged.
+
 ### The Mysteries of Each Set
 
 These are the app's own names (`Data/MysteryData.swift`). The server's
@@ -188,9 +231,11 @@ is Today's Rosary's, the chaplet's is Seven Sorrows', the Scriptural and
 Holy Rosaries are their own). They once began another, and its first
 save erased the place unasked. The tray's row says where ("Continue at
 the Third Joyful Mystery"); the Chapel's focus says "Your place is kept
-at…" over CONTINUE THE ROSARY, and its Today row CONTINUE. A Rosary left
-last night is not taken up (Home's card still offers it until it
-expires), and a Rosary of another form is left for Home's card. Every
+at…" over CONTINUE THE ROSARY, and its Today row CONTINUE. "Today" is
+the prayer day (see The Prayer Day): a Rosary left at half past eleven
+is still taken up at half past twelve, and one left before the day
+turned at four is not (Home's card still offers it until it expires),
+and a Rosary of another form is left for Home's card. Every
 door, Home's card included, resumes through `AppRouter.resume`; if a
 meditation set cannot be loaded, the act begins as it always has.
 
@@ -332,8 +377,9 @@ every row shows at its trailing edge what a tap does — OFFERED with the
 seal, BEGIN › / CONTINUE › until then, every act on the rule being one the
 app watches finish (the row marked by hand went out with the acts that
 needed it); the Rosary, the Scriptural Rosary, the Holy Rosary, the
-chaplet and the consecration day check from real data, and the Prayer Book's three orders from their Amen (`PrayerBookStore.wasOffered`), reset each
-morning; the half is a figure "2 / 4" over a row
+chaplet and the consecration day check from real data, and the Prayer Book's three orders from their Amen (`PrayerBookStore.wasOffered`), reset
+when the prayer day turns at four in the morning (the consecration day
+by its own numbering, on the calendar); the half is a figure "2 / 4" over a row
 of tappable cells), **Consecration** (de Montfort's four preparations
 as a segmented road, tracks weighted 12/7/7/7 days, the day's own
 title as the foot note), **Prayer Book** (`ChapelPrayerBookTile`: the order for the hour it is, the reader's kept ribbons beneath it, PRAY at its foot; the half is the hour's order alone), **Reading** (the open book with the author
@@ -526,6 +572,7 @@ app/
 │   ├── BookReadingProgress                                (SwiftData)
 │   ├── PrayerShortcut                       # + MeWidget (read only by the Chapel's migration)
 │   ├── PrayerBook            # BookPrayer, chapters, orders of prayer, seasons
+│   ├── PrayerDay             # The prayer day, turning at four: what counts as today for everything prayed
 │   ├── Chant                 # Chant, ChantScorePart, ChantGroup, ChantCatalog
 │   ├── ChantScoreDrawing     # A score's drawing, read from .lvscore; SVG path data
 │   └── StreakMilestone, MarianFeastDay, BilingualConsecrationPrayer
@@ -606,6 +653,7 @@ app/
 │   ├── MissalAPIService, MissalCacheService   # Missale Meum, cached on disk
 │   ├── OfficeAPIService, OfficeCacheService   # Our /office API, cached on disk
 │   ├── CanonicalClock        # Which canonical hour it is now
+│   ├── PrayerDayClock        # Today's prayer day, rolling over at four, for the pages that show it
 │   ├── PrayerHistoryService, PrayerResumeService, ScheduleService
 │   ├── FavoritesService, MeditationSetResolver, TrueDevotionLibrary
 │   ├── LibraryService        # Gutenberg text + LibriVox tracks, disk cache
@@ -1851,10 +1899,12 @@ write concurrent code here:
   breath; the Angelus rings `church_bell.caf` — aloud only, since in
   silence the book makes no sound at all. The page's words dissolve
   under its head and beads (`topChromeFade`, no inset) rather than being
-  cut mid-line. An order prayed to its Amen is offered for the book's
-  day, which turns at four in the morning (`PrayerBook.dayBeginsAtHour`)
-  as the hours do, not at midnight: Night Prayers said at half past
-  twelve are that night's, and the next evening still asks for its own.
+  cut mid-line. An order prayed to its Amen is offered for the prayer
+  day (see The Prayer Day), which turns at four in the morning
+  (`PrayerBook.dayBeginsAtHour`) as the book's hours do, not at
+  midnight: Night Prayers said at half past twelve are that night's,
+  as a Rosary said beside them is, and the next evening still asks for
+  its own.
   Nothing is carried forward. **Keeping**
   is a silk ribbon (`RibbonToggle`, `PrayerBookStore.ribbons`) — the
   kept prayers stand on the book's first page and the Chapel tile.
