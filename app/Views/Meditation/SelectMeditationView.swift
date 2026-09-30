@@ -4,14 +4,22 @@
 //
 //  Created by Abraham Rodriguez on 2/10/26.
 //
-//  The meditation picker, read as a shelf.
+//  A set of mysteries' page, where the Rosary is chosen in one of its
+//  three forms: OTHER WAYS TO PRAY — the Scriptural Rosary, and the Holy
+//  Rosary with no meditation — then the shelf of MEDITATIONS.
 //
-//  Kinds of meditation sit behind a filter button — most visits don't
-//  narrow by kind, and an always-visible chip row was competing with the
-//  sets themselves. The shelf reads two ways: a gallery of half-width
-//  tiles, or a plain ruled list. Pinned sets stay above whatever is
-//  showing. Tapping a set opens it — what it is, who wrote it, how the
-//  first mystery begins — before the Rosary starts.
+//  The two rows stand above the sets and open their own pages with these
+//  mysteries chosen. They were doors of their own elsewhere — a quiet
+//  line on home, banners in Explore — and there looked like Rosaries
+//  apart from this one; here they read as what they are, other ways of
+//  praying the mysteries at the top of the page.
+//
+//  Kinds of meditation sit behind a filter button beside the shelf's
+//  heading — most visits don't narrow by kind, and an always-visible chip
+//  row was competing with the sets themselves. The shelf reads two ways:
+//  a gallery of half-width tiles, or a plain ruled list. Pinned sets stay
+//  above whatever is showing. Tapping a set opens its own page, where
+//  how it will be prayed is confirmed before the Rosary starts.
 //
 
 import SwiftUI
@@ -79,7 +87,16 @@ struct SelectMeditationView: View {
                         // The header names the screen; a second line
                         // saying "select a meditation set" over a shelf of
                         // meditation sets says nothing twice.
-                        Color.clear.frame(height: 30)
+                        Color.clear.frame(height: 26)
+
+                        // Bundled whole, so they stand whatever the
+                        // server does
+                        otherWaysToPray
+                            .devotionalEntrance()
+
+                        meditationsHeading
+                            .padding(.top, 26)
+                            .padding(.bottom, 14)
 
                         // One slot for the spinner and what replaces it,
                         // so the shelf arriving is a crossfade over the
@@ -138,8 +155,6 @@ struct SelectMeditationView: View {
 
     private var shelf: some View {
         VStack(spacing: 30) {
-            controlsRow
-
             if isFilterOpen {
                 filterTray
                     .transition(.opacity.combined(with: .move(edge: .top)))
@@ -152,54 +167,97 @@ struct SelectMeditationView: View {
         .animation(Motion.crossfade, value: viewMode)
     }
 
+    // MARK: - Other Ways to Pray
+
+    /// The Rosary's two other forms, for these mysteries: each opens its
+    /// own page with them chosen
+    private var otherWaysToPray: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            ShelfHeading(title: "Other ways to pray")
+
+            VStack(spacing: 0) {
+                OtherWayRow(
+                    icon: PrayerShortcut.scripturalRosary.icon,
+                    title: "The Scriptural Rosary",
+                    detail: "A verse of the Gospel for every bead"
+                ) {
+                    openOnce(.scripturalRosary(category))
+                }
+
+                OtherWayRow(
+                    icon: PrayerShortcut.rosaryAloud.icon,
+                    title: "No Meditation",
+                    detail: "Every prayer said aloud, nothing read between"
+                ) {
+                    openOnce(.rosaryAloud(category))
+                }
+            }
+        }
+    }
+
     // MARK: - Controls
 
-    /// How many sets are showing, and how the shelf is read. The count
-    /// turns into "6 OF 14 SETS" whenever something is narrowing — that
-    /// second form is how the user knows a filter is on.
-    private var controlsRow: some View {
-        HStack(spacing: 6) {
-            Text(countLabel.uppercased())
-                .font(AppFonts.labelFont(10))
-                .tracking(2)
-                .foregroundColor(AppColors.textSecondary)
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
-                .contentTransition(.numericText())
+    /// MEDITATIONS, and how the shelf is read beside it: the kinds, then
+    /// gallery or list. Under it, only while something is narrowing, how
+    /// many sets are showing of how many — that is how the user knows a
+    /// filter is on.
+    private var meditationsHeading: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 6) {
+                ShelfHeading(title: "Meditations")
 
-            Spacer(minLength: 8)
+                if hasShelf {
+                    if viewModel.hasLabels {
+                        ChromeToggle(
+                            icon: "ph-funnel",
+                            label: "Filter by kind",
+                            isOn: isFilterOpen || !viewModel.selectedLabels.isEmpty,
+                            badge: viewModel.selectedLabels.count,
+                            action: { isFilterOpen.toggle() }
+                        )
 
-            if viewModel.hasLabels {
-                ChromeToggle(
-                    icon: "ph-funnel",
-                    label: "Filter by kind",
-                    isOn: isFilterOpen || !viewModel.selectedLabels.isEmpty,
-                    badge: viewModel.selectedLabels.count,
-                    action: { isFilterOpen.toggle() }
-                )
+                        // A hairline between the funnel and the layout
+                        // pair — they do different jobs.
+                        Rectangle()
+                            .fill(AppColors.gold.opacity(0.15))
+                            .frame(width: 1, height: 26)
+                            .padding(.horizontal, 3)
+                    }
 
-                // A hairline between the funnel and the layout pair —
-                // they do different jobs.
-                Rectangle()
-                    .fill(AppColors.gold.opacity(0.15))
-                    .frame(width: 1, height: 26)
-                    .padding(.horizontal, 3)
+                    ChromeToggle(
+                        icon: "ph-cards",
+                        label: "Gallery",
+                        isOn: viewMode == .gallery,
+                        action: { viewMode = .gallery }
+                    )
+
+                    ChromeToggle(
+                        icon: "ph-list",
+                        label: "List",
+                        isOn: viewMode == .list,
+                        action: { viewMode = .list }
+                    )
+                }
             }
 
-            ChromeToggle(
-                icon: "ph-cards",
-                label: "Gallery",
-                isOn: viewMode == .gallery,
-                action: { viewMode = .gallery }
-            )
-
-            ChromeToggle(
-                icon: "ph-list",
-                label: "List",
-                isOn: viewMode == .list,
-                action: { viewMode = .list }
-            )
+            if hasShelf, viewModel.isNarrowed {
+                Text(countLabel.uppercased())
+                    .font(AppFonts.labelFont(10))
+                    .tracking(2)
+                    .foregroundColor(AppColors.textSecondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                    .contentTransition(.numericText())
+                    .transition(.opacity)
+            }
         }
+        .animation(Motion.crossfade, value: hasShelf)
+        .animation(Motion.crossfade, value: viewModel.isNarrowed)
+    }
+
+    /// Whether there is a shelf to read: loaded, and not empty
+    private var hasShelf: Bool {
+        !viewModel.isLoading && viewModel.errorMessage == nil && !viewModel.meditationSets.isEmpty
     }
 
     private var countLabel: String {
@@ -386,6 +444,13 @@ struct SelectMeditationView: View {
         router.navigateToMeditationSetDetail(meditationSet)
     }
 
+    /// Opens one of the Rosary's other forms, once per visit to the page
+    private func openOnce(_ route: AppRoute) {
+        guard !isOpeningSet else { return }
+        isOpeningSet = true
+        router.push(route)
+    }
+
     private func errorState(_ error: String) -> some View {
         VStack(spacing: 16) {
             Text(error)
@@ -449,7 +514,9 @@ private struct PickerChip: View {
 
 /// Lays chips out left to right at their own width, wrapping to a new
 /// line when the next one won't fit.
-private struct ChipFlowLayout: Layout {
+// SwiftUI may call a Layout off the main actor, so it is not isolated
+// to it (CLAUDE.md → Concurrency)
+private nonisolated struct ChipFlowLayout: Layout {
     var spacing: CGFloat = 8
 
     /// Fills the proposed width when there is one, so `placeSubviews`
@@ -548,6 +615,95 @@ private struct ChromeToggle: View {
         .buttonStyle(QuietGlyphButtonStyle())
         .accessibilityLabel(label)
         .accessibilityAddTraits(isOn ? .isSelected : [])
+    }
+}
+
+// MARK: - Shelf Heading
+
+/// A part of the page named in gold capitals, run out on a rule to the
+/// right: OTHER WAYS TO PRAY, MEDITATIONS
+private struct ShelfHeading: View {
+    let title: String
+
+    var body: some View {
+        HStack(spacing: 12) {
+            // The name keeps its width; the rule beside it is what gives
+            // way to the shelf's controls
+            Text(title.uppercased())
+                .font(AppFonts.labelFont(13))
+                .tracking(3)
+                .foregroundColor(AppColors.gold)
+                .fixedSize()
+                .accessibilityAddTraits(.isHeader)
+
+            Rectangle()
+                .fill(AppColors.gold.opacity(0.4))
+                .frame(height: 1)
+                .frame(maxWidth: .infinity)
+                .accessibilityHidden(true)
+        }
+    }
+}
+
+// MARK: - Other Way Row
+
+/// One of the Rosary's other forms as a ruled row: its glyph in a small
+/// round-headed window, its name, what it is, and a caret
+private struct OtherWayRow: View {
+    let icon: String
+    let title: String
+    let detail: String
+    let action: () -> Void
+
+    private let window = UnevenRoundedRectangle(
+        topLeadingRadius: 20,
+        bottomLeadingRadius: 3,
+        bottomTrailingRadius: 3,
+        topTrailingRadius: 20
+    )
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 14) {
+                window
+                    .fill(AppColors.background.opacity(0.6))
+                    .overlay(window.strokeBorder(AppColors.gold.opacity(0.5), lineWidth: 0.8))
+                    .overlay(
+                        AppIcon(icon, size: 18)
+                            .foregroundColor(AppColors.gold)
+                    )
+                    .frame(width: 40, height: 50)
+                    .accessibilityHidden(true)
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(title)
+                        .font(AppFonts.titleFont(15))
+                        .foregroundColor(AppColors.cream)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    Text(detail)
+                        .font(AppFonts.italicFont(13))
+                        .foregroundColor(AppColors.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                AppIcon("ph-caret-right", size: 12)
+                    .foregroundColor(AppColors.gold.opacity(0.5))
+            }
+            .padding(.vertical, 7)
+            .frame(minHeight: 64)
+            .overlay(alignment: .bottom) {
+                Rectangle()
+                    .fill(AppColors.gold.opacity(0.2))
+                    .frame(height: AppLine.hairline)
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(SacredCardButtonStyle())
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(title). \(detail)")
+        .accessibilityAddTraits(.isButton)
     }
 }
 

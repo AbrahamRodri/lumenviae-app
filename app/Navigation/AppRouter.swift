@@ -87,15 +87,18 @@ enum AppRoute: Hashable {
     case libraryBook(id: String)
     case libraryChapter(bookID: String, chapterIndex: Int)
 
-    /// The Scriptural Rosary: its title page, where the mysteries are
-    /// chosen, and the prayer itself. Everything the prayer needs is
-    /// Hashable, so it rides in the path rather than out of band.
-    case scripturalRosary
+    /// The Scriptural Rosary: its own page, opened from a mysteries'
+    /// page with those mysteries chosen (its Mysteries row changes them),
+    /// and the prayer itself. Everything the prayer needs is Hashable, so
+    /// it rides in the path rather than out of band.
+    case scripturalRosary(MysteryCategory)
     case scripturalRosaryPrayer(ScripturalRosaryLaunch)
 
-    /// The Rosary Aloud's title page. It prays on the Scriptural Rosary's
-    /// screens (`ScripturalRosaryLaunch.form`), so only the door is its own.
-    case rosaryAloud
+    /// The Holy Rosary's page — every prayer said aloud, nothing read
+    /// between (it was the Rosary Aloud). It prays on the Scriptural
+    /// Rosary's screens (`ScripturalRosaryLaunch.form`), so only the door
+    /// is its own.
+    case rosaryAloud(MysteryCategory)
 
     /// The Prayer Book: its title page, which opens on the order of
     /// prayer for the hour it is; one of its chapters; and an order of

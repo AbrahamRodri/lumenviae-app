@@ -61,9 +61,9 @@ struct HomeView: View {
                     .padding(.top, 32)
                     .devotionalEntrance(delay: 0.16)
 
-                    // The day's three practices, between the mysteries
-                    // and the colophon: the Mass, the Office, and the
-                    // preparation, each standing on its own live fact.
+                    // The day's four rows, between the mysteries and the
+                    // colophon: the preparation, the hour's prayers, then
+                    // the feast's Mass and Office, each on its own live fact.
                     TodaysPrayerSection(today: todayInChurch)
                     .padding(.horizontal, 20)
                     .padding(.top, 44)
@@ -230,12 +230,6 @@ struct HomeView: View {
             category: viewModel.todaysCategory,
             onBeginPrayer: {
                 router.navigateToMeditationSelection(category: viewModel.todaysCategory)
-            },
-            onPrayInScripture: {
-                router.push(.scripturalRosary)
-            },
-            onPrayAloud: {
-                router.push(.rosaryAloud)
             }
         )
     }
@@ -417,7 +411,7 @@ struct DayPrayerLabel: View {
 // MARK: - FeaturedMysteryCard
 
 /// The day's mysteries, set large in the arch: a kicker saying they are
-/// today's, the devotion's name, and the two ways to pray it.
+/// today's, the devotion's name, and the one act that opens them.
 ///
 /// The card used to headline the *first* mystery of the five — "The
 /// Annunciation", its passage beneath — which made one decade the
@@ -441,9 +435,8 @@ struct DayPrayerLabel: View {
 /// │  The Sorrowful Mysteries    │  ← The devotion
 /// │                             │
 /// │   ┌───────────────────┐     │
-/// │   │ PRAY WITH A MEDIT…│     │  ← The one gold act
+/// │   │ PRAY THE ROSARY  › │     │  ← The one gold act
 /// │   └───────────────────┘     │
-/// │ SCRIPTURAL ROSARY › · ROSARY ALOUD › │  ← The other ways to pray it
 /// └─────────────────────────────┘
 /// ```
 struct FeaturedMysteryCard: View {
@@ -453,16 +446,9 @@ struct FeaturedMysteryCard: View {
     /// The day's mystery category (Joyful, Sorrowful, etc.)
     let category: MysteryCategory
 
-    /// Action triggered when "Begin Prayer" is tapped
+    /// Opens the day's mysteries' page, where the Rosary's three forms
+    /// are chosen
     var onBeginPrayer: () -> Void = {}
-
-    /// The quiet line under it: the same mysteries, prayed a verse to a
-    /// bead — the Scriptural Rosary's door on the home page
-    var onPrayInScripture: () -> Void = {}
-
-    /// Beside it: the same mysteries with every prayer said aloud — the
-    /// Rosary Aloud's door on the home page
-    var onPrayAloud: () -> Void = {}
 
     // MARK: - Body
 
@@ -471,7 +457,6 @@ struct FeaturedMysteryCard: View {
             HeroBadge("TODAY'S MYSTERIES")
             devotionTitle
             beginPrayerButton
-            otherWaysToPray
         }
     }
 
@@ -487,94 +472,26 @@ struct FeaturedMysteryCard: View {
             .minimumScaleFactor(0.85)
     }
 
-    /// Primary CTA button — the screen's one filled gold shape, in the
+    /// The card's one act — the screen's one filled gold shape, in the
     /// same words the Chapel's focus block uses for the same act.
     ///
-    /// It says what will be on the beads. It read "Begin the Rosary"
-    /// until the Scriptural Rosary's line came to stand under it, and
-    /// then two lines said "Rosary" and neither said how the two
-    /// differed: this one opens the shelf of meditation sets, the line
-    /// beneath opens the Gospel on the beads. Named by the meditation,
-    /// the pair read as two ways of praying the same mysteries. The
-    /// raised medallion still says "Pray", because it is the
-    /// *configurable* act: a tap runs whatever the user chose, a hold
-    /// opens the tray.
+    /// It opens the day's mysteries' page, where the Rosary is chosen in
+    /// one of its three forms: a meditation set, the Scriptural Rosary,
+    /// or the Holy Rosary with nothing read between. It read "Pray with a
+    /// Meditation" while two quiet links stood under it for the
+    /// Scriptural Rosary and the Rosary Aloud, and the card looked as
+    /// though it offered three different Rosaries; now there is one, and
+    /// its forms stand together on the page this opens. Home shows no
+    /// settings: how the Rosary will be prayed is confirmed on the form's
+    /// own page, just above PRAY. The raised medallion still says "Pray",
+    /// because it is the *configurable* act: a tap runs whatever the user
+    /// chose, a hold opens the tray.
     private var beginPrayerButton: some View {
-        // Goes on to the shelf of meditations, so a chevron, not play
-        GoldCTAButton(title: "Pray with a Meditation", glyph: .chevron, action: onBeginPrayer)
+        // Goes on to the mysteries' page, so a chevron, not play
+        GoldCTAButton(title: "Pray the Rosary", glyph: .chevron, action: onBeginPrayer)
             .padding(.horizontal, 20)
             .padding(.top, 8)
     }
-
-    /// The Scriptural Rosary, offered where the day's mysteries are
-    /// offered. The card already names the passage the mystery is drawn
-    /// from; this is the way to pray that passage a verse to a bead. It
-    /// used to be reachable only from Explore and the Pray tray, and a
-    /// devotion nobody can find from the home page is not a devotion the
-    /// app has. Quiet gold, under the one filled act, never beside it.
-    ///
-    /// Named, not described: an earlier "Or pray it in Scripture" read
-    /// as a footnote to the button above it, and a door should say where
-    /// it goes.
-    ///
-    /// The Rosary Aloud stands beside it on the same line, a second quiet
-    /// door rather than a second line: two lines of small capitals under
-    /// the button made the card a menu. Where the pair will not fit on
-    /// one line — a narrow phone, a large text size — they drop their
-    /// articles first, and only then stand one over the other.
-    private var otherWaysToPray: some View {
-        ViewThatFits(in: .horizontal) {
-            HStack(spacing: 0) {
-                scriptureLink("The Scriptural Rosary")
-                separator
-                aloudLink("The Rosary Aloud")
-            }
-            HStack(spacing: 0) {
-                scriptureLink("Scriptural Rosary")
-                separator
-                aloudLink("Rosary Aloud")
-            }
-            VStack(spacing: -16) {
-                scriptureLink("The Scriptural Rosary")
-                aloudLink("The Rosary Aloud")
-            }
-        }
-        // The buttons keep their 44pt targets; the stack's rhythm keeps
-        // its own spacing
-        .padding(.vertical, -8)
-    }
-
-    private func scriptureLink(_ title: String) -> some View {
-        QuietGoldButton(
-            title: title,
-            trailingIcon: "ph-caret-right",
-            size: 10,
-            color: AppColors.gold.opacity(0.85),
-            horizontalPadding: 10,
-            action: onPrayInScripture
-        )
-    }
-
-    private func aloudLink(_ title: String) -> some View {
-        QuietGoldButton(
-            title: title,
-            trailingIcon: "ph-caret-right",
-            size: 10,
-            color: AppColors.gold.opacity(0.85),
-            horizontalPadding: 10,
-            action: onPrayAloud
-        )
-    }
-
-    /// A small diamond between the two doors, the app's own stop
-    private var separator: some View {
-        Rectangle()
-            .fill(AppColors.gold.opacity(0.45))
-            .frame(width: 3.5, height: 3.5)
-            .rotationEffect(.degrees(45))
-            .accessibilityHidden(true)
-    }
-
 }
 
 // MARK: - SacredMysteriesSection

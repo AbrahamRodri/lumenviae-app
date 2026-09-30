@@ -183,17 +183,14 @@ struct ExploreView: View {
 
         section("The Mysteries") {
             VStack(spacing: 10) {
+                // Each opens its mysteries' page, where the Rosary is
+                // chosen in its three forms — a meditation set, the
+                // Scriptural Rosary, or the Holy Rosary. The Scriptural
+                // Rosary and the Rosary Aloud once stood here as two
+                // banners of their own beneath the five, as though they
+                // were other devotions; every mysteries' page holds them
+                // now, and typed search still finds them
                 mysteryLedger(MysteryCategory.allCases)
-
-                // Beneath the five: the other way of praying them. A
-                // door of its own, because it is a devotion of its own —
-                // the mysteries above open the shelf of meditations;
-                // this opens the Rosary prayed on the Gospel's words.
-                scripturalBanner
-
-                // And the Rosary with nothing between its prayers but
-                // the voice saying them
-                aloudBanner
 
                 // For someone who has never prayed it: the course, where
                 // a newcomer looks first rather than at the page's foot
@@ -501,6 +498,11 @@ struct ExploreView: View {
         let action: () -> Void
     }
 
+    /// The day's mysteries' page, where the Rosary's forms are chosen
+    private func openTodaysMysteries() {
+        router.navigateToMeditationSelection(category: ScheduleService.categoryForToday())
+    }
+
     private var libraryEntries: [LibraryEntry] {
         [
             LibraryEntry(icon: "ch-altar", title: "Daily Missal",
@@ -513,10 +515,13 @@ struct ExploreView: View {
                          matchText: "true devotion summary marks false devotions montfort") { router.push(.trueDevotion) },
             LibraryEntry(icon: "ph-book-open", title: "Spiritual Reading",
                          matchText: "spiritual reading books imitation of christ story of a soul confessions augustine dolorous passion emmerich therese kempis library") { router.push(.spiritualReading) },
-            LibraryEntry(icon: "ch-bible", title: "Scriptural Rosary",
-                         matchText: "scriptural rosary verse every bead gospel douay rheims bible") { router.push(.scripturalRosary) },
-            LibraryEntry(icon: PrayerShortcut.rosaryAloud.icon, title: "The Rosary Aloud",
-                         matchText: "rosary aloud said spoken audio listen voice hear prayers learn by ear") { router.push(.rosaryAloud) },
+            // The Rosary's two forms beside the meditation sets, found by
+            // name and opening the day's mysteries' page, where they stand
+            // under OTHER WAYS TO PRAY with the sets beneath
+            LibraryEntry(icon: PrayerShortcut.scripturalRosary.icon, title: "The Scriptural Rosary",
+                         matchText: "scriptural rosary verse every bead gospel douay rheims bible") { openTodaysMysteries() },
+            LibraryEntry(icon: PrayerShortcut.rosaryAloud.icon, title: "The Holy Rosary",
+                         matchText: "holy rosary aloud said spoken audio listen voice hear prayers learn by ear no meditation") { openTodaysMysteries() },
             LibraryEntry(icon: "ch-rosary", title: "How to Pray",
                          matchText: "how to pray the rosary guide montfort methods") { router.push(.howToPray) },
             // Not the Gospel glyph: that is the Scriptural Rosary's, and
@@ -661,86 +666,6 @@ struct ExploreView: View {
         .buttonStyle(SacredCardButtonStyle())
         // The subtitle is half the row; an override would drop it
         .accessibilityLabel("\(category.devotionTitle). \(category.subtitle)")
-    }
-
-    /// The Scriptural Rosary's door, in the ledger's own shape: the arch
-    /// holds the Gospel's glyph rather than a painting, and the row
-    /// stands on the card ground rather than a category's colours,
-    /// because it belongs to no one set of mysteries.
-    private var scripturalBanner: some View {
-        devotionBanner(
-            icon: PrayerShortcut.scripturalRosary.icon,
-            title: "The Scriptural Rosary",
-            detail: "A verse for every bead"
-        ) {
-            router.push(.scripturalRosary)
-        }
-    }
-
-    /// The Rosary Aloud's door, in the same shape beside it: another way
-    /// of praying whichever mysteries, so it too stands on the card
-    /// ground, and its arch holds its own glyph.
-    private var aloudBanner: some View {
-        devotionBanner(
-            icon: PrayerShortcut.rosaryAloud.icon,
-            title: "The Rosary Aloud",
-            detail: "Every prayer said aloud"
-        ) {
-            router.push(.rosaryAloud)
-        }
-    }
-
-    private func devotionBanner(
-        icon: String,
-        title: String,
-        detail: String,
-        action: @escaping () -> Void
-    ) -> some View {
-        Button(action: action) {
-            HStack(spacing: 14) {
-                GothicArchShape(riseRatio: 0.42)
-                    .fill(AppColors.background.opacity(0.6))
-                    .frame(width: 44, height: 56)
-                    .overlay(
-                        AppIcon(icon, size: 20)
-                            .foregroundColor(AppColors.gold)
-                    )
-                    .overlay(
-                        GothicArchShape(riseRatio: 0.42)
-                            .strokeBorder(AppColors.gold.opacity(0.5), lineWidth: 0.8)
-                    )
-                    .accessibilityHidden(true)
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(title)
-                        .font(AppFonts.headlineFont(16))
-                        .foregroundColor(AppColors.cream)
-
-                    Text(detail)
-                        .font(AppFonts.italicFont(12))
-                        .foregroundColor(AppColors.textSecondary)
-                }
-
-                Spacer(minLength: 8)
-
-                AppIcon("ph-caret-right", size: 13)
-                    .foregroundColor(AppColors.textSecondary.opacity(0.6))
-            }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 10)
-            .frame(minHeight: 44)
-            .background(
-                RoundedRectangle(cornerRadius: 14)
-                    .fill(AppColors.cardBackground)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 14)
-                    .strokeBorder(AppColors.gold.opacity(0.2), lineWidth: AppLine.hairline)
-            )
-            .contentShape(RoundedRectangle(cornerRadius: 14))
-        }
-        .buttonStyle(SacredCardButtonStyle())
-        .accessibilityLabel("\(title). \(detail)")
     }
 
     /// A quiet line under the devotions for someone who has never
@@ -914,13 +839,13 @@ struct ExploreView: View {
     /// thing to discover, so it stays off the browse page — typed
     /// search still finds its door, and the Chapel's Prayer Streak tile
     /// and Settings → Devotion keep the real ones.
-    /// How to Pray stands under the mysteries, where a newcomer looks,
-    /// and the two other ways of praying them stand there too.
+    /// How to Pray stands under the mysteries, where a newcomer looks;
+    /// the Rosary's other two forms stand on every mysteries' page.
     private var studyEntries: [LibraryEntry] {
         let housed = [
             "Daily Missal", "Divine Office",
             "True Devotion", "Spiritual Reading",
-            "Scriptural Rosary", "The Rosary Aloud",
+            "The Scriptural Rosary", "The Holy Rosary",
             "Prayer Record", "How to Pray", "The Chant Library"
         ]
         return libraryEntries.filter { !housed.contains($0.title) }
