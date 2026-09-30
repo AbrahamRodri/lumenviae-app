@@ -2,11 +2,12 @@
 //  TodaysPrayerSection.swift
 //  Lumen Viae
 //
-//  "Today's Prayer" — the day's three practices on the home page: the
-//  Total Consecration, the Mass, the Divine Office. A section heading in
-//  the home page's own voice, then the consecration — the user's own
-//  devotion, whatever the day — and under it the feast heading the two
-//  rows that keep it, the Mass and the Office. No card, no panel, no fill.
+//  "Today's Prayer" — the day's four rows on the home page: the Total
+//  Consecration, the hour's prayers, the Mass, the Divine Office. A
+//  section heading in the home page's own voice, then the consecration —
+//  the user's own devotion, whatever the day — and beside it the Prayer
+//  Book's order for the hour; under them the feast heading the two rows
+//  that keep it, the Mass and the Office. No card, no panel, no fill.
 //
 //  Named for the user's prayer rather than the Church's calendar,
 //  because the Total Consecration is a private devotion and not a
@@ -300,14 +301,10 @@ struct TodaysPrayerSection: View {
         }
     }
 
-    /// The hour said the way the row's other facts are: short capitals
+    /// The hour said the way the row's other facts are: short capitals,
+    /// from the book's own table, so the row turns when the book does
     private static func hourMoment(_ date: Date) -> String {
-        switch Calendar.current.component(.hour, from: date) {
-        case 4..<11:  return "ON RISING"
-        case 11..<15: return "AT NOON"
-        case 15..<20: return "AT SIX"
-        default:      return "BEFORE SLEEP"
-        }
+        PrayerBook.dayOrderMoment(at: date, short: true).uppercased()
     }
 
     // MARK: Row 1 — Total Consecration

@@ -860,7 +860,7 @@ struct ChapelFlameTile: View {
                         .contentTransition(.numericText())
                         .animation(Motion.crossfade, value: streak)
                 } else {
-                    Text("Begin your streak")
+                    Text("Begin Your Streak")
                         .font(AppFonts.headlineFont(14))
                         .foregroundColor(AppColors.cream)
                         .lineLimit(2)

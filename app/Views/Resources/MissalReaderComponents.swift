@@ -314,7 +314,7 @@ struct MissalReadingSheet: View {
 
                     MissalSheetChipGroup("Latin and English") {
                         MissalSheetChip(
-                            title: "Stacked",
+                            title: "Line by line",
                             isSelected: settings.missalLayout == .interlinear
                         ) {
                             settings.missalLayoutPreference = MissalLayout.interlinear.rawValue

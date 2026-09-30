@@ -476,13 +476,18 @@ enum PrayerBook {
         return order(id)!
     }
 
-    /// The hour's order said as a kicker — "AT NOON", "BEFORE SLEEP"
-    nonisolated static func dayOrderMoment(at date: Date = Date(), calendar: Calendar = .current) -> String {
+    /// The hour's order said as a kicker — "AT NOON", "BEFORE SLEEP" — or,
+    /// `short`, as home's ledger sets it among its other facts: "AT SIX"
+    nonisolated static func dayOrderMoment(
+        at date: Date = Date(),
+        calendar: Calendar = .current,
+        short: Bool = false
+    ) -> String {
         let hour = calendar.component(.hour, from: date)
         switch hour {
         case dayBeginsAtHour..<11:  return "On rising"
         case 11..<15: return "At noon"
-        case 15..<20: return "At six in the evening"
+        case 15..<20: return short ? "At six" : "At six in the evening"
         default:      return "Before sleep"
         }
     }
