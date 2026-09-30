@@ -80,6 +80,10 @@ struct ContentView: View {
                     destinationView(for: route)
                 }
             }
+            // Under the tour the page is dimmed and takes no touch, and
+            // VoiceOver may not wander onto it either: the tour's card is
+            // the one place to be, whatever its modal trait reaches
+            .accessibilityHidden(firstUseTour.isRunning)
 
             // The consecration tab hosts its OWN NavigationStack. Nesting
             // it inside the outer stack's root silently drops the outer
@@ -123,6 +127,7 @@ struct ContentView: View {
                     .offset(y: shouldShowTabBar ? 0 : 100)
                     .animation(Motion.panel, value: shouldShowTabBar)
             }
+            .accessibilityHidden(firstUseTour.isRunning)
 
             if firstUseTour.isRunning {
                 FirstUseTourOverlay(tour: firstUseTour)
