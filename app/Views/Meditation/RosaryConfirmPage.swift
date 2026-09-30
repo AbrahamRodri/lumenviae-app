@@ -771,7 +771,10 @@ private struct MysteriesChoiceSheet: View {
                 } label: {
                     SheetRow(
                         category.devotionTitle,
-                        detail: category.subtitle,
+                        // The check takes the trailing edge from TODAY when
+                        // today's mysteries are the chosen ones, as they
+                        // usually are: the line under the name says it
+                        detail: chosen && category == today ? "Today · \(category.subtitle)" : category.subtitle,
                         icon: category.iconName,
                         accessory: chosen ? .check : (category == today ? .label("Today") : .none),
                         isLit: chosen
