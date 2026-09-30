@@ -47,7 +47,7 @@ enum Motion {
     /// pill passing to the other, its note, and a group arriving or
     /// leaving beneath it. The design system's ease-out at 0.25s — a
     /// choice lands, it does not bounce.
-    static let choice = Animation.timingCurve(0, 0, 0.58, 1, duration: 0.25)
+    static let choice = ease(0.25)
 
     /// The design system's ease-out — cubic-bezier(0, 0, 0.58, 1) —
     /// for chrome that collapses, fades or slides as the page moves.

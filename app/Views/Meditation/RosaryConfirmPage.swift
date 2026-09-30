@@ -446,7 +446,7 @@ struct RosaryChoiceGroup: View {
     /// choice while it was still half there, words over words.
     static let comingAndGoing: AnyTransition = .asymmetric(
         insertion: .opacity.animation(Motion.choice.delay(0.14)),
-        removal: .opacity.animation(.timingCurve(0, 0, 0.58, 1, duration: 0.1))
+        removal: .opacity.animation(Motion.ease(0.1))
     )
 
     var body: some View {
@@ -549,7 +549,9 @@ struct RosaryChoicePill: View {
                 )
                 .contentShape(Capsule())
         }
-        .buttonStyle(QuietGlyphButtonStyle())
+        // A row's settle, not a bare glyph's dip: half the pill scaling
+        // to 0.9 and fading to 0.6 read as a jolt under the thumb
+        .buttonStyle(SacredCardButtonStyle())
     }
 }
 
