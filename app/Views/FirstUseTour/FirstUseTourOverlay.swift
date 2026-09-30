@@ -41,9 +41,17 @@ struct FirstUseTourOverlay: View {
                 // A control as wide as the page is lit inside the glass, so
                 // its gold rim is seen on both sides rather than cut off by
                 // them; a round one keeps its circle
-                let hole = stop.isRound
-                    ? lit
-                    : lit.intersection(CGRect(origin: .zero, size: geometry.size).insetBy(dx: 6, dy: 6))
+                let screen = CGRect(origin: .zero, size: geometry.size)
+                let clipped = stop.isRound ? lit : lit.intersection(screen.insetBy(dx: 6, dy: 6))
+                // A control scrolled off the glass (the featured card, the
+                // page scrolled before the tour began) has no place on it:
+                // its intersection is null, whose infinite edges sent the
+                // card, and "Leave the tour" with it, off the screen over
+                // a page that takes no touch. The light closes to a point
+                // at the middle instead, and the card stands by it.
+                let hole = clipped.isNull || !clipped.intersects(screen)
+                    ? CGRect(x: screen.midX, y: screen.midY, width: 0, height: 0)
+                    : clipped
 
                 Group {
                     if reduceMotion {
@@ -161,7 +169,10 @@ struct FirstUseTourOverlay: View {
                 .strokeBorder(AppColors.gold.opacity(0.24), lineWidth: AppLine.hairline)
         )
         .alignmentGuide(.top) { card in
-            below ? -(hole.maxY + Self.gap) : -(hole.minY - Self.gap - card.height)
+            let top = below ? hole.maxY + Self.gap : hole.minY - Self.gap - card.height
+            // Kept on the glass, clear of the island and the home
+            // indicator, whatever the control's place or the text size
+            return -min(max(top, 60), size.height - card.height - 40)
         }
         .offset(x: x)
         .accessibilityElement(children: .contain)
@@ -224,7 +235,10 @@ private nonisolated struct TourSpotlight: Shape {
         if !ringOnly {
             path.addRect(rect)
         }
-        path.addRoundedRect(in: hole, cornerSize: CGSize(width: radius, height: radius))
+        // A light closed to a point cuts nothing and draws no rim
+        if hole.width > 1, hole.height > 1 {
+            path.addRoundedRect(in: hole, cornerSize: CGSize(width: radius, height: radius))
+        }
         return path
     }
 }
