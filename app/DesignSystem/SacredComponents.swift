@@ -24,33 +24,6 @@ extension Gradient {
         0, 0.12, 0.24, 0.36, 0.47, 0.58, 0.68, 0.77, 0.85, 0.92, 1
     ]
 
-    /// A fade to `color` across `from`…`end` of a gradient's span, eased
-    /// so neither end is a line.
-    ///
-    /// Two things make an image's dissolve into the page visible, and
-    /// this addresses both:
-    ///
-    /// A two-stop ramp is smooth in the middle and has a **corner** at
-    /// each end. The eye reads a corner in a gradient as a line — a Mach
-    /// band — which is the very edge such a fade exists to remove. These
-    /// stops follow a smoothstep, so there is no corner to find.
-    ///
-    /// And `end` should land **before** the image's own edge, never on
-    /// it. Alpha is linear but sight is not: the last few percent of a
-    /// *dark* painting showing through is nothing, while the last few
-    /// percent of a bright cloud or a pale robe is a visible band right
-    /// where the image stops. Finishing the fade early and holding the
-    /// flat color through the edge costs a sliver of painting and makes
-    /// the seam unfindable at any brightness.
-    static func smoothFade(to color: Color, from: CGFloat, end: CGFloat = 1) -> Gradient {
-        Gradient(stops: rampSamples.map { t in
-            Gradient.Stop(
-                color: color.opacity(smoothstep(t)),
-                location: from + (end - from) * t
-            )
-        })
-    }
-
     /// An eased mask ramping clear→black across `from`…`to`, then held to
     /// the foot.
     ///

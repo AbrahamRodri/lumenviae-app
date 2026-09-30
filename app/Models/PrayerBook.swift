@@ -53,13 +53,6 @@ struct BookPrayer: Identifiable, Hashable {
         return BilingualText(english: english, latin: latin).formatted(for: language)
     }
 
-    /// The one language a single-language surface speaks or quizzes in:
-    /// Latin only when Latin alone is chosen and the prayer has it.
-    func singleText(for language: PrayerLanguage) -> String {
-        if language == .latin, let latin { return latin }
-        return english
-    }
-
     static func == (lhs: BookPrayer, rhs: BookPrayer) -> Bool { lhs.id == rhs.id }
     func hash(into hasher: inout Hasher) { hasher.combine(id) }
 }

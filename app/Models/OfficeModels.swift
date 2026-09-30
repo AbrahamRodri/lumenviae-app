@@ -93,9 +93,6 @@ nonisolated enum CanonicalHour: String, CaseIterable, Codable, Identifiable {
         }
     }
 
-    /// "Terce, the mid-morning hour"
-    var namedDayPart: String { "\(label), \(dayPart)" }
-
     /// The clock hour at which this hour's traditional time begins.
     ///
     /// One table, and everything else is derived from it: which hour is

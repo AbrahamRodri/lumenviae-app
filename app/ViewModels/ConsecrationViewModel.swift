@@ -53,11 +53,6 @@ final class ConsecrationViewModel {
         progress?.currentDayNumber ?? 1
     }
 
-    /// The current phase based on today's day
-    var currentPhase: ConsecrationPhase? {
-        ConsecrationPhase.phase(for: todaysDayNumber)
-    }
-
     // The prayer-flow state that used to live here (currentPrayerIndex,
     // prayersForToday, currentPrayer, hasNextPrayer, totalPrayers,
     // nextPrayer, resetPrayers) is gone. Nothing read it — the flow owns

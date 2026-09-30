@@ -58,21 +58,6 @@ final class ConsecrationProgress {
         return min(max(daysSinceStart + 1, 1), 34)
     }
 
-    /// The current phase based on the current day
-    var currentPhase: ConsecrationPhase? {
-        ConsecrationPhase.phase(for: currentDayNumber)
-    }
-
-    /// Progress percentage through the entire consecration (0.0 to 1.0)
-    var progressPercentage: Double {
-        Double(completedDays.count) / 34.0
-    }
-
-    /// The highest day number that has been completed
-    var highestCompletedDay: Int {
-        completedDays.max() ?? 0
-    }
-
     /// Whether the user can access a specific day
     /// User can access today and any past days, but not future days
     func canAccessDay(_ dayNumber: Int) -> Bool {
@@ -82,17 +67,6 @@ final class ConsecrationProgress {
     /// Whether a specific day has been completed
     func isDayCompleted(_ dayNumber: Int) -> Bool {
         completedDays.contains(dayNumber)
-    }
-
-    /// The next day that needs to be completed
-    /// Returns nil if all days are completed
-    var nextIncompleteDay: Int? {
-        for day in 1...34 {
-            if !completedDays.contains(day) && canAccessDay(day) {
-                return day
-            }
-        }
-        return nil
     }
 
     // MARK: - Initialization
@@ -130,8 +104,4 @@ final class ConsecrationProgress {
         Calendar.current.date(byAdding: .day, value: 33, to: startDate) ?? startDate
     }
 
-    /// Days remaining until completion
-    var daysRemaining: Int {
-        34 - completedDays.count
-    }
 }

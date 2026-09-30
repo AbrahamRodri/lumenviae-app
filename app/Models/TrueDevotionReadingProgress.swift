@@ -64,10 +64,6 @@ final class TrueDevotionReadingProgress {
 
     // MARK: - Methods
 
-    func isChapterCompleted(_ chapterID: String) -> Bool {
-        completedChapterIDs.contains(chapterID)
-    }
-
     func markChapterCompleted(_ chapterID: String) {
         var ids = completedChapterIDs
         ids.insert(chapterID)

@@ -94,26 +94,6 @@ final class PrayerHistoryService {
         return counts
     }
 
-    /// Number of Rosaries completed this week.
-    func rosariesThisWeek() -> Int {
-        let calendar = Calendar.current
-        let today = Date()
-        guard let weekStart = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: today)) else {
-            return 0
-        }
-        return sessions(from: weekStart, to: today).count
-    }
-
-    /// Number of Rosaries completed this month.
-    func rosariesThisMonth() -> Int {
-        let calendar = Calendar.current
-        let today = Date()
-        guard let monthStart = calendar.date(from: calendar.dateComponents([.year, .month], from: today)) else {
-            return 0
-        }
-        return sessions(from: monthStart, to: today).count
-    }
-
     /// Whether at least one Rosary was completed today.
     func hasPrayedToday() -> Bool {
         !sessions(on: Date()).isEmpty

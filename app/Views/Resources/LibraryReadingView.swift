@@ -21,9 +21,9 @@
 //  the new one arrived. A door to a reading on another shelf is pushed,
 //  so Back still returns to the reading it was opened from.
 //
-//  `DevotionPrayerView`, at the foot of the file, is the page a prayer
-//  door opens: the Litany, the hymns, the Magnificat. The readings
-//  themselves are data (`Models/LibraryReading.swift`).
+//  A prayer door — the Litany, the hymns, the Magnificat — opens the
+//  prayer in the Prayer Book (`BookPrayerView`). The readings themselves
+//  are data (`Models/LibraryReading.swift`).
 //
 
 import SwiftUI
@@ -503,102 +503,12 @@ struct LibraryReadingView: View {
     }
 }
 
-// MARK: - DevotionPrayerView
-
-/// A prayer of Our Lady on a page of its own: the Latin name as the
-/// kicker, the English in Cinzel, and the prayer beneath in the
-/// prayer-book grammar, in the reader's prayer language.
-struct DevotionPrayerView: View {
-
-    let prayerID: String
-
-    @Environment(\.dismiss) private var dismiss
-    @Environment(UserSettings.self) private var settings
-
-    private var prayer: BilingualConsecrationPrayer? {
-        DevotionPrayers.find(prayerID)
-    }
-
-    var body: some View {
-        ZStack {
-            AppColors.appGradient
-                .ignoresSafeArea()
-
-            if let prayer {
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: 0) {
-                        VStack(spacing: 16) {
-                            Text(prayer.latinTitle.uppercased())
-                                .font(AppFonts.labelFont(9.5))
-                                .tracking(3)
-                                .foregroundColor(AppColors.gold)
-                                .multilineTextAlignment(.center)
-
-                            OrnamentDivider()
-                                .frame(width: 150)
-
-                            Text(prayer.englishTitle)
-                                .font(AppFonts.titleFont(27))
-                                .foregroundColor(AppColors.cream)
-                                .multilineTextAlignment(.center)
-                                .lineSpacing(5)
-                                .minimumScaleFactor(0.6)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
-                        .padding(.horizontal, 28)
-                        .frame(maxWidth: .infinity)
-                        .devotionalEntrance()
-
-                        PrayerText(
-                            content: prayer.formattedContent(for: settings.prayerLanguage),
-                            size: max(16, settings.meditationFontSize - 2),
-                            alignment: .leading,
-                            showsDropCap: true
-                        )
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal, 28)
-                        .padding(.top, 34)
-                        .padding(.bottom, 56)
-                        .devotionalEntrance(delay: 0.08)
-                    }
-                    .padding(.top, 8)
-                }
-                .topChromeFade()
-            } else {
-                Text("This prayer could not be found.")
-                    .font(AppFonts.readingItalicFont(16))
-                    .foregroundColor(AppColors.textSecondary)
-            }
-        }
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: { dismiss() }) {
-                    HStack(spacing: 6) {
-                        AppIcon("ph-caret-left", size: 14)
-                        Text("Back")
-                            .font(AppFonts.bodyFont(16))
-                    }
-                    .foregroundColor(AppColors.gold)
-                }
-            }
-        }
-    }
-}
-
 // MARK: - Previews
 
 #Preview("Entry") {
     NavigationStack {
         LibraryReadingView(entryID: "lourdes")
             .environment(AppRouter())
-            .environment(UserSettings.shared)
-    }
-}
-
-#Preview("Prayer") {
-    NavigationStack {
-        DevotionPrayerView(prayerID: "litany_loreto")
             .environment(UserSettings.shared)
     }
 }

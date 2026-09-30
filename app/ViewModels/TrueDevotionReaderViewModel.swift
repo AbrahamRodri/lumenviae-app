@@ -101,21 +101,6 @@ final class TrueDevotionReaderViewModel {
         completedChapterIDs.contains(chapterID)
     }
 
-    /// Genuinely part-way through — a chapter merely opened at the top has
-    /// nothing to resume and reads as unstarted.
-    func isInProgress(_ chapterID: String) -> Bool {
-        !isCompleted(chapterID) && lastChapterID == chapterID && lastParagraphIndex > 0
-    }
-
-    func completedCount(of book: TrueDevotionBook) -> Int {
-        book.chapters.reduce(0) { $0 + (completedChapterIDs.contains($1.id) ? 1 : 0) }
-    }
-
-    func progressPercentage(of book: TrueDevotionBook) -> Double {
-        guard !book.chapters.isEmpty else { return 0 }
-        return Double(completedCount(of: book)) / Double(book.chapters.count)
-    }
-
     /// The chapter the continue card resumes: the one last opened if it is
     /// unfinished, otherwise the first unfinished chapter.
     func continueChapter(in book: TrueDevotionBook) -> TrueDevotionChapter? {
