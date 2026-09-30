@@ -49,7 +49,10 @@ extension CanonicalHour {
 /// night blue would leave the one unlit mark on the page it was put
 /// there to light.
 enum LitHourMark {
-    static let disc = Color(hex: "#d9b96a")
+    /// The theme's own gold, as the ring and glow around it are; it was a
+    /// fixed gold of its own, the one mark on the page that did not move
+    /// with the theme
+    static var disc: Color { AppColors.gold }
 }
 
 // MARK: - The Scribe's Close

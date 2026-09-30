@@ -440,12 +440,6 @@ struct PrayerBookView: View {
 
 // MARK: - Our Lady's cards
 
-/// The Marian blue of the Marian Library's dogma tiles, so Our Lady's
-/// prayers and her library read as one
-enum PrayerBookMarian {
-    static let blue = Color(hex: "2e3d66")
-}
-
 /// The antiphon the Church sings to Our Lady at the close of the day in
 /// this part of the year, set large
 struct MarianSeasonCard: View {
@@ -485,7 +479,7 @@ struct MarianSeasonCard: View {
         .background(
             RoundedRectangle(cornerRadius: 18)
                 .fill(LinearGradient(
-                    colors: [PrayerBookMarian.blue, PrayerBookMarian.blue.opacity(0.4)],
+                    colors: [AppColors.marianBlue, AppColors.marianBlue.opacity(0.4)],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 ))
@@ -530,7 +524,7 @@ struct MarianPrayerCard: View {
         .frame(width: 148, height: 142, alignment: .topLeading)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(PrayerBookMarian.blue.opacity(0.35))
+                .fill(AppColors.marianBlue.opacity(0.35))
         )
         .overlay(
             RoundedRectangle(cornerRadius: 16)
