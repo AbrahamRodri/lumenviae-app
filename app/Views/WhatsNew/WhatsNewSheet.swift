@@ -23,6 +23,18 @@ struct WhatsNewSheet: View {
 
     @Environment(\.dismiss) private var dismiss
 
+    /// The notes' own height, the foot's, and the home indicator's, so
+    /// the sheet stands only as tall as what it says. At full height four
+    /// rows left a wide empty band above Continue.
+    @State private var notesHeight: CGFloat = 0
+    @State private var footHeight: CGFloat = 0
+    @State private var bottomInset: CGFloat = 0
+
+    private var fittedDetent: PresentationDetent {
+        guard notesHeight > 0, footHeight > 0 else { return .large }
+        return .height(notesHeight + footHeight + bottomInset)
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             ScrollView(showsIndicators: false) {
@@ -52,6 +64,7 @@ struct WhatsNewSheet: View {
                     }
                 }
                 .padding(.bottom, 12)
+                .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { notesHeight = $0 }
             }
             .scrollBounceBehavior(.basedOnSize)
 
@@ -61,7 +74,12 @@ struct WhatsNewSheet: View {
             .padding(.horizontal, SheetMetrics.gutter)
             .padding(.top, 12)
             .padding(.bottom, 16)
+            .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { footHeight = $0 }
         }
+        .onGeometryChange(for: CGFloat.self) { $0.safeAreaInsets.bottom } action: { bottomInset = $0 }
+        // Taller than the glass allows, the height detent stops at the
+        // top and the notes scroll, as they did at full height
+        .presentationDetents([fittedDetent])
         .sheetGround()
     }
 }
