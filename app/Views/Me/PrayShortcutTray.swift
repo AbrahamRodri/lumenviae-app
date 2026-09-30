@@ -16,6 +16,10 @@
 //  TAP), the way the index lights the prayer you are on. It is the one
 //  thing about this menu nobody could otherwise see.
 //
+//  A Rosary left off today is taken up by the row of its form, which
+//  says where ("Continue at the Third Joyful Mystery") in place of its
+//  standing line.
+//
 //  Rows dismiss first and act second (the same pendingHandoff pattern
 //  the prayer tray uses) so an act that presents its own sheet — the
 //  Mass, the Office — never tries to present into a dismissal.
@@ -96,6 +100,7 @@ struct PrayShortcutTray: View {
         }
         .buttonStyle(SacredCardButtonStyle())
         .accessibilityLabel(shortcut.title)
+        .accessibilityValue(continuation(for: shortcut).map { "Continues at the \($0.placeLabel)" } ?? "")
         .accessibilityHint(isQuickTap ? "Also what a tap on the Pray button does" : "")
     }
 
@@ -122,12 +127,21 @@ struct PrayShortcutTray: View {
     }
 
     /// The Rosary's forms name the day's mysteries, and Today's Rosary
-    /// what the voice will do; the rest carry their standing line.
+    /// what the voice will do; the rest carry their standing line. A
+    /// Rosary of the row's form left off today is taken up, not begun
+    /// again, and the row says where.
     private func subtitle(for shortcut: PrayerShortcut) -> String {
-        shortcut.trayDetail(
+        if let session = continuation(for: shortcut) {
+            return "Continue at the \(session.placeLabel)"
+        }
+        return shortcut.trayDetail(
             today: ScheduleService.categoryForToday(),
             praysAloud: settings.prayAloud
         )
+    }
+
+    private func continuation(for shortcut: PrayerShortcut) -> InProgressPrayer? {
+        PrayerResumeService.shared.continuation(for: shortcut)
     }
 }
 

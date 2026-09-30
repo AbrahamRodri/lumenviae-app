@@ -170,55 +170,22 @@ struct HomeView: View {
         )
     }
 
-    /// Reloads the interrupted session's meditation set and jumps back to
-    /// the saved mystery. Resolution (bundled → API → offline download)
-    /// is shared with the picker via MeditationSetResolver.
+    /// Opens the interrupted Rosary where it stopped, through the path
+    /// the Pray button and the Chapel share (`AppRouter.resume`). Only a
+    /// meditation set has anything to load, so only it shows the card's
+    /// spinner, and only its load can fail.
     private func resumeInterruptedPrayer() {
         guard let session = PrayerResumeService.shared.inProgress,
               !isResuming, router.path.isEmpty else { return }
 
-        // The Scriptural Rosary and the Rosary Aloud are bundled whole:
-        // nothing to load, and their own screen to return to, in the
-        // form they were being prayed in
-        if let form = session.spokenForm {
-            guard let category = MysteryCategory(fromAPIString: session.category) else { return }
-            router.push(.scripturalRosaryPrayer(ScripturalRosaryLaunch(
-                category: category,
-                form: form,
-                startIndex: session.mysteryIndex,
-                startBead: session.beadIndex ?? 0,
-                priorSeconds: session.accumulatedSeconds,
-                startedAt: session.startedAt
-            )))
-            return
-        }
-
-        isResuming = true
+        isResuming = session.spokenForm == nil
         resumeError = nil
-        let generation = router.generation
 
         Task {
             defer { isResuming = false }
-
-            let set = try? await MeditationSetResolver.resolve(
-                id: session.meditationSetId,
-                categoryHint: session.category
-            )
-
-            guard let set else {
+            if !(await router.resume(session)) {
                 resumeError = "Couldn't load — check your connection"
-                return
             }
-            // The user may have navigated while we loaded — never push then.
-            guard router.generation == generation else { return }
-
-            router.navigateToPrayerSession(
-                meditationSet: set,
-                startAtIndex: session.mysteryIndex,
-                startAtBead: session.beadIndex ?? 0,
-                priorSeconds: session.accumulatedSeconds,
-                startedAt: session.startedAt
-            )
         }
     }
 
@@ -246,16 +213,8 @@ struct ResumePrayerCard: View {
     let onContinue: () -> Void
     let onDismiss: () -> Void
 
-    private var mysteryLabel: String {
-        let ordinal = session.mysteryIndex + 1
-        guard let category = MysteryCategory(fromAPIString: session.category) else {
-            return "\(Constants.ordinalWord(ordinal)) \(session.category.capitalized) Mystery"
-        }
-        // "The First Joyful Mystery" without its article, as the card
-        // reads it in running text
-        let label = category.mysteryLabel(ordinal: ordinal)
-        return label.hasPrefix("The ") ? String(label.dropFirst(4)) : label
-    }
+    /// "First Joyful Mystery", as the card reads it in running text
+    private var mysteryLabel: String { session.placeLabel }
 
     /// The door's own glyph for what is being resumed
     private var resumeGlyph: String {

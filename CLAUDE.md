@@ -165,6 +165,20 @@ The **Pray** button raised over the bar runs the user's chosen quick act
 (today's Rosary by default), and **press-and-hold** opens a tray of their
 chosen devotions (`PrayShortcutTray`).
 
+**An unfinished Rosary is taken up, never begun again over.** The Pray
+button's tap, its tray, and the Chapel's focus and Today rows continue a
+Rosary of their act's form left off today where it stopped
+(`InProgressPrayer.isContinued(by:)`: a meditation set of any mysteries
+is Today's Rosary's, the chaplet's is Seven Sorrows', the Scriptural and
+Holy Rosaries are their own). They once began another, and its first
+save erased the place unasked. The tray's row says where ("Continue at
+the Third Joyful Mystery"); the Chapel's focus says "Your place is kept
+at…" over CONTINUE THE ROSARY, and its Today row CONTINUE. A Rosary left
+last night is not taken up (Home's card still offers it until it
+expires), and a Rosary of another form is left for Home's card. Every
+door, Home's card included, resumes through `AppRouter.resume`; if a
+meditation set cannot be loaded, the act begins as it always has.
+
 The home header is the wordmark framed by the app's chrome:
 **ph-faders → Settings** and **ph-info → About** together on the left,
 the search glass alone on the right. No flame — the streak lives in the Chapel's own Prayer Streak

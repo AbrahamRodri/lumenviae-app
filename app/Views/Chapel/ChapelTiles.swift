@@ -39,6 +39,10 @@ struct ChapelAct: Identifiable {
     let subtitle: String
     let done: Bool
 
+    /// A Rosary of this act's form left off today, which the act takes
+    /// up where it stopped (`InProgressPrayer.isContinued(by:)`)
+    var resume: InProgressPrayer? = nil
+
     var id: String { shortcut.rawValue }
 
     /// The act's name as the ledger and the focus block set it.
@@ -46,6 +50,15 @@ struct ChapelAct: Identifiable {
 
     /// The gold act under the focus title.
     var focusAction: String {
+        if resume != nil {
+            switch shortcut {
+            case .todaysRosary:     return "Continue the Rosary"
+            case .sevenSorrows:     return "Continue the Chaplet"
+            case .scripturalRosary: return "Continue the Scriptural Rosary"
+            case .rosaryAloud:      return "Continue the Holy Rosary"
+            default:                break
+            }
+        }
         switch shortcut {
         case .todaysRosary:     return "Pray with a Meditation"
         case .chooseMeditation: return "Open Today's Mysteries"
@@ -62,9 +75,10 @@ struct ChapelAct: Identifiable {
     }
 
     /// The gold word on the ledger row's trailing act — CONTINUE for a
-    /// preparation already under way, BEGIN for everything else.
+    /// preparation already under way or a Rosary left off today, BEGIN
+    /// for everything else.
     var rowAction: String {
-        shortcut == .consecration ? "Continue" : "Begin"
+        shortcut == .consecration || resume != nil ? "Continue" : "Begin"
     }
 }
 

@@ -7,6 +7,13 @@
 //  15-minute devotion. The prayer flow saves its position as the user
 //  advances; Home offers to continue; completion clears it.
 //
+//  The Pray button — its tap, its tray — and the Chapel's focus and
+//  Today rows take it up too, when their act prays the same form and it
+//  was left off today (`InProgressPrayer.isContinued(by:)`). They once
+//  began another Rosary over it, and the first save of the new one
+//  erased the place without a word. Every door resumes through
+//  `AppRouter.resume`, so none can come back to a different place.
+//
 //  Only lightweight identifiers are stored. On resume, the meditation
 //  set itself is re-resolved (bundled set, offline fallback, or API).
 //
@@ -78,6 +85,44 @@ struct InProgressPrayer: Codable, Equatable {
 
     /// When this snapshot was last written (drives expiry)
     let savedAt: Date
+}
+
+// MARK: - Continuing from the Pray button
+
+extension InProgressPrayer {
+
+    /// The Pray button's act that prays this Rosary's form: Today's
+    /// Rosary for a meditation set of any mysteries — as the Chapel counts
+    /// any of them as the day's Rosary — Seven Sorrows for the chaplet's,
+    /// and the Scriptural and Holy Rosaries for their own.
+    var act: PrayerShortcut {
+        switch kind {
+        case .scripturalRosary: return .scripturalRosary
+        case .rosaryAloud:      return .rosaryAloud
+        case .meditationSet, nil:
+            return category == MysteryCategory.sevenSorrows.rawValue ? .sevenSorrows : .todaysRosary
+        }
+    }
+
+    /// Whether `act` — from the Pray button, its tray, or the Chapel —
+    /// takes this Rosary up where it stopped rather than beginning
+    /// another over it: the same form, left off today. A Rosary left
+    /// last night is not today's; Home's card still offers it until it
+    /// expires.
+    func isContinued(by act: PrayerShortcut, now: Date = Date(), calendar: Calendar = .current) -> Bool {
+        self.act == act && calendar.isDate(savedAt, inSameDayAs: now)
+    }
+
+    /// Where it stopped, as running text: "Third Joyful Mystery",
+    /// "Third Sorrow of Mary"
+    var placeLabel: String {
+        let ordinal = mysteryIndex + 1
+        guard let mysteries = MysteryCategory(fromAPIString: category) else {
+            return "\(Constants.ordinalWord(ordinal)) \(category.capitalized) Mystery"
+        }
+        let label = mysteries.mysteryLabel(ordinal: ordinal)
+        return label.hasPrefix("The ") ? String(label.dropFirst(4)) : label
+    }
 }
 
 // MARK: - PrayerResumeService
@@ -206,6 +251,12 @@ final class PrayerResumeService {
         if let data = try? JSONEncoder().encode(snapshot) {
             UserDefaults.standard.set(data, forKey: Self.storageKey)
         }
+    }
+
+    /// The unfinished Rosary `act` would take up today, if there is one
+    func continuation(for act: PrayerShortcut, now: Date = Date()) -> InProgressPrayer? {
+        guard let session = inProgress, session.isContinued(by: act, now: now) else { return nil }
+        return session
     }
 
     /// Clears the snapshot — on completion, or when the user dismisses it.
