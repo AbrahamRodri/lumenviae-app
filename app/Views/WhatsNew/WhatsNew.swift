@@ -55,9 +55,11 @@ struct WhatsNewRelease: Identifiable {
             ),
             WhatsNewItem(
                 icon: PrayerShortcut.rosaryAloud.icon,
-                title: "The Rosary Aloud",
+                title: "The Holy Rosary",
                 detail: "Every prayer of the Rosary said aloud, in the voice you choose, at the speed you set",
-                route: .rosaryAloud
+                // Today's mysteries: the notes are decided at launch and
+                // shown the same day
+                route: .rosaryAloud(ScheduleService.categoryForToday())
             ),
             WhatsNewItem(
                 icon: "ch-rosary",
