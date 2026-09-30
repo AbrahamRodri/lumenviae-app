@@ -21,8 +21,6 @@ struct ChantScoreSheet: View {
 
     @Environment(\.dismiss) private var dismiss
 
-    private var player = ChantPlayer.shared
-
     /// How much closer than the width of the glass: 1 to 3
     @State private var zoom: CGFloat = 1
 
@@ -117,7 +115,7 @@ struct ChantScoreSheet: View {
             }
 
             if showsTransport {
-                footTransport
+                ChantScoreSheetTransport(chant: chant)
             }
         }
         .sheetGround()
@@ -235,10 +233,24 @@ struct ChantScoreSheet: View {
     private static func clamped(_ zoom: CGFloat) -> CGFloat {
         min(max(zoom, 1), 3)
     }
+}
 
-    /// Play, pause and the time, under a hairline — the score stays the
-    /// sheet's subject
-    private var footTransport: some View {
+// MARK: - ChantScoreSheetTransport
+
+/// Play, pause and the time, under a hairline — the score stays the
+/// sheet's subject. A view of its own so that the recording's progress,
+/// read twice a second, redraws the transport alone and never the score
+/// above it.
+private struct ChantScoreSheetTransport: View {
+    let chant: Chant
+
+    private var player = ChantPlayer.shared
+
+    init(chant: Chant) {
+        self.chant = chant
+    }
+
+    var body: some View {
         let holds = player.holds(chant)
         return VStack(spacing: 10) {
             Rectangle()

@@ -24,8 +24,6 @@ struct ChantView: View {
 
     @Environment(AppRouter.self) private var router
 
-    private var player = ChantPlayer.shared
-
     @State private var showsScore = false
 
     init(chantID: String) {
@@ -45,7 +43,7 @@ struct ChantView: View {
                             .padding(.horizontal, 28)
                             .devotionalEntrance()
 
-                        transport(chant)
+                        ChantTransport(chant: chant)
                             .padding(.horizontal, 24)
                             .padding(.top, 28)
 
@@ -141,9 +139,120 @@ struct ChantView: View {
         return "The Chant Library · \(group)".uppercased()
     }
 
-    // MARK: - Transport
+    // MARK: - Score
 
-    private func transport(_ chant: Chant) -> some View {
+    private func score(_ chant: Chant) -> some View {
+        VStack(alignment: .leading, spacing: 16) {
+            // Both words shrink a little before either breaks mid-word
+            HStack(spacing: 10) {
+                Text("THE SCORE")
+                    .font(AppFonts.labelFont(8.5))
+                    .tracking(2)
+                    .foregroundColor(AppColors.gold.opacity(0.75))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
+                Rectangle()
+                    .fill(AppColors.gold.opacity(0.18))
+                    .frame(height: AppLine.hairline)
+                Button {
+                    showsScore = true
+                } label: {
+                    Text("ENLARGE")
+                        .font(AppFonts.labelFont(9))
+                        .tracking(2)
+                        .foregroundColor(AppColors.gold.opacity(0.8))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.6)
+                        .frame(minWidth: 44, minHeight: 44)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(QuietGlyphButtonStyle())
+                .accessibilityLabel("Enlarge the score")
+            }
+            .padding(.horizontal, 8)
+
+            Button {
+                showsScore = true
+            } label: {
+                ChantScoreView(parts: chant.score)
+            }
+            .buttonStyle(.plain)
+            .accessibilityHint("Opens the score full screen")
+        }
+    }
+
+    // MARK: - Doors
+
+    @ViewBuilder
+    private func doors(_ chant: Chant) -> some View {
+        let prayers = chant.prayerIDs.compactMap { id in
+            PrayerBook.prayer(id) ?? BookPrayer.bundled(id, origin: nil, note: nil)
+        }
+        let others = ChantCatalog.otherSettings(of: chant)
+
+        if !prayers.isEmpty || !others.isEmpty {
+            VStack(alignment: .leading, spacing: 22) {
+                if !prayers.isEmpty {
+                    section("The prayer in words") {
+                        ForEach(prayers, id: \.id) { prayer in
+                            LedgerDoorRow(title: prayer.title, note: prayer.latinTitle, icon: "ch-praying-hands") {
+                                router.push(.devotionPrayer(id: prayer.id))
+                            }
+                        }
+                    }
+                }
+
+                if !others.isEmpty {
+                    section("Also sung") {
+                        ForEach(others) { other in
+                            LedgerDoorRow(
+                                title: other.fullTitle,
+                                note: other.detail,
+                                icon: "ph-music-note"
+                            ) {
+                                router.push(.chant(id: other.id))
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private func section<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 10) {
+                Text(title.uppercased())
+                    .font(AppFonts.labelFont(8.5))
+                    .tracking(2)
+                    .foregroundColor(AppColors.gold.opacity(0.75))
+                Rectangle()
+                    .fill(AppColors.gold.opacity(0.18))
+                    .frame(height: AppLine.hairline)
+            }
+            VStack(spacing: 0) {
+                content()
+            }
+        }
+    }
+}
+
+// MARK: - ChantTransport
+
+/// The chant page's transport: play, the scrubber and the time, and the
+/// practice row. A view of its own so that the recording's progress, read
+/// twice a second, redraws the transport alone — read in the page's body,
+/// it redrew the title, the doors and every part of the score with it.
+private struct ChantTransport: View {
+    let chant: Chant
+
+    private var player = ChantPlayer.shared
+
+    init(chant: Chant) {
+        self.chant = chant
+    }
+
+    var body: some View {
         let holds = player.holds(chant)
         let progress = holds ? player.progress : 0
         let elapsed = holds ? player.currentTime : 0
@@ -244,103 +353,6 @@ struct ChantView: View {
         .buttonStyle(QuietGlyphButtonStyle())
         .disabled(!holds)
         .accessibilityLabel("Start the chant again from the top")
-    }
-
-    // MARK: - Score
-
-    private func score(_ chant: Chant) -> some View {
-        VStack(alignment: .leading, spacing: 16) {
-            // Both words shrink a little before either breaks mid-word
-            HStack(spacing: 10) {
-                Text("THE SCORE")
-                    .font(AppFonts.labelFont(8.5))
-                    .tracking(2)
-                    .foregroundColor(AppColors.gold.opacity(0.75))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.6)
-                Rectangle()
-                    .fill(AppColors.gold.opacity(0.18))
-                    .frame(height: AppLine.hairline)
-                Button {
-                    showsScore = true
-                } label: {
-                    Text("ENLARGE")
-                        .font(AppFonts.labelFont(9))
-                        .tracking(2)
-                        .foregroundColor(AppColors.gold.opacity(0.8))
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.6)
-                        .frame(minWidth: 44, minHeight: 44)
-                        .contentShape(Rectangle())
-                }
-                .buttonStyle(QuietGlyphButtonStyle())
-                .accessibilityLabel("Enlarge the score")
-            }
-            .padding(.horizontal, 8)
-
-            Button {
-                showsScore = true
-            } label: {
-                ChantScoreView(parts: chant.score)
-            }
-            .buttonStyle(.plain)
-            .accessibilityHint("Opens the score full screen")
-        }
-    }
-
-    // MARK: - Doors
-
-    @ViewBuilder
-    private func doors(_ chant: Chant) -> some View {
-        let prayers = chant.prayerIDs.compactMap { id in
-            PrayerBook.prayer(id) ?? BookPrayer.bundled(id, origin: nil, note: nil)
-        }
-        let others = ChantCatalog.otherSettings(of: chant)
-
-        if !prayers.isEmpty || !others.isEmpty {
-            VStack(alignment: .leading, spacing: 22) {
-                if !prayers.isEmpty {
-                    section("The prayer in words") {
-                        ForEach(prayers, id: \.id) { prayer in
-                            LedgerDoorRow(title: prayer.title, note: prayer.latinTitle, icon: "ch-praying-hands") {
-                                router.push(.devotionPrayer(id: prayer.id))
-                            }
-                        }
-                    }
-                }
-
-                if !others.isEmpty {
-                    section("Also sung") {
-                        ForEach(others) { other in
-                            LedgerDoorRow(
-                                title: other.fullTitle,
-                                note: other.detail,
-                                icon: "ph-music-note"
-                            ) {
-                                router.push(.chant(id: other.id))
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private func section<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 10) {
-                Text(title.uppercased())
-                    .font(AppFonts.labelFont(8.5))
-                    .tracking(2)
-                    .foregroundColor(AppColors.gold.opacity(0.75))
-                Rectangle()
-                    .fill(AppColors.gold.opacity(0.18))
-                    .frame(height: AppLine.hairline)
-            }
-            VStack(spacing: 0) {
-                content()
-            }
-        }
     }
 }
 
