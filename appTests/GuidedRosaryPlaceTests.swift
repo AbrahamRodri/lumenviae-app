@@ -4,7 +4,8 @@
 //
 //  The guide's kept place: a step is only ever offered back if it is a
 //  step of those mysteries, still fresh, and in a Rosary the guide can
-//  walk — and a step means the same bead whichever set it was kept in.
+//  walk, and one whose guide has not changed length or bead since it
+//  was kept — and a step means the same bead whichever set it was kept in.
 //
 
 import Foundation
@@ -65,6 +66,41 @@ struct GuidedRosaryPlaceTests {
     @Test func nothingOrGarbageIsNoPlace() {
         #expect(GuidedRosary.Place(nil) == nil)
         #expect(GuidedRosary.Place(Data("not a place".utf8)) == nil)
+    }
+
+    // MARK: - A Guide Changed Since
+
+    /// A kept place as stored, with its fields changed as a place kept by
+    /// another build would have them: `nil` removes a field
+    private func stored(_ category: MysteryCategory, step: Int, _ changes: [String: Any?]) -> Data? {
+        guard let data = data(category, step: step),
+              var object = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return nil }
+        for (key, value) in changes { object[key] = value ?? nil }
+        return try? JSONSerialization.data(withJSONObject: object)
+    }
+
+    @Test func aPlaceKeepsItsBeadAndTheGuidesLength() {
+        let place = GuidedRosary.Place(category: .joyful, step: 7 + 13 + 4, prayedSeconds: 0)
+        #expect(place.stepCount == 75)
+        #expect(place.bead == RosaryPart.loopSmall(decade: 1, bead: 2).key)
+        #expect(RosaryPart.loopSmall(decade: 1, bead: 2).key == "loopSmall.1.2")
+    }
+
+    @Test func aPlaceKeptInAGuideOfAnotherLengthIsNotOffered() {
+        #expect(GuidedRosary.Place(stored(.sorrowful, step: 40, ["stepCount": 76])) == nil)
+        #expect(GuidedRosary.Place(stored(.sorrowful, step: 40, ["stepCount": 75])) != nil)
+    }
+
+    @Test func aPlaceWhoseStepIsNowAnotherBeadIsNotOffered() {
+        #expect(GuidedRosary.Place(stored(.glorious, step: 40, ["bead": "loopSmall.4.9"])) == nil)
+    }
+
+    @Test func aPlaceKeptBeforeEitherWasStoredIsOfferedWhileInRange() {
+        let older: [String: Any?] = ["stepCount": nil, "bead": nil]
+        let place = GuidedRosary.Place(stored(.luminous, step: 40, older))
+        #expect(place?.step == 40)
+        #expect(place?.stepCount == nil)
+        #expect(GuidedRosary.Place(stored(.luminous, step: 75, older)) == nil)
     }
 
     // MARK: - Naming It
