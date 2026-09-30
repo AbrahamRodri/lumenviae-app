@@ -62,7 +62,7 @@ struct WhatsNewRelease: Identifiable {
                 route: .rosaryAloud(ScheduleService.categoryForToday())
             ),
             WhatsNewItem(
-                icon: "ch-rosary",
+                icon: "lv-rosary",
                 title: "How to Pray the Rosary",
                 detail: "A short course for someone new to it, then Your First Rosary, a prayer at a time",
                 route: .howToPray

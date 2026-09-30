@@ -10,11 +10,6 @@ import Foundation
 @Observable
 final class HomeViewModel {
 
-    // MARK: - State
-
-    /// Mystery categories for the home screen grid (excludes Luminous, includes Seven Sorrows).
-    let allCategories: [MysteryCategory] = MysteryCategory.homeCategories
-
     // MARK: - Dependencies
 
     private let scheduleService: ScheduleService.Type
@@ -32,6 +27,15 @@ final class HomeViewModel {
     /// schedule changed there has to be on the card when Back returns.
     var todaysCategory: MysteryCategory {
         scheduleService.categoryForToday()
+    }
+
+    /// The grid's sets: the ones the week prays on the user's schedule, in
+    /// the week's order, then the Seven Sorrows — Joyful, Sorrowful,
+    /// Glorious and the Sorrows on the traditional schedule, with the
+    /// Luminous after the Glorious on the modern one. Read fresh for the
+    /// same reason as `todaysCategory`.
+    var allCategories: [MysteryCategory] {
+        scheduleService.weekCategories() + [.sevenSorrows]
     }
 
     /// Day label for the header (e.g., "WEDNESDAY PRAYER")

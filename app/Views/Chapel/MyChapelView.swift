@@ -317,7 +317,12 @@ struct MyChapelView: View {
     /// the row marked by hand went with them.
     private var resolvedActs: [ChapelAct] {
         var acts = settings.ruleItems.map { item in
-            ChapelAct(shortcut: item, subtitle: subtitle(for: item), done: isDone(item))
+            ChapelAct(
+                shortcut: item,
+                subtitle: subtitle(for: item),
+                done: isDone(item),
+                resume: PrayerResumeService.shared.continuation(for: item)
+            )
         }
         if activeConsecration != nil {
             acts.insert(
@@ -473,6 +478,10 @@ struct MyChapelView: View {
         }
         guard let next else {
             return "Everything on your rule has been offered today. The Chapel keeps until morning."
+        }
+        // Taken up where it stopped, as the guide's own welcome says it
+        if let session = next.resume {
+            return "Your place is kept at the \(session.placeLabel)."
         }
         switch next.shortcut {
         case .todaysRosary:

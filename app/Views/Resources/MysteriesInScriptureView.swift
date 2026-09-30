@@ -595,7 +595,7 @@ struct MysteryPassageView: View {
                         LedgerDoorRow(title: "Pray the Scriptural Rosary", note: "These verses, one on every bead", icon: "ch-bible") {
                             router.push(.scripturalRosaryPrayer(ScripturalRosaryLaunch(category: category)))
                         }
-                        LedgerDoorRow(title: category.devotionTitle, note: "Meditations on these mysteries", icon: "ch-rosary") {
+                        LedgerDoorRow(title: category.devotionTitle, note: "Meditations on these mysteries", icon: "lv-rosary") {
                             router.navigateToMeditationSelection(category: category)
                         }
                     }

@@ -11,31 +11,37 @@ Lumen Viae is an iOS app built with SwiftUI that guides users through praying th
 ```
 Home Screen
     │
-    ├── Featured card: today's mysteries ("Pray with a Meditation")
-    │   └── Goes to: Select Meditation View
-    │       (its quiet line, "The Scriptural Rosary · The Rosary Aloud", opens either title page)
+    ├── Featured card: today's mysteries ("Pray the Rosary", a chevron)
+    │   └── Goes to: that day's mysteries' page
     │
-    └── Sacred Mysteries Grid (Joyful, Sorrowful, Glorious, Seven Sorrows;
-        its VIEW ALL page adds Luminous)
+    └── Sacred Mysteries Grid (the week's sets, then the Seven Sorrows:
+        Joyful, Sorrowful, Glorious on Traditional, with Luminous after
+        Glorious on Modern; VIEW ALL always lists all five)
         └── Tap any mystery card
             │
             ▼
-Select Meditation View (the shelf)
+The mysteries' page (SelectMeditationView) — one Rosary, three forms
     │
-    ├── Gallery of tiles (default) or ruled list (remembered), pinned sets on top
-    ├── Funnel button → "Kind of meditation" tray (label chips from the API)
+    ├── OTHER WAYS TO PRAY: The Scriptural Rosary · No Meditation (the
+    │   Holy Rosary), each opening its own page with these mysteries chosen
+    ├── MEDITATIONS: gallery of tiles (default) or ruled list (remembered),
+    │   pinned sets on top, the funnel → "Kind of meditation" tray
     └── Tap a set
         │
         ▼
-Meditation Set Detail (set like a title page, not a product listing)
+The Rosary's own page (RosaryConfirmPage — a set's, the Scriptural
+Rosary's and the Holy Rosary's are the same page)
     │
-    ├── Header: Back · pin
-    ├── Labels kicker, ornament, name in Cinzel, painting in a lancet arch
-    ├── A ruled ledger of sections, each named in the left margin:
-    │   About this set · The meditations (numbered) · From (author, source) · Offline
-    ├── The first meditation in full, behind a quiet disclosure
-    ├── HOW YOU'LL PRAY — one quiet ruled line naming what is set
-    │   (voice · speed · aloud · beads), opening the choices in a sheet
+    ├── The painting dissolving into the page, Back over it
+    ├── Kicker, name in Cinzel, one italic line
+    ├── YOUR ROSARY TODAY
+    │   ├── Audio: Meditation Only | Whole Rosary (Read in Silence in the
+    │   │   Scriptural Rosary; none in the Holy Rosary, always aloud)
+    │   ├── Counting: On My Rosary | On the Screen — only while the Whole
+    │   │   Rosary is not chosen
+    │   └── Rows: Mysteries (not for a set), Voice & speed
+    ├── Past the choices, a ledger for whoever scrolls (a set's meditations,
+    │   source, offline copy, first meditation)
     └── "PRAY" (the screen's one gold act) — nothing set beneath it,
         and never an estimated duration
         │
@@ -45,10 +51,10 @@ Prayer Flow (5 Mysteries/Decades)
     ├── 1st Mystery → 2nd Mystery → 3rd Mystery → 4th Mystery → 5th Mystery
     │   (Each mystery: Meditation + 10 Hail Marys + Glory Be; the Seven
     │   Sorrows chaplet is seven sorrows of seven Hail Marys each)
-    │   On the beads (default): one strand at the right edge, swipe down
-    │   a bead at a time, the mystery turns on its own. Off the beads
-    │   (Settings → Prayer Experience): arrows and a swipe between
-    │   mysteries, no strand.
+    │   On the Screen (Counting's default): one strand at the right edge,
+    │   swipe down a bead at a time, the mystery turns on its own. On My
+    │   Rosary: arrows and a swipe between mysteries, no strand. With the
+    │   Whole Rosary the voice moves the beads on the screen.
     │
     ▼
 Completion Screen
@@ -75,7 +81,7 @@ Return to Home
 | Friday | Sorrowful | Sorrowful |
 | Saturday | Glorious | **Joyful** |
 
-> **Note:** Traditional is the pre-2002 schedule and the default; no install's day changes unless its user chooses Modern. The Luminous Mysteries are always available from the grid's VIEW ALL page or from Explore. **Modern keeps the seasonal Sunday:** RVM 38 gives Sunday to the Glorious but leaves room for the liturgical season, and with the custom kept the two schedules differ only on Thursday and Saturday, which is how the sheet describes them. The choice is `UserSettings.mysteryScheduleRaw` (`MysterySchedule`, raw values `traditional`/`modern`), read by `ScheduleService.category(for:)` as a default argument, so every surface that names or opens "today's mysteries" follows it without passing it along. **It is a per-user client preference:** the server's `LiturgicalCalendar` and the web copy keep the traditional schedule and are not changed by it. A debug build can be launched on another day with `SIMCTL_CHILD_LUMEN_VIAE_TODAY=2026-10-01` (`ScheduleService.today`).
+> **Note:** Traditional is the pre-2002 schedule and the default; no install's day changes unless its user chooses Modern. The home grid shows the sets the week prays (`ScheduleService.weekCategories`, derived from the weekday rule, in the week's order from Monday) and then the Seven Sorrows: on Traditional that is the 2×2 of Joyful, Sorrowful, Glorious and the Sorrows, as it always was; on Modern the Luminous stand after the Glorious, the week's four Rosaries form the square, and the Seven Sorrows, a chaplet rather than one of the week's sets, span the row beneath them (an odd count gives its last card the whole row, never a half-width card beside an empty cell). `HomeViewModel.allCategories` is read fresh like `todaysCategory`, so the grid follows a change of schedule the moment Settings is left. The Luminous Mysteries are always available from the grid's VIEW ALL page or from Explore. **Modern keeps the seasonal Sunday:** RVM 38 gives Sunday to the Glorious but leaves room for the liturgical season, and with the custom kept the two schedules differ only on Thursday and Saturday, which is how the sheet describes them. The choice is `UserSettings.mysteryScheduleRaw` (`MysterySchedule`, raw values `traditional`/`modern`), read by `ScheduleService.category(for:)` as a default argument, so every surface that names or opens "today's mysteries" follows it without passing it along. **It is a per-user client preference:** the server's `LiturgicalCalendar` and the web copy keep the traditional schedule and are not changed by it. A debug build can be launched on another day with `SIMCTL_CHILD_LUMEN_VIAE_TODAY=2026-10-01` (`ScheduleService.today`).
 >
 > `ScheduleService` computes the seasons on device (Easter by Meeus/Jones/Butcher; Lent = Ash Wednesday up to Easter; Advent = the Sunday on or after Nov 27 through Dec 24) and its **Traditional** schedule is kept **identical to the server's `LumenViae.LiturgicalCalendar`** — Christmastide and Eastertide deliberately count as "ordinary" for this rule on both sides. Change the two together, along with the site copy (the web app's home, dashboard and category pages). The day names the app shows (`MysteryCategory.daysPrayed`, and `Mystery.daysPrayed`, which reads it) are computed from the rule by `ScheduleService.daysPrayed`, so they follow whichever schedule is chosen; `MysteryData` no longer carries them. The server's `mysteries.days_prayed` column is not decoded by the app, and as of Sept 2026 it (and `priv/repo/seeds.exs`) still carries older, non-traditional days — fix it there before anything shows it.
 
@@ -130,7 +136,8 @@ must match the **server's** names exactly.
 There is no "type" field and no default kind. A meditation set is a
 server-authored set of five (seven for the Sorrows) carrying `labels`
 from the web app's vocabulary (`LumenViae.Rosary.Labels`): Considerations
-(shown as **Reflections**), Contemplative, Saints, Scriptural, Intentions —
+(shown as **Reflections**), Contemplative, Saints, Scriptural (shown as
+**Gospel**), Intentions —
 see Content Requirements below. As of Sept 2026 the Saints sets are
 Liguori, Ignatius, Chrysostom, Newman, Augustine and Aquinas, beside
 Sheen, Emmerich, Agreda, Faber and Guéranger. **No
@@ -141,10 +148,18 @@ Father", "In Times of Suffering") are not planned — don't build UI that
 waits for them. The quick act's "today's Rosary" picks one of the day's
 sets at random.
 
-The **Scriptural Rosary** — a verse for every Hail Mary — is not a kind of
-meditation but a devotion of its own, with its own title page and prayer
-screen (see the Built list below). The meditation's player prays on the
-same strand, without the verses.
+The Rosary is **one prayer in three forms**, chosen on each mysteries'
+page: with a meditation set, as **the Scriptural Rosary** — a verse for
+every Hail Mary, no meditation — or as **the Holy Rosary**, every prayer
+said aloud with nothing read between (it was the Rosary Aloud, and the
+mysteries' page lists it as "No Meditation"). The forms are
+`RosaryForm` (`Models/RosaryForm.swift`); the Scriptural Rosary is not a
+kind of meditation, and the filter's "Scriptural" label reads as
+**Gospel** so that one thing on the page is called Scriptural. The app
+once looked as though it held four Rosaries — Pray with a Meditation, the
+Scriptural Rosary, the Rosary Aloud, and an "Every prayer aloud" switch
+that quietly made a fourth of the first — each with its own door in a
+different place.
 
 ## App Tabs
 
@@ -164,6 +179,20 @@ button.
 The **Pray** button raised over the bar runs the user's chosen quick act
 (today's Rosary by default), and **press-and-hold** opens a tray of their
 chosen devotions (`PrayShortcutTray`).
+
+**An unfinished Rosary is taken up, never begun again over.** The Pray
+button's tap, its tray, and the Chapel's focus and Today rows continue a
+Rosary of their act's form left off today where it stopped
+(`InProgressPrayer.isContinued(by:)`: a meditation set of any mysteries
+is Today's Rosary's, the chaplet's is Seven Sorrows', the Scriptural and
+Holy Rosaries are their own). They once began another, and its first
+save erased the place unasked. The tray's row says where ("Continue at
+the Third Joyful Mystery"); the Chapel's focus says "Your place is kept
+at…" over CONTINUE THE ROSARY, and its Today row CONTINUE. A Rosary left
+last night is not taken up (Home's card still offers it until it
+expires), and a Rosary of another form is left for Home's card. Every
+door, Home's card included, resumes through `AppRouter.resume`; if a
+meditation set cannot be loaded, the act begins as it always has.
 
 The home header is the wordmark framed by the app's chrome:
 **ph-faders → Settings** and **ph-info → About** together on the left,
@@ -212,15 +241,20 @@ Library tile, not from here.
 
 The search glass pushes `AppRoute.explore`
 (`Views/Home/ExploreView.swift`): at rest it browses — an epigraph
-(Mt 7:7), the five devotions as painted banners with the Scriptural
-Rosary's and the Rosary Aloud's doors beneath them and a quiet "New to the Rosary? · How to
+(Mt 7:7), the five devotions as painted banners, each opening its mysteries'
+page, where the Rosary's three forms stand (the Scriptural Rosary and
+the Rosary Aloud once had banners of their own beneath the five, as
+though they were other devotions; typed search still finds both, and
+opens the day's mysteries' page), and a quiet "New to the Rosary? · How to
 Pray" door under that (How to Pray was the fourth item of The Study at
 the foot of the page, where a newcomer never reached it); then the
 Prayer Book, Sung Prayer (tonight's antiphon of Our Lady, played where
 it stands, over the door to the Chant Library), The
 Liturgy (Missal | Office), the Spiritual Reading shelf, and The Study's
 ruled index — and typing searches mysteries, library doors, library readings,
-chants, the Prayer Book's orders and prayers, and meditation sets at once. The set index is fetched quietly for search but deliberately
+chants, the Prayer Book's orders and prayers, and meditation sets at once
+(a set by the label the shelf shows as well as the one the server
+stores, so "gospel" finds the Scriptural sets). The set index is fetched quietly for search but deliberately
 never listed on the browse page, and the field is deliberately not
 auto-focused: the page is a place first, a search second. The real
 search field lives on Explore, not on home.
@@ -239,8 +273,9 @@ withdraw their chrome as the page moves and carry a floating
 page, True Devotion's own, the Office's ledger of hours — keep the
 system bar and the gold Back like everything else; only the reading
 surface hides it. Also drawing their own chrome (bar hidden, Back on
-the page): the meditation shelf and a set's title page, the Scriptural
-Rosary's and the Rosary Aloud's title page, the Guided Rosary, the Prayer Book's pray-along, and the prayer and completion
+the page): the mysteries' page and the Rosary's own page in its three forms
+(`RosaryConfirmPage`: a set's, the Scriptural Rosary's, the Holy
+Rosary's), the Guided Rosary, the Prayer Book's pray-along, and the prayer and completion
 screens. A page may hide the bar only if it draws its own Back in every
 branch. Not every push is an `AppRoute`: True Devotion's chapters are
 closure `NavigationLink`s, the Office's hours a
@@ -296,7 +331,7 @@ the same page; it opens on one italic line saying what a rule is, and
 every row shows at its trailing edge what a tap does — OFFERED with the
 seal, BEGIN › / CONTINUE › until then, every act on the rule being one the
 app watches finish (the row marked by hand went out with the acts that
-needed it); the Rosary, the Scriptural Rosary, the Rosary Aloud, the
+needed it); the Rosary, the Scriptural Rosary, the Holy Rosary, the
 chaplet and the consecration day check from real data, and the Prayer Book's three orders from their Amen (`PrayerBookStore.wasOffered`), reset each
 morning; the half is a figure "2 / 4" over a row
 of tappable cells), **Consecration** (de Montfort's four preparations
@@ -374,11 +409,14 @@ before the foot's imprint. The day strip wraps a long feast to a second
 line rather than cutting it mid-word.
 
 **The rule's vocabulary** (`PrayerShortcut.isRuleEligible`): the
-Rosary, the Scriptural Rosary, the Rosary Aloud and Seven Sorrows can be
+Rosary, the Scriptural Rosary, the Holy Rosary and Seven Sorrows can be
 chosen, and the Prayer Book's three orders of the day — Morning Prayers,
 the Angelus, Night Prayers — which the pray-along screen marks offered
 at their Amen (`PrayerBookStore.wasOffered`), so the Chapel can ask
-about them honestly. "A
+about them honestly. The Holy Rosary is still recorded under its old
+name, "The Rosary Aloud" (`ScripturalRosaryViewModel.aloudDevotionName`),
+since the Prayer Record holds days prayed under it and the rule matches
+by it. "A
 Meditation" was briefly eligible, marked by hand, and is not: browsing
 the picker is a doorway to the Rosary, not a devotion beside it. **The Mass and the Office are
 off the rule** until the app can keep a day's schedule for them — a
@@ -427,11 +465,16 @@ the page they serve):
 - **Prayer Experience** — text size, prayer language (English by
   default; the app's first face is the one most users read), the
   narration voice (`NarrationVoiceRow`, the server's list; the same
-  choice stands in the player's playback sheet), Bead counter (the
-  meditation player's strand; see the Core prayer flow), and Pray aloud
-  (the spoken Rosary)
+  choice stands in the player's playback sheet), then Counting and
+  Audio — the Rosary's two choices, each a pill of its two named options
+  over a line saying what the chosen one does
+  (`RosaryChoiceSettingsRow`, the same pill as a Rosary's own page). They
+  keep the rows the Bead counter and Pray aloud switches stood in, and
+  their order; a switch could say only on or off, not which of two ways.
+  Counting stands dimmed under the Whole Rosary, saying why: the voice
+  moves the beads on the screen then
 - **After the Rosary** — the prayers after the Rosary (Holy Father,
-  Memorare, St Michael), under their own heading and the set page's
+  Memorare, St Michael), under their own heading and the Voice & speed sheet's
   note: they are said aloud after the closing prayer, and only when
   every prayer is — nothing else reads them. Set as three more switches
   among the ways of praying, they read as prayers added to every
@@ -470,6 +513,7 @@ app/
 │   ├── JournalEntry, PrayerSession                       (SwiftData)
 │   ├── ChapelTile            # + ChapelPlacement — the Chapel page's vocabulary
 │   ├── RosaryStrand          # + BeadPosition — the whole Rosary as one string
+│   ├── RosaryForm            # + RosaryChoice, RosaryInfoRow — one Rosary in three forms
 │   ├── SpokenRosary, RosaryAudioManifest, NarrationVoice  # the Rosary said aloud
 │   ├── GuidedRosary          # RosaryPart, RosaryMap, the 75-step first Rosary
 │   ├── LibraryReading        # ReadingShelf, KeptFeast — short readings
@@ -492,7 +536,7 @@ app/
 │   └── TrueDevotionReaderViewModel
 ├── Views/
 │   ├── Home/ Prayer/ Journal/ Progress/ Account/
-│   ├── Scriptural/           # ScripturalRosaryView (the title page),
+│   ├── Scriptural/           # ScripturalRosaryView (the Scriptural and Holy Rosaries' page),
 │   │                         # ScripturalRosaryPrayerView (the prayer)
 │   ├── Chapel/               # MyChapelView (the tab), ChapelGrid (arrange
 │   │                         # machinery), ChapelTiles, ChapelPrayerBookTile
@@ -501,8 +545,10 @@ app/
 │   ├── Me/                   # What outlived the retired Me page: MeCustomizeSheet's
 │   │                         # RuleEditorSheet + editor furniture,
 │   │                         # PrayButtonEditorSheet, PrayShortcutTray
-│   ├── Meditation/           # SelectMeditationView (the shelf), MeditationSetDetailView,
-│   │                         # RosarySetupCard (HOW YOU'LL PRAY)
+│   ├── Meditation/           # SelectMeditationView (the mysteries' page), MeditationSetDetailView,
+│   │                         # RosaryConfirmPage (the Rosary's own page:
+│   │                         # YOUR ROSARY TODAY, the choices, the rows),
+│   │                         # BeadSwitch (+ SetupTogglePill)
 │   ├── Consecration/         # 33-day preparation (own NavigationStack)
 │   ├── TrueDevotionView      # True Devotion's title page (at the Views/ root)
 │   ├── TrueDevotion/         # Its contents page and chapter reader
@@ -527,7 +573,8 @@ app/
 │                             # PendantCrossView, OrdoMasthead
 ├── DesignSystem/             # Theme, Typography, AppIcon, Motion,
 │                             # CallToAction (GoldCTAButton, QuietGoldButton,
-│                             # PrayFootScrim), SheetChrome, FocalFill,
+│                             # PrayFootScrim + PrayFootGround, the Prayer
+│                             # Book's), SheetChrome, FocalFill,
 │                             # SacredComponents (OrnamentDivider, DropCapText…),
 │                             # ReadingText (ReadingTypography, ReadingText, PrayerText)
 ├── Data/                     # Bundled content, not code-adjacent constants
@@ -604,8 +651,9 @@ write concurrent code here:
 
 ### Built
 
-- **Core prayer flow** — day-based mysteries, meditation picker (gallery or
-  list, a filter tray of API labels, pinned sets on top), a set detail step
+- **Core prayer flow** — day-based mysteries, the mysteries' page (the
+  Rosary's other two forms over the meditation sets: gallery or list, a
+  filter tray of API labels, pinned sets on top), the Rosary's own page
   before prayer, decade-by-decade prayer screen with bead tracking,
   completion screen, and a resume card for an unfinished Rosary.
 
@@ -652,13 +700,25 @@ write concurrent code here:
   way of praying it. An earlier cut hid the strand until the meditation
   was heard, and switching the counter on mid-meditation then seemed to
   do nothing. The setting has one name and one explanation wherever it
-  is a switch — Settings, the playback sheet, the set's title page —
-  `UserSettings.beadCounterTitle` ("Bead counter") and
-  `beadCounterDetail(isOn:aloud:)`; it had three names and none said what
-  would appear. With Pray aloud on it says the voice moves the beads: it
-  once told a person to wait for the meditation and swipe, one row under a
-  switch that said the voice would move them. Onboarding alone asks it as a choice between two ways of
-  praying ("On the Beads" / "Without the Beads"), each shown working. `ToggleRow` answers a tap anywhere on the row, not only on its
+  is offered — Counting, On My Rosary or On the Screen: on a Rosary's
+  own page, in the playback sheet and in Settings from
+  `RosaryChoice.counting` (`UserSettings.beadCounterTitle` and
+  `beadCounterDetail` survive as wrappers over it, and nothing calls
+  them), and in onboarding's "Where Will You Count?" from its own copy of
+  the same words; it had three names ("Pray on the Beads", "Bead
+  counter" and the pill's ON THE BEADS) and none said what would
+  appear. It is offered
+  only while the voice reads the meditation alone: with the Whole Rosary
+  the voice moves the beads on the screen whatever Counting says
+  (`RosaryForm.countsOnScreen`, which both players read), so a counter
+  switched off earlier cannot take the strand from a Rosary said aloud,
+  where nothing would be left to change it back. When the voice cannot
+  begin (`spokenFailure`: no recordings to be had, offline), the
+  meditation's player counts as Counting says again (`aloud: prayAloud
+  && viewModel.spokenFailure == nil`): the meditation is heard in its
+  own narration, and a Rosary counted on one's own rosary is not handed a
+  strand locked at every Our Father that no voice will move.
+  `ToggleRow` answers a tap anywhere on the row, not only on its
   switch. The one-time `PrayerSwipeHint` ("Swipe down for the next
   bead") waits for the beads to unlock and for the voice to let go of
   the hand (`voiceHoldsHand`) — said aloud the beads count as unlocked
@@ -681,45 +741,94 @@ write concurrent code here:
   view models; `BeadPosition` (mystery + bead) is what the one haptic
   keys on, so a step across a decade's end ticks once.
 
-  **The beads are optional on the meditation's player**
-  (`userSettings.prayOnBeads`, on by default; Settings → Prayer
-  Experience → "Bead counter", the player's playback sheet (the faders) so it
-  can be changed mid-Rosary, and the set title page's HOW YOU'LL PRAY
-  line, so it is chosen before PRAY; an earlier pill said ON THE BEADS
-  in small capitals and read as a label nobody knew to tap).
+  **The beads are optional on both players** (`userSettings.prayOnBeads`,
+  on by default: Counting, On the Screen).
 
-  **How the Rosary is prayed is chosen on the title page as one line**
-  (`RosarySetupCard`, also on the Scriptural Rosary's title page with
-  `kind: .scriptural`): HOW YOU'LL PRAY over what is set in words —
-  "Female voice · 1× · Every prayer aloud · On the beads" — and a caret
-  to a sheet holding the voice, the speed, Pray aloud, the bead counter
-  and the prayers after the Rosary. The choices once stood open on the
-  page as a filled card of capsules and switches, three of them gold,
-  laid over the painting above PRAY; the title page read as a settings
-  form. Keep them in the sheet. The line says only "Read in silence"
-  for a Scriptural Rosary read in silence — it named a voice and a
-  speed for a Rosary nobody hears — and the Rosary Aloud's sheet, which
-  has no switch for the prayers, has no heading for them either. The
-  player's playback sheet (the faders) holds the same two switches
-  under the same heading, THE PRAYERS, Pray aloud first; it once filed
-  Pray aloud under "The beads", after the counter. At the accessibility
-  text sizes it opens the whole glass high and scrolls
+  **The two choices that change the prayer are shown before PRAY; the
+  rest are rows.** Every form of the Rosary is confirmed on one page
+  (`RosaryConfirmPage`, the "Rosary ways to pray" handoff): the painting
+  dissolving into the page, the name, then YOUR ROSARY TODAY — Audio
+  (Meditation Only | Whole Rosary; Read in Silence in the Scriptural
+  Rosary) and, while the voice reads the meditation alone, Counting (On My
+  Rosary | On the Screen), each a pill of two named options
+  (`RosaryChoicePill`, a segmented picker to VoiceOver) with a line
+  beneath saying what the chosen one does, and under them ruled rows for
+  what else is set: Mysteries (not for a set, which belongs to its
+  mysteries; "Joyful · today", to a sheet of the five sets and the
+  chaplet, where a tap chooses and closes) and Voice & speed ("Male · 1×",
+  to a sheet holding the voice, the speed and, but for the chaplet, the
+  prayers after the Rosary). The Holy Rosary offers no choice: its audio
+  is a plain row, "Whole Rosary · pause anytime". The words for every
+  option and note are `RosaryChoice`'s, read by the pages, Settings and
+  the playback sheet; onboarding sets the same names and notes from its
+  own copy (`OnboardingView`, the notes joined by a semicolon), so change
+  the two together.
+
+  This reverses a recorded decision. The choices once stood behind one
+  quiet line — HOW YOU'LL PRAY over "Female voice · 1× · Every prayer
+  aloud · On the beads" and a caret to a sheet — because open on the page
+  they had been a filled card of capsules and switches, three of them
+  gold, and the title page read as a settings form; the rule was "keep
+  them in the sheet". What changed is how few there are: two choices,
+  each a single pill, the rest in rows. The two change what praying is
+  like, so they are seen where they apply rather than found after PRAY.
+  What holds now is the reverse: the two choices stand on the page,
+  everything else stays a row. A choice made here is the setting itself,
+  and carries to the next Rosary and to every other place it is offered.
+
+  A choice's arrival and departure are timed apart
+  (`RosaryChoiceGroup.comingAndGoing`): Counting, leaving, is gone before
+  the rows beneath close over its place, and arriving waits for them to
+  make room. As one plain fade on the rows' own 0.25s the rows slid
+  through it while it was still half there. The pill itself passes its lit
+  segment on `Motion.choice` (`ease(0.25)`, the design system's ease-out),
+  with no spring, and a segment presses with `SacredCardButtonStyle`, a
+  row's settle: as a bare glyph (`QuietGlyphButtonStyle`) half the pill
+  dipped to 0.9 and faded, and read as a jolt under the thumb.
+
+  A set's page puts its subtitle under the name only when its description
+  opens on a sentence short enough to stand there
+  (`MeditationSetDetailViewModel.subtitle(from:)` — its own splitter, since
+  the system's sentence tokenizer ends sentences at "St." and "Fulton J.");
+  the descriptions run to six lines, and six there pushed the choices
+  under PRAY. The full description stands in the ledger below, unless the
+  subtitle said all of it. The page's pin went with the design: sets are
+  pinned on the shelf's tiles and rows. PRAY's foot turns solid faster
+  than `PrayFootScrim`, the long scrim these pages once stood on, which
+  now stands only in the Prayer Book's `PrayFootGround`: the ledger
+  scrolls under this foot, and at that scrim's pace its lines read
+  through beneath the button.
+
+  The player's playback sheet (the faders) holds the same two choices
+  beneath the voice and the speed, in the same order and words. At the
+  accessibility text sizes it opens the whole glass high and scrolls
   (`PlaybackSettingsSheet.detents(for:)`) — at 530 points its rows stood
   crushed, one switch's name over the other's — and the voice capsules
   and the speed stop growing at `accessibility1` and shrink their words
   a little rather than cut "0.75×" to "0….".
 
-  With the bead counter off, the player is the
+  Counted on one's own rosary, the meditation's player is the
   decade-at-a-time screen it was for a hand that keeps its own count:
   the mystery strand in the header, arrows flanking the transport (→
   becomes the AMEN check on the last mystery), a horizontal swipe
   between mysteries (live in the reader too, which has no arrows), the
-  one-time `PrayerSwipeHint`, and no strand or bead row. The Scriptural
-  Rosary is a verse per bead and has no other way to be prayed, so the
-  setting does not reach it. Resume keeps `(mysteryIndex, beadIndex)`
+  one-time `PrayerSwipeHint`, and no strand or bead row. The bead never
+  moves there, so the last bead, which brings back controls put away,
+  never comes: they come back by themselves at the last mystery, where
+  AMEN waits (on the Scriptural Rosary's screen too). The Scriptural
+  Rosary is counted by hand too (below). Resume keeps `(mysteryIndex, beadIndex)`
   (`InProgressPrayer.beadIndex`, optional for older snapshots).
   The painting, its frost and its scrim are `PrayerPaintingStage`,
   shared with the Scriptural Rosary, which uses its `.veiled` style.
+  A tap on the painting — or on the pendant, while the opening and
+  closing prayers are said — puts the controls away and brings them
+  back (on the meditation's player the pendant's tap, like the
+  painting's, puts the one-time swipe hint away with them). To VoiceOver
+  each is one button (`StageTapAccessibility`) whose double-tap runs that
+  same tap: left to fall at the element's centre, it landed mid-glass,
+  where the Scriptural Rosary's column moves the bead and the pendant's
+  steps the prayer. The pendant's label says where the voice is on it
+  ("The pendant. The large bead").
 - **Audio** — narration for meditations, and chant from the Chant
   Library (below).
 
@@ -742,7 +851,7 @@ write concurrent code here:
   played before silence when no link will.
 
   **The narration's speed is a slider** (`PlaybackSpeedChoice`, in the
-  playback sheet and the HOW YOU'LL PRAY sheet): 0.7× to 1.7×
+  playback sheet and the Voice & speed sheet): 0.7× to 1.7×
   (`AudioService.rateRange` — slower the voice drags, faster the
   prayers run together) in twentieths, its value beside it
   ("1.15×"), a soft catch at 1× felt as a tick, and an outlined 1× at
@@ -925,7 +1034,7 @@ write concurrent code here:
   voice. A set saved from its own page takes the spoken prayers of its
   mysteries too, every prayer after the Rosary included
   (`OfflineContentService.spokenClips(for:)`): it once said "Saved on
-  this device" and then, with Pray aloud on, would not begin on a plane.
+  this device" and then, with the Whole Rosary chosen, would not begin on a plane.
 - **Personalization** — three themes, prayer language, text
   size (app-wide, plus the missal's and the reading shelf's own); the Chapel
   tab's arrange-in-place page (tile order, full/half widths, the tray, rule
@@ -941,8 +1050,8 @@ write concurrent code here:
   Rosary → **what you'll hear** (Meditation Only, the default, or Whole
   Rosary — `userSettings.prayAloud` — over a decade's four parts marked
   VOICE or YOU) → **where you'll count** (On the Screen, the default, or
-  On My Rosary — `userSettings.prayOnBeads`, which Settings calls the
-  Bead counter), each shown working in one fixed slot: the players' own
+  On My Rosary — `userSettings.prayOnBeads`, the choice Settings and the
+  Rosary's pages call Counting), each shown working in one fixed slot: the players' own
   `RosaryStrandView` to swipe, or arrows stepping a mystery at a time →
   what the app holds for the reasons chosen → colors → language → a
   reminder with evening already chosen ("Remind Me at 8 PM"), which says
@@ -1027,7 +1136,9 @@ write concurrent code here:
   someone who skips a version sees only the notes of the one they
   arrive at. The 4.0 notes name what CHANGELOG.md's 4.0 section adds —
   the Prayer Book, the Chant Library, the Rosary said aloud (with the
-  speed slider), and How to Pray with Your First Rosary — and not the
+  speed slider; its row is "The Holy Rosary" and opens that form's own
+  page on today's mysteries, `.rosaryAloud(today)`), and How to Pray
+  with Your First Rosary — and not the
   Scriptural Rosary or the voices, which came in 3.0; if a named
   devotion is renamed or its route moves, change its row too. **The
   first-use tour** (`Views/FirstUseTour/`) is for a new reader: marked
@@ -1279,48 +1390,55 @@ write concurrent code here:
   Every hour names its source — the texts are The Divinum Officium
   Project's work, and the footer credits it.
 
-- **Scriptural Rosary** — a verse of Scripture for every Hail Mary bead,
-  as a devotion of its own (`Views/Scriptural/`). It was a Prayer
+- **Scriptural Rosary** — a verse of Scripture for every Hail Mary bead:
+  one of the Rosary's three forms (`Views/Scriptural/`). It was a Prayer
   Experience toggle that grew a verse band on the meditation's player;
-  that put two readings on one screen, and a person who wanted the
-  Gospel on the beads had to find a switch in Settings to get it. Now
-  it has its own doors and its own two screens, and the toggle is gone.
+  that put two readings on one screen. Then it became a devotion of its
+  own, with doors of its own on home, in Explore and in the tray, and
+  looked like a second Rosary beside the first. Now it stands where the
+  Rosary is chosen.
 
-  **Doors:** THE SCRIPTURAL ROSARY, the quiet line under PRAY WITH A
-  MEDITATION on the home page's featured card (the button was "Begin
-  the Rosary" until this line stood under it, and then two lines said
-  "Rosary" without saying how they differed; each now names what will
-  be on the beads, and the Chapel's focus block says the same words for
-  the same act; the line opens the title page with the day's mysteries
-  chosen — named, because an earlier "Or pray it in Scripture" read as
-  a footnote to the button). The card itself is TODAY'S MYSTERIES over
-  the devotion's name — it used to headline the first of the five
-  mysteries with its passage, which made one decade the subject of a
-  button that prays all of them — and nothing stands between the title
-  and the button; the row beneath the five mysteries
-  on Explore (and typed search); the `PrayerShortcut.scripturalRosary`
-  act — Pray tray, quick tap, Rule of Prayer, the Chapel's focus — which
-  goes straight to the day's mysteries the way Today's Rosary does; and
-  "Pray the Scriptural Rosary" in In Scripture — its gold button and
-  each passage page's row both go straight to prayer in the set being
-  read (the row once opened the title page on today's set). The
-  act stands second in the tray by default, and a tray saved before it
-  existed is given it once, under Today's Rosary
-  (`userSettings.prayTrayOfferedScriptural`) — a devotion that is only
-  in Explore is one nobody finds, which is how the home link and the
-  tray row came to be. The Chapel's rule
-  counts it by name (`ScripturalRosaryViewModel.devotionName`, which is
-  what `PrayerSession.meditationType` records); it also counts as the
-  day's Rosary, since it is one.
+  **Doors:** THE SCRIPTURAL ROSARY under OTHER WAYS TO PRAY on every
+  mysteries' page, opening its own page with those mysteries chosen;
+  the `PrayerShortcut.scripturalRosary` act — Pray tray ("Joyful
+  Mysteries · a verse for every bead"), quick tap, Rule of Prayer, the
+  Chapel's focus — which goes straight to the day's mysteries the way
+  Today's Rosary does; "Pray the Scriptural Rosary" in In Scripture —
+  its gold button and each passage page's row — straight to prayer in
+  the set being read; How to Pray's Going Deeper tile; and typed search
+  in Explore, which opens the day's mysteries' page. The home card's
+  quiet line (THE SCRIPTURAL ROSARY · THE ROSARY ALOUD under PRAY WITH A
+  MEDITATION) and Explore's two banners are gone: home shows one act,
+  PRAY THE ROSARY, which opens the day's mysteries' page, where every
+  form stands together. The card over it is TODAY'S MYSTERIES over the
+  devotion's name — it once headlined the first of the five mysteries
+  with its passage, which made one decade the subject of a button that
+  prays all of them — and nothing stands between the title and the
+  button. (The Chapel's focus block still says Pray with a Meditation
+  for Today's Rosary: its act goes straight to a set's Rosary, where
+  home's goes to the page.) The act stands second in the
+  tray by default, and a tray saved before it existed is given it once,
+  under Today's Rosary (`userSettings.prayTrayOfferedScriptural`). The
+  Chapel's rule counts it by name (`ScripturalRosaryViewModel.devotionName`,
+  which is what `PrayerSession.meditationType` records); it also counts
+  as the day's Rosary, since it is one.
 
-  **`ScripturalRosaryView`** is the title page, set like a meditation
-  set's: kicker, ornament, name, the chosen mysteries' painting in the
-  arch, then a ledger — About, The mysteries (the picker: a bead per
-  set, today's marked TODAY and chosen to begin with, nothing
-  remembered), The first decade (the first mystery and its first
-  verse), From (Douay-Rheims) — and at the foot, on `PrayFootScrim`, the
-  HOW YOU'LL PRAY line (`RosarySetupCard`) over PRAY. `SetSection` and the scrim are shared with the set
-  detail rather than copied.
+  **`ScripturalRosaryView`** is the Rosary's own page
+  (`RosaryConfirmPage`) for the Scriptural Rosary and the Holy Rosary: A
+  VERSE FOR EVERY BEAD / EVERY PRAYER SAID ALOUD over the name and one
+  line, the chosen mysteries' painting crossfading as the Mysteries row
+  changes them (nothing remembered: tomorrow's page opens on tomorrow's
+  mysteries), the choices, and past them a ledger — About, The first
+  decade (the Scriptural Rosary's first mystery and its first verse),
+  From. The Mysteries row opens a sheet of the five sets and the chaplet
+  (`MysteriesChoiceSheet`), the chosen one lit and checked and today's
+  marked TODAY; when today's are the chosen ones, as they usually are,
+  the check takes the trailing edge and the line under the name says it
+  instead ("Today · The Incarnation"). A tap chooses and closes. PRAY is
+  guarded against a second push (`isOpening`, cleared when the page
+  shows again), as the mysteries' page guards its sets, so a double tap
+  before the push covers the page cannot open the Rosary twice. `SetSection`
+  is shared with the set's page.
 
   **`ScripturalRosaryPrayerView`** is the handoff's 3a: the mystery's
   painting edge to edge under a veil (`PrayerPaintingStage(style:
@@ -1353,19 +1471,42 @@ write concurrent code here:
   chaplet, the Fatima Prayer (Latin when Latin
   alone is the prayer language; `BeadReading.closingPrayer`) under GLORY
   BE & FATIMA PRAYER. **Swipe down for the next bead, up for the one
-  before; the decade turns on its own** — there are no arrows and no
-  swipe between mysteries. An earlier draft walked the beads with two
+  before; the decade turns on its own** — on the beads there are no
+  arrows and no swipe between mysteries (counted on one's own rosary,
+  below, the mysteries have them). An earlier draft walked the beads with two
   arrows, and before that a gold disc stood between them; both are
   gone, and must not come back: nothing but the beads moves the Rosary
   forward. The column still taps forward and long-presses back
   (VoiceOver cannot swipe), and the one haptic keys on `beadPosition`.
   The header is × · SCRIPTURAL ROSARY · Aa (`ReaderTextOptionsSheet`
-  without its narration section); the foot is the still mystery strand
-  over the mystery's ordinal name, a Pray aloud pill
-  (`UserSettings.prayAloud`) and the ⋯ tray with no download row. There
-  is no meditation narration and no reader; said aloud, the spoken
+  without its narration section); the Holy Rosary's header reads THE
+  HOLY ROSARY. The foot is the still mystery strand over the mystery's
+  ordinal name, a Whole Rosary switch (`SetupTogglePill`,
+  `UserSettings.prayAloud`, named as the Audio choice names it; this
+  screen has no playback sheet to put it in, and the Holy Rosary, which
+  has no such choice, has no switch) and the ⋯ tray with no download row.
+  There is no meditation narration and no reader; said aloud, the spoken
   Rosary (see API Endpoints below) reads each verse before its Hail Mary,
   and a play disc and caption stand above the strand while it does.
+
+  **Counted on one's own rosary** (Counting: On My Rosary, offered while
+  the verses are read in silence), the strand is taken down and the
+  screen moves a mystery at a time, as the meditation's player does off
+  the beads. The column's head names what the hand counts — OUR FATHER ·
+  TEN HAIL MARYS · GLORY BE (seven in a sorrow) — over the mystery's
+  name, and beneath it the whole decade is set at once
+  (`ScripturalRosaryViewModel.reading(bead:)`): the Our Father's
+  announcement, a verse for each Hail Mary under the bead's own name,
+  and the Glory Be with, but in the chaplet, the Fatima Prayer. It
+  scrolls, dissolving at the foot, and crossfades whole when the mystery
+  turns. Arrows flank the mysteries' beads at the foot, laid over them
+  so the readout keeps its place (the last becomes AMEN's check), and a
+  swipe left or right does what they do; a vertical drag is the decade's
+  scroll. To VoiceOver the column carries Next mystery and Previous
+  mystery, and on the last mystery the forward action is named "Amen —
+  finish the Rosary": an action called Next mystery must not finish it.
+  The Scriptural Rosary once counted only on the screen; its verses are
+  as much for the hand that keeps its own count.
 
   **On the pendant a move is a prayer.** While the opening and closing
   prayers are said aloud there is no bead of the strand to move to, so
@@ -1383,7 +1524,7 @@ write concurrent code here:
   as it stood on the last bead; it once vanished for the Hail, Holy Queen
   and came back only after the last Amen.
 
-  **The Rosary Aloud sets every prayer as it is said, the pendant's
+  **The Holy Rosary sets every prayer as it is said, the pendant's
   too.** It is this screen (`SpokenForm.plain`), and its column carries
   the prayer where the Scriptural Rosary's carries the verse. The Creed,
   the Hail, Holy Queen, the closing prayer and the prayers after the
@@ -1394,7 +1535,7 @@ write concurrent code here:
   (`PendantStage(trailingColumn:)`); laid under the words, even dimmed,
   the cross ran through the Creed's lines. A rubric line ("[Let us
   pray.]") is set as a rubric, red and italic and out of its brackets,
-  since the voice does not say it. The Rosary Aloud's prayers come down
+  since the voice does not say it. The Holy Rosary's prayers come down
   as far as they must to be on the page whole (`prayerMinimumScale`) —
   at 0.7 the Our Father was cut off at "who trespass a…" at the largest
   sizes — and the Creed closes its lines up as well once it cannot fit
@@ -1406,6 +1547,12 @@ write concurrent code here:
   through `CompletedPrayer` (the completion screen takes that value now,
   not a set) and never posts to the API. An interrupted one resumes from
   Home's card (`InProgressPrayer.kind`), on its own screen, at its bead.
+  The screens name the form by `ScripturalRosaryViewModel.displayName` —
+  the header, the Lock Screen, a share, the resume card, the ⋯ tray and
+  the feedback form say The Holy Rosary — while `CompletedPrayer` records
+  `devotionName`, still "The Rosary Aloud" for the Holy Rosary (above,
+  the rule's vocabulary). A resume card saved while that was its name is
+  named by `holyRosaryName`.
 
   The 249 verses are **bundled** (`Data/ScripturalRosaryData.swift`,
   keyed `"<category>_<order>"` like MysteryData's fruits) — prayer must
@@ -1891,20 +2038,47 @@ default to Candlelit**:
 
 Three families in `Assets.xcassets/Icons`, all drawn through `AppIcon`
 (never `Image("ph-…")` at a call site) and all rendered as templates:
-**`ph-*`** are Phosphor (light, plus `ph-*-fill`); **`ch-*`** are
-Christicons, the devotional glyphs — `stroke-width="1.5"`, round caps and
-joins, on a 24×24 viewBox, except the `-fill` variants and the two
-filled hearts; and **`lv-*`** are drawn for this app, each at the weight
-of the family it sits beside — `lv-chalice` at 1.15 to sit level with
-Phosphor light, `lv-breviary` at 1.5 to sit with the `ch-*` glyphs. A
-new stroked `ch-*` icon must be stroked at 1.5 or it stands heavier than
-everything beside it. SF Symbols appear only where the system's own
-vocabulary is the point — the transport's ±10s skips (glyphs that
-carry a number), the spoken Rosary's failure notice, the Prayer Record
-calendar's prayed-day marker, swipe and menu actions
-(`Label(…, systemImage:)`) — never as a devotional or door glyph. Note that `qlmanage` cannot preview these
-faithfully: it renders a stroke-only SVG blank and *fills* path data
-meant to be stroked, so check a new glyph in the running app.
+
+- **`ph-*`** are Phosphor Light (MIT), plus `ph-*-fill` for a selected
+  tab: the app's chrome — carets, ×, search, transport, faders, the
+  readers' controls — at the weight of 1.125 on a 24 grid.
+- **`ch-*`** are the devotional glyphs, `stroke-width="1.5"`, round caps
+  and joins, on a 24×24 viewBox. Most are Christicons (christicons.com,
+  its licence page: free for commercial use and to modify, no
+  attribution; never redistributed as a set, and never the primary
+  element of a logo or brand mark — so never the app icon's subject).
+  `ch-lily`, `ch-consecration`(`-fill`), `ch-sacred-heart` and
+  `ch-window-fill` were drawn for this app and only share the prefix.
+  The published set has 61 glyphs; the ones not vendored are worth
+  checking before drawing a new one.
+- **`lv-*`** are drawn for this app where no glyph with real meaning
+  existed, at 1.5 to stand with the `ch-*` glyphs. All but
+  `lv-breviary` are written by `Tools/IconAudit/draw.py` — edit a glyph
+  there and rerun it, never the SVG. `lv-star` is Christicons' star with
+  its four short rays left off (with them it read as a sparkle), and
+  `lv-stella-maris` and `lv-jordan` set that star and Christicons' dove
+  over the same waves.
+
+The rule the icon audit (Sept 2026, `Tools/IconAudit/contact-sheet.png`)
+holds every glyph to: one metaphor per concept, taken from the Church's
+own iconography, legible at 12–16pt, the Chapel kickers' size. Never the
+vocabulary of other apps standing in for a devotion — a sparkle ("new",
+"AI"), a sun or sunrise (weather), a moon (Do Not Disturb), a rating
+star, a prize medal or laurel (gamification), an account avatar, a chat
+bubble, the ☰ list. Where no emblem is traditional (the Luminous
+Mysteries date from 2002) take the first scene's. Known and unsettled:
+Phosphor Light is a third lighter than the 1.5 glyphs, so a list that
+mixes a Phosphor door (True Devotion's crown, the Office's clock, the
+Chant's note, the scroll, the flame) with `ch-*` glyphs stands uneven.
+
+SF Symbols appear only where the system's own vocabulary is the point —
+the transport's ±10s skips (glyphs that carry a number), the spoken
+Rosary's failure notice, the Prayer Record calendar's prayed-day marker,
+swipe and menu actions (`Label(…, systemImage:)`) — never as a devotional
+or door glyph. Note that `qlmanage` cannot preview these faithfully: it
+renders a stroke-only SVG blank and *fills* path data meant to be
+stroked, so check a new glyph in the running app, or render it in a
+browser as `make_sheet.py` does.
 
 A gold act's glyph names the act: `GoldCTAButton(glyph: .play)` for one
 that begins a prayer, `.chevron` (trailing) for one that goes on to a
@@ -1912,25 +2086,62 @@ page, and a trailing check (`trailingIcon: "ph-check"`) for one that
 completes something. A Latin cross once led
 every page-level act and named nothing; the cross now stands on the tab
 bar's Pray medallion alone. The `OrnamentDivider`'s centre cross is an
-ornament, not a control, and stays.
+ornament, not a control, and stays; `lv-lozenge` is its diamond stud,
+for a flourish set beside a word (MILESTONE REACHED), and means nothing.
 
 One glyph per door. The same door wears the same icon everywhere it
-appears — the Missal is `ch-altar` on every surface (the Liturgy tile,
-which holds the Missal and the Office together, wears it too), the
-Office `ph-clock`, the Marian Library `ch-lily`, In Scripture
-`lv-breviary` (the Scriptural Rosary keeps `ch-bible`), the Marian
-dogmas `ph-star-fill`, the saints `ph-user`, the Consecration
-`ch-consecration` (the Marian monogram, a cross over an M; the crown is
-True Devotion's alone). A door's glyph may also mark content of its own
-kind inside a page, never a different door: `ch-lily` is Mary's lily,
-so it also marks the Memorare, Our Lady's Psalter and the Cana reading;
-`ph-clock` is the hours, so it also marks the reminder's time. A glyph
-standing for a devotion is the one that devotion's own iconography
-uses: the Seven Sorrows take `ch-sorrowful-heart`, Mary's heart pierced
-by Simeon's sword, wherever they appear; `ch-sacred-heart`, the heart
-aflame, marks the heart of the Marian consecration — True Devotion's
-"The Spirit of This Devotion" and the consecration onboarding's "The
-Gift".
+appears:
+
+- **Doors** — the Rosary `lv-rosary` (beads, medal and crucifix: a ring
+  over a cross, as `ch-rosary` drew it, is the sign ♀); the Missal
+  `ch-altar` on every surface (the Liturgy tile, which holds the Missal
+  and the Office together, wears it too); the Office `ph-clock`; the
+  Marian Library `ch-lily`; In Scripture `lv-breviary` (the Scriptural
+  Rosary keeps `ch-bible`); the Prayer Book `ch-praying-hands`, the one
+  praying-hands glyph (it also marks a prayer's door and Pray aloud);
+  the Consecration `ch-consecration` (the Marian monogram, a cross over
+  an M; the crown is True Devotion's alone).
+- **The mysteries** (`MysteryCategory.iconName`) — Joyful `lv-star`,
+  the Star of Bethlehem; Sorrowful `lv-crown-of-thorns`, a plaited
+  ring; Glorious `lv-banner`, the Resurrection's vexillum; Luminous
+  `lv-jordan`, the dove over the Jordan; the Seven Sorrows
+  `lv-pierced-heart`, Mary's heart pierced by Simeon's sword, wherever
+  they appear.
+- **The hours** — Morning Prayers `lv-rooster` (the cock of Lauds'
+  hymn, *Aeterne rerum Conditor*), the Angelus `lv-bell` (a church bell
+  on its yoke, as is the Church Bells sound; `ph-bell` is the Daily
+  Reminders' notification bell and the Altar Bell sound), Night Prayers
+  `lv-lamp` (Vespers was the *lucernarium*, the lighting of the lamps).
+  The moon is left to the reader's sleep timer.
+- **The Prayer Book's chapters** — Our Lord `ch-chi-rho`, the Holy
+  Ghost `ch-dove`, Angels and Saints `lv-saint` (every saint: the Marian
+  Saints shelf, a saint's reading, the Saints kind of meditation),
+  Through the Day `lv-hourglass`, Penance `ch-keys` (the keys of
+  absolution; the confession orders and Carlo's confession too), the
+  Litanies `lv-procession-cross` (they were sung in procession), Short
+  Prayers `lv-dart` (*iaculatoriæ*, prayers darted out).
+- **The Marian Library's shelves**, whose glyph the doors to their
+  readings wear — the dogmas `lv-twelve-stars` (Apoc 12:1), Scripture
+  `ch-bible`, the apparitions `lv-rose`, the saints `lv-saint`, the
+  Rosary `lv-rosary`, her titles `lv-stella-maris`.
+- **Milestones** — a count is its numeral (③ ⑦ ⑨); a named devotion its
+  sign (33 `ch-consecration`, 54 `lv-rosary`, 100 `lv-wheat`, 365
+  `ch-chi-rho`). Never a prize medal.
+
+A door's glyph may also mark content of its own kind inside a page,
+never a different door: `ch-lily` is Mary's lily, so it also marks the
+Memorare, Our Lady's Psalter and the Cana reading; `ph-clock` is the
+hours, so it also marks the reminder's time. A glyph standing for a
+devotion is the one that devotion's own iconography uses:
+`ch-sacred-heart`, the heart aflame, marks the heart of the Marian
+consecration — True Devotion's "The Spirit of This Devotion" and the
+consecration onboarding's "The Gift".
+
+Known clash, not yet settled: Today's Mysteries (the Pray tray's row,
+`PrayerShortcut.chooseMeditation`) wears `ph-book-open` as the "Rosary
+ways to pray" handoff specified, which Spiritual Reading's door and the
+Journal tab also wear. The Rosary's two choices wear `ph-speaker-high`
+(Audio) and `lv-rosary` (Counting), from `RosaryChoice`.
 
 ### Motion
 
@@ -1944,7 +2155,9 @@ curves, as about a hundred call sites do. The named motions:
 name, verse or cue changing), `decadeTurn` (painting, kicker and title
 crossfading to the next mystery), `chrome`, `panel` (a reader or tray
 arriving), `settle` (a press or toggle landing), `crossfade` (content
-changing in place), and `ease(_:)`/`travel(_:)` — the design system's
+changing in place), `choice` (one of the Rosary's two choices changing —
+the pill's lit segment, its note, a choice arriving or leaving beneath
+another — `ease(0.25)`), and `ease(_:)`/`travel(_:)` — the design system's
 cubic-bezier curves the missal and office readers use. Springs settle:
 the named ones damp at 0.74–0.86 and any other at 0.7 or more, so they
 barely overshoot. Only a celebration bounces — the milestone card and
@@ -1953,7 +2166,9 @@ completion, the streak widget's flame (damping 0.5–0.65); nothing a
 person uses to pray does. The two press styles (`SacredCardButtonStyle`,
 `GoldCTAButtonStyle`) share one beat, and bare glyphs — the header's
 glass, a month arrow, a tab — take `QuietGlyphButtonStyle` so no chrome
-tap feels dead.
+tap feels dead. A segment of a Rosary choice's pill is not a bare
+glyph: it takes `SacredCardButtonStyle`, since half the pill dipping to
+0.9 read as a jolt under the thumb.
 
 Four rules, learned the hard way:
 
@@ -2170,7 +2385,7 @@ LibriVox.
   five categories. As of Sept 2026 there are 23: Joyful 6, Sorrowful 5,
   Glorious 5, Luminous 4, Seven Sorrows 3.
 - **Labels (live in API):** Each meditation set carries a `labels: [String]` array. The controlled vocabulary lives in the web app (`LumenViae.Rosary.Labels`) and is currently Intentions, Saints, Scriptural, Contemplative, Considerations. The iOS picker builds its multi-select filter chips from these and groups unfiltered browsing by each set's *first* label, so order labels primary-first. If a set arrives without `labels`, the picker gracefully falls back to a flat list. Favorites are on-device (not API).
-- **Label wording is a display concern:** filtering and grouping match the raw API string, but the picker renders labels through `MeditationLabel.displayName` (`Models/MeditationSet.swift`). "Considerations" currently shows as **Reflections**. Rename in that map, not in the database.
+- **Label wording is a display concern:** filtering and grouping match the raw API string, but the picker renders labels through `MeditationLabel.displayName` (`Models/MeditationSet.swift`). "Considerations" currently shows as **Reflections**, and "Scriptural" as **Gospel**, so that one thing on a mysteries' page is called Scriptural: the Scriptural Rosary above the sets. Rename in that map, not in the database; Explore's search matches both words.
 
 ### API Endpoints (as implemented in `APIService`)
 ```
@@ -2184,19 +2399,22 @@ POST /completions                       # { meditation_set_id, prayed_aloud } �
 ```
 **The completion is the app's one write, and it is not nothing.** When a
 meditation set's Rosary is finished, `recordCompletion` posts the set id
-and whether it was prayed aloud. The server stores it with the time, a
+and whether it was said aloud as the Whole Rosary (`prayed_aloud`; the
+Privacy Policy says it in those words). The server stores it with the time, a
 city/region/country looked up from the request's IP through a third-party
 service, and the IP truncated to /24 — no account, device or install
 identifier (the backend's `docs/COMPLETION_ANALYTICS.md`). The Scriptural
-Rosary and the Guided Rosary never post. The privacy manifest
+Rosary, the Holy Rosary and the Guided Rosary never post, and the
+Privacy Policy names all three. The privacy manifest
 (`PrivacyInfo.xcprivacy`: Product Interaction and Coarse Location, not
 linked, not tracking, for Analytics) and the in-app Privacy Policy
 (`PrivacyPolicySheet` in `Views/Account/AccountView.swift`, "What Reaches
 Us") say so, and App Store Connect's App Privacy answers must match them —
 keep the three in step with any change to what is sent.
-The spoken Rosary (`UserSettings.prayAloud`, off by default) says every
-prayer aloud and moves the beads with the voice, in both the meditation's
-player and the Scriptural Rosary. `SpokenRosaryScript` (Models/SpokenRosary)
+The spoken Rosary (`UserSettings.prayAloud` — Audio: Whole Rosary — off
+by default, and always in the Holy Rosary) says every prayer aloud and
+moves the beads with the voice, in both the meditation's player and the
+Scriptural Rosary's screen. `SpokenRosaryScript` (Models/SpokenRosary)
 builds the script, pure; `SpokenRosaryPlayer` walks it and takes track
 navigation while it runs, so the screens' own narration loading stands
 aside; `RosaryAudioPack` saves each voice's clips under
@@ -2223,8 +2441,8 @@ on through the Hail, Holy Queen. After the last Amen the pendant stays
 finished), so the Rosary ends on the cross it began on, AMEN beckoning and
 the next-prayer button faded; the last mystery's painting once came back
 under it. Until then the play button is ready whenever the Rosary is said
-aloud (`NarrationPlayControl`): a prayer stepped to while paused, or Pray
-aloud turned on mid-Rosary, has no recording loaded until play is pressed,
+aloud (`NarrationPlayControl`): a prayer stepped to while paused, or the
+Whole Rosary chosen mid-Rosary, has no recording loaded until play is pressed,
 and gated on a track's length the button stood lit and did nothing. Under
 VoiceOver the button reads the prayer being said, and a swipe up or down
 on it steps a prayer, as the buttons beside it do; its fifteen seconds ran
@@ -2237,10 +2455,10 @@ reader's bead row, the rotor's bead actions and the decade arrows stand
 still, and only the player's previous and next prayer buttons move the
 Rosary - one tap on the reader's row once skipped the Creed, the first
 mystery's announcement and its meditation, and the → arrow the whole first
-decade. On arrival PRAY is the word to begin, and the voice begins; turned
-on mid-Rosary from the playback sheet, Pray aloud carries on only if the
-meditation was playing, and otherwise waits at the hand's place for play,
-as a new voice does. The reader follows the voice only while it is on the
+decade. On arrival PRAY is the word to begin, and the voice begins;
+chosen mid-Rosary from the playback sheet, the Whole Rosary carries on
+only if the meditation was playing, and otherwise waits at the hand's
+place for play, as a new voice does. The reader follows the voice only while it is on the
 meditation (`isHearingMeditation`) - its page once ran top to bottom under
 every Hail Mary, and back - and its bead row names what is said (OPENING
 PRAYERS · The Apostles' Creed, THE MYSTERY, MEDITATION) with no cue to tap,
@@ -2255,8 +2473,9 @@ Father, seven Hail Marys and a Glory Be with no Fatima Prayer (the strand's
 Glory Be bead and the Scriptural Rosary say so on screen too); then three
 Hail Marys "in honor of her tears", `sorrows_closing_prayer` and the Sign
 of the Cross. The four Rosaries may add `RosaryClosingExtra`s after
-`rosary_closing_prayer`, off by default and chosen in Settings or on a
-set's page (`UserSettings.prayForHolyFather`, `prayMemorare`,
+`rosary_closing_prayer`, off by default and chosen in Settings (After the
+Rosary) or in a Rosary's own page's Voice & speed sheet
+(`UserSettings.prayForHolyFather`, `prayMemorare`,
 `praySaintMichael`), always said Holy Father (Our Father, Hail Mary,
 Glory Be, captioned "For the intentions of the Holy Father"), Memorare,
 Saint Michael; never in the chaplet. `OfflineContentService.downloadAll`
@@ -2286,7 +2505,10 @@ turn - the Glory Be was once cut off after a breath, and a meditation
 stepped onto while its link was fetched was cut off two seconds in, when
 the announcement before it ended. Resume keeps the script step (`SpokenStep` on `InProgressPrayer`,
 kept current through `SpokenRosaryHost.spokenRosaryReached`), used only if
-the rebuilt script still has that prayer at that place. Completions post
+the rebuilt script still has that prayer at that place, and only while
+the hand still stands on the mystery and bead the snapshot was saved at:
+taken up after the hand had moved on (the Whole Rosary chosen later in
+the Rosary), the voice would carry it back there. Completions post
 `prayed_aloud` (`POST /completions`).
 A debug build takes `LUMEN_VIAE_API_BASE_URL` to try an undeployed server;
 it redirects `APIService` only, since `OfficeAPIService` hard-codes

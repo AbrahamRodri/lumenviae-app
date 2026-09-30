@@ -170,55 +170,22 @@ struct HomeView: View {
         )
     }
 
-    /// Reloads the interrupted session's meditation set and jumps back to
-    /// the saved mystery. Resolution (bundled → API → offline download)
-    /// is shared with the picker via MeditationSetResolver.
+    /// Opens the interrupted Rosary where it stopped, through the path
+    /// the Pray button and the Chapel share (`AppRouter.resume`). Only a
+    /// meditation set has anything to load, so only it shows the card's
+    /// spinner, and only its load can fail.
     private func resumeInterruptedPrayer() {
         guard let session = PrayerResumeService.shared.inProgress,
               !isResuming, router.path.isEmpty else { return }
 
-        // The Scriptural Rosary and the Rosary Aloud are bundled whole:
-        // nothing to load, and their own screen to return to, in the
-        // form they were being prayed in
-        if let form = session.spokenForm {
-            guard let category = MysteryCategory(fromAPIString: session.category) else { return }
-            router.push(.scripturalRosaryPrayer(ScripturalRosaryLaunch(
-                category: category,
-                form: form,
-                startIndex: session.mysteryIndex,
-                startBead: session.beadIndex ?? 0,
-                priorSeconds: session.accumulatedSeconds,
-                startedAt: session.startedAt
-            )))
-            return
-        }
-
-        isResuming = true
+        isResuming = session.spokenForm == nil
         resumeError = nil
-        let generation = router.generation
 
         Task {
             defer { isResuming = false }
-
-            let set = try? await MeditationSetResolver.resolve(
-                id: session.meditationSetId,
-                categoryHint: session.category
-            )
-
-            guard let set else {
+            if !(await router.resume(session)) {
                 resumeError = "Couldn't load — check your connection"
-                return
             }
-            // The user may have navigated while we loaded — never push then.
-            guard router.generation == generation else { return }
-
-            router.navigateToPrayerSession(
-                meditationSet: set,
-                startAtIndex: session.mysteryIndex,
-                startAtBead: session.beadIndex ?? 0,
-                priorSeconds: session.accumulatedSeconds,
-                startedAt: session.startedAt
-            )
         }
     }
 
@@ -246,23 +213,15 @@ struct ResumePrayerCard: View {
     let onContinue: () -> Void
     let onDismiss: () -> Void
 
-    private var mysteryLabel: String {
-        let ordinal = session.mysteryIndex + 1
-        guard let category = MysteryCategory(fromAPIString: session.category) else {
-            return "\(Constants.ordinalWord(ordinal)) \(session.category.capitalized) Mystery"
-        }
-        // "The First Joyful Mystery" without its article, as the card
-        // reads it in running text
-        let label = category.mysteryLabel(ordinal: ordinal)
-        return label.hasPrefix("The ") ? String(label.dropFirst(4)) : label
-    }
+    /// "First Joyful Mystery", as the card reads it in running text
+    private var mysteryLabel: String { session.placeLabel }
 
     /// The door's own glyph for what is being resumed
     private var resumeGlyph: String {
         switch session.spokenForm {
         case .scriptural: return PrayerShortcut.scripturalRosary.icon
         case .plain: return PrayerShortcut.rosaryAloud.icon
-        case nil: return "ch-rosary"
+        case nil: return "lv-rosary"
         }
     }
 
@@ -506,7 +465,9 @@ struct SacredMysteriesSection: View {
 
     // MARK: - Properties
 
-    /// Mystery categories to display on home (Joyful, Sorrowful, Glorious, Seven Sorrows)
+    /// The sets the week prays on the user's schedule, then the Seven
+    /// Sorrows (`HomeViewModel.allCategories`): four on the traditional
+    /// schedule, five with the Luminous on the modern one
     let categories: [MysteryCategory]
 
     /// Callback when a category card is tapped
@@ -550,31 +511,44 @@ struct SacredMysteriesSection: View {
         .padding(.horizontal, 20)
     }
 
-    /// 2x2 grid of mystery category cards
+    /// The cards two to a row. An odd count gives its last card the whole
+    /// row: on the modern schedule the week's four Rosaries stand as a
+    /// square, and the Seven Sorrows, a chaplet rather than one of the
+    /// week's sets, spans the row beneath them, where a half-width card
+    /// beside an empty cell read as a gap in the page.
     private var mysteryGrid: some View {
-        LazyVGrid(
-            columns: [
-                GridItem(.flexible(), spacing: 16),
-                GridItem(.flexible(), spacing: 16)
-            ],
-            spacing: 16
-        ) {
-            ForEach(categories, id: \.self) { category in
-                Button {
-                    onSelectCategory?(category)
-                } label: {
-                    MysteryCard(
-                        title: category.displayName,
-                        subtitle: category.subtitle,
-                        gradientColors: category.gradientColors,
-                        cardImageName: category.cardImageName,
-                        imageFocal: category.cardFocalPoint
-                    )
+        VStack(spacing: 16) {
+            ForEach(rows, id: \.self) { row in
+                HStack(spacing: 16) {
+                    ForEach(row, id: \.self) { category in
+                        card(for: category)
+                    }
                 }
-                .buttonStyle(SacredCardButtonStyle())
             }
         }
         .padding(.horizontal, 20)
+    }
+
+    /// The categories two at a time, in order
+    private var rows: [[MysteryCategory]] {
+        stride(from: 0, to: categories.count, by: 2).map { start in
+            Array(categories[start..<min(start + 2, categories.count)])
+        }
+    }
+
+    private func card(for category: MysteryCategory) -> some View {
+        Button {
+            onSelectCategory?(category)
+        } label: {
+            MysteryCard(
+                title: category.displayName,
+                subtitle: category.subtitle,
+                gradientColors: category.gradientColors,
+                cardImageName: category.cardImageName,
+                imageFocal: category.cardFocalPoint
+            )
+        }
+        .buttonStyle(SacredCardButtonStyle())
     }
 }
 

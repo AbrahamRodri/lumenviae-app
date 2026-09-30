@@ -261,7 +261,7 @@ struct PrayAlongView: View {
                             // Hangs upright, and swings only while it
                             // rings: it once rested at one end of its
                             // swing, so in silence it hung askew
-                            AppIcon("ph-bell", size: 26)
+                            AppIcon("lv-bell", size: 26)
                                 .foregroundColor(AppColors.gold)
                                 .keyframeAnimator(initialValue: 0.0, trigger: bellRings) { bell, angle in
                                     bell.rotationEffect(.degrees(angle), anchor: .top)

@@ -399,7 +399,7 @@ private struct DevotionStepView: View {
                     // as the Marian way, the heart that receives the gift,
                     // the baptismal candle behind the promise.
                     devotionCard(
-                        icon: "ch-rosary",
+                        icon: "lv-rosary",
                         title: "The Way",
                         text: "Give yourself entirely to Jesus Christ through the hands of His mother — the way St. Louis de Montfort taught in True Devotion to Mary.",
                         delay: 0.35

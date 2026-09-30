@@ -48,7 +48,7 @@ enum FeedbackTopic: String, CaseIterable, Identifiable {
     var icon: String {
         switch self {
         case .problem: return "ph-wrench"
-        case .idea: return "ph-sparkle"
+        case .idea: return "ph-lightbulb"
         case .meditations: return "ph-book-open"
         case .other: return "ph-chat-teardrop-text"
         }

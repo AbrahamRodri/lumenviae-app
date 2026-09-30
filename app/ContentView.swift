@@ -260,6 +260,31 @@ struct ContentView: View {
         if shortcut != .consecration, router.selectedTab == .consecration {
             router.selectedTab = .home
         }
+        // A Rosary of this act's form, left off today, is taken up where it
+        // stopped. Begun again, its first save erased the place unasked.
+        if let session = PrayerResumeService.shared.continuation(for: shortcut) {
+            continueRosary(session, orBegin: shortcut)
+            return
+        }
+        begin(shortcut)
+    }
+
+    /// Takes up an unfinished Rosary. If its set cannot be loaded — away
+    /// from a signal, never saved for offline — the act begins as it
+    /// always has, rather than the button doing nothing.
+    private func continueRosary(_ session: InProgressPrayer, orBegin shortcut: PrayerShortcut) {
+        guard !isStartingPrayer, router.path.isEmpty else { return }
+        isStartingPrayer = true
+
+        Task {
+            let resumed = await router.resume(session)
+            isStartingPrayer = false
+            if !resumed { begin(shortcut) }
+        }
+    }
+
+    /// Runs an act from its beginning
+    private func begin(_ shortcut: PrayerShortcut) {
         switch shortcut {
         case .todaysRosary:
             startPrayer(category: ScheduleService.categoryForToday())

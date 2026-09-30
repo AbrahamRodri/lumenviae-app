@@ -523,7 +523,7 @@ struct RosaryLessonView: View {
                         // page follows it up: a long one — the Creed, the
                         // Hail, Holy Queen — once collapsed from under the
                         // finger and left the next prayer in its place
-                        practiceButton("Say it with me", icon: "ph-hands-praying", outlined: true) {
+                        practiceButton("Say it with me", icon: "ch-praying-hands", outlined: true) {
                             practice[prayer.id] = 1
                             practiceTarget = prayer.id
                         }
