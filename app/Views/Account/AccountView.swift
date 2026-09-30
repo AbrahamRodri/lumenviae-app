@@ -1178,7 +1178,7 @@ struct PrivacyPolicySheet: View {
 
                     InfoBlock(
                         title: "What Reaches Us",
-                        text: "One short note, when you finish a meditation set's Rosary: which set it was, and whether Pray aloud was on. Our server keeps it with the time and an approximate city, region and country, looked up through ipapi.co from the address your phone connects from, and keeps that address only in a shortened form. No name, account or device identifier goes with it, so two Rosaries prayed on one phone look like two prayed by strangers. We use these notes only to learn which meditations are prayed, and roughly where. The Scriptural Rosary and the guided Rosary send nothing, and nothing else reaches us unless you write to us."
+                        text: "One short note, when you finish a meditation set's Rosary: which set it was, and whether it was said aloud as the Whole Rosary. Our server keeps it with the time and an approximate city, region and country, looked up through ipapi.co from the address your phone connects from, and keeps that address only in a shortened form. No name, account or device identifier goes with it, so two Rosaries prayed on one phone look like two prayed by strangers. We use these notes only to learn which meditations are prayed, and roughly where. The Scriptural Rosary, the Holy Rosary and the guided Rosary send nothing, and nothing else reaches us unless you write to us."
                     )
 
                     InfoBlock(

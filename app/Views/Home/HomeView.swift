@@ -474,8 +474,9 @@ struct FeaturedMysteryCard: View {
             .minimumScaleFactor(0.85)
     }
 
-    /// The card's one act — the screen's one filled gold shape, in the
-    /// same words the Chapel's focus block uses for the same act.
+    /// The card's one act — the screen's one filled gold shape. (The
+    /// Chapel's focus block still says "Pray with a Meditation": its act
+    /// goes straight to a set's Rosary, where this one goes to the page.)
     ///
     /// It opens the day's mysteries' page, where the Rosary is chosen in
     /// one of its three forms: a meditation set, the Scriptural Rosary,
