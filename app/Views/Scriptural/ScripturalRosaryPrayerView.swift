@@ -214,7 +214,9 @@ struct ScripturalRosaryPrayerView: View {
                                 ? RosaryStrandView.windowTop(fullHeight: fullHeight) / max(fullHeight, 1)
                                 : 0.355,
                             bottomLimit: footTop.map { $0 - Self.pendantFootClearance },
-                            trailingColumn: viewModel.isPlain ? Self.readingTrailingInset : nil
+                            trailingColumn: viewModel.isPlain ? Self.readingTrailingInset : nil,
+                            chromeHidden: chromeHidden,
+                            onTap: toggleChrome
                         )
                         .transition(.opacity)
                     } else {
@@ -226,9 +228,7 @@ struct ScripturalRosaryPrayerView: View {
                             width: geometry.size.width,
                             fullHeight: fullHeight
                         ) {
-                            withAnimation(Motion.chrome) {
-                                chromeHidden.toggle()
-                            }
+                            toggleChrome()
                         }
                         .transition(.opacity)
                     }
@@ -290,6 +290,19 @@ struct ScripturalRosaryPrayerView: View {
         // The last Amen said aloud: felt in the pocket, as the glowing
         // AMEN is seen on the screen
         .sensoryFeedback(.success, trigger: viewModel.isSpokenFinished) { old, new in !old && new }
+        // The chrome comes back on its own where it is needed: when the
+        // pendant takes the painting's place — the ground that was tapped
+        // to clear it is gone — and when the Rosary reaches its end, where
+        // AMEN is the one thing left to do
+        .onChange(of: viewModel.spokenPendant == nil) { _, noPendant in
+            if !noPendant { showChrome() }
+        }
+        .onChange(of: viewModel.isSpokenFinished) { _, finished in
+            if finished { showChrome() }
+        }
+        .onChange(of: viewModel.isLastBeadOfRosary) { _, last in
+            if last { showChrome() }
+        }
         // Leaving the Rosary must not leave it being said over other screens
         .onDisappear {
             viewModel.stopSpeaking()
@@ -1290,6 +1303,17 @@ struct ScripturalRosaryPrayerView: View {
             viewModel.stepSpokenPrayer(forward: forward)
         }
         if moved { prayerStepPulse += 1 }
+    }
+
+    /// A tap on the ground — the painting, or the pendant in its place —
+    /// clears the chrome for contemplation, or brings it back
+    private func toggleChrome() {
+        withAnimation(Motion.chrome) { chromeHidden.toggle() }
+    }
+
+    private func showChrome() {
+        guard chromeHidden else { return }
+        withAnimation(Motion.chrome) { chromeHidden = false }
     }
 
     /// Runs whatever the tray handed over, exactly once.

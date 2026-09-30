@@ -257,6 +257,19 @@ struct MysteryPrayerView: View {
         // The last Amen said aloud: felt in the pocket, as the glowing
         // AMEN is seen on the screen
         .sensoryFeedback(.success, trigger: viewModel.isSpokenFinished) { old, new in !old && new }
+        // The chrome comes back on its own where it is needed: when the
+        // pendant takes the painting's place — the ground that was tapped
+        // to clear it is gone — and when the Rosary reaches its end, where
+        // AMEN is the one thing left to do
+        .onChange(of: viewModel.spokenPendant == nil) { _, noPendant in
+            if !noPendant { showChrome() }
+        }
+        .onChange(of: viewModel.isSpokenFinished) { _, finished in
+            if finished { showChrome() }
+        }
+        .onChange(of: viewModel.isLastBeadOfRosary) { _, last in
+            if last { showChrome() }
+        }
         // The voice changed under the Rosary - from the playback sheet,
         // or Settings on another screen - so the mystery under the hand
         // is heard again in the new one, carrying on if it was playing
@@ -388,6 +401,19 @@ struct MysteryPrayerView: View {
     private func dismissSwipeHint() {
         guard swipeHint != .retired else { return }
         withAnimation(.easeInOut(duration: 0.4)) { swipeHint = .retired }
+    }
+
+    // MARK: - The Chrome
+
+    /// A tap on the ground — the painting, or the pendant in its place —
+    /// clears the chrome for contemplation, or brings it back
+    private func toggleChrome() {
+        withAnimation(Motion.chrome) { chromeHidden.toggle() }
+    }
+
+    private func showChrome() {
+        guard chromeHidden else { return }
+        withAnimation(Motion.chrome) { chromeHidden = false }
     }
 
     // MARK: - Reader
@@ -728,7 +754,9 @@ struct MysteryPrayerView: View {
                                 fullHeight: fullHeight,
                                 controlsTop: geometry.safeAreaInsets.top + geometry.size.height - controlsHeight
                             ),
-                            topFraction: Self.pendantTopFraction
+                            topFraction: Self.pendantTopFraction,
+                            chromeHidden: chromeHidden,
+                            onTap: toggleChrome
                         )
                         .offset(x: -shift)
                         .transition(.opacity)
@@ -741,9 +769,7 @@ struct MysteryPrayerView: View {
                             fullHeight: fullHeight
                         ) {
                             dismissSwipeHint()
-                            withAnimation(Motion.chrome) {
-                                chromeHidden.toggle()
-                            }
+                            toggleChrome()
                         }
                         .transition(.opacity)
                     }

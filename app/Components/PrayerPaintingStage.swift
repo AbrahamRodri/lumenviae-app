@@ -57,6 +57,15 @@ struct PrayerPaintingStage: View {
     /// the chrome, and retiring any hint that was showing).
     let onTap: () -> Void
 
+    /// What a tap on the ground does, said to VoiceOver — shared with the
+    /// pendant, which stands on the same ground while the opening and
+    /// closing prayers are said aloud
+    static func tapHint(chromeHidden: Bool) -> String {
+        chromeHidden
+            ? "Double-tap to bring back the controls"
+            : "Double-tap to hide the controls and see the whole picture"
+    }
+
     var body: some View {
         ZStack {
             AppColors.background
@@ -104,6 +113,7 @@ struct PrayerPaintingStage: View {
         .animation(Motion.decadeTurn, value: paintingID)
         .contentShape(Rectangle())
         .onTapGesture(perform: onTap)
+        .modifier(StageTapAccessibility(label: "The mystery's painting", chromeHidden: chromeHidden))
     }
 
     /// Darker at the head, where the chrome is, and at the foot, where
@@ -172,6 +182,7 @@ struct PrayerPaintingStage: View {
         .animation(Motion.decadeTurn, value: paintingID)
         .contentShape(Rectangle())
         .onTapGesture(perform: onTap)
+        .modifier(StageTapAccessibility(label: "The mystery's painting", chromeHidden: chromeHidden))
     }
 
     /// The painting filling the frame, cropped around its focal point —
@@ -310,5 +321,23 @@ struct PrayerPaintingStage: View {
         // Contemplation lifts the veil: most of the scrim goes with the
         // chrome, leaving only enough to keep the status bar readable
         .opacity(chromeHidden ? 0.3 : 1)
+    }
+}
+
+// MARK: - StageTapAccessibility
+
+/// The player's ground as one button to VoiceOver: what it is, and what a
+/// double-tap does to the controls. It had no name and no hint, and a
+/// double-tap cleared the screen without a word said about it.
+struct StageTapAccessibility: ViewModifier {
+    let label: String
+    let chromeHidden: Bool
+
+    func body(content: Content) -> some View {
+        content
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(label)
+            .accessibilityHint(PrayerPaintingStage.tapHint(chromeHidden: chromeHidden))
+            .accessibilityAddTraits(.isButton)
     }
 }
