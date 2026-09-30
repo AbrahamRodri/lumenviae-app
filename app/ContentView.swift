@@ -172,6 +172,19 @@ struct ContentView: View {
             try? await Task.sleep(for: .milliseconds(450))
             step.perform(with: router)
         }
+        .task { // TEMP-VERIFY
+            let env = ProcessInfo.processInfo.environment
+            guard let leaveAfter = env["LV_SCRIPTURAL_BY_HAND"].flatMap(Double.init) else { return }
+            UserSettings.shared.prayAloud = false
+            UserSettings.shared.prayOnBeads = false
+            PrayerResumeService.shared.clear()
+            try? await Task.sleep(for: .seconds(1.5))
+            router.push(.scripturalRosaryPrayer(ScripturalRosaryLaunch(category: .joyful)))
+            try? await Task.sleep(for: .seconds(leaveAfter))
+            router.pop()
+            try? await Task.sleep(for: .seconds(1))
+            print("LVK after leaving at \(leaveAfter)s: kept =", PrayerResumeService.shared.inProgress.map { "\($0.kind.map { "\($0)" } ?? "set") \($0.mysteryIndex),\($0.beadIndex.map(String.init) ?? "-")" } ?? "nothing")
+        }
         .sheet(isPresented: $showPrayTray, onDismiss: {
             if let shortcut = pendingTrayShortcut {
                 pendingTrayShortcut = nil
