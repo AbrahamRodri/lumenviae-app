@@ -4,7 +4,8 @@
 //
 //  Ownership of the shared player as a claim: one holder at a time, a new
 //  claim ending the old with notice, a borrowed speed coming back however
-//  a claim ends, the app's speed controls never retuning a borrowed one,
+//  a claim ends — a consecration day's chant, sung at its own pace,
+//  included — the app's speed controls never retuning a borrowed one,
 //  a claim declining while the player is in use when asked to — a
 //  chant a phone call has stopped included — the older
 //  surface ending a claim when it takes the player, end-of-track told to
@@ -16,7 +17,8 @@
 //  Each test drives a service of its own that does not speak to the
 //  system (no audio session, no Lock Screen), with its speed kept in a
 //  defaults suite of its own. Recordings are the app's bundled chants,
-//  loaded but never played.
+//  loaded, and played only where a test needs the wish to play, stopped
+//  in the same turn of the main actor, so nothing is heard.
 //
 
 import Foundation
@@ -168,6 +170,27 @@ struct AudioClaimTests {
         service.setTrackNavigation(owner: "book", canGoNext: true, canGoPrevious: true, onNext: {}, onPrevious: {})
         #expect(service.holder == nil)
         #expect(service.playbackRate == 1.5)
+    }
+
+    @Test func aConsecrationDaySingsAtTheChantsOwnPace() async {
+        let service = makeService()
+        let day = service.claim(.consecration, rate: ConsecrationDayFlowView.chantRate)!
+        #expect(service.playbackRate == 1.0)
+        #expect(service.appRate == 1.25)
+        #expect(await day.load(recording))
+        #expect(service.playbackRate == 1.0)
+
+        // The day ending on its own hand gives the app's speed back
+        day.release()
+        #expect(service.playbackRate == 1.25)
+        #expect(service.appRate == 1.25)
+
+        // And so does another flow taking the player from it
+        _ = service.claim(.consecration, rate: ConsecrationDayFlowView.chantRate)
+        #expect(service.playbackRate == 1.0)
+        _ = service.claim(.prayerFlow)
+        #expect(service.playbackRate == 1.25)
+        #expect(service.appRate == 1.25)
     }
 
     @Test func aClaimAtTheAppsSpeedTakesItBack() {

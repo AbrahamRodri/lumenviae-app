@@ -85,6 +85,12 @@ struct ConsecrationDayFlowView: View {
     /// the player.
     @State private var audioClaim: AudioClaim?
 
+    /// The pace the day's chants are sung at: as the cantor sang them, as
+    /// the Chant Library first plays them. A Rosary read at 1.5× has not
+    /// thereby chosen a speed for sung Latin, so the pace is borrowed, and
+    /// the app's narration speed comes back untouched when the claim ends.
+    static let chantRate: AudioRatePolicy = .borrowed(1.0)
+
     /// The chant whose score is open over the day
     @State private var scoreChant: Chant?
 
@@ -376,7 +382,7 @@ struct ConsecrationDayFlowView: View {
         if let held = audioClaim, held.isCurrent {
             claim = held
         } else {
-            guard let taken = audio.claim(.consecration, ifIdle: !thenPlay) else { return }
+            guard let taken = audio.claim(.consecration, rate: Self.chantRate, ifIdle: !thenPlay) else { return }
             claim = taken
             audioClaim = taken
         }
