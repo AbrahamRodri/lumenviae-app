@@ -45,6 +45,21 @@ enum RosaryPart: Hashable {
     /// A large bead of the loop, between decades: 0…3, carrying the Our
     /// Father of decades two to five
     case loopLarge(Int)
+
+    /// The bead as a word that keeps, for a place stored on the device
+    /// ("loopSmall.2.3"): written out case by case rather than read off
+    /// the enum's description, so a place kept today still names the same
+    /// bead in a later build
+    var key: String {
+        switch self {
+        case .crucifix: return "crucifix"
+        case .pendantLarge(let n): return "pendantLarge.\(n)"
+        case .pendantSmall(let n): return "pendantSmall.\(n)"
+        case .medal: return "medal"
+        case .loopSmall(let decade, let bead): return "loopSmall.\(decade).\(bead)"
+        case .loopLarge(let n): return "loopLarge.\(n)"
+        }
+    }
 }
 
 // MARK: - RosaryMap
@@ -321,6 +336,15 @@ extension GuidedRosary {
 
         let savedAt: Date
 
+        /// How many steps the guide had, and the bead the fingers were on
+        /// (`RosaryPart.key`), when the place was kept: a place is offered
+        /// back only while both still hold, so a guide changed in a later
+        /// build — a step added before this one — can never land a kept
+        /// place on another bead. Nil in a place kept before they were,
+        /// which is offered back as long as its step is in range.
+        let stepCount: Int?
+        let bead: String?
+
         /// Nobody picks up the third decade two days later
         static let expiry: TimeInterval = 24 * 60 * 60
 
@@ -330,8 +354,11 @@ extension GuidedRosary {
             guard let data,
                   let place = try? JSONDecoder().decode(Place.self, from: data),
                   now.timeIntervalSince(place.savedAt) <= Self.expiry,
-                  GuidedRosary.isGuidable(place.category),
-                  GuidedRosary.steps(for: place.category).indices.contains(place.step) else { return nil }
+                  GuidedRosary.isGuidable(place.category) else { return nil }
+            let steps = GuidedRosary.steps(for: place.category)
+            guard steps.indices.contains(place.step),
+                  place.stepCount.map({ $0 == steps.count }) ?? true,
+                  place.bead.map({ $0 == steps[place.step].part.key }) ?? true else { return nil }
             self = place
         }
 
@@ -340,6 +367,9 @@ extension GuidedRosary {
             self.step = step
             self.prayedSeconds = prayedSeconds
             self.savedAt = savedAt
+            let steps = GuidedRosary.steps(for: category)
+            self.stepCount = steps.count
+            self.bead = steps.indices.contains(step) ? steps[step].part.key : nil
         }
 
         var data: Data? { try? JSONEncoder().encode(self) }
