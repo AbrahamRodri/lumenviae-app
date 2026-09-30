@@ -119,10 +119,14 @@ struct MysteryPrayerView: View {
     /// screen, whatever Counting says: Counting is offered only while the
     /// voice reads the meditation alone, so a counter switched off before
     /// then must not take the strand away from a Rosary said aloud, where
-    /// nothing is left to change it back
+    /// nothing is left to change it back. When the voice could not begin
+    /// (`spokenFailure`: no recordings to be had, offline) the meditation
+    /// is heard in its own narration and the Rosary is the reader's to
+    /// count again — as Counting says, not on a strand locked at every
+    /// Our Father that no voice will move.
     private var onBeads: Bool {
         RosaryForm.meditation.countsOnScreen(
-            aloud: userSettings.prayAloud,
+            aloud: userSettings.prayAloud && viewModel.spokenFailure == nil,
             onBeads: userSettings.prayOnBeads
         )
     }
