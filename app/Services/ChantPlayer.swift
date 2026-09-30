@@ -7,13 +7,14 @@
 //  chant started on one is paused on another and the tile knows what the
 //  library is singing.
 //
-//  It remembers which file it loaded and the load generation it loaded
-//  under, and holds the Lock Screen arrows; everything it claims about
-//  playback is conditioned on all three still being its — so when another
-//  flow (a Rosary, a book, a
+//  It holds the player by a claim (`AudioClaim`), and everything it says
+//  about playback is the claim's: when another flow (a Rosary, a book, a
 //  consecration day singing the very same recording) takes the player,
-//  its progress line and pause glyph quietly return to rest instead of
-//  narrating someone else's audio.
+//  the claim ends, and its progress line and pause glyph quietly return
+//  to rest instead of narrating someone else's audio. It once decided
+//  that for itself, from the file it loaded, the load generation and the
+//  Lock Screen arrows, and a day that took the same recording from it
+//  left both believing they held it.
 //
 //  It lives **above the views**, like `LibraryListeningSession`: the
 //  Chapel is a tab, and `ContentView`'s tab `switch` destroys a view's
@@ -23,8 +24,9 @@
 //
 //  Practice asks two things of it the tile never did: a slower pace (a
 //  chant learned by ear is learned at three-quarters speed first) and a
-//  chant sung again from the top when it ends. Both are borrowed, never
-//  remembered as the app's narration speed, and handed back.
+//  chant sung again from the top when it ends. The pace is borrowed —
+//  part of the claim, never remembered as the app's narration speed —
+//  and comes back however the claim ends.
 //
 
 import Foundation
@@ -48,25 +50,12 @@ final class ChantPlayer {
     /// Sing the chant again from the top when it ends
     var repeats = false
 
-    private var loadedURL: URL?
-
-    /// The player's load generation at the moment this chant took it.
-    /// Another flow's `loadAudio` of a different file resets the player
-    /// and bumps this; one of the same file takes the arrows instead.
-    /// Either lets go of the claim (`ownsPlayback`).
-    private var loadedGeneration: Int?
+    /// The player, while the library holds it. Ended by another flow's
+    /// claim or load (`lostPlayer`), or by `relinquish()`.
+    private var claim: AudioClaim?
 
     private var loadCount = 0
     private var loadTask: Task<Void, Never>?
-
-    /// Whether this player set a rate that is not the app's own, so it
-    /// knows there is something to hand back — and never "restores" a
-    /// rate it did not borrow.
-    private var borrowedRate = false
-
-    /// Owner token for the Lock Screen's track arrows, which step through
-    /// the library while a chant is sounding.
-    private let navigationOwner = UUID()
 
     private let audio = AudioService.shared
 
@@ -77,24 +66,11 @@ final class ChantPlayer {
 
     // MARK: - What is sounding
 
-    /// Whether the player's loaded audio is still this player's chant.
-    ///
-    /// The URL alone will not do: the consecration flow loads some of the
-    /// same files, so a player that went by URL would claim a chant a
-    /// consecration day started. Nor will the generation alone: a second
-    /// load of the file already loaded is not a new load, so a day that
-    /// took the Veni Creator from the library kept its generation, and
-    /// both believed they held it — closing the day then silenced the
-    /// library's chant. The Lock Screen arrows go to whoever claimed the
-    /// file last, so holding them is what settles it, as it does for the
-    /// Prayer Book's player.
-    var ownsPlayback: Bool {
-        guard let loadedURL, let loadedGeneration else { return false }
-        return audio.currentURL == loadedURL && audio.loadGeneration == loadedGeneration
-            && audio.isTrackNavigationOwner(navigationOwner)
-    }
+    /// Whether the player's loaded audio is still this player's chant:
+    /// its claim holds the player, and the item in it is the one it loaded
+    var ownsPlayback: Bool { claim?.holdsItem ?? false }
 
-    var isPlaying: Bool { ownsPlayback && audio.isPlaying }
+    var isPlaying: Bool { claim?.isPlaying ?? false }
 
     /// Whether `chant` is the one this player holds and is sounding.
     func isPlaying(_ chant: Chant) -> Bool {
@@ -108,30 +84,31 @@ final class ChantPlayer {
 
     /// 0…1 through the recording, or 0 when the player is elsewhere.
     var progress: Double {
-        guard ownsPlayback, audio.duration > 0 else { return 0 }
-        return min(1, audio.currentTime / audio.duration)
+        guard let claim, claim.duration > 0 else { return 0 }
+        return min(1, claim.currentTime / claim.duration)
     }
 
-    var currentTime: Double { ownsPlayback ? audio.currentTime : 0 }
+    var currentTime: Double { claim?.currentTime ?? 0 }
 
     /// The recording's length: the player's once loaded, the catalog's
     /// measured length before, so the page never reads "0:00".
     var duration: Double {
-        ownsPlayback && audio.duration > 0 ? audio.duration : current.duration
+        let loaded = claim?.duration ?? 0
+        return loaded > 0 ? loaded : current.duration
     }
 
     /// "0:55 of 4:12", once the recording is loaded and ours.
     var timeLabel: String? {
-        guard ownsPlayback, audio.duration > 0 else { return nil }
-        return "\(Self.clock(audio.currentTime)) of \(Self.clock(audio.duration))"
+        guard let claim, claim.duration > 0 else { return nil }
+        return "\(Self.clock(claim.currentTime)) of \(Self.clock(claim.duration))"
     }
 
     /// "1:12" — how far into the recording, once it is loaded and ours.
     /// The tile's kicker carries it at full width and the transport row
     /// at half, so the time is said once either way.
     var elapsedLabel: String? {
-        guard ownsPlayback, audio.duration > 0 else { return nil }
-        return Self.clock(audio.currentTime)
+        guard let claim, claim.duration > 0 else { return nil }
+        return Self.clock(claim.currentTime)
     }
 
     static func clock(_ seconds: Double) -> String {
@@ -157,7 +134,7 @@ final class ChantPlayer {
     /// Play or pause the chant the tile holds.
     func togglePlayback() {
         if ownsPlayback {
-            audio.togglePlayback()
+            claim?.togglePlayback()
         } else {
             play(current)
         }
@@ -166,7 +143,7 @@ final class ChantPlayer {
     /// Play or pause `chant`: the one sounding pauses, any other starts.
     func toggle(_ chant: Chant) {
         if holds(chant) {
-            audio.togglePlayback()
+            claim?.togglePlayback()
         } else {
             play(chant)
         }
@@ -187,82 +164,69 @@ final class ChantPlayer {
         }
         isLoading = true
 
-        // The transport as it stood when the user asked. Taking it over
-        // from whatever holds it now is what they asked for; taking it
-        // from something that claimed it *while they waited* is not.
-        let generationAtRequest = audio.loadGeneration
+        // Taken now, at the tap: whatever holds the player is what the
+        // user asked to take it from, and nothing can claim it while the
+        // recording arrives without ending this claim first
+        let claim = takePlayer()
 
         // A load already in flight is superseded, not left to finish:
-        // its continuation would otherwise reach `audio.play()` after
-        // the user asked for something else entirely.
+        // its continuation would otherwise reach `play()` after the user
+        // asked for something else entirely.
         loadTask?.cancel()
         loadTask = Task { @MainActor [weak self] in
             guard let self else { return }
             defer { if token == self.loadCount { self.isLoading = false } }
 
-            guard self.audio.loadGeneration == generationAtRequest else { return }
-
-            // The file already in the player, but someone else's (a
-            // consecration day's Veni Creator): loaded afresh, so the
-            // chant begins at its top rather than where the day left it
-            if self.audio.currentURL == url, !self.ownsPlayback {
-                self.audio.reset(preservingNowPlaying: true)
-            }
-
-            // Take the transport at chant's own pace. A Rosary read at
-            // 2× has not thereby chosen a speed for sung Latin, so the
-            // rate is borrowed rather than remembered, and handed back
-            // in `relinquish()` — or as soon as another flow takes the
-            // arrows from the chant.
-            self.audio.setPlaybackRate(self.rate, remember: false, borrower: self.navigationOwner)
-            self.borrowedRate = true
-
-            let ready = await self.audio.loadAudio(
-                from: url.absoluteString,
+            // Loaded afresh, from its top, when the file in the player is
+            // someone else's (a consecration day's Veni Creator) — the
+            // claim sees to that
+            let ready = await claim.load(
+                url,
                 title: chant.latinTitle,
                 subtitle: chant.setting.map { "Chant · \($0)" } ?? "Chant",
                 album: ChantCatalog.credit,
                 claimNowPlaying: true
             )
 
-            guard token == self.loadCount, !Task.isCancelled else { return }
+            // Superseded by another chant, or the player taken meanwhile:
+            // nothing to say, and nothing to play
+            guard token == self.loadCount, !Task.isCancelled, claim.isCurrent else { return }
 
-            // `loadAudio` answers false for a track already loaded whose
+            // `load` answers false for a track already loaded whose
             // duration is still resolving — a second press on the same
-            // chant, not a failure. The player having the URL is the
+            // chant, not a failure. The claim holding the item is the
             // honest test of whether the load landed.
-            guard ready || self.audio.currentURL == url else {
+            guard ready || claim.holdsItem else {
                 self.errorMessage = "The chant couldn't be played."
-                self.releaseRate()
+                // Nothing of the chant's is in the player: the player, the
+                // arrows and the app's speed go back
+                claim.release()
+                self.claim = nil
                 return
             }
 
-            self.loadedURL = url
-            self.loadedGeneration = self.audio.loadGeneration
-            self.attachNavigation()
-            self.audio.play()
+            self.attachNavigation(to: claim)
+            claim.play()
         }
     }
 
     /// Moves the playhead to a fraction of the recording.
     func seek(toFraction fraction: Double) {
-        guard ownsPlayback, audio.duration > 0 else { return }
-        audio.seek(to: min(max(fraction, 0), 1) * audio.duration)
+        guard let claim, claim.duration > 0 else { return }
+        claim.seek(to: min(max(fraction, 0), 1) * claim.duration)
     }
 
     /// Back to the top, for another try at a phrase.
     func restart() {
-        guard ownsPlayback else { return }
-        audio.seek(to: 0)
-        if !audio.isPlaying { audio.play() }
+        guard let claim, claim.holdsItem else { return }
+        claim.seek(to: 0)
+        if !claim.isPlaying { claim.play() }
     }
 
     /// Practice pace. Applied at once to a chant already sounding.
     func setRate(_ newRate: Double) {
         rate = newRate
-        guard ownsPlayback else { return }
-        audio.setPlaybackRate(newRate, remember: false, borrower: navigationOwner)
-        borrowedRate = true
+        claim?.setRate(newRate)
     }
 
     /// Gives the player and the app's narration speed back: the chant is
@@ -273,26 +237,48 @@ final class ChantPlayer {
         loadTask?.cancel()
         loadTask = nil
         isLoading = false
+        claim?.release()
+        claim = nil
+    }
 
-        if ownsPlayback {
-            audio.reset()
-            audio.deactivateSession()
+    // MARK: - The Player
+
+    /// The library's claim on the player: the one it holds, or a new one
+    /// at the chant's own pace. A Rosary read at 2× has not thereby chosen
+    /// a speed for sung Latin, so the pace is borrowed, and the app's
+    /// comes back when the claim ends — by `relinquish()`, or by another
+    /// flow taking the player.
+    private func takePlayer() -> AudioClaim {
+        if let claim, claim.isCurrent { return claim }
+        let claim = audio.claim(.chant, rate: .borrowed(rate)) { [weak self] in
+            self?.lostPlayer()
+        }!
+        claim.onFinish = { [weak self] in
+            guard let self, self.repeats else { return }
+            self.claim?.play()
         }
-        audio.clearTrackNavigation(owner: navigationOwner)
-        loadedURL = nil
-        loadedGeneration = nil
-        releaseRate()
+        self.claim = claim
+        return claim
+    }
+
+    /// Another flow took the player: a recording still arriving is let go,
+    /// and the readouts, which read the claim, are at rest
+    private func lostPlayer() {
+        loadTask?.cancel()
+        loadTask = nil
+        isLoading = false
+        claim = nil
     }
 
     // MARK: - Lock Screen
 
-    /// The Lock Screen's arrows step through the library in its order,
-    /// and a chant heard to its end sings again when Repeat is on.
-    private func attachNavigation() {
+    /// The Lock Screen's arrows step through the library in its order;
+    /// a chant heard to its end sings again when Repeat is on
+    /// (`takePlayer`).
+    private func attachNavigation(to claim: AudioClaim) {
         let chants = ChantCatalog.all
         let index = chants.firstIndex { $0.id == current.id } ?? 0
-        audio.setTrackNavigation(
-            owner: navigationOwner,
+        claim.navigation = AudioNavigation(
             canGoNext: index < chants.count - 1,
             canGoPrevious: index > 0,
             onNext: { [weak self] in
@@ -302,20 +288,7 @@ final class ChantPlayer {
             onPrevious: { [weak self] in
                 guard let self, index > 0 else { return }
                 self.play(chants[index - 1])
-            },
-            onFinish: { [weak self] in
-                guard let self, self.repeats, self.ownsPlayback else { return }
-                self.audio.play()
             }
         )
-    }
-
-    /// Hands the app-wide narration speed back, once, whether or not
-    /// this player still holds the transport — unless another flow has
-    /// set a speed of its own since, which is its to keep.
-    private func releaseRate() {
-        guard borrowedRate else { return }
-        borrowedRate = false
-        audio.restoreRememberedRate(from: navigationOwner)
     }
 }
