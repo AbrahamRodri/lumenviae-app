@@ -65,9 +65,11 @@ struct GoldCTAButton: View {
     /// medallion alone, which is the app's mark as much as a control.
     enum Glyph {
         case none
-        /// Leads the title: this begins a prayer
+        /// Leads the title: this begins a prayer. An inline act wears it
+        /// too, so the guided Rosary's Begin matches the course's.
         case play
-        /// Follows the title: this goes on to a page
+        /// Follows the title: this goes on to a page. A page-level act's
+        /// alone; an inline act names its trailing glyph instead.
         case chevron
     }
 
@@ -94,7 +96,9 @@ struct GoldCTAButton: View {
 
     private var label: some View {
         HStack(spacing: prominence == .page ? 10 : 6) {
-            if prominence == .page, glyph == .play {
+            // Play leads at either prominence: a prayer begins whether
+            // the act is a page's or stands in a foot beside Back
+            if glyph == .play {
                 AppIcon("ph-play-fill", size: 11)
             }
 

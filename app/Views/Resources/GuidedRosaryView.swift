@@ -293,13 +293,16 @@ struct GuidedRosaryView: View {
         }
     }
 
-    /// Begin wears play, as the course's Begin does: a prayer begins.
-    /// Continue wears it too — the praying begins again.
+    /// Begin leads with play, as the course's Begin does: a prayer
+    /// begins. Continue wears it too — the praying begins again. It once
+    /// trailed the word, the one Begin in the course that did; Next and
+    /// Amen still follow theirs, since they go on and complete.
     private func footAct(resumes: Bool) -> some View {
         GoldCTAButton(
             title: index == nil ? (resumes ? "Continue" : "Begin") : (isLast ? "Amen" : "Next"),
             prominence: .inline,
-            trailingIcon: index == nil ? "ph-play-fill" : (isLast ? "ph-check" : "ph-caret-right"),
+            glyph: index == nil ? .play : .none,
+            trailingIcon: index == nil ? nil : (isLast ? "ph-check" : "ph-caret-right"),
             fullWidth: false
         ) {
             if isLast {
