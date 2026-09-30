@@ -40,9 +40,9 @@ extension ChantCatalog {
             prayerIDs: ["hail_holy_queen"],
             duration: 185.0,
             score: [
-                ChantScorePart(file: "chant-salve-regina-simple", caption: "Salve Regina simple", aspectRatio: 1.0797),
+                ChantScorePart(file: "chant-salve-regina-simple", caption: "Salve Regina", aspectRatio: 1.0797),
                 ChantScorePart(file: "chant-vers-alt-ora-pro-nobis", caption: "Ora pro nobis", aspectRatio: 3.9357),
-                ChantScorePart(file: "chant-or-omnipotens-sempiterne", caption: "Oremus. Omnipotens... qui gloriosae", aspectRatio: 1.5328)
+                ChantScorePart(file: "chant-or-omnipotens-sempiterne", caption: "Oremus. Omnipotens… qui gloriosae", aspectRatio: 1.5328)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/salve-regina-simple/")!
         ),
@@ -56,9 +56,9 @@ extension ChantCatalog {
             prayerIDs: ["hail_holy_queen"],
             duration: 250.1,
             score: [
-                ChantScorePart(file: "chant-salve-regina-solemne", caption: "Salve Regina solemne", aspectRatio: 1.0723),
+                ChantScorePart(file: "chant-salve-regina-solemne", caption: "Salve Regina", aspectRatio: 1.0723),
                 ChantScorePart(file: "chant-vers-alt-ora-pro-nobis", caption: "Ora pro nobis", aspectRatio: 3.9357),
-                ChantScorePart(file: "chant-or-omnipotens-sempiterne", caption: "Oremus. Omnipotens... qui gloriosae", aspectRatio: 1.5328)
+                ChantScorePart(file: "chant-or-omnipotens-sempiterne", caption: "Oremus. Omnipotens… qui gloriosae", aspectRatio: 1.5328)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/salve-regina-solemne/")!
         ),
@@ -72,7 +72,7 @@ extension ChantCatalog {
             prayerIDs: ["alma_redemptoris"],
             duration: 210.0,
             score: [
-                ChantScorePart(file: "chant-alma-redemptoris-mater-solemne", caption: "Alma Redemptoris Mater solemne", aspectRatio: 1.4196),
+                ChantScorePart(file: "chant-alma-redemptoris-mater-solemne", caption: "Alma Redemptoris Mater", aspectRatio: 1.4196),
                 ChantScorePart(file: "chant-vers-alt-angelus-domini", caption: "Angelus Domini", aspectRatio: 3.9357),
                 ChantScorePart(file: "chant-or-gratiam-tuam", caption: "Oremus. Gratiam tuam quaesumus", aspectRatio: 1.9104),
                 ChantScorePart(file: "chant-vers-alt-post-partum", caption: "Post partum", aspectRatio: 3.9357),
@@ -90,7 +90,7 @@ extension ChantCatalog {
             prayerIDs: ["ave_regina_caelorum"],
             duration: 96.5,
             score: [
-                ChantScorePart(file: "chant-ave-regina-caelorum-simple", caption: "Ave Regina caelorum simple", aspectRatio: 2.1857),
+                ChantScorePart(file: "chant-ave-regina-caelorum-simple", caption: "Ave Regina caelorum", aspectRatio: 2.1857),
                 ChantScorePart(file: "chant-vers-alt-dignare-me", caption: "Dignare me", aspectRatio: 3.9357),
                 ChantScorePart(file: "chant-or-concede-misericors", caption: "Oremus. Concede misericors Deus", aspectRatio: 1.9585)
             ],
@@ -106,7 +106,7 @@ extension ChantCatalog {
             prayerIDs: ["ave_regina_caelorum"],
             duration: 138.0,
             score: [
-                ChantScorePart(file: "chant-ave-regina-caelorum", caption: "Ave Regina caelorum solemne", aspectRatio: 1.6306),
+                ChantScorePart(file: "chant-ave-regina-caelorum", caption: "Ave Regina caelorum", aspectRatio: 1.6306),
                 ChantScorePart(file: "chant-vers-alt-dignare-me", caption: "Dignare me", aspectRatio: 3.9357),
                 ChantScorePart(file: "chant-or-concede-misericors", caption: "Oremus. Concede misericors Deus", aspectRatio: 1.9585)
             ],
@@ -122,9 +122,9 @@ extension ChantCatalog {
             prayerIDs: ["regina_caeli"],
             duration: 91.0,
             score: [
-                ChantScorePart(file: "chant-regina-caeli-simple", caption: "Regina caeli simple", aspectRatio: 3.6863),
+                ChantScorePart(file: "chant-regina-caeli-simple", caption: "Regina caeli", aspectRatio: 3.6863),
                 ChantScorePart(file: "chant-vers-alt-gaude-et-laetare", caption: "Gaude et laetare", aspectRatio: 3.9357),
-                ChantScorePart(file: "chant-or-deus-qui-per-web", caption: "Oratio Deus qui per resurrectionem", aspectRatio: 1.8735)
+                ChantScorePart(file: "chant-or-deus-qui-per-web", caption: "Oremus. Deus qui per resurrectionem", aspectRatio: 1.8735)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/regina-caeli-simple/")!
         ),
@@ -138,9 +138,9 @@ extension ChantCatalog {
             prayerIDs: ["regina_caeli"],
             duration: 144.0,
             score: [
-                ChantScorePart(file: "chant-regina-caeli-solemne", caption: "Regina caeli solemne", aspectRatio: 1.8462),
+                ChantScorePart(file: "chant-regina-caeli-solemne", caption: "Regina caeli", aspectRatio: 1.8462),
                 ChantScorePart(file: "chant-vers-alt-gaude-et-laetare", caption: "Gaude et laetare", aspectRatio: 3.9357),
-                ChantScorePart(file: "chant-or-deus-qui-per-web", caption: "Oratio Deus qui per resurrectionem", aspectRatio: 1.8735)
+                ChantScorePart(file: "chant-or-deus-qui-per-web", caption: "Oremus. Deus qui per resurrectionem", aspectRatio: 1.8735)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/regina-caeli-solemne/")!
         ),
@@ -170,7 +170,7 @@ extension ChantCatalog {
             prayerIDs: ["ave_maris_stella"],
             duration: 132.0,
             score: [
-                ChantScorePart(file: "chant-ave-maris-stella-off-bmv-in-sabb", caption: "Ave maris stella (Off. BMV in Sabb.)", aspectRatio: 0.8081)
+                ChantScorePart(file: "chant-ave-maris-stella-off-bmv-in-sabb", caption: "Ave maris stella", aspectRatio: 0.8081)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/ave-maris-stella-off-bmv-in-sabb/")!
         ),
@@ -212,7 +212,7 @@ extension ChantCatalog {
             prayerIDs: ["flos_carmeli"],
             duration: 168.0,
             score: [
-                ChantScorePart(file: "chant-flos-carmeli-w", caption: "canto Flos Carmeli", aspectRatio: 0.7470)
+                ChantScorePart(file: "chant-flos-carmeli-w", caption: "Flos Carmeli", aspectRatio: 0.7470)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/flos-carmeli/")!
         ),
@@ -226,7 +226,7 @@ extension ChantCatalog {
             prayerIDs: ["stabat_mater"],
             duration: 330.0,
             score: [
-                ChantScorePart(file: "chant-stabat-mater-seq", caption: "la secuencia Stabat Mater", aspectRatio: 0.3278)
+                ChantScorePart(file: "chant-stabat-mater-seq", caption: "Stabat Mater", aspectRatio: 0.3278)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/stabat-mater-sequentia/")!
         ),
@@ -265,7 +265,7 @@ extension ChantCatalog {
             prayerIDs: ["memorare"],
             duration: 128.3,
             score: [
-                ChantScorePart(file: "chant-memorare-1", caption: "Memorare 1", aspectRatio: 1.0940)
+                ChantScorePart(file: "chant-memorare-1", caption: "Memorare", aspectRatio: 1.0940)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/memorare-1/")!
         ),
@@ -273,7 +273,7 @@ extension ChantCatalog {
             id: "ave_maria_antiphon",
             groupID: "ourLady",
             latinTitle: "Ave Maria",
-            englishTitle: "Hail Mary, the antiphon",
+            englishTitle: "Hail Mary",
             setting: "Antiphon",
             detail: "The Offertory of the last Sunday of Advent",
             prayerIDs: [],
@@ -293,7 +293,7 @@ extension ChantCatalog {
             prayerIDs: [],
             duration: 463.0,
             score: [
-                ChantScorePart(file: "chant-salve-mater", caption: "canto Salve Mater", aspectRatio: 0.4119)
+                ChantScorePart(file: "chant-salve-mater", caption: "Salve Mater", aspectRatio: 0.4119)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/salve-mater/")!
         ),
@@ -307,7 +307,7 @@ extension ChantCatalog {
             prayerIDs: [],
             duration: 90.0,
             score: [
-                ChantScorePart(file: "chant-inviolata", caption: "la secuencia Inviolata", aspectRatio: 1.4473)
+                ChantScorePart(file: "chant-inviolata", caption: "Inviolata", aspectRatio: 1.4473)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/inviolata/")!
         ),
@@ -468,7 +468,7 @@ extension ChantCatalog {
             prayerIDs: ["o_salutaris"],
             duration: 66.0,
             score: [
-                ChantScorePart(file: "chant-o-salutaris-hostia-i", caption: "O salutaris Hostia I", aspectRatio: 2.3522)
+                ChantScorePart(file: "chant-o-salutaris-hostia-i", caption: "O salutaris Hostia", aspectRatio: 2.3522)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/o-salutaris-hostia-i/")!
         ),
@@ -482,7 +482,7 @@ extension ChantCatalog {
             prayerIDs: ["tantum_ergo"],
             duration: 137.4,
             score: [
-                ChantScorePart(file: "chant-tantum-ergo-i", caption: "Tantum ergo I", aspectRatio: 1.3729),
+                ChantScorePart(file: "chant-tantum-ergo-i", caption: "Tantum ergo", aspectRatio: 1.3729),
                 ChantScorePart(file: "chant-vers-panem-de-caelo", caption: "Panem de caelo", aspectRatio: 3.9357),
                 ChantScorePart(file: "chant-or-deus-qui-nobis", caption: "Oremus. Deus qui nobis", aspectRatio: 1.8202)
             ],
@@ -498,7 +498,7 @@ extension ChantCatalog {
             prayerIDs: ["o_sacrum_convivium"],
             duration: 118.0,
             score: [
-                ChantScorePart(file: "chant-o-sacrum-convivium", caption: "la antífona O sacrum convivium", aspectRatio: 1.6858)
+                ChantScorePart(file: "chant-o-sacrum-convivium", caption: "O sacrum convivium", aspectRatio: 1.6858)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/o-sacrum-convivium/")!
         ),
@@ -526,7 +526,7 @@ extension ChantCatalog {
             prayerIDs: ["anima_christi"],
             duration: 90.0,
             score: [
-                ChantScorePart(file: "chant-anima-christi-i", caption: "Anima Christi I", aspectRatio: 1.1418)
+                ChantScorePart(file: "chant-anima-christi-i", caption: "Anima Christi", aspectRatio: 1.1418)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/anima-christi-i/")!
         ),
@@ -540,7 +540,7 @@ extension ChantCatalog {
             prayerIDs: [],
             duration: 87.0,
             score: [
-                ChantScorePart(file: "chant-panis-angelicus", caption: "himno Panis angelicus I", aspectRatio: 1.3132)
+                ChantScorePart(file: "chant-panis-angelicus", caption: "Panis angelicus", aspectRatio: 1.3132)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/panis-angelicus-1/")!
         ),
@@ -554,7 +554,7 @@ extension ChantCatalog {
             prayerIDs: [],
             duration: 438.0,
             score: [
-                ChantScorePart(file: "chant-lauda-sion-salvatorem", caption: "la secuencia Lauda Sion Salvatorem", aspectRatio: 0.2300)
+                ChantScorePart(file: "chant-lauda-sion-salvatorem", caption: "Lauda Sion Salvatorem", aspectRatio: 0.2300)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/lauda-sion-salvatorem/")!
         ),
@@ -568,7 +568,7 @@ extension ChantCatalog {
             prayerIDs: [],
             duration: 101.0,
             score: [
-                ChantScorePart(file: "chant-adoremus-in-aeternum-1", caption: "canto Adoremus in aeternum 1", aspectRatio: 1.1634)
+                ChantScorePart(file: "chant-adoremus-in-aeternum-1", caption: "Adoremus in aeternum", aspectRatio: 1.1634)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/adoremus-in-aeternum-1/")!
         ),
@@ -582,7 +582,7 @@ extension ChantCatalog {
             prayerIDs: [],
             duration: 101.0,
             score: [
-                ChantScorePart(file: "chant-ecce-panis-angelorum", caption: "la secuencia Ecce panis Angelorum", aspectRatio: 1.1051)
+                ChantScorePart(file: "chant-ecce-panis-angelorum", caption: "Ecce panis Angelorum", aspectRatio: 1.1051)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/ecce-panis-angelorum/")!
         ),
@@ -596,7 +596,7 @@ extension ChantCatalog {
             prayerIDs: [],
             duration: 152.0,
             score: [
-                ChantScorePart(file: "chant-ubi-caritas", caption: "canto Ubi caritas", aspectRatio: 0.7458)
+                ChantScorePart(file: "chant-ubi-caritas", caption: "Ubi caritas", aspectRatio: 0.7458)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/ubi-caritas/")!
         ),
@@ -661,7 +661,7 @@ extension ChantCatalog {
                 ChantScorePart(file: "chant-litaniae-ss-cordis-jesu-3-cor-jesu", caption: "Cor Jesu Filii Patris aeterni", aspectRatio: 7.4264),
                 ChantScorePart(file: "chant-litaniae-ss-cordis-jesu-4-agnus-dei", caption: "Agnus Dei", aspectRatio: 2.2380),
                 ChantScorePart(file: "chant-litaniae-ss-cordis-jesu-5-vers-jesu-mitis", caption: "Jesu mitis", aspectRatio: 3.9357),
-                ChantScorePart(file: "chant-litaniae-ss-cordis-jesu-6-or-omn-respice", caption: "Oremus. Omnipotens... respice in Cor", aspectRatio: 1.4443)
+                ChantScorePart(file: "chant-litaniae-ss-cordis-jesu-6-or-omn-respice", caption: "Oremus. Omnipotens… respice in Cor", aspectRatio: 1.4443)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/litaniae-sacratissimi-cordis-jesu/")!
         ),
@@ -675,11 +675,11 @@ extension ChantCatalog {
             prayerIDs: ["litany_holy_name"],
             duration: 876.0,
             score: [
-                ChantScorePart(file: "chant-litaniae-sanctissimi-nominis-jesu-0", caption: "los Kyries de las Litaniae Santissimi Nominis Jesu", aspectRatio: 3.8323),
-                ChantScorePart(file: "chant-litaniae-sanctissimi-nominis-jesu-1", caption: "Pater de caelis de las Litaniae Santissimi Nominis Jesu", aspectRatio: 8.0851),
-                ChantScorePart(file: "chant-litaniae-sanctissimi-nominis-jesu-2", caption: "Jesu Fili Dei vivi de las Litaniae Santissimi Nominis Jesu", aspectRatio: 8.0851),
-                ChantScorePart(file: "chant-litaniae-sanctissimi-nominis-jesu-3-alt", caption: "Propitius esto de las Litaniae Sanctissimi Nominis Jesu", aspectRatio: 4.5157),
-                ChantScorePart(file: "chant-litaniae-sanctissimi-nominis-jesu-4", caption: "Agnus Dei de las Litaniae Sanctissimi Nominis Jesu", aspectRatio: 1.8174),
+                ChantScorePart(file: "chant-litaniae-sanctissimi-nominis-jesu-0", caption: "Kyrie eleison", aspectRatio: 3.8323),
+                ChantScorePart(file: "chant-litaniae-sanctissimi-nominis-jesu-1", caption: "Pater de caelis", aspectRatio: 8.0851),
+                ChantScorePart(file: "chant-litaniae-sanctissimi-nominis-jesu-2", caption: "Jesu Fili Dei vivi", aspectRatio: 8.0851),
+                ChantScorePart(file: "chant-litaniae-sanctissimi-nominis-jesu-3-alt", caption: "Propitius esto", aspectRatio: 4.5157),
+                ChantScorePart(file: "chant-litaniae-sanctissimi-nominis-jesu-4", caption: "Agnus Dei", aspectRatio: 1.8174),
                 ChantScorePart(file: "chant-litaniae-sanctissimi-nominis-jesu-5", caption: "Collect", aspectRatio: 0.7909)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/litaniae-sanctissimi-nominis-jesu/")!
@@ -694,7 +694,7 @@ extension ChantCatalog {
             prayerIDs: [],
             duration: 116.1,
             score: [
-                ChantScorePart(file: "chant-jesu-dulcis-memoria", caption: "himno Jesu dulcis memoria", aspectRatio: 0.8348)
+                ChantScorePart(file: "chant-jesu-dulcis-memoria", caption: "Jesu dulcis memoria", aspectRatio: 0.8348)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/jesu-dulcis-memoria/")!
         ),
@@ -708,7 +708,7 @@ extension ChantCatalog {
             prayerIDs: [],
             duration: 38.1,
             score: [
-                ChantScorePart(file: "chant-cor-jesu-sacratissimum-i", caption: "Cor Jesu sacratissimum I", aspectRatio: 7.1647)
+                ChantScorePart(file: "chant-cor-jesu-sacratissimum-i", caption: "Cor Jesu sacratissimum", aspectRatio: 7.1647)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/cor-jesu-sacratissimum-i/")!
         ),
@@ -738,7 +738,7 @@ extension ChantCatalog {
             prayerIDs: [],
             duration: 128.1,
             score: [
-                ChantScorePart(file: "chant-christus-vincit-simple", caption: "Christus vincit simple", aspectRatio: 2.2434)
+                ChantScorePart(file: "chant-christus-vincit-simple", caption: "Christus vincit", aspectRatio: 2.2434)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/christus-vincit-simple/")!
         ),
@@ -799,11 +799,11 @@ extension ChantCatalog {
             prayerIDs: [],
             duration: 1072.1,
             score: [
-                ChantScorePart(file: "chant-litaniae-sanctorum-1-kyrie-eleison", caption: "los Kyries de las Letanías de los Santos", aspectRatio: 3.9167),
-                ChantScorePart(file: "chant-litaniae-sanctorum-2-pater-de-caelis", caption: "Pater de caelis de las Letanías de los Santos", aspectRatio: 7.8361),
-                ChantScorePart(file: "chant-litaniae-sanctorum-3-propitius-esto", caption: "Propitius esto de las Letanías de los Santos", aspectRatio: 4.6023),
-                ChantScorePart(file: "chant-litaniae-sanctorum-4-peccatores", caption: "Peccatores de las Letanías de los Santos", aspectRatio: 7.8361),
-                ChantScorePart(file: "chant-litaniae-sanctorum-5-agnus-dei-kyrie", caption: "Agnus Dei y los Kyries de las Letanías de los Santos", aspectRatio: 1.4128)
+                ChantScorePart(file: "chant-litaniae-sanctorum-1-kyrie-eleison", caption: "Kyrie eleison", aspectRatio: 3.9167),
+                ChantScorePart(file: "chant-litaniae-sanctorum-2-pater-de-caelis", caption: "Pater de caelis", aspectRatio: 7.8361),
+                ChantScorePart(file: "chant-litaniae-sanctorum-3-propitius-esto", caption: "Propitius esto", aspectRatio: 4.6023),
+                ChantScorePart(file: "chant-litaniae-sanctorum-4-peccatores", caption: "Peccatores", aspectRatio: 7.8361),
+                ChantScorePart(file: "chant-litaniae-sanctorum-5-agnus-dei-kyrie", caption: "Agnus Dei, Kyrie eleison", aspectRatio: 1.4128)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/litaniae-sanctorum/")!
         ),
@@ -831,7 +831,7 @@ extension ChantCatalog {
             prayerIDs: [],
             duration: 125.1,
             score: [
-                ChantScorePart(file: "chant-creator-alme-siderum", caption: "himno Creator alme siderum", aspectRatio: 0.7705)
+                ChantScorePart(file: "chant-creator-alme-siderum", caption: "Creator alme siderum", aspectRatio: 0.7705)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/creator-alme-siderum/")!
         ),
@@ -845,7 +845,7 @@ extension ChantCatalog {
             prayerIDs: [],
             duration: 272.1,
             score: [
-                ChantScorePart(file: "chant-veni-veni-emmanuel-webfix", caption: "Veni veni Emmanuel, corregida la errata de la versión previa", aspectRatio: 0.4292)
+                ChantScorePart(file: "chant-veni-veni-emmanuel-webfix", caption: "Veni veni Emmanuel", aspectRatio: 0.4292)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/veni-veni-emmanuel/")!
         ),
@@ -873,7 +873,7 @@ extension ChantCatalog {
             prayerIDs: [],
             duration: 315.0,
             score: [
-                ChantScorePart(file: "chant-adeste-fideles", caption: "himno Adeste fideles", aspectRatio: 0.5907)
+                ChantScorePart(file: "chant-adeste-fideles", caption: "Adeste fideles", aspectRatio: 0.5907)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/adeste-fideles/")!
         ),
@@ -887,7 +887,7 @@ extension ChantCatalog {
             prayerIDs: [],
             duration: 203.1,
             score: [
-                ChantScorePart(file: "chant-jesu-redemptor-omnium", caption: "himno Jesu Redemptor omnium", aspectRatio: 0.5821)
+                ChantScorePart(file: "chant-jesu-redemptor-omnium", caption: "Jesu Redemptor omnium", aspectRatio: 0.5821)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/jesu-redemptor-omnium/")!
         ),
