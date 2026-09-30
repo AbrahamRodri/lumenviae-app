@@ -313,16 +313,6 @@ final class PrayerSessionViewModel {
         return Double(currentMysteryIndex + 1) / Double(totalMysteries)
     }
 
-    /// Human-readable progress (e.g., "Mystery 1 of 5")
-    var progressLabel: String {
-        "Mystery \(currentMysteryIndex + 1) of \(totalMysteries)"
-    }
-
-    /// Text for the next/complete button
-    var nextButtonText: String {
-        isLastMystery ? "COMPLETE" : "NEXT MYSTERY"
-    }
-
     // MARK: - Navigation
 
     /// Advances to the next mystery.

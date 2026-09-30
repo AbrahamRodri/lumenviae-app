@@ -203,6 +203,13 @@ struct AppColors {
     /// Pure white - the most prominent text
     static let textPrimary = Color.white
 
+    /// Our Lady's blue: True Devotion's cloth, the Marian Library's dogma
+    /// tiles, the Prayer Book's cards of Our Lady. Fixed in every theme,
+    /// as `Rubric.red` is — it names her, and the book and the tiles that
+    /// wear it are the same objects whatever the page's ground. It was
+    /// once written out as a hex in four files.
+    static let marianBlue = Color(hex: "2e3d66")
+
     /// Muted secondary text
     static var textSecondary: Color { palette.textSecondary }
 

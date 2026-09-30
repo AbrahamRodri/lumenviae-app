@@ -53,13 +53,6 @@ struct BookPrayer: Identifiable, Hashable {
         return BilingualText(english: english, latin: latin).formatted(for: language)
     }
 
-    /// The one language a single-language surface speaks or quizzes in:
-    /// Latin only when Latin alone is chosen and the prayer has it.
-    func singleText(for language: PrayerLanguage) -> String {
-        if language == .latin, let latin { return latin }
-        return english
-    }
-
     static func == (lhs: BookPrayer, rhs: BookPrayer) -> Bool { lhs.id == rhs.id }
     func hash(into hasher: inout Hasher) { hasher.combine(id) }
 }
@@ -483,13 +476,18 @@ enum PrayerBook {
         return order(id)!
     }
 
-    /// The hour's order said as a kicker — "AT NOON", "BEFORE SLEEP"
-    nonisolated static func dayOrderMoment(at date: Date = Date(), calendar: Calendar = .current) -> String {
+    /// The hour's order said as a kicker — "AT NOON", "BEFORE SLEEP" — or,
+    /// `short`, as home's ledger sets it among its other facts: "AT SIX"
+    nonisolated static func dayOrderMoment(
+        at date: Date = Date(),
+        calendar: Calendar = .current,
+        short: Bool = false
+    ) -> String {
         let hour = calendar.component(.hour, from: date)
         switch hour {
         case dayBeginsAtHour..<11:  return "On rising"
         case 11..<15: return "At noon"
-        case 15..<20: return "At six in the evening"
+        case 15..<20: return short ? "At six" : "At six in the evening"
         default:      return "Before sleep"
         }
     }

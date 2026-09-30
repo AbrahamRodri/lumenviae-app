@@ -28,7 +28,7 @@ extension LibraryBookInfo {
         case "story-of-a-soul":           return Color(hex: "5e3140")  // rose-brown
         case "confessions-of-st-augustine": return Color(hex: "3d3a24") // bronze-olive
         case "dolorous-passion":          return Color(hex: "342a52")  // passion violet
-        case "true-devotion":             return Color(hex: "2e3d66")  // Marian blue
+        case "true-devotion":             return AppColors.marianBlue
         default:                          return Color(hex: "252542")
         }
     }

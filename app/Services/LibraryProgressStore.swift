@@ -67,24 +67,6 @@ enum LibraryProgressStore {
         return row
     }
 
-    /// Moves only the paragraph within the chapter already recorded —
-    /// what a scroll reports. Silently ignored if the reader has since
-    /// moved to another chapter.
-    static func recordParagraph(
-        bookID: String,
-        chapterIndex: Int,
-        paragraphIndex: Int,
-        in context: ModelContext
-    ) {
-        guard let row = row(for: bookID, in: context),
-              row.lastChapterIndex == chapterIndex,
-              row.lastParagraphIndex != paragraphIndex else { return }
-        row.lastParagraphIndex = max(0, paragraphIndex)
-        row.lastReadAt = Date()
-        row.updatedAt = Date()
-        save(context)
-    }
-
     /// Marks a chapter read to the end. Additive only — a chapter is
     /// never un-finished, and nothing counts what is missing.
     static func markFinished(

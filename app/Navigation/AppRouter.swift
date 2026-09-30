@@ -72,8 +72,8 @@ enum AppRoute: Hashable {
     /// stepped in place along its shelf
     case libraryReading(id: String)
     /// A prayer the library leads to — the Litany, a hymn, a prayer of
-    /// the Rosary — on a page of its own, by the id `DevotionPrayers.find`
-    /// looks up
+    /// the Rosary — opened in the Prayer Book (`BookPrayerView`), by the
+    /// id `PrayerBook.prayer` looks up
     case devotionPrayer(id: String)
     /// The Missal opened on a given day rather than today — a feast
     /// named elsewhere in the app

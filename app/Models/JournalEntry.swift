@@ -125,14 +125,6 @@ final class JournalEntry {
         return category?.displayName ?? "General Reflection"
     }
 
-    /// Secondary label for additional context
-    var secondaryLabel: String? {
-        if isConsecrationEntry {
-            return consecrationPhase?.displayName
-        }
-        return nil
-    }
-
     /// Icon name for the entry type. Categories defer to
     /// `MysteryCategory.iconName` so the journal never shows a different
     /// icon for a category than the rest of the app; the Marian monogram

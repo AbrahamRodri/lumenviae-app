@@ -50,18 +50,6 @@ struct ConsecrationDay: Codable, Identifiable, Hashable {
         readings.map(\.title).joined(separator: " & ")
     }
 
-    /// The readings run together, separated by the ornament rule
-    var meditationText: String {
-        readings.map(\.text).joined(separator: "\n\n─────\n\n")
-    }
-
-    /// Every distinct work the day draws on, in order of appearance
-    var meditationSource: String? {
-        var seen: Set<String> = []
-        let works = readings.compactMap(\.source).filter { seen.insert($0).inserted }
-        return works.isEmpty ? nil : works.joined(separator: " & ")
-    }
-
     // MARK: - Computed Properties
 
     /// Get the prayers for this day (based on the phase)
@@ -96,16 +84,6 @@ struct ConsecrationDay: Codable, Identifiable, Hashable {
     /// Day number within the current phase (e.g., Day 13 overall = Day 1 of Week 1)
     var dayWithinPhase: Int {
         dayNumber - phase.dayRange.lowerBound + 1
-    }
-
-    /// Progress through the current phase (0.0 to 1.0)
-    var phaseProgress: Double {
-        Double(dayWithinPhase) / Double(phase.dayCount)
-    }
-
-    /// Overall consecration progress (0.0 to 1.0)
-    var overallProgress: Double {
-        Double(dayNumber) / 34.0
     }
 
     /// Whether this is the final consecration day

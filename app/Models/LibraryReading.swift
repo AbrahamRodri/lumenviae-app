@@ -52,13 +52,6 @@ struct KeptFeast: Hashable {
         return "\(day) \(monthName)"
     }
 
-    /// "11 FEB"
-    var shortDateLabel: String {
-        let symbols = Calendar.current.shortMonthSymbols
-        let monthName = symbols.indices.contains(month - 1) ? symbols[month - 1] : ""
-        return "\(day) \(monthName.uppercased())"
-    }
-
     /// Said beneath a feast the Missal cannot open, so a day with no
     /// Mass door never reads as a door that failed to draw — Kolbe, Padre
     /// Pio and St. Carlo were raised to the altars after 1962
@@ -72,7 +65,7 @@ enum ReadingDoor: Hashable {
     /// The mysteries this truth is prayed in
     case mysteries(MysteryCategory, note: String)
 
-    /// A bundled prayer (`BilingualConsecrationPrayers.allPrayers`)
+    /// A bundled prayer, opened in the Prayer Book (`PrayerBook.prayer`)
     case prayer(id: String, note: String)
 
     /// A page of the app, drawn with its own glyph and words

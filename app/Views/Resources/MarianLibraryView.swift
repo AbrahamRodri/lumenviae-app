@@ -43,8 +43,6 @@ struct MarianLibraryView: View {
         ($0.nextDate() ?? .distantFuture) < ($1.nextDate() ?? .distantFuture)
     }
 
-    private static let marianBlue = Color(hex: "2e3d66")
-
     var body: some View {
         ZStack {
             AppColors.appGradient
@@ -383,7 +381,7 @@ struct MarianLibraryView: View {
                         RoundedRectangle(cornerRadius: 18, style: .continuous)
                             .fill(
                                 LinearGradient(
-                                    colors: [Self.marianBlue, Self.marianBlue.opacity(0.45)],
+                                    colors: [AppColors.marianBlue, AppColors.marianBlue.opacity(0.45)],
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
                                 )

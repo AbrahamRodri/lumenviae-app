@@ -35,13 +35,6 @@ final class PrayerSession {
         MysteryCategory(rawValue: categoryRaw)
     }
 
-    /// Formatted duration string (e.g., "12 min")
-    var formattedDuration: String? {
-        guard let seconds = durationSeconds else { return nil }
-        let minutes = seconds / 60
-        return "\(minutes) min"
-    }
-
     // MARK: - Initialization
 
     init(

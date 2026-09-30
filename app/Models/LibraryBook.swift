@@ -377,13 +377,4 @@ nonisolated struct LibriVoxSection: Codable, Identifiable, Hashable {
         return seconds
     }
 
-    /// "54 min" / "1 hr 12 min" from the API's seconds-as-string
-    var playtimeLabel: String? {
-        guard let playtime, let seconds = Int(playtime), seconds > 0 else { return nil }
-        let minutes = max(seconds / 60, 1)
-        if minutes >= 60 {
-            return "\(minutes / 60) hr \(minutes % 60) min"
-        }
-        return "\(minutes) min"
-    }
 }

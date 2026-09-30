@@ -58,22 +58,6 @@ struct MarianFeastDay: Identifiable, Hashable {
         return Calendar.current.date(byAdding: .day, value: -33, to: nextFeast)
     }
 
-    /// Check if today is a valid start date for this feast day
-    func isValidStartDate(_ date: Date) -> Bool {
-        let calendar = Calendar.current
-        let currentYear = calendar.component(.year, from: date)
-
-        // Check both this year and next year
-        for year in [currentYear, currentYear + 1] {
-            if let startDate = startDate(for: year) {
-                if calendar.isDate(date, inSameDayAs: startDate) {
-                    return true
-                }
-            }
-        }
-        return false
-    }
-
     /// Whether this feast day is available to start today
     func canStartToday(from today: Date = Date()) -> Bool {
         guard let start = nextStartDate(from: Calendar.current.date(byAdding: .day, value: -1, to: today) ?? today) else {
@@ -174,11 +158,6 @@ extension MarianFeastDay {
             }
             return next1 < next2
         }
-    }
-
-    /// Get feast days that can be started today
-    static func availableToday(from date: Date = Date()) -> [MarianFeastDay] {
-        all.filter { $0.canStartToday(from: date) }
     }
 
     /// Find a feast day by ID

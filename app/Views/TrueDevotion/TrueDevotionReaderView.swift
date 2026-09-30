@@ -18,7 +18,7 @@ import SwiftData
 
 extension TrueDevotionBook {
     /// The binding the shelf gave this book — Marian blue.
-    static let bindingColor = Color(hex: "2e3d66")
+    static let bindingColor = AppColors.marianBlue
 
     /// The id a note on a passage carries in the journal.
     static let noteBookID = "true-devotion"
