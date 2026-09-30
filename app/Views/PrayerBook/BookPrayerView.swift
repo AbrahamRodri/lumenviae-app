@@ -30,6 +30,10 @@ struct BookPrayerView: View {
     @State private var pageOpacity: Double = 1
     @State private var showsLearn = false
     @State private var keptNote: String?
+
+    /// Clears the note after its three seconds; restarted by each note,
+    /// so a second note in the same words keeps its own three seconds
+    @State private var noteClear: Task<Void, Never>?
     /// The last thing the ribbon said, held while its words fade out
     @State private var lastKeptNote = " "
 
@@ -384,9 +388,11 @@ struct BookPrayerView: View {
         // Heard as well as seen: the words above are hidden from
         // VoiceOver, and scrolled down the page they are out of sight
         AccessibilityNotification.Announcement(note).post()
-        Task { @MainActor in
+        noteClear?.cancel()
+        noteClear = Task { @MainActor in
             try? await Task.sleep(for: .seconds(3))
-            if keptNote == note { keptNote = nil }
+            guard !Task.isCancelled else { return }
+            keptNote = nil
         }
     }
 }
