@@ -64,13 +64,10 @@ struct WhatsNewRelease: Identifiable {
                 title: "How to Pray the Rosary",
                 detail: "A short course for someone new to it, then Your First Rosary, a prayer at a time",
                 route: .howToPray
-            ),
-            WhatsNewItem(
-                icon: PrayerShortcut.scripturalRosary.icon,
-                title: "The Scriptural Rosary",
-                detail: "A verse of Scripture for every Hail Mary, as a devotion of its own",
-                route: .scripturalRosary
             )
+            // The Scriptural Rosary and the narration voices came in 3.0
+            // (CHANGELOG.md), so they are no news to someone arriving
+            // from it
         ])
     ]
 
