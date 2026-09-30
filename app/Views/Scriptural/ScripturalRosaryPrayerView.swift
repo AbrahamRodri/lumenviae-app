@@ -985,7 +985,11 @@ struct ScripturalRosaryPrayerView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 28)
-        .accessibilityAction(named: "Next mystery") {
+        // As the reading column carries its bead actions. On the last
+        // mystery the forward action is the arrow's AMEN, and says so:
+        // an action called "Next mystery" must not finish the Rosary
+        .accessibilityElement(children: .contain)
+        .accessibilityAction(named: viewModel.isLastMystery ? "Amen — finish the Rosary" : "Next mystery") {
             if viewModel.isLastMystery { finishRosary() } else { nextMystery() }
         }
         .accessibilityAction(named: "Previous mystery", previousMystery)
