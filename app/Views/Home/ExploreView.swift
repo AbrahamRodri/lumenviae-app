@@ -289,7 +289,13 @@ struct ExploreView: View {
             $0.devotionTitle.lowercased().contains(needle)
                 || $0.subtitle.lowercased().contains(needle)
         }
-        let libraryHits = libraryEntries.filter { $0.matchText.lowercased().contains(needle) }
+        // A door answers to its own name as well as its words: matched on
+        // the words alone, "chant library" found nothing, since the Chant
+        // Library's words say "chant" and "gregorian" but never the two
+        // together, and "prayer record" missed the Prayer Record
+        let libraryHits = libraryEntries.filter {
+            "\($0.title) \($0.matchText)".lowercased().contains(needle)
+        }
         let setHits = sets.filter { matches($0, needle: needle) }
         // The library's own readings — Lourdes, Kolbe, the marks of true
         // devotion — found by name or by their dating line. A shelf's
