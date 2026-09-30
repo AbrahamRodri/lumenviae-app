@@ -15,8 +15,8 @@
 //  never stops to change surfaces and the way back is always the same
 //  button.
 //
-//  It is prayed one of two ways, chosen in Settings and in the ⚙ sheet
-//  (`UserSettings.prayOnBeads`):
+//  It is prayed one of two ways, chosen on the set's page, in Settings
+//  and in the playback sheet (Counting, `UserSettings.prayOnBeads`):
 //
 //  On the beads, the whole Rosary hangs as one strand at the right
 //  edge and the bead — not the mystery — is the unit the hand moves
@@ -35,7 +35,9 @@
 //  Off the beads, the player moves a decade at a time, for a hand that
 //  keeps its own count on a rosary: swiping left/right moves between
 //  mysteries, and the arrows flanking the transport do the same thing a
-//  swipe does.
+//  swipe does. That way is chosen only while the voice reads the
+//  meditation alone (Counting: On My Rosary); with the Whole Rosary said
+//  aloud the voice moves the beads on the screen.
 //
 //  Either way, tapping the artwork clears the chrome for undistracted
 //  contemplation, and completing the Rosary is always a deliberate tap
@@ -112,8 +114,18 @@ struct MysteryPrayerView: View {
     /// so the setting and the screen cannot disagree.
     private var readerOpen: Bool { !userSettings.prayerImageMode }
 
-    /// Whether the Rosary is prayed on the beads (see the header)
-    private var onBeads: Bool { userSettings.prayOnBeads }
+    /// Whether the Rosary is prayed on the beads (see the header). With
+    /// the Whole Rosary said aloud the voice moves the beads on the
+    /// screen, whatever Counting says: Counting is offered only while the
+    /// voice reads the meditation alone, so a counter switched off before
+    /// then must not take the strand away from a Rosary said aloud, where
+    /// nothing is left to change it back
+    private var onBeads: Bool {
+        RosaryForm.meditation.countsOnScreen(
+            aloud: userSettings.prayAloud,
+            onBeads: userSettings.prayOnBeads
+        )
+    }
 
     let meditationSet: MeditationSet
 

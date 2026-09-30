@@ -34,7 +34,20 @@
 //  Tapping the painting clears the chrome, verse and all, for
 //  contemplation; the way out is the × at the top left, always.
 //
-//  The Rosary Aloud prays here too (`SpokenForm.plain`): the same
+//  Counted on one's own rosary (Counting: On My Rosary, offered while
+//  the verses are read in silence), the strand is taken down and the
+//  screen moves a mystery at a time, as the meditation's player does
+//  off the beads: the column's head names what the hand counts, and
+//  beneath it the whole decade is set at once — the Our Father's
+//  announcement, a verse for each Hail Mary, the Glory Be — scrolled,
+//  and crossfading whole when the mystery turns. Arrows flank the
+//  mysteries' beads at the foot, the last becoming AMEN's check, and a
+//  swipe left or right does what they do. The Scriptural Rosary once
+//  counted only on the screen; its verses are as much for the hand that
+//  keeps its own count.
+//
+//  The Holy Rosary prays here too (`SpokenForm.plain`; it was the
+//  Rosary Aloud): the same
 //  screen, said aloud whatever the setting, each bead carrying the
 //  prayer being said on it instead of a verse. When the recordings
 //  cannot be had it is still a Rosary — the notice says why, and the
@@ -124,13 +137,17 @@ struct ScripturalRosaryPrayerView: View {
                     if let pendant = viewModel.spokenPendant {
                         pendantColumn(pendant)
                             .transition(.opacity)
-                    } else {
+                    } else if countsOnScreen {
                         readingColumn
+                            .transition(.opacity)
+                    } else {
+                        decadeColumn
                             .transition(.opacity)
                     }
                 }
                 .padding(.top, readingTop(fullHeight: fullHeight, topInset: geometry.safeAreaInsets.top))
                 .animation(Motion.decadeTurn, value: viewModel.spokenPendant == nil)
+                .animation(Motion.crossfade, value: countsOnScreen)
                 // The column is given the glass above the foot and no
                 // more, so words too long for it — a prayer at a large
                 // text size — can never push the foot off the screen
@@ -159,7 +176,8 @@ struct ScripturalRosaryPrayerView: View {
                 // prayed on the pendant, and the strand comes in with the
                 // first mystery. Nor in the Rosary Aloud's closing, where
                 // the pendant hangs in the strand's own place
-                if viewModel.spokenPendant?.phase != .opening,
+                if countsOnScreen,
+                   viewModel.spokenPendant?.phase != .opening,
                    !(viewModel.isPlain && viewModel.spokenPendant != nil) {
                 Color.clear
                     .rosaryStrand(
@@ -353,7 +371,7 @@ struct ScripturalRosaryPrayerView: View {
             // while `audioURL` is nil - the tray offers no download.
             voice: NarrationVoiceCatalog.shared.chosenSlug,
             shareText: viewModel.isPlain
-                ? "\(mysteryName), the Rosary Aloud on Lumen Viae"
+                ? "\(mysteryName), the Holy Rosary on Lumen Viae"
                 : "\(shareLine) · \(mysteryName), the Scriptural Rosary on Lumen Viae",
             feedbackContext: FeedbackContext(
                 meditationTitle: mysteryName,
@@ -377,7 +395,9 @@ struct ScripturalRosaryPrayerView: View {
     private var beadSwipeGesture: some Gesture {
         DragGesture(minimumDistance: 30)
             .onChanged { value in
-                guard !beadsHeld else { return }
+                // On one's own rosary the string is not on the screen to
+                // follow the finger; the swipe is read when it ends
+                guard !beadsHeld, countsOnScreen else { return }
                 let t = value.translation
                 if dragArmed == nil {
                     dragArmed = abs(t.height) > abs(t.width) * 1.2
@@ -392,6 +412,10 @@ struct ScripturalRosaryPrayerView: View {
             }
             .onEnded { value in
                 defer { dragArmed = nil }
+                guard countsOnScreen else {
+                    handleMysterySwipe(value)
+                    return
+                }
                 guard !beadsHeld else {
                     settleStrand()
                     return
@@ -411,6 +435,38 @@ struct ScripturalRosaryPrayerView: View {
                     prayBack()
                 }
             }
+    }
+
+    /// Whether the beads are counted on the screen: always while the
+    /// voice says every prayer, which moves them itself, and otherwise as
+    /// Counting says (`RosaryForm.countsOnScreen`). Off the screen the
+    /// Rosary moves a mystery at a time, for a hand keeping count on its
+    /// own rosary.
+    private var countsOnScreen: Bool {
+        RosaryForm(viewModel.form).countsOnScreen(
+            aloud: userSettings.prayAloud,
+            onBeads: userSettings.prayOnBeads
+        )
+    }
+
+    /// Left for the next mystery, right for the one before, while the
+    /// beads are counted on one's own rosary. The angle gate keeps the
+    /// decade's scroll from ever counting, and a forward swipe on the
+    /// last mystery does nothing — only AMEN finishes.
+    private func handleMysterySwipe(_ value: DragGesture.Value) {
+        let dx = value.translation.width
+        let dy = value.translation.height
+        guard abs(dx) > 60, abs(dx) > abs(dy) * 1.5 else { return }
+
+        if dx < 0 {
+            guard !viewModel.isLastMystery else { return }
+            nextMystery()
+        } else {
+            // A drag begun on the left bezel is the navigation stack's
+            // way back, not a step back a mystery on the way out
+            guard value.startLocation.x > 40 else { return }
+            previousMystery()
+        }
     }
 
     /// Whether the beads are held still: while the recordings are being
@@ -451,7 +507,7 @@ struct ScripturalRosaryPrayerView: View {
     /// the size of the reading on the right.
     private var header: some View {
         ZStack {
-            Text((viewModel.isPlain ? "The Rosary Aloud" : "Scriptural Rosary").uppercased())
+            Text((viewModel.isPlain ? "The Holy Rosary" : "Scriptural Rosary").uppercased())
                 .font(AppFonts.labelFont(9))
                 .tracking(2.5)
                 .foregroundColor(AppColors.goldLight)
@@ -860,6 +916,170 @@ struct ScripturalRosaryPrayerView: View {
         return parts.filter { !$0.isEmpty }.joined(separator: ". ")
     }
 
+    // MARK: - On One's Own Rosary
+
+    /// The decade set whole, for a hand keeping count on its own rosary:
+    /// what the hand counts and the mystery's name at the head, held
+    /// still, and beneath them the Our Father's announcement, a verse for
+    /// each Hail Mary named as the bead is, and the Glory Be. Too long for
+    /// the glass, so it scrolls, dissolving at the foot; it crossfades
+    /// whole when the mystery turns, as a bead's words do on the strand.
+    private var decadeColumn: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            VStack(alignment: .leading, spacing: 8) {
+                Text(decadeCount.uppercased())
+                    .font(AppFonts.labelFont(9.5))
+                    .tracking(2)
+                    .foregroundColor(AppColors.gold.opacity(0.9))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                    .shadow(color: .black.opacity(0.5), radius: 4, y: 1)
+
+                Text(viewModel.currentMystery?.name ?? "")
+                    .font(AppFonts.headlineFont(20))
+                    .foregroundColor(AppColors.cream)
+                    .lineLimit(2, reservesSpace: true)
+                    .minimumScaleFactor(0.85)
+                    .multilineTextAlignment(.leading)
+                    .shadow(color: .black.opacity(0.5), radius: 6, y: 1)
+                    .contentTransition(.opacity)
+                    .animation(Motion.decadeTurn, value: viewModel.currentMysteryIndex)
+            }
+            .accessibilityElement(children: .combine)
+
+            ZStack(alignment: .topLeading) {
+                ScrollView(showsIndicators: false) {
+                    decadeWords
+                        .padding(.bottom, 28)
+                }
+                .scrollBounceBehavior(.basedOnSize)
+                .id(viewModel.currentMysteryIndex)
+                .transition(.opacity)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .mask(
+                LinearGradient(
+                    stops: [
+                        .init(color: .black, location: 0),
+                        .init(color: .black, location: 0.9),
+                        .init(color: .clear, location: 1)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
+            .animation(Motion.decadeTurn, value: viewModel.currentMysteryIndex)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 28)
+        .accessibilityAction(named: "Next mystery") {
+            if viewModel.isLastMystery { finishRosary() } else { nextMystery() }
+        }
+        .accessibilityAction(named: "Previous mystery", previousMystery)
+    }
+
+    /// What the hand counts on the decade: "Our Father · Ten Hail Marys ·
+    /// Glory Be", seven to a sorrow of the chaplet
+    private var decadeCount: String {
+        let hailMarys = viewModel.hailMarys == 7 ? "Seven" : viewModel.hailMarys == 10 ? "Ten" : "\(viewModel.hailMarys)"
+        return "Our Father · \(hailMarys) Hail Marys · Glory Be"
+    }
+
+    /// Every bead's words in order, each under the bead's own name
+    private var decadeWords: some View {
+        VStack(alignment: .leading, spacing: 24) {
+            ForEach(0...(viewModel.hailMarys + 1), id: \.self) { bead in
+                decadeBead(bead)
+            }
+        }
+    }
+
+    private func decadeBead(_ bead: Int) -> some View {
+        let reading = viewModel.reading(bead: bead)
+        let size = userSettings.meditationFontSize
+
+        return VStack(alignment: .leading, spacing: 8) {
+            Text(viewModel.strand.label(bead: bead).uppercased())
+                .font(AppFonts.labelFont(9))
+                .tracking(1.8)
+                .foregroundColor(AppColors.gold.opacity(0.8))
+                .shadow(color: .black.opacity(0.5), radius: 4, y: 1)
+
+            Text(reading.text)
+                .font(AppFonts.bodyFont(size))
+                .foregroundColor(AppColors.cream)
+                .lineSpacing((size * 0.35).rounded())
+                .shadow(color: .black.opacity(0.55), radius: 6, y: 1)
+                .fixedSize(horizontal: false, vertical: true)
+
+            if let closing = reading.closingPrayer {
+                Text(closing)
+                    .font(AppFonts.bodyFont(size))
+                    .foregroundColor(AppColors.cream)
+                    .lineSpacing((size * 0.35).rounded())
+                    .shadow(color: .black.opacity(0.55), radius: 6, y: 1)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, 4)
+            }
+
+            if let reference = reading.reference {
+                Text(reference.uppercased())
+                    .font(AppFonts.labelFont(9))
+                    .tracking(1.5)
+                    .foregroundColor(AppColors.gold.opacity(0.8))
+            }
+
+            if let footnote = reading.footnote {
+                Text(footnote.uppercased())
+                    .font(AppFonts.labelFont(9))
+                    .tracking(1.5)
+                    .foregroundColor(AppColors.cream.opacity(0.55))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .accessibilityElement(children: .combine)
+    }
+
+    /// The mystery before, faded on the first — present, so the foot
+    /// never rearranges itself under the thumb
+    private var previousMysteryArrow: some View {
+        TransportButton(icon: .asset("ph-arrow-left"), size: 20, label: "Previous mystery", action: previousMystery)
+            .disabled(viewModel.isFirstMystery)
+            .opacity(viewModel.isFirstMystery ? 0.25 : 1)
+            .accessibilityHidden(viewModel.isFirstMystery)
+    }
+
+    /// The mystery after — and on the last, the check that is AMEN: the
+    /// forward move that ends the Rosary is the one that finishes it
+    private var nextMysteryArrow: some View {
+        TransportButton(
+            icon: .asset(viewModel.isLastMystery ? "ph-check" : "ph-arrow-right"),
+            size: viewModel.isLastMystery ? 21 : 20,
+            label: viewModel.isLastMystery ? "Amen — finish the Rosary" : "Next mystery"
+        ) {
+            if viewModel.isLastMystery {
+                finishRosary()
+            } else {
+                nextMystery()
+            }
+        }
+    }
+
+    private func nextMystery() {
+        travel = .forward
+        withAnimation(Motion.decadeTurn) {
+            _ = viewModel.nextMystery()
+        }
+    }
+
+    private func previousMystery() {
+        guard !viewModel.isFirstMystery else { return }
+        travel = .back
+        withAnimation(Motion.decadeTurn) {
+            viewModel.previousMystery()
+        }
+    }
+
     // MARK: - Foot
 
     /// Where the Rosary stands among its mysteries — the five beads and
@@ -890,19 +1110,31 @@ struct ScripturalRosaryPrayerView: View {
                     .contentTransition(.opacity)
             }
             .animation(Motion.decadeTurn, value: viewModel.currentMysteryIndex)
+            .frame(maxWidth: .infinity)
+            // Counted on one's own rosary, the arrows that move a mystery
+            // at a time stand either side of where the Rosary stands.
+            // Laid over the readout rather than beside it, so it keeps
+            // its place and its height whichever way the beads are counted
+            .overlay(alignment: .leading) {
+                if !countsOnScreen { previousMysteryArrow.transition(.opacity) }
+            }
+            .overlay(alignment: .trailing) {
+                if !countsOnScreen { nextMysteryArrow.transition(.opacity) }
+            }
+            .animation(Motion.crossfade, value: countsOnScreen)
 
             HStack(spacing: 28) {
-                // Said aloud or read in silence, from the Rosary itself:
+                // Whole Rosary or read in silence, from the Rosary itself:
                 // this screen has no playback sheet to put it in. Named
-                // in words and drawn as the same switch the set's page
-                // uses — a bare speaker here read as a volume control.
-                // The Rosary Aloud has no such choice to offer
+                // in words — the Audio choice's own — and drawn as a
+                // switch; a bare speaker here read as a volume control.
+                // The Holy Rosary has no such choice to offer
                 if !viewModel.isPlain {
                     SetupTogglePill(
-                        icon: "ph-hands-praying",
-                        title: UserSettings.prayAloudTitle,
+                        icon: RosaryChoice.audio.icon,
+                        title: RosaryChoice.audio.name(of: true, for: .scriptural),
                         isOn: Bindable(userSettings).prayAloud,
-                        hint: UserSettings.prayAloudDetail(isOn: userSettings.prayAloud)
+                        hint: RosaryChoice.audio.note(for: userSettings.prayAloud, form: .scriptural)
                     )
                     .frame(width: 172)
                 }
