@@ -124,7 +124,9 @@ struct ContentView: View {
                 )
                     .ignoresSafeArea(.all, edges: .bottom)
                     .opacity(shouldShowTabBar ? 1 : 0)
-                    .offset(y: shouldShowTabBar ? 0 : 100)
+                    // Under Reduce Motion it fades where it stands
+                    // rather than sliding below the glass
+                    .offset(y: shouldShowTabBar || reduceMotion ? 0 : 100)
                     .animation(Motion.panel, value: shouldShowTabBar)
             }
             .accessibilityHidden(firstUseTour.isRunning)
