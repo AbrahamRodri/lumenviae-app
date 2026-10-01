@@ -554,12 +554,12 @@ enum ChantSearch {
             .joined(separator: " ")
     }
 
-    /// `text` with every match of the folded `needle` underlined in gold
-    static func highlighted(_ text: String, needle: String) -> AttributedString {
-        guard !needle.isEmpty else { return AttributedString(text) }
+    /// Where the folded `needle` stands in `text`, as ranges of the text
+    /// as written: a match on "caeli" is the range of "Cæli"
+    static func matches(in text: String, needle: String) -> [Range<String.Index>] {
+        guard !needle.isEmpty else { return [] }
 
-        // Each folded character remembers the character it came from, so
-        // a match on "caeli" can be drawn under "Cæli"
+        // Each folded character remembers the character it came from
         var folded: [Character] = []
         var origin: [String.Index] = []
         for index in text.indices {
@@ -569,7 +569,7 @@ enum ChantSearch {
             }
         }
         let pattern = Array(needle)
-        guard !pattern.isEmpty, folded.count >= pattern.count else { return AttributedString(text) }
+        guard !pattern.isEmpty, folded.count >= pattern.count else { return [] }
 
         var ranges: [Range<String.Index>] = []
         var i = 0
@@ -583,6 +583,13 @@ enum ChantSearch {
                 i += 1
             }
         }
+        return ranges
+    }
+
+    /// `text` with every match of the folded `needle` underlined in gold
+    static func highlighted(_ text: String, needle: String) -> AttributedString {
+        let ranges = matches(in: text, needle: needle)
+        guard !ranges.isEmpty else { return AttributedString(text) }
 
         var result = AttributedString()
         var cursor = text.startIndex
