@@ -5,10 +5,10 @@
 //  Learning a chant by heart — the "Learn · Practice" board. A chant is
 //  learned in four steps, the learner's own to take:
 //
-//    1 Listen        hear the choir
-//    2 Read along    follow the words as the choir sings them
-//    3 Sing along    the choir sings, then you sing it back
-//    4 On your own   you sing first, then the choir sings it to you
+//    1 Listen        hear it sung
+//    2 Read along    follow the words as the cantor sings them
+//    3 Sing along    the cantor sings, then you sing it back
+//    4 On your own   you sing first, then the cantor sings it to you
 //
 //  For a chant whose lines have been timed (`Chant.lines`), each step goes
 //  a line at a time — the line sung, again if asked, three times if
@@ -46,7 +46,7 @@ struct ChantPracticeView: View {
     /// not beginning to learn, so nothing is kept until they act
     @State private var hasActed = false
 
-    /// Whether the practice set the choir singing, so closing it stops
+    /// Whether the practice set the cantor singing, so closing it stops
     /// what it began and leaves alone what it found
     @State private var startedPlayback = false
 
@@ -325,8 +325,8 @@ struct ChantPracticeView: View {
             ChantYourTurn(
                 turn: turn,
                 subtitle: step == .onYourOwn
-                    ? "Sing the line from memory. The choir will answer."
-                    : "The choir sang the line. Now sing it back."
+                    ? "Sing the line from memory. The cantor will answer."
+                    : "The cantor sang the line. Now sing it back."
             )
             .transition(.opacity)
         } else {
@@ -341,7 +341,7 @@ struct ChantPracticeView: View {
                     if lines, !player.holds(chant) || !player.isPlaying {
                         singLine()
                     } else {
-                        // Starting the choir is the practice's own act, and
+                        // Starting the chant is the practice's own act, and
                         // puts down a set the chant was being sung in
                         if !player.isPlaying(chant) {
                             startedPlayback = true
@@ -369,27 +369,30 @@ struct ChantPracticeView: View {
     }
 
     private var statusTitle: String {
-        if player.isPlaying(chant) { return "The choir is singing" }
+        if player.isPlaying(chant) { return "The cantor is singing" }
         switch step {
-        case .listen:    return "Listen to the choir"
+        case .listen:    return "Hear it sung"
         case .readAlong: return "Follow the words"
-        case .singAlong: return "Sing with the choir"
+        case .singAlong: return "Sing with the cantor"
         case .onYourOwn: return "Sing it on your own"
         }
     }
 
+    /// What a tap on the disc beside it does: while the chant sounds, the
+    /// disc holds it, so the note says that rather than what it did before
     private var statusNote: String {
+        if player.isPlaying(chant) { return "Tap to pause." }
         if lines {
             switch step {
             case .listen, .readAlong: return "Tap to hear the line."
-            case .singAlong: return "The choir sings the line, then you sing it back."
-            case .onYourOwn: return "You sing first, then the choir answers."
+            case .singAlong: return "The cantor sings the line, then you sing it back."
+            case .onYourOwn: return "You sing first, then the cantor answers."
             }
         }
         switch step {
         case .listen:    return "Hear the whole chant, as many times as you like."
-        case .readAlong: return "Follow the words as the choir sings them."
-        case .singAlong: return "Sing with the choir, slower if it helps."
+        case .readAlong: return "Follow the words as the cantor sings them."
+        case .singAlong: return "Sing with the cantor, slower if it helps."
         case .onYourOwn: return "Sing from memory, then play it to check."
         }
     }
@@ -619,7 +622,7 @@ struct ChantPracticeView: View {
         if lines {
             begin()
         } else if next == .onYourOwn, player.isPlaying(chant) {
-            // From memory: the choir rests until it is asked
+            // From memory: the cantor rests until asked
             player.togglePlayback()
         } else {
             begin()

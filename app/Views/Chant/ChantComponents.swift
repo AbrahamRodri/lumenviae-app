@@ -511,6 +511,71 @@ struct ChantRule: View {
     }
 }
 
+// MARK: - ChantSideScroll
+
+/// A row that runs past the glass sideways — the strip of sections, the
+/// season's chips, the search's filters, the shelf of spines — fading out
+/// at whichever edge has more to show, and only while it has. The
+/// Office's rail fades its trailing edge for good; a row scrolled to its
+/// end, or one that fits, has nothing there to hint at, and one opened on
+/// its middle (the Seasons chips, centred on the season) has something at
+/// both. A fade, not a scrollbar: cut by the edge, "SA…" read as a word
+/// misprinted rather than a row that goes on.
+struct ChantSideScroll<Content: View>: View {
+    /// The fade's breadth, the Office rail's
+    var fade: CGFloat = 52
+    @ViewBuilder var content: Content
+
+    @State private var more = ChantSideScrollMore()
+
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            content
+                .onGeometryChange(for: ChantSideScrollMore.self) { geometry in
+                    // Where the row stands against the scroll view's own
+                    // bounds, read again as it scrolls
+                    let row = geometry.frame(in: .named(ChantSideScrollMore.space))
+                    let glass = geometry.bounds(of: .named(ChantSideScrollMore.space))?.width ?? row.width
+                    return ChantSideScrollMore(leading: row.minX < -1, trailing: row.maxX > glass + 1)
+                } action: { now in
+                    withAnimation(Motion.crossfade) { more = now }
+                }
+        }
+        .coordinateSpace(.named(ChantSideScrollMore.space))
+        .mask {
+            HStack(spacing: 0) {
+                edge(more.leading, from: .leading)
+                Color.black
+                edge(more.trailing, from: .trailing)
+            }
+        }
+    }
+
+    /// One end of the mask: clear at the glass's edge and whole a fade's
+    /// breadth in while the row goes on past it; whole throughout when
+    /// it does not
+    private func edge(_ goesOn: Bool, from side: HorizontalEdge) -> some View {
+        ZStack {
+            LinearGradient(
+                colors: [.clear, .black],
+                startPoint: side == .leading ? .leading : .trailing,
+                endPoint: side == .leading ? .trailing : .leading
+            )
+            Color.black.opacity(goesOn ? 0 : 1)
+        }
+        .frame(width: fade)
+    }
+}
+
+/// Which edges of a `ChantSideScroll` have more beyond them. Measured
+/// off the main actor, so nonisolated
+nonisolated struct ChantSideScrollMore: Equatable {
+    static let space = "ChantSideScroll.space"
+
+    var leading = false
+    var trailing = false
+}
+
 // MARK: - ChantSettingPill
 
 /// A work sung in more than one setting — the simple and the solemn Salve

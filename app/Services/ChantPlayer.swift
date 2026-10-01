@@ -26,7 +26,7 @@
 //  chant learned by ear is learned at three-quarters speed first), a
 //  chant sung again from the top when it ends, and — for a chant whose
 //  lines have been timed (`Chant.lines`) — a line at a time: the line
-//  again, or the choir and the learner taking turns. The pace is
+//  again, or the cantor and the learner taking turns. The pace is
 //  borrowed — part of the claim, never remembered as the app's narration
 //  speed — and comes back however the claim ends.
 //
@@ -152,7 +152,7 @@ enum ChantLineEnd: Equatable {
     case goOn
     /// The same line again, until the reader moves on
     case again
-    /// The choir sings a line, then rests for as long while the reader
+    /// The cantor sings a line, then rests for as long while the reader
     /// sings it back, then goes on to the next
     case takeTurns
     /// Stops at the line's end (practice: listen, read along)
@@ -332,7 +332,7 @@ final class ChantPlayer {
         } else if isLoading {
             pauseAskedWhileLoading.toggle()
         } else if let turn {
-            // The reader's turn is held or taken up; the choir is not
+            // The reader's turn is held or taken up; the cantor is not
             // started over the reader singing
             if turn.endsAt == nil { resumeTurn() } else { suspendTurn() }
         } else if ownsPlayback {
@@ -892,7 +892,7 @@ final class ChantPlayer {
         }
     }
 
-    /// The reader sings line `index` first, then the choir sings it back
+    /// The reader sings line `index` first, then the cantor sings it back
     /// to them, and stops — practice's last step
     func yourTurnFirst(_ index: Int, of chant: Chant) {
         guard chant.lines.indices.contains(index) else { return }
@@ -901,7 +901,7 @@ final class ChantPlayer {
             claim?.pause()
             seek(toLine: index)
         } else {
-            // Loaded, but held still at the line, so the choir can answer
+            // Loaded, but held still at the line, so the cantor can answer
             // from its start when the reader's turn is over
             load(chant, startLine: index, paused: true)
         }
@@ -1021,7 +1021,7 @@ final class ChantPlayer {
     /// What follows the reader's turn when it ends
     @ObservationIgnored private var afterTurn: (() -> Void)?
 
-    /// The reader's turn: as long as the choir took over the line, at the
+    /// The reader's turn: as long as the cantor took over the line, at the
     /// pace it is sounding at, and a breath more
     private func beginTurn(on line: Int, then: @escaping () -> Void) {
         let length = current.lines.indices.contains(line) ? current.lines[line].length : 4
@@ -1152,7 +1152,7 @@ final class ChantPlayer {
                 continueQueue()
             } else if let turn {
                 // The reader's turn keeping its time is going on already,
-                // as a silence is: play never starts the choir over the
+                // as a silence is: play never starts the cantor over the
                 // reader singing
                 if turn.endsAt == nil { resumeTurn() }
             } else if !isPlaying {

@@ -6,7 +6,7 @@
 //  Latin and in English, its score, the line being sung with its English
 //  beneath when the chant's lines have been timed, and a transport made
 //  for learning by ear: the line again (or the whole chant again), back
-//  and on by the line (or by ten seconds), a slower pace, the choir and
+//  and on by the line (or by ten seconds), a slower pace, the cantor and
 //  the reader taking turns line by line, the words, and a sleep timer.
 //  "Learn this chant" opens its practice, step by step.
 //
@@ -264,7 +264,12 @@ struct ChantView: View {
                         endPoint: .bottom
                     )
                 )
-                .padding(14)
+                .padding(.horizontal, 14)
+                .padding(.top, 14)
+                // A foot of its own for ENLARGE, beneath the score's
+                // dissolve: laid over the last line, it was read through
+                // the faded words
+                .padding(.bottom, 32)
                 .overlay(
                     RoundedRectangle(cornerRadius: 14)
                         .strokeBorder(AppColors.gold.opacity(0.24), lineWidth: AppLine.hairline)
@@ -439,11 +444,11 @@ private struct NowPlayingLine: View {
 
 // MARK: - ChantYourTurn
 
-/// "Your turn": the line the choir sang is the reader's to sing back,
-/// for as long as the choir took over it
+/// "Your turn": the line the cantor sang is the reader's to sing back,
+/// for as long as the cantor took over it
 struct ChantYourTurn: View {
     let turn: ChantTurn
-    var subtitle = "The choir sang the line. Now sing it back."
+    var subtitle = "The cantor sang the line. Now sing it back."
 
     var body: some View {
         HStack(spacing: 14) {
@@ -560,7 +565,7 @@ private struct NowPlayingTransport: View {
                         if !holds { player.play(chant) }
                         player.setLineEnd(player.lineEnd == .takeTurns ? .goOn : .takeTurns)
                     }
-                    .accessibilityHint("The choir sings a line, then waits while you sing it back")
+                    .accessibilityHint("The cantor sings a line, then waits while you sing it back")
                 }
                 pill("Words", icon: "ph-text-align-left", isOn: false, action: showWords)
                 pill("Sleep timer", icon: "ph-moon-stars", isOn: player.hasSleepTimer, action: showSleep)

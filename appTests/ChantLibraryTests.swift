@@ -341,6 +341,28 @@ struct ChantLibraryTests {
         #expect(works.contains { $0.chants.contains { $0.id == "gloria_patri" } })
     }
 
+    @Test func aHitInTheWordsNamesItsSettingWhereTheWorkHasTwo() throws {
+        let solemn = try #require(ChantCatalog.chant("salve_regina_solemn"))
+        let sung = ChantSearch.WordHit(id: "a", chant: solemn, snippet: "Salve", line: 0, start: 0)
+        #expect(ChantSearch.setting(of: sung) == "Solemn")
+        // The Prayer Book's words are every setting's, and name none
+        let read = ChantSearch.WordHit(id: "b", chant: solemn, snippet: "Salve", line: nil, start: nil)
+        #expect(ChantSearch.setting(of: read) == nil)
+        let teDeum = try #require(ChantCatalog.chant("te_deum"))
+        let alone = ChantSearch.WordHit(id: "c", chant: teDeum, snippet: "Te Deum", line: 0, start: 0)
+        #expect(ChantSearch.setting(of: alone) == nil)
+    }
+
+    @Test func theCanticlesAreNotCalledPsalms() throws {
+        #expect(try #require(ChantCatalog.chant("magnificat")).kindName == "Canticle")
+        #expect(try #require(ChantCatalog.chant("te_deum")).kindName == "Canticle")
+        #expect(try #require(ChantCatalog.chant("miserere")).kindName == "Psalm")
+        #expect(try #require(ChantCatalog.chant("salve_regina_simple")).kindName == "Antiphon")
+        for id in ChantLibraryData.kindNames.keys {
+            #expect(ChantCatalog.chant(id) != nil, "\(id) names a chant the catalog lacks")
+        }
+    }
+
     @Test func theWordsLoseTheirMarks() {
         #expect(ChantSearch.clean("℣. Ora pro nobis, sancta Dei Génitrix.") == "Ora pro nobis, sancta Dei Génitrix.")
         #expect(ChantSearch.clean("[Let us pray.]") == "")

@@ -164,7 +164,7 @@ struct ChantSearchView: View {
     }
 
     private var filters: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
+        ChantSideScroll {
             HStack(spacing: 8) {
                 Menu {
                     Picker("Type", selection: $form) {
@@ -430,7 +430,7 @@ struct ChantSearchView: View {
         } label: {
             VStack(alignment: .leading, spacing: 6) {
                 HStack(alignment: .firstTextBaseline, spacing: 10) {
-                    Text(hit.chant.latinTitle)
+                    Text([hit.chant.latinTitle, ChantSearch.setting(of: hit)].compactMap { $0 }.joined(separator: " · "))
                         .font(AppFonts.readingFont(17))
                         .foregroundColor(AppColors.cream)
                     Spacer(minLength: 8)
@@ -466,6 +466,7 @@ struct ChantSearchView: View {
         .accessibilityElement(children: .ignore)
         .accessibilityLabel([
             hit.chant.latinTitle,
+            ChantSearch.setting(of: hit),
             hit.start.map { "at \(ChantPlayer.spoken($0))" },
             hit.snippet,
             hit.chant.englishTitle
@@ -497,6 +498,16 @@ enum ChantSearch {
         /// The line's index in `Chant.lines`, for a timed chant
         let line: Int?
         let start: TimeInterval?
+    }
+
+    /// The setting a hit in the words was sung in, named where its work
+    /// has more than one, as Titles names it with its pill: the simple
+    /// and the solemn Salve Regina would otherwise give rows that read
+    /// alike. A hit in the Prayer Book's text is the words of every
+    /// setting, quoted once, and names none
+    static func setting(of hit: WordHit) -> String? {
+        guard hit.line != nil, hit.chant.settings.count > 1 else { return nil }
+        return hit.chant.settingName
     }
 
     /// Case, accents and the ligatures aside: "Cæli" and "caeli" fold alike

@@ -101,6 +101,15 @@ enum ChantLibraryData {
         "veni_sancte_reple": .everydayPrayer
     ]
 
+    /// What one chant is, for a kicker, where its kind's own word would
+    /// be wrong: Psalms and Canticles holds the Miserere, a psalm, beside
+    /// the Magnificat and the Te Deum, which are canticles
+    static let kindNames: [String: String] = [
+        "magnificat": "Canticle",
+        "te_deum": "Canticle",
+        "miserere": "Psalm",
+    ]
+
     // MARK: - Seasons
 
     static let seasonChants: [ChantSeason: [String]] = [

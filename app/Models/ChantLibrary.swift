@@ -608,9 +608,9 @@ enum ChantLearningStep: Int, CaseIterable, Identifiable {
 
     var note: String {
         switch self {
-        case .listen:    return "Hear the choir"
+        case .listen:    return "Hear it sung"
         case .readAlong: return "Follow the words"
-        case .singAlong: return "Sing with the choir"
+        case .singAlong: return "Sing with the cantor"
         case .onYourOwn: return "Sing without help"
         }
     }
@@ -623,6 +623,10 @@ enum ChantLearningStep: Int, CaseIterable, Identifiable {
 extension Chant {
 
     var form: ChantForm { ChantLibraryData.forms[id] ?? .hymn }
+
+    /// What it is, for a kicker — "CANTICLE · 7:31": its kind's word for
+    /// one of them, unless the kind holds more than one sort of chant
+    var kindName: String { ChantLibraryData.kindNames[id] ?? form.singular }
 
     /// The seasons it belongs to; none for a chant of the whole year
     var seasons: [ChantSeason] {

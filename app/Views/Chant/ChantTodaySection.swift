@@ -275,11 +275,11 @@ struct ChantTodaySection: View {
             ChantThumbnail(name: ChantCatalog.painting(subject: day.painting), size: 64, radius: 12)
 
             VStack(alignment: .leading, spacing: 6) {
-                Text("\(featured.form.singular) · \(featured.durationLabel)".uppercased())
+                Text("\(featured.kindName) · \(featured.durationLabel)".uppercased())
                     .font(AppFonts.labelFont(8.5))
                     .tracking(1.5)
                     .foregroundColor(AppColors.gold.opacity(0.8))
-                    .accessibilityLabel("\(featured.form.singular), \(ChantPlayer.spoken(featured.duration))")
+                    .accessibilityLabel("\(featured.kindName), \(ChantPlayer.spoken(featured.duration))")
 
                 Button {
                     open(featured)

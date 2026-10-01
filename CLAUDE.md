@@ -2237,7 +2237,11 @@ write concurrent code here:
   a strip of sections, the one chosen remembered (`chantLibrary.section`),
   its glass opening a search over the page, which stays beneath it hidden
   so Cancel comes back to the same section at the same place, and its
-  bookmark the Saved section. **Today**
+  bookmark the Saved section. The strip, Seasons' chips, the search's
+  filters and Saved's shelf are `ChantSideScroll`s, which fade out at
+  whichever edge has more to show (52 points, the Office rail's), and
+  only while it has: cut by the glass with no sign, the strip's "SA…"
+  read as a misprint. **Today**
   (`ChantTodaySection`): the day's four hours on the sun's arc
   (`ChantHour`, `ChantDayArc` — the Angelus at six and noon, the Regina
   Cæli in its place through Eastertide, the Magnificat at evening, the
@@ -2296,15 +2300,23 @@ write concurrent code here:
   (`ChantForm` — Short Chants for the antiphons, Hymns, Feast Poems for
   the sequences, Litanies, Psalms and Canticles, Everyday Prayers; 16,
   21, 7, 5, 3 and 12), the kind's chants with their lengths drawn as
-  rules, and "Short on time?" (`ChantLength`, a minute and seven minutes
-  the cuts). **Learn** (`ChantLearnSection`): the four steps, the
+  rules (a kicker that says what one chant is, as Today's weekday card
+  does, reads `Chant.kindName`: its kind's word, but Canticle for the
+  Magnificat and the Te Deum, which stand under Psalms and Canticles
+  beside the Miserere, a Psalm), and "Short on time?" (`ChantLength`,
+  a minute and seven minutes the cuts). **Learn** (`ChantLearnSection`): the four steps, the
   season's chant to learn in time, and the course (`ChantLearningPath`:
   the Rosary's prayers, the antiphons of Our Lady, the hymns of
   adoration, then more under "See more"), each chant showing the step
   it stands on, the one touched last with its CONTINUE in gold, the
   board's one gold act. **Saved** (`ChantSavedSection`): a shelf of spines
-  (`ChantSpineCloth`) — Learned, Favourites, and each set the reader
-  made — over the one chosen; a set's chants and pauses are moved and
+  (`ChantSpineCloth`) — Learned, Favourites, each set the reader made,
+  and the dashed + after the last — standing side by side on a shelf
+  that runs the gutter, the one chosen taller and lit, over the chants
+  of the one chosen. A spine's title turns up it in an overlay, never
+  in the spine's own stack: there, the line it was set on before
+  turning widened every spine to a hundred points, a cover standing
+  over its neighbours. A set's chants and pauses are moved and
   removed from the handle's menu, added from `ChantPickerSheet` and
   `ChantPauseSheet` (a note in red, silence if wanted; with none, its
   row says NOTE), shared as words and sung as one; then Recently played
@@ -2315,7 +2327,7 @@ write concurrent code here:
   first chant from Add to a Set: backing out leaves no empty spine. The
   Learned and Favourites spines carry a count only once there is
   something to count, to VoiceOver too, and the spine chosen does not
-  rise under Reduce Motion. The curation — every chant's kind,
+  grow under Reduce Motion. The curation — every chant's kind,
   seasons, feasts, weekdays, months, occasions with their rubrics,
   paths and paintings — is `Data/ChantLibraryData.swift`, hand-written;
   `ChantLibraryTests` fails if it names a chant the catalog lacks or
@@ -2357,10 +2369,14 @@ write concurrent code here:
   pill, grouped in season now / any time / other times; Prayers finds
   the chant that sings a prayer by the Prayer Book's name for it; Words
   finds a line of what is sung — with its place in the recording only
-  when the chant's lines are timed.
+  when the chant's lines are timed, and the setting it was sung in
+  where the work has two ("Salve Regina · Solemn", to VoiceOver too),
+  so the simple and the solemn never give rows that read alike.
 
   **The chant's page is Now Playing** (`ChantView`, `.chant(id:)`): the
-  names, the score in a window (ENLARGE for `ChantScoreSheet`), the
+  names, the score in a window (ENLARGE for `ChantScoreSheet`, in a
+  foot of its own beneath the score's dissolve — laid over it, it was
+  read through the last faded line), the
   line being sung with its English, the scrubber, five controls around
   the page's gold play — repeat, back, forward, speed (1× | ¾×) — and
   Take turns (two arrows passing, since nothing listens — it once wore a
@@ -2373,11 +2389,12 @@ write concurrent code here:
   width and cut it at the window's foot: fitted to the window, a tall
   score (the Magnificat) was drawn some 58 points wide. **Practice** (`ChantPracticeView`, full
   screen, its own ✕) learns a chant in four steps — Listen, Read along,
-  Sing along (the choir sings, then "Your turn"), On your own (you
-  first, then the choir) — with Repeat, Speed and Hide words (every
+  Sing along (the cantor sings, then "Your turn"), On your own (you
+  first, then the cantor) — with Repeat, Speed and Hide words (every
   other word, or all, cut to its first letter), ending on the learner's
-  own "I know it by heart". Its ✕ gives back the pace and the Repeat it
-  found, and stops the choir only if the practice set it singing: a ¾×
+  own "I know it by heart". The note beside its disc says what a tap
+  does, "Tap to pause." while the chant sounds. Its ✕ gives back the
+  pace and the Repeat it found, and stops the cantor only if the practice set it singing: a ¾×
   chosen to learn by once stayed on every chant after.
 
   **A chant steps by the line only when its lines are timed**
@@ -2529,7 +2546,7 @@ write concurrent code here:
   while a chant is still arriving — headphones pulled out as the set's
   next chant loads — is kept (`pauseAskedWhileLoading`), and the chant
   arrives held. Play from the Lock Screen during the reader's turn never
-  starts the choir over them: a turn keeping its time is going on, as a
+  starts the cantor over them: a turn keeping its time is going on, as a
   silence is. On screen it is drawn so (`chantGoesOn`, a chant sounding
   or its turn running): the chant page's gold play and the mini player's
   disc show pause through the turn, and a tap holds it, where they once

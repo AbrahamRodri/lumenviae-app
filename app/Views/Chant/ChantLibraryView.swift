@@ -266,7 +266,7 @@ struct ChantLibraryView: View {
 
     private func sectionStrip(proxy: ScrollViewProxy) -> some View {
         ScrollViewReader { strip in
-            ScrollView(.horizontal, showsIndicators: false) {
+            ChantSideScroll {
                 HStack(spacing: 24) {
                     ForEach(ChantLibrarySection.allCases) { each in
                         let lit = each == section

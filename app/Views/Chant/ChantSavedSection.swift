@@ -53,6 +53,9 @@ struct ChantSavedSection: View {
     @State private var renameText = ""
     @State private var deleting: ChantSet?
     @State private var namingSet = false
+    /// The glass's width, so the shelf runs the whole gutter under a few
+    /// spines
+    @State private var shelfWidth: CGFloat = 0
 
     init(openSetID: Binding<UUID?>, open: @escaping (Chant) -> Void) {
         _openSetID = openSetID
@@ -158,7 +161,7 @@ struct ChantSavedSection: View {
     // MARK: - The shelf of spines
 
     private var spines: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
+        ChantSideScroll {
             HStack(alignment: .bottom, spacing: 8) {
                 // A count stands on a spine only once there is something to
                 // count: an empty shelf is not told it has none
@@ -198,9 +201,15 @@ struct ChantSavedSection: View {
                 }
                 newSpine
             }
+            // As tall as the tallest spine chosen, whichever is, so the
+            // page beneath never moves when another is taken down
+            .frame(height: Self.tallest + Self.chosenRise, alignment: .bottom)
             .padding(.horizontal, 20)
-            .padding(.top, 12)
-            .padding(.bottom, 10)
+            .padding(.top, 14)
+            .padding(.bottom, 6)
+            // The shelf runs the gutter whatever stands on it, and on past
+            // the glass with the spines once they outrun it
+            .frame(minWidth: shelfWidth, alignment: .leading)
             .background(alignment: .bottom) {
                 // The shelf they stand on
                 Rectangle()
@@ -216,9 +225,15 @@ struct ChantSavedSection: View {
                     .accessibilityHidden(true)
             }
         }
+        .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { shelfWidth = $0 }
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Your shelf")
     }
+
+    /// The tallest spine on the shelf, a set's
+    private static let tallest: CGFloat = 180
+    /// How much taller the chosen spine stands than its neighbours
+    private static let chosenRise: CGFloat = 12
 
     private static func count(_ n: Int) -> String? {
         n > 0 ? "\(n)" : nil
@@ -237,48 +252,55 @@ struct ChantSavedSection: View {
         lit: Bool,
         action: @escaping () -> Void
     ) -> some View {
-        Button(action: action) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 4)
-                    .fill(cloth)
-                RoundedRectangle(cornerRadius: 4)
-                    .strokeBorder(AppColors.gold.opacity(lit ? 0.85 : 0.35), lineWidth: lit ? 1 : AppLine.hairline)
-                // Two tooled bands, as a book's spine carries
-                VStack {
-                    Rectangle().fill(AppColors.gold.opacity(0.35)).frame(height: 1).padding(.top, 10)
-                    Spacer()
-                    Rectangle().fill(AppColors.gold.opacity(0.35)).frame(height: 1).padding(.bottom, 26)
+        // The spine chosen stands taller than its neighbours, on the same
+        // shelf; under Reduce Motion it is lit where it stands
+        let tall = height + (lit && !reduceMotion ? Self.chosenRise : 0)
+        return Button(action: action) {
+            RoundedRectangle(cornerRadius: 4)
+                .fill(cloth)
+                .overlay {
+                    RoundedRectangle(cornerRadius: 4)
+                        .strokeBorder(AppColors.gold.opacity(lit ? 0.85 : 0.35), lineWidth: lit ? 1 : AppLine.hairline)
                 }
-                .padding(.horizontal, 6)
-
-                Text(title.uppercased())
-                    .font(AppFonts.labelFont(9))
-                    .tracking(1.8)
-                    .foregroundColor(AppColors.goldLight.opacity(0.92))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.6)
-                    .frame(width: height - 52)
-                    .rotationEffect(.degrees(-90))
-                    .offset(y: -6)
-
-                if let note {
+                .overlay {
+                    // Two tooled bands, as a book's spine carries
                     VStack {
+                        Rectangle().fill(AppColors.gold.opacity(0.35)).frame(height: 1).padding(.top, 10)
                         Spacer()
+                        Rectangle().fill(AppColors.gold.opacity(0.35)).frame(height: 1).padding(.bottom, 26)
+                    }
+                    .padding(.horizontal, 6)
+                }
+                .overlay {
+                    // The title runs up the spine. Laid over the cloth, so
+                    // the line it is set on before it turns never widens
+                    // it: set in the spine's own stack, that line made every
+                    // spine a hundred points wide, standing over its
+                    // neighbours like a cover
+                    Text(title.uppercased())
+                        .font(AppFonts.labelFont(9))
+                        .tracking(1.8)
+                        .foregroundColor(AppColors.goldLight.opacity(0.92))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.6)
+                        .frame(width: tall - 52)
+                        .rotationEffect(.degrees(-90))
+                        .offset(y: -6)
+                }
+                .overlay(alignment: .bottom) {
+                    if let note {
                         Text(note)
                             .font(AppFonts.readingItalicFont(10.5))
                             .foregroundColor(AppColors.cream.opacity(0.75))
                             .lineLimit(1)
                             .minimumScaleFactor(0.7)
+                            .padding(.horizontal, 4)
                             .padding(.bottom, 8)
                     }
                 }
-            }
-            .frame(width: 46, height: height)
-            // The spine chosen stands a little proud of the shelf; under
-            // Reduce Motion it is lit where it stands
-            .offset(y: lit && !reduceMotion ? -8 : 0)
-            .shadow(color: lit ? AppColors.gold.opacity(0.35) : .black.opacity(0.4), radius: lit ? 10 : 4, y: 3)
-            .contentShape(Rectangle())
+                .frame(width: 46, height: tall)
+                .shadow(color: lit ? AppColors.gold.opacity(0.35) : .black.opacity(0.4), radius: lit ? 10 : 4, y: 3)
+                .contentShape(Rectangle())
         }
         .buttonStyle(SacredCardButtonStyle())
         .animation(Motion.settle, value: lit)

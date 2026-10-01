@@ -91,7 +91,7 @@ struct ChantSeasonsSection: View {
 
     private func seasonChips(current: ChantSeason, shown: ChantSeason) -> some View {
         ScrollViewReader { proxy in
-            ScrollView(.horizontal, showsIndicators: false) {
+            ChantSideScroll {
                 HStack(spacing: 8) {
                     ForEach(ChantSeason.allCases) { season in
                         let lit = season == shown
