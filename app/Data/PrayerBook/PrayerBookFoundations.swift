@@ -286,7 +286,7 @@ Qui vivis et regnas in saecula saeculorum. Amen.
             title: "Prayer for the Pope",
             latinTitle: "Oremus pro Pontifice",
             origin: "The Mass · Psalm 40:3",
-            note: "Said for the Holy Father by name, at Benediction (adoration of the Host, ending in a blessing) and in private prayer.",
+            note: "Said for the Pope by name, at Benediction (adoration of the Host, ending in a blessing) and in private prayer.",
             english: """
 ℣. Let us pray for our Pope N.
 ℟. The Lord preserve him, and give him life, and make him blessed upon the earth, and deliver him not up to the will of his enemies.
