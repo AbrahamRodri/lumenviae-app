@@ -5,18 +5,17 @@ those two.
 
 Every entry has a `status`:
 
-  identified   the work is named from the image or a page found by search,
-               but no licence page has been read and nothing is downloaded
-  candidate    a proposed work for an open slot; licence still unread
-  verified     the licence was read on the source page and the file fetched
-               (fetch.py sets this when it resolves a Commons file)
+  unverified   named here, but no licence page has been read: a work
+               identified from the image, or a candidate for an open slot
+  verified     fetch.py read the licence on the source page (Commons' file
+               page, or Verbum Gloriae's licence page and the chant's own
+               page) and it is on the allowed list
   flagged      a licence that cannot be established, or one known not to
                be open
 
-This round was done with the network policy refusing every source host
-(Verbum Gloriae, Wikimedia Commons, the museums' APIs), so nothing below
-is past `identified`/`candidate` yet. fetch.py takes each entry the rest of
-the way once it can reach Commons.
+Nothing unverified is merged into the app. This round was done with the
+network policy refusing every source host, so everything below starts
+unverified; fetch.py takes each entry the rest of the way.
 """
 
 PD_ART = {
@@ -231,17 +230,26 @@ CHANTS = [
     dict(tier=1, found=True, entry={"id": "vidi_aquam", "slug": "vidi-aquam", "group": "easter", "latin": "Vidi Aquam", "english": "I Saw Water", "setting": None, "detail": "Sung at the sprinkling before Sunday Mass in Eastertide", "prayers": []},
          source="https://www.verbumgloriae.es/project/vidi-aquam/", est_seconds=150),
     # Tier 2
-    dict(tier=2, found=True, entry={"id": "missa_de_angelis", "slug": "misa-viii-de-angelis", "group": "mass", "latin": "Missa de Angelis", "english": "The Mass of the Angels", "setting": "Mass VIII", "detail": "Kyrie, Gloria, Sanctus and Agnus Dei, the best-known Ordinary of all", "prayers": []},
-         source="https://www.verbumgloriae.es/project/misa-viii-de-angelis/", est_seconds=600,
-         note="One page, likely four recordings (Kyrie, Gloria, Sanctus, Agnus Dei). If so, split into four entries with \"page\": \"project/misa-viii-de-angelis\" and an \"audio\"/\"scores\" selector each; fetch.py --chants lists the file names."),
+    dict(tier=2, found=True, entry={"id": "kyrie_de_angelis", "slug": "misa-viii-de-angelis", "page": "project/misa-viii-de-angelis", "group": "mass", "latin": "Kyrie", "english": "Lord, Have Mercy", "setting": "Mass VIII", "detail": "Mass VIII, the Missa de Angelis", "prayers": []},
+         source="https://www.verbumgloriae.es/project/misa-viii-de-angelis/", est_seconds=90, audio_match="kyrie", scores_match="kyrie",
+         note="One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'kyrie'."),
+    dict(tier=2, found=True, entry={"id": "gloria_de_angelis", "slug": "misa-viii-de-angelis", "page": "project/misa-viii-de-angelis", "group": "mass", "latin": "Gloria", "english": "Glory to God in the Highest", "setting": "Mass VIII", "detail": "Mass VIII, the Missa de Angelis", "prayers": []},
+         source="https://www.verbumgloriae.es/project/misa-viii-de-angelis/", est_seconds=180, audio_match="gloria", scores_match="gloria",
+         note="One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'gloria'."),
+    dict(tier=2, found=True, entry={"id": "sanctus_de_angelis", "slug": "misa-viii-de-angelis", "page": "project/misa-viii-de-angelis", "group": "mass", "latin": "Sanctus", "english": "Holy, Holy, Holy", "setting": "Mass VIII", "detail": "Mass VIII, the Missa de Angelis", "prayers": []},
+         source="https://www.verbumgloriae.es/project/misa-viii-de-angelis/", est_seconds=60, audio_match="sanctus", scores_match="sanctus",
+         note="One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'sanctus'."),
+    dict(tier=2, found=True, entry={"id": "agnus_de_angelis", "slug": "misa-viii-de-angelis", "page": "project/misa-viii-de-angelis", "group": "mass", "latin": "Agnus Dei", "english": "Lamb of God", "setting": "Mass VIII", "detail": "Mass VIII, the Missa de Angelis", "prayers": []},
+         source="https://www.verbumgloriae.es/project/misa-viii-de-angelis/", est_seconds=60, audio_match="agnus", scores_match="agnus",
+         note="One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'agnus'."),
     dict(tier=2, found=True, entry={"id": "credo_iii", "slug": "credo-iii", "group": "mass", "latin": "Credo III", "english": "The Nicene Creed", "setting": "Credo III", "detail": "The Creed sung on Sundays and solemnities", "prayers": []},
          source="https://www.verbumgloriae.es/project/credo-iii/", est_seconds=330),
     # Tier 3 found
     dict(tier=3, found=True, entry={"id": "audi_benigne", "slug": "audi-benigne-conditor", "group": "lent", "latin": "Audi Benigne Conditor", "english": "O Kind Creator, Bow Thine Ear", "setting": None, "detail": "The Vespers hymn of Lent", "prayers": []},
          source="https://www.verbumgloriae.es/project/audi-benigne-conditor/", est_seconds=180),
-    dict(tier=3, found=True, entry={"id": "o_vos_omnes", "slug": "misterios-dolorosos", "page": "cantos/santo-rosario/misterios-dolorosos", "audio": "TODO", "scores": ["TODO"], "group": "lent", "latin": "O Vos Omnes", "english": "O All Ye That Pass By", "setting": None, "detail": "Lamentations 1:12, sung in the Sorrowful Mysteries", "prayers": []},
-         source="https://www.verbumgloriae.es/cantos/santo-rosario/misterios-dolorosos/", est_seconds=90,
-         note="The page holds the whole sung Sorrowful Rosary; the search result names a score 'Partitura «O vos omnes»'. Fill audio/scores from fetch.py --chants."),
+    dict(tier=3, found=True, entry={"id": "o_vos_omnes", "slug": "misterios-dolorosos", "page": "cantos/santo-rosario/misterios-dolorosos", "group": "lent", "latin": "O Vos Omnes", "english": "O All Ye That Pass By", "setting": None, "detail": "Lamentations 1:12, sung in the Sorrowful Mysteries", "prayers": []},
+         source="https://www.verbumgloriae.es/cantos/santo-rosario/misterios-dolorosos/", est_seconds=90, audio_match="vos[-_ ]?omnes", scores_match="vos[-_ ]?omnes",
+         note="The page holds the whole sung Sorrowful Rosary; fetch.py picks this antiphon's files by the pattern 'vos-omnes'."),
     # Also on VG, not asked for but fitting slots the designs draw
     dict(tier="extra", found=True, entry={"id": "ad_regias", "slug": "ad-regias-agni-dapes", "group": "easter", "latin": "Ad Regias Agni Dapes", "english": "At the Lamb's High Feast", "setting": None, "detail": "The Vespers hymn of Eastertide", "prayers": []},
          source="https://www.verbumgloriae.es/project/ad-regias-agni-dapes/", est_seconds=200,

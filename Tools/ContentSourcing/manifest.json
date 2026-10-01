@@ -3,7 +3,7 @@
   "new_paintings": [
     {
       "kind": "painting",
-      "status": "candidate",
+      "status": "unverified",
       "file_url": null,
       "commons_file": null,
       "width": null,
@@ -28,7 +28,7 @@
     },
     {
       "kind": "painting",
-      "status": "candidate",
+      "status": "unverified",
       "file_url": null,
       "commons_file": null,
       "width": null,
@@ -53,7 +53,7 @@
     },
     {
       "kind": "painting",
-      "status": "candidate",
+      "status": "unverified",
       "file_url": null,
       "commons_file": null,
       "width": null,
@@ -79,7 +79,7 @@
     },
     {
       "kind": "painting",
-      "status": "candidate",
+      "status": "unverified",
       "file_url": null,
       "commons_file": null,
       "width": null,
@@ -105,7 +105,7 @@
     },
     {
       "kind": "painting",
-      "status": "candidate",
+      "status": "unverified",
       "file_url": null,
       "commons_file": null,
       "width": null,
@@ -130,7 +130,7 @@
     },
     {
       "kind": "painting",
-      "status": "candidate",
+      "status": "unverified",
       "file_url": null,
       "commons_file": null,
       "width": null,
@@ -155,7 +155,7 @@
     },
     {
       "kind": "painting",
-      "status": "candidate",
+      "status": "unverified",
       "file_url": null,
       "commons_file": null,
       "width": null,
@@ -180,7 +180,7 @@
     },
     {
       "kind": "painting",
-      "status": "candidate",
+      "status": "unverified",
       "file_url": null,
       "commons_file": null,
       "width": null,
@@ -206,7 +206,7 @@
     },
     {
       "kind": "painting",
-      "status": "candidate",
+      "status": "unverified",
       "file_url": null,
       "commons_file": null,
       "width": null,
@@ -231,7 +231,7 @@
     },
     {
       "kind": "painting",
-      "status": "candidate",
+      "status": "unverified",
       "file_url": null,
       "commons_file": null,
       "width": null,
@@ -257,7 +257,7 @@
     },
     {
       "kind": "painting",
-      "status": "candidate",
+      "status": "unverified",
       "file_url": null,
       "commons_file": null,
       "width": null,
@@ -283,7 +283,7 @@
     },
     {
       "kind": "painting",
-      "status": "candidate",
+      "status": "unverified",
       "file_url": null,
       "commons_file": null,
       "width": null,
@@ -308,7 +308,7 @@
     },
     {
       "kind": "painting",
-      "status": "candidate",
+      "status": "unverified",
       "file_url": null,
       "commons_file": null,
       "width": null,
@@ -334,7 +334,7 @@
     },
     {
       "kind": "painting",
-      "status": "candidate",
+      "status": "unverified",
       "file_url": null,
       "commons_file": null,
       "width": null,
@@ -359,7 +359,7 @@
     },
     {
       "kind": "painting",
-      "status": "candidate",
+      "status": "unverified",
       "file_url": null,
       "commons_file": null,
       "width": null,
@@ -388,7 +388,7 @@
     {
       "kind": "painting",
       "imageset": "glorious_coronation",
-      "status": "identified",
+      "status": "unverified",
       "identification_confidence": "high",
       "work": "The Coronation of the Virgin",
       "creator": "Diego Velázquez",
@@ -403,7 +403,7 @@
     {
       "kind": "painting",
       "imageset": "sorrowful_crucifixion",
-      "status": "identified",
+      "status": "unverified",
       "identification_confidence": "high",
       "work": "Christ Crucified",
       "creator": "Diego Velázquez",
@@ -418,7 +418,7 @@
     {
       "kind": "painting",
       "imageset": "sorrowful_crowning",
-      "status": "identified",
+      "status": "unverified",
       "identification_confidence": "high",
       "work": "The Crowning with Thorns",
       "creator": "Anthony van Dyck",
@@ -433,7 +433,7 @@
     {
       "kind": "painting",
       "imageset": "sorrowful_agony",
-      "status": "identified",
+      "status": "unverified",
       "identification_confidence": "high",
       "work": "Christ in Gethsemane",
       "creator": "Heinrich Hofmann (d. 1911)",
@@ -448,7 +448,7 @@
     {
       "kind": "painting",
       "imageset": "sorrowful_scourging",
-      "status": "identified",
+      "status": "unverified",
       "identification_confidence": "high",
       "work": "The Flagellation of Our Lord Jesus Christ",
       "creator": "William-Adolphe Bouguereau (d. 1905)",
@@ -463,7 +463,7 @@
     {
       "kind": "painting",
       "imageset": "seven_sorrows_pieta",
-      "status": "identified",
+      "status": "unverified",
       "identification_confidence": "high",
       "work": "Pietà",
       "creator": "William-Adolphe Bouguereau (d. 1905)",
@@ -478,7 +478,7 @@
     {
       "kind": "painting",
       "imageset": "seven_sorrows_burial",
-      "status": "identified",
+      "status": "unverified",
       "identification_confidence": "high",
       "work": "The Entombment of Christ",
       "creator": "Caravaggio",
@@ -493,7 +493,7 @@
     {
       "kind": "painting",
       "imageset": "luminous_transfiguration",
-      "status": "identified",
+      "status": "unverified",
       "identification_confidence": "high",
       "work": "The Transfiguration",
       "creator": "Raphael",
@@ -508,7 +508,7 @@
     {
       "kind": "painting",
       "imageset": "luminous_proclamation",
-      "status": "identified",
+      "status": "unverified",
       "identification_confidence": "high",
       "work": "The Sermon on the Mount",
       "creator": "Carl Heinrich Bloch (d. 1890)",
@@ -523,7 +523,7 @@
     {
       "kind": "painting",
       "imageset": "seven_sorrows_meeting",
-      "status": "identified",
+      "status": "unverified",
       "identification_confidence": "high",
       "work": "Christ Falls on the Way to Calvary (Lo Spasimo di Sicilia)",
       "creator": "Raphael",
@@ -538,7 +538,7 @@
     {
       "kind": "painting",
       "imageset": "seven_sorrows_descent",
-      "status": "identified",
+      "status": "unverified",
       "identification_confidence": "medium",
       "work": "The Descent from the Cross",
       "creator": "Peter Paul Rubens",
@@ -553,7 +553,7 @@
     {
       "kind": "painting",
       "imageset": "seven_sorrows_simeon",
-      "status": "identified",
+      "status": "unverified",
       "identification_confidence": "medium",
       "work": "Simeon's Song of Praise",
       "creator": "Rembrandt",
@@ -568,7 +568,7 @@
     {
       "kind": "painting",
       "imageset": "luminous_eucharist",
-      "status": "identified",
+      "status": "unverified",
       "identification_confidence": "medium",
       "work": "The Last Supper",
       "creator": "Juan de Juanes",
@@ -583,7 +583,7 @@
     {
       "kind": "painting",
       "imageset": "joyful_presentation",
-      "status": "identified",
+      "status": "unverified",
       "identification_confidence": "medium",
       "work": "The Presentation in the Temple",
       "creator": "Simon Vouet",
@@ -598,7 +598,7 @@
     {
       "kind": "painting",
       "imageset": "seven_sorrows_flight",
-      "status": "identified",
+      "status": "unverified",
       "identification_confidence": "medium",
       "work": "The Flight into Egypt",
       "creator": "Bartolomé Esteban Murillo",
@@ -613,7 +613,7 @@
     {
       "kind": "painting",
       "imageset": "luminous_baptism",
-      "status": "identified",
+      "status": "unverified",
       "identification_confidence": "medium",
       "work": "The Baptism of Christ",
       "creator": "Guido Reni",
@@ -628,7 +628,7 @@
     {
       "kind": "painting",
       "imageset": "joyful_annunciation",
-      "status": "identified",
+      "status": "unverified",
       "identification_confidence": "medium",
       "work": "The Annunciation",
       "creator": "Paolo de Matteis",
@@ -643,7 +643,7 @@
     {
       "kind": "painting",
       "imageset": "joyful_finding",
-      "status": "identified",
+      "status": "unverified",
       "identification_confidence": "medium",
       "work": "Christ among the Doctors",
       "creator": "Paolo Veronese",
@@ -658,7 +658,7 @@
     {
       "kind": "painting",
       "imageset": "glorious_resurrection",
-      "status": "identified",
+      "status": "unverified",
       "identification_confidence": "low",
       "work": "The Resurrection (French Baroque; artist unconfirmed)",
       "creator": null,
@@ -673,7 +673,7 @@
     {
       "kind": "painting",
       "imageset": "glorious_ascension",
-      "status": "identified",
+      "status": "unverified",
       "identification_confidence": "low",
       "work": "The Ascension (17th-c. Italian/French; artist unconfirmed)",
       "creator": null,
@@ -688,7 +688,7 @@
     {
       "kind": "painting",
       "imageset": "glorious_assumption",
-      "status": "identified",
+      "status": "unverified",
       "identification_confidence": "low",
       "work": "The Assumption of the Virgin (18th-c. Italian; artist unconfirmed)",
       "creator": null,
@@ -703,7 +703,7 @@
     {
       "kind": "painting",
       "imageset": "glorious_pentecost",
-      "status": "identified",
+      "status": "unverified",
       "identification_confidence": "low",
       "work": "Pentecost (artist unconfirmed)",
       "creator": null,
@@ -718,7 +718,7 @@
     {
       "kind": "painting",
       "imageset": "joyful_nativity",
-      "status": "identified",
+      "status": "unverified",
       "identification_confidence": "low",
       "work": "The Adoration of the Shepherds, night scene (artist unconfirmed)",
       "creator": null,
@@ -733,7 +733,7 @@
     {
       "kind": "painting",
       "imageset": "joyful_visitation",
-      "status": "identified",
+      "status": "unverified",
       "identification_confidence": "low",
       "work": "The Visitation (artist unconfirmed)",
       "creator": null,
@@ -748,7 +748,7 @@
     {
       "kind": "painting",
       "imageset": "luminous_cana",
-      "status": "identified",
+      "status": "unverified",
       "identification_confidence": "low",
       "work": "The Wedding at Cana (artist unconfirmed)",
       "creator": null,
@@ -763,7 +763,7 @@
     {
       "kind": "painting",
       "imageset": "sorrowful_carrying",
-      "status": "identified",
+      "status": "unverified",
       "identification_confidence": "low",
       "work": "Christ Carrying the Cross (Flemish Baroque; artist unconfirmed)",
       "creator": null,
@@ -792,7 +792,7 @@
       "kind": "chant",
       "id": "pange_lingua",
       "tier": 1,
-      "status": "candidate",
+      "status": "unverified",
       "source_page": "https://www.verbumgloriae.es/project/pange-lingua/",
       "creator": "Verbum Gloriae",
       "licence": "Verbum Gloriae copyleft (CC BY-SA 4.0 terms without the attribution requirement; ShareAlike)",
@@ -807,7 +807,7 @@
       "kind": "chant",
       "id": "vidi_aquam",
       "tier": 1,
-      "status": "candidate",
+      "status": "unverified",
       "source_page": "https://www.verbumgloriae.es/project/vidi-aquam/",
       "creator": "Verbum Gloriae",
       "licence": "Verbum Gloriae copyleft (CC BY-SA 4.0 terms without the attribution requirement; ShareAlike)",
@@ -820,24 +820,69 @@
     },
     {
       "kind": "chant",
-      "id": "missa_de_angelis",
+      "id": "kyrie_de_angelis",
       "tier": 2,
-      "status": "candidate",
+      "status": "unverified",
       "source_page": "https://www.verbumgloriae.es/project/misa-viii-de-angelis/",
       "creator": "Verbum Gloriae",
       "licence": "Verbum Gloriae copyleft (CC BY-SA 4.0 terms without the attribution requirement; ShareAlike)",
       "licence_url": "https://www.verbumgloriae.es/licencia-copyleft/",
       "attribution": "Recordings and scores: Verbum Gloriae (verbumgloriae.es), copyleft",
-      "estimated_seconds": 600,
-      "estimated_bytes": 2577749,
+      "estimated_seconds": 90,
+      "estimated_bytes": 386662,
       "size_is_estimate": true,
-      "note": "One page, likely four recordings (Kyrie, Gloria, Sanctus, Agnus Dei). If so, split into four entries with \"page\": \"project/misa-viii-de-angelis\" and an \"audio\"/\"scores\" selector each; fetch.py --chants lists the file names."
+      "note": "One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'kyrie'."
+    },
+    {
+      "kind": "chant",
+      "id": "gloria_de_angelis",
+      "tier": 2,
+      "status": "unverified",
+      "source_page": "https://www.verbumgloriae.es/project/misa-viii-de-angelis/",
+      "creator": "Verbum Gloriae",
+      "licence": "Verbum Gloriae copyleft (CC BY-SA 4.0 terms without the attribution requirement; ShareAlike)",
+      "licence_url": "https://www.verbumgloriae.es/licencia-copyleft/",
+      "attribution": "Recordings and scores: Verbum Gloriae (verbumgloriae.es), copyleft",
+      "estimated_seconds": 180,
+      "estimated_bytes": 773325,
+      "size_is_estimate": true,
+      "note": "One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'gloria'."
+    },
+    {
+      "kind": "chant",
+      "id": "sanctus_de_angelis",
+      "tier": 2,
+      "status": "unverified",
+      "source_page": "https://www.verbumgloriae.es/project/misa-viii-de-angelis/",
+      "creator": "Verbum Gloriae",
+      "licence": "Verbum Gloriae copyleft (CC BY-SA 4.0 terms without the attribution requirement; ShareAlike)",
+      "licence_url": "https://www.verbumgloriae.es/licencia-copyleft/",
+      "attribution": "Recordings and scores: Verbum Gloriae (verbumgloriae.es), copyleft",
+      "estimated_seconds": 60,
+      "estimated_bytes": 257775,
+      "size_is_estimate": true,
+      "note": "One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'sanctus'."
+    },
+    {
+      "kind": "chant",
+      "id": "agnus_de_angelis",
+      "tier": 2,
+      "status": "unverified",
+      "source_page": "https://www.verbumgloriae.es/project/misa-viii-de-angelis/",
+      "creator": "Verbum Gloriae",
+      "licence": "Verbum Gloriae copyleft (CC BY-SA 4.0 terms without the attribution requirement; ShareAlike)",
+      "licence_url": "https://www.verbumgloriae.es/licencia-copyleft/",
+      "attribution": "Recordings and scores: Verbum Gloriae (verbumgloriae.es), copyleft",
+      "estimated_seconds": 60,
+      "estimated_bytes": 257775,
+      "size_is_estimate": true,
+      "note": "One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'agnus'."
     },
     {
       "kind": "chant",
       "id": "credo_iii",
       "tier": 2,
-      "status": "candidate",
+      "status": "unverified",
       "source_page": "https://www.verbumgloriae.es/project/credo-iii/",
       "creator": "Verbum Gloriae",
       "licence": "Verbum Gloriae copyleft (CC BY-SA 4.0 terms without the attribution requirement; ShareAlike)",
@@ -852,7 +897,7 @@
       "kind": "chant",
       "id": "audi_benigne",
       "tier": 3,
-      "status": "candidate",
+      "status": "unverified",
       "source_page": "https://www.verbumgloriae.es/project/audi-benigne-conditor/",
       "creator": "Verbum Gloriae",
       "licence": "Verbum Gloriae copyleft (CC BY-SA 4.0 terms without the attribution requirement; ShareAlike)",
@@ -867,7 +912,7 @@
       "kind": "chant",
       "id": "o_vos_omnes",
       "tier": 3,
-      "status": "candidate",
+      "status": "unverified",
       "source_page": "https://www.verbumgloriae.es/cantos/santo-rosario/misterios-dolorosos/",
       "creator": "Verbum Gloriae",
       "licence": "Verbum Gloriae copyleft (CC BY-SA 4.0 terms without the attribution requirement; ShareAlike)",
@@ -876,13 +921,13 @@
       "estimated_seconds": 90,
       "estimated_bytes": 386662,
       "size_is_estimate": true,
-      "note": "The page holds the whole sung Sorrowful Rosary; the search result names a score 'Partitura «O vos omnes»'. Fill audio/scores from fetch.py --chants."
+      "note": "The page holds the whole sung Sorrowful Rosary; fetch.py picks this antiphon's files by the pattern 'vos-omnes'."
     },
     {
       "kind": "chant",
       "id": "ad_regias",
       "tier": "extra",
-      "status": "candidate",
+      "status": "unverified",
       "source_page": "https://www.verbumgloriae.es/project/ad-regias-agni-dapes/",
       "creator": "Verbum Gloriae",
       "licence": "Verbum Gloriae copyleft (CC BY-SA 4.0 terms without the attribution requirement; ShareAlike)",
@@ -897,7 +942,7 @@
       "kind": "chant",
       "id": "te_matrem",
       "tier": "extra",
-      "status": "candidate",
+      "status": "unverified",
       "source_page": "https://www.verbumgloriae.es/project/te-matrem-laudamus/",
       "creator": "Verbum Gloriae",
       "licence": "Verbum Gloriae copyleft (CC BY-SA 4.0 terms without the attribution requirement; ShareAlike)",
@@ -912,7 +957,7 @@
       "kind": "chant",
       "id": "o_oriens_magnificat",
       "tier": "extra",
-      "status": "candidate",
+      "status": "unverified",
       "source_page": "https://www.verbumgloriae.es/project/o-oriens-et-magnificat/",
       "creator": "Verbum Gloriae",
       "licence": "Verbum Gloriae copyleft (CC BY-SA 4.0 terms without the attribution requirement; ShareAlike)",
