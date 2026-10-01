@@ -2260,7 +2260,12 @@ write concurrent code here:
   days to the next season in the middle — then the seasons as chips, the
   season's chants, the chant to learn before the next one comes, and the
   feasts ahead with theirs (`ChantFeast`, the 1962 dates; Christ the
-  King the last Sunday of October). **Occasions**
+  King the last Sunday of October), each row its red day numeral, its
+  names and the feast's painting as Coming Up hangs the season's (the
+  chant's own where the feast has none). A thumbnail is cut about the
+  point `ChantLibraryData.focalPoints` names for its painting, where the
+  middle would lose its subject — the Father over the Son in the Trinity,
+  the angel's face, Our Lady's in the Immaculate Conception. **Occasions**
   (`ChantOccasionsSection`): Benediction, a Visit, a Sung Rosary (53
   minutes, the Ave Maria fifty-three times), Before Bed, Before Work or
   Study, For Those Who Have Died — an index in red numerals over the
@@ -2277,10 +2282,15 @@ write concurrent code here:
   (`ChantSet.occasionID`), a second tap letting that set go — never a
   second copy — but only while the set is still the occasion's own copy,
   its name and its chants and pauses in order
-  (`ChantShelfStore.isUntouchedCopy`); a kept set the reader has changed
-  is let go only after Saved's own question before a delete
-  (`toggleKeeping` answers `.askFirst`), since a tap once threw away
-  their work. Choosing an occasion, here or from Today's month, brings
+  (`ChantShelfStore.isUntouchedCopy`); where the occasion sings the
+  season's antiphon of Our Lady, any of the four answers, so Before Bed
+  kept in Advent with the Alma Redemptoris is still its own copy in Lent.
+  A set a later build has written fields into is not taken for untouched.
+  Any other kept set is let go only after Saved's own question before a
+  delete (`toggleKeeping` answers `.askFirst`), its line true whatever
+  made the set differ ("It is no longer quite the occasion's own
+  order"), since a tap once threw away the reader's work, and a seasonal
+  copy was once told it had been changed. Choosing an occasion, here or from Today's month, brings
   its order up the page; the tap once seemed to do nothing, the order
   opening below the fold. **Types** (`ChantTypesSection`): six lettered tiles
   (`ChantForm` — Short Chants for the antiphons, Hymns, Feast Poems for
@@ -2327,7 +2337,10 @@ write concurrent code here:
   its key's `.unreadable`, never written over. An entry it can read keeps
   the fields a later build gave it, a set's items' included: each
   entry's stored form is held by its key (`ShelfEntry`), and the fields
-  this build does not know go back with it on every write.
+  this build does not know go back with it on every write. An entry gone
+  from the list lets its stored form go, and `setStep` and `notePlayed`
+  write their list once, so an entry updated in place keeps its fields
+  and one put down and begun again inherits none.
 
   **The rubrics are set in `Rubric.text`** (`FixedColors`, a lighter red
   at 4.6:1 or more on every theme): the sentences of an order of
@@ -2517,7 +2530,13 @@ write concurrent code here:
   next chant loads — is kept (`pauseAskedWhileLoading`), and the chant
   arrives held. Play from the Lock Screen during the reader's turn never
   starts the choir over them: a turn keeping its time is going on, as a
-  silence is. A chant chosen during a silence takes the Lock Screen
+  silence is. On screen it is drawn so (`chantGoesOn`, a chant sounding
+  or its turn running): the chant page's gold play and the mini player's
+  disc show pause through the turn, and a tap holds it, where they once
+  showed play and a tap paused the turn unseen; a silence still shows
+  play on the disc, since a tap there goes on to the next chant. A chant
+  whose recording is missing takes a set's silence out of the player
+  rather than leave it looping as if it were the chant. A chant chosen during a silence takes the Lock Screen
   straight from the silence; only a set that really ends clears it.
   Practising a chant, by the line or whole, puts down a set it was being
   sung in. The line clock and the reader's turn keep the speed sounding

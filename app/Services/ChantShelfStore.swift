@@ -204,8 +204,12 @@ final class ChantShelfStore {
     /// Stands the learner on `step`, beginning the chant if it was not
     func setStep(_ step: ChantLearningStep, for chantID: String) {
         learned.removeAll { $0 == chantID }
-        learning.removeAll { $0.chantID == chantID }
-        learning.insert(LearningRecord(chantID: chantID, step: step.rawValue, touched: Date()), at: 0)
+        // One write: the chant's record is updated where it is kept, so the
+        // fields a later build gave it stay with it
+        var records = learning
+        records.removeAll { $0.chantID == chantID }
+        records.insert(LearningRecord(chantID: chantID, step: step.rawValue, touched: Date()), at: 0)
+        learning = records
     }
 
     /// Begins a chant at its first step, or touches it where it stands.
@@ -311,15 +315,73 @@ final class ChantShelfStore {
             saveOccasion(occasion, on: date)
             return .kept
         }
-        guard isUntouchedCopy(kept, of: occasion, on: date) else { return .askFirst(kept) }
+        guard isUntouchedCopy(kept, of: occasion) else { return .askFirst(kept) }
         deleteSet(kept.id)
         return .letGo
     }
 
     /// Whether a kept set is still the occasion's own copy: its name, and
-    /// the same chants and pauses in the same order
-    func isUntouchedCopy(_ set: ChantSet, of occasion: ChantOccasion, on date: Date = Date()) -> Bool {
-        set.name == occasion.title && set.items.map(\.kind) == Self.copy(of: occasion, on: date)
+    /// the same chants and pauses in the same order — where the occasion
+    /// sings the season's antiphon of Our Lady, any of the four, so a copy
+    /// kept in Advent is still the occasion's own in Lent. A set a later
+    /// build has written fields into is not taken for untouched: what it
+    /// holds there, this build cannot see.
+    func isUntouchedCopy(_ set: ChantSet, of occasion: ChantOccasion) -> Bool {
+        guard set.name == occasion.title, !carriesUnknownFields(set) else { return false }
+        let order = Self.order(of: occasion)
+        guard set.items.count == order.count else { return false }
+        return zip(order, set.items).allSatisfy { $0.matches($1.kind) }
+    }
+
+    /// One item of an occasion's own order: a note, or a chant the
+    /// occasion may sing there
+    private enum OccasionItem {
+        case note(String)
+        case chant(ids: Set<String>, times: Int)
+
+        func matches(_ kind: ChantSet.Item.Kind) -> Bool {
+            switch (self, kind) {
+            case let (.note(rubric), .pause(note, seconds)):
+                return seconds == 0 && note == rubric
+            case let (.chant(ids, times), .chant(id, kept)):
+                return ids.contains(id) && times == kept
+            default:
+                return false
+            }
+        }
+    }
+
+    /// The occasion's order, as `copy(of:on:)` writes it on any day
+    private static func order(of occasion: ChantOccasion) -> [OccasionItem] {
+        var items: [OccasionItem] = []
+        for block in occasion.blocks {
+            if let rubric = block.rubric {
+                items.append(.note(rubric))
+            }
+            for _ in 0..<max(1, block.rounds) {
+                for step in block.steps {
+                    let ids: Set<String>
+                    switch step.chant {
+                    case .chant(let id):
+                        ids = ChantCatalog.chant(id) == nil ? [] : [id]
+                    case .antiphonOfTheSeason:
+                        ids = Set(MarianAntiphon.allCases.flatMap { ChantCatalog.chants(forPrayer: $0.prayerID).map(\.id) })
+                    }
+                    guard !ids.isEmpty else { continue }
+                    items.append(.chant(ids: ids, times: max(1, step.times)))
+                }
+            }
+        }
+        return items
+    }
+
+    /// Whether the set's stored form, or one of its items', holds fields
+    /// this build does not know
+    private func carriesUnknownFields(_ set: ChantSet) -> Bool {
+        guard let earlier = stored[Key.sets]?[set.entryKey] else { return false }
+        if earlier.keys.contains(where: { !ChantSet.knownFields.contains($0) }) { return true }
+        let items = earlier["items"] as? [[String: Any]] ?? []
+        return items.contains { item in item.keys.contains { $0 != "id" && $0 != "kind" } }
     }
 
     /// An occasion copied to a set of the reader's own, its rubrics
@@ -406,11 +468,14 @@ final class ChantShelfStore {
     private static let recentLimit = 8
 
     func notePlayed(_ chantID: String, at date: Date = Date()) {
-        recent.removeAll { $0.chantID == chantID }
-        recent.insert(RecentPlay(chantID: chantID, at: date), at: 0)
-        if recent.count > Self.recentLimit {
-            recent.removeLast(recent.count - Self.recentLimit)
+        // One write, as `setStep` makes
+        var plays = recent
+        plays.removeAll { $0.chantID == chantID }
+        plays.insert(RecentPlay(chantID: chantID, at: date), at: 0)
+        if plays.count > Self.recentLimit {
+            plays.removeLast(plays.count - Self.recentLimit)
         }
+        recent = plays
     }
 
     // MARK: - Preferences
@@ -478,6 +543,10 @@ final class ChantShelfStore {
             defaults.set(data, forKey: key)
             return
         }
+        // An entry gone from the list lets go of its stored form, so a new
+        // entry under the same key later inherits nothing of it
+        let present = Set(values.map { $0.entryKey })
+        stored[key] = storedForms.filter { present.contains($0.key) }
         var elements: [Any] = []
         for (value, element) in zip(values, encoded) {
             guard var fields = element as? [String: Any], let earlier = storedForms[value.entryKey] else {

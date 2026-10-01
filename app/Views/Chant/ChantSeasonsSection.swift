@@ -231,6 +231,10 @@ struct ChantSeasonsSection: View {
         }
     }
 
+    static func painting(of feast: ChantFeast, chant: Chant) -> String {
+        feast.painting.map { ChantCatalog.painting(subject: $0) } ?? ChantCatalog.painting(for: chant)
+    }
+
     private func feastRow(_ feast: ChantFeast, date: Date, chant: Chant) -> some View {
         let parts = ChantDates.dayAndMonth(date)
         return Button {
@@ -258,16 +262,16 @@ struct ChantSeasonsSection: View {
                         .font(AppFonts.readingFont(17))
                         .foregroundColor(AppColors.cream)
                         .fixedSize(horizontal: false, vertical: true)
-                    Text(chant.latinTitle)
+                    Text("\(chant.latinTitle) · \(chant.durationLabel)")
                         .font(AppFonts.readingItalicFont(13.5))
                         .foregroundColor(AppColors.textSecondary)
+                        .monospacedDigit()
+                        .fixedSize(horizontal: false, vertical: true)
                 }
-                Spacer(minLength: 8)
-                Text(chant.durationLabel)
-                    .font(AppFonts.labelFont(9))
-                    .tracking(1)
-                    .foregroundColor(AppColors.textSecondary)
-                    .monospacedDigit()
+                Spacer(minLength: 0)
+                // The feast's own painting, as Coming Up hangs the season's;
+                // a feast with none shows its chant's
+                ChantThumbnail(name: Self.painting(of: feast, chant: chant), size: 56, radius: 12)
             }
             .padding(.vertical, 10)
             .frame(minHeight: 56)

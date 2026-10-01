@@ -532,8 +532,10 @@ private struct NowPlayingTransport: View {
                 Spacer(minLength: 0)
                 stepButton(back: true, lines: lines, holds: holds)
                 Spacer(minLength: 0)
+                // The reader's turn is the chant going on: drawn as pause,
+                // and a tap holds it
                 ChantGoldPlayButton(
-                    isPlaying: player.isPlaying(chant),
+                    isPlaying: player.holds(chant) && player.chantGoesOn,
                     isLoading: player.current.id == chant.id && player.isLoading,
                     size: 68,
                     label: chant.latinTitle

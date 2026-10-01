@@ -365,6 +365,13 @@ final class ChantPlayer {
         if ownsPlayback { claim?.pause() }
     }
 
+    /// Whether the chant is going on: sounding, or the reader's turn in it
+    /// keeping its time — what a play button draws, so a tap during the
+    /// turn reads as a pause, and pauses
+    var chantGoesOn: Bool {
+        isPlaying || turn?.endsAt != nil
+    }
+
     /// A pause asked for while the chant was still arriving — headphones
     /// taken out as a set's next chant loads, the set's own Pause — which
     /// the load keeps: the chant arrives held, not sounding
@@ -411,6 +418,7 @@ final class ChantPlayer {
     /// still there when `paused`, for the reader to sing first.
     private func load(_ chant: Chant, startLine: Int? = nil, paused: Bool = false) {
         lineTask?.cancel()
+        let silenceInPlayer = silentClipLoaded
         silentClipLoaded = false
         current = chant
         UserSettings.shared.chapelChantID = chant.id
@@ -424,6 +432,8 @@ final class ChantPlayer {
 
         guard let url = chant.audioURL else {
             errorMessage = "This chant's recording is missing."
+            // The set's silence, left looping, would be read as this chant
+            if silenceInPlayer { claim?.unload(preservingNowPlaying: false) }
             return
         }
         isLoading = true

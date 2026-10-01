@@ -147,7 +147,7 @@ enum ChantLibraryData {
 
     static let feasts: [ChantFeast] = [
         ChantFeast(id: "holy_name", name: "The Holy Name of Jesus", rule: .holyName, chantID: "jesu_dulcis_memoria"),
-        ChantFeast(id: "st_joseph", name: "St Joseph", rule: .fixed(month: 3, day: 19), chantID: "te_joseph"),
+        ChantFeast(id: "st_joseph", name: "St Joseph", rule: .fixed(month: 3, day: 19), chantID: "te_joseph", painting: "devotion_st_joseph"),
         ChantFeast(id: "annunciation", name: "The Annunciation", rule: .fixed(month: 3, day: 25), chantID: "ave_maria_antiphon"),
         ChantFeast(id: "holy_thursday", name: "Holy Thursday", rule: .easter(-3), chantID: "ubi_caritas"),
         ChantFeast(id: "good_friday", name: "Good Friday", rule: .easter(-2), chantID: "vexilla_regis"),
@@ -162,8 +162,8 @@ enum ChantLibraryData {
         ChantFeast(id: "rosary", name: "Our Lady of the Rosary", rule: .fixed(month: 10, day: 7), chantID: "litany_loreto", painting: "feast_our_lady_of_the_rosary"),
         ChantFeast(id: "christ_the_king", name: "Christ the King", rule: .lastSundayOfOctober, chantID: "christus_vincit", painting: "feast_christ_the_king"),
         ChantFeast(id: "all_saints", name: "All Saints", rule: .fixed(month: 11, day: 1), chantID: "litany_saints", painting: "feast_all_saints"),
-        ChantFeast(id: "all_souls", name: "All Souls", rule: .fixed(month: 11, day: 2), chantID: "dies_irae"),
-        ChantFeast(id: "immaculate_conception", name: "The Immaculate Conception", rule: .fixed(month: 12, day: 8), chantID: "tota_pulchra"),
+        ChantFeast(id: "all_souls", name: "All Souls", rule: .fixed(month: 11, day: 2), chantID: "dies_irae", painting: "devotion_holy_souls"),
+        ChantFeast(id: "immaculate_conception", name: "The Immaculate Conception", rule: .fixed(month: 12, day: 8), chantID: "tota_pulchra", painting: "season_advent"),
         ChantFeast(id: "christmas", name: "Christmas Day", rule: .fixed(month: 12, day: 25), chantID: "adeste_fideles")
     ]
 
@@ -393,6 +393,17 @@ enum ChantLibraryData {
     /// back to until its imageset is in the app (`ChantCatalog.painting(
     /// subject:)`): the Annunciation for Advent, the Jordan's Trinity for
     /// Sunday, the angel in the garden for the Holy Angels
+    /// Where a painting is cut to a square, when its middle would lose its
+    /// subject: the Father over the Son in Ribera's Trinity, the angel's
+    /// face in Strozzi's Guardian Angel, Our Lady's in Murillo's
+    /// Immaculate Conception. 0…1 across and down; any painting not named
+    /// here is cut about its middle.
+    static let focalPoints: [String: (x: Double, y: Double)] = [
+        "devotion_holy_trinity": (0.5, 0.25),
+        "devotion_guardian_angels": (0.5, 0.3),
+        "season_advent": (0.5, 0.3)
+    ]
+
     static let subjectPaintings: [String: String] = [
         "season_advent": "joyful_annunciation",
         "devotion_holy_trinity": "luminous_baptism",

@@ -598,9 +598,12 @@ struct ChantThumbnail: View {
     let name: String
     var size: CGFloat = 40
     var radius: CGFloat = 10
+    /// Where the painting is cut; the curation's point for it
+    /// (`ChantLibraryData.focalPoints`), else its middle
+    var focal: UnitPoint? = nil
 
     var body: some View {
-        CachedAssetImage(name, focal: .center)
+        CachedAssetImage(name, focal: focal ?? Self.focalPoint(for: name))
             .frame(width: size, height: size)
             .clipShape(RoundedRectangle(cornerRadius: radius))
             .overlay(
@@ -608,6 +611,11 @@ struct ChantThumbnail: View {
                     .strokeBorder(AppColors.gold.opacity(0.24), lineWidth: AppLine.hairline)
             )
             .accessibilityHidden(true)
+    }
+
+    static func focalPoint(for name: String) -> UnitPoint {
+        guard let point = ChantLibraryData.focalPoints[name] else { return .center }
+        return UnitPoint(x: point.x, y: point.y)
     }
 }
 
@@ -743,7 +751,10 @@ struct ChantMiniPlayer: View {
             .accessibilityHint("Opens the chant")
 
             ChantPlayDisc(
-                isPlaying: player.isPlaying && !player.waitingForNext,
+                // A turn keeping its time draws as going on, and a tap holds
+                // it; a silence does not, since a tap there goes on to the
+                // next chant
+                isPlaying: player.chantGoesOn && !player.waitingForNext,
                 isLoading: player.isLoading,
                 size: 36,
                 label: player.waitingForNext ? chant.latinTitle : title

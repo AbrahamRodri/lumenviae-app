@@ -95,7 +95,9 @@ struct ChantOccasionsSection: View {
             }
             Button("Cancel", role: .cancel) { unkeeping = nil }
         } message: {
-            Text("You have changed it since you kept it. Its chants stay in the library; only the set goes.")
+            // True whatever made it differ: the reader's own changes, or a
+            // later build's, which this one cannot see
+            Text("It is no longer quite the occasion's own order. Its chants stay in the library; only the set goes.")
         }
     }
 

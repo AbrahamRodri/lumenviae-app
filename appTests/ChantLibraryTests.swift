@@ -433,6 +433,40 @@ struct ChantLibraryTests {
         #expect(shelf.set(kept.id) != nil)
     }
 
+    /// Before Bed sings the season's antiphon: kept in Advent with the Alma
+    /// Redemptoris, it is still its own copy in Lent, when the Ave Regina
+    /// is sung, and a second tap lets it go without asking
+    @Test func aCopyKeptInOneSeasonIsStillTheOccasionsOwnInAnother() {
+        let shelf = store()
+        let beforeBed = ChantOccasion.occasion("before_bed")!
+        let advent = day(2026, 12, 6)
+        let lent = day(2027, 3, 1)
+        #expect(shelf.toggleKeeping(beforeBed, on: advent) == .kept)
+        let kept = shelf.keptSet(of: beforeBed)!
+        let antiphon = kept.items.compactMap { $0.chant }.last
+        #expect(antiphon.map { ChantCatalog.chants(forPrayer: PrayerBook.antiphon(on: advent).prayerID).contains($0) } == true)
+        #expect(PrayerBook.antiphon(on: advent) != PrayerBook.antiphon(on: lent))
+        #expect(shelf.toggleKeeping(beforeBed, on: lent) == .letGo)
+        #expect(shelf.sets.isEmpty)
+    }
+
+    /// A kept set a later build has written into is not taken for the
+    /// occasion's untouched copy: what it holds there cannot be seen here
+    @Test func aKeptSetALaterBuildWroteIntoIsAskedAbout() throws {
+        let defaults = UserDefaults(suiteName: "ChantLibraryTests.\(UUID().uuidString)")!
+        let benediction = ChantOccasion.occasion("benediction")!
+        let kept = ChantShelfStore(defaults: defaults).saveOccasion(benediction)
+        let encoded = try JSONSerialization.jsonObject(with: JSONEncoder().encode([kept]))
+        var sets = try #require(encoded as? [[String: Any]])
+        sets[0]["reminder"] = "Thursday evening"
+        defaults.set(try JSONSerialization.data(withJSONObject: sets), forKey: "chantShelf.sets")
+
+        let shelf = ChantShelfStore(defaults: defaults)
+        #expect(!shelf.isUntouchedCopy(shelf.set(kept.id)!, of: benediction))
+        #expect(shelf.toggleKeeping(benediction) == .askFirst(shelf.set(kept.id)!))
+        #expect(shelf.set(kept.id) != nil)
+    }
+
     @Test func aShelfKeepsTheFieldsALaterBuildWrote() throws {
         let defaults = UserDefaults(suiteName: "ChantLibraryTests.\(UUID().uuidString)")!
         let set = ChantSet(name: "Holy hour", items: [ChantSet.Item(kind: .chant(id: "adoro_te", times: 1))])
@@ -465,6 +499,15 @@ struct ChantLibraryTests {
         let learning = try #require(writtenLearning as? [[String: Any]])
         #expect(learning.first?["step"] as? Int == ChantLearningStep.singAlong.rawValue)
         #expect(learning.first?["reminder"] as? String == "evening")
+
+        // Put down and begun again, it is a new record, and inherits
+        // nothing of the old one
+        shelf.stopLearning("sub_tuum")
+        shelf.setStep(.listen, for: "sub_tuum")
+        let rewritten = try JSONSerialization.jsonObject(with: try #require(defaults.data(forKey: "chantShelf.learning")))
+        let fresh = try #require(rewritten as? [[String: Any]])
+        #expect(fresh.first?["step"] as? Int == ChantLearningStep.listen.rawValue)
+        #expect(fresh.first?["reminder"] == nil)
     }
 
     @Test func anOccasionKeptBeforeSetsSaidSoIsKnown() throws {

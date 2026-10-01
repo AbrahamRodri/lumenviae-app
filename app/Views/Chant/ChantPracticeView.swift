@@ -522,7 +522,10 @@ struct ChantPracticeView: View {
         if lines {
             singLine()
         } else if step == .listen || step == .readAlong {
-            if !player.isPlaying(chant) {
+            if player.isPlaying(chant) {
+                // Sounding already, in a set: it sings on, on its own
+                player.endQueue()
+            } else {
                 singWhole()
             }
         }
