@@ -16,8 +16,8 @@
 //  Half: the hour's order and when it is said, the three hours along
 //  the floor, and the whole tile prays it.
 //
-//  The reader's ribbons are not on this tile: they stand on the book's
-//  own first page.
+//  The reader's ribbons are not on this tile: they stand under Saved
+//  on Prayers' Today.
 //
 
 import SwiftUI
@@ -48,13 +48,6 @@ struct ChapelPrayerBookTile: View {
 
     private func pray(_ order: PrayerOrder) {
         router.push(.prayAlong(.order(order)))
-    }
-
-    /// The one line under the order's name that says what it is. Read in
-    /// one place, so when the Prayer Book's own card and this tile share
-    /// a sentence (`PrayerBook.daySummary(of:on:)`), the change is here.
-    private func summary(of order: PrayerOrder) -> String {
-        order.detail
     }
 
     /// "At noon", or "Offered today" once it has been
@@ -102,7 +95,10 @@ struct ChapelPrayerBookTile: View {
                             .minimumScaleFactor(0.8)
                             .contentTransition(.opacity)
 
-                        Text(summary(of: order))
+                        // The Prayers page's own sentence for the hour, the
+                        // one its Pray Now card sets, so the two never say
+                        // what the same order is in two ways
+                        Text(PrayerBook.daySummary(of: order, on: Date()))
                             .font(AppFonts.italicFont(16))
                             .foregroundColor(AppColors.cream.opacity(0.85))
                             .multilineTextAlignment(.center)

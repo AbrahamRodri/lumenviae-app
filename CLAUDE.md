@@ -451,10 +451,11 @@ schedule; the half is the hour's order over the three beads, each with
 its hour's own glyph (`lv-rooster`, `lv-bell`, `lv-lamp`) in place of
 its name, which had no room — MORNING and ANGELUS shrank to two sizes
 beside NIGHT, and the Regina Cæli could not be set — and the whole tile
-prays it; its line under the order is read in one place
-(`ChapelPrayerBookTile.summary(of:)`) so it can become the Prayer
-Book's own card's sentence in one line; the reader's ribbons stand on the book's first
-page, no longer here), **Reading** (the open book standing on a shelf
+prays it; its line under the order is the Prayers page's own
+sentence for the hour, `PrayerBook.daySummary(of:on:)`, which Pray Now
+sets too, so the tile and the page never say what one order is in two
+ways; the reader's ribbons stand under Saved on Prayers' Today, no
+longer here), **Reading** (the open book standing on a shelf
 with the author and the place beside it — "St. Thérèse · Chapter IV" —
 and the other books under way standing as spines beside it: tap a
 spine, or swipe the face, to bring that book forward; the tile is not
