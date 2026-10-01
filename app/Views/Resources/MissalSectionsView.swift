@@ -34,6 +34,11 @@ enum MissalVestment: String {
         case .rose: return "Rose"
         }
     }
+
+    /// The colour as it is said, never bare: "Green vestments". Where a
+    /// dot or silk already shows the colour, the screen may drop the
+    /// words and keep these for VoiceOver.
+    var plainName: String { "\(name) vestments" }
 }
 
 // MARK: - MissalRubric

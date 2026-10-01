@@ -34,7 +34,41 @@ nonisolated enum CanonicalHour: String, CaseIterable, Codable, Identifiable {
 
     var id: String { rawValue }
 
-    /// The name the hour is known by in English
+    /// The hour said plainly, the way the app titles it: "Dawn Prayer",
+    /// "Evening Prayer". The Church's name (`label`) stands beside or
+    /// beneath it, smaller. Deliberately never "Morning Prayer" or
+    /// "Night Prayer", which would be taken for the Prayer Book's own
+    /// Morning Prayers and Night Prayers.
+    var plainName: String {
+        switch self {
+        case .matins: return "Night Vigil"
+        case .lauds: return "Dawn Prayer"
+        case .prime: return "Early Morning Prayer"
+        case .terce: return "Mid-Morning Prayer"
+        case .sext: return "Midday Prayer"
+        case .nones: return "Mid-Afternoon Prayer"
+        case .vespers: return "Evening Prayer"
+        case .compline: return "Bedtime Prayer"
+        }
+    }
+
+    /// One word for the tight places — a bar title, a row's fact, the
+    /// home ledger's column of facts — in capitals: "DAWN", "EVENING".
+    var shortName: String {
+        switch self {
+        case .matins: return "VIGIL"
+        case .lauds: return "DAWN"
+        case .prime: return "EARLY"
+        case .terce: return "MID-MORNING"
+        case .sext: return "MIDDAY"
+        case .nones: return "AFTERNOON"
+        case .vespers: return "EVENING"
+        case .compline: return "BEDTIME"
+        }
+    }
+
+    /// The Church's name for the hour, kept as the secondary line under
+    /// `plainName` so a reader can match it in a printed breviary
     var label: String {
         switch self {
         case .matins: return "Matins"
@@ -72,7 +106,7 @@ nonisolated enum CanonicalHour: String, CaseIterable, Codable, Identifiable {
         case .sext: return "At midday"
         case .nones: return "Mid-afternoon"
         case .vespers: return "At evening"
-        case .compline: return "Before sleep"
+        case .compline: return "At bedtime"
         }
     }
 
@@ -131,11 +165,11 @@ nonisolated enum CanonicalHour: String, CaseIterable, Codable, Identifiable {
         return all[(index + 1) % all.count]
     }
 
-    /// "until Sext at noon" — why this hour is the one being prayed and
-    /// when it lapses.
+    /// "until Midday Prayer at noon" — why this hour is the one being
+    /// prayed and when it lapses.
     var lapses: String {
         let hour = following
-        return "until \(hour.label) at \(Self.clockWord(hour.beginsAtClockHour))"
+        return "until \(hour.plainName) at \(Self.clockWord(hour.beginsAtClockHour))"
     }
 
     /// The clock said the way a breviary would say it, in words.

@@ -52,10 +52,10 @@ nonisolated struct MissalInfo: Codable, Hashable {
     /// notes "Commemoration of Sts. Euphemia, Lucy and Geminianus"
     let commemorations: [MissalCommemoration]?
 
-    /// "I class" … "IV class", the 1962 ranking
+    /// The day's rank in plain words — "Great Feast", "Feast", "Lesser
+    /// Feast", "Weekday" — never the 1962 "I class"; see `DayRank`
     var rankLabel: String? {
-        guard let rank, (1...4).contains(rank) else { return nil }
-        return ["I", "II", "III", "IV"][rank - 1] + " class"
+        DayRank.plainLabel(rank: rank, title: title, season: tempora)
     }
 }
 
@@ -77,8 +77,63 @@ nonisolated struct MissalCalendarDay: Codable, Hashable, Identifiable {
     let commemorations: [MissalCommemoration]?
 
     var rankLabel: String? {
+        DayRank.plainLabel(rank: rank, title: title)
+    }
+}
+
+// MARK: - DayRank
+
+/// The day's rank in the words both books use. The 1962 calendar ranks
+/// a day I to IV class; the Missal served it as "I class" and the Office
+/// as "First class", which said nothing to a newcomer and did not agree
+/// with each other. Home and the Chapel read the same words through
+/// `MissalProper.rankLabel`, and the Office through `OfficeRank`.
+nonisolated enum DayRank {
+
+    /// "Great Feast" · "Feast" · "Lesser Feast" · "Weekday". A day whose
+    /// title is a feria is a weekday whatever its class — "Lenten
+    /// Weekday" or "Advent Weekday" in those seasons. `season` is any
+    /// further text that may name the season (the Missal's tempora).
+    static func plainLabel(rank: Int?, title: String?, season: String? = nil) -> String? {
+        let words = "\(title ?? "") \(season ?? "")".lowercased()
+        if isWeekday(title) {
+            return weekday(in: words)
+        }
         guard let rank, (1...4).contains(rank) else { return nil }
-        return ["I", "II", "III", "IV"][rank - 1] + " class"
+        switch rank {
+        case 1: return "Great Feast"
+        case 2: return "Feast"
+        case 3: return "Lesser Feast"
+        default: return weekday(in: words)
+        }
+    }
+
+    /// A feria by its title: "Feria …", or a weekday named for its week
+    /// ("Monday of Holy Week", "Tuesday after Ash Wednesday"), an Ember
+    /// day, or Ash Wednesday itself — ranked I to III class in Lent and
+    /// Holy Week, but weekdays, never feasts. The days of an octave and
+    /// of the Triduum are named by weekday too, and are not weekdays.
+    private static func isWeekday(_ title: String?) -> Bool {
+        let t = (title ?? "").lowercased()
+        let notWeekdays = ["octave", "supper", "good friday", "holy saturday", "vigil"]
+        if notWeekdays.contains(where: { t.contains($0) }) { return false }
+        return t.contains("feria")
+            || t.contains("ember ")
+            || t.hasPrefix("ash wednesday")
+            || t.range(of: "^(monday|tuesday|wednesday|thursday|friday|saturday)\\b",
+                       options: .regularExpression) != nil
+    }
+
+    private static func weekday(in words: String) -> String {
+        if words.contains("advent") { return "Advent Weekday" }
+        if words.contains("holy week") || words.contains("ash wednesday") { return "Lenten Weekday" }
+        // "Lent" as a word, so a Valentine or a silent night is not Lenten;
+        // the Latin tempora say "Quadragesimæ" and "Passionis"
+        if words.range(of: "\\blent\\b", options: .regularExpression) != nil
+            || words.contains("quadrages") || words.contains("passion") {
+            return "Lenten Weekday"
+        }
+        return "Weekday"
     }
 }
 

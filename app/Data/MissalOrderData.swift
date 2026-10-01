@@ -80,6 +80,42 @@ enum MissalOrderData {
         "commemoratio postcommunio":    Role(posture: .stand, isProper: true)
     ]
 
+    // MARK: - Plain Names
+
+    /// The day's own sections named plainly, keyed like `roles`. The
+    /// Mass's technical names ("Introit", "Secret", "Postcommunion")
+    /// stand beneath as the Latin secondary line, so a reader can still
+    /// find the same part in a hand missal.
+    private static let plainNames: [String: String] = [
+        "introitus":                    "Entrance Chant",
+        "oratio":                       "Opening Prayer",
+        "commemoratio oratio":          "Opening Prayer · Also Remembered",
+        "lectio":                       "First Reading",
+        "epistola":                     "First Reading",
+        "graduale":                     "Chant Between the Readings",
+        "tractus":                      "Chant Between the Readings",
+        "sequentia":                    "Feast Poem",
+        "evangelium":                   "Gospel",
+        "offertorium":                  "Offertory Chant",
+        "secreta":                      "Prayer over the Gifts",
+        "commemoratio secreta":         "Prayer over the Gifts · Also Remembered",
+        "prefatio":                     "Preface",
+        "communio":                     "Communion Chant",
+        "postcommunio":                 "Prayer after Communion",
+        "commemoratio postcommunio":    "Prayer after Communion · Also Remembered"
+    ]
+
+    /// A section's plain English name, or nil when the map does not
+    /// know it. Also matched on a prefix, since the API names a second
+    /// lesson or a seasonal variant "Lectio 2", "Graduale (Allelúja)".
+    static func plainName(for section: MissalSection) -> String? {
+        let key = sectionKey(section)
+        if let name = plainNames[key] { return name }
+        let head = key.split(whereSeparator: { !$0.isLetter && $0 != " " }).first
+            .map { String($0).trimmingCharacters(in: .whitespaces) } ?? key
+        return plainNames[head]
+    }
+
     // MARK: - Ordinary Parts
 
     /// One fixed part of the Mass, drawn from the Ordo by its label.
@@ -98,7 +134,7 @@ enum MissalOrderData {
     private static let asperges = OrdinaryPart(
         ordoLabel: "asperges",
         latinName: "Asperges",
-        englishName: "Asperges",
+        englishName: "Sprinkling with Holy Water",
         posture: .stand,
         highMassOnly: true
     )
@@ -117,14 +153,14 @@ enum MissalOrderData {
     private static let kyrie = OrdinaryPart(
         ordoLabel: "kyrie",
         latinName: "Kyrie",
-        englishName: "Kyrie",
+        englishName: "Lord, Have Mercy",
         posture: .stand
     )
 
     private static let gloria = OrdinaryPart(
         ordoLabel: "gloria",
         latinName: "Gloria",
-        englishName: "Gloria",
+        englishName: "Glory to God",
         posture: .stand
     )
 
@@ -132,7 +168,7 @@ enum MissalOrderData {
     private static let credo = OrdinaryPart(
         ordoLabel: "credo",
         latinName: "Credo",
-        englishName: "Credo",
+        englishName: "The Creed",
         posture: .stand
     )
 
@@ -154,7 +190,7 @@ enum MissalOrderData {
         OrdinaryPart(
             ordoLabel: "lavabo",
             latinName: "Lavabo",
-            englishName: "Lavabo",
+            englishName: "Washing of the Hands",
             posture: .sit
         ),
         OrdinaryPart(
@@ -176,21 +212,21 @@ enum MissalOrderData {
     private static let canon = OrdinaryPart(
         ordoLabel: "canon",
         latinName: "Canon Missæ",
-        englishName: "Canon of the Mass",
+        englishName: "Eucharistic Prayer",
         posture: .kneel
     )
 
     private static let afterCanon: [OrdinaryPart] = [
         OrdinaryPart(
             ordoLabel: "fraction – breaking of the sacred host",
-            latinName: "The Fraction",
-            englishName: "The Fraction",
+            latinName: "Fractio",
+            englishName: "Breaking of the Host",
             posture: .kneel
         ),
         OrdinaryPart(
             ordoLabel: "agnus dei",
             latinName: "Agnus Dei",
-            englishName: "Agnus Dei",
+            englishName: "Lamb of God",
             posture: .kneel
         ),
         OrdinaryPart(
@@ -213,8 +249,8 @@ enum MissalOrderData {
         ),
         OrdinaryPart(
             ordoLabel: "ablutions",
-            latinName: "Ablutions",
-            englishName: "Ablutions",
+            latinName: "Ablutiones",
+            englishName: "Cleansing of the Vessels",
             posture: .sit
         )
     ]
@@ -224,19 +260,19 @@ enum MissalOrderData {
         OrdinaryPart(
             ordoLabel: "conclusion",
             latinName: "Ite, Missa Est",
-            englishName: "Conclusion",
+            englishName: "The Mass Is Ended",
             posture: .stand
         ),
         OrdinaryPart(
             ordoLabel: "the last gospel",
             latinName: "Ultimum Evangélium",
-            englishName: "The Last Gospel",
+            englishName: "Closing Gospel",
             posture: .stand
         ),
         OrdinaryPart(
             ordoLabel: "prayers ordered by the pope leo xiii",
-            latinName: "Leonine Prayers",
-            englishName: "Leonine Prayers",
+            latinName: "Preces Leoninæ",
+            englishName: "Prayers after Mass",
             posture: .kneel,
             highMassOnly: false
         )
@@ -441,7 +477,11 @@ enum MissalOrderData {
             let isProper = role?.isProper ?? true
 
             let latin = MissalOrderData.trimmed(section.id)
-            let english = MissalOrderData.trimmed(section.label)
+            // The plain name first, from the bundled map; the API's own
+            // English ("Introit", "Secret") only for a section the map
+            // does not know, which an unusual day may bring
+            let english = MissalOrderData.plainName(for: section)
+                ?? MissalOrderData.trimmed(section.label)
 
             var body = section.body
             if includesOrdinary, !prefix.isEmpty {
@@ -500,7 +540,7 @@ enum MissalOrderData {
                 OrdinaryPart(
                     ordoLabel: "offertory",
                     latinName: "Offertorium",
-                    englishName: "Offertory",
+                    englishName: "Offertory Chant",
                     posture: .sit
                 ),
                 body: body
@@ -538,7 +578,7 @@ enum MissalOrderData {
                 OrdinaryPart(
                     ordoLabel: "preface",
                     latinName: "Sursum Corda",
-                    englishName: "Preface Dialogue",
+                    englishName: "Lift Up Your Hearts",
                     posture: .stand
                 ),
                 body: [dialogue]
@@ -553,7 +593,7 @@ enum MissalOrderData {
                 OrdinaryPart(
                     ordoLabel: "sanctus",
                     latinName: "Sanctus",
-                    englishName: "Sanctus",
+                    englishName: "Holy, Holy, Holy",
                     posture: .kneel
                 ),
                 body: [sanctus]

@@ -32,13 +32,27 @@ final class TodayInChurch {
 
     /// The feast, once known. Until then the ledger names the thing itself.
     var title: String {
-        proper?.info.title ?? "The Mass of the Day"
+        proper?.info.title ?? "Today's Mass"
     }
 
-    /// "III class  ·  Red", whichever parts the day carries
+    /// "Feast  ·  Red vestments", whichever parts the day carries — the
+    /// rank in plain words (`DayRank`), the colour never bare
     var meta: String? {
-        let parts = [proper?.info.rankLabel, vestment?.name].compactMap { $0 }
+        let parts = [rank, vestment?.plainName].compactMap { $0 }
         return parts.isEmpty ? nil : parts.joined(separator: "  ·  ")
+    }
+
+    /// "Great Feast", "Feast", "Lesser Feast", "Weekday" — the word the
+    /// home ledger and the Chapel set beside the day's silk
+    var rank: String? {
+        proper?.info.rankLabel
+    }
+
+    /// The day as VoiceOver says it, colour included even where the
+    /// screen shows it only as a dot: "Feast, red vestments"
+    var spokenMeta: String? {
+        let parts = [rank, vestment?.plainName.lowercased()].compactMap { $0 }
+        return parts.isEmpty ? nil : parts.joined(separator: ", ")
     }
 
     var vestment: MissalVestment? {

@@ -96,16 +96,26 @@ enum OfficeRank {
         }
     }
 
-    /// The class in English. The engine answers in Latin ("III.
-    /// classis"), and Latin belongs in the prayer text, not in the
-    /// chrome above it — so the landing and the reader both name the day
-    /// through here rather than printing what arrived.
-    var englishLabel: String? {
+    /// The day's rank in plain words, the Missal's own (`DayRank`):
+    /// Great Feast · Feast · Lesser Feast · Weekday. The engine answers in
+    /// Latin ("III. classis"), and Latin belongs in the prayer text, not
+    /// in the chrome above it — so the landing, the reader and the
+    /// calendar all name the day through here.
+    var englishLabel: String? { plainLabel(title: nil) }
+
+    /// The same, with the day's title, so a feria in Lent or Advent says
+    /// "Lenten Weekday" or "Advent Weekday"
+    func plainLabel(title: String?) -> String? {
+        DayRank.plainLabel(rank: classNumber, title: self == .feria ? "Feria \(title ?? "")" : title)
+    }
+
+    /// 1 to 4, the Missal's numbering; a feria has none of its own
+    private var classNumber: Int? {
         switch self {
-        case .first: return "First class"
-        case .second: return "Second class"
-        case .third: return "Third class"
-        case .fourth: return "Fourth class"
+        case .first: return 1
+        case .second: return 2
+        case .third: return 3
+        case .fourth: return 4
         case .feria: return nil
         }
     }
