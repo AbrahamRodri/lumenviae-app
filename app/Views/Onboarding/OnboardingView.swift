@@ -533,7 +533,7 @@ struct OnboardingView: View {
 
                     OnboardingChoiceCard(
                         label: "Whole Rosary",
-                        detail: "Every prayer is said aloud; pray along",
+                        detail: "Every prayer is said aloud; pray along with the voice",
                         isSelected: praysAloud
                     ) {
                         choose(aloud: true)
@@ -570,7 +570,7 @@ struct OnboardingView: View {
     private static let onScreenLead =
         "The beads are on the screen. Swipe for each Hail Mary, and the next mystery begins on its own."
     private static let ownRosaryLead =
-        "Keep count on your own beads. The screen moves a mystery at a time."
+        "Count on your own rosary. The screen shows one mystery at a time."
 
     /// The prayer screen's one new idea, tried rather than described, and
     /// chosen rather than imposed. On the screen, a strand moves under the
@@ -613,7 +613,7 @@ struct OnboardingView: View {
                 VStack(spacing: 10) {
                     OnboardingChoiceCard(
                         label: "On My Rosary",
-                        detail: "Count on your own rosary; the screen moves a mystery at a time",
+                        detail: "Count on your own rosary; the screen shows one mystery at a time",
                         isSelected: !praysOnBeads
                     ) {
                         withAnimation(Motion.ease(0.25)) { praysOnBeads = false }

@@ -284,10 +284,15 @@ consecration is a private devotion and not a liturgical observance;
 with the Chapel's day strip. Every row has the same parts — the door's
 own glyph (`ch-altar`, `ph-clock`, `ch-consecration`, the hour's order's own, the same as on
 every other surface), name, the row's own live fact, chevron — so the
-eye reads down the column of facts: the day's class and colour in words beside its silk, a 4×24 bar
-("II CLASS · RED", which once stood under the feast as a caption to
+eye reads down the column of facts: the day's rank in a plain word
+beside its silk, a 4×24 bar (FEAST, `TodayInChurch.rank`; the colour is
+the silk's alone on screen, and VoiceOver hears it in words through
+`spokenMeta` — "Today's Mass, Feast, red vestments"; it once read "II
+CLASS · RED", and before that stood under the feast as a caption to
 the whole section), the
-hour it is as a lit dot and its name (TERCE), the day of the
+hour it is as a lit dot and its one plain word (EVENING,
+`CanonicalHour.shortName`; VoiceOver hears `plainName`, "Evening
+Prayer"; it once read VESPERS), the day of the
 preparation over a 46pt hair. There is no line under the names: a plain
 sentence under each once said what the row was, and the section took
 longer to read for it. The consecration row, before any consecration is

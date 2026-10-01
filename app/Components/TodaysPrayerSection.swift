@@ -184,14 +184,15 @@ struct TodaysPrayerSection: View {
     private var massRow: some View {
         LedgerRow(
             icon: "ch-altar",
-            name: "The Mass",
-            accessibility: ["The Mass, today's propers", massRank, today.vestment?.name]
-                .compactMap { $0 }
-                .joined(separator: ", ")
+            name: "Today's Mass",
+            // The colour said in words to VoiceOver, where the screen
+            // shows it only as the silk: "Today's Mass, Feast, red vestments"
+            accessibility: ["Today's Mass", today.spokenMeta].compactMap { $0 }.joined(separator: ", ")
         ) {
-            // The day's class and colour in words, beside its silk —
-            // "II CLASS · RED" — set as the Office row sets its hour, so
-            // the column of facts reads as one
+            // The day's rank in plain words beside its silk — "FEAST" —
+            // set as the Office row sets its hour, so the column of facts
+            // reads as one. The colour is the silk's alone: a bare "RED"
+            // beside it said nothing a newcomer could read.
             HStack(spacing: 10) {
                 if let massFact {
                     Text(massFact)
@@ -216,33 +217,29 @@ struct TodaysPrayerSection: View {
         }
     }
 
-    /// "II class", once the day's propers are known
-    private var massRank: String? {
-        today.proper?.info.rankLabel
-    }
-
-    /// "II CLASS · RED" — whichever of the two the day carries
+    /// "FEAST", once the day's propers are known — the liturgy's own word
+    /// for the rank (`TodayInChurch.rank`)
     private var massFact: String? {
-        let parts = [massRank, today.vestment?.name].compactMap { $0 }
-        return parts.isEmpty ? nil : parts.joined(separator: " · ").uppercased()
+        today.rank?.uppercased()
     }
 
-    // MARK: Row 3 — The Divine Office
+    // MARK: Row 3 — The Hours of Prayer (the Divine Office)
 
     private var officeRow: some View {
         let hour = clock.hour
 
         return LedgerRow(
             icon: "ph-clock",
-            name: "The Divine Office",
-            accessibility: "The Divine Office, \(hour.label), the hour now"
+            name: "Hours of Prayer",
+            accessibility: "Hours of Prayer, \(hour.plainName), the hour now"
         ) {
-            // The hour itself, lit — "TERCE" says which hour it is, where
-            // "NOW" only said that there was one.
+            // The hour itself, lit, in its one plain word — "EVENING" says
+            // which hour it is, where "NOW" only said that there was one,
+            // and "VESPERS" said it in a word a newcomer could not read
             HStack(spacing: 8) {
                 LitHourDot(size: 9, box: 16, glow: 4)
 
-                Text(hour.label.uppercased())
+                Text(hour.shortName)
                     .font(AppFonts.labelFont(9))
                     .tracking(2)
                     .foregroundColor(AppColors.gold.opacity(0.9))
@@ -369,7 +366,7 @@ private struct LedgerRow<Fact: View>: View {
                 medallion
 
                 // A door's name is never cut: beside a long fact
-                // ("The Divine Office" by COMPLINE) or at the larger text
+                // ("Hours of Prayer" by MID-MORNING) or at the larger text
                 // sizes it takes a second line, as the Chapel's day
                 // strip does for a long feast
                 Text(name)
