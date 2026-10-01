@@ -100,7 +100,7 @@ struct ChantSearchView: View {
                     } label: {
                         AppIcon("ph-x", size: 13)
                             .foregroundColor(AppColors.textSecondary)
-                            .frame(width: 36, height: 44)
+                            .frame(width: 44, height: 44)
                             .contentShape(Rectangle())
                     }
                     .buttonStyle(QuietGlyphButtonStyle())
@@ -143,7 +143,7 @@ struct ChantSearchView: View {
                         .font(AppFonts.labelFont(9.5))
                         .tracking(1.5)
                         .foregroundColor(lit ? AppColors.goldLight : AppColors.textSecondary)
-                        .frame(minHeight: 40)
+                        .frame(minHeight: 44)
                         .overlay(alignment: .bottom) {
                             Rectangle()
                                 .fill(AppColors.gold)

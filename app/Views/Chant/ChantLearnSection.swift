@@ -159,7 +159,7 @@ struct ChantLearnSection: View {
                 learn(chant)
             } label: {
                 HStack(spacing: 14) {
-                    ChantThumbnail(name: ChantCatalog.painting(for: chant), size: 52, radius: 26)
+                    ChantThumbnail(name: ChantCatalog.painting(subject: next.season.painting), size: 52, radius: 26)
                     VStack(alignment: .leading, spacing: 3) {
                         Text(startsLine(next.season, days: next.days).uppercased())
                             .font(AppFonts.labelFont(8.5))

@@ -185,7 +185,7 @@ struct ChantSeasonsSection: View {
                     }
                 }
                 Spacer(minLength: 0)
-                ChantThumbnail(name: ChantCatalog.painting(for: chant), size: 56, radius: 12)
+                ChantThumbnail(name: ChantCatalog.painting(subject: next.season.painting), size: 56, radius: 12)
             }
             .chantShell(padding: 18)
         }

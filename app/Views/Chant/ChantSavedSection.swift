@@ -14,6 +14,22 @@
 
 import SwiftUI
 
+// MARK: - ChantSpineCloth
+
+/// The spines on the Saved shelf, dyed from colours the app already
+/// names: chants learned in the rubric's red, favourites in Marian blue,
+/// and the reader's own sets in the vestments' green, violet, black and
+/// rose, in turn — each laid thin on the dark page so it reads as cloth
+enum ChantSpineCloth {
+    static var learned: Color { Rubric.red.opacity(0.5) }
+    static var favorites: Color { AppColors.marianBlue }
+    static var sets: [Color] {
+        [MissalVestment.green, .violet, .black, .rose].map { $0.swatch.opacity(0.55) }
+    }
+}
+
+// MARK: - ChantSavedSection
+
 struct ChantSavedSection: View {
 
     @Binding var openSetID: UUID?
@@ -397,10 +413,11 @@ struct ChantSavedSection: View {
             } label: {
                 AppIcon("ph-dots-six-vertical", size: 16)
                     .foregroundColor(AppColors.textSecondary)
-                    .frame(width: 32, height: 44)
+                    .frame(width: 44, height: 44)
                     .contentShape(Rectangle())
             }
             .accessibilityLabel("Move or remove")
+            .padding(.horizontal, -6)
 
             switch item.kind {
             case .chant(let id, let times):

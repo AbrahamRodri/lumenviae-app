@@ -562,7 +562,9 @@ struct ChantSettingPill: View {
                             .lineLimit(1)
                     }
                     .frame(maxWidth: .infinity)
-                    .frame(height: 32)
+                    // 38 inside a 3pt rim: the pill stands 44 tall, a
+                    // finger's reach, as drawn
+                    .frame(height: 38)
                     .background(Capsule().fill(lit ? AppColors.gold.opacity(0.16) : Color.clear))
                     .contentShape(Capsule())
                 }
@@ -573,7 +575,6 @@ struct ChantSettingPill: View {
         }
         .padding(3)
         .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.22), lineWidth: AppLine.hairline))
-        .frame(minHeight: 44)
         .animation(Motion.choice, value: selected)
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Setting")

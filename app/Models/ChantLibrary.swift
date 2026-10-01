@@ -160,6 +160,11 @@ enum ChantSeason: String, CaseIterable, Identifiable {
         (ChantLibraryData.seasonChants[self] ?? []).compactMap(ChantCatalog.chant)
     }
 
+    /// Its painting, by subject (`ChantCatalog.painting(subject:)`)
+    var painting: String {
+        ChantLibraryData.seasonPaintings[self] ?? "glorious_coronation"
+    }
+
     /// The chant to learn before the season comes
     var signatureChant: Chant? {
         ChantLibraryData.seasonSignatures[self].flatMap(ChantCatalog.chant)
@@ -312,6 +317,8 @@ struct ChantFeast: Identifiable, Hashable {
     let name: String
     let rule: Rule
     let chantID: String
+    /// Its painting, by subject, where one is drawn for it
+    var painting: String? = nil
 
     var chant: Chant? { ChantCatalog.chant(chantID) }
 
@@ -372,6 +379,8 @@ struct ChantWeekday: Identifiable, Hashable {
     /// What "Play all" names them: "chants of the Blessed Sacrament"
     let collective: String
     let chantIDs: [String]
+    /// Its painting, by subject (`ChantCatalog.painting(subject:)`)
+    let painting: String
 
     var id: Int { weekday }
 
@@ -690,6 +699,17 @@ extension ChantCatalog {
         ChantLibraryData.paintings[chant.id]
             ?? ChantLibraryData.groupPaintings[chant.groupID]
             ?? "glorious_coronation"
+    }
+
+    /// A painting asked for by its subject — `season_advent`,
+    /// `devotion_holy_souls` — or the painting standing in for it until
+    /// that imageset is in the app: `fallback` when one is given, else
+    /// the curation's (`ChantLibraryData.subjectPaintings`). The one place
+    /// the swap happens, so a painting that lands needs no other change.
+    /// A name that is already an imageset is itself.
+    static func painting(subject: String, else fallback: String? = nil) -> String {
+        if ImageCacheService.shared.image(named: subject) != nil { return subject }
+        return fallback ?? ChantLibraryData.subjectPaintings[subject] ?? "glorious_coronation"
     }
 
     /// How the Today board introduces tonight's antiphon

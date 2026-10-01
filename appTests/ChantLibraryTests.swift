@@ -81,6 +81,16 @@ struct ChantLibraryTests {
         for occasion in ChantLibraryData.occasions {
             #expect(ImageCacheService.shared.image(named: occasion.painting) != nil, "\(occasion.id)")
         }
+        // A painting asked for by subject draws its stand-in until its
+        // imageset arrives, and never a blank
+        var subjects = Array(ChantLibraryData.subjectPaintings.keys)
+        subjects += ChantLibraryData.weekdays.map(\.painting)
+        subjects += ChantSeason.allCases.map(\.painting)
+        subjects += ChantLibraryData.feasts.compactMap(\.painting)
+        for subject in subjects {
+            let name = ChantCatalog.painting(subject: subject)
+            #expect(ImageCacheService.shared.image(named: name) != nil, "\(subject) falls back to \(name)")
+        }
     }
 
     @Test func everyWorkOfTonightHasItsLine() {
@@ -309,6 +319,16 @@ struct ChantLibraryTests {
     }
 
     // MARK: - The day
+
+    @Test func theHoursTurnWhenThePrayerBooksDo() {
+        for hour in 0..<24 {
+            let now = day(2026, 10, 1, hour: hour)
+            let next = day(2026, 10, 1, hour: hour).addingTimeInterval(3600)
+            let chantTurns = ChantHour.present(at: now) != ChantHour.present(at: next)
+            let bookTurns = PrayerBook.dayOrderMoment(at: now, short: true) != PrayerBook.dayOrderMoment(at: next, short: true)
+            #expect(chantTurns == bookTurns, "at \(hour):00")
+        }
+    }
 
     @Test func theArcStandsTheHoursInTheirPlaces() {
         #expect(abs(ChantDayArc.position(of: day(2026, 10, 1, hour: 6)) - 0.125) < 0.001)

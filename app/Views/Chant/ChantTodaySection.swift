@@ -128,7 +128,11 @@ struct ChantTodaySection: View {
         let holds = player.holds(chosen)
 
         return VStack(alignment: .leading, spacing: 0) {
-            ChantPainting(name: ChantCatalog.painting(for: chosen), height: 250, dissolveFrom: 0.3)
+            ChantPainting(
+                name: ChantCatalog.painting(subject: "hour_night", else: ChantCatalog.painting(for: chosen)),
+                height: 250,
+                dissolveFrom: 0.3
+            )
 
             VStack(alignment: .leading, spacing: 12) {
                 Text("TONIGHT'S CHANT")
@@ -274,7 +278,7 @@ struct ChantTodaySection: View {
 
     private func weekdayCard(_ day: ChantWeekday, featured: Chant) -> some View {
         HStack(alignment: .top, spacing: 14) {
-            ChantThumbnail(name: ChantCatalog.painting(for: featured), size: 64, radius: 12)
+            ChantThumbnail(name: ChantCatalog.painting(subject: day.painting), size: 64, radius: 12)
 
             VStack(alignment: .leading, spacing: 6) {
                 Text("\(featured.form.singular) · \(featured.durationLabel)".uppercased())

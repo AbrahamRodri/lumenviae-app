@@ -123,6 +123,16 @@ enum ChantLibraryData {
         .afterPentecost: "The longest season of the year. Until Advent, each day ends with the Salve Regina."
     ]
 
+    /// Each season's painting, by subject
+    static let seasonPaintings: [ChantSeason: String] = [
+        .advent: "season_advent",
+        .christmas: "joyful_nativity",
+        .lent: "sorrowful_agony",
+        .easter: "glorious_resurrection",
+        .pentecost: "glorious_pentecost",
+        .afterPentecost: "glorious_coronation"
+    ]
+
     /// The chant to learn before each season comes
     static let seasonSignatures: [ChantSeason: String] = [
         .advent: "rorate_caeli",
@@ -149,9 +159,9 @@ enum ChantLibraryData {
         ChantFeast(id: "assumption", name: "The Assumption", rule: .fixed(month: 8, day: 15), chantID: "ave_maris_stella"),
         ChantFeast(id: "seven_sorrows", name: "Our Lady of Sorrows", rule: .fixed(month: 9, day: 15), chantID: "stabat_mater"),
         ChantFeast(id: "st_michael", name: "St Michael", rule: .fixed(month: 9, day: 29), chantID: "sancte_michael"),
-        ChantFeast(id: "rosary", name: "Our Lady of the Rosary", rule: .fixed(month: 10, day: 7), chantID: "litany_loreto"),
-        ChantFeast(id: "christ_the_king", name: "Christ the King", rule: .lastSundayOfOctober, chantID: "christus_vincit"),
-        ChantFeast(id: "all_saints", name: "All Saints", rule: .fixed(month: 11, day: 1), chantID: "litany_saints"),
+        ChantFeast(id: "rosary", name: "Our Lady of the Rosary", rule: .fixed(month: 10, day: 7), chantID: "litany_loreto", painting: "feast_our_lady_of_the_rosary"),
+        ChantFeast(id: "christ_the_king", name: "Christ the King", rule: .lastSundayOfOctober, chantID: "christus_vincit", painting: "feast_christ_the_king"),
+        ChantFeast(id: "all_saints", name: "All Saints", rule: .fixed(month: 11, day: 1), chantID: "litany_saints", painting: "feast_all_saints"),
         ChantFeast(id: "all_souls", name: "All Souls", rule: .fixed(month: 11, day: 2), chantID: "dies_irae"),
         ChantFeast(id: "immaculate_conception", name: "The Immaculate Conception", rule: .fixed(month: 12, day: 8), chantID: "tota_pulchra"),
         ChantFeast(id: "christmas", name: "Christmas Day", rule: .fixed(month: 12, day: 25), chantID: "adeste_fideles")
@@ -164,31 +174,38 @@ enum ChantLibraryData {
         ChantWeekday(weekday: 1, devotion: "the Holy Trinity",
                      headline: "Sundays honour the Holy Trinity",
                      collective: "chants to the Trinity",
-                     chantIDs: ["te_deum", "gloria_patri", "in_nomine_patris"]),
+                     chantIDs: ["te_deum", "gloria_patri", "in_nomine_patris"],
+                     painting: "devotion_holy_trinity"),
         ChantWeekday(weekday: 2, devotion: "the Holy Souls",
                      headline: "Mondays remember the Holy Souls",
                      collective: "chants for the dead",
-                     chantIDs: ["dies_irae", "miserere"]),
+                     chantIDs: ["dies_irae", "miserere"],
+                     painting: "devotion_holy_souls"),
         ChantWeekday(weekday: 3, devotion: "the Holy Angels",
                      headline: "Tuesdays honour the Holy Angels",
                      collective: "chants of the angels",
-                     chantIDs: ["sancte_michael", "litany_saints"]),
+                     chantIDs: ["sancte_michael", "litany_saints"],
+                     painting: "devotion_guardian_angels"),
         ChantWeekday(weekday: 4, devotion: "St Joseph",
                      headline: "Wednesdays honour St Joseph",
                      collective: "chants of St Joseph",
-                     chantIDs: ["te_joseph", "litany_st_joseph"]),
+                     chantIDs: ["te_joseph", "litany_st_joseph"],
+                     painting: "devotion_st_joseph"),
         ChantWeekday(weekday: 5, devotion: "the Blessed Sacrament",
                      headline: "Thursdays honour the Blessed Sacrament",
                      collective: "chants of the Blessed Sacrament",
-                     chantIDs: ["adoro_te", "ave_verum", "tantum_ergo"]),
+                     chantIDs: ["adoro_te", "ave_verum", "tantum_ergo"],
+                     painting: "luminous_eucharist"),
         ChantWeekday(weekday: 6, devotion: "the Passion",
                      headline: "Fridays keep the Passion",
                      collective: "chants of the Passion",
-                     chantIDs: ["vexilla_regis", "stabat_mater", "anima_christi"]),
+                     chantIDs: ["vexilla_regis", "stabat_mater", "anima_christi"],
+                     painting: "sorrowful_crucifixion"),
         ChantWeekday(weekday: 7, devotion: "Our Lady",
                      headline: "Saturdays honour Our Lady",
                      collective: "chants of Our Lady",
-                     chantIDs: ["ave_maris_stella", "sub_tuum", "salve_mater"])
+                     chantIDs: ["ave_maris_stella", "sub_tuum", "salve_mater"],
+                     painting: "glorious_coronation")
     ]
 
     // MARK: - The months
@@ -370,6 +387,23 @@ enum ChantLibraryData {
         "veni_sancte_spiritus": "glorious_pentecost",
         "veni_sancte_reple": "glorious_pentecost",
         "dies_irae": "seven_sorrows_burial"
+    ]
+
+    /// The paintings asked for by subject, and the painting each falls
+    /// back to until its imageset is in the app (`ChantCatalog.painting(
+    /// subject:)`): the Annunciation for Advent, the Jordan's Trinity for
+    /// Sunday, the angel in the garden for the Holy Angels
+    static let subjectPaintings: [String: String] = [
+        "season_advent": "joyful_annunciation",
+        "devotion_holy_trinity": "luminous_baptism",
+        "devotion_holy_souls": "seven_sorrows_burial",
+        "devotion_guardian_angels": "sorrowful_agony",
+        "devotion_st_joseph": "joyful_nativity",
+        "feast_our_lady_of_the_rosary": "glorious_coronation",
+        "feast_christ_the_king": "glorious_ascension",
+        "feast_all_saints": "glorious_pentecost",
+        "hour_morning": "glorious_resurrection",
+        "hour_night": "glorious_coronation"
     ]
 
     static let groupPaintings: [String: String] = [
