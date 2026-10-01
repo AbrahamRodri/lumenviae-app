@@ -708,9 +708,19 @@ extension ChantCatalog {
     /// the swap happens, so a painting that lands needs no other change.
     /// A name that is already an imageset is itself.
     static func painting(subject: String, else fallback: String? = nil) -> String {
-        if ImageCacheService.shared.image(named: subject) != nil { return subject }
+        // Whether the subject's imageset is in the app is asked once: the
+        // image cache keeps only what it finds, and a board redrawn on
+        // every tick of the player would ask the catalog again each time
+        let present = subjectsPresent[subject] ?? {
+            let found = ImageCacheService.shared.image(named: subject) != nil
+            subjectsPresent[subject] = found
+            return found
+        }()
+        if present { return subject }
         return fallback ?? ChantLibraryData.subjectPaintings[subject] ?? "glorious_coronation"
     }
+
+    private static var subjectsPresent: [String: Bool] = [:]
 
     /// How the Today board introduces tonight's antiphon
     static func tonightLine(for chant: Chant) -> String {

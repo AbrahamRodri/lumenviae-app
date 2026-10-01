@@ -57,11 +57,21 @@ struct ChantQueue: Equatable {
     /// "Benediction", "Thursday Holy Hour"
     let title: String
     let entries: [Entry]
+    /// For each entry, the step of the occasion or the item of the set it
+    /// was unrolled from — so a page lights the row that is sounding
+    /// without unrolling the set again itself
+    let origins: [Int]
+    /// What was unrolled: "occasion:benediction", "set:<id>"; nil for a
+    /// list of chants
+    let source: String?
     var index: Int = 0
 
     var entry: Entry? { entries.indices.contains(index) ? entries[index] : nil }
     var hasNext: Bool { index + 1 < entries.count }
     var hasPrevious: Bool { index > 0 }
+
+    /// The step or item sounding now
+    var origin: Int? { origins.indices.contains(index) ? origins[index] : nil }
 
     /// The next chant to sound, past any silence
     var nextChant: Chant? {
@@ -75,27 +85,54 @@ struct ChantQueue: Equatable {
         return "\(max(1, sung)) of \(chants.count)"
     }
 
+    /// The occasion unrolled, its steps numbered in the order they are
+    /// written, each repeat and round of a step keeping its number
     static func occasion(_ occasion: ChantOccasion, on date: Date = Date()) -> ChantQueue {
-        ChantQueue(title: occasion.title, entries: occasion.sequence(on: date).map(Entry.chant))
+        var entries: [Entry] = []
+        var origins: [Int] = []
+        var number = 0
+        for block in occasion.blocks {
+            let first = number
+            for _ in 0..<max(1, block.rounds) {
+                number = first
+                for step in block.steps {
+                    if let chant = step.chant.resolve(on: date) {
+                        for _ in 0..<max(1, step.times) {
+                            entries.append(.chant(chant))
+                            origins.append(number)
+                        }
+                    }
+                    number += 1
+                }
+            }
+        }
+        return ChantQueue(title: occasion.title, entries: entries, origins: origins, source: "occasion:\(occasion.id)")
     }
 
     static func set(_ set: ChantSet) -> ChantQueue {
         var entries: [Entry] = []
-        for item in set.items {
+        var origins: [Int] = []
+        for (position, item) in set.items.enumerated() {
             switch item.kind {
             case .chant(let id, let times):
                 guard let chant = ChantCatalog.chant(id) else { continue }
-                entries.append(contentsOf: Array(repeating: .chant(chant), count: max(1, times)))
+                for _ in 0..<max(1, times) {
+                    entries.append(.chant(chant))
+                    origins.append(position)
+                }
             case .pause(let note, let seconds):
                 // A note with no silence of its own is read, not waited on
-                if seconds > 0 { entries.append(.silence(note: note, seconds: seconds)) }
+                if seconds > 0 {
+                    entries.append(.silence(note: note, seconds: seconds))
+                    origins.append(position)
+                }
             }
         }
-        return ChantQueue(title: set.name, entries: entries)
+        return ChantQueue(title: set.name, entries: entries, origins: origins, source: "set:\(set.id.uuidString)")
     }
 
     static func chants(_ chants: [Chant], title: String) -> ChantQueue {
-        ChantQueue(title: title, entries: chants.map(Entry.chant))
+        ChantQueue(title: title, entries: chants.map(Entry.chant), origins: Array(chants.indices), source: nil)
     }
 }
 
@@ -235,9 +272,13 @@ final class ChantPlayer {
 
     // MARK: - Acts
 
-    /// Play or pause the chant the tile holds.
+    /// Play or pause the chant the tile holds. While a set waits between
+    /// chants, or keeps a silence, it goes on to what comes next.
     func togglePlayback() {
-        if waitingForNext {
+        if silence != nil {
+            endSilence()
+            entryFinished()
+        } else if waitingForNext {
             continueQueue()
         } else if ownsPlayback {
             claim?.togglePlayback()
@@ -362,6 +403,9 @@ final class ChantPlayer {
     private func seek(to time: Double) {
         guard let claim else { return }
         claim.seek(to: time)
+        // Read afresh from the new place, even one the clock already read
+        anchor = nil
+        lastObserved = -1
         endTurn()
         activeLine = current.lineIndex(at: time)
         lineIndex = activeLine
@@ -392,6 +436,7 @@ final class ChantPlayer {
         endQueue()
         resetLines()
         lineTask?.cancel()
+        cancelSleep()
         claim?.release()
         claim = nil
     }
@@ -417,13 +462,24 @@ final class ChantPlayer {
         queue.index = min(max(0, index), queue.entries.count - 1)
         self.queue = queue
         waitingForNext = false
+        // A set is sung as it is written: a line looped or turns taken on
+        // a chant's page are not carried into it
+        lineEnd = .goOn
         playEntry()
     }
 
-    /// Whether `queue` is the one being sung — the same title and chants
+    /// Whether `queue` is the one being sung: the same occasion or set,
+    /// or for a list of chants, the same chants under the same title
     func isSinging(_ queue: ChantQueue) -> Bool {
         guard let current = self.queue else { return false }
+        if let source = queue.source { return current.source == source }
         return current.title == queue.title && current.entries == queue.entries
+    }
+
+    /// Whether the set from `source` is being sung, and what of it sounds
+    func origin(singing source: String) -> Int? {
+        guard let queue, queue.source == source else { return nil }
+        return queue.origin
     }
 
     /// The next entry of the set, now
@@ -509,12 +565,14 @@ final class ChantPlayer {
             lineEnded(line)
             return
         }
-        if repeats {
-            claim?.play()
-            return
-        }
+        // A set goes on whatever Repeat says: Repeat is for a chant sung
+        // on its own, and would hold a set on its first chant for good
         if queue != nil {
             entryFinished()
+            return
+        }
+        if repeats {
+            claim?.play()
         }
     }
 
@@ -541,6 +599,7 @@ final class ChantPlayer {
     /// a line's end is met within a tenth of a second
     @ObservationIgnored private var anchor: (media: Double, wall: Date)?
     @ObservationIgnored private var lastObserved: Double = -1
+    @ObservationIgnored private var anchoredPlaying = false
     @ObservationIgnored private var lineTask: Task<Void, Never>?
     @ObservationIgnored private var turnTask: Task<Void, Never>?
 
@@ -628,10 +687,13 @@ final class ChantPlayer {
             lineIndex = nil
             return
         }
+        // A tenth of a second while the chant sounds, a second while it
+        // rests, and over once the player holds it no longer
         lineTask = Task { @MainActor [weak self] in
             while !Task.isCancelled {
-                self?.tickLines()
-                try? await Task.sleep(for: .milliseconds(100))
+                guard let self, let claim = self.claim, claim.holdsItem else { return }
+                self.tickLines()
+                try? await Task.sleep(for: .milliseconds(claim.isPlaying ? 100 : 1000))
             }
         }
     }
@@ -639,13 +701,18 @@ final class ChantPlayer {
     private func tickLines() {
         guard let claim, claim.holdsItem, current.hasLines, turn == nil else { return }
 
+        // The clock carried forward from the player's last reading — taken
+        // afresh whenever that reading changes, and whenever the chant
+        // starts or stops, so a resume never counts the time it was paused
         let observed = claim.currentTime
-        if observed != lastObserved {
+        let playing = claim.isPlaying
+        if anchor == nil || observed != lastObserved || playing != anchoredPlaying {
             lastObserved = observed
+            anchoredPlaying = playing
             anchor = (observed, Date())
         }
         let now: Double
-        if claim.isPlaying, let anchor {
+        if playing, let anchor {
             now = anchor.media + Date().timeIntervalSince(anchor.wall) * rate
         } else {
             now = observed
@@ -658,7 +725,7 @@ final class ChantPlayer {
             return
         }
 
-        guard claim.isPlaying, let line = activeLine, current.lines.indices.contains(line) else { return }
+        guard playing, let line = activeLine, current.lines.indices.contains(line) else { return }
         if lineIndex != line { lineIndex = line }
         if now >= current.lines[line].end - 0.03 {
             lineEnded(line)
@@ -704,10 +771,10 @@ final class ChantPlayer {
     /// The last line has been sung back: the chant is over, as if it had
     /// played to its end
     private func finishedTakingTurns() {
-        if repeats {
-            claim?.play()
-        } else if queue != nil {
+        if queue != nil {
             entryFinished()
+        } else if repeats {
+            claim?.play()
         }
     }
 
@@ -804,6 +871,7 @@ final class ChantPlayer {
         claim = nil
         endQueue()
         endTurn()
+        cancelSleep()
     }
 
     // MARK: - Lock Screen

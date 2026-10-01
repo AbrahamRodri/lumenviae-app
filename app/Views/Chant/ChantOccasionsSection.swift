@@ -119,9 +119,8 @@ struct ChantOccasionsSection: View {
 
     private func order(_ occasion: ChantOccasion) -> some View {
         let queue = ChantQueue.occasion(occasion)
-        let singing = player.isSinging(queue)
-        let sungIndex = singing ? player.queue?.index : nil
-        let positions = Self.positions(of: occasion)
+        let sung = player.isSinging(queue) ? player.queue : nil
+        let numbers = Self.stepNumbers(of: occasion)
         let count = occasion.distinctChants().count
 
         return VStack(alignment: .leading, spacing: 0) {
@@ -159,13 +158,11 @@ struct ChantOccasionsSection: View {
                                     stepRow(
                                         chant,
                                         times: step.times,
-                                        state: state(
-                                            of: positions[blockIndex][stepIndex],
-                                            sung: sungIndex
-                                        ),
+                                        state: state(of: numbers[blockIndex][stepIndex], in: sung),
                                         isLast: blockIndex == occasion.blocks.count - 1 && stepIndex == block.steps.count - 1,
                                         playFrom: {
-                                            player.play(queue, from: positions[blockIndex][stepIndex].first?.lowerBound ?? 0)
+                                            let number = numbers[blockIndex][stepIndex]
+                                            player.play(queue, from: queue.origins.firstIndex(of: number) ?? 0)
                                         }
                                     )
                                 }
@@ -212,11 +209,12 @@ struct ChantOccasionsSection: View {
     private enum StepState { case done, sounding, ahead }
 
     /// A step sounding in any of its rounds is lit; one whose last round
-    /// is behind the set is done
-    private func state(of ranges: [Range<Int>], sung: Int?) -> StepState {
+    /// is behind the set is done — read from the queue's own record of
+    /// which step each entry came from
+    private func state(of number: Int, in sung: ChantQueue?) -> StepState {
         guard let sung else { return .ahead }
-        if ranges.contains(where: { $0.contains(sung) }) { return .sounding }
-        if let last = ranges.last, last.upperBound <= sung { return .done }
+        if sung.origin == number { return .sounding }
+        if let last = sung.origins.lastIndex(of: number), last < sung.index { return .done }
         return .ahead
     }
 
@@ -365,25 +363,16 @@ struct ChantOccasionsSection: View {
 
     // MARK: - Arithmetic
 
-    /// Where each step of each block stands in the queue an occasion
-    /// unrolls to: one range of entries for each round it is sung in,
-    /// its repeats inside it — the decade's Ave Maria, ten entries, five
-    /// times over
-    static func positions(of occasion: ChantOccasion) -> [[[Range<Int>]]] {
-        var cursor = 0
-        var positions: [[[Range<Int>]]] = []
-        for block in occasion.blocks {
-            var steps = Array(repeating: [Range<Int>](), count: block.steps.count)
-            for _ in 0..<max(1, block.rounds) {
-                for (index, step) in block.steps.enumerated() {
-                    let count = step.chant.resolve() == nil ? 0 : max(1, step.times)
-                    steps[index].append(cursor..<(cursor + count))
-                    cursor += count
-                }
+    /// Each step's number, in the order the occasion writes its steps —
+    /// the numbers `ChantQueue.occasion` gives the entries it unrolls
+    static func stepNumbers(of occasion: ChantOccasion) -> [[Int]] {
+        var number = 0
+        return occasion.blocks.map { block in
+            block.steps.map { _ in
+                defer { number += 1 }
+                return number
             }
-            positions.append(steps)
         }
-        return positions
     }
 
     static func numeral(_ n: Int) -> String {

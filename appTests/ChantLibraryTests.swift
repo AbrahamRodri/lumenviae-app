@@ -182,6 +182,19 @@ struct ChantLibraryTests {
         #expect(ChantQueue.occasion(benediction).position == "1 of 4")
     }
 
+    @Test func aQueueRemembersTheStepEachEntryCameFrom() {
+        let rosary = ChantOccasion.occasion("sung_rosary")!
+        let queue = ChantQueue.occasion(rosary)
+        #expect(queue.entries.count == queue.origins.count)
+        #expect(queue.entries.count == rosary.sequence().count)
+        // The decade's Ave Maria is step 6, sung ten times in each of five
+        // rounds; the page's step numbers are the queue's
+        let numbers = ChantOccasionsSection.stepNumbers(of: rosary)
+        #expect(numbers[2][1] == 6)
+        #expect(queue.origins.filter { $0 == 6 }.count == 50)
+        #expect(queue.source == "occasion:sung_rosary")
+    }
+
     @Test func aSetUnrollsItsRepeatsAndKeepsItsSilences() {
         let set = ChantSet(name: "Test", items: [
             ChantSet.Item(kind: .pause(note: "Kneel.", seconds: 0)),

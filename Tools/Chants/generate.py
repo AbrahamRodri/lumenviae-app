@@ -65,7 +65,7 @@ The file's name is the chant's id (an "id" inside that names no chant is
 let pass, the name ruling). Times are seconds into the chant's .m4a.
 "part" is null for the whole recording, or the index of the score part
 the lines are engraved on; a line may carry its own. A file that does
-not hold together — a line ending before it starts, lines out of order,
+not hold together — a line ending before it starts, lines out of order or overlapping,
 a line past the recording's end, a part the score lacks — stops the
 build. A chant with no file has no lines, and the app steps it by ten
 seconds and repeats it whole.
@@ -431,6 +431,7 @@ def read_lines(ids, durations, part_counts):
         if not lines:
             sys.exit(f"{path.name}: no lines")
         previous_start = -1.0
+        previous_end = 0.0
         checked = []
         for number, line in enumerate(lines, 1):
             where = f"{path.name}, line {number}"
@@ -447,6 +448,8 @@ def read_lines(ids, durations, part_counts):
                 sys.exit(f"{where}: ends at {end} before it starts at {start}")
             if start < previous_start:
                 sys.exit(f"{where}: starts before the line above it")
+            if start < previous_end - 0.001:
+                sys.exit(f"{where}: starts at {start}, before the line above it ends at {previous_end}")
             limit = durations.get(chant)
             if limit is not None and end > limit + 0.5:
                 sys.exit(f"{where}: ends at {end}, past the recording's {limit:.1f}s")
@@ -457,6 +460,7 @@ def read_lines(ids, durations, part_counts):
                 if count is not None and not 0 <= part < count:
                     sys.exit(f"{where}: part {part}, but the score has {count}")
             previous_start = start
+            previous_end = end
             checked.append(dict(latin=latin, english=english, start=start, end=end, part=part))
         found[chant] = checked
     return found

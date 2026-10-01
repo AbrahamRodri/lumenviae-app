@@ -371,23 +371,10 @@ struct ChantSavedSection: View {
         .chantShell(padding: 18)
     }
 
-    /// Whether the item is what the set being sung is on
+    /// Whether the item is what the set being sung is on, by the queue's
+    /// own record of which item each entry came from
     private func isSounding(_ item: ChantSet.Item, index: Int, in set: ChantSet) -> Bool {
-        guard let queue = player.queue, queue.title == set.name, let entry = queue.entry else { return false }
-        // The queue unrolls repeats; find the item the entry came from
-        var cursor = 0
-        for (position, each) in set.items.enumerated() {
-            let count: Int
-            switch each.kind {
-            case .chant(let id, let times): count = ChantCatalog.chant(id) == nil ? 0 : max(1, times)
-            case .pause(_, let seconds): count = seconds > 0 ? 1 : 0
-            }
-            if queue.index < cursor + count {
-                return position == index && (entry.chant != nil || item.chant == nil)
-            }
-            cursor += count
-        }
-        return false
+        player.origin(singing: "set:\(set.id.uuidString)") == index
     }
 
     private func itemRow(_ item: ChantSet.Item, index: Int, in set: ChantSet, sounding: Bool) -> some View {
