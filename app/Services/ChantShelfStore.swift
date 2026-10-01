@@ -269,9 +269,23 @@ final class ChantShelfStore {
         return set
     }
 
-    /// The set kept from `occasion`, if it is kept
+    /// The set kept from `occasion`, if it is kept — one kept before a set
+    /// said which occasion it came from included, known by its name and the
+    /// occasion's rubrics standing as its notes, so the bookmark shows it
+    /// kept and a tap never makes a second
     func keptSet(of occasion: ChantOccasion) -> ChantSet? {
         sets.first { $0.occasionID == occasion.id }
+            ?? sets.first { $0.occasionID == nil && Self.wasKept(occasion, as: $0) }
+    }
+
+    private static func wasKept(_ occasion: ChantOccasion, as set: ChantSet) -> Bool {
+        guard set.name == occasion.title else { return false }
+        let notes = set.items.compactMap { item -> String? in
+            if case .pause(let note, 0) = item.kind { return note }
+            return nil
+        }
+        let rubrics = occasion.blocks.compactMap { $0.rubric }
+        return !rubrics.isEmpty && notes == rubrics
     }
 
     /// Keeps the occasion as a set of the reader's own, or, kept already,

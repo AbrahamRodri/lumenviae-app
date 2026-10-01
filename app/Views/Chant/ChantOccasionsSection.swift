@@ -248,6 +248,13 @@ struct ChantOccasionsSection: View {
 
     private enum StepState { case done, sounding, ahead }
 
+    /// What a tap on the bead does, as VoiceOver says it
+    private func beadLabel(_ chant: Chant, state: StepState) -> String {
+        guard state == .sounding else { return "Sing from \(chant.latinTitle)" }
+        let act = player.isGoingOn ? "Pause the set at" : "Go on with the set at"
+        return "\(act) \(chant.latinTitle)"
+    }
+
     /// A step sounding in any of its rounds is lit; one whose last round
     /// is behind the set is done — read from the queue's own record of
     /// which step each entry came from
@@ -290,9 +297,7 @@ struct ChantOccasionsSection: View {
             .buttonStyle(QuietGlyphButtonStyle())
             .padding(.leading, -11)
             .padding(.vertical, -6)
-            .accessibilityLabel(state == .sounding
-                ? (player.isGoingOn ? "Pause the set at \(chant.latinTitle)" : "Go on with the set at \(chant.latinTitle)")
-                : "Sing from \(chant.latinTitle)")
+            .accessibilityLabel(beadLabel(chant, state: state))
 
             Button {
                 open(chant)
@@ -320,7 +325,7 @@ struct ChantOccasionsSection: View {
             }
             .buttonStyle(.plain)
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel("\(times > 1 ? "\(chant.latinTitle), \(times) times" : chant.latinTitle), \(chant.englishTitle), \(ChantPlayer.spoken(chant.duration * Double(max(1, times))))")
+            .accessibilityLabel(chant.spokenEntry(times: times, duration: chant.duration * Double(max(1, times))))
             .accessibilityAddTraits(.isButton)
             .accessibilityHint("Opens the chant")
         }

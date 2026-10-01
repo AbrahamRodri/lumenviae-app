@@ -601,6 +601,16 @@ final class ChantPlayer {
         queue = nil
         waitingForNext = false
         endSilence()
+        // The silence's few seconds are no chant: a set put down in one, or
+        // ending on one, takes them out of the player and off the Lock
+        // Screen, where "Silence" once stood until something else loaded
+        if silentClipLoaded {
+            silentClipLoaded = false
+            loadCount += 1
+            loadTask?.cancel()
+            loadTask = nil
+            claim?.unload(preservingNowPlaying: false)
+        }
     }
 
     private func playEntry() {
@@ -636,6 +646,9 @@ final class ChantPlayer {
         loadCount += 1
         let token = loadCount
         lineTask?.cancel()
+        // A chant still arriving is let go for the silence, and with it its
+        // spinner: left on, the set's own pause stood refusing every tap
+        isLoading = false
         claim.pause()
         guard let url = Bundle.main.url(forResource: "chant_silence", withExtension: "m4a") else { return }
         silentClipLoaded = true
@@ -649,7 +662,15 @@ final class ChantPlayer {
                 album: ChantCatalog.credit,
                 claimNowPlaying: true
             )
-            guard token == self.loadCount, !Task.isCancelled, claim.isCurrent,
+            if token != self.loadCount {
+                // Put down while it arrived, and nothing loaded since: the
+                // silence is taken back out rather than read as a chant
+                if !self.silentClipLoaded, !self.isLoading, claim.holdsItem, self.audio.currentURL == url {
+                    claim.unload(preservingNowPlaying: false)
+                }
+                return
+            }
+            guard !Task.isCancelled, claim.isCurrent,
                   ready || claim.holdsItem, let silence = self.silence, !silence.isPaused else { return }
             self.attachNavigation(to: claim)
             claim.play()
@@ -1042,7 +1063,6 @@ final class ChantPlayer {
 
     private func fallAsleep() {
         claim?.pause()
-        silentClipLoaded = false
         endQueue()
         endTurn()
         cancelSleep()

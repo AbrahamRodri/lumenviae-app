@@ -809,6 +809,17 @@ struct ChantMiniPlayer: View {
     }
 }
 
+// MARK: - Spoken rows
+
+extension Chant {
+    /// A chant in a set as VoiceOver says it: "Ave Maria, 10 times, Hail
+    /// Mary, 3 minutes 20 seconds"
+    func spokenEntry(times: Int, duration: TimeInterval) -> String {
+        let name = times > 1 ? "\(latinTitle), \(times) times" : latinTitle
+        return "\(name), \(englishTitle), \(ChantPlayer.spoken(duration))"
+    }
+}
+
 // MARK: - ChantSetPlayButton
 
 /// A set's one gold act: Play all until the set is under way, then the

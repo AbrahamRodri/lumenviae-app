@@ -352,6 +352,25 @@ struct ChantLibraryTests {
         #expect(shelf.sets.isEmpty)
     }
 
+    @Test func anOccasionKeptBeforeSetsSaidSoIsKnown() throws {
+        let defaults = UserDefaults(suiteName: "ChantLibraryTests.\(UUID().uuidString)")!
+        let benediction = ChantOccasion.occasion("benediction")!
+        // Kept as an earlier build kept it, with no occasion named
+        var older = ChantShelfStore(defaults: defaults).saveOccasion(benediction)
+        older.occasionID = nil
+        defaults.set(try JSONEncoder().encode([older]), forKey: "chantShelf.sets")
+
+        let shelf = ChantShelfStore(defaults: defaults)
+        #expect(shelf.keptSet(of: benediction)?.id == older.id)
+        // A set of the reader's own that only shares an occasion's name is
+        // not that occasion kept
+        let visit = ChantOccasion.occasion("visit")!
+        shelf.newSet(named: visit.title)
+        #expect(shelf.keptSet(of: visit) == nil)
+        shelf.toggleKeeping(benediction)
+        #expect(shelf.sets.map(\.name) == [visit.title])
+    }
+
     @Test func aNewSetIsNamedOrBegunWithItsChant() {
         let shelf = store()
         #expect(shelf.nextSetName == "My set")

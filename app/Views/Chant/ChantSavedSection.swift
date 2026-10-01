@@ -470,7 +470,7 @@ struct ChantSavedSection: View {
                     }
                     .buttonStyle(.plain)
                     .accessibilityElement(children: .ignore)
-                    .accessibilityLabel("\(times > 1 ? "\(chant.latinTitle), \(times) times" : chant.latinTitle), \(chant.englishTitle), \(ChantPlayer.spoken(item.duration))")
+                    .accessibilityLabel(chant.spokenEntry(times: times, duration: item.duration))
                     .accessibilityAddTraits(.isButton)
                     .accessibilityHint("Opens the chant")
                 }
@@ -487,13 +487,19 @@ struct ChantSavedSection: View {
                 }
                 .frame(minHeight: 44)
                 .accessibilityElement(children: .ignore)
-                .accessibilityLabel(seconds > 0
-                    ? "\(note.isEmpty ? "Silence" : note), \(ChantPlayer.spoken(TimeInterval(seconds))) of silence"
-                    : "A note: \(note.isEmpty ? "Silence" : note)")
+                .accessibilityLabel(Self.spokenPause(note: note, seconds: seconds))
             }
         }
         .padding(.vertical, 4)
         .overlay(alignment: .bottom) { ChantRule(opacity: 0.12) }
+    }
+
+    /// A pause as VoiceOver says it: its silence in words, or that it is
+    /// a note
+    private static func spokenPause(note: String, seconds: Int) -> String {
+        let words = note.isEmpty ? "Silence" : note
+        guard seconds > 0 else { return "A note: \(words)" }
+        return "\(words), \(ChantPlayer.spoken(TimeInterval(seconds))) of silence"
     }
 
     private func addButton(_ title: String, color: Color, action: @escaping () -> Void) -> some View {
