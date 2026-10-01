@@ -393,7 +393,14 @@ Reduce Motion drops the lifted row's lean and the slot's growth.
 Above the grid, fixed: a day strip (liturgical-colour diamond from the
 missal vestment + weekday · feast via `TodayInChurch`) and the focus
 block. The strip carries no app chrome — it reads the day, and the room
-that buys is what lets a long feast set in full. Tiles (vocabulary `Models/ChapelTile.swift`;
+that buys is what lets a long feast set in full — with one exception at
+its right: the journal's pencil, a 40pt gold-ringed circle answering to
+44, which opens `JournalEntryEditorView(isMidPrayer: false)` as the
+Journal does ("New reflection" to VoiceOver). With the Journal off the
+tab bar, a new reflection needs a door that is always on the page, and
+the Reflections tile can be put away; the Chapel is where reflections
+are kept, and the Reflections tile still opens the whole journal
+(`switchTo(.journal)`). Tiles (vocabulary `Models/ChapelTile.swift`;
 layout persists as `userSettings.chapelLayout`, validated against known
 ids on decode, with a one-time migration from the old `meWidgets`
 order; a tile newer than a stored layout is inserted in its default
@@ -417,14 +424,17 @@ calendar); "3 of 5 offered" in the ruled foot; the half is a figure
 "2 / 4" over a row of tappable cells; the tile once opened on an italic
 line saying what a rule is, which the beads and their BEGIN now say),
 **Consecration** (the preparation's own painting —
-`ConsecrationPhase.heroImageName`, the one its day page opens on — run
-to the card's edges under a scrim, the day as a figure "Day 14 / 33"
+`ConsecrationPhase.heroImageName`, the one its day page opens on, chosen
+in one place, `ChapelConsecrationTile.paintingName`, so a painting made
+for the tile is a one-line change — run to the card's edges under a
+scrim, the day as a figure "Day 14 / 33"
 over the day's own title on its floor, CONTINUE beside it, and de
 Montfort's four preparations as a segmented road along the floor,
 tracks weighted 12/7/7/7 days; the half counts "14 / 33" over the
 preparation's name; made, "Consecrated" with its date; not begun,
-"Total Consecration" over the Annunciation), **Prayer Book**
-(`ChapelPrayerBookTile`: a leaf darkening down the card, the order for
+"Total Consecration" over the Annunciation), **Prayers**
+(`ChapelPrayerBookTile`, the Prayer Book under the name its tab
+carries: a leaf darkening down the card, the order for
 the hour it is set large and centred with its one line, a door to the
 book, over an outlined PRAY — outlined because the page's one filled
 gold act is the focus block's — and the day's three hours ruled off
@@ -499,7 +509,7 @@ its floor; the whole tile opens the Prayer Record, and has no foot).
 `ChapelTileFrame` in `Views/Chapel/ChapelTiles.swift`): a card at a
 16pt corner cut from the section's own ground (`ChapelSurface`) — the
 rule lit on `cardElevated`, the flame's ember on `backgroundDeep`, the
-consecration's painting, the Prayer Book's leaf from `cardElevated`
+consecration's painting, the Prayers tile's leaf from `cardElevated`
 down to `backgroundDeep`, the shelf and the chant on `cardBackground`,
 the journal on `quoteBackground`, the liturgy on `backgroundDeep`, the
 library on `cardBackground` with an inset rule — and an
@@ -524,24 +534,28 @@ and a hold as two gestures rather than a Button, so a hold that
 arranges the page never also opens the tile on release) except where
 the body has doors of its own — the Today rows and cells, the Reading
 tile's face and spines, the Liturgy's rows, the Library's doors, the
-chant's play disc and name, the Prayer Book's order, PRAY and hours at
+chant's play disc and name, the Prayers tile's order, PRAY and hours at
 full width — where only the foot's act, if any, is a control
 (`onAct`). The page before this drew one anatomy for every tile (the
 "Chapel Tiles" handoff): a kicker with a glyph on the page above a
 hairline shell with no fill, and the rule "no filled card surfaces on
 the page"; any tile sat well beside any other, and none could be told
-apart at a glance. That rule is retired for the tiles and the arrange
-rows — each section's ground is its own — and kickers above the card
-must not come back. Only the rule's card wears a halo; the chant keeps
+apart at a glance. The redesign deliberately replaces that anatomy and
+that rule. Filled surfaces are allowed on the Chapel in exactly these
+places: each tile's own card, on the ground its `ChapelSurface` names;
+the folded rows, the lifted row and the landing slot of arrange mode;
+the hidden-sections tray and its chips; and the chant's play disc. The
+page itself — the day strip, the focus block, the foot — stands on the
+bare page gradient, and kickers above the card must not come back. Only the rule's card wears a halo; the chant keeps
 the Chant Library's own disc (`ChantPlayDisc`, dark with a gold rim)
 rather than the board's gold one, since the page's one filled gold act
-is the focus block's, as the Prayer Book's PRAY is outlined. Halves
+is the focus block's, as the Prayers tile's PRAY is outlined. Halves
 lead with a figure or a headline, left-aligned — but the streak's,
 centred under its ember as drawn. The foot of the page is ARRANGE THIS
 PAGE in an outlined capsule — the 2×2 arrange mark, not the board's
 faders, which are Settings' door — over "Or press and hold anywhere."
 and the imprint, which the board leaves off and the page keeps. The
-default order is Today, Streak, Consecration, Prayer Book, Reading,
+default order is Today, Streak, Consecration, Prayers, Reading,
 Chant, Reflections, Liturgy, Library: the live sections lead, and the
 two indexes of doors stand last, the Library's colophon the right last
 line before the foot. The day strip wraps a long feast to a second
