@@ -349,7 +349,7 @@ private struct NowPlayingScore: View {
     var body: some View {
         let index = player.holds(chant) ? (player.currentLine?.part ?? 0) : 0
         let part = chant.score.indices.contains(index) ? chant.score[index] : chant.score.first
-        Group {
+        ZStack(alignment: .top) {
             if let part {
                 ChantScoreImage(part: part)
                     .id(part.file)
@@ -380,6 +380,18 @@ private struct NowPlayingLine: View {
             ? (player.holds(chant) ? player.currentLine : chant.lines.first)
             : nil
 
+        VStack(spacing: 14) {
+            lineSlot(line)
+            // The reader's turn stands under the line it asks for
+            if let turn = player.turn, player.holds(chant) {
+                ChantYourTurn(turn: turn)
+                    .transition(.opacity)
+            }
+        }
+        .animation(Motion.crossfade, value: player.turn)
+    }
+
+    private func lineSlot(_ line: ChantLine?) -> some View {
         ZStack {
             if let line {
                 VStack(spacing: 5) {
@@ -411,14 +423,6 @@ private struct NowPlayingLine: View {
         }
         .frame(maxWidth: .infinity, minHeight: chant.hasLines ? 76 : 0)
         .animation(Motion.words, value: line)
-        .overlay(alignment: .bottom) {
-            if let turn = player.turn, player.holds(chant) {
-                ChantYourTurn(turn: turn)
-                    .offset(y: 8)
-                    .transition(.opacity)
-            }
-        }
-        .animation(Motion.crossfade, value: player.turn)
     }
 }
 
@@ -454,7 +458,7 @@ struct ChantYourTurn: View {
         }
         .padding(.horizontal, 16)
         .frame(minHeight: 56)
-        .background(RoundedRectangle(cornerRadius: 14).fill(AppColors.background))
+        .background(RoundedRectangle(cornerRadius: 14).fill(AppColors.gold.opacity(0.08)))
         .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(AppColors.gold.opacity(0.6), lineWidth: 1))
         .accessibilityElement(children: .combine)
         .accessibilityAddTraits(.updatesFrequently)

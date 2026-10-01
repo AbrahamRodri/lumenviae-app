@@ -50,7 +50,9 @@ struct ChantSavedSection: View {
         VStack(alignment: .leading, spacing: 36) {
             spines
 
-            Group {
+            // One slot the shelves crossfade in, so the one leaving and the
+            // one arriving are never laid out one above the other
+            ZStack(alignment: .top) {
                 switch selected {
                 case .learned:
                     list(
@@ -59,21 +61,23 @@ struct ChantSavedSection: View {
                         chants: shelf.learnedChants,
                         empty: "When you have learned a chant by heart and said so, it stands here."
                     )
+                    .transition(.opacity)
                 case .favorites:
                     list(
                         title: "Favourites",
                         kicker: "Kept close",
                         chants: shelf.favoriteChants,
-                        empty: "Hold a chant down anywhere in the library, or tap the heart on its page, to keep it here."
+                        empty: "Hold a chant down anywhere in the library, or add it from the ⋯ on its page, to keep it here."
                     )
+                    .transition(.opacity)
                 case .set(let id):
                     if let set = shelf.set(id) {
                         setCard(set)
+                            .transition(.opacity)
                     }
                 }
             }
             .padding(.horizontal, 20)
-            .transition(.opacity)
             .animation(Motion.crossfade, value: selected)
 
             if !shelf.recent.isEmpty {

@@ -40,10 +40,15 @@ struct ChantOccasionsSection: View {
             index
                 .padding(.horizontal, 12)
 
-            order(chosen)
-                .padding(.horizontal, 20)
-                .id(chosen.id)
-                .transition(.opacity)
+            // The order of service crossfades in a slot of its own: as a
+            // re-identified block in this column, the leaving one and the
+            // arriving one stood one above the other while they faded
+            ZStack(alignment: .top) {
+                order(chosen)
+                    .id(chosen.id)
+                    .transition(.opacity)
+            }
+            .padding(.horizontal, 20)
 
             makeYourOwn
                 .padding(.horizontal, 20)

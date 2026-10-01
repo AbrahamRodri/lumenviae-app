@@ -90,8 +90,12 @@ struct ChantPracticeView: View {
                             score
                                 .padding(.horizontal, 20)
 
-                            words
-                                .padding(.horizontal, 22)
+                            // A slot of its own, so a line leaving and the
+                            // next arriving crossfade over one another
+                            ZStack(alignment: .top) {
+                                words
+                            }
+                            .padding(.horizontal, 22)
 
                             status
                                 .padding(.horizontal, 20)
@@ -183,7 +187,7 @@ struct ChantPracticeView: View {
                                   : AppColors.textSecondary.opacity(0.35))
                             .frame(height: 3)
                             .shadow(color: each == step ? AppColors.gold.opacity(0.5) : .clear, radius: 5)
-                            .frame(maxWidth: .infinity, minHeight: 24)
+                            .frame(maxWidth: .infinity, minHeight: 44)
                             .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
