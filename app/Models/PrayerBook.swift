@@ -180,6 +180,16 @@ enum MarianAntiphon: CaseIterable {
     case reginaCaeli
     case salveRegina
 
+    /// Its name as it is sung, the first words of its Latin
+    var name: String {
+        switch self {
+        case .almaRedemptoris:   return "Alma Redemptoris Mater"
+        case .aveReginaCaelorum: return "Ave Regina Cælorum"
+        case .reginaCaeli:       return "Regina Cæli"
+        case .salveRegina:       return "Salve Regina"
+        }
+    }
+
     var prayerID: String {
         switch self {
         case .almaRedemptoris:   return "alma_redemptoris"
@@ -632,14 +642,25 @@ enum PrayerBook {
         return lastOffered >= angelusBellBegan(at: date, calendar: calendar) && lastOffered <= date
     }
 
-    /// The line under an hour's name on the Prayers page's Pray Now card:
-    /// the Angelus said plainly, and the Regina Cæli in its place in
-    /// Eastertide; the other hours their own
-    static func prayNowLine(for order: PrayerOrder, on date: Date = Date()) -> String {
-        guard order.id == angelusOrderID else { return order.detail }
-        return isEastertide(date)
-            ? "Our Lady's Easter joy, said in the Angelus's place from Easter until Pentecost."
-            : "A short prayer to Mary said at morning, noon and evening."
+    /// One plain line saying what one of the day's three orders is, as
+    /// the Prayers page's Pray Now card sets it under the order's name and
+    /// the Chapel's Prayers tile reads it: the Angelus said plainly and
+    /// the Regina Cæli in its place in Eastertide, and Night Prayers
+    /// closing on the antiphon the season sings. Any other order is its
+    /// own detail.
+    static func daySummary(of order: PrayerOrder, on date: Date = Date()) -> String {
+        switch order.id {
+        case morningOrderID:
+            return "The day offered to God before it begins."
+        case angelusOrderID:
+            return isEastertide(date)
+                ? "Our Lady's Easter joy, said in the Angelus's place from Easter to Trinity Sunday."
+                : "A short prayer to Mary said at morning, noon and evening."
+        case nightOrderID:
+            return "The day examined and given back, closing on the \(antiphon(on: date).name)."
+        default:
+            return order.detail
+        }
     }
 
     // MARK: Our Lady's best-known prayers

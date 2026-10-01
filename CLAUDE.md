@@ -1953,7 +1953,9 @@ write concurrent code here:
   Chapel's rule reads, still counts an order once a prayer day. The
   card's line is the board's for the Angelus ("A short prayer to Mary
   said at morning, noon and evening.") and the Regina Cæli's own in
-  Eastertide (`PrayerBook.prayNowLine`), and its painting crossfades in a
+  Eastertide, and Night Prayers' names the antiphon the season sings —
+  one pure function, `PrayerBook.daySummary(of:on:)`, which the Chapel's
+  Prayers tile reads too, and its painting crossfades in a
   slot of its own as the hour changes. The card is outlined, never
   filled, its halo the outline's. Then Prayers to Mary: the antiphon the
   season sings over the mystery it sings of (THIS SEASON) — left out in

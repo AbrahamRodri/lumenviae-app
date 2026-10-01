@@ -316,7 +316,7 @@ struct PrayerBookView: View {
                                 .minimumScaleFactor(0.7)
                                 .contentTransition(.opacity)
 
-                            Text(PrayerBook.prayNowLine(for: order, on: now))
+                            Text(PrayerBook.daySummary(of: order, on: now))
                                 .font(AppFonts.readingItalicFont(15))
                                 .foregroundColor(AppColors.cream.opacity(0.82))
                                 .fixedSize(horizontal: false, vertical: true)

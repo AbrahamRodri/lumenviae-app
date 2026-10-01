@@ -178,10 +178,21 @@ struct PrayersPageTests {
         defaults.removePersistentDomain(forName: "PrayersPageTests.store")
     }
 
-    @Test func prayNowSaysTheAngelusPlainlyAndTheReginaCaeliInItsSeason() {
+    @Test func eachHourIsSummedUpInOnePlainLine() {
+        let morning = PrayerBook.order(PrayerBook.morningOrderID)!
         let angelus = PrayerBook.order(PrayerBook.angelusOrderID)!
-        #expect(PrayerBook.prayNowLine(for: angelus, on: at(12)) == "A short prayer to Mary said at morning, noon and evening.")
-        #expect(PrayerBook.prayNowLine(for: angelus, on: at(12, 2026, 4, 12)).contains("Easter"))
+        let night = PrayerBook.order(PrayerBook.nightOrderID)!
+        let table = PrayerBook.order("table")!
+
+        #expect(PrayerBook.daySummary(of: angelus, on: at(12)) == "A short prayer to Mary said at morning, noon and evening.")
+        #expect(PrayerBook.daySummary(of: angelus, on: at(12, 2026, 4, 12)).contains("Easter"))
+        #expect(PrayerBook.daySummary(of: morning, on: at(7)) == "The day offered to God before it begins.")
+        // Night Prayers close on the antiphon the season sings
+        #expect(PrayerBook.daySummary(of: night, on: at(22)) == "The day examined and given back, closing on the Salve Regina.")
+        #expect(PrayerBook.daySummary(of: night, on: at(22, 2026, 12, 20)).hasSuffix("Alma Redemptoris Mater."))
+        #expect(PrayerBook.daySummary(of: night, on: at(22, 2026, 4, 12)).hasSuffix("Regina Cæli."))
+        // Any other order is its own detail
+        #expect(PrayerBook.daySummary(of: table) == table.detail)
     }
 
     // MARK: The tab
