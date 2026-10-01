@@ -14,8 +14,8 @@ extension PrayerBookTexts {
             id: "sub_tuum",
             title: "We Fly to Thy Patronage",
             latinTitle: "Sub tuum præsidium",
-            origin: "Egyptian papyrus · III century",
-            note: "The oldest known prayer to Our Lady, found on a papyrus from Egypt, and said in any danger.",
+            origin: "Egyptian papyrus · 3rd century",
+            note: "The oldest known prayer to Mary, found on a papyrus from Egypt, and said in any danger.",
             english: """
 We fly to thy patronage,
 O holy Mother of God;
@@ -36,7 +36,7 @@ Virgo gloriosa et benedicta.
             title: "O Mary, Conceived without Sin",
             latinTitle: "O Maria, sine labe concepta",
             origin: "Our Lady to St Catherine Labouré · Paris, 1830",
-            note: "The words set round Our Lady on the Miraculous Medal, as she showed it in the chapel of the Rue du Bac.",
+            note: "The words set round Mary on the Miraculous Medal, as she showed it in the chapel of the Rue du Bac.",
             english: """
 O Mary, conceived without sin,
 pray for us who have recourse to thee.
@@ -50,8 +50,8 @@ ora pro nobis qui ad te confugimus.
             id: "blessed_be_conception",
             title: "Blessed Be Her Immaculate Conception",
             latinTitle: "Benedicta sit sancta et immaculata Conceptio",
-            origin: "The Raccolta",
-            note: "A short act of praise said at any moment of the day, and above all on the feast of the eighth of December.",
+            origin: "The Raccolta, an old Vatican prayer book",
+            note: "A short act of praise said at any moment of the day, and above all on her feast on December 8.",
             english: """
 Blessed be the holy and Immaculate Conception
 of the Blessed Virgin Mary, Mother of God.
@@ -63,10 +63,10 @@ beatae Virginis Mariae, Dei Genetricis.
         ),
         BookPrayer(
             id: "totus_tuus",
-            title: "Totus Tuus",
-            latinTitle: "Totus tuus",
-            origin: "St Louis de Montfort · XVIII century",
-            note: "Montfort's short renewal of the consecration to Jesus through Mary, said often through the day.",
+            title: "All Yours",
+            latinTitle: "Totus Tuus",
+            origin: "St Louis de Montfort · 18th century",
+            note: "St Louis de Montfort's short renewal of the consecration to Jesus through Mary, said often through the day.",
             english: """
 I am all Thine, and all that I have is Thine,
 O most loving Jesus, through Mary, Thy most holy Mother.
@@ -80,8 +80,8 @@ O amantissime Iesu, per Mariam, Matrem tuam sanctissimam.
             id: "o_domina_mea",
             title: "My Queen, My Mother",
             latinTitle: "O Domina mea",
-            origin: "Attributed to Fr Nicolò Zucchi, SJ · XVII century",
-            note: "A short consecration of oneself to Our Lady, said each morning.",
+            origin: "Attributed to Fr Nicolò Zucchi, SJ · 17th century",
+            note: "A short prayer giving oneself to Mary, said each morning.",
             english: """
 My Queen, my Mother,
 I give myself entirely to thee;
@@ -109,8 +109,8 @@ ut rem ac possessionem tuam. Amen.
             id: "three_hail_marys",
             title: "The Three Hail Marys",
             latinTitle: nil,
-            origin: "St Mechtilde · XIII century · St Alphonsus Liguori · XVIII century",
-            note: "Said on rising and again before sleep, asking through Our Lady to be kept from mortal sin.",
+            origin: "St Mechtilde · 13th century · St Alphonsus Liguori · 18th century",
+            note: "Said on waking and again at bedtime, asking Mary's help to be kept from mortal sin.",
             english: """
 [Three Hail Marys, in honour of the power God the Father gave to Our Lady, the wisdom God the Son gave her, and the love God the Holy Ghost gave her.]
 
@@ -159,7 +159,7 @@ O my Mother, keep me from mortal sin this day.
             id: "perpetual_help",
             title: "To Our Mother of Perpetual Help",
             latinTitle: nil,
-            origin: "After St Alphonsus Liguori · XVIII century",
+            origin: "After St Alphonsus Liguori · 18th century",
             note: "Said before the icon of Our Mother of Perpetual Help, kept by the Redemptorists in Rome since 1866.",
             english: """
 O Mother of Perpetual Help, grant that I may ever invoke thy most powerful name, which is the protection of the living and the salvation of the dying.
@@ -176,8 +176,8 @@ But I will not be content with merely pronouncing thy name: let my love for thee
             id: "mary_after_communion",
             title: "To Our Lady after Communion",
             latinTitle: "O Maria, Virgo et Mater sanctissima",
-            origin: "Roman Missal · thanksgiving after Mass",
-            note: "Said after Communion, among the prayers the Missal sets for thanksgiving after Mass.",
+            origin: "The Mass · thanks after Mass",
+            note: "Said after Communion, among the Church's prayers of thanks after Mass.",
             english: """
 O Mary, most holy Virgin Mother, behold, I have received thy most dear Son, whom thou didst conceive in thy immaculate womb, bring forth, nurse, and embrace most tenderly.
 
@@ -197,8 +197,8 @@ Rogo ergo te, piissima Mater, impetra mihi veniam omnium peccatorum meorum, uber
             id: "ave_regina_caelorum",
             title: "Hail, Queen of Heaven",
             latinTitle: "Ave, Regina cælorum",
-            origin: "Western Church · XII century",
-            note: "Sung at the close of Compline from the Purification to Holy Week.",
+            origin: "Western Church · 12th century",
+            note: "Sung to close the Church's Bedtime Prayer (Compline) from February 2 until Holy Week.",
             english: """
 Hail, O Queen of heaven,
 hail, O Lady of the Angels;
@@ -240,8 +240,8 @@ Concede, misericors Deus, fragilitati nostrae praesidium, ut, qui sanctae Dei Ge
             id: "alma_redemptoris",
             title: "Loving Mother of the Redeemer",
             latinTitle: "Alma Redemptoris Mater",
-            origin: "Attributed to Hermann of Reichenau · XI century",
-            note: "Sung at the close of Compline from Advent to the Purification, with its own versicle and prayer before and after Christmas.",
+            origin: "Attributed to Hermann of Reichenau · 11th century",
+            note: "Sung to close the Church's Bedtime Prayer (Compline) from Advent until February 2.",
             english: """
 Loving Mother of the Redeemer, who remainest the open gate of heaven,
 and star of the sea, succour the falling people who strive to rise again:
@@ -297,10 +297,10 @@ Deus, qui salutis aeternae, beatae Mariae virginitate fecunda, humano generi pra
         ),
         BookPrayer(
             id: "regina_caeli",
-            title: "The Regina Cæli",
-            latinTitle: "Regina cæli",
-            origin: "Western Church · XII century",
-            note: "Said in place of the Angelus through Eastertide, and sung at the close of Compline in the same season.",
+            title: "Queen of Heaven",
+            latinTitle: "Regina Cæli",
+            origin: "Western Church · 12th century",
+            note: "Said instead of the Angelus from Easter to Pentecost, and sung to close the Church's Bedtime Prayer in those weeks.",
             english: """
 O Queen of heaven, rejoice, alleluia.
 For He whom thou didst merit to bear, alleluia,
@@ -332,8 +332,8 @@ Deus, qui per resurrectionem Filii tui, Domini nostri Iesu Christi, mundum laeti
             id: "angelus",
             title: "The Angelus",
             latinTitle: "Angelus Domini",
-            origin: "Western Church · XIII–XVI century",
-            note: "Said at six in the morning, at noon and at six in the evening when the bell rings; in Eastertide the Regina Cæli is said in its place.",
+            origin: "Western Church · 13th–16th century",
+            note: "Said at 6 AM, noon and 6 PM when the church bell rings; from Easter to Pentecost, Queen of Heaven (Regina Cæli) is said instead.",
             english: """
 ℣. The Angel of the Lord declared unto Mary.
 ℟. And she conceived of the Holy Ghost.
@@ -416,7 +416,7 @@ Gratiam tuam, quaesumus, Domine, mentibus nostris infunde; ut qui, Angelo nuntia
             title: "Thou Art All Fair",
             latinTitle: "Tota pulchra es",
             origin: "Western Church · after the Canticle of Canticles 4:7",
-            note: "The antiphon of the Immaculate Conception, sung on her feast of the eighth of December and at Benediction.",
+            note: "A short sung prayer to Mary, conceived without sin, for her feast on December 8 and for Benediction (adoration of the Host, ending in a blessing).",
             english: """
 Thou art all fair, O Mary,
 and the original stain is not in thee.
@@ -462,8 +462,8 @@ Deus, qui per immaculatam Virginis Conceptionem dignum Filio tuo habitaculum pra
             id: "flos_carmeli",
             title: "Flower of Carmel",
             latinTitle: "Flos Carmeli",
-            origin: "Attributed to St Simon Stock · XIII century",
-            note: "The opening stanzas of the Carmelites' hymn to their Mother, sung on her feast of the sixteenth of July.",
+            origin: "Attributed to St Simon Stock · 13th century",
+            note: "The opening verses of the Carmelites' hymn to their Mother, sung on her feast, July 16.",
             english: """
 Flower of Carmel,
 vine in blossom,
@@ -493,10 +493,10 @@ stella maris.
         ),
         BookPrayer(
             id: "stabat_mater",
-            title: "The Stabat Mater",
+            title: "At the Cross Her Station Keeping",
             latinTitle: "Stabat Mater",
-            origin: "Attributed to Jacopone da Todi · XIII century",
-            note: "The sequence of the Mass of Our Lady's Seven Sorrows, and sung a stanza at a time between the Stations of the Cross.",
+            origin: "Attributed to Jacopone da Todi · 13th century",
+            note: "The hymn sung at Mass on the feast of Our Lady of Sorrows, and a verse at a time between the Stations of the Cross.",
             english: """
 The Mother stood in sorrow,
 weeping beside the Cross

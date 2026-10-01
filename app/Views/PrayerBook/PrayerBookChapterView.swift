@@ -116,7 +116,7 @@ struct PrayerBookChapterView: View {
                 BookPrayerRow(
                     prayer: prayer,
                     number: i + 1,
-                    badge: chapter.id == "our_lady" && prayer.id == seasonal ? "Of the season" : nil,
+                    badge: chapter.id == "our_lady" && prayer.id == seasonal ? "This season" : nil,
                     showsRule: i < prayers.count - 1
                 ) {
                     router.push(.devotionPrayer(id: prayer.id))

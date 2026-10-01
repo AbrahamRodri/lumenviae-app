@@ -108,6 +108,13 @@ gained books of their own, and How to Pray became a course.
 - Open the Journal from the Chapel's Reflections tile, from Explore's
   search, and from the screen after a Rosary, which asks what stayed with
   you in the prayer
+- Say the Prayers tab in plain words: prayers known by a Latin name
+  carry an English title (I Confess, Down in Adoration Falling, Queen of
+  Heaven), the season's antiphon is the season's song to Mary, a prayer
+  done reads Prayed, the ribbon's words are Save and Saved, the hours read
+  On waking, At noon, At 6 PM and At bedtime, centuries are written as
+  numbers, and every Church word in a prayer's notes is explained where
+  it stands
 - Reuse the spoken Rosary's saved manifest while its signed links live, and
   fetch a new one before downloading once they have expired; offline, say
   the Rosary from the recordings already on disk (abebfed)

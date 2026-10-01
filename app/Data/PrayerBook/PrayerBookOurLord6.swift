@@ -14,8 +14,8 @@ extension PrayerBookTexts {
             id: "adoro_te",
             title: "I Adore Thee Devoutly",
             latinTitle: "Adoro te devote",
-            origin: "St Thomas Aquinas · XIII century",
-            note: "Said in thanksgiving after Holy Communion, and in adoration before the Blessed Sacrament.",
+            origin: "St Thomas Aquinas · 13th century",
+            note: "Said in thanksgiving after Holy Communion, and in adoration before Jesus present in the Host.",
             english: """
 I adore Thee devoutly, O hidden Deity,
 Who under these figures art truly concealed;
@@ -94,9 +94,9 @@ Amen.
         BookPrayer(
             id: "veni_sancte_spiritus",
             title: "Come, Holy Spirit",
-            latinTitle: "Veni, Sancte Spiritus",
-            origin: "Attributed to Stephen Langton · XIII century",
-            note: "The Golden Sequence, sung at Mass before the Gospel on Pentecost and through its octave.",
+            latinTitle: "Veni, Sancte Spiritus, et emitte",
+            origin: "Attributed to Stephen Langton · 13th century",
+            note: "A hymn sung at Mass before the Gospel on Pentecost and through the week after.",
             english: """
 Come, Holy Spirit,
 and send forth from heaven

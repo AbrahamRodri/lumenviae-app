@@ -304,7 +304,7 @@ struct TodaysPrayerSection: View {
     /// The hour said the way the row's other facts are: short capitals,
     /// from the book's own table, so the row turns when the book does
     private static func hourMoment(_ date: Date) -> String {
-        PrayerBook.dayOrderMoment(at: date, short: true).uppercased()
+        PrayerBook.dayOrderMoment(at: date).uppercased()
     }
 
     // MARK: Row 1 — Total Consecration

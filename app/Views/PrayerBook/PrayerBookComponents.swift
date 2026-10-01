@@ -85,8 +85,8 @@ struct RibbonToggle: View {
         }
         .buttonStyle(QuietGlyphButtonStyle())
         .sensoryFeedback(.selection, trigger: kept)
-        .accessibilityLabel(kept ? "Kept with a ribbon" : "Keep this prayer with a ribbon")
-        .accessibilityHint(kept ? "Takes the ribbon out" : "It will wait under Saved, on the Prayers page")
+        .accessibilityLabel(kept ? "Saved" : "Save this prayer")
+        .accessibilityHint(kept ? "Removes it from Saved" : "Adds it to Saved on the Prayers tab")
     }
 }
 
@@ -140,8 +140,8 @@ struct BookPrayerRow: View {
                                 .multilineTextAlignment(.leading)
                                 .fixedSize(horizontal: false, vertical: true)
 
-                            if let latin = prayer.latinTitle, latin != prayer.title {
-                                Text(latin)
+                            if let second = prayer.secondTitle {
+                                Text(second)
                                     .font(AppFonts.readingItalicFont(13.5))
                                     .foregroundColor(AppColors.textSecondary)
                                     .lineLimit(1)
@@ -164,7 +164,7 @@ struct BookPrayerRow: View {
                         }
                         if store.isKept(prayer.id) {
                             RibbonMark(kept: true, width: 7, restLength: 12, keptLength: 16)
-                                .accessibilityLabel("Kept")
+                                .accessibilityLabel("Saved")
                         }
                         AppIcon("ph-caret-right", size: 11)
                             .foregroundColor(AppColors.gold.opacity(0.5))
@@ -187,18 +187,19 @@ struct BookPrayerRow: View {
     }
 }
 
-/// "BY HEART" beside a sealed check — the reader's own mark, never a score
+/// "LEARNED" beside a sealed check — the reader's own mark that they
+/// know a prayer by heart, never a score
 struct ByHeartMark: View {
     var body: some View {
         HStack(spacing: 4) {
             AppIcon("ph-seal-check-fill", size: 11)
-            Text("BY HEART")
+            Text("LEARNED")
                 .font(AppFonts.labelFont(7.5))
                 .tracking(1.4)
         }
         .foregroundColor(AppColors.gold.opacity(0.85))
         .fixedSize()
-        .accessibilityLabel("Known by heart")
+        .accessibilityLabel("Learned by heart")
     }
 }
 
@@ -281,15 +282,13 @@ struct PrayerHoursStrip: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(QuietGlyphButtonStyle())
-        .accessibilityLabel("\(order.title(on: now))\(lit ? ", now" : "")\(offered ? ", offered today" : "")")
+        .accessibilityLabel("\(order.title(on: now))\(lit ? ", now" : "")\(offered ? ", prayed today" : "")")
     }
 
+    /// Named as the Prayers page's strip names its stations — MORNING,
+    /// NOON or EVENING, NIGHT — never by a prayer's Latin name
     private func shortName(_ order: PrayerOrder) -> String {
-        switch order.id {
-        case PrayerBook.morningOrderID: return "Morning"
-        case PrayerBook.angelusOrderID: return PrayerBook.isEastertide(now) ? "Regina Cæli" : "Angelus"
-        default: return "Night"
-        }
+        PrayerBook.hourName(of: order, at: now)
     }
 }
 

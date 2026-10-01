@@ -291,7 +291,7 @@ struct PrayerBookView: View {
         let painting = PrayerBookPainting.hour(order, on: now)
 
         return VStack(alignment: .leading, spacing: 16) {
-            PrayersSectionTitle(title: "Pray Now", note: "The prayer for this time of day.")
+            PrayersSectionTitle(title: "This Time of Day", note: "Prayers for this hour. Tap a time below to see another.")
 
             VStack(spacing: 0) {
                 Button {
@@ -374,15 +374,15 @@ struct PrayerBookView: View {
         let known = PrayerBook.bestKnownMarianIDs
             .filter { $0 != antiphon.prayerID }
             .compactMap { PrayerBook.prayer($0) }
-        // In Eastertide the Regina Cæli is the Angelus, already set large
-        // in Pray Now over the same painting; the section opens on its
-        // rows rather than showing it twice
+        // In the Easter season Queen of Heaven is the Angelus, already set
+        // large on the card above over the same painting; the section
+        // opens on its rows rather than showing it twice
         let seasonalIsPrayNow = shownOrder.prayerIDs(now) == [antiphon.prayerID]
 
         return VStack(alignment: .leading, spacing: 16) {
             PrayersSectionTitle(
                 title: "Prayers to Mary",
-                note: "This season's prayer, and her best-known prayers."
+                note: "This season's song to Mary, and her best-known prayers."
             )
 
             if let seasonal, !seasonalIsPrayNow {
@@ -398,6 +398,7 @@ struct PrayerBookView: View {
                 ForEach(Array(known.enumerated()), id: \.element.id) { i, prayer in
                     PrayersLedgerRow(
                         title: prayer.listTitle,
+                        note: PrayerBook.englishNames[prayer.id],
                         prayerID: prayer.id,
                         showsRule: i < known.count - 1
                     ) {
@@ -426,7 +427,7 @@ struct PrayerBookView: View {
         return VStack(alignment: .leading, spacing: 16) {
             PrayersSectionTitle(
                 title: "Saved",
-                note: "Tap the ribbon on any prayer to save it here."
+                note: "To save a prayer here, tap the bookmark at the top of its page."
             )
 
             if !kept.isEmpty {
@@ -452,8 +453,8 @@ struct PrayerBookView: View {
     private var occasions: some View {
         VStack(alignment: .leading, spacing: 16) {
             PrayersSectionTitle(
-                title: "For Any Occasion",
-                note: "Pick where you are to see prayers for it."
+                title: "Occasions",
+                note: "Choose where you are, or what you need, to see its prayers."
             )
 
             WordFlow(spacing: 8, lineSpacing: 4) {
@@ -496,6 +497,7 @@ struct PrayerBookView: View {
                 ForEach(PrayerBook.chapters) { chapter in
                     PrayersLedgerRow(
                         title: chapter.title,
+                        note: PrayerBook.chapterNotes[chapter.id],
                         count: chapter.prayerIDs.count
                     ) {
                         router.push(.prayerBookChapter(id: chapter.id))

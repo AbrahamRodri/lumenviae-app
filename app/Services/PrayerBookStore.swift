@@ -229,9 +229,8 @@ final class PrayerBookStore {
         for hour in Self.angelusHours {
             let content = UNMutableNotificationContent()
             content.title = "The Angelus"
-            content.body = hour == 12
-                ? "The noon bell. The Angel of the Lord declared unto Mary."
-                : "The Angel of the Lord declared unto Mary."
+            let bell = hour == 12 ? "noon" : hour < 12 ? "morning" : "evening"
+            content.body = "The \(bell) bell: time for the Angelus, a short prayer to Mary. Tap to pray it."
             content.sound = UNNotificationSound(named: UNNotificationSoundName("church_bell.caf"))
             content.categoryIdentifier = Self.angelusCategory
             content.threadIdentifier = "angelus"

@@ -61,7 +61,7 @@ struct PrayerBookTests {
         let angelus = PrayerBook.order(PrayerBook.angelusOrderID)!
         #expect(angelus.prayerIDs(day(2026, 4, 12)) == ["regina_caeli"])
         #expect(angelus.prayerIDs(day(2026, 9, 24)) == ["angelus"])
-        #expect(angelus.title(on: day(2026, 4, 12)) == "The Regina Cæli")
+        #expect(angelus.title(on: day(2026, 4, 12)) == "Queen of Heaven")
     }
 
     @Test func theDayOrderFollowsTheClock() {

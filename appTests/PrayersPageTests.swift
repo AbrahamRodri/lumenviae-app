@@ -43,7 +43,7 @@ struct PrayersPageTests {
     @Test func theChaptersCarryTheirPlainNames() {
         #expect(PrayerBook.chapters.map(\.title) == [
             "Basic Prayers", "Mary", "Jesus", "The Eucharist", "The Holy Spirit",
-            "Angels and Saints", "Through the Day", "Confession", "For the Dead",
+            "Angels and Saints", "Through the Day", "Confession", "For Those Who Have Died",
             "The Church", "Litanies", "Short Prayers"
         ])
         for chapter in PrayerBook.chapters {
@@ -87,7 +87,7 @@ struct PrayersPageTests {
         #expect(PrayerBook.standing(of: angelus, at: at(12), offered: false, calendar: calendar) == .now)
         #expect(PrayerBook.standing(of: angelus, at: at(12), offered: true, calendar: calendar) == .offered)
         // A morning not prayed by night is still said on rising
-        #expect(PrayerBook.standing(of: morning, at: at(21), offered: false, calendar: calendar) == .at("On rising"))
+        #expect(PrayerBook.standing(of: morning, at: at(21), offered: false, calendar: calendar) == .at("On waking"))
         #expect(PrayerBook.standing(of: night, at: at(12), offered: false, calendar: calendar) == .at("At bedtime"))
         #expect(PrayerBook.standing(of: angelus, at: at(8), offered: false, calendar: calendar) == .at("At noon"))
     }
@@ -101,7 +101,7 @@ struct PrayersPageTests {
         #expect(PrayerBook.standing(of: angelus, at: at(8), offered: false, calendar: calendar) == .at("At noon"))
         // The evening's is kept until the day turns at four
         #expect(PrayerBook.hourName(of: angelus, at: at(21), calendar: calendar) == "Evening")
-        #expect(PrayerBook.standing(of: angelus, at: at(21), offered: false, calendar: calendar) == .at("At six"))
+        #expect(PrayerBook.standing(of: angelus, at: at(21), offered: false, calendar: calendar) == .at("At 6 PM"))
     }
 
     @Test func anOfferedAngelusIsNamedForTheBellItKept() {
@@ -110,13 +110,13 @@ struct PrayersPageTests {
         func station(at now: Date, last: Date) -> String {
             let offered = PrayerBook.isOfferedNow(angelus, at: now, offeredToday: true, lastOffered: last, calendar: calendar)
             let name = PrayerBook.hourName(of: angelus, at: now, calendar: calendar)
-            return offered ? "\(name) · Offered" : name
+            return offered ? "\(name) · Prayed" : name
         }
         let sixInTheEvening = at(18)
 
         // Prayed at the evening bell: EVENING through the night, never NOON offered
-        #expect(station(at: at(21), last: sixInTheEvening) == "Evening · Offered")
-        #expect(station(at: moment(0, 30, day: 25), last: sixInTheEvening) == "Evening · Offered")
+        #expect(station(at: at(21), last: sixInTheEvening) == "Evening · Prayed")
+        #expect(station(at: moment(0, 30, day: 25), last: sixInTheEvening) == "Evening · Prayed")
         // Prayed at noon, by evening it is the evening bell's turn to ask
         #expect(station(at: at(21), last: at(12)) == "Evening")
     }
@@ -241,15 +241,58 @@ struct PrayersPageTests {
         let night = PrayerBook.order(PrayerBook.nightOrderID)!
         let table = PrayerBook.order("table")!
 
-        #expect(PrayerBook.daySummary(of: angelus, on: at(12)) == "A short prayer to Mary said at morning, noon and evening.")
+        #expect(PrayerBook.daySummary(of: angelus, on: at(12)) == "A short prayer to Mary, said at 6 AM, noon and 6 PM.")
         #expect(PrayerBook.daySummary(of: angelus, on: at(12, 2026, 4, 12)).contains("Easter"))
-        #expect(PrayerBook.daySummary(of: morning, on: at(7)) == "The day offered to God before it begins.")
+        #expect(PrayerBook.daySummary(of: morning, on: at(7)) == "A few short prayers on waking, giving the day to God.")
         // Night Prayers close on the antiphon the season sings
-        #expect(PrayerBook.daySummary(of: night, on: at(22)) == "The day examined and given back, closing on the Salve Regina.")
-        #expect(PrayerBook.daySummary(of: night, on: at(22, 2026, 12, 20)).hasSuffix("Alma Redemptoris Mater."))
-        #expect(PrayerBook.daySummary(of: night, on: at(22, 2026, 4, 12)).hasSuffix("Regina Cæli."))
+        #expect(PrayerBook.daySummary(of: night, on: at(22)) == "Look back on the day, ask God's forgiveness, and end with this season's song to Mary: Hail, Holy Queen.")
+        #expect(PrayerBook.daySummary(of: night, on: at(22, 2026, 12, 20)).hasSuffix("Loving Mother of the Redeemer."))
+        #expect(PrayerBook.daySummary(of: night, on: at(22, 2026, 4, 12)).hasSuffix("Queen of Heaven."))
         // Any other order is its own detail
         #expect(PrayerBook.daySummary(of: table) == table.detail)
+    }
+
+    // MARK: Plain words
+
+    @Test func everySurfaceSaysTheHourInTheSameWords() {
+        let morning = PrayerBook.order(PrayerBook.morningOrderID)!
+        let angelus = PrayerBook.order(PrayerBook.angelusOrderID)!
+        let night = PrayerBook.order(PrayerBook.nightOrderID)!
+
+        // Home's row and the Chapel's tile read these
+        #expect(PrayerBook.dayOrderMoment(at: at(7), calendar: calendar) == "On waking")
+        #expect(PrayerBook.dayOrderMoment(at: at(12), calendar: calendar) == "At noon")
+        #expect(PrayerBook.dayOrderMoment(at: at(17), calendar: calendar) == "At 6 PM")
+        #expect(PrayerBook.dayOrderMoment(at: at(22), calendar: calendar) == "At bedtime")
+        // and the Prayers page's strip says the same of an hour not yet come
+        #expect(PrayerBook.standing(of: morning, at: at(22), offered: false, calendar: calendar)
+                == .at(PrayerBook.dayOrderMoment(at: at(7), calendar: calendar)))
+        #expect(PrayerBook.standing(of: angelus, at: at(22), offered: false, calendar: calendar)
+                == .at(PrayerBook.dayOrderMoment(at: at(17), calendar: calendar)))
+        #expect(PrayerBook.standing(of: night, at: at(7), offered: false, calendar: calendar)
+                == .at(PrayerBook.dayOrderMoment(at: at(22), calendar: calendar)))
+    }
+
+    @Test func theSongsToMaryAreNamedAsTheirPrayersAre() {
+        for antiphon in MarianAntiphon.allCases {
+            #expect(PrayerBook.prayer(antiphon.prayerID)?.listTitle == antiphon.name)
+            // The seasons in plain dates, never the calendar's Latin
+            for word in ["Purification", "Trinity", "Eastertide"] {
+                #expect(!antiphon.season.contains(word))
+            }
+        }
+    }
+
+    @Test func aPrayersNameIsNeverSetTwice() {
+        for prayer in PrayerBook.prayers.values {
+            if let second = prayer.secondTitle {
+                #expect(!PrayerBook.isSameName(second, prayer.title), "\(prayer.id) names itself twice")
+            }
+        }
+        #expect(PrayerBook.prayer("memorare")?.secondTitle == "Remember, O most gracious Virgin Mary")
+        #expect(PrayerBook.prayer("tantum_ergo")?.title == "Down in Adoration Falling")
+        #expect(PrayerBook.prayer("tantum_ergo")?.secondTitle == "Tantum Ergo")
+        #expect(PrayerBook.isSameName("The Memorare", "memorare"))
     }
 
     // MARK: The tab

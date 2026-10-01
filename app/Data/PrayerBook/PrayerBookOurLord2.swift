@@ -14,8 +14,8 @@ extension PrayerBookTexts {
             id: "anima_christi",
             title: "Soul of Christ",
             latinTitle: "Anima Christi",
-            origin: "Traditional · XIV century",
-            note: "Said after Holy Communion, and set by St Ignatius at the head of the Spiritual Exercises.",
+            origin: "Traditional · 14th century",
+            note: "Said after Holy Communion, and set by St Ignatius at the start of his retreat book, the Spiritual Exercises.",
             english: """
 Soul of Christ, sanctify me.
 Body of Christ, save me.
@@ -51,8 +51,8 @@ in saecula saeculorum. Amen.
             id: "suscipe",
             title: "Take, O Lord, and Receive",
             latinTitle: "Suscipe",
-            origin: "St Ignatius of Loyola · XVI century",
-            note: "The offering that closes the Spiritual Exercises, in the Contemplation for obtaining love, and often said after Holy Communion.",
+            origin: "St Ignatius of Loyola · 16th century",
+            note: "St Ignatius's prayer giving himself wholly to God, from his retreat book, the Spiritual Exercises; often said after Holy Communion.",
             english: """
 Take, O Lord, and receive all my liberty.
 Take my memory, my understanding, and my whole will.
@@ -73,9 +73,9 @@ et dives sum satis, nec aliud quidquam ultra posco. Amen.
         BookPrayer(
             id: "come_holy_ghost",
             title: "Come, Holy Ghost",
-            latinTitle: "Veni, Sancte Spiritus",
-            origin: "Roman Missal · Pentecost",
-            note: "Said before prayer, study or any work begun, asking the light of the Holy Ghost.",
+            latinTitle: "Veni, Sancte Spiritus, reple",
+            origin: "The Mass · Pentecost",
+            note: "Said before prayer, study or any work begun, asking the Holy Spirit for light.",
             english: """
 Come, Holy Ghost, fill the hearts of Thy faithful, and kindle in them the fire of Thy love.
 
@@ -101,7 +101,7 @@ Deus, qui corda fidelium Sancti Spiritus illustratione docuisti, da nobis in eod
             id: "en_ego",
             title: "Prayer before a Crucifix",
             latinTitle: "En ego, o bone et dulcissime Iesu",
-            origin: "Roman Missal · Psalm 21:17–18",
+            origin: "The Mass · Psalm 21:17–18",
             note: "Said kneeling before an image of Christ crucified, after Holy Communion or at any time.",
             english: """
 Behold, O good and most sweet Jesus, I cast myself upon my knees in Thy sight, and with the most fervent desire of my soul I pray and beseech Thee that Thou wouldst impress upon my heart lively sentiments of faith, hope and charity, true repentance for my sins, and a most firm will to amend them; while with deep affection and grief of soul I consider within myself and contemplate in mind Thy five wounds, having before my eyes that which David the prophet long ago put in Thy mouth concerning Thee, O good Jesus:

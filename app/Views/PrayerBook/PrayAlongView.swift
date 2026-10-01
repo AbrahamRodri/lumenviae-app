@@ -280,7 +280,7 @@ struct PrayAlongView: View {
                                 .accessibilityHidden(true)
                         }
 
-                        if let latin = prayer.latinTitle, latin != prayer.title {
+                        if let latin = prayer.secondTitle {
                             Text(latin.uppercased())
                                 .font(AppFonts.labelFont(9))
                                 .tracking(2.5)
@@ -572,7 +572,7 @@ struct PrayAlongView: View {
                     .padding(.top, 14)
 
                     if launch.orderID == nil, let only = prayers.first, !store.isKept(only.id) {
-                        QuietGoldButton(title: "Keep it with a ribbon", leadingIcon: "ph-push-pin") {
+                        QuietGoldButton(title: "Save this prayer", leadingIcon: "ph-push-pin") {
                             store.toggleRibbon(only.id)
                         }
                     }
@@ -594,7 +594,7 @@ struct PrayAlongView: View {
         case PrayerBook.morningOrderID: return "The day is offered before it is begun."
         case PrayerBook.nightOrderID: return "The day is given back. Rest in His peace."
         case PrayerBook.angelusOrderID: return "The Word was made flesh, and dwelt among us."
-        default: return "\(launch.title), offered for today."
+        default: return "\(launch.title), prayed today."
         }
     }
 
@@ -812,7 +812,7 @@ struct PrayAloudChoiceSheet: View {
                 SheetHeader(
                     kicker: "Prayers",
                     title: "Aloud, or in silence?",
-                    lead: "The book can read each prayer to you, the page following the voice, or leave the words to you."
+                    lead: "The app can read each prayer aloud to you, or leave you to say the words yourself."
                 )
 
                 Button { onChoose(true) } label: {
@@ -828,7 +828,7 @@ struct PrayAloudChoiceSheet: View {
                 Button { onChoose(false) } label: {
                     SheetRow(
                         "In silence",
-                        detail: "For the pew, or beside someone asleep",
+                        detail: "No sound. The words stay on screen for you to say.",
                         icon: "ph-book-open",
                         showsDivider: false,
                         detailLineLimit: nil
@@ -836,7 +836,7 @@ struct PrayAloudChoiceSheet: View {
                 }
                 .buttonStyle(SacredCardButtonStyle())
 
-                SheetNote("The speaker at the top of the page changes this whenever you like, and so does Settings.")
+                SheetNote("Change this any time with the speaker button at the top, or in Settings.")
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }

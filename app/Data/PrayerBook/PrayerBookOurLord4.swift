@@ -15,7 +15,7 @@ extension PrayerBookTexts {
             title: "Litany of the Sacred Heart",
             latinTitle: "Litaniæ Sacratissimi Cordis Iesu",
             origin: "Approved by Pope Leo XIII · 1899",
-            note: "Said especially in June, the month of the Sacred Heart, and on First Fridays.",
+            note: "Said especially in June, the month of the Sacred Heart, and on the first Friday of each month.",
             english: """
 Lord, have mercy on us.
 Christ, have mercy on us.

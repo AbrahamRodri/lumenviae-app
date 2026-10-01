@@ -133,7 +133,7 @@ struct PrayerOrderView: View {
             if offered {
                 HStack(spacing: 6) {
                     AppIcon("ph-seal-check-fill", size: 12)
-                    Text("OFFERED TODAY")
+                    Text("PRAYED TODAY")
                         .font(AppFonts.labelFont(8.5))
                         .tracking(2)
                 }
@@ -167,11 +167,12 @@ struct PrayerOrderView: View {
     private func seasonNote(_ order: PrayerOrder) -> String? {
         switch order.id {
         case PrayerBook.nightOrderID:
+            // The season named as it is written, never lowered: lowered,
+            // it once read "trinity Sunday" and "eastertide"
             let antiphon = PrayerBook.antiphon(on: now)
-            let name = PrayerBook.prayer(antiphon.prayerID)?.latinTitle ?? "Our Lady's antiphon"
-            return "Night Prayers close on the \(name), the antiphon the Church sings to Our Lady from \(antiphon.season.lowercasedFirst)."
+            return "Night Prayers end with this season's song to Mary, \(antiphon.name) (\(antiphon.latinName)), sung at night from \(antiphon.season)."
         case PrayerBook.angelusOrderID where PrayerBook.isEastertide(now):
-            return "From Easter to Pentecost the Regina Cæli is said in the Angelus's place."
+            return "From Easter to Pentecost, Queen of Heaven (Regina Cæli) is said instead of the Angelus."
         default:
             return nil
         }
@@ -231,13 +232,6 @@ struct PrayerOrderView: View {
         .padding(.top, 92)
         .padding(.bottom, 20)
         .background(PrayFootGround())
-    }
-}
-
-private extension String {
-    var lowercasedFirst: String {
-        guard let first else { return self }
-        return first.lowercased() + dropFirst()
     }
 }
 

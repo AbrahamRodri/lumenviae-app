@@ -14,8 +14,8 @@ extension PrayerBookTexts {
             id: "ave_verum",
             title: "Hail, True Body",
             latinTitle: "Ave verum Corpus",
-            origin: "Attributed to Pope Innocent VI · XIV century",
-            note: "A greeting to Our Lord in the Blessed Sacrament, sung at the elevation of the Host and at Benediction.",
+            origin: "Attributed to Pope Innocent VI · 14th century",
+            note: "A greeting to Jesus present in the Host, sung as the priest raises the Host at Mass, and at Benediction (adoration of the Host, ending in a blessing).",
             english: """
 Hail, true Body, born
 of the Virgin Mary,
@@ -47,8 +47,8 @@ O Iesu, fili Mariae.
             id: "o_salutaris",
             title: "O Saving Victim",
             latinTitle: "O salutaris Hostia",
-            origin: "St Thomas Aquinas · XIII century",
-            note: "The last two stanzas of St Thomas's hymn for Lauds of Corpus Christi, sung as the Host is set in the monstrance at the opening of Benediction.",
+            origin: "St Thomas Aquinas · 13th century",
+            note: "The last two verses of a hymn by St Thomas Aquinas, sung at the start of Benediction as the Host is set out for adoration.",
             english: """
 O saving Victim,
 Who openest the gate of heaven,
@@ -76,10 +76,10 @@ Amen.
         ),
         BookPrayer(
             id: "tantum_ergo",
-            title: "Tantum Ergo",
-            latinTitle: "Tantum ergo",
-            origin: "St Thomas Aquinas · XIII century",
-            note: "The last two stanzas of St Thomas's Pange lingua, sung before the blessing with the Sacrament at Benediction.",
+            title: "Down in Adoration Falling",
+            latinTitle: "Tantum Ergo",
+            origin: "St Thomas Aquinas · 13th century",
+            note: "The last two verses of a longer hymn by St Thomas Aquinas, sung at Benediction just before the priest blesses the people with the Host.",
             english: """
 So great a Sacrament, therefore,
 let us venerate, bowing low;
@@ -135,8 +135,8 @@ Deus, qui nobis sub Sacramento mirabili passionis tuae memoriam reliquisti: trib
             id: "divine_praises",
             title: "The Divine Praises",
             latinTitle: "Laudes Divinæ",
-            origin: "Fr Luigi Felici, SJ · XVIII century",
-            note: "Said after the blessing with the Blessed Sacrament at Benediction, each praise repeated by the people.",
+            origin: "Fr Luigi Felici, SJ · 18th century",
+            note: "Said at Benediction after the priest blesses the people with the Host, each praise repeated by all.",
             english: """
 Blessed be God.
 Blessed be His holy Name.

@@ -271,8 +271,9 @@ is the user's own devotion, kept whatever day it is, and no part of the
 Church's calendar, so it stands apart from the feast and above it. Beside
 it, and for the same reason, stands **the hour's prayers**: the Prayer
 Book's order for the hour it is (Morning Prayers until eleven, the
-Angelus until eight, Night Prayers after), its fact ON RISING · AT NOON
-· AT SIX · BEFORE SLEEP, or OFFERED once prayed to its Amen — never
+Angelus until eight, Night Prayers after), its fact ON WAKING · AT NOON
+· AT 6 PM · AT BEDTIME (`PrayerBook.dayOrderMoment`, the words the
+Prayers page and the Chapel's tile say too), or OFFERED once prayed to its Amen — never
 "missed"; it opens the Prayer Book, which opens on that same order.
 Four ruled rows on the bare page — no card,
 no panel, no fill. The Mass, the Divine Office,
@@ -487,8 +488,8 @@ its hour's own glyph (`lv-rooster`, `lv-bell`, `lv-lamp`) in place of
 its name, which had no room — MORNING and ANGELUS shrank to two sizes
 beside NIGHT, and the Regina Cæli could not be set — and the whole tile
 prays it; its line under the order is the Prayers page's own
-sentence for the hour, `PrayerBook.daySummary(of:on:)`, which Pray Now
-sets too, so the tile and the page never say what one order is in two
+sentence for the hour, `PrayerBook.daySummary(of:on:)`, which the
+Prayers page's hour card sets too, so the tile and the page never say what one order is in two
 ways; the reader's ribbons stand under Saved on Prayers' Today, no
 longer here), **Reading** (the open book standing on a shelf
 with the author and the place beside it — "St. Thérèse · Chapter IV" —
@@ -739,7 +740,7 @@ the page they serve):
   is offered at all; Counting once came first, in the switches' order.
   Counting stands dimmed under the Whole Rosary, saying why: the voice
   moves the beads on the screen then. Beneath them stands the
-  **Prayers** row (the Prayer Book's, named as its tab is), In Silence |
+  **Prayers Tab** row (the Prayer Book's, named for its tab), In Silence |
   Aloud, in the same row and pill
   (`PrayerBookAudio`), which sets `PrayerBookStore.praysAloud`. It is
   kept apart from Audio on purpose: the Rosary's choice decides whether
@@ -2146,21 +2147,44 @@ write concurrent code here:
   `Models/PrayerBook.swift` is the model: twelve **chapters**, named in
   plain words (Basic Prayers, Mary — twenty prayers — Jesus, the
   Eucharist, the Holy Spirit, Angels and Saints, Through the Day,
-  Confession, For the Dead, the Church, Litanies, Short Prayers), each
+  Confession, For Those Who Have Died, the Church, Litanies, Short
+  Prayers), each
   keeping its numeral and Latin title for its own page, a `topic` for
   search ("Prayers to Mary") and `searchWords` that include the names it
   once printed (Our Lady, the Holy Ghost, Penance, the Faithful
   Departed), so a reader who knew them still finds it; and eleven
   **orders of prayer** said together — Morning Prayers, the Angelus,
-  Night Prayers, At Table, Before Mass, After Communion, Before
+  Night Prayers, At Meals, Before Mass, After Communion, Before
   Confession, After Confession, Visiting Jesus in Church (the visit to
-  the Blessed Sacrament), For the Holy Souls, In Time of Trouble. The
+  the Blessed Sacrament), For Those Who Have Died (the order shares its
+  chapter's name), In Time of Trouble. The
   texts are `Data/PrayerBook/*.swift` (`PrayerBookTexts`), in
   `PrayerText`'s grammar, English always and Latin only where the Church
   prays in Latin, paired line for line; the Rosary's and the
   consecration's prayers are joined in by id (`BookPrayer.bundled`),
   never copied. Hymn translations are plain literal renderings, not
   Caswall or Hopkins.
+
+  **The words are plain** (the plain-language pass, Oct 2026,
+  `copy-audit/GLOSSARY.md` on its branch): a title says what a thing is
+  in everyday English, a Church or Latin name stands small beside it,
+  and a Church word in a sentence is explained where it stands. So a
+  prayer known by a Latin name has an English title over it — Down in
+  Adoration Falling over Tantum Ergo, I Confess over Confiteor, Queen of
+  Heaven over Regina Cæli — except the Memorare, set over its English
+  (`PrayerBook.englishNames`), and `BookPrayer.secondTitle` is the line
+  beneath, never the name said twice. The four seasonal antiphons are
+  "the season's song to Mary" (`MarianAntiphon.name` is English,
+  `latinName` the Latin), their seasons plain dates ("Pentecost to
+  Advent", "Advent to February 2"). Centuries are numbers ("13th
+  century"); the hours of the Office are named as the Office names them
+  ("the Church's Bedtime Prayer (Compline)"); "Benediction" is
+  explained in place; the Missal and the Breviary are "The Mass" and
+  "The Hours of Prayer"; done is PRAYED, never OFFERED, though "offer"
+  stays where it means offering the day to God; the ribbon's words are
+  Save, Saved and Remove from Saved, though the silk is still drawn;
+  and the reader's mark that a prayer is known by heart is LEARNED, as
+  the Chant Library says it.
 
   The book has one name wherever the reader sees one, **Prayers** —
   the tab, Explore's section, the pray-along's kicker over a single
@@ -2176,13 +2200,14 @@ write concurrent code here:
   long page behind a toolbar glass that scrolled there — and three parts
   chosen on a bar beneath it (`PrayersSection`: TODAY · OCCASIONS · ALL
   PRAYERS), which take turns in one slot with the search's results.
-  **Today** opens on the hour (`PrayerBook.dayOrder(at:)`): the Pray Now
-  card, the order's painting (`PrayerBookPainting`) dissolving under its
-  name and one italic line, a strip of MORNING · NOON · NIGHT at its
-  foot (`PrayerHourStations`; the Angelus is EVENING from three until
-  the day turns at four, when it is the six o'clock bell being kept),
-  each saying where it stands —
-  OFFERED, Now, or when it is said (`PrayerBook.standing`), never
+  **Today** opens on the hour (`PrayerBook.dayOrder(at:)`) under This
+  Time of Day: the hour's card, the order's painting
+  (`PrayerBookPainting`) dissolving under its name and one italic line,
+  a strip of MORNING · NOON · NIGHT at its foot (`PrayerHourStations`;
+  the Angelus is EVENING from three until the day turns at four, when it
+  is the 6 PM bell being kept), each saying where it stands — PRAYED,
+  Now, or when it is said, ON WAKING · AT NOON · AT 6 PM · AT BEDTIME
+  (`PrayerBook.standing`, in `dayOrderMoment`'s words), never
   "missed" — and each a way to show that hour above (the choice let go
   when the hour turns and when the app comes back to the foreground),
   and the page's one gold act, PRAY THE ANGELUS (PRAY THE ANGELUS AGAIN
@@ -2190,7 +2215,7 @@ write concurrent code here:
   offered for its bell, not its day (`PrayerBook.isOfferedNow`): the
   middle station is the noon and evening Angelus only
   (`PrayerBook.angelusBellKept`, which names the station and dates its
-  OFFERED alike). Before eleven it is NOON, at noon, with the bell still
+  PRAYED alike). Before eleven it is NOON, at noon, with the bell still
   to come, whether or not an Angelus was said at six; from eleven it is
   offered by an Angelus said since eleven, and from three until the day
   turns at four it is EVENING, offered by one said since three, so an
@@ -2202,25 +2227,30 @@ write concurrent code here:
   moment an order was offered (`PrayerBookStore.lastOffered`, kept
   beside the day under its own key), while `wasOffered`, which the
   Chapel's rule reads, still counts an order once a prayer day. The
-  card's line is the board's for the Angelus ("A short prayer to Mary
-  said at morning, noon and evening.") and the Regina Cæli's own in
-  Eastertide, and Night Prayers' names the antiphon the season sings —
+  card's line is the Angelus's ("A short prayer to Mary, said at 6 AM,
+  noon and 6 PM.") and Queen of Heaven's own in the Easter season, with
+  "Regina Cæli" at its head, and Night Prayers' names the season's song
+  to Mary —
   one pure function, `PrayerBook.daySummary(of:on:)` — and its painting
   crossfades in a
   slot of its own as the hour changes. The card is outlined, never
-  filled, its halo the outline's. Then Prayers to Mary: the antiphon the
-  season sings over the mystery it sings of (THIS SEASON) — left out in
-  Eastertide while the Regina Cæli is already Pray Now's prayer — her
+  filled, its halo the outline's. Then Prayers to Mary: the season's
+  song to Mary over the mystery it sings of (THIS SEASON'S SONG TO MARY,
+  "Sung at night, Pentecost to Advent") — left out in the Easter season
+  while Queen of Heaven is already the hour card's prayer — her
   three best-known prayers (`PrayerBook.bestKnownMarianIDs`) as ruled
-  rows, and ALL 20 PRAYERS TO MARY; then Saved, the prayers kept with a
-  ribbon as small outlined cards of one height the ribbon hangs from (a
-  hold takes the ribbon out). Lists name a prayer as people say it
+  rows (the Memorare with its English beneath), and ALL 20 PRAYERS TO
+  MARY; then Saved, the prayers saved with the bookmark at the head of
+  a prayer's page, as small outlined cards of one height the ribbon
+  hangs from (a hold offers Remove from Saved). Lists name a prayer as people say it
   (`BookPrayer.listTitle`: Hail Mary, Memorare, Litany of Loreto, St
   Michael); its own page keeps its full title. **Occasions** is where the reader is
-  (`PrayerOccasionPlace`: At Mass, Confession, At Home, In Need, the last
+  (`PrayerOccasionPlace`: At Mass, At Confession, At Home, In Need, the last
   one chosen kept in `prayers.occasionPlace`), each place's orders as
   ruled rows with their glyph in a small outlined frame. **All Prayers**
-  is the chapters by topic with their counts. **Searching**, the parts
+  is the chapters by topic with their counts, The Eucharist and Litanies
+  each with a line saying what the word means (`PrayerBook.chapterNotes`).
+  **Searching**, the parts
   give way to "7 PRAYERS MATCH", said aloud to VoiceOver once the reader
   pauses, a card for a topic the words name
   (`PrayerBook.topics(matching:)`: every word searched must begin a word
@@ -2229,7 +2259,7 @@ write concurrent code here:
   only the prayer), a card for an order of prayer they name
   (`PrayerBook.searchOrders`: "blessed sacrament" finds Visiting Jesus in
   Church), and the prayers found, each with its topic ("Mary · this
-  season" for the season's antiphon). A prayer answers the same way
+  season" for the season's song to Mary). A prayer answers the same way
   (`PrayerBook.search`): every word searched begins a word of its title,
   Latin title or the other names it is looked for by
   (`BookPrayer.searchWords`: Salve Regina, Litany of Loreto), "st", "st."
@@ -2259,10 +2289,11 @@ write concurrent code here:
   place, as a prayer's page steps along its chapter; it once popped and
   pushed a route in one tick, and the next chapter opened scrolled to
   wherever the last was left. The seasons are computed: the Angelus is
-  the Regina Cæli from Easter to the Saturday after Pentecost, and Night
-  Prayers close on the Marian antiphon the season sings
-  (`PrayerBook.antiphon(on:)` — Alma Redemptoris, Ave Regina Cælorum,
-  Regina Cæli, Salve Regina), which the Mary chapter marks OF THE SEASON.
+  Queen of Heaven (the Regina Cæli) from Easter to the Saturday after
+  Pentecost, and Night Prayers close on the season's song to Mary
+  (`PrayerBook.antiphon(on:)` — Loving Mother of the Redeemer, Hail,
+  Queen of Heaven, Queen of Heaven, Hail, Holy Queen), which the Mary
+  chapter marks THIS SEASON.
 
   **Praying** is `PrayAlongView` (`.prayAlong(PrayAlongLaunch)`, a
   player: bar hidden, its own ×): one prayer at a time, a strand of beads
@@ -2279,7 +2310,7 @@ write concurrent code here:
   praying from there answers the question with what the switch shows;
   afterwards the speaker at the head of the page owns the choice. The
   same choice stands in Settings → Prayer Experience as the Prayers
-  row, and a choice made there answers the question before it is asked;
+  Tab row, and a choice made there answers the question before it is asked;
   it never follows the Rosary's Audio. Aloud,
   each prayer is the server's ElevenLabs
   recording in the chosen narration voice (below), the stanza being said
@@ -2293,14 +2324,17 @@ write concurrent code here:
   midnight: Night Prayers said at half past twelve are that night's,
   as a Rosary said beside them is, and the next evening still asks for
   its own.
-  Nothing is carried forward. **Keeping**
-  is a silk ribbon (`RibbonToggle`, `PrayerBookStore.ribbons`) — the
-  kept prayers stand under Saved on Prayers' Today.
+  Nothing is carried forward. **Saving**
+  is a silk ribbon drawn as a bookmark (`RibbonToggle`,
+  `PrayerBookStore.ribbons`), its words Save and Saved — the saved
+  prayers stand under Saved on Prayers' Today.
   **Learning** is `LearnByHeartSheet`: four steps (read, some hidden,
   first letters, by heart), in English or Latin, a hidden word shown by a
-  touch, and at the end the reader's own BY HEART mark — never scored.
+  touch, and at the end the reader's own LEARNED mark — never scored.
   **The Angelus bell** (Settings → Devotion) rings at 6, noon and 6
-  (`PrayerBookStore.setAngelusBell`), and a tap on it opens the Angelus
+  (`PrayerBookStore.setAngelusBell`), its notice saying what the
+  Angelus is ("The noon bell: time for the Angelus, a short prayer to
+  Mary. Tap to pray it."), and a tap on it opens the Angelus
   (`PrayerNotificationRouter`, which claims only its own notifications).
 
   **The recordings** are `LumenViae.Rosary.PrayerAudio`'s `book` kind,

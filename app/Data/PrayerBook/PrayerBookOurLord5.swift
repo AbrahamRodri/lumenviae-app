@@ -14,8 +14,8 @@ extension PrayerBookTexts {
             id: "aquinas_before_mass",
             title: "Prayer of St Thomas Aquinas before Mass",
             latinTitle: "Omnipotens sempiterne Deus, ecce accedo",
-            origin: "St Thomas Aquinas · XIII century",
-            note: "Said in preparation before Mass or Holy Communion, among the prayers the Roman Missal sets before the priest celebrates.",
+            origin: "St Thomas Aquinas · 13th century",
+            note: "Said to get ready for Mass or Holy Communion, among the prayers the Church gives priests to say before Mass.",
             english: """
 Almighty and everlasting God, behold, I draw near to the sacrament of Thine only-begotten Son, our Lord Jesus Christ: I come as one sick to the physician of life, as one unclean to the fountain of mercy, as one blind to the light of eternal brightness, as one poor and needy to the Lord of heaven and earth.
 
@@ -39,8 +39,8 @@ O amantissime Pater, concede mihi dilectum Filium tuum, quem nunc velatum in via
             id: "aquinas_after_mass",
             title: "Prayer of St Thomas Aquinas after Mass",
             latinTitle: "Gratias tibi ago, Domine sancte",
-            origin: "St Thomas Aquinas · XIII century",
-            note: "Said in thanksgiving after Mass and Holy Communion, among the prayers the Roman Missal sets for thanksgiving.",
+            origin: "St Thomas Aquinas · 13th century",
+            note: "Said in thanksgiving after Mass and Holy Communion, among the Church's prayers of thanks after Mass.",
             english: """
 I give Thee thanks, O holy Lord, Father almighty, eternal God, who, for no merits of mine, but of the sole condescension of Thy mercy, hast vouchsafed to feed me, a sinner and Thine unworthy servant, with the precious Body and Blood of Thy Son, our Lord Jesus Christ.
 

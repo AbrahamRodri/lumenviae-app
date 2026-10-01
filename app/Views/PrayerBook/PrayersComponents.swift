@@ -185,12 +185,12 @@ struct PrayerHourStations: View {
         // what it shows: "Noon, the Angelus, the hour it is now"
         .accessibilityLabel("\(hourName), \(order.title(on: now)), \(Self.spoken(standing))")
         .accessibilityAddTraits(shown ? [.isButton, .isSelected] : .isButton)
-        .accessibilityHint(shown ? "" : "Shows it above")
+        .accessibilityHint(shown ? "" : "Shows its prayers on the card above")
     }
 
     static func word(for standing: PrayerBook.HourStanding) -> String {
         switch standing {
-        case .offered:       return "Offered"
+        case .offered:       return "Prayed"
         case .now:           return "Now"
         case .at(let when):  return when
         }
@@ -198,7 +198,7 @@ struct PrayerHourStations: View {
 
     private static func spoken(_ standing: PrayerBook.HourStanding) -> String {
         switch standing {
-        case .offered:       return "offered"
+        case .offered:       return "prayed today"
         case .now:           return "the hour it is now"
         case .at(let when):  return when.lowercased()
         }
@@ -218,7 +218,7 @@ struct MarianSeasonCard: View {
             PrayerBookPaintingGround(painting: .antiphon(antiphon), footOpacity: 0.9)
 
             VStack(alignment: .leading, spacing: 3) {
-                Text("THIS SEASON")
+                Text("THIS SEASON'S SONG TO MARY")
                     .font(AppFonts.labelFont(8.5))
                     .tracking(2.2)
                     .foregroundColor(AppColors.gold)
@@ -229,7 +229,7 @@ struct MarianSeasonCard: View {
                     .lineLimit(2)
                     .minimumScaleFactor(0.7)
 
-                Text("Said at the end of the day")
+                Text("Sung at night, \(antiphon.season)")
                     .font(AppFonts.readingItalicFont(14.5))
                     .foregroundColor(AppColors.cream.opacity(0.8))
             }
@@ -246,7 +246,7 @@ struct MarianSeasonCard: View {
         )
         .contentShape(RoundedRectangle(cornerRadius: 16))
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("This season: \(prayer.listTitle). Said at the end of the day, \(antiphon.season).")
+        .accessibilityLabel("This season's song to Mary: \(prayer.listTitle). Sung at night, \(antiphon.season).")
         .accessibilityHint("Opens the prayer")
     }
 }
@@ -345,7 +345,7 @@ struct PrayersLedgerRow: View {
         var parts = [title]
         if let note { parts.append(note) }
         if let count { parts.append(count == 1 ? "1 prayer" : "\(count) prayers") }
-        if byHeart { parts.append("known by heart") }
+        if byHeart { parts.append("learned by heart") }
         if kept { parts.append("saved") }
         return parts.joined(separator: ", ")
     }
@@ -411,13 +411,13 @@ struct SavedPrayerCard: View {
             Button {
                 withAnimation(Motion.crossfade) { store.toggleRibbon(prayer.id) }
             } label: {
-                Label("Take the ribbon out", systemImage: "minus.circle")
+                Label("Remove from Saved", systemImage: "minus.circle")
             }
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel([prayer.listTitle, topic].compactMap { $0 }.joined(separator: ", "))
         .accessibilityAddTraits(.isButton)
-        .accessibilityAction(named: "Take the ribbon out") {
+        .accessibilityAction(named: "Remove from Saved") {
             withAnimation(Motion.crossfade) { store.toggleRibbon(prayer.id) }
         }
     }
@@ -527,7 +527,7 @@ struct PrayersOccasionRow: View {
         }
         .buttonStyle(SacredCardButtonStyle())
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(title), \(order.occasion)\(offered ? ", offered today" : "")")
+        .accessibilityLabel("\(title), \(order.occasion)\(offered ? ", prayed today" : "")")
         .accessibilityAddTraits(.isButton)
     }
 }

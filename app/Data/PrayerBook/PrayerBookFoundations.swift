@@ -76,8 +76,8 @@ Et vitam venturi saeculi. Amen.
             id: "act_of_faith",
             title: "The Act of Faith",
             latinTitle: "Actus Fidei",
-            origin: "The Raccolta",
-            note: "Made on rising and at night, with the Acts of Hope and Charity.",
+            origin: "The Raccolta, an old Vatican prayer book",
+            note: "Made on waking and at night, with the Acts of Hope and Charity.",
             english: """
 O Lord God, I firmly believe and profess
 each and every truth which the holy Catholic Church proposes,
@@ -99,8 +99,8 @@ In hac fide vivere et mori statuo. Amen.
             id: "act_of_hope",
             title: "The Act of Hope",
             latinTitle: "Actus Spei",
-            origin: "The Raccolta",
-            note: "Made on rising and at night, after the Act of Faith.",
+            origin: "The Raccolta, an old Vatican prayer book",
+            note: "Made on waking and at night, after the Act of Faith.",
             english: """
 O Lord God, I hope by Thy grace for the pardon of all my sins,
 and after this life to gain eternal happiness,
@@ -120,8 +120,8 @@ In hac spe vivere et mori statuo. Amen.
             id: "act_of_charity",
             title: "The Act of Charity",
             latinTitle: "Actus Caritatis",
-            origin: "The Raccolta",
-            note: "Made on rising and at night, after the Acts of Faith and Hope.",
+            origin: "The Raccolta, an old Vatican prayer book",
+            note: "Made on waking and at night, after the Acts of Faith and Hope.",
             english: """
 O Lord God, I love Thee above all things,
 and my neighbour for Thy sake,
@@ -139,9 +139,9 @@ In hac caritate vivere et mori statuo. Amen.
         ),
         BookPrayer(
             id: "confiteor",
-            title: "The Confiteor",
+            title: "I Confess",
             latinTitle: "Confiteor",
-            origin: "Roman Missal",
+            origin: "The Mass",
             note: "Said before Confession and in night prayers, striking the breast at the words of fault.",
             english: """
 I confess to almighty God,
@@ -199,8 +199,8 @@ Saviour of the world, O good Jesus, who didst give Thyself to the death of the C
             id: "the_confession",
             title: "Making Your Confession",
             latinTitle: nil,
-            origin: "The Sacrament of Penance",
-            note: "What is said in the confessional, from the Sign of the Cross to the penance.",
+            origin: "The Sacrament of Confession",
+            note: "What is said in the confessional, from the Sign of the Cross to the prayers the priest gives you (your penance).",
             english: """
 [Kneel, and make the Sign of the Cross.]
 
@@ -229,7 +229,7 @@ For these and all the sins of my past life, especially for [a sin], I am heartil
             title: "Thanksgiving after Confession",
             latinTitle: nil,
             origin: "Traditional",
-            note: "Said after leaving the confessional, once the penance has been said.",
+            note: "Said after leaving the confessional, once you have said the prayers the priest gave you (your penance).",
             english: """
 [If the penance given is a prayer, say it first, before anything else.]
 
@@ -245,7 +245,7 @@ Grant that for the time to come I may abhor sin more than death itself, and avoi
             id: "requiem_aeternam",
             title: "Eternal Rest",
             latinTitle: "Requiem æternam",
-            origin: "Roman Missal · 4 Esdras 2:34–35",
+            origin: "The Mass · 4 Esdras 2:34–35",
             note: "Said for the dead, and at the end of grace after meals.",
             english: """
 ℣. Eternal rest grant unto them, O Lord.
@@ -264,8 +264,8 @@ Grant that for the time to come I may abhor sin more than death itself, and avoi
             id: "fidelium_deus",
             title: "For All the Faithful Departed",
             latinTitle: "Fidelium, Deus",
-            origin: "Roman Missal",
-            note: "The collect for all the faithful departed, said after the De profundis.",
+            origin: "The Mass",
+            note: "The Church's prayer for all who have died, said after Psalm 129, Out of the Depths.",
             english: """
 [Let us pray.]
 O God, the Creator and Redeemer of all the faithful,
@@ -285,8 +285,8 @@ Qui vivis et regnas in saecula saeculorum. Amen.
             id: "prayer_for_the_pope",
             title: "Prayer for the Pope",
             latinTitle: "Oremus pro Pontifice",
-            origin: "Roman Missal · Psalm 40:3",
-            note: "Said for the Holy Father by name, at Benediction and in private prayer.",
+            origin: "The Mass · Psalm 40:3",
+            note: "Said for the Holy Father by name, at Benediction (adoration of the Host, ending in a blessing) and in private prayer.",
             english: """
 ℣. Let us pray for our Pope N.
 ℟. The Lord preserve him, and give him life, and make him blessed upon the earth, and deliver him not up to the will of his enemies.
@@ -315,7 +315,7 @@ Per Christum Dominum nostrum. Amen.
             title: "Psalm 129 · Out of the Depths",
             latinTitle: "De profundis",
             origin: "Psalm 129 · Douay-Rheims",
-            note: "The sixth of the penitential psalms, said above all for the faithful departed.",
+            note: "The sixth of the seven psalms of sorrow for sin, said above all for those who have died.",
             english: """
 Out of the depths I have cried to Thee, O Lord: * Lord, hear my voice.
 Let Thy ears be attentive * to the voice of my supplication.
@@ -350,7 +350,7 @@ Et ipse redimet Israel * ex omnibus iniquitatibus eius.
             title: "Psalm 31 · Blessed Are They",
             latinTitle: "Beati quorum",
             origin: "Psalm 31 · Douay-Rheims",
-            note: "The second of the seven penitential psalms, often given as a penance.",
+            note: "The second of the seven psalms of sorrow for sin, often given by the priest as your penance after Confession.",
             english: """
 Blessed are they whose iniquities are forgiven: * and whose sins are covered.
 Blessed is the man to whom the Lord hath not imputed sin, * and in whose spirit there is no guile.
@@ -401,7 +401,7 @@ Sicut erat in principio, et nunc, et semper, * et in saecula saeculorum. Amen.
             title: "Psalm 50 · Have Mercy on Me",
             latinTitle: "Miserere",
             origin: "Psalm 50 · Douay-Rheims",
-            note: "The fourth of the seven penitential psalms, David's prayer of sorrow after his sin.",
+            note: "The fourth of the seven psalms of sorrow for sin: David's prayer for mercy after his sin.",
             english: """
 Have mercy on me, O God, * according to Thy great mercy.
 And according to the multitude of Thy tender mercies * blot out my iniquity.
@@ -550,10 +550,10 @@ Sloth: have I been idle in my duties, or in the service of God?
         ),
         BookPrayer(
             id: "te_deum",
-            title: "The Te Deum",
+            title: "We Praise Thee, O God",
             latinTitle: "Te Deum",
-            origin: "Roman Breviary · IV century",
-            note: "Sung at the close of Matins on Sundays and feasts, and in thanksgiving to God.",
+            origin: "The Hours of Prayer · 4th century",
+            note: "Sung at the end of the Church's Night Vigil (Matins) on Sundays and feast days, and to thank God for a great gift.",
             english: """
 We praise Thee, O God: we acknowledge Thee to be the Lord.
 Thee, the eternal Father, all the earth doth worship.

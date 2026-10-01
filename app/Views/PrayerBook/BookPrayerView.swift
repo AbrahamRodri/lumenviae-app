@@ -90,8 +90,8 @@ struct BookPrayerView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 RibbonToggle(prayerID: currentID) { kept in
                     say(kept
-                        ? "Kept. It waits under Saved, on Prayers."
-                        : "The ribbon is taken out.")
+                        ? "Saved. Find it under Saved on the Prayers tab."
+                        : "Removed from Saved.")
                 }
             }
         }
@@ -170,7 +170,7 @@ struct BookPrayerView: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .contentTransition(.opacity)
 
-            if let latin = prayer.latinTitle, latin != prayer.title {
+            if let latin = prayer.secondTitle {
                 Text(latin)
                     .font(AppFonts.readingItalicFont(17))
                     .foregroundColor(AppColors.cream.opacity(0.7))
@@ -258,13 +258,13 @@ struct BookPrayerView: View {
             // chant's page offers the others
             if let chant = ChantCatalog.chants(forPrayer: prayer.id).first {
                 QuietGoldButton(
-                    title: "Sing it in chant",
+                    title: "Hear it sung",
                     leadingIcon: "ph-music-note",
                     leadingIconSize: 12
                 ) {
                     router.push(.chant(id: chant.id))
                 }
-                .accessibilityHint("Opens the Gregorian chant, with its recording and its score")
+                .accessibilityHint("Opens a sung recording, with its sheet music")
             }
         }
     }
@@ -277,7 +277,7 @@ struct BookPrayerView: View {
         if !orders.isEmpty {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(spacing: 10) {
-                    Text("PRAYED TOGETHER IN")
+                    Text("ALSO SAID IN")
                         .font(AppFonts.labelFont(8.5))
                         .tracking(2)
                         .foregroundColor(AppColors.gold.opacity(0.75))
@@ -321,7 +321,7 @@ struct BookPrayerView: View {
                     }
                 }
 
-                QuietGoldButton(title: "\(chapter.title) · all \(ids.count)", trailingIcon: "ph-caret-right") {
+                QuietGoldButton(title: "All \(ids.count) \(chapter.topic)", trailingIcon: "ph-caret-right") {
                     router.push(.prayerBookChapter(id: chapter.id))
                 }
             }
@@ -336,7 +336,7 @@ struct BookPrayerView: View {
             VStack(alignment: forward ? .trailing : .leading, spacing: 4) {
                 HStack(spacing: 5) {
                     if !forward { AppIcon("ph-caret-left", size: 9) }
-                    Text(forward ? "NEXT" : "BEFORE")
+                    Text(forward ? "NEXT" : "PREVIOUS")
                         .font(AppFonts.labelFont(8.5))
                         .tracking(2)
                     if forward { AppIcon("ph-caret-right", size: 9) }

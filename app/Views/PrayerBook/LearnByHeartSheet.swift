@@ -236,7 +236,7 @@ struct LearnByHeartSheet: View {
                         .scaleEffect(1.3)
                         .padding(.vertical, 12)
                     if !sealed {
-                        QuietGoldButton(title: "Take the mark away") {
+                        QuietGoldButton(title: "Remove the Learned mark") {
                             store.setByHeart(prayer.id, false)
                         }
                     }

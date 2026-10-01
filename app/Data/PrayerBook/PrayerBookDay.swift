@@ -16,8 +16,8 @@ extension PrayerBookTexts {
             id: "morning_offering",
             title: "The Morning Offering",
             latinTitle: nil,
-            origin: "The Apostleship of Prayer · XIX century",
-            note: "Said on rising, offering the whole day to God before it is begun.",
+            origin: "The Apostleship of Prayer · 19th century",
+            note: "Said on waking, offering the whole day to God before it is begun.",
             english: """
 O Jesus, through the Immaculate Heart of Mary, I offer Thee my prayers, works, joys and sufferings of this day, for all the intentions of Thy Sacred Heart, in union with the Holy Sacrifice of the Mass throughout the world, in reparation for my sins, for the intentions of all our associates, and in particular for the intention recommended this month by the Holy Father. Amen.
 """,
@@ -27,7 +27,7 @@ O Jesus, through the Immaculate Heart of Mary, I offer Thee my prayers, works, j
             id: "grace_before",
             title: "Grace before Meals",
             latinTitle: "Benedic, Domine",
-            origin: "Roman Breviary · the blessing at table",
+            origin: "The Hours of Prayer · the blessing at meals",
             note: "Said standing at table before the meal, with the Sign of the Cross.",
             english: """
 Bless us, O Lord, and these Thy gifts,
@@ -44,8 +44,8 @@ Per Christum Dominum nostrum. Amen.
             id: "grace_after",
             title: "Grace after Meals",
             latinTitle: "Agimus tibi gratias",
-            origin: "Roman Breviary · the thanksgiving after meals",
-            note: "Said at the end of the meal, remembering the faithful departed.",
+            origin: "The Hours of Prayer · the thanks after meals",
+            note: "Said at the end of the meal, remembering those who have died.",
             english: """
 We give Thee thanks, almighty God,
 for all Thy benefits,
@@ -67,7 +67,7 @@ qui vivis et regnas in saecula saeculorum. Amen.
             id: "angele_dei",
             title: "To One's Guardian Angel",
             latinTitle: "Angele Dei",
-            origin: "Traditional · XI century",
+            origin: "Traditional · 11th century",
             note: "Said morning and night; among the first prayers a child learns.",
             english: """
 Angel of God, my guardian dear,
@@ -86,8 +86,8 @@ rege et guberna. Amen.
             id: "visita_quaesumus",
             title: "Visit This House",
             latinTitle: "Visita, quæsumus",
-            origin: "Roman Breviary · Compline",
-            note: "The collect that closes Compline, asking the holy angels to keep the house through the night.",
+            origin: "The Hours of Prayer · Bedtime Prayer (Compline)",
+            note: "The prayer that ends the Church's Bedtime Prayer, asking the angels to guard the house through the night.",
             english: """
 [Let us pray.]
 
@@ -107,8 +107,8 @@ Visita, quaesumus, Domine, habitationem istam, et omnes insidias inimici ab ea l
             id: "in_manus_tuas",
             title: "Into Thy Hands",
             latinTitle: "In manus tuas",
-            origin: "Roman Breviary · Compline",
-            note: "The short responsory of Compline, giving the night into God's keeping in Our Lord's last words from the Cross.",
+            origin: "The Hours of Prayer · Bedtime Prayer (Compline)",
+            note: "A short call and answer from the Church's Bedtime Prayer, giving the night to God in Jesus's last words from the Cross.",
             english: """
 ℣. Into Thy hands, O Lord, I commend my spirit.
 ℟. Into Thy hands, O Lord, I commend my spirit.
@@ -137,7 +137,7 @@ Visita, quaesumus, Domine, habitationem istam, et omnes insidias inimici ab ea l
             title: "The Examen before Sleep",
             latinTitle: nil,
             origin: "After St Ignatius of Loyola",
-            note: "Made each night before sleep, a few quiet minutes through its five points.",
+            note: "Made each night at bedtime: a few quiet minutes looking back over the day, in five steps.",
             english: """
 [Give thanks to God for the gifts of this day.]
 I thank Thee, O my God, for all the benefits Thou hast bestowed on me this day.
@@ -160,7 +160,7 @@ Grant me, O Lord, the grace to amend my life, and to serve Thee better tomorrow.
             id: "jmj",
             title: "Jesus, Mary and Joseph",
             latinTitle: nil,
-            origin: "The Raccolta",
+            origin: "The Raccolta, an old Vatican prayer book",
             note: "Said at any hour, and asked for especially as the hour of death draws near.",
             english: """
 Jesus, Mary and Joseph, I give you my heart and my soul.
@@ -173,7 +173,7 @@ Jesus, Mary and Joseph, may I breathe forth my soul in peace with you.
             id: "sweet_heart",
             title: "Sweet Heart of Jesus",
             latinTitle: "Dulce Cor Iesu",
-            origin: "The Raccolta",
+            origin: "The Raccolta, an old Vatican prayer book",
             note: "Two short petitions to the Hearts of Jesus and Mary, said in passing through the day.",
             english: """
 Sweet Heart of Jesus, be my love.
@@ -188,7 +188,7 @@ Dulce Cor Mariae, esto salus mea.
             id: "jesus_meek",
             title: "Jesus, Meek and Humble of Heart",
             latinTitle: "Iesu, mitis et humilis Corde",
-            origin: "The Raccolta · after Matthew 11:29",
+            origin: "The Raccolta, an old Vatican prayer book · after Matthew 11:29",
             note: "Our Lord's words of Himself, turned into a petition; it also closes the Litany of the Sacred Heart.",
             english: """
 Jesus, meek and humble of heart,
@@ -203,7 +203,7 @@ fac cor nostrum secundum Cor tuum.
             id: "my_jesus_mercy",
             title: "My Jesus, Mercy",
             latinTitle: "Iesu mi, misericordia",
-            origin: "The Raccolta",
+            origin: "The Raccolta, an old Vatican prayer book",
             note: "Said in a breath, at any moment of the day and in time of temptation.",
             english: """
 My Jesus, mercy.
@@ -229,8 +229,8 @@ do not adore, do not hope and do not love Thee.
             id: "st_patrick_breastplate",
             title: "St Patrick's Breastplate",
             latinTitle: nil,
-            origin: "Attributed to St Patrick · V century",
-            note: "The heart of the lorica, a prayer for protection said on rising and before setting out.",
+            origin: "Attributed to St Patrick · 5th century",
+            note: "The heart of a longer prayer for protection, said on waking and before setting out.",
             english: """
 Christ with me, Christ before me, Christ behind me,
 Christ within me, Christ beneath me, Christ above me,
@@ -248,7 +248,7 @@ Christ in every ear that hears me.
             title: "The Canticle of Simeon",
             latinTitle: "Nunc dimittis",
             origin: "Luke 2:29–32 · Douay-Rheims",
-            note: "Simeon's song on holding the Child in the Temple, sung every night at Compline within its antiphon.",
+            note: "Simeon's song on holding the Child Jesus in the Temple, sung every night at the Church's Bedtime Prayer (Compline).",
             english: """
 Protect us, O Lord, while we are awake, and guard us while we sleep;
 that we may watch with Christ, and rest in peace.
@@ -285,7 +285,7 @@ ut vigilemus cum Christo, et requiescamus in pace.
             title: "To Thee, O Blessed Joseph",
             latinTitle: "Ad te, beate Ioseph",
             origin: "Pope Leo XIII · 1889",
-            note: "Written for the encyclical Quamquam pluries, to be said after the Rosary through the month of October.",
+            note: "Written by Pope Leo XIII in a letter to the whole Church, to be said after the Rosary through October.",
             english: """
 To thee, O blessed Joseph, do we have recourse in our tribulation, and having implored the help of thy most holy Spouse, we confidently invoke thy patronage also.
 
@@ -305,7 +305,7 @@ Tuere, o Custos providentissime divinae Familiae, Iesu Christi sobolem electam; 
             id: "litany_of_humility",
             title: "Litany of Humility",
             latinTitle: nil,
-            origin: "Attributed to Cardinal Rafael Merry del Val · XX century",
+            origin: "Attributed to Cardinal Rafael Merry del Val · 20th century",
             note: "Said slowly, one petition at a time, against the wish to be esteemed.",
             english: """
 O Jesus, meek and humble of heart, ℟. hear me.
@@ -460,7 +460,7 @@ Deus, qui ineffabili providentia beatum Ioseph sanctissimae Genitricis tuae Spon
             title: "The Canticle of Zachary",
             latinTitle: "Benedictus",
             origin: "Luke 1:68–79 · Douay-Rheims",
-            note: "Zachary's song at the birth of his son John, sung every morning at Lauds.",
+            note: "Zachary's song at the birth of his son John, sung every morning at the Church's Dawn Prayer (Lauds).",
             english: """
 Blessed be the Lord God of Israel; * because He hath visited and wrought the redemption of His people:
 And hath raised up an horn of salvation to us, * in the house of David His servant:

@@ -32,7 +32,7 @@ struct BookPrayer: Identifiable, Hashable {
     let latinTitle: String?
 
     /// Who wrote it and when, as a prayer book's small print — "St
-    /// Bernard of Clairvaux · XII century"
+    /// Bernard of Clairvaux · 12th century"
     let origin: String?
 
     /// When or how it is said, in one plain sentence
@@ -53,6 +53,16 @@ struct BookPrayer: Identifiable, Hashable {
     /// Other names it is looked for by — "Salve Regina", "Litany of
     /// Loreto" — beside its title and Latin title
     var searchWords: [String] { PrayerBook.prayerSearchWords[id] ?? [] }
+
+    /// The line set small beneath its name: its Latin, or, for the one
+    /// prayer known by its Latin name ("Memorare"), its English. Never
+    /// the name said twice, whatever its case or article: "Tantum Ergo"
+    /// once stood over "Tantum ergo".
+    var secondTitle: String? {
+        if let english = PrayerBook.englishNames[id] { return english }
+        guard let latinTitle, !PrayerBook.isSameName(latinTitle, title) else { return nil }
+        return latinTitle
+    }
 
     /// The text as the page sets it in `language`. A prayer with no
     /// Latin is English in every mode — the bilingual modes would only
@@ -137,26 +147,26 @@ struct PrayerOrder: Identifiable, Hashable {
     let latinTitle: String
     let icon: String
 
-    /// When it is prayed, as a kicker — "ON RISING"
+    /// When it is prayed, as a kicker — "ON WAKING"
     let occasion: String
 
     /// One italic line saying what the order is
     let detail: String
 
     /// Its prayers on a given day. Most never change; the Angelus gives
-    /// way to the Regina Cæli in Eastertide, and Night Prayers close on
-    /// the antiphon of Our Lady that the season sings.
+    /// way to Queen of Heaven (the Regina Cæli) in the Easter season, and
+    /// Night Prayers close on the season's song to Mary.
     let prayerIDs: (Date) -> [String]
 
     func prayers(on date: Date = Date()) -> [BookPrayer] {
         prayerIDs(date).compactMap { PrayerBook.prayer($0) }
     }
 
-    /// The order's name on a given day — the Angelus is the Regina Cæli
-    /// in Eastertide, and says so
+    /// The order's name on a given day — the Angelus is Queen of Heaven
+    /// (the Regina Cæli) in the Easter season, and says so
     func title(on date: Date = Date()) -> String {
         if id == PrayerBook.angelusOrderID, PrayerBook.isEastertide(date) {
-            return "The Regina Cæli"
+            return "Queen of Heaven"
         }
         return title
     }
@@ -169,19 +179,31 @@ struct PrayerOrder: Identifiable, Hashable {
     func hash(into hasher: inout Hasher) { hasher.combine(id) }
 }
 
-// MARK: - The seasons of Our Lady's antiphon
+// MARK: - The season's song to Mary
 
-/// The four antiphons of Our Lady, each sung at the close of the day
-/// through its own part of the year — the last words of Compline, and
-/// so the last words of Night Prayers here.
+/// The four songs to Mary (the antiphons of Our Lady), each sung at the
+/// close of the day through its own part of the year — the last words
+/// of the Church's Bedtime Prayer (Compline), and so the last words of
+/// Night Prayers here.
 enum MarianAntiphon: CaseIterable {
     case almaRedemptoris
     case aveReginaCaelorum
     case reginaCaeli
     case salveRegina
 
-    /// Its name as it is sung, the first words of its Latin
+    /// Its name in English, as the lists say it — "Hail, Holy Queen"
     var name: String {
+        switch self {
+        case .almaRedemptoris:   return "Loving Mother of the Redeemer"
+        case .aveReginaCaelorum: return "Hail, Queen of Heaven"
+        case .reginaCaeli:       return "Queen of Heaven"
+        case .salveRegina:       return "Hail, Holy Queen"
+        }
+    }
+
+    /// Its name as it is sung, the first words of its Latin, set beside
+    /// the English and never alone
+    var latinName: String {
         switch self {
         case .almaRedemptoris:   return "Alma Redemptoris Mater"
         case .aveReginaCaelorum: return "Ave Regina Cælorum"
@@ -199,13 +221,15 @@ enum MarianAntiphon: CaseIterable {
         }
     }
 
-    /// The part of the year it keeps, in words
+    /// The part of the year it keeps, in plain dates: February 2 is
+    /// Candlemas (the Purification), and Pentecost stands for the Trinity
+    /// Sunday a week after it, where the Salve Regina's season begins
     var season: String {
         switch self {
-        case .almaRedemptoris:   return "Advent to the Purification"
-        case .aveReginaCaelorum: return "The Purification to Holy Week"
-        case .reginaCaeli:       return "Eastertide"
-        case .salveRegina:       return "Trinity Sunday to Advent"
+        case .almaRedemptoris:   return "Advent to February 2"
+        case .aveReginaCaelorum: return "February 2 to Holy Week"
+        case .reginaCaeli:       return "Easter to Pentecost"
+        case .salveRegina:       return "Pentecost to Advent"
         }
     }
 }
@@ -247,38 +271,38 @@ enum PrayerBook {
                            note: "Begins and ends every prayer; the right hand touches the forehead, the breast, the left shoulder and the right."),
         BookPrayer.bundled("our_father", origin: "Our Lord · Matthew 6:9–13",
                            note: "The prayer Christ Himself taught when the disciples asked Him how to pray."),
-        BookPrayer.bundled("hail_mary", origin: "Luke 1:28, 42 · the Church, XV century",
+        BookPrayer.bundled("hail_mary", origin: "Luke 1:28, 42 · the Church, 15th century",
                            note: "The Angel's greeting and Elizabeth's, and the Church's petition after them."),
-        BookPrayer.bundled("glory_be", origin: "The Church · IV century",
-                           note: "The lesser doxology, closing psalms, decades, and every hour of the Office."),
-        BookPrayer.bundled("apostles_creed", origin: "The Roman Church · II century",
-                           note: "The baptismal creed of Rome, the faith of the Apostles in twelve articles."),
+        BookPrayer.bundled("glory_be", origin: "The Church · 4th century",
+                           note: "Praise of the Trinity, said after each ten Hail Marys of the Rosary and after the psalms in the Church's Hours of Prayer."),
+        BookPrayer.bundled("apostles_creed", origin: "The Roman Church · 2nd century",
+                           note: "The creed said at baptism in Rome: the faith of the Apostles in twelve statements."),
         BookPrayer.bundled("fatima_prayer", title: "The Fatima Prayer", origin: "Our Lady of Fatima · 1917",
-                           note: "Asked by Our Lady at Fatima to be said after the Glory Be of every decade."),
-        BookPrayer.bundled("hail_holy_queen", origin: "Western Church · XI century",
-                           note: "Sung at the close of Compline from Trinity Sunday to Advent, and said at the end of the Rosary."),
-        BookPrayer.bundled("memorare", origin: "Attributed to St Bernard of Clairvaux · XII century",
+                           note: "Asked for by Mary at Fatima, to be said in the Rosary after each Glory Be."),
+        BookPrayer.bundled("hail_holy_queen", origin: "Western Church · 11th century",
+                           note: "Said at the end of the Rosary, and sung to close the Church's Bedtime Prayer (Compline) from Pentecost to Advent."),
+        BookPrayer.bundled("memorare", origin: "Attributed to St Bernard of Clairvaux · 12th century",
                            note: "Spread by Fr Claude Bernard in the seventeenth century, who owed his own conversion to it."),
         BookPrayer.bundled("act_of_contrition", origin: "Traditional",
-                           note: "Said in the confessional, and each night before sleep."),
+                           note: "Said in the confessional, and each night at bedtime."),
         BookPrayer.bundled("st_michael_prayer", origin: "Pope Leo XIII · 1886",
-                           note: "Once said kneeling after every Low Mass, for the defence of the Church."),
-        BookPrayer.bundled("sorrows_closing_prayer", title: "To Our Lady of Sorrows", origin: "The Servite chaplet",
-                           note: "The prayer that closes the chaplet of the Seven Sorrows."),
-        BookPrayer.bundled("rosary_closing_prayer", title: "Prayer after the Rosary", origin: "Roman Missal · the Rosary's collect",
-                           note: "The collect of the feast of the Holy Rosary, said when the beads are done."),
-        BookPrayer.bundled("veni_creator", origin: "Attributed to Rabanus Maurus · IX century",
-                           note: "Sung at Pentecost, at ordinations, and whenever the Church asks the Holy Ghost to come."),
-        BookPrayer.bundled("ave_maris_stella", origin: "Western Church · IX century",
-                           note: "The Vespers hymn of Our Lady's feasts."),
+                           note: "Once said kneeling at the end of every spoken Mass, asking St Michael to defend the Church."),
+        BookPrayer.bundled("sorrows_closing_prayer", title: "To Our Lady of Sorrows", origin: "The Servants of Mary (Servites)",
+                           note: "The last prayer of the Seven Sorrows of Mary, prayed on their own beads."),
+        BookPrayer.bundled("rosary_closing_prayer", title: "Prayer after the Rosary", origin: "The Mass of the Holy Rosary",
+                           note: "The Church's prayer from the Mass of the Holy Rosary, said when the beads are done."),
+        BookPrayer.bundled("veni_creator", origin: "Attributed to Rabanus Maurus · 9th century",
+                           note: "Sung at Pentecost, at ordinations, and whenever the Church asks the Holy Spirit to come."),
+        BookPrayer.bundled("ave_maris_stella", origin: "Western Church · 9th century",
+                           note: "The hymn the Church sings at Evening Prayer (Vespers) on Mary's feast days."),
         BookPrayer.bundled("magnificat", origin: "Our Lady · Luke 1:46–55",
-                           note: "Our Lady's own song at the Visitation, sung every evening at Vespers."),
-        BookPrayer.bundled("litany_loreto", origin: "The Holy House of Loreto · XVI century",
+                           note: "Mary's own song when she visited Elizabeth, sung every evening at the Church's Evening Prayer (Vespers)."),
+        BookPrayer.bundled("litany_loreto", origin: "The Holy House of Loreto · 16th century",
                            note: "Sung at Loreto since the 1550s, and approved for the whole Church in 1587."),
-        BookPrayer.bundled("litany_holy_name", origin: "St Bernardine of Siena · XV century",
+        BookPrayer.bundled("litany_holy_name", origin: "St Bernardine of Siena · 15th century",
                            note: "A litany to the Holy Name, approved for the whole Church in 1862."),
-        BookPrayer.bundled("o_jesus_living_in_mary", origin: "Fr Charles de Condren · XVII century",
-                           note: "Prayed each day of Montfort's preparation for consecration.")
+        BookPrayer.bundled("o_jesus_living_in_mary", origin: "Fr Charles de Condren · 17th century",
+                           note: "Said each day of the 33-day preparation to give yourself to Jesus through Mary, on the Consecrate tab.")
     ].compactMap { $0 }
 
     // MARK: Chapters
@@ -287,7 +311,7 @@ enum PrayerBook {
         PrayerBookChapter(
             id: "first", numeral: "I", title: "Basic Prayers", latinTitle: "Orationes Primæ",
             icon: "ch-praying-hands",
-            epigraph: "Learned at a mother's knee, and said until the last day.",
+            epigraph: "The first prayers every Catholic learns, said all through life.",
             prayerIDs: ["sign_of_cross", "our_father", "hail_mary", "glory_be", "apostles_creed",
                         "nicene_creed", "act_of_faith", "act_of_hope", "act_of_charity",
                         "act_of_contrition", "fatima_prayer"],
@@ -297,7 +321,7 @@ enum PrayerBook {
         PrayerBookChapter(
             id: "our_lady", numeral: "II", title: "Mary", latinTitle: "De Beata Maria Virgine",
             icon: "ch-lily",
-            epigraph: "From the oldest prayer to her the Church keeps, to the youngest.",
+            epigraph: "Prayers to Mary, the mother of Jesus, from the oldest to the newest.",
             prayerIDs: ["hail_mary", "sub_tuum", "angelus", "regina_caeli", "hail_holy_queen",
                         "alma_redemptoris", "ave_regina_caelorum", "memorare", "magnificat",
                         "ave_maris_stella", "stabat_mater", "tota_pulchra", "flos_carmeli",
@@ -318,7 +342,7 @@ enum PrayerBook {
         PrayerBookChapter(
             id: "sacrament", numeral: "IV", title: "The Eucharist", latinTitle: "De Sanctissimo Sacramento",
             icon: "ch-monstrance",
-            epigraph: "Before the altar, at Mass, and in the hour after it.",
+            epigraph: "Prayers to Jesus, present in the Host, at Mass and before the altar.",
             prayerIDs: ["aquinas_before_mass", "spiritual_communion", "adoro_te", "ave_verum",
                         "o_sacrum_convivium", "o_salutaris", "tantum_ergo", "divine_praises",
                         "aquinas_after_mass"],
@@ -328,7 +352,7 @@ enum PrayerBook {
         PrayerBookChapter(
             id: "holy_ghost", numeral: "V", title: "The Holy Spirit", latinTitle: "De Spiritu Sancto",
             icon: "ch-dove",
-            epigraph: "Asked for light before any work of the soul.",
+            epigraph: "Prayers asking the Holy Spirit for light and help.",
             prayerIDs: ["come_holy_ghost", "veni_creator", "veni_sancte_spiritus"],
             topic: "Prayers to the Holy Spirit",
             searchWords: ["holy ghost", "the holy ghost", "paraclete", "pentecost"]
@@ -345,7 +369,7 @@ enum PrayerBook {
         PrayerBookChapter(
             id: "day", numeral: "VII", title: "Through the Day", latinTitle: "Per Diem",
             icon: "lv-hourglass",
-            epigraph: "On rising, at table, at evening, and at the day's end.",
+            epigraph: "On waking, at meals, in the evening, and at the day's end.",
             prayerIDs: ["morning_offering", "benedictus", "grace_before", "grace_after",
                         "visita_quaesumus", "examen", "in_manus_tuas", "nunc_dimittis"],
             topic: "Prayers through the Day",
@@ -354,19 +378,20 @@ enum PrayerBook {
         PrayerBookChapter(
             id: "penance", numeral: "VIII", title: "Confession", latinTitle: "De Pænitentia",
             icon: "ch-keys",
-            epigraph: "For the examination, the confession, and the thanks after it.",
+            epigraph: "For getting ready, confessing, and giving thanks afterwards.",
             prayerIDs: ["before_confession", "examination_of_conscience", "the_confession",
                         "confiteor", "act_of_contrition", "miserere", "after_confession", "beati_quorum"],
             topic: "Prayers for Confession",
             searchWords: ["penance", "contrition", "examination", "sorrow for sin"]
         ),
         PrayerBookChapter(
-            id: "departed", numeral: "IX", title: "For the Dead", latinTitle: "Pro Defunctis",
+            id: "departed", numeral: "IX", title: "For Those Who Have Died", latinTitle: "Pro Defunctis",
             icon: "ch-candle",
             epigraph: "It is a holy and wholesome thought to pray for the dead.",
             prayerIDs: ["requiem_aeternam", "de_profundis", "fidelium_deus"],
-            topic: "Prayers for the Dead",
-            searchWords: ["the faithful departed", "departed", "holy souls", "purgatory", "funeral"]
+            topic: "Prayers for Those Who Have Died",
+            searchWords: ["for the dead", "the dead", "the faithful departed", "departed", "holy souls",
+                          "purgatory", "funeral"]
         ),
         PrayerBookChapter(
             id: "church", numeral: "X", title: "The Church", latinTitle: "Pro Ecclesia",
@@ -396,6 +421,13 @@ enum PrayerBook {
         )
     ]
 
+    /// A line under a chapter's name in the All Prayers list, where the
+    /// name alone is a Church word a newcomer may not know
+    static let chapterNotes: [String: String] = [
+        "sacrament": "Jesus present in the Host",
+        "litanies": "Short petitions, each with the same response",
+    ]
+
     static func chapter(_ id: String) -> PrayerBookChapter? {
         chapters.first { $0.id == id }
     }
@@ -416,8 +448,8 @@ enum PrayerBook {
     static let orders: [PrayerOrder] = [
         PrayerOrder(
             id: morningOrderID, title: "Morning Prayers", latinTitle: "Preces Matutinæ",
-            icon: "lv-rooster", occasion: "On rising",
-            detail: "The day offered before it is begun.",
+            icon: "lv-rooster", occasion: "On waking",
+            detail: "A few short prayers on waking, giving the day to God.",
             prayerIDs: { _ in
                 ["sign_of_cross", "morning_offering", "our_father", "hail_mary", "glory_be",
                  "act_of_faith", "act_of_hope", "act_of_charity", "angele_dei"]
@@ -425,21 +457,21 @@ enum PrayerBook {
         ),
         PrayerOrder(
             id: angelusOrderID, title: "The Angelus", latinTitle: "Angelus Domini",
-            icon: "lv-bell", occasion: "At six, noon and six",
-            detail: "The Incarnation remembered three times a day, when the bell rings.",
+            icon: "lv-bell", occasion: "6 AM, noon and 6 PM",
+            detail: "Remembering how God's Son became man, said three times a day when the church bell rings.",
             prayerIDs: { date in [isEastertide(date) ? "regina_caeli" : "angelus"] }
         ),
         PrayerOrder(
             id: nightOrderID, title: "Night Prayers", latinTitle: "Preces Vespertinæ",
-            icon: "lv-lamp", occasion: "Before sleep",
-            detail: "The day examined and given back, closing on Our Lady's antiphon.",
+            icon: "lv-lamp", occasion: "At bedtime",
+            detail: "Look back on the day, ask God's forgiveness, and end with a song to Mary.",
             prayerIDs: { date in
                 ["sign_of_cross", "examen", "act_of_contrition", "in_manus_tuas",
                  "visita_quaesumus", antiphon(on: date).prayerID]
             }
         ),
         PrayerOrder(
-            id: "table", title: "At Table", latinTitle: "Benedictio Mensæ",
+            id: "table", title: "At Meals", latinTitle: "Benedictio Mensæ",
             icon: "ch-bread", occasion: "Before and after meals",
             detail: "Grace before the meal, and thanks when it is done.",
             prayerIDs: { _ in ["grace_before", "grace_after"] }
@@ -447,7 +479,7 @@ enum PrayerBook {
         PrayerOrder(
             id: "before_mass", title: "Before Mass", latinTitle: "Præparatio ad Missam",
             icon: "ch-altar", occasion: "In the pew, before Mass begins",
-            detail: "Light asked for, the heart made ready, and faith, hope and love renewed.",
+            detail: "Prayers to get ready for Mass: for light, a ready heart, and faith, hope and love.",
             prayerIDs: { _ in
                 ["sign_of_cross", "come_holy_ghost", "aquinas_before_mass",
                  "act_of_faith", "act_of_hope", "act_of_charity"]
@@ -456,7 +488,7 @@ enum PrayerBook {
         PrayerOrder(
             id: "after_mass", title: "After Communion", latinTitle: "Gratiarum Actio",
             icon: "ch-chalice", occasion: "In thanksgiving, after Mass",
-            detail: "The minutes after Communion, when He is closest.",
+            detail: "Prayers of thanks for the minutes after you receive Communion.",
             prayerIDs: { _ in
                 ["anima_christi", "en_ego", "aquinas_after_mass", "mary_after_communion", "suscipe"]
             }
@@ -464,7 +496,7 @@ enum PrayerBook {
         PrayerOrder(
             id: "before_confession", title: "Before Confession", latinTitle: "Ante Confessionem",
             icon: "ch-keys", occasion: "Before going in",
-            detail: "Light to see, the commandments to see by, and sorrow for what is seen.",
+            detail: "Ask for light, go through the Ten Commandments, and be sorry for your sins.",
             prayerIDs: { _ in
                 ["sign_of_cross", "come_holy_ghost", "before_confession",
                  "examination_of_conscience", "act_of_contrition", "the_confession"]
@@ -473,27 +505,27 @@ enum PrayerBook {
         PrayerOrder(
             id: "after_confession", title: "After Confession", latinTitle: "Post Confessionem",
             icon: "ch-keys", occasion: "Kneeling afterwards",
-            detail: "The penance said, and thanks given for mercy.",
+            detail: "Say the prayers the priest gave you (your penance), then thank God for His mercy.",
             prayerIDs: { _ in ["after_confession", "beati_quorum", "hail_mary"] }
         ),
         PrayerOrder(
             id: "visit", title: "Visiting Jesus in Church", latinTitle: "Visitatio",
-            icon: "ch-monstrance", occasion: "Before the tabernacle",
-            detail: "A few minutes with Him in the tabernacle, or in spirit from wherever you are.",
+            icon: "ch-monstrance", occasion: "In church, or from anywhere",
+            detail: "A few minutes with Jesus in the tabernacle, where the Host is kept in church, or in spirit from anywhere.",
             prayerIDs: { _ in
                 ["adoro_te", "spiritual_communion", "o_sacrum_convivium", "tantum_ergo", "divine_praises"]
             }
         ),
         PrayerOrder(
-            id: "holy_souls", title: "For the Holy Souls", latinTitle: "Pro Defunctis",
-            icon: "ch-candle", occasion: "For the dead",
-            detail: "For those who have gone before us, and wait.",
+            id: "holy_souls", title: "For Those Who Have Died", latinTitle: "Pro Defunctis",
+            icon: "ch-candle", occasion: "At a death, or any day",
+            detail: "Prayers asking God to give rest and peace to those who have died.",
             prayerIDs: { _ in ["de_profundis", "requiem_aeternam", "fidelium_deus"] }
         ),
         PrayerOrder(
             id: "trouble", title: "In Time of Trouble", latinTitle: "In Tribulatione",
             icon: "ph-shield", occasion: "When you need help",
-            detail: "The oldest prayers of refuge, to Our Lady and to St Michael.",
+            detail: "Prayers for help and protection, to Mary and to St Michael.",
             prayerIDs: { _ in ["sub_tuum", "memorare", "perpetual_help", "st_michael_prayer"] }
         )
     ]
@@ -538,19 +570,20 @@ enum PrayerBook {
         return order(id)!
     }
 
-    /// The hour's order said as a kicker — "AT NOON", "BEFORE SLEEP" — or,
-    /// `short`, as home's ledger sets it among its other facts: "AT SIX"
+    /// When the hour's order is said, in the words every surface that
+    /// names it shares — the Prayers page's strip, home's hour row and
+    /// the Chapel's Prayers tile: "On waking", "At noon", "At 6 PM", "At
+    /// bedtime"
     nonisolated static func dayOrderMoment(
         at date: Date = Date(),
-        calendar: Calendar = .current,
-        short: Bool = false
+        calendar: Calendar = .current
     ) -> String {
         let hour = calendar.component(.hour, from: date)
         switch hour {
-        case dayBeginsAtHour..<11:  return "On rising"
+        case dayBeginsAtHour..<11:  return "On waking"
         case 11..<15: return "At noon"
-        case 15..<20: return short ? "At six" : "At six in the evening"
-        default:      return "Before sleep"
+        case 15..<20: return "At 6 PM"
+        default:      return "At bedtime"
         }
     }
 
@@ -574,14 +607,15 @@ enum PrayerBook {
     // MARK: The day's three hours, in plain words
 
     /// What the Prayers page calls one of the day's three orders on its
-    /// strip of hours: MORNING, NOON, NIGHT. The middle station is the
-    /// Angelus at noon and at six in the evening, named for the bell being
-    /// kept (`angelusBellKept`), which is also the bell its OFFERED reads:
+    /// strip of hours: MORNING, NOON, EVENING, NIGHT. The middle station is
+    /// the Angelus at noon and at 6 PM, named for the bell being kept
+    /// (`angelusBellKept`), which is also the bell its PRAYED reads:
     /// NOON until three, the noon bell still to come before eleven, and
     /// EVENING from three until the day turns at four. The six o'clock
     /// morning bell has no station of its own, since MORNING is Morning
     /// Prayers', so the strip never says NOON at five, nor NOON offered
-    /// for an Angelus said at the evening bell.
+    /// for an Angelus said at the evening bell. (`offered` names the
+    /// state in code; the reader sees PRAYED.)
     static func hourName(of order: PrayerOrder, at date: Date = Date(), calendar: Calendar = .current) -> String {
         switch order.id {
         case morningOrderID: return "Morning"
@@ -590,9 +624,10 @@ enum PrayerBook {
         }
     }
 
-    /// Where one of the day's orders stands at `date`: offered today,
-    /// the hour it is now, or when it is said. Never "missed" — a
-    /// morning not prayed by night still reads "On rising".
+    /// Where one of the day's orders stands at `date`: prayed today (the
+    /// reader sees "Prayed"), the hour it is now, or when it is said, in
+    /// `dayOrderMoment`'s words. Never "missed" — a morning not prayed by
+    /// night still reads "On waking".
     enum HourStanding: Equatable {
         case offered
         case now
@@ -608,10 +643,10 @@ enum PrayerBook {
         if offered { return .offered }
         if dayOrder(at: date, calendar: calendar).id == order.id { return .now }
         switch order.id {
-        case morningOrderID: return .at("On rising")
+        case morningOrderID: return .at("On waking")
         case nightOrderID:   return .at("At bedtime")
         default:
-            return .at(angelusBellKept(at: date, calendar: calendar) == .evening ? "At six" : "At noon")
+            return .at(angelusBellKept(at: date, calendar: calendar) == .evening ? "At 6 PM" : "At noon")
         }
     }
 
@@ -683,21 +718,21 @@ enum PrayerBook {
     }
 
     /// One plain line saying what one of the day's three orders is, as
-    /// the Prayers page's Pray Now card sets it under the order's name:
-    /// the Angelus said plainly and
-    /// the Regina Cæli in its place in Eastertide, and Night Prayers
-    /// closing on the antiphon the season sings. Any other order is its
-    /// own detail.
+    /// the Prayers page's card sets it under the order's name: the
+    /// Angelus at its three hours, Queen of Heaven in its place in the
+    /// Easter season with its Latin name beneath the English, and Night
+    /// Prayers ending on the season's song to Mary. Any other order is
+    /// its own detail.
     static func daySummary(of order: PrayerOrder, on date: Date = Date()) -> String {
         switch order.id {
         case morningOrderID:
-            return "The day offered to God before it begins."
+            return "A few short prayers on waking, giving the day to God."
         case angelusOrderID:
             return isEastertide(date)
-                ? "Our Lady's Easter joy, said in the Angelus's place from Easter until the Saturday after Pentecost."
-                : "A short prayer to Mary said at morning, noon and evening."
+                ? "Regina Cæli: a short Easter prayer to Mary, said instead of the Angelus from Easter to Pentecost."
+                : "A short prayer to Mary, said at 6 AM, noon and 6 PM."
         case nightOrderID:
-            return "The day examined and given back, closing on the \(antiphon(on: date).name)."
+            return "Look back on the day, ask God's forgiveness, and end with this season's song to Mary: \(antiphon(on: date).name)."
         default:
             return order.detail
         }
@@ -706,13 +741,13 @@ enum PrayerBook {
     // MARK: Our Lady's best-known prayers
 
     /// The three of her prayers the Prayers page sets beneath the
-    /// season's antiphon — the ones most Catholics know by heart
+    /// season's song to Mary — the ones most Catholics know by heart
     static let bestKnownMarianIDs = ["hail_mary", "memorare", "litany_loreto"]
 
     // MARK: Seasons
 
-    /// Easter Sunday to the Saturday after Pentecost: the Regina Cæli
-    /// stands in the Angelus's place
+    /// Easter Sunday to the Saturday after Pentecost: Queen of Heaven
+    /// (the Regina Cæli) stands in the Angelus's place
     static func isEastertide(_ date: Date, calendar: Calendar = .current) -> Bool {
         let day = calendar.startOfDay(for: date)
         let year = calendar.component(.year, from: day)
@@ -722,7 +757,7 @@ enum PrayerBook {
         return day >= easter && day < trinity
     }
 
-    /// The antiphon of Our Lady the Church sings at Compline on `date`
+    /// The song to Mary the Church sings at Bedtime Prayer on `date`
     static func antiphon(on date: Date, calendar: Calendar = .current) -> MarianAntiphon {
         let day = calendar.startOfDay(for: date)
         let year = calendar.component(.year, from: day)
@@ -744,6 +779,23 @@ enum PrayerBook {
     }
 
     // MARK: Search
+
+    /// The English set beneath a prayer that is known by its Latin name,
+    /// where its Latin would only say the name again
+    static let englishNames: [String: String] = [
+        "memorare": "Remember, O most gracious Virgin Mary",
+    ]
+
+    /// Whether two names are one name, whatever their case, accents or
+    /// leading article: "Tantum Ergo" and "Tantum ergo", "The Memorare"
+    /// and "Memorare"
+    static func isSameName(_ one: String, _ other: String) -> Bool {
+        func bare(_ name: String) -> String {
+            let folded = folded(name)
+            return folded.hasPrefix("the ") ? String(folded.dropFirst(4)) : folded
+        }
+        return bare(one) == bare(other)
+    }
 
     /// The names a list gives a prayer where its title is longer than
     /// the name people use
@@ -774,8 +826,8 @@ enum PrayerBook {
     /// The other names an order of prayer is looked for by
     static let orderSearchWords: [String: [String]] = [
         "visit": ["blessed sacrament", "visit to the blessed sacrament", "adoration", "tabernacle"],
-        "table": ["grace", "meals"],
-        "holy_souls": ["purgatory", "the dead"],
+        "table": ["grace", "meals", "at table"],
+        "holy_souls": ["purgatory", "the dead", "for the dead", "holy souls", "for the holy souls"],
         "trouble": ["help", "danger"],
     ]
 
@@ -906,7 +958,7 @@ enum PrayerOccasionPlace: String, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .mass:       return "At Mass"
-        case .confession: return "Confession"
+        case .confession: return "At Confession"
         case .home:       return "At Home"
         case .need:       return "In Need"
         }
@@ -963,9 +1015,9 @@ struct PrayAlongLaunch: Hashable {
 /// asleep.
 enum PrayerBookAudio {
 
-    /// The book's own name, as its tab says it, so the row is never read
-    /// as a second Audio
-    static let title = "Prayers"
+    /// The book's own name, as its tab says it, with the word tab, so the
+    /// row is never read as a second Audio, or as every prayer in the app
+    static let title = "Prayers Tab"
 
     /// The Prayer Book's door glyph
     static let icon = "ch-praying-hands"
@@ -983,10 +1035,10 @@ enum PrayerBookAudio {
     /// says that instead.
     static func note(for aloud: Bool, answered: Bool = true) -> String {
         guard answered else {
-            return "Not yet chosen. The book asks the first time you pray along."
+            return "Not chosen yet. You'll be asked the first time you pray from the Prayers tab."
         }
         return aloud
-            ? "Each prayer is said aloud as you pray along."
-            : "The prayers stand on the page. You say them."
+            ? "Each prayer is read aloud to you."
+            : "No sound. The words are on screen for you to say."
     }
 }
