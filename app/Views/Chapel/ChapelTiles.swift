@@ -2173,14 +2173,18 @@ private extension TodayInChurch {
     }
 
     /// The opening words of a line, up to its first stop and no more than
-    /// three of them, with the marks a missal prints before a text left off
+    /// three of them. The marks a missal prints before a text — ℣. ℟.
+    /// Ant. — are taken off first: cut at the first stop with them still
+    /// on, a line opening "Ant. Gaudeamus" named its Mass "Ant".
     static func incipit(of line: String) -> String? {
-        let stops = CharacterSet(charactersIn: ":;,.!?")
-        let opening = line.components(separatedBy: stops).first ?? line
+        var text = line.trimmingCharacters(in: .whitespaces)
+        for mark in ["℣.", "℟.", "V.", "R.", "Ant."] where text.hasPrefix(mark) {
+            text = String(text.dropFirst(mark.count)).trimmingCharacters(in: .whitespaces)
+        }
+
+        let stops = CharacterSet(charactersIn: ":;,.!?*")
+        let opening = text.components(separatedBy: stops).first ?? text
         let words = opening
-            .replacingOccurrences(of: "℣.", with: "")
-            .replacingOccurrences(of: "℟.", with: "")
-            .replacingOccurrences(of: "Ant.", with: "")
             .split(whereSeparator: \.isWhitespace)
             .prefix(3)
         guard !words.isEmpty else { return nil }
@@ -2354,11 +2358,12 @@ struct ChapelChantTile: View {
         player.errorMessage ?? chant.setting ?? chant.englishTitle
     }
 
-    /// The title line's note: how far into the chant, once it is sounding
-    /// here; else that it is the season's antiphon, when it is.
+    /// The title line's note: that the chant is the season's antiphon,
+    /// when it is. How far the voice has come is the staff's playhead,
+    /// not a clock: read here, the time changed every second and redrew
+    /// the whole tile with it.
     private var note: String? {
-        if let elapsed = player.elapsedLabel { return elapsed }
-        return ChantCatalog.antiphonOfTheSeason()?.id == chant.id ? "Antiphon of the season" : nil
+        ChantCatalog.antiphonOfTheSeason()?.id == chant.id ? "Antiphon of the season" : nil
     }
 
     var body: some View {
@@ -2388,7 +2393,7 @@ struct ChapelChantTile: View {
 
                 name(size: 15, tracking: 2.5, lineSize: 14, lines: 1)
             }
-            .padding(.vertical, 16)
+            .padding(.vertical, 18)
 
             staff
                 .frame(height: 34)
@@ -2412,7 +2417,7 @@ struct ChapelChantTile: View {
 
                 name(size: 11, tracking: 1.5, lineSize: 12.5, lines: 2)
             }
-            .padding(.vertical, 12)
+            .padding(.vertical, 14)
 
             staff
                 .frame(height: 24)
@@ -2450,10 +2455,7 @@ struct ChapelChantTile: View {
     }
 
     private var staff: some View {
-        ChapelChantStaff(
-            chantID: chant.id,
-            progress: player.holds(chant) ? player.progress : nil
-        )
+        ChapelChantStaff(player: player)
     }
 }
 
@@ -2462,22 +2464,30 @@ struct ChapelChantTile: View {
 /// playhead standing where the voice is. The melody is drawn for the
 /// chant — the same line every time for the same chant — and is a
 /// picture of chant, not its score: the score is a tap away on its page.
+///
+/// A view of its own that reads the player itself, so the player's
+/// ticks twice a second redraw the staff and not the tile around it —
+/// the lesson of the chant page's transports.
 private struct ChapelChantStaff: View {
-    let chantID: String
-
-    /// 0…1 through the recording while the library holds it; nil when it
-    /// is not loaded, and nothing is lit
-    let progress: Double?
+    let player: ChantPlayer
 
     private static let noteCount = 25
 
+    /// 0…1 through the recording while the library holds it; nil when it
+    /// is not loaded, and nothing is lit
+    private var reached: Double? {
+        player.holds(player.current) ? player.progress : nil
+    }
+
     var body: some View {
-        GeometryReader { geo in
+        let chantID = player.current.id
+        let reached = self.reached
+        return GeometryReader { geo in
             let width = geo.size.width
             let height = geo.size.height
             let levels = Self.melody(for: chantID)
             let step = (width - 12) / CGFloat(Self.noteCount - 1)
-            let head = progress.map { CGFloat($0) * width }
+            let head = reached.map { CGFloat($0) * width }
 
             ZStack(alignment: .topLeading) {
                 ForEach(0..<4, id: \.self) { line in
@@ -2506,7 +2516,7 @@ private struct ChapelChantStaff: View {
             }
             // Glides between the player's ticks instead of stepping with
             // them
-            .animation(.linear(duration: 0.5), value: progress)
+            .animation(.linear(duration: 0.5), value: reached)
         }
         .accessibilityHidden(true)
     }

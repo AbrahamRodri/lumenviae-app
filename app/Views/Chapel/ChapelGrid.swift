@@ -181,7 +181,7 @@ struct ChapelArrangeRow: View {
 
             // The hide button's place
             Color.clear
-                .frame(width: ChapelHideButton.width(span: placement.span), height: 1)
+                .frame(width: ChapelHideButton.width, height: 1)
         }
         .padding(.leading, placement.span == 2 ? 14 : 12)
         .padding(.trailing, placement.span == 2 ? 4 : 0)
@@ -231,13 +231,15 @@ struct ChapelHideButton: View {
     let span: Int
     let action: () -> Void
 
-    static func width(span: Int) -> CGFloat { span == 2 ? 44 : 40 }
+    /// 44 at either width: the half's row is narrow, and the target is
+    /// not
+    static let width: CGFloat = 44
 
     var body: some View {
         Button(action: action) {
             AppIcon("ph-x", size: 16)
                 .foregroundColor(AppColors.textSecondary)
-                .frame(width: Self.width(span: span), height: 44)
+                .frame(width: Self.width, height: 44)
                 .contentShape(Rectangle())
         }
         .buttonStyle(QuietGlyphButtonStyle())
@@ -370,6 +372,8 @@ struct ChapelTray: View {
                     .font(AppFonts.bodyFont(15))
                     .foregroundColor(AppColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
+                    .contentTransition(.opacity)
+                    .animation(Motion.crossfade, value: hidden.isEmpty)
             }
 
             if !hidden.isEmpty {
@@ -434,15 +438,22 @@ nonisolated struct ChapelChipFlow: Layout {
 
     var spacing: CGFloat = 10
 
+    /// Fills the proposed width when there is one, so `placeSubviews`
+    /// arranges against exactly the width `sizeThatFits` did — a tight
+    /// content width fed back as bounds can differ by a floating-point
+    /// ulp and wrap the last chip of the widest row on placement only
+    /// (the meditation shelf's `ChipFlowLayout` learned it first).
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         let placed = positions(of: subviews, in: proposal.width ?? .infinity)
-        return CGSize(width: proposal.width ?? placed.size.width, height: placed.size.height)
+        if let width = proposal.width, width.isFinite {
+            return CGSize(width: width, height: placed.size.height)
+        }
+        return placed.size
     }
 
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-        let placed = positions(of: subviews, in: bounds.width)
-        for (index, subview) in subviews.enumerated() {
-            let point = placed.points[index]
+        let placed = positions(of: subviews, in: proposal.width ?? bounds.width)
+        for (subview, point) in zip(subviews, placed.points) {
             subview.place(
                 at: CGPoint(x: bounds.minX + point.x, y: bounds.minY + point.y),
                 proposal: .unspecified

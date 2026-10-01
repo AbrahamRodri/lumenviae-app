@@ -55,15 +55,22 @@ struct ChapelPrayerBookTile: View {
     }
 
     /// The part of the day the book is at, for the title line's note —
-    /// turning where the book's own moments turn (four, eleven, three
-    /// and eight, `PrayerBook.dayOrderMoment`), so the note and the order
-    /// beneath it change together on `PrayerBookHourSchedule`
+    /// read off the hour's order and the book's own moment rather than a
+    /// table of hours of its own, so the note and the order beneath it
+    /// can never disagree: the Angelus is midday's at the noon bell and
+    /// the evening's at the six o'clock one
     private var dayPart: String {
-        switch Calendar.current.component(.hour, from: Date()) {
-        case PrayerBook.dayBeginsAtHour..<11: return "Morning"
-        case 11..<15: return "Midday"
-        case 15..<20: return "Afternoon"
-        default:      return "Evening"
+        switch order.id {
+        case PrayerBook.morningOrderID:
+            return "Morning"
+        case PrayerBook.angelusOrderID:
+            let now = Date()
+            let noon = Calendar.current.date(bySettingHour: 12, minute: 0, second: 0, of: now) ?? now
+            return PrayerBook.dayOrderMoment(at: now) == PrayerBook.dayOrderMoment(at: noon)
+                ? "Midday"
+                : "Evening"
+        default:
+            return "Evening"
         }
     }
 

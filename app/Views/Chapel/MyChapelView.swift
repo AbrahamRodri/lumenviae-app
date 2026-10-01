@@ -33,6 +33,7 @@ struct MyChapelView: View {
     @Environment(AppRouter.self) private var router
     @Environment(\.modelContext) private var modelContext
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.scenePhase) private var scenePhase
 
     /// Sessions re-render the rule and the flame as prayers land.
     @Query(sort: \PrayerSession.completedAt, order: .reverse)
@@ -102,6 +103,10 @@ struct MyChapelView: View {
     /// positions while the finger sits still on a boundary.
     @State private var lastDropBoundaryY: CGFloat?
 
+    /// The tray's height while arranging, so the page's foot can always
+    /// scroll clear of it however many sections it holds
+    @State private var trayHeight: CGFloat = 0
+
     private var arranging: Bool { router.chapelArranging }
 
     private static let space = "chapel"
@@ -134,15 +139,24 @@ struct MyChapelView: View {
                         // page is arranged it is being rearranged, not
                         // read, and the day, the focus and its gold act
                         // stand down for the list of sections
+                        //
+                        // The arranging head is held above the scroll, so
+                        // DONE cannot scroll away while the tab bar is
+                        // gone; here it only keeps its room. A branch
+                        // leaves at once rather than fading, so the slot
+                        // never lays out the page's head and the
+                        // arranging head together
                         ZStack(alignment: .top) {
                             if arranging {
                                 arrangeHeader
-                                    .transition(.opacity)
+                                    .hidden()
+                                    .transition(Self.modeSwap)
                             } else {
                                 pageHead(acts: acts, next: next)
-                                    .transition(.opacity)
+                                    .transition(Self.modeSwap)
                             }
                         }
+                        .animation(.easeOut(duration: 0.25), value: arranging)
                         .id(Self.top)
 
                         grid(acts: acts)
@@ -154,7 +168,7 @@ struct MyChapelView: View {
                                 .transition(.opacity.combined(with: .scale(scale: 0.96)))
                         }
                     }
-                    .padding(.bottom, 190)
+                    .padding(.bottom, arranging ? max(190, trayHeight + 20) : 190)
                     // Press and hold the page itself. Behind the
                     // content, not over it: as a `simultaneousGesture`
                     // on the ScrollView this recognized *alongside*
@@ -195,6 +209,7 @@ struct MyChapelView: View {
             .topChromeFade(height: 32)
 
             if arranging {
+                arrangeHeadOverlay
                 trayOverlay
             }
 
@@ -225,6 +240,13 @@ struct MyChapelView: View {
             if !active { cancelCarry() }
         }
         .task { await today.load() }
+        // The feast is the calendar day's: a page left open overnight
+        // and brought back the next morning takes up the new day, so the
+        // Liturgy's leaf and the feast beside it never disagree
+        .onChange(of: scenePhase) { _, phase in
+            guard phase == .active else { return }
+            Task { await today.load() }
+        }
         .sheet(isPresented: $showRuleEditor) {
             RuleEditorSheet()
                 .presentationBackground(AppColors.background)
@@ -252,13 +274,47 @@ struct MyChapelView: View {
             focusBlock(acts: acts, next: next)
 
             OrnamentDivider()
-                .frame(width: 210)
+                .padding(.horizontal, 28)
                 .padding(.top, -4)
 
             if !settings.chapelCoached {
                 coachRibbon
             }
         }
+    }
+
+    /// How a mode's drawing gives way to the other's: the arriving one
+    /// fades in, the leaving one goes at once, so the two are never laid
+    /// out together — a full tile and its folded row overlapping in one
+    /// slot held the tile's height until the fade had ended, and the
+    /// page then jumped.
+    private static let modeSwap = AnyTransition.asymmetric(insertion: .opacity, removal: .identity)
+
+    /// The arranging head held at the top of the glass, over the page's
+    /// own ground, so the rows scroll away under it rather than through
+    /// it — DONE is the only way out of arranging, and the tab bar has
+    /// given way to the tray
+    private var arrangeHeadOverlay: some View {
+        VStack(spacing: 0) {
+            arrangeHeader
+                .padding(.bottom, 14)
+                .background(alignment: .bottom) {
+                    LinearGradient(
+                        stops: [
+                            .init(color: AppColors.backgroundDeep, location: 0),
+                            .init(color: AppColors.backgroundDeep, location: 0.82),
+                            .init(color: AppColors.backgroundDeep.opacity(0), location: 1)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .ignoresSafeArea(edges: .top)
+                }
+
+            Spacer(minLength: 0)
+        }
+        .transition(.opacity)
+        .zIndex(20)
     }
 
     /// The head while the page is arranged: what the page is doing, how
@@ -727,12 +783,13 @@ struct MyChapelView: View {
                 // others rather than dragged down a page three thousand
                 // points long
                 ChapelArrangeRow(placement: placement)
-                    .transition(.opacity)
+                    .transition(Self.modeSwap)
             } else {
                 tileContent(placement, acts: acts)
-                    .transition(.opacity)
+                    .transition(Self.modeSwap)
             }
         }
+        .animation(.easeOut(duration: 0.25), value: arranging)
         .overlay {
             if arranging {
                 Color.clear
@@ -1140,6 +1197,11 @@ struct MyChapelView: View {
                 onAdd: addToEnd,
                 chipGesture: trayDrag
             )
+            .onGeometryChange(for: CGFloat.self) { proxy in
+                proxy.size.height
+            } action: { height in
+                trayHeight = height
+            }
         }
         .zIndex(30)
         .transition(.move(edge: .bottom).combined(with: .opacity))
