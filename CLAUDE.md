@@ -362,13 +362,20 @@ enter arrange mode, drawn from the Arrange board of the earlier
 "Chapel Page Redesign" draft, since the Chapel Redesign draws none:
 the page's head (the day strip, the focus and its gold act) crossfades
 to a REARRANGE head with DONE — the page's one gold act while
-arranging — over one line saying how, the page scrolls back to it, and
+arranging — over one line saying how, held at the top of the glass over
+the page's ground (the scroll keeps its room), since DONE is the only
+way out while the tab bar is gone; the page scrolls back to the top, and
 every section folds to a 58pt row (`ChapelArrangeRow`: a grip, its
 name, WIDE in a capsule at full width or HALF under the name at half,
 and a ✕ laid over its trailing edge above the carry gesture,
-`ChapelHideButton`), so the whole page fits the glass. The tab bar
-yields to a tray of HIDDEN SECTIONS (`ChapelTray`, chips in a
-`ChapelChipFlow`; `router.chapelArranging` is how ContentView knows).
+`ChapelHideButton`), so the whole page fits the glass. A mode's
+drawing gives way to the other's at once while the arriving one fades
+in (`MyChapelView.modeSwap`): a full tile and its row crossfading in
+one slot held the tile's height until the fade had ended, and the page
+then jumped. The tab bar yields to a tray of HIDDEN SECTIONS
+(`ChapelTray`, chips in a `ChapelChipFlow`; `router.chapelArranging` is
+how ContentView knows), whose measured height the page's foot keeps
+clear of, however many sections it holds.
 A row is dragged (the row lifts, MOVING, leaning up to ±9° into the
 travel; a dashed slot opens at the landing, LET GO TO PLACE IT HERE),
 tapped to switch between its section's **two authored layouts** (full
@@ -385,7 +392,7 @@ Reduce Motion drops the lifted row's lean and the slot's growth.
 
 Above the grid, fixed: a day strip (liturgical-colour diamond from the
 missal vestment + weekday · feast via `TodayInChurch`) and the focus
-block over a 210-wide ornament. The strip carries no app chrome — it reads the day, and the room
+block. The strip carries no app chrome — it reads the day, and the room
 that buys is what lets a long feast set in full. Tiles (vocabulary `Models/ChapelTile.swift`;
 layout persists as `userSettings.chapelLayout`, validated against known
 ids on decode, with a one-time migration from the old `meWidgets`
@@ -444,7 +451,9 @@ day's Introit, in Latin, read from the missal's proper, and OFFICE by
 the hour it is now, from `CanonicalClock` — the board said the next
 hour, but the Office opens on the present one; until the propers are
 known the leaf names "The Mass of the Day" and the Mass row "Daily
-Missal"; split out of the Library so one heading is true of everything
+Missal", and the page loads the day again when it comes back to the
+foreground, so a Chapel left open overnight never sets today's date
+beside yesterday's feast; split out of the Library so one heading is true of everything
 beneath it; a layout saved before it existed seats it beside the
 Library, at the Library's width, and on the page only if the Library
 is — `ChapelPlacement.completing`, which the Me migration shares; the
@@ -461,8 +470,10 @@ CHANT LIBRARY (LIBRARY at half) opens the library; beneath, a staff of
 square notes lit up to where the voice has reached, with a gold
 playhead, the melody drawn for the chant from its id (the same line
 every time, a picture of chant and not its score, which is a tap away);
-the elapsed time rides the title line at full width while the chant is
-loaded, and at half the staff's playhead says it alone), **Reflections**
+the staff is a view of its own that reads the player, so the player's
+ticks redraw it and not the tile; the playhead is how far the voice has
+come, at both widths — the elapsed clock once rode the title line and
+redrew the whole tile every second), **Reflections**
 (on the quote ground, the latest journal entry in the upright medium
 face under an illuminated versal, or its gilded opening mark when it
 opens on a quotation (`VersalCut.opensOnQuotation`: a lone apostrophe,
