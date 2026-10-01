@@ -138,112 +138,7 @@ struct MyChapelView: View {
         let acts = resolvedActs
         let next = acts.first { !$0.done }
 
-        return ZStack {
-            AppColors.appGradient
-                .ignoresSafeArea()
-
-            halo
-
-            ScrollViewReader { scroller in
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: 30) {
-                        // The page's head and the arranging head share one
-                        // slot: while the page is arranged it is being
-                        // rearranged, not read, and the day, the focus and
-                        // its gold act stand down for the list of sections.
-                        // The arranging head itself is held above the
-                        // scroll, so DONE cannot scroll away while the tab
-                        // bar is gone; here it only keeps its room. The
-                        // leaving head goes at once and the arriving one
-                        // fades in, so the slot never lays out both
-                        // together
-                        ZStack(alignment: .top) {
-                            if arranging {
-                                arrangeHeader
-                                    .hidden()
-                                    .transition(modeTransition)
-                            } else {
-                                pageHead(acts: acts, next: next)
-                                    .transition(modeTransition)
-                            }
-                        }
-                        .animation(modeChange, value: arranging)
-                        .id(Self.top)
-
-                        grid(acts: acts)
-                            .padding(.horizontal, 20)
-                            .padding(.top, arranging ? -12 : 0)
-
-                        if !arranging {
-                            footControl
-                                .transition(
-                                    reduceMotion
-                                        ? Self.stillModeSwap
-                                        : .opacity.combined(with: .scale(scale: 0.96))
-                                )
-                        }
-                    }
-                    .padding(.bottom, arranging ? max(190, trayHeight + 20) : 190)
-                    // Press and hold the page itself. Behind the
-                    // content, not over it: as a `simultaneousGesture`
-                    // on the ScrollView this recognized *alongside*
-                    // every control, so holding the Rosary's gold act for
-                    // half a second both entered arrange mode and
-                    // started a Rosary. A control now wins its own
-                    // touch, and only the page between them arranges.
-                    .background {
-                        Color.clear
-                            .contentShape(Rectangle())
-                            .onLongPressGesture(minimumDuration: 0.45, maximumDistance: 8) {
-                                enterArrange()
-                            }
-                    }
-                }
-                // A row lifted by a hold is carried by the same touch the
-                // scroll would have taken, so the scroll stands still
-                // until it is set down
-                .scrollDisabled(carrying != nil)
-                // Arranged, the page folds to a list that fits the glass;
-                // a hold far down the page would otherwise leave the list
-                // scrolled out of sight above
-                .onChange(of: arranging) { _, now in
-                    guard now else { return }
-                    withAnimation(reduceMotion ? nil : Motion.chrome) {
-                        scroller.scrollTo(Self.top, anchor: .top)
-                    }
-                }
-            }
-            // The dissolve is so a scrolled ledger row stops colliding
-            // with the clock and the battery on its way off the page —
-            // but it takes whatever sits in it, and with no inset the
-            // day strip came to rest *inside* the band and read at
-            // about seven-tenths opacity before anyone had scrolled. A
-            // tab root has no Back capsule to clear, which is why this
-            // once passed 0; the band is there either way, so the strip
-            // is held clear of it like the first line on every other
-            // page. Shallower than a pushed page's 48, because there is
-            // no capsule to cover: 32 is enough to dissolve a row under
-            // the clock, and every point beyond it is dead room above
-            // the day.
-            // While arranging, the head is held above the scroll at the
-            // glass's top, so the scroll's room for it starts there too:
-            // inset by the band as well, the rows began fifty points
-            // below the line telling how to move them
-            .topChromeFade(height: 32, inset: arranging ? 0 : 32)
-
-            if arranging {
-                arrangeHeadOverlay
-                trayOverlay
-            }
-
-            ghostOverlay
-        }
-        .coordinateSpace(name: Self.space)
-        .sensoryFeedback(.impact(weight: .medium), trigger: arranging)
-        // A light tick as a row lifts, by a hold, its grip or a chip
-        .sensoryFeedback(.impact(weight: .light), trigger: carrying) { old, new in
-            old == nil && new != nil
-        }
+        return pageStack(acts: acts, next: next)
         .onAppear {
             if historyService == nil {
                 historyService = PrayerHistoryService(modelContext: modelContext)
@@ -296,6 +191,140 @@ struct MyChapelView: View {
                 .presentationBackground(AppColors.background)
                 .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
+    }
+
+    // MARK: - The page, in parts
+
+    // The page is built from these parts, each a function of its own, so
+    // the compiler checks one part at a time: written as one expression
+    // in the body, it outgrew the type-checker's time and the build
+    // stopped there.
+
+    /// The ground, the scrolling page, and what is held above it while
+    /// the page is arranged.
+    private func pageStack(acts: [ChapelAct], next: ChapelAct?) -> some View {
+        ZStack {
+            AppColors.appGradient
+                .ignoresSafeArea()
+
+            halo
+
+            scrollingPage(acts: acts, next: next)
+
+            if arranging {
+                arrangeHeadOverlay
+                trayOverlay
+            }
+
+            ghostOverlay
+        }
+        .coordinateSpace(name: Self.space)
+        .sensoryFeedback(.impact(weight: .medium), trigger: arranging)
+        // A light tick as a row lifts, by a hold, its grip or a chip
+        .sensoryFeedback(.impact(weight: .light), trigger: carrying) { old, new in
+            Self.lifts(old, new)
+        }
+    }
+
+    /// Whether a carry has just begun, for the tick as a row lifts
+    private static func lifts(_ old: Carry?, _ new: Carry?) -> Bool {
+        old == nil && new != nil
+    }
+
+    private func scrollingPage(acts: [ChapelAct], next: ChapelAct?) -> some View {
+        ScrollViewReader { scroller in
+            ScrollView(showsIndicators: false) {
+                pageColumn(acts: acts, next: next)
+            }
+            // A row lifted by a hold is carried by the same touch the
+            // scroll would have taken, so the scroll stands still
+            // until it is set down
+            .scrollDisabled(carrying != nil)
+            // Arranged, the page folds to a list that fits the glass;
+            // a hold far down the page would otherwise leave the list
+            // scrolled out of sight above
+            .onChange(of: arranging) { _, now in
+                guard now else { return }
+                withAnimation(reduceMotion ? nil : Motion.chrome) {
+                    scroller.scrollTo(Self.top, anchor: .top)
+                }
+            }
+        }
+        // The dissolve is so a scrolled ledger row stops colliding
+        // with the clock and the battery on its way off the page —
+        // but it takes whatever sits in it, and with no inset the
+        // day strip came to rest *inside* the band and read at
+        // about seven-tenths opacity before anyone had scrolled. A
+        // tab root has no Back capsule to clear, which is why this
+        // once passed 0; the band is there either way, so the strip
+        // is held clear of it like the first line on every other
+        // page. Shallower than a pushed page's 48, because there is
+        // no capsule to cover: 32 is enough to dissolve a row under
+        // the clock, and every point beyond it is dead room above
+        // the day.
+        // While arranging, the head is held above the scroll at the
+        // glass's top, so the scroll's room for it starts there too:
+        // inset by the band as well, the rows began fifty points
+        // below the line telling how to move them
+        .topChromeFade(height: 32, inset: arranging ? 0 : 32)
+    }
+
+    private func pageColumn(acts: [ChapelAct], next: ChapelAct?) -> some View {
+        VStack(spacing: 30) {
+            headSlot(acts: acts, next: next)
+
+            grid(acts: acts)
+                .padding(.horizontal, 20)
+                .padding(.top, arranging ? -12 : 0)
+
+            if !arranging {
+                footControl
+                    .transition(footTransition)
+            }
+        }
+        .padding(.bottom, arranging ? max(190, trayHeight + 20) : 190)
+        // Press and hold the page itself. Behind the
+        // content, not over it: as a `simultaneousGesture`
+        // on the ScrollView this recognized *alongside*
+        // every control, so holding the Rosary's gold act for
+        // half a second both entered arrange mode and
+        // started a Rosary. A control now wins its own
+        // touch, and only the page between them arranges.
+        .background {
+            Color.clear
+                .contentShape(Rectangle())
+                .onLongPressGesture(minimumDuration: 0.45, maximumDistance: 8) {
+                    enterArrange()
+                }
+        }
+    }
+
+    /// The page's head and the arranging head share one slot: while the
+    /// page is arranged it is being rearranged, not read, and the day,
+    /// the focus and its gold act stand down for the list of sections.
+    /// The arranging head itself is held above the scroll, so DONE
+    /// cannot scroll away while the tab bar is gone; here it only keeps
+    /// its room. The leaving head goes at once and the arriving one fades
+    /// in, so the slot never lays out both together
+    private func headSlot(acts: [ChapelAct], next: ChapelAct?) -> some View {
+        ZStack(alignment: .top) {
+            if arranging {
+                arrangeHeader
+                    .hidden()
+                    .transition(modeTransition)
+            } else {
+                pageHead(acts: acts, next: next)
+                    .transition(modeTransition)
+            }
+        }
+        .animation(modeChange, value: arranging)
+        .id(Self.top)
+    }
+
+    private var footTransition: AnyTransition {
+        reduceMotion
+            ? Self.stillModeSwap
+            : AnyTransition.opacity.combined(with: .scale(scale: 0.96))
     }
 
     private func refreshFlameStats() {
@@ -892,31 +921,10 @@ struct MyChapelView: View {
         // touch, and a swipe meant to scroll the list moved a section to
         // the top of the page instead. Both overlays stand while the row
         // is carried, since taking one away mid-drag would cancel it.
-        .overlay {
-            if arranging {
-                Color.clear
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        // A hold let go where it lifted ends on a touch
-                        // that is also a tap; it set the row down, no more
-                        guard carrying == nil,
-                              Date.now.timeIntervalSince(heldCarryEnded) > 0.35
-                        else { return }
-                        toggleSpan(placement.tile)
-                    }
-                    .simultaneousGesture(holdCarry(placement))
-            }
-        }
+        .overlay { rowTouch(placement) }
         // The grip carries at once, through a hit area of its own above
         // the row's, the full height of the row and 44 wide
-        .overlay(alignment: .leading) {
-            if arranging {
-                Color.clear
-                    .frame(width: 44)
-                    .contentShape(Rectangle())
-                    .gesture(tileDrag(placement))
-            }
-        }
+        .overlay(alignment: .leading) { gripTouch(placement) }
         .overlay(alignment: .trailing) {
             if arranging && !isCarried {
                 ChapelHideButton(tile: placement.tile, span: placement.span) {
@@ -1187,6 +1195,41 @@ struct MyChapelView: View {
         carryDrag(placement, fromTray: false)
     }
 
+    /// The whole row while arranging: a tap turns it wide or half, and a
+    /// hold lifts it to be carried
+    @ViewBuilder
+    private func rowTouch(_ placement: ChapelPlacement) -> some View {
+        if arranging {
+            Color.clear
+                .contentShape(Rectangle())
+                .onTapGesture { tapRow(placement) }
+                .simultaneousGesture(holdCarry(placement))
+        }
+    }
+
+    /// The grip's own hit area, which carries at once
+    @ViewBuilder
+    private func gripTouch(_ placement: ChapelPlacement) -> some View {
+        if arranging {
+            Color.clear
+                .frame(width: 44)
+                .contentShape(Rectangle())
+                .gesture(tileDrag(placement))
+        }
+    }
+
+    private func tapRow(_ placement: ChapelPlacement) {
+        // A hold let go where it lifted ends on a touch that is also a
+        // tap; it set the row down, no more
+        guard carrying == nil,
+              Date.now.timeIntervalSince(heldCarryEnded) > 0.35
+        else { return }
+        toggleSpan(placement.tile)
+    }
+
+    /// A hold, and then the drag it carries
+    private typealias HoldValue = SequenceGesture<LongPressGesture, DragGesture>.Value
+
     /// A row lifted by holding it still: a short beat, as the page's own
     /// hold is a longer one, cancelled by movement so that a swipe stays
     /// the scroll's. Laid on beside the scroll rather than over it, so
@@ -1194,36 +1237,51 @@ struct MyChapelView: View {
     /// scroll stands still while the row is carried. The hold gives no
     /// point of its own, so the row lifts where it stands and follows the
     /// drag's translation from there.
-    private func holdCarry(_ placement: ChapelPlacement) -> some Gesture {
-        LongPressGesture(minimumDuration: 0.28, maximumDistance: 10)
-            .sequenced(before: DragGesture(minimumDistance: 0, coordinateSpace: .named(Self.space)))
-            .updating($dragActive) { value, state, _ in
-                if case .second(true, _) = value { state = true }
-            }
-            .onChanged { value in
-                guard case .second(true, let drag) = value else { return }
-                let translation = drag?.translation ?? .zero
+    private func holdCarry(_ placement: ChapelPlacement) -> AnyGesture<HoldValue> {
+        let hold: SequenceGesture<LongPressGesture, DragGesture> =
+            LongPressGesture(minimumDuration: 0.28, maximumDistance: 10)
+                .sequenced(before: DragGesture(minimumDistance: 0, coordinateSpace: .named(Self.space)))
 
-                if carrying == nil {
-                    guard let frame = tileFrames[placement.tile] else { return }
-                    let anchor = CGPoint(x: frame.midX, y: frame.midY)
-                    holdAnchor = anchor
-                    beginCarry(
-                        placement.tile,
-                        fromTray: false,
-                        span: placement.span,
-                        at: CGPoint(x: anchor.x + translation.width, y: anchor.y + translation.height)
-                    )
-                } else if carrying?.tile == placement.tile, let anchor = holdAnchor {
-                    moveCarry(to: CGPoint(x: anchor.x + translation.width, y: anchor.y + translation.height))
+        return AnyGesture(
+            hold
+                .updating($dragActive) { value, state, _ in
+                    state = Self.isCarrying(value)
                 }
-            }
-            .onEnded { value in
-                guard case .second(true, let drag) = value,
-                      carrying?.tile == placement.tile
-                else { return }
-                endHeldCarry(translation: drag?.translation ?? .zero)
-            }
+                .onChanged { value in holdChanged(value, placement) }
+                .onEnded { value in holdEnded(value, placement) }
+        )
+    }
+
+    /// Whether the hold has been made, and its drag is under way
+    private static func isCarrying(_ value: HoldValue) -> Bool {
+        if case .second(true, _) = value { return true }
+        return false
+    }
+
+    private func holdChanged(_ value: HoldValue, _ placement: ChapelPlacement) {
+        guard case .second(true, let drag) = value else { return }
+        let translation = drag?.translation ?? .zero
+
+        if carrying == nil {
+            guard let frame = tileFrames[placement.tile] else { return }
+            let anchor = CGPoint(x: frame.midX, y: frame.midY)
+            holdAnchor = anchor
+            beginCarry(
+                placement.tile,
+                fromTray: false,
+                span: placement.span,
+                at: CGPoint(x: anchor.x + translation.width, y: anchor.y + translation.height)
+            )
+        } else if carrying?.tile == placement.tile, let anchor = holdAnchor {
+            moveCarry(to: CGPoint(x: anchor.x + translation.width, y: anchor.y + translation.height))
+        }
+    }
+
+    private func holdEnded(_ value: HoldValue, _ placement: ChapelPlacement) {
+        guard case .second(true, let drag) = value,
+              carrying?.tile == placement.tile
+        else { return }
+        endHeldCarry(translation: drag?.translation ?? .zero)
     }
 
     /// Sets down a row lifted by a hold. Let go where it lifted, it is
