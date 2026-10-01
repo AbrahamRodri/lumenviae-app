@@ -2,15 +2,21 @@
 //  ChantView.swift
 //  Lumen Viae
 //
-//  One chant on a page of its own, laid out for learning it: its name in
-//  Latin and in English and when it is sung, the recording, then the
-//  score to follow while it sounds. Practice asks two more things of the
-//  transport — a slower pace, and the chant again from the top when it
-//  ends — and the score opens large, to be read at arm's length.
+//  One chant on a page of its own — the "Now Playing" board: its name in
+//  Latin and in English, its score, the line being sung with its English
+//  beneath when the chant's lines have been timed, and a transport made
+//  for learning by ear: the line again (or the whole chant again), back
+//  and on by the line (or by ten seconds), a slower pace, the choir and
+//  the reader taking turns line by line, the words, and a sleep timer.
+//  "Learn this chant" opens its practice, step by step.
 //
-//  Beneath: the prayer the chant sings, in words, and its other settings
-//  (the solemn tone beside the simple), each a door. The credit stands at
-//  the foot, as the recordings' licence asks.
+//  Beneath the fold: the prayer the chant sings, in words, and its other
+//  settings (the solemn tone beside the simple), each a door; the credit
+//  stands at the foot, as the recordings' licence asks.
+//
+//  Every line-by-line control stands only for a chant that has lines
+//  (`Chant.hasLines`). The rest step by ten seconds and repeat the whole
+//  chant: no timing is guessed.
 //
 //  Reached from the Chant Library, a prayer's own page ("Sing it in
 //  chant"), and the Chapel's Chant tile (`AppRoute.chant(id:)`).
@@ -25,6 +31,12 @@ struct ChantView: View {
     @Environment(AppRouter.self) private var router
 
     @State private var showsScore = false
+    @State private var showsWords = false
+    @State private var showsSleep = false
+    @State private var addingToSet = false
+    @State private var practicing: Chant?
+
+    private var shelf = ChantShelfStore.shared
 
     init(chantID: String) {
         self.chantID = chantID
@@ -43,17 +55,25 @@ struct ChantView: View {
                             .padding(.horizontal, 28)
                             .devotionalEntrance()
 
-                        ChantTransport(chant: chant)
-                            .padding(.horizontal, 24)
-                            .padding(.top, 28)
-
-                        score(chant)
+                        scorePanel(chant)
                             .padding(.horizontal, 20)
-                            .padding(.top, 36)
+                            .padding(.top, 22)
+
+                        NowPlayingLine(chant: chant)
+                            .padding(.horizontal, 26)
+                            .padding(.top, 22)
+
+                        NowPlayingTransport(
+                            chant: chant,
+                            showWords: { showsWords = true },
+                            showSleep: { showsSleep = true }
+                        )
+                        .padding(.horizontal, 22)
+                        .padding(.top, 20)
 
                         doors(chant)
                             .padding(.horizontal, 28)
-                            .padding(.top, 36)
+                            .padding(.top, 40)
 
                         ChantCredit()
                             .padding(.horizontal, 36)
@@ -81,6 +101,14 @@ struct ChantView: View {
                     .foregroundColor(AppColors.gold)
                 }
             }
+            if let chant {
+                ToolbarItem(placement: .principal) {
+                    learnButton(chant)
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    moreMenu(chant)
+                }
+            }
         }
         .sheet(isPresented: $showsScore) {
             if let chant {
@@ -88,97 +116,165 @@ struct ChantView: View {
                     .dynamicTypeSize(...DynamicTypeSize.appMaximum)
             }
         }
+        .sheet(isPresented: $showsWords) {
+            if let chant {
+                ChantWordsSheet(chant: chant)
+                    .presentationDetents([.medium, .large])
+                    .dynamicTypeSize(...DynamicTypeSize.appMaximum)
+            }
+        }
+        .sheet(isPresented: $showsSleep) {
+            ChantSleepSheet()
+                .presentationDetents([.medium])
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
+        }
+        .sheet(isPresented: $addingToSet) {
+            if let chant {
+                ChantAddToSetSheet(chant: chant)
+                    .presentationDetents([.medium, .large])
+                    .dynamicTypeSize(...DynamicTypeSize.appMaximum)
+            }
+        }
+        .fullScreenCover(item: $practicing) { chant in
+            ChantPracticeView(chant: chant)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
+                .presentationBackground(AppColors.background)
+        }
+    }
+
+    // MARK: - Chrome
+
+    private func learnButton(_ chant: Chant) -> some View {
+        let learned = shelf.isLearned(chant.id)
+        let step = shelf.step(of: chant.id)
+        return Button {
+            shelf.begin(chant.id)
+            practicing = chant
+        } label: {
+            Text(learned ? "Practise again" : step == nil ? "Learn this chant" : "Continue learning")
+                .font(AppFonts.readingFont(14.5))
+                .foregroundColor(AppColors.gold)
+                .lineLimit(1)
+                .padding(.horizontal, 14)
+                .frame(height: 34)
+                .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.4), lineWidth: AppLine.hairline))
+                .frame(minHeight: 44)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(SacredCardButtonStyle())
+        .accessibilityHint("Opens a practice, step by step")
+    }
+
+    private func moreMenu(_ chant: Chant) -> some View {
+        Menu {
+            Button {
+                shelf.toggleFavorite(chant.id)
+            } label: {
+                if shelf.isFavorite(chant.id) {
+                    Label("Remove from Favourites", systemImage: "heart.slash")
+                } else {
+                    Label("Add to Favourites", systemImage: "heart")
+                }
+            }
+            Button {
+                addingToSet = true
+            } label: {
+                Label("Add to a Set", systemImage: "text.badge.plus")
+            }
+            Button {
+                showsScore = true
+            } label: {
+                Label("Enlarge the Score", systemImage: "arrow.up.left.and.arrow.down.right")
+            }
+            Link(destination: chant.sourceURL) {
+                Label("This Chant at Verbum Gloriae", systemImage: "safari")
+            }
+        } label: {
+            AppIcon("ph-dots-three", size: 22)
+                .foregroundColor(AppColors.gold)
+                .frame(minWidth: 44, minHeight: 44)
+                .contentShape(Rectangle())
+        }
+        .accessibilityLabel("More options")
     }
 
     // MARK: - Title
 
     private func titleBlock(_ chant: Chant) -> some View {
-        VStack(spacing: 14) {
-            Text(kicker(chant))
-                .font(AppFonts.labelFont(9.5))
-                .tracking(3)
-                .foregroundColor(AppColors.gold)
-                .multilineTextAlignment(.center)
-
-            OrnamentDivider()
-                .frame(width: 150)
-
-            Text(chant.latinTitle)
-                .font(AppFonts.titleFont(27))
-                .foregroundColor(AppColors.cream)
-                .multilineTextAlignment(.center)
-                .lineSpacing(5)
-                .minimumScaleFactor(0.6)
-                .fixedSize(horizontal: false, vertical: true)
-
-            Text(chant.englishTitle)
-                .font(AppFonts.readingItalicFont(17))
-                .foregroundColor(AppColors.cream.opacity(0.7))
-                .multilineTextAlignment(.center)
-
-            if let setting = chant.distinctSetting {
-                Text(setting.uppercased())
-                    .font(AppFonts.labelFont(8.5))
-                    .tracking(2)
-                    .foregroundColor(AppColors.textSecondary)
+        VStack(spacing: 6) {
+            HStack(spacing: 8) {
+                Text(chant.latinTitle)
+                    .font(AppFonts.titleFont(26))
+                    .foregroundColor(AppColors.cream)
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(4)
+                    .minimumScaleFactor(0.6)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityAddTraits(.isHeader)
+                if shelf.isFavorite(chant.id) {
+                    AppIcon("ph-heart-fill", size: 13)
+                        .foregroundColor(AppColors.gold.opacity(0.8))
+                        .accessibilityLabel("A favourite")
+                }
             }
 
-            Text(chant.detail)
-                .font(AppFonts.readingItalicFont(15))
-                .foregroundColor(AppColors.cream.opacity(0.8))
+            Text(subtitle(chant))
+                .font(AppFonts.readingItalicFont(16))
+                .foregroundColor(AppColors.textSecondary)
                 .multilineTextAlignment(.center)
-                .lineSpacing(3)
                 .fixedSize(horizontal: false, vertical: true)
-                .padding(.top, 4)
         }
         .frame(maxWidth: .infinity)
     }
 
-    private func kicker(_ chant: Chant) -> String {
-        let group = chant.group?.title ?? "Chant"
-        return "The Chant Library · \(group)".uppercased()
+    private func subtitle(_ chant: Chant) -> String {
+        if let setting = chant.distinctSetting {
+            return "\(chant.englishTitle) · \(setting.lowercased())"
+        }
+        return chant.englishTitle
     }
 
     // MARK: - Score
 
-    private func score(_ chant: Chant) -> some View {
-        VStack(alignment: .leading, spacing: 16) {
-            // Both words shrink a little before either breaks mid-word
-            HStack(spacing: 10) {
-                Text("THE SCORE")
-                    .font(AppFonts.labelFont(8.5))
-                    .tracking(2)
-                    .foregroundColor(AppColors.gold.opacity(0.75))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.6)
-                Rectangle()
-                    .fill(AppColors.gold.opacity(0.18))
-                    .frame(height: AppLine.hairline)
-                Button {
-                    showsScore = true
-                } label: {
+    /// The score in a window: the part being sung when the lines say
+    /// which, the opening part otherwise, its foot dissolving. A tap
+    /// opens the whole score large.
+    private func scorePanel(_ chant: Chant) -> some View {
+        Button {
+            showsScore = true
+        } label: {
+            NowPlayingScore(chant: chant)
+                .frame(height: 210, alignment: .top)
+                .frame(maxWidth: .infinity)
+                .clipped()
+                .mask(
+                    LinearGradient(
+                        stops: [
+                            .init(color: .black, location: 0),
+                            .init(color: .black, location: 0.72),
+                            .init(color: .clear, location: 1)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+                .padding(14)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14)
+                        .strokeBorder(AppColors.gold.opacity(0.24), lineWidth: AppLine.hairline)
+                )
+                .overlay(alignment: .bottomTrailing) {
                     Text("ENLARGE")
-                        .font(AppFonts.labelFont(9))
+                        .font(AppFonts.labelFont(8.5))
                         .tracking(2)
                         .foregroundColor(AppColors.gold.opacity(0.8))
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.6)
-                        .frame(minWidth: 44, minHeight: 44)
-                        .contentShape(Rectangle())
+                        .padding(12)
                 }
-                .buttonStyle(QuietGlyphButtonStyle())
-                .accessibilityLabel("Enlarge the score")
-            }
-            .padding(.horizontal, 8)
-
-            Button {
-                showsScore = true
-            } label: {
-                ChantScoreView(parts: chant.score)
-            }
-            .buttonStyle(.plain)
-            .accessibilityHint("Opens the score full screen")
+                .contentShape(Rectangle())
         }
+        .buttonStyle(SacredCardButtonStyle())
+        .accessibilityLabel("The score")
+        .accessibilityHint("Opens the score full screen")
     }
 
     // MARK: - Doors
@@ -237,13 +333,11 @@ struct ChantView: View {
     }
 }
 
-// MARK: - ChantTransport
+// MARK: - NowPlayingScore
 
-/// The chant page's transport: play, the scrubber and the time, and the
-/// practice row. A view of its own so that the recording's progress, read
-/// twice a second, redraws the transport alone — read in the page's body,
-/// it redrew the title, the doors and every part of the score with it.
-private struct ChantTransport: View {
+/// The score part the line under the hand is engraved on — or the first,
+/// for a chant whose lines name no part
+private struct NowPlayingScore: View {
     let chant: Chant
 
     private var player = ChantPlayer.shared
@@ -253,38 +347,187 @@ private struct ChantTransport: View {
     }
 
     var body: some View {
+        let index = player.holds(chant) ? (player.currentLine?.part ?? 0) : 0
+        let part = chant.score.indices.contains(index) ? chant.score[index] : chant.score.first
+        Group {
+            if let part {
+                ChantScoreImage(part: part)
+                    .id(part.file)
+                    .transition(.opacity)
+            }
+        }
+        .animation(Motion.crossfade, value: part?.file)
+    }
+}
+
+// MARK: - NowPlayingLine
+
+/// The line being sung, the Latin over its English, crossfading whole
+/// as the next comes; or, for a chant whose lines have not been timed,
+/// when it is sung. The reader's turn, while it lasts, is said here.
+private struct NowPlayingLine: View {
+    let chant: Chant
+
+    private var player = ChantPlayer.shared
+    private var shelf = ChantShelfStore.shared
+
+    init(chant: Chant) {
+        self.chant = chant
+    }
+
+    var body: some View {
+        let line = chant.hasLines
+            ? (player.holds(chant) ? player.currentLine : chant.lines.first)
+            : nil
+
+        ZStack {
+            if let line {
+                VStack(spacing: 5) {
+                    if shelf.words.showsLatin {
+                        Text(line.latin)
+                            .font(AppFonts.readingFont(21))
+                            .foregroundColor(AppColors.goldLight)
+                            .lineSpacing(3)
+                    }
+                    if shelf.words.showsEnglish {
+                        Text(line.english)
+                            .font(AppFonts.readingItalicFont(16))
+                            .foregroundColor(AppColors.cream.opacity(0.72))
+                    }
+                }
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+                .id(line)
+                .transition(.opacity)
+                .accessibilityElement(children: .combine)
+            } else {
+                Text(chant.detail)
+                    .font(AppFonts.readingItalicFont(16.5))
+                    .foregroundColor(AppColors.cream.opacity(0.8))
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(3)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .frame(maxWidth: .infinity, minHeight: chant.hasLines ? 76 : 0)
+        .animation(Motion.words, value: line)
+        .overlay(alignment: .bottom) {
+            if let turn = player.turn, player.holds(chant) {
+                ChantYourTurn(turn: turn)
+                    .offset(y: 8)
+                    .transition(.opacity)
+            }
+        }
+        .animation(Motion.crossfade, value: player.turn)
+    }
+}
+
+// MARK: - ChantYourTurn
+
+/// "Your turn": the line the choir sang is the reader's to sing back,
+/// for as long as the choir took over it
+struct ChantYourTurn: View {
+    let turn: ChantTurn
+    var subtitle = "The choir sang the line. Now sing it back."
+
+    var body: some View {
+        HStack(spacing: 14) {
+            VStack(alignment: .leading, spacing: 1) {
+                Text("Your turn")
+                    .font(AppFonts.readingFont(16))
+                    .foregroundColor(AppColors.goldLight)
+                Text(subtitle)
+                    .font(AppFonts.readingItalicFont(12.5))
+                    .foregroundColor(AppColors.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            Spacer(minLength: 8)
+            TimelineView(.animation(minimumInterval: 0.1)) { context in
+                let left = max(0, turn.endsAt.timeIntervalSince(context.date))
+                Text(String(format: "%.0f", left.rounded(.up)))
+                    .font(AppFonts.titleFont(20))
+                    .foregroundColor(AppColors.goldLight)
+                    .monospacedDigit()
+                    .frame(minWidth: 28)
+            }
+            .accessibilityHidden(true)
+        }
+        .padding(.horizontal, 16)
+        .frame(minHeight: 56)
+        .background(RoundedRectangle(cornerRadius: 14).fill(AppColors.background))
+        .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(AppColors.gold.opacity(0.6), lineWidth: 1))
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.updatesFrequently)
+    }
+}
+
+// MARK: - NowPlayingTransport
+
+/// The page's transport: the scrubber and the time, the five controls,
+/// and the practice row. A view of its own so that the recording's
+/// progress, read twice a second, redraws the transport alone — read in
+/// the page's body, it redrew the title, the doors and the score with it.
+private struct NowPlayingTransport: View {
+    let chant: Chant
+    let showWords: () -> Void
+    let showSleep: () -> Void
+
+    private var player = ChantPlayer.shared
+
+    init(chant: Chant, showWords: @escaping () -> Void, showSleep: @escaping () -> Void) {
+        self.chant = chant
+        self.showWords = showWords
+        self.showSleep = showSleep
+    }
+
+    var body: some View {
         let holds = player.holds(chant)
         let progress = holds ? player.progress : 0
         let elapsed = holds ? player.currentTime : 0
         let total = holds ? player.duration : chant.duration
+        let lines = chant.hasLines
 
-        return VStack(spacing: 14) {
-            HStack(spacing: 16) {
-                ChantPlayDisc(
+        return VStack(spacing: 18) {
+            VStack(spacing: 4) {
+                ChantScrubber(progress: progress, duration: total, isEnabled: holds) { fraction in
+                    player.seek(toFraction: fraction)
+                }
+                HStack {
+                    Text(ChantPlayer.clock(elapsed))
+                        .contentTransition(.numericText())
+                    Spacer()
+                    if lines {
+                        Text("Line \((holds ? player.lineIndex ?? 0 : 0) + 1) of \(chant.lines.count)")
+                            .font(AppFonts.readingItalicFont(13))
+                            .contentTransition(.numericText())
+                        Spacer()
+                    }
+                    Text(ChantPlayer.clock(total))
+                }
+                .font(AppFonts.labelFont(9))
+                .tracking(1.5)
+                .foregroundColor(AppColors.textSecondary)
+                .monospacedDigit()
+                .accessibilityHidden(true)
+            }
+
+            HStack(spacing: 0) {
+                repeatButton(lines: lines, holds: holds)
+                Spacer(minLength: 0)
+                stepButton(back: true, lines: lines, holds: holds)
+                Spacer(minLength: 0)
+                ChantGoldPlayButton(
                     isPlaying: player.isPlaying(chant),
                     isLoading: player.current.id == chant.id && player.isLoading,
-                    size: 56,
+                    size: 68,
                     label: chant.latinTitle
                 ) {
                     player.toggle(chant)
                 }
-
-                VStack(spacing: 4) {
-                    ChantScrubber(progress: progress, duration: total, isEnabled: holds) { fraction in
-                        player.seek(toFraction: fraction)
-                    }
-                    HStack {
-                        Text(ChantPlayer.clock(elapsed))
-                            .contentTransition(.numericText())
-                        Spacer()
-                        Text(ChantPlayer.clock(total))
-                    }
-                    .font(AppFonts.labelFont(9))
-                    .tracking(1.5)
-                    .foregroundColor(AppColors.textSecondary)
-                    .monospacedDigit()
-                    .accessibilityHidden(true)
-                }
+                Spacer(minLength: 0)
+                stepButton(back: false, lines: lines, holds: holds)
+                Spacer(minLength: 0)
+                speedButton
             }
 
             if let error = player.current.id == chant.id ? player.errorMessage : nil {
@@ -293,66 +536,115 @@ private struct ChantTransport: View {
                     .foregroundColor(AppColors.textSecondary)
             }
 
-            // Practice: a slower pace, the chant again when it ends, and
-            // back to the top for another try at a phrase. One row while
-            // it fits; at larger text the chips keep a row of their own
-            // rather than break SLOW and REPEAT mid-word.
-            ViewThatFits(in: .horizontal) {
-                HStack(spacing: 10) {
-                    practiceChips
-                    Spacer(minLength: 0)
-                    fromTheTop(holds: holds)
+            HStack(spacing: 2) {
+                if lines {
+                    pill("Take turns", icon: "ph-microphone", isOn: holds && player.lineEnd == .takeTurns) {
+                        if !holds { player.play(chant) }
+                        player.setLineEnd(player.lineEnd == .takeTurns ? .goOn : .takeTurns)
+                    }
+                    .accessibilityHint("The choir sings a line, then waits while you sing it back")
                 }
-                VStack(alignment: .leading, spacing: 2) {
-                    HStack(spacing: 10) { practiceChips }
-                    fromTheTop(holds: holds)
-                }
-                VStack(alignment: .leading, spacing: 2) {
-                    practiceChips
-                    fromTheTop(holds: holds)
-                }
+                pill("Words", icon: "ph-text-align-left", isOn: false, action: showWords)
+                pill("Sleep timer", icon: "ph-moon-stars", isOn: player.hasSleepTimer, action: showSleep)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(maxWidth: .infinity)
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 14)
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(AppColors.gold.opacity(0.24), lineWidth: AppLine.hairline)
-        )
     }
 
-    @ViewBuilder
-    private var practiceChips: some View {
-        ChantPracticeChip(title: "Slow", isOn: player.rate < 1) {
-            player.setRate(player.rate < 1 ? 1.0 : 0.75)
-        }
-        .accessibilityHint("Plays at three-quarters speed, for learning")
+    // MARK: Controls
 
-        ChantPracticeChip(title: "Repeat", isOn: player.repeats) {
-            player.repeats.toggle()
-        }
-        .accessibilityHint("Sings the chant again from the top when it ends")
-    }
-
-    private func fromTheTop(holds: Bool) -> some View {
-        Button {
-            player.restart()
+    private func repeatButton(lines: Bool, holds: Bool) -> some View {
+        let isOn = lines ? (holds && player.lineEnd == .again) : player.repeats
+        return Button {
+            if lines {
+                if !holds { player.play(chant) }
+                player.setLineEnd(player.lineEnd == .again ? .goOn : .again)
+            } else {
+                player.repeats.toggle()
+            }
         } label: {
-            HStack(spacing: 6) {
-                AppIcon("ph-arrow-counter-clockwise", size: 12)
-                Text("FROM THE TOP")
-                    .font(AppFonts.labelFont(9))
-                    .tracking(2)
-                    .lineLimit(1)
+            ZStack(alignment: .bottom) {
+                AppIcon(lines ? "ph-repeat-once" : "ph-repeat", size: 20)
+                    .foregroundColor(isOn ? AppColors.goldLight : AppColors.gold.opacity(0.75))
+                    .frame(width: 44, height: 44)
+                Circle()
+                    .fill(AppColors.goldLight)
+                    .frame(width: 4, height: 4)
+                    .opacity(isOn ? 1 : 0)
+                    .offset(y: -3)
             }
-            .foregroundColor(AppColors.gold.opacity(holds ? 0.8 : 0.35))
-            .frame(minHeight: 44)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(QuietGlyphButtonStyle())
+        .accessibilityLabel(lines ? "Repeat this line" : "Repeat the chant")
+        .accessibilityAddTraits(isOn ? [.isSelected] : [])
+        .sensoryFeedback(.selection, trigger: isOn)
+    }
+
+    private func stepButton(back: Bool, lines: Bool, holds: Bool) -> some View {
+        Button {
+            if lines {
+                if back { player.previousLine() } else { player.nextLine() }
+            } else {
+                player.skip(by: back ? -10 : 10)
+            }
+        } label: {
+            Group {
+                if lines {
+                    AppIcon(back ? "ph-skip-back" : "ph-skip-forward", size: 22)
+                } else {
+                    // The system's own glyph, since it carries its number
+                    Image(systemName: back ? "gobackward.10" : "goforward.10")
+                        .font(.system(size: 21, weight: .light))
+                }
+            }
+            .foregroundColor(AppColors.gold.opacity(holds ? 1 : 0.35))
+            .frame(width: 48, height: 48)
             .contentShape(Rectangle())
         }
         .buttonStyle(QuietGlyphButtonStyle())
         .disabled(!holds)
-        .accessibilityLabel("Start the chant again from the top")
+        .accessibilityLabel(lines
+            ? (back ? "Previous line" : "Next line")
+            : (back ? "Back ten seconds" : "On ten seconds"))
+    }
+
+    private var speedButton: some View {
+        let slow = player.rate < 1
+        return Button {
+            player.setRate(slow ? 1.0 : 0.75)
+        } label: {
+            Text(slow ? "¾×" : "1×")
+                .font(AppFonts.readingFont(16))
+                .foregroundColor(slow ? AppColors.goldLight : AppColors.gold)
+                .frame(width: 44, height: 44)
+                .overlay(Circle().strokeBorder(AppColors.gold.opacity(slow ? 0.5 : 0), lineWidth: AppLine.hairline).padding(4))
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(QuietGlyphButtonStyle())
+        .accessibilityLabel(slow ? "Speed, slower" : "Speed, normal")
+        .accessibilityHint("Plays at three-quarters speed, for learning")
+    }
+
+    private func pill(_ title: String, icon: String, isOn: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 7) {
+                AppIcon(icon, size: 15)
+                    .foregroundColor(isOn ? AppColors.goldLight : AppColors.gold)
+                Text(title)
+                    .font(AppFonts.readingFont(14.5))
+                    .foregroundColor(isOn ? AppColors.goldLight : AppColors.cream.opacity(0.82))
+                    .lineLimit(1)
+                    .fixedSize()
+            }
+            .padding(.horizontal, 13)
+            .frame(height: 38)
+            .background(Capsule().fill(isOn ? AppColors.gold.opacity(0.14) : Color.clear))
+            .frame(minHeight: 44)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(SacredCardButtonStyle())
+        .accessibilityAddTraits(isOn ? [.isSelected] : [])
     }
 }
 

@@ -22,14 +22,111 @@
 //  its hold in view state would go on singing with nothing in the app
 //  able to pause it.
 //
-//  Practice asks two things of it the tile never did: a slower pace (a
-//  chant learned by ear is learned at three-quarters speed first) and a
-//  chant sung again from the top when it ends. The pace is borrowed —
-//  part of the claim, never remembered as the app's narration speed —
-//  and comes back however the claim ends.
+//  Practice asks more of it than the tile ever did: a slower pace (a
+//  chant learned by ear is learned at three-quarters speed first), a
+//  chant sung again from the top when it ends, and — for a chant whose
+//  lines have been timed (`Chant.lines`) — a line at a time: the line
+//  again, or the choir and the learner taking turns. The pace is
+//  borrowed — part of the claim, never remembered as the app's narration
+//  speed — and comes back however the claim ends.
+//
+//  It also sings a set: an occasion's chants in their order, or a set
+//  the reader made, with silence where the set keeps it, and — when the
+//  reader asks — a wait for a tap between one chant and the next. And it
+//  can be told to fall silent after a while, for chant sung to sleep by.
 //
 
 import Foundation
+
+// MARK: - ChantQueue
+
+/// Chants sung one after another: an occasion, a set, a day's devotion.
+struct ChantQueue: Equatable {
+
+    enum Entry: Equatable {
+        case chant(Chant)
+        /// A pause the set keeps, in silence, with what it is for
+        case silence(note: String, seconds: Int)
+
+        var chant: Chant? {
+            if case .chant(let chant) = self { return chant }
+            return nil
+        }
+    }
+
+    /// "Benediction", "Thursday Holy Hour"
+    let title: String
+    let entries: [Entry]
+    var index: Int = 0
+
+    var entry: Entry? { entries.indices.contains(index) ? entries[index] : nil }
+    var hasNext: Bool { index + 1 < entries.count }
+    var hasPrevious: Bool { index > 0 }
+
+    /// The next chant to sound, past any silence
+    var nextChant: Chant? {
+        entries.dropFirst(index + 1).lazy.compactMap(\.chant).first
+    }
+
+    /// "2 of 4", counting the chants alone
+    var position: String {
+        let chants = entries.compactMap(\.chant)
+        let sung = entries.prefix(index + 1).compactMap(\.chant).count
+        return "\(max(1, sung)) of \(chants.count)"
+    }
+
+    static func occasion(_ occasion: ChantOccasion, on date: Date = Date()) -> ChantQueue {
+        ChantQueue(title: occasion.title, entries: occasion.sequence(on: date).map(Entry.chant))
+    }
+
+    static func set(_ set: ChantSet) -> ChantQueue {
+        var entries: [Entry] = []
+        for item in set.items {
+            switch item.kind {
+            case .chant(let id, let times):
+                guard let chant = ChantCatalog.chant(id) else { continue }
+                entries.append(contentsOf: Array(repeating: .chant(chant), count: max(1, times)))
+            case .pause(let note, let seconds):
+                // A note with no silence of its own is read, not waited on
+                if seconds > 0 { entries.append(.silence(note: note, seconds: seconds)) }
+            }
+        }
+        return ChantQueue(title: set.name, entries: entries)
+    }
+
+    static func chants(_ chants: [Chant], title: String) -> ChantQueue {
+        ChantQueue(title: title, entries: chants.map(Entry.chant))
+    }
+}
+
+// MARK: - ChantLineEnd
+
+/// What happens when the line under the hand has been sung. Only a chant
+/// with timed lines has any of this; every other chant plays through.
+enum ChantLineEnd: Equatable {
+    /// The next line follows: the chant as it was recorded
+    case goOn
+    /// The same line again, until the reader moves on
+    case again
+    /// The choir sings a line, then rests for as long while the reader
+    /// sings it back, then goes on to the next
+    case takeTurns
+    /// Stops at the line's end (practice: listen, read along)
+    case stop
+    /// Rests for the reader to sing it back, then stops (practice: sing
+    /// along)
+    case yourTurnThenStop
+}
+
+// MARK: - ChantTurn
+
+/// The reader's turn to sing a line back, and when it ends
+struct ChantTurn: Equatable {
+    let line: Int
+    let endsAt: Date
+}
+
+// MARK: - ChantPlayer
 
 @Observable
 @MainActor
@@ -54,10 +151,11 @@ final class ChantPlayer {
     /// claim or load (`lostPlayer`), or by `relinquish()`.
     private var claim: AudioClaim?
 
-    private var loadCount = 0
-    private var loadTask: Task<Void, Never>?
+    @ObservationIgnored private var loadCount = 0
+    @ObservationIgnored private var loadTask: Task<Void, Never>?
 
     private let audio = AudioService.shared
+    private let shelf = ChantShelfStore.shared
 
     private init() {
         let stored = ChantCatalog.chant(UserSettings.shared.chapelChantID)
@@ -111,6 +209,12 @@ final class ChantPlayer {
         return Self.clock(claim.currentTime)
     }
 
+    /// Whether the library is in the middle of something the mini player
+    /// should stand for: a chant loaded, a set under way, a silence kept
+    var isActive: Bool {
+        ownsPlayback || isLoading || queue != nil || silence != nil
+    }
+
     static func clock(_ seconds: Double) -> String {
         let whole = max(0, Int(seconds.rounded(.down)))
         return "\(whole / 60):\(String(format: "%02d", whole % 60))"
@@ -133,7 +237,9 @@ final class ChantPlayer {
 
     /// Play or pause the chant the tile holds.
     func togglePlayback() {
-        if ownsPlayback {
+        if waitingForNext {
+            continueQueue()
+        } else if ownsPlayback {
             claim?.togglePlayback()
         } else {
             play(current)
@@ -149,14 +255,28 @@ final class ChantPlayer {
         }
     }
 
-    /// Loads and sings a chant, and makes it the tile's remembered one.
+    /// Loads and sings a chant on its own, and makes it the tile's
+    /// remembered one. A set under way is put down, and the lines go back
+    /// to playing through: the reader chose another chant.
     func play(_ chant: Chant) {
+        endQueue()
+        lineEnd = .goOn
+        load(chant)
+    }
+
+    /// Loads and sings a chant, keeping whatever set it belongs to: from
+    /// the start of line `startLine` when one is asked for, and held
+    /// still there when `paused`, for the reader to sing first.
+    private func load(_ chant: Chant, startLine: Int? = nil, paused: Bool = false) {
+        lineTask?.cancel()
         current = chant
         UserSettings.shared.chapelChantID = chant.id
+        shelf.notePlayed(chant.id)
 
         loadCount += 1
         let token = loadCount
         errorMessage = nil
+        resetLines()
 
         guard let url = chant.audioURL else {
             errorMessage = "This chant's recording is missing."
@@ -183,7 +303,7 @@ final class ChantPlayer {
             let ready = await claim.load(
                 url,
                 title: chant.latinTitle,
-                subtitle: chant.setting.map { "Chant · \($0)" } ?? "Chant",
+                subtitle: self.nowPlayingSubtitle(for: chant),
                 album: ChantCatalog.credit,
                 claimNowPlaying: true
             )
@@ -206,20 +326,51 @@ final class ChantPlayer {
             }
 
             self.attachNavigation(to: claim)
-            claim.play()
+            // To the line first, so nothing of the chant's opening sounds
+            // on the way there
+            if let startLine, chant.lines.indices.contains(startLine) {
+                claim.seek(to: chant.lines[startLine].start)
+                self.activeLine = startLine
+                self.lineIndex = startLine
+            }
+            if !paused { claim.play() }
+            self.startLineWatch()
         }
+    }
+
+    /// The Lock Screen's line under the title: the set and where it
+    /// stands, or the setting
+    private func nowPlayingSubtitle(for chant: Chant) -> String {
+        if let queue { return "\(queue.title) · \(queue.position)" }
+        return chant.setting.map { "Chant · \($0)" } ?? "Chant"
     }
 
     /// Moves the playhead to a fraction of the recording.
     func seek(toFraction fraction: Double) {
         guard let claim, claim.duration > 0 else { return }
-        claim.seek(to: min(max(fraction, 0), 1) * claim.duration)
+        seek(to: min(max(fraction, 0), 1) * claim.duration)
+    }
+
+    /// Ten seconds on or back: the transport's steps for a chant whose
+    /// lines have not been timed
+    func skip(by seconds: Double) {
+        guard let claim, claim.holdsItem else { return }
+        let target = min(max(0, claim.currentTime + seconds), max(0, claim.duration - 0.5))
+        seek(to: target)
+    }
+
+    private func seek(to time: Double) {
+        guard let claim else { return }
+        claim.seek(to: time)
+        endTurn()
+        activeLine = current.lineIndex(at: time)
+        lineIndex = activeLine
     }
 
     /// Back to the top, for another try at a phrase.
     func restart() {
         guard let claim, claim.holdsItem else { return }
-        claim.seek(to: 0)
+        seek(to: 0)
         if !claim.isPlaying { claim.play() }
     }
 
@@ -227,6 +378,7 @@ final class ChantPlayer {
     func setRate(_ newRate: Double) {
         rate = newRate
         claim?.setRate(newRate)
+        anchor = nil
     }
 
     /// Gives the player and the app's narration speed back: the chant is
@@ -237,8 +389,389 @@ final class ChantPlayer {
         loadTask?.cancel()
         loadTask = nil
         isLoading = false
+        endQueue()
+        resetLines()
+        lineTask?.cancel()
         claim?.release()
         claim = nil
+    }
+
+    // MARK: - Sets
+
+    /// The set being sung, if one is
+    private(set) var queue: ChantQueue?
+
+    /// A chant has ended and the reader asked to be waited for before the
+    /// next (`ChantShelfStore.pausesBetween`)
+    private(set) var waitingForNext = false
+
+    /// A silence the set keeps, and when it ends
+    private(set) var silence: (note: String, endsAt: Date)?
+
+    @ObservationIgnored private var silenceTask: Task<Void, Never>?
+
+    /// Sings a set from `index`
+    func play(_ queue: ChantQueue, from index: Int = 0) {
+        guard !queue.entries.isEmpty else { return }
+        var queue = queue
+        queue.index = min(max(0, index), queue.entries.count - 1)
+        self.queue = queue
+        waitingForNext = false
+        playEntry()
+    }
+
+    /// Whether `queue` is the one being sung — the same title and chants
+    func isSinging(_ queue: ChantQueue) -> Bool {
+        guard let current = self.queue else { return false }
+        return current.title == queue.title && current.entries == queue.entries
+    }
+
+    /// The next entry of the set, now
+    func continueQueue() {
+        guard var queue, queue.hasNext else {
+            endQueue()
+            return
+        }
+        queue.index += 1
+        self.queue = queue
+        waitingForNext = false
+        playEntry()
+    }
+
+    func previousInQueue() {
+        guard var queue, queue.hasPrevious else { return }
+        queue.index -= 1
+        self.queue = queue
+        waitingForNext = false
+        playEntry()
+    }
+
+    /// Puts the set down; the chant sounding, if any, sings on alone
+    func endQueue() {
+        queue = nil
+        waitingForNext = false
+        endSilence()
+    }
+
+    private func playEntry() {
+        endSilence()
+        guard let entry = queue?.entry else {
+            endQueue()
+            return
+        }
+        switch entry {
+        case .chant(let chant):
+            load(chant)
+        case .silence(let note, let seconds):
+            claim?.pause()
+            let ends = Date().addingTimeInterval(TimeInterval(seconds))
+            silence = (note, ends)
+            silenceTask = Task { @MainActor [weak self] in
+                try? await Task.sleep(for: .seconds(seconds))
+                guard let self, !Task.isCancelled, self.silence != nil else { return }
+                self.silence = nil
+                self.entryFinished()
+            }
+        }
+    }
+
+    private func endSilence() {
+        silenceTask?.cancel()
+        silenceTask = nil
+        silence = nil
+    }
+
+    /// One entry of the set is done: the next follows, or waits for a
+    /// tap, or the set is over
+    private func entryFinished() {
+        guard let queue else { return }
+        guard queue.hasNext else {
+            endQueue()
+            return
+        }
+        if shelf.pausesBetween, queue.entries[queue.index + 1].chant != nil {
+            waitingForNext = true
+        } else {
+            continueQueue()
+        }
+    }
+
+    // MARK: - End of a recording
+
+    private func finished() {
+        if sleepsAtEndOfChant {
+            fallAsleep()
+            return
+        }
+        // The last line of a chant whose lines are being stepped: its end
+        // is the recording's
+        if current.hasLines, let line = activeLine ?? current.lines.indices.last, lineEnd != .goOn {
+            lineEnded(line)
+            return
+        }
+        if repeats {
+            claim?.play()
+            return
+        }
+        if queue != nil {
+            entryFinished()
+        }
+    }
+
+    // MARK: - Lines
+
+    /// The line sounding now, for a chant with timed lines
+    private(set) var lineIndex: Int?
+
+    /// What happens at the end of each line (`ChantLineEnd`)
+    private(set) var lineEnd: ChantLineEnd = .goOn
+
+    /// The reader's turn to sing, while it lasts
+    private(set) var turn: ChantTurn?
+
+    /// Bumped each time a line stops at its end for practice, so a page
+    /// can answer it
+    private(set) var linesFinished = 0
+
+    /// The line whose end is being waited on
+    @ObservationIgnored private var activeLine: Int?
+
+    /// The player's clock is read twice a second; between its ticks the
+    /// time is carried forward from the last one at the chant's pace, so
+    /// a line's end is met within a tenth of a second
+    @ObservationIgnored private var anchor: (media: Double, wall: Date)?
+    @ObservationIgnored private var lastObserved: Double = -1
+    @ObservationIgnored private var lineTask: Task<Void, Never>?
+    @ObservationIgnored private var turnTask: Task<Void, Never>?
+
+    var currentLine: ChantLine? {
+        guard let lineIndex, current.lines.indices.contains(lineIndex) else { return nil }
+        return current.lines[lineIndex]
+    }
+
+    func setLineEnd(_ end: ChantLineEnd) {
+        lineEnd = end
+        endTurn()
+        activeLine = lineIndex
+    }
+
+    /// To the start of a line, playing on if it was playing
+    func seek(toLine index: Int) {
+        guard current.lines.indices.contains(index), let claim, claim.holdsItem else { return }
+        seek(to: current.lines[index].start)
+        activeLine = index
+        lineIndex = index
+    }
+
+    func nextLine() {
+        let next = (lineIndex ?? -1) + 1
+        guard current.lines.indices.contains(next) else { return }
+        seek(toLine: next)
+    }
+
+    func previousLine() {
+        guard let lineIndex else { return }
+        // Within the first two seconds of a line, the line before; later,
+        // this line from its start — as a track's back button does
+        let index = currentTime - current.lines[lineIndex].start > 2 ? lineIndex : lineIndex - 1
+        seek(toLine: max(0, index))
+    }
+
+    /// Sings line `index` of `chant` and then does what `end` says —
+    /// practice's one act. Loads the chant first when it is not ours.
+    func playLine(_ index: Int, of chant: Chant, then end: ChantLineEnd) {
+        guard chant.lines.indices.contains(index) else { return }
+        endTurn()
+        if holds(chant), let claim {
+            lineEnd = end
+            seek(toLine: index)
+            if !claim.isPlaying { claim.play() }
+        } else {
+            endQueue()
+            load(chant, startLine: index)
+            lineEnd = end
+        }
+    }
+
+    /// The reader sings line `index` first, then the choir sings it back
+    /// to them, and stops — practice's last step
+    func yourTurnFirst(_ index: Int, of chant: Chant) {
+        guard chant.lines.indices.contains(index) else { return }
+        if holds(chant) {
+            claim?.pause()
+            seek(toLine: index)
+        } else {
+            // Loaded, but held still at the line, so the choir can answer
+            // from its start when the reader's turn is over
+            endQueue()
+            load(chant, startLine: index, paused: true)
+        }
+        lineEnd = .stop
+        beginTurn(on: index) { [weak self] in
+            guard let self, let claim = self.claim, claim.holdsItem else { return }
+            self.seek(toLine: index)
+            claim.play()
+        }
+    }
+
+    private func resetLines() {
+        endTurn()
+        lineIndex = current.hasLines ? 0 : nil
+        activeLine = current.hasLines ? 0 : nil
+        anchor = nil
+        lastObserved = -1
+    }
+
+    private func startLineWatch() {
+        lineTask?.cancel()
+        guard current.hasLines else {
+            lineIndex = nil
+            return
+        }
+        lineTask = Task { @MainActor [weak self] in
+            while !Task.isCancelled {
+                self?.tickLines()
+                try? await Task.sleep(for: .milliseconds(100))
+            }
+        }
+    }
+
+    private func tickLines() {
+        guard let claim, claim.holdsItem, current.hasLines, turn == nil else { return }
+
+        let observed = claim.currentTime
+        if observed != lastObserved {
+            lastObserved = observed
+            anchor = (observed, Date())
+        }
+        let now: Double
+        if claim.isPlaying, let anchor {
+            now = anchor.media + Date().timeIntervalSince(anchor.wall) * rate
+        } else {
+            now = observed
+        }
+
+        if lineEnd == .goOn || activeLine == nil {
+            let index = current.lineIndex(at: now)
+            if index != lineIndex { lineIndex = index }
+            activeLine = index
+            return
+        }
+
+        guard claim.isPlaying, let line = activeLine, current.lines.indices.contains(line) else { return }
+        if lineIndex != line { lineIndex = line }
+        if now >= current.lines[line].end - 0.03 {
+            lineEnded(line)
+        }
+    }
+
+    /// The line under the hand has been sung: what `lineEnd` says follows
+    private func lineEnded(_ line: Int) {
+        guard let claim else { return }
+        let lines = current.lines
+        switch lineEnd {
+        case .goOn:
+            break
+        case .again:
+            seek(toLine: line)
+            claim.play()
+        case .stop:
+            claim.pause()
+            seek(toLine: line)
+            linesFinished += 1
+        case .yourTurnThenStop:
+            claim.pause()
+            beginTurn(on: line) { [weak self] in
+                guard let self else { return }
+                self.seek(toLine: line)
+                self.linesFinished += 1
+            }
+        case .takeTurns:
+            claim.pause()
+            beginTurn(on: line) { [weak self] in
+                guard let self, let claim = self.claim else { return }
+                if lines.indices.contains(line + 1) {
+                    self.seek(toLine: line + 1)
+                    claim.play()
+                } else {
+                    self.seek(toLine: 0)
+                    self.finishedTakingTurns()
+                }
+            }
+        }
+    }
+
+    /// The last line has been sung back: the chant is over, as if it had
+    /// played to its end
+    private func finishedTakingTurns() {
+        if repeats {
+            claim?.play()
+        } else if queue != nil {
+            entryFinished()
+        }
+    }
+
+    /// The reader's turn: as long as the choir took over the line, at the
+    /// chant's pace, and a breath more
+    private func beginTurn(on line: Int, then: @escaping () -> Void) {
+        let length = current.lines.indices.contains(line) ? current.lines[line].length : 4
+        let seconds = length / max(rate, 0.5) + 0.6
+        turn = ChantTurn(line: line, endsAt: Date().addingTimeInterval(seconds))
+        turnTask?.cancel()
+        turnTask = Task { @MainActor [weak self] in
+            try? await Task.sleep(for: .seconds(seconds))
+            guard let self, !Task.isCancelled, self.turn?.line == line else { return }
+            self.turn = nil
+            then()
+        }
+    }
+
+    private func endTurn() {
+        turnTask?.cancel()
+        turnTask = nil
+        turn = nil
+    }
+
+    // MARK: - Sleep
+
+    /// When the library falls silent, if the reader asked it to
+    private(set) var sleepEndsAt: Date?
+
+    /// Falls silent when the chant sounding ends
+    private(set) var sleepsAtEndOfChant = false
+
+    @ObservationIgnored private var sleepTask: Task<Void, Never>?
+
+    var hasSleepTimer: Bool { sleepEndsAt != nil || sleepsAtEndOfChant }
+
+    func sleep(afterMinutes minutes: Int) {
+        cancelSleep()
+        let seconds = TimeInterval(minutes * 60)
+        sleepEndsAt = Date().addingTimeInterval(seconds)
+        sleepTask = Task { @MainActor [weak self] in
+            try? await Task.sleep(for: .seconds(seconds))
+            guard let self, !Task.isCancelled else { return }
+            self.fallAsleep()
+        }
+    }
+
+    func sleepAtEndOfChant() {
+        cancelSleep()
+        sleepsAtEndOfChant = true
+    }
+
+    func cancelSleep() {
+        sleepTask?.cancel()
+        sleepTask = nil
+        sleepEndsAt = nil
+        sleepsAtEndOfChant = false
+    }
+
+    private func fallAsleep() {
+        claim?.pause()
+        endQueue()
+        endTurn()
+        cancelSleep()
     }
 
     // MARK: - The Player
@@ -254,28 +787,40 @@ final class ChantPlayer {
             self?.lostPlayer()
         }!
         claim.onFinish = { [weak self] in
-            guard let self, self.repeats else { return }
-            self.claim?.play()
+            self?.finished()
         }
         self.claim = claim
         return claim
     }
 
     /// Another flow took the player: a recording still arriving is let go,
-    /// and the readouts, which read the claim, are at rest
+    /// a set and a silence are put down, and the readouts, which read the
+    /// claim, are at rest
     private func lostPlayer() {
         loadTask?.cancel()
         loadTask = nil
+        lineTask?.cancel()
         isLoading = false
         claim = nil
+        endQueue()
+        endTurn()
     }
 
     // MARK: - Lock Screen
 
-    /// The Lock Screen's arrows step through the library in its order;
-    /// a chant heard to its end sings again when Repeat is on
-    /// (`takePlayer`).
+    /// The Lock Screen's arrows step through the set being sung, or else
+    /// through the library in its order; a chant heard to its end sings
+    /// again when Repeat is on (`finished`).
     private func attachNavigation(to claim: AudioClaim) {
+        if let queue {
+            claim.navigation = AudioNavigation(
+                canGoNext: queue.hasNext,
+                canGoPrevious: queue.hasPrevious,
+                onNext: { [weak self] in self?.continueQueue() },
+                onPrevious: { [weak self] in self?.previousInQueue() }
+            )
+            return
+        }
         let chants = ChantCatalog.all
         let index = chants.firstIndex { $0.id == current.id } ?? 0
         claim.navigation = AudioNavigation(

@@ -343,3 +343,595 @@ struct ChantPracticeChip: View {
         .sensoryFeedback(.selection, trigger: isOn)
     }
 }
+
+// MARK: - ChantLibraryRow
+
+/// A chant on its shelf: its disc to play it where it stands, then its
+/// names, its length, and a caret to its page. Explore's Sung Prayer
+/// sets the same row.
+struct ChantLibraryRow: View {
+    let chant: Chant
+    let player: ChantPlayer
+    /// The line under the names, when the board says something of its
+    /// own there ("for Easter", "Corpus Christi")
+    var note: String? = nil
+    let open: () -> Void
+
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    private var sounding: Bool { player.isPlaying(chant) }
+
+    /// Under the accessibility sizes the length leaves its column for a
+    /// line under the names, which it squeezed until "Redemptoris" broke
+    /// mid-word
+    private var lengthBelow: Bool { dynamicTypeSize >= .accessibility1 }
+
+    var body: some View {
+        HStack(spacing: 12) {
+            ChantPlayDisc(
+                isPlaying: sounding,
+                isLoading: player.current.id == chant.id && player.isLoading,
+                size: 34,
+                label: chant.latinTitle
+            ) {
+                player.toggle(chant)
+            }
+
+            Button(action: open) {
+                HStack(spacing: 10) {
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(chant.latinTitle)
+                            .font(AppFonts.readingFont(17))
+                            .foregroundColor(sounding ? AppColors.goldLight : AppColors.cream.opacity(0.94))
+                            .fixedSize(horizontal: false, vertical: true)
+                            .animation(Motion.crossfade, value: sounding)
+
+                        Text(subtitle)
+                            .font(AppFonts.readingItalicFont(13.5))
+                            .foregroundColor(AppColors.textSecondary)
+                            .fixedSize(horizontal: false, vertical: true)
+
+                        if lengthBelow { length }
+                    }
+
+                    Spacer(minLength: 8)
+
+                    if !lengthBelow { length }
+
+                    AppIcon("ph-caret-right", size: 10)
+                        .foregroundColor(AppColors.gold.opacity(0.45))
+                }
+                .padding(.vertical, 10)
+                .frame(minHeight: 52)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("\(chant.latinTitle), \(subtitle), \(chant.durationLabel)")
+            .accessibilityHint("Opens the chant with its score")
+            .accessibilityAddTraits(.isButton)
+        }
+        .overlay(alignment: .bottom) {
+            Rectangle()
+                .fill(AppColors.gold.opacity(0.12))
+                .frame(height: AppLine.hairline)
+        }
+        .chantContextMenu(chant)
+    }
+
+    private var length: some View {
+        Text(chant.durationLabel)
+            .font(AppFonts.labelFont(9))
+            .tracking(1)
+            .foregroundColor(AppColors.textSecondary)
+            .monospacedDigit()
+            .lineLimit(1)
+    }
+
+    private var subtitle: String {
+        if let note { return note }
+        if let setting = chant.distinctSetting {
+            return "\(chant.englishTitle) · \(setting.lowercased())"
+        }
+        return chant.englishTitle
+    }
+}
+
+// MARK: - Context menu
+
+extension View {
+    /// A chant held down: keep it as a favourite, or put it in a set
+    func chantContextMenu(_ chant: Chant) -> some View {
+        modifier(ChantContextMenu(chant: chant))
+    }
+}
+
+private struct ChantContextMenu: ViewModifier {
+    let chant: Chant
+
+    private var shelf = ChantShelfStore.shared
+
+    init(chant: Chant) {
+        self.chant = chant
+    }
+
+    func body(content: Content) -> some View {
+        content.contextMenu {
+            Button {
+                shelf.toggleFavorite(chant.id)
+            } label: {
+                if shelf.isFavorite(chant.id) {
+                    Label("Remove from Favourites", systemImage: "heart.slash")
+                } else {
+                    Label("Add to Favourites", systemImage: "heart")
+                }
+            }
+
+            if !shelf.sets.isEmpty {
+                Menu {
+                    ForEach(shelf.sets) { set in
+                        Button(set.name) {
+                            shelf.addChant(chant.id, to: set.id)
+                        }
+                    }
+                } label: {
+                    Label("Add to a Set", systemImage: "text.badge.plus")
+                }
+            }
+        }
+    }
+}
+
+// MARK: - ChantSectionHeading
+
+/// A section of a library board: a small gold kicker over its title in
+/// the display face, and a line of what it is. Left-aligned, as every
+/// section beneath the masthead stands.
+struct ChantSectionHeading: View {
+    let kicker: String?
+    let title: String
+    var note: String? = nil
+    var titleSize: CGFloat = 21
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 5) {
+            if let kicker {
+                Text(kicker.uppercased())
+                    .font(AppFonts.labelFont(9))
+                    .tracking(2)
+                    .foregroundColor(AppColors.gold)
+            }
+            Text(title)
+                .font(AppFonts.titleFont(titleSize))
+                .foregroundColor(AppColors.cream)
+                .fixedSize(horizontal: false, vertical: true)
+                .accessibilityAddTraits(.isHeader)
+            if let note {
+                Text(note)
+                    .font(AppFonts.readingItalicFont(14.5))
+                    .foregroundColor(AppColors.textSecondary)
+                    .lineSpacing(2)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+// MARK: - ChantRule
+
+/// The hairline under a section's heading, and between rows
+struct ChantRule: View {
+    var opacity: Double = 0.3
+
+    var body: some View {
+        Rectangle()
+            .fill(AppColors.gold.opacity(opacity))
+            .frame(height: AppLine.hairline)
+            .accessibilityHidden(true)
+    }
+}
+
+// MARK: - ChantSettingPill
+
+/// A work sung in more than one setting — the simple and the solemn Salve
+/// Regina — as a pill of its settings, each with its length. A segmented
+/// picker to VoiceOver.
+struct ChantSettingPill: View {
+    let settings: [Chant]
+    let selected: String
+    let choose: (Chant) -> Void
+
+    var body: some View {
+        HStack(spacing: 4) {
+            ForEach(settings) { chant in
+                let lit = chant.id == selected
+                Button {
+                    choose(chant)
+                } label: {
+                    HStack(spacing: 6) {
+                        Text(chant.settingName ?? chant.latinTitle)
+                            .font(AppFonts.readingItalicFont(14))
+                            .foregroundColor(lit ? AppColors.goldLight : AppColors.textSecondary)
+                            .lineLimit(1)
+                        Text(chant.durationLabel)
+                            .font(AppFonts.labelFont(8.5))
+                            .tracking(1)
+                            .foregroundColor(AppColors.textSecondary)
+                            .monospacedDigit()
+                            .lineLimit(1)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 32)
+                    .background(Capsule().fill(lit ? AppColors.gold.opacity(0.16) : Color.clear))
+                    .contentShape(Capsule())
+                }
+                .buttonStyle(SacredCardButtonStyle())
+                .accessibilityLabel("\(chant.settingName ?? chant.latinTitle), \(ChantPlayer.spoken(chant.duration))")
+                .accessibilityAddTraits(lit ? [.isSelected] : [])
+            }
+        }
+        .padding(3)
+        .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.22), lineWidth: AppLine.hairline))
+        .frame(minHeight: 44)
+        .animation(Motion.choice, value: selected)
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Setting")
+    }
+}
+
+// MARK: - ChantPainting
+
+/// A painting hung at the head of a card or a board, dissolving to clear
+/// at its foot so the words beneath stand on the page, never on a slab.
+struct ChantPainting: View {
+    let name: String
+    var height: CGFloat = 220
+    /// How far down the painting the dissolve begins
+    var dissolveFrom: CGFloat = 0.45
+
+    var body: some View {
+        CachedAssetImage(name, focal: .center)
+            .frame(height: height)
+            .frame(maxWidth: .infinity)
+            .clipped()
+            .mask(
+                LinearGradient(
+                    stops: [
+                        .init(color: .black, location: 0),
+                        .init(color: .black, location: dissolveFrom),
+                        .init(color: .black.opacity(0.35), location: (dissolveFrom + 1) / 2),
+                        .init(color: .clear, location: 1)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
+            .accessibilityHidden(true)
+    }
+}
+
+// MARK: - ChantThumbnail
+
+/// A painting as a small square, for a row or the mini player
+struct ChantThumbnail: View {
+    let name: String
+    var size: CGFloat = 40
+    var radius: CGFloat = 10
+
+    var body: some View {
+        CachedAssetImage(name, focal: .center)
+            .frame(width: size, height: size)
+            .clipShape(RoundedRectangle(cornerRadius: radius))
+            .overlay(
+                RoundedRectangle(cornerRadius: radius)
+                    .strokeBorder(AppColors.gold.opacity(0.24), lineWidth: AppLine.hairline)
+            )
+            .accessibilityHidden(true)
+    }
+}
+
+// MARK: - ChantStepBeads
+
+/// The four steps of learning a chant as four beads on a thread: those
+/// taken in gold, the one under way ringed, the rest at rest.
+struct ChantStepBeads: View {
+    let step: ChantLearningStep?
+    var learned = false
+
+    var body: some View {
+        HStack(spacing: 0) {
+            ForEach(ChantLearningStep.allCases) { each in
+                let taken = learned || (step.map { each.rawValue < $0.rawValue } ?? false)
+                let here = !learned && step == each
+                ZStack {
+                    Circle()
+                        .fill(taken ? AppColors.gold : Color.clear)
+                    Circle()
+                        .strokeBorder(here ? AppColors.goldLight : AppColors.gold.opacity(taken ? 0 : 0.35),
+                                      lineWidth: here ? 1.5 : 1)
+                }
+                .frame(width: here ? 13 : 9, height: here ? 13 : 9)
+                .shadow(color: here ? AppColors.gold.opacity(0.4) : .clear, radius: 4)
+
+                if each != .onYourOwn {
+                    Rectangle()
+                        .fill(AppColors.gold.opacity(taken ? 0.6 : 0.2))
+                        .frame(width: 14, height: 1)
+                }
+            }
+        }
+        .accessibilityElement()
+        .accessibilityLabel(learned ? "Learned" : step.map { "Step \($0.rawValue) of 4, \($0.title)" } ?? "Not begun")
+    }
+}
+
+// MARK: - ChantFlowLayout
+
+/// Lays its subviews out in rows, wrapping to the width it is given: the
+/// Types board's chants under a minute, the search filters.
+nonisolated struct ChantFlowLayout: Layout {
+    var spacing: CGFloat = 8
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let arrangement = arrange(subviews, in: proposal.width ?? .infinity)
+        if let width = proposal.width, width.isFinite {
+            return CGSize(width: width, height: arrangement.size.height)
+        }
+        return arrangement.size
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        let arrangement = arrange(subviews, in: proposal.width ?? bounds.width)
+        for (subview, origin) in zip(subviews, arrangement.origins) {
+            subview.place(
+                at: CGPoint(x: bounds.minX + origin.x, y: bounds.minY + origin.y),
+                proposal: .unspecified
+            )
+        }
+    }
+
+    private func arrange(_ subviews: Subviews, in width: CGFloat) -> (size: CGSize, origins: [CGPoint]) {
+        var origins: [CGPoint] = []
+        var x: CGFloat = 0
+        var y: CGFloat = 0
+        var rowHeight: CGFloat = 0
+        var maxX: CGFloat = 0
+
+        for subview in subviews {
+            let size = subview.sizeThatFits(.unspecified)
+            if x > 0, x + size.width > width {
+                x = 0
+                y += rowHeight + spacing
+                rowHeight = 0
+            }
+            origins.append(CGPoint(x: x, y: y))
+            x += size.width + spacing
+            rowHeight = max(rowHeight, size.height)
+            maxX = max(maxX, x - spacing)
+        }
+
+        return (CGSize(width: maxX, height: y + rowHeight), origins)
+    }
+}
+
+// MARK: - ChantMiniPlayer
+
+/// What the library is singing, held at the foot of every board: the
+/// painting, the chant and where it stands, and its pause. A tap opens
+/// the chant's page. While a set waits between chants it names the next
+/// and its button sings it; while a set keeps a silence it says so.
+///
+/// It is the one filled surface on the library's pages, because it
+/// floats over a page that scrolls beneath it, as the tab bar does.
+struct ChantMiniPlayer: View {
+
+    let open: () -> Void
+
+    private var player = ChantPlayer.shared
+
+    init(open: @escaping () -> Void) {
+        self.open = open
+    }
+
+    private var chant: Chant { player.current }
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Button(action: open) {
+                HStack(spacing: 12) {
+                    ChantThumbnail(name: ChantCatalog.painting(for: chant))
+
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text(title)
+                            .font(AppFonts.readingFont(16))
+                            .foregroundColor(AppColors.cream)
+                            .lineLimit(1)
+                        subtitle
+                            .font(AppFonts.readingItalicFont(12.5))
+                            .foregroundColor(AppColors.textSecondary)
+                            .lineLimit(1)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityElement(children: .combine)
+            .accessibilityHint("Opens the chant")
+
+            ChantPlayDisc(
+                isPlaying: player.isPlaying && !player.waitingForNext,
+                isLoading: player.isLoading,
+                size: 36,
+                label: player.waitingForNext ? (player.queue?.nextChant?.latinTitle ?? title) : title
+            ) {
+                player.togglePlayback()
+            }
+        }
+        .padding(.vertical, 8)
+        .padding(.leading, 10)
+        .padding(.trailing, 6)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(AppColors.cardElevated)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline)
+        )
+        .overlay(alignment: .bottomLeading) {
+            GeometryReader { geo in
+                Rectangle()
+                    .fill(AppColors.goldCTAGradient)
+                    .frame(width: geo.size.width * player.progress, height: 1.5)
+                    .animation(.linear(duration: 0.5), value: player.progress)
+                    .frame(maxHeight: .infinity, alignment: .bottom)
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
+        }
+        .shadow(color: .black.opacity(0.45), radius: 16, y: 6)
+    }
+
+    private var title: String {
+        if let silence = player.silence { return silence.note.isEmpty ? "Silence" : silence.note }
+        if player.waitingForNext, let next = player.queue?.nextChant { return "Next: \(next.latinTitle)" }
+        return chant.latinTitle
+    }
+
+    @ViewBuilder
+    private var subtitle: some View {
+        if let silence = player.silence {
+            TimelineView(.periodic(from: .now, by: 1)) { context in
+                let left = max(0, silence.endsAt.timeIntervalSince(context.date))
+                Text("Silence · \(ChantPlayer.clock(left)) left")
+            }
+        } else if player.waitingForNext, let queue = player.queue {
+            Text("\(queue.title) · waiting for you")
+        } else if let queue = player.queue {
+            Text("\(queue.title) · \(queue.position)")
+        } else if let time = player.timeLabel {
+            Text(chant.settingName.map { "\($0) · \(time)" } ?? time)
+        } else {
+            Text(chant.englishTitle)
+        }
+    }
+}
+
+// MARK: - ChantRubricText
+
+/// A note in red between chants, as a printed order of service sets what
+/// happens between its texts
+struct ChantRubricText: View {
+    let text: String
+    var size: CGFloat = 14.5
+
+    var body: some View {
+        Text(text)
+            .font(AppFonts.readingItalicFont(size))
+            .foregroundColor(Rubric.red)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+}
+
+// MARK: - Long dates
+
+enum ChantDates {
+
+    private static let ordinals = [
+        "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth",
+        "eleventh", "twelfth", "thirteenth", "fourteenth", "fifteenth", "sixteenth", "seventeenth",
+        "eighteenth", "nineteenth", "twentieth", "twenty-first", "twenty-second", "twenty-third",
+        "twenty-fourth", "twenty-fifth", "twenty-sixth", "twenty-seventh", "twenty-eighth",
+        "twenty-ninth", "thirtieth", "thirty-first"
+    ]
+
+    /// "Thursday, the first of October"
+    static func spelled(_ date: Date, calendar: Calendar = .current) -> String {
+        let weekday = calendar.component(.weekday, from: date)
+        let day = calendar.component(.day, from: date)
+        let month = calendar.component(.month, from: date)
+        let weekdays = calendar.standaloneWeekdaySymbols
+        let months = calendar.standaloneMonthSymbols
+        guard weekdays.indices.contains(weekday - 1),
+              months.indices.contains(month - 1),
+              ordinals.indices.contains(day - 1) else {
+            return date.formatted(date: .complete, time: .omitted)
+        }
+        return "\(weekdays[weekday - 1]), the \(ordinals[day - 1]) of \(months[month - 1])"
+    }
+
+    /// "Wednesday, October 7"
+    static func feastDay(_ date: Date) -> String {
+        date.formatted(.dateTime.weekday(.wide).month(.wide).day())
+    }
+
+    /// "7" and "OCT"
+    static func dayAndMonth(_ date: Date) -> (day: String, month: String) {
+        (date.formatted(.dateTime.day()), date.formatted(.dateTime.month(.abbreviated)).uppercased())
+    }
+}
+
+// MARK: - ChantGoldPlayButton
+
+/// The board's one gold act when it is a chant to sing: a gold disc with
+/// the play or pause glyph dark upon it, haloed. Tonight's antiphon, the
+/// chant's own page.
+struct ChantGoldPlayButton: View {
+    let isPlaying: Bool
+    let isLoading: Bool
+    var size: CGFloat = 56
+    let label: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            ZStack {
+                Circle()
+                    .fill(AppColors.goldGradient)
+                ZStack {
+                    if isLoading {
+                        ProgressView()
+                            .tint(AppColors.background)
+                            .transition(.opacity)
+                    } else if isPlaying {
+                        AppIcon("ph-pause-fill", size: size * 0.34)
+                            .transition(.opacity)
+                    } else {
+                        AppIcon("ph-play-fill", size: size * 0.34)
+                            .offset(x: size * 0.03)
+                            .transition(.opacity)
+                    }
+                }
+                .foregroundColor(AppColors.background)
+                .animation(Motion.crossfade, value: isLoading)
+                .animation(Motion.crossfade, value: isPlaying)
+            }
+            .frame(width: size, height: size)
+            .shadow(color: AppColors.gold.opacity(0.28), radius: 10)
+            .shadow(color: AppColors.gold.opacity(0.14), radius: 22)
+            .frame(minWidth: 44, minHeight: 44)
+            .contentShape(Circle())
+        }
+        .buttonStyle(GoldCTAButtonStyle())
+        .accessibilityLabel(isLoading ? "Loading \(label)" : isPlaying ? "Pause \(label)" : "Play \(label)")
+    }
+}
+
+// MARK: - ChantShell
+
+extension View {
+    /// The library's outline: a 16pt hairline at gold@0.24 on the bare
+    /// page, no fill
+    func chantShell(padding: CGFloat = 16) -> some View {
+        self
+            .padding(padding)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(AppColors.gold.opacity(0.24), lineWidth: AppLine.hairline)
+            )
+    }
+}

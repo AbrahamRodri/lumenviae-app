@@ -136,3 +136,19 @@ enum StCarloPalette {
     static let polo = Color(hex: "A93B32")
     static let poloDark = Color(hex: "8E2F28")
 }
+
+// MARK: - The Chant Library's Spines
+
+/// The spines on the Chant Library's Saved shelf: chants learned in
+/// oxblood, favourites in Marian blue, and the reader's own sets in the
+/// cloths of a choir's books, in turn
+enum ChantSpineCloth {
+    static let learned = Color(hex: "5a2626")     // oxblood
+    static let favorites = AppColors.marianBlue
+    static let sets: [Color] = [
+        Color(hex: "2f4a36"),   // chapter green
+        Color(hex: "3f3352"),   // Lenten violet
+        Color(hex: "4a3a24"),   // old leather
+        Color(hex: "2e3f55")    // slate blue
+    ]
+}
