@@ -67,7 +67,7 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
         case .todaysRosary:     return "The day's mysteries, straight to prayer"
         case .chooseMeditation: return "Choose how to pray today's mysteries"
         case .sevenSorrows:     return "Seven Hail Marys for each sorrow"
-        case .scripturalRosary: return "A verse of the Gospel for every bead"
+        case .scripturalRosary: return "A Bible verse for every Hail Mary"
         case .rosaryAloud:      return "Every prayer said aloud, no readings"
         case .mass:             return "Today's traditional Latin Mass"
         case .office:           return "The Church\u{2019}s prayer for each hour (Divine Office)"
@@ -164,7 +164,7 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
     /// but is never absent: while a preparation is under way it stands
     /// on the rule of its own accord. Browsing the picker for a
     /// meditation is a doorway to the Rosary, not a devotion beside it,
-    /// so it is not a rule of its own. The Holy Rosary is: the Chapel
+    /// so it is not a rule of its own. The Rosary Said Aloud is: the Chapel
     /// watches it finish by name, as it does the Scriptural Rosary.
     var isRuleEligible: Bool {
         switch self {

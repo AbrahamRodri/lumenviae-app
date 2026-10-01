@@ -751,7 +751,7 @@ struct MyChapelView: View {
         case .sevenSorrows:
             return "Seven Hail Marys for each of Mary's seven sorrows, prayed on beads of their own."
         case .scripturalRosary:
-            return "The \(ScheduleService.categoryForToday().devotionTitle), with a verse of the Gospel on every bead."
+            return "The \(ScheduleService.categoryForToday().devotionTitle), with a Bible verse for every Hail Mary."
         case .rosaryAloud:
             return "The \(ScheduleService.categoryForToday().devotionTitle), every prayer said aloud and the beads moving with the voice."
         case .mass:

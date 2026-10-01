@@ -682,7 +682,7 @@ Rosary, the Scriptural Rosary, the Rosary Said Aloud and the Seven
 Sorrows of Mary can be chosen, and the Prayer Book's three orders of the day — Morning Prayers,
 the Angelus, Night Prayers — which the pray-along screen marks offered
 at their Amen (`PrayerBookStore.wasOffered`), so the Chapel can ask
-about them honestly. The Holy Rosary is still recorded under its old
+about them honestly. The Rosary Said Aloud is still recorded under its old
 name, "The Rosary Aloud" (`ScripturalRosaryViewModel.aloudDevotionName`),
 since the Prayer Record holds days prayed under it and the rule matches
 by it. "A
