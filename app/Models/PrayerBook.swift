@@ -764,8 +764,9 @@ struct PrayAlongLaunch: Hashable {
 /// asleep.
 enum PrayerBookAudio {
 
-    /// The book's own name, so the row is never read as a second Audio
-    static let title = "Prayer Book"
+    /// The book's own name, as its tab says it, so the row is never read
+    /// as a second Audio
+    static let title = "Prayers"
 
     /// The Prayer Book's door glyph
     static let icon = "ch-praying-hands"

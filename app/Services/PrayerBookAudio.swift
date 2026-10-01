@@ -144,7 +144,7 @@ final class PrayAlongVoice {
             from: url.absoluteString,
             title: prayer.title,
             subtitle: title,
-            album: "The Prayer Book",
+            album: "Prayers",
             queueIndex: index,
             queueCount: count,
             claimNowPlaying: true

@@ -396,12 +396,12 @@ final class OfflineContentService {
             // Stage 5 — the Prayer Book said aloud, in the same voice and
             // through the same pack (the Rosary's prayers it shares are
             // already on disk). Best-effort, as the spoken Rosary is.
-            state = .downloading(stage: "The Prayer Book", completed: 0, total: 1)
+            state = .downloading(stage: "Prayers", completed: 0, total: 1)
             _ = try? await RosaryAudioPack.shared.prepare(
                 voice: voice,
                 clips: Set(PrayerBook.prayers.keys.map { PrayAlongVoice.clipID(for: $0) })
             ) { [weak self] done, total in
-                self?.state = .downloading(stage: "The Prayer Book", completed: done, total: max(total, 1))
+                self?.state = .downloading(stage: "Prayers", completed: done, total: max(total, 1))
             }
 
             // Manifest is written for partial runs too, so a relaunch

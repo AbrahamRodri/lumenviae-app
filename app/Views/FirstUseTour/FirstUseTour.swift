@@ -54,7 +54,7 @@ enum FirstUseTourStop: Int, CaseIterable {
         case .prayers:
             return "The Church's prayers, open on the one for the hour it is. Find any prayer by name, or by where you are: at Mass, at Confession, at home."
         case .chapel:
-            return "Your own page: the prayers you keep each day, the days you have prayed, and the Prayer Book at the hour. Arrange it as you like."
+            return "Your own page: the prayers you keep each day, the days you have prayed, and the hour's prayers. Arrange it as you like."
         case .explore:
             return "Every devotion in the app, chant and spiritual reading, and a search across them all."
         }

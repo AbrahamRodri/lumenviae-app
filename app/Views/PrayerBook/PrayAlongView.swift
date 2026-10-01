@@ -78,7 +78,7 @@ struct PrayAlongView: View {
     private var kicker: String {
         if prayers.count > 1 { return launch.title }
         if let id = launch.orderID, let order = PrayerBook.order(id) { return order.occasion }
-        return "The Prayer Book"
+        return "Prayers"
     }
 
     private var isAngelus: Bool {
@@ -810,7 +810,7 @@ struct PrayAloudChoiceSheet: View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 0) {
                 SheetHeader(
-                    kicker: "The Prayer Book",
+                    kicker: "Prayers",
                     title: "Aloud, or in silence?",
                     lead: "The book can read each prayer to you, the page following the voice, or leave the words to you."
                 )

@@ -524,8 +524,9 @@ the page they serve):
   first, as on the Rosary's own page, since it decides whether Counting
   is offered at all; Counting once came first, in the switches' order.
   Counting stands dimmed under the Whole Rosary, saying why: the voice
-  moves the beads on the screen then. Beneath them stands the **Prayer
-  Book** row, In Silence | Aloud, in the same row and pill
+  moves the beads on the screen then. Beneath them stands the
+  **Prayers** row (the Prayer Book's, named as its tab is), In Silence |
+  Aloud, in the same row and pill
   (`PrayerBookAudio`), which sets `PrayerBookStore.praysAloud`. It is
   kept apart from Audio on purpose: the Rosary's choice decides whether
   the voice leads every prayer or reads the meditation alone, the
@@ -1912,6 +1913,13 @@ write concurrent code here:
   never copied. Hymn translations are plain literal renderings, not
   Caswall or Hopkins.
 
+  The book has one name wherever the reader sees one, **Prayers** —
+  the tab, Explore's section, the pray-along's kicker over a single
+  prayer, its question before it first speaks, the Settings row, the
+  Lock Screen's album line, the offline download's stage — while types
+  and files keep "PrayerBook"; What's New's 4.0 notes keep the name it
+  was added under.
+
   **Prayers** (`PrayerBookView(isTabRoot:)`, the tab's root; pushed it
   draws a Back, but nothing pushes it now) is a plain title, the search
   field at the head of the page — finding one prayer by name is the
@@ -1978,7 +1986,7 @@ write concurrent code here:
   order page's switch stands just above its PRAY, so
   praying from there answers the question with what the switch shows;
   afterwards the speaker at the head of the page owns the choice. The
-  same choice stands in Settings → Prayer Experience as the Prayer Book
+  same choice stands in Settings → Prayer Experience as the Prayers
   row, and a choice made there answers the question before it is asked;
   it never follows the Rosary's Audio. Aloud,
   each prayer is the server's ElevenLabs
