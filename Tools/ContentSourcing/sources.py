@@ -223,8 +223,8 @@ EXISTING = [
 # any faithful reproduction of it, but the file it came from is not proven.
 PROVENANCE = {
     "glorious_coronation": dict(commons_file="File:Diego Velázquez - Coronation of the Virgin - Prado.jpg", licence="Public domain",
-                                match="exact", score=1.0, bundled="640×852",
-                                note="Bundled at 640×852, under a third of the file's 2292×3051."),
+                                match="exact", score=1.0, bundled="1202×1600",
+                                note="Taken again at 1600 px from this file (fetch.py --retake); it was bundled at 640×852."),
     "sorrowful_crucifixion": dict(commons_file="File:Cristo crucificado.jpg", licence="Public domain",
                                   match="exact", score=1.0, bundled="2046×3051"),
     "sorrowful_crowning": dict(commons_file="File:Anthonis van Dyck 004.jpg", licence="Public domain",
@@ -233,8 +233,8 @@ PROVENANCE = {
                             match="exact", score=1.0, bundled="960×1346",
                             note="Bundled at 960×1346; the file is 1141×1600."),
     "sorrowful_scourging": dict(commons_file="File:William-Adolphe Bouguereau (1825-1905) - The Flagellation of Our Lord Jesus Christ (1880).jpg",
-                                licence="Public domain", match="exact", score=1.0, bundled="499×714",
-                                note="Bundled at 499×714; the file is 2136×3056."),
+                                licence="Public domain", match="exact", score=1.0, bundled="1118×1600",
+                                note="Taken again at 1600 px from this file (fetch.py --retake); it was bundled at 499×714."),
     "seven_sorrows_pieta": dict(commons_file="File:William-Adolphe Bouguereau (1825-1905) - Pieta (1876).jpg", licence="Public domain",
                                 match="exact", score=1.0, bundled="1920×3015"),
     "seven_sorrows_burial": dict(commons_file="File:The Entombment of Christ-Caravaggio (c.1602-3).jpg", licence="Public domain",
@@ -273,8 +273,8 @@ PROVENANCE = {
                           licence="Public domain", match="same work", score=0.965, bundled="1920×1407",
                           note="A crop of this scan."),
     "sorrowful_carrying": dict(commons_file="File:Anthony van Dyck - Jesus Christ bearing the Cross.jpg", licence="Public domain",
-                               match="exact", score=1.0, bundled="960×1261",
-                               note="Bundled at 960×1261; the file, Sint-Pauluskerk's own photograph, is 3349×4399."),
+                               match="exact", score=1.0, bundled="1218×1600",
+                               note="Sint-Pauluskerk's own photograph. Taken again at 1600 px from this file (fetch.py --retake); it was bundled at 960×1261."),
     "glorious_resurrection": dict(commons_file="File:Noël Coypel - Resurrection of Christ (large version).jpg", licence="Public domain",
                                   match="same work", score=0.782, bundled="566×732",
                                   note="Commons holds the work only small (638×900 at most); the bundled image is a crop of it, "

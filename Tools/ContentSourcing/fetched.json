@@ -125,5 +125,41 @@
     "height": 3200,
     "bytes": 248751,
     "crop": null
+  },
+  "glorious_coronation": {
+    "status": "verified",
+    "commons_file": "File:Diego Velázquez - Coronation of the Virgin - Prado.jpg",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Diego_Vel%C3%A1zquez_-_Coronation_of_the_Virgin_-_Prado.jpg",
+    "file_url": "https://upload.wikimedia.org/wikipedia/commons/b/b5/Diego_Vel%C3%A1zquez_-_Coronation_of_the_Virgin_-_Prado.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "licence": "Public domain",
+    "licence_url": "https://commons.wikimedia.org/wiki/Commons:Reuse_of_PD-Art_photographs",
+    "width": 2292,
+    "height": 3051,
+    "bytes": 538754,
+    "retaken_from": "640×852"
+  },
+  "sorrowful_scourging": {
+    "status": "verified",
+    "commons_file": "File:William-Adolphe Bouguereau (1825-1905) - The Flagellation of Our Lord Jesus Christ (1880).jpg",
+    "source_page": "https://commons.wikimedia.org/wiki/File:William-Adolphe_Bouguereau_(1825-1905)_-_The_Flagellation_of_Our_Lord_Jesus_Christ_(1880).jpg",
+    "file_url": "https://upload.wikimedia.org/wikipedia/commons/5/56/William-Adolphe_Bouguereau_%281825-1905%29_-_The_Flagellation_of_Our_Lord_Jesus_Christ_%281880%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "licence": "Public domain",
+    "licence_url": "https://commons.wikimedia.org/wiki/Commons:Reuse_of_PD-Art_photographs",
+    "width": 2136,
+    "height": 3056,
+    "bytes": 256961,
+    "retaken_from": "499×714"
+  },
+  "sorrowful_carrying": {
+    "status": "verified",
+    "commons_file": "File:Anthony van Dyck - Jesus Christ bearing the Cross.jpg",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Anthony_van_Dyck_-_Jesus_Christ_bearing_the_Cross.jpg",
+    "file_url": "https://upload.wikimedia.org/wikipedia/commons/9/93/Anthony_van_Dyck_-_Jesus_Christ_bearing_the_Cross.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "licence": "Public domain",
+    "licence_url": "https://commons.wikimedia.org/wiki/Commons:Reuse_of_PD-Art_photographs",
+    "width": 3349,
+    "height": 4399,
+    "bytes": 402747,
+    "retaken_from": "960×1261"
   }
 }

@@ -29,6 +29,8 @@ Other modes:
     python3 fetch.py --search [imageset]   show Commons hits for a slot, with licences
     python3 fetch.py --take <imageset> "File:…"   pin and take a particular file
     python3 fetch.py --provenance          look up the bundled paintings on Commons
+    python3 fetch.py --retake <imageset>   take a bundled painting again at full size,
+                                           from the file its provenance matched exactly
 """
 
 import io
@@ -187,6 +189,39 @@ def take_painting(slot: dict, pinned: str = None):
     print(f"  ✓ {name}: {info['title']} [{info['licence']}] → {len(jpeg) // 1024} KB")
 
 
+def retake_bundled(name: str):
+    """Take a bundled painting again at full size, from the Commons file its
+    provenance matched exactly, over the JPG already in its imageset. The
+    imageset and its Contents.json stay as they are, and the aspect must
+    not move, or the app's focal points would land elsewhere."""
+    from PIL import Image
+    prov = S.PROVENANCE.get(name)
+    if not prov or prov["match"] != "exact":
+        raise Failure("only a painting whose provenance match is exact can be taken again")
+    d = ASSETS / f"{name}.imageset"
+    contents = json.loads((d / "Contents.json").read_text())
+    filename = next(i["filename"] for i in contents["images"] if i.get("filename"))
+    if not filename.lower().endswith((".jpg", ".jpeg")):
+        raise Failure(f"{filename} is not a JPEG; replace it by hand")
+    ow, oh = Image.open(d / filename).size
+    found = imageinfo([prov["commons_file"]])
+    if not found:
+        raise Failure(f"file not on Commons: {prov['commons_file']}")
+    info = found[0]
+    if not licence_ok(info):
+        raise Failure(f"licence '{info['licence'] or 'none stated'}' is not on the allowed list ({info['page']})")
+    drift = abs((info["width"] / info["height"]) / (ow / oh) - 1)
+    if drift > 0.005:
+        raise Failure(f"the file's aspect differs from the bundled {ow}×{oh} by {drift:.2%}; the focal points would move")
+    jpeg = encode(get(info["url"]))
+    nw, nh = Image.open(io.BytesIO(jpeg)).size
+    (d / filename).write_bytes(jpeg)
+    record(name, dict(status="verified", commons_file=info["title"], source_page=info["page"], file_url=info["url"],
+                      licence=info["licence"], licence_url=info["licence_url"] or S.PD_ART["licence_url"],
+                      width=info["width"], height=info["height"], bytes=len(jpeg), retaken_from=f"{ow}×{oh}"))
+    print(f"  ✓ {name}: {ow}×{oh} → {nw}×{nh} from {info['title']} [{info['licence']}], {len(jpeg) // 1024} KB")
+
+
 # ------------------------------------------------------------------- chants
 
 def vg_licence_read() -> bool:
@@ -309,6 +344,12 @@ def main(argv):
         slot = next(p for p in S.PAINTINGS if p["imageset"] == argv[1])
         try:
             take_painting(slot, argv[2])
+        except Failure as e:
+            sys.exit(f"{argv[1]}: {e}")
+        build_manifest.build()
+    elif argv[0] == "--retake" and len(argv) == 2:
+        try:
+            retake_bundled(argv[1])
         except Failure as e:
             sys.exit(f"{argv[1]}: {e}")
         build_manifest.build()
