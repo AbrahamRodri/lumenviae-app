@@ -91,20 +91,24 @@ struct PrayersPageTests {
         #expect(PrayerBook.standing(of: angelus, at: at(8), offered: false, calendar: calendar) == .at("At noon"))
     }
 
-    @Test func theAngelusIsNamedForTheBellThatIsComing() {
+    @Test func theAngelusIsNamedForTheBellBeingKept() {
         let angelus = PrayerBook.order(PrayerBook.angelusOrderID)!
         #expect(PrayerBook.hourName(of: angelus, at: at(12), calendar: calendar) == "Noon")
         #expect(PrayerBook.hourName(of: angelus, at: at(17), calendar: calendar) == "Evening")
+        // The noon bell is still to come
         #expect(PrayerBook.hourName(of: angelus, at: at(8), calendar: calendar) == "Noon")
+        #expect(PrayerBook.standing(of: angelus, at: at(8), offered: false, calendar: calendar) == .at("At noon"))
+        // The evening's is kept until the day turns at four
+        #expect(PrayerBook.hourName(of: angelus, at: at(21), calendar: calendar) == "Evening")
+        #expect(PrayerBook.standing(of: angelus, at: at(21), offered: false, calendar: calendar) == .at("At six"))
     }
 
     @Test func anOfferedAngelusIsNamedForTheBellItKept() {
         let angelus = PrayerBook.order(PrayerBook.angelusOrderID)!
-        // The strip's name and its OFFERED read the same moment, as the
-        // station does
+        // The strip's name and its OFFERED, as the station reads them
         func station(at now: Date, last: Date) -> String {
             let offered = PrayerBook.isOfferedNow(angelus, at: now, offeredToday: true, lastOffered: last, calendar: calendar)
-            let name = PrayerBook.hourName(of: angelus, at: now, offered: offered, calendar: calendar)
+            let name = PrayerBook.hourName(of: angelus, at: now, calendar: calendar)
             return offered ? "\(name) · Offered" : name
         }
         let sixInTheEvening = at(18)
@@ -113,22 +117,30 @@ struct PrayersPageTests {
         #expect(station(at: at(21), last: sixInTheEvening) == "Evening · Offered")
         #expect(station(at: moment(0, 30, day: 25), last: sixInTheEvening) == "Evening · Offered")
         // Prayed at noon, by evening it is the evening bell's turn to ask
-        #expect(station(at: at(21), last: at(12)) == "Noon")
+        #expect(station(at: at(21), last: at(12)) == "Evening")
     }
 
-    @Test func anAngelusPrayedAtTheMorningBellIsKept() {
+    @Test func anAngelusAtTheMorningBellCountsForTheDayNotForNoon() {
         let angelus = PrayerBook.order(PrayerBook.angelusOrderID)!
         let sixInTheMorning = moment(6, 2)
         func offered(at now: Date) -> Bool {
             PrayerBook.isOfferedNow(angelus, at: now, offeredToday: true, lastOffered: sixInTheMorning, calendar: calendar)
         }
 
-        #expect(PrayerBook.angelusBellBegan(at: moment(6, 5), calendar: calendar) == at(4))
-        #expect(offered(at: moment(6, 5)))
-        #expect(offered(at: at(10)))
-        #expect(PrayerBook.hourName(of: angelus, at: at(10), offered: true, calendar: calendar) == "Morning")
-        // Noon's bell asks for its own
+        // The middle station is noon's, still to come
+        #expect(!offered(at: moment(6, 5)))
+        #expect(!offered(at: at(10)))
         #expect(!offered(at: at(12)))
+        #expect(PrayerBook.hourName(of: angelus, at: moment(6, 5), calendar: calendar) == "Noon")
+
+        // The day's measure still counts it, as the Chapel's rule reads it
+        let defaults = UserDefaults(suiteName: "PrayersPageTests.morningBell")!
+        defaults.removePersistentDomain(forName: "PrayersPageTests.morningBell")
+        let store = PrayerBookStore(defaults: defaults)
+        store.markOffered(PrayerBook.angelusOrderID, on: sixInTheMorning)
+        #expect(store.wasOffered(PrayerBook.angelusOrderID, on: at(12)))
+        #expect(store.wasOffered(PrayerBook.angelusOrderID, on: at(21)))
+        defaults.removePersistentDomain(forName: "PrayersPageTests.morningBell")
     }
 
     // MARK: Paintings

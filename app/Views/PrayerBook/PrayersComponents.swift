@@ -139,9 +139,8 @@ struct PrayerHourStations: View {
             lastOffered: store.lastOffered(order.id)
         )
         let standing = PrayerBook.standing(of: order, at: now, offered: offered)
-        // Named from the same offering it stands on, so an Angelus kept
-        // at the evening bell never reads NOON, offered
-        let hourName = PrayerBook.hourName(of: order, at: now, offered: offered)
+        // Named for the bell its OFFERED reads (`angelusBellKept`)
+        let hourName = PrayerBook.hourName(of: order, at: now)
         let shown = order.id == shownID
         let color: Color = shown
             ? AppColors.goldLight

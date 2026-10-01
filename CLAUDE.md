@@ -1941,21 +1941,26 @@ write concurrent code here:
   **Today** opens on the hour (`PrayerBook.dayOrder(at:)`): the Pray Now
   card, the order's painting (`PrayerBookPainting`) dissolving under its
   name and one italic line, a strip of MORNING · NOON · NIGHT at its
-  foot (`PrayerHourStations`; the Angelus is EVENING from three, when it
-  is the six o'clock bell that is coming), each saying where it stands —
+  foot (`PrayerHourStations`; the Angelus is EVENING from three until
+  the day turns at four, when it is the six o'clock bell being kept),
+  each saying where it stands —
   OFFERED, Now, or when it is said (`PrayerBook.standing`), never
   "missed" — and each a way to show that hour above (the choice let go
   when the hour turns and when the app comes back to the foreground),
   and the page's one gold act, PRAY THE ANGELUS (PRAY THE ANGELUS AGAIN
   once offered, so the button always names its prayer). The Angelus is
-  offered for its bell, not its day (`PrayerBook.isOfferedNow`, the
-  bells kept from four, eleven and three, `PrayerBook.angelusBellKept`):
-  one prayed at six in the morning reads OFFERED until eleven, one at
-  noon until three, and then the evening bell asks again; after midnight
-  the evening's still stands. Once offered, the station is named for the
-  bell it kept (`hourName(of:at:offered:)`, read from the same offering
-  as its OFFERED), so an evening Angelus never reads NOON, offered, after
-  eight, and one kept at the morning bell reads MORNING. That reads the
+  offered for its bell, not its day (`PrayerBook.isOfferedNow`): the
+  middle station is the noon and evening Angelus only
+  (`PrayerBook.angelusBellKept`, which names the station and dates its
+  OFFERED alike). Before eleven it is NOON, at noon, with the bell still
+  to come, whether or not an Angelus was said at six; from eleven it is
+  offered by an Angelus said since eleven, and from three until the day
+  turns at four it is EVENING, offered by one said since three, so an
+  evening Angelus never reads NOON, offered. The six o'clock morning bell
+  has no station (MORNING is Morning Prayers'): an Angelus said then
+  counts for the day wherever `wasOffered` is read, the Chapel's rule and
+  home's hour row, but leaves the strip's NOON and PRAY THE ANGELUS
+  (not AGAIN). That reads the
   moment an order was offered (`PrayerBookStore.lastOffered`, kept
   beside the day under its own key), while `wasOffered`, which the
   Chapel's rule reads, still counts an order once a prayer day. The

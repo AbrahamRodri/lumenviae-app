@@ -574,26 +574,19 @@ enum PrayerBook {
     // MARK: The day's three hours, in plain words
 
     /// What the Prayers page calls one of the day's three orders on its
-    /// strip of hours: MORNING, NOON, NIGHT. The Angelus's hour is noon
-    /// until three and the evening after, when it is the six o'clock
-    /// bell that is coming, so the strip never says NOON at five. Once
-    /// the Angelus is offered for the bell being kept (`offered`, as
-    /// `isOfferedNow` reads it), it is named for that bell: an Angelus
-    /// prayed at six in the evening is EVENING through the night, where
-    /// the hour alone had it NOON again from eight, offered.
-    static func hourName(
-        of order: PrayerOrder,
-        at date: Date = Date(),
-        offered: Bool = false,
-        calendar: Calendar = .current
-    ) -> String {
+    /// strip of hours: MORNING, NOON, NIGHT. The middle station is the
+    /// Angelus at noon and at six in the evening, named for the bell being
+    /// kept (`angelusBellKept`), which is also the bell its OFFERED reads:
+    /// NOON until three, the noon bell still to come before eleven, and
+    /// EVENING from three until the day turns at four. The six o'clock
+    /// morning bell has no station of its own, since MORNING is Morning
+    /// Prayers', so the strip never says NOON at five, nor NOON offered
+    /// for an Angelus said at the evening bell.
+    static func hourName(of order: PrayerOrder, at date: Date = Date(), calendar: Calendar = .current) -> String {
         switch order.id {
         case morningOrderID: return "Morning"
         case nightOrderID:   return "Night"
-        default:
-            if offered { return angelusBellKept(at: date, calendar: calendar).name }
-            let hour = calendar.component(.hour, from: date)
-            return (15..<20).contains(hour) ? "Evening" : "Noon"
+        default:             return angelusBellKept(at: date, calendar: calendar).name
         }
     }
 
@@ -617,52 +610,53 @@ enum PrayerBook {
         switch order.id {
         case morningOrderID: return .at("On rising")
         case nightOrderID:   return .at("At bedtime")
-        default:             return .at("At noon")
+        default:
+            return .at(angelusBellKept(at: date, calendar: calendar) == .evening ? "At six" : "At noon")
         }
     }
 
-    /// The Angelus's three bells: at six in the morning, at noon, and at
-    /// six in the evening
+    /// The two Angelus bells the Prayers page's strip keeps: noon's and the
+    /// evening's. The bell at six in the morning has no station of its
+    /// own; an Angelus said then counts for the day (`wasOffered`), which
+    /// is the rule's measure, but not for the noon bell still to come.
     enum AngelusBell: Equatable {
-        case morning
         case noon
         case evening
 
-        /// The bell's name on the Prayers page's strip
+        /// The bell's name on the strip
         var name: String {
             switch self {
-            case .morning: return "Morning"
             case .noon:    return "Noon"
             case .evening: return "Evening"
             }
         }
 
-        /// The clock hour from which the bell is kept
+        /// The clock hour from which an Angelus said counts for the bell
         var keptFromHour: Int {
             switch self {
-            case .morning: return PrayerBook.dayBeginsAtHour
             case .noon:    return 11
             case .evening: return 15
             }
         }
     }
 
-    /// The Angelus bell being kept at `date`: the morning's from four,
-    /// when the prayer day begins, noon's from eleven, and the evening's
-    /// from three on past midnight, until the day turns at four
+    /// The Angelus bell being kept at `date`: noon's from the day's turn at
+    /// four, still to come before eleven, and the evening's from three on
+    /// past midnight, until the day turns again
     static func angelusBellKept(at date: Date = Date(), calendar: Calendar = .current) -> AngelusBell {
         let hour = calendar.component(.hour, from: date)
-        if hour < dayBeginsAtHour || hour >= AngelusBell.evening.keptFromHour { return .evening }
-        return hour < AngelusBell.noon.keptFromHour ? .morning : .noon
+        return hour < dayBeginsAtHour || hour >= AngelusBell.evening.keptFromHour ? .evening : .noon
     }
 
-    /// When the Angelus bell being kept began: the morning's at four, noon's
-    /// at eleven, the evening's at three, and after midnight still the
-    /// evening before's, as the prayer day keeps it. An Angelus prayed at
-    /// six in the morning is the morning bell's, and noon's asks for its
-    /// own; by evening the evening bell asks again. The rule of prayer
-    /// still counts the Angelus once a day (`wasOffered`); only the
-    /// Prayers page's strip keeps the bells apart.
+    /// From when an Angelus said counts for the bell being kept: noon's
+    /// from eleven, the evening's from three, and after midnight still the
+    /// evening before's, as the prayer day keeps it. Before eleven it is
+    /// noon's eleven o'clock, still ahead, so nothing yet offers it: an
+    /// Angelus said at six in the morning leaves PRAY THE ANGELUS, not
+    /// AGAIN. One prayed at noon is the noon bell's; by evening the evening
+    /// bell asks for its own. The rule of prayer still counts the Angelus
+    /// once a day (`wasOffered`); only the Prayers page's strip keeps the
+    /// bells apart.
     static func angelusBellBegan(at date: Date = Date(), calendar: Calendar = .current) -> Date {
         let hour = calendar.component(.hour, from: date)
         let today = calendar.startOfDay(for: date)
