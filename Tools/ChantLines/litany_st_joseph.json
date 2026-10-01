@@ -1,7 +1,7 @@
 {
   "id": "litany_st_joseph",
   "part": null,
-  "method": "breaths by loudness (under -14 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 52 of 84 breaks heard",
+  "method": "breaths by loudness (under -14 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 53 of 84 breaks heard",
   "lines": [
     {
       "latin": "Kýrie eléison.",

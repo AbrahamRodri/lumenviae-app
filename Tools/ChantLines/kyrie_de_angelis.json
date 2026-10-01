@@ -1,0 +1,70 @@
+{
+  "id": "kyrie_de_angelis",
+  "part": null,
+  "method": "breaths by loudness (under -20 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 0 of 8 breaks heard",
+  "lines": [
+    {
+      "latin": "Kýrie, eléison.",
+      "english": "Lord, have mercy.",
+      "start": 0.37,
+      "end": 16.26,
+      "part": 0
+    },
+    {
+      "latin": "Kýrie, eléison.",
+      "english": "Lord, have mercy.",
+      "start": 16.97,
+      "end": 32.52,
+      "part": 0
+    },
+    {
+      "latin": "Kýrie, eléison.",
+      "english": "Lord, have mercy.",
+      "start": 33.73,
+      "end": 49.96,
+      "part": 0
+    },
+    {
+      "latin": "Christe, eléison.",
+      "english": "Christ, have mercy.",
+      "start": 50.13,
+      "end": 65.34,
+      "part": 0
+    },
+    {
+      "latin": "Christe, eléison.",
+      "english": "Christ, have mercy.",
+      "start": 65.65,
+      "end": 80.64,
+      "part": 0
+    },
+    {
+      "latin": "Christe, eléison.",
+      "english": "Christ, have mercy.",
+      "start": 81.85,
+      "end": 96.52,
+      "part": 0
+    },
+    {
+      "latin": "Kýrie, eléison.",
+      "english": "Lord, have mercy.",
+      "start": 97.77,
+      "end": 112.76,
+      "part": 0
+    },
+    {
+      "latin": "Kýrie, eléison.",
+      "english": "Lord, have mercy.",
+      "start": 113.01,
+      "end": 127.48,
+      "part": 0
+    },
+    {
+      "latin": "Kýrie, eléison.",
+      "english": "Lord, have mercy.",
+      "start": 128.43,
+      "end": 148.1,
+      "part": 0
+    }
+  ]
+}

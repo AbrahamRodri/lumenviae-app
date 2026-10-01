@@ -1,0 +1,231 @@
+{
+  "id": "o_oriens_magnificat",
+  "part": null,
+  "method": "breaths by loudness (under -20 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 23 of 31 breaks heard",
+  "lines": [
+    {
+      "latin": "O Oriens,",
+      "english": "O Dayspring,",
+      "start": 0.29,
+      "end": 8.17,
+      "part": 0
+    },
+    {
+      "latin": "splendor lucis ætérnæ,",
+      "english": "splendour of light eternal,",
+      "start": 8.17,
+      "end": 14.07,
+      "part": 0
+    },
+    {
+      "latin": "et sol justítiæ: veni, et illúmina",
+      "english": "and Sun of justice: come, and enlighten",
+      "start": 14.07,
+      "end": 28.33,
+      "part": 0
+    },
+    {
+      "latin": "sedéntes in ténebris",
+      "english": "those who sit in darkness",
+      "start": 28.33,
+      "end": 35.46,
+      "part": 0
+    },
+    {
+      "latin": "et umbra mortis.",
+      "english": "and in the shadow of death.",
+      "start": 35.81,
+      "end": 42.74,
+      "part": 0
+    },
+    {
+      "latin": "Magníficat ánima mea Dóminum.",
+      "english": "My soul doth magnify the Lord.",
+      "start": 44.67,
+      "end": 53.7,
+      "part": 1
+    },
+    {
+      "latin": "Et exsultávit spíritus meus",
+      "english": "And my spirit hath rejoiced",
+      "start": 54.17,
+      "end": 59.38,
+      "part": 1
+    },
+    {
+      "latin": "in Deo salutári meo.",
+      "english": "in God my Saviour.",
+      "start": 59.39,
+      "end": 64.28,
+      "part": 1
+    },
+    {
+      "latin": "Quia respéxit humilitátem ancíllæ suæ:",
+      "english": "Because He hath regarded the humility of His handmaid:",
+      "start": 65.01,
+      "end": 71.43,
+      "part": 1
+    },
+    {
+      "latin": "ecce enim ex hoc beátam me dicent omnes generatiónes.",
+      "english": "for behold from henceforth all generations shall call me blessed.",
+      "start": 71.43,
+      "end": 79.24,
+      "part": 1
+    },
+    {
+      "latin": "Quia fecit mihi magna qui potens est:",
+      "english": "Because He that is mighty hath done great things to me:",
+      "start": 79.73,
+      "end": 85.65,
+      "part": 1
+    },
+    {
+      "latin": "et sanctum nomen ejus.",
+      "english": "and holy is His name.",
+      "start": 85.65,
+      "end": 90.48,
+      "part": 1
+    },
+    {
+      "latin": "Et misericórdia ejus a progénie in progénies",
+      "english": "And His mercy is from generation unto generations,",
+      "start": 90.81,
+      "end": 98.47,
+      "part": 1
+    },
+    {
+      "latin": "timéntibus eum.",
+      "english": "to them that fear Him.",
+      "start": 98.47,
+      "end": 103.04,
+      "part": 1
+    },
+    {
+      "latin": "Fecit poténtiam in bráchio suo:",
+      "english": "He hath shewed might in His arm:",
+      "start": 103.81,
+      "end": 109.51,
+      "part": 1
+    },
+    {
+      "latin": "dispérsit supérbos mente cordis sui.",
+      "english": "He hath scattered the proud in the conceit of their heart.",
+      "start": 109.51,
+      "end": 115.5,
+      "part": 1
+    },
+    {
+      "latin": "Depósuit poténtes de sede,",
+      "english": "He hath put down the mighty from their seat,",
+      "start": 116.09,
+      "end": 121.76,
+      "part": 1
+    },
+    {
+      "latin": "et exaltávit húmiles.",
+      "english": "and hath exalted the humble.",
+      "start": 121.77,
+      "end": 126.56,
+      "part": 1
+    },
+    {
+      "latin": "Esuriéntes implévit bonis:",
+      "english": "He hath filled the hungry with good things:",
+      "start": 127.37,
+      "end": 133.1,
+      "part": 1
+    },
+    {
+      "latin": "et dívites dimísit inánes.",
+      "english": "and the rich He hath sent empty away.",
+      "start": 133.21,
+      "end": 138.82,
+      "part": 1
+    },
+    {
+      "latin": "Suscépit Israël púerum suum,",
+      "english": "He hath received Israel His servant,",
+      "start": 139.79,
+      "end": 145.59,
+      "part": 1
+    },
+    {
+      "latin": "recordátus misericórdiæ suæ.",
+      "english": "being mindful of His mercy.",
+      "start": 145.59,
+      "end": 151.06,
+      "part": 1
+    },
+    {
+      "latin": "Sicut locútus est ad patres nostros, Abraham et sémini ejus in sǽcula.",
+      "english": "As He spoke to our fathers, to Abraham and to his seed for ever.",
+      "start": 152.13,
+      "end": 164.0,
+      "part": 1
+    },
+    {
+      "latin": "Glória Patri, et Fílio,",
+      "english": "Glory be to the Father, and to the Son,",
+      "start": 164.65,
+      "end": 170.01,
+      "part": 1
+    },
+    {
+      "latin": "et Spirítui Sancto.",
+      "english": "and to the Holy Spirit.",
+      "start": 170.01,
+      "end": 175.26,
+      "part": 1
+    },
+    {
+      "latin": "Sicut erat in princípio, et nunc, et semper,",
+      "english": "As it was in the beginning, is now, and ever shall be,",
+      "start": 175.39,
+      "end": 182.26,
+      "part": 1
+    },
+    {
+      "latin": "et in sǽcula sæculórum. Amen.",
+      "english": "world without end. Amen.",
+      "start": 182.31,
+      "end": 188.6,
+      "part": 1
+    },
+    {
+      "latin": "O Oriens,",
+      "english": "O Dayspring,",
+      "start": 190.01,
+      "end": 197.89,
+      "part": 2
+    },
+    {
+      "latin": "splendor lucis ætérnæ,",
+      "english": "splendour of light eternal,",
+      "start": 197.89,
+      "end": 203.79,
+      "part": 2
+    },
+    {
+      "latin": "et sol justítiæ: veni, et illúmina",
+      "english": "and Sun of justice: come, and enlighten",
+      "start": 203.79,
+      "end": 218.05,
+      "part": 2
+    },
+    {
+      "latin": "sedéntes in ténebris",
+      "english": "those who sit in darkness",
+      "start": 218.05,
+      "end": 225.18,
+      "part": 2
+    },
+    {
+      "latin": "et umbra mortis.",
+      "english": "and in the shadow of death.",
+      "start": 225.53,
+      "end": 232.42,
+      "part": 2
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+# Audi benigne Conditor, the Lenten hymn: its five stanzas and Amen. Latin
+# from the score; English plain.
+noise -20
+gap 0.3
+merge 1.5
+
+part 0
+Audi, benígne Cónditor, Nostras preces cum flétibus, | Hear, kind Creator, our prayers poured out with weeping
+In hoc sacro jejúnio Fusas quadragenário. | in this holy fast of forty days.
+Scrutátor alme córdium, | Kind Searcher of hearts,
+Infírma tu scis vírium: | Thou knowest how weak our strength is:
+Ad te revérsis éxhibe Remissiónis grátiam. | to those who have turned back to Thee show the grace of pardon.
+Multum quidem peccávimus, | Much indeed have we sinned,
+Sed parce confiténtibus: | but spare us who confess it:
+Ad nóminis laudem tui, Confer medélam lánguidis. | for the praise of Thy name bring healing to the sick.
+Concéde nostrum cónteri | Grant that our body
+Corpus per abstinéntiam, Culpæ ut relínquant pábulum Jejúna corda críminum. | be subdued by abstinence, that our fasting hearts may forsake the food of sin.
+Præsta beáta Trínitas, Concéde simplex Únitas: | Grant, O blessed Trinity, grant, O simple Unity,
+Ut fructuósa sint tuis Jejuniórum múnera. | that the gifts of fasting may bear fruit for Thine own.
+Amen. | Amen.

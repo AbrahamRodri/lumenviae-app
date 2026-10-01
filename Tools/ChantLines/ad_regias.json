@@ -1,0 +1,140 @@
+{
+  "id": "ad_regias",
+  "part": null,
+  "method": "breaths by loudness (under -20 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 14 of 18 breaks heard",
+  "lines": [
+    {
+      "latin": "Ad régias Agni dapes,",
+      "english": "At the royal banquet of the Lamb,",
+      "start": 0.31,
+      "end": 6.81,
+      "part": 0
+    },
+    {
+      "latin": "Stolis amícti cándidis,",
+      "english": "clothed in white robes,",
+      "start": 6.81,
+      "end": 12.48,
+      "part": 0
+    },
+    {
+      "latin": "Post tránsitum maris Rubri, Christo canámus Príncipi.",
+      "english": "the Red Sea crossed, let us sing to Christ our Prince:",
+      "start": 13.03,
+      "end": 25.2,
+      "part": 0
+    },
+    {
+      "latin": "Divína cujus cáritas Sacrum propínat sánguinem,",
+      "english": "whose divine charity gives us His sacred Blood to drink,",
+      "start": 26.41,
+      "end": 38.66,
+      "part": 0
+    },
+    {
+      "latin": "Almíque membra córporis Amor sacérdos ímmolat.",
+      "english": "and Love, the priest, offers in sacrifice the members of His holy Body.",
+      "start": 39.07,
+      "end": 51.48,
+      "part": 0
+    },
+    {
+      "latin": "Sparsum cruórem póstibus",
+      "english": "At the blood sprinkled on the doorposts",
+      "start": 52.25,
+      "end": 58.79,
+      "part": 0
+    },
+    {
+      "latin": "Vastátor horret Ángelus:",
+      "english": "the destroying Angel shudders:",
+      "start": 58.79,
+      "end": 64.38,
+      "part": 0
+    },
+    {
+      "latin": "Fugítque divísum mare, Mergúntur hostes flúctibus.",
+      "english": "the sea parts and flees; the enemies are drowned in the waves.",
+      "start": 64.97,
+      "end": 76.74,
+      "part": 0
+    },
+    {
+      "latin": "Jam Pascha nostrum Christus est,",
+      "english": "Now Christ is our Pasch,",
+      "start": 78.15,
+      "end": 85.09,
+      "part": 0
+    },
+    {
+      "latin": "Paschális idem víctima: Et pura puris méntibus Sinceritátis ázyma.",
+      "english": "and He the Paschal victim, and the pure unleavened bread of sincerity for pure minds.",
+      "start": 85.09,
+      "end": 103.48,
+      "part": 0
+    },
+    {
+      "latin": "O vera cæli víctima, Subjécta cui sunt tártara,",
+      "english": "O true Victim from heaven, to whom hell is made subject,",
+      "start": 104.51,
+      "end": 117.35,
+      "part": 0
+    },
+    {
+      "latin": "Solúta mortis víncula, Recépta vitæ prǽmia.",
+      "english": "the bonds of death are loosed, the rewards of life won back.",
+      "start": 117.35,
+      "end": 130.2,
+      "part": 0
+    },
+    {
+      "latin": "Victor subáctis ínferis Tropǽa Christus éxplicat,",
+      "english": "Christ the victor, hell overthrown, displays His trophies,",
+      "start": 131.23,
+      "end": 143.75,
+      "part": 0
+    },
+    {
+      "latin": "Cælóque apérto, súbditum Regem tenebrárum trahit.",
+      "english": "and, heaven opened, drags the king of darkness captive.",
+      "start": 143.75,
+      "end": 156.8,
+      "part": 0
+    },
+    {
+      "latin": "Ut sis perénne méntibus Paschále Jesu gáudium,",
+      "english": "That Thou mayest be, O Jesus, an everlasting Paschal joy to our minds,",
+      "start": 157.09,
+      "end": 169.69,
+      "part": 0
+    },
+    {
+      "latin": "A morte dira críminum Vitæ renátos líbera.",
+      "english": "free those reborn to life from the dread death of sin.",
+      "start": 169.69,
+      "end": 181.6,
+      "part": 0
+    },
+    {
+      "latin": "Deo Patri sit glória, Et Fílio qui a mórtuis",
+      "english": "To God the Father be glory, and to the Son, who from the dead",
+      "start": 182.53,
+      "end": 194.84,
+      "part": 0
+    },
+    {
+      "latin": "Surréxit, ac Paráclito, In sempitérna sǽcula.",
+      "english": "is risen, and to the Paraclete, for everlasting ages.",
+      "start": 194.89,
+      "end": 207.18,
+      "part": 0
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 208.01,
+      "end": 217.36,
+      "part": 0
+    }
+  ]
+}

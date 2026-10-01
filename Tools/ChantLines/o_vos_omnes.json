@@ -1,0 +1,70 @@
+{
+  "id": "o_vos_omnes",
+  "part": null,
+  "method": "breaths by loudness (under -20 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 8 of 8 breaks heard",
+  "lines": [
+    {
+      "latin": "O vos omnes,",
+      "english": "O all ye",
+      "start": 0.21,
+      "end": 5.38,
+      "part": 0
+    },
+    {
+      "latin": "qui transítis per viam,",
+      "english": "that pass by the way,",
+      "start": 5.49,
+      "end": 12.93,
+      "part": 0
+    },
+    {
+      "latin": "atténdite, et vidéte:",
+      "english": "attend, and see",
+      "start": 12.93,
+      "end": 21.26,
+      "part": 0
+    },
+    {
+      "latin": "Si est dolor símilis",
+      "english": "if there be any sorrow",
+      "start": 21.85,
+      "end": 33.26,
+      "part": 0
+    },
+    {
+      "latin": "sicut dolor meus.",
+      "english": "like to my sorrow.",
+      "start": 33.71,
+      "end": 46.86,
+      "part": 0
+    },
+    {
+      "latin": "Atténdite, univérsi pópuli,",
+      "english": "Attend, all ye people,",
+      "start": 48.19,
+      "end": 61.86,
+      "part": 0
+    },
+    {
+      "latin": "et vidéte dolórem meum.",
+      "english": "and see my sorrow.",
+      "start": 62.43,
+      "end": 79.68,
+      "part": 0
+    },
+    {
+      "latin": "Si est dolor símilis",
+      "english": "If there be any sorrow",
+      "start": 80.79,
+      "end": 92.2,
+      "part": 0
+    },
+    {
+      "latin": "sicut dolor meus.",
+      "english": "like to my sorrow.",
+      "start": 92.63,
+      "end": 105.86,
+      "part": 0
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+# Vidi aquam, the Asperges of Eastertide: the antiphon, the verse of
+# Psalm 117 and the Gloria Patri, and the antiphon again, sung whole as the
+# score's R. Vidi aquam asks (the same take both times). Latin from the
+# score; English the Douay-Rheims's for the psalm, the antiphon's after
+# Ezechiel 47 in its manner.
+noise -20
+gap 0.3
+merge 1.5
+
+part 0
+Vidi aquam | I saw water
+egrediéntem de templo, | coming forth from the temple,
+a látere dextro, | on the right side,
+allelúia: | alleluia:
+et omnes, ad quos pervénit aqua ista, | and all they to whom that water came
+salvi facti sunt, | were saved,
+et dicent, | and they shall say,
+allelúia, allelúia. | alleluia, alleluia.
+Confitémini Dómino quóniam bonus: | Give praise to the Lord, for He is good:
+quóniam in sǽculum misericórdia ejus. | for His mercy endureth for ever.
+Glória Patri, et Fílio, et Spirítui Sancto. | Glory be to the Father, and to the Son, and to the Holy Ghost.
+Sicut erat in princípio, et nunc, et semper, | As it was in the beginning, is now, and ever shall be,
+et in sǽcula sæculórum. Amen. | world without end. Amen.
+Vidi aquam | I saw water
+egrediéntem de templo, | coming forth from the temple,
+a látere dextro, | on the right side,
+allelúia: | alleluia:
+et omnes, ad quos pervénit aqua ista, | and all they to whom that water came
+salvi facti sunt, | were saved,
+et dicent, | and they shall say,
+allelúia, allelúia. | alleluia, alleluia.

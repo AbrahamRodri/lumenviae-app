@@ -1,0 +1,217 @@
+{
+  "id": "credo_iii",
+  "part": null,
+  "method": "breaths by loudness (under -20 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 21 of 29 breaks heard",
+  "lines": [
+    {
+      "latin": "Credo in unum Deum,",
+      "english": "I believe in one God,",
+      "start": 0.27,
+      "end": 5.4,
+      "part": 0
+    },
+    {
+      "latin": "Patrem omnipoténtem,",
+      "english": "the Father almighty,",
+      "start": 6.15,
+      "end": 10.89,
+      "part": 0
+    },
+    {
+      "latin": "factórem cæli et terræ, visibílium ómnium,",
+      "english": "Maker of heaven and earth, and of all things visible",
+      "start": 10.89,
+      "end": 21.01,
+      "part": 0
+    },
+    {
+      "latin": "et invisibílium.",
+      "english": "and invisible.",
+      "start": 21.01,
+      "end": 26.62,
+      "part": 0
+    },
+    {
+      "latin": "Et in unum Dóminum Jesum Christum,",
+      "english": "And in one Lord Jesus Christ,",
+      "start": 27.37,
+      "end": 33.9,
+      "part": 0
+    },
+    {
+      "latin": "Fílium Dei unigénitum.",
+      "english": "the only-begotten Son of God,",
+      "start": 34.09,
+      "end": 40.14,
+      "part": 0
+    },
+    {
+      "latin": "Et ex Patre natum",
+      "english": "born of the Father",
+      "start": 40.53,
+      "end": 44.99,
+      "part": 0
+    },
+    {
+      "latin": "ante ómnia sǽcula.",
+      "english": "before all ages;",
+      "start": 44.99,
+      "end": 51.1,
+      "part": 0
+    },
+    {
+      "latin": "Deum de Deo, lumen de lúmine,",
+      "english": "God of God, Light of Light,",
+      "start": 51.69,
+      "end": 58.53,
+      "part": 0
+    },
+    {
+      "latin": "Deum verum de Deo vero. Génitum, non factum,",
+      "english": "true God of true God; begotten, not made;",
+      "start": 58.53,
+      "end": 70.55,
+      "part": 0
+    },
+    {
+      "latin": "consubstantiálem Patri:",
+      "english": "of one substance with the Father;",
+      "start": 70.55,
+      "end": 75.45,
+      "part": 0
+    },
+    {
+      "latin": "per quem ómnia facta sunt.",
+      "english": "by whom all things were made.",
+      "start": 75.45,
+      "end": 81.81,
+      "part": 0
+    },
+    {
+      "latin": "Qui propter nos hómines, et propter nostram salútem descéndit de cælis.",
+      "english": "Who for us men and for our salvation came down from heaven.",
+      "start": 81.81,
+      "end": 95.52,
+      "part": 0
+    },
+    {
+      "latin": "Et incarnátus est de Spíritu Sancto ex María Vírgine:",
+      "english": "And became incarnate by the Holy Ghost of the Virgin Mary:",
+      "start": 96.39,
+      "end": 109.37,
+      "part": 0
+    },
+    {
+      "latin": "Et homo factus est.",
+      "english": "and was made man.",
+      "start": 109.37,
+      "end": 115.62,
+      "part": 0
+    },
+    {
+      "latin": "Crucifíxus étiam pro nobis:",
+      "english": "He was crucified also for us,",
+      "start": 116.47,
+      "end": 124.09,
+      "part": 0
+    },
+    {
+      "latin": "sub Póntio Piláto passus, et sepúltus est.",
+      "english": "suffered under Pontius Pilate, and was buried.",
+      "start": 124.09,
+      "end": 133.98,
+      "part": 0
+    },
+    {
+      "latin": "Et resurréxit tértia die, secúndum Scriptúras.",
+      "english": "And the third day He rose again according to the Scriptures.",
+      "start": 134.99,
+      "end": 145.06,
+      "part": 0
+    },
+    {
+      "latin": "Et ascéndit in cælum: sedet ad déxteram Patris.",
+      "english": "And He ascended into heaven, and sitteth at the right hand of the Father.",
+      "start": 145.29,
+      "end": 156.64,
+      "part": 0
+    },
+    {
+      "latin": "Et íterum ventúrus est cum glória, judicáre vivos et mórtuos:",
+      "english": "And He shall come again with glory to judge the living and the dead;",
+      "start": 157.95,
+      "end": 170.01,
+      "part": 0
+    },
+    {
+      "latin": "cujus regni non erit finis.",
+      "english": "of whose kingdom there shall be no end.",
+      "start": 170.01,
+      "end": 175.78,
+      "part": 0
+    },
+    {
+      "latin": "Et in Spíritum Sanctum, Dóminum, et vivificántem:",
+      "english": "And in the Holy Ghost, the Lord and Giver of life,",
+      "start": 176.75,
+      "end": 187.19,
+      "part": 0
+    },
+    {
+      "latin": "qui ex Patre Filióque procédit.",
+      "english": "who proceedeth from the Father and the Son;",
+      "start": 187.19,
+      "end": 193.58,
+      "part": 0
+    },
+    {
+      "latin": "Qui cum Patre et Fílio simul adorátur, et conglorificátur:",
+      "english": "who together with the Father and the Son is adored and glorified;",
+      "start": 194.93,
+      "end": 207.85,
+      "part": 0
+    },
+    {
+      "latin": "qui locútus est per Prophétas.",
+      "english": "who spoke by the Prophets.",
+      "start": 207.85,
+      "end": 213.76,
+      "part": 0
+    },
+    {
+      "latin": "Et unam sanctam cathólicam et apostólicam Ecclésiam.",
+      "english": "And one holy, catholic and apostolic Church.",
+      "start": 214.75,
+      "end": 227.85,
+      "part": 0
+    },
+    {
+      "latin": "Confíteor unum baptísma in remissiónem peccatórum.",
+      "english": "I confess one baptism for the remission of sins.",
+      "start": 227.85,
+      "end": 239.54,
+      "part": 0
+    },
+    {
+      "latin": "Et exspécto resurrectiónem mortuórum.",
+      "english": "And I look for the resurrection of the dead,",
+      "start": 240.03,
+      "end": 249.14,
+      "part": 0
+    },
+    {
+      "latin": "Et vitam ventúri sǽculi.",
+      "english": "and the life of the world to come.",
+      "start": 249.31,
+      "end": 255.7,
+      "part": 0
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 256.15,
+      "end": 269.14,
+      "part": 0
+    }
+  ]
+}

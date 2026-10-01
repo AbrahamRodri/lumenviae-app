@@ -1,0 +1,37 @@
+# Credo III, whole. Latin from the score; English the Prayer Book's Nicene
+# Creed (nicene_creed), its words kept and broken where the chant breathes.
+noise -20
+gap 0.3
+merge 1.5
+
+part 0
+Credo in unum Deum, | I believe in one God,
+Patrem omnipoténtem, | the Father almighty,
+factórem cæli et terræ, visibílium ómnium, | Maker of heaven and earth, and of all things visible
+et invisibílium. | and invisible.
+Et in unum Dóminum Jesum Christum, | And in one Lord Jesus Christ,
+Fílium Dei unigénitum. | the only-begotten Son of God,
+Et ex Patre natum | born of the Father
+ante ómnia sǽcula. | before all ages;
+Deum de Deo, lumen de lúmine, | God of God, Light of Light,
+Deum verum de Deo vero. Génitum, non factum, | true God of true God; begotten, not made;
+consubstantiálem Patri: | of one substance with the Father;
+per quem ómnia facta sunt. | by whom all things were made.
+Qui propter nos hómines, et propter nostram salútem descéndit de cælis. | Who for us men and for our salvation came down from heaven.
+Et incarnátus est de Spíritu Sancto ex María Vírgine: | And became incarnate by the Holy Ghost of the Virgin Mary:
+Et homo factus est. | and was made man.
+Crucifíxus étiam pro nobis: | He was crucified also for us,
+sub Póntio Piláto passus, et sepúltus est. | suffered under Pontius Pilate, and was buried.
+Et resurréxit tértia die, secúndum Scriptúras. | And the third day He rose again according to the Scriptures.
+Et ascéndit in cælum: sedet ad déxteram Patris. | And He ascended into heaven, and sitteth at the right hand of the Father.
+Et íterum ventúrus est cum glória, judicáre vivos et mórtuos: | And He shall come again with glory to judge the living and the dead;
+cujus regni non erit finis. | of whose kingdom there shall be no end.
+Et in Spíritum Sanctum, Dóminum, et vivificántem: | And in the Holy Ghost, the Lord and Giver of life,
+qui ex Patre Filióque procédit. | who proceedeth from the Father and the Son;
+Qui cum Patre et Fílio simul adorátur, et conglorificátur: | who together with the Father and the Son is adored and glorified;
+qui locútus est per Prophétas. | who spoke by the Prophets.
+Et unam sanctam cathólicam et apostólicam Ecclésiam. | And one holy, catholic and apostolic Church.
+Confíteor unum baptísma in remissiónem peccatórum. | I confess one baptism for the remission of sins.
+Et exspécto resurrectiónem mortuórum. | And I look for the resurrection of the dead,
+Et vitam ventúri sǽculi. | and the life of the world to come.
+Amen. | Amen.

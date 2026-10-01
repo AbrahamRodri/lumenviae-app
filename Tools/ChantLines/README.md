@@ -19,6 +19,13 @@ One file per chant, `<chant id>.json`, as Tools/Chants reads it:
 antiphon, its versicle and its collect alike, in the order they are sung.
 Times are seconds from the start of `app/Resources/Chants/<id>.m4a`.
 
+A line may carry a `"part"` of its own, the score part (0-based, in the
+order `ChantCatalogData.swift` lists them) its words are engraved on — the
+Pange Lingua's hymn, versicle and collect are three parts, and O Oriens's
+antiphon, Magnificat and antiphon again are three. A source that gives its
+lines parts writes `part N` on a line of its own before the lines engraved
+on part N, and `build` stops if a part is not one of the chant's.
+
 **A chant has a file here only when it passed every check below.** The
 Chant Library ships whatever is in this folder, so a chant that would not
 line up is left out rather than guessed at; the ones left out are listed
@@ -57,7 +64,11 @@ at the end.
      break fails the chant. Whisper mishears sung Latin freely, so a
      garbled phrase proves nothing either way; the method field says how
      many breaks it did hear in the right place ("15 of 19 breaks heard").
-     The check catches a single word moved across a break.
+     The check catches a single word moved across a break. A word heard
+     seven times or more running is Whisper looping ("yār yār yār …" over
+     a whole verse of the Te Matrem), not the cantor — the most any chant
+     here sings in a row is six Alleluias — and is cut back to two before
+     the alignment, or the loop drags the letters after it out of place.
 
    A line starts 0.15 s before its sound is found, so it does not clip
    its first consonant, and ends where its sound has died away (under
@@ -103,6 +114,6 @@ once; `WHISPER_THREADS=n` sets the number itself.
 
 ## Left out
 
-None. All 64 chants in Tools/Chants/chants.json passed (2,203 lines). If a
+None. All 76 chants in Tools/Chants/chants.json passed (2,452 lines). If a
 recording or a score changes and a chant stops passing, `build` removes its
 json, and it belongs in this list with the reason.

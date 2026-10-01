@@ -1,0 +1,44 @@
+# Te Matrem laudamus, the Te Deum of Our Lady: its thirty-one verses, the
+# longer split at their half bar where the cantor breathes, the two cries
+# of "Virgo" on one breath. Latin from the score, but "univérsæ", which it
+# prints "univérse"; English plain.
+noise -20
+gap 0.3
+merge 1.5
+
+part 0
+Te Matrem laudámus: te Dóminam confitémur. | We praise thee as Mother: we acknowledge thee to be our Lady.
+Te ætérni Patris stella maris splendor illúminat. | Thee, star of the sea, the splendour of the eternal Father enlightens.
+Tibi omnes Ángeli, tibi cæli et univérsæ potestátes: | To thee all the Angels, to thee the heavens and all the Powers,
+Tibi Chérubim et Séraphim incessábili voce proclámant: | to thee the Cherubim and Seraphim cry out with unceasing voice:
+Virgo: Virgo: | Virgin, Virgin,
+Virgo vírginum sine exémplo. | Virgin of virgins without equal.
+Ante partum et in partu atque post partum. | before childbirth, in childbirth, and after childbirth.
+Te gloriósam Apóstoli prædicant: | Thee, the glorious one, the Apostles proclaim;
+Te Prophetárum Virgo cóncinunt líneæ: | thee, O Virgin, the line of the Prophets sings;
+Te Mártyres sui Dómini Matrem testántur. | the Martyrs bear witness to thee, the Mother of their Lord.
+Te per orbem terrárum sancta confitétur Ecclésia: | Thee the holy Church throughout the world doth confess:
+Matrem imménsæ castitátis: | the Mother of boundless chastity;
+Venerándam Dei Sponsam maritíque nésciam: | the venerable Spouse of God, who knew not man;
+Solam Sancto grávidam Spíritu. | who alone conceived by the Holy Ghost.
+Tu es Regína cæli. | Thou art the Queen of heaven.
+Tu mundi totíus es Dómina. | Thou art the Lady of the whole world.
+Tu ad liberándum hóminem pérditum, carne vestísti Altíssimi Fílium. | Thou, to set lost man free, didst clothe the Son of the Most High with flesh.
+Tu ad vincéndum mortis acúleo, castíssimo protulísti vitam ex útero. | Thou, to overcome the sting of death, didst bring forth Life from thy most chaste womb.
+Tu ad déxteram Dei Patris sedéntis Fílii es Mater: | Thou art the Mother of the Son who sitteth at the right hand of God the Father,
+Judex vivórum qui est et mortuórum. | who is the Judge of the living and of the dead.
+Te ergo quǽsumus, Christi crédulis súbveni, | We beseech thee, therefore, help those who believe in Christ,
+pretiosíssimo ventris tui gérmine redémptis. | redeemed by the most precious Fruit of thy womb.
+Ætérna fac | Make them
+cum Sanctis cunctis in glória munerári. | to be rewarded with all the Saints in glory everlasting.
+Salvum fac pópulum tuum Dómina | Save thy people, O Lady,
+benedícta et immaculáta. | blessed and immaculate.
+Et rege eos | And rule them,
+et extólle illos usque in ætérnum. | and lift them up for ever.
+Per síngulos dies benedícimus te. | Every day we bless thee.
+Et laudámus nomen Altíssimi, qui te fecit altíssimam. | And we praise the name of the Most High, who made thee most high.
+Dignáre omni laude digníssima, ab indigníssimis laudári. | Vouchsafe, thou most worthy of all praise, to be praised by the most unworthy.
+Miserére nostri Dómina, Mater misericórdiæ. | Have mercy on us, O Lady, Mother of mercy.
+Fiat misericórdia Fílii tui Dómina super nos, ope tua qua clamámus ei. | Let the mercy of thy Son, O Lady, be upon us, by thy help, as we cry to Him.
+In te Dómina sperávi: | In thee, O Lady, have I hoped:
+non confúndar in ætérnum. | let me never be confounded.

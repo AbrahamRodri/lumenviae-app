@@ -245,6 +245,21 @@ def key(text: str) -> str:
     return re.sub(r"(.)\1+", r"\1", t)
 
 
+def unloop(heard: str) -> str:
+    """A transcript with Whisper's repetition loops cut back: a word heard
+    LOOP times or more running ("yār yār yār …" over a whole verse) is
+    Whisper stuck, not the cantor, since the most any chant here sings a
+    word in a row is six Alleluias (O Fílii). Two are kept, for a word the
+    text repeats itself ("Virgo: Virgo:")."""
+    runs = []
+    for w in heard.split():
+        if runs and key(w) == key(runs[-1][0]):
+            runs[-1].append(w)
+        else:
+            runs.append([w])
+    return " ".join(" ".join(r[:2] if len(r) >= LOOP else r) for r in runs)
+
+
 def heard_breaks(lines: list, heard: list) -> list:
     """For every break between two lines, what the transcripts say of it:
     "wrong" when Whisper heard words of one line in the phrase the other
@@ -255,7 +270,7 @@ def heard_breaks(lines: list, heard: list) -> list:
     exactly count as heard, so a garbled phrase proves nothing either way."""
     from rapidfuzz.distance import Levenshtein
     text_keys = [key(l) for l in lines]
-    heard_keys = [key(h) for h in heard]
+    heard_keys = [key(unloop(h)) for h in heard]
     T, A = "".join(text_keys), "".join(heard_keys)
     line_of = [i for i, k in enumerate(text_keys) for _ in k]
     phrase_of = [i for i, k in enumerate(heard_keys) for _ in k]
@@ -312,6 +327,7 @@ def heard_breaks(lines: list, heard: list) -> list:
 RUN = 4         # letters in a row that must agree for a transcript to count
 SLACK = 0       # letters a heard break may stray from the text's
 NEAR = 14       # letters from the break within which an agreeing run confirms it
+LOOP = 7        # one word heard this many times running is Whisper looping
 
 
 # ---------------------------------------------------------------- text

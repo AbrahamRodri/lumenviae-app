@@ -1,0 +1,15 @@
+# Agnus Dei VIII, de Angelis, whole; the second invocation is sung on one
+# breath to its response. Latin from the score; English plain.
+noise -20
+gap 0.3
+merge 1.5
+
+part 0
+Agnus Dei, | Lamb of God,
+qui tollis peccáta mundi: | Who takest away the sins of the world,
+miserére nobis. | have mercy on us.
+Agnus Dei, qui tollis peccáta mundi: | Lamb of God, Who takest away the sins of the world,
+miserére nobis. | have mercy on us.
+Agnus Dei, | Lamb of God,
+qui tollis peccáta mundi: | Who takest away the sins of the world,
+dona nobis pacem. | grant us peace.

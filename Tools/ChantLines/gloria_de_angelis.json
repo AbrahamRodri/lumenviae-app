@@ -1,0 +1,168 @@
+{
+  "id": "gloria_de_angelis",
+  "part": null,
+  "method": "breaths by loudness (under -20 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 16 of 22 breaks heard",
+  "lines": [
+    {
+      "latin": "Glória in excélsis Deo.",
+      "english": "Glory to God in the highest.",
+      "start": 0.27,
+      "end": 6.59,
+      "part": 0
+    },
+    {
+      "latin": "Et in terra pax homínibus",
+      "english": "And on earth peace to men",
+      "start": 6.59,
+      "end": 11.14,
+      "part": 0
+    },
+    {
+      "latin": "bonæ voluntátis.",
+      "english": "of good will.",
+      "start": 11.27,
+      "end": 15.93,
+      "part": 0
+    },
+    {
+      "latin": "Laudámus te. Benedícimus te.",
+      "english": "We praise Thee. We bless Thee.",
+      "start": 15.93,
+      "end": 25.27,
+      "part": 0
+    },
+    {
+      "latin": "Adorámus te.",
+      "english": "We adore Thee.",
+      "start": 25.27,
+      "end": 30.22,
+      "part": 0
+    },
+    {
+      "latin": "Glorificámus te.",
+      "english": "We glorify Thee.",
+      "start": 30.53,
+      "end": 34.91,
+      "part": 0
+    },
+    {
+      "latin": "Grátias ágimus tibi propter magnam glóriam tuam.",
+      "english": "We give Thee thanks for Thy great glory.",
+      "start": 34.91,
+      "end": 46.18,
+      "part": 0
+    },
+    {
+      "latin": "Dómine Deus, Rex cæléstis,",
+      "english": "O Lord God, heavenly King,",
+      "start": 46.39,
+      "end": 52.06,
+      "part": 0
+    },
+    {
+      "latin": "Deus Pater omnípotens.",
+      "english": "God the Father almighty.",
+      "start": 52.45,
+      "end": 59.46,
+      "part": 0
+    },
+    {
+      "latin": "Dómine Fili unigénite Jesu Christe.",
+      "english": "O Lord Jesus Christ, the only-begotten Son.",
+      "start": 59.53,
+      "end": 69.58,
+      "part": 0
+    },
+    {
+      "latin": "Dómine Deus, Agnus Dei, Fílius Patris.",
+      "english": "O Lord God, Lamb of God, Son of the Father.",
+      "start": 69.95,
+      "end": 80.38,
+      "part": 0
+    },
+    {
+      "latin": "Qui tollis peccáta mundi,",
+      "english": "Who takest away the sins of the world,",
+      "start": 81.03,
+      "end": 87.39,
+      "part": 0
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 87.39,
+      "end": 92.98,
+      "part": 0
+    },
+    {
+      "latin": "Qui tollis peccáta mundi,",
+      "english": "Who takest away the sins of the world,",
+      "start": 93.83,
+      "end": 98.87,
+      "part": 0
+    },
+    {
+      "latin": "súscipe deprecatiónem nostram.",
+      "english": "receive our prayer.",
+      "start": 98.87,
+      "end": 108.37,
+      "part": 0
+    },
+    {
+      "latin": "Qui sedes ad déxteram Patris,",
+      "english": "Who sittest at the right hand of the Father,",
+      "start": 108.37,
+      "end": 113.99,
+      "part": 0
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 113.99,
+      "end": 118.77,
+      "part": 0
+    },
+    {
+      "latin": "Quóniam tu solus sanctus.",
+      "english": "For Thou alone art holy.",
+      "start": 118.77,
+      "end": 124.06,
+      "part": 0
+    },
+    {
+      "latin": "Tu solus Dóminus.",
+      "english": "Thou alone art the Lord.",
+      "start": 124.39,
+      "end": 129.54,
+      "part": 0
+    },
+    {
+      "latin": "Tu solus Altíssimus, Jesu Christe.",
+      "english": "Thou alone art most high, O Jesus Christ,",
+      "start": 129.77,
+      "end": 139.68,
+      "part": 0
+    },
+    {
+      "latin": "Cum Sancto Spíritu,",
+      "english": "with the Holy Ghost,",
+      "start": 140.03,
+      "end": 144.93,
+      "part": 0
+    },
+    {
+      "latin": "in glória Dei Patris.",
+      "english": "in the glory of God the Father.",
+      "start": 144.93,
+      "end": 151.76,
+      "part": 0
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 152.39,
+      "end": 159.3,
+      "part": 0
+    }
+  ]
+}

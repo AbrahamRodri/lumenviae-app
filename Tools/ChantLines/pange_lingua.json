@@ -1,0 +1,308 @@
+{
+  "id": "pange_lingua",
+  "part": null,
+  "method": "breaths by loudness (under -16 dB for 0.2 s, phrases under 1.5 s merged) + text alignment; Whisper: 38 of 42 breaks heard",
+  "lines": [
+    {
+      "latin": "Pange lingua gloriósi",
+      "english": "Sing, my tongue, the mystery",
+      "start": 0.27,
+      "end": 5.83,
+      "part": 0
+    },
+    {
+      "latin": "Córporis mystérium,",
+      "english": "of the glorious Body,",
+      "start": 5.83,
+      "end": 11.57,
+      "part": 0
+    },
+    {
+      "latin": "Sanguinísque pretiósi,",
+      "english": "and of the precious Blood,",
+      "start": 11.57,
+      "end": 16.53,
+      "part": 0
+    },
+    {
+      "latin": "Quem in mundi prétium",
+      "english": "which, as the price of the world,",
+      "start": 16.53,
+      "end": 22.03,
+      "part": 0
+    },
+    {
+      "latin": "Fructus ventris generósi",
+      "english": "the fruit of a noble womb,",
+      "start": 22.03,
+      "end": 26.85,
+      "part": 0
+    },
+    {
+      "latin": "Rex effúdit géntium.",
+      "english": "the King of the nations, poured out.",
+      "start": 26.85,
+      "end": 32.58,
+      "part": 0
+    },
+    {
+      "latin": "Nobis datus, nobis natus",
+      "english": "Given to us, born for us",
+      "start": 33.49,
+      "end": 39.31,
+      "part": 0
+    },
+    {
+      "latin": "Ex intácta Vírgine,",
+      "english": "of a spotless Virgin,",
+      "start": 39.33,
+      "end": 45.09,
+      "part": 0
+    },
+    {
+      "latin": "Et in mundo conversátus,",
+      "english": "and having dwelt in the world,",
+      "start": 45.09,
+      "end": 49.97,
+      "part": 0
+    },
+    {
+      "latin": "Sparso verbi sémine,",
+      "english": "the seed of the word once sown,",
+      "start": 49.97,
+      "end": 55.66,
+      "part": 0
+    },
+    {
+      "latin": "Sui moras incolátus",
+      "english": "the days of His sojourn",
+      "start": 55.87,
+      "end": 60.93,
+      "part": 0
+    },
+    {
+      "latin": "Miro clausit órdine.",
+      "english": "He closed in a wondrous way.",
+      "start": 60.93,
+      "end": 66.78,
+      "part": 0
+    },
+    {
+      "latin": "In suprémæ nocte cœnæ Recúmbens cum frátribus,",
+      "english": "On the night of the Last Supper, at table with His brethren,",
+      "start": 68.07,
+      "end": 79.87,
+      "part": 0
+    },
+    {
+      "latin": "Observáta lege plene",
+      "english": "the Law fully kept",
+      "start": 79.87,
+      "end": 84.97,
+      "part": 0
+    },
+    {
+      "latin": "Cibis in legálibus,",
+      "english": "in the foods it prescribed,",
+      "start": 84.97,
+      "end": 90.56,
+      "part": 0
+    },
+    {
+      "latin": "Cibum turbæ duodénæ",
+      "english": "as food to the band of Twelve",
+      "start": 90.79,
+      "end": 95.93,
+      "part": 0
+    },
+    {
+      "latin": "Se dat suis mánibus.",
+      "english": "He gives Himself with His own hands.",
+      "start": 95.93,
+      "end": 101.36,
+      "part": 0
+    },
+    {
+      "latin": "Verbum caro, panem verum Verbo carnem éfficit:",
+      "english": "The Word made flesh, by a word, makes true bread His flesh:",
+      "start": 102.99,
+      "end": 115.23,
+      "part": 0
+    },
+    {
+      "latin": "Fitque sanguis Christi merum,",
+      "english": "and wine becomes the Blood of Christ;",
+      "start": 115.23,
+      "end": 120.19,
+      "part": 0
+    },
+    {
+      "latin": "Et si sensus déficit,",
+      "english": "and if the senses fail,",
+      "start": 120.19,
+      "end": 126.18,
+      "part": 0
+    },
+    {
+      "latin": "Ad firmándum cor sincérum",
+      "english": "to make a sincere heart firm",
+      "start": 126.31,
+      "end": 131.67,
+      "part": 0
+    },
+    {
+      "latin": "Sola fides súfficit.",
+      "english": "faith alone suffices.",
+      "start": 131.67,
+      "end": 137.24,
+      "part": 0
+    },
+    {
+      "latin": "Tantum ergo Sacraméntum",
+      "english": "So great a Sacrament, therefore,",
+      "start": 138.91,
+      "end": 144.99,
+      "part": 0
+    },
+    {
+      "latin": "Venerémur cérnui:",
+      "english": "let us venerate, bowing low;",
+      "start": 145.03,
+      "end": 150.93,
+      "part": 0
+    },
+    {
+      "latin": "Et antíquum documéntum",
+      "english": "and let the former teaching",
+      "start": 150.93,
+      "end": 156.15,
+      "part": 0
+    },
+    {
+      "latin": "Novo cedat rítui:",
+      "english": "give way to the new rite;",
+      "start": 156.15,
+      "end": 162.03,
+      "part": 0
+    },
+    {
+      "latin": "Præstet fides suppleméntum",
+      "english": "let faith provide its aid",
+      "start": 162.03,
+      "end": 167.39,
+      "part": 0
+    },
+    {
+      "latin": "Sénsuum deféctui.",
+      "english": "for the failing of the senses.",
+      "start": 167.39,
+      "end": 172.78,
+      "part": 0
+    },
+    {
+      "latin": "Genitóri, Genitóque Laus et jubilátio,",
+      "english": "To the Begetter and the Begotten be praise and jubilation,",
+      "start": 174.33,
+      "end": 186.29,
+      "part": 0
+    },
+    {
+      "latin": "Salus, honor, virtus quoque",
+      "english": "salvation, honour, and might also,",
+      "start": 186.29,
+      "end": 191.41,
+      "part": 0
+    },
+    {
+      "latin": "Sit et benedíctio:",
+      "english": "and blessing be to Them;",
+      "start": 191.41,
+      "end": 197.07,
+      "part": 0
+    },
+    {
+      "latin": "Procedénti ab utróque",
+      "english": "to Him Who proceedeth from Both",
+      "start": 197.07,
+      "end": 202.37,
+      "part": 0
+    },
+    {
+      "latin": "Compar sit laudátio.",
+      "english": "be equal praise.",
+      "start": 202.37,
+      "end": 208.36,
+      "part": 0
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 209.25,
+      "end": 217.42,
+      "part": 0
+    },
+    {
+      "latin": "Panem de cælo præstitísti eis.",
+      "english": "Thou didst give them bread from heaven.",
+      "start": 219.71,
+      "end": 225.03,
+      "part": 1
+    },
+    {
+      "latin": "Omne delectaméntum in se habéntem.",
+      "english": "Containing in itself all delight.",
+      "start": 225.03,
+      "end": 230.97,
+      "part": 1
+    },
+    {
+      "latin": "Orémus.",
+      "english": "Let us pray.",
+      "start": 230.97,
+      "end": 234.43,
+      "part": 2
+    },
+    {
+      "latin": "Deus, qui nobis sub Sacraménto mirábili passiónis tuæ memóriam reliquísti:",
+      "english": "O God, Who under a wonderful Sacrament hast left us a memorial of Thy Passion,",
+      "start": 234.43,
+      "end": 242.99,
+      "part": 2
+    },
+    {
+      "latin": "tríbue, quǽsumus,",
+      "english": "grant us, we beseech Thee,",
+      "start": 242.99,
+      "end": 245.73,
+      "part": 2
+    },
+    {
+      "latin": "ita nos córporis et sánguinis tui sacra mystéria venerári;",
+      "english": "so to venerate the sacred mysteries of Thy Body and Blood,",
+      "start": 245.75,
+      "end": 252.49,
+      "part": 2
+    },
+    {
+      "latin": "ut redemptiónis tuæ fructum in nobis júgiter sentiámus.",
+      "english": "that we may continually feel within ourselves the fruit of Thy redemption.",
+      "start": 252.49,
+      "end": 260.03,
+      "part": 2
+    },
+    {
+      "latin": "Qui vivis et regnas in sǽcula sæculórum.",
+      "english": "Who livest and reignest world without end.",
+      "start": 260.03,
+      "end": 267.31,
+      "part": 2
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 267.31,
+      "end": 272.56,
+      "part": 2
+    }
+  ]
+}

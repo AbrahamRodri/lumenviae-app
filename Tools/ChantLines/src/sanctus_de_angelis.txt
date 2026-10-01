@@ -1,0 +1,15 @@
+# Sanctus VIII, de Angelis, whole; the cantor breathes after "venit" and
+# sings "in nómine Dómini" and the last Hosanna on one breath. Latin from
+# the score; English plain.
+noise -20
+gap 0.3
+merge 1.5
+
+part 0
+Sanctus, | Holy,
+Sanctus, Sanctus | Holy, Holy,
+Dóminus Deus Sábaoth. | Lord God of hosts.
+Pleni sunt cæli et terra glória tua. | Heaven and earth are full of Thy glory.
+Hosánna in excélsis. | Hosanna in the highest.
+Benedíctus qui venit | Blessed is He that cometh
+in nómine Dómini. Hosánna in excélsis. | in the name of the Lord. Hosanna in the highest.

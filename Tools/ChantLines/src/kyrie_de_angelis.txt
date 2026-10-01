@@ -1,0 +1,18 @@
+# Kyrie VIII, de Angelis: Kyrie, Christe and Kyrie three times each, the
+# last Kyrie the longer melody, on whose second star the cantor breathes
+# inside the word. Latin from the score; English plain.
+noise -20
+gap 0.3
+merge 1.5
+
+part 0
+Kýrie, eléison. | Lord, have mercy.
+Kýrie, eléison. | Lord, have mercy.
+Kýrie, eléison. | Lord, have mercy.
+Christe, eléison. | Christ, have mercy.
+Christe, eléison. | Christ, have mercy.
+Christe, eléison. | Christ, have mercy.
+Kýrie, eléison. | Lord, have mercy.
+Kýrie, eléison. | Lord, have mercy.
+Kýrie, eléison. | Lord, have mercy.
+~

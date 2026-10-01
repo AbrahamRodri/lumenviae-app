@@ -1,0 +1,20 @@
+# O vos omnes, the responsory of Holy Saturday: the respond, its versicle
+# Attendite universi populi, and the respond's second half again, as the
+# score's * Si est asks. The cantor breathes inside "dolórem meum", which
+# the English cannot part. Latin from the score; English the
+# Douay-Rheims's (Lamentations 1:12 and 1:18).
+noise -20
+gap 0.3
+merge 1.5
+
+part 0
+O vos omnes, | O all ye
+qui transítis per viam, | that pass by the way,
+atténdite, et vidéte: | attend, and see
+Si est dolor símilis | if there be any sorrow
+sicut dolor meus. | like to my sorrow.
+Atténdite, univérsi pópuli, | Attend, all ye people,
+et vidéte dolórem meum. | and see my sorrow.
+~
+Si est dolor símilis | If there be any sorrow
+sicut dolor meus. | like to my sorrow.

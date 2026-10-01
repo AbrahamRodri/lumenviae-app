@@ -1,0 +1,252 @@
+{
+  "id": "te_matrem",
+  "part": null,
+  "method": "breaths by loudness (under -20 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 23 of 34 breaks heard",
+  "lines": [
+    {
+      "latin": "Te Matrem laudámus: te Dóminam confitémur.",
+      "english": "We praise thee as Mother: we acknowledge thee to be our Lady.",
+      "start": 0.27,
+      "end": 11.38,
+      "part": 0
+    },
+    {
+      "latin": "Te ætérni Patris stella maris splendor illúminat.",
+      "english": "Thee, star of the sea, the splendour of the eternal Father enlightens.",
+      "start": 11.57,
+      "end": 22.82,
+      "part": 0
+    },
+    {
+      "latin": "Tibi omnes Ángeli, tibi cæli et univérsæ potestátes:",
+      "english": "To thee all the Angels, to thee the heavens and all the Powers,",
+      "start": 23.03,
+      "end": 36.34,
+      "part": 0
+    },
+    {
+      "latin": "Tibi Chérubim et Séraphim incessábili voce proclámant:",
+      "english": "to thee the Cherubim and Seraphim cry out with unceasing voice:",
+      "start": 36.39,
+      "end": 48.58,
+      "part": 0
+    },
+    {
+      "latin": "Virgo: Virgo:",
+      "english": "Virgin, Virgin,",
+      "start": 48.99,
+      "end": 63.37,
+      "part": 0
+    },
+    {
+      "latin": "Virgo vírginum sine exémplo.",
+      "english": "Virgin of virgins without equal.",
+      "start": 63.37,
+      "end": 70.32,
+      "part": 0
+    },
+    {
+      "latin": "Ante partum et in partu atque post partum.",
+      "english": "before childbirth, in childbirth, and after childbirth.",
+      "start": 70.37,
+      "end": 79.55,
+      "part": 0
+    },
+    {
+      "latin": "Te gloriósam Apóstoli prædicant:",
+      "english": "Thee, the glorious one, the Apostles proclaim;",
+      "start": 79.55,
+      "end": 88.87,
+      "part": 0
+    },
+    {
+      "latin": "Te Prophetárum Virgo cóncinunt líneæ:",
+      "english": "thee, O Virgin, the line of the Prophets sings;",
+      "start": 88.87,
+      "end": 98.49,
+      "part": 0
+    },
+    {
+      "latin": "Te Mártyres sui Dómini Matrem testántur.",
+      "english": "the Martyrs bear witness to thee, the Mother of their Lord.",
+      "start": 98.49,
+      "end": 109.46,
+      "part": 0
+    },
+    {
+      "latin": "Te per orbem terrárum sancta confitétur Ecclésia:",
+      "english": "Thee the holy Church throughout the world doth confess:",
+      "start": 109.77,
+      "end": 122.11,
+      "part": 0
+    },
+    {
+      "latin": "Matrem imménsæ castitátis:",
+      "english": "the Mother of boundless chastity;",
+      "start": 122.11,
+      "end": 131.66,
+      "part": 0
+    },
+    {
+      "latin": "Venerándam Dei Sponsam maritíque nésciam:",
+      "english": "the venerable Spouse of God, who knew not man;",
+      "start": 132.03,
+      "end": 142.8,
+      "part": 0
+    },
+    {
+      "latin": "Solam Sancto grávidam Spíritu.",
+      "english": "who alone conceived by the Holy Ghost.",
+      "start": 143.33,
+      "end": 151.94,
+      "part": 0
+    },
+    {
+      "latin": "Tu es Regína cæli.",
+      "english": "Thou art the Queen of heaven.",
+      "start": 152.41,
+      "end": 159.74,
+      "part": 0
+    },
+    {
+      "latin": "Tu mundi totíus es Dómina.",
+      "english": "Thou art the Lady of the whole world.",
+      "start": 160.35,
+      "end": 166.74,
+      "part": 0
+    },
+    {
+      "latin": "Tu ad liberándum hóminem pérditum, carne vestísti Altíssimi Fílium.",
+      "english": "Thou, to set lost man free, didst clothe the Son of the Most High with flesh.",
+      "start": 167.29,
+      "end": 180.97,
+      "part": 0
+    },
+    {
+      "latin": "Tu ad vincéndum mortis acúleo, castíssimo protulísti vitam ex útero.",
+      "english": "Thou, to overcome the sting of death, didst bring forth Life from thy most chaste womb.",
+      "start": 180.97,
+      "end": 194.44,
+      "part": 0
+    },
+    {
+      "latin": "Tu ad déxteram Dei Patris sedéntis Fílii es Mater:",
+      "english": "Thou art the Mother of the Son who sitteth at the right hand of God the Father,",
+      "start": 194.67,
+      "end": 206.26,
+      "part": 0
+    },
+    {
+      "latin": "Judex vivórum qui est et mortuórum.",
+      "english": "who is the Judge of the living and of the dead.",
+      "start": 206.45,
+      "end": 217.8,
+      "part": 0
+    },
+    {
+      "latin": "Te ergo quǽsumus, Christi crédulis súbveni,",
+      "english": "We beseech thee, therefore, help those who believe in Christ,",
+      "start": 218.23,
+      "end": 226.59,
+      "part": 0
+    },
+    {
+      "latin": "pretiosíssimo ventris tui gérmine redémptis.",
+      "english": "redeemed by the most precious Fruit of thy womb.",
+      "start": 226.59,
+      "end": 234.76,
+      "part": 0
+    },
+    {
+      "latin": "Ætérna fac",
+      "english": "Make them",
+      "start": 235.91,
+      "end": 240.45,
+      "part": 0
+    },
+    {
+      "latin": "cum Sanctis cunctis in glória munerári.",
+      "english": "to be rewarded with all the Saints in glory everlasting.",
+      "start": 240.45,
+      "end": 247.5,
+      "part": 0
+    },
+    {
+      "latin": "Salvum fac pópulum tuum Dómina",
+      "english": "Save thy people, O Lady,",
+      "start": 248.31,
+      "end": 255.11,
+      "part": 0
+    },
+    {
+      "latin": "benedícta et immaculáta.",
+      "english": "blessed and immaculate.",
+      "start": 255.11,
+      "end": 262.76,
+      "part": 0
+    },
+    {
+      "latin": "Et rege eos",
+      "english": "And rule them,",
+      "start": 262.97,
+      "end": 266.77,
+      "part": 0
+    },
+    {
+      "latin": "et extólle illos usque in ætérnum.",
+      "english": "and lift them up for ever.",
+      "start": 266.77,
+      "end": 274.86,
+      "part": 0
+    },
+    {
+      "latin": "Per síngulos dies benedícimus te.",
+      "english": "Every day we bless thee.",
+      "start": 276.09,
+      "end": 285.81,
+      "part": 0
+    },
+    {
+      "latin": "Et laudámus nomen Altíssimi, qui te fecit altíssimam.",
+      "english": "And we praise the name of the Most High, who made thee most high.",
+      "start": 285.81,
+      "end": 297.54,
+      "part": 0
+    },
+    {
+      "latin": "Dignáre omni laude digníssima, ab indigníssimis laudári.",
+      "english": "Vouchsafe, thou most worthy of all praise, to be praised by the most unworthy.",
+      "start": 297.83,
+      "end": 309.26,
+      "part": 0
+    },
+    {
+      "latin": "Miserére nostri Dómina, Mater misericórdiæ.",
+      "english": "Have mercy on us, O Lady, Mother of mercy.",
+      "start": 309.81,
+      "end": 320.92,
+      "part": 0
+    },
+    {
+      "latin": "Fiat misericórdia Fílii tui Dómina super nos, ope tua qua clamámus ei.",
+      "english": "Let the mercy of thy Son, O Lady, be upon us, by thy help, as we cry to Him.",
+      "start": 321.71,
+      "end": 337.48,
+      "part": 0
+    },
+    {
+      "latin": "In te Dómina sperávi:",
+      "english": "In thee, O Lady, have I hoped:",
+      "start": 338.67,
+      "end": 345.0,
+      "part": 0
+    },
+    {
+      "latin": "non confúndar in ætérnum.",
+      "english": "let me never be confounded.",
+      "start": 345.51,
+      "end": 354.1,
+      "part": 0
+    }
+  ]
+}

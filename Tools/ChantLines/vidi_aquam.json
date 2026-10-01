@@ -1,0 +1,154 @@
+{
+  "id": "vidi_aquam",
+  "part": null,
+  "method": "breaths by loudness (under -20 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 10 of 20 breaks heard",
+  "lines": [
+    {
+      "latin": "Vidi aquam",
+      "english": "I saw water",
+      "start": 0.25,
+      "end": 7.07,
+      "part": 0
+    },
+    {
+      "latin": "egrediéntem de templo,",
+      "english": "coming forth from the temple,",
+      "start": 7.07,
+      "end": 17.69,
+      "part": 0
+    },
+    {
+      "latin": "a látere dextro,",
+      "english": "on the right side,",
+      "start": 17.69,
+      "end": 25.86,
+      "part": 0
+    },
+    {
+      "latin": "allelúia:",
+      "english": "alleluia:",
+      "start": 25.89,
+      "end": 33.2,
+      "part": 0
+    },
+    {
+      "latin": "et omnes, ad quos pervénit aqua ista,",
+      "english": "and all they to whom that water came",
+      "start": 33.71,
+      "end": 51.38,
+      "part": 0
+    },
+    {
+      "latin": "salvi facti sunt,",
+      "english": "were saved,",
+      "start": 51.47,
+      "end": 59.69,
+      "part": 0
+    },
+    {
+      "latin": "et dicent,",
+      "english": "and they shall say,",
+      "start": 59.69,
+      "end": 65.4,
+      "part": 0
+    },
+    {
+      "latin": "allelúia, allelúia.",
+      "english": "alleluia, alleluia.",
+      "start": 65.63,
+      "end": 78.6,
+      "part": 0
+    },
+    {
+      "latin": "Confitémini Dómino quóniam bonus:",
+      "english": "Give praise to the Lord, for He is good:",
+      "start": 80.63,
+      "end": 87.85,
+      "part": 0
+    },
+    {
+      "latin": "quóniam in sǽculum misericórdia ejus.",
+      "english": "for His mercy endureth for ever.",
+      "start": 87.85,
+      "end": 97.02,
+      "part": 0
+    },
+    {
+      "latin": "Glória Patri, et Fílio, et Spirítui Sancto.",
+      "english": "Glory be to the Father, and to the Son, and to the Holy Ghost.",
+      "start": 97.75,
+      "end": 107.03,
+      "part": 0
+    },
+    {
+      "latin": "Sicut erat in princípio, et nunc, et semper,",
+      "english": "As it was in the beginning, is now, and ever shall be,",
+      "start": 107.03,
+      "end": 115.59,
+      "part": 0
+    },
+    {
+      "latin": "et in sǽcula sæculórum. Amen.",
+      "english": "world without end. Amen.",
+      "start": 115.59,
+      "end": 124.42,
+      "part": 0
+    },
+    {
+      "latin": "Vidi aquam",
+      "english": "I saw water",
+      "start": 125.93,
+      "end": 132.37,
+      "part": 0
+    },
+    {
+      "latin": "egrediéntem de templo,",
+      "english": "coming forth from the temple,",
+      "start": 132.37,
+      "end": 142.99,
+      "part": 0
+    },
+    {
+      "latin": "a látere dextro,",
+      "english": "on the right side,",
+      "start": 142.99,
+      "end": 151.14,
+      "part": 0
+    },
+    {
+      "latin": "allelúia:",
+      "english": "alleluia:",
+      "start": 151.19,
+      "end": 158.5,
+      "part": 0
+    },
+    {
+      "latin": "et omnes, ad quos pervénit aqua ista,",
+      "english": "and all they to whom that water came",
+      "start": 158.99,
+      "end": 176.68,
+      "part": 0
+    },
+    {
+      "latin": "salvi facti sunt,",
+      "english": "were saved,",
+      "start": 176.75,
+      "end": 184.97,
+      "part": 0
+    },
+    {
+      "latin": "et dicent,",
+      "english": "and they shall say,",
+      "start": 184.97,
+      "end": 190.7,
+      "part": 0
+    },
+    {
+      "latin": "allelúia, allelúia.",
+      "english": "alleluia, alleluia.",
+      "start": 190.93,
+      "end": 205.0,
+      "part": 0
+    }
+  ]
+}

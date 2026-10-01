@@ -1,0 +1,98 @@
+{
+  "id": "audi_benigne",
+  "part": null,
+  "method": "breaths by loudness (under -20 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 10 of 12 breaks heard",
+  "lines": [
+    {
+      "latin": "Audi, benígne Cónditor, Nostras preces cum flétibus,",
+      "english": "Hear, kind Creator, our prayers poured out with weeping",
+      "start": 0.25,
+      "end": 12.59,
+      "part": 0
+    },
+    {
+      "latin": "In hoc sacro jejúnio Fusas quadragenário.",
+      "english": "in this holy fast of forty days.",
+      "start": 12.59,
+      "end": 24.14,
+      "part": 0
+    },
+    {
+      "latin": "Scrutátor alme córdium,",
+      "english": "Kind Searcher of hearts,",
+      "start": 24.73,
+      "end": 30.81,
+      "part": 0
+    },
+    {
+      "latin": "Infírma tu scis vírium:",
+      "english": "Thou knowest how weak our strength is:",
+      "start": 30.81,
+      "end": 37.07,
+      "part": 0
+    },
+    {
+      "latin": "Ad te revérsis éxhibe Remissiónis grátiam.",
+      "english": "to those who have turned back to Thee show the grace of pardon.",
+      "start": 37.07,
+      "end": 49.4,
+      "part": 0
+    },
+    {
+      "latin": "Multum quidem peccávimus,",
+      "english": "Much indeed have we sinned,",
+      "start": 49.91,
+      "end": 55.73,
+      "part": 0
+    },
+    {
+      "latin": "Sed parce confiténtibus:",
+      "english": "but spare us who confess it:",
+      "start": 55.73,
+      "end": 62.09,
+      "part": 0
+    },
+    {
+      "latin": "Ad nóminis laudem tui, Confer medélam lánguidis.",
+      "english": "for the praise of Thy name bring healing to the sick.",
+      "start": 62.09,
+      "end": 73.78,
+      "part": 0
+    },
+    {
+      "latin": "Concéde nostrum cónteri",
+      "english": "Grant that our body",
+      "start": 75.15,
+      "end": 81.03,
+      "part": 0
+    },
+    {
+      "latin": "Corpus per abstinéntiam, Culpæ ut relínquant pábulum Jejúna corda críminum.",
+      "english": "be subdued by abstinence, that our fasting hearts may forsake the food of sin.",
+      "start": 81.03,
+      "end": 98.56,
+      "part": 0
+    },
+    {
+      "latin": "Præsta beáta Trínitas, Concéde simplex Únitas:",
+      "english": "Grant, O blessed Trinity, grant, O simple Unity,",
+      "start": 99.87,
+      "end": 112.03,
+      "part": 0
+    },
+    {
+      "latin": "Ut fructuósa sint tuis Jejuniórum múnera.",
+      "english": "that the gifts of fasting may bear fruit for Thine own.",
+      "start": 112.03,
+      "end": 124.16,
+      "part": 0
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 124.77,
+      "end": 130.76,
+      "part": 0
+    }
+  ]
+}

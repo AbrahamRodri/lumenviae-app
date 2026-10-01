@@ -1,0 +1,63 @@
+{
+  "id": "agnus_de_angelis",
+  "part": null,
+  "method": "breaths by loudness (under -20 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 2 of 7 breaks heard",
+  "lines": [
+    {
+      "latin": "Agnus Dei,",
+      "english": "Lamb of God,",
+      "start": 0.27,
+      "end": 6.96,
+      "part": 0
+    },
+    {
+      "latin": "qui tollis peccáta mundi:",
+      "english": "Who takest away the sins of the world,",
+      "start": 7.51,
+      "end": 14.78,
+      "part": 0
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 15.01,
+      "end": 23.16,
+      "part": 0
+    },
+    {
+      "latin": "Agnus Dei, qui tollis peccáta mundi:",
+      "english": "Lamb of God, Who takest away the sins of the world,",
+      "start": 25.25,
+      "end": 37.48,
+      "part": 0
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 37.97,
+      "end": 46.36,
+      "part": 0
+    },
+    {
+      "latin": "Agnus Dei,",
+      "english": "Lamb of God,",
+      "start": 48.31,
+      "end": 55.4,
+      "part": 0
+    },
+    {
+      "latin": "qui tollis peccáta mundi:",
+      "english": "Who takest away the sins of the world,",
+      "start": 55.65,
+      "end": 63.29,
+      "part": 0
+    },
+    {
+      "latin": "dona nobis pacem.",
+      "english": "grant us peace.",
+      "start": 63.29,
+      "end": 72.44,
+      "part": 0
+    }
+  ]
+}

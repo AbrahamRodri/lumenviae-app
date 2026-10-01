@@ -1,0 +1,56 @@
+# Pange lingua, the hymn of Corpus Christi and of Holy Thursday: its six
+# stanzas, a line to each verse but where two run on one breath, and the
+# Amen; then the versicle Panem de caelo and the collect Deus qui nobis.
+# Latin from the scores, but "Se dat suis mánibus", which the score misprints
+# "Sedat sui"; English plain, the last two stanzas', the versicle's and the
+# collect's as the Tantum ergo has them.
+noise -16
+gap 0.2
+merge 1.5
+
+part 0
+Pange lingua gloriósi | Sing, my tongue, the mystery
+Córporis mystérium, | of the glorious Body,
+Sanguinísque pretiósi, | and of the precious Blood,
+Quem in mundi prétium | which, as the price of the world,
+Fructus ventris generósi | the fruit of a noble womb,
+Rex effúdit géntium. | the King of the nations, poured out.
+Nobis datus, nobis natus | Given to us, born for us
+Ex intácta Vírgine, | of a spotless Virgin,
+Et in mundo conversátus, | and having dwelt in the world,
+Sparso verbi sémine, | the seed of the word once sown,
+Sui moras incolátus | the days of His sojourn
+Miro clausit órdine. | He closed in a wondrous way.
+In suprémæ nocte cœnæ Recúmbens cum frátribus, | On the night of the Last Supper, at table with His brethren,
+Observáta lege plene | the Law fully kept
+Cibis in legálibus, | in the foods it prescribed,
+Cibum turbæ duodénæ | as food to the band of Twelve
+Se dat suis mánibus. | He gives Himself with His own hands.
+Verbum caro, panem verum Verbo carnem éfficit: | The Word made flesh, by a word, makes true bread His flesh:
+Fitque sanguis Christi merum, | and wine becomes the Blood of Christ;
+Et si sensus déficit, | and if the senses fail,
+Ad firmándum cor sincérum | to make a sincere heart firm
+Sola fides súfficit. | faith alone suffices.
+Tantum ergo Sacraméntum | So great a Sacrament, therefore,
+Venerémur cérnui: | let us venerate, bowing low;
+Et antíquum documéntum | and let the former teaching
+Novo cedat rítui: | give way to the new rite;
+Præstet fides suppleméntum | let faith provide its aid
+Sénsuum deféctui. | for the failing of the senses.
+Genitóri, Genitóque Laus et jubilátio, | To the Begetter and the Begotten be praise and jubilation,
+Salus, honor, virtus quoque | salvation, honour, and might also,
+Sit et benedíctio: | and blessing be to Them;
+Procedénti ab utróque | to Him Who proceedeth from Both
+Compar sit laudátio. | be equal praise.
+Amen. | Amen.
+part 1
+Panem de cælo præstitísti eis. | Thou didst give them bread from heaven.
+Omne delectaméntum in se habéntem. | Containing in itself all delight.
+part 2
+Orémus. | Let us pray.
+Deus, qui nobis sub Sacraménto mirábili passiónis tuæ memóriam reliquísti: | O God, Who under a wonderful Sacrament hast left us a memorial of Thy Passion,
+tríbue, quǽsumus, | grant us, we beseech Thee,
+ita nos córporis et sánguinis tui sacra mystéria venerári; | so to venerate the sacred mysteries of Thy Body and Blood,
+ut redemptiónis tuæ fructum in nobis júgiter sentiámus. | that we may continually feel within ourselves the fruit of Thy redemption.
+Qui vivis et regnas in sǽcula sæculórum. | Who livest and reignest world without end.
+Amen. | Amen.
