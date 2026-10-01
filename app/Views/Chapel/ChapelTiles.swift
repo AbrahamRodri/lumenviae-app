@@ -2016,40 +2016,7 @@ struct ChapelLiturgyTile: View {
     /// colour left to the diamond beside it; "Green vestments" when the
     /// day names a colour and no rank
     private var rankLine: String? {
-        today.proper?.info.rankLabel ?? today.vestment.map { "\($0.name) vestments" }
-    }
-
-    // The three below stand until the liturgy's own words reach this
-    // branch, when they give way to `MissalVestment.plainName`,
-    // `TodayInChurch.spokenMeta` and `CanonicalHour.plainName`
-
-    /// "green vestments", for VoiceOver and for a day with no rank
-    private var vestmentWords: String? {
-        today.vestment.map { "\($0.name.lowercased()) vestments" }
-    }
-
-    /// The rank line as it is heard: "Lesser Feast, white vestments"
-    private var rankSpoken: String? {
-        guard let rank = today.proper?.info.rankLabel else { return vestmentWords }
-        guard let vestmentWords else { return rank }
-        return "\(rank), \(vestmentWords)"
-    }
-
-    /// The hour in plain words, the Church's name second: "Evening
-    /// Prayer" for Vespers, "Bedtime Prayer" for Compline — never "Night
-    /// Prayers", which are the Prayer Book's. The plain-language rulings'
-    /// table, word for word.
-    static func plainName(of hour: CanonicalHour) -> String {
-        switch hour {
-        case .matins:   return "Night Vigil"
-        case .lauds:    return "Dawn Prayer"
-        case .prime:    return "Early Morning Prayer"
-        case .terce:    return "Mid-Morning Prayer"
-        case .sext:     return "Midday Prayer"
-        case .nones:    return "Mid-Afternoon Prayer"
-        case .vespers:  return "Evening Prayer"
-        case .compline: return "Bedtime Prayer"
-        }
+        today.proper?.info.rankLabel ?? today.vestment?.plainName
     }
 
     // MARK: Full — the leaf and the feast, the ledger beneath
@@ -2104,7 +2071,7 @@ struct ChapelLiturgyTile: View {
                             .minimumScaleFactor(0.85)
                             // "Feast, red vestments": the colour the
                             // diamond shows, said in words
-                            .accessibilityLabel(rankSpoken ?? rankLine)
+                            .accessibilityLabel(today.spokenMeta ?? rankLine)
                     }
                     .transition(.opacity)
                 }
@@ -2128,7 +2095,7 @@ struct ChapelLiturgyTile: View {
             )
             ledgerRow(
                 kicker: "Hours of Prayer",
-                title: Self.plainName(of: hour),
+                title: hour.plainName,
                 line: "\(hour.label), the hour now",
                 route: .office,
                 divided: false
@@ -2221,7 +2188,7 @@ struct ChapelLiturgyTile: View {
     private var halfLedger: some View {
         VStack(spacing: 0) {
             halfDoor("Today\u{2019}s Mass", route: .missal, divided: true)
-            halfDoor(Self.plainName(of: hour), route: .office, divided: false)
+            halfDoor(hour.plainName, route: .office, divided: false)
         }
         .overlay(alignment: .top) {
             Rectangle()

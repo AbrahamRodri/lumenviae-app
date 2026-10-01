@@ -498,15 +498,17 @@ never makes), **Today in the Church** ("The Church" at half, where
 the whole name has no room; on the deep ground, the date on a
 calendar leaf beside the feast with its rank — "Lesser Feast"
 (`rankLabel`), the vestment's diamond before it, the colour said to
-VoiceOver alone ("Lesser Feast, white vestments") — over a ledger of the Church's two books for the
+VoiceOver alone (`TodayInChurch.spokenMeta`, "Lesser Feast, white
+vestments") — over a ledger of the Church's two books for the
 day: THE MASS, Today's Mass over the first words of the day's entrance
 chant ("Entrance chant: Gaudeámus omnes"), in Latin, read from the
 missal's proper — no more than
 three, and never ending on a word that leaves it hanging
 (`TodayInChurch.incipit(of:)`, "Gaudeámus omnes", not "Gaudeámus omnes
 in"; `appTests/ChapelLiturgyTests.swift`) — and HOURS OF PRAYER by
-the hour it is now in plain words over its Church name ("Evening
-Prayer" over "Vespers, the hour now"), from `CanonicalClock` — the
+the hour it is now in plain words over its Church name
+(`CanonicalHour.plainName` over `label`: "Evening Prayer" over
+"Vespers, the hour now"), from `CanonicalClock` — the
 board said the next
 hour, but the Office opens on the present one; until the propers are
 known the leaf names "The Mass of the Day" and the Mass row "Prayers
@@ -651,13 +653,10 @@ Eastertide — and the focus block's gold act names the prayer without
 repeating the title over it (the three forms' act is PRAY THE ROSARY
 or CONTINUE THE ROSARY, the consecration's OPEN DAY 14), so every act
 fits its button on one line at `.xLarge`. Words another area owns are
-read from it, never written again here: the rank (`rankLabel`) and
-the day (`TodayInChurch`) are the liturgy's, and so will be the hours'
-plain names and the colour in words — until `CanonicalHour.plainName`,
-`MissalVestment.plainName` and `TodayInChurch.spokenMeta` reach this
-branch, the Liturgy tile keeps the rulings' table and its own
-"white vestments" (`ChapelLiturgyTile.plainName(of:)`), to give way
-to them then; when each of the book's three orders is said
+read from it, never written again here: the hours' plain names
+(`CanonicalHour.plainName`), the rank (`rankLabel`), the vestment
+(`MissalVestment.plainName`) and the day (`TodayInChurch`) are the
+liturgy's; when each of the book's three orders is said
 (`PrayerOrder.occasion`), the season's song to Mary
 (`MarianAntiphon.name`) and the Angelus's Eastertide name
 (`PrayerOrder.title(on:)`, which the Pray tray and the rule read
