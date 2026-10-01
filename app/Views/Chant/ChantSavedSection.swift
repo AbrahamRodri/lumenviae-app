@@ -243,7 +243,7 @@ struct ChantSavedSection: View {
         .buttonStyle(SacredCardButtonStyle())
         .animation(Motion.settle, value: lit)
         .accessibilityLabel("\(title), \(note)")
-        .accessibilityAddTraits(lit ? [.isSelected, .isButton] : .isButton)
+        .accessibilityAddTraits(lit ? [.isSelected, .isButton] : [.isButton])
     }
 
     private var newSpine: some View {

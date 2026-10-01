@@ -713,11 +713,13 @@ extension ChantCatalog {
         // Whether the subject's imageset is in the app is asked once: the
         // image cache keeps only what it finds, and a board redrawn on
         // every tick of the player would ask the catalog again each time
-        let present = subjectsPresent[subject] ?? {
-            let found = ImageCacheService.shared.image(named: subject) != nil
-            subjectsPresent[subject] = found
-            return found
-        }()
+        let present: Bool
+        if let known = subjectsPresent[subject] {
+            present = known
+        } else {
+            present = ImageCacheService.shared.image(named: subject) != nil
+            subjectsPresent[subject] = present
+        }
         if present { return subject }
         return fallback ?? ChantLibraryData.subjectPaintings[subject] ?? "glorious_coronation"
     }

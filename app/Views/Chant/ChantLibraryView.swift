@@ -273,7 +273,7 @@ struct ChantLibraryView: View {
                         .buttonStyle(QuietGlyphButtonStyle())
                         .id(each)
                         .accessibilityLabel(each.tab)
-                        .accessibilityAddTraits(lit ? [.isSelected, .isButton] : .isButton)
+                        .accessibilityAddTraits(lit ? [.isSelected, .isButton] : [.isButton])
                     }
                 }
                 .padding(.horizontal, 24)

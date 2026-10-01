@@ -163,11 +163,14 @@ struct ChantPracticeView: View {
     private var stepBar: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(alignment: .firstTextBaseline) {
-                (Text("Step \(step.rawValue) of 4: ")
-                    .foregroundColor(AppColors.cream)
-                 + Text(step.title)
-                    .foregroundColor(AppColors.goldLight))
-                    .font(AppFonts.readingFont(16))
+                HStack(alignment: .firstTextBaseline, spacing: 0) {
+                    Text("Step \(step.rawValue) of 4: ")
+                        .foregroundColor(AppColors.cream)
+                    Text(step.title)
+                        .foregroundColor(AppColors.goldLight)
+                }
+                .font(AppFonts.readingFont(16))
+                .accessibilityElement(children: .combine)
                 Spacer(minLength: 8)
                 if lines {
                     Text("Line \(line + 1) of \(chant.lines.count)")

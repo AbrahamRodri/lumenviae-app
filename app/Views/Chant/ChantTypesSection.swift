@@ -102,7 +102,7 @@ struct ChantTypesSection: View {
         .buttonStyle(SacredCardButtonStyle())
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(each.title), \(count) chants")
-        .accessibilityAddTraits(lit ? [.isSelected, .isButton] : .isButton)
+        .accessibilityAddTraits(lit ? [.isSelected, .isButton] : [.isButton])
     }
 
     // MARK: - The kind chosen
@@ -284,7 +284,7 @@ struct ChantTypesSection: View {
         .buttonStyle(SacredCardButtonStyle())
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(each.title), \(each.chants.count) chants")
-        .accessibilityAddTraits(lit ? [.isSelected, .isButton] : .isButton)
+        .accessibilityAddTraits(lit ? [.isSelected, .isButton] : [.isButton])
     }
 
     /// A chant as a capsule: its disc plays it, its name opens it

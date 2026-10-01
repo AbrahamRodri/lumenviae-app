@@ -101,13 +101,11 @@ struct ChantView: View {
                     .foregroundColor(AppColors.gold)
                 }
             }
-            if let chant {
-                ToolbarItem(placement: .principal) {
-                    learnButton(chant)
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    moreMenu(chant)
-                }
+            ToolbarItem(placement: .principal) {
+                if let chant { learnButton(chant) }
+            }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                if let chant { moreMenu(chant) }
             }
         }
         .sheet(isPresented: $showsScore) {
