@@ -68,7 +68,8 @@ struct Chant: Identifiable, Hashable {
     let groupID: String
     let latinTitle: String
     let englishTitle: String
-    /// The setting where a chant has more than one ("Simple tone")
+    /// The version, where a chant is sung more than one way ("Simple
+    /// melody")
     let setting: String?
     /// When it is sung, in one line
     let detail: String
@@ -111,8 +112,8 @@ struct Chant: Identifiable, Hashable {
     }
 
     /// The setting, where neither title already says it: a title naming
-    /// its own setting is not also "· antiphon" beneath it, and Credo III
-    /// is not "The Nicene Creed · credo iii".
+    /// its own setting is not also "· short chant" beneath it, and Credo
+    /// III is not "The Nicene Creed · credo iii".
     var distinctSetting: String? {
         guard let setting,
               !englishTitle.localizedCaseInsensitiveContains(setting),
@@ -121,18 +122,27 @@ struct Chant: Identifiable, Hashable {
     }
 
     /// The distinct setting as it reads after a "·" mid-line: "simple
-    /// tone", "with alleluia", but a Mass by its name and number, "Mass
-    /// VIII", never "mass viii"
+    /// melody", "with alleluia", but a name keeps its capitals — "Mass of
+    /// the Angels", never "mass of the angels". A setting with a capital
+    /// after its first word is a name.
     var settingMidLine: String? {
         guard let setting = distinctSetting else { return nil }
-        let named = setting.split(separator: " ").contains { word in
-            word.allSatisfy { "IVXLC".contains($0) }
+        let named = setting.split(separator: " ").dropFirst().contains { word in
+            word.first?.isUppercase == true
         }
         return named ? setting : setting.lowercased()
     }
 
+    /// Its two names as VoiceOver says them: "Salve Regina, Hail, Holy
+    /// Queen". A Latin title is never heard alone.
+    var spokenName: String { "\(latinTitle), \(englishTitle)" }
+
+    /// The English name with the Latin after it, where one line holds
+    /// both: "Hail, Holy Queen (Salve Regina)"
+    var englishWithLatin: String { "\(englishTitle) (\(latinTitle))" }
+
     /// The title with its setting, for a row that has room for one line:
-    /// "Salve Regina · Simple tone", and Credo III alone, never twice
+    /// "Salve Regina · Simple melody", and Credo III alone, never twice
     var fullTitle: String {
         if let setting, !latinTitle.localizedCaseInsensitiveContains(setting) {
             return "\(latinTitle) · \(setting)"
@@ -180,8 +190,8 @@ enum ChantCatalog {
         }
     }
 
-    /// The antiphon of Our Lady the season sings tonight, in its simple
-    /// tone — the library's first piece and the Chapel tile's until the
+    /// The antiphon of Our Lady the season sings tonight — tonight's song
+    /// to Mary, as the screens call it — in its simple melody — the library's first piece and the Chapel tile's until the
     /// reader chooses another.
     static func antiphonOfTheSeason(on date: Date = Date()) -> Chant? {
         chants(forPrayer: PrayerBook.antiphon(on: date).prayerID).first
@@ -198,8 +208,8 @@ enum ChantCatalog {
     /// Said wherever a chant plays. The licence asks for no attribution;
     /// the app gives it anyway, and says the files are shared on the same
     /// terms, which the licence does ask.
-    static let credit = "Sung and engraved by Verbum Gloriae"
-    static let licenceNote = "Shared under Verbum Gloriae's copyleft licence. The recordings here are re-encoded and the scores recoloured, and they carry the same licence."
+    static let credit = "Recordings and sheet music by Verbum Gloriae"
+    static let licenceNote = "Shared under Verbum Gloriae's free licence, a copyleft licence. Our copies are compressed and recoloured, and they carry the same licence."
     static let sourceSite = URL(string: "https://www.verbumgloriae.es")!
     static let licenceURL = URL(string: "https://www.verbumgloriae.es/licencia-copyleft/")!
 }

@@ -100,8 +100,8 @@ struct ChantPauseSheet: View {
         VStack(alignment: .leading, spacing: 0) {
             SheetHeader(
                 kicker: "Add to \(set.name)",
-                title: "A pause or note",
-                lead: "Words in red between chants — what happens, or what to pray for — and silence kept there if you want it."
+                title: "A pause",
+                lead: "A short note in red between chants, such as what to pray for, with silence after it if you want."
             ) {
                 SheetHeaderAction(title: "Cancel") { dismiss() }
             }
@@ -141,7 +141,7 @@ struct ChantPauseSheet: View {
 
             SheetNote(minutes == 0
                       ? "The note is read, and the next chant follows."
-                      : "The set keeps silence for \(minutes == 1 ? "a minute" : "\(minutes) minutes") here, then goes on.")
+                      : "The set pauses in silence for \(minutes == 1 ? "a minute" : "\(minutes) minutes") here, then goes on.")
 
             Spacer(minLength: 12)
 
@@ -178,7 +178,7 @@ struct ChantAddToSetSheet: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            SheetHeader(kicker: chant.latinTitle, title: "Add to a set") {
+            SheetHeader(kicker: chant.englishTitle, title: "Add to a set") {
                 SheetHeaderAction(title: "Cancel") { dismiss() }
             }
             ScrollView {
@@ -228,7 +228,7 @@ struct ChantNewSetSheet: View {
             SheetHeader(
                 kicker: "Saved",
                 title: "A new set",
-                lead: "For a holy hour, a prayer group or family prayer. Its chants and pauses are added once it is made."
+                lead: "For an hour of prayer in church, a prayer group or family prayer. Its chants and pauses are added once it is made."
             ) {
                 SheetHeaderAction(title: "Cancel") { dismiss() }
             }
@@ -283,7 +283,7 @@ struct ChantWordsSheet: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            SheetHeader(kicker: chant.latinTitle, title: "The words") {
+            SheetHeader(kicker: chant.englishTitle, title: "The words") {
                 SheetHeaderAction(title: "Done") { dismiss() }
             }
 
@@ -297,9 +297,9 @@ struct ChantWordsSheet: View {
                         PrayerText(content: prayer.content(for: language(for: prayer)), size: 17)
                             .padding(.horizontal, SheetMetrics.gutter)
                             .padding(.vertical, 8)
-                        SheetNote("The words as the Prayer Book prints them. The chant may sing a versicle or a collect beside them.")
+                        SheetNote("The words as they appear in Prayers. The chant may add a short verse and response, or a closing prayer.")
                     } else {
-                        SheetNote("The words of this chant have not been set out yet. They stand on its score.")
+                        SheetNote("The words of this chant aren't written out here yet. You can read them on its sheet music.")
                     }
                 }
                 .padding(.bottom, 24)
@@ -346,7 +346,7 @@ struct ChantWordsSheet: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityHint("Sings from this line")
+        .accessibilityHint("Plays from this line")
     }
 }
 

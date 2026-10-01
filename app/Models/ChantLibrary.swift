@@ -53,12 +53,12 @@ enum ChantForm: String, CaseIterable, Identifiable {
         }
     }
 
-    /// One of them, for a kicker: "HYMN · 4:24"
+    /// One of them, for a kicker: "HYMN · 4:24", in the tile's own word
     var singular: String {
         switch self {
-        case .shortChant:     return "Antiphon"
+        case .shortChant:     return "Short chant"
         case .hymn:           return "Hymn"
-        case .sequence:       return "Sequence"
+        case .sequence:       return "Feast poem"
         case .litany:         return "Litany"
         case .psalm:          return "Psalm"
         case .everydayPrayer: return "Prayer"
@@ -71,13 +71,13 @@ enum ChantForm: String, CaseIterable, Identifiable {
         case .shortChant:
             return "Antiphons: a few lines, sung before or after a psalm, or on their own at the close of the day."
         case .hymn:
-            return "Verses in metre, every verse to the same melody, sung at the hours, at Benediction and in procession."
+            return "Poems in verses, each verse sung to the same melody: at morning and evening prayer, at Adoration and in processions."
         case .sequence:
             return "Sequences: long poems sung at Mass, just before the Gospel, on the greatest feasts."
         case .litany:
-            return "Calls and responses: the cantor names, and everyone answers."
+            return "Short petitions, each answered by the same response: the singer calls, and everyone answers."
         case .psalm:
-            return "The psalms and canticles, sung verse by verse."
+            return "Psalms, and canticles: great songs of praise like Mary's Magnificat and the Te Deum, sung verse by verse."
         case .everydayPrayer:
             return "The prayers said every day, the Rosary's and the Mass's among them, set to chant."
         }
@@ -102,8 +102,8 @@ enum ChantLength: String, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .underAMinute: return "Under a minute"
-        case .aFewMinutes:  return "A few minutes"
-        case .aLongWhile:   return "A long while"
+        case .aFewMinutes:  return "1 to 7 minutes"
+        case .aLongWhile:   return "Over 7 minutes"
         }
     }
 
@@ -466,13 +466,20 @@ enum ChantHour: Int, CaseIterable, Identifiable {
         }
     }
 
-    /// "It is evening: time for the Magnificat"
-    var headline: String {
+    /// "It is evening: time for Mary's song, the Magnificat", naming the
+    /// chant the hour sings on `date`: through the Easter season morning
+    /// and noon sing Queen of Heaven, not the Angelus
+    func headline(on date: Date, calendar: Calendar = .current) -> String {
+        let eastertide = PrayerBook.isEastertide(date, calendar: calendar)
         switch self {
-        case .morning: return "It is morning: time for the Angelus"
-        case .noon:    return "It is midday: time for the Angelus"
-        case .evening: return "It is evening: time for the Magnificat"
-        case .night:   return "It is night: time for night prayer"
+        case .morning:
+            return eastertide ? "It is morning: time to sing Queen of Heaven" : "It is morning: time for the Angelus"
+        case .noon:
+            return eastertide ? "It is midday: time to sing Queen of Heaven" : "It is midday: time for the Angelus"
+        case .evening:
+            return "It is evening: time for Mary's song, the Magnificat"
+        case .night:
+            return "It is night: time for the song to Mary"
         }
     }
 
@@ -610,7 +617,7 @@ enum ChantLearningStep: Int, CaseIterable, Identifiable {
         switch self {
         case .listen:    return "Hear it sung"
         case .readAlong: return "Follow the words"
-        case .singAlong: return "Sing with the cantor"
+        case .singAlong: return "Sing with the recording"
         case .onYourOwn: return "Sing without help"
         }
     }
@@ -646,16 +653,18 @@ extension Chant {
         ChantCatalog.all.filter { $0.workKey == workKey }
     }
 
-    /// "Simple", "Solemn": the setting without its "tone", for a pill and
-    /// the mini player's line; none where the title already says it, so
-    /// Credo III never plays as "Credo III · Credo III"
+    /// "Simple", "Solemn": the setting without its "melody", for a pill;
+    /// none where the title already says it, so Credo III never plays as
+    /// "Credo III · Credo III"
     var settingName: String? {
         guard let setting, !latinTitle.localizedCaseInsensitiveContains(setting) else { return nil }
-        let word = setting.replacingOccurrences(of: " tone", with: "")
+        let word = setting
+            .replacingOccurrences(of: " melody", with: "")
+            .replacingOccurrences(of: " tone", with: "")
         return word.prefix(1).uppercased() + word.dropFirst()
     }
 
-    /// When it is sung in the year, against `date`: "in season until
+    /// When it is sung in the year, against `date`: "this season, until
     /// Advent", "for Easter", or nil for a chant of every season
     func seasonLine(on date: Date = Date()) -> String? {
         let seasons = self.seasons
@@ -664,7 +673,7 @@ extension Chant {
         if seasons.contains(now) {
             var last = now
             while seasons.contains(last.next), last.next != now { last = last.next }
-            return "in season until \(last.next.prose)"
+            return "this season, until \(last.next.prose)"
         }
         return "for \(seasons[0].prose)"
     }

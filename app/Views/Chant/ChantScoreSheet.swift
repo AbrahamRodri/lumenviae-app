@@ -52,7 +52,7 @@ struct ChantScoreSheet: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            SheetHeader(kicker: "The score", title: chant.fullTitle) {
+            SheetHeader(kicker: "Sheet music", title: chant.fullTitle, lead: chant.englishTitle) {
                 SheetHeaderAction(title: "Done") { dismiss() }
             }
 
@@ -111,7 +111,7 @@ struct ChantScoreSheet: View {
                     .coordinateSpace(.named(Self.glass))
                     .onGeometryChange(for: CGSize.self) { $0.size } action: { glassSize = $0 }
                 }
-                .accessibilityHint("Pinch or double tap to bring the score closer")
+                .accessibilityHint("Pinch or double tap to bring the sheet music closer")
             }
 
             if showsTransport {
@@ -262,7 +262,7 @@ private struct ChantScoreSheetTransport: View {
                     isPlaying: player.isPlaying(chant),
                     isLoading: player.current.id == chant.id && player.isLoading,
                     size: 40,
-                    label: chant.latinTitle
+                    label: chant.spokenName
                 ) {
                     player.toggle(chant)
                 }

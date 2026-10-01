@@ -147,7 +147,7 @@ struct ChantTypesSection: View {
                 Button {
                     byLength.toggle()
                 } label: {
-                    Text(byLength ? "IN ORDER" : "BY LENGTH")
+                    Text(byLength ? "USUAL ORDER" : "SHORTEST FIRST")
                         .font(AppFonts.labelFont(8.5))
                         .tracking(1.5)
                         .foregroundColor(AppColors.gold.opacity(0.85))
@@ -155,7 +155,7 @@ struct ChantTypesSection: View {
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(QuietGlyphButtonStyle())
-                .accessibilityLabel(byLength ? "Sort in the library's order" : "Sort by length")
+                .accessibilityLabel(byLength ? "Sort in the usual order" : "Sort shortest first")
             }
             .overlay(alignment: .bottom) { ChantRule() }
 
@@ -182,6 +182,10 @@ struct ChantTypesSection: View {
                         .font(AppFonts.readingFont(17))
                         .foregroundColor(player.isPlaying(chant) ? AppColors.goldLight : AppColors.cream)
                         .fixedSize(horizontal: false, vertical: true)
+                    Text(chant.englishTitle)
+                        .font(AppFonts.readingFont(14.5))
+                        .foregroundColor(AppColors.cream.opacity(0.8))
+                        .fixedSize(horizontal: false, vertical: true)
                     Text(context(of: chant))
                         .font(AppFonts.readingItalicFont(13.5))
                         .foregroundColor(AppColors.textSecondary)
@@ -200,7 +204,7 @@ struct ChantTypesSection: View {
         .overlay(alignment: .bottom) { ChantRule(opacity: 0.12) }
         .chantContextMenu(chant)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(chant.latinTitle), \(context(of: chant)), \(ChantPlayer.spoken(chant.duration))")
+        .accessibilityLabel("\(chant.spokenName), \(context(of: chant)), \(ChantPlayer.spoken(chant.duration))")
         .accessibilityAddTraits(.isButton)
         .accessibilityHint("Opens the chant")
     }
@@ -309,7 +313,7 @@ struct ChantTypesSection: View {
                 isPlaying: player.isPlaying(chant),
                 isLoading: player.current.id == chant.id && player.isLoading,
                 size: 28,
-                label: chant.latinTitle
+                label: chant.spokenName
             ) {
                 player.toggle(chant)
             }
@@ -318,7 +322,8 @@ struct ChantTypesSection: View {
                 open(chant)
             } label: {
                 HStack(spacing: 6) {
-                    Text(chant.settingMidLine.map { "\(chant.latinTitle) · \($0)" } ?? chant.latinTitle)
+                    // English first, where one line holds one name
+                    Text(chant.settingMidLine.map { "\(chant.englishTitle) · \($0)" } ?? chant.englishTitle)
                         .font(AppFonts.readingFont(15))
                         .foregroundColor(player.isPlaying(chant) ? AppColors.goldLight : AppColors.cream)
                         .lineLimit(1)
@@ -332,7 +337,7 @@ struct ChantTypesSection: View {
             }
             .buttonStyle(.plain)
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel("\(chant.fullTitle), \(ChantPlayer.spoken(chant.duration))")
+            .accessibilityLabel("\(chant.spokenName)\(chant.settingMidLine.map { ", \($0)" } ?? ""), \(ChantPlayer.spoken(chant.duration))")
             .accessibilityAddTraits(.isButton)
             .accessibilityHint("Opens the chant")
         }

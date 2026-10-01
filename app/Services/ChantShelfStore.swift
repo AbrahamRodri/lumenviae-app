@@ -284,9 +284,9 @@ final class ChantShelfStore {
     }
 
     private static func wasKept(_ occasion: ChantOccasion, as set: ChantSet) -> Bool {
-        guard set.name == occasion.title else { return false }
+        guard ChantLibraryData.currentWording(of: set.name) == occasion.title else { return false }
         let notes = set.items.compactMap { item -> String? in
-            if case .pause(let note, 0) = item.kind { return note }
+            if case .pause(let note, 0) = item.kind { return ChantLibraryData.currentWording(of: note) }
             return nil
         }
         let rubrics = occasion.blocks.compactMap { $0.rubric }
@@ -325,9 +325,12 @@ final class ChantShelfStore {
     /// sings the season's antiphon of Our Lady, any of the four, so a copy
     /// kept in Advent is still the occasion's own in Lent. A set a later
     /// build has written fields into is not taken for untouched: what it
-    /// holds there, this build cannot see.
+    /// holds there, this build cannot see. A copy kept before the
+    /// occasion's words were made plain ("Benediction") is read in the
+    /// words it has now (`ChantLibraryData.formerWords`).
     func isUntouchedCopy(_ set: ChantSet, of occasion: ChantOccasion) -> Bool {
-        guard set.name == occasion.title, !carriesUnknownFields(set) else { return false }
+        guard ChantLibraryData.currentWording(of: set.name) == occasion.title,
+              !carriesUnknownFields(set) else { return false }
         let order = Self.order(of: occasion)
         guard set.items.count == order.count else { return false }
         return zip(order, set.items).allSatisfy { $0.matches($1.kind) }
@@ -342,7 +345,7 @@ final class ChantShelfStore {
         func matches(_ kind: ChantSet.Item.Kind) -> Bool {
             switch (self, kind) {
             case let (.note(rubric), .pause(note, seconds)):
-                return seconds == 0 && note == rubric
+                return seconds == 0 && ChantLibraryData.currentWording(of: note) == rubric
             case let (.chant(ids, times), .chant(id, kept)):
                 return ids.contains(id) && times == kept
             default:

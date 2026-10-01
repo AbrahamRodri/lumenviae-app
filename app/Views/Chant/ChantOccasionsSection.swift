@@ -97,7 +97,7 @@ struct ChantOccasionsSection: View {
         } message: {
             // True whatever made it differ: the reader's own changes, or a
             // later build's, which this one cannot see
-            Text("It is no longer quite the occasion's own order. Its chants stay in the library; only the set goes.")
+            Text("This set no longer matches the occasion's order. Deleting it removes the set; its chants stay in the library.")
         }
     }
 
@@ -175,7 +175,7 @@ struct ChantOccasionsSection: View {
 
             VStack(alignment: .leading, spacing: 16) {
                 VStack(alignment: .leading, spacing: 6) {
-                    Text((count == 1 ? "A set of 1 chant" : "Set of \(count) chants").uppercased())
+                    Text((count == 1 ? "1 chant, in order" : "\(count) chants, in order").uppercased())
                         .font(AppFonts.labelFont(9))
                         .tracking(2)
                         .foregroundColor(AppColors.gold)
@@ -264,8 +264,8 @@ struct ChantOccasionsSection: View {
         }
         .buttonStyle(SacredCardButtonStyle())
         .sensoryFeedback(.selection, trigger: kept)
-        .accessibilityLabel("Keep as a set of your own")
-        .accessibilityValue(kept ? "Kept under Saved" : "")
+        .accessibilityLabel("Save as your own set")
+        .accessibilityValue(kept ? "Saved" : "")
         .accessibilityAddTraits(kept ? [.isSelected] : [])
     }
 
@@ -273,9 +273,9 @@ struct ChantOccasionsSection: View {
 
     /// What a tap on the bead does, as VoiceOver says it
     private func beadLabel(_ chant: Chant, state: StepState) -> String {
-        guard state == .sounding else { return "Sing from \(chant.latinTitle)" }
-        let act = player.isGoingOn ? "Pause the set at" : "Go on with the set at"
-        return "\(act) \(chant.latinTitle)"
+        guard state == .sounding else { return "Play from \(chant.spokenName)" }
+        let act = player.isGoingOn ? "Pause the set at" : "Resume the set at"
+        return "\(act) \(chant.spokenName)"
     }
 
     /// A step sounding in any of its rounds is lit; one whose last round
@@ -414,7 +414,7 @@ struct ChantOccasionsSection: View {
                     Text("Make your own set")
                         .font(AppFonts.readingFont(17))
                         .foregroundColor(AppColors.cream)
-                    Text("Choose chants for a holy hour, a prayer group or family prayer")
+                    Text("Choose chants for an hour of prayer in church, a prayer group or family prayer")
                         .font(AppFonts.readingItalicFont(14))
                         .foregroundColor(AppColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -447,9 +447,9 @@ struct ChantOccasionsSection: View {
         }
     }
 
+    /// The index's number, in figures: it is counted, not titled
     static func numeral(_ n: Int) -> String {
-        let numerals = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"]
-        return numerals.indices.contains(n - 1) ? numerals[n - 1] : "\(n)"
+        "\(n)"
     }
 
     static func minutes(_ duration: TimeInterval) -> String {

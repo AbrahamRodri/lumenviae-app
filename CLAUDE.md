@@ -2367,13 +2367,37 @@ write concurrent code here:
 
 - **The Chant Library** — the Church's own songs, each with its
   recording and its score, bundled so they sound in a chapel with no
-  signal: 76 chants in thirteen shelves (Our Lady, the Rosary and the
-  Angelus, the Blessed Sacrament, the Holy Ghost, the Sacred Heart and
-  the Holy Name, praise, the saints, the four seasons, the dead, and the
-  Mass — the Ordinary of Mass VIII and Credo III). Doors:
+  signal: 76 chants in thirteen shelves (Mary, the Rosary and the
+  Angelus, the Blessed Sacrament, the Holy Spirit, the Sacred Heart and
+  the Holy Name, praise, the saints, the four seasons, For Those Who
+  Have Died, and the Mass — the Ordinary of Mass VIII and Credo III; the
+  shelves choose paintings and are not shown by name). Doors:
   the Chapel's Chant tile, Explore (Chant, and search), and **"Hear it
   sung"** on any Prayer Book page whose prayer has a chant (a
   quiet act under Learn it by heart).
+
+  **The library speaks plainly** (the Oct 2026 plain-language pass,
+  `copy-audit/GLOSSARY.md` on `claude/copy-audit`): a title says what a
+  thing is in everyday English, and a Church or Latin name stands beside
+  or beneath it, never alone. The four seasonal antiphons of Our Lady
+  are "songs to Mary" ("TONIGHT'S SONG TO MARY", the Learn path "Songs
+  to Mary"); any other antiphon is a "short chant", a sequence a "feast
+  poem" (the kinds' kickers say the tile's own word, `ChantForm.singular`);
+  the cantor is "the singer", a tone a "melody" (the data's settings read
+  "Simple melody", the pill still "Simple | Solemn"), the score "sheet
+  music"; Benediction is "Adoration and Blessing" with "Benediction" in
+  its line; keeping is "Save"; the seasons are said in plain words
+  (Pre-Lent, the Easter season, February 2 (Candlemas)); numbers are
+  figures. A Latin title goes with its English: beneath it on a row and
+  a card, "Praise, O Sion (Lauda Sion)" where one line holds both, the
+  English alone where only one fits (a chip, a kicker, the practice's
+  head), and both to VoiceOver (`Chant.spokenName`, which every play
+  disc in the library is labelled with). The prayers, chant texts and
+  the words a score is captioned with are not chrome and keep their
+  Latin. An occasion's title or red note reworded is kept in
+  `ChantLibraryData.formerWords`, old words to new, and the shelf reads
+  a kept set's name and notes through it (`currentWording(of:)`), so a
+  copy kept as "Benediction" is still the occasion's own.
 
   **The library has six ways in** (the "Chant Library Redesign" boards):
   `ChantLibraryView` (`.chantLibrary`) is a masthead — CHANT LIBRARY over
@@ -2389,14 +2413,18 @@ write concurrent code here:
   (`ChantTodaySection`): the day's four hours on the sun's arc
   (`ChantHour`, `ChantDayArc` — the Angelus at six and noon, the Regina
   Cæli in its place through Eastertide, the Magnificat at evening, the
-  season's antiphon at night, turning on the Prayer Book's hours),
-  tonight's antiphon in the board's lancet arch (`ArchHero`, 420 tall,
+  season's song to Mary at night, turning on the Prayer Book's hours,
+  each named in English under the arc — Angelus, Mary's Song, Hail, Holy
+  Queen — from `ChantLibraryData.stationNames`; the heading names what
+  the hour sings that day, Queen of Heaven through the Easter season),
+  tonight's song to Mary in the board's lancet arch (`ArchHero`, 420 tall,
   the chant's own painting, else the night's) with its play the board's
   one gold act and a Simple | Solemn pill beneath (`ChantSettingPill`;
   the catalog's words, never the board's "Ornate"), the weekday's devotion
   (`ChantWeekday`) as a row of seven, the month's (`ChantMonth`, its
   feast named in a line, February left out for want of a chant; its
-  kickers the board's FULL ROSARY and FEAST DAY CHANT), and CONTINUE
+  kickers the board's FULL ROSARY and FEAST DAY CHANT, and CHANTS IN
+  ORDER for another occasion), and CONTINUE
   LEARNING. The time Today shows is read in a view of its own
   (`ChantTonightTime`), as the chant page's transport is, so the board
   is not redrawn twice a second. **Seasons** (`ChantSeasonsSection`): the year as
@@ -2418,7 +2446,8 @@ write concurrent code here:
   point `ChantLibraryData.focalPoints` names for its painting, where the
   middle would lose its subject — the Father over the Son in the Trinity,
   the angel's face, Our Lady's in the Immaculate Conception. **Occasions**
-  (`ChantOccasionsSection`): Benediction, a Visit, a Sung Rosary (53
+  (`ChantOccasionsSection`): Adoration and Blessing (Benediction), A
+  Visit to Jesus in Church, a Sung Rosary (53
   minutes, the Ave Maria fifty-three times), Before Bed, Before Work or
   Study, For Those Who Have Died — an index in red numerals over the
   chosen one's order of service, what happens between chants in red
@@ -2440,7 +2469,7 @@ write concurrent code here:
   A set a later build has written fields into is not taken for untouched.
   Any other kept set is let go only after Saved's own question before a
   delete (`toggleKeeping` answers `.askFirst`), its line true whatever
-  made the set differ ("It is no longer quite the occasion's own
+  made the set differ ("This set no longer matches the occasion's
   order"), since a tap once threw away the reader's work, and a seasonal
   copy was once told it had been changed. Choosing an occasion, here or from Today's month, brings
   its order up the page; the tap once seemed to do nothing, the order
@@ -2528,7 +2557,8 @@ write concurrent code here:
   **The chant's page is Now Playing** (`ChantView`, `.chant(id:)`): the
   names (the setting after the English only where neither title says it,
   and mid-line in lower case but for a name, `Chant.settingMidLine`:
-  "Lord, Have Mercy · Mass VIII", never "· mass viii", and Credo III
+  "Lord, Have Mercy · Mass of the Angels", never "· mass of the angels",
+  and Credo III
   never "The Nicene Creed · credo iii"), the score in a window (ENLARGE for `ChantScoreSheet`, in a
   foot of its own beneath the score's dissolve — laid over it, it was
   read through the last faded line), the
@@ -2544,12 +2574,12 @@ write concurrent code here:
   width and cut it at the window's foot: fitted to the window, a tall
   score (the Magnificat) was drawn some 58 points wide. **Practice** (`ChantPracticeView`, full
   screen, its own ✕) learns a chant in four steps — Listen, Read along,
-  Sing along (the cantor sings, then "Your turn"), On your own (you
-  first, then the cantor) — with Repeat, Speed and Hide words (every
+  Sing along (the singer sings, then "Your turn"), On your own (you
+  first, then the singer) — with Repeat, Speed and Hide words (every
   other word, or all, cut to its first letter), ending on the learner's
   own "I know it by heart". The note beside its disc says what a tap
   does, "Tap to pause." while the chant sounds. Its ✕ gives back the
-  pace and the Repeat it found, and stops the cantor only if the
+  pace and the Repeat it found, and stops the singer only if the
   practice set it singing: a ¾× chosen to learn by once stayed on every
   chant after. A chant the practice loaded itself, sounded or not, it
   puts away (`relinquish`), a load still arriving included; one the
@@ -2581,8 +2611,9 @@ write concurrent code here:
   AudioService's half-second ticks.
 
   **What the library is singing stands at the foot of every section**
-  (`ChantMiniPlayer`): painting, chant, where it stands ("Simple · 0:21 of
-  3:05", "Benediction · 2 of 4", "Silence · 9:12 left", "Next: Tantum
+  (`ChantMiniPlayer`): painting, chant, where it stands ("Hail, Holy
+  Queen · 0:21 of 3:05", the time kept whole however long the English
+  runs, "Adoration and Blessing · 2 of 4", "Silence · 9:12 left", "Next: Tantum
   Ergo"), its pause, and a gold hairline of progress; a tap opens the
   chant — waiting between chants, the next one, whose page's play goes
   on with the set rather than sing the last again. Under Reduce Motion
@@ -2638,7 +2669,10 @@ write concurrent code here:
   `Tools/ChantLines/` where it has a file — checked against the
   recording's length and the score's parts, a file that does not hold
   together stopping the build, and folded in alone, with no network,
-  by `--lines-only`. Never hand-edit them; edit the JSON and
+  by `--lines-only`; chants.json's own words — the shelves, a chant's
+  titles, setting, detail and prayers — fold in the same way, with no
+  network, by `--text-only`, which writes the lines a full run writes from
+  them. Never hand-edit them; edit the JSON and
   rerun (ffmpeg and macOS's afconvert are needed only for a recording the
   app does not have yet: one already there is kept, its source neither
   fetched nor encoded). A change to titles or captions alone reruns with
@@ -2719,7 +2753,7 @@ write concurrent code here:
   while a chant is still arriving — headphones pulled out as the set's
   next chant loads — is kept (`pauseAskedWhileLoading`), and the chant
   arrives held. Play from the Lock Screen during the reader's turn never
-  starts the cantor over them: a turn keeping its time is going on, as a
+  starts the singer over them: a turn keeping its time is going on, as a
   silence is. On screen it is drawn so (`chantGoesOn`, a chant sounding
   or its turn running): the chant page's gold play and the mini player's
   disc show pause through the turn, and a tap holds it, where they once

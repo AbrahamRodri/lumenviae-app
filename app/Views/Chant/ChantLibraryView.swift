@@ -56,7 +56,7 @@ enum ChantLibrarySection: String, CaseIterable, Identifiable {
     /// The masthead's title
     var title: String {
         switch self {
-        case .today:     return "Sung Prayer"
+        case .today:     return "Chants for Today"
         case .seasons:   return "Through the Church Year"
         case .occasions: return "Chants for Occasions"
         case .types:     return "Types of Chant"
@@ -73,9 +73,9 @@ enum ChantLibrarySection: String, CaseIterable, Identifiable {
         case .seasons:
             return "Different chants belong to different seasons. Here is where we are now."
         case .occasions:
-            return "Sets of chants in the order they are sung, so you can follow along or lead a group."
+            return "Chants in the order they are sung, so you can follow along or lead a group."
         case .types:
-            return "Browse by the kind of chant: short antiphons, hymns, long poems, litanies and more."
+            return "Browse by kind: short chants, hymns, feast poems, litanies and more."
         case .learn:
             return "Learn to sing a chant from memory, a step at a time."
         case .saved:

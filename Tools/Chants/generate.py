@@ -53,6 +53,11 @@ longer serves is.
 --lines-only folds the line files into the Swift already written,
 touching nothing else: no page is read and no file is fetched, so a
 chant's lines can be added with no network, no ffmpeg and no cache.
+--text-only folds chants.json's own words into the Swift already
+written — the shelves, and each chant's shelf, titles, setting, detail
+and prayers — the same lines a full run writes from them, touching the
+durations, the scores' captions and the lines not at all; chants.json
+must still list the chants the Swift holds, in its order.
 
 LINES. Tools/ChantLines/<chant id>.json holds one chant's sung lines,
 derived from its bundled recording and checked line by line before the
@@ -202,10 +207,10 @@ def find_scores(entry: dict, text: str) -> list:
 
 # Spanish captions that name a part rather than quote it
 CAPTION_WORDS = [
-    (r"vers(o|ículo)s? y respuestas?", "Versicles and responses"),
-    (r"oraci[oó]n", "Collect"),
-    (r"primera jaculatoria", "First aspiration"),
-    (r"segunda jaculatoria", "Second aspiration"),
+    (r"vers(o|ículo)s? y respuestas?", "Verse and response"),
+    (r"oraci[oó]n", "Closing prayer"),
+    (r"primera jaculatoria", "First short prayer"),
+    (r"segunda jaculatoria", "Second short prayer"),
     (r"primer misterio gozoso", "The first joyful mystery"),
 ]
 
@@ -568,6 +573,66 @@ def fold_lines_into_swift(ids):
     print(f"lines folded in for {len(found)} chant(s): {', '.join(sorted(found)) or 'none'}")
 
 
+def swift_groups(manifest):
+    """The `groups:` table, as the generated file sets it."""
+    out = []
+    for g in manifest["groups"]:
+        out.append(f"        ChantGroup(id: {swift_string(g['id'])}, title: {swift_string(g['title'])}, note: {swift_string(g.get('note'))}),")
+    out[-1] = out[-1].rstrip(",")
+    return out
+
+
+def swift_chant_text(e):
+    """A chant's lines that chants.json decides, keyed by their label."""
+    return {
+        "groupID": f"            groupID: {swift_string(e['group'])},",
+        "latinTitle": f"            latinTitle: {swift_string(e['latin'])},",
+        "englishTitle": f"            englishTitle: {swift_string(e['english'])},",
+        "setting": f"            setting: {swift_string(e.get('setting'))},",
+        "detail": f"            detail: {swift_string(e['detail'])},",
+        "prayerIDs": f"            prayerIDs: [{', '.join(swift_string(p) for p in e['prayers'])}],",
+    }
+
+
+def fold_text_into_swift(manifest):
+    """--text-only: chants.json's words written into the Swift as it
+    stands, the same lines `main` writes from them."""
+    entries = {c["id"]: c for c in manifest["chants"]}
+    text = SWIFT_OUT.read_text("utf-8")
+    ids = re.findall(r'^            id: "([^"]+)",', text, re.M)
+    if ids != [c["id"] for c in manifest["chants"]]:
+        sys.exit("chants.json and the Swift hold different chants: run without --text-only")
+    groups = {g["id"] for g in manifest["groups"]}
+    for c in manifest["chants"]:
+        if c["group"] not in groups:
+            sys.exit(f"{c['id']}: unknown group {c['group']}")
+
+    out = []
+    current = None
+    in_groups = False
+    for raw in text.split("\n"):
+        if raw == "    static let groups: [ChantGroup] = [":
+            out.append(raw)
+            out.extend(swift_groups(manifest))
+            in_groups = True
+            continue
+        if in_groups:
+            if raw == "    ]":
+                in_groups = False
+                out.append(raw)
+            continue
+        m = re.match(r'            id: "([^"]+)",', raw)
+        if m:
+            current = entries[m.group(1)]
+        label = re.match(r"            (groupID|latinTitle|englishTitle|setting|detail|prayerIDs): ", raw)
+        if label and current is not None:
+            out.append(swift_chant_text(current)[label.group(1)])
+            continue
+        out.append(raw)
+    SWIFT_OUT.write_text("\n".join(out), "utf-8")
+    print(f"words folded in for {len(ids)} chants and {len(groups)} shelves")
+
+
 def main():
     manifest = json.loads((TOOL / "chants.json").read_text("utf-8"))
     chants = manifest["chants"]
@@ -579,6 +644,10 @@ def main():
 
     if "--lines-only" in sys.argv[1:]:
         fold_lines_into_swift(ids)
+        return
+
+    if "--text-only" in sys.argv[1:]:
+        fold_text_into_swift(manifest)
         return
 
     if not keep:

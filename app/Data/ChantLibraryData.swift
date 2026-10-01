@@ -145,12 +145,12 @@ enum ChantLibraryData {
     ]
 
     static let seasonNotes: [ChantSeason: String] = [
-        .advent: "Four weeks of waiting for Christmas. The chants ask heaven to send the Saviour, and each day ends with the Alma Redemptoris Mater.",
-        .christmas: "From Christmas, through the Epiphany, to Septuagesima: the carols and hymns of the Child.",
-        .lent: "From Septuagesima, when the Alleluia is put away, through Lent and Passiontide to Easter.",
-        .easter: "The fifty days of the Resurrection. The Regina Cæli is sung in place of the Angelus, and at the close of each day.",
-        .pentecost: "The week of Pentecost, when the Church sings to the Holy Ghost.",
-        .afterPentecost: "The longest season of the year. Until Advent, each day ends with the Salve Regina."
+        .advent: "Four weeks of waiting for Christmas. The chants ask heaven to send the Saviour, and each day ends with “Loving Mother of the Redeemer” (Alma Redemptoris Mater).",
+        .christmas: "From Christmas, through the Epiphany on January 6, to Pre-Lent: the carols and hymns of the Christ Child.",
+        .lent: "From Pre-Lent, the three Sundays before Lent, when the Church stops singing Alleluia, through Lent to Easter.",
+        .easter: "The fifty days from Easter to Pentecost. “Queen of Heaven” (Regina Cæli) is sung in place of the Angelus, and at the close of each day.",
+        .pentecost: "The week of Pentecost, the feast of the Holy Spirit's coming.",
+        .afterPentecost: "The longest season, from late May or June until Advent. Each day ends with “Hail, Holy Queen” (Salve Regina)."
     ]
 
     /// Each season's painting, by subject
@@ -184,7 +184,7 @@ enum ChantLibraryData {
         ChantFeast(id: "good_friday", name: "Good Friday", rule: .easter(-2), chantID: "vexilla_regis"),
         ChantFeast(id: "easter", name: "Easter Sunday", rule: .easter(0), chantID: "victimae_paschali"),
         ChantFeast(id: "pentecost", name: "Pentecost", rule: .easter(49), chantID: "veni_sancte_spiritus"),
-        ChantFeast(id: "corpus_christi", name: "Corpus Christi", rule: .easter(60), chantID: "lauda_sion"),
+        ChantFeast(id: "corpus_christi", name: "Corpus Christi (the Body of Christ)", rule: .easter(60), chantID: "lauda_sion"),
         ChantFeast(id: "sacred_heart", name: "The Sacred Heart", rule: .easter(68), chantID: "litany_sacred_heart"),
         ChantFeast(id: "mount_carmel", name: "Our Lady of Mount Carmel", rule: .fixed(month: 7, day: 16), chantID: "flos_carmeli"),
         ChantFeast(id: "assumption", name: "The Assumption", rule: .fixed(month: 8, day: 15), chantID: "ave_maris_stella"),
@@ -197,7 +197,7 @@ enum ChantLibraryData {
         ChantFeast(id: "immaculate_conception", name: "The Immaculate Conception", rule: .fixed(month: 12, day: 8), chantID: "tota_pulchra", painting: "season_advent"),
         // Not a feast but a day of the Office: the O antiphons ring round
         // the Magnificat at Vespers from the 17th, and the 21st's is O Oriens
-        ChantFeast(id: "o_oriens", name: "The Fifth O Antiphon", rule: .fixed(month: 12, day: 21), chantID: "o_oriens_magnificat"),
+        ChantFeast(id: "o_oriens", name: "Advent's “O Morning Star”", rule: .fixed(month: 12, day: 21), chantID: "o_oriens_magnificat"),
         ChantFeast(id: "christmas", name: "Christmas Day", rule: .fixed(month: 12, day: 25), chantID: "adeste_fideles")
     ]
 
@@ -210,9 +210,9 @@ enum ChantLibraryData {
                      collective: "chants to the Trinity",
                      chantIDs: ["te_deum", "gloria_patri", "in_nomine_patris"],
                      painting: "devotion_holy_trinity"),
-        ChantWeekday(weekday: 2, devotion: "the Holy Souls",
-                     headline: "Mondays remember the Holy Souls",
-                     collective: "chants for the dead",
+        ChantWeekday(weekday: 2, devotion: "those who have died",
+                     headline: "Mondays remember those who have died",
+                     collective: "chants for those who have died",
                      chantIDs: ["dies_irae", "miserere"],
                      painting: "devotion_holy_souls"),
         ChantWeekday(weekday: 3, devotion: "the Holy Angels",
@@ -225,21 +225,21 @@ enum ChantLibraryData {
                      collective: "chants of St Joseph",
                      chantIDs: ["te_joseph", "litany_st_joseph"],
                      painting: "devotion_st_joseph"),
-        ChantWeekday(weekday: 5, devotion: "the Blessed Sacrament",
-                     headline: "Thursdays honour the Blessed Sacrament",
-                     collective: "chants of the Blessed Sacrament",
+        ChantWeekday(weekday: 5, devotion: "Jesus present in the Host",
+                     headline: "Thursdays honour Jesus, present in the Host",
+                     collective: "chants to Jesus in the Host",
                      // The whole Pange Lingua, whose last two verses are
                      // the Tantum Ergo
                      chantIDs: ["adoro_te", "ave_verum", "pange_lingua"],
                      painting: "luminous_eucharist"),
         ChantWeekday(weekday: 6, devotion: "the Passion",
-                     headline: "Fridays keep the Passion",
+                     headline: "Fridays remember the Passion",
                      collective: "chants of the Passion",
                      chantIDs: ["vexilla_regis", "stabat_mater", "anima_christi"],
                      painting: "sorrowful_crucifixion"),
-        ChantWeekday(weekday: 7, devotion: "Our Lady",
-                     headline: "Saturdays honour Our Lady",
-                     collective: "chants of Our Lady",
+        ChantWeekday(weekday: 7, devotion: "Mary",
+                     headline: "Saturdays honour Mary",
+                     collective: "chants of Mary",
                      chantIDs: ["ave_maris_stella", "sub_tuum", "salve_mater"],
                      painting: "glorious_coronation")
     ]
@@ -268,7 +268,7 @@ enum ChantLibraryData {
                    chantIDs: ["stabat_mater"], occasionID: nil, feastID: "seven_sorrows"),
         ChantMonth(month: 10, title: "The Month of the Holy Rosary",
                    chantIDs: [], occasionID: "sung_rosary", feastID: "rosary"),
-        ChantMonth(month: 11, title: "The Month of the Holy Souls",
+        ChantMonth(month: 11, title: "The Month for Those Who Have Died",
                    chantIDs: [], occasionID: "for_the_dead", feastID: "all_souls"),
         ChantMonth(month: 12, title: "The Month of the Immaculate Conception",
                    chantIDs: [], occasionID: nil, feastID: "immaculate_conception")
@@ -279,27 +279,27 @@ enum ChantLibraryData {
     static let occasions: [ChantOccasion] = [
         ChantOccasion(
             id: "benediction",
-            title: "Benediction",
-            note: "The blessing with the Blessed Sacrament",
+            title: "Adoration and Blessing",
+            note: "Benediction: hymns before the Host, then the priest's blessing",
             painting: "luminous_eucharist",
             blocks: [
-                ChantOccasionBlock(rubric: "The Blessed Sacrament is set on the altar. Kneel.",
+                ChantOccasionBlock(rubric: "The Host is placed on the altar for all to see. Kneel.",
                                    steps: [ChantOccasionStep(chant: .chant("o_salutaris"))]),
                 ChantOccasionBlock(rubric: "The priest offers incense.",
                                    steps: [ChantOccasionStep(chant: .chant("tantum_ergo"))]),
                 ChantOccasionBlock(rubric: "The priest blesses everyone with the Host. Then pray together:",
                                    steps: [ChantOccasionStep(chant: .chant("divine_praises"))]),
-                ChantOccasionBlock(rubric: "The Blessed Sacrament is put back in the tabernacle.",
+                ChantOccasionBlock(rubric: "The Host is put back in the tabernacle, where it is kept in church.",
                                    steps: [ChantOccasionStep(chant: .chant("adoremus"))])
             ]
         ),
         ChantOccasion(
             id: "visit",
-            title: "A Visit to the Blessed Sacrament",
-            note: "Quiet time before the tabernacle",
+            title: "A Visit to Jesus in Church",
+            note: "Quiet time with Jesus, present in the Host",
             painting: "sorrowful_agony",
             blocks: [
-                ChantOccasionBlock(rubric: "Kneel before the tabernacle.",
+                ChantOccasionBlock(rubric: "Kneel before the tabernacle, where the Host is kept.",
                                    steps: [ChantOccasionStep(chant: .chant("adoro_te"))]),
                 ChantOccasionBlock(rubric: "Greet Our Lord, hidden there.",
                                    steps: [ChantOccasionStep(chant: .chant("ave_verum"))]),
@@ -313,14 +313,14 @@ enum ChantLibraryData {
             note: "Every prayer of the Rosary, sung in Latin",
             painting: "joyful_annunciation",
             blocks: [
-                ChantOccasionBlock(rubric: "On the crucifix: sign yourself, then the Creed.",
+                ChantOccasionBlock(rubric: "On the crucifix: make the Sign of the Cross, then sing the Creed.",
                                    steps: [ChantOccasionStep(chant: .chant("in_nomine_patris")),
                                            ChantOccasionStep(chant: .chant("credo_in_deum"))]),
                 ChantOccasionBlock(rubric: "On the large bead, then the three small beads, for faith, hope and charity.",
                                    steps: [ChantOccasionStep(chant: .chant("pater_noster")),
                                            ChantOccasionStep(chant: .chant("ave_maria"), times: 3),
                                            ChantOccasionStep(chant: .chant("gloria_patri"))]),
-                ChantOccasionBlock(rubric: "Name each mystery, then pray its decade. Five times.",
+                ChantOccasionBlock(rubric: "Name each mystery, then pray its decade of ten Hail Marys. Five times.",
                                    steps: [ChantOccasionStep(chant: .chant("pater_noster")),
                                            ChantOccasionStep(chant: .chant("ave_maria"), times: 10),
                                            ChantOccasionStep(chant: .chant("gloria_patri")),
@@ -334,12 +334,12 @@ enum ChantLibraryData {
         ChantOccasion(
             id: "before_bed",
             title: "Before Bed",
-            note: "End the day with Our Lady",
+            note: "End the day with Mary",
             painting: "glorious_coronation",
             blocks: [
                 ChantOccasionBlock(rubric: "Put yourself under her protection for the night.",
                                    steps: [ChantOccasionStep(chant: .chant("sub_tuum"))]),
-                ChantOccasionBlock(rubric: "Then the antiphon the Church sings tonight.",
+                ChantOccasionBlock(rubric: "Then tonight's song to Mary.",
                                    steps: [ChantOccasionStep(chant: .antiphonOfTheSeason)])
             ]
         ),
@@ -349,9 +349,9 @@ enum ChantLibraryData {
             note: "Ask for help before you start",
             painting: "glorious_pentecost",
             blocks: [
-                ChantOccasionBlock(rubric: "Before you begin, ask the Holy Ghost to come.",
+                ChantOccasionBlock(rubric: "Before you begin, ask the Holy Spirit to come.",
                                    steps: [ChantOccasionStep(chant: .chant("veni_sancte_reple"))]),
-                ChantOccasionBlock(rubric: "Then the hymn of every work begun.",
+                ChantOccasionBlock(rubric: "Then the hymn sung at the start of any work.",
                                    steps: [ChantOccasionStep(chant: .chant("veni_creator"))])
             ]
         ),
@@ -361,7 +361,7 @@ enum ChantLibraryData {
             note: "At a funeral, or any time in November",
             painting: "seven_sorrows_burial",
             blocks: [
-                ChantOccasionBlock(rubric: "The sequence of the Requiem Mass.",
+                ChantOccasionBlock(rubric: "The poem sung at the funeral Mass.",
                                    steps: [ChantOccasionStep(chant: .chant("dies_irae"))]),
                 ChantOccasionBlock(rubric: "Then ask all the saints to pray for them.",
                                    steps: [ChantOccasionStep(chant: .chant("litany_saints"))])
@@ -377,22 +377,22 @@ enum ChantLibraryData {
         ChantLearningPath(id: "rosary", title: "Start here: the Rosary prayers",
                           note: "Short and simple. Sung on every bead.",
                           chantIDs: ["in_nomine_patris", "gloria_patri", "ave_maria", "pater_noster"]),
-        ChantLearningPath(id: "marian", title: "Hymns to Mary",
-                          note: "One for each season, sung at night.",
+        ChantLearningPath(id: "marian", title: "Songs to Mary",
+                          note: "One for each season, sung at night, and the oldest prayer to her.",
                           chantIDs: ["salve_regina_simple", "sub_tuum", "regina_caeli_simple",
                                      "ave_regina_simple", "alma_redemptoris"]),
         ChantLearningPath(id: "adoration", title: "Hymns for Adoration",
-                          note: "Sung before the Blessed Sacrament.",
+                          note: "Sung before Jesus, present in the Host.",
                           chantIDs: ["o_salutaris", "ave_verum", "tantum_ergo", "adoro_te"]),
         ChantLearningPath(id: "year", title: "Through the Year",
                           note: "One for each season, learned before it comes.",
                           chantIDs: ["rorate_caeli", "adeste_fideles", "attende_domine",
                                      "victimae_paschali", "veni_creator"]),
         ChantLearningPath(id: "longer", title: "The Longer Chants",
-                          note: "The Creed, the canticles and a litany, for when the short ones are known.",
+                          note: "The Creed, two great songs of praise and a litany, for when the short ones are known.",
                           chantIDs: ["credo_in_deum", "magnificat", "te_deum", "litany_loreto"]),
         ChantLearningPath(id: "mass", title: "The Sung Mass",
-                          note: "Mass VIII, the de Angelis, and the Creed sung on Sundays.",
+                          note: "The Mass of the Angels (Mass VIII), the best-known sung Mass, and the Sunday Creed.",
                           chantIDs: ["kyrie_de_angelis", "gloria_de_angelis", "sanctus_de_angelis",
                                      "agnus_de_angelis", "credo_iii"])
     ]
@@ -479,9 +479,47 @@ enum ChantLibraryData {
     /// Tonight's antiphon, introduced: keyed by the work, so both its
     /// settings read the same
     static let tonightLines: [String: String] = [
-        "Salve Regina|hail_holy_queen": "Hail, Holy Queen. Sung to Our Lady at the close of each day, from Trinity Sunday until Advent.",
-        "Alma Redemptoris Mater|alma_redemptoris": "Loving Mother of the Redeemer. Sung at the close of each day from Advent until the Purification.",
-        "Ave Regina Cælorum|ave_regina_caelorum": "Hail, Queen of Heaven. Sung at the close of each day from the Purification until Holy Week.",
-        "Regina Cæli|regina_caeli": "Queen of Heaven, rejoice. Sung through Eastertide at the close of each day, and in place of the Angelus."
+        "Salve Regina|hail_holy_queen": "Hail, Holy Queen. Sung to Mary at the close of each day, from Trinity Sunday (late May or June) until Advent.",
+        "Alma Redemptoris Mater|alma_redemptoris": "Loving Mother of the Redeemer. Sung at the close of each day from Advent until February 2 (Candlemas).",
+        "Ave Regina Cælorum|ave_regina_caelorum": "Hail, Queen of Heaven. Sung at the close of each day from February 2 (Candlemas) until Holy Week.",
+        "Regina Cæli|regina_caeli": "Queen of Heaven, rejoice. Sung at the close of each day through the Easter season, and in place of the Angelus."
     ]
+
+    /// The names the day's four hours give their chants under the arc,
+    /// in English and as short as they honestly can be: a station is a
+    /// quarter of the glass wide
+    static let stationNames: [String: String] = [
+        "angelus": "Angelus",
+        "magnificat": "Mary's Song",
+        "salve_regina_simple": "Hail, Holy Queen",
+        "salve_regina_solemn": "Hail, Holy Queen",
+        "alma_redemptoris": "Loving Mother",
+        "ave_regina_simple": "Hail, Queen of Heaven",
+        "ave_regina_solemn": "Hail, Queen of Heaven",
+        "regina_caeli_simple": "Queen of Heaven",
+        "regina_caeli_solemn": "Queen of Heaven"
+    ]
+
+    /// The words an occasion's title or a red note once had, by the words
+    /// it has now. A set kept from an occasion before its words were made
+    /// plain carries the old ones, and is still the occasion's own copy:
+    /// the shelf reads its name and notes through this before comparing
+    static let formerWords: [String: String] = [
+        "Benediction": "Adoration and Blessing",
+        "The Blessed Sacrament is set on the altar. Kneel.": "The Host is placed on the altar for all to see. Kneel.",
+        "The Blessed Sacrament is put back in the tabernacle.": "The Host is put back in the tabernacle, where it is kept in church.",
+        "A Visit to the Blessed Sacrament": "A Visit to Jesus in Church",
+        "Kneel before the tabernacle.": "Kneel before the tabernacle, where the Host is kept.",
+        "On the crucifix: sign yourself, then the Creed.": "On the crucifix: make the Sign of the Cross, then sing the Creed.",
+        "Name each mystery, then pray its decade. Five times.": "Name each mystery, then pray its decade of ten Hail Marys. Five times.",
+        "Then the antiphon the Church sings tonight.": "Then tonight's song to Mary.",
+        "Before you begin, ask the Holy Ghost to come.": "Before you begin, ask the Holy Spirit to come.",
+        "Then the hymn of every work begun.": "Then the hymn sung at the start of any work.",
+        "The sequence of the Requiem Mass.": "The poem sung at the funeral Mass."
+    ]
+
+    /// Words as they read now, whichever wording they were kept in
+    static func currentWording(of words: String) -> String {
+        formerWords[words] ?? words
+    }
 }

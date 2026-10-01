@@ -6,9 +6,9 @@
 //  learned in four steps, the learner's own to take:
 //
 //    1 Listen        hear it sung
-//    2 Read along    follow the words as the cantor sings them
-//    3 Sing along    the cantor sings, then you sing it back
-//    4 On your own   you sing first, then the cantor sings it to you
+//    2 Read along    follow the words as the singer sings them
+//    3 Sing along    the singer sings, then you sing it back
+//    4 On your own   you sing first, then the singer sings it to you
 //
 //  For a chant whose lines have been timed (`Chant.lines`), each step goes
 //  a line at a time — the line sung, again if asked, three times if
@@ -46,7 +46,7 @@ struct ChantPracticeView: View {
     /// not beginning to learn, so nothing is kept until they act
     @State private var hasActed = false
 
-    /// Whether the practice set the cantor singing, so closing it stops
+    /// Whether the practice set the singer singing, so closing it stops
     /// what it began and leaves alone what it found
     @State private var startedPlayback = false
 
@@ -192,11 +192,12 @@ struct ChantPracticeView: View {
 
             Spacer()
 
-            Text("Learning \(chant.latinTitle)")
+            Text("Learning \(chant.englishTitle)")
                 .font(AppFonts.readingFont(16))
                 .foregroundColor(AppColors.cream)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
+                .accessibilityLabel("Learning \(chant.englishTitle), \(chant.latinTitle)")
                 .accessibilityAddTraits(.isHeader)
 
             Spacer()
@@ -279,7 +280,7 @@ struct ChantPracticeView: View {
         )
         .padding(12)
         .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(AppColors.gold.opacity(0.24), lineWidth: AppLine.hairline))
-        .accessibilityLabel("The score")
+        .accessibilityLabel("The sheet music")
     }
 
     // MARK: - Words
@@ -323,7 +324,7 @@ struct ChantPracticeView: View {
             .multilineTextAlignment(.center)
             .fixedSize(horizontal: false, vertical: true)
         } else {
-            Text("The words of this chant stand on its score.")
+            Text("The words of this chant are printed on its sheet music.")
                 .font(AppFonts.readingItalicFont(15))
                 .foregroundColor(AppColors.textSecondary)
         }
@@ -341,8 +342,8 @@ struct ChantPracticeView: View {
             ChantYourTurn(
                 turn: turn,
                 subtitle: step == .onYourOwn
-                    ? "Sing the line from memory. The cantor will answer."
-                    : "The cantor sang the line. Now sing it back."
+                    ? "Sing the line from memory. The singer will answer."
+                    : "The singer sang the line. Now sing it back."
             )
             .transition(.opacity)
         } else {
@@ -351,7 +352,7 @@ struct ChantPracticeView: View {
                     isPlaying: player.isPlaying(chant),
                     isLoading: player.current.id == chant.id && player.isLoading,
                     size: 40,
-                    label: chant.latinTitle
+                    label: chant.spokenName
                 ) {
                     acted()
                     if lines, !player.holds(chant) || !player.isPlaying {
@@ -385,11 +386,11 @@ struct ChantPracticeView: View {
     }
 
     private var statusTitle: String {
-        if player.isPlaying(chant) { return "The cantor is singing" }
+        if player.isPlaying(chant) { return "The singer is singing" }
         switch step {
         case .listen:    return "Hear it sung"
         case .readAlong: return "Follow the words"
-        case .singAlong: return "Sing with the cantor"
+        case .singAlong: return "Sing with the recording"
         case .onYourOwn: return "Sing it on your own"
         }
     }
@@ -401,14 +402,14 @@ struct ChantPracticeView: View {
         if lines {
             switch step {
             case .listen, .readAlong: return "Tap to hear the line."
-            case .singAlong: return "The cantor sings the line, then you sing it back."
-            case .onYourOwn: return "You sing first, then the cantor answers."
+            case .singAlong: return "The singer sings the line, then you sing it back."
+            case .onYourOwn: return "You sing first, then the singer answers."
             }
         }
         switch step {
         case .listen:    return "Hear the whole chant, as many times as you like."
-        case .readAlong: return "Follow the words as the cantor sings them."
-        case .singAlong: return "Sing with the cantor, slower if it helps."
+        case .readAlong: return "Follow the words as the singer sings them."
+        case .singAlong: return "Sing with the recording, slower if it helps."
         case .onYourOwn: return "Sing from memory, then play it to check."
         }
     }
@@ -485,7 +486,7 @@ struct ChantPracticeView: View {
             }
             .buttonStyle(SacredCardButtonStyle())
             .frame(maxWidth: 130)
-            .accessibilityLabel(lines ? "Sing the line again" : "From the top")
+            .accessibilityLabel(lines ? "Play the line again" : "From the top")
 
             GoldCTAButton(
                 title: forwardTitle,
@@ -513,11 +514,18 @@ struct ChantPracticeView: View {
             Spacer()
             AppIcon("ph-seal-check-fill", size: 44)
                 .foregroundColor(AppColors.gold)
-            Text(chant.latinTitle)
-                .font(AppFonts.titleFont(26))
-                .foregroundColor(AppColors.cream)
-                .multilineTextAlignment(.center)
-            Text("Learned by heart. It is kept on your shelf, under Saved.")
+            VStack(spacing: 6) {
+                Text(chant.latinTitle)
+                    .font(AppFonts.titleFont(26))
+                    .foregroundColor(AppColors.cream)
+                    .multilineTextAlignment(.center)
+                Text(chant.englishTitle)
+                    .font(AppFonts.readingFont(17))
+                    .foregroundColor(AppColors.cream.opacity(0.85))
+                    .multilineTextAlignment(.center)
+            }
+            .accessibilityElement(children: .combine)
+            Text("Learned by heart. You'll find it in Saved, under Learned.")
                 .font(AppFonts.readingItalicFont(16))
                 .foregroundColor(AppColors.cream.opacity(0.78))
                 .multilineTextAlignment(.center)
@@ -638,7 +646,7 @@ struct ChantPracticeView: View {
         if lines {
             begin()
         } else if next == .onYourOwn, player.isPlaying(chant) {
-            // From memory: the cantor rests until asked
+            // From memory: the singer rests until asked
             player.togglePlayback()
         } else {
             begin()

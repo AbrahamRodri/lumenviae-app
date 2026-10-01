@@ -186,7 +186,7 @@ struct ChantSearchView: View {
                 if let form {
                     chip(form.title, isOn: true) { self.form = nil }
                 }
-                chip("In season", isOn: inSeason) { inSeason.toggle() }
+                chip("This season", isOn: inSeason) { inSeason.toggle() }
                 chip("Under 3 min", isOn: short) { short.toggle() }
                 chip("Still to learn", isOn: stillToLearn) { stillToLearn.toggle() }
             }
@@ -282,7 +282,7 @@ struct ChantSearchView: View {
         let other = titleWorks.filter { !$0.chants[0].seasons.isEmpty && !$0.chants[0].seasons.contains(season) }
 
         return VStack(alignment: .leading, spacing: 28) {
-            if !now.isEmpty { workGroup("In season now", now) }
+            if !now.isEmpty { workGroup("This season", now) }
             if !always.isEmpty { workGroup(now.isEmpty && other.isEmpty ? "Chants" : "Any time of year", always) }
             if !other.isEmpty { workGroup("Other times of year", other) }
             if !prayerWorks.isEmpty { workGroup("Sung prayers", prayerWorks) }
@@ -334,7 +334,7 @@ struct ChantSearchView: View {
         let versions = works.reduce(0) { $0 + $1.chants.count }
         let count = works.count == 1 ? "1 chant" : "\(works.count) chants"
         return VStack(alignment: .leading, spacing: 0) {
-            groupHeading(title, count: versions > works.count ? "\(count), \(versions) settings" : count)
+            groupHeading(title, count: versions > works.count ? "\(count), \(versions) versions" : count)
             ForEach(works, id: \.key) { work in
                 workRow(work)
             }
@@ -351,7 +351,7 @@ struct ChantSearchView: View {
                     isPlaying: player.isPlaying(chosen),
                     isLoading: player.current.id == chosen.id && player.isLoading,
                     size: 34,
-                    label: chosen.latinTitle
+                    label: chosen.spokenName
                 ) {
                     player.toggle(chosen)
                 }
@@ -472,7 +472,7 @@ struct ChantSearchView: View {
             hit.chant.englishTitle
         ].compactMap { $0 }.joined(separator: ", "))
         .accessibilityAddTraits(.isButton)
-        .accessibilityHint(hit.line != nil ? "Sings from this line" : "Opens the chant")
+        .accessibilityHint(hit.line != nil ? "Plays from this line" : "Opens the chant")
     }
 }
 

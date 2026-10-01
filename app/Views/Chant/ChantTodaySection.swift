@@ -69,7 +69,7 @@ struct ChantTodaySection: View {
             let present = ChantHour.present(at: now)
             VStack(alignment: .leading, spacing: 12) {
                 HStack(alignment: .lastTextBaseline, spacing: 10) {
-                    ChantSectionHeading(kicker: "Through the day", title: present.headline, titleSize: 19)
+                    ChantSectionHeading(kicker: "Through the day", title: present.headline(on: now), titleSize: 19)
                     Text(now.formatted(date: .omitted, time: .shortened).uppercased())
                         .font(AppFonts.labelFont(9))
                         .tracking(1)
@@ -110,14 +110,20 @@ struct ChantTodaySection: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(QuietGlyphButtonStyle())
-        .accessibilityLabel("\(hour.time): \(chant?.latinTitle ?? "")")
+        .accessibilityLabel("\(hour.time): \(chant.map(stationLabel) ?? "")")
         .accessibilityAddTraits(lit ? [.isSelected] : [])
         .accessibilityHint("Opens the chant")
     }
 
-    /// The station's name, as short as it can honestly be
+    /// The station's name, in English and as short as it can honestly be
     private func shortTitle(_ chant: Chant) -> String {
-        chant.id == "angelus" ? "Angelus" : chant.latinTitle
+        ChantLibraryData.stationNames[chant.id] ?? chant.englishTitle
+    }
+
+    /// The station to VoiceOver: its short name and the chant's Latin one,
+    /// "Mary's Song, the Magnificat"
+    private func stationLabel(_ chant: Chant) -> String {
+        chant.id == "angelus" ? "the Angelus" : "\(shortTitle(chant)), the \(chant.latinTitle)"
     }
 
     // MARK: - Tonight's chant
@@ -136,7 +142,7 @@ struct ChantTodaySection: View {
                 spacing: 12,
                 contentPadding: EdgeInsets(top: 22, leading: 22, bottom: 22, trailing: 22)
             ) {
-                HeroBadge("TONIGHT'S CHANT")
+                HeroBadge("TONIGHT'S SONG TO MARY")
 
                 Text(chosen.latinTitle)
                     .font(AppFonts.titleFont(30))
@@ -179,7 +185,7 @@ struct ChantTodaySection: View {
                 isPlaying: player.isPlaying(chant),
                 isLoading: player.current.id == chant.id && player.isLoading,
                 size: 56,
-                label: chant.latinTitle
+                label: chant.spokenName
             ) {
                 player.toggle(chant)
             }
@@ -193,7 +199,7 @@ struct ChantTodaySection: View {
             }
             .buttonStyle(.plain)
             .accessibilityElement(children: .combine)
-            .accessibilityHint("Opens the chant with its score")
+            .accessibilityHint("Opens the chant with its sheet music")
         }
     }
 
@@ -289,6 +295,10 @@ struct ChantTodaySection: View {
                             .font(AppFonts.headlineFont(17))
                             .foregroundColor(AppColors.cream)
                             .fixedSize(horizontal: false, vertical: true)
+                        Text(featured.englishTitle)
+                            .font(AppFonts.readingFont(15))
+                            .foregroundColor(AppColors.cream.opacity(0.85))
+                            .fixedSize(horizontal: false, vertical: true)
                         Text(featured.detail)
                             .font(AppFonts.readingItalicFont(14))
                             .foregroundColor(AppColors.textSecondary)
@@ -299,14 +309,14 @@ struct ChantTodaySection: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityElement(children: .combine)
-                .accessibilityHint("Opens the chant with its score")
+                .accessibilityHint("Opens the chant with its sheet music")
 
                 HStack(spacing: 10) {
                     ChantPlayDisc(
                         isPlaying: player.isPlaying(featured),
                         isLoading: player.current.id == featured.id && player.isLoading,
                         size: 32,
-                        label: featured.latinTitle
+                        label: featured.spokenName
                     ) {
                         player.toggle(featured)
                     }
@@ -338,7 +348,7 @@ struct ChantTodaySection: View {
 
     /// What the day's set link says while the set is under way
     private var setWord: String {
-        if player.waitingForNext { return "Go on" }
+        if player.waitingForNext { return "Play next" }
         return player.isGoingOn ? "Pause" : "Resume"
     }
 
@@ -369,7 +379,7 @@ struct ChantTodaySection: View {
             VStack(spacing: 0) {
                 if let occasion = month.occasion {
                     monthRow(
-                        kicker: occasion.id == "sung_rosary" ? "Full Rosary" : "Sung together",
+                        kicker: occasion.id == "sung_rosary" ? "Full Rosary" : "Chants in order",
                         title: occasion.title,
                         note: occasion.note,
                         trailing: minutes(occasion.duration()),
@@ -496,9 +506,14 @@ struct ChantTodaySection: View {
                         .font(AppFonts.labelFont(9))
                         .tracking(2)
                         .foregroundColor(AppColors.gold)
-                    Text(chant.latinTitle)
-                        .font(AppFonts.readingFont(18))
-                        .foregroundColor(AppColors.cream)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(chant.latinTitle)
+                            .font(AppFonts.readingFont(18))
+                            .foregroundColor(AppColors.cream)
+                        Text(chant.englishTitle)
+                            .font(AppFonts.readingItalicFont(13.5))
+                            .foregroundColor(AppColors.textSecondary)
+                    }
                     ChantStepBeads(step: step)
                     Text("Step \(step.rawValue) of 4: \(step.title)")
                         .font(AppFonts.readingItalicFont(13.5))

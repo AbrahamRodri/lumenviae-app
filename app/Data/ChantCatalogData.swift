@@ -15,19 +15,19 @@ import Foundation
 extension ChantCatalog {
 
     static let groups: [ChantGroup] = [
-        ChantGroup(id: "ourLady", title: "Our Lady", note: "The antiphons of the year, her hymns and her litany"),
+        ChantGroup(id: "ourLady", title: "Mary", note: "Her songs through the year, her hymns and her litany"),
         ChantGroup(id: "rosary", title: "The Rosary and the Angelus", note: "The prayers of the beads, chanted as a Latin Rosary is sung"),
-        ChantGroup(id: "sacrament", title: "The Blessed Sacrament", note: "For Mass, Benediction and a visit"),
-        ChantGroup(id: "holyGhost", title: "The Holy Ghost", note: "Pentecost, and every work begun"),
+        ChantGroup(id: "sacrament", title: "The Blessed Sacrament", note: "Jesus present in the Host: for Mass, Adoration and a visit"),
+        ChantGroup(id: "holyGhost", title: "The Holy Spirit", note: "Pentecost, and the start of any work"),
         ChantGroup(id: "ourLord", title: "The Sacred Heart and the Holy Name", note: nil),
         ChantGroup(id: "praise", title: "Praise and Thanksgiving", note: nil),
         ChantGroup(id: "saints", title: "Angels and Saints", note: nil),
         ChantGroup(id: "advent", title: "Advent", note: nil),
         ChantGroup(id: "christmas", title: "Christmas", note: nil),
-        ChantGroup(id: "lent", title: "Lent and Passiontide", note: nil),
+        ChantGroup(id: "lent", title: "Lent", note: nil),
         ChantGroup(id: "easter", title: "Easter", note: nil),
-        ChantGroup(id: "departed", title: "The Faithful Departed", note: nil),
-        ChantGroup(id: "mass", title: "The Mass", note: "The Ordinary, sung as on Sundays")
+        ChantGroup(id: "departed", title: "For Those Who Have Died", note: nil),
+        ChantGroup(id: "mass", title: "The Mass", note: "The parts of the Mass sung every Sunday")
     ]
 
     static let all: [Chant] = [
@@ -36,8 +36,8 @@ extension ChantCatalog {
             groupID: "ourLady",
             latinTitle: "Salve Regina",
             englishTitle: "Hail, Holy Queen",
-            setting: "Simple tone",
-            detail: "The evening antiphon from Trinity Sunday to Advent, and the Rosary's close",
+            setting: "Simple melody",
+            detail: "The evening song to Mary from Trinity Sunday to Advent, and the Rosary's close",
             prayerIDs: ["hail_holy_queen"],
             duration: 185.0,
             score: [
@@ -74,8 +74,8 @@ extension ChantCatalog {
             groupID: "ourLady",
             latinTitle: "Salve Regina",
             englishTitle: "Hail, Holy Queen",
-            setting: "Solemn tone",
-            detail: "The same antiphon in its older, richer melody",
+            setting: "Solemn melody",
+            detail: "The same song in its older, richer melody",
             prayerIDs: ["hail_holy_queen"],
             duration: 250.1,
             score: [
@@ -116,8 +116,8 @@ extension ChantCatalog {
             groupID: "ourLady",
             latinTitle: "Alma Redemptoris Mater",
             englishTitle: "Loving Mother of the Redeemer",
-            setting: "Solemn tone",
-            detail: "The evening antiphon from Advent to Candlemas",
+            setting: nil,
+            detail: "The evening song to Mary from Advent to February 2",
             prayerIDs: ["alma_redemptoris"],
             duration: 210.0,
             score: [
@@ -161,8 +161,8 @@ extension ChantCatalog {
             groupID: "ourLady",
             latinTitle: "Ave Regina Cælorum",
             englishTitle: "Hail, Queen of Heaven",
-            setting: "Simple tone",
-            detail: "The evening antiphon from Candlemas to Holy Week",
+            setting: "Simple melody",
+            detail: "The evening song to Mary from February 2 to Holy Week",
             prayerIDs: ["ave_regina_caelorum"],
             duration: 96.5,
             score: [
@@ -193,8 +193,8 @@ extension ChantCatalog {
             groupID: "ourLady",
             latinTitle: "Ave Regina Cælorum",
             englishTitle: "Hail, Queen of Heaven",
-            setting: "Solemn tone",
-            detail: "The same antiphon in its solemn melody",
+            setting: "Solemn melody",
+            detail: "The same song in its solemn melody",
             prayerIDs: ["ave_regina_caelorum"],
             duration: 138.0,
             score: [
@@ -224,8 +224,8 @@ extension ChantCatalog {
             groupID: "ourLady",
             latinTitle: "Regina Cæli",
             englishTitle: "Queen of Heaven, Rejoice",
-            setting: "Simple tone",
-            detail: "The antiphon of Eastertide, sung in place of the Angelus",
+            setting: "Simple melody",
+            detail: "The song to Mary for the fifty days of Easter, sung in place of the Angelus",
             prayerIDs: ["regina_caeli"],
             duration: 91.0,
             score: [
@@ -255,8 +255,8 @@ extension ChantCatalog {
             groupID: "ourLady",
             latinTitle: "Regina Cæli",
             englishTitle: "Queen of Heaven, Rejoice",
-            setting: "Solemn tone",
-            detail: "The same antiphon in its solemn melody",
+            setting: "Solemn melody",
+            detail: "The same song in its solemn melody",
             prayerIDs: ["regina_caeli"],
             duration: 144.0,
             score: [
@@ -287,7 +287,7 @@ extension ChantCatalog {
             latinTitle: "Sub Tuum Præsidium",
             englishTitle: "We Fly to Thy Patronage",
             setting: nil,
-            detail: "The oldest prayer to Our Lady that survives",
+            detail: "The oldest prayer to Mary that survives",
             prayerIDs: ["sub_tuum"],
             duration: 104.1,
             score: [
@@ -317,7 +317,7 @@ extension ChantCatalog {
             latinTitle: "Ave Maris Stella",
             englishTitle: "Hail, Star of the Sea",
             setting: nil,
-            detail: "The Vespers hymn of her feasts and of her Saturdays",
+            detail: "The evening hymn of her feasts and of her Saturdays",
             prayerIDs: ["ave_maris_stella"],
             duration: 132.0,
             score: [
@@ -348,7 +348,7 @@ extension ChantCatalog {
             latinTitle: "Magnificat",
             englishTitle: "The Canticle of Mary",
             setting: "With alleluia",
-            detail: "Our Lady's own song, sung every evening at Vespers",
+            detail: "Mary's own song, sung at evening prayer every day",
             prayerIDs: ["magnificat"],
             duration: 314.1,
             score: [
@@ -399,7 +399,7 @@ extension ChantCatalog {
             latinTitle: "Tota Pulchra Es",
             englishTitle: "Thou Art All Fair",
             setting: nil,
-            detail: "In honour of the Immaculate Conception",
+            detail: "In honour of the Immaculate Conception: Mary, conceived without sin",
             prayerIDs: ["tota_pulchra"],
             duration: 108.0,
             score: [
@@ -429,7 +429,7 @@ extension ChantCatalog {
             latinTitle: "Flos Carmeli",
             englishTitle: "Flower of Carmel",
             setting: nil,
-            detail: "The sequence of Our Lady of Mount Carmel",
+            detail: "The feast poem of Our Lady of Mount Carmel",
             prayerIDs: ["flos_carmeli"],
             duration: 168.0,
             score: [
@@ -484,8 +484,8 @@ extension ChantCatalog {
             groupID: "ourLady",
             latinTitle: "Stabat Mater",
             englishTitle: "The Mother Stood",
-            setting: "The sequence",
-            detail: "The sequence of the Seven Sorrows",
+            setting: "Feast poem",
+            detail: "The feast poem of the Seven Sorrows of Mary",
             prayerIDs: ["stabat_mater"],
             duration: 330.0,
             score: [
@@ -562,7 +562,7 @@ extension ChantCatalog {
             latinTitle: "Litaniæ Lauretanæ",
             englishTitle: "The Litany of Loreto",
             setting: nil,
-            detail: "With the versicle and collect for each season",
+            detail: "With the closing verse and prayer for each season",
             prayerIDs: ["litany_loreto"],
             duration: 784.1,
             score: [
@@ -774,8 +774,8 @@ extension ChantCatalog {
             groupID: "ourLady",
             latinTitle: "Ave Maria",
             englishTitle: "Hail Mary",
-            setting: "Antiphon",
-            detail: "The Offertory of the last Sunday of Advent",
+            setting: "Short chant",
+            detail: "Sung at Mass on the last Sunday of Advent",
             prayerIDs: [],
             duration: 57.0,
             score: [
@@ -797,7 +797,7 @@ extension ChantCatalog {
             latinTitle: "Salve Mater Misericordiæ",
             englishTitle: "Hail, Mother of Mercy",
             setting: nil,
-            detail: "A Marian hymn with a refrain for all to sing",
+            detail: "A hymn to Mary with a refrain for all to sing",
             prayerIDs: [],
             duration: 463.0,
             score: [
@@ -880,7 +880,7 @@ extension ChantCatalog {
             latinTitle: "Inviolata",
             englishTitle: "Inviolate",
             setting: nil,
-            detail: "A prose to the ever-Virgin",
+            detail: "A hymn to Mary, ever a virgin",
             prayerIDs: [],
             duration: 90.0,
             score: [
@@ -908,7 +908,7 @@ extension ChantCatalog {
             latinTitle: "O Gloriosa Virginum",
             englishTitle: "O Glorious Virgin",
             setting: nil,
-            detail: "The Lauds hymn of Our Lady's feasts",
+            detail: "The morning hymn of Mary's feasts",
             prayerIDs: [],
             duration: 119.1,
             score: [
@@ -941,7 +941,7 @@ extension ChantCatalog {
             latinTitle: "Te Matrem Laudamus",
             englishTitle: "We Praise Thee as Mother",
             setting: nil,
-            detail: "A Marian Te Deum",
+            detail: "A song of praise to Mary, in the form of the Te Deum",
             prayerIDs: [],
             duration: 360.0,
             score: [
@@ -1077,7 +1077,7 @@ extension ChantCatalog {
             latinTitle: "O mi Jesu",
             englishTitle: "The Fatima Prayer",
             setting: nil,
-            detail: "After the Glory Be, with a second aspiration to Our Lady",
+            detail: "After the Glory Be, with a second short prayer to Mary",
             prayerIDs: ["fatima_prayer"],
             duration: 34.5,
             score: [
@@ -1099,7 +1099,7 @@ extension ChantCatalog {
             latinTitle: "Angelus Domini",
             englishTitle: "The Angelus",
             setting: nil,
-            detail: "At six, at noon and at six, with its collect",
+            detail: "At 6 AM, noon and 6 PM, with its closing prayer",
             prayerIDs: ["angelus"],
             duration: 234.9,
             score: [
@@ -1200,7 +1200,7 @@ extension ChantCatalog {
             latinTitle: "Ave Verum Corpus",
             englishTitle: "Hail, True Body",
             setting: nil,
-            detail: "Sung at the Elevation and at Benediction",
+            detail: "Sung as the priest raises the Host, and at Benediction",
             prayerIDs: ["ave_verum"],
             duration: 87.0,
             score: [
@@ -1226,7 +1226,7 @@ extension ChantCatalog {
             latinTitle: "O Salutaris Hostia",
             englishTitle: "O Saving Victim",
             setting: nil,
-            detail: "Sung as the Host is set in the monstrance",
+            detail: "Sung as the Host is placed on the altar for adoration",
             prayerIDs: ["o_salutaris"],
             duration: 66.0,
             score: [
@@ -1289,7 +1289,7 @@ extension ChantCatalog {
             latinTitle: "O Sacrum Convivium",
             englishTitle: "O Sacred Banquet",
             setting: nil,
-            detail: "The Magnificat antiphon of Corpus Christi",
+            detail: "Sung at evening prayer on Corpus Christi, the feast of the Body of Christ",
             prayerIDs: ["o_sacrum_convivium"],
             duration: 118.0,
             score: [
@@ -1375,7 +1375,7 @@ extension ChantCatalog {
             latinTitle: "Panis Angelicus",
             englishTitle: "Bread of Angels",
             setting: nil,
-            detail: "From St Thomas's hymn for the Matins of Corpus Christi",
+            detail: "From St Thomas's hymn for the night prayer of Corpus Christi",
             prayerIDs: [],
             duration: 87.0,
             score: [
@@ -1406,7 +1406,7 @@ extension ChantCatalog {
             latinTitle: "Lauda Sion",
             englishTitle: "Praise, O Sion",
             setting: nil,
-            detail: "The sequence of Corpus Christi",
+            detail: "The feast poem of Corpus Christi, the feast of the Body of Christ",
             prayerIDs: [],
             duration: 438.0,
             score: [
@@ -1534,7 +1534,7 @@ extension ChantCatalog {
             latinTitle: "Ecce Panis Angelorum",
             englishTitle: "Behold the Bread of Angels",
             setting: nil,
-            detail: "The last verses of the Lauda Sion",
+            detail: "The last verses of the Lauda Sion (Praise, O Sion)",
             prayerIDs: [],
             duration: 101.0,
             score: [
@@ -1617,7 +1617,7 @@ extension ChantCatalog {
             latinTitle: "Veni Creator Spiritus",
             englishTitle: "Come, Creator Spirit",
             setting: nil,
-            detail: "The hymn of Pentecost, with its versicle and collect",
+            detail: "The hymn of Pentecost, with its closing verse and prayer",
             prayerIDs: ["veni_creator"],
             duration: 248.1,
             score: [
@@ -1669,8 +1669,8 @@ extension ChantCatalog {
             groupID: "holyGhost",
             latinTitle: "Veni Sancte Spiritus",
             englishTitle: "Come, Holy Spirit",
-            setting: "The sequence",
-            detail: "The Golden Sequence of Pentecost",
+            setting: "Feast poem",
+            detail: "The golden feast poem of Pentecost",
             prayerIDs: ["veni_sancte_spiritus"],
             duration: 157.1,
             score: [
@@ -1710,8 +1710,8 @@ extension ChantCatalog {
             groupID: "holyGhost",
             latinTitle: "Veni Sancte Spiritus, Reple",
             englishTitle: "Come, Holy Ghost",
-            setting: "Antiphon",
-            detail: "Before prayer, study or any work begun",
+            setting: "Short chant",
+            detail: "Before prayer, study or any work",
             prayerIDs: ["come_holy_ghost"],
             duration: 88.1,
             score: [
@@ -1742,7 +1742,7 @@ extension ChantCatalog {
             latinTitle: "Litaniæ Sacratissimi Cordis",
             englishTitle: "The Litany of the Sacred Heart",
             setting: nil,
-            detail: "For First Fridays and the month of June",
+            detail: "For the first Friday of each month, and for June",
             prayerIDs: ["litany_sacred_heart"],
             duration: 698.1,
             score: [
@@ -2076,7 +2076,7 @@ extension ChantCatalog {
             latinTitle: "Cor Jesu Sacratissimum",
             englishTitle: "Most Sacred Heart of Jesus",
             setting: nil,
-            detail: "An invocation of the Sacred Heart",
+            detail: "A short prayer to the Sacred Heart",
             prayerIDs: [],
             duration: 38.1,
             score: [
@@ -2097,8 +2097,8 @@ extension ChantCatalog {
             groupID: "praise",
             latinTitle: "Te Deum",
             englishTitle: "We Praise Thee, O God",
-            setting: "Solemn tone",
-            detail: "The Church's great hymn of thanksgiving, with its versicles and collect",
+            setting: nil,
+            detail: "The Church's great hymn of thanksgiving, with its closing verses and prayer",
             prayerIDs: ["te_deum"],
             duration: 451.1,
             score: [
@@ -2165,8 +2165,8 @@ extension ChantCatalog {
             groupID: "praise",
             latinTitle: "Christus Vincit",
             englishTitle: "Christ Conquers",
-            setting: "Simple tone",
-            detail: "The acclamations of Christ the King",
+            setting: nil,
+            detail: "Cries of praise to Christ the King",
             prayerIDs: [],
             duration: 128.1,
             score: [
@@ -2330,7 +2330,7 @@ extension ChantCatalog {
             latinTitle: "Te Joseph Celebrent",
             englishTitle: "Let Heaven Sing Thee, Joseph",
             setting: nil,
-            detail: "The Vespers hymn of St Joseph",
+            detail: "The evening hymn of St Joseph",
             prayerIDs: [],
             duration: 197.1,
             score: [
@@ -2688,7 +2688,7 @@ extension ChantCatalog {
             latinTitle: "Creator Alme Siderum",
             englishTitle: "Creator of the Stars of Night",
             setting: nil,
-            detail: "The Vespers hymn of Advent",
+            detail: "The evening hymn of Advent",
             prayerIDs: [],
             duration: 125.1,
             score: [
@@ -2717,7 +2717,7 @@ extension ChantCatalog {
             latinTitle: "Veni, Veni, Emmanuel",
             englishTitle: "O Come, O Come, Emmanuel",
             setting: nil,
-            detail: "The O Antiphons made a hymn",
+            detail: "Advent's seven “O” prayers, made into a hymn",
             prayerIDs: [],
             duration: 272.1,
             score: [
@@ -2774,7 +2774,7 @@ extension ChantCatalog {
             latinTitle: "O Oriens",
             englishTitle: "O Morning Star, with the Magnificat",
             setting: nil,
-            detail: "The O Antiphon of December 21, around Mary's song",
+            detail: "Advent's “O” prayer for December 21, sung with Mary's song, the Magnificat",
             prayerIDs: ["magnificat"],
             duration: 237.0,
             score: [
@@ -2922,7 +2922,7 @@ extension ChantCatalog {
             latinTitle: "Jesu Redemptor Omnium",
             englishTitle: "Jesus, Redeemer of All",
             setting: nil,
-            detail: "The Vespers hymn of Christmas",
+            detail: "The evening hymn of Christmas",
             prayerIDs: [],
             duration: 203.1,
             score: [
@@ -3127,7 +3127,7 @@ extension ChantCatalog {
             latinTitle: "Vexilla Regis",
             englishTitle: "The Banners of the King",
             setting: nil,
-            detail: "The Vespers hymn of Passiontide",
+            detail: "The evening hymn of the last two weeks of Lent",
             prayerIDs: [],
             duration: 205.1,
             score: [
@@ -3172,7 +3172,7 @@ extension ChantCatalog {
             latinTitle: "Audi Benigne Conditor",
             englishTitle: "O Kind Creator, Bow Thine Ear",
             setting: nil,
-            detail: "The Vespers hymn of Lent",
+            detail: "The evening hymn of Lent",
             prayerIDs: [],
             duration: 135.0,
             score: [
@@ -3200,7 +3200,7 @@ extension ChantCatalog {
             latinTitle: "Victimæ Paschali Laudes",
             englishTitle: "Praises to the Paschal Victim",
             setting: nil,
-            detail: "The sequence of Easter Sunday",
+            detail: "The feast poem of Easter Sunday",
             prayerIDs: [],
             duration: 114.0,
             score: [
@@ -3329,7 +3329,7 @@ extension ChantCatalog {
             latinTitle: "Vidi Aquam",
             englishTitle: "I Saw Water",
             setting: nil,
-            detail: "Sung at the sprinkling before Sunday Mass in Eastertide",
+            detail: "Sung as the priest sprinkles holy water before Sunday Mass in the Easter season",
             prayerIDs: [],
             duration: 210.0,
             score: [
@@ -3343,7 +3343,7 @@ extension ChantCatalog {
             latinTitle: "Ad Regias Agni Dapes",
             englishTitle: "At the Lamb's High Feast",
             setting: nil,
-            detail: "The Vespers hymn of Eastertide",
+            detail: "The evening hymn of the Easter season",
             prayerIDs: [],
             duration: 220.1,
             score: [
@@ -3357,7 +3357,7 @@ extension ChantCatalog {
             latinTitle: "Dies Iræ",
             englishTitle: "Day of Wrath",
             setting: nil,
-            detail: "The sequence of the Requiem Mass",
+            detail: "The poem sung at the funeral Mass, before the Gospel",
             prayerIDs: [],
             duration: 384.0,
             score: [
@@ -3428,8 +3428,8 @@ extension ChantCatalog {
             groupID: "mass",
             latinTitle: "Kyrie",
             englishTitle: "Lord, Have Mercy",
-            setting: "Mass VIII",
-            detail: "Mass VIII, the Missa de Angelis",
+            setting: "Mass of the Angels",
+            detail: "From the Mass of the Angels (Mass VIII), the best-known sung Mass",
             prayerIDs: [],
             duration: 153.0,
             score: [
@@ -3442,8 +3442,8 @@ extension ChantCatalog {
             groupID: "mass",
             latinTitle: "Gloria",
             englishTitle: "Glory to God in the Highest",
-            setting: "Mass VIII",
-            detail: "Mass VIII, the Missa de Angelis",
+            setting: "Mass of the Angels",
+            detail: "From the Mass of the Angels (Mass VIII), the best-known sung Mass",
             prayerIDs: [],
             duration: 165.0,
             score: [
@@ -3456,8 +3456,8 @@ extension ChantCatalog {
             groupID: "mass",
             latinTitle: "Sanctus",
             englishTitle: "Holy, Holy, Holy",
-            setting: "Mass VIII",
-            detail: "Mass VIII, the Missa de Angelis",
+            setting: "Mass of the Angels",
+            detail: "From the Mass of the Angels (Mass VIII), the best-known sung Mass",
             prayerIDs: [],
             duration: 93.0,
             score: [
@@ -3470,8 +3470,8 @@ extension ChantCatalog {
             groupID: "mass",
             latinTitle: "Agnus Dei",
             englishTitle: "Lamb of God",
-            setting: "Mass VIII",
-            detail: "Mass VIII, the Missa de Angelis",
+            setting: "Mass of the Angels",
+            detail: "From the Mass of the Angels (Mass VIII), the best-known sung Mass",
             prayerIDs: [],
             duration: 77.1,
             score: [
@@ -3485,7 +3485,7 @@ extension ChantCatalog {
             latinTitle: "Credo III",
             englishTitle: "The Nicene Creed",
             setting: "Credo III",
-            detail: "The Creed sung on Sundays and solemnities",
+            detail: "The Creed sung on Sundays and great feasts",
             prayerIDs: ["nicene_creed"],
             duration: 274.1,
             score: [

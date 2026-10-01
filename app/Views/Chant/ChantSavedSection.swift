@@ -81,15 +81,15 @@ struct ChantSavedSection: View {
                         title: "Learned",
                         kicker: "By heart",
                         chants: shelf.learnedChants,
-                        empty: "When you have learned a chant by heart and said so, it stands here."
+                        empty: "Chants you mark as learned by heart appear here."
                     )
                     .transition(.opacity)
                 case .favorites:
                     list(
                         title: "Favourites",
-                        kicker: "Kept close",
+                        kicker: "Saved",
                         chants: shelf.favoriteChants,
-                        empty: "Hold a chant down anywhere in the library, or add it from the ⋯ on its page, to keep it here."
+                        empty: "Press and hold any chant, or tap ⋯ on its page, to add it to your favourites."
                     )
                     .transition(.opacity)
                 case .set(let id):
@@ -190,7 +190,7 @@ struct ChantSavedSection: View {
                 ForEach(Array(shelf.sets.enumerated()), id: \.element.id) { index, set in
                     spine(
                         set.name,
-                        note: "my set",
+                        note: "your set",
                         cloth: ChantSpineCloth.sets[index % ChantSpineCloth.sets.count],
                         height: [180, 158, 172, 162][index % 4],
                         lit: selected == .set(set.id)
@@ -227,7 +227,7 @@ struct ChantSavedSection: View {
         }
         .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { shelfWidth = $0 }
         .accessibilityElement(children: .contain)
-        .accessibilityLabel("Your shelf")
+        .accessibilityLabel("Your saved chants and sets")
     }
 
     /// The tallest spine on the shelf, a set's
@@ -418,8 +418,8 @@ struct ChantSavedSection: View {
             }
 
             HStack(spacing: 10) {
-                addButton("A chant", color: AppColors.gold) { addingChant = set }
-                addButton("A pause or note", color: Rubric.text) { addingPause = set }
+                addButton("Add a chant", color: AppColors.gold) { addingChant = set }
+                addButton("Add a pause", color: Rubric.text) { addingPause = set }
             }
 
             ChantSetPlayButton(queue: queue, title: "Play the set")
@@ -539,7 +539,7 @@ struct ChantSavedSection: View {
             .contentShape(Capsule())
         }
         .buttonStyle(SacredCardButtonStyle())
-        .accessibilityLabel("Add \(title.lowercased())")
+        .accessibilityLabel(title)
     }
 
     /// The set as plain words, to send to a prayer group

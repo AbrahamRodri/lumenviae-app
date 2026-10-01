@@ -79,7 +79,7 @@ struct ChantSeasonsSection: View {
                 Rectangle()
                     .fill(AppColors.cream.opacity(0.8))
                     .frame(width: 18, height: 1.5)
-                Text("Night hymn to Mary")
+                Text("Song to Mary at night")
             }
         }
         .font(AppFonts.readingItalicFont(13.5))
@@ -158,12 +158,12 @@ struct ChantSeasonsSection: View {
     }
 
     private func kicker(for season: ChantSeason, current: ChantSeason, year: ChantYear, today: Date) -> String {
-        if season == current { return "In season now" }
+        if season == current { return "This season" }
         guard let span = year.span(of: season) else { return "Through the year" }
         if span.start > today {
             return "From \(span.start.formatted(.dateTime.day().month(.wide)))"
         }
-        return "Kept earlier this year"
+        return "Earlier this year"
     }
 
     // MARK: - Coming up
@@ -179,10 +179,16 @@ struct ChantSeasonsSection: View {
                         .font(AppFonts.labelFont(9))
                         .tracking(2)
                         .foregroundColor(AppColors.gold)
-                    Text("Learn \(chant.latinTitle) before \(next.season.prose)")
-                        .font(AppFonts.titleFont(19))
-                        .foregroundColor(AppColors.cream)
-                        .fixedSize(horizontal: false, vertical: true)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Learn “\(chant.englishTitle)” before \(next.season.prose)")
+                            .font(AppFonts.titleFont(19))
+                            .foregroundColor(AppColors.cream)
+                            .fixedSize(horizontal: false, vertical: true)
+                        Text(chant.latinTitle)
+                            .font(AppFonts.readingItalicFont(14.5))
+                            .foregroundColor(AppColors.cream.opacity(0.75))
+                    }
+                    .accessibilityElement(children: .combine)
                     Text(timeLeft(days: next.days, season: next.season))
                         .font(AppFonts.readingItalicFont(14.5))
                         .foregroundColor(AppColors.textSecondary)
@@ -206,17 +212,12 @@ struct ChantSeasonsSection: View {
     private func timeLeft(days: Int, season: ChantSeason) -> String {
         let weeks = days / 7
         if weeks >= 2 {
-            return "You have \(Self.number(weeks)) weeks. A few minutes a night is enough."
+            return "You have \(weeks) weeks. A few minutes a night is enough."
         }
         if days > 1 {
             return "\(season.title) begins in \(days) days. A few minutes a night is enough."
         }
         return days == 1 ? "\(season.title) begins tomorrow." : "\(season.title) begins today."
-    }
-
-    private static func number(_ n: Int) -> String {
-        let words = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve"]
-        return words.indices.contains(n) ? words[n] : "\(n)"
     }
 
     // MARK: - Feasts ahead
@@ -267,7 +268,7 @@ struct ChantSeasonsSection: View {
                         .font(AppFonts.readingFont(17))
                         .foregroundColor(AppColors.cream)
                         .fixedSize(horizontal: false, vertical: true)
-                    Text("\(chant.latinTitle) · \(chant.durationLabel)")
+                    Text("\(chant.englishWithLatin) · \(chant.durationLabel)")
                         .font(AppFonts.readingItalicFont(13.5))
                         .foregroundColor(AppColors.textSecondary)
                         .monospacedDigit()
@@ -285,7 +286,7 @@ struct ChantSeasonsSection: View {
         .buttonStyle(.plain)
         .overlay(alignment: .bottom) { ChantRule(opacity: 0.12) }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(date.formatted(.dateTime.day().month(.wide))), \(feast.name): \(chant.latinTitle), \(ChantPlayer.spoken(chant.duration))")
+        .accessibilityLabel("\(date.formatted(.dateTime.day().month(.wide))), \(feast.name): \(chant.spokenName), \(ChantPlayer.spoken(chant.duration))")
         .accessibilityAddTraits(.isButton)
         .accessibilityHint("Opens the chant")
     }
@@ -463,7 +464,7 @@ struct ChantYearWheel: View {
         let antiphon = year.antiphons.first { today >= $0.start && today < $0.end }
         var summary = "The Church's year. Now: \(current.title). \(next.days) \(next.days == 1 ? "day" : "days") until \(next.season.title)."
         if let antiphon, let chant = ChantCatalog.chants(forPrayer: antiphon.value.prayerID).first {
-            summary += " The night hymn to Mary is the \(chant.latinTitle)."
+            summary += " Tonight's song to Mary is \(chant.englishTitle), the \(chant.latinTitle)."
         }
         return summary
     }

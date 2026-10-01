@@ -62,7 +62,7 @@ struct ChantScoreImage: View {
             }
         }
         .accessibilityElement()
-        .accessibilityLabel("Score: \(part.caption)")
+        .accessibilityLabel("Sheet music: \(part.caption)")
         .accessibilityAddTraits(.isImage)
     }
 }
@@ -291,8 +291,8 @@ struct ChantCredit: View {
                 links {
                     creditLink("VERBUMGLORIAE.ES", to: ChantCatalog.sourceSite)
                         .accessibilityLabel("Verbum Gloriae's website")
-                    creditLink("THE LICENCE", to: ChantCatalog.licenceURL)
-                        .accessibilityLabel("The licence")
+                    creditLink("READ THE LICENCE", to: ChantCatalog.licenceURL)
+                        .accessibilityLabel("Read the licence")
                 }
             }
         }
@@ -340,7 +340,7 @@ struct ChantLibraryRow: View {
                 isPlaying: sounding,
                 isLoading: player.current.id == chant.id && player.isLoading,
                 size: 34,
-                label: chant.latinTitle
+                label: chant.spokenName
             ) {
                 player.toggle(chant)
             }
@@ -376,7 +376,7 @@ struct ChantLibraryRow: View {
             .buttonStyle(.plain)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("\(chant.latinTitle), \(subtitle), \(ChantPlayer.spoken(chant.duration))")
-            .accessibilityHint("Opens the chant with its score")
+            .accessibilityHint("Opens the chant with its sheet music")
             .accessibilityAddTraits(.isButton)
         }
         .overlay(alignment: .bottom) {
@@ -621,7 +621,7 @@ struct ChantSettingPill: View {
         .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.22), lineWidth: AppLine.hairline))
         .animation(Motion.choice, value: selected)
         .accessibilityElement(children: .contain)
-        .accessibilityLabel("Setting")
+        .accessibilityLabel("Melody")
     }
 }
 
@@ -822,7 +822,7 @@ struct ChantMiniPlayer: View {
                 isPlaying: player.chantGoesOn && !player.waitingForNext,
                 isLoading: player.isLoading,
                 size: 36,
-                label: player.waitingForNext ? chant.latinTitle : title
+                label: player.waitingForNext ? chant.spokenName : title
             ) {
                 player.togglePlayback()
             }
@@ -877,8 +877,16 @@ struct ChantMiniPlayer: View {
         } else if let queue = player.queue {
             Text("\(queue.title) · \(queue.position)")
         } else if let time = player.timeLabel {
-            Text(chant.settingName.map { "\($0) · \(time)" } ?? time)
-                .accessibilityLabel([chant.settingName, player.spokenTimeLabel].compactMap { $0 }.joined(separator: ", "))
+            // The English name beside the Latin title above, and the time
+            // kept whole however long the name runs
+            HStack(spacing: 0) {
+                Text(chant.englishTitle)
+                    .truncationMode(.tail)
+                Text(" · \(time)")
+                    .fixedSize()
+            }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel([chant.englishTitle, player.spokenTimeLabel].compactMap { $0 }.joined(separator: ", "))
         } else {
             Text(chant.englishTitle)
         }
@@ -918,7 +926,7 @@ struct ChantSetPlayButton: View {
         // for while it arrived
         let going = singing && player.isGoingOn
         let word = !singing ? title
-            : player.waitingForNext ? "Go on"
+            : player.waitingForNext ? "Play next"
             : going ? "Pause" : "Resume"
         GoldCTAButton(title: word, glyph: going ? .none : .play) {
             if singing {

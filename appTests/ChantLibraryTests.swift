@@ -379,19 +379,41 @@ struct ChantLibraryTests {
         #expect(credo.distinctSetting == nil)
         #expect(credo.fullTitle == "Credo III")
         #expect(credo.settingName == nil)
-        // A Mass keeps its name's case mid-line
-        #expect(try #require(ChantCatalog.chant("kyrie_de_angelis")).settingMidLine == "Mass VIII")
-        #expect(try #require(ChantCatalog.chant("salve_regina_simple")).settingMidLine == "simple tone")
+        // A name keeps its capitals mid-line; a plain phrase is lower-cased
+        #expect(try #require(ChantCatalog.chant("kyrie_de_angelis")).settingMidLine == "Mass of the Angels")
+        #expect(try #require(ChantCatalog.chant("salve_regina_simple")).settingMidLine == "simple melody")
+        #expect(try #require(ChantCatalog.chant("salve_regina_solemn")).settingName == "Solemn")
     }
 
     @Test func theCanticlesAreNotCalledPsalms() throws {
         #expect(try #require(ChantCatalog.chant("magnificat")).kindName == "Canticle")
         #expect(try #require(ChantCatalog.chant("te_deum")).kindName == "Canticle")
         #expect(try #require(ChantCatalog.chant("miserere")).kindName == "Psalm")
-        #expect(try #require(ChantCatalog.chant("salve_regina_simple")).kindName == "Antiphon")
+        #expect(try #require(ChantCatalog.chant("salve_regina_simple")).kindName == "Short chant")
+        #expect(try #require(ChantCatalog.chant("dies_irae")).kindName == "Feast poem")
         for id in ChantLibraryData.kindNames.keys {
             #expect(ChantCatalog.chant(id) != nil, "\(id) names a chant the catalog lacks")
         }
+    }
+
+    @Test func theLibrarySpeaksPlainly() {
+        // Chrome a newcomer reads: no Church jargon standing alone
+        let jargon = /(?i)\b(antiphon|sequence|cantor|tone|vespers|lauds|matins|eastertide|septuagesima|passiontide|purification|holy ghost|holy souls|versicle|collect)\b/
+        var chrome: [String] = ChantSeason.allCases.map(\.note)
+        chrome += ChantForm.allCases.map(\.singular)
+        chrome += ChantLibraryData.weekdays.flatMap { [$0.headline, $0.devotion, $0.collective] }
+        chrome += ChantLibraryData.learningPaths.flatMap { [$0.title, $0.note] }
+        chrome += ChantLibraryData.occasions.flatMap { [$0.title] + $0.blocks.compactMap(\.rubric) }
+        chrome += ChantLibraryData.feasts.map(\.name)
+        chrome += ChantCatalog.all.flatMap { [$0.detail, $0.setting ?? ""] }
+        chrome += ChantHour.allCases.map { $0.headline(on: day(2026, 10, 1)) }
+        for line in chrome {
+            #expect(line.firstMatch(of: jargon) == nil, "\(line)")
+        }
+        // The forms' notes may name their Church word, since they explain it
+        #expect(ChantForm.shortChant.note.hasPrefix("Antiphons:"))
+        #expect(ChantHour.noon.headline(on: day(2026, 4, 20)).contains("Queen of Heaven"))
+        #expect(ChantHour.noon.headline(on: day(2026, 10, 1)).contains("Angelus"))
     }
 
     @Test func theWordsLoseTheirMarks() {
@@ -580,6 +602,32 @@ struct ChantLibraryTests {
         #expect(shelf.keptSet(of: visit) == nil)
         shelf.toggleKeeping(benediction)
         #expect(shelf.sets.map(\.name) == [visit.title])
+    }
+
+    @Test func anOccasionKeptInItsOldWordsIsStillItsOwnCopy() throws {
+        let defaults = UserDefaults(suiteName: "ChantLibraryTests.\(UUID().uuidString)")!
+        let blessing = ChantOccasion.occasion("benediction")!
+        #expect(blessing.title == "Adoration and Blessing")
+        // Kept by an earlier build, under the title and notes it had then
+        let former = Dictionary(uniqueKeysWithValues: ChantLibraryData.formerWords.map { ($1, $0) })
+        var older = ChantShelfStore(defaults: defaults).saveOccasion(blessing)
+        older.occasionID = nil
+        older.name = "Benediction"
+        older.items = older.items.map { item in
+            var item = item
+            if case .pause(let note, let seconds) = item.kind {
+                item.kind = .pause(note: former[note] ?? note, seconds: seconds)
+            }
+            return item
+        }
+        #expect(older.items.contains { $0.kind == .pause(note: "The Blessed Sacrament is set on the altar. Kneel.", seconds: 0) })
+        defaults.set(try JSONEncoder().encode([older]), forKey: "chantShelf.sets")
+
+        let shelf = ChantShelfStore(defaults: defaults)
+        let kept = try #require(shelf.keptSet(of: blessing))
+        #expect(shelf.isUntouchedCopy(kept, of: blessing))
+        #expect(shelf.toggleKeeping(blessing) == .letGo)
+        #expect(shelf.sets.isEmpty)
     }
 
     @Test func aNewSetIsNamedOrBegunWithItsChant() {

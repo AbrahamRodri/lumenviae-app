@@ -6,7 +6,7 @@
 //  Latin and in English, its score, the line being sung with its English
 //  beneath when the chant's lines have been timed, and a transport made
 //  for learning by ear: the line again (or the whole chant again), back
-//  and on by the line (or by ten seconds), a slower pace, the cantor and
+//  and on by the line (or by ten seconds), a slower pace, the singer and
 //  the reader taking turns line by line, the words, and a sleep timer.
 //  "Learn this chant" opens its practice, step by step.
 //
@@ -181,7 +181,7 @@ struct ChantView: View {
             Button {
                 showsScore = true
             } label: {
-                Label("Enlarge the Score", systemImage: "arrow.up.left.and.arrow.down.right")
+                Label("Enlarge the Sheet Music", systemImage: "arrow.up.left.and.arrow.down.right")
             }
             // A chant under way can be put down, and nothing then says it
             // was ever begun
@@ -193,7 +193,7 @@ struct ChantView: View {
                 }
             }
             Link(destination: chant.sourceURL) {
-                Label("This Chant at Verbum Gloriae", systemImage: "safari")
+                Label("Open on Verbum Gloriae's Site", systemImage: "safari")
             }
         } label: {
             AppIcon("ph-dots-three", size: 22)
@@ -284,8 +284,8 @@ struct ChantView: View {
                 .contentShape(Rectangle())
         }
         .buttonStyle(SacredCardButtonStyle())
-        .accessibilityLabel("The score")
-        .accessibilityHint("Opens the score full screen")
+        .accessibilityLabel("The sheet music")
+        .accessibilityHint("Opens the sheet music full screen")
     }
 
     // MARK: - Doors
@@ -310,7 +310,7 @@ struct ChantView: View {
                 }
 
                 if !others.isEmpty {
-                    section("Also sung") {
+                    section("Other versions") {
                         ForEach(others) { other in
                             LedgerDoorRow(
                                 title: other.fullTitle,
@@ -444,11 +444,11 @@ private struct NowPlayingLine: View {
 
 // MARK: - ChantYourTurn
 
-/// "Your turn": the line the cantor sang is the reader's to sing back,
-/// for as long as the cantor took over it
+/// "Your turn": the line the singer sang is the reader's to sing back,
+/// for as long as the singer took over it
 struct ChantYourTurn: View {
     let turn: ChantTurn
-    var subtitle = "The cantor sang the line. Now sing it back."
+    var subtitle = "The singer sang the line. Now sing it back."
 
     var body: some View {
         HStack(spacing: 14) {
@@ -543,7 +543,7 @@ private struct NowPlayingTransport: View {
                     isPlaying: player.holds(chant) && player.chantGoesOn,
                     isLoading: player.current.id == chant.id && player.isLoading,
                     size: 68,
-                    label: chant.latinTitle
+                    label: chant.spokenName
                 ) {
                     player.toggle(chant)
                 }
@@ -565,7 +565,7 @@ private struct NowPlayingTransport: View {
                         if !holds { player.play(chant) }
                         player.setLineEnd(player.lineEnd == .takeTurns ? .goOn : .takeTurns)
                     }
-                    .accessibilityHint("The cantor sings a line, then waits while you sing it back")
+                    .accessibilityHint("The singer sings a line, then waits while you sing it back")
                 }
                 pill("Words", icon: "ph-text-align-left", isOn: false, action: showWords)
                 pill("Sleep timer", icon: "ph-moon-stars", isOn: player.hasSleepTimer, action: showSleep)
@@ -629,7 +629,7 @@ private struct NowPlayingTransport: View {
         .disabled(!holds)
         .accessibilityLabel(lines
             ? (back ? "Previous line" : "Next line")
-            : (back ? "Back ten seconds" : "On ten seconds"))
+            : (back ? "Back ten seconds" : "Forward ten seconds"))
     }
 
     private var speedButton: some View {
