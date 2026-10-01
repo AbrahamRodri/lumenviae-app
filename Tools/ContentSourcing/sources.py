@@ -192,14 +192,14 @@ EXISTING = [
     ("luminous_baptism", "The Baptism of Christ", "Guido Reni", "c. 1623", "Kunsthistorisches Museum, Vienna", "medium"),
     ("joyful_annunciation", "The Annunciation", "Paolo de Matteis", "1712", "Saint Louis Art Museum", "medium"),
     ("joyful_finding", "Christ among the Doctors", "Paolo Veronese", "c. 1558", "Museo del Prado", "medium"),
-    ("glorious_resurrection", "The Resurrection (French Baroque; artist unconfirmed)", None, None, None, "low"),
-    ("glorious_ascension", "The Ascension (17th-c. Italian/French; artist unconfirmed)", None, None, None, "low"),
-    ("glorious_assumption", "The Assumption of the Virgin (18th-c. Italian; artist unconfirmed)", None, None, None, "low"),
-    ("glorious_pentecost", "Pentecost (artist unconfirmed)", None, None, None, "low"),
-    ("joyful_nativity", "The Adoration of the Shepherds, night scene (artist unconfirmed)", None, None, None, "low"),
-    ("joyful_visitation", "The Visitation (artist unconfirmed)", None, None, None, "low"),
-    ("luminous_cana", "The Wedding at Cana (artist unconfirmed)", None, None, None, "low"),
-    ("sorrowful_carrying", "Christ Carrying the Cross (Flemish Baroque; artist unconfirmed)", None, None, None, "low"),
+    ("joyful_visitation", "The Visitation", "Raphael and workshop (Giulio Romano)", "c. 1517", "Museo del Prado", "high"),  # signed RAPHAEL URBINAS at the foot
+    ("luminous_cana", "The Marriage Feast at Cana", "Bartolomé Esteban Murillo", "c. 1672", "Barber Institute of Fine Arts, Birmingham", "high"),
+    ("sorrowful_carrying", "Christ Carrying the Cross", "Anthony van Dyck", "1617–18", "Sint-Pauluskerk, Antwerp", "medium"),
+    ("glorious_resurrection", "The Resurrection of Christ", "Noël Coypel", "1700", "unconfirmed (French royal commission)", "medium"),
+    ("glorious_pentecost", "Pentecost", "attributed to Juan Bautista Maíno (tentative)", "c. 1615–20", "Museo del Prado, if Maíno", "low"),
+    ("glorious_ascension", "The Ascension (Spanish or Flemish Baroque, 17th c.)", None, None, None, "ask Abraham"),
+    ("glorious_assumption", "The Assumption of the Virgin (Neapolitan/Roman, 18th c., in the manner of Giaquinto or Solimena)", None, None, None, "ask Abraham"),
+    ("joyful_nativity", "The Adoration of the Shepherds, night scene with putti (Italian Baroque, in the manner of Guido Reni)", None, None, None, "ask Abraham"),
 ]
 
 CARLO = dict(
@@ -213,6 +213,9 @@ CARLO = dict(
          "images of him were deleted as non-free, so expect none); (3) no photograph: the page draws the votive candle or a monogram instead. "
          "A painted 'old master' image cannot exist for a saint who died in 2006, so the brief's 'same style' replacement is not possible here.",
 )
+
+# Where Abraham found the three marked "ask Abraham" settles them; fetch.py
+# --provenance (a Commons search per painting) is the next step for the rest.
 
 # ------------------------------------------------------------------- chants
 # VG pages confirmed to exist by search (titles and URLs seen in results).

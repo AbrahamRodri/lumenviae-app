@@ -120,6 +120,10 @@ def markdown(m) -> str:
     for e in m["existing_paintings"]:
         out.append("| `{}` | {} | {} | {} | {} | {} |".format(e["imageset"], cell(e["work"]), cell(e["creator"]),
                                                           cell(e["date"]), cell(e["collection"]), e["identification_confidence"]))
+    ask = [e["imageset"] for e in m["existing_paintings"] if e["identification_confidence"] == "ask Abraham"]
+    if ask:
+        out += ["", "**For Abraham:** where did these come from? " + ", ".join(f"`{a}`" for a in ask)
+                + ". The subject and school are clear but not the painter, so their licence can't be confirmed yet."]
     out += ["", "## Flagged", ""]
     for f in m["flagged"]:
         out += [f"- **`{f['imageset']}`**: {f['work']}. Creator: {f['creator']}. Licence: {f['licence']}.", "", f"  {f['note']}", ""]
@@ -141,6 +145,10 @@ def markdown(m) -> str:
     out += ["", "Fallbacks (to list for the manager, not to stage):", ""]
     for f in m["fallback_sources"]:
         out.append(f"- [{f['name']}]({f['url']}): {f['note']}")
+    out += ["", "## Other voices: for Abraham's review", "",
+            "Not staged: this round takes Verbum Gloriae's single cantor only. Once Commons is readable, the recordings "
+            "found for the missing chants (the Trinity, the Angels, Compline, Requiem, Passion, Christmas, Haec Dies) are "
+            "listed here with link, performer and licence, for Abraham to decide. Not yet searched: Commons was unreachable.", ""]
     out += ["", "## Why the chants need the Mac", "",
             "The bundle's recordings are mono HE-AAC, encoded by macOS's afconvert. Linux ffmpeg 6.1 has only the LC `aac` "
             "encoder (no libfdk_aac), so generate.py cannot match the bundle there. Tools/Chants/ belongs to the Chant "

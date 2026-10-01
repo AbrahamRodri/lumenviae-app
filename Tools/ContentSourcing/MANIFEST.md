@@ -79,14 +79,16 @@ Identified by eye from the bundled images. `high` = recognisable work; `medium` 
 | `luminous_baptism` | The Baptism of Christ | Guido Reni | c. 1623 | Kunsthistorisches Museum, Vienna | medium |
 | `joyful_annunciation` | The Annunciation | Paolo de Matteis | 1712 | Saint Louis Art Museum | medium |
 | `joyful_finding` | Christ among the Doctors | Paolo Veronese | c. 1558 | Museo del Prado | medium |
-| `glorious_resurrection` | The Resurrection (French Baroque; artist unconfirmed) | — | — | — | low |
-| `glorious_ascension` | The Ascension (17th-c. Italian/French; artist unconfirmed) | — | — | — | low |
-| `glorious_assumption` | The Assumption of the Virgin (18th-c. Italian; artist unconfirmed) | — | — | — | low |
-| `glorious_pentecost` | Pentecost (artist unconfirmed) | — | — | — | low |
-| `joyful_nativity` | The Adoration of the Shepherds, night scene (artist unconfirmed) | — | — | — | low |
-| `joyful_visitation` | The Visitation (artist unconfirmed) | — | — | — | low |
-| `luminous_cana` | The Wedding at Cana (artist unconfirmed) | — | — | — | low |
-| `sorrowful_carrying` | Christ Carrying the Cross (Flemish Baroque; artist unconfirmed) | — | — | — | low |
+| `joyful_visitation` | The Visitation | Raphael and workshop (Giulio Romano) | c. 1517 | Museo del Prado | high |
+| `luminous_cana` | The Marriage Feast at Cana | Bartolomé Esteban Murillo | c. 1672 | Barber Institute of Fine Arts, Birmingham | high |
+| `sorrowful_carrying` | Christ Carrying the Cross | Anthony van Dyck | 1617–18 | Sint-Pauluskerk, Antwerp | medium |
+| `glorious_resurrection` | The Resurrection of Christ | Noël Coypel | 1700 | unconfirmed (French royal commission) | medium |
+| `glorious_pentecost` | Pentecost | attributed to Juan Bautista Maíno (tentative) | c. 1615–20 | Museo del Prado, if Maíno | low |
+| `glorious_ascension` | The Ascension (Spanish or Flemish Baroque, 17th c.) | — | — | — | ask Abraham |
+| `glorious_assumption` | The Assumption of the Virgin (Neapolitan/Roman, 18th c., in the manner of Giaquinto or Solimena) | — | — | — | ask Abraham |
+| `joyful_nativity` | The Adoration of the Shepherds, night scene with putti (Italian Baroque, in the manner of Guido Reni) | — | — | — | ask Abraham |
+
+**For Abraham:** where did these come from? `glorious_ascension`, `glorious_assumption`, `joyful_nativity`. The subject and school are clear but not the painter, so their licence can't be confirmed yet.
 
 ## Flagged
 
@@ -146,6 +148,11 @@ Fallbacks (to list for the manager, not to stage):
 - [Wikimedia Commons, Category:Gregorian chant (audio)](https://commons.wikimedia.org/wiki/Category:Gregorian_chant): Many PD/CC0/CC BY-SA Ogg recordings; mostly choirs or amateurs, so a different voice from VG's cantor. List for the manager; don't stage.
 - [Musopen](https://musopen.org/): Public-domain recordings; little plainchant.
 - [Internet Archive (78 rpm transfers)](https://archive.org/): US public domain only for recordings published before 1926 (as of 2026); the transfer itself may carry terms; other countries differ. Check each, and prefer Commons.
+
+## Other voices: for Abraham's review
+
+Not staged: this round takes Verbum Gloriae's single cantor only. Once Commons is readable, the recordings found for the missing chants (the Trinity, the Angels, Compline, Requiem, Passion, Christmas, Haec Dies) are listed here with link, performer and licence, for Abraham to decide. Not yet searched: Commons was unreachable.
+
 
 ## Why the chants need the Mac
 
