@@ -34,7 +34,9 @@ src/<id>.txt holds settings, a blank line, then the lines:
 
     Salve, Regína, Mater misericórdiæ: | Hail, holy Queen, Mother of mercy,
 
-A line of its own reading `~` carries the line above it over one more
+A line reading `part N` gives the lines below it the score part they are
+engraved on (N counts from 0, in ChantCatalogData's order); a file that
+uses it must give every line one. A line of its own reading `~` carries the line above it over one more
 phrase: for a breath the cantor takes inside a line where the text is not
 sure enough to be parted (a breath inside one word's melisma, say). `#`
 begins a comment.
@@ -331,6 +333,11 @@ def read_src(chant: str) -> tuple:
             settings[k] = float(v)
             continue
         body = True
+        part = re.fullmatch(r"part\s+(\d+)", line)
+        if part:
+            settings["_part"] = int(part.group(1))
+            settings["_parts"] = True
+            continue
         if line == "~":
             if not lines:
                 sys.exit(f"{chant}: ~ before any line")
@@ -339,7 +346,7 @@ def read_src(chant: str) -> tuple:
         if "|" not in line:
             sys.exit(f"{chant}: a line without its English: {line}")
         latin, english = (s.strip() for s in line.split("|", 1))
-        lines.append([latin, english, 1])
+        lines.append([latin, english, 1, settings.get("_part")])
     return settings, lines
 
 
@@ -363,14 +370,14 @@ def check(chant: str) -> tuple:
     settings, lines = read_src(chant)
     found, total = phrases(chant, settings["noise"], settings["gap"], settings["merge"])
     problems = []
-    wanted = sum(span for _, _, span in lines)
+    wanted = sum(l[2] for l in lines)
     if len(found) != wanted:
         problems.append(f"{len(found)} phrases in the recording, {wanted} in the text")
         return None, problems
     # a line written over several phrases (a "~" under it) takes them all
     sound, heard_found, k = [], hear(chant, found), 0
     heard = [] if heard_found is not None else None
-    for _, _, span in lines:
+    for _, _, span, _ in lines:
         sound.append([found[k][0], found[k + span - 1][1]])
         if heard is not None:
             heard.append(" ".join(heard_found[k:k + span]))
@@ -388,10 +395,27 @@ def check(chant: str) -> tuple:
         verified = f"{breaks.count('heard')} of {len(breaks)} breaks heard"
     method = (f"breaths by loudness (under {settings['noise']:g} dB for {settings['gap']:g} s, "
               f"phrases under {settings['merge']:g} s merged) + text alignment; Whisper: {verified}")
+    if settings.get("_parts"):
+        count = score_parts(chant)
+        for i, l in enumerate(lines):
+            if l[3] is None:
+                problems.append(f"line {i + 1} has no score part (a `part N` above it)")
+            elif count is not None and not 0 <= l[3] < count:
+                problems.append(f"line {i + 1} is on part {l[3]}, but the score has {count}")
     out = {"id": chant, "part": None, "method": method, "lines": [
-        {"latin": la, "english": en, "start": a, "end": b}
-        for (la, en, _), (a, b) in zip(lines, padded(chant, sound, total))]}
+        dict({"latin": la, "english": en, "start": a, "end": b},
+             **({"part": part} if settings.get("_parts") else {}))
+        for (la, en, _, part), (a, b) in zip(lines, padded(chant, sound, total))]}
     return out, problems
+
+
+def score_parts(chant: str):
+    """How many score parts the catalog gives the chant, or None."""
+    catalog = ROOT / "app" / "Data" / "ChantCatalogData.swift"
+    if not catalog.exists():
+        return None
+    m = re.search(r'^ {12}id: "' + re.escape(chant) + r'",(.*?)sourceURL', catalog.read_text("utf-8"), re.S | re.M)
+    return len(re.findall(r"ChantScorePart\(", m.group(1))) if m else None
 
 
 def build(chants: list):
