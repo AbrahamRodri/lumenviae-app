@@ -427,7 +427,7 @@ struct ExploreView: View {
                             }
                             ForEach(prayerHits.prefix(Self.readingLimit)) { prayer in
                                 LedgerDoorRow(
-                                    title: prayer.title,
+                                    title: prayer.listTitle,
                                     note: prayer.latinTitle ?? PrayerBook.homeChapter(of: prayer.id)?.title,
                                     icon: PrayerBook.homeChapter(of: prayer.id)?.icon
                                 ) {

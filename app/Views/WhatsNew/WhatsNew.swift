@@ -47,7 +47,7 @@ struct WhatsNewRelease: Identifiable {
                 // The Journal gave Prayers its place in the bar. Every row
                 // here is a door, and the Journal is a tab, not a page, so
                 // where it opens now is said in this row's line
-                detail: "The Church's common prayers, in the tab bar where the Journal was; the Journal now opens from the Chapel and after each prayer",
+                detail: "The Church's common prayers, in the tab bar where the Journal was; the Journal now opens from the Chapel and after each Rosary",
                 // Turns to the Prayers tab (`AppRouter.push`)
                 route: .prayerBook
             ),

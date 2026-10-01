@@ -576,12 +576,22 @@ enum PrayerBook {
     /// What the Prayers page calls one of the day's three orders on its
     /// strip of hours: MORNING, NOON, NIGHT. The Angelus's hour is noon
     /// until three and the evening after, when it is the six o'clock
-    /// bell that is coming, so the strip never says NOON at five.
-    static func hourName(of order: PrayerOrder, at date: Date = Date(), calendar: Calendar = .current) -> String {
+    /// bell that is coming, so the strip never says NOON at five. Once
+    /// the Angelus is offered for the bell being kept (`offered`, as
+    /// `isOfferedNow` reads it), it is named for that bell: an Angelus
+    /// prayed at six in the evening is EVENING through the night, where
+    /// the hour alone had it NOON again from eight, offered.
+    static func hourName(
+        of order: PrayerOrder,
+        at date: Date = Date(),
+        offered: Bool = false,
+        calendar: Calendar = .current
+    ) -> String {
         switch order.id {
         case morningOrderID: return "Morning"
         case nightOrderID:   return "Night"
         default:
+            if offered { return angelusBellKept(at: date, calendar: calendar).name }
             let hour = calendar.component(.hour, from: date)
             return (15..<20).contains(hour) ? "Evening" : "Noon"
         }
@@ -611,20 +621,56 @@ enum PrayerBook {
         }
     }
 
-    /// When the Angelus bell being kept began: noon's from eleven, the
-    /// evening's from three, and after midnight still the evening before's,
-    /// as the prayer day keeps it. An Angelus prayed at noon is the noon
-    /// bell's; by evening the evening bell asks for its own. The rule of
-    /// prayer still counts the Angelus once a day (`wasOffered`); only the
+    /// The Angelus's three bells: at six in the morning, at noon, and at
+    /// six in the evening
+    enum AngelusBell: Equatable {
+        case morning
+        case noon
+        case evening
+
+        /// The bell's name on the Prayers page's strip
+        var name: String {
+            switch self {
+            case .morning: return "Morning"
+            case .noon:    return "Noon"
+            case .evening: return "Evening"
+            }
+        }
+
+        /// The clock hour from which the bell is kept
+        var keptFromHour: Int {
+            switch self {
+            case .morning: return PrayerBook.dayBeginsAtHour
+            case .noon:    return 11
+            case .evening: return 15
+            }
+        }
+    }
+
+    /// The Angelus bell being kept at `date`: the morning's from four,
+    /// when the prayer day begins, noon's from eleven, and the evening's
+    /// from three on past midnight, until the day turns at four
+    static func angelusBellKept(at date: Date = Date(), calendar: Calendar = .current) -> AngelusBell {
+        let hour = calendar.component(.hour, from: date)
+        if hour < dayBeginsAtHour || hour >= AngelusBell.evening.keptFromHour { return .evening }
+        return hour < AngelusBell.noon.keptFromHour ? .morning : .noon
+    }
+
+    /// When the Angelus bell being kept began: the morning's at four, noon's
+    /// at eleven, the evening's at three, and after midnight still the
+    /// evening before's, as the prayer day keeps it. An Angelus prayed at
+    /// six in the morning is the morning bell's, and noon's asks for its
+    /// own; by evening the evening bell asks again. The rule of prayer
+    /// still counts the Angelus once a day (`wasOffered`); only the
     /// Prayers page's strip keeps the bells apart.
     static func angelusBellBegan(at date: Date = Date(), calendar: Calendar = .current) -> Date {
         let hour = calendar.component(.hour, from: date)
         let today = calendar.startOfDay(for: date)
-        if hour < dayBeginsAtHour {
-            let eve = calendar.date(byAdding: .day, value: -1, to: today) ?? today
-            return calendar.date(bySettingHour: 15, minute: 0, second: 0, of: eve) ?? eve
-        }
-        return calendar.date(bySettingHour: hour < 15 ? 11 : 15, minute: 0, second: 0, of: today) ?? today
+        let day = hour < dayBeginsAtHour
+            ? calendar.date(byAdding: .day, value: -1, to: today) ?? today
+            : today
+        let bell = angelusBellKept(at: date, calendar: calendar)
+        return calendar.date(bySettingHour: bell.keptFromHour, minute: 0, second: 0, of: day) ?? day
     }
 
     /// Whether `order` is offered for the hour it is now: the day's offering
@@ -643,8 +689,8 @@ enum PrayerBook {
     }
 
     /// One plain line saying what one of the day's three orders is, as
-    /// the Prayers page's Pray Now card sets it under the order's name and
-    /// the Chapel's Prayers tile reads it: the Angelus said plainly and
+    /// the Prayers page's Pray Now card sets it under the order's name:
+    /// the Angelus said plainly and
     /// the Regina Cæli in its place in Eastertide, and Night Prayers
     /// closing on the antiphon the season sings. Any other order is its
     /// own detail.
@@ -746,7 +792,7 @@ enum PrayerBook {
     /// the whole search comes after the names. It once matched only the
     /// whole search as one string, so "St Michael" found nothing.
     static func search(_ needle: String) -> [BookPrayer] {
-        let wanted = searchWords(needle)
+        let wanted = searchWords(needle, asName: false)
         guard !wanted.isEmpty else { return [] }
 
         let phrase = folded(needle).trimmingCharacters(in: .whitespacesAndNewlines)
@@ -771,7 +817,7 @@ enum PrayerBook {
     /// Visiting Jesus in Church — by their title, Latin title, when they
     /// are said and the names they are looked for by
     static func searchOrders(_ needle: String) -> [PrayerOrder] {
-        let wanted = searchWords(needle)
+        let wanted = searchWords(needle, asName: false)
         guard !wanted.isEmpty, wanted.joined().count >= 3 else { return [] }
         return orders.filter { order in
             let names = [order.title, order.latinTitle, order.occasion] + order.searchWords
@@ -779,23 +825,35 @@ enum PrayerBook {
         }
     }
 
-    /// Every word wanted begins one of the name's words
+    /// Every word wanted begins one of the name's words. A lone "st"
+    /// searched is a saint's or the start of a word, so it finds St
+    /// Michael and the Stabat Mater alike.
     private static func nameAnswers(_ wanted: [String], _ name: String) -> Bool {
         let words = searchWords(name)
-        return !words.isEmpty && wanted.allSatisfy { want in words.contains { $0.hasPrefix(want) } }
+        return !words.isEmpty && wanted.allSatisfy { want in
+            words.contains { $0.hasPrefix(want) || (want == "st" && $0 == "saint") }
+        }
     }
 
+    /// Text as the searches read it: case and accents let go, and the
+    /// ligatures the Latin is printed with written out, so "regina caeli"
+    /// finds the Regina Cæli and "praesidium" the Sub tuum præsidium
     private static func folded(_ text: String) -> String {
         text.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil)
+            .replacingOccurrences(of: "æ", with: "ae")
+            .replacingOccurrences(of: "Æ", with: "ae")
+            .replacingOccurrences(of: "œ", with: "oe")
+            .replacingOccurrences(of: "Œ", with: "oe")
     }
 
     /// A name or a search as the prayer search reads it: folded, split
-    /// into words, "st" and "st." read as "saint", the words that name
-    /// nothing ("the", "of", "to") left out, unless they are all there is
-    private static func searchWords(_ text: String) -> [String] {
+    /// into words, the words that name nothing ("the", "of", "to") left
+    /// out, unless they are all there is. In a name, "st" and "st." read
+    /// as "saint"; searched, "st" stays as typed (`nameAnswers`).
+    private static func searchWords(_ text: String, asName: Bool = true) -> [String] {
         let words = folded(text)
             .split { !$0.isLetter }
-            .map { $0 == "st" ? "saint" : String($0) }
+            .map { asName && $0 == "st" ? "saint" : String($0) }
         let kept = words.filter { !searchStopWords.contains($0) }
         return kept.isEmpty ? words : kept
     }
@@ -831,7 +889,7 @@ enum PrayerBook {
     /// A name as the topic search reads it: folded, split into words,
     /// the small words dropped
     private static func topicWords(_ text: String) -> [String] {
-        text.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil)
+        folded(text)
             .split { !$0.isLetter }
             .map(String.init)
             .filter { !topicStopWords.contains($0) }

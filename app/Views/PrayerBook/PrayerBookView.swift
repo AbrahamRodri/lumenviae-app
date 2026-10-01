@@ -568,12 +568,20 @@ struct PrayerBookView: View {
     }
 
     /// Says what the search found as the results change, since VoiceOver
-    /// stays in the field and would otherwise hear nothing of them
+    /// stays in the field and would otherwise hear nothing of them: the
+    /// topic and the orders of prayer as well as the prayers, as the page
+    /// sets them, so "visiting" is never "No prayer by that name" over
+    /// the card it found
     private func announceResults(for query: String) {
         let needle = query.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !needle.isEmpty else { return }
         let found = PrayerBook.search(needle).count
-        let words = found == 0 ? "No prayer by that name" : Self.matchCount(found)
+        let topics = PrayerBook.topics(matching: needle).prefix(2).map { $0.topic }
+        let orders = PrayerBook.searchOrders(needle).prefix(3).map { $0.title(on: now) }
+
+        var parts = topics + orders
+        if found > 0 { parts.append(Self.matchCount(found)) }
+        let words = parts.isEmpty ? "No prayer by that name" : parts.joined(separator: ", ")
         AccessibilityNotification.Announcement(words).post()
     }
 

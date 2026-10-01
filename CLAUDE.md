@@ -1286,7 +1286,7 @@ write concurrent code here:
   arrive at. The 4.0 notes name what CHANGELOG.md's 4.0 section adds —
   Prayers (the Prayer Book, in the tab bar where the Journal was, its
   line saying the Journal now opens from the Chapel and after each
-  prayer, since every row is a door and the Journal is a tab, not a
+  Rosary, since every row is a door and the Journal is a tab, not a
   page; it turns to the Prayers tab), the Chant Library, the Rosary said aloud (with the
   speed slider; its row is "The Holy Rosary" and opens that form's own
   page on today's mysteries, `.rosaryAloud(today)`), and How to Pray
@@ -1948,17 +1948,22 @@ write concurrent code here:
   when the hour turns and when the app comes back to the foreground),
   and the page's one gold act, PRAY THE ANGELUS (PRAY THE ANGELUS AGAIN
   once offered, so the button always names its prayer). The Angelus is
-  offered for its bell, not its day (`PrayerBook.isOfferedNow`): one
-  prayed at noon reads OFFERED until three, and then the evening bell
-  asks again; after midnight the evening's still stands. That reads the
+  offered for its bell, not its day (`PrayerBook.isOfferedNow`, the
+  bells kept from four, eleven and three, `PrayerBook.angelusBellKept`):
+  one prayed at six in the morning reads OFFERED until eleven, one at
+  noon until three, and then the evening bell asks again; after midnight
+  the evening's still stands. Once offered, the station is named for the
+  bell it kept (`hourName(of:at:offered:)`, read from the same offering
+  as its OFFERED), so an evening Angelus never reads NOON, offered, after
+  eight, and one kept at the morning bell reads MORNING. That reads the
   moment an order was offered (`PrayerBookStore.lastOffered`, kept
   beside the day under its own key), while `wasOffered`, which the
   Chapel's rule reads, still counts an order once a prayer day. The
   card's line is the board's for the Angelus ("A short prayer to Mary
   said at morning, noon and evening.") and the Regina Cæli's own in
   Eastertide, and Night Prayers' names the antiphon the season sings —
-  one pure function, `PrayerBook.daySummary(of:on:)`, which the Chapel's
-  Prayers tile reads too, and its painting crossfades in a
+  one pure function, `PrayerBook.daySummary(of:on:)` — and its painting
+  crossfades in a
   slot of its own as the hour changes. The card is outlined, never
   filled, its halo the outline's. Then Prayers to Mary: the antiphon the
   season sings over the mystery it sings of (THIS SEASON) — left out in
@@ -1985,10 +1990,13 @@ write concurrent code here:
   (`PrayerBook.search`): every word searched begins a word of its title,
   Latin title or the other names it is looked for by
   (`BookPrayer.searchWords`: Salve Regina, Litany of Loreto), "st", "st."
-  and "saint" read as one word, and a prayer whose text holds the whole
+  and "saint" read as one word (though a lone "st" searched also begins
+  a word, so it finds the Stabat Mater beside the saints), æ and œ read
+  as ae and oe ("regina caeli"), and a prayer whose text holds the whole
   search comes after the names. It once matched the whole search as one
   string, and "St Michael", "Loreto" and the field's own "St Joseph"
-  found nothing. Morning and Night Prayers
+  found nothing. VoiceOver hears the topic and the orders found as well
+  as the count of prayers, as the page sets them. Morning and Night Prayers
   have no mystery of their own: their cards name paintings
   (`hour_morning`, `hour_night`, names shared with the Chant Library's
   redesign, still being made) that are not yet in the catalog, and until

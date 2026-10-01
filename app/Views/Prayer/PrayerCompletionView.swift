@@ -81,7 +81,9 @@ struct PrayerCompletionView: View {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 0) {
                         // Header
-                        CompletionHeader(onClose: { router.popToRoot() })
+                        // ✕ goes home as Not Now does, whatever tab the
+                        // prayer began on
+                        CompletionHeader(onClose: returnHome)
 
                         Spacer()
 
@@ -180,6 +182,9 @@ struct PrayerCompletionView: View {
                     .frame(minHeight: proxy.size.height)
                 }
                 .scrollBounceBehavior(.basedOnSize)
+                // The seal's rings of light resonate past the page's
+                // edges, as they did before it scrolled
+                .scrollClipDisabled()
             }
         }
         .navigationBarHidden(true)

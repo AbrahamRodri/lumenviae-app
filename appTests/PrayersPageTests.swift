@@ -22,6 +22,10 @@ struct PrayersPageTests {
         calendar.date(from: DateComponents(year: year, month: month, day: day, hour: hour))!
     }
 
+    private func moment(_ hour: Int, _ minute: Int, day: Int = 24) -> Date {
+        calendar.date(from: DateComponents(year: 2026, month: 9, day: day, hour: hour, minute: minute))!
+    }
+
     // MARK: Occasions
 
     @Test func everyOccasionsOrderStandsInExactlyOnePlace() {
@@ -94,6 +98,39 @@ struct PrayersPageTests {
         #expect(PrayerBook.hourName(of: angelus, at: at(8), calendar: calendar) == "Noon")
     }
 
+    @Test func anOfferedAngelusIsNamedForTheBellItKept() {
+        let angelus = PrayerBook.order(PrayerBook.angelusOrderID)!
+        // The strip's name and its OFFERED read the same moment, as the
+        // station does
+        func station(at now: Date, last: Date) -> String {
+            let offered = PrayerBook.isOfferedNow(angelus, at: now, offeredToday: true, lastOffered: last, calendar: calendar)
+            let name = PrayerBook.hourName(of: angelus, at: now, offered: offered, calendar: calendar)
+            return offered ? "\(name) · Offered" : name
+        }
+        let sixInTheEvening = at(18)
+
+        // Prayed at the evening bell: EVENING through the night, never NOON offered
+        #expect(station(at: at(21), last: sixInTheEvening) == "Evening · Offered")
+        #expect(station(at: moment(0, 30, day: 25), last: sixInTheEvening) == "Evening · Offered")
+        // Prayed at noon, by evening it is the evening bell's turn to ask
+        #expect(station(at: at(21), last: at(12)) == "Noon")
+    }
+
+    @Test func anAngelusPrayedAtTheMorningBellIsKept() {
+        let angelus = PrayerBook.order(PrayerBook.angelusOrderID)!
+        let sixInTheMorning = moment(6, 2)
+        func offered(at now: Date) -> Bool {
+            PrayerBook.isOfferedNow(angelus, at: now, offeredToday: true, lastOffered: sixInTheMorning, calendar: calendar)
+        }
+
+        #expect(PrayerBook.angelusBellBegan(at: moment(6, 5), calendar: calendar) == at(4))
+        #expect(offered(at: moment(6, 5)))
+        #expect(offered(at: at(10)))
+        #expect(PrayerBook.hourName(of: angelus, at: at(10), offered: true, calendar: calendar) == "Morning")
+        // Noon's bell asks for its own
+        #expect(!offered(at: at(12)))
+    }
+
     // MARK: Paintings
 
     @Test func everyPaintingThePageHangsIsInTheCatalog() {
@@ -122,6 +159,13 @@ struct PrayersPageTests {
         #expect(found("St Joseph").contains("litany_st_joseph"))
         #expect(found("hail ma").first == "hail_mary")
         #expect(found("zzqx").isEmpty)
+        // The Latin's ligatures written out
+        #expect(found("regina caeli").contains("regina_caeli"))
+        #expect(found("praesidium").contains("sub_tuum"))
+        // A lone "st" is a saint or the start of a word
+        #expect(found("st").contains("st_michael_prayer"))
+        #expect(found("st").contains("stabat_mater"))
+        #expect(!found("saint").contains("stabat_mater"))
     }
 
     @Test func aSearchNamesTheOrdersPrayedTogether() {
