@@ -829,8 +829,9 @@ private struct MysteriesChoiceSheet: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             SheetHeader(
-                kicker: form == .holy ? "The Holy Rosary" : "The Scriptural Rosary",
-                title: "Mysteries"
+                kicker: ScripturalRosaryViewModel.displayName(for: form == .holy ? SpokenForm.plain : .scriptural),
+                title: "Choose the Mysteries",
+                lead: "The scenes from the lives of Jesus and Mary that you will pray on."
             ) {
                 SheetHeaderAction(title: "Done") { dismiss() }
             }

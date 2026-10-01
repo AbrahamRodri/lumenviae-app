@@ -4,10 +4,11 @@
 //
 //  The page of the Rosary's two forms that are not a meditation set:
 //  the Scriptural Rosary — a verse of Scripture for every Hail Mary —
-//  and the Holy Rosary, every prayer said aloud with nothing read
-//  between (`SpokenForm.plain`; it was the Rosary Aloud).
+//  and the Rosary Said Aloud, every prayer said aloud with no readings
+//  between (`SpokenForm.plain`; it was the Holy Rosary, and before that
+//  the Rosary Aloud).
 //
-//  Both are reached from a mysteries' page, OTHER WAYS TO PRAY, with
+//  Both are reached from a mysteries' page, WAYS TO PRAY, with
 //  those mysteries already chosen, and both are set on the Rosary's own
 //  page (`RosaryConfirmPage`), as a meditation set is: the mysteries'
 //  painting dissolving into the page, the name, one line saying what the
@@ -53,10 +54,10 @@ struct ScripturalRosaryView: View {
 
     var body: some View {
         RosaryConfirmPage(
-            kicker: isPlain ? "Every prayer said aloud" : "A verse for every bead",
-            title: isPlain ? "The Holy Rosary" : "The Scriptural Rosary",
+            kicker: isPlain ? "Every prayer, no readings" : "A verse for every bead",
+            title: ScripturalRosaryViewModel.displayName(for: form),
             subtitle: isPlain
-                ? "The prayers alone, with nothing read between them."
+                ? "A voice leads every prayer, with no readings between."
                 : "One verse of Scripture for every Hail Mary.",
             onBack: { router.pop() },
             onPray: {
@@ -91,7 +92,8 @@ struct ScripturalRosaryView: View {
             }
 
             if !isPlain {
-                SetSection(label: "The first\ndecade") {
+                // The chaplet's are sorrows, and its ledger says so
+                SetSection(label: category == .sevenSorrows ? "The first\nsorrow" : "The first\nmystery") {
                     firstDecade
                 }
             }
@@ -106,8 +108,8 @@ struct ScripturalRosaryView: View {
     /// does not say twice
     private var about: String {
         isPlain
-            ? "The beads move with the voice — for praying with the phone put away, or for learning the prayers by ear. Each mystery is announced, and each prayer is set on the screen as it is said. Pause the voice to pray quietly for a while."
-            : "A decade walks through its own scene bead by bead. The Our Father bead announces the mystery and the fruit to ask for, a verse stands on each Hail Mary, and the Glory Be closes it."
+            ? "The beads move with the voice — for praying with the phone put away, or for learning the prayers by ear. Each mystery, a scene from the lives of Jesus and Mary, is announced, and each prayer is shown on the screen as it is said. Pause the voice to pray quietly for a while."
+            : "Each mystery, a scene from the lives of Jesus and Mary, is told verse by verse. The Our Father bead names the mystery and a grace to ask for, each of the Hail Marys has its own verse, and the Glory Be closes it."
     }
 
     /// How the prayer will open: the first mystery by name, and the
@@ -154,7 +156,7 @@ struct ScripturalRosaryView: View {
 
             Text(isPlain
                  ? "Said in the voice you choose · ten Hail Marys to a mystery, seven to a sorrow"
-                 : "Douay-Rheims translation · ten verses to a mystery, seven to a sorrow")
+                 : "Douay-Rheims, the classic Catholic English Bible · ten verses to a mystery, seven to a sorrow")
                 .font(AppFonts.readingFont(15))
                 .foregroundColor(AppColors.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)

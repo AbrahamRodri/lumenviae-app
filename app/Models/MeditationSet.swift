@@ -27,9 +27,13 @@ enum MeditationLabel {
 
     /// "Scriptural" reads as Gospel so that one thing on a mysteries' page
     /// is called Scriptural — the Scriptural Rosary above the sets — and a
-    /// set that sets the Gospel beside its meditations is not taken for it
+    /// set that sets the Gospel beside its meditations is not taken for it.
+    /// "Contemplative" reads as Inside the Scene, what those meditations
+    /// do (Emmerich, Agreda, Ignatius, Faber: the persons seen and heard),
+    /// since the bare adjective could not be told from Reflections beside it
     private static let displayNames: [String: String] = [
         "Considerations": "Reflections",
+        "Contemplative": "Inside the Scene",
         "Scriptural": "Gospel"
     ]
 

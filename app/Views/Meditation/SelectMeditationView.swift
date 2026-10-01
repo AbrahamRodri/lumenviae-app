@@ -5,8 +5,9 @@
 //  Created by Abraham Rodriguez on 2/10/26.
 //
 //  A set of mysteries' page, where the Rosary is chosen in one of its
-//  three forms: OTHER WAYS TO PRAY — the Scriptural Rosary, and the Holy
-//  Rosary with no meditation — then the shelf of MEDITATIONS.
+//  three forms: WAYS TO PRAY — the Scriptural Rosary, and the Rosary
+//  Said Aloud with no readings — then the shelf of MEDITATIONS, under a
+//  line saying what a meditation is.
 //
 //  The two rows stand above the sets and open their own pages with these
 //  mysteries chosen. They were doors of their own elsewhere — a quiet
@@ -173,21 +174,21 @@ struct SelectMeditationView: View {
     /// own page with them chosen
     private var otherWaysToPray: some View {
         VStack(alignment: .leading, spacing: 12) {
-            ShelfHeading(title: "Other ways to pray")
+            ShelfHeading(title: "Ways to pray")
 
             VStack(spacing: 0) {
                 OtherWayRow(
                     icon: PrayerShortcut.scripturalRosary.icon,
-                    title: "The Scriptural Rosary",
-                    detail: "A verse of the Gospel for every bead"
+                    title: ScripturalRosaryViewModel.displayName(for: .scriptural),
+                    detail: "A Bible verse for every Hail Mary"
                 ) {
                     openOnce(.scripturalRosary(category))
                 }
 
                 OtherWayRow(
                     icon: PrayerShortcut.rosaryAloud.icon,
-                    title: "No Meditation",
-                    detail: "Every prayer said aloud, nothing read between"
+                    title: ScripturalRosaryViewModel.displayName(for: .plain),
+                    detail: "Every prayer, no readings"
                 ) {
                     openOnce(.rosaryAloud(category))
                 }
@@ -240,6 +241,14 @@ struct SelectMeditationView: View {
                 }
             }
 
+            // What a meditation is, said once on the page, and the
+            // mysteries with it: the shelf below is the third way to pray
+            Text(meditationsLead)
+                .font(AppFonts.italicFont(13))
+                .foregroundColor(AppColors.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.top, 2)
+
             if hasShelf, viewModel.isNarrowed {
                 Text(countLabel.uppercased())
                     .font(AppFonts.labelFont(10))
@@ -260,9 +269,19 @@ struct SelectMeditationView: View {
         !viewModel.isLoading && viewModel.errorMessage == nil && !viewModel.meditationSets.isEmpty
     }
 
+    /// The line under MEDITATIONS: what a meditation is, and what the
+    /// mysteries are, for someone who has never prayed with either
+    private var meditationsLead: String {
+        category == .sevenSorrows
+            ? "Or pray with a meditation: a short reading on each of Mary's seven sorrows."
+            : "Or pray with a meditation: a short reading on each mystery, a scene from the lives of Jesus and Mary."
+    }
+
+    /// How many meditations are showing — a set of five readings is
+    /// "meditations" on the page, never a set
     private var countLabel: String {
         let total = viewModel.totalSetCount
-        let unit = total == 1 ? "set" : "sets"
+        let unit = total == 1 ? "meditation" : "meditations"
         return viewModel.isNarrowed
             ? "\(viewModel.visibleSetCount) of \(total) \(unit)"
             : "\(total) \(unit)"
@@ -396,7 +415,7 @@ struct SelectMeditationView: View {
 
     private var emptyState: some View {
         VStack(spacing: 12) {
-            Text("No set carries all of those together")
+            Text("No meditations match all of those kinds")
                 .font(AppFonts.italicFont(16))
                 .foregroundColor(AppColors.textSecondary)
                 .multilineTextAlignment(.center)
@@ -621,7 +640,7 @@ private struct ChromeToggle: View {
 // MARK: - Shelf Heading
 
 /// A part of the page named in gold capitals, run out on a rule to the
-/// right: OTHER WAYS TO PRAY, MEDITATIONS
+/// right: WAYS TO PRAY, MEDITATIONS
 private struct ShelfHeading: View {
     let title: String
 

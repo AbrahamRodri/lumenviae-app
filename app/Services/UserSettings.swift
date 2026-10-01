@@ -78,7 +78,7 @@ enum PrayerIntention: String, CaseIterable, Identifiable {
         switch self {
         case .peace:    return "Stillness in a busy life"
         case .habit:    return "To make the Rosary part of each day"
-        case .devotion: return "To love Our Lady more"
+        case .devotion: return "To love Mary more"
         case .learning: return "New to it, or coming back after a while"
         }
     }
@@ -120,7 +120,7 @@ struct ReminderSound: Identifiable, Equatable {
         ReminderSound(
             fileName: "harp.caf",
             displayName: "Harp of David",
-            detail: "A gentle harp glissando",
+            detail: "A gentle sweep of harp strings",
             icon: "ph-music-note"
         ),
         ReminderSound(

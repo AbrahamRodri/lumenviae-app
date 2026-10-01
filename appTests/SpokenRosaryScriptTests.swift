@@ -154,7 +154,7 @@ struct SpokenRosaryScriptTests {
             "memorare", "st_michael_prayer",
             "sign_of_cross"
         ])
-        #expect(closing[2...4].allSatisfy { $0.caption == "For the intentions of the Holy Father" })
+        #expect(closing[2...4].allSatisfy { $0.caption == "For the Pope's intentions" })
     }
 
     @Test func eachClosingPrayerStandsAlone() {

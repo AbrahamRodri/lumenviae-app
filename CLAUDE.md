@@ -22,21 +22,22 @@ Home Screen
             ▼
 The mysteries' page (SelectMeditationView) — one Rosary, three forms
     │
-    ├── OTHER WAYS TO PRAY: The Scriptural Rosary · No Meditation (the
-    │   Holy Rosary), each opening its own page with these mysteries chosen
-    ├── MEDITATIONS: gallery of tiles (default) or ruled list (remembered),
-    │   pinned sets on top, the funnel → "Kind of meditation" tray
+    ├── WAYS TO PRAY: The Scriptural Rosary · The Rosary Said Aloud, each
+    │   opening its own page with these mysteries chosen
+    ├── MEDITATIONS ("a short reading on each mystery"): gallery of tiles
+    │   (default) or ruled list (remembered), pinned sets on top, the
+    │   funnel → "Kind of meditation" tray
     └── Tap a set
         │
         ▼
 The Rosary's own page (RosaryConfirmPage — a set's, the Scriptural
-Rosary's and the Holy Rosary's are the same page)
+Rosary's and the Rosary Said Aloud's are the same page)
     │
     ├── The painting dissolving into the page, Back over it
     ├── Kicker, name in Cinzel, one italic line
     ├── YOUR ROSARY TODAY
     │   ├── Audio: Meditation Only | Whole Rosary (Read in Silence in the
-    │   │   Scriptural Rosary; none in the Holy Rosary, always aloud)
+    │   │   Scriptural Rosary; none in the Rosary Said Aloud, always aloud)
     │   ├── Counting: On My Rosary | On the Screen — only while the Whole
     │   │   Rosary is not chosen
     │   └── Rows: Mysteries (not for a set), Voice & speed (not while
@@ -182,8 +183,9 @@ must match the **server's** names exactly.
 There is no "type" field and no default kind. A meditation set is a
 server-authored set of five (seven for the Sorrows) carrying `labels`
 from the web app's vocabulary (`LumenViae.Rosary.Labels`): Considerations
-(shown as **Reflections**), Contemplative, Saints, Scriptural (shown as
-**Gospel**), Intentions —
+(shown as **Reflections**), Contemplative (shown as **Inside the
+Scene**, the title onboarding's Kinds of Meditation gives it), Saints,
+Scriptural (shown as **Gospel**), Intentions —
 see Content Requirements below. As of Sept 2026 the Saints sets are
 Liguori, Ignatius, Chrysostom, Newman, Augustine and Aquinas, beside
 Sheen, Emmerich, Agreda, Faber and Guéranger. **No
@@ -196,9 +198,12 @@ sets at random.
 
 The Rosary is **one prayer in three forms**, chosen on each mysteries'
 page: with a meditation set, as **the Scriptural Rosary** — a verse for
-every Hail Mary, no meditation — or as **the Holy Rosary**, every prayer
-said aloud with nothing read between (it was the Rosary Aloud, and the
-mysteries' page lists it as "No Meditation"). The forms are
+every Hail Mary, no meditation — or as **the Rosary Said Aloud**, every
+prayer said aloud with no readings between (it was the Rosary Aloud,
+then the Holy Rosary, which a newcomer could not tell from the Rosary;
+the mysteries' page lists it as "The Rosary Said Aloud · Every prayer,
+no readings", under WAYS TO PRAY). Every page reads its name from
+`ScripturalRosaryViewModel.displayName` (`holyRosaryName`). The forms are
 `RosaryForm` (`Models/RosaryForm.swift`); the Scriptural Rosary is not a
 kind of meditation, and the filter's "Scriptural" label reads as
 **Gospel** so that one thing on the page is called Scriptural. The app
@@ -712,7 +717,8 @@ informational pages are never the settings page's attic:
 app-wide toggles and choices (the readers keep their own — the Missal's
 and the Office's Aa sheets, the reading goal on a book's page), set in
 the Chapel's own voice: a Cinzel plate
-("Settings / How your chapel is kept."), then outlined sections with
+("Settings / Choose how the app looks, sounds and reminds you."), then
+outlined sections with
 glyph-led kickers (`AccountSection` — no filled card surfaces, same as
 the page they serve):
 
@@ -742,8 +748,8 @@ the page they serve):
   shows the default, Aloud, and its line says the book will ask.
   Drawing the row answers nothing; a tap on either segment does, the lit
   one too
-- **After the Rosary** — the prayers after the Rosary (Holy Father,
-  Memorare, St Michael), under their own heading and the Voice & speed sheet's
+- **After the Rosary** — the prayers after the Rosary (For the Pope's
+  intentions, Memorare, Saint Michael), under their own heading and the Voice & speed sheet's
   note: they are said aloud after the closing prayer, and only when
   every prayer is — nothing else reads them. Set as three more switches
   among the ways of praying, they read as prayers added to every
@@ -756,8 +762,8 @@ the page they serve):
 
 **`AboutView`** (`AppRoute.about`, the home masthead's **ph-info**) — the app's
 colophon: the wordmark as masthead, then About Lumen Viae, Privacy
-Policy, Help & Support, Send Feedback, and the footer (version, "Ad
-Majorem Dei Gloriam"). **App Introduction** — which re-runs onboarding —
+Policy, Help & Support, Send Feedback, and the footer (version, "For
+the greater glory of God", the Ad Majorem Dei Gloriam in English). **App Introduction** — which re-runs onboarding —
 stands above Privacy Policy behind `#if DEBUG`: it is for development,
 since a reader has seen the introduction and needs no door back to it.
 It runs in a **`fullScreenCover`**, never a sheet; onboarding is the
@@ -937,7 +943,8 @@ write concurrent code here:
   (`RosaryStrandView`, hung by `.rosaryStrand(_:)` at the same place on
   both players): prayed beads run off below the hand, the bead under the
   hand rests at the window's middle, and the beads to come descend from
-  above, Our Father beads larger and carrying their numeral so the next
+  above, Our Father beads larger and carrying their number (1 to 5,
+  1 to 7 in the chaplet; they were Roman numerals) so the next
   decade is seen approaching. It is a readout, never tappable. Swipe
   **down** for the next bead, up for the one before; the decade turns
   on its own when the next Our Father arrives (medium haptic; a bead is
@@ -960,7 +967,7 @@ write concurrent code here:
   **The beads unlock once the meditation has been heard.** The strand
   always hangs at the edge, but on a mystery's Our Father it is greyed,
   still and locked — a small drawn lock on the bead under the hand, and
-  OPENS AFTER / THE MEDITATION in place of the bead's name
+  SWIPE AFTER / THE MEDITATION in place of the bead's name
   (`RosaryStrandView.locked`) — until the narration plays to its end
   (`PrayerSessionViewModel.beadsUnlocked`, fed by AudioService's
   end-of-track callback, which in the prayer flow only ever notes this
@@ -1034,8 +1041,8 @@ write concurrent code here:
   no Voice & speed row (`RosaryInfoRow.rows(for:aloud:)`): nothing is
   spoken, and the prayers after the Rosary are said only aloud. It comes
   back with the Whole Rosary. A set's page keeps the row in either mode,
-  since its meditation is always read aloud, and so does the Holy
-  Rosary's. The Holy Rosary offers no choice: its audio
+  since its meditation is always read aloud, and so does the Rosary
+  Said Aloud's. The Rosary Said Aloud offers no choice: its audio
   is a plain row, "Whole Rosary · pause anytime". The words for every
   option and note are `RosaryChoice`'s, read by the pages, Settings and
   the playback sheet; onboarding sets the same names and notes from its
@@ -1116,7 +1123,8 @@ write concurrent code here:
   same tap: left to fall at the element's centre, it landed mid-glass,
   where the Scriptural Rosary's column moves the bead and the pendant's
   steps the prayer. The pendant's label says where the voice is on it
-  ("The pendant. The large bead").
+  ("The cross and first beads. The large bead"; the centrepiece is "The
+  medal", since a newcomer knows neither "pendant" nor "centrepiece").
 - **Audio** — narration for meditations, and chant from the Chant
   Library (below).
 
@@ -1231,7 +1239,9 @@ write concurrent code here:
   freely from the Journal page, or kept from a book as a note; searchable,
   editable, and entirely on device. It has no place in the bar (Prayers
   took it): its main door is the completion screen — THE ROSARY IS
-  OFFERED over Amen (THE CHAPLET IS OFFERED for the Seven Sorrows) —
+  OFFERED over Amen (THE SEVEN SORROWS ARE OFFERED for the chaplet;
+  its streak chip reads "12 DAYS IN A ROW" or "1 DAY SO FAR" beside
+  "12 ROSARIES PRAYED") —
   which asks "What stayed with you in this prayer?" over WRITE A
   REFLECTION, an outlined gold pill, and NOT NOW; once a reflection is
   kept (an entry written since the screen came up, so one opened and
@@ -1772,7 +1782,8 @@ write concurrent code here:
   looked like a second Rosary beside the first. Now it stands where the
   Rosary is chosen.
 
-  **Doors:** THE SCRIPTURAL ROSARY under OTHER WAYS TO PRAY on every
+  **Doors:** THE SCRIPTURAL ROSARY ("A Bible verse for every Hail
+  Mary") under WAYS TO PRAY on every
   mysteries' page, opening its own page with those mysteries chosen;
   the `PrayerShortcut.scripturalRosary` act — Pray tray ("Joyful
   Mysteries · a verse for every bead"), quick tap, Daily Prayers, the
@@ -1802,14 +1813,17 @@ write concurrent code here:
   as the day's Rosary, since it is one.
 
   **`ScripturalRosaryView`** is the Rosary's own page
-  (`RosaryConfirmPage`) for the Scriptural Rosary and the Holy Rosary: A
-  VERSE FOR EVERY BEAD / EVERY PRAYER SAID ALOUD over the name and one
+  (`RosaryConfirmPage`) for the Scriptural Rosary and the Rosary Said
+  Aloud: A VERSE FOR EVERY BEAD / EVERY PRAYER, NO READINGS over the
+  name and one
   line, the chosen mysteries' painting crossfading as the Mysteries row
   changes them (nothing remembered: tomorrow's page opens on tomorrow's
   mysteries), the choices, and past them a ledger — About, The first
-  decade (the Scriptural Rosary's first mystery and its first verse),
-  From. The Mysteries row opens a sheet of the five sets and the chaplet
-  (`MysteriesChoiceSheet`), the chosen one lit and checked and today's
+  mystery (The first sorrow in the chaplet: the Scriptural Rosary's
+  first mystery and its first verse), From. The Mysteries row opens a
+  sheet of the five sets and the chaplet (`MysteriesChoiceSheet`,
+  "Choose the Mysteries", over a line saying what they are), the
+  chosen one lit and checked and today's
   marked TODAY; when today's are the chosen ones, as they usually are,
   the check takes the trailing edge and the line under the name says it
   instead ("Today · The Incarnation"). A tap chooses and closes. PRAY is
@@ -1831,7 +1845,8 @@ write concurrent code here:
   it needs them or not, then one slot for the bead's words — the verse
   in the Medium face at the reading size + 1 (the italic thinned to
   hairlines over the painting), its citation, the fruit on an Our
-  Father, a cue only where it is news — which is one view identified by
+  Father (ASK FOR · HUMILITY, as In Scripture names it), a cue only
+  where it is news — which is one view identified by
   the bead and **crossfades whole** over the one leaving, in a ZStack
   with nothing beneath it. An earlier draft centred the column on the
   glass and let each Text change under its own `contentTransition`: a
@@ -1857,12 +1872,12 @@ write concurrent code here:
   forward. The column still taps forward and long-presses back
   (VoiceOver cannot swipe), and the one haptic keys on `beadPosition`.
   The header is × · SCRIPTURAL ROSARY · Aa (`ReaderTextOptionsSheet`
-  without its narration section); the Holy Rosary's header reads THE
-  HOLY ROSARY. The foot is the still mystery strand over the mystery's
+  without its narration section); the Rosary Said Aloud's header reads
+  THE ROSARY SAID ALOUD. The foot is the still mystery strand over the mystery's
   ordinal name, a Whole Rosary switch (`SetupTogglePill`,
   `UserSettings.prayAloud`, named as the Audio choice names it; this
-  screen has no playback sheet to put it in, and the Holy Rosary, which
-  has no such choice, has no switch) and the ⋯ tray with no download row.
+  screen has no playback sheet to put it in, and the Rosary Said Aloud,
+  which has no such choice, has no switch) and the ⋯ tray with no download row.
   There is no meditation narration and no reader; said aloud, the spoken
   Rosary (see API Endpoints below) reads each verse before its Hail Mary,
   and a play disc and caption stand above the strand while it does.
@@ -1908,8 +1923,8 @@ write concurrent code here:
   as it stood on the last bead; it once vanished for the Hail, Holy Queen
   and came back only after the last Amen.
 
-  **The Holy Rosary sets every prayer as it is said, the pendant's
-  too.** It is this screen (`SpokenForm.plain`), and its column carries
+  **The Rosary Said Aloud sets every prayer as it is said, the
+  pendant's too.** It is this screen (`SpokenForm.plain`), and its column carries
   the prayer where the Scriptural Rosary's carries the verse. The Creed,
   the Hail, Holy Queen, the closing prayer and the prayers after the
   Rosary once showed only their names — the prayers someone learning by
@@ -1919,7 +1934,7 @@ write concurrent code here:
   (`PendantStage(trailingColumn:)`); laid under the words, even dimmed,
   the cross ran through the Creed's lines. A rubric line ("[Let us
   pray.]") is set as a rubric, red and italic and out of its brackets,
-  since the voice does not say it. The Holy Rosary's prayers come down
+  since the voice does not say it. The Rosary Said Aloud's prayers come down
   as far as they must to be on the page whole (`prayerMinimumScale`) —
   at 0.7 the Our Father was cut off at "who trespass a…" at the largest
   sizes — and the Creed closes its lines up as well once it cannot fit
@@ -1933,10 +1948,12 @@ write concurrent code here:
   Home's card (`InProgressPrayer.kind`), on its own screen, at its bead.
   The screens name the form by `ScripturalRosaryViewModel.displayName` —
   the header, the Lock Screen, a share, the resume card, the ⋯ tray and
-  the feedback form say The Holy Rosary — while `CompletedPrayer` records
-  `devotionName`, still "The Rosary Aloud" for the Holy Rosary (above,
-  the rule's vocabulary). A resume card saved while that was its name is
-  named by `holyRosaryName`.
+  the feedback form say The Rosary Said Aloud (`holyRosaryName`, which
+  keeps its old symbol) — while `CompletedPrayer` records
+  `devotionName`, still "The Rosary Aloud" for this form (above, the
+  rule's vocabulary). Home's card names a snapshot by its kind, never
+  its stored name, so a card saved as "The Rosary Aloud" or "The Holy
+  Rosary" comes back as the Rosary Said Aloud.
 
   The 249 verses are **bundled** (`Data/ScripturalRosaryData.swift`,
   keyed `"<category>_<order>"` like MysteryData's fruits) — prayer must
@@ -3165,7 +3182,7 @@ LibriVox.
   five categories. As of Sept 2026 there are 23: Joyful 6, Sorrowful 5,
   Glorious 5, Luminous 4, Seven Sorrows 3.
 - **Labels (live in API):** Each meditation set carries a `labels: [String]` array. The controlled vocabulary lives in the web app (`LumenViae.Rosary.Labels`) and is currently Intentions, Saints, Scriptural, Contemplative, Considerations. The iOS picker builds its multi-select filter chips from these and groups unfiltered browsing by each set's *first* label, so order labels primary-first. If a set arrives without `labels`, the picker gracefully falls back to a flat list. Favorites are on-device (not API).
-- **Label wording is a display concern:** filtering and grouping match the raw API string, but the picker renders labels through `MeditationLabel.displayName` (`Models/MeditationSet.swift`). "Considerations" currently shows as **Reflections**, and "Scriptural" as **Gospel**, so that one thing on a mysteries' page is called Scriptural: the Scriptural Rosary above the sets. Rename in that map, not in the database; Explore's search matches both words.
+- **Label wording is a display concern:** filtering and grouping match the raw API string, but the picker renders labels through `MeditationLabel.displayName` (`Models/MeditationSet.swift`). "Considerations" currently shows as **Reflections**, "Contemplative" as **Inside the Scene** (the bare adjective could not be told from Reflections), and "Scriptural" as **Gospel**, so that one thing on a mysteries' page is called Scriptural: the Scriptural Rosary above the sets. Rename in that map, not in the database; Explore's search matches both words.
 
 ### API Endpoints (as implemented in `APIService`)
 ```
@@ -3184,7 +3201,7 @@ Privacy Policy says it in those words). The server stores it with the time, a
 city/region/country looked up from the request's IP through a third-party
 service, and the IP truncated to /24 — no account, device or install
 identifier (the backend's `docs/COMPLETION_ANALYTICS.md`). The Scriptural
-Rosary, the Holy Rosary and the Guided Rosary never post, and the
+Rosary, the Rosary Said Aloud and the Guided Rosary never post, and the
 Privacy Policy names all three. The privacy manifest
 (`PrivacyInfo.xcprivacy`: Product Interaction and Coarse Location, not
 linked, not tracking, for Analytics) and the in-app Privacy Policy
@@ -3192,7 +3209,7 @@ linked, not tracking, for Analytics) and the in-app Privacy Policy
 Us") say so, and App Store Connect's App Privacy answers must match them —
 keep the three in step with any change to what is sent.
 The spoken Rosary (`UserSettings.prayAloud` — Audio: Whole Rosary — off
-by default, and always in the Holy Rosary) says every prayer aloud and
+by default, and always in the Rosary Said Aloud) says every prayer aloud and
 moves the beads with the voice, in both the meditation's player and the
 Scriptural Rosary's screen. `SpokenRosaryScript` (Models/SpokenRosary)
 builds the script, pure; `SpokenRosaryPlayer` walks it and takes track
@@ -3256,8 +3273,10 @@ of the Cross. The four Rosaries may add `RosaryClosingExtra`s after
 `rosary_closing_prayer`, off by default and chosen in Settings (After the
 Rosary) or in a Rosary's own page's Voice & speed sheet
 (`UserSettings.prayForHolyFather`, `prayMemorare`,
-`praySaintMichael`), always said Holy Father (Our Father, Hail Mary,
-Glory Be, captioned "For the intentions of the Holy Father"), Memorare,
+`praySaintMichael`), always said in this order: for the Pope's
+intentions (Our Father, Hail Mary, Glory Be, captioned "For the Pope's
+intentions"; the switch's line says what the intentions are, and the
+Memorare's quotes its first words), Memorare,
 Saint Michael; never in the chaplet. `OfflineContentService.downloadAll`
 also fills the pack for the chosen voice (`SpokenRosaryScript.everyClip()`),
 best-effort, so the first spoken Rosary prays offline. The pack reuses its

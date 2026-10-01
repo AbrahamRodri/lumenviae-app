@@ -104,24 +104,18 @@ struct RosaryStrand: Hashable {
     }
 
     /// The label beside a bead on the drawn strand, where one is drawn:
-    /// the Our Father beads carry the numeral of the decade they open,
-    /// the final bead the Rosary's end. A numeral alone — the bead's
+    /// the Our Father beads carry the number of the decade they open, in
+    /// plain figures (they were Roman numerals, which a reader had to
+    /// work out), the final bead the Rosary's end. A number alone — the bead's
     /// size and its gold ring already say it is an Our Father, and the
     /// words spelt out beside every one of them ran a hundred points
     /// into the reading, sliding under its last words as the string
     /// moved.
     func strandLabel(at index: Int) -> String? {
         switch bead(at: index) {
-        case .ourFather(let decade): return Self.roman(decade + 1)
+        case .ourFather(let decade): return "\(decade + 1)"
         case .hailMary: return nil
         case .amen: return "Amen"
         }
-    }
-
-    /// I through X, which is as far as any string here runs.
-    static func roman(_ number: Int) -> String {
-        let numerals = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"]
-        guard number >= 1, number <= numerals.count else { return "\(number)" }
-        return numerals[number - 1]
     }
 }

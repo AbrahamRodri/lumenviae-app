@@ -29,7 +29,7 @@ struct PrayerIntentionSheet: View {
                 SheetHeader(
                     kicker: "Reminders",
                     title: "What Brings You to the Rosary",
-                    lead: "Choose any that fit. Your reminders follow them."
+                    lead: "Choose any that fit. We'll word your reminders to match."
                 )
 
                 ForEach(PrayerIntention.allCases) { intention in

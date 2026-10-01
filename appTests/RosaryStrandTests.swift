@@ -106,17 +106,11 @@ struct RosaryStrandTests {
     }
 
     @Test func theOurFatherBeadsCarryTheirNumeralAndTheLastBeadItsAmen() {
-        #expect(rosary.strandLabel(at: 0) == "I")
+        #expect(rosary.strandLabel(at: 0) == "1")
         #expect(rosary.strandLabel(at: 1) == nil)
-        #expect(rosary.strandLabel(at: 44) == "V")
+        #expect(rosary.strandLabel(at: 44) == "5")
         #expect(rosary.strandLabel(at: 55) == "Amen")
-        #expect(chaplet.strandLabel(at: 48) == "VII")
+        #expect(chaplet.strandLabel(at: 48) == "7")
         #expect(chaplet.strandLabel(at: 56) == "Amen")
-    }
-
-    @Test func numeralsRunToTenAndNoFurther() {
-        #expect((1...10).map(RosaryStrand.roman) == ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"])
-        #expect(RosaryStrand.roman(11) == "11")
-        #expect(RosaryStrand.roman(0) == "0")
     }
 }

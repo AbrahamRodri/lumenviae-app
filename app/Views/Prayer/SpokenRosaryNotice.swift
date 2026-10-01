@@ -46,7 +46,7 @@ struct SpokenRosaryNotice: View {
                     fullWidth: false,
                     action: onRetry
                 )
-                .accessibilityHint("Downloads the prayers so they can be said aloud")
+                .accessibilityHint("Downloads the recordings for the Whole Rosary")
 
             case .notRecorded:
                 // Choosing another voice is what the view answers to:

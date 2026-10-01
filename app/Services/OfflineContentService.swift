@@ -346,7 +346,7 @@ final class OfflineContentService {
 
             if !artworkJobs.isEmpty {
                 var artDone = 0
-                state = .downloading(stage: "Artwork", completed: 0, total: artworkJobs.count)
+                state = .downloading(stage: "Paintings", completed: 0, total: artworkJobs.count)
 
                 for job in artworkJobs {
                     if !FileManager.default.fileExists(atPath: job.destination.path) {
@@ -358,7 +358,7 @@ final class OfflineContentService {
                         }
                     }
                     artDone += 1
-                    state = .downloading(stage: "Artwork", completed: artDone, total: artworkJobs.count)
+                    state = .downloading(stage: "Paintings", completed: artDone, total: artworkJobs.count)
                 }
             }
 
@@ -367,7 +367,7 @@ final class OfflineContentService {
             // Its own monotonic counter; the denominator never moves.
             var audioDone = 0
             let audioTotal = audioJobs.count
-            state = .downloading(stage: "Audio", completed: 0, total: max(audioTotal, 1))
+            state = .downloading(stage: "Meditation Audio", completed: 0, total: max(audioTotal, 1))
 
             for job in audioJobs {
                 if !FileManager.default.fileExists(atPath: job.destination.path) {
@@ -378,30 +378,30 @@ final class OfflineContentService {
                     }
                 }
                 audioDone += 1
-                state = .downloading(stage: "Audio", completed: audioDone, total: audioTotal)
+                state = .downloading(stage: "Meditation Audio", completed: audioDone, total: audioTotal)
             }
 
             // Stage 4 — the spoken Rosary: every prayer, announcement and
             // verse in the chosen voice, through the pack's own download.
             // Best-effort: a failure here leaves the rest of the library
             // complete, and the pack tries again when next prayed aloud.
-            state = .downloading(stage: "Spoken Prayers", completed: 0, total: 1)
+            state = .downloading(stage: "Rosary Audio", completed: 0, total: 1)
             _ = try? await RosaryAudioPack.shared.prepare(
                 voice: voice,
                 clips: SpokenRosaryScript.everyClip()
             ) { [weak self] done, total in
-                self?.state = .downloading(stage: "Spoken Prayers", completed: done, total: max(total, 1))
+                self?.state = .downloading(stage: "Rosary Audio", completed: done, total: max(total, 1))
             }
 
             // Stage 5 — the Prayer Book said aloud, in the same voice and
             // through the same pack (the Rosary's prayers it shares are
             // already on disk). Best-effort, as the spoken Rosary is.
-            state = .downloading(stage: "Prayers", completed: 0, total: 1)
+            state = .downloading(stage: "Prayers Audio", completed: 0, total: 1)
             _ = try? await RosaryAudioPack.shared.prepare(
                 voice: voice,
                 clips: Set(PrayerBook.prayers.keys.map { PrayAlongVoice.clipID(for: $0) })
             ) { [weak self] done, total in
-                self?.state = .downloading(stage: "Prayers", completed: done, total: max(total, 1))
+                self?.state = .downloading(stage: "Prayers Audio", completed: done, total: max(total, 1))
             }
 
             // Manifest is written for partial runs too, so a relaunch

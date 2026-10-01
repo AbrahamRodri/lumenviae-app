@@ -277,7 +277,7 @@ final class AudioService {
             // and the "press play" this message asks for could never work.
             self.setupAudioSession()
             self.reset()
-            self.errorMessage = "Audio was interrupted by the system — reopen this mystery to continue"
+            self.errorMessage = "The audio stopped. Open this mystery again to continue."
         }
         #endif
     }
@@ -1124,7 +1124,7 @@ final class AudioService {
         claim: AudioClaim?
     ) async -> Bool {
         guard let url = URL(string: urlString) else {
-            errorMessage = "Invalid audio URL"
+            errorMessage = "This recording can't be played."
             return false
         }
 

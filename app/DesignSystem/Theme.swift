@@ -70,7 +70,7 @@ enum AppTheme: String, CaseIterable, Identifiable {
     /// One-line character description shown in the theme picker
     var detail: String {
         switch self {
-        case .marianBlue: return "Deep blue, the color of Our Lady"
+        case .marianBlue: return "Deep blue, the color of Mary"
         case .midnight:   return "Dark navy, quiet and plain"
         case .candlelit:  return "A dark chapel lit by warm gold"
         }

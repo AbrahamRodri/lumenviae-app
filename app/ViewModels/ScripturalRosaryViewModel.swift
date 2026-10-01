@@ -50,14 +50,25 @@ final class ScripturalRosaryViewModel {
     }
 
     /// The devotion's name as the screens set it: the header, the Lock
-    /// Screen, a share, the resume card. The Holy Rosary's is kept here as
-    /// well, for a card saved while it was still recorded under its old
-    /// name (`aloudDevotionName`), which the Prayer Record keeps.
+    /// Screen, a share, the resume card. Every page that names a form
+    /// reads it here, so the name is said one way everywhere.
     var displayName: String {
-        isPlain ? Self.holyRosaryName : "The Scriptural Rosary"
+        Self.displayName(for: form)
     }
 
-    static let holyRosaryName = "The Holy Rosary"
+    /// A form's name, for a page that has no model of its own: the
+    /// Rosary's own page and its Mysteries sheet
+    static func displayName(for form: SpokenForm) -> String {
+        form == .plain ? holyRosaryName : "The Scriptural Rosary"
+    }
+
+    /// The form said aloud, as a reader sees it. It was "The Holy
+    /// Rosary", which a newcomer could not tell from "The Rosary". Home's
+    /// resume card shows it for any snapshot kept as `.rosaryAloud`, by
+    /// its kind and never by its stored name, so a card saved under "The
+    /// Rosary Aloud" or "The Holy Rosary" still comes back as this form.
+    /// What the Prayer Record keeps is `aloudDevotionName`, unchanged.
+    static let holyRosaryName = "The Rosary Said Aloud"
 
     /// Which snapshot an interrupted one is kept as, so it comes back
     /// as itself
@@ -288,13 +299,15 @@ final class ScripturalRosaryViewModel {
                 return BeadReading(
                     reference: nil,
                     text: Self.prayer("our_father", in: UserSettings.shared.prayerLanguage),
-                    footnote: MysteryData.fruit(for: mystery).map { "Fruit of the mystery · \($0)" }
+                    footnote: MysteryData.fruit(for: mystery).map { "Ask for · \($0)" }
                 )
             }
+            // The mystery's fruit, the grace to ask for while it is
+            // prayed, named as In Scripture names it
             return BeadReading(
                 reference: mystery.scriptureReference,
                 text: mystery.description ?? "",
-                footnote: MysteryData.fruit(for: mystery).map { "Fruit of the mystery · \($0)" }
+                footnote: MysteryData.fruit(for: mystery).map { "Ask for · \($0)" }
             )
         }
 

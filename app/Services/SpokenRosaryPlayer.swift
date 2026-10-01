@@ -81,9 +81,9 @@ final class SpokenRosaryPlayer {
         var message: String {
             switch self {
             case .offline:
-                return "You're offline. Praying aloud needs the internet the first time."
+                return "You're offline. The Whole Rosary needs the internet the first time."
             case .notRecorded:
-                return "Praying aloud isn't ready in this voice yet."
+                return "The Whole Rosary isn't recorded in this voice yet. Choose another voice."
             }
         }
     }

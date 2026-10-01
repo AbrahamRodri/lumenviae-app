@@ -36,7 +36,7 @@ struct PrayerSwipeHint: View {
             // painting and a transport and nothing that says the decade
             // is prayed on the user's own beads; onboarding says it once,
             // eight slides before they get here, and never again.
-            Text(onBeads ? "Swipe down for the next bead" : "Pray the decade, then swipe left")
+            Text(onBeads ? "Swipe down for the next bead" : "After the Hail Marys, swipe left")
                 .font(AppFonts.labelFont(9))
                 .tracking(2)
                 .foregroundColor(AppColors.cream.opacity(onBeads ? 0.78 : 0.6))

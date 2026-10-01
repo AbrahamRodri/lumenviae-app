@@ -406,7 +406,7 @@ struct ScripturalRosaryPrayerView: View {
             // while `audioURL` is nil - the tray offers no download.
             voice: NarrationVoiceCatalog.shared.chosenSlug,
             shareText: viewModel.isPlain
-                ? "\(mysteryName), the Holy Rosary on Lumen Viae"
+                ? "\(mysteryName) · \(viewModel.displayName) on Lumen Viae"
                 : "\(shareLine) · \(mysteryName), the Scriptural Rosary on Lumen Viae",
             feedbackContext: FeedbackContext(
                 meditationTitle: mysteryName,
@@ -542,7 +542,7 @@ struct ScripturalRosaryPrayerView: View {
     /// the size of the reading on the right.
     private var header: some View {
         ZStack {
-            Text((viewModel.isPlain ? "The Holy Rosary" : "Scriptural Rosary").uppercased())
+            Text((viewModel.isPlain ? viewModel.displayName : "Scriptural Rosary").uppercased())
                 .font(AppFonts.labelFont(9))
                 .tracking(2.5)
                 .foregroundColor(AppColors.goldLight)

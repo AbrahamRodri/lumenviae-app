@@ -258,7 +258,7 @@ struct AccountView: View {
                                 title: "The Angelus Bell",
                                 subtitle: PrayerBookStore.shared.angelusBellDenied
                                     ? "Notifications are turned off for Lumen Viae"
-                                    : "Rings at 6 am, noon and 6 pm",
+                                    : "Rings at 6 AM, noon and 6 PM for the Angelus, a short prayer to Mary",
                                 isOn: Binding(
                                     get: { PrayerBookStore.shared.angelusBell },
                                     set: { on in Task { await PrayerBookStore.shared.setAngelusBell(on) } }
@@ -553,7 +553,7 @@ struct AccountHeaderView: View {
                 .font(AppFonts.headlineFont(30))
                 .foregroundColor(AppColors.cream)
 
-            Text("How your chapel is kept.")
+            Text("Choose how the app looks, sounds and reminds you.")
                 .font(AppFonts.italicFont(14))
                 .foregroundColor(AppColors.textSecondary)
 
@@ -664,7 +664,9 @@ struct OfflineContentRows: View {
                         .frame(width: 24)
 
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Downloading \(stage)…")
+                        // The first stage gets the list of what there is
+                        // to download, and is not itself a download
+                        Text(stage == "Preparing" ? "Preparing…" : "Downloading \(stage)…")
                             .font(AppFonts.bodyFont(16))
                             .foregroundColor(AppColors.cream)
 
@@ -713,7 +715,7 @@ struct OfflineContentRows: View {
                     ActionRow(
                         icon: "ph-arrow-counter-clockwise",
                         title: "Update Download",
-                        subtitle: "Re-fetches meditation text; existing audio is kept"
+                        subtitle: "Gets the latest meditations; saved audio stays"
                     ) {
                         Task { await service.downloadAll(refreshText: true) }
                     }
@@ -946,7 +948,7 @@ struct PrayerLanguageRow: View {
                         selectedLanguage = language.rawValue
                     }) {
                         HStack {
-                            Text(language.rawValue)
+                            Text(Self.displayName(of: language))
                                 .font(AppFonts.bodyFont(15))
                                 .foregroundColor(
                                     selectedLanguage == language.rawValue
@@ -977,6 +979,19 @@ struct PrayerLanguageRow: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
+    }
+
+    /// What a language is called here. The two bilingual choices are
+    /// stored as "Latin & English" and "English & Latin", which read
+    /// alike, so each names the language set first, as onboarding does;
+    /// the stored values do not change.
+    static func displayName(of language: PrayerLanguage) -> String {
+        switch language {
+        case .english: return "English"
+        case .latin: return "Latin"
+        case .both: return "Latin, English beneath"
+        case .latinUnderEnglish: return "English, Latin beneath"
+        }
     }
 }
 
@@ -1116,7 +1131,7 @@ struct AccountFooter: View {
                 .font(AppFonts.bodyFont(12))
                 .foregroundColor(AppColors.textSecondary)
 
-            Text("Ad Majorem Dei Gloriam")
+            Text("For the greater glory of God")
                 .font(AppFonts.italicFont(12))
                 .foregroundColor(AppColors.gold.opacity(0.6))
         }
@@ -1151,12 +1166,12 @@ struct AboutSheet: View {
                 VStack(alignment: .leading, spacing: 16) {
                     InfoBlock(
                         title: "Our Mission",
-                        text: "Lumen Viae is a Catholic Rosary companion designed to deepen your prayer life. Through guided meditations, scripture, and reflection, the app accompanies you through all five mysteries of the Rosary — Joyful, Sorrowful, Glorious, and Luminous."
+                        text: "Lumen Viae is a Catholic Rosary companion designed to deepen your prayer life. Through guided meditations, Scripture, and reflection, the app accompanies you through the mysteries of the Rosary, scenes from the lives of Jesus and Mary: the Joyful, Sorrowful, Glorious and Luminous, and the Seven Sorrows of Mary."
                     )
 
                     InfoBlock(
                         title: "How to Pray the Rosary",
-                        text: "Each Rosary consists of five decades (mysteries). For each mystery, meditate on the scene, pray one Our Father, ten Hail Marys, and a Glory Be. The app guides you through all five, with optional meditations from saints and scripture."
+                        text: "A Rosary has five mysteries. For each one, think on its scene and pray one Our Father, ten Hail Marys and a Glory Be, together called a decade. The app guides you through all five, with an optional meditation for each: a short reading from a saint or from Scripture."
                     )
 
                     InfoBlock(
@@ -1172,7 +1187,7 @@ struct AboutSheet: View {
                         .font(AppFonts.bodyFont(13))
                         .foregroundColor(AppColors.textSecondary)
 
-                    Text("Ad Majorem Dei Gloriam")
+                    Text("For the greater glory of God")
                         .font(AppFonts.italicFont(13))
                         .foregroundColor(AppColors.gold.opacity(0.6))
                 }
@@ -1207,12 +1222,12 @@ struct PrivacyPolicySheet: View {
 
                     InfoBlock(
                         title: "What Reaches Us",
-                        text: "One short note, when you finish a meditation set's Rosary: which set it was, and whether it was said aloud as the Whole Rosary. Our server keeps it with the time and an approximate city, region and country, looked up through ipapi.co from the address your phone connects from, and keeps that address only in a shortened form. No name, account or device identifier goes with it, so two Rosaries prayed on one phone look like two prayed by strangers. We use these notes only to learn which meditations are prayed, and roughly where. The Scriptural Rosary, the Holy Rosary and the guided Rosary send nothing, and nothing else reaches us unless you write to us."
+                        text: "One short note, when you finish a Rosary prayed with meditations: which meditations they were, and whether it was said aloud as the Whole Rosary. Our server keeps it with the time and an approximate city, region and country, looked up through ipapi.co from the address your phone connects from, and keeps that address only in a shortened form. No name, account or device identifier goes with it, so two Rosaries prayed on one phone look like two prayed by strangers. We use these notes only to learn which meditations are prayed, and roughly where. The Scriptural Rosary, the Rosary Said Aloud and the guided Rosary send nothing, and nothing else reaches us unless you write to us."
                     )
 
                     InfoBlock(
                         title: "What the App Fetches",
-                        text: "Meditations, narration and the Divine Office come from our own server; the Missal from Missale Meum; the reading shelf's books and recordings from Project Gutenberg and LibriVox. Each receives the request itself, as any website does, and nothing more. The app carries no analytics or advertising code from anyone else, and nothing is used to track you."
+                        text: "Meditations, narration and the Hours of Prayer (the Divine Office) come from our own server; the Mass texts from Missale Meum; the books and recordings under Spiritual Reading from Project Gutenberg and LibriVox. Each receives the request itself, as any website does, and nothing more. The app carries no analytics or advertising code from anyone else, and nothing is used to track you."
                     )
 
                     InfoBlock(
@@ -1255,12 +1270,12 @@ struct HelpSupportSheet: View {
                 VStack(alignment: .leading, spacing: 28) {
                     InfoBlock(
                         title: "How do I begin praying?",
-                        text: "From the home screen, tap \"Pray the Rosary\" under today's mysteries, or tap any mystery in the grid below. On the page that opens, choose a meditation set, or one of the other ways to pray: the Scriptural Rosary, with a verse for every bead, or the Holy Rosary, with no meditation. Its own page shows how you'll pray, the audio and the counting, just above Pray."
+                        text: "From the home screen, tap \"Pray the Rosary\" under today's mysteries, or tap any mystery in the grid below. On the page that opens, choose a meditation (a short reading on each mystery), or another way to pray: the Scriptural Rosary, with a Bible verse for every Hail Mary, or the Rosary Said Aloud, with no readings. The next page shows how you'll pray, the audio and the counting, just above Pray."
                     )
 
                     InfoBlock(
                         title: "What are the different mysteries?",
-                        text: "There are four sets of mysteries. On the traditional schedule: Joyful (Monday, Thursday), Sorrowful (Tuesday, Friday), and Glorious (Wednesday, Saturday). Sunday takes Joyful in Advent, Sorrowful in Lent, and Glorious otherwise. Luminous mysteries, added by Pope John Paul II, can be prayed any day from View All beside the home grid. The modern schedule (Settings, under Devotion) gives them Thursday and moves the Joyful to Saturday."
+                        text: "The mysteries are scenes from the lives of Jesus and Mary, five to a Rosary. There are four sets of them. On the traditional schedule: Joyful (Monday, Thursday), Sorrowful (Tuesday, Friday), and Glorious (Wednesday, Saturday). Sunday takes Joyful in Advent, Sorrowful in Lent, and Glorious otherwise. Luminous mysteries, added by Pope John Paul II, can be prayed any day from View All beside the home grid. The modern schedule (Settings, under Devotion) gives them Thursday and moves the Joyful to Saturday. The Seven Sorrows of Mary can be prayed on any day too."
                     )
 
                     InfoBlock(
@@ -1270,7 +1285,7 @@ struct HelpSupportSheet: View {
 
                     InfoBlock(
                         title: "Why are some meditations unavailable?",
-                        text: "Meditation content is fetched from our server. If you're offline or content hasn't been added yet, some sets may not be available. Check your internet connection and try again."
+                        text: "Meditations come from our server. If you're offline, or they haven't been added yet, some meditations may not be available. Check your internet connection and try again."
                     )
 
                     InfoBlock(

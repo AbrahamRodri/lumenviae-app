@@ -39,7 +39,8 @@ enum RosaryForm: Hashable {
     case meditation
     /// A verse of Scripture for every bead
     case scriptural
-    /// The Holy Rosary: every prayer said aloud, nothing read between
+    /// The Rosary Said Aloud (it was the Holy Rosary): every prayer
+    /// said aloud, no readings between
     case holy
 
     init(_ spoken: SpokenForm) {
@@ -117,16 +118,16 @@ enum RosaryChoice: Hashable, CaseIterable {
         switch (self, form == .scriptural) {
         case (.audio, false):
             return value
-                ? "Every prayer is said aloud. Answer along."
+                ? "Every prayer is said aloud. Pray along with the voice."
                 : "The meditation is read aloud. You say the prayers."
         case (.audio, true):
             return value
                 ? "Every verse and prayer is said aloud."
-                : "The verses stand on the beads; you read and pray in silence."
+                : "A verse is shown for each Hail Mary. You read and pray in silence."
         case (.counting, _):
             return value
                 ? "The beads are on the screen. Swipe for each Hail Mary."
-                : "Count on your own rosary. The screen moves a mystery at a time."
+                : "Count on your own rosary. The screen shows one mystery at a time."
         }
     }
 

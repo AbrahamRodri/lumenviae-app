@@ -319,7 +319,7 @@ struct PendantCrossView: View {
             }
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(current.map { "The pendant. \($0.name)" } ?? "The pendant")
+        .accessibilityLabel(current.map { "The cross and first beads. \($0.name)" } ?? "The cross and first beads")
     }
 
     // MARK: Where Everything Hangs
@@ -588,7 +588,7 @@ struct PendantStage: View {
         .allowsHitTesting(onTap != nil)
         // Where the voice is on it, as the pendant itself says
         .modifier(StageTapAccessibility(
-            label: pendant.place.map { "The pendant. \($0.name)" } ?? "The pendant",
+            label: pendant.place.map { "The cross and first beads. \($0.name)" } ?? "The cross and first beads",
             chromeHidden: chromeHidden,
             action: { onTap?() }
         ))

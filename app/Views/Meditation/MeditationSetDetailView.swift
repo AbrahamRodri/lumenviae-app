@@ -93,7 +93,7 @@ struct MeditationSetDetailView: View {
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("The server may still be waking up — it can take a few seconds. Downloading offline content in Settings keeps every meditation available without a connection.")
+            Text("The server may be slow to start. Try again in a few seconds. To pray without a connection, use Download for Offline in Settings.")
         }
     }
 
@@ -104,7 +104,7 @@ struct MeditationSetDetailView: View {
     private var sections: some View {
         VStack(spacing: 0) {
             if let about = viewModel.about {
-                SetSection(label: "About\nthis set") {
+                SetSection(label: "About") {
                     ReadingText(text: about, size: 16)
                 }
             }
@@ -134,8 +134,8 @@ struct MeditationSetDetailView: View {
         }
     }
 
-    /// The meditations this set holds, numbered the way a missal numbers
-    /// them, with the devotion's own place in the week beneath.
+    /// The meditations this set holds, numbered, with the devotion's own
+    /// place in the week beneath.
     private var meditationList: some View {
         VStack(alignment: .leading, spacing: 12) {
             ForEach(Array(viewModel.entryTitles.enumerated()), id: \.offset) { index, title in
@@ -238,7 +238,7 @@ struct MeditationSetDetailView: View {
 
                     case .failed:
                         VStack(alignment: .leading, spacing: 6) {
-                            Text("Some of it didn't come down. What finished was kept.")
+                            Text("Some of it didn't download. What finished is saved.")
                                 .font(AppFonts.italicFont(14))
                                 .foregroundColor(AppColors.textSecondary)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -375,7 +375,7 @@ struct MeditationSetDetailView: View {
             VStack(spacing: 10) {
                 sectionRule
 
-                Text("Couldn't load these meditations. The server may still be waking up.")
+                Text("Couldn't load these meditations. The server may be slow to start.")
                     .font(AppFonts.italicFont(15))
                     .foregroundColor(AppColors.textSecondary)
                     .multilineTextAlignment(.center)
@@ -440,10 +440,11 @@ struct MeditationSetDetailView: View {
         }
     }
 
-    /// Roman numerals for the mystery list. Never needs past seven.
+    /// The mystery list's numbers, in plain figures: they are read as
+    /// numbers, and Roman numerals asked the reader to work them out.
+    /// Never needs past seven.
     private static func numeral(_ n: Int) -> String {
-        let numerals = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"]
-        return n >= 1 && n <= numerals.count ? numerals[n - 1] : "\(n)"
+        "\(n)"
     }
 }
 

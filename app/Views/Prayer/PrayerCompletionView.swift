@@ -502,7 +502,7 @@ struct MilestoneCelebrationCard: View {
 // MARK: - Streak Celebration Chip
 
 /// Progress feedback shown right after completing the Rosary:
-/// current streak plus lifetime Rosaries offered.
+/// current streak plus lifetime Rosaries prayed.
 struct StreakCelebrationChip: View {
     let streakDays: Int
     let totalRosaries: Int
@@ -513,10 +513,12 @@ struct StreakCelebrationChip: View {
                 AppIcon("ph-flame-fill", size: 14)
                     .foregroundColor(AppColors.goldLight)
 
-                Text(streakDays == 1 ? "DAY 1 STREAK" : "\(streakDays) DAY STREAK")
+                Text(streakDays == 1 ? "1 DAY SO FAR" : "\(streakDays) DAYS IN A ROW")
                     .font(AppFonts.labelFont(11))
                     .tracking(1.5)
                     .foregroundColor(AppColors.cream)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
             }
 
             Rectangle()
@@ -527,10 +529,12 @@ struct StreakCelebrationChip: View {
                 AppIcon("lv-rosary", size: 14)
                     .foregroundColor(AppColors.goldLight)
 
-                Text(totalRosaries == 1 ? "1 ROSARY OFFERED" : "\(totalRosaries) ROSARIES OFFERED")
+                Text(totalRosaries == 1 ? "1 ROSARY PRAYED" : "\(totalRosaries) ROSARIES PRAYED")
                     .font(AppFonts.labelFont(11))
                     .tracking(1.5)
                     .foregroundColor(AppColors.cream)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
             }
         }
         .padding(.horizontal, 18)
@@ -661,7 +665,7 @@ struct CompletionBadge: View {
             // Title, emerging from light into focus: what was prayed is
             // offered, and the word that closes every prayer
             VStack(spacing: 6) {
-                Text(isChaplet ? "THE CHAPLET IS OFFERED" : "THE ROSARY IS OFFERED")
+                Text(isChaplet ? "THE SEVEN SORROWS ARE OFFERED" : "THE ROSARY IS OFFERED")
                     .font(AppFonts.labelFont(11))
                     .tracking(2.5)
                     .foregroundColor(AppColors.gold)

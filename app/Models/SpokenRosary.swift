@@ -49,7 +49,7 @@ enum PendantPlace: Hashable {
         case .largeBead: return "The large bead"
         case .smallBead(let index): return "Small bead \(index + 1) of 3"
         case .chain: return "The chain"
-        case .medal: return "The centrepiece"
+        case .medal: return "The medal"
         }
     }
 }
@@ -148,7 +148,7 @@ enum RosaryClosingExtra: String, CaseIterable, Hashable {
     /// What the setting is called
     var title: String {
         switch self {
-        case .holyFather: return "For the Holy Father's intentions"
+        case .holyFather: return "For the Pope's intentions"
         case .memorare: return "Memorare"
         case .stMichael: return "Saint Michael Prayer"
         }
@@ -157,7 +157,7 @@ enum RosaryClosingExtra: String, CaseIterable, Hashable {
     /// The name where three share a row: the set's page
     var shortTitle: String {
         switch self {
-        case .holyFather: return "Holy Father"
+        case .holyFather: return "The Pope"
         case .memorare: return "Memorare"
         case .stMichael: return "St. Michael"
         }
@@ -166,8 +166,8 @@ enum RosaryClosingExtra: String, CaseIterable, Hashable {
     /// What the setting adds, said as what is prayed
     var detail: String {
         switch self {
-        case .holyFather: return "An Our Father, Hail Mary and Glory Be after the Rosary."
-        case .memorare: return "The Memorare after the Rosary."
+        case .holyFather: return "An Our Father, Hail Mary and Glory Be after the Rosary, for what the Pope asks the Church to pray for."
+        case .memorare: return "The prayer “Remember, O most gracious Virgin Mary” after the Rosary."
         case .stMichael: return "The Prayer to Saint Michael after the Rosary."
         }
     }
@@ -193,7 +193,7 @@ enum RosaryClosingExtra: String, CaseIterable, Hashable {
         }
     }
 
-    static let holyFatherCaption = "For the intentions of the Holy Father"
+    static let holyFatherCaption = "For the Pope's intentions"
 
     /// The chosen ones, in the order they are said, whatever order they
     /// were chosen in
