@@ -1284,7 +1284,10 @@ write concurrent code here:
   nothing (a point release included) and is still recorded as seen, and
   someone who skips a version sees only the notes of the one they
   arrive at. The 4.0 notes name what CHANGELOG.md's 4.0 section adds —
-  the Prayer Book, the Chant Library, the Rosary said aloud (with the
+  Prayers (the Prayer Book, in the tab bar where the Journal was, its
+  line saying the Journal now opens from the Chapel and after each
+  prayer, since every row is a door and the Journal is a tab, not a
+  page; it turns to the Prayers tab), the Chant Library, the Rosary said aloud (with the
   speed slider; its row is "The Holy Rosary" and opens that form's own
   page on today's mysteries, `.rosaryAloud(today)`), and How to Pray
   with Your First Rosary — and not the
@@ -1924,9 +1927,9 @@ write concurrent code here:
   The book has one name wherever the reader sees one, **Prayers** —
   the tab, Explore's section, the pray-along's kicker over a single
   prayer, its question before it first speaks, the Settings row, the
-  Lock Screen's album line, the offline download's stage — while types
-  and files keep "PrayerBook"; What's New's 4.0 notes keep the name it
-  was added under.
+  Lock Screen's album line, the offline download's stage, What's New's
+  4.0 notes, which had not yet been shown to anyone — while types and
+  files keep "PrayerBook".
 
   **Prayers** (`PrayerBookView(isTabRoot:)`, the tab's root; pushed it
   draws a Back, but nothing pushes it now) is a plain title, the search

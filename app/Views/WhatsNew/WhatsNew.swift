@@ -43,8 +43,12 @@ struct WhatsNewRelease: Identifiable {
         WhatsNewRelease(version: "4.0", items: [
             WhatsNewItem(
                 icon: "ch-praying-hands",
-                title: "The Prayer Book",
-                detail: "The Church's common prayers, set out for the hour of the day, to pray aloud or in silence",
+                title: "Prayers",
+                // The Journal gave Prayers its place in the bar. Every row
+                // here is a door, and the Journal is a tab, not a page, so
+                // where it opens now is said in this row's line
+                detail: "The Church's common prayers, in the tab bar where the Journal was; the Journal now opens from the Chapel and after each prayer",
+                // Turns to the Prayers tab (`AppRouter.push`)
                 route: .prayerBook
             ),
             WhatsNewItem(

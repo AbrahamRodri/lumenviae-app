@@ -654,7 +654,7 @@ enum PrayerBook {
             return "The day offered to God before it begins."
         case angelusOrderID:
             return isEastertide(date)
-                ? "Our Lady's Easter joy, said in the Angelus's place from Easter to Trinity Sunday."
+                ? "Our Lady's Easter joy, said in the Angelus's place from Easter until the Saturday after Pentecost."
                 : "A short prayer to Mary said at morning, noon and evening."
         case nightOrderID:
             return "The day examined and given back, closing on the \(antiphon(on: date).name)."
