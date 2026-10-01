@@ -3,10 +3,11 @@
 //  Lumen Viae
 //
 //  The Chapel page's furniture for arranging: the two-column grid that
-//  seats full- and half-width tiles, the sway they take up while
-//  arranging, the ✕ badge that puts a section away, the dashed slot
-//  that opens where a carried tile will land, the ghost under the
-//  finger, and the tray the tab bar yields to.
+//  seats full- and half-width tiles; the compact row each section folds
+//  to while the page is arranged, with its grip, its width and the ✕
+//  that hides it; the dashed slot that opens where a carried section
+//  will land; the row lifted under the finger; and the tray of hidden
+//  sections the tab bar yields to.
 //
 //  The page itself (state, gestures, persistence) lives in MyChapelView;
 //  everything here is drawing.
@@ -124,100 +125,159 @@ nonisolated struct ChapelGridLayout: Layout {
     }
 }
 
-// MARK: - ChapelSway
+// MARK: - ChapelArrangeRow
 
-/// The gentle rock every placed tile takes up while arranging —
-/// ±0.5° at 0.24s, staggered by position. It stops entirely while
-/// something is carried, so the only moving thing is the one in hand,
-/// and it never runs under Reduce Motion.
-struct ChapelSway: ViewModifier {
+/// A section as it stands while the page is arranged: folded to one
+/// 58pt row so the whole page fits the glass and a section can be
+/// carried past the others without scrolling. The grip says it moves;
+/// the row says how wide it stands — WIDE in a capsule at full width,
+/// HALF under the name at half — and a tap anywhere on it switches the
+/// two. The ✕ that hides it is laid over its trailing edge by the page
+/// (`ChapelHideButton`), above the carry gesture, so the row keeps room
+/// for it here.
+struct ChapelArrangeRow: View {
 
-    let active: Bool
-    let index: Int
+    let placement: ChapelPlacement
 
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var angle: Double = 0
+    var body: some View {
+        HStack(spacing: placement.span == 2 ? 12 : 10) {
+            ChapelGrip(color: AppColors.textSecondary)
 
-    func body(content: Content) -> some View {
-        content
-            .rotationEffect(.degrees(angle))
-            .onChange(of: active && !reduceMotion, initial: true) { _, swaying in
-                if swaying {
-                    angle = -0.5
-                    withAnimation(
-                        .easeInOut(duration: 0.24)
-                            .repeatForever(autoreverses: true)
-                            .delay(Double(index) * 0.05)
-                    ) {
-                        angle = 0.5
-                    }
-                } else {
-                    withAnimation(.easeOut(duration: 0.2)) {
-                        angle = 0
-                    }
+            if placement.span == 2 {
+                Text(placement.tile.title)
+                    .font(AppFonts.bodyFont(18))
+                    .foregroundColor(AppColors.cream)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+
+                Spacer(minLength: 8)
+
+                Text("WIDE")
+                    .font(AppFonts.labelFont(9))
+                    .tracking(2)
+                    .foregroundColor(AppColors.gold)
+                    .padding(.horizontal, 12)
+                    .frame(height: 30)
+                    .overlay(
+                        Capsule()
+                            .strokeBorder(AppColors.gold.opacity(0.45), lineWidth: AppLine.hairline)
+                    )
+            } else {
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(placement.tile.shortTitle)
+                        .font(AppFonts.bodyFont(16))
+                        .foregroundColor(AppColors.cream)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+
+                    Text("HALF")
+                        .font(AppFonts.labelFont(9))
+                        .tracking(2)
+                        .foregroundColor(AppColors.gold)
                 }
+
+                Spacer(minLength: 0)
             }
+
+            // The hide button's place
+            Color.clear
+                .frame(width: ChapelHideButton.width(span: placement.span), height: 1)
+        }
+        .padding(.leading, placement.span == 2 ? 14 : 12)
+        .padding(.trailing, placement.span == 2 ? 4 : 0)
+        .frame(maxWidth: .infinity, minHeight: 58, maxHeight: 58)
+        .background(
+            RoundedRectangle(cornerRadius: ChapelTileMetrics.cornerRadius)
+                .fill(AppColors.cardBackground)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: ChapelTileMetrics.cornerRadius)
+                .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline)
+        )
     }
 }
 
-// MARK: - ChapelRemoveBadge
+/// The six dots of a grip — the mark of a thing that moves.
+struct ChapelGrip: View {
+    var color: Color
 
-/// The ✕ that puts a section away, hung at the shell's top-left corner
-/// — below the kicker, which stands on the page above the shell and
-/// would otherwise sit under the badge.
-struct ChapelRemoveBadge: View {
+    var body: some View {
+        VStack(spacing: 2.8) {
+            ForEach(0..<3, id: \.self) { _ in
+                HStack(spacing: 2.8) {
+                    ForEach(0..<2, id: \.self) { _ in
+                        Circle()
+                            .fill(color)
+                            .frame(width: 3.2, height: 3.2)
+                    }
+                }
+            }
+        }
+        .frame(width: 12, height: 18)
+        .accessibilityHidden(true)
+    }
+}
+
+// MARK: - ChapelHideButton
+
+/// The ✕ that hides a section — into the tray, never a deletion. Laid
+/// over the arrange row's trailing edge, above the carry gesture: it is
+/// the only control that hides a section, and it sits inside a cell
+/// that is running a drag — a miss here does not do nothing, it starts
+/// carrying the section.
+struct ChapelHideButton: View {
 
     let tile: ChapelTile
+    let span: Int
     let action: () -> Void
+
+    static func width(span: Int) -> CGFloat { span == 2 ? 44 : 40 }
 
     var body: some View {
         Button(action: action) {
-            ZStack {
-                Circle()
-                    .fill(AppColors.backgroundDeep)
-                Circle()
-                    .strokeBorder(AppColors.gold.opacity(0.5), lineWidth: AppLine.hairline)
-                AppIcon("ph-x", size: 10)
-                    .foregroundColor(AppColors.gold.opacity(0.8))
-            }
-            .frame(width: 22, height: 22)
-            // The badge reads as 22pt but answers to 44. It is the only
-            // control that puts a section away, and it sits inside a
-            // cell that is simultaneously running a drag gesture — a
-            // miss here does not do nothing, it starts carrying the tile.
-            .frame(width: 44, height: 44)
-            .contentShape(Rectangle())
+            AppIcon("ph-x", size: 16)
+                .foregroundColor(AppColors.textSecondary)
+                .frame(width: Self.width(span: span), height: 44)
+                .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
-        .offset(
-            x: -7 - 11,
-            y: ChapelTileMetrics.shellTop - 7 - 11
-        )
-        .accessibilityLabel("Put \(tile.title) away")
+        .buttonStyle(QuietGlyphButtonStyle())
+        .padding(.trailing, span == 2 ? 4 : 0)
+        .accessibilityLabel("Hide \(tile.title)")
     }
 }
 
 // MARK: - ChapelSlotView
 
-/// The dashed opening between two tiles where the carried one will land.
+/// The dashed opening between two rows where the carried section will
+/// land, saying so.
 struct ChapelSlotView: View {
+
+    let span: Int
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var arrived = false
 
     var body: some View {
-        RoundedRectangle(cornerRadius: 16)
-            .fill(AppColors.gold.opacity(0.07))
+        RoundedRectangle(cornerRadius: ChapelTileMetrics.cornerRadius)
+            .fill(AppColors.gold.opacity(0.06))
             .overlay(
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: ChapelTileMetrics.cornerRadius)
                     .strokeBorder(
-                        AppColors.gold.opacity(0.55),
+                        AppColors.gold,
                         style: StrokeStyle(lineWidth: 1.5, dash: [6, 5])
                     )
             )
-            .shadow(color: AppColors.gold.opacity(0.1), radius: 11)
-            .frame(minHeight: 74)
-            .scaleEffect(arrived || reduceMotion ? 1 : 0.94)
+            .overlay(
+                Text(span == 2 ? "LET GO TO PLACE IT HERE" : "PLACE IT HERE")
+                    .font(AppFonts.labelFont(10))
+                    .tracking(2)
+                    .foregroundColor(AppColors.gold)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+                    .padding(.horizontal, 10)
+            )
+            .frame(height: 58)
+            .scaleEffect(arrived || reduceMotion ? 1 : 0.96)
             .opacity(arrived || reduceMotion ? 1 : 0)
             .onAppear {
                 withAnimation(.easeOut(duration: 0.22)) { arrived = true }
@@ -228,8 +288,8 @@ struct ChapelSlotView: View {
 
 // MARK: - ChapelGhost
 
-/// The card that lifts out under the finger: the section's icon and
-/// name, leaning up to ±9° into the direction of travel.
+/// The row lifted under the finger, leaning up to ±9° into the
+/// direction of travel.
 struct ChapelGhost: View {
 
     let tile: ChapelTile
@@ -240,32 +300,36 @@ struct ChapelGhost: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            AppIcon(tile.icon, size: 17)
+            ChapelGrip(color: AppColors.gold)
+
+            Text(tile.title)
+                .font(AppFonts.bodyFont(18))
+                .foregroundColor(AppColors.textPrimary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+
+            Spacer(minLength: 8)
+
+            Text("MOVING")
+                .font(AppFonts.labelFont(9))
+                .tracking(2)
                 .foregroundColor(AppColors.gold)
-
-            Text(tile.title.uppercased())
-                .font(AppFonts.labelFont(10))
-                .tracking(1.8)
-                .lineSpacing(3)
-                .foregroundColor(AppColors.cream.opacity(0.9))
-
-            Spacer(minLength: 0)
         }
-        .padding(.horizontal, 15)
-        .padding(.vertical, 14)
-        .frame(width: 168)
+        .padding(.leading, 14)
+        .padding(.trailing, 16)
+        .frame(width: 300, height: 58)
         .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(AppColors.backgroundDeep)
+            RoundedRectangle(cornerRadius: ChapelTileMetrics.cornerRadius)
+                .fill(AppColors.cardElevated)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(AppColors.gold.opacity(0.5), lineWidth: 1)
+            RoundedRectangle(cornerRadius: ChapelTileMetrics.cornerRadius)
+                .strokeBorder(AppColors.gold, lineWidth: 1)
         )
-        .shadow(color: .black.opacity(0.6), radius: 17, y: 9)
-        .shadow(color: AppColors.gold.opacity(0.16), radius: 13)
+        .shadow(color: .black.opacity(0.45), radius: 16, y: 6)
+        .shadow(color: AppColors.gold.opacity(0.13), radius: 16)
         .rotationEffect(.degrees(reduceMotion ? 0 : tilt))
-        .scaleEffect(lifted || reduceMotion ? 1.04 : 0.9)
+        .scaleEffect(lifted || reduceMotion ? 1.02 : 0.94)
         .opacity(lifted || reduceMotion ? 1 : 0.5)
         .onAppear {
             withAnimation(.easeOut(duration: 0.18)) { lifted = true }
@@ -277,147 +341,135 @@ struct ChapelGhost: View {
 
 // MARK: - ChapelTray
 
-/// What the tab bar yields to while arranging: the put-away sections,
-/// each ready to be dragged back up onto the page — or tapped, which
-/// returns it to the page's end.
+/// What the tab bar yields to while arranging: the hidden sections, each
+/// a chip ready to be tapped back onto the page's end or dragged up to
+/// a place of its own. Nothing is deleted, and the tray says so.
 struct ChapelTray: View {
 
     /// Sections currently off the page, in layout order.
-    let putAway: [ChapelPlacement]
+    let hidden: [ChapelPlacement]
 
-    let onDone: () -> Void
     let onAdd: (ChapelTile) -> Void
 
-    /// Builds the drag gesture for one tray row; the page owns the
-    /// carry pipeline, the tray only offers the handle.
-    let rowGesture: (ChapelPlacement) -> AnyGesture<DragGesture.Value>
+    /// Builds the drag gesture for one chip; the page owns the carry
+    /// pipeline, the tray only offers the handle.
+    let chipGesture: (ChapelPlacement) -> AnyGesture<DragGesture.Value>
 
     var body: some View {
-        VStack(spacing: 0) {
-            HStack(spacing: 7) {
-                // Names the two gestures the page never announced: a tap
-                // switches a section between its wide and narrow drawing,
-                // and ✕ puts it in this tray rather than deleting it —
-                // which is what a ✕ badge otherwise promises.
-                Text(putAway.isEmpty
-                     ? "Drag to reorder · tap to resize · ✕ puts a section here"
-                     : "Drag onto your page · tap to resize · nothing is deleted")
-                    .font(AppFonts.italicFont(12.5))
+        VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text("HIDDEN SECTIONS")
+                    .font(AppFonts.headlineFont(13))
+                    .tracking(2)
+                    .foregroundColor(AppColors.cream)
+                    .accessibilityAddTraits(.isHeader)
+
+                Text(hidden.isEmpty
+                     ? "Nothing is hidden. The ✕ on a section puts it here."
+                     : "Nothing is deleted. Tap one to put it back.")
+                    .font(AppFonts.bodyFont(15))
                     .foregroundColor(AppColors.textSecondary)
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.85)
-
-                Spacer(minLength: 0)
-
-                Button(action: onDone) {
-                    Text("DONE")
-                        .font(AppFonts.labelFont(11))
-                        .tracking(2)
-                        .foregroundColor(AppColors.gold)
-                        .padding(.leading, 12)
-                        .frame(minHeight: 44)
-                        .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Done arranging")
+                    .fixedSize(horizontal: false, vertical: true)
             }
-            .padding(.bottom, 4)
 
-            tray
-        }
-        .padding(.top, 40)
-        .padding(.horizontal, 20)
-        .padding(.bottom, 34)
-        .background(
-            LinearGradient(
-                stops: [
-                    .init(color: .clear, location: 0),
-                    .init(color: AppColors.background.opacity(0.85), location: 0.22),
-                    .init(color: AppColors.backgroundDeep, location: 0.42),
-                    .init(color: AppColors.backgroundDeep, location: 1)
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea(edges: .bottom)
-        )
-    }
-
-    @ViewBuilder
-    private var tray: some View {
-        Group {
-            if putAway.isEmpty {
-                Text("Everything is on your page. What you put away waits here.")
-                    .font(AppFonts.italicFont(13))
-                    .foregroundColor(AppColors.textSecondary)
-                    .multilineTextAlignment(.center)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 20)
-                    .padding(.horizontal, 16)
-            } else {
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: 0) {
-                        ForEach(putAway) { placement in
-                            row(placement)
-                        }
+            if !hidden.isEmpty {
+                ChapelChipFlow(spacing: 10) {
+                    ForEach(hidden) { placement in
+                        chip(placement)
                     }
                 }
-                .frame(maxHeight: 168)
-                .fixedSize(horizontal: false, vertical: true)
             }
         }
-        .background(AppColors.cardBackground)
-        .cornerRadius(16)
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: AppLine.hairline)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.top, 18)
+        .padding(.horizontal, 20)
+        .padding(.bottom, 30)
+        .background(
+            UnevenRoundedRectangle(topLeadingRadius: 20, topTrailingRadius: 20)
+                .fill(AppColors.cardBackground)
+                .overlay(
+                    UnevenRoundedRectangle(topLeadingRadius: 20, topTrailingRadius: 20)
+                        .stroke(AppColors.gold.opacity(0.4), lineWidth: AppLine.hairline)
+                )
+                .ignoresSafeArea(edges: .bottom)
         )
     }
 
-    private func row(_ placement: ChapelPlacement) -> some View {
-        HStack(spacing: 14) {
-            AppIcon(placement.tile.icon, size: 17)
-                .foregroundColor(AppColors.gold.opacity(0.6))
-                .frame(width: 22)
+    private func chip(_ placement: ChapelPlacement) -> some View {
+        HStack(spacing: 8) {
+            // Phosphor's ✕ turned a quarter: the plus at the same weight
+            AppIcon("ph-x", size: 13)
+                .rotationEffect(.degrees(45))
+                .foregroundColor(AppColors.gold)
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text(placement.tile.title)
-                    .font(AppFonts.bodyFont(15))
-                    .foregroundColor(AppColors.cream.opacity(0.85))
-
-                Text(placement.tile.detail)
-                    .font(AppFonts.bodyFont(11))
-                    .foregroundColor(AppColors.textSecondary)
-            }
-
-            Spacer(minLength: 0)
-
-            grabHandle
+            Text(placement.tile.title)
+                .font(AppFonts.bodyFont(16))
+                .foregroundColor(AppColors.cream)
+                .lineLimit(1)
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
-        .frame(minHeight: 52)
-        .contentShape(Rectangle())
-        .gesture(rowGesture(placement))
+        .padding(.leading, 12)
+        .padding(.trailing, 16)
+        .frame(height: 44)
+        .background(Capsule().fill(AppColors.background))
+        .overlay(
+            Capsule()
+                .strokeBorder(AppColors.gold.opacity(0.45), lineWidth: AppLine.hairline)
+        )
+        .contentShape(Capsule())
+        .gesture(chipGesture(placement))
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(placement.tile.title). \(placement.tile.detail)")
+        .accessibilityLabel("\(placement.tile.title), hidden. \(placement.tile.detail)")
         .accessibilityHint("Double-tap to put it back on your page.")
+        .accessibilityAddTraits(.isButton)
         .accessibilityAction { onAdd(placement.tile) }
     }
+}
 
-    private var grabHandle: some View {
-        VStack(spacing: 3) {
-            ForEach(0..<3) { _ in
-                HStack(spacing: 3) {
-                    ForEach(0..<2) { _ in
-                        Circle()
-                            .fill(AppColors.gold.opacity(0.45))
-                            .frame(width: 3, height: 3)
-                    }
-                }
-            }
+// MARK: - ChapelChipFlow
+
+/// Chips laid in rows, wrapping to the next when a row is full.
+/// Nonisolated: the layout engine reads it off the main actor (see the
+/// Concurrency notes in CLAUDE.md).
+nonisolated struct ChapelChipFlow: Layout {
+
+    var spacing: CGFloat = 10
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let placed = positions(of: subviews, in: proposal.width ?? .infinity)
+        return CGSize(width: proposal.width ?? placed.size.width, height: placed.size.height)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        let placed = positions(of: subviews, in: bounds.width)
+        for (index, subview) in subviews.enumerated() {
+            let point = placed.points[index]
+            subview.place(
+                at: CGPoint(x: bounds.minX + point.x, y: bounds.minY + point.y),
+                proposal: .unspecified
+            )
         }
-        .padding(.trailing, 2)
-        .accessibilityHidden(true)
+    }
+
+    private func positions(of subviews: Subviews, in width: CGFloat) -> (points: [CGPoint], size: CGSize) {
+        var points: [CGPoint] = []
+        var x: CGFloat = 0
+        var y: CGFloat = 0
+        var rowHeight: CGFloat = 0
+        var widest: CGFloat = 0
+
+        for subview in subviews {
+            let size = subview.sizeThatFits(.unspecified)
+            if x > 0, x + size.width > width {
+                x = 0
+                y += rowHeight + spacing
+                rowHeight = 0
+            }
+            points.append(CGPoint(x: x, y: y))
+            x += size.width + spacing
+            rowHeight = max(rowHeight, size.height)
+            widest = max(widest, x - spacing)
+        }
+
+        return (points, CGSize(width: widest, height: y + rowHeight))
     }
 }

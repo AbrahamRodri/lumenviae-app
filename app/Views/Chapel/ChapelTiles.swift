@@ -8,22 +8,24 @@
 //  data: they read the same services and SwiftData models the rest of
 //  the app writes.
 //
-//  One anatomy for every tile, at both spans (the "Chapel Tiles"
-//  handoff): a kicker on the page above the shell — a 12pt glyph, a
-//  tracked label, a trailing italic note — then one 16pt hairline shell
-//  with no fill and no shadow, and a foot pinned to its floor: an
-//  italic note on the left, a gold text act on the right. The grid's
-//  rows stretch, so two halves always end on the same line. The tile's
-//  own character lives in its body and nowhere else: a ledger, a road,
-//  an open book, a diptych, an index, a transport, a versal, an orb.
+//  Each section is its own object (the "Chapel Redesign" handoff). A
+//  tile is a card cut from its own ground — the rule lit on a raised
+//  card, the flame burning in the dark, the consecration's painting run
+//  to the card's edges, the Prayer Book a leaf darkening down the page,
+//  the reading shelf and the chant on cloth, the journal on the quote
+//  ground, the liturgy on the deep ground, the library bound with a
+//  second rule inside its first — and names itself on its own first
+//  line, in Cinzel, with an italic note beside it. What it shows is
+//  drawn for what it is: a string of beads, an ember, a road, a page of
+//  hours, a shelf, a staff, a versal, a calendar leaf, an index.
 //
-//  The page once drew three registers — ruled, outlined at 16, outlined
-//  at 20 — with kickers on some tiles and not others, centred halves
-//  beside left-aligned ones, and rows that top-aligned with ragged
-//  bottoms. Any tile now sits well beside any other. Halves are
-//  left-aligned, never centred, and lead with one figure: a number in
-//  Cinzel 26 with its denominator muted at 15, or a headline at 14–15,
-//  then one italic line.
+//  The page before this drew every section in one shell: a kicker on the
+//  page above a hairline outline with no fill, and a foot pinned to its
+//  floor. Any tile sat well beside any other, and none of them could be
+//  told apart at a glance. What the tiles still share is the frame's
+//  measure — a 16pt corner, a hairline at the tile's own strength, the
+//  title line, a foot ruled off when there is one — so two halves side
+//  by side still share their first line and end on the same one.
 //
 
 import SwiftUI
@@ -82,27 +84,188 @@ struct ChapelAct: Identifiable {
     }
 }
 
-// MARK: - The shared anatomy
+// MARK: - The frame every tile shares
 
-/// The measures every tile is built to, in one place, so the grid's
-/// furniture (the ✕ badge) can find the shell's corner without asking.
+/// The measures every tile is built to, in one place.
 enum ChapelTileMetrics {
-    /// The kicker's line on the page above the shell
-    static let kickerHeight: CGFloat = 18
-    /// The air between the kicker and the shell's top edge
-    static let kickerGap: CGFloat = 10
-    /// Where the shell begins, measured from the tile's top
-    static var shellTop: CGFloat { kickerHeight + kickerGap }
     static let cornerRadius: CGFloat = 16
+
+    /// The card's own padding. A tile's foot sits closer to its floor
+    /// than its title does to its top, because the foot's act answers
+    /// to 44 points and carries its own air.
+    static func padding(_ span: Int) -> EdgeInsets {
+        span == 2
+            ? EdgeInsets(top: 18, leading: 18, bottom: 6, trailing: 18)
+            : EdgeInsets(top: 16, leading: 14, bottom: 4, trailing: 14)
+    }
 }
 
-/// The kicker every tile opens with, on the page above its shell: a
-/// 12pt glyph, a tracked label, and room for a trailing italic note.
-/// The same sizes at both spans, so a pair of halves shares one title
-/// line; at half width the label truncates before the note does.
-struct ChapelKicker: View {
-    let icon: String
+/// What a tile's card is cut from. Each section has its own, so the page
+/// reads as a room of different things rather than a stack of one.
+enum ChapelSurface {
+    /// The rule: a raised card, lit from its upper corner, with a halo
+    case lit
+    /// The flame: the deep ground, warm where the flame stands
+    case ember
+    /// The consecration: the preparation's painting, edge to edge
+    case painting(String)
+    /// The Prayer Book: a leaf darkening from the raised card down
+    case leaf
+    /// The shelf and the chant: the card's own cloth
+    case cloth
+    /// The journal: the quote ground
+    case quote
+    /// The liturgy: the deep ground
+    case deep
+    /// The library: cloth bound with a second rule inside the first
+    case bound
+
+    /// How strongly the card's hairline is drawn — the lit card most,
+    /// the deep ground least, so each card's edge is as strong as its
+    /// ground needs
+    var borderOpacity: Double {
+        switch self {
+        case .lit:      return 0.42
+        case .ember:    return 0.26
+        case .painting: return 0.32
+        case .leaf:     return 0.22
+        case .cloth:    return 0.26
+        case .quote:    return 0.2
+        case .deep:     return 0.18
+        case .bound:    return 0.3
+        }
+    }
+
+    var isPainting: Bool {
+        if case .painting = self { return true }
+        return false
+    }
+
+    var isLit: Bool {
+        if case .lit = self { return true }
+        return false
+    }
+}
+
+/// The ground a card is cut from, drawn behind its contents.
+private struct ChapelCardGround: View {
+    let surface: ChapelSurface
+    let span: Int
+
+    var body: some View {
+        switch surface {
+        case .lit:
+            AppColors.cardElevated
+                .overlay {
+                    RadialGradient(
+                        stops: [
+                            .init(color: AppColors.gold.opacity(0.16), location: 0),
+                            .init(color: AppColors.gold.opacity(0.05), location: 0.45),
+                            .init(color: .clear, location: 0.72)
+                        ],
+                        center: .topLeading,
+                        startRadius: 0,
+                        endRadius: span == 2 ? 340 : 220
+                    )
+                }
+
+        case .ember:
+            GeometryReader { geo in
+                // The warmth stands behind the flame: beside the figure at
+                // full width, above it at half
+                let center = span == 2
+                    ? CGPoint(x: 66, y: geo.size.height * 0.5)
+                    : CGPoint(x: geo.size.width * 0.5, y: geo.size.height * 0.34)
+                AppColors.backgroundDeep
+                    .overlay {
+                        RadialGradient(
+                            stops: [
+                                .init(color: AppColors.gold.opacity(0.22), location: 0),
+                                .init(color: AppColors.gold.opacity(0.06), location: 0.5),
+                                .init(color: .clear, location: 0.72)
+                            ],
+                            center: UnitPoint(
+                                x: geo.size.width > 0 ? center.x / geo.size.width : 0.5,
+                                y: geo.size.height > 0 ? center.y / geo.size.height : 0.5
+                            ),
+                            startRadius: 0,
+                            endRadius: span == 2 ? 150 : 120
+                        )
+                    }
+            }
+
+        case .painting(let name):
+            ZStack {
+                AppColors.backgroundDeep
+                CachedAssetImage(name, focal: UnitPoint(x: 0.5, y: span == 2 ? 0.28 : 0.26))
+                // Clear at the head, so the painting is seen, and dark at
+                // the foot, where the day is read over it
+                LinearGradient(
+                    stops: [
+                        .init(color: AppColors.backgroundDeep.opacity(0.10), location: 0),
+                        .init(color: AppColors.backgroundDeep.opacity(0.18), location: 0.34),
+                        .init(color: AppColors.background.opacity(0.78), location: 0.68),
+                        .init(color: AppColors.background.opacity(0.96), location: 1)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            }
+            .accessibilityHidden(true)
+
+        case .leaf:
+            LinearGradient(
+                stops: [
+                    .init(color: AppColors.cardElevated, location: 0),
+                    .init(color: AppColors.cardBackground, location: 0.46),
+                    .init(color: AppColors.backgroundDeep, location: 1)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+
+        case .cloth:
+            AppColors.cardBackground
+
+        case .quote:
+            AppColors.quoteBackground
+
+        case .deep:
+            AppColors.backgroundDeep
+
+        case .bound:
+            AppColors.cardBackground
+                .overlay(
+                    RoundedRectangle(cornerRadius: ChapelTileMetrics.cornerRadius - 6)
+                        .strokeBorder(AppColors.gold.opacity(0.14), lineWidth: AppLine.hairline)
+                        .padding(6)
+                )
+        }
+    }
+}
+
+/// The lit card's halo — the rule's alone, since it is the page's
+/// working list and the one card the eye should find first.
+private struct ChapelCardHalo: ViewModifier {
+    let active: Bool
+
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        if active {
+            content
+                .shadow(color: AppColors.gold.opacity(0.10), radius: 16)
+                .shadow(color: AppColors.gold.opacity(0.05), radius: 35)
+        } else {
+            content
+        }
+    }
+}
+
+/// A tile's first line: its name in Cinzel, and at the right either an
+/// italic note — "Not yet today", "Two more open" — or the list's EDIT.
+struct ChapelTileHeader: View {
     let title: String
+    let span: Int
     var note: String? = nil
 
     /// Edits the tile's own list (the Today tile's rule) from its title
@@ -111,68 +274,59 @@ struct ChapelKicker: View {
     /// BEGIN and CONTINUE, and read as one more of them.
     var onEdit: (() -> Void)? = nil
 
-    init(_ icon: String, _ title: String, note: String? = nil, onEdit: (() -> Void)? = nil) {
-        self.icon = icon
-        self.title = title
-        self.note = note
-        self.onEdit = onEdit
-    }
+    /// Set over a painting, where the name takes a shadow to be read
+    var overPainting: Bool = false
 
     var body: some View {
-        HStack(spacing: 7) {
-            AppIcon(icon, size: 12)
-                .foregroundColor(AppColors.gold.opacity(0.75))
-                .accessibilityHidden(true)
-
-            Text(title.uppercased())
-                .font(AppFonts.labelFont(10))
-                .tracking(2.5)
-                .foregroundColor(AppColors.gold.opacity(0.75))
+        HStack(alignment: .firstTextBaseline, spacing: 10) {
+            Text(title)
+                .font(AppFonts.titleFont(span == 2 ? 17 : 15))
+                .tracking(0.5)
+                .foregroundColor(AppColors.cream)
                 .lineLimit(1)
-                .truncationMode(.tail)
+                .minimumScaleFactor(0.8)
+                .shadow(color: .black.opacity(overPainting ? 0.6 : 0), radius: 4, y: 1)
+                .accessibilityAddTraits(.isHeader)
 
             Spacer(minLength: note == nil && onEdit == nil ? 0 : 8)
 
             if let note {
-                ChapelKickerNote(note)
+                ChapelHeaderNote(note)
                     .layoutPriority(1)
             }
 
             if let onEdit {
                 Button(action: onEdit) {
-                    HStack(spacing: 6) {
-                        AppIcon("ph-pencil-simple", size: 11)
-                        Text("EDIT")
-                            .font(AppFonts.labelFont(10))
-                            .tracking(2)
-                    }
-                    .foregroundColor(AppColors.gold)
-                    .padding(.leading, 12)
-                    // Drawn to the title line's height, answering to 44:
-                    // a taller kicker would break the line a pair of
-                    // halves shares
-                    .frame(minHeight: 44)
-                    .contentShape(Rectangle())
-                    .padding(.vertical, -(44 - ChapelTileMetrics.kickerHeight) / 2)
+                    Text("EDIT")
+                        .font(AppFonts.labelFont(10))
+                        .tracking(2)
+                        .foregroundColor(AppColors.gold)
+                        .padding(.leading, 12)
+                        // Drawn to the title line's height, answering to
+                        // 44: a taller title line would break the line a
+                        // pair of halves shares
+                        .frame(minHeight: 44)
+                        .contentShape(Rectangle())
+                        .padding(.vertical, -11)
                 }
                 .buttonStyle(QuietGlyphButtonStyle())
-                .accessibilityLabel("Edit \(title.lowercased())")
+                .accessibilityLabel("Edit your rule")
                 .layoutPriority(1)
             }
         }
-        .frame(minHeight: ChapelTileMetrics.kickerHeight)
+        .frame(minHeight: 22, alignment: .leading)
     }
 }
 
-/// The italic note on a kicker's right — "2 of 4 offered", "Lit today".
-struct ChapelKickerNote: View {
+/// The italic note on a title line's right — "Not yet today", "1962".
+struct ChapelHeaderNote: View {
     let text: String
 
     init(_ text: String) { self.text = text }
 
     var body: some View {
         Text(text)
-            .font(AppFonts.italicFont(12))
+            .font(AppFonts.italicFont(13.5))
             .foregroundColor(AppColors.textSecondary)
             .lineLimit(1)
             // A count or a clock rolls its digits; a word crossfades
@@ -183,61 +337,7 @@ struct ChapelKickerNote: View {
     }
 }
 
-/// A 1pt rule inside a shell — under the Today tile's opening line.
-struct ChapelRule: View {
-    var opacity: Double = 0.22
-
-    var body: some View {
-        Rectangle()
-            .fill(AppColors.gold.opacity(opacity))
-            .frame(height: 1)
-    }
-}
-
-/// The 16pt-radius hairline every shell is drawn with: no fill, no
-/// shadow. The flame stands in it like everything else.
-struct ChapelOutline: ViewModifier {
-    var cornerRadius: CGFloat = ChapelTileMetrics.cornerRadius
-    var borderOpacity: Double = 0.24
-
-    func body(content: Content) -> some View {
-        content.overlay(
-            RoundedRectangle(cornerRadius: cornerRadius)
-                .strokeBorder(AppColors.gold.opacity(borderOpacity), lineWidth: AppLine.hairline)
-        )
-    }
-}
-
-/// The one shell: the design's padding at each span, filling whatever
-/// height the row offers so its foot can be pinned to the floor.
-struct ChapelShell<Content: View>: View {
-    let span: Int
-
-    /// A list-style body (rows of doors) sits closer to the shell's top
-    /// edge than a body that opens on a figure.
-    var topPadding: CGFloat? = nil
-
-    let content: Content
-
-    init(span: Int, topPadding: CGFloat? = nil, @ViewBuilder content: () -> Content) {
-        self.span = span
-        self.topPadding = topPadding
-        self.content = content()
-    }
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            content
-        }
-        .padding(.top, topPadding ?? (span == 2 ? 14 : 12))
-        .padding(.horizontal, span == 2 ? 16 : 14)
-        .padding(.bottom, span == 2 ? 6 : 4)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .modifier(ChapelOutline())
-    }
-}
-
-/// The italic line at a foot's left — a fact, never a judgement.
+/// The italic line at a foot — a fact, never a judgement.
 struct ChapelFootNote: View {
     let text: String
     var size: CGFloat = 13
@@ -252,10 +352,11 @@ struct ChapelFootNote: View {
             .font(AppFonts.italicFont(size))
             .foregroundColor(AppColors.textSecondary)
             .lineLimit(1)
+            .truncationMode(.tail)
     }
 }
 
-/// The gold text act every foot closes on — "CONTINUE ›".
+/// The gold text act a foot closes on — "CONTINUE ›".
 struct ChapelFootAct: View {
     let title: String
 
@@ -271,77 +372,49 @@ struct ChapelFootAct: View {
     }
 }
 
-/// A tile's foot, pinned to the shell's floor by the Spacer above it.
-/// Full: the note on the left, the act on the right. Half: the act
-/// alone, left-aligned — or the note alone where a tile has no act.
+/// A tile's foot, on the card's floor: at full width the note on the
+/// left and the act on the right; at half the act alone, left-aligned,
+/// or the note where a tile has no act. Ruled off from the body above
+/// it unless the body ends on a line of its own (the reading shelf).
 ///
 /// The act is a button of its own only when the tile's body has doors
 /// of its own; otherwise the whole tile is the door and the act is a
 /// label inside it.
-struct ChapelFoot<Note: View>: View {
+struct ChapelTileFoot: View {
     let span: Int
-    let act: String?
-    var ruled: Bool = false
+    var note: String? = nil
+    var act: String? = nil
+    var ruled: Bool = true
     var action: (() -> Void)? = nil
-    let note: Note
-
-    init(
-        span: Int,
-        act: String?,
-        ruled: Bool = false,
-        action: (() -> Void)? = nil,
-        @ViewBuilder note: () -> Note
-    ) {
-        self.span = span
-        self.act = act
-        self.ruled = ruled
-        self.action = action
-        self.note = note()
-    }
 
     var body: some View {
-        Group {
-            if span == 2 { full } else { half }
+        HStack(spacing: 12) {
+            if span == 2 {
+                if let note {
+                    ChapelFootNote(note)
+                }
+                Spacer(minLength: 0)
+                if let act {
+                    actView(act)
+                }
+            } else {
+                if let act {
+                    actView(act)
+                } else if let note {
+                    ChapelFootNote(note)
+                }
+                Spacer(minLength: 0)
+            }
         }
-        .padding(.top, ruled ? 4 : 0)
+        .frame(minHeight: 44)
+        .padding(.top, 2)
         .overlay(alignment: .top) {
             if ruled {
                 Rectangle()
-                    .fill(AppColors.gold.opacity(0.18))
+                    .fill(AppColors.gold.opacity(0.16))
                     .frame(height: AppLine.hairline)
             }
         }
-    }
-
-    private var full: some View {
-        HStack(spacing: 12) {
-            ZStack(alignment: .leading) { note }
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-            if let act {
-                actView(act)
-            }
-        }
-        // A foot with no act (the Liturgy's feast line) keeps the
-        // height an act would have given it
-        .frame(minHeight: 44)
-    }
-
-    private var half: some View {
-        HStack(spacing: 0) {
-            if let act {
-                // Drawn 32 tall, answering to 44: the design's half foot
-                // is shallow, and the tap target is not.
-                actView(act)
-                    .padding(.vertical, -6)
-            } else {
-                ZStack(alignment: .leading) { note }
-                    .frame(minHeight: 32, alignment: .leading)
-            }
-
-            Spacer(minLength: 0)
-        }
-        .padding(.top, 4)
     }
 
     @ViewBuilder
@@ -361,7 +434,7 @@ struct ChapelFoot<Note: View>: View {
     }
 }
 
-/// A hold on the quiet parts of a tile — its kicker, its shell between
+/// A hold on the quiet parts of a tile — its title, its card between
 /// the doors — arranges the page, as a hold on the page between tiles
 /// does. Only where no control is: a door keeps its own touch.
 private struct ChapelHoldToArrange: ViewModifier {
@@ -381,30 +454,37 @@ private struct ChapelHoldToArrange: ViewModifier {
     }
 }
 
-/// The whole anatomy, assembled: kicker, shell, body, foot. A tile
-/// hands it a body and, at most, a foot note; everything else is the
-/// design's. With `onTap` the entire tile — kicker, shell and foot —
-/// is one door; without it, `onAct` makes the foot's act the only
-/// control the frame draws, for tiles whose bodies carry their own.
+/// The whole tile, assembled: its card, its title line, its body, what
+/// stands on its floor, and its foot. A tile hands it a body and, where
+/// the design pins something to the card's floor (the week under the
+/// flame, the hours under the Prayer Book's order), a floor; everything
+/// else is the frame's. With `onTap` the entire card is one door;
+/// without it, `onAct` makes the foot's act the only control the frame
+/// draws, for tiles whose bodies carry their own.
 ///
 /// Either way a hold arranges the page. The tiles cover most of it, and
 /// the page's own hold lives behind them, so a tile that took no hold
 /// left "press and hold anywhere" true only of the gaps.
-struct ChapelTileFrame<Content: View, FootNote: View>: View {
+struct ChapelTileFrame<Content: View, Floor: View>: View {
     let tile: ChapelTile
     let span: Int
+    let surface: ChapelSurface
     var note: String? = nil
-    var shellTop: CGFloat? = nil
     var act: String? = nil
-    var footRuled: Bool = false
+    var footNote: String? = nil
+    var footRuled: Bool = true
 
-    /// Edits the tile's own list from its title line; see `ChapelKicker`
+    /// The card's padding, where a tile's design departs from the
+    /// standard measure (the painting runs its road to the floor)
+    var padding: EdgeInsets? = nil
+
+    /// Edits the tile's own list from its title line; see `ChapelTileHeader`
     var onEdit: (() -> Void)? = nil
     var onTap: (() -> Void)? = nil
     var onAct: (() -> Void)? = nil
     var accessibilityLabel: String? = nil
     let content: Content
-    let footNote: FootNote
+    let floor: Floor
 
     @Environment(AppRouter.self) private var router
 
@@ -415,29 +495,33 @@ struct ChapelTileFrame<Content: View, FootNote: View>: View {
     init(
         tile: ChapelTile,
         span: Int,
+        surface: ChapelSurface,
         note: String? = nil,
-        shellTop: CGFloat? = nil,
         act: String? = nil,
-        footRuled: Bool = false,
+        footNote: String? = nil,
+        footRuled: Bool = true,
+        padding: EdgeInsets? = nil,
         onEdit: (() -> Void)? = nil,
         onTap: (() -> Void)? = nil,
         onAct: (() -> Void)? = nil,
         accessibilityLabel: String? = nil,
         @ViewBuilder content: () -> Content,
-        @ViewBuilder footNote: () -> FootNote
+        @ViewBuilder floor: () -> Floor
     ) {
         self.tile = tile
         self.span = span
+        self.surface = surface
         self.note = note
-        self.shellTop = shellTop
         self.act = act
+        self.footNote = footNote
         self.footRuled = footRuled
+        self.padding = padding
         self.onEdit = onEdit
         self.onTap = onTap
         self.onAct = onAct
         self.accessibilityLabel = accessibilityLabel
         self.content = content()
-        self.footNote = footNote()
+        self.floor = floor()
     }
 
     var body: some View {
@@ -445,11 +529,11 @@ struct ChapelTileFrame<Content: View, FootNote: View>: View {
             // A tap and a hold, as two gestures rather than a Button: a
             // Button fires on release, so a hold that had just arranged
             // the page would also have opened the tile under the finger
-            frame
+            card
                 .scaleEffect(pressed ? 0.98 : 1)
                 .opacity(pressed ? 0.92 : 1)
                 .animation(.easeOut(duration: 0.18), value: pressed)
-                .contentShape(Rectangle())
+                .contentShape(RoundedRectangle(cornerRadius: ChapelTileMetrics.cornerRadius))
                 .onTapGesture(perform: onTap)
                 .onLongPressGesture(minimumDuration: 0.45, maximumDistance: 8) {
                     pressed = false
@@ -462,33 +546,45 @@ struct ChapelTileFrame<Content: View, FootNote: View>: View {
                 .accessibilityAddTraits(.isButton)
                 .accessibilityAction { onTap() }
         } else {
-            frame
+            card
         }
     }
 
-    private var frame: some View {
+    private var card: some View {
         VStack(alignment: .leading, spacing: 0) {
-            ChapelKicker(tile.icon, span == 2 ? tile.title : tile.shortTitle, note: note, onEdit: onEdit)
-                .padding(.bottom, ChapelTileMetrics.kickerGap)
-                .contentShape(Rectangle())
-                .modifier(ChapelHoldToArrange(active: onTap == nil))
+            ChapelTileHeader(
+                title: span == 2 ? tile.title : tile.shortTitle,
+                span: span,
+                note: note,
+                onEdit: onEdit,
+                overPainting: surface.isPainting
+            )
+            .contentShape(Rectangle())
+            .modifier(ChapelHoldToArrange(active: onTap == nil))
 
-            ChapelShell(span: span, topPadding: shellTop) {
-                content
+            content
 
-                Spacer(minLength: 0)
+            Spacer(minLength: 0)
 
-                ChapelFoot(
+            floor
+
+            if act != nil || footNote != nil {
+                ChapelTileFoot(
                     span: span,
+                    note: footNote,
                     act: act,
                     ruled: footRuled,
                     action: onTap == nil ? onAct : nil
-                ) {
-                    footNote
-                }
+                )
             }
-            // Behind the body, so it answers only between the doors
-            .background {
+        }
+        .padding(padding ?? ChapelTileMetrics.padding(span))
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .background {
+            ZStack {
+                ChapelCardGround(surface: surface, span: span)
+
+                // Behind the body, so it answers only between the doors
                 if onTap == nil {
                     Color.clear
                         .contentShape(Rectangle())
@@ -496,17 +592,25 @@ struct ChapelTileFrame<Content: View, FootNote: View>: View {
                 }
             }
         }
+        .clipShape(RoundedRectangle(cornerRadius: ChapelTileMetrics.cornerRadius))
+        .overlay(
+            RoundedRectangle(cornerRadius: ChapelTileMetrics.cornerRadius)
+                .strokeBorder(AppColors.gold.opacity(surface.borderOpacity), lineWidth: AppLine.hairline)
+        )
+        .modifier(ChapelCardHalo(active: surface.isLit))
     }
 }
 
-extension ChapelTileFrame where FootNote == EmptyView {
+extension ChapelTileFrame where Floor == EmptyView {
     init(
         tile: ChapelTile,
         span: Int,
+        surface: ChapelSurface,
         note: String? = nil,
-        shellTop: CGFloat? = nil,
         act: String? = nil,
-        footRuled: Bool = false,
+        footNote: String? = nil,
+        footRuled: Bool = true,
+        padding: EdgeInsets? = nil,
         onEdit: (() -> Void)? = nil,
         onTap: (() -> Void)? = nil,
         onAct: (() -> Void)? = nil,
@@ -516,39 +620,57 @@ extension ChapelTileFrame where FootNote == EmptyView {
         self.init(
             tile: tile,
             span: span,
+            surface: surface,
             note: note,
-            shellTop: shellTop,
             act: act,
+            footNote: footNote,
             footRuled: footRuled,
+            padding: padding,
             onEdit: onEdit,
             onTap: onTap,
             onAct: onAct,
             accessibilityLabel: accessibilityLabel,
             content: content,
-            footNote: { EmptyView() }
+            floor: { EmptyView() }
         )
     }
 }
 
-/// A half tile's leading figure: the number in Cinzel 26 with its
-/// denominator muted at 15 — "12 days", "Day 14 / 33", "2 / 4".
-private func chapelFigure(_ number: String, _ denominator: String) -> some View {
-    (Text(number)
-        .font(AppFonts.headlineFont(26))
+/// A figure in Cinzel with what it counts beside it — "Day 14 / 33",
+/// "12 days in a row" — set as one line of text so the two share a
+/// baseline whatever their sizes.
+private func chapelFigure(
+    _ number: String,
+    size: CGFloat,
+    denominator: String? = nil,
+    denominatorSize: CGFloat = 16,
+    caption: String? = nil,
+    captionSize: CGFloat = 15
+) -> Text {
+    var line = Text(number)
+        .font(AppFonts.titleFont(size))
         .foregroundColor(AppColors.cream)
-     + Text(denominator)
-        .font(AppFonts.headlineFont(15))
-        .foregroundColor(AppColors.cream.opacity(0.45)))
-        .lineLimit(1)
-        .minimumScaleFactor(0.8)
+    if let denominator {
+        line = line + Text(" \(denominator)")
+            .font(AppFonts.titleFont(denominatorSize))
+            .foregroundColor(AppColors.cream.opacity(0.6))
+    }
+    if let caption {
+        line = line + Text("  \(caption)")
+            .font(AppFonts.italicFont(captionSize))
+            .foregroundColor(AppColors.cream.opacity(0.85))
+    }
+    return line
 }
 
 // MARK: - Today (the rule)
 
-/// The user's rule of prayer, act by act. This is the tile that drives
-/// the focus block at the top of the page — the ledger is the picker —
-/// and the one tile that is not obviously a link, so it explains itself
-/// in its first line and shows on every row what a tap will do.
+/// The user's rule of prayer, act by act, as a string of beads: one
+/// bead to an act, a gold one for each offered, the next ringed and lit
+/// on a wash of gold, the rest waiting. The tile that drives the focus
+/// block at the top of the page — the ledger is the picker — so every
+/// row shows at its trailing edge what a tap does: the seal once an act
+/// is offered, BEGIN (or CONTINUE) until then.
 struct ChapelRuleTile: View {
 
     let acts: [ChapelAct]
@@ -560,127 +682,120 @@ struct ChapelRuleTile: View {
     private var next: ChapelAct? { acts.first { !$0.done } }
 
     var body: some View {
-        // The title line carries EDIT, so the count stands in the foot at
-        // full width; at half, the tile's figure already says it
         ChapelTileFrame(
             tile: .rule,
             span: span,
-            shellTop: span == 2 ? 12 : nil,
+            surface: .lit,
+            footNote: span == 2 && !acts.isEmpty ? "\(doneCount) of \(acts.count) offered" : nil,
             onEdit: onEditRule
         ) {
             if span == 2 { full } else { half }
-        } footNote: {
-            if span == 2, !acts.isEmpty {
-                ChapelFootNote("\(doneCount) of \(acts.count) offered")
-            }
         }
     }
 
-    // MARK: Full — the ledger
+    // MARK: Full — the string of beads
 
     @ViewBuilder
     private var full: some View {
-        Text("Your rule of prayer — the devotions you mean to offer each day.")
-            .font(AppFonts.italicFont(13))
-            .foregroundColor(AppColors.cream.opacity(0.8))
-            .lineSpacing(3)
-            .fixedSize(horizontal: false, vertical: true)
-            .padding(.bottom, 10)
-
-        ChapelRule()
-
         if acts.isEmpty {
             Text("No devotions on your rule yet.")
                 .font(AppFonts.italicFont(14))
                 .foregroundColor(AppColors.textSecondary)
-                .padding(.vertical, 16)
+                .padding(.top, 14)
+                .padding(.bottom, 12)
         } else {
-            ForEach(acts) { act in
-                row(act, isLast: act.id == acts.last?.id)
+            VStack(alignment: .leading, spacing: 0) {
+                ForEach(acts) { act in
+                    row(act)
+                }
             }
+            // The thread the beads hang on, from the first bead to the
+            // last, behind them
+            .background(alignment: .leading) {
+                Rectangle()
+                    .fill(AppColors.gold.opacity(0.24))
+                    .frame(width: 1)
+                    .padding(.vertical, 26)
+                    .padding(.leading, 10.5)
+                    .accessibilityHidden(true)
+            }
+            .padding(.top, 12)
+            .padding(.bottom, 6)
         }
     }
 
-    /// One act of the rule; the hairline runs between rows, never
-    /// under the last, which the foot already rules off.
-    private func row(_ act: ChapelAct, isLast: Bool) -> some View {
+    private func row(_ act: ChapelAct) -> some View {
         let isNext = act.id == next?.id
         return Button(action: { onAct(act) }) {
-            HStack(spacing: 15) {
-                AppIcon(act.shortcut.icon, size: 17)
-                    .foregroundColor(tint(act, isNext: isNext))
-                    .frame(width: 24, height: 24)
-                    .modifier(NextActHalo(active: isNext))
+            HStack(spacing: 12) {
+                ChapelRuleBead(mark: act.done ? .offered : (isNext ? .next : .waiting))
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(act.focusTitle)
-                        .font(AppFonts.bodyFont(15.5))
+                        .font(AppFonts.titleFont(isNext ? 16.5 : 14))
                         .foregroundColor(
-                            act.done || isNext
-                                ? AppColors.cream
-                                : AppColors.cream.opacity(0.72)
+                            AppColors.cream.opacity(isNext ? 1 : (act.done ? 0.55 : 0.85))
                         )
                         .lineLimit(1)
+                        .minimumScaleFactor(0.8)
 
                     Text(act.subtitle)
-                        .font(AppFonts.bodyFont(11.5))
+                        .font(AppFonts.italicFont(13))
                         .foregroundColor(AppColors.textSecondary)
                         .lineLimit(1)
                 }
 
                 Spacer(minLength: 8)
 
-                trailing(act)
+                trailing(act, isNext: isNext)
             }
             .frame(minHeight: 52)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .overlay(alignment: .bottom) {
-            if !isLast {
-                Rectangle()
-                    .fill(AppColors.gold.opacity(0.11))
-                    .frame(height: AppLine.hairline)
+        .background {
+            // The next act is lit where it hangs, the wash running a
+            // little past the beads' column on either side
+            if isNext {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(AppColors.gold.opacity(0.08))
+                    .padding(.horizontal, -8)
+                    .transition(.opacity)
             }
         }
+        .padding(.vertical, isNext ? 2 : 0)
+        .animation(Motion.crossfade, value: isNext)
         .accessibilityLabel(accessibility(for: act))
     }
 
-    /// What the row's tap does, drawn at its trailing edge: the seal
-    /// once an act is offered, and BEGIN (or CONTINUE) until then —
-    /// every act on the rule is one the app watches finish. The two
+    /// What the row's tap does, drawn at its trailing edge. The two
     /// crossfade in place as the act is offered.
-    private func trailing(_ act: ChapelAct) -> some View {
+    private func trailing(_ act: ChapelAct, isNext: Bool) -> some View {
         ZStack(alignment: .trailing) {
             if act.done {
                 HStack(spacing: 6) {
                     Text("OFFERED")
                         .font(AppFonts.labelFont(8.5))
-                        .tracking(1.5)
-                        .foregroundColor(AppColors.gold.opacity(0.7))
+                        .tracking(2)
+                        .foregroundColor(AppColors.gold.opacity(0.55))
 
-                    AppIcon("ph-seal-check-fill", size: 20)
-                        .foregroundColor(AppColors.gold)
+                    AppIcon("ph-seal-check-fill", size: 16)
+                        .foregroundColor(AppColors.gold.opacity(0.7))
                 }
-                .transition(.opacity.combined(with: .scale(scale: 0.9)))
+                .transition(.opacity)
             } else {
-                HStack(spacing: 6) {
+                HStack(spacing: 8) {
                     Text(act.rowAction.uppercased())
-                        .font(AppFonts.labelFont(9.5))
+                        .font(AppFonts.labelFont(10))
                         .tracking(2)
                     AppIcon("ph-caret-right", size: 9)
                 }
-                .foregroundColor(AppColors.gold)
+                .foregroundColor(AppColors.gold.opacity(isNext ? 1 : 0.75))
                 .frame(minHeight: 44)
                 .transition(.opacity)
             }
         }
-        .animation(.easeOut(duration: 0.25), value: act.done)
-    }
-
-    private func tint(_ act: ChapelAct, isNext: Bool) -> Color {
-        if isNext { return AppColors.goldLight }
-        return act.done ? AppColors.gold : AppColors.gold.opacity(0.45)
+        .animation(Motion.crossfade, value: act.done)
     }
 
     private func accessibility(for act: ChapelAct) -> String {
@@ -693,13 +808,24 @@ struct ChapelRuleTile: View {
     private var half: some View {
         if acts.isEmpty {
             Text("No devotions yet.")
-                .font(AppFonts.italicFont(12.5))
+                .font(AppFonts.italicFont(13))
                 .foregroundColor(AppColors.textSecondary)
+                .padding(.top, 14)
         } else {
-            chapelFigure("\(doneCount)", " / \(acts.count)")
+            chapelFigure("\(doneCount)", size: 30, denominator: "/ \(acts.count)", denominatorSize: 14)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+                .contentTransition(.numericText())
+                .animation(Motion.crossfade, value: doneCount)
+                .padding(.top, 14)
+
+            Text("offered today")
+                .font(AppFonts.italicFont(14))
+                .foregroundColor(AppColors.cream.opacity(0.85))
+                .padding(.top, 2)
 
             // One 44pt row of equal cells, one per act, bleeding 8pt into
-            // the shell's padding on each side. Each cell is the half
+            // the card's padding on each side. Each cell is the half
             // tile's only way to offer its act.
             HStack(spacing: 2) {
                 ForEach(acts) { act in
@@ -708,6 +834,7 @@ struct ChapelRuleTile: View {
             }
             .padding(.horizontal, -8)
             .padding(.top, 8)
+            .padding(.bottom, 8)
         }
     }
 
@@ -716,50 +843,72 @@ struct ChapelRuleTile: View {
         return Button(action: { onAct(act) }) {
             VStack(spacing: 5) {
                 AppIcon(act.shortcut.icon, size: 15)
-                    .foregroundColor(tint(act, isNext: isNext))
-                    .modifier(NextActHalo(active: isNext))
+                    .foregroundColor(
+                        isNext ? AppColors.goldLight : (act.done ? AppColors.gold : AppColors.gold.opacity(0.45))
+                    )
 
-                RoundedRectangle(cornerRadius: 1)
-                    .fill(tick(act, isNext: isNext))
-                    .frame(width: 10, height: 2)
+                ChapelRuleBead(mark: act.done ? .offered : (isNext ? .next : .waiting), scale: 0.7)
+                    .frame(height: 12)
             }
             .frame(maxWidth: .infinity)
             .frame(height: 44)
             .background(
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(AppColors.gold.opacity(isNext ? 0.07 : 0))
+                    .fill(AppColors.gold.opacity(isNext ? 0.08 : 0))
             )
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .accessibilityLabel(accessibility(for: act))
     }
-
-    private func tick(_ act: ChapelAct, isNext: Bool) -> AnyShapeStyle {
-        if act.done { return AnyShapeStyle(AppColors.goldGradient) }
-        return AnyShapeStyle(
-            isNext ? AppColors.gold.opacity(0.45) : AppColors.cream.opacity(0.13)
-        )
-    }
 }
 
-/// The halo the next act's glyph carries.
-private struct NextActHalo: ViewModifier {
-    let active: Bool
+/// One bead of the rule's string: gold once offered, ringed and lit for
+/// the next act, and an empty ring for the acts still waiting.
+private struct ChapelRuleBead: View {
+    enum Mark { case offered, next, waiting }
 
-    func body(content: Content) -> some View {
-        content
-            .shadow(color: AppColors.gold.opacity(active ? 0.4 : 0), radius: 5)
-            .animation(.easeOut(duration: 0.4), value: active)
+    let mark: Mark
+    var scale: CGFloat = 1
+
+    var body: some View {
+        ZStack {
+            switch mark {
+            case .offered:
+                Circle()
+                    .fill(AppColors.goldGradient)
+                    .frame(width: 9 * scale, height: 9 * scale)
+                    .shadow(color: AppColors.gold.opacity(0.55), radius: 1.5)
+            case .next:
+                Circle()
+                    .fill(AppColors.cardElevated)
+                    .overlay(Circle().strokeBorder(AppColors.gold, lineWidth: 1.5))
+                    .overlay(
+                        Circle()
+                            .fill(AppColors.goldLight)
+                            .frame(width: 5 * scale, height: 5 * scale)
+                    )
+                    .frame(width: 15 * scale, height: 15 * scale)
+                    .haloGlow(AppColors.gold, radius: 9, intensity: 0.5)
+            case .waiting:
+                Circle()
+                    .fill(AppColors.cardElevated)
+                    .overlay(Circle().strokeBorder(AppColors.textSecondary.opacity(0.6), lineWidth: 1))
+                    .frame(width: 9 * scale, height: 9 * scale)
+            }
+        }
+        .frame(width: 22 * scale, height: 22 * scale)
+        .animation(Motion.settle, value: mark)
+        .accessibilityHidden(true)
     }
 }
 
 // MARK: - Prayer Streak
 
-/// The streak as a burning orb, in the same shell as every other tile.
-/// It never scolds: only days prayed are marked, the kicker says "Not
-/// yet today" and never "missed", and the milestone ahead is an
-/// invitation. The whole tile opens the Prayer Record.
+/// The streak as an ember in the dark. It never scolds: only days
+/// prayed are marked, the note says "Not yet today" and never "missed",
+/// and the milestone ahead is an invitation. The whole tile opens the
+/// Prayer Record.
 ///
 /// Two facts, kept apart so neither is mistaken for the other: the
 /// streak — days in a row, the figure — and the week, drawn as a small
@@ -796,12 +945,6 @@ struct ChapelFlameTile: View {
 
     private var litNote: String { hasPrayedToday ? "Lit today" : "Not yet today" }
 
-    /// What the figure counts, said under it — so the streak is never
-    /// read as this week's tally
-    private var streakCaption: String {
-        streak == 0 ? "Each day you pray adds one" : "In a row"
-    }
-
     private var daysPrayedThisWeek: Int { weekStatus.filter(\.didPray).count }
 
     private var accessibilityLabel: String {
@@ -813,78 +956,79 @@ struct ChapelFlameTile: View {
     }
 
     var body: some View {
-        if span == 2 { full } else { half }
-    }
-
-    private var full: some View {
-        ChapelTileFrame(
-            tile: .flame,
-            span: 2,
-            note: litNote,
-            act: "Prayer record",
-            onTap: onOpen,
-            accessibilityLabel: accessibilityLabel
-        ) {
-            VStack(alignment: .leading, spacing: 14) {
-                HStack(spacing: 16) {
-                    FlameOrb(isLit: hasPrayedToday, size: 52)
-
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(streakLabel)
-                            .font(AppFonts.headlineFont(19))
-                            .foregroundColor(AppColors.cream)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.85)
-                            .contentTransition(.numericText())
-                            .animation(Motion.crossfade, value: streakLabel)
-
-                        Text(streakCaption)
-                            .font(AppFonts.italicFont(12.5))
-                            .foregroundColor(AppColors.textSecondary)
-                    }
-
-                    Spacer(minLength: 0)
-                }
-
-                if !weekStatus.isEmpty {
-                    weekStrip(letterSize: 7.5, dot: 7, ring: 13)
-                }
+        if span == 2 {
+            ChapelTileFrame(
+                tile: .flame,
+                span: 2,
+                surface: .ember,
+                note: litNote,
+                onTap: onOpen,
+                accessibilityLabel: accessibilityLabel
+            ) {
+                full
             }
-        } footNote: {
-            if let milestoneLine {
-                ChapelFootNote(milestoneLine)
+        } else {
+            ChapelTileFrame(
+                tile: .flame,
+                span: 1,
+                surface: .ember,
+                onTap: onOpen,
+                accessibilityLabel: accessibilityLabel
+            ) {
+                halfFigure
+            } floor: {
+                if !weekStatus.isEmpty {
+                    halfWeek
+                        .padding(.top, 4)
+                        .padding(.bottom, 14)
+                }
             }
         }
     }
 
-    private var half: some View {
-        ChapelTileFrame(
-            tile: .flame,
-            span: 1,
-            note: litNote,
-            act: "Record",
-            onTap: onOpen,
-            accessibilityLabel: accessibilityLabel
-        ) {
-            HStack(spacing: 12) {
-                FlameOrb(isLit: hasPrayedToday, size: 34)
+    // MARK: Full — the ember beside the figure, the week beneath
 
-                if streak > 0 {
-                    chapelFigure("\(streak)", streak == 1 ? " day" : " days")
+    private var full: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(spacing: 18) {
+                ChapelFlameMedallion(size: 64, isLit: hasPrayedToday)
+                    .frame(width: 96)
+
+                VStack(alignment: .leading, spacing: 6) {
+                    if streak > 0 {
+                        chapelFigure(
+                            "\(streak)",
+                            size: 42,
+                            caption: streak == 1 ? "day of prayer" : "days in a row"
+                        )
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.75)
                         .contentTransition(.numericText())
                         .animation(Motion.crossfade, value: streak)
-                } else {
-                    Text("Begin Your Streak")
-                        .font(AppFonts.headlineFont(14))
-                        .foregroundColor(AppColors.cream)
-                        .lineLimit(2)
-                        .fixedSize(horizontal: false, vertical: true)
+                    } else {
+                        Text("Begin Your Streak")
+                            .font(AppFonts.titleFont(21))
+                            .foregroundColor(AppColors.cream)
+                            .lineLimit(2)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+
+                    Text(milestoneLine ?? "Each day you pray adds one")
+                        .font(AppFonts.italicFont(13))
+                        .foregroundColor(AppColors.textSecondary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.85)
                 }
+
+                Spacer(minLength: 0)
             }
+            .padding(.top, 16)
+            .padding(.bottom, 14)
 
             if !weekStatus.isEmpty {
-                weekStrip(letterSize: 7, dot: 6, ring: 12)
-                    .padding(.top, 10)
+                fullWeek
+                    .padding(.top, 2)
+                    .padding(.bottom, 16)
             }
         }
     }
@@ -896,31 +1040,28 @@ struct ChapelFlameTile: View {
     }()
 
     /// The week, Sunday to Saturday, as a small calendar: each day's
-    /// initial over its bead, spread across the shell. Only the prayed
-    /// days are lit — never a mark for a missed one, and a day still to
-    /// come looks the same as one let pass — and today is ringed, so
-    /// the eye knows where in the week it stands.
-    private func weekStrip(letterSize: CGFloat, dot: CGFloat, ring: CGFloat) -> some View {
+    /// initial over its bead. Only the prayed days are lit — never a mark
+    /// for a missed one, and a day still to come looks the same as one
+    /// let pass — and today is ringed, so the eye knows where in the week
+    /// it stands.
+    private var fullWeek: some View {
         HStack(spacing: 0) {
             ForEach(Array(weekStatus.enumerated()), id: \.offset) { _, day in
                 let isToday = PrayerDay.isToday(day.date)
-                VStack(spacing: 5) {
+                VStack(spacing: 6) {
                     Text(Self.dayInitial.string(from: day.date).uppercased())
-                        .font(AppFonts.labelFont(letterSize))
+                        .font(AppFonts.bodyFont(11))
                         .tracking(1)
-                        .foregroundColor(isToday ? AppColors.gold : AppColors.textSecondary.opacity(0.8))
+                        .foregroundColor(isToday ? AppColors.gold : AppColors.textSecondary)
 
                     ZStack {
                         if isToday {
                             Circle()
-                                .strokeBorder(AppColors.goldLight.opacity(0.8), lineWidth: AppLine.hairline)
-                                .frame(width: ring, height: ring)
+                                .strokeBorder(AppColors.goldLight, lineWidth: 1.5)
                         }
-                        Circle()
-                            .fill(day.didPray ? AppColors.gold : AppColors.cream.opacity(0.16))
-                            .frame(width: dot, height: dot)
+                        weekBead(prayed: day.didPray, prayedSize: 9, restSize: 7)
                     }
-                    .frame(width: ring, height: ring)
+                    .frame(width: 26, height: 26)
                 }
                 .frame(maxWidth: .infinity)
             }
@@ -930,13 +1071,98 @@ struct ChapelFlameTile: View {
         .animation(Motion.settle, value: weekStatus.map(\.didPray))
         .accessibilityHidden(true)
     }
+
+    // MARK: Half — the ember over the figure, the week on the floor
+
+    private var halfFigure: some View {
+        VStack(spacing: 8) {
+            ChapelFlameMedallion(size: 48, isLit: hasPrayedToday)
+
+            if streak > 0 {
+                chapelFigure("\(streak)", size: 30, caption: streak == 1 ? "day" : "days", captionSize: 14)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                    .contentTransition(.numericText())
+                    .animation(Motion.crossfade, value: streak)
+            } else {
+                Text("Begin Your Streak")
+                    .font(AppFonts.titleFont(14))
+                    .foregroundColor(AppColors.cream)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.top, 14)
+        .padding(.bottom, 10)
+    }
+
+    /// The week as seven beads with no initials — a half has no room for
+    /// them — today ringed
+    private var halfWeek: some View {
+        HStack(spacing: 0) {
+            ForEach(Array(weekStatus.enumerated()), id: \.offset) { _, day in
+                ZStack {
+                    if PrayerDay.isToday(day.date) {
+                        Circle()
+                            .strokeBorder(AppColors.gold.opacity(0.8), lineWidth: 1)
+                            .frame(width: 12, height: 12)
+                    }
+                    weekBead(prayed: day.didPray, prayedSize: 6, restSize: 6)
+                }
+                .frame(maxWidth: .infinity)
+            }
+        }
+        .frame(height: 12)
+        .animation(Motion.settle, value: weekStatus.map(\.didPray))
+        .accessibilityHidden(true)
+    }
+
+    @ViewBuilder
+    private func weekBead(prayed: Bool, prayedSize: CGFloat, restSize: CGFloat) -> some View {
+        if prayed {
+            Circle()
+                .fill(AppColors.goldGradient)
+                .frame(width: prayedSize, height: prayedSize)
+                .shadow(color: AppColors.gold.opacity(0.6), radius: 2)
+        } else {
+            Circle()
+                .fill(AppColors.textSecondary.opacity(0.4))
+                .frame(width: restSize, height: restSize)
+        }
+    }
+}
+
+/// The flame in its ember: a soft gold disc, a blurred glow behind it,
+/// and the flame. Quieter until the day is lit, never dark.
+private struct ChapelFlameMedallion: View {
+    let size: CGFloat
+    let isLit: Bool
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(AppColors.gold.opacity(isLit ? 0.35 : 0.22))
+                .blur(radius: 7)
+            Circle()
+                .fill(AppColors.gold.opacity(isLit ? 0.22 : 0.14))
+            AppIcon("ph-flame-fill", size: (size * 0.44).rounded())
+                .foregroundColor(AppColors.goldLight.opacity(isLit ? 1 : 0.75))
+        }
+        .frame(width: size, height: size)
+        .animation(Motion.settle, value: isLit)
+        .accessibilityHidden(true)
+    }
 }
 
 // MARK: - Consecration
 
-/// The user's place on the 33-day path, with de Montfort's four
-/// preparations as a segmented road — each track as long as its true
-/// share of the days. The whole tile opens the consecration.
+/// The user's place on the 33-day path, over the preparation's own
+/// painting — the one its day page opens on — with de Montfort's four
+/// preparations as a segmented road along the card's floor, each track
+/// as long as its true share of the days. The whole tile opens the
+/// consecration.
 struct ChapelConsecrationTile: View {
 
     let span: Int
@@ -955,7 +1181,7 @@ struct ChapelConsecrationTile: View {
     }
 
     /// The four preparations, with their true lengths.
-    private static let phases: [(name: String, from: Int, to: Int)] = [
+    static let phases: [(name: String, from: Int, to: Int)] = [
         ("The World", 1, 12),
         ("Yourself", 13, 19),
         ("Our Lady", 20, 26),
@@ -982,15 +1208,21 @@ struct ChapelConsecrationTile: View {
             : "Consecration. Day \(day) of 33, \(phaseName(day: day)). Continue."
     }
 
-    /// "Today: Humble Subjection" — the day's own title from the
-    /// preparation, so the foot says what today asks rather than which
-    /// week it is in (the road already says that).
-    private static func todayLine(day: Int) -> String {
-        if let title = ConsecrationData.day(day)?.title {
-            return "Today: \(title)"
-        }
-        return phaseName(day: day)
+    /// The painting the day's preparation is set under on its own page
+    private static func paintingName(day: Int) -> String {
+        (ConsecrationPhase.phase(for: day) ?? .consecrationDay).heroImageName
     }
+
+    /// The card's padding: the road runs to the floor, with no foot
+    /// beneath it
+    private var padding: EdgeInsets {
+        span == 2
+            ? EdgeInsets(top: 18, leading: 18, bottom: 0, trailing: 18)
+            : EdgeInsets(top: 16, leading: 14, bottom: 0, trailing: 14)
+    }
+
+    /// Tall enough that the painting is seen above the day
+    private var minHeight: CGFloat { span == 2 ? 270 : 222 }
 
     private func open() {
         router.switchTo(.consecration)
@@ -998,241 +1230,225 @@ struct ChapelConsecrationTile: View {
 
     var body: some View {
         if let active {
-            let day = active.currentDayNumber
-            if span == 2 { fullActive(day: day) } else { halfActive(day: day) }
+            activeTile(day: active.currentDayNumber)
         } else if let completed {
-            if span == 2 { fullCompleted(completed) } else { halfCompleted }
+            completedTile(completed)
         } else {
-            if span == 2 { fullInvitation } else { halfInvitation }
+            invitation
         }
     }
 
-    // MARK: Full
+    // MARK: Under way
 
-    private func fullActive(day: Int) -> some View {
-        let shown = min(day, 33)
-        let toGo = max(0, 33 - shown)
-        return ChapelTileFrame(
+    private func activeTile(day: Int) -> some View {
+        ChapelTileFrame(
             tile: .consecration,
-            span: 2,
-            note: toGo == 0 ? nil : (toGo == 1 ? "1 day to go" : "\(toGo) days to go"),
-            act: "Continue",
+            span: span,
+            surface: .painting(Self.paintingName(day: day)),
+            padding: padding,
             onTap: open,
             accessibilityLabel: Self.spoken(day: day)
         ) {
-            Text(day > 33 ? "Consecration Day" : "Day \(day) of 33")
-                .font(AppFonts.headlineFont(20))
-                .foregroundColor(AppColors.cream)
-                .lineLimit(1)
+            EmptyView()
+        } floor: {
+            VStack(alignment: .leading, spacing: 0) {
+                HStack(alignment: .bottom, spacing: 12) {
+                    VStack(alignment: .leading, spacing: span == 2 ? 4 : 3) {
+                        dayFigure(day)
 
-            road(day: shown)
-                .padding(.top, 12)
-                .padding(.bottom, 8)
-        } footNote: {
-            ChapelFootNote(Self.todayLine(day: day))
+                        Text(dayLine(day))
+                            .font(AppFonts.italicFont(span == 2 ? 16 : 14))
+                            .foregroundColor(AppColors.cream.opacity(0.92))
+                            .lineLimit(2)
+                            .minimumScaleFactor(0.85)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+
+                    if span == 2 {
+                        Spacer(minLength: 0)
+                        ChapelFootAct(title: "Continue")
+                            .frame(minHeight: 44)
+                    }
+                }
+
+                ChapelRoad(day: min(day, 33), height: span == 2 ? 4 : 3)
+                    .padding(.top, span == 2 ? 12 : 10)
+                    .padding(.bottom, span == 2 ? 16 : 14)
+            }
+        }
+        .frame(minHeight: minHeight)
+    }
+
+    /// "Day 14 / 33" at full width, "14 / 33" at half. The day of
+    /// consecration is named rather than counted: a figure of
+    /// "Day 33 / 33" over "The day of consecration" said two different
+    /// days at once.
+    @ViewBuilder
+    private func dayFigure(_ day: Int) -> some View {
+        if day > 33 {
+            Text("Consecration Day")
+                .font(AppFonts.titleFont(span == 2 ? 26 : 18))
+                .foregroundColor(AppColors.cream)
+                .lineLimit(2)
+                .minimumScaleFactor(0.8)
+                .fixedSize(horizontal: false, vertical: true)
+        } else {
+            chapelFigure(
+                span == 2 ? "Day \(day)" : "\(day)",
+                size: span == 2 ? 30 : 32,
+                denominator: "/ 33",
+                denominatorSize: span == 2 ? 16 : 14
+            )
+            .lineLimit(1)
+            .minimumScaleFactor(0.8)
         }
     }
 
-    private func fullCompleted(_ progress: ConsecrationProgress) -> some View {
+    /// The day's own title at full width ("Humble Subjection"), which
+    /// says what today asks; the preparation's name at half, where the
+    /// room is for a short line
+    private func dayLine(_ day: Int) -> String {
+        if span == 2 || day > 33 {
+            return ConsecrationData.day(day)?.title ?? Self.phaseName(day: day)
+        }
+        return Self.phaseName(day: day)
+    }
+
+    // MARK: Made
+
+    private func completedTile(_ progress: ConsecrationProgress) -> some View {
         ChapelTileFrame(
             tile: .consecration,
-            span: 2,
-            act: "Revisit",
+            span: span,
+            surface: .painting(ConsecrationPhase.consecrationDay.heroImageName),
+            padding: padding,
             onTap: open,
             accessibilityLabel: "Consecration, made. Revisit."
         ) {
-            HStack(spacing: 10) {
-                AppIcon("ph-seal-check-fill", size: 18)
-                    .foregroundColor(AppColors.gold)
+            EmptyView()
+        } floor: {
+            HStack(alignment: .bottom, spacing: 12) {
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: 8) {
+                        AppIcon("ph-seal-check-fill", size: span == 2 ? 20 : 16)
+                            .foregroundColor(AppColors.gold)
+                        Text("Consecrated")
+                            .font(AppFonts.titleFont(span == 2 ? 26 : 18))
+                            .foregroundColor(AppColors.cream)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
+                    }
 
-                Text("Consecrated")
-                    .font(AppFonts.headlineFont(20))
-                    .foregroundColor(AppColors.cream)
+                    if let date = progress.completedAt {
+                        Text("On \(date.formatted(date: .abbreviated, time: .omitted))")
+                            .font(AppFonts.italicFont(span == 2 ? 16 : 14))
+                            .foregroundColor(AppColors.cream.opacity(0.92))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.85)
+                    }
+                }
+
+                if span == 2 {
+                    Spacer(minLength: 0)
+                    ChapelFootAct(title: "Revisit")
+                        .frame(minHeight: 44)
+                }
             }
-        } footNote: {
-            if let date = progress.completedAt {
-                ChapelFootNote("On \(date.formatted(date: .abbreviated, time: .omitted))")
-            }
+            .padding(.bottom, span == 2 ? 16 : 14)
         }
+        .frame(minHeight: minHeight)
     }
 
-    private var fullInvitation: some View {
+    // MARK: Not yet begun
+
+    private var invitation: some View {
         ChapelTileFrame(
             tile: .consecration,
-            span: 2,
-            act: "Begin",
+            span: span,
+            surface: .painting(ConsecrationPhase.knowledgeOfMary.heroImageName),
+            padding: padding,
             onTap: open,
             accessibilityLabel: "Total Consecration. A 33-day preparation to give yourself to Jesus through Mary. Begin."
         ) {
-            Text("Total Consecration")
-                .font(AppFonts.headlineFont(20))
-                .foregroundColor(AppColors.cream)
+            EmptyView()
+        } floor: {
+            HStack(alignment: .bottom, spacing: 12) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Total Consecration")
+                        .font(AppFonts.titleFont(span == 2 ? 26 : 18))
+                        .foregroundColor(AppColors.cream)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.8)
+                        .fixedSize(horizontal: false, vertical: true)
 
-            Text("A 33-day preparation to give yourself to Jesus through Mary.")
-                .font(AppFonts.italicFont(13))
-                .foregroundColor(AppColors.textSecondary)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.top, 6)
-                .padding(.bottom, 4)
+                    Text(span == 2
+                         ? "A 33-day preparation to give yourself to Jesus through Mary."
+                         : "Thirty-three days")
+                        .font(AppFonts.italicFont(span == 2 ? 15 : 14))
+                        .foregroundColor(AppColors.cream.opacity(0.92))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                if span == 2 {
+                    Spacer(minLength: 0)
+                    ChapelFootAct(title: "Begin")
+                        .frame(minHeight: 44)
+                }
+            }
+            .padding(.bottom, span == 2 ? 16 : 14)
         }
+        .frame(minHeight: minHeight)
     }
+}
 
-    /// The segmented road: four pills as long as their preparations,
-    /// the days walked filled in gold, each named beneath.
-    private func road(day: Int) -> some View {
-        VStack(spacing: 8) {
-            GeometryReader { geo in
-                let unit = (geo.size.width - 15) / 33
-                HStack(spacing: 5) {
-                    ForEach(Self.phases, id: \.name) { phase in
-                        let length = phase.to - phase.from + 1
-                        let filled = min(length, max(0, day - phase.from + 1))
+/// The segmented road: four tracks as long as their preparations, the
+/// days walked filled in gold.
+private struct ChapelRoad: View {
+    let day: Int
+    let height: CGFloat
 
-                        Capsule()
-                            .fill(AppColors.background.opacity(0.6))
-                            .overlay(alignment: .leading) {
-                                Capsule()
-                                    .fill(AppColors.goldGradient)
-                                    .frame(width: CGFloat(filled) * unit)
-                            }
-                            .clipShape(Capsule())
-                            .frame(width: CGFloat(length) * unit)
-                    }
+    var body: some View {
+        GeometryReader { geo in
+            let unit = max(0, geo.size.width - 12) / 33
+            HStack(spacing: 4) {
+                ForEach(ChapelConsecrationTile.phases, id: \.name) { phase in
+                    let length = phase.to - phase.from + 1
+                    let walked = min(length, max(0, day - phase.from + 1))
+
+                    Capsule()
+                        .fill(AppColors.cream.opacity(0.18))
+                        .overlay(alignment: .leading) {
+                            Capsule()
+                                .fill(AppColors.goldCTAGradient)
+                                .frame(width: CGFloat(walked) * unit)
+                        }
+                        .clipShape(Capsule())
+                        .frame(width: CGFloat(length) * unit)
                 }
             }
-            .frame(height: 7)
-
-            GeometryReader { geo in
-                let unit = (geo.size.width - 15) / 33
-                HStack(spacing: 5) {
-                    ForEach(Self.phases, id: \.name) { phase in
-                        let length = phase.to - phase.from + 1
-                        let current = day >= phase.from && day <= phase.to
-                        let begun = day >= phase.from
-
-                        Text(phase.name.uppercased())
-                            .font(AppFonts.labelFont(8))
-                            .tracking(1)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.7)
-                            .foregroundColor(
-                                current
-                                    ? AppColors.gold
-                                    : AppColors.cream.opacity(begun ? 0.55 : 0.3)
-                            )
-                            .frame(width: CGFloat(length) * unit)
-                    }
-                }
-            }
-            .frame(height: 10)
         }
+        .frame(height: height)
         .accessibilityHidden(true)
-    }
-
-    // MARK: Half
-
-    private func halfActive(day: Int) -> some View {
-        let shown = min(day, 33)
-        return ChapelTileFrame(
-            tile: .consecration,
-            span: 1,
-            act: "Continue",
-            onTap: open,
-            accessibilityLabel: Self.spoken(day: day)
-        ) {
-            // The day of consecration is named rather than counted: a
-            // figure of "Day 33 / 33" over "The day of consecration" said
-            // two different days at once
-            if day > 33 {
-                Text("Consecration Day")
-                    .font(AppFonts.headlineFont(15))
-                    .foregroundColor(AppColors.cream)
-                    .lineLimit(2)
-                    .fixedSize(horizontal: false, vertical: true)
-            } else {
-                chapelFigure("Day \(day)", " / 33")
-            }
-
-            Text(day > 33 ? (ConsecrationData.day(day)?.title ?? "Total Consecration") : Self.phaseName(day: day))
-                .font(AppFonts.italicFont(12.5))
-                .foregroundColor(AppColors.textSecondary)
-                .lineLimit(1)
-                .minimumScaleFactor(0.85)
-                .padding(.top, 6)
-
-            GeometryReader { geo in
-                ZStack(alignment: .leading) {
-                    Capsule()
-                        .fill(AppColors.background.opacity(0.6))
-                    Capsule()
-                        .fill(AppColors.goldGradient)
-                        .frame(width: geo.size.width * CGFloat(shown) / 33)
-                }
-            }
-            .frame(height: 5)
-            .padding(.top, 8)
-            .padding(.bottom, 4)
-            .accessibilityHidden(true)
-        }
-    }
-
-    private var halfCompleted: some View {
-        ChapelTileFrame(
-            tile: .consecration,
-            span: 1,
-            act: "Revisit",
-            onTap: open,
-            accessibilityLabel: "Consecration, made. Revisit."
-        ) {
-            HStack(spacing: 8) {
-                AppIcon("ph-seal-check-fill", size: 16)
-                    .foregroundColor(AppColors.gold)
-
-                Text("Consecrated")
-                    .font(AppFonts.headlineFont(15))
-                    .foregroundColor(AppColors.cream)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.85)
-            }
-        }
-    }
-
-    private var halfInvitation: some View {
-        ChapelTileFrame(
-            tile: .consecration,
-            span: 1,
-            act: "Begin",
-            onTap: open,
-            accessibilityLabel: "Total Consecration, a 33-day preparation. Begin."
-        ) {
-            Text("Total Consecration")
-                .font(AppFonts.headlineFont(14))
-                .foregroundColor(AppColors.cream)
-                .lineLimit(2)
-                .fixedSize(horizontal: false, vertical: true)
-
-            Text("Thirty-three days")
-                .font(AppFonts.italicFont(12.5))
-                .foregroundColor(AppColors.textSecondary)
-                .lineLimit(1)
-                .padding(.top, 6)
-        }
     }
 }
 
 // MARK: - Reading
 
-/// The book left face-down. One book at a time on the page — an oratory
+/// The book left open, standing on a shelf with the others still under
+/// way beside it as spines. One book at a time on the page — an oratory
 /// has a book open on the prie-dieu, not a list of them — but the face
 /// slides: a reader keeping two or three going swipes another forward,
-/// or taps its spine where it stands beside the open one, and the
-/// spines restack to whatever is not showing. Tapping the face, or the
-/// foot's act, takes the book in front up where it was left.
+/// or taps its spine where it stands beside the open one. Tapping the
+/// face, or the foot's act, takes the book in front up where it was
+/// left.
 ///
 /// The body has doors of its own — the face and the spines — so the
 /// tile is not one door. An earlier cut made it one: every spine then
 /// opened the book in front of it, and the books behind could not be
 /// reached from the tile at all.
+///
+/// The shelf shows no share of the book read: a percentage of a book is
+/// a judgement of the reader, which the shelf never makes.
 struct ChapelReadingTile: View {
 
     let span: Int
@@ -1265,184 +1481,196 @@ struct ChapelReadingTile: View {
 
     private var front: Entry? { underWay.first { $0.row.bookID == shownBookID } }
 
-    /// The rest of the shelf — everything under way but the book in
-    /// front, so bringing one forward restacks the spines.
-    private var others: [Entry] { underWay.filter { $0.row.bookID != shownBookID } }
+    /// The books standing beside `entry` — everything under way but it
+    private func others(than entry: Entry) -> [Entry] {
+        underWay.filter { $0.row.bookID != entry.row.bookID }
+    }
 
     var body: some View {
         if let front {
-            if span == 2 { full(front) } else { half(front) }
+            ChapelTileFrame(
+                tile: .reading,
+                span: span,
+                surface: .cloth,
+                note: span == 2 ? restNote(front) : nil,
+                act: "Continue",
+                footRuled: span == 1,
+                onAct: { takeUp(front.row, front.info) }
+            ) {
+                if span == 2 { full } else { half(front) }
+            }
         } else {
-            if span == 2 { emptyFull } else { emptyHalf }
+            empty
         }
     }
 
-    // MARK: Full — the open book, the others standing beside it
+    // MARK: Full — the open book, its fellows beside it, its facts
 
-    /// The open book's cover height, which the spines stand level with
-    private static let fullCoverHeight: CGFloat = 68
+    /// The open book's cover, which the spines stand level with
+    private static let fullCover = CGSize(width: 76, height: 110)
+    private static let halfCover = CGSize(width: 54, height: 78)
 
-    private func full(_ entry: Entry) -> some View {
-        ChapelTileFrame(
-            tile: .reading,
-            span: 2,
-            note: fullNote(entry.row),
-            act: "Continue reading",
-            onAct: { takeUp(entry.row, entry.info) }
-        ) {
-            HStack(alignment: .center, spacing: 12) {
-                pager { page in
-                    fullFace(page.row, page.info)
+    private var full: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            pager { page in
+                fullPage(page)
+            }
+            // The cover's height, and room above it for the ribbon
+            .frame(height: Self.fullCover.height + 4)
+            .padding(.top, 14)
+            .padding(.horizontal, 4)
+
+            ChapelShelfLine()
+                .padding(.horizontal, -18)
+        }
+    }
+
+    /// One face of the full tile: the open book with its fellows standing
+    /// beside it, and its title and place. Tapping the cover or the
+    /// words takes the book up; tapping a spine brings that book forward.
+    private func fullPage(_ entry: Entry) -> some View {
+        HStack(alignment: .bottom, spacing: 18) {
+            HStack(alignment: .bottom, spacing: 0) {
+                Button(action: { takeUp(entry.row, entry.info) }) {
+                    ChapelBookCover(
+                        color: entry.info.bindingColor,
+                        width: Self.fullCover.width,
+                        height: Self.fullCover.height,
+                        ornamented: true,
+                        ribbon: true,
+                        ribbonLength: 35
+                    )
                 }
-                .frame(height: Self.fullCoverHeight)
+                .buttonStyle(SacredCardButtonStyle())
+                // The words beside it carry the same door, with its label
+                .accessibilityHidden(true)
 
-                if !others.isEmpty {
-                    HStack(alignment: .bottom, spacing: 0) {
-                        ForEach(Array(others.prefix(2).enumerated()), id: \.element.row.bookID) { index, other in
-                            spineButton(other, height: index == 0 ? 36 : 29)
-                        }
-                    }
-                    .animation(.easeOut(duration: 0.25), value: shownBookID)
+                ForEach(Array(others(than: entry).prefix(2).enumerated()), id: \.element.row.bookID) { index, other in
+                    spineButton(other, height: index == 0 ? 104 : 98)
                 }
             }
-        }
-    }
 
-    /// One face of the full tile: the cover and its facts. Tapping it
-    /// takes the book up.
-    private func fullFace(_ row: BookReadingProgress, _ info: LibraryBookInfo) -> some View {
-        Button(action: { takeUp(row, info) }) {
-            HStack(alignment: .center, spacing: 16) {
-                ChapelBookCover(color: info.bindingColor, width: 48, height: Self.fullCoverHeight)
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(info.author.uppercased())
-                        .font(AppFonts.labelFont(9))
-                        .tracking(2)
-                        .foregroundColor(AppColors.gold.opacity(0.8))
-                        .lineLimit(1)
-
-                    Text(info.title)
-                        .font(AppFonts.headlineFont(16))
+            Button(action: { takeUp(entry.row, entry.info) }) {
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(entry.info.title)
+                        .font(AppFonts.titleFont(17))
                         .foregroundColor(AppColors.cream)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.85)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    Text(placeLine(entry))
+                        .font(AppFonts.italicFont(14))
+                        .foregroundColor(AppColors.cream.opacity(0.8))
                         .lineLimit(2)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-
-                Spacer(minLength: 0)
-            }
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(SacredCardButtonStyle())
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(info.title), \(chapterLine(row) ?? "under way"). Continue reading.")
-    }
-
-    /// A standing spine that brings its book forward — the same move as
-    /// swiping the face, one tap instead. Drawn 11 wide; answers to 24
-    /// by the cover's full height.
-    private func spineButton(_ entry: Entry, height: CGFloat) -> some View {
-        Button {
-            withAnimation(.easeOut(duration: 0.3)) {
-                shownID = entry.row.bookID
-            }
-        } label: {
-            ChapelBookSpine(color: entry.info.bindingColor, height: height)
-                .frame(width: 24, height: Self.fullCoverHeight, alignment: .bottom)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.bottom, 8)
                 .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel("Bring \(entry.info.title) forward")
-    }
-
-    /// "Chapter IX · two more open" — the place, and the rest of the
-    /// shelf still under way.
-    private func fullNote(_ row: BookReadingProgress) -> String? {
-        let place = chapterLine(row)
-        let rest: String? = {
-            switch others.count {
-            case 0:  return nil
-            case 1:  return "one more open"
-            case 2:  return "two more open"
-            case 3:  return "three more open"
-            default: return "\(others.count) more open"
             }
-        }()
-        switch (place, rest) {
-        case let (place?, rest?): return "\(place) · \(rest)"
-        case let (place?, nil):   return place
-        case let (nil, rest?):    return rest.prefix(1).uppercased() + rest.dropFirst()
-        case (nil, nil):          return nil
+            .buttonStyle(SacredCardButtonStyle())
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("\(entry.info.title), \(chapterLine(entry.row) ?? "under way"). Continue reading.")
         }
     }
 
-    // MARK: Half — the cover and the title, sliding
+    /// "Two more open" — the rest of the shelf still under way
+    private func restNote(_ entry: Entry) -> String? {
+        switch others(than: entry).count {
+        case 0:  return nil
+        case 1:  return "One more open"
+        case 2:  return "Two more open"
+        case 3:  return "Three more open"
+        case let count: return "\(count) more open"
+        }
+    }
+
+    /// "St. Thérèse · Chapter IV" — whose book it is, and where the
+    /// reader left it
+    private func placeLine(_ entry: Entry) -> String {
+        let author = Self.shortAuthor(entry.info)
+        guard let chapter = chapterLine(entry.row) else { return author }
+        return "\(author) · \(chapter)"
+    }
+
+    // MARK: Half — the book on its shelf, its facts beneath
 
     private func half(_ entry: Entry) -> some View {
-        ChapelTileFrame(
-            tile: .reading,
-            span: 1,
-            note: shortChapterLine(entry.row),
-            act: "Continue",
-            onAct: { takeUp(entry.row, entry.info) }
-        ) {
+        VStack(alignment: .leading, spacing: 0) {
             pager { page in
-                halfFace(page.row, page.info)
+                halfPage(page)
             }
+            .frame(height: Self.halfCover.height + 4)
+            .padding(.top, 12)
+            .padding(.horizontal, 2)
 
-            // No room for spines at half width, so the books under way
-            // are counted beneath the face, the one showing lit
-            if underWay.count > 1 {
-                HStack(spacing: 5) {
-                    ForEach(underWay, id: \.row.bookID) { entry in
-                        Circle()
-                            .fill(
-                                entry.row.bookID == shownBookID
-                                    ? AppColors.gold.opacity(0.9)
-                                    : AppColors.gold.opacity(0.22)
-                            )
-                            .frame(width: 4.5, height: 4.5)
-                    }
-                }
-                .padding(.top, 8)
-                .animation(.easeOut(duration: 0.25), value: shownBookID)
-                .accessibilityHidden(true)
-            }
-        }
-    }
+            ChapelShelfLine()
+                .padding(.horizontal, -14)
 
-    /// One face of the compact tile. Tapping it takes the book up.
-    private func halfFace(_ row: BookReadingProgress, _ info: LibraryBookInfo) -> some View {
-        Button(action: { takeUp(row, info) }) {
-            HStack(alignment: .top, spacing: 12) {
-                ChapelBookCover(
-                    color: info.bindingColor,
-                    width: 34,
-                    height: 46,
-                    ornamented: true,
-                    ribbon: true
-                )
-
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(info.title)
-                        .font(AppFonts.headlineFont(14))
+            Button(action: { takeUp(entry.row, entry.info) }) {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(entry.info.title)
+                        .font(AppFonts.titleFont(13.5))
                         .foregroundColor(AppColors.cream)
-                        .lineLimit(3)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.85)
                         .fixedSize(horizontal: false, vertical: true)
 
-                    Text(Self.shortAuthor(info))
+                    Text(chapterLine(entry.row) ?? Self.shortAuthor(entry.info))
                         .font(AppFonts.italicFont(12.5))
                         .foregroundColor(AppColors.textSecondary)
                         .lineLimit(1)
                 }
-
-                Spacer(minLength: 0)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.top, 12)
+                .padding(.bottom, 6)
+                .contentShape(Rectangle())
             }
-            .contentShape(Rectangle())
+            .buttonStyle(.plain)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("\(entry.info.title), \(chapterLine(entry.row) ?? "under way"). Continue reading.")
+            .animation(Motion.crossfade, value: entry.row.bookID)
         }
-        .buttonStyle(SacredCardButtonStyle())
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(info.title), \(chapterLine(row) ?? "under way"). Continue reading.")
+    }
+
+    private func halfPage(_ entry: Entry) -> some View {
+        HStack(alignment: .bottom, spacing: 0) {
+            Button(action: { takeUp(entry.row, entry.info) }) {
+                ChapelBookCover(
+                    color: entry.info.bindingColor,
+                    width: Self.halfCover.width,
+                    height: Self.halfCover.height,
+                    ornamented: true,
+                    ribbon: true,
+                    ribbonLength: 24
+                )
+            }
+            .buttonStyle(SacredCardButtonStyle())
+            .accessibilityHidden(true)
+
+            ForEach(Array(others(than: entry).prefix(2).enumerated()), id: \.element.row.bookID) { index, other in
+                spineButton(other, height: index == 0 ? 74 : 70)
+            }
+
+            Spacer(minLength: 0)
+        }
+    }
+
+    /// A standing spine that brings its book forward — the same move as
+    /// swiping the face, one tap instead. Drawn 11 wide; answers to 20.
+    private func spineButton(_ entry: Entry, height: CGFloat) -> some View {
+        Button {
+            withAnimation(Motion.crossfade) {
+                shownID = entry.row.bookID
+            }
+        } label: {
+            ChapelBookSpine(color: entry.info.bindingColor, height: height)
+                .frame(width: 20, alignment: .center)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Bring \(entry.info.title) forward")
     }
 
     // MARK: The slide
@@ -1457,6 +1685,9 @@ struct ChapelReadingTile: View {
             LazyHStack(spacing: 0) {
                 ForEach(underWay, id: \.row.bookID) { entry in
                     page(entry)
+                        // On the pager's floor, the shelf, with the room
+                        // above for the ribbon standing over the cover
+                        .frame(maxHeight: .infinity, alignment: .bottom)
                         .containerRelativeFrame(.horizontal)
                         .id(entry.row.bookID)
                 }
@@ -1469,50 +1700,37 @@ struct ChapelReadingTile: View {
 
     // MARK: Empty — the shelf's cloths, and an invitation
 
-    private var emptyFull: some View {
+    private var empty: some View {
         ChapelTileFrame(
             tile: .reading,
-            span: 2,
-            note: "empty",
+            span: span,
+            surface: .cloth,
             act: "The shelf",
+            footRuled: span == 1,
             onTap: { router.push(.spiritualReading) },
             accessibilityLabel: "Reading. Nothing open yet — take up and read. Opens the shelf."
         ) {
-            HStack(spacing: 6) {
-                ForEach(LibraryCatalog.books.prefix(4)) { book in
-                    ChapelBookCover(color: book.bindingColor, width: 22, height: 30, shadowed: false)
+            VStack(alignment: .leading, spacing: 0) {
+                HStack(alignment: .bottom, spacing: 6) {
+                    ForEach(LibraryCatalog.books.prefix(span == 2 ? 4 : 3)) { book in
+                        ChapelBookCover(color: book.bindingColor, width: 26, height: 38, shadowed: false)
+                    }
+                    Spacer(minLength: 0)
                 }
+                .padding(.top, 16)
+                .padding(.horizontal, 4)
+
+                ChapelShelfLine()
+                    .padding(.horizontal, span == 2 ? -18 : -14)
+
+                Text("Tolle, lege — take up and read.")
+                    .font(AppFonts.italicFont(span == 2 ? 14 : 12.5))
+                    .foregroundColor(AppColors.cream.opacity(0.85))
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, 12)
+                    .padding(.bottom, 6)
             }
-
-            Text("Tolle, lege — take up and read.")
-                .font(AppFonts.italicFont(13))
-                .foregroundColor(AppColors.cream.opacity(0.85))
-                .padding(.top, 10)
-                .padding(.bottom, 2)
-        }
-    }
-
-    private var emptyHalf: some View {
-        ChapelTileFrame(
-            tile: .reading,
-            span: 1,
-            note: "empty",
-            act: "The shelf",
-            onTap: { router.push(.spiritualReading) },
-            accessibilityLabel: "Reading. Nothing open yet — take up and read. Opens the shelf."
-        ) {
-            HStack(spacing: 6) {
-                ForEach(LibraryCatalog.books.prefix(3)) { book in
-                    ChapelBookCover(color: book.bindingColor, width: 22, height: 30, shadowed: false)
-                }
-            }
-
-            Text("Tolle, lege — take up and read.")
-                .font(AppFonts.italicFont(12.5))
-                .foregroundColor(AppColors.cream.opacity(0.85))
-                .lineLimit(2)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.top, 10)
         }
     }
 
@@ -1524,17 +1742,8 @@ struct ChapelReadingTile: View {
         return row.lastChapterTitle
     }
 
-    /// "Chapter IX" → "Ch. IX", for the half kicker's little room
-    private func shortChapterLine(_ row: BookReadingProgress) -> String? {
-        guard let line = chapterLine(row) else { return nil }
-        if line.hasPrefix("Chapter ") {
-            return "Ch. " + line.dropFirst("Chapter ".count)
-        }
-        return line
-    }
-
-    /// The author as a half tile has room to say — the surname a reader
-    /// knows the book by, the way "De Montfort" stands for the saint.
+    /// The author as a tile has room to say — the name a reader knows
+    /// the book by, the way "De Montfort" stands for the saint.
     private static func shortAuthor(_ info: LibraryBookInfo) -> String {
         switch info.id {
         case "imitation-of-christ":         return "à Kempis"
@@ -1561,6 +1770,26 @@ struct ChapelReadingTile: View {
     }
 }
 
+/// The shelf the books stand on: a gilt edge fading at both ends, with
+/// the shadow it throws.
+private struct ChapelShelfLine: View {
+    var body: some View {
+        LinearGradient(
+            stops: [
+                .init(color: AppColors.gold.opacity(0), location: 0),
+                .init(color: AppColors.gold.opacity(0.4), location: 0.12),
+                .init(color: AppColors.gold.opacity(0.4), location: 0.88),
+                .init(color: AppColors.gold.opacity(0), location: 1)
+            ],
+            startPoint: .leading,
+            endPoint: .trailing
+        )
+        .frame(height: 1)
+        .shadow(color: .black.opacity(0.45), radius: 5, y: 6)
+        .accessibilityHidden(true)
+    }
+}
+
 /// A small cloth cover, drawn rather than imaged: the binding colour lit
 /// from the upper left, gilt rules at head and tail, and — ornamented —
 /// a diamond between them and a marker ribbon over the top edge.
@@ -1570,6 +1799,7 @@ struct ChapelBookCover: View {
     let height: CGFloat
     var ornamented: Bool = false
     var ribbon: Bool = false
+    var ribbonLength: CGFloat = 12
     var shadowed: Bool = true
 
     var body: some View {
@@ -1587,17 +1817,17 @@ struct ChapelBookCover: View {
             .overlay {
                 if ornamented {
                     VStack(spacing: 0) {
-                        giltPair
+                        gilt
                         Spacer(minLength: 0)
                         Rectangle()
                             .fill(AppColors.gold.opacity(0.75))
-                            .frame(width: 4, height: 4)
+                            .frame(width: 6, height: 6)
                             .rotationEffect(.degrees(45))
                         Spacer(minLength: 0)
-                        giltPair
+                        gilt
                     }
-                    .padding(.vertical, 6)
-                    .padding(.horizontal, 6)
+                    .padding(.vertical, 9)
+                    .padding(.horizontal, 8)
                 } else if width >= 30 {
                     VStack(spacing: 0) {
                         gilt
@@ -1607,40 +1837,46 @@ struct ChapelBookCover: View {
                     .padding(.vertical, 7)
                 }
             }
-            .overlay(
-                RoundedRectangle(cornerRadius: 2)
-                    .strokeBorder(AppColors.gold.opacity(0.35), lineWidth: AppLine.hairline)
-            )
+            // The spine's edge, shadowed where the boards meet it
+            .overlay(alignment: .leading) {
+                Rectangle()
+                    .fill(Color.black.opacity(0.25))
+                    .frame(width: 3)
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 2))
             .overlay(alignment: .topTrailing) {
                 if ribbon {
-                    RoundedRectangle(cornerRadius: 1)
-                        .fill(AppColors.goldLight)
-                        .frame(width: 4, height: 12)
-                        .padding(.trailing, 6)
+                    ChapelRibbon()
+                        .fill(AppColors.gold)
+                        .frame(width: 5, height: ribbonLength)
+                        .padding(.trailing, width * 0.16)
                         .offset(y: -3)
                         .shadow(color: .black.opacity(0.4), radius: 1, y: 1)
                 }
             }
             .frame(width: width, height: height)
-            .shadow(color: .black.opacity(shadowed ? 0.35 : 0), radius: 8, y: 5)
+            .shadow(color: .black.opacity(shadowed ? 0.5 : 0), radius: 7, y: 6)
             .accessibilityHidden(true)
     }
 
     private var gilt: some View {
         Rectangle()
-            .fill(AppColors.gold.opacity(0.5))
+            .fill(AppColors.gold.opacity(0.6))
             .frame(height: AppLine.hairline)
     }
+}
 
-    private var giltPair: some View {
-        VStack(spacing: 2) {
-            Rectangle()
-                .fill(AppColors.gold.opacity(0.55))
-                .frame(height: AppLine.hairline)
-            Rectangle()
-                .fill(AppColors.gold.opacity(0.55))
-                .frame(height: AppLine.hairline)
-        }
+/// A silk marker with its swallowtail end.
+private struct ChapelRibbon: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.move(to: CGPoint(x: rect.minX, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+        path.addLine(to: CGPoint(x: rect.midX, y: rect.minY + rect.height * 0.82))
+        path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+        path.closeSubpath()
+        return path
     }
 }
 
@@ -1654,158 +1890,248 @@ private struct ChapelBookSpine: View {
         RoundedRectangle(cornerRadius: 2)
             .fill(
                 LinearGradient(
-                    colors: [color.lightened(by: 0.10), color, color.darkened(by: 0.18)],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
+                    colors: [color.darkened(by: 0.2), color.lightened(by: 0.06), color.darkened(by: 0.16)],
+                    startPoint: .leading,
+                    endPoint: .trailing
                 )
             )
             .overlay(
                 VStack {
-                    Spacer().frame(height: height * 0.16)
-                    Rectangle().fill(AppColors.gold.opacity(0.5)).frame(height: AppLine.hairline)
+                    Rectangle().fill(AppColors.gold.opacity(0.55)).frame(height: AppLine.hairline)
                     Spacer()
-                    Rectangle().fill(AppColors.gold.opacity(0.5)).frame(height: AppLine.hairline)
-                    Spacer().frame(height: height * 0.16)
+                    Rectangle().fill(AppColors.gold.opacity(0.55)).frame(height: AppLine.hairline)
                 }
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 2)
-                    .strokeBorder(AppColors.gold.opacity(0.35), lineWidth: AppLine.hairline)
+                .padding(.vertical, 10)
+                .padding(.horizontal, 2)
             )
             .frame(width: 11, height: height)
-            .shadow(color: .black.opacity(0.4), radius: 2, y: 2)
             .accessibilityHidden(true)
     }
 }
 
 // MARK: - Liturgy
 
-/// The Church's own two books for the day — the Missal and the
-/// Breviary — as a diptych, each leaf a door, over the day's feast.
-/// Split out of the Library so one heading is true of everything
+/// The day as the Church keeps it: the date on a calendar leaf, the
+/// feast with its class and its colour, and a ledger of the Church's own
+/// two books for it — the Mass by its Introit, the Office by the hour it
+/// is. Split out of the Library so one heading is true of everything
 /// beneath it: these are the liturgy, and the rest of the shelf is not.
+///
+/// The feast, its class and its colour are the missal's, read through
+/// the page's `TodayInChurch`, and the Introit is the day's own proper.
+/// Until the day is known — or with the missal unreachable — the leaf
+/// says the plain thing and the doors still open.
 struct ChapelLiturgyTile: View {
 
     let span: Int
-
-    /// "Saturday · The Most Holy Name of Mary" — the page's own day line
-    let dayLine: String
-
-    /// The feast alone, for the half tile's narrower foot; nil until known
-    let feast: String?
+    let today: TodayInChurch
 
     @Environment(AppRouter.self) private var router
 
+    private var hour: CanonicalHour { CanonicalClock.shared.hour }
+
     var body: some View {
-        if span == 2 { full } else { half }
-    }
-
-    // MARK: Full — the diptych
-
-    private var full: some View {
         ChapelTileFrame(
             tile: .liturgy,
-            span: 2,
-            note: "1962 Missal · Breviary",
-            footRuled: true
+            span: span,
+            surface: .deep,
+            note: span == 2 ? "1962" : nil
         ) {
-            HStack(alignment: .center, spacing: 12) {
-                leaf("ch-altar", "Daily Missal", "The Mass", .missal)
-
-                Rectangle()
-                    .fill(AppColors.gold.opacity(0.22))
-                    .frame(width: 1)
-                    .padding(.vertical, 4)
-                    .accessibilityHidden(true)
-
-                leaf("ph-clock", "Divine Office", "The Hours", .office)
-            }
-            .padding(.bottom, 8)
-        } footNote: {
-            ChapelFootNote(dayLine)
+            if span == 2 { fullDay } else { halfDay }
+        } floor: {
+            if span == 2 { fullLedger } else { halfLedger }
         }
     }
 
-    private func leaf(_ icon: String, _ title: String, _ under: String, _ route: AppRoute) -> some View {
+    /// "III class · white", whichever parts the day carries
+    private var rankLine: String? {
+        let parts = [today.proper?.info.rankLabel, today.vestment?.name.lowercased()].compactMap { $0 }
+        return parts.isEmpty ? nil : parts.joined(separator: " · ")
+    }
+
+    // MARK: Full — the leaf and the feast, the ledger beneath
+
+    private var fullDay: some View {
+        HStack(alignment: .center, spacing: 18) {
+            VStack(spacing: 2) {
+                Text(Date.now.formatted(.dateTime.month(.abbreviated)).uppercased())
+                    .font(AppFonts.labelFont(9))
+                    .tracking(2)
+                    .foregroundColor(AppColors.gold.opacity(0.8))
+                    .lineLimit(1)
+
+                Text(Date.now.formatted(.dateTime.day()))
+                    .font(AppFonts.titleFont(30))
+                    .foregroundColor(AppColors.cream)
+                    .lineLimit(1)
+            }
+            .frame(width: 64)
+            .padding(.top, 10)
+            .padding(.bottom, 9)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline)
+            )
+            .accessibilityElement(children: .combine)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(today.title)
+                    .font(AppFonts.titleFont(23))
+                    .foregroundColor(AppColors.cream)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.75)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .contentTransition(.opacity)
+                    .animation(Motion.crossfade, value: today.title)
+
+                if let rankLine {
+                    HStack(spacing: 8) {
+                        if let vestment = today.vestment {
+                            Rectangle()
+                                .fill(vestment.swatch)
+                                .frame(width: 7, height: 7)
+                                .rotationEffect(.degrees(45))
+                                .accessibilityHidden(true)
+                        }
+
+                        Text(rankLine)
+                            .font(AppFonts.italicFont(14))
+                            .foregroundColor(AppColors.cream.opacity(0.8))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.85)
+                    }
+                    .transition(.opacity)
+                }
+            }
+
+            Spacer(minLength: 0)
+        }
+        .padding(.top, 20)
+        .padding(.bottom, 18)
+    }
+
+    private var fullLedger: some View {
+        VStack(spacing: 0) {
+            ledgerRow(
+                kicker: "Holy Mass",
+                title: today.introitIncipit ?? "Daily Missal",
+                line: today.introitIncipit == nil ? "The propers of the day" : "The Introit of the day",
+                route: .missal,
+                divided: true
+            )
+            ledgerRow(
+                kicker: "Office",
+                title: hour.label,
+                line: "The hour now",
+                route: .office,
+                divided: false
+            )
+        }
+        .padding(.bottom, 6)
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(AppColors.gold.opacity(0.16))
+                .frame(height: AppLine.hairline)
+        }
+    }
+
+    private func ledgerRow(kicker: String, title: String, line: String, route: AppRoute, divided: Bool) -> some View {
         Button {
             router.push(route)
         } label: {
             HStack(spacing: 12) {
-                AppIcon(icon, size: 20)
-                    .foregroundColor(AppColors.gold)
+                Text(kicker.uppercased())
+                    .font(AppFonts.labelFont(9))
+                    .tracking(2)
+                    .foregroundColor(AppColors.gold.opacity(0.75))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                    .frame(width: 92, alignment: .leading)
 
-                VStack(alignment: .leading, spacing: 3) {
+                VStack(alignment: .leading, spacing: 2) {
                     Text(title)
-                        .font(AppFonts.headlineFont(14))
+                        .font(AppFonts.titleFont(15.5))
                         .foregroundColor(AppColors.cream)
                         .lineLimit(1)
-                        .minimumScaleFactor(0.85)
+                        .minimumScaleFactor(0.8)
 
-                    Text(under.uppercased())
-                        .font(AppFonts.labelFont(8))
-                        .tracking(2)
+                    Text(line)
+                        .font(AppFonts.italicFont(13.5))
                         .foregroundColor(AppColors.textSecondary)
                         .lineLimit(1)
                 }
 
                 Spacer(minLength: 0)
+
+                AppIcon("ph-caret-right", size: 10)
+                    .foregroundColor(AppColors.gold)
             }
-            .frame(minHeight: 44)
+            .frame(minHeight: 60)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .frame(maxWidth: .infinity)
-        .accessibilityLabel("\(title), \(under.lowercased())")
+        .overlay(alignment: .bottom) {
+            if divided {
+                Rectangle()
+                    .fill(AppColors.gold.opacity(0.14))
+                    .frame(height: AppLine.hairline)
+            }
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(kicker): \(title), \(line.lowercased())")
+        .accessibilityAddTraits(.isButton)
     }
 
-    // MARK: Half — two door rows over the feast
+    // MARK: Half — the date and the feast over two doors
 
-    private var half: some View {
-        ChapelTileFrame(
-            tile: .liturgy,
-            span: 1,
-            shellTop: 2
-        ) {
-            ChapelDoorRow("ch-altar", "Daily Missal", divided: true) {
-                router.push(.missal)
-            }
-            ChapelDoorRow("ph-clock", "Divine Office") {
-                router.push(.office)
-            }
-        } footNote: {
-            ChapelFootNote(feast ?? dayLine, size: 12.5)
+    private var halfDay: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(Date.now.formatted(.dateTime.month(.abbreviated).day()).uppercased())
+                .font(AppFonts.labelFont(9))
+                .tracking(2)
+                .foregroundColor(AppColors.gold.opacity(0.8))
+                .lineLimit(1)
+
+            Text(today.title)
+                .font(AppFonts.titleFont(17))
+                .foregroundColor(AppColors.cream)
+                .lineLimit(3)
+                .minimumScaleFactor(0.85)
+                .fixedSize(horizontal: false, vertical: true)
+                .contentTransition(.opacity)
+                .animation(Motion.crossfade, value: today.title)
+        }
+        .padding(.top, 16)
+        .padding(.bottom, 12)
+    }
+
+    private var halfLedger: some View {
+        VStack(spacing: 0) {
+            halfDoor("Holy Mass", route: .missal, divided: true)
+            halfDoor(hour.label, route: .office, divided: false)
+        }
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(AppColors.gold.opacity(0.16))
+                .frame(height: AppLine.hairline)
         }
     }
-}
 
-/// One 44pt door in a ruled list: a 13pt glyph and the door's name.
-private struct ChapelDoorRow: View {
-    let icon: String
-    let title: String
-    var divided: Bool = false
-    let action: () -> Void
-
-    init(_ icon: String, _ title: String, divided: Bool = false, action: @escaping () -> Void) {
-        self.icon = icon
-        self.title = title
-        self.divided = divided
-        self.action = action
-    }
-
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 9) {
-                AppIcon(icon, size: 13)
-                    .foregroundColor(AppColors.gold.opacity(0.8))
-                    .frame(width: 16)
-
+    private func halfDoor(_ title: String, route: AppRoute, divided: Bool) -> some View {
+        Button {
+            router.push(route)
+        } label: {
+            HStack(spacing: 8) {
                 Text(title)
-                    .font(AppFonts.bodyFont(12.5))
+                    .font(AppFonts.italicFont(14.5))
                     .foregroundColor(AppColors.cream)
                     .lineLimit(1)
                     .minimumScaleFactor(0.85)
 
                 Spacer(minLength: 0)
+
+                AppIcon("ph-caret-right", size: 9)
+                    .foregroundColor(AppColors.gold)
             }
             .frame(minHeight: 44)
             .contentShape(Rectangle())
@@ -1814,103 +2140,205 @@ private struct ChapelDoorRow: View {
         .overlay(alignment: .bottom) {
             if divided {
                 Rectangle()
-                    .fill(AppColors.gold.opacity(0.11))
+                    .fill(AppColors.gold.opacity(0.14))
                     .frame(height: AppLine.hairline)
             }
         }
-        .accessibilityLabel(title)
+        .accessibilityLabel(route == .office ? "The Office: \(title)" : title)
+    }
+}
+
+private extension TodayInChurch {
+    /// The day's Mass named the way a missal's index names it: by the
+    /// first words of its Introit, in Latin — "In medio Ecclesiae",
+    /// "Gaudeamus omnes". Nil until the propers are known, or when the
+    /// day carries no Introit the app can read.
+    var introitIncipit: String? {
+        guard let section = proper?.sections.first(where: {
+            ($0.id ?? "").lowercased().hasPrefix("introit")
+        }) else { return nil }
+
+        for passage in section.body {
+            // Each passage is an [english, latin] pair; a single-element
+            // passage carries the same text for both
+            let latin = passage.count > 1 ? passage[1] : (passage.first ?? "")
+            for line in latin.components(separatedBy: "\n") {
+                let trimmed = line.trimmingCharacters(in: .whitespaces)
+                // A line in asterisks is the citation, not the text
+                guard !trimmed.isEmpty, !trimmed.hasPrefix("*") else { continue }
+                return Self.incipit(of: trimmed)
+            }
+        }
+        return nil
+    }
+
+    /// The opening words of a line, up to its first stop and no more than
+    /// three of them, with the marks a missal prints before a text left off
+    static func incipit(of line: String) -> String? {
+        let stops = CharacterSet(charactersIn: ":;,.!?")
+        let opening = line.components(separatedBy: stops).first ?? line
+        let words = opening
+            .replacingOccurrences(of: "℣.", with: "")
+            .replacingOccurrences(of: "℟.", with: "")
+            .replacingOccurrences(of: "Ant.", with: "")
+            .split(whereSeparator: \.isWhitespace)
+            .prefix(3)
+        guard !words.isEmpty else { return nil }
+        return words.joined(separator: " ")
     }
 }
 
 // MARK: - Library
 
-/// The chapel's shelf: six doors in two columns — the books, the
-/// guides, and the saints — over Augustine's line. The liturgy has its
-/// own tile now, so this heading is true of every door beneath it.
+/// The chapel's shelf, bound like a book: the books and the guides as a
+/// ruled index of doors, each with a line saying what it holds, over
+/// Augustine's line. The liturgy has its own tile, so this heading is
+/// true of every door beneath it.
 struct ChapelLibraryTile: View {
 
     let span: Int
 
     @Environment(AppRouter.self) private var router
 
-    private typealias Door = (icon: String, title: String, route: AppRoute)
+    private struct Door {
+        let title: String
+        let line: String
+        let route: AppRoute
+    }
 
-    /// Read down the columns: the books and the Marian library on the
-    /// left, the two Rosary guides and the saint on the right.
-    private static let left: [Door] = [
-        ("ph-crown", "True Devotion", .trueDevotionBook),
-        ("ph-book-open", "Spiritual Reading", .spiritualReading),
-        ("ch-lily", "Marian Library", .marianLibrary)
+    private static let books: [Door] = [
+        Door(title: "True Devotion", line: "St. Louis de Montfort", route: .trueDevotionBook),
+        Door(title: "Spiritual Reading", line: "The saints\u{2019} own books", route: .spiritualReading),
+        Door(title: "Marian Library", line: "Our Lady in the tradition", route: .marianLibrary)
     ]
 
-    private static let right: [Door] = [
-        ("lv-rosary", "How to Pray", .howToPray),
-        ("lv-breviary", "In Scripture", .scripture),
-        ("ch-monstrance", "Carlo Acutis", .carloAcutis)
+    private static let guides: [Door] = [
+        Door(title: "How to Pray", line: "The Rosary, step by step", route: .howToPray),
+        Door(title: "In Scripture", line: "Each mystery in the Gospel", route: .scripture),
+        Door(title: "Carlo Acutis", line: "A saint of our day", route: .carloAcutis)
     ]
 
     var body: some View {
-        if span == 2 { full } else { half }
+        if span == 2 {
+            ChapelTileFrame(
+                tile: .library,
+                span: 2,
+                surface: .bound,
+                padding: EdgeInsets(top: 20, leading: 22, bottom: 4, trailing: 22)
+            ) {
+                full
+            }
+        } else {
+            ChapelTileFrame(
+                tile: .library,
+                span: 1,
+                surface: .bound,
+                act: "Three more",
+                footRuled: false,
+                onAct: { router.push(.explore) }
+            ) {
+                half
+            }
+        }
     }
 
-    // MARK: Full — the index
+    // MARK: Full — the index, and the colophon
 
     private var full: some View {
-        ChapelTileFrame(
-            tile: .library,
-            span: 2,
-            note: "Six doors",
-            shellTop: 4,
-            act: "The shelf",
-            footRuled: true,
-            onAct: { router.push(.spiritualReading) }
-        ) {
-            HStack(alignment: .top, spacing: 18) {
-                column(Self.left)
-                column(Self.right)
-            }
-        } footNote: {
-            ChapelFootNote("Our heart is restless until it rests in thee.")
-        }
-    }
-
-    private func column(_ doors: [Door]) -> some View {
         VStack(alignment: .leading, spacing: 0) {
-            ForEach(Array(doors.enumerated()), id: \.element.title) { index, door in
-                ChapelDoorRow(door.icon, door.title, divided: index < doors.count - 1) {
-                    router.push(door.route)
-                }
+            VStack(alignment: .leading, spacing: 18) {
+                section("Books", Self.books)
+                section("Guides", Self.guides)
             }
+            .padding(.top, 18)
+            .padding(.bottom, 10)
+
+            Text("Our heart is restless until it rests in thee.")
+                .font(AppFonts.italicFont(14))
+                .foregroundColor(AppColors.cream.opacity(0.7))
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.top, 6)
+                .padding(.bottom, 18)
         }
-        .frame(maxWidth: .infinity)
     }
 
-    // MARK: Half — the first two doors, and a door to the rest
+    private func section(_ name: String, _ doors: [Door]) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text(name.uppercased())
+                .font(AppFonts.labelFont(9))
+                .tracking(2.5)
+                .foregroundColor(AppColors.gold.opacity(0.75))
+                .padding(.bottom, 4)
+                .accessibilityAddTraits(.isHeader)
+
+            ForEach(Array(doors.enumerated()), id: \.element.title) { index, door in
+                doorRow(door, size: 17, minHeight: 54, showsLine: true, divided: index < doors.count - 1)
+            }
+        }
+    }
+
+    // MARK: Half — the books, and a door to the rest
 
     private var half: some View {
-        ChapelTileFrame(
-            tile: .library,
-            span: 1,
-            shellTop: 2,
-            act: "Four more",
-            onAct: { router.push(.explore) }
-        ) {
-            ForEach(Array(Self.left.prefix(2).enumerated()), id: \.element.title) { index, door in
-                ChapelDoorRow(door.icon, door.title, divided: index == 0) {
-                    router.push(door.route)
-                }
+        VStack(alignment: .leading, spacing: 0) {
+            ForEach(Self.books, id: \.title) { door in
+                doorRow(door, size: 15, minHeight: 44, showsLine: false, divided: true)
             }
         }
+        .padding(.top, 10)
+        .padding(.bottom, 2)
+    }
+
+    private func doorRow(_ door: Door, size: CGFloat, minHeight: CGFloat, showsLine: Bool, divided: Bool) -> some View {
+        Button {
+            router.push(door.route)
+        } label: {
+            HStack(spacing: 10) {
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(door.title)
+                        .font(AppFonts.bodyFont(size))
+                        .foregroundColor(AppColors.cream)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.85)
+
+                    if showsLine {
+                        Text(door.line)
+                            .font(AppFonts.italicFont(13))
+                            .foregroundColor(AppColors.textSecondary)
+                            .lineLimit(1)
+                    }
+                }
+
+                Spacer(minLength: 0)
+
+                AppIcon("ph-caret-right", size: 9)
+                    .foregroundColor(AppColors.gold.opacity(0.7))
+            }
+            .frame(minHeight: minHeight)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .overlay(alignment: .bottom) {
+            if divided {
+                Rectangle()
+                    .fill(AppColors.gold.opacity(0.12))
+                    .frame(height: AppLine.hairline)
+            }
+        }
+        .accessibilityLabel(showsLine ? "\(door.title), \(door.line)" : door.title)
     }
 }
 
 // MARK: - Chant
 
 /// Sung prayer kept close to hand: a round play control, the chant by
-/// name, and a scrub line. The name opens the chant's own page (its score,
-/// its practice); the foot's act opens the Chant Library, where another
-/// is chosen. The tile holds whatever the library last sang, or the
-/// antiphon of the season until it has sung anything.
+/// name, and a staff whose notes light as the chant is sung. The name
+/// opens the chant's own page (its score, its practice); the foot's act
+/// opens the Chant Library, where another is chosen. The tile holds
+/// whatever the library last sang, or the antiphon of the season until
+/// it has sung anything.
 struct ChapelChantTile: View {
 
     let span: Int
@@ -1920,143 +2348,201 @@ struct ChapelChantTile: View {
 
     private var chant: Chant { player.current }
 
-    var body: some View {
-        if span == 2 { full } else { half }
+    /// What stands under the chant's name: a failure to play it, else the
+    /// setting it is sung in, else its English name.
+    private var statusLine: String {
+        player.errorMessage ?? chant.setting ?? chant.englishTitle
     }
 
-    /// What stands under the chant's name: a failure to play it, else
-    /// when it is sung.
-    private var statusLine: String {
-        player.errorMessage ?? chant.setting.map { "\($0) · \(chant.detail)" } ?? chant.detail
+    /// The title line's note: how far into the chant, once it is sounding
+    /// here; else that it is the season's antiphon, when it is.
+    private var note: String? {
+        if let elapsed = player.elapsedLabel { return elapsed }
+        return ChantCatalog.antiphonOfTheSeason()?.id == chant.id ? "Antiphon of the season" : nil
+    }
+
+    var body: some View {
+        ChapelTileFrame(
+            tile: .chant,
+            span: span,
+            surface: .cloth,
+            note: span == 2 ? note : nil,
+            act: span == 2 ? "Chant library" : "Library",
+            onAct: onOpenLibrary
+        ) {
+            if span == 2 { full } else { half }
+        }
     }
 
     private var full: some View {
-        ChapelTileFrame(
-            tile: .chant,
-            span: 2,
-            note: player.elapsedLabel,
-            act: "Chant library",
-            onAct: onOpenLibrary
-        ) {
-            HStack(spacing: 14) {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(spacing: 16) {
                 ChantPlayDisc(
                     isPlaying: player.isPlaying,
                     isLoading: player.isLoading,
-                    size: 46,
+                    size: 50,
                     label: chant.latinTitle
                 ) {
                     player.togglePlayback()
                 }
 
-                Button(action: onOpenChant) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(chant.latinTitle.uppercased())
-                            .font(AppFonts.labelFont(10))
-                            .tracking(2.5)
-                            .foregroundColor(AppColors.gold)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.8)
-
-                        Text(statusLine)
-                            .font(AppFonts.italicFont(13))
-                            .foregroundColor(AppColors.textSecondary)
-                            .lineLimit(2)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .frame(minHeight: 44)
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-                .accessibilityElement(children: .combine)
-                .accessibilityHint("Opens the chant with its score")
+                name(size: 15, tracking: 2.5, lineSize: 14, lines: 1)
             }
+            .padding(.vertical, 16)
 
-            scrubLine
-                .padding(.top, 14)
-                .padding(.bottom, 6)
+            staff
+                .frame(height: 34)
+                .padding(.top, 6)
+                .padding(.horizontal, 2)
+                .padding(.bottom, 14)
         }
     }
 
     private var half: some View {
-        ChapelTileFrame(
-            tile: .chant,
-            span: 1,
-            act: "Library",
-            onAct: onOpenLibrary
-        ) {
-            Button(action: onOpenChant) {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(chant.latinTitle)
-                        .font(AppFonts.headlineFont(15))
-                        .foregroundColor(AppColors.cream)
-                        .lineLimit(2)
-                        .minimumScaleFactor(0.85)
-                        .fixedSize(horizontal: false, vertical: true)
-
-                    Text(chant.setting ?? chant.englishTitle)
-                        .font(AppFonts.italicFont(12.5))
-                        .foregroundColor(AppColors.textSecondary)
-                        .lineLimit(2)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .accessibilityElement(children: .combine)
-            .accessibilityHint("Opens the chant with its score")
-
-            // The time is said once, here on the transport row, and
-            // not in the kicker as well
-            HStack(spacing: 8) {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(spacing: 10) {
                 ChantPlayDisc(
                     isPlaying: player.isPlaying,
                     isLoading: player.isLoading,
-                    size: 36,
+                    size: 38,
                     label: chant.latinTitle
                 ) {
                     player.togglePlayback()
                 }
 
-                scrubLine
-
-                if let elapsed = player.elapsedLabel {
-                    Text(elapsed)
-                        .font(AppFonts.bodyFont(11))
-                        .foregroundColor(AppColors.textSecondary)
-                        .monospacedDigit()
-                        .lineLimit(1)
-                }
+                name(size: 11, tracking: 1.5, lineSize: 12.5, lines: 2)
             }
-            .padding(.top, 4)
-            .padding(.bottom, 2)
+            .padding(.vertical, 12)
+
+            staff
+                .frame(height: 24)
+                .padding(.top, 4)
+                .padding(.bottom, 6)
         }
     }
 
-    private var scrubLine: some View {
-        GeometryReader { geo in
-            ZStack(alignment: .leading) {
-                Rectangle()
-                    .fill(AppColors.gold.opacity(0.15))
-                Rectangle()
-                    .fill(AppColors.gold)
-                    .frame(width: geo.size.width * player.progress)
-                    // Glides between the player's ticks instead of
-                    // stepping with them
-                    .animation(.linear(duration: 0.5), value: player.progress)
+    /// The chant's name, in tracked capitals, over its setting — the door
+    /// to its own page
+    private func name(size: CGFloat, tracking: CGFloat, lineSize: CGFloat, lines: Int) -> some View {
+        Button(action: onOpenChant) {
+            VStack(alignment: .leading, spacing: 3) {
+                Text(chant.latinTitle.uppercased())
+                    .font(AppFonts.labelFont(size))
+                    .tracking(tracking)
+                    .foregroundColor(AppColors.cream)
+                    .lineLimit(lines)
+                    .minimumScaleFactor(0.75)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Text(statusLine)
+                    .font(AppFonts.italicFont(lineSize))
+                    .foregroundColor(AppColors.textSecondary)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(minHeight: 44)
+            .contentShape(Rectangle())
         }
-        .frame(height: 1)
+        .buttonStyle(.plain)
+        .accessibilityElement(children: .combine)
+        .accessibilityHint("Opens the chant with its score")
+    }
+
+    private var staff: some View {
+        ChapelChantStaff(
+            chantID: chant.id,
+            progress: player.holds(chant) ? player.progress : nil
+        )
+    }
+}
+
+/// Four lines of a chant staff with a melody's square notes along them,
+/// lit up to the point the chant has reached and dim beyond it, and the
+/// playhead standing where the voice is. The melody is drawn for the
+/// chant — the same line every time for the same chant — and is a
+/// picture of chant, not its score: the score is a tap away on its page.
+private struct ChapelChantStaff: View {
+    let chantID: String
+
+    /// 0…1 through the recording while the library holds it; nil when it
+    /// is not loaded, and nothing is lit
+    let progress: Double?
+
+    private static let noteCount = 25
+
+    var body: some View {
+        GeometryReader { geo in
+            let width = geo.size.width
+            let height = geo.size.height
+            let levels = Self.melody(for: chantID)
+            let step = (width - 12) / CGFloat(Self.noteCount - 1)
+            let head = progress.map { CGFloat($0) * width }
+
+            ZStack(alignment: .topLeading) {
+                ForEach(0..<4, id: \.self) { line in
+                    Rectangle()
+                        .fill(AppColors.gold.opacity(0.28))
+                        .frame(width: width, height: AppLine.hairline)
+                        .offset(y: height * CGFloat(line) / 3)
+                }
+
+                ForEach(0..<levels.count, id: \.self) { index in
+                    let x = 4 + CGFloat(index) * step
+                    let sung = head.map { x + 3.5 <= $0 } ?? false
+                    RoundedRectangle(cornerRadius: 1)
+                        .fill(sung ? AppColors.goldLight : AppColors.gold.opacity(0.38))
+                        .frame(width: 7, height: 6)
+                        .offset(x: x, y: Self.noteTop(level: levels[index], height: height))
+                }
+
+                if let head {
+                    Rectangle()
+                        .fill(AppColors.gold)
+                        .frame(width: 1, height: height + 12)
+                        .shadow(color: AppColors.gold.opacity(0.6), radius: 3)
+                        .offset(x: min(max(head, 0), width), y: -6)
+                }
+            }
+            // Glides between the player's ticks instead of stepping with
+            // them
+            .animation(.linear(duration: 0.5), value: progress)
+        }
         .accessibilityHidden(true)
+    }
+
+    /// Where a note stands: level 0 on the second line from the bottom,
+    /// each level a line or a space higher
+    private static func noteTop(level: Int, height: CGFloat) -> CGFloat {
+        height * 2 / 3 - CGFloat(level) * height / 6 - 3
+    }
+
+    /// A melody walked a step at a time, seeded by the chant's id so the
+    /// same chant always draws the same line
+    private static func melody(for id: String) -> [Int] {
+        var seed: UInt64 = 1_469_598_103_934_665_603
+        for byte in id.utf8 {
+            seed = (seed ^ UInt64(byte)) &* 1_099_511_628_211
+        }
+        var level = 0
+        var levels: [Int] = []
+        for _ in 0..<noteCount {
+            levels.append(level)
+            seed = seed &* 6_364_136_223_846_793_005 &+ 1_442_695_040_888_963_407
+            let move = Int((seed >> 33) % 3) - 1
+            level = min(4, max(-1, level + move))
+        }
+        return levels
     }
 }
 
 // MARK: - Reflections
 
 /// The latest journal entry, opened by an illuminated versal — writing,
-/// not a list. An entry that opens on a quotation mark has no letter to
-/// illuminate and takes a gold rule down its side instead. The whole
-/// tile opens the journal.
+/// not a list. An entry that opens on a quotation mark has its mark
+/// gilded in the letter's place; one that opens on no letter at all
+/// takes a gold rule down its side instead. The whole tile opens the
+/// journal.
 struct ChapelReflectionsTile: View {
 
     let span: Int
@@ -2085,76 +2571,70 @@ struct ChapelReflectionsTile: View {
 
     var body: some View {
         if let latest {
-            if span == 2 { full(latest) } else { half(latest) }
+            let text = tileText(latest)
+            let day = Self.dayNote(latest.createdAt)
+            ChapelTileFrame(
+                tile: .reflections,
+                span: span,
+                surface: .quote,
+                note: span == 2 ? day : nil,
+                act: span == 2 ? "Open the journal" : nil,
+                footNote: span == 2 ? nil : day,
+                onTap: open,
+                accessibilityLabel: "Reflections, \(day). \(text). Opens the journal."
+            ) {
+                entryBlock(
+                    text,
+                    versalSize: span == 2 ? 50 : 36,
+                    bodySize: span == 2 ? 16.5 : 14.5,
+                    lines: span == 2 ? 3 : 5
+                )
+                .padding(.top, span == 2 ? 16 : 14)
+                .padding(.bottom, span == 2 ? 12 : 8)
+            }
         } else {
-            empty
-        }
-    }
-
-    private func full(_ entry: JournalEntry) -> some View {
-        let text = tileText(entry)
-        return ChapelTileFrame(
-            tile: .reflections,
-            span: 2,
-            note: entry.createdAt.formatted(date: .abbreviated, time: .omitted),
-            act: "Open journal",
-            onTap: open,
-            accessibilityLabel: "Reflections. \(text). Opens the journal."
-        ) {
-            entryBlock(text, versalSize: 42, bodySize: 15, lines: 3)
-                .padding(.bottom, 6)
-        } footNote: {
-            // A fading rule in the note's place: the entry's own
-            // sentence is the note, and nothing should compete with it
-            LinearGradient(
-                colors: [AppColors.gold.opacity(0.3), .clear],
-                startPoint: .leading,
-                endPoint: .trailing
-            )
-            .frame(height: 1)
-        }
-    }
-
-    private func half(_ entry: JournalEntry) -> some View {
-        let text = tileText(entry)
-        return ChapelTileFrame(
-            tile: .reflections,
-            span: 1,
-            note: entry.createdAt.formatted(.dateTime.month(.abbreviated).day()),
-            act: "Journal",
-            onTap: open,
-            accessibilityLabel: "Reflections. \(text). Opens the journal."
-        ) {
-            // The card floor for reading text is 15, at half width too
-            entryBlock(text, versalSize: 34, bodySize: 15, lines: 2)
-                .padding(.bottom, 4)
-        }
-    }
-
-    private var empty: some View {
-        ChapelTileFrame(
-            tile: .reflections,
-            span: span,
-            act: span == 2 ? "Open journal" : "Journal",
-            onTap: open,
-            accessibilityLabel: "Reflections. Your reflections will gather here after prayer. Opens the journal."
-        ) {
-            Text("Your reflections will gather here after prayer.")
-                .font(AppFonts.italicFont(span == 2 ? 15 : 13))
-                .foregroundColor(AppColors.textSecondary)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.bottom, 4)
+            ChapelTileFrame(
+                tile: .reflections,
+                span: span,
+                surface: .quote,
+                act: span == 2 ? "Open the journal" : "Journal",
+                onTap: open,
+                accessibilityLabel: "Reflections. Your reflections will gather here after prayer. Opens the journal."
+            ) {
+                Text("Your reflections will gather here after prayer.")
+                    .font(AppFonts.italicFont(span == 2 ? 15 : 13))
+                    .foregroundColor(AppColors.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, 14)
+                    .padding(.bottom, 10)
+            }
         }
     }
 
     // MARK: Bits
 
+    /// When the entry was written, as a reader says it: "Today",
+    /// "Yesterday", the weekday through the week, then the date.
+    private static func dayNote(_ date: Date, now: Date = .now, calendar: Calendar = .current) -> String {
+        if calendar.isDateInToday(date) { return "Today" }
+        if calendar.isDateInYesterday(date) { return "Yesterday" }
+        let days = calendar.dateComponents(
+            [.day],
+            from: calendar.startOfDay(for: date),
+            to: calendar.startOfDay(for: now)
+        ).day ?? 0
+        if days < 7 {
+            return date.formatted(.dateTime.weekday(.wide))
+        }
+        return date.formatted(.dateTime.month(.abbreviated).day())
+    }
+
     /// What the tile quotes from the entry. A passage kept from a book is
     /// set as the quotation it is, without the citation and its rights
     /// note — the journal's own page sets those apart, and on a tile of
-    /// two or three lines they crowded out the passage. Any other entry
-    /// is the journal's own preview, its newlines flattened, so a
-    /// paragraph break never spends one of those lines on nothing.
+    /// a few lines they crowded out the passage. Any other entry is the
+    /// journal's own preview, its newlines flattened, so a paragraph
+    /// break never spends one of those lines on nothing.
     private func tileText(_ entry: JournalEntry) -> String {
         if let kept = entry.keptPassage {
             let passage = kept.passage
@@ -2178,14 +2658,13 @@ struct ChapelReflectionsTile: View {
         // when the mark is
         let words = cut.map { opensOnQuotation ? $0.wordsAfterLead : $0.rest } ?? text
 
-        // A few lines of the reader's own writing, at the quote leading —
-        // about 1.45 — so they read as one breath rather than a list; the
-        // medium italic holds its weight on the dark ground where the
-        // light face thinned
+        // A few lines of the reader's own writing, in the upright medium
+        // face, which holds its weight on the dark ground, at a reading
+        // leading of about one and a half
         let writing = Text(words)
-            .font(AppFonts.italicFont(bodySize))
-            .foregroundColor(AppColors.cream.opacity(0.88))
-            .lineSpacing(ReadingTypography.quoteLineSpacing(for: bodySize))
+            .font(AppFonts.bodyFont(bodySize))
+            .foregroundColor(AppColors.cream.opacity(0.92))
+            .lineSpacing((bodySize * 0.36).rounded())
             .lineLimit(lines)
 
         return Group {
@@ -2193,10 +2672,11 @@ struct ChapelReflectionsTile: View {
                 // A hair between the initial and the rest of its word: the
                 // two are separate views, and any more air than that splits
                 // "Be" into "B  e". A mark stands off its words a little more.
-                HStack(alignment: .top, spacing: opensOnQuotation ? 7 : 4) {
+                HStack(alignment: .top, spacing: opensOnQuotation ? 9 : 6) {
                     versalText(cut, size: versalSize, bodySize: bodySize)
+                        .shadow(color: AppColors.gold.opacity(0.35), radius: 7)
                         .frame(height: versalSize * 0.8, alignment: opensOnQuotation ? .topLeading : .bottomLeading)
-                        .padding(.top, 5)
+                        .padding(.top, 4)
 
                     writing
                 }
@@ -2236,14 +2716,14 @@ struct ChapelReflectionsTile: View {
     private func versalText(_ cut: VersalCut, size: CGFloat, bodySize: CGFloat) -> Text {
         if cut.opensOnQuotation {
             return Text(cut.lead)
-                .font(AppFonts.headlineFont((size * 1.5).rounded()))
+                .font(AppFonts.titleFont((size * 1.5).rounded()))
                 .foregroundColor(AppColors.gold)
         }
         return Text(cut.lead)
-            .font(AppFonts.italicFont(bodySize))
-            .foregroundColor(AppColors.cream.opacity(0.88))
+            .font(AppFonts.bodyFont(bodySize))
+            .foregroundColor(AppColors.cream.opacity(0.92))
         + Text(cut.letter)
-            .font(AppFonts.headlineFont(size))
+            .font(AppFonts.titleFont(size))
             .foregroundColor(AppColors.gold)
     }
 }

@@ -106,6 +106,9 @@ struct MyChapelView: View {
 
     private static let space = "chapel"
 
+    /// The page's head, which arranging scrolls back to
+    private static let top = "chapel-top"
+
     // MARK: Body
 
     var body: some View {
@@ -123,43 +126,58 @@ struct MyChapelView: View {
 
             halo
 
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 30) {
-                    dayStrip
+            ScrollViewReader { scroller in
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 30) {
+                        // The page's head and the arranging head share one
+                        // slot and crossfade over each other: while the
+                        // page is arranged it is being rearranged, not
+                        // read, and the day, the focus and its gold act
+                        // stand down for the list of sections
+                        ZStack(alignment: .top) {
+                            if arranging {
+                                arrangeHeader
+                                    .transition(.opacity)
+                            } else {
+                                pageHead(acts: acts, next: next)
+                                    .transition(.opacity)
+                            }
+                        }
+                        .id(Self.top)
 
-                    focusBlock(acts: acts, next: next)
+                        grid(acts: acts)
+                            .padding(.horizontal, 20)
+                            .padding(.top, arranging ? -12 : 0)
 
-                    OrnamentDivider()
-                        .padding(.horizontal, 28)
-                        .padding(.top, -4)
-
-                    if !arranging && !settings.chapelCoached {
-                        coachRibbon
-                            .transition(.opacity.combined(with: .scale(scale: 0.96)))
+                        if !arranging {
+                            footControl
+                                .transition(.opacity.combined(with: .scale(scale: 0.96)))
+                        }
                     }
-
-                    grid(acts: acts)
-                        .padding(.horizontal, 20)
-
-                    if !arranging {
-                        footControl
-                            .transition(.opacity.combined(with: .scale(scale: 0.96)))
+                    .padding(.bottom, 190)
+                    // Press and hold the page itself. Behind the
+                    // content, not over it: as a `simultaneousGesture`
+                    // on the ScrollView this recognized *alongside*
+                    // every control, so holding the Rosary's gold act for
+                    // half a second both entered arrange mode and
+                    // started a Rosary. A control now wins its own
+                    // touch, and only the page between them arranges.
+                    .background {
+                        Color.clear
+                            .contentShape(Rectangle())
+                            .onLongPressGesture(minimumDuration: 0.45, maximumDistance: 8) {
+                                enterArrange()
+                            }
                     }
                 }
-                .padding(.bottom, 190)
-                // Press and hold the page itself. Behind the
-                // content, not over it: as a `simultaneousGesture`
-                // on the ScrollView this recognized *alongside*
-                // every control, so holding the Rosary's gold act for
-                // half a second both entered arrange mode and
-                // started a Rosary. A control now wins its own
-                // touch, and only the page between them arranges.
-                .background {
-                    Color.clear
-                        .contentShape(Rectangle())
-                        .onLongPressGesture(minimumDuration: 0.45, maximumDistance: 8) {
-                            enterArrange()
-                        }
+                // Arranged, the page folds to a list that fits the glass;
+                // a hold far down the page would otherwise leave the list
+                // scrolled out of sight above
+                .onChange(of: arranging) { _, now in
+                    guard now else { return }
+                    withAnimation(reduceMotion ? nil : Motion.chrome) {
+                        scroller.scrollTo(Self.top, anchor: .top)
+                    }
                 }
             }
             // The dissolve is so a scrolled ledger row stops colliding
@@ -221,6 +239,60 @@ struct MyChapelView: View {
             prayedToday: historyService.hasPrayedToday(),
             week: historyService.weeklyPrayerStatus()
         )
+    }
+
+    // MARK: - The page's head
+
+    /// Everything above the sections as the page is read: the day, the
+    /// focus and the ornament under it, and the one-time coach.
+    private func pageHead(acts: [ChapelAct], next: ChapelAct?) -> some View {
+        VStack(spacing: 30) {
+            dayStrip
+
+            focusBlock(acts: acts, next: next)
+
+            OrnamentDivider()
+                .frame(width: 210)
+                .padding(.top, -4)
+
+            if !settings.chapelCoached {
+                coachRibbon
+            }
+        }
+    }
+
+    /// The head while the page is arranged: what the page is doing, how
+    /// to do it, and DONE — the page's one gold act while the focus block
+    /// stands down.
+    private var arrangeHeader: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .center, spacing: 12) {
+                Text("Rearrange")
+                    .font(AppFonts.titleFont(22))
+                    .foregroundColor(AppColors.textPrimary)
+                    .accessibilityAddTraits(.isHeader)
+
+                Spacer(minLength: 0)
+
+                GoldCTAButton(
+                    title: "Done",
+                    prominence: .inline,
+                    silhouette: .rounded(14),
+                    trailingIcon: "ph-check",
+                    fullWidth: false,
+                    action: endArrange
+                )
+                .accessibilityLabel("Done arranging")
+            }
+
+            Text("Drag a section to move it. Tap one to make it wide or half.")
+                .font(AppFonts.bodyFont(16))
+                .foregroundColor(AppColors.accentSoft)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 20)
+        .padding(.top, 22)
     }
 
     // MARK: - Ambient halo
@@ -625,12 +697,16 @@ struct MyChapelView: View {
 
     private func grid(acts: [ChapelAct]) -> some View {
         let entries = gridEntries
-        // Every tile stands in its own shell now, so the gap closes to
-        // the design's 28. It was 46 while the frameless tiles had no
-        // edge of their own but the gap to say where they ended.
-        return ChapelGridLayout(columnGap: 16, rowGap: 28) {
+        // Each tile is a card of its own, so the gap need only part two
+        // objects: 20 between rows, 12 between a pair of halves. Folded
+        // to rows while arranging, the page closes to 10 both ways so the
+        // whole of it fits the glass.
+        return ChapelGridLayout(
+            columnGap: arranging ? 10 : 12,
+            rowGap: arranging ? 10 : 20
+        ) {
             ForEach(Array(entries.enumerated()), id: \.element.id) { index, placement in
-                cell(placement, index: index, acts: acts)
+                cell(placement, index: index, count: entries.count, acts: acts)
                     .chapelSpan(placement.span)
                     .id("tile-\(placement.tile.rawValue)")
             }
@@ -639,18 +715,24 @@ struct MyChapelView: View {
     }
 
     @ViewBuilder
-    private func cell(_ placement: ChapelPlacement, index: Int, acts: [ChapelAct]) -> some View {
+    private func cell(_ placement: ChapelPlacement, index: Int, count: Int, acts: [ChapelAct]) -> some View {
         let isCarried = carrying?.tile == placement.tile
 
         ZStack {
             if isCarried {
-                ChapelSlotView()
+                ChapelSlotView(span: placement.span)
+            } else if arranging {
+                // Folded to a row while the page is arranged: the whole
+                // page fits the glass, and a section is carried past the
+                // others rather than dragged down a page three thousand
+                // points long
+                ChapelArrangeRow(placement: placement)
+                    .transition(.opacity)
             } else {
                 tileContent(placement, acts: acts)
-                    .allowsHitTesting(!arranging)
+                    .transition(.opacity)
             }
         }
-        .modifier(ChapelSway(active: arranging && carrying == nil, index: index))
         .overlay {
             if arranging {
                 Color.clear
@@ -658,9 +740,9 @@ struct MyChapelView: View {
                     .gesture(tileDrag(placement))
             }
         }
-        .overlay(alignment: .topLeading) {
+        .overlay(alignment: .trailing) {
             if arranging && !isCarried {
-                ChapelRemoveBadge(tile: placement.tile) {
+                ChapelHideButton(tile: placement.tile, span: placement.span) {
                     putAway(placement.tile)
                 }
             }
@@ -683,8 +765,27 @@ struct MyChapelView: View {
         }
         .accessibilityElement(children: arranging ? .ignore : .contain)
         .accessibilityLabel(
-            arranging ? "\(placement.tile.title). Arranging." : placement.tile.title
+            arranging
+                ? "\(placement.tile.title), \(placement.span == 2 ? "full width" : "half width")"
+                : placement.tile.title
         )
+        .accessibilityHint(arranging ? "Arranging the page." : "")
+        // VoiceOver cannot drag: every move the hand makes on a row, the
+        // rotor makes as an action
+        .accessibilityActions {
+            if arranging {
+                Button(placement.span == 2 ? "Make half width" : "Make full width") {
+                    toggleSpan(placement.tile)
+                }
+                if index > 0 {
+                    Button("Move up") { move(placement.tile, by: -1) }
+                }
+                if index < count - 1 {
+                    Button("Move down") { move(placement.tile, by: 1) }
+                }
+                Button("Hide") { putAway(placement.tile) }
+            }
+        }
     }
 
     @ViewBuilder
@@ -704,8 +805,7 @@ struct MyChapelView: View {
         case .liturgy:
             ChapelLiturgyTile(
                 span: placement.span,
-                dayLine: dayLine,
-                feast: today.feastTitle
+                today: today
             )
         case .library:
             ChapelLibraryTile(span: placement.span)
@@ -736,29 +836,34 @@ struct MyChapelView: View {
     /// The standing, visible door into arrange mode — the long press is
     /// a shortcut, never the only way.
     private var footControl: some View {
-        VStack(spacing: 12) {
-            OrnamentDivider()
-                .frame(width: 120)
-
+        VStack(spacing: 8) {
+            // An outlined capsule, so the one door into arranging reads
+            // as a control and not as a line of the colophon
             Button(action: enterArrange) {
                 HStack(spacing: 9) {
-                    arrangeGlyph(size: 6, gap: 2.5)
+                    arrangeGlyph(size: 5.5, gap: 2.5)
 
                     Text("ARRANGE THIS PAGE")
                         .font(AppFonts.labelFont(10))
-                        .tracking(2.2)
+                        .tracking(2.5)
+                        .foregroundColor(AppColors.gold)
                 }
-                .foregroundColor(AppColors.gold.opacity(0.85))
+                .padding(.horizontal, 20)
                 .frame(minHeight: 44)
-                .contentShape(Rectangle())
+                .overlay(
+                    Capsule()
+                        .strokeBorder(AppColors.gold.opacity(0.4), lineWidth: AppLine.hairline)
+                )
+                .contentShape(Capsule())
             }
-            .buttonStyle(.plain)
+            // The card's settle: a bare glyph's dip to 0.9 reads as a
+            // jolt across a control this wide
+            .buttonStyle(SacredCardButtonStyle())
             .accessibilityLabel("Arrange this page")
 
             Text("Or press and hold anywhere.")
-                .font(AppFonts.italicFont(12))
+                .font(AppFonts.italicFont(13))
                 .foregroundColor(AppColors.textSecondary)
-                .padding(.top, -8)
 
             // The page's imprint — the version at the foot of the
             // user's own page, where a flyleaf carries its printing.
@@ -772,10 +877,10 @@ struct MyChapelView: View {
                     .font(AppFonts.italicFont(11))
                     .foregroundColor(AppColors.gold.opacity(0.5))
             }
-            .padding(.top, 16)
+            .padding(.top, 22)
         }
         .padding(.horizontal, 40)
-        .padding(.top, -6)
+        .padding(.top, 4)
     }
 
     // MARK: - Arrange mode
@@ -845,6 +950,25 @@ struct MyChapelView: View {
                 }
             )
         }
+    }
+
+    /// A step up or down the page, for VoiceOver, which cannot drag: the
+    /// section trades places with its neighbour among those on the page.
+    private func move(_ tile: ChapelTile, by offset: Int) {
+        let layout = settings.chapelLayout
+        var placed = layout.filter(\.on)
+        let stowed = layout.filter { !$0.on }
+        guard let from = placed.firstIndex(where: { $0.tile == tile }) else { return }
+        let to = from + offset
+        guard placed.indices.contains(to) else { return }
+
+        placed.swapAt(from, to)
+        withAnimation(.easeOut(duration: 0.26)) {
+            settings.setChapelLayout(placed + stowed)
+        }
+        AccessibilityNotification.Announcement(
+            "\(tile.title), \(to + 1) of \(placed.count)"
+        ).post()
     }
 
     // MARK: - The carry
@@ -1012,10 +1136,9 @@ struct MyChapelView: View {
             Spacer()
 
             ChapelTray(
-                putAway: settings.chapelLayout.filter { !$0.on },
-                onDone: endArrange,
+                hidden: settings.chapelLayout.filter { !$0.on },
                 onAdd: addToEnd,
-                rowGesture: trayDrag
+                chipGesture: trayDrag
             )
         }
         .zIndex(30)

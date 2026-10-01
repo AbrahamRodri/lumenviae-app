@@ -48,9 +48,9 @@ enum ChapelTile: String, CaseIterable, Identifiable {
         }
     }
 
-    /// The kicker's name at half width, where a long one would leave no
-    /// room beside it for its note. The tray and the ghost keep the
-    /// full name.
+    /// The tile's name at half width, on its own title line and on its
+    /// folded row while arranging, where a long one would not fit. The
+    /// tray and the lifted row keep the full name.
     var shortTitle: String {
         switch self {
         case .flame: return "Streak"
@@ -59,7 +59,8 @@ enum ChapelTile: String, CaseIterable, Identifiable {
         }
     }
 
-    /// One line in the tray saying what the section shows.
+    /// One line saying what the section shows, which VoiceOver reads on
+    /// a hidden section's chip in the tray.
     var detail: String {
         switch self {
         case .rule:         return "Your rule of prayer, act by act"
@@ -70,7 +71,7 @@ enum ChapelTile: String, CaseIterable, Identifiable {
         case .chant:        return "Sung prayer, kept close to hand"
         case .reflections:  return "Your latest journal entries"
         case .flame:        return "Your streak and this week's prayer"
-        case .prayers:      return "The hour's prayers, and the ones you keep"
+        case .prayers:      return "The prayers for the hour, and the day's three"
         }
     }
 
@@ -83,20 +84,6 @@ enum ChapelTile: String, CaseIterable, Identifiable {
         switch self {
         case .liturgy: return .library
         default:       return nil
-        }
-    }
-
-    var icon: String {
-        switch self {
-        case .rule:         return "ph-scroll"
-        case .consecration: return "ch-consecration"
-        case .reading:      return "ph-book-open"
-        case .liturgy:      return "ch-altar"
-        case .library:      return "ph-book"
-        case .chant:        return "ph-music-note"
-        case .reflections:  return "ph-note-pencil"
-        case .flame:        return "ph-flame"
-        case .prayers:      return "ch-praying-hands"
         }
     }
 }
