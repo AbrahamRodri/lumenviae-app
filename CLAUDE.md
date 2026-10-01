@@ -355,7 +355,10 @@ handoff; its sections redrawn by the "Chapel Redesign" handoff, Oct
 2026): a page the user arranges **in place** — no customize sheet.
 Two ideas drive it: a single focus at the top (the first unoffered act
 on the rule, set large with the page's one gold CTA, advancing on its
-own as acts are offered — derived, never stored), and an arrangeable
+own as acts are offered — derived, never stored; the rule all offered,
+it reads THE DAY IS OFFERED over "Thanks be to God", true at any hour,
+where "Rest now" once sent someone who had prayed by half past six back
+to bed), and an arrangeable
 grid of sections below. Long-press 450ms anywhere (cancelled by >8pt of
 movement) — on the page, on a tile that opens on a tap, or on the
 quiet parts of a tile full of doors — the coach ribbon's "Show me" (one-time,
@@ -407,7 +410,10 @@ block. The strip carries no app chrome — it reads the day, and the room
 that buys is what lets a long feast set in full — with one exception at
 its right: the journal's pencil, a 40pt gold-ringed circle answering to
 44, which opens `JournalEntryEditorView(isMidPrayer: false)` as the
-Journal does ("New reflection" to VoiceOver). With the Journal off the
+Journal does ("New reflection" to VoiceOver), under the sheet grammar's
+header: the date over NEW REFLECTION (REFLECTION when one is edited,
+DURING PRAYER over it from a mystery being prayed), CANCEL and SAVE
+beside them, SAVE dimmed until something is written. With the Journal off the
 tab bar, a new reflection needs a door that is always on the page, and
 the Reflections tile can be put away; the Chapel is where reflections
 are kept, and the Reflections tile still opens the whole journal

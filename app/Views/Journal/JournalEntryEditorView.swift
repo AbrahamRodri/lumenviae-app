@@ -107,12 +107,8 @@ struct JournalEntryEditorView: View {
             VStack(spacing: 0) {
                 editorHeader
 
-                Divider()
-                    .background(AppColors.gold.opacity(0.2))
-
                 subjectRow
                     .padding(.horizontal, 20)
-                    .padding(.top, 16)
                     .padding(.bottom, 8)
 
                 Divider()
@@ -166,36 +162,34 @@ struct JournalEntryEditorView: View {
 
     // MARK: - Header
 
+    /// The sheet grammar's header: when it is written over what it is,
+    /// CANCEL and SAVE beside them. It once read Cancel · DEVOTION · Save
+    /// in a bar of its own, and DEVOTION named nothing a new reflection is
     private var editorHeader: some View {
-        HStack {
-            Button(action: { dismiss() }) {
-                Text("Cancel")
-                    .font(AppFonts.bodyFont(16))
-                    .foregroundColor(AppColors.textSecondary)
+        SheetHeader(kicker: headerKicker, title: existingEntry == nil ? "New Reflection" : "Reflection") {
+            HStack(spacing: 4) {
+                SheetHeaderAction(title: "Cancel") { dismiss() }
+
+                SheetHeaderAction(title: "Save", action: saveEntry)
+                    .disabled(hasNoText)
+                    .opacity(hasNoText ? 0.35 : 1)
             }
-
-            Spacer()
-
-            Text(isMidPrayer ? "REFLECTION" : "DEVOTION")
-                .font(AppFonts.bodyFont(11))
-                .tracking(3)
-                .foregroundColor(AppColors.gold)
-
-            Spacer()
-
-            Button(action: saveEntry) {
-                Text("Save")
-                    .font(AppFonts.headlineFont(16))
-                    .foregroundColor(
-                        text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                            ? AppColors.gold.opacity(0.3)
-                            : AppColors.gold
-                    )
-            }
-            .disabled(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 16)
+    }
+
+    /// The day it is written, "Thursday, 1 October" (an entry's own when it
+    /// is edited), or, opened from a mystery being prayed, that it is
+    private var headerKicker: String {
+        if existingEntry == nil, isMidPrayer { return "During prayer" }
+        let date = existingEntry?.createdAt ?? Date()
+        let weekday = date.formatted(.dateTime.weekday(.wide))
+        let day = date.formatted(.dateTime.day())
+        let month = date.formatted(.dateTime.month(.wide))
+        return "\(weekday), \(day) \(month)"
+    }
+
+    private var hasNoText: Bool {
+        text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     // MARK: - Subject Row

@@ -675,7 +675,11 @@ struct MyChapelView: View {
 
     private func focusTitle(acts: [ChapelAct], next: ChapelAct?) -> String {
         if acts.isEmpty { return "A rule of prayer" }
-        return next?.focusTitle ?? "Rest now"
+        // True at any hour: the rule can be offered by half past six in
+        // the morning, where "Rest now" sent someone back to bed. The
+        // space before "God" does not break, so a title that needs two
+        // lines reads "Thanks be / to God", never leaving "God" alone
+        return next?.focusTitle ?? "Thanks be to\u{00A0}God"
     }
 
     private func focusDetail(acts: [ChapelAct], next: ChapelAct?) -> String {
@@ -683,7 +687,7 @@ struct MyChapelView: View {
             return "Choose the devotions you mean to offer each day, and the Chapel will keep them here."
         }
         guard let next else {
-            return "Everything on your rule has been offered today. The Chapel keeps until morning."
+            return "Everything on your rule has been offered today. It begins again tomorrow."
         }
         // Taken up where it stopped, as the guide's own welcome says it
         if let session = next.resume {
