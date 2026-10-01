@@ -50,6 +50,13 @@ struct ChapelPrayerBookTile: View {
         router.push(.prayAlong(.order(order)))
     }
 
+    /// The one line under the order's name that says what it is. Read in
+    /// one place, so when the Prayer Book's own card and this tile share
+    /// a sentence (`PrayerBook.daySummary(of:on:)`), the change is here.
+    private func summary(of order: PrayerOrder) -> String {
+        order.detail
+    }
+
     /// "At noon", or "Offered today" once it has been
     private var momentLine: String {
         offered ? "Offered today" : PrayerBook.dayOrderMoment(at: Date())
@@ -95,7 +102,7 @@ struct ChapelPrayerBookTile: View {
                             .minimumScaleFactor(0.8)
                             .contentTransition(.opacity)
 
-                        Text(order.detail)
+                        Text(summary(of: order))
                             .font(AppFonts.italicFont(16))
                             .foregroundColor(AppColors.cream.opacity(0.85))
                             .multilineTextAlignment(.center)
@@ -150,12 +157,15 @@ struct ChapelPrayerBookTile: View {
                     .lineLimit(2)
                     .minimumScaleFactor(0.85)
                     .fixedSize(horizontal: false, vertical: true)
+                    .contentTransition(.opacity)
 
                 Text(momentLine)
                     .font(AppFonts.italicFont(13.5))
                     .foregroundColor(AppColors.textSecondary)
                     .lineLimit(1)
+                    .contentTransition(.opacity)
             }
+            .animation(Motion.crossfade, value: momentLine)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.top, 18)
             .padding(.bottom, 14)
@@ -203,19 +213,28 @@ struct ChapelPrayerBookTile: View {
         let face = VStack(spacing: 6) {
             HourBead(offered: wasOffered, current: isCurrent)
 
-            Text(Self.shortName(dayOrder).uppercased())
-                .font(AppFonts.labelFont(span == 2 ? 9.5 : 8.5))
-                .tracking(span == 2 ? 2 : 1.5)
-                .foregroundColor(isCurrent ? AppColors.cream : AppColors.cream.opacity(0.6))
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
-
             if span == 2 {
+                Text(Self.shortName(dayOrder).uppercased())
+                    .font(AppFonts.labelFont(9.5))
+                    .tracking(2)
+                    .foregroundColor(isCurrent ? AppColors.cream : AppColors.cream.opacity(0.6))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+
                 Text(standing)
                     .font(AppFonts.italicFont(12.5))
                     .foregroundColor(AppColors.textSecondary)
                     .lineLimit(1)
                     .minimumScaleFactor(0.75)
+                    .contentTransition(.opacity)
+                    .animation(Motion.crossfade, value: standing)
+            } else {
+                // At half width the hour's own glyph — the cock, the
+                // bell, the lamp — where its name had no room: MORNING
+                // and ANGELUS shrank to two sizes beside NIGHT, and the
+                // Regina Cæli could not be set at all
+                AppIcon(dayOrder.icon, size: 14)
+                    .foregroundColor(isCurrent ? AppColors.cream : AppColors.cream.opacity(0.6))
             }
         }
         .padding(.vertical, 4)

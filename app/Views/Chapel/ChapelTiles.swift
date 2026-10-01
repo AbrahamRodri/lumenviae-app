@@ -353,6 +353,10 @@ struct ChapelFootNote: View {
             .foregroundColor(AppColors.textSecondary)
             .lineLimit(1)
             .truncationMode(.tail)
+            .contentTransition(
+                text.contains(where: \.isNumber) ? ContentTransition.numericText() : .opacity
+            )
+            .animation(Motion.crossfade, value: text)
     }
 }
 
@@ -543,7 +547,9 @@ struct ChapelTileFrame<Content: View, Floor: View>: View {
                 }
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(accessibilityLabel ?? tile.title)
-                .accessibilityAddTraits(.isButton)
+                // Still a heading when the whole card is one door, so the
+                // rotor walks the page section by section
+                .accessibilityAddTraits([.isButton, .isHeader])
                 .accessibilityAction { onTap() }
         } else {
             card
@@ -945,12 +951,37 @@ struct ChapelFlameTile: View {
 
     private var litNote: String { hasPrayedToday ? "Lit today" : "Not yet today" }
 
-    private var daysPrayedThisWeek: Int { weekStatus.filter(\.didPray).count }
+    private static let weekdayName: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "EEEE"
+        return f
+    }()
 
+    /// "Sunday, Monday and Tuesday" — the days prayed this week, by name.
+    /// Only the days prayed: a count out of seven read midweek as a
+    /// shortfall, which the tile never draws.
+    private var daysPrayedThisWeek: String? {
+        let names = weekStatus.filter(\.didPray).map { Self.weekdayName.string(from: $0.date) }
+        guard let last = names.last else { return nil }
+        return names.count == 1 ? last : names.dropLast().joined(separator: ", ") + " and " + last
+    }
+
+    /// The tile as one sentence, in the words the screen sets: the
+    /// figure as "days in a row", the day, the week by name, and the
+    /// milestone ahead
     private var accessibilityLabel: String {
-        var line = "Prayer Streak. \(streakLabel), \(litNote.lowercased())."
-        if !weekStatus.isEmpty {
-            line += " Prayed \(daysPrayedThisWeek) of 7 days this week."
+        var line = "Prayer Streak. "
+        switch streak {
+        case 0:  line += "Begin your streak"
+        case 1:  line += "1 day of prayer"
+        default: line += "\(streak) days in a row"
+        }
+        line += ", \(litNote.lowercased())."
+        if let days = daysPrayedThisWeek {
+            line += " This week, prayed \(days)."
+        }
+        if let milestoneLine {
+            line += " Next, \(milestoneLine.replacingOccurrences(of: " · ", with: ", "))."
         }
         return line + " Opens the Prayer Record."
     }
@@ -1200,12 +1231,14 @@ struct ChapelConsecrationTile: View {
         }
     }
 
-    /// What VoiceOver says for the tile under way. The day of
-    /// consecration is not a thirty-fourth day of the preparation.
+    /// What VoiceOver says for the tile under way — "Consecration, day
+    /// 14 of 33, Humble Subjection. Continue." — the day's own title, as
+    /// the full tile sets it. The day of consecration is not a
+    /// thirty-fourth day of the preparation.
     private static func spoken(day: Int) -> String {
-        day > 33
-            ? "Consecration. The day of consecration. Continue."
-            : "Consecration. Day \(day) of 33, \(phaseName(day: day)). Continue."
+        if day > 33 { return "Consecration, the day of consecration. Continue." }
+        let title = ConsecrationData.day(day)?.title ?? phaseName(day: day)
+        return "Consecration, day \(day) of 33, \(title). Continue."
     }
 
     /// Where the user stands with the consecration, as the tile draws it
@@ -1476,6 +1509,8 @@ struct ChapelReadingTile: View {
     @Query(sort: \BookReadingProgress.updatedAt, order: .reverse)
     private var progress: [BookReadingProgress]
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     /// Which book's face is forward. Nil until the reader brings one
     /// forward; the most recent stands in front until then.
     @State private var shownID: String?
@@ -1676,15 +1711,15 @@ struct ChapelReadingTile: View {
     }
 
     /// A standing spine that brings its book forward — the same move as
-    /// swiping the face, one tap instead. Drawn 11 wide; answers to 20.
+    /// swiping the face, one tap instead. Drawn 11 wide; answers to 24.
     private func spineButton(_ entry: Entry, height: CGFloat) -> some View {
         Button {
-            withAnimation(Motion.crossfade) {
+            withAnimation(reduceMotion ? nil : Motion.crossfade) {
                 shownID = entry.row.bookID
             }
         } label: {
             ChapelBookSpine(color: entry.info.bindingColor, height: height)
-                .frame(width: 20, alignment: .center)
+                .frame(width: 24, alignment: .center)
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
@@ -2021,6 +2056,7 @@ struct ChapelLiturgyTile: View {
                     .transition(.opacity)
                 }
             }
+            .animation(Motion.crossfade, value: rankLine)
 
             Spacer(minLength: 0)
         }
@@ -2072,12 +2108,15 @@ struct ChapelLiturgyTile: View {
                         .foregroundColor(AppColors.cream)
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
+                        .contentTransition(.opacity)
 
                     Text(line)
                         .font(AppFonts.italicFont(13.5))
                         .foregroundColor(AppColors.textSecondary)
                         .lineLimit(1)
+                        .contentTransition(.opacity)
                 }
+                .animation(Motion.crossfade, value: title)
 
                 Spacer(minLength: 0)
 
@@ -2456,13 +2495,17 @@ struct ChapelChantTile: View {
                     .lineLimit(lines)
                     .minimumScaleFactor(0.75)
                     .fixedSize(horizontal: false, vertical: true)
+                    .contentTransition(.opacity)
 
                 Text(statusLine)
                     .font(AppFonts.italicFont(lineSize))
                     .foregroundColor(AppColors.textSecondary)
                     .lineLimit(2)
                     .fixedSize(horizontal: false, vertical: true)
+                    .contentTransition(.opacity)
             }
+            .animation(Motion.crossfade, value: chant.id)
+            .animation(Motion.crossfade, value: statusLine)
             .frame(maxWidth: .infinity, alignment: .leading)
             .frame(minHeight: 44)
             .contentShape(Rectangle())
@@ -2477,35 +2520,37 @@ struct ChapelChantTile: View {
     }
 }
 
-/// Four lines of a chant staff with a melody's square notes along them,
-/// lit up to the point the chant has reached and dim beyond it, and the
-/// playhead standing where the voice is. The melody is drawn for the
-/// chant — the same line every time for the same chant — and is a
-/// picture of chant, not its score: the score is a tap away on its page.
+/// Four lines of a chant staff with square notes along them, and a gold
+/// playhead standing where the voice is. The notes are one fixed
+/// contour, the same for every chant and the same at every moment: the
+/// app holds no pitches, so the staff is a picture of chant, never a
+/// melody that could be taken for this chant's own — its score is a tap
+/// away on its page. Only the playhead moves, following the recording.
 ///
 /// A view of its own that reads the player itself, so the player's
 /// ticks twice a second redraw the staff and not the tile around it —
-/// the lesson of the chant page's transports.
+/// the lesson of the chant page's transports. On screen the playhead is
+/// the only clock; VoiceOver hears the time as words, here.
 private struct ChapelChantStaff: View {
     let player: ChantPlayer
 
-    private static let noteCount = 25
+    /// The contour, a step at a time — 0 on the second line from the
+    /// bottom, each step a line or a space higher — drawn once for the
+    /// board and kept for every chant
+    private static let contour = [
+        0, 1, 2, 2, 3, 2, 1, 1, 0, 1, 2, 3, 4,
+        3, 2, 2, 1, 0, 1, 0, -1, 0, 1, 1, 0
+    ]
 
-    /// 0…1 through the recording while the library holds it; nil when it
-    /// is not loaded, and nothing is lit
-    private var reached: Double? {
-        player.holds(player.current) ? player.progress : nil
-    }
+    /// Whether the recording in the player is this tile's chant
+    private var held: Bool { player.holds(player.current) }
 
     var body: some View {
-        let chantID = player.current.id
-        let reached = self.reached
+        let head: Double? = held ? player.progress : nil
         return GeometryReader { geo in
             let width = geo.size.width
             let height = geo.size.height
-            let levels = Self.melody(for: chantID)
-            let step = (width - 12) / CGFloat(Self.noteCount - 1)
-            let head = reached.map { CGFloat($0) * width }
+            let step = (width - 12) / CGFloat(Self.contour.count - 1)
 
             ZStack(alignment: .topLeading) {
                 ForEach(0..<4, id: \.self) { line in
@@ -2515,52 +2560,41 @@ private struct ChapelChantStaff: View {
                         .offset(y: height * CGFloat(line) / 3)
                 }
 
-                ForEach(0..<levels.count, id: \.self) { index in
-                    let x = 4 + CGFloat(index) * step
-                    let sung = head.map { x + 3.5 <= $0 } ?? false
+                ForEach(0..<Self.contour.count, id: \.self) { index in
                     RoundedRectangle(cornerRadius: 1)
-                        .fill(sung ? AppColors.goldLight : AppColors.gold.opacity(0.38))
+                        .fill(AppColors.gold.opacity(0.55))
                         .frame(width: 7, height: 6)
-                        .offset(x: x, y: Self.noteTop(level: levels[index], height: height))
+                        .offset(
+                            x: 4 + CGFloat(index) * step,
+                            y: Self.noteTop(level: Self.contour[index], height: height)
+                        )
                 }
 
                 if let head {
                     Rectangle()
-                        .fill(AppColors.gold)
+                        .fill(AppColors.goldLight)
                         .frame(width: 1, height: height + 12)
                         .shadow(color: AppColors.gold.opacity(0.6), radius: 3)
-                        .offset(x: min(max(head, 0), width), y: -6)
+                        .offset(x: min(max(CGFloat(head) * width, 0), width), y: -6)
                 }
             }
             // Glides between the player's ticks instead of stepping with
             // them
-            .animation(.linear(duration: 0.5), value: reached)
+            .animation(.linear(duration: 0.5), value: head)
         }
-        .accessibilityHidden(true)
+        .accessibilityElement()
+        .accessibilityLabel("Sung so far")
+        .accessibilityValue(
+            "\(ChantPlayer.spoken(player.currentTime)) of \(ChantPlayer.spoken(player.duration))"
+        )
+        // Nothing to say until the chant is in the player
+        .accessibilityHidden(!held)
     }
 
     /// Where a note stands: level 0 on the second line from the bottom,
     /// each level a line or a space higher
     private static func noteTop(level: Int, height: CGFloat) -> CGFloat {
         height * 2 / 3 - CGFloat(level) * height / 6 - 3
-    }
-
-    /// A melody walked a step at a time, seeded by the chant's id so the
-    /// same chant always draws the same line
-    private static func melody(for id: String) -> [Int] {
-        var seed: UInt64 = 1_469_598_103_934_665_603
-        for byte in id.utf8 {
-            seed = (seed ^ UInt64(byte)) &* 1_099_511_628_211
-        }
-        var level = 0
-        var levels: [Int] = []
-        for _ in 0..<noteCount {
-            levels.append(level)
-            seed = seed &* 6_364_136_223_846_793_005 &+ 1_442_695_040_888_963_407
-            let move = Int((seed >> 33) % 3) - 1
-            level = min(4, max(-1, level + move))
-        }
-        return levels
     }
 }
 

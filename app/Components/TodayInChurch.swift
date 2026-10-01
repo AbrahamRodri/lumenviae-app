@@ -58,6 +58,14 @@ final class TodayInChurch {
         // colour on screen while THE MASS opened the right one.
         guard proper == nil || loadedDay != day else { return }
 
+        // A new day lets go of the last one's feast before it looks for
+        // its own: kept while the store missed and the fetch failed, it
+        // set yesterday's feast beside today's date until a load came good
+        if loadedDay != day {
+            proper = nil
+            loadedDay = nil
+        }
+
         if let stored = diskCache.loadProper(for: day)?.first {
             proper = stored
             loadedDay = day

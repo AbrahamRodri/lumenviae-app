@@ -34,10 +34,15 @@ extension View {
 /// span-1 tiles share one, and are stretched to it, so two halves side
 /// by side always end on the same line. Rows never pack densely — the
 /// order the user set is the order the eye reads.
+///
+/// Two full rows stand `rowGap` apart; a row of halves stands a little
+/// closer to its neighbours (`halfRowGap`), as the boards set a page of
+/// halves tighter than a page of full sections.
 nonisolated struct ChapelGridLayout: Layout {
 
-    var columnGap: CGFloat = 16
-    var rowGap: CGFloat = 28
+    var columnGap: CGFloat = 12
+    var rowGap: CGFloat = 20
+    var halfRowGap: CGFloat = 18
 
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         // An unspecified proposal is a question about ideal size, not an
@@ -72,54 +77,64 @@ nonisolated struct ChapelGridLayout: Layout {
         }
     }
 
+    /// One row of the grid: the subviews it seats, and whether they are
+    /// halves
+    private struct Row {
+        var members: [Int] = []
+        var isHalves = false
+        var height: CGFloat = 0
+    }
+
     private func frames(for subviews: Subviews, in width: CGFloat) -> [CGRect] {
         let halfWidth = max(0, (width - columnGap) / 2)
 
-        var frames: [CGRect] = []
-        var rowTop: CGFloat = 0
-        var rowHeight: CGFloat = 0
-        var rowStart = 0
-        var column = 0
-
-        // Every tile in a row is given the row's height: each tile's
-        // shell fills what it is offered and pins its foot to the floor,
-        // so a short half beside a tall one ends where the tall one does
-        // rather than leaving a ragged bottom.
-        func closeRow() {
-            for index in rowStart..<frames.count {
-                frames[index].size.height = rowHeight
-            }
-            rowTop += rowHeight + rowGap
-            rowHeight = 0
-            rowStart = frames.count
-            column = 0
-        }
-
-        for subview in subviews {
+        // Seat the subviews in rows first, so the gap between two rows
+        // can be chosen knowing what stands on either side of it
+        var rows: [Row] = []
+        var open: Row?
+        for (index, subview) in subviews.enumerated() {
             let span = subview[ChapelSpanKey.self]
-            let tileWidth = span == 2 ? width : halfWidth
-
-            if span == 2, column == 1 {
-                closeRow()
-            }
-
             let height = subview.sizeThatFits(
-                ProposedViewSize(width: tileWidth, height: nil)
+                ProposedViewSize(width: span == 2 ? width : halfWidth, height: nil)
             ).height
 
-            let x = column == 1 ? halfWidth + columnGap : 0
-            frames.append(CGRect(x: x, y: rowTop, width: tileWidth, height: height))
-            rowHeight = max(rowHeight, height)
-
-            if span == 2 || column == 1 {
-                closeRow()
+            if span == 2 {
+                if let pending = open { rows.append(pending); open = nil }
+                rows.append(Row(members: [index], isHalves: false, height: height))
+            } else if var pending = open {
+                pending.members.append(index)
+                pending.height = max(pending.height, height)
+                rows.append(pending)
+                open = nil
             } else {
-                column = 1
+                open = Row(members: [index], isHalves: true, height: height)
             }
         }
-
         // A half left alone on the last row keeps its own height
-        if rowStart < frames.count { closeRow() }
+        if let pending = open { rows.append(pending) }
+
+        // Every tile in a row is given the row's height: each tile's card
+        // fills what it is offered and pins its foot to the floor, so a
+        // short half beside a tall one ends where the tall one does
+        // rather than leaving a ragged bottom.
+        var frames = [CGRect](repeating: .zero, count: subviews.count)
+        var top: CGFloat = 0
+        for (rowIndex, row) in rows.enumerated() {
+            for (column, index) in row.members.enumerated() {
+                frames[index] = CGRect(
+                    x: row.isHalves && column == 1 ? halfWidth + columnGap : 0,
+                    y: top,
+                    width: row.isHalves ? halfWidth : width,
+                    height: row.height
+                )
+            }
+            if rowIndex + 1 < rows.count {
+                let next = rows[rowIndex + 1]
+                top += row.height + (row.isHalves || next.isHalves ? halfRowGap : rowGap)
+            } else {
+                top += row.height
+            }
+        }
 
         return frames
     }
@@ -319,7 +334,7 @@ struct ChapelGhost: View {
         }
         .padding(.leading, 14)
         .padding(.trailing, 16)
-        .frame(width: 300, height: 58)
+        .frame(width: 318, height: 58)
         .background(
             RoundedRectangle(cornerRadius: ChapelTileMetrics.cornerRadius)
                 .fill(AppColors.cardElevated)

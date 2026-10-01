@@ -207,7 +207,11 @@ struct MyChapelView: View {
             // no capsule to cover: 32 is enough to dissolve a row under
             // the clock, and every point beyond it is dead room above
             // the day.
-            .topChromeFade(height: 32)
+            // While arranging, the head is held above the scroll at the
+            // glass's top, so the scroll's room for it starts there too:
+            // inset by the band as well, the rows began fifty points
+            // below the line telling how to move them
+            .topChromeFade(height: 32, inset: arranging ? 0 : 32)
 
             if arranging {
                 arrangeHeadOverlay
@@ -246,6 +250,11 @@ struct MyChapelView: View {
         // Liturgy's leaf and the feast beside it never disagree
         .onChange(of: scenePhase) { _, phase in
             guard phase == .active else { return }
+            Task { await today.load() }
+        }
+        // And at the turn of the hour while it is open, which takes in
+        // midnight (Matins); the load returns at once on the same day
+        .onChange(of: CanonicalClock.shared.hour) { _, _ in
             Task { await today.load() }
         }
         .sheet(isPresented: $showRuleEditor) {
@@ -324,6 +333,8 @@ struct MyChapelView: View {
         }
         .transition(.opacity)
         .zIndex(20)
+        // Drawn after the scroll, it would be read after every row
+        .accessibilitySortPriority(1)
     }
 
     /// The head while the page is arranged: what the page is doing, how
@@ -418,6 +429,8 @@ struct MyChapelView: View {
                     .truncationMode(.tail)
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .contentTransition(.opacity)
+                    .animation(Motion.crossfade, value: dayLine)
             }
 
             Spacer(minLength: 0)
@@ -782,12 +795,13 @@ struct MyChapelView: View {
     private func grid(acts: [ChapelAct]) -> some View {
         let entries = gridEntries
         // Each tile is a card of its own, so the gap need only part two
-        // objects: 20 between rows, 12 between a pair of halves. Folded
-        // to rows while arranging, the page closes to 10 both ways so the
-        // whole of it fits the glass.
+        // objects: 20 between full rows, 18 beside a row of halves, 12
+        // between a pair of halves. Folded to rows while arranging, the
+        // page closes to 10 every way.
         return ChapelGridLayout(
             columnGap: arranging ? 10 : 12,
-            rowGap: arranging ? 10 : 20
+            rowGap: arranging ? 10 : 20,
+            halfRowGap: arranging ? 10 : 18
         ) {
             ForEach(Array(entries.enumerated()), id: \.element.id) { index, placement in
                 cell(placement, index: index, count: entries.count, acts: acts)
