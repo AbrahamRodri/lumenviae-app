@@ -367,8 +367,10 @@ enter arrange mode, drawn from the Arrange board of the earlier
 "Chapel Page Redesign" draft, since the Chapel Redesign draws none:
 the page's head (the day strip, the focus and its gold act) crossfades
 to a REARRANGE head with DONE — the page's one gold act while
-arranging — over one line saying how, held at the top of the glass over
-the page's ground (the scroll keeps its room, and drops the band's
+arranging — over one line saying how ("Hold a section to move it. Tap
+one to make it wide or half."), held at the top of the glass over the
+page's deep ground, opaque behind every word and fading only in a band
+beneath them, so a scrolled row never shows through the line (the scroll keeps its room, and drops the band's
 32pt inset while arranging so the rows begin under the head, not fifty
 points below it), since DONE is the only way out while the tab bar is
 gone, and read first by VoiceOver; the page scrolls back to the top, and
@@ -376,9 +378,15 @@ every section folds to a 58pt row (`ChapelArrangeRow`: a grip, its
 name, WIDE in a capsule at full width or HALF under the name at half,
 and a ✕ laid over its trailing edge above the carry gesture,
 `ChapelHideButton`), so most of the page fits the glass and the rest
-is a short scroll — begun in the gutters or between rows, since a row
-answers to the touch that would carry it; on a 6.1" phone the last
-rows of nine stand under the tray until scrolled to. A mode's
+is a short scroll, begun anywhere: a row is carried by its grip at
+once (a 44pt hit area of its own), or by a hold anywhere on it (0.28s,
+let go by 10pt of movement, `MyChapelView.holdCarry`, laid beside the
+scroll so the ScrollView keeps its pan), so a swipe on a row scrolls
+the list, and the scroll stands still while a row is carried. The whole
+row once carried at the first touch, and a swipe meant to scroll moved
+a section to the top. A hold let go where it lifted sets the row down
+as it was and never resizes it. On a 6.1" phone the last rows of nine
+stand under the tray until scrolled to. A mode's
 drawing gives way to the other's at once while the arriving one fades
 in (`MyChapelView.modeSwap`): a full tile and its row crossfading in
 one slot held the tile's height until the fade had ended, and the page
@@ -386,7 +394,7 @@ then jumped. The tab bar yields to a tray of HIDDEN SECTIONS
 (`ChapelTray`, chips in a `ChapelChipFlow`; `router.chapelArranging` is
 how ContentView knows), whose measured height the page's foot keeps
 clear of, however many sections it holds.
-A row is dragged (the row lifts, MOVING, 318 wide, leaning up to ±9° into the
+A row is carried (it lifts with a light tick, MOVING, 318 wide, leaning up to ±9° into the
 travel; a dashed slot opens at the landing, LET GO TO PLACE IT HERE),
 tapped to switch between its section's **two authored layouts** (full
 `span 2` / half `span 1` — each a different drawing, never the full
