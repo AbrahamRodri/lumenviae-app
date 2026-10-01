@@ -9,6 +9,7 @@ after every fetch.
 """
 
 import json
+import urllib.parse
 from pathlib import Path
 
 import sources as S
@@ -40,6 +41,14 @@ def build():
         if creator is None:
             e.update(licence="Probably public domain (old master), unconfirmed until the work is identified",
                      licence_url=None)
+        prov = S.PROVENANCE.get(name)
+        if prov:
+            # An exact match names the bundled file's source and its licence;
+            # a match of the same work only names the picture
+            e.update(commons_file=prov["commons_file"], licence=prov["licence"],
+                     source_page="https://commons.wikimedia.org/wiki/" + urllib.parse.quote(prov["commons_file"].replace(" ", "_")),
+                     match=prov["match"], match_score=prov["score"], bundled_size=prov["bundled"],
+                     provenance_note=prov.get("note"), status="verified" if prov["match"] == "exact" else "unverified")
         e.update(got.get(name, {}))
         existing.append(e)
     carlo = dict(kind="photograph", **S.CARLO)
@@ -122,12 +131,18 @@ def markdown(m) -> str:
         out.append(f"- `{p['imageset']}`: {p['work']}, {p['creator']} ({p['date']}), {p['collection']}. {cell(p['why'])}"
                    + (f" *Alternate:* {p['alternate']}." if p.get("alternate") else ""))
     out += ["", "## Existing paintings: provenance", "",
-            "Identified by eye from the bundled images. `high` = recognisable work; `medium` = likely; `low` = subject only. "
-            "All are pre-1910 old masters, so PD-Art is expected; confirm each with `fetch.py --provenance`.", "",
-            "| Imageset | Work | Creator | Date | Collection | Confidence |", "|---|---|---|---|---|---|"]
+            "Identified by eye from the bundled images, then each compared with the Commons files of its work (aspect ratio, "
+            "and the correlation of the two images at 32×32; the uncertain ones by eye). `confirmed` = the comparison found the work. "
+            "Match `exact` = the bundled image is that file or a resize of it, so its source and licence are known (status `verified`); "
+            "`same work` = a crop or another scan of the same picture, which PD-Art covers, though the file it came from is not proven.", "",
+            "| Imageset | Work | Creator | Date | Collection | Confidence | Commons file | Licence | Match | Bundled | Note |",
+            "|---|---|---|---|---|---|---|---|---|---|---|"]
     for e in m["existing_paintings"]:
-        out.append("| `{}` | {} | {} | {} | {} | {} |".format(e["imageset"], cell(e["work"]), cell(e["creator"]),
-                                                          cell(e["date"]), cell(e["collection"]), e["identification_confidence"]))
+        match = f"{e['match']} ({e['match_score']})" if e.get("match") else None
+        out.append("| `{}` | {} | {} | {} | {} | {} | {} | {} | {} | {} | {} |".format(
+            e["imageset"], cell(e["work"]), cell(e["creator"]), cell(e["date"]), cell(e["collection"]),
+            e["identification_confidence"], cell(e.get("commons_file")), cell(e["licence"] if e.get("match") else None),
+            cell(match), cell(e.get("bundled_size")), cell(e.get("provenance_note"))))
     ask = [e["imageset"] for e in m["existing_paintings"] if e["identification_confidence"] == "ask Abraham"]
     if ask:
         out += ["", "**For Abraham:** where did these come from? " + ", ".join(f"`{a}`" for a in ask)

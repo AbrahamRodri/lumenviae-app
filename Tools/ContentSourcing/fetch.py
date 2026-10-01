@@ -133,11 +133,17 @@ def choose(slot: dict) -> dict:
     return max(good, key=lambda h: h["width"] * h["height"])
 
 
-def encode(data: bytes) -> bytes:
+def encode(data: bytes, crop=None) -> bytes:
+    """`crop` is (left, top, right, bottom): the fraction of the source to trim
+    from each edge, so a scan's frame can be left out at any source size."""
     from PIL import Image
     im = Image.open(io.BytesIO(data))
     im.draft("RGB", (LONG_EDGE * 2, LONG_EDGE * 2))
     im = im.convert("RGB")
+    if crop:
+        w, h = im.size
+        left, top, right, bottom = crop
+        im = im.crop((round(left * w), round(top * h), w - round(right * w), h - round(bottom * h)))
     im.thumbnail((LONG_EDGE, LONG_EDGE), Image.LANCZOS)
     best = b""
     for q in (88, 84, 80, 76, 72, 68):
@@ -168,7 +174,7 @@ def take_painting(slot: dict, pinned: str = None):
     info = choose(slot)
     if not licence_ok(info):
         raise Failure(f"licence '{info['licence'] or 'none stated'}' is not on the allowed list ({info['page']})")
-    jpeg = encode(get(info["url"]))
+    jpeg = encode(get(info["url"]), slot.get("crop"))
     write_imageset(name, jpeg)
     attribution = None
     if re.search(r"cc[- ]by", info["licence"], re.I):
@@ -176,7 +182,8 @@ def take_painting(slot: dict, pinned: str = None):
         attribution = f"{artist}, {info['licence']}, via Wikimedia Commons ({info['page']})"
     record(name, dict(status="verified", commons_file=info["title"], source_page=info["page"], file_url=info["url"],
                       licence=info["licence"], licence_url=info["licence_url"] or S.PD_ART["licence_url"],
-                      attribution=attribution, width=info["width"], height=info["height"], bytes=len(jpeg)))
+                      attribution=attribution, width=info["width"], height=info["height"], bytes=len(jpeg),
+                      crop=slot.get("crop")))
     print(f"  ✓ {name}: {info['title']} [{info['licence']}] → {len(jpeg) // 1024} KB")
 
 
@@ -308,7 +315,10 @@ def main(argv):
     elif argv[0] == "--provenance":
         for name, work, creator, *_ in S.EXISTING:
             print(f"{name}: {work} — {creator or '?'}")
-            for i in search(f"{work} {creator or ''}", limit=4):
+            # A parenthetical ("(d. 1911)", "(Lo Spasimo di Sicilia)") is a note
+            # for the reader; left in the query, it matches nothing
+            query = re.sub(r"\s*\([^)]*\)", "", f"{work} {creator or ''}").strip()
+            for i in search(query, limit=4):
                 print(f"  {'OK' if licence_ok(i) else '--'} {i['width']}×{i['height']}  {i['licence'] or '?':18} {i['title']}")
     else:
         sys.exit(__doc__)

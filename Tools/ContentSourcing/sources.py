@@ -57,10 +57,13 @@ PAINTINGS = [
     dict(imageset="devotion_holy_trinity", slot="(b) Sunday · the Holy Trinity: Chant Main board, weekday devotions strip",
          features=["Chant Library: Main"],
          work="The Holy Trinity", creator="Jusepe de Ribera (1591–1652)", date="c. 1635",
-         collection="Museo del Prado, Madrid", source_page="https://www.museodelprado.es/en/the-collection",
-         commons_search="Ribera Holy Trinity Prado",
+         collection="Real Monasterio de San Lorenzo de El Escorial (a variant of the Prado's picture)",
+         source_page="https://www.patrimonionacional.es/",
+         commons_search="José de Ribera Santísima Trinidad",
          why="The Throne of Grace (the Father holding the dead Son, the Dove above) — tenebrist palette that sits beside the Caravaggio Entombment and Velázquez Crucifixion.",
          alternate="Guido Reni, The Holy Trinity (1625–26), Santissima Trinità dei Pellegrini, Rome",
+         # The scan takes in the gilt frame's inner edge on all four sides
+         crop=(0.014, 0.014, 0.016, 0.008),
          **PD_ART),
     dict(imageset="devotion_holy_souls", slot="(c) Monday · the Holy Souls; Occasions 'For Those Who Have Died'; Year board All Souls (Nov 2)",
          features=["Chant Library: Main, Occasions, Year", "Prayer Book: For the Holy Souls"],
@@ -72,11 +75,11 @@ PAINTINGS = [
          **PD_ART),
     dict(imageset="devotion_guardian_angels", slot="(d) Tuesday · the Holy Angels: Chant Main board, weekday devotions strip",
          features=["Chant Library: Main", "Prayer Book: Angels and Saints"],
-         work="The Guardian Angel", creator="Pietro da Cortona (1596–1669)", date="1656",
-         collection="Galleria Nazionale d'Arte Antica (Palazzo Barberini), Rome", source_page="https://www.barberinicorsini.org/",
-         commons_search="Pietro da Cortona Guardian Angel 1656",
-         why="The guardian angel leading a child by the hand, pointing to heaven: Tuesday's devotion exactly, Roman Baroque.",
-         alternate="Domenico Fetti, The Guardian Angel (c. 1615), Musée du Louvre",
+         work="The Guardian Angel", creator="Bernardo Strozzi (1581–1644)", date=None,
+         collection="Museum of Fine Arts, Houston (76.256)", source_page="https://www.mfah.org/art/detail/3618",
+         commons_search="Bernardo Strozzi Guardian Angel Houston",
+         why="The guardian angel standing over a child, arms open to keep her: Tuesday's devotion exactly, Genoese Baroque beside the bundle's Caravaggio and Van Dyck. Undated in the museum's record.",
+         alternate="Pietro da Cortona, The Guardian Angel (1656), Galleria Nazionale d'Arte Antica, Rome — the first choice, but Commons holds it only at 694×1100",
          **PD_ART),
     dict(imageset="devotion_st_joseph", slot="(e) Wednesday · St Joseph: Chant Main board, weekday devotions strip",
          features=["Chant Library: Main"],
@@ -175,39 +178,108 @@ UNUSED = [
 ]
 
 # ------------------------------------------------- provenance of what's bundled
-# Identified from the images themselves (contact sheet, Sept 2026). The
-# sizes (many exactly 1920 px wide) match Commons' standard thumbnails, so
-# Commons is the likely source; fetch.py --provenance confirms each by
-# searching Commons and comparing.
+# Identified from the images themselves (contact sheet, Sept 2026), then
+# each bundled image compared with the Commons files of its work (Sept 30):
+# aspect ratio, and the correlation of the two at 32x32 in grayscale, with
+# every uncertain pair checked by eye. `confirmed` means that comparison
+# found the work; PROVENANCE below names the file.
 
 EXISTING = [
-    ("glorious_coronation", "The Coronation of the Virgin", "Diego Velázquez", "1635–36", "Museo del Prado", "high"),
-    ("sorrowful_crucifixion", "Christ Crucified", "Diego Velázquez", "c. 1632", "Museo del Prado", "high"),
-    ("sorrowful_crowning", "The Crowning with Thorns", "Anthony van Dyck", "1618–20", "Museo del Prado", "high"),
-    ("sorrowful_agony", "Christ in Gethsemane", "Heinrich Hofmann (d. 1911)", "1886", "Riverside Church, New York", "high"),
-    ("sorrowful_scourging", "The Flagellation of Our Lord Jesus Christ", "William-Adolphe Bouguereau (d. 1905)", "1880", "Cathédrale Saint-Louis, La Rochelle", "high"),
-    ("seven_sorrows_pieta", "Pietà", "William-Adolphe Bouguereau (d. 1905)", "1876", "Private collection", "high"),
-    ("seven_sorrows_burial", "The Entombment of Christ", "Caravaggio", "1603–04", "Pinacoteca Vaticana", "high"),
-    ("luminous_transfiguration", "The Transfiguration", "Raphael", "1516–20", "Pinacoteca Vaticana", "high"),
-    ("luminous_proclamation", "The Sermon on the Mount", "Carl Heinrich Bloch (d. 1890)", "1877", "Museum of National History, Frederiksborg Castle", "high"),
-    ("seven_sorrows_meeting", "Christ Falls on the Way to Calvary (Lo Spasimo di Sicilia)", "Raphael", "c. 1516", "Museo del Prado", "high"),
-    ("seven_sorrows_descent", "The Descent from the Cross", "Peter Paul Rubens", "1612–14", "Cathedral of Our Lady, Antwerp", "medium"),
-    ("seven_sorrows_simeon", "Simeon's Song of Praise", "Rembrandt", "1631", "Mauritshuis, The Hague", "medium"),
-    ("luminous_eucharist", "The Last Supper", "Juan de Juanes", "c. 1562", "Museo del Prado", "medium"),
-    ("joyful_presentation", "The Presentation in the Temple", "Simon Vouet", "1641", "Musée du Louvre", "medium"),
-    ("seven_sorrows_flight", "The Flight into Egypt", "Bartolomé Esteban Murillo", "1647–50", "Detroit Institute of Arts", "medium"),
-    ("luminous_baptism", "The Baptism of Christ", "Guido Reni", "c. 1623", "Kunsthistorisches Museum, Vienna", "medium"),
-    ("joyful_annunciation", "The Annunciation", "Paolo de Matteis", "1712", "Saint Louis Art Museum", "medium"),
-    ("joyful_finding", "Christ among the Doctors", "Paolo Veronese", "c. 1558", "Museo del Prado", "medium"),
-    ("joyful_visitation", "The Visitation", "Raphael and workshop (Giulio Romano)", "c. 1517", "Museo del Prado", "high"),  # signed RAPHAEL URBINAS at the foot
-    ("luminous_cana", "The Marriage Feast at Cana", "Bartolomé Esteban Murillo", "c. 1672", "Barber Institute of Fine Arts, Birmingham", "high"),
-    ("sorrowful_carrying", "Christ Carrying the Cross", "Anthony van Dyck", "1617–18", "Sint-Pauluskerk, Antwerp", "medium"),
-    ("glorious_resurrection", "The Resurrection of Christ", "Noël Coypel", "1700", "unconfirmed (French royal commission)", "medium"),
-    ("glorious_pentecost", "Pentecost", "attributed to Juan Bautista Maíno (tentative)", "c. 1615–20", "Museo del Prado, if Maíno", "low"),
+    ("glorious_coronation", "The Coronation of the Virgin", "Diego Velázquez", "1635–36", "Museo del Prado", "confirmed"),
+    ("sorrowful_crucifixion", "Christ Crucified", "Diego Velázquez", "c. 1632", "Museo del Prado", "confirmed"),
+    ("sorrowful_crowning", "The Crowning with Thorns", "Anthony van Dyck", "1618–20", "Museo del Prado", "confirmed"),
+    ("sorrowful_agony", "Christ in Gethsemane", "Heinrich Hofmann (d. 1911)", "1886", "Riverside Church, New York", "confirmed"),
+    ("sorrowful_scourging", "The Flagellation of Our Lord Jesus Christ", "William-Adolphe Bouguereau (d. 1905)", "1880", "Cathédrale Saint-Louis, La Rochelle", "confirmed"),
+    ("seven_sorrows_pieta", "Pietà", "William-Adolphe Bouguereau (d. 1905)", "1876", "Private collection", "confirmed"),
+    ("seven_sorrows_burial", "The Entombment of Christ", "Caravaggio", "1603–04", "Pinacoteca Vaticana", "confirmed"),
+    ("luminous_transfiguration", "The Transfiguration", "Raphael", "1516–20", "Pinacoteca Vaticana", "confirmed"),
+    ("luminous_proclamation", "The Sermon on the Mount", "Carl Heinrich Bloch (d. 1890)", "1877", "Museum of National History, Frederiksborg Castle", "confirmed"),
+    ("seven_sorrows_meeting", "Christ Falls on the Way to Calvary (Lo Spasimo di Sicilia)", "Raphael", "c. 1516", "Museo del Prado", "confirmed"),
+    ("seven_sorrows_descent", "The Descent from the Cross", "Peter Paul Rubens", "1612–14", "Cathedral of Our Lady, Antwerp", "confirmed"),
+    ("seven_sorrows_simeon", "Simeon's Song of Praise", "Rembrandt", "1631", "Mauritshuis, The Hague", "confirmed"),
+    ("luminous_eucharist", "The Last Supper", "Juan de Juanes", "c. 1562", "Museo del Prado", "confirmed"),
+    ("joyful_presentation", "The Presentation in the Temple", "Simon Vouet", "1641", "Musée du Louvre", "confirmed"),
+    ("seven_sorrows_flight", "The Flight into Egypt", "Bartolomé Esteban Murillo", "1647–50", "Musei di Strada Nuova (Palazzo Bianco), Genoa", "confirmed"),
+    ("luminous_baptism", "The Baptism of Christ", "Guido Reni", "c. 1623", "Kunsthistorisches Museum, Vienna", "confirmed"),
+    ("joyful_annunciation", "The Annunciation", "Paolo de Matteis", "1712", "Saint Louis Art Museum", "confirmed"),
+    ("joyful_finding", "Christ among the Doctors", "Paolo Veronese", "c. 1558", "Museo del Prado", "confirmed"),
+    ("joyful_visitation", "The Visitation", "Raphael and workshop (Giulio Romano)", "c. 1517", "Museo del Prado", "confirmed"),  # signed RAPHAEL URBINAS at the foot
+    ("luminous_cana", "The Marriage Feast at Cana", "Bartolomé Esteban Murillo", "c. 1672", "Barber Institute of Fine Arts, Birmingham", "confirmed"),
+    ("sorrowful_carrying", "Christ Carrying the Cross", "Anthony van Dyck", "1617–18", "Sint-Pauluskerk, Antwerp", "confirmed"),
+    ("glorious_resurrection", "The Resurrection of Christ", "Noël Coypel", "1700", "unconfirmed (French royal commission)", "confirmed"),
+    # Once thought Maíno's; set beside the Prado's Maíno it is another
+    # picture (landscape, Mary seated at the centre), so its painter is unknown
+    ("glorious_pentecost", "Pentecost (not Maíno's: the Prado's Maíno is a different composition)", None, None, None, "ask Abraham"),
     ("glorious_ascension", "The Ascension (Spanish or Flemish Baroque, 17th c.)", None, None, None, "ask Abraham"),
     ("glorious_assumption", "The Assumption of the Virgin (Neapolitan/Roman, 18th c., in the manner of Giaquinto or Solimena)", None, None, None, "ask Abraham"),
     ("joyful_nativity", "The Adoration of the Shepherds, night scene with putti (Italian Baroque, in the manner of Guido Reni)", None, None, None, "ask Abraham"),
 ]
+
+# The Commons file each confirmed painting matches, its licence as read on
+# that file page, and how close the match is. `exact`: the bundled image is
+# that file or a resize of it (correlation 0.996 or more, same aspect), so
+# its source and licence are both known. `same work`: the bundled image is a
+# crop or another scan of the same picture (checked by eye); PD-Art covers
+# any faithful reproduction of it, but the file it came from is not proven.
+PROVENANCE = {
+    "glorious_coronation": dict(commons_file="File:Diego Velázquez - Coronation of the Virgin - Prado.jpg", licence="Public domain",
+                                match="exact", score=1.0, bundled="640×852",
+                                note="Bundled at 640×852, under a third of the file's 2292×3051."),
+    "sorrowful_crucifixion": dict(commons_file="File:Cristo crucificado.jpg", licence="Public domain",
+                                  match="exact", score=1.0, bundled="2046×3051"),
+    "sorrowful_crowning": dict(commons_file="File:Anthonis van Dyck 004.jpg", licence="Public domain",
+                               match="exact", score=1.0, bundled="2362×2705"),
+    "sorrowful_agony": dict(commons_file="File:Christ in Gethsemane.jpg", licence="Public domain",
+                            match="exact", score=1.0, bundled="960×1346",
+                            note="Bundled at 960×1346; the file is 1141×1600."),
+    "sorrowful_scourging": dict(commons_file="File:William-Adolphe Bouguereau (1825-1905) - The Flagellation of Our Lord Jesus Christ (1880).jpg",
+                                licence="Public domain", match="exact", score=1.0, bundled="499×714",
+                                note="Bundled at 499×714; the file is 2136×3056."),
+    "seven_sorrows_pieta": dict(commons_file="File:William-Adolphe Bouguereau (1825-1905) - Pieta (1876).jpg", licence="Public domain",
+                                match="exact", score=1.0, bundled="1920×3015"),
+    "seven_sorrows_burial": dict(commons_file="File:The Entombment of Christ-Caravaggio (c.1602-3).jpg", licence="Public domain",
+                                 match="exact", score=1.0, bundled="1920×2852"),
+    "luminous_transfiguration": dict(commons_file="File:Transfiguration Raphael.jpg", licence="Public domain",
+                                     match="exact", score=1.0, bundled="1067×1608"),
+    "luminous_proclamation": dict(commons_file="File:Bloch-SermonOnTheMount.jpg", licence="Public domain",
+                                  match="exact", score=1.0, bundled="1377×1545"),
+    "seven_sorrows_meeting": dict(commons_file="File:Christ Falling on the Way to Calvary - Raphael.jpg", licence="Public domain",
+                                  match="exact", score=1.0, bundled="1920×2663"),
+    "seven_sorrows_descent": dict(commons_file="File:Peter Paul Rubens - Descent from the Cross - WGA20212 (cropped).jpg", licence="Public domain",
+                                  match="same work", score=0.94, bundled="1689×2248",
+                                  note="A crop of the Antwerp triptych's central panel, which this file cuts from the Web Gallery of Art's whole triptych."),
+    "seven_sorrows_simeon": dict(commons_file="File:Simeon in the temple, by Rembrandt van Rijn.jpg", licence="Public domain",
+                                 match="exact", score=0.999, bundled="1920×2473"),
+    "luminous_eucharist": dict(commons_file="File:The Last Supper by Vicente Juan Macip.jpg", licence="Public domain",
+                               match="same work", score=0.967, bundled="1517×998",
+                               note="A crop of this scan or of another of the same picture."),
+    "joyful_presentation": dict(commons_file="File:Simon Vouet - Presentation in the Temple - WGA25366.jpg", licence="Public domain",
+                                match="exact", score=1.0, bundled="800×1302"),
+    "seven_sorrows_flight": dict(commons_file="File:Bartolomé Esteban Murillo - The Flight into Egypt - Google Art Project.jpg", licence="Public domain",
+                                 match="exact", score=1.0, bundled="1920×2465",
+                                 note="The Genoa picture (Musei di Strada Nuova), not Detroit's as first thought."),
+    "luminous_baptism": dict(commons_file="File:Guido Reni - The Baptism of Christ - Google Art Project.jpg", licence="Public domain",
+                             match="exact", score=1.0, bundled="1920×2727"),
+    "joyful_annunciation": dict(commons_file="File:Paolo de Matteis - The Annunciation - 69-1973 - Saint Louis Art Museum.jpg", licence="Public domain",
+                                match="same work", score=0.928, bundled="4351×5077",
+                                note="The bundled image is larger than any Commons file of the work: another scan, most likely the museum's own."),
+    "joyful_finding": dict(commons_file="File:Disputa con los doctores (El Veronés) grande.jpg", licence="Public domain",
+                           match="exact", score=0.996, bundled="3051×1667"),
+    "joyful_visitation": dict(commons_file="File:Visitación de Rafael.jpg", licence="Public domain",
+                              match="exact", score=1.0, bundled="1157×1600",
+                              note="fetch.py --provenance's search finds only 'Raphael - The visitation.jpg' (520×719), a weak match; "
+                                   "the bundled file is this one, the same size to the pixel, found by comparing the images."),
+    "luminous_cana": dict(commons_file="File:The Barber Institute of Fine Arts - Bartolomé Esteban Murillo - The Marriage Feast at CanaFXD.jpg",
+                          licence="Public domain", match="same work", score=0.965, bundled="1920×1407",
+                          note="A crop of this scan."),
+    "sorrowful_carrying": dict(commons_file="File:Anthony van Dyck - Jesus Christ bearing the Cross.jpg", licence="Public domain",
+                               match="exact", score=1.0, bundled="960×1261",
+                               note="Bundled at 960×1261; the file, Sint-Pauluskerk's own photograph, is 3349×4399."),
+    "glorious_resurrection": dict(commons_file="File:Noël Coypel - Resurrection of Christ (large version).jpg", licence="Public domain",
+                                  match="same work", score=0.782, bundled="566×732",
+                                  note="Commons holds the work only small (638×900 at most); the bundled image is a crop of it, "
+                                       "the same composition by eye, and the smallest painting in the bundle."),
+}
 
 CARLO = dict(
     imageset="carlo_acutis", status="flagged",
@@ -221,8 +293,8 @@ CARLO = dict(
          "A painted 'old master' image cannot exist for a saint who died in 2006, so the brief's 'same style' replacement is not possible here.",
 )
 
-# Where Abraham found the three marked "ask Abraham" settles them; fetch.py
-# --provenance (a Commons search per painting) is the next step for the rest.
+# Where Abraham found the four marked "ask Abraham" settles them; the rest
+# are named in PROVENANCE.
 
 # ------------------------------------------------------------------- chants
 # VG pages confirmed to exist by search (titles and URLs seen in results).

@@ -20,9 +20,9 @@ Generated from `sources.py` by `build_manifest.py`; edit there. Machine-readable
 | Imageset | Slot | Work | Creator | Date | Collection | Licence | Status |
 |---|---|---|---|---|---|---|---|
 | `season_advent` | (a) Advent: Chant Year/Learn boards, 'Learn Rorate Cæli before Advent' card; Year board's Advent season | The Immaculate Conception of Los Venerables | Bartolomé Esteban Murillo (1617–1682) | c. 1678 | Museo del Prado, Madrid | Public domain | verified |
-| `devotion_holy_trinity` | (b) Sunday · the Holy Trinity: Chant Main board, weekday devotions strip | The Holy Trinity | Jusepe de Ribera (1591–1652) | c. 1635 | Museo del Prado, Madrid | Public domain | verified |
+| `devotion_holy_trinity` | (b) Sunday · the Holy Trinity: Chant Main board, weekday devotions strip | The Holy Trinity | Jusepe de Ribera (1591–1652) | c. 1635 | Real Monasterio de San Lorenzo de El Escorial (a variant of the Prado's picture) | Public domain | verified |
 | `devotion_holy_souls` | (c) Monday · the Holy Souls; Occasions 'For Those Who Have Died'; Year board All Souls (Nov 2) | The Day of the Dead (Le Jour des morts) | William-Adolphe Bouguereau (1825–1905) | 1859 | Musée des Beaux-Arts de Bordeaux | Public domain | verified |
-| `devotion_guardian_angels` | (d) Tuesday · the Holy Angels: Chant Main board, weekday devotions strip | The Guardian Angel | Pietro da Cortona (1596–1669) | 1656 | Galleria Nazionale d'Arte Antica (Palazzo Barberini), Rome | Public domain (PD-Art: faithful 2D reproduction of a work whose author died more than 100 years ago) | unverified |
+| `devotion_guardian_angels` | (d) Tuesday · the Holy Angels: Chant Main board, weekday devotions strip | The Guardian Angel | Bernardo Strozzi (1581–1644) | — | Museum of Fine Arts, Houston (76.256) | Public domain | verified |
 | `devotion_st_joseph` | (e) Wednesday · St Joseph: Chant Main board, weekday devotions strip | Saint Joseph and the Christ Child | Guido Reni (1575–1642) | c. 1640 | Museum of Fine Arts, Houston | Public domain | verified |
 | `feast_our_lady_of_the_rosary` | (f) October / Our Lady of the Rosary (Oct 7): Chant Main 'Month of the Holy Rosary' card, Year 'Feast days ahead', Occasions 'A Sung Rosary' | Madonna of the Rosary | Caravaggio (1571–1610) | 1607 | Kunsthistorisches Museum, Vienna | Public domain | verified |
 | `feast_christ_the_king` | (g) Christ the King (last Sunday of October): Chant Year 'Feast days ahead' (Christus Vincit) | Christ Triumphant over Sin and Death | Peter Paul Rubens (1577–1640) | c. 1615–22 | Rubens workshop picture; several versions (e.g. Rubenshuis, Antwerp) — pick the version Commons tags PD-Art | Public domain | verified |
@@ -36,7 +36,7 @@ Alternates and reasons:
 - `season_advent`: Rorate cæli desuper — the heavens dropping down the Just One; Advent's Marian expectation, in the bundle's Spanish Baroque register (cf. the Velázquez Coronation). *Alternate:* Philippe de Champaigne, The Annunciation (c. 1644) (The Met, CC0 if open access) — if a scene rather than an icon is wanted.
 - `devotion_holy_trinity`: The Throne of Grace (the Father holding the dead Son, the Dove above) — tenebrist palette that sits beside the Caravaggio Entombment and Velázquez Crucifixion. *Alternate:* Guido Reni, The Holy Trinity (1625–26), Santissima Trinità dei Pellegrini, Rome.
 - `devotion_holy_souls`: Two women in mourning at a grave on All Souls' Day; by the painter of the bundle's Pietà and Flagellation, so the two read as one hand. *Alternate:* Ludovico Carracci, An Angel Frees the Souls of Purgatory (c. 1610), Pinacoteca Vaticana.
-- `devotion_guardian_angels`: The guardian angel leading a child by the hand, pointing to heaven: Tuesday's devotion exactly, Roman Baroque. *Alternate:* Domenico Fetti, The Guardian Angel (c. 1615), Musée du Louvre.
+- `devotion_guardian_angels`: The guardian angel standing over a child, arms open to keep her: Tuesday's devotion exactly, Genoese Baroque beside the bundle's Caravaggio and Van Dyck. Undated in the museum's record. *Alternate:* Pietro da Cortona, The Guardian Angel (1656), Galleria Nazionale d'Arte Antica, Rome — the first choice, but Commons holds it only at 694×1100.
 - `devotion_st_joseph`: Half-length Joseph holding the Child: an icon of the saint that crops well to a tile. *Alternate:* Bartolomé Esteban Murillo, Saint Joseph with the Infant Jesus (c. 1665–66), Museo de Bellas Artes de Sevilla.
 - `feast_our_lady_of_the_rosary`: St Dominic giving out rosaries at Our Lady's command — the feast's own subject, by the painter of the bundle's Entombment. *Alternate:* Bartolomé Esteban Murillo, The Virgin of the Rosary (c. 1650–55), Museo del Prado.
 - `feast_christ_the_king`: The risen Christ enthroned over death, Flemish Baroque beside the bundle's Rubens Descent and Van Dyck Crowning. *Alternate:* Hans Memling, Christ Surrounded by Musician Angels (c. 1480s), KMSKA Antwerp — earlier style, but the kingship is explicit.
@@ -58,38 +58,38 @@ No design draws these slots now; kept in case a later one does. fetch.py does no
 
 ## Existing paintings: provenance
 
-Identified by eye from the bundled images. `high` = recognisable work; `medium` = likely; `low` = subject only. All are pre-1910 old masters, so PD-Art is expected; confirm each with `fetch.py --provenance`.
+Identified by eye from the bundled images, then each compared with the Commons files of its work (aspect ratio, and the correlation of the two images at 32×32; the uncertain ones by eye). `confirmed` = the comparison found the work. Match `exact` = the bundled image is that file or a resize of it, so its source and licence are known (status `verified`); `same work` = a crop or another scan of the same picture, which PD-Art covers, though the file it came from is not proven.
 
-| Imageset | Work | Creator | Date | Collection | Confidence |
-|---|---|---|---|---|---|
-| `glorious_coronation` | The Coronation of the Virgin | Diego Velázquez | 1635–36 | Museo del Prado | high |
-| `sorrowful_crucifixion` | Christ Crucified | Diego Velázquez | c. 1632 | Museo del Prado | high |
-| `sorrowful_crowning` | The Crowning with Thorns | Anthony van Dyck | 1618–20 | Museo del Prado | high |
-| `sorrowful_agony` | Christ in Gethsemane | Heinrich Hofmann (d. 1911) | 1886 | Riverside Church, New York | high |
-| `sorrowful_scourging` | The Flagellation of Our Lord Jesus Christ | William-Adolphe Bouguereau (d. 1905) | 1880 | Cathédrale Saint-Louis, La Rochelle | high |
-| `seven_sorrows_pieta` | Pietà | William-Adolphe Bouguereau (d. 1905) | 1876 | Private collection | high |
-| `seven_sorrows_burial` | The Entombment of Christ | Caravaggio | 1603–04 | Pinacoteca Vaticana | high |
-| `luminous_transfiguration` | The Transfiguration | Raphael | 1516–20 | Pinacoteca Vaticana | high |
-| `luminous_proclamation` | The Sermon on the Mount | Carl Heinrich Bloch (d. 1890) | 1877 | Museum of National History, Frederiksborg Castle | high |
-| `seven_sorrows_meeting` | Christ Falls on the Way to Calvary (Lo Spasimo di Sicilia) | Raphael | c. 1516 | Museo del Prado | high |
-| `seven_sorrows_descent` | The Descent from the Cross | Peter Paul Rubens | 1612–14 | Cathedral of Our Lady, Antwerp | medium |
-| `seven_sorrows_simeon` | Simeon's Song of Praise | Rembrandt | 1631 | Mauritshuis, The Hague | medium |
-| `luminous_eucharist` | The Last Supper | Juan de Juanes | c. 1562 | Museo del Prado | medium |
-| `joyful_presentation` | The Presentation in the Temple | Simon Vouet | 1641 | Musée du Louvre | medium |
-| `seven_sorrows_flight` | The Flight into Egypt | Bartolomé Esteban Murillo | 1647–50 | Detroit Institute of Arts | medium |
-| `luminous_baptism` | The Baptism of Christ | Guido Reni | c. 1623 | Kunsthistorisches Museum, Vienna | medium |
-| `joyful_annunciation` | The Annunciation | Paolo de Matteis | 1712 | Saint Louis Art Museum | medium |
-| `joyful_finding` | Christ among the Doctors | Paolo Veronese | c. 1558 | Museo del Prado | medium |
-| `joyful_visitation` | The Visitation | Raphael and workshop (Giulio Romano) | c. 1517 | Museo del Prado | high |
-| `luminous_cana` | The Marriage Feast at Cana | Bartolomé Esteban Murillo | c. 1672 | Barber Institute of Fine Arts, Birmingham | high |
-| `sorrowful_carrying` | Christ Carrying the Cross | Anthony van Dyck | 1617–18 | Sint-Pauluskerk, Antwerp | medium |
-| `glorious_resurrection` | The Resurrection of Christ | Noël Coypel | 1700 | unconfirmed (French royal commission) | medium |
-| `glorious_pentecost` | Pentecost | attributed to Juan Bautista Maíno (tentative) | c. 1615–20 | Museo del Prado, if Maíno | low |
-| `glorious_ascension` | The Ascension (Spanish or Flemish Baroque, 17th c.) | — | — | — | ask Abraham |
-| `glorious_assumption` | The Assumption of the Virgin (Neapolitan/Roman, 18th c., in the manner of Giaquinto or Solimena) | — | — | — | ask Abraham |
-| `joyful_nativity` | The Adoration of the Shepherds, night scene with putti (Italian Baroque, in the manner of Guido Reni) | — | — | — | ask Abraham |
+| Imageset | Work | Creator | Date | Collection | Confidence | Commons file | Licence | Match | Bundled | Note |
+|---|---|---|---|---|---|---|---|---|---|---|
+| `glorious_coronation` | The Coronation of the Virgin | Diego Velázquez | 1635–36 | Museo del Prado | confirmed | File:Diego Velázquez - Coronation of the Virgin - Prado.jpg | Public domain | exact (1.0) | 640×852 | Bundled at 640×852, under a third of the file's 2292×3051. |
+| `sorrowful_crucifixion` | Christ Crucified | Diego Velázquez | c. 1632 | Museo del Prado | confirmed | File:Cristo crucificado.jpg | Public domain | exact (1.0) | 2046×3051 | — |
+| `sorrowful_crowning` | The Crowning with Thorns | Anthony van Dyck | 1618–20 | Museo del Prado | confirmed | File:Anthonis van Dyck 004.jpg | Public domain | exact (1.0) | 2362×2705 | — |
+| `sorrowful_agony` | Christ in Gethsemane | Heinrich Hofmann (d. 1911) | 1886 | Riverside Church, New York | confirmed | File:Christ in Gethsemane.jpg | Public domain | exact (1.0) | 960×1346 | Bundled at 960×1346; the file is 1141×1600. |
+| `sorrowful_scourging` | The Flagellation of Our Lord Jesus Christ | William-Adolphe Bouguereau (d. 1905) | 1880 | Cathédrale Saint-Louis, La Rochelle | confirmed | File:William-Adolphe Bouguereau (1825-1905) - The Flagellation of Our Lord Jesus Christ (1880).jpg | Public domain | exact (1.0) | 499×714 | Bundled at 499×714; the file is 2136×3056. |
+| `seven_sorrows_pieta` | Pietà | William-Adolphe Bouguereau (d. 1905) | 1876 | Private collection | confirmed | File:William-Adolphe Bouguereau (1825-1905) - Pieta (1876).jpg | Public domain | exact (1.0) | 1920×3015 | — |
+| `seven_sorrows_burial` | The Entombment of Christ | Caravaggio | 1603–04 | Pinacoteca Vaticana | confirmed | File:The Entombment of Christ-Caravaggio (c.1602-3).jpg | Public domain | exact (1.0) | 1920×2852 | — |
+| `luminous_transfiguration` | The Transfiguration | Raphael | 1516–20 | Pinacoteca Vaticana | confirmed | File:Transfiguration Raphael.jpg | Public domain | exact (1.0) | 1067×1608 | — |
+| `luminous_proclamation` | The Sermon on the Mount | Carl Heinrich Bloch (d. 1890) | 1877 | Museum of National History, Frederiksborg Castle | confirmed | File:Bloch-SermonOnTheMount.jpg | Public domain | exact (1.0) | 1377×1545 | — |
+| `seven_sorrows_meeting` | Christ Falls on the Way to Calvary (Lo Spasimo di Sicilia) | Raphael | c. 1516 | Museo del Prado | confirmed | File:Christ Falling on the Way to Calvary - Raphael.jpg | Public domain | exact (1.0) | 1920×2663 | — |
+| `seven_sorrows_descent` | The Descent from the Cross | Peter Paul Rubens | 1612–14 | Cathedral of Our Lady, Antwerp | confirmed | File:Peter Paul Rubens - Descent from the Cross - WGA20212 (cropped).jpg | Public domain | same work (0.94) | 1689×2248 | A crop of the Antwerp triptych's central panel, which this file cuts from the Web Gallery of Art's whole triptych. |
+| `seven_sorrows_simeon` | Simeon's Song of Praise | Rembrandt | 1631 | Mauritshuis, The Hague | confirmed | File:Simeon in the temple, by Rembrandt van Rijn.jpg | Public domain | exact (0.999) | 1920×2473 | — |
+| `luminous_eucharist` | The Last Supper | Juan de Juanes | c. 1562 | Museo del Prado | confirmed | File:The Last Supper by Vicente Juan Macip.jpg | Public domain | same work (0.967) | 1517×998 | A crop of this scan or of another of the same picture. |
+| `joyful_presentation` | The Presentation in the Temple | Simon Vouet | 1641 | Musée du Louvre | confirmed | File:Simon Vouet - Presentation in the Temple - WGA25366.jpg | Public domain | exact (1.0) | 800×1302 | — |
+| `seven_sorrows_flight` | The Flight into Egypt | Bartolomé Esteban Murillo | 1647–50 | Musei di Strada Nuova (Palazzo Bianco), Genoa | confirmed | File:Bartolomé Esteban Murillo - The Flight into Egypt - Google Art Project.jpg | Public domain | exact (1.0) | 1920×2465 | The Genoa picture (Musei di Strada Nuova), not Detroit's as first thought. |
+| `luminous_baptism` | The Baptism of Christ | Guido Reni | c. 1623 | Kunsthistorisches Museum, Vienna | confirmed | File:Guido Reni - The Baptism of Christ - Google Art Project.jpg | Public domain | exact (1.0) | 1920×2727 | — |
+| `joyful_annunciation` | The Annunciation | Paolo de Matteis | 1712 | Saint Louis Art Museum | confirmed | File:Paolo de Matteis - The Annunciation - 69-1973 - Saint Louis Art Museum.jpg | Public domain | same work (0.928) | 4351×5077 | The bundled image is larger than any Commons file of the work: another scan, most likely the museum's own. |
+| `joyful_finding` | Christ among the Doctors | Paolo Veronese | c. 1558 | Museo del Prado | confirmed | File:Disputa con los doctores (El Veronés) grande.jpg | Public domain | exact (0.996) | 3051×1667 | — |
+| `joyful_visitation` | The Visitation | Raphael and workshop (Giulio Romano) | c. 1517 | Museo del Prado | confirmed | File:Visitación de Rafael.jpg | Public domain | exact (1.0) | 1157×1600 | fetch.py --provenance's search finds only 'Raphael - The visitation.jpg' (520×719), a weak match; the bundled file is this one, the same size to the pixel, found by comparing the images. |
+| `luminous_cana` | The Marriage Feast at Cana | Bartolomé Esteban Murillo | c. 1672 | Barber Institute of Fine Arts, Birmingham | confirmed | File:The Barber Institute of Fine Arts - Bartolomé Esteban Murillo - The Marriage Feast at CanaFXD.jpg | Public domain | same work (0.965) | 1920×1407 | A crop of this scan. |
+| `sorrowful_carrying` | Christ Carrying the Cross | Anthony van Dyck | 1617–18 | Sint-Pauluskerk, Antwerp | confirmed | File:Anthony van Dyck - Jesus Christ bearing the Cross.jpg | Public domain | exact (1.0) | 960×1261 | Bundled at 960×1261; the file, Sint-Pauluskerk's own photograph, is 3349×4399. |
+| `glorious_resurrection` | The Resurrection of Christ | Noël Coypel | 1700 | unconfirmed (French royal commission) | confirmed | File:Noël Coypel - Resurrection of Christ (large version).jpg | Public domain | same work (0.782) | 566×732 | Commons holds the work only small (638×900 at most); the bundled image is a crop of it, the same composition by eye, and the smallest painting in the bundle. |
+| `glorious_pentecost` | Pentecost (not Maíno's: the Prado's Maíno is a different composition) | — | — | — | ask Abraham | — | — | — | — | — |
+| `glorious_ascension` | The Ascension (Spanish or Flemish Baroque, 17th c.) | — | — | — | ask Abraham | — | — | — | — | — |
+| `glorious_assumption` | The Assumption of the Virgin (Neapolitan/Roman, 18th c., in the manner of Giaquinto or Solimena) | — | — | — | ask Abraham | — | — | — | — | — |
+| `joyful_nativity` | The Adoration of the Shepherds, night scene with putti (Italian Baroque, in the manner of Guido Reni) | — | — | — | ask Abraham | — | — | — | — | — |
 
-**For Abraham:** where did these come from? `glorious_ascension`, `glorious_assumption`, `joyful_nativity`. The subject and school are clear but not the painter, so their licence can't be confirmed yet.
+**For Abraham:** where did these come from? `glorious_pentecost`, `glorious_ascension`, `glorious_assumption`, `joyful_nativity`. The subject and school are clear but not the painter, so their licence can't be confirmed yet.
 
 ## Flagged
 
