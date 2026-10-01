@@ -3,9 +3,9 @@
 //  Lumen Viae
 //
 //  The Prayer Book's own furniture: the silk ribbon a prayer is kept
-//  with, the contents page's dot leader, the ruled prayer row, the tile
-//  an order of prayer stands on, the strip of the day's three hours, and
-//  the schedule a surface naming the hour's order redraws on.
+//  with, the ruled prayer row, the strip of the day's three hours, and
+//  the schedule a surface naming the hour's order redraws on. The
+//  Prayers page's own pieces are in PrayersComponents.swift.
 //
 
 import SwiftUI
@@ -86,68 +86,7 @@ struct RibbonToggle: View {
         .buttonStyle(QuietGlyphButtonStyle())
         .sensoryFeedback(.selection, trigger: kept)
         .accessibilityLabel(kept ? "Kept with a ribbon" : "Keep this prayer with a ribbon")
-        .accessibilityHint(kept ? "Takes the ribbon out" : "It will wait on the Prayer Book's first page")
-    }
-}
-
-// MARK: - Dot Leader
-
-/// The dotted line a printed contents page runs from a title to its page
-struct PrayerBookDotLeader: View {
-    var body: some View {
-        GeometryReader { geometry in
-            Path { path in
-                path.move(to: CGPoint(x: 0, y: geometry.size.height / 2))
-                path.addLine(to: CGPoint(x: geometry.size.width, y: geometry.size.height / 2))
-            }
-            .stroke(AppColors.gold.opacity(0.35), style: StrokeStyle(lineWidth: 1.2, lineCap: .round, dash: [0.5, 5]))
-        }
-        .frame(height: 2)
-    }
-}
-
-// MARK: - Section heading
-
-/// A section of the book's pages: a small engraved label over a hairline
-/// that runs to the edge, with an optional quiet link.
-struct PrayerBookSectionHeading: View {
-    let title: String
-    var note: String? = nil
-    var link: (String, () -> Void)? = nil
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack(alignment: .firstTextBaseline) {
-                Text(title)
-                    .font(AppFonts.headlineFont(19))
-                    .foregroundColor(AppColors.goldLight)
-                    .accessibilityAddTraits(.isHeader)
-
-                Spacer(minLength: 8)
-
-                if let link {
-                    Button(action: link.1) {
-                        HStack(spacing: 5) {
-                            Text(link.0.uppercased())
-                                .font(AppFonts.labelFont(9.5))
-                                .tracking(2)
-                            AppIcon("ph-caret-right", size: 9)
-                        }
-                        .foregroundColor(AppColors.gold.opacity(0.8))
-                        .frame(minHeight: 44)
-                        .contentShape(Rectangle())
-                    }
-                    .buttonStyle(QuietGlyphButtonStyle())
-                }
-            }
-
-            if let note {
-                Text(note)
-                    .font(AppFonts.readingItalicFont(14))
-                    .foregroundColor(AppColors.textSecondary)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-        }
+        .accessibilityHint(kept ? "Takes the ribbon out" : "It will wait under Saved, on the Prayers page")
     }
 }
 
@@ -260,79 +199,6 @@ struct ByHeartMark: View {
         .foregroundColor(AppColors.gold.opacity(0.85))
         .fixedSize()
         .accessibilityLabel("Known by heart")
-    }
-}
-
-// MARK: - Order Tile
-
-/// An order of prayer standing on the page: its glyph, when it is
-/// prayed, its name, and how many prayers it holds. Outlined, never
-/// filled, as every surface of the Chapel is.
-struct PrayerOrderTile: View {
-    let order: PrayerOrder
-    let action: () -> Void
-
-    private var store = PrayerBookStore.shared
-
-    init(order: PrayerOrder, action: @escaping () -> Void) {
-        self.order = order
-        self.action = action
-    }
-
-    var body: some View {
-        let offered = store.wasOffered(order.id)
-        let count = order.prayers().count
-
-        Button(action: action) {
-            VStack(alignment: .leading, spacing: 0) {
-                HStack(alignment: .top) {
-                    AppIcon(order.icon, size: 20)
-                        .foregroundColor(AppColors.gold)
-                    Spacer()
-                    if offered {
-                        AppIcon("ph-seal-check-fill", size: 14)
-                            .foregroundColor(AppColors.gold.opacity(0.85))
-                            .accessibilityLabel("Offered today")
-                    }
-                }
-
-                Spacer(minLength: 14)
-
-                // Three lines, not two: at the larger text sizes a name
-                // like After Communion was cut to "After Comm…"
-                Text(order.occasion.uppercased())
-                    .font(AppFonts.labelFont(8))
-                    .tracking(1.8)
-                    .foregroundColor(AppColors.gold.opacity(0.7))
-                    .lineLimit(3)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                Text(order.title(on: Date()))
-                    .font(AppFonts.headlineFont(15))
-                    .foregroundColor(AppColors.cream)
-                    .multilineTextAlignment(.leading)
-                    .lineLimit(3)
-                    .minimumScaleFactor(0.85)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.top, 5)
-
-                Text(count == 1 ? "One prayer" : "\(count) prayers")
-                    .font(AppFonts.readingItalicFont(12.5))
-                    .foregroundColor(AppColors.textSecondary)
-                    .padding(.top, 3)
-            }
-            .padding(14)
-            .frame(maxWidth: .infinity, minHeight: 138, alignment: .topLeading)
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(AppColors.gold.opacity(0.24), lineWidth: AppLine.hairline)
-            )
-            .contentShape(RoundedRectangle(cornerRadius: 16))
-        }
-        .buttonStyle(SacredCardButtonStyle())
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(order.title(on: Date())), \(order.occasion), \(count) prayers\(offered ? ", offered today" : "")")
-        .accessibilityAddTraits(.isButton)
     }
 }
 

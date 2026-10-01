@@ -2,18 +2,59 @@
 //  PrayerBookView.swift
 //  Lumen Viae
 //
-//  The Prayer Book's title page. It opens, as the Office does, on the
-//  hour it is: Morning Prayers until eleven, the Angelus through the
-//  noon and evening bells, Night Prayers after dark — lit, with the
-//  page's one gold act to pray it. Beneath it the day's three hours
-//  stand on one line, then the orders kept for an occasion (before Mass,
-//  after Confession, at table), Our Lady's prayers led by the antiphon
-//  the season sings, the reader's own ribbons, and the book's contents.
+//  Prayers: the Prayer Book as a tab of its own, in the Journal's old
+//  place in the bar. One plain word for a title, the search field at the
+//  head of the page rather than at its foot — finding one prayer by name
+//  is the book's commonest errand — and the book in three parts beneath
+//  it:
+//
+//  - Today: the prayer for the hour it is, over its painting, with the
+//    day's three hours on a strip at the card's foot and the page's one
+//    gold act; then Our Lady's prayers, led by the antiphon the season
+//    sings; then the prayers the reader has saved with a ribbon.
+//  - Occasions: the reader picks where they are — at Mass, Confession,
+//    at home, in need — and the orders kept there stand beneath.
+//  - All Prayers: every chapter of the book by topic, in plain words.
+//
+//  Typing searches every prayer by name, Latin name and words, and
+//  names a chapter as a topic when the words name one.
+//
+//  It once stood as a row inside other pages — home's ledger, Explore,
+//  the Chapel's tile — and opened as a pushed title page with an
+//  ENCHIRIDION masthead and seven sections in five kinds of container,
+//  the search at the very foot. Every one of those doors now comes here
+//  (`AppRouter.push(.prayerBook)` turns to the tab).
 //
 
 import SwiftUI
 
+// MARK: - PrayersSection
+
+/// The three parts of the Prayers page
+enum PrayersSection: String, CaseIterable, Identifiable {
+    case today
+    case occasions
+    case all
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .today:     return "Today"
+        case .occasions: return "Occasions"
+        case .all:       return "All Prayers"
+        }
+    }
+}
+
+// MARK: - PrayerBookView
+
 struct PrayerBookView: View {
+
+    /// The root of the Prayers tab, under the bar, or a page pushed from
+    /// some other page, with a Back of its own. Every door turns to the
+    /// tab, so the pushed page is only the destination table's fallback.
+    let isTabRoot: Bool
 
     @Environment(AppRouter.self) private var router
     @Environment(\.scenePhase) private var scenePhase
@@ -24,40 +65,51 @@ struct PrayerBookView: View {
     @State private var now = Date()
     @State private var query = ""
     @FocusState private var searching: Bool
+    @State private var section: PrayersSection = .today
 
-    private static let contentsAnchor = "contents"
+    /// One of the day's other hours, chosen on the Pray Now card's strip
+    /// to see it and pray it; nil shows the hour it is
+    @State private var chosenHourID: String?
+
+    /// Where the reader last said they were, on Occasions. Kept, since
+    /// someone who opens it in the pew opens it there every Sunday.
+    @AppStorage("prayers.occasionPlace") private var placeRaw = PrayerOccasionPlace.mass.rawValue
+
+    init(isTabRoot: Bool = false) {
+        self.isTabRoot = isTabRoot
+    }
 
     private var trimmedQuery: String {
         query.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
-    var body: some View {
-        ScrollViewReader { proxy in
-            page
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        // The book's most common errand is one prayer by
-                        // name, and its field stands at the foot of a long
-                        // page; the glass goes straight there
-                        Button { findAPrayer(proxy) } label: {
-                            AppIcon("ph-magnifying-glass", size: 18)
-                                .foregroundColor(AppColors.gold)
-                                .frame(width: 44, height: 44)
-                        }
-                        .buttonStyle(QuietGlyphButtonStyle())
-                        .accessibilityLabel("Find a prayer")
-                    }
-                }
-        }
+    private var isSearching: Bool { !trimmedQuery.isEmpty }
+
+    private var place: PrayerOccasionPlace {
+        PrayerOccasionPlace(rawValue: placeRaw) ?? .mass
     }
 
-    private func findAPrayer(_ proxy: ScrollViewProxy) {
-        withAnimation(Motion.ease(0.45)) {
-            proxy.scrollTo(Self.contentsAnchor, anchor: UnitPoint(x: 0.5, y: 0.08))
-        }
-        Task { @MainActor in
-            try? await Task.sleep(for: .milliseconds(350))
-            searching = true
+    // MARK: Body
+
+    @ViewBuilder
+    var body: some View {
+        if isTabRoot {
+            page
+        } else {
+            page
+                .navigationBarBackButtonHidden(true)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button(action: { router.pop() }) {
+                            HStack(spacing: 6) {
+                                AppIcon("ph-caret-left", size: 14)
+                                Text("Back")
+                                    .font(AppFonts.bodyFont(16))
+                            }
+                            .foregroundColor(AppColors.gold)
+                        }
+                    }
+                }
         }
     }
 
@@ -67,52 +119,44 @@ struct PrayerBookView: View {
 
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
-                    masthead
-                        .frame(maxWidth: .infinity)
-                        .padding(.top, 8)
+                    head
+                        .padding(.top, isTabRoot ? 16 : 4)
                         .devotionalEntrance()
 
-                    hourPlate
-                        .padding(.top, 28)
-                        .devotionalEntrance(delay: 0.06)
-
-                    PrayerHoursStrip(now: now) { order in
-                        router.push(.prayerOrder(id: order.id))
+                    // The three parts and the search's results take turns
+                    // in one slot, crossfading over each other
+                    ZStack(alignment: .top) {
+                        if isSearching {
+                            results
+                                .transition(.opacity)
+                        } else {
+                            switch section {
+                            case .today:
+                                today
+                                    .transition(.opacity)
+                            case .occasions:
+                                occasions
+                                    .transition(.opacity)
+                            case .all:
+                                allPrayers
+                                    .transition(.opacity)
+                            }
+                        }
                     }
-                    .padding(.top, 22)
-                    .padding(.horizontal, 8)
-                    .devotionalEntrance(delay: 0.1)
-
-                    prayTogether
-                        .padding(.top, 44)
-
-                    ourLady
-                        .padding(.top, 44)
-
-                    ribbons
-                        .padding(.top, 44)
-
-                    contents
-                        .padding(.top, 44)
-                        .id(Self.contentsAnchor)
+                    .frame(maxWidth: .infinity, alignment: .topLeading)
+                    .animation(Motion.crossfade, value: isSearching)
+                    .animation(Motion.crossfade, value: section)
+                    .padding(.top, 28)
+                    .devotionalEntrance(delay: 0.06)
                 }
                 .padding(.horizontal, 20)
-                .padding(.bottom, 56)
+                // Clear of the tab bar and its fade at the root
+                .padding(.bottom, isTabRoot ? 130 : 56)
             }
-            .topChromeFade()
-        }
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: { router.pop() }) {
-                    HStack(spacing: 6) {
-                        AppIcon("ph-caret-left", size: 14)
-                        Text("Back")
-                            .font(AppFonts.bodyFont(16))
-                    }
-                    .foregroundColor(AppColors.gold)
-                }
-            }
+            .scrollDismissesKeyboard(.interactively)
+            // At the root the page begins below the status bar and only
+            // dissolves under it; pushed, it is held clear of the Back
+            .topChromeFade(inset: isTabRoot ? 0 : nil)
         }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active { now = Date() }
@@ -120,7 +164,7 @@ struct PrayerBookView: View {
         .onAppear { now = Date() }
         // Left open across one of the book's hours — four, eleven, three,
         // eight — the page turns with it, on the timeline home's row and
-        // the Chapel's tile keep; it once kept the old hour's order lit
+        // the Chapel's tile keep
         .background {
             TimelineView(PrayerBookHourSchedule()) { context in
                 Color.clear.onChange(of: context.date) { _, date in
@@ -130,229 +174,40 @@ struct PrayerBookView: View {
         }
     }
 
-    // MARK: - Masthead
+    // MARK: - Head
 
-    private var masthead: some View {
-        VStack(spacing: 12) {
-            Text("ENCHIRIDION")
-                .font(AppFonts.labelFont(9.5))
-                .tracking(3.5)
-                .foregroundColor(AppColors.gold)
-
-            Text("The Prayer Book")
+    private var head: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Prayers")
                 .font(AppFonts.titleFont(30))
                 .foregroundColor(AppColors.cream)
-
-            OrnamentDivider()
-                .frame(width: 150)
-
-            Text("The Church's prayers for every hour and every need.")
-                .font(AppFonts.readingItalicFont(15))
-                .foregroundColor(AppColors.cream.opacity(0.75))
-                .multilineTextAlignment(.center)
-        }
-    }
-
-    // MARK: - The Hour
-
-    /// The order for the hour it is, lit, with the page's one gold act
-    private var hourPlate: some View {
-        let order = PrayerBook.dayOrder(at: now)
-        let offered = store.wasOffered(order.id, on: now)
-        let count = order.prayers(on: now).count
-        let title = order.title(on: now)
-
-        return VStack(spacing: 12) {
-            HStack(spacing: 8) {
-                if offered {
-                    AppIcon("ph-seal-check-fill", size: 12)
-                }
-                Text((offered ? "Offered today" : PrayerBook.dayOrderMoment(at: now)).uppercased())
-                    .font(AppFonts.labelFont(9.5))
-                    .tracking(2.5)
-            }
-            .foregroundColor(AppColors.gold)
-
-            AppIcon(order.icon, size: 30)
-                .foregroundColor(AppColors.goldLight)
-                .shadow(color: AppColors.gold.opacity(0.5), radius: 10)
-
-            // Two lines at most, so a large text size shrinks the name
-            // rather than breaking it mid-word ("Angel / us")
-            Text(title)
-                .font(AppFonts.titleFont(30))
-                .foregroundColor(AppColors.cream)
-                .multilineTextAlignment(.center)
-                .lineLimit(2)
-                .minimumScaleFactor(0.7)
-
-            Text(order.detail)
-                .font(AppFonts.readingItalicFont(15.5))
-                .foregroundColor(AppColors.cream.opacity(0.8))
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
-                .frame(maxWidth: 290)
-
-            GoldCTAButton(title: offered ? "Pray it again" : "Pray \(title)", glyph: .play) {
-                router.push(.prayAlong(.order(order, on: now)))
-            }
-            .padding(.top, 8)
-
-            QuietGoldButton(
-                title: count == 1 ? "See the prayer" : "See the \(count) prayers",
-                trailingIcon: "ph-caret-right"
-            ) {
-                router.push(.prayerOrder(id: order.id))
-            }
-        }
-        .padding(.horizontal, 22)
-        .padding(.top, 26)
-        .padding(.bottom, 12)
-        .frame(maxWidth: .infinity)
-        .background(
-            RoundedRectangle(cornerRadius: 22)
-                .fill(
-                    LinearGradient(
-                        colors: [AppColors.gold.opacity(0.1), AppColors.gold.opacity(0.0)],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 22)
-                .strokeBorder(AppColors.gold.opacity(0.35), lineWidth: AppLine.hairline)
-        )
-        .shadow(color: AppColors.gold.opacity(0.08), radius: 18)
-    }
-
-    // MARK: - Pray Together
-
-    private var prayTogether: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            PrayerBookSectionHeading(
-                title: "Pray Together",
-                note: "A few prayers said one after another, for the moments that ask for them."
-            )
-
-            // One column at the accessibility sizes, where two cut the
-            // orders' names short
-            LazyVGrid(
-                columns: Array(
-                    repeating: GridItem(.flexible(), spacing: 12),
-                    count: typeSize.isAccessibilitySize ? 1 : 2
-                ),
-                spacing: 12
-            ) {
-                ForEach(PrayerBook.occasionOrders) { order in
-                    PrayerOrderTile(order: order) {
-                        router.push(.prayerOrder(id: order.id))
-                    }
-                }
-            }
-        }
-    }
-
-    // MARK: - Our Lady
-
-    private var ourLady: some View {
-        let chapter = PrayerBook.ourLady
-        let antiphon = PrayerBook.antiphon(on: now)
-        let seasonal = PrayerBook.prayer(antiphon.prayerID)
-        let others = chapter.prayers.filter { $0.id != antiphon.prayerID }
-
-        return VStack(alignment: .leading, spacing: 14) {
-            PrayerBookSectionHeading(
-                title: "Our Lady",
-                link: ("All \(chapter.prayerIDs.count)", { router.push(.prayerBookChapter(id: chapter.id)) })
-            )
-
-            if let seasonal {
-                Button {
-                    router.push(.devotionPrayer(id: seasonal.id))
-                } label: {
-                    MarianSeasonCard(prayer: seasonal, season: antiphon.season)
-                }
-                .buttonStyle(SacredCardButtonStyle())
-            }
-
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 12) {
-                    ForEach(others) { prayer in
-                        Button {
-                            router.push(.devotionPrayer(id: prayer.id))
-                        } label: {
-                            MarianPrayerCard(prayer: prayer)
-                        }
-                        .buttonStyle(SacredCardButtonStyle())
-                    }
-                }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 4)
-            }
-            .padding(.horizontal, -20)
-        }
-    }
-
-    // MARK: - Ribbons
-
-    @ViewBuilder
-    private var ribbons: some View {
-        let kept = store.keptPrayers
-        VStack(alignment: .leading, spacing: 8) {
-            PrayerBookSectionHeading(title: "Your Ribbons")
-
-            if kept.isEmpty {
-                HStack(alignment: .top, spacing: 14) {
-                    RibbonMark(kept: true, width: 10, restLength: 20, keptLength: 26)
-                    Text("Keep a prayer with its ribbon — the silk marker at the top of any prayer's page — and it waits for you here.")
-                        .font(AppFonts.readingItalicFont(14.5))
-                        .foregroundColor(AppColors.textSecondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                .padding(.top, 6)
-            } else {
-                VStack(spacing: 0) {
-                    ForEach(Array(kept.enumerated()), id: \.element.id) { i, prayer in
-                        BookPrayerRow(prayer: prayer, showsRule: i < kept.count - 1) {
-                            router.push(.devotionPrayer(id: prayer.id))
-                        }
-                    }
-                }
-            }
-        }
-        .animation(Motion.crossfade, value: store.ribbons)
-    }
-
-    // MARK: - Contents
-
-    private var contents: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            PrayerBookSectionHeading(title: "Contents")
+                .accessibilityAddTraits(.isHeader)
 
             searchField
 
-            ZStack(alignment: .top) {
-                if trimmedQuery.isEmpty {
-                    chapterList
-                        .transition(.opacity)
-                } else {
-                    results
-                        .transition(.opacity)
+            PrayersSectionBar(
+                selection: isSearching ? nil : section
+            ) { chosen in
+                // A part chosen mid-search puts the search away: the
+                // results stand where the parts do, so the two never
+                // show at once
+                if isSearching {
+                    query = ""
+                    searching = false
                 }
+                section = chosen
             }
-            .animation(Motion.crossfade, value: trimmedQuery.isEmpty)
         }
     }
 
     private var searchField: some View {
         HStack(spacing: 10) {
-            AppIcon("ph-magnifying-glass", size: 14)
-                .foregroundColor(AppColors.gold.opacity(0.7))
+            AppIcon("ph-magnifying-glass", size: 15)
+                .foregroundColor(AppColors.gold.opacity(0.75))
             TextField(
                 "",
                 text: $query,
-                prompt: Text("Find a prayer — Memorare, Salve, St Joseph…")
+                prompt: Text("Search prayers — Hail Mary, St Joseph…")
                     .foregroundColor(AppColors.textSecondary)
             )
             .font(AppFonts.readingFont(16))
@@ -361,6 +216,7 @@ struct PrayerBookView: View {
             .autocorrectionDisabled()
             .submitLabel(.search)
             .focused($searching)
+            .accessibilityLabel("Search prayers")
 
             if !query.isEmpty {
                 Button { query = "" } label: {
@@ -379,169 +235,291 @@ struct PrayerBookView: View {
         .frame(minHeight: 46)
         .overlay(
             RoundedRectangle(cornerRadius: 14)
-                .strokeBorder(AppColors.gold.opacity(0.25), lineWidth: AppLine.hairline)
+                .strokeBorder(
+                    AppColors.gold.opacity(searching || isSearching ? 0.6 : 0.25),
+                    lineWidth: AppLine.hairline
+                )
         )
+        .animation(Motion.crossfade, value: searching)
     }
 
-    private var chapterList: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            ForEach(PrayerBook.chapters) { chapter in
+    // MARK: - Today
+
+    private var today: some View {
+        VStack(alignment: .leading, spacing: 44) {
+            prayNow
+            prayersToMary
+            saved
+        }
+    }
+
+    /// The order for the hour it is, or for the hour chosen on the strip
+    private var shownOrder: PrayerOrder {
+        chosenHourID.flatMap { PrayerBook.order($0) } ?? PrayerBook.dayOrder(at: now)
+    }
+
+    private var prayNow: some View {
+        let order = shownOrder
+        let offered = store.wasOffered(order.id, on: now)
+
+        return VStack(alignment: .leading, spacing: 16) {
+            PrayersSectionTitle(title: "Pray Now", note: "The prayer for this time of day.")
+
+            VStack(spacing: 0) {
                 Button {
-                    router.push(.prayerBookChapter(id: chapter.id))
+                    router.push(.prayerOrder(id: order.id))
                 } label: {
-                    VStack(alignment: .leading, spacing: 3) {
-                        HStack(alignment: .lastTextBaseline, spacing: 8) {
-                            Text(chapter.numeral)
-                                .font(AppFonts.titleFont(14))
-                                .foregroundColor(AppColors.gold)
-                                .frame(width: 38, alignment: .leading)
+                    ZStack(alignment: .bottomLeading) {
+                        PrayerBookPaintingGround(painting: .hour(order, on: now))
 
-                            Text(chapter.title)
-                                .font(AppFonts.readingFont(17))
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(order.title(on: now))
+                                .font(AppFonts.titleFont(27))
                                 .foregroundColor(AppColors.cream)
-                                .layoutPriority(1)
+                                .lineLimit(2)
+                                .minimumScaleFactor(0.7)
+                                .contentTransition(.opacity)
 
-                            PrayerBookDotLeader()
-                                .frame(minWidth: 16)
-
-                            Text("\(chapter.prayerIDs.count) PRAYERS")
-                                .font(AppFonts.labelFont(8.5))
-                                .tracking(1.5)
-                                .foregroundColor(AppColors.gold.opacity(0.8))
-                                .fixedSize()
+                            Text(order.detail)
+                                .font(AppFonts.readingItalicFont(15))
+                                .foregroundColor(AppColors.cream.opacity(0.82))
+                                .fixedSize(horizontal: false, vertical: true)
+                                .contentTransition(.opacity)
                         }
-
-                        Text(chapter.latinTitle)
-                            .font(AppFonts.readingItalicFont(13))
-                            .foregroundColor(AppColors.textSecondary)
-                            .padding(.leading, 46)
+                        .multilineTextAlignment(.leading)
+                        .padding(.horizontal, 18)
+                        .padding(.bottom, 16)
                     }
-                    .padding(.vertical, 10)
-                    .frame(minHeight: 44)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 300)
+                    .clipped()
                     .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(SacredCardButtonStyle())
                 .accessibilityElement(children: .combine)
                 .accessibilityAddTraits(.isButton)
+                .accessibilityHint("Shows its prayers")
+
+                PrayerHourStations(now: now, shownID: order.id) { chosen in
+                    let current = PrayerBook.dayOrder(at: now).id
+                    chosenHourID = chosen.id == current ? nil : chosen.id
+                }
+            }
+            .animation(Motion.crossfade, value: order.id)
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(AppColors.gold.opacity(0.35), lineWidth: AppLine.hairline)
+            )
+            // The halo is the card's shape's, not its words', so the
+            // strip's names cast no glow of their own
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(AppColors.background)
+                    .haloGlow(AppColors.gold, radius: 16, intensity: 0.19)
+            )
+
+            GoldCTAButton(title: prayTitle(order, offered: offered), glyph: .play) {
+                router.push(.prayAlong(.order(order, on: now)))
             }
         }
     }
 
-    @ViewBuilder
-    private var results: some View {
-        let hits = PrayerBook.search(trimmedQuery)
-        if hits.isEmpty {
-            Text("No prayer by that name. Try a word from it — \"mercy\", \"Joseph\", \"light\".")
-                .font(AppFonts.readingItalicFont(14))
-                .foregroundColor(AppColors.textSecondary)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.top, 8)
-        } else {
+    /// "Pray the Angelus" — the order's own name, its article lowered
+    private func prayTitle(_ order: PrayerOrder, offered: Bool) -> String {
+        if offered { return "Pray it again" }
+        let title = order.title(on: now)
+        if title.hasPrefix("The ") {
+            return "Pray the " + title.dropFirst(4)
+        }
+        return "Pray \(title)"
+    }
+
+    private var prayersToMary: some View {
+        let chapter = PrayerBook.ourLady
+        let antiphon = PrayerBook.antiphon(on: now)
+        let seasonal = PrayerBook.prayer(antiphon.prayerID)
+        let known = PrayerBook.bestKnownMarianIDs
+            .filter { $0 != antiphon.prayerID }
+            .compactMap { PrayerBook.prayer($0) }
+
+        return VStack(alignment: .leading, spacing: 16) {
+            PrayersSectionTitle(
+                title: "Prayers to Mary",
+                note: "This season's prayer, and her best-known prayers."
+            )
+
+            if let seasonal {
+                Button {
+                    router.push(.devotionPrayer(id: seasonal.id))
+                } label: {
+                    MarianSeasonCard(prayer: seasonal, antiphon: antiphon)
+                }
+                .buttonStyle(SacredCardButtonStyle())
+            }
+
             VStack(spacing: 0) {
-                ForEach(Array(hits.enumerated()), id: \.element.id) { i, prayer in
-                    BookPrayerRow(prayer: prayer, showsRule: i < hits.count - 1) {
+                ForEach(Array(known.enumerated()), id: \.element.id) { i, prayer in
+                    PrayersLedgerRow(
+                        title: prayer.title,
+                        prayerID: prayer.id,
+                        showsRule: i < known.count - 1
+                    ) {
                         router.push(.devotionPrayer(id: prayer.id))
                     }
                 }
             }
+
+            QuietGoldButton(
+                title: "All \(chapter.prayerIDs.count) prayers to Mary",
+                trailingIcon: "ph-caret-right",
+                size: 10,
+                color: AppColors.gold,
+                horizontalPadding: 0
+            ) {
+                router.push(.prayerBookChapter(id: chapter.id))
+            }
+            .padding(.top, -10)
         }
     }
-}
 
-// MARK: - Our Lady's cards
+    private var saved: some View {
+        let kept = store.keptPrayers
+        let columns = typeSize >= .xLarge ? 2 : 3
 
-/// The antiphon the Church sings to Our Lady at the close of the day in
-/// this part of the year, set large
-struct MarianSeasonCard: View {
-    let prayer: BookPrayer
-    let season: String
+        return VStack(alignment: .leading, spacing: 16) {
+            PrayersSectionTitle(
+                title: "Saved",
+                note: "Tap the bookmark on any prayer to save it here."
+            )
 
-    var body: some View {
-        HStack(alignment: .center, spacing: 16) {
-            VStack(alignment: .leading, spacing: 6) {
-                Text("OF THE SEASON")
-                    .font(AppFonts.labelFont(8.5))
-                    .tracking(2.2)
-                    .foregroundColor(AppColors.gold)
+            if !kept.isEmpty {
+                LazyVGrid(
+                    columns: Array(repeating: GridItem(.flexible(), spacing: 10, alignment: .top), count: columns),
+                    alignment: .leading,
+                    spacing: 10
+                ) {
+                    ForEach(kept) { prayer in
+                        SavedPrayerCard(prayer: prayer) {
+                            router.push(.devotionPrayer(id: prayer.id))
+                        }
+                        .transition(.opacity)
+                    }
+                }
+            }
+        }
+        .animation(Motion.crossfade, value: store.ribbons)
+    }
 
-                Text(prayer.latinTitle ?? prayer.title)
-                    .font(AppFonts.titleFont(23))
-                    .foregroundColor(AppColors.cream)
-                    .minimumScaleFactor(0.7)
-                    .lineLimit(2)
+    // MARK: - Occasions
 
-                Text(prayer.title)
-                    .font(AppFonts.readingItalicFont(15))
-                    .foregroundColor(AppColors.cream.opacity(0.8))
+    private var occasions: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            PrayersSectionTitle(
+                title: "For Any Occasion",
+                note: "Pick where you are to see prayers for it."
+            )
 
-                Text("Sung at the close of the day · \(season)")
-                    .font(AppFonts.readingItalicFont(12.5))
+            WordFlow(spacing: 8, lineSpacing: 4) {
+                ForEach(PrayerOccasionPlace.allCases) { option in
+                    PrayersPlaceChip(title: option.title, isSelected: option == place) {
+                        placeRaw = option.rawValue
+                    }
+                }
+            }
+
+            // The orders of one place give way to another's in one slot
+            ZStack(alignment: .top) {
+                VStack(spacing: 0) {
+                    let orders = PrayerBook.orders(at: place)
+                    ForEach(Array(orders.enumerated()), id: \.element.id) { i, order in
+                        PrayersOccasionRow(
+                            order: order,
+                            now: now,
+                            showsRule: i < orders.count - 1
+                        ) {
+                            router.push(.prayerOrder(id: order.id))
+                        }
+                    }
+                }
+                .id(place)
+                .transition(.opacity)
+            }
+            .frame(maxWidth: .infinity, alignment: .topLeading)
+            .animation(Motion.crossfade, value: place)
+        }
+    }
+
+    // MARK: - All Prayers
+
+    private var allPrayers: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            PrayersSectionTitle(title: "All Prayers", note: "Every prayer, by topic.")
+
+            VStack(spacing: 0) {
+                ForEach(PrayerBook.chapters) { chapter in
+                    PrayersLedgerRow(
+                        title: chapter.title,
+                        count: chapter.prayerIDs.count
+                    ) {
+                        router.push(.prayerBookChapter(id: chapter.id))
+                    }
+                }
+            }
+        }
+    }
+
+    // MARK: - Search
+
+    @ViewBuilder
+    private var results: some View {
+        let hits = PrayerBook.search(trimmedQuery)
+        let topics = Array(PrayerBook.topics(matching: trimmedQuery).prefix(2))
+        let seasonalID = PrayerBook.antiphon(on: now).prayerID
+
+        VStack(alignment: .leading, spacing: 14) {
+            if hits.isEmpty && topics.isEmpty {
+                Text("No prayer by that name. Try a word from it — \"mercy\", \"Joseph\", \"light\".")
+                    .font(AppFonts.readingItalicFont(14))
                     .foregroundColor(AppColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
-                    .padding(.top, 2)
+            } else {
+                if !hits.isEmpty {
+                    Text(hits.count == 1 ? "1 prayer matches" : "\(hits.count) prayers match")
+                        .font(AppFonts.labelFont(9))
+                        .tracking(2)
+                        .textCase(.uppercase)
+                        .foregroundColor(AppColors.textSecondary)
+                        .contentTransition(.numericText())
+                        .animation(Motion.crossfade, value: hits.count)
+                }
+
+                ForEach(topics) { chapter in
+                    PrayersTopicCard(chapter: chapter) {
+                        router.push(.prayerBookChapter(id: chapter.id))
+                    }
+                }
+
+                VStack(spacing: 0) {
+                    ForEach(Array(hits.enumerated()), id: \.element.id) { i, prayer in
+                        PrayersLedgerRow(
+                            title: prayer.title,
+                            note: chapterNote(for: prayer, seasonalID: seasonalID),
+                            prayerID: prayer.id,
+                            showsRule: i < hits.count - 1
+                        ) {
+                            router.push(.devotionPrayer(id: prayer.id))
+                        }
+                    }
+                }
             }
-            Spacer(minLength: 0)
-            AppIcon("ch-lily", size: 34)
-                .foregroundColor(AppColors.gold.opacity(0.85))
         }
-        .padding(18)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 18)
-                .fill(LinearGradient(
-                    colors: [AppColors.marianBlue, AppColors.marianBlue.opacity(0.4)],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                ))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 18)
-                .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline)
-        )
-        .contentShape(RoundedRectangle(cornerRadius: 18))
-        .accessibilityElement(children: .combine)
-        .accessibilityHint("Opens the prayer")
     }
-}
 
-/// One of Our Lady's prayers on the shelf: its Latin incipit large, its
-/// English name beneath
-struct MarianPrayerCard: View {
-    let prayer: BookPrayer
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            AppIcon("ch-lily", size: 15)
-                .foregroundColor(AppColors.gold.opacity(0.8))
-
-            Spacer(minLength: 6)
-
-            Text(prayer.latinTitle ?? prayer.title)
-                .font(AppFonts.headlineFont(14.5))
-                .foregroundColor(AppColors.cream)
-                .lineLimit(3)
-                .minimumScaleFactor(0.8)
-                .fixedSize(horizontal: false, vertical: true)
-
-            if prayer.latinTitle != nil {
-                Text(prayer.title)
-                    .font(AppFonts.readingItalicFont(12.5))
-                    .foregroundColor(AppColors.cream.opacity(0.7))
-                    .lineLimit(2)
-            }
-        }
-        .padding(14)
-        .frame(width: 148, height: 142, alignment: .topLeading)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(AppColors.marianBlue.opacity(0.35))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(AppColors.gold.opacity(0.22), lineWidth: AppLine.hairline)
-        )
-        .contentShape(RoundedRectangle(cornerRadius: 16))
-        .accessibilityElement(children: .combine)
+    /// The topic a found prayer belongs to — "Mary · this season"
+    private func chapterNote(for prayer: BookPrayer, seasonalID: String) -> String? {
+        guard let chapter = PrayerBook.homeChapter(of: prayer.id) else { return nil }
+        return prayer.id == seasonalID ? "\(chapter.title) · this season" : chapter.title
     }
 }
 
@@ -549,7 +527,7 @@ struct MarianPrayerCard: View {
 
 #Preview {
     NavigationStack {
-        PrayerBookView()
+        PrayerBookView(isTabRoot: true)
             .environment(AppRouter())
             .environment(UserSettings.shared)
     }
