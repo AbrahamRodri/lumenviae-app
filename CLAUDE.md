@@ -349,113 +349,191 @@ equal cells), padded clear of the raised Pray medallion.
 
 The old Me/Account tab slot, rebuilt as **My Chapel**
 (`Views/Chapel/MyChapelView.swift`, from the "My Chapel" design
-handoff): a page the user arranges **in place** — no customize sheet.
+handoff; its sections redrawn by the "Chapel Redesign" handoff, Oct
+2026): a page the user arranges **in place** — no customize sheet.
 Two ideas drive it: a single focus at the top (the first unoffered act
 on the rule, set large with the page's one gold CTA, advancing on its
 own as acts are offered — derived, never stored), and an arrangeable
-tile grid below. Long-press 450ms anywhere (cancelled by >8pt of
+grid of sections below. Long-press 450ms anywhere (cancelled by >8pt of
 movement) — on the page, on a tile that opens on a tap, or on the
 quiet parts of a tile full of doors — the coach ribbon's "Show me" (one-time,
-`userSettings.chapelCoached`), or the foot's "Arrange this page" all
-enter arrange mode: tiles sway ±0.5°, gain a ✕ badge at the corner of their shell, the tab
-bar yields to a tray (`router.chapelArranging` is how ContentView
-knows), and tiles can be dragged (a ghost leans up to ±9° into the
-travel; a dashed slot opens at the landing), tapped to switch between
-their **two authored layouts** (full `span 2` / half `span 1` — each a
-different drawing, never the full squeezed), or put away. Nothing is
+`userSettings.chapelCoached`), or the foot's ARRANGE THIS PAGE all
+enter arrange mode, drawn from the Arrange board of the earlier
+"Chapel Page Redesign" draft, since the Chapel Redesign draws none:
+the page's head (the day strip, the focus and its gold act) crossfades
+to a REARRANGE head with DONE — the page's one gold act while
+arranging — over one line saying how, the page scrolls back to it, and
+every section folds to a 58pt row (`ChapelArrangeRow`: a grip, its
+name, WIDE in a capsule at full width or HALF under the name at half,
+and a ✕ laid over its trailing edge above the carry gesture,
+`ChapelHideButton`), so the whole page fits the glass. The tab bar
+yields to a tray of HIDDEN SECTIONS (`ChapelTray`, chips in a
+`ChapelChipFlow`; `router.chapelArranging` is how ContentView knows).
+A row is dragged (the row lifts, MOVING, leaning up to ±9° into the
+travel; a dashed slot opens at the landing, LET GO TO PLACE IT HERE),
+tapped to switch between its section's **two authored layouts** (full
+`span 2` / half `span 1` — each a different drawing, never the full
+squeezed), or hidden; a chip is tapped back onto the page's end or
+dragged to a place of its own. VoiceOver, which cannot drag, has each
+row's moves as actions — Make half or full width, Move up, Move down,
+Hide — and a chip's double-tap puts its section back. Nothing is
 deleted: the tray always holds what's off the page, and a stowed flame
-keeps counting. All ambient motion quiets under Reduce Motion.
+keeps counting. The tiles once swayed ±0.5° in arrange mode, wore a ✕
+badge at their shell's corner, and were carried at full size down a
+page three thousand points long; the folded rows replaced all three.
+Reduce Motion drops the lifted row's lean and the slot's growth.
 
 Above the grid, fixed: a day strip (liturgical-colour diamond from the
 missal vestment + weekday · feast via `TodayInChurch`) and the focus
-block. The strip carries no app chrome — it reads the day, and the room
+block over a 210-wide ornament. The strip carries no app chrome — it reads the day, and the room
 that buys is what lets a long feast set in full. Tiles (vocabulary `Models/ChapelTile.swift`;
 layout persists as `userSettings.chapelLayout`, validated against known
 ids on decode, with a one-time migration from the old `meWidgets`
 order; a tile newer than a stored layout is inserted in its default
-place, not appended): **Today** (the rule as a ledger, and the picker
-itself — the focus block above it carried a "CHOOSE ANOTHER" jump down
-to this tile and no longer does, since the ledger is a scroll away on
-the same page; it opens on one italic line saying what a rule is, and
-every row shows at its trailing edge what a tap does — OFFERED with the
-seal, BEGIN › / CONTINUE › until then, every act on the rule being one the
-app watches finish (the row marked by hand went out with the acts that
-needed it); the Rosary, the Scriptural Rosary, the Holy Rosary, the
-chaplet and the consecration day check from real data, and the Prayer Book's three orders from their Amen (`PrayerBookStore.wasOffered`), reset
-when the prayer day turns at four in the morning (the consecration day
-by its own numbering, on the calendar); the half is a figure "2 / 4" over a row
-of tappable cells), **Consecration** (de Montfort's four preparations
-as a segmented road, tracks weighted 12/7/7/7 days, the day's own
-title as the foot note), **Prayer Book** (`ChapelPrayerBookTile`: the order for the hour it is, the reader's kept ribbons beneath it, PRAY at its foot; the half is the hour's order alone), **Reading** (the open book with the author
-over the title, the other books under way standing as spines beside
-it — tap a spine, or swipe the face, to bring that book forward; the
-tile is not one door, because made one, every spine opened the book in
-front of it and the rest could not be reached; the half's cover carries its ribbon and diamond; empty,
-the shelf's cloths and "Tolle, lege"), **Liturgy** (the Missal
-and the Breviary as a diptych, each leaf a door, over the day's feast;
-split out of the Library so one heading is true of everything beneath
-it; a layout saved before it existed seats it beside the Library, at
-the Library's width, and on the page only if the Library is —
-`ChapelPlacement.completing`, which the Me migration shares), **Library** (six doors in two columns — True Devotion, Spiritual
-Reading, the Marian Library | How to Pray, In Scripture, Carlo Acutis —
-over Augustine's line and THE SHELF; the half keeps the first two and
-makes FOUR MORE a door to Explore), **Chant** (the Chant Library's
-player: the chant it last sang, or the antiphon of the season until it
-has sung one — its disc plays it, its name opens the chant's page, and
-CHANT LIBRARY (LIBRARY at half) opens the library; the elapsed time
-rides the kicker at full width and the transport row at half, said once
-either way), **Reflections** (latest journal entry under an
-illuminated versal, or its gilded opening mark when it opens on a
-quotation (`VersalCut.opensOnQuotation`: a lone apostrophe, 'Tis, is
-no quotation), or beside a rule of gold fading down when it opens on
-no letter; a passage kept from a book is quoted without its citation,
-and any other entry is the journal's `previewText`, newlines flattened), **Prayer Streak** (the
-flame; stands directly under Today, because a record of days prayed
-belongs beside the day it records and onboarding's closing line promises
-it is being kept; the kicker says "Lit today" or "Not yet today", never
-"missed"; the streak's figure is captioned "In a row" and the week is
-drawn beneath it as a small Sunday-to-Saturday calendar, each day's
-initial over its bead and today ringed — "This week" under the figure
-with bare dots beside it read as one confused count; the whole tile
-opens the Prayer Record).
+place, not appended; the redesign added, renamed and removed none, so
+every stored layout reads as it did): **Today** (the rule as a string
+of beads on a raised card lit from its corner — the page's only card
+with a halo, since it is the working list and the picker itself; the
+focus block above it carried a "CHOOSE ANOTHER" jump down to this tile
+and no longer does, since the ledger is a scroll away on the same
+page; one bead to an act on a gold thread, gold once offered, the next
+ringed and lit on a wash of gold with its name a size larger, the rest
+an empty ring; every row shows at its trailing edge what a tap does —
+OFFERED with the seal, BEGIN › / CONTINUE › until then, every act on
+the rule being one the app watches finish (the row marked by hand went
+out with the acts that needed it); the Rosary, the Scriptural Rosary,
+the Holy Rosary, the chaplet and the consecration day check from real
+data, and the Prayer Book's three orders from their Amen
+(`PrayerBookStore.wasOffered`), reset when the prayer day turns at four
+in the morning (the consecration day by its own numbering, on the
+calendar); "3 of 5 offered" in the ruled foot; the half is a figure
+"2 / 4" over a row of tappable cells; the tile once opened on an italic
+line saying what a rule is, which the beads and their BEGIN now say),
+**Consecration** (the preparation's own painting —
+`ConsecrationPhase.heroImageName`, the one its day page opens on — run
+to the card's edges under a scrim, the day as a figure "Day 14 / 33"
+over the day's own title on its floor, CONTINUE beside it, and de
+Montfort's four preparations as a segmented road along the floor,
+tracks weighted 12/7/7/7 days; the half counts "14 / 33" over the
+preparation's name; made, "Consecrated" with its date; not begun,
+"Total Consecration" over the Annunciation), **Prayer Book**
+(`ChapelPrayerBookTile`: a leaf darkening down the card, the order for
+the hour it is set large and centred with its one line, a door to the
+book, over an outlined PRAY — outlined because the page's one filled
+gold act is the focus block's — and the day's three hours ruled off
+along the floor, each its bead (gold once offered, ringed while it is
+the hour's), its name and where it stands — "Offered", or when it is
+said, never "missed" — and each a door that prays its own order; the
+part of the day rides the title line, turning on the book's own
+schedule; the half is the hour's order over the three beads, and the
+whole tile prays it; the reader's ribbons stand on the book's first
+page, no longer here), **Reading** (the open book standing on a shelf
+with the author and the place beside it — "St. Thérèse · Chapter IV" —
+and the other books under way standing as spines beside it: tap a
+spine, or swipe the face, to bring that book forward; the tile is not
+one door, because made one, every spine opened the book in front of it
+and the rest could not be reached; "Two more open" rides the title
+line; the half stands the book over its title; empty, the shelf's
+cloths and "Tolle, lege"; no bar of the book read — the board drew
+one, and a share of a book is a judgement of the reader the shelf
+never makes), **Liturgy** (on the deep ground, the date on a calendar
+leaf beside the feast with its class and its colour — "III class ·
+white", the vestment's diamond before it — over a ledger of the
+Church's two books for the day: HOLY MASS by the first words of the
+day's Introit, in Latin, read from the missal's proper, and OFFICE by
+the hour it is now, from `CanonicalClock` — the board said the next
+hour, but the Office opens on the present one; until the propers are
+known the leaf names "The Mass of the Day" and the Mass row "Daily
+Missal"; split out of the Library so one heading is true of everything
+beneath it; a layout saved before it existed seats it beside the
+Library, at the Library's width, and on the page only if the Library
+is — `ChapelPlacement.completing`, which the Me migration shares; the
+half is the date and the feast over two doors), **Library** (bound
+like a book, a second rule inside its edge: BOOKS — True Devotion,
+Spiritual Reading, the Marian Library — and GUIDES — How to Pray, In
+Scripture, Carlo Acutis — as a ruled index of doors, each name over a
+line saying what it holds, with no glyphs, over Augustine's line; the
+half keeps the three books and makes THREE MORE a door to Explore),
+**Chant** (the Chant Library's player on cloth: the chant it last sang,
+or the antiphon of the season until it has sung one, which the title
+line says — its disc plays it, its name opens the chant's page, and
+CHANT LIBRARY (LIBRARY at half) opens the library; beneath, a staff of
+square notes lit up to where the voice has reached, with a gold
+playhead, the melody drawn for the chant from its id (the same line
+every time, a picture of chant and not its score, which is a tap away);
+the elapsed time rides the title line at full width while the chant is
+loaded, and at half the staff's playhead says it alone), **Reflections**
+(on the quote ground, the latest journal entry in the upright medium
+face under an illuminated versal, or its gilded opening mark when it
+opens on a quotation (`VersalCut.opensOnQuotation`: a lone apostrophe,
+'Tis, is no quotation), or beside a rule of gold fading down when it
+opens on no letter; a passage kept from a book is quoted without its
+citation, and any other entry is the journal's `previewText`, newlines
+flattened; when it was written rides the title line — "Today",
+"Yesterday", the weekday through the week, then the date — and OPEN
+THE JOURNAL the foot; at half the day is the foot's note), **Prayer
+Streak** (the flame as an ember in the dark; stands directly under
+Today, because a record of days prayed belongs beside the day it
+records and onboarding's closing line promises it is being kept; the
+title line says "Lit today" or "Not yet today", never "missed", and the
+ember burns quieter until the day is lit; the figure reads "12 days in
+a row" beside the ember, over the next milestone as an invitation, and
+the week is drawn beneath as a small Sunday-to-Saturday calendar, each
+day's initial over its bead and today ringed — "This week" under the
+figure with bare dots beside it once read as one confused count; the
+half centres the ember over "12 days" with the week as seven beads on
+its floor; the whole tile opens the Prayer Record, and has no foot).
 
-**One anatomy for every tile, at both spans** (the "Chapel Tiles"
-handoff, `ChapelTileFrame` in `Views/Chapel/ChapelTiles.swift`): a
-kicker on the page above the shell — 12pt glyph, Cinzel 10 tracked 2.5
-at `gold@0.75`, a trailing italic note at 12 — the same sizes at both
-spans so a pair of halves shares one title line (a half's label
-truncates before its note does; the flame's reads STREAK there, the Prayer Book's PRAYERS);
-one 16pt hairline shell at `gold@0.24`, no fill, no shadow, 14/16/6
-padding at full and 12/14/4 at half (list-style bodies sit closer to
-the top edge); the tile's body; and a foot pinned to the shell's floor
-by a Spacer — full: italic note left, gold text act right (`labelFont
-10`, tracking 2, caret 9, 44pt tall); half: the act alone, left-aligned,
-drawn 32 tall and answering to 44. The grid's rows **stretch**
-(`ChapelGridLayout` gives every tile in a row the row's height, and the
-shell fills it), so two halves always end on the same line; the row gap
-is 28, the column gap 16. Halves are left-aligned, never centred, and
-lead with one figure — Cinzel 26 with the denominator at 15 in
-`cream@0.45` ("12 days", "Day 14 / 33", "2 / 4") — or a headline at
-14–15, then one italic line. Kicker, shell and foot are one door
-(`onTap` — a tap and a hold as two gestures rather than a Button, so a
-hold that arranges the page never also opens the tile on release)
-except where the body has doors of its own — the Today rows
-and cells, the Reading tile's face and spines, the Liturgy leaves, the
-Library doors, the chant's play disc and name, the Prayer Book's order and ribbons at full width — where only the foot's act is a
-control (`onAct`). The Today tile has no foot act at all; its EDIT rides
-the kicker (`onEdit`), since a foot act there read as one more BEGIN
-row. The ✕ badge hangs
-at the shell's corner, below the kicker. The page once drew three
-registers (ruled, outlined at 16, outlined at 20) with kickers on some
-tiles and not others and centred halves beside left-aligned ones, and
-the tiles fought; none of that may come back. No filled card surfaces
-on the page — `AppColors.cardBackground` only in the tray and the
-chant's play disc (`ChantPlayDisc`). The
-default order is Today, Streak, Consecration, Prayer Book (the hour's
-order over the reader's ribbons, `ChapelPrayerBookTile`), Reading, Chant,
-Reflections, Liturgy, Library: the live sections lead, and the two
-indexes of doors stand last, the Library's colophon the right last line
-before the foot's imprint. The day strip wraps a long feast to a second
+**Each section its own object** (the "Chapel Redesign" handoff,
+`ChapelTileFrame` in `Views/Chapel/ChapelTiles.swift`): a card at a
+16pt corner cut from the section's own ground (`ChapelSurface`) — the
+rule lit on `cardElevated`, the flame's ember on `backgroundDeep`, the
+consecration's painting, the Prayer Book's leaf from `cardElevated`
+down to `backgroundDeep`, the shelf and the chant on `cardBackground`,
+the journal on `quoteBackground`, the liturgy on `backgroundDeep`, the
+library on `cardBackground` with an inset rule — and an
+`AppLine.hairline` edge at the ground's own strength (`gold@0.18`
+on the deep liturgy to `gold@0.42` on the lit rule). The tile names
+itself on its own first line, inside the card: the name in Cinzel at 17
+(15 at half) in cream, an italic note at 13.5 on the right, or the
+rule's EDIT (`onEdit`, the list's edit control where a list's is looked
+for; as a foot act it read as one more BEGIN row). Padding 18/18/6 at
+full and 16/14/4 at half; then the body; then what the tile pins to
+its floor (`floor`: the week under the flame, the hours under the
+Prayer Book, the road under the consecration's day, the liturgy's
+doors), after a Spacer; then the foot, ruled off at `gold@0.16` unless
+the body ends on a line of its own (the reading shelf) — full: an
+italic note at 13 left, the gold text act right (`labelFont 10`,
+tracking 2, caret 9, 44pt tall); half: the act alone, left-aligned. The
+grid's rows **stretch** (`ChapelGridLayout` gives every tile in a row
+the row's height, and the card fills it), so two halves always end on
+the same line and share their first; the row gap is 20 and the column
+gap 12, both 10 while arranged. The card is one door (`onTap` — a tap
+and a hold as two gestures rather than a Button, so a hold that
+arranges the page never also opens the tile on release) except where
+the body has doors of its own — the Today rows and cells, the Reading
+tile's face and spines, the Liturgy's rows, the Library's doors, the
+chant's play disc and name, the Prayer Book's order, PRAY and hours at
+full width — where only the foot's act, if any, is a control
+(`onAct`). The page before this drew one anatomy for every tile (the
+"Chapel Tiles" handoff): a kicker with a glyph on the page above a
+hairline shell with no fill, and the rule "no filled card surfaces on
+the page"; any tile sat well beside any other, and none could be told
+apart at a glance. That rule is retired for the tiles and the arrange
+rows — each section's ground is its own — and kickers above the card
+must not come back. Only the rule's card wears a halo; the chant keeps
+the Chant Library's own disc (`ChantPlayDisc`, dark with a gold rim)
+rather than the board's gold one, since the page's one filled gold act
+is the focus block's, as the Prayer Book's PRAY is outlined. Halves
+lead with a figure or a headline, left-aligned — but the streak's,
+centred under its ember as drawn. The foot of the page is ARRANGE THIS
+PAGE in an outlined capsule — the 2×2 arrange mark, not the board's
+faders, which are Settings' door — over "Or press and hold anywhere."
+and the imprint, which the board leaves off and the page keeps. The
+default order is Today, Streak, Consecration, Prayer Book, Reading,
+Chant, Reflections, Liturgy, Library: the live sections lead, and the
+two indexes of doors stand last, the Library's colophon the right last
+line before the foot. The day strip wraps a long feast to a second
 line rather than cutting it mid-word.
 
 **The rule's vocabulary** (`PrayerShortcut.isRuleEligible`): the
