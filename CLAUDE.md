@@ -2224,19 +2224,112 @@ write concurrent code here:
   recording and its score, bundled so they sound in a chapel with no
   signal: 64 chants in twelve shelves (Our Lady, the Rosary and the
   Angelus, the Blessed Sacrament, the Holy Ghost, the Sacred Heart and
-  the Holy Name, praise, the saints, the four seasons, the dead). The
-  library (`ChantLibraryView`, `.chantLibrary`) opens on the antiphon
-  of Our Lady the season sings tonight (`ChantCatalog.antiphonOfTheSeason`,
-  from `PrayerBook.antiphon(on:)`), and each row plays where it stands or
-  opens the chant's page (`ChantView`, `.chant(id:)`): the names and when
-  it is sung, a transport with the practice a chant is learned by — SLOW
-  (0.75×), REPEAT, FROM THE TOP — the score, ENLARGE for a full-screen
-  score (`ChantScoreSheet`) that a pinch or a double tap brings closer
-  about the phrase under the finger, the prayer in words and its
-  other settings as doors, and the credit. Doors: the Chapel's Chant tile,
-  Explore (Sung Prayer, and search), and **"Sing it in chant"** on any
-  Prayer Book page whose prayer has a chant (a quiet act under Learn it
-  by heart). The consecration day's transport plays the same bundled
+  the Holy Name, praise, the saints, the four seasons, the dead). Doors:
+  the Chapel's Chant tile, Explore (Sung Prayer, and search), and **"Sing
+  it in chant"** on any Prayer Book page whose prayer has a chant (a
+  quiet act under Learn it by heart).
+
+  **The library has six ways in** (the "Chant Library Redesign" boards):
+  `ChantLibraryView` (`.chantLibrary`) is a masthead — CHANT LIBRARY over
+  the section's title — over a strip of sections, the one chosen
+  remembered (`chantLibrary.section`), its glass opening a search in the
+  page's place and its bookmark the Saved section. **Today**
+  (`ChantTodaySection`): the day's four hours on the sun's arc
+  (`ChantHour`, `ChantDayArc` — the Angelus at six and noon, the Regina
+  Cæli in its place through Eastertide, the Magnificat at evening, the
+  season's antiphon at night, turning on the Prayer Book's hours),
+  tonight's antiphon under its painting with a Simple | Solemn pill
+  (`ChantSettingPill`; the catalog's words, never the board's "Ornate")
+  and the board's one gold act, the weekday's devotion
+  (`ChantWeekday`) as a row of seven, the month's (`ChantMonth`, its
+  feast named in a line, February left out for want of a chant), and
+  CONTINUE LEARNING. **Seasons** (`ChantSeasonsSection`): the year as
+  a wheel (`ChantYearWheel`, from `ChantYear`) — six seasons round the
+  rim, Christmas running on to Septuagesima and Lent beginning there,
+  Pentecost its octave; the four antiphons of Our Lady as a thread
+  within, read a day at a time from `PrayerBook.antiphon(on:)` so the
+  wheel and Night Prayers cannot disagree; today on the rim and the
+  days to the next season in the middle — then the seasons as chips, the
+  season's chants, the chant to learn before the next one comes, and the
+  feasts ahead with theirs (`ChantFeast`, the 1962 dates; Christ the
+  King the last Sunday of October). **Occasions**
+  (`ChantOccasionsSection`): Benediction, a Visit, a Sung Rosary (53
+  minutes, the Ave Maria fifty-three times), Before Bed, Before Work or
+  Study, For Those Who Have Died — an index in red numerals over the
+  chosen one's order of service, what happens between chants in red
+  (`ChantRubricText`), each chant a bead that lights as the set is sung,
+  Pause between chants, PLAY ALL and the bookmark that keeps it as a
+  set of one's own. **Types** (`ChantTypesSection`): six lettered tiles
+  (`ChantForm` — Short Chants for the antiphons, Hymns, Feast Poems for
+  the sequences, Litanies, Psalms and Canticles, Everyday Prayers; 16,
+  21, 7, 5, 3 and 12), the kind's chants with their lengths drawn as
+  rules, and "Short on time?" (`ChantLength`, a minute and seven minutes
+  the cuts). **Learn** (`ChantLearnSection`): the four steps, the
+  season's chant to learn in time, and the course (`ChantLearningPath`:
+  the Rosary's prayers, the antiphons of Our Lady, the hymns of
+  adoration, then more under "See more"), each chant showing the step
+  it stands on. **Saved** (`ChantSavedSection`): a shelf of spines
+  (`ChantSpineCloth`) — Learned, Favourites, and each set the reader
+  made — over the one chosen; a set's chants and pauses are moved and
+  removed from the handle's menu, added from `ChantPickerSheet` and
+  `ChantPauseSheet` (a note in red, silence if wanted), shared as words
+  and sung as one; then Recently played and the one setting, the Words
+  (Latin and English, either alone). The curation — every chant's kind,
+  seasons, feasts, weekdays, months, occasions with their rubrics,
+  paths and paintings — is `Data/ChantLibraryData.swift`, hand-written;
+  `ChantLibraryTests` fails if it names a chant the catalog lacks or
+  leaves one without a kind. The counts the boards print are read from
+  the data, never typed.
+
+  **Nothing on the Learn and Saved boards counts against anyone**
+  (`ChantShelfStore`, UserDefaults): a step is the learner's own to
+  take, a chant is learned when they say so, practising a learned chant
+  again never takes its mark away, and the boards show what has been
+  done — "4 learned", "1 under way" — never "not started". The board's
+  "59 not started" was left out for it.
+
+  **Search** (`ChantSearchView`, `ChantSearch`) folds case, accents and
+  the ligatures ("caeli" finds Cæli, the match underlined under the
+  word as written): titles come back one result per work, its settings a
+  pill, grouped in season now / any time / other times; Prayers finds
+  the chant that sings a prayer by the Prayer Book's name for it; Words
+  finds a line of what is sung — with its place in the recording only
+  when the chant's lines are timed.
+
+  **The chant's page is Now Playing** (`ChantView`, `.chant(id:)`): the
+  names, the score in a window (ENLARGE for `ChantScoreSheet`), the
+  line being sung with its English, the scrubber, five controls around
+  the page's gold play — repeat, back, forward, speed (1× | ¾×) — and
+  Take turns, Words (`ChantWordsSheet`) and the sleep timer
+  (`ChantSleepSheet`), "Learn this chant" at its head and Favourites and
+  Add to a Set in its ⋯; beneath the fold the prayer in words, the other
+  settings and the credit. **Practice** (`ChantPracticeView`, full
+  screen, its own ✕) learns a chant in four steps — Listen, Read along,
+  Sing along (the choir sings, then "Your turn"), On your own (you
+  first, then the choir) — with Repeat, Speed and Hide words (every
+  other word, or all, cut to its first letter), ending on the learner's
+  own "I know it by heart".
+
+  **A chant steps by the line only when its lines are timed**
+  (`Chant.lines`, `ChantLine`: Latin, a plain English line, start and end
+  in the recording, and the score part it is engraved on). Line 2 of 9,
+  back and on by the line, the line again, Take turns, the practice a
+  line at a time and a Words hit's time all stand only then; every other
+  chant steps by ten seconds (the system's ±10 glyphs), repeats whole,
+  takes its words from the Prayer Book, and is practised whole. No
+  timing is ever guessed. The lines come from
+  `Tools/ChantLines/<chant id>.json`, derived from the bundled recording
+  and checked before a file is added, which the generator folds into
+  `ChantCatalogData.swift` (below). The player meets a line's end within
+  a tenth of a second by carrying the clock forward between
+  AudioService's half-second ticks.
+
+  **What the library is singing stands at the foot of every section**
+  (`ChantMiniPlayer`): painting, chant, where it stands ("Simple · 0:21 of
+  3:05", "Benediction · 2 of 4", "Silence · 9:12 left", "Next: Tantum
+  Ergo"), its pause, and a gold hairline of progress; a tap opens the
+  chant. It is the one filled surface on the library's pages, because
+  it floats over a page that scrolls beneath it. The consecration day's transport plays the same bundled
   recording for its Veni Creator, Ave Maris Stella, Magnificat, litanies
   and Glory Be, with a SCORE door and the credit beneath it; it reads
   and drives the shared player only through its own claim, taken on a
@@ -2280,7 +2373,11 @@ write concurrent code here:
   and lines, the prayers each sings): recordings as `Resources/Chants/
   <id>.m4a` (mono HE-AAC 32 kbps — four hours of chant ship in the app,
   about 59 MB), scores as `Resources/Chants/Scores/<name>.lvscore`, and
-  `Data/ChantCatalogData.swift`. Never hand-edit them; edit the JSON and
+  `Data/ChantCatalogData.swift`, with each chant's timed lines from
+  `Tools/ChantLines/` where it has a file — checked against the
+  recording's length and the score's parts, a file that does not hold
+  together stopping the build, and folded in alone, with no network,
+  by `--lines-only`. Never hand-edit them; edit the JSON and
   rerun (ffmpeg and macOS's afconvert are needed only for a recording the
   app does not have yet: one already there is kept, its source neither
   fetched nor encoded). A change to titles or captions alone reruns with
@@ -2319,7 +2416,7 @@ write concurrent code here:
   the score back (always across, coming back to the width of the glass),
   the double tap's scaling is drawn about the point that brings the
   score to where it will rest, not the tapped one. The page's and the
-  sheet's transports are views of their own (`ChantTransport`,
+  sheet's transports are views of their own (`NowPlayingTransport`,
   `ChantScoreSheetTransport`): read in the page's body, the progress they
   show twice a second re-evaluated the page, score and all, on every
   tick. The scrubber is heard as time ("1 minute 5 seconds of 3 minutes
@@ -2328,7 +2425,14 @@ write concurrent code here:
   **`ChantPlayer`** (`Services/`) is the library's hold on the shared
   AudioService, above the views like `LibraryListeningSession`: one chant
   at a time for the tile, the library, the pages and the Lock Screen
-  (whose arrows step through the library). It holds the player by a
+  (whose arrows step through the library, or through the set being
+  sung). It sings a set (`ChantQueue`: an occasion, a reader's set, a
+  weekday's chants), keeping a set's silences and, with Pause between
+  chants, waiting for a tap before the next; a chant chosen on its own
+  puts the set down. It keeps the line clock (`lineEnd`: on, again,
+  take turns, and practice's stop and your-turn-then-stop), the sleep
+  timer (minutes, or the chant's end), and notes each chant sung for
+  Recently played. It holds the player by a
   claim (`AudioClaim`), taken at the tap, so another flow taking the
   player is never narrated as its own: the progress line and the pause
   glyph read the claim, and come to rest when it ends. The consecration
