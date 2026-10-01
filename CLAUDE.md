@@ -207,16 +207,19 @@ different place.
 
 ## App Tabs
 
-`AppTab` (in `Components/CustomTabBar.swift`) has five cases, but the bar shows
+`AppTab` (in `Components/CustomTabBar.swift`) has six cases, but the bar shows
 four — Progress is reached from the Chapel's flame tile, Settings → Devotion
 and Explore's search instead, to keep the bar from crowding the raised Pray
-button.
+button, and the Journal, which gave its place to Prayers, from the Chapel's
+Reflections tile, Explore's search, and the completion screen's Write a
+Reflection.
 
 | Tab | In the bar | Purpose |
 |-----|-----------|---------|
 | Home | Yes | Search glass → Explore, today's mysteries, mystery grid, Today's Prayer, the reading shelf, quote |
 | Consecrate | Yes | The 33-day preparation for Marian consecration |
-| Journal | Yes | Reflections, searchable, stored on device |
+| Prayers | Yes | The Prayer Book: Today, Occasions, All Prayers, and a search over them (see The Prayer Book below) |
+| Journal | No — via Chapel | Reflections, searchable, stored on device |
 | Progress | No — via Chapel | Streaks, prayer history, milestones ("Prayer Record") |
 | Chapel | Yes | My Chapel — the user's arrangeable page (Settings and About live in the home masthead) |
 
@@ -612,8 +615,10 @@ app/
 │   ├── TrueDevotion/         # Its contents page and chapter reader
 │   ├── Library/              # Spiritual Reading shelf, book page, chapter
 │   │                         # reader, contents sheet, transport
-│   ├── PrayerBook/           # The Prayer Book: title page, chapter, order
-│   │                         # page, prayer page, pray-along, learn by heart
+│   ├── PrayerBook/           # The Prayer Book: Prayers (the tab's page,
+│   │                         # + PrayersComponents, PrayerBookPaintings),
+│   │                         # chapter, order page, prayer page,
+│   │                         # pray-along, learn by heart
 │   ├── Resources/            # How to Pray (+ RosaryLessonView, GuidedRosaryView),
 │   │                         # Marian Library, In Scripture, Carlo Acutis,
 │   │                         # LibraryReadingView, the Missal and the Office
@@ -1014,8 +1019,13 @@ write concurrent code here:
 - **Progress** — streaks, history, and milestones, reached from the
   Chapel's Prayer Streak tile, Settings → Devotion, and Explore's search.
 - **Journal** — entries after a Rosary or consecration day, written
-  freely from the Journal tab, or kept from a book as a note; searchable,
-  editable, and entirely on device.
+  freely from the Journal page, or kept from a book as a note; searchable,
+  editable, and entirely on device. It has no place in the bar (Prayers
+  took it): its main door is the completion screen, which asks "What
+  stayed with you in this prayer?" over WRITE A REFLECTION (and NOT NOW,
+  RETURN HOME once the reflection has been opened), and the page itself
+  opens from the Chapel's Reflections tile (`router.switchTo(.journal)`)
+  and Explore's search, as Progress does.
 - **33-day Consecration** — feast-day selection, per-day scripture and reading,
   bilingual prayers, journal prompts, and a completion rite. The tab's day page
   (`ConsecrationDayOverviewView`) is a column of gold-hairline cards. **Your
@@ -1279,10 +1289,10 @@ write concurrent code here:
   prayer, or a prayer is still being fetched, it waits for the reader to
   come back; if anything pushes a page while it runs (a notification, a
   shortcut) it stands aside (`pause()`), still owed, and begins again
-  from its first stop when home returns. Four coach marks over the real
+  from its first stop when home returns. Five coach marks over the real
   controls, one at a time: today's Rosary (the featured card), the Pray
-  button (a tap and a hold), the Chapel tab, and Explore's glass, which
-  is also where the Prayer Book is named. Each control reports where it
+  button (a tap and a hold), the Prayers tab, the Chapel tab, and
+  Explore's glass. Each control reports where it
   stands with one appended modifier, `.firstUseTourStop(_:)` (HomeView,
   HeaderView, CustomTabBar); move a control and its stop follows it, and
   a stop scrolled off the glass keeps its card on the glass rather than
@@ -1873,43 +1883,86 @@ write concurrent code here:
   silently each morning, never carried forward, chained into a streak or
   counted against anyone.
 
-- **The Prayer Book** — the Church's common prayers, bundled, reached
-  from home (Today's Prayer's hour row), Explore (its own section, and
-  search finds prayers by name, Latin name or words), the Chapel's
-  Prayer Book tile, the Pray tray (the Angelus, offered once) and every
-  existing door to a prayer (`.devotionPrayer(id:)` now opens
-  `BookPrayerView`). `Models/PrayerBook.swift` is the model: twelve
-  **chapters** (the First Prayers, Our Lady — twenty prayers — Our Lord,
-  the Blessed Sacrament, the Holy Ghost, Angels and Saints, Through the
-  Day, Penance, the Faithful Departed, the Church, the Litanies, Short
-  Prayers), and eleven **orders of prayer** said together — Morning
-  Prayers, the Angelus, Night Prayers, At Table, Before Mass, After
-  Communion, Before Confession, After Confession, a Visit to the Blessed
-  Sacrament, For the Holy Souls, In Time of Trouble. The texts are
-  `Data/PrayerBook/*.swift` (`PrayerBookTexts`), in `PrayerText`'s
-  grammar, English always and Latin only where the Church prays in
-  Latin, paired line for line; the Rosary's and the consecration's
-  prayers are joined in by id (`BookPrayer.bundled`), never copied. Hymn
-  translations are plain literal renderings, not Caswall or Hopkins.
+- **The Prayer Book** — the Church's common prayers, bundled, with a
+  tab of its own, **Prayers**, in the Journal's old place in the bar (the
+  "Prayer Book Rethink" design, its Combined boards). Every other door
+  turns to that tab rather than pushing a second copy of the book:
+  home's hour row, Explore's section and search (which finds prayers by
+  name, Latin name or words), the Chapel's Prayer Book tile, a prayer's
+  order page and What's New all `push(.prayerBook)`, which
+  `AppRouter.push` answers with `switchTo(.prayers)`. The Pray tray (the
+  Angelus, offered once) and every existing door to a prayer
+  (`.devotionPrayer(id:)` opens `BookPrayerView`) are unchanged.
+  `Models/PrayerBook.swift` is the model: twelve **chapters**, named in
+  plain words (Basic Prayers, Mary — twenty prayers — Jesus, the
+  Eucharist, the Holy Spirit, Angels and Saints, Through the Day,
+  Confession, For the Dead, the Church, Litanies, Short Prayers), each
+  keeping its numeral and Latin title for its own page, a `topic` for
+  search ("Prayers to Mary") and `searchWords` that include the names it
+  once printed (Our Lady, the Holy Ghost, Penance, the Faithful
+  Departed), so a reader who knew them still finds it; and eleven
+  **orders of prayer** said together — Morning Prayers, the Angelus,
+  Night Prayers, At Table, Before Mass, After Communion, Before
+  Confession, After Confession, Visiting Jesus in Church (the visit to
+  the Blessed Sacrament), For the Holy Souls, In Time of Trouble. The
+  texts are `Data/PrayerBook/*.swift` (`PrayerBookTexts`), in
+  `PrayerText`'s grammar, English always and Latin only where the Church
+  prays in Latin, paired line for line; the Rosary's and the
+  consecration's prayers are joined in by id (`BookPrayer.bundled`),
+  never copied. Hymn translations are plain literal renderings, not
+  Caswall or Hopkins.
 
-  **The book opens on the hour** (`PrayerBook.dayOrder(at:)`), lit, with
-  the page's one gold act, over the day's three hours on one strand. Its
-  search field heads the contents, a long page down, so
-  the bar carries a search glass that scrolls there and focuses it —
-  finding one prayer by name is the book's commonest errand. The book's
-  hour turns at four, eleven, three and eight (`PrayerBook.nextTurn`),
-  none of them an hour of the Office, so the surfaces that name it
-  elsewhere — home's hour row, the Chapel's Prayer Book tile — redraw on
-  `PrayerBookHourSchedule` rather than on `CanonicalClock`, which slept
-  through them and kept home on the Angelus until midnight. A chapter's
-  foot turns to the next chapter in place, as a prayer's page steps
-  along its chapter; it once popped and pushed a route in one tick, and
-  the next chapter opened scrolled to wherever the last was left. The
-  seasons are computed: the Angelus is the Regina Cæli from Easter to the
-  Saturday after Pentecost, and Night Prayers close on the Marian
-  antiphon the season sings (`PrayerBook.antiphon(on:)` — Alma
-  Redemptoris, Ave Regina Cælorum, Regina Cæli, Salve Regina), which the
-  Our Lady chapter marks OF THE SEASON.
+  **Prayers** (`PrayerBookView(isTabRoot:)`, the tab's root; pushed it
+  draws a Back, but nothing pushes it now) is a plain title, the search
+  field at the head of the page — finding one prayer by name is the
+  book's commonest errand, and the field once stood at the foot of a
+  long page behind a toolbar glass that scrolled there — and three parts
+  chosen on a bar beneath it (`PrayersSection`: TODAY · OCCASIONS · ALL
+  PRAYERS), which take turns in one slot with the search's results.
+  **Today** opens on the hour (`PrayerBook.dayOrder(at:)`): the Pray Now
+  card, the order's painting (`PrayerBookPainting`) dissolving under its
+  name and one italic line, a strip of MORNING · NOON · NIGHT at its
+  foot (`PrayerHourStations`; the Angelus is EVENING from three, when it
+  is the six o'clock bell that is coming), each saying where it stands —
+  Done, Now, or when it is said (`PrayerBook.standing`), never "missed"
+  — and each a way to show that hour above, and the page's one gold act,
+  PRAY THE ANGELUS (PRAY IT AGAIN once offered). Then Prayers to Mary:
+  the antiphon the season sings over the mystery it sings of (THIS
+  SEASON), her three best-known prayers (`PrayerBook.bestKnownMarianIDs`)
+  as ruled rows, and ALL 20 PRAYERS TO MARY; then Saved, the prayers kept
+  with a ribbon as small outlined cards the ribbon hangs from (a hold
+  removes one). **Occasions** is where the reader is
+  (`PrayerOccasionPlace`: At Mass, Confession, At Home, In Need, the last
+  one chosen kept in `prayers.occasionPlace`), each place's orders as
+  ruled rows with their glyph in a small outlined frame. **All Prayers**
+  is the chapters by topic with their counts. **Searching**, the parts
+  give way to "7 PRAYERS MATCH", a card for a topic the words name
+  (`PrayerBook.topics(matching:)`: every word searched must begin a word
+  of the topic's names, the small words — "the", "prayers", "to" —
+  counting for nothing, so "mary" finds Prayers to Mary and "hail mary"
+  only the prayer), and the prayers found, each with its topic ("Mary ·
+  this season" for the season's antiphon). Morning and Night Prayers
+  have no mystery of their own: their cards name paintings
+  (`prayerbook_morning`, `prayerbook_night`) that are not yet in the
+  catalog, and until they are hang the Presentation and Gethsemane
+  (`PrayerBookPainting.resolvedAsset`). Saved's cards and every surface
+  on the page are outlined, never filled, where the design drew them
+  filled; the ribbon is the prayer page's red silk, where the design
+  drew it gold.
+
+  The book's hour turns at four, eleven, three and eight
+  (`PrayerBook.nextTurn`), none of them an hour of the Office, so the
+  surfaces that name it — Prayers itself, home's hour row, the Chapel's
+  Prayer Book tile — redraw on `PrayerBookHourSchedule` rather than on
+  `CanonicalClock`, which slept through them and kept home on the
+  Angelus until midnight. A chapter's foot turns to the next chapter in
+  place, as a prayer's page steps along its chapter; it once popped and
+  pushed a route in one tick, and the next chapter opened scrolled to
+  wherever the last was left. The seasons are computed: the Angelus is
+  the Regina Cæli from Easter to the Saturday after Pentecost, and Night
+  Prayers close on the Marian antiphon the season sings
+  (`PrayerBook.antiphon(on:)` — Alma Redemptoris, Ave Regina Cælorum,
+  Regina Cæli, Salve Regina), which the Mary chapter marks OF THE SEASON.
 
   **Praying** is `PrayAlongView` (`.prayAlong(PrayAlongLaunch)`, a
   player: bar hidden, its own ×): one prayer at a time, a strand of beads
@@ -1942,7 +1995,8 @@ write concurrent code here:
   its own.
   Nothing is carried forward. **Keeping**
   is a silk ribbon (`RibbonToggle`, `PrayerBookStore.ribbons`) — the
-  kept prayers stand on the book's first page and the Chapel tile.
+  kept prayers stand under Saved on Prayers' Today and on the Chapel
+  tile.
   **Learning** is `LearnByHeartSheet`: four steps (read, some hidden,
   first letters, by heart), in English or Latin, a hidden word shown by a
   touch, and at the end the reader's own BY HEART mark — never scored.
@@ -2276,7 +2330,8 @@ appears:
   and the Office together, wears it too); the Office `ph-clock`; the
   Marian Library `ch-lily`; In Scripture `lv-breviary` (the Scriptural
   Rosary keeps `ch-bible`); the Prayer Book `ch-praying-hands`, the one
-  praying-hands glyph (it also marks a prayer's door and Pray aloud);
+  praying-hands glyph (it also marks a prayer's door and Pray aloud, and
+  is the Prayers tab's, lit in gold alone since no fill weight is drawn);
   the Consecration `ch-consecration` (the Marian monogram, a cross over
   an M; the crown is True Devotion's alone).
 - **The mysteries** (`MysteryCategory.iconName`) — Joyful `lv-star`,
@@ -2291,11 +2346,11 @@ appears:
   Reminders' notification bell and the Altar Bell sound), Night Prayers
   `lv-lamp` (Vespers was the *lucernarium*, the lighting of the lamps).
   The moon is left to the reader's sleep timer.
-- **The Prayer Book's chapters** — Our Lord `ch-chi-rho`, the Holy
-  Ghost `ch-dove`, Angels and Saints `lv-saint` (every saint: the Marian
+- **The Prayer Book's chapters** — Jesus `ch-chi-rho`, the Holy
+  Spirit `ch-dove`, Angels and Saints `lv-saint` (every saint: the Marian
   Saints shelf, a saint's reading, the Saints kind of meditation),
-  Through the Day `lv-hourglass`, Penance `ch-keys` (the keys of
-  absolution; the confession orders and Carlo's confession too), the
+  Through the Day `lv-hourglass`, Confession `ch-keys` (the keys of
+  absolution; the confession orders and Carlo's confession too),
   Litanies `lv-procession-cross` (they were sung in procession), Short
   Prayers `lv-dart` (*iaculatoriæ*, prayers darted out).
 - **The Marian Library's shelves**, whose glyph the doors to their
@@ -2323,7 +2378,7 @@ so the schedule and Sunday's season decide it, as they decide the row's
 subtitle) — the banner on a Wednesday, the star on a Monday. The row
 names those mysteries and opens their page. It wore `ph-book-open`, as
 the "Rosary ways to pray" handoff specified, which Spiritual Reading's
-door and the Journal tab also wear; a new fixed glyph, a triptych, was
+door and the Journal also wear; a new fixed glyph, a triptych, was
 drawn and passed over (`Tools/IconAudit/candidates/`). The Rosary's two
 choices wear `ph-speaker-high` (Audio) and `lv-rosary` (Counting), from
 `RosaryChoice`.
