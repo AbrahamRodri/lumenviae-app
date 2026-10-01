@@ -135,17 +135,15 @@ struct MyChapelView: View {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 30) {
                         // The page's head and the arranging head share one
-                        // slot and crossfade over each other: while the
-                        // page is arranged it is being rearranged, not
-                        // read, and the day, the focus and its gold act
-                        // stand down for the list of sections
-                        //
-                        // The arranging head is held above the scroll, so
-                        // DONE cannot scroll away while the tab bar is
-                        // gone; here it only keeps its room. A branch
-                        // leaves at once rather than fading, so the slot
-                        // never lays out the page's head and the
-                        // arranging head together
+                        // slot: while the page is arranged it is being
+                        // rearranged, not read, and the day, the focus and
+                        // its gold act stand down for the list of sections.
+                        // The arranging head itself is held above the
+                        // scroll, so DONE cannot scroll away while the tab
+                        // bar is gone; here it only keeps its room. The
+                        // leaving head goes at once and the arriving one
+                        // fades in, so the slot never lays out both
+                        // together
                         ZStack(alignment: .top) {
                             if arranging {
                                 arrangeHeader
