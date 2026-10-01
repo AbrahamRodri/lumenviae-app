@@ -1,0 +1,127 @@
+{
+  "id": "salve_regina_simple",
+  "part": null,
+  "method": "breaths by loudness (under -18 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 15 of 19 breaks heard",
+  "lines": [
+    {
+      "latin": "Salve, Regína, Mater misericórdiæ:",
+      "english": "Hail, holy Queen, Mother of mercy,",
+      "start": 0.41,
+      "end": 11.83
+    },
+    {
+      "latin": "Vita, dulcédo, et spes nostra, salve.",
+      "english": "our life, our sweetness and our hope.",
+      "start": 11.83,
+      "end": 22.58
+    },
+    {
+      "latin": "Ad te clamámus, éxsules, fílii Hevæ.",
+      "english": "To thee do we cry, poor banished children of Eve.",
+      "start": 22.95,
+      "end": 33.33
+    },
+    {
+      "latin": "Ad te suspirámus, geméntes et flentes",
+      "english": "To thee do we send up our sighs, mourning and weeping",
+      "start": 33.33,
+      "end": 43.37
+    },
+    {
+      "latin": "in hac lacrimárum valle.",
+      "english": "in this valley of tears.",
+      "start": 43.37,
+      "end": 50.04
+    },
+    {
+      "latin": "Eia ergo, Advocáta nostra, illos tuos misericórdes óculos",
+      "english": "Turn, then, most gracious advocate, thine eyes of mercy",
+      "start": 50.33,
+      "end": 68.49
+    },
+    {
+      "latin": "ad nos convérte.",
+      "english": "toward us,",
+      "start": 68.49,
+      "end": 73.9
+    },
+    {
+      "latin": "Et Jesum, benedíctum fructum ventris tui,",
+      "english": "and Jesus, the blessed fruit of thy womb,",
+      "start": 74.49,
+      "end": 85.4
+    },
+    {
+      "latin": "nobis post hoc exsílium osténde.",
+      "english": "after this, our exile, show unto us.",
+      "start": 85.63,
+      "end": 96.98
+    },
+    {
+      "latin": "O clemens:",
+      "english": "O clement,",
+      "start": 97.67,
+      "end": 104.74
+    },
+    {
+      "latin": "O pia:",
+      "english": "O loving,",
+      "start": 104.99,
+      "end": 112.62
+    },
+    {
+      "latin": "O dulcis",
+      "english": "O sweet",
+      "start": 112.67,
+      "end": 121.89
+    },
+    {
+      "latin": "Virgo María.",
+      "english": "Virgin Mary.",
+      "start": 121.89,
+      "end": 128.3
+    },
+    {
+      "latin": "Ora pro nobis, sancta Dei Génitrix.",
+      "english": "Pray for us, O holy Mother of God.",
+      "start": 130.73,
+      "end": 135.41
+    },
+    {
+      "latin": "Ut digni efficiámur promissiónibus Christi.",
+      "english": "That we may be made worthy of the promises of Christ.",
+      "start": 135.41,
+      "end": 141.5
+    },
+    {
+      "latin": "Orémus.",
+      "english": "Let us pray.",
+      "start": 141.63,
+      "end": 144.79
+    },
+    {
+      "latin": "Omnípotens sempitérne Deus, qui gloriósæ Vírginis Matris Maríæ corpus et ánimam, ut dignum Fílii tui habitáculum éffici mererétur, Spíritu Sancto cooperánte præparásti:",
+      "english": "Almighty, everlasting God, who by the co-operation of the Holy Ghost didst prepare the body and soul of the glorious Virgin Mother Mary to become a worthy dwelling for Thy Son:",
+      "start": 144.79,
+      "end": 158.77
+    },
+    {
+      "latin": "da, ut cujus commemoratióne lætámur, ejus pia intercessióne ab instántibus malis et a morte perpétua liberémur.",
+      "english": "grant that we who rejoice in her commemoration may by her loving intercession be delivered from present evils and from everlasting death.",
+      "start": 158.77,
+      "end": 171.85
+    },
+    {
+      "latin": "Per eumdem Christum Dóminum nostrum.",
+      "english": "Through the same Christ our Lord.",
+      "start": 171.85,
+      "end": 177.38
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 177.45,
+      "end": 182.0
+    }
+  ]
+}

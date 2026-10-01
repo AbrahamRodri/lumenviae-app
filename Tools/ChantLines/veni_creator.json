@@ -1,0 +1,217 @@
+{
+  "id": "veni_creator",
+  "part": null,
+  "method": "breaths by loudness (under -16 dB for 0.2 s, phrases under 1.5 s merged) + text alignment; Whisper: 25 of 34 breaks heard",
+  "lines": [
+    {
+      "latin": "Veni Creátor Spíritus,",
+      "english": "Come, Holy Ghost, Creator blest,",
+      "start": 0.35,
+      "end": 5.95
+    },
+    {
+      "latin": "Mentes tuórum vísita: Imple supérna grátia",
+      "english": "and in our souls take up Thy rest; come with Thy grace and heavenly aid",
+      "start": 5.95,
+      "end": 17.75
+    },
+    {
+      "latin": "Quæ tu creásti péctora.",
+      "english": "to fill the hearts which Thou hast made.",
+      "start": 17.8,
+      "end": 24.94
+    },
+    {
+      "latin": "Qui díceris Paráclitus,",
+      "english": "O Comforter, to Thee we cry,",
+      "start": 25.97,
+      "end": 31.57
+    },
+    {
+      "latin": "Altíssimi donum Dei,",
+      "english": "Thou heavenly gift of God most high,",
+      "start": 31.57,
+      "end": 37.15
+    },
+    {
+      "latin": "Fons vivus, ignis, cáritas,",
+      "english": "Thou fount of life and fire of love,",
+      "start": 37.2,
+      "end": 43.61
+    },
+    {
+      "latin": "Et spiritális únctio.",
+      "english": "and sweet anointing from above.",
+      "start": 43.61,
+      "end": 51.12
+    },
+    {
+      "latin": "Tu septifórmis múnere,",
+      "english": "Thou in Thy sevenfold gifts art known;",
+      "start": 51.99,
+      "end": 57.83
+    },
+    {
+      "latin": "Dígitus patérnæ déxteræ, Tu rite promíssum Patris,",
+      "english": "Thou, finger of God's hand we own; Thou, promise of the Father, Thou",
+      "start": 57.83,
+      "end": 70.85
+    },
+    {
+      "latin": "Sermóne ditans gúttura.",
+      "english": "Who dost the tongue with power endow.",
+      "start": 70.85,
+      "end": 78.26
+    },
+    {
+      "latin": "Accénde lumen sénsibus,",
+      "english": "Kindle our senses from above,",
+      "start": 79.37,
+      "end": 85.63
+    },
+    {
+      "latin": "Infúnde amórem córdibus,",
+      "english": "and make our hearts o'erflow with love;",
+      "start": 85.63,
+      "end": 91.77
+    },
+    {
+      "latin": "Infírma nostri córporis",
+      "english": "with patience firm and virtue high",
+      "start": 91.77,
+      "end": 98.65
+    },
+    {
+      "latin": "Virtúte firmans pérpeti.",
+      "english": "the weakness of our flesh supply.",
+      "start": 98.65,
+      "end": 106.14
+    },
+    {
+      "latin": "Hostem repéllas lóngius,",
+      "english": "Far from us drive the foe we dread,",
+      "start": 107.09,
+      "end": 113.07
+    },
+    {
+      "latin": "Pacémque dones prótinus:",
+      "english": "and grant us Thy true peace instead;",
+      "start": 113.07,
+      "end": 119.27
+    },
+    {
+      "latin": "Ductóre sic te prǽvio,",
+      "english": "so shall we not, with Thee for guide,",
+      "start": 119.27,
+      "end": 125.93
+    },
+    {
+      "latin": "Vitémus omne nóxium.",
+      "english": "turn from the path of life aside.",
+      "start": 125.93,
+      "end": 132.98
+    },
+    {
+      "latin": "Per te sciámus da Patrem,",
+      "english": "Oh, may Thy grace on us bestow",
+      "start": 134.31,
+      "end": 140.47
+    },
+    {
+      "latin": "Noscámus atque Fílium,",
+      "english": "the Father and the Son to know;",
+      "start": 140.47,
+      "end": 146.59
+    },
+    {
+      "latin": "Teque utriúsque Spíritum",
+      "english": "and Thee, through endless times confessed,",
+      "start": 146.59,
+      "end": 153.39
+    },
+    {
+      "latin": "Credámus omni témpore.",
+      "english": "of both the eternal Spirit blest.",
+      "start": 153.39,
+      "end": 160.84
+    },
+    {
+      "latin": "Deo Patri sit glória,",
+      "english": "Now to the Father and the Son,",
+      "start": 161.83,
+      "end": 168.21
+    },
+    {
+      "latin": "Et Fílio, qui a mórtuis",
+      "english": "Who rose from death, be glory given,",
+      "start": 168.25,
+      "end": 174.75
+    },
+    {
+      "latin": "Surréxit, ac Paráclito,",
+      "english": "with Thee, O holy Comforter,",
+      "start": 174.75,
+      "end": 181.55
+    },
+    {
+      "latin": "In sæculórum sǽcula.",
+      "english": "henceforth by all in earth and heaven.",
+      "start": 181.55,
+      "end": 189.34
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 190.35,
+      "end": 199.1
+    },
+    {
+      "latin": "Emítte Spíritum tuum et creabúntur.",
+      "english": "Send forth Thy Spirit, and they shall be created.",
+      "start": 201.49,
+      "end": 207.21
+    },
+    {
+      "latin": "Et renovábis fáciem terræ.",
+      "english": "And Thou shalt renew the face of the earth.",
+      "start": 207.21,
+      "end": 212.19
+    },
+    {
+      "latin": "Orémus.",
+      "english": "Let us pray.",
+      "start": 212.19,
+      "end": 215.15
+    },
+    {
+      "latin": "Deus, qui corda fidélium Sancti Spíritus illustratióne docuísti:",
+      "english": "O God, who didst instruct the hearts of the faithful by the light of the Holy Ghost,",
+      "start": 215.15,
+      "end": 222.91
+    },
+    {
+      "latin": "da nobis in eódem Spíritu recta sápere,",
+      "english": "grant us in the same Spirit to be truly wise,",
+      "start": 222.91,
+      "end": 228.49
+    },
+    {
+      "latin": "et de ejus semper consolatióne gaudére.",
+      "english": "and ever to rejoice in His consolation.",
+      "start": 228.53,
+      "end": 235.27
+    },
+    {
+      "latin": "Per Christum Dóminum nostrum.",
+      "english": "Through Christ our Lord.",
+      "start": 235.27,
+      "end": 241.45
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 241.45,
+      "end": 246.02
+    }
+  ]
+}

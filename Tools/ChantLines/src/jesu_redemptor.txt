@@ -1,0 +1,36 @@
+# Jesu Redemptor omnium, the Vespers hymn of Christmas: all seven stanzas,
+# a breath at every line, and the Amen. Latin from the score; English a
+# plain literal rendering (no app prayer).
+noise -16
+gap 0.3
+merge 1.5
+
+Jesu Redémptor ómnium, | Jesus, Redeemer of all,
+Quem lucis ante oríginem, | Whom, before the beginning of light,
+Parem patérnæ glóriæ, | equal to the Father's glory,
+Pater suprémus édidit. | the Father most high begot.
+Tu lumen et splendor Patris, | Thou light and splendour of the Father,
+Tu spes perénnis ómnium: | Thou everlasting hope of all,
+Inténde quas fundunt preces | give ear to the prayers poured forth
+Tui per orbem sérvuli. | by Thy servants throughout the world.
+Meménto, rerum Cónditor, | Remember, O Maker of all things,
+Nostri quod olim córporis, | that once, of our body,
+Sacráta ab alvo Vírginis | from the hallowed womb of the Virgin,
+Nascéndo, formam súmpseris. | being born, Thou didst take the form.
+Testátur hoc præsens dies, | This present day bears witness,
+Currens per anni círculum, | running its course through the circle of the year,
+Quod solus e sinu Patris | that Thou alone, from the bosom of the Father,
+Mundi salus advéneris. | didst come, the salvation of the world.
+Hunc astra, tellus, ǽquora, | Him the stars, the earth, the seas,
+Hunc omne quod cælo subest, | Him all that is beneath the heavens,
+Salútis auctórem novæ | the Author of a new salvation,
+Novo salútat cántico. | greet with a new song.
+Et nos, beáta quos sacri | And we, whom the blessed stream
+Rigávit unda sánguinis, | of sacred Blood hath watered,
+Natális ob diem tui, | for the day of Thy birth
+Hymni tribútum sólvimus. | pay the tribute of a hymn.
+Jesu, tibi sit glória, | Jesus, to Thee be glory,
+Qui natus es de Vírgine, | Who wast born of the Virgin,
+Cum Patre et almo Spíritu, | with the Father and the loving Spirit,
+In sempitérna sǽcula. | unto everlasting ages.
+Amen. | Amen.

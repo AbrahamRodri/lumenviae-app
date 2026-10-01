@@ -1,0 +1,53 @@
+# Parce Domine: the refrain, sung twice at the start and again after each
+# of the five verses. Latin from the score; English plain and literal. The
+# cantor breathes at the refrain's bars and at the dotted note of aeternum,
+# and at the verses' bars, a few of which he sings through (those pieces
+# stand together as one line).
+noise -14
+gap 0.3
+merge 1.5
+
+Parce Dómine, | Spare, O Lord,
+parce pópulo tuo: | spare Thy people;
+ne in ætérnum | be not for ever
+irascáris nobis. | angry with us.
+Parce Dómine, | Spare, O Lord,
+parce pópulo tuo: | spare Thy people;
+ne in ætérnum | be not for ever
+irascáris nobis. | angry with us.
+Flectámus iram víndicem, Plorémus ante Júdicem; | Let us turn aside the avenging wrath, let us weep before the Judge;
+Clamémus ore súpplici, | let us cry out with suppliant voice,
+Dicámus omnes cérnui: | let us all say, bowed low:
+Parce Dómine, | Spare, O Lord,
+parce pópulo tuo: | spare Thy people;
+ne in ætérnum irascáris nobis. | be not for ever angry with us.
+Nostris malis offéndimus | By our evil deeds we have offended
+Tuam Deus cleméntiam Effúnde nobis désuper | Thy clemency, O God; pour forth upon us from on high,
+Remíssor indulgéntiam. | O Forgiver, Thy pardon.
+Parce Dómine, | Spare, O Lord,
+parce pópulo tuo: | spare Thy people;
+ne in ætérnum | be not for ever
+irascáris nobis. | angry with us.
+Dans tempus acceptábile, | Thou who givest the acceptable time,
+Da lacrimárum rívulis | grant that with streams of tears
+Laváre cordis víctimam, | we may wash the victim of our heart,
+Quam læta adúrat cáritas. | which glad charity may set aflame.
+Parce Dómine, | Spare, O Lord,
+parce pópulo tuo: | spare Thy people;
+ne in ætérnum | be not for ever
+irascáris nobis. | angry with us.
+Audi, benígne Cónditor, | Hear, O kind Creator,
+Nostras preces cum flétibus | our prayers with weeping
+In hoc sacro jejúnio | in this holy fast
+Fusas quadragenário. | of forty days poured forth.
+Parce Dómine, | Spare, O Lord,
+parce pópulo tuo: | spare Thy people;
+ne in ætérnum | be not for ever
+irascáris nobis. | angry with us.
+Scrutátor alme córdium, | O gracious Searcher of hearts,
+Infírma tu scis vírium; | Thou knowest the weakness of our strength;
+Ad te revérsis éxhibe Remissiónis grátiam. | show to those who return to Thee the grace of forgiveness.
+Parce Dómine, | Spare, O Lord,
+parce pópulo tuo: | spare Thy people;
+ne in ætérnum | be not for ever
+irascáris nobis. | angry with us.

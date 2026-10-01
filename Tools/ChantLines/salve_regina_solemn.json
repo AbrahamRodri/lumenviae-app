@@ -1,0 +1,151 @@
+{
+  "id": "salve_regina_solemn",
+  "part": null,
+  "method": "breaths by loudness (under -20 dB for 0.2 s, phrases under 1.5 s merged) + text alignment; Whisper: 10 of 23 breaks heard",
+  "lines": [
+    {
+      "latin": "Salve, Regína,",
+      "english": "Hail, holy Queen,",
+      "start": 0.09,
+      "end": 12.21
+    },
+    {
+      "latin": "mater misericórdiæ:",
+      "english": "Mother of mercy,",
+      "start": 12.21,
+      "end": 19.68
+    },
+    {
+      "latin": "Vita, dulcédo,",
+      "english": "our life, our sweetness",
+      "start": 20.43,
+      "end": 32.27
+    },
+    {
+      "latin": "et spes nostra, salve.",
+      "english": "and our hope.",
+      "start": 32.27,
+      "end": 40.74
+    },
+    {
+      "latin": "Ad te clamámus, éxsules,",
+      "english": "To thee do we cry, poor banished",
+      "start": 41.13,
+      "end": 47.93
+    },
+    {
+      "latin": "fílii Hevæ.",
+      "english": "children of Eve.",
+      "start": 47.93,
+      "end": 58.16
+    },
+    {
+      "latin": "Ad te suspirámus, geméntes et flentes",
+      "english": "To thee do we send up our sighs, mourning and weeping",
+      "start": 58.31,
+      "end": 72.66
+    },
+    {
+      "latin": "in hac lacrimárum valle.",
+      "english": "in this valley of tears.",
+      "start": 72.77,
+      "end": 82.36
+    },
+    {
+      "latin": "Eia ergo, Advocáta nostra, illos tuos misericórdes óculos",
+      "english": "Turn, then, most gracious advocate, thine eyes of mercy",
+      "start": 82.55,
+      "end": 107.13
+    },
+    {
+      "latin": "ad nos convérte.",
+      "english": "toward us,",
+      "start": 107.13,
+      "end": 114.08
+    },
+    {
+      "latin": "Et Jesum, benedíctum fructum ventris tui,",
+      "english": "and Jesus, the blessed fruit of thy womb,",
+      "start": 114.71,
+      "end": 129.46
+    },
+    {
+      "latin": "nobis post hoc exsílium",
+      "english": "after this, our exile,",
+      "start": 130.05,
+      "end": 140.84
+    },
+    {
+      "latin": "osténde.",
+      "english": "show unto us.",
+      "start": 141.01,
+      "end": 146.08
+    },
+    {
+      "latin": "O clemens:",
+      "english": "O clement,",
+      "start": 146.91,
+      "end": 155.83
+    },
+    {
+      "latin": "O pia:",
+      "english": "O loving,",
+      "start": 155.83,
+      "end": 166.66
+    },
+    {
+      "latin": "O dulcis",
+      "english": "O sweet",
+      "start": 166.67,
+      "end": 180.3
+    },
+    {
+      "latin": "Virgo María.",
+      "english": "Virgin Mary.",
+      "start": 180.39,
+      "end": 189.7
+    },
+    {
+      "latin": "Ora pro nobis, sancta Dei Génitrix.",
+      "english": "Pray for us, O holy Mother of God.",
+      "start": 191.95,
+      "end": 196.75
+    },
+    {
+      "latin": "Ut digni efficiámur promissiónibus Christi.",
+      "english": "That we may be made worthy of the promises of Christ.",
+      "start": 196.75,
+      "end": 202.58
+    },
+    {
+      "latin": "Orémus.",
+      "english": "Let us pray.",
+      "start": 202.75,
+      "end": 206.09
+    },
+    {
+      "latin": "Omnípotens sempitérne Deus, qui gloriósæ Vírginis Matris Maríæ corpus et ánimam, ut dignum Fílii tui habitáculum éffici mererétur, Spíritu Sancto cooperánte præparásti:",
+      "english": "Almighty, everlasting God, who by the co-operation of the Holy Ghost didst prepare the body and soul of the glorious Virgin Mother Mary to become a worthy dwelling for Thy Son:",
+      "start": 206.09,
+      "end": 220.68
+    },
+    {
+      "latin": "da, ut cujus commemoratióne lætámur, ejus pia intercessióne ab instántibus malis et a morte perpétua liberémur.",
+      "english": "grant that we who rejoice in her commemoration may by her loving intercession be delivered from present evils and from everlasting death.",
+      "start": 220.79,
+      "end": 235.03
+    },
+    {
+      "latin": "Per eumdem Christum Dóminum nostrum.",
+      "english": "Through the same Christ our Lord.",
+      "start": 235.03,
+      "end": 241.02
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 241.33,
+      "end": 246.24
+    }
+  ]
+}

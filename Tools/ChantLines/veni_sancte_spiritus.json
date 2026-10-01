@@ -1,0 +1,157 @@
+{
+  "id": "veni_sancte_spiritus",
+  "part": null,
+  "method": "breaths by loudness (under -16 dB for 0.2 s, phrases under 1.5 s merged) + text alignment; Whisper: 22 of 24 breaks heard",
+  "lines": [
+    {
+      "latin": "Veni Sancte Spíritus,",
+      "english": "Come, Holy Spirit,",
+      "start": 0.41,
+      "end": 4.24
+    },
+    {
+      "latin": "Et emítte cǽlitus",
+      "english": "and send forth from heaven",
+      "start": 4.55,
+      "end": 9.13
+    },
+    {
+      "latin": "Lucis tuæ rádium.",
+      "english": "the ray of Thy light.",
+      "start": 9.13,
+      "end": 13.68
+    },
+    {
+      "latin": "Veni pater páuperum,",
+      "english": "Come, Father of the poor,",
+      "start": 14.59,
+      "end": 18.73
+    },
+    {
+      "latin": "Veni dator múnerum,",
+      "english": "come, Giver of gifts,",
+      "start": 18.73,
+      "end": 23.43
+    },
+    {
+      "latin": "Veni lumen córdium.",
+      "english": "come, Light of hearts.",
+      "start": 23.43,
+      "end": 28.06
+    },
+    {
+      "latin": "Consolátor óptime, Dulcis hospes ánimæ,",
+      "english": "Best of comforters, sweet Guest of the soul,",
+      "start": 29.01,
+      "end": 38.09
+    },
+    {
+      "latin": "Dulce refrigérium.",
+      "english": "sweet refreshment.",
+      "start": 38.09,
+      "end": 43.16
+    },
+    {
+      "latin": "In labóre réquies, In æstu tempéries,",
+      "english": "In labour, rest; in heat, coolness;",
+      "start": 44.25,
+      "end": 53.25
+    },
+    {
+      "latin": "In fletu solátium.",
+      "english": "in weeping, solace.",
+      "start": 53.25,
+      "end": 58.9
+    },
+    {
+      "latin": "O lux beatíssima, Reple cordis íntima",
+      "english": "O most blessed Light, fill the inmost heart",
+      "start": 59.59,
+      "end": 67.99
+    },
+    {
+      "latin": "Tuórum fidélium.",
+      "english": "of Thy faithful.",
+      "start": 68.03,
+      "end": 73.16
+    },
+    {
+      "latin": "Sine tuo númine,",
+      "english": "Without Thy divine power",
+      "start": 74.29,
+      "end": 78.85
+    },
+    {
+      "latin": "Nihil est in hómine,",
+      "english": "there is nothing in man,",
+      "start": 78.85,
+      "end": 82.67
+    },
+    {
+      "latin": "Nihil est innóxium.",
+      "english": "nothing that is without harm.",
+      "start": 82.67,
+      "end": 87.86
+    },
+    {
+      "latin": "Lava quod est sórdidum,",
+      "english": "Wash what is soiled,",
+      "start": 89.07,
+      "end": 93.75
+    },
+    {
+      "latin": "Riga quod est áridum,",
+      "english": "water what is dry,",
+      "start": 93.76,
+      "end": 98.69
+    },
+    {
+      "latin": "Sana quod est sáucium.",
+      "english": "heal what is wounded.",
+      "start": 98.69,
+      "end": 103.39
+    },
+    {
+      "latin": "Flecte quod est rígidum, Fove quod est frígidum,",
+      "english": "Bend what is stiff, warm what is cold,",
+      "start": 103.39,
+      "end": 112.76
+    },
+    {
+      "latin": "Rege quod est dévium.",
+      "english": "guide what has strayed.",
+      "start": 112.83,
+      "end": 117.71
+    },
+    {
+      "latin": "Da tuis fidélibus, In te confidéntibus,",
+      "english": "Give to Thy faithful, who trust in Thee,",
+      "start": 117.71,
+      "end": 126.07
+    },
+    {
+      "latin": "Sacrum septenárium.",
+      "english": "the sacred sevenfold gift.",
+      "start": 126.07,
+      "end": 130.42
+    },
+    {
+      "latin": "Da virtútis méritum, Da salútis éxitum,",
+      "english": "Give the reward of virtue, give a saving end,",
+      "start": 130.89,
+      "end": 139.31
+    },
+    {
+      "latin": "Da perénne gáudium.",
+      "english": "give everlasting joy.",
+      "start": 139.31,
+      "end": 143.56
+    },
+    {
+      "latin": "Amen. Allelúia.",
+      "english": "Amen. Alleluia.",
+      "start": 144.89,
+      "end": 152.66
+    }
+  ]
+}

@@ -238,9 +238,68 @@ struct ChantLibraryTests {
         return chant
     }
 
-    @Test func aChantWithoutLinesStepsByNone() {
-        for chant in ChantCatalog.all where !chant.hasLines {
-            #expect(chant.lineIndex(at: 10) == nil)
+    /// A chant whose lines have not been timed — a chant that arrives
+    /// before its file in Tools/ChantLines — steps by no line and takes its
+    /// words from the Prayer Book
+    @Test func aChantWithoutLinesFallsBackToTheWholeChant() {
+        var chant = ChantCatalog.chant("salve_regina_simple")!
+        chant.lines = []
+        #expect(!chant.hasLines)
+        #expect(chant.lineIndex(at: 0) == nil)
+        #expect(chant.lineIndex(at: 10) == nil)
+        #expect(chant.bookPrayer != nil)
+        #expect(chant.words?.latin == chant.bookPrayer?.latin)
+        #expect(chant.words?.english == chant.bookPrayer?.english)
+    }
+
+    /// Every chant that has lines has them as the generator checked them:
+    /// in order, none overlapping the one before, none starting before the
+    /// recording or ending after it, each on a part its score has
+    @Test func everyTimedChantsLinesHoldTogether() {
+        for chant in ChantCatalog.all where chant.hasLines {
+            var previousEnd: TimeInterval = 0
+            for (index, line) in chant.lines.enumerated() {
+                let place = "\(chant.id), line \(index + 1)"
+                #expect(line.start >= 0, "\(place) starts before the recording")
+                #expect(line.end > line.start, "\(place) ends before it starts")
+                #expect(line.start >= previousEnd - 0.001, "\(place) overlaps the line before")
+                if chant.duration > 0 {
+                    #expect(line.end <= chant.duration + 0.5, "\(place) ends after the recording")
+                }
+                if let part = line.part {
+                    #expect(chant.score.indices.contains(part), "\(place) names part \(part)")
+                }
+                #expect(!line.latin.isEmpty && !line.english.isEmpty, "\(place) has no words")
+                previousEnd = line.end
+            }
+        }
+    }
+
+    /// The chants timed today, by name: a chant added later without its
+    /// timings does not fail this, and one of these losing its lines does
+    @Test func theTimedChantsKeepTheirLines() {
+        let timed = [
+            "adeste_fideles", "adoremus", "adoro_te", "alma_redemptoris",
+            "angelus", "anima_christi", "attende_domine", "ave_maria",
+            "ave_maria_antiphon", "ave_maris_stella", "ave_regina_simple",
+            "ave_regina_solemn", "ave_verum", "christus_vincit", "cor_jesu",
+            "creator_alme", "credo_in_deum", "dies_irae", "divine_praises",
+            "ecce_panis", "flos_carmeli", "gloria_patri", "in_nomine_patris",
+            "inviolata", "jesu_dulcis_memoria", "jesu_redemptor", "lauda_sion",
+            "litany_holy_name", "litany_loreto", "litany_sacred_heart",
+            "litany_saints", "litany_st_joseph", "magnificat", "memorare",
+            "miserere", "o_filii", "o_gloriosa", "o_mi_jesu", "o_sacrum_convivium",
+            "o_salutaris", "panis_angelicus", "parce_domine", "pater_noster",
+            "puer_natus", "regina_caeli_simple", "regina_caeli_solemn",
+            "rorate_caeli", "salve_mater", "salve_regina_simple",
+            "salve_regina_solemn", "sancte_michael", "stabat_mater", "sub_tuum",
+            "tantum_ergo", "te_deum", "te_joseph", "tota_pulchra", "ubi_caritas",
+            "veni_creator", "veni_emmanuel", "veni_sancte_reple",
+            "veni_sancte_spiritus", "vexilla_regis", "victimae_paschali"
+        ]
+        #expect(timed.count == 64)
+        for id in timed {
+            #expect(ChantCatalog.chant(id)?.hasLines == true, "\(id) has lost its lines")
         }
     }
 

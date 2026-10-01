@@ -1,0 +1,34 @@
+# Attende Domine: the refrain, sung twice at the start and again after each
+# of the five verses. Latin from the score; English plain and literal. The
+# cantor breathes at the refrain's bar (where he does not, the refrain is
+# one line) and at each verse's bars, so a verse line is a bar-to-bar piece.
+noise -14
+gap 0.3
+merge 1.5
+
+Atténde Dómine, et miserére, | Hearken, O Lord, and have mercy,
+quia peccávimus tibi. | for we have sinned against Thee.
+Atténde Dómine, et miserére, | Hearken, O Lord, and have mercy,
+quia peccávimus tibi. | for we have sinned against Thee.
+Ad te Rex summe, ómnium Redémptor, | To Thee, O King most high, Redeemer of all,
+óculos nostros sublevámus flentes: | we lift up our eyes in weeping;
+exáudi, Christe, supplicántum preces. | hear, O Christ, the prayers of Thy suppliants.
+Atténde Dómine, et miserére, quia peccávimus tibi. | Hearken, O Lord, and have mercy, for we have sinned against Thee.
+Déxtera Patris, lapis anguláris, | Right hand of the Father, corner-stone,
+via salútis, jánua cæléstis, | way of salvation, gate of heaven,
+áblue nostri máculas delícti. | wash away the stains of our sin.
+Atténde Dómine, et miserére, quia peccávimus tibi. | Hearken, O Lord, and have mercy, for we have sinned against Thee.
+Rogámus, Deus, tuam majestátem: | We beseech Thy majesty, O God;
+áuribus sacris gémitus exáudi: | with Thy holy ears hear our groaning;
+crímina nostra plácidus indúlge. | graciously pardon our crimes.
+Atténde Dómine, et miserére, | Hearken, O Lord, and have mercy,
+quia peccávimus tibi. | for we have sinned against Thee.
+Tibi fatémur crímina admíssa: | To Thee we confess the sins we have committed;
+contríto corde pándimus occúlta: | with contrite heart we lay bare what was hidden;
+tua, Redémptor, píetas ignóscat. | may Thy loving-kindness, O Redeemer, forgive.
+Atténde Dómine, et miserére, quia peccávimus tibi. | Hearken, O Lord, and have mercy, for we have sinned against Thee.
+Ínnocens captus, nec repúgnans ductus, | Seized though innocent, led away unresisting,
+téstibus falsis pro ímpiis damnátus: | condemned by false witnesses for the wicked;
+quos redemísti, tu consérva, Christe. | keep, O Christ, those whom Thou hast redeemed.
+Atténde Dómine, et miserére, | Hearken, O Lord, and have mercy,
+quia peccávimus tibi. | for we have sinned against Thee.

@@ -1,0 +1,35 @@
+# Adoro te devote, all seven stanzas. Latin from the score; English from
+# the Prayer Book (adoro_te).
+noise -18
+gap 0.3
+merge 1.5
+
+Adóro te devóte, latens Déitas, | I adore Thee devoutly, O hidden Deity,
+Quæ sub his figúris vere látitas: | Who under these figures art truly concealed;
+Tibi se cor meum totum súbjicit, | to Thee my whole heart subjects itself,
+Quia te contémplans totum déficit. | for in contemplating Thee it wholly fails.
+Visus, tactus, gustus in te fállitur, | Sight, touch and taste are deceived in Thee,
+Sed audítu solo tuto créditur: | but by hearing alone is it safely believed;
+Credo quidquid dixit Dei Fílius: | I believe whatever the Son of God has said:
+Nil hoc verbo veritátis vérius. | nothing is truer than this word of Truth.
+In Cruce latébat sola Déitas, | On the Cross the Godhead alone lay hidden,
+At hic latet simul et humánitas: | but here the manhood too lies hidden with it;
+Ambo tamen credens atque cónfitens, | yet believing and confessing both,
+Peto quod petívit latro pǽnitens. | I ask for what the penitent thief asked.
+Plagas, sicut Thomas, non intúeor: | I do not look upon the wounds, as Thomas did;
+Deum tamen meum te confíteor: | yet I confess Thee to be my God;
+Fac me tibi semper magis crédere, | make me ever more and more believe in Thee,
+In te spem habére, te dilígere. | have hope in Thee, and love Thee.
+O memoriále mortis Dómini, | O memorial of the death of the Lord,
+Panis vivus vitam præstans hómini: | living Bread that gives life to man,
+Præsta meæ menti de te vívere, | grant to my mind to live on Thee,
+Et te illi semper dulce sápere. | and that Thou be ever sweet to its taste.
+Pie pellicáne, Jesu Dómine, | O loving Pelican, Lord Jesus,
+Me immúndum munda tuo Sánguine: | cleanse me, who am unclean, with Thy Blood,
+Cujus una stilla salvum fácere | a single drop of which can make safe
+Totum mundum quit ab omni scélere. | the whole world from every sin.
+Jesu, quem velátum nunc aspício, | Jesus, Whom now I look upon veiled,
+Oro fiat illud quod tam sítio: | I pray that what I so thirst for may come to pass:
+Ut te reveláta cernens fácie, | that, seeing Thee with Thy face unveiled,
+Visu sim beátus tuæ glóriæ. | I may be blessed in beholding Thy glory.
+Amen. | Amen.

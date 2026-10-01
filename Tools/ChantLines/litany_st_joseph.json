@@ -1,0 +1,517 @@
+{
+  "id": "litany_st_joseph",
+  "part": null,
+  "method": "breaths by loudness (under -14 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 52 of 84 breaks heard",
+  "lines": [
+    {
+      "latin": "Kýrie eléison.",
+      "english": "Lord, have mercy on us.",
+      "start": 0.35,
+      "end": 5.13
+    },
+    {
+      "latin": "Kýrie eléison.",
+      "english": "Lord, have mercy on us.",
+      "start": 5.13,
+      "end": 9.91
+    },
+    {
+      "latin": "Christe eléison.",
+      "english": "Christ, have mercy on us.",
+      "start": 9.91,
+      "end": 14.41
+    },
+    {
+      "latin": "Christe eléison.",
+      "english": "Christ, have mercy on us.",
+      "start": 14.41,
+      "end": 18.54
+    },
+    {
+      "latin": "Kýrie eléison.",
+      "english": "Lord, have mercy on us.",
+      "start": 18.81,
+      "end": 23.09
+    },
+    {
+      "latin": "Kýrie eléison.",
+      "english": "Lord, have mercy on us.",
+      "start": 23.09,
+      "end": 27.37
+    },
+    {
+      "latin": "Christe audi nos.",
+      "english": "Christ, hear us.",
+      "start": 27.37,
+      "end": 31.47
+    },
+    {
+      "latin": "Christe audi nos.",
+      "english": "Christ, hear us.",
+      "start": 31.47,
+      "end": 35.57
+    },
+    {
+      "latin": "Christe exáudi nos.",
+      "english": "Christ, graciously hear us.",
+      "start": 35.57,
+      "end": 39.43
+    },
+    {
+      "latin": "Christe exáudi nos.",
+      "english": "Christ, graciously hear us.",
+      "start": 39.43,
+      "end": 43.76
+    },
+    {
+      "latin": "Pater de cælis Deus,",
+      "english": "God the Father of Heaven,",
+      "start": 44.53,
+      "end": 49.63
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 49.63,
+      "end": 54.24
+    },
+    {
+      "latin": "Fili Redémptor mundi Deus,",
+      "english": "God the Son, Redeemer of the world,",
+      "start": 54.85,
+      "end": 60.55
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 60.55,
+      "end": 65.0
+    },
+    {
+      "latin": "Spíritus Sancte Deus,",
+      "english": "God the Holy Ghost,",
+      "start": 65.27,
+      "end": 70.85
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 70.85,
+      "end": 75.6
+    },
+    {
+      "latin": "Sancta Trínitas unus Deus,",
+      "english": "Holy Trinity, One God,",
+      "start": 76.29,
+      "end": 82.35
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 82.35,
+      "end": 86.86
+    },
+    {
+      "latin": "Sancta María,",
+      "english": "Holy Mary,",
+      "start": 87.45,
+      "end": 92.17
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 92.17,
+      "end": 97.25
+    },
+    {
+      "latin": "Sancte Joseph,",
+      "english": "St Joseph,",
+      "start": 97.25,
+      "end": 102.03
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 102.03,
+      "end": 105.98
+    },
+    {
+      "latin": "Proles David ínclyta,",
+      "english": "Renowned offspring of David,",
+      "start": 106.81,
+      "end": 112.38
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 112.45,
+      "end": 116.88
+    },
+    {
+      "latin": "Lumen Patriarchárum,",
+      "english": "Light of Patriarchs,",
+      "start": 117.11,
+      "end": 122.57
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 122.57,
+      "end": 126.78
+    },
+    {
+      "latin": "Dei Genitrícis Sponse,",
+      "english": "Spouse of the Mother of God,",
+      "start": 127.01,
+      "end": 132.97
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 132.97,
+      "end": 137.02
+    },
+    {
+      "latin": "Custos pudíce Vírginis,",
+      "english": "Chaste guardian of the Virgin,",
+      "start": 137.45,
+      "end": 143.18
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 143.49,
+      "end": 147.82
+    },
+    {
+      "latin": "Fílii Dei nutrítie,",
+      "english": "Foster-father of the Son of God,",
+      "start": 148.17,
+      "end": 154.08
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 154.35,
+      "end": 158.84
+    },
+    {
+      "latin": "Christi defénsor sédule,",
+      "english": "Diligent protector of Christ,",
+      "start": 158.87,
+      "end": 164.85
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 164.85,
+      "end": 169.08
+    },
+    {
+      "latin": "Almæ Famíliæ præses,",
+      "english": "Head of the Holy Family,",
+      "start": 169.77,
+      "end": 176.09
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 176.09,
+      "end": 180.28
+    },
+    {
+      "latin": "Joseph justíssime,",
+      "english": "Joseph most just,",
+      "start": 180.75,
+      "end": 186.38
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 186.45,
+      "end": 191.24
+    },
+    {
+      "latin": "Joseph castíssime,",
+      "english": "Joseph most chaste,",
+      "start": 191.31,
+      "end": 196.98
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 197.09,
+      "end": 201.6
+    },
+    {
+      "latin": "Joseph prudentíssime,",
+      "english": "Joseph most prudent,",
+      "start": 202.03,
+      "end": 207.76
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 208.17,
+      "end": 212.7
+    },
+    {
+      "latin": "Joseph fortíssime,",
+      "english": "Joseph most strong,",
+      "start": 213.41,
+      "end": 219.0
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 219.37,
+      "end": 224.24
+    },
+    {
+      "latin": "Joseph obedientíssime,",
+      "english": "Joseph most obedient,",
+      "start": 224.27,
+      "end": 230.48
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 230.93,
+      "end": 235.28
+    },
+    {
+      "latin": "Joseph fidelíssime,",
+      "english": "Joseph most faithful,",
+      "start": 235.69,
+      "end": 241.63
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 241.63,
+      "end": 246.49
+    },
+    {
+      "latin": "Spéculum patiéntiæ,",
+      "english": "Mirror of patience,",
+      "start": 246.49,
+      "end": 252.49
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 252.49,
+      "end": 257.54
+    },
+    {
+      "latin": "Amátor paupertátis,",
+      "english": "Lover of poverty,",
+      "start": 257.57,
+      "end": 263.79
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 263.79,
+      "end": 268.1
+    },
+    {
+      "latin": "Exémplar opíficum,",
+      "english": "Model of artisans,",
+      "start": 268.71,
+      "end": 274.85
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 274.85,
+      "end": 279.63
+    },
+    {
+      "latin": "Domésticæ vitæ decus,",
+      "english": "Glory of home life,",
+      "start": 279.63,
+      "end": 286.1
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 286.33,
+      "end": 291.06
+    },
+    {
+      "latin": "Custos vírginum,",
+      "english": "Guardian of virgins,",
+      "start": 291.13,
+      "end": 296.38
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 296.67,
+      "end": 301.91
+    },
+    {
+      "latin": "Familiárum cólumen,",
+      "english": "Pillar of families,",
+      "start": 301.91,
+      "end": 307.86
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 307.91,
+      "end": 312.72
+    },
+    {
+      "latin": "Solátium miserórum,",
+      "english": "Solace of the wretched,",
+      "start": 313.11,
+      "end": 319.25
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 319.25,
+      "end": 323.64
+    },
+    {
+      "latin": "Spes ægrotántium,",
+      "english": "Hope of the sick,",
+      "start": 324.07,
+      "end": 329.55
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 329.55,
+      "end": 334.12
+    },
+    {
+      "latin": "Patróne moriéntium,",
+      "english": "Patron of the dying,",
+      "start": 334.59,
+      "end": 340.47
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 340.47,
+      "end": 345.34
+    },
+    {
+      "latin": "Terror dǽmonum,",
+      "english": "Terror of demons,",
+      "start": 345.47,
+      "end": 350.85
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 350.85,
+      "end": 355.91
+    },
+    {
+      "latin": "Protéctor sanctæ Ecclésiæ,",
+      "english": "Protector of Holy Church,",
+      "start": 355.91,
+      "end": 362.76
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 362.99,
+      "end": 367.42
+    },
+    {
+      "latin": "Agnus Dei, qui tollis peccáta mundi,",
+      "english": "Lamb of God, Who takest away the sins of the world,",
+      "start": 368.03,
+      "end": 375.71
+    },
+    {
+      "latin": "parce nobis Dómine.",
+      "english": "spare us, O Lord.",
+      "start": 375.71,
+      "end": 381.56
+    },
+    {
+      "latin": "Agnus Dei, qui tollis peccáta mundi,",
+      "english": "Lamb of God, Who takest away the sins of the world,",
+      "start": 382.31,
+      "end": 390.25
+    },
+    {
+      "latin": "exáudi nos Dómine.",
+      "english": "graciously hear us, O Lord.",
+      "start": 390.25,
+      "end": 396.22
+    },
+    {
+      "latin": "Agnus Dei, qui tollis peccáta mundi,",
+      "english": "Lamb of God, Who takest away the sins of the world,",
+      "start": 396.59,
+      "end": 405.05
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 405.05,
+      "end": 411.2
+    },
+    {
+      "latin": "Constítuit eum dóminum domus suæ.",
+      "english": "He made him the lord of his house,",
+      "start": 412.57,
+      "end": 418.75
+    },
+    {
+      "latin": "Et príncipem omnis possessiónis suæ.",
+      "english": "And ruler of all his substance.",
+      "start": 418.75,
+      "end": 425.47
+    },
+    {
+      "latin": "Orémus.",
+      "english": "Let us pray.",
+      "start": 425.47,
+      "end": 428.87
+    },
+    {
+      "latin": "Deus, qui ineffábili providéntia beátum Joseph sanctíssimæ Genitrícis tuæ sponsum elígere dignátus es:",
+      "english": "O God, Who in Thine ineffable providence didst vouchsafe to choose blessed Joseph to be the spouse of Thy most holy Mother,",
+      "start": 428.87,
+      "end": 440.05
+    },
+    {
+      "latin": "præsta, quǽsumus;",
+      "english": "grant, we beseech Thee,",
+      "start": 440.05,
+      "end": 442.71
+    },
+    {
+      "latin": "ut quem protectórem venerámur in terris,",
+      "english": "that him whom we venerate as our protector on earth",
+      "start": 442.71,
+      "end": 447.71
+    },
+    {
+      "latin": "intercessórem habére mereámur in cælis:",
+      "english": "we may be worthy to have for our intercessor in heaven:",
+      "start": 447.71,
+      "end": 453.99
+    },
+    {
+      "latin": "Qui vivis et regnas in sǽcula sæculórum.",
+      "english": "Who livest and reignest world without end.",
+      "start": 453.99,
+      "end": 461.98
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 462.17,
+      "end": 467.72
+    }
+  ]
+}

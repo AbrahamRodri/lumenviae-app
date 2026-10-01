@@ -1,0 +1,133 @@
+{
+  "id": "victimae_paschali",
+  "part": null,
+  "method": "breaths by loudness (under -14 dB for 0.2 s, phrases under 1.5 s merged) + text alignment; Whisper: 14 of 20 breaks heard",
+  "lines": [
+    {
+      "latin": "Víctimæ pascháli laudes",
+      "english": "Praises to the Paschal Victim",
+      "start": 0.41,
+      "end": 4.81
+    },
+    {
+      "latin": "ímmolent Christiáni.",
+      "english": "let Christians offer.",
+      "start": 4.81,
+      "end": 9.16
+    },
+    {
+      "latin": "Agnus redémit oves:",
+      "english": "The Lamb hath redeemed the sheep;",
+      "start": 9.17,
+      "end": 13.21
+    },
+    {
+      "latin": "Christus ínnocens Patri",
+      "english": "Christ, the innocent, unto the Father",
+      "start": 13.21,
+      "end": 17.61
+    },
+    {
+      "latin": "reconciliávit",
+      "english": "hath reconciled",
+      "start": 17.61,
+      "end": 21.35
+    },
+    {
+      "latin": "peccatóres.",
+      "english": "sinners.",
+      "start": 21.35,
+      "end": 24.68
+    },
+    {
+      "latin": "Mors et vita duéllo conflixére mirándo:",
+      "english": "Death and life have contended in a wondrous combat;",
+      "start": 25.43,
+      "end": 33.65
+    },
+    {
+      "latin": "dux vitæ mórtuus,",
+      "english": "the Prince of life, who died,",
+      "start": 33.65,
+      "end": 37.29
+    },
+    {
+      "latin": "regnat vivus.",
+      "english": "reigns alive.",
+      "start": 37.3,
+      "end": 41.24
+    },
+    {
+      "latin": "Dic nobis María, quid vidísti",
+      "english": "Tell us, Mary, what didst thou see",
+      "start": 42.29,
+      "end": 47.57
+    },
+    {
+      "latin": "in via?",
+      "english": "on the way?",
+      "start": 47.57,
+      "end": 51.06
+    },
+    {
+      "latin": "Sepúlcrum Christi vivéntis,",
+      "english": "The tomb of the living Christ,",
+      "start": 51.49,
+      "end": 56.35
+    },
+    {
+      "latin": "et glóriam vidi resurgéntis:",
+      "english": "and I saw the glory of His rising;",
+      "start": 56.35,
+      "end": 61.98
+    },
+    {
+      "latin": "Angélicos testes, sudárium, et vestes.",
+      "english": "the angelic witnesses, the napkin, and the garments.",
+      "start": 62.39,
+      "end": 70.84
+    },
+    {
+      "latin": "Surréxit Christus spes mea:",
+      "english": "Christ my hope is risen;",
+      "start": 71.99,
+      "end": 76.71
+    },
+    {
+      "latin": "præcédet suos in Galilǽam.",
+      "english": "He will go before His own into Galilee.",
+      "start": 76.71,
+      "end": 82.62
+    },
+    {
+      "latin": "Scimus Christum surrexísse",
+      "english": "We know that Christ is risen",
+      "start": 83.07,
+      "end": 87.53
+    },
+    {
+      "latin": "a mórtuis vere:",
+      "english": "truly from the dead;",
+      "start": 87.53,
+      "end": 91.6
+    },
+    {
+      "latin": "tu nobis, victor Rex,",
+      "english": "on us, O victorious King,",
+      "start": 91.73,
+      "end": 95.91
+    },
+    {
+      "latin": "miserére.",
+      "english": "have mercy.",
+      "start": 95.91,
+      "end": 100.2
+    },
+    {
+      "latin": "Amen. Allelúia.",
+      "english": "Amen. Alleluia.",
+      "start": 101.39,
+      "end": 109.1
+    }
+  ]
+}

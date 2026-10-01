@@ -1,0 +1,21 @@
+# Veni Sancte Spiritus, reple: the antiphon, its versicle Emitte Spiritum
+# and the collect Deus qui corda. Latin from the scores; English from the
+# Prayer Book (come_holy_ghost), the antiphon's last clause, which it does
+# not print, plain.
+noise -14
+gap 0.3
+merge 1.5
+
+Veni Sancte Spíritus, | Come, Holy Ghost,
+reple tuórum corda fidélium, | fill the hearts of Thy faithful,
+et tui amóris in eis ignem accénde: | and kindle in them the fire of Thy love:
+qui per diversitátem linguárum cunctárum, | who through the diversity of all tongues
+gentes in unitáte fídei congregásti. | didst gather the nations in the unity of faith.
+Emítte Spíritum tuum et creabúntur. | Send forth Thy Spirit, and they shall be created.
+Et renovábis fáciem terræ. | And Thou shalt renew the face of the earth.
+Orémus. | Let us pray.
+Deus, qui corda fidélium Sancti Spíritus illustratióne docuísti: | O God, who didst instruct the hearts of the faithful by the light of the Holy Ghost,
+da nobis in eódem Spíritu recta sápere, | grant us in the same Spirit to be truly wise,
+et de ejus semper consolatióne gaudére. | and ever to rejoice in His consolation.
+Per Christum Dóminum nostrum. | Through Christ our Lord.
+Amen. | Amen.

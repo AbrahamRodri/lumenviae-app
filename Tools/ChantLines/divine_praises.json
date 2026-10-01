@@ -1,0 +1,103 @@
+{
+  "id": "divine_praises",
+  "part": null,
+  "method": "breaths by loudness (under -14 dB for 0.2 s, phrases under 1.5 s merged) + text alignment; Whisper: 12 of 15 breaks heard",
+  "lines": [
+    {
+      "latin": "Benedíctus Deus, Benedíctum nomen sanctum ejus.",
+      "english": "Blessed be God. Blessed be His holy Name.",
+      "start": 0.15,
+      "end": 8.79
+    },
+    {
+      "latin": "Benedíctus Jesus Christus verus Deus et verus homo.",
+      "english": "Blessed be Jesus Christ, true God and true Man.",
+      "start": 8.79,
+      "end": 17.83
+    },
+    {
+      "latin": "Benedíctum nomen Jesu. Benedíctum Cor ejus sacratíssimum.",
+      "english": "Blessed be the Name of Jesus. Blessed be His most Sacred Heart.",
+      "start": 17.83,
+      "end": 28.13
+    },
+    {
+      "latin": "Benedíctus ejus Sanguis pretiosíssimus.",
+      "english": "Blessed be His most Precious Blood.",
+      "start": 28.13,
+      "end": 36.59
+    },
+    {
+      "latin": "Benedíctus Jesus in sanctíssimo altáris Sacraménto.",
+      "english": "Blessed be Jesus in the most holy Sacrament of the altar.",
+      "start": 36.59,
+      "end": 46.13
+    },
+    {
+      "latin": "Benedíctus Sanctus Spíritus Paráclitus.",
+      "english": "Blessed be the Holy Ghost, the Paraclete.",
+      "start": 46.13,
+      "end": 54.69
+    },
+    {
+      "latin": "Benedícta magna Mater Dei, María sanctíssima.",
+      "english": "Blessed be the great Mother of God, Mary most holy.",
+      "start": 54.69,
+      "end": 63.95
+    },
+    {
+      "latin": "Benedícta sancta ejus et immaculáta Concéptio.",
+      "english": "Blessed be her holy and Immaculate Conception.",
+      "start": 63.95,
+      "end": 73.81
+    },
+    {
+      "latin": "Benedícta ejus gloriósa Assúmptio.",
+      "english": "Blessed be her glorious Assumption.",
+      "start": 73.81,
+      "end": 82.79
+    },
+    {
+      "latin": "Benedíctum nomen Maríæ,",
+      "english": "Blessed be the name of Mary,",
+      "start": 82.79,
+      "end": 87.65
+    },
+    {
+      "latin": "Vírginis et Matris.",
+      "english": "Virgin and Mother.",
+      "start": 87.68,
+      "end": 92.51
+    },
+    {
+      "latin": "Benedíctus sanctus Joseph,",
+      "english": "Blessed be St Joseph,",
+      "start": 92.51,
+      "end": 97.11
+    },
+    {
+      "latin": "ejus castíssimus Sponsus.",
+      "english": "her most chaste spouse.",
+      "start": 97.11,
+      "end": 102.39
+    },
+    {
+      "latin": "Benedíctus Deus in Ángelis suis,",
+      "english": "Blessed be God in His Angels",
+      "start": 102.39,
+      "end": 108.57
+    },
+    {
+      "latin": "et in Sanctis suis.",
+      "english": "and in His Saints.",
+      "start": 108.57,
+      "end": 114.66
+    },
+    {
+      "latin": "Fiat! Fiat!",
+      "english": "So be it! So be it!",
+      "start": 114.83,
+      "end": 122.58
+    }
+  ]
+}

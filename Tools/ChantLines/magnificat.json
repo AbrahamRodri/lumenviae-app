@@ -1,0 +1,217 @@
+{
+  "id": "magnificat",
+  "part": null,
+  "method": "breaths by loudness (under -20 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 33 of 34 breaks heard",
+  "lines": [
+    {
+      "latin": "Allelúia: Allelúia, allelúia.",
+      "english": "Alleluia: alleluia, alleluia.",
+      "start": 0.27,
+      "end": 10.74
+    },
+    {
+      "latin": "Allelúia: Allelúia, allelúia.",
+      "english": "Alleluia: alleluia, alleluia.",
+      "start": 11.19,
+      "end": 21.82
+    },
+    {
+      "latin": "Magníficat ánima mea Dóminum.",
+      "english": "My soul doth magnify the Lord.",
+      "start": 22.59,
+      "end": 30.59
+    },
+    {
+      "latin": "Allelúia, allelúia.",
+      "english": "Alleluia, alleluia.",
+      "start": 30.59,
+      "end": 37.46
+    },
+    {
+      "latin": "Et exsultávit spíritus meus in Deo salutári meo.",
+      "english": "And my spirit hath rejoiced in God my Saviour.",
+      "start": 38.01,
+      "end": 51.78
+    },
+    {
+      "latin": "Allelúia: Allelúia, allelúia.",
+      "english": "Alleluia: alleluia, alleluia.",
+      "start": 52.17,
+      "end": 62.6
+    },
+    {
+      "latin": "Quia respéxit humilitátem ancíllæ suæ:",
+      "english": "Because He hath regarded the humility of His handmaid:",
+      "start": 63.17,
+      "end": 69.91
+    },
+    {
+      "latin": "ecce enim ex hoc beátam me dicent omnes generatiónes.",
+      "english": "for behold from henceforth all generations shall call me blessed.",
+      "start": 69.91,
+      "end": 79.29
+    },
+    {
+      "latin": "Allelúia, allelúia.",
+      "english": "Alleluia, alleluia.",
+      "start": 79.29,
+      "end": 86.72
+    },
+    {
+      "latin": "Quia fecit mihi magna qui potens est:",
+      "english": "Because He that is mighty hath done great things to me:",
+      "start": 87.17,
+      "end": 94.17
+    },
+    {
+      "latin": "et sanctum nomen ejus.",
+      "english": "and holy is His name.",
+      "start": 94.17,
+      "end": 100.74
+    },
+    {
+      "latin": "Allelúia: Allelúia, allelúia.",
+      "english": "Alleluia: alleluia, alleluia.",
+      "start": 101.29,
+      "end": 112.08
+    },
+    {
+      "latin": "Et misericórdia ejus a progénie in progénies",
+      "english": "And His mercy is from generation unto generations,",
+      "start": 112.47,
+      "end": 121.08
+    },
+    {
+      "latin": "timéntibus eum.",
+      "english": "to them that fear Him.",
+      "start": 121.13,
+      "end": 125.65
+    },
+    {
+      "latin": "Allelúia, allelúia.",
+      "english": "Alleluia, alleluia.",
+      "start": 125.65,
+      "end": 132.88
+    },
+    {
+      "latin": "Fecit poténtiam in bráchio suo: dispérsit supérbos mente cordis sui.",
+      "english": "He hath shewed might in His arm: He hath scattered the proud in the conceit of their heart.",
+      "start": 133.37,
+      "end": 147.98
+    },
+    {
+      "latin": "Allelúia: Allelúia, allelúia.",
+      "english": "Alleluia: alleluia, alleluia.",
+      "start": 148.59,
+      "end": 158.92
+    },
+    {
+      "latin": "Depósuit poténtes de sede, et exaltávit húmiles.",
+      "english": "He hath put down the mighty from their seat, and hath exalted the humble.",
+      "start": 159.77,
+      "end": 170.61
+    },
+    {
+      "latin": "Allelúia, allelúia.",
+      "english": "Alleluia, alleluia.",
+      "start": 170.61,
+      "end": 177.98
+    },
+    {
+      "latin": "Esuriéntes implévit bonis:",
+      "english": "He hath filled the hungry with good things:",
+      "start": 178.47,
+      "end": 184.77
+    },
+    {
+      "latin": "et dívites dimísit inánes.",
+      "english": "and the rich He hath sent empty away.",
+      "start": 184.77,
+      "end": 191.98
+    },
+    {
+      "latin": "Allelúia: Allelúia, allelúia.",
+      "english": "Alleluia: alleluia, alleluia.",
+      "start": 192.41,
+      "end": 202.98
+    },
+    {
+      "latin": "Suscépit Israël púerum suum:",
+      "english": "He hath received Israel His servant,",
+      "start": 203.85,
+      "end": 209.75
+    },
+    {
+      "latin": "recordátus misericórdiæ suæ.",
+      "english": "being mindful of His mercy.",
+      "start": 209.75,
+      "end": 216.03
+    },
+    {
+      "latin": "Allelúia, allelúia.",
+      "english": "Alleluia, alleluia.",
+      "start": 216.03,
+      "end": 222.82
+    },
+    {
+      "latin": "Sicut locútus est ad patres nostros,",
+      "english": "As He spoke to our fathers,",
+      "start": 223.95,
+      "end": 230.71
+    },
+    {
+      "latin": "Abraham et sémini ejus in sǽcula.",
+      "english": "to Abraham and to his seed for ever.",
+      "start": 230.71,
+      "end": 239.26
+    },
+    {
+      "latin": "Allelúia: Allelúia, allelúia.",
+      "english": "Alleluia: alleluia, alleluia.",
+      "start": 239.87,
+      "end": 250.36
+    },
+    {
+      "latin": "Glória Patri, et Fílio,",
+      "english": "Glory be to the Father, and to the Son,",
+      "start": 250.93,
+      "end": 256.33
+    },
+    {
+      "latin": "et Spirítui Sancto.",
+      "english": "and to the Holy Spirit.",
+      "start": 256.33,
+      "end": 261.25
+    },
+    {
+      "latin": "Allelúia, allelúia.",
+      "english": "Alleluia, alleluia.",
+      "start": 261.25,
+      "end": 268.2
+    },
+    {
+      "latin": "Sicut erat in princípio, et nunc, et semper,",
+      "english": "As it was in the beginning, is now, and ever shall be,",
+      "start": 268.89,
+      "end": 277.51
+    },
+    {
+      "latin": "et in sǽcula sæculórum. Amen.",
+      "english": "world without end. Amen.",
+      "start": 277.51,
+      "end": 285.32
+    },
+    {
+      "latin": "Allelúia: Allelúia, allelúia.",
+      "english": "Alleluia: alleluia, alleluia.",
+      "start": 286.01,
+      "end": 296.86
+    },
+    {
+      "latin": "Allelúia: Allelúia, allelúia.",
+      "english": "Alleluia: alleluia, alleluia.",
+      "start": 297.53,
+      "end": 309.72
+    }
+  ]
+}

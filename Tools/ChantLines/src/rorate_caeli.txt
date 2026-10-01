@@ -1,0 +1,44 @@
+# Rorate cæli: the refrain sung twice, then the four verses, each followed
+# by the refrain in full (the score cues it as "℟. Roráte."). Latin from
+# the score; English a plain literal rendering (no app prayer).
+noise -16
+gap 0.2
+merge 1.5
+
+Roráte cæli désuper, | Drop down dew, ye heavens, from above,
+et nubes pluant justum. | and let the clouds rain down the Just One.
+Roráte cæli désuper, | Drop down dew, ye heavens, from above,
+et nubes pluant justum. | and let the clouds rain down the Just One.
+Ne irascáris Dómine, | Be not angry, O Lord,
+ne ultra memíneris iniquitátis: | remember iniquity no longer:
+ecce cívitas Sancti facta est desérta: Sion desérta facta est: | behold, the city of the Holy One is become a desert: Sion is become a desert:
+Jerúsalem desoláta est: | Jerusalem is desolate:
+domus sanctificatiónis tuæ et glóriæ tuæ, | the house of Thy sanctification and of Thy glory,
+ubi laudavérunt te patres nostri. | where our fathers praised Thee.
+Roráte cæli désuper, | Drop down dew, ye heavens, from above,
+et nubes pluant justum. | and let the clouds rain down the Just One.
+Peccávimus, et facti sumus tamquam immúndus nos, | We have sinned, and are become as one unclean,
+et cecídimus | and we have fallen
+quasi fólium univérsi: | like a leaf, every one of us:
+et iniquitátes nostræ quasi ventus abstulérunt nos: | and our iniquities, like the wind, have carried us away:
+abscondísti fáciem tuam a nobis, | Thou hast hidden Thy face from us,
+et allisísti nos in manu iniquitátis nostræ. | and hast crushed us in the hand of our iniquity.
+Roráte cæli désuper, | Drop down dew, ye heavens, from above,
+et nubes pluant justum. | and let the clouds rain down the Just One.
+Vide Dómine, afflictiónem pópuli tui, | Behold, O Lord, the affliction of Thy people,
+et mitte quem missúrus es: | and send forth Him Whom Thou art to send:
+emítte Agnum dominatórem terræ, | send forth the Lamb, the ruler of the earth,
+de Petra desérti ad montem fíliæ Sion: | from the Rock of the desert to the mount of the daughter of Sion:
+ut áuferat ipse jugum captivitátis nostræ. | that He Himself may take away the yoke of our captivity.
+Roráte cæli désuper, | Drop down dew, ye heavens, from above,
+et nubes pluant justum. | and let the clouds rain down the Just One.
+Consolámini, | Be comforted,
+consolámini, pópule meus: | be comforted, My people:
+cito véniet salus tua: | thy salvation shall quickly come:
+quare mæróre consúmeris, | why art thou wasted with grief,
+quia innovávit te dolor? | because sorrow hath come upon thee anew?
+Salvábo te, noli timére, | I will save thee, fear not,
+ego enim sum Dóminus Deus tuus, | for I am the Lord thy God,
+Sanctus Israël, Redémptor tuus. | the Holy One of Israel, thy Redeemer.
+Roráte cæli désuper, | Drop down dew, ye heavens, from above,
+et nubes pluant justum. | and let the clouds rain down the Just One.

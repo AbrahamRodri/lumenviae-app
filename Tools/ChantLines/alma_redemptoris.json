@@ -1,0 +1,157 @@
+{
+  "id": "alma_redemptoris",
+  "part": null,
+  "method": "breaths by loudness (under -18 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 17 of 24 breaks heard",
+  "lines": [
+    {
+      "latin": "Alma",
+      "english": "Loving",
+      "start": 0.09,
+      "end": 13.45
+    },
+    {
+      "latin": "Redemptóris Mater,",
+      "english": "Mother of the Redeemer,",
+      "start": 13.45,
+      "end": 19.31
+    },
+    {
+      "latin": "quæ pérvia cæli porta manes,",
+      "english": "who remainest the open gate of heaven,",
+      "start": 19.31,
+      "end": 33.24
+    },
+    {
+      "latin": "Et stella maris,",
+      "english": "and star of the sea,",
+      "start": 33.41,
+      "end": 40.29
+    },
+    {
+      "latin": "succúrre cadénti",
+      "english": "succour the falling",
+      "start": 40.29,
+      "end": 46.49
+    },
+    {
+      "latin": "súrgere qui curat pópulo:",
+      "english": "people who strive to rise again:",
+      "start": 46.49,
+      "end": 53.78
+    },
+    {
+      "latin": "Tu quæ genuísti, natúra miránte,",
+      "english": "thou who, while nature marvelled, didst bring forth",
+      "start": 53.97,
+      "end": 68.37
+    },
+    {
+      "latin": "tuum sanctum Genitórem:",
+      "english": "thy holy Creator,",
+      "start": 68.37,
+      "end": 75.75
+    },
+    {
+      "latin": "Virgo prius",
+      "english": "Virgin before",
+      "start": 75.75,
+      "end": 83.87
+    },
+    {
+      "latin": "ac postérius,",
+      "english": "and after,",
+      "start": 83.87,
+      "end": 88.95
+    },
+    {
+      "latin": "Gabriélis ab ore sumens illud Ave, peccatórum miserére.",
+      "english": "who from the mouth of Gabriel didst receive that Ave, have mercy on sinners.",
+      "start": 88.95,
+      "end": 107.52
+    },
+    {
+      "latin": "Ángelus Dómini nuntiávit Maríæ.",
+      "english": "The Angel of the Lord declared unto Mary.",
+      "start": 108.91,
+      "end": 113.91
+    },
+    {
+      "latin": "Et concépit de Spíritu Sancto.",
+      "english": "And she conceived of the Holy Ghost.",
+      "start": 113.91,
+      "end": 119.7
+    },
+    {
+      "latin": "Orémus.",
+      "english": "Let us pray.",
+      "start": 119.79,
+      "end": 123.47
+    },
+    {
+      "latin": "Grátiam tuam quǽsumus, Dómine, méntibus nostris infúnde:",
+      "english": "Pour forth, we beseech Thee, O Lord, Thy grace into our hearts;",
+      "start": 123.47,
+      "end": 129.69
+    },
+    {
+      "latin": "ut qui, ángelo nuntiánte, Christi Fílii tui incarnatiónem cognóvimus;",
+      "english": "that we, to whom the Incarnation of Christ, Thy Son, was made known by the message of an Angel,",
+      "start": 129.69,
+      "end": 137.29
+    },
+    {
+      "latin": "per passiónem ejus et crucem, ad resurrectiónis glóriam perducámur.",
+      "english": "may by His Passion and Cross be brought to the glory of His Resurrection.",
+      "start": 137.29,
+      "end": 145.41
+    },
+    {
+      "latin": "Per eumdem Christum Dóminum nostrum.",
+      "english": "Through the same Christ our Lord.",
+      "start": 145.41,
+      "end": 151.17
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 151.17,
+      "end": 156.58
+    },
+    {
+      "latin": "Post partum, Virgo, invioláta permansísti.",
+      "english": "After childbirth, O Virgin, thou didst remain inviolate.",
+      "start": 159.43,
+      "end": 165.27
+    },
+    {
+      "latin": "Dei Génitrix, intercéde pro nobis.",
+      "english": "O Mother of God, intercede for us.",
+      "start": 165.27,
+      "end": 171.21
+    },
+    {
+      "latin": "Orémus.",
+      "english": "Let us pray.",
+      "start": 171.21,
+      "end": 174.67
+    },
+    {
+      "latin": "Deus, qui salútis ætérnæ, beátæ Maríæ virginitáte fecúnda, humáno géneri prǽmia præstitísti:",
+      "english": "O God, who by the fruitful virginity of Blessed Mary hast bestowed upon mankind the rewards of eternal salvation;",
+      "start": 174.67,
+      "end": 183.57
+    },
+    {
+      "latin": "tríbue, quǽsumus; ut ipsam pro nobis intercédere sentiámus, per quam merúimus auctórem vitæ suscípere, Dóminum nostrum Jesum Christum Fílium tuum.",
+      "english": "grant, we beseech Thee, that we may know the help of her intercession, through whom we were made worthy to receive the Author of life, our Lord Jesus Christ, Thy Son.",
+      "start": 183.57,
+      "end": 200.54
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 200.55,
+      "end": 205.96
+    }
+  ]
+}

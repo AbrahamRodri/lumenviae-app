@@ -1,0 +1,181 @@
+{
+  "id": "vexilla_regis",
+  "part": null,
+  "method": "breaths by loudness (under -14 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 19 of 28 breaks heard",
+  "lines": [
+    {
+      "latin": "Vexílla Regis pródeunt:",
+      "english": "The banners of the King go forth;",
+      "start": 0.27,
+      "end": 7.17
+    },
+    {
+      "latin": "Fulget Crucis mystérium,",
+      "english": "the mystery of the Cross shines out,",
+      "start": 7.17,
+      "end": 12.84
+    },
+    {
+      "latin": "Qua vita mortem pértulit,",
+      "english": "whereon Life endured death,",
+      "start": 13.13,
+      "end": 19.11
+    },
+    {
+      "latin": "Et morte vitam prótulit.",
+      "english": "and by death brought forth life.",
+      "start": 19.11,
+      "end": 26.12
+    },
+    {
+      "latin": "Quæ vulneráta lánceæ",
+      "english": "Wounded by the spear's",
+      "start": 27.89,
+      "end": 34.63
+    },
+    {
+      "latin": "Mucróne diro, críminum",
+      "english": "cruel point, that from the filth of our sins",
+      "start": 34.63,
+      "end": 40.08
+    },
+    {
+      "latin": "Ut nos laváret sórdibus,",
+      "english": "it might wash us,",
+      "start": 40.75,
+      "end": 46.85
+    },
+    {
+      "latin": "Manávit unda et sánguine.",
+      "english": "it poured forth water and blood.",
+      "start": 46.85,
+      "end": 54.26
+    },
+    {
+      "latin": "Impléta sunt quæ cóncinit",
+      "english": "Fulfilled are the things which David",
+      "start": 56.09,
+      "end": 62.52
+    },
+    {
+      "latin": "David fidéli cármine,",
+      "english": "sang in faithful verse,",
+      "start": 62.79,
+      "end": 68.24
+    },
+    {
+      "latin": "Dicéndo natiónibus:",
+      "english": "telling the nations:",
+      "start": 68.97,
+      "end": 74.95
+    },
+    {
+      "latin": "Regnávit a ligno Deus.",
+      "english": "God hath reigned from the Tree.",
+      "start": 74.95,
+      "end": 82.16
+    },
+    {
+      "latin": "Arbor decóra et fúlgida,",
+      "english": "O Tree, beautiful and shining,",
+      "start": 84.11,
+      "end": 90.69
+    },
+    {
+      "latin": "Ornáta Regis púrpura,",
+      "english": "adorned with the purple of the King,",
+      "start": 90.69,
+      "end": 96.5
+    },
+    {
+      "latin": "Elécta digno stípite",
+      "english": "chosen from a worthy stock",
+      "start": 96.61,
+      "end": 102.59
+    },
+    {
+      "latin": "Tam sancta membra tángere.",
+      "english": "to touch limbs so holy.",
+      "start": 102.59,
+      "end": 109.82
+    },
+    {
+      "latin": "Beáta, cujus bráchiis",
+      "english": "Blessed Tree, upon whose arms",
+      "start": 111.43,
+      "end": 118.32
+    },
+    {
+      "latin": "Prétium pepéndit sǽculi:",
+      "english": "hung the ransom of the world;",
+      "start": 118.35,
+      "end": 123.8
+    },
+    {
+      "latin": "Statéra facta córporis,",
+      "english": "it was made the balance of His Body,",
+      "start": 124.55,
+      "end": 130.57
+    },
+    {
+      "latin": "Tulítque prædam tártari.",
+      "english": "and took away the prey of hell.",
+      "start": 130.57,
+      "end": 137.74
+    },
+    {
+      "latin": "O Crux ave, spes única,",
+      "english": "Hail, O Cross, our only hope!",
+      "start": 139.35,
+      "end": 145.91
+    },
+    {
+      "latin": "Hoc Passiónis témpore",
+      "english": "In this time of the Passion",
+      "start": 145.91,
+      "end": 151.34
+    },
+    {
+      "latin": "Piis adáuge grátiam,",
+      "english": "increase grace in the devout,",
+      "start": 151.79,
+      "end": 157.41
+    },
+    {
+      "latin": "Reísque dele crímina.",
+      "english": "and blot out the crimes of the guilty.",
+      "start": 157.41,
+      "end": 164.72
+    },
+    {
+      "latin": "Te fons salútis Trínitas,",
+      "english": "Thee, O Trinity, fount of salvation,",
+      "start": 166.51,
+      "end": 173.11
+    },
+    {
+      "latin": "Colláudet omnis spíritus:",
+      "english": "let every spirit praise;",
+      "start": 173.11,
+      "end": 178.7
+    },
+    {
+      "latin": "Quibus Crucis victóriam",
+      "english": "to those to whom the victory of the Cross",
+      "start": 179.05,
+      "end": 185.05
+    },
+    {
+      "latin": "Largíris, adde prǽmium.",
+      "english": "Thou givest, add the reward.",
+      "start": 185.05,
+      "end": 192.38
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 194.23,
+      "end": 199.3
+    }
+  ]
+}

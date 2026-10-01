@@ -1,0 +1,181 @@
+{
+  "id": "jesu_redemptor",
+  "part": null,
+  "method": "breaths by loudness (under -16 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 12 of 28 breaks heard",
+  "lines": [
+    {
+      "latin": "Jesu Redémptor ómnium,",
+      "english": "Jesus, Redeemer of all,",
+      "start": 0.37,
+      "end": 6.73
+    },
+    {
+      "latin": "Quem lucis ante oríginem,",
+      "english": "Whom, before the beginning of light,",
+      "start": 6.73,
+      "end": 13.69
+    },
+    {
+      "latin": "Parem patérnæ glóriæ,",
+      "english": "equal to the Father's glory,",
+      "start": 13.69,
+      "end": 19.37
+    },
+    {
+      "latin": "Pater suprémus édidit.",
+      "english": "the Father most high begot.",
+      "start": 19.37,
+      "end": 25.1
+    },
+    {
+      "latin": "Tu lumen et splendor Patris,",
+      "english": "Thou light and splendour of the Father,",
+      "start": 26.79,
+      "end": 32.98
+    },
+    {
+      "latin": "Tu spes perénnis ómnium:",
+      "english": "Thou everlasting hope of all,",
+      "start": 33.17,
+      "end": 40.27
+    },
+    {
+      "latin": "Inténde quas fundunt preces",
+      "english": "give ear to the prayers poured forth",
+      "start": 40.27,
+      "end": 46.53
+    },
+    {
+      "latin": "Tui per orbem sérvuli.",
+      "english": "by Thy servants throughout the world.",
+      "start": 46.53,
+      "end": 52.5
+    },
+    {
+      "latin": "Meménto, rerum Cónditor,",
+      "english": "Remember, O Maker of all things,",
+      "start": 53.83,
+      "end": 59.93
+    },
+    {
+      "latin": "Nostri quod olim córporis,",
+      "english": "that once, of our body,",
+      "start": 59.93,
+      "end": 67.41
+    },
+    {
+      "latin": "Sacráta ab alvo Vírginis",
+      "english": "from the hallowed womb of the Virgin,",
+      "start": 67.41,
+      "end": 73.29
+    },
+    {
+      "latin": "Nascéndo, formam súmpseris.",
+      "english": "being born, Thou didst take the form.",
+      "start": 73.29,
+      "end": 79.34
+    },
+    {
+      "latin": "Testátur hoc præsens dies,",
+      "english": "This present day bears witness,",
+      "start": 81.45,
+      "end": 87.91
+    },
+    {
+      "latin": "Currens per anni círculum,",
+      "english": "running its course through the circle of the year,",
+      "start": 87.91,
+      "end": 95.45
+    },
+    {
+      "latin": "Quod solus e sinu Patris",
+      "english": "that Thou alone, from the bosom of the Father,",
+      "start": 95.45,
+      "end": 101.38
+    },
+    {
+      "latin": "Mundi salus advéneris.",
+      "english": "didst come, the salvation of the world.",
+      "start": 101.63,
+      "end": 107.82
+    },
+    {
+      "latin": "Hunc astra, tellus, ǽquora,",
+      "english": "Him the stars, the earth, the seas,",
+      "start": 109.43,
+      "end": 115.75
+    },
+    {
+      "latin": "Hunc omne quod cælo subest,",
+      "english": "Him all that is beneath the heavens,",
+      "start": 115.75,
+      "end": 123.45
+    },
+    {
+      "latin": "Salútis auctórem novæ",
+      "english": "the Author of a new salvation,",
+      "start": 123.45,
+      "end": 129.81
+    },
+    {
+      "latin": "Novo salútat cántico.",
+      "english": "greet with a new song.",
+      "start": 129.81,
+      "end": 136.54
+    },
+    {
+      "latin": "Et nos, beáta quos sacri",
+      "english": "And we, whom the blessed stream",
+      "start": 137.25,
+      "end": 143.32
+    },
+    {
+      "latin": "Rigávit unda sánguinis,",
+      "english": "of sacred Blood hath watered,",
+      "start": 143.49,
+      "end": 151.01
+    },
+    {
+      "latin": "Natális ob diem tui,",
+      "english": "for the day of Thy birth",
+      "start": 151.01,
+      "end": 157.08
+    },
+    {
+      "latin": "Hymni tribútum sólvimus.",
+      "english": "pay the tribute of a hymn.",
+      "start": 157.19,
+      "end": 163.32
+    },
+    {
+      "latin": "Jesu, tibi sit glória,",
+      "english": "Jesus, to Thee be glory,",
+      "start": 165.01,
+      "end": 171.39
+    },
+    {
+      "latin": "Qui natus es de Vírgine,",
+      "english": "Who wast born of the Virgin,",
+      "start": 171.39,
+      "end": 178.67
+    },
+    {
+      "latin": "Cum Patre et almo Spíritu,",
+      "english": "with the Father and the loving Spirit,",
+      "start": 178.67,
+      "end": 184.71
+    },
+    {
+      "latin": "In sempitérna sǽcula.",
+      "english": "unto everlasting ages.",
+      "start": 184.71,
+      "end": 191.62
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 192.31,
+      "end": 196.78
+    }
+  ]
+}

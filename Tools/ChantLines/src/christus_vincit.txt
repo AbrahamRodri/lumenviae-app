@@ -1,0 +1,25 @@
+# Christus vincit, simple tone: the acclamation sung twice, then after each
+# verse of Psalm 116 and each half of the Gloria Patri. The score prints
+# the first verse only; the second verse and the doxology, which the
+# recording sings (Whisper hears them), are the Vulgate's and the Liber's
+# words, spelled as the app's own Gloria Patri score spells them. English
+# plain (the app has no prayer for it).
+noise -14
+gap 0.3
+merge 1.5
+
+Christus vincit, Christus regnat, | Christ conquers, Christ reigns,
+Christus ímperat. | Christ commands.
+Christus vincit, Christus regnat, Christus ímperat. | Christ conquers, Christ reigns, Christ commands.
+Laudáte Dóminum, omnes Gentes: laudáte eum, omnes pópuli: | Praise the Lord, all ye nations: praise Him, all ye peoples.
+Christus vincit, Christus regnat, | Christ conquers, Christ reigns,
+Christus ímperat. | Christ commands.
+Quóniam confirmáta est super nos misericórdia ejus: | For His mercy is confirmed upon us:
+et véritas Dómini manet in ætérnum. | and the truth of the Lord remaineth for ever.
+Christus vincit, Christus regnat, Christus ímperat. | Christ conquers, Christ reigns, Christ commands.
+Glória Patri, et Fílio, | Glory be to the Father, and to the Son,
+et Spirítui Sancto. | and to the Holy Ghost.
+Christus vincit, Christus regnat, Christus ímperat. | Christ conquers, Christ reigns, Christ commands.
+Sicut erat in princípio, et nunc, et semper, | As it was in the beginning, is now, and ever shall be,
+et in sǽcula sæculórum. Amen. | world without end. Amen.
+Christus vincit, Christus regnat, Christus ímperat. | Christ conquers, Christ reigns, Christ commands.

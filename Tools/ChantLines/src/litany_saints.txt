@@ -1,0 +1,268 @@
+# Litaniæ Sanctorum, the litany of the Rogation days as the Liber Usualis
+# prints it, sung through as this recording has it: every Kyrie, Christe audi
+# and exaudi twice; the saints from Sancta Maria to Omnes Sancti et Sanctæ
+# Dei; Propitius esto twice; the eleven Ab and A, nine Per and In die judicii;
+# Peccatores and the sixteen Ut to Fili Dei; the Agnus Dei; and the closing
+# Christe and Kyrie once each. It ends there, without the Pater noster,
+# psalm and collects that follow in the books. The app has no prayer for it:
+# the Latin of the Kyrie, Pater de caelis, Propitius esto, Peccatores and
+# Agnus Dei parts is the scores'; the invocations, which the scores do not
+# print, are the Liber's: the count and order hold throughout, and Whisper
+# heard nearly every one in its place (not Cosma et Damiane, Benedicte,
+# Ut nos exaudire or Fili Dei, which stand where the count puts them).
+# English plain. The cantor breathes inside the longer Ut petitions, and
+# each half is its own line; in Ut inimicos Whisper heard too little of
+# the first half to say where the breath fell, so it is one line (~).
+noise -12
+gap 0.2
+merge 1.5
+
+Kýrie, eléison. | Lord, have mercy on us.
+Kýrie, eléison. | Lord, have mercy on us.
+Christe, eléison. | Christ, have mercy on us.
+Christe, eléison. | Christ, have mercy on us.
+Kýrie, eléison. | Lord, have mercy on us.
+Kýrie, eléison. | Lord, have mercy on us.
+Christe, audi nos. | Christ, hear us.
+Christe, audi nos. | Christ, hear us.
+Christe, exáudi nos. | Christ, graciously hear us.
+Christe, exáudi nos. | Christ, graciously hear us.
+Pater de cælis, Deus, | God the Father of Heaven,
+miserére nobis. | have mercy on us.
+Fili, Redémptor mundi, Deus, | God the Son, Redeemer of the world,
+miserére nobis. | have mercy on us.
+Spíritus Sancte, Deus, | God the Holy Ghost,
+miserére nobis. | have mercy on us.
+Sancta Trínitas, unus Deus, | Holy Trinity, One God,
+miserére nobis. | have mercy on us.
+Sancta María, | Holy Mary,
+ora pro nobis. | pray for us.
+Sancta Dei Génitrix, | Holy Mother of God,
+ora pro nobis. | pray for us.
+Sancta Virgo vírginum, | Holy Virgin of virgins,
+ora pro nobis. | pray for us.
+Sancte Míchael, | Saint Michael,
+ora pro nobis. | pray for us.
+Sancte Gábriel, | Saint Gabriel,
+ora pro nobis. | pray for us.
+Sancte Ráphael, | Saint Raphael,
+ora pro nobis. | pray for us.
+Omnes sancti Ángeli et Archángeli, | All ye holy Angels and Archangels,
+oráte pro nobis. | pray for us.
+Omnes sancti beatórum Spirítuum órdines, | All ye holy orders of blessed Spirits,
+oráte pro nobis. | pray for us.
+Sancte Joánnes Baptísta, | Saint John the Baptist,
+ora pro nobis. | pray for us.
+Sancte Joseph, | Saint Joseph,
+ora pro nobis. | pray for us.
+Omnes sancti Patriárchæ et Prophétæ, | All ye holy Patriarchs and Prophets,
+oráte pro nobis. | pray for us.
+Sancte Petre, | Saint Peter,
+ora pro nobis. | pray for us.
+Sancte Paule, | Saint Paul,
+ora pro nobis. | pray for us.
+Sancte Andréa, | Saint Andrew,
+ora pro nobis. | pray for us.
+Sancte Jacóbe, | Saint James,
+ora pro nobis. | pray for us.
+Sancte Joánnes, | Saint John,
+ora pro nobis. | pray for us.
+Sancte Thoma, | Saint Thomas,
+ora pro nobis. | pray for us.
+Sancte Jacóbe, | Saint James,
+ora pro nobis. | pray for us.
+Sancte Philíppe, | Saint Philip,
+ora pro nobis. | pray for us.
+Sancte Bartholomǽe, | Saint Bartholomew,
+ora pro nobis. | pray for us.
+Sancte Matthǽe, | Saint Matthew,
+ora pro nobis. | pray for us.
+Sancte Simon, | Saint Simon,
+ora pro nobis. | pray for us.
+Sancte Thaddǽe, | Saint Thaddeus,
+ora pro nobis. | pray for us.
+Sancte Matthía, | Saint Matthias,
+ora pro nobis. | pray for us.
+Sancte Bárnaba, | Saint Barnabas,
+ora pro nobis. | pray for us.
+Sancte Luca, | Saint Luke,
+ora pro nobis. | pray for us.
+Sancte Marce, | Saint Mark,
+ora pro nobis. | pray for us.
+Omnes sancti Apóstoli et Evangelístæ, | All ye holy Apostles and Evangelists,
+oráte pro nobis. | pray for us.
+Omnes sancti Discípuli Dómini, | All ye holy Disciples of the Lord,
+oráte pro nobis. | pray for us.
+Omnes sancti Innocéntes, | All ye holy Innocents,
+oráte pro nobis. | pray for us.
+Sancte Stéphane, | Saint Stephen,
+ora pro nobis. | pray for us.
+Sancte Laurénti, | Saint Lawrence,
+ora pro nobis. | pray for us.
+Sancte Vincénti, | Saint Vincent,
+ora pro nobis. | pray for us.
+Sancti Fabiáne et Sebastiáne, | Saints Fabian and Sebastian,
+oráte pro nobis. | pray for us.
+Sancti Joánnes et Paule, | Saints John and Paul,
+oráte pro nobis. | pray for us.
+Sancti Cosma et Damiáne, | Saints Cosmas and Damian,
+oráte pro nobis. | pray for us.
+Sancti Gervási et Protási, | Saints Gervase and Protase,
+oráte pro nobis. | pray for us.
+Omnes sancti Mártyres, | All ye holy Martyrs,
+oráte pro nobis. | pray for us.
+Sancte Silvéster, | Saint Sylvester,
+ora pro nobis. | pray for us.
+Sancte Gregóri, | Saint Gregory,
+ora pro nobis. | pray for us.
+Sancte Ambrósi, | Saint Ambrose,
+ora pro nobis. | pray for us.
+Sancte Augustíne, | Saint Augustine,
+ora pro nobis. | pray for us.
+Sancte Hierónyme, | Saint Jerome,
+ora pro nobis. | pray for us.
+Sancte Martíne, | Saint Martin,
+ora pro nobis. | pray for us.
+Sancte Nicoláe, | Saint Nicholas,
+ora pro nobis. | pray for us.
+Omnes sancti Pontífices et Confessóres, | All ye holy Bishops and Confessors,
+oráte pro nobis. | pray for us.
+Omnes sancti Doctóres, | All ye holy Doctors,
+oráte pro nobis. | pray for us.
+Sancte Antóni, | Saint Anthony,
+ora pro nobis. | pray for us.
+Sancte Benedícte, | Saint Benedict,
+ora pro nobis. | pray for us.
+Sancte Bernárde, | Saint Bernard,
+ora pro nobis. | pray for us.
+Sancte Domínice, | Saint Dominic,
+ora pro nobis. | pray for us.
+Sancte Francísce, | Saint Francis,
+ora pro nobis. | pray for us.
+Omnes sancti Sacerdótes et Levítæ, | All ye holy Priests and Levites,
+oráte pro nobis. | pray for us.
+Omnes sancti Mónachi et Eremítæ, | All ye holy Monks and Hermits,
+oráte pro nobis. | pray for us.
+Sancta María Magdaléna, | Saint Mary Magdalen,
+ora pro nobis. | pray for us.
+Sancta Ágatha, | Saint Agatha,
+ora pro nobis. | pray for us.
+Sancta Lúcia, | Saint Lucy,
+ora pro nobis. | pray for us.
+Sancta Agnes, | Saint Agnes,
+ora pro nobis. | pray for us.
+Sancta Cæcília, | Saint Cecilia,
+ora pro nobis. | pray for us.
+Sancta Catharína, | Saint Catherine,
+ora pro nobis. | pray for us.
+Sancta Anastásia, | Saint Anastasia,
+ora pro nobis. | pray for us.
+Omnes sanctæ Vírgines et Víduæ, | All ye holy Virgins and Widows,
+oráte pro nobis. | pray for us.
+Omnes Sancti et Sanctæ Dei, | All ye holy men and women, Saints of God,
+intercédite pro nobis. | make intercession for us.
+Propítius esto, | Be merciful,
+parce nobis, Dómine. | spare us, O Lord.
+Propítius esto, | Be merciful,
+exáudi nos, Dómine. | graciously hear us, O Lord.
+Ab omni malo, | From all evil,
+líbera nos, Dómine. | O Lord, deliver us.
+Ab omni peccáto, | From all sin,
+líbera nos, Dómine. | O Lord, deliver us.
+Ab ira tua, | From Thy wrath,
+líbera nos, Dómine. | O Lord, deliver us.
+A subitánea et improvísa morte, | From a sudden and unprovided death,
+líbera nos, Dómine. | O Lord, deliver us.
+Ab insídiis diáboli, | From the snares of the devil,
+líbera nos, Dómine. | O Lord, deliver us.
+Ab ira, et ódio, et omni mala voluntáte, | From anger, and hatred, and every evil will,
+líbera nos, Dómine. | O Lord, deliver us.
+A spíritu fornicatiónis, | From the spirit of fornication,
+líbera nos, Dómine. | O Lord, deliver us.
+A fúlgure et tempestáte, | From lightning and tempest,
+líbera nos, Dómine. | O Lord, deliver us.
+A flagéllo terræmótus, | From the scourge of earthquake,
+líbera nos, Dómine. | O Lord, deliver us.
+A peste, fame, et bello, | From plague, famine, and war,
+líbera nos, Dómine. | O Lord, deliver us.
+A morte perpétua, | From everlasting death,
+líbera nos, Dómine. | O Lord, deliver us.
+Per mystérium sanctæ Incarnatiónis tuæ, | Through the mystery of Thy holy Incarnation,
+líbera nos, Dómine. | O Lord, deliver us.
+Per advéntum tuum, | Through Thy coming,
+líbera nos, Dómine. | O Lord, deliver us.
+Per nativitátem tuam, | Through Thy nativity,
+líbera nos, Dómine. | O Lord, deliver us.
+Per baptísmum et sanctum jejúnium tuum, | Through Thy baptism and holy fasting,
+líbera nos, Dómine. | O Lord, deliver us.
+Per crucem et passiónem tuam, | Through Thy cross and Passion,
+líbera nos, Dómine. | O Lord, deliver us.
+Per mortem et sepultúram tuam, | Through Thy death and burial,
+líbera nos, Dómine. | O Lord, deliver us.
+Per sanctam resurrectiónem tuam, | Through Thy holy Resurrection,
+líbera nos, Dómine. | O Lord, deliver us.
+Per admirábilem ascensiónem tuam, | Through Thine admirable Ascension,
+líbera nos, Dómine. | O Lord, deliver us.
+Per advéntum Spíritus Sancti Parácliti, | Through the coming of the Holy Ghost, the Paraclete,
+líbera nos, Dómine. | O Lord, deliver us.
+In die judícii, | In the day of judgement,
+líbera nos, Dómine. | O Lord, deliver us.
+Peccatóres, | We sinners,
+te rogámus, audi nos. | we beseech Thee, hear us.
+Ut nobis parcas, | That Thou wouldst spare us,
+te rogámus, audi nos. | we beseech Thee, hear us.
+Ut nobis indúlgeas, | That Thou wouldst pardon us,
+te rogámus, audi nos. | we beseech Thee, hear us.
+Ut ad veram pœniténtiam nos perdúcere dignéris, | That Thou wouldst vouchsafe to bring us to true penance,
+te rogámus, audi nos. | we beseech Thee, hear us.
+Ut Ecclésiam tuam sanctam régere et conserváre dignéris, | That Thou wouldst vouchsafe to govern and preserve Thy holy Church,
+te rogámus, audi nos. | we beseech Thee, hear us.
+Ut domnum apostólicum et omnes ecclesiásticos órdines | That our Apostolic Lord and all the orders of the Church
+in sancta religióne conserváre dignéris, | Thou wouldst vouchsafe to preserve in holy religion,
+te rogámus, audi nos. | we beseech Thee, hear us.
+Ut inimícos sanctæ Ecclésiæ humiliáre dignéris, | That Thou wouldst vouchsafe to humble the enemies of holy Church,
+~
+te rogámus, audi nos. | we beseech Thee, hear us.
+Ut régibus et princípibus christiánis | That to Christian kings and princes
+pacem et veram concórdiam donáre dignéris, | Thou wouldst vouchsafe to give peace and true concord,
+te rogámus, audi nos. | we beseech Thee, hear us.
+Ut cuncto pópulo christiáno | That to all Christian people
+pacem et unitátem largíri dignéris, | Thou wouldst vouchsafe to grant peace and unity,
+te rogámus, audi nos. | we beseech Thee, hear us.
+Ut omnes errántes ad unitátem Ecclésiæ revocáre, | That Thou wouldst vouchsafe to call back all who stray to the unity of the Church,
+et infidéles univérsos ad Evangélii lumen perdúcere dignéris, | and to lead all unbelievers to the light of the Gospel,
+te rogámus, audi nos. | we beseech Thee, hear us.
+Ut nosmetípsos in tuo sancto servítio | That in Thy holy service
+confortáre et conserváre dignéris, | Thou wouldst vouchsafe to strengthen and preserve us,
+te rogámus, audi nos. | we beseech Thee, hear us.
+Ut mentes nostras ad cæléstia desidéria érigas, | That Thou wouldst lift up our minds to heavenly desires,
+te rogámus, audi nos. | we beseech Thee, hear us.
+Ut ómnibus benefactóribus nostris | That to all our benefactors
+sempitérna bona retríbuas, | Thou wouldst render everlasting good things,
+te rogámus, audi nos. | we beseech Thee, hear us.
+Ut ánimas nostras, fratrum, propinquórum et benefactórum nostrórum | That our souls, and those of our brethren, kinsfolk and benefactors,
+ab ætérna damnatióne erípias, | Thou wouldst deliver from eternal damnation,
+te rogámus, audi nos. | we beseech Thee, hear us.
+Ut fructus terræ | That the fruits of the earth
+dare et conserváre dignéris, | Thou wouldst vouchsafe to give and preserve,
+te rogámus, audi nos. | we beseech Thee, hear us.
+Ut ómnibus fidélibus defúnctis | That to all the faithful departed
+réquiem ætérnam donáre dignéris, | Thou wouldst vouchsafe to grant eternal rest,
+te rogámus, audi nos. | we beseech Thee, hear us.
+Ut nos exaudíre dignéris, | That Thou wouldst vouchsafe graciously to hear us,
+te rogámus, audi nos. | we beseech Thee, hear us.
+Fili Dei, | Son of God,
+te rogámus, audi nos. | we beseech Thee, hear us.
+Agnus Dei, | Lamb of God,
+qui tollis peccáta mundi, | Who takest away the sins of the world,
+parce nobis, Dómine. | spare us, O Lord.
+Agnus Dei, qui tollis peccáta mundi, | Lamb of God, Who takest away the sins of the world,
+exáudi nos Dómine. | graciously hear us, O Lord.
+Agnus Dei, | Lamb of God,
+qui tollis peccáta mundi, | Who takest away the sins of the world,
+miserére nobis. | have mercy on us.
+Christe, audi nos. | Christ, hear us.
+Christe, exáudi nos. | Christ, graciously hear us.
+Kýrie, eléison. | Lord, have mercy on us.
+Christe, eléison. | Christ, have mercy on us.
+Kýrie, eléison. | Lord, have mercy on us.

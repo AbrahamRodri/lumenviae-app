@@ -1,0 +1,247 @@
+{
+  "id": "flos_carmeli",
+  "part": null,
+  "method": "breaths by loudness (under -14 dB for 0.25 s, phrases under 1.5 s merged) + text alignment; Whisper: 26 of 39 breaks heard",
+  "lines": [
+    {
+      "latin": "Flos Carméli, vitis florígera,",
+      "english": "Flower of Carmel, vine in blossom,",
+      "start": 0.47,
+      "end": 6.36
+    },
+    {
+      "latin": "splendor cæli,",
+      "english": "splendour of heaven,",
+      "start": 6.55,
+      "end": 9.35
+    },
+    {
+      "latin": "Virgo puérpera",
+      "english": "Virgin who didst bear a Son,",
+      "start": 9.37,
+      "end": 13.09
+    },
+    {
+      "latin": "singuláris.",
+      "english": "none like to thee.",
+      "start": 13.09,
+      "end": 16.1
+    },
+    {
+      "latin": "Mater mitis,",
+      "english": "Mother most gentle,",
+      "start": 17.27,
+      "end": 20.83
+    },
+    {
+      "latin": "sed viri néscia,",
+      "english": "who knewest not man,",
+      "start": 20.83,
+      "end": 24.39
+    },
+    {
+      "latin": "Carmelítis",
+      "english": "to thy Carmelites",
+      "start": 24.39,
+      "end": 27.93
+    },
+    {
+      "latin": "esto propítia,",
+      "english": "be thou gracious,",
+      "start": 27.93,
+      "end": 31.77
+    },
+    {
+      "latin": "Stella maris.",
+      "english": "O Star of the Sea.",
+      "start": 31.77,
+      "end": 36.16
+    },
+    {
+      "latin": "Radix Jesse",
+      "english": "Root of Jesse,",
+      "start": 37.89,
+      "end": 40.99
+    },
+    {
+      "latin": "gérminans flósculum,",
+      "english": "putting forth a little flower,",
+      "start": 40.99,
+      "end": 44.18
+    },
+    {
+      "latin": "nos adésse",
+      "english": "that we may be",
+      "start": 44.73,
+      "end": 47.65
+    },
+    {
+      "latin": "tecum in sǽculum",
+      "english": "with thee for ever",
+      "start": 47.65,
+      "end": 51.3
+    },
+    {
+      "latin": "patiáris.",
+      "english": "do thou permit.",
+      "start": 51.41,
+      "end": 54.36
+    },
+    {
+      "latin": "Inter spinas",
+      "english": "Thou who among thorns",
+      "start": 55.73,
+      "end": 59.33
+    },
+    {
+      "latin": "quæ crescis lílium,",
+      "english": "growest as a lily,",
+      "start": 59.33,
+      "end": 63.17
+    },
+    {
+      "latin": "serva puras",
+      "english": "keep pure",
+      "start": 63.17,
+      "end": 66.73
+    },
+    {
+      "latin": "mentes fragílium,",
+      "english": "the minds of the frail,",
+      "start": 66.73,
+      "end": 70.55
+    },
+    {
+      "latin": "tuteláris.",
+      "english": "as their guardian.",
+      "start": 70.55,
+      "end": 75.18
+    },
+    {
+      "latin": "Armatúra",
+      "english": "O armour",
+      "start": 76.99,
+      "end": 79.99
+    },
+    {
+      "latin": "fortis pugnántium,",
+      "english": "strong for them that fight,",
+      "start": 79.99,
+      "end": 83.2
+    },
+    {
+      "latin": "furunt bella,",
+      "english": "the wars rage:",
+      "start": 83.69,
+      "end": 86.47
+    },
+    {
+      "latin": "tende præsídium",
+      "english": "hold forth as a defence",
+      "start": 86.47,
+      "end": 89.78
+    },
+    {
+      "latin": "Scapuláris.",
+      "english": "the Scapular.",
+      "start": 90.43,
+      "end": 93.56
+    },
+    {
+      "latin": "Per incérta",
+      "english": "Through things uncertain",
+      "start": 95.15,
+      "end": 98.61
+    },
+    {
+      "latin": "prudens consílium,",
+      "english": "prudent counsel,",
+      "start": 98.61,
+      "end": 102.27
+    },
+    {
+      "latin": "per advérsa",
+      "english": "through adversity",
+      "start": 102.27,
+      "end": 105.71
+    },
+    {
+      "latin": "juge solátium",
+      "english": "unfailing comfort",
+      "start": 105.72,
+      "end": 109.47
+    },
+    {
+      "latin": "largiáris.",
+      "english": "do thou bestow.",
+      "start": 109.47,
+      "end": 113.96
+    },
+    {
+      "latin": "Mater dulcis",
+      "english": "Sweet Mother,",
+      "start": 115.89,
+      "end": 118.88
+    },
+    {
+      "latin": "Carméli dómina,",
+      "english": "Lady of Carmel,",
+      "start": 119.03,
+      "end": 122.42
+    },
+    {
+      "latin": "plebem tuam",
+      "english": "thy people",
+      "start": 122.65,
+      "end": 125.71
+    },
+    {
+      "latin": "reple lætítia",
+      "english": "fill with the gladness",
+      "start": 125.71,
+      "end": 129.48
+    },
+    {
+      "latin": "qua beáris.",
+      "english": "wherewith thou art blessed.",
+      "start": 129.65,
+      "end": 132.68
+    },
+    {
+      "latin": "Paradísi",
+      "english": "Of Paradise",
+      "start": 134.05,
+      "end": 137.45
+    },
+    {
+      "latin": "clavis et jánua,",
+      "english": "the key and the gate,",
+      "start": 137.45,
+      "end": 141.27
+    },
+    {
+      "latin": "fac nos duci",
+      "english": "cause us to be led",
+      "start": 141.27,
+      "end": 144.83
+    },
+    {
+      "latin": "quo, Mater, glória",
+      "english": "whither, O Mother, with glory",
+      "start": 144.83,
+      "end": 148.55
+    },
+    {
+      "latin": "coronáris.",
+      "english": "thou art crowned.",
+      "start": 148.55,
+      "end": 153.34
+    },
+    {
+      "latin": "Amen. Allelúia.",
+      "english": "Amen. Alleluia.",
+      "start": 154.87,
+      "end": 163.28
+    }
+  ]
+}

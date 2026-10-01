@@ -1,0 +1,253 @@
+{
+  "id": "veni_emmanuel",
+  "part": null,
+  "method": "breaths by loudness (under -14 dB for 0.35 s, phrases under 1.5 s merged) + text alignment; Whisper: 31 of 40 breaks heard",
+  "lines": [
+    {
+      "latin": "Veni, veni, Emmánuel,",
+      "english": "Come, come, Emmanuel,",
+      "start": 0.45,
+      "end": 5.73
+    },
+    {
+      "latin": "Captívum solve Israël,",
+      "english": "set captive Israel free,",
+      "start": 5.73,
+      "end": 11.63
+    },
+    {
+      "latin": "Qui gemit in exsílio",
+      "english": "who mourns in exile,",
+      "start": 11.63,
+      "end": 16.95
+    },
+    {
+      "latin": "Privátus Dei Fílio.",
+      "english": "deprived of the Son of God.",
+      "start": 16.95,
+      "end": 22.57
+    },
+    {
+      "latin": "Gaude, gaude, Emmánuel",
+      "english": "Rejoice, rejoice! Emmanuel",
+      "start": 22.57,
+      "end": 30.01
+    },
+    {
+      "latin": "Nascétur pro te, Israël.",
+      "english": "shall be born for thee, O Israel.",
+      "start": 30.01,
+      "end": 36.46
+    },
+    {
+      "latin": "Veni, veni, Rex géntium,",
+      "english": "Come, come, King of the nations,",
+      "start": 37.89,
+      "end": 43.35
+    },
+    {
+      "latin": "Veni, Redémptor ómnium:",
+      "english": "come, Redeemer of all,",
+      "start": 43.35,
+      "end": 49.06
+    },
+    {
+      "latin": "Ut salves tuos fámulos",
+      "english": "to save Thy servants,",
+      "start": 49.41,
+      "end": 55.11
+    },
+    {
+      "latin": "Peccáti sibi cónscios.",
+      "english": "who know their sin.",
+      "start": 55.11,
+      "end": 61.01
+    },
+    {
+      "latin": "Gaude, gaude, Emmánuel",
+      "english": "Rejoice, rejoice! Emmanuel",
+      "start": 61.01,
+      "end": 68.57
+    },
+    {
+      "latin": "Nascétur pro te, Israël.",
+      "english": "shall be born for thee, O Israel.",
+      "start": 68.57,
+      "end": 75.32
+    },
+    {
+      "latin": "Veni, veni, O Oriens,",
+      "english": "Come, come, O Dayspring,",
+      "start": 76.69,
+      "end": 82.07
+    },
+    {
+      "latin": "Soláre nos advéniens:",
+      "english": "console us by Thy coming;",
+      "start": 82.07,
+      "end": 87.76
+    },
+    {
+      "latin": "Noctis depélle nébulas,",
+      "english": "drive away the clouds of night,",
+      "start": 87.91,
+      "end": 93.51
+    },
+    {
+      "latin": "Dirásque noctis ténebras.",
+      "english": "and the dread darkness of night.",
+      "start": 93.51,
+      "end": 99.45
+    },
+    {
+      "latin": "Gaude, gaude, Emmánuel",
+      "english": "Rejoice, rejoice! Emmanuel",
+      "start": 99.45,
+      "end": 106.77
+    },
+    {
+      "latin": "Nascétur pro te, Israël.",
+      "english": "shall be born for thee, O Israel.",
+      "start": 106.77,
+      "end": 113.24
+    },
+    {
+      "latin": "Veni, Clavis Davídica,",
+      "english": "Come, Key of David,",
+      "start": 114.67,
+      "end": 120.05
+    },
+    {
+      "latin": "Regna reclúde cǽlica;",
+      "english": "open wide the heavenly kingdom;",
+      "start": 120.05,
+      "end": 126.07
+    },
+    {
+      "latin": "Fac iter tutum súperum,",
+      "english": "make safe the way on high,",
+      "start": 126.07,
+      "end": 131.82
+    },
+    {
+      "latin": "Et claude vias ínferum.",
+      "english": "and close the ways below.",
+      "start": 131.87,
+      "end": 137.67
+    },
+    {
+      "latin": "Gaude, gaude, Emmánuel",
+      "english": "Rejoice, rejoice! Emmanuel",
+      "start": 137.67,
+      "end": 145.35
+    },
+    {
+      "latin": "Nascétur pro te, Israël.",
+      "english": "shall be born for thee, O Israel.",
+      "start": 145.35,
+      "end": 152.24
+    },
+    {
+      "latin": "Veni, O Jesse Vírgula:",
+      "english": "Come, O Rod of Jesse:",
+      "start": 153.31,
+      "end": 158.75
+    },
+    {
+      "latin": "Ex hostis tuos úngula,",
+      "english": "from the claw of the enemy Thine own,",
+      "start": 158.75,
+      "end": 164.64
+    },
+    {
+      "latin": "De specu tuos tártari",
+      "english": "from the cave of hell Thine own",
+      "start": 164.83,
+      "end": 170.75
+    },
+    {
+      "latin": "Educ, et antro bárathri.",
+      "english": "lead forth, and from the pit of the abyss.",
+      "start": 170.75,
+      "end": 176.57
+    },
+    {
+      "latin": "Gaude, gaude, Emmánuel",
+      "english": "Rejoice, rejoice! Emmanuel",
+      "start": 176.57,
+      "end": 184.05
+    },
+    {
+      "latin": "Nascétur pro te, Israël.",
+      "english": "shall be born for thee, O Israel.",
+      "start": 184.05,
+      "end": 190.7
+    },
+    {
+      "latin": "Veni, veni, Adonái,",
+      "english": "Come, come, Adonai,",
+      "start": 192.07,
+      "end": 197.25
+    },
+    {
+      "latin": "Qui pópulo in Sínai,",
+      "english": "Who to the people on Sinai",
+      "start": 197.25,
+      "end": 202.54
+    },
+    {
+      "latin": "Legem dedísti vértice,",
+      "english": "from its summit gavest the Law,",
+      "start": 203.01,
+      "end": 208.65
+    },
+    {
+      "latin": "In majestáte glóriæ.",
+      "english": "in the majesty of glory.",
+      "start": 208.65,
+      "end": 214.03
+    },
+    {
+      "latin": "Gaude, gaude, Emmánuel",
+      "english": "Rejoice, rejoice! Emmanuel",
+      "start": 214.03,
+      "end": 221.69
+    },
+    {
+      "latin": "Nascétur pro te, Israël.",
+      "english": "shall be born for thee, O Israel.",
+      "start": 221.69,
+      "end": 227.76
+    },
+    {
+      "latin": "Veni, O Sapiéntia, Quæ hic dispónis ómnia:",
+      "english": "Come, O Wisdom, Who orderest all things here:",
+      "start": 229.39,
+      "end": 240.56
+    },
+    {
+      "latin": "Veni, viam prudéntiæ",
+      "english": "come, that the way of prudence",
+      "start": 240.67,
+      "end": 246.37
+    },
+    {
+      "latin": "Ut dóceas et glóriæ.",
+      "english": "Thou mayest teach us, and of glory.",
+      "start": 246.37,
+      "end": 252.07
+    },
+    {
+      "latin": "Gaude, gaude, Emmánuel",
+      "english": "Rejoice, rejoice! Emmanuel",
+      "start": 252.07,
+      "end": 259.85
+    },
+    {
+      "latin": "Nascétur pro te, Israël.",
+      "english": "shall be born for thee, O Israel.",
+      "start": 259.85,
+      "end": 266.9
+    }
+  ]
+}

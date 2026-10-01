@@ -1,0 +1,49 @@
+# Veni Creator Spiritus, all seven stanzas (the last the Paschal doxology,
+# Deo Patri ... qui a mortuis surrexit) and Amen; the versicle Emitte
+# Spiritum and the collect Deus qui corda. Latin from the scores; English
+# from the app's Veni Creator (the consecration's) and the Prayer Book's
+# Come, Holy Ghost (come_holy_ghost) for the versicle and collect. The
+# breaths between the second and third lines of the first and third
+# stanzas are too shallow to be found in this reverberant recording, so
+# those lines stand as one; the cantor breathes inside the last word of
+# "Per Christum Dominum nostrum".
+noise -16
+gap 0.2
+merge 1.5
+
+Veni Creátor Spíritus, | Come, Holy Ghost, Creator blest,
+Mentes tuórum vísita: Imple supérna grátia | and in our souls take up Thy rest; come with Thy grace and heavenly aid
+Quæ tu creásti péctora. | to fill the hearts which Thou hast made.
+Qui díceris Paráclitus, | O Comforter, to Thee we cry,
+Altíssimi donum Dei, | Thou heavenly gift of God most high,
+Fons vivus, ignis, cáritas, | Thou fount of life and fire of love,
+Et spiritális únctio. | and sweet anointing from above.
+Tu septifórmis múnere, | Thou in Thy sevenfold gifts art known;
+Dígitus patérnæ déxteræ, Tu rite promíssum Patris, | Thou, finger of God's hand we own; Thou, promise of the Father, Thou
+Sermóne ditans gúttura. | Who dost the tongue with power endow.
+Accénde lumen sénsibus, | Kindle our senses from above,
+Infúnde amórem córdibus, | and make our hearts o'erflow with love;
+Infírma nostri córporis | with patience firm and virtue high
+Virtúte firmans pérpeti. | the weakness of our flesh supply.
+Hostem repéllas lóngius, | Far from us drive the foe we dread,
+Pacémque dones prótinus: | and grant us Thy true peace instead;
+Ductóre sic te prǽvio, | so shall we not, with Thee for guide,
+Vitémus omne nóxium. | turn from the path of life aside.
+Per te sciámus da Patrem, | Oh, may Thy grace on us bestow
+Noscámus atque Fílium, | the Father and the Son to know;
+Teque utriúsque Spíritum | and Thee, through endless times confessed,
+Credámus omni témpore. | of both the eternal Spirit blest.
+Deo Patri sit glória, | Now to the Father and the Son,
+Et Fílio, qui a mórtuis | Who rose from death, be glory given,
+Surréxit, ac Paráclito, | with Thee, O holy Comforter,
+In sæculórum sǽcula. | henceforth by all in earth and heaven.
+Amen. | Amen.
+Emítte Spíritum tuum et creabúntur. | Send forth Thy Spirit, and they shall be created.
+Et renovábis fáciem terræ. | And Thou shalt renew the face of the earth.
+Orémus. | Let us pray.
+Deus, qui corda fidélium Sancti Spíritus illustratióne docuísti: | O God, who didst instruct the hearts of the faithful by the light of the Holy Ghost,
+da nobis in eódem Spíritu recta sápere, | grant us in the same Spirit to be truly wise,
+et de ejus semper consolatióne gaudére. | and ever to rejoice in His consolation.
+Per Christum Dóminum nostrum. | Through Christ our Lord.
+~
+Amen. | Amen.

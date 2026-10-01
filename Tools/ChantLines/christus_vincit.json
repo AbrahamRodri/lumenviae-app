@@ -1,0 +1,97 @@
+{
+  "id": "christus_vincit",
+  "part": null,
+  "method": "breaths by loudness (under -14 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 11 of 14 breaks heard",
+  "lines": [
+    {
+      "latin": "Christus vincit, Christus regnat,",
+      "english": "Christ conquers, Christ reigns,",
+      "start": 0.33,
+      "end": 5.57
+    },
+    {
+      "latin": "Christus ímperat.",
+      "english": "Christ commands.",
+      "start": 5.57,
+      "end": 10.48
+    },
+    {
+      "latin": "Christus vincit, Christus regnat, Christus ímperat.",
+      "english": "Christ conquers, Christ reigns, Christ commands.",
+      "start": 11.15,
+      "end": 21.46
+    },
+    {
+      "latin": "Laudáte Dóminum, omnes Gentes: laudáte eum, omnes pópuli:",
+      "english": "Praise the Lord, all ye nations: praise Him, all ye peoples.",
+      "start": 22.65,
+      "end": 33.58
+    },
+    {
+      "latin": "Christus vincit, Christus regnat,",
+      "english": "Christ conquers, Christ reigns,",
+      "start": 34.71,
+      "end": 40.27
+    },
+    {
+      "latin": "Christus ímperat.",
+      "english": "Christ commands.",
+      "start": 40.27,
+      "end": 45.32
+    },
+    {
+      "latin": "Quóniam confirmáta est super nos misericórdia ejus:",
+      "english": "For His mercy is confirmed upon us:",
+      "start": 46.07,
+      "end": 54.1
+    },
+    {
+      "latin": "et véritas Dómini manet in ætérnum.",
+      "english": "and the truth of the Lord remaineth for ever.",
+      "start": 54.61,
+      "end": 61.38
+    },
+    {
+      "latin": "Christus vincit, Christus regnat, Christus ímperat.",
+      "english": "Christ conquers, Christ reigns, Christ commands.",
+      "start": 62.65,
+      "end": 73.08
+    },
+    {
+      "latin": "Glória Patri, et Fílio,",
+      "english": "Glory be to the Father, and to the Son,",
+      "start": 74.11,
+      "end": 80.45
+    },
+    {
+      "latin": "et Spirítui Sancto.",
+      "english": "and to the Holy Ghost.",
+      "start": 80.45,
+      "end": 85.84
+    },
+    {
+      "latin": "Christus vincit, Christus regnat, Christus ímperat.",
+      "english": "Christ conquers, Christ reigns, Christ commands.",
+      "start": 86.95,
+      "end": 97.4
+    },
+    {
+      "latin": "Sicut erat in princípio, et nunc, et semper,",
+      "english": "As it was in the beginning, is now, and ever shall be,",
+      "start": 98.55,
+      "end": 105.65
+    },
+    {
+      "latin": "et in sǽcula sæculórum. Amen.",
+      "english": "world without end. Amen.",
+      "start": 105.65,
+      "end": 112.66
+    },
+    {
+      "latin": "Christus vincit, Christus regnat, Christus ímperat.",
+      "english": "Christ conquers, Christ reigns, Christ commands.",
+      "start": 113.39,
+      "end": 123.86
+    }
+  ]
+}

@@ -1,0 +1,1495 @@
+{
+  "id": "litany_saints",
+  "part": null,
+  "method": "breaths by loudness (under -12 dB for 0.2 s, phrases under 1.5 s merged) + text alignment; Whisper: 192 of 247 breaks heard",
+  "lines": [
+    {
+      "latin": "Kýrie, eléison.",
+      "english": "Lord, have mercy on us.",
+      "start": 0.33,
+      "end": 5.33
+    },
+    {
+      "latin": "Kýrie, eléison.",
+      "english": "Lord, have mercy on us.",
+      "start": 5.33,
+      "end": 10.1
+    },
+    {
+      "latin": "Christe, eléison.",
+      "english": "Christ, have mercy on us.",
+      "start": 10.23,
+      "end": 14.66
+    },
+    {
+      "latin": "Christe, eléison.",
+      "english": "Christ, have mercy on us.",
+      "start": 14.81,
+      "end": 19.26
+    },
+    {
+      "latin": "Kýrie, eléison.",
+      "english": "Lord, have mercy on us.",
+      "start": 19.37,
+      "end": 24.05
+    },
+    {
+      "latin": "Kýrie, eléison.",
+      "english": "Lord, have mercy on us.",
+      "start": 24.05,
+      "end": 28.68
+    },
+    {
+      "latin": "Christe, audi nos.",
+      "english": "Christ, hear us.",
+      "start": 28.81,
+      "end": 32.99
+    },
+    {
+      "latin": "Christe, audi nos.",
+      "english": "Christ, hear us.",
+      "start": 32.99,
+      "end": 37.21
+    },
+    {
+      "latin": "Christe, exáudi nos.",
+      "english": "Christ, graciously hear us.",
+      "start": 37.21,
+      "end": 41.41
+    },
+    {
+      "latin": "Christe, exáudi nos.",
+      "english": "Christ, graciously hear us.",
+      "start": 41.41,
+      "end": 45.64
+    },
+    {
+      "latin": "Pater de cælis, Deus,",
+      "english": "God the Father of Heaven,",
+      "start": 45.99,
+      "end": 49.77
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 49.77,
+      "end": 54.01
+    },
+    {
+      "latin": "Fili, Redémptor mundi, Deus,",
+      "english": "God the Son, Redeemer of the world,",
+      "start": 54.01,
+      "end": 58.25
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 58.25,
+      "end": 62.65
+    },
+    {
+      "latin": "Spíritus Sancte, Deus,",
+      "english": "God the Holy Ghost,",
+      "start": 62.65,
+      "end": 66.29
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 66.29,
+      "end": 70.39
+    },
+    {
+      "latin": "Sancta Trínitas, unus Deus,",
+      "english": "Holy Trinity, One God,",
+      "start": 70.39,
+      "end": 74.71
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 74.71,
+      "end": 78.78
+    },
+    {
+      "latin": "Sancta María,",
+      "english": "Holy Mary,",
+      "start": 78.99,
+      "end": 82.37
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 82.37,
+      "end": 86.25
+    },
+    {
+      "latin": "Sancta Dei Génitrix,",
+      "english": "Holy Mother of God,",
+      "start": 86.25,
+      "end": 90.19
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 90.19,
+      "end": 93.93
+    },
+    {
+      "latin": "Sancta Virgo vírginum,",
+      "english": "Holy Virgin of virgins,",
+      "start": 93.93,
+      "end": 97.71
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 97.71,
+      "end": 101.65
+    },
+    {
+      "latin": "Sancte Míchael,",
+      "english": "Saint Michael,",
+      "start": 101.65,
+      "end": 104.97
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 104.97,
+      "end": 108.79
+    },
+    {
+      "latin": "Sancte Gábriel,",
+      "english": "Saint Gabriel,",
+      "start": 108.79,
+      "end": 112.11
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 112.11,
+      "end": 115.83
+    },
+    {
+      "latin": "Sancte Ráphael,",
+      "english": "Saint Raphael,",
+      "start": 115.83,
+      "end": 119.03
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 119.03,
+      "end": 122.81
+    },
+    {
+      "latin": "Omnes sancti Ángeli et Archángeli,",
+      "english": "All ye holy Angels and Archangels,",
+      "start": 122.81,
+      "end": 128.11
+    },
+    {
+      "latin": "oráte pro nobis.",
+      "english": "pray for us.",
+      "start": 128.11,
+      "end": 132.25
+    },
+    {
+      "latin": "Omnes sancti beatórum Spirítuum órdines,",
+      "english": "All ye holy orders of blessed Spirits,",
+      "start": 132.25,
+      "end": 138.27
+    },
+    {
+      "latin": "oráte pro nobis.",
+      "english": "pray for us.",
+      "start": 138.27,
+      "end": 142.47
+    },
+    {
+      "latin": "Sancte Joánnes Baptísta,",
+      "english": "Saint John the Baptist,",
+      "start": 142.47,
+      "end": 146.75
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 146.75,
+      "end": 150.91
+    },
+    {
+      "latin": "Sancte Joseph,",
+      "english": "Saint Joseph,",
+      "start": 150.91,
+      "end": 154.19
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 154.19,
+      "end": 157.91
+    },
+    {
+      "latin": "Omnes sancti Patriárchæ et Prophétæ,",
+      "english": "All ye holy Patriarchs and Prophets,",
+      "start": 157.91,
+      "end": 163.11
+    },
+    {
+      "latin": "oráte pro nobis.",
+      "english": "pray for us.",
+      "start": 163.11,
+      "end": 167.31
+    },
+    {
+      "latin": "Sancte Petre,",
+      "english": "Saint Peter,",
+      "start": 167.31,
+      "end": 170.49
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 170.49,
+      "end": 174.35
+    },
+    {
+      "latin": "Sancte Paule,",
+      "english": "Saint Paul,",
+      "start": 174.35,
+      "end": 177.39
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 177.39,
+      "end": 181.25
+    },
+    {
+      "latin": "Sancte Andréa,",
+      "english": "Saint Andrew,",
+      "start": 181.25,
+      "end": 184.53
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 184.53,
+      "end": 188.19
+    },
+    {
+      "latin": "Sancte Jacóbe,",
+      "english": "Saint James,",
+      "start": 188.19,
+      "end": 191.53
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 191.53,
+      "end": 195.41
+    },
+    {
+      "latin": "Sancte Joánnes,",
+      "english": "Saint John,",
+      "start": 195.41,
+      "end": 198.97
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 198.97,
+      "end": 202.79
+    },
+    {
+      "latin": "Sancte Thoma,",
+      "english": "Saint Thomas,",
+      "start": 202.79,
+      "end": 205.83
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 205.83,
+      "end": 209.65
+    },
+    {
+      "latin": "Sancte Jacóbe,",
+      "english": "Saint James,",
+      "start": 209.65,
+      "end": 212.99
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 212.99,
+      "end": 216.73
+    },
+    {
+      "latin": "Sancte Philíppe,",
+      "english": "Saint Philip,",
+      "start": 216.73,
+      "end": 220.07
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 220.07,
+      "end": 223.95
+    },
+    {
+      "latin": "Sancte Bartholomǽe,",
+      "english": "Saint Bartholomew,",
+      "start": 223.95,
+      "end": 227.87
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 227.87,
+      "end": 231.59
+    },
+    {
+      "latin": "Sancte Matthǽe,",
+      "english": "Saint Matthew,",
+      "start": 231.59,
+      "end": 234.97
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 234.97,
+      "end": 238.7
+    },
+    {
+      "latin": "Sancte Simon,",
+      "english": "Saint Simon,",
+      "start": 238.93,
+      "end": 241.99
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 241.99,
+      "end": 245.83
+    },
+    {
+      "latin": "Sancte Thaddǽe,",
+      "english": "Saint Thaddeus,",
+      "start": 245.83,
+      "end": 249.19
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 249.19,
+      "end": 252.89
+    },
+    {
+      "latin": "Sancte Matthía,",
+      "english": "Saint Matthias,",
+      "start": 252.89,
+      "end": 256.27
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 256.27,
+      "end": 260.13
+    },
+    {
+      "latin": "Sancte Bárnaba,",
+      "english": "Saint Barnabas,",
+      "start": 260.13,
+      "end": 263.37
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 263.37,
+      "end": 267.21
+    },
+    {
+      "latin": "Sancte Luca,",
+      "english": "Saint Luke,",
+      "start": 267.21,
+      "end": 270.55
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 270.55,
+      "end": 274.53
+    },
+    {
+      "latin": "Sancte Marce,",
+      "english": "Saint Mark,",
+      "start": 274.53,
+      "end": 277.73
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 277.73,
+      "end": 281.55
+    },
+    {
+      "latin": "Omnes sancti Apóstoli et Evangelístæ,",
+      "english": "All ye holy Apostles and Evangelists,",
+      "start": 281.55,
+      "end": 287.19
+    },
+    {
+      "latin": "oráte pro nobis.",
+      "english": "pray for us.",
+      "start": 287.19,
+      "end": 291.21
+    },
+    {
+      "latin": "Omnes sancti Discípuli Dómini,",
+      "english": "All ye holy Disciples of the Lord,",
+      "start": 291.21,
+      "end": 296.01
+    },
+    {
+      "latin": "oráte pro nobis.",
+      "english": "pray for us.",
+      "start": 296.01,
+      "end": 300.01
+    },
+    {
+      "latin": "Omnes sancti Innocéntes,",
+      "english": "All ye holy Innocents,",
+      "start": 300.01,
+      "end": 304.43
+    },
+    {
+      "latin": "oráte pro nobis.",
+      "english": "pray for us.",
+      "start": 304.43,
+      "end": 308.77
+    },
+    {
+      "latin": "Sancte Stéphane,",
+      "english": "Saint Stephen,",
+      "start": 308.77,
+      "end": 312.13
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 312.13,
+      "end": 316.01
+    },
+    {
+      "latin": "Sancte Laurénti,",
+      "english": "Saint Lawrence,",
+      "start": 316.01,
+      "end": 319.29
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 319.29,
+      "end": 322.97
+    },
+    {
+      "latin": "Sancte Vincénti,",
+      "english": "Saint Vincent,",
+      "start": 322.97,
+      "end": 326.25
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 326.25,
+      "end": 329.87
+    },
+    {
+      "latin": "Sancti Fabiáne et Sebastiáne,",
+      "english": "Saints Fabian and Sebastian,",
+      "start": 329.87,
+      "end": 334.99
+    },
+    {
+      "latin": "oráte pro nobis.",
+      "english": "pray for us.",
+      "start": 334.99,
+      "end": 338.93
+    },
+    {
+      "latin": "Sancti Joánnes et Paule,",
+      "english": "Saints John and Paul,",
+      "start": 338.93,
+      "end": 342.89
+    },
+    {
+      "latin": "oráte pro nobis.",
+      "english": "pray for us.",
+      "start": 342.89,
+      "end": 346.93
+    },
+    {
+      "latin": "Sancti Cosma et Damiáne,",
+      "english": "Saints Cosmas and Damian,",
+      "start": 346.93,
+      "end": 351.23
+    },
+    {
+      "latin": "oráte pro nobis.",
+      "english": "pray for us.",
+      "start": 351.23,
+      "end": 355.15
+    },
+    {
+      "latin": "Sancti Gervási et Protási,",
+      "english": "Saints Gervase and Protase,",
+      "start": 355.15,
+      "end": 359.43
+    },
+    {
+      "latin": "oráte pro nobis.",
+      "english": "pray for us.",
+      "start": 359.43,
+      "end": 363.43
+    },
+    {
+      "latin": "Omnes sancti Mártyres,",
+      "english": "All ye holy Martyrs,",
+      "start": 363.43,
+      "end": 367.51
+    },
+    {
+      "latin": "oráte pro nobis.",
+      "english": "pray for us.",
+      "start": 367.51,
+      "end": 371.57
+    },
+    {
+      "latin": "Sancte Silvéster,",
+      "english": "Saint Sylvester,",
+      "start": 371.57,
+      "end": 375.05
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 375.05,
+      "end": 378.79
+    },
+    {
+      "latin": "Sancte Gregóri,",
+      "english": "Saint Gregory,",
+      "start": 378.79,
+      "end": 382.09
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 382.09,
+      "end": 385.99
+    },
+    {
+      "latin": "Sancte Ambrósi,",
+      "english": "Saint Ambrose,",
+      "start": 385.99,
+      "end": 389.53
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 389.53,
+      "end": 393.49
+    },
+    {
+      "latin": "Sancte Augustíne,",
+      "english": "Saint Augustine,",
+      "start": 393.49,
+      "end": 397.03
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 397.03,
+      "end": 400.81
+    },
+    {
+      "latin": "Sancte Hierónyme,",
+      "english": "Saint Jerome,",
+      "start": 400.81,
+      "end": 404.43
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 404.43,
+      "end": 408.19
+    },
+    {
+      "latin": "Sancte Martíne,",
+      "english": "Saint Martin,",
+      "start": 408.19,
+      "end": 411.51
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 411.51,
+      "end": 415.35
+    },
+    {
+      "latin": "Sancte Nicoláe,",
+      "english": "Saint Nicholas,",
+      "start": 415.35,
+      "end": 418.97
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 418.97,
+      "end": 422.73
+    },
+    {
+      "latin": "Omnes sancti Pontífices et Confessóres,",
+      "english": "All ye holy Bishops and Confessors,",
+      "start": 422.73,
+      "end": 428.41
+    },
+    {
+      "latin": "oráte pro nobis.",
+      "english": "pray for us.",
+      "start": 428.41,
+      "end": 432.31
+    },
+    {
+      "latin": "Omnes sancti Doctóres,",
+      "english": "All ye holy Doctors,",
+      "start": 432.31,
+      "end": 436.47
+    },
+    {
+      "latin": "oráte pro nobis.",
+      "english": "pray for us.",
+      "start": 436.47,
+      "end": 440.45
+    },
+    {
+      "latin": "Sancte Antóni,",
+      "english": "Saint Anthony,",
+      "start": 440.45,
+      "end": 443.69
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 443.69,
+      "end": 447.53
+    },
+    {
+      "latin": "Sancte Benedícte,",
+      "english": "Saint Benedict,",
+      "start": 447.53,
+      "end": 450.87
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 450.87,
+      "end": 454.71
+    },
+    {
+      "latin": "Sancte Bernárde,",
+      "english": "Saint Bernard,",
+      "start": 454.71,
+      "end": 458.09
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 458.09,
+      "end": 461.99
+    },
+    {
+      "latin": "Sancte Domínice,",
+      "english": "Saint Dominic,",
+      "start": 461.99,
+      "end": 465.53
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 465.53,
+      "end": 469.06
+    },
+    {
+      "latin": "Sancte Francísce,",
+      "english": "Saint Francis,",
+      "start": 469.17,
+      "end": 472.55
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 472.55,
+      "end": 476.41
+    },
+    {
+      "latin": "Omnes sancti Sacerdótes et Levítæ,",
+      "english": "All ye holy Priests and Levites,",
+      "start": 476.41,
+      "end": 481.55
+    },
+    {
+      "latin": "oráte pro nobis.",
+      "english": "pray for us.",
+      "start": 481.55,
+      "end": 485.45
+    },
+    {
+      "latin": "Omnes sancti Mónachi et Eremítæ,",
+      "english": "All ye holy Monks and Hermits,",
+      "start": 485.45,
+      "end": 490.49
+    },
+    {
+      "latin": "oráte pro nobis.",
+      "english": "pray for us.",
+      "start": 490.49,
+      "end": 494.75
+    },
+    {
+      "latin": "Sancta María Magdaléna,",
+      "english": "Saint Mary Magdalen,",
+      "start": 494.75,
+      "end": 498.91
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 498.91,
+      "end": 502.81
+    },
+    {
+      "latin": "Sancta Ágatha,",
+      "english": "Saint Agatha,",
+      "start": 502.81,
+      "end": 506.11
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 506.11,
+      "end": 509.99
+    },
+    {
+      "latin": "Sancta Lúcia,",
+      "english": "Saint Lucy,",
+      "start": 509.99,
+      "end": 513.33
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 513.33,
+      "end": 517.07
+    },
+    {
+      "latin": "Sancta Agnes,",
+      "english": "Saint Agnes,",
+      "start": 517.07,
+      "end": 520.61
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 520.61,
+      "end": 524.35
+    },
+    {
+      "latin": "Sancta Cæcília,",
+      "english": "Saint Cecilia,",
+      "start": 524.35,
+      "end": 528.27
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 528.27,
+      "end": 532.31
+    },
+    {
+      "latin": "Sancta Catharína,",
+      "english": "Saint Catherine,",
+      "start": 532.31,
+      "end": 535.97
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 535.97,
+      "end": 539.79
+    },
+    {
+      "latin": "Sancta Anastásia,",
+      "english": "Saint Anastasia,",
+      "start": 539.79,
+      "end": 543.65
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 543.65,
+      "end": 547.39
+    },
+    {
+      "latin": "Omnes sanctæ Vírgines et Víduæ,",
+      "english": "All ye holy Virgins and Widows,",
+      "start": 547.39,
+      "end": 552.45
+    },
+    {
+      "latin": "oráte pro nobis.",
+      "english": "pray for us.",
+      "start": 552.45,
+      "end": 556.45
+    },
+    {
+      "latin": "Omnes Sancti et Sanctæ Dei,",
+      "english": "All ye holy men and women, Saints of God,",
+      "start": 556.45,
+      "end": 561.19
+    },
+    {
+      "latin": "intercédite pro nobis.",
+      "english": "make intercession for us.",
+      "start": 561.19,
+      "end": 566.12
+    },
+    {
+      "latin": "Propítius esto,",
+      "english": "Be merciful,",
+      "start": 566.35,
+      "end": 570.27
+    },
+    {
+      "latin": "parce nobis, Dómine.",
+      "english": "spare us, O Lord.",
+      "start": 570.27,
+      "end": 574.76
+    },
+    {
+      "latin": "Propítius esto,",
+      "english": "Be merciful,",
+      "start": 574.79,
+      "end": 578.65
+    },
+    {
+      "latin": "exáudi nos, Dómine.",
+      "english": "graciously hear us, O Lord.",
+      "start": 578.65,
+      "end": 582.9
+    },
+    {
+      "latin": "Ab omni malo,",
+      "english": "From all evil,",
+      "start": 583.07,
+      "end": 586.53
+    },
+    {
+      "latin": "líbera nos, Dómine.",
+      "english": "O Lord, deliver us.",
+      "start": 586.53,
+      "end": 590.97
+    },
+    {
+      "latin": "Ab omni peccáto,",
+      "english": "From all sin,",
+      "start": 590.97,
+      "end": 594.79
+    },
+    {
+      "latin": "líbera nos, Dómine.",
+      "english": "O Lord, deliver us.",
+      "start": 594.79,
+      "end": 599.03
+    },
+    {
+      "latin": "Ab ira tua,",
+      "english": "From Thy wrath,",
+      "start": 599.03,
+      "end": 602.63
+    },
+    {
+      "latin": "líbera nos, Dómine.",
+      "english": "O Lord, deliver us.",
+      "start": 602.63,
+      "end": 606.88
+    },
+    {
+      "latin": "A subitánea et improvísa morte,",
+      "english": "From a sudden and unprovided death,",
+      "start": 607.01,
+      "end": 612.51
+    },
+    {
+      "latin": "líbera nos, Dómine.",
+      "english": "O Lord, deliver us.",
+      "start": 612.51,
+      "end": 616.91
+    },
+    {
+      "latin": "Ab insídiis diáboli,",
+      "english": "From the snares of the devil,",
+      "start": 616.91,
+      "end": 621.59
+    },
+    {
+      "latin": "líbera nos, Dómine.",
+      "english": "O Lord, deliver us.",
+      "start": 621.59,
+      "end": 626.03
+    },
+    {
+      "latin": "Ab ira, et ódio, et omni mala voluntáte,",
+      "english": "From anger, and hatred, and every evil will,",
+      "start": 626.03,
+      "end": 632.61
+    },
+    {
+      "latin": "líbera nos, Dómine.",
+      "english": "O Lord, deliver us.",
+      "start": 632.61,
+      "end": 636.8
+    },
+    {
+      "latin": "A spíritu fornicatiónis,",
+      "english": "From the spirit of fornication,",
+      "start": 637.09,
+      "end": 642.25
+    },
+    {
+      "latin": "líbera nos, Dómine.",
+      "english": "O Lord, deliver us.",
+      "start": 642.25,
+      "end": 646.5
+    },
+    {
+      "latin": "A fúlgure et tempestáte,",
+      "english": "From lightning and tempest,",
+      "start": 646.61,
+      "end": 651.37
+    },
+    {
+      "latin": "líbera nos, Dómine.",
+      "english": "O Lord, deliver us.",
+      "start": 651.37,
+      "end": 655.71
+    },
+    {
+      "latin": "A flagéllo terræmótus,",
+      "english": "From the scourge of earthquake,",
+      "start": 655.71,
+      "end": 660.33
+    },
+    {
+      "latin": "líbera nos, Dómine.",
+      "english": "O Lord, deliver us.",
+      "start": 660.33,
+      "end": 664.4
+    },
+    {
+      "latin": "A peste, fame, et bello,",
+      "english": "From plague, famine, and war,",
+      "start": 664.73,
+      "end": 669.55
+    },
+    {
+      "latin": "líbera nos, Dómine.",
+      "english": "O Lord, deliver us.",
+      "start": 669.55,
+      "end": 673.9
+    },
+    {
+      "latin": "A morte perpétua,",
+      "english": "From everlasting death,",
+      "start": 674.05,
+      "end": 678.29
+    },
+    {
+      "latin": "líbera nos, Dómine.",
+      "english": "O Lord, deliver us.",
+      "start": 678.29,
+      "end": 682.68
+    },
+    {
+      "latin": "Per mystérium sanctæ Incarnatiónis tuæ,",
+      "english": "Through the mystery of Thy holy Incarnation,",
+      "start": 682.77,
+      "end": 689.17
+    },
+    {
+      "latin": "líbera nos, Dómine.",
+      "english": "O Lord, deliver us.",
+      "start": 689.17,
+      "end": 693.58
+    },
+    {
+      "latin": "Per advéntum tuum,",
+      "english": "Through Thy coming,",
+      "start": 693.59,
+      "end": 697.47
+    },
+    {
+      "latin": "líbera nos, Dómine.",
+      "english": "O Lord, deliver us.",
+      "start": 697.47,
+      "end": 701.78
+    },
+    {
+      "latin": "Per nativitátem tuam,",
+      "english": "Through Thy nativity,",
+      "start": 701.97,
+      "end": 706.61
+    },
+    {
+      "latin": "líbera nos, Dómine.",
+      "english": "O Lord, deliver us.",
+      "start": 706.61,
+      "end": 710.86
+    },
+    {
+      "latin": "Per baptísmum et sanctum jejúnium tuum,",
+      "english": "Through Thy baptism and holy fasting,",
+      "start": 711.23,
+      "end": 717.19
+    },
+    {
+      "latin": "líbera nos, Dómine.",
+      "english": "O Lord, deliver us.",
+      "start": 717.19,
+      "end": 721.58
+    },
+    {
+      "latin": "Per crucem et passiónem tuam,",
+      "english": "Through Thy cross and Passion,",
+      "start": 721.75,
+      "end": 726.87
+    },
+    {
+      "latin": "líbera nos, Dómine.",
+      "english": "O Lord, deliver us.",
+      "start": 726.87,
+      "end": 731.1
+    },
+    {
+      "latin": "Per mortem et sepultúram tuam,",
+      "english": "Through Thy death and burial,",
+      "start": 731.53,
+      "end": 736.73
+    },
+    {
+      "latin": "líbera nos, Dómine.",
+      "english": "O Lord, deliver us.",
+      "start": 736.73,
+      "end": 741.2
+    },
+    {
+      "latin": "Per sanctam resurrectiónem tuam,",
+      "english": "Through Thy holy Resurrection,",
+      "start": 741.25,
+      "end": 746.81
+    },
+    {
+      "latin": "líbera nos, Dómine.",
+      "english": "O Lord, deliver us.",
+      "start": 746.81,
+      "end": 751.16
+    },
+    {
+      "latin": "Per admirábilem ascensiónem tuam,",
+      "english": "Through Thine admirable Ascension,",
+      "start": 751.49,
+      "end": 757.27
+    },
+    {
+      "latin": "líbera nos, Dómine.",
+      "english": "O Lord, deliver us.",
+      "start": 757.27,
+      "end": 761.66
+    },
+    {
+      "latin": "Per advéntum Spíritus Sancti Parácliti,",
+      "english": "Through the coming of the Holy Ghost, the Paraclete,",
+      "start": 761.91,
+      "end": 767.77
+    },
+    {
+      "latin": "líbera nos, Dómine.",
+      "english": "O Lord, deliver us.",
+      "start": 767.77,
+      "end": 772.04
+    },
+    {
+      "latin": "In die judícii,",
+      "english": "In the day of judgement,",
+      "start": 772.29,
+      "end": 776.61
+    },
+    {
+      "latin": "líbera nos, Dómine.",
+      "english": "O Lord, deliver us.",
+      "start": 776.61,
+      "end": 781.12
+    },
+    {
+      "latin": "Peccatóres,",
+      "english": "We sinners,",
+      "start": 781.77,
+      "end": 785.15
+    },
+    {
+      "latin": "te rogámus, audi nos.",
+      "english": "we beseech Thee, hear us.",
+      "start": 785.15,
+      "end": 789.57
+    },
+    {
+      "latin": "Ut nobis parcas,",
+      "english": "That Thou wouldst spare us,",
+      "start": 789.57,
+      "end": 793.01
+    },
+    {
+      "latin": "te rogámus, audi nos.",
+      "english": "we beseech Thee, hear us.",
+      "start": 793.05,
+      "end": 797.69
+    },
+    {
+      "latin": "Ut nobis indúlgeas,",
+      "english": "That Thou wouldst pardon us,",
+      "start": 797.69,
+      "end": 801.83
+    },
+    {
+      "latin": "te rogámus, audi nos.",
+      "english": "we beseech Thee, hear us.",
+      "start": 801.83,
+      "end": 806.36
+    },
+    {
+      "latin": "Ut ad veram pœniténtiam nos perdúcere dignéris,",
+      "english": "That Thou wouldst vouchsafe to bring us to true penance,",
+      "start": 806.41,
+      "end": 812.85
+    },
+    {
+      "latin": "te rogámus, audi nos.",
+      "english": "we beseech Thee, hear us.",
+      "start": 812.85,
+      "end": 817.3
+    },
+    {
+      "latin": "Ut Ecclésiam tuam sanctam régere et conserváre dignéris,",
+      "english": "That Thou wouldst vouchsafe to govern and preserve Thy holy Church,",
+      "start": 817.33,
+      "end": 826.05
+    },
+    {
+      "latin": "te rogámus, audi nos.",
+      "english": "we beseech Thee, hear us.",
+      "start": 826.05,
+      "end": 830.29
+    },
+    {
+      "latin": "Ut domnum apostólicum et omnes ecclesiásticos órdines",
+      "english": "That our Apostolic Lord and all the orders of the Church",
+      "start": 830.29,
+      "end": 836.07
+    },
+    {
+      "latin": "in sancta religióne conserváre dignéris,",
+      "english": "Thou wouldst vouchsafe to preserve in holy religion,",
+      "start": 836.07,
+      "end": 842.09
+    },
+    {
+      "latin": "te rogámus, audi nos.",
+      "english": "we beseech Thee, hear us.",
+      "start": 842.09,
+      "end": 846.37
+    },
+    {
+      "latin": "Ut inimícos sanctæ Ecclésiæ humiliáre dignéris,",
+      "english": "That Thou wouldst vouchsafe to humble the enemies of holy Church,",
+      "start": 846.37,
+      "end": 854.25
+    },
+    {
+      "latin": "te rogámus, audi nos.",
+      "english": "we beseech Thee, hear us.",
+      "start": 854.25,
+      "end": 858.47
+    },
+    {
+      "latin": "Ut régibus et princípibus christiánis",
+      "english": "That to Christian kings and princes",
+      "start": 858.47,
+      "end": 862.91
+    },
+    {
+      "latin": "pacem et veram concórdiam donáre dignéris,",
+      "english": "Thou wouldst vouchsafe to give peace and true concord,",
+      "start": 862.91,
+      "end": 868.89
+    },
+    {
+      "latin": "te rogámus, audi nos.",
+      "english": "we beseech Thee, hear us.",
+      "start": 868.89,
+      "end": 873.27
+    },
+    {
+      "latin": "Ut cuncto pópulo christiáno",
+      "english": "That to all Christian people",
+      "start": 873.27,
+      "end": 876.93
+    },
+    {
+      "latin": "pacem et unitátem largíri dignéris,",
+      "english": "Thou wouldst vouchsafe to grant peace and unity,",
+      "start": 876.93,
+      "end": 882.31
+    },
+    {
+      "latin": "te rogámus, audi nos.",
+      "english": "we beseech Thee, hear us.",
+      "start": 882.31,
+      "end": 886.79
+    },
+    {
+      "latin": "Ut omnes errántes ad unitátem Ecclésiæ revocáre,",
+      "english": "That Thou wouldst vouchsafe to call back all who stray to the unity of the Church,",
+      "start": 886.79,
+      "end": 892.27
+    },
+    {
+      "latin": "et infidéles univérsos ad Evangélii lumen perdúcere dignéris,",
+      "english": "and to lead all unbelievers to the light of the Gospel,",
+      "start": 892.28,
+      "end": 900.31
+    },
+    {
+      "latin": "te rogámus, audi nos.",
+      "english": "we beseech Thee, hear us.",
+      "start": 900.31,
+      "end": 904.85
+    },
+    {
+      "latin": "Ut nosmetípsos in tuo sancto servítio",
+      "english": "That in Thy holy service",
+      "start": 904.85,
+      "end": 909.15
+    },
+    {
+      "latin": "confortáre et conserváre dignéris,",
+      "english": "Thou wouldst vouchsafe to strengthen and preserve us,",
+      "start": 909.15,
+      "end": 914.55
+    },
+    {
+      "latin": "te rogámus, audi nos.",
+      "english": "we beseech Thee, hear us.",
+      "start": 914.55,
+      "end": 918.79
+    },
+    {
+      "latin": "Ut mentes nostras ad cæléstia desidéria érigas,",
+      "english": "That Thou wouldst lift up our minds to heavenly desires,",
+      "start": 918.79,
+      "end": 927.07
+    },
+    {
+      "latin": "te rogámus, audi nos.",
+      "english": "we beseech Thee, hear us.",
+      "start": 927.07,
+      "end": 931.25
+    },
+    {
+      "latin": "Ut ómnibus benefactóribus nostris",
+      "english": "That to all our benefactors",
+      "start": 931.25,
+      "end": 935.35
+    },
+    {
+      "latin": "sempitérna bona retríbuas,",
+      "english": "Thou wouldst render everlasting good things,",
+      "start": 935.38,
+      "end": 940.33
+    },
+    {
+      "latin": "te rogámus, audi nos.",
+      "english": "we beseech Thee, hear us.",
+      "start": 940.33,
+      "end": 944.75
+    },
+    {
+      "latin": "Ut ánimas nostras, fratrum, propinquórum et benefactórum nostrórum",
+      "english": "That our souls, and those of our brethren, kinsfolk and benefactors,",
+      "start": 944.75,
+      "end": 952.67
+    },
+    {
+      "latin": "ab ætérna damnatióne erípias,",
+      "english": "Thou wouldst deliver from eternal damnation,",
+      "start": 952.69,
+      "end": 958.29
+    },
+    {
+      "latin": "te rogámus, audi nos.",
+      "english": "we beseech Thee, hear us.",
+      "start": 958.29,
+      "end": 962.76
+    },
+    {
+      "latin": "Ut fructus terræ",
+      "english": "That the fruits of the earth",
+      "start": 962.77,
+      "end": 965.29
+    },
+    {
+      "latin": "dare et conserváre dignéris,",
+      "english": "Thou wouldst vouchsafe to give and preserve,",
+      "start": 965.29,
+      "end": 970.17
+    },
+    {
+      "latin": "te rogámus, audi nos.",
+      "english": "we beseech Thee, hear us.",
+      "start": 970.17,
+      "end": 974.45
+    },
+    {
+      "latin": "Ut ómnibus fidélibus defúnctis",
+      "english": "That to all the faithful departed",
+      "start": 974.45,
+      "end": 978.43
+    },
+    {
+      "latin": "réquiem ætérnam donáre dignéris,",
+      "english": "Thou wouldst vouchsafe to grant eternal rest,",
+      "start": 978.43,
+      "end": 983.73
+    },
+    {
+      "latin": "te rogámus, audi nos.",
+      "english": "we beseech Thee, hear us.",
+      "start": 983.73,
+      "end": 987.95
+    },
+    {
+      "latin": "Ut nos exaudíre dignéris,",
+      "english": "That Thou wouldst vouchsafe graciously to hear us,",
+      "start": 987.95,
+      "end": 992.57
+    },
+    {
+      "latin": "te rogámus, audi nos.",
+      "english": "we beseech Thee, hear us.",
+      "start": 992.57,
+      "end": 997.03
+    },
+    {
+      "latin": "Fili Dei,",
+      "english": "Son of God,",
+      "start": 997.03,
+      "end": 1000.23
+    },
+    {
+      "latin": "te rogámus, audi nos.",
+      "english": "we beseech Thee, hear us.",
+      "start": 1000.23,
+      "end": 1004.6
+    },
+    {
+      "latin": "Agnus Dei,",
+      "english": "Lamb of God,",
+      "start": 1005.01,
+      "end": 1008.05
+    },
+    {
+      "latin": "qui tollis peccáta mundi,",
+      "english": "Who takest away the sins of the world,",
+      "start": 1008.06,
+      "end": 1012.29
+    },
+    {
+      "latin": "parce nobis, Dómine.",
+      "english": "spare us, O Lord.",
+      "start": 1012.29,
+      "end": 1017.36
+    },
+    {
+      "latin": "Agnus Dei, qui tollis peccáta mundi,",
+      "english": "Lamb of God, Who takest away the sins of the world,",
+      "start": 1017.39,
+      "end": 1024.97
+    },
+    {
+      "latin": "exáudi nos Dómine.",
+      "english": "graciously hear us, O Lord.",
+      "start": 1024.97,
+      "end": 1029.72
+    },
+    {
+      "latin": "Agnus Dei,",
+      "english": "Lamb of God,",
+      "start": 1029.81,
+      "end": 1032.85
+    },
+    {
+      "latin": "qui tollis peccáta mundi,",
+      "english": "Who takest away the sins of the world,",
+      "start": 1032.87,
+      "end": 1037.21
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 1037.21,
+      "end": 1042.42
+    },
+    {
+      "latin": "Christe, audi nos.",
+      "english": "Christ, hear us.",
+      "start": 1042.99,
+      "end": 1047.15
+    },
+    {
+      "latin": "Christe, exáudi nos.",
+      "english": "Christ, graciously hear us.",
+      "start": 1047.15,
+      "end": 1051.43
+    },
+    {
+      "latin": "Kýrie, eléison.",
+      "english": "Lord, have mercy on us.",
+      "start": 1051.43,
+      "end": 1055.95
+    },
+    {
+      "latin": "Christe, eléison.",
+      "english": "Christ, have mercy on us.",
+      "start": 1055.95,
+      "end": 1060.15
+    },
+    {
+      "latin": "Kýrie, eléison.",
+      "english": "Lord, have mercy on us.",
+      "start": 1060.15,
+      "end": 1067.18
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "id": "sub_tuum",
+  "part": null,
+  "method": "breaths by loudness (under -14 dB for 0.4 s, phrases under 1.5 s merged) + text alignment; Whisper: 11 of 11 breaks heard",
+  "lines": [
+    {
+      "latin": "Sub tuum præsídium confúgimus,",
+      "english": "We fly to thy patronage,",
+      "start": 0.47,
+      "end": 7.17
+    },
+    {
+      "latin": "sancta Dei Génitrix:",
+      "english": "O holy Mother of God;",
+      "start": 7.17,
+      "end": 12.07
+    },
+    {
+      "latin": "nostras deprecatiónes ne despícias in necessitátibus:",
+      "english": "despise not our petitions in our necessities,",
+      "start": 12.07,
+      "end": 26.33
+    },
+    {
+      "latin": "sed a perículis cunctis líbera nos semper, Virgo gloriósa et benedícta.",
+      "english": "but deliver us always from all dangers, O glorious and blessed Virgin.",
+      "start": 26.33,
+      "end": 49.8
+    },
+    {
+      "latin": "Ora pro nobis, sancta Dei Génitrix.",
+      "english": "Pray for us, O holy Mother of God.",
+      "start": 52.29,
+      "end": 57.17
+    },
+    {
+      "latin": "Ut digni efficiámur promissiónibus Christi.",
+      "english": "That we may be made worthy of the promises of Christ.",
+      "start": 57.17,
+      "end": 63.19
+    },
+    {
+      "latin": "Orémus.",
+      "english": "Let us pray.",
+      "start": 63.19,
+      "end": 66.43
+    },
+    {
+      "latin": "Concéde nos fámulos tuos, quǽsumus Dómine Deus, perpétua mentis et córporis sanitáte gaudére:",
+      "english": "Grant, we beseech Thee, O Lord God, unto us Thy servants, that we may rejoice in continual health of mind and body,",
+      "start": 66.43,
+      "end": 75.57
+    },
+    {
+      "latin": "et gloriósa beátæ Maríæ semper Vírginis intercessióne,",
+      "english": "and by the glorious intercession of Blessed Mary, ever virgin,",
+      "start": 75.57,
+      "end": 81.81
+    },
+    {
+      "latin": "a præsénti liberári tristítia, et ætérna pérfrui lætítia.",
+      "english": "may be delivered from present sadness, and enter into the joy of Thine eternal gladness.",
+      "start": 81.81,
+      "end": 89.47
+    },
+    {
+      "latin": "Per Christum Dóminum nostrum.",
+      "english": "Through Christ our Lord.",
+      "start": 89.47,
+      "end": 94.57
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 94.57,
+      "end": 99.96
+    }
+  ]
+}

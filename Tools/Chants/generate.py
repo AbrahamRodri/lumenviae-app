@@ -404,12 +404,24 @@ def encode(src: Path, dest: Path) -> float:
 
 # ---------------------------------------------------------------- swift
 
+SWIFT_ESCAPES = {"\\": "\\\\", '"': '\\"', "\n": "\\n", "\r": "\\r", "\t": "\\t"}
+
+
 def swift_string(s):
+    """A Swift string literal: a backslash and a quote escaped, and every
+    control character, which a literal may not hold as it stands, written
+    as an escape (\\u{1B})."""
     if s is None:
         return "nil"
-    escaped = (s.replace("\\", "\\\\").replace('"', '\\"')
-                .replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t"))
-    return '"' + escaped + '"'
+    out = []
+    for c in s:
+        if c in SWIFT_ESCAPES:
+            out.append(SWIFT_ESCAPES[c])
+        elif ord(c) < 0x20 or ord(c) == 0x7F:
+            out.append("\\u{%X}" % ord(c))
+        else:
+            out.append(c)
+    return '"' + "".join(out) + '"'
 
 
 # ---------------------------------------------------------------- lines

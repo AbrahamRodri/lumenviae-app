@@ -1,0 +1,271 @@
+{
+  "id": "adeste_fideles",
+  "part": null,
+  "method": "breaths by loudness (under -18 dB for 0.2 s, phrases under 1.5 s merged) + text alignment; Whisper: 39 of 43 breaks heard",
+  "lines": [
+    {
+      "latin": "Adéste fidéles,",
+      "english": "Draw near, ye faithful,",
+      "start": 0.41,
+      "end": 5.69
+    },
+    {
+      "latin": "læti, triumphántes:",
+      "english": "glad and triumphant:",
+      "start": 5.69,
+      "end": 10.05
+    },
+    {
+      "latin": "Veníte, veníte in Béthlehem:",
+      "english": "come, come to Bethlehem:",
+      "start": 10.05,
+      "end": 17.72
+    },
+    {
+      "latin": "Natum vidéte Regem Angelórum:",
+      "english": "see Him born, the King of Angels:",
+      "start": 18.29,
+      "end": 27.37
+    },
+    {
+      "latin": "Veníte, adorémus,",
+      "english": "Come, let us adore,",
+      "start": 27.37,
+      "end": 32.73
+    },
+    {
+      "latin": "veníte, adorémus,",
+      "english": "come, let us adore,",
+      "start": 32.73,
+      "end": 37.96
+    },
+    {
+      "latin": "veníte adorémus Dóminum.",
+      "english": "come, let us adore the Lord.",
+      "start": 38.13,
+      "end": 46.78
+    },
+    {
+      "latin": "Natum vidéte Regem Angelórum:",
+      "english": "See Him born, the King of Angels:",
+      "start": 47.57,
+      "end": 56.6
+    },
+    {
+      "latin": "Veníte, adorémus,",
+      "english": "Come, let us adore,",
+      "start": 56.93,
+      "end": 62.41
+    },
+    {
+      "latin": "veníte, adorémus,",
+      "english": "come, let us adore,",
+      "start": 62.41,
+      "end": 67.61
+    },
+    {
+      "latin": "veníte adorémus Dóminum.",
+      "english": "come, let us adore the Lord.",
+      "start": 67.61,
+      "end": 76.94
+    },
+    {
+      "latin": "En grege relícto,",
+      "english": "Lo, their flock left behind,",
+      "start": 78.85,
+      "end": 84.05
+    },
+    {
+      "latin": "húmiles ad cunas",
+      "english": "to the lowly cradle",
+      "start": 84.05,
+      "end": 88.23
+    },
+    {
+      "latin": "Vocáti pastóres appróperant:",
+      "english": "the shepherds, called, draw near:",
+      "start": 88.26,
+      "end": 96.1
+    },
+    {
+      "latin": "Et nos ovánti gradu festinémus:",
+      "english": "let us too make haste with joyful step:",
+      "start": 96.63,
+      "end": 105.12
+    },
+    {
+      "latin": "Veníte, adorémus,",
+      "english": "Come, let us adore,",
+      "start": 105.57,
+      "end": 111.0
+    },
+    {
+      "latin": "veníte, adorémus,",
+      "english": "come, let us adore,",
+      "start": 111.03,
+      "end": 116.25
+    },
+    {
+      "latin": "veníte adorémus Dóminum.",
+      "english": "come, let us adore the Lord.",
+      "start": 116.25,
+      "end": 125.36
+    },
+    {
+      "latin": "Et nos ovánti gradu festinémus:",
+      "english": "Let us too make haste with joyful step:",
+      "start": 126.23,
+      "end": 134.89
+    },
+    {
+      "latin": "Veníte, adorémus,",
+      "english": "Come, let us adore,",
+      "start": 134.89,
+      "end": 139.95
+    },
+    {
+      "latin": "veníte, adorémus,",
+      "english": "come, let us adore,",
+      "start": 139.95,
+      "end": 145.09
+    },
+    {
+      "latin": "veníte adorémus Dóminum.",
+      "english": "come, let us adore the Lord.",
+      "start": 145.09,
+      "end": 154.04
+    },
+    {
+      "latin": "Ætérni Paréntis",
+      "english": "Of the eternal Father",
+      "start": 155.99,
+      "end": 161.25
+    },
+    {
+      "latin": "splendórem ætérnum",
+      "english": "the eternal splendour",
+      "start": 161.25,
+      "end": 165.61
+    },
+    {
+      "latin": "Velátum sub carne vidébimus:",
+      "english": "we shall see veiled beneath the flesh:",
+      "start": 165.61,
+      "end": 173.0
+    },
+    {
+      "latin": "Deum infántem, pannis involútum:",
+      "english": "God, an infant, wrapped in swaddling clothes:",
+      "start": 173.65,
+      "end": 182.58
+    },
+    {
+      "latin": "Veníte, adorémus,",
+      "english": "Come, let us adore,",
+      "start": 182.69,
+      "end": 187.79
+    },
+    {
+      "latin": "veníte, adorémus,",
+      "english": "come, let us adore,",
+      "start": 187.79,
+      "end": 193.09
+    },
+    {
+      "latin": "veníte adorémus Dóminum.",
+      "english": "come, let us adore the Lord.",
+      "start": 193.09,
+      "end": 202.34
+    },
+    {
+      "latin": "Deum infántem, pannis involútum:",
+      "english": "God, an infant, wrapped in swaddling clothes:",
+      "start": 202.97,
+      "end": 212.06
+    },
+    {
+      "latin": "Veníte, adorémus,",
+      "english": "Come, let us adore,",
+      "start": 212.29,
+      "end": 217.33
+    },
+    {
+      "latin": "veníte, adorémus,",
+      "english": "come, let us adore,",
+      "start": 217.33,
+      "end": 222.53
+    },
+    {
+      "latin": "veníte adorémus Dóminum.",
+      "english": "come, let us adore the Lord.",
+      "start": 222.53,
+      "end": 232.54
+    },
+    {
+      "latin": "Pro nobis egénum",
+      "english": "Him, poor for our sake",
+      "start": 233.49,
+      "end": 238.89
+    },
+    {
+      "latin": "et fœno cubántem",
+      "english": "and lying on the hay,",
+      "start": 238.89,
+      "end": 243.21
+    },
+    {
+      "latin": "Piis foveámus ampléxibus:",
+      "english": "let us cherish with loving embraces:",
+      "start": 243.21,
+      "end": 250.2
+    },
+    {
+      "latin": "Sic nos amántem quis non redamáret?",
+      "english": "Who would not love in return One Who so loves us?",
+      "start": 251.05,
+      "end": 259.5
+    },
+    {
+      "latin": "Veníte, adorémus,",
+      "english": "Come, let us adore,",
+      "start": 260.25,
+      "end": 265.3
+    },
+    {
+      "latin": "veníte, adorémus,",
+      "english": "come, let us adore,",
+      "start": 265.47,
+      "end": 270.67
+    },
+    {
+      "latin": "veníte adorémus Dóminum.",
+      "english": "come, let us adore the Lord.",
+      "start": 270.67,
+      "end": 279.9
+    },
+    {
+      "latin": "Sic nos amántem quis non redamáret?",
+      "english": "Who would not love in return One Who so loves us?",
+      "start": 280.53,
+      "end": 289.12
+    },
+    {
+      "latin": "Veníte, adorémus,",
+      "english": "Come, let us adore,",
+      "start": 289.57,
+      "end": 294.74
+    },
+    {
+      "latin": "veníte, adorémus,",
+      "english": "come, let us adore,",
+      "start": 295.03,
+      "end": 300.21
+    },
+    {
+      "latin": "veníte adorémus Dóminum.",
+      "english": "come, let us adore the Lord.",
+      "start": 300.21,
+      "end": 309.78
+    }
+  ]
+}

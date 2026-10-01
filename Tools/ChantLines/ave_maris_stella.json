@@ -1,0 +1,97 @@
+{
+  "id": "ave_maris_stella",
+  "part": null,
+  "method": "breaths by loudness (under -14 dB for 0.4 s, phrases under 1.5 s merged) + text alignment; Whisper: 14 of 14 breaks heard",
+  "lines": [
+    {
+      "latin": "Ave maris stella, Dei Mater alma,",
+      "english": "Hail, O Star of the ocean, God's own Mother blest,",
+      "start": 0.25,
+      "end": 7.65
+    },
+    {
+      "latin": "atque semper Virgo, felix cæli porta.",
+      "english": "ever sinless Virgin, gate of heavenly rest.",
+      "start": 7.65,
+      "end": 15.56
+    },
+    {
+      "latin": "Sumens illud Ave Gabriélis ore,",
+      "english": "Taking that sweet Ave, which from Gabriel came,",
+      "start": 16.85,
+      "end": 24.49
+    },
+    {
+      "latin": "Funda nos in pace, Mutans Hevæ nomen.",
+      "english": "peace confirm within us, changing Eve's name.",
+      "start": 24.49,
+      "end": 32.48
+    },
+    {
+      "latin": "Solve vincla reis, Profer lumen cæcis",
+      "english": "Break the sinners' fetters, make our blindness day,",
+      "start": 33.69,
+      "end": 41.23
+    },
+    {
+      "latin": "Mala nostra pelle, Bona cuncta posce.",
+      "english": "chase all evils from us, for all blessings pray.",
+      "start": 41.23,
+      "end": 49.3
+    },
+    {
+      "latin": "Monstra te esse matrem: Sumat per te preces,",
+      "english": "Show thyself a Mother, may the Word divine",
+      "start": 50.75,
+      "end": 58.57
+    },
+    {
+      "latin": "Qui pro nobis natus, Tulit esse tuus.",
+      "english": "born for us thine Infant hear our prayers through thine.",
+      "start": 58.57,
+      "end": 66.68
+    },
+    {
+      "latin": "Virgo singuláris, Inter omnes mitis,",
+      "english": "Virgin all excelling, mildest of the mild,",
+      "start": 67.99,
+      "end": 75.75
+    },
+    {
+      "latin": "Nos culpis solútos, Mitis fac et castos.",
+      "english": "free from guilt preserve us meek and undefiled.",
+      "start": 75.75,
+      "end": 84.5
+    },
+    {
+      "latin": "Vitam præsta puram, Iter para tutum:",
+      "english": "Keep our life all spotless, make our way secure",
+      "start": 85.47,
+      "end": 93.19
+    },
+    {
+      "latin": "Ut vidéntes Jesum Semper collætémur.",
+      "english": "till we find in Jesus, joy for evermore.",
+      "start": 93.19,
+      "end": 101.38
+    },
+    {
+      "latin": "Sit laus Deo Patri, Summo Christo decus,",
+      "english": "Praise to God the Father, honor to the Son,",
+      "start": 102.77,
+      "end": 110.35
+    },
+    {
+      "latin": "Spirítui Sancto, Tribus honor unus.",
+      "english": "in the Holy Spirit, be the glory one.",
+      "start": 110.35,
+      "end": 118.98
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 120.15,
+      "end": 127.18
+    }
+  ]
+}

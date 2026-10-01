@@ -1,0 +1,64 @@
+# Puer natus in Bethlehem: all fourteen stanzas, each followed by the
+# refrain In cordis jubilo (the score cues it as "℟. In cordis."). Latin
+# from the score (its small capitals set in ordinary type); English a plain
+# literal rendering (no app prayer).
+noise -20
+gap 0.3
+merge 1.5
+
+Puer natus in Béthlehem, allelúia: | A Child is born in Bethlehem, alleluia:
+Unde gaudet Jerúsalem, allelúia, allelúia. | wherefore Jerusalem rejoices, alleluia, alleluia.
+In cordis júbilo, Christum natum adorémus, | With joy of heart let us adore Christ newly born,
+Cum novo cántico. | with a new song.
+Assúmpsit carnem Fílius, allelúia, | The Son hath taken flesh, alleluia,
+Dei Patris altíssimus, allelúia, allelúia. | of God the Father, the Most High, alleluia, alleluia.
+In cordis júbilo, Christum natum adorémus, | With joy of heart let us adore Christ newly born,
+Cum novo cántico. | with a new song.
+Per Gabriélem núntium, allelúia, | Through Gabriel the messenger, alleluia,
+Virgo concépit Fílium, allelúia, allelúia. | the Virgin conceived a Son, alleluia, alleluia.
+In cordis júbilo, Christum natum adorémus, | With joy of heart let us adore Christ newly born,
+Cum novo cántico. | with a new song.
+Tamquam sponsus de thálamo, allelúia, | As a bridegroom from his chamber, alleluia,
+Procéssit Matris útero, allelúia, allelúia. | He came forth from His Mother's womb, alleluia, alleluia.
+In cordis júbilo, Christum natum adorémus, | With joy of heart let us adore Christ newly born,
+Cum novo cántico. | with a new song.
+Hic jacet in præsépio, allelúia: | Here He lies in a manger, alleluia:
+Qui regnat sine término, allelúia, allelúia. | Who reigns without end, alleluia, alleluia.
+In cordis júbilo, Christum natum adorémus, | With joy of heart let us adore Christ newly born,
+Cum novo cántico. | with a new song.
+Et Ángelus pastóribus, allelúia, | And the Angel to the shepherds, alleluia,
+Revélat quod sit Dóminus, allelúia, allelúia. | reveals that He is the Lord, alleluia, alleluia.
+In cordis júbilo, Christum natum adorémus, | With joy of heart let us adore Christ newly born,
+Cum novo cántico. | with a new song.
+Reges de Saba véniunt, allelúia, | Kings come from Saba, alleluia,
+Aurum, thus, myrrham ófferunt, allelúia, allelúia. | gold, frankincense, myrrh they offer, alleluia, alleluia.
+In cordis júbilo, Christum natum adorémus, | With joy of heart let us adore Christ newly born,
+Cum novo cántico. | with a new song.
+Intrántes domum ínvicem, allelúia, | Entering the house one after another, alleluia,
+Novum salútant Príncipem, allelúia, allelúia. | they greet the new Prince, alleluia, alleluia.
+In cordis júbilo, Christum natum adorémus, | With joy of heart let us adore Christ newly born,
+Cum novo cántico. | with a new song.
+De Matre natus Vírgine, allelúia, | Born of a Virgin Mother, alleluia,
+Qui lumen est de lúmine, allelúia, allelúia. | He Who is Light of Light, alleluia, alleluia.
+In cordis júbilo, Christum natum adorémus, | With joy of heart let us adore Christ newly born,
+Cum novo cántico. | with a new song.
+Sine serpéntis vúlnere, allelúia, | Without the serpent's wound, alleluia,
+De nostro venit sánguine, allelúia, allelúia. | He came of our blood, alleluia, alleluia.
+In cordis júbilo, Christum natum adorémus, | With joy of heart let us adore Christ newly born,
+Cum novo cántico. | with a new song.
+In carne nobis símilis, allelúia, | Like unto us in the flesh, alleluia,
+Peccáto sed dissímilis, allelúia, allelúia. | but unlike us in sin, alleluia, alleluia.
+In cordis júbilo, Christum natum adorémus, | With joy of heart let us adore Christ newly born,
+Cum novo cántico. | with a new song.
+Ut rédderet nos hómines, allelúia, | That He might make us men, alleluia,
+Deo et sibi símiles, allelúia, allelúia. | like unto God and unto Himself, alleluia, alleluia.
+In cordis júbilo, Christum natum adorémus, | With joy of heart let us adore Christ newly born,
+Cum novo cántico. | with a new song.
+In hoc natáli gáudio, allelúia: | In this joy of His birth, alleluia:
+Benedicámus Dómino, allelúia, allelúia. | let us bless the Lord, alleluia, alleluia.
+In cordis júbilo, Christum natum adorémus, | With joy of heart let us adore Christ newly born,
+Cum novo cántico. | with a new song.
+Laudétur sancta Trínitas, allelúia, | Praised be the Holy Trinity, alleluia,
+Deo dicámus grátias, allelúia, allelúia. | let us give thanks to God, alleluia, alleluia.
+In cordis júbilo, Christum natum adorémus, | With joy of heart let us adore Christ newly born,
+Cum novo cántico. | with a new song.

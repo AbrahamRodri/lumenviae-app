@@ -1,0 +1,103 @@
+{
+  "id": "adoremus",
+  "part": null,
+  "method": "breaths by loudness (under -16 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 15 of 15 breaks heard",
+  "lines": [
+    {
+      "latin": "Adorémus in ætérnum",
+      "english": "Let us adore for ever",
+      "start": 0.23,
+      "end": 6.29
+    },
+    {
+      "latin": "sanctíssimum Sacraméntum.",
+      "english": "the most holy Sacrament.",
+      "start": 6.29,
+      "end": 12.36
+    },
+    {
+      "latin": "Adorémus in ætérnum",
+      "english": "Let us adore for ever",
+      "start": 13.57,
+      "end": 19.69
+    },
+    {
+      "latin": "sanctíssimum Sacraméntum.",
+      "english": "the most holy Sacrament.",
+      "start": 19.69,
+      "end": 25.34
+    },
+    {
+      "latin": "Laudáte Dóminum omnes gentes:",
+      "english": "O praise the Lord, all ye nations;",
+      "start": 26.57,
+      "end": 31.17
+    },
+    {
+      "latin": "laudáte eum omnes pópuli.",
+      "english": "praise Him, all ye peoples.",
+      "start": 31.17,
+      "end": 36.07
+    },
+    {
+      "latin": "Quóniam confirmáta est super nos misericórdia ejus:",
+      "english": "For His mercy is confirmed upon us,",
+      "start": 36.07,
+      "end": 42.71
+    },
+    {
+      "latin": "et véritas Dómini manet in ætérnum.",
+      "english": "and the truth of the Lord remaineth for ever.",
+      "start": 42.71,
+      "end": 48.24
+    },
+    {
+      "latin": "Adorémus in ætérnum",
+      "english": "Let us adore for ever",
+      "start": 49.27,
+      "end": 55.39
+    },
+    {
+      "latin": "sanctíssimum Sacraméntum.",
+      "english": "the most holy Sacrament.",
+      "start": 55.39,
+      "end": 61.04
+    },
+    {
+      "latin": "Glória Patri, et Fílio,",
+      "english": "Glory be to the Father, and to the Son,",
+      "start": 62.33,
+      "end": 66.69
+    },
+    {
+      "latin": "et Spirítui Sancto.",
+      "english": "and to the Holy Ghost.",
+      "start": 66.69,
+      "end": 71.33
+    },
+    {
+      "latin": "Sicut erat in princípio, et nunc, et semper:",
+      "english": "As it was in the beginning, is now, and ever shall be,",
+      "start": 71.33,
+      "end": 77.05
+    },
+    {
+      "latin": "et in sǽcula sæculórum. Amen.",
+      "english": "world without end. Amen.",
+      "start": 77.05,
+      "end": 83.24
+    },
+    {
+      "latin": "Adorémus in ætérnum",
+      "english": "Let us adore for ever",
+      "start": 83.71,
+      "end": 89.77
+    },
+    {
+      "latin": "sanctíssimum Sacraméntum.",
+      "english": "the most holy Sacrament.",
+      "start": 89.77,
+      "end": 95.84
+    }
+  ]
+}

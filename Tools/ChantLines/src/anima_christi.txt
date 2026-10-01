@@ -1,0 +1,20 @@
+# Anima Christi, sung once through: each verse in its two halves, the last
+# in three. Latin from the score; English from the Prayer Book
+# (anima_christi).
+noise -16
+gap 0.3
+merge 1.5
+
+Ánima Christi, sanctífica me: | Soul of Christ, sanctify me.
+Corpus Christi, salva me. | Body of Christ, save me.
+Sanguis Christi, inébria me: | Blood of Christ, inebriate me.
+aqua láteris Christi, lava me. | Water from the side of Christ, wash me.
+Pássio Christi, confórta me: | Passion of Christ, strengthen me.
+O bone Jesu, exáudi me. | O good Jesus, hear me.
+Intra tua vúlnera abscónde me: | Within Thy wounds hide me.
+ne permíttas me separári a te. | Suffer me not to be separated from Thee.
+Ab hoste malígno defénde me: | From the malicious enemy defend me.
+in hora mortis meæ voca me. | In the hour of my death call me,
+Et jube me veníre ad te: | and bid me come to Thee,
+ut cum Sanctis tuis laudem te | that with Thy Saints I may praise Thee
+in sǽcula sæculórum. Amen. | for ever and ever. Amen.

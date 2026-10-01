@@ -1,0 +1,73 @@
+# Stabat Mater, the sequence: all twenty stanzas, Amen and Alleluia, a line
+# to each of a stanza's three verses. Latin from the score; English from the
+# Prayer Book (stabat_mater). The cantor breathes once inside "Pertransívit
+# gládius", where the score has no bar, so that line is not parted there;
+# nor are Amen and Alleluia, which Whisper cannot tell apart across the
+# breath between them.
+noise -12
+gap 0.25
+merge 1.5
+
+Stabat Mater dolorósa | The Mother stood in sorrow,
+Juxta crucem lacrimósa, | weeping beside the Cross
+Dum pendébat Fílius. | whereon her Son was hanging.
+Cujus ánimam geméntem, | Through her soul, lamenting,
+Contristátam et doléntem, | saddened and grieving,
+Pertransívit gládius. | the sword hath passed.
+~
+O quam tristis et afflícta | O how sad and how afflicted
+Fuit illa benedícta | was that blessed one,
+Mater Unigéniti! | the Mother of the Only-begotten.
+Quæ mærébat et dolébat, | She mourned and she grieved,
+Pia Mater, dum vidébat | the loving Mother, as she beheld
+Nati pœnas ínclyti. | the torments of her glorious Son.
+Quis est homo qui non fleret, | Who is the man that would not weep
+Matrem Christi si vidéret | if he should see the Mother of Christ
+In tanto supplício? | in so great anguish?
+Quis non posset contristári, | Who could keep from sorrow,
+Christi Matrem contemplári | beholding the Mother of Christ
+Doléntem cum Fílio? | grieving with her Son?
+Pro peccátis suæ gentis | For the sins of His own people
+Vidit Jesum in torméntis, | she saw Jesus in torments,
+Et flagéllis súbditum. | and given over to the scourge.
+Vidit suum dulcem natum | She saw her own sweet Son
+Moriéndo desolátum, | forsaken in His dying,
+Dum emísit spíritum. | as He gave up His spirit.
+Eia Mater, fons amóris, | O Mother, fount of love,
+Me sentíre vim dolóris | let me feel the force of thy sorrow,
+Fac, ut tecum lúgeam. | make me mourn with thee.
+Fac ut árdeat cor meum | Make my heart to burn
+In amándo Christum Deum, | in loving Christ my God,
+Ut sibi compláceam. | that I may be pleasing to Him.
+Sancta Mater, istud agas, | Holy Mother, do this for me:
+Crucifíxi fige plagas | fix the wounds of the Crucified
+Cordi meo válide. | deep within my heart.
+Tui nati vulneráti, | Of thy wounded Son,
+Tam dignáti pro me pati, | Who deigned to suffer so much for me,
+Pœnas mecum dívide. | share with me the pains.
+Fac me tecum pie flere, | Let me weep with thee in love,
+Crucifíxo condolére, | and grieve with the Crucified,
+Donec ego víxero. | as long as I shall live.
+Juxta crucem tecum stare, | To stand beside the Cross with thee,
+Et me tibi sociáre | and to join myself to thee
+In planctu desídero. | in lamenting, is my desire.
+Virgo vírginum præclára, | Virgin, most glorious of virgins,
+Mihi jam non sis amára: | be not bitter to me now;
+Fac me tecum plángere. | let me lament with thee.
+Fac ut portem Christi mortem, | Let me bear the death of Christ,
+Passiónis fac consórtem, | make me a sharer in His Passion,
+Et plagas recólere. | and keep His wounds in mind.
+Fac me plagis vulnerári, | Let me be wounded with His wounds,
+Fac me cruce inebriári, | let me be inebriated with the Cross
+Et cruóre Fílii. | and with the Blood of thy Son.
+Flammis ne urar succénsus, | Lest I burn, enkindled by the flames,
+Per te, Virgo, sim defénsus | by thee, O Virgin, may I be defended
+In die judícii. | in the day of judgement.
+Christe, cum sit hinc exíre, | O Christ, when I must go from hence,
+Da per Matrem me veníre | grant that through Thy Mother I may come
+Ad palmam victóriæ. | to the palm of victory.
+Quando corpus moriétur, | When my body dies,
+Fac ut ánimæ donétur | grant that to my soul be given
+Paradísi glória. | the glory of paradise.
+Amen. Allelúia. | Amen. Alleluia.
+~

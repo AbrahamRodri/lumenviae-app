@@ -1,0 +1,21 @@
+# Regina caeli, solemn tone; its versicle and the collect Deus, qui per
+# resurrectionem. Latin from the score; English from the Prayer Book. The
+# last alleluia's melisma is sung on breaths too short to part it, and the
+# cantor runs Oremus into the collect.
+noise -20
+gap 0.3
+merge 1.5
+
+Regína cæli lætáre, | O Queen of heaven, rejoice,
+allelúia: | alleluia.
+Quia quem meruísti portáre, | For He whom thou didst merit to bear,
+allelúia: | alleluia,
+Resurréxit, sicut dixit, allelúia: | hath risen, as He said, alleluia.
+Ora pro nobis Deum, | Pray for us to God,
+allelúia. | alleluia.
+Gaude et lætáre, Virgo María, allelúia. | Rejoice and be glad, O Virgin Mary, alleluia.
+Quia surréxit Dóminus vere, allelúia. | For the Lord is truly risen, alleluia.
+Orémus. Deus, qui per resurrectiónem Fílii tui Dómini nostri Jesu Christi mundum lætificáre dignátus es: | Let us pray. O God, who by the Resurrection of Thy Son, our Lord Jesus Christ, didst vouchsafe to give joy to the world;
+præsta, quǽsumus; ut per ejus Genitrícem Vírginem Maríam perpétuæ capiámus gáudia vitæ. | grant, we beseech Thee, that through His Mother, the Virgin Mary, we may obtain the joys of everlasting life.
+Per eumdem Christum Dóminum nostrum. | Through the same Christ our Lord.
+Amen. | Amen.

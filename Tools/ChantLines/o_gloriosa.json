@@ -1,0 +1,109 @@
+{
+  "id": "o_gloriosa",
+  "part": null,
+  "method": "breaths by loudness (under -14 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 12 of 16 breaks heard",
+  "lines": [
+    {
+      "latin": "O gloriósa Vírginum",
+      "english": "O glorious one among virgins,",
+      "start": 0.29,
+      "end": 6.93
+    },
+    {
+      "latin": "Sublímis inter sídera:",
+      "english": "lofty among the stars,",
+      "start": 6.93,
+      "end": 12.61
+    },
+    {
+      "latin": "Qui te creávit, párvulum",
+      "english": "Him who created thee, as a little Child,",
+      "start": 12.61,
+      "end": 19.23
+    },
+    {
+      "latin": "Lacténte nutris úbere.",
+      "english": "thou dost nourish at thy breast.",
+      "start": 19.23,
+      "end": 25.28
+    },
+    {
+      "latin": "Quod Heva tristis ábstulit,",
+      "english": "What sorrowful Eve took away,",
+      "start": 26.89,
+      "end": 33.69
+    },
+    {
+      "latin": "Tu reddis almo gérmine:",
+      "english": "thou restorest through thy gracious Offspring;",
+      "start": 33.69,
+      "end": 39.44
+    },
+    {
+      "latin": "Intrent ut astra flébiles,",
+      "english": "that those who weep may enter the stars,",
+      "start": 39.65,
+      "end": 46.43
+    },
+    {
+      "latin": "Cæli reclúdis cárdines.",
+      "english": "thou openest the doors of heaven.",
+      "start": 46.43,
+      "end": 52.52
+    },
+    {
+      "latin": "Tu Regis alti jánua,",
+      "english": "Thou art the gate of the King on high,",
+      "start": 54.19,
+      "end": 60.79
+    },
+    {
+      "latin": "Et aula lucis fúlgida:",
+      "english": "and the shining hall of light:",
+      "start": 60.79,
+      "end": 66.53
+    },
+    {
+      "latin": "Vitam datam per Vírginem,",
+      "english": "for the life given through the Virgin,",
+      "start": 66.53,
+      "end": 73.29
+    },
+    {
+      "latin": "Gentes redémptæ, pláudite.",
+      "english": "ye redeemed nations, give praise.",
+      "start": 73.29,
+      "end": 80.14
+    },
+    {
+      "latin": "Jesu, tibi sit glória,",
+      "english": "Jesus, to Thee be glory,",
+      "start": 81.25,
+      "end": 87.99
+    },
+    {
+      "latin": "Qui natus es de Vírgine,",
+      "english": "Who wast born of the Virgin,",
+      "start": 87.99,
+      "end": 93.94
+    },
+    {
+      "latin": "Cum Patre et almo Spíritu,",
+      "english": "with the Father and the gracious Spirit,",
+      "start": 93.95,
+      "end": 100.57
+    },
+    {
+      "latin": "In sempitérna sǽcula.",
+      "english": "for everlasting ages.",
+      "start": 100.57,
+      "end": 107.64
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 108.21,
+      "end": 113.58
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+# Miserere mei, Deus (Psalm 50), all twenty verses on the psalm tone, then
+# the versicle Miserere mei Deus: miserere mei (no Gloria Patri: the
+# recording, like the score, has none). Each verse is two lines, parted at
+# its asterisk, where the cantor breathes. Latin from the score; English
+# from the Prayer Book (miserere), its last line plain.
+noise -14
+gap 0.2
+merge 1.5
+
+Miserére mei Deus, | Have mercy on me, O God,
+secúndum magnam misericórdiam tuam. | according to Thy great mercy.
+Et secúndum multitúdinem miseratiónum tuárum, | And according to the multitude of Thy tender mercies
+dele iniquitátem meam. | blot out my iniquity.
+Amplius lava me ab iniquitáte mea: | Wash me yet more from my iniquity,
+et a peccáto meo munda me. | and cleanse me from my sin.
+Quóniam iniquitátem meam ego cognósco: | For I know my iniquity,
+et peccátum meum contra me est semper. | and my sin is always before me.
+Tibi soli peccávi, et malum coram te feci: | To Thee only have I sinned, and have done evil before Thee:
+ut justificéris in sermónibus tuis, et vincas cum judicáris. | that Thou mayst be justified in Thy words, and mayst overcome when Thou art judged.
+Ecce enim in iniquitátibus concéptus sum: | For behold I was conceived in iniquities:
+et in peccátis concépit me mater mea. | and in sins did my mother conceive me.
+Ecce enim veritátem dilexísti: | For behold Thou hast loved truth:
+incérta et occúlta sapiéntiæ tuæ manifestásti mihi. | the uncertain and hidden things of Thy wisdom Thou hast made manifest to me.
+Aspérges me hyssópo, et mundábor: | Thou shalt sprinkle me with hyssop, and I shall be cleansed:
+lavábis me, et super nivem dealbábor. | Thou shalt wash me, and I shall be made whiter than snow.
+Audítui meo dabis gáudium et lætítiam: | To my hearing Thou shalt give joy and gladness:
+et exsultábunt ossa humiliáta. | and the bones that have been humbled shall rejoice.
+Avérte fáciem tuam a peccátis meis: | Turn away Thy face from my sins,
+et omnes iniquitátes meas dele. | and blot out all my iniquities.
+Cor mundum crea in me, Deus: | Create a clean heart in me, O God:
+et spíritum rectum ínnova in viscéribus meis. | and renew a right spirit within my bowels.
+Ne projícias me a fácie tua: | Cast me not away from Thy face:
+et spíritum sanctum tuum ne áuferas a me. | and take not Thy holy spirit from me.
+Redde mihi lætítiam salutáris tui: | Restore unto me the joy of Thy salvation,
+et spíritu principáli confírma me. | and strengthen me with a perfect spirit.
+Docébo iníquos vias tuas: | I will teach the unjust Thy ways:
+et ímpii ad te converténtur. | and the wicked shall be converted to Thee.
+Líbera me de sanguínibus, Deus, Deus salútis meæ: | Deliver me from blood, O God, Thou God of my salvation:
+et exsultábit lingua mea justítiam tuam. | and my tongue shall extol Thy justice.
+Dómine, lábia mea apéries: | O Lord, Thou wilt open my lips:
+et os meum annuntiábit laudem tuam. | and my mouth shall declare Thy praise.
+Quóniam si voluísses sacrifícium, dedíssem útique: | For if Thou hadst desired sacrifice, I would indeed have given it:
+holocáustis non delectáberis. | with burnt offerings Thou wilt not be delighted.
+Sacrifícium Deo spíritus contribulátus: | A sacrifice to God is an afflicted spirit:
+cor contrítum et humiliátum, Deus, non despícies. | a contrite and humbled heart, O God, Thou wilt not despise.
+Benígne fac, Dómine, in bona voluntáte tua Sion: | Deal favourably, O Lord, in Thy good will with Sion:
+ut ædificéntur muri Jerúsalem. | that the walls of Jerusalem may be built up.
+Tunc acceptábis sacrifícium justítiæ, oblatiónes, et holocáusta: | Then shalt Thou accept the sacrifice of justice, oblations and whole burnt offerings:
+tunc impónent super altáre tuum vítulos. | then shall they lay calves upon Thy altar.
+Miserére mei Deus: | Have mercy on me, O God:
+miserére mei. | have mercy on me.

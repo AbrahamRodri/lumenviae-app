@@ -1,0 +1,172 @@
+# Litaniæ Lauretanæ: the litany as this recording sings it, every Kyrie
+# twice, with Mater Ecclésiæ after Mater Christi, Mater immaculáta and
+# Regína famíliæ (the app's Prayer Book prints the older list); then the
+# year's three versicles and collects: Ora pro nobis and Concede nos
+# famulos, Advent's Angelus Domini and Deus qui de beatae, Christmastide's
+# Post partum and Deus qui salutis, and Eastertide's Gaude et laetare with
+# Deus qui per resurrectionem, whose score the site no longer serves.
+# Latin from the scores, the invocations from the Prayer Book's list with
+# the scores' spelling; English from the Prayer Book (litany_loreto) and
+# the Alma Redemptoris's and Regina caeli's collects, the rest plain.
+noise -16
+gap 0.3
+merge 1.5
+
+Kýrie, eléison. | Lord, have mercy on us.
+Kýrie, eléison. | Lord, have mercy on us.
+Christe, eléison. | Christ, have mercy on us.
+Christe, eléison. | Christ, have mercy on us.
+Kýrie, eléison. | Lord, have mercy on us.
+Kýrie, eléison. | Lord, have mercy on us.
+Christe, audi nos. | Christ, hear us.
+Christe, audi nos. | Christ, hear us.
+Christe, exáudi nos. | Christ, graciously hear us.
+Christe, exáudi nos. | Christ, graciously hear us.
+Pater de cælis, Deus, | God the Father of Heaven,
+miserére nobis. | have mercy on us.
+Fili, Redémptor mundi, Deus, | God the Son, Redeemer of the world,
+miserére nobis. | have mercy on us.
+Spíritus Sancte, Deus, | God the Holy Ghost,
+miserére nobis. | have mercy on us.
+Sancta Trínitas, unus Deus, | Holy Trinity, One God,
+miserére nobis. | have mercy on us.
+Sancta María, | Holy Mary,
+ora pro nobis. | pray for us.
+Sancta Dei Génitrix, | Holy Mother of God,
+ora pro nobis. | pray for us.
+Sancta Virgo vírginum, | Holy Virgin of virgins,
+ora pro nobis. | pray for us.
+Mater Christi, | Mother of Christ,
+ora pro nobis. | pray for us.
+Mater Ecclésiæ, | Mother of the Church,
+ora pro nobis. | pray for us.
+Mater divínæ grátiæ, | Mother of divine grace,
+ora pro nobis. | pray for us.
+Mater puríssima, | Mother most pure,
+ora pro nobis. | pray for us.
+Mater castíssima, | Mother most chaste,
+ora pro nobis. | pray for us.
+Mater invioláta, | Mother inviolate,
+ora pro nobis. | pray for us.
+Mater intemeráta, | Mother undefiled,
+ora pro nobis. | pray for us.
+Mater immaculáta, | Mother immaculate,
+ora pro nobis. | pray for us.
+Mater amábilis, | Mother most amiable,
+ora pro nobis. | pray for us.
+Mater admirábilis, | Mother most admirable,
+ora pro nobis. | pray for us.
+Mater boni consílii, | Mother of good counsel,
+ora pro nobis. | pray for us.
+Mater Creatóris, | Mother of our Creator,
+ora pro nobis. | pray for us.
+Mater Salvatóris, | Mother of our Saviour,
+ora pro nobis. | pray for us.
+Virgo prudentíssima, | Virgin most prudent,
+ora pro nobis. | pray for us.
+Virgo veneránda, | Virgin most venerable,
+ora pro nobis. | pray for us.
+Virgo prædicánda, | Virgin most renowned,
+ora pro nobis. | pray for us.
+Virgo potens, | Virgin most powerful,
+ora pro nobis. | pray for us.
+Virgo clemens, | Virgin most merciful,
+ora pro nobis. | pray for us.
+Virgo fidélis, | Virgin most faithful,
+ora pro nobis. | pray for us.
+Spéculum justítiæ, | Mirror of justice,
+ora pro nobis. | pray for us.
+Sedes sapiéntiæ, | Seat of wisdom,
+ora pro nobis. | pray for us.
+Causa nostræ lætítiæ, | Cause of our joy,
+ora pro nobis. | pray for us.
+Vas spirituále, | Spiritual vessel,
+ora pro nobis. | pray for us.
+Vas honorábile, | Vessel of honor,
+ora pro nobis. | pray for us.
+Vas insígne devotiónis, | Singular vessel of devotion,
+ora pro nobis. | pray for us.
+Rosa mýstica, | Mystical rose,
+ora pro nobis. | pray for us.
+Turris Davídica, | Tower of David,
+ora pro nobis. | pray for us.
+Turris ebúrnea, | Tower of ivory,
+ora pro nobis. | pray for us.
+Domus áurea, | House of gold,
+ora pro nobis. | pray for us.
+Fœderis arca, | Ark of the covenant,
+ora pro nobis. | pray for us.
+Jánua cæli, | Gate of Heaven,
+ora pro nobis. | pray for us.
+Stella matutína, | Morning star,
+ora pro nobis. | pray for us.
+Salus infirmórum, | Health of the sick,
+ora pro nobis. | pray for us.
+Refúgium peccatórum, | Refuge of sinners,
+ora pro nobis. | pray for us.
+Consolátrix afflictórum, | Comforter of the afflicted,
+ora pro nobis. | pray for us.
+Auxílium Christianórum, | Help of Christians,
+ora pro nobis. | pray for us.
+Regína Angelórum, | Queen of angels,
+ora pro nobis. | pray for us.
+Regína Patriarchárum, | Queen of patriarchs,
+ora pro nobis. | pray for us.
+Regína Prophetárum, | Queen of prophets,
+ora pro nobis. | pray for us.
+Regína Apostolórum, | Queen of Apostles,
+ora pro nobis. | pray for us.
+Regína Mártyrum, | Queen of martyrs,
+ora pro nobis. | pray for us.
+Regína Confessórum, | Queen of confessors,
+ora pro nobis. | pray for us.
+Regína Vírginum, | Queen of virgins,
+ora pro nobis. | pray for us.
+Regína Sanctórum ómnium, | Queen of all saints,
+ora pro nobis. | pray for us.
+Regína sine labe origináli concépta, | Queen conceived without Original Sin,
+ora pro nobis. | pray for us.
+Regína in cælum assúmpta, | Queen assumed into Heaven,
+ora pro nobis. | pray for us.
+Regína sacratíssimi Rosárii, | Queen of the most holy Rosary,
+ora pro nobis. | pray for us.
+Regína famíliæ, | Queen of the family,
+ora pro nobis. | pray for us.
+Regína pacis, | Queen of peace,
+ora pro nobis. | pray for us.
+Agnus Dei, qui tollis peccáta mundi, | Lamb of God, Who takest away the sins of the world,
+parce nobis, Dómine. | spare us, O Lord.
+Agnus Dei, qui tollis peccáta mundi, | Lamb of God, Who takest away the sins of the world,
+exáudi nos, Dómine. | graciously hear us, O Lord.
+Agnus Dei, qui tollis peccáta mundi, | Lamb of God, Who takest away the sins of the world,
+miserére nobis. | have mercy on us.
+Ora pro nobis, sancta Dei Génitrix. | Pray for us, O holy Mother of God.
+Ut digni efficiámur promissiónibus Christi. | That we may be made worthy of the promises of Christ.
+Orémus. | Let us pray.
+Concéde nos fámulos tuos, quǽsumus Dómine Deus, perpétua mentis et córporis sanitáte gaudére: | Grant, we beseech Thee, O Lord God, unto us Thy servants, that we may rejoice in continual health of mind and body,
+et gloriósa beátæ Maríæ semper Vírginis intercessióne, | and by the glorious intercession of Blessed Mary, ever virgin,
+a præsénti liberári tristítia, et ætérna pérfrui lætítia. | may be delivered from present sadness, and enter into the joy of Thine eternal gladness.
+Per Christum Dóminum nostrum. | Through Christ our Lord.
+Amen. | Amen.
+Ángelus Dómini nuntiávit Maríæ. | The Angel of the Lord declared unto Mary.
+Et concépit de Spíritu Sancto. | And she conceived of the Holy Ghost.
+Orémus. | Let us pray.
+Deus, qui de beátæ Maríæ Vírginis útero Verbum tuum, Ángelo nuntiánte, carnem suscípere voluísti: | O God, who didst will that Thy Word, at the message of an Angel, should take flesh in the womb of the Blessed Virgin Mary:
+præsta supplícibus tuis; ut, qui vere eam Genitrícem Dei crédimus, | grant to us Thy suppliants, that we who believe her to be truly the Mother of God
+ejus apud te intercessiónibus adjuvémur. | may be helped by her intercession with Thee.
+Per eumdem Christum Dóminum nostrum. | Through the same Christ our Lord.
+Amen. | Amen.
+Post partum, Virgo, invioláta permansísti. | After childbirth, O Virgin, thou didst remain inviolate.
+Dei Génitrix, intercéde pro nobis. | O Mother of God, intercede for us.
+Orémus. | Let us pray.
+Deus, qui salútis ætérnæ, beátæ Maríæ virginitáte fecúnda, humáno géneri prǽmia præstitísti: | O God, who by the fruitful virginity of Blessed Mary hast bestowed upon mankind the rewards of eternal salvation;
+tríbue, quǽsumus; ut ipsam pro nobis intercédere sentiámus, | grant, we beseech Thee, that we may know the help of her intercession,
+per quam merúimus auctórem vitæ suscípere, Dóminum nostrum Jesum Christum Fílium tuum. | through whom we were made worthy to receive the Author of life, our Lord Jesus Christ, Thy Son.
+Amen. | Amen.
+Gaude et lætáre, Virgo María, allelúia. | Rejoice and be glad, O Virgin Mary, alleluia.
+Quia surréxit Dóminus vere, allelúia. | For the Lord is truly risen, alleluia.
+Orémus. | Let us pray.
+Deus, qui per resurrectiónem Fílii tui Dómini nostri Jesu Christi mundum lætificáre dignátus es: | O God, who by the Resurrection of Thy Son, our Lord Jesus Christ, didst vouchsafe to give joy to the world;
+præsta, quǽsumus; ut per ejus Genitrícem Vírginem Maríam perpétuæ capiámus gáudia vitæ. | grant, we beseech Thee, that through His Mother, the Virgin Mary, we may obtain the joys of everlasting life.
+Per eumdem Christum Dóminum nostrum. | Through the same Christ our Lord.
+Amen. | Amen.

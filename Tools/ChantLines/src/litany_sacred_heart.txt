@@ -1,0 +1,108 @@
+# Litaniæ Sacratissimi Cordis Jesu: the litany as this recording sings
+# it, every Kyrie twice and the thirty-three invocations of the Prayer
+# Book's list; then Jesu mitis and the collect Omnipotens sempiterne Deus,
+# respice. Latin from the scores, the invocations from the Prayer Book's
+# list with the scores' spelling and the Liber's accents; English from the
+# Prayer Book (litany_sacred_heart).
+noise -14
+gap 0.3
+merge 1.5
+
+Kýrie eléison. | Lord, have mercy on us.
+Kýrie eléison. | Lord, have mercy on us.
+Christe eléison. | Christ, have mercy on us.
+Christe eléison. | Christ, have mercy on us.
+Kýrie eléison. | Lord, have mercy on us.
+Kýrie eléison. | Lord, have mercy on us.
+Christe audi nos. | Christ, hear us.
+Christe audi nos. | Christ, hear us.
+Christe exáudi nos. | Christ, graciously hear us.
+Christe exáudi nos. | Christ, graciously hear us.
+Pater de cælis Deus, | God the Father of Heaven,
+miserére nobis. | have mercy on us.
+Fili Redémptor mundi Deus, | God the Son, Redeemer of the world,
+miserére nobis. | have mercy on us.
+Spíritus Sancte Deus, | God the Holy Ghost,
+miserére nobis. | have mercy on us.
+Sancta Trínitas unus Deus, | Holy Trinity, One God,
+miserére nobis. | have mercy on us.
+Cor Jesu, Fílii Patris ætérni, | Heart of Jesus, Son of the Eternal Father,
+miserére nobis. | have mercy on us.
+Cor Jesu, in sinu Vírginis Matris a Spíritu Sancto formátum, | Heart of Jesus, formed by the Holy Ghost in the womb of the Virgin Mother,
+miserére nobis. | have mercy on us.
+Cor Jesu, Verbo Dei substantiáliter unítum, | Heart of Jesus, substantially united to the Word of God,
+miserére nobis. | have mercy on us.
+Cor Jesu, majestátis infinítæ, | Heart of Jesus, of infinite majesty,
+miserére nobis. | have mercy on us.
+Cor Jesu, templum Dei sanctum, | Heart of Jesus, holy temple of God,
+miserére nobis. | have mercy on us.
+Cor Jesu, tabernáculum Altíssimi, | Heart of Jesus, tabernacle of the Most High,
+miserére nobis. | have mercy on us.
+Cor Jesu, domus Dei et porta cæli, | Heart of Jesus, house of God and gate of heaven,
+miserére nobis. | have mercy on us.
+Cor Jesu, fornax ardens caritátis, | Heart of Jesus, burning furnace of charity,
+miserére nobis. | have mercy on us.
+Cor Jesu, justítiæ et amóris receptáculum, | Heart of Jesus, vessel of justice and of love,
+miserére nobis. | have mercy on us.
+Cor Jesu, bonitáte et amóre plenum, | Heart of Jesus, full of goodness and love,
+miserére nobis. | have mercy on us.
+Cor Jesu, virtútum ómnium abýssus, | Heart of Jesus, abyss of all virtues,
+miserére nobis. | have mercy on us.
+Cor Jesu, omni laude digníssimum, | Heart of Jesus, most worthy of all praise,
+miserére nobis. | have mercy on us.
+Cor Jesu, rex et centrum ómnium córdium, | Heart of Jesus, king and center of all hearts,
+miserére nobis. | have mercy on us.
+Cor Jesu, in quo sunt omnes thesáuri sapiéntiæ et sciéntiæ, | Heart of Jesus, wherein are all the treasures of wisdom and knowledge,
+miserére nobis. | have mercy on us.
+Cor Jesu, in quo hábitat omnis plenitúdo divinitátis, | Heart of Jesus, wherein dwelleth all the fullness of the Godhead,
+miserére nobis. | have mercy on us.
+Cor Jesu, in quo Pater sibi bene complácuit, | Heart of Jesus, wherein the Father was well pleased,
+miserére nobis. | have mercy on us.
+Cor Jesu, de cujus plenitúdine omnes nos accépimus, | Heart of Jesus, of Whose fullness we have all received,
+miserére nobis. | have mercy on us.
+Cor Jesu, desidérium cóllium æternórum, | Heart of Jesus, desire of the everlasting hills,
+miserére nobis. | have mercy on us.
+Cor Jesu, pátiens et multæ misericórdiæ, | Heart of Jesus, patient and of great mercy,
+miserére nobis. | have mercy on us.
+Cor Jesu, dives in omnes qui ínvocant te, | Heart of Jesus, rich unto all who call upon Thee,
+miserére nobis. | have mercy on us.
+Cor Jesu, fons vitæ et sanctitátis, | Heart of Jesus, fountain of life and holiness,
+miserére nobis. | have mercy on us.
+Cor Jesu, propitiátio pro peccátis nostris, | Heart of Jesus, propitiation for our sins,
+miserére nobis. | have mercy on us.
+Cor Jesu, saturátum oppróbriis, | Heart of Jesus, filled with reproaches,
+miserére nobis. | have mercy on us.
+Cor Jesu, attrítum propter scélera nostra, | Heart of Jesus, bruised for our iniquities,
+miserére nobis. | have mercy on us.
+Cor Jesu, usque ad mortem obédiens factum, | Heart of Jesus, made obedient unto death,
+miserére nobis. | have mercy on us.
+Cor Jesu, láncea perforátum, | Heart of Jesus, pierced with a lance,
+miserére nobis. | have mercy on us.
+Cor Jesu, fons totíus consolatiónis, | Heart of Jesus, fountain of all consolation,
+miserére nobis. | have mercy on us.
+Cor Jesu, vita et resurréctio nostra, | Heart of Jesus, our life and resurrection,
+miserére nobis. | have mercy on us.
+Cor Jesu, pax et reconciliátio nostra, | Heart of Jesus, our peace and reconciliation,
+miserére nobis. | have mercy on us.
+Cor Jesu, víctima peccatórum, | Heart of Jesus, victim for sinners,
+miserére nobis. | have mercy on us.
+Cor Jesu, salus in te sperántium, | Heart of Jesus, salvation of those who hope in Thee,
+miserére nobis. | have mercy on us.
+Cor Jesu, spes in te moriéntium, | Heart of Jesus, hope of those who die in Thee,
+miserére nobis. | have mercy on us.
+Cor Jesu, delíciæ Sanctórum ómnium, | Heart of Jesus, delight of all the Saints,
+miserére nobis. | have mercy on us.
+Agnus Dei, qui tollis peccáta mundi, | Lamb of God, Who takest away the sins of the world,
+parce nobis Dómine. | spare us, O Lord.
+Agnus Dei, qui tollis peccáta mundi, | Lamb of God, Who takest away the sins of the world,
+exáudi nos Dómine. | graciously hear us, O Lord.
+Agnus Dei, qui tollis peccáta mundi, | Lamb of God, Who takest away the sins of the world,
+miserére nobis. | have mercy on us.
+Jesu, mitis et húmilis Corde. | Jesus, meek and humble of heart.
+Fac cor nostrum secúndum Cor tuum. | Make our hearts like unto Thine.
+Orémus. | Let us pray.
+Omnípotens sempitérne Deus, réspice in Cor dilectíssimi Fílii tui, et in laudes et satisfactiónes quas in nómine peccatórum tibi persólvit, | Almighty and everlasting God, look upon the Heart of Thy most beloved Son, and upon the praises and satisfactions which He hath rendered unto Thee in the name of sinners;
+iísque misericórdiam tuam peténtibus, Tu véniam concéde placátus, | and to those who seek Thy mercy do Thou, being appeased, grant pardon
+in nómine ejúsdem Fílii tui Jesu Christi: | in the name of the same Thy Son Jesus Christ,
+Qui tecum vivit et regnat in sǽcula sæculórum. | Who liveth and reigneth with Thee world without end.
+Amen. | Amen.

@@ -1,0 +1,955 @@
+{
+  "id": "litany_holy_name",
+  "part": null,
+  "method": "breaths by loudness (under -12 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 125 of 157 breaks heard",
+  "lines": [
+    {
+      "latin": "Kýrie, eléison.",
+      "english": "Lord, have mercy on us.",
+      "start": 0.41,
+      "end": 5.24
+    },
+    {
+      "latin": "Kýrie, eléison.",
+      "english": "Lord, have mercy on us.",
+      "start": 5.51,
+      "end": 10.54
+    },
+    {
+      "latin": "Christe, eléison.",
+      "english": "Christ, have mercy on us.",
+      "start": 10.73,
+      "end": 15.71
+    },
+    {
+      "latin": "Christe, eléison.",
+      "english": "Christ, have mercy on us.",
+      "start": 15.71,
+      "end": 20.88
+    },
+    {
+      "latin": "Kýrie, eléison.",
+      "english": "Lord, have mercy on us.",
+      "start": 20.97,
+      "end": 26.19
+    },
+    {
+      "latin": "Kýrie, eléison.",
+      "english": "Lord, have mercy on us.",
+      "start": 26.19,
+      "end": 30.66
+    },
+    {
+      "latin": "Jesu, audi nos.",
+      "english": "Jesus, hear us.",
+      "start": 31.43,
+      "end": 36.13
+    },
+    {
+      "latin": "Jesu, audi nos.",
+      "english": "Jesus, hear us.",
+      "start": 36.13,
+      "end": 40.89
+    },
+    {
+      "latin": "Jesu, exáudi nos.",
+      "english": "Jesus, graciously hear us.",
+      "start": 40.89,
+      "end": 45.89
+    },
+    {
+      "latin": "Jesu, exáudi nos.",
+      "english": "Jesus, graciously hear us.",
+      "start": 45.89,
+      "end": 50.6
+    },
+    {
+      "latin": "Pater de cælis, Deus,",
+      "english": "God the Father of Heaven,",
+      "start": 51.49,
+      "end": 56.47
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 56.47,
+      "end": 61.58
+    },
+    {
+      "latin": "Fili, Redémptor mundi, Deus,",
+      "english": "God the Son, Redeemer of the world,",
+      "start": 62.09,
+      "end": 67.71
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 67.71,
+      "end": 72.72
+    },
+    {
+      "latin": "Spíritus Sancte, Deus,",
+      "english": "God the Holy Ghost,",
+      "start": 73.59,
+      "end": 78.89
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 78.89,
+      "end": 83.76
+    },
+    {
+      "latin": "Sancta Trínitas, unus Deus,",
+      "english": "Holy Trinity, One God,",
+      "start": 84.69,
+      "end": 90.33
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 90.33,
+      "end": 95.5
+    },
+    {
+      "latin": "Jesu, Fili Dei vivi,",
+      "english": "Jesus, Son of the living God,",
+      "start": 96.35,
+      "end": 101.97
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 101.97,
+      "end": 107.08
+    },
+    {
+      "latin": "Jesu, splendor Patris,",
+      "english": "Jesus, splendor of the Father,",
+      "start": 107.89,
+      "end": 113.23
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 113.23,
+      "end": 118.44
+    },
+    {
+      "latin": "Jesu, candor lucis ætérnæ,",
+      "english": "Jesus, brightness of eternal light,",
+      "start": 119.09,
+      "end": 125.09
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 125.09,
+      "end": 130.28
+    },
+    {
+      "latin": "Jesu, Rex glóriæ,",
+      "english": "Jesus, King of glory,",
+      "start": 130.89,
+      "end": 135.91
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 135.91,
+      "end": 141.0
+    },
+    {
+      "latin": "Jesu, sol justítiæ,",
+      "english": "Jesus, sun of justice,",
+      "start": 141.41,
+      "end": 146.67
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 146.67,
+      "end": 151.92
+    },
+    {
+      "latin": "Jesu, Fili Maríæ Vírginis,",
+      "english": "Jesus, Son of the Virgin Mary,",
+      "start": 152.37,
+      "end": 158.44
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 158.53,
+      "end": 163.68
+    },
+    {
+      "latin": "Jesu amábilis,",
+      "english": "Jesus, most amiable,",
+      "start": 164.37,
+      "end": 169.33
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 169.33,
+      "end": 174.48
+    },
+    {
+      "latin": "Jesu admirábilis,",
+      "english": "Jesus, most admirable,",
+      "start": 175.07,
+      "end": 180.31
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 180.31,
+      "end": 185.38
+    },
+    {
+      "latin": "Jesu, Deus fortis,",
+      "english": "Jesus, mighty God,",
+      "start": 186.05,
+      "end": 191.25
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 191.25,
+      "end": 196.34
+    },
+    {
+      "latin": "Jesu, Pater futúri sæculi,",
+      "english": "Jesus, Father of the world to come,",
+      "start": 196.81,
+      "end": 202.93
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 202.93,
+      "end": 208.1
+    },
+    {
+      "latin": "Jesu, magni consílii Ángele,",
+      "english": "Jesus, angel of great counsel,",
+      "start": 208.65,
+      "end": 214.85
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 214.85,
+      "end": 220.32
+    },
+    {
+      "latin": "Jesu potentíssime,",
+      "english": "Jesus, most powerful,",
+      "start": 220.73,
+      "end": 226.01
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 226.01,
+      "end": 231.06
+    },
+    {
+      "latin": "Jesu patientíssime,",
+      "english": "Jesus, most patient,",
+      "start": 231.61,
+      "end": 237.43
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 237.43,
+      "end": 242.34
+    },
+    {
+      "latin": "Jesu obedientíssime,",
+      "english": "Jesus, most obedient,",
+      "start": 243.15,
+      "end": 248.91
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 248.91,
+      "end": 254.16
+    },
+    {
+      "latin": "Jesu, mitis et húmilis corde,",
+      "english": "Jesus, meek and humble of heart,",
+      "start": 254.53,
+      "end": 260.49
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 260.49,
+      "end": 265.5
+    },
+    {
+      "latin": "Jesu, amátor castitátis,",
+      "english": "Jesus, lover of chastity,",
+      "start": 266.19,
+      "end": 272.11
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 272.11,
+      "end": 277.1
+    },
+    {
+      "latin": "Jesu, amátor noster,",
+      "english": "Jesus, lover of us,",
+      "start": 277.73,
+      "end": 283.13
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 283.13,
+      "end": 288.22
+    },
+    {
+      "latin": "Jesu, Deus pacis,",
+      "english": "Jesus, God of peace,",
+      "start": 288.83,
+      "end": 293.95
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 293.95,
+      "end": 299.38
+    },
+    {
+      "latin": "Jesu, auctor vitæ,",
+      "english": "Jesus, author of life,",
+      "start": 299.59,
+      "end": 304.73
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 304.73,
+      "end": 309.74
+    },
+    {
+      "latin": "Jesu, exémplar virtútum,",
+      "english": "Jesus, model of virtues,",
+      "start": 310.39,
+      "end": 316.35
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 316.35,
+      "end": 321.6
+    },
+    {
+      "latin": "Jesu, zelátor animárum,",
+      "english": "Jesus, lover of souls,",
+      "start": 322.07,
+      "end": 327.93
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 327.93,
+      "end": 332.92
+    },
+    {
+      "latin": "Jesu, Deus noster,",
+      "english": "Jesus, our God,",
+      "start": 333.81,
+      "end": 339.15
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 339.15,
+      "end": 344.08
+    },
+    {
+      "latin": "Jesu, refúgium nostrum,",
+      "english": "Jesus, our refuge,",
+      "start": 344.89,
+      "end": 350.37
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 350.37,
+      "end": 355.58
+    },
+    {
+      "latin": "Jesu, pater páuperum,",
+      "english": "Jesus, Father of the poor,",
+      "start": 356.05,
+      "end": 361.2
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 361.31,
+      "end": 366.38
+    },
+    {
+      "latin": "Jesu, thesáurus fidélium,",
+      "english": "Jesus, treasure of the faithful,",
+      "start": 366.87,
+      "end": 372.57
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 372.57,
+      "end": 378.04
+    },
+    {
+      "latin": "Jesu, bone pastor,",
+      "english": "Jesus, Good Shepherd,",
+      "start": 378.37,
+      "end": 383.51
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 383.51,
+      "end": 388.5
+    },
+    {
+      "latin": "Jesu, lux vera,",
+      "english": "Jesus, true light,",
+      "start": 389.23,
+      "end": 393.93
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 393.93,
+      "end": 399.02
+    },
+    {
+      "latin": "Jesu, sapiéntia ætérna,",
+      "english": "Jesus, eternal wisdom,",
+      "start": 399.73,
+      "end": 405.89
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 405.89,
+      "end": 410.82
+    },
+    {
+      "latin": "Jesu, bónitas infiníta,",
+      "english": "Jesus, infinite goodness,",
+      "start": 411.53,
+      "end": 417.51
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 417.51,
+      "end": 422.58
+    },
+    {
+      "latin": "Jesu, via et vita nostra,",
+      "english": "Jesus, our way and our life,",
+      "start": 423.27,
+      "end": 429.38
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 429.43,
+      "end": 434.7
+    },
+    {
+      "latin": "Jesu, gáudium Angelórum,",
+      "english": "Jesus, joy of angels,",
+      "start": 435.33,
+      "end": 441.43
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 441.43,
+      "end": 446.5
+    },
+    {
+      "latin": "Jesu, Rex Patriarchárum,",
+      "english": "Jesus, King of patriarchs,",
+      "start": 446.97,
+      "end": 452.46
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 452.51,
+      "end": 457.28
+    },
+    {
+      "latin": "Jesu, Magíster Apostolórum,",
+      "english": "Jesus, master of Apostles,",
+      "start": 458.11,
+      "end": 464.33
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 464.33,
+      "end": 469.54
+    },
+    {
+      "latin": "Jesu, Doctor Evangelistárum,",
+      "english": "Jesus, teacher of Evangelists,",
+      "start": 469.89,
+      "end": 476.1
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 476.13,
+      "end": 481.12
+    },
+    {
+      "latin": "Jesu, fortitúdo Mártyrum,",
+      "english": "Jesus, strength of martyrs,",
+      "start": 481.85,
+      "end": 487.73
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 487.73,
+      "end": 492.64
+    },
+    {
+      "latin": "Jesu, lumen Confessórum,",
+      "english": "Jesus, light of confessors,",
+      "start": 493.33,
+      "end": 498.79
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 498.79,
+      "end": 504.12
+    },
+    {
+      "latin": "Jesu, púritas Vírginum,",
+      "english": "Jesus, purity of virgins,",
+      "start": 504.43,
+      "end": 509.95
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 509.95,
+      "end": 515.12
+    },
+    {
+      "latin": "Jesu, coróna Sanctórum ómnium,",
+      "english": "Jesus, crown of all saints,",
+      "start": 515.57,
+      "end": 521.63
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 521.63,
+      "end": 527.24
+    },
+    {
+      "latin": "Propítius esto,",
+      "english": "Be merciful,",
+      "start": 527.85,
+      "end": 532.09
+    },
+    {
+      "latin": "parce nobis, Jesu.",
+      "english": "spare us, O Jesus.",
+      "start": 532.09,
+      "end": 536.7
+    },
+    {
+      "latin": "Propítius esto,",
+      "english": "Be merciful,",
+      "start": 536.89,
+      "end": 541.25
+    },
+    {
+      "latin": "exáudi nos, Jesu.",
+      "english": "graciously hear us, O Jesus.",
+      "start": 541.25,
+      "end": 545.7
+    },
+    {
+      "latin": "Ab omni malo,",
+      "english": "From all evil,",
+      "start": 546.23,
+      "end": 550.13
+    },
+    {
+      "latin": "líbera nos, Jesu.",
+      "english": "Jesus, deliver us.",
+      "start": 550.13,
+      "end": 554.52
+    },
+    {
+      "latin": "Ab omni peccáto,",
+      "english": "From all sin,",
+      "start": 554.91,
+      "end": 559.05
+    },
+    {
+      "latin": "líbera nos, Jesu.",
+      "english": "Jesus, deliver us.",
+      "start": 559.05,
+      "end": 563.54
+    },
+    {
+      "latin": "Ab ira tua,",
+      "english": "From Thy wrath,",
+      "start": 563.99,
+      "end": 567.81
+    },
+    {
+      "latin": "líbera nos, Jesu.",
+      "english": "Jesus, deliver us.",
+      "start": 567.81,
+      "end": 572.36
+    },
+    {
+      "latin": "Ab insídiis diáboli,",
+      "english": "From the snares of the devil,",
+      "start": 572.55,
+      "end": 577.45
+    },
+    {
+      "latin": "líbera nos, Jesu.",
+      "english": "Jesus, deliver us.",
+      "start": 577.45,
+      "end": 581.9
+    },
+    {
+      "latin": "A spíritu fornicatiónis,",
+      "english": "From the spirit of fornication,",
+      "start": 582.51,
+      "end": 587.71
+    },
+    {
+      "latin": "líbera nos, Jesu.",
+      "english": "Jesus, deliver us.",
+      "start": 587.71,
+      "end": 592.22
+    },
+    {
+      "latin": "A morte perpétua,",
+      "english": "From everlasting death,",
+      "start": 592.55,
+      "end": 597.17
+    },
+    {
+      "latin": "líbera nos, Jesu.",
+      "english": "Jesus, deliver us.",
+      "start": 597.17,
+      "end": 601.36
+    },
+    {
+      "latin": "A negléctu inspiratiónum tuárum,",
+      "english": "From the neglect of Thine inspirations,",
+      "start": 601.87,
+      "end": 608.05
+    },
+    {
+      "latin": "líbera nos, Jesu.",
+      "english": "Jesus, deliver us.",
+      "start": 608.05,
+      "end": 612.48
+    },
+    {
+      "latin": "Per mystérium sanctæ Incarnatiónis tuæ,",
+      "english": "Through the mystery of Thy holy Incarnation,",
+      "start": 613.09,
+      "end": 619.67
+    },
+    {
+      "latin": "líbera nos, Jesu.",
+      "english": "Jesus, deliver us.",
+      "start": 619.67,
+      "end": 624.14
+    },
+    {
+      "latin": "Per nativitátem tuam,",
+      "english": "Through Thy nativity,",
+      "start": 624.61,
+      "end": 629.45
+    },
+    {
+      "latin": "líbera nos, Jesu.",
+      "english": "Jesus, deliver us.",
+      "start": 629.45,
+      "end": 633.82
+    },
+    {
+      "latin": "Per infántiam tuam,",
+      "english": "Through Thine infancy,",
+      "start": 634.33,
+      "end": 638.83
+    },
+    {
+      "latin": "líbera nos, Jesu.",
+      "english": "Jesus, deliver us.",
+      "start": 638.83,
+      "end": 643.16
+    },
+    {
+      "latin": "Per diviníssimam vitam tuam,",
+      "english": "Through Thy most divine life,",
+      "start": 643.75,
+      "end": 648.99
+    },
+    {
+      "latin": "líbera nos, Jesu.",
+      "english": "Jesus, deliver us.",
+      "start": 648.99,
+      "end": 653.22
+    },
+    {
+      "latin": "Per labóres tuos,",
+      "english": "Through Thy labors,",
+      "start": 654.01,
+      "end": 658.23
+    },
+    {
+      "latin": "líbera nos, Jesu.",
+      "english": "Jesus, deliver us.",
+      "start": 658.23,
+      "end": 662.58
+    },
+    {
+      "latin": "Per agoníam et passiónem tuam,",
+      "english": "Through Thine agony and Passion,",
+      "start": 663.11,
+      "end": 668.83
+    },
+    {
+      "latin": "líbera nos, Jesu.",
+      "english": "Jesus, deliver us.",
+      "start": 668.83,
+      "end": 673.32
+    },
+    {
+      "latin": "Per crucem et derelictiónem tuam,",
+      "english": "Through Thy cross and dereliction,",
+      "start": 673.83,
+      "end": 679.61
+    },
+    {
+      "latin": "líbera nos, Jesu.",
+      "english": "Jesus, deliver us.",
+      "start": 679.61,
+      "end": 684.18
+    },
+    {
+      "latin": "Per languóres tuos,",
+      "english": "Through Thy sufferings,",
+      "start": 684.67,
+      "end": 689.15
+    },
+    {
+      "latin": "líbera nos, Jesu.",
+      "english": "Jesus, deliver us.",
+      "start": 689.15,
+      "end": 693.42
+    },
+    {
+      "latin": "Per mortem et sepultúram tuam,",
+      "english": "Through Thy death and burial,",
+      "start": 693.95,
+      "end": 699.33
+    },
+    {
+      "latin": "líbera nos, Jesu.",
+      "english": "Jesus, deliver us.",
+      "start": 699.33,
+      "end": 703.5
+    },
+    {
+      "latin": "Per resurrectiónem tuam,",
+      "english": "Through Thy Resurrection,",
+      "start": 704.15,
+      "end": 709.11
+    },
+    {
+      "latin": "líbera nos, Jesu.",
+      "english": "Jesus, deliver us.",
+      "start": 709.11,
+      "end": 713.48
+    },
+    {
+      "latin": "Per ascensiónem tuam,",
+      "english": "Through Thine Ascension,",
+      "start": 714.09,
+      "end": 718.95
+    },
+    {
+      "latin": "líbera nos, Jesu.",
+      "english": "Jesus, deliver us.",
+      "start": 718.95,
+      "end": 723.44
+    },
+    {
+      "latin": "Per sanctíssimæ Eucharistíæ institutiónem tuam,",
+      "english": "Through Thine institution of the most Holy Eucharist,",
+      "start": 723.95,
+      "end": 731.27
+    },
+    {
+      "latin": "líbera nos, Jesu.",
+      "english": "Jesus, deliver us.",
+      "start": 731.27,
+      "end": 735.64
+    },
+    {
+      "latin": "Per gáudia tua,",
+      "english": "Through Thy joys,",
+      "start": 736.21,
+      "end": 740.43
+    },
+    {
+      "latin": "líbera nos, Jesu.",
+      "english": "Jesus, deliver us.",
+      "start": 740.43,
+      "end": 744.84
+    },
+    {
+      "latin": "Per glóriam tuam,",
+      "english": "Through Thy glory,",
+      "start": 745.25,
+      "end": 749.67
+    },
+    {
+      "latin": "líbera nos, Jesu.",
+      "english": "Jesus, deliver us.",
+      "start": 749.67,
+      "end": 754.08
+    },
+    {
+      "latin": "Agnus Dei, qui tollis peccáta mundi,",
+      "english": "Lamb of God, Who takest away the sins of the world,",
+      "start": 755.09,
+      "end": 762.47
+    },
+    {
+      "latin": "parce nobis, Jesu.",
+      "english": "spare us, O Jesus.",
+      "start": 762.47,
+      "end": 767.5
+    },
+    {
+      "latin": "Agnus Dei, qui tollis peccáta mundi,",
+      "english": "Lamb of God, Who takest away the sins of the world,",
+      "start": 768.03,
+      "end": 775.53
+    },
+    {
+      "latin": "exáudi nos, Jesu.",
+      "english": "graciously hear us, O Jesus.",
+      "start": 775.53,
+      "end": 780.36
+    },
+    {
+      "latin": "Agnus Dei, qui tollis peccáta mundi,",
+      "english": "Lamb of God, Who takest away the sins of the world,",
+      "start": 781.13,
+      "end": 788.55
+    },
+    {
+      "latin": "miserére nobis, Jesu.",
+      "english": "have mercy on us, O Jesus.",
+      "start": 788.55,
+      "end": 794.4
+    },
+    {
+      "latin": "Jesu, audi nos.",
+      "english": "Jesus, hear us.",
+      "start": 795.75,
+      "end": 799.72
+    },
+    {
+      "latin": "Jesu, exáudi nos.",
+      "english": "Jesus, graciously hear us.",
+      "start": 800.15,
+      "end": 804.0
+    },
+    {
+      "latin": "Orémus.",
+      "english": "Let us pray.",
+      "start": 805.09,
+      "end": 808.37
+    },
+    {
+      "latin": "Dómine Jesu Christe, qui dixísti:",
+      "english": "O Lord Jesus Christ, Who hast said:",
+      "start": 808.37,
+      "end": 812.43
+    },
+    {
+      "latin": "pétite, et accipiétis; quǽrite, et inveniétis; pulsáte, et aperiétur vobis;",
+      "english": "Ask and ye shall receive, seek and ye shall find, knock and it shall be opened unto you;",
+      "start": 812.43,
+      "end": 821.71
+    },
+    {
+      "latin": "quǽsumus, da nobis peténtibus diviníssimi tui amóris afféctum,",
+      "english": "grant, we beseech Thee, to us who ask the gift of Thy divine love,",
+      "start": 821.71,
+      "end": 829.59
+    },
+    {
+      "latin": "ut te toto corde, ore et ópere diligámus, et a tua nunquam laude cessémus.",
+      "english": "that we may ever love Thee with all our hearts, and in all our words and actions, and never cease from praising Thee.",
+      "start": 829.59,
+      "end": 838.42
+    },
+    {
+      "latin": "Sancti nóminis tui, Dómine, timórem páriter et amórem fac nos habére perpétuum,",
+      "english": "Give us, O Lord, a perpetual fear and love of Thy holy Name;",
+      "start": 839.19,
+      "end": 847.67
+    },
+    {
+      "latin": "quia nunquam tua gubernatióne destítuis,",
+      "english": "for Thou never failest to govern",
+      "start": 847.67,
+      "end": 853.07
+    },
+    {
+      "latin": "quos in soliditáte tuæ dilectiónis instítuis.",
+      "english": "those whom Thou dost solidly establish in Thy love,",
+      "start": 853.07,
+      "end": 859.48
+    },
+    {
+      "latin": "Qui vivis et regnas in sǽcula sæculórum.",
+      "english": "Who livest and reignest world without end.",
+      "start": 859.51,
+      "end": 866.22
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 866.51,
+      "end": 870.62
+    }
+  ]
+}

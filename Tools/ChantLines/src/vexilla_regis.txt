@@ -1,0 +1,37 @@
+# Vexilla Regis prodeunt, all seven stanzas (the Passiontide text, Hoc
+# Passionis tempore) and the Amen; the cantor breathes at the end of every
+# verse line, so a line is a quarter of a stanza. Latin from the score;
+# English plain and literal.
+noise -14
+gap 0.3
+merge 1.5
+
+Vexílla Regis pródeunt: | The banners of the King go forth;
+Fulget Crucis mystérium, | the mystery of the Cross shines out,
+Qua vita mortem pértulit, | whereon Life endured death,
+Et morte vitam prótulit. | and by death brought forth life.
+Quæ vulneráta lánceæ | Wounded by the spear's
+Mucróne diro, críminum | cruel point, that from the filth of our sins
+Ut nos laváret sórdibus, | it might wash us,
+Manávit unda et sánguine. | it poured forth water and blood.
+Impléta sunt quæ cóncinit | Fulfilled are the things which David
+David fidéli cármine, | sang in faithful verse,
+Dicéndo natiónibus: | telling the nations:
+Regnávit a ligno Deus. | God hath reigned from the Tree.
+Arbor decóra et fúlgida, | O Tree, beautiful and shining,
+Ornáta Regis púrpura, | adorned with the purple of the King,
+Elécta digno stípite | chosen from a worthy stock
+Tam sancta membra tángere. | to touch limbs so holy.
+Beáta, cujus bráchiis | Blessed Tree, upon whose arms
+Prétium pepéndit sǽculi: | hung the ransom of the world;
+Statéra facta córporis, | it was made the balance of His Body,
+Tulítque prædam tártari. | and took away the prey of hell.
+O Crux ave, spes única, | Hail, O Cross, our only hope!
+Hoc Passiónis témpore | In this time of the Passion
+Piis adáuge grátiam, | increase grace in the devout,
+Reísque dele crímina. | and blot out the crimes of the guilty.
+Te fons salútis Trínitas, | Thee, O Trinity, fount of salvation,
+Colláudet omnis spíritus: | let every spirit praise;
+Quibus Crucis victóriam | to those to whom the victory of the Cross
+Largíris, adde prǽmium. | Thou givest, add the reward.
+Amen. | Amen.

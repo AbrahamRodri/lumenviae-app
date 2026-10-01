@@ -1,0 +1,373 @@
+{
+  "id": "stabat_mater",
+  "part": null,
+  "method": "breaths by loudness (under -12 dB for 0.25 s, phrases under 1.5 s merged) + text alignment; Whisper: 45 of 60 breaks heard",
+  "lines": [
+    {
+      "latin": "Stabat Mater dolorósa",
+      "english": "The Mother stood in sorrow,",
+      "start": 0.51,
+      "end": 5.39
+    },
+    {
+      "latin": "Juxta crucem lacrimósa,",
+      "english": "weeping beside the Cross",
+      "start": 5.39,
+      "end": 10.27
+    },
+    {
+      "latin": "Dum pendébat Fílius.",
+      "english": "whereon her Son was hanging.",
+      "start": 10.27,
+      "end": 14.66
+    },
+    {
+      "latin": "Cujus ánimam geméntem,",
+      "english": "Through her soul, lamenting,",
+      "start": 15.41,
+      "end": 20.53
+    },
+    {
+      "latin": "Contristátam et doléntem,",
+      "english": "saddened and grieving,",
+      "start": 20.53,
+      "end": 25.73
+    },
+    {
+      "latin": "Pertransívit gládius.",
+      "english": "the sword hath passed.",
+      "start": 25.73,
+      "end": 30.18
+    },
+    {
+      "latin": "O quam tristis et afflícta",
+      "english": "O how sad and how afflicted",
+      "start": 30.99,
+      "end": 36.15
+    },
+    {
+      "latin": "Fuit illa benedícta",
+      "english": "was that blessed one,",
+      "start": 36.15,
+      "end": 41.05
+    },
+    {
+      "latin": "Mater Unigéniti!",
+      "english": "the Mother of the Only-begotten.",
+      "start": 41.05,
+      "end": 45.96
+    },
+    {
+      "latin": "Quæ mærébat et dolébat,",
+      "english": "She mourned and she grieved,",
+      "start": 46.35,
+      "end": 51.43
+    },
+    {
+      "latin": "Pia Mater, dum vidébat",
+      "english": "the loving Mother, as she beheld",
+      "start": 51.43,
+      "end": 56.49
+    },
+    {
+      "latin": "Nati pœnas ínclyti.",
+      "english": "the torments of her glorious Son.",
+      "start": 56.49,
+      "end": 61.44
+    },
+    {
+      "latin": "Quis est homo qui non fleret,",
+      "english": "Who is the man that would not weep",
+      "start": 61.97,
+      "end": 67.07
+    },
+    {
+      "latin": "Matrem Christi si vidéret",
+      "english": "if he should see the Mother of Christ",
+      "start": 67.07,
+      "end": 72.47
+    },
+    {
+      "latin": "In tanto supplício?",
+      "english": "in so great anguish?",
+      "start": 72.47,
+      "end": 77.6
+    },
+    {
+      "latin": "Quis non posset contristári,",
+      "english": "Who could keep from sorrow,",
+      "start": 77.67,
+      "end": 82.73
+    },
+    {
+      "latin": "Christi Matrem contemplári",
+      "english": "beholding the Mother of Christ",
+      "start": 82.74,
+      "end": 88.05
+    },
+    {
+      "latin": "Doléntem cum Fílio?",
+      "english": "grieving with her Son?",
+      "start": 88.05,
+      "end": 92.68
+    },
+    {
+      "latin": "Pro peccátis suæ gentis",
+      "english": "For the sins of His own people",
+      "start": 93.29,
+      "end": 98.75
+    },
+    {
+      "latin": "Vidit Jesum in torméntis,",
+      "english": "she saw Jesus in torments,",
+      "start": 98.75,
+      "end": 103.84
+    },
+    {
+      "latin": "Et flagéllis súbditum.",
+      "english": "and given over to the scourge.",
+      "start": 104.03,
+      "end": 109.14
+    },
+    {
+      "latin": "Vidit suum dulcem natum",
+      "english": "She saw her own sweet Son",
+      "start": 109.51,
+      "end": 115.03
+    },
+    {
+      "latin": "Moriéndo desolátum,",
+      "english": "forsaken in His dying,",
+      "start": 115.03,
+      "end": 120.47
+    },
+    {
+      "latin": "Dum emísit spíritum.",
+      "english": "as He gave up His spirit.",
+      "start": 120.47,
+      "end": 125.52
+    },
+    {
+      "latin": "Eia Mater, fons amóris,",
+      "english": "O Mother, fount of love,",
+      "start": 126.11,
+      "end": 131.42
+    },
+    {
+      "latin": "Me sentíre vim dolóris",
+      "english": "let me feel the force of thy sorrow,",
+      "start": 131.47,
+      "end": 136.81
+    },
+    {
+      "latin": "Fac, ut tecum lúgeam.",
+      "english": "make me mourn with thee.",
+      "start": 136.81,
+      "end": 142.02
+    },
+    {
+      "latin": "Fac ut árdeat cor meum",
+      "english": "Make my heart to burn",
+      "start": 142.37,
+      "end": 147.51
+    },
+    {
+      "latin": "In amándo Christum Deum,",
+      "english": "in loving Christ my God,",
+      "start": 147.51,
+      "end": 152.75
+    },
+    {
+      "latin": "Ut sibi compláceam.",
+      "english": "that I may be pleasing to Him.",
+      "start": 152.75,
+      "end": 158.01
+    },
+    {
+      "latin": "Sancta Mater, istud agas,",
+      "english": "Holy Mother, do this for me:",
+      "start": 158.01,
+      "end": 163.03
+    },
+    {
+      "latin": "Crucifíxi fige plagas",
+      "english": "fix the wounds of the Crucified",
+      "start": 163.03,
+      "end": 168.15
+    },
+    {
+      "latin": "Cordi meo válide.",
+      "english": "deep within my heart.",
+      "start": 168.15,
+      "end": 172.9
+    },
+    {
+      "latin": "Tui nati vulneráti,",
+      "english": "Of thy wounded Son,",
+      "start": 173.35,
+      "end": 178.29
+    },
+    {
+      "latin": "Tam dignáti pro me pati,",
+      "english": "Who deigned to suffer so much for me,",
+      "start": 178.29,
+      "end": 183.43
+    },
+    {
+      "latin": "Pœnas mecum dívide.",
+      "english": "share with me the pains.",
+      "start": 183.43,
+      "end": 188.64
+    },
+    {
+      "latin": "Fac me tecum pie flere,",
+      "english": "Let me weep with thee in love,",
+      "start": 188.95,
+      "end": 194.03
+    },
+    {
+      "latin": "Crucifíxo condolére,",
+      "english": "and grieve with the Crucified,",
+      "start": 194.03,
+      "end": 199.33
+    },
+    {
+      "latin": "Donec ego víxero.",
+      "english": "as long as I shall live.",
+      "start": 199.33,
+      "end": 204.63
+    },
+    {
+      "latin": "Juxta crucem tecum stare,",
+      "english": "To stand beside the Cross with thee,",
+      "start": 204.63,
+      "end": 209.75
+    },
+    {
+      "latin": "Et me tibi sociáre",
+      "english": "and to join myself to thee",
+      "start": 209.75,
+      "end": 215.13
+    },
+    {
+      "latin": "In planctu desídero.",
+      "english": "in lamenting, is my desire.",
+      "start": 215.13,
+      "end": 220.18
+    },
+    {
+      "latin": "Virgo vírginum præclára,",
+      "english": "Virgin, most glorious of virgins,",
+      "start": 220.47,
+      "end": 225.89
+    },
+    {
+      "latin": "Mihi jam non sis amára:",
+      "english": "be not bitter to me now;",
+      "start": 225.89,
+      "end": 231.21
+    },
+    {
+      "latin": "Fac me tecum plángere.",
+      "english": "let me lament with thee.",
+      "start": 231.21,
+      "end": 235.78
+    },
+    {
+      "latin": "Fac ut portem Christi mortem,",
+      "english": "Let me bear the death of Christ,",
+      "start": 236.75,
+      "end": 242.11
+    },
+    {
+      "latin": "Passiónis fac consórtem,",
+      "english": "make me a sharer in His Passion,",
+      "start": 242.11,
+      "end": 247.39
+    },
+    {
+      "latin": "Et plagas recólere.",
+      "english": "and keep His wounds in mind.",
+      "start": 247.39,
+      "end": 252.4
+    },
+    {
+      "latin": "Fac me plagis vulnerári,",
+      "english": "Let me be wounded with His wounds,",
+      "start": 252.89,
+      "end": 257.95
+    },
+    {
+      "latin": "Fac me cruce inebriári,",
+      "english": "let me be inebriated with the Cross",
+      "start": 257.95,
+      "end": 263.03
+    },
+    {
+      "latin": "Et cruóre Fílii.",
+      "english": "and with the Blood of thy Son.",
+      "start": 263.03,
+      "end": 268.12
+    },
+    {
+      "latin": "Flammis ne urar succénsus,",
+      "english": "Lest I burn, enkindled by the flames,",
+      "start": 268.53,
+      "end": 273.83
+    },
+    {
+      "latin": "Per te, Virgo, sim defénsus",
+      "english": "by thee, O Virgin, may I be defended",
+      "start": 273.83,
+      "end": 279.07
+    },
+    {
+      "latin": "In die judícii.",
+      "english": "in the day of judgement.",
+      "start": 279.07,
+      "end": 283.78
+    },
+    {
+      "latin": "Christe, cum sit hinc exíre,",
+      "english": "O Christ, when I must go from hence,",
+      "start": 284.55,
+      "end": 289.55
+    },
+    {
+      "latin": "Da per Matrem me veníre",
+      "english": "grant that through Thy Mother I may come",
+      "start": 289.55,
+      "end": 294.89
+    },
+    {
+      "latin": "Ad palmam victóriæ.",
+      "english": "to the palm of victory.",
+      "start": 294.89,
+      "end": 299.98
+    },
+    {
+      "latin": "Quando corpus moriétur,",
+      "english": "When my body dies,",
+      "start": 300.41,
+      "end": 305.65
+    },
+    {
+      "latin": "Fac ut ánimæ donétur",
+      "english": "grant that to my soul be given",
+      "start": 305.65,
+      "end": 310.83
+    },
+    {
+      "latin": "Paradísi glória.",
+      "english": "the glory of paradise.",
+      "start": 310.83,
+      "end": 316.56
+    },
+    {
+      "latin": "Amen. Allelúia.",
+      "english": "Amen. Alleluia.",
+      "start": 316.95,
+      "end": 325.62
+    }
+  ]
+}

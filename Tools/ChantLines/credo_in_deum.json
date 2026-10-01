@@ -1,0 +1,145 @@
+{
+  "id": "credo_in_deum",
+  "part": null,
+  "method": "breaths by loudness (under -20 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 14 of 22 breaks heard",
+  "lines": [
+    {
+      "latin": "Credo in Deum,",
+      "english": "I believe in God,",
+      "start": 0.31,
+      "end": 5.89
+    },
+    {
+      "latin": "Patrem omnipoténtem,",
+      "english": "the Father almighty,",
+      "start": 5.89,
+      "end": 12.04
+    },
+    {
+      "latin": "Creatórem cæli",
+      "english": "Creator of heaven",
+      "start": 12.05,
+      "end": 16.86
+    },
+    {
+      "latin": "et terræ.",
+      "english": "and earth,",
+      "start": 16.87,
+      "end": 21.76
+    },
+    {
+      "latin": "Et in Jesum Christum,",
+      "english": "and in Jesus Christ,",
+      "start": 22.21,
+      "end": 26.87
+    },
+    {
+      "latin": "Fílium ejus únicum,",
+      "english": "His only Son,",
+      "start": 26.87,
+      "end": 32.27
+    },
+    {
+      "latin": "Dóminum nostrum,",
+      "english": "our Lord,",
+      "start": 32.27,
+      "end": 38.58
+    },
+    {
+      "latin": "qui concéptus est de Spíritu Sancto,",
+      "english": "who was conceived by the Holy Spirit,",
+      "start": 39.07,
+      "end": 46.67
+    },
+    {
+      "latin": "natus ex María Vírgine,",
+      "english": "born of the Virgin Mary,",
+      "start": 46.67,
+      "end": 53.22
+    },
+    {
+      "latin": "passus sub Póntio Piláto, crucifíxus, mórtuus, et sepúltus,",
+      "english": "suffered under Pontius Pilate, was crucified, died and was buried;",
+      "start": 53.97,
+      "end": 68.35
+    },
+    {
+      "latin": "descéndit ad ínferos,",
+      "english": "He descended into hell;",
+      "start": 68.35,
+      "end": 74.76
+    },
+    {
+      "latin": "tértia die",
+      "english": "on the third day",
+      "start": 75.73,
+      "end": 79.71
+    },
+    {
+      "latin": "resurréxit a mórtuis,",
+      "english": "He rose again from the dead;",
+      "start": 79.71,
+      "end": 85.64
+    },
+    {
+      "latin": "ascéndit ad cælos, sedet ad déxteram Dei Patris omnipoténtis,",
+      "english": "He ascended into heaven, and is seated at the right hand of God the Father almighty;",
+      "start": 86.21,
+      "end": 100.94
+    },
+    {
+      "latin": "inde ventúrus est judicáre",
+      "english": "from there He will come to judge",
+      "start": 101.77,
+      "end": 110.65
+    },
+    {
+      "latin": "vivos et mórtuos.",
+      "english": "the living and the dead.",
+      "start": 110.65,
+      "end": 116.84
+    },
+    {
+      "latin": "Credo in Spíritum Sanctum,",
+      "english": "I believe in the Holy Spirit,",
+      "start": 117.67,
+      "end": 124.0
+    },
+    {
+      "latin": "sanctam Ecclésiam cathólicam,",
+      "english": "the holy catholic Church,",
+      "start": 124.03,
+      "end": 131.73
+    },
+    {
+      "latin": "sanctórum communiónem,",
+      "english": "the communion of saints,",
+      "start": 131.73,
+      "end": 138.34
+    },
+    {
+      "latin": "remissiónem peccatórum,",
+      "english": "the forgiveness of sins,",
+      "start": 138.45,
+      "end": 145.5
+    },
+    {
+      "latin": "carnis resurrectiónem,",
+      "english": "the resurrection of the body,",
+      "start": 146.01,
+      "end": 153.5
+    },
+    {
+      "latin": "vitam ætérnam.",
+      "english": "and life everlasting.",
+      "start": 153.51,
+      "end": 159.82
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 161.23,
+      "end": 169.98
+    }
+  ]
+}

@@ -1,0 +1,170 @@
+# Litaniæ Sanctissimi Nominis Jesu: the litany as this recording sings
+# it, every Kyrie and Jesu audi nos twice, the thirty-eight invocations,
+# Propitius esto twice, the seven Ab and fourteen Per of the app's list (the
+# consecration's litany_holy_name), in its order; then the Agnus Dei, Jesu
+# audi nos, and under one Oremus the collects Domine Jesu Christe and
+# Sancti nominis tui. Latin from the scores (nunquam, as they print it), the
+# invocations from the app's list; English from the app's litany_holy_name.
+# At -12 dB the breath between Ab omni peccato and its libera nos is found.
+noise -12
+gap 0.3
+merge 1.5
+
+Kýrie, eléison. | Lord, have mercy on us.
+Kýrie, eléison. | Lord, have mercy on us.
+Christe, eléison. | Christ, have mercy on us.
+Christe, eléison. | Christ, have mercy on us.
+Kýrie, eléison. | Lord, have mercy on us.
+Kýrie, eléison. | Lord, have mercy on us.
+Jesu, audi nos. | Jesus, hear us.
+Jesu, audi nos. | Jesus, hear us.
+Jesu, exáudi nos. | Jesus, graciously hear us.
+Jesu, exáudi nos. | Jesus, graciously hear us.
+Pater de cælis, Deus, | God the Father of Heaven,
+miserére nobis. | have mercy on us.
+Fili, Redémptor mundi, Deus, | God the Son, Redeemer of the world,
+miserére nobis. | have mercy on us.
+Spíritus Sancte, Deus, | God the Holy Ghost,
+miserére nobis. | have mercy on us.
+Sancta Trínitas, unus Deus, | Holy Trinity, One God,
+miserére nobis. | have mercy on us.
+Jesu, Fili Dei vivi, | Jesus, Son of the living God,
+miserére nobis. | have mercy on us.
+Jesu, splendor Patris, | Jesus, splendor of the Father,
+miserére nobis. | have mercy on us.
+Jesu, candor lucis ætérnæ, | Jesus, brightness of eternal light,
+miserére nobis. | have mercy on us.
+Jesu, Rex glóriæ, | Jesus, King of glory,
+miserére nobis. | have mercy on us.
+Jesu, sol justítiæ, | Jesus, sun of justice,
+miserére nobis. | have mercy on us.
+Jesu, Fili Maríæ Vírginis, | Jesus, Son of the Virgin Mary,
+miserére nobis. | have mercy on us.
+Jesu amábilis, | Jesus, most amiable,
+miserére nobis. | have mercy on us.
+Jesu admirábilis, | Jesus, most admirable,
+miserére nobis. | have mercy on us.
+Jesu, Deus fortis, | Jesus, mighty God,
+miserére nobis. | have mercy on us.
+Jesu, Pater futúri sæculi, | Jesus, Father of the world to come,
+miserére nobis. | have mercy on us.
+Jesu, magni consílii Ángele, | Jesus, angel of great counsel,
+miserére nobis. | have mercy on us.
+Jesu potentíssime, | Jesus, most powerful,
+miserére nobis. | have mercy on us.
+Jesu patientíssime, | Jesus, most patient,
+miserére nobis. | have mercy on us.
+Jesu obedientíssime, | Jesus, most obedient,
+miserére nobis. | have mercy on us.
+Jesu, mitis et húmilis corde, | Jesus, meek and humble of heart,
+miserére nobis. | have mercy on us.
+Jesu, amátor castitátis, | Jesus, lover of chastity,
+miserére nobis. | have mercy on us.
+Jesu, amátor noster, | Jesus, lover of us,
+miserére nobis. | have mercy on us.
+Jesu, Deus pacis, | Jesus, God of peace,
+miserére nobis. | have mercy on us.
+Jesu, auctor vitæ, | Jesus, author of life,
+miserére nobis. | have mercy on us.
+Jesu, exémplar virtútum, | Jesus, model of virtues,
+miserére nobis. | have mercy on us.
+Jesu, zelátor animárum, | Jesus, lover of souls,
+miserére nobis. | have mercy on us.
+Jesu, Deus noster, | Jesus, our God,
+miserére nobis. | have mercy on us.
+Jesu, refúgium nostrum, | Jesus, our refuge,
+miserére nobis. | have mercy on us.
+Jesu, pater páuperum, | Jesus, Father of the poor,
+miserére nobis. | have mercy on us.
+Jesu, thesáurus fidélium, | Jesus, treasure of the faithful,
+miserére nobis. | have mercy on us.
+Jesu, bone pastor, | Jesus, Good Shepherd,
+miserére nobis. | have mercy on us.
+Jesu, lux vera, | Jesus, true light,
+miserére nobis. | have mercy on us.
+Jesu, sapiéntia ætérna, | Jesus, eternal wisdom,
+miserére nobis. | have mercy on us.
+Jesu, bónitas infiníta, | Jesus, infinite goodness,
+miserére nobis. | have mercy on us.
+Jesu, via et vita nostra, | Jesus, our way and our life,
+miserére nobis. | have mercy on us.
+Jesu, gáudium Angelórum, | Jesus, joy of angels,
+miserére nobis. | have mercy on us.
+Jesu, Rex Patriarchárum, | Jesus, King of patriarchs,
+miserére nobis. | have mercy on us.
+Jesu, Magíster Apostolórum, | Jesus, master of Apostles,
+miserére nobis. | have mercy on us.
+Jesu, Doctor Evangelistárum, | Jesus, teacher of Evangelists,
+miserére nobis. | have mercy on us.
+Jesu, fortitúdo Mártyrum, | Jesus, strength of martyrs,
+miserére nobis. | have mercy on us.
+Jesu, lumen Confessórum, | Jesus, light of confessors,
+miserére nobis. | have mercy on us.
+Jesu, púritas Vírginum, | Jesus, purity of virgins,
+miserére nobis. | have mercy on us.
+Jesu, coróna Sanctórum ómnium, | Jesus, crown of all saints,
+miserére nobis. | have mercy on us.
+Propítius esto, | Be merciful,
+parce nobis, Jesu. | spare us, O Jesus.
+Propítius esto, | Be merciful,
+exáudi nos, Jesu. | graciously hear us, O Jesus.
+Ab omni malo, | From all evil,
+líbera nos, Jesu. | Jesus, deliver us.
+Ab omni peccáto, | From all sin,
+líbera nos, Jesu. | Jesus, deliver us.
+Ab ira tua, | From Thy wrath,
+líbera nos, Jesu. | Jesus, deliver us.
+Ab insídiis diáboli, | From the snares of the devil,
+líbera nos, Jesu. | Jesus, deliver us.
+A spíritu fornicatiónis, | From the spirit of fornication,
+líbera nos, Jesu. | Jesus, deliver us.
+A morte perpétua, | From everlasting death,
+líbera nos, Jesu. | Jesus, deliver us.
+A negléctu inspiratiónum tuárum, | From the neglect of Thine inspirations,
+líbera nos, Jesu. | Jesus, deliver us.
+Per mystérium sanctæ Incarnatiónis tuæ, | Through the mystery of Thy holy Incarnation,
+líbera nos, Jesu. | Jesus, deliver us.
+Per nativitátem tuam, | Through Thy nativity,
+líbera nos, Jesu. | Jesus, deliver us.
+Per infántiam tuam, | Through Thine infancy,
+líbera nos, Jesu. | Jesus, deliver us.
+Per diviníssimam vitam tuam, | Through Thy most divine life,
+líbera nos, Jesu. | Jesus, deliver us.
+Per labóres tuos, | Through Thy labors,
+líbera nos, Jesu. | Jesus, deliver us.
+Per agoníam et passiónem tuam, | Through Thine agony and Passion,
+líbera nos, Jesu. | Jesus, deliver us.
+Per crucem et derelictiónem tuam, | Through Thy cross and dereliction,
+líbera nos, Jesu. | Jesus, deliver us.
+Per languóres tuos, | Through Thy sufferings,
+líbera nos, Jesu. | Jesus, deliver us.
+Per mortem et sepultúram tuam, | Through Thy death and burial,
+líbera nos, Jesu. | Jesus, deliver us.
+Per resurrectiónem tuam, | Through Thy Resurrection,
+líbera nos, Jesu. | Jesus, deliver us.
+Per ascensiónem tuam, | Through Thine Ascension,
+líbera nos, Jesu. | Jesus, deliver us.
+Per sanctíssimæ Eucharistíæ institutiónem tuam, | Through Thine institution of the most Holy Eucharist,
+líbera nos, Jesu. | Jesus, deliver us.
+Per gáudia tua, | Through Thy joys,
+líbera nos, Jesu. | Jesus, deliver us.
+Per glóriam tuam, | Through Thy glory,
+líbera nos, Jesu. | Jesus, deliver us.
+Agnus Dei, qui tollis peccáta mundi, | Lamb of God, Who takest away the sins of the world,
+parce nobis, Jesu. | spare us, O Jesus.
+Agnus Dei, qui tollis peccáta mundi, | Lamb of God, Who takest away the sins of the world,
+exáudi nos, Jesu. | graciously hear us, O Jesus.
+Agnus Dei, qui tollis peccáta mundi, | Lamb of God, Who takest away the sins of the world,
+miserére nobis, Jesu. | have mercy on us, O Jesus.
+Jesu, audi nos. | Jesus, hear us.
+Jesu, exáudi nos. | Jesus, graciously hear us.
+Orémus. | Let us pray.
+Dómine Jesu Christe, qui dixísti: | O Lord Jesus Christ, Who hast said:
+pétite, et accipiétis; quǽrite, et inveniétis; pulsáte, et aperiétur vobis; | Ask and ye shall receive, seek and ye shall find, knock and it shall be opened unto you;
+quǽsumus, da nobis peténtibus diviníssimi tui amóris afféctum, | grant, we beseech Thee, to us who ask the gift of Thy divine love,
+ut te toto corde, ore et ópere diligámus, et a tua nunquam laude cessémus. | that we may ever love Thee with all our hearts, and in all our words and actions, and never cease from praising Thee.
+Sancti nóminis tui, Dómine, timórem páriter et amórem fac nos habére perpétuum, | Give us, O Lord, a perpetual fear and love of Thy holy Name;
+quia nunquam tua gubernatióne destítuis, | for Thou never failest to govern
+quos in soliditáte tuæ dilectiónis instítuis. | those whom Thou dost solidly establish in Thy love,
+Qui vivis et regnas in sǽcula sæculórum. | Who livest and reignest world without end.
+Amen. | Amen.

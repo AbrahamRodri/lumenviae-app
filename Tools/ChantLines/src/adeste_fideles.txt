@@ -1,0 +1,52 @@
+# Adeste fideles: the four stanzas of the score, each sung through and then
+# again from its * (the score's cue after each stanza: "* Natum.", "* Et
+# nos.", "* Deum.", "* Sic nos."), so every refrain stands twice. Latin from
+# the score; English a plain literal rendering (no app prayer).
+noise -18
+gap 0.2
+merge 1.5
+
+Adéste fidéles, | Draw near, ye faithful,
+læti, triumphántes: | glad and triumphant:
+Veníte, veníte in Béthlehem: | come, come to Bethlehem:
+Natum vidéte Regem Angelórum: | see Him born, the King of Angels:
+Veníte, adorémus, | Come, let us adore,
+veníte, adorémus, | come, let us adore,
+veníte adorémus Dóminum. | come, let us adore the Lord.
+Natum vidéte Regem Angelórum: | See Him born, the King of Angels:
+Veníte, adorémus, | Come, let us adore,
+veníte, adorémus, | come, let us adore,
+veníte adorémus Dóminum. | come, let us adore the Lord.
+En grege relícto, | Lo, their flock left behind,
+húmiles ad cunas | to the lowly cradle
+Vocáti pastóres appróperant: | the shepherds, called, draw near:
+Et nos ovánti gradu festinémus: | let us too make haste with joyful step:
+Veníte, adorémus, | Come, let us adore,
+veníte, adorémus, | come, let us adore,
+veníte adorémus Dóminum. | come, let us adore the Lord.
+Et nos ovánti gradu festinémus: | Let us too make haste with joyful step:
+Veníte, adorémus, | Come, let us adore,
+veníte, adorémus, | come, let us adore,
+veníte adorémus Dóminum. | come, let us adore the Lord.
+Ætérni Paréntis | Of the eternal Father
+splendórem ætérnum | the eternal splendour
+Velátum sub carne vidébimus: | we shall see veiled beneath the flesh:
+Deum infántem, pannis involútum: | God, an infant, wrapped in swaddling clothes:
+Veníte, adorémus, | Come, let us adore,
+veníte, adorémus, | come, let us adore,
+veníte adorémus Dóminum. | come, let us adore the Lord.
+Deum infántem, pannis involútum: | God, an infant, wrapped in swaddling clothes:
+Veníte, adorémus, | Come, let us adore,
+veníte, adorémus, | come, let us adore,
+veníte adorémus Dóminum. | come, let us adore the Lord.
+Pro nobis egénum | Him, poor for our sake
+et fœno cubántem | and lying on the hay,
+Piis foveámus ampléxibus: | let us cherish with loving embraces:
+Sic nos amántem quis non redamáret? | Who would not love in return One Who so loves us?
+Veníte, adorémus, | Come, let us adore,
+veníte, adorémus, | come, let us adore,
+veníte adorémus Dóminum. | come, let us adore the Lord.
+Sic nos amántem quis non redamáret? | Who would not love in return One Who so loves us?
+Veníte, adorémus, | Come, let us adore,
+veníte, adorémus, | come, let us adore,
+veníte adorémus Dóminum. | come, let us adore the Lord.

@@ -1,0 +1,12 @@
+# The two aspirations after each decade: O mi Jesu (the Fatima Prayer) and
+# O Maria sine labe concepta. Latin from the score; English from the app's
+# Fatima Prayer and the Prayer Book's O Mary, Conceived without Sin.
+noise -20
+gap 0.3
+merge 1.5
+
+O mi Jesu, dimítte nobis, | O my Jesus, forgive us our sins,
+líbera nos ab igne inférni; | save us from the fires of hell,
+perduc in cælum omnes ánimas, præsértim illas quæ máxime índigent misericórdiæ tuæ. | and lead all souls to heaven, especially those in most need of Thy mercy.
+O María sine labe concépta. | O Mary, conceived without sin,
+Ora pro nobis qui confúgimus ad te. | pray for us who have recourse to thee.

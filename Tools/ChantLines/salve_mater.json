@@ -1,0 +1,409 @@
+{
+  "id": "salve_mater",
+  "part": null,
+  "method": "breaths by loudness (under -16 dB for 0.25 s, phrases under 1.5 s merged) + text alignment; Whisper: 54 of 66 breaks heard",
+  "lines": [
+    {
+      "latin": "Salve mater misericórdiæ,",
+      "english": "Hail, Mother of mercy,",
+      "start": 0.43,
+      "end": 6.87
+    },
+    {
+      "latin": "Mater Dei et mater véniæ,",
+      "english": "Mother of God and Mother of pardon,",
+      "start": 6.87,
+      "end": 12.9
+    },
+    {
+      "latin": "Mater spei, et mater grátiæ,",
+      "english": "Mother of hope and Mother of grace,",
+      "start": 13.19,
+      "end": 19.83
+    },
+    {
+      "latin": "Mater plena sanctæ lætítiæ,",
+      "english": "Mother full of holy joy,",
+      "start": 19.83,
+      "end": 26.69
+    },
+    {
+      "latin": "O María!",
+      "english": "O Mary!",
+      "start": 26.69,
+      "end": 31.56
+    },
+    {
+      "latin": "Salve mater misericórdiæ,",
+      "english": "Hail, Mother of mercy,",
+      "start": 33.03,
+      "end": 39.61
+    },
+    {
+      "latin": "Mater Dei et mater véniæ,",
+      "english": "Mother of God and Mother of pardon,",
+      "start": 39.61,
+      "end": 46.0
+    },
+    {
+      "latin": "Mater spei, et mater grátiæ,",
+      "english": "Mother of hope and Mother of grace,",
+      "start": 46.09,
+      "end": 52.65
+    },
+    {
+      "latin": "Mater plena sanctæ lætítiæ,",
+      "english": "Mother full of holy joy,",
+      "start": 52.65,
+      "end": 59.53
+    },
+    {
+      "latin": "O María!",
+      "english": "O Mary!",
+      "start": 59.53,
+      "end": 64.66
+    },
+    {
+      "latin": "Salve, decus humáni géneris,",
+      "english": "Hail, glory of the human race,",
+      "start": 66.11,
+      "end": 72.92
+    },
+    {
+      "latin": "Salve, Virgo dígnior céteris,",
+      "english": "hail, Virgin more worthy than all others,",
+      "start": 73.01,
+      "end": 79.43
+    },
+    {
+      "latin": "Quæ vírgines omnes transgréderis,",
+      "english": "who surpassest all virgins",
+      "start": 79.43,
+      "end": 85.68
+    },
+    {
+      "latin": "Et áltius sedes in súperis,",
+      "english": "and art seated higher in heaven,",
+      "start": 85.71,
+      "end": 92.43
+    },
+    {
+      "latin": "O María!",
+      "english": "O Mary!",
+      "start": 92.43,
+      "end": 98.66
+    },
+    {
+      "latin": "Salve mater misericórdiæ,",
+      "english": "Hail, Mother of mercy,",
+      "start": 99.41,
+      "end": 105.85
+    },
+    {
+      "latin": "Mater Dei et mater véniæ,",
+      "english": "Mother of God and Mother of pardon,",
+      "start": 105.85,
+      "end": 112.0
+    },
+    {
+      "latin": "Mater spei, et mater grátiæ,",
+      "english": "Mother of hope and Mother of grace,",
+      "start": 112.15,
+      "end": 118.81
+    },
+    {
+      "latin": "Mater plena sanctæ lætítiæ,",
+      "english": "Mother full of holy joy,",
+      "start": 118.81,
+      "end": 125.67
+    },
+    {
+      "latin": "O María!",
+      "english": "O Mary!",
+      "start": 125.67,
+      "end": 130.52
+    },
+    {
+      "latin": "Salve felix Virgo puérpera:",
+      "english": "Hail, happy Virgin Mother:",
+      "start": 132.15,
+      "end": 138.57
+    },
+    {
+      "latin": "Nam qui sedet in Patris déxtera,",
+      "english": "for He who sits at the Father's right hand,",
+      "start": 138.57,
+      "end": 145.17
+    },
+    {
+      "latin": "Cælum regens, terram et ǽthera,",
+      "english": "ruling heaven, earth and sky,",
+      "start": 145.17,
+      "end": 151.27
+    },
+    {
+      "latin": "Intra tua se clausit víscera, O María!",
+      "english": "enclosed Himself within thy womb, O Mary!",
+      "start": 151.27,
+      "end": 163.58
+    },
+    {
+      "latin": "Salve mater misericórdiæ,",
+      "english": "Hail, Mother of mercy,",
+      "start": 164.19,
+      "end": 170.75
+    },
+    {
+      "latin": "Mater Dei et mater véniæ,",
+      "english": "Mother of God and Mother of pardon,",
+      "start": 170.75,
+      "end": 177.16
+    },
+    {
+      "latin": "Mater spei, et mater grátiæ,",
+      "english": "Mother of hope and Mother of grace,",
+      "start": 177.25,
+      "end": 183.79
+    },
+    {
+      "latin": "Mater plena sanctæ lætítiæ,",
+      "english": "Mother full of holy joy,",
+      "start": 183.79,
+      "end": 190.67
+    },
+    {
+      "latin": "O María!",
+      "english": "O Mary!",
+      "start": 190.67,
+      "end": 195.82
+    },
+    {
+      "latin": "Te creávit Pater ingénitus,",
+      "english": "The unbegotten Father created thee,",
+      "start": 196.99,
+      "end": 203.39
+    },
+    {
+      "latin": "Adamávit te Unigénitus,",
+      "english": "the Only-begotten loved thee,",
+      "start": 203.39,
+      "end": 209.75
+    },
+    {
+      "latin": "Fecundávit te Sanctus Spíritus,",
+      "english": "the Holy Ghost made thee fruitful,",
+      "start": 209.75,
+      "end": 216.11
+    },
+    {
+      "latin": "Tu es facta tota divínitus, O María!",
+      "english": "thou wast made wholly by God, O Mary!",
+      "start": 216.11,
+      "end": 227.9
+    },
+    {
+      "latin": "Salve mater misericórdiæ,",
+      "english": "Hail, Mother of mercy,",
+      "start": 228.85,
+      "end": 235.31
+    },
+    {
+      "latin": "Mater Dei et mater véniæ,",
+      "english": "Mother of God and Mother of pardon,",
+      "start": 235.31,
+      "end": 241.44
+    },
+    {
+      "latin": "Mater spei, et mater grátiæ,",
+      "english": "Mother of hope and Mother of grace,",
+      "start": 241.61,
+      "end": 248.25
+    },
+    {
+      "latin": "Mater plena sanctæ lætítiæ,",
+      "english": "Mother full of holy joy,",
+      "start": 248.25,
+      "end": 255.13
+    },
+    {
+      "latin": "O María!",
+      "english": "O Mary!",
+      "start": 255.13,
+      "end": 259.98
+    },
+    {
+      "latin": "Te creávit Deus mirábilem,",
+      "english": "God created thee wonderful,",
+      "start": 261.51,
+      "end": 267.82
+    },
+    {
+      "latin": "Te respéxit ancíllam húmilem,",
+      "english": "He looked upon thee, His lowly handmaid,",
+      "start": 267.95,
+      "end": 274.21
+    },
+    {
+      "latin": "Te quæsívit sponsam amábilem,",
+      "english": "He sought thee as a lovely bride,",
+      "start": 274.21,
+      "end": 280.49
+    },
+    {
+      "latin": "Tibi numquam fecit consímilem,",
+      "english": "He never made one like to thee,",
+      "start": 280.49,
+      "end": 287.23
+    },
+    {
+      "latin": "O María!",
+      "english": "O Mary!",
+      "start": 287.25,
+      "end": 293.18
+    },
+    {
+      "latin": "Salve mater misericórdiæ,",
+      "english": "Hail, Mother of mercy,",
+      "start": 294.09,
+      "end": 300.65
+    },
+    {
+      "latin": "Mater Dei et mater véniæ,",
+      "english": "Mother of God and Mother of pardon,",
+      "start": 300.65,
+      "end": 307.06
+    },
+    {
+      "latin": "Mater spei, et mater grátiæ,",
+      "english": "Mother of hope and Mother of grace,",
+      "start": 307.13,
+      "end": 313.69
+    },
+    {
+      "latin": "Mater plena sanctæ lætítiæ,",
+      "english": "Mother full of holy joy,",
+      "start": 313.69,
+      "end": 320.57
+    },
+    {
+      "latin": "O María!",
+      "english": "O Mary!",
+      "start": 320.57,
+      "end": 325.72
+    },
+    {
+      "latin": "Te beátam laudáre cúpiunt",
+      "english": "They long to praise thee, blessed one,",
+      "start": 327.15,
+      "end": 333.61
+    },
+    {
+      "latin": "Omnes justi, sed non suffíciunt;",
+      "english": "all the just, but they are not equal to it;",
+      "start": 333.61,
+      "end": 339.87
+    },
+    {
+      "latin": "Multas laudes de te concípiunt,",
+      "english": "many praises of thee they conceive,",
+      "start": 339.87,
+      "end": 346.15
+    },
+    {
+      "latin": "Sed in illis prorsus defíciunt,",
+      "english": "but in them they wholly fall short,",
+      "start": 346.15,
+      "end": 352.75
+    },
+    {
+      "latin": "O María!",
+      "english": "O Mary!",
+      "start": 352.75,
+      "end": 358.94
+    },
+    {
+      "latin": "Salve mater misericórdiæ,",
+      "english": "Hail, Mother of mercy,",
+      "start": 359.85,
+      "end": 366.31
+    },
+    {
+      "latin": "Mater Dei et mater véniæ,",
+      "english": "Mother of God and Mother of pardon,",
+      "start": 366.31,
+      "end": 372.46
+    },
+    {
+      "latin": "Mater spei, et mater grátiæ,",
+      "english": "Mother of hope and Mother of grace,",
+      "start": 372.61,
+      "end": 379.27
+    },
+    {
+      "latin": "Mater plena sanctæ lætítiæ,",
+      "english": "Mother full of holy joy,",
+      "start": 379.27,
+      "end": 386.13
+    },
+    {
+      "latin": "O María!",
+      "english": "O Mary!",
+      "start": 386.13,
+      "end": 390.98
+    },
+    {
+      "latin": "Esto, Mater, nostrum solátium;",
+      "english": "Be thou, O Mother, our comfort;",
+      "start": 392.57,
+      "end": 399.31
+    },
+    {
+      "latin": "Nostrum esto, tu Virgo, gáudium;",
+      "english": "be thou, O Virgin, our joy;",
+      "start": 399.31,
+      "end": 405.83
+    },
+    {
+      "latin": "Et nos tandem post hoc exsílium,",
+      "english": "and at last, after this exile,",
+      "start": 405.83,
+      "end": 411.95
+    },
+    {
+      "latin": "Lætos junge choris cæléstium,",
+      "english": "join us, rejoicing, to the choirs of heaven,",
+      "start": 411.95,
+      "end": 418.59
+    },
+    {
+      "latin": "O María!",
+      "english": "O Mary!",
+      "start": 418.61,
+      "end": 424.68
+    },
+    {
+      "latin": "Salve mater misericórdiæ,",
+      "english": "Hail, Mother of mercy,",
+      "start": 425.67,
+      "end": 432.27
+    },
+    {
+      "latin": "Mater Dei et mater véniæ,",
+      "english": "Mother of God and Mother of pardon,",
+      "start": 432.27,
+      "end": 438.64
+    },
+    {
+      "latin": "Mater spei, et mater grátiæ, Mater plena sanctæ lætítiæ,",
+      "english": "Mother of hope and Mother of grace, Mother full of holy joy,",
+      "start": 438.81,
+      "end": 452.13
+    },
+    {
+      "latin": "O María!",
+      "english": "O Mary!",
+      "start": 452.13,
+      "end": 457.48
+    }
+  ]
+}

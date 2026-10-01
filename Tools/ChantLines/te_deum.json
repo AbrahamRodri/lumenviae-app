@@ -1,0 +1,307 @@
+{
+  "id": "te_deum",
+  "part": null,
+  "method": "breaths by loudness (under -20 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 42 of 49 breaks heard",
+  "lines": [
+    {
+      "latin": "Te Deum laudámus: te Dóminum confitémur.",
+      "english": "We praise Thee, O God: we acknowledge Thee to be the Lord.",
+      "start": 0.29,
+      "end": 13.03
+    },
+    {
+      "latin": "Te ætérnum Patrem omnis terra venerátur.",
+      "english": "Thee, the eternal Father, all the earth doth worship.",
+      "start": 13.03,
+      "end": 23.45
+    },
+    {
+      "latin": "Tibi omnes Ángeli,",
+      "english": "To Thee all the Angels,",
+      "start": 23.45,
+      "end": 28.27
+    },
+    {
+      "latin": "tibi Cæli et univérsæ potestátes:",
+      "english": "to Thee the heavens and all the Powers,",
+      "start": 28.27,
+      "end": 35.56
+    },
+    {
+      "latin": "Tibi Chérubim et Séraphim incessábili voce proclámant:",
+      "english": "to Thee the Cherubim and Seraphim cry out with unceasing voice:",
+      "start": 35.83,
+      "end": 48.66
+    },
+    {
+      "latin": "Sanctus:",
+      "english": "Holy,",
+      "start": 49.07,
+      "end": 54.73
+    },
+    {
+      "latin": "Sanctus:",
+      "english": "Holy,",
+      "start": 54.73,
+      "end": 60.41
+    },
+    {
+      "latin": "Sanctus Dóminus Deus Sábaoth.",
+      "english": "Holy, Lord God of hosts.",
+      "start": 60.41,
+      "end": 71.21
+    },
+    {
+      "latin": "Pleni sunt cæli et terra majestátis glóriæ tuæ.",
+      "english": "The heavens and the earth are full of the majesty of Thy glory.",
+      "start": 71.21,
+      "end": 82.54
+    },
+    {
+      "latin": "Te gloriósus Apostolórum chorus:",
+      "english": "Thee the glorious choir of the Apostles,",
+      "start": 82.95,
+      "end": 92.3
+    },
+    {
+      "latin": "Te Prophetárum laudábilis númerus:",
+      "english": "Thee the praiseworthy company of the Prophets,",
+      "start": 92.83,
+      "end": 102.16
+    },
+    {
+      "latin": "Te Mártyrum candidátus laudat exércitus.",
+      "english": "Thee the white-robed army of Martyrs doth praise.",
+      "start": 102.49,
+      "end": 112.42
+    },
+    {
+      "latin": "Te per orbem terrárum sancta confitétur Ecclésia:",
+      "english": "Thee the holy Church throughout the whole world doth confess:",
+      "start": 113.23,
+      "end": 124.92
+    },
+    {
+      "latin": "Patrem imménsæ majestátis:",
+      "english": "the Father of boundless majesty;",
+      "start": 125.23,
+      "end": 136.12
+    },
+    {
+      "latin": "Venerándum tuum verum, et únicum Fílium:",
+      "english": "Thine adorable, true and only Son;",
+      "start": 136.53,
+      "end": 146.2
+    },
+    {
+      "latin": "Sanctum quoque Paráclitum Spíritum.",
+      "english": "and the Holy Ghost, the Paraclete.",
+      "start": 147.11,
+      "end": 159.0
+    },
+    {
+      "latin": "Tu Rex glóriæ, Christe.",
+      "english": "Thou, O Christ, art the King of glory.",
+      "start": 159.09,
+      "end": 165.06
+    },
+    {
+      "latin": "Tu Patris sempitérnus es Fílius.",
+      "english": "Thou art the everlasting Son of the Father.",
+      "start": 165.07,
+      "end": 172.7
+    },
+    {
+      "latin": "Tu ad liberándum susceptúrus hóminem, non horruísti Vírginis úterum.",
+      "english": "Thou, when Thou wouldst take manhood upon Thee to set man free, didst not shrink from the Virgin's womb.",
+      "start": 173.13,
+      "end": 188.14
+    },
+    {
+      "latin": "Tu devícto mortis acúleo, aperuísti credéntibus regna cælórum.",
+      "english": "Thou, having overcome the sting of death, didst open the kingdom of heaven to them that believe.",
+      "start": 188.59,
+      "end": 203.9
+    },
+    {
+      "latin": "Tu ad déxteram Dei sedes, in glória Patris.",
+      "english": "Thou sittest at the right hand of God, in the glory of the Father.",
+      "start": 204.37,
+      "end": 216.52
+    },
+    {
+      "latin": "Judex créderis esse ventúrus.",
+      "english": "Thou art believed to be the Judge who shall come.",
+      "start": 217.01,
+      "end": 225.64
+    },
+    {
+      "latin": "Te ergo quǽsumus, tuis fámulis súbveni,",
+      "english": "We beseech Thee, therefore, come to the help of Thy servants,",
+      "start": 225.97,
+      "end": 235.83
+    },
+    {
+      "latin": "quos pretióso sánguine redemísti.",
+      "english": "whom Thou hast redeemed with Thy precious blood.",
+      "start": 235.83,
+      "end": 243.8
+    },
+    {
+      "latin": "Ætérna fac",
+      "english": "Make them",
+      "start": 244.17,
+      "end": 248.51
+    },
+    {
+      "latin": "cum Sanctis tuis in glória numerári.",
+      "english": "to be numbered with Thy Saints in glory everlasting.",
+      "start": 248.51,
+      "end": 255.67
+    },
+    {
+      "latin": "Salvum fac pópulum tuum Dómine,",
+      "english": "Save Thy people, O Lord,",
+      "start": 255.67,
+      "end": 261.91
+    },
+    {
+      "latin": "et bénedic hereditáti tuæ.",
+      "english": "and bless Thine inheritance.",
+      "start": 261.91,
+      "end": 269.17
+    },
+    {
+      "latin": "Et rege eos,",
+      "english": "Rule them,",
+      "start": 269.17,
+      "end": 273.35
+    },
+    {
+      "latin": "et extólle illos usque in ætérnum.",
+      "english": "and lift them up for ever.",
+      "start": 273.35,
+      "end": 282.68
+    },
+    {
+      "latin": "Per síngulos dies, benedícimus te.",
+      "english": "Every day we bless Thee.",
+      "start": 283.01,
+      "end": 294.15
+    },
+    {
+      "latin": "Et laudámus nomen tuum in sǽculum, et in sǽculum sǽculi.",
+      "english": "And we praise Thy name for ever, and for ever and ever.",
+      "start": 294.15,
+      "end": 307.69
+    },
+    {
+      "latin": "Dignáre Dómine die isto sine peccáto nos custodíre.",
+      "english": "Deign, O Lord, to keep us this day without sin.",
+      "start": 307.69,
+      "end": 321.98
+    },
+    {
+      "latin": "Miserére nostri Dómine, miserére nostri.",
+      "english": "Have mercy on us, O Lord, have mercy on us.",
+      "start": 322.01,
+      "end": 334.84
+    },
+    {
+      "latin": "Fiat misericórdia tua Dómine super nos,",
+      "english": "Let Thy mercy, O Lord, be upon us,",
+      "start": 335.01,
+      "end": 345.41
+    },
+    {
+      "latin": "quemádmodum sperávimus in te.",
+      "english": "as we have hoped in Thee.",
+      "start": 345.41,
+      "end": 352.54
+    },
+    {
+      "latin": "In te Dómine sperávi:",
+      "english": "In Thee, O Lord, have I hoped:",
+      "start": 352.87,
+      "end": 360.16
+    },
+    {
+      "latin": "non confúndar in ætérnum.",
+      "english": "let me not be confounded for ever.",
+      "start": 360.23,
+      "end": 368.38
+    },
+    {
+      "latin": "Benedicámus Patrem et Fílium cum Sancto Spíritu.",
+      "english": "Let us bless the Father and the Son, with the Holy Ghost.",
+      "start": 369.73,
+      "end": 376.25
+    },
+    {
+      "latin": "Laudémus et superexaltémus eum in sǽcula.",
+      "english": "Let us praise and exalt Him above all for ever.",
+      "start": 376.25,
+      "end": 382.33
+    },
+    {
+      "latin": "Benedíctus es Dómine in firmaménto cæli.",
+      "english": "Blessed art Thou, O Lord, in the firmament of heaven.",
+      "start": 382.33,
+      "end": 388.35
+    },
+    {
+      "latin": "Et laudábilis, et gloriósus, et superexaltátus in sǽcula.",
+      "english": "And worthy to be praised, and glorious, and exalted above all for ever.",
+      "start": 388.35,
+      "end": 395.79
+    },
+    {
+      "latin": "Dómine exáudi oratiónem meam.",
+      "english": "O Lord, hear my prayer.",
+      "start": 395.79,
+      "end": 401.26
+    },
+    {
+      "latin": "Et clamor meus ad te véniat.",
+      "english": "And let my cry come unto Thee.",
+      "start": 401.35,
+      "end": 406.19
+    },
+    {
+      "latin": "Orémus.",
+      "english": "Let us pray.",
+      "start": 406.19,
+      "end": 409.08
+    },
+    {
+      "latin": "Deus cujus misericórdiæ non est númerus, et bonitátis infinítus est thesáurus:",
+      "english": "O God, whose mercies are without number, and the treasure of whose goodness is infinite:",
+      "start": 409.23,
+      "end": 417.41
+    },
+    {
+      "latin": "piísimæ Majestáti tuæ pro collátis donis grátias ágimus, tuam semper cleméntiam exorántes:",
+      "english": "we give thanks to Thy most gracious Majesty for the gifts Thou hast bestowed, ever beseeching Thy clemency,",
+      "start": 417.41,
+      "end": 427.25
+    },
+    {
+      "latin": "ut qui peténtibus postuláta concédis, eósdem non déserens, ad prǽmia futúra dispónas.",
+      "english": "that as Thou grantest the petitions of them that ask Thee, Thou wilt not forsake them, but wilt prepare them for the rewards to come.",
+      "start": 427.25,
+      "end": 436.99
+    },
+    {
+      "latin": "Per Christum Dóminum nostrum.",
+      "english": "Through Christ our Lord.",
+      "start": 436.99,
+      "end": 441.54
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 442.57,
+      "end": 446.76
+    }
+  ]
+}

@@ -1,0 +1,955 @@
+{
+  "id": "litany_loreto",
+  "part": null,
+  "method": "breaths by loudness (under -16 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 76 of 157 breaks heard",
+  "lines": [
+    {
+      "latin": "Kýrie, eléison.",
+      "english": "Lord, have mercy on us.",
+      "start": 0.31,
+      "end": 5.44
+    },
+    {
+      "latin": "Kýrie, eléison.",
+      "english": "Lord, have mercy on us.",
+      "start": 5.59,
+      "end": 10.78
+    },
+    {
+      "latin": "Christe, eléison.",
+      "english": "Christ, have mercy on us.",
+      "start": 10.89,
+      "end": 15.8
+    },
+    {
+      "latin": "Christe, eléison.",
+      "english": "Christ, have mercy on us.",
+      "start": 16.29,
+      "end": 21.32
+    },
+    {
+      "latin": "Kýrie, eléison.",
+      "english": "Lord, have mercy on us.",
+      "start": 21.75,
+      "end": 27.14
+    },
+    {
+      "latin": "Kýrie, eléison.",
+      "english": "Lord, have mercy on us.",
+      "start": 27.29,
+      "end": 32.72
+    },
+    {
+      "latin": "Christe, audi nos.",
+      "english": "Christ, hear us.",
+      "start": 32.91,
+      "end": 37.24
+    },
+    {
+      "latin": "Christe, audi nos.",
+      "english": "Christ, hear us.",
+      "start": 37.33,
+      "end": 41.6
+    },
+    {
+      "latin": "Christe, exáudi nos.",
+      "english": "Christ, graciously hear us.",
+      "start": 41.97,
+      "end": 46.54
+    },
+    {
+      "latin": "Christe, exáudi nos.",
+      "english": "Christ, graciously hear us.",
+      "start": 46.71,
+      "end": 50.98
+    },
+    {
+      "latin": "Pater de cælis, Deus,",
+      "english": "God the Father of Heaven,",
+      "start": 51.93,
+      "end": 56.21
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 56.21,
+      "end": 60.78
+    },
+    {
+      "latin": "Fili, Redémptor mundi, Deus,",
+      "english": "God the Son, Redeemer of the world,",
+      "start": 61.03,
+      "end": 65.95
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 65.95,
+      "end": 70.08
+    },
+    {
+      "latin": "Spíritus Sancte, Deus,",
+      "english": "God the Holy Ghost,",
+      "start": 70.53,
+      "end": 74.92
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 75.15,
+      "end": 79.58
+    },
+    {
+      "latin": "Sancta Trínitas, unus Deus,",
+      "english": "Holy Trinity, One God,",
+      "start": 79.79,
+      "end": 85.01
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 85.01,
+      "end": 89.56
+    },
+    {
+      "latin": "Sancta María,",
+      "english": "Holy Mary,",
+      "start": 89.83,
+      "end": 93.67
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 93.67,
+      "end": 97.56
+    },
+    {
+      "latin": "Sancta Dei Génitrix,",
+      "english": "Holy Mother of God,",
+      "start": 97.95,
+      "end": 102.3
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 102.51,
+      "end": 106.66
+    },
+    {
+      "latin": "Sancta Virgo vírginum,",
+      "english": "Holy Virgin of virgins,",
+      "start": 107.01,
+      "end": 111.61
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 111.61,
+      "end": 115.38
+    },
+    {
+      "latin": "Mater Christi,",
+      "english": "Mother of Christ,",
+      "start": 115.69,
+      "end": 119.83
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 119.83,
+      "end": 123.76
+    },
+    {
+      "latin": "Mater Ecclésiæ,",
+      "english": "Mother of the Church,",
+      "start": 124.07,
+      "end": 128.34
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 128.55,
+      "end": 132.62
+    },
+    {
+      "latin": "Mater divínæ grátiæ,",
+      "english": "Mother of divine grace,",
+      "start": 132.77,
+      "end": 137.58
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 137.85,
+      "end": 141.75
+    },
+    {
+      "latin": "Mater puríssima,",
+      "english": "Mother most pure,",
+      "start": 141.75,
+      "end": 146.19
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 146.19,
+      "end": 150.06
+    },
+    {
+      "latin": "Mater castíssima,",
+      "english": "Mother most chaste,",
+      "start": 150.21,
+      "end": 154.85
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 154.85,
+      "end": 159.02
+    },
+    {
+      "latin": "Mater invioláta,",
+      "english": "Mother inviolate,",
+      "start": 159.45,
+      "end": 163.97
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 163.97,
+      "end": 167.82
+    },
+    {
+      "latin": "Mater intemeráta,",
+      "english": "Mother undefiled,",
+      "start": 168.39,
+      "end": 173.17
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 173.17,
+      "end": 177.04
+    },
+    {
+      "latin": "Mater immaculáta,",
+      "english": "Mother immaculate,",
+      "start": 177.33,
+      "end": 181.93
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 181.93,
+      "end": 186.32
+    },
+    {
+      "latin": "Mater amábilis,",
+      "english": "Mother most amiable,",
+      "start": 186.35,
+      "end": 190.7
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 190.81,
+      "end": 194.88
+    },
+    {
+      "latin": "Mater admirábilis,",
+      "english": "Mother most admirable,",
+      "start": 195.13,
+      "end": 199.56
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 199.89,
+      "end": 204.04
+    },
+    {
+      "latin": "Mater boni consílii,",
+      "english": "Mother of good counsel,",
+      "start": 204.21,
+      "end": 209.1
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 209.31,
+      "end": 213.08
+    },
+    {
+      "latin": "Mater Creatóris,",
+      "english": "Mother of our Creator,",
+      "start": 213.51,
+      "end": 217.89
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 217.89,
+      "end": 221.66
+    },
+    {
+      "latin": "Mater Salvatóris,",
+      "english": "Mother of our Saviour,",
+      "start": 222.13,
+      "end": 226.52
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 226.55,
+      "end": 230.78
+    },
+    {
+      "latin": "Virgo prudentíssima,",
+      "english": "Virgin most prudent,",
+      "start": 230.91,
+      "end": 235.34
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 235.53,
+      "end": 239.46
+    },
+    {
+      "latin": "Virgo veneránda,",
+      "english": "Virgin most venerable,",
+      "start": 239.57,
+      "end": 243.93
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 243.93,
+      "end": 247.94
+    },
+    {
+      "latin": "Virgo prædicánda,",
+      "english": "Virgin most renowned,",
+      "start": 248.19,
+      "end": 252.41
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 252.41,
+      "end": 256.58
+    },
+    {
+      "latin": "Virgo potens,",
+      "english": "Virgin most powerful,",
+      "start": 256.65,
+      "end": 260.91
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 260.91,
+      "end": 264.96
+    },
+    {
+      "latin": "Virgo clemens,",
+      "english": "Virgin most merciful,",
+      "start": 265.23,
+      "end": 269.34
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 269.53,
+      "end": 273.8
+    },
+    {
+      "latin": "Virgo fidélis,",
+      "english": "Virgin most faithful,",
+      "start": 273.85,
+      "end": 277.66
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 277.89,
+      "end": 282.16
+    },
+    {
+      "latin": "Spéculum justítiæ,",
+      "english": "Mirror of justice,",
+      "start": 282.39,
+      "end": 286.54
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 286.85,
+      "end": 291.15
+    },
+    {
+      "latin": "Sedes sapiéntiæ,",
+      "english": "Seat of wisdom,",
+      "start": 291.15,
+      "end": 295.69
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 295.69,
+      "end": 299.38
+    },
+    {
+      "latin": "Causa nostræ lætítiæ,",
+      "english": "Cause of our joy,",
+      "start": 299.95,
+      "end": 304.73
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 304.73,
+      "end": 308.74
+    },
+    {
+      "latin": "Vas spirituále,",
+      "english": "Spiritual vessel,",
+      "start": 308.85,
+      "end": 313.23
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 313.23,
+      "end": 317.55
+    },
+    {
+      "latin": "Vas honorábile,",
+      "english": "Vessel of honor,",
+      "start": 317.55,
+      "end": 321.85
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 321.85,
+      "end": 325.58
+    },
+    {
+      "latin": "Vas insígne devotiónis,",
+      "english": "Singular vessel of devotion,",
+      "start": 325.85,
+      "end": 330.98
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 331.15,
+      "end": 335.29
+    },
+    {
+      "latin": "Rosa mýstica,",
+      "english": "Mystical rose,",
+      "start": 335.29,
+      "end": 339.74
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 339.95,
+      "end": 344.04
+    },
+    {
+      "latin": "Turris Davídica,",
+      "english": "Tower of David,",
+      "start": 344.19,
+      "end": 348.45
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 348.45,
+      "end": 352.14
+    },
+    {
+      "latin": "Turris ebúrnea,",
+      "english": "Tower of ivory,",
+      "start": 352.65,
+      "end": 357.01
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 357.01,
+      "end": 361.09
+    },
+    {
+      "latin": "Domus áurea,",
+      "english": "House of gold,",
+      "start": 361.09,
+      "end": 365.47
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 365.47,
+      "end": 369.51
+    },
+    {
+      "latin": "Fœderis arca,",
+      "english": "Ark of the covenant,",
+      "start": 369.51,
+      "end": 373.47
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 373.47,
+      "end": 377.41
+    },
+    {
+      "latin": "Jánua cæli,",
+      "english": "Gate of Heaven,",
+      "start": 377.41,
+      "end": 381.57
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 381.57,
+      "end": 385.52
+    },
+    {
+      "latin": "Stella matutína,",
+      "english": "Morning star,",
+      "start": 385.79,
+      "end": 389.87
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 389.87,
+      "end": 393.92
+    },
+    {
+      "latin": "Salus infirmórum,",
+      "english": "Health of the sick,",
+      "start": 394.15,
+      "end": 398.41
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 398.41,
+      "end": 402.44
+    },
+    {
+      "latin": "Refúgium peccatórum,",
+      "english": "Refuge of sinners,",
+      "start": 402.51,
+      "end": 407.36
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 407.43,
+      "end": 411.54
+    },
+    {
+      "latin": "Consolátrix afflictórum,",
+      "english": "Comforter of the afflicted,",
+      "start": 411.71,
+      "end": 416.54
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 416.67,
+      "end": 420.5
+    },
+    {
+      "latin": "Auxílium Christianórum,",
+      "english": "Help of Christians,",
+      "start": 420.73,
+      "end": 425.72
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 425.81,
+      "end": 429.48
+    },
+    {
+      "latin": "Regína Angelórum,",
+      "english": "Queen of angels,",
+      "start": 429.81,
+      "end": 434.47
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 434.47,
+      "end": 438.3
+    },
+    {
+      "latin": "Regína Patriarchárum,",
+      "english": "Queen of patriarchs,",
+      "start": 438.73,
+      "end": 443.59
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 443.59,
+      "end": 447.57
+    },
+    {
+      "latin": "Regína Prophetárum,",
+      "english": "Queen of prophets,",
+      "start": 447.57,
+      "end": 452.24
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 452.27,
+      "end": 456.19
+    },
+    {
+      "latin": "Regína Apostolórum,",
+      "english": "Queen of Apostles,",
+      "start": 456.19,
+      "end": 460.97
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 460.97,
+      "end": 464.48
+    },
+    {
+      "latin": "Regína Mártyrum,",
+      "english": "Queen of martyrs,",
+      "start": 465.15,
+      "end": 469.24
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 469.51,
+      "end": 473.5
+    },
+    {
+      "latin": "Regína Confessórum,",
+      "english": "Queen of confessors,",
+      "start": 473.69,
+      "end": 478.21
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 478.21,
+      "end": 482.25
+    },
+    {
+      "latin": "Regína Vírginum,",
+      "english": "Queen of virgins,",
+      "start": 482.25,
+      "end": 486.5
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 486.53,
+      "end": 490.68
+    },
+    {
+      "latin": "Regína Sanctórum ómnium,",
+      "english": "Queen of all saints,",
+      "start": 490.75,
+      "end": 495.74
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 495.77,
+      "end": 499.85
+    },
+    {
+      "latin": "Regína sine labe origináli concépta,",
+      "english": "Queen conceived without Original Sin,",
+      "start": 499.85,
+      "end": 506.44
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 506.59,
+      "end": 510.38
+    },
+    {
+      "latin": "Regína in cælum assúmpta,",
+      "english": "Queen assumed into Heaven,",
+      "start": 510.87,
+      "end": 516.18
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 516.21,
+      "end": 520.18
+    },
+    {
+      "latin": "Regína sacratíssimi Rosárii,",
+      "english": "Queen of the most holy Rosary,",
+      "start": 520.19,
+      "end": 526.29
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 526.29,
+      "end": 530.15
+    },
+    {
+      "latin": "Regína famíliæ,",
+      "english": "Queen of the family,",
+      "start": 530.15,
+      "end": 534.72
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 534.95,
+      "end": 538.86
+    },
+    {
+      "latin": "Regína pacis,",
+      "english": "Queen of peace,",
+      "start": 538.91,
+      "end": 543.08
+    },
+    {
+      "latin": "ora pro nobis.",
+      "english": "pray for us.",
+      "start": 543.13,
+      "end": 547.06
+    },
+    {
+      "latin": "Agnus Dei, qui tollis peccáta mundi,",
+      "english": "Lamb of God, Who takest away the sins of the world,",
+      "start": 547.93,
+      "end": 555.91
+    },
+    {
+      "latin": "parce nobis, Dómine.",
+      "english": "spare us, O Lord.",
+      "start": 555.91,
+      "end": 561.0
+    },
+    {
+      "latin": "Agnus Dei, qui tollis peccáta mundi,",
+      "english": "Lamb of God, Who takest away the sins of the world,",
+      "start": 561.17,
+      "end": 569.05
+    },
+    {
+      "latin": "exáudi nos, Dómine.",
+      "english": "graciously hear us, O Lord.",
+      "start": 569.05,
+      "end": 573.94
+    },
+    {
+      "latin": "Agnus Dei, qui tollis peccáta mundi,",
+      "english": "Lamb of God, Who takest away the sins of the world,",
+      "start": 574.41,
+      "end": 582.35
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 582.35,
+      "end": 586.94
+    },
+    {
+      "latin": "Ora pro nobis, sancta Dei Génitrix.",
+      "english": "Pray for us, O holy Mother of God.",
+      "start": 588.29,
+      "end": 593.43
+    },
+    {
+      "latin": "Ut digni efficiámur promissiónibus Christi.",
+      "english": "That we may be made worthy of the promises of Christ.",
+      "start": 593.43,
+      "end": 599.25
+    },
+    {
+      "latin": "Orémus.",
+      "english": "Let us pray.",
+      "start": 599.25,
+      "end": 602.31
+    },
+    {
+      "latin": "Concéde nos fámulos tuos, quǽsumus Dómine Deus, perpétua mentis et córporis sanitáte gaudére:",
+      "english": "Grant, we beseech Thee, O Lord God, unto us Thy servants, that we may rejoice in continual health of mind and body,",
+      "start": 602.31,
+      "end": 611.83
+    },
+    {
+      "latin": "et gloriósa beátæ Maríæ semper Vírginis intercessióne,",
+      "english": "and by the glorious intercession of Blessed Mary, ever virgin,",
+      "start": 611.83,
+      "end": 618.37
+    },
+    {
+      "latin": "a præsénti liberári tristítia, et ætérna pérfrui lætítia.",
+      "english": "may be delivered from present sadness, and enter into the joy of Thine eternal gladness.",
+      "start": 618.37,
+      "end": 625.73
+    },
+    {
+      "latin": "Per Christum Dóminum nostrum.",
+      "english": "Through Christ our Lord.",
+      "start": 625.73,
+      "end": 630.66
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 630.89,
+      "end": 635.26
+    },
+    {
+      "latin": "Ángelus Dómini nuntiávit Maríæ.",
+      "english": "The Angel of the Lord declared unto Mary.",
+      "start": 636.47,
+      "end": 641.63
+    },
+    {
+      "latin": "Et concépit de Spíritu Sancto.",
+      "english": "And she conceived of the Holy Ghost.",
+      "start": 641.63,
+      "end": 647.03
+    },
+    {
+      "latin": "Orémus.",
+      "english": "Let us pray.",
+      "start": 647.03,
+      "end": 650.35
+    },
+    {
+      "latin": "Deus, qui de beátæ Maríæ Vírginis útero Verbum tuum, Ángelo nuntiánte, carnem suscípere voluísti:",
+      "english": "O God, who didst will that Thy Word, at the message of an Angel, should take flesh in the womb of the Blessed Virgin Mary:",
+      "start": 650.35,
+      "end": 660.93
+    },
+    {
+      "latin": "præsta supplícibus tuis; ut, qui vere eam Genitrícem Dei crédimus,",
+      "english": "grant to us Thy suppliants, that we who believe her to be truly the Mother of God",
+      "start": 660.93,
+      "end": 669.07
+    },
+    {
+      "latin": "ejus apud te intercessiónibus adjuvémur.",
+      "english": "may be helped by her intercession with Thee.",
+      "start": 669.07,
+      "end": 675.5
+    },
+    {
+      "latin": "Per eumdem Christum Dóminum nostrum.",
+      "english": "Through the same Christ our Lord.",
+      "start": 675.55,
+      "end": 681.5
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 681.65,
+      "end": 685.74
+    },
+    {
+      "latin": "Post partum, Virgo, invioláta permansísti.",
+      "english": "After childbirth, O Virgin, thou didst remain inviolate.",
+      "start": 687.47,
+      "end": 693.41
+    },
+    {
+      "latin": "Dei Génitrix, intercéde pro nobis.",
+      "english": "O Mother of God, intercede for us.",
+      "start": 693.41,
+      "end": 699.11
+    },
+    {
+      "latin": "Orémus.",
+      "english": "Let us pray.",
+      "start": 699.11,
+      "end": 702.19
+    },
+    {
+      "latin": "Deus, qui salútis ætérnæ, beátæ Maríæ virginitáte fecúnda, humáno géneri prǽmia præstitísti:",
+      "english": "O God, who by the fruitful virginity of Blessed Mary hast bestowed upon mankind the rewards of eternal salvation;",
+      "start": 702.19,
+      "end": 711.51
+    },
+    {
+      "latin": "tríbue, quǽsumus; ut ipsam pro nobis intercédere sentiámus,",
+      "english": "grant, we beseech Thee, that we may know the help of her intercession,",
+      "start": 711.51,
+      "end": 718.89
+    },
+    {
+      "latin": "per quam merúimus auctórem vitæ suscípere, Dóminum nostrum Jesum Christum Fílium tuum.",
+      "english": "through whom we were made worthy to receive the Author of life, our Lord Jesus Christ, Thy Son.",
+      "start": 718.89,
+      "end": 728.4
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 728.43,
+      "end": 733.2
+    },
+    {
+      "latin": "Gaude et lætáre, Virgo María, allelúia.",
+      "english": "Rejoice and be glad, O Virgin Mary, alleluia.",
+      "start": 734.63,
+      "end": 740.21
+    },
+    {
+      "latin": "Quia surréxit Dóminus vere, allelúia.",
+      "english": "For the Lord is truly risen, alleluia.",
+      "start": 740.21,
+      "end": 745.73
+    },
+    {
+      "latin": "Orémus.",
+      "english": "Let us pray.",
+      "start": 745.73,
+      "end": 748.75
+    },
+    {
+      "latin": "Deus, qui per resurrectiónem Fílii tui Dómini nostri Jesu Christi mundum lætificáre dignátus es:",
+      "english": "O God, who by the Resurrection of Thy Son, our Lord Jesus Christ, didst vouchsafe to give joy to the world;",
+      "start": 748.75,
+      "end": 758.01
+    },
+    {
+      "latin": "præsta, quǽsumus; ut per ejus Genitrícem Vírginem Maríam perpétuæ capiámus gáudia vitæ.",
+      "english": "grant, we beseech Thee, that through His Mother, the Virgin Mary, we may obtain the joys of everlasting life.",
+      "start": 758.01,
+      "end": 770.15
+    },
+    {
+      "latin": "Per eumdem Christum Dóminum nostrum.",
+      "english": "Through the same Christ our Lord.",
+      "start": 770.15,
+      "end": 775.87
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 775.87,
+      "end": 779.82
+    }
+  ]
+}

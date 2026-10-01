@@ -1,0 +1,19 @@
+# Inviolata, the prose, whole: a line to each piece between the score's
+# double bars. Latin from the score; English plain (the app has no prayer
+# for it).
+noise -16
+gap 0.3
+merge 1.5
+
+Invioláta, íntegra, et casta es María: | Inviolate, spotless and chaste art thou, O Mary,
+Quæ es effécta fúlgida cæli porta. | who art made the shining gate of heaven.
+O Mater alma Christi caríssima: | O loving Mother of Christ, most dear,
+Súscipe pia laudum præcónia. | receive our loving songs of praise.
+Te nunc flágitant devóta corda et ora: | Devout hearts and lips now beseech thee
+Nostra ut pura péctora sint et córpora. | that our hearts and bodies may be pure.
+Tua per precáta dulcísona: | By thy sweet-sounding prayers
+Nobis concédas véniam per sǽcula. | grant us pardon for ever.
+O benígna! | O kindly one!
+O Regína! | O Queen!
+O María! | O Mary!
+Quæ sola invioláta permansísti. | who alone hast remained inviolate.

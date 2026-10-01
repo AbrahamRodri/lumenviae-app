@@ -1,0 +1,49 @@
+{
+  "id": "o_salutaris",
+  "part": null,
+  "method": "breaths by loudness (under -18 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 4 of 6 breaks heard",
+  "lines": [
+    {
+      "latin": "O salutáris Hóstia,",
+      "english": "O saving Victim,",
+      "start": 0.53,
+      "end": 8.15
+    },
+    {
+      "latin": "Quæ cæli pandis óstium, Bella premunt hostília,",
+      "english": "Who openest the gate of heaven, hostile wars press hard upon us:",
+      "start": 8.15,
+      "end": 19.03
+    },
+    {
+      "latin": "Da robur, fer auxílium.",
+      "english": "give strength, bring aid.",
+      "start": 19.03,
+      "end": 26.18
+    },
+    {
+      "latin": "Uni trinóque Dómino",
+      "english": "To the Lord, One and Three,",
+      "start": 27.01,
+      "end": 34.63
+    },
+    {
+      "latin": "Sit sempitérna glória, Qui vitam sine término",
+      "english": "be glory everlasting; Who life without an end",
+      "start": 34.63,
+      "end": 45.45
+    },
+    {
+      "latin": "Nobis donet in pátria.",
+      "english": "may grant us in our homeland.",
+      "start": 45.45,
+      "end": 52.9
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 53.13,
+      "end": 62.36
+    }
+  ]
+}

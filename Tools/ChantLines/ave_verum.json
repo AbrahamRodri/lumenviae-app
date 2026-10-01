@@ -1,0 +1,67 @@
+{
+  "id": "ave_verum",
+  "part": null,
+  "method": "breaths by loudness (under -20 dB for 0.2 s, phrases under 1.5 s merged) + text alignment; Whisper: 6 of 9 breaks heard",
+  "lines": [
+    {
+      "latin": "Ave verum Corpus natum",
+      "english": "Hail, true Body, born",
+      "start": 0.27,
+      "end": 7.17
+    },
+    {
+      "latin": "de María Vírgine:",
+      "english": "of the Virgin Mary,",
+      "start": 7.17,
+      "end": 12.86
+    },
+    {
+      "latin": "Vere passum, immolátum in cruce pro hómine:",
+      "english": "that truly suffered and was sacrificed upon the cross for man;",
+      "start": 13.23,
+      "end": 26.6
+    },
+    {
+      "latin": "Cujus latus perforátum",
+      "english": "Whose side, when it was pierced,",
+      "start": 26.81,
+      "end": 33.33
+    },
+    {
+      "latin": "fluxit aqua et sánguine:",
+      "english": "flowed with water and with blood:",
+      "start": 33.33,
+      "end": 41.18
+    },
+    {
+      "latin": "Esto nobis prægustátum",
+      "english": "be for us a foretaste",
+      "start": 41.49,
+      "end": 47.67
+    },
+    {
+      "latin": "mortis in exámine.",
+      "english": "in the trial of death.",
+      "start": 47.68,
+      "end": 54.9
+    },
+    {
+      "latin": "O Jesu dulcis!",
+      "english": "O sweet Jesus,",
+      "start": 55.85,
+      "end": 63.05
+    },
+    {
+      "latin": "O Jesu pie!",
+      "english": "O loving Jesus,",
+      "start": 63.05,
+      "end": 70.17
+    },
+    {
+      "latin": "O Jesu fili Maríæ.",
+      "english": "O Jesus, Son of Mary.",
+      "start": 70.17,
+      "end": 81.88
+    }
+  ]
+}

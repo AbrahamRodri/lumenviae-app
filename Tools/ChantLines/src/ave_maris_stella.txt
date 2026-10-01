@@ -1,0 +1,22 @@
+# Ave maris stella, all seven stanzas and the Amen; the cantor breathes at
+# each stanza's half bar, so a line is half a stanza. Latin from the score;
+# English from the app's own (the consecration's ave_maris_stella).
+noise -14
+gap 0.4
+merge 1.5
+
+Ave maris stella, Dei Mater alma, | Hail, O Star of the ocean, God's own Mother blest,
+atque semper Virgo, felix cæli porta. | ever sinless Virgin, gate of heavenly rest.
+Sumens illud Ave Gabriélis ore, | Taking that sweet Ave, which from Gabriel came,
+Funda nos in pace, Mutans Hevæ nomen. | peace confirm within us, changing Eve's name.
+Solve vincla reis, Profer lumen cæcis | Break the sinners' fetters, make our blindness day,
+Mala nostra pelle, Bona cuncta posce. | chase all evils from us, for all blessings pray.
+Monstra te esse matrem: Sumat per te preces, | Show thyself a Mother, may the Word divine
+Qui pro nobis natus, Tulit esse tuus. | born for us thine Infant hear our prayers through thine.
+Virgo singuláris, Inter omnes mitis, | Virgin all excelling, mildest of the mild,
+Nos culpis solútos, Mitis fac et castos. | free from guilt preserve us meek and undefiled.
+Vitam præsta puram, Iter para tutum: | Keep our life all spotless, make our way secure
+Ut vidéntes Jesum Semper collætémur. | till we find in Jesus, joy for evermore.
+Sit laus Deo Patri, Summo Christo decus, | Praise to God the Father, honor to the Son,
+Spirítui Sancto, Tribus honor unus. | in the Holy Spirit, be the glory one.
+Amen. | Amen.

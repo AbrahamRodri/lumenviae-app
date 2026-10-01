@@ -1,0 +1,163 @@
+{
+  "id": "attende_domine",
+  "part": null,
+  "method": "breaths by loudness (under -14 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 25 of 25 breaks heard",
+  "lines": [
+    {
+      "latin": "Atténde Dómine, et miserére,",
+      "english": "Hearken, O Lord, and have mercy,",
+      "start": 0.29,
+      "end": 6.93
+    },
+    {
+      "latin": "quia peccávimus tibi.",
+      "english": "for we have sinned against Thee.",
+      "start": 6.93,
+      "end": 12.42
+    },
+    {
+      "latin": "Atténde Dómine, et miserére,",
+      "english": "Hearken, O Lord, and have mercy,",
+      "start": 13.29,
+      "end": 19.61
+    },
+    {
+      "latin": "quia peccávimus tibi.",
+      "english": "for we have sinned against Thee.",
+      "start": 19.61,
+      "end": 24.96
+    },
+    {
+      "latin": "Ad te Rex summe, ómnium Redémptor,",
+      "english": "To Thee, O King most high, Redeemer of all,",
+      "start": 26.17,
+      "end": 33.75
+    },
+    {
+      "latin": "óculos nostros sublevámus flentes:",
+      "english": "we lift up our eyes in weeping;",
+      "start": 33.75,
+      "end": 40.93
+    },
+    {
+      "latin": "exáudi, Christe, supplicántum preces.",
+      "english": "hear, O Christ, the prayers of Thy suppliants.",
+      "start": 40.93,
+      "end": 48.72
+    },
+    {
+      "latin": "Atténde Dómine, et miserére, quia peccávimus tibi.",
+      "english": "Hearken, O Lord, and have mercy, for we have sinned against Thee.",
+      "start": 49.89,
+      "end": 62.24
+    },
+    {
+      "latin": "Déxtera Patris, lapis anguláris,",
+      "english": "Right hand of the Father, corner-stone,",
+      "start": 63.33,
+      "end": 71.03
+    },
+    {
+      "latin": "via salútis, jánua cæléstis,",
+      "english": "way of salvation, gate of heaven,",
+      "start": 71.03,
+      "end": 78.01
+    },
+    {
+      "latin": "áblue nostri máculas delícti.",
+      "english": "wash away the stains of our sin.",
+      "start": 78.01,
+      "end": 85.26
+    },
+    {
+      "latin": "Atténde Dómine, et miserére, quia peccávimus tibi.",
+      "english": "Hearken, O Lord, and have mercy, for we have sinned against Thee.",
+      "start": 86.27,
+      "end": 98.28
+    },
+    {
+      "latin": "Rogámus, Deus, tuam majestátem:",
+      "english": "We beseech Thy majesty, O God;",
+      "start": 99.35,
+      "end": 107.05
+    },
+    {
+      "latin": "áuribus sacris gémitus exáudi:",
+      "english": "with Thy holy ears hear our groaning;",
+      "start": 107.05,
+      "end": 113.99
+    },
+    {
+      "latin": "crímina nostra plácidus indúlge.",
+      "english": "graciously pardon our crimes.",
+      "start": 113.99,
+      "end": 121.88
+    },
+    {
+      "latin": "Atténde Dómine, et miserére,",
+      "english": "Hearken, O Lord, and have mercy,",
+      "start": 122.05,
+      "end": 128.63
+    },
+    {
+      "latin": "quia peccávimus tibi.",
+      "english": "for we have sinned against Thee.",
+      "start": 128.63,
+      "end": 134.14
+    },
+    {
+      "latin": "Tibi fatémur crímina admíssa:",
+      "english": "To Thee we confess the sins we have committed;",
+      "start": 135.41,
+      "end": 142.77
+    },
+    {
+      "latin": "contríto corde pándimus occúlta:",
+      "english": "with contrite heart we lay bare what was hidden;",
+      "start": 142.77,
+      "end": 149.85
+    },
+    {
+      "latin": "tua, Redémptor, píetas ignóscat.",
+      "english": "may Thy loving-kindness, O Redeemer, forgive.",
+      "start": 149.85,
+      "end": 157.56
+    },
+    {
+      "latin": "Atténde Dómine, et miserére, quia peccávimus tibi.",
+      "english": "Hearken, O Lord, and have mercy, for we have sinned against Thee.",
+      "start": 158.09,
+      "end": 170.06
+    },
+    {
+      "latin": "Ínnocens captus, nec repúgnans ductus,",
+      "english": "Seized though innocent, led away unresisting,",
+      "start": 171.23,
+      "end": 178.73
+    },
+    {
+      "latin": "téstibus falsis pro ímpiis damnátus:",
+      "english": "condemned by false witnesses for the wicked;",
+      "start": 178.73,
+      "end": 185.95
+    },
+    {
+      "latin": "quos redemísti, tu consérva, Christe.",
+      "english": "keep, O Christ, those whom Thou hast redeemed.",
+      "start": 185.95,
+      "end": 193.58
+    },
+    {
+      "latin": "Atténde Dómine, et miserére,",
+      "english": "Hearken, O Lord, and have mercy,",
+      "start": 194.31,
+      "end": 200.89
+    },
+    {
+      "latin": "quia peccávimus tibi.",
+      "english": "for we have sinned against Thee.",
+      "start": 200.89,
+      "end": 207.56
+    }
+  ]
+}

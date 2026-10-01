@@ -1,0 +1,181 @@
+{
+  "id": "adoro_te",
+  "part": null,
+  "method": "breaths by loudness (under -18 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 22 of 28 breaks heard",
+  "lines": [
+    {
+      "latin": "Adóro te devóte, latens Déitas,",
+      "english": "I adore Thee devoutly, O hidden Deity,",
+      "start": 0.45,
+      "end": 8.91
+    },
+    {
+      "latin": "Quæ sub his figúris vere látitas:",
+      "english": "Who under these figures art truly concealed;",
+      "start": 8.91,
+      "end": 17.37
+    },
+    {
+      "latin": "Tibi se cor meum totum súbjicit,",
+      "english": "to Thee my whole heart subjects itself,",
+      "start": 17.37,
+      "end": 25.89
+    },
+    {
+      "latin": "Quia te contémplans totum déficit.",
+      "english": "for in contemplating Thee it wholly fails.",
+      "start": 25.89,
+      "end": 34.74
+    },
+    {
+      "latin": "Visus, tactus, gustus in te fállitur,",
+      "english": "Sight, touch and taste are deceived in Thee,",
+      "start": 36.07,
+      "end": 44.87
+    },
+    {
+      "latin": "Sed audítu solo tuto créditur:",
+      "english": "but by hearing alone is it safely believed;",
+      "start": 44.87,
+      "end": 53.17
+    },
+    {
+      "latin": "Credo quidquid dixit Dei Fílius:",
+      "english": "I believe whatever the Son of God has said:",
+      "start": 53.17,
+      "end": 61.66
+    },
+    {
+      "latin": "Nil hoc verbo veritátis vérius.",
+      "english": "nothing is truer than this word of Truth.",
+      "start": 61.71,
+      "end": 69.34
+    },
+    {
+      "latin": "In Cruce latébat sola Déitas,",
+      "english": "On the Cross the Godhead alone lay hidden,",
+      "start": 70.67,
+      "end": 79.15
+    },
+    {
+      "latin": "At hic latet simul et humánitas:",
+      "english": "but here the manhood too lies hidden with it;",
+      "start": 79.15,
+      "end": 87.75
+    },
+    {
+      "latin": "Ambo tamen credens atque cónfitens,",
+      "english": "yet believing and confessing both,",
+      "start": 87.75,
+      "end": 96.54
+    },
+    {
+      "latin": "Peto quod petívit latro pǽnitens.",
+      "english": "I ask for what the penitent thief asked.",
+      "start": 96.63,
+      "end": 105.42
+    },
+    {
+      "latin": "Plagas, sicut Thomas, non intúeor:",
+      "english": "I do not look upon the wounds, as Thomas did;",
+      "start": 106.55,
+      "end": 115.07
+    },
+    {
+      "latin": "Deum tamen meum te confíteor:",
+      "english": "yet I confess Thee to be my God;",
+      "start": 115.07,
+      "end": 123.67
+    },
+    {
+      "latin": "Fac me tibi semper magis crédere,",
+      "english": "make me ever more and more believe in Thee,",
+      "start": 123.67,
+      "end": 132.36
+    },
+    {
+      "latin": "In te spem habére, te dilígere.",
+      "english": "have hope in Thee, and love Thee.",
+      "start": 132.49,
+      "end": 141.5
+    },
+    {
+      "latin": "O memoriále mortis Dómini,",
+      "english": "O memorial of the death of the Lord,",
+      "start": 142.53,
+      "end": 151.01
+    },
+    {
+      "latin": "Panis vivus vitam præstans hómini:",
+      "english": "living Bread that gives life to man,",
+      "start": 151.01,
+      "end": 159.75
+    },
+    {
+      "latin": "Præsta meæ menti de te vívere,",
+      "english": "grant to my mind to live on Thee,",
+      "start": 159.75,
+      "end": 168.53
+    },
+    {
+      "latin": "Et te illi semper dulce sápere.",
+      "english": "and that Thou be ever sweet to its taste.",
+      "start": 168.53,
+      "end": 177.86
+    },
+    {
+      "latin": "Pie pellicáne, Jesu Dómine,",
+      "english": "O loving Pelican, Lord Jesus,",
+      "start": 179.13,
+      "end": 187.63
+    },
+    {
+      "latin": "Me immúndum munda tuo Sánguine:",
+      "english": "cleanse me, who am unclean, with Thy Blood,",
+      "start": 187.63,
+      "end": 196.47
+    },
+    {
+      "latin": "Cujus una stilla salvum fácere",
+      "english": "a single drop of which can make safe",
+      "start": 196.47,
+      "end": 204.92
+    },
+    {
+      "latin": "Totum mundum quit ab omni scélere.",
+      "english": "the whole world from every sin.",
+      "start": 205.39,
+      "end": 213.22
+    },
+    {
+      "latin": "Jesu, quem velátum nunc aspício,",
+      "english": "Jesus, Whom now I look upon veiled,",
+      "start": 214.35,
+      "end": 223.11
+    },
+    {
+      "latin": "Oro fiat illud quod tam sítio:",
+      "english": "I pray that what I so thirst for may come to pass:",
+      "start": 223.11,
+      "end": 231.77
+    },
+    {
+      "latin": "Ut te reveláta cernens fácie,",
+      "english": "that, seeing Thee with Thy face unveiled,",
+      "start": 231.77,
+      "end": 240.5
+    },
+    {
+      "latin": "Visu sim beátus tuæ glóriæ.",
+      "english": "I may be blessed in beholding Thy glory.",
+      "start": 240.69,
+      "end": 249.66
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 251.21,
+      "end": 260.68
+    }
+  ]
+}

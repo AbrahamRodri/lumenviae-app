@@ -1,0 +1,97 @@
+{
+  "id": "panis_angelicus",
+  "part": null,
+  "method": "breaths by loudness (under -14 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 6 of 14 breaks heard",
+  "lines": [
+    {
+      "latin": "Panis angélicus",
+      "english": "The bread of Angels",
+      "start": 0.39,
+      "end": 7.87
+    },
+    {
+      "latin": "fit panis hóminum;",
+      "english": "becomes the bread of men;",
+      "start": 7.87,
+      "end": 11.26
+    },
+    {
+      "latin": "Dat panis cǽlicus",
+      "english": "the bread of heaven",
+      "start": 11.49,
+      "end": 16.09
+    },
+    {
+      "latin": "figúris términum:",
+      "english": "puts an end to figures.",
+      "start": 16.09,
+      "end": 19.62
+    },
+    {
+      "latin": "O res mirábilis!",
+      "english": "O wondrous thing!",
+      "start": 20.77,
+      "end": 24.37
+    },
+    {
+      "latin": "mandúcat Dóminum",
+      "english": "there feeds upon the Lord",
+      "start": 24.37,
+      "end": 29.26
+    },
+    {
+      "latin": "Pauper, servus, et húmilis.",
+      "english": "the poor man, the servant, and the lowly.",
+      "start": 29.37,
+      "end": 36.24
+    },
+    {
+      "latin": "Te trina Déitas",
+      "english": "Thee, Godhead three",
+      "start": 38.29,
+      "end": 45.23
+    },
+    {
+      "latin": "únaque póscimus:",
+      "english": "and one, we beseech:",
+      "start": 45.23,
+      "end": 49.09
+    },
+    {
+      "latin": "Sic nos tu vísita,",
+      "english": "so do Thou visit us",
+      "start": 49.09,
+      "end": 53.85
+    },
+    {
+      "latin": "sicut te cólimus;",
+      "english": "as we worship Thee;",
+      "start": 53.85,
+      "end": 57.56
+    },
+    {
+      "latin": "Per tuas sémitas",
+      "english": "by Thy paths",
+      "start": 58.67,
+      "end": 62.39
+    },
+    {
+      "latin": "duc nos quo téndimus,",
+      "english": "lead us whither we are bound,",
+      "start": 62.39,
+      "end": 67.33
+    },
+    {
+      "latin": "Ad lucem quam inhábitas.",
+      "english": "to the light wherein Thou dwellest.",
+      "start": 67.33,
+      "end": 74.58
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 75.95,
+      "end": 81.14
+    }
+  ]
+}

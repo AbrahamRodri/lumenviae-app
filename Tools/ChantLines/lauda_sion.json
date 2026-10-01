@@ -1,0 +1,487 @@
+{
+  "id": "lauda_sion",
+  "part": null,
+  "method": "breaths by loudness (under -14 dB for 0.2 s, phrases under 1.5 s merged) + text alignment; Whisper: 46 of 79 breaks heard",
+  "lines": [
+    {
+      "latin": "Lauda Sion Salvatórem,",
+      "english": "Praise, O Sion, thy Saviour,",
+      "start": 0.45,
+      "end": 5.23
+    },
+    {
+      "latin": "Lauda ducem et pastórem,",
+      "english": "praise thy leader and thy shepherd",
+      "start": 5.23,
+      "end": 10.59
+    },
+    {
+      "latin": "In hymnis et cánticis.",
+      "english": "in hymns and canticles.",
+      "start": 10.59,
+      "end": 15.12
+    },
+    {
+      "latin": "Quantum potes, tantum aude:",
+      "english": "As much as thou canst, so much dare,",
+      "start": 16.09,
+      "end": 20.89
+    },
+    {
+      "latin": "Quia major omni laude,",
+      "english": "for He is greater than all praise,",
+      "start": 20.89,
+      "end": 26.07
+    },
+    {
+      "latin": "Nec laudáre súfficis.",
+      "english": "nor art thou able to praise Him enough.",
+      "start": 26.07,
+      "end": 30.22
+    },
+    {
+      "latin": "Laudis thema speciális,",
+      "english": "A theme of special praise,",
+      "start": 31.75,
+      "end": 37.83
+    },
+    {
+      "latin": "Panis vivus et vitális",
+      "english": "the living and life-giving Bread,",
+      "start": 37.83,
+      "end": 42.44
+    },
+    {
+      "latin": "Hódie propónitur.",
+      "english": "is set before us this day.",
+      "start": 42.65,
+      "end": 47.24
+    },
+    {
+      "latin": "Quem in sacræ mensa cœnæ,",
+      "english": "That at the table of the holy Supper",
+      "start": 48.03,
+      "end": 54.33
+    },
+    {
+      "latin": "Turbæ fratrum duodénæ",
+      "english": "to the band of the twelve brethren",
+      "start": 54.33,
+      "end": 59.25
+    },
+    {
+      "latin": "Datum non ambígitur.",
+      "english": "it was given, none doubteth.",
+      "start": 59.25,
+      "end": 64.22
+    },
+    {
+      "latin": "Sit laus plena, sit sonóra, Sit jucúnda, sit decóra",
+      "english": "Let praise be full, let it be resounding, let it be joyful, let it be comely,",
+      "start": 65.07,
+      "end": 75.07
+    },
+    {
+      "latin": "Mentis jubilátio.",
+      "english": "the jubilation of the mind.",
+      "start": 75.07,
+      "end": 79.36
+    },
+    {
+      "latin": "Dies enim solémnis ágitur,",
+      "english": "For the solemn day is kept",
+      "start": 80.53,
+      "end": 86.92
+    },
+    {
+      "latin": "In qua mensæ prima recólitur",
+      "english": "on which is recalled the first",
+      "start": 87.15,
+      "end": 93.38
+    },
+    {
+      "latin": "Hujus institútio.",
+      "english": "institution of this table.",
+      "start": 93.45,
+      "end": 98.32
+    },
+    {
+      "latin": "In hac mensa novi Regis,",
+      "english": "At this table of the new King,",
+      "start": 99.03,
+      "end": 104.01
+    },
+    {
+      "latin": "Novum Pascha novæ legis,",
+      "english": "the new Pasch of the new law",
+      "start": 104.01,
+      "end": 108.99
+    },
+    {
+      "latin": "Phase vetus términat.",
+      "english": "endeth the old Passover.",
+      "start": 108.99,
+      "end": 113.28
+    },
+    {
+      "latin": "Vetustátem nóvitas,",
+      "english": "The new puts the old to flight,",
+      "start": 114.47,
+      "end": 119.99
+    },
+    {
+      "latin": "Umbram fugat véritas,",
+      "english": "the truth puts the shadow to flight,",
+      "start": 119.99,
+      "end": 125.51
+    },
+    {
+      "latin": "Noctem lux elíminat.",
+      "english": "the light drives out the night.",
+      "start": 125.51,
+      "end": 129.92
+    },
+    {
+      "latin": "Quod in cœna Christus gessit,",
+      "english": "What Christ did at the Supper,",
+      "start": 131.07,
+      "end": 136.05
+    },
+    {
+      "latin": "Faciéndum hoc expréssit",
+      "english": "this He bade be done",
+      "start": 136.05,
+      "end": 140.81
+    },
+    {
+      "latin": "In sui memóriam.",
+      "english": "in memory of Him.",
+      "start": 140.81,
+      "end": 145.58
+    },
+    {
+      "latin": "Docti sacris institútis,",
+      "english": "Taught by His holy ordinances,",
+      "start": 146.35,
+      "end": 151.47
+    },
+    {
+      "latin": "Panem, vinum in salútis",
+      "english": "bread and wine into the saving",
+      "start": 151.47,
+      "end": 156.31
+    },
+    {
+      "latin": "Consecrámus hóstiam.",
+      "english": "Victim we consecrate.",
+      "start": 156.31,
+      "end": 161.22
+    },
+    {
+      "latin": "Dogma datur christiánis,",
+      "english": "This doctrine is given to Christians,",
+      "start": 161.67,
+      "end": 166.23
+    },
+    {
+      "latin": "Quod in carnem transit panis,",
+      "english": "that bread passeth into flesh,",
+      "start": 166.23,
+      "end": 170.97
+    },
+    {
+      "latin": "Et vinum in sánguinem.",
+      "english": "and wine into blood.",
+      "start": 170.97,
+      "end": 175.96
+    },
+    {
+      "latin": "Quod non capis, quod non vides,",
+      "english": "What thou dost not understand, what thou dost not see,",
+      "start": 176.81,
+      "end": 181.39
+    },
+    {
+      "latin": "Animósa firmat fides,",
+      "english": "a lively faith confirmeth,",
+      "start": 181.39,
+      "end": 186.15
+    },
+    {
+      "latin": "Præter rerum órdinem.",
+      "english": "beyond the order of nature.",
+      "start": 186.15,
+      "end": 191.22
+    },
+    {
+      "latin": "Sub divérsis speciébus,",
+      "english": "Under differing species,",
+      "start": 192.37,
+      "end": 198.25
+    },
+    {
+      "latin": "Signis tantum, et non rebus,",
+      "english": "signs only and not things,",
+      "start": 198.25,
+      "end": 202.95
+    },
+    {
+      "latin": "Latent res exímiæ.",
+      "english": "lie hidden wondrous realities.",
+      "start": 202.95,
+      "end": 207.54
+    },
+    {
+      "latin": "Caro cibus, sanguis potus:",
+      "english": "Flesh is meat, blood is drink;",
+      "start": 208.61,
+      "end": 214.65
+    },
+    {
+      "latin": "Manet tamen Christus totus",
+      "english": "yet Christ remaineth whole",
+      "start": 214.65,
+      "end": 219.67
+    },
+    {
+      "latin": "Sub utráque spécie.",
+      "english": "under either species.",
+      "start": 219.67,
+      "end": 224.34
+    },
+    {
+      "latin": "A suménte non concísus,",
+      "english": "By him who receiveth He is not cut,",
+      "start": 225.23,
+      "end": 230.33
+    },
+    {
+      "latin": "Non confráctus, non divísus:",
+      "english": "not broken, not divided;",
+      "start": 230.33,
+      "end": 235.09
+    },
+    {
+      "latin": "Ínteger accípitur.",
+      "english": "whole is He received.",
+      "start": 235.09,
+      "end": 240.14
+    },
+    {
+      "latin": "Sumit unus, sumunt mille:",
+      "english": "One receiveth, a thousand receive;",
+      "start": 241.29,
+      "end": 246.17
+    },
+    {
+      "latin": "Quantum isti, tantum ille: Nec sumptus consúmitur.",
+      "english": "as much as these, so much the one; nor, received, is He consumed.",
+      "start": 246.17,
+      "end": 255.86
+    },
+    {
+      "latin": "Sumunt boni, sumunt mali:",
+      "english": "The good receive, the wicked receive,",
+      "start": 256.79,
+      "end": 262.03
+    },
+    {
+      "latin": "Sorte tamen inæquáli,",
+      "english": "yet with unequal lot,",
+      "start": 262.03,
+      "end": 266.79
+    },
+    {
+      "latin": "Vitæ vel intéritus.",
+      "english": "of life or of destruction.",
+      "start": 266.79,
+      "end": 271.22
+    },
+    {
+      "latin": "Mors est malis, vita bonis:",
+      "english": "Death to the wicked, life to the good:",
+      "start": 272.53,
+      "end": 278.11
+    },
+    {
+      "latin": "Vide paris sumptiónis",
+      "english": "see, of a like receiving,",
+      "start": 278.11,
+      "end": 282.87
+    },
+    {
+      "latin": "Quam sit dispar éxitus.",
+      "english": "how unlike is the issue.",
+      "start": 282.87,
+      "end": 287.52
+    },
+    {
+      "latin": "Fracto demum sacraménto,",
+      "english": "When at last the Sacrament is broken,",
+      "start": 288.49,
+      "end": 293.31
+    },
+    {
+      "latin": "Ne vacíles, sed meménto",
+      "english": "waver not, but remember",
+      "start": 293.31,
+      "end": 297.81
+    },
+    {
+      "latin": "Tantum esse sub fragménto,",
+      "english": "that there is as much in a fragment",
+      "start": 297.81,
+      "end": 302.53
+    },
+    {
+      "latin": "Quantum toto tégitur.",
+      "english": "as is hidden in the whole.",
+      "start": 302.53,
+      "end": 307.46
+    },
+    {
+      "latin": "Nulla rei fit scissúra:",
+      "english": "No division is made of the substance;",
+      "start": 308.51,
+      "end": 313.27
+    },
+    {
+      "latin": "Signi tantum fit fractúra,",
+      "english": "the breaking is of the sign alone,",
+      "start": 313.27,
+      "end": 317.81
+    },
+    {
+      "latin": "Qua nec status, nec statúra",
+      "english": "by which neither the state nor the stature",
+      "start": 317.81,
+      "end": 322.49
+    },
+    {
+      "latin": "Signáti minúitur.",
+      "english": "of the One signified is lessened.",
+      "start": 322.49,
+      "end": 327.2
+    },
+    {
+      "latin": "Ecce panis Angelórum,",
+      "english": "Behold the Bread of Angels,",
+      "start": 328.65,
+      "end": 333.75
+    },
+    {
+      "latin": "Factus cibus viatórum:",
+      "english": "made the food of wayfarers,",
+      "start": 333.75,
+      "end": 338.23
+    },
+    {
+      "latin": "Vere panis filiórum,",
+      "english": "truly the bread of children,",
+      "start": 338.23,
+      "end": 343.25
+    },
+    {
+      "latin": "Non mitténdus cánibus.",
+      "english": "not to be cast to the dogs.",
+      "start": 343.25,
+      "end": 348.18
+    },
+    {
+      "latin": "In figúris præsignátur,",
+      "english": "In figures it is foreshown,",
+      "start": 349.37,
+      "end": 354.31
+    },
+    {
+      "latin": "Cum Ísaac immolátur,",
+      "english": "when Isaac is offered,",
+      "start": 354.31,
+      "end": 358.93
+    },
+    {
+      "latin": "Agnus Paschæ deputátur,",
+      "english": "the Paschal Lamb appointed,",
+      "start": 358.93,
+      "end": 364.17
+    },
+    {
+      "latin": "Datur manna pátribus.",
+      "english": "manna given to the fathers.",
+      "start": 364.17,
+      "end": 369.26
+    },
+    {
+      "latin": "Bone pastor, panis vere,",
+      "english": "Good Shepherd, true Bread,",
+      "start": 370.29,
+      "end": 375.45
+    },
+    {
+      "latin": "Jesu, nostri miserére:",
+      "english": "Jesus, have mercy on us;",
+      "start": 375.45,
+      "end": 381.31
+    },
+    {
+      "latin": "Tu nos pasce, nos tuére,",
+      "english": "do Thou feed us, defend us,",
+      "start": 381.31,
+      "end": 385.97
+    },
+    {
+      "latin": "Tu nos bona fac vidére",
+      "english": "do Thou make us see good things",
+      "start": 385.97,
+      "end": 391.23
+    },
+    {
+      "latin": "In terra vivéntium.",
+      "english": "in the land of the living.",
+      "start": 391.23,
+      "end": 396.06
+    },
+    {
+      "latin": "Tu qui cuncta scis et vales,",
+      "english": "Thou who knowest and canst all things,",
+      "start": 396.95,
+      "end": 402.31
+    },
+    {
+      "latin": "Qui nos pascis hic mortáles:",
+      "english": "who feedest us here as mortals,",
+      "start": 402.31,
+      "end": 408.15
+    },
+    {
+      "latin": "Tuos ibi commensáles,",
+      "english": "Thy fellow guests there,",
+      "start": 408.15,
+      "end": 412.89
+    },
+    {
+      "latin": "Coherédes et sodáles",
+      "english": "fellow heirs and companions",
+      "start": 412.89,
+      "end": 417.74
+    },
+    {
+      "latin": "Fac sanctórum cívium.",
+      "english": "make us of the holy citizens.",
+      "start": 417.79,
+      "end": 422.78
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 424.45,
+      "end": 427.59
+    },
+    {
+      "latin": "Allelúia.",
+      "english": "Alleluia.",
+      "start": 427.59,
+      "end": 432.3
+    }
+  ]
+}

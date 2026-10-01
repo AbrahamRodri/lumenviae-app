@@ -1,0 +1,343 @@
+{
+  "id": "dies_irae",
+  "part": null,
+  "method": "breaths by loudness (under -14 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 32 of 55 breaks heard",
+  "lines": [
+    {
+      "latin": "Dies iræ, dies illa,",
+      "english": "The day of wrath, that day,",
+      "start": 0.53,
+      "end": 4.75
+    },
+    {
+      "latin": "Solvet sæclum in favílla:",
+      "english": "shall dissolve the world in ashes,",
+      "start": 4.75,
+      "end": 10.63
+    },
+    {
+      "latin": "Teste David cum Sibýlla.",
+      "english": "as David bears witness with the Sibyl.",
+      "start": 10.63,
+      "end": 17.18
+    },
+    {
+      "latin": "Quantus tremor est futúrus,",
+      "english": "What trembling there shall be",
+      "start": 17.45,
+      "end": 21.97
+    },
+    {
+      "latin": "Quando judex est ventúrus,",
+      "english": "when the Judge shall come",
+      "start": 21.97,
+      "end": 28.45
+    },
+    {
+      "latin": "Cuncta stricte discussúrus!",
+      "english": "to sift all things strictly!",
+      "start": 28.45,
+      "end": 34.0
+    },
+    {
+      "latin": "Tuba mirum spargens sonum",
+      "english": "The trumpet, scattering its wondrous sound",
+      "start": 34.55,
+      "end": 41.93
+    },
+    {
+      "latin": "Per sepúlcra regiónum,",
+      "english": "through the tombs of every land,",
+      "start": 41.93,
+      "end": 46.67
+    },
+    {
+      "latin": "Coget omnes ante thronum.",
+      "english": "shall gather all before the throne.",
+      "start": 46.67,
+      "end": 53.86
+    },
+    {
+      "latin": "Mors stupébit et natúra,",
+      "english": "Death and nature shall stand amazed",
+      "start": 54.47,
+      "end": 61.97
+    },
+    {
+      "latin": "Cum resúrget creatúra,",
+      "english": "when the creature shall rise again",
+      "start": 61.97,
+      "end": 66.49
+    },
+    {
+      "latin": "Judicánti responsúra.",
+      "english": "to answer to its Judge.",
+      "start": 66.49,
+      "end": 74.1
+    },
+    {
+      "latin": "Liber scriptus proferétur,",
+      "english": "The written book shall be brought forth,",
+      "start": 74.77,
+      "end": 81.99
+    },
+    {
+      "latin": "In quo totum continétur,",
+      "english": "in which all is contained,",
+      "start": 81.99,
+      "end": 87.91
+    },
+    {
+      "latin": "Unde mundus judicétur.",
+      "english": "whereby the world shall be judged.",
+      "start": 87.91,
+      "end": 93.94
+    },
+    {
+      "latin": "Judex ergo cum sedébit,",
+      "english": "When therefore the Judge shall sit,",
+      "start": 95.01,
+      "end": 101.88
+    },
+    {
+      "latin": "Quidquid latet apparébit:",
+      "english": "whatever is hidden shall appear;",
+      "start": 102.23,
+      "end": 107.6
+    },
+    {
+      "latin": "Nil inúltum remanébit.",
+      "english": "nothing shall remain unavenged.",
+      "start": 108.15,
+      "end": 113.72
+    },
+    {
+      "latin": "Quid sum miser tunc dictúrus?",
+      "english": "What shall I, wretch, say then?",
+      "start": 115.57,
+      "end": 120.09
+    },
+    {
+      "latin": "Quem patrónum rogatúrus?",
+      "english": "What advocate shall I entreat,",
+      "start": 120.09,
+      "end": 126.13
+    },
+    {
+      "latin": "Cum vix justus sit secúrus.",
+      "english": "when even the just is scarcely safe?",
+      "start": 126.13,
+      "end": 131.92
+    },
+    {
+      "latin": "Rex treméndæ majestátis,",
+      "english": "King of dreadful majesty,",
+      "start": 132.81,
+      "end": 137.53
+    },
+    {
+      "latin": "Qui salvándos salvas gratis,",
+      "english": "who freely savest those that are saved,",
+      "start": 137.53,
+      "end": 143.42
+    },
+    {
+      "latin": "Salva me, fons pietátis.",
+      "english": "save me, O fount of pity.",
+      "start": 143.59,
+      "end": 149.26
+    },
+    {
+      "latin": "Recordáre Jesu pie,",
+      "english": "Remember, loving Jesus,",
+      "start": 150.45,
+      "end": 158.05
+    },
+    {
+      "latin": "Quod sum causa tuæ viæ:",
+      "english": "that I am the cause of Thy journey;",
+      "start": 158.05,
+      "end": 162.83
+    },
+    {
+      "latin": "Ne me perdas illa die.",
+      "english": "lose me not on that day.",
+      "start": 162.83,
+      "end": 170.22
+    },
+    {
+      "latin": "Quærens me, sedísti lassus:",
+      "english": "Seeking me, Thou didst sit down weary;",
+      "start": 171.11,
+      "end": 178.71
+    },
+    {
+      "latin": "Redemísti crucem passus:",
+      "english": "Thou didst redeem me, suffering the Cross;",
+      "start": 178.71,
+      "end": 183.47
+    },
+    {
+      "latin": "Tantus labor non sit cassus.",
+      "english": "let not such labour be in vain.",
+      "start": 183.47,
+      "end": 191.06
+    },
+    {
+      "latin": "Juste judex ultiónis,",
+      "english": "Just Judge of vengeance,",
+      "start": 192.07,
+      "end": 198.97
+    },
+    {
+      "latin": "Donum fac remissiónis,",
+      "english": "grant the gift of remission",
+      "start": 198.97,
+      "end": 204.42
+    },
+    {
+      "latin": "Ante diem ratiónis.",
+      "english": "before the day of reckoning.",
+      "start": 204.91,
+      "end": 210.48
+    },
+    {
+      "latin": "Ingemísco, tamquam reus:",
+      "english": "I groan as one guilty;",
+      "start": 212.27,
+      "end": 219.29
+    },
+    {
+      "latin": "Culpa rubet vultus meus:",
+      "english": "my face blushes for my fault;",
+      "start": 219.29,
+      "end": 225.27
+    },
+    {
+      "latin": "Supplicánti parce Deus.",
+      "english": "spare Thy suppliant, O God.",
+      "start": 225.27,
+      "end": 231.26
+    },
+    {
+      "latin": "Qui Maríam absolvísti,",
+      "english": "Thou who didst absolve Mary",
+      "start": 232.37,
+      "end": 236.87
+    },
+    {
+      "latin": "Et latrónem exaudísti,",
+      "english": "and didst hear the thief,",
+      "start": 236.87,
+      "end": 242.54
+    },
+    {
+      "latin": "Mihi quoque spem dedísti.",
+      "english": "to me also hast given hope.",
+      "start": 242.89,
+      "end": 248.4
+    },
+    {
+      "latin": "Preces meæ non sunt dignæ:",
+      "english": "My prayers are not worthy;",
+      "start": 249.55,
+      "end": 254.15
+    },
+    {
+      "latin": "Sed tu bonus fac benígne,",
+      "english": "but Thou, who art good, deal kindly,",
+      "start": 254.15,
+      "end": 260.11
+    },
+    {
+      "latin": "Ne perénni cremer igne.",
+      "english": "lest I burn in everlasting fire.",
+      "start": 260.11,
+      "end": 266.04
+    },
+    {
+      "latin": "Inter oves locum præsta, Et ab hædis me sequéstra,",
+      "english": "Grant me a place among the sheep, and set me apart from the goats,",
+      "start": 266.63,
+      "end": 278.95
+    },
+    {
+      "latin": "Státuens in parte dextra.",
+      "english": "placing me on Thy right hand.",
+      "start": 278.95,
+      "end": 286.74
+    },
+    {
+      "latin": "Confutátis maledíctis,",
+      "english": "When the accursed are confounded",
+      "start": 287.15,
+      "end": 294.33
+    },
+    {
+      "latin": "Flammis ácribus addíctis:",
+      "english": "and given over to the bitter flames,",
+      "start": 294.33,
+      "end": 298.98
+    },
+    {
+      "latin": "Voca me cum benedíctis.",
+      "english": "call me with the blessed.",
+      "start": 299.03,
+      "end": 306.4
+    },
+    {
+      "latin": "Oro supplex et acclínis,",
+      "english": "I pray, suppliant and bowed down,",
+      "start": 307.55,
+      "end": 314.58
+    },
+    {
+      "latin": "Cor contrítum quasi cinis:",
+      "english": "my heart contrite as ashes:",
+      "start": 314.65,
+      "end": 320.2
+    },
+    {
+      "latin": "Gere curam mei finis.",
+      "english": "take Thou care of my end.",
+      "start": 320.81,
+      "end": 326.18
+    },
+    {
+      "latin": "Lacrimósa dies illa, Qua resúrget ex favílla,",
+      "english": "Tearful that day, when from the ashes shall rise",
+      "start": 328.09,
+      "end": 342.84
+    },
+    {
+      "latin": "Judicándus homo reus:",
+      "english": "guilty man to be judged;",
+      "start": 343.21,
+      "end": 350.71
+    },
+    {
+      "latin": "Huic ergo parce Deus.",
+      "english": "spare him therefore, O God.",
+      "start": 350.71,
+      "end": 360.3
+    },
+    {
+      "latin": "Pie Jesu Dómine,",
+      "english": "Loving Lord Jesus,",
+      "start": 361.09,
+      "end": 365.61
+    },
+    {
+      "latin": "dona eis réquiem.",
+      "english": "grant them rest.",
+      "start": 365.61,
+      "end": 371.88
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 372.43,
+      "end": 378.54
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+# Dies irae, the sequence of the Requiem Mass, all its verses and the Amen.
+# Latin from the score; English plain and literal. The cantor breathes at
+# the score's bars, but sings Inter oves and Et ab haedis on one breath, and
+# Lacrimosa and Qua resurget on another: each of those pairs is one line.
+noise -14
+gap 0.3
+merge 1.5
+
+Dies iræ, dies illa, | The day of wrath, that day,
+Solvet sæclum in favílla: | shall dissolve the world in ashes,
+Teste David cum Sibýlla. | as David bears witness with the Sibyl.
+Quantus tremor est futúrus, | What trembling there shall be
+Quando judex est ventúrus, | when the Judge shall come
+Cuncta stricte discussúrus! | to sift all things strictly!
+Tuba mirum spargens sonum | The trumpet, scattering its wondrous sound
+Per sepúlcra regiónum, | through the tombs of every land,
+Coget omnes ante thronum. | shall gather all before the throne.
+Mors stupébit et natúra, | Death and nature shall stand amazed
+Cum resúrget creatúra, | when the creature shall rise again
+Judicánti responsúra. | to answer to its Judge.
+Liber scriptus proferétur, | The written book shall be brought forth,
+In quo totum continétur, | in which all is contained,
+Unde mundus judicétur. | whereby the world shall be judged.
+Judex ergo cum sedébit, | When therefore the Judge shall sit,
+Quidquid latet apparébit: | whatever is hidden shall appear;
+Nil inúltum remanébit. | nothing shall remain unavenged.
+Quid sum miser tunc dictúrus? | What shall I, wretch, say then?
+Quem patrónum rogatúrus? | What advocate shall I entreat,
+Cum vix justus sit secúrus. | when even the just is scarcely safe?
+Rex treméndæ majestátis, | King of dreadful majesty,
+Qui salvándos salvas gratis, | who freely savest those that are saved,
+Salva me, fons pietátis. | save me, O fount of pity.
+Recordáre Jesu pie, | Remember, loving Jesus,
+Quod sum causa tuæ viæ: | that I am the cause of Thy journey;
+Ne me perdas illa die. | lose me not on that day.
+Quærens me, sedísti lassus: | Seeking me, Thou didst sit down weary;
+Redemísti crucem passus: | Thou didst redeem me, suffering the Cross;
+Tantus labor non sit cassus. | let not such labour be in vain.
+Juste judex ultiónis, | Just Judge of vengeance,
+Donum fac remissiónis, | grant the gift of remission
+Ante diem ratiónis. | before the day of reckoning.
+Ingemísco, tamquam reus: | I groan as one guilty;
+Culpa rubet vultus meus: | my face blushes for my fault;
+Supplicánti parce Deus. | spare Thy suppliant, O God.
+Qui Maríam absolvísti, | Thou who didst absolve Mary
+Et latrónem exaudísti, | and didst hear the thief,
+Mihi quoque spem dedísti. | to me also hast given hope.
+Preces meæ non sunt dignæ: | My prayers are not worthy;
+Sed tu bonus fac benígne, | but Thou, who art good, deal kindly,
+Ne perénni cremer igne. | lest I burn in everlasting fire.
+Inter oves locum præsta, Et ab hædis me sequéstra, | Grant me a place among the sheep, and set me apart from the goats,
+Státuens in parte dextra. | placing me on Thy right hand.
+Confutátis maledíctis, | When the accursed are confounded
+Flammis ácribus addíctis: | and given over to the bitter flames,
+Voca me cum benedíctis. | call me with the blessed.
+Oro supplex et acclínis, | I pray, suppliant and bowed down,
+Cor contrítum quasi cinis: | my heart contrite as ashes:
+Gere curam mei finis. | take Thou care of my end.
+Lacrimósa dies illa, Qua resúrget ex favílla, | Tearful that day, when from the ashes shall rise
+Judicándus homo reus: | guilty man to be judged;
+Huic ergo parce Deus. | spare him therefore, O God.
+Pie Jesu Dómine, | Loving Lord Jesus,
+dona eis réquiem. | grant them rest.
+Amen. | Amen.

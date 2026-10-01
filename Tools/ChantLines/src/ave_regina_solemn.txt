@@ -1,0 +1,21 @@
+# Ave Regina caelorum, solemn tone; its versicle and the collect Concede,
+# misericors Deus. Latin from the score; English from the Prayer Book.
+# The breath after "decóra" is too shallow in this reverberant recording
+# to be found, so the last two phrases of the antiphon stand as one line.
+noise -17
+gap 0.25
+merge 1.5
+
+Ave Regína cælórum, | Hail, O Queen of heaven,
+Ave Dómina Angelórum: | hail, O Lady of the Angels;
+Salve radix, salve porta, | hail, thou root, hail, thou gate,
+Ex qua mundo lux est orta: | from whom unto the world a light hath arisen.
+Gaude Virgo gloriósa, | Rejoice, O glorious Virgin,
+Super omnes speciósa: | lovely beyond all others;
+Vale, o valde decóra, Et pro nobis Christum exóra. | farewell, O most beautiful, and pray for us to Christ.
+Dignáre me laudáre te Virgo sacráta. | Vouchsafe that I may praise thee, O sacred Virgin.
+Da mihi virtútem contra hostes tuos. | Give me strength against thine enemies.
+Orémus. | Let us pray.
+Concéde, miséricors Deus, fragilitáti nostræ præsídium: ut qui sanctæ Dei Genitrícis memóriam ágimus, intercessiónis ejus auxílio a nostris iniquitátibus resurgámus. | Grant, O merciful God, to our weak natures Thy protection, that we who commemorate the holy Mother of God may, by the help of her intercession, rise again from our iniquities.
+Per eumdem Christum Dóminum nostrum. | Through the same Christ our Lord.
+Amen. | Amen.

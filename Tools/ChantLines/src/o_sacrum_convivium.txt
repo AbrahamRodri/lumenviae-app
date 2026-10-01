@@ -1,0 +1,26 @@
+# O sacrum convivium, mode V: the antiphon with its paschal ending
+# (nobis pignus datur, alleluia), then the ending sung after Septuagesima
+# (nobis pignus datur, its melisma on "da-"). Latin from the score; English
+# from the Prayer Book (o_sacrum_convivium). The cantor breathes after
+# "recólitur", and inside the melismas of the alleluia and of "datur",
+# where the words cannot be parted (~).
+noise -14
+gap 0.2
+merge 1.5
+
+O sacrum convívium! | O sacred banquet,
+in quo Christus súmitur: | in which Christ is received,
+recólitur memória | the memory is renewed
+~
+passiónis ejus: | of His Passion,
+mens implétur grátia: | the mind is filled with grace,
+et futúræ glóriæ | and of future glory
+nobis pignus datur, | a pledge is given to us.
+allelúia. | Alleluia.
+~
+~
+~
+nobis pignus datur. | A pledge is given to us.
+~
+~
+~

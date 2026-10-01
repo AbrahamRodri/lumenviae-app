@@ -1,0 +1,95 @@
+# Litaniæ Sancti Joseph: the litany as this recording sings it, every
+# Kyrie twice, the invocations of the 1909 list (the Prayer Book's; the
+# seven added in 2021 are not sung); then Constituit eum and the collect
+# Deus qui ineffabili. Latin from the scores, the invocations from the
+# Prayer Book's list with the scores' spelling and the Liber's accents;
+# English from the Prayer Book (litany_st_joseph).
+noise -14
+gap 0.3
+merge 1.5
+
+Kýrie eléison. | Lord, have mercy on us.
+Kýrie eléison. | Lord, have mercy on us.
+Christe eléison. | Christ, have mercy on us.
+Christe eléison. | Christ, have mercy on us.
+Kýrie eléison. | Lord, have mercy on us.
+Kýrie eléison. | Lord, have mercy on us.
+Christe audi nos. | Christ, hear us.
+Christe audi nos. | Christ, hear us.
+Christe exáudi nos. | Christ, graciously hear us.
+Christe exáudi nos. | Christ, graciously hear us.
+Pater de cælis Deus, | God the Father of Heaven,
+miserére nobis. | have mercy on us.
+Fili Redémptor mundi Deus, | God the Son, Redeemer of the world,
+miserére nobis. | have mercy on us.
+Spíritus Sancte Deus, | God the Holy Ghost,
+miserére nobis. | have mercy on us.
+Sancta Trínitas unus Deus, | Holy Trinity, One God,
+miserére nobis. | have mercy on us.
+Sancta María, | Holy Mary,
+ora pro nobis. | pray for us.
+Sancte Joseph, | St Joseph,
+ora pro nobis. | pray for us.
+Proles David ínclyta, | Renowned offspring of David,
+ora pro nobis. | pray for us.
+Lumen Patriarchárum, | Light of Patriarchs,
+ora pro nobis. | pray for us.
+Dei Genitrícis Sponse, | Spouse of the Mother of God,
+ora pro nobis. | pray for us.
+Custos pudíce Vírginis, | Chaste guardian of the Virgin,
+ora pro nobis. | pray for us.
+Fílii Dei nutrítie, | Foster-father of the Son of God,
+ora pro nobis. | pray for us.
+Christi defénsor sédule, | Diligent protector of Christ,
+ora pro nobis. | pray for us.
+Almæ Famíliæ præses, | Head of the Holy Family,
+ora pro nobis. | pray for us.
+Joseph justíssime, | Joseph most just,
+ora pro nobis. | pray for us.
+Joseph castíssime, | Joseph most chaste,
+ora pro nobis. | pray for us.
+Joseph prudentíssime, | Joseph most prudent,
+ora pro nobis. | pray for us.
+Joseph fortíssime, | Joseph most strong,
+ora pro nobis. | pray for us.
+Joseph obedientíssime, | Joseph most obedient,
+ora pro nobis. | pray for us.
+Joseph fidelíssime, | Joseph most faithful,
+ora pro nobis. | pray for us.
+Spéculum patiéntiæ, | Mirror of patience,
+ora pro nobis. | pray for us.
+Amátor paupertátis, | Lover of poverty,
+ora pro nobis. | pray for us.
+Exémplar opíficum, | Model of artisans,
+ora pro nobis. | pray for us.
+Domésticæ vitæ decus, | Glory of home life,
+ora pro nobis. | pray for us.
+Custos vírginum, | Guardian of virgins,
+ora pro nobis. | pray for us.
+Familiárum cólumen, | Pillar of families,
+ora pro nobis. | pray for us.
+Solátium miserórum, | Solace of the wretched,
+ora pro nobis. | pray for us.
+Spes ægrotántium, | Hope of the sick,
+ora pro nobis. | pray for us.
+Patróne moriéntium, | Patron of the dying,
+ora pro nobis. | pray for us.
+Terror dǽmonum, | Terror of demons,
+ora pro nobis. | pray for us.
+Protéctor sanctæ Ecclésiæ, | Protector of Holy Church,
+ora pro nobis. | pray for us.
+Agnus Dei, qui tollis peccáta mundi, | Lamb of God, Who takest away the sins of the world,
+parce nobis Dómine. | spare us, O Lord.
+Agnus Dei, qui tollis peccáta mundi, | Lamb of God, Who takest away the sins of the world,
+exáudi nos Dómine. | graciously hear us, O Lord.
+Agnus Dei, qui tollis peccáta mundi, | Lamb of God, Who takest away the sins of the world,
+miserére nobis. | have mercy on us.
+Constítuit eum dóminum domus suæ. | He made him the lord of his house,
+Et príncipem omnis possessiónis suæ. | And ruler of all his substance.
+Orémus. | Let us pray.
+Deus, qui ineffábili providéntia beátum Joseph sanctíssimæ Genitrícis tuæ sponsum elígere dignátus es: | O God, Who in Thine ineffable providence didst vouchsafe to choose blessed Joseph to be the spouse of Thy most holy Mother,
+præsta, quǽsumus; | grant, we beseech Thee,
+ut quem protectórem venerámur in terris, | that him whom we venerate as our protector on earth
+intercessórem habére mereámur in cælis: | we may be worthy to have for our intercessor in heaven:
+Qui vivis et regnas in sǽcula sæculórum. | Who livest and reignest world without end.
+Amen. | Amen.

@@ -1,0 +1,21 @@
+# Panis angelicus, mode IV, both stanzas and Amen. Latin from the score;
+# English plain and literal (the app has no prayer for it).
+noise -14
+gap 0.3
+merge 1.5
+
+Panis angélicus | The bread of Angels
+fit panis hóminum; | becomes the bread of men;
+Dat panis cǽlicus | the bread of heaven
+figúris términum: | puts an end to figures.
+O res mirábilis! | O wondrous thing!
+mandúcat Dóminum | there feeds upon the Lord
+Pauper, servus, et húmilis. | the poor man, the servant, and the lowly.
+Te trina Déitas | Thee, Godhead three
+únaque póscimus: | and one, we beseech:
+Sic nos tu vísita, | so do Thou visit us
+sicut te cólimus; | as we worship Thee;
+Per tuas sémitas | by Thy paths
+duc nos quo téndimus, | lead us whither we are bound,
+Ad lucem quam inhábitas. | to the light wherein Thou dwellest.
+Amen. | Amen.

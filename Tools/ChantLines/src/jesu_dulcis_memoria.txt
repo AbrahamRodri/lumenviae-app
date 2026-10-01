@@ -1,0 +1,28 @@
+# Jesu, dulcis memoria, its five stanzas and Amen. Latin from the score;
+# English plain and literal (the app has no prayer for it). The breath
+# before the last line of the first stanza is found only at a setting that
+# cuts the soft ends of other lines, so its last two lines stand as one.
+noise -14
+gap 0.3
+merge 1.5
+
+Jesu, dulcis memória, | Jesus, sweet remembrance,
+Dans vera cordis gáudia: | giving true joys to the heart:
+Sed super mel et ómnia Ejus dulcis præséntia. | but above honey and all things is His sweet presence.
+Nil cánitur suávius, | Nothing more delightful is sung,
+Nil audítur jucúndius, | nothing more pleasing is heard,
+Nil cogitátur dúlcius, | nothing sweeter is thought upon,
+Quam Jesus Dei Fílius. | than Jesus, the Son of God.
+Jesu, spes pœniténtibus, | Jesus, hope of the penitent,
+Quam pius es peténtibus! | how loving Thou art to those who ask!
+Quam bonus te quæréntibus! | How good to those who seek Thee!
+Sed quid inveniéntibus! | But what to those who find!
+Nec lingua valet dícere, | No tongue can tell it,
+Nec líttera exprímere: | nor any letter express it:
+Expértus potest crédere, | one who has known it can believe
+Quid sit Jesum dilígere. | what it is to love Jesus.
+Sis, Jesu, nostrum gáudium, | Be Thou, Jesus, our joy,
+Qui es futúrus prǽmium: | who art to be our reward:
+Sit nostra in te glória, | may our glory be in Thee
+Per cuncta semper sǽcula. | through all ages for ever.
+Amen. | Amen.

@@ -1,0 +1,103 @@
+{
+  "id": "ubi_caritas",
+  "part": null,
+  "method": "breaths by loudness (under -21 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 14 of 15 breaks heard",
+  "lines": [
+    {
+      "latin": "Ubi cáritas et amor, Deus ibi est.",
+      "english": "Where charity and love are, God is there.",
+      "start": 0.21,
+      "end": 9.54
+    },
+    {
+      "latin": "Congregávit nos in unum Christi amor.",
+      "english": "The love of Christ hath gathered us together into one.",
+      "start": 9.63,
+      "end": 18.24
+    },
+    {
+      "latin": "Exsultémus, et in ipso jucundémur.",
+      "english": "Let us rejoice, and in Him be glad.",
+      "start": 18.27,
+      "end": 27.2
+    },
+    {
+      "latin": "Timeámus, et amémus Deum vivum.",
+      "english": "Let us fear and let us love the living God.",
+      "start": 27.23,
+      "end": 35.46
+    },
+    {
+      "latin": "Et ex corde diligámus nos sincéro.",
+      "english": "And let us love one another with a sincere heart.",
+      "start": 35.79,
+      "end": 45.8
+    },
+    {
+      "latin": "Ubi cáritas et amor, Deus ibi est.",
+      "english": "Where charity and love are, God is there.",
+      "start": 46.85,
+      "end": 56.23
+    },
+    {
+      "latin": "Simul ergo cum in unum congregámur:",
+      "english": "When therefore we are gathered together into one,",
+      "start": 56.23,
+      "end": 65.13
+    },
+    {
+      "latin": "Ne nos mente dividámur caveámus.",
+      "english": "let us beware lest we be divided in mind.",
+      "start": 65.13,
+      "end": 73.88
+    },
+    {
+      "latin": "Cessent júrgia malígna, cessent lites.",
+      "english": "Let malicious quarrels cease, let strife cease.",
+      "start": 74.13,
+      "end": 82.4
+    },
+    {
+      "latin": "Et in médio nostri sit Christus Deus.",
+      "english": "And in the midst of us be Christ our God.",
+      "start": 82.85,
+      "end": 92.76
+    },
+    {
+      "latin": "Ubi cáritas et amor, Deus ibi est.",
+      "english": "Where charity and love are, God is there.",
+      "start": 94.07,
+      "end": 103.16
+    },
+    {
+      "latin": "Simul quoque cum beátis videámus",
+      "english": "Together also with the blessed may we see",
+      "start": 103.41,
+      "end": 112.12
+    },
+    {
+      "latin": "Gloriánter vultum tuum, Christe Deus:",
+      "english": "Thy face in glory, O Christ our God:",
+      "start": 112.13,
+      "end": 121.13
+    },
+    {
+      "latin": "Gáudium, quod est imménsum, atque probum:",
+      "english": "a joy that is boundless and good,",
+      "start": 121.13,
+      "end": 129.64
+    },
+    {
+      "latin": "Sǽcula per infiníta sæculórum.",
+      "english": "unto the endless ages of ages.",
+      "start": 129.75,
+      "end": 140.32
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 140.69,
+      "end": 147.5
+    }
+  ]
+}

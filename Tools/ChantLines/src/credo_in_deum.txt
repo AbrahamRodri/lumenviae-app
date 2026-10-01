@@ -1,0 +1,29 @@
+# Credo in Deum, the Apostles' Creed, as the Rosary sings it. Latin from the
+# score; English from the app's Apostles' Creed.
+noise -20
+gap 0.3
+merge 1.5
+
+Credo in Deum, | I believe in God,
+Patrem omnipoténtem, | the Father almighty,
+Creatórem cæli | Creator of heaven
+et terræ. | and earth,
+Et in Jesum Christum, | and in Jesus Christ,
+Fílium ejus únicum, | His only Son,
+Dóminum nostrum, | our Lord,
+qui concéptus est de Spíritu Sancto, | who was conceived by the Holy Spirit,
+natus ex María Vírgine, | born of the Virgin Mary,
+passus sub Póntio Piláto, crucifíxus, mórtuus, et sepúltus, | suffered under Pontius Pilate, was crucified, died and was buried;
+descéndit ad ínferos, | He descended into hell;
+tértia die | on the third day
+resurréxit a mórtuis, | He rose again from the dead;
+ascéndit ad cælos, sedet ad déxteram Dei Patris omnipoténtis, | He ascended into heaven, and is seated at the right hand of God the Father almighty;
+inde ventúrus est judicáre | from there He will come to judge
+vivos et mórtuos. | the living and the dead.
+Credo in Spíritum Sanctum, | I believe in the Holy Spirit,
+sanctam Ecclésiam cathólicam, | the holy catholic Church,
+sanctórum communiónem, | the communion of saints,
+remissiónem peccatórum, | the forgiveness of sins,
+carnis resurrectiónem, | the resurrection of the body,
+vitam ætérnam. | and life everlasting.
+Amen. | Amen.

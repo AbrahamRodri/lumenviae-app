@@ -1,0 +1,31 @@
+# Victimae paschali laudes, the Easter sequence, all eight verses (without
+# Credendum est, as the score prints it) and its Amen, Alleluia. Latin from
+# the score; English plain and literal. The cantor breathes at the score's
+# bars and at a few dotted notes between words: after reconciliávit and
+# mórtuus, and after vidísti, where Whisper hears "in via" alone and the
+# lengths agree.
+noise -14
+gap 0.2
+merge 1.5
+
+Víctimæ pascháli laudes | Praises to the Paschal Victim
+ímmolent Christiáni. | let Christians offer.
+Agnus redémit oves: | The Lamb hath redeemed the sheep;
+Christus ínnocens Patri | Christ, the innocent, unto the Father
+reconciliávit | hath reconciled
+peccatóres. | sinners.
+Mors et vita duéllo conflixére mirándo: | Death and life have contended in a wondrous combat;
+dux vitæ mórtuus, | the Prince of life, who died,
+regnat vivus. | reigns alive.
+Dic nobis María, quid vidísti | Tell us, Mary, what didst thou see
+in via? | on the way?
+Sepúlcrum Christi vivéntis, | The tomb of the living Christ,
+et glóriam vidi resurgéntis: | and I saw the glory of His rising;
+Angélicos testes, sudárium, et vestes. | the angelic witnesses, the napkin, and the garments.
+Surréxit Christus spes mea: | Christ my hope is risen;
+præcédet suos in Galilǽam. | He will go before His own into Galilee.
+Scimus Christum surrexísse | We know that Christ is risen
+a mórtuis vere: | truly from the dead;
+tu nobis, victor Rex, | on us, O victorious King,
+miserére. | have mercy.
+Amen. Allelúia. | Amen. Alleluia.

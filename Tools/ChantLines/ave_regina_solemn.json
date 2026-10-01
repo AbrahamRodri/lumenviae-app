@@ -1,0 +1,85 @@
+{
+  "id": "ave_regina_solemn",
+  "part": null,
+  "method": "breaths by loudness (under -17 dB for 0.25 s, phrases under 1.5 s merged) + text alignment; Whisper: 9 of 12 breaks heard",
+  "lines": [
+    {
+      "latin": "Ave Regína cælórum,",
+      "english": "Hail, O Queen of heaven,",
+      "start": 0.53,
+      "end": 12.4
+    },
+    {
+      "latin": "Ave Dómina Angelórum:",
+      "english": "hail, O Lady of the Angels;",
+      "start": 12.65,
+      "end": 24.3
+    },
+    {
+      "latin": "Salve radix, salve porta,",
+      "english": "hail, thou root, hail, thou gate,",
+      "start": 24.89,
+      "end": 34.36
+    },
+    {
+      "latin": "Ex qua mundo lux est orta:",
+      "english": "from whom unto the world a light hath arisen.",
+      "start": 34.47,
+      "end": 45.58
+    },
+    {
+      "latin": "Gaude Virgo gloriósa,",
+      "english": "Rejoice, O glorious Virgin,",
+      "start": 45.75,
+      "end": 53.23
+    },
+    {
+      "latin": "Super omnes speciósa:",
+      "english": "lovely beyond all others;",
+      "start": 53.23,
+      "end": 63.68
+    },
+    {
+      "latin": "Vale, o valde decóra, Et pro nobis Christum exóra.",
+      "english": "farewell, O most beautiful, and pray for us to Christ.",
+      "start": 64.05,
+      "end": 89.92
+    },
+    {
+      "latin": "Dignáre me laudáre te Virgo sacráta.",
+      "english": "Vouchsafe that I may praise thee, O sacred Virgin.",
+      "start": 91.09,
+      "end": 96.47
+    },
+    {
+      "latin": "Da mihi virtútem contra hostes tuos.",
+      "english": "Give me strength against thine enemies.",
+      "start": 96.47,
+      "end": 102.21
+    },
+    {
+      "latin": "Orémus.",
+      "english": "Let us pray.",
+      "start": 102.21,
+      "end": 105.23
+    },
+    {
+      "latin": "Concéde, miséricors Deus, fragilitáti nostræ præsídium: ut qui sanctæ Dei Genitrícis memóriam ágimus, intercessiónis ejus auxílio a nostris iniquitátibus resurgámus.",
+      "english": "Grant, O merciful God, to our weak natures Thy protection, that we who commemorate the holy Mother of God may, by the help of her intercession, rise again from our iniquities.",
+      "start": 105.23,
+      "end": 124.84
+    },
+    {
+      "latin": "Per eumdem Christum Dóminum nostrum.",
+      "english": "Through the same Christ our Lord.",
+      "start": 124.87,
+      "end": 130.39
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 130.39,
+      "end": 134.8
+    }
+  ]
+}

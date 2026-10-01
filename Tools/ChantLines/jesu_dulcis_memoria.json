@@ -1,0 +1,127 @@
+{
+  "id": "jesu_dulcis_memoria",
+  "part": null,
+  "method": "breaths by loudness (under -14 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 15 of 19 breaks heard",
+  "lines": [
+    {
+      "latin": "Jesu, dulcis memória,",
+      "english": "Jesus, sweet remembrance,",
+      "start": 0.35,
+      "end": 4.87
+    },
+    {
+      "latin": "Dans vera cordis gáudia:",
+      "english": "giving true joys to the heart:",
+      "start": 4.87,
+      "end": 9.71
+    },
+    {
+      "latin": "Sed super mel et ómnia Ejus dulcis præséntia.",
+      "english": "but above honey and all things is His sweet presence.",
+      "start": 9.71,
+      "end": 20.52
+    },
+    {
+      "latin": "Nil cánitur suávius,",
+      "english": "Nothing more delightful is sung,",
+      "start": 20.79,
+      "end": 25.33
+    },
+    {
+      "latin": "Nil audítur jucúndius,",
+      "english": "nothing more pleasing is heard,",
+      "start": 25.33,
+      "end": 30.15
+    },
+    {
+      "latin": "Nil cogitátur dúlcius,",
+      "english": "nothing sweeter is thought upon,",
+      "start": 30.15,
+      "end": 35.53
+    },
+    {
+      "latin": "Quam Jesus Dei Fílius.",
+      "english": "than Jesus, the Son of God.",
+      "start": 35.53,
+      "end": 40.74
+    },
+    {
+      "latin": "Jesu, spes pœniténtibus,",
+      "english": "Jesus, hope of the penitent,",
+      "start": 41.67,
+      "end": 46.49
+    },
+    {
+      "latin": "Quam pius es peténtibus!",
+      "english": "how loving Thou art to those who ask!",
+      "start": 46.49,
+      "end": 51.47
+    },
+    {
+      "latin": "Quam bonus te quæréntibus!",
+      "english": "How good to those who seek Thee!",
+      "start": 51.47,
+      "end": 57.05
+    },
+    {
+      "latin": "Sed quid inveniéntibus!",
+      "english": "But what to those who find!",
+      "start": 57.05,
+      "end": 61.86
+    },
+    {
+      "latin": "Nec lingua valet dícere,",
+      "english": "No tongue can tell it,",
+      "start": 63.01,
+      "end": 67.73
+    },
+    {
+      "latin": "Nec líttera exprímere:",
+      "english": "nor any letter express it:",
+      "start": 67.73,
+      "end": 72.79
+    },
+    {
+      "latin": "Expértus potest crédere,",
+      "english": "one who has known it can believe",
+      "start": 72.79,
+      "end": 77.71
+    },
+    {
+      "latin": "Quid sit Jesum dilígere.",
+      "english": "what it is to love Jesus.",
+      "start": 77.71,
+      "end": 83.62
+    },
+    {
+      "latin": "Sis, Jesu, nostrum gáudium,",
+      "english": "Be Thou, Jesus, our joy,",
+      "start": 84.39,
+      "end": 89.01
+    },
+    {
+      "latin": "Qui es futúrus prǽmium:",
+      "english": "who art to be our reward:",
+      "start": 89.01,
+      "end": 94.01
+    },
+    {
+      "latin": "Sit nostra in te glória,",
+      "english": "may our glory be in Thee",
+      "start": 94.01,
+      "end": 99.35
+    },
+    {
+      "latin": "Per cuncta semper sǽcula.",
+      "english": "through all ages for ever.",
+      "start": 99.35,
+      "end": 105.44
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 105.57,
+      "end": 111.34
+    }
+  ]
+}

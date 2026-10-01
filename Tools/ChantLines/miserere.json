@@ -1,0 +1,259 @@
+{
+  "id": "miserere",
+  "part": null,
+  "method": "breaths by loudness (under -14 dB for 0.2 s, phrases under 1.5 s merged) + text alignment; Whisper: 35 of 41 breaks heard",
+  "lines": [
+    {
+      "latin": "Miserére mei Deus,",
+      "english": "Have mercy on me, O God,",
+      "start": 0.43,
+      "end": 5.85
+    },
+    {
+      "latin": "secúndum magnam misericórdiam tuam.",
+      "english": "according to Thy great mercy.",
+      "start": 5.85,
+      "end": 13.75
+    },
+    {
+      "latin": "Et secúndum multitúdinem miseratiónum tuárum,",
+      "english": "And according to the multitude of Thy tender mercies",
+      "start": 13.75,
+      "end": 21.23
+    },
+    {
+      "latin": "dele iniquitátem meam.",
+      "english": "blot out my iniquity.",
+      "start": 21.23,
+      "end": 28.14
+    },
+    {
+      "latin": "Amplius lava me ab iniquitáte mea:",
+      "english": "Wash me yet more from my iniquity,",
+      "start": 28.15,
+      "end": 35.09
+    },
+    {
+      "latin": "et a peccáto meo munda me.",
+      "english": "and cleanse me from my sin.",
+      "start": 35.09,
+      "end": 41.59
+    },
+    {
+      "latin": "Quóniam iniquitátem meam ego cognósco:",
+      "english": "For I know my iniquity,",
+      "start": 41.59,
+      "end": 48.37
+    },
+    {
+      "latin": "et peccátum meum contra me est semper.",
+      "english": "and my sin is always before me.",
+      "start": 48.37,
+      "end": 56.08
+    },
+    {
+      "latin": "Tibi soli peccávi, et malum coram te feci:",
+      "english": "To Thee only have I sinned, and have done evil before Thee:",
+      "start": 56.11,
+      "end": 63.37
+    },
+    {
+      "latin": "ut justificéris in sermónibus tuis, et vincas cum judicáris.",
+      "english": "that Thou mayst be justified in Thy words, and mayst overcome when Thou art judged.",
+      "start": 63.37,
+      "end": 72.99
+    },
+    {
+      "latin": "Ecce enim in iniquitátibus concéptus sum:",
+      "english": "For behold I was conceived in iniquities:",
+      "start": 72.99,
+      "end": 80.11
+    },
+    {
+      "latin": "et in peccátis concépit me mater mea.",
+      "english": "and in sins did my mother conceive me.",
+      "start": 80.11,
+      "end": 87.93
+    },
+    {
+      "latin": "Ecce enim veritátem dilexísti:",
+      "english": "For behold Thou hast loved truth:",
+      "start": 87.93,
+      "end": 94.87
+    },
+    {
+      "latin": "incérta et occúlta sapiéntiæ tuæ manifestásti mihi.",
+      "english": "the uncertain and hidden things of Thy wisdom Thou hast made manifest to me.",
+      "start": 94.87,
+      "end": 103.78
+    },
+    {
+      "latin": "Aspérges me hyssópo, et mundábor:",
+      "english": "Thou shalt sprinkle me with hyssop, and I shall be cleansed:",
+      "start": 104.99,
+      "end": 111.47
+    },
+    {
+      "latin": "lavábis me, et super nivem dealbábor.",
+      "english": "Thou shalt wash me, and I shall be made whiter than snow.",
+      "start": 111.47,
+      "end": 118.66
+    },
+    {
+      "latin": "Audítui meo dabis gáudium et lætítiam:",
+      "english": "To my hearing Thou shalt give joy and gladness:",
+      "start": 119.23,
+      "end": 126.59
+    },
+    {
+      "latin": "et exsultábunt ossa humiliáta.",
+      "english": "and the bones that have been humbled shall rejoice.",
+      "start": 126.59,
+      "end": 133.97
+    },
+    {
+      "latin": "Avérte fáciem tuam a peccátis meis:",
+      "english": "Turn away Thy face from my sins,",
+      "start": 133.97,
+      "end": 140.85
+    },
+    {
+      "latin": "et omnes iniquitátes meas dele.",
+      "english": "and blot out all my iniquities.",
+      "start": 140.85,
+      "end": 148.06
+    },
+    {
+      "latin": "Cor mundum crea in me, Deus:",
+      "english": "Create a clean heart in me, O God:",
+      "start": 148.45,
+      "end": 153.99
+    },
+    {
+      "latin": "et spíritum rectum ínnova in viscéribus meis.",
+      "english": "and renew a right spirit within my bowels.",
+      "start": 153.99,
+      "end": 162.2
+    },
+    {
+      "latin": "Ne projícias me a fácie tua:",
+      "english": "Cast me not away from Thy face:",
+      "start": 162.51,
+      "end": 169.17
+    },
+    {
+      "latin": "et spíritum sanctum tuum ne áuferas a me.",
+      "english": "and take not Thy holy spirit from me.",
+      "start": 169.17,
+      "end": 177.67
+    },
+    {
+      "latin": "Redde mihi lætítiam salutáris tui:",
+      "english": "Restore unto me the joy of Thy salvation,",
+      "start": 177.67,
+      "end": 184.83
+    },
+    {
+      "latin": "et spíritu principáli confírma me.",
+      "english": "and strengthen me with a perfect spirit.",
+      "start": 184.83,
+      "end": 192.38
+    },
+    {
+      "latin": "Docébo iníquos vias tuas:",
+      "english": "I will teach the unjust Thy ways:",
+      "start": 192.65,
+      "end": 198.93
+    },
+    {
+      "latin": "et ímpii ad te converténtur.",
+      "english": "and the wicked shall be converted to Thee.",
+      "start": 198.93,
+      "end": 205.56
+    },
+    {
+      "latin": "Líbera me de sanguínibus, Deus, Deus salútis meæ:",
+      "english": "Deliver me from blood, O God, Thou God of my salvation:",
+      "start": 206.01,
+      "end": 213.93
+    },
+    {
+      "latin": "et exsultábit lingua mea justítiam tuam.",
+      "english": "and my tongue shall extol Thy justice.",
+      "start": 213.93,
+      "end": 222.28
+    },
+    {
+      "latin": "Dómine, lábia mea apéries:",
+      "english": "O Lord, Thou wilt open my lips:",
+      "start": 222.53,
+      "end": 228.99
+    },
+    {
+      "latin": "et os meum annuntiábit laudem tuam.",
+      "english": "and my mouth shall declare Thy praise.",
+      "start": 228.99,
+      "end": 236.79
+    },
+    {
+      "latin": "Quóniam si voluísses sacrifícium, dedíssem útique:",
+      "english": "For if Thou hadst desired sacrifice, I would indeed have given it:",
+      "start": 236.79,
+      "end": 245.01
+    },
+    {
+      "latin": "holocáustis non delectáberis.",
+      "english": "with burnt offerings Thou wilt not be delighted.",
+      "start": 245.01,
+      "end": 251.46
+    },
+    {
+      "latin": "Sacrifícium Deo spíritus contribulátus:",
+      "english": "A sacrifice to God is an afflicted spirit:",
+      "start": 251.95,
+      "end": 259.57
+    },
+    {
+      "latin": "cor contrítum et humiliátum, Deus, non despícies.",
+      "english": "a contrite and humbled heart, O God, Thou wilt not despise.",
+      "start": 259.57,
+      "end": 267.76
+    },
+    {
+      "latin": "Benígne fac, Dómine, in bona voluntáte tua Sion:",
+      "english": "Deal favourably, O Lord, in Thy good will with Sion:",
+      "start": 268.23,
+      "end": 276.73
+    },
+    {
+      "latin": "ut ædificéntur muri Jerúsalem.",
+      "english": "that the walls of Jerusalem may be built up.",
+      "start": 276.73,
+      "end": 284.42
+    },
+    {
+      "latin": "Tunc acceptábis sacrifícium justítiæ, oblatiónes, et holocáusta:",
+      "english": "Then shalt Thou accept the sacrifice of justice, oblations and whole burnt offerings:",
+      "start": 284.83,
+      "end": 294.79
+    },
+    {
+      "latin": "tunc impónent super altáre tuum vítulos.",
+      "english": "then shall they lay calves upon Thy altar.",
+      "start": 294.79,
+      "end": 302.62
+    },
+    {
+      "latin": "Miserére mei Deus:",
+      "english": "Have mercy on me, O God:",
+      "start": 303.37,
+      "end": 309.11
+    },
+    {
+      "latin": "miserére mei.",
+      "english": "have mercy on me.",
+      "start": 309.11,
+      "end": 314.62
+    }
+  ]
+}

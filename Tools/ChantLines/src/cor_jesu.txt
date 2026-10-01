@@ -1,0 +1,12 @@
+# Cor Jesu sacratissimum, sung three times as the score directs (ter).
+# Latin from the score; English plain (the app has no prayer for it).
+noise -20
+gap 0.3
+merge 1.5
+
+Cor Jesu sacratíssimum, | Most Sacred Heart of Jesus,
+miserére nobis. | have mercy on us.
+Cor Jesu sacratíssimum, | Most Sacred Heart of Jesus,
+miserére nobis. | have mercy on us.
+Cor Jesu sacratíssimum, | Most Sacred Heart of Jesus,
+miserére nobis. | have mercy on us.

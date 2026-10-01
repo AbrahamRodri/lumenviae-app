@@ -1,0 +1,85 @@
+{
+  "id": "regina_caeli_solemn",
+  "part": null,
+  "method": "breaths by loudness (under -20 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 10 of 12 breaks heard",
+  "lines": [
+    {
+      "latin": "Regína cæli lætáre,",
+      "english": "O Queen of heaven, rejoice,",
+      "start": 0.41,
+      "end": 12.49
+    },
+    {
+      "latin": "allelúia:",
+      "english": "alleluia.",
+      "start": 12.49,
+      "end": 16.72
+    },
+    {
+      "latin": "Quia quem meruísti portáre,",
+      "english": "For He whom thou didst merit to bear,",
+      "start": 16.87,
+      "end": 39.06
+    },
+    {
+      "latin": "allelúia:",
+      "english": "alleluia,",
+      "start": 39.09,
+      "end": 46.36
+    },
+    {
+      "latin": "Resurréxit, sicut dixit, allelúia:",
+      "english": "hath risen, as He said, alleluia.",
+      "start": 46.91,
+      "end": 61.02
+    },
+    {
+      "latin": "Ora pro nobis Deum,",
+      "english": "Pray for us to God,",
+      "start": 61.13,
+      "end": 68.38
+    },
+    {
+      "latin": "allelúia.",
+      "english": "alleluia.",
+      "start": 68.55,
+      "end": 93.94
+    },
+    {
+      "latin": "Gaude et lætáre, Virgo María, allelúia.",
+      "english": "Rejoice and be glad, O Virgin Mary, alleluia.",
+      "start": 95.61,
+      "end": 101.21
+    },
+    {
+      "latin": "Quia surréxit Dóminus vere, allelúia.",
+      "english": "For the Lord is truly risen, alleluia.",
+      "start": 101.21,
+      "end": 107.01
+    },
+    {
+      "latin": "Orémus. Deus, qui per resurrectiónem Fílii tui Dómini nostri Jesu Christi mundum lætificáre dignátus es:",
+      "english": "Let us pray. O God, who by the Resurrection of Thy Son, our Lord Jesus Christ, didst vouchsafe to give joy to the world;",
+      "start": 107.01,
+      "end": 118.55
+    },
+    {
+      "latin": "præsta, quǽsumus; ut per ejus Genitrícem Vírginem Maríam perpétuæ capiámus gáudia vitæ.",
+      "english": "grant, we beseech Thee, that through His Mother, the Virgin Mary, we may obtain the joys of everlasting life.",
+      "start": 118.55,
+      "end": 130.58
+    },
+    {
+      "latin": "Per eumdem Christum Dóminum nostrum.",
+      "english": "Through the same Christ our Lord.",
+      "start": 130.69,
+      "end": 136.56
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 136.61,
+      "end": 141.2
+    }
+  ]
+}

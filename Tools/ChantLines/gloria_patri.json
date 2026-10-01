@@ -1,0 +1,25 @@
+{
+  "id": "gloria_patri",
+  "part": null,
+  "method": "breaths by loudness (under -20 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 1 of 2 breaks heard",
+  "lines": [
+    {
+      "latin": "Glória Patri, et Fílio, et Spirítui Sancto.",
+      "english": "Glory be to the Father, and to the Son, and to the Holy Spirit.",
+      "start": 0.35,
+      "end": 11.54
+    },
+    {
+      "latin": "Sicut erat in princípio, et nunc, et semper,",
+      "english": "As it was in the beginning, is now, and ever shall be,",
+      "start": 11.89,
+      "end": 20.15
+    },
+    {
+      "latin": "et in sǽcula sæculórum. Amen.",
+      "english": "world without end. Amen.",
+      "start": 20.15,
+      "end": 27.02
+    }
+  ]
+}

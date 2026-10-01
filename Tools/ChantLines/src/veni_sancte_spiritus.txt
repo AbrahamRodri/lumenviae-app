@@ -1,0 +1,36 @@
+# Veni Sancte Spiritus, the sequence of Pentecost: its ten stanzas, Amen
+# and Alleluia. Latin from the score; English from the Prayer Book
+# (veni_sancte_spiritus). In the third, fourth, fifth, eighth, ninth and
+# tenth stanzas the breath after the first line is too shallow in this
+# reverberant recording to be found without cutting off the soft last
+# syllables of other lines, so the first two lines of each stand as one;
+# so do Amen and Alleluia.
+noise -16
+gap 0.2
+merge 1.5
+
+Veni Sancte Spíritus, | Come, Holy Spirit,
+Et emítte cǽlitus | and send forth from heaven
+Lucis tuæ rádium. | the ray of Thy light.
+Veni pater páuperum, | Come, Father of the poor,
+Veni dator múnerum, | come, Giver of gifts,
+Veni lumen córdium. | come, Light of hearts.
+Consolátor óptime, Dulcis hospes ánimæ, | Best of comforters, sweet Guest of the soul,
+Dulce refrigérium. | sweet refreshment.
+In labóre réquies, In æstu tempéries, | In labour, rest; in heat, coolness;
+In fletu solátium. | in weeping, solace.
+O lux beatíssima, Reple cordis íntima | O most blessed Light, fill the inmost heart
+Tuórum fidélium. | of Thy faithful.
+Sine tuo númine, | Without Thy divine power
+Nihil est in hómine, | there is nothing in man,
+Nihil est innóxium. | nothing that is without harm.
+Lava quod est sórdidum, | Wash what is soiled,
+Riga quod est áridum, | water what is dry,
+Sana quod est sáucium. | heal what is wounded.
+Flecte quod est rígidum, Fove quod est frígidum, | Bend what is stiff, warm what is cold,
+Rege quod est dévium. | guide what has strayed.
+Da tuis fidélibus, In te confidéntibus, | Give to Thy faithful, who trust in Thee,
+Sacrum septenárium. | the sacred sevenfold gift.
+Da virtútis méritum, Da salútis éxitum, | Give the reward of virtue, give a saving end,
+Da perénne gáudium. | give everlasting joy.
+Amen. Allelúia. | Amen. Alleluia.

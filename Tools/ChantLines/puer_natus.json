@@ -1,0 +1,343 @@
+{
+  "id": "puer_natus",
+  "part": null,
+  "method": "breaths by loudness (under -20 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 50 of 55 breaks heard",
+  "lines": [
+    {
+      "latin": "Puer natus in Béthlehem, allelúia:",
+      "english": "A Child is born in Bethlehem, alleluia:",
+      "start": 0.31,
+      "end": 7.61
+    },
+    {
+      "latin": "Unde gaudet Jerúsalem, allelúia, allelúia.",
+      "english": "wherefore Jerusalem rejoices, alleluia, alleluia.",
+      "start": 7.61,
+      "end": 16.72
+    },
+    {
+      "latin": "In cordis júbilo, Christum natum adorémus,",
+      "english": "With joy of heart let us adore Christ newly born,",
+      "start": 17.59,
+      "end": 25.9
+    },
+    {
+      "latin": "Cum novo cántico.",
+      "english": "with a new song.",
+      "start": 26.13,
+      "end": 30.3
+    },
+    {
+      "latin": "Assúmpsit carnem Fílius, allelúia,",
+      "english": "The Son hath taken flesh, alleluia,",
+      "start": 32.13,
+      "end": 39.25
+    },
+    {
+      "latin": "Dei Patris altíssimus, allelúia, allelúia.",
+      "english": "of God the Father, the Most High, alleluia, alleluia.",
+      "start": 39.25,
+      "end": 48.32
+    },
+    {
+      "latin": "In cordis júbilo, Christum natum adorémus,",
+      "english": "With joy of heart let us adore Christ newly born,",
+      "start": 48.99,
+      "end": 57.2
+    },
+    {
+      "latin": "Cum novo cántico.",
+      "english": "with a new song.",
+      "start": 57.27,
+      "end": 62.02
+    },
+    {
+      "latin": "Per Gabriélem núntium, allelúia,",
+      "english": "Through Gabriel the messenger, alleluia,",
+      "start": 63.19,
+      "end": 70.37
+    },
+    {
+      "latin": "Virgo concépit Fílium, allelúia, allelúia.",
+      "english": "the Virgin conceived a Son, alleluia, alleluia.",
+      "start": 70.37,
+      "end": 79.44
+    },
+    {
+      "latin": "In cordis júbilo, Christum natum adorémus,",
+      "english": "With joy of heart let us adore Christ newly born,",
+      "start": 80.37,
+      "end": 88.3
+    },
+    {
+      "latin": "Cum novo cántico.",
+      "english": "with a new song.",
+      "start": 88.67,
+      "end": 93.36
+    },
+    {
+      "latin": "Tamquam sponsus de thálamo, allelúia,",
+      "english": "As a bridegroom from his chamber, alleluia,",
+      "start": 94.85,
+      "end": 101.78
+    },
+    {
+      "latin": "Procéssit Matris útero, allelúia, allelúia.",
+      "english": "He came forth from His Mother's womb, alleluia, alleluia.",
+      "start": 101.97,
+      "end": 110.38
+    },
+    {
+      "latin": "In cordis júbilo, Christum natum adorémus,",
+      "english": "With joy of heart let us adore Christ newly born,",
+      "start": 111.59,
+      "end": 119.9
+    },
+    {
+      "latin": "Cum novo cántico.",
+      "english": "with a new song.",
+      "start": 119.93,
+      "end": 124.56
+    },
+    {
+      "latin": "Hic jacet in præsépio, allelúia:",
+      "english": "Here He lies in a manger, alleluia:",
+      "start": 125.97,
+      "end": 133.03
+    },
+    {
+      "latin": "Qui regnat sine término, allelúia, allelúia.",
+      "english": "Who reigns without end, alleluia, alleluia.",
+      "start": 133.03,
+      "end": 141.7
+    },
+    {
+      "latin": "In cordis júbilo, Christum natum adorémus,",
+      "english": "With joy of heart let us adore Christ newly born,",
+      "start": 142.63,
+      "end": 150.82
+    },
+    {
+      "latin": "Cum novo cántico.",
+      "english": "with a new song.",
+      "start": 150.99,
+      "end": 155.24
+    },
+    {
+      "latin": "Et Ángelus pastóribus, allelúia,",
+      "english": "And the Angel to the shepherds, alleluia,",
+      "start": 156.99,
+      "end": 164.01
+    },
+    {
+      "latin": "Revélat quod sit Dóminus, allelúia, allelúia.",
+      "english": "reveals that He is the Lord, alleluia, alleluia.",
+      "start": 164.01,
+      "end": 172.92
+    },
+    {
+      "latin": "In cordis júbilo, Christum natum adorémus,",
+      "english": "With joy of heart let us adore Christ newly born,",
+      "start": 173.67,
+      "end": 182.15
+    },
+    {
+      "latin": "Cum novo cántico.",
+      "english": "with a new song.",
+      "start": 182.15,
+      "end": 186.44
+    },
+    {
+      "latin": "Reges de Saba véniunt, allelúia,",
+      "english": "Kings come from Saba, alleluia,",
+      "start": 188.01,
+      "end": 195.31
+    },
+    {
+      "latin": "Aurum, thus, myrrham ófferunt, allelúia, allelúia.",
+      "english": "gold, frankincense, myrrh they offer, alleluia, alleluia.",
+      "start": 195.31,
+      "end": 204.04
+    },
+    {
+      "latin": "In cordis júbilo, Christum natum adorémus,",
+      "english": "With joy of heart let us adore Christ newly born,",
+      "start": 205.35,
+      "end": 213.72
+    },
+    {
+      "latin": "Cum novo cántico.",
+      "english": "with a new song.",
+      "start": 213.93,
+      "end": 217.96
+    },
+    {
+      "latin": "Intrántes domum ínvicem, allelúia,",
+      "english": "Entering the house one after another, alleluia,",
+      "start": 219.95,
+      "end": 227.17
+    },
+    {
+      "latin": "Novum salútant Príncipem, allelúia, allelúia.",
+      "english": "they greet the new Prince, alleluia, alleluia.",
+      "start": 227.17,
+      "end": 236.44
+    },
+    {
+      "latin": "In cordis júbilo, Christum natum adorémus,",
+      "english": "With joy of heart let us adore Christ newly born,",
+      "start": 237.15,
+      "end": 245.57
+    },
+    {
+      "latin": "Cum novo cántico.",
+      "english": "with a new song.",
+      "start": 245.57,
+      "end": 250.98
+    },
+    {
+      "latin": "De Matre natus Vírgine, allelúia,",
+      "english": "Born of a Virgin Mother, alleluia,",
+      "start": 251.69,
+      "end": 258.66
+    },
+    {
+      "latin": "Qui lumen est de lúmine, allelúia, allelúia.",
+      "english": "He Who is Light of Light, alleluia, alleluia.",
+      "start": 258.89,
+      "end": 267.9
+    },
+    {
+      "latin": "In cordis júbilo, Christum natum adorémus,",
+      "english": "With joy of heart let us adore Christ newly born,",
+      "start": 268.45,
+      "end": 276.99
+    },
+    {
+      "latin": "Cum novo cántico.",
+      "english": "with a new song.",
+      "start": 276.99,
+      "end": 281.52
+    },
+    {
+      "latin": "Sine serpéntis vúlnere, allelúia,",
+      "english": "Without the serpent's wound, alleluia,",
+      "start": 282.85,
+      "end": 290.09
+    },
+    {
+      "latin": "De nostro venit sánguine, allelúia, allelúia.",
+      "english": "He came of our blood, alleluia, alleluia.",
+      "start": 290.09,
+      "end": 299.34
+    },
+    {
+      "latin": "In cordis júbilo, Christum natum adorémus,",
+      "english": "With joy of heart let us adore Christ newly born,",
+      "start": 299.81,
+      "end": 308.13
+    },
+    {
+      "latin": "Cum novo cántico.",
+      "english": "with a new song.",
+      "start": 308.13,
+      "end": 312.44
+    },
+    {
+      "latin": "In carne nobis símilis, allelúia,",
+      "english": "Like unto us in the flesh, alleluia,",
+      "start": 314.07,
+      "end": 321.01
+    },
+    {
+      "latin": "Peccáto sed dissímilis, allelúia, allelúia.",
+      "english": "but unlike us in sin, alleluia, alleluia.",
+      "start": 321.01,
+      "end": 329.54
+    },
+    {
+      "latin": "In cordis júbilo, Christum natum adorémus,",
+      "english": "With joy of heart let us adore Christ newly born,",
+      "start": 330.51,
+      "end": 338.48
+    },
+    {
+      "latin": "Cum novo cántico.",
+      "english": "with a new song.",
+      "start": 338.81,
+      "end": 343.08
+    },
+    {
+      "latin": "Ut rédderet nos hómines, allelúia,",
+      "english": "That He might make us men, alleluia,",
+      "start": 344.77,
+      "end": 351.64
+    },
+    {
+      "latin": "Deo et sibi símiles, allelúia, allelúia.",
+      "english": "like unto God and unto Himself, alleluia, alleluia.",
+      "start": 351.67,
+      "end": 360.36
+    },
+    {
+      "latin": "In cordis júbilo, Christum natum adorémus,",
+      "english": "With joy of heart let us adore Christ newly born,",
+      "start": 361.19,
+      "end": 369.42
+    },
+    {
+      "latin": "Cum novo cántico.",
+      "english": "with a new song.",
+      "start": 369.75,
+      "end": 373.96
+    },
+    {
+      "latin": "In hoc natáli gáudio, allelúia:",
+      "english": "In this joy of His birth, alleluia:",
+      "start": 375.81,
+      "end": 383.07
+    },
+    {
+      "latin": "Benedicámus Dómino, allelúia, allelúia.",
+      "english": "let us bless the Lord, alleluia, alleluia.",
+      "start": 383.07,
+      "end": 391.68
+    },
+    {
+      "latin": "In cordis júbilo, Christum natum adorémus,",
+      "english": "With joy of heart let us adore Christ newly born,",
+      "start": 392.71,
+      "end": 400.74
+    },
+    {
+      "latin": "Cum novo cántico.",
+      "english": "with a new song.",
+      "start": 401.09,
+      "end": 405.32
+    },
+    {
+      "latin": "Laudétur sancta Trínitas, allelúia,",
+      "english": "Praised be the Holy Trinity, alleluia,",
+      "start": 407.05,
+      "end": 414.41
+    },
+    {
+      "latin": "Deo dicámus grátias, allelúia, allelúia.",
+      "english": "let us give thanks to God, alleluia, alleluia.",
+      "start": 414.41,
+      "end": 423.58
+    },
+    {
+      "latin": "In cordis júbilo, Christum natum adorémus,",
+      "english": "With joy of heart let us adore Christ newly born,",
+      "start": 424.35,
+      "end": 432.46
+    },
+    {
+      "latin": "Cum novo cántico.",
+      "english": "with a new song.",
+      "start": 432.85,
+      "end": 438.78
+    }
+  ]
+}

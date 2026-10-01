@@ -1,0 +1,31 @@
+# Te Joseph celebrent, the Vespers hymn of St Joseph: its five stanzas and
+# Amen. Latin from the score; English plain and literal (the app has no
+# prayer for it). The cantor breathes before the last notes of the first
+# line of the second stanza (Whisper hears the whole line before it), so
+# that line runs over both phrases.
+noise -15
+gap 0.5
+merge 1.5
+
+Te Joseph célebrent ágmina cǽlitum: | Let the hosts of heaven celebrate thee, Joseph;
+Te cuncti résonent christíadum chori, | let all the choirs of Christians resound with thy praise,
+Qui clarus méritis, junctus es ínclytæ | who, glorious in merit, wast joined
+Casto fœdere Vírgini. | in chaste wedlock to the renowned Virgin.
+Almo cum túmidam gérmine cónjugem | When thy spouse was great with the holy Child,
+~
+Admírans, dúbio tángeris ánxius, | marvelling, thou art troubled with anxious doubt;
+Afflátu súperi Fláminis Ángelus | by the breath of the Spirit from on high, an Angel
+Concéptum púerum docet. | teacheth that the Child was conceived.
+Tu natum Dóminum stringis, ad éxteras | Thou embracest the new-born Lord; to the far lands
+Ægýpti prófugum tu séqueris plagas: | of Egypt thou followest Him, a fugitive;
+Amíssum Sólymis quǽris, et ínvenis, | lost in Jerusalem, thou seekest Him, and findest Him,
+Miscens gáudia flétibus. | mingling joys with tears.
+Post mortem réliquos sors pia cónsecrat, | Others a holy lot doth consecrate after death,
+Palmámque eméritos glória súscipit: | and glory receives them when they have won the palm;
+Tu vivens, Súperis par, frúeris Deo, | thou, while living, like to the Saints above, enjoyest God,
+Mira sorte beátior. | more blessed by a wondrous lot.
+Nobis, summa Trias, parce precántibus: | Spare us who pray to Thee, O Trinity most high;
+Da Joseph méritis sídera scándere, | grant us by the merits of Joseph to climb to the stars,
+Ut tandem líceat nos tibi pérpetim | that at length it may be given us for ever
+Gratum prómere cánticum. | to pour forth to Thee a pleasing song.
+Amen. | Amen.

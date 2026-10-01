@@ -1,0 +1,22 @@
+# Sancte Michael archangele, Leo XIII's prayer to St Michael, sung (no
+# Amen). Latin from the score; English from the app's Prayer to Saint
+# Michael (st_michael_prayer), its clauses put in the Latin's order so each
+# line says what its Latin says, and its Amen, which is not sung, left off.
+# The cantor breathes after "spíritus", inside "Satan and all the evil
+# spirits", which the English cannot part, so that line runs over both.
+noise -16
+gap 0.22
+merge 1.5
+
+Sancte Míchaël archángele, defénde nos in prǽlio; | Saint Michael the Archangel, defend us in battle.
+contra nequítiam et insídias diáboli | Against the wickedness and snares of the devil
+esto præsídium. | be our safeguard.
+Ímperet illi Deus, | May God rebuke him,
+súpplices deprecámur: | we humbly pray;
+tuque princeps milítiæ cœléstis, | and do thou, O Prince of the heavenly hosts,
+Sátanam aliósque spíritus malígnos, | Satan and all the evil spirits,
+~
+qui ad perditiónem animárum | who, seeking the ruin of souls,
+pervagántur in mundo, | prowl about the world,
+divína virtúte | by the power of God,
+in inférnum detrúde. | cast into hell.

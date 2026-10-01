@@ -1,0 +1,211 @@
+{
+  "id": "angelus",
+  "part": null,
+  "method": "breaths by loudness (under -20 dB for 0.2 s, phrases under 1.5 s merged) + text alignment; Whisper: 19 of 33 breaks heard",
+  "lines": [
+    {
+      "latin": "Ángelus Dómini nuntiávit Maríæ.",
+      "english": "The Angel of the Lord declared unto Mary.",
+      "start": 0.15,
+      "end": 8.1
+    },
+    {
+      "latin": "Et concépit de Spíritu Sancto.",
+      "english": "And she conceived of the Holy Ghost.",
+      "start": 8.23,
+      "end": 16.14
+    },
+    {
+      "latin": "Ave María, grátia plena, Dóminus tecum; benedícta tu in muliéribus, et benedíctus fructus ventris tui, Jesus.",
+      "english": "Hail Mary, full of grace, the Lord is with thee; blessed art thou among women, and blessed is the fruit of thy womb, Jesus.",
+      "start": 16.79,
+      "end": 29.94
+    },
+    {
+      "latin": "Sancta María, Mater Dei, ora pro nobis peccatóribus, nunc et in hora mortis nostræ. Amen.",
+      "english": "Holy Mary, Mother of God, pray for us sinners, now and at the hour of our death. Amen.",
+      "start": 30.19,
+      "end": 41.84
+    },
+    {
+      "latin": "Ecce ancílla Dómini.",
+      "english": "Behold the handmaid of the Lord.",
+      "start": 43.09,
+      "end": 49.81
+    },
+    {
+      "latin": "Fiat mihi secúndum verbum tuum.",
+      "english": "Be it done unto me according to thy word.",
+      "start": 49.83,
+      "end": 57.78
+    },
+    {
+      "latin": "Ave María, grátia plena, Dóminus tecum; benedícta tu in muliéribus,",
+      "english": "Hail Mary, full of grace, the Lord is with thee; blessed art thou among women,",
+      "start": 58.93,
+      "end": 66.75
+    },
+    {
+      "latin": "et benedíctus fructus ventris tui, Jesus.",
+      "english": "and blessed is the fruit of thy womb, Jesus.",
+      "start": 66.75,
+      "end": 72.24
+    },
+    {
+      "latin": "Sancta María, Mater Dei, ora pro nobis peccatóribus,",
+      "english": "Holy Mary, Mother of God, pray for us sinners,",
+      "start": 72.57,
+      "end": 79.21
+    },
+    {
+      "latin": "nunc et in hora mortis nostræ. Amen.",
+      "english": "now and at the hour of our death. Amen.",
+      "start": 79.21,
+      "end": 85.4
+    },
+    {
+      "latin": "Et Verbum caro factum est.",
+      "english": "And the Word was made flesh.",
+      "start": 86.47,
+      "end": 93.7
+    },
+    {
+      "latin": "Et habitávit in nobis.",
+      "english": "And dwelt among us.",
+      "start": 93.89,
+      "end": 100.28
+    },
+    {
+      "latin": "Ave María, grátia plena, Dóminus tecum; benedícta tu in muliéribus,",
+      "english": "Hail Mary, full of grace, the Lord is with thee; blessed art thou among women,",
+      "start": 101.77,
+      "end": 109.61
+    },
+    {
+      "latin": "et benedíctus fructus ventris tui, Jesus.",
+      "english": "and blessed is the fruit of thy womb, Jesus.",
+      "start": 109.61,
+      "end": 115.32
+    },
+    {
+      "latin": "Sancta María, Mater Dei, ora pro nobis peccatóribus,",
+      "english": "Holy Mary, Mother of God, pray for us sinners,",
+      "start": 115.41,
+      "end": 121.85
+    },
+    {
+      "latin": "nunc et in hora mortis nostræ.",
+      "english": "now and at the hour of our death.",
+      "start": 121.85,
+      "end": 125.09
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 125.09,
+      "end": 128.1
+    },
+    {
+      "latin": "Ora pro nobis, sancta Dei Génitrix.",
+      "english": "Pray for us, O holy Mother of God.",
+      "start": 128.69,
+      "end": 133.3
+    },
+    {
+      "latin": "Ut digni efficiámur promissiónibus Christi.",
+      "english": "That we may be made worthy of the promises of Christ.",
+      "start": 133.35,
+      "end": 138.1
+    },
+    {
+      "latin": "Orémus.",
+      "english": "Let us pray.",
+      "start": 138.49,
+      "end": 141.25
+    },
+    {
+      "latin": "Grátiam tuam quǽsumus, Dómine, méntibus nostris infúnde:",
+      "english": "Pour forth, we beseech Thee, O Lord, Thy grace into our hearts;",
+      "start": 141.25,
+      "end": 146.41
+    },
+    {
+      "latin": "ut qui, ángelo nuntiánte, Christi Fílii tui incarnatiónem cognóvimus;",
+      "english": "that we, to whom the Incarnation of Christ, Thy Son, was made known by the message of an Angel,",
+      "start": 146.42,
+      "end": 153.22
+    },
+    {
+      "latin": "per passiónem ejus et crucem, ad resurrectiónis glóriam perducámur.",
+      "english": "may by His Passion and Cross be brought to the glory of His Resurrection.",
+      "start": 153.41,
+      "end": 160.36
+    },
+    {
+      "latin": "Per eumdem Christum Dóminum nostrum.",
+      "english": "Through the same Christ our Lord.",
+      "start": 160.51,
+      "end": 164.94
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 165.37,
+      "end": 170.18
+    },
+    {
+      "latin": "Glória Patri, et Fílio, et Spirítui Sancto.",
+      "english": "Glory be to the Father, and to the Son, and to the Holy Ghost.",
+      "start": 171.25,
+      "end": 179.28
+    },
+    {
+      "latin": "Sicut erat in princípio, et nunc, et semper,",
+      "english": "As it was in the beginning, is now, and ever shall be,",
+      "start": 179.57,
+      "end": 185.53
+    },
+    {
+      "latin": "et in sǽcula sæculórum. Amen.",
+      "english": "world without end. Amen.",
+      "start": 185.53,
+      "end": 190.62
+    },
+    {
+      "latin": "Glória Patri, et Fílio, et Spirítui Sancto.",
+      "english": "Glory be to the Father, and to the Son, and to the Holy Ghost.",
+      "start": 191.87,
+      "end": 199.46
+    },
+    {
+      "latin": "Sicut erat in princípio, et nunc, et semper,",
+      "english": "As it was in the beginning, is now, and ever shall be,",
+      "start": 199.95,
+      "end": 206.19
+    },
+    {
+      "latin": "et in sǽcula sæculórum. Amen.",
+      "english": "world without end. Amen.",
+      "start": 206.19,
+      "end": 210.8
+    },
+    {
+      "latin": "Glória Patri, et Fílio, et Spirítui Sancto.",
+      "english": "Glory be to the Father, and to the Son, and to the Holy Ghost.",
+      "start": 212.65,
+      "end": 220.46
+    },
+    {
+      "latin": "Sicut erat in princípio, et nunc, et semper,",
+      "english": "As it was in the beginning, is now, and ever shall be,",
+      "start": 221.03,
+      "end": 227.35
+    },
+    {
+      "latin": "et in sǽcula sæculórum. Amen.",
+      "english": "world without end. Amen.",
+      "start": 227.35,
+      "end": 232.68
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "id": "pater_noster",
+  "part": null,
+  "method": "breaths by loudness (under -20 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 6 of 7 breaks heard",
+  "lines": [
+    {
+      "latin": "Pater noster, qui es in cælis: sanctificétur nomen tuum;",
+      "english": "Our Father, who art in heaven, hallowed be Thy name;",
+      "start": 0.21,
+      "end": 8.83
+    },
+    {
+      "latin": "advéniat regnum tuum;",
+      "english": "Thy kingdom come;",
+      "start": 8.83,
+      "end": 12.81
+    },
+    {
+      "latin": "fiat volúntas tua, sicut in cælo et in terra.",
+      "english": "Thy will be done on earth as it is in heaven.",
+      "start": 12.81,
+      "end": 20.49
+    },
+    {
+      "latin": "Panem nostrum quotidiánum da nobis hódie;",
+      "english": "Give us this day our daily bread;",
+      "start": 20.49,
+      "end": 25.93
+    },
+    {
+      "latin": "et dimítte nobis débita nostra, sicut et nos dimíttimus debitóribus nostris;",
+      "english": "and forgive us our trespasses as we forgive those who trespass against us;",
+      "start": 25.93,
+      "end": 36.27
+    },
+    {
+      "latin": "et ne nos indúcas in tentatiónem.",
+      "english": "and lead us not into temptation,",
+      "start": 36.27,
+      "end": 42.09
+    },
+    {
+      "latin": "Sed líbera nos a malo.",
+      "english": "but deliver us from evil.",
+      "start": 42.09,
+      "end": 46.75
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 46.75,
+      "end": 51.42
+    }
+  ]
+}

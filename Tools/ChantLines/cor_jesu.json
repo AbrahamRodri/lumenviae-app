@@ -1,0 +1,43 @@
+{
+  "id": "cor_jesu",
+  "part": null,
+  "method": "breaths by loudness (under -20 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 5 of 5 breaks heard",
+  "lines": [
+    {
+      "latin": "Cor Jesu sacratíssimum,",
+      "english": "Most Sacred Heart of Jesus,",
+      "start": 0.35,
+      "end": 5.45
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 5.45,
+      "end": 10.38
+    },
+    {
+      "latin": "Cor Jesu sacratíssimum,",
+      "english": "Most Sacred Heart of Jesus,",
+      "start": 11.49,
+      "end": 16.37
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 16.37,
+      "end": 21.64
+    },
+    {
+      "latin": "Cor Jesu sacratíssimum,",
+      "english": "Most Sacred Heart of Jesus,",
+      "start": 22.61,
+      "end": 27.72
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 27.93,
+      "end": 32.8
+    }
+  ]
+}

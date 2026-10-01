@@ -1,0 +1,15 @@
+# O salutaris Hostia, mode VIII, both stanzas and Amen. The cantor sings
+# on without a breath from "óstium" into "Bella" and from "glória" into
+# "Qui vitam", so those pairs of half-lines stand as one line each. Latin
+# from the score; English from the Prayer Book (o_salutaris).
+noise -18
+gap 0.3
+merge 1.5
+
+O salutáris Hóstia, | O saving Victim,
+Quæ cæli pandis óstium, Bella premunt hostília, | Who openest the gate of heaven, hostile wars press hard upon us:
+Da robur, fer auxílium. | give strength, bring aid.
+Uni trinóque Dómino | To the Lord, One and Three,
+Sit sempitérna glória, Qui vitam sine término | be glory everlasting; Who life without an end
+Nobis donet in pátria. | may grant us in our homeland.
+Amen. | Amen.

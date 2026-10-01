@@ -1,0 +1,31 @@
+# Salve Regina, solemn tone; its versicle and the collect Omnipotens
+# sempiterne Deus. Latin from the score; English from the Prayer Book
+# (hail_holy_queen), the collect's plain.
+noise -20
+gap 0.2
+merge 1.5
+
+Salve, Regína, | Hail, holy Queen,
+mater misericórdiæ: | Mother of mercy,
+Vita, dulcédo, | our life, our sweetness
+et spes nostra, salve. | and our hope.
+Ad te clamámus, éxsules, | To thee do we cry, poor banished
+fílii Hevæ. | children of Eve.
+Ad te suspirámus, geméntes et flentes | To thee do we send up our sighs, mourning and weeping
+in hac lacrimárum valle. | in this valley of tears.
+Eia ergo, Advocáta nostra, illos tuos misericórdes óculos | Turn, then, most gracious advocate, thine eyes of mercy
+ad nos convérte. | toward us,
+Et Jesum, benedíctum fructum ventris tui, | and Jesus, the blessed fruit of thy womb,
+nobis post hoc exsílium | after this, our exile,
+osténde. | show unto us.
+O clemens: | O clement,
+O pia: | O loving,
+O dulcis | O sweet
+Virgo María. | Virgin Mary.
+Ora pro nobis, sancta Dei Génitrix. | Pray for us, O holy Mother of God.
+Ut digni efficiámur promissiónibus Christi. | That we may be made worthy of the promises of Christ.
+Orémus. | Let us pray.
+Omnípotens sempitérne Deus, qui gloriósæ Vírginis Matris Maríæ corpus et ánimam, ut dignum Fílii tui habitáculum éffici mererétur, Spíritu Sancto cooperánte præparásti: | Almighty, everlasting God, who by the co-operation of the Holy Ghost didst prepare the body and soul of the glorious Virgin Mother Mary to become a worthy dwelling for Thy Son:
+da, ut cujus commemoratióne lætámur, ejus pia intercessióne ab instántibus malis et a morte perpétua liberémur. | grant that we who rejoice in her commemoration may by her loving intercession be delivered from present evils and from everlasting death.
+Per eumdem Christum Dóminum nostrum. | Through the same Christ our Lord.
+Amen. | Amen.

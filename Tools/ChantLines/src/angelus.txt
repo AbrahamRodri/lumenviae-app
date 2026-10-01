@@ -1,0 +1,42 @@
+# The Angelus, sung: its three versicles, each with a Hail Mary; Ora pro
+# nobis and the collect Gratiam tuam; and the Gloria Patri three times.
+# Latin from the scores; English from the Prayer Book's Angelus (the Gloria
+# Patri, which it does not print, in the Prayer Book's own words: Holy Ghost).
+noise -20
+gap 0.2
+merge 1.5
+
+Ángelus Dómini nuntiávit Maríæ. | The Angel of the Lord declared unto Mary.
+Et concépit de Spíritu Sancto. | And she conceived of the Holy Ghost.
+Ave María, grátia plena, Dóminus tecum; benedícta tu in muliéribus, et benedíctus fructus ventris tui, Jesus. | Hail Mary, full of grace, the Lord is with thee; blessed art thou among women, and blessed is the fruit of thy womb, Jesus.
+Sancta María, Mater Dei, ora pro nobis peccatóribus, nunc et in hora mortis nostræ. Amen. | Holy Mary, Mother of God, pray for us sinners, now and at the hour of our death. Amen.
+Ecce ancílla Dómini. | Behold the handmaid of the Lord.
+Fiat mihi secúndum verbum tuum. | Be it done unto me according to thy word.
+Ave María, grátia plena, Dóminus tecum; benedícta tu in muliéribus, | Hail Mary, full of grace, the Lord is with thee; blessed art thou among women,
+et benedíctus fructus ventris tui, Jesus. | and blessed is the fruit of thy womb, Jesus.
+Sancta María, Mater Dei, ora pro nobis peccatóribus, | Holy Mary, Mother of God, pray for us sinners,
+nunc et in hora mortis nostræ. Amen. | now and at the hour of our death. Amen.
+Et Verbum caro factum est. | And the Word was made flesh.
+Et habitávit in nobis. | And dwelt among us.
+Ave María, grátia plena, Dóminus tecum; benedícta tu in muliéribus, | Hail Mary, full of grace, the Lord is with thee; blessed art thou among women,
+et benedíctus fructus ventris tui, Jesus. | and blessed is the fruit of thy womb, Jesus.
+Sancta María, Mater Dei, ora pro nobis peccatóribus, | Holy Mary, Mother of God, pray for us sinners,
+nunc et in hora mortis nostræ. | now and at the hour of our death.
+Amen. | Amen.
+Ora pro nobis, sancta Dei Génitrix. | Pray for us, O holy Mother of God.
+Ut digni efficiámur promissiónibus Christi. | That we may be made worthy of the promises of Christ.
+Orémus. | Let us pray.
+Grátiam tuam quǽsumus, Dómine, méntibus nostris infúnde: | Pour forth, we beseech Thee, O Lord, Thy grace into our hearts;
+ut qui, ángelo nuntiánte, Christi Fílii tui incarnatiónem cognóvimus; | that we, to whom the Incarnation of Christ, Thy Son, was made known by the message of an Angel,
+per passiónem ejus et crucem, ad resurrectiónis glóriam perducámur. | may by His Passion and Cross be brought to the glory of His Resurrection.
+Per eumdem Christum Dóminum nostrum. | Through the same Christ our Lord.
+Amen. | Amen.
+Glória Patri, et Fílio, et Spirítui Sancto. | Glory be to the Father, and to the Son, and to the Holy Ghost.
+Sicut erat in princípio, et nunc, et semper, | As it was in the beginning, is now, and ever shall be,
+et in sǽcula sæculórum. Amen. | world without end. Amen.
+Glória Patri, et Fílio, et Spirítui Sancto. | Glory be to the Father, and to the Son, and to the Holy Ghost.
+Sicut erat in princípio, et nunc, et semper, | As it was in the beginning, is now, and ever shall be,
+et in sǽcula sæculórum. Amen. | world without end. Amen.
+Glória Patri, et Fílio, et Spirítui Sancto. | Glory be to the Father, and to the Son, and to the Holy Ghost.
+Sicut erat in princípio, et nunc, et semper, | As it was in the beginning, is now, and ever shall be,
+et in sǽcula sæculórum. Amen. | world without end. Amen.

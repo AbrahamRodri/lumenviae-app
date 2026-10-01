@@ -1,0 +1,20 @@
+# Creator alme siderum, the Vespers hymn of Advent: all six stanzas, each
+# sung in two breaths (at the half bar), and the Amen. Latin from the
+# score; English a plain literal rendering (no app prayer).
+noise -20
+gap 0.3
+merge 1.5
+
+Creátor alme síderum, Ætérna lux credéntium, | Gracious Creator of the stars, everlasting light of believers,
+Jesu, Redémptor ómnium, Inténde votis súpplicum. | Jesus, Redeemer of all, give ear to the prayers of Thy suppliants.
+Qui dǽmonis ne fráudibus Períret orbis, ímpetu | Thou who, lest the world should perish by the deceits of the devil, by the force
+Amóris actus, lánguidi Mundi medéla factus es. | of love wast moved to become the healing of a languishing world.
+Commúne qui mundi nefas Ut expiáres, ad crucem | Who, to atone for the common guilt of the world, to the Cross
+E Vírginis sacrário Intácta prodis víctima. | from the Virgin's sanctuary camest forth, a spotless Victim.
+Cujus potéstas glóriæ, Noménque cum primum sonat, | At whose glorious power, and at whose Name as soon as it sounds,
+Et cǽlites et ínferi Treménte curvántur genu. | both those in heaven and those below bow with trembling knee.
+Te deprecámur, últimæ Magnum diéi Júdicem, | We beseech Thee, the great Judge of the last day:
+Armis supérnæ grátiæ Defénde nos ab hóstibus. | with the arms of heavenly grace defend us from our foes.
+Virtus, honor, laus, glória Deo Patri cum Fílio, | Power, honour, praise and glory to God the Father with the Son,
+Sancto simul Paráclito, In sæculórum sǽcula. | together with the Holy Paraclete, for ever and ever.
+Amen. | Amen.

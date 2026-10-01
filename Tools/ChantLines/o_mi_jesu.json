@@ -1,0 +1,37 @@
+{
+  "id": "o_mi_jesu",
+  "part": null,
+  "method": "breaths by loudness (under -20 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 4 of 4 breaks heard",
+  "lines": [
+    {
+      "latin": "O mi Jesu, dimítte nobis,",
+      "english": "O my Jesus, forgive us our sins,",
+      "start": 0.21,
+      "end": 4.01
+    },
+    {
+      "latin": "líbera nos ab igne inférni;",
+      "english": "save us from the fires of hell,",
+      "start": 4.01,
+      "end": 8.13
+    },
+    {
+      "latin": "perduc in cælum omnes ánimas, præsértim illas quæ máxime índigent misericórdiæ tuæ.",
+      "english": "and lead all souls to heaven, especially those in most need of Thy mercy.",
+      "start": 8.13,
+      "end": 19.18
+    },
+    {
+      "latin": "O María sine labe concépta.",
+      "english": "O Mary, conceived without sin,",
+      "start": 20.03,
+      "end": 24.89
+    },
+    {
+      "latin": "Ora pro nobis qui confúgimus ad te.",
+      "english": "pray for us who have recourse to thee.",
+      "start": 24.89,
+      "end": 30.34
+    }
+  ]
+}

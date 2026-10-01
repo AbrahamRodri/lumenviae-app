@@ -1,0 +1,23 @@
+# Ubi caritas, mode VI: the antiphon, then after every four verses, and the
+# closing Amen. Latin from the score; English plain and literal (the app has
+# no prayer for it).
+noise -21
+gap 0.3
+merge 1.5
+
+Ubi cáritas et amor, Deus ibi est. | Where charity and love are, God is there.
+Congregávit nos in unum Christi amor. | The love of Christ hath gathered us together into one.
+Exsultémus, et in ipso jucundémur. | Let us rejoice, and in Him be glad.
+Timeámus, et amémus Deum vivum. | Let us fear and let us love the living God.
+Et ex corde diligámus nos sincéro. | And let us love one another with a sincere heart.
+Ubi cáritas et amor, Deus ibi est. | Where charity and love are, God is there.
+Simul ergo cum in unum congregámur: | When therefore we are gathered together into one,
+Ne nos mente dividámur caveámus. | let us beware lest we be divided in mind.
+Cessent júrgia malígna, cessent lites. | Let malicious quarrels cease, let strife cease.
+Et in médio nostri sit Christus Deus. | And in the midst of us be Christ our God.
+Ubi cáritas et amor, Deus ibi est. | Where charity and love are, God is there.
+Simul quoque cum beátis videámus | Together also with the blessed may we see
+Gloriánter vultum tuum, Christe Deus: | Thy face in glory, O Christ our God:
+Gáudium, quod est imménsum, atque probum: | a joy that is boundless and good,
+Sǽcula per infiníta sæculórum. | unto the endless ages of ages.
+Amen. | Amen.

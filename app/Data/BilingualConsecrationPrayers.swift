@@ -79,7 +79,7 @@ of both the eternal Spirit blest.
 
 Now to the Father and the Son,
 Who rose from death, be glory given,
-with Thou, O holy Comforter,
+with Thee, O holy Comforter,
 henceforth by all in earth and heaven. Amen.
 """,
         latinContent: """

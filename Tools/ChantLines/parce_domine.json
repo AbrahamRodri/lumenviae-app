@@ -1,0 +1,271 @@
+{
+  "id": "parce_domine",
+  "part": null,
+  "method": "breaths by loudness (under -14 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 39 of 43 breaks heard",
+  "lines": [
+    {
+      "latin": "Parce Dómine,",
+      "english": "Spare, O Lord,",
+      "start": 0.25,
+      "end": 4.29
+    },
+    {
+      "latin": "parce pópulo tuo:",
+      "english": "spare Thy people;",
+      "start": 4.29,
+      "end": 9.99
+    },
+    {
+      "latin": "ne in ætérnum",
+      "english": "be not for ever",
+      "start": 9.99,
+      "end": 13.17
+    },
+    {
+      "latin": "irascáris nobis.",
+      "english": "angry with us.",
+      "start": 13.17,
+      "end": 17.62
+    },
+    {
+      "latin": "Parce Dómine,",
+      "english": "Spare, O Lord,",
+      "start": 19.35,
+      "end": 23.31
+    },
+    {
+      "latin": "parce pópulo tuo:",
+      "english": "spare Thy people;",
+      "start": 23.31,
+      "end": 28.83
+    },
+    {
+      "latin": "ne in ætérnum",
+      "english": "be not for ever",
+      "start": 28.83,
+      "end": 32.03
+    },
+    {
+      "latin": "irascáris nobis.",
+      "english": "angry with us.",
+      "start": 32.03,
+      "end": 36.76
+    },
+    {
+      "latin": "Flectámus iram víndicem, Plorémus ante Júdicem;",
+      "english": "Let us turn aside the avenging wrath, let us weep before the Judge;",
+      "start": 38.33,
+      "end": 48.21
+    },
+    {
+      "latin": "Clamémus ore súpplici,",
+      "english": "let us cry out with suppliant voice,",
+      "start": 48.21,
+      "end": 52.41
+    },
+    {
+      "latin": "Dicámus omnes cérnui:",
+      "english": "let us all say, bowed low:",
+      "start": 52.41,
+      "end": 57.94
+    },
+    {
+      "latin": "Parce Dómine,",
+      "english": "Spare, O Lord,",
+      "start": 59.21,
+      "end": 63.17
+    },
+    {
+      "latin": "parce pópulo tuo:",
+      "english": "spare Thy people;",
+      "start": 63.17,
+      "end": 68.87
+    },
+    {
+      "latin": "ne in ætérnum irascáris nobis.",
+      "english": "be not for ever angry with us.",
+      "start": 68.87,
+      "end": 76.56
+    },
+    {
+      "latin": "Nostris malis offéndimus",
+      "english": "By our evil deeds we have offended",
+      "start": 78.63,
+      "end": 83.23
+    },
+    {
+      "latin": "Tuam Deus cleméntiam Effúnde nobis désuper",
+      "english": "Thy clemency, O God; pour forth upon us from on high,",
+      "start": 83.23,
+      "end": 92.61
+    },
+    {
+      "latin": "Remíssor indulgéntiam.",
+      "english": "O Forgiver, Thy pardon.",
+      "start": 92.61,
+      "end": 98.06
+    },
+    {
+      "latin": "Parce Dómine,",
+      "english": "Spare, O Lord,",
+      "start": 99.29,
+      "end": 103.13
+    },
+    {
+      "latin": "parce pópulo tuo:",
+      "english": "spare Thy people;",
+      "start": 103.13,
+      "end": 108.65
+    },
+    {
+      "latin": "ne in ætérnum",
+      "english": "be not for ever",
+      "start": 108.65,
+      "end": 111.79
+    },
+    {
+      "latin": "irascáris nobis.",
+      "english": "angry with us.",
+      "start": 111.79,
+      "end": 116.06
+    },
+    {
+      "latin": "Dans tempus acceptábile,",
+      "english": "Thou who givest the acceptable time,",
+      "start": 118.17,
+      "end": 122.71
+    },
+    {
+      "latin": "Da lacrimárum rívulis",
+      "english": "grant that with streams of tears",
+      "start": 122.71,
+      "end": 127.85
+    },
+    {
+      "latin": "Laváre cordis víctimam,",
+      "english": "we may wash the victim of our heart,",
+      "start": 127.85,
+      "end": 132.23
+    },
+    {
+      "latin": "Quam læta adúrat cáritas.",
+      "english": "which glad charity may set aflame.",
+      "start": 132.23,
+      "end": 138.12
+    },
+    {
+      "latin": "Parce Dómine,",
+      "english": "Spare, O Lord,",
+      "start": 139.23,
+      "end": 143.05
+    },
+    {
+      "latin": "parce pópulo tuo:",
+      "english": "spare Thy people;",
+      "start": 143.05,
+      "end": 148.63
+    },
+    {
+      "latin": "ne in ætérnum",
+      "english": "be not for ever",
+      "start": 148.63,
+      "end": 151.77
+    },
+    {
+      "latin": "irascáris nobis.",
+      "english": "angry with us.",
+      "start": 151.77,
+      "end": 156.44
+    },
+    {
+      "latin": "Audi, benígne Cónditor,",
+      "english": "Hear, O kind Creator,",
+      "start": 158.39,
+      "end": 162.89
+    },
+    {
+      "latin": "Nostras preces cum flétibus",
+      "english": "our prayers with weeping",
+      "start": 162.89,
+      "end": 168.03
+    },
+    {
+      "latin": "In hoc sacro jejúnio",
+      "english": "in this holy fast",
+      "start": 168.03,
+      "end": 172.15
+    },
+    {
+      "latin": "Fusas quadragenário.",
+      "english": "of forty days poured forth.",
+      "start": 172.15,
+      "end": 178.1
+    },
+    {
+      "latin": "Parce Dómine,",
+      "english": "Spare, O Lord,",
+      "start": 178.97,
+      "end": 182.73
+    },
+    {
+      "latin": "parce pópulo tuo:",
+      "english": "spare Thy people;",
+      "start": 182.73,
+      "end": 188.33
+    },
+    {
+      "latin": "ne in ætérnum",
+      "english": "be not for ever",
+      "start": 188.33,
+      "end": 191.47
+    },
+    {
+      "latin": "irascáris nobis.",
+      "english": "angry with us.",
+      "start": 191.47,
+      "end": 196.22
+    },
+    {
+      "latin": "Scrutátor alme córdium,",
+      "english": "O gracious Searcher of hearts,",
+      "start": 198.37,
+      "end": 202.91
+    },
+    {
+      "latin": "Infírma tu scis vírium;",
+      "english": "Thou knowest the weakness of our strength;",
+      "start": 202.91,
+      "end": 207.93
+    },
+    {
+      "latin": "Ad te revérsis éxhibe Remissiónis grátiam.",
+      "english": "show to those who return to Thee the grace of forgiveness.",
+      "start": 207.93,
+      "end": 217.44
+    },
+    {
+      "latin": "Parce Dómine,",
+      "english": "Spare, O Lord,",
+      "start": 218.67,
+      "end": 222.69
+    },
+    {
+      "latin": "parce pópulo tuo:",
+      "english": "spare Thy people;",
+      "start": 222.69,
+      "end": 228.41
+    },
+    {
+      "latin": "ne in ætérnum",
+      "english": "be not for ever",
+      "start": 228.41,
+      "end": 231.67
+    },
+    {
+      "latin": "irascáris nobis.",
+      "english": "angry with us.",
+      "start": 231.67,
+      "end": 237.4
+    }
+  ]
+}

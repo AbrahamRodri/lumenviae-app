@@ -1,0 +1,17 @@
+# Ave verum Corpus, mode VI, sung once through. Latin from the score;
+# English from the Prayer Book (ave_verum). The cantor's shallow breaths
+# after "Ave verum" and "immolátum" are not taken as line breaks.
+noise -20
+gap 0.2
+merge 1.5
+
+Ave verum Corpus natum | Hail, true Body, born
+de María Vírgine: | of the Virgin Mary,
+Vere passum, immolátum in cruce pro hómine: | that truly suffered and was sacrificed upon the cross for man;
+Cujus latus perforátum | Whose side, when it was pierced,
+fluxit aqua et sánguine: | flowed with water and with blood:
+Esto nobis prægustátum | be for us a foretaste
+mortis in exámine. | in the trial of death.
+O Jesu dulcis! | O sweet Jesus,
+O Jesu pie! | O loving Jesus,
+O Jesu fili Maríæ. | O Jesus, Son of Mary.

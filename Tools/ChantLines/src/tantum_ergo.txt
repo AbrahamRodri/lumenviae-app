@@ -1,0 +1,29 @@
+# Tantum ergo, mode III, both stanzas and Amen; the versicle Panem de caelo
+# (sung without its paschal alleluia) and the collect Deus, qui nobis.
+# Latin from the scores; English from the Prayer Book (tantum_ergo).
+noise -16
+gap 0.15
+merge 1.5
+
+Tantum ergo Sacraméntum | So great a Sacrament, therefore,
+Venerémur cérnui: | let us venerate, bowing low;
+Et antíquum documéntum | and let the former teaching
+Novo cedat rítui: | give way to the new rite;
+Præstet fides suppleméntum | let faith provide its aid
+Sénsuum deféctui. | for the failing of the senses.
+Genitóri, Genitóque | To the Begetter and the Begotten
+Laus et jubilátio, | be praise and jubilation,
+Salus, honor, virtus quoque | salvation, honour, and might also,
+Sit et benedíctio: | and blessing be to Them;
+Procedénti ab utróque | to Him Who proceedeth from Both
+Compar sit laudátio. | be equal praise.
+Amen. | Amen.
+Panem de cælo præstitísti eis. | Thou didst give them bread from heaven.
+Omne delectaméntum in se habéntem. | Containing in itself all delight.
+Orémus. | Let us pray.
+Deus, qui nobis sub Sacraménto mirábili passiónis tuæ memóriam reliquísti: | O God, Who under a wonderful Sacrament hast left us a memorial of Thy Passion,
+tríbue, quǽsumus, | grant us, we beseech Thee,
+ita nos córporis et sánguinis tui sacra mystéria venerári; | so to venerate the sacred mysteries of Thy Body and Blood,
+ut redemptiónis tuæ fructum in nobis júgiter sentiámus. | that we may continually feel within ourselves the fruit of Thy redemption.
+Qui vivis et regnas in sǽcula sæculórum. | Who livest and reignest world without end.
+Amen. | Amen.

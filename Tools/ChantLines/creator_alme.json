@@ -1,0 +1,85 @@
+{
+  "id": "creator_alme",
+  "part": null,
+  "method": "breaths by loudness (under -20 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 11 of 12 breaks heard",
+  "lines": [
+    {
+      "latin": "Creátor alme síderum, Ætérna lux credéntium,",
+      "english": "Gracious Creator of the stars, everlasting light of believers,",
+      "start": 0.37,
+      "end": 8.39
+    },
+    {
+      "latin": "Jesu, Redémptor ómnium, Inténde votis súpplicum.",
+      "english": "Jesus, Redeemer of all, give ear to the prayers of Thy suppliants.",
+      "start": 8.39,
+      "end": 17.06
+    },
+    {
+      "latin": "Qui dǽmonis ne fráudibus Períret orbis, ímpetu",
+      "english": "Thou who, lest the world should perish by the deceits of the devil, by the force",
+      "start": 18.35,
+      "end": 26.69
+    },
+    {
+      "latin": "Amóris actus, lánguidi Mundi medéla factus es.",
+      "english": "of love wast moved to become the healing of a languishing world.",
+      "start": 26.69,
+      "end": 35.64
+    },
+    {
+      "latin": "Commúne qui mundi nefas Ut expiáres, ad crucem",
+      "english": "Who, to atone for the common guilt of the world, to the Cross",
+      "start": 37.11,
+      "end": 45.89
+    },
+    {
+      "latin": "E Vírginis sacrário Intácta prodis víctima.",
+      "english": "from the Virgin's sanctuary camest forth, a spotless Victim.",
+      "start": 45.89,
+      "end": 54.76
+    },
+    {
+      "latin": "Cujus potéstas glóriæ, Noménque cum primum sonat,",
+      "english": "At whose glorious power, and at whose Name as soon as it sounds,",
+      "start": 56.09,
+      "end": 64.49
+    },
+    {
+      "latin": "Et cǽlites et ínferi Treménte curvántur genu.",
+      "english": "both those in heaven and those below bow with trembling knee.",
+      "start": 64.49,
+      "end": 73.2
+    },
+    {
+      "latin": "Te deprecámur, últimæ Magnum diéi Júdicem,",
+      "english": "We beseech Thee, the great Judge of the last day:",
+      "start": 74.27,
+      "end": 82.26
+    },
+    {
+      "latin": "Armis supérnæ grátiæ Defénde nos ab hóstibus.",
+      "english": "with the arms of heavenly grace defend us from our foes.",
+      "start": 82.75,
+      "end": 91.02
+    },
+    {
+      "latin": "Virtus, honor, laus, glória Deo Patri cum Fílio,",
+      "english": "Power, honour, praise and glory to God the Father with the Son,",
+      "start": 92.65,
+      "end": 101.41
+    },
+    {
+      "latin": "Sancto simul Paráclito, In sæculórum sǽcula.",
+      "english": "together with the Holy Paraclete, for ever and ever.",
+      "start": 101.41,
+      "end": 111.04
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 112.17,
+      "end": 120.52
+    }
+  ]
+}

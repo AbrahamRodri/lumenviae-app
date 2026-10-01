@@ -1,0 +1,91 @@
+{
+  "id": "ave_regina_simple",
+  "part": null,
+  "method": "breaths by loudness (under -14 dB for 0.2 s, phrases under 1.5 s merged) + text alignment; Whisper: 9 of 13 breaks heard",
+  "lines": [
+    {
+      "latin": "Ave Regína cælórum, Ave Dómina Angelórum:",
+      "english": "Hail, O Queen of heaven, hail, O Lady of the Angels;",
+      "start": 0.55,
+      "end": 10.11
+    },
+    {
+      "latin": "Salve radix, salve porta,",
+      "english": "hail, thou root, hail, thou gate,",
+      "start": 10.15,
+      "end": 15.11
+    },
+    {
+      "latin": "Ex qua mundo lux est orta:",
+      "english": "from whom unto the world a light hath arisen.",
+      "start": 15.11,
+      "end": 20.95
+    },
+    {
+      "latin": "Gaude Virgo gloriósa, Super omnes speciósa:",
+      "english": "Rejoice, O glorious Virgin, lovely beyond all others;",
+      "start": 20.95,
+      "end": 32.03
+    },
+    {
+      "latin": "Vale, o valde decóra,",
+      "english": "farewell, O most beautiful,",
+      "start": 32.03,
+      "end": 39.65
+    },
+    {
+      "latin": "Et pro nobis Christum exóra.",
+      "english": "and pray for us to Christ.",
+      "start": 39.65,
+      "end": 51.14
+    },
+    {
+      "latin": "Dignáre me laudáre te Virgo sacráta.",
+      "english": "Vouchsafe that I may praise thee, O sacred Virgin.",
+      "start": 52.77,
+      "end": 57.69
+    },
+    {
+      "latin": "Da mihi virtútem contra hostes tuos.",
+      "english": "Give me strength against thine enemies.",
+      "start": 57.69,
+      "end": 63.47
+    },
+    {
+      "latin": "Orémus.",
+      "english": "Let us pray.",
+      "start": 63.47,
+      "end": 66.41
+    },
+    {
+      "latin": "Concéde, miséricors Deus, fragilitáti nostræ præsídium:",
+      "english": "Grant, O merciful God, to our weak natures Thy protection,",
+      "start": 66.41,
+      "end": 72.45
+    },
+    {
+      "latin": "ut qui sanctæ Dei Genitrícis memóriam ágimus,",
+      "english": "that we who commemorate the holy Mother of God",
+      "start": 72.45,
+      "end": 77.71
+    },
+    {
+      "latin": "intercessiónis ejus auxílio a nostris iniquitátibus resurgámus.",
+      "english": "may, by the help of her intercession, rise again from our iniquities.",
+      "start": 77.71,
+      "end": 85.73
+    },
+    {
+      "latin": "Per eumdem Christum Dóminum nostrum.",
+      "english": "Through the same Christ our Lord.",
+      "start": 85.73,
+      "end": 91.71
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 91.71,
+      "end": 96.14
+    }
+  ]
+}

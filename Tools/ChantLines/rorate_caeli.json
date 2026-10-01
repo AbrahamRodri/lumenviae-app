@@ -1,0 +1,229 @@
+{
+  "id": "rorate_caeli",
+  "part": null,
+  "method": "breaths by loudness (under -16 dB for 0.2 s, phrases under 1.5 s merged) + text alignment; Whisper: 27 of 36 breaks heard",
+  "lines": [
+    {
+      "latin": "Roráte cæli désuper,",
+      "english": "Drop down dew, ye heavens, from above,",
+      "start": 0.31,
+      "end": 8.39
+    },
+    {
+      "latin": "et nubes pluant justum.",
+      "english": "and let the clouds rain down the Just One.",
+      "start": 8.39,
+      "end": 14.52
+    },
+    {
+      "latin": "Roráte cæli désuper,",
+      "english": "Drop down dew, ye heavens, from above,",
+      "start": 15.23,
+      "end": 23.15
+    },
+    {
+      "latin": "et nubes pluant justum.",
+      "english": "and let the clouds rain down the Just One.",
+      "start": 23.15,
+      "end": 28.8
+    },
+    {
+      "latin": "Ne irascáris Dómine,",
+      "english": "Be not angry, O Lord,",
+      "start": 29.87,
+      "end": 34.81
+    },
+    {
+      "latin": "ne ultra memíneris iniquitátis:",
+      "english": "remember iniquity no longer:",
+      "start": 34.81,
+      "end": 41.29
+    },
+    {
+      "latin": "ecce cívitas Sancti facta est desérta: Sion desérta facta est:",
+      "english": "behold, the city of the Holy One is become a desert: Sion is become a desert:",
+      "start": 41.29,
+      "end": 53.57
+    },
+    {
+      "latin": "Jerúsalem desoláta est:",
+      "english": "Jerusalem is desolate:",
+      "start": 53.57,
+      "end": 61.14
+    },
+    {
+      "latin": "domus sanctificatiónis tuæ et glóriæ tuæ,",
+      "english": "the house of Thy sanctification and of Thy glory,",
+      "start": 61.47,
+      "end": 69.94
+    },
+    {
+      "latin": "ubi laudavérunt te patres nostri.",
+      "english": "where our fathers praised Thee.",
+      "start": 70.05,
+      "end": 78.56
+    },
+    {
+      "latin": "Roráte cæli désuper,",
+      "english": "Drop down dew, ye heavens, from above,",
+      "start": 80.05,
+      "end": 88.13
+    },
+    {
+      "latin": "et nubes pluant justum.",
+      "english": "and let the clouds rain down the Just One.",
+      "start": 88.13,
+      "end": 94.06
+    },
+    {
+      "latin": "Peccávimus, et facti sumus tamquam immúndus nos,",
+      "english": "We have sinned, and are become as one unclean,",
+      "start": 95.17,
+      "end": 103.67
+    },
+    {
+      "latin": "et cecídimus",
+      "english": "and we have fallen",
+      "start": 103.67,
+      "end": 107.29
+    },
+    {
+      "latin": "quasi fólium univérsi:",
+      "english": "like a leaf, every one of us:",
+      "start": 107.29,
+      "end": 112.96
+    },
+    {
+      "latin": "et iniquitátes nostræ quasi ventus abstulérunt nos:",
+      "english": "and our iniquities, like the wind, have carried us away:",
+      "start": 113.19,
+      "end": 122.52
+    },
+    {
+      "latin": "abscondísti fáciem tuam a nobis,",
+      "english": "Thou hast hidden Thy face from us,",
+      "start": 122.85,
+      "end": 130.82
+    },
+    {
+      "latin": "et allisísti nos in manu iniquitátis nostræ.",
+      "english": "and hast crushed us in the hand of our iniquity.",
+      "start": 131.39,
+      "end": 141.52
+    },
+    {
+      "latin": "Roráte cæli désuper,",
+      "english": "Drop down dew, ye heavens, from above,",
+      "start": 142.63,
+      "end": 150.43
+    },
+    {
+      "latin": "et nubes pluant justum.",
+      "english": "and let the clouds rain down the Just One.",
+      "start": 150.43,
+      "end": 156.34
+    },
+    {
+      "latin": "Vide Dómine, afflictiónem pópuli tui,",
+      "english": "Behold, O Lord, the affliction of Thy people,",
+      "start": 157.61,
+      "end": 165.61
+    },
+    {
+      "latin": "et mitte quem missúrus es:",
+      "english": "and send forth Him Whom Thou art to send:",
+      "start": 165.61,
+      "end": 172.32
+    },
+    {
+      "latin": "emítte Agnum dominatórem terræ,",
+      "english": "send forth the Lamb, the ruler of the earth,",
+      "start": 172.39,
+      "end": 179.99
+    },
+    {
+      "latin": "de Petra desérti ad montem fíliæ Sion:",
+      "english": "from the Rock of the desert to the mount of the daughter of Sion:",
+      "start": 179.99,
+      "end": 188.13
+    },
+    {
+      "latin": "ut áuferat ipse jugum captivitátis nostræ.",
+      "english": "that He Himself may take away the yoke of our captivity.",
+      "start": 188.13,
+      "end": 197.5
+    },
+    {
+      "latin": "Roráte cæli désuper,",
+      "english": "Drop down dew, ye heavens, from above,",
+      "start": 198.67,
+      "end": 206.51
+    },
+    {
+      "latin": "et nubes pluant justum.",
+      "english": "and let the clouds rain down the Just One.",
+      "start": 206.51,
+      "end": 212.62
+    },
+    {
+      "latin": "Consolámini,",
+      "english": "Be comforted,",
+      "start": 213.89,
+      "end": 216.79
+    },
+    {
+      "latin": "consolámini, pópule meus:",
+      "english": "be comforted, My people:",
+      "start": 216.79,
+      "end": 223.65
+    },
+    {
+      "latin": "cito véniet salus tua:",
+      "english": "thy salvation shall quickly come:",
+      "start": 223.65,
+      "end": 230.31
+    },
+    {
+      "latin": "quare mæróre consúmeris,",
+      "english": "why art thou wasted with grief,",
+      "start": 230.31,
+      "end": 236.37
+    },
+    {
+      "latin": "quia innovávit te dolor?",
+      "english": "because sorrow hath come upon thee anew?",
+      "start": 236.37,
+      "end": 242.23
+    },
+    {
+      "latin": "Salvábo te, noli timére,",
+      "english": "I will save thee, fear not,",
+      "start": 242.23,
+      "end": 250.64
+    },
+    {
+      "latin": "ego enim sum Dóminus Deus tuus,",
+      "english": "for I am the Lord thy God,",
+      "start": 250.77,
+      "end": 258.89
+    },
+    {
+      "latin": "Sanctus Israël, Redémptor tuus.",
+      "english": "the Holy One of Israel, thy Redeemer.",
+      "start": 258.89,
+      "end": 267.36
+    },
+    {
+      "latin": "Roráte cæli désuper,",
+      "english": "Drop down dew, ye heavens, from above,",
+      "start": 268.55,
+      "end": 276.43
+    },
+    {
+      "latin": "et nubes pluant justum.",
+      "english": "and let the clouds rain down the Just One.",
+      "start": 276.43,
+      "end": 282.9
+    }
+  ]
+}

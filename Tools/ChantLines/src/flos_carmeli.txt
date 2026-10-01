@@ -1,0 +1,52 @@
+# Flos Carmeli, the sequence: all eight stanzas, Amen and Alleluia. The
+# cantor breathes at nearly every bar, so a line is a bar-to-bar piece; in
+# the first stanza the first two run together. Amen and Alleluia stand as
+# one line: Whisper hears the end of the Amen after the breath found between
+# them, so they are not parted there. Latin from the score;
+# English for the first two stanzas from the Prayer Book (flos_carmeli), the
+# rest plain.
+noise -14
+gap 0.25
+merge 1.5
+
+Flos Carméli, vitis florígera, | Flower of Carmel, vine in blossom,
+splendor cæli, | splendour of heaven,
+Virgo puérpera | Virgin who didst bear a Son,
+singuláris. | none like to thee.
+Mater mitis, | Mother most gentle,
+sed viri néscia, | who knewest not man,
+Carmelítis | to thy Carmelites
+esto propítia, | be thou gracious,
+Stella maris. | O Star of the Sea.
+Radix Jesse | Root of Jesse,
+gérminans flósculum, | putting forth a little flower,
+nos adésse | that we may be
+tecum in sǽculum | with thee for ever
+patiáris. | do thou permit.
+Inter spinas | Thou who among thorns
+quæ crescis lílium, | growest as a lily,
+serva puras | keep pure
+mentes fragílium, | the minds of the frail,
+tuteláris. | as their guardian.
+Armatúra | O armour
+fortis pugnántium, | strong for them that fight,
+furunt bella, | the wars rage:
+tende præsídium | hold forth as a defence
+Scapuláris. | the Scapular.
+Per incérta | Through things uncertain
+prudens consílium, | prudent counsel,
+per advérsa | through adversity
+juge solátium | unfailing comfort
+largiáris. | do thou bestow.
+Mater dulcis | Sweet Mother,
+Carméli dómina, | Lady of Carmel,
+plebem tuam | thy people
+reple lætítia | fill with the gladness
+qua beáris. | wherewith thou art blessed.
+Paradísi | Of Paradise
+clavis et jánua, | the key and the gate,
+fac nos duci | cause us to be led
+quo, Mater, glória | whither, O Mother, with glory
+coronáris. | thou art crowned.
+Amen. Allelúia. | Amen. Alleluia.
+~

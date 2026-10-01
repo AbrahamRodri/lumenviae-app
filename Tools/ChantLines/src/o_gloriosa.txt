@@ -1,0 +1,24 @@
+# O gloriosa Virginum, the Lauds hymn: all four stanzas and the Amen, a line
+# to each verse. Latin from the score; English plain (the app has no prayer
+# for it).
+noise -14
+gap 0.3
+merge 1.5
+
+O gloriósa Vírginum | O glorious one among virgins,
+Sublímis inter sídera: | lofty among the stars,
+Qui te creávit, párvulum | Him who created thee, as a little Child,
+Lacténte nutris úbere. | thou dost nourish at thy breast.
+Quod Heva tristis ábstulit, | What sorrowful Eve took away,
+Tu reddis almo gérmine: | thou restorest through thy gracious Offspring;
+Intrent ut astra flébiles, | that those who weep may enter the stars,
+Cæli reclúdis cárdines. | thou openest the doors of heaven.
+Tu Regis alti jánua, | Thou art the gate of the King on high,
+Et aula lucis fúlgida: | and the shining hall of light:
+Vitam datam per Vírginem, | for the life given through the Virgin,
+Gentes redémptæ, pláudite. | ye redeemed nations, give praise.
+Jesu, tibi sit glória, | Jesus, to Thee be glory,
+Qui natus es de Vírgine, | Who wast born of the Virgin,
+Cum Patre et almo Spíritu, | with the Father and the gracious Spirit,
+In sempitérna sǽcula. | for everlasting ages.
+Amen. | Amen.

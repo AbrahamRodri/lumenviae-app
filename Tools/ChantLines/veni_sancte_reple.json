@@ -1,0 +1,85 @@
+{
+  "id": "veni_sancte_reple",
+  "part": null,
+  "method": "breaths by loudness (under -14 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 9 of 12 breaks heard",
+  "lines": [
+    {
+      "latin": "Veni Sancte Spíritus,",
+      "english": "Come, Holy Ghost,",
+      "start": 0.33,
+      "end": 5.48
+    },
+    {
+      "latin": "reple tuórum corda fidélium,",
+      "english": "fill the hearts of Thy faithful,",
+      "start": 5.53,
+      "end": 11.25
+    },
+    {
+      "latin": "et tui amóris in eis ignem accénde:",
+      "english": "and kindle in them the fire of Thy love:",
+      "start": 11.25,
+      "end": 21.02
+    },
+    {
+      "latin": "qui per diversitátem linguárum cunctárum,",
+      "english": "who through the diversity of all tongues",
+      "start": 21.93,
+      "end": 28.55
+    },
+    {
+      "latin": "gentes in unitáte fídei congregásti.",
+      "english": "didst gather the nations in the unity of faith.",
+      "start": 28.55,
+      "end": 37.5
+    },
+    {
+      "latin": "Emítte Spíritum tuum et creabúntur.",
+      "english": "Send forth Thy Spirit, and they shall be created.",
+      "start": 39.51,
+      "end": 45.01
+    },
+    {
+      "latin": "Et renovábis fáciem terræ.",
+      "english": "And Thou shalt renew the face of the earth.",
+      "start": 45.01,
+      "end": 50.26
+    },
+    {
+      "latin": "Orémus.",
+      "english": "Let us pray.",
+      "start": 50.39,
+      "end": 53.7
+    },
+    {
+      "latin": "Deus, qui corda fidélium Sancti Spíritus illustratióne docuísti:",
+      "english": "O God, who didst instruct the hearts of the faithful by the light of the Holy Ghost,",
+      "start": 53.89,
+      "end": 61.47
+    },
+    {
+      "latin": "da nobis in eódem Spíritu recta sápere,",
+      "english": "grant us in the same Spirit to be truly wise,",
+      "start": 61.47,
+      "end": 66.39
+    },
+    {
+      "latin": "et de ejus semper consolatióne gaudére.",
+      "english": "and ever to rejoice in His consolation.",
+      "start": 66.39,
+      "end": 73.03
+    },
+    {
+      "latin": "Per Christum Dóminum nostrum.",
+      "english": "Through Christ our Lord.",
+      "start": 73.03,
+      "end": 78.1
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 78.55,
+      "end": 81.88
+    }
+  ]
+}

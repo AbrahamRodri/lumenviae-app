@@ -1,0 +1,23 @@
+# Tota pulchra es, the antiphon alone (the recording holds no versicle or
+# collect); its first two sentences are sung twice, as the score writes them.
+# Latin from the score; English from the Prayer Book (tota_pulchra). The
+# pause between the two cries of O María is too shallow to be found beside
+# the other breaths, so they stand as one line.
+noise -16
+gap 0.3
+merge 1.5
+
+Tota pulchra es, María! | Thou art all fair, O Mary,
+Tota pulchra es, María! | thou art all fair, O Mary,
+Et mácula originális non est in te. | and the original stain is not in thee.
+Et mácula originális non est in te. | and the original stain is not in thee.
+Tu, glória Jerúsalem. | Thou art the glory of Jerusalem,
+Tu, lætítia Israël. | thou art the joy of Israel,
+Tu, honorificéntia pópuli nostri. | thou art the honour of our people,
+Tu, advocáta peccatórum. | thou art the advocate of sinners.
+O María! O María! | O Mary, O Mary,
+Virgo prudentíssima! | Virgin most prudent,
+Mater clementíssima! | Mother most merciful,
+Ora pro nobis. | pray for us,
+Intercéde pro nobis | intercede for us
+ad Dóminum Jesum Christum. | with our Lord Jesus Christ.

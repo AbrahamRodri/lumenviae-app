@@ -1,0 +1,19 @@
+# Sub tuum præsidium; its versicle Ora pro nobis and the collect Concede nos
+# famulos tuos. Latin from the scores; English from the Prayer Book
+# (sub_tuum), the collect's from the Litany of Loreto's.
+noise -14
+gap 0.4
+merge 1.5
+
+Sub tuum præsídium confúgimus, | We fly to thy patronage,
+sancta Dei Génitrix: | O holy Mother of God;
+nostras deprecatiónes ne despícias in necessitátibus: | despise not our petitions in our necessities,
+sed a perículis cunctis líbera nos semper, Virgo gloriósa et benedícta. | but deliver us always from all dangers, O glorious and blessed Virgin.
+Ora pro nobis, sancta Dei Génitrix. | Pray for us, O holy Mother of God.
+Ut digni efficiámur promissiónibus Christi. | That we may be made worthy of the promises of Christ.
+Orémus. | Let us pray.
+Concéde nos fámulos tuos, quǽsumus Dómine Deus, perpétua mentis et córporis sanitáte gaudére: | Grant, we beseech Thee, O Lord God, unto us Thy servants, that we may rejoice in continual health of mind and body,
+et gloriósa beátæ Maríæ semper Vírginis intercessióne, | and by the glorious intercession of Blessed Mary, ever virgin,
+a præsénti liberári tristítia, et ætérna pérfrui lætítia. | may be delivered from present sadness, and enter into the joy of Thine eternal gladness.
+Per Christum Dóminum nostrum. | Through Christ our Lord.
+Amen. | Amen.

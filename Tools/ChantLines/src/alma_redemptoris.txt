@@ -1,0 +1,32 @@
+# Alma Redemptoris Mater, solemn tone; both its versicles and collects,
+# Advent's (Angelus Domini, Gratiam tuam) and Christmastide's (Post partum,
+# Deus qui salutis). Latin from the score; English from the Prayer Book.
+noise -18
+gap 0.3
+merge 1.5
+
+Alma | Loving
+Redemptóris Mater, | Mother of the Redeemer,
+quæ pérvia cæli porta manes, | who remainest the open gate of heaven,
+Et stella maris, | and star of the sea,
+succúrre cadénti | succour the falling
+súrgere qui curat pópulo: | people who strive to rise again:
+Tu quæ genuísti, natúra miránte, | thou who, while nature marvelled, didst bring forth
+tuum sanctum Genitórem: | thy holy Creator,
+Virgo prius | Virgin before
+ac postérius, | and after,
+Gabriélis ab ore sumens illud Ave, peccatórum miserére. | who from the mouth of Gabriel didst receive that Ave, have mercy on sinners.
+Ángelus Dómini nuntiávit Maríæ. | The Angel of the Lord declared unto Mary.
+Et concépit de Spíritu Sancto. | And she conceived of the Holy Ghost.
+Orémus. | Let us pray.
+Grátiam tuam quǽsumus, Dómine, méntibus nostris infúnde: | Pour forth, we beseech Thee, O Lord, Thy grace into our hearts;
+ut qui, ángelo nuntiánte, Christi Fílii tui incarnatiónem cognóvimus; | that we, to whom the Incarnation of Christ, Thy Son, was made known by the message of an Angel,
+per passiónem ejus et crucem, ad resurrectiónis glóriam perducámur. | may by His Passion and Cross be brought to the glory of His Resurrection.
+Per eumdem Christum Dóminum nostrum. | Through the same Christ our Lord.
+Amen. | Amen.
+Post partum, Virgo, invioláta permansísti. | After childbirth, O Virgin, thou didst remain inviolate.
+Dei Génitrix, intercéde pro nobis. | O Mother of God, intercede for us.
+Orémus. | Let us pray.
+Deus, qui salútis ætérnæ, beátæ Maríæ virginitáte fecúnda, humáno géneri prǽmia præstitísti: | O God, who by the fruitful virginity of Blessed Mary hast bestowed upon mankind the rewards of eternal salvation;
+tríbue, quǽsumus; ut ipsam pro nobis intercédere sentiámus, per quam merúimus auctórem vitæ suscípere, Dóminum nostrum Jesum Christum Fílium tuum. | grant, we beseech Thee, that we may know the help of her intercession, through whom we were made worthy to receive the Author of life, our Lord Jesus Christ, Thy Son.
+Amen. | Amen.

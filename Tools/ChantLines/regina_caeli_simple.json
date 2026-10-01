@@ -1,0 +1,85 @@
+{
+  "id": "regina_caeli_simple",
+  "part": null,
+  "method": "breaths by loudness (under -18 dB for 0.2 s, phrases under 1.5 s merged) + text alignment; Whisper: 7 of 12 breaks heard",
+  "lines": [
+    {
+      "latin": "Regína cæli lætáre, allelúia:",
+      "english": "O Queen of heaven, rejoice, alleluia.",
+      "start": 0.17,
+      "end": 9.96
+    },
+    {
+      "latin": "Quia quem meruísti portáre, allelúia:",
+      "english": "For He whom thou didst merit to bear, alleluia,",
+      "start": 10.01,
+      "end": 20.7
+    },
+    {
+      "latin": "Resurréxit, sicut dixit, allelúia:",
+      "english": "hath risen, as He said, alleluia.",
+      "start": 21.25,
+      "end": 30.86
+    },
+    {
+      "latin": "Ora pro nobis Deum, allelúia.",
+      "english": "Pray for us to God, alleluia.",
+      "start": 31.23,
+      "end": 42.4
+    },
+    {
+      "latin": "Gaude et lætáre, Virgo María, allelúia.",
+      "english": "Rejoice and be glad, O Virgin Mary, alleluia.",
+      "start": 43.49,
+      "end": 48.55
+    },
+    {
+      "latin": "Quia surréxit Dóminus vere, allelúia.",
+      "english": "For the Lord is truly risen, alleluia.",
+      "start": 48.59,
+      "end": 54.06
+    },
+    {
+      "latin": "Orémus.",
+      "english": "Let us pray.",
+      "start": 54.13,
+      "end": 57.32
+    },
+    {
+      "latin": "Deus, qui per resurrectiónem Fílii tui Dómini nostri Jesu Christi mundum lætificáre dignátus es:",
+      "english": "O God, who by the Resurrection of Thy Son, our Lord Jesus Christ, didst vouchsafe to give joy to the world;",
+      "start": 57.57,
+      "end": 66.91
+    },
+    {
+      "latin": "præsta, quǽsumus;",
+      "english": "grant, we beseech Thee,",
+      "start": 66.91,
+      "end": 69.25
+    },
+    {
+      "latin": "ut per ejus Genitrícem Vírginem Maríam",
+      "english": "that through His Mother, the Virgin Mary,",
+      "start": 69.29,
+      "end": 74.19
+    },
+    {
+      "latin": "perpétuæ capiámus gáudia vitæ.",
+      "english": "we may obtain the joys of everlasting life.",
+      "start": 74.19,
+      "end": 79.28
+    },
+    {
+      "latin": "Per eumdem Christum Dóminum nostrum.",
+      "english": "Through the same Christ our Lord.",
+      "start": 79.61,
+      "end": 85.12
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 85.59,
+      "end": 90.08
+    }
+  ]
+}

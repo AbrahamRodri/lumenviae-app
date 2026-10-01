@@ -1,0 +1,52 @@
+# Veni, veni, Emmanuel: all seven stanzas, each followed by its refrain
+# Gaude, gaude. A breath at every line but the first of the seventh stanza;
+# the cantor breathes inside the refrain's last line twice (after "pro te,"
+# in the second and fifth), carried with ~. Latin from the score; English a
+# plain literal rendering (no app prayer).
+noise -14
+gap 0.35
+merge 1.5
+
+Veni, veni, Emmánuel, | Come, come, Emmanuel,
+Captívum solve Israël, | set captive Israel free,
+Qui gemit in exsílio | who mourns in exile,
+Privátus Dei Fílio. | deprived of the Son of God.
+Gaude, gaude, Emmánuel | Rejoice, rejoice! Emmanuel
+Nascétur pro te, Israël. | shall be born for thee, O Israel.
+Veni, veni, Rex géntium, | Come, come, King of the nations,
+Veni, Redémptor ómnium: | come, Redeemer of all,
+Ut salves tuos fámulos | to save Thy servants,
+Peccáti sibi cónscios. | who know their sin.
+Gaude, gaude, Emmánuel | Rejoice, rejoice! Emmanuel
+Nascétur pro te, Israël. | shall be born for thee, O Israel.
+~
+Veni, veni, O Oriens, | Come, come, O Dayspring,
+Soláre nos advéniens: | console us by Thy coming;
+Noctis depélle nébulas, | drive away the clouds of night,
+Dirásque noctis ténebras. | and the dread darkness of night.
+Gaude, gaude, Emmánuel | Rejoice, rejoice! Emmanuel
+Nascétur pro te, Israël. | shall be born for thee, O Israel.
+Veni, Clavis Davídica, | Come, Key of David,
+Regna reclúde cǽlica; | open wide the heavenly kingdom;
+Fac iter tutum súperum, | make safe the way on high,
+Et claude vias ínferum. | and close the ways below.
+Gaude, gaude, Emmánuel | Rejoice, rejoice! Emmanuel
+Nascétur pro te, Israël. | shall be born for thee, O Israel.
+Veni, O Jesse Vírgula: | Come, O Rod of Jesse:
+Ex hostis tuos úngula, | from the claw of the enemy Thine own,
+De specu tuos tártari | from the cave of hell Thine own
+Educ, et antro bárathri. | lead forth, and from the pit of the abyss.
+Gaude, gaude, Emmánuel | Rejoice, rejoice! Emmanuel
+Nascétur pro te, Israël. | shall be born for thee, O Israel.
+~
+Veni, veni, Adonái, | Come, come, Adonai,
+Qui pópulo in Sínai, | Who to the people on Sinai
+Legem dedísti vértice, | from its summit gavest the Law,
+In majestáte glóriæ. | in the majesty of glory.
+Gaude, gaude, Emmánuel | Rejoice, rejoice! Emmanuel
+Nascétur pro te, Israël. | shall be born for thee, O Israel.
+Veni, O Sapiéntia, Quæ hic dispónis ómnia: | Come, O Wisdom, Who orderest all things here:
+Veni, viam prudéntiæ | come, that the way of prudence
+Ut dóceas et glóriæ. | Thou mayest teach us, and of glory.
+Gaude, gaude, Emmánuel | Rejoice, rejoice! Emmanuel
+Nascétur pro te, Israël. | shall be born for thee, O Israel.

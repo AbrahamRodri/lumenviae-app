@@ -1,0 +1,91 @@
+{
+  "id": "tota_pulchra",
+  "part": null,
+  "method": "breaths by loudness (under -16 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 9 of 13 breaks heard",
+  "lines": [
+    {
+      "latin": "Tota pulchra es, María!",
+      "english": "Thou art all fair, O Mary,",
+      "start": 0.45,
+      "end": 7.58
+    },
+    {
+      "latin": "Tota pulchra es, María!",
+      "english": "thou art all fair, O Mary,",
+      "start": 7.65,
+      "end": 14.33
+    },
+    {
+      "latin": "Et mácula originális non est in te.",
+      "english": "and the original stain is not in thee.",
+      "start": 14.33,
+      "end": 22.65
+    },
+    {
+      "latin": "Et mácula originális non est in te.",
+      "english": "and the original stain is not in thee.",
+      "start": 22.65,
+      "end": 31.72
+    },
+    {
+      "latin": "Tu, glória Jerúsalem.",
+      "english": "Thou art the glory of Jerusalem,",
+      "start": 32.49,
+      "end": 39.11
+    },
+    {
+      "latin": "Tu, lætítia Israël.",
+      "english": "thou art the joy of Israel,",
+      "start": 39.11,
+      "end": 46.44
+    },
+    {
+      "latin": "Tu, honorificéntia pópuli nostri.",
+      "english": "thou art the honour of our people,",
+      "start": 46.59,
+      "end": 54.44
+    },
+    {
+      "latin": "Tu, advocáta peccatórum.",
+      "english": "thou art the advocate of sinners.",
+      "start": 54.95,
+      "end": 62.24
+    },
+    {
+      "latin": "O María! O María!",
+      "english": "O Mary, O Mary,",
+      "start": 62.49,
+      "end": 73.55
+    },
+    {
+      "latin": "Virgo prudentíssima!",
+      "english": "Virgin most prudent,",
+      "start": 73.55,
+      "end": 79.03
+    },
+    {
+      "latin": "Mater clementíssima!",
+      "english": "Mother most merciful,",
+      "start": 79.03,
+      "end": 84.22
+    },
+    {
+      "latin": "Ora pro nobis.",
+      "english": "pray for us,",
+      "start": 84.49,
+      "end": 89.89
+    },
+    {
+      "latin": "Intercéde pro nobis",
+      "english": "intercede for us",
+      "start": 89.89,
+      "end": 94.51
+    },
+    {
+      "latin": "ad Dóminum Jesum Christum.",
+      "english": "with our Lord Jesus Christ.",
+      "start": 94.51,
+      "end": 102.88
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "id": "in_nomine_patris",
+  "part": null,
+  "method": "breaths by loudness (under -20 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 1 of 1 breaks heard",
+  "lines": [
+    {
+      "latin": "In nómine Patris, et Fílii, et Spíritus Sancti.",
+      "english": "In the name of the Father, and of the Son, and of the Holy Spirit.",
+      "start": 0.21,
+      "end": 7.84
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 8.13,
+      "end": 12.86
+    }
+  ]
+}

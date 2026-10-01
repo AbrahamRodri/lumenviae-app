@@ -1,0 +1,76 @@
+# Salve Mater misericordiæ, its refrain and six verses: the refrain is sung
+# twice at the start and after every verse, a line to each piece between the
+# score's bars. Where the cantor sings two pieces in one breath (the end of
+# the second and third verses, the middle of the last refrain) they stand as
+# one line. Latin from the score; English plain (the app has no prayer for it).
+noise -16
+gap 0.25
+merge 1.5
+
+Salve mater misericórdiæ, | Hail, Mother of mercy,
+Mater Dei et mater véniæ, | Mother of God and Mother of pardon,
+Mater spei, et mater grátiæ, | Mother of hope and Mother of grace,
+Mater plena sanctæ lætítiæ, | Mother full of holy joy,
+O María! | O Mary!
+Salve mater misericórdiæ, | Hail, Mother of mercy,
+Mater Dei et mater véniæ, | Mother of God and Mother of pardon,
+Mater spei, et mater grátiæ, | Mother of hope and Mother of grace,
+Mater plena sanctæ lætítiæ, | Mother full of holy joy,
+O María! | O Mary!
+Salve, decus humáni géneris, | Hail, glory of the human race,
+Salve, Virgo dígnior céteris, | hail, Virgin more worthy than all others,
+Quæ vírgines omnes transgréderis, | who surpassest all virgins
+Et áltius sedes in súperis, | and art seated higher in heaven,
+O María! | O Mary!
+Salve mater misericórdiæ, | Hail, Mother of mercy,
+Mater Dei et mater véniæ, | Mother of God and Mother of pardon,
+Mater spei, et mater grátiæ, | Mother of hope and Mother of grace,
+Mater plena sanctæ lætítiæ, | Mother full of holy joy,
+O María! | O Mary!
+Salve felix Virgo puérpera: | Hail, happy Virgin Mother:
+Nam qui sedet in Patris déxtera, | for He who sits at the Father's right hand,
+Cælum regens, terram et ǽthera, | ruling heaven, earth and sky,
+Intra tua se clausit víscera, O María! | enclosed Himself within thy womb, O Mary!
+Salve mater misericórdiæ, | Hail, Mother of mercy,
+Mater Dei et mater véniæ, | Mother of God and Mother of pardon,
+Mater spei, et mater grátiæ, | Mother of hope and Mother of grace,
+Mater plena sanctæ lætítiæ, | Mother full of holy joy,
+O María! | O Mary!
+Te creávit Pater ingénitus, | The unbegotten Father created thee,
+Adamávit te Unigénitus, | the Only-begotten loved thee,
+Fecundávit te Sanctus Spíritus, | the Holy Ghost made thee fruitful,
+Tu es facta tota divínitus, O María! | thou wast made wholly by God, O Mary!
+Salve mater misericórdiæ, | Hail, Mother of mercy,
+Mater Dei et mater véniæ, | Mother of God and Mother of pardon,
+Mater spei, et mater grátiæ, | Mother of hope and Mother of grace,
+Mater plena sanctæ lætítiæ, | Mother full of holy joy,
+O María! | O Mary!
+Te creávit Deus mirábilem, | God created thee wonderful,
+Te respéxit ancíllam húmilem, | He looked upon thee, His lowly handmaid,
+Te quæsívit sponsam amábilem, | He sought thee as a lovely bride,
+Tibi numquam fecit consímilem, | He never made one like to thee,
+O María! | O Mary!
+Salve mater misericórdiæ, | Hail, Mother of mercy,
+Mater Dei et mater véniæ, | Mother of God and Mother of pardon,
+Mater spei, et mater grátiæ, | Mother of hope and Mother of grace,
+Mater plena sanctæ lætítiæ, | Mother full of holy joy,
+O María! | O Mary!
+Te beátam laudáre cúpiunt | They long to praise thee, blessed one,
+Omnes justi, sed non suffíciunt; | all the just, but they are not equal to it;
+Multas laudes de te concípiunt, | many praises of thee they conceive,
+Sed in illis prorsus defíciunt, | but in them they wholly fall short,
+O María! | O Mary!
+Salve mater misericórdiæ, | Hail, Mother of mercy,
+Mater Dei et mater véniæ, | Mother of God and Mother of pardon,
+Mater spei, et mater grátiæ, | Mother of hope and Mother of grace,
+Mater plena sanctæ lætítiæ, | Mother full of holy joy,
+O María! | O Mary!
+Esto, Mater, nostrum solátium; | Be thou, O Mother, our comfort;
+Nostrum esto, tu Virgo, gáudium; | be thou, O Virgin, our joy;
+Et nos tandem post hoc exsílium, | and at last, after this exile,
+Lætos junge choris cæléstium, | join us, rejoicing, to the choirs of heaven,
+O María! | O Mary!
+Salve mater misericórdiæ, | Hail, Mother of mercy,
+Mater Dei et mater véniæ, | Mother of God and Mother of pardon,
+Mater spei, et mater grátiæ, Mater plena sanctæ lætítiæ, | Mother of hope and Mother of grace, Mother full of holy joy,
+O María! | O Mary!

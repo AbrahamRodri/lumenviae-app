@@ -1,0 +1,24 @@
+# Laudes Divinae: the praises after Benediction, each sung once, and Fiat,
+# fiat. Latin from the score, which joins the Name of Jesus and the Sacred
+# Heart in one verse and has the praise of the Holy Ghost; English from the
+# Prayer Book (divine_praises), which lacks that praise, so its line is plain.
+noise -14
+gap 0.2
+merge 1.5
+
+Benedíctus Deus, Benedíctum nomen sanctum ejus. | Blessed be God. Blessed be His holy Name.
+Benedíctus Jesus Christus verus Deus et verus homo. | Blessed be Jesus Christ, true God and true Man.
+Benedíctum nomen Jesu. Benedíctum Cor ejus sacratíssimum. | Blessed be the Name of Jesus. Blessed be His most Sacred Heart.
+Benedíctus ejus Sanguis pretiosíssimus. | Blessed be His most Precious Blood.
+Benedíctus Jesus in sanctíssimo altáris Sacraménto. | Blessed be Jesus in the most holy Sacrament of the altar.
+Benedíctus Sanctus Spíritus Paráclitus. | Blessed be the Holy Ghost, the Paraclete.
+Benedícta magna Mater Dei, María sanctíssima. | Blessed be the great Mother of God, Mary most holy.
+Benedícta sancta ejus et immaculáta Concéptio. | Blessed be her holy and Immaculate Conception.
+Benedícta ejus gloriósa Assúmptio. | Blessed be her glorious Assumption.
+Benedíctum nomen Maríæ, | Blessed be the name of Mary,
+Vírginis et Matris. | Virgin and Mother.
+Benedíctus sanctus Joseph, | Blessed be St Joseph,
+ejus castíssimus Sponsus. | her most chaste spouse.
+Benedíctus Deus in Ángelis suis, | Blessed be God in His Angels
+et in Sanctis suis. | and in His Saints.
+Fiat! Fiat! | So be it! So be it!

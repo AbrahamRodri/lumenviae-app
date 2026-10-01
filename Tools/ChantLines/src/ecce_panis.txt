@@ -1,0 +1,26 @@
+# Ecce panis Angelorum, the last four stanzas of the Lauda Sion, and Amen.
+# Latin from the score; English plain and literal (the same lines as
+# lauda_sion's last stanzas).
+noise -18
+gap 0.2
+merge 1.5
+
+Ecce panis Angelórum, | Behold the Bread of Angels,
+Factus cibus viatórum: | made the food of wayfarers,
+Vere panis filiórum, | truly the bread of children,
+Non mitténdus cánibus. | not to be cast to the dogs.
+In figúris præsignátur, | In figures it is foreshown,
+Cum Ísaac immolátur, | when Isaac is offered,
+Agnus Paschæ deputátur, | the Paschal Lamb appointed,
+Datur manna pátribus. | manna given to the fathers.
+Bone pastor, panis vere, | Good Shepherd, true Bread,
+Jesu, nostri miserére: | Jesus, have mercy on us;
+Tu nos pasce, nos tuére, | do Thou feed us, defend us,
+Tu nos bona fac vidére | do Thou make us see good things
+In terra vivéntium. | in the land of the living.
+Tu qui cuncta scis et vales, | Thou who knowest and canst all things,
+Qui nos pascis hic mortáles: | who feedest us here as mortals,
+Tuos ibi commensáles, | Thy fellow guests there,
+Coherédes et sodáles | fellow heirs and companions
+Fac Sanctórum civium. | make us of the holy citizens.
+Amen. | Amen.

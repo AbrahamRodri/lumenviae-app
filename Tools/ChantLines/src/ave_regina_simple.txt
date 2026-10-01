@@ -1,0 +1,23 @@
+# Ave Regina caelorum, simple tone; its versicle and the collect Concede,
+# misericors Deus. Latin from the score; English from the Prayer Book.
+# The cantor breathes once inside the last line, after "nobis"; Whisper
+# hears nothing past it, so the line is not parted there.
+noise -14
+gap 0.2
+merge 1.5
+
+Ave Regína cælórum, Ave Dómina Angelórum: | Hail, O Queen of heaven, hail, O Lady of the Angels;
+Salve radix, salve porta, | hail, thou root, hail, thou gate,
+Ex qua mundo lux est orta: | from whom unto the world a light hath arisen.
+Gaude Virgo gloriósa, Super omnes speciósa: | Rejoice, O glorious Virgin, lovely beyond all others;
+Vale, o valde decóra, | farewell, O most beautiful,
+Et pro nobis Christum exóra. | and pray for us to Christ.
+~
+Dignáre me laudáre te Virgo sacráta. | Vouchsafe that I may praise thee, O sacred Virgin.
+Da mihi virtútem contra hostes tuos. | Give me strength against thine enemies.
+Orémus. | Let us pray.
+Concéde, miséricors Deus, fragilitáti nostræ præsídium: | Grant, O merciful God, to our weak natures Thy protection,
+ut qui sanctæ Dei Genitrícis memóriam ágimus, | that we who commemorate the holy Mother of God
+intercessiónis ejus auxílio a nostris iniquitátibus resurgámus. | may, by the help of her intercession, rise again from our iniquities.
+Per eumdem Christum Dóminum nostrum. | Through the same Christ our Lord.
+Amen. | Amen.

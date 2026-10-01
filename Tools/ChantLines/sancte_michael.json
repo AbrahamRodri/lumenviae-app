@@ -1,0 +1,73 @@
+{
+  "id": "sancte_michael",
+  "part": null,
+  "method": "breaths by loudness (under -16 dB for 0.22 s, phrases under 1.5 s merged) + text alignment; Whisper: 8 of 10 breaks heard",
+  "lines": [
+    {
+      "latin": "Sancte Míchaël archángele, defénde nos in prǽlio;",
+      "english": "Saint Michael the Archangel, defend us in battle.",
+      "start": 0.45,
+      "end": 13.21
+    },
+    {
+      "latin": "contra nequítiam et insídias diáboli",
+      "english": "Against the wickedness and snares of the devil",
+      "start": 13.21,
+      "end": 22.75
+    },
+    {
+      "latin": "esto præsídium.",
+      "english": "be our safeguard.",
+      "start": 22.75,
+      "end": 29.58
+    },
+    {
+      "latin": "Ímperet illi Deus,",
+      "english": "May God rebuke him,",
+      "start": 30.17,
+      "end": 37.03
+    },
+    {
+      "latin": "súpplices deprecámur:",
+      "english": "we humbly pray;",
+      "start": 37.03,
+      "end": 42.83
+    },
+    {
+      "latin": "tuque princeps milítiæ cœléstis,",
+      "english": "and do thou, O Prince of the heavenly hosts,",
+      "start": 42.83,
+      "end": 50.81
+    },
+    {
+      "latin": "Sátanam aliósque spíritus malígnos,",
+      "english": "Satan and all the evil spirits,",
+      "start": 50.81,
+      "end": 59.03
+    },
+    {
+      "latin": "qui ad perditiónem animárum",
+      "english": "who, seeking the ruin of souls,",
+      "start": 59.03,
+      "end": 68.53
+    },
+    {
+      "latin": "pervagántur in mundo,",
+      "english": "prowl about the world,",
+      "start": 68.53,
+      "end": 74.95
+    },
+    {
+      "latin": "divína virtúte",
+      "english": "by the power of God,",
+      "start": 74.95,
+      "end": 79.25
+    },
+    {
+      "latin": "in inférnum detrúde.",
+      "english": "cast into hell.",
+      "start": 79.29,
+      "end": 87.62
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+# Ave Maria, as the Rosary sings it. Latin from the score; English from the app's Hail Mary.
+noise -20
+gap 0.3
+merge 1.5
+
+Ave María, grátia plena, Dóminus tecum; | Hail Mary, full of grace, the Lord is with thee;
+benedícta tu in muliéribus, | blessed art thou among women,
+et benedíctus fructus ventris tui, Jesus. | and blessed is the fruit of thy womb, Jesus.
+Sancta María, Mater Dei, | Holy Mary, Mother of God,
+ora pro nobis peccatóribus, | pray for us sinners,
+nunc et in hora mortis nostræ. Amen. | now and at the hour of our death. Amen.

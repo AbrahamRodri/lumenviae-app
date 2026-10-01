@@ -1,0 +1,93 @@
+# Lauda Sion, the sequence of Corpus Christi: all twenty-four stanzas,
+# Amen and Alleluia. Latin from the score (its "vacíles" kept as printed);
+# English plain and literal. The cantor breathes inside "Lauda ducem et
+# pastórem" and inside "In qua mensæ prima recólitur", where Whisper heard
+# too little to place the breath (~); he sings on without a breath from
+# "Sit laus plena" into "Sit jucúnda" and from "Quantum isti" into "Nec
+# sumptus", which stand as one line each.
+noise -14
+gap 0.2
+merge 1.5
+
+Lauda Sion Salvatórem, | Praise, O Sion, thy Saviour,
+Lauda ducem et pastórem, | praise thy leader and thy shepherd
+~
+In hymnis et cánticis. | in hymns and canticles.
+Quantum potes, tantum aude: | As much as thou canst, so much dare,
+Quia major omni laude, | for He is greater than all praise,
+Nec laudáre súfficis. | nor art thou able to praise Him enough.
+Laudis thema speciális, | A theme of special praise,
+Panis vivus et vitális | the living and life-giving Bread,
+Hódie propónitur. | is set before us this day.
+Quem in sacræ mensa cœnæ, | That at the table of the holy Supper
+Turbæ fratrum duodénæ | to the band of the twelve brethren
+Datum non ambígitur. | it was given, none doubteth.
+Sit laus plena, sit sonóra, Sit jucúnda, sit decóra | Let praise be full, let it be resounding, let it be joyful, let it be comely,
+Mentis jubilátio. | the jubilation of the mind.
+Dies enim solémnis ágitur, | For the solemn day is kept
+In qua mensæ prima recólitur | on which is recalled the first
+~
+Hujus institútio. | institution of this table.
+In hac mensa novi Regis, | At this table of the new King,
+Novum Pascha novæ legis, | the new Pasch of the new law
+Phase vetus términat. | endeth the old Passover.
+Vetustátem nóvitas, | The new puts the old to flight,
+Umbram fugat véritas, | the truth puts the shadow to flight,
+Noctem lux elíminat. | the light drives out the night.
+Quod in cœna Christus gessit, | What Christ did at the Supper,
+Faciéndum hoc expréssit | this He bade be done
+In sui memóriam. | in memory of Him.
+Docti sacris institútis, | Taught by His holy ordinances,
+Panem, vinum in salútis | bread and wine into the saving
+Consecrámus hóstiam. | Victim we consecrate.
+Dogma datur christiánis, | This doctrine is given to Christians,
+Quod in carnem transit panis, | that bread passeth into flesh,
+Et vinum in sánguinem. | and wine into blood.
+Quod non capis, quod non vides, | What thou dost not understand, what thou dost not see,
+Animósa firmat fides, | a lively faith confirmeth,
+Præter rerum órdinem. | beyond the order of nature.
+Sub divérsis speciébus, | Under differing species,
+Signis tantum, et non rebus, | signs only and not things,
+Latent res exímiæ. | lie hidden wondrous realities.
+Caro cibus, sanguis potus: | Flesh is meat, blood is drink;
+Manet tamen Christus totus | yet Christ remaineth whole
+Sub utráque spécie. | under either species.
+A suménte non concísus, | By him who receiveth He is not cut,
+Non confráctus, non divísus: | not broken, not divided;
+Ínteger accípitur. | whole is He received.
+Sumit unus, sumunt mille: | One receiveth, a thousand receive;
+Quantum isti, tantum ille: Nec sumptus consúmitur. | as much as these, so much the one; nor, received, is He consumed.
+Sumunt boni, sumunt mali: | The good receive, the wicked receive,
+Sorte tamen inæquáli, | yet with unequal lot,
+Vitæ vel intéritus. | of life or of destruction.
+Mors est malis, vita bonis: | Death to the wicked, life to the good:
+Vide paris sumptiónis | see, of a like receiving,
+Quam sit dispar éxitus. | how unlike is the issue.
+Fracto demum sacraménto, | When at last the Sacrament is broken,
+Ne vacíles, sed meménto | waver not, but remember
+Tantum esse sub fragménto, | that there is as much in a fragment
+Quantum toto tégitur. | as is hidden in the whole.
+Nulla rei fit scissúra: | No division is made of the substance;
+Signi tantum fit fractúra, | the breaking is of the sign alone,
+Qua nec status, nec statúra | by which neither the state nor the stature
+Signáti minúitur. | of the One signified is lessened.
+Ecce panis Angelórum, | Behold the Bread of Angels,
+Factus cibus viatórum: | made the food of wayfarers,
+Vere panis filiórum, | truly the bread of children,
+Non mitténdus cánibus. | not to be cast to the dogs.
+In figúris præsignátur, | In figures it is foreshown,
+Cum Ísaac immolátur, | when Isaac is offered,
+Agnus Paschæ deputátur, | the Paschal Lamb appointed,
+Datur manna pátribus. | manna given to the fathers.
+Bone pastor, panis vere, | Good Shepherd, true Bread,
+Jesu, nostri miserére: | Jesus, have mercy on us;
+Tu nos pasce, nos tuére, | do Thou feed us, defend us,
+Tu nos bona fac vidére | do Thou make us see good things
+In terra vivéntium. | in the land of the living.
+Tu qui cuncta scis et vales, | Thou who knowest and canst all things,
+Qui nos pascis hic mortáles: | who feedest us here as mortals,
+Tuos ibi commensáles, | Thy fellow guests there,
+Coherédes et sodáles | fellow heirs and companions
+Fac sanctórum cívium. | make us of the holy citizens.
+Amen. | Amen.
+Allelúia. | Alleluia.

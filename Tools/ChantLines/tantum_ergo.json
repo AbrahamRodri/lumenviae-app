@@ -1,0 +1,139 @@
+{
+  "id": "tantum_ergo",
+  "part": null,
+  "method": "breaths by loudness (under -16 dB for 0.15 s, phrases under 1.5 s merged) + text alignment; Whisper: 17 of 21 breaks heard",
+  "lines": [
+    {
+      "latin": "Tantum ergo Sacraméntum",
+      "english": "So great a Sacrament, therefore,",
+      "start": 0.29,
+      "end": 6.37
+    },
+    {
+      "latin": "Venerémur cérnui:",
+      "english": "let us venerate, bowing low;",
+      "start": 6.41,
+      "end": 12.33
+    },
+    {
+      "latin": "Et antíquum documéntum",
+      "english": "and let the former teaching",
+      "start": 12.33,
+      "end": 17.55
+    },
+    {
+      "latin": "Novo cedat rítui:",
+      "english": "give way to the new rite;",
+      "start": 17.55,
+      "end": 23.41
+    },
+    {
+      "latin": "Præstet fides suppleméntum",
+      "english": "let faith provide its aid",
+      "start": 23.41,
+      "end": 28.77
+    },
+    {
+      "latin": "Sénsuum deféctui.",
+      "english": "for the failing of the senses.",
+      "start": 28.77,
+      "end": 34.16
+    },
+    {
+      "latin": "Genitóri, Genitóque",
+      "english": "To the Begetter and the Begotten",
+      "start": 35.73,
+      "end": 41.63
+    },
+    {
+      "latin": "Laus et jubilátio,",
+      "english": "be praise and jubilation,",
+      "start": 41.7,
+      "end": 47.69
+    },
+    {
+      "latin": "Salus, honor, virtus quoque",
+      "english": "salvation, honour, and might also,",
+      "start": 47.69,
+      "end": 52.81
+    },
+    {
+      "latin": "Sit et benedíctio:",
+      "english": "and blessing be to Them;",
+      "start": 52.81,
+      "end": 58.45
+    },
+    {
+      "latin": "Procedénti ab utróque",
+      "english": "to Him Who proceedeth from Both",
+      "start": 58.45,
+      "end": 63.75
+    },
+    {
+      "latin": "Compar sit laudátio.",
+      "english": "be equal praise.",
+      "start": 63.75,
+      "end": 69.76
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 70.85,
+      "end": 78.8
+    },
+    {
+      "latin": "Panem de cælo præstitísti eis.",
+      "english": "Thou didst give them bread from heaven.",
+      "start": 81.09,
+      "end": 86.41
+    },
+    {
+      "latin": "Omne delectaméntum in se habéntem.",
+      "english": "Containing in itself all delight.",
+      "start": 86.41,
+      "end": 92.35
+    },
+    {
+      "latin": "Orémus.",
+      "english": "Let us pray.",
+      "start": 92.35,
+      "end": 95.81
+    },
+    {
+      "latin": "Deus, qui nobis sub Sacraménto mirábili passiónis tuæ memóriam reliquísti:",
+      "english": "O God, Who under a wonderful Sacrament hast left us a memorial of Thy Passion,",
+      "start": 95.81,
+      "end": 104.37
+    },
+    {
+      "latin": "tríbue, quǽsumus,",
+      "english": "grant us, we beseech Thee,",
+      "start": 104.37,
+      "end": 107.11
+    },
+    {
+      "latin": "ita nos córporis et sánguinis tui sacra mystéria venerári;",
+      "english": "so to venerate the sacred mysteries of Thy Body and Blood,",
+      "start": 107.13,
+      "end": 113.89
+    },
+    {
+      "latin": "ut redemptiónis tuæ fructum in nobis júgiter sentiámus.",
+      "english": "that we may continually feel within ourselves the fruit of Thy redemption.",
+      "start": 113.89,
+      "end": 121.41
+    },
+    {
+      "latin": "Qui vivis et regnas in sǽcula sæculórum.",
+      "english": "Who livest and reignest world without end.",
+      "start": 121.41,
+      "end": 128.69
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 128.69,
+      "end": 133.9
+    }
+  ]
+}

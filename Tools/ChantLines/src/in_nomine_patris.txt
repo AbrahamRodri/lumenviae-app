@@ -1,0 +1,7 @@
+# In nomine Patris. Latin from the score; English from the app's Sign of the Cross.
+noise -20
+gap 0.3
+merge 1.5
+
+In nómine Patris, et Fílii, et Spíritus Sancti. | In the name of the Father, and of the Son, and of the Holy Spirit.
+Amen. | Amen.

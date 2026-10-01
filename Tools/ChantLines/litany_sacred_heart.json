@@ -1,0 +1,595 @@
+{
+  "id": "litany_sacred_heart",
+  "part": null,
+  "method": "breaths by loudness (under -14 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 64 of 97 breaks heard",
+  "lines": [
+    {
+      "latin": "Kýrie eléison.",
+      "english": "Lord, have mercy on us.",
+      "start": 0.47,
+      "end": 5.64
+    },
+    {
+      "latin": "Kýrie eléison.",
+      "english": "Lord, have mercy on us.",
+      "start": 5.93,
+      "end": 11.04
+    },
+    {
+      "latin": "Christe eléison.",
+      "english": "Christ, have mercy on us.",
+      "start": 11.31,
+      "end": 16.12
+    },
+    {
+      "latin": "Christe eléison.",
+      "english": "Christ, have mercy on us.",
+      "start": 16.61,
+      "end": 21.38
+    },
+    {
+      "latin": "Kýrie eléison.",
+      "english": "Lord, have mercy on us.",
+      "start": 22.09,
+      "end": 27.12
+    },
+    {
+      "latin": "Kýrie eléison.",
+      "english": "Lord, have mercy on us.",
+      "start": 27.65,
+      "end": 32.88
+    },
+    {
+      "latin": "Christe audi nos.",
+      "english": "Christ, hear us.",
+      "start": 33.23,
+      "end": 38.08
+    },
+    {
+      "latin": "Christe audi nos.",
+      "english": "Christ, hear us.",
+      "start": 38.61,
+      "end": 43.68
+    },
+    {
+      "latin": "Christe exáudi nos.",
+      "english": "Christ, graciously hear us.",
+      "start": 43.83,
+      "end": 49.04
+    },
+    {
+      "latin": "Christe exáudi nos.",
+      "english": "Christ, graciously hear us.",
+      "start": 49.19,
+      "end": 54.32
+    },
+    {
+      "latin": "Pater de cælis Deus,",
+      "english": "God the Father of Heaven,",
+      "start": 55.11,
+      "end": 60.65
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 60.65,
+      "end": 66.06
+    },
+    {
+      "latin": "Fili Redémptor mundi Deus,",
+      "english": "God the Son, Redeemer of the world,",
+      "start": 66.51,
+      "end": 72.91
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 72.91,
+      "end": 77.68
+    },
+    {
+      "latin": "Spíritus Sancte Deus,",
+      "english": "God the Holy Ghost,",
+      "start": 78.53,
+      "end": 84.68
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 84.89,
+      "end": 89.94
+    },
+    {
+      "latin": "Sancta Trínitas unus Deus,",
+      "english": "Holy Trinity, One God,",
+      "start": 90.77,
+      "end": 97.33
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 97.33,
+      "end": 102.4
+    },
+    {
+      "latin": "Cor Jesu, Fílii Patris ætérni,",
+      "english": "Heart of Jesus, Son of the Eternal Father,",
+      "start": 103.45,
+      "end": 111.21
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 111.21,
+      "end": 116.5
+    },
+    {
+      "latin": "Cor Jesu, in sinu Vírginis Matris a Spíritu Sancto formátum,",
+      "english": "Heart of Jesus, formed by the Holy Ghost in the womb of the Virgin Mother,",
+      "start": 117.09,
+      "end": 127.91
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 127.91,
+      "end": 133.2
+    },
+    {
+      "latin": "Cor Jesu, Verbo Dei substantiáliter unítum,",
+      "english": "Heart of Jesus, substantially united to the Word of God,",
+      "start": 133.55,
+      "end": 143.05
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 143.05,
+      "end": 148.28
+    },
+    {
+      "latin": "Cor Jesu, majestátis infinítæ,",
+      "english": "Heart of Jesus, of infinite majesty,",
+      "start": 148.95,
+      "end": 157.05
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 157.05,
+      "end": 162.26
+    },
+    {
+      "latin": "Cor Jesu, templum Dei sanctum,",
+      "english": "Heart of Jesus, holy temple of God,",
+      "start": 163.01,
+      "end": 170.77
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 170.77,
+      "end": 175.4
+    },
+    {
+      "latin": "Cor Jesu, tabernáculum Altíssimi,",
+      "english": "Heart of Jesus, tabernacle of the Most High,",
+      "start": 176.27,
+      "end": 184.8
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 184.85,
+      "end": 190.02
+    },
+    {
+      "latin": "Cor Jesu, domus Dei et porta cæli,",
+      "english": "Heart of Jesus, house of God and gate of heaven,",
+      "start": 190.63,
+      "end": 199.13
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 199.13,
+      "end": 204.22
+    },
+    {
+      "latin": "Cor Jesu, fornax ardens caritátis,",
+      "english": "Heart of Jesus, burning furnace of charity,",
+      "start": 205.19,
+      "end": 213.63
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 213.63,
+      "end": 218.48
+    },
+    {
+      "latin": "Cor Jesu, justítiæ et amóris receptáculum,",
+      "english": "Heart of Jesus, vessel of justice and of love,",
+      "start": 219.43,
+      "end": 229.14
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 229.37,
+      "end": 234.28
+    },
+    {
+      "latin": "Cor Jesu, bonitáte et amóre plenum,",
+      "english": "Heart of Jesus, full of goodness and love,",
+      "start": 235.23,
+      "end": 243.7
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 243.71,
+      "end": 248.66
+    },
+    {
+      "latin": "Cor Jesu, virtútum ómnium abýssus,",
+      "english": "Heart of Jesus, abyss of all virtues,",
+      "start": 249.67,
+      "end": 257.83
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 257.83,
+      "end": 262.48
+    },
+    {
+      "latin": "Cor Jesu, omni laude digníssimum,",
+      "english": "Heart of Jesus, most worthy of all praise,",
+      "start": 263.59,
+      "end": 271.68
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 271.71,
+      "end": 276.78
+    },
+    {
+      "latin": "Cor Jesu, rex et centrum ómnium córdium,",
+      "english": "Heart of Jesus, king and center of all hearts,",
+      "start": 277.85,
+      "end": 287.05
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 287.05,
+      "end": 292.02
+    },
+    {
+      "latin": "Cor Jesu, in quo sunt omnes thesáuri sapiéntiæ et sciéntiæ,",
+      "english": "Heart of Jesus, wherein are all the treasures of wisdom and knowledge,",
+      "start": 292.63,
+      "end": 303.81
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 303.81,
+      "end": 308.42
+    },
+    {
+      "latin": "Cor Jesu, in quo hábitat omnis plenitúdo divinitátis,",
+      "english": "Heart of Jesus, wherein dwelleth all the fullness of the Godhead,",
+      "start": 309.29,
+      "end": 319.71
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 319.71,
+      "end": 324.42
+    },
+    {
+      "latin": "Cor Jesu, in quo Pater sibi bene complácuit,",
+      "english": "Heart of Jesus, wherein the Father was well pleased,",
+      "start": 325.39,
+      "end": 334.3
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 334.43,
+      "end": 339.24
+    },
+    {
+      "latin": "Cor Jesu, de cujus plenitúdine omnes nos accépimus,",
+      "english": "Heart of Jesus, of Whose fullness we have all received,",
+      "start": 340.21,
+      "end": 349.66
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 349.89,
+      "end": 354.44
+    },
+    {
+      "latin": "Cor Jesu, desidérium cóllium æternórum,",
+      "english": "Heart of Jesus, desire of the everlasting hills,",
+      "start": 355.65,
+      "end": 364.24
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 364.55,
+      "end": 369.3
+    },
+    {
+      "latin": "Cor Jesu, pátiens et multæ misericórdiæ,",
+      "english": "Heart of Jesus, patient and of great mercy,",
+      "start": 370.43,
+      "end": 379.57
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 379.57,
+      "end": 384.28
+    },
+    {
+      "latin": "Cor Jesu, dives in omnes qui ínvocant te,",
+      "english": "Heart of Jesus, rich unto all who call upon Thee,",
+      "start": 385.19,
+      "end": 393.82
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 393.97,
+      "end": 398.88
+    },
+    {
+      "latin": "Cor Jesu, fons vitæ et sanctitátis,",
+      "english": "Heart of Jesus, fountain of life and holiness,",
+      "start": 399.77,
+      "end": 407.94
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 408.15,
+      "end": 413.02
+    },
+    {
+      "latin": "Cor Jesu, propitiátio pro peccátis nostris,",
+      "english": "Heart of Jesus, propitiation for our sins,",
+      "start": 414.01,
+      "end": 422.98
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 423.19,
+      "end": 428.42
+    },
+    {
+      "latin": "Cor Jesu, saturátum oppróbriis,",
+      "english": "Heart of Jesus, filled with reproaches,",
+      "start": 429.01,
+      "end": 437.06
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 437.19,
+      "end": 441.74
+    },
+    {
+      "latin": "Cor Jesu, attrítum propter scélera nostra,",
+      "english": "Heart of Jesus, bruised for our iniquities,",
+      "start": 442.87,
+      "end": 451.69
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 451.69,
+      "end": 456.7
+    },
+    {
+      "latin": "Cor Jesu, usque ad mortem obédiens factum,",
+      "english": "Heart of Jesus, made obedient unto death,",
+      "start": 457.45,
+      "end": 466.41
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 466.41,
+      "end": 471.26
+    },
+    {
+      "latin": "Cor Jesu, láncea perforátum,",
+      "english": "Heart of Jesus, pierced with a lance,",
+      "start": 472.17,
+      "end": 480.23
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 480.23,
+      "end": 485.32
+    },
+    {
+      "latin": "Cor Jesu, fons totíus consolatiónis,",
+      "english": "Heart of Jesus, fountain of all consolation,",
+      "start": 486.11,
+      "end": 494.96
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 495.17,
+      "end": 500.24
+    },
+    {
+      "latin": "Cor Jesu, vita et resurréctio nostra,",
+      "english": "Heart of Jesus, our life and resurrection,",
+      "start": 500.85,
+      "end": 509.91
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 509.91,
+      "end": 514.86
+    },
+    {
+      "latin": "Cor Jesu, pax et reconciliátio nostra,",
+      "english": "Heart of Jesus, our peace and reconciliation,",
+      "start": 515.65,
+      "end": 524.91
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 524.91,
+      "end": 529.9
+    },
+    {
+      "latin": "Cor Jesu, víctima peccatórum,",
+      "english": "Heart of Jesus, victim for sinners,",
+      "start": 530.67,
+      "end": 538.99
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 538.99,
+      "end": 544.26
+    },
+    {
+      "latin": "Cor Jesu, salus in te sperántium,",
+      "english": "Heart of Jesus, salvation of those who hope in Thee,",
+      "start": 544.83,
+      "end": 553.13
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 553.13,
+      "end": 558.1
+    },
+    {
+      "latin": "Cor Jesu, spes in te moriéntium,",
+      "english": "Heart of Jesus, hope of those who die in Thee,",
+      "start": 558.87,
+      "end": 567.03
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 567.03,
+      "end": 571.86
+    },
+    {
+      "latin": "Cor Jesu, delíciæ Sanctórum ómnium,",
+      "english": "Heart of Jesus, delight of all the Saints,",
+      "start": 572.57,
+      "end": 581.16
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 581.27,
+      "end": 586.62
+    },
+    {
+      "latin": "Agnus Dei, qui tollis peccáta mundi,",
+      "english": "Lamb of God, Who takest away the sins of the world,",
+      "start": 587.67,
+      "end": 596.82
+    },
+    {
+      "latin": "parce nobis Dómine.",
+      "english": "spare us, O Lord.",
+      "start": 597.15,
+      "end": 602.82
+    },
+    {
+      "latin": "Agnus Dei, qui tollis peccáta mundi,",
+      "english": "Lamb of God, Who takest away the sins of the world,",
+      "start": 603.25,
+      "end": 612.82
+    },
+    {
+      "latin": "exáudi nos Dómine.",
+      "english": "graciously hear us, O Lord.",
+      "start": 612.93,
+      "end": 618.64
+    },
+    {
+      "latin": "Agnus Dei, qui tollis peccáta mundi,",
+      "english": "Lamb of God, Who takest away the sins of the world,",
+      "start": 618.95,
+      "end": 628.43
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 628.43,
+      "end": 634.86
+    },
+    {
+      "latin": "Jesu, mitis et húmilis Corde.",
+      "english": "Jesus, meek and humble of heart.",
+      "start": 635.83,
+      "end": 641.41
+    },
+    {
+      "latin": "Fac cor nostrum secúndum Cor tuum.",
+      "english": "Make our hearts like unto Thine.",
+      "start": 641.41,
+      "end": 647.55
+    },
+    {
+      "latin": "Orémus.",
+      "english": "Let us pray.",
+      "start": 647.55,
+      "end": 650.65
+    },
+    {
+      "latin": "Omnípotens sempitérne Deus, réspice in Cor dilectíssimi Fílii tui, et in laudes et satisfactiónes quas in nómine peccatórum tibi persólvit,",
+      "english": "Almighty and everlasting God, look upon the Heart of Thy most beloved Son, and upon the praises and satisfactions which He hath rendered unto Thee in the name of sinners;",
+      "start": 650.65,
+      "end": 665.47
+    },
+    {
+      "latin": "iísque misericórdiam tuam peténtibus, Tu véniam concéde placátus,",
+      "english": "and to those who seek Thy mercy do Thou, being appeased, grant pardon",
+      "start": 665.47,
+      "end": 673.65
+    },
+    {
+      "latin": "in nómine ejúsdem Fílii tui Jesu Christi:",
+      "english": "in the name of the same Thy Son Jesus Christ,",
+      "start": 673.65,
+      "end": 680.39
+    },
+    {
+      "latin": "Qui tecum vivit et regnat in sǽcula sæculórum.",
+      "english": "Who liveth and reigneth with Thee world without end.",
+      "start": 680.39,
+      "end": 688.28
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 688.33,
+      "end": 692.92
+    }
+  ]
+}

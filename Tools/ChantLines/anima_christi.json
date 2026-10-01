@@ -1,0 +1,85 @@
+{
+  "id": "anima_christi",
+  "part": null,
+  "method": "breaths by loudness (under -16 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 8 of 12 breaks heard",
+  "lines": [
+    {
+      "latin": "Ánima Christi, sanctífica me:",
+      "english": "Soul of Christ, sanctify me.",
+      "start": 0.25,
+      "end": 6.41
+    },
+    {
+      "latin": "Corpus Christi, salva me.",
+      "english": "Body of Christ, save me.",
+      "start": 6.41,
+      "end": 12.84
+    },
+    {
+      "latin": "Sanguis Christi, inébria me:",
+      "english": "Blood of Christ, inebriate me.",
+      "start": 13.01,
+      "end": 19.03
+    },
+    {
+      "latin": "aqua láteris Christi, lava me.",
+      "english": "Water from the side of Christ, wash me.",
+      "start": 19.03,
+      "end": 26.38
+    },
+    {
+      "latin": "Pássio Christi, confórta me:",
+      "english": "Passion of Christ, strengthen me.",
+      "start": 26.55,
+      "end": 32.03
+    },
+    {
+      "latin": "O bone Jesu, exáudi me.",
+      "english": "O good Jesus, hear me.",
+      "start": 32.03,
+      "end": 39.62
+    },
+    {
+      "latin": "Intra tua vúlnera abscónde me:",
+      "english": "Within Thy wounds hide me.",
+      "start": 39.69,
+      "end": 45.59
+    },
+    {
+      "latin": "ne permíttas me separári a te.",
+      "english": "Suffer me not to be separated from Thee.",
+      "start": 45.59,
+      "end": 53.06
+    },
+    {
+      "latin": "Ab hoste malígno defénde me:",
+      "english": "From the malicious enemy defend me.",
+      "start": 53.23,
+      "end": 58.81
+    },
+    {
+      "latin": "in hora mortis meæ voca me.",
+      "english": "In the hour of my death call me,",
+      "start": 58.81,
+      "end": 66.06
+    },
+    {
+      "latin": "Et jube me veníre ad te:",
+      "english": "and bid me come to Thee,",
+      "start": 66.09,
+      "end": 71.87
+    },
+    {
+      "latin": "ut cum Sanctis tuis laudem te",
+      "english": "that with Thy Saints I may praise Thee",
+      "start": 71.87,
+      "end": 77.11
+    },
+    {
+      "latin": "in sǽcula sæculórum. Amen.",
+      "english": "for ever and ever. Amen.",
+      "start": 77.11,
+      "end": 85.3
+    }
+  ]
+}

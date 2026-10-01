@@ -1,0 +1,24 @@
+# Adoremus in aeternum with Psalm 116: the antiphon sung and answered, then
+# after each verse of the psalm and after the Gloria Patri. Latin from the
+# score, the antiphon written out each time it is sung (the score cues it
+# as "R. Adorémus."); English plain, the Gloria Patri as the Angelus has it.
+noise -16
+gap 0.3
+merge 1.5
+
+Adorémus in ætérnum | Let us adore for ever
+sanctíssimum Sacraméntum. | the most holy Sacrament.
+Adorémus in ætérnum | Let us adore for ever
+sanctíssimum Sacraméntum. | the most holy Sacrament.
+Laudáte Dóminum omnes gentes: | O praise the Lord, all ye nations;
+laudáte eum omnes pópuli. | praise Him, all ye peoples.
+Quóniam confirmáta est super nos misericórdia ejus: | For His mercy is confirmed upon us,
+et véritas Dómini manet in ætérnum. | and the truth of the Lord remaineth for ever.
+Adorémus in ætérnum | Let us adore for ever
+sanctíssimum Sacraméntum. | the most holy Sacrament.
+Glória Patri, et Fílio, | Glory be to the Father, and to the Son,
+et Spirítui Sancto. | and to the Holy Ghost.
+Sicut erat in princípio, et nunc, et semper: | As it was in the beginning, is now, and ever shall be,
+et in sǽcula sæculórum. Amen. | world without end. Amen.
+Adorémus in ætérnum | Let us adore for ever
+sanctíssimum Sacraméntum. | the most holy Sacrament.

@@ -1,0 +1,463 @@
+{
+  "id": "o_filii",
+  "part": null,
+  "method": "breaths by loudness (under -14 dB for 0.2 s, phrases under 1.5 s merged) + text alignment; Whisper: 43 of 75 breaks heard",
+  "lines": [
+    {
+      "latin": "Allelúia, allelúia,",
+      "english": "Alleluia, alleluia,",
+      "start": 0.27,
+      "end": 5.41
+    },
+    {
+      "latin": "allelúia.",
+      "english": "alleluia.",
+      "start": 5.41,
+      "end": 10.24
+    },
+    {
+      "latin": "Allelúia, allelúia,",
+      "english": "Alleluia, alleluia,",
+      "start": 10.71,
+      "end": 15.73
+    },
+    {
+      "latin": "allelúia.",
+      "english": "alleluia.",
+      "start": 15.73,
+      "end": 20.54
+    },
+    {
+      "latin": "O fílii et fíliæ,",
+      "english": "O sons and daughters,",
+      "start": 20.91,
+      "end": 26.01
+    },
+    {
+      "latin": "Rex cæléstis, Rex glóriæ,",
+      "english": "the King of heaven, the King of glory,",
+      "start": 26.02,
+      "end": 31.01
+    },
+    {
+      "latin": "Morte surréxit hódie,",
+      "english": "hath risen from death today.",
+      "start": 31.01,
+      "end": 36.35
+    },
+    {
+      "latin": "Allelúia.",
+      "english": "Alleluia.",
+      "start": 36.35,
+      "end": 40.44
+    },
+    {
+      "latin": "Allelúia, allelúia,",
+      "english": "Alleluia, alleluia,",
+      "start": 40.73,
+      "end": 46.07
+    },
+    {
+      "latin": "allelúia.",
+      "english": "alleluia.",
+      "start": 46.07,
+      "end": 50.84
+    },
+    {
+      "latin": "Et mane prima sábbati,",
+      "english": "And early on the first day of the week",
+      "start": 51.17,
+      "end": 56.19
+    },
+    {
+      "latin": "Ad óstium monuménti",
+      "english": "to the door of the tomb",
+      "start": 56.19,
+      "end": 61.23
+    },
+    {
+      "latin": "Accessérunt discípuli,",
+      "english": "the disciples came.",
+      "start": 61.23,
+      "end": 66.33
+    },
+    {
+      "latin": "Allelúia.",
+      "english": "Alleluia.",
+      "start": 66.33,
+      "end": 70.74
+    },
+    {
+      "latin": "Allelúia, allelúia,",
+      "english": "Alleluia, alleluia,",
+      "start": 71.03,
+      "end": 76.47
+    },
+    {
+      "latin": "allelúia.",
+      "english": "alleluia.",
+      "start": 76.47,
+      "end": 81.04
+    },
+    {
+      "latin": "Et María Magdaléne,",
+      "english": "And Mary Magdalen,",
+      "start": 81.47,
+      "end": 86.61
+    },
+    {
+      "latin": "Et Jacóbi, et Salóme,",
+      "english": "and Mary of James, and Salome,",
+      "start": 86.61,
+      "end": 91.55
+    },
+    {
+      "latin": "Venérunt corpus úngere,",
+      "english": "came to anoint the Body.",
+      "start": 91.55,
+      "end": 96.87
+    },
+    {
+      "latin": "Allelúia.",
+      "english": "Alleluia.",
+      "start": 96.87,
+      "end": 100.82
+    },
+    {
+      "latin": "Allelúia, allelúia,",
+      "english": "Alleluia, alleluia,",
+      "start": 101.21,
+      "end": 106.61
+    },
+    {
+      "latin": "allelúia.",
+      "english": "alleluia.",
+      "start": 106.61,
+      "end": 110.58
+    },
+    {
+      "latin": "In albis sedens Ángelus",
+      "english": "An Angel sitting in white",
+      "start": 111.39,
+      "end": 116.59
+    },
+    {
+      "latin": "Prædíxit muliéribus:",
+      "english": "foretold to the women:",
+      "start": 116.59,
+      "end": 121.65
+    },
+    {
+      "latin": "In Galilǽa est Dóminus,",
+      "english": "The Lord is in Galilee.",
+      "start": 121.65,
+      "end": 126.73
+    },
+    {
+      "latin": "Allelúia.",
+      "english": "Alleluia.",
+      "start": 126.73,
+      "end": 130.92
+    },
+    {
+      "latin": "Allelúia, allelúia,",
+      "english": "Alleluia, alleluia,",
+      "start": 131.19,
+      "end": 136.37
+    },
+    {
+      "latin": "allelúia.",
+      "english": "alleluia.",
+      "start": 136.37,
+      "end": 140.58
+    },
+    {
+      "latin": "Et Joánnes Apóstolus",
+      "english": "And John the Apostle",
+      "start": 141.25,
+      "end": 146.47
+    },
+    {
+      "latin": "Cucúrrit Petro cítius,",
+      "english": "ran more swiftly than Peter,",
+      "start": 146.47,
+      "end": 151.45
+    },
+    {
+      "latin": "Monuménto venit prius,",
+      "english": "and came first to the tomb.",
+      "start": 151.45,
+      "end": 156.67
+    },
+    {
+      "latin": "Allelúia.",
+      "english": "Alleluia.",
+      "start": 156.67,
+      "end": 160.94
+    },
+    {
+      "latin": "Allelúia, allelúia,",
+      "english": "Alleluia, alleluia,",
+      "start": 161.31,
+      "end": 166.83
+    },
+    {
+      "latin": "allelúia.",
+      "english": "alleluia.",
+      "start": 166.83,
+      "end": 171.88
+    },
+    {
+      "latin": "Discípulis adstántibus,",
+      "english": "As the disciples stood by,",
+      "start": 172.01,
+      "end": 177.29
+    },
+    {
+      "latin": "In médio stetit Christus,",
+      "english": "Christ stood in their midst,",
+      "start": 177.29,
+      "end": 182.43
+    },
+    {
+      "latin": "Dicens: Pax vobis ómnibus,",
+      "english": "saying: Peace be to you all.",
+      "start": 182.43,
+      "end": 187.73
+    },
+    {
+      "latin": "Allelúia.",
+      "english": "Alleluia.",
+      "start": 187.73,
+      "end": 192.2
+    },
+    {
+      "latin": "Allelúia, allelúia,",
+      "english": "Alleluia, alleluia,",
+      "start": 192.57,
+      "end": 198.07
+    },
+    {
+      "latin": "allelúia.",
+      "english": "alleluia.",
+      "start": 198.07,
+      "end": 202.46
+    },
+    {
+      "latin": "Ut intelléxit Dídymus,",
+      "english": "When Didymus understood",
+      "start": 203.17,
+      "end": 208.37
+    },
+    {
+      "latin": "Quia surréxerat Jesus,",
+      "english": "that Jesus had risen,",
+      "start": 208.37,
+      "end": 213.47
+    },
+    {
+      "latin": "Remánsit fere dúbius,",
+      "english": "he remained still in doubt.",
+      "start": 213.47,
+      "end": 218.53
+    },
+    {
+      "latin": "Allelúia.",
+      "english": "Alleluia.",
+      "start": 218.53,
+      "end": 223.16
+    },
+    {
+      "latin": "Allelúia, allelúia,",
+      "english": "Alleluia, alleluia,",
+      "start": 223.45,
+      "end": 228.75
+    },
+    {
+      "latin": "allelúia.",
+      "english": "alleluia.",
+      "start": 228.75,
+      "end": 233.3
+    },
+    {
+      "latin": "Vide, Thoma, vide latus,",
+      "english": "See, Thomas, see My side,",
+      "start": 233.97,
+      "end": 238.91
+    },
+    {
+      "latin": "Vide pedes, vide manus,",
+      "english": "see My feet, see My hands;",
+      "start": 238.91,
+      "end": 243.71
+    },
+    {
+      "latin": "Noli esse incrédulus,",
+      "english": "be not faithless.",
+      "start": 243.71,
+      "end": 248.91
+    },
+    {
+      "latin": "Allelúia.",
+      "english": "Alleluia.",
+      "start": 248.91,
+      "end": 253.58
+    },
+    {
+      "latin": "Allelúia, allelúia,",
+      "english": "Alleluia, alleluia,",
+      "start": 253.75,
+      "end": 258.83
+    },
+    {
+      "latin": "allelúia.",
+      "english": "alleluia.",
+      "start": 258.83,
+      "end": 263.42
+    },
+    {
+      "latin": "Quando Thomas Christi latus,",
+      "english": "When Thomas the side of Christ,",
+      "start": 263.81,
+      "end": 268.85
+    },
+    {
+      "latin": "Pedes vidit atque manus,",
+      "english": "His feet and His hands had seen,",
+      "start": 268.85,
+      "end": 273.63
+    },
+    {
+      "latin": "Dixit: Tu es Deus meus,",
+      "english": "he said: Thou art my God.",
+      "start": 273.63,
+      "end": 278.63
+    },
+    {
+      "latin": "Allelúia.",
+      "english": "Alleluia.",
+      "start": 278.63,
+      "end": 282.86
+    },
+    {
+      "latin": "Allelúia, allelúia,",
+      "english": "Alleluia, alleluia,",
+      "start": 283.41,
+      "end": 288.61
+    },
+    {
+      "latin": "allelúia.",
+      "english": "alleluia.",
+      "start": 288.61,
+      "end": 293.08
+    },
+    {
+      "latin": "Beáti qui non vidérunt,",
+      "english": "Blessed are they that have not seen,",
+      "start": 293.61,
+      "end": 298.63
+    },
+    {
+      "latin": "Et fírmiter credidérunt,",
+      "english": "and have firmly believed;",
+      "start": 298.63,
+      "end": 303.55
+    },
+    {
+      "latin": "Vitam ætérnam habébunt,",
+      "english": "they shall have life everlasting.",
+      "start": 303.55,
+      "end": 308.61
+    },
+    {
+      "latin": "Allelúia.",
+      "english": "Alleluia.",
+      "start": 308.61,
+      "end": 312.94
+    },
+    {
+      "latin": "Allelúia, allelúia,",
+      "english": "Alleluia, alleluia,",
+      "start": 313.15,
+      "end": 318.25
+    },
+    {
+      "latin": "allelúia.",
+      "english": "alleluia.",
+      "start": 318.25,
+      "end": 322.3
+    },
+    {
+      "latin": "In hoc festo sanctíssimo",
+      "english": "On this most holy feast",
+      "start": 323.01,
+      "end": 328.25
+    },
+    {
+      "latin": "Sit laus et jubilátio,",
+      "english": "be praise and jubilation:",
+      "start": 328.25,
+      "end": 333.19
+    },
+    {
+      "latin": "Benedicámus Dómino,",
+      "english": "let us bless the Lord.",
+      "start": 333.19,
+      "end": 338.31
+    },
+    {
+      "latin": "Allelúia.",
+      "english": "Alleluia.",
+      "start": 338.31,
+      "end": 342.46
+    },
+    {
+      "latin": "Allelúia, allelúia,",
+      "english": "Alleluia, alleluia,",
+      "start": 342.99,
+      "end": 348.29
+    },
+    {
+      "latin": "allelúia.",
+      "english": "alleluia.",
+      "start": 348.29,
+      "end": 352.56
+    },
+    {
+      "latin": "Ex quibus nos humíllimas",
+      "english": "For these things, most humble,",
+      "start": 353.23,
+      "end": 358.41
+    },
+    {
+      "latin": "Devótas atque débitas",
+      "english": "devout and due,",
+      "start": 358.41,
+      "end": 363.53
+    },
+    {
+      "latin": "Deo dicámus grátias,",
+      "english": "let us give thanks to God.",
+      "start": 363.53,
+      "end": 368.97
+    },
+    {
+      "latin": "Allelúia.",
+      "english": "Alleluia.",
+      "start": 368.97,
+      "end": 373.62
+    },
+    {
+      "latin": "Allelúia, allelúia,",
+      "english": "Alleluia, alleluia,",
+      "start": 373.85,
+      "end": 379.61
+    },
+    {
+      "latin": "allelúia.",
+      "english": "alleluia.",
+      "start": 379.61,
+      "end": 385.96
+    }
+  ]
+}

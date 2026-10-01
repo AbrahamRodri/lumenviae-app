@@ -1,0 +1,87 @@
+# O filii et filiae: the threefold Alleluia sung twice, then the twelve
+# verses, each closing on its Alleluia and the threefold Alleluia after it.
+# The cantor breathes at the end of every verse line and once inside the
+# threefold Alleluia, at its bar. Latin from the score (its small capitals
+# set in ordinary type: Benedicámus Dómino, Deo dicámus grátias); English plain and
+# literal. The score's opening R. Allelúia is not sung as written: the
+# recording repeats the threefold Alleluia whole.
+noise -14
+gap 0.2
+merge 1.5
+
+Allelúia, allelúia, | Alleluia, alleluia,
+allelúia. | alleluia.
+Allelúia, allelúia, | Alleluia, alleluia,
+allelúia. | alleluia.
+O fílii et fíliæ, | O sons and daughters,
+Rex cæléstis, Rex glóriæ, | the King of heaven, the King of glory,
+Morte surréxit hódie, | hath risen from death today.
+Allelúia. | Alleluia.
+Allelúia, allelúia, | Alleluia, alleluia,
+allelúia. | alleluia.
+Et mane prima sábbati, | And early on the first day of the week
+Ad óstium monuménti | to the door of the tomb
+Accessérunt discípuli, | the disciples came.
+Allelúia. | Alleluia.
+Allelúia, allelúia, | Alleluia, alleluia,
+allelúia. | alleluia.
+Et María Magdaléne, | And Mary Magdalen,
+Et Jacóbi, et Salóme, | and Mary of James, and Salome,
+Venérunt corpus úngere, | came to anoint the Body.
+Allelúia. | Alleluia.
+Allelúia, allelúia, | Alleluia, alleluia,
+allelúia. | alleluia.
+In albis sedens Ángelus | An Angel sitting in white
+Prædíxit muliéribus: | foretold to the women:
+In Galilǽa est Dóminus, | The Lord is in Galilee.
+Allelúia. | Alleluia.
+Allelúia, allelúia, | Alleluia, alleluia,
+allelúia. | alleluia.
+Et Joánnes Apóstolus | And John the Apostle
+Cucúrrit Petro cítius, | ran more swiftly than Peter,
+Monuménto venit prius, | and came first to the tomb.
+Allelúia. | Alleluia.
+Allelúia, allelúia, | Alleluia, alleluia,
+allelúia. | alleluia.
+Discípulis adstántibus, | As the disciples stood by,
+In médio stetit Christus, | Christ stood in their midst,
+Dicens: Pax vobis ómnibus, | saying: Peace be to you all.
+Allelúia. | Alleluia.
+Allelúia, allelúia, | Alleluia, alleluia,
+allelúia. | alleluia.
+Ut intelléxit Dídymus, | When Didymus understood
+Quia surréxerat Jesus, | that Jesus had risen,
+Remánsit fere dúbius, | he remained still in doubt.
+Allelúia. | Alleluia.
+Allelúia, allelúia, | Alleluia, alleluia,
+allelúia. | alleluia.
+Vide, Thoma, vide latus, | See, Thomas, see My side,
+Vide pedes, vide manus, | see My feet, see My hands;
+Noli esse incrédulus, | be not faithless.
+Allelúia. | Alleluia.
+Allelúia, allelúia, | Alleluia, alleluia,
+allelúia. | alleluia.
+Quando Thomas Christi latus, | When Thomas the side of Christ,
+Pedes vidit atque manus, | His feet and His hands had seen,
+Dixit: Tu es Deus meus, | he said: Thou art my God.
+Allelúia. | Alleluia.
+Allelúia, allelúia, | Alleluia, alleluia,
+allelúia. | alleluia.
+Beáti qui non vidérunt, | Blessed are they that have not seen,
+Et fírmiter credidérunt, | and have firmly believed;
+Vitam ætérnam habébunt, | they shall have life everlasting.
+Allelúia. | Alleluia.
+Allelúia, allelúia, | Alleluia, alleluia,
+allelúia. | alleluia.
+In hoc festo sanctíssimo | On this most holy feast
+Sit laus et jubilátio, | be praise and jubilation:
+Benedicámus Dómino, | let us bless the Lord.
+Allelúia. | Alleluia.
+Allelúia, allelúia, | Alleluia, alleluia,
+allelúia. | alleluia.
+Ex quibus nos humíllimas | For these things, most humble,
+Devótas atque débitas | devout and due,
+Deo dicámus grátias, | let us give thanks to God.
+Allelúia. | Alleluia.
+Allelúia, allelúia, | Alleluia, alleluia,
+allelúia. | alleluia.

@@ -1,0 +1,43 @@
+{
+  "id": "ave_maria_antiphon",
+  "part": null,
+  "method": "breaths by loudness (under -14 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 5 of 5 breaks heard",
+  "lines": [
+    {
+      "latin": "Ave María, grátia plena, Dóminus tecum,",
+      "english": "Hail Mary, full of grace, the Lord is with thee;",
+      "start": 0.27,
+      "end": 12.53
+    },
+    {
+      "latin": "benedícta tu in muliéribus,",
+      "english": "blessed art thou among women,",
+      "start": 12.53,
+      "end": 20.49
+    },
+    {
+      "latin": "et benedíctus fructus ventris tui, Jesus.",
+      "english": "and blessed is the fruit of thy womb, Jesus.",
+      "start": 20.49,
+      "end": 29.9
+    },
+    {
+      "latin": "Sancta María, Mater Dei,",
+      "english": "Holy Mary, Mother of God,",
+      "start": 30.17,
+      "end": 36.65
+    },
+    {
+      "latin": "ora pro nobis peccatóribus,",
+      "english": "pray for us sinners,",
+      "start": 36.65,
+      "end": 43.53
+    },
+    {
+      "latin": "nunc et in hora mortis nostræ. Amen.",
+      "english": "now and at the hour of our death. Amen.",
+      "start": 43.53,
+      "end": 53.46
+    }
+  ]
+}

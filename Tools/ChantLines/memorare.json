@@ -1,0 +1,79 @@
+{
+  "id": "memorare",
+  "part": null,
+  "method": "breaths by loudness (under -20 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 9 of 11 breaks heard",
+  "lines": [
+    {
+      "latin": "Memoráre,",
+      "english": "Remember,",
+      "start": 0.29,
+      "end": 3.91
+    },
+    {
+      "latin": "o piíssima Virgo María,",
+      "english": "O most gracious Virgin Mary,",
+      "start": 3.91,
+      "end": 12.54
+    },
+    {
+      "latin": "non esse audítum a sǽculo",
+      "english": "that never was it known",
+      "start": 12.57,
+      "end": 19.12
+    },
+    {
+      "latin": "quemquam ad tua curréntem præsídia,",
+      "english": "that anyone who fled to thy protection,",
+      "start": 19.55,
+      "end": 28.39
+    },
+    {
+      "latin": "tua implorántem auxília,",
+      "english": "implored thy help,",
+      "start": 28.39,
+      "end": 35.78
+    },
+    {
+      "latin": "tua peténtem suffrágia,",
+      "english": "or sought thine intercession,",
+      "start": 36.49,
+      "end": 44.18
+    },
+    {
+      "latin": "esse derelíctum.",
+      "english": "was left unaided.",
+      "start": 44.63,
+      "end": 51.8
+    },
+    {
+      "latin": "Ego, tali animátus confidéntia.",
+      "english": "Inspired by this confidence,",
+      "start": 53.05,
+      "end": 66.49
+    },
+    {
+      "latin": "ad te, Virgo vírginum, mater, curro;",
+      "english": "I fly unto thee, O Virgin of virgins, my Mother;",
+      "start": 66.49,
+      "end": 78.52
+    },
+    {
+      "latin": "ad te vénio, coram te gemens peccátor assísto.",
+      "english": "to thee do I come, before thee I stand, sinful and sorrowful.",
+      "start": 79.17,
+      "end": 96.28
+    },
+    {
+      "latin": "Noli, Mater Verbi, verba mea despícere;",
+      "english": "O Mother of the Word Incarnate, despise not my petitions,",
+      "start": 97.07,
+      "end": 112.14
+    },
+    {
+      "latin": "sed audi propítia, et exáudi.",
+      "english": "but in thy mercy hear and answer me.",
+      "start": 112.63,
+      "end": 123.28
+    }
+  ]
+}

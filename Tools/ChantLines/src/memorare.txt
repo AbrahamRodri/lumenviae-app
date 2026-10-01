@@ -1,0 +1,22 @@
+# Memorare, set to chant (mode IV), whole; the score and the recording have
+# no Amen. Latin from the score; English from the app's Memorare. The cantor
+# breathes before "curro" and after "Noli", where the English cannot be
+# parted without moving its words, so those two lines run over two phrases.
+noise -20
+gap 0.3
+merge 1.5
+
+Memoráre, | Remember,
+o piíssima Virgo María, | O most gracious Virgin Mary,
+non esse audítum a sǽculo | that never was it known
+quemquam ad tua curréntem præsídia, | that anyone who fled to thy protection,
+tua implorántem auxília, | implored thy help,
+tua peténtem suffrágia, | or sought thine intercession,
+esse derelíctum. | was left unaided.
+Ego, tali animátus confidéntia. | Inspired by this confidence,
+ad te, Virgo vírginum, mater, curro; | I fly unto thee, O Virgin of virgins, my Mother;
+~
+ad te vénio, coram te gemens peccátor assísto. | to thee do I come, before thee I stand, sinful and sorrowful.
+Noli, Mater Verbi, verba mea despícere; | O Mother of the Word Incarnate, despise not my petitions,
+~
+sed audi propítia, et exáudi. | but in thy mercy hear and answer me.
