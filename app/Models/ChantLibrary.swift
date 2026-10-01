@@ -126,7 +126,9 @@ enum ChantLength: String, CaseIterable, Identifiable {
 /// The seasons of the Church's year as the library keeps them. The year
 /// is cut where its chants change: Christmas runs on to Septuagesima, and
 /// Lent begins there, when the Alleluia is put away. Pentecost is its own
-/// week, the octave; after it the long green season runs to Advent.
+/// week, the octave; after it the long green season runs to Advent. The
+/// boundaries are `ScheduleService`'s, and for display only: they never
+/// decide which mysteries are prayed.
 enum ChantSeason: String, CaseIterable, Identifiable {
     case advent
     case christmas
@@ -218,14 +220,14 @@ struct ChantYear {
         self.start = start
         self.end = end
 
+        // Every boundary is ScheduleService's, where the app's calendar
+        // lives; nothing here reckons a date of its own
+        let easterYear = startYear + 1
         let christmas = calendar.date(from: DateComponents(year: startYear, month: 12, day: 25)) ?? start
-        let easter = ScheduleService.easterSunday(year: startYear + 1, calendar: calendar) ?? end
-        func fromEaster(_ days: Int) -> Date {
-            calendar.date(byAdding: .day, value: days, to: easter) ?? easter
-        }
-        let septuagesima = fromEaster(-63)
-        let pentecost = fromEaster(49)
-        let trinity = fromEaster(56)
+        let easter = ScheduleService.easterSunday(year: easterYear, calendar: calendar) ?? end
+        let septuagesima = ScheduleService.septuagesima(year: easterYear, calendar: calendar) ?? easter
+        let pentecost = ScheduleService.pentecost(year: easterYear, calendar: calendar) ?? easter
+        let trinity = ScheduleService.trinitySunday(year: easterYear, calendar: calendar) ?? pentecost
 
         let bounds: [(ChantSeason, Date, Date)] = [
             (.advent, start, christmas),

@@ -128,6 +128,21 @@ struct ChantLibraryTests {
         #expect(ChantYear(containing: day(2027, 5, 23)).season(on: day(2027, 5, 23)) == .afterPentecost)
     }
 
+    @Test func theWheelsBoundariesAreTheSchedules() {
+        // Easter 2027 is the 28th of March
+        let monthAndDay: (Date?) -> [Int] = { date in
+            guard let date else { return [] }
+            return [self.calendar.component(.month, from: date), self.calendar.component(.day, from: date)]
+        }
+        #expect(monthAndDay(ScheduleService.septuagesima(year: 2027)) == [1, 24])
+        #expect(monthAndDay(ScheduleService.pentecost(year: 2027)) == [5, 16])
+        #expect(monthAndDay(ScheduleService.trinitySunday(year: 2027)) == [5, 23])
+        let church = ChantYear(containing: day(2027, 3, 1))
+        #expect(church.span(of: .lent)?.start == ScheduleService.septuagesima(year: 2027))
+        #expect(church.span(of: .pentecost)?.start == ScheduleService.pentecost(year: 2027))
+        #expect(church.span(of: .afterPentecost)?.start == ScheduleService.trinitySunday(year: 2027))
+    }
+
     @Test func theWheelCountsTheDaysToAdvent() {
         let today = day(2026, 10, 1)
         let next = ChantYear(containing: today).daysUntilNextSeason(from: today)

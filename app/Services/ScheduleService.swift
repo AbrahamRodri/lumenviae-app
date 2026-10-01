@@ -242,6 +242,35 @@ struct ScheduleService {
         return calendar.date(byAdding: .day, value: daysUntilSunday, to: nov27)
     }
 
+    // MARK: - The Church Year, for Display
+
+    // The boundaries the Chant Library's wheel cuts the year at. They are
+    // for display only: which mysteries are prayed is `season(for:)`'s
+    // three seasons and nothing here, so the Rosary's schedule stays the
+    // server's `LiturgicalCalendar`.
+
+    /// Septuagesima Sunday: nine weeks before Easter, when the Alleluia is
+    /// put away
+    static func septuagesima(year: Int, calendar: Calendar = .current) -> Date? {
+        easterSunday(year: year, calendar: calendar).flatMap {
+            calendar.date(byAdding: .day, value: -63, to: $0)
+        }
+    }
+
+    /// Pentecost: the seventh Sunday after Easter
+    static func pentecost(year: Int, calendar: Calendar = .current) -> Date? {
+        easterSunday(year: year, calendar: calendar).flatMap {
+            calendar.date(byAdding: .day, value: 49, to: $0)
+        }
+    }
+
+    /// Trinity Sunday: the Sunday after Pentecost, closing its octave
+    static func trinitySunday(year: Int, calendar: Calendar = .current) -> Date? {
+        easterSunday(year: year, calendar: calendar).flatMap {
+            calendar.date(byAdding: .day, value: 56, to: $0)
+        }
+    }
+
     // MARK: - Day Labels
 
     /// Header label for the current day (e.g., "WEDNESDAY PRAYER")
