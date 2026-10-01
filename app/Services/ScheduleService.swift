@@ -273,9 +273,11 @@ struct ScheduleService {
 
     // MARK: - Day Labels
 
-    /// Header label for the current day (e.g., "WEDNESDAY PRAYER")
+    /// Header label for the current day (e.g., "WEDNESDAY"): the day
+    /// alone, over TODAY'S MYSTERIES — "WEDNESDAY PRAYER" read as the
+    /// name of one prayer
     static var dayLabel: String {
-        "\(dayName.uppercased()) PRAYER"
+        dayName.uppercased()
     }
 
     /// Reused: `DateFormatter` init is expensive, and `dayName` is reached

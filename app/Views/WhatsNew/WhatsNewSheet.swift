@@ -42,7 +42,7 @@ struct WhatsNewSheet: View {
                     SheetHeader(
                         kicker: "Lumen Viae \(release.version)",
                         title: "What's New",
-                        lead: "Added since you last updated. Each opens where it lives in the app."
+                        lead: "Added since you last updated. Tap one to open it."
                     )
 
                     SheetRule()

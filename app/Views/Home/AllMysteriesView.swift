@@ -63,13 +63,17 @@ struct AllMysteriesView: View {
 
     private var headerSection: some View {
         VStack(spacing: 8) {
-            Text("All Mysteries")
+            Text("Rosary Mysteries")
                 .font(AppFonts.headlineFont(28))
                 .foregroundColor(AppColors.goldLight)
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
 
-            Text("Select a mystery type to begin prayer")
+            Text("Scenes from the lives of Jesus and Mary. Choose which to pray.")
                 .font(AppFonts.bodyFont(14))
                 .foregroundColor(AppColors.textSecondary)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
         }
         .padding(.horizontal, 20)
     }

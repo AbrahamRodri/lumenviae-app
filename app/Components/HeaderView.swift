@@ -61,7 +61,9 @@ struct HeaderView: View {
                 Spacer(minLength: 0)
 
                 if let onSearchTap {
-                    glyph("ph-magnifying-glass", "Search", action: onSearchTap)
+                    // Named for the page it opens, as the tour names it;
+                    // what it does is the hint
+                    glyph("ph-magnifying-glass", "Explore", hint: "Search", action: onSearchTap)
                         .firstUseTourStop(.explore)
                 }
             }
@@ -73,6 +75,7 @@ struct HeaderView: View {
     private func glyph(
         _ icon: String,
         _ label: String,
+        hint: String = "",
         action: @escaping () -> Void
     ) -> some View {
         Button(action: action) {
@@ -83,6 +86,7 @@ struct HeaderView: View {
         }
         .buttonStyle(QuietGlyphButtonStyle())
         .accessibilityLabel(label)
+        .accessibilityHint(hint)
     }
 }
 

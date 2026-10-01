@@ -93,7 +93,7 @@ struct MysteryCard: View {
 #Preview {
     MysteryCard(
         title: "Joyful",
-        subtitle: "The Incarnation",
+        subtitle: "Jesus' birth and childhood",
         gradientColors: MysteryCategory.joyful.gradientColors,
         cardImageName: "joyful_annunciation"
     )

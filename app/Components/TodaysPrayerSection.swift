@@ -260,7 +260,7 @@ struct TodaysPrayerSection: View {
     // MARK: Row 1b — The hour's prayers
 
     /// The Prayer Book's order for the hour it is — Morning Prayers, the
-    /// Angelus, Night Prayers — and OFFERED once it has been prayed to
+    /// Angelus, Night Prayers — and PRAYED once it has been prayed to
     /// its Amen today. Opens the book, which opens on this same order.
     /// Never "missed": an hour gone by is simply not this row any more.
     private var hourRow: some View {
@@ -280,14 +280,14 @@ struct TodaysPrayerSection: View {
         return LedgerRow(
             icon: order.icon,
             name: order.title(on: now),
-            accessibility: "\(order.title(on: now)), \(offered ? "offered today" : moment.lowercased())"
+            accessibility: "\(order.title(on: now)), \(offered ? "prayed today" : moment.lowercased())"
         ) {
             HStack(spacing: 6) {
                 if offered {
                     AppIcon("ph-seal-check-fill", size: 11)
                         .foregroundColor(AppColors.gold)
                 }
-                Text(offered ? "OFFERED" : moment)
+                Text(offered ? "PRAYED" : moment)
                     .font(AppFonts.labelFont(9))
                     .tracking(2)
                     .foregroundColor(AppColors.gold.opacity(0.9))
@@ -307,7 +307,7 @@ struct TodaysPrayerSection: View {
         PrayerBook.dayOrderMoment(at: date).uppercased()
     }
 
-    // MARK: Row 1 — Total Consecration
+    // MARK: Row 1 — Consecration to Mary
 
     /// Nothing is greyed out and nothing is hidden. A user who has never
     /// begun sees an invitation in the same place, at the same weight —
@@ -318,9 +318,9 @@ struct TodaysPrayerSection: View {
 
         return LedgerRow(
             icon: "ch-consecration",
-            name: "Total Consecration",
-            accessibility: day.map { "Total Consecration, day \($0) of 33" }
-                ?? "Total Consecration, thirty-three days to Our Lady"
+            name: "Consecration to Mary",
+            accessibility: day.map { "Consecration to Mary, day \($0) of a 33-day preparation" }
+                ?? "Consecration to Mary, a 33-day preparation. Begin."
         ) {
             if let day {
                 VStack(alignment: .trailing, spacing: 6) {

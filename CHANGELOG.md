@@ -115,6 +115,13 @@ gained books of their own, and How to Pray became a course.
   On waking, At noon, At 6 PM and At bedtime, centuries are written as
   numbers, and every Church word in a prayer's notes is explained where
   it stands
+- Say Home, Explore, the introduction, What's New and the first tour in
+  plain words: the mysteries are explained once on each page ("scenes
+  from the lives of Jesus and Mary") and their cards say what each set is
+  about, Explore has a title and plain doors (Today's Mass, Hours of
+  Prayer, Chant, Learn More, All books), the consecration is Consecration
+  to Mary, the Rosary said aloud is The Rosary Said Aloud, and a prayer
+  done reads Prayed
 - Reuse the spoken Rosary's saved manifest while its signed links live, and
   fetch a new one before downloading once they have expired; offline, say
   the Rosary from the recordings already on disk (abebfed)

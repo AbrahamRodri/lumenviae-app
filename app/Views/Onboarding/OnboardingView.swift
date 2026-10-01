@@ -450,7 +450,7 @@ struct OnboardingView: View {
             stage: stage
         ) {
             OnboardingLead(
-                "A quiet place to pray the Rosary, with Scripture and a meditation on each mystery.",
+                "A quiet place to pray the Rosary, with Scripture and a reflection on each of its mysteries: scenes from the lives of Jesus and Mary.",
                 italic: true
             )
         } bottomContent: {
@@ -499,7 +499,7 @@ struct OnboardingView: View {
     private static let meditationOnlyLead =
         "The voice reads the meditation, then you say the prayers yourself."
     private static let wholeRosaryLead =
-        "The voice leads every prayer, bead by bead, and you answer along."
+        "The voice leads every prayer, bead by bead, and you pray along."
 
     /// How much of the Rosary the voice says (`UserSettings.prayAloud`),
     /// asked first of the two because it decides whether the beads
@@ -533,7 +533,7 @@ struct OnboardingView: View {
 
                     OnboardingChoiceCard(
                         label: "Whole Rosary",
-                        detail: "Every prayer is said aloud; answer along",
+                        detail: "Every prayer is said aloud; pray along",
                         isSelected: praysAloud
                     ) {
                         choose(aloud: true)
@@ -659,19 +659,19 @@ struct OnboardingView: View {
             ]
         case .habit:
             return [
-                Offer(icon: "ph-calendar-dots", text: "Today's mysteries, set by the traditional weekday order"),
+                Offer(icon: "ph-calendar-dots", text: "Today's mysteries, chosen by the day of the week"),
                 Offer(icon: "ph-bell", text: "One gentle reminder a day, at the hour you choose"),
                 Offer(icon: "ph-flame", text: "A quiet record of the days you pray")
             ]
         case .devotion:
             return [
-                Offer(icon: "ch-consecration", text: "St. Louis de Montfort's 33-day preparation for Total Consecration"),
+                Offer(icon: "ch-consecration", text: "A 33-day preparation to give yourself to Jesus through Mary, by St. Louis de Montfort"),
                 Offer(icon: "ph-crown", text: "True Devotion to Mary, the complete book"),
-                Offer(icon: "lv-pierced-heart", text: "The Chaplet of the Seven Sorrows")
+                Offer(icon: "lv-pierced-heart", text: "The Seven Sorrows of Mary, prayed on their own beads")
             ]
         case .learning:
             return [
-                Offer(icon: "lv-rosary", text: "How to Pray the Rosary in three short lessons, then Your First Rosary, guided"),
+                Offer(icon: "lv-rosary", text: "How to Pray the Rosary in three short lessons, then a guided first Rosary"),
                 Offer(icon: "ch-praying-hands", text: "Every prayer written out, in English or in Latin"),
                 Offer(icon: "ph-book-open", text: "A meditation on each mystery, to read or to hear")
             ]
@@ -679,10 +679,10 @@ struct OnboardingView: View {
     }
 
     private static let generalOffers = [
-        Offer(icon: "ph-calendar-dots", text: "Today's mysteries, set by the traditional weekday order"),
+        Offer(icon: "ph-calendar-dots", text: "Today's mysteries, chosen by the day of the week"),
         Offer(icon: "ph-book-open", text: "A meditation on each mystery, to read or to hear"),
-        Offer(icon: "ch-consecration", text: "St. Louis de Montfort's 33-day preparation for Total Consecration"),
-        Offer(icon: "ch-altar", text: "The 1962 Missal and the Divine Office for each day")
+        Offer(icon: "ch-consecration", text: "A 33-day preparation to give yourself to Jesus through Mary, by St. Louis de Montfort"),
+        Offer(icon: "ch-altar", text: "Each day's Mass and the Church's Hours of Prayer, in their traditional form")
     ]
 
     /// With several reasons chosen, each one's best line comes first, so
@@ -736,7 +736,7 @@ struct OnboardingView: View {
             VStack(spacing: 4) {
                 continueButton("Continue", to: .colors)
 
-                QuietGoldButton(title: "Kinds of Meditation", trailingIcon: "ph-caret-right") {
+                QuietGoldButton(title: "See the Kinds of Meditation", trailingIcon: "ph-caret-right") {
                     showMethodsSheet = true
                 }
                 .frame(minHeight: 44)
@@ -767,7 +767,7 @@ struct OnboardingView: View {
     private func detail(for language: PrayerLanguage) -> String {
         switch language {
         case .english:           return "Every prayer in English"
-        case .latin:             return "The traditional language of the Roman liturgy"
+        case .latin:             return "The Church's traditional language of prayer"
         case .both:              return "Latin first, English beneath each line"
         case .latinUnderEnglish: return "English first, Latin beneath each line"
         }
@@ -818,7 +818,7 @@ struct OnboardingView: View {
     /// not tied to it, so they do not claim it.
     private static let reminderOptions: [(label: String, spoken: String, detail: String, hour: Int)] = [
         ("Morning", "6 AM", "6 AM, to begin the day with prayer", 6),
-        ("Noon", "Noon", "12 PM, when the Angelus bells ring", 12),
+        ("Noon", "Noon", "12 PM, when church bells ring for the noon prayer", 12),
         ("Evening", "8 PM", "8 PM, to end the day with prayer", 20)
     ]
 
@@ -1002,7 +1002,7 @@ struct OnboardingView: View {
         }
         switch primaryIntention {
         case .peace:
-            return "May each decade bring you stillness. Today's mysteries are ready when you are."
+            return "May each prayer bring you stillness. Today's mysteries are ready when you are."
         case .habit:
             return "Faithfulness grows one day at a time. Begin with today's mysteries."
         case .devotion:
@@ -2050,7 +2050,7 @@ private struct OnboardingThemePicker: View {
     /// rest of the app quotes it
     private func words(for theme: AppTheme) -> (text: String, source: String) {
         switch theme {
-        case .marianBlue: return ("“Tota pulchra es, Maria.” Thou art all fair, O Mary.", "Antiphon of the Immaculate Conception")
+        case .marianBlue: return ("“Tota pulchra es, Maria.” Thou art all fair, O Mary.", "An old chant to Mary")
         case .midnight:   return ("“Be still and see that I am God.”", "Psalm 45:11")
         case .candlelit:  return ("“Thy word is a lamp to my feet.”", "Psalm 118:105")
         }

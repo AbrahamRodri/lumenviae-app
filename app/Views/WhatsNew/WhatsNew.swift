@@ -54,12 +54,14 @@ struct WhatsNewRelease: Identifiable {
             WhatsNewItem(
                 icon: "ph-music-note",
                 title: "The Chant Library",
-                detail: "The Church's own songs in Gregorian chant, each with its recording and its score",
+                detail: "The Church's own songs in Gregorian chant, each with a recording and sheet music",
                 route: .chantLibrary
             ),
             WhatsNewItem(
                 icon: PrayerShortcut.rosaryAloud.icon,
-                title: "The Holy Rosary",
+                // The form's name as the Rosary's own screens say it
+                // (`ScripturalRosaryViewModel.displayName`)
+                title: "The Rosary Said Aloud",
                 detail: "Every prayer of the Rosary said aloud, in the voice you choose, at the speed you set",
                 // Today's mysteries: the notes are decided at launch and
                 // shown the same day
@@ -68,7 +70,7 @@ struct WhatsNewRelease: Identifiable {
             WhatsNewItem(
                 icon: "lv-rosary",
                 title: "How to Pray the Rosary",
-                detail: "A short course for someone new to it, then Your First Rosary, a prayer at a time",
+                detail: "A short course for someone new to it, then a guided first Rosary, one prayer at a time",
                 route: .howToPray
             )
             // The Scriptural Rosary and the narration voices came in 3.0

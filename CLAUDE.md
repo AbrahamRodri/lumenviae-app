@@ -14,7 +14,7 @@ Home Screen
     ├── Featured card: today's mysteries ("Pray the Rosary", a chevron)
     │   └── Goes to: that day's mysteries' page
     │
-    └── Sacred Mysteries Grid (the week's sets, then the Seven Sorrows:
+    └── Rosary Mysteries Grid (the week's sets, then the Seven Sorrows:
         Joyful, Sorrowful, Glorious on Traditional, with Luminous after
         Glorious on Modern; VIEW ALL always lists all five)
         └── Tap any mystery card
@@ -261,8 +261,8 @@ liturgical day and carries only the journal's pencil, and not the Chapel's foot,
 control and the imprint, nothing else.
 
 **Today's Prayer** (`Components/TodaysPrayerSection.swift`) stands
-between the Sacred Mysteries grid and the reading shelf: a section heading in the home page's own voice ("Today's Prayer" in
-Cinzel 19, the date where the other sections keep their link), the Total Consecration first, under the section's name, then the feast as a subsection
+between the Rosary Mysteries grid and the reading shelf: a section heading in the home page's own voice ("Today's Prayer" in
+Cinzel 19, the date where the other sections keep their link), the Consecration to Mary first, under the section's name, then the feast as a subsection
 of it — its name in small engraved capitals with a hairline beside it
 running to the edge, the way a card names one of its parts — heading the Mass and
 the Office. Set large in the reading italic, the feast read as a second
@@ -273,11 +273,11 @@ it, and for the same reason, stands **the hour's prayers**: the Prayer
 Book's order for the hour it is (Morning Prayers until eleven, the
 Angelus until eight, Night Prayers after), its fact ON WAKING · AT NOON
 · AT 6 PM · AT BEDTIME (`PrayerBook.dayOrderMoment`, the words the
-Prayers page and the Chapel's tile say too), or OFFERED once prayed to its Amen — never
+Prayers page and the Chapel's tile say too), or PRAYED once prayed to its Amen — never
 "missed"; it opens the Prayer Book, which opens on that same order.
 Four ruled rows on the bare page — no card,
-no panel, no fill. The Mass, the Divine Office,
-the Total Consecration and the hour's prayers, given equal standing. It is named for the
+no panel, no fill. Today's Mass, the Hours of Prayer,
+the Consecration to Mary and the hour's prayers, given equal standing. It is named for the
 user's prayer and **not** "Today in the Church", because the
 consecration is a private devotion and not a liturgical observance;
 `TodayInChurch` (the observable) still supplies the day and is shared
@@ -296,18 +296,23 @@ in this section may shame the user**: no "0 days", no "missed", no
 empty track. True Devotion is reached from the reading shelf below, Explore and the Chapel's
 Library tile, not from here.
 
-The search glass pushes `AppRoute.explore`
-(`Views/Home/ExploreView.swift`): at rest it browses — an epigraph
-(Mt 7:7), the five devotions as painted banners, each opening its mysteries'
+The search glass (VoiceOver: "Explore", hinted "Search") pushes
+`AppRoute.explore` (`Views/Home/ExploreView.swift`), titled Explore in
+its bar: at rest it browses — one line saying what the page is
+("Everything in the app, and a search across it all.") over an epigraph
+(Mt 7:7), then ROSARY MYSTERIES, a line saying what the mysteries are
+("Scenes from the lives of Jesus and Mary, prayed with the Rosary.")
+over the five devotions as painted banners, each opening its mysteries'
 page, where the Rosary's three forms stand (the Scriptural Rosary and
 the Rosary Aloud once had banners of their own beneath the five, as
 though they were other devotions; typed search still finds both, and
 opens the day's mysteries' page), and a quiet "New to the Rosary? · How to
-Pray" door under that (How to Pray was the fourth item of The Study at
-the foot of the page, where a newcomer never reached it); then the
-Prayer Book, Sung Prayer (tonight's antiphon of Our Lady, played where
-it stands, over the door to the Chant Library), The
-Liturgy (Missal | Office), the Spiritual Reading shelf, and The Study's
+Pray" door under that (How to Pray was the fourth item of the index at
+the foot of the page, where a newcomer never reached it); then
+Prayers, Chant (tonight's song to Mary, played where it stands, over
+ALL CHANTS, the door to the Chant Library), Today in the Church (Today's
+Mass | Hours of Prayer, each over its book's Church name, Daily Missal
+and Divine Office), Spiritual Reading (ALL BOOKS), and Learn More's
 ruled index — and typing searches mysteries, library doors, library readings,
 chants, the Prayer Book's orders and prayers, and meditation sets at once
 (a set by the label the shelf shows as well as the one the server
@@ -1251,7 +1256,7 @@ write concurrent code here:
   on a small phone at the largest text size on a milestone day. The page
   itself opens from the Chapel's Reflections tile
   (`router.switchTo(.journal)`) and Explore's search, which finds it by
-  name and does not list it in The Study, as Progress does.
+  name and does not list it in Learn More, as Progress does.
 - **33-day Consecration** — feast-day selection, per-day scripture and reading,
   bilingual prayers, journal prompts, and a completion rite. The tab's day page
   (`ConsecrationDayOverviewView`) is a column of gold-hairline cards. **Your
@@ -1476,8 +1481,11 @@ write concurrent code here:
 
   The copy
   is plain on purpose: say what a thing is before anything beautiful
-  about it, the Church's own names in full (Total Consecration, *True
-  Devotion to Mary*), Scripture from the Douay-Rheims with its
+  about it — the consecration as "a 33-day preparation to give yourself
+  to Jesus through Mary", the mysteries as "scenes from the lives of
+  Jesus and Mary" — a Church word only where it is explained, a book's
+  own name in full (*True Devotion to Mary*), Scripture from the
+  Douay-Rheims with its
   numbering, and noon is the only reminder hour that claims the Angelus.
   Intention wording lives in `PrayerIntention.displayName`/`detail`;
   the raw values are what is stored and never change.
@@ -1507,7 +1515,8 @@ write concurrent code here:
   line saying the Journal now opens from the Chapel and after each
   Rosary, since every row is a door and the Journal is a tab, not a
   page; it turns to the Prayers tab), the Chant Library, the Rosary said aloud (with the
-  speed slider; its row is "The Holy Rosary" and opens that form's own
+  speed slider; its row is "The Rosary Said Aloud", the form's own name,
+  and opens that form's own
   page on today's mysteries, `.rosaryAloud(today)`), and How to Pray
   with Your First Rosary — and not the
   Scriptural Rosary or the voices, which came in 3.0; if a named
@@ -1519,7 +1528,8 @@ write concurrent code here:
   come back; if anything pushes a page while it runs (a notification, a
   shortcut) it stands aside (`pause()`), still owed, and begins again
   from its first stop when home returns. Five coach marks over the real
-  controls, one at a time: today's Rosary (the featured card), the Pray
+  controls, one at a time: Today's Mysteries (the featured card, named
+  as it names itself), the Pray
   button (a tap and a hold), the Prayers tab, the Chapel tab, and
   Explore's glass. Each control reports where it
   stands with one appended modifier, `.firstUseTourStop(_:)` (HomeView,
@@ -1827,7 +1837,7 @@ write concurrent code here:
   chosen one lit and checked and today's
   marked TODAY; when today's are the chosen ones, as they usually are,
   the check takes the trailing edge and the line under the name says it
-  instead ("Today · The Incarnation"). A tap chooses and closes. PRAY is
+  instead ("Today · Jesus' birth and childhood"). A tap chooses and closes. PRAY is
   guarded against a second push (`isOpening`, cleared when the page
   shows again), as the mysteries' page guards its sets, so a double tap
   before the push covers the page cannot open the Rosary twice. `SetSection`
@@ -2356,8 +2366,8 @@ write concurrent code here:
   Angelus, the Blessed Sacrament, the Holy Ghost, the Sacred Heart and
   the Holy Name, praise, the saints, the four seasons, the dead, and the
   Mass — the Ordinary of Mass VIII and Credo III). Doors:
-  the Chapel's Chant tile, Explore (Sung Prayer, and search), and **"Sing
-  it in chant"** on any Prayer Book page whose prayer has a chant (a
+  the Chapel's Chant tile, Explore (Chant, and search), and **"Hear it
+  sung"** on any Prayer Book page whose prayer has a chant (a
   quiet act under Learn it by heart).
 
   **The library has six ways in** (the "Chant Library Redesign" boards):
@@ -2606,7 +2616,7 @@ write concurrent code here:
   `ChantCatalog.credit` says so on the chant page, the library, the
   consecration transport and the Lock Screen (its album line), with
   `licenceNote` beside it on the chant page and the library; the Chapel's
-  Chant tile and Explore's Sung Prayer carry neither. Each chant's own
+  Chant tile and Explore's Chant section carry neither. Each chant's own
   source page is its `sourceURL`. Nothing else may be added to the library
   without the same record: the three chants the app sang before (Sept
   2026) were files on S3 with no licence — the Magnificat a YouTube

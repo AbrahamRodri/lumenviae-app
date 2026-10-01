@@ -59,7 +59,7 @@ struct ReadingShelfSection: View {
 
             Button(action: { router.push(.spiritualReading) }) {
                 HStack(spacing: 5) {
-                    Text("THE SHELF")
+                    Text("ALL BOOKS")
                         .font(AppFonts.labelFont(10))
                         .tracking(1.5)
                     AppIcon("ph-caret-right", size: 9)
@@ -68,7 +68,7 @@ struct ReadingShelfSection: View {
                 .padding(.vertical, 8)
                 .padding(.leading, 16)
             }
-            .accessibilityLabel("Open the Spiritual Reading shelf")
+            .accessibilityLabel("See all Spiritual Reading books")
         }
         .padding(.horizontal, 20)
     }

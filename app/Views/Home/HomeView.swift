@@ -487,12 +487,22 @@ struct SacredMysteriesSection: View {
 
     // MARK: - Subviews
 
-    /// Section header with "Sacred Mysteries" title
+    /// The section's name over one line saying what the mysteries are,
+    /// said once on the page, where a newcomer first meets the word
     private var sectionHeader: some View {
-        HStack {
-            Text("Sacred Mysteries")
-                .font(AppFonts.headlineFont(19))
-                .foregroundColor(AppColors.goldLight)
+        HStack(alignment: .firstTextBaseline) {
+            VStack(alignment: .leading, spacing: 3) {
+                Text("Rosary Mysteries")
+                    .font(AppFonts.headlineFont(19))
+                    .foregroundColor(AppColors.goldLight)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.85)
+
+                Text("Scenes from the lives of Jesus and Mary")
+                    .font(AppFonts.readingItalicFont(14))
+                    .foregroundColor(AppColors.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
 
             Spacer()
 

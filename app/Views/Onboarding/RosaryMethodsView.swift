@@ -48,25 +48,25 @@ struct RosaryMethodsView: View {
             label: "Considerations",
             icon: "lv-rosary",
             title: "A reading and a prayer",
-            description: "A short reflection on the mystery, often with a prayer at the end. The words come from preachers and Doctors of the Church. Read it once, then keep it in mind through the decade.\n\nSt. Alphonsus Liguori · Ven. Fulton J. Sheen · St. John Henry Newman · St. Thomas Aquinas"
+            description: "A short reflection on the mystery, often with a prayer at the end. The words come from preachers and the Church's great teachers. Read it once, then keep it in mind through the ten Hail Marys.\n\nSt. Alphonsus Liguori · Venerable Fulton J. Sheen · St. John Henry Newman · St. Thomas Aquinas"
         ),
         MeditationKind(
             label: "Contemplative",
             icon: "ch-candle",
             title: "Inside the scene",
-            description: "Longer passages that place you within the mystery: what was seen, heard, and felt there. Read slowly. You do not need to finish the page before the decade ends.\n\nBl. Anne Catherine Emmerich · Ven. Mary of Agreda · St. Ignatius of Loyola · Fr. Frederick William Faber"
+            description: "Longer passages that place you within the mystery: what was seen, heard, and felt there. Read slowly. You do not need to finish the page before the ten Hail Marys end.\n\nBlessed Anne Catherine Emmerich · Venerable Mary of Agreda · St. Ignatius of Loyola · Fr. Frederick William Faber"
         ),
         MeditationKind(
             label: "Saints",
             icon: "lv-saint",
             title: "In a saint's own words",
-            description: "A set written by a saint of the Church carries this label as well as its own kind.\n\nA set of St. Alphonsus's reflections, for example, is marked both Saints and Reflections."
+            description: "Meditations written by saints. They also appear under their other kind.\n\nSt. Alphonsus's, for example, are under both Saints and Reflections."
         ),
         MeditationKind(
             label: "Scriptural",
             icon: "ch-bible",
             title: "The Gospel first",
-            description: "The Scripture passage for the mystery, then a few lines of meditation on it.\n\nThe Seven Sorrows are set this way, because the Gospel tells the whole scene. For a verse on every bead, choose The Scriptural Rosary on any mysteries' page, above its meditation sets."
+            description: "The Scripture passage for the mystery, then a few lines of meditation on it.\n\nThe Seven Sorrows are set this way, because the Gospel tells the whole scene. For a verse on every bead, open any of the mysteries and choose The Scriptural Rosary, above the meditations."
         )
     ]
 

@@ -36,7 +36,7 @@ enum FirstUseTourStop: Int, CaseIterable {
     /// The place's name, as the mark's kicker
     var name: String {
         switch self {
-        case .today:   return "Today's Rosary"
+        case .today:   return "Today's Mysteries"
         case .pray:    return "The Pray Button"
         case .prayers: return "Prayers"
         case .chapel:  return "Your Chapel"
@@ -48,15 +48,15 @@ enum FirstUseTourStop: Int, CaseIterable {
     var words: String {
         switch self {
         case .today:
-            return "The day's mysteries, set out each morning. Begin the day's Rosary here."
+            return "Each day has its own mysteries: scenes from the lives of Jesus and Mary to reflect on as you pray. Start today's Rosary here."
         case .pray:
-            return "Tap it to begin today's Rosary at once. Press and hold to choose another devotion."
+            return "Tap it to begin today's Rosary at once. Press and hold to choose another prayer."
         case .prayers:
-            return "The Church's prayers, open on the one for the hour it is. Find any prayer by name, or by where you are: at Mass, at Confession, at home."
+            return "Catholic prayers for every need, opening on the ones for this time of day. Find any prayer by name, or by where you are: at Mass, at Confession, at home."
         case .chapel:
-            return "Your own page: the prayers you keep each day, the days you have prayed, and the hour's prayers. Arrange it as you like."
+            return "Your own page: your daily prayers, the days you have prayed, and the prayers for this time of day. Arrange it as you like."
         case .explore:
-            return "Every devotion in the app, chant and spiritual reading, and a search across them all."
+            return "Everything in the app in one place, from prayers and chant to books, with a search across it all."
         }
     }
 

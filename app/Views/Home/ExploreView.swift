@@ -101,6 +101,14 @@ struct ExploreView: View {
                     .foregroundColor(AppColors.gold)
                 }
             }
+            // The page's name, the one the home masthead's glass and the
+            // first-use tour call it by
+            ToolbarItem(placement: .principal) {
+                Text("Explore")
+                    .font(AppFonts.headlineFont(17))
+                    .foregroundColor(AppColors.cream)
+                    .accessibilityAddTraits(.isHeader)
+            }
         }
         // The index is worth fetching only once there is something to
         // match it against — at rest this page lists no sets.
@@ -126,7 +134,7 @@ struct ExploreView: View {
                 TextField(
                     "",
                     text: $query,
-                    prompt: Text("Search mysteries, meditations, the library")
+                    prompt: Text("Search prayers, mysteries, books and chant")
                         .font(AppFonts.bodyFont(15))
                         .foregroundColor(AppColors.textSecondary.opacity(0.8))
                 )
@@ -181,8 +189,15 @@ struct ExploreView: View {
     private var browseContent: some View {
         epigraph
 
-        section("The Mysteries") {
-            VStack(spacing: 10) {
+        section("Rosary Mysteries") {
+            VStack(alignment: .leading, spacing: 10) {
+                // Said once on the page, where a newcomer first meets
+                // the word
+                Text("Scenes from the lives of Jesus and Mary, prayed with the Rosary.")
+                    .font(AppFonts.readingItalicFont(14))
+                    .foregroundColor(AppColors.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+
                 // Each opens its mysteries' page, where the Rosary is
                 // chosen in its three forms — a meditation set, the
                 // Scriptural Rosary, or the Holy Rosary. The Scriptural
@@ -204,9 +219,9 @@ struct ExploreView: View {
             prayerBookShelf
         }
 
-        // The Church's songs: tonight's antiphon of Our Lady, to play
-        // where it stands, over the door to the whole library
-        section("Sung Prayer", link: ("The library", { router.push(.chantLibrary) })) {
+        // The Church's songs: tonight's song to Mary, to play where it
+        // stands, over the door to the whole library
+        section("Chant", link: ("All chants", { router.push(.chantLibrary) })) {
             chantShelf
         }
 
@@ -214,15 +229,15 @@ struct ExploreView: View {
         // books as a diptych — the same pairing the home page's shelf
         // makes — the books to read as a row of standing covers, and
         // the guides and records as a ruled index.
-        section("The Liturgy") {
+        section("Today in the Church") {
             liturgyDiptych
         }
 
-        section("Spiritual Reading", link: ("The shelf", { router.push(.spiritualReading) })) {
+        section("Spiritual Reading", link: ("All books", { router.push(.spiritualReading) })) {
             readingShelf
         }
 
-        section("The Study") {
+        section("Learn More") {
             libraryIndex
         }
     }
@@ -267,6 +282,14 @@ struct ExploreView: View {
     /// The page's reason for being, in the Gospel's own words.
     private var epigraph: some View {
         VStack(spacing: 6) {
+            // What the page is, before the verse that says why
+            Text("Everything in the app, and a search across it all.")
+                .font(AppFonts.readingItalicFont(15))
+                .foregroundColor(AppColors.textSecondary)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.bottom, 8)
+
             Text("Seek, and you shall find.")
                 .font(AppFonts.italicFont(15))
                 .foregroundColor(AppColors.cream.opacity(0.9))
@@ -349,8 +372,8 @@ struct ExploreView: View {
                         .foregroundColor(AppColors.cream)
 
                     Text(setsUnavailable
-                         ? "The meditations couldn't be reached — mysteries and the library are still searchable."
-                         : "Try a mystery, a set's name, or a saint.")
+                         ? "Couldn't load the meditations. Check your connection. Prayers, mysteries and books can still be searched."
+                         : "Try a mystery, a prayer, or a saint's name.")
                         .font(AppFonts.italicFont(13))
                         .foregroundColor(AppColors.textSecondary)
                         .multilineTextAlignment(.center)
@@ -378,14 +401,14 @@ struct ExploreView: View {
         } else {
             VStack(alignment: .leading, spacing: 28) {
                 if !categories.isEmpty {
-                    section("The Mysteries") {
+                    section("Rosary Mysteries") {
                         mysteryLedger(categories)
                     }
                     .transition(.opacity)
                 }
 
                 if !libraryHits.isEmpty {
-                    section("The Library") {
+                    section("In the App") {
                         tileGrid(libraryHits.map { entry in
                             ExploreTile(icon: entry.icon, title: entry.title, action: entry.action)
                         })
@@ -516,10 +539,10 @@ struct ExploreView: View {
 
     private var libraryEntries: [LibraryEntry] {
         [
-            LibraryEntry(icon: "ch-altar", title: "Daily Missal",
+            LibraryEntry(icon: "ch-altar", title: "Today's Mass",
                          matchText: "daily missal mass 1962 propers latin") { router.push(.missal) },
-            LibraryEntry(icon: "ph-clock", title: "Divine Office",
-                         matchText: "divine office breviary hours matins lauds prime terce sext none vespers compline") { router.push(.office) },
+            LibraryEntry(icon: "ph-clock", title: "Hours of Prayer",
+                         matchText: "divine office breviary hours of prayer matins lauds prime terce sext none vespers compline") { router.push(.office) },
             LibraryEntry(icon: "ph-crown", title: "True Devotion",
                          matchText: "true devotion to mary montfort book") { router.push(.trueDevotionBook) },
             LibraryEntry(icon: "ph-scroll", title: "The Devotion in Summary",
@@ -531,7 +554,7 @@ struct ExploreView: View {
             // under OTHER WAYS TO PRAY with the sets beneath
             LibraryEntry(icon: PrayerShortcut.scripturalRosary.icon, title: "The Scriptural Rosary",
                          matchText: "scriptural rosary verse every bead gospel douay rheims bible") { openTodaysMysteries() },
-            LibraryEntry(icon: PrayerShortcut.rosaryAloud.icon, title: "The Holy Rosary",
+            LibraryEntry(icon: PrayerShortcut.rosaryAloud.icon, title: "The Rosary Said Aloud",
                          matchText: "holy rosary aloud said spoken audio listen voice hear prayers learn by ear no meditation") { openTodaysMysteries() },
             LibraryEntry(icon: "lv-rosary", title: "How to Pray",
                          matchText: "how to pray the rosary guide montfort methods") { router.push(.howToPray) },
@@ -541,12 +564,12 @@ struct ExploreView: View {
                          matchText: "mysteries in scripture bible verses") { router.push(.scripture) },
             LibraryEntry(icon: "ch-lily", title: "Marian Library",
                          matchText: "marian theology library dogmas apparitions saints") { router.push(.marianLibrary) },
-            LibraryEntry(icon: "ch-monstrance", title: "Carlo Acutis",
+            LibraryEntry(icon: "ch-monstrance", title: "St. Carlo Acutis",
                          matchText: "carlo acutis eucharist digital altar saint") { router.push(.carloAcutis) },
             LibraryEntry(icon: "ch-praying-hands", title: "Prayers",
                          matchText: "prayer book prayers enchiridion morning night angelus grace confession examination conscience mass communion litany litanies marian our lady latin novena") { router.push(.prayerBook) },
             LibraryEntry(icon: "ph-music-note", title: "The Chant Library",
-                         matchText: "chant chants gregorian sung song songs hymn hymns latin score scores music antiphon sing") { router.push(.chantLibrary) },
+                         matchText: "chant chants gregorian sung song songs hymn hymns latin score scores sheet music antiphon sing") { router.push(.chantLibrary) },
             LibraryEntry(icon: "ph-flame", title: "Prayer Record",
                          matchText: "sacred record progress streak history calendar") { router.switchTo(.progress) },
             // The Journal gave its place in the bar to Prayers; found by
@@ -730,7 +753,7 @@ struct ExploreView: View {
             }
             LedgerDoorRow(
                 title: "The Chant Library",
-                note: "\(ChantCatalog.all.count) chants of the Church, each with its recording and its score",
+                note: "\(ChantCatalog.all.count) sung prayers of the Church, each with a recording and sheet music",
                 icon: "ph-music-note"
             ) {
                 router.push(.chantLibrary)
@@ -793,8 +816,8 @@ struct ExploreView: View {
         HStack(spacing: 0) {
             diptychLeaf(
                 icon: "ch-altar",
-                title: "Daily Missal",
-                subtitle: "The Mass"
+                title: "Today's Mass",
+                subtitle: "Daily Missal"
             ) { router.push(.missal) }
 
             Rectangle()
@@ -804,8 +827,8 @@ struct ExploreView: View {
             // The Office's glyph everywhere is the clock of its hours
             diptychLeaf(
                 icon: "ph-clock",
-                title: "Divine Office",
-                subtitle: "The Hours"
+                title: "Hours of Prayer",
+                subtitle: "Divine Office"
             ) { router.push(.office) }
         }
         .fixedSize(horizontal: false, vertical: true)
@@ -831,6 +854,10 @@ struct ExploreView: View {
                 Text(title)
                     .font(AppFonts.headlineFont(15))
                     .foregroundColor(AppColors.cream)
+                    // Half the card wide: gives way a little at the larger
+                    // text sizes rather than break the name in two
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
 
                 Text(subtitle.uppercased())
                     .font(AppFonts.labelFont(8))
@@ -858,9 +885,9 @@ struct ExploreView: View {
     /// the Rosary's other two forms stand on every mysteries' page.
     private var studyEntries: [LibraryEntry] {
         let housed = [
-            "Daily Missal", "Divine Office",
+            "Today's Mass", "Hours of Prayer",
             "True Devotion", "Spiritual Reading",
-            "The Scriptural Rosary", "The Holy Rosary",
+            "The Scriptural Rosary", "The Rosary Said Aloud",
             "Prayer Record", "How to Pray", "The Chant Library",
             "Journal"
         ]

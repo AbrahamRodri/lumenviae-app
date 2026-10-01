@@ -57,14 +57,15 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
         }
     }
 
-    /// Subtitle describing the theological theme of this category
+    /// What the mysteries are about, in everyday words — the line under
+    /// the name on every card, so it is the explanation a newcomer reads
     var subtitle: String {
         switch self {
-        case .joyful:      return "The Incarnation"
-        case .sorrowful:   return "The Passion"
+        case .joyful:      return "Jesus' birth and childhood"
+        case .sorrowful:   return "Jesus' suffering and death"
         case .glorious:    return "The Resurrection"
-        case .luminous:    return "The Light"
-        case .sevenSorrows: return "Mary's Sorrows"
+        case .luminous:    return "Jesus' public life"
+        case .sevenSorrows: return "Mary in her grief"
         }
     }
 
@@ -127,8 +128,8 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
     var daysPrayed: String {
         if let days = ScheduleService.daysPrayed(self) { return days }
         switch self {
-        case .sevenSorrows: return "Fridays, September 15"
-        default:            return "Thursday (modern schedule)"
+        case .sevenSorrows: return "Fridays, and on her feast, September 15"
+        default:            return "Any day you choose"
         }
     }
 
