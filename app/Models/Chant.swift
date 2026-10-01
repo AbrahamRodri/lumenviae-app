@@ -32,6 +32,26 @@ struct ChantScorePart: Hashable {
     let aspectRatio: CGFloat
 }
 
+// MARK: - ChantLine
+
+/// One sung line of a chant: its words, a plain English rendering, and
+/// where it stands in the recording. Lines come from
+/// `Tools/ChantLines/<chant id>.json`, derived from the bundled recording
+/// and checked line by line before they are added; a chant without that
+/// file has none, and every surface that steps by the line falls back to
+/// the whole chant. No timing is ever guessed.
+struct ChantLine: Hashable {
+    let latin: String
+    let english: String
+    /// Seconds into the chant's recording
+    let start: TimeInterval
+    let end: TimeInterval
+    /// The score part the line is engraved on, when the file names one
+    var part: Int? = nil
+
+    var length: TimeInterval { max(0, end - start) }
+}
+
 // MARK: - ChantGroup
 
 /// A shelf of the library: Our Lady, the Blessed Sacrament, a season.
@@ -59,6 +79,21 @@ struct Chant: Identifiable, Hashable {
     let score: [ChantScorePart]
     /// The chant's own page at Verbum Gloriae
     let sourceURL: URL
+    /// Its sung lines, timed against the recording — empty until the
+    /// chant's lines have been derived and checked (`ChantLine`)
+    var lines: [ChantLine] = []
+
+    /// Whether the chant can be stepped, repeated and practised a line
+    /// at a time
+    var hasLines: Bool { !lines.isEmpty }
+
+    /// The line sounding at `time`, or the one just sung while the
+    /// recording rests between two
+    func lineIndex(at time: TimeInterval) -> Int? {
+        guard !lines.isEmpty else { return nil }
+        if let index = lines.lastIndex(where: { $0.start <= time + 0.05 }) { return index }
+        return 0
+    }
 
     /// The bundled recording. Resources are copied flat into the bundle.
     var audioURL: URL? {
