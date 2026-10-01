@@ -374,6 +374,16 @@ struct ChantLibraryTests {
         #expect(ChantSearch.setting(of: alone) == nil)
     }
 
+    @Test func aSettingTheTitleAlreadySaysIsNotSaidAgain() throws {
+        let credo = try #require(ChantCatalog.chant("credo_iii"))
+        #expect(credo.distinctSetting == nil)
+        #expect(credo.fullTitle == "Credo III")
+        #expect(credo.settingName == nil)
+        // A Mass keeps its name's case mid-line
+        #expect(try #require(ChantCatalog.chant("kyrie_de_angelis")).settingMidLine == "Mass VIII")
+        #expect(try #require(ChantCatalog.chant("salve_regina_simple")).settingMidLine == "simple tone")
+    }
+
     @Test func theCanticlesAreNotCalledPsalms() throws {
         #expect(try #require(ChantCatalog.chant("magnificat")).kindName == "Canticle")
         #expect(try #require(ChantCatalog.chant("te_deum")).kindName == "Canticle")

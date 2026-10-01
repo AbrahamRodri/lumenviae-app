@@ -2262,7 +2262,8 @@ write concurrent code here:
   Pentecost its octave; the four antiphons of Our Lady as a thread
   within, read a day at a time from `PrayerBook.antiphon(on:)` so the
   wheel and Night Prayers cannot disagree; today on the rim and the
-  days to the next season in the middle — then the seasons as chips, the
+  days to the next season in the middle — then the seasons as chips (a
+  chip chosen scrolls to the middle, as far as the row's ends allow), the
   season's chants, the chant to learn before the next one comes, and the
   feasts ahead with theirs (`ChantFeast`, the 1962 dates; Christ the
   King the last Sunday of October; and, though no feast, the 21st of
@@ -2382,7 +2383,10 @@ write concurrent code here:
   so the simple and the solemn never give rows that read alike.
 
   **The chant's page is Now Playing** (`ChantView`, `.chant(id:)`): the
-  names, the score in a window (ENLARGE for `ChantScoreSheet`, in a
+  names (the setting after the English only where neither title says it,
+  and mid-line in lower case but for a name, `Chant.settingMidLine`:
+  "Lord, Have Mercy · Mass VIII", never "· mass viii", and Credo III
+  never "The Nicene Creed · credo iii"), the score in a window (ENLARGE for `ChantScoreSheet`, in a
   foot of its own beneath the score's dissolve — laid over it, it was
   read through the last faded line), the
   line being sung with its English, the scrubber, five controls around
@@ -2402,8 +2406,13 @@ write concurrent code here:
   other word, or all, cut to its first letter), ending on the learner's
   own "I know it by heart". The note beside its disc says what a tap
   does, "Tap to pause." while the chant sounds. Its ✕ gives back the
-  pace and the Repeat it found, and stops the cantor only if the practice set it singing: a ¾×
-  chosen to learn by once stayed on every chant after.
+  pace and the Repeat it found, and stops the cantor only if the
+  practice set it singing: a ¾× chosen to learn by once stayed on every
+  chant after. A chant the practice loaded itself, sounded or not, it
+  puts away (`relinquish`), a load still arriving included; one the
+  library already held is paused where it was. Paused, a chant the
+  practice had only loaded stood in the mini player at 0:00, over the
+  foot of every page.
 
   **A chant steps by the line only when its lines are timed**
   (`Chant.lines`, `ChantLine`: Latin, a plain English line, start and end
@@ -2434,8 +2443,11 @@ write concurrent code here:
   Ergo"), its pause, and a gold hairline of progress; a tap opens the
   chant — waiting between chants, the next one, whose page's play goes
   on with the set rather than sing the last again. Under Reduce Motion
-  it fades in rather than rises. It is the one filled surface on the library's pages, because
-  it floats over a page that scrolls beneath it. The consecration day's transport plays the same bundled
+  it fades in rather than rises. It is the one filled surface on the
+  library's pages, because it floats over a page that scrolls beneath
+  it: it stands in the page's bottom safe-area inset, so every section's
+  scroll and the search's run on beneath it and bring their last row
+  clear of it at its real height, where a fixed 112 points was a guess. The consecration day's transport plays the same bundled
   recording for its Veni Creator, Ave Maris Stella, Magnificat, litanies
   and Glory Be, with a SCORE door and the credit beneath it; it reads
   and drives the shared player only through its own claim, taken on a

@@ -398,8 +398,8 @@ struct ChantLibraryRow: View {
 
     private var subtitle: String {
         if let note { return note }
-        if let setting = chant.distinctSetting {
-            return "\(chant.englishTitle) · \(setting.lowercased())"
+        if let setting = chant.settingMidLine {
+            return "\(chant.englishTitle) · \(setting)"
         }
         return chant.englishTitle
     }

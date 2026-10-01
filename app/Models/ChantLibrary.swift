@@ -646,9 +646,11 @@ extension Chant {
         ChantCatalog.all.filter { $0.workKey == workKey }
     }
 
-    /// "Simple", "Solemn": the setting without its "tone", for a pill
+    /// "Simple", "Solemn": the setting without its "tone", for a pill and
+    /// the mini player's line; none where the title already says it, so
+    /// Credo III never plays as "Credo III · Credo III"
     var settingName: String? {
-        guard let setting else { return nil }
+        guard let setting, !latinTitle.localizedCaseInsensitiveContains(setting) else { return nil }
         let word = setting.replacingOccurrences(of: " tone", with: "")
         return word.prefix(1).uppercased() + word.dropFirst()
     }

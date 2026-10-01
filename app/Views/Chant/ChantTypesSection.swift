@@ -318,7 +318,7 @@ struct ChantTypesSection: View {
                 open(chant)
             } label: {
                 HStack(spacing: 6) {
-                    Text(chant.distinctSetting.map { "\(chant.latinTitle) · \($0.lowercased())" } ?? chant.latinTitle)
+                    Text(chant.settingMidLine.map { "\(chant.latinTitle) · \($0)" } ?? chant.latinTitle)
                         .font(AppFonts.readingFont(15))
                         .foregroundColor(player.isPlaying(chant) ? AppColors.goldLight : AppColors.cream)
                         .lineLimit(1)

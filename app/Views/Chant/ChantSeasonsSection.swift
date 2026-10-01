@@ -127,6 +127,11 @@ struct ChantSeasonsSection: View {
                 .padding(.horizontal, 20)
             }
             .onAppear { proxy.scrollTo(shown, anchor: .center) }
+            // A season chosen comes to the middle, as far as the row's
+            // ends allow, so the chips on either side of it show
+            .onChange(of: shown) { _, now in
+                withAnimation(Motion.crossfade) { proxy.scrollTo(now, anchor: .center) }
+            }
         }
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Season")

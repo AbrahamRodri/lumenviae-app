@@ -234,8 +234,8 @@ struct ChantView: View {
     }
 
     private func subtitle(_ chant: Chant) -> String {
-        if let setting = chant.distinctSetting {
-            return "\(chant.englishTitle) · \(setting.lowercased())"
+        if let setting = chant.settingMidLine {
+            return "\(chant.englishTitle) · \(setting)"
         }
         return chant.englishTitle
     }

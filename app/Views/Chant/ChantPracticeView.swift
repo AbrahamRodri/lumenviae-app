@@ -50,6 +50,10 @@ struct ChantPracticeView: View {
     /// what it began and leaves alone what it found
     @State private var startedPlayback = false
 
+    /// Whether the chant was already in the player when the practice
+    /// opened: the library's, to be left as it was found
+    @State private var foundHolding = false
+
     /// The shared player's pace and Repeat as the practice found them,
     /// given back when it closes: a slower pace and a repeat chosen for
     /// learning are not every later chant's
@@ -106,6 +110,7 @@ struct ChantPracticeView: View {
         .animation(Motion.crossfade, value: learnedNow)
         .onAppear {
             found = (player.rate, player.repeats)
+            foundHolding = player.holds(chant)
             step = shelf.step(of: chant.id) ?? .listen
             if shelf.isLearned(chant.id) { step = .onYourOwn }
             hidden = step == .onYourOwn ? .half : .none
@@ -113,7 +118,18 @@ struct ChantPracticeView: View {
         }
         .onDisappear {
             player.setLineEnd(.goOn)
-            if startedPlayback { player.pause() }
+            if startedPlayback {
+                if !foundHolding, player.current.id == chant.id,
+                   player.holds(chant) || player.isLoading {
+                    // A chant the practice loaded, or is still loading, is
+                    // the practice's to put away: left paused, it stood in
+                    // the library's mini player at 0:00 when nothing had
+                    // sounded, over the foot of every page
+                    player.relinquish()
+                } else {
+                    player.pause()
+                }
+            }
             if let found {
                 player.setRate(found.rate)
                 player.repeats = found.repeats

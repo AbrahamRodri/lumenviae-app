@@ -110,17 +110,33 @@ struct Chant: Identifiable, Hashable {
         return "\(whole / 60):\(String(format: "%02d", whole % 60))"
     }
 
-    /// The setting, where the English title does not already say it: a
-    /// title naming its own setting is not also "· antiphon" beneath it.
+    /// The setting, where neither title already says it: a title naming
+    /// its own setting is not also "· antiphon" beneath it, and Credo III
+    /// is not "The Nicene Creed · credo iii".
     var distinctSetting: String? {
-        guard let setting, !englishTitle.localizedCaseInsensitiveContains(setting) else { return nil }
+        guard let setting,
+              !englishTitle.localizedCaseInsensitiveContains(setting),
+              !latinTitle.localizedCaseInsensitiveContains(setting) else { return nil }
         return setting
     }
 
+    /// The distinct setting as it reads after a "·" mid-line: "simple
+    /// tone", "with alleluia", but a Mass by its name and number, "Mass
+    /// VIII", never "mass viii"
+    var settingMidLine: String? {
+        guard let setting = distinctSetting else { return nil }
+        let named = setting.split(separator: " ").contains { word in
+            word.allSatisfy { "IVXLC".contains($0) }
+        }
+        return named ? setting : setting.lowercased()
+    }
+
     /// The title with its setting, for a row that has room for one line:
-    /// "Salve Regina · Simple tone"
+    /// "Salve Regina · Simple tone", and Credo III alone, never twice
     var fullTitle: String {
-        if let setting { return "\(latinTitle) · \(setting)" }
+        if let setting, !latinTitle.localizedCaseInsensitiveContains(setting) {
+            return "\(latinTitle) · \(setting)"
+        }
         return latinTitle
     }
 }

@@ -71,7 +71,7 @@ struct ChantSearchView: View {
                     results
                         .padding(.horizontal, 20)
                 }
-                .padding(.bottom, player.isActive ? 112 : 40)
+                .padding(.bottom, 40)
             }
             .scrollDismissesKeyboard(.interactively)
         }
@@ -364,7 +364,7 @@ struct ChantSearchView: View {
                             .font(AppFonts.readingFont(17))
                             .foregroundColor(player.isPlaying(chosen) ? AppColors.goldLight : AppColors.cream)
                         Text(ChantSearch.highlighted(
-                            [chosen.englishTitle, work.chants.count == 1 ? chosen.distinctSetting?.lowercased() : nil, when]
+                            [chosen.englishTitle, work.chants.count == 1 ? chosen.settingMidLine : nil, when]
                                 .compactMap { $0 }
                                 .joined(separator: " · "),
                             needle: needle

@@ -110,7 +110,7 @@ struct ChantLibraryView: View {
     }
 
     var body: some View {
-        ZStack(alignment: .bottom) {
+        ZStack {
             AppColors.appGradient.ignoresSafeArea()
 
             // The library stays where it is while the search stands over
@@ -130,10 +130,16 @@ struct ChantLibraryView: View {
                 }
             }
             .animation(Motion.crossfade, value: searching)
-
-            if player.isActive {
-                miniPlayer
-                    .transition(reduceMotion ? AnyTransition.opacity : AnyTransition.move(edge: .bottom).combined(with: .opacity))
+            // The mini player stands in room of its own at the page's
+            // foot, so every section's scroll, and the search's, runs on
+            // beneath it and still brings its last row clear of it, at
+            // any text size: laid over the page with a fixed 112 points
+            // left at the foot, it was a guess at its height
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                if player.isActive {
+                    miniPlayer
+                        .transition(reduceMotion ? AnyTransition.opacity : AnyTransition.move(edge: .bottom).combined(with: .opacity))
+                }
             }
         }
         .animation(reduceMotion ? Motion.crossfade : Motion.panel, value: player.isActive)
@@ -206,7 +212,7 @@ struct ChantLibraryView: View {
                     footer
                         .padding(.horizontal, 36)
                         .padding(.top, 44)
-                        .padding(.bottom, player.isActive ? 112 : 48)
+                        .padding(.bottom, 48)
                 }
                 .padding(.top, 8)
             }
