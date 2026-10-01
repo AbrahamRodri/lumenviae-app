@@ -1,0 +1,109 @@
+{
+  "_about": "Proposed additions to Tools/Chants/chants.json, in its exact schema. Copy `groups` into its groups and `chants` into its chants, then run generate.py on a Mac. Entries whose audio/scores read TODO need the file names fetch.py --chants prints.",
+  "groups": [
+    {
+      "id": "mass",
+      "title": "The Mass",
+      "note": "The Ordinary, sung as on Sundays"
+    }
+  ],
+  "chants": [
+    {
+      "id": "pange_lingua",
+      "slug": "pange-lingua",
+      "group": "sacrament",
+      "latin": "Pange Lingua",
+      "english": "Sing, My Tongue, the Saviour's Glory",
+      "setting": null,
+      "detail": "St Thomas Aquinas's hymn for Corpus Christi, whose last two verses are the Tantum Ergo",
+      "prayers": []
+    },
+    {
+      "id": "vidi_aquam",
+      "slug": "vidi-aquam",
+      "group": "easter",
+      "latin": "Vidi Aquam",
+      "english": "I Saw Water",
+      "setting": null,
+      "detail": "Sung at the sprinkling before Sunday Mass in Eastertide",
+      "prayers": []
+    },
+    {
+      "id": "missa_de_angelis",
+      "slug": "misa-viii-de-angelis",
+      "group": "mass",
+      "latin": "Missa de Angelis",
+      "english": "The Mass of the Angels",
+      "setting": "Mass VIII",
+      "detail": "Kyrie, Gloria, Sanctus and Agnus Dei, the best-known Ordinary of all",
+      "prayers": []
+    },
+    {
+      "id": "credo_iii",
+      "slug": "credo-iii",
+      "group": "mass",
+      "latin": "Credo III",
+      "english": "The Nicene Creed",
+      "setting": "Credo III",
+      "detail": "The Creed sung on Sundays and solemnities",
+      "prayers": []
+    },
+    {
+      "id": "audi_benigne",
+      "slug": "audi-benigne-conditor",
+      "group": "lent",
+      "latin": "Audi Benigne Conditor",
+      "english": "O Kind Creator, Bow Thine Ear",
+      "setting": null,
+      "detail": "The Vespers hymn of Lent",
+      "prayers": []
+    },
+    {
+      "id": "o_vos_omnes",
+      "slug": "misterios-dolorosos",
+      "page": "cantos/santo-rosario/misterios-dolorosos",
+      "audio": "TODO",
+      "scores": [
+        "TODO"
+      ],
+      "group": "lent",
+      "latin": "O Vos Omnes",
+      "english": "O All Ye That Pass By",
+      "setting": null,
+      "detail": "Lamentations 1:12, sung in the Sorrowful Mysteries",
+      "prayers": []
+    },
+    {
+      "id": "ad_regias",
+      "slug": "ad-regias-agni-dapes",
+      "group": "easter",
+      "latin": "Ad Regias Agni Dapes",
+      "english": "At the Lamb's High Feast",
+      "setting": null,
+      "detail": "The Vespers hymn of Eastertide",
+      "prayers": []
+    },
+    {
+      "id": "te_matrem",
+      "slug": "te-matrem-laudamus",
+      "group": "ourLady",
+      "latin": "Te Matrem Laudamus",
+      "english": "We Praise Thee as Mother",
+      "setting": null,
+      "detail": "A Marian Te Deum",
+      "prayers": []
+    },
+    {
+      "id": "o_oriens_magnificat",
+      "slug": "o-oriens-et-magnificat",
+      "group": "advent",
+      "latin": "O Oriens",
+      "english": "O Morning Star, with the Magnificat",
+      "setting": null,
+      "detail": "The O Antiphon of December 21, around Mary's song",
+      "prayers": [
+        "magnificat"
+      ]
+    }
+  ]
+}
