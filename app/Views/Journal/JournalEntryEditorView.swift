@@ -71,16 +71,6 @@ struct JournalEntryEditorView: View {
         lockedCategory?.iconName ?? "ph-book"
     }
 
-    private static let dateFormatter: DateFormatter = {
-        let f = DateFormatter()
-        f.setLocalizedDateFormatFromTemplate("MMM d")
-        return f
-    }()
-
-    private var formattedDate: String {
-        Self.dateFormatter.string(from: existingEntry?.createdAt ?? Date())
-    }
-
     // MARK: - Init
 
     init(
@@ -244,11 +234,8 @@ struct JournalEntryEditorView: View {
                 }
             }
 
+            // No date here: the header names the day above the row
             Spacer()
-
-            Text(formattedDate)
-                .font(AppFonts.bodyFont(12))
-                .foregroundColor(AppColors.textSecondary)
         }
         .padding(12)
         .background(
