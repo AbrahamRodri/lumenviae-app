@@ -1,0 +1,200 @@
+{
+  "id": "o_oriens_magnificat",
+  "part": null,
+  "method": "text only — timings pending recording",
+  "lines": [
+    {
+      "latin": "O Oriens, splendor lucis ætérnæ,",
+      "english": "O Dayspring, splendour of light eternal,",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "et sol justítiæ:",
+      "english": "and Sun of justice:",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "veni, et illúmina sedéntes in ténebris,",
+      "english": "come, and enlighten those who sit in darkness",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "et umbra mortis.",
+      "english": "and in the shadow of death.",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Magníficat",
+      "english": "My soul",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "ánima mea Dóminum.",
+      "english": "doth magnify the Lord.",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Et exsultávit spíritus meus",
+      "english": "And my spirit hath rejoiced",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "in Deo salutári meo.",
+      "english": "in God my Saviour.",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Quia respéxit humilitátem ancíllæ suæ:",
+      "english": "Because He hath regarded the humility of His handmaid:",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "ecce enim ex hoc beátam me dicent omnes generatiónes.",
+      "english": "for behold from henceforth all generations shall call me blessed.",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Quia fecit mihi magna qui potens est:",
+      "english": "Because He that is mighty hath done great things to me:",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "et sanctum nomen ejus.",
+      "english": "and holy is His name.",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Et misericórdia ejus a progénie in progénies",
+      "english": "And His mercy is from generation unto generations,",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "timéntibus eum.",
+      "english": "to them that fear Him.",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Fecit poténtiam in bráchio suo:",
+      "english": "He hath shewed might in His arm:",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "dispérsit supérbos mente cordis sui.",
+      "english": "He hath scattered the proud in the conceit of their heart.",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Depósuit poténtes de sede,",
+      "english": "He hath put down the mighty from their seat,",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "et exaltávit húmiles.",
+      "english": "and hath exalted the humble.",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Esuriéntes implévit bonis:",
+      "english": "He hath filled the hungry with good things:",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "et dívites dimísit inánes.",
+      "english": "and the rich He hath sent empty away.",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Suscépit Israël púerum suum,",
+      "english": "He hath received Israel His servant,",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "recordátus misericórdiæ suæ.",
+      "english": "being mindful of His mercy.",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Sicut locútus est ad patres nostros,",
+      "english": "As He spoke to our fathers,",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Abraham et sémini ejus in sæcula.",
+      "english": "to Abraham and to his seed for ever.",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Glória Patri, et Fílio,",
+      "english": "Glory be to the Father, and to the Son,",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "et Spirítui Sancto.",
+      "english": "and to the Holy Spirit.",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Sicut erat in princípio, et nunc, et semper,",
+      "english": "As it was in the beginning, is now, and ever shall be,",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "et in sæcula sæculórum. Amen.",
+      "english": "world without end. Amen.",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "O Oriens, splendor lucis ætérnæ,",
+      "english": "O Dayspring, splendour of light eternal,",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "et sol justítiæ:",
+      "english": "and Sun of justice:",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "veni, et illúmina sedéntes in ténebris,",
+      "english": "come, and enlighten those who sit in darkness",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "et umbra mortis.",
+      "english": "and in the shadow of death.",
+      "start": null,
+      "end": null
+    }
+  ],
+  "note": "Magnificat: the app's own English and Latin (BilingualConsecrationPrayers.swift, magnificat), each verse broken at its mediant; the antiphon before and after — check the recording repeats it"
+}

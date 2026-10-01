@@ -1,0 +1,37 @@
+{
+  "id": "sanctus_de_angelis",
+  "part": null,
+  "method": "text only — timings pending recording",
+  "lines": [
+    {
+      "latin": "Sanctus, Sanctus, Sanctus Dóminus Deus Sábaoth.",
+      "english": "Holy, Holy, Holy, Lord God of hosts.",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Pleni sunt cæli et terra glória tua.",
+      "english": "Heaven and earth are full of Thy glory.",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Hosánna in excélsis.",
+      "english": "Hosanna in the highest.",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Benedíctus qui venit in nómine Dómini.",
+      "english": "Blessed is He that cometh in the name of the Lord.",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Hosánna in excélsis.",
+      "english": "Hosanna in the highest.",
+      "start": null,
+      "end": null
+    }
+  ]
+}

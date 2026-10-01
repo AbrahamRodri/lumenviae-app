@@ -1,0 +1,158 @@
+{
+  "id": "credo_iii",
+  "part": null,
+  "method": "text only — timings pending recording",
+  "lines": [
+    {
+      "latin": "Credo in unum Deum,",
+      "english": "I believe in one God,",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Patrem omnipoténtem, factórem cæli et terræ,",
+      "english": "the Father almighty, Maker of heaven and earth,",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "visibílium ómnium, et invisibílium.",
+      "english": "and of all things visible and invisible.",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Et in unum Dóminum Jesum Christum,",
+      "english": "And in one Lord Jesus Christ,",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Fílium Dei unigénitum.",
+      "english": "the only-begotten Son of God,",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Et ex Patre natum ante ómnia sǽcula.",
+      "english": "born of the Father before all ages;",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Deum de Deo, lumen de lúmine, Deum verum de Deo vero.",
+      "english": "God of God, Light of Light, true God of true God;",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Génitum, non factum, consubstantiálem Patri:",
+      "english": "begotten, not made; of one substance with the Father;",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "per quem ómnia facta sunt.",
+      "english": "by whom all things were made.",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Qui propter nos hómines, et propter nostram salútem descéndit de cælis.",
+      "english": "Who for us men and for our salvation came down from heaven.",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Et incarnátus est de Spíritu Sancto ex María Vírgine:",
+      "english": "And became incarnate by the Holy Ghost of the Virgin Mary:",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Et homo factus est.",
+      "english": "and was made man.",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Crucifíxus étiam pro nobis: sub Póntio Piláto passus, et sepúltus est.",
+      "english": "He was crucified also for us, suffered under Pontius Pilate, and was buried.",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Et resurréxit tértia die, secúndum Scriptúras.",
+      "english": "And the third day He rose again according to the Scriptures.",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Et ascéndit in cælum: sedet ad déxteram Patris.",
+      "english": "And He ascended into heaven, and sitteth at the right hand of the Father.",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Et íterum ventúrus est cum glória, judicáre vivos et mórtuos:",
+      "english": "And He shall come again with glory to judge the living and the dead;",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "cujus regni non erit finis.",
+      "english": "of whose kingdom there shall be no end.",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Et in Spíritum Sanctum, Dóminum, et vivificántem:",
+      "english": "And in the Holy Ghost, the Lord and Giver of life,",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "qui ex Patre Filióque procédit.",
+      "english": "who proceedeth from the Father and the Son;",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Qui cum Patre et Fílio simul adorátur, et conglorificátur:",
+      "english": "who together with the Father and the Son is adored and glorified;",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "qui locútus est per Prophétas.",
+      "english": "who spoke by the Prophets.",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Et unam, sanctam, cathólicam et apostólicam Ecclésiam.",
+      "english": "And one holy, catholic and apostolic Church.",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Confíteor unum baptísma in remissiónem peccatórum.",
+      "english": "I confess one baptism for the remission of sins.",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Et exspécto resurrectiónem mortuórum.",
+      "english": "And I look for the resurrection of the dead,",
+      "start": null,
+      "end": null
+    },
+    {
+      "latin": "Et vitam ventúri sǽculi. Amen.",
+      "english": "and the life of the world to come. Amen.",
+      "start": null,
+      "end": null
+    }
+  ],
+  "note": "English: the app's own Nicene Creed (PrayerBookFoundations.swift, nicene_creed), split at the chant's phrases"
+}
