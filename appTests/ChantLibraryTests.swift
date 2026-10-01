@@ -300,25 +300,30 @@ struct ChantLibraryTests {
     /// timings does not fail this, and one of these losing its lines does
     @Test func theTimedChantsKeepTheirLines() {
         let timed = [
-            "adeste_fideles", "adoremus", "adoro_te", "alma_redemptoris",
-            "angelus", "anima_christi", "attende_domine", "ave_maria",
-            "ave_maria_antiphon", "ave_maris_stella", "ave_regina_simple",
-            "ave_regina_solemn", "ave_verum", "christus_vincit", "cor_jesu",
-            "creator_alme", "credo_in_deum", "dies_irae", "divine_praises",
-            "ecce_panis", "flos_carmeli", "gloria_patri", "in_nomine_patris",
-            "inviolata", "jesu_dulcis_memoria", "jesu_redemptor", "lauda_sion",
+            "ad_regias", "adeste_fideles", "adoremus", "adoro_te",
+            "agnus_de_angelis", "alma_redemptoris", "angelus", "anima_christi",
+            "attende_domine", "audi_benigne", "ave_maria", "ave_maria_antiphon",
+            "ave_maris_stella", "ave_regina_simple", "ave_regina_solemn",
+            "ave_verum", "christus_vincit", "cor_jesu", "creator_alme",
+            "credo_iii", "credo_in_deum", "dies_irae", "divine_praises",
+            "ecce_panis", "flos_carmeli", "gloria_de_angelis", "gloria_patri",
+            "in_nomine_patris", "inviolata", "jesu_dulcis_memoria",
+            "jesu_redemptor", "kyrie_de_angelis", "lauda_sion",
             "litany_holy_name", "litany_loreto", "litany_sacred_heart",
             "litany_saints", "litany_st_joseph", "magnificat", "memorare",
-            "miserere", "o_filii", "o_gloriosa", "o_mi_jesu", "o_sacrum_convivium",
-            "o_salutaris", "panis_angelicus", "parce_domine", "pater_noster",
-            "puer_natus", "regina_caeli_simple", "regina_caeli_solemn",
-            "rorate_caeli", "salve_mater", "salve_regina_simple",
-            "salve_regina_solemn", "sancte_michael", "stabat_mater", "sub_tuum",
-            "tantum_ergo", "te_deum", "te_joseph", "tota_pulchra", "ubi_caritas",
+            "miserere", "o_filii", "o_gloriosa", "o_mi_jesu",
+            "o_oriens_magnificat", "o_sacrum_convivium", "o_salutaris",
+            "o_vos_omnes", "pange_lingua", "panis_angelicus", "parce_domine",
+            "pater_noster", "puer_natus", "regina_caeli_simple",
+            "regina_caeli_solemn", "rorate_caeli", "salve_mater",
+            "salve_regina_simple", "salve_regina_solemn", "sancte_michael",
+            "sanctus_de_angelis", "stabat_mater", "sub_tuum", "tantum_ergo",
+            "te_deum", "te_joseph", "te_matrem", "tota_pulchra", "ubi_caritas",
             "veni_creator", "veni_emmanuel", "veni_sancte_reple",
-            "veni_sancte_spiritus", "vexilla_regis", "victimae_paschali"
+            "veni_sancte_spiritus", "vexilla_regis", "victimae_paschali",
+            "vidi_aquam"
         ]
-        #expect(timed.count == 64)
+        #expect(timed.count == 76)
         for id in timed {
             #expect(ChantCatalog.chant(id)?.hasLines == true, "\(id) has lost its lines")
         }

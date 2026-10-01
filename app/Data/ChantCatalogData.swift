@@ -947,7 +947,44 @@ extension ChantCatalog {
             score: [
                 ChantScorePart(file: "chant-te-matrem-laudamus", caption: "Te Matrem laudamus", aspectRatio: 0.3122)
             ],
-            sourceURL: URL(string: "https://www.verbumgloriae.es/project/te-matrem-laudamus/")!
+            sourceURL: URL(string: "https://www.verbumgloriae.es/project/te-matrem-laudamus/")!,
+            lines: [
+                ChantLine(latin: "Te Matrem laudámus: te Dóminam confitémur.", english: "We praise thee as Mother: we acknowledge thee to be our Lady.", start: 0.27, end: 11.38, part: 0),
+                ChantLine(latin: "Te ætérni Patris stella maris splendor illúminat.", english: "Thee, star of the sea, the splendour of the eternal Father enlightens.", start: 11.57, end: 22.82, part: 0),
+                ChantLine(latin: "Tibi omnes Ángeli, tibi cæli et univérsæ potestátes:", english: "To thee all the Angels, to thee the heavens and all the Powers,", start: 23.03, end: 36.34, part: 0),
+                ChantLine(latin: "Tibi Chérubim et Séraphim incessábili voce proclámant:", english: "to thee the Cherubim and Seraphim cry out with unceasing voice:", start: 36.39, end: 48.58, part: 0),
+                ChantLine(latin: "Virgo: Virgo:", english: "Virgin, Virgin,", start: 48.99, end: 63.37, part: 0),
+                ChantLine(latin: "Virgo vírginum sine exémplo.", english: "Virgin of virgins without equal.", start: 63.37, end: 70.32, part: 0),
+                ChantLine(latin: "Ante partum et in partu atque post partum.", english: "before childbirth, in childbirth, and after childbirth.", start: 70.37, end: 79.55, part: 0),
+                ChantLine(latin: "Te gloriósam Apóstoli prædicant:", english: "Thee, the glorious one, the Apostles proclaim;", start: 79.55, end: 88.87, part: 0),
+                ChantLine(latin: "Te Prophetárum Virgo cóncinunt líneæ:", english: "thee, O Virgin, the line of the Prophets sings;", start: 88.87, end: 98.49, part: 0),
+                ChantLine(latin: "Te Mártyres sui Dómini Matrem testántur.", english: "the Martyrs bear witness to thee, the Mother of their Lord.", start: 98.49, end: 109.46, part: 0),
+                ChantLine(latin: "Te per orbem terrárum sancta confitétur Ecclésia:", english: "Thee the holy Church throughout the world doth confess:", start: 109.77, end: 122.11, part: 0),
+                ChantLine(latin: "Matrem imménsæ castitátis:", english: "the Mother of boundless chastity;", start: 122.11, end: 131.66, part: 0),
+                ChantLine(latin: "Venerándam Dei Sponsam maritíque nésciam:", english: "the venerable Spouse of God, who knew not man;", start: 132.03, end: 142.80, part: 0),
+                ChantLine(latin: "Solam Sancto grávidam Spíritu.", english: "who alone conceived by the Holy Spirit.", start: 143.33, end: 151.94, part: 0),
+                ChantLine(latin: "Tu es Regína cæli.", english: "Thou art the Queen of heaven.", start: 152.41, end: 159.74, part: 0),
+                ChantLine(latin: "Tu mundi totíus es Dómina.", english: "Thou art the Lady of the whole world.", start: 160.35, end: 166.74, part: 0),
+                ChantLine(latin: "Tu ad liberándum hóminem pérditum, carne vestísti Altíssimi Fílium.", english: "Thou, to set lost man free, didst clothe the Son of the Most High with flesh.", start: 167.29, end: 180.97, part: 0),
+                ChantLine(latin: "Tu ad vincéndum mortis acúleo, castíssimo protulísti vitam ex útero.", english: "Thou, to overcome the sting of death, didst bring forth Life from thy most chaste womb.", start: 180.97, end: 194.44, part: 0),
+                ChantLine(latin: "Tu ad déxteram Dei Patris sedéntis Fílii es Mater:", english: "Thou art the Mother of the Son who sitteth at the right hand of God the Father,", start: 194.67, end: 206.26, part: 0),
+                ChantLine(latin: "Judex vivórum qui est et mortuórum.", english: "who is the Judge of the living and of the dead.", start: 206.45, end: 217.80, part: 0),
+                ChantLine(latin: "Te ergo quǽsumus, Christi crédulis súbveni,", english: "We beseech thee, therefore, help those who believe in Christ,", start: 218.23, end: 226.59, part: 0),
+                ChantLine(latin: "pretiosíssimo ventris tui gérmine redémptis.", english: "redeemed by the most precious Fruit of thy womb.", start: 226.59, end: 234.76, part: 0),
+                ChantLine(latin: "Ætérna fac", english: "Make them", start: 235.91, end: 240.45, part: 0),
+                ChantLine(latin: "cum Sanctis cunctis in glória munerári.", english: "to be rewarded with all the Saints in glory everlasting.", start: 240.45, end: 247.50, part: 0),
+                ChantLine(latin: "Salvum fac pópulum tuum Dómina", english: "Save thy people, O Lady,", start: 248.31, end: 255.11, part: 0),
+                ChantLine(latin: "benedícta et immaculáta.", english: "blessed and immaculate.", start: 255.11, end: 262.76, part: 0),
+                ChantLine(latin: "Et rege eos", english: "And rule them,", start: 262.97, end: 266.77, part: 0),
+                ChantLine(latin: "et extólle illos usque in ætérnum.", english: "and lift them up for ever.", start: 266.77, end: 274.86, part: 0),
+                ChantLine(latin: "Per síngulos dies benedícimus te.", english: "Every day we bless thee.", start: 276.09, end: 285.81, part: 0),
+                ChantLine(latin: "Et laudámus nomen Altíssimi, qui te fecit altíssimam.", english: "And we praise the name of the Most High, who made thee most high.", start: 285.81, end: 297.54, part: 0),
+                ChantLine(latin: "Dignáre omni laude digníssima, ab indigníssimis laudári.", english: "Vouchsafe, thou most worthy of all praise, to be praised by the most unworthy.", start: 297.83, end: 309.26, part: 0),
+                ChantLine(latin: "Miserére nostri Dómina, Mater misericórdiæ.", english: "Have mercy on us, O Lady, Mother of mercy.", start: 309.81, end: 320.92, part: 0),
+                ChantLine(latin: "Fiat misericórdia Fílii tui Dómina super nos, ope tua qua clamámus ei.", english: "Let the mercy of thy Son, O Lady, be upon us, by thy help, as we cry to Him.", start: 321.71, end: 337.48, part: 0),
+                ChantLine(latin: "In te Dómina sperávi:", english: "In thee, O Lady, have I hoped:", start: 338.67, end: 345.00, part: 0),
+                ChantLine(latin: "non confúndar in ætérnum.", english: "let me never be confounded.", start: 345.51, end: 354.10, part: 0)
+            ]
         ),
         Chant(
             id: "in_nomine_patris",
@@ -1609,7 +1646,52 @@ extension ChantCatalog {
                 ChantScorePart(file: "chant-vers-panem-de-caelo", caption: "Panem de caelo", aspectRatio: 3.9357),
                 ChantScorePart(file: "chant-or-deus-qui-nobis", caption: "Oremus. Deus qui nobis", aspectRatio: 1.8202)
             ],
-            sourceURL: URL(string: "https://www.verbumgloriae.es/project/pange-lingua/")!
+            sourceURL: URL(string: "https://www.verbumgloriae.es/project/pange-lingua/")!,
+            lines: [
+                ChantLine(latin: "Pange lingua gloriósi", english: "Sing, my tongue, the mystery", start: 0.27, end: 5.83, part: 0),
+                ChantLine(latin: "Córporis mystérium,", english: "of the glorious Body,", start: 5.83, end: 11.57, part: 0),
+                ChantLine(latin: "Sanguinísque pretiósi,", english: "and of the precious Blood,", start: 11.57, end: 16.53, part: 0),
+                ChantLine(latin: "Quem in mundi prétium", english: "which, as the price of the world,", start: 16.53, end: 22.03, part: 0),
+                ChantLine(latin: "Fructus ventris generósi", english: "the fruit of a noble womb,", start: 22.03, end: 26.85, part: 0),
+                ChantLine(latin: "Rex effúdit géntium.", english: "the King of the nations, poured out.", start: 26.85, end: 32.58, part: 0),
+                ChantLine(latin: "Nobis datus, nobis natus", english: "Given to us, born for us", start: 33.49, end: 39.31, part: 0),
+                ChantLine(latin: "Ex intácta Vírgine,", english: "of a spotless Virgin,", start: 39.33, end: 45.09, part: 0),
+                ChantLine(latin: "Et in mundo conversátus,", english: "and having dwelt in the world,", start: 45.09, end: 49.97, part: 0),
+                ChantLine(latin: "Sparso verbi sémine,", english: "the seed of the word once sown,", start: 49.97, end: 55.66, part: 0),
+                ChantLine(latin: "Sui moras incolátus", english: "the days of His sojourn", start: 55.87, end: 60.93, part: 0),
+                ChantLine(latin: "Miro clausit órdine.", english: "He closed in a wondrous way.", start: 60.93, end: 66.78, part: 0),
+                ChantLine(latin: "In suprémæ nocte cœnæ Recúmbens cum frátribus,", english: "On the night of the Last Supper, at table with His brethren,", start: 68.07, end: 79.87, part: 0),
+                ChantLine(latin: "Observáta lege plene", english: "the Law fully kept", start: 79.87, end: 84.97, part: 0),
+                ChantLine(latin: "Cibis in legálibus,", english: "in the foods it prescribed,", start: 84.97, end: 90.56, part: 0),
+                ChantLine(latin: "Cibum turbæ duodénæ", english: "as food to the band of Twelve", start: 90.79, end: 95.93, part: 0),
+                ChantLine(latin: "Se dat suis mánibus.", english: "He gives Himself with His own hands.", start: 95.93, end: 101.36, part: 0),
+                ChantLine(latin: "Verbum caro, panem verum Verbo carnem éfficit:", english: "The Word made flesh, by a word, makes true bread His flesh:", start: 102.99, end: 115.23, part: 0),
+                ChantLine(latin: "Fitque sanguis Christi merum,", english: "and wine becomes the Blood of Christ;", start: 115.23, end: 120.19, part: 0),
+                ChantLine(latin: "Et si sensus déficit,", english: "and if the senses fail,", start: 120.19, end: 126.18, part: 0),
+                ChantLine(latin: "Ad firmándum cor sincérum", english: "to make a sincere heart firm", start: 126.31, end: 131.67, part: 0),
+                ChantLine(latin: "Sola fides súfficit.", english: "faith alone suffices.", start: 131.67, end: 137.24, part: 0),
+                ChantLine(latin: "Tantum ergo Sacraméntum", english: "So great a Sacrament, therefore,", start: 138.91, end: 144.99, part: 0),
+                ChantLine(latin: "Venerémur cérnui:", english: "let us venerate, bowing low;", start: 145.03, end: 150.93, part: 0),
+                ChantLine(latin: "Et antíquum documéntum", english: "and let the former teaching", start: 150.93, end: 156.15, part: 0),
+                ChantLine(latin: "Novo cedat rítui:", english: "give way to the new rite;", start: 156.15, end: 162.03, part: 0),
+                ChantLine(latin: "Præstet fides suppleméntum", english: "let faith provide its aid", start: 162.03, end: 167.39, part: 0),
+                ChantLine(latin: "Sénsuum deféctui.", english: "for the failing of the senses.", start: 167.39, end: 172.78, part: 0),
+                ChantLine(latin: "Genitóri, Genitóque Laus et jubilátio,", english: "To the Begetter and the Begotten be praise and jubilation,", start: 174.33, end: 186.29, part: 0),
+                ChantLine(latin: "Salus, honor, virtus quoque", english: "salvation, honour, and might also,", start: 186.29, end: 191.41, part: 0),
+                ChantLine(latin: "Sit et benedíctio:", english: "and blessing be to Them;", start: 191.41, end: 197.07, part: 0),
+                ChantLine(latin: "Procedénti ab utróque", english: "to Him Who proceedeth from Both", start: 197.07, end: 202.37, part: 0),
+                ChantLine(latin: "Compar sit laudátio.", english: "be equal praise.", start: 202.37, end: 208.36, part: 0),
+                ChantLine(latin: "Amen.", english: "Amen.", start: 209.25, end: 217.42, part: 0),
+                ChantLine(latin: "Panem de cælo præstitísti eis.", english: "Thou didst give them bread from heaven.", start: 219.71, end: 225.03, part: 1),
+                ChantLine(latin: "Omne delectaméntum in se habéntem.", english: "Containing in itself all delight.", start: 225.03, end: 230.97, part: 1),
+                ChantLine(latin: "Orémus.", english: "Let us pray.", start: 230.97, end: 234.43, part: 2),
+                ChantLine(latin: "Deus, qui nobis sub Sacraménto mirábili passiónis tuæ memóriam reliquísti:", english: "O God, Who under a wonderful Sacrament hast left us a memorial of Thy Passion,", start: 234.43, end: 242.99, part: 2),
+                ChantLine(latin: "tríbue, quǽsumus,", english: "grant us, we beseech Thee,", start: 242.99, end: 245.73, part: 2),
+                ChantLine(latin: "ita nos córporis et sánguinis tui sacra mystéria venerári;", english: "so to venerate the sacred mysteries of Thy Body and Blood,", start: 245.75, end: 252.49, part: 2),
+                ChantLine(latin: "ut redemptiónis tuæ fructum in nobis júgiter sentiámus.", english: "that we may continually feel within ourselves the fruit of Thy redemption.", start: 252.49, end: 260.03, part: 2),
+                ChantLine(latin: "Qui vivis et regnas in sǽcula sæculórum.", english: "Who livest and reignest world without end.", start: 260.03, end: 267.31, part: 2),
+                ChantLine(latin: "Amen.", english: "Amen.", start: 267.31, end: 272.56, part: 2)
+            ]
         ),
         Chant(
             id: "veni_creator",
@@ -2782,7 +2864,41 @@ extension ChantCatalog {
                 ChantScorePart(file: "chant-o-sapientia-magnificat-2", caption: "Magnificat", aspectRatio: 3.8060),
                 ChantScorePart(file: "chant-o-oriens-magnificat-web-3", caption: "O Oriens", aspectRatio: 3.1826)
             ],
-            sourceURL: URL(string: "https://www.verbumgloriae.es/project/o-oriens-et-magnificat/")!
+            sourceURL: URL(string: "https://www.verbumgloriae.es/project/o-oriens-et-magnificat/")!,
+            lines: [
+                ChantLine(latin: "O Oriens,", english: "O Dayspring,", start: 0.29, end: 8.17, part: 0),
+                ChantLine(latin: "splendor lucis ætérnæ,", english: "splendour of light eternal,", start: 8.17, end: 14.07, part: 0),
+                ChantLine(latin: "et sol justítiæ: veni, et illúmina", english: "and Sun of justice: come, and enlighten", start: 14.07, end: 28.33, part: 0),
+                ChantLine(latin: "sedéntes in ténebris", english: "those who sit in darkness", start: 28.33, end: 35.46, part: 0),
+                ChantLine(latin: "et umbra mortis.", english: "and in the shadow of death.", start: 35.81, end: 42.74, part: 0),
+                ChantLine(latin: "Magníficat ánima mea Dóminum.", english: "My soul doth magnify the Lord.", start: 44.67, end: 53.70, part: 1),
+                ChantLine(latin: "Et exsultávit spíritus meus", english: "And my spirit hath rejoiced", start: 54.17, end: 59.38, part: 1),
+                ChantLine(latin: "in Deo salutári meo.", english: "in God my Saviour.", start: 59.39, end: 64.28, part: 1),
+                ChantLine(latin: "Quia respéxit humilitátem ancíllæ suæ:", english: "Because He hath regarded the humility of His handmaid:", start: 65.01, end: 71.43, part: 1),
+                ChantLine(latin: "ecce enim ex hoc beátam me dicent omnes generatiónes.", english: "for behold from henceforth all generations shall call me blessed.", start: 71.43, end: 79.24, part: 1),
+                ChantLine(latin: "Quia fecit mihi magna qui potens est:", english: "Because He that is mighty hath done great things to me:", start: 79.73, end: 85.65, part: 1),
+                ChantLine(latin: "et sanctum nomen ejus.", english: "and holy is His name.", start: 85.65, end: 90.48, part: 1),
+                ChantLine(latin: "Et misericórdia ejus a progénie in progénies", english: "And His mercy is from generation unto generations,", start: 90.81, end: 98.47, part: 1),
+                ChantLine(latin: "timéntibus eum.", english: "to them that fear Him.", start: 98.47, end: 103.04, part: 1),
+                ChantLine(latin: "Fecit poténtiam in bráchio suo:", english: "He hath shewed might in His arm:", start: 103.81, end: 109.51, part: 1),
+                ChantLine(latin: "dispérsit supérbos mente cordis sui.", english: "He hath scattered the proud in the conceit of their heart.", start: 109.51, end: 115.50, part: 1),
+                ChantLine(latin: "Depósuit poténtes de sede,", english: "He hath put down the mighty from their seat,", start: 116.09, end: 121.76, part: 1),
+                ChantLine(latin: "et exaltávit húmiles.", english: "and hath exalted the humble.", start: 121.77, end: 126.56, part: 1),
+                ChantLine(latin: "Esuriéntes implévit bonis:", english: "He hath filled the hungry with good things:", start: 127.37, end: 133.10, part: 1),
+                ChantLine(latin: "et dívites dimísit inánes.", english: "and the rich He hath sent empty away.", start: 133.21, end: 138.82, part: 1),
+                ChantLine(latin: "Suscépit Israël púerum suum,", english: "He hath received Israel His servant,", start: 139.79, end: 145.59, part: 1),
+                ChantLine(latin: "recordátus misericórdiæ suæ.", english: "being mindful of His mercy.", start: 145.59, end: 151.06, part: 1),
+                ChantLine(latin: "Sicut locútus est ad patres nostros, Abraham et sémini ejus in sǽcula.", english: "As He spoke to our fathers, to Abraham and to his seed for ever.", start: 152.13, end: 164.00, part: 1),
+                ChantLine(latin: "Glória Patri, et Fílio,", english: "Glory be to the Father, and to the Son,", start: 164.65, end: 170.01, part: 1),
+                ChantLine(latin: "et Spirítui Sancto.", english: "and to the Holy Spirit.", start: 170.01, end: 175.26, part: 1),
+                ChantLine(latin: "Sicut erat in princípio, et nunc, et semper,", english: "As it was in the beginning, is now, and ever shall be,", start: 175.39, end: 182.26, part: 1),
+                ChantLine(latin: "et in sǽcula sæculórum. Amen.", english: "world without end. Amen.", start: 182.31, end: 188.60, part: 1),
+                ChantLine(latin: "O Oriens,", english: "O Dayspring,", start: 190.01, end: 197.89, part: 2),
+                ChantLine(latin: "splendor lucis ætérnæ,", english: "splendour of light eternal,", start: 197.89, end: 203.79, part: 2),
+                ChantLine(latin: "et sol justítiæ: veni, et illúmina", english: "and Sun of justice: come, and enlighten", start: 203.79, end: 218.05, part: 2),
+                ChantLine(latin: "sedéntes in ténebris", english: "those who sit in darkness", start: 218.05, end: 225.18, part: 2),
+                ChantLine(latin: "et umbra mortis.", english: "and in the shadow of death.", start: 225.53, end: 232.42, part: 2)
+            ]
         ),
         Chant(
             id: "puer_natus",
@@ -3178,7 +3294,22 @@ extension ChantCatalog {
             score: [
                 ChantScorePart(file: "chant-audi-benigne-conditor-web-1", caption: "Audi benigne Conditor", aspectRatio: 0.8842)
             ],
-            sourceURL: URL(string: "https://www.verbumgloriae.es/project/audi-benigne-conditor/")!
+            sourceURL: URL(string: "https://www.verbumgloriae.es/project/audi-benigne-conditor/")!,
+            lines: [
+                ChantLine(latin: "Audi, benígne Cónditor, Nostras preces cum flétibus,", english: "Hear, kind Creator, our prayers poured out with weeping", start: 0.25, end: 12.59, part: 0),
+                ChantLine(latin: "In hoc sacro jejúnio Fusas quadragenário.", english: "in this holy fast of forty days.", start: 12.59, end: 24.14, part: 0),
+                ChantLine(latin: "Scrutátor alme córdium,", english: "Kind Searcher of hearts,", start: 24.73, end: 30.81, part: 0),
+                ChantLine(latin: "Infírma tu scis vírium:", english: "Thou knowest how weak our strength is:", start: 30.81, end: 37.07, part: 0),
+                ChantLine(latin: "Ad te revérsis éxhibe Remissiónis grátiam.", english: "to those who have turned back to Thee show the grace of pardon.", start: 37.07, end: 49.40, part: 0),
+                ChantLine(latin: "Multum quidem peccávimus,", english: "Much indeed have we sinned,", start: 49.91, end: 55.73, part: 0),
+                ChantLine(latin: "Sed parce confiténtibus:", english: "but spare us who confess it:", start: 55.73, end: 62.09, part: 0),
+                ChantLine(latin: "Ad nóminis laudem tui, Confer medélam lánguidis.", english: "for the praise of Thy name bring healing to the sick.", start: 62.09, end: 73.78, part: 0),
+                ChantLine(latin: "Concéde nostrum cónteri", english: "Grant that our body", start: 75.15, end: 81.03, part: 0),
+                ChantLine(latin: "Corpus per abstinéntiam, Culpæ ut relínquant pábulum Jejúna corda críminum.", english: "be subdued by abstinence, that our fasting hearts may forsake the food of sin.", start: 81.03, end: 98.56, part: 0),
+                ChantLine(latin: "Præsta beáta Trínitas, Concéde simplex Únitas:", english: "Grant, O blessed Trinity, grant, O simple Unity,", start: 99.87, end: 112.03, part: 0),
+                ChantLine(latin: "Ut fructuósa sint tuis Jejuniórum múnera.", english: "that the gifts of fasting may bear fruit for Thine own.", start: 112.03, end: 124.16, part: 0),
+                ChantLine(latin: "Amen.", english: "Amen.", start: 124.77, end: 130.76, part: 0)
+            ]
         ),
         Chant(
             id: "o_vos_omnes",
@@ -3192,7 +3323,18 @@ extension ChantCatalog {
             score: [
                 ChantScorePart(file: "chant-o-vos-omnes", caption: "O vos omnes", aspectRatio: 1.8463)
             ],
-            sourceURL: URL(string: "https://www.verbumgloriae.es/cantos/santo-rosario/misterios-dolorosos/")!
+            sourceURL: URL(string: "https://www.verbumgloriae.es/cantos/santo-rosario/misterios-dolorosos/")!,
+            lines: [
+                ChantLine(latin: "O vos omnes,", english: "O all ye", start: 0.21, end: 5.38, part: 0),
+                ChantLine(latin: "qui transítis per viam,", english: "that pass by the way,", start: 5.49, end: 12.93, part: 0),
+                ChantLine(latin: "atténdite, et vidéte:", english: "attend, and see", start: 12.93, end: 21.26, part: 0),
+                ChantLine(latin: "Si est dolor símilis", english: "if there be any sorrow", start: 21.85, end: 33.26, part: 0),
+                ChantLine(latin: "sicut dolor meus.", english: "like to my sorrow.", start: 33.71, end: 46.86, part: 0),
+                ChantLine(latin: "Atténdite, univérsi pópuli,", english: "Attend, all ye people,", start: 48.19, end: 61.86, part: 0),
+                ChantLine(latin: "et vidéte dolórem meum.", english: "and see my sorrow.", start: 62.43, end: 79.68, part: 0),
+                ChantLine(latin: "Si est dolor símilis", english: "If there be any sorrow", start: 80.79, end: 92.20, part: 0),
+                ChantLine(latin: "sicut dolor meus.", english: "like to my sorrow.", start: 92.63, end: 105.86, part: 0)
+            ]
         ),
         Chant(
             id: "victimae_paschali",
@@ -3335,7 +3477,30 @@ extension ChantCatalog {
             score: [
                 ChantScorePart(file: "chant-vidi-aquam", caption: "Vidi aquam", aspectRatio: 1.1655)
             ],
-            sourceURL: URL(string: "https://www.verbumgloriae.es/project/vidi-aquam/")!
+            sourceURL: URL(string: "https://www.verbumgloriae.es/project/vidi-aquam/")!,
+            lines: [
+                ChantLine(latin: "Vidi aquam", english: "I saw water", start: 0.25, end: 7.07, part: 0),
+                ChantLine(latin: "egrediéntem de templo,", english: "coming forth from the temple,", start: 7.07, end: 17.69, part: 0),
+                ChantLine(latin: "a látere dextro,", english: "on the right side,", start: 17.69, end: 25.86, part: 0),
+                ChantLine(latin: "allelúia:", english: "alleluia:", start: 25.89, end: 33.20, part: 0),
+                ChantLine(latin: "et omnes, ad quos pervénit aqua ista,", english: "and all they to whom that water came", start: 33.71, end: 51.38, part: 0),
+                ChantLine(latin: "salvi facti sunt,", english: "were saved,", start: 51.47, end: 59.69, part: 0),
+                ChantLine(latin: "et dicent,", english: "and they shall say,", start: 59.69, end: 65.40, part: 0),
+                ChantLine(latin: "allelúia, allelúia.", english: "alleluia, alleluia.", start: 65.63, end: 78.60, part: 0),
+                ChantLine(latin: "Confitémini Dómino quóniam bonus:", english: "Give praise to the Lord, for He is good:", start: 80.63, end: 87.85, part: 0),
+                ChantLine(latin: "quóniam in sǽculum misericórdia ejus.", english: "for His mercy endureth for ever.", start: 87.85, end: 97.02, part: 0),
+                ChantLine(latin: "Glória Patri, et Fílio, et Spirítui Sancto.", english: "Glory be to the Father, and to the Son, and to the Holy Spirit.", start: 97.75, end: 107.03, part: 0),
+                ChantLine(latin: "Sicut erat in princípio, et nunc, et semper,", english: "As it was in the beginning, is now, and ever shall be,", start: 107.03, end: 115.59, part: 0),
+                ChantLine(latin: "et in sǽcula sæculórum. Amen.", english: "world without end. Amen.", start: 115.59, end: 124.42, part: 0),
+                ChantLine(latin: "Vidi aquam", english: "I saw water", start: 125.93, end: 132.37, part: 0),
+                ChantLine(latin: "egrediéntem de templo,", english: "coming forth from the temple,", start: 132.37, end: 142.99, part: 0),
+                ChantLine(latin: "a látere dextro,", english: "on the right side,", start: 142.99, end: 151.14, part: 0),
+                ChantLine(latin: "allelúia:", english: "alleluia:", start: 151.19, end: 158.50, part: 0),
+                ChantLine(latin: "et omnes, ad quos pervénit aqua ista,", english: "and all they to whom that water came", start: 158.99, end: 176.68, part: 0),
+                ChantLine(latin: "salvi facti sunt,", english: "were saved,", start: 176.75, end: 184.97, part: 0),
+                ChantLine(latin: "et dicent,", english: "and they shall say,", start: 184.97, end: 190.70, part: 0),
+                ChantLine(latin: "allelúia, allelúia.", english: "alleluia, alleluia.", start: 190.93, end: 205.00, part: 0)
+            ]
         ),
         Chant(
             id: "ad_regias",
@@ -3349,7 +3514,28 @@ extension ChantCatalog {
             score: [
                 ChantScorePart(file: "chant-ad-regias-agni-dapes", caption: "Ad regias Agni dapes", aspectRatio: 0.5803)
             ],
-            sourceURL: URL(string: "https://www.verbumgloriae.es/project/ad-regias-agni-dapes/")!
+            sourceURL: URL(string: "https://www.verbumgloriae.es/project/ad-regias-agni-dapes/")!,
+            lines: [
+                ChantLine(latin: "Ad régias Agni dapes,", english: "At the royal banquet of the Lamb,", start: 0.31, end: 6.81, part: 0),
+                ChantLine(latin: "Stolis amícti cándidis,", english: "clothed in white robes,", start: 6.81, end: 12.48, part: 0),
+                ChantLine(latin: "Post tránsitum maris Rubri, Christo canámus Príncipi.", english: "the Red Sea crossed, let us sing to Christ our Prince:", start: 13.03, end: 25.20, part: 0),
+                ChantLine(latin: "Divína cujus cáritas Sacrum propínat sánguinem,", english: "whose divine charity gives us His sacred Blood to drink,", start: 26.41, end: 38.66, part: 0),
+                ChantLine(latin: "Almíque membra córporis Amor sacérdos ímmolat.", english: "and Love, the priest, offers in sacrifice the members of His holy Body.", start: 39.07, end: 51.48, part: 0),
+                ChantLine(latin: "Sparsum cruórem póstibus", english: "At the blood sprinkled on the doorposts", start: 52.25, end: 58.79, part: 0),
+                ChantLine(latin: "Vastátor horret Ángelus:", english: "the destroying Angel shudders:", start: 58.79, end: 64.38, part: 0),
+                ChantLine(latin: "Fugítque divísum mare, Mergúntur hostes flúctibus.", english: "the sea parts and flees; the enemies are drowned in the waves.", start: 64.97, end: 76.74, part: 0),
+                ChantLine(latin: "Jam Pascha nostrum Christus est,", english: "Now Christ is our Pasch,", start: 78.15, end: 85.09, part: 0),
+                ChantLine(latin: "Paschális idem víctima: Et pura puris méntibus Sinceritátis ázyma.", english: "and He the Paschal victim, and the pure unleavened bread of sincerity for pure minds.", start: 85.09, end: 103.48, part: 0),
+                ChantLine(latin: "O vera cæli víctima, Subjécta cui sunt tártara,", english: "O true Victim from heaven, to whom hell is made subject,", start: 104.51, end: 117.35, part: 0),
+                ChantLine(latin: "Solúta mortis víncula, Recépta vitæ prǽmia.", english: "the bonds of death are loosed, the rewards of life won back.", start: 117.35, end: 130.20, part: 0),
+                ChantLine(latin: "Victor subáctis ínferis Tropǽa Christus éxplicat,", english: "Christ the victor, hell overthrown, displays His trophies,", start: 131.23, end: 143.75, part: 0),
+                ChantLine(latin: "Cælóque apérto, súbditum Regem tenebrárum trahit.", english: "and, heaven opened, drags the king of darkness captive.", start: 143.75, end: 156.80, part: 0),
+                ChantLine(latin: "Ut sis perénne méntibus Paschále Jesu gáudium,", english: "That Thou mayest be, O Jesus, an everlasting Paschal joy to our minds,", start: 157.09, end: 169.69, part: 0),
+                ChantLine(latin: "A morte dira críminum Vitæ renátos líbera.", english: "free those reborn to life from the dread death of sin.", start: 169.69, end: 181.60, part: 0),
+                ChantLine(latin: "Deo Patri sit glória, Et Fílio qui a mórtuis", english: "To God the Father be glory, and to the Son, who from the dead", start: 182.53, end: 194.84, part: 0),
+                ChantLine(latin: "Surréxit, ac Paráclito, In sempitérna sǽcula.", english: "is risen, and to the Paraclete, for everlasting ages.", start: 194.89, end: 207.18, part: 0),
+                ChantLine(latin: "Amen.", english: "Amen.", start: 208.01, end: 217.36, part: 0)
+            ]
         ),
         Chant(
             id: "dies_irae",
@@ -3435,7 +3621,18 @@ extension ChantCatalog {
             score: [
                 ChantScorePart(file: "chant-kyrie-viii", caption: "Kyrie", aspectRatio: 2.2761)
             ],
-            sourceURL: URL(string: "https://www.verbumgloriae.es/project/misa-viii-de-angelis/")!
+            sourceURL: URL(string: "https://www.verbumgloriae.es/project/misa-viii-de-angelis/")!,
+            lines: [
+                ChantLine(latin: "Kýrie, eléison.", english: "Lord, have mercy.", start: 0.37, end: 16.26, part: 0),
+                ChantLine(latin: "Kýrie, eléison.", english: "Lord, have mercy.", start: 16.97, end: 32.52, part: 0),
+                ChantLine(latin: "Kýrie, eléison.", english: "Lord, have mercy.", start: 33.73, end: 49.96, part: 0),
+                ChantLine(latin: "Christe, eléison.", english: "Christ, have mercy.", start: 50.13, end: 65.34, part: 0),
+                ChantLine(latin: "Christe, eléison.", english: "Christ, have mercy.", start: 65.65, end: 80.64, part: 0),
+                ChantLine(latin: "Christe, eléison.", english: "Christ, have mercy.", start: 81.85, end: 96.52, part: 0),
+                ChantLine(latin: "Kýrie, eléison.", english: "Lord, have mercy.", start: 97.77, end: 112.76, part: 0),
+                ChantLine(latin: "Kýrie, eléison.", english: "Lord, have mercy.", start: 113.01, end: 127.48, part: 0),
+                ChantLine(latin: "Kýrie, eléison.", english: "Lord, have mercy.", start: 128.43, end: 148.10, part: 0)
+            ]
         ),
         Chant(
             id: "gloria_de_angelis",
@@ -3449,7 +3646,32 @@ extension ChantCatalog {
             score: [
                 ChantScorePart(file: "chant-gloria-viii", caption: "Gloria", aspectRatio: 0.7375)
             ],
-            sourceURL: URL(string: "https://www.verbumgloriae.es/project/misa-viii-de-angelis/")!
+            sourceURL: URL(string: "https://www.verbumgloriae.es/project/misa-viii-de-angelis/")!,
+            lines: [
+                ChantLine(latin: "Glória in excélsis Deo.", english: "Glory to God in the highest.", start: 0.27, end: 6.59, part: 0),
+                ChantLine(latin: "Et in terra pax homínibus", english: "And on earth peace to men", start: 6.59, end: 11.14, part: 0),
+                ChantLine(latin: "bonæ voluntátis.", english: "of good will.", start: 11.27, end: 15.93, part: 0),
+                ChantLine(latin: "Laudámus te. Benedícimus te.", english: "We praise Thee. We bless Thee.", start: 15.93, end: 25.27, part: 0),
+                ChantLine(latin: "Adorámus te.", english: "We adore Thee.", start: 25.27, end: 30.22, part: 0),
+                ChantLine(latin: "Glorificámus te.", english: "We glorify Thee.", start: 30.53, end: 34.91, part: 0),
+                ChantLine(latin: "Grátias ágimus tibi propter magnam glóriam tuam.", english: "We give Thee thanks for Thy great glory.", start: 34.91, end: 46.18, part: 0),
+                ChantLine(latin: "Dómine Deus, Rex cæléstis,", english: "O Lord God, heavenly King,", start: 46.39, end: 52.06, part: 0),
+                ChantLine(latin: "Deus Pater omnípotens.", english: "God the Father almighty.", start: 52.45, end: 59.46, part: 0),
+                ChantLine(latin: "Dómine Fili unigénite Jesu Christe.", english: "O Lord Jesus Christ, the only-begotten Son.", start: 59.53, end: 69.58, part: 0),
+                ChantLine(latin: "Dómine Deus, Agnus Dei, Fílius Patris.", english: "O Lord God, Lamb of God, Son of the Father.", start: 69.95, end: 80.38, part: 0),
+                ChantLine(latin: "Qui tollis peccáta mundi,", english: "Who takest away the sins of the world,", start: 81.03, end: 87.39, part: 0),
+                ChantLine(latin: "miserére nobis.", english: "have mercy on us.", start: 87.39, end: 92.98, part: 0),
+                ChantLine(latin: "Qui tollis peccáta mundi,", english: "Who takest away the sins of the world,", start: 93.83, end: 98.87, part: 0),
+                ChantLine(latin: "súscipe deprecatiónem nostram.", english: "receive our prayer.", start: 98.87, end: 108.37, part: 0),
+                ChantLine(latin: "Qui sedes ad déxteram Patris,", english: "Who sittest at the right hand of the Father,", start: 108.37, end: 113.99, part: 0),
+                ChantLine(latin: "miserére nobis.", english: "have mercy on us.", start: 113.99, end: 118.77, part: 0),
+                ChantLine(latin: "Quóniam tu solus sanctus.", english: "For Thou alone art holy.", start: 118.77, end: 124.06, part: 0),
+                ChantLine(latin: "Tu solus Dóminus.", english: "Thou alone art the Lord.", start: 124.39, end: 129.54, part: 0),
+                ChantLine(latin: "Tu solus Altíssimus, Jesu Christe.", english: "Thou alone art most high, O Jesus Christ,", start: 129.77, end: 139.68, part: 0),
+                ChantLine(latin: "Cum Sancto Spíritu,", english: "with the Holy Spirit,", start: 140.03, end: 144.93, part: 0),
+                ChantLine(latin: "in glória Dei Patris.", english: "in the glory of God the Father.", start: 144.93, end: 151.76, part: 0),
+                ChantLine(latin: "Amen.", english: "Amen.", start: 152.39, end: 159.30, part: 0)
+            ]
         ),
         Chant(
             id: "sanctus_de_angelis",
@@ -3463,7 +3685,16 @@ extension ChantCatalog {
             score: [
                 ChantScorePart(file: "chant-sanctus-viii", caption: "Sanctus", aspectRatio: 1.6619)
             ],
-            sourceURL: URL(string: "https://www.verbumgloriae.es/project/misa-viii-de-angelis/")!
+            sourceURL: URL(string: "https://www.verbumgloriae.es/project/misa-viii-de-angelis/")!,
+            lines: [
+                ChantLine(latin: "Sanctus,", english: "Holy,", start: 0.43, end: 5.63, part: 0),
+                ChantLine(latin: "Sanctus, Sanctus", english: "Holy, Holy,", start: 5.63, end: 14.88, part: 0),
+                ChantLine(latin: "Dóminus Deus Sábaoth.", english: "Lord God of hosts.", start: 15.25, end: 30.96, part: 0),
+                ChantLine(latin: "Pleni sunt cæli et terra glória tua.", english: "Heaven and earth are full of Thy glory.", start: 32.01, end: 47.36, part: 0),
+                ChantLine(latin: "Hosánna in excélsis.", english: "Hosanna in the highest.", start: 47.81, end: 56.86, part: 0),
+                ChantLine(latin: "Benedíctus qui venit", english: "Blessed is He that cometh", start: 57.59, end: 66.89, part: 0),
+                ChantLine(latin: "in nómine Dómini. Hosánna in excélsis.", english: "in the name of the Lord. Hosanna in the highest.", start: 66.89, end: 87.50, part: 0)
+            ]
         ),
         Chant(
             id: "agnus_de_angelis",
@@ -3477,7 +3708,17 @@ extension ChantCatalog {
             score: [
                 ChantScorePart(file: "chant-agnus-dei-viii", caption: "Agnus Dei", aspectRatio: 2.2682)
             ],
-            sourceURL: URL(string: "https://www.verbumgloriae.es/project/misa-viii-de-angelis/")!
+            sourceURL: URL(string: "https://www.verbumgloriae.es/project/misa-viii-de-angelis/")!,
+            lines: [
+                ChantLine(latin: "Agnus Dei,", english: "Lamb of God,", start: 0.27, end: 6.96, part: 0),
+                ChantLine(latin: "qui tollis peccáta mundi:", english: "Who takest away the sins of the world,", start: 7.51, end: 14.78, part: 0),
+                ChantLine(latin: "miserére nobis.", english: "have mercy on us.", start: 15.01, end: 23.16, part: 0),
+                ChantLine(latin: "Agnus Dei, qui tollis peccáta mundi:", english: "Lamb of God, Who takest away the sins of the world,", start: 25.25, end: 37.48, part: 0),
+                ChantLine(latin: "miserére nobis.", english: "have mercy on us.", start: 37.97, end: 46.36, part: 0),
+                ChantLine(latin: "Agnus Dei,", english: "Lamb of God,", start: 48.31, end: 55.40, part: 0),
+                ChantLine(latin: "qui tollis peccáta mundi:", english: "Who takest away the sins of the world,", start: 55.65, end: 63.29, part: 0),
+                ChantLine(latin: "dona nobis pacem.", english: "grant us peace.", start: 63.29, end: 72.44, part: 0)
+            ]
         ),
         Chant(
             id: "credo_iii",
@@ -3491,7 +3732,39 @@ extension ChantCatalog {
             score: [
                 ChantScorePart(file: "chant-credo-iii", caption: "Credo", aspectRatio: 0.3954)
             ],
-            sourceURL: URL(string: "https://www.verbumgloriae.es/project/credo-iii/")!
+            sourceURL: URL(string: "https://www.verbumgloriae.es/project/credo-iii/")!,
+            lines: [
+                ChantLine(latin: "Credo in unum Deum,", english: "I believe in one God,", start: 0.27, end: 5.40, part: 0),
+                ChantLine(latin: "Patrem omnipoténtem,", english: "the Father almighty,", start: 6.15, end: 10.89, part: 0),
+                ChantLine(latin: "factórem cæli et terræ, visibílium ómnium,", english: "Maker of heaven and earth, and of all things visible", start: 10.89, end: 21.01, part: 0),
+                ChantLine(latin: "et invisibílium.", english: "and invisible.", start: 21.01, end: 26.62, part: 0),
+                ChantLine(latin: "Et in unum Dóminum Jesum Christum,", english: "And in one Lord Jesus Christ,", start: 27.37, end: 33.90, part: 0),
+                ChantLine(latin: "Fílium Dei unigénitum.", english: "the only-begotten Son of God,", start: 34.09, end: 40.14, part: 0),
+                ChantLine(latin: "Et ex Patre natum", english: "born of the Father", start: 40.53, end: 44.99, part: 0),
+                ChantLine(latin: "ante ómnia sǽcula.", english: "before all ages;", start: 44.99, end: 51.10, part: 0),
+                ChantLine(latin: "Deum de Deo, lumen de lúmine,", english: "God of God, Light of Light,", start: 51.69, end: 58.53, part: 0),
+                ChantLine(latin: "Deum verum de Deo vero. Génitum, non factum,", english: "true God of true God; begotten, not made;", start: 58.53, end: 70.55, part: 0),
+                ChantLine(latin: "consubstantiálem Patri:", english: "of one substance with the Father;", start: 70.55, end: 75.45, part: 0),
+                ChantLine(latin: "per quem ómnia facta sunt.", english: "by whom all things were made.", start: 75.45, end: 81.81, part: 0),
+                ChantLine(latin: "Qui propter nos hómines, et propter nostram salútem descéndit de cælis.", english: "Who for us men and for our salvation came down from heaven.", start: 81.81, end: 95.52, part: 0),
+                ChantLine(latin: "Et incarnátus est de Spíritu Sancto ex María Vírgine:", english: "And became incarnate by the Holy Spirit of the Virgin Mary:", start: 96.39, end: 109.37, part: 0),
+                ChantLine(latin: "Et homo factus est.", english: "and was made man.", start: 109.37, end: 115.62, part: 0),
+                ChantLine(latin: "Crucifíxus étiam pro nobis:", english: "He was crucified also for us,", start: 116.47, end: 124.09, part: 0),
+                ChantLine(latin: "sub Póntio Piláto passus, et sepúltus est.", english: "suffered under Pontius Pilate, and was buried.", start: 124.09, end: 133.98, part: 0),
+                ChantLine(latin: "Et resurréxit tértia die, secúndum Scriptúras.", english: "And the third day He rose again according to the Scriptures.", start: 134.99, end: 145.06, part: 0),
+                ChantLine(latin: "Et ascéndit in cælum: sedet ad déxteram Patris.", english: "And He ascended into heaven, and sitteth at the right hand of the Father.", start: 145.29, end: 156.64, part: 0),
+                ChantLine(latin: "Et íterum ventúrus est cum glória, judicáre vivos et mórtuos:", english: "And He shall come again with glory to judge the living and the dead;", start: 157.95, end: 170.01, part: 0),
+                ChantLine(latin: "cujus regni non erit finis.", english: "of whose kingdom there shall be no end.", start: 170.01, end: 175.78, part: 0),
+                ChantLine(latin: "Et in Spíritum Sanctum, Dóminum, et vivificántem:", english: "And in the Holy Spirit, the Lord and Giver of life,", start: 176.75, end: 187.19, part: 0),
+                ChantLine(latin: "qui ex Patre Filióque procédit.", english: "who proceedeth from the Father and the Son;", start: 187.19, end: 193.58, part: 0),
+                ChantLine(latin: "Qui cum Patre et Fílio simul adorátur, et conglorificátur:", english: "who together with the Father and the Son is adored and glorified;", start: 194.93, end: 207.85, part: 0),
+                ChantLine(latin: "qui locútus est per Prophétas.", english: "who spoke by the Prophets.", start: 207.85, end: 213.76, part: 0),
+                ChantLine(latin: "Et unam sanctam cathólicam et apostólicam Ecclésiam.", english: "And one holy, catholic and apostolic Church.", start: 214.75, end: 227.85, part: 0),
+                ChantLine(latin: "Confíteor unum baptísma in remissiónem peccatórum.", english: "I confess one baptism for the remission of sins.", start: 227.85, end: 239.54, part: 0),
+                ChantLine(latin: "Et exspécto resurrectiónem mortuórum.", english: "And I look for the resurrection of the dead,", start: 240.03, end: 249.14, part: 0),
+                ChantLine(latin: "Et vitam ventúri sǽculi.", english: "and the life of the world to come.", start: 249.31, end: 255.70, part: 0),
+                ChantLine(latin: "Amen.", english: "Amen.", start: 256.15, end: 269.14, part: 0)
+            ]
         )
     ]
 }

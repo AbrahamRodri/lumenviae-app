@@ -2598,13 +2598,12 @@ write concurrent code here:
   `Tools/ChantLines/<chant id>.json`, derived from the bundled recording
   and checked before a file is added (its README says how), which the
   generator folds into `ChantCatalogData.swift` (below). As of Oct 2026
-  64 of the 76 chants are timed, 2,203 lines in all (the twelve brought
-  in that month are still to be timed) — each file covers its whole
+  all 76 chants are timed, 2,452 lines in all — each file covers its whole
   recording, the versicles, collects and repeats included, and its words
   follow the recording where it differs from the app's prayer text (the
   Litany of Loreto's later invocations, the 1909 Litany of St Joseph).
   The whole-chant ways stay for a chant added before its timings;
-  `ChantLibraryTests` names the 64 timed today, so a new chant without
+  `ChantLibraryTests` names the 76 timed today, so a new chant without
   lines fails nothing, and checks every timed chant's lines run in order
   within its recording. The player meets a line's end within
   a tenth of a second by carrying the clock forward between
