@@ -2,7 +2,8 @@
 //  ChapelPrayerBookTile.swift
 //  Lumen Viae
 //
-//  The Prayer Book on the Chapel page: the order for the hour it is —
+//  Prayers on the Chapel page — the Prayer Book, under the name its
+//  tab now carries: the order for the hour it is —
 //  Morning Prayers, the Angelus, Night Prayers — set like a page of the
 //  book, over the day's three hours.
 //
@@ -107,7 +108,7 @@ struct ChapelPrayerBookTile: View {
                 }
                 .buttonStyle(SacredCardButtonStyle())
                 .accessibilityElement(children: .combine)
-                .accessibilityHint("Opens the Prayer Book")
+                .accessibilityHint("Opens Prayers.")
 
                 GoldCTAButton(
                     title: "Pray",

@@ -44,7 +44,7 @@ enum ChapelTile: String, CaseIterable, Identifiable {
         case .chant:        return "Chant"
         case .reflections:  return "Reflections"
         case .flame:        return "Prayer Streak"
-        case .prayers:      return "Prayer Book"
+        case .prayers:      return "Prayers"
         }
     }
 
@@ -54,7 +54,6 @@ enum ChapelTile: String, CaseIterable, Identifiable {
     var shortTitle: String {
         switch self {
         case .flame: return "Streak"
-        case .prayers: return "Prayers"
         default:     return title
         }
     }

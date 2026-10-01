@@ -57,6 +57,9 @@ struct MyChapelView: View {
 
     @State private var showRuleEditor = false
 
+    /// The new-reflection sheet, opened from the day strip's pencil
+    @State private var showNewReflection = false
+
     /// The flame tile's three numbers, recomputed when a prayer lands
     /// rather than on every body pass — `weeklyPrayerStatus()` alone is
     /// seven predicate fetches, and this body runs on every scroll and
@@ -250,6 +253,14 @@ struct MyChapelView: View {
                 .presentationBackground(AppColors.background)
                 .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
+        // As the Journal opens a new entry
+        .sheet(isPresented: $showNewReflection) {
+            JournalEntryEditorView(isMidPrayer: false)
+                .presentationDetents([.large])
+                .presentationDragIndicator(.visible)
+                .presentationBackground(AppColors.background)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
+        }
     }
 
     private func refreshFlameStats() {
@@ -417,6 +428,25 @@ struct MyChapelView: View {
             // left to read the liturgical day, which is its whole job.
             // The foot named both in words for a while as well, and that
             // duplicate is gone too — the masthead is the one door.
+            //
+            // The one exception is the journal's pencil. With the
+            // Journal off the tab bar, a new reflection needs a door
+            // that is always on the page — the Reflections tile can be
+            // put away — and the Chapel is where reflections are kept
+            Button { showNewReflection = true } label: {
+                AppIcon("ph-pencil-simple", size: 17)
+                    .foregroundColor(AppColors.gold)
+                    .frame(width: 40, height: 40)
+                    .overlay(
+                        Circle()
+                            .strokeBorder(AppColors.gold.opacity(0.4), lineWidth: AppLine.hairline)
+                    )
+                    // Drawn at 40, answering to 44
+                    .frame(width: 44, height: 44)
+                    .contentShape(Circle())
+            }
+            .buttonStyle(QuietGlyphButtonStyle())
+            .accessibilityLabel("New reflection")
         }
         .frame(minHeight: 44)
         .padding(.horizontal, 20)

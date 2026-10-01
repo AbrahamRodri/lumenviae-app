@@ -1208,9 +1208,27 @@ struct ChapelConsecrationTile: View {
             : "Consecration. Day \(day) of 33, \(phaseName(day: day)). Continue."
     }
 
-    /// The painting the day's preparation is set under on its own page
-    private static func paintingName(day: Int) -> String {
-        (ConsecrationPhase.phase(for: day) ?? .consecrationDay).heroImageName
+    /// Where the user stands with the consecration, as the tile draws it
+    private enum Stage {
+        case underWay(day: Int)
+        case made
+        case notBegun
+    }
+
+    /// The painting the tile is set under: the one place it is chosen, so
+    /// a painting made for this tile is a one-line change. Until one is,
+    /// the painting the consecration's own page opens on for that day —
+    /// each preparation's own — the Coronation once it is made, and the
+    /// Annunciation before it is begun.
+    private static func paintingName(_ stage: Stage) -> String {
+        switch stage {
+        case .underWay(let day):
+            return (ConsecrationPhase.phase(for: day) ?? .consecrationDay).heroImageName
+        case .made:
+            return ConsecrationPhase.consecrationDay.heroImageName
+        case .notBegun:
+            return ConsecrationPhase.knowledgeOfMary.heroImageName
+        }
     }
 
     /// The card's padding: the road runs to the floor, with no foot
@@ -1244,7 +1262,7 @@ struct ChapelConsecrationTile: View {
         ChapelTileFrame(
             tile: .consecration,
             span: span,
-            surface: .painting(Self.paintingName(day: day)),
+            surface: .painting(Self.paintingName(.underWay(day: day))),
             padding: padding,
             onTap: open,
             accessibilityLabel: Self.spoken(day: day)
@@ -1320,7 +1338,7 @@ struct ChapelConsecrationTile: View {
         ChapelTileFrame(
             tile: .consecration,
             span: span,
-            surface: .painting(ConsecrationPhase.consecrationDay.heroImageName),
+            surface: .painting(Self.paintingName(.made)),
             padding: padding,
             onTap: open,
             accessibilityLabel: "Consecration, made. Revisit."
@@ -1365,7 +1383,7 @@ struct ChapelConsecrationTile: View {
         ChapelTileFrame(
             tile: .consecration,
             span: span,
-            surface: .painting(ConsecrationPhase.knowledgeOfMary.heroImageName),
+            surface: .painting(Self.paintingName(.notBegun)),
             padding: padding,
             onTap: open,
             accessibilityLabel: "Total Consecration. A 33-day preparation to give yourself to Jesus through Mary. Begin."
