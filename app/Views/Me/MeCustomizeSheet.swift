@@ -31,8 +31,8 @@ struct RuleEditorSheet: View {
     var body: some View {
         VStack(spacing: 0) {
             EditorHeader(
-                title: "Rule of Prayer",
-                subtitle: "The devotions you mean to offer each day.",
+                title: "Daily Prayers",
+                subtitle: "The prayers you mean to pray each day, what the saints called a rule of prayer.",
                 onDone: { dismiss() }
             )
 
@@ -63,7 +63,7 @@ struct RuleEditorSections: View {
                     title: item.actName,
                     detail: nil
                 ) {
-                    EditorRemoveButton(label: "Remove \(item.actName) from your rule") {
+                    EditorRemoveButton(label: "Remove \(item.actName) from your daily prayers") {
                         withAnimation(Motion.settle) {
                             settings.setRuleItems(enabled.filter { $0 != item })
                         }
@@ -76,9 +76,9 @@ struct RuleEditorSections: View {
                 settings.setRuleItems(items)
             }
         } header: {
-            EditorSectionHeader("Your rule of prayer")
+            EditorSectionHeader("Your daily prayers")
         } footer: {
-            EditorSectionFooter("The devotions on your daily checklist. While a consecration is under way it joins the rule on its own. Each day starts fresh — yesterday is never held against you.")
+            EditorSectionFooter("The prayers on your daily checklist. While you are preparing for your Consecration to Mary, it is added here for you. Each day starts fresh — yesterday is never held against you.")
         }
 
         if !available.isEmpty {
@@ -88,7 +88,7 @@ struct RuleEditorSections: View {
                         icon: item.icon,
                         title: item.actName,
                         detail: item.subtitle,
-                        accessibilityLabel: "Add \(item.actName) to your rule"
+                        accessibilityLabel: "Add \(item.actName) to your daily prayers"
                     ) {
                         withAnimation(Motion.settle) {
                             settings.setRuleItems(enabled + [item])
@@ -96,7 +96,7 @@ struct RuleEditorSections: View {
                     }
                 }
             } header: {
-                EditorSectionHeader("Add to your rule")
+                EditorSectionHeader("Add a prayer")
             }
         }
     }

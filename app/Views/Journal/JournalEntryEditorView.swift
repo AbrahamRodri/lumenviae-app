@@ -5,8 +5,8 @@
 //  Used in three contexts:
 //  1. Mid-prayer (isMidPrayer: true)  — subject locked to current mystery
 //  2. Post-prayer completion           — subject locked to category
-//  3. From journal tab                 — subject is a free-form editable field
-//     defaulting to "General Reflection"; user can type any title they want
+//  3. From journal tab                 — subject is a free-form editable field,
+//     empty under "Title (optional)"; user can type any title they want
 //
 
 import SwiftUI
@@ -56,7 +56,7 @@ struct JournalEntryEditorView: View {
     private var displayedSubject: String {
         if let title = lockedMysteryTitle { return title }
         if let cat = lockedCategory { return cat.displayName }
-        return subjectText.isEmpty ? "General Reflection" : subjectText
+        return subjectText.isEmpty ? "Reflection" : subjectText
     }
 
     private var placeholderText: String {
@@ -126,22 +126,28 @@ struct JournalEntryEditorView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
+                // Said only once something is written: "0 characters"
+                // stood under an empty page, and "1 characters" under one
+                // letter. The row keeps its height either way.
                 HStack {
                     Spacer()
-                    Text("\(text.count) characters")
+                    Text(text.count == 1 ? "1 character" : "\(text.count) characters")
                         .font(AppFonts.bodyFont(12))
                         .foregroundColor(AppColors.textSecondary.opacity(0.4))
                         .padding(.trailing, 24)
                         .padding(.bottom, 8)
+                        .opacity(text.isEmpty ? 0 : 1)
+                        .accessibilityHidden(text.isEmpty)
                 }
             }
         }
         .onAppear {
+            // A new reflection's title starts empty, under its placeholder:
+            // typed into the field, "General Reflection" was saved as the
+            // title of every reflection not renamed
             if let entry = existingEntry {
                 text = entry.text
-                subjectText = entry.mysteryTitle ?? "General Reflection"
-            } else if subjectText.isEmpty {
-                subjectText = "General Reflection"
+                subjectText = entry.mysteryTitle ?? ""
             }
             // Always go straight to the body field
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
@@ -197,7 +203,7 @@ struct JournalEntryEditorView: View {
                         .font(AppFonts.italicFont(16))
                         .foregroundColor(AppColors.cream)
 
-                    Text(isMidPrayer ? "During prayer" : "Post-prayer reflection")
+                    Text(isMidPrayer ? "During prayer" : "After prayer")
                         .font(AppFonts.bodyFont(11))
                         .foregroundColor(AppColors.textSecondary)
                 }
@@ -207,7 +213,7 @@ struct JournalEntryEditorView: View {
                 // a hairline that brightens under the caret, and a hint
                 // line led by a pencil that says what to do with it.
                 VStack(alignment: .leading, spacing: 5) {
-                    TextField("General Reflection", text: $subjectText)
+                    TextField("Title (optional)", text: $subjectText)
                         .font(AppFonts.italicFont(16))
                         .foregroundColor(AppColors.cream)
                         .tint(AppColors.gold)
@@ -223,7 +229,7 @@ struct JournalEntryEditorView: View {
 
                     HStack(spacing: 5) {
                         AppIcon("ph-pencil-simple", size: 10)
-                        Text(subjectFocused ? "Mystery, topic, or leave blank" : "Tap to name this entry")
+                        Text(subjectFocused ? "Mystery, topic, or leave blank" : "Tap to add a title")
                             .font(AppFonts.bodyFont(11))
                     }
                     .foregroundColor(
@@ -264,9 +270,10 @@ struct JournalEntryEditorView: View {
         let finalTitle: String? = {
             if let locked = lockedMysteryTitle { return locked }
             // A subject locked to a set of mysteries is named by them.
-            // The free-form field is never shown, so what it holds is
-            // only its placeholder — saved, "General Reflection" stood in
-            // the journal over every reflection written after a Rosary
+            // The free-form field is never shown, so nothing it holds is
+            // the reader's — saved, the "General Reflection" it was once
+            // filled with stood in the journal over every reflection
+            // written after a Rosary
             if isSubjectLocked { return nil }
             let s = subjectText.trimmingCharacters(in: .whitespacesAndNewlines)
             return s.isEmpty ? nil : s

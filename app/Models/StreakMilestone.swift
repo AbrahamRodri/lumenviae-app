@@ -7,7 +7,7 @@
 //  ═══════════════════════════════════════════════════════════════════════════
 //
 //  Milestones follow real devotional structures of the Church rather than
-//  arbitrary numbers — a 9-day streak completes a Novena, a 33-day streak
+//  arbitrary numbers — a 9-day streak completes a novena, a 33-day streak
 //  mirrors St. Louis de Montfort's consecration period, 54 days completes
 //  the traditional 54-Day Rosary Novena.
 //
@@ -23,10 +23,12 @@ struct StreakMilestone: Identifiable, Equatable {
     /// Days of consecutive prayer required
     let days: Int
 
-    /// Devotional name, e.g. "Novena"
-    let name: String
+    /// What the Church calls a run of this length, in plain words, where
+    /// it has a name: "a novena". Never shown alone, only after the days.
+    let meaning: String?
 
-    /// SF Symbol shown on the milestone badge
+    /// The glyph on the milestone badge (`AppIcon`): the count's numeral,
+    /// or a named devotion's sign
     let icon: String
 
     /// Short celebratory line shown when the milestone is reached
@@ -34,51 +36,59 @@ struct StreakMilestone: Identifiable, Equatable {
 
     var id: Int { days }
 
+    /// The milestone as it is named, led by its number: "9 days". The
+    /// blessing beneath it says what the Church calls it, and why.
+    var name: String { "\(days) days" }
+
+    /// "9 days · a novena": the number, then the Church's name for it, for
+    /// a line that has no blessing beneath it to explain
+    var title: String { meaning.map { "\(name) · \($0)" } ?? name }
+
     // MARK: - All Milestones
 
     /// Ordered by days ascending.
     static let all: [StreakMilestone] = [
         StreakMilestone(
             days: 3,
-            name: "Triduum",
+            meaning: "a triduum",
             icon: "ph-number-circle-three",
-            blessing: "Three days of prayer, after the ancient rhythm of the Church."
+            blessing: "Three days in a row: a triduum, the Church's ancient three days of prayer."
         ),
         StreakMilestone(
             days: 7,
-            name: "A Faithful Week",
+            meaning: "a faithful week",
             icon: "ph-number-circle-seven",
             blessing: "Seven days — every mystery of the week visited in prayer."
         ),
         StreakMilestone(
             days: 9,
-            name: "Novena",
+            meaning: "a novena",
             icon: "ph-number-circle-nine",
-            blessing: "Nine days of unbroken devotion, in the tradition of the Apostles in the Upper Room."
+            blessing: "Nine days in a row: a novena, as the Apostles prayed for nine days before Pentecost."
         ),
         StreakMilestone(
             days: 33,
-            name: "Consecration",
+            meaning: nil,
             icon: "ch-consecration",
-            blessing: "Thirty-three days — the length of St. Louis de Montfort's total consecration."
+            blessing: "Thirty-three days, as long as St. Louis de Montfort's Consecration to Mary."
         ),
         StreakMilestone(
             days: 54,
-            name: "54-Day Novena",
+            meaning: "a Rosary novena",
             icon: "lv-rosary",
-            blessing: "The great Rosary Novena complete — 27 days in petition, 27 in thanksgiving."
+            blessing: "The great Rosary novena complete: 27 days asking, and 27 giving thanks."
         ),
         StreakMilestone(
             days: 100,
-            name: "Hundredfold",
+            meaning: nil,
             icon: "lv-wheat",
             blessing: "Some seed fell on good soil and brought forth fruit a hundredfold."
         ),
         StreakMilestone(
             days: 365,
-            name: "A Year of Grace",
+            meaning: "a year of grace",
             icon: "ch-chi-rho",
-            blessing: "A full year of daily prayer. Ad majorem Dei gloriam."
+            blessing: "A full year of daily prayer, for the greater glory of God."
         )
     ]
 
@@ -92,7 +102,7 @@ struct StreakMilestone: Identifiable, Equatable {
 
     /// The next milestone ahead of this streak, if any.
     /// Used for the goal-gradient line on the streak card
-    /// ("Novena — 3 days away").
+    /// ("9 days · a novena · 3 days away").
     static func next(after streak: Int) -> StreakMilestone? {
         all.first { $0.days > streak }
     }

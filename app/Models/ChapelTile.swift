@@ -39,7 +39,7 @@ enum ChapelTile: String, CaseIterable, Identifiable {
         case .rule:         return "Today"
         case .consecration: return "Consecration"
         case .reading:      return "Reading"
-        case .liturgy:      return "Liturgy"
+        case .liturgy:      return "Today in the Church"
         case .library:      return "Library"
         case .chant:        return "Chant"
         case .reflections:  return "Reflections"
@@ -53,8 +53,9 @@ enum ChapelTile: String, CaseIterable, Identifiable {
     /// tray and the lifted row keep the full name.
     var shortTitle: String {
         switch self {
-        case .flame: return "Streak"
-        default:     return title
+        case .flame:   return "Streak"
+        case .liturgy: return "The Church"
+        default:       return title
         }
     }
 
@@ -62,15 +63,15 @@ enum ChapelTile: String, CaseIterable, Identifiable {
     /// a hidden section's chip in the tray.
     var detail: String {
         switch self {
-        case .rule:         return "Your rule of prayer, act by act"
-        case .consecration: return "Your place on the 33-day preparation"
+        case .rule:         return "Your daily prayers, one by one"
+        case .consecration: return "Your place in the 33-day Consecration to Mary"
         case .reading:      return "The book you have open"
-        case .liturgy:      return "The Mass and the Hours of the day"
+        case .liturgy:      return "Today's Mass and the Hours of Prayer"
         case .library:      return "The books, the guides, and the saints"
-        case .chant:        return "Sung prayer, kept close to hand"
-        case .reflections:  return "Your latest journal entries"
+        case .chant:        return "A chant to play, and the Chant Library"
+        case .reflections:  return "Your latest reflections"
         case .flame:        return "Your streak and this week's prayer"
-        case .prayers:      return "The prayers for the hour, and the day's three"
+        case .prayers:      return "Prayers for morning, noon and night"
         }
     }
 

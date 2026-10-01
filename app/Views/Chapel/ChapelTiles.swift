@@ -45,33 +45,42 @@ struct ChapelAct: Identifiable {
     /// up where it stopped (`InProgressPrayer.isContinued(by:)`)
     var resume: InProgressPrayer? = nil
 
+    /// The consecration's day, for its act's words ("Open Day 14")
+    var day: Int? = nil
+
     var id: String { shortcut.rawValue }
 
     /// The act's name as the ledger and the focus block set it.
     var focusTitle: String { shortcut.actName }
 
-    /// The gold act under the focus title.
+    /// The gold act under the focus title. The title names the act, so
+    /// the button need not name it twice: the Rosary's three forms are
+    /// all "the Rosary" here, as they are one prayer, and every word fits
+    /// the button on one line at the largest text size the app draws —
+    /// "Continue the Rosary Said Aloud" did not.
     var focusAction: String {
         if resume != nil {
             switch shortcut {
-            case .todaysRosary:     return "Continue the Rosary"
-            case .sevenSorrows:     return "Continue the Chaplet"
-            case .scripturalRosary: return "Continue the Scriptural Rosary"
-            case .rosaryAloud:      return "Continue the Holy Rosary"
-            default:                break
+            case .todaysRosary, .scripturalRosary, .rosaryAloud:
+                return "Continue the Rosary"
+            case .sevenSorrows:
+                return "Continue Praying"
+            default:
+                break
             }
         }
         switch shortcut {
-        case .todaysRosary:     return "Pray with a Meditation"
+        case .todaysRosary, .scripturalRosary, .rosaryAloud:
+            return "Pray the Rosary"
         case .chooseMeditation: return "Open Today's Mysteries"
-        case .sevenSorrows:     return "Begin the Chaplet"
-        case .scripturalRosary: return "Begin the Scriptural Rosary"
-        case .rosaryAloud:      return "Begin the Holy Rosary"
-        case .mass:             return "Begin the Mass"
-        case .office:           return "Begin the Office"
-        case .consecration:     return "Continue the Preparation"
+        case .sevenSorrows:     return "Pray the Seven Sorrows"
+        case .mass:             return "Open Today\u{2019}s Mass"
+        case .office:           return "Open Hours of Prayer"
+        case .consecration:
+            guard let day else { return "Open the Consecration" }
+            return day > 33 ? "Open Consecration Day" : "Open Day \(day)"
         case .morningPrayers:   return "Pray Morning Prayers"
-        case .angelus:          return PrayerBook.isEastertide(Date()) ? "Pray the Regina Cæli" : "Pray the Angelus"
+        case .angelus:          return PrayerBook.isEastertide(Date()) ? "Pray Queen of Heaven" : "Pray the Angelus"
         case .nightPrayers:     return "Pray Night Prayers"
         }
     }
@@ -310,7 +319,7 @@ struct ChapelTileHeader: View {
                         .padding(.vertical, -11)
                 }
                 .buttonStyle(QuietGlyphButtonStyle())
-                .accessibilityLabel("Edit your rule")
+                .accessibilityLabel("Edit your daily prayers")
                 .layoutPriority(1)
             }
         }
@@ -694,7 +703,7 @@ struct ChapelRuleTile: View {
             tile: .rule,
             span: span,
             surface: .lit,
-            footNote: span == 2 && !acts.isEmpty ? "\(doneCount) of \(acts.count) offered" : nil,
+            footNote: span == 2 && !acts.isEmpty ? "\(doneCount) of \(acts.count) prayed" : nil,
             onEdit: onEditRule
         ) {
             if span == 2 { full } else { half }
@@ -706,7 +715,7 @@ struct ChapelRuleTile: View {
     @ViewBuilder
     private var full: some View {
         if acts.isEmpty {
-            Text("No devotions on your rule yet.")
+            Text("You haven\u{2019}t chosen any daily prayers yet.")
                 .font(AppFonts.italicFont(14))
                 .foregroundColor(AppColors.textSecondary)
                 .padding(.top, 14)
@@ -739,13 +748,17 @@ struct ChapelRuleTile: View {
                 ChapelRuleBead(mark: act.done ? .offered : (isNext ? .next : .waiting))
 
                 VStack(alignment: .leading, spacing: 2) {
+                    // Two lines where a name needs them: "The Seven
+                    // Sorrows of Mary" beside CONTINUE › at the larger
+                    // text sizes
                     Text(act.focusTitle)
                         .font(AppFonts.titleFont(isNext ? 16.5 : 14))
                         .foregroundColor(
                             AppColors.cream.opacity(isNext ? 1 : (act.done ? 0.55 : 0.85))
                         )
-                        .lineLimit(1)
+                        .lineLimit(2)
                         .minimumScaleFactor(0.8)
+                        .fixedSize(horizontal: false, vertical: true)
 
                     Text(act.subtitle)
                         .font(AppFonts.italicFont(13))
@@ -782,7 +795,7 @@ struct ChapelRuleTile: View {
         ZStack(alignment: .trailing) {
             if act.done {
                 HStack(spacing: 6) {
-                    Text("OFFERED")
+                    Text("PRAYED")
                         .font(AppFonts.labelFont(8.5))
                         .tracking(2)
                         .foregroundColor(AppColors.gold.opacity(0.55))
@@ -807,7 +820,7 @@ struct ChapelRuleTile: View {
     }
 
     private func accessibility(for act: ChapelAct) -> String {
-        act.done ? "\(act.focusTitle), offered." : "\(act.rowAction) \(act.focusTitle)"
+        act.done ? "\(act.focusTitle), prayed." : "\(act.rowAction) \(act.focusTitle)"
     }
 
     // MARK: Half — the figure and a row of cells
@@ -815,7 +828,7 @@ struct ChapelRuleTile: View {
     @ViewBuilder
     private var half: some View {
         if acts.isEmpty {
-            Text("No devotions yet.")
+            Text("None chosen yet.")
                 .font(AppFonts.italicFont(13))
                 .foregroundColor(AppColors.textSecondary)
                 .padding(.top, 14)
@@ -827,7 +840,7 @@ struct ChapelRuleTile: View {
                 .animation(Motion.crossfade, value: doneCount)
                 .padding(.top, 14)
 
-            Text("offered today")
+            Text("prayed today")
                 .font(AppFonts.italicFont(14))
                 .foregroundColor(AppColors.cream.opacity(0.85))
                 .padding(.top, 2)
@@ -934,13 +947,13 @@ struct ChapelFlameTile: View {
 
     private var streakLabel: String {
         switch streak {
-        case 0:  return "Begin Your Streak"
-        case 1:  return "1 Day of Prayer"
-        default: return "\(streak) Days of Prayer"
+        case 0:  return "Pray today to begin"
+        case 1:  return "1 day so far"
+        default: return "\(streak) days in a row"
         }
     }
 
-    /// "Novena · 1 day away" — the next milestone by name, and how far
+    /// "9 days · a novena · 1 day away" — the next milestone, and how far
     /// off it stands. Word for word the Prayer Record's own line
     /// (`MilestoneProgressLine`), so the two surfaces agree. Still an
     /// invitation ahead, never a warning: the distance is to something,
@@ -948,10 +961,10 @@ struct ChapelFlameTile: View {
     private var milestoneLine: String? {
         guard let next = StreakMilestone.next(after: streak) else { return nil }
         let away = next.days - streak
-        return "\(next.name) · \(away == 1 ? "1 day away" : "\(away) days away")"
+        return "\(next.title) · \(away == 1 ? "1 day away" : "\(away) days away")"
     }
 
-    private var litNote: String { hasPrayedToday ? "Lit today" : "Not yet today" }
+    private var litNote: String { hasPrayedToday ? "Prayed today" : "Not yet today" }
 
     private static let weekdayName: DateFormatter = {
         let f = DateFormatter()
@@ -973,12 +986,12 @@ struct ChapelFlameTile: View {
     /// milestone ahead
     private var accessibilityLabel: String {
         var line = "Prayer Streak. "
+        // With no streak the day is not yet prayed, and the figure says so
         switch streak {
-        case 0:  line += "Begin your streak"
-        case 1:  line += "1 day of prayer"
-        default: line += "\(streak) days in a row"
+        case 0:  line += "Pray today to begin."
+        case 1:  line += "1 day so far, \(litNote.lowercased())."
+        default: line += "\(streak) days in a row, \(litNote.lowercased())."
         }
-        line += ", \(litNote.lowercased())."
         if let days = daysPrayedThisWeek {
             line += " This week, prayed \(days)."
         }
@@ -1032,14 +1045,14 @@ struct ChapelFlameTile: View {
                         chapelFigure(
                             "\(streak)",
                             size: 42,
-                            caption: streak == 1 ? "day of prayer" : "days in a row"
+                            caption: streak == 1 ? "day so far" : "days in a row"
                         )
                         .lineLimit(1)
                         .minimumScaleFactor(0.75)
                         .contentTransition(.numericText())
                         .animation(Motion.crossfade, value: streak)
                     } else {
-                        Text("Begin Your Streak")
+                        Text("Pray today to begin")
                             .font(AppFonts.titleFont(21))
                             .foregroundColor(AppColors.cream)
                             .lineLimit(2)
@@ -1118,7 +1131,7 @@ struct ChapelFlameTile: View {
                     .contentTransition(.numericText())
                     .animation(Motion.crossfade, value: streak)
             } else {
-                Text("Begin Your Streak")
+                Text("Pray today to begin")
                     .font(AppFonts.titleFont(14))
                     .foregroundColor(AppColors.cream)
                     .multilineTextAlignment(.center)
@@ -1217,7 +1230,7 @@ struct ChapelConsecrationTile: View {
     static let phases: [(name: String, from: Int, to: Int)] = [
         ("The World", 1, 12),
         ("Yourself", 13, 19),
-        ("Our Lady", 20, 26),
+        ("Mary", 20, 26),
         ("Christ", 27, 33)
     ]
 
@@ -1227,20 +1240,20 @@ struct ChapelConsecrationTile: View {
         switch day {
         case ...12:   return "Renouncing the world"
         case 13...19: return "Knowing yourself"
-        case 20...26: return "Knowing Our Lady"
+        case 20...26: return "Knowing Mary"
         case 27...33: return "Knowing Christ"
-        default:      return "The day of consecration"
+        default:      return "Consecration Day"
         }
     }
 
-    /// What VoiceOver says for the tile under way — "Consecration, day
-    /// 14 of 33, Humble Subjection. Continue." — the day's own title, as
+    /// What VoiceOver says for the tile under way — "Consecration to
+    /// Mary, day 14 of 33, Humble Subjection. Continue." — the day's own title, as
     /// the full tile sets it. The day of consecration is not a
     /// thirty-fourth day of the preparation.
     private static func spoken(day: Int) -> String {
-        if day > 33 { return "Consecration, the day of consecration. Continue." }
+        if day > 33 { return "Consecration to Mary, Consecration Day. Continue." }
         let title = ConsecrationData.day(day)?.title ?? phaseName(day: day)
-        return "Consecration, day \(day) of 33, \(title). Continue."
+        return "Consecration to Mary, day \(day) of 33, \(title). Continue."
     }
 
     /// Where the user stands with the consecration, as the tile draws it
@@ -1376,7 +1389,7 @@ struct ChapelConsecrationTile: View {
             surface: .painting(Self.paintingName(.made)),
             padding: padding,
             onTap: open,
-            accessibilityLabel: "Consecration, made. Revisit."
+            accessibilityLabel: "Consecration to Mary, completed. Opens it again."
         ) {
             EmptyView()
         } floor: {
@@ -1421,13 +1434,13 @@ struct ChapelConsecrationTile: View {
             surface: .painting(Self.paintingName(.notBegun)),
             padding: padding,
             onTap: open,
-            accessibilityLabel: "Total Consecration. A 33-day preparation to give yourself to Jesus through Mary. Begin."
+            accessibilityLabel: "Consecration to Mary. A 33-day preparation to give yourself to Jesus through Mary. Begin."
         ) {
             EmptyView()
         } floor: {
             HStack(alignment: .bottom, spacing: 12) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Total Consecration")
+                    Text("Consecration to Mary")
                         .font(AppFonts.titleFont(span == 2 ? 26 : 18))
                         .foregroundColor(AppColors.cream)
                         .lineLimit(2)
@@ -1436,7 +1449,7 @@ struct ChapelConsecrationTile: View {
 
                     Text(span == 2
                          ? "A 33-day preparation to give yourself to Jesus through Mary."
-                         : "Thirty-three days")
+                         : "A 33-day preparation")
                         .font(AppFonts.italicFont(span == 2 ? 15 : 14))
                         .foregroundColor(AppColors.cream.opacity(0.92))
                         .fixedSize(horizontal: false, vertical: true)
@@ -1630,14 +1643,12 @@ struct ChapelReadingTile: View {
         }
     }
 
-    /// "Two more open" — the rest of the shelf still under way
+    /// "2 more books started" — the rest of the shelf still under way
     private func restNote(_ entry: Entry) -> String? {
         switch others(than: entry).count {
         case 0:  return nil
-        case 1:  return "One more open"
-        case 2:  return "Two more open"
-        case 3:  return "Three more open"
-        case let count: return "\(count) more open"
+        case 1:  return "1 more book started"
+        case let count: return "\(count) more books started"
         }
     }
 
@@ -1725,7 +1736,7 @@ struct ChapelReadingTile: View {
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("Bring \(entry.info.title) forward")
+        .accessibilityLabel("Show \(entry.info.title)")
     }
 
     // MARK: The slide
@@ -1753,17 +1764,17 @@ struct ChapelReadingTile: View {
         .scrollPosition(id: $shownID)
     }
 
-    // MARK: Empty — the shelf's cloths, and an invitation
+    // MARK: Empty — the books' cloths, and an invitation
 
     private var empty: some View {
         ChapelTileFrame(
             tile: .reading,
             span: span,
             surface: .cloth,
-            act: "The shelf",
+            act: "All books",
             footRuled: span == 1,
             onTap: { router.push(.spiritualReading) },
-            accessibilityLabel: "Reading. Nothing open yet — take up and read. Opens the shelf."
+            accessibilityLabel: "Reading. No book open yet. Take up and read: choose a book. Opens all books."
         ) {
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .bottom, spacing: 6) {
@@ -1778,7 +1789,7 @@ struct ChapelReadingTile: View {
                 ChapelShelfLine()
                     .padding(.horizontal, span == 2 ? -18 : -14)
 
-                Text("Tolle, lege — take up and read.")
+                Text("Take up and read \u{00B7} choose a book")
                     .font(AppFonts.italicFont(span == 2 ? 14 : 12.5))
                     .foregroundColor(AppColors.cream.opacity(0.85))
                     .lineLimit(2)
@@ -1966,16 +1977,19 @@ private struct ChapelBookSpine: View {
 
 // MARK: - Liturgy
 
-/// The day as the Church keeps it: the date on a calendar leaf, the
-/// feast with its class and its colour, and a ledger of the Church's own
-/// two books for it — the Mass by its Introit, the Office by the hour it
-/// is. Split out of the Library so one heading is true of everything
-/// beneath it: these are the liturgy, and the rest of the shelf is not.
+/// Today in the Church: the date on a calendar leaf, the feast with its
+/// rank and its colour, and a ledger of the Church's own two books for
+/// it — today's Mass with the first words of its entrance chant, the
+/// Hours of Prayer by the hour it is. Split out of the Library so one
+/// heading is true of everything beneath it: these are the liturgy, and
+/// the rest of the shelf is not.
 ///
-/// The feast, its class and its colour are the missal's, read through
-/// the page's `TodayInChurch`, and the Introit is the day's own proper.
-/// Until the day is known — or with the missal unreachable — the leaf
-/// says the plain thing and the doors still open.
+/// The feast, its rank and its colour are the missal's, read through
+/// the page's `TodayInChurch`, and the entrance chant (the Introit) is
+/// the day's own proper. Until the day is known — or with the missal
+/// unreachable — the leaf says the plain thing and the doors still open.
+/// The colour is shown by the vestment's diamond, so it is said in words
+/// to VoiceOver alone ("green vestments").
 struct ChapelLiturgyTile: View {
 
     let span: Int
@@ -1989,8 +2003,7 @@ struct ChapelLiturgyTile: View {
         ChapelTileFrame(
             tile: .liturgy,
             span: span,
-            surface: .deep,
-            note: span == 2 ? "1962" : nil
+            surface: .deep
         ) {
             if span == 2 { fullDay } else { halfDay }
         } floor: {
@@ -1998,10 +2011,40 @@ struct ChapelLiturgyTile: View {
         }
     }
 
-    /// "III class · white", whichever parts the day carries
+    /// The day's rank in the missal's words ("Lesser Feast"), with the
+    /// colour left to the diamond beside it; "green vestments" when the
+    /// day names a colour and no rank
     private var rankLine: String? {
-        let parts = [today.proper?.info.rankLabel, today.vestment?.name.lowercased()].compactMap { $0 }
-        return parts.isEmpty ? nil : parts.joined(separator: " · ")
+        today.proper?.info.rankLabel ?? vestmentWords
+    }
+
+    /// "green vestments", for VoiceOver and for a day with no rank
+    private var vestmentWords: String? {
+        today.vestment.map { "\($0.name.lowercased()) vestments" }
+    }
+
+    /// The rank line as it is heard: "Lesser Feast, white vestments"
+    private var rankSpoken: String? {
+        guard let rankLine else { return nil }
+        guard let vestmentWords, vestmentWords != rankLine else { return rankLine }
+        return "\(rankLine), \(vestmentWords)"
+    }
+
+    /// The hour in plain words, the Church's name second: "Evening
+    /// Prayer" for Vespers, "Bedtime Prayer" for Compline — never "Night
+    /// Prayers", which are the Prayer Book's. The plain-language rulings'
+    /// table, word for word; `CanonicalHour.plainName` is to carry it.
+    static func plainName(of hour: CanonicalHour) -> String {
+        switch hour {
+        case .matins:   return "Night Vigil"
+        case .lauds:    return "Dawn Prayer"
+        case .prime:    return "Early Morning Prayer"
+        case .terce:    return "Mid-Morning Prayer"
+        case .sext:     return "Midday Prayer"
+        case .nones:    return "Mid-Afternoon Prayer"
+        case .vespers:  return "Evening Prayer"
+        case .compline: return "Bedtime Prayer"
+        }
     }
 
     // MARK: Full — the leaf and the feast, the ledger beneath
@@ -2054,6 +2097,7 @@ struct ChapelLiturgyTile: View {
                             .foregroundColor(AppColors.cream.opacity(0.8))
                             .lineLimit(1)
                             .minimumScaleFactor(0.85)
+                            .accessibilityLabel(rankSpoken ?? rankLine)
                     }
                     .transition(.opacity)
                 }
@@ -2069,16 +2113,16 @@ struct ChapelLiturgyTile: View {
     private var fullLedger: some View {
         VStack(spacing: 0) {
             ledgerRow(
-                kicker: "Holy Mass",
-                title: today.introitIncipit ?? "Daily Missal",
-                line: today.introitIncipit == nil ? "The propers of the day" : "The Introit of the day",
+                kicker: "The Mass",
+                title: "Today\u{2019}s Mass",
+                line: today.introitIncipit.map { "Entrance chant: \($0)" } ?? "Prayers and readings for today",
                 route: .missal,
                 divided: true
             )
             ledgerRow(
-                kicker: "Office",
-                title: hour.label,
-                line: "The hour now",
+                kicker: "Hours of Prayer",
+                title: Self.plainName(of: hour),
+                line: "\(hour.label), the hour now",
                 route: .office,
                 divided: false
             )
@@ -2096,11 +2140,13 @@ struct ChapelLiturgyTile: View {
             router.push(route)
         } label: {
             HStack(spacing: 12) {
+                // HOURS OF / PRAYER takes two lines in the column
                 Text(kicker.uppercased())
                     .font(AppFonts.labelFont(9))
                     .tracking(2)
+                    .lineSpacing(3)
                     .foregroundColor(AppColors.gold.opacity(0.75))
-                    .lineLimit(1)
+                    .lineLimit(2)
                     .minimumScaleFactor(0.8)
                     .frame(width: 92, alignment: .leading)
 
@@ -2116,9 +2162,10 @@ struct ChapelLiturgyTile: View {
                         .font(AppFonts.italicFont(13.5))
                         .foregroundColor(AppColors.textSecondary)
                         .lineLimit(1)
+                        .minimumScaleFactor(0.8)
                         .contentTransition(.opacity)
                 }
-                .animation(Motion.crossfade, value: title)
+                .animation(Motion.crossfade, value: title + line)
 
                 Spacer(minLength: 0)
 
@@ -2166,8 +2213,8 @@ struct ChapelLiturgyTile: View {
 
     private var halfLedger: some View {
         VStack(spacing: 0) {
-            halfDoor("Holy Mass", route: .missal, divided: true)
-            halfDoor(hour.label, route: .office, divided: false)
+            halfDoor("Today\u{2019}s Mass", route: .missal, divided: true)
+            halfDoor(Self.plainName(of: hour), route: .office, divided: false)
         }
         .overlay(alignment: .top) {
             Rectangle()
@@ -2203,7 +2250,7 @@ struct ChapelLiturgyTile: View {
                     .frame(height: AppLine.hairline)
             }
         }
-        .accessibilityLabel(route == .office ? "The Office: \(title)" : title)
+        .accessibilityLabel(route == .office ? "Hours of Prayer: \(title), \(hour.label), the hour now" : title)
     }
 }
 
@@ -2290,9 +2337,9 @@ struct ChapelLibraryTile: View {
     }
 
     private static let books: [Door] = [
-        Door(title: "True Devotion", line: "St. Louis de Montfort", route: .trueDevotionBook),
+        Door(title: "True Devotion", line: "St. Louis de Montfort\u{2019}s book on Mary", route: .trueDevotionBook),
         Door(title: "Spiritual Reading", line: "The saints\u{2019} own books", route: .spiritualReading),
-        Door(title: "Marian Library", line: "Our Lady in the tradition", route: .marianLibrary)
+        Door(title: "Marian Library", line: "Mary\u{2019}s feasts, titles and saints", route: .marianLibrary)
     ]
 
     private static let guides: [Door] = [
@@ -2316,7 +2363,7 @@ struct ChapelLibraryTile: View {
                 tile: .library,
                 span: 1,
                 surface: .bound,
-                act: "Three more",
+                act: "See more",
                 footRuled: false,
                 onAct: { router.push(.explore) }
             ) {
@@ -2410,7 +2457,9 @@ struct ChapelLibraryTile: View {
                     .frame(height: AppLine.hairline)
             }
         }
-        .accessibilityLabel(showsLine ? "\(door.title), \(door.line)" : door.title)
+        // Its line is heard at half width too, where there is no room to
+        // set it
+        .accessibilityLabel("\(door.title), \(door.line)")
     }
 }
 
@@ -2420,8 +2469,9 @@ struct ChapelLibraryTile: View {
 /// name, and a staff whose notes light as the chant is sung. The name
 /// opens the chant's own page (its score, its practice); the foot's act
 /// opens the Chant Library, where another is chosen. The tile holds
-/// whatever the library last sang, or the antiphon of the season until
-/// it has sung anything.
+/// whatever the library last sang, or this season's song to Mary until
+/// it has sung anything. The Latin name is set large, as the library
+/// files it, with the English beneath it and in what VoiceOver hears.
 struct ChapelChantTile: View {
 
     let span: Int
@@ -2431,18 +2481,33 @@ struct ChapelChantTile: View {
 
     private var chant: Chant { player.current }
 
-    /// What stands under the chant's name: a failure to play it, else the
-    /// setting it is sung in, else its English name.
-    private var statusLine: String {
-        player.errorMessage ?? chant.setting ?? chant.englishTitle
+    /// The English name, where it is not the Latin's own word
+    /// ("Magnificat")
+    private var englishName: String? {
+        chant.englishTitle.caseInsensitiveCompare(chant.latinTitle) == .orderedSame ? nil : chant.englishTitle
     }
 
-    /// The title line's note: that the chant is the season's antiphon,
-    /// when it is. How far the voice has come is the staff's playhead,
+    /// What stands under the chant's name: a failure to play it, else its
+    /// English name and the setting it is sung in — "Hail, Holy Queen ·
+    /// Simple tone"
+    private var statusLine: String {
+        if let error = player.errorMessage { return error }
+        let parts = [englishName, chant.distinctSetting].compactMap { $0 }
+        return parts.isEmpty ? (chant.setting ?? chant.englishTitle) : parts.joined(separator: " \u{00B7} ")
+    }
+
+    /// The chant as the play disc names it to VoiceOver, English first:
+    /// "Hail, Holy Queen (Salve Regina)"
+    private var spokenName: String {
+        englishName.map { "\($0) (\(chant.latinTitle))" } ?? chant.latinTitle
+    }
+
+    /// The title line's note: that the chant is this season's song to
+    /// Mary, when it is. How far the voice has come is the staff's playhead,
     /// not a clock: read here, the time changed every second and redrew
     /// the whole tile with it.
     private var note: String? {
-        ChantCatalog.antiphonOfTheSeason()?.id == chant.id ? "Antiphon of the season" : nil
+        ChantCatalog.antiphonOfTheSeason()?.id == chant.id ? "This season\u{2019}s song to Mary" : nil
     }
 
     var body: some View {
@@ -2451,7 +2516,7 @@ struct ChapelChantTile: View {
             span: span,
             surface: .cloth,
             note: span == 2 ? note : nil,
-            act: span == 2 ? "Chant library" : "Library",
+            act: span == 2 ? "Browse chants" : "Browse",
             onAct: onOpenLibrary
         ) {
             if span == 2 { full } else { half }
@@ -2465,7 +2530,7 @@ struct ChapelChantTile: View {
                     isPlaying: player.isPlaying,
                     isLoading: player.isLoading,
                     size: 50,
-                    label: chant.latinTitle
+                    label: spokenName
                 ) {
                     player.togglePlayback()
                 }
@@ -2489,7 +2554,7 @@ struct ChapelChantTile: View {
                     isPlaying: player.isPlaying,
                     isLoading: player.isLoading,
                     size: 38,
-                    label: chant.latinTitle
+                    label: spokenName
                 ) {
                     player.togglePlayback()
                 }
@@ -2687,11 +2752,11 @@ struct ChapelReflectionsTile: View {
                 tile: .reflections,
                 span: span,
                 surface: .quote,
-                act: span == 2 ? "Open the journal" : "Journal",
+                act: span == 2 ? "Open the journal" : "Open",
                 onTap: open,
-                accessibilityLabel: "Reflections. Your reflections will gather here after prayer. Opens the journal."
+                accessibilityLabel: "Reflections. After you pray, write a reflection and it will appear here. Opens the journal."
             ) {
-                Text("Your reflections will gather here after prayer.")
+                Text("After you pray, write a reflection and it will appear here.")
                     .font(AppFonts.italicFont(span == 2 ? 15 : 13))
                     .foregroundColor(AppColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)

@@ -58,10 +58,12 @@ struct StreakWidget: View {
                 if hasPrayedToday {
                     HStack(spacing: 6) {
                         AppIcon("ph-check", size: 11)
-                        Text("TODAY")
+                        Text("PRAYED")
                             .font(AppFonts.labelFont(10))
                             .tracking(1)
                     }
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel("Prayed today")
                     .foregroundColor(AppColors.background)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 7)
@@ -89,6 +91,11 @@ struct StreakWidget: View {
                         )
                     }
                 }
+                // One sentence for the row, as the Chapel's streak says it:
+                // seven initials read as letters said nothing of which
+                // days were prayed
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(weekSpoken)
             }
 
             // Next devotional milestone (goal gradient — always an
@@ -118,20 +125,35 @@ struct StreakWidget: View {
 
     private var streakLabel: String {
         switch streak {
-        case 0: return "Begin Your Streak"
-        case 1: return "1 Day of Prayer"
-        default: return "\(streak) Days of Prayer"
+        case 0: return "Pray today to begin"
+        case 1: return "1 day so far"
+        default: return "\(streak) days in a row"
         }
+    }
+
+    private static let weekdayName: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "EEEE"
+        return f
+    }()
+
+    /// "This week, prayed Sunday, Monday and Tuesday." The days prayed by
+    /// name, never a count out of seven
+    private var weekSpoken: String {
+        let names = weekStatus.filter(\.didPray).map { Self.weekdayName.string(from: $0.date) }
+        guard let last = names.last else { return "This week, no days prayed yet." }
+        let days = names.count == 1 ? last : names.dropLast().joined(separator: ", ") + " and " + last
+        return "This week, prayed \(days)."
     }
 
     private var nudgeMessage: String {
         if hasPrayedToday {
-            return "Your light shines today. Well done."
+            return "You have prayed today. Well done."
         }
         if streak > 0 {
             return "A quiet moment awaits, whenever you are ready."
         }
-        return "Light the first candle — pray today."
+        return "Each day you pray adds one to your streak."
     }
 }
 
@@ -200,7 +222,7 @@ struct FlameOrb: View {
 // MARK: - MilestoneProgressLine
 
 /// Thin progress bar toward the next devotional milestone,
-/// e.g. "Novena · 3 days away".
+/// e.g. "9 days · a novena · 3 days away".
 struct MilestoneProgressLine: View {
     let streak: Int
     let milestone: StreakMilestone
@@ -221,10 +243,12 @@ struct MilestoneProgressLine: View {
                     AppIcon(milestone.icon, size: 11)
                         .foregroundColor(AppColors.gold)
 
-                    Text(milestone.name.uppercased())
+                    Text(milestone.title.uppercased())
                         .font(AppFonts.bodyFont(11))
                         .tracking(2)
                         .foregroundColor(AppColors.gold)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.85)
                 }
 
                 Spacer()

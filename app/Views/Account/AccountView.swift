@@ -169,9 +169,9 @@ struct AccountView: View {
                             // strands the Prayer Record.
                             ActionRow(
                                 icon: "ph-scroll",
-                                title: "Rule of Prayer",
+                                title: "Daily Prayers",
                                 subtitle: userSettings.ruleItems.isEmpty
-                                    ? "No devotions chosen yet"
+                                    ? "No prayers chosen yet"
                                     : userSettings.ruleItems.map(\.title).joined(separator: " · ")
                             ) {
                                 showRuleEditor = true

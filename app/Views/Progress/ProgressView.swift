@@ -4,7 +4,7 @@
 //
 //  Displays the user's prayer history and statistics:
 //  - Monthly calendar showing prayer days
-//  - Devotions offered by category
+//  - Rosaries prayed, by their mysteries
 //  - Inspirational scripture quote
 //
 
@@ -62,7 +62,7 @@ struct PrayerProgressView: View {
                     calendarCard
                         .devotionalEntrance(delay: 0.24)
 
-                    // Devotions Offered
+                    // Rosaries Prayed
                     devotionsSection
                         .devotionalEntrance(delay: 0.32)
 
@@ -89,10 +89,12 @@ struct PrayerProgressView: View {
                 .font(AppFonts.italicFont(32))
                 .foregroundColor(AppColors.cream)
 
-            Text("LUMEN VIAE")
+            Text("THE DAYS YOU HAVE PRAYED")
                 .font(AppFonts.bodyFont(12))
                 .tracking(4)
                 .foregroundColor(AppColors.gold.opacity(0.7))
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
         }
     }
 
@@ -170,7 +172,7 @@ struct PrayerProgressView: View {
     }
 
     private var yearString: String {
-        "Anno Domini \(Self.yearFormatter.string(from: displayedMonth))"
+        Self.yearFormatter.string(from: displayedMonth)
     }
 
     private func previousMonth() {
@@ -307,30 +309,30 @@ struct PrayerProgressView: View {
 
     private var devotionsSection: some View {
         VStack(spacing: 16) {
-            Text("Devotions Offered")
+            Text("Rosaries Prayed")
                 .font(AppFonts.italicFont(20))
                 .foregroundColor(AppColors.gold)
 
-            // Only what has been offered is listed: a column of noughts
+            // Only what has been prayed is listed: a column of noughts
             // on a first visit read as a tally of what was not prayed
-            let offered = devotionRows.filter { $0.count > 0 }
+            let prayed = devotionRows.filter { $0.count > 0 }
             VStack(spacing: 0) {
-                if offered.isEmpty {
-                    Text("Each Rosary you pray is kept here, by its mysteries.")
+                if prayed.isEmpty {
+                    Text("Each Rosary you pray is counted here, by its mysteries.")
                         .font(AppFonts.italicFont(15))
                         .foregroundColor(AppColors.textSecondary)
                         .multilineTextAlignment(.center)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
                 } else {
-                    ForEach(Array(offered.enumerated()), id: \.element.name) { index, row in
+                    ForEach(Array(prayed.enumerated()), id: \.element.name) { index, row in
                         DevotionRow(
                             name: row.name,
                             count: row.count,
                             color: row.color
                         )
 
-                        if index < offered.count - 1 {
+                        if index < prayed.count - 1 {
                             Divider()
                                 .background(AppColors.gold.opacity(0.2))
                         }
@@ -432,6 +434,17 @@ struct CalendarDayCell: View {
             }
         }
         .frame(height: 44)
+        // "14, prayed": the mark said in words, where VoiceOver read the
+        // symbol's name or nothing
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(spokenLabel)
+    }
+
+    private var spokenLabel: String {
+        var parts = ["\(day)"]
+        if isToday { parts.append("today") }
+        if prayerCount > 0 { parts.append("prayed") }
+        return parts.joined(separator: ", ")
     }
 
     private var dayTextColor: Color {

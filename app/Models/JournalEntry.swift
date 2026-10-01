@@ -115,14 +115,15 @@ final class JournalEntry {
                 if day == 34 {
                     return "Consecration Day"
                 }
-                return "Day \(day)"
+                // What it is day 14 of: "Day 14" alone said nothing
+                return "Consecration \u{00B7} Day \(day)"
             }
             return "Consecration"
         }
         if let title = mysteryTitle, !title.isEmpty {
             return title
         }
-        return category?.displayName ?? "General Reflection"
+        return category?.displayName ?? "Reflection"
     }
 
     /// Icon name for the entry type. Categories defer to

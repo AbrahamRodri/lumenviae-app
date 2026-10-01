@@ -41,14 +41,14 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
         switch self {
         case .todaysRosary:     return "Today's Rosary"
         case .chooseMeditation: return "Today's Mysteries"
-        case .sevenSorrows:     return "Seven Sorrows"
+        case .sevenSorrows:     return "The Seven Sorrows of Mary"
         case .scripturalRosary: return "The Scriptural Rosary"
-        case .rosaryAloud:      return "The Holy Rosary"
+        case .rosaryAloud:      return "The Rosary Said Aloud"
         case .mass:             return "The Mass"
-        case .office:           return "The Divine Office"
-        case .consecration:     return "The Consecration"
+        case .office:           return "Hours of Prayer"
+        case .consecration:     return "Consecration to Mary"
         case .morningPrayers:   return "Morning Prayers"
-        case .angelus:          return PrayerBook.isEastertide(Date()) ? "The Regina Cæli" : "The Angelus"
+        case .angelus:          return PrayerBook.isEastertide(Date()) ? "Queen of Heaven (Regina Cæli)" : "The Angelus"
         case .nightPrayers:     return "Night Prayers"
         }
     }
@@ -58,16 +58,16 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
     var subtitle: String {
         switch self {
         case .todaysRosary:     return "The day's mysteries, straight to prayer"
-        case .chooseMeditation: return "Every way to pray them"
-        case .sevenSorrows:     return "The chaplet of Our Lady's sorrows"
+        case .chooseMeditation: return "Choose how to pray today's mysteries"
+        case .sevenSorrows:     return "Seven Hail Marys for each sorrow"
         case .scripturalRosary: return "A verse of the Gospel for every bead"
-        case .rosaryAloud:      return "Every prayer said aloud, nothing read between"
-        case .mass:             return "Today's propers · 1962 Missal"
-        case .office:           return "The canonical hours · 1962 Breviary"
-        case .consecration:     return "The 33-day preparation"
-        case .morningPrayers:   return "The day offered before it is begun"
-        case .angelus:          return "At six, noon and six, when the bell rings"
-        case .nightPrayers:     return "The day examined, and Our Lady's antiphon"
+        case .rosaryAloud:      return "Every prayer said aloud, no readings"
+        case .mass:             return "Today's traditional Latin Mass"
+        case .office:           return "The Church\u{2019}s prayer for each hour (Divine Office)"
+        case .consecration:     return "Giving yourself to Jesus through Mary"
+        case .morningPrayers:   return "Prayers to give the day to God"
+        case .angelus:          return "A prayer to Mary at 6 AM, noon and 6 PM"
+        case .nightPrayers:     return "Look back on the day, and a song to Mary"
         }
     }
 
@@ -119,21 +119,22 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
         }
     }
 
-    /// The act's name as the rule and the Chapel's focus block set it —
-    /// "The Rosary", not "Today's Rosary": on a daily rule every act is
-    /// today's, and the shorter name is the one that fits a ledger row.
+    /// The act's name as the daily prayers and the Chapel's focus block
+    /// set it — "The Rosary", not "Today's Rosary": on a list of daily
+    /// prayers every act is today's, and the shorter name is the one that
+    /// fits a ledger row.
     var actName: String {
         switch self {
         case .todaysRosary:     return "The Rosary"
         case .chooseMeditation: return "Today's Mysteries"
-        case .sevenSorrows:     return "Seven Sorrows"
+        case .sevenSorrows:     return "The Seven Sorrows of Mary"
         case .scripturalRosary: return "Scriptural Rosary"
-        case .rosaryAloud:      return "The Holy Rosary"
+        case .rosaryAloud:      return "The Rosary Said Aloud"
         case .mass:             return "The Mass"
-        case .office:           return "The Office"
-        case .consecration:     return "Consecration"
+        case .office:           return "Hours of Prayer"
+        case .consecration:     return "Consecration to Mary"
         case .morningPrayers:   return "Morning Prayers"
-        case .angelus:          return PrayerBook.isEastertide(Date()) ? "Regina Cæli" : "The Angelus"
+        case .angelus:          return PrayerBook.isEastertide(Date()) ? "Queen of Heaven" : "The Angelus"
         case .nightPrayers:     return "Night Prayers"
         }
     }

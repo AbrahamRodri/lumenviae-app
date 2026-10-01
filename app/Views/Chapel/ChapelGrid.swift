@@ -145,7 +145,7 @@ nonisolated struct ChapelGridLayout: Layout {
 /// A section as it stands while the page is arranged: folded to one
 /// 58pt row so the whole page fits the glass and a section can be
 /// carried past the others without scrolling. The grip says it moves;
-/// the row says how wide it stands — WIDE in a capsule at full width,
+/// the row says how wide it stands — FULL in a capsule at full width,
 /// HALF under the name at half — and a tap anywhere on it switches the
 /// two. The ✕ that hides it is laid over its trailing edge by the page
 /// (`ChapelHideButton`), above the carry gesture, so the row keeps room
@@ -167,7 +167,7 @@ struct ChapelArrangeRow: View {
 
                 Spacer(minLength: 8)
 
-                Text("WIDE")
+                Text("FULL")
                     .font(AppFonts.labelFont(9))
                     .tracking(2)
                     .foregroundColor(AppColors.gold)

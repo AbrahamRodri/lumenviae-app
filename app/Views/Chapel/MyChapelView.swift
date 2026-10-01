@@ -440,7 +440,7 @@ struct MyChapelView: View {
                 .accessibilityLabel("Done arranging")
             }
 
-            Text("Hold a section to move it. Tap one to make it wide or half.")
+            Text("Hold a section to move it. Tap one to make it full or half width.")
                 .font(AppFonts.bodyFont(16))
                 .foregroundColor(AppColors.accentSoft)
                 .fixedSize(horizontal: false, vertical: true)
@@ -583,7 +583,8 @@ struct MyChapelView: View {
                 ChapelAct(
                     shortcut: .consecration,
                     subtitle: subtitle(for: .consecration),
-                    done: isDone(.consecration)
+                    done: isDone(.consecration),
+                    day: activeConsecration?.currentDayNumber
                 ),
                 at: min(1, acts.count)
             )
@@ -645,17 +646,17 @@ struct MyChapelView: View {
         case .consecration:
             guard let progress = activeConsecration else { return "Not yet begun" }
             let day = progress.currentDayNumber
-            guard day <= 33 else { return "The day of consecration" }
+            guard day <= 33 else { return "Consecration Day" }
             return "Day \(day) of 33 · \(ChapelConsecrationTile.phaseName(day: day))"
         case .sevenSorrows:
-            return "Chaplet"
+            return "Seven Hail Marys for each sorrow"
         case .morningPrayers:
-            return "On rising · \(PrayerBook.order(PrayerBook.morningOrderID)?.prayers().count ?? 0) prayers"
+            return "On waking · \(PrayerBook.order(PrayerBook.morningOrderID)?.prayers().count ?? 0) prayers"
         case .angelus:
-            return "At six, noon and six"
+            return "6 AM, noon and 6 PM"
         case .nightPrayers:
             let antiphon = PrayerBook.antiphon(on: Date())
-            return "Before sleep · \(PrayerBook.prayer(antiphon.prayerID)?.latinTitle ?? "Our Lady's antiphon")"
+            return "At bedtime · \(PrayerBook.prayer(antiphon.prayerID)?.listTitle ?? "a song to Mary")"
         case .chooseMeditation, .mass, .office:
             // Never on the rule (`isRuleEligible`)
             return item.subtitle
@@ -721,12 +722,12 @@ struct MyChapelView: View {
     }
 
     private func focusKicker(acts: [ChapelAct], next: ChapelAct?) -> String {
-        if acts.isEmpty { return "Your rule" }
-        return next != nil ? "Next" : "The day is offered"
+        if acts.isEmpty { return "Daily prayers" }
+        return next != nil ? "Next" : "All prayed today"
     }
 
     private func focusTitle(acts: [ChapelAct], next: ChapelAct?) -> String {
-        if acts.isEmpty { return "A rule of prayer" }
+        if acts.isEmpty { return "Choose your daily prayers" }
         // True at any hour: the rule can be offered by half past six in
         // the morning, where "Rest now" sent someone back to bed. The
         // space before "God" does not break, so a title that needs two
@@ -736,48 +737,48 @@ struct MyChapelView: View {
 
     private func focusDetail(acts: [ChapelAct], next: ChapelAct?) -> String {
         if acts.isEmpty {
-            return "Choose the devotions you mean to offer each day, and the Chapel will keep them here."
+            return "Pick the prayers you mean to pray each day, and this page will keep track of them."
         }
         guard let next else {
-            return "Everything on your rule has been offered today. It begins again tomorrow."
+            return "You have prayed all your daily prayers today. They begin again tomorrow."
         }
         // Taken up where it stopped, as the guide's own welcome says it
         if let session = next.resume {
-            return "Your place is kept at the \(session.placeLabel)."
+            return "You stopped at the \(session.placeLabel)."
         }
         switch next.shortcut {
         case .todaysRosary:
             return "The \(ScheduleService.categoryForToday().devotionTitle), with meditations drawn from the saints."
         case .sevenSorrows:
-            return "The chaplet of Our Lady's seven sorrows, prayed on her own beads."
+            return "Seven Hail Marys for each of Mary's seven sorrows, prayed on beads of their own."
         case .scripturalRosary:
             return "The \(ScheduleService.categoryForToday().devotionTitle), with a verse of the Gospel on every bead."
         case .rosaryAloud:
             return "The \(ScheduleService.categoryForToday().devotionTitle), every prayer said aloud and the beads moving with the voice."
         case .mass:
-            return "The propers of the day, from the 1962 Missal, with the Ordinary in its place."
+            return "Today\u{2019}s prayers and readings, in the traditional Latin Mass (1962 Missal)."
         case .office:
-            return "The canonical hours of the 1962 Breviary, prayed hour by hour."
+            return "The Church\u{2019}s prayer for each hour of the day, the Divine Office."
         case .consecration:
             let day = activeConsecration.map { min($0.currentDayNumber, 33) }
-            return day.map { "Day \($0) of the 33-day preparation to Jesus through Mary." }
-                ?? "The 33-day preparation to Jesus through Mary."
+            return day.map { "Day \($0) of 33, preparing to give yourself to Jesus through Mary." }
+                ?? "A 33-day preparation to give yourself to Jesus through Mary."
         case .chooseMeditation:
-            return "Browse the day's meditation sets and choose one to pray."
+            return "Browse today's meditations and choose one to pray."
         case .morningPrayers:
-            return "The day offered before it is begun: the Morning Offering, the acts of faith, hope and love."
+            return "Give the day to God before it begins: the Morning Offering and the acts of faith, hope and love."
         case .angelus:
             return PrayerBook.isEastertide(Date())
-                ? "Queen of Heaven, rejoice — the Easter antiphon, said in the Angelus's place."
-                : "The Angel of the Lord declared unto Mary — the Incarnation remembered at the bell."
+                ? "Queen of Heaven (Regina Cæli), the Easter season's prayer to Mary, said in place of the Angelus."
+                : "A short prayer to Mary at 6 AM, noon and 6 PM, recalling the angel's message to her."
         case .nightPrayers:
-            return "The day examined and given back, closing on Our Lady's antiphon."
+            return "Look back over the day, ask forgiveness, and end with a song to Mary."
         }
     }
 
     private func focusAction(acts: [ChapelAct], next: ChapelAct?) -> String {
-        if acts.isEmpty { return "Choose your rule" }
-        return next?.focusAction ?? "Open the Rosary"
+        if acts.isEmpty { return "Choose Prayers" }
+        return next?.focusAction ?? "Pray the Rosary"
     }
 
     private func performFocusAction(acts: [ChapelAct], next: ChapelAct?) {
@@ -803,7 +804,7 @@ struct MyChapelView: View {
                     .font(AppFonts.bodyFont(14))
                     .foregroundColor(AppColors.cream)
 
-                Text("Move sections, resize them, put some away")
+                Text("Move, resize or hide sections")
                     .font(AppFonts.italicFont(12))
                     .foregroundColor(AppColors.textSecondary)
             }
@@ -1058,7 +1059,7 @@ struct MyChapelView: View {
                     .tracking(1.5)
                     .foregroundColor(AppColors.textSecondary.opacity(0.8))
 
-                Text("Ad Majorem Dei Gloriam")
+                Text("For the greater glory of God")
                     .font(AppFonts.italicFont(11))
                     .foregroundColor(AppColors.gold.opacity(0.5))
             }

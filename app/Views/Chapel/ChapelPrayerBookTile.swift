@@ -10,9 +10,10 @@
 //  Full: the hour's order by name, with the line that says what it is,
 //  as a door to the book; PRAY beneath it, outlined, since the page's
 //  one filled gold act is the focus block's; and the three hours ruled
-//  off along the card's floor, each a door that prays its own order and
-//  each saying where it stands — offered, or when it is said. Never
-//  "missed".
+//  off along the card's floor — MORNING, NOON or EVENING, NIGHT, the
+//  Prayers page's own stations — each a door that prays its own order
+//  and each saying where it stands: prayed, now, or when it is said.
+//  Never "missed".
 //  Half: the hour's order and when it is said, the three hours along
 //  the floor, and the whole tile prays it.
 //
@@ -44,35 +45,37 @@ struct ChapelPrayerBookTile: View {
 
     private var order: PrayerOrder { PrayerBook.dayOrder(at: Date()) }
 
-    private var offered: Bool { store.wasOffered(order.id) }
+    private var offered: Bool { prayedNow(order) }
+
+    /// Prayed for the hour it is now, as the Prayers page reads it: the
+    /// day's offering for Morning and Night Prayers, the bell's for the
+    /// Angelus (`PrayerBook.isOfferedNow`), so an Angelus said at noon
+    /// leaves EVENING still to pray, where the strip names that bell
+    private func prayedNow(_ order: PrayerOrder) -> Bool {
+        PrayerBook.isOfferedNow(
+            order,
+            at: Date(),
+            offeredToday: store.wasOffered(order.id),
+            lastOffered: store.lastOffered(order.id)
+        )
+    }
 
     private func pray(_ order: PrayerOrder) {
         router.push(.prayAlong(.order(order)))
     }
 
-    /// "At noon", or "Offered today" once it has been
+    /// "At noon", or "Prayed today" once it has been
     private var momentLine: String {
-        offered ? "Offered today" : PrayerBook.dayOrderMoment(at: Date())
+        offered ? "Prayed today" : PrayerBook.dayOrderMoment(at: Date())
     }
 
-    /// The part of the day the book is at, for the title line's note —
-    /// read off the hour's order and the book's own moment rather than a
-    /// table of hours of its own, so the note and the order beneath it
-    /// can never disagree: the Angelus is midday's at the noon bell and
-    /// the evening's at the six o'clock one
+    /// The part of the day the book is at, for the title line's note, in
+    /// the Prayers page's own station names — Morning, Noon, Evening,
+    /// Night (`PrayerBook.hourName`) — so the note and the station lit
+    /// beneath it can never disagree: the Angelus is Noon's at the noon
+    /// bell and Evening's at the six o'clock one
     private var dayPart: String {
-        switch order.id {
-        case PrayerBook.morningOrderID:
-            return "Morning"
-        case PrayerBook.angelusOrderID:
-            let now = Date()
-            let noon = Calendar.current.date(bySettingHour: 12, minute: 0, second: 0, of: now) ?? now
-            return PrayerBook.dayOrderMoment(at: now) == PrayerBook.dayOrderMoment(at: noon)
-                ? "Midday"
-                : "Evening"
-        default:
-            return "Evening"
-        }
+        PrayerBook.hourName(of: order, at: Date())
     }
 
     // MARK: Full
@@ -144,7 +147,7 @@ struct ChapelPrayerBookTile: View {
             span: 1,
             surface: .leaf,
             onTap: { pray(order) },
-            accessibilityLabel: "\(order.title(on: Date())), \(momentLine). Prays it."
+            accessibilityLabel: "\(order.title(on: Date())), \(momentLine.lowercased()). Double-tap to pray."
         ) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(order.title(on: Date()))
@@ -196,21 +199,21 @@ struct ChapelPrayerBookTile: View {
         }
     }
 
-    /// One hour: its bead — gold once offered, ringed while it is the
+    /// One hour: its bead — gold once prayed, ringed while it is the
     /// hour's — its name, and at full width where it stands
     @ViewBuilder
     private func hour(_ dayOrder: PrayerOrder) -> some View {
         let isCurrent = dayOrder.id == order.id
-        let wasOffered = store.wasOffered(dayOrder.id)
-        let standing = wasOffered
-            ? "Offered"
-            : (isCurrent ? PrayerBook.dayOrderMoment(at: Date()) : dayOrder.occasion)
+        let wasOffered = prayedNow(dayOrder)
+        let place = PrayerBook.standing(of: dayOrder, at: Date(), offered: wasOffered)
+        let standing = Self.word(for: place)
+        let name = PrayerBook.hourName(of: dayOrder, at: Date())
 
         let face = VStack(spacing: 6) {
             HourBead(offered: wasOffered, current: isCurrent)
 
             if span == 2 {
-                Text(Self.shortName(dayOrder).uppercased())
+                Text(name.uppercased())
                     .font(AppFonts.labelFont(9.5))
                     .tracking(2)
                     .foregroundColor(isCurrent ? AppColors.cream : AppColors.cream.opacity(0.6))
@@ -247,7 +250,10 @@ struct ChapelPrayerBookTile: View {
             }
             .buttonStyle(.plain)
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel("\(dayOrder.title(on: Date())), \(standing.lowercased()). Prays it.")
+            // Led by the word on the glass, so Voice Control finds it by
+            // what it shows: "Noon, the Angelus, the hour it is now"
+            .accessibilityLabel("\(name), \(dayOrder.title(on: Date())), \(Self.spoken(place))")
+            .accessibilityHint("Double-tap to pray.")
             .accessibilityAddTraits(.isButton)
         } else {
             face
@@ -255,18 +261,27 @@ struct ChapelPrayerBookTile: View {
         }
     }
 
-    /// The hour's name as the strip has room to set it
-    private static func shortName(_ order: PrayerOrder) -> String {
-        switch order.id {
-        case PrayerBook.morningOrderID: return "Morning"
-        case PrayerBook.angelusOrderID: return PrayerBook.isEastertide(Date()) ? "Regina Cæli" : "Angelus"
-        case PrayerBook.nightOrderID:   return "Night"
-        default:                        return order.title
+    /// Where an hour stands, in the strip's words: "Prayed", "Now", or
+    /// when it is said, in the Prayers page's words ("At noon")
+    private static func word(for standing: PrayerBook.HourStanding) -> String {
+        switch standing {
+        case .offered:      return "Prayed"
+        case .now:          return "Now"
+        case .at(let when): return when
+        }
+    }
+
+    /// The same, as VoiceOver hears it
+    private static func spoken(_ standing: PrayerBook.HourStanding) -> String {
+        switch standing {
+        case .offered:      return "prayed"
+        case .now:          return "the hour it is now"
+        case .at(let when): return when.lowercased()
         }
     }
 }
 
-/// An hour's bead on the Prayer Book's strip
+/// An hour's bead on the Prayer Book's strip: gold once prayed
 private struct HourBead: View {
     let offered: Bool
     let current: Bool

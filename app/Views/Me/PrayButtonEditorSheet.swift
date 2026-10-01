@@ -19,7 +19,7 @@ struct PrayButtonEditorSheet: View {
         VStack(spacing: 0) {
             EditorHeader(
                 title: "Pray Button",
-                subtitle: "What a tap begins, and what a hold offers.",
+                subtitle: "What a tap starts, and what a hold shows.",
                 onDone: { dismiss() }
             )
 

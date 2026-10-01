@@ -104,7 +104,7 @@ The prayer day decides the history and the streak
 (`PrayerHistoryService`: `sessions(on:)` is the prayer day an instant
 falls in, `sessions(onPrayerDay:)` a day by its date), the Prayer
 Record's calendar, week row and TODAY, the Chapel's Today tile, focus
-and flame ("Lit today", the week's ring), `StreakWidget`, milestones,
+and flame ("Prayed today", the week's ring), `StreakWidget`, milestones,
 the Pray button's Continue (`InProgressPrayer.isContinued`), and the
 Prayer Book's offered (`PrayerBookStore`). A prayer day is named by its
 calendar date's midnight — 12:30 AM on a Wednesday is Tuesday's, named
@@ -236,8 +236,8 @@ Rosary of their act's form left off today where it stopped
 is Today's Rosary's, the chaplet's is Seven Sorrows', the Scriptural and
 Holy Rosaries are their own). They once began another, and its first
 save erased the place unasked. The tray's row says where ("Continue at
-the Third Joyful Mystery"); the Chapel's focus says "Your place is kept
-at…" over CONTINUE THE ROSARY, and its Today row CONTINUE. "Today" is
+the Third Joyful Mystery"); the Chapel's focus says "You stopped at
+the…" over CONTINUE THE ROSARY, and its Today row CONTINUE. "Today" is
 the prayer day (see The Prayer Day): a Rosary left at half past eleven
 is still taken up at half past twelve, and one left before the day
 turned at four is not (Home's card still offers it until it expires),
@@ -356,7 +356,7 @@ handoff; its sections redrawn by the "Chapel Redesign" handoff, Oct
 Two ideas drive it: a single focus at the top (the first unoffered act
 on the rule, set large with the page's one gold CTA, advancing on its
 own as acts are offered — derived, never stored; the rule all offered,
-it reads THE DAY IS OFFERED over "Thanks be to God", true at any hour,
+it reads ALL PRAYED TODAY over "Thanks be to God", true at any hour,
 where "Rest now" once sent someone who had prayed by half past six back
 to bed), and an arrangeable
 grid of sections below. Long-press 450ms anywhere (cancelled by >8pt of
@@ -368,14 +368,14 @@ enter arrange mode, drawn from the Arrange board of the earlier
 the page's head (the day strip, the focus and its gold act) crossfades
 to a REARRANGE head with DONE — the page's one gold act while
 arranging — over one line saying how ("Hold a section to move it. Tap
-one to make it wide or half."), held at the top of the glass over the
+one to make it full or half width."), held at the top of the glass over the
 page's deep ground, opaque behind every word and fading only in a band
 beneath them, so a scrolled row never shows through the line (the scroll keeps its room, and drops the band's
 32pt inset while arranging so the rows begin under the head, not fifty
 points below it), since DONE is the only way out while the tab bar is
 gone, and read first by VoiceOver; the page scrolls back to the top, and
 every section folds to a 58pt row (`ChapelArrangeRow`: a grip, its
-name, WIDE in a capsule at full width or HALF under the name at half,
+name, FULL in a capsule at full width or HALF under the name at half,
 and a ✕ laid over its trailing edge above the carry gesture,
 `ChapelHideButton`), so most of the page fits the glass and the rest
 is a short scroll, begun anywhere: a row is carried by its grip at
@@ -435,17 +435,17 @@ of beads on a raised card lit from its corner — the page's only card
 with a halo, since it is the working list and the picker itself; the
 focus block above it carried a "CHOOSE ANOTHER" jump down to this tile
 and no longer does, since the ledger is a scroll away on the same
-page; one bead to an act on a gold thread, gold once offered, the next
+page; one bead to an act on a gold thread, gold once prayed, the next
 ringed and lit on a wash of gold with its name a size larger, the rest
 an empty ring; every row shows at its trailing edge what a tap does —
-OFFERED with the seal, BEGIN › / CONTINUE › until then, every act on
+PRAYED with the seal, BEGIN › / CONTINUE › until then, every act on
 the rule being one the app watches finish (the row marked by hand went
 out with the acts that needed it); the Rosary, the Scriptural Rosary,
-the Holy Rosary, the chaplet and the consecration day check from real
+the Rosary Said Aloud, the Seven Sorrows and the consecration day check from real
 data, and the Prayer Book's three orders from their Amen
 (`PrayerBookStore.wasOffered`), reset when the prayer day turns at four
 in the morning (the consecration day by its own numbering, on the
-calendar); "3 of 5 offered" in the ruled foot; the half is a figure
+calendar); "3 of 5 prayed" in the ruled foot; the half is a figure
 "2 / 4" over a row of tappable cells; the tile once opened on an italic
 line saying what a rule is, which the beads and their BEGIN now say),
 **Consecration** (the preparation's own painting —
@@ -457,17 +457,21 @@ over the day's own title on its floor, CONTINUE beside it, and de
 Montfort's four preparations as a segmented road along the floor,
 tracks weighted 12/7/7/7 days; the half counts "14 / 33" over the
 preparation's name; made, "Consecrated" with its date; not begun,
-"Total Consecration" over the Annunciation), **Prayers**
+"Consecration to Mary" over the Annunciation), **Prayers**
 (`ChapelPrayerBookTile`, the Prayer Book under the name its tab
 carries: a leaf darkening down the card, the order for
 the hour it is set large and centred with its one line, a door to the
 book, over an outlined PRAY — outlined because the page's one filled
 gold act is the focus block's — and the day's three hours ruled off
-along the floor, each its bead (gold once offered, ringed while it is
-the hour's), its name and where it stands — "Offered", or when it is
-said, never "missed" — and each a door that prays its own order; the
-part of the day rides the title line, turning on the book's own
-schedule; the half is the hour's order over the three beads, each with
+along the floor, each its bead (gold once prayed, ringed while it is
+the hour's), its name — MORNING, NOON or EVENING, NIGHT, the Prayers
+page's own stations (`PrayerBook.hourName`) — and where it stands —
+"Prayed", "Now", or when it is said, never "missed" — and each a door
+that prays its own order; the Angelus counts as prayed for the bell
+being kept, as on the Prayers page (`PrayerBook.isOfferedNow`), so
+one said at noon leaves EVENING to pray, where the Today tile counts
+it once a day; the station it is rides the title line, turning on the
+book's own schedule; the half is the hour's order over the three beads, each with
 its hour's own glyph (`lv-rooster`, `lv-bell`, `lv-lamp`) in place of
 its name, which had no room — MORNING and ANGELUS shrank to two sizes
 beside NIGHT, and the Regina Cæli could not be set — and the whole tile
@@ -480,22 +484,28 @@ with the author and the place beside it — "St. Thérèse · Chapter IV" —
 and the other books under way standing as spines beside it: tap a
 spine, or swipe the face, to bring that book forward; the tile is not
 one door, because made one, every spine opened the book in front of it
-and the rest could not be reached; "Two more open" rides the title
-line; the half stands the book over its title; empty, the shelf's
-cloths and "Tolle, lege"; no bar of the book read — the board drew
+and the rest could not be reached; "2 more books started" rides the title
+line; the half stands the book over its title; empty, the books'
+cloths over "Take up and read · choose a book" and ALL BOOKS; no bar of the book read — the board drew
 one, and a share of a book is a judgement of the reader the shelf
-never makes), **Liturgy** (on the deep ground, the date on a calendar
-leaf beside the feast with its class and its colour — "III class ·
-white", the vestment's diamond before it — over a ledger of the
-Church's two books for the day: HOLY MASS by the first words of the
-day's Introit, in Latin, read from the missal's proper — no more than
+never makes), **Today in the Church** ("The Church" at half, where
+the whole name has no room; on the deep ground, the date on a
+calendar leaf beside the feast with its rank — "Lesser Feast", the
+vestment's diamond before it, the colour said to VoiceOver alone as
+"white vestments" — over a ledger of the Church's two books for the
+day: THE MASS, Today's Mass over the first words of the day's entrance
+chant ("Entrance chant: Gaudeámus omnes"), in Latin, read from the
+missal's proper — no more than
 three, and never ending on a word that leaves it hanging
 (`TodayInChurch.incipit(of:)`, "Gaudeámus omnes", not "Gaudeámus omnes
-in"; `appTests/ChapelLiturgyTests.swift`) — and OFFICE by
-the hour it is now, from `CanonicalClock` — the board said the next
+in"; `appTests/ChapelLiturgyTests.swift`) — and HOURS OF PRAYER by
+the hour it is now in plain words over its Church name ("Evening
+Prayer" over "Vespers, the hour now"), from `CanonicalClock` — the
+board said the next
 hour, but the Office opens on the present one; until the propers are
-known the leaf names "The Mass of the Day" and the Mass row "Daily
-Missal"; the page loads the day again when it comes back to the
+known the leaf names "The Mass of the Day" and the Mass row "Prayers
+and readings for today"; no bare "1962" stands on the title line; the
+page loads the day again when it comes back to the
 foreground, refreshing `CanonicalClock` first as every page that shows
 the hour must, and at every turn of the canonical hour, midnight included,
 and `TodayInChurch` lets go of the last day's feast before it looks for
@@ -510,11 +520,13 @@ like a book, a second rule inside its edge: BOOKS — True Devotion,
 Spiritual Reading, the Marian Library — and GUIDES — How to Pray, In
 Scripture, Carlo Acutis — as a ruled index of doors, each name over a
 line saying what it holds, with no glyphs, over Augustine's line; the
-half keeps the three books and makes THREE MORE a door to Explore),
+half keeps the three books and makes SEE MORE a door to Explore),
 **Chant** (the Chant Library's player on cloth: the chant it last sang,
-or the antiphon of the season until it has sung one, which the title
-line says — its disc plays it, its name opens the chant's page, and
-CHANT LIBRARY (LIBRARY at half) opens the library; beneath, a staff of
+or this season's song to Mary until it has sung one, which the title
+line says — its disc plays it ("Play Hail, Holy Queen (Salve Regina)"
+to VoiceOver), its name, the Latin over the English and the setting,
+opens the chant's page, and BROWSE CHANTS (BROWSE at half) opens the
+library; beneath, a staff of
 square notes in one fixed contour, the same for every chant and never
 lit by the voice — the app holds no pitches, so it is a picture of
 chant and must never pass for this chant's melody, whose score is a tap
@@ -539,7 +551,7 @@ THE JOURNAL the foot; at half the day is the foot's note), **Prayer
 Streak** (the flame as an ember in the dark; stands directly under
 Today, because a record of days prayed belongs beside the day it
 records and onboarding's closing line promises it is being kept; the
-title line says "Lit today" or "Not yet today", never "missed", and the
+title line says "Prayed today" or "Not yet today", never "missed", and the
 ember burns quieter until the day is lit; the figure reads "12 days in
 a row" beside the ember, over the next milestone as an invitation, and
 the week is drawn beneath as a small Sunday-to-Saturday calendar, each
@@ -549,8 +561,8 @@ half centres the ember over "12 days" with the week as seven beads on
 its floor — the one centred half; the whole tile opens the Prayer Record
 at both widths, and has no foot. To VoiceOver it is one sentence in the
 screen's words — "12 days in a row, not yet today. This week, prayed
-Sunday, Monday and Tuesday. Next, Novena, 1 day away. Opens the Prayer
-Record." — the days prayed by name, never a count out of seven, which
+Sunday, Monday and Tuesday. Next, 54 days, a Rosary novena, 1 day
+away. Opens the Prayer Record." — the days prayed by name, never a count out of seven, which
 read midweek as a shortfall).
 
 **Each section its own object** (the "Chapel Redesign" handoff,
@@ -584,13 +596,13 @@ a pair of halves 12 apart; 10 every way while arranged. The card is one door (`o
 and a hold as two gestures rather than a Button, so a hold that
 arranges the page never also opens the tile on release) except where
 the body has doors of its own — the Today rows and cells, the Reading
-tile's face and spines, the Liturgy's rows, the Library's doors, the
+tile's face and spines, Today in the Church's rows, the Library's doors, the
 chant's play disc and name, the Prayers tile's order, PRAY and hours at
 full width — where only the foot's act, if any, is a control
 (`onAct`). A card that is one door keeps its title's heading trait,
 so VoiceOver's rotor still walks the page section by section; the
-consecration reads "Consecration, day 14 of 33, Humble Subjection.
-Continue." The Library's half ends on THREE MORE, a door to Explore,
+consecration reads "Consecration to Mary, day 14 of 33, Humble
+Subjection. Continue." The Library's half ends on SEE MORE, a door to Explore,
 where the three guides it leaves out stand. The page before this drew one anatomy for every tile (the
 "Chapel Tiles" handoff): a kicker with a glyph on the page above a
 hairline shell with no fill, and the rule "no filled card surfaces on
@@ -611,14 +623,38 @@ PAGE in an outlined capsule — the 2×2 arrange mark, not the board's
 faders, which are Settings' door — over "Or press and hold anywhere."
 and the imprint, which the board leaves off and the page keeps. The
 default order is Today, Streak, Consecration, Prayers, Reading,
-Chant, Reflections, Liturgy, Library: the live sections lead, and the
+Chant, Reflections, Today in the Church, Library: the live sections lead, and the
 two indexes of doors stand last, the Library's colophon the right last
 line before the foot. The day strip wraps a long feast to a second
 line rather than cutting it mid-word.
 
+**The Chapel's words** (the plain-language rulings, Oct 2026): what
+the code calls the rule the reader sees as **daily prayers** ("Daily
+Prayers" in the editor and Settings, whose lead says once that the
+saints called it a rule of prayer); a finished act is **PRAYED**, never
+OFFERED ("3 of 5 prayed", "Prayed today"; "offer" stays only where it
+means offering to God, as in the Morning Offering); the streak's figure
+is "N days in a row", "1 day so far", or "Pray today to begin", and a
+milestone leads with its number ("9 days · a novena",
+`StreakMilestone.title`; the completion card sets `name`, "9 days",
+over a blessing that says what the Church calls it). The forms are
+named as everywhere else — the Rosary Said Aloud, the Seven Sorrows of
+Mary, Consecration to Mary, Queen of Heaven (Regina Cæli) in
+Eastertide — and the focus block's gold act names the prayer without
+repeating the title over it (the three forms' act is PRAY THE ROSARY
+or CONTINUE THE ROSARY, the consecration's OPEN DAY 14), so every act
+fits its button on one line at `.xLarge`. The hours' plain names on
+Today in the Church (`ChapelLiturgyTile.plainName(of:)`) are the
+rulings' table word for word, until `CanonicalHour.plainName` carries
+it; the rank comes from `MissalProper.rankLabel` and the day's name
+from `TodayInChurch`, both the liturgy's to word. The journal's things
+are reflections, never entries; a new one's title starts empty under
+"Title (optional)", and one with no title reads "Reflection". The
+words "Arrange" and "Rearrange" stay.
+
 **The rule's vocabulary** (`PrayerShortcut.isRuleEligible`): the
-Rosary, the Scriptural Rosary, the Holy Rosary and Seven Sorrows can be
-chosen, and the Prayer Book's three orders of the day — Morning Prayers,
+Rosary, the Scriptural Rosary, the Rosary Said Aloud and the Seven
+Sorrows of Mary can be chosen, and the Prayer Book's three orders of the day — Morning Prayers,
 the Angelus, Night Prayers — which the pray-along screen marks offered
 at their Amen (`PrayerBookStore.wasOffered`), so the Chapel can ask
 about them honestly. The Holy Rosary is still recorded under its old
@@ -635,11 +671,11 @@ preparation is under way `MyChapelView.resolvedActs` inserts it second,
 under the rule's first act (the Rosary by default), and it leaves when the preparation is done. Two of
 the handoff's recommendations are deliberately not built: hiding the
 Consecration tile while the act is on the rule would mean its road was
-never seen, and merging Liturgy into Library at half width is a
+never seen, and merging Today in the Church into Library at half width is a
 different page from the one drawn.
 
 The rule's *membership* is edited in `RuleEditorSheet` (Settings →
-Devotion → Rule of Prayer, and the EDIT on the Today tile's title line);
+Devotion → Daily Prayers, and the EDIT on the Today tile's title line);
 `PrayButtonEditorSheet` (quick tap + hold menu) still opens from the
 Pray tray's "Edit this menu" row. The one-motion acts remain
 `PrayerShortcut`. Prayer Record's standing doors are the flame tile and
@@ -698,9 +734,9 @@ the page they serve):
   every prayer is — nothing else reads them. Set as three more switches
   among the ways of praying, they read as prayers added to every
   Rosary, and a silent Rosary never said them
-- **Devotion** — Rule of Prayer (→ `RuleEditorSheet`), Prayer Record,
+- **Devotion** — Daily Prayers (→ `RuleEditorSheet`), Prayer Record,
   Daily Mysteries (Traditional | Modern → `MysteryScheduleSheet`, the row
-  under Rule of Prayer), Daily Reminders (toggle, time, sound), The Angelus Bell, What Brings
+  under Daily Prayers), Daily Reminders (toggle, time, sound), The Angelus Bell, What Brings
   You to the Rosary (decides the reminder copy pool)
 - **Offline** — download every meditation set and audio file
 
@@ -1711,7 +1747,7 @@ write concurrent code here:
   **Doors:** THE SCRIPTURAL ROSARY under OTHER WAYS TO PRAY on every
   mysteries' page, opening its own page with those mysteries chosen;
   the `PrayerShortcut.scripturalRosary` act — Pray tray ("Joyful
-  Mysteries · a verse for every bead"), quick tap, Rule of Prayer, the
+  Mysteries · a verse for every bead"), quick tap, Daily Prayers, the
   Chapel's focus — which goes straight to the day's mysteries the way
   Today's Rosary does; "Pray the Scriptural Rosary" in In Scripture —
   its gold button and each passage page's row — straight to prayer in
@@ -1724,9 +1760,8 @@ write concurrent code here:
   devotion's name — it once headlined the first of the five mysteries
   with its passage, which made one decade the subject of a button that
   prays all of them — and nothing stands between the title and the
-  button. (The Chapel's focus block still says Pray with a Meditation
-  for Today's Rosary: its act goes straight to a set's Rosary, where
-  home's goes to the page.) A new install's tray has it third, under
+  button. (The Chapel's focus block says Pray the Rosary too, but its
+  act goes straight to a set's Rosary, where home's goes to the page.) A new install's tray has it third, under
   Today's Rosary and Today's Mysteries (`UserSettings.defaultPrayTray`,
   the "Rosary ways to pray" design's order), and a tray saved before it
   existed is given it once, under Today's Rosary

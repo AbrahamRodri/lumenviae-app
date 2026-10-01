@@ -184,7 +184,7 @@ struct JournalView: View {
                                     .foregroundColor(AppColors.background)
                             }
                         }
-                        .accessibilityLabel("New entry")
+                        .accessibilityLabel("New reflection")
                     }
                 }
             }
@@ -429,7 +429,7 @@ struct JournalView: View {
             Button(action: { showingNewEntry = true }) {
                 HStack(spacing: 8) {
                     AppIcon("ph-note-pencil", size: 16)
-                    Text("Write First Entry")
+                    Text("Write Your First Reflection")
                         .tracking(1)
                 }
                 .font(AppFonts.bodyFont(15))
@@ -523,7 +523,7 @@ struct JournalEntryCard: View {
                 Spacer()
 
                 if entry.isMidPrayer {
-                    Text("mid-prayer")
+                    Text("during prayer")
                         .font(AppFonts.bodyFont(10))
                         .tracking(1)
                         .foregroundColor(AppColors.textSecondary)
@@ -695,7 +695,7 @@ struct JournalDetailView: View {
                                 .frame(width: 44, height: 44)
                                 .contentShape(Rectangle())
                         }
-                        .accessibilityLabel("Edit entry")
+                        .accessibilityLabel("Edit reflection")
 
                         Button(action: { showingDeleteConfirm = true }) {
                             AppIcon("ph-trash", size: 16)
@@ -703,7 +703,7 @@ struct JournalDetailView: View {
                                 .frame(width: 44, height: 44)
                                 .contentShape(Rectangle())
                         }
-                        .accessibilityLabel("Delete entry")
+                        .accessibilityLabel("Delete reflection")
                     }
                 }
                 .padding(.horizontal, 6)
