@@ -547,7 +547,11 @@ struct ExploreView: View {
             LibraryEntry(icon: "ph-music-note", title: "The Chant Library",
                          matchText: "chant chants gregorian sung song songs hymn hymns latin score scores music antiphon sing") { router.push(.chantLibrary) },
             LibraryEntry(icon: "ph-flame", title: "Prayer Record",
-                         matchText: "sacred record progress streak history calendar") { router.switchTo(.progress) }
+                         matchText: "sacred record progress streak history calendar") { router.switchTo(.progress) },
+            // The Journal gave its place in the bar to Prayers; found by
+            // name, it opens as the Chapel's Reflections tile opens it
+            LibraryEntry(icon: "ph-book-open", title: "Journal",
+                         matchText: "journal reflections reflection notes entries write diary") { router.switchTo(.journal) }
         ]
     }
 

@@ -3,9 +3,9 @@
 //  Lumen Viae
 //
 //  A new reader's first look at the home page, once, after the
-//  introduction: four coach marks over the real controls, one at a time
-//  — today's Rosary, the Pray button (a tap and a hold), the Chapel, and
-//  Explore, where the Prayer Book is kept.
+//  introduction: five coach marks over the real controls, one at a time
+//  — today's Rosary, the Pray button (a tap and a hold), Prayers (the
+//  Prayer Book's tab), the Chapel, and Explore.
 //
 //  Why this and not a deck of cards before the app: tutorials read
 //  before the app is seen do not help people use it (NN/g, "Mobile
@@ -31,13 +31,14 @@ import SwiftUI
 
 /// The places the tour stops, in order.
 enum FirstUseTourStop: Int, CaseIterable {
-    case today, pray, chapel, explore
+    case today, pray, prayers, chapel, explore
 
     /// The place's name, as the mark's kicker
     var name: String {
         switch self {
         case .today:   return "Today's Rosary"
         case .pray:    return "The Pray Button"
+        case .prayers: return "Prayers"
         case .chapel:  return "Your Chapel"
         case .explore: return "Explore"
         }
@@ -50,10 +51,12 @@ enum FirstUseTourStop: Int, CaseIterable {
             return "The day's mysteries, set out each morning. Begin the day's Rosary here."
         case .pray:
             return "Tap it to begin today's Rosary at once. Press and hold to choose another devotion."
+        case .prayers:
+            return "The Church's prayers, open on the one for the hour it is. Find any prayer by name, or by where you are: at Mass, at Confession, at home."
         case .chapel:
             return "Your own page: the prayers you keep each day, the days you have prayed, and the Prayer Book at the hour. Arrange it as you like."
         case .explore:
-            return "Every devotion in the app, the Prayer Book, chant and spiritual reading, and a search across them all."
+            return "Every devotion in the app, chant and spiritual reading, and a search across them all."
         }
     }
 

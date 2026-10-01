@@ -101,7 +101,8 @@ enum AppRoute: Hashable {
     case rosaryAloud(MysteryCategory)
 
     /// The Prayer Book: its title page, which opens on the order of
-    /// prayer for the hour it is; one of its chapters; and an order of
+    /// prayer for the hour it is — the Prayers tab's root, to which
+    /// `push(.prayerBook)` turns; one of its chapters; and an order of
     /// prayer's own page — Morning Prayers, Before Confession. A single
     /// prayer's page is `devotionPrayer(id:)`, which every door to a
     /// prayer in the app already uses.
@@ -301,7 +302,15 @@ final class AppRouter {
 
     /// Pushes any content destination. The named helpers above predate
     /// this; new pages ride it directly.
+    ///
+    /// The Prayer Book has a tab of its own, so a door to it — home's hour
+    /// row, Explore, the Chapel's tile, a prayer's page — turns to that
+    /// tab rather than stacking a second copy of the book on this one.
     func push(_ route: AppRoute) {
+        if route == .prayerBook {
+            switchTo(.prayers)
+            return
+        }
         path.append(route)
     }
 

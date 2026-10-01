@@ -381,6 +381,9 @@ struct ContentView: View {
         case .chapel:
             MyChapelView()
                 .transition(tabTurn)
+        case .prayers:
+            PrayerBookView(isTabRoot: true)
+                .transition(tabTurn)
         }
     }
 

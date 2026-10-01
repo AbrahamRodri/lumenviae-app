@@ -7,11 +7,14 @@
 //  Custom tab bar (instead of TabView) so it can match the design system
 //  and hide during the prayer flow.
 //
-//  Layout: four tabs (Home, Consecrate, Journal, Chapel) plus a raised
+//  Layout: four tabs (Home, Consecrate, Prayers, Chapel) plus a raised
 //  "Pray" button in the bottom-right — the prime action position. It
 //  starts today's Rosary directly, no selection screens. Progress has no
 //  tab; it opens from the Chapel's flame tile, or from Settings →
-//  Devotion → Prayer Record when the flame is stowed in the tray.
+//  Devotion → Prayer Record when the flame is stowed in the tray. Nor
+//  has the Journal, since Prayers took its place: it opens from the
+//  Chapel's Reflections tile and Explore's search, and is written in
+//  after a prayer, at its Amen.
 //
 //  The bar is the page's foot, not a slab laid over it: content dissolves
 //  into it through a fade, its surface is the same color the app gradient
@@ -30,6 +33,8 @@ enum AppTab: CaseIterable {
     case journal
     case progress
     case chapel
+    /// The Prayer Book, in the Journal's old place in the bar
+    case prayers
 
     var title: String {
         switch self {
@@ -38,6 +43,7 @@ enum AppTab: CaseIterable {
         case .journal:      return Constants.journalTab
         case .progress:     return Constants.progressTab
         case .chapel:       return Constants.chapelTab
+        case .prayers:      return Constants.prayersTab
         }
     }
 
@@ -50,11 +56,17 @@ enum AppTab: CaseIterable {
         case .journal:      return "ph-book-open"
         case .progress:     return "ph-flame"
         case .chapel:       return "ch-window"
+        // The Prayer Book's glyph on every surface it is a door on
+        case .prayers:      return "ch-praying-hands"
         }
     }
 
-    /// Asset icon shown when the tab is selected (the fill weight)
-    var selectedIcon: String { icon + "-fill" }
+    /// Asset icon shown when the tab is selected (the fill weight). The
+    /// praying hands have no fill weight drawn, so Prayers is lit in gold
+    /// alone, as the gold and the bead beneath already say it is chosen.
+    var selectedIcon: String {
+        self == .prayers ? icon : icon + "-fill"
+    }
 }
 
 // MARK: - CustomTabBar
@@ -74,8 +86,9 @@ struct CustomTabBar: View {
     var onPrayHold: () -> Void = {}
 
     /// Tabs shown in the bar. Progress is reachable from the Chapel's
-    /// flame tile, and from Settings when the flame is stowed.
-    private let visibleTabs: [AppTab] = [.home, .consecration, .journal, .chapel]
+    /// flame tile, and from Settings when the flame is stowed; the
+    /// Journal, from the Chapel's Reflections tile and Explore's search.
+    private let visibleTabs: [AppTab] = [.home, .consecration, .prayers, .chapel]
 
     var body: some View {
         VStack(spacing: 0) {
@@ -120,7 +133,7 @@ struct CustomTabBar: View {
                         selectedTab = tab
                     }
                     .frame(minWidth: 44)
-                    .firstUseTourStop(tab == .chapel ? .chapel : nil)
+                    .firstUseTourStop(tab == .chapel ? .chapel : tab == .prayers ? .prayers : nil)
 
                     if tab != visibleTabs.last {
                         Spacer(minLength: 8)

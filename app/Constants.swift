@@ -111,6 +111,7 @@ struct Constants {
     static let journalTab = "JOURNAL"
     static let progressTab = "PROGRESS"
     static let chapelTab = "CHAPEL"
+    static let prayersTab = "PRAYERS"
 }
 
 // MARK: - Color Hex Support
