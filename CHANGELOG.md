@@ -80,14 +80,15 @@ gained books of their own, and How to Pray became a course.
   Prayer, the Angelus in the Pray tray, its recordings in the offline
   download, and every door to a prayer opening that prayer's page in the
   book (e118f0f, d9200c5)
-- Add the Chant Library: 76 chants sung and engraved by Verbum Gloriae and
-  shared under their copyleft licence, bundled so they sound with no
-  signal, on thirteen shelves that open on tonight's antiphon of Our Lady.
-  Each chant has a page with SLOW, REPEAT and FROM THE TOP for learning it,
-  its score drawn in the page's cream with red initials, a zoomable
-  full-screen score, the prayer in words and its other settings. It opens
-  from the Chapel's Chant tile, Explore's Sung Prayer and "Sing it in
-  chant" on a Prayer Book page (7b7e89d, 48d1cad, 75c91ec)
+- Add the Chant Library: 76 chants, each sung and written out in sheet
+  music by Verbum Gloriae and shared under their copyleft licence, bundled
+  so they play with no signal, on thirteen shelves that open on tonight's
+  song to Mary. Each chant's page shows its sheet music, which can be
+  enlarged, and its words in Latin and English; it plays at 1× or ¾×
+  speed, repeats, goes a line at a time, lets you take turns with the
+  singer, and has a sleep timer. "Learn this chant" teaches it by heart in
+  four steps. It opens from the Chapel's Chant tile, Explore and "Sing it
+  in chant" on a page in Prayers (7b7e89d, 48d1cad, 75c91ec)
 - Offer the modern schedule of mysteries in Settings → Devotion → Daily
   Mysteries: the Luminous on Thursday and the Joyful on Saturday, the
   seasonal Sunday kept. Each set's days are named from the schedule
