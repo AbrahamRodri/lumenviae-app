@@ -68,11 +68,20 @@ struct ChantCatalogTests {
 
     @Test func captionsNameThePartNotTheSitesFiling() {
         // Spanish kinds and articles, tones, litanies named again on their
-        // own page, melody numbers, editors' notes
-        let filing = /(?i)\b(simple|solemne|secuencia|himno|canto|antífona|letanías|litaniae|corregida|los|las|del)\b|\s(I|1)$|\.\.\./
+        // own page, a part filed by its number ("1 de la Antífona O Oriens
+        // y el Magnificat"), a Mass's name, editors' notes
+        let filing = /(?i:\b(simple|solemne|secuencia|himno|canto|antífona|letanías|litaniae|corregida|los|las|del|de la|y el|de angelis)\b)|\.\.\./
+        // A melody's or a Mass's number: "Tantum ergo I", "Kyrie VIII"
+        let number = /\s([IVX]+|1)$/
+        // The page's markup: a shortcode's typeset quotes and its next
+        // attribute ("Memorare 1″ show_bottom_space=»off")
+        let markup = /[″»«“”=]|show_/
         for chant in ChantCatalog.all {
             for part in chant.score {
                 #expect(part.caption.firstMatch(of: filing) == nil, "\(chant.id): \(part.caption)")
+                #expect(part.caption.firstMatch(of: number) == nil, "\(chant.id): \(part.caption)")
+                #expect(part.caption.firstMatch(of: markup) == nil, "\(chant.id): \(part.caption)")
+                #expect(!part.caption.contains("\""), "\(chant.id): \(part.caption)")
             }
         }
     }

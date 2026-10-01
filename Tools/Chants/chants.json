@@ -1,5 +1,5 @@
 {
-  "_about": "The Chant Library, curated. Each entry is one recording and its score from Verbum Gloriae (https://www.verbumgloriae.es), shared under their copyleft licence (https://www.verbumgloriae.es/licencia-copyleft/). `slug` is the chant's page there; `page` overrides it for chants that live on a section page, with `audio` and `scores` picking that chant's files out of it by file name. `prayers` are the app's own prayer ids the chant is a sung form of. Run generate.py after any change.",
+  "_about": "The Chant Library, curated. Each entry is one recording and its score from Verbum Gloriae (https://www.verbumgloriae.es), shared under their copyleft licence (https://www.verbumgloriae.es/licencia-copyleft/). `slug` is the chant's page there; `page` overrides it for chants that live on a section page, with `audio` and `scores` picking that chant's files out of it by file name. `prayers` are the app's own prayer ids the chant is a sung form of. `captions`, one to a score, names the parts of a page that files them by number rather than by their words. Run generate.py after any change.",
   "groups": [
     {"id": "ourLady", "title": "Our Lady", "note": "The antiphons of the year, her hymns and her litany"},
     {"id": "rosary", "title": "The Rosary and the Angelus", "note": "The prayers of the beads, chanted as a Latin Rosary is sung"},
@@ -79,7 +79,7 @@
     {"id": "rorate_caeli", "slug": "rorate-caeli", "group": "advent", "latin": "Rorate Cæli", "english": "Drop Down Dew, Ye Heavens", "setting": null, "detail": "The prayer of Advent's waiting", "prayers": []},
     {"id": "creator_alme", "slug": "creator-alme-siderum", "group": "advent", "latin": "Creator Alme Siderum", "english": "Creator of the Stars of Night", "setting": null, "detail": "The Vespers hymn of Advent", "prayers": []},
     {"id": "veni_emmanuel", "slug": "veni-veni-emmanuel", "group": "advent", "latin": "Veni, Veni, Emmanuel", "english": "O Come, O Come, Emmanuel", "setting": null, "detail": "The O Antiphons made a hymn", "prayers": []},
-    {"id": "o_oriens_magnificat", "slug": "o-oriens-et-magnificat", "group": "advent", "latin": "O Oriens", "english": "O Morning Star, with the Magnificat", "setting": null, "detail": "The O Antiphon of December 21, around Mary's song", "prayers": ["magnificat"]},
+    {"id": "o_oriens_magnificat", "slug": "o-oriens-et-magnificat", "group": "advent", "latin": "O Oriens", "english": "O Morning Star, with the Magnificat", "setting": null, "detail": "The O Antiphon of December 21, around Mary's song", "prayers": ["magnificat"], "captions": ["O Oriens", "Magnificat", "O Oriens"]},
 
     {"id": "puer_natus", "slug": "puer-natus-in-bethlehem", "group": "christmas", "latin": "Puer Natus in Bethlehem", "english": "A Child Is Born in Bethlehem", "setting": null, "detail": "A Christmas carol of the Middle Ages", "prayers": []},
     {"id": "adeste_fideles", "slug": "adeste-fideles", "group": "christmas", "latin": "Adeste Fideles", "english": "O Come, All Ye Faithful", "setting": null, "detail": "The Christmas hymn in its Latin", "prayers": []},
@@ -103,6 +103,6 @@
     {"id": "gloria_de_angelis", "slug": "misa-viii-de-angelis", "page": "project/misa-viii-de-angelis", "audio": "2022/08/Gloria-VIII.ogg", "scores": ["Gloria-VIII-web.svg"], "group": "mass", "latin": "Gloria", "english": "Glory to God in the Highest", "setting": "Mass VIII", "detail": "Mass VIII, the Missa de Angelis", "prayers": []},
     {"id": "sanctus_de_angelis", "slug": "misa-viii-de-angelis", "page": "project/misa-viii-de-angelis", "audio": "2022/09/Sanctus-VIII.ogg", "scores": ["Sanctus-VIII-web.svg"], "group": "mass", "latin": "Sanctus", "english": "Holy, Holy, Holy", "setting": "Mass VIII", "detail": "Mass VIII, the Missa de Angelis", "prayers": []},
     {"id": "agnus_de_angelis", "slug": "misa-viii-de-angelis", "page": "project/misa-viii-de-angelis", "audio": "2022/09/Agnus-Dei-VIII.ogg", "scores": ["Agnus-Dei-VIII-web.svg"], "group": "mass", "latin": "Agnus Dei", "english": "Lamb of God", "setting": "Mass VIII", "detail": "Mass VIII, the Missa de Angelis", "prayers": []},
-    {"id": "credo_iii", "slug": "credo-iii", "group": "mass", "latin": "Credo III", "english": "The Nicene Creed", "setting": "Credo III", "detail": "The Creed sung on Sundays and solemnities", "prayers": []}
+    {"id": "credo_iii", "slug": "credo-iii", "group": "mass", "latin": "Credo III", "english": "The Nicene Creed", "setting": "Credo III", "detail": "The Creed sung on Sundays and solemnities", "prayers": ["nicene_creed"]}
   ]
 }

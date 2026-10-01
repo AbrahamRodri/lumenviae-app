@@ -41,6 +41,9 @@ enum ChantLibraryData {
         "parce_domine": .shortChant,
         "adoremus": .shortChant,
         "christus_vincit": .shortChant,
+        "vidi_aquam": .shortChant,
+        "o_vos_omnes": .shortChant,
+        "o_oriens_magnificat": .shortChant,
 
         // Hymns
         "ave_maris_stella": .hymn,
@@ -64,6 +67,9 @@ enum ChantLibraryData {
         "attende_domine": .hymn,
         "vexilla_regis": .hymn,
         "o_filii": .hymn,
+        "pange_lingua": .hymn,
+        "audi_benigne": .hymn,
+        "ad_regias": .hymn,
 
         // Feast poems: sequences
         "victimae_paschali": .sequence,
@@ -85,6 +91,9 @@ enum ChantLibraryData {
         "magnificat": .psalm,
         "miserere": .psalm,
         "te_deum": .psalm,
+        // The Te Deum's Marian echo, in its form and its tone: prose
+        // verses sung one by one, not a hymn's verses in metre
+        "te_matrem": .psalm,
 
         // Everyday prayers
         "in_nomine_patris": .everydayPrayer,
@@ -98,27 +107,39 @@ enum ChantLibraryData {
         "memorare": .everydayPrayer,
         "anima_christi": .everydayPrayer,
         "divine_praises": .everydayPrayer,
-        "veni_sancte_reple": .everydayPrayer
+        "veni_sancte_reple": .everydayPrayer,
+
+        // The Ordinary of the Mass, sung as on Sundays
+        "kyrie_de_angelis": .everydayPrayer,
+        "gloria_de_angelis": .everydayPrayer,
+        "sanctus_de_angelis": .everydayPrayer,
+        "agnus_de_angelis": .everydayPrayer,
+        "credo_iii": .everydayPrayer
     ]
 
     /// What one chant is, for a kicker, where its kind's own word would
     /// be wrong: Psalms and Canticles holds the Miserere, a psalm, beside
-    /// the Magnificat and the Te Deum, which are canticles
+    /// the Magnificat, the Te Deum and the Te Matrem, which are canticles
     static let kindNames: [String: String] = [
         "magnificat": "Canticle",
         "te_deum": "Canticle",
-        "miserere": "Psalm",
+        "te_matrem": "Canticle",
+        "miserere": "Psalm"
     ]
 
     // MARK: - Seasons
 
     static let seasonChants: [ChantSeason: [String]] = [
-        .advent: ["rorate_caeli", "creator_alme", "veni_emmanuel", "alma_redemptoris", "ave_maria_antiphon"],
+        .advent: ["rorate_caeli", "creator_alme", "veni_emmanuel", "o_oriens_magnificat",
+                  "alma_redemptoris", "ave_maria_antiphon"],
         .christmas: ["adeste_fideles", "puer_natus", "jesu_redemptor", "alma_redemptoris"],
-        .lent: ["attende_domine", "parce_domine", "miserere", "vexilla_regis", "stabat_mater",
-                "ubi_caritas", "ave_regina_simple", "ave_regina_solemn"],
-        .easter: ["victimae_paschali", "o_filii", "regina_caeli_simple", "regina_caeli_solemn"],
-        .pentecost: ["veni_sancte_spiritus", "veni_creator", "veni_sancte_reple",
+        .lent: ["attende_domine", "audi_benigne", "parce_domine", "miserere", "vexilla_regis",
+                "o_vos_omnes", "stabat_mater", "ubi_caritas", "ave_regina_simple", "ave_regina_solemn"],
+        // The Vidi Aquam is sung before Sunday Mass from Easter through
+        // Pentecost Sunday, as the Regina Cæli runs on into Pentecost's week
+        .easter: ["victimae_paschali", "o_filii", "vidi_aquam", "ad_regias",
+                  "regina_caeli_simple", "regina_caeli_solemn"],
+        .pentecost: ["veni_sancte_spiritus", "veni_creator", "veni_sancte_reple", "vidi_aquam",
                      "regina_caeli_simple", "regina_caeli_solemn"],
         .afterPentecost: ["salve_regina_simple", "salve_regina_solemn", "lauda_sion", "christus_vincit"]
     ]
@@ -158,7 +179,8 @@ enum ChantLibraryData {
         ChantFeast(id: "holy_name", name: "The Holy Name of Jesus", rule: .holyName, chantID: "jesu_dulcis_memoria"),
         ChantFeast(id: "st_joseph", name: "St Joseph", rule: .fixed(month: 3, day: 19), chantID: "te_joseph", painting: "devotion_st_joseph"),
         ChantFeast(id: "annunciation", name: "The Annunciation", rule: .fixed(month: 3, day: 25), chantID: "ave_maria_antiphon"),
-        ChantFeast(id: "holy_thursday", name: "Holy Thursday", rule: .easter(-3), chantID: "ubi_caritas"),
+        // Sung as the Blessed Sacrament is carried to the altar of repose
+        ChantFeast(id: "holy_thursday", name: "Holy Thursday", rule: .easter(-3), chantID: "pange_lingua"),
         ChantFeast(id: "good_friday", name: "Good Friday", rule: .easter(-2), chantID: "vexilla_regis"),
         ChantFeast(id: "easter", name: "Easter Sunday", rule: .easter(0), chantID: "victimae_paschali"),
         ChantFeast(id: "pentecost", name: "Pentecost", rule: .easter(49), chantID: "veni_sancte_spiritus"),
@@ -173,6 +195,9 @@ enum ChantLibraryData {
         ChantFeast(id: "all_saints", name: "All Saints", rule: .fixed(month: 11, day: 1), chantID: "litany_saints", painting: "feast_all_saints"),
         ChantFeast(id: "all_souls", name: "All Souls", rule: .fixed(month: 11, day: 2), chantID: "dies_irae", painting: "devotion_holy_souls"),
         ChantFeast(id: "immaculate_conception", name: "The Immaculate Conception", rule: .fixed(month: 12, day: 8), chantID: "tota_pulchra", painting: "season_advent"),
+        // Not a feast but a day of the Office: the O antiphons ring round
+        // the Magnificat at Vespers from the 17th, and the 21st's is O Oriens
+        ChantFeast(id: "o_oriens", name: "The Fifth O Antiphon", rule: .fixed(month: 12, day: 21), chantID: "o_oriens_magnificat"),
         ChantFeast(id: "christmas", name: "Christmas Day", rule: .fixed(month: 12, day: 25), chantID: "adeste_fideles")
     ]
 
@@ -203,7 +228,9 @@ enum ChantLibraryData {
         ChantWeekday(weekday: 5, devotion: "the Blessed Sacrament",
                      headline: "Thursdays honour the Blessed Sacrament",
                      collective: "chants of the Blessed Sacrament",
-                     chantIDs: ["adoro_te", "ave_verum", "tantum_ergo"],
+                     // The whole Pange Lingua, whose last two verses are
+                     // the Tantum Ergo
+                     chantIDs: ["adoro_te", "ave_verum", "pange_lingua"],
                      painting: "luminous_eucharist"),
         ChantWeekday(weekday: 6, devotion: "the Passion",
                      headline: "Fridays keep the Passion",
@@ -363,7 +390,11 @@ enum ChantLibraryData {
                                      "victimae_paschali", "veni_creator"]),
         ChantLearningPath(id: "longer", title: "The Longer Chants",
                           note: "The Creed, the canticles and a litany, for when the short ones are known.",
-                          chantIDs: ["credo_in_deum", "magnificat", "te_deum", "litany_loreto"])
+                          chantIDs: ["credo_in_deum", "magnificat", "te_deum", "litany_loreto"]),
+        ChantLearningPath(id: "mass", title: "The Sung Mass",
+                          note: "Mass VIII, the de Angelis, and the Creed sung on Sundays.",
+                          chantIDs: ["kyrie_de_angelis", "gloria_de_angelis", "sanctus_de_angelis",
+                                     "agnus_de_angelis", "credo_iii"])
     ]
 
     /// How many paths stand open before "See more"
@@ -395,7 +426,10 @@ enum ChantLibraryData {
         "veni_creator": "glorious_pentecost",
         "veni_sancte_spiritus": "glorious_pentecost",
         "veni_sancte_reple": "glorious_pentecost",
-        "dies_irae": "seven_sorrows_burial"
+        "dies_irae": "seven_sorrows_burial",
+        "o_vos_omnes": "sorrowful_crucifixion",
+        "vidi_aquam": "glorious_resurrection",
+        "ad_regias": "glorious_resurrection"
     ]
 
     /// The paintings asked for by subject, and the painting each falls
@@ -438,7 +472,8 @@ enum ChantLibraryData {
         "christmas": "joyful_nativity",
         "lent": "sorrowful_agony",
         "easter": "glorious_resurrection",
-        "departed": "seven_sorrows_burial"
+        "departed": "seven_sorrows_burial",
+        "mass": "luminous_eucharist"
     ]
 
     /// Tonight's antiphon, introduced: keyed by the work, so both its

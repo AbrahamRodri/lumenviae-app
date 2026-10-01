@@ -14,7 +14,10 @@ so wherever a chant plays.
 The selection is curated in chants.json. For each chant this script:
 
   1. reads the chant's page (cached in cache/pages/) for its recording
-     and the SVG scores whose alt text begins "Partitura";
+     and the SVG scores whose alt text begins "Partitura", each part
+     captioned with the Latin words of its alt text — or, where the page
+     files its parts by number, with the `captions` chants.json gives it;
+     a caption still holding the site's markup or filing stops the build;
   2. downloads them (cache/files/);
   3. re-encodes the recording as mono HE-AAC at 32 kbps
      (app/Resources/Chants/<id>.m4a) — ffmpeg decodes the Ogg, Apple's
@@ -148,14 +151,37 @@ def find_audio(entry: dict, text: str) -> str:
     return urls[0]
 
 
+# The quotes the site's typesetter may put round a builder shortcode's
+# attribute: » at both ends, “ ”, «, and after a figure the inch mark ″
+SHORTCODE_QUOTES = "[\"«»“”″]"
+
+
+def plain_quotes(text: str) -> str:
+    """Every builder shortcode with its attributes' quotes put back as
+    plain ones, so a value ends where it ends. Typeset, they took whatever
+    shape the typesetter read them as — alt=»Partitura del Memorare 1″
+    show_bottom_space=»off» closed its alt on an inch mark, and the alt
+    ran on to the end of the next attribute. A quote inside a value, the
+    Spanish « » round the Latin, is left as it is: only a quote that opens
+    a value after its name= or closes one before the next name= or the
+    shortcode's end is an attribute's."""
+    def fix(m):
+        code = html.unescape(m.group(0))
+        code = re.sub(rf"(\s[a-z_]+=){SHORTCODE_QUOTES}", r'\1"', code)
+        return re.sub(rf'{SHORTCODE_QUOTES}(?=\s+[a-z_]+="|\s*/?$)', '"', code)
+    # A shortcode runs from its name to its closing bracket; it never holds
+    # a tag's < or >, so an HTML class named et_pb_… is never taken for one
+    return re.sub(r"et_pb_[a-z_]+\s[^\]<>]*", fix, text)
+
+
 def find_scores(entry: dict, text: str) -> list:
-    """(url, caption) for every score on the page, in page order, once each."""
+    """(url, alt) for every score on the page, in page order, once each."""
     found, seen = [], set()
     images = re.compile(
         r'<img[^>]*src="([^"]+\.svg)"[^>]*alt="([^"]*)"'
-        # The same image as a builder shortcode, its quotes typeset as »
-        r'|et_pb_image src=»([^»\s]+\.svg)» alt=»(.*?)»(?=\s[a-z_]+=|\])')
-    for m in images.finditer(text):
+        # The same image as a builder shortcode
+        r'|et_pb_image src="([^"\s]+\.svg)" alt="(.*?)"(?=\s+[a-z_]+=|\s*/?\]|\s*/?$)')
+    for m in images.finditer(plain_quotes(text)):
         url = m.group(1) or m.group(3)
         alt = html.unescape(m.group(2) if m.group(1) else m.group(4)).strip()
         if not alt.lower().startswith("partitura") or url in seen:
@@ -184,6 +210,11 @@ CAPTION_WORDS = [
 ]
 
 
+# What must never reach a caption: a shortcode's quotes or attributes,
+# and the site's Spanish filing of a part by its number
+CAPTION_LEAK = re.compile(r'[″»«“”"=]|show_|\b(de la|y el)\b', re.I)
+
+
 def caption(alt: str, entry: dict) -> str:
     """The name a score part is shown under: the words it begins with, in
     Latin, and none of the site's own filing — no Spanish article or kind
@@ -205,6 +236,10 @@ def caption(alt: str, entry: dict) -> str:
     text = re.sub(r",\s*corregida\b.*$", "", text, flags=re.I)
     text = re.sub(r"\s*\([^)]*\)$", "", text)
     text = re.sub(r"\s+(en tono\s+)?(simple|solemne)$", "", text, flags=re.I)
+    # A Mass's number and name are the chant's setting, not its words:
+    # "Gloria VIII de Angelis" is the Gloria, "Credo III" the Credo
+    text = re.sub(r"\s+de Angelis$", "", text, flags=re.I)
+    text = re.sub(r"\s+[IVX]+$", "", text)
     text = re.sub(r"\s+(I|1)$", "", text)
     text = re.sub(r"^Oratio\s+", "Oremus. ", text)
     text = re.sub(r"^Oremus\.\s*", "Oremus. ", text)
@@ -570,7 +605,14 @@ def main():
             duration = encode(src, recording)
 
         parts = []
-        for url, alt in find_scores(entry, text):
+        scores = find_scores(entry, text)
+        # A page that files its parts by number rather than by their words
+        # ("1 de la Antífona O Oriens y el Magnificat") names them in
+        # chants.json, one caption to a score
+        named = entry.get("captions")
+        if named is not None and len(named) != len(scores):
+            sys.exit(f"{entry['id']}: {len(named)} captions for {len(scores)} scores")
+        for index, (url, alt) in enumerate(scores):
             name = score_name(url)
             if keep and name not in written_assets:
                 if not (SCORES_OUT / f"{name}.lvscore").exists():
@@ -589,7 +631,10 @@ def main():
                 text_ops, aspect = score_ops(svg)
                 write_score(name, text_ops)
                 written_assets[name] = aspect
-            parts.append(dict(file=name, caption=caption(alt, entry), aspect=written_assets[name]))
+            shown = named[index] if named else caption(alt, entry)
+            if CAPTION_LEAK.search(shown):
+                sys.exit(f"{entry['id']}: the site's markup or filing in a caption: {shown!r}")
+            parts.append(dict(file=name, caption=shown, aspect=written_assets[name]))
         built.append(dict(entry=entry, duration=duration, parts=parts, source=page_url(entry)))
         print(f"{entry['id']:24} {duration:6.1f}s  {len(parts)} score part(s)")
 

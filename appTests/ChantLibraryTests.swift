@@ -35,17 +35,17 @@ struct ChantLibraryTests {
     }
 
     @Test func theKindsAreTheBoardsCounts() {
-        #expect(ChantForm.shortChant.chants.count == 16)
-        #expect(ChantForm.hymn.chants.count == 21)
+        #expect(ChantForm.shortChant.chants.count == 19)
+        #expect(ChantForm.hymn.chants.count == 24)
         #expect(ChantForm.sequence.chants.count == 7)
         #expect(ChantForm.litany.chants.count == 5)
-        #expect(ChantForm.psalm.chants.count == 3)
-        #expect(ChantForm.everydayPrayer.chants.count == 12)
+        #expect(ChantForm.psalm.chants.count == 4)
+        #expect(ChantForm.everydayPrayer.chants.count == 17)
     }
 
     @Test func theLengthsAreTheBoardsCounts() {
         #expect(ChantLength.underAMinute.chants.count == 7)
-        #expect(ChantLength.aFewMinutes.chants.count == 48)
+        #expect(ChantLength.aFewMinutes.chants.count == 60)
         #expect(ChantLength.aLongWhile.chants.count == 9)
     }
 
@@ -165,6 +165,27 @@ struct ChantLibraryTests {
         let ahead = ChantFeast.upcoming(from: day(2026, 10, 1), count: 4)
         #expect(ahead.map(\.feast.id) == ["rosary", "christ_the_king", "all_saints", "all_souls"])
         #expect(calendar.component(.day, from: ahead[1].date) == 25)
+    }
+
+    @Test func theDaysAheadOfAdventTakeInTheFifthOAntiphon() {
+        let ahead = ChantFeast.upcoming(from: day(2026, 12, 1), count: 4)
+        #expect(ahead.map(\.feast.id) == ["immaculate_conception", "o_oriens", "christmas", "holy_name"])
+        #expect(calendar.component(.day, from: ahead[1].date) == 21)
+        #expect(ahead[1].feast.chant?.id == "o_oriens_magnificat")
+    }
+
+    @Test func theMassIsSungWhole() throws {
+        let mass = try #require(ChantLibraryData.learningPaths.first { $0.id == "mass" })
+        let shelf = try #require(ChantCatalog.groups.first { $0.id == "mass" })
+        #expect(mass.chantIDs.allSatisfy { ChantLibraryData.forms[$0] == .everydayPrayer })
+        #expect(Set(mass.chantIDs) == Set(ChantCatalog.chants(in: shelf).map(\.id)))
+        // The Prayer Book's Nicene Creed is sung as Credo III
+        #expect(ChantCatalog.chants(forPrayer: "nicene_creed").map(\.id) == ["credo_iii"])
+        // Thursday's set sings the whole Pange Lingua, never its last two
+        // verses again as the Tantum Ergo
+        let thursday = try #require(ChantLibraryData.weekdays.first { $0.weekday == 5 })
+        #expect(thursday.chantIDs.contains("pange_lingua"))
+        #expect(!thursday.chantIDs.contains("tantum_ergo"))
     }
 
     @Test func theMovableFeastsFallOnTheirDays() {

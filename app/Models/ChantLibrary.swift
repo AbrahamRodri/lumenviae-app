@@ -77,9 +77,9 @@ enum ChantForm: String, CaseIterable, Identifiable {
         case .litany:
             return "Calls and responses: the cantor names, and everyone answers."
         case .psalm:
-            return "The psalms and canticles of Scripture, sung verse by verse."
+            return "The psalms and canticles, sung verse by verse."
         case .everydayPrayer:
-            return "The prayers said every day, the Rosary's among them, set to their simple tones."
+            return "The prayers said every day, the Rosary's and the Mass's among them, set to chant."
         }
     }
 
@@ -694,7 +694,8 @@ extension Chant {
 
 extension ChantCatalog {
 
-    /// "All 64 chants work offline." Said at the foot of the library.
+    /// "All 76 chants work offline." Said at the foot of the library,
+    /// counted from the catalog.
     static var offlineNote: String {
         "All \(all.count) chants work offline."
     }
