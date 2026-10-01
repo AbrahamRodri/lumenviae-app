@@ -751,7 +751,7 @@ extension ChantCatalog {
             prayerIDs: ["memorare"],
             duration: 128.3,
             score: [
-                ChantScorePart(file: "chant-memorare-1", caption: "Memorare 1″ show_bottom_space=»off", aspectRatio: 1.0940)
+                ChantScorePart(file: "chant-memorare-1", caption: "Memorare", aspectRatio: 1.0940)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/memorare-1/")!,
             lines: [
@@ -2778,9 +2778,9 @@ extension ChantCatalog {
             prayerIDs: ["magnificat"],
             duration: 237.0,
             score: [
-                ChantScorePart(file: "chant-o-oriens-magnificat-web-1", caption: "1 de la Antífona O Oriens y el Magnificat", aspectRatio: 3.1826),
-                ChantScorePart(file: "chant-o-sapientia-magnificat-2", caption: "2 de la Antífona O Oriens y el Magnificat", aspectRatio: 3.8060),
-                ChantScorePart(file: "chant-o-oriens-magnificat-web-3", caption: "3 de la Antífona O Oriens y el Magnificat", aspectRatio: 3.1826)
+                ChantScorePart(file: "chant-o-oriens-magnificat-web-1", caption: "O Oriens", aspectRatio: 3.1826),
+                ChantScorePart(file: "chant-o-sapientia-magnificat-2", caption: "Magnificat", aspectRatio: 3.8060),
+                ChantScorePart(file: "chant-o-oriens-magnificat-web-3", caption: "O Oriens", aspectRatio: 3.1826)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/o-oriens-et-magnificat/")!
         ),
@@ -3433,7 +3433,7 @@ extension ChantCatalog {
             prayerIDs: [],
             duration: 153.0,
             score: [
-                ChantScorePart(file: "chant-kyrie-viii", caption: "Kyrie VIII", aspectRatio: 2.2761)
+                ChantScorePart(file: "chant-kyrie-viii", caption: "Kyrie", aspectRatio: 2.2761)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/misa-viii-de-angelis/")!
         ),
@@ -3447,7 +3447,7 @@ extension ChantCatalog {
             prayerIDs: [],
             duration: 165.0,
             score: [
-                ChantScorePart(file: "chant-gloria-viii", caption: "Gloria VIII de Angelis", aspectRatio: 0.7375)
+                ChantScorePart(file: "chant-gloria-viii", caption: "Gloria", aspectRatio: 0.7375)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/misa-viii-de-angelis/")!
         ),
@@ -3461,7 +3461,7 @@ extension ChantCatalog {
             prayerIDs: [],
             duration: 93.0,
             score: [
-                ChantScorePart(file: "chant-sanctus-viii", caption: "Sanctus VIII", aspectRatio: 1.6619)
+                ChantScorePart(file: "chant-sanctus-viii", caption: "Sanctus", aspectRatio: 1.6619)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/misa-viii-de-angelis/")!
         ),
@@ -3475,7 +3475,7 @@ extension ChantCatalog {
             prayerIDs: [],
             duration: 77.1,
             score: [
-                ChantScorePart(file: "chant-agnus-dei-viii", caption: "Agnus Dei VIII", aspectRatio: 2.2682)
+                ChantScorePart(file: "chant-agnus-dei-viii", caption: "Agnus Dei", aspectRatio: 2.2682)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/misa-viii-de-angelis/")!
         ),
@@ -3486,10 +3486,10 @@ extension ChantCatalog {
             englishTitle: "The Nicene Creed",
             setting: "Credo III",
             detail: "The Creed sung on Sundays and solemnities",
-            prayerIDs: [],
+            prayerIDs: ["nicene_creed"],
             duration: 274.1,
             score: [
-                ChantScorePart(file: "chant-credo-iii", caption: "Credo III", aspectRatio: 0.3954)
+                ChantScorePart(file: "chant-credo-iii", caption: "Credo", aspectRatio: 0.3954)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/credo-iii/")!
         )
