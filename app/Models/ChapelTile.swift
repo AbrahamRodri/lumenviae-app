@@ -68,7 +68,7 @@ enum ChapelTile: String, CaseIterable, Identifiable {
         case .reading:      return "The book you have open"
         case .liturgy:      return "Today's Mass and the Hours of Prayer"
         case .library:      return "The books, the guides, and the saints"
-        case .chant:        return "A chant to play, and the Chant Library"
+        case .chant:        return "Play a chant, or open the Chant Library"
         case .reflections:  return "Your latest reflections"
         case .flame:        return "Your streak and this week's prayer"
         case .prayers:      return "Prayers for morning, noon and night"

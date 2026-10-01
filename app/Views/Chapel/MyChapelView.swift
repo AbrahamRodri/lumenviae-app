@@ -13,7 +13,7 @@
 //     acts are offered.
 //
 //  2. Everything below is arrangeable in place. Press and hold (or tap
-//     "Arrange this page"), then drag sections around, tap them to
+//     "Arrange this page"), then drag sections by their handles, tap them to
 //     switch between full and half width, put them away into a tray,
 //     and drag them back out. No separate customize sheet.
 //
@@ -105,16 +105,6 @@ struct MyChapelView: View {
     /// without a little hysteresis the slot flickers between two
     /// positions while the finger sits still on a boundary.
     @State private var lastDropBoundaryY: CGFloat?
-
-    /// Where a row lifted by a hold stood: its carry follows the drag's
-    /// translation from here, since the hold gives no point of its own
-    /// until the finger moves
-    @State private var holdAnchor: CGPoint?
-
-    /// When a row lifted by a hold was last set down. The touch that
-    /// ends a hold without moving is a tap as well, and a row lifted and
-    /// set down in place must not also turn wide or half
-    @State private var heldCarryEnded = Date.distantPast
 
     /// The tray's height while arranging, so the page's foot can always
     /// scroll clear of it however many sections it holds
@@ -220,7 +210,7 @@ struct MyChapelView: View {
         }
         .coordinateSpace(name: Self.space)
         .sensoryFeedback(.impact(weight: .medium), trigger: arranging)
-        // A light tick as a row lifts, by a hold, its grip or a chip
+        // A light tick as a row lifts, by its grip or a chip
         .sensoryFeedback(.impact(weight: .light), trigger: carrying) { old, new in
             Self.lifts(old, new)
         }
@@ -236,9 +226,8 @@ struct MyChapelView: View {
             ScrollView(showsIndicators: false) {
                 pageColumn(acts: acts, next: next)
             }
-            // A row lifted by a hold is carried by the same touch the
-            // scroll would have taken, so the scroll stands still
-            // until it is set down
+            // The scroll stands still while a row is carried by its
+            // grip, until it is set down
             .scrollDisabled(carrying != nil)
             // Arranged, the page folds to a list that fits the glass;
             // a hold far down the page would otherwise leave the list
@@ -440,7 +429,7 @@ struct MyChapelView: View {
                 .accessibilityLabel("Done arranging")
             }
 
-            Text("Hold a section to move it. Tap one to make it full or half width.")
+            Text("Drag a section by its handle to move it. Tap one to make it full or half.")
                 .font(AppFonts.bodyFont(16))
                 .foregroundColor(AppColors.accentSoft)
                 .fixedSize(horizontal: false, vertical: true)
@@ -650,17 +639,27 @@ struct MyChapelView: View {
             return "Day \(day) of 33 · \(ChapelConsecrationTile.phaseName(day: day))"
         case .sevenSorrows:
             return "Seven Hail Marys for each sorrow"
+        // The three orders in the Prayers page's own words for when each
+        // is said ("On waking", "At bedtime") and for the season's song
+        // to Mary, read from the book rather than written again here
         case .morningPrayers:
-            return "On waking · \(PrayerBook.order(PrayerBook.morningOrderID)?.prayers().count ?? 0) prayers"
+            guard let order = Self.bookOrder(of: item) else { return item.subtitle }
+            return "\(order.occasion) · \(order.prayers().count) prayers"
         case .angelus:
-            return "6 AM, noon and 6 PM"
+            return Self.bookOrder(of: item)?.occasion ?? item.subtitle
         case .nightPrayers:
-            let antiphon = PrayerBook.antiphon(on: Date())
-            return "At bedtime · \(PrayerBook.prayer(antiphon.prayerID)?.listTitle ?? "a song to Mary")"
+            guard let order = Self.bookOrder(of: item) else { return item.subtitle }
+            return "\(order.occasion) · \(PrayerBook.antiphon(on: Date()).name)"
         case .chooseMeditation, .mass, .office:
             // Never on the rule (`isRuleEligible`)
             return item.subtitle
         }
+    }
+
+    /// The Prayers page's order of prayer an act prays, if it prays one
+    private static func bookOrder(of item: PrayerShortcut) -> PrayerOrder? {
+        guard let id = item.prayerOrderID else { return nil }
+        return PrayerBook.order(id)
     }
 
     private func handleAct(_ act: ChapelAct) {
@@ -916,15 +915,17 @@ struct MyChapelView: View {
             }
         }
         .animation(modeChange, value: arranging)
-        // A swipe on a row is the scroll's. The row is carried after a
-        // hold, or at once by its grip, laid over it below; a tap turns
-        // it wide or half. The whole row once carried at the first
-        // touch, and a swipe meant to scroll the list moved a section to
-        // the top of the page instead. Both overlays stand while the row
-        // is carried, since taking one away mid-drag would cancel it.
+        // A swipe on a row is the scroll's, and a tap turns it full or
+        // half. The row is carried by its grip alone, laid over it below.
+        // The whole row once carried at the first touch, and a swipe
+        // meant to scroll the list moved a section to the top of the
+        // page; then a hold anywhere on it carried it, laid beside the
+        // scroll, and the scroll's pan never began from a row at all.
         .overlay { rowTouch(placement) }
         // The grip carries at once, through a hit area of its own above
-        // the row's, the full height of the row and 44 wide
+        // the row's, the full height of the row and 44 wide. It stands
+        // while the row is carried, since taking it away mid-drag would
+        // cancel the drag.
         .overlay(alignment: .leading) { gripTouch(placement) }
         .overlay(alignment: .trailing) {
             if arranging && !isCarried {
@@ -1196,15 +1197,14 @@ struct MyChapelView: View {
         carryDrag(placement, fromTray: false)
     }
 
-    /// The whole row while arranging: a tap turns it wide or half, and a
-    /// hold lifts it to be carried
+    /// The whole row while arranging: a tap turns it full or half, and
+    /// nothing else, so a swipe begun on it scrolls the list
     @ViewBuilder
     private func rowTouch(_ placement: ChapelPlacement) -> some View {
         if arranging {
             Color.clear
                 .contentShape(Rectangle())
                 .onTapGesture { tapRow(placement) }
-                .simultaneousGesture(holdCarry(placement))
         }
     }
 
@@ -1220,89 +1220,8 @@ struct MyChapelView: View {
     }
 
     private func tapRow(_ placement: ChapelPlacement) {
-        // A hold let go where it lifted ends on a touch that is also a
-        // tap; it set the row down, no more
-        guard carrying == nil,
-              Date.now.timeIntervalSince(heldCarryEnded) > 0.35
-        else { return }
+        guard carrying == nil else { return }
         toggleSpan(placement.tile)
-    }
-
-    /// A hold, and then the drag it carries
-    private typealias HoldValue = SequenceGesture<LongPressGesture, DragGesture>.Value
-
-    /// A row lifted by holding it still: a short beat, as the page's own
-    /// hold is a longer one, cancelled by movement so that a swipe stays
-    /// the scroll's. Laid on beside the scroll rather than over it, so
-    /// the ScrollView keeps its pan until the hold is made, and the
-    /// scroll stands still while the row is carried. The hold gives no
-    /// point of its own, so the row lifts where it stands and follows the
-    /// drag's translation from there.
-    private func holdCarry(_ placement: ChapelPlacement) -> AnyGesture<HoldValue> {
-        let hold: SequenceGesture<LongPressGesture, DragGesture> =
-            LongPressGesture(minimumDuration: 0.28, maximumDistance: 10)
-                .sequenced(before: DragGesture(minimumDistance: 0, coordinateSpace: .named(Self.space)))
-
-        return AnyGesture(
-            hold
-                .updating($dragActive) { value, state, _ in
-                    state = Self.isCarrying(value)
-                }
-                .onChanged { value in holdChanged(value, placement) }
-                .onEnded { value in holdEnded(value, placement) }
-        )
-    }
-
-    /// Whether the hold has been made, and its drag is under way
-    private static func isCarrying(_ value: HoldValue) -> Bool {
-        if case .second(true, _) = value { return true }
-        return false
-    }
-
-    private func holdChanged(_ value: HoldValue, _ placement: ChapelPlacement) {
-        guard case .second(true, let drag) = value else { return }
-        let translation = drag?.translation ?? .zero
-
-        if carrying == nil {
-            guard let frame = tileFrames[placement.tile] else { return }
-            let anchor = CGPoint(x: frame.midX, y: frame.midY)
-            holdAnchor = anchor
-            beginCarry(
-                placement.tile,
-                fromTray: false,
-                span: placement.span,
-                at: CGPoint(x: anchor.x + translation.width, y: anchor.y + translation.height)
-            )
-        } else if carrying?.tile == placement.tile, let anchor = holdAnchor {
-            moveCarry(to: CGPoint(x: anchor.x + translation.width, y: anchor.y + translation.height))
-        }
-    }
-
-    private func holdEnded(_ value: HoldValue, _ placement: ChapelPlacement) {
-        guard case .second(true, let drag) = value,
-              carrying?.tile == placement.tile
-        else { return }
-        endHeldCarry(translation: drag?.translation ?? .zero)
-    }
-
-    /// Sets down a row lifted by a hold. Let go where it lifted, it is
-    /// put back as it was: a hold is never a tap, so it never resizes.
-    private func endHeldCarry(translation: CGSize) {
-        guard let carried = carrying else { return }
-        let landing = dropIndex
-
-        withAnimation(.easeOut(duration: 0.26)) {
-            carrying = nil
-            dropIndex = nil
-        }
-        carryPoint = nil
-        tilt = 0
-        lastDropBoundaryY = nil
-        holdAnchor = nil
-        heldCarryEnded = .now
-
-        guard abs(translation.width) + abs(translation.height) >= 10 else { return }
-        commitDrop(of: carried, at: landing)
     }
 
     private func trayDrag(_ placement: ChapelPlacement) -> AnyGesture<DragGesture.Value> {
@@ -1321,7 +1240,6 @@ struct MyChapelView: View {
         carryPoint = nil
         tilt = 0
         lastDropBoundaryY = nil
-        holdAnchor = nil
     }
 
     private func beginCarry(_ tile: ChapelTile, fromTray: Bool, span: Int, at point: CGPoint) {
@@ -1455,10 +1373,14 @@ struct MyChapelView: View {
 
     /// The card under the finger while something is carried.
     private var ghostOverlay: some View {
-        GeometryReader { _ in
+        GeometryReader { proxy in
             if let carrying, let carryPoint {
+                // Level with the column, following the finger only up
+                // and down. Centred on the finger, a row lifted by its
+                // grip hung half off the glass to the left, and the
+                // landing slot's words read beside it.
                 ChapelGhost(tile: carrying.tile, tilt: tilt)
-                    .position(carryPoint)
+                    .position(x: proxy.size.width / 2, y: carryPoint.y)
             }
         }
         .allowsHitTesting(false)

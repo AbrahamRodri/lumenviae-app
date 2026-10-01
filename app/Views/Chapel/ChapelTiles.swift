@@ -80,7 +80,8 @@ struct ChapelAct: Identifiable {
             guard let day else { return "Open the Consecration" }
             return day > 33 ? "Open Consecration Day" : "Open Day \(day)"
         case .morningPrayers:   return "Pray Morning Prayers"
-        case .angelus:          return PrayerBook.isEastertide(Date()) ? "Pray Queen of Heaven" : "Pray the Angelus"
+        case .angelus:
+            return PrayerBook.isEastertide(Date()) ? "Pray \(PrayerShortcut.angelusTitle)" : "Pray the Angelus"
         case .nightPrayers:     return "Pray Night Prayers"
         }
     }
@@ -2012,11 +2013,15 @@ struct ChapelLiturgyTile: View {
     }
 
     /// The day's rank in the missal's words ("Lesser Feast"), with the
-    /// colour left to the diamond beside it; "green vestments" when the
+    /// colour left to the diamond beside it; "Green vestments" when the
     /// day names a colour and no rank
     private var rankLine: String? {
-        today.proper?.info.rankLabel ?? vestmentWords
+        today.proper?.info.rankLabel ?? today.vestment.map { "\($0.name) vestments" }
     }
+
+    // The three below stand until the liturgy's own words reach this
+    // branch, when they give way to `MissalVestment.plainName`,
+    // `TodayInChurch.spokenMeta` and `CanonicalHour.plainName`
 
     /// "green vestments", for VoiceOver and for a day with no rank
     private var vestmentWords: String? {
@@ -2025,15 +2030,15 @@ struct ChapelLiturgyTile: View {
 
     /// The rank line as it is heard: "Lesser Feast, white vestments"
     private var rankSpoken: String? {
-        guard let rankLine else { return nil }
-        guard let vestmentWords, vestmentWords != rankLine else { return rankLine }
-        return "\(rankLine), \(vestmentWords)"
+        guard let rank = today.proper?.info.rankLabel else { return vestmentWords }
+        guard let vestmentWords else { return rank }
+        return "\(rank), \(vestmentWords)"
     }
 
     /// The hour in plain words, the Church's name second: "Evening
     /// Prayer" for Vespers, "Bedtime Prayer" for Compline — never "Night
     /// Prayers", which are the Prayer Book's. The plain-language rulings'
-    /// table, word for word; `CanonicalHour.plainName` is to carry it.
+    /// table, word for word.
     static func plainName(of hour: CanonicalHour) -> String {
         switch hour {
         case .matins:   return "Night Vigil"
@@ -2097,6 +2102,8 @@ struct ChapelLiturgyTile: View {
                             .foregroundColor(AppColors.cream.opacity(0.8))
                             .lineLimit(1)
                             .minimumScaleFactor(0.85)
+                            // "Feast, red vestments": the colour the
+                            // diamond shows, said in words
                             .accessibilityLabel(rankSpoken ?? rankLine)
                     }
                     .transition(.opacity)
@@ -2469,8 +2476,8 @@ struct ChapelLibraryTile: View {
 /// name, and a staff whose notes light as the chant is sung. The name
 /// opens the chant's own page (its score, its practice); the foot's act
 /// opens the Chant Library, where another is chosen. The tile holds
-/// whatever the library last sang, or this season's song to Mary until
-/// it has sung anything. The Latin name is set large, as the library
+/// whatever the library last sang, or tonight's song to Mary until it
+/// has sung anything. The Latin name is set large, as the library
 /// files it, with the English beneath it and in what VoiceOver hears.
 struct ChapelChantTile: View {
 
@@ -2488,11 +2495,11 @@ struct ChapelChantTile: View {
     }
 
     /// What stands under the chant's name: a failure to play it, else its
-    /// English name and the setting it is sung in — "Hail, Holy Queen ·
-    /// Simple tone"
+    /// English name and the setting it is sung in, as the Chant Library
+    /// sets a setting mid-line — "Hail, Holy Queen · simple melody"
     private var statusLine: String {
         if let error = player.errorMessage { return error }
-        let parts = [englishName, chant.distinctSetting].compactMap { $0 }
+        let parts = [englishName, chant.settingMidLine].compactMap { $0 }
         return parts.isEmpty ? (chant.setting ?? chant.englishTitle) : parts.joined(separator: " \u{00B7} ")
     }
 
@@ -2502,12 +2509,12 @@ struct ChapelChantTile: View {
         englishName.map { "\($0) (\(chant.latinTitle))" } ?? chant.latinTitle
     }
 
-    /// The title line's note: that the chant is this season's song to
-    /// Mary, when it is. How far the voice has come is the staff's playhead,
+    /// The title line's note: that the chant is tonight's song to Mary,
+    /// in the Chant Library's words, when it is. How far the voice has come is the staff's playhead,
     /// not a clock: read here, the time changed every second and redrew
     /// the whole tile with it.
     private var note: String? {
-        ChantCatalog.antiphonOfTheSeason()?.id == chant.id ? "This season\u{2019}s song to Mary" : nil
+        ChantCatalog.antiphonOfTheSeason()?.id == chant.id ? "Tonight\u{2019}s song to Mary" : nil
     }
 
     var body: some View {

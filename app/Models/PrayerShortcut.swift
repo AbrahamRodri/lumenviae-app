@@ -48,9 +48,16 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
         case .office:           return "Hours of Prayer"
         case .consecration:     return "Consecration to Mary"
         case .morningPrayers:   return "Morning Prayers"
-        case .angelus:          return PrayerBook.isEastertide(Date()) ? "Queen of Heaven (Regina Cæli)" : "The Angelus"
+        case .angelus:          return Self.angelusTitle
         case .nightPrayers:     return "Night Prayers"
         }
+    }
+
+    /// The Angelus, or in Eastertide the prayer said in its place, by the
+    /// Prayers page's own title for it (`PrayerOrder.title(on:)`), so the
+    /// two never name the season's prayer in two ways
+    static var angelusTitle: String {
+        PrayerBook.order(PrayerBook.angelusOrderID)?.title(on: Date()) ?? "The Angelus"
     }
 
     /// The static line under the title. The Rosary's forms name the
@@ -134,7 +141,7 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
         case .office:           return "Hours of Prayer"
         case .consecration:     return "Consecration to Mary"
         case .morningPrayers:   return "Morning Prayers"
-        case .angelus:          return PrayerBook.isEastertide(Date()) ? "Queen of Heaven" : "The Angelus"
+        case .angelus:          return Self.angelusTitle
         case .nightPrayers:     return "Night Prayers"
         }
     }

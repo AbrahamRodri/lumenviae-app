@@ -144,12 +144,13 @@ nonisolated struct ChapelGridLayout: Layout {
 
 /// A section as it stands while the page is arranged: folded to one
 /// 58pt row so the whole page fits the glass and a section can be
-/// carried past the others without scrolling. The grip says it moves;
-/// the row says how wide it stands — FULL in a capsule at full width,
-/// HALF under the name at half — and a tap anywhere on it switches the
-/// two. The ✕ that hides it is laid over its trailing edge by the page
-/// (`ChapelHideButton`), above the carry gesture, so the row keeps room
-/// for it here.
+/// carried past the others without scrolling. The grip is what moves
+/// it — the page lays the carry over the grip alone, so a swipe begun
+/// anywhere else on the row scrolls the list; the row says how wide it
+/// stands — FULL in a capsule at full width, HALF under the name at
+/// half — and a tap anywhere on it switches the two. The ✕ that hides
+/// it is laid over its trailing edge by the page (`ChapelHideButton`),
+/// above the row's tap, so the row keeps room for it here.
 struct ChapelArrangeRow: View {
 
     let placement: ChapelPlacement
@@ -236,10 +237,9 @@ struct ChapelGrip: View {
 // MARK: - ChapelHideButton
 
 /// The ✕ that hides a section — into the tray, never a deletion. Laid
-/// over the arrange row's trailing edge, above the carry gesture: it is
-/// the only control that hides a section, and it sits inside a cell
-/// that is running a drag — a miss here does not do nothing, it starts
-/// carrying the section.
+/// over the arrange row's trailing edge, above the row's tap: it is the
+/// only control that hides a section, and a miss here does not do
+/// nothing, it turns the section full or half.
 struct ChapelHideButton: View {
 
     let tile: ChapelTile

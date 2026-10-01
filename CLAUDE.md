@@ -367,8 +367,9 @@ enter arrange mode, drawn from the Arrange board of the earlier
 "Chapel Page Redesign" draft, since the Chapel Redesign draws none:
 the page's head (the day strip, the focus and its gold act) crossfades
 to a REARRANGE head with DONE — the page's one gold act while
-arranging — over one line saying how ("Hold a section to move it. Tap
-one to make it full or half width."), held at the top of the glass over the
+arranging — over one line saying how ("Drag a section by its handle to
+move it. Tap one to make it full or half." — in words, since the
+fonts carry no ⠿), held at the top of the glass over the
 page's deep ground, opaque behind every word and fading only in a band
 beneath them, so a scrolled row never shows through the line (the scroll keeps its room, and drops the band's
 32pt inset while arranging so the rows begin under the head, not fifty
@@ -378,15 +379,17 @@ every section folds to a 58pt row (`ChapelArrangeRow`: a grip, its
 name, FULL in a capsule at full width or HALF under the name at half,
 and a ✕ laid over its trailing edge above the carry gesture,
 `ChapelHideButton`), so most of the page fits the glass and the rest
-is a short scroll, begun anywhere: a row is carried by its grip at
-once (a 44pt hit area of its own), or by a hold anywhere on it (0.28s,
-let go by 10pt of movement, `MyChapelView.holdCarry`, laid beside the
-scroll so the ScrollView keeps its pan), so a swipe on a row scrolls
-the list, and the scroll stands still while a row is carried. The whole
-row once carried at the first touch, and a swipe meant to scroll moved
-a section to the top. A hold let go where it lifted sets the row down
-as it was and never resizes it. On a 6.1" phone the last rows of nine
-stand under the tray until scrolled to. A mode's
+is a short scroll, begun anywhere: a row is carried by its grip alone,
+at once (a 44pt hit area of its own, the full height of the row), and
+the rest of the row answers only to a tap, so a swipe begun on a row
+scrolls the list; the scroll stands still while a row is carried. The
+whole row once carried at the first touch, and a swipe meant to scroll
+moved a section to the top; then a hold anywhere on it carried it
+(a 0.28s long press sequenced before a drag, laid beside the scroll),
+and the scroll's pan never began from a row at all — a long press and
+then a drag inside a ScrollView is not to be relied on, so it must not
+come back. On a 6.1" phone the last rows of nine stand under the tray
+until scrolled to. A mode's
 drawing gives way to the other's at once while the arriving one fades
 in (`MyChapelView.modeSwap`): a full tile and its row crossfading in
 one slot held the tile's height until the fade had ended, and the page
@@ -394,8 +397,11 @@ then jumped. The tab bar yields to a tray of HIDDEN SECTIONS
 (`ChapelTray`, chips in a `ChapelChipFlow`; `router.chapelArranging` is
 how ContentView knows), whose measured height the page's foot keeps
 clear of, however many sections it holds.
-A row is carried (it lifts with a light tick, MOVING, 318 wide, leaning up to ±9° into the
-travel; a dashed slot opens at the landing, LET GO TO PLACE IT HERE),
+A row is carried (it lifts with a light tick, MOVING, 318 wide, level
+with the column and following the finger up and down, leaning up to
+±9° into the travel — centred on the finger, a row lifted by its grip
+hung half off the glass; a dashed slot opens at the landing, LET GO TO
+PLACE IT HERE),
 tapped to switch between its section's **two authored layouts** (full
 `span 2` / half `span 1` — each a different drawing, never the full
 squeezed), or hidden; a chip is tapped back onto the page's end or
@@ -490,9 +496,9 @@ cloths over "Take up and read · choose a book" and ALL BOOKS; no bar of the boo
 one, and a share of a book is a judgement of the reader the shelf
 never makes), **Today in the Church** ("The Church" at half, where
 the whole name has no room; on the deep ground, the date on a
-calendar leaf beside the feast with its rank — "Lesser Feast", the
-vestment's diamond before it, the colour said to VoiceOver alone as
-"white vestments" — over a ledger of the Church's two books for the
+calendar leaf beside the feast with its rank — "Lesser Feast"
+(`rankLabel`), the vestment's diamond before it, the colour said to
+VoiceOver alone ("Lesser Feast, white vestments") — over a ledger of the Church's two books for the
 day: THE MASS, Today's Mass over the first words of the day's entrance
 chant ("Entrance chant: Gaudeámus omnes"), in Latin, read from the
 missal's proper — no more than
@@ -522,10 +528,11 @@ Scripture, Carlo Acutis — as a ruled index of doors, each name over a
 line saying what it holds, with no glyphs, over Augustine's line; the
 half keeps the three books and makes SEE MORE a door to Explore),
 **Chant** (the Chant Library's player on cloth: the chant it last sang,
-or this season's song to Mary until it has sung one, which the title
+or tonight's song to Mary until it has sung one, which the title
 line says — its disc plays it ("Play Hail, Holy Queen (Salve Regina)"
-to VoiceOver), its name, the Latin over the English and the setting,
-opens the chant's page, and BROWSE CHANTS (BROWSE at half) opens the
+to VoiceOver), its name, the Latin over the English and the setting
+as the library sets one mid-line (`Chant.settingMidLine`, "Hail, Holy
+Queen · simple melody"), opens the chant's page, and BROWSE CHANTS (BROWSE at half) opens the
 library; beneath, a staff of
 square notes in one fixed contour, the same for every chant and never
 lit by the voice — the app holds no pitches, so it is a picture of
@@ -643,11 +650,19 @@ Mary, Consecration to Mary, Queen of Heaven (Regina Cæli) in
 Eastertide — and the focus block's gold act names the prayer without
 repeating the title over it (the three forms' act is PRAY THE ROSARY
 or CONTINUE THE ROSARY, the consecration's OPEN DAY 14), so every act
-fits its button on one line at `.xLarge`. The hours' plain names on
-Today in the Church (`ChapelLiturgyTile.plainName(of:)`) are the
-rulings' table word for word, until `CanonicalHour.plainName` carries
-it; the rank comes from `MissalProper.rankLabel` and the day's name
-from `TodayInChurch`, both the liturgy's to word. The journal's things
+fits its button on one line at `.xLarge`. Words another area owns are
+read from it, never written again here: the rank (`rankLabel`) and
+the day (`TodayInChurch`) are the liturgy's, and so will be the hours'
+plain names and the colour in words — until `CanonicalHour.plainName`,
+`MissalVestment.plainName` and `TodayInChurch.spokenMeta` reach this
+branch, the Liturgy tile keeps the rulings' table and its own
+"white vestments" (`ChapelLiturgyTile.plainName(of:)`), to give way
+to them then; when each of the book's three orders is said
+(`PrayerOrder.occasion`), the season's song to Mary
+(`MarianAntiphon.name`) and the Angelus's Eastertide name
+(`PrayerOrder.title(on:)`, which the Pray tray and the rule read
+through `PrayerShortcut.angelusTitle`) are the Prayers page's; a
+chant's setting mid-line (`Chant.settingMidLine`) is the library's. The journal's things
 are reflections, never entries; a new one's title starts empty under
 "Title (optional)", and one with no title reads "Reflection". The
 words "Arrange" and "Rearrange" stay.
