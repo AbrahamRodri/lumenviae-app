@@ -75,6 +75,11 @@ final class TodayInChurch {
         guard let fetched = try? await api.fetchPropers(day: day), !fetched.isEmpty else { return }
 
         diskCache.saveProper(fetched, for: day)
+
+        // A fetch asked before midnight and answered after it is still
+        // that day's feast, kept on disk for it, but no longer today's:
+        // set here, it would stand over the new day's until the next load
+        guard MissalAPIService.dayString(for: .now) == day else { return }
         proper = fetched.first
         loadedDay = day
     }

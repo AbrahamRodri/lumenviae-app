@@ -393,7 +393,11 @@ deleted: the tray always holds what's off the page, and a stowed flame
 keeps counting. The tiles once swayed ±0.5° in arrange mode, wore a ✕
 badge at their shell's corner, and were carried at full size down a
 page three thousand points long; the folded rows replaced all three.
-Reduce Motion drops the lifted row's lean and the slot's growth.
+Reduce Motion drops the lifted row's lean and the slot's growth, and
+the change of mode is a fade alone (`MyChapelView.modeChange`, and
+`beginChapelArranging(reduceMotion:)`, which every hold passes): the
+tiles do not fold nor the rows slide to their places, and the tray
+fades in rather than rising.
 
 Above the grid, fixed: a day strip (liturgical-colour diamond from the
 missal vestment + weekday · feast via `TodayInChurch`) and the focus
@@ -468,14 +472,19 @@ never makes), **Liturgy** (on the deep ground, the date on a calendar
 leaf beside the feast with its class and its colour — "III class ·
 white", the vestment's diamond before it — over a ledger of the
 Church's two books for the day: HOLY MASS by the first words of the
-day's Introit, in Latin, read from the missal's proper, and OFFICE by
+day's Introit, in Latin, read from the missal's proper — no more than
+three, and never ending on a word that leaves it hanging
+(`TodayInChurch.incipit(of:)`, "Gaudeámus omnes", not "Gaudeámus omnes
+in"; `appTests/ChapelLiturgyTests.swift`) — and OFFICE by
 the hour it is now, from `CanonicalClock` — the board said the next
 hour, but the Office opens on the present one; until the propers are
 known the leaf names "The Mass of the Day" and the Mass row "Daily
 Missal"; the page loads the day again when it comes back to the
-foreground and at every turn of the canonical hour, midnight included,
+foreground, refreshing `CanonicalClock` first as every page that shows
+the hour must, and at every turn of the canonical hour, midnight included,
 and `TodayInChurch` lets go of the last day's feast before it looks for
-the new one's, so a Chapel left open overnight — even offline — never
+the new one's, and sets no feast fetched for a day that has ended while
+it was asked, so a Chapel left open overnight — even offline — never
 sets today's date beside yesterday's feast; split out of the Library so one heading is true of everything
 beneath it; a layout saved before it existed seats it beside the
 Library, at the Library's width, and on the page only if the Library
@@ -507,7 +516,9 @@ opens on a quotation (`VersalCut.opensOnQuotation`: a lone apostrophe,
 opens on no letter; a passage kept from a book is quoted without its
 citation, and any other entry is the journal's `previewText`, newlines
 flattened; when it was written rides the title line — "Today",
-"Yesterday", the weekday through the week, then the date — and OPEN
+"Yesterday", the weekday through the week, then the date, turning at
+midnight while the page is open (the tile reads `CanonicalClock`, whose
+Matins begins at midnight, since the journal's day is the calendar's) — and OPEN
 THE JOURNAL the foot; at half the day is the foot's note), **Prayer
 Streak** (the flame as an ember in the dark; stands directly under
 Today, because a record of days prayed belongs beside the day it

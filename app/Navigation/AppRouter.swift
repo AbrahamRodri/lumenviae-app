@@ -272,10 +272,13 @@ final class AppRouter {
 
     /// Begins arrange mode from wherever on the Chapel it is asked for —
     /// a hold on the page, on a tile, on the quiet parts of a tile full
-    /// of doors, or the coach ribbon and the foot. Idempotent.
-    func beginChapelArranging() {
+    /// of doors, or the coach ribbon and the foot. Idempotent. Under
+    /// Reduce Motion the change carries no animation, so the tiles do not
+    /// fold nor the rows slide to their places; the Chapel fades in what
+    /// arrives on transitions of its own.
+    func beginChapelArranging(reduceMotion: Bool) {
         guard !chapelArranging else { return }
-        withAnimation(.easeOut(duration: 0.25)) {
+        withAnimation(reduceMotion ? nil : .easeOut(duration: 0.25)) {
             chapelArranging = true
         }
     }

@@ -445,12 +445,13 @@ private struct ChapelHoldToArrange: ViewModifier {
     let active: Bool
 
     @Environment(AppRouter.self) private var router
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @ViewBuilder
     func body(content: Content) -> some View {
         if active {
             content.onLongPressGesture(minimumDuration: 0.45, maximumDistance: 8) {
-                router.beginChapelArranging()
+                router.beginChapelArranging(reduceMotion: reduceMotion)
             }
         } else {
             content
@@ -491,6 +492,7 @@ struct ChapelTileFrame<Content: View, Floor: View>: View {
     let floor: Floor
 
     @Environment(AppRouter.self) private var router
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     /// A finger resting on a tile that opens on a tap: the card press
     /// settle, drawn here because the tile is not a Button
@@ -541,7 +543,7 @@ struct ChapelTileFrame<Content: View, Floor: View>: View {
                 .onTapGesture(perform: onTap)
                 .onLongPressGesture(minimumDuration: 0.45, maximumDistance: 8) {
                     pressed = false
-                    router.beginChapelArranging()
+                    router.beginChapelArranging(reduceMotion: reduceMotion)
                 } onPressingChanged: { isPressing in
                     pressed = isPressing
                 }
@@ -2228,11 +2230,15 @@ private extension TodayInChurch {
         }
         return nil
     }
+}
 
+extension TodayInChurch {
     /// The opening words of a line, up to its first stop and no more than
-    /// three of them. The marks a missal prints before a text — ℣. ℟.
-    /// Ant. — are taken off first: cut at the first stop with them still
-    /// on, a line opening "Ant. Gaudeamus" named its Mass "Ant".
+    /// three of them, never ending on a small word that leaves the
+    /// sentence hanging: "Gaudeámus omnes", not "Gaudeámus omnes in". The
+    /// marks a missal prints before a text — ℣. ℟. Ant. — are taken off
+    /// first: cut at the first stop with them still on, a line opening
+    /// "Ant. Gaudeamus" named its Mass "Ant".
     static func incipit(of line: String) -> String? {
         var text = line.trimmingCharacters(in: .whitespaces)
         for mark in ["℣.", "℟.", "V.", "R.", "Ant."] where text.hasPrefix(mark) {
@@ -2241,11 +2247,27 @@ private extension TodayInChurch {
 
         let stops = CharacterSet(charactersIn: ":;,.!?*")
         let opening = text.components(separatedBy: stops).first ?? text
-        let words = opening
-            .split(whereSeparator: \.isWhitespace)
-            .prefix(3)
+        var words = Array(opening.split(whereSeparator: \.isWhitespace).prefix(3))
+        while words.count > 1, let last = words.last, leavesHanging(last) {
+            words.removeLast()
+        }
         guard !words.isEmpty else { return nil }
         return words.joined(separator: " ")
+    }
+
+    /// The prepositions and conjunctions an incipit does not end on
+    private static let hangingWords: Set<String> = [
+        "in", "ad", "et", "de", "cum", "a", "ab", "ex",
+        "per", "pro", "sub", "super", "qui", "quia", "ut"
+    ]
+
+    /// Whatever its case or accent: the missal prints "súper" and "In"
+    private static func leavesHanging(_ word: Substring) -> Bool {
+        let bare = word
+            .folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil)
+            .trimmingCharacters(in: .punctuationCharacters)
+            .lowercased()
+        return hangingWords.contains(bare)
     }
 }
 
@@ -2632,6 +2654,12 @@ struct ChapelReflectionsTile: View {
     }
 
     var body: some View {
+        // Read so the tile is drawn again when the canonical hour turns,
+        // Matins at midnight among them: the note is the journal's own
+        // calendar day, and on a page left open it said "Today" of an
+        // entry written yesterday until something else redrew it
+        let _ = CanonicalClock.shared.hour
+
         if let latest {
             let text = tileText(latest)
             let day = Self.dayNote(latest.createdAt)

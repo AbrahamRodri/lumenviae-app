@@ -151,13 +151,13 @@ struct MyChapelView: View {
                             if arranging {
                                 arrangeHeader
                                     .hidden()
-                                    .transition(Self.modeSwap)
+                                    .transition(modeTransition)
                             } else {
                                 pageHead(acts: acts, next: next)
-                                    .transition(Self.modeSwap)
+                                    .transition(modeTransition)
                             }
                         }
-                        .animation(.easeOut(duration: 0.25), value: arranging)
+                        .animation(modeChange, value: arranging)
                         .id(Self.top)
 
                         grid(acts: acts)
@@ -166,7 +166,11 @@ struct MyChapelView: View {
 
                         if !arranging {
                             footControl
-                                .transition(.opacity.combined(with: .scale(scale: 0.96)))
+                                .transition(
+                                    reduceMotion
+                                        ? Self.stillModeSwap
+                                        : .opacity.combined(with: .scale(scale: 0.96))
+                                )
                         }
                     }
                     .padding(.bottom, arranging ? max(190, trayHeight + 20) : 190)
@@ -250,6 +254,10 @@ struct MyChapelView: View {
         // Liturgy's leaf and the feast beside it never disagree
         .onChange(of: scenePhase) { _, phase in
             guard phase == .active else { return }
+            // The hour as well, as every page that shows it must: its
+            // sleeping task may wake late after a suspension, and the
+            // Liturgy's Office row would name the hour the page was left on
+            CanonicalClock.shared.refresh()
             Task { await today.load() }
         }
         // And at the turn of the hour while it is open, which takes in
@@ -308,6 +316,25 @@ struct MyChapelView: View {
     /// page then jumped.
     private static let modeSwap = AnyTransition.asymmetric(insertion: .opacity, removal: .identity)
 
+    /// The same swap under Reduce Motion, where the change of mode
+    /// carries no animation (`modeChange`): the fade brings its own, so
+    /// what arrives still fades in where it stands
+    private static let stillModeSwap = AnyTransition.asymmetric(
+        insertion: .opacity.animation(.easeOut(duration: 0.25)),
+        removal: .identity
+    )
+
+    private var modeTransition: AnyTransition {
+        reduceMotion ? Self.stillModeSwap : Self.modeSwap
+    }
+
+    /// The change of mode's own beat. Under Reduce Motion there is none:
+    /// the tiles do not fold, nor the rows slide to their places — the
+    /// page is redrawn where it stands, and only fades
+    private var modeChange: Animation? {
+        reduceMotion ? nil : .easeOut(duration: 0.25)
+    }
+
     /// The arranging head held at the top of the glass, over the page's
     /// own ground, so the rows scroll away under it rather than through
     /// it — DONE is the only way out of arranging, and the tab bar has
@@ -331,7 +358,7 @@ struct MyChapelView: View {
 
             Spacer(minLength: 0)
         }
-        .transition(.opacity)
+        .transition(reduceMotion ? AnyTransition.opacity.animation(.easeOut(duration: 0.25)) : .opacity)
         .zIndex(20)
         // Drawn after the scroll, it would be read after every row
         .accessibilitySortPriority(1)
@@ -825,13 +852,13 @@ struct MyChapelView: View {
                 // others rather than dragged down a page three thousand
                 // points long
                 ChapelArrangeRow(placement: placement)
-                    .transition(Self.modeSwap)
+                    .transition(modeTransition)
             } else {
                 tileContent(placement, acts: acts)
-                    .transition(Self.modeSwap)
+                    .transition(modeTransition)
             }
         }
-        .animation(.easeOut(duration: 0.25), value: arranging)
+        .animation(modeChange, value: arranging)
         .overlay {
             if arranging {
                 Color.clear
@@ -985,11 +1012,11 @@ struct MyChapelView: View {
     // MARK: - Arrange mode
 
     private func enterArrange() {
-        router.beginChapelArranging()
+        router.beginChapelArranging(reduceMotion: reduceMotion)
     }
 
     private func endArrange() {
-        withAnimation(.easeOut(duration: 0.25)) {
+        withAnimation(modeChange) {
             router.chapelArranging = false
         }
         carrying = nil
@@ -1246,7 +1273,12 @@ struct MyChapelView: View {
             }
         }
         .zIndex(30)
-        .transition(.move(edge: .bottom).combined(with: .opacity))
+        // Risen from below, but only faded under Reduce Motion
+        .transition(
+            reduceMotion
+                ? AnyTransition.opacity.animation(.easeOut(duration: 0.25))
+                : .move(edge: .bottom).combined(with: .opacity)
+        )
     }
 
     // MARK: - Ghost
