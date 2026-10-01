@@ -90,7 +90,7 @@ struct BookPrayerView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 RibbonToggle(prayerID: currentID) { kept in
                     say(kept
-                        ? "Kept. It waits on the Prayer Book's first page."
+                        ? "Kept. It waits under Saved, on Prayers."
                         : "The ribbon is taken out.")
                 }
             }

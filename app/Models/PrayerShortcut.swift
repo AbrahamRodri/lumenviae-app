@@ -96,7 +96,7 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
     /// wears its own sign but Today's Mysteries, which wears the day's
     /// mysteries' own emblem: the row names them, and the page it opens
     /// is theirs. It wore the open book, which the reading shelf's door
-    /// and the Journal tab wear too.
+    /// and the Journal wear too.
     func icon(today: MysteryCategory) -> String {
         switch self {
         case .todaysRosary:     return "lv-rosary"

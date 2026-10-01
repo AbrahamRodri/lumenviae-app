@@ -168,7 +168,7 @@ struct PrayerHourStations: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(QuietGlyphButtonStyle())
-        .accessibilityElement(children: .ignore)
+        .accessibilityElement(children: .combine)
         .accessibilityLabel("\(order.title(on: now)), \(Self.spoken(standing))")
         .accessibilityAddTraits(shown ? [.isButton, .isSelected] : .isButton)
         .accessibilityHint(shown ? "" : "Shows it above")
@@ -231,10 +231,9 @@ struct MarianSeasonCard: View {
                 .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline)
         )
         .contentShape(RoundedRectangle(cornerRadius: 16))
-        .accessibilityElement(children: .ignore)
+        .accessibilityElement(children: .combine)
         .accessibilityLabel("This season: \(prayer.title). Said at the end of the day, \(antiphon.season).")
         .accessibilityHint("Opens the prayer")
-        .accessibilityAddTraits(.isButton)
     }
 }
 
@@ -323,7 +322,7 @@ struct PrayersLedgerRow: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(SacredCardButtonStyle())
-        .accessibilityElement(children: .ignore)
+        .accessibilityElement(children: .combine)
         .accessibilityLabel(spokenLabel(byHeart: byHeart, kept: kept))
         .accessibilityAddTraits(.isButton)
     }
@@ -399,7 +398,7 @@ struct SavedPrayerCard: View {
                 Label("Remove from Saved", systemImage: "bookmark.slash")
             }
         }
-        .accessibilityElement(children: .ignore)
+        .accessibilityElement(children: .combine)
         .accessibilityLabel([prayer.title, topic].compactMap { $0 }.joined(separator: ", "))
         .accessibilityAddTraits(.isButton)
         .accessibilityAction(named: "Remove from Saved") {
@@ -511,7 +510,7 @@ struct PrayersOccasionRow: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(SacredCardButtonStyle())
-        .accessibilityElement(children: .ignore)
+        .accessibilityElement(children: .combine)
         .accessibilityLabel("\(title), \(order.occasion)\(offered ? ", offered today" : "")")
         .accessibilityAddTraits(.isButton)
     }
@@ -560,7 +559,7 @@ struct PrayersTopicCard: View {
             .contentShape(RoundedRectangle(cornerRadius: 14))
         }
         .buttonStyle(SacredCardButtonStyle())
-        .accessibilityElement(children: .ignore)
+        .accessibilityElement(children: .combine)
         .accessibilityLabel("Topic: \(chapter.topic), \(count) prayers")
         .accessibilityAddTraits(.isButton)
     }

@@ -120,7 +120,7 @@ struct PrayerBookView: View {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
                     head
-                        .padding(.top, isTabRoot ? 16 : 4)
+                        .padding(.top, 4)
                         .devotionalEntrance()
 
                     // The three parts and the search's results take turns
@@ -154,9 +154,9 @@ struct PrayerBookView: View {
                 .padding(.bottom, isTabRoot ? 130 : 56)
             }
             .scrollDismissesKeyboard(.interactively)
-            // At the root the page begins below the status bar and only
-            // dissolves under it; pushed, it is held clear of the Back
-            .topChromeFade(inset: isTabRoot ? 0 : nil)
+            // At the root the page dissolves under the status bar, as the
+            // Chapel's does; pushed, under the Back, and held clear of it
+            .topChromeFade(height: isTabRoot ? 32 : 48)
         }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active { now = Date() }
@@ -431,7 +431,7 @@ struct PrayerBookView: View {
             // The orders of one place give way to another's in one slot
             ZStack(alignment: .top) {
                 VStack(spacing: 0) {
-                    let orders = PrayerBook.orders(at: place)
+                    let orders = PrayerBook.ordersKept(at: place)
                     ForEach(Array(orders.enumerated()), id: \.element.id) { i, order in
                         PrayersOccasionRow(
                             order: order,

@@ -1887,7 +1887,7 @@ write concurrent code here:
   tab of its own, **Prayers**, in the Journal's old place in the bar (the
   "Prayer Book Rethink" design, its Combined boards). Every other door
   turns to that tab rather than pushing a second copy of the book:
-  home's hour row, Explore's section and search (which finds prayers by
+  home's hour row, Explore's section (titled Prayers) and search (which finds prayers by
   name, Latin name or words), the Chapel's Prayer Book tile, a prayer's
   order page and What's New all `push(.prayerBook)`, which
   `AppRouter.push` answers with `switchTo(.prayers)`. The Pray tray (the
@@ -1943,8 +1943,8 @@ write concurrent code here:
   only the prayer), and the prayers found, each with its topic ("Mary ·
   this season" for the season's antiphon). Morning and Night Prayers
   have no mystery of their own: their cards name paintings
-  (`prayerbook_morning`, `prayerbook_night`) that are not yet in the
-  catalog, and until they are hang the Presentation and Gethsemane
+  (`hour_morning`, `hour_night`, names the Chant Library's hours
+  share) that are not yet in the catalog, and until they are hang the Presentation and Gethsemane
   (`PrayerBookPainting.resolvedAsset`). Saved's cards and every surface
   on the page are outlined, never filled, where the design drew them
   filled; the ribbon is the prayer page's red silk, where the design

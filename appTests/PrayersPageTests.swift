@@ -29,7 +29,7 @@ struct PrayersPageTests {
         #expect(Set(placed).count == placed.count, "an order stands in two places")
         #expect(Set(placed) == Set(PrayerBook.occasionOrders.map(\.id)))
         for place in PrayerOccasionPlace.allCases {
-            #expect(PrayerBook.orders(at: place).count == place.orderIDs.count, "\(place) names an order the book lacks")
+            #expect(PrayerBook.ordersKept(at: place).count == place.orderIDs.count, "\(place) names an order the book lacks")
         }
     }
 

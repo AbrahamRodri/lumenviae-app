@@ -200,7 +200,7 @@ struct ExploreView: View {
 
         // The Prayer Book: the day's three hours on one line, the hour it
         // is lit, and the orders kept for an occasion as a row to hand
-        section("The Prayer Book", link: ("Open", { router.push(.prayerBook) })) {
+        section("Prayers", link: ("Open", { router.push(.prayerBook) })) {
             prayerBookShelf
         }
 
@@ -542,7 +542,7 @@ struct ExploreView: View {
                          matchText: "marian theology library dogmas apparitions saints") { router.push(.marianLibrary) },
             LibraryEntry(icon: "ch-monstrance", title: "Carlo Acutis",
                          matchText: "carlo acutis eucharist digital altar saint") { router.push(.carloAcutis) },
-            LibraryEntry(icon: "ch-praying-hands", title: "The Prayer Book",
+            LibraryEntry(icon: "ch-praying-hands", title: "Prayers",
                          matchText: "prayer book prayers enchiridion morning night angelus grace confession examination conscience mass communion litany litanies marian our lady latin novena") { router.push(.prayerBook) },
             LibraryEntry(icon: "ph-music-note", title: "The Chant Library",
                          matchText: "chant chants gregorian sung song songs hymn hymns latin score scores music antiphon sing") { router.push(.chantLibrary) },

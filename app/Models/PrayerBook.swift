@@ -492,7 +492,7 @@ enum PrayerBook {
 
     /// Where the reader is when they pray an occasion's order — the
     /// Prayers page's four places, each with the orders kept there
-    static func orders(at place: PrayerOccasionPlace) -> [PrayerOrder] {
+    static func ordersKept(at place: PrayerOccasionPlace) -> [PrayerOrder] {
         place.orderIDs.compactMap { order($0) }
     }
 

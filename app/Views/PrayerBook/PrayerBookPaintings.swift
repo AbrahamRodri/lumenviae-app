@@ -6,8 +6,9 @@
 //  the antiphon of Our Lady the season sings. The Angelus is the
 //  Annunciation it remembers; the antiphons are the mysteries they sing
 //  of. Morning and Night Prayers have no mystery of their own, so each
-//  names a painting of its own (`prayerbook_morning`,
-//  `prayerbook_night`) and, until that painting is in the catalog,
+//  names a painting of its own (`hour_morning`, `hour_night`, the names
+//  the Chant Library's hours share) and, until that painting is in the
+//  catalog,
 //  hangs the mystery nearest it: the Presentation, a life offered as the
 //  morning offers the day, and Gethsemane, where He asked the disciples
 //  to watch and pray through the night.
@@ -47,13 +48,13 @@ struct PrayerBookPainting: Equatable {
         switch order.id {
         case PrayerBook.morningOrderID:
             return PrayerBookPainting(
-                asset: "prayerbook_morning",
+                asset: "hour_morning",
                 fallback: "joyful_presentation",
                 caption: "The Presentation in the Temple"
             )
         case PrayerBook.nightOrderID:
             return PrayerBookPainting(
-                asset: "prayerbook_night",
+                asset: "hour_night",
                 fallback: "sorrowful_agony",
                 focal: UnitPoint(x: 0.5, y: 0.3),
                 caption: "The Agony in the Garden"

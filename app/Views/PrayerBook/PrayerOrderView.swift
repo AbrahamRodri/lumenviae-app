@@ -87,7 +87,7 @@ struct PrayerOrderView: View {
                         .frame(width: 44, height: 44)
                 }
                 .buttonStyle(QuietGlyphButtonStyle())
-                .accessibilityLabel("The Prayer Book")
+                .accessibilityLabel("Prayers")
             }
         }
         .onAppear { now = Date() }
