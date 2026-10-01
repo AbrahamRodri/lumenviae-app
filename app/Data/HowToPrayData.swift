@@ -32,7 +32,7 @@ enum HowToPrayData {
         RosaryStep(id: 7, title: "Pray ten Hail Marys", detail: "On the ten small beads of the decade, keeping the mystery before your mind's eye.", prayerIDs: ["hail_mary"]),
         RosaryStep(id: 8, title: "Close the decade", detail: "On the next large bead, before its Our Father: the Glory Be, then the Fatima Prayer, which Our Lady asked for at Fatima.", prayerIDs: ["glory_be", "fatima_prayer"]),
         RosaryStep(id: 9, title: "Pray the other four decades", detail: "Announce each mystery in turn, then the Our Father, ten Hail Marys, the Glory Be and the Fatima Prayer."),
-        RosaryStep(id: 10, title: "Conclude", detail: "Pray the Hail, Holy Queen and the closing prayer, and end with the Sign of the Cross. Many add the Memorare, the Prayer to Saint Michael, or an Our Father, Hail Mary and Glory Be for the Holy Father before the last Sign of the Cross.", prayerIDs: ["hail_holy_queen", "rosary_closing_prayer"])
+        RosaryStep(id: 10, title: "Conclude", detail: "Pray the Hail, Holy Queen and the closing prayer, and end with the Sign of the Cross. Many add the Memorare, the Prayer to Saint Michael, or an Our Father, Hail Mary and Glory Be for the Pope's intentions before the last Sign of the Cross.", prayerIDs: ["hail_holy_queen", "rosary_closing_prayer"])
     ]
 
     // MARK: - Montfort's Counsel

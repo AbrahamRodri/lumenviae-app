@@ -129,7 +129,7 @@ enum RosaryMap {
         ),
         Anatomy(
             id: "medal",
-            name: "The centrepiece",
+            name: "The medal",
             prayed: "Where the loop begins, and where the Rosary is closed with the Hail, Holy Queen.",
             parts: [.medal]
         ),
@@ -289,18 +289,18 @@ enum GuidedRosary {
                 decade == 0
                     ? "Move on to the next large bead. Before its Our Father, close the decade: the Glory Be, and the prayer Our Lady asked for at Fatima. You have prayed one decade."
                     : decade == 4
-                        ? "Move on to the centrepiece, and close the last decade."
+                        ? "Move on to the medal, and close the last decade."
                         : "On the next large bead, before its Our Father, close the decade.",
                 prayers: ["glory_be", "fatima_prayer"],
                 decade: decade)
         }
 
-        // The close, on the centrepiece and the crucifix
-        add(.medal, "The centrepiece",
-            "You have come round to the centrepiece. Hold it, and greet Our Lady as Queen and Mother.",
+        // The close, on the medal and the crucifix
+        add(.medal, "The medal",
+            "You have come round to the medal. Hold it, and greet Our Lady as Queen and Mother.",
             prayers: ["hail_holy_queen"],
             closing: true)
-        add(.medal, "The centrepiece",
+        add(.medal, "The medal",
             "The closing prayer asks that what the mysteries hold may become ours.",
             prayers: ["rosary_closing_prayer"],
             closing: true)
@@ -389,7 +389,7 @@ extension GuidedRosary {
         }
 
         /// The bead within that part: "The Crowning with Thorns · 4 of
-        /// 10", "Small bead · 2 of 3", "The centrepiece"
+        /// 10", "Small bead · 2 of 3", "The medal"
         var beadName: String {
             let steps = GuidedRosary.steps(for: category)
             guard steps.indices.contains(step) else { return "" }
