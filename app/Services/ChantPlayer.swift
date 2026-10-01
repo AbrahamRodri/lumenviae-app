@@ -329,8 +329,12 @@ final class ChantPlayer {
             }
         } else if waitingForNext {
             continueQueue()
-        } else if let turn, turn.endsAt == nil {
-            resumeTurn()
+        } else if isLoading {
+            pauseAskedWhileLoading.toggle()
+        } else if let turn {
+            // The reader's turn is held or taken up; the choir is not
+            // started over the reader singing
+            if turn.endsAt == nil { resumeTurn() } else { suspendTurn() }
         } else if ownsPlayback {
             claim?.togglePlayback()
         } else {
@@ -345,32 +349,46 @@ final class ChantPlayer {
         if waitingForNext, queue?.nextChant?.id == chant.id {
             continueQueue()
         } else if holds(chant), !waitingForNext {
-            claim?.togglePlayback()
+            togglePlayback()
         } else {
             play(chant)
         }
     }
 
     /// Pauses whatever the library is doing — the chant, a silence, the
-    /// reader's turn — keeping each where it stands
+    /// reader's turn, or a chant still arriving — keeping each where it
+    /// stands
     func pause() {
+        if isLoading { pauseAskedWhileLoading = true }
         if silence != nil { suspendSilence() }
         if turn != nil { suspendTurn() }
         if ownsPlayback { claim?.pause() }
     }
 
+    /// A pause asked for while the chant was still arriving — headphones
+    /// taken out as a set's next chant loads, the set's own Pause — which
+    /// the load keeps: the chant arrives held, not sounding
+    private(set) var pauseAskedWhileLoading = false
+
     /// Whether the library is going on with what it holds: a chant
-    /// sounding, or a silence or the reader's turn keeping its time
+    /// sounding or on its way, or a silence or the reader's turn keeping
+    /// its time
     var isGoingOn: Bool {
-        isPlaying || !(silence?.isPaused ?? true) || turn?.endsAt != nil
+        isPlaying || (isLoading && !pauseAskedWhileLoading)
+            || !(silence?.isPaused ?? true) || turn?.endsAt != nil
     }
 
     /// A set's own transport: pauses whatever is going on, keeping each
     /// where it stands, or takes up what was paused — where the mini
     /// player's tap would pass over a silence, this holds it
     func pauseOrResume() {
-        guard !isLoading else { return }
-        if isGoingOn { pause() } else { togglePlayback() }
+        if isLoading {
+            pauseAskedWhileLoading.toggle()
+        } else if isGoingOn {
+            pause()
+        } else {
+            togglePlayback()
+        }
     }
 
     /// The chant the mini player opens: the next, while a set waits for it
@@ -383,7 +401,7 @@ final class ChantPlayer {
     /// remembered one. A set under way is put down, and the lines go back
     /// to playing through: the reader chose another chant.
     func play(_ chant: Chant) {
-        endQueue()
+        dropQueue()
         lineEnd = .goOn
         load(chant)
     }
@@ -401,6 +419,7 @@ final class ChantPlayer {
         loadCount += 1
         let token = loadCount
         errorMessage = nil
+        pauseAskedWhileLoading = false
         resetLines()
 
         guard let url = chant.audioURL else {
@@ -463,7 +482,10 @@ final class ChantPlayer {
             } else if claim.currentTime > 0.25 {
                 claim.seek(to: 0)
             }
-            if !paused { claim.play() }
+            // A pause asked for on the way — headphones taken out as the
+            // set's next chant arrived — is kept: the chant waits for play
+            if !paused, !self.pauseAskedWhileLoading { claim.play() }
+            self.pauseAskedWhileLoading = false
             self.startLineWatch()
         }
     }
@@ -598,9 +620,7 @@ final class ChantPlayer {
 
     /// Puts the set down; the chant sounding, if any, sings on alone
     func endQueue() {
-        queue = nil
-        waitingForNext = false
-        endSilence()
+        dropQueue()
         // The silence's few seconds are no chant: a set put down in one, or
         // ending on one, takes them out of the player and off the Lock
         // Screen, where "Silence" once stood until something else loaded
@@ -611,6 +631,16 @@ final class ChantPlayer {
             loadTask = nil
             claim?.unload(preservingNowPlaying: false)
         }
+    }
+
+    /// The set put down for a chant about to load in its place: a silence
+    /// the set was keeping is left in the player for the load to replace,
+    /// so the Lock Screen passes from the one to the other and is never
+    /// cleared between them
+    private func dropQueue() {
+        queue = nil
+        waitingForNext = false
+        endSilence()
     }
 
     private func playEntry() {
@@ -649,6 +679,7 @@ final class ChantPlayer {
         // A chant still arriving is let go for the silence, and with it its
         // spinner: left on, the set's own pause stood refusing every tap
         isLoading = false
+        pauseAskedWhileLoading = false
         claim.pause()
         guard let url = Bundle.main.url(forResource: "chant_silence", withExtension: "m4a") else { return }
         silentClipLoaded = true
@@ -838,8 +869,9 @@ final class ChantPlayer {
         guard chant.lines.indices.contains(index) else { return }
         endTurn()
         // Practising a line is the reader's own act: a set under way is
-        // put down, whether or not the chant was already in the player
-        endQueue()
+        // put down, whether or not the chant was already in the player.
+        // A silence it kept is left for the load below to replace.
+        dropQueue()
         if holds(chant), let claim {
             lineEnd = end
             seek(toLine: index)
@@ -854,7 +886,7 @@ final class ChantPlayer {
     /// to them, and stops — practice's last step
     func yourTurnFirst(_ index: Int, of chant: Chant) {
         guard chant.lines.indices.contains(index) else { return }
-        endQueue()
+        dropQueue()
         if holds(chant) {
             claim?.pause()
             seek(toLine: index)
@@ -1099,13 +1131,20 @@ final class ChantPlayer {
         case .pause:
             pause()
         case .play:
-            if let silence {
+            if isLoading {
+                // The chant on its way sounds when it arrives, whatever
+                // pause was asked for meanwhile
+                pauseAskedWhileLoading = false
+            } else if let silence {
                 // A silence keeping its time is already what was asked
                 if silence.isPaused { resumeSilence() }
             } else if waitingForNext {
                 continueQueue()
-            } else if let turn, turn.endsAt == nil {
-                resumeTurn()
+            } else if let turn {
+                // The reader's turn keeping its time is going on already,
+                // as a silence is: play never starts the choir over the
+                // reader singing
+                if turn.endsAt == nil { resumeTurn() }
             } else if !isPlaying {
                 togglePlayback()
             }

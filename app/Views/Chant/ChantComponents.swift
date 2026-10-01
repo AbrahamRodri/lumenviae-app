@@ -838,7 +838,9 @@ struct ChantSetPlayButton: View {
 
     var body: some View {
         let singing = player.isSinging(queue)
-        let going = singing && (player.isGoingOn || player.isLoading)
+        // A chant on its way counts as going on, unless a pause was asked
+        // for while it arrived
+        let going = singing && player.isGoingOn
         let word = !singing ? title
             : player.waitingForNext ? "Go on"
             : going ? "Pause" : "Resume"

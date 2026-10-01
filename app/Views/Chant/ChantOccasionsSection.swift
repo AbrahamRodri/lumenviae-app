@@ -33,6 +33,10 @@ struct ChantOccasionsSection: View {
 
     @State private var namingSet = false
 
+    /// A kept set the reader has changed, waiting on their word before
+    /// the bookmark lets it go
+    @State private var unkeeping: ChantSet?
+
     init(
         openID: Binding<String?>,
         open: @escaping (Chant) -> Void,
@@ -78,6 +82,20 @@ struct ChantOccasionsSection: View {
             ChantNewSetSheet { set in madeSet(set) }
                 .presentationDetents([.medium])
                 .dynamicTypeSize(...DynamicTypeSize.appMaximum)
+        }
+        // The same question Saved asks before a set is deleted
+        .confirmationDialog(
+            "Delete \(unkeeping?.name ?? "this set")?",
+            isPresented: Binding(get: { unkeeping != nil }, set: { if !$0 { unkeeping = nil } }),
+            titleVisibility: .visible
+        ) {
+            Button("Delete the Set", role: .destructive) {
+                if let unkeeping { shelf.deleteSet(unkeeping.id) }
+                unkeeping = nil
+            }
+            Button("Cancel", role: .cancel) { unkeeping = nil }
+        } message: {
+            Text("You have changed it since you kept it. Its chants stay in the library; only the set goes.")
         }
     }
 
@@ -224,11 +242,14 @@ struct ChantOccasionsSection: View {
     }
 
     /// The bookmark: keeps the occasion as a set of the reader's own, and
-    /// a second tap lets it go — one kept set for each occasion
+    /// a second tap lets it go — one kept set for each occasion. A kept set
+    /// the reader has changed since is let go only once they say so.
     private func keepButton(_ occasion: ChantOccasion) -> some View {
         let kept = shelf.keptSet(of: occasion) != nil
         return Button {
-            shelf.toggleKeeping(occasion)
+            if case .askFirst(let set) = shelf.toggleKeeping(occasion) {
+                unkeeping = set
+            }
         } label: {
             AppIcon(kept ? "ph-bookmark-simple-fill" : "ph-bookmark-simple", size: 18)
                 .foregroundColor(AppColors.gold)

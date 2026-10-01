@@ -341,7 +341,12 @@ struct ChantPracticeView: View {
                     if lines, !player.holds(chant) || !player.isPlaying {
                         singLine()
                     } else {
-                        if !player.isPlaying(chant) { startedPlayback = true }
+                        // Starting the choir is the practice's own act, and
+                        // puts down a set the chant was being sung in
+                        if !player.isPlaying(chant) {
+                            startedPlayback = true
+                            player.endQueue()
+                        }
                         player.toggle(chant)
                     }
                 }
@@ -518,8 +523,7 @@ struct ChantPracticeView: View {
             singLine()
         } else if step == .listen || step == .readAlong {
             if !player.isPlaying(chant) {
-                startedPlayback = true
-                if player.holds(chant) { player.restart() } else { player.play(chant) }
+                singWhole()
             }
         }
     }
@@ -554,8 +558,20 @@ struct ChantPracticeView: View {
         if lines {
             singLine()
         } else {
-            startedPlayback = true
-            if player.holds(chant) { player.restart() } else { player.play(chant) }
+            singWhole()
+        }
+    }
+
+    /// The whole chant from its top, as the practice's own act: a set the
+    /// chant was being sung in is put down, as practising a line puts it
+    /// down, or the set would go on to its next chant mid-practice
+    private func singWhole() {
+        startedPlayback = true
+        if player.holds(chant) {
+            player.endQueue()
+            player.restart()
+        } else {
+            player.play(chant)
         }
     }
 

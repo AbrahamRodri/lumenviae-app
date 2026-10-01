@@ -2271,10 +2271,16 @@ write concurrent code here:
   (`ChantSetPlayButton`, Saved's PLAY THE SET too, through
   `ChantPlayer.pauseOrResume`, which holds a silence where a tap on the
   mini player passes over it), and so is the sounding bead; it once
-  began the set again from its first chant. The bookmark is a toggle:
+  began the set again from its first chant (Today's weekday "Play all"
+  answers the same way). The bookmark is a toggle:
   filled while the occasion is kept as a set of one's own
   (`ChantSet.occasionID`), a second tap letting that set go — never a
-  second copy. Choosing an occasion, here or from Today's month, brings
+  second copy — but only while the set is still the occasion's own copy,
+  its name and its chants and pauses in order
+  (`ChantShelfStore.isUntouchedCopy`); a kept set the reader has changed
+  is let go only after Saved's own question before a delete
+  (`toggleKeeping` answers `.askFirst`), since a tap once threw away
+  their work. Choosing an occasion, here or from Today's month, brings
   its order up the page; the tap once seemed to do nothing, the order
   opening below the fold. **Types** (`ChantTypesSection`): six lettered tiles
   (`ChantForm` — Short Chants for the antiphons, Hymns, Feast Poems for
@@ -2318,7 +2324,10 @@ write concurrent code here:
   says it was begun. The store reads each list an entry at a time and
   keeps what it cannot read — an entry a later build wrote — writing it
   back beside the rest; data that is no list at all is set aside under
-  its key's `.unreadable`, never written over.
+  its key's `.unreadable`, never written over. An entry it can read keeps
+  the fields a later build gave it, a set's items' included: each
+  entry's stored form is held by its key (`ShelfEntry`), and the fields
+  this build does not know go back with it on every write.
 
   **The rubrics are set in `Rubric.text`** (`FixedColors`, a lighter red
   at 4.6:1 or more on every theme): the sentences of an order of
@@ -2367,8 +2376,16 @@ write concurrent code here:
   takes its words from the Prayer Book, and is practised whole. No
   timing is ever guessed. The lines come from
   `Tools/ChantLines/<chant id>.json`, derived from the bundled recording
-  and checked before a file is added, which the generator folds into
-  `ChantCatalogData.swift` (below). The player meets a line's end within
+  and checked before a file is added (its README says how), which the
+  generator folds into `ChantCatalogData.swift` (below). As of Oct 2026
+  all 64 chants are timed, 2,203 lines in all — each file covers its whole
+  recording, the versicles, collects and repeats included, and its words
+  follow the recording where it differs from the app's prayer text (the
+  Litany of Loreto's later invocations, the 1909 Litany of St Joseph).
+  The whole-chant ways stay for a chant added before its timings;
+  `ChantLibraryTests` names the 64 timed today, so a new chant without
+  lines fails nothing, and checks every timed chant's lines run in order
+  within its recording. The player meets a line's end within
   a tenth of a second by carrying the clock forward between
   AudioService's half-second ticks.
 
@@ -2495,8 +2512,16 @@ write concurrent code here:
   tap, and a silence that ends with another flow holding it ends the set
   rather than claim over it. An entry that loads the recording already
   in the player — the next Ave of a decade — begins it from its top; it
-  once moved the count while the same Ave sang on. The line clock and
-  the reader's turn keep the speed sounding (`speed`). It holds the player by a
+  once moved the count while the same Ave sang on. A pause asked for
+  while a chant is still arriving — headphones pulled out as the set's
+  next chant loads — is kept (`pauseAskedWhileLoading`), and the chant
+  arrives held. Play from the Lock Screen during the reader's turn never
+  starts the choir over them: a turn keeping its time is going on, as a
+  silence is. A chant chosen during a silence takes the Lock Screen
+  straight from the silence; only a set that really ends clears it.
+  Practising a chant, by the line or whole, puts down a set it was being
+  sung in. The line clock and the reader's turn keep the speed sounding
+  (`speed`). It holds the player by a
   claim (`AudioClaim`), taken at the tap, so another flow taking the
   player is never narrated as its own: the progress line and the pause
   glyph read the claim, and come to rest when it ends. The consecration

@@ -129,6 +129,7 @@ final class ChantShelfStore {
         self.sets = sets.good
         self.recent = recent.good
         unreadable = [Key.learning: learning.unreadable, Key.sets: sets.unreadable, Key.recent: recent.unreadable]
+        stored = [Key.learning: learning.stored, Key.sets: sets.stored, Key.recent: recent.stored]
         words = ChantWordsPreference(rawValue: defaults.string(forKey: Key.words) ?? "") ?? .both
         pausesBetween = defaults.bool(forKey: Key.pausesBetween)
     }
@@ -288,14 +289,37 @@ final class ChantShelfStore {
         return !rubrics.isEmpty && notes == rubrics
     }
 
-    /// Keeps the occasion as a set of the reader's own, or, kept already,
-    /// lets that set go: one set for each occasion, never two
-    func toggleKeeping(_ occasion: ChantOccasion) {
-        if let kept = keptSet(of: occasion) {
-            deleteSet(kept.id)
-        } else {
-            saveOccasion(occasion)
+    /// What a tap on an occasion's bookmark did
+    enum Keeping: Equatable {
+        /// The occasion is kept, as a set of the reader's own
+        case kept
+        /// The kept set, still the occasion's own copy, is let go
+        case letGo
+        /// The kept set has been changed since — renamed, its chants or
+        /// pauses moved, added or taken away — so it is not let go without
+        /// asking: the reader's work would go with it
+        case askFirst(ChantSet)
+    }
+
+    /// Keeps the occasion as a set of the reader's own, or, kept already
+    /// and never changed, lets that set go: one set for each occasion,
+    /// never two. A kept set the reader has changed is left for them to
+    /// let go once asked (`deleteSet`).
+    @discardableResult
+    func toggleKeeping(_ occasion: ChantOccasion, on date: Date = Date()) -> Keeping {
+        guard let kept = keptSet(of: occasion) else {
+            saveOccasion(occasion, on: date)
+            return .kept
         }
+        guard isUntouchedCopy(kept, of: occasion, on: date) else { return .askFirst(kept) }
+        deleteSet(kept.id)
+        return .letGo
+    }
+
+    /// Whether a kept set is still the occasion's own copy: its name, and
+    /// the same chants and pauses in the same order
+    func isUntouchedCopy(_ set: ChantSet, of occasion: ChantOccasion, on date: Date = Date()) -> Bool {
+        set.name == occasion.title && set.items.map(\.kind) == Self.copy(of: occasion, on: date)
     }
 
     /// An occasion copied to a set of the reader's own, its rubrics
@@ -303,21 +327,28 @@ final class ChantShelfStore {
     @discardableResult
     func saveOccasion(_ occasion: ChantOccasion, on date: Date = Date()) -> ChantSet {
         if let kept = keptSet(of: occasion) { return kept }
-        var items: [ChantSet.Item] = []
+        let items = Self.copy(of: occasion, on: date).map { ChantSet.Item(kind: $0) }
+        let set = ChantSet(name: occasion.title, items: items, occasionID: occasion.id)
+        sets.append(set)
+        return set
+    }
+
+    /// The occasion as a set's items: each rubric a note before its block,
+    /// each chant as many times as the occasion sings it
+    private static func copy(of occasion: ChantOccasion, on date: Date) -> [ChantSet.Item.Kind] {
+        var kinds: [ChantSet.Item.Kind] = []
         for block in occasion.blocks {
             if let rubric = block.rubric {
-                items.append(ChantSet.Item(kind: .pause(note: rubric, seconds: 0)))
+                kinds.append(.pause(note: rubric, seconds: 0))
             }
             for _ in 0..<max(1, block.rounds) {
                 for step in block.steps {
                     guard let chant = step.chant.resolve(on: date) else { continue }
-                    items.append(ChantSet.Item(kind: .chant(id: chant.id, times: max(1, step.times))))
+                    kinds.append(.chant(id: chant.id, times: max(1, step.times)))
                 }
             }
         }
-        let set = ChantSet(name: occasion.title, items: items, occasionID: occasion.id)
-        sets.append(set)
-        return set
+        return kinds
     }
 
     func rename(_ id: UUID, to name: String) {
@@ -400,44 +431,127 @@ final class ChantShelfStore {
     /// beside the entries it could, so nothing stored is lost by reading it
     @ObservationIgnored private var unreadable: [String: [Any]] = [:]
 
-    /// A stored list, read an entry at a time: the entries that read, and
-    /// the ones that did not, as they were. Data that is no list at all is
-    /// set aside under its own key rather than written over.
-    private static func readList<T: Decodable>(
+    /// Each entry as it was stored, by list and by the entry's own key, so
+    /// the fields a later build gave it — which this build cannot read and
+    /// would not write — go back with it when this build writes the list
+    @ObservationIgnored private var stored: [String: [String: [String: Any]]] = [:]
+
+    /// A stored list, read an entry at a time: the entries that read, each
+    /// one's stored form, and the entries that did not read, as they were.
+    /// Data that is no list at all is set aside under its own key rather
+    /// than written over.
+    private static func readList<T: ShelfEntry>(
         _ type: T.Type,
         key: String,
         from defaults: UserDefaults
-    ) -> (good: [T], unreadable: [Any]) {
-        guard let data = defaults.data(forKey: key) else { return ([], []) }
+    ) -> (good: [T], unreadable: [Any], stored: [String: [String: Any]]) {
+        guard let data = defaults.data(forKey: key) else { return ([], [], [:]) }
         guard let elements = (try? JSONSerialization.jsonObject(with: data)) as? [Any] else {
             defaults.set(data, forKey: key + ".unreadable")
-            return ([], [])
+            return ([], [], [:])
         }
         var good: [T] = []
         var unreadable: [Any] = []
+        var stored: [String: [String: Any]] = [:]
         let decoder = JSONDecoder()
         for element in elements {
             if let elementData = try? JSONSerialization.data(withJSONObject: element, options: [.fragmentsAllowed]),
                let value = try? decoder.decode(T.self, from: elementData) {
                 good.append(value)
+                if let fields = element as? [String: Any] {
+                    stored[value.entryKey] = fields
+                }
             } else {
                 unreadable.append(element)
             }
         }
-        return (good, unreadable)
+        return (good, unreadable, stored)
     }
 
-    private func writeList<T: Encodable>(_ values: [T], key: String) {
+    private func writeList<T: ShelfEntry>(_ values: [T], key: String) {
         guard let data = try? JSONEncoder().encode(values) else { return }
         let kept = unreadable[key] ?? []
-        guard !kept.isEmpty,
-              var elements = (try? JSONSerialization.jsonObject(with: data)) as? [Any] else {
+        let storedForms = stored[key] ?? [:]
+        guard !kept.isEmpty || !storedForms.isEmpty,
+              let encoded = (try? JSONSerialization.jsonObject(with: data)) as? [Any],
+              encoded.count == values.count else {
             defaults.set(data, forKey: key)
             return
+        }
+        var elements: [Any] = []
+        for (value, element) in zip(values, encoded) {
+            guard var fields = element as? [String: Any], let earlier = storedForms[value.entryKey] else {
+                elements.append(element)
+                continue
+            }
+            T.keepUnknownFields(of: earlier, in: &fields)
+            elements.append(fields)
         }
         elements.append(contentsOf: kept)
         if let merged = try? JSONSerialization.data(withJSONObject: elements) {
             defaults.set(merged, forKey: key)
+        }
+    }
+}
+
+// MARK: - ShelfEntry
+
+/// An entry of one of the shelf's stored lists
+private protocol ShelfEntry: Codable {
+    /// What names the entry from one read to the next, to find its stored
+    /// form again
+    var entryKey: String { get }
+
+    /// The fields this build writes; any other a stored entry carries was
+    /// written by a later build
+    static var knownFields: Set<String> { get }
+
+    /// Gives `fields`, the entry as this build writes it, every field of
+    /// its stored form that this build does not know
+    static func keepUnknownFields(of earlier: [String: Any], in fields: inout [String: Any])
+}
+
+extension ShelfEntry {
+    static func keepUnknownFields(of earlier: [String: Any], in fields: inout [String: Any]) {
+        for (name, value) in earlier where !knownFields.contains(name) {
+            fields[name] = value
+        }
+    }
+}
+
+extension ChantShelfStore.LearningRecord: ShelfEntry {
+    var entryKey: String { chantID }
+    static var knownFields: Set<String> { ["chantID", "step", "touched"] }
+}
+
+extension ChantShelfStore.RecentPlay: ShelfEntry {
+    var entryKey: String { chantID }
+    static var knownFields: Set<String> { ["chantID", "at"] }
+}
+
+extension ChantSet: ShelfEntry {
+    var entryKey: String { id.uuidString }
+    static var knownFields: Set<String> { ["id", "name", "items", "occasionID"] }
+
+    /// The set's own unknown fields, and each of its items' too, found by
+    /// the item's id
+    static func keepUnknownFields(of earlier: [String: Any], in fields: inout [String: Any]) {
+        for (name, value) in earlier where !knownFields.contains(name) {
+            fields[name] = value
+        }
+        guard let earlierItems = earlier["items"] as? [[String: Any]],
+              let items = fields["items"] as? [[String: Any]] else { return }
+        var earlierByID: [String: [String: Any]] = [:]
+        for item in earlierItems {
+            if let id = item["id"] as? String { earlierByID[id] = item }
+        }
+        fields["items"] = items.map { item -> [String: Any] in
+            guard let id = item["id"] as? String, let before = earlierByID[id] else { return item }
+            var merged = item
+            for (name, value) in before where !["id", "kind"].contains(name) {
+                merged[name] = value
+            }
+            return merged
         }
     }
 }

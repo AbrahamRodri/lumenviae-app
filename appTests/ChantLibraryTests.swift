@@ -411,6 +411,62 @@ struct ChantLibraryTests {
         #expect(shelf.sets.isEmpty)
     }
 
+    @Test func aKeptSetIsLetGoOnlyWhileItIsTheOccasionsOwnCopy() {
+        let shelf = store()
+        let benediction = ChantOccasion.occasion("benediction")!
+        #expect(shelf.toggleKeeping(benediction) == .kept)
+        #expect(shelf.toggleKeeping(benediction) == .letGo)
+        #expect(shelf.sets.isEmpty)
+
+        // Changed since it was kept: asked about, and kept until answered
+        shelf.toggleKeeping(benediction)
+        let kept = shelf.keptSet(of: benediction)!
+        shelf.addChant("adoro_te", to: kept.id)
+        let changed = shelf.set(kept.id)!
+        #expect(shelf.toggleKeeping(benediction) == .askFirst(changed))
+        #expect(shelf.set(kept.id) != nil)
+
+        // Renamed is changed too, though its chants are as they were
+        shelf.removeItem(changed.items.last!.id, from: kept.id)
+        shelf.rename(kept.id, to: "Our Benediction")
+        #expect(shelf.toggleKeeping(benediction) != .letGo)
+        #expect(shelf.set(kept.id) != nil)
+    }
+
+    @Test func aShelfKeepsTheFieldsALaterBuildWrote() throws {
+        let defaults = UserDefaults(suiteName: "ChantLibraryTests.\(UUID().uuidString)")!
+        let set = ChantSet(name: "Holy hour", items: [ChantSet.Item(kind: .chant(id: "adoro_te", times: 1))])
+        let encoded = try JSONSerialization.jsonObject(with: JSONEncoder().encode(set))
+        var object = try #require(encoded as? [String: Any])
+        object["colour"] = "violet"
+        var items = try #require(object["items"] as? [[String: Any]])
+        items[0]["note"] = "Kneel"
+        object["items"] = items
+        defaults.set(try JSONSerialization.data(withJSONObject: [object]), forKey: "chantShelf.sets")
+        let record: [String: Any] = ["chantID": "sub_tuum", "step": 2, "touched": 0, "reminder": "evening"]
+        defaults.set(try JSONSerialization.data(withJSONObject: [record]), forKey: "chantShelf.learning")
+
+        let shelf = ChantShelfStore(defaults: defaults)
+        shelf.rename(set.id, to: "A holy hour")
+        shelf.addChant("tantum_ergo", to: set.id)
+        shelf.setStep(.singAlong, for: "sub_tuum")
+
+        let writtenSets = try JSONSerialization.jsonObject(with: try #require(defaults.data(forKey: "chantShelf.sets")))
+        let sets = try #require(writtenSets as? [[String: Any]])
+        #expect(sets.count == 1)
+        #expect(sets[0]["name"] as? String == "A holy hour")
+        #expect(sets[0]["colour"] as? String == "violet")
+        let writtenItems = try #require(sets[0]["items"] as? [[String: Any]])
+        #expect(writtenItems.count == 2)
+        #expect(writtenItems[0]["note"] as? String == "Kneel")
+        #expect(writtenItems[1]["note"] == nil)
+
+        let writtenLearning = try JSONSerialization.jsonObject(with: try #require(defaults.data(forKey: "chantShelf.learning")))
+        let learning = try #require(writtenLearning as? [[String: Any]])
+        #expect(learning.first?["step"] as? Int == ChantLearningStep.singAlong.rawValue)
+        #expect(learning.first?["reminder"] as? String == "evening")
+    }
+
     @Test func anOccasionKeptBeforeSetsSaidSoIsKnown() throws {
         let defaults = UserDefaults(suiteName: "ChantLibraryTests.\(UUID().uuidString)")!
         let benediction = ChantOccasion.occasion("benediction")!

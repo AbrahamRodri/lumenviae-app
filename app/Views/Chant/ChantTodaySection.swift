@@ -312,10 +312,14 @@ struct ChantTodaySection: View {
                     }
 
                     if day.chants.count > 1 {
+                        let queue = ChantQueue.chants(day.chants, title: "\(day.name)'s chants")
+                        let singing = player.isSinging(queue)
                         Button {
-                            player.play(ChantQueue.chants(day.chants, title: "\(day.name)'s chants"))
+                            // Under way, the day's set is paused and taken up
+                            // as every set is, never begun again
+                            if singing { player.pauseOrResume() } else { player.play(queue) }
                         } label: {
-                            Text("Play all \(day.chants.count) \(day.collective)")
+                            Text(singing ? setWord : "Play all \(day.chants.count) \(day.collective)")
                                 .font(AppFonts.readingFont(14.5))
                                 .foregroundColor(AppColors.gold)
                                 .underline(color: AppColors.gold.opacity(0.4))
@@ -330,6 +334,12 @@ struct ChantTodaySection: View {
             }
         }
         .chantShell()
+    }
+
+    /// What the day's set link says while the set is under way
+    private var setWord: String {
+        if player.waitingForNext { return "Go on" }
+        return player.isGoingOn ? "Pause" : "Resume"
     }
 
     // MARK: - The month
