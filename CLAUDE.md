@@ -246,11 +246,11 @@ meditation set cannot be loaded, the act begins as it always has.
 The home header is the wordmark framed by the app's chrome:
 **ph-faders → Settings** and **ph-info → About** together on the left,
 the search glass alone on the right. No flame — the streak lives in the Chapel's own Prayer Streak
-tile, which opens the Prayer Record (its foot act says so; Settings →
+tile, which opens the Prayer Record (the whole tile is its door; Settings →
 Devotion is the other standing door to the Progress page, and Explore's
 search finds it as "Prayer Record"). The masthead is the **only** door
 to Settings and About — not the Chapel's day strip, which reads the
-liturgical day alone, and not the Chapel's foot, which is the arrange
+liturgical day and carries only the journal's pencil, and not the Chapel's foot, which is the arrange
 control and the imprint, nothing else.
 
 **Today's Prayer** (`Components/TodaysPrayerSection.swift`) stands
@@ -836,7 +836,7 @@ write concurrent code here:
   the artwork cache all do, and so does a chant score's read from disk).
 - SwiftUI may read a `Layout`, a `LayoutValueKey`, or a value
   `onGeometryChange` measures off the main actor, so those types are marked
-  `nonisolated` (`ChapelGridLayout`, `ChapelSpanKey`, the Prayer Book's
+  `nonisolated` (`ChapelGridLayout`, `ChapelSpanKey`, `ChapelChipFlow`, the Prayer Book's
   `WordFlow`, onboarding's `WordsExtent`; the meditation shelf's
   `ChipFlowLayout` still lacks it);
   under default MainActor isolation a new one needs the same, and the
@@ -2031,7 +2031,7 @@ write concurrent code here:
   order page's praying-hands door stands down when it was opened from
   the tab itself, where Back already goes there):
   home's hour row, Explore's section (titled Prayers) and search (which finds prayers by
-  name, Latin name or words), the Chapel's Prayer Book tile, a prayer's
+  name, Latin name or words), the Chapel's Prayers tile, a prayer's
   order page and What's New all `push(.prayerBook)`, which
   `AppRouter.push` answers with `switchTo(.prayers)`. The Pray tray (the
   Angelus, offered once) and every existing door to a prayer
@@ -2188,8 +2188,7 @@ write concurrent code here:
   its own.
   Nothing is carried forward. **Keeping**
   is a silk ribbon (`RibbonToggle`, `PrayerBookStore.ribbons`) — the
-  kept prayers stand under Saved on Prayers' Today and on the Chapel
-  tile.
+  kept prayers stand under Saved on Prayers' Today.
   **Learning** is `LearnByHeartSheet`: four steps (read, some hidden,
   first letters, by heart), in English or Latin, a hidden word shown by a
   touch, and at the end the reader's own BY HEART mark — never scored.
@@ -2722,7 +2721,8 @@ transition entirely.
 - Gold accents for sacred/important elements; one filled gold act per screen
 - Ruled ledgers and 16pt hairline outlines at `gold@0.24` on the bare
   page — filled card surfaces only where a section above says so (the
-  Chapel's tray, the chant's play disc)
+  Chapel's sections, its arrange rows and tray — see The Chapel Tab —
+  and the chant's play disc)
 - Heroes and plates dissolve to clear, never to a flat slab
 - Minimalist, distraction-free UI for prayer focus
 
