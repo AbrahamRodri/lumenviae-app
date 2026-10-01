@@ -682,7 +682,7 @@ struct OnboardingView: View {
         Offer(icon: "ph-calendar-dots", text: "Today's mysteries, chosen by the day of the week"),
         Offer(icon: "ph-book-open", text: "A meditation on each mystery, to read or to hear"),
         Offer(icon: "ch-consecration", text: "A 33-day preparation to give yourself to Jesus through Mary, by St. Louis de Montfort"),
-        Offer(icon: "ch-altar", text: "Each day's Mass and the Church's Hours of Prayer, in their traditional form")
+        Offer(icon: "ch-altar", text: "The traditional Latin Mass and the Church's Hours of Prayer, for each day")
     ]
 
     /// With several reasons chosen, each one's best line comes first, so

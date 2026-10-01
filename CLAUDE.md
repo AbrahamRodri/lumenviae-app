@@ -309,8 +309,8 @@ though they were other devotions; typed search still finds both, and
 opens the day's mysteries' page), and a quiet "New to the Rosary? · How to
 Pray" door under that (How to Pray was the fourth item of the index at
 the foot of the page, where a newcomer never reached it); then
-Prayers, Chant (tonight's song to Mary, played where it stands, over
-ALL CHANTS, the door to the Chant Library), Today in the Church (Today's
+Prayers, Chant (tonight's song to Mary, said as such above it and
+played where it stands, with SEE ALL, the door to the Chant Library), Today in the Church (Today's
 Mass | Hours of Prayer, each over its book's Church name, Daily Missal
 and Divine Office), Spiritual Reading (ALL BOOKS), and Learn More's
 ruled index — and typing searches mysteries, library doors, library readings,

@@ -221,7 +221,7 @@ struct ExploreView: View {
 
         // The Church's songs: tonight's song to Mary, to play where it
         // stands, over the door to the whole library
-        section("Chant", link: ("All chants", { router.push(.chantLibrary) })) {
+        section("Chant", link: ("See all", { router.push(.chantLibrary) })) {
             chantShelf
         }
 
@@ -747,6 +747,13 @@ struct ExploreView: View {
     private var chantShelf: some View {
         VStack(alignment: .leading, spacing: 0) {
             if let antiphon = ChantCatalog.antiphonOfTheSeason() {
+                // Why this one chant stands here, before the door to the
+                // rest
+                Text("Tonight's song to Mary")
+                    .font(AppFonts.readingItalicFont(14))
+                    .foregroundColor(AppColors.textSecondary)
+                    .padding(.bottom, 4)
+
                 ChantLibraryRow(chant: antiphon, player: ChantPlayer.shared) {
                     router.push(.chant(id: antiphon.id))
                 }

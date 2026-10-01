@@ -648,7 +648,7 @@ struct ChantLibraryTests {
             let now = day(2026, 10, 1, hour: hour)
             let next = day(2026, 10, 1, hour: hour).addingTimeInterval(3600)
             let chantTurns = ChantHour.present(at: now) != ChantHour.present(at: next)
-            let bookTurns = PrayerBook.dayOrderMoment(at: now, short: true) != PrayerBook.dayOrderMoment(at: next, short: true)
+            let bookTurns = PrayerBook.dayOrderMoment(at: now) != PrayerBook.dayOrderMoment(at: next)
             #expect(chantTurns == bookTurns, "at \(hour):00")
         }
     }
