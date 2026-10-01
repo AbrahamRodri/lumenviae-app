@@ -26,7 +26,8 @@ extension ChantCatalog {
         ChantGroup(id: "christmas", title: "Christmas", note: nil),
         ChantGroup(id: "lent", title: "Lent and Passiontide", note: nil),
         ChantGroup(id: "easter", title: "Easter", note: nil),
-        ChantGroup(id: "departed", title: "The Faithful Departed", note: nil)
+        ChantGroup(id: "departed", title: "The Faithful Departed", note: nil),
+        ChantGroup(id: "mass", title: "The Mass", note: "The Ordinary, sung as on Sundays")
     ]
 
     static let all: [Chant] = [
@@ -750,7 +751,7 @@ extension ChantCatalog {
             prayerIDs: ["memorare"],
             duration: 128.3,
             score: [
-                ChantScorePart(file: "chant-memorare-1", caption: "Memorare", aspectRatio: 1.0940)
+                ChantScorePart(file: "chant-memorare-1", caption: "Memorare 1″ show_bottom_space=»off", aspectRatio: 1.0940)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/memorare-1/")!,
             lines: [
@@ -933,6 +934,20 @@ extension ChantCatalog {
                 ChantLine(latin: "In sempitérna sǽcula.", english: "for everlasting ages.", start: 100.57, end: 107.64),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 108.21, end: 113.58)
             ]
+        ),
+        Chant(
+            id: "te_matrem",
+            groupID: "ourLady",
+            latinTitle: "Te Matrem Laudamus",
+            englishTitle: "We Praise Thee as Mother",
+            setting: nil,
+            detail: "A Marian Te Deum",
+            prayerIDs: [],
+            duration: 360.0,
+            score: [
+                ChantScorePart(file: "chant-te-matrem-laudamus", caption: "Te Matrem laudamus", aspectRatio: 0.3122)
+            ],
+            sourceURL: URL(string: "https://www.verbumgloriae.es/project/te-matrem-laudamus/")!
         ),
         Chant(
             id: "in_nomine_patris",
@@ -1579,6 +1594,22 @@ extension ChantCatalog {
                 ChantLine(latin: "Sǽcula per infiníta sæculórum.", english: "unto the endless ages of ages.", start: 129.75, end: 140.32),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 140.69, end: 147.50)
             ]
+        ),
+        Chant(
+            id: "pange_lingua",
+            groupID: "sacrament",
+            latinTitle: "Pange Lingua",
+            englishTitle: "Sing, My Tongue, the Saviour's Glory",
+            setting: nil,
+            detail: "St Thomas Aquinas's hymn for Corpus Christi, whose last two verses are the Tantum Ergo",
+            prayerIDs: [],
+            duration: 276.0,
+            score: [
+                ChantScorePart(file: "chant-pange-lingua", caption: "Pange lingua", aspectRatio: 0.5695),
+                ChantScorePart(file: "chant-vers-panem-de-caelo", caption: "Panem de caelo", aspectRatio: 3.9357),
+                ChantScorePart(file: "chant-or-deus-qui-nobis", caption: "Oremus. Deus qui nobis", aspectRatio: 1.8202)
+            ],
+            sourceURL: URL(string: "https://www.verbumgloriae.es/project/pange-lingua/")!
         ),
         Chant(
             id: "veni_creator",
@@ -2738,6 +2769,22 @@ extension ChantCatalog {
             ]
         ),
         Chant(
+            id: "o_oriens_magnificat",
+            groupID: "advent",
+            latinTitle: "O Oriens",
+            englishTitle: "O Morning Star, with the Magnificat",
+            setting: nil,
+            detail: "The O Antiphon of December 21, around Mary's song",
+            prayerIDs: ["magnificat"],
+            duration: 237.0,
+            score: [
+                ChantScorePart(file: "chant-o-oriens-magnificat-web-1", caption: "1 de la Antífona O Oriens y el Magnificat", aspectRatio: 3.1826),
+                ChantScorePart(file: "chant-o-sapientia-magnificat-2", caption: "2 de la Antífona O Oriens y el Magnificat", aspectRatio: 3.8060),
+                ChantScorePart(file: "chant-o-oriens-magnificat-web-3", caption: "3 de la Antífona O Oriens y el Magnificat", aspectRatio: 3.1826)
+            ],
+            sourceURL: URL(string: "https://www.verbumgloriae.es/project/o-oriens-et-magnificat/")!
+        ),
+        Chant(
             id: "puer_natus",
             groupID: "christmas",
             latinTitle: "Puer Natus in Bethlehem",
@@ -3120,6 +3167,34 @@ extension ChantCatalog {
             ]
         ),
         Chant(
+            id: "audi_benigne",
+            groupID: "lent",
+            latinTitle: "Audi Benigne Conditor",
+            englishTitle: "O Kind Creator, Bow Thine Ear",
+            setting: nil,
+            detail: "The Vespers hymn of Lent",
+            prayerIDs: [],
+            duration: 135.0,
+            score: [
+                ChantScorePart(file: "chant-audi-benigne-conditor-web-1", caption: "Audi benigne Conditor", aspectRatio: 0.8842)
+            ],
+            sourceURL: URL(string: "https://www.verbumgloriae.es/project/audi-benigne-conditor/")!
+        ),
+        Chant(
+            id: "o_vos_omnes",
+            groupID: "lent",
+            latinTitle: "O Vos Omnes",
+            englishTitle: "O All Ye That Pass By",
+            setting: nil,
+            detail: "Lamentations 1:12, sung in the Sorrowful Mysteries",
+            prayerIDs: [],
+            duration: 110.0,
+            score: [
+                ChantScorePart(file: "chant-o-vos-omnes", caption: "O vos omnes", aspectRatio: 1.8463)
+            ],
+            sourceURL: URL(string: "https://www.verbumgloriae.es/cantos/santo-rosario/misterios-dolorosos/")!
+        ),
+        Chant(
             id: "victimae_paschali",
             groupID: "easter",
             latinTitle: "Victimæ Paschali Laudes",
@@ -3249,6 +3324,34 @@ extension ChantCatalog {
             ]
         ),
         Chant(
+            id: "vidi_aquam",
+            groupID: "easter",
+            latinTitle: "Vidi Aquam",
+            englishTitle: "I Saw Water",
+            setting: nil,
+            detail: "Sung at the sprinkling before Sunday Mass in Eastertide",
+            prayerIDs: [],
+            duration: 210.0,
+            score: [
+                ChantScorePart(file: "chant-vidi-aquam", caption: "Vidi aquam", aspectRatio: 1.1655)
+            ],
+            sourceURL: URL(string: "https://www.verbumgloriae.es/project/vidi-aquam/")!
+        ),
+        Chant(
+            id: "ad_regias",
+            groupID: "easter",
+            latinTitle: "Ad Regias Agni Dapes",
+            englishTitle: "At the Lamb's High Feast",
+            setting: nil,
+            detail: "The Vespers hymn of Eastertide",
+            prayerIDs: [],
+            duration: 220.1,
+            score: [
+                ChantScorePart(file: "chant-ad-regias-agni-dapes", caption: "Ad regias Agni dapes", aspectRatio: 0.5803)
+            ],
+            sourceURL: URL(string: "https://www.verbumgloriae.es/project/ad-regias-agni-dapes/")!
+        ),
+        Chant(
             id: "dies_irae",
             groupID: "departed",
             latinTitle: "Dies Iræ",
@@ -3319,6 +3422,76 @@ extension ChantCatalog {
                 ChantLine(latin: "dona eis réquiem.", english: "grant them rest.", start: 365.61, end: 371.88),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 372.43, end: 378.54)
             ]
+        ),
+        Chant(
+            id: "kyrie_de_angelis",
+            groupID: "mass",
+            latinTitle: "Kyrie",
+            englishTitle: "Lord, Have Mercy",
+            setting: "Mass VIII",
+            detail: "Mass VIII, the Missa de Angelis",
+            prayerIDs: [],
+            duration: 153.0,
+            score: [
+                ChantScorePart(file: "chant-kyrie-viii", caption: "Kyrie VIII", aspectRatio: 2.2761)
+            ],
+            sourceURL: URL(string: "https://www.verbumgloriae.es/project/misa-viii-de-angelis/")!
+        ),
+        Chant(
+            id: "gloria_de_angelis",
+            groupID: "mass",
+            latinTitle: "Gloria",
+            englishTitle: "Glory to God in the Highest",
+            setting: "Mass VIII",
+            detail: "Mass VIII, the Missa de Angelis",
+            prayerIDs: [],
+            duration: 165.0,
+            score: [
+                ChantScorePart(file: "chant-gloria-viii", caption: "Gloria VIII de Angelis", aspectRatio: 0.7375)
+            ],
+            sourceURL: URL(string: "https://www.verbumgloriae.es/project/misa-viii-de-angelis/")!
+        ),
+        Chant(
+            id: "sanctus_de_angelis",
+            groupID: "mass",
+            latinTitle: "Sanctus",
+            englishTitle: "Holy, Holy, Holy",
+            setting: "Mass VIII",
+            detail: "Mass VIII, the Missa de Angelis",
+            prayerIDs: [],
+            duration: 93.0,
+            score: [
+                ChantScorePart(file: "chant-sanctus-viii", caption: "Sanctus VIII", aspectRatio: 1.6619)
+            ],
+            sourceURL: URL(string: "https://www.verbumgloriae.es/project/misa-viii-de-angelis/")!
+        ),
+        Chant(
+            id: "agnus_de_angelis",
+            groupID: "mass",
+            latinTitle: "Agnus Dei",
+            englishTitle: "Lamb of God",
+            setting: "Mass VIII",
+            detail: "Mass VIII, the Missa de Angelis",
+            prayerIDs: [],
+            duration: 77.1,
+            score: [
+                ChantScorePart(file: "chant-agnus-dei-viii", caption: "Agnus Dei VIII", aspectRatio: 2.2682)
+            ],
+            sourceURL: URL(string: "https://www.verbumgloriae.es/project/misa-viii-de-angelis/")!
+        ),
+        Chant(
+            id: "credo_iii",
+            groupID: "mass",
+            latinTitle: "Credo III",
+            englishTitle: "The Nicene Creed",
+            setting: "Credo III",
+            detail: "The Creed sung on Sundays and solemnities",
+            prayerIDs: [],
+            duration: 274.1,
+            score: [
+                ChantScorePart(file: "chant-credo-iii", caption: "Credo III", aspectRatio: 0.3954)
+            ],
+            sourceURL: URL(string: "https://www.verbumgloriae.es/project/credo-iii/")!
         )
     ]
 }

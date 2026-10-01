@@ -12,7 +12,8 @@
     {"id": "christmas", "title": "Christmas", "note": null},
     {"id": "lent", "title": "Lent and Passiontide", "note": null},
     {"id": "easter", "title": "Easter", "note": null},
-    {"id": "departed", "title": "The Faithful Departed", "note": null}
+    {"id": "departed", "title": "The Faithful Departed", "note": null},
+    {"id": "mass", "title": "The Mass", "note": "The Ordinary, sung as on Sundays"}
   ],
   "chants": [
     {"id": "salve_regina_simple", "slug": "salve-regina-simple", "group": "ourLady", "latin": "Salve Regina", "english": "Hail, Holy Queen", "setting": "Simple tone", "detail": "The evening antiphon from Trinity Sunday to Advent, and the Rosary's close", "prayers": ["hail_holy_queen"]},
@@ -34,6 +35,7 @@
     {"id": "salve_mater", "slug": "salve-mater", "group": "ourLady", "latin": "Salve Mater Misericordiæ", "english": "Hail, Mother of Mercy", "setting": null, "detail": "A Marian hymn with a refrain for all to sing", "prayers": []},
     {"id": "inviolata", "slug": "inviolata", "group": "ourLady", "latin": "Inviolata", "english": "Inviolate", "setting": null, "detail": "A prose to the ever-Virgin", "prayers": []},
     {"id": "o_gloriosa", "slug": "o-gloriosa-virginum", "group": "ourLady", "latin": "O Gloriosa Virginum", "english": "O Glorious Virgin", "setting": null, "detail": "The Lauds hymn of Our Lady's feasts", "prayers": []},
+    {"id": "te_matrem", "slug": "te-matrem-laudamus", "group": "ourLady", "latin": "Te Matrem Laudamus", "english": "We Praise Thee as Mother", "setting": null, "detail": "A Marian Te Deum", "prayers": []},
 
     {"id": "in_nomine_patris", "slug": "misterios-gozosos", "page": "cantos/santo-rosario/misterios-gozosos", "audio": "In-nomine-Patris.ogg", "scores": ["In-nomine-Patris-web.svg"], "group": "rosary", "latin": "In Nomine Patris", "english": "The Sign of the Cross", "setting": null, "detail": "How a sung Rosary begins and ends", "prayers": ["sign_of_cross"]},
     {"id": "credo_in_deum", "slug": "misterios-gozosos", "page": "cantos/santo-rosario/misterios-gozosos", "audio": "Credo-in-Deum.ogg", "scores": ["Credo-in-Deum-web.svg"], "group": "rosary", "latin": "Credo in Deum", "english": "The Apostles' Creed", "setting": null, "detail": "On the crucifix", "prayers": ["apostles_creed"]},
@@ -55,6 +57,7 @@
     {"id": "adoremus", "slug": "adoremus-in-aeternum-1", "group": "sacrament", "latin": "Adoremus in Æternum", "english": "Let Us Adore For Ever", "setting": null, "detail": "Sung at the close of Benediction", "prayers": []},
     {"id": "ecce_panis", "slug": "ecce-panis-angelorum", "group": "sacrament", "latin": "Ecce Panis Angelorum", "english": "Behold the Bread of Angels", "setting": null, "detail": "The last verses of the Lauda Sion", "prayers": []},
     {"id": "ubi_caritas", "slug": "ubi-caritas", "group": "sacrament", "latin": "Ubi Caritas", "english": "Where Charity and Love Are", "setting": null, "detail": "Sung at the washing of feet on Holy Thursday", "prayers": []},
+    {"id": "pange_lingua", "slug": "pange-lingua", "group": "sacrament", "latin": "Pange Lingua", "english": "Sing, My Tongue, the Saviour's Glory", "setting": null, "detail": "St Thomas Aquinas's hymn for Corpus Christi, whose last two verses are the Tantum Ergo", "prayers": []},
 
     {"id": "veni_creator", "slug": "veni-creator-spiritus", "group": "holyGhost", "latin": "Veni Creator Spiritus", "english": "Come, Creator Spirit", "setting": null, "detail": "The hymn of Pentecost, with its versicle and collect", "prayers": ["veni_creator"]},
     {"id": "veni_sancte_spiritus", "slug": "veni-sancte-spiritus", "group": "holyGhost", "latin": "Veni Sancte Spiritus", "english": "Come, Holy Spirit", "setting": "The sequence", "detail": "The Golden Sequence of Pentecost", "prayers": ["veni_sancte_spiritus"]},
@@ -76,6 +79,7 @@
     {"id": "rorate_caeli", "slug": "rorate-caeli", "group": "advent", "latin": "Rorate Cæli", "english": "Drop Down Dew, Ye Heavens", "setting": null, "detail": "The prayer of Advent's waiting", "prayers": []},
     {"id": "creator_alme", "slug": "creator-alme-siderum", "group": "advent", "latin": "Creator Alme Siderum", "english": "Creator of the Stars of Night", "setting": null, "detail": "The Vespers hymn of Advent", "prayers": []},
     {"id": "veni_emmanuel", "slug": "veni-veni-emmanuel", "group": "advent", "latin": "Veni, Veni, Emmanuel", "english": "O Come, O Come, Emmanuel", "setting": null, "detail": "The O Antiphons made a hymn", "prayers": []},
+    {"id": "o_oriens_magnificat", "slug": "o-oriens-et-magnificat", "group": "advent", "latin": "O Oriens", "english": "O Morning Star, with the Magnificat", "setting": null, "detail": "The O Antiphon of December 21, around Mary's song", "prayers": ["magnificat"]},
 
     {"id": "puer_natus", "slug": "puer-natus-in-bethlehem", "group": "christmas", "latin": "Puer Natus in Bethlehem", "english": "A Child Is Born in Bethlehem", "setting": null, "detail": "A Christmas carol of the Middle Ages", "prayers": []},
     {"id": "adeste_fideles", "slug": "adeste-fideles", "group": "christmas", "latin": "Adeste Fideles", "english": "O Come, All Ye Faithful", "setting": null, "detail": "The Christmas hymn in its Latin", "prayers": []},
@@ -85,10 +89,20 @@
     {"id": "parce_domine", "slug": "parce-domine", "group": "lent", "latin": "Parce Domine", "english": "Spare, O Lord", "setting": null, "detail": "From the prophet Joel, sung in Lent", "prayers": []},
     {"id": "miserere", "slug": "miserere-mei-deus", "group": "lent", "latin": "Miserere Mei, Deus", "english": "Psalm 50 · Have Mercy on Me", "setting": null, "detail": "David's psalm of repentance", "prayers": ["miserere"]},
     {"id": "vexilla_regis", "slug": "vexilla-regis-prodeunt", "group": "lent", "latin": "Vexilla Regis", "english": "The Banners of the King", "setting": null, "detail": "The Vespers hymn of Passiontide", "prayers": []},
+    {"id": "audi_benigne", "slug": "audi-benigne-conditor", "group": "lent", "latin": "Audi Benigne Conditor", "english": "O Kind Creator, Bow Thine Ear", "setting": null, "detail": "The Vespers hymn of Lent", "prayers": []},
+    {"id": "o_vos_omnes", "slug": "misterios-dolorosos", "page": "cantos/santo-rosario/misterios-dolorosos", "audio": "2024/11/O-vos-omnes.ogg", "scores": ["O-vos-omnes-web.svg"], "group": "lent", "latin": "O Vos Omnes", "english": "O All Ye That Pass By", "setting": null, "detail": "Lamentations 1:12, sung in the Sorrowful Mysteries", "prayers": []},
 
     {"id": "victimae_paschali", "slug": "victimae-paschali-laudes", "group": "easter", "latin": "Victimæ Paschali Laudes", "english": "Praises to the Paschal Victim", "setting": null, "detail": "The sequence of Easter Sunday", "prayers": []},
     {"id": "o_filii", "slug": "o-filii-et-filiae", "group": "easter", "latin": "O Filii et Filiæ", "english": "O Sons and Daughters", "setting": null, "detail": "An Easter carol of the Resurrection", "prayers": []},
+    {"id": "vidi_aquam", "slug": "vidi-aquam", "group": "easter", "latin": "Vidi Aquam", "english": "I Saw Water", "setting": null, "detail": "Sung at the sprinkling before Sunday Mass in Eastertide", "prayers": []},
+    {"id": "ad_regias", "slug": "ad-regias-agni-dapes", "group": "easter", "latin": "Ad Regias Agni Dapes", "english": "At the Lamb's High Feast", "setting": null, "detail": "The Vespers hymn of Eastertide", "prayers": []},
 
-    {"id": "dies_irae", "slug": "dies-irae", "group": "departed", "latin": "Dies Iræ", "english": "Day of Wrath", "setting": null, "detail": "The sequence of the Requiem Mass", "prayers": []}
+    {"id": "dies_irae", "slug": "dies-irae", "group": "departed", "latin": "Dies Iræ", "english": "Day of Wrath", "setting": null, "detail": "The sequence of the Requiem Mass", "prayers": []},
+
+    {"id": "kyrie_de_angelis", "slug": "misa-viii-de-angelis", "page": "project/misa-viii-de-angelis", "audio": "2022/08/Kyrie-VIII.ogg", "scores": ["Kyrie-VIII-web.svg"], "group": "mass", "latin": "Kyrie", "english": "Lord, Have Mercy", "setting": "Mass VIII", "detail": "Mass VIII, the Missa de Angelis", "prayers": []},
+    {"id": "gloria_de_angelis", "slug": "misa-viii-de-angelis", "page": "project/misa-viii-de-angelis", "audio": "2022/08/Gloria-VIII.ogg", "scores": ["Gloria-VIII-web.svg"], "group": "mass", "latin": "Gloria", "english": "Glory to God in the Highest", "setting": "Mass VIII", "detail": "Mass VIII, the Missa de Angelis", "prayers": []},
+    {"id": "sanctus_de_angelis", "slug": "misa-viii-de-angelis", "page": "project/misa-viii-de-angelis", "audio": "2022/09/Sanctus-VIII.ogg", "scores": ["Sanctus-VIII-web.svg"], "group": "mass", "latin": "Sanctus", "english": "Holy, Holy, Holy", "setting": "Mass VIII", "detail": "Mass VIII, the Missa de Angelis", "prayers": []},
+    {"id": "agnus_de_angelis", "slug": "misa-viii-de-angelis", "page": "project/misa-viii-de-angelis", "audio": "2022/09/Agnus-Dei-VIII.ogg", "scores": ["Agnus-Dei-VIII-web.svg"], "group": "mass", "latin": "Agnus Dei", "english": "Lamb of God", "setting": "Mass VIII", "detail": "Mass VIII, the Missa de Angelis", "prayers": []},
+    {"id": "credo_iii", "slug": "credo-iii", "group": "mass", "latin": "Credo III", "english": "The Nicene Creed", "setting": "Credo III", "detail": "The Creed sung on Sundays and solemnities", "prayers": []}
   ]
 }

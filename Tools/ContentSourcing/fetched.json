@@ -161,5 +161,276 @@
     "height": 4399,
     "bytes": 402747,
     "retaken_from": "960×1261"
+  },
+  "pange_lingua": {
+    "status": "verified",
+    "resolved_entry": {
+      "id": "pange_lingua",
+      "slug": "pange-lingua",
+      "group": "sacrament",
+      "latin": "Pange Lingua",
+      "english": "Sing, My Tongue, the Saviour's Glory",
+      "setting": null,
+      "detail": "St Thomas Aquinas's hymn for Corpus Christi, whose last two verses are the Tantum Ergo",
+      "prayers": []
+    },
+    "audio_files": [
+      "2021/06/Pange-lingua.ogg"
+    ],
+    "score_files": [
+      "Pange-lingua-web.svg",
+      "Vers.-Panem-de-caelo-web.svg",
+      "Or.-Deus-qui-nobis-web.svg"
+    ],
+    "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/"
+  },
+  "vidi_aquam": {
+    "status": "verified",
+    "resolved_entry": {
+      "id": "vidi_aquam",
+      "slug": "vidi-aquam",
+      "group": "easter",
+      "latin": "Vidi Aquam",
+      "english": "I Saw Water",
+      "setting": null,
+      "detail": "Sung at the sprinkling before Sunday Mass in Eastertide",
+      "prayers": []
+    },
+    "audio_files": [
+      "2022/05/Vidi-aquam.ogg"
+    ],
+    "score_files": [
+      "Vidi-aquam-web.svg"
+    ],
+    "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/"
+  },
+  "kyrie_de_angelis": {
+    "status": "verified",
+    "resolved_entry": {
+      "id": "kyrie_de_angelis",
+      "slug": "misa-viii-de-angelis",
+      "page": "project/misa-viii-de-angelis",
+      "audio": "2022/08/Kyrie-VIII.ogg",
+      "scores": [
+        "Kyrie-VIII-web.svg"
+      ],
+      "group": "mass",
+      "latin": "Kyrie",
+      "english": "Lord, Have Mercy",
+      "setting": "Mass VIII",
+      "detail": "Mass VIII, the Missa de Angelis",
+      "prayers": []
+    },
+    "audio_files": [
+      "2022/08/Kyrie-VIII.ogg"
+    ],
+    "score_files": [
+      "Kyrie-VIII-web.svg"
+    ],
+    "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/"
+  },
+  "gloria_de_angelis": {
+    "status": "verified",
+    "resolved_entry": {
+      "id": "gloria_de_angelis",
+      "slug": "misa-viii-de-angelis",
+      "page": "project/misa-viii-de-angelis",
+      "audio": "2022/08/Gloria-VIII.ogg",
+      "scores": [
+        "Gloria-VIII-web.svg"
+      ],
+      "group": "mass",
+      "latin": "Gloria",
+      "english": "Glory to God in the Highest",
+      "setting": "Mass VIII",
+      "detail": "Mass VIII, the Missa de Angelis",
+      "prayers": []
+    },
+    "audio_files": [
+      "2022/08/Gloria-VIII.ogg"
+    ],
+    "score_files": [
+      "Gloria-VIII-web.svg"
+    ],
+    "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/"
+  },
+  "sanctus_de_angelis": {
+    "status": "verified",
+    "resolved_entry": {
+      "id": "sanctus_de_angelis",
+      "slug": "misa-viii-de-angelis",
+      "page": "project/misa-viii-de-angelis",
+      "audio": "2022/09/Sanctus-VIII.ogg",
+      "scores": [
+        "Sanctus-VIII-web.svg"
+      ],
+      "group": "mass",
+      "latin": "Sanctus",
+      "english": "Holy, Holy, Holy",
+      "setting": "Mass VIII",
+      "detail": "Mass VIII, the Missa de Angelis",
+      "prayers": []
+    },
+    "audio_files": [
+      "2022/09/Sanctus-VIII.ogg"
+    ],
+    "score_files": [
+      "Sanctus-VIII-web.svg"
+    ],
+    "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/"
+  },
+  "agnus_de_angelis": {
+    "status": "verified",
+    "resolved_entry": {
+      "id": "agnus_de_angelis",
+      "slug": "misa-viii-de-angelis",
+      "page": "project/misa-viii-de-angelis",
+      "audio": "2022/09/Agnus-Dei-VIII.ogg",
+      "scores": [
+        "Agnus-Dei-VIII-web.svg"
+      ],
+      "group": "mass",
+      "latin": "Agnus Dei",
+      "english": "Lamb of God",
+      "setting": "Mass VIII",
+      "detail": "Mass VIII, the Missa de Angelis",
+      "prayers": []
+    },
+    "audio_files": [
+      "2022/09/Agnus-Dei-VIII.ogg"
+    ],
+    "score_files": [
+      "Agnus-Dei-VIII-web.svg"
+    ],
+    "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/"
+  },
+  "credo_iii": {
+    "status": "verified",
+    "resolved_entry": {
+      "id": "credo_iii",
+      "slug": "credo-iii",
+      "group": "mass",
+      "latin": "Credo III",
+      "english": "The Nicene Creed",
+      "setting": "Credo III",
+      "detail": "The Creed sung on Sundays and solemnities",
+      "prayers": []
+    },
+    "audio_files": [
+      "2022/09/Credo-III.ogg"
+    ],
+    "score_files": [
+      "Credo-III-web.svg"
+    ],
+    "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/"
+  },
+  "audi_benigne": {
+    "status": "verified",
+    "resolved_entry": {
+      "id": "audi_benigne",
+      "slug": "audi-benigne-conditor",
+      "group": "lent",
+      "latin": "Audi Benigne Conditor",
+      "english": "O Kind Creator, Bow Thine Ear",
+      "setting": null,
+      "detail": "The Vespers hymn of Lent",
+      "prayers": []
+    },
+    "audio_files": [
+      "2022/03/Audi-benigne-Conditor-1.ogg"
+    ],
+    "score_files": [
+      "Audi-benigne-Conditor-web-1.svg"
+    ],
+    "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/"
+  },
+  "o_vos_omnes": {
+    "status": "verified",
+    "resolved_entry": {
+      "id": "o_vos_omnes",
+      "slug": "misterios-dolorosos",
+      "page": "cantos/santo-rosario/misterios-dolorosos",
+      "audio": "2024/11/O-vos-omnes.ogg",
+      "scores": [
+        "O-vos-omnes-web.svg"
+      ],
+      "group": "lent",
+      "latin": "O Vos Omnes",
+      "english": "O All Ye That Pass By",
+      "setting": null,
+      "detail": "Lamentations 1:12, sung in the Sorrowful Mysteries",
+      "prayers": []
+    },
+    "audio_files": [
+      "2024/11/O-vos-omnes.ogg"
+    ],
+    "score_files": [
+      "O-vos-omnes-web.svg"
+    ],
+    "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/"
+  },
+  "ad_regias": {
+    "status": "verified",
+    "resolved_entry": {
+      "id": "ad_regias",
+      "slug": "ad-regias-agni-dapes",
+      "group": "easter",
+      "latin": "Ad Regias Agni Dapes",
+      "english": "At the Lamb's High Feast",
+      "setting": null,
+      "detail": "The Vespers hymn of Eastertide",
+      "prayers": []
+    },
+    "audio_files": [
+      "2021/05/Ad-Regias-Agni-dapes.ogg"
+    ],
+    "score_files": [
+      "Ad-regias-Agni-dapes-web-2.svg"
+    ],
+    "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/"
+  },
+  "te_matrem": {
+    "status": "verified",
+    "resolved_entry": {
+      "id": "te_matrem",
+      "slug": "te-matrem-laudamus",
+      "group": "ourLady",
+      "latin": "Te Matrem Laudamus",
+      "english": "We Praise Thee as Mother",
+      "setting": null,
+      "detail": "A Marian Te Deum",
+      "prayers": []
+    },
+    "audio_files": [
+      "2022/02/Te-Matrem-laudamus.ogg"
+    ],
+    "score_files": [
+      "Te-Matrem-laudamus-web.svg"
+    ],
+    "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/"
+  },
+  "o_oriens_magnificat": {
+    "status": "verified",
+    "resolved_entry": {
+      "id": "o_oriens_magnificat",
+      "slug": "o-oriens-et-magnificat",
+      "group": "advent",
+      "latin": "O Oriens",
+      "english": "O Morning Star, with the Magnificat",
+      "setting": null,
+      "detail": "The O Antiphon of December 21, around Mary's song",
+      "prayers": [
+        "magnificat"
+      ]
+    },
+    "audio_files": [
+      "2022/11/O-Oriens-Magnificat.ogg"
+    ],
+    "score_files": [
+      "O-Oriens-Magnificat-web-1.svg",
+      "O-Sapientia-Magnificat-2-web.svg",
+      "O-Oriens-Magnificat-web-3.svg"
+    ],
+    "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/"
   }
 }

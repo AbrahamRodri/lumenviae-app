@@ -103,20 +103,20 @@ Licence for all: Verbum Gloriae copyleft (CC BY-SA 4.0 terms without the attribu
 
 | id | Tier | Status | Page | Est. length | Size | Note |
 |---|---|---|---|---|---|---|
-| `pange_lingua` | 1 | unverified | https://www.verbumgloriae.es/project/pange-lingua/ | 4:30 | 1.11 MB (est.) | — |
-| `vidi_aquam` | 1 | unverified | https://www.verbumgloriae.es/project/vidi-aquam/ | 2:30 | 0.61 MB (est.) | — |
-| `kyrie_de_angelis` | 2 | unverified | https://www.verbumgloriae.es/project/misa-viii-de-angelis/ | 1:30 | 0.37 MB (est.) | One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'kyrie'. |
-| `gloria_de_angelis` | 2 | unverified | https://www.verbumgloriae.es/project/misa-viii-de-angelis/ | 3:00 | 0.74 MB (est.) | One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'gloria'. |
-| `sanctus_de_angelis` | 2 | unverified | https://www.verbumgloriae.es/project/misa-viii-de-angelis/ | 1:00 | 0.25 MB (est.) | One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'sanctus'. |
-| `agnus_de_angelis` | 2 | unverified | https://www.verbumgloriae.es/project/misa-viii-de-angelis/ | 1:00 | 0.25 MB (est.) | One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'agnus'. |
-| `credo_iii` | 2 | unverified | https://www.verbumgloriae.es/project/credo-iii/ | 5:30 | 1.35 MB (est.) | — |
-| `audi_benigne` | 3 | unverified | https://www.verbumgloriae.es/project/audi-benigne-conditor/ | 3:00 | 0.74 MB (est.) | — |
-| `o_vos_omnes` | 3 | unverified | https://www.verbumgloriae.es/cantos/santo-rosario/misterios-dolorosos/ | 1:30 | 0.37 MB (est.) | The page holds the whole sung Sorrowful Rosary; fetch.py picks this antiphon's files by the pattern 'vos-omnes'. |
-| `ad_regias` | extra | unverified | https://www.verbumgloriae.es/project/ad-regias-agni-dapes/ | 3:20 | 0.82 MB (est.) | An Eastertide hymn while Haec Dies is missing; there is also an 'otro tono' page. |
-| `te_matrem` | extra | unverified | https://www.verbumgloriae.es/project/te-matrem-laudamus/ | 4:00 | 0.98 MB (est.) | — |
-| `o_oriens_magnificat` | extra | unverified | https://www.verbumgloriae.es/project/o-oriens-et-magnificat/ | 5:30 | 1.35 MB (est.) | — |
+| `pange_lingua` | 1 | verified | https://www.verbumgloriae.es/project/pange-lingua/ | 4:30 | 1.08 MB | — |
+| `vidi_aquam` | 1 | verified | https://www.verbumgloriae.es/project/vidi-aquam/ | 2:30 | 0.81 MB | — |
+| `kyrie_de_angelis` | 2 | verified | https://www.verbumgloriae.es/project/misa-viii-de-angelis/ | 1:30 | 0.59 MB | One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'kyrie'. |
+| `gloria_de_angelis` | 2 | verified | https://www.verbumgloriae.es/project/misa-viii-de-angelis/ | 3:00 | 0.64 MB | One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'gloria'. |
+| `sanctus_de_angelis` | 2 | verified | https://www.verbumgloriae.es/project/misa-viii-de-angelis/ | 1:00 | 0.36 MB | One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'sanctus'. |
+| `agnus_de_angelis` | 2 | verified | https://www.verbumgloriae.es/project/misa-viii-de-angelis/ | 1:00 | 0.30 MB | One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'agnus'. |
+| `credo_iii` | 2 | verified | https://www.verbumgloriae.es/project/credo-iii/ | 5:30 | 1.06 MB | — |
+| `audi_benigne` | 3 | verified | https://www.verbumgloriae.es/project/audi-benigne-conditor/ | 3:00 | 0.53 MB | — |
+| `o_vos_omnes` | 3 | verified | https://www.verbumgloriae.es/cantos/santo-rosario/misterios-dolorosos/ | 1:30 | 0.43 MB | The page holds the whole sung Sorrowful Rosary; fetch.py picks this antiphon's files by the pattern 'vos-omnes'. |
+| `ad_regias` | extra | verified | https://www.verbumgloriae.es/project/ad-regias-agni-dapes/ | 3:20 | 0.86 MB | An Eastertide hymn while Haec Dies is missing; there is also an 'otro tono' page. |
+| `te_matrem` | extra | verified | https://www.verbumgloriae.es/project/te-matrem-laudamus/ | 4:00 | 1.38 MB | — |
+| `o_oriens_magnificat` | extra | verified | https://www.verbumgloriae.es/project/o-oriens-et-magnificat/ | 5:30 | 0.92 MB | — |
 
-Growth if all are taken: 8.9 MB of audio, on top of the bundle's ~59 MB (plus scores, ~60 KB each).
+Growth if all are taken: 9.0 MB of audio, on top of the bundle's ~59 MB (plus scores, ~60 KB each).
 
 ## Asked for, not on Verbum Gloriae
 

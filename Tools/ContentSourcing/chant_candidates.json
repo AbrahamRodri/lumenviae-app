@@ -32,6 +32,10 @@
       "id": "kyrie_de_angelis",
       "slug": "misa-viii-de-angelis",
       "page": "project/misa-viii-de-angelis",
+      "audio": "2022/08/Kyrie-VIII.ogg",
+      "scores": [
+        "Kyrie-VIII-web.svg"
+      ],
       "group": "mass",
       "latin": "Kyrie",
       "english": "Lord, Have Mercy",
@@ -43,6 +47,10 @@
       "id": "gloria_de_angelis",
       "slug": "misa-viii-de-angelis",
       "page": "project/misa-viii-de-angelis",
+      "audio": "2022/08/Gloria-VIII.ogg",
+      "scores": [
+        "Gloria-VIII-web.svg"
+      ],
       "group": "mass",
       "latin": "Gloria",
       "english": "Glory to God in the Highest",
@@ -54,6 +62,10 @@
       "id": "sanctus_de_angelis",
       "slug": "misa-viii-de-angelis",
       "page": "project/misa-viii-de-angelis",
+      "audio": "2022/09/Sanctus-VIII.ogg",
+      "scores": [
+        "Sanctus-VIII-web.svg"
+      ],
       "group": "mass",
       "latin": "Sanctus",
       "english": "Holy, Holy, Holy",
@@ -65,6 +77,10 @@
       "id": "agnus_de_angelis",
       "slug": "misa-viii-de-angelis",
       "page": "project/misa-viii-de-angelis",
+      "audio": "2022/09/Agnus-Dei-VIII.ogg",
+      "scores": [
+        "Agnus-Dei-VIII-web.svg"
+      ],
       "group": "mass",
       "latin": "Agnus Dei",
       "english": "Lamb of God",
@@ -96,6 +112,10 @@
       "id": "o_vos_omnes",
       "slug": "misterios-dolorosos",
       "page": "cantos/santo-rosario/misterios-dolorosos",
+      "audio": "2024/11/O-vos-omnes.ogg",
+      "scores": [
+        "O-vos-omnes-web.svg"
+      ],
       "group": "lent",
       "latin": "O Vos Omnes",
       "english": "O All Ye That Pass By",
@@ -137,17 +157,17 @@
     }
   ],
   "status": {
-    "pange_lingua": "unverified",
-    "vidi_aquam": "unverified",
-    "kyrie_de_angelis": "unverified",
-    "gloria_de_angelis": "unverified",
-    "sanctus_de_angelis": "unverified",
-    "agnus_de_angelis": "unverified",
-    "credo_iii": "unverified",
-    "audi_benigne": "unverified",
-    "o_vos_omnes": "unverified",
-    "ad_regias": "unverified",
-    "te_matrem": "unverified",
-    "o_oriens_magnificat": "unverified"
+    "pange_lingua": "verified",
+    "vidi_aquam": "verified",
+    "kyrie_de_angelis": "verified",
+    "gloria_de_angelis": "verified",
+    "sanctus_de_angelis": "verified",
+    "agnus_de_angelis": "verified",
+    "credo_iii": "verified",
+    "audi_benigne": "verified",
+    "o_vos_omnes": "verified",
+    "ad_regias": "verified",
+    "te_matrem": "verified",
+    "o_oriens_magnificat": "verified"
   }
 }

@@ -903,7 +903,7 @@
       "kind": "chant",
       "id": "pange_lingua",
       "tier": 1,
-      "status": "unverified",
+      "status": "verified",
       "source_page": "https://www.verbumgloriae.es/project/pange-lingua/",
       "creator": "Verbum Gloriae",
       "licence": "Verbum Gloriae copyleft (CC BY-SA 4.0 terms without the attribution requirement; ShareAlike)",
@@ -911,14 +911,24 @@
       "attribution": "Recordings and scores: Verbum Gloriae (verbumgloriae.es), copyleft",
       "estimated_seconds": 270,
       "estimated_bytes": 1159987,
-      "size_is_estimate": true,
-      "note": null
+      "size_is_estimate": false,
+      "note": null,
+      "audio_files": [
+        "2021/06/Pange-lingua.ogg"
+      ],
+      "score_files": [
+        "Pange-lingua-web.svg",
+        "Vers.-Panem-de-caelo-web.svg",
+        "Or.-Deus-qui-nobis-web.svg"
+      ],
+      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/",
+      "encoded_bytes": 1132809
     },
     {
       "kind": "chant",
       "id": "vidi_aquam",
       "tier": 1,
-      "status": "unverified",
+      "status": "verified",
       "source_page": "https://www.verbumgloriae.es/project/vidi-aquam/",
       "creator": "Verbum Gloriae",
       "licence": "Verbum Gloriae copyleft (CC BY-SA 4.0 terms without the attribution requirement; ShareAlike)",
@@ -926,14 +936,22 @@
       "attribution": "Recordings and scores: Verbum Gloriae (verbumgloriae.es), copyleft",
       "estimated_seconds": 150,
       "estimated_bytes": 644437,
-      "size_is_estimate": true,
-      "note": null
+      "size_is_estimate": false,
+      "note": null,
+      "audio_files": [
+        "2022/05/Vidi-aquam.ogg"
+      ],
+      "score_files": [
+        "Vidi-aquam-web.svg"
+      ],
+      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/",
+      "encoded_bytes": 853299
     },
     {
       "kind": "chant",
       "id": "kyrie_de_angelis",
       "tier": 2,
-      "status": "unverified",
+      "status": "verified",
       "source_page": "https://www.verbumgloriae.es/project/misa-viii-de-angelis/",
       "creator": "Verbum Gloriae",
       "licence": "Verbum Gloriae copyleft (CC BY-SA 4.0 terms without the attribution requirement; ShareAlike)",
@@ -941,14 +959,22 @@
       "attribution": "Recordings and scores: Verbum Gloriae (verbumgloriae.es), copyleft",
       "estimated_seconds": 90,
       "estimated_bytes": 386662,
-      "size_is_estimate": true,
-      "note": "One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'kyrie'."
+      "size_is_estimate": false,
+      "note": "One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'kyrie'.",
+      "audio_files": [
+        "2022/08/Kyrie-VIII.ogg"
+      ],
+      "score_files": [
+        "Kyrie-VIII-web.svg"
+      ],
+      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/",
+      "encoded_bytes": 620244
     },
     {
       "kind": "chant",
       "id": "gloria_de_angelis",
       "tier": 2,
-      "status": "unverified",
+      "status": "verified",
       "source_page": "https://www.verbumgloriae.es/project/misa-viii-de-angelis/",
       "creator": "Verbum Gloriae",
       "licence": "Verbum Gloriae copyleft (CC BY-SA 4.0 terms without the attribution requirement; ShareAlike)",
@@ -956,14 +982,22 @@
       "attribution": "Recordings and scores: Verbum Gloriae (verbumgloriae.es), copyleft",
       "estimated_seconds": 180,
       "estimated_bytes": 773325,
-      "size_is_estimate": true,
-      "note": "One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'gloria'."
+      "size_is_estimate": false,
+      "note": "One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'gloria'.",
+      "audio_files": [
+        "2022/08/Gloria-VIII.ogg"
+      ],
+      "score_files": [
+        "Gloria-VIII-web.svg"
+      ],
+      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/",
+      "encoded_bytes": 666465
     },
     {
       "kind": "chant",
       "id": "sanctus_de_angelis",
       "tier": 2,
-      "status": "unverified",
+      "status": "verified",
       "source_page": "https://www.verbumgloriae.es/project/misa-viii-de-angelis/",
       "creator": "Verbum Gloriae",
       "licence": "Verbum Gloriae copyleft (CC BY-SA 4.0 terms without the attribution requirement; ShareAlike)",
@@ -971,14 +1005,22 @@
       "attribution": "Recordings and scores: Verbum Gloriae (verbumgloriae.es), copyleft",
       "estimated_seconds": 60,
       "estimated_bytes": 257775,
-      "size_is_estimate": true,
-      "note": "One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'sanctus'."
+      "size_is_estimate": false,
+      "note": "One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'sanctus'.",
+      "audio_files": [
+        "2022/09/Sanctus-VIII.ogg"
+      ],
+      "score_files": [
+        "Sanctus-VIII-web.svg"
+      ],
+      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/",
+      "encoded_bytes": 375927
     },
     {
       "kind": "chant",
       "id": "agnus_de_angelis",
       "tier": 2,
-      "status": "unverified",
+      "status": "verified",
       "source_page": "https://www.verbumgloriae.es/project/misa-viii-de-angelis/",
       "creator": "Verbum Gloriae",
       "licence": "Verbum Gloriae copyleft (CC BY-SA 4.0 terms without the attribution requirement; ShareAlike)",
@@ -986,14 +1028,22 @@
       "attribution": "Recordings and scores: Verbum Gloriae (verbumgloriae.es), copyleft",
       "estimated_seconds": 60,
       "estimated_bytes": 257775,
-      "size_is_estimate": true,
-      "note": "One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'agnus'."
+      "size_is_estimate": false,
+      "note": "One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'agnus'.",
+      "audio_files": [
+        "2022/09/Agnus-Dei-VIII.ogg"
+      ],
+      "score_files": [
+        "Agnus-Dei-VIII-web.svg"
+      ],
+      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/",
+      "encoded_bytes": 314161
     },
     {
       "kind": "chant",
       "id": "credo_iii",
       "tier": 2,
-      "status": "unverified",
+      "status": "verified",
       "source_page": "https://www.verbumgloriae.es/project/credo-iii/",
       "creator": "Verbum Gloriae",
       "licence": "Verbum Gloriae copyleft (CC BY-SA 4.0 terms without the attribution requirement; ShareAlike)",
@@ -1001,14 +1051,22 @@
       "attribution": "Recordings and scores: Verbum Gloriae (verbumgloriae.es), copyleft",
       "estimated_seconds": 330,
       "estimated_bytes": 1417762,
-      "size_is_estimate": true,
-      "note": null
+      "size_is_estimate": false,
+      "note": null,
+      "audio_files": [
+        "2022/09/Credo-III.ogg"
+      ],
+      "score_files": [
+        "Credo-III-web.svg"
+      ],
+      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/",
+      "encoded_bytes": 1115138
     },
     {
       "kind": "chant",
       "id": "audi_benigne",
       "tier": 3,
-      "status": "unverified",
+      "status": "verified",
       "source_page": "https://www.verbumgloriae.es/project/audi-benigne-conditor/",
       "creator": "Verbum Gloriae",
       "licence": "Verbum Gloriae copyleft (CC BY-SA 4.0 terms without the attribution requirement; ShareAlike)",
@@ -1016,14 +1074,22 @@
       "attribution": "Recordings and scores: Verbum Gloriae (verbumgloriae.es), copyleft",
       "estimated_seconds": 180,
       "estimated_bytes": 773325,
-      "size_is_estimate": true,
-      "note": null
+      "size_is_estimate": false,
+      "note": null,
+      "audio_files": [
+        "2022/03/Audi-benigne-Conditor-1.ogg"
+      ],
+      "score_files": [
+        "Audi-benigne-Conditor-web-1.svg"
+      ],
+      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/",
+      "encoded_bytes": 552949
     },
     {
       "kind": "chant",
       "id": "o_vos_omnes",
       "tier": 3,
-      "status": "unverified",
+      "status": "verified",
       "source_page": "https://www.verbumgloriae.es/cantos/santo-rosario/misterios-dolorosos/",
       "creator": "Verbum Gloriae",
       "licence": "Verbum Gloriae copyleft (CC BY-SA 4.0 terms without the attribution requirement; ShareAlike)",
@@ -1031,14 +1097,22 @@
       "attribution": "Recordings and scores: Verbum Gloriae (verbumgloriae.es), copyleft",
       "estimated_seconds": 90,
       "estimated_bytes": 386662,
-      "size_is_estimate": true,
-      "note": "The page holds the whole sung Sorrowful Rosary; fetch.py picks this antiphon's files by the pattern 'vos-omnes'."
+      "size_is_estimate": false,
+      "note": "The page holds the whole sung Sorrowful Rosary; fetch.py picks this antiphon's files by the pattern 'vos-omnes'.",
+      "audio_files": [
+        "2024/11/O-vos-omnes.ogg"
+      ],
+      "score_files": [
+        "O-vos-omnes-web.svg"
+      ],
+      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/",
+      "encoded_bytes": 451321
     },
     {
       "kind": "chant",
       "id": "ad_regias",
       "tier": "extra",
-      "status": "unverified",
+      "status": "verified",
       "source_page": "https://www.verbumgloriae.es/project/ad-regias-agni-dapes/",
       "creator": "Verbum Gloriae",
       "licence": "Verbum Gloriae copyleft (CC BY-SA 4.0 terms without the attribution requirement; ShareAlike)",
@@ -1046,14 +1120,22 @@
       "attribution": "Recordings and scores: Verbum Gloriae (verbumgloriae.es), copyleft",
       "estimated_seconds": 200,
       "estimated_bytes": 859250,
-      "size_is_estimate": true,
-      "note": "An Eastertide hymn while Haec Dies is missing; there is also an 'otro tono' page."
+      "size_is_estimate": false,
+      "note": "An Eastertide hymn while Haec Dies is missing; there is also an 'otro tono' page.",
+      "audio_files": [
+        "2021/05/Ad-Regias-Agni-dapes.ogg"
+      ],
+      "score_files": [
+        "Ad-regias-Agni-dapes-web-2.svg"
+      ],
+      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/",
+      "encoded_bytes": 905188
     },
     {
       "kind": "chant",
       "id": "te_matrem",
       "tier": "extra",
-      "status": "unverified",
+      "status": "verified",
       "source_page": "https://www.verbumgloriae.es/project/te-matrem-laudamus/",
       "creator": "Verbum Gloriae",
       "licence": "Verbum Gloriae copyleft (CC BY-SA 4.0 terms without the attribution requirement; ShareAlike)",
@@ -1061,14 +1143,22 @@
       "attribution": "Recordings and scores: Verbum Gloriae (verbumgloriae.es), copyleft",
       "estimated_seconds": 240,
       "estimated_bytes": 1031100,
-      "size_is_estimate": true,
-      "note": null
+      "size_is_estimate": false,
+      "note": null,
+      "audio_files": [
+        "2022/02/Te-Matrem-laudamus.ogg"
+      ],
+      "score_files": [
+        "Te-Matrem-laudamus-web.svg"
+      ],
+      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/",
+      "encoded_bytes": 1448759
     },
     {
       "kind": "chant",
       "id": "o_oriens_magnificat",
       "tier": "extra",
-      "status": "unverified",
+      "status": "verified",
       "source_page": "https://www.verbumgloriae.es/project/o-oriens-et-magnificat/",
       "creator": "Verbum Gloriae",
       "licence": "Verbum Gloriae copyleft (CC BY-SA 4.0 terms without the attribution requirement; ShareAlike)",
@@ -1076,8 +1166,18 @@
       "attribution": "Recordings and scores: Verbum Gloriae (verbumgloriae.es), copyleft",
       "estimated_seconds": 330,
       "estimated_bytes": 1417762,
-      "size_is_estimate": true,
-      "note": null
+      "size_is_estimate": false,
+      "note": null,
+      "audio_files": [
+        "2022/11/O-Oriens-Magnificat.ogg"
+      ],
+      "score_files": [
+        "O-Oriens-Magnificat-web-1.svg",
+        "O-Sapientia-Magnificat-2-web.svg",
+        "O-Oriens-Magnificat-web-3.svg"
+      ],
+      "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/",
+      "encoded_bytes": 968010
     }
   ],
   "chants_not_found": [
