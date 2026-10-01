@@ -108,6 +108,82 @@ struct PrayersPageTests {
         }
     }
 
+    // MARK: Search
+
+    @Test func aSearchFindsAPrayerByTheStartsOfItsWords() {
+        func found(_ needle: String) -> [String] { PrayerBook.search(needle).map(\.id) }
+
+        #expect(found("St Michael").contains("st_michael_prayer"))
+        #expect(found("saint michael").contains("st_michael_prayer"))
+        #expect(found("St. Michael").contains("st_michael_prayer"))
+        #expect(found("Loreto").contains("litany_loreto"))
+        #expect(found("salve regina").contains("hail_holy_queen"))
+        #expect(found("St Joseph").contains("ad_te_beate_ioseph"))
+        #expect(found("St Joseph").contains("litany_st_joseph"))
+        #expect(found("hail ma").first == "hail_mary")
+        #expect(found("zzqx").isEmpty)
+    }
+
+    @Test func aSearchNamesTheOrdersPrayedTogether() {
+        #expect(PrayerBook.searchOrders("blessed sacrament").map(\.id).contains("visit"))
+        #expect(PrayerBook.searchOrders("visiting").map(\.id) == ["visit"])
+        #expect(PrayerBook.searchOrders("ma").isEmpty)
+    }
+
+    @Test func aListNamesAPrayerAsPeopleSayIt() {
+        #expect(PrayerBook.prayer("hail_mary")?.listTitle == "Hail Mary")
+        #expect(PrayerBook.prayer("memorare")?.listTitle == "Memorare")
+        #expect(PrayerBook.prayer("litany_loreto")?.listTitle == "Litany of Loreto")
+        #expect(PrayerBook.prayer("st_michael_prayer")?.listTitle == "St Michael")
+        // A prayer with no shorter name keeps its own
+        #expect(PrayerBook.prayer("sub_tuum")?.listTitle == PrayerBook.prayer("sub_tuum")?.title)
+    }
+
+    // MARK: The Angelus's two bells
+
+    @Test func theAngelusIsOfferedForItsBellNotItsDay() {
+        let angelus = PrayerBook.order(PrayerBook.angelusOrderID)!
+        let night = PrayerBook.order(PrayerBook.nightOrderID)!
+        func offered(_ order: PrayerOrder, at now: Date, last: Date?, today: Bool = true) -> Bool {
+            PrayerBook.isOfferedNow(order, at: now, offeredToday: today, lastOffered: last, calendar: calendar)
+        }
+        let noon = calendar.date(from: DateComponents(year: 2026, month: 9, day: 24, hour: 12, minute: 10))!
+
+        // Prayed at noon: offered until three, and the evening bell asks again
+        #expect(offered(angelus, at: at(13), last: noon))
+        #expect(!offered(angelus, at: at(17), last: noon))
+        // Prayed at the evening bell: offered through the night, past midnight
+        #expect(offered(angelus, at: at(21), last: at(18)))
+        #expect(offered(angelus, at: at(1, 2026, 9, 25), last: at(18)))
+        // Not prayed today, whatever the moment says
+        #expect(!offered(angelus, at: at(13), last: noon, today: false))
+        // The other hours keep the day's offering alone
+        #expect(offered(night, at: at(22), last: nil))
+    }
+
+    @Test func theStoreKeepsTheMomentBesideTheDay() {
+        let defaults = UserDefaults(suiteName: "PrayersPageTests.store")!
+        defaults.removePersistentDomain(forName: "PrayersPageTests.store")
+        let store = PrayerBookStore(defaults: defaults)
+        let moment = Date()
+
+        #expect(store.lastOffered(PrayerBook.angelusOrderID) == nil)
+        store.markOffered(PrayerBook.angelusOrderID, on: moment)
+        #expect(store.wasOffered(PrayerBook.angelusOrderID, on: moment))
+        #expect(store.lastOffered(PrayerBook.angelusOrderID) == moment)
+        // Read back from the defaults, to within the store's own precision
+        let kept = PrayerBookStore(defaults: defaults).lastOffered(PrayerBook.angelusOrderID)
+        #expect(kept.map { abs($0.timeIntervalSince(moment)) < 0.001 } == true)
+
+        defaults.removePersistentDomain(forName: "PrayersPageTests.store")
+    }
+
+    @Test func prayNowSaysTheAngelusPlainlyAndTheReginaCaeliInItsSeason() {
+        let angelus = PrayerBook.order(PrayerBook.angelusOrderID)!
+        #expect(PrayerBook.prayNowLine(for: angelus, on: at(12)) == "A short prayer to Mary said at morning, noon and evening.")
+        #expect(PrayerBook.prayNowLine(for: angelus, on: at(12, 2026, 4, 12)).contains("Easter"))
+    }
+
     // MARK: The tab
 
     @Test func aDoorToThePrayerBookTurnsToItsTab() {

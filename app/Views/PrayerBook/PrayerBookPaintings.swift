@@ -6,12 +6,12 @@
 //  the antiphon of Our Lady the season sings. The Angelus is the
 //  Annunciation it remembers; the antiphons are the mysteries they sing
 //  of. Morning and Night Prayers have no mystery of their own, so each
-//  names a painting of its own (`hour_morning`, `hour_night`, the names
-//  the Chant Library's hours share) and, until that painting is in the
-//  catalog,
-//  hangs the mystery nearest it: the Presentation, a life offered as the
-//  morning offers the day, and Gethsemane, where He asked the disciples
-//  to watch and pray through the night.
+//  names a painting of its own (`hour_morning`, `hour_night`, names
+//  shared with the Chant Library's redesign, which is still being made)
+//  and, until that painting is in the catalog, hangs the mystery nearest
+//  it: the Presentation, a life offered as the morning offers the day,
+//  and Gethsemane, where He asked the disciples to watch and pray through
+//  the night.
 //
 
 import SwiftUI
@@ -26,11 +26,19 @@ struct PrayerBookPainting: Equatable {
     let caption: String
 
     /// The asset the catalog actually has: the painting's own, else its
-    /// stand-in. Read through the image cache, which says nil for a name
-    /// the catalog does not carry.
+    /// stand-in. Looked up once per name: the image cache keeps what it
+    /// finds but not what it misses, so a painting not yet in the catalog
+    /// was looked for again on every redraw.
     var resolvedAsset: String {
-        ImageCacheService.shared.image(named: asset) == nil ? fallback : asset
+        if let known = Self.resolved[asset] { return known }
+        let found = ImageCacheService.shared.image(named: asset) == nil ? fallback : asset
+        Self.resolved[asset] = found
+        return found
     }
+
+    /// Each asset's answer, for the life of the app: the catalog does not
+    /// change while it runs
+    private static var resolved: [String: String] = [:]
 
     init(asset: String, fallback: String? = nil, focal: UnitPoint = UnitPoint(x: 0.5, y: 0.2), caption: String) {
         self.asset = asset

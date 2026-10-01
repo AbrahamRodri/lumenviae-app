@@ -159,16 +159,31 @@ struct PrayerBookView: View {
             .topChromeFade(height: isTabRoot ? 32 : 48)
         }
         .onChange(of: scenePhase) { _, phase in
-            if phase == .active { now = Date() }
+            // Back in the foreground, the card shows the hour it is now,
+            // not one chosen on the strip some hours ago
+            if phase == .active {
+                now = Date()
+                chosenHourID = nil
+            }
         }
         .onAppear { now = Date() }
+        // Said once the reader pauses, not at every letter
+        .task(id: trimmedQuery) {
+            guard !trimmedQuery.isEmpty else { return }
+            try? await Task.sleep(for: .milliseconds(700))
+            guard !Task.isCancelled else { return }
+            announceResults(for: trimmedQuery)
+        }
         // Left open across one of the book's hours — four, eleven, three,
         // eight — the page turns with it, on the timeline home's row and
         // the Chapel's tile keep
         .background {
             TimelineView(PrayerBookHourSchedule()) { context in
                 Color.clear.onChange(of: context.date) { _, date in
-                    withAnimation(Motion.crossfade) { now = date }
+                    withAnimation(Motion.crossfade) {
+                        now = date
+                        chosenHourID = nil
+                    }
                 }
             }
         }
@@ -258,9 +273,22 @@ struct PrayerBookView: View {
         chosenHourID.flatMap { PrayerBook.order($0) } ?? PrayerBook.dayOrder(at: now)
     }
 
+    /// Whether `order` is offered for the hour it is now. The Angelus is
+    /// the bell's, not the day's: a noon Angelus leaves the evening's
+    /// still to pray (`PrayerBook.isOfferedNow`).
+    private func isOfferedNow(_ order: PrayerOrder) -> Bool {
+        PrayerBook.isOfferedNow(
+            order,
+            at: now,
+            offeredToday: store.wasOffered(order.id, on: now),
+            lastOffered: store.lastOffered(order.id)
+        )
+    }
+
     private var prayNow: some View {
         let order = shownOrder
-        let offered = store.wasOffered(order.id, on: now)
+        let offered = isOfferedNow(order)
+        let painting = PrayerBookPainting.hour(order, on: now)
 
         return VStack(alignment: .leading, spacing: 16) {
             PrayersSectionTitle(title: "Pray Now", note: "The prayer for this time of day.")
@@ -270,7 +298,15 @@ struct PrayerBookView: View {
                     router.push(.prayerOrder(id: order.id))
                 } label: {
                     ZStack(alignment: .bottomLeading) {
-                        PrayerBookPaintingGround(painting: .hour(order, on: now))
+                        // One painting crossfades over the other in its
+                        // own slot as the hour changes; swapped in place,
+                        // it cut while the words above it faded
+                        ZStack {
+                            PrayerBookPaintingGround(painting: painting)
+                                .id(painting.resolvedAsset)
+                                .transition(.opacity)
+                        }
+                        .animation(Motion.crossfade, value: painting.resolvedAsset)
 
                         VStack(alignment: .leading, spacing: 6) {
                             Text(order.title(on: now))
@@ -280,7 +316,7 @@ struct PrayerBookView: View {
                                 .minimumScaleFactor(0.7)
                                 .contentTransition(.opacity)
 
-                            Text(order.detail)
+                            Text(PrayerBook.prayNowLine(for: order, on: now))
                                 .font(AppFonts.readingItalicFont(15))
                                 .foregroundColor(AppColors.cream.opacity(0.82))
                                 .fixedSize(horizontal: false, vertical: true)
@@ -307,15 +343,12 @@ struct PrayerBookView: View {
             }
             .animation(Motion.crossfade, value: order.id)
             .clipShape(RoundedRectangle(cornerRadius: 16))
+            // Outlined, never filled, and the halo the outline's own, so
+            // the strip's names cast no glow and no band of fill stands
+            // under them
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
                     .strokeBorder(AppColors.gold.opacity(0.35), lineWidth: AppLine.hairline)
-            )
-            // The halo is the card's shape's, not its words', so the
-            // strip's names cast no glow of their own
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(AppColors.background)
                     .haloGlow(AppColors.gold, radius: 16, intensity: 0.19)
             )
 
@@ -325,14 +358,13 @@ struct PrayerBookView: View {
         }
     }
 
-    /// "Pray the Angelus" — the order's own name, its article lowered
+    /// "Pray the Angelus" — the order's own name, its article lowered —
+    /// and "Pray the Angelus again" once it is offered, so the button
+    /// always says which prayer it begins
     private func prayTitle(_ order: PrayerOrder, offered: Bool) -> String {
-        if offered { return "Pray it again" }
         let title = order.title(on: now)
-        if title.hasPrefix("The ") {
-            return "Pray the " + title.dropFirst(4)
-        }
-        return "Pray \(title)"
+        let named = title.hasPrefix("The ") ? "the " + title.dropFirst(4) : title
+        return offered ? "Pray \(named) again" : "Pray \(named)"
     }
 
     private var prayersToMary: some View {
@@ -342,6 +374,10 @@ struct PrayerBookView: View {
         let known = PrayerBook.bestKnownMarianIDs
             .filter { $0 != antiphon.prayerID }
             .compactMap { PrayerBook.prayer($0) }
+        // In Eastertide the Regina Cæli is the Angelus, already set large
+        // in Pray Now over the same painting; the section opens on its
+        // rows rather than showing it twice
+        let seasonalIsPrayNow = shownOrder.prayerIDs(now) == [antiphon.prayerID]
 
         return VStack(alignment: .leading, spacing: 16) {
             PrayersSectionTitle(
@@ -349,7 +385,7 @@ struct PrayerBookView: View {
                 note: "This season's prayer, and her best-known prayers."
             )
 
-            if let seasonal {
+            if let seasonal, !seasonalIsPrayNow {
                 Button {
                     router.push(.devotionPrayer(id: seasonal.id))
                 } label: {
@@ -361,7 +397,7 @@ struct PrayerBookView: View {
             VStack(spacing: 0) {
                 ForEach(Array(known.enumerated()), id: \.element.id) { i, prayer in
                     PrayersLedgerRow(
-                        title: prayer.title,
+                        title: prayer.listTitle,
                         prayerID: prayer.id,
                         showsRule: i < known.count - 1
                     ) {
@@ -390,7 +426,7 @@ struct PrayerBookView: View {
         return VStack(alignment: .leading, spacing: 16) {
             PrayersSectionTitle(
                 title: "Saved",
-                note: "Tap the bookmark on any prayer to save it here."
+                note: "Tap the ribbon on any prayer to save it here."
             )
 
             if !kept.isEmpty {
@@ -475,17 +511,18 @@ struct PrayerBookView: View {
     private var results: some View {
         let hits = PrayerBook.search(trimmedQuery)
         let topics = Array(PrayerBook.topics(matching: trimmedQuery).prefix(2))
+        let orders = Array(PrayerBook.searchOrders(trimmedQuery).prefix(3))
         let seasonalID = PrayerBook.antiphon(on: now).prayerID
 
         VStack(alignment: .leading, spacing: 14) {
-            if hits.isEmpty && topics.isEmpty {
+            if hits.isEmpty && topics.isEmpty && orders.isEmpty {
                 Text("No prayer by that name. Try a word from it — \"mercy\", \"Joseph\", \"light\".")
                     .font(AppFonts.readingItalicFont(14))
                     .foregroundColor(AppColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
             } else {
                 if !hits.isEmpty {
-                    Text(hits.count == 1 ? "1 prayer matches" : "\(hits.count) prayers match")
+                    Text(Self.matchCount(hits.count))
                         .font(AppFonts.labelFont(9))
                         .tracking(2)
                         .textCase(.uppercase)
@@ -500,10 +537,19 @@ struct PrayerBookView: View {
                     }
                 }
 
+                // An order of prayer the words name — "blessed sacrament"
+                // finds Visiting Jesus in Church — as a card of its own,
+                // since it is prayed as one
+                ForEach(orders) { order in
+                    PrayersOrderCard(order: order, now: now) {
+                        router.push(.prayerOrder(id: order.id))
+                    }
+                }
+
                 VStack(spacing: 0) {
                     ForEach(Array(hits.enumerated()), id: \.element.id) { i, prayer in
                         PrayersLedgerRow(
-                            title: prayer.title,
+                            title: prayer.listTitle,
                             note: chapterNote(for: prayer, seasonalID: seasonalID),
                             prayerID: prayer.id,
                             showsRule: i < hits.count - 1
@@ -514,6 +560,21 @@ struct PrayerBookView: View {
                 }
             }
         }
+    }
+
+    /// "7 prayers match"
+    private static func matchCount(_ count: Int) -> String {
+        count == 1 ? "1 prayer matches" : "\(count) prayers match"
+    }
+
+    /// Says what the search found as the results change, since VoiceOver
+    /// stays in the field and would otherwise hear nothing of them
+    private func announceResults(for query: String) {
+        let needle = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !needle.isEmpty else { return }
+        let found = PrayerBook.search(needle).count
+        let words = found == 0 ? "No prayer by that name" : Self.matchCount(found)
+        AccessibilityNotification.Announcement(words).post()
     }
 
     /// The topic a found prayer belongs to — "Mary · this season"

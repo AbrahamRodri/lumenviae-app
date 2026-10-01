@@ -56,6 +56,8 @@ struct PrayersSectionBar: View {
                 .fill(AppColors.gold.opacity(0.15))
                 .frame(height: AppLine.hairline)
         }
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Prayer views")
     }
 }
 
@@ -87,9 +89,11 @@ struct PrayersSectionTitle: View {
 // MARK: - The day's three hours, at the card's foot
 
 /// MORNING · NOON · NIGHT across the foot of the Pray Now card, each
-/// saying where it stands — Done, Now, or when it is said — and each a
+/// saying where it stands — Offered, Now, or when it is said — and each a
 /// way to see that hour's prayers above. The hour shown is lit. Never
 /// "missed": a morning not prayed by evening still reads "On rising".
+/// The Angelus is offered for its bell, not its day: prayed at noon, it
+/// reads OFFERED until three, and then the evening bell asks again.
 struct PrayerHourStations: View {
     let now: Date
 
@@ -128,7 +132,14 @@ struct PrayerHourStations: View {
     }
 
     private func station(_ order: PrayerOrder) -> some View {
-        let standing = PrayerBook.standing(of: order, at: now, offered: store.wasOffered(order.id, on: now))
+        let offered = PrayerBook.isOfferedNow(
+            order,
+            at: now,
+            offeredToday: store.wasOffered(order.id, on: now),
+            lastOffered: store.lastOffered(order.id)
+        )
+        let standing = PrayerBook.standing(of: order, at: now, offered: offered)
+        let hourName = PrayerBook.hourName(of: order, at: now)
         let shown = order.id == shownID
         let color: Color = shown
             ? AppColors.goldLight
@@ -136,7 +147,7 @@ struct PrayerHourStations: View {
 
         return Button { onSelect(order) } label: {
             VStack(spacing: 3) {
-                Text(PrayerBook.hourName(of: order, at: now).uppercased())
+                Text(hourName.uppercased())
                     .font(AppFonts.labelFont(9.5))
                     .tracking(2)
                     .lineLimit(1)
@@ -169,14 +180,16 @@ struct PrayerHourStations: View {
         }
         .buttonStyle(QuietGlyphButtonStyle())
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(order.title(on: now)), \(Self.spoken(standing))")
+        // Led by the word on the glass, so Voice Control finds it by
+        // what it shows: "Noon, the Angelus, the hour it is now"
+        .accessibilityLabel("\(hourName), \(order.title(on: now)), \(Self.spoken(standing))")
         .accessibilityAddTraits(shown ? [.isButton, .isSelected] : .isButton)
         .accessibilityHint(shown ? "" : "Shows it above")
     }
 
     static func word(for standing: PrayerBook.HourStanding) -> String {
         switch standing {
-        case .offered:       return "Done"
+        case .offered:       return "Offered"
         case .now:           return "Now"
         case .at(let when):  return when
         }
@@ -184,7 +197,7 @@ struct PrayerHourStations: View {
 
     private static func spoken(_ standing: PrayerBook.HourStanding) -> String {
         switch standing {
-        case .offered:       return "done today"
+        case .offered:       return "offered"
         case .now:           return "the hour it is now"
         case .at(let when):  return when.lowercased()
         }
@@ -209,7 +222,7 @@ struct MarianSeasonCard: View {
                     .tracking(2.2)
                     .foregroundColor(AppColors.gold)
 
-                Text(prayer.title)
+                Text(prayer.listTitle)
                     .font(AppFonts.titleFont(23))
                     .foregroundColor(AppColors.cream)
                     .lineLimit(2)
@@ -232,7 +245,7 @@ struct MarianSeasonCard: View {
         )
         .contentShape(RoundedRectangle(cornerRadius: 16))
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("This season: \(prayer.title). Said at the end of the day, \(antiphon.season).")
+        .accessibilityLabel("This season: \(prayer.listTitle). Said at the end of the day, \(antiphon.season).")
         .accessibilityHint("Opens the prayer")
     }
 }
@@ -341,12 +354,15 @@ struct PrayersLedgerRow: View {
 
 /// A prayer the reader keeps with a ribbon, standing on the page as a
 /// small outlined card the ribbon hangs from: its name, and the topic it
-/// belongs to
+/// belongs to. Every card is one height, so a row of them ends on one
+/// line: a long name takes three lines at most, a little smaller.
 struct SavedPrayerCard: View {
     let prayer: BookPrayer
     let action: () -> Void
 
     private var store = PrayerBookStore.shared
+
+    private static let height: CGFloat = 132
 
     init(prayer: BookPrayer, action: @escaping () -> Void) {
         self.prayer = prayer
@@ -358,13 +374,12 @@ struct SavedPrayerCard: View {
 
         Button(action: action) {
             VStack(alignment: .leading, spacing: 3) {
-                Text(prayer.title)
+                Text(prayer.listTitle)
                     .font(AppFonts.readingFont(16))
                     .foregroundColor(AppColors.cream)
                     .multilineTextAlignment(.leading)
-                    .lineLimit(4)
-                    .minimumScaleFactor(0.85)
-                    .fixedSize(horizontal: false, vertical: true)
+                    .lineLimit(3)
+                    .minimumScaleFactor(0.75)
 
                 if let topic {
                     Text(topic)
@@ -376,7 +391,7 @@ struct SavedPrayerCard: View {
             .padding(.top, 40)
             .padding(.horizontal, 12)
             .padding(.bottom, 12)
-            .frame(maxWidth: .infinity, minHeight: 128, alignment: .bottomLeading)
+            .frame(maxWidth: .infinity, minHeight: Self.height, maxHeight: Self.height, alignment: .bottomLeading)
             .overlay(
                 RoundedRectangle(cornerRadius: 14)
                     .strokeBorder(AppColors.gold.opacity(0.28), lineWidth: AppLine.hairline)
@@ -395,13 +410,13 @@ struct SavedPrayerCard: View {
             Button {
                 withAnimation(Motion.crossfade) { store.toggleRibbon(prayer.id) }
             } label: {
-                Label("Remove from Saved", systemImage: "bookmark.slash")
+                Label("Take the ribbon out", systemImage: "minus.circle")
             }
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel([prayer.title, topic].compactMap { $0 }.joined(separator: ", "))
+        .accessibilityLabel([prayer.listTitle, topic].compactMap { $0 }.joined(separator: ", "))
         .accessibilityAddTraits(.isButton)
-        .accessibilityAction(named: "Remove from Saved") {
+        .accessibilityAction(named: "Take the ribbon out") {
             withAnimation(Motion.crossfade) { store.toggleRibbon(prayer.id) }
         }
     }
@@ -512,6 +527,61 @@ struct PrayersOccasionRow: View {
         .buttonStyle(SacredCardButtonStyle())
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(title), \(order.occasion)\(offered ? ", offered today" : "")")
+        .accessibilityAddTraits(.isButton)
+    }
+}
+
+// MARK: - An order found
+
+/// An order of prayer a search's words name, standing with the topics
+/// above the prayers found: "Visiting Jesus in Church · Said together ·
+/// 5 prayers"
+struct PrayersOrderCard: View {
+    let order: PrayerOrder
+    let now: Date
+    let action: () -> Void
+
+    var body: some View {
+        let count = order.prayers(on: now).count
+        let title = order.title(on: now)
+        let line = count == 1 ? "\(order.occasion) · one prayer" : "\(order.occasion) · \(count) prayers"
+
+        Button(action: action) {
+            HStack(spacing: 12) {
+                AppIcon(order.icon, size: 18)
+                    .foregroundColor(AppColors.gold)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(AppFonts.readingFont(17))
+                        .foregroundColor(AppColors.cream)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    Text(line)
+                        .font(AppFonts.readingItalicFont(13))
+                        .foregroundColor(AppColors.textSecondary)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                Spacer(minLength: 8)
+
+                AppIcon("ph-caret-right", size: 12)
+                    .foregroundColor(AppColors.gold.opacity(0.7))
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
+            .frame(minHeight: 58)
+            .overlay(
+                RoundedRectangle(cornerRadius: 14)
+                    .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline)
+            )
+            .contentShape(RoundedRectangle(cornerRadius: 14))
+        }
+        .buttonStyle(SacredCardButtonStyle())
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Prayers said together: \(title), \(line)")
         .accessibilityAddTraits(.isButton)
     }
 }

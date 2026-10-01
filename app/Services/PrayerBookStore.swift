@@ -26,6 +26,7 @@ final class PrayerBookStore {
         static let ribbons = "prayerBook.ribbons"
         static let byHeart = "prayerBook.byHeart"
         static let offered = "prayerBook.offered"
+        static let offeredAt = "prayerBook.offeredAt"
         static let aloud = "prayerBook.aloud"
         static let angelusBell = "prayerBook.angelusBell"
     }
@@ -35,6 +36,7 @@ final class PrayerBookStore {
         ribbons = defaults.stringArray(forKey: Key.ribbons) ?? []
         byHeart = Set(defaults.stringArray(forKey: Key.byHeart) ?? [])
         offered = (defaults.dictionary(forKey: Key.offered) as? [String: String]) ?? [:]
+        offeredAt = (defaults.dictionary(forKey: Key.offeredAt) as? [String: Date]) ?? [:]
         praysAloud = defaults.object(forKey: Key.aloud) as? Bool ?? true
         hasChosenAloud = defaults.object(forKey: Key.aloud) != nil
         angelusBell = defaults.bool(forKey: Key.angelusBell)
@@ -105,10 +107,26 @@ final class PrayerBookStore {
         return dayFormatter.string(from: PrayerDay.day(of: date))
     }
 
+    /// Order id → the moment it was last prayed through to its Amen.
+    /// Kept beside the day, never in its place: the rule of prayer counts
+    /// an order once a prayer day (`wasOffered`), while the Prayers page
+    /// keeps the Angelus's two bells apart, and a noon Angelus is not the
+    /// evening's (`PrayerBook.isOfferedNow`).
+    private var offeredAt: [String: Date] {
+        didSet { defaults.set(offeredAt, forKey: Key.offeredAt) }
+    }
+
     /// An order prayed through to its Amen. The rule of prayer asks
     /// about the day's three by this.
     func markOffered(_ orderID: String, on date: Date = PrayerDay.now) {
         offered[orderID] = Self.stamp(date)
+        offeredAt[orderID] = date
+    }
+
+    /// When an order was last prayed through to its Amen, or nil if this
+    /// install never kept the moment (an order offered before it did)
+    func lastOffered(_ orderID: String) -> Date? {
+        offeredAt[orderID]
     }
 
     func wasOffered(_ orderID: String, on date: Date = PrayerDay.now) -> Bool {

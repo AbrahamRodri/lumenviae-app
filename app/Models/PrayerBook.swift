@@ -45,6 +45,15 @@ struct BookPrayer: Identifiable, Hashable {
 
     var hasLatin: Bool { latin != nil }
 
+    /// The prayer's name in a list, as most people say it — "Hail Mary",
+    /// "St Michael" — where its own page keeps the full title ("The Hail
+    /// Mary", "Prayer to Saint Michael")
+    var listTitle: String { PrayerBook.listTitles[id] ?? title }
+
+    /// Other names it is looked for by — "Salve Regina", "Litany of
+    /// Loreto" — beside its title and Latin title
+    var searchWords: [String] { PrayerBook.prayerSearchWords[id] ?? [] }
+
     /// The text as the page sets it in `language`. A prayer with no
     /// Latin is English in every mode — the bilingual modes would only
     /// pair it with nothing.
@@ -151,6 +160,10 @@ struct PrayerOrder: Identifiable, Hashable {
         }
         return title
     }
+
+    /// Other names the order is looked for by — the visit was "A Visit
+    /// to the Blessed Sacrament" before it was "Visiting Jesus in Church"
+    var searchWords: [String] { PrayerBook.orderSearchWords[id] ?? [] }
 
     static func == (lhs: PrayerOrder, rhs: PrayerOrder) -> Bool { lhs.id == rhs.id }
     func hash(into hasher: inout Hasher) { hasher.combine(id) }
@@ -463,7 +476,7 @@ enum PrayerBook {
         ),
         PrayerOrder(
             id: "holy_souls", title: "For the Holy Souls", latinTitle: "Pro Defunctis",
-            icon: "ch-candle", occasion: "For those who have gone before us",
+            icon: "ch-candle", occasion: "For the dead",
             detail: "For those who have gone before us, and wait.",
             prayerIDs: { _ in ["de_profundis", "requiem_aeternam", "fidelium_deus"] }
         ),
@@ -588,6 +601,47 @@ enum PrayerBook {
         }
     }
 
+    /// When the Angelus bell being kept began: noon's from eleven, the
+    /// evening's from three, and after midnight still the evening before's,
+    /// as the prayer day keeps it. An Angelus prayed at noon is the noon
+    /// bell's; by evening the evening bell asks for its own. The rule of
+    /// prayer still counts the Angelus once a day (`wasOffered`); only the
+    /// Prayers page's strip keeps the bells apart.
+    static func angelusBellBegan(at date: Date = Date(), calendar: Calendar = .current) -> Date {
+        let hour = calendar.component(.hour, from: date)
+        let today = calendar.startOfDay(for: date)
+        if hour < dayBeginsAtHour {
+            let eve = calendar.date(byAdding: .day, value: -1, to: today) ?? today
+            return calendar.date(bySettingHour: 15, minute: 0, second: 0, of: eve) ?? eve
+        }
+        return calendar.date(bySettingHour: hour < 15 ? 11 : 15, minute: 0, second: 0, of: today) ?? today
+    }
+
+    /// Whether `order` is offered for the hour it is now: the day's offering
+    /// for most, and the bell's for the Angelus
+    static func isOfferedNow(
+        _ order: PrayerOrder,
+        at date: Date = Date(),
+        offeredToday: Bool,
+        lastOffered: Date?,
+        calendar: Calendar = .current
+    ) -> Bool {
+        guard offeredToday else { return false }
+        guard order.id == angelusOrderID else { return true }
+        guard let lastOffered else { return false }
+        return lastOffered >= angelusBellBegan(at: date, calendar: calendar) && lastOffered <= date
+    }
+
+    /// The line under an hour's name on the Prayers page's Pray Now card:
+    /// the Angelus said plainly, and the Regina Cæli in its place in
+    /// Eastertide; the other hours their own
+    static func prayNowLine(for order: PrayerOrder, on date: Date = Date()) -> String {
+        guard order.id == angelusOrderID else { return order.detail }
+        return isEastertide(date)
+            ? "Our Lady's Easter joy, said in the Angelus's place from Easter until Pentecost."
+            : "A short prayer to Mary said at morning, noon and evening."
+    }
+
     // MARK: Our Lady's best-known prayers
 
     /// The three of her prayers the Prayers page sets beneath the
@@ -630,30 +684,102 @@ enum PrayerBook {
 
     // MARK: Search
 
-    /// Prayers whose name, Latin name or words hold `needle`. A match in
-    /// the name ranks before a match in the text.
-    static func search(_ needle: String) -> [BookPrayer] {
-        let needle = needle.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil)
-        guard !needle.isEmpty else { return [] }
+    /// The names a list gives a prayer where its title is longer than
+    /// the name people use
+    static let listTitles: [String: String] = [
+        "hail_mary": "Hail Mary",
+        "our_father": "Our Father",
+        "glory_be": "Glory Be",
+        "memorare": "Memorare",
+        "litany_loreto": "Litany of Loreto",
+        "st_michael_prayer": "St Michael",
+        "apostles_creed": "Apostles' Creed",
+        "act_of_contrition": "Act of Contrition",
+        "sign_of_cross": "Sign of the Cross",
+    ]
 
-        func folded(_ s: String?) -> String {
-            (s ?? "").folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil)
-        }
+    /// The other names a prayer is looked for by
+    static let prayerSearchWords: [String: [String]] = [
+        "litany_loreto": ["litany of loreto", "loretto", "litany of our lady"],
+        "hail_holy_queen": ["salve regina"],
+        "st_michael_prayer": ["st michael", "michael the archangel"],
+        "ad_te_beate_ioseph": ["st joseph", "prayer to st joseph"],
+        "angele_dei": ["guardian angel"],
+        "memorare": ["remember o most gracious"],
+        "anima_christi": ["soul of christ"],
+        "regina_caeli": ["queen of heaven rejoice"],
+    ]
+
+    /// The other names an order of prayer is looked for by
+    static let orderSearchWords: [String: [String]] = [
+        "visit": ["blessed sacrament", "visit to the blessed sacrament", "adoration", "tabernacle"],
+        "table": ["grace", "meals"],
+        "holy_souls": ["purgatory", "the dead"],
+        "trouble": ["help", "danger"],
+    ]
+
+    /// Prayers a search finds. A name answers when every word searched
+    /// begins one of its words — "St Joseph", "loreto", "hail ma" — the
+    /// title, the Latin title and the names it is looked for by alike,
+    /// with "st", "st." and "saint" one word; a prayer whose words hold
+    /// the whole search comes after the names. It once matched only the
+    /// whole search as one string, so "St Michael" found nothing.
+    static func search(_ needle: String) -> [BookPrayer] {
+        let wanted = searchWords(needle)
+        guard !wanted.isEmpty else { return [] }
+
+        let phrase = folded(needle).trimmingCharacters(in: .whitespacesAndNewlines)
 
         var named: [BookPrayer] = []
         var worded: [BookPrayer] = []
         for chapter in chapters {
             for prayer in chapter.prayers where !named.contains(prayer) && !worded.contains(prayer) {
-                if folded(prayer.title).contains(needle) || folded(prayer.latinTitle).contains(needle) {
+                let names = [prayer.title, prayer.listTitle, prayer.latinTitle ?? ""] + prayer.searchWords
+                if names.contains(where: { nameAnswers(wanted, $0) }) {
                     named.append(prayer)
-                } else if needle.count >= 4,
-                          folded(prayer.english).contains(needle) || folded(prayer.latin).contains(needle) {
+                } else if phrase.count >= 4,
+                          folded(prayer.english).contains(phrase) || folded(prayer.latin ?? "").contains(phrase) {
                     worded.append(prayer)
                 }
             }
         }
         return named + worded
     }
+
+    /// The orders of prayer a search names — "blessed sacrament" finds
+    /// Visiting Jesus in Church — by their title, Latin title, when they
+    /// are said and the names they are looked for by
+    static func searchOrders(_ needle: String) -> [PrayerOrder] {
+        let wanted = searchWords(needle)
+        guard !wanted.isEmpty, wanted.joined().count >= 3 else { return [] }
+        return orders.filter { order in
+            let names = [order.title, order.latinTitle, order.occasion] + order.searchWords
+            return names.contains { nameAnswers(wanted, $0) }
+        }
+    }
+
+    /// Every word wanted begins one of the name's words
+    private static func nameAnswers(_ wanted: [String], _ name: String) -> Bool {
+        let words = searchWords(name)
+        return !words.isEmpty && wanted.allSatisfy { want in words.contains { $0.hasPrefix(want) } }
+    }
+
+    private static func folded(_ text: String) -> String {
+        text.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil)
+    }
+
+    /// A name or a search as the prayer search reads it: folded, split
+    /// into words, "st" and "st." read as "saint", the words that name
+    /// nothing ("the", "of", "to") left out, unless they are all there is
+    private static func searchWords(_ text: String) -> [String] {
+        let words = folded(text)
+            .split { !$0.isLetter }
+            .map { $0 == "st" ? "saint" : String($0) }
+        let kept = words.filter { !searchStopWords.contains($0) }
+        return kept.isEmpty ? words : kept
+    }
+
+    private static let searchStopWords: Set<String> = ["a", "an", "and", "of", "the", "to", "o", "for", "in", "on", "at"]
 
     /// The chapters a search names as topics: "mary" finds Prayers to
     /// Mary, "holy ghost" the Holy Spirit's, under the names the book

@@ -80,14 +80,19 @@ struct PrayerOrderView: View {
                     .foregroundColor(AppColors.gold)
                 }
             }
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button { router.push(.prayerBook) } label: {
-                    AppIcon("ch-praying-hands", size: 18)
-                        .foregroundColor(AppColors.gold)
-                        .frame(width: 44, height: 44)
+            // Prayers is a tab, and the door to it clears the stack it is
+            // opened from. Opened from the tab itself, Back already goes
+            // there without losing the way back, so the door stands down
+            if router.selectedTab != .prayers {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button { router.push(.prayerBook) } label: {
+                        AppIcon("ch-praying-hands", size: 18)
+                            .foregroundColor(AppColors.gold)
+                            .frame(width: 44, height: 44)
+                    }
+                    .buttonStyle(QuietGlyphButtonStyle())
+                    .accessibilityLabel("Prayers")
                 }
-                .buttonStyle(QuietGlyphButtonStyle())
-                .accessibilityLabel("Prayers")
             }
         }
         .onAppear { now = Date() }

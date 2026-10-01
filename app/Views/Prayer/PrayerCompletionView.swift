@@ -30,9 +30,14 @@ struct PrayerCompletionView: View {
     /// Controls the post-prayer journal editor sheet
     @State private var showingJournalEditor = false
 
-    /// Once the reflection has been opened the question is answered, and
-    /// the way home no longer says "Not now"
-    @State private var openedReflection = false
+    /// Once a reflection has been written and kept, the question is
+    /// answered, and the way home no longer says "Not now". Opened and
+    /// cancelled, it is still unanswered.
+    @State private var savedReflection = false
+
+    /// When the screen came up: a journal entry kept since then is the
+    /// reflection this prayer asked for
+    @State private var appearedAt = Date()
 
     /// Streak after recording this session (shown as celebration feedback)
     @State private var streakDays = 0
@@ -67,108 +72,120 @@ struct PrayerCompletionView: View {
                 .ignoresSafeArea()
                 .allowsHitTesting(false)
 
-            // Content overlay
-            VStack(spacing: 0) {
-                // Header
-                CompletionHeader(onClose: { router.popToRoot() })
+            // Content overlay. It stands on the glass as it was laid out,
+            // its Spacers sharing the room; on a small phone at the largest
+            // text size, on a milestone day, the streak chip, the
+            // milestone and the quote outgrow it, and the page scrolls
+            // rather than clip the way home
+            GeometryReader { proxy in
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 0) {
+                        // Header
+                        CompletionHeader(onClose: { router.popToRoot() })
 
-                Spacer()
+                        Spacer()
 
-                // Completion badge and title — the sacred reveal:
-                // light blooms, the ring draws itself, the check arrives,
-                // and rings of light resonate outward like a bell
-                CompletionBadge()
-                    .padding(.bottom, 16)
+                        // Completion badge and title — the sacred reveal:
+                        // light blooms, the ring draws itself, the check arrives,
+                        // and rings of light resonate outward like a bell
+                        CompletionBadge(isChaplet: completed.category == .sevenSorrows)
+                            .padding(.bottom, 16)
 
-                // Streak feedback - the key "come back tomorrow" moment
-                if streakDays > 0 {
-                    StreakCelebrationChip(
-                        streakDays: streakDays,
-                        totalRosaries: totalRosaries
-                    )
-                    .opacity(showStreakChip ? 1 : 0)
-                    .scaleEffect(showStreakChip ? 1 : 0.85)
-                    .padding(.bottom, reachedMilestone == nil ? 24 : 12)
-                }
-
-                // Devotional milestone celebration (shown only the day
-                // a milestone is reached — rare enough to stay special)
-                if let milestone = reachedMilestone {
-                    MilestoneCelebrationCard(milestone: milestone)
-                        .opacity(showStreakChip ? 1 : 0)
-                        .scaleEffect(showStreakChip ? 1 : 0.9)
-                        .padding(.horizontal, 32)
-                        .padding(.bottom, 24)
-                }
-
-                // Quote card
-                CompletionQuoteCard(
-                    quote: quote.text,
-                    author: quote.author,
-                    source: quote.source
-                )
-                .padding(.horizontal, 20)
-                .opacity(showQuote ? 1 : 0)
-                .offset(y: showQuote ? 0 : 16)
-
-                Spacer()
-
-                // Action buttons. The journal has no tab of its own now
-                // (Prayers took its place in the bar), so this is its
-                // main door: the prayer's last screen asks one quiet
-                // question, and the act answers it.
-                VStack(spacing: 12) {
-                    Text("What stayed with you in this prayer?")
-                        .font(AppFonts.readingItalicFont(15))
-                        .foregroundColor(AppColors.cream.opacity(0.8))
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding(.bottom, 4)
-
-                    // Write a Reflection (Journal) - Primary
-                    Button(action: {
-                        openedReflection = true
-                        showingJournalEditor = true
-                    }) {
-                        HStack(spacing: 12) {
-                            AppIcon("ph-note-pencil", size: 17)
-
-                            Text("WRITE A REFLECTION")
-                                .font(AppFonts.labelFont(14))
-                                .tracking(2.5)
+                        // Streak feedback - the key "come back tomorrow" moment
+                        if streakDays > 0 {
+                            StreakCelebrationChip(
+                                streakDays: streakDays,
+                                totalRosaries: totalRosaries
+                            )
+                            .opacity(showStreakChip ? 1 : 0)
+                            .scaleEffect(showStreakChip ? 1 : 0.85)
+                            .padding(.bottom, reachedMilestone == nil ? 24 : 12)
                         }
-                        .foregroundColor(AppColors.background)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 18)
-                        .background(Capsule().fill(AppColors.goldGradient))
-                        .haloGlow(AppColors.gold, radius: 9, intensity: 0.3)
-                    }
-                    .buttonStyle(GoldCTAButtonStyle())
 
-                    // Not now - Secondary: the question declined, home.
-                    // Once a reflection has been opened, simply home.
-                    Button(action: { router.popToRoot() }) {
-                        Text(openedReflection ? "RETURN HOME" : "NOT NOW")
-                            .font(AppFonts.labelFont(12))
-                            .tracking(2.5)
-                            .foregroundColor(AppColors.cream.opacity(0.75))
-                            .contentTransition(.opacity)
-                            .frame(maxWidth: .infinity, minHeight: 44)
-                            .contentShape(Rectangle())
+                        // Devotional milestone celebration (shown only the day
+                        // a milestone is reached — rare enough to stay special)
+                        if let milestone = reachedMilestone {
+                            MilestoneCelebrationCard(milestone: milestone)
+                                .opacity(showStreakChip ? 1 : 0)
+                                .scaleEffect(showStreakChip ? 1 : 0.9)
+                                .padding(.horizontal, 32)
+                                .padding(.bottom, 24)
+                        }
+
+                        // Quote card
+                        CompletionQuoteCard(
+                            quote: quote.text,
+                            author: quote.author,
+                            source: quote.source
+                        )
+                        .padding(.horizontal, 20)
+                        .opacity(showQuote ? 1 : 0)
+                        .offset(y: showQuote ? 0 : 16)
+
+                        Spacer()
+
+                        // Action buttons. The journal has no tab of its own now
+                        // (Prayers took its place in the bar), so this is its
+                        // main door: the prayer's last screen asks one quiet
+                        // question, and the act answers it.
+                        VStack(spacing: 12) {
+                            Text("What stayed with you in this prayer?")
+                                .font(AppFonts.readingItalicFont(15))
+                                .foregroundColor(AppColors.cream.opacity(0.8))
+                                .multilineTextAlignment(.center)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .padding(.bottom, 4)
+
+                            // Write a Reflection (Journal) - the main door, drawn
+                            // as the board draws it: an outlined gold pill
+                            Button(action: { showingJournalEditor = true }) {
+                                HStack(spacing: 12) {
+                                    AppIcon("ph-note-pencil", size: 17)
+
+                                    Text("WRITE A REFLECTION")
+                                        .font(AppFonts.labelFont(14))
+                                        .tracking(2.5)
+                                }
+                                .foregroundColor(AppColors.gold)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 18)
+                                .background(
+                                    Capsule()
+                                        .strokeBorder(AppColors.gold, lineWidth: 1)
+                                )
+                                .contentShape(Capsule())
+                            }
+                            .buttonStyle(GoldCTAButtonStyle())
+
+                            // Not now - Secondary: the question declined, home.
+                            // Once a reflection has been kept, simply home.
+                            Button(action: returnHome) {
+                                Text(savedReflection ? "RETURN HOME" : "NOT NOW")
+                                    .font(AppFonts.labelFont(12))
+                                    .tracking(2.5)
+                                    .foregroundColor(AppColors.textSecondary)
+                                    .contentTransition(.opacity)
+                                    .frame(maxWidth: .infinity, minHeight: 44)
+                                    .contentShape(Rectangle())
+                            }
+                            .buttonStyle(GoldCTAButtonStyle())
+                            .animation(Motion.crossfade, value: savedReflection)
+                            .accessibilityLabel(savedReflection ? "Return home" : "Not now")
+                            .accessibilityHint(savedReflection ? "" : "Returns home")
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 16)
+                        .opacity(showButtons ? 1 : 0)
                     }
-                    .buttonStyle(GoldCTAButtonStyle())
-                    .animation(Motion.crossfade, value: openedReflection)
-                    .accessibilityLabel(openedReflection ? "Return home" : "Not now")
-                    .accessibilityHint(openedReflection ? "" : "Returns home")
+                    .frame(minHeight: proxy.size.height)
                 }
-                .padding(.horizontal, 20)
-                .padding(.bottom, 16)
-                .opacity(showButtons ? 1 : 0)
+                .scrollBounceBehavior(.basedOnSize)
             }
         }
         .navigationBarHidden(true)
         .sensoryFeedback(.success, trigger: showStreakChip)
         .onAppear {
+            appearedAt = Date()
             recordPrayerSession()
 
             // The quote and the acts follow the badge's reveal. Under
@@ -190,7 +207,7 @@ struct PrayerCompletionView: View {
                 showStreakChip = true
             }
         }
-        .sheet(isPresented: $showingJournalEditor) {
+        .sheet(isPresented: $showingJournalEditor, onDismiss: noteReflection) {
             JournalEntryEditorView(
                 category: completed.category,
                 mysteryTitle: nil,
@@ -201,6 +218,24 @@ struct PrayerCompletionView: View {
             .presentationDragIndicator(.visible)
             .presentationBackground(AppColors.background)
             .dynamicTypeSize(...DynamicTypeSize.appMaximum)
+        }
+    }
+
+    /// Home, whichever tab the prayer was begun from: the stack the
+    /// prayer stood on is cleared, and the home tab chosen
+    private func returnHome() {
+        router.switchTo(.home)
+        router.popToRoot()
+    }
+
+    /// Whether the editor that just closed kept a reflection: one entry
+    /// written since this screen came up is enough. Cancelled, nothing
+    /// was kept, and the question still stands.
+    private func noteReflection() {
+        let since = appearedAt
+        let written = FetchDescriptor<JournalEntry>(predicate: #Predicate { $0.createdAt >= since })
+        if let count = try? modelContext.fetchCount(written), count > 0 {
+            savedReflection = true
         }
     }
 
@@ -575,6 +610,10 @@ struct CompletionHeader: View {
 struct CompletionBadge: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
+    /// The Seven Sorrows chaplet is offered as a chaplet, never as a
+    /// Rosary
+    var isChaplet: Bool = false
+
 
     /// Circle stroke progress (0 → 1 draws it closed)
     @State private var circleProgress: CGFloat = 0
@@ -614,16 +653,21 @@ struct CompletionBadge: View {
                 }
             }
 
-            // Title, emerging from light into focus
-            VStack(spacing: 4) {
-                Text("THE ROSARY")
-                    .font(AppFonts.headlineFont(28))
+            // Title, emerging from light into focus: what was prayed is
+            // offered, and the word that closes every prayer
+            VStack(spacing: 6) {
+                Text(isChaplet ? "THE CHAPLET IS OFFERED" : "THE ROSARY IS OFFERED")
+                    .font(AppFonts.labelFont(11))
+                    .tracking(2.5)
                     .foregroundColor(AppColors.gold)
 
-                Text("IS COMPLETED")
-                    .font(AppFonts.headlineFont(28))
-                    .foregroundColor(AppColors.gold)
+                Text("Amen")
+                    .font(AppFonts.titleFont(34))
+                    .foregroundColor(AppColors.cream)
             }
+            .multilineTextAlignment(.center)
+            .accessibilityElement(children: .combine)
+            .accessibilityAddTraits(.isHeader)
             .opacity(showTitle ? 1 : 0)
             .blur(radius: showTitle || reduceMotion ? 0 : 8)
             .offset(y: showTitle || reduceMotion ? 0 : 10)

@@ -319,6 +319,7 @@ struct ExploreView: View {
             $0.title(on: Date()).lowercased().contains(needle)
                 || $0.occasion.lowercased().contains(needle)
                 || $0.latinTitle.lowercased().contains(needle)
+                || $0.searchWords.contains { $0.contains(needle) }
         }
         let prayerHits = PrayerBook.search(needle)
         let chantHits = ChantCatalog.search(needle)
@@ -860,7 +861,8 @@ struct ExploreView: View {
             "Daily Missal", "Divine Office",
             "True Devotion", "Spiritual Reading",
             "The Scriptural Rosary", "The Holy Rosary",
-            "Prayer Record", "How to Pray", "The Chant Library"
+            "Prayer Record", "How to Pray", "The Chant Library",
+            "Journal"
         ]
         return libraryEntries.filter { !housed.contains($0.title) }
     }

@@ -99,6 +99,15 @@ gained books of their own, and How to Pray became a course.
 
 ### Changed
 
+- Give the Prayer Book a tab of its own, Prayers, in the Journal's place
+  in the bar: the search at the head of the page, then Today (the prayer
+  for the hour over its painting, Our Lady's prayers led by the season's
+  antiphon, and the prayers kept with a ribbon), Occasions chosen by where
+  you are, and All Prayers by topic in plain words; every door to the
+  book turns to the tab (5f07da6, b16e6cf)
+- Open the Journal from the Chapel's Reflections tile, from Explore's
+  search, and from the screen after a Rosary, which asks what stayed with
+  you in the prayer (b16e6cf, 3822fc6)
 - Reuse the spoken Rosary's saved manifest while its signed links live, and
   fetch a new one before downloading once they have expired; offline, say
   the Rosary from the recordings already on disk (abebfed)
