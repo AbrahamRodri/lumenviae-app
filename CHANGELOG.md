@@ -80,9 +80,9 @@ gained books of their own, and How to Pray became a course.
   Prayer, the Angelus in the Pray tray, its recordings in the offline
   download, and every door to a prayer opening that prayer's page in the
   book (e118f0f, d9200c5)
-- Add the Chant Library: 64 chants sung and engraved by Verbum Gloriae and
+- Add the Chant Library: 76 chants sung and engraved by Verbum Gloriae and
   shared under their copyleft licence, bundled so they sound with no
-  signal, on twelve shelves that open on tonight's antiphon of Our Lady.
+  signal, on thirteen shelves that open on tonight's antiphon of Our Lady.
   Each chant has a page with SLOW, REPEAT and FROM THE TOP for learning it,
   its score drawn in the page's cream with red initials, a zoomable
   full-screen score, the prayer in words and its other settings. It opens
