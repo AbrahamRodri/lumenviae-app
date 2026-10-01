@@ -27,7 +27,8 @@ The selection is curated in chants.json. For each chant this script:
      and the initials in its rubric red, sharp at any zoom. Asset
      catalogs store SVG uncompressed (110 scores came to 30 MB) and
      CoreSVG would not read every one; this is about a fifth of that;
-  5. writes app/Data/ChantCatalogData.swift.
+  5. writes app/Data/ChantCatalogData.swift, with each chant's timed lines
+     where Tools/ChantLines/<chant id>.json holds them (see LINES below).
 
 Usage:
     python3 generate.py            # fetch what is missing, build, write
@@ -46,6 +47,29 @@ app as well: nothing is downloaded but the pages, nothing is re-encoded
 or redrawn, and neither ffmpeg nor the cache of source files is needed. A
 score the app does not already hold is left out, as a score the site no
 longer serves is.
+--lines-only folds the line files into the Swift already written,
+touching nothing else: no page is read and no file is fetched, so a
+chant's lines can be added with no network, no ffmpeg and no cache.
+
+LINES. Tools/ChantLines/<chant id>.json holds one chant's sung lines,
+derived from its bundled recording and checked line by line before the
+file is added — every file in the folder is taken as shippable:
+
+    { "id": "salve_regina_simple", "part": null,
+      "method": "silencedetect + text alignment",
+      "lines": [ { "latin": "Salve, Regína, mater misericórdiæ,",
+                   "english": "Hail, holy Queen, Mother of mercy,",
+                   "start": 0.0, "end": 7.4 } ] }
+
+The file's name is the chant's id (an "id" inside that names no chant is
+let pass, the name ruling). Times are seconds into the chant's .m4a.
+"part" is null for the whole recording, or the index of the score part
+the lines are engraved on; a line may carry its own. A file that does
+not hold together — a line ending before it starts, lines out of order,
+a line past the recording's end, a part the score lacks — stops the
+build. A chant with no file has no lines, and the app steps it by ten
+seconds and repeats it whole.
+
 Never hand-edit the generated Swift; edit chants.json and rerun.
 """
 
@@ -66,6 +90,7 @@ CACHE = TOOL / "cache"
 AUDIO_OUT = ROOT / "app" / "Resources" / "Chants"
 SCORES_OUT = ROOT / "app" / "Resources" / "Chants" / "Scores"
 SWIFT_OUT = ROOT / "app" / "Data" / "ChantCatalogData.swift"
+LINES_DIR = ROOT / "Tools" / "ChantLines"
 SITE = "https://www.verbumgloriae.es"
 UA = {"User-Agent": "Mozilla/5.0 (Macintosh) LumenViae/1.0 (chant library build)"}
 CODEC = "aach"      # HE-AAC: built for one voice at a low rate
@@ -385,6 +410,109 @@ def swift_string(s):
     return '"' + s.replace("\\", "\\\\").replace('"', '\\"') + '"'
 
 
+# ---------------------------------------------------------------- lines
+
+def read_lines(ids, durations, part_counts):
+    """Every chant's lines from Tools/ChantLines, checked: {id: [line]}."""
+    found = {}
+    if not LINES_DIR.exists():
+        return found
+    for path in sorted(LINES_DIR.glob("*.json")):
+        data = json.loads(path.read_text("utf-8"))
+        chant = path.stem
+        if chant not in ids:
+            named = data.get("id")
+            if named in ids:
+                chant = named
+            else:
+                sys.exit(f"{path.name}: names no chant in chants.json")
+        default_part = data.get("part")
+        lines = data.get("lines") or []
+        if not lines:
+            sys.exit(f"{path.name}: no lines")
+        previous_start = -1.0
+        checked = []
+        for number, line in enumerate(lines, 1):
+            where = f"{path.name}, line {number}"
+            for key in ("latin", "english", "start", "end"):
+                if key not in line:
+                    sys.exit(f"{where}: no {key}")
+            latin = str(line["latin"]).strip()
+            english = str(line["english"]).strip()
+            start = float(line["start"])
+            end = float(line["end"])
+            if not latin or not english:
+                sys.exit(f"{where}: empty words")
+            if start < 0 or end <= start:
+                sys.exit(f"{where}: ends at {end} before it starts at {start}")
+            if start < previous_start:
+                sys.exit(f"{where}: starts before the line above it")
+            limit = durations.get(chant)
+            if limit is not None and end > limit + 0.5:
+                sys.exit(f"{where}: ends at {end}, past the recording's {limit:.1f}s")
+            part = line.get("part", default_part)
+            if part is not None:
+                part = int(part)
+                count = part_counts.get(chant)
+                if count is not None and not 0 <= part < count:
+                    sys.exit(f"{where}: part {part}, but the score has {count}")
+            previous_start = start
+            checked.append(dict(latin=latin, english=english, start=start, end=end, part=part))
+        found[chant] = checked
+    return found
+
+
+def swift_lines(lines):
+    """The `lines:` argument of a Chant, as the generated file sets it."""
+    out = ["            lines: ["]
+    for l in lines:
+        part = "" if l["part"] is None else f", part: {l['part']}"
+        out.append(f"                ChantLine(latin: {swift_string(l['latin'])}, "
+                   f"english: {swift_string(l['english'])}, "
+                   f"start: {l['start']:.2f}, end: {l['end']:.2f}{part}),")
+    out[-1] = out[-1].rstrip(",")
+    out.append("            ]")
+    return out
+
+
+def fold_lines_into_swift(ids):
+    """--lines-only: the line files written into the Swift as it stands."""
+    text = SWIFT_OUT.read_text("utf-8")
+    # A chant's own id stands alone on its line, twelve spaces in; a
+    # shelf's is inside `ChantGroup(` and is never matched
+    durations = {m.group(1): float(m.group(2)) for m in re.finditer(
+        r'^            id: "([^"]+)",.*?duration: ([0-9.]+),', text, re.S | re.M)}
+    part_counts = {}
+    for block in re.finditer(r'^            id: "([^"]+)",(.*?)sourceURL:', text, re.S | re.M):
+        part_counts[block.group(1)] = block.group(2).count("ChantScorePart(")
+    found = read_lines(set(ids), durations, part_counts)
+
+    out = []
+    current = None
+    skipping = False
+    for raw in text.split("\n"):
+        if skipping:
+            if raw == "            ]":
+                skipping = False
+            continue
+        m = re.match(r'            id: "([^"]+)",', raw)
+        if m:
+            current = m.group(1)
+        if raw.startswith("            lines: ["):
+            # Lines from an earlier fold: dropped, and the sourceURL above
+            # them loses its comma again
+            out[-1] = out[-1].rstrip(",")
+            skipping = not raw.rstrip().endswith("]")
+            continue
+        if raw.startswith("            sourceURL:") and current in found:
+            out.append(raw.rstrip(",") + ",")
+            out.extend(swift_lines(found[current]))
+            continue
+        out.append(raw)
+    SWIFT_OUT.write_text("\n".join(out), "utf-8")
+    print(f"lines folded in for {len(found)} chant(s): {', '.join(sorted(found)) or 'none'}")
+
+
 def main():
     manifest = json.loads((TOOL / "chants.json").read_text("utf-8"))
     chants = manifest["chants"]
@@ -393,6 +521,10 @@ def main():
         sys.exit("duplicate chant ids in chants.json")
     groups = {g["id"] for g in manifest["groups"]}
     keep = "--keep-assets" in sys.argv[1:]
+
+    if "--lines-only" in sys.argv[1:]:
+        fold_lines_into_swift(ids)
+        return
 
     if not keep:
         if SCORES_OUT.exists():
@@ -441,6 +573,12 @@ def main():
         built.append(dict(entry=entry, duration=duration, parts=parts, source=page_url(entry)))
         print(f"{entry['id']:24} {duration:6.1f}s  {len(parts)} score part(s)")
 
+    timed = read_lines(
+        set(ids),
+        {b["entry"]["id"]: b["duration"] for b in built},
+        {b["entry"]["id"]: len(b["parts"]) for b in built},
+    )
+
     lines = [
         "//",
         "//  ChantCatalogData.swift",
@@ -481,7 +619,12 @@ def main():
                          f"caption: {swift_string(p['caption'])}, aspectRatio: {p['aspect']:.4f}),")
         lines[-1] = lines[-1].rstrip(",")
         lines.append("            ],")
-        lines.append(f"            sourceURL: URL(string: {swift_string(b['source'])})!")
+        source = f"            sourceURL: URL(string: {swift_string(b['source'])})!"
+        if e["id"] in timed:
+            lines.append(source + ",")
+            lines.extend(swift_lines(timed[e["id"]]))
+        else:
+            lines.append(source)
         lines.append("        ),")
     lines[-1] = lines[-1].rstrip(",")
     lines += ["    ]", "}", ""]
@@ -491,7 +634,7 @@ def main():
     svg_mb = sum(f.stat().st_size for f in SCORES_OUT.glob("*.lvscore")) / 1e6
     minutes = sum(b["duration"] for b in built) / 60
     print(f"\n{len(built)} chants, {minutes:.0f} min: audio {audio_mb:.1f} MB, scores {svg_mb:.1f} MB "
-          f"({len(written_assets)} scores)")
+          f"({len(written_assets)} scores), lines for {len(timed)}")
 
 
 if __name__ == "__main__":
