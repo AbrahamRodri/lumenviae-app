@@ -327,7 +327,7 @@ struct LibrarySpeedSleepSheet: View {
     var body: some View {
         LibraryTraySheet(
             title: "Speed and Sleep",
-            note: "The voice withdraws rather than being cut off. LibriVox readers are volunteers, and they read at their own pace."
+            note: "The voice fades out rather than stopping suddenly. LibriVox readers are volunteers, and they read at their own pace."
         ) {
             SheetSectionLabel("Speed")
 
@@ -353,7 +353,7 @@ struct LibrarySpeedSleepSheet: View {
             }
 
             if session.sleepTimer != nil {
-                LibraryTrayRow(title: "Let it run on", isOn: false) {
+                LibraryTrayRow(title: "No timer", isOn: false) {
                     session.setSleepTimer(nil)
                     dismiss()
                 }

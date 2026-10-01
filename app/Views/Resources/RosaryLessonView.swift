@@ -208,7 +208,7 @@ struct RosaryLessonView: View {
             }
             .accessibilityHidden(true)
 
-            Text("LESSON \(current.numeral) OF III")
+            Text("LESSON \(current.numeral) OF 3")
                 .font(AppFonts.labelFont(9.5))
                 .tracking(2.8)
                 .foregroundColor(AppColors.gold)

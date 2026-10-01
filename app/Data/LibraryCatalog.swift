@@ -74,7 +74,7 @@ enum LibraryCatalog {
             title: "The Story of a Soul",
             author: "St. Thérèse of Lisieux",
             translator: "Thomas N. Taylor",
-            blurb: "The autobiography of the Little Flower — her little way, written under obedience.",
+            blurb: "St. Thérèse of Lisieux tells her own life, and her simple way of trusting God.",
             gutenbergID: 16772,
             // Version 2 (LibriVox 8021), read solo by Susan Morin from
             // Taylor's translation — the same English as the text, which
@@ -169,7 +169,7 @@ enum LibraryCatalog {
             id: "dolorous-passion",
             title: "The Dolorous Passion",
             author: "Anne Catherine Emmerich",
-            blurb: "The Lenten visions of a contemplative nun on the Passion of Our Lord.",
+            blurb: "A nun's visions, seen in prayer, of the suffering and death of Jesus.",
             gutenbergID: 10866,
             librivoxID: 13588,
             trackMapping: .sequential(offset: 0),

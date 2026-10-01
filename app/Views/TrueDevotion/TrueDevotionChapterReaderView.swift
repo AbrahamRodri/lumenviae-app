@@ -367,7 +367,7 @@ struct TrueDevotionChapterReaderView: View {
 
     private var markButtonLabel: String {
         let count = viewModel.markCount(forChapter: currentChapterID)
-        return count > 0 ? "MARK · \(count)" : "MARK"
+        return count > 0 ? "BOOKMARK · \(count)" : "BOOKMARK"
     }
 
     private func setChrome(hidden: Bool) {
@@ -507,7 +507,7 @@ struct TrueDevotionChapterReaderView: View {
         let nowMarked = viewModel.toggleMark(
             chapterID: currentChapterID, paragraph: paragraph
         )
-        toast = nowMarked ? "Marked" : "Mark removed"
+        toast = nowMarked ? "Bookmarked" : "Bookmark removed"
         if selectedParagraph == paragraph {
             withAnimation(.easeOut(duration: 0.2)) { selectedParagraph = nil }
         }
@@ -580,11 +580,11 @@ struct TrueDevotionChapterReaderView: View {
             OrnamentDivider()
                 .padding(.horizontal, 30)
 
-            Text("Finis")
+            Text("The End")
                 .font(AppFonts.italicFont(18))
                 .foregroundColor(AppColors.gold)
 
-            Text("You have read the whole of True Devotion. Totus tuus.")
+            Text("You have read the whole of True Devotion. All yours, Mary.")
                 .font(AppFonts.bodyFont(14))
                 .foregroundColor(AppColors.textSecondary)
                 .multilineTextAlignment(.center)
@@ -727,7 +727,7 @@ struct TrueDevotionContentsSheet: View {
 
     private var marksSection: some View {
         VStack(alignment: .leading, spacing: 0) {
-            SheetSectionLabel("Your marks · \(viewModel.marks.count)")
+            SheetSectionLabel("Your bookmarks · \(viewModel.marks.count)")
 
             ForEach(Array(viewModel.marks.enumerated()), id: \.offset) { _, mark in
                 markRow(mark.chapterID, paragraph: mark.paragraph)
@@ -743,7 +743,7 @@ struct TrueDevotionContentsSheet: View {
                 words: (chapter.paragraphs.first(where: { $0.id == paragraph })?.text).map { text in
                     text.count > 90 ? String(text.prefix(90)) + "\u{2026}" : text
                 },
-                spokenLabel: "Mark in \(chapter.title). Returns to that passage."
+                spokenLabel: "Bookmark in \(chapter.title). Returns to that passage."
             ) {
                 onSelectMark?(chapterID, paragraph)
                 dismiss()

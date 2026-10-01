@@ -56,7 +56,7 @@ struct KeptFeast: Hashable {
     /// Mass door never reads as a door that failed to draw — Kolbe, Padre
     /// Pio and St. Carlo were raised to the altars after 1962
     var calendarNote: String? {
-        inMissal ? nil : "Not on the universal 1962 calendar, so the Missal has no Mass for it"
+        inMissal ? nil : "Not on the Church-wide calendar of the traditional Latin Mass (1962 Missal), so there is no Mass for it here"
     }
 }
 

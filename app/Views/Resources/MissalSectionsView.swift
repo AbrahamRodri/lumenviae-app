@@ -105,7 +105,10 @@ struct MissalSectionsView: View {
     /// the user's own order.
     private func heading(for section: MissalSection) -> String? {
         let latin = nonEmpty(section.id)
-        let english = nonEmpty(section.label)
+        // The plain English name where the Mass's map knows one
+        // ("Entrance Chant" for the Introit, "Lord, Have Mercy" for the
+        // Kyrie); the API's own label otherwise
+        let english = MissalOrderData.plainName(for: section) ?? nonEmpty(section.label)
         let distinct = latin != nil && english != nil
             && latin!.caseInsensitiveCompare(english!) != .orderedSame
 
@@ -627,7 +630,7 @@ struct MissalLayoutChoiceSheet: View {
         // specimen, the button), so nothing asks the column to be centred.
         VStack(alignment: .leading, spacing: 0) {
             SheetHeader(
-                kicker: "The Daily Missal",
+                kicker: "The Mass",
                 title: "How should the translation read?"
             )
 
@@ -759,7 +762,7 @@ struct MissalTextSizeSheet: View {
         @Bindable var settings = userSettings
 
         return VStack(alignment: .leading, spacing: 0) {
-            SheetHeader(kicker: "Ordo Missæ", title: "Text") {
+            SheetHeader(kicker: "Order of Mass", title: "Text Settings") {
                 SheetHeaderAction(title: "Done") { dismiss() }
             }
 

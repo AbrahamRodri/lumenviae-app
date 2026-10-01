@@ -351,7 +351,7 @@ struct LibraryChapterRow: View {
                                 .font(AppFonts.labelFont(9))
                                 .foregroundColor(AppColors.goldLight.opacity(0.9))
                         }
-                        .accessibilityLabel("\(markCount) marks")
+                        .accessibilityLabel("\(markCount) bookmarks")
                     }
 
                     if let listening {
@@ -586,7 +586,7 @@ struct LibraryChapterRow: View {
         parts.append(chapter.displayTitle)
         if isCurrent { parts.append("where you are") }
         else if isFinished { parts.append("read") }
-        if markCount > 0 { parts.append("\(markCount) marks") }
+        if markCount > 0 { parts.append("\(markCount) bookmarks") }
         if let seconds = listening?.playtimeSeconds {
             parts.append(ReadingSpans.chipMinutes(seconds).lowercased())
         }
@@ -778,7 +778,7 @@ struct LibraryContentsSheet: View {
     /// door straight back to its paragraph.
     private var marksSection: some View {
         VStack(alignment: .leading, spacing: 0) {
-            SheetSectionLabel("Your marks · \(marks.count)")
+            SheetSectionLabel("Your bookmarks · \(marks.count)")
 
             ForEach(Array(marks.enumerated()), id: \.offset) { _, mark in
                 markRow(mark)
@@ -794,7 +794,7 @@ struct LibraryContentsSheet: View {
                 words: chapter.paragraphs.indices.contains(mark.paragraph)
                     ? openingWords(of: chapter.paragraphs[mark.paragraph])
                     : nil,
-                spokenLabel: "Mark in \(chapter.displayTitle). Returns to that passage."
+                spokenLabel: "Bookmark in \(chapter.displayTitle). Returns to that passage."
             ) {
                 onSelectMark?(mark.chapter, mark.paragraph)
                 dismiss()

@@ -202,8 +202,8 @@ enum CarloAcutisData {
         Moment(year: "2002", title: "God's programmer", line: "Begins his exhibition of the Eucharistic miracles", readingID: "carlo_programmer"),
         Moment(year: "2005", title: "A friend to the forgotten", line: "High school in Milan: the bullied, the homeless, the porter who asked to be baptised", readingID: "carlo_friend"),
         Moment(year: "2006", title: "The offering", line: "Leukaemia at fifteen, offered for the Pope and the Church", readingID: "carlo_offering"),
-        Moment(year: "2020", title: "Beatified in Assisi", line: "10 October, after a boy in Brazil was healed", readingID: "carlo_saint"),
-        Moment(year: "2025", title: "Canonised", line: "7 September, by Pope Leo XIV", readingID: "carlo_saint")
+        Moment(year: "2020", title: "Declared Blessed in Assisi", line: "10 October, after a boy in Brazil was healed", readingID: "carlo_saint"),
+        Moment(year: "2025", title: "Declared a Saint", line: "7 September, by Pope Leo XIV", readingID: "carlo_saint")
     ]
 
     // MARK: - His Rule of Life
@@ -220,8 +220,8 @@ enum CarloAcutisData {
     /// What he did, every day or every week — each with the door to do
     /// it with him today
     static let rule: [Habit] = [
-        Habit(icon: "ch-altar", name: "Holy Mass", often: "Daily", readingID: "carlo_mass", act: .mass, actTitle: "The day's Mass"),
-        Habit(icon: "ch-monstrance", name: "Adoration", often: "Daily", readingID: "carlo_mass", act: nil, actTitle: nil),
+        Habit(icon: "ch-altar", name: "Holy Mass", often: "Daily", readingID: "carlo_mass", act: .mass, actTitle: "Read the Day's Mass"),
+        Habit(icon: "ch-monstrance", name: "Prayer Before the Eucharist", often: "Daily", readingID: "carlo_mass", act: nil, actTitle: nil),
         Habit(icon: "lv-rosary", name: "The Rosary", often: "Daily", readingID: "carlo_rosary", act: .todaysRosary, actTitle: "Pray it"),
         Habit(icon: "ch-keys", name: "Confession", often: "Weekly", readingID: "carlo_confession", act: nil, actTitle: nil),
         Habit(icon: "ch-angel", name: "His guardian angel", often: "Always", readingID: "carlo_angel", act: nil, actTitle: nil)

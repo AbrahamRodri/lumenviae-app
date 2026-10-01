@@ -320,16 +320,18 @@ private struct ThresholdStepView: View {
                 Spacer(minLength: 12)
 
                 VStack(spacing: 14) {
-                    StepLabel(text: "TOTUS TUUS")
+                    StepLabel(text: "ALL YOURS")
 
-                    Text("Total Consecration")
+                    Text("Consecration to Mary")
                         .font(AppFonts.headlineFont(28))
                         .foregroundColor(AppColors.cream)
                         .multilineTextAlignment(.center)
 
-                    Text("to Jesus through Mary")
+                    Text("A 33-day preparation to give yourself to Jesus through Mary")
                         .font(AppFonts.italicFont(17))
                         .foregroundColor(AppColors.textSecondary)
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
                 .staggeredReveal(delay: 0.4)
 
@@ -342,7 +344,7 @@ private struct ThresholdStepView: View {
 
                 Spacer(minLength: 12)
 
-                OnboardingContinueButton(title: "Discover the devotion", action: onContinue)
+                OnboardingContinueButton(title: "Learn how it works", action: onContinue)
                     .staggeredReveal(delay: 0.7)
             }
             .padding(.horizontal, 24)
@@ -385,7 +387,7 @@ private struct DevotionStepView: View {
                 VStack(spacing: 14) {
                     StepLabel(text: "THE DEVOTION")
 
-                    Text("What Is Total Consecration?")
+                    Text("What Is the Consecration to Mary?")
                         .font(AppFonts.headlineFont(26))
                         .foregroundColor(AppColors.cream)
                         .multilineTextAlignment(.center)
@@ -488,7 +490,7 @@ private struct RhythmStepView: View {
                     rhythmRow(
                         icon: "ch-praying-hands",
                         title: "Pray",
-                        text: "The prayers of the preparation — Veni Creator, Ave Maris Stella, the litanies — with chanted audio.",
+                        text: "The day's prayers — hymns to the Holy Spirit and to Mary, and litanies (short petitions, each answered by the same response) — sung aloud if you wish.",
                         delay: 0.35
                     )
 
@@ -653,6 +655,7 @@ private struct JourneyStepView: View {
 
     private func dayRangeLabel(_ phase: ConsecrationPhase) -> String {
         let range = phase.dayRange
+        if phase == .consecrationDay { return "Consecration Day" }
         return range.count == 1 ? "Day \(range.lowerBound)" : "\(range.lowerBound)\u{2013}\(range.upperBound)"
     }
 }

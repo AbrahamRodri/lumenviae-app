@@ -113,7 +113,7 @@ struct OfficeCalendarSheet: View {
         if let text = entry.detail?.text, !text.isEmpty {
             return text
         }
-        return "Feria"
+        return "Weekday"
     }
 
     /// The spoken name of a cell: the date, then the day the calendar
@@ -205,8 +205,8 @@ struct OfficeCalendarSheet: View {
     private var offlineDetail: String {
         if loadFailed { return "Check your connection" }
         return monthFullySaved
-            ? "\(monthDayCount) days · all eight hours"
-            : "\(savedCount) of \(monthDayCount) days on this device · eight hours each"
+            ? "\(monthDayCount) days · all eight prayers"
+            : "\(savedCount) of \(monthDayCount) days on this device · all eight prayers each"
     }
 
     /// A day counts as saved only when every one of its hours is here.

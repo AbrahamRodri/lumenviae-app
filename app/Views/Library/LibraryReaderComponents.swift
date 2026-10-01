@@ -249,7 +249,7 @@ struct TodaysGoalBand: View {
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Today's goal. \(line). Opens the measures.")
+        .accessibilityLabel("Today's goal. \(line). Opens your reading goal.")
     }
 
     /// A 38-point dial whose ring fills as the day's reading does —
@@ -590,7 +590,7 @@ struct PassageActionBar: View {
                         .fill(isMarked ? AppColors.goldLight : AppColors.gold)
                         .frame(width: 8, height: 15)
 
-                    Text(isMarked ? "UNMARK" : "MARK")
+                    Text(isMarked ? "REMOVE" : "BOOKMARK")
                         .font(AppFonts.labelFont(10))
                         .tracking(1.5)
                 }
@@ -600,7 +600,7 @@ struct PassageActionBar: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(isMarked ? "Take the mark off this passage" : "Mark this passage")
+            .accessibilityLabel(isMarked ? "Remove the bookmark from this passage" : "Bookmark this passage")
 
             divider
 
@@ -698,7 +698,7 @@ struct LibraryFootnoteSheet: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            SheetHeader(kicker: "The editor's", title: "Footnote \(number)")
+            SheetHeader(kicker: "Editor's note", title: "Footnote \(number)")
 
             Text(text)
                 .font(AppFonts.bodyFont(15))

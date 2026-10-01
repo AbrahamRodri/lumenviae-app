@@ -171,7 +171,7 @@ struct MissalCalendarSheet: View {
 
     private var offlineDetail: String {
         monthFullySaved
-            ? "\(monthDayCount) days · propers and the Ordinary"
+            ? "\(monthDayCount) days · every part of the Mass"
             : "\(savedCount) of \(monthDayCount) days on this device"
     }
 

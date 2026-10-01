@@ -74,7 +74,7 @@ struct CarloAcutisView: View {
                         lifeTimeline
                             .padding(.horizontal, 24)
 
-                        sectionTitle("Live a Day as He Did", kicker: "His rule of life")
+                        sectionTitle("Live a Day as He Did", kicker: "His daily habits")
                         ruleOfLife
                             .padding(.horizontal, 20)
 
@@ -183,7 +183,7 @@ struct CarloAcutisView: View {
             .animation(Motion.crossfade, value: sayingIndex)
 
             QuietGoldButton(
-                title: "Another",
+                title: "Another saying",
                 leadingIcon: "ph-arrow-counter-clockwise",
                 leadingIconSize: 10,
                 size: 9.5
@@ -454,7 +454,7 @@ struct CarloAcutisView: View {
                 .padding(.horizontal, 20)
 
             VStack(alignment: .leading, spacing: 12) {
-                Text("A PRAYER FOR HIS INTERCESSION")
+                Text("A PRAYER ASKING HIS HELP")
                     .font(AppFonts.labelFont(9))
                     .tracking(2.2)
                     .foregroundColor(AppColors.gold.opacity(0.85))

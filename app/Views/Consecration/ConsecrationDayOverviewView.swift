@@ -781,7 +781,9 @@ struct ConsecrationDayOverviewView: View {
     /// one has yet reached.
     private func periodSpan(_ phase: ConsecrationPhase) -> String {
         let range = phase.dayRange
-        let span = range.count == 1 ? "Day \(range.lowerBound)" : "Days \(range.lowerBound)–\(range.upperBound)"
+        let span = phase == .consecrationDay
+            ? "Consecration Day"
+            : range.count == 1 ? "Day \(range.lowerBound)" : "Days \(range.lowerBound)–\(range.upperBound)"
         guard range.lowerBound <= viewModel.todaysDayNumber else { return "\(span) · still ahead" }
         let kept = range.filter { viewModel.isDayCompleted($0) }.count
         return kept > 0 ? "\(span) · \(kept) of \(range.count) prayed" : span
@@ -1141,7 +1143,7 @@ private struct JourneyDays: View {
         // Days still ahead stay quiet rather than opening early
         .disabled(!reachable)
         .accessibilityLabel(
-            "Day \(number)\(isDone ? ", complete" : "")\(isToday ? ", today" : "")\(reachable ? "" : ", not yet")"
+            "\(number == 34 ? "Consecration Day" : "Day \(number)")\(isDone ? ", complete" : "")\(isToday ? ", today" : "")\(reachable ? "" : ", not yet")"
         )
     }
 

@@ -154,10 +154,10 @@ struct ConsecrationDayFlowView: View {
     }
 
     /// What the quiet forward control says. "Next" is right between
-    /// prayers; leaving the prayers is better named by where it goes.
+    /// prayers; leaving the prayers, it says what comes next to do.
     private var forwardTitle: String {
         guard isLastPrayerStep else { return "Next" }
-        return readings.count > 1 ? "Readings" : "Reading"
+        return readings.count > 1 ? "Go to the readings" : "Go to the reading"
     }
 
     /// True on the final prayer, where forward leaves the prayers for
@@ -401,9 +401,9 @@ struct ConsecrationDayFlowView: View {
             let ready = await claim.load(
                 url,
                 title: prayer.title,
-                subtitle: "33-Day Consecration",
+                subtitle: "Consecration to Mary",
                 artworkAssetName: dayArtworkAsset,
-                album: "Day \(dayNumber)",
+                album: phase == .consecrationDay ? "Consecration Day" : "Day \(dayNumber)",
                 queueIndex: stepIndex,
                 queueCount: steps.count,
                 claimNowPlaying: true
@@ -452,15 +452,16 @@ struct ConsecrationDayFlowView: View {
                 Button {
                     scoreChant = chant
                 } label: {
-                    Text("SCORE")
+                    Text("SHEET MUSIC")
                         .font(AppFonts.labelFont(9))
                         .tracking(2)
                         .foregroundColor(AppColors.gold.opacity(0.85))
+                        .fixedSize()
                         .frame(minWidth: 44, minHeight: 44)
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(QuietGlyphButtonStyle())
-                .accessibilityLabel("Show the score")
+                .accessibilityLabel("Show the sheet music")
             }
             .padding(.horizontal, 4)
         }
@@ -724,7 +725,7 @@ struct ConsecrationDayFlowView: View {
     private var navigationButtons: some View {
         HStack {
             QuietGoldButton(
-                title: "Prev",
+                title: "Back",
                 leadingIcon: "ph-arrow-left",
                 leadingIconSize: 11
             ) {

@@ -97,7 +97,7 @@ final class ConsecrationViewModel {
 
             loadCurrentDay()
         } catch {
-            errorMessage = "Failed to load progress: \(error.localizedDescription)"
+            errorMessage = "Your progress could not be loaded. Please try again."
         }
     }
 
@@ -113,7 +113,7 @@ final class ConsecrationViewModel {
             progress = newProgress
             loadCurrentDay()
         } catch {
-            errorMessage = "Failed to start consecration: \(error.localizedDescription)"
+            errorMessage = "Your consecration could not be started. Please try again."
         }
     }
 
@@ -185,7 +185,7 @@ final class ConsecrationViewModel {
         do {
             try context.save()
         } catch {
-            errorMessage = "Failed to complete day: \(error.localizedDescription)"
+            errorMessage = "Today could not be saved as prayed. Please try again."
         }
     }
 
@@ -253,7 +253,7 @@ final class ConsecrationViewModel {
             }
             try context.save()
         } catch {
-            errorMessage = "Failed to save journal: \(error.localizedDescription)"
+            errorMessage = "Your reflection could not be saved. Please try again."
         }
     }
 
@@ -316,7 +316,7 @@ final class ConsecrationViewModel {
             self.currentDay = nil
             self.journalText = ""
         } catch {
-            errorMessage = "Failed to reset consecration: \(error.localizedDescription)"
+            errorMessage = "Your consecration could not be reset. Please try again."
         }
     }
 

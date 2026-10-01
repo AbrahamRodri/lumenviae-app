@@ -205,7 +205,7 @@ struct LibraryReadingView: View {
 
     private func titling(_ entry: LibraryReading, section: ReadingShelf, index: Int) -> some View {
         VStack(spacing: 16) {
-            Text("\(section.title.uppercased()) · \(ReadingShelf.numeral(index + 1)) OF \(ReadingShelf.numeral(section.entries.count))")
+            Text("\(section.title.uppercased()) · \(index + 1) OF \(section.entries.count)")
                 .font(AppFonts.labelFont(9))
                 .tracking(2.4)
                 .foregroundColor(AppColors.gold)
@@ -350,7 +350,7 @@ struct LibraryReadingView: View {
                 }
             }
 
-            Text(feast.keptBy.map { "\(feast.name) · kept in \($0)" } ?? feast.name)
+            Text(feast.keptBy.map { "\(feast.name) · celebrated in \($0)" } ?? feast.name)
                 .font(AppFonts.readingItalicFont(15))
                 .foregroundColor(AppColors.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -368,7 +368,7 @@ struct LibraryReadingView: View {
                 // is let into it rather than added to it — as the door rows
                 // below do
                 QuietGoldButton(
-                    title: isToday ? "Today's Mass" : "The day's Mass",
+                    title: isToday ? "Read Today's Mass" : "Read the Day's Mass",
                     trailingIcon: "ph-caret-right",
                     horizontalPadding: 0
                 ) {

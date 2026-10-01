@@ -55,7 +55,7 @@ struct DivineOfficeView: View {
 
     private static let groups: [HourGroup] = [
         HourGroup(heading: "THE NIGHT AND THE DAWN", hours: [.matins, .lauds]),
-        HourGroup(heading: "THE LITTLE HOURS", hours: [.prime, .terce, .sext, .nones]),
+        HourGroup(heading: "THROUGH THE DAY", hours: [.prime, .terce, .sext, .nones]),
         HourGroup(heading: "EVENING AND NIGHT", hours: [.vespers, .compline])
     ]
 
@@ -130,7 +130,7 @@ struct DivineOfficeView: View {
     /// The book's name in the bar's dead centre — the page below opens
     /// straight onto the day's leaf, as the missal does.
     private var bookName: some View {
-        Text("THE DIVINE OFFICE")
+        Text("HOURS OF PRAYER")
             .font(AppFonts.labelFont(10.5))
             .tracking(2.5)
             .foregroundColor(AppColors.gold.opacity(0.75))
@@ -159,8 +159,13 @@ struct DivineOfficeView: View {
     private var content: some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 0) {
+                bookLine
+                    .padding(.horizontal, 24)
+                    .devotionalEntrance(delay: 0.02)
+
                 feastPlate
                     .padding(.horizontal, 24)
+                    .padding(.top, 14)
                     .devotionalEntrance(delay: 0.04)
 
                 theHourNow
@@ -186,6 +191,20 @@ struct DivineOfficeView: View {
         // *inside* the band, ghosting before anyone has scrolled — the
         // failure the modifier's own inset exists to prevent.
         .topChromeFade()
+    }
+
+    // MARK: - What This Is
+
+    /// The book's Church name, said once and explained: the bar calls it
+    /// Hours of Prayer, and a reader new to it is told what it holds
+    private var bookLine: some View {
+        Text("The Divine Office: the psalms and prayers the Church prays at set hours through the day.")
+            .font(AppFonts.italicFont(14))
+            .lineSpacing(14 * 0.2)
+            .foregroundColor(AppColors.textSecondary)
+            .multilineTextAlignment(.center)
+            .fixedSize(horizontal: false, vertical: true)
+            .frame(maxWidth: .infinity)
     }
 
     // MARK: - Feast Plate
@@ -245,13 +264,14 @@ struct DivineOfficeView: View {
         .animation(.easeOut(duration: 0.35), value: viewModel.feastTitle)
     }
 
-    /// "THIRD CLASS  ·  WHITE" — whichever parts the day carries. The
-    /// office names no colour of its own; the missal's propers for the
-    /// same date supply it when they can be reached.
+    /// "LESSER FEAST  ·  WHITE VESTMENTS" — whichever parts the day
+    /// carries, in the Missal's own words. The office names no colour of
+    /// its own; the missal's propers for the same date supply it when
+    /// they can be reached.
     private func dayClassLine(_ rank: String?) -> String? {
         let parts = [
-            OfficeRank(rank).englishLabel,
-            viewModel.vestment?.name
+            OfficeRank(rank).plainLabel(title: viewModel.feastTitle),
+            viewModel.vestment?.plainName
         ].compactMap { $0 }
 
         return parts.isEmpty ? nil : parts.joined(separator: "  ·  ").uppercased()
@@ -278,22 +298,23 @@ struct DivineOfficeView: View {
                 HStack(spacing: 9) {
                     LitHourDot(size: 8, box: 14, glow: 5)
 
-                    Text("THE HOUR NOW")
+                    Text("PRAYER FOR NOW")
                         .font(AppFonts.labelFont(9.5))
                         .tracking(2.8)
                         .foregroundColor(AppColors.gold.opacity(0.92))
                 }
 
-                Text(hour.label)
-                    .font(AppFonts.headlineFont(34))
+                Text(hour.plainName)
+                    .font(AppFonts.headlineFont(30))
                     .foregroundColor(AppColors.cream)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
                     .padding(.top, 9)
                     .id(hour)
                     .transition(.opacity)
 
-                // Why this hour is the one being prayed, and when it
-                // lapses
-                Text("\(hour.timeOfDay)  ·  \(hour.lapses)")
+                // Its Church name, and when it gives way to the next
+                Text("\(hour.label)  ·  \(hour.lapses)")
                     .font(AppFonts.italicFont(14))
                     .foregroundColor(AppColors.accentSoft)
                     .multilineTextAlignment(.center)
@@ -301,7 +322,7 @@ struct DivineOfficeView: View {
 
                 Spacer(minLength: 12)
 
-                GoldCTAButton(title: "Pray \(hour.label)") {
+                GoldCTAButton(title: "Pray \(hour.plainName)") {
                     openHour = hour
                 }
             }
@@ -408,11 +429,11 @@ struct DivineOfficeView: View {
                 bead(for: hour, lit: isPresent)
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(hour.label)
+                    Text(hour.plainName)
                         .font(AppFonts.headlineFont(16.5))
                         .foregroundColor(AppColors.cream.opacity(0.9))
 
-                    Text(hour.timeOfDay)
+                    Text("\(hour.label)  ·  \(hour.timeOfDay)")
                         .font(AppFonts.italicFont(12))
                         .foregroundColor(AppColors.textSecondary)
                 }
@@ -434,7 +455,9 @@ struct DivineOfficeView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(SacredCardButtonStyle())
-        .accessibilityLabel(isPresent ? "\(hour.label), the hour now" : hour.label)
+        .accessibilityLabel(isPresent
+            ? "\(hour.plainName), \(hour.label), the prayer for now"
+            : "\(hour.plainName), \(hour.label)")
     }
 
     /// The hour's place in the day, said as a colour, punching a hole in
@@ -469,7 +492,7 @@ struct DivineOfficeView: View {
             OrnamentDivider()
                 .padding(.horizontal, 30)
 
-            Text("Breviarium Romanum 1962 · texts served by The Divinum Officium Project")
+            Text("The traditional Latin Office (1962 books) · texts from the Divinum Officium Project")
                 .font(AppFonts.bodyFont(11))
                 .lineSpacing(11 * 0.5)
                 .foregroundColor(AppColors.textSecondary.opacity(0.8))

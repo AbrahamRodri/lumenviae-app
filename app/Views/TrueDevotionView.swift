@@ -117,7 +117,7 @@ struct TrueDevotionView: View {
                         .fixedSize(horizontal: false, vertical: true)
 
                     // The book is named here, under the page's title
-                    Text("From \(LibraryCatalog.trueDevotionDisplay.title)\n\(LibraryCatalog.trueDevotionDisplay.author) · c. 1712")
+                    Text("From \(LibraryCatalog.trueDevotionDisplay.title)\n\(LibraryCatalog.trueDevotionDisplay.author) · written about 1712")
                         .font(AppFonts.readingItalicFont(15))
                         .foregroundColor(AppColors.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -147,7 +147,7 @@ struct TrueDevotionView: View {
                 // tab, so it says so rather than switching silently
                 VStack(spacing: 2) {
                     QuietGoldButton(
-                        title: "The Total Consecration",
+                        title: "Begin the Consecration to Mary",
                         leadingIcon: PrayerShortcut.consecration.icon,
                         trailingIcon: "ph-caret-right",
                         size: 10

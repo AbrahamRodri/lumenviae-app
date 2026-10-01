@@ -495,7 +495,7 @@ struct DailyMissalView: View {
             .fixedSize(horizontal: false, vertical: true)
 
         if let commemorations = info.commemorations, !commemorations.isEmpty {
-            Text("Commemoration of \(commemorations.map(\.title).joined(separator: " and "))")
+            Text("Also remembered today: \(commemorations.map(\.title).joined(separator: " and "))")
                 .font(AppFonts.italicFont(13))
                 .foregroundColor(AppColors.textSecondary)
                 .multilineTextAlignment(.center)
@@ -504,8 +504,11 @@ struct DailyMissalView: View {
         }
     }
 
-    /// The vestment as a lit dot beside its name, then the 1962 class —
+    /// The vestment as a lit dot, then the day's rank in plain words —
     /// between the day arrows, where TODAY once stood on a row of its own.
+    /// The dot shows the colour, so the row leaves the word to VoiceOver:
+    /// "GREEN VESTMENTS" beside "LENTEN WEEKDAY" did not fit between the
+    /// arrows.
     @ViewBuilder
     private func rubricRow(_ info: MissalInfo) -> some View {
         let rank = info.rankLabel
@@ -516,17 +519,6 @@ struct DailyMissalView: View {
                     .fill(vestment.swatch)
                     .frame(width: 7, height: 7)
                     .shadow(color: vestment.swatch.opacity(0.45), radius: 3)
-
-                Text(vestment.name.uppercased())
-                    .font(AppFonts.labelFont(9))
-                    .tracking(2.5)
-                    .foregroundColor(AppColors.textSecondary)
-            }
-
-            if vestment != nil && rank != nil {
-                Rectangle()
-                    .fill(AppColors.gold.opacity(0.25))
-                    .frame(width: 1, height: 9)
             }
 
             if let rank {
@@ -538,6 +530,8 @@ struct DailyMissalView: View {
         }
         .lineLimit(1)
         .minimumScaleFactor(0.8)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel([rank, vestment?.plainName.lowercased()].compactMap { $0 }.joined(separator: ", "))
     }
 
     /// Yesterday and tomorrow at the edges, and the day's vestment and
@@ -800,7 +794,7 @@ struct DailyMissalView: View {
                 .frame(width: 150)
                 .padding(.top, 8)
 
-            Text("ITE, MISSA EST")
+            Text("THE MASS IS ENDED")
                 .font(AppFonts.labelFont(10))
                 .tracking(3)
                 .foregroundColor(AppColors.gold.opacity(0.5))
@@ -816,7 +810,7 @@ struct DailyMissalView: View {
             }
             .padding(.top, 4)
 
-            Text("Missale Romanum 1962 · texts served by Missale Meum")
+            Text("The traditional Latin Mass (1962 Missal) · texts from Missale Meum")
                 .font(AppFonts.bodyFont(11))
                 .foregroundColor(AppColors.textSecondary.opacity(0.8))
                 .multilineTextAlignment(.center)

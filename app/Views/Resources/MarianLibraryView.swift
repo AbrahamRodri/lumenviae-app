@@ -107,7 +107,7 @@ struct MarianLibraryView: View {
 
     private var masthead: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("DE MARIA NUMQUAM SATIS")
+            Text("OF MARY, NEVER ENOUGH")
                 .font(AppFonts.labelFont(9.5))
                 .tracking(3)
                 .foregroundColor(AppColors.gold)
@@ -117,7 +117,7 @@ struct MarianLibraryView: View {
                 .foregroundColor(AppColors.cream)
                 .minimumScaleFactor(0.7)
 
-            Text("Of Mary, there is never enough. Her feasts, her dogmas, her appearings, and the saints who loved her.")
+            Text("Her feast days, what the Church teaches about her, where she has appeared, and the saints who loved her.")
                 .font(AppFonts.readingItalicFont(16))
                 .foregroundColor(AppColors.textSecondary)
                 .lineSpacing(3)
@@ -163,7 +163,7 @@ struct MarianLibraryView: View {
                     .lineSpacing(3)
                     .fixedSize(horizontal: false, vertical: true)
 
-                Text(feast.keptBy.map { "\(feast.dateLabel) · kept in \($0)" } ?? feast.dateLabel)
+                Text(feast.keptBy.map { "\(feast.dateLabel) · celebrated in \($0)" } ?? feast.dateLabel)
                     .font(AppFonts.readingItalicFont(15))
                     .foregroundColor(AppColors.textPrimary.opacity(0.8))
 
@@ -213,7 +213,7 @@ struct MarianLibraryView: View {
     @ViewBuilder
     private func featureActs(_ feast: KeptFeast, date: Date?, isToday: Bool, reading: (id: String, name: String?)?) -> some View {
         if feast.inMissal, let date {
-            featureButton(isToday ? "Today's Mass" : "The day's Mass", icon: "ch-altar", filled: true) {
+            featureButton(isToday ? "Read Today's Mass" : "Read the Day's Mass", icon: "ch-altar", filled: true) {
                 router.push(.missalDay(date))
             }
         }
@@ -740,10 +740,18 @@ struct MarianLibraryView: View {
                 .foregroundColor(AppColors.gold.opacity(0.6))
 
             VStack(spacing: 10) {
+                // Said once, where the word stands: these titles are sung
+                // in her litany, and a newcomer does not know the word
+                Text("A litany is a prayer of short petitions, each answered by the same response.")
+                    .font(AppFonts.readingItalicFont(14))
+                    .foregroundColor(AppColors.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+
                 prayerDoor("Pray the Litany of Loreto", id: "litany_loreto")
                 HStack(spacing: 10) {
-                    prayerDoor("Ave Maris Stella", id: "ave_maris_stella")
-                    prayerDoor("The Magnificat", id: "magnificat")
+                    prayerDoor("Hail, Star of the Sea", id: "ave_maris_stella")
+                    prayerDoor("Mary's Song", id: "magnificat")
                 }
             }
         }

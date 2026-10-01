@@ -97,9 +97,9 @@ enum MarianLibraryData {
     static let dogmas = ReadingShelf(
         id: "dogmas",
         icon: "lv-twelve-stars",
-        title: "The Four Marian Dogmas",
-        marginLabel: "The\ndogmas",
-        subtitle: "What the Church solemnly teaches",
+        title: "Four Teachings About Mary",
+        marginLabel: "The\nteachings",
+        subtitle: "What the Church solemnly teaches about her (its dogmas)",
         entries: [
             LibraryReading(
                 id: "theotokos",
@@ -151,7 +151,7 @@ enum MarianLibraryData {
                 painting: "joyful_annunciation",
                 feast: KeptFeast(month: 12, day: 8, name: "The Immaculate Conception"),
                 doors: [
-                    .page(.libraryReading(id: "lourdes"), icon: "lv-rose", title: "Our Lady of Lourdes", note: "Where she gave the dogma its name")
+                    .page(.libraryReading(id: "lourdes"), icon: "lv-rose", title: "Our Lady of Lourdes", note: "Where she named this teaching herself")
                 ]
             ),
             LibraryReading(
@@ -181,7 +181,7 @@ enum MarianLibraryData {
         icon: "ch-bible",
         title: "Mary in Scripture",
         marginLabel: "In\nScripture",
-        subtitle: "From Genesis to the Apocalypse",
+        subtitle: "From Genesis to Revelation",
         entries: [
             LibraryReading(
                 id: "new_eve",
@@ -278,9 +278,9 @@ enum MarianLibraryData {
     static let apparitions = ReadingShelf(
         id: "apparitions",
         icon: "lv-rose",
-        title: "Approved Apparitions",
-        marginLabel: "Apparitions",
-        subtitle: "When Heaven visited earth",
+        title: "Where Mary Appeared",
+        marginLabel: "Her\nappearances",
+        subtitle: "Appearances of Mary the Church has approved",
         entries: [
             LibraryReading(
                 id: "guadalupe",
@@ -312,7 +312,7 @@ enum MarianLibraryData {
                 ),
                 feast: KeptFeast(month: 11, day: 27, name: "Our Lady of the Miraculous Medal", inMissal: false, keptBy: "the Vincentian family"),
                 doors: [
-                    .page(.libraryReading(id: "immaculate_conception"), icon: "lv-twelve-stars", title: "The Immaculate Conception", note: "The dogma the medal prepared")
+                    .page(.libraryReading(id: "immaculate_conception"), icon: "lv-twelve-stars", title: "The Immaculate Conception", note: "The teaching the medal prepared for")
                 ]
             ),
             LibraryReading(
@@ -419,7 +419,7 @@ enum MarianLibraryData {
     static let saints = ReadingShelf(
         id: "saints",
         icon: "lv-saint",
-        title: "The Marian Saints",
+        title: "Saints Who Loved Mary",
         marginLabel: "The\nsaints",
         subtitle: "In their own words",
         entries: [
@@ -551,7 +551,7 @@ enum MarianLibraryData {
         icon: "lv-rosary",
         title: "The Rosary Through History",
         marginLabel: "The\nRosary",
-        subtitle: "Eight centuries of Our Lady's Psalter",
+        subtitle: "Eight centuries of the Rosary",
         entries: [
             LibraryReading(
                 id: "psalter",
@@ -630,7 +630,7 @@ enum MarianLibraryData {
         icon: "lv-stella-maris",
         title: "Titles of Our Lady",
         marginLabel: "Her\ntitles",
-        subtitle: "From the Litany and sacred Tradition",
+        subtitle: "Names the Church has long given her in prayer",
         entries: [
             LibraryReading(
                 id: "mediatrix",

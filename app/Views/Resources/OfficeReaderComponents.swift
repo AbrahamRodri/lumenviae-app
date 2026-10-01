@@ -36,13 +36,11 @@ enum LitHourMark {
 
 extension CanonicalHour {
 
-    /// "Here ends Lauds" — the close a scribe wrote under a finished
-    /// hour, answering the "Incipit" the engine itself names the first
-    /// section by. The verb agrees with its hour: Laudes and Vesperae
-    /// are plural and take *expliciunt*.
+    /// "End of Dawn Prayer" — the close under a finished hour, where a
+    /// scribe wrote "Expliciunt Laudes". Said in English: the Latin
+    /// close stood in the chrome with nothing to say what it meant.
     var explicit: String {
-        let plural = self == .lauds || self == .vespers
-        return "\(plural ? "EXPLICIUNT" : "EXPLICIT") \(latinName.uppercased())"
+        "END OF \(plainName.uppercased())"
     }
 }
 
@@ -141,7 +139,7 @@ struct OfficeReadingSheet: View {
     var body: some View {
         @Bindable var settings = settings
 
-        return MissalSheetShell(kicker: "Divine Office", title: "Reading") {
+        return MissalSheetShell(kicker: "Hours of Prayer", title: "Text Settings") {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
                     MissalSheetChipGroup("Language") {
@@ -177,7 +175,7 @@ struct OfficeReadingSheet: View {
 
                     SheetSizeSlider(scale: $settings.missalTextScale)
 
-                    SheetNote("The breviary and the missal are set the same way — these settings belong to both books.")
+                    SheetNote("These settings apply to the Mass texts as well.")
                         .padding(.top, 8)
                 }
                 .padding(.bottom, 36)
@@ -223,7 +221,7 @@ struct OfficeIndexSheet: View {
     let onJump: (String) -> Void
 
     var body: some View {
-        MissalSheetShell(kicker: "Divine Office", title: hour.latinName) {
+        MissalSheetShell(kicker: "In this prayer", title: hour.plainName) {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
                     let reading = readingIndex
@@ -254,9 +252,10 @@ struct OfficeIndexSheet: View {
             onJump(section.id)
             dismiss()
         } label: {
+            // English first and the Latin beneath, as on the prayer pages
             SheetRow(
-                section.latinName.isEmpty ? section.englishName : section.latinName,
-                detail: showsBothNames ? section.englishName : nil,
+                section.englishName.isEmpty ? section.latinName : section.englishName,
+                detail: showsBothNames ? section.latinName : nil,
                 accessory: isActive ? .label("Here") : .none,
                 isLit: isActive
             )

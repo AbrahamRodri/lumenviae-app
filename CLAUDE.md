@@ -1286,8 +1286,8 @@ write concurrent code here:
   Devotion in Summary are all `LibraryReading`s on `ReadingShelf`s
   (`Models/LibraryReading.swift`; `LibraryReadings.locate(id:)` is the
   one lookup), pushed as `.libraryReading(id:)` and drawn by
-  `LibraryReadingView`: shelf and place as kicker ("APPROVED
-  APPARITIONS · IV OF VIII"), the saying as a `QuotedPassageText`, prose
+  `LibraryReadingView`: shelf and place as kicker ("WHERE MARY
+  APPEARED · 4 OF 8"), the saying as a `QuotedPassageText`, prose
   on a versal, named `parts` and two-column `tables` where the content
   has them, then a ledger of doors — **Feast day** (`KeptFeast`; a feast
   on the universal 1962 calendar opens that day's Mass through
@@ -1531,7 +1531,13 @@ write concurrent code here:
   Efficiency Boost?"), and help given on the control itself, one at a
   time, does (NN/g, "Instructional Overlays and Coach Marks"; Apple HIG,
   "Offering help").
-- **Daily Missal** — the 1962 propers for any day, reached from Today's
+- **Daily Missal** — titled "The Mass" in the app (the door "Today's
+  Mass", "Daily Missal" its secondary name; the plain-language rulings
+  are `copy-audit/GLOSSARY.md` on `claude/copy-audit`: plain titles first,
+  the Church's names second, never a bare "1962"; the parts of the Mass
+  named in English from `MissalOrderData`'s map, the day's rank as Great
+  Feast / Feast / Lesser Feast / Weekday through `DayRank`, and a colour
+  as "green vestments") — the 1962 propers for any day, reached from Today's
   Prayer on home, Explore, the Chapel's Liturgy tile and the Pray tray
   (and on a given day through `.missalDay(Date)`), as one scroll surface
   under a single collapsing header. Served live by the third-party Missale Meum API
@@ -1572,12 +1578,12 @@ write concurrent code here:
   Sanctus (reading the Ordo's Common Preface in place of the day's) and
   one without a Communio still gets its Canon. A section's tier
   (`isProper`) decides only the diamond stud, never whether it is drawn,
-  so "Propers only" keeps the day's own Preface. The Aa
+  so "Today's texts only" keeps the day's own Preface. The Aa
   sheet sets language (writes the app-wide prayer language), stacked or
   side-by-side bilingual layout (side-by-side forces Both), a
   text size slider for the liturgical books (15–21pt, `missalTextScale`,
   which the citations and the Office's hours follow too), posture
-  cues, a High Mass toggle, and Contents: "With the Ordinary" (default)
+  cues, a Sung Mass toggle (the High Mass), and Contents: "Whole Mass" (default)
   lays the **entire Ordinary** through the propers — Asperges (sung Sunday
   Mass) through the Last Gospel and the Leonine prayers — with the
   variable parts computed per day as best the data allows: Gloria falls
@@ -1589,7 +1595,7 @@ write concurrent code here:
   the Offertory verse opens with the Ordinary's ℣ ℟ dialogue. The Ordo's
   single-sided rubric commentary and its "– Introit in today Mass –"
   placeholders are left out entirely. The propers' diamond stud is the
-  only tier mark — nothing is dimmed. "Propers only" keeps the day's own
+  only tier mark — nothing is dimmed. "Today's texts only" keeps the day's own
   texts alone (body, rail, ☰ index, progress denominator). The first open
   asks, once, for the bilingual layout. Texts arrive as
   `[english, latin]` pairs whose line counts align, and pair line for line in
@@ -1607,10 +1613,10 @@ write concurrent code here:
   content column (a marker inside the LazyVStack gets released
   mid-scroll and goes stale) and section tops in content-space
   coordinates, which scrolling never moves. The ☰ button
-  raises the Ordo Missæ index sheet (the section being read lit and
+  raises the Order of Mass index sheet (the section being read lit and
   marked HERE, propers with their diamond, postures, tap to jump); the
-  colophon ("ITE, MISSA EST") links the full `OrdoMissaeView`. The date
-  pill opens `MissalCalendarSheet`, a month grid — "AUGUST MMXXVI", vestment dot per day from the year calendar,
+  colophon ("THE MASS IS ENDED") links the full `OrdoMissaeView`. The date
+  pill opens `MissalCalendarSheet`, a month grid — "AUGUST 2026", vestment dot per day from the year calendar,
   today ringed in gold, month chevrons — over a feast readout naming
   whichever day is under the finger (today's until one is: pressing a day
   names it, lifting opens it), with an honest offline row
@@ -1621,7 +1627,13 @@ write concurrent code here:
   chapel with no signal still gets the right page; the year's calendar is
   fetched (and kept on disk) the first time the calendar sheet opens; days
   more than 30 back are pruned.
-- **Divine Office** — the pre-Vatican-II Breviarium Romanum (1960 rubrics,
+- **Divine Office** — titled "Hours of Prayer" in the app, with "The
+  Divine Office" its secondary name and one line saying what it is; each
+  hour by `CanonicalHour.plainName` (Night Vigil, Dawn Prayer, Early
+  Morning Prayer, Mid-Morning Prayer, Midday Prayer, Mid-Afternoon
+  Prayer, Evening Prayer, Bedtime Prayer — never "Morning Prayer" or
+  "Night Prayer", which are the Prayer Book's), `shortName` in tight
+  places, the Church's name (`label`) small beneath — the pre-Vatican-II Breviarium Romanum (1960 rubrics,
   the 1962 books), reached from the Divine Office row of Today's Prayer,
   Explore, the Chapel's Liturgy tile and the Pray tray. Served by our own API's `/office/*` endpoints
   (`GET /office/:date`, `/office/:date/:hour`, `/office/calendar/:year/:month`,
@@ -1647,12 +1659,12 @@ write concurrent code here:
   plain row on the strand, and the arch — a shallower rise than the home
   hero's `ArchHero` (0.34), so it reads as a plate, not a window — is why
   the eye lands there first. It carries
-  the page's one filled gold act ("Pray" and the hour's name, e.g. "Pray Compline"), and **no corner
+  the page's one filled gold act ("Pray" and the hour's plain name, e.g. "Pray Bedtime Prayer"), and **no corner
   ticks, second border, or ornament divider inside it** — one ornament
   per idea. Its halo is steady; only the lit NOW mark may pulse.
 
   Beneath it the eight stand in three groups — the night and the dawn,
-  the little hours, evening and night — each strung on one strand of
+  through the day (the little hours), evening and night — each strung on one strand of
   gold, each bead in its hour's own `skyColor`, so the strand runs dark
   through bright and back to dark over the day, the three groups under
   their headings (`showHourGroups` is a constant, always on).
@@ -1723,17 +1735,19 @@ write concurrent code here:
   they pair line for line). The versal opens the hour's first words
   **only when they are words** — an hour beginning "℣. Deus in
   adiutórium" would otherwise gild the versicle mark. The leaf closes
-  on the scribe's `explicit` ("EXPLICIUNT LAUDES"), never on
+  on the scribe's `explicit`, said in English ("END OF DAWN PRAYER";
+  it was "EXPLICIUNT LAUDES"), never on
   "Benedicamus Domino", which the Conclusio prints three lines above.
 
   `OfficeCalendarSheet` is the missal's month grid, and literally so:
   both sheets draw **`LiturgicalMonthGrid`** (the month in words beside the
-  year in Roman numerals, chevrons, the weeks, the press-a-day-to-name-it readout) and supply
+  year — "AUGUST 2026", no longer in Roman numerals — chevrons, the weeks, the press-a-day-to-name-it readout) and supply
   only the three things that differ — the day's mark, what the day is
   called, and the offline row. They were two copies of the same four
   hundred lines, which is how the same defect came to be fixed twice.
   The office names no vestment colour, so each day is marked by
-  **rank** instead (`OfficeRank`, parsed from "I. classis"), a gold dot
+  **rank** instead (`OfficeRank`, parsed from "I. classis" and named in the
+  Missal's words through `DayRank`), a gold dot
   that burns brighter for the greater feasts and not at all for a
   feria. A day counts as saved only when all eight of its hours are on
   disk — half a day is no use in a chapel with no signal.
@@ -2046,7 +2060,7 @@ write concurrent code here:
   readings saved · 11 MB · about 188 MB more".
 
   **Two ways to keep a page, and they are not the same act.** Select a
-  paragraph and the capsule offers NOTE, MARK, SHARE.
+  paragraph and the capsule offers NOTE, BOOKMARK, SHARE.
 
   A **note** is something the reader wrote, and the journal is still
   the app's one store for that — `keepAsReflection` composes the

@@ -46,7 +46,8 @@ enum RosaryLesson: Int, CaseIterable {
         }
     }
 
-    var numeral: String { ["I", "II", "III"][rawValue] }
+    /// "1", "2", "3" — a count a beginner reads, not ornament to decode
+    var numeral: String { String(rawValue + 1) }
 
     /// Which lessons have been opened, as a set of raw values
     static let seenKey = "howToPray.seenLessons"
@@ -434,7 +435,7 @@ struct HowToPrayRosaryView: View {
                         router.push(.libraryReading(id: reading.id))
                     }
                 }
-                deeperTile(icon: "ch-lily", title: "Our Lady's Psalter", note: "How the Rosary came to be") {
+                deeperTile(icon: "ch-lily", title: "How the Rosary Began", note: "Our Lady's Psalter") {
                     router.push(.libraryReading(id: "psalter"))
                 }
                 deeperTile(icon: "ch-bible", title: "The Scriptural Rosary", note: "A verse for every bead") {

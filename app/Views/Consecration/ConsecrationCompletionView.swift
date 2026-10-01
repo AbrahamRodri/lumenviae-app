@@ -105,9 +105,14 @@ struct ConsecrationCompletionView: View {
             OrnamentDivider()
                 .frame(width: 170)
 
-            Text("Totus tuus ego sum")
+            Text("I am all yours")
                 .font(AppFonts.italicFont(17))
                 .foregroundColor(AppColors.goldLight)
+                .multilineTextAlignment(.center)
+
+            Text("Totus tuus ego sum")
+                .font(AppFonts.italicFont(13))
+                .foregroundColor(AppColors.textSecondary)
                 .multilineTextAlignment(.center)
         }
     }

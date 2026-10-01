@@ -110,11 +110,25 @@ enum MissalOrderData {
     /// lesson or a seasonal variant "Lectio 2", "Graduale (Allelúja)".
     static func plainName(for section: MissalSection) -> String? {
         let key = sectionKey(section)
-        if let name = plainNames[key] { return name }
+        if let name = plainNames[key] ?? ordinaryNames[key] { return name }
         let head = key.split(whereSeparator: { !$0.isLetter && $0 != " " }).first
             .map { String($0).trimmingCharacters(in: .whitespaces) } ?? key
-        return plainNames[head]
+        return plainNames[head] ?? ordinaryNames[head]
     }
+
+    /// The fixed parts' plain names, keyed by the Ordo's own labels, so
+    /// the Order of Mass page names them as the day's page does
+    private static let ordinaryNames: [String: String] = {
+        let parts = [asperges] + beforeIntroit + [kyrie, gloria, credo]
+            + afterOffertory + [canon] + afterCanon + closing
+        var names = Dictionary(parts.map { ($0.ordoLabel, $0.englishName) },
+                               uniquingKeysWith: { first, _ in first })
+        names["offertory"] = "Offertory Chant"
+        names["preface"] = "Preface"
+        names["sanctus"] = "Holy, Holy, Holy"
+        names["pater noster"] = "Our Father"
+        return names
+    }()
 
     // MARK: - Ordinary Parts
 

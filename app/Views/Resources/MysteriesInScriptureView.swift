@@ -131,7 +131,7 @@ struct MysteriesInScriptureView: View {
                 .foregroundColor(AppColors.cream)
                 .lineSpacing(3)
 
-            Text("Every mystery of the Rosary is a page of the Gospel. Read its verse before the decade, and pray with the scene in front of you.")
+            Text("Every mystery of the Rosary is a page of the Gospel. Read its verse before the decade (the ten Hail Marys said for it), and pray with the scene in front of you.")
                 .font(AppFonts.readingItalicFont(16))
                 .foregroundColor(AppColors.textSecondary)
                 .lineSpacing(3)

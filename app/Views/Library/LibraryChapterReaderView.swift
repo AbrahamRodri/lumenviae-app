@@ -494,10 +494,10 @@ struct LibraryChapterReaderView: View {
         }
     }
 
-    /// "MARK · 2" once this chapter holds ribbons, "MARK" before.
+    /// "BOOKMARK · 2" once this chapter holds bookmarks, "BOOKMARK" before.
     private var markButtonLabel: String {
         let count = marks.filter { $0.chapter == currentIndex }.count
-        return count > 0 ? "MARK · \(count)" : "MARK"
+        return count > 0 ? "BOOKMARK · \(count)" : "BOOKMARK"
     }
 
     /// Withdraws or returns the chrome. The place rule stays either way.
@@ -927,7 +927,7 @@ struct LibraryChapterReaderView: View {
             in: modelContext
         )
         refreshMarks()
-        toast = nowMarked ? "Marked" : "Mark removed"
+        toast = nowMarked ? "Bookmarked" : "Bookmark removed"
         if selectedParagraph == paragraph {
             withAnimation(.easeOut(duration: 0.2)) { selectedParagraph = nil }
         }
@@ -1153,7 +1153,7 @@ struct LibraryTextOptionsSheet: View {
 
         LibraryTraySheet(
             title: "Reading Size",
-            note: "Applies to the books on this shelf."
+            note: "Applies to every book in Spiritual Reading."
         ) {
             SheetSizeSlider(scale: $settings.readingTextScale)
 

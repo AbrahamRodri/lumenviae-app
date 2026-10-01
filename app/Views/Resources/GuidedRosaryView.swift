@@ -287,7 +287,7 @@ struct GuidedRosaryView: View {
                 ) {
                     beginAgain()
                 }
-                .accessibilityHint("Starts from the Sign of the Cross, and lets the kept place go")
+                .accessibilityHint("Starts again from the Sign of the Cross, and clears your saved place")
                 .transition(.opacity)
             }
         }

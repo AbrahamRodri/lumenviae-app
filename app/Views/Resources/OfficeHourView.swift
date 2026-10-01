@@ -302,13 +302,13 @@ struct OfficeHourView: View {
 
     private var chromeRow: some View {
         HStack(spacing: 4) {
-            PrayerHeaderButton(icon: "ph-caret-left", size: 16, label: "The hours") {
+            PrayerHeaderButton(icon: "ph-caret-left", size: 16, label: "Back") {
                 dismiss()
             }
 
             Spacer(minLength: 0)
 
-            PrayerHeaderButton(icon: "ph-list", size: 17, label: "This hour's order") {
+            PrayerHeaderButton(icon: "ph-list", size: 17, label: "Parts of this prayer") {
                 sheet = .index
             }
 
@@ -327,12 +327,16 @@ struct OfficeHourView: View {
     /// crossfades with anything: the plate beneath states the day, the
     /// bar states the hour, and neither has to take turns.
     private var hourTitle: some View {
-        Text(hour.label.uppercased())
+        Text(hour.plainName.uppercased())
             .font(AppFonts.labelFont(12.5))
             .tracking(2.5)
             .foregroundColor(AppColors.cream)
             .lineLimit(1)
+            // "EARLY MORNING PRAYER" is the longest, and comes down a
+            // little to fit between the buttons rather than be cut
+            .minimumScaleFactor(0.7)
             .frame(maxWidth: 210)
+            .accessibilityLabel("\(hour.plainName), \(hour.label)")
             .allowsHitTesting(false)
             .accessibilityAddTraits(.isHeader)
     }
@@ -373,12 +377,12 @@ struct OfficeHourView: View {
         .animation(anim(0.3), value: feastTitle ?? "")
     }
 
-    /// "THURSDAY, 27 AUGUST  ·  THIRD CLASS" — the day's class in
-    /// English, mapped from the engine's Latin rather than printed as it
-    /// arrived. A feria carries no class and the line is just the date.
+    /// "THURSDAY, 27 AUGUST  ·  LESSER FEAST" — the day's rank in the
+    /// Missal's plain words, mapped from the engine's Latin rather than
+    /// printed as it arrived. A feria reads "WEEKDAY".
     private var dayLine: String {
         let date = Self.plateDateFormatter.string(from: viewModel.date)
-        guard let rank = OfficeRank(celebration?.rank).englishLabel else {
+        guard let rank = OfficeRank(celebration?.rank).plainLabel(title: feastTitle) else {
             return date.uppercased()
         }
         return "\(date)  ·  \(rank)".uppercased()
@@ -578,7 +582,7 @@ struct OfficeHourView: View {
             HStack {
                 if let previous = hour.previous {
                     QuietGoldButton(
-                        title: previous.label,
+                        title: previous.plainName,
                         leadingIcon: "ph-caret-left",
                         leadingIconSize: 9,
                         size: 10,
@@ -593,7 +597,7 @@ struct OfficeHourView: View {
 
                 if let next = hour.next {
                     QuietGoldButton(
-                        title: next.label,
+                        title: next.plainName,
                         trailingIcon: "ph-caret-right",
                         size: 10,
                         color: AppColors.gold,
@@ -605,7 +609,7 @@ struct OfficeHourView: View {
             }
             .padding(.top, 6)
 
-            Text("Breviarium Romanum 1962 · texts served by \(office?.source.name ?? "The Divinum Officium Project")")
+            Text("The traditional Latin Office (1962 books) · texts from \(office?.source.name ?? "the Divinum Officium Project")")
                 .font(AppFonts.bodyFont(11))
                 .foregroundColor(AppColors.textSecondary.opacity(0.8))
                 .multilineTextAlignment(.center)
@@ -624,7 +628,7 @@ struct OfficeHourView: View {
 
     private var errorState: some View {
         VStack(spacing: 16) {
-            Text("\(hour.label) could not be reached. Check your connection and try again.")
+            Text("\(hour.plainName) could not be reached. Check your connection and try again.")
                 .font(AppFonts.bodyFont(14))
                 .foregroundColor(AppColors.textSecondary)
                 .multilineTextAlignment(.center)

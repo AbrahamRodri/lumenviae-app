@@ -88,11 +88,17 @@ struct SpiritualReadingView: View {
                 .foregroundColor(AppColors.cream)
                 .multilineTextAlignment(.center)
 
-            // The words that converted Augustine — the shelf's whole
-            // invitation in three of them.
-            Text("Tolle, lege — take up and read")
+            // What the shelf is, then the words that converted Augustine,
+            // in English with the Latin small: a motto may follow an
+            // explanation, never stand in its place
+            Text("Classic Catholic books to read, or to hear read aloud")
                 .font(AppFonts.italicFont(16))
                 .foregroundColor(AppColors.gold.opacity(0.8))
+                .multilineTextAlignment(.center)
+
+            Text("Take up and read (Tolle, lege)")
+                .font(AppFonts.italicFont(13))
+                .foregroundColor(AppColors.textSecondary)
 
             OrnamentDivider()
                 .padding(.horizontal, 40)

@@ -273,11 +273,11 @@ struct ConsecrationDateSelectionView: View {
         Group {
             switch avail {
             case .startToday:
-                Text("Day 1 · today   →   Day 34 · \(feastDate, style: .date)")
+                Text("Day 1 · today   →   Consecration Day · \(feastDate, style: .date)")
             case .catchUp(let day):
-                Text("Day \(day) · today   →   Day 34 · \(feastDate, style: .date)")
+                Text("Day \(day) · today   →   Consecration Day · \(feastDate, style: .date)")
             case .waitUntil(let start):
-                Text("Day 1 · \(start, style: .date)   →   Day 34 · \(feastDate, style: .date)")
+                Text("Day 1 · \(start, style: .date)   →   Consecration Day · \(feastDate, style: .date)")
             }
         }
         .font(AppFonts.bodyFont(12))
@@ -322,7 +322,7 @@ struct ConsecrationDateSelectionView: View {
     private var customStartSheet: some View {
         VStack(alignment: .leading, spacing: 0) {
             SheetHeader(
-                kicker: "Total Consecration",
+                kicker: "Consecration to Mary",
                 title: "Start at Any Day",
                 lead: "Praying along with a book or a group? Begin wherever they are."
             )

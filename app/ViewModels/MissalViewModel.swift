@@ -105,7 +105,7 @@ final class MissalViewModel {
                     propers = stored
                 }
             } else if requested == date {
-                errorMessage = "The missal could not be reached. Check your connection and try again."
+                errorMessage = "The Mass texts could not be reached. Check your connection and try again."
             }
         }
 

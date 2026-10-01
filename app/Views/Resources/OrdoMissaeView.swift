@@ -38,7 +38,7 @@ struct OrdoMissaeView: View {
                 } label: {
                     HStack(spacing: 6) {
                         AppIcon("ph-caret-left", size: 14)
-                        Text("Missal")
+                        Text("Back")
                             .font(AppFonts.bodyFont(16))
                     }
                     .foregroundColor(AppColors.gold)
@@ -96,16 +96,16 @@ struct OrdoMissaeView: View {
 
     private var header: some View {
         VStack(spacing: 10) {
-            Text("THE ORDER OF MASS")
+            Text("EVERY MASS")
                 .font(AppFonts.labelFont(10))
                 .tracking(2.5)
                 .foregroundColor(AppColors.gold.opacity(0.7))
 
-            Text("Ordo Missae")
+            Text("The Order of Mass")
                 .font(AppFonts.headlineFont(23))
                 .foregroundColor(AppColors.cream)
 
-            Text("The fixed prayers of the Traditional Latin Mass")
+            Text("The prayers said at every traditional Latin Mass (Ordo Missæ)")
                 .font(AppFonts.bodyFont(13))
                 .foregroundColor(AppColors.textSecondary)
                 .multilineTextAlignment(.center)
@@ -124,7 +124,7 @@ struct OrdoMissaeView: View {
                 .padding(.horizontal, 30)
                 .padding(.top, 28)
 
-            Text("Missale Romanum 1962 · texts served by Missale Meum")
+            Text("The traditional Latin Mass (1962 Missal) · texts from Missale Meum")
                 .font(AppFonts.bodyFont(11))
                 .foregroundColor(AppColors.textSecondary.opacity(0.8))
                 .multilineTextAlignment(.center)

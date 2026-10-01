@@ -3,7 +3,7 @@
 //  Lumen Viae
 //
 //  One month of a liturgical calendar as a grid — the shape both the
-//  missal's date pill and the breviary's raise. Roman-numeral month at
+//  missal's date pill and the breviary's raise. The month and year at
 //  the head, chevrons either side, the weeks below, and under them the
 //  day whichever finger is resting names.
 //
@@ -111,12 +111,12 @@ struct LiturgicalMonthGrid<DayMark: View, Offline: View>: View {
         }
     }
 
-    /// "AUGUST MMXXVI" — the month in words, the year in the numerals a
-    /// liturgical book would carve.
+    /// "AUGUST 2026" — the month in words and the year as it is read.
+    /// Roman numerals here were ornament a reader had to decode.
     private var monthTitle: String {
         let name = LiturgicalCalendarFormat.monthName.string(from: month).uppercased()
         let year = calendar.component(.year, from: month)
-        return "\(name) \(LiturgicalCalendarFormat.roman(year))"
+        return "\(name) \(year)"
     }
 
     private func step(by value: Int) {

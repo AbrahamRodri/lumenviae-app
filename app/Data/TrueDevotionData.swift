@@ -392,7 +392,7 @@ extension TrueDevotionData {
         icon: "ph-crown",
         title: "The Devotion in Summary",
         marginLabel: "The\nteaching",
-        subtitle: "Montfort's doctrine, a part at a time",
+        subtitle: "Montfort's teaching, a part at a time",
         entries: [
             reading(
                 foundations,

@@ -4,7 +4,7 @@
 //
 //  The Daily Missal reader's pieces: one section of the Mass — posture
 //  cue, tiered heading, passages — and the two sheets the header's
-//  buttons raise: Reading (the Aa settings) and Ordo Missæ (the
+//  buttons raise: Text Settings (the Aa sheet) and the Order of Mass (the
 //  jump-to-section index). All of it draws through the shared missal
 //  passage views, so the text itself is set the same way everywhere.
 //
@@ -94,20 +94,22 @@ struct MissalReaderSectionView: View {
             && section.latinName.caseInsensitiveCompare(section.englishName) != .orderedSame
     }
 
+    /// The plain name first, in the heading's gold, and the Latin after
+    /// it, small and dim, so a reader can match it in a hand missal
     private var headingText: Text {
-        let latin = Text(section.latinName.uppercased())
+        let english = Text((section.englishName.isEmpty ? section.latinName : section.englishName).uppercased())
             .font(AppFonts.headlineFont(12))
             .tracking(2.5)
             .foregroundColor(AppColors.gold)
 
-        guard showsBothNames else { return latin }
+        guard showsBothNames else { return english }
 
-        let english = Text(section.englishName.uppercased())
+        let latin = Text(section.latinName.uppercased())
             .font(AppFonts.labelFont(10))
             .tracking(2)
             .foregroundColor(AppColors.gold.opacity(0.42))
 
-        return latin + Text("  ") + english
+        return english + Text("  ") + latin
     }
 
     // MARK: - Passages
@@ -292,7 +294,7 @@ struct MissalReadingSheet: View {
     var body: some View {
         @Bindable var settings = settings
 
-        return MissalSheetShell(kicker: "Daily Missal", title: "Reading") {
+        return MissalSheetShell(kicker: "The Mass", title: "Text Settings") {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
                     MissalSheetChipGroup("Language") {
@@ -328,14 +330,14 @@ struct MissalReadingSheet: View {
 
                     MissalSheetChipGroup("Contents") {
                         MissalSheetChip(
-                            title: "Propers only",
+                            title: "Today's texts only",
                             isSelected: settings.missalScope == .propersOnly
                         ) {
                             settings.missalScopeRaw = MissalScope.propersOnly.rawValue
                         }
 
                         MissalSheetChip(
-                            title: "With the Ordinary",
+                            title: "Whole Mass",
                             isSelected: settings.missalScope == .full
                         ) {
                             settings.missalScopeRaw = MissalScope.full.rawValue
@@ -356,8 +358,8 @@ struct MissalReadingSheet: View {
                     )
 
                     toggleRow(
-                        title: "High Mass",
-                        detail: "The sung Mass — Asperges and incensing; the Leonine prayers follow Low Mass",
+                        title: "Sung Mass",
+                        detail: "Adds the sprinkling with holy water and the incense; the prayers after Mass belong to the spoken Mass",
                         isOn: $settings.missalHighMass
                     )
                 }
@@ -416,7 +418,7 @@ struct MissalIndexSheet: View {
     let onJump: (String) -> Void
 
     var body: some View {
-        MissalSheetShell(kicker: "Daily Missal", title: "Ordo Missæ") {
+        MissalSheetShell(kicker: "The Mass", title: "Order of Mass") {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
                     ForEach(Array(sections.enumerated()), id: \.element.id) { index, section in
@@ -447,7 +449,7 @@ struct MissalIndexSheet: View {
     /// it explains stands where the marks above it do, and its words
     /// under the rows' names.
     private var legend: some View {
-        SheetNote("Marked parts are proper to today; the rest is the Ordinary.")
+        SheetNote("Marked parts are today's own; the rest are said at every Mass.")
             .padding(.leading, MissalIndexRow.nameInset)
             .overlay(alignment: .topLeading) {
                 MissalProperDiamond()
@@ -493,14 +495,15 @@ private struct MissalIndexRow: View {
             .frame(width: Self.markColumn)
 
             VStack(alignment: .leading, spacing: 3) {
-                Text(section.latinName)
+                // English first and the Latin beneath, as on the prayer pages
+                Text(section.englishName.isEmpty ? section.latinName : section.englishName)
                     .font(AppFonts.bodyFont(16))
                     .foregroundColor(isActive ? AppColors.goldLight : AppColors.cream)
                     .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)
 
                 if showsBothNames {
-                    Text(section.englishName)
+                    Text(section.latinName)
                         .font(AppFonts.italicFont(13))
                         .foregroundColor(AppColors.textSecondary)
                         .multilineTextAlignment(.leading)
