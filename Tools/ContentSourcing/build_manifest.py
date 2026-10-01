@@ -58,9 +58,12 @@ def build():
             e.update(encoded_bytes=encoded.stat().st_size, size_is_estimate=False)
         chants.append(e)
 
+    unused = [dict(kind="painting", status="unused", **p) for p in S.UNUSED]
+
     manifest = {
         "_about": "Content sourced for Lumen Viae (branch claude/content-sourcing). Generated from sources.py by build_manifest.py; do not hand-edit.",
         "new_paintings": pictures,
+        "unused_candidates": unused,
         "existing_paintings": existing,
         "flagged": [carlo],
         "chants": chants,
@@ -113,7 +116,12 @@ def markdown(m) -> str:
     for p in m["new_paintings"]:
         out.append(f"- `{p['imageset']}`: {cell(p['why'])}" + (f" *Alternate:* {p['alternate']}." if p.get("alternate") else ""))
     out += ["", "Target format: 1600 px on the long edge, progressive JPEG, 300–800 KB; one 1x image per imageset like the existing ones.", "",
-            "## Existing paintings: provenance", "",
+            "## Unused candidates", "",
+            "No design draws these slots now; kept in case a later one does. fetch.py does not take them.", ""]
+    for p in m["unused_candidates"]:
+        out.append(f"- `{p['imageset']}`: {p['work']}, {p['creator']} ({p['date']}), {p['collection']}. {cell(p['why'])}"
+                   + (f" *Alternate:* {p['alternate']}." if p.get("alternate") else ""))
+    out += ["", "## Existing paintings: provenance", "",
             "Identified by eye from the bundled images. `high` = recognisable work; `medium` = likely; `low` = subject only. "
             "All are pre-1910 old masters, so PD-Art is expected; confirm each with `fetch.py --provenance`.", "",
             "| Imageset | Work | Creator | Date | Collection | Confidence |", "|---|---|---|---|---|---|"]

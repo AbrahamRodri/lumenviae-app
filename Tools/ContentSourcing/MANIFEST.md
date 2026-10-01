@@ -30,10 +30,6 @@ Generated from `sources.py` by `build_manifest.py`; edit there. Machine-readable
 | `hour_morning` | (h) Prayer Book 'Pray Now' hero for Morning Prayers (On rising) | The Song of the Lark | Jules Breton (1827–1906) | 1884 | Art Institute of Chicago | CC0 1.0 (Art Institute of Chicago open access) | unverified |
 | `hour_night` | (h) Prayer Book 'Pray Now' hero for Night Prayers (Before sleep); Chapel's Prayer Book tile at night | The Penitent Magdalen | Georges de La Tour (1593–1652) | c. 1640 | The Metropolitan Museum of Art | CC0 1.0 (The Met Open Access) | unverified |
 | `occasion_before_bed` | (i) Chant Occasions 'Before Bed' (Compline chants) | Reuse hour_night (no separate file proposed) | — | — | — | — | unverified |
-| `occasion_before_work` | (i) Chant Occasions 'Before Work or Study' (Veni Creator, Veni Sancte reple) | The Apotheosis of Saint Thomas Aquinas | Francisco de Zurbarán (1598–1664) | 1631 | Museo de Bellas Artes de Sevilla | Public domain (PD-Art: faithful 2D reproduction of a work whose author died more than 100 years ago) | unverified |
-| `occasion_visit_blessed_sacrament` | (i) Chant Occasions 'Visiting the Blessed Sacrament'; Prayer Book 'A Visit to the Blessed Sacrament' | Disputation of the Holy Sacrament (Disputa) | Raphael (1483–1520) | 1509–10 | Stanza della Segnatura, Vatican | Public domain (PD-Art: faithful 2D reproduction of a work whose author died more than 100 years ago) | unverified |
-| `occasion_confession` | (i) Prayer Book occasions 'Before / After Confession' | Confession (from The Seven Sacraments) | Giuseppe Maria Crespi (1665–1747) | c. 1712 | Gemäldegalerie Alte Meister, Dresden | Public domain (PD-Art: faithful 2D reproduction of a work whose author died more than 100 years ago) | unverified |
-| `occasion_mass` | (i) Prayer Book occasions 'At Mass' (Before Mass, After Communion); Chant Mass Ordinary if added | The Mass at Bolsena | Raphael (1483–1520) | 1512 | Stanza di Eliodoro, Vatican | Public domain (PD-Art: faithful 2D reproduction of a work whose author died more than 100 years ago) | unverified |
 
 Alternates and reasons:
 
@@ -48,12 +44,17 @@ Alternates and reasons:
 - `hour_morning`: A field-worker stopping at sunrise — the day offered at its start; 19th-c. academic like the Hofmann and Bouguereau already bundled. AIC publishes it CC0. *Alternate:* Jean-François Millet, The Angelus (1857–59), Musée d'Orsay — but that is the evening Angelus.
 - `hour_night`: Prayer by a single candle at night — the examination of conscience before sleep. The Met's open-access image is CC0. *Alternate:* Georges de La Tour, The Magdalen with the Smoking Flame (c. 1640), LACMA.
 - `occasion_before_bed`: Same subject as Night Prayers; an alias saves ~500 KB. If a distinct picture is wanted: Gerrit van Honthorst / Jan Lievens candlelight devotional scenes.
-- `occasion_before_work`: The patron of students under the Dove — study begun by asking the Holy Ghost; Spanish Golden Age. *Alternate:* Georges de La Tour, Saint Joseph the Carpenter (c. 1642), Musée du Louvre — work rather than study.
-- `occasion_visit_blessed_sacrament`: The Host in the monstrance on the altar, heaven open above it; the bundle already holds Raphael's Transfiguration. Wide — crop to the altar. *Alternate:* Reuse luminous_eucharist (already Benediction's picture in the Occasions board).
-- `occasion_confession`: A penitent at the grille of the confessional — the sacrament itself, in warm Bolognese chiaroscuro. *Alternate:* Pietro Longhi, The Confession (c. 1750), Gallerie dell'Accademia / Uffizi.
-- `occasion_mass`: A priest at the altar at the elevation; Raphael again, and a crop of the altar reads at tile size. *Alternate:* Giuseppe Maria Crespi, Communion (from The Seven Sacraments), Dresden.
 
 Target format: 1600 px on the long edge, progressive JPEG, 300–800 KB; one 1x image per imageset like the existing ones.
+
+## Unused candidates
+
+No design draws these slots now; kept in case a later one does. fetch.py does not take them.
+
+- `occasion_before_work`: The Apotheosis of Saint Thomas Aquinas, Francisco de Zurbarán (1598–1664) (1631), Museo de Bellas Artes de Sevilla. The patron of students under the Dove — study begun by asking the Holy Ghost; Spanish Golden Age. *Alternate:* Georges de La Tour, Saint Joseph the Carpenter (c. 1642), Musée du Louvre — work rather than study.
+- `occasion_visit_blessed_sacrament`: Disputation of the Holy Sacrament (Disputa), Raphael (1483–1520) (1509–10), Stanza della Segnatura, Vatican. The Host in the monstrance on the altar, heaven open above it; the bundle already holds Raphael's Transfiguration. Wide — crop to the altar. *Alternate:* Reuse luminous_eucharist (already Benediction's picture in the Occasions board).
+- `occasion_confession`: Confession (from The Seven Sacraments), Giuseppe Maria Crespi (1665–1747) (c. 1712), Gemäldegalerie Alte Meister, Dresden. A penitent at the grille of the confessional — the sacrament itself, in warm Bolognese chiaroscuro. *Alternate:* Pietro Longhi, The Confession (c. 1750), Gallerie dell'Accademia / Uffizi.
+- `occasion_mass`: The Mass at Bolsena, Raphael (1483–1520) (1512), Stanza di Eliodoro, Vatican. A priest at the altar at the elevation; Raphael again, and a crop of the altar reads at tile size. *Alternate:* Giuseppe Maria Crespi, Communion (from The Seven Sacraments), Dresden.
 
 ## Existing paintings: provenance
 

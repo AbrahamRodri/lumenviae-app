@@ -280,15 +280,12 @@
       "licence_url": null,
       "attribution": null,
       "alias_of": "hour_night"
-    },
+    }
+  ],
+  "unused_candidates": [
     {
       "kind": "painting",
-      "status": "unverified",
-      "file_url": null,
-      "commons_file": null,
-      "width": null,
-      "height": null,
-      "bytes": null,
+      "status": "unused",
       "imageset": "occasion_before_work",
       "slot": "(i) Chant Occasions 'Before Work or Study' (Veni Creator, Veni Sancte reple)",
       "features": [
@@ -308,12 +305,7 @@
     },
     {
       "kind": "painting",
-      "status": "unverified",
-      "file_url": null,
-      "commons_file": null,
-      "width": null,
-      "height": null,
-      "bytes": null,
+      "status": "unused",
       "imageset": "occasion_visit_blessed_sacrament",
       "slot": "(i) Chant Occasions 'Visiting the Blessed Sacrament'; Prayer Book 'A Visit to the Blessed Sacrament'",
       "features": [
@@ -334,12 +326,7 @@
     },
     {
       "kind": "painting",
-      "status": "unverified",
-      "file_url": null,
-      "commons_file": null,
-      "width": null,
-      "height": null,
-      "bytes": null,
+      "status": "unused",
       "imageset": "occasion_confession",
       "slot": "(i) Prayer Book occasions 'Before / After Confession'",
       "features": [
@@ -359,12 +346,7 @@
     },
     {
       "kind": "painting",
-      "status": "unverified",
-      "file_url": null,
-      "commons_file": null,
-      "width": null,
-      "height": null,
-      "bytes": null,
+      "status": "unused",
       "imageset": "occasion_mass",
       "slot": "(i) Prayer Book occasions 'At Mass' (Before Mass, After Communion); Chant Mass Ordinary if added",
       "features": [

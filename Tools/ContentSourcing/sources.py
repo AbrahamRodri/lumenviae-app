@@ -133,6 +133,13 @@ PAINTINGS = [
          commons_search=None,
          why="Same subject as Night Prayers; an alias saves ~500 KB. If a distinct picture is wanted: Gerrit van Honthorst / Jan Lievens candlelight devotional scenes.",
          alternate=None, licence=None, licence_url=None, attribution=None, alias_of="hour_night"),
+]
+
+# No design draws occasion art (the Prayer Book's occasions are ruled rows
+# with glyphs; the Chant Library's featured occasion is the bundled
+# Institution of the Eucharist). Kept for a later design; fetch.py never
+# takes these.
+UNUSED = [
     dict(imageset="occasion_before_work", slot="(i) Chant Occasions 'Before Work or Study' (Veni Creator, Veni Sancte reple)",
          features=["Chant Library: Occasions"],
          work="The Apotheosis of Saint Thomas Aquinas", creator="Francisco de Zurbarán (1598–1664)", date="1631",
