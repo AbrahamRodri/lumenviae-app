@@ -6,7 +6,8 @@
 //  Automatically records the completed prayer session to SwiftData and displays:
 //  - Completion badge with checkmark
 //  - Inspirational scripture quote
-//  - Options to record reflection or return home
+//  - One question — what stayed with you in this prayer? — answered by
+//    writing a reflection, the journal's main door, or declined
 //
 
 import SwiftUI
@@ -28,6 +29,10 @@ struct PrayerCompletionView: View {
 
     /// Controls the post-prayer journal editor sheet
     @State private var showingJournalEditor = false
+
+    /// Once the reflection has been opened the question is answered, and
+    /// the way home no longer says "Not now"
+    @State private var openedReflection = false
 
     /// Streak after recording this session (shown as celebration feedback)
     @State private var streakDays = 0
@@ -108,14 +113,27 @@ struct PrayerCompletionView: View {
 
                 Spacer()
 
-                // Action buttons
+                // Action buttons. The journal has no tab of its own now
+                // (Prayers took its place in the bar), so this is its
+                // main door: the prayer's last screen asks one quiet
+                // question, and the act answers it.
                 VStack(spacing: 12) {
-                    // Record Devotion (Journal) - Primary
-                    Button(action: { showingJournalEditor = true }) {
+                    Text("What stayed with you in this prayer?")
+                        .font(AppFonts.readingItalicFont(15))
+                        .foregroundColor(AppColors.cream.opacity(0.8))
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.bottom, 4)
+
+                    // Write a Reflection (Journal) - Primary
+                    Button(action: {
+                        openedReflection = true
+                        showingJournalEditor = true
+                    }) {
                         HStack(spacing: 12) {
                             AppIcon("ph-note-pencil", size: 17)
 
-                            Text("RECORD DEVOTION")
+                            Text("WRITE A REFLECTION")
                                 .font(AppFonts.labelFont(14))
                                 .tracking(2.5)
                         }
@@ -127,20 +145,21 @@ struct PrayerCompletionView: View {
                     }
                     .buttonStyle(GoldCTAButtonStyle())
 
-                    // Return Home - Secondary
+                    // Not now - Secondary: the question declined, home.
+                    // Once a reflection has been opened, simply home.
                     Button(action: { router.popToRoot() }) {
-                        Text("RETURN HOME")
-                            .font(AppFonts.labelFont(14))
+                        Text(openedReflection ? "RETURN HOME" : "NOT NOW")
+                            .font(AppFonts.labelFont(12))
                             .tracking(2.5)
-                            .foregroundColor(AppColors.cream)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 18)
-                            .background(
-                                Capsule()
-                                    .strokeBorder(AppColors.gold.opacity(0.5), lineWidth: 1)
-                            )
+                            .foregroundColor(AppColors.cream.opacity(0.75))
+                            .contentTransition(.opacity)
+                            .frame(maxWidth: .infinity, minHeight: 44)
+                            .contentShape(Rectangle())
                     }
                     .buttonStyle(GoldCTAButtonStyle())
+                    .animation(Motion.crossfade, value: openedReflection)
+                    .accessibilityLabel(openedReflection ? "Return home" : "Not now")
+                    .accessibilityHint(openedReflection ? "" : "Returns home")
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 16)
