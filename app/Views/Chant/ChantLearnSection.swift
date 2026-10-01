@@ -172,6 +172,7 @@ struct ChantLearnSection: View {
                         Text("The \(next.season.title) chant · \(chant.durationLabel)")
                             .font(AppFonts.readingItalicFont(13))
                             .foregroundColor(AppColors.textSecondary)
+                            .accessibilityLabel("The \(next.season.title) chant, \(ChantPlayer.spoken(chant.duration))")
                     }
                     Spacer(minLength: 6)
                     AppIcon("ph-caret-right", size: 11)
@@ -242,6 +243,9 @@ struct ChantLearnSection: View {
     private func pathRow(_ chant: Chant, isLast: Bool) -> some View {
         let learned = shelf.isLearned(chant.id)
         let step = shelf.step(of: chant.id)
+        // The chant touched last is the board's one gold act; any other
+        // under way keeps its CONTINUE outlined
+        let latest = shelf.latestInProgress?.chant.id == chant.id
 
         return Button {
             if learned { open(chant) } else { learn(chant) }
@@ -274,10 +278,11 @@ struct ChantLearnSection: View {
                     Text("CONTINUE")
                         .font(AppFonts.labelFont(8.5))
                         .tracking(1.5)
-                        .foregroundColor(AppColors.goldLight)
+                        .foregroundColor(latest ? AppColors.background : AppColors.goldLight)
                         .padding(.horizontal, 12)
                         .frame(height: 30)
-                        .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.6), lineWidth: 1))
+                        .background(Capsule().fill(latest ? AppColors.gold : Color.clear))
+                        .overlay(Capsule().strokeBorder(AppColors.gold.opacity(latest ? 0 : 0.6), lineWidth: 1))
                         .padding(.top, 6)
                 } else {
                     Text(chant.durationLabel)
@@ -308,8 +313,23 @@ struct ChantLearnSection: View {
                     .accessibilityHidden(true)
             }
         }
-        .accessibilityElement(children: .combine)
+        .chantContextMenu(chant)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(rowLabel(chant, learned: learned, step: step))
+        .accessibilityAddTraits(.isButton)
         .accessibilityHint(learned ? "Opens the chant" : "Opens the practice for this chant")
+    }
+
+    /// The row as VoiceOver says it: its length in words, not "1:05"
+    private func rowLabel(_ chant: Chant, learned: Bool, step: ChantLearningStep?) -> String {
+        var parts = [chant.latinTitle, chant.englishTitle]
+        if learned {
+            parts.append("Learned")
+        } else if let step {
+            parts.append("Step \(step.rawValue) of 4: \(step.title)")
+        }
+        parts.append(ChantPlayer.spoken(chant.duration))
+        return parts.joined(separator: ", ")
     }
 
     /// Learned: a gold bead with a check. Under way: a ring filled as far

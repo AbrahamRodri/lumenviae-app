@@ -122,60 +122,58 @@ struct ChantTodaySection: View {
 
     // MARK: - Tonight's chant
 
+    /// The board's lancet arch: tonight's antiphon in its painting, the
+    /// words standing on the arch's own deepening tint, its play the
+    /// board's one gold act; the setting chosen beneath the arch
     private func tonight(_ antiphon: Chant) -> some View {
         let settings = antiphon.settings
         let chosen = settings.first { $0.id == tonightSettingID } ?? antiphon
-        let holds = player.holds(chosen)
 
-        return VStack(alignment: .leading, spacing: 0) {
-            ChantPainting(
-                name: ChantCatalog.painting(subject: "hour_night", else: ChantCatalog.painting(for: chosen)),
-                height: 250,
-                dissolveFrom: 0.3
-            )
-
-            VStack(alignment: .leading, spacing: 12) {
-                Text("TONIGHT'S CHANT")
-                    .font(AppFonts.labelFont(9))
-                    .tracking(2)
-                    .foregroundColor(AppColors.gold)
+        return VStack(spacing: 16) {
+            ArchHero(
+                imageName: Self.tonightPainting(for: chosen),
+                height: 420,
+                spacing: 12,
+                contentPadding: EdgeInsets(top: 22, leading: 22, bottom: 22, trailing: 22)
+            ) {
+                HeroBadge("TONIGHT'S CHANT")
 
                 Text(chosen.latinTitle)
                     .font(AppFonts.titleFont(30))
                     .foregroundColor(AppColors.cream)
+                    .multilineTextAlignment(.center)
+                    .minimumScaleFactor(0.8)
                     .fixedSize(horizontal: false, vertical: true)
                     .accessibilityAddTraits(.isHeader)
 
                 Text(ChantCatalog.tonightLine(for: chosen))
                     .font(AppFonts.readingItalicFont(16))
-                    .foregroundColor(AppColors.cream.opacity(0.8))
+                    .foregroundColor(AppColors.cream.opacity(0.85))
+                    .multilineTextAlignment(.center)
                     .lineSpacing(3)
                     .fixedSize(horizontal: false, vertical: true)
 
-                ViewThatFits(in: .horizontal) {
-                    HStack(spacing: 14) {
-                        tonightTransport(chosen, holds: holds)
-                        Spacer(minLength: 8)
-                        if settings.count > 1 {
-                            settingPill(settings, chosen: chosen)
-                                .frame(width: 170)
-                        }
-                    }
-                    VStack(alignment: .leading, spacing: 14) {
-                        tonightTransport(chosen, holds: holds)
-                        if settings.count > 1 {
-                            settingPill(settings, chosen: chosen)
-                        }
-                    }
-                }
-                .padding(.top, 6)
+                tonightTransport(chosen)
+                    .padding(.top, 4)
             }
             .padding(.horizontal, 20)
-            .padding(.top, -64)
+
+            if settings.count > 1 {
+                settingPill(settings, chosen: chosen)
+                    .frame(maxWidth: 240)
+            }
         }
+        .frame(maxWidth: .infinity)
     }
 
-    private func tonightTransport(_ chant: Chant, holds: Bool) -> some View {
+    /// Tonight's painting: the chant's own where it has one, else the
+    /// night's
+    static func tonightPainting(for chant: Chant) -> String {
+        ChantLibraryData.paintings[chant.id]
+            ?? ChantCatalog.painting(subject: "hour_night", else: ChantCatalog.painting(for: chant))
+    }
+
+    private func tonightTransport(_ chant: Chant) -> some View {
         HStack(spacing: 14) {
             ChantGoldPlayButton(
                 isPlaying: player.isPlaying(chant),
@@ -189,19 +187,9 @@ struct ChantTodaySection: View {
             Button {
                 open(chant)
             } label: {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(chant.setting ?? chant.englishTitle)
-                        .font(AppFonts.readingFont(16))
-                        .foregroundColor(AppColors.cream)
-                        .lineLimit(1)
-                    Text(holds ? (player.timeLabel ?? chant.durationLabel) : chant.durationLabel)
-                        .font(AppFonts.readingItalicFont(13))
-                        .foregroundColor(AppColors.textSecondary)
-                        .monospacedDigit()
-                        .contentTransition(.numericText())
-                }
-                .frame(minHeight: 44)
-                .contentShape(Rectangle())
+                ChantTonightTime(chant: chant)
+                    .frame(minHeight: 44)
+                    .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .accessibilityElement(children: .combine)
@@ -241,8 +229,14 @@ struct ChantTodaySection: View {
             }
             .sensoryFeedback(.selection, trigger: shown.weekday)
 
-            if let featured = shown.chants.first {
-                weekdayCard(shown, featured: featured)
+            // A slot of its own, so the day leaving and the day chosen
+            // crossfade over one another
+            ZStack(alignment: .top) {
+                if let featured = shown.chants.first {
+                    weekdayCard(shown, featured: featured)
+                        .id(shown.weekday)
+                        .transition(.opacity)
+                }
             }
         }
         .animation(Motion.crossfade, value: shown.weekday)
@@ -285,6 +279,7 @@ struct ChantTodaySection: View {
                     .font(AppFonts.labelFont(8.5))
                     .tracking(1.5)
                     .foregroundColor(AppColors.gold.opacity(0.8))
+                    .accessibilityLabel("\(featured.form.singular), \(ChantPlayer.spoken(featured.duration))")
 
                 Button {
                     open(featured)
@@ -364,20 +359,22 @@ struct ChantTodaySection: View {
             VStack(spacing: 0) {
                 if let occasion = month.occasion {
                     monthRow(
-                        kicker: "Sung together",
+                        kicker: occasion.id == "sung_rosary" ? "Full Rosary" : "Sung together",
                         title: occasion.title,
                         note: occasion.note,
-                        trailing: minutes(occasion.duration())
+                        trailing: minutes(occasion.duration()),
+                        spokenTrailing: spokenMinutes(occasion.duration())
                     ) {
                         openOccasion(occasion)
                     }
                 }
                 if let chant = month.feast?.chant {
                     monthRow(
-                        kicker: "For the feast",
+                        kicker: "Feast day chant",
                         title: chant.latinTitle,
                         note: chant.englishTitle,
-                        trailing: chant.durationLabel
+                        trailing: chant.durationLabel,
+                        spokenTrailing: ChantPlayer.spoken(chant.duration)
                     ) {
                         open(chant)
                     }
@@ -387,7 +384,8 @@ struct ChantTodaySection: View {
                         kicker: "For the month",
                         title: chant.latinTitle,
                         note: chant.englishTitle,
-                        trailing: chant.durationLabel
+                        trailing: chant.durationLabel,
+                        spokenTrailing: ChantPlayer.spoken(chant.duration)
                     ) {
                         open(chant)
                     }
@@ -410,6 +408,7 @@ struct ChantTodaySection: View {
         title: String,
         note: String,
         trailing: String,
+        spokenTrailing: String,
         action: @escaping () -> Void
     ) -> some View {
         Button(action: action) {
@@ -418,7 +417,7 @@ struct ChantTodaySection: View {
                     Text(kicker.uppercased())
                         .font(AppFonts.labelFont(8))
                         .tracking(1.5)
-                        .foregroundColor(AppColors.gold.opacity(0.7))
+                        .foregroundColor(Rubric.text)
                     Text(title)
                         .font(AppFonts.readingFont(17))
                         .foregroundColor(AppColors.cream)
@@ -443,7 +442,9 @@ struct ChantTodaySection: View {
         }
         .buttonStyle(.plain)
         .overlay(alignment: .top) { ChantRule(opacity: 0.18) }
-        .accessibilityElement(children: .combine)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(kicker): \(title), \(note), \(spokenTrailing)")
+        .accessibilityAddTraits(.isButton)
     }
 
     /// "The Feast of Our Lady of the Rosary is Wednesday, October 7."
@@ -466,6 +467,11 @@ struct ChantTodaySection: View {
     private func minutes(_ duration: TimeInterval) -> String {
         let whole = max(1, Int((duration / 60).rounded()))
         return "\(whole) min"
+    }
+
+    private func spokenMinutes(_ duration: TimeInterval) -> String {
+        let whole = max(1, Int((duration / 60).rounded()))
+        return whole == 1 ? "1 minute" : "\(whole) minutes"
     }
 
     // MARK: - Continue learning
@@ -498,6 +504,39 @@ struct ChantTodaySection: View {
         .buttonStyle(SacredCardButtonStyle())
         .accessibilityElement(children: .combine)
         .accessibilityHint("Opens the practice for this chant")
+    }
+}
+
+// MARK: - ChantTonightTime
+
+/// The setting's name over where the recording stands. A view of its own,
+/// so the time, read twice a second, redraws this line alone and not the
+/// board around it.
+private struct ChantTonightTime: View {
+    let chant: Chant
+
+    private var player = ChantPlayer.shared
+
+    init(chant: Chant) {
+        self.chant = chant
+    }
+
+    var body: some View {
+        let holds = player.holds(chant)
+        let name = chant.setting ?? chant.englishTitle
+        VStack(alignment: .leading, spacing: 2) {
+            Text(name)
+                .font(AppFonts.readingFont(16))
+                .foregroundColor(AppColors.cream)
+                .lineLimit(1)
+            Text(holds ? (player.timeLabel ?? chant.durationLabel) : chant.durationLabel)
+                .font(AppFonts.readingItalicFont(13))
+                .foregroundColor(AppColors.cream.opacity(0.7))
+                .monospacedDigit()
+                .contentTransition(.numericText())
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(name), \(holds ? (player.spokenTimeLabel ?? ChantPlayer.spoken(chant.duration)) : ChantPlayer.spoken(chant.duration))")
     }
 }
 

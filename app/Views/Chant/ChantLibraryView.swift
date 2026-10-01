@@ -97,6 +97,10 @@ struct ChantLibraryView: View {
     @State private var openOccasionID: String?
     @State private var openSetID: UUID?
 
+    /// Where the page should come to rest once the section arriving has
+    /// been laid out: the occasion's order, when Today opened one
+    @State private var pendingAnchor: String?
+
     private var player = ChantPlayer.shared
 
     init() {}
@@ -109,23 +113,27 @@ struct ChantLibraryView: View {
         ZStack(alignment: .bottom) {
             AppColors.appGradient.ignoresSafeArea()
 
+            // The library stays where it is while the search stands over
+            // it, hidden, so Cancel comes back to the same section at the
+            // same place on the page
             ZStack {
+                library
+                    .opacity(searching ? 0 : 1)
+                    .allowsHitTesting(!searching)
+                    .accessibilityHidden(searching)
                 if searching {
                     ChantSearchView(
                         close: { withAnimation(Motion.crossfade) { searching = false } },
                         open: openChant
                     )
                     .transition(.opacity)
-                } else {
-                    library
-                        .transition(.opacity)
                 }
             }
             .animation(Motion.crossfade, value: searching)
 
             if player.isActive {
                 miniPlayer
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .transition(reduceMotion ? AnyTransition.opacity : AnyTransition.move(edge: .bottom).combined(with: .opacity))
             }
         }
         .animation(reduceMotion ? Motion.crossfade : Motion.panel, value: player.isActive)
@@ -188,7 +196,7 @@ struct ChantLibraryView: View {
                         .padding(.top, 22)
 
                     ZStack(alignment: .top) {
-                        sectionBody
+                        sectionBody(proxy: proxy)
                             .id(section)
                             .transition(.opacity)
                     }
@@ -204,9 +212,15 @@ struct ChantLibraryView: View {
             }
             .topChromeFade()
             // A section chosen from far down the page — the glass's Saved —
-            // opens at its head, under the masthead that names it
+            // opens at its head, under the masthead that names it; an
+            // occasion opened from Today, at its order of service. On the
+            // next turn, once the section arriving has been laid out.
             .onChange(of: sectionRaw) { _, _ in
-                withAnimation(Motion.crossfade) { proxy.scrollTo("top", anchor: .top) }
+                let anchor = pendingAnchor ?? "top"
+                pendingAnchor = nil
+                DispatchQueue.main.async {
+                    withAnimation(Motion.crossfade) { proxy.scrollTo(anchor, anchor: .top) }
+                }
             }
         }
     }
@@ -220,11 +234,16 @@ struct ChantLibraryView: View {
                 .tracking(3)
                 .foregroundColor(AppColors.gold)
 
-            OrnamentDivider()
-                .frame(width: 150)
+            // The ornament stands on Today's masthead alone, as the boards
+            // draw it
+            if section == .today {
+                OrnamentDivider()
+                    .frame(width: 150)
+                    .transition(.opacity)
+            }
 
             Text(section.title)
-                .font(AppFonts.titleFont(28))
+                .font(AppFonts.titleFont(26))
                 .foregroundColor(AppColors.cream)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
@@ -296,7 +315,7 @@ struct ChantLibraryView: View {
     // MARK: - Sections
 
     @ViewBuilder
-    private var sectionBody: some View {
+    private func sectionBody(proxy: ScrollViewProxy) -> some View {
         switch section {
         case .today:
             ChantTodaySection(
@@ -304,6 +323,7 @@ struct ChantLibraryView: View {
                 learn: learn,
                 openOccasion: { occasion in
                     openOccasionID = occasion.id
+                    pendingAnchor = ChantOccasionsSection.orderAnchor
                     choose(.occasions)
                 }
             )
@@ -316,6 +336,9 @@ struct ChantLibraryView: View {
                 madeSet: { set in
                     openSetID = set.id
                     choose(.saved)
+                },
+                reveal: { id in
+                    withAnimation(Motion.crossfade) { proxy.scrollTo(id, anchor: .top) }
                 }
             )
         case .types:
@@ -354,8 +377,10 @@ struct ChantLibraryView: View {
     // MARK: - Mini player
 
     private var miniPlayer: some View {
+        // Waiting between chants, the next one: its page's play goes on
+        // with the set
         ChantMiniPlayer {
-            openChant(player.current)
+            openChant(player.shown)
         }
         .padding(.horizontal, 12)
         .padding(.top, 36)
@@ -381,8 +406,9 @@ struct ChantLibraryView: View {
         router.push(.chant(id: chant.id))
     }
 
+    /// The practice, which keeps the chant as under way only once the
+    /// learner takes a step in it
     private func learn(_ chant: Chant) {
-        ChantShelfStore.shared.begin(chant.id)
         practicing = chant
     }
 }

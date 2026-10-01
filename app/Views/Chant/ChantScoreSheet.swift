@@ -275,12 +275,14 @@ private struct ChantScoreSheetTransport: View {
                     player.seek(toFraction: fraction)
                 }
 
+                // The scrubber says the time in words; this is for the eye
                 Text(holds ? ChantPlayer.clock(player.currentTime) : chant.durationLabel)
                     .font(AppFonts.labelFont(9))
                     .tracking(1.5)
                     .foregroundColor(AppColors.textSecondary)
                     .monospacedDigit()
                     .frame(minWidth: 36, alignment: .trailing)
+                    .accessibilityHidden(true)
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 8)

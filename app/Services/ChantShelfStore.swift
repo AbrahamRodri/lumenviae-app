@@ -52,6 +52,9 @@ struct ChantSet: Codable, Identifiable, Hashable {
     var id = UUID()
     var name: String
     var items: [Item] = []
+    /// The occasion it was kept from, so the occasion's bookmark knows it
+    /// is kept and a second tap lets it go
+    var occasionID: String? = nil
 
     var chantCount: Int { items.filter { $0.chant != nil }.count }
     var pauseCount: Int { items.count - chantCount }
@@ -119,9 +122,13 @@ final class ChantShelfStore {
         self.defaults = defaults
         favorites = defaults.stringArray(forKey: Key.favorites) ?? []
         learned = defaults.stringArray(forKey: Key.learned) ?? []
-        learning = Self.decode([LearningRecord].self, from: defaults.data(forKey: Key.learning)) ?? []
-        sets = Self.decode([ChantSet].self, from: defaults.data(forKey: Key.sets)) ?? []
-        recent = Self.decode([RecentPlay].self, from: defaults.data(forKey: Key.recent)) ?? []
+        let learning = Self.readList(LearningRecord.self, key: Key.learning, from: defaults)
+        let sets = Self.readList(ChantSet.self, key: Key.sets, from: defaults)
+        let recent = Self.readList(RecentPlay.self, key: Key.recent, from: defaults)
+        self.learning = learning.good
+        self.sets = sets.good
+        self.recent = recent.good
+        unreadable = [Key.learning: learning.unreadable, Key.sets: sets.unreadable, Key.recent: recent.unreadable]
         words = ChantWordsPreference(rawValue: defaults.string(forKey: Key.words) ?? "") ?? .both
         pausesBetween = defaults.bool(forKey: Key.pausesBetween)
     }
@@ -145,7 +152,7 @@ final class ChantShelfStore {
         }
     }
 
-    var favoriteChants: [Chant] { favorites.compactMap(ChantCatalog.chant) }
+    var favoriteChants: [Chant] { favorites.compactMap { ChantCatalog.chant($0) } }
 
     // MARK: - Learning
 
@@ -157,7 +164,7 @@ final class ChantShelfStore {
 
     /// The chants being learned, the one touched last first
     private(set) var learning: [LearningRecord] {
-        didSet { defaults.set(Self.encode(learning), forKey: Key.learning) }
+        didSet { writeList(learning, key: Key.learning) }
     }
 
     /// The chants the learner has called learned, the latest first
@@ -187,7 +194,7 @@ final class ChantShelfStore {
         return nil
     }
 
-    var learnedChants: [Chant] { learned.compactMap(ChantCatalog.chant) }
+    var learnedChants: [Chant] { learned.compactMap { ChantCatalog.chant($0) } }
 
     var inProgressCount: Int {
         learning.filter { !isLearned($0.chantID) }.count
@@ -222,36 +229,66 @@ final class ChantShelfStore {
         setStep(.onYourOwn, for: chantID)
     }
 
+    /// The learner puts a chant down: no step is kept for it, and nothing
+    /// says it was ever begun
+    func stopLearning(_ chantID: String) {
+        learning.removeAll { $0.chantID == chantID }
+    }
+
     // MARK: - Sets
 
     private(set) var sets: [ChantSet] {
-        didSet { defaults.set(Self.encode(sets), forKey: Key.sets) }
+        didSet { writeList(sets, key: Key.sets) }
     }
 
     func set(_ id: UUID) -> ChantSet? {
         sets.first { $0.id == id }
     }
 
-    /// A new, empty set, named with the next free "My set"
-    @discardableResult
-    func newSet(named name: String? = nil) -> ChantSet {
-        var proposed = name ?? "My set"
-        if name == nil {
-            var number = 2
-            while sets.contains(where: { $0.name == proposed }) {
-                proposed = "My set \(number)"
-                number += 1
-            }
+    /// The next free "My set" name, for a new set's sheet to offer
+    var nextSetName: String {
+        var proposed = "My set"
+        var number = 2
+        while sets.contains(where: { $0.name == proposed }) {
+            proposed = "My set \(number)"
+            number += 1
         }
-        let set = ChantSet(name: proposed)
+        return proposed
+    }
+
+    /// A new set, named — made when the reader names it, or with its first
+    /// chant, so backing out leaves no empty spine on the shelf
+    @discardableResult
+    func newSet(named name: String? = nil, with chantID: String? = nil) -> ChantSet {
+        let trimmed = name?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        var set = ChantSet(name: trimmed.isEmpty ? nextSetName : trimmed)
+        if let chantID {
+            set.items.append(ChantSet.Item(kind: .chant(id: chantID, times: 1)))
+        }
         sets.append(set)
         return set
+    }
+
+    /// The set kept from `occasion`, if it is kept
+    func keptSet(of occasion: ChantOccasion) -> ChantSet? {
+        sets.first { $0.occasionID == occasion.id }
+    }
+
+    /// Keeps the occasion as a set of the reader's own, or, kept already,
+    /// lets that set go: one set for each occasion, never two
+    func toggleKeeping(_ occasion: ChantOccasion) {
+        if let kept = keptSet(of: occasion) {
+            deleteSet(kept.id)
+        } else {
+            saveOccasion(occasion)
+        }
     }
 
     /// An occasion copied to a set of the reader's own, its rubrics
     /// kept as notes, so it can be changed without changing the library
     @discardableResult
     func saveOccasion(_ occasion: ChantOccasion, on date: Date = Date()) -> ChantSet {
+        if let kept = keptSet(of: occasion) { return kept }
         var items: [ChantSet.Item] = []
         for block in occasion.blocks {
             if let rubric = block.rubric {
@@ -264,7 +301,7 @@ final class ChantShelfStore {
                 }
             }
         }
-        let set = ChantSet(name: occasion.title, items: items)
+        let set = ChantSet(name: occasion.title, items: items, occasionID: occasion.id)
         sets.append(set)
         return set
     }
@@ -318,7 +355,7 @@ final class ChantShelfStore {
 
     /// The chants sung lately, the latest first, each once
     private(set) var recent: [RecentPlay] {
-        didSet { defaults.set(Self.encode(recent), forKey: Key.recent) }
+        didSet { writeList(recent, key: Key.recent) }
     }
 
     private static let recentLimit = 8
@@ -344,12 +381,49 @@ final class ChantShelfStore {
 
     // MARK: - Coding
 
-    private static func decode<T: Decodable>(_ type: T.Type, from data: Data?) -> T? {
-        guard let data else { return nil }
-        return try? JSONDecoder().decode(type, from: data)
+    /// What a list held that this build could not read — an entry written
+    /// by a later build, or damaged — kept as it was and written back
+    /// beside the entries it could, so nothing stored is lost by reading it
+    @ObservationIgnored private var unreadable: [String: [Any]] = [:]
+
+    /// A stored list, read an entry at a time: the entries that read, and
+    /// the ones that did not, as they were. Data that is no list at all is
+    /// set aside under its own key rather than written over.
+    private static func readList<T: Decodable>(
+        _ type: T.Type,
+        key: String,
+        from defaults: UserDefaults
+    ) -> (good: [T], unreadable: [Any]) {
+        guard let data = defaults.data(forKey: key) else { return ([], []) }
+        guard let elements = (try? JSONSerialization.jsonObject(with: data)) as? [Any] else {
+            defaults.set(data, forKey: key + ".unreadable")
+            return ([], [])
+        }
+        var good: [T] = []
+        var unreadable: [Any] = []
+        let decoder = JSONDecoder()
+        for element in elements {
+            if let elementData = try? JSONSerialization.data(withJSONObject: element, options: [.fragmentsAllowed]),
+               let value = try? decoder.decode(T.self, from: elementData) {
+                good.append(value)
+            } else {
+                unreadable.append(element)
+            }
+        }
+        return (good, unreadable)
     }
 
-    private static func encode<T: Encodable>(_ value: T) -> Data? {
-        try? JSONEncoder().encode(value)
+    private func writeList<T: Encodable>(_ values: [T], key: String) {
+        guard let data = try? JSONEncoder().encode(values) else { return }
+        let kept = unreadable[key] ?? []
+        guard !kept.isEmpty,
+              var elements = (try? JSONSerialization.jsonObject(with: data)) as? [Any] else {
+            defaults.set(data, forKey: key)
+            return
+        }
+        elements.append(contentsOf: kept)
+        if let merged = try? JSONSerialization.data(withJSONObject: elements) {
+            defaults.set(merged, forKey: key)
+        }
     }
 }

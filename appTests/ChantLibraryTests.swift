@@ -338,6 +338,71 @@ struct ChantLibraryTests {
         #expect(ChantQueue.set(kept).entries.count == 4)
     }
 
+    @Test func anOccasionIsKeptOnceAndLetGo() {
+        let shelf = store()
+        let benediction = ChantOccasion.occasion("benediction")!
+        shelf.toggleKeeping(benediction)
+        let kept = shelf.keptSet(of: benediction)
+        #expect(kept != nil)
+        // Kept already, it is not kept twice
+        #expect(shelf.saveOccasion(benediction).id == kept?.id)
+        #expect(shelf.sets.count == 1)
+        shelf.toggleKeeping(benediction)
+        #expect(shelf.keptSet(of: benediction) == nil)
+        #expect(shelf.sets.isEmpty)
+    }
+
+    @Test func aNewSetIsNamedOrBegunWithItsChant() {
+        let shelf = store()
+        #expect(shelf.nextSetName == "My set")
+        #expect(shelf.newSet(named: "  Holy hour ").name == "Holy hour")
+        let begun = shelf.newSet(with: "adoro_te")
+        #expect(begun.name == "My set")
+        #expect(begun.items.first?.chant?.id == "adoro_te")
+        #expect(shelf.newSet(named: "").name == "My set 2")
+    }
+
+    @Test func learningPutDownLeavesNoTrace() {
+        let shelf = store()
+        shelf.setStep(.readAlong, for: "sub_tuum")
+        shelf.stopLearning("sub_tuum")
+        #expect(shelf.step(of: "sub_tuum") == nil)
+        #expect(shelf.latestInProgress == nil)
+        #expect(shelf.inProgressCount == 0)
+    }
+
+    @Test func aShelfKeepsWhatItCannotRead() throws {
+        let defaults = UserDefaults(suiteName: "ChantLibraryTests.\(UUID().uuidString)")!
+        let good = try JSONSerialization.jsonObject(with: JSONEncoder().encode(ChantSet(name: "Holy hour")))
+        let stored: [Any] = [good, ["written": "by a later build"]]
+        defaults.set(try JSONSerialization.data(withJSONObject: stored), forKey: "chantShelf.sets")
+
+        let shelf = ChantShelfStore(defaults: defaults)
+        #expect(shelf.sets.map(\.name) == ["Holy hour"])
+
+        // A change writes the entry it could not read back beside the rest
+        shelf.newSet(named: "Family prayer")
+        let written = try #require(defaults.data(forKey: "chantShelf.sets"))
+        let object = try JSONSerialization.jsonObject(with: written)
+        let elements = try #require(object as? [Any])
+        #expect(elements.count == 3)
+        #expect(ChantShelfStore(defaults: defaults).sets.map(\.name) == ["Holy hour", "Family prayer"])
+    }
+
+    @Test func aShelfSetsAsideWhatIsNoListAtAll() {
+        let defaults = UserDefaults(suiteName: "ChantLibraryTests.\(UUID().uuidString)")!
+        let damaged = Data("not a list".utf8)
+        defaults.set(damaged, forKey: "chantShelf.sets")
+        let shelf = ChantShelfStore(defaults: defaults)
+        #expect(shelf.sets.isEmpty)
+        #expect(defaults.data(forKey: "chantShelf.sets.unreadable") == damaged)
+    }
+
+    @Test func theSpeedIsShownAsItSounds() {
+        #expect(ChantPlayer.speedLabel(0.75) == "¾×")
+        #expect(ChantPlayer.speedLabel(1) == "1×")
+    }
+
     @Test func recentlyPlayedHoldsEachChantOnce() {
         let shelf = store()
         shelf.notePlayed("angelus")

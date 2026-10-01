@@ -35,6 +35,8 @@ struct ChantSavedSection: View {
     @Binding var openSetID: UUID?
     let open: (Chant) -> Void
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     private var player = ChantPlayer.shared
     private var shelf = ChantShelfStore.shared
 
@@ -50,6 +52,7 @@ struct ChantSavedSection: View {
     @State private var renaming: ChantSet?
     @State private var renameText = ""
     @State private var deleting: ChantSet?
+    @State private var namingSet = false
 
     init(openSetID: Binding<UUID?>, open: @escaping (Chant) -> Void) {
         _openSetID = openSetID
@@ -114,6 +117,14 @@ struct ChantSavedSection: View {
                 .presentationDetents([.medium, .large])
                 .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
+        .sheet(isPresented: $namingSet) {
+            ChantNewSetSheet { set in
+                spineChoice = nil
+                openSetID = set.id
+            }
+            .presentationDetents([.medium])
+            .dynamicTypeSize(...DynamicTypeSize.appMaximum)
+        }
         .alert("Rename this set", isPresented: Binding(
             get: { renaming != nil },
             set: { if !$0 { renaming = nil } }
@@ -149,11 +160,27 @@ struct ChantSavedSection: View {
     private var spines: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(alignment: .bottom, spacing: 8) {
-                spine("Learned", note: "\(shelf.learned.count)", cloth: ChantSpineCloth.learned, height: 150, lit: selected == .learned) {
+                // A count stands on a spine only once there is something to
+                // count: an empty shelf is not told it has none
+                spine(
+                    "Learned",
+                    note: Self.count(shelf.learned.count),
+                    spokenNote: Self.spokenCount(shelf.learned.count),
+                    cloth: ChantSpineCloth.learned,
+                    height: 150,
+                    lit: selected == .learned
+                ) {
                     openSetID = nil
                     spineChoice = .learned
                 }
-                spine("Favourites", note: "\(shelf.favorites.count)", cloth: ChantSpineCloth.favorites, height: 166, lit: selected == .favorites) {
+                spine(
+                    "Favourites",
+                    note: Self.count(shelf.favorites.count),
+                    spokenNote: Self.spokenCount(shelf.favorites.count),
+                    cloth: ChantSpineCloth.favorites,
+                    height: 166,
+                    lit: selected == .favorites
+                ) {
                     openSetID = nil
                     spineChoice = .favorites
                 }
@@ -193,9 +220,18 @@ struct ChantSavedSection: View {
         .accessibilityLabel("Your shelf")
     }
 
+    private static func count(_ n: Int) -> String? {
+        n > 0 ? "\(n)" : nil
+    }
+
+    private static func spokenCount(_ n: Int) -> String? {
+        n > 0 ? (n == 1 ? "1 chant" : "\(n) chants") : nil
+    }
+
     private func spine(
         _ title: String,
-        note: String,
+        note: String?,
+        spokenNote: String? = nil,
         cloth: Color,
         height: CGFloat,
         lit: Bool,
@@ -225,32 +261,34 @@ struct ChantSavedSection: View {
                     .rotationEffect(.degrees(-90))
                     .offset(y: -6)
 
-                VStack {
-                    Spacer()
-                    Text(note)
-                        .font(AppFonts.readingItalicFont(10.5))
-                        .foregroundColor(AppColors.cream.opacity(0.75))
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.7)
-                        .padding(.bottom, 8)
+                if let note {
+                    VStack {
+                        Spacer()
+                        Text(note)
+                            .font(AppFonts.readingItalicFont(10.5))
+                            .foregroundColor(AppColors.cream.opacity(0.75))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7)
+                            .padding(.bottom, 8)
+                    }
                 }
             }
             .frame(width: 46, height: height)
-            .offset(y: lit ? -8 : 0)
+            // The spine chosen stands a little proud of the shelf; under
+            // Reduce Motion it is lit where it stands
+            .offset(y: lit && !reduceMotion ? -8 : 0)
             .shadow(color: lit ? AppColors.gold.opacity(0.35) : .black.opacity(0.4), radius: lit ? 10 : 4, y: 3)
             .contentShape(Rectangle())
         }
         .buttonStyle(SacredCardButtonStyle())
         .animation(Motion.settle, value: lit)
-        .accessibilityLabel("\(title), \(note)")
+        .accessibilityLabel([title, spokenNote ?? note].compactMap { $0 }.joined(separator: ", "))
         .accessibilityAddTraits(lit ? [.isSelected, .isButton] : [.isButton])
     }
 
     private var newSpine: some View {
         Button {
-            let set = shelf.newSet()
-            spineChoice = nil
-            openSetID = set.id
+            namingSet = true
         } label: {
             AppIcon("ph-plus", size: 16)
                 .foregroundColor(AppColors.gold)
@@ -359,13 +397,11 @@ struct ChantSavedSection: View {
 
             HStack(spacing: 10) {
                 addButton("A chant", color: AppColors.gold) { addingChant = set }
-                addButton("A pause or note", color: Rubric.red) { addingPause = set }
+                addButton("A pause or note", color: Rubric.text) { addingPause = set }
             }
 
-            GoldCTAButton(title: "Play the set", glyph: .play) {
-                player.play(queue)
-            }
-            .disabled(set.chantCount == 0)
+            ChantSetPlayButton(queue: queue, title: "Play the set")
+                .disabled(set.chantCount == 0)
             .padding(.top, 4)
         }
         .chantShell(padding: 18)
@@ -433,21 +469,27 @@ struct ChantSavedSection: View {
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
-                    .accessibilityElement(children: .combine)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel("\(times > 1 ? "\(chant.latinTitle), \(times) times" : chant.latinTitle), \(chant.englishTitle), \(ChantPlayer.spoken(item.duration))")
+                    .accessibilityAddTraits(.isButton)
                     .accessibilityHint("Opens the chant")
                 }
             case .pause(let note, let seconds):
                 HStack(alignment: .firstTextBaseline, spacing: 8) {
                     ChantRubricText(text: note.isEmpty ? "Silence" : note, size: 15.5)
                     Spacer(minLength: 8)
-                    Text(seconds > 0 ? ChantPlayer.clock(TimeInterval(seconds)) : "—")
+                    // A note kept with no silence says so in a word
+                    Text(seconds > 0 ? ChantPlayer.clock(TimeInterval(seconds)) : "NOTE")
                         .font(AppFonts.labelFont(9))
                         .tracking(1)
-                        .foregroundColor(sounding ? Rubric.red : AppColors.textSecondary)
+                        .foregroundColor(sounding ? Rubric.text : AppColors.textSecondary)
                         .monospacedDigit()
                 }
                 .frame(minHeight: 44)
-                .accessibilityElement(children: .combine)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(seconds > 0
+                    ? "\(note.isEmpty ? "Silence" : note), \(ChantPlayer.spoken(TimeInterval(seconds))) of silence"
+                    : "A note: \(note.isEmpty ? "Silence" : note)")
             }
         }
         .padding(.vertical, 4)
@@ -584,12 +626,6 @@ struct ChantSavedSection: View {
             }
             .accessibilityLabel("Words: \(shelf.words.title)")
             .overlay(alignment: .bottom) { ChantRule(opacity: 0.12) }
-
-            Text("All \(ChantCatalog.all.count) chants are kept on this phone, so they play even in a church with no signal.")
-                .font(AppFonts.readingItalicFont(13.5))
-                .foregroundColor(AppColors.textSecondary)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.top, 4)
         }
     }
 }

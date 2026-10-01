@@ -312,38 +312,6 @@ struct ChantCredit: View {
     }
 }
 
-// MARK: - ChantPracticeChip
-
-/// A small tracked word that turns on and off: SLOW, REPEAT.
-struct ChantPracticeChip: View {
-    let title: String
-    let isOn: Bool
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            Text(title.uppercased())
-                .font(AppFonts.labelFont(9))
-                .tracking(2)
-                .foregroundColor(isOn ? AppColors.goldLight : AppColors.gold.opacity(0.65))
-                // A word, never broken across two lines of a capsule
-                .lineLimit(1)
-                .fixedSize()
-                .padding(.horizontal, 14)
-                .frame(minHeight: 32)
-                .background(Capsule().fill(isOn ? AppColors.gold.opacity(0.16) : Color.clear))
-                .overlay(Capsule().strokeBorder(AppColors.gold.opacity(isOn ? 0.5 : 0.25), lineWidth: AppLine.hairline))
-                .frame(minHeight: 44)
-                .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        // The word as written, not the capitals, so it is read as a word
-        .accessibilityLabel(title)
-        .accessibilityAddTraits(isOn ? [.isSelected] : [])
-        .sensoryFeedback(.selection, trigger: isOn)
-    }
-}
-
 // MARK: - ChantLibraryRow
 
 /// A chant on its shelf: its disc to play it where it stands, then its
@@ -407,7 +375,7 @@ struct ChantLibraryRow: View {
             }
             .buttonStyle(.plain)
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel("\(chant.latinTitle), \(subtitle), \(chant.durationLabel)")
+            .accessibilityLabel("\(chant.latinTitle), \(subtitle), \(ChantPlayer.spoken(chant.duration))")
             .accessibilityHint("Opens the chant with its score")
             .accessibilityAddTraits(.isButton)
         }
@@ -440,7 +408,8 @@ struct ChantLibraryRow: View {
 // MARK: - Context menu
 
 extension View {
-    /// A chant held down: keep it as a favourite, or put it in a set
+    /// A chant held down: keep it as a favourite, put it in a set, or stop
+    /// learning it
     func chantContextMenu(_ chant: Chant) -> some View {
         modifier(ChantContextMenu(chant: chant))
     }
@@ -476,6 +445,16 @@ private struct ChantContextMenu: ViewModifier {
                     }
                 } label: {
                     Label("Add to a Set", systemImage: "text.badge.plus")
+                }
+            }
+
+            // A chant under way can be put down quietly, and nothing then
+            // says it was ever begun
+            if shelf.step(of: chant.id) != nil {
+                Button {
+                    shelf.stopLearning(chant.id)
+                } label: {
+                    Label("Stop Learning", systemImage: "xmark.circle")
                 }
             }
         }
@@ -735,7 +714,8 @@ struct ChantMiniPlayer: View {
         self.open = open
     }
 
-    private var chant: Chant { player.current }
+    /// What it names: the next chant while a set waits for it
+    private var chant: Chant { player.shown }
 
     var body: some View {
         HStack(spacing: 12) {
@@ -755,6 +735,7 @@ struct ChantMiniPlayer: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
+                .frame(minHeight: 44)
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
@@ -765,7 +746,7 @@ struct ChantMiniPlayer: View {
                 isPlaying: player.isPlaying && !player.waitingForNext,
                 isLoading: player.isLoading,
                 size: 36,
-                label: player.waitingForNext ? (player.queue?.nextChant?.latinTitle ?? title) : title
+                label: player.waitingForNext ? chant.latinTitle : title
             ) {
                 player.togglePlayback()
             }
@@ -798,16 +779,22 @@ struct ChantMiniPlayer: View {
 
     private var title: String {
         if let silence = player.silence { return silence.note.isEmpty ? "Silence" : silence.note }
-        if player.waitingForNext, let next = player.queue?.nextChant { return "Next: \(next.latinTitle)" }
+        if player.waitingForNext { return "Next: \(chant.latinTitle)" }
         return chant.latinTitle
     }
 
     @ViewBuilder
     private var subtitle: some View {
         if let silence = player.silence {
-            TimelineView(.periodic(from: .now, by: 1)) { context in
-                let left = max(0, silence.endsAt.timeIntervalSince(context.date))
-                Text("Silence · \(ChantPlayer.clock(left)) left")
+            if let endsAt = silence.endsAt {
+                TimelineView(.periodic(from: .now, by: 1)) { context in
+                    let left = max(0, endsAt.timeIntervalSince(context.date))
+                    Text("Silence · \(ChantPlayer.clock(left)) left")
+                        .accessibilityLabel("Silence, \(ChantPlayer.spoken(left)) left")
+                }
+            } else {
+                Text("Silence · paused, \(ChantPlayer.clock(silence.remaining)) left")
+                    .accessibilityLabel("Silence, paused, \(ChantPlayer.spoken(silence.remaining)) left")
             }
         } else if player.waitingForNext, let queue = player.queue {
             Text("\(queue.title) · waiting for you")
@@ -815,8 +802,41 @@ struct ChantMiniPlayer: View {
             Text("\(queue.title) · \(queue.position)")
         } else if let time = player.timeLabel {
             Text(chant.settingName.map { "\($0) · \(time)" } ?? time)
+                .accessibilityLabel([chant.settingName, player.spokenTimeLabel].compactMap { $0 }.joined(separator: ", "))
         } else {
             Text(chant.englishTitle)
+        }
+    }
+}
+
+// MARK: - ChantSetPlayButton
+
+/// A set's one gold act: Play all until the set is under way, then the
+/// set's own pause and resume. It once began the set again from its
+/// first chant at every tap.
+struct ChantSetPlayButton: View {
+    let queue: ChantQueue
+    let title: String
+
+    private var player = ChantPlayer.shared
+
+    init(queue: ChantQueue, title: String) {
+        self.queue = queue
+        self.title = title
+    }
+
+    var body: some View {
+        let singing = player.isSinging(queue)
+        let going = singing && (player.isGoingOn || player.isLoading)
+        let word = !singing ? title
+            : player.waitingForNext ? "Go on"
+            : going ? "Pause" : "Resume"
+        GoldCTAButton(title: word, glyph: going ? .none : .play) {
+            if singing {
+                player.pauseOrResume()
+            } else {
+                player.play(queue)
+            }
         }
     }
 }
@@ -832,7 +852,7 @@ struct ChantRubricText: View {
     var body: some View {
         Text(text)
             .font(AppFonts.readingItalicFont(size))
-            .foregroundColor(Rubric.red)
+            .foregroundColor(Rubric.text)
             .fixedSize(horizontal: false, vertical: true)
     }
 }

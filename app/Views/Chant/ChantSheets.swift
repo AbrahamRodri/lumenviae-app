@@ -109,7 +109,7 @@ struct ChantPauseSheet: View {
             SheetSectionLabel("The note")
             TextField("", text: $note, prompt: Text("Silent prayer").foregroundColor(AppColors.textSecondary))
                 .font(AppFonts.readingItalicFont(17))
-                .foregroundColor(Rubric.red)
+                .foregroundColor(Rubric.text)
                 .padding(.horizontal, 14)
                 .frame(height: 48)
                 .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(AppColors.gold.opacity(0.35), lineWidth: AppLine.hairline))
@@ -193,8 +193,7 @@ struct ChantAddToSetSheet: View {
                         .buttonStyle(.plain)
                     }
                     Button {
-                        let set = shelf.newSet()
-                        shelf.addChant(chant.id, to: set.id)
+                        shelf.newSet(with: chant.id)
                         dismiss()
                     } label: {
                         SheetRow("A new set", detail: "Begun with this chant", icon: "ph-plus", accessory: .none, showsDivider: false)
@@ -204,6 +203,64 @@ struct ChantAddToSetSheet: View {
             }
         }
         .sheetGround()
+    }
+}
+
+// MARK: - ChantNewSetSheet
+
+/// A set of the reader's own, named before it is made: it stands on the
+/// shelf only once it is made, so backing out leaves no empty spine
+struct ChantNewSetSheet: View {
+    let made: (ChantSet) -> Void
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var name = ""
+    @FocusState private var focused: Bool
+
+    private var shelf = ChantShelfStore.shared
+
+    init(made: @escaping (ChantSet) -> Void) {
+        self.made = made
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            SheetHeader(
+                kicker: "Saved",
+                title: "A new set",
+                lead: "For a holy hour, a prayer group or family prayer. Its chants and pauses are added once it is made."
+            ) {
+                SheetHeaderAction(title: "Cancel") { dismiss() }
+            }
+
+            SheetSectionLabel("Its name")
+            TextField("", text: $name, prompt: Text(shelf.nextSetName).foregroundColor(AppColors.textSecondary))
+                .font(AppFonts.readingFont(17))
+                .foregroundColor(AppColors.cream)
+                .focused($focused)
+                .submitLabel(.done)
+                .onSubmit(make)
+                .padding(.horizontal, 14)
+                .frame(height: 48)
+                .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(AppColors.gold.opacity(0.35), lineWidth: AppLine.hairline))
+                .padding(.horizontal, SheetMetrics.gutter)
+                .accessibilityLabel("The set's name")
+                .accessibilityHint("Left empty, it is called \(shelf.nextSetName)")
+
+            Spacer(minLength: 12)
+
+            GoldCTAButton(title: "Make the set", trailingIcon: "ph-check", action: make)
+                .padding(.horizontal, SheetMetrics.gutter)
+                .padding(.bottom, 20)
+        }
+        .sheetGround()
+        .onAppear { focused = true }
+    }
+
+    private func make() {
+        let set = shelf.newSet(named: name)
+        dismiss()
+        made(set)
     }
 }
 

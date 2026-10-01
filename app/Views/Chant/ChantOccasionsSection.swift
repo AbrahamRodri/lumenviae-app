@@ -21,14 +21,28 @@ struct ChantOccasionsSection: View {
     @Binding var openID: String?
     let open: (Chant) -> Void
     let madeSet: (ChantSet) -> Void
+    /// Scrolls the library to a view of this section, by its id
+    let reveal: (String) -> Void
+
+    /// The order of service's place on the page, for the library to
+    /// scroll to when an occasion is chosen — here, or from Today
+    static let orderAnchor = "chantLibrary.occasionOrder"
 
     private var player = ChantPlayer.shared
     private var shelf = ChantShelfStore.shared
 
-    init(openID: Binding<String?>, open: @escaping (Chant) -> Void, madeSet: @escaping (ChantSet) -> Void) {
+    @State private var namingSet = false
+
+    init(
+        openID: Binding<String?>,
+        open: @escaping (Chant) -> Void,
+        madeSet: @escaping (ChantSet) -> Void,
+        reveal: @escaping (String) -> Void
+    ) {
         _openID = openID
         self.open = open
         self.madeSet = madeSet
+        self.reveal = reveal
     }
 
     private var chosen: ChantOccasion {
@@ -49,11 +63,22 @@ struct ChantOccasionsSection: View {
                     .transition(.opacity)
             }
             .padding(.horizontal, 20)
+            .id(Self.orderAnchor)
 
             makeYourOwn
                 .padding(.horizontal, 20)
         }
         .animation(Motion.crossfade, value: chosen.id)
+        // The order chosen is brought up, or the tap would seem to have
+        // done nothing: it opens below the fold of the index
+        .onChange(of: openID) { _, _ in
+            reveal(Self.orderAnchor)
+        }
+        .sheet(isPresented: $namingSet) {
+            ChantNewSetSheet { set in madeSet(set) }
+                .presentationDetents([.medium])
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
+        }
     }
 
     // MARK: - Index
@@ -76,7 +101,7 @@ struct ChantOccasionsSection: View {
             HStack(alignment: .firstTextBaseline, spacing: 14) {
                 Text(numeral)
                     .font(AppFonts.titleFont(13))
-                    .foregroundColor(Rubric.red)
+                    .foregroundColor(Rubric.text)
                     .frame(width: 26, alignment: .center)
 
                 VStack(alignment: .leading, spacing: 3) {
@@ -97,6 +122,7 @@ struct ChantOccasionsSection: View {
                         .font(AppFonts.labelFont(8.5))
                         .tracking(1)
                         .foregroundColor(AppColors.textSecondary)
+                        .accessibilityLabel(Self.spokenMinutes(occasion.duration()))
                     Text(chants == 1 ? "1 chant" : "\(chants) chants")
                         .font(AppFonts.readingItalicFont(12.5))
                         .foregroundColor(AppColors.textSecondary)
@@ -162,7 +188,13 @@ struct ChantOccasionsSection: View {
                                         isLast: blockIndex == occasion.blocks.count - 1 && stepIndex == block.steps.count - 1,
                                         playFrom: {
                                             let number = numbers[blockIndex][stepIndex]
-                                            player.play(queue, from: queue.origins.firstIndex(of: number) ?? 0)
+                                            // The bead sounding pauses and takes up
+                                            // the set; any other sings from there
+                                            if state(of: number, in: player.isSinging(queue) ? player.queue : nil) == .sounding {
+                                                player.pauseOrResume()
+                                            } else {
+                                                player.play(queue, from: queue.origins.firstIndex(of: number) ?? 0)
+                                            }
                                         }
                                     )
                                 }
@@ -177,23 +209,8 @@ struct ChantOccasionsSection: View {
                 pausesBetween
 
                 HStack(spacing: 10) {
-                    GoldCTAButton(title: "Play all \(count)", glyph: .play) {
-                        player.play(queue)
-                    }
-                    Button {
-                        madeSet(shelf.saveOccasion(occasion))
-                    } label: {
-                        AppIcon("ph-bookmark-simple", size: 18)
-                            .foregroundColor(AppColors.gold)
-                            .frame(width: 52, height: 52)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 14)
-                                    .strokeBorder(AppColors.gold.opacity(0.4), lineWidth: AppLine.hairline)
-                            )
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(SacredCardButtonStyle())
-                    .accessibilityLabel("Keep as a set of your own")
+                    ChantSetPlayButton(queue: queue, title: "Play all \(count)")
+                    keepButton(occasion)
                 }
             }
             .padding(.horizontal, 18)
@@ -204,6 +221,29 @@ struct ChantOccasionsSection: View {
             RoundedRectangle(cornerRadius: 16)
                 .strokeBorder(AppColors.gold.opacity(0.24), lineWidth: AppLine.hairline)
         )
+    }
+
+    /// The bookmark: keeps the occasion as a set of the reader's own, and
+    /// a second tap lets it go — one kept set for each occasion
+    private func keepButton(_ occasion: ChantOccasion) -> some View {
+        let kept = shelf.keptSet(of: occasion) != nil
+        return Button {
+            shelf.toggleKeeping(occasion)
+        } label: {
+            AppIcon(kept ? "ph-bookmark-simple-fill" : "ph-bookmark-simple", size: 18)
+                .foregroundColor(AppColors.gold)
+                .frame(width: 52, height: 52)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14)
+                        .strokeBorder(AppColors.gold.opacity(kept ? 0.7 : 0.4), lineWidth: AppLine.hairline)
+                )
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(SacredCardButtonStyle())
+        .sensoryFeedback(.selection, trigger: kept)
+        .accessibilityLabel("Keep as a set of your own")
+        .accessibilityValue(kept ? "Kept under Saved" : "")
+        .accessibilityAddTraits(kept ? [.isSelected] : [])
     }
 
     private enum StepState { case done, sounding, ahead }
@@ -236,7 +276,7 @@ struct ChantOccasionsSection: View {
                     case .done:
                         AppIcon("ph-check", size: 10).foregroundColor(AppColors.goldLight)
                     case .sounding:
-                        AppIcon(player.isPlaying ? "ph-pause-fill" : "ph-play-fill", size: 9)
+                        AppIcon(player.isGoingOn ? "ph-pause-fill" : "ph-play-fill", size: 9)
                             .foregroundColor(AppColors.background)
                     case .ahead:
                         EmptyView()
@@ -250,7 +290,9 @@ struct ChantOccasionsSection: View {
             .buttonStyle(QuietGlyphButtonStyle())
             .padding(.leading, -11)
             .padding(.vertical, -6)
-            .accessibilityLabel(state == .sounding ? "Sounding: \(chant.latinTitle)" : "Sing from \(chant.latinTitle)")
+            .accessibilityLabel(state == .sounding
+                ? (player.isGoingOn ? "Pause the set at \(chant.latinTitle)" : "Go on with the set at \(chant.latinTitle)")
+                : "Sing from \(chant.latinTitle)")
 
             Button {
                 open(chant)
@@ -277,7 +319,9 @@ struct ChantOccasionsSection: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityElement(children: .combine)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("\(times > 1 ? "\(chant.latinTitle), \(times) times" : chant.latinTitle), \(chant.englishTitle), \(ChantPlayer.spoken(chant.duration * Double(max(1, times))))")
+            .accessibilityAddTraits(.isButton)
             .accessibilityHint("Opens the chant")
         }
         // The thread the beads hang on
@@ -331,7 +375,7 @@ struct ChantOccasionsSection: View {
 
     private var makeYourOwn: some View {
         Button {
-            madeSet(shelf.newSet())
+            namingSet = true
         } label: {
             HStack(spacing: 14) {
                 AppIcon("ph-plus", size: 16)
@@ -382,5 +426,10 @@ struct ChantOccasionsSection: View {
 
     static func minutes(_ duration: TimeInterval) -> String {
         "\(max(1, Int((duration / 60).rounded()))) min"
+    }
+
+    static func spokenMinutes(_ duration: TimeInterval) -> String {
+        let whole = max(1, Int((duration / 60).rounded()))
+        return whole == 1 ? "1 minute" : "\(whole) minutes"
     }
 }

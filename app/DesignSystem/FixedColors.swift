@@ -136,3 +136,16 @@ enum StCarloPalette {
     static let polo = Color(hex: "A93B32")
     static let poloDark = Color(hex: "8E2F28")
 }
+
+// MARK: - Rubric, for Words
+
+extension Rubric {
+
+    /// The rubric's red lifted for sentences read on the dark page — what
+    /// happens between an occasion's chants, a set's notes, the red
+    /// numerals of an index. `Rubric.red`, the missal's vestment red,
+    /// stands at about 3:1 on the page: right for a ℣, a ✠ or a score's
+    /// initial, too faint for a line of instruction. This stands at 4.6:1
+    /// or more on every theme's page and card.
+    static let text = Color(hex: "D07A6E")
+}

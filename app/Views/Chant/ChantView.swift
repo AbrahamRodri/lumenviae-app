@@ -146,7 +146,6 @@ struct ChantView: View {
         let learned = shelf.isLearned(chant.id)
         let step = shelf.step(of: chant.id)
         return Button {
-            shelf.begin(chant.id)
             practicing = chant
         } label: {
             Text(learned ? "Practise again" : step == nil ? "Learn this chant" : "Continue learning")
@@ -183,6 +182,15 @@ struct ChantView: View {
                 showsScore = true
             } label: {
                 Label("Enlarge the Score", systemImage: "arrow.up.left.and.arrow.down.right")
+            }
+            // A chant under way can be put down, and nothing then says it
+            // was ever begun
+            if shelf.step(of: chant.id) != nil {
+                Button {
+                    shelf.stopLearning(chant.id)
+                } label: {
+                    Label("Stop Learning", systemImage: "xmark.circle")
+                }
             }
             Link(destination: chant.sourceURL) {
                 Label("This Chant at Verbum Gloriae", systemImage: "safari")
@@ -242,8 +250,8 @@ struct ChantView: View {
             showsScore = true
         } label: {
             NowPlayingScore(chant: chant)
-                .frame(height: 210, alignment: .top)
                 .frame(maxWidth: .infinity)
+                .frame(height: 210, alignment: .top)
                 .clipped()
                 .mask(
                     LinearGradient(
@@ -349,11 +357,16 @@ private struct NowPlayingScore: View {
         let part = chant.score.indices.contains(index) ? chant.score[index] : chant.score.first
         ZStack(alignment: .top) {
             if let part {
+                // Drawn at the window's full width and its own height, so a
+                // tall score is cut by the window rather than shrunk to fit
+                // inside it
                 ChantScoreImage(part: part)
+                    .fixedSize(horizontal: false, vertical: true)
                     .id(part.file)
                     .transition(.opacity)
             }
         }
+        .frame(maxWidth: .infinity)
         .animation(Motion.crossfade, value: part?.file)
     }
 }
@@ -444,11 +457,12 @@ struct ChantYourTurn: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
             Spacer(minLength: 8)
-            TimelineView(.animation(minimumInterval: 0.1)) { context in
-                let left = max(0, turn.endsAt.timeIntervalSince(context.date))
+            // Paused, the turn keeps what was left of it, and says so still
+            TimelineView(.animation(minimumInterval: 0.1, paused: turn.endsAt == nil)) { context in
+                let left = turn.endsAt.map { max(0, $0.timeIntervalSince(context.date)) } ?? turn.remaining
                 Text(String(format: "%.0f", left.rounded(.up)))
                     .font(AppFonts.titleFont(20))
-                    .foregroundColor(AppColors.goldLight)
+                    .foregroundColor(AppColors.goldLight.opacity(turn.endsAt == nil ? 0.55 : 1))
                     .monospacedDigit()
                     .frame(minWidth: 28)
             }
@@ -540,7 +554,7 @@ private struct NowPlayingTransport: View {
 
             HStack(spacing: 2) {
                 if lines {
-                    pill("Take turns", icon: "ph-microphone", isOn: holds && player.lineEnd == .takeTurns) {
+                    pill("Take turns", icon: "ph-arrows-left-right", isOn: holds && player.lineEnd == .takeTurns) {
                         if !holds { player.play(chant) }
                         player.setLineEnd(player.lineEnd == .takeTurns ? .goOn : .takeTurns)
                     }
@@ -612,11 +626,15 @@ private struct NowPlayingTransport: View {
     }
 
     private var speedButton: some View {
-        let slow = player.rate < 1
+        // The speed sounding, which the Lock Screen may have changed
+        let speed = player.speed
+        let slow = speed < 1
         return Button {
             player.setRate(slow ? 1.0 : 0.75)
         } label: {
-            Text(slow ? "¾×" : "1×")
+            Text(ChantPlayer.speedLabel(speed))
+                .minimumScaleFactor(0.7)
+                .lineLimit(1)
                 .font(AppFonts.readingFont(16))
                 .foregroundColor(slow ? AppColors.goldLight : AppColors.gold)
                 .frame(width: 44, height: 44)
@@ -624,8 +642,8 @@ private struct NowPlayingTransport: View {
                 .contentShape(Rectangle())
         }
         .buttonStyle(QuietGlyphButtonStyle())
-        .accessibilityLabel(slow ? "Speed, slower" : "Speed, normal")
-        .accessibilityHint("Plays at three-quarters speed, for learning")
+        .accessibilityLabel(slow ? "Speed, slower" : speed > 1 ? "Speed, faster" : "Speed, normal")
+        .accessibilityHint(slow ? "Plays at the normal speed" : "Plays at three-quarters speed, for learning")
     }
 
     private func pill(_ title: String, icon: String, isOn: Bool, action: @escaping () -> Void) -> some View {

@@ -30,13 +30,19 @@ struct ChantTypesSection: View {
             tiles
                 .padding(.horizontal, 20)
 
-            chosenForm
-                .padding(.horizontal, 20)
-                .animation(Motion.crossfade, value: form)
+            // The kind chosen in a slot of its own, identified by the kind,
+            // so the one leaving and the one arriving crossfade over one
+            // another rather than stand one above the other
+            ZStack(alignment: .top) {
+                chosenForm
+                    .id(form)
+                    .transition(.opacity)
+            }
+            .padding(.horizontal, 20)
+            .animation(Motion.crossfade, value: form)
 
             shortOnTime
                 .padding(.horizontal, 20)
-                .animation(Motion.crossfade, value: length)
         }
     }
 
@@ -69,7 +75,7 @@ struct ChantTypesSection: View {
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                     Text("\(count)")
                         .font(AppFonts.labelFont(8.5))
-                        .foregroundColor(Rubric.red)
+                        .foregroundColor(Rubric.text)
                         .padding(8)
                 }
                 .aspectRatio(1, contentMode: .fit)
@@ -153,10 +159,14 @@ struct ChantTypesSection: View {
             }
             .overlay(alignment: .bottom) { ChantRule() }
 
-            VStack(spacing: 0) {
-                ForEach(chants) { chant in
-                    formRow(chant, longest: longest)
+            ZStack(alignment: .top) {
+                VStack(spacing: 0) {
+                    ForEach(chants) { chant in
+                        formRow(chant, longest: longest)
+                    }
                 }
+                .id(byLength)
+                .transition(.opacity)
             }
             .animation(Motion.crossfade, value: byLength)
         }
@@ -248,12 +258,17 @@ struct ChantTypesSection: View {
                 }
             }
 
-            ChantFlowLayout(spacing: 8) {
-                ForEach(length.chants) { chant in
-                    chip(chant)
+            ZStack(alignment: .topLeading) {
+                ChantFlowLayout(spacing: 8) {
+                    ForEach(length.chants) { chant in
+                        chip(chant)
+                    }
                 }
+                .id(length)
+                .transition(.opacity)
             }
             .padding(.top, 4)
+            .animation(Motion.crossfade, value: length)
         }
     }
 
@@ -316,7 +331,9 @@ struct ChantTypesSection: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityElement(children: .combine)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("\(chant.fullTitle), \(ChantPlayer.spoken(chant.duration))")
+            .accessibilityAddTraits(.isButton)
             .accessibilityHint("Opens the chant")
         }
         .padding(.leading, 0)

@@ -45,8 +45,15 @@ struct ChantSeasonsSection: View {
 
             VStack(alignment: .leading, spacing: 18) {
                 seasonChips(current: current, shown: shown)
-                inSeason(shown, current: current, year: year, today: today)
-                    .padding(.horizontal, 20)
+                // The season's chants in a slot of their own, identified by
+                // the season, so the list leaving and the list arriving
+                // crossfade over one another
+                ZStack(alignment: .top) {
+                    inSeason(shown, current: current, year: year, today: today)
+                        .id(shown)
+                        .transition(.opacity)
+                }
+                .padding(.horizontal, 20)
             }
             .animation(Motion.crossfade, value: shown)
 
@@ -233,7 +240,7 @@ struct ChantSeasonsSection: View {
                 VStack(spacing: 0) {
                     Text(parts.day)
                         .font(AppFonts.titleFont(24))
-                        .foregroundColor(Rubric.red)
+                        .foregroundColor(Rubric.text)
                         .monospacedDigit()
                     Text(parts.month)
                         .font(AppFonts.labelFont(8))
@@ -287,6 +294,11 @@ struct ChantYearWheel: View {
     let today: Date
     let highlighted: ChantSeason
 
+    /// Each label's measured width, so a label near the rim's edge is
+    /// kept inside the wheel's frame — AFTER PENTECOST, at the larger
+    /// text sizes, once ran off the screen
+    @State private var labelWidths: [ChantSeason: CGFloat] = [:]
+
     var body: some View {
         GeometryReader { geo in
             let side = min(geo.size.width, geo.size.height)
@@ -302,7 +314,7 @@ struct ChantYearWheel: View {
                 centre
 
                 ForEach(year.seasons.filter { $0.value != .pentecost }, id: \.value) { span in
-                    label(span.value, at: angle(of: midpoint(span)), radius: ring, center: center)
+                    label(span.value, at: angle(of: midpoint(span)), radius: ring, center: center, bounds: geo.size)
                 }
             }
         }
@@ -387,8 +399,11 @@ struct ChantYearWheel: View {
         .frame(maxWidth: 150)
     }
 
-    private func label(_ season: ChantSeason, at a: Angle, radius: CGFloat, center: CGPoint) -> some View {
+    private func label(_ season: ChantSeason, at a: Angle, radius: CGFloat, center: CGPoint, bounds: CGSize) -> some View {
         let lit = season == highlighted
+        let place = point(center, radius, a)
+        let half = (labelWidths[season] ?? 0) / 2
+        let x = max(half, min(bounds.width - half, place.x))
         return Text(season.title.uppercased())
             .font(AppFonts.labelFont(8))
             .tracking(1.2)
@@ -399,7 +414,8 @@ struct ChantYearWheel: View {
             .padding(.vertical, 4)
             .background(Capsule().fill(lit ? AppColors.goldLight : AppColors.background))
             .overlay(Capsule().strokeBorder(AppColors.gold.opacity(lit ? 0 : 0.5), lineWidth: AppLine.hairline))
-            .position(point(center, radius, a))
+            .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { labelWidths[season] = $0 }
+            .position(x: x, y: place.y)
     }
 
     // MARK: Geometry

@@ -407,7 +407,9 @@ def encode(src: Path, dest: Path) -> float:
 def swift_string(s):
     if s is None:
         return "nil"
-    return '"' + s.replace("\\", "\\\\").replace('"', '\\"') + '"'
+    escaped = (s.replace("\\", "\\\\").replace('"', '\\"')
+                .replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t"))
+    return '"' + escaped + '"'
 
 
 # ---------------------------------------------------------------- lines
@@ -444,6 +446,8 @@ def read_lines(ids, durations, part_counts):
             end = float(line["end"])
             if not latin or not english:
                 sys.exit(f"{where}: empty words")
+            if any(ord(c) < 0x20 or ord(c) == 0x7f for c in latin + english):
+                sys.exit(f"{where}: a control character in the words")
             if start < 0 or end <= start:
                 sys.exit(f"{where}: ends at {end} before it starts at {start}")
             if start < previous_start:

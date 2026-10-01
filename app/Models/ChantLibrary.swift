@@ -159,7 +159,7 @@ enum ChantSeason: String, CaseIterable, Identifiable {
 
     /// Its own chants, in the order the board lists them
     var chants: [Chant] {
-        (ChantLibraryData.seasonChants[self] ?? []).compactMap(ChantCatalog.chant)
+        (ChantLibraryData.seasonChants[self] ?? []).compactMap { ChantCatalog.chant($0) }
     }
 
     /// Its painting, by subject (`ChantCatalog.painting(subject:)`)
@@ -169,7 +169,7 @@ enum ChantSeason: String, CaseIterable, Identifiable {
 
     /// The chant to learn before the season comes
     var signatureChant: Chant? {
-        ChantLibraryData.seasonSignatures[self].flatMap(ChantCatalog.chant)
+        ChantLibraryData.seasonSignatures[self].flatMap { ChantCatalog.chant($0) }
     }
 
     /// The season after this one, round the year
@@ -386,7 +386,7 @@ struct ChantWeekday: Identifiable, Hashable {
 
     var id: Int { weekday }
 
-    var chants: [Chant] { chantIDs.compactMap(ChantCatalog.chant) }
+    var chants: [Chant] { chantIDs.compactMap { ChantCatalog.chant($0) } }
 
     /// "Thursday"
     var name: String {
@@ -416,9 +416,9 @@ struct ChantMonth: Hashable {
     /// The month's own feast, which names its chant
     let feastID: String?
 
-    var chants: [Chant] { chantIDs.compactMap(ChantCatalog.chant) }
-    var occasion: ChantOccasion? { occasionID.flatMap(ChantOccasion.occasion) }
-    var feast: ChantFeast? { feastID.flatMap(ChantFeast.feast) }
+    var chants: [Chant] { chantIDs.compactMap { ChantCatalog.chant($0) } }
+    var occasion: ChantOccasion? { occasionID.flatMap { ChantOccasion.occasion($0) } }
+    var feast: ChantFeast? { feastID.flatMap { ChantFeast.feast($0) } }
 
     /// "October"
     var name: String {
@@ -582,7 +582,7 @@ struct ChantLearningPath: Identifiable, Hashable {
     let note: String
     let chantIDs: [String]
 
-    var chants: [Chant] { chantIDs.compactMap(ChantCatalog.chant) }
+    var chants: [Chant] { chantIDs.compactMap { ChantCatalog.chant($0) } }
 }
 
 // MARK: - ChantLearningStep
@@ -711,8 +711,8 @@ extension ChantCatalog {
     /// A name that is already an imageset is itself.
     static func painting(subject: String, else fallback: String? = nil) -> String {
         // Whether the subject's imageset is in the app is asked once: the
-        // image cache keeps only what it finds, and a board redrawn on
-        // every tick of the player would ask the catalog again each time
+        // image cache keeps only what it finds, and the answer cannot
+        // change while the app runs
         let present: Bool
         if let known = subjectsPresent[subject] {
             present = known

@@ -225,39 +225,70 @@ struct ChantSearchView: View {
         return true
     }
 
-    @ViewBuilder
+    /// What stands under the field: the hint before anything is asked,
+    /// a line saying nothing matched, or what did
+    private enum ResultsState: Hashable {
+        case hint, nothing, found
+    }
+
+    /// The three share one slot and crossfade over one another, never
+    /// laid out one above the other while they fade
     private var results: some View {
-        if needle.isEmpty && !filtering {
-            hint
-        } else {
-            let titleWorks = (scope == .all || scope == .titles) ? ChantSearch.works(matching: needle, where: passes) : []
-            let prayerWorks = (scope == .all || scope == .prayers) ? ChantSearch.works(singingPrayerMatching: needle, where: passes)
-                .filter { work in !titleWorks.contains { $0.key == work.key } } : []
-            let wordHits = (scope == .all || scope == .words) && !needle.isEmpty
-                ? ChantSearch.wordHits(matching: needle, where: passes) : []
+        let asking = !needle.isEmpty || filtering
+        let titleWorks = asking && (scope == .all || scope == .titles)
+            ? ChantSearch.works(matching: needle, where: passes) : []
+        let prayerWorks = asking && (scope == .all || scope == .prayers)
+            ? ChantSearch.works(singingPrayerMatching: needle, where: passes)
+                .filter { work in !titleWorks.contains { $0.key == work.key } }
+            : []
+        let wordHits = asking && (scope == .all || scope == .words) && !needle.isEmpty
+            ? ChantSearch.wordHits(matching: needle, where: passes) : []
+        let state: ResultsState = !asking ? .hint
+            : titleWorks.isEmpty && prayerWorks.isEmpty && wordHits.isEmpty ? .nothing
+            : .found
 
-            if titleWorks.isEmpty && prayerWorks.isEmpty && wordHits.isEmpty {
-                Text(needle.isEmpty ? "No chant fits every filter chosen." : "Nothing in the library matches “\(query)”.")
-                    .font(AppFonts.readingItalicFont(15))
-                    .foregroundColor(AppColors.textSecondary)
-                    .padding(.top, 8)
-                accentNote
-            } else {
-                VStack(alignment: .leading, spacing: 28) {
-                    let season = ChantSeason.season(on: Date())
-                    let now = titleWorks.filter { $0.chants[0].seasons.contains(season) }
-                    let always = titleWorks.filter { $0.chants[0].seasons.isEmpty }
-                    let other = titleWorks.filter { !$0.chants[0].seasons.isEmpty && !$0.chants[0].seasons.contains(season) }
-
-                    if !now.isEmpty { workGroup("In season now", now) }
-                    if !always.isEmpty { workGroup(now.isEmpty && other.isEmpty ? "Chants" : "Any time of year", always) }
-                    if !other.isEmpty { workGroup("Other times of year", other) }
-                    if !prayerWorks.isEmpty { workGroup("Sung prayers", prayerWorks) }
-                    if !wordHits.isEmpty { wordGroup(wordHits) }
-
+        return ZStack(alignment: .topLeading) {
+            switch state {
+            case .hint:
+                hint
+                    .transition(.opacity)
+            case .nothing:
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(needle.isEmpty ? "No chant fits every filter chosen." : "Nothing in the library matches “\(query)”.")
+                        .font(AppFonts.readingItalicFont(15))
+                        .foregroundColor(AppColors.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.top, 8)
                     accentNote
                 }
+                .transition(.opacity)
+            case .found:
+                found(titleWorks: titleWorks, prayerWorks: prayerWorks, wordHits: wordHits)
+                    .transition(.opacity)
             }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .animation(Motion.crossfade, value: state)
+    }
+
+    private func found(
+        titleWorks: [ChantSearch.Work],
+        prayerWorks: [ChantSearch.Work],
+        wordHits: [ChantSearch.WordHit]
+    ) -> some View {
+        let season = ChantSeason.season(on: Date())
+        let now = titleWorks.filter { $0.chants[0].seasons.contains(season) }
+        let always = titleWorks.filter { $0.chants[0].seasons.isEmpty }
+        let other = titleWorks.filter { !$0.chants[0].seasons.isEmpty && !$0.chants[0].seasons.contains(season) }
+
+        return VStack(alignment: .leading, spacing: 28) {
+            if !now.isEmpty { workGroup("In season now", now) }
+            if !always.isEmpty { workGroup(now.isEmpty && other.isEmpty ? "Chants" : "Any time of year", always) }
+            if !other.isEmpty { workGroup("Other times of year", other) }
+            if !prayerWorks.isEmpty { workGroup("Sung prayers", prayerWorks) }
+            if !wordHits.isEmpty { wordGroup(wordHits) }
+
+            accentNote
         }
     }
 
@@ -432,7 +463,14 @@ struct ChantSearchView: View {
         }
         .buttonStyle(.plain)
         .overlay(alignment: .bottom) { ChantRule(opacity: 0.12) }
-        .accessibilityElement(children: .combine)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel([
+            hit.chant.latinTitle,
+            hit.start.map { "at \(ChantPlayer.spoken($0))" },
+            hit.snippet,
+            hit.chant.englishTitle
+        ].compactMap { $0 }.joined(separator: ", "))
+        .accessibilityAddTraits(.isButton)
         .accessibilityHint(hit.line != nil ? "Sings from this line" : "Opens the chant")
     }
 }
@@ -540,8 +578,10 @@ enum ChantSearch {
     }
 
     /// A line of the Prayer Book's grammar as plain words: the marks of
-    /// versicle and response, the pointing and a rubric's brackets gone
-    static func clean(_ line: String) -> String {
+    /// versicle and response, the pointing and a rubric's brackets gone.
+    /// Words in, words out, touching nothing else, so it is called from
+    /// anywhere — a function reference to it included.
+    nonisolated static func clean(_ line: String) -> String {
         var text = line
         for mark in ["℣.", "℟.", "℣", "℟", "✠", "|||"] {
             text = text.replacingOccurrences(of: mark, with: " ")

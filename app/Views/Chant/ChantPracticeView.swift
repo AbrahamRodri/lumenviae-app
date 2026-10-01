@@ -42,6 +42,19 @@ struct ChantPracticeView: View {
     @State private var hidden: Hiding = .none
     @State private var learnedNow = false
 
+    /// Whether the learner has taken a step yet: opening the practice is
+    /// not beginning to learn, so nothing is kept until they act
+    @State private var hasActed = false
+
+    /// Whether the practice set the choir singing, so closing it stops
+    /// what it began and leaves alone what it found
+    @State private var startedPlayback = false
+
+    /// The shared player's pace and Repeat as the practice found them,
+    /// given back when it closes: a slower pace and a repeat chosen for
+    /// learning are not every later chant's
+    @State private var found: (rate: Double, repeats: Bool)?
+
     /// How much of the words is hidden, for singing from memory
     enum Hiding: CaseIterable {
         case none, half, all
@@ -77,43 +90,22 @@ struct ChantPracticeView: View {
                 header
                     .padding(.horizontal, 8)
 
-                if learnedNow {
-                    learnedPage
-                        .transition(.opacity)
-                } else {
-                    ScrollView(showsIndicators: false) {
-                        VStack(spacing: 26) {
-                            stepBar
-                                .padding(.horizontal, 24)
-                                .padding(.top, 12)
-
-                            score
-                                .padding(.horizontal, 20)
-
-                            // A slot of its own, so a line leaving and the
-                            // next arriving crossfade over one another
-                            ZStack(alignment: .top) {
-                                words
-                            }
-                            .padding(.horizontal, 22)
-
-                            status
-                                .padding(.horizontal, 20)
-
-                            options
-                                .padding(.horizontal, 20)
-                        }
-                        .padding(.bottom, 24)
+                // One slot: the learned page and the practice crossfade over
+                // each other, never laid out one above the other
+                ZStack {
+                    if learnedNow {
+                        learnedPage
+                            .transition(.opacity)
+                    } else {
+                        practice
+                            .transition(.opacity)
                     }
-
-                    foot
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 12)
                 }
             }
         }
         .animation(Motion.crossfade, value: learnedNow)
         .onAppear {
+            found = (player.rate, player.repeats)
             step = shelf.step(of: chant.id) ?? .listen
             if shelf.isLearned(chant.id) { step = .onYourOwn }
             hidden = step == .onYourOwn ? .half : .none
@@ -121,9 +113,49 @@ struct ChantPracticeView: View {
         }
         .onDisappear {
             player.setLineEnd(.goOn)
+            if startedPlayback { player.pause() }
+            if let found {
+                player.setRate(found.rate)
+                player.repeats = found.repeats
+            }
         }
         .onChange(of: player.linesFinished) { _, _ in
             lineSung()
+        }
+    }
+
+    // MARK: - The practice
+
+    private var practice: some View {
+        VStack(spacing: 0) {
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 26) {
+                    stepBar
+                        .padding(.horizontal, 24)
+                        .padding(.top, 12)
+
+                    score
+                        .padding(.horizontal, 20)
+
+                    // A slot of its own, so a line leaving and the
+                    // next arriving crossfade over one another
+                    ZStack(alignment: .top) {
+                        words
+                    }
+                    .padding(.horizontal, 22)
+
+                    status
+                        .padding(.horizontal, 20)
+
+                    options
+                        .padding(.horizontal, 20)
+                }
+                .padding(.bottom, 24)
+            }
+
+            foot
+                .padding(.horizontal, 20)
+                .padding(.bottom, 12)
         }
     }
 
@@ -212,13 +244,15 @@ struct ChantPracticeView: View {
         let part = chant.score.indices.contains(partIndex) ? chant.score[partIndex] : chant.score.first
         return ZStack {
             if let part {
+                // Its full width and its own height, cut by the window
                 ChantScoreImage(part: part)
+                    .fixedSize(horizontal: false, vertical: true)
                     .id(part.file)
                     .transition(.opacity)
             }
         }
-        .frame(height: lines ? 120 : 170, alignment: .top)
         .frame(maxWidth: .infinity)
+        .frame(height: lines ? 120 : 170, alignment: .top)
         .clipped()
         .mask(
             LinearGradient(
@@ -303,9 +337,11 @@ struct ChantPracticeView: View {
                     size: 40,
                     label: chant.latinTitle
                 ) {
+                    acted()
                     if lines, !player.holds(chant) || !player.isPlaying {
                         singLine()
                     } else {
+                        if !player.isPlaying(chant) { startedPlayback = true }
                         player.toggle(chant)
                     }
                 }
@@ -368,16 +404,24 @@ struct ChantPracticeView: View {
                 }
                 .accessibilityLabel("Repeat the chant: \(player.repeats ? "on" : "off")")
             }
-            option(player.rate < 1 ? "Slower" : "Normal", label: "Speed") {
-                player.setRate(player.rate < 1 ? 1.0 : 0.75)
+            option(speedTitle, label: "Speed") {
+                player.setRate(player.speed < 1 ? 1.0 : 0.75)
             }
-            .accessibilityLabel("Speed: \(player.rate < 1 ? "slower" : "normal")")
+            .accessibilityLabel("Speed: \(speedTitle.lowercased())")
             option(hidden.title, label: "Hide words") {
                 hidden = hidden.next
             }
             .disabled(step == .listen)
             .accessibilityLabel("Hide the words: \(hidden.title)")
         }
+    }
+
+    /// The pace sounding: Slower, Normal, or the speed the Lock Screen set
+    private var speedTitle: String {
+        let speed = player.speed
+        if speed < 1 { return "Slower" }
+        if abs(speed - 1) < 0.01 { return "Normal" }
+        return ChantPlayer.speedLabel(speed)
     }
 
     private func option(_ value: String, label: String, action: @escaping () -> Void) -> some View {
@@ -474,6 +518,7 @@ struct ChantPracticeView: View {
             singLine()
         } else if step == .listen || step == .readAlong {
             if !player.isPlaying(chant) {
+                startedPlayback = true
                 if player.holds(chant) { player.restart() } else { player.play(chant) }
             }
         }
@@ -482,6 +527,7 @@ struct ChantPracticeView: View {
     /// The line under the hand, as the step sings it
     private func singLine() {
         guard lines else { return }
+        startedPlayback = true
         switch step {
         case .listen, .readAlong:
             player.playLine(line, of: chant, then: .stop)
@@ -503,15 +549,28 @@ struct ChantPracticeView: View {
     }
 
     private func again() {
+        acted()
         timesSung = 0
         if lines {
             singLine()
         } else {
+            startedPlayback = true
             if player.holds(chant) { player.restart() } else { player.play(chant) }
         }
     }
 
+    /// The learner's first act keeps the chant as under way, at the step
+    /// they stand on; a chant learned and practised again keeps its mark
+    private func acted() {
+        guard !hasActed else { return }
+        hasActed = true
+        if !shelf.isLearned(chant.id) {
+            shelf.setStep(step, for: chant.id)
+        }
+    }
+
     private func forward() {
+        acted()
         if isLastOfAll {
             player.setLineEnd(.goOn)
             shelf.markLearned(chant.id)
@@ -530,6 +589,7 @@ struct ChantPracticeView: View {
     }
 
     private func go(to next: ChantLearningStep) {
+        hasActed = true
         step = next
         line = 0
         hidden = next == .onYourOwn ? .half : .none
