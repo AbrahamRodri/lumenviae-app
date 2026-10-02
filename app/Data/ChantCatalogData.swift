@@ -1027,7 +1027,7 @@ extension ChantCatalog {
             englishTitle: "Hail, Mother of Mercy",
             setting: nil,
             detail: "A hymn to Mary with a refrain for all to sing",
-            prayerIDs: [],
+            prayerIDs: ["salve_mater"],
             duration: 463.0,
             score: [
                 ChantScorePart(file: "chant-salve-mater", caption: "Salve Mater", aspectRatio: 0.4119)
@@ -1110,7 +1110,7 @@ extension ChantCatalog {
             englishTitle: "Inviolate",
             setting: nil,
             detail: "A hymn to Mary, ever a virgin",
-            prayerIDs: [],
+            prayerIDs: ["inviolata"],
             duration: 90.0,
             score: [
                 ChantScorePart(file: "chant-inviolata", caption: "Inviolata", aspectRatio: 1.4473)
@@ -2782,7 +2782,7 @@ extension ChantCatalog {
             englishTitle: "Give Peace, O Lord",
             setting: nil,
             detail: "A prayer for peace in our days",
-            prayerIDs: [],
+            prayerIDs: ["da_pacem"],
             duration: 132.0,
             score: [
                 ChantScorePart(file: "chant-da-pacem-domine", caption: "Da pacem Domine", aspectRatio: 1.1404)
@@ -3025,7 +3025,7 @@ extension ChantCatalog {
             englishTitle: "The Litany of the Saints",
             setting: nil,
             detail: "The oldest litany of the Church",
-            prayerIDs: [],
+            prayerIDs: ["litany_of_the_saints"],
             duration: 1072.1,
             score: [
                 ChantScorePart(file: "chant-litaniae-sanctorum-1-kyrie-eleison", caption: "Kyrie eleison", aspectRatio: 3.9167),

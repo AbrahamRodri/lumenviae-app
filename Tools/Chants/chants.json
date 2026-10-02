@@ -37,8 +37,8 @@
     {"id": "litany_loreto", "slug": "litaniae-lauretanae", "group": "ourLady", "latin": "Litaniæ Lauretanæ", "english": "The Litany of Loreto", "setting": null, "detail": "With the closing verse and prayer for each season", "prayers": ["litany_loreto"]},
     {"id": "memorare", "slug": "memorare-1", "group": "ourLady", "latin": "Memorare", "english": "Remember, O Most Gracious Virgin Mary", "setting": null, "detail": "St Bernard's prayer, set to chant", "prayers": ["memorare"]},
     {"id": "ave_maria_antiphon", "slug": "ave-maria-antiphona", "group": "ourLady", "latin": "Ave Maria", "english": "Hail Mary", "setting": "Short chant", "detail": "Sung at Mass on the last Sunday of Advent", "prayers": []},
-    {"id": "salve_mater", "slug": "salve-mater", "group": "ourLady", "latin": "Salve Mater Misericordiæ", "english": "Hail, Mother of Mercy", "setting": null, "detail": "A hymn to Mary with a refrain for all to sing", "prayers": []},
-    {"id": "inviolata", "slug": "inviolata", "group": "ourLady", "latin": "Inviolata", "english": "Inviolate", "setting": null, "detail": "A hymn to Mary, ever a virgin", "prayers": []},
+    {"id": "salve_mater", "slug": "salve-mater", "group": "ourLady", "latin": "Salve Mater Misericordiæ", "english": "Hail, Mother of Mercy", "setting": null, "detail": "A hymn to Mary with a refrain for all to sing", "prayers": ["salve_mater"]},
+    {"id": "inviolata", "slug": "inviolata", "group": "ourLady", "latin": "Inviolata", "english": "Inviolate", "setting": null, "detail": "A hymn to Mary, ever a virgin", "prayers": ["inviolata"]},
     {"id": "o_gloriosa", "slug": "o-gloriosa-virginum", "group": "ourLady", "latin": "O Gloriosa Virginum", "english": "O Glorious Virgin", "setting": null, "detail": "The morning hymn of Mary's feasts", "prayers": []},
     {"id": "te_matrem", "slug": "te-matrem-laudamus", "group": "ourLady", "latin": "Te Matrem Laudamus", "english": "We Praise Thee as Mother", "setting": null, "detail": "A song of praise to Mary, in the form of the Te Deum", "prayers": []},
 
@@ -81,13 +81,13 @@
     {"id": "te_saeculorum", "slug": "te-saeculorum-principem", "group": "praise", "latin": "Te Sæculorum Principem", "english": "Thee, Prince of All the Ages", "setting": null, "detail": "The evening hymn of the feast of Christ the King", "prayers": []},
     {"id": "salvete_christi_vulnera", "slug": "salvete-christi-vulnera", "group": "ourLord", "latin": "Salvete, Christi Vulnera", "english": "Hail, Wounds of Christ", "setting": null, "detail": "The morning hymn of the Precious Blood, kept in July", "prayers": []},
     {"id": "lucis_creator", "slug": "lucis-creator-optime", "group": "praise", "latin": "Lucis Creator Optime", "english": "O Blest Creator of the Light", "setting": null, "detail": "The evening hymn of Sundays through the year", "prayers": []},
-    {"id": "da_pacem", "slug": "da-pacem-domine", "group": "praise", "latin": "Da Pacem, Domine", "english": "Give Peace, O Lord", "setting": null, "detail": "A prayer for peace in our days", "prayers": []},
+    {"id": "da_pacem", "slug": "da-pacem-domine", "group": "praise", "latin": "Da Pacem, Domine", "english": "Give Peace, O Lord", "setting": null, "detail": "A prayer for peace in our days", "prayers": ["da_pacem"]},
 
     {"id": "sancte_michael", "slug": "sancte-michael-archangele", "group": "saints", "latin": "Sancte Michael Archangele", "english": "St Michael the Archangel", "setting": null, "detail": "Pope Leo XIII's prayer, set to chant", "prayers": ["st_michael_prayer"]},
     {"id": "ut_queant_laxis", "slug": "ut-queant-laxis", "group": "saints", "latin": "Ut Queant Laxis", "english": "That Thy Servants May Sing", "setting": null, "detail": "The hymn of St John the Baptist on June 24, whose lines gave the notes their names: ut, re, mi", "prayers": []},
     {"id": "litany_st_joseph", "slug": "litaniae-sancti-joseph", "group": "saints", "latin": "Litaniæ Sancti Joseph", "english": "The Litany of St Joseph", "setting": null, "detail": "For Wednesdays and the month of March", "prayers": ["litany_st_joseph"]},
     {"id": "te_joseph", "slug": "te-joseph-celebrent", "group": "saints", "latin": "Te Joseph Celebrent", "english": "Let Heaven Sing Thee, Joseph", "setting": null, "detail": "The evening hymn of St Joseph", "prayers": []},
-    {"id": "litany_saints", "slug": "litaniae-sanctorum", "group": "saints", "latin": "Litaniæ Sanctorum", "english": "The Litany of the Saints", "setting": null, "detail": "The oldest litany of the Church", "prayers": []},
+    {"id": "litany_saints", "slug": "litaniae-sanctorum", "group": "saints", "latin": "Litaniæ Sanctorum", "english": "The Litany of the Saints", "setting": null, "detail": "The oldest litany of the Church", "prayers": ["litany_of_the_saints"]},
 
     {"id": "rorate_caeli", "slug": "rorate-caeli", "group": "advent", "latin": "Rorate Cæli", "english": "Drop Down Dew, Ye Heavens", "setting": null, "detail": "The prayer of Advent's waiting", "prayers": []},
     {"id": "en_clara_vox", "slug": "en-clara-vox", "group": "advent", "latin": "En Clara Vox", "english": "Hark! A Clear Voice Is Sounding", "setting": null, "detail": "The morning hymn of Advent", "prayers": []},

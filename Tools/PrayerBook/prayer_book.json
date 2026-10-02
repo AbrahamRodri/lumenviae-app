@@ -2,6 +2,11 @@
   "generated_by": "Tools/PrayerBook/export.py (the Lumen Viae app)",
   "prayers": [
     {
+      "id": "abandonment_foucauld",
+      "title": "Prayer of Abandonment",
+      "text": "My Father, I abandon myself to Thee; do with me what Thou wilt. Whatever Thou mayest do with me, I thank Thee. I am ready for all, I accept all. Let only Thy will be done in me and in all Thy creatures; I desire nothing else, my God.\n\nInto Thy hands I commend my soul; I give it to Thee, my God, with all the love of my heart, because I love Thee, and because for me it is a need of love to give myself, to put myself into Thy hands without measure, with boundless confidence, for Thou art my Father. Amen."
+    },
+    {
       "id": "act_of_charity",
       "title": "The Act of Charity",
       "text": "O Lord God, I love Thee above all things, and my neighbour for Thy sake, because Thou art the highest, infinite and most perfect Good, worthy of all love. In this love I am resolved to live and die. Amen."
@@ -15,6 +20,11 @@
       "id": "act_of_hope",
       "title": "The Act of Hope",
       "text": "O Lord God, I hope by Thy grace for the pardon of all my sins, and after this life to gain eternal happiness, because Thou hast promised it, who art infinitely powerful, faithful, kind and merciful. In this hope I am resolved to live and die. Amen."
+    },
+    {
+      "id": "actiones_nostras",
+      "title": "Before Work",
+      "text": "Direct, we beseech Thee, O Lord, all our actions by Thy holy inspirations, and carry them on by Thy gracious assistance, that every prayer and work of ours may always begin from Thee, and through Thee be happily ended. Through Christ our Lord. Amen."
     },
     {
       "id": "ad_te_beate_ioseph",
@@ -42,6 +52,11 @@
       "text": "Angel of God, my guardian dear, to whom God's love commits me here, ever this day be at my side, to light and guard, to rule and guide. Amen."
     },
     {
+      "id": "angels_prayer_fatima",
+      "title": "The Angel's Prayer at Fatima",
+      "text": "Most Holy Trinity, Father, Son and Holy Spirit, I adore Thee profoundly, and I offer Thee the most precious Body, Blood, Soul and Divinity of Jesus Christ, present in all the tabernacles of the earth, in reparation for the outrages, sacrileges and indifferences by which He Himself is offended. And by the infinite merits of His most Sacred Heart and of the Immaculate Heart of Mary, I beg of Thee the conversion of poor sinners."
+    },
+    {
       "id": "angelus",
       "title": "The Angelus",
       "text": "The Angel of the Lord declared unto Mary. And she conceived of the Holy Ghost.\n\nHail Mary, full of grace, the Lord is with thee; blessed art thou among women, and blessed is the fruit of thy womb, Jesus. Holy Mary, Mother of God, pray for us sinners, now and at the hour of our death. Amen.\n\nBehold the handmaid of the Lord. Be it done unto me according to thy word.\n\nHail Mary, full of grace, the Lord is with thee; blessed art thou among women, and blessed is the fruit of thy womb, Jesus. Holy Mary, Mother of God, pray for us sinners, now and at the hour of our death. Amen.\n\nAnd the Word was made flesh. And dwelt among us.\n\nHail Mary, full of grace, the Lord is with thee; blessed art thou among women, and blessed is the fruit of thy womb, Jesus. Holy Mary, Mother of God, pray for us sinners, now and at the hour of our death. Amen.\n\nPray for us, O holy Mother of God. That we may be made worthy of the promises of Christ.\n\nLet us pray.\n\nPour forth, we beseech Thee, O Lord, Thy grace into our hearts; that we, to whom the Incarnation of Christ, Thy Son, was made known by the message of an Angel, may by His Passion and Cross be brought to the glory of His Resurrection. Through the same Christ our Lord. Amen."
@@ -60,6 +75,11 @@
       "id": "aquinas_before_mass",
       "title": "Prayer of St Thomas Aquinas before Mass",
       "text": "Almighty and everlasting God, behold, I draw near to the sacrament of Thine only-begotten Son, our Lord Jesus Christ: I come as one sick to the physician of life, as one unclean to the fountain of mercy, as one blind to the light of eternal brightness, as one poor and needy to the Lord of heaven and earth.\n\nI beseech Thee therefore, of the abundance of Thine immeasurable bounty, that Thou vouchsafe to heal my sickness, to wash my uncleanness, to enlighten my blindness, to enrich my poverty, and to clothe my nakedness; that I may receive the Bread of Angels, the King of kings and Lord of lords, with such reverence and humility, with such contrition and devotion, with such purity and faith, with such purpose and intention, as is expedient for the salvation of my soul.\n\nGrant me, I beseech Thee, to receive not only the sacrament of the Body and Blood of the Lord, but also the reality and the power of the sacrament. O most gentle God, grant me so to receive the Body of Thine only-begotten Son, our Lord Jesus Christ, which He took from the Virgin Mary, that I may be worthy to be incorporated into His mystical body, and to be numbered among His members.\n\nO most loving Father, grant me that Thy beloved Son, whom I now purpose to receive veiled upon the way, I may at last behold for ever with face unveiled: who with Thee liveth and reigneth in the unity of the Holy Ghost, God, world without end. Amen."
+    },
+    {
+      "id": "aquinas_before_study",
+      "title": "Prayer of St Thomas Aquinas before Study",
+      "text": "O Creator past all telling, who from the treasures of Thy wisdom didst appoint three hierarchies of Angels, and didst set them in wondrous order above the highest heaven, and didst dispose the parts of the universe most beautifully:\n\nThou, I say, who art called the true fount of light and wisdom, and the principle surpassing all, vouchsafe to pour upon the darkness of my understanding a ray of Thy brightness, taking from me the twofold darkness in which I was born, that is, sin and ignorance.\n\nThou who makest eloquent the tongues of little children, instruct my tongue, and pour upon my lips the grace of Thy blessing.\n\nGive me keenness to understand, capacity to retain, method and ease in learning, subtlety to interpret, and abundant grace in speaking.\n\nOrder my beginning, direct my progress, and bring my ending to completion: Thou who art true God and man, who livest and reignest world without end. Amen."
     },
     {
       "id": "ave_maris_stella",
@@ -97,14 +117,39 @@
       "text": "Blessed be the holy and Immaculate Conception of the Blessed Virgin Mary, Mother of God."
     },
     {
+      "id": "breathe_in_me",
+      "title": "Breathe in Me, O Holy Spirit",
+      "text": "Breathe within me, O Holy Spirit, that all my thoughts may be holy. Move within me, O Holy Spirit, that my works too may be holy. Draw my heart, O Holy Spirit, that I may love nothing but what is holy. Make me strong, O Holy Spirit, to stand for all that is holy. Keep me, O Holy Spirit, that I may be holy for ever. Amen."
+    },
+    {
+      "id": "christ_the_king",
+      "title": "Act of Dedication of the Human Race to Christ the King",
+      "text": "O most sweet Jesus, Redeemer of the human race, look down upon us, most humbly prostrate before Thine altar. We are Thine, and Thine we wish to be; and that we may be bound to Thee more firmly, behold, each one of us today freely dedicates himself to Thy most Sacred Heart.\n\nMany indeed have never known Thee; many, despising Thy commandments, have rejected Thee. Have mercy on them all, O most gracious Jesus, and draw them all to Thy holy Heart.\n\nBe Thou King, O Lord, not only of the faithful who have never gone away from Thee, but also of the prodigal children who have forsaken Thee: grant that they may soon return to their Father's house, lest they perish of misery and hunger.\n\nBe Thou King of those whom error of opinion has deceived, or whom discord keeps apart, and call them back to the harbour of truth and the unity of faith, so that soon there may be one fold and one shepherd.\n\nGrant, O Lord, to Thy Church a sure freedom and safety; grant to all nations the tranquillity of order; bring it about that from one end of the earth to the other one voice may resound: Praise be to the divine Heart, through which our salvation was won; to It be glory and honour for ever. Amen."
+    },
+    {
       "id": "come_holy_ghost",
       "title": "Come, Holy Ghost",
       "text": "Come, Holy Ghost, fill the hearts of Thy faithful, and kindle in them the fire of Thy love.\n\nSend forth Thy Spirit, and they shall be created. And Thou shalt renew the face of the earth.\n\nLet us pray.\n\nO God, who didst instruct the hearts of the faithful by the light of the Holy Ghost, grant us in the same Spirit to be truly wise, and ever to rejoice in His consolation. Through Christ our Lord. Amen."
     },
     {
       "id": "confiteor",
-      "title": "The Confiteor",
+      "title": "I Confess",
       "text": "I confess to almighty God, to blessed Mary ever Virgin, to blessed Michael the Archangel, to blessed John the Baptist, to the holy Apostles Peter and Paul, and to all the Saints, that I have sinned exceedingly in thought, word and deed:\n\nthrough my fault, through my fault, through my most grievous fault.\n\nTherefore I beseech blessed Mary ever Virgin, blessed Michael the Archangel, blessed John the Baptist, the holy Apostles Peter and Paul, and all the Saints, to pray to the Lord our God for me. Amen."
+    },
+    {
+      "id": "consecration_sacred_heart",
+      "title": "Act of Consecration to the Sacred Heart",
+      "text": "I,, give myself and consecrate to the Sacred Heart of our Lord Jesus Christ my person and my life, my actions, pains and sufferings, so as no longer to wish to make use of any part of my being save to honour, love and glorify Him.\n\nThis is my irrevocable will: to be all His, and to do all things for the love of Him, renouncing with all my heart whatever may displease Him.\n\nI take Thee, therefore, O Sacred Heart, for the only object of my love, the protector of my life, the assurance of my salvation, the remedy of my frailty and inconstancy, the repairer of all the faults of my life, and my sure refuge at the hour of my death.\n\nBe Thou, O Heart of goodness, my justification before God Thy Father, and turn away from me the strokes of His just anger. O Heart of love, I put all my trust in Thee, for I fear all things from my own weakness and malice, but I hope all things from Thy goodness.\n\nConsume in me, then, whatever can displease Thee or resist Thee. Let Thy pure love imprint Thee so deeply upon my heart that I may never be able to forget Thee nor be separated from Thee.\n\nI beseech Thee, by all Thy goodness, that my name be written in Thee, for I wish to place all my happiness and all my glory in living and dying as Thy slave. Amen."
+    },
+    {
+      "id": "conversion_of_sinners",
+      "title": "For the Conversion of Sinners",
+      "text": "Eternal Father, we offer Thee the Blood, the Passion and the Death of Jesus Christ, the sorrows of Mary most holy and of St Joseph, in satisfaction for our sins, in relief of the holy souls in Purgatory, for the needs of our holy Mother the Church, and for the conversion of sinners. Amen."
+    },
+    {
+      "id": "da_pacem",
+      "title": "For Peace",
+      "text": "Give peace, O Lord, in our days, for there is none other that fighteth for us, but only Thou, our God.\n\nLet peace be in Thy strength. And abundance in Thy towers.\n\nLet us pray.\n\nO God, from Whom are holy desires, right counsels and just works: give unto Thy servants that peace which the world cannot give; that our hearts may be set to obey Thy commandments, and that, the fear of enemies being taken away, our times, by Thy protection, may be peaceful. Through our Lord Jesus Christ, Thy Son, Who liveth and reigneth with Thee in the unity of the Holy Spirit, God, world without end.\n\nAmen."
     },
     {
       "id": "de_profundis",
@@ -112,9 +157,29 @@
       "text": "Out of the depths I have cried to Thee, O Lord: Lord, hear my voice. Let Thy ears be attentive to the voice of my supplication. If Thou, O Lord, wilt mark iniquities: Lord, who shall stand it? For with Thee there is merciful forgiveness: and by reason of Thy law, I have waited for Thee, O Lord.\n\nMy soul hath relied on His word: my soul hath hoped in the Lord. From the morning watch even until night, let Israel hope in the Lord. Because with the Lord there is mercy: and with Him plentiful redemption. And He shall redeem Israel from all his iniquities.\n\nEternal rest grant unto them, O Lord. And let perpetual light shine upon them."
     },
     {
+      "id": "deceased_parents",
+      "title": "For One's Father and Mother Who Have Died",
+      "text": "Let us pray.\n\nO God, Who hast commanded us to honour our father and our mother: in Thy mercy have pity on the souls of my father and mother, and forgive them their sins; and make me to see them again in the joy of everlasting light. Through Christ our Lord.\n\nAmen."
+    },
+    {
+      "id": "divine_mercy_chaplet",
+      "title": "The Chaplet of Divine Mercy",
+      "text": "Eternal Father, I offer Thee the Body and Blood, Soul and Divinity of Thy dearest Son, our Lord Jesus Christ, in atonement for our sins and for those of the whole world.\n\nFor the sake of His sorrowful Passion, have mercy on us and on the whole world.\n\nHoly God, Holy Mighty One, Holy Immortal One, have mercy on us and on the whole world."
+    },
+    {
       "id": "divine_praises",
       "title": "The Divine Praises",
       "text": "Blessed be God. Blessed be His holy Name. Blessed be Jesus Christ, true God and true Man. Blessed be the Name of Jesus. Blessed be His most Sacred Heart. Blessed be His most Precious Blood. Blessed be Jesus in the most holy Sacrament of the altar. Blessed be the great Mother of God, Mary most holy. Blessed be her holy and Immaculate Conception. Blessed be her glorious Assumption. Blessed be the name of Mary, Virgin and Mother. Blessed be St Joseph, her most chaste spouse. Blessed be God in His Angels and in His Saints."
+    },
+    {
+      "id": "domine_non_sum_dignus",
+      "title": "Lord, I Am Not Worthy",
+      "text": "Lord, I am not worthy that Thou shouldst enter under my roof: say but the word, and my soul shall be healed."
+    },
+    {
+      "id": "efficacious_novena",
+      "title": "The Efficacious Novena to the Sacred Heart",
+      "text": "O my Jesus, Thou hast said: \"Ask, and it shall be given you: seek, and you shall find: knock, and it shall be opened to you.\" Behold, I knock, I seek, I ask for the grace of ….\n\nSacred Heart of Jesus, I place all my trust in Thee.\n\nO my Jesus, Thou hast said: \"Amen, amen I say to you: if you ask the Father any thing in my name, he will give it you.\" Behold, in Thy name I ask the Father for the grace of ….\n\nSacred Heart of Jesus, I place all my trust in Thee.\n\nO my Jesus, Thou hast said: \"Heaven and earth shall pass, but my words shall not pass.\" Leaning on the infallibility of Thy holy words, I ask for the grace of ….\n\nSacred Heart of Jesus, I place all my trust in Thee.\n\nO Sacred Heart of Jesus, for whom it is impossible not to have compassion on the afflicted, have pity on us poor sinners, and grant us the grace which we ask of Thee, through the Sorrowful and Immaculate Heart of Mary, Thy tender Mother and ours.\n\nSt Joseph, foster father of Jesus, pray for us."
     },
     {
       "id": "en_ego",
@@ -142,6 +207,16 @@
       "text": "Flower of Carmel, vine in blossom, splendour of heaven, Virgin who didst bear a Son, none like to thee.\n\nMother most gentle, who knewest not man, to thy Carmelites be thou gracious, O Star of the Sea."
     },
     {
+      "id": "generosity_ignatius",
+      "title": "Prayer for Generosity",
+      "text": "Lord Jesus, teach us to be generous; to serve Thee as Thou deservest; to give without counting; to fight without heeding the wounds; to labour without seeking rest; to spend ourselves without looking for any other reward than to know that we are doing Thy holy will. Amen."
+    },
+    {
+      "id": "golden_arrow",
+      "title": "The Golden Arrow",
+      "text": "May the most holy, most sacred, most adorable, most incomprehensible and unutterable Name of God be always praised, blessed, loved, adored and glorified, in heaven, on earth and under the earth, by all the creatures that have come forth from the hands of God, and by the Sacred Heart of our Lord Jesus Christ in the most holy Sacrament of the altar.\n\nAmen."
+    },
+    {
       "id": "grace_after",
       "title": "Grace after Meals",
       "text": "We give Thee thanks, almighty God, for all Thy benefits, Who livest and reignest world without end. Amen.\n\nMay the souls of the faithful departed, through the mercy of God, rest in peace. Amen."
@@ -152,9 +227,39 @@
       "text": "Bless us, O Lord, and these Thy gifts, which we are about to receive from Thy bounty, through Christ our Lord. Amen."
     },
     {
+      "id": "happy_death",
+      "title": "For a Happy Death",
+      "text": "O my Lord and Saviour, support me in my last hour in the strong arms of Thy Sacraments, and by the fresh fragrance of Thy consolations. Let the absolving words be said over me, and the holy oil sign and seal me, and Thy own Body be my food, and Thy Blood my sprinkling; and let my sweet Mother, Mary, breathe on me, and my Angel whisper peace to me, and my glorious Saints smile upon me; that in them all, and through them all, I may receive the gift of perseverance, and die, as I desire to live, in Thy faith, in Thy Church, in Thy service, and in Thy love. Amen."
+    },
+    {
+      "id": "holy_spirit_enlighten",
+      "title": "Holy Spirit, Spirit of Truth",
+      "text": "Holy Spirit, Spirit of truth, come into our hearts; shed the brightness of Thy light on all nations, that they may be of one faith and pleasing to God."
+    },
+    {
+      "id": "immaculate_heart",
+      "title": "Prayer to the Heart of Mary",
+      "text": "Heart of Mary, Mother of God and our Mother, Heart most amiable, on which the adorable Trinity ever gazes with complacency, worthy of all the veneration and tenderness of angels and of men; Heart most like the Heart of Jesus, whose most perfect image thou art; Heart full of goodness, ever compassionate towards our miseries; vouchsafe to thaw our icy hearts, that they may be wholly changed to the likeness of the Heart of Jesus.\n\nInfuse into them the love of thy virtues, inflame them with that blessed fire with which thou dost ever burn. In thee let the Holy Church find safe shelter; protect it and be its sweet asylum, its tower of strength, impregnable against every inroad of its enemies. Be thou the road leading to Jesus; be thou the channel whereby we receive all graces needful for our salvation.\n\nBe thou our help in need, our comfort in trouble, our strength in temptation, our refuge in persecution, our aid in all dangers; but especially in the last struggle of our life, at the moment of our death, when all hell shall be unchained against us to snatch away our souls.\n\nIn that dread moment, that hour so terrible, whereon our eternity depends, ah, then, most tender Virgin, make us feel how great is the tenderness of thy maternal Heart, and how mighty thy power with the Heart of Jesus, opening to us a safe refuge in the very fount of mercy itself, that so we too may join with thee in Paradise in blessing that same Heart of Jesus for ever and for ever. Amen."
+    },
+    {
       "id": "in_manus_tuas",
       "title": "Into Thy Hands",
       "text": "Into Thy hands, O Lord, I commend my spirit. Into Thy hands, O Lord, I commend my spirit. Thou hast redeemed us, O Lord, God of truth. I commend my spirit. Glory be to the Father, and to the Son, and to the Holy Spirit. Into Thy hands, O Lord, I commend my spirit.\n\nKeep us, O Lord, as the apple of Thine eye. Protect us under the shadow of Thy wings."
+    },
+    {
+      "id": "infant_of_prague",
+      "title": "Prayer to the Infant Jesus of Prague",
+      "text": "O Jesus, I flee to Thee, and through Thy Mother I pray Thee to help me in my need. For I firmly believe that Thy divinity can help me. I hope with confidence to obtain Thy holy grace. I love Thee with all my heart and all my soul. I am heartily sorry for my sins, and I beg Thee, O good Jesus, to give me strength to overcome them. I purpose never more to offend Thee, and I offer myself to Thee, to suffer all things patiently for Thee, to serve Thee faithfully, and to love my neighbour as myself for love of Thee.\n\nO almighty Child Jesus, I implore Thee once more: help me in this need …, that with Mary and Joseph I may possess Thee for ever, and with the holy angels adore Thee in heaven. Amen."
+    },
+    {
+      "id": "inviolata",
+      "title": "Inviolate",
+      "text": "Inviolate, whole and chaste art thou, Mary, who wast made the shining gate of heaven. O loving Mother of Christ, most dear, receive our devout proclamations of praise. Devout hearts and lips now entreat thee that our hearts and bodies may be pure. By thy sweet-sounding prayers grant us pardon for ever. O kind one! O Queen! O Mary, who alone hast remained inviolate."
+    },
+    {
+      "id": "jesus_i_trust_in_thee",
+      "title": "Jesus, I Trust in Thee",
+      "text": "Jesus, I trust in Thee."
     },
     {
       "id": "jesus_meek",
@@ -172,6 +277,21 @@
       "text": "Jesus, Mary and Joseph, I give you my heart and my soul. Jesus, Mary and Joseph, assist me in my last agony. Jesus, Mary and Joseph, may I breathe forth my soul in peace with you."
     },
     {
+      "id": "jmj_heart_and_soul",
+      "title": "Jesus, Mary and Joseph, I Give You My Heart",
+      "text": "Jesus, Mary and Joseph, I give you my heart and my soul. Jesus, Mary and Joseph, assist me in my last agony. Jesus, Mary and Joseph, may I breathe forth my soul in peace with you."
+    },
+    {
+      "id": "lead_kindly_light",
+      "title": "Lead, Kindly Light",
+      "text": "Lead, Kindly Light, amid the encircling gloom, Lead Thou me on! The night is dark, and I am far from home; Lead Thou me on! Keep Thou my feet; I do not ask to see The distant scene; one step enough for me.\n\nI was not ever thus, nor prayed that Thou Shouldst lead me on; I loved to choose and see my path; but now Lead Thou me on! I loved the garish day, and, spite of fears, Pride ruled my will: remember not past years.\n\nSo long Thy power hath blest me, sure it still Will lead me on, O'er moor and fen, o'er crag and torrent, till The night is gone, And with the morn those angel faces smile, Which I have loved long since, and lost awhile."
+    },
+    {
+      "id": "litany_blessed_sacrament",
+      "title": "Litany of the Most Blessed Sacrament",
+      "text": "Lord, have mercy on us. Christ, have mercy on us. Lord, have mercy on us. Christ, hear us. Christ, graciously hear us.\n\nGod the Father of Heaven, have mercy on us. God the Son, Redeemer of the world, have mercy on us. God the Holy Spirit, have mercy on us. Holy Trinity, One God, have mercy on us.\n\nLiving Bread, Who camest down from heaven, have mercy on us. Hidden God and Saviour, have mercy on us. Corn of the elect, have mercy on us. Wine that bringeth forth virgins, have mercy on us. Fat bread and delight of kings, have mercy on us. Perpetual sacrifice, have mercy on us. Clean oblation, have mercy on us. Lamb without spot, have mercy on us. Most pure feast, have mercy on us. Food of angels, have mercy on us. Hidden manna, have mercy on us. Memorial of the wonders of God, have mercy on us. Supersubstantial Bread, have mercy on us. Word made flesh, dwelling in us, have mercy on us. Sacred Host, have mercy on us. Chalice of benediction, have mercy on us. Mystery of faith, have mercy on us.\n\nMost high and adorable Sacrament, have mercy on us. Most holy of all sacrifices, have mercy on us. True propitiation for the living and the dead, have mercy on us. Heavenly antidote, by which we are preserved from sin, have mercy on us. Most wonderful of all miracles, have mercy on us. Most holy commemoration of the Passion of Christ, have mercy on us. Gift transcending all fulness, have mercy on us. Special memorial of divine love, have mercy on us. Abundance of divine bounty, have mercy on us. Most holy and august mystery, have mercy on us. Medicine of immortality, have mercy on us. Tremendous and life-giving Sacrament, have mercy on us. Bread made flesh by the omnipotence of the Word, have mercy on us. Unbloody sacrifice, have mercy on us. Our feast and our fellow-guest, have mercy on us. Sweetest banquet, at which the angels minister, have mercy on us. Sacrament of piety, have mercy on us. Bond of charity, have mercy on us. Priest and victim, have mercy on us. Spiritual sweetness tasted in its own fountain, have mercy on us. Refreshment of holy souls, have mercy on us. Viaticum of those who die in the Lord, have mercy on us. Pledge of future glory, have mercy on us.\n\nBe merciful, spare us, O Lord. Be merciful, graciously hear us, O Lord.\n\nFrom an unworthy reception of Thy Body and Blood, O Lord, deliver us. From the lust of the flesh, O Lord, deliver us. From the lust of the eyes, O Lord, deliver us. From the pride of life, O Lord, deliver us. From every occasion of sin, O Lord, deliver us. Through that desire with which Thou didst desire to eat this Pasch with Thy disciples, O Lord, deliver us. Through that profound humility with which Thou didst wash their feet, O Lord, deliver us. Through that ardent charity with which Thou didst institute this divine Sacrament, O Lord, deliver us. Through Thy Precious Blood, which Thou hast left us on the altar, O Lord, deliver us. Through the five wounds of this Thy most holy Body, which Thou didst receive for us, O Lord, deliver us.\n\nWe sinners, we beseech Thee, hear us. That Thou wouldst vouchsafe to preserve and increase our faith, reverence and devotion towards this admirable Sacrament, we beseech Thee, hear us. That Thou wouldst vouchsafe to lead us, through a true confession of our sins, to a frequent reception of the Holy Eucharist, we beseech Thee, hear us. That Thou wouldst vouchsafe to deliver us from all heresy, unbelief and blindness of heart, we beseech Thee, hear us. That Thou wouldst vouchsafe to impart to us the precious and heavenly fruits of this most holy Sacrament, we beseech Thee, hear us. That at the hour of our death Thou wouldst vouchsafe to strengthen and defend us with this heavenly Viaticum, we beseech Thee, hear us. Son of God, we beseech Thee, hear us.\n\nLamb of God, Who takest away the sins of the world, spare us, O Lord. Lamb of God, Who takest away the sins of the world, graciously hear us, O Lord. Lamb of God, Who takest away the sins of the world, have mercy on us.\n\nThou didst give them bread from heaven, Having in it all sweetness.\n\nLet us pray.\n\nO God, Who under a wonderful Sacrament hast left us a memorial of Thy Passion: grant us, we beseech Thee, so to venerate the sacred mysteries of Thy Body and Blood, that we may ever feel within us the fruit of Thy redemption: Who livest and reignest world without end.\n\nAmen."
+    },
+    {
       "id": "litany_holy_name",
       "title": "Litany of the Holy Name of Jesus",
       "text": "Lord, have mercy on us. Christ, have mercy on us. Lord, have mercy on us. Jesus, hear us. Jesus, graciously hear us.\n\nGod the Father of Heaven, have mercy on us. God the Son, Redeemer of the world, have mercy on us. God the Holy Ghost, have mercy on us. Holy Trinity, One God, have mercy on us.\n\nJesus, Son of the living God, have mercy on us. Jesus, splendor of the Father, have mercy on us. Jesus, brightness of eternal light, have mercy on us. Jesus, King of glory, have mercy on us. Jesus, sun of justice, have mercy on us. Jesus, Son of the Virgin Mary, have mercy on us.\n\nJesus, most amiable, have mercy on us. Jesus, most admirable, have mercy on us. Jesus, mighty God, have mercy on us. Jesus, Father of the world to come, have mercy on us. Jesus, angel of great counsel, have mercy on us. Jesus, most powerful, have mercy on us. Jesus, most patient, have mercy on us. Jesus, most obedient, have mercy on us. Jesus, meek and humble of heart, have mercy on us.\n\nJesus, lover of chastity, have mercy on us. Jesus, lover of us, have mercy on us. Jesus, God of peace, have mercy on us. Jesus, author of life, have mercy on us. Jesus, model of virtues, have mercy on us. Jesus, lover of souls, have mercy on us. Jesus, our God, have mercy on us.\n\nJesus, our refuge, have mercy on us. Jesus, Father of the poor, have mercy on us. Jesus, treasure of the faithful, have mercy on us. Jesus, Good Shepherd, have mercy on us. Jesus, true light, have mercy on us. Jesus, eternal wisdom, have mercy on us. Jesus, infinite goodness, have mercy on us. Jesus, our way and our life, have mercy on us.\n\nJesus, joy of angels, have mercy on us. Jesus, King of patriarchs, have mercy on us. Jesus, master of Apostles, have mercy on us. Jesus, teacher of Evangelists, have mercy on us. Jesus, strength of martyrs, have mercy on us. Jesus, light of confessors, have mercy on us. Jesus, purity of virgins, have mercy on us. Jesus, crown of all saints, have mercy on us.\n\nBe merciful, spare us, O Jesus. Be merciful, graciously hear us, O Jesus.\n\nFrom all evil, Jesus, deliver us. From all sin, Jesus, deliver us. From Thy wrath, Jesus, deliver us. From the snares of the devil, Jesus, deliver us. From the spirit of fornication, Jesus, deliver us. From everlasting death, Jesus, deliver us. From the neglect of Thine inspirations, Jesus, deliver us.\n\nThrough the mystery of Thy holy Incarnation, Jesus, deliver us. Through Thy nativity, Jesus, deliver us. Through Thine infancy, Jesus, deliver us. Through Thy most divine life, Jesus, deliver us. Through Thy labors, Jesus, deliver us. Through Thine agony and Passion, Jesus, deliver us. Through Thy cross and dereliction, Jesus, deliver us. Through Thy sufferings, Jesus, deliver us. Through Thy death and burial, Jesus, deliver us. Through Thy Resurrection, Jesus, deliver us. Through Thine Ascension, Jesus, deliver us. Through Thine institution of the most Holy Eucharist, Jesus, deliver us. Through Thy joys, Jesus, deliver us. Through Thy glory, Jesus, deliver us.\n\nLamb of God, Who takest away the sins of the world, spare us, O Jesus. Lamb of God, Who takest away the sins of the world, graciously hear us, O Jesus. Lamb of God, Who takest away the sins of the world, have mercy on us, O Jesus.\n\nJesus, hear us. Jesus, graciously hear us.\n\nLet us pray.\n\nO Lord Jesus Christ, Who hast said: Ask and ye shall receive, seek and ye shall find, knock and it shall be opened unto you; grant, we beseech Thee, to us who ask the gift of Thy divine love, that we may ever love Thee with all our hearts, and in all our words and actions, and never cease from praising Thee.\n\nGive us, O Lord, a perpetual fear and love of Thy holy Name; for Thou never failest to govern those whom Thou dost solidly establish in Thy love, Who livest and reignest world without end.\n\nAmen."
@@ -187,9 +307,24 @@
       "text": "O Jesus, meek and humble of heart, hear me.\n\nFrom the desire of being esteemed, deliver me, Jesus. From the desire of being loved, deliver me, Jesus. From the desire of being extolled, deliver me, Jesus. From the desire of being honored, deliver me, Jesus. From the desire of being praised, deliver me, Jesus. From the desire of being preferred to others, deliver me, Jesus. From the desire of being consulted, deliver me, Jesus. From the desire of being approved, deliver me, Jesus.\n\nFrom the fear of being humiliated, deliver me, Jesus. From the fear of being despised, deliver me, Jesus. From the fear of suffering rebukes, deliver me, Jesus. From the fear of being calumniated, deliver me, Jesus. From the fear of being forgotten, deliver me, Jesus. From the fear of being ridiculed, deliver me, Jesus. From the fear of being wronged, deliver me, Jesus. From the fear of being suspected, deliver me, Jesus.\n\nThat others may be loved more than I, Jesus, grant me the grace to desire it. That others may be esteemed more than I, Jesus, grant me the grace to desire it. That, in the opinion of the world, others may increase and I may decrease, Jesus, grant me the grace to desire it. That others may be chosen and I set aside, Jesus, grant me the grace to desire it. That others may be praised and I unnoticed, Jesus, grant me the grace to desire it. That others may be preferred to me in everything, Jesus, grant me the grace to desire it. That others may become holier than I, provided that I may become as holy as I should, Jesus, grant me the grace to desire it."
     },
     {
+      "id": "litany_of_the_saints",
+      "title": "Litany of the Saints",
+      "text": "Lord, have mercy on us. Christ, have mercy on us. Lord, have mercy on us. Christ, hear us. Christ, graciously hear us.\n\nGod the Father of heaven, have mercy on us. God the Son, Redeemer of the world, have mercy on us. God the Holy Spirit, have mercy on us. Holy Trinity, one God, have mercy on us.\n\nHoly Mary, pray for us. Holy Mother of God, pray for us. Holy Virgin of virgins, pray for us. St Michael, pray for us. St Gabriel, pray for us. St Raphael, pray for us.\n\nAll ye holy Angels and Archangels, pray for us. All ye holy orders of blessed Spirits, pray for us.\n\nSt John the Baptist, pray for us. St Joseph, pray for us.\n\nAll ye holy Patriarchs and Prophets, pray for us.\n\nSt Peter, pray for us. St Paul, pray for us. St Andrew, pray for us. St James, pray for us. St John, pray for us. St Thomas, pray for us. St James, pray for us. St Philip, pray for us. St Bartholomew, pray for us. St Matthew, pray for us. St Simon, pray for us. St Thaddeus, pray for us. St Matthias, pray for us. St Barnabas, pray for us. St Luke, pray for us. St Mark, pray for us.\n\nAll ye holy Apostles and Evangelists, pray for us. All ye holy Disciples of the Lord, pray for us. All ye holy Innocents, pray for us.\n\nSt Stephen, pray for us. St Lawrence, pray for us. St Vincent, pray for us.\n\nSts Fabian and Sebastian, pray for us. Sts John and Paul, pray for us. Sts Cosmas and Damian, pray for us. Sts Gervase and Protase, pray for us. All ye holy Martyrs, pray for us.\n\nSt Sylvester, pray for us. St Gregory, pray for us. St Ambrose, pray for us. St Augustine, pray for us. St Jerome, pray for us. St Martin, pray for us. St Nicholas, pray for us.\n\nAll ye holy Bishops and Confessors, pray for us. All ye holy Doctors, pray for us.\n\nSt Anthony, pray for us. St Benedict, pray for us. St Bernard, pray for us. St Dominic, pray for us. St Francis, pray for us.\n\nAll ye holy Priests and Levites, pray for us. All ye holy Monks and Hermits, pray for us.\n\nSt Mary Magdalen, pray for us. St Agatha, pray for us. St Lucy, pray for us. St Agnes, pray for us. St Cecilia, pray for us. St Catherine, pray for us. St Anastasia, pray for us.\n\nAll ye holy Virgins and Widows, pray for us.\n\nAll ye holy men and women, Saints of God, make intercession for us.\n\nBe merciful, spare us, O Lord. Be merciful, graciously hear us, O Lord.\n\nFrom all evil, O Lord, deliver us. From all sin, O Lord, deliver us. From Thy wrath, O Lord, deliver us. From a sudden and unprovided death, O Lord, deliver us. From the snares of the devil, O Lord, deliver us. From anger, and hatred, and every evil will, O Lord, deliver us. From the spirit of fornication, O Lord, deliver us. From lightning and tempest, O Lord, deliver us. From the scourge of earthquake, O Lord, deliver us. From pestilence, famine and war, O Lord, deliver us. From everlasting death, O Lord, deliver us. Through the mystery of Thy holy Incarnation, O Lord, deliver us. Through Thy coming, O Lord, deliver us. Through Thy birth, O Lord, deliver us. Through Thy baptism and holy fasting, O Lord, deliver us. Through Thy Cross and Passion, O Lord, deliver us. Through Thy death and burial, O Lord, deliver us. Through Thy holy Resurrection, O Lord, deliver us. Through Thy wonderful Ascension, O Lord, deliver us. Through the coming of the Holy Spirit, the Paraclete, O Lord, deliver us. In the day of judgement, O Lord, deliver us.\n\nWe sinners, we beseech Thee, hear us. That Thou spare us, we beseech Thee, hear us. That Thou pardon us, we beseech Thee, hear us. That Thou vouchsafe to bring us to true penance, we beseech Thee, hear us. That Thou vouchsafe to rule and keep Thy holy Church, we beseech Thee, hear us. That Thou vouchsafe to keep the Apostolic Lord and every order of the Church in holy religion, we beseech Thee, hear us. That Thou vouchsafe to humble the enemies of holy Church, we beseech Thee, hear us. That Thou vouchsafe to give peace and true concord to Christian kings and princes, we beseech Thee, hear us. That Thou vouchsafe to grant peace and unity to all the Christian people, we beseech Thee, hear us. That Thou vouchsafe to strengthen and keep us in Thy holy service, we beseech Thee, hear us. That Thou lift up our minds to heavenly desires, we beseech Thee, hear us. That Thou render everlasting good things to all our benefactors, we beseech Thee, hear us. That Thou snatch from everlasting damnation our souls, and those of our brethren, kinsfolk and benefactors, we beseech Thee, hear us. That Thou vouchsafe to give and keep the fruits of the earth, we beseech Thee, hear us. That Thou vouchsafe to give eternal rest to all the faithful departed, we beseech Thee, hear us. That Thou vouchsafe graciously to hear us, we beseech Thee, hear us. Son of God, we beseech Thee, hear us.\n\nLamb of God, Who takest away the sins of the world, spare us, O Lord. Lamb of God, Who takest away the sins of the world, graciously hear us, O Lord. Lamb of God, Who takest away the sins of the world, have mercy on us.\n\nChrist, hear us. Christ, graciously hear us. Lord, have mercy on us. Christ, graciously hear us. Christ, have mercy on us. Christ, graciously hear us. Lord, have mercy on us. Christ, graciously hear us.\n\nAnd lead us not into temptation. But deliver us from evil.\n\nO Lord, hear my prayer. And let my cry come unto Thee.\n\nLet us pray.\n\nAlmighty and everlasting God, Who hast dominion over the living and the dead alike, and hast mercy on all whom Thou foreknowest shall be Thine by faith and works: we humbly beseech Thee that those for whom we have purposed to pour forth our prayers, whether this present world still holds them in the flesh, or the world to come has already received them freed from the body, may, by the intercession of all Thy Saints and the kindness of Thy mercy, obtain the pardon of all their sins. Through our Lord Jesus Christ, Thy Son, Who liveth and reigneth with Thee in the unity of the Holy Spirit, God, world without end.\n\nAmen."
+    },
+    {
+      "id": "litany_precious_blood",
+      "title": "Litany of the Most Precious Blood",
+      "text": "Lord, have mercy on us. Christ, have mercy on us. Lord, have mercy on us. Christ, hear us. Christ, graciously hear us.\n\nGod the Father of Heaven, have mercy on us. God the Son, Redeemer of the world, have mercy on us. God the Holy Spirit, have mercy on us. Holy Trinity, One God, have mercy on us.\n\nBlood of Christ, Only-begotten of the Eternal Father, save us. Blood of Christ, Word of God made flesh, save us. Blood of Christ, of the New and Eternal Testament, save us. Blood of Christ, running down upon the earth in the Agony, save us. Blood of Christ, flowing forth in the Scourging, save us. Blood of Christ, streaming out in the Crowning with Thorns, save us. Blood of Christ, poured out upon the Cross, save us. Blood of Christ, price of our salvation, save us. Blood of Christ, without which there is no forgiveness, save us. Blood of Christ, in the Eucharist the drink and cleansing of souls, save us. Blood of Christ, river of mercy, save us. Blood of Christ, conqueror of demons, save us. Blood of Christ, strength of martyrs, save us. Blood of Christ, might of confessors, save us. Blood of Christ, bringing forth virgins, save us. Blood of Christ, stay of those in peril, save us. Blood of Christ, relief of those who labour, save us. Blood of Christ, solace in weeping, save us. Blood of Christ, hope of the penitent, save us. Blood of Christ, comfort of the dying, save us. Blood of Christ, peace and sweetness of hearts, save us. Blood of Christ, pledge of eternal life, save us. Blood of Christ, setting souls free from the pit of Purgatory, save us. Blood of Christ, most worthy of all glory and honour, save us.\n\nLamb of God, Who takest away the sins of the world, spare us, O Lord. Lamb of God, Who takest away the sins of the world, graciously hear us, O Lord. Lamb of God, Who takest away the sins of the world, have mercy on us.\n\nThou hast redeemed us, O Lord, in Thy Blood, And hast made us a kingdom for our God.\n\nLet us pray.\n\nAlmighty and everlasting God, Who didst appoint Thine only-begotten Son to be the Redeemer of the world, and didst will to be appeased by His Blood: grant, we beseech Thee, that we may so venerate this price of our salvation, and by its power be so defended on earth from the evils of this present life, that we may rejoice in its everlasting fruit in heaven. Through the same Christ our Lord.\n\nAmen."
+    },
+    {
       "id": "litany_sacred_heart",
       "title": "Litany of the Sacred Heart",
       "text": "Lord, have mercy on us. Christ, have mercy on us. Lord, have mercy on us. Christ, hear us. Christ, graciously hear us.\n\nGod the Father of Heaven, have mercy on us. God the Son, Redeemer of the world, have mercy on us. God the Holy Ghost, have mercy on us. Holy Trinity, One God, have mercy on us.\n\nHeart of Jesus, Son of the Eternal Father, have mercy on us. Heart of Jesus, formed by the Holy Ghost in the womb of the Virgin Mother, have mercy on us. Heart of Jesus, substantially united to the Word of God, have mercy on us. Heart of Jesus, of infinite majesty, have mercy on us. Heart of Jesus, holy temple of God, have mercy on us. Heart of Jesus, tabernacle of the Most High, have mercy on us.\n\nHeart of Jesus, house of God and gate of heaven, have mercy on us. Heart of Jesus, burning furnace of charity, have mercy on us. Heart of Jesus, vessel of justice and of love, have mercy on us. Heart of Jesus, full of goodness and love, have mercy on us. Heart of Jesus, abyss of all virtues, have mercy on us. Heart of Jesus, most worthy of all praise, have mercy on us.\n\nHeart of Jesus, king and center of all hearts, have mercy on us. Heart of Jesus, wherein are all the treasures of wisdom and knowledge, have mercy on us. Heart of Jesus, wherein dwelleth all the fullness of the Godhead, have mercy on us. Heart of Jesus, wherein the Father was well pleased, have mercy on us. Heart of Jesus, of Whose fullness we have all received, have mercy on us.\n\nHeart of Jesus, desire of the everlasting hills, have mercy on us. Heart of Jesus, patient and of great mercy, have mercy on us. Heart of Jesus, rich unto all who call upon Thee, have mercy on us. Heart of Jesus, fountain of life and holiness, have mercy on us. Heart of Jesus, propitiation for our sins, have mercy on us.\n\nHeart of Jesus, filled with reproaches, have mercy on us. Heart of Jesus, bruised for our iniquities, have mercy on us. Heart of Jesus, made obedient unto death, have mercy on us. Heart of Jesus, pierced with a lance, have mercy on us. Heart of Jesus, fountain of all consolation, have mercy on us.\n\nHeart of Jesus, our life and resurrection, have mercy on us. Heart of Jesus, our peace and reconciliation, have mercy on us. Heart of Jesus, victim for sinners, have mercy on us. Heart of Jesus, salvation of those who hope in Thee, have mercy on us. Heart of Jesus, hope of those who die in Thee, have mercy on us. Heart of Jesus, delight of all the Saints, have mercy on us.\n\nLamb of God, Who takest away the sins of the world, spare us, O Lord. Lamb of God, Who takest away the sins of the world, graciously hear us, O Lord. Lamb of God, Who takest away the sins of the world, have mercy on us.\n\nJesus, meek and humble of heart. Make our hearts like unto Thine.\n\nLet us pray.\n\nAlmighty and everlasting God, look upon the Heart of Thy most beloved Son, and upon the praises and satisfactions which He hath rendered unto Thee in the name of sinners; and to those who seek Thy mercy do Thou, being appeased, grant pardon in the name of the same Thy Son Jesus Christ, Who liveth and reigneth with Thee world without end.\n\nAmen."
+    },
+    {
+      "id": "litany_seven_sorrows",
+      "title": "Litany of Our Lady of Sorrows",
+      "text": "Lord, have mercy on us. Christ, have mercy on us. Lord, have mercy on us. Christ, hear us. Christ, graciously hear us.\n\nGod the Father of Heaven, have mercy on us. God the Son, Redeemer of the world, have mercy on us. God the Holy Spirit, have mercy on us. Holy Trinity, One God, have mercy on us.\n\nHoly Mary, Mother of God, pray for us. Holy Virgin of virgins, pray for us. Mother of the Crucified, pray for us. Sorrowful Mother, pray for us. Mournful Mother, pray for us. Sighing Mother, pray for us. Afflicted Mother, pray for us. Forsaken Mother, pray for us. Desolate Mother, pray for us.\n\nMother most sad, pray for us. Mother set around with anguish, pray for us. Mother overwhelmed by grief, pray for us. Mother transfixed by a sword, pray for us. Mother crucified in thy heart, pray for us. Mother bereaved of thy Son, pray for us. Sighing Dove, pray for us. Mother of Dolours, pray for us.\n\nFount of tears, pray for us. Sea of bitterness, pray for us. Field of tribulation, pray for us. Mass of suffering, pray for us. Mirror of patience, pray for us. Rock of constancy, pray for us. Remedy in perplexity, pray for us. Joy of the afflicted, pray for us.\n\nArk of the desolate, pray for us. Refuge of the abandoned, pray for us. Shield of the oppressed, pray for us. Conqueror of the incredulous, pray for us. Solace of the wretched, pray for us. Medicine of the sick, pray for us. Help of the faint, pray for us. Strength of the weak, pray for us.\n\nProtectress of those who fight, pray for us. Haven of the shipwrecked, pray for us. Calmer of tempests, pray for us. Companion of the sorrowful, pray for us. Retreat of those who groan, pray for us. Terror of the treacherous, pray for us.\n\nStandard-bearer of the Martyrs, pray for us. Treasure of the Faithful, pray for us. Light of Confessors, pray for us. Pearl of Virgins, pray for us. Comfort of Widows, pray for us. Joy of all Saints, pray for us. Queen of thy Servants, pray for us. Holy Mary, who alone art unexampled, pray for us.\n\nLamb of God, Who takest away the sins of the world, spare us, O Lord. Lamb of God, Who takest away the sins of the world, graciously hear us, O Lord. Lamb of God, Who takest away the sins of the world, have mercy on us.\n\nPray for us, most Sorrowful Virgin, That we may be made worthy of the promises of Christ.\n\nLet us pray.\n\nO God, in Whose Passion, according to the prophecy of Simeon, a sword of grief pierced through the most sweet soul of Thy glorious Blessed Virgin Mother Mary: grant that we, who celebrate the memory of her Seven Sorrows, may obtain the happy effect of Thy Passion, Who livest and reignest world without end.\n\nAmen."
     },
     {
       "id": "litany_st_joseph",
@@ -207,6 +342,16 @@
       "text": "O Mary, most holy Virgin Mother, behold, I have received thy most dear Son, whom thou didst conceive in thy immaculate womb, bring forth, nurse, and embrace most tenderly.\n\nBehold Him at whose sight thou didst rejoice and wast filled with all delight; Him do I humbly and lovingly present and offer to thee, to be clasped in thine arms, to be loved by thy heart, and to be offered up to the Most Holy Trinity in supreme worship of adoration, for thine own honour and glory, and for my needs and those of the whole world.\n\nI ask thee therefore, most loving Mother, to obtain for me the forgiveness of all my sins, and abundant grace to serve Him hereafter more faithfully; and lastly, the grace of final perseverance, that with thee I may praise Him for ever and ever. Amen."
     },
     {
+      "id": "mary_help_of_christians",
+      "title": "Prayer to Mary, Help of Christians",
+      "text": "O Mary, powerful Virgin, thou art the mighty and glorious protector of the Church; thou art the marvellous help of Christians; thou art terrible as an army set in battle array; thou hast destroyed heresy in all the world.\n\nIn the midst of our anguish, our struggles and our distress, defend us from the power of the enemy, and at the hour of our death receive our souls in Paradise. Amen."
+    },
+    {
+      "id": "memorare_st_joseph",
+      "title": "The Memorare to St Joseph",
+      "text": "Remember, O most chaste spouse of the Virgin Mary, that it has never been heard that anyone who ran to thy protection, or begged thy help, was left without comfort.\n\nMoved by this trust, I come to thee, and commend myself to thee with all my heart. Do not despise my prayer, O thou who art called the father of the Redeemer, but in thy kindness hear it and grant it. Amen."
+    },
+    {
       "id": "miraculous_medal",
       "title": "O Mary, Conceived without Sin",
       "text": "O Mary, conceived without sin, pray for us who have recourse to thee."
@@ -222,9 +367,34 @@
       "text": "O Jesus, through the Immaculate Heart of Mary, I offer Thee my prayers, works, joys and sufferings of this day, for all the intentions of Thy Sacred Heart, in union with the Holy Sacrifice of the Mass throughout the world, in reparation for my sins, for the intentions of all our associates, and in particular for the intention recommended this month by the Holy Father. Amen."
     },
     {
+      "id": "my_god_and_my_all",
+      "title": "My God and My All",
+      "text": "My God and my all."
+    },
+    {
+      "id": "my_jesus_i_love_thee",
+      "title": "My Jesus, I Love Thee",
+      "text": "My Jesus, I love Thee above all things."
+    },
+    {
       "id": "my_jesus_mercy",
       "title": "My Jesus, Mercy",
       "text": "My Jesus, mercy."
+    },
+    {
+      "id": "my_lord_and_my_god",
+      "title": "My Lord and My God",
+      "text": "My Lord and my God."
+    },
+    {
+      "id": "nada_te_turbe",
+      "title": "Let Nothing Disturb Thee",
+      "text": "Let nothing disturb thee, let nothing affright thee; all things are passing, God never changes. Patience obtains all things. Whoever has God wants for nothing: God alone suffices."
+    },
+    {
+      "id": "newman_definite_service",
+      "title": "Some Definite Service",
+      "text": "God has created me to do Him some definite service; He has committed some work to me which He has not committed to another. I have my mission. I may never know it in this life, but I shall be told it in the next.\n\nI am a link in a chain, a bond of connexion between persons. He has not created me for naught. I shall do good, I shall do His work; I shall be an angel of peace, a preacher of truth in my own place, while not intending it, if I do but keep His commandments and serve Him in my calling.\n\nTherefore I will trust Him. Whatever, wherever I am, I can never be thrown away. If I am in sickness, my sickness may serve Him; in perplexity, my perplexity may serve Him; if I am in sorrow, my sorrow may serve Him. My sickness, or perplexity, or sorrow may be necessary causes of some great end, which is quite beyond us. He does nothing in vain; He may prolong my life, He may shorten it; He knows what He is about. He may take away my friends, He may throw me among strangers, He may make me feel desolate, make my spirits sink, hide the future from me; still He knows what He is about."
     },
     {
       "id": "nicene_creed",
@@ -247,6 +417,11 @@
       "text": "O Jesus living in Mary, come and live in Thy servants, in the spirit of Thy holiness, in the fullness of Thy might, in the truth of Thy virtues, in the perfection of Thy ways, in the communion of Thy mysteries. Subdue every hostile power in Thy Spirit, for the glory of the Father. Amen."
     },
     {
+      "id": "o_sacrament_most_holy",
+      "title": "O Sacrament Most Holy",
+      "text": "O Sacrament most holy, O Sacrament divine, all praise and all thanksgiving be every moment Thine."
+    },
+    {
       "id": "o_sacrum_convivium",
       "title": "O Sacred Banquet",
       "text": "O sacred banquet, in which Christ is received, the memory of His Passion is renewed, the mind is filled with grace, and a pledge of future glory is given to us. Alleluia."
@@ -257,9 +432,39 @@
       "text": "O saving Victim, Who openest the gate of heaven, hostile wars press hard upon us: give strength, bring aid.\n\nTo the Lord, One and Three, be glory everlasting; Who life without an end may grant us in our homeland. Amen."
     },
     {
+      "id": "our_lady_of_good_counsel",
+      "title": "Prayer to Our Lady of Good Counsel",
+      "text": "Most glorious Virgin, chosen by the Eternal Counsel to be the Mother of the Eternal Word made Man, treasure-house of divine graces and advocate of sinners; I, the most unworthy of thy servants, have recourse to thee, begging of thee to be my guide and counsellor in this vale of tears.\n\nObtain for me, through the most Precious Blood of thy Divine Son, forgiveness of my sins, and the salvation of my soul with all the means necessary to secure it. Obtain for Holy Church triumph over her enemies and the extension of the Kingdom of Jesus Christ over the whole earth. Amen."
+    },
+    {
+      "id": "our_lady_of_lourdes",
+      "title": "Prayer to Our Lady of Lourdes",
+      "text": "O ever Immaculate Virgin, Mother of mercy, health of the sick, refuge of sinners, comfort of the afflicted, thou knowest my wants, my troubles, my sufferings; deign to cast upon me a look of mercy.\n\nBy appearing in the grotto of Lourdes, thou wast pleased to make it a privileged sanctuary, whence thou dispensest thy favours; and already many sufferers have obtained the cure of their infirmities, both spiritual and corporal. I come, therefore, with the most unbounded confidence to implore thy maternal intercession.\n\nObtain, O loving Mother, the granting of my requests. Through gratitude for thy favours, I will endeavour to imitate thy virtues, that I may one day share thy glory. Amen."
+    },
+    {
+      "id": "our_lady_of_mount_carmel",
+      "title": "Prayer to Our Lady of Mount Carmel",
+      "text": "Most blessed Virgin Immaculate, the beauty and splendour of Carmel, thou who regardest with eyes of special love those who wear thy blessed habit, look kindly upon me and spread over me the mantle of thy maternal protection.\n\nStrengthen my weakness with thy power, illuminate the darkness of my mind with thy wisdom, increase in me the virtues of Faith, Hope and Charity. Adorn my soul with such graces and virtues that it may be ever dear to thy divine Son and to thee.\n\nAssist me in life, console me in death, with thy dear presence, and present me to the Holy Trinity as thy child and devoted servant, eternally to praise and bless thee in Paradise. Amen."
+    },
+    {
+      "id": "our_lady_of_sorrows",
+      "title": "Prayer to Our Lady of Sorrows",
+      "text": "O God, come to my assistance. O Lord, make haste to help me.\n\nI compassionate thee, sorrowing Mary, in the affliction of thy tender heart at the prophecy of the holy old man Simeon. Dear Mother, by thy heart then so afflicted, obtain for me the virtue of humility and the gift of holy fear of God.\n\nI compassionate thee, sorrowing Mary, in the anxiety which thy sensitive heart underwent in the flight and sojourn in Egypt. Dear Mother, by thy heart then made so anxious, obtain for me the virtue of liberality, especially towards the poor, and the gift of pity.\n\nI compassionate thee, sorrowing Mary, in the trouble of thy anxious heart, when thou didst lose thy dear Son Jesus. Dear Mother, by thy heart then so troubled, obtain for me the virtue of holy chastity and the gift of knowledge.\n\nI compassionate thee, sorrowing Mary, in the shock thy maternal heart underwent when Jesus met thee carrying His Cross. Dear Mother, by thy loving heart then so overwhelmed, obtain for me the virtue of patience and the gift of fortitude.\n\nI compassionate thee, sorrowing Mary, in the martyrdom thy generous heart bore so nobly whilst thou didst stand by Jesus in His agony. Dear Mother, by thy heart then so martyred, obtain for me the virtue of temperance and the gift of counsel.\n\nI compassionate thee, sorrowing Mary, in the wound of thy tender heart when the sacred Side of Jesus was pierced with the lance. Dear Mother, by thy heart then so transfixed, obtain for me the virtue of fraternal charity and the gift of understanding.\n\nI compassionate thee, sorrowing Mary, in the pang felt by thy loving heart when the Body of Jesus was buried in the grave. Dear Mother, by all the bitterness of desolation thou didst then experience, obtain for me the virtue of diligence and the gift of wisdom.\n\nPray for us, Virgin most sorrowful. That we may be made worthy of the promises of Christ.\n\nLet us pray.\n\nGrant, we beseech Thee, O Lord Jesus Christ, that the most blessed Virgin Mary, Thy Mother, may intercede for us before the throne of Thy mercy, now and at the hour of our death, whose most holy soul was transfixed with the sword of sorrow in the hour of Thine own Passion. Through Thee, Jesus Christ, Saviour of the world, Who livest and reignest world without end.\n\nAmen."
+    },
+    {
       "id": "pardon_prayer",
       "title": "The Pardon Prayer",
       "text": "My God, I believe, I adore, I hope and I love Thee. I ask pardon of Thee for those who do not believe, do not adore, do not hope and do not love Thee."
+    },
+    {
+      "id": "parents_for_children",
+      "title": "A Parent's Prayer for Their Children",
+      "text": "O heavenly Father, I commend my children unto Thee. Be Thou their God and Father, and mercifully supply whatever is lacking in me through frailty or negligence. Strengthen them to overcome the corruptions of the world, whether from within or without, and deliver them from the secret snares of the enemy. Pour Thy grace into their hearts, and confirm and multiply in them the gifts of Thy Holy Spirit, that they may daily grow in grace and in the knowledge of our Lord Jesus Christ; and so, faithfully serving Thee here, may come to rejoice in Thy presence hereafter. Through the same Christ our Lord. Amen."
+    },
+    {
+      "id": "peace_prayer",
+      "title": "The Peace Prayer",
+      "text": "Lord, make me an instrument of Thy peace.\n\nWhere there is hatred, let me bring love; where there is offence, let me bring pardon; where there is discord, let me bring union; where there is error, let me bring truth; where there is doubt, let me bring faith; where there is despair, let me bring hope; where there is darkness, let me bring Thy light; where there is sadness, let me bring joy.\n\nO Master, grant that I may seek not so much to be consoled as to console, to be understood as to understand, to be loved as to love.\n\nFor it is in giving that we receive, in forgetting ourselves that we find, in pardoning that we are pardoned, and in dying that we rise again to eternal life. Amen."
     },
     {
       "id": "perpetual_help",
@@ -267,14 +472,54 @@
       "text": "O Mother of Perpetual Help, grant that I may ever invoke thy most powerful name, which is the protection of the living and the salvation of the dying.\n\nO purest Mary, O sweetest Mary, let thy name henceforth be ever on my lips. Delay not, O Blessed Lady, to rescue me whenever I call on thee; for in all my needs, in all my temptations, I shall never cease to call on thee, ever repeating thy sacred name, Mary, Mary.\n\nO what consolation, what sweetness, what confidence, what emotion fill my soul when I pronounce thy sacred name, or even only think of thee! I thank the Lord for having given thee, for my good, so sweet, so powerful, so lovely a name.\n\nBut I will not be content with merely pronouncing thy name: let my love for thee prompt me ever to hail thee Mother of Perpetual Help. Amen."
     },
     {
+      "id": "prayer_for_family",
+      "title": "For the Family",
+      "text": "O God of goodness and mercy, to Thy fatherly protection we commend our family, our household, and all that is ours. We give all into Thy love and keeping: fill this house with Thy blessings, as Thou didst fill the holy house of Nazareth with Thy presence. Keep far from us, before all else, the stain of sin; and do Thou alone reign among us by Thy law, by Thy holy love, and by the practice of every Christian virtue. May each of us obey Thee, love Thee, and follow in his own life Thy example, and that of Mary, Thy Mother and ours, and of St Joseph, Thy faithful guardian.\n\nKeep us and our house from every evil and misfortune; yet grant that we may be ever resigned to Thy holy will, even in the sorrows it shall please Thee to send us. Give us all the grace to live in perfect peace with one another and in charity toward our neighbour, and grant that each of us may so live as to receive the comfort of Thy holy Sacraments at the hour of death. O Jesus, bless us and keep us.\n\nO Mary, Mother of grace and mercy, defend us from the evil spirit, reconcile us to thy Son, and commend us to Him, that we may be made worthy of His promises.\n\nSt Joseph, foster-father of our Saviour, guardian of His holy Mother, head of the Holy Family, pray for us, bless us, and defend our home at all times.\n\nBless this house, O God the Father, Who didst create us; O God the Son, Who didst suffer for us upon the Cross; O God the Holy Spirit, Who didst sanctify us in Baptism. May the one God in three Persons keep our bodies, purify our minds, direct our hearts, and bring us all to everlasting life. Amen."
+    },
+    {
+      "id": "prayer_for_our_country",
+      "title": "For Our Country",
+      "text": "We pray Thee, O God of might, wisdom, and justice, through Whom authority is rightly administered, laws are enacted, and judgment decreed, assist with Thy Holy Spirit of counsel and fortitude the President of these United States, that his administration may be conducted in righteousness, and be eminently useful to Thy people over whom he presides; by encouraging due respect for virtue and religion; by a faithful execution of the laws in justice and mercy; and by restraining vice and immorality.\n\nLet the light of Thy divine wisdom direct the deliberations of Congress, and shine forth in all the proceedings and laws framed for our rule and government, so that they may tend to the preservation of peace, the promotion of national happiness, the increase of industry, sobriety, and useful knowledge; and may perpetuate to us the blessing of equal liberty.\n\nWe pray for his excellency, the governor of this state, for the members of the assembly, for all judges, magistrates, and other officers who are appointed to guard our political welfare, that they may be enabled, by Thy powerful protection, to discharge the duties of their respective stations with honesty and ability.\n\nWe recommend likewise, to Thy unbounded mercy, all our brethren and fellow citizens throughout the United States, that they may be blessed in the knowledge and sanctified in the observance of Thy most holy law; that they may be preserved in union, and in that peace which the world cannot give; and after enjoying the blessings of this life, be admitted to those which are eternal. Amen."
+    },
+    {
+      "id": "prayer_for_priests",
+      "title": "For Priests",
+      "text": "Let us pray.\n\nAlmighty and everlasting God, by Whose Spirit the whole body of the Church is sanctified and governed: hear our supplications for all its orders, that by the gift of Thy grace Thou mayest be faithfully served by every rank of them. Through our Lord Jesus Christ, Thy Son, Who liveth and reigneth with Thee in the unity of the same Holy Spirit, God, world without end.\n\nAmen."
+    },
+    {
       "id": "prayer_for_the_pope",
       "title": "Prayer for the Pope",
       "text": "Let us pray for our Pope. The Lord preserve him, and give him life, and make him blessed upon the earth, and deliver him not up to the will of his enemies.\n\nLet us pray. O God, the Shepherd and Ruler of all the faithful, look mercifully upon Thy servant, whom Thou hast set over Thy Church as its chief shepherd; grant him, we beseech Thee, by word and example to profit those over whom he is set, that together with the flock committed to him he may come to life everlasting. Through Christ our Lord. Amen."
     },
     {
+      "id": "prayer_for_the_sick",
+      "title": "For the Sick",
+      "text": "Look down, O Lord, upon Thy servant, who labours under bodily infirmity, and refresh the soul which Thou hast created; that, being bettered by Thy chastisements, he may know himself saved by Thy healing. Through Christ our Lord. Amen."
+    },
+    {
+      "id": "prayer_for_travel",
+      "title": "Before a Journey",
+      "text": "In the way of peace and prosperity may the almighty and merciful Lord direct us: and may the Angel Raphael accompany us on the way, that we may return home in peace, in safety and in joy.\n\nSave Thy servants. Who hope in Thee, O my God. Send us help, O Lord, from the sanctuary. And defend us out of Sion. Be unto us, O Lord, a tower of strength. From the face of the enemy. Show us, O Lord, Thy ways. And teach us Thy paths. God hath given His angels charge over thee. To keep thee in all thy ways. O Lord, hear my prayer. And let my cry come unto Thee.\n\nLet us pray.\n\nO God, Who didst make the children of Israel to walk dry-shod through the midst of the sea, and Who didst open to the three Wise Men the way to Thee by the guiding of a star: grant us, we beseech Thee, a prosperous journey and a peaceful time; that, with Thy holy Angel for our companion, we may happily come to the place to which we go, and at the last to the haven of everlasting salvation.\n\nBe present, we beseech Thee, O Lord, to our supplications, and dispose the way of Thy servants in the prosperity of Thy salvation; that amid all the changes of this way and of this life, we may ever be protected by Thy help. Through our Lord Jesus Christ, Thy Son, Who liveth and reigneth with Thee in the unity of the Holy Spirit, God, world without end. Amen.\n\nLet us go forth in peace. In the name of the Lord. Amen."
+    },
+    {
+      "id": "precious_blood_offering",
+      "title": "Offering of the Precious Blood",
+      "text": "Eternal Father, I offer Thee the Most Precious Blood of Jesus Christ in satisfaction for my sins, and for the needs of Holy Church.\n\nAmen."
+    },
+    {
+      "id": "radiating_christ",
+      "title": "Prayer for Radiating Christ",
+      "text": "Dear Jesus, help me to carry Thy fragrance wherever I go.\n\nFill my soul with Thy spirit and Thy life. Enter into my whole being and take hold of it so wholly that my life may be only a shining of Thine.\n\nShine through me, and dwell in me so, that every soul I come near may feel Thy presence in mine. Let them look up and see no longer me, but only Jesus.\n\nStay with me, and then I shall begin to shine as Thou shinest, so to shine as to be a light to others. The light, O Jesus, will be all from Thee; none of it will be mine. It will be Thou shining on others through me.\n\nLet me thus praise Thee in the way Thou lovest best, by shining on those around me. Let me preach Thee without preaching, not by words but by my example, by the drawing power and the sympathy of what I do, by the plain fullness of the love my heart bears for Thee. Amen."
+    },
+    {
       "id": "regina_caeli",
-      "title": "The Regina Cæli",
+      "title": "Queen of Heaven",
       "text": "O Queen of heaven, rejoice, alleluia. For He whom thou didst merit to bear, alleluia, hath risen, as He said, alleluia. Pray for us to God, alleluia.\n\nRejoice and be glad, O Virgin Mary, alleluia. For the Lord is truly risen, alleluia.\n\nLet us pray.\n\nO God, who by the Resurrection of Thy Son, our Lord Jesus Christ, didst vouchsafe to give joy to the world; grant, we beseech Thee, that through His Mother, the Virgin Mary, we may obtain the joys of everlasting life. Through the same Christ our Lord. Amen."
+    },
+    {
+      "id": "reparation_sacred_heart",
+      "title": "Act of Reparation to the Sacred Heart",
+      "text": "O most sweet Jesus, whose love poured out upon men is repaid so ungratefully with forgetfulness, neglect and contempt, behold us prostrate before Thine altars, striving to make amends by a special honour for the wicked coldness of men and the injuries with which Thy most loving Heart is everywhere wounded.\n\nYet, mindful that we too have at times not been free of such unworthiness, and moved therefore by the deepest sorrow, we implore first Thy mercy for ourselves, ready to atone by a willing expiation not only for the sins we ourselves have committed, but also for those of the men who, straying far from the way of salvation, either refuse, obstinate in their unbelief, to follow Thee as their shepherd and leader, or, trampling on the promises of their baptism, have cast off the most sweet yoke of Thy law.\n\nWhile we strive to atone for all these lamentable crimes, we resolve to make amends for each of them: for immodesty and shamefulness in life and dress, for the many snares of corruption laid for the souls of the innocent, for the profaning of feast days, for the hateful blasphemies hurled against Thee and Thy Saints, for the insults heaped upon Thy Vicar and the order of priests, for the neglect of the very Sacrament of divine love and its profanation by horrible sacrileges, and lastly for the public sins of nations that resist the rights and the teaching authority of the Church which Thou hast founded.\n\nWould that we could wash away these crimes with our own blood! Meanwhile, to make amends for the honour of God that has been wronged, we offer Thee that same satisfaction which Thou didst once offer to Thy Father on the Cross, and which Thou dost go on renewing daily upon the altars; we offer it joined with the expiations of the Virgin Mother, of all the Saints, and of the faithful who are devout.\n\nAnd we promise with all our heart that, so far as in us lies, with the help of Thy grace, we will make amends for our own past sins and those of others, and for the coldness shown to so great a love, by firm faith, by purity of life and conduct, and by perfect keeping of the law of the Gospel, above all of charity; that we will hinder with all our strength the injuries yet to be done to Thee; and that we will call as many as we can to follow Thee.\n\nReceive, we beseech Thee, O most gracious Jesus, through the intercession of the Blessed Virgin Mary, the Reparatrix, the willing homage of this expiation; and keep us, by the great gift of perseverance, most faithful even unto death in our duty and in Thy service, so that at last we may all come to that fatherland where Thou with the Father and the Holy Spirit livest and reignest, God, for ever and ever. Amen."
     },
     {
       "id": "requiem_aeternam",
@@ -282,14 +527,99 @@
       "text": "Eternal rest grant unto them, O Lord. And let perpetual light shine upon them. May they rest in peace. Amen."
     },
     {
+      "id": "sacred_heart_trust",
+      "title": "Most Sacred Heart of Jesus",
+      "text": "Most Sacred Heart of Jesus, I place all my trust in Thee."
+    },
+    {
+      "id": "salve_mater",
+      "title": "Hail, Mother of Mercy",
+      "text": "Hail, Mother of mercy, Mother of God and Mother of pardon, Mother of hope and Mother of grace, Mother full of holy gladness. O Mary!\n\nHail, glory of the human race, hail, Virgin worthier than all the rest, who surpassest all virgins and sittest higher among those above. O Mary!\n\nHail, happy Virgin who gavest birth: for He Who sits at the Father's right hand, ruling the heaven, the earth and the sky, enclosed Himself within thy womb. O Mary!\n\nBe thou, Mother, our solace; be thou, O Virgin, our joy; and at the last, after this exile, join us glad to the choirs of heaven. O Mary!"
+    },
+    {
+      "id": "secret_of_sanctity",
+      "title": "The Secret of Sanctity",
+      "text": "O Holy Spirit, soul of my soul, I adore Thee. Enlighten me, guide me, strengthen me, console me. Tell me what I ought to do; give me Thy commands. I promise to submit myself to all that Thou desirest of me, and to accept all that Thou permittest to befall me: only make known to me Thy will. Amen."
+    },
+    {
+      "id": "seven_gifts",
+      "title": "Prayer for the Seven Gifts of the Holy Spirit",
+      "text": "O Lord Jesus Christ, Who before Thou didst ascend into heaven didst promise to send the Holy Spirit to finish Thy work in the souls of Thy disciples, grant that the same Holy Spirit may perfect in me the work of Thy grace and Thy love.\n\nGrant me the Spirit of Wisdom, that I may despise the passing things of this world and long only for the things that are eternal; the Spirit of Understanding, to enlighten my mind with the light of Thy truth; the Spirit of Counsel, that I may choose always the surest way of pleasing Thee; the Spirit of Fortitude, that I may bear my cross with Thee and overcome every hindrance to my salvation; the Spirit of Knowledge, that I may know Thee and know myself; the Spirit of Piety, that I may find Thy service sweet; and the Spirit of Fear, that I may be filled with loving reverence for Thee and dread above all to displease Thee.\n\nMark me, dear Lord, with the sign of Thy true disciples, and fill me in all things with Thy Spirit. Amen."
+    },
+    {
       "id": "spiritual_communion",
       "title": "Act of Spiritual Communion",
       "text": "My Jesus, I believe that Thou art present in the Most Holy Sacrament. I love Thee above all things, and I desire to receive Thee into my soul. Since I cannot now receive Thee sacramentally, come at least spiritually into my heart. I embrace Thee as if Thou wert already there, and unite myself wholly to Thee. Never permit me to be separated from Thee. Amen."
     },
     {
+      "id": "st_alphonsus_visit",
+      "title": "Prayer for a Visit to the Blessed Sacrament",
+      "text": "My Lord Jesus Christ, Who, for the love which Thou bearest to men, remainest night and day in this Sacrament, full of compassion and of love, awaiting, calling and welcoming all who come to visit Thee: I believe that Thou art present in the Sacrament of the Altar. I adore Thee from the abyss of my nothingness, and I thank Thee for all the graces which Thou hast bestowed upon me, and in particular for having given me Thyself in this Sacrament, for having given me Thy most holy Mother Mary for my advocate, and for having called me to visit Thee in this church.\n\nI now salute Thy most loving Heart, and this for three ends: first, in thanksgiving for this great gift; secondly, to make amends to Thee for all the outrages which Thou receivest in this Sacrament from all Thine enemies; thirdly, I intend by this visit to adore Thee in all the places on earth in which Thou art the least revered and the most abandoned.\n\nMy Jesus, I love Thee with my whole heart. I grieve for having hitherto so many times offended Thy infinite goodness. I purpose, by the help of Thy grace, never more to offend Thee; and at this moment, miserable as I am, I consecrate my whole being to Thee. I give Thee my entire will, all my affections and desires, and all that I have. From this day forward dispose of me and of all that belongs to me as it seems good to Thee. All that I ask of Thee and desire is Thy holy love, final perseverance, and the perfect accomplishment of Thy will.\n\nI recommend to Thee the souls in purgatory, but especially those who had the greatest devotion to the most Blessed Sacrament and to the most blessed Virgin Mary; and I also recommend to Thee all poor sinners. My dear Saviour, I unite all my affections with the affections of Thy most loving Heart; and I offer them, thus united, to Thy Eternal Father, and beseech Him in Thy name to vouchsafe, for Thy love, to accept and grant them. Amen."
+    },
+    {
+      "id": "st_ambrose_before_mass",
+      "title": "Prayer of St Ambrose before Mass",
+      "text": "O High Priest and true Pontiff, Who didst offer Thyself to God the Father, a pure and spotless victim, upon the altar of the cross for us miserable sinners; Who didst give us Thy flesh to eat and Thy blood to drink, and didst ordain this mystery in the power of the Holy Spirit, saying: As often as you do these things, you shall do them in memory of Me:\n\nI beseech Thee by that same blood of Thine, the great price of our salvation; I beseech Thee by that wonderful and unspeakable love with which Thou didst vouchsafe so to love us, miserable and unworthy as we are, that Thou didst wash us from our sins in Thy blood:\n\nteach me, Thine unworthy servant, whom, among Thy other gifts, Thou hast vouchsafed to call to the priestly office, by no merits of mine but by the sole condescension of Thy mercy; teach me, by Thy Holy Spirit, to handle so great a mystery with that reverence and honour, that devotion and fear, which are due and fitting. Amen."
+    },
+    {
+      "id": "st_anne",
+      "title": "Prayer to St Anne",
+      "text": "O good St Anne, mother of the Virgin Mary and grandmother of our Saviour, God chose thee to bring into the world her who was to be the Mother of His Son. Full of trust, I turn to thee and put myself under thy care.\n\nTake my family into thy keeping. Teach us to love Jesus and Mary as thou didst love them, and obtain for us the grace we ask of thee now.\n\nBe with us in life, and at the hour of death bring us to Jesus and Mary, that with thee we may praise God for ever. Amen."
+    },
+    {
+      "id": "st_anthony",
+      "title": "Prayer to St Anthony",
+      "text": "O holy St Anthony, gentlest of saints, for the love thou didst bear to God and the charity thou didst show His creatures, thou wast given on earth the power to work wonders. Thy word was ready for all who came to thee in sorrow or in need, and the Lord answered it.\n\nTrusting in this, I come to thee and beg thee to obtain for me what I ask.\n\nIf what I seek should need a miracle, thou art the saint of miracles.\n\nO kind and loving St Anthony, whose heart was ever tender to men, speak my request to the Child Jesus, whom thou didst hold in thine arms, and my thanks shall be thine for ever. Amen."
+    },
+    {
+      "id": "st_benedict_medal",
+      "title": "The Verses of the St Benedict Medal",
+      "text": "May the holy Cross be my light; let not the dragon be my guide.\n\nBegone, Satan; never counsel me to vanities. Evil is the cup thou offerest; drink thou thine own poison."
+    },
+    {
+      "id": "st_dominic_o_lumen",
+      "title": "O Light of the Church",
+      "text": "O light of the Church, teacher of the truth, rose of patience, ivory of chastity, the water of wisdom thou hast poured freely; preacher of grace, join us to the blessed."
+    },
+    {
+      "id": "st_francis_before_crucifix",
+      "title": "Prayer of St Francis before the Crucifix",
+      "text": "Most high and glorious God, enlighten the darkness of my heart, and give me right faith, sure hope and perfect charity, sense and knowledge, O Lord, that I may fulfil Thy holy and true command. Amen."
+    },
+    {
+      "id": "st_gertrude",
+      "title": "St Gertrude's Offering for the Holy Souls",
+      "text": "Eternal Father, I offer Thee the most Precious Blood of Thy Divine Son Jesus, together with all the Masses offered this day throughout the world, for all the holy souls in purgatory, for sinners in every place, for sinners in the universal Church, and for those of my own home and my own family. Amen."
+    },
+    {
+      "id": "st_joseph_happy_death",
+      "title": "To St Joseph for a Happy Death",
+      "text": "O blessed Joseph, who didst breathe thy last in the arms of Jesus and Mary, obtain for me this grace, I beseech thee: that I may die as thou didst, with Jesus and Mary beside me.\n\nBe with me in my last struggle, keep me from the snares of the enemy, and when my soul goes forth from this life, present it to my Saviour, that I may praise Him with thee for ever. Amen.\n\nJesus, Mary and Joseph, I give you my heart and my soul. Jesus, Mary and Joseph, assist me in my last agony. Jesus, Mary and Joseph, may I breathe forth my soul in peace with you."
+    },
+    {
+      "id": "st_joseph_pray",
+      "title": "St Joseph, Pray for Us",
+      "text": "St Joseph, pray for us."
+    },
+    {
+      "id": "st_joseph_workers",
+      "title": "To St Joseph, Model of Workers",
+      "text": "Glorious St Joseph, model of all who are given to labour, obtain for me the grace to work in a spirit of penance, in expiation of my many sins;\n\nto work with a good conscience, putting the call of duty above my own inclinations; to work with thankfulness and joy, counting it an honour to use and to increase, by my labour, the gifts I have received from God;\n\nto work with order, peace, moderation and patience, never shrinking from weariness or trouble; to work above all with a pure intention and with detachment from self, keeping always before my eyes death, and the account I must give of time lost, of talents unused, of good left undone, and of empty pride in success, so fatal to the work of God.\n\nAll for Jesus, all through Mary, all after thine example, O Patriarch Joseph. Such shall be my watchword in life and in death. Amen."
+    },
+    {
+      "id": "st_jude",
+      "title": "Prayer to St Jude",
+      "text": "O holy St Jude, Apostle and Martyr, kinsman of our Lord, great in virtue and rich in miracles, faithful helper of all who call on thee in need: to thee I come from the depth of my heart, and humbly ask thee, to whom God has given so great a power, to come to my aid.\n\nHelp me now in my present and urgent trouble.\n\nIn return I promise to make thy name known, and to have thee honoured and invoked. Pray for me, that I may never lose hope. Amen."
+    },
+    {
       "id": "st_patrick_breastplate",
       "title": "St Patrick's Breastplate",
       "text": "Christ with me, Christ before me, Christ behind me, Christ within me, Christ beneath me, Christ above me, Christ at my right hand, Christ at my left, Christ as I lie down, Christ as I sit, Christ as I rise, Christ in the heart of all who think of me, Christ in the mouth of all who speak of me, Christ in every eye that looks on me, Christ in every ear that hears me."
+    },
+    {
+      "id": "st_peregrine",
+      "title": "Prayer to St Peregrine",
+      "text": "O glorious St Peregrine, who didst answer the call of Mary and leave the world to serve her Son in the Order of her Servants; who didst bear in patience a painful sickness, and wast healed by the hand of Christ reaching down from the Cross: look with pity on all who suffer.\n\nObtain for me, if it be God's will, relief from this illness, and grace to bear what I must bear with patience and with trust.\n\nPray for us, that in health and in sickness we may love God, and at the last come to praise Him with thee for ever. Amen."
     },
     {
       "id": "st_richard",
@@ -298,7 +628,7 @@
     },
     {
       "id": "stabat_mater",
-      "title": "The Stabat Mater",
+      "title": "At the Cross Her Station Keeping",
       "text": "The Mother stood in sorrow, weeping beside the Cross whereon her Son was hanging.\n\nThrough her soul, lamenting, saddened and grieving, the sword hath passed.\n\nO how sad and how afflicted was that blessed one, the Mother of the Only-begotten.\n\nShe mourned and she grieved, the loving Mother, as she beheld the torments of her glorious Son.\n\nWho is the man that would not weep if he should see the Mother of Christ in so great anguish?\n\nWho could keep from sorrow, beholding the Mother of Christ grieving with her Son?\n\nFor the sins of His own people she saw Jesus in torments, and given over to the scourge.\n\nShe saw her own sweet Son forsaken in His dying, as He gave up His spirit.\n\nO Mother, fount of love, let me feel the force of thy sorrow, make me mourn with thee.\n\nMake my heart to burn in loving Christ my God, that I may be pleasing to Him.\n\nHoly Mother, do this for me: fix the wounds of the Crucified deep within my heart.\n\nOf thy wounded Son, Who deigned to suffer so much for me, share with me the pains.\n\nLet me weep with thee in love, and grieve with the Crucified, as long as I shall live.\n\nTo stand beside the Cross with thee, and to join myself to thee in lamenting, is my desire.\n\nVirgin, most glorious of virgins, be not bitter to me now; let me lament with thee.\n\nLet me bear the death of Christ, make me a sharer in His Passion, and keep His wounds in mind.\n\nLet me be wounded with His wounds, let me be inebriated with the Cross and with the Blood of thy Son.\n\nLest I burn, enkindled by the flames, by thee, O Virgin, may I be defended in the day of judgement.\n\nO Christ, when I must go from hence, grant that through Thy Mother I may come to the palm of victory.\n\nWhen my body dies, grant that to my soul be given the glory of paradise. Amen."
     },
     {
@@ -318,12 +648,12 @@
     },
     {
       "id": "tantum_ergo",
-      "title": "Tantum Ergo",
+      "title": "Down in Adoration Falling",
       "text": "So great a Sacrament, therefore, let us venerate, bowing low; and let the former teaching give way to the new rite; let faith provide its aid for the failing of the senses.\n\nTo the Begetter and the Begotten be praise and jubilation, salvation, honour, and might also, and blessing be to Them; to Him Who proceedeth from Both be equal praise. Amen.\n\nThou didst give them bread from heaven. Containing in itself all delight.\n\nLet us pray.\n\nO God, Who under a wonderful Sacrament hast left us a memorial of Thy Passion, grant us, we beseech Thee, so to venerate the sacred mysteries of Thy Body and Blood, that we may continually feel within ourselves the fruit of Thy redemption. Who livest and reignest world without end.\n\nAmen."
     },
     {
       "id": "te_deum",
-      "title": "The Te Deum",
+      "title": "We Praise Thee, O God",
       "text": "We praise Thee, O God: we acknowledge Thee to be the Lord. Thee, the eternal Father, all the earth doth worship. To Thee all the Angels, to Thee the heavens and all the Powers, to Thee the Cherubim and Seraphim cry out with unceasing voice: Holy, Holy, Holy, Lord God of hosts. The heavens and the earth are full of the majesty of Thy glory.\n\nThee the glorious choir of the Apostles, Thee the praiseworthy company of the Prophets, Thee the white-robed army of Martyrs doth praise. Thee the holy Church throughout the whole world doth confess: the Father of boundless majesty; Thine adorable, true and only Son; and the Holy Ghost, the Paraclete.\n\nThou, O Christ, art the King of glory. Thou art the everlasting Son of the Father. Thou, when Thou wouldst take manhood upon Thee to set man free, didst not shrink from the Virgin's womb. Thou, having overcome the sting of death, didst open the kingdom of heaven to them that believe. Thou sittest at the right hand of God, in the glory of the Father. Thou art believed to be the Judge who shall come.\n\nWe beseech Thee, therefore, come to the help of Thy servants, whom Thou hast redeemed with Thy precious blood. Make them to be numbered with Thy Saints in glory everlasting.\n\nSave Thy people, O Lord, and bless Thine inheritance. Rule them, and lift them up for ever. Every day we bless Thee. And we praise Thy name for ever, and for ever and ever. Deign, O Lord, to keep us this day without sin. Have mercy on us, O Lord, have mercy on us. Let Thy mercy, O Lord, be upon us, as we have hoped in Thee. In Thee, O Lord, have I hoped: let me not be confounded for ever."
     },
     {
@@ -343,8 +673,13 @@
     },
     {
       "id": "totus_tuus",
-      "title": "Totus Tuus",
+      "title": "All Yours",
       "text": "I am all Thine, and all that I have is Thine, O most loving Jesus, through Mary, Thy most holy Mother."
+    },
+    {
+      "id": "transfige",
+      "title": "Prayer of St Bonaventure after Mass",
+      "text": "Pierce, O most sweet Lord Jesus, the inmost marrow of my soul with the most sweet and healing wound of Thy love, with true, serene and most holy apostolic charity, that my soul may ever languish and melt with love and longing for Thee alone; that it may yearn for Thee and faint for Thy courts, and long to be dissolved and to be with Thee.\n\nGrant that my soul may hunger after Thee, the Bread of Angels, the refreshment of holy souls, our daily and supersubstantial bread, having all sweetness and savour and every delight of taste.\n\nMay my heart ever hunger after and feed upon Thee, upon Whom the angels desire to look, and may my inmost soul be filled with the sweetness of Thy savour; may it ever thirst for Thee, the fountain of life, the fountain of wisdom and knowledge, the fountain of eternal light, the torrent of pleasure, the fulness of the house of God;\n\nmay it ever seek Thee, ever find Thee, tend to Thee, come to Thee, meditate upon Thee, speak of Thee, and do all things to the praise and glory of Thy name, with humility and discretion, with love and delight, with readiness and affection, and with perseverance unto the end;\n\nand be Thou alone ever my hope, my whole confidence, my riches, my delight, my pleasure, my joy, my rest and tranquillity, my peace, my sweetness, my fragrance, my sweet savour, my food, my refreshment, my refuge, my help, my wisdom, my portion, my possession and my treasure, in Whom may my mind and my heart be ever fixed and firm and rooted immovably. Amen."
     },
     {
       "id": "veni_creator",

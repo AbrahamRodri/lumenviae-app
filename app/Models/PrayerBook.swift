@@ -254,6 +254,19 @@ enum PrayerBook {
             PrayerBookTexts.ourLord5,
             PrayerBookTexts.ourLord6,
             PrayerBookTexts.day,
+            PrayerBookTexts.mary2,
+            PrayerBookTexts.jesus2,
+            PrayerBookTexts.jesus3,
+            PrayerBookTexts.jesus4,
+            PrayerBookTexts.jesus5,
+            PrayerBookTexts.eucharist2,
+            PrayerBookTexts.eucharist3,
+            PrayerBookTexts.saints2,
+            PrayerBookTexts.saints3,
+            PrayerBookTexts.saints4,
+            PrayerBookTexts.saints5,
+            PrayerBookTexts.saints6,
+            PrayerBookTexts.day2,
             bundled
         ]
         for prayer in parts.joined() where all[prayer.id] == nil {
@@ -303,6 +316,16 @@ enum PrayerBook {
                            note: "A litany to the Holy Name, approved for the whole Church in 1862."),
         BookPrayer.bundled("o_jesus_living_in_mary", origin: "Fr Charles de Condren · 17th century",
                            note: "Said each day of the 33-day preparation to give yourself to Jesus through Mary, on the Consecrate tab.")
+    ].compactMap { $0 } + consecrationOnly
+
+    /// The consecration's English-only prayers the book prints too
+    private static let consecrationOnly: [BookPrayer] = [
+        ConsecrationData.allPrayers["litany_holy_ghost"].map { prayer in
+            BookPrayer(id: prayer.id, title: "Litany of the Holy Spirit", latinTitle: nil,
+                       origin: "Traditional",
+                       note: "Said in the first days of the 33-day preparation, asking the Holy Spirit to come.",
+                       english: prayer.content, latin: nil)
+        }
     ].compactMap { $0 }
 
     // MARK: Chapters
@@ -326,7 +349,10 @@ enum PrayerBook {
                         "alma_redemptoris", "ave_regina_caelorum", "memorare", "magnificat",
                         "ave_maris_stella", "stabat_mater", "tota_pulchra", "flos_carmeli",
                         "litany_loreto", "o_domina_mea", "perpetual_help", "three_hail_marys",
-                        "miraculous_medal", "mary_after_communion", "sorrows_closing_prayer"],
+                        "miraculous_medal", "mary_after_communion", "sorrows_closing_prayer",
+                        "our_lady_of_good_counsel", "our_lady_of_lourdes", "immaculate_heart",
+                        "our_lady_of_sorrows", "litany_seven_sorrows", "mary_help_of_christians",
+                        "our_lady_of_mount_carmel", "inviolata", "salve_mater"],
             topic: "Prayers to Mary",
             searchWords: ["our lady", "the virgin", "virgin mary", "blessed virgin", "marian", "mother of god"]
         ),
@@ -335,7 +361,11 @@ enum PrayerBook {
             icon: "ch-chi-rho",
             epigraph: "To Christ, Who is the way to the Father.",
             prayerIDs: ["anima_christi", "en_ego", "jesus_prayer", "st_richard", "suscipe",
-                        "o_jesus_living_in_mary", "litany_holy_name", "litany_sacred_heart"],
+                        "o_jesus_living_in_mary", "litany_holy_name", "litany_sacred_heart",
+                        "consecration_sacred_heart", "reparation_sacred_heart", "efficacious_novena",
+                        "christ_the_king", "litany_precious_blood", "precious_blood_offering",
+                        "golden_arrow", "divine_mercy_chaplet", "infant_of_prague", "peace_prayer",
+                        "generosity_ignatius", "abandonment_foucauld", "nada_te_turbe", "radiating_christ"],
             topic: "Prayers to Jesus",
             searchWords: ["our lord", "christ", "sacred heart", "holy name"]
         ),
@@ -343,9 +373,11 @@ enum PrayerBook {
             id: "sacrament", numeral: "IV", title: "The Eucharist", latinTitle: "De Sanctissimo Sacramento",
             icon: "ch-monstrance",
             epigraph: "Prayers to Jesus, present in the Host, at Mass and before the altar.",
-            prayerIDs: ["aquinas_before_mass", "spiritual_communion", "adoro_te", "ave_verum",
+            prayerIDs: ["aquinas_before_mass", "st_ambrose_before_mass", "domine_non_sum_dignus",
+                        "spiritual_communion", "adoro_te", "ave_verum",
                         "o_sacrum_convivium", "o_salutaris", "tantum_ergo", "divine_praises",
-                        "aquinas_after_mass"],
+                        "aquinas_after_mass",
+                        "transfige", "st_alphonsus_visit", "angels_prayer_fatima", "litany_blessed_sacrament"],
             topic: "Prayers of the Eucharist",
             searchWords: ["blessed sacrament", "holy communion", "communion", "adoration", "benediction", "the mass"]
         ),
@@ -353,7 +385,8 @@ enum PrayerBook {
             id: "holy_ghost", numeral: "V", title: "The Holy Spirit", latinTitle: "De Spiritu Sancto",
             icon: "ch-dove",
             epigraph: "Prayers asking the Holy Spirit for light and help.",
-            prayerIDs: ["come_holy_ghost", "veni_creator", "veni_sancte_spiritus"],
+            prayerIDs: ["come_holy_ghost", "veni_creator", "veni_sancte_spiritus",
+                        "breathe_in_me", "seven_gifts", "secret_of_sanctity", "litany_holy_ghost"],
             topic: "Prayers to the Holy Spirit",
             searchWords: ["holy ghost", "the holy ghost", "paraclete", "pentecost"]
         ),
@@ -362,7 +395,10 @@ enum PrayerBook {
             icon: "lv-saint",
             epigraph: "The friends of God, asked to pray for us.",
             prayerIDs: ["angele_dei", "st_michael_prayer", "ad_te_beate_ioseph", "litany_st_joseph",
-                        "st_patrick_breastplate"],
+                        "st_patrick_breastplate",
+                        "memorare_st_joseph", "st_joseph_workers", "st_joseph_happy_death", "st_anne",
+                        "st_anthony", "st_jude", "st_peregrine", "st_benedict_medal", "st_dominic_o_lumen",
+                        "st_francis_before_crucifix", "litany_of_the_saints"],
             topic: "Prayers to the Angels and Saints",
             searchWords: ["angels", "saints", "guardian angel", "archangel"]
         ),
@@ -371,7 +407,10 @@ enum PrayerBook {
             icon: "lv-hourglass",
             epigraph: "On waking, at meals, in the evening, and at the day's end.",
             prayerIDs: ["morning_offering", "benedictus", "grace_before", "grace_after",
-                        "visita_quaesumus", "examen", "in_manus_tuas", "nunc_dimittis"],
+                        "visita_quaesumus", "examen", "in_manus_tuas", "nunc_dimittis",
+                        "actiones_nostras", "aquinas_before_study", "prayer_for_travel",
+                        "prayer_for_family", "parents_for_children", "prayer_for_the_sick", "happy_death",
+                        "newman_definite_service", "lead_kindly_light"],
             topic: "Prayers through the Day",
             searchWords: ["daily prayers", "morning", "evening", "bedtime", "meals", "grace"]
         ),
@@ -388,7 +427,8 @@ enum PrayerBook {
             id: "departed", numeral: "IX", title: "For Those Who Have Died", latinTitle: "Pro Defunctis",
             icon: "ch-candle",
             epigraph: "It is a holy and wholesome thought to pray for the dead.",
-            prayerIDs: ["requiem_aeternam", "de_profundis", "fidelium_deus"],
+            prayerIDs: ["requiem_aeternam", "de_profundis", "fidelium_deus",
+                        "deceased_parents", "st_gertrude"],
             topic: "Prayers for Those Who Have Died",
             searchWords: ["for the dead", "the dead", "the faithful departed", "departed", "holy souls",
                           "purgatory", "funeral"]
@@ -397,7 +437,8 @@ enum PrayerBook {
             id: "church", numeral: "X", title: "The Church", latinTitle: "Pro Ecclesia",
             icon: "ch-church",
             epigraph: "For the Pope, for the Church, and in thanksgiving for both.",
-            prayerIDs: ["prayer_for_the_pope", "te_deum", "st_michael_prayer", "rosary_closing_prayer"],
+            prayerIDs: ["prayer_for_the_pope", "te_deum", "st_michael_prayer", "rosary_closing_prayer",
+                        "prayer_for_priests", "conversion_of_sinners", "da_pacem", "prayer_for_our_country"],
             topic: "Prayers for the Church",
             searchWords: ["the pope", "holy father", "thanksgiving"]
         ),
@@ -406,7 +447,9 @@ enum PrayerBook {
             icon: "lv-procession-cross",
             epigraph: "Titles called out one after another, and a response to every one.",
             prayerIDs: ["litany_loreto", "litany_holy_name", "litany_sacred_heart", "litany_st_joseph",
-                        "litany_of_humility"],
+                        "litany_of_humility",
+                        "litany_of_the_saints", "litany_holy_ghost", "litany_precious_blood",
+                        "litany_blessed_sacrament", "litany_seven_sorrows"],
             topic: "Litanies",
             searchWords: ["the litanies", "litany"]
         ),
@@ -415,7 +458,10 @@ enum PrayerBook {
             icon: "lv-dart",
             epigraph: "A breath of prayer, said in passing through the day.",
             prayerIDs: ["jmj", "sweet_heart", "jesus_meek", "my_jesus_mercy", "pardon_prayer",
-                        "miraculous_medal", "blessed_be_conception", "totus_tuus", "requiem_aeternam"],
+                        "miraculous_medal", "blessed_be_conception", "totus_tuus", "requiem_aeternam",
+                        "my_god_and_my_all", "my_lord_and_my_god", "jesus_i_trust_in_thee",
+                        "sacred_heart_trust", "my_jesus_i_love_thee", "o_sacrament_most_holy",
+                        "holy_spirit_enlighten", "st_joseph_pray", "jmj_heart_and_soul"],
             topic: "Short Prayers",
             searchWords: ["ejaculations", "aspirations", "aspiration"]
         )
@@ -814,6 +860,22 @@ enum PrayerBook {
     /// The other names a prayer is looked for by
     static let prayerSearchWords: [String: [String]] = [
         "litany_loreto": ["litany of loreto", "loretto", "litany of our lady"],
+        "peace_prayer": ["prayer of st francis", "instrument of thy peace", "instrument of your peace"],
+        "divine_mercy_chaplet": ["divine mercy", "chaplet", "st faustina"],
+        "efficacious_novena": ["novena", "padre pio"],
+        "litany_of_the_saints": ["all saints", "litaniae sanctorum"],
+        "litany_seven_sorrows": ["our lady of sorrows", "seven sorrows"],
+        "st_anthony": ["lost things", "anthony of padua"],
+        "st_jude": ["hopeless cases", "desperate cases"],
+        "st_peregrine": ["cancer"],
+        "prayer_for_travel": ["journey", "travel", "itinerarium"],
+        "aquinas_before_study": ["study", "students", "exams"],
+        "prayer_for_the_sick": ["sick", "illness", "healing"],
+        "lead_kindly_light": ["newman"],
+        "newman_definite_service": ["newman", "purpose"],
+        "christ_the_king": ["consecration to christ the king"],
+        "consecration_sacred_heart": ["sacred heart", "enthronement"],
+        "st_benedict_medal": ["vade retro satana", "benedict medal", "exorcism"],
         "hail_holy_queen": ["salve regina"],
         "st_michael_prayer": ["st michael", "michael the archangel"],
         "ad_te_beate_ioseph": ["st joseph", "prayer to st joseph"],

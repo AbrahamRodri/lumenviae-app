@@ -2160,7 +2160,7 @@ write concurrent code here:
   Angelus, offered once) and every existing door to a prayer
   (`.devotionPrayer(id:)` opens `BookPrayerView`) are unchanged.
   `Models/PrayerBook.swift` is the model: twelve **chapters**, named in
-  plain words (Basic Prayers, Mary — twenty prayers — Jesus, the
+  plain words (Basic Prayers, Mary — twenty-nine prayers — Jesus, the
   Eucharist, the Holy Spirit, Angels and Saints, Through the Day,
   Confession, For Those Who Have Died, the Church, Litanies, Short
   Prayers), each
@@ -2177,7 +2177,18 @@ write concurrent code here:
   `PrayerText`'s grammar, English always and Latin only where the Church
   prays in Latin, paired line for line; the Rosary's and the
   consecration's prayers are joined in by id (`BookPrayer.bundled`),
-  never copied. Hymn translations are plain literal renderings, not
+  never copied (the consecration's English-only Litany of the Holy
+  Spirit through `consecrationOnly`). The Oct 2026 additions (the files
+  named `…2` to `…6`, about 60 prayers: the Sacred Heart's acts, Christ
+  the King, the Precious Blood, the Divine Mercy chaplet, the saints'
+  prayers, the Litany of the Saints and four more litanies, prayers for
+  the day, the Church and the dead, and short aspirations) each name
+  their sources in the file's header: a public-domain edition (the 1910
+  Raccolta, the Ritual, the Missal, Newman), or our own literal
+  rendering from the original Latin, French, Spanish or Polish where the
+  English in print is modern. None is a new composition; ones that
+  would have been were left out. Most were written from memory of the
+  originals and await a check against a scan. Hymn translations are plain literal renderings, not
   Caswall or Hopkins.
 
   **The words are plain** (the plain-language pass, Oct 2026,
@@ -2254,7 +2265,7 @@ write concurrent code here:
   "Sung at night, Pentecost to Advent") — left out in the Easter season
   while Queen of Heaven is already the hour card's prayer — her
   three best-known prayers (`PrayerBook.bestKnownMarianIDs`) as ruled
-  rows (the Memorare with its English beneath), and ALL 20 PRAYERS TO
+  rows (the Memorare with its English beneath), and ALL 29 PRAYERS TO
   MARY; then Saved, the prayers saved with the bookmark at the head of
   a prayer's page, as small outlined cards of one height the ribbon
   hangs from (a hold offers Remove from Saved). Lists name a prayer as people say it
