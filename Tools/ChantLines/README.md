@@ -114,6 +114,6 @@ once; `WHISPER_THREADS=n` sets the number itself.
 
 ## Left out
 
-None. All 76 chants in Tools/Chants/chants.json passed (2,452 lines). If a
+None. All 77 chants in Tools/Chants/chants.json passed (2,480 lines). If a
 recording or a score changes and a chant stops passing, `build` removes its
 json, and it belongs in this list with the reason.

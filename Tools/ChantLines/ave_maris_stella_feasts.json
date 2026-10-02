@@ -1,0 +1,175 @@
+{
+  "id": "ave_maris_stella_feasts",
+  "part": null,
+  "method": "breaths by loudness (under -14 dB for 0.2 s, phrases under 1.5 s merged) + text alignment; Whisper: 20 of 27 breaks heard",
+  "lines": [
+    {
+      "latin": "Ave maris stella, Dei Mater alma,",
+      "english": "Hail, O Star of the ocean, God's own Mother blest,",
+      "start": 0.37,
+      "end": 11.33
+    },
+    {
+      "latin": "atque semper Virgo,",
+      "english": "ever sinless Virgin,",
+      "start": 11.33,
+      "end": 18.43
+    },
+    {
+      "latin": "felix cæli porta.",
+      "english": "gate of heavenly rest.",
+      "start": 18.43,
+      "end": 22.84
+    },
+    {
+      "latin": "Sumens illud Ave",
+      "english": "Taking that sweet Ave,",
+      "start": 24.01,
+      "end": 30.13
+    },
+    {
+      "latin": "Gabriélis ore,",
+      "english": "which from Gabriel came,",
+      "start": 30.13,
+      "end": 34.87
+    },
+    {
+      "latin": "Funda nos in pace,",
+      "english": "peace confirm within us,",
+      "start": 34.87,
+      "end": 41.43
+    },
+    {
+      "latin": "Mutans Hevæ nomen.",
+      "english": "changing Eve's name.",
+      "start": 41.43,
+      "end": 45.5
+    },
+    {
+      "latin": "Solve vincla reis,",
+      "english": "Break the sinners' fetters,",
+      "start": 47.25,
+      "end": 53.47
+    },
+    {
+      "latin": "Profer lumen cæcis:",
+      "english": "make our blindness day,",
+      "start": 53.47,
+      "end": 58.39
+    },
+    {
+      "latin": "Mala nostra pelle,",
+      "english": "chase all evils from us,",
+      "start": 58.39,
+      "end": 65.33
+    },
+    {
+      "latin": "Bona cuncta posce.",
+      "english": "for all blessings pray.",
+      "start": 65.33,
+      "end": 69.94
+    },
+    {
+      "latin": "Monstra te esse matrem:",
+      "english": "Show thyself a Mother,",
+      "start": 71.07,
+      "end": 77.53
+    },
+    {
+      "latin": "Sumat per te preces,",
+      "english": "may the Word divine",
+      "start": 77.54,
+      "end": 82.45
+    },
+    {
+      "latin": "Qui pro nobis natus,",
+      "english": "born for us thine Infant",
+      "start": 82.45,
+      "end": 89.35
+    },
+    {
+      "latin": "Tulit esse tuus.",
+      "english": "hear our prayers through thine.",
+      "start": 89.35,
+      "end": 94.14
+    },
+    {
+      "latin": "Virgo singuláris,",
+      "english": "Virgin all excelling,",
+      "start": 95.07,
+      "end": 101.43
+    },
+    {
+      "latin": "Inter omnes mitis,",
+      "english": "mildest of the mild,",
+      "start": 101.43,
+      "end": 105.7
+    },
+    {
+      "latin": "Nos culpis solútos,",
+      "english": "free from guilt preserve us",
+      "start": 106.17,
+      "end": 112.94
+    },
+    {
+      "latin": "Mites fac et castos.",
+      "english": "meek and undefiled.",
+      "start": 113.09,
+      "end": 117.34
+    },
+    {
+      "latin": "Vitam præsta puram,",
+      "english": "Keep our life all spotless,",
+      "start": 119.17,
+      "end": 125.53
+    },
+    {
+      "latin": "Iter para tutum:",
+      "english": "make our way secure",
+      "start": 125.56,
+      "end": 130.59
+    },
+    {
+      "latin": "Ut vidéntes Jesum,",
+      "english": "till we find in Jesus",
+      "start": 130.59,
+      "end": 137.57
+    },
+    {
+      "latin": "Semper collætémur.",
+      "english": "joy for evermore.",
+      "start": 137.57,
+      "end": 141.82
+    },
+    {
+      "latin": "Sit laus Deo Patri,",
+      "english": "Praise to God the Father,",
+      "start": 143.25,
+      "end": 149.45
+    },
+    {
+      "latin": "Summo Christo decus,",
+      "english": "honor to the Son,",
+      "start": 149.45,
+      "end": 154.38
+    },
+    {
+      "latin": "Spirítui Sancto,",
+      "english": "in the Holy Spirit,",
+      "start": 154.41,
+      "end": 161.19
+    },
+    {
+      "latin": "Tribus honor unus.",
+      "english": "be the glory one.",
+      "start": 161.19,
+      "end": 165.38
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 167.37,
+      "end": 174.68
+    }
+  ]
+}

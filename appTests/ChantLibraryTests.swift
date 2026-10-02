@@ -36,7 +36,7 @@ struct ChantLibraryTests {
 
     @Test func theKindsAreTheBoardsCounts() {
         #expect(ChantForm.shortChant.chants.count == 19)
-        #expect(ChantForm.hymn.chants.count == 24)
+        #expect(ChantForm.hymn.chants.count == 25)
         #expect(ChantForm.sequence.chants.count == 7)
         #expect(ChantForm.litany.chants.count == 5)
         #expect(ChantForm.psalm.chants.count == 4)
@@ -45,7 +45,7 @@ struct ChantLibraryTests {
 
     @Test func theLengthsAreTheBoardsCounts() {
         #expect(ChantLength.underAMinute.chants.count == 7)
-        #expect(ChantLength.aFewMinutes.chants.count == 60)
+        #expect(ChantLength.aFewMinutes.chants.count == 61)
         #expect(ChantLength.aLongWhile.chants.count == 9)
     }
 
@@ -303,7 +303,7 @@ struct ChantLibraryTests {
             "ad_regias", "adeste_fideles", "adoremus", "adoro_te",
             "agnus_de_angelis", "alma_redemptoris", "angelus", "anima_christi",
             "attende_domine", "audi_benigne", "ave_maria", "ave_maria_antiphon",
-            "ave_maris_stella", "ave_regina_simple", "ave_regina_solemn",
+            "ave_maris_stella", "ave_maris_stella_feasts", "ave_regina_simple", "ave_regina_solemn",
             "ave_verum", "christus_vincit", "cor_jesu", "creator_alme",
             "credo_iii", "credo_in_deum", "dies_irae", "divine_praises",
             "ecce_panis", "flos_carmeli", "gloria_de_angelis", "gloria_patri",
@@ -323,7 +323,7 @@ struct ChantLibraryTests {
             "veni_sancte_spiritus", "vexilla_regis", "victimae_paschali",
             "vidi_aquam"
         ]
-        #expect(timed.count == 76)
+        #expect(timed.count == 77)
         for id in timed {
             #expect(ChantCatalog.chant(id)?.hasLines == true, "\(id) has lost its lines")
         }

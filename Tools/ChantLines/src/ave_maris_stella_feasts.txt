@@ -1,0 +1,38 @@
+# Ave maris stella in the feast-day melody (Mode I), all seven stanzas and
+# the Amen. This cantor breathes at every quarter of a stanza, so a line is
+# a quarter, but for the first stanza's first two, sung in one breath, and
+# the Amen, broken by a breath inside it. Latin from the score; English
+# from the app's own (the consecration's ave_maris_stella).
+noise -14
+gap 0.2
+merge 1.5
+
+Ave maris stella, Dei Mater alma, | Hail, O Star of the ocean, God's own Mother blest,
+atque semper Virgo, | ever sinless Virgin,
+felix cæli porta. | gate of heavenly rest.
+Sumens illud Ave | Taking that sweet Ave,
+Gabriélis ore, | which from Gabriel came,
+Funda nos in pace, | peace confirm within us,
+Mutans Hevæ nomen. | changing Eve's name.
+Solve vincla reis, | Break the sinners' fetters,
+Profer lumen cæcis: | make our blindness day,
+Mala nostra pelle, | chase all evils from us,
+Bona cuncta posce. | for all blessings pray.
+Monstra te esse matrem: | Show thyself a Mother,
+Sumat per te preces, | may the Word divine
+Qui pro nobis natus, | born for us thine Infant
+Tulit esse tuus. | hear our prayers through thine.
+Virgo singuláris, | Virgin all excelling,
+Inter omnes mitis, | mildest of the mild,
+Nos culpis solútos, | free from guilt preserve us
+Mites fac et castos. | meek and undefiled.
+Vitam præsta puram, | Keep our life all spotless,
+Iter para tutum: | make our way secure
+Ut vidéntes Jesum, | till we find in Jesus
+Semper collætémur. | joy for evermore.
+Sit laus Deo Patri, | Praise to God the Father,
+Summo Christo decus, | honor to the Son,
+Spirítui Sancto, | in the Holy Spirit,
+Tribus honor unus. | be the glory one.
+Amen. | Amen.
+~

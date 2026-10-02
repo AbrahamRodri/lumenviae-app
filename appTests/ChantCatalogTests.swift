@@ -53,6 +53,14 @@ struct ChantCatalogTests {
         }
     }
 
+    /// The consecration's days and the Prayer Book sing the first chant of
+    /// a prayer: for the Ave Maris Stella, the feast-day melody, never
+    /// the Saturday Office's
+    @Test func theConsecrationSingsTheFeastDayAveMarisStella() {
+        let settings = ChantCatalog.chants(forPrayer: "ave_maris_stella").map(\.id)
+        #expect(settings == ["ave_maris_stella_feasts", "ave_maris_stella"])
+    }
+
     @Test func everyAntiphonOfTheSeasonHasAChant() {
         let calendar = Calendar(identifier: .gregorian)
         for (month, day) in [(12, 10), (2, 20), (4, 20), (9, 24)] {

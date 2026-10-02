@@ -47,6 +47,7 @@ enum ChantLibraryData {
 
         // Hymns
         "ave_maris_stella": .hymn,
+        "ave_maris_stella_feasts": .hymn,
         "o_gloriosa": .hymn,
         "salve_mater": .hymn,
         "inviolata": .hymn,
@@ -187,7 +188,7 @@ enum ChantLibraryData {
         ChantFeast(id: "corpus_christi", name: "Corpus Christi (the Body of Christ)", rule: .easter(60), chantID: "lauda_sion"),
         ChantFeast(id: "sacred_heart", name: "The Sacred Heart", rule: .easter(68), chantID: "litany_sacred_heart"),
         ChantFeast(id: "mount_carmel", name: "Our Lady of Mount Carmel", rule: .fixed(month: 7, day: 16), chantID: "flos_carmeli"),
-        ChantFeast(id: "assumption", name: "The Assumption", rule: .fixed(month: 8, day: 15), chantID: "ave_maris_stella"),
+        ChantFeast(id: "assumption", name: "The Assumption", rule: .fixed(month: 8, day: 15), chantID: "ave_maris_stella_feasts"),
         ChantFeast(id: "seven_sorrows", name: "Our Lady of Sorrows", rule: .fixed(month: 9, day: 15), chantID: "stabat_mater"),
         ChantFeast(id: "st_michael", name: "St Michael", rule: .fixed(month: 9, day: 29), chantID: "sancte_michael"),
         ChantFeast(id: "rosary", name: "Our Lady of the Rosary", rule: .fixed(month: 10, day: 7), chantID: "litany_loreto", painting: "feast_our_lady_of_the_rosary"),
@@ -257,7 +258,7 @@ enum ChantLibraryData {
         ChantMonth(month: 4, title: "The Month of the Blessed Sacrament",
                    chantIDs: ["adoro_te", "ave_verum"], occasionID: "visit", feastID: nil),
         ChantMonth(month: 5, title: "The Month of Mary",
-                   chantIDs: ["ave_maris_stella", "litany_loreto"], occasionID: "sung_rosary", feastID: nil),
+                   chantIDs: ["ave_maris_stella_feasts", "litany_loreto"], occasionID: "sung_rosary", feastID: nil),
         ChantMonth(month: 6, title: "The Month of the Sacred Heart",
                    chantIDs: ["litany_sacred_heart", "cor_jesu"], occasionID: nil, feastID: "sacred_heart"),
         ChantMonth(month: 7, title: "The Month of the Precious Blood",
