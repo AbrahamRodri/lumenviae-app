@@ -119,7 +119,7 @@ enum MissalOrderData {
     /// The fixed parts' plain names, keyed by the Ordo's own labels, so
     /// the Order of Mass page names them as the day's page does
     private static let ordinaryNames: [String: String] = {
-        let parts = [asperges] + beforeIntroit + [kyrie, gloria, credo]
+        let parts: [OrdinaryPart] = [asperges] + beforeIntroit + [kyrie, gloria, credo]
             + afterOffertory + [canon] + afterCanon + closing
         var names = Dictionary(parts.map { ($0.ordoLabel, $0.englishName) },
                                uniquingKeysWith: { first, _ in first })
