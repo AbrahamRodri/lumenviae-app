@@ -1,0 +1,70 @@
+{
+  "id": "asperges_me",
+  "part": null,
+  "method": "breaths by loudness (under -20 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 4 of 8 breaks heard",
+  "lines": [
+    {
+      "latin": "Aspérges me,",
+      "english": "Thou shalt sprinkle me,",
+      "start": 0.25,
+      "end": 5.13,
+      "part": 0
+    },
+    {
+      "latin": "Dómine, hyssópo, et mundábor:",
+      "english": "O Lord, with hyssop, and I shall be cleansed:",
+      "start": 5.13,
+      "end": 17.16,
+      "part": 0
+    },
+    {
+      "latin": "lavábis me, et super nivem dealbábor.",
+      "english": "Thou shalt wash me, and I shall be made whiter than snow.",
+      "start": 17.57,
+      "end": 33.56,
+      "part": 0
+    },
+    {
+      "latin": "Miserére mei, Deus,",
+      "english": "Have mercy on me, O God,",
+      "start": 35.03,
+      "end": 42.89,
+      "part": 0
+    },
+    {
+      "latin": "secúndum magnam misericórdiam tuam.",
+      "english": "according to Thy great mercy.",
+      "start": 42.89,
+      "end": 53.52,
+      "part": 0
+    },
+    {
+      "latin": "Glória Patri, et Fílio, et Spirítui Sancto:",
+      "english": "Glory be to the Father, and to the Son, and to the Holy Spirit.",
+      "start": 55.19,
+      "end": 66.55,
+      "part": 0
+    },
+    {
+      "latin": "Sicut erat in princípio, et nunc, et semper, et in sǽcula sæculórum. Amen.",
+      "english": "As it was in the beginning, is now, and ever shall be, world without end. Amen.",
+      "start": 66.55,
+      "end": 87.02,
+      "part": 0
+    },
+    {
+      "latin": "Aspérges me, Dómine, hyssópo, et mundábor:",
+      "english": "Thou shalt sprinkle me, O Lord, with hyssop, and I shall be cleansed:",
+      "start": 89.31,
+      "end": 105.98,
+      "part": 0
+    },
+    {
+      "latin": "lavábis me, et super nivem dealbábor.",
+      "english": "Thou shalt wash me, and I shall be made whiter than snow.",
+      "start": 106.39,
+      "end": 122.0,
+      "part": 0
+    }
+  ]
+}

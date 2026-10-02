@@ -1,0 +1,229 @@
+{
+  "id": "salve_festa_dies",
+  "part": null,
+  "method": "breaths by loudness (under -14 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 36 of 36 breaks heard",
+  "lines": [
+    {
+      "latin": "Salve festa dies,",
+      "english": "Hail, festal day,",
+      "start": 0.71,
+      "end": 5.99
+    },
+    {
+      "latin": "toto venerábilis ævo, Qua Deus inférnum vicit et astra tenet.",
+      "english": "to be honoured through every age, on which God conquered hell and holds the stars.",
+      "start": 5.99,
+      "end": 21.64
+    },
+    {
+      "latin": "Salve festa dies, toto venerábilis ævo,",
+      "english": "Hail, festal day, to be honoured through every age,",
+      "start": 22.77,
+      "end": 34.25
+    },
+    {
+      "latin": "Qua Deus inférnum vicit et astra tenet.",
+      "english": "on which God conquered hell and holds the stars.",
+      "start": 34.25,
+      "end": 44.34
+    },
+    {
+      "latin": "Ecce renascéntis testátur grátia mundi",
+      "english": "Behold, the grace of the world reborn bears witness",
+      "start": 45.15,
+      "end": 54.52
+    },
+    {
+      "latin": "Omnia cum Dómino dona redísse suo.",
+      "english": "that all gifts have returned with their Lord.",
+      "start": 54.61,
+      "end": 65.35
+    },
+    {
+      "latin": "Salve festa dies, toto venerábilis ævo,",
+      "english": "Hail, festal day, to be honoured through every age,",
+      "start": 65.35,
+      "end": 77.49
+    },
+    {
+      "latin": "Qua Deus inférnum vicit et astra tenet.",
+      "english": "on which God conquered hell and holds the stars.",
+      "start": 77.49,
+      "end": 87.36
+    },
+    {
+      "latin": "Namque triumphánti post trístia tártara Christo",
+      "english": "For to Christ, triumphant after the gloom of hell,",
+      "start": 88.09,
+      "end": 97.99
+    },
+    {
+      "latin": "Úndique fronde nemus,",
+      "english": "the grove on every side with leaf,",
+      "start": 97.99,
+      "end": 102.95
+    },
+    {
+      "latin": "grámina flore favent.",
+      "english": "the grasses with flower, give their welcome.",
+      "start": 102.95,
+      "end": 108.44
+    },
+    {
+      "latin": "Salve festa dies,",
+      "english": "Hail, festal day,",
+      "start": 109.25,
+      "end": 114.97
+    },
+    {
+      "latin": "toto venerábilis ævo,",
+      "english": "to be honoured through every age,",
+      "start": 114.97,
+      "end": 120.75
+    },
+    {
+      "latin": "Qua Deus inférnum vicit et astra tenet.",
+      "english": "on which God conquered hell and holds the stars.",
+      "start": 120.75,
+      "end": 130.68
+    },
+    {
+      "latin": "Qui genus humánum cernens mersísse profúndo,",
+      "english": "Thou who, seeing mankind sunk in the deep,",
+      "start": 131.47,
+      "end": 141.33
+    },
+    {
+      "latin": "Ut hóminem eríperes, es quoque factus homo.",
+      "english": "that Thou mightest rescue man, wast Thyself made man.",
+      "start": 141.33,
+      "end": 151.36
+    },
+    {
+      "latin": "Salve festa dies,",
+      "english": "Hail, festal day,",
+      "start": 152.15,
+      "end": 157.73
+    },
+    {
+      "latin": "toto venerábilis ævo,",
+      "english": "to be honoured through every age,",
+      "start": 157.73,
+      "end": 163.69
+    },
+    {
+      "latin": "Qua Deus inférnum vicit et astra tenet.",
+      "english": "on which God conquered hell and holds the stars.",
+      "start": 163.69,
+      "end": 173.8
+    },
+    {
+      "latin": "Trístia cessérunt inférnæ víncula legis",
+      "english": "The grim bonds of the law of hell have given way,",
+      "start": 174.11,
+      "end": 183.47
+    },
+    {
+      "latin": "Expavítque chaos lúminis ore premi.",
+      "english": "and chaos trembled to be overwhelmed by the face of light.",
+      "start": 183.47,
+      "end": 193.72
+    },
+    {
+      "latin": "Salve festa dies, toto venerábilis ævo,",
+      "english": "Hail, festal day, to be honoured through every age,",
+      "start": 194.85,
+      "end": 206.51
+    },
+    {
+      "latin": "Qua Deus inférnum vicit et astra tenet.",
+      "english": "on which God conquered hell and holds the stars.",
+      "start": 206.51,
+      "end": 216.54
+    },
+    {
+      "latin": "Pollícitam sed redde fidem, precor, alma potéstas:",
+      "english": "But fulfil Thy promised word, I pray, O gracious Power:",
+      "start": 217.07,
+      "end": 226.93
+    },
+    {
+      "latin": "Tértia lux rédiit, surge sepúlte meus.",
+      "english": "the third day has returned; arise, my Buried One.",
+      "start": 226.93,
+      "end": 236.64
+    },
+    {
+      "latin": "Salve festa dies, toto venerábilis ævo,",
+      "english": "Hail, festal day, to be honoured through every age,",
+      "start": 237.47,
+      "end": 248.65
+    },
+    {
+      "latin": "Qua Deus inférnum vicit et astra tenet.",
+      "english": "on which God conquered hell and holds the stars.",
+      "start": 248.65,
+      "end": 258.16
+    },
+    {
+      "latin": "Solve catenátas inférni cárceris umbras,",
+      "english": "Loose the chained shades of the prison of hell,",
+      "start": 259.15,
+      "end": 268.19
+    },
+    {
+      "latin": "Et révoca sursum quidquid ad ima ruit.",
+      "english": "and call back on high whatever has fallen to the depths.",
+      "start": 268.19,
+      "end": 278.06
+    },
+    {
+      "latin": "Salve festa dies,",
+      "english": "Hail, festal day,",
+      "start": 278.81,
+      "end": 284.47
+    },
+    {
+      "latin": "toto venerábilis ævo,",
+      "english": "to be honoured through every age,",
+      "start": 284.47,
+      "end": 290.45
+    },
+    {
+      "latin": "Qua Deus inférnum vicit et astra tenet.",
+      "english": "on which God conquered hell and holds the stars.",
+      "start": 290.45,
+      "end": 300.24
+    },
+    {
+      "latin": "Redde tuam fáciem, vídeant ut sǽcula lumen;",
+      "english": "Give back Thy face, that the ages may see the light;",
+      "start": 301.17,
+      "end": 310.74
+    },
+    {
+      "latin": "Redde diem qui nos, te moriénte, fugit.",
+      "english": "give back the day that fled from us when Thou didst die.",
+      "start": 310.77,
+      "end": 321.04
+    },
+    {
+      "latin": "Salve festa dies,",
+      "english": "Hail, festal day,",
+      "start": 321.87,
+      "end": 327.67
+    },
+    {
+      "latin": "toto venerábilis ævo,",
+      "english": "to be honoured through every age,",
+      "start": 327.67,
+      "end": 333.29
+    },
+    {
+      "latin": "Qua Deus inférnum vicit et astra tenet.",
+      "english": "on which God conquered hell and holds the stars.",
+      "start": 333.29,
+      "end": 343.98
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+# Adoramus te, sanctissime Domine Jesu Christe (Mode I). Latin from the
+# score; English plain and literal. The cantor breathes at the bar inside
+# the melisma of tibi, which the text cannot part, so that line runs over
+# both phrases.
+noise -14
+gap 0.3
+merge 1.5
+
+Adorámus te, | We adore Thee,
+sanctíssime Dómine Jesu Christe, | most holy Lord Jesus Christ,
+hic et ad omnes ecclésias tuas | here and in all Thy churches
+quæ sunt in toto mundo, | which are throughout the whole world,
+et benedícimus tibi, | and we bless Thee,
+~
+quia per sanctam crucem tuam redemísti mundum. | because by Thy holy Cross Thou hast redeemed the world.

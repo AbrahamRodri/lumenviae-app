@@ -1,0 +1,229 @@
+{
+  "id": "media_vita",
+  "part": null,
+  "method": "breaths by loudness (under -14 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 16 of 36 breaks heard",
+  "lines": [
+    {
+      "latin": "Média vita",
+      "english": "In the midst of life",
+      "start": 0.41,
+      "end": 4.43
+    },
+    {
+      "latin": "in morte sumus:",
+      "english": "we are in death:",
+      "start": 4.43,
+      "end": 9.94
+    },
+    {
+      "latin": "quem quǽrimus adjutórem,",
+      "english": "whom shall we seek as our helper,",
+      "start": 10.19,
+      "end": 16.94
+    },
+    {
+      "latin": "nisi te Dómine?",
+      "english": "but Thee, O Lord,",
+      "start": 17.25,
+      "end": 26.4
+    },
+    {
+      "latin": "qui pro peccátis nostris",
+      "english": "who for our sins",
+      "start": 26.89,
+      "end": 33.29
+    },
+    {
+      "latin": "juste irásceris:",
+      "english": "art justly angered?",
+      "start": 33.29,
+      "end": 42.8
+    },
+    {
+      "latin": "Sancte Deus,",
+      "english": "Holy God,",
+      "start": 44.57,
+      "end": 53.88
+    },
+    {
+      "latin": "Sancte fortis,",
+      "english": "holy and mighty,",
+      "start": 54.35,
+      "end": 63.62
+    },
+    {
+      "latin": "Sancte miséricors Salvátor,",
+      "english": "holy and merciful Saviour,",
+      "start": 63.97,
+      "end": 74.33
+    },
+    {
+      "latin": "amáræ morti",
+      "english": "to bitter death",
+      "start": 74.33,
+      "end": 77.29
+    },
+    {
+      "latin": "ne tradas nos.",
+      "english": "deliver us not.",
+      "start": 77.29,
+      "end": 85.16
+    },
+    {
+      "latin": "In te speravérunt",
+      "english": "In Thee our fathers",
+      "start": 86.51,
+      "end": 94.37
+    },
+    {
+      "latin": "patres nostri;",
+      "english": "put their hope;",
+      "start": 94.37,
+      "end": 100.89
+    },
+    {
+      "latin": "speravérunt,",
+      "english": "they hoped,",
+      "start": 100.89,
+      "end": 104.85
+    },
+    {
+      "latin": "et liberásti eos.",
+      "english": "and Thou didst deliver them.",
+      "start": 104.85,
+      "end": 115.68
+    },
+    {
+      "latin": "Sancte Deus,",
+      "english": "Holy God,",
+      "start": 117.35,
+      "end": 126.74
+    },
+    {
+      "latin": "Sancte fortis,",
+      "english": "holy and mighty,",
+      "start": 127.13,
+      "end": 136.16
+    },
+    {
+      "latin": "Sancte miséricors Salvátor,",
+      "english": "holy and merciful Saviour,",
+      "start": 136.71,
+      "end": 147.13
+    },
+    {
+      "latin": "amáræ morti",
+      "english": "to bitter death",
+      "start": 147.13,
+      "end": 149.85
+    },
+    {
+      "latin": "ne tradas nos.",
+      "english": "deliver us not.",
+      "start": 149.85,
+      "end": 157.46
+    },
+    {
+      "latin": "Ad te clamavérunt",
+      "english": "To Thee our fathers",
+      "start": 158.79,
+      "end": 166.41
+    },
+    {
+      "latin": "patres nostri;",
+      "english": "cried out;",
+      "start": 166.41,
+      "end": 172.61
+    },
+    {
+      "latin": "clamavérunt,",
+      "english": "they cried,",
+      "start": 172.61,
+      "end": 176.53
+    },
+    {
+      "latin": "et non sunt confúsi.",
+      "english": "and were not put to shame.",
+      "start": 176.53,
+      "end": 186.78
+    },
+    {
+      "latin": "Sancte Deus,",
+      "english": "Holy God,",
+      "start": 188.47,
+      "end": 197.76
+    },
+    {
+      "latin": "Sancte fortis,",
+      "english": "holy and mighty,",
+      "start": 198.25,
+      "end": 207.3
+    },
+    {
+      "latin": "Sancte miséricors Salvátor,",
+      "english": "holy and merciful Saviour,",
+      "start": 207.79,
+      "end": 217.98
+    },
+    {
+      "latin": "amáræ morti",
+      "english": "to bitter death",
+      "start": 218.41,
+      "end": 221.15
+    },
+    {
+      "latin": "ne tradas nos.",
+      "english": "deliver us not.",
+      "start": 221.15,
+      "end": 228.72
+    },
+    {
+      "latin": "Glória Patri,",
+      "english": "Glory be to the Father,",
+      "start": 230.11,
+      "end": 237.47
+    },
+    {
+      "latin": "et Fílio,",
+      "english": "and to the Son,",
+      "start": 237.47,
+      "end": 243.51
+    },
+    {
+      "latin": "et Spirítui Sancto.",
+      "english": "and to the Holy Spirit.",
+      "start": 243.51,
+      "end": 253.14
+    },
+    {
+      "latin": "Sancte Deus,",
+      "english": "Holy God,",
+      "start": 254.33,
+      "end": 263.4
+    },
+    {
+      "latin": "Sancte fortis,",
+      "english": "holy and mighty,",
+      "start": 264.03,
+      "end": 273.0
+    },
+    {
+      "latin": "Sancte miséricors Salvátor,",
+      "english": "holy and merciful Saviour,",
+      "start": 273.49,
+      "end": 283.91
+    },
+    {
+      "latin": "amáræ morti",
+      "english": "to bitter death",
+      "start": 283.91,
+      "end": 286.79
+    },
+    {
+      "latin": "ne tradas nos.",
+      "english": "deliver us not.",
+      "start": 286.79,
+      "end": 294.86
+    }
+  ]
+}

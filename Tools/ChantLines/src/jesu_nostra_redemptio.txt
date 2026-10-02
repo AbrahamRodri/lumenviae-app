@@ -1,0 +1,28 @@
+# Jesu nostra redemptio (Mode IV), all five stanzas and the Amen.
+# The cantor breathes at every quarter of a stanza, so a line is a quarter.
+# Latin from the score; English a plain, literal rendering.
+noise -14
+gap 0.15
+merge 2
+
+Jesu nostra redémptio, | O Jesus, our redemption,
+Amor et desidérium, | our love and our desire,
+Deus Creátor ómnium, | God, Creator of all things,
+Homo in fine témporum. | made Man at the end of the ages.
+Quæ te vicit cleméntia, | What mercy overcame Thee,
+Ut ferres nostra crímina, | that Thou shouldst bear our sins,
+Crudélem mortem pátiens, | suffering a cruel death,
+Ut nos a morte tólleres! | to take us up from death!
+Inférni claustra pénetrans, | Breaking through the gates of hell,
+Tuos captívos rédimens: | redeeming Thine own captives,
+Victor triúmpho nóbili, | Victor in noble triumph,
+Ad dextram Patris résidens. | Thou art seated at the Father's right hand.
+Ipsa te cogat píetas, | May Thy own loving kindness move Thee
+Ut mala nostra súperes | to overcome our evils
+Parcéndo, et voti cómpotes | by sparing us, and, granting our prayer,
+Nos tuo vultu sáties. | to fill us with the sight of Thy face.
+Tu esto nostrum gáudium, | Be Thou our joy,
+Qui es futúrus prǽmium: | who art to be our reward;
+Sit nostra in te glória | may our glory be in Thee
+Per cuncta semper sǽcula. | through all ages for ever.
+Amen. | Amen.

@@ -1,0 +1,37 @@
+# Alma Redemptoris Mater, simple tone; both its versicles and collects,
+# Advent's (Angelus Domini, Gratiam tuam) and Christmastide's (Post partum,
+# Deus qui salutis). The cantor sings "súrgere qui curat pópulo" on to
+# "natúra miránte", and "Virgo prius" on to "illud Ave", on one breath.
+# Latin from the scores; English from the Prayer Book, as the solemn
+# tone's.
+noise -18
+gap 0.3
+merge 1.5
+
+part 0
+Alma Redemptóris Mater, quæ pérvia cæli porta manes, | Loving Mother of the Redeemer, who remainest the open gate of heaven,
+Et stella maris, | and star of the sea,
+succúrre cadénti | succour the falling
+súrgere qui curat pópulo: Tu quæ genuísti, natúra miránte, | people who strive to rise again: thou who, while nature marvelled, didst bring forth
+tuum sanctum Genitórem: | thy holy Creator,
+Virgo prius ac postérius, Gabriélis ab ore sumens illud Ave, | Virgin before and after, who from the mouth of Gabriel didst receive that Ave,
+peccatórum miserére. | have mercy on sinners.
+part 1
+Ángelus Dómini nuntiávit Maríæ. | The Angel of the Lord declared unto Mary.
+Et concépit de Spíritu Sancto. | And she conceived of the Holy Spirit.
+part 2
+Orémus. | Let us pray.
+Grátiam tuam quǽsumus, Dómine, méntibus nostris infúnde: | Pour forth, we beseech Thee, O Lord, Thy grace into our hearts;
+ut qui, ángelo nuntiánte, Christi Fílii tui incarnatiónem cognóvimus; | that we, to whom the Incarnation of Christ, Thy Son, was made known by the message of an Angel,
+per passiónem ejus et crucem, ad resurrectiónis glóriam perducámur. | may by His Passion and Cross be brought to the glory of His Resurrection.
+Per eumdem Christum Dóminum nostrum. | Through the same Christ our Lord.
+Amen. | Amen.
+part 3
+Post partum, Virgo, invioláta permansísti. | After childbirth, O Virgin, thou didst remain inviolate.
+Dei Génitrix, intercéde pro nobis. | O Mother of God, intercede for us.
+part 4
+Orémus. | Let us pray.
+Deus, qui salútis ætérnæ, beátæ Maríæ virginitáte fecúnda, humáno géneri prǽmia præstitísti: | O God, who by the fruitful virginity of Blessed Mary hast bestowed upon mankind the rewards of eternal salvation;
+tríbue, quǽsumus; ut ipsam pro nobis intercédere sentiámus, | grant, we beseech Thee, that we may know the help of her intercession,
+per quam merúimus auctórem vitæ suscípere, Dóminum nostrum Jesum Christum Fílium tuum. | through whom we were made worthy to receive the Author of life, our Lord Jesus Christ, Thy Son.
+Amen. | Amen.

@@ -1,0 +1,238 @@
+{
+  "id": "o_emmanuel_magnificat",
+  "part": null,
+  "method": "breaths by loudness (under -18 dB for 0.2 s, phrases under 1.5 s merged) + text alignment; Whisper: 20 of 32 breaks heard",
+  "lines": [
+    {
+      "latin": "O Emmánuel,",
+      "english": "O Emmanuel,",
+      "start": 0.25,
+      "end": 7.19,
+      "part": 0
+    },
+    {
+      "latin": "Rex et légifer noster,",
+      "english": "our King and Lawgiver,",
+      "start": 7.19,
+      "end": 12.89,
+      "part": 0
+    },
+    {
+      "latin": "exspectátio géntium, et Salvátor eárum:",
+      "english": "the Expected of the nations, and their Saviour:",
+      "start": 12.89,
+      "end": 26.55,
+      "part": 0
+    },
+    {
+      "latin": "veni ad salvándum nos,",
+      "english": "come to save us,",
+      "start": 26.55,
+      "end": 33.01,
+      "part": 0
+    },
+    {
+      "latin": "Dómine Deus noster.",
+      "english": "O Lord our God.",
+      "start": 33.01,
+      "end": 39.78,
+      "part": 0
+    },
+    {
+      "latin": "Magníficat ánima mea Dóminum.",
+      "english": "My soul doth magnify the Lord.",
+      "start": 41.43,
+      "end": 50.46,
+      "part": 1
+    },
+    {
+      "latin": "Et exsultávit spíritus meus",
+      "english": "And my spirit hath rejoiced",
+      "start": 50.93,
+      "end": 56.12,
+      "part": 1
+    },
+    {
+      "latin": "in Deo salutári meo.",
+      "english": "in God my Saviour.",
+      "start": 56.15,
+      "end": 61.02,
+      "part": 1
+    },
+    {
+      "latin": "Quia respéxit humilitátem ancíllæ suæ:",
+      "english": "Because He hath regarded the humility of His handmaid:",
+      "start": 61.77,
+      "end": 68.17,
+      "part": 1
+    },
+    {
+      "latin": "ecce enim ex hoc beátam me dicent omnes generatiónes.",
+      "english": "for behold from henceforth all generations shall call me blessed.",
+      "start": 68.17,
+      "end": 75.98,
+      "part": 1
+    },
+    {
+      "latin": "Quia fecit mihi magna qui potens est:",
+      "english": "Because He that is mighty hath done great things to me:",
+      "start": 76.49,
+      "end": 82.41,
+      "part": 1
+    },
+    {
+      "latin": "et sanctum nomen ejus.",
+      "english": "and holy is His name.",
+      "start": 82.41,
+      "end": 86.96,
+      "part": 1
+    },
+    {
+      "latin": "Et misericórdia ejus a progénie in progénies",
+      "english": "And His mercy is from generation unto generations,",
+      "start": 87.55,
+      "end": 95.16,
+      "part": 1
+    },
+    {
+      "latin": "timéntibus eum.",
+      "english": "to them that fear Him.",
+      "start": 95.23,
+      "end": 99.78,
+      "part": 1
+    },
+    {
+      "latin": "Fecit poténtiam in bráchio suo:",
+      "english": "He hath shewed might in His arm:",
+      "start": 100.57,
+      "end": 106.27,
+      "part": 1
+    },
+    {
+      "latin": "dispérsit supérbos mente cordis sui.",
+      "english": "He hath scattered the proud in the conceit of their heart.",
+      "start": 106.27,
+      "end": 112.24,
+      "part": 1
+    },
+    {
+      "latin": "Depósuit poténtes de sede,",
+      "english": "He hath put down the mighty from their seat,",
+      "start": 112.83,
+      "end": 118.5,
+      "part": 1
+    },
+    {
+      "latin": "et exaltávit húmiles.",
+      "english": "and hath exalted the humble.",
+      "start": 118.51,
+      "end": 123.28,
+      "part": 1
+    },
+    {
+      "latin": "Esuriéntes implévit bonis:",
+      "english": "He hath filled the hungry with good things:",
+      "start": 124.13,
+      "end": 129.82,
+      "part": 1
+    },
+    {
+      "latin": "et dívites dimísit inánes.",
+      "english": "and the rich He hath sent empty away.",
+      "start": 129.95,
+      "end": 135.54,
+      "part": 1
+    },
+    {
+      "latin": "Suscépit Israël púerum suum,",
+      "english": "He hath received Israel His servant,",
+      "start": 136.55,
+      "end": 142.35,
+      "part": 1
+    },
+    {
+      "latin": "recordátus misericórdiæ suæ.",
+      "english": "being mindful of His mercy.",
+      "start": 142.35,
+      "end": 147.78,
+      "part": 1
+    },
+    {
+      "latin": "Sicut locútus est ad patres nostros,",
+      "english": "As He spoke to our fathers,",
+      "start": 148.89,
+      "end": 154.77,
+      "part": 1
+    },
+    {
+      "latin": "Abraham et sémini ejus in sǽcula.",
+      "english": "to Abraham and to his seed for ever.",
+      "start": 154.77,
+      "end": 160.66,
+      "part": 1
+    },
+    {
+      "latin": "Glória Patri, et Fílio,",
+      "english": "Glory be to the Father, and to the Son,",
+      "start": 161.41,
+      "end": 166.77,
+      "part": 1
+    },
+    {
+      "latin": "et Spirítui Sancto.",
+      "english": "and to the Holy Spirit.",
+      "start": 166.77,
+      "end": 171.8,
+      "part": 1
+    },
+    {
+      "latin": "Sicut erat in princípio, et nunc, et semper,",
+      "english": "As it was in the beginning, is now, and ever shall be,",
+      "start": 172.15,
+      "end": 179.0,
+      "part": 1
+    },
+    {
+      "latin": "et in sǽcula sæculórum. Amen.",
+      "english": "world without end. Amen.",
+      "start": 179.07,
+      "end": 185.34,
+      "part": 1
+    },
+    {
+      "latin": "O Emmánuel,",
+      "english": "O Emmanuel,",
+      "start": 186.77,
+      "end": 193.71,
+      "part": 2
+    },
+    {
+      "latin": "Rex et légifer noster,",
+      "english": "our King and Lawgiver,",
+      "start": 193.71,
+      "end": 199.41,
+      "part": 2
+    },
+    {
+      "latin": "exspectátio géntium, et Salvátor eárum:",
+      "english": "the Expected of the nations, and their Saviour:",
+      "start": 199.41,
+      "end": 213.07,
+      "part": 2
+    },
+    {
+      "latin": "veni ad salvándum nos,",
+      "english": "come to save us,",
+      "start": 213.07,
+      "end": 219.53,
+      "part": 2
+    },
+    {
+      "latin": "Dómine Deus noster.",
+      "english": "O Lord our God.",
+      "start": 219.53,
+      "end": 226.3,
+      "part": 2
+    }
+  ]
+}

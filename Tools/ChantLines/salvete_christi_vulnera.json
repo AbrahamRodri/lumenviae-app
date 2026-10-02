@@ -1,0 +1,229 @@
+{
+  "id": "salvete_christi_vulnera",
+  "part": null,
+  "method": "breaths by loudness (under -16 dB for 0.2 s, phrases under 2.5 s merged) + text alignment; Whisper: 26 of 36 breaks heard",
+  "lines": [
+    {
+      "latin": "Salvéte Christi vúlnera,",
+      "english": "Hail, wounds of Christ,",
+      "start": 0.45,
+      "end": 6.49
+    },
+    {
+      "latin": "Imménsi amóris pígnora,",
+      "english": "pledges of boundless love,",
+      "start": 6.49,
+      "end": 13.11
+    },
+    {
+      "latin": "Quibus perénnes rívuli",
+      "english": "from which unending streams",
+      "start": 13.11,
+      "end": 19.17
+    },
+    {
+      "latin": "Manant rubéntis sánguinis.",
+      "english": "of crimson blood flow forth.",
+      "start": 19.17,
+      "end": 26.58
+    },
+    {
+      "latin": "Nitóre stellas víncitis,",
+      "english": "In brightness you surpass the stars,",
+      "start": 28.15,
+      "end": 34.09
+    },
+    {
+      "latin": "Rosas odóre et bálsama,",
+      "english": "in fragrance roses and balsam,",
+      "start": 34.09,
+      "end": 40.91
+    },
+    {
+      "latin": "Prétio lapíllos Índicos,",
+      "english": "in worth the gems of India,",
+      "start": 40.91,
+      "end": 47.29
+    },
+    {
+      "latin": "Mellis favos dulcédine.",
+      "english": "in sweetness the honeycomb.",
+      "start": 47.29,
+      "end": 54.6
+    },
+    {
+      "latin": "Per vos patet gratíssimum",
+      "english": "Through you is opened a most welcome",
+      "start": 56.39,
+      "end": 62.45
+    },
+    {
+      "latin": "Nostris asýlum méntibus:",
+      "english": "refuge for our minds;",
+      "start": 62.45,
+      "end": 69.25
+    },
+    {
+      "latin": "Non huc furor minántium",
+      "english": "here the fury of threatening",
+      "start": 69.25,
+      "end": 75.69
+    },
+    {
+      "latin": "Unquam penétrat hóstium.",
+      "english": "foes never enters.",
+      "start": 75.69,
+      "end": 82.7
+    },
+    {
+      "latin": "Quot Jesus in prætório",
+      "english": "How many scourges Jesus,",
+      "start": 84.41,
+      "end": 90.29
+    },
+    {
+      "latin": "Flagélla nudus éxcipit!",
+      "english": "stripped, receives in the praetorium!",
+      "start": 90.29,
+      "end": 97.11
+    },
+    {
+      "latin": "Quot scissa pellis úndique",
+      "english": "How many drops of blood",
+      "start": 97.11,
+      "end": 103.67
+    },
+    {
+      "latin": "Stillat cruóris gúttulas!",
+      "english": "His torn skin sheds on every side!",
+      "start": 103.67,
+      "end": 110.8
+    },
+    {
+      "latin": "Frontem venústam, proh dolor!",
+      "english": "His comely brow, alas,",
+      "start": 113.01,
+      "end": 118.99
+    },
+    {
+      "latin": "Coróna pungit spínea,",
+      "english": "a crown of thorns pierces;",
+      "start": 118.99,
+      "end": 125.85
+    },
+    {
+      "latin": "Clavi retúsa cúspide",
+      "english": "nails with blunted points",
+      "start": 125.85,
+      "end": 132.35
+    },
+    {
+      "latin": "Pedes manúsque pérforant.",
+      "english": "pierce through His feet and hands.",
+      "start": 132.35,
+      "end": 139.62
+    },
+    {
+      "latin": "Postquam sed ille trádidit",
+      "english": "But after He had given up",
+      "start": 141.55,
+      "end": 147.51
+    },
+    {
+      "latin": "Amans volénsque spíritum,",
+      "english": "His spirit, loving and willing,",
+      "start": 147.51,
+      "end": 154.26
+    },
+    {
+      "latin": "Pectus ferítur láncea,",
+      "english": "His breast is struck with a lance,",
+      "start": 154.59,
+      "end": 160.83
+    },
+    {
+      "latin": "Geminúsque liquor éxsilit.",
+      "english": "and a twofold stream springs forth.",
+      "start": 160.83,
+      "end": 167.8
+    },
+    {
+      "latin": "Ut plena sit redémptio,",
+      "english": "That redemption may be full,",
+      "start": 169.49,
+      "end": 175.55
+    },
+    {
+      "latin": "Sub torculári stríngitur,",
+      "english": "He is pressed beneath the winepress,",
+      "start": 175.55,
+      "end": 182.32
+    },
+    {
+      "latin": "Suíque Jesus ímmemor",
+      "english": "and Jesus, unmindful of Himself,",
+      "start": 182.53,
+      "end": 188.91
+    },
+    {
+      "latin": "Sibi nil resérvat sánguinis.",
+      "english": "keeps for Himself no drop of blood.",
+      "start": 188.91,
+      "end": 195.94
+    },
+    {
+      "latin": "Veníte, quotquot críminum",
+      "english": "Come, all whom the deadly",
+      "start": 197.87,
+      "end": 204.02
+    },
+    {
+      "latin": "Funésta labes ínficit:",
+      "english": "stain of sin defiles:",
+      "start": 204.29,
+      "end": 211.33
+    },
+    {
+      "latin": "In hoc salútis bálneo",
+      "english": "in this bath of salvation",
+      "start": 211.33,
+      "end": 217.73
+    },
+    {
+      "latin": "Qui se lavat, mundábitur.",
+      "english": "whoever washes shall be made clean.",
+      "start": 217.73,
+      "end": 225.26
+    },
+    {
+      "latin": "Summi ad Paréntis déxteram",
+      "english": "To Him who sits at the right hand",
+      "start": 227.01,
+      "end": 232.91
+    },
+    {
+      "latin": "Sedénti habénda est grátia,",
+      "english": "of the Father most high be thanks,",
+      "start": 232.91,
+      "end": 239.99
+    },
+    {
+      "latin": "Qui nos redémit sánguine,",
+      "english": "who redeemed us by His blood",
+      "start": 239.99,
+      "end": 246.37
+    },
+    {
+      "latin": "Sanctóque firmat Spíritu.",
+      "english": "and strengthens us by the Holy Spirit.",
+      "start": 246.37,
+      "end": 254.66
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 256.05,
+      "end": 264.74
+    }
+  ]
+}

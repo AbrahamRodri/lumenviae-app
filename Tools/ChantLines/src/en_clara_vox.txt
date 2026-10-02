@@ -1,0 +1,25 @@
+# En clara vox redarguit, the Advent hymn at Lauds (Mode I), all five
+# stanzas and the Amen. The cantor breathes after every line of the first
+# stanza, and later sings a stanza's first two lines (and the third
+# stanza's last two) in one breath; those stand together as one line.
+# Latin from the score; English plain and literal.
+noise -14
+gap 0.3
+merge 1.5
+
+En clara vox redárguit | Lo, a clear voice rebukes
+Obscúra quæque, pérsonans: | all things dark, resounding:
+Procul fugéntur sómnia, | let dreams be put to flight,
+Ab alto Jesus prómicat. | from on high Jesus shines forth.
+Mens jam resúrgat tórpida, Non ámplius jacens humi: | Let the sluggish mind now rise, no longer lying on the ground;
+Sidus refúlget jam novum, | a new star now shines,
+Ut tollat omne nóxium. | to take away all that harms.
+En Agnus ad nos míttitur Laxáre gratis débitum: | Lo, the Lamb is sent to us to loose our debt freely;
+Omnes simul cum lácrimis Precémur indulgéntiam. | let us all together with tears pray for pardon,
+Ut cum secúndo fúlserit, Metúque mundum cínxerit, | that when He shines forth a second time and girds the world with fear,
+Non pro reátu púniat, | He may not punish us for our guilt,
+Sed nos pius tunc prótegat. | but in His mercy then protect us.
+Virtus, honor, laus, glória Deo Patri cum Fílio, | Power, honour, praise and glory to God the Father with the Son,
+Sancto simul Paráclito, | together with the Holy Paraclete,
+In sæculórum sǽcula. | for ever and ever.
+Amen. | Amen.

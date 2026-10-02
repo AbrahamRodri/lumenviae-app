@@ -1,0 +1,133 @@
+{
+  "id": "da_pacem",
+  "part": null,
+  "method": "breaths by loudness (under -14 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 14 of 20 breaks heard",
+  "lines": [
+    {
+      "latin": "Da pacem Dómine",
+      "english": "Give peace, O Lord,",
+      "start": 0.33,
+      "end": 4.37
+    },
+    {
+      "latin": "in diébus nostris:",
+      "english": "in our days;",
+      "start": 4.37,
+      "end": 9.23
+    },
+    {
+      "latin": "quia non est álius",
+      "english": "for there is none other",
+      "start": 9.23,
+      "end": 15.23
+    },
+    {
+      "latin": "qui pugnet pro nobis,",
+      "english": "who fights for us,",
+      "start": 15.23,
+      "end": 19.09
+    },
+    {
+      "latin": "nisi tu Deus noster.",
+      "english": "but only Thou, our God.",
+      "start": 19.09,
+      "end": 25.8
+    },
+    {
+      "latin": "Rogáte quæ ad pacem sunt Jerúsalem:",
+      "english": "Pray for the things that are for the peace of Jerusalem:",
+      "start": 27.09,
+      "end": 32.75
+    },
+    {
+      "latin": "et abundántia diligéntibus te:",
+      "english": "and abundance for them that love thee.",
+      "start": 32.75,
+      "end": 37.84
+    },
+    {
+      "latin": "Fiat pax in virtúte tua:",
+      "english": "Let peace be in thy strength,",
+      "start": 39.01,
+      "end": 43.85
+    },
+    {
+      "latin": "et abundántia in túrribus tuis.",
+      "english": "and abundance in thy towers.",
+      "start": 43.85,
+      "end": 48.98
+    },
+    {
+      "latin": "Da pacem Dómine in diébus nostris:",
+      "english": "Give peace, O Lord, in our days;",
+      "start": 50.47,
+      "end": 59.06
+    },
+    {
+      "latin": "quia non est álius",
+      "english": "for there is none other",
+      "start": 59.35,
+      "end": 65.49
+    },
+    {
+      "latin": "qui pugnet pro nobis,",
+      "english": "who fights for us,",
+      "start": 65.49,
+      "end": 69.49
+    },
+    {
+      "latin": "nisi tu Deus noster.",
+      "english": "but only Thou, our God.",
+      "start": 69.49,
+      "end": 76.1
+    },
+    {
+      "latin": "Glória Patri, et Fílio,",
+      "english": "Glory be to the Father, and to the Son,",
+      "start": 77.37,
+      "end": 82.19
+    },
+    {
+      "latin": "et Spirítui Sancto.",
+      "english": "and to the Holy Spirit.",
+      "start": 82.19,
+      "end": 86.7
+    },
+    {
+      "latin": "Sicut erat in princípio, et nunc, et semper,",
+      "english": "As it was in the beginning, is now, and ever shall be,",
+      "start": 87.43,
+      "end": 93.47
+    },
+    {
+      "latin": "et in sǽcula sæculórum. Amen.",
+      "english": "world without end. Amen.",
+      "start": 93.47,
+      "end": 98.98
+    },
+    {
+      "latin": "Da pacem Dómine",
+      "english": "Give peace, O Lord,",
+      "start": 100.27,
+      "end": 104.55
+    },
+    {
+      "latin": "in diébus nostris:",
+      "english": "in our days;",
+      "start": 104.55,
+      "end": 109.12
+    },
+    {
+      "latin": "quia non est álius qui pugnet pro nobis,",
+      "english": "for there is none other who fights for us,",
+      "start": 109.27,
+      "end": 119.33
+    },
+    {
+      "latin": "nisi tu Deus noster.",
+      "english": "but only Thou, our God.",
+      "start": 119.33,
+      "end": 126.5
+    }
+  ]
+}

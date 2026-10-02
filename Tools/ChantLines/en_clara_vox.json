@@ -1,0 +1,103 @@
+{
+  "id": "en_clara_vox",
+  "part": null,
+  "method": "breaths by loudness (under -14 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 9 of 15 breaks heard",
+  "lines": [
+    {
+      "latin": "En clara vox redárguit",
+      "english": "Lo, a clear voice rebukes",
+      "start": 0.21,
+      "end": 4.27
+    },
+    {
+      "latin": "Obscúra quæque, pérsonans:",
+      "english": "all things dark, resounding:",
+      "start": 4.27,
+      "end": 9.47
+    },
+    {
+      "latin": "Procul fugéntur sómnia,",
+      "english": "let dreams be put to flight,",
+      "start": 9.47,
+      "end": 14.21
+    },
+    {
+      "latin": "Ab alto Jesus prómicat.",
+      "english": "from on high Jesus shines forth.",
+      "start": 14.21,
+      "end": 19.82
+    },
+    {
+      "latin": "Mens jam resúrgat tórpida, Non ámplius jacens humi:",
+      "english": "Let the sluggish mind now rise, no longer lying on the ground;",
+      "start": 20.25,
+      "end": 29.85
+    },
+    {
+      "latin": "Sidus refúlget jam novum,",
+      "english": "a new star now shines,",
+      "start": 29.85,
+      "end": 34.43
+    },
+    {
+      "latin": "Ut tollat omne nóxium.",
+      "english": "to take away all that harms.",
+      "start": 34.43,
+      "end": 39.44
+    },
+    {
+      "latin": "En Agnus ad nos míttitur Laxáre gratis débitum:",
+      "english": "Lo, the Lamb is sent to us to loose our debt freely;",
+      "start": 40.09,
+      "end": 49.33
+    },
+    {
+      "latin": "Omnes simul cum lácrimis Precémur indulgéntiam.",
+      "english": "let us all together with tears pray for pardon,",
+      "start": 49.33,
+      "end": 59.77
+    },
+    {
+      "latin": "Ut cum secúndo fúlserit, Metúque mundum cínxerit,",
+      "english": "that when He shines forth a second time and girds the world with fear,",
+      "start": 59.77,
+      "end": 69.37
+    },
+    {
+      "latin": "Non pro reátu púniat,",
+      "english": "He may not punish us for our guilt,",
+      "start": 69.37,
+      "end": 74.05
+    },
+    {
+      "latin": "Sed nos pius tunc prótegat.",
+      "english": "but in His mercy then protect us.",
+      "start": 74.05,
+      "end": 79.9
+    },
+    {
+      "latin": "Virtus, honor, laus, glória Deo Patri cum Fílio,",
+      "english": "Power, honour, praise and glory to God the Father with the Son,",
+      "start": 80.09,
+      "end": 89.45
+    },
+    {
+      "latin": "Sancto simul Paráclito,",
+      "english": "together with the Holy Paraclete,",
+      "start": 89.45,
+      "end": 94.17
+    },
+    {
+      "latin": "In sæculórum sǽcula.",
+      "english": "for ever and ever.",
+      "start": 94.17,
+      "end": 100.7
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 100.95,
+      "end": 108.4
+    }
+  ]
+}

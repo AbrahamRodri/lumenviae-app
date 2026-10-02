@@ -1,0 +1,29 @@
+# Lucis Creator optime (Mode VIII), the Sunday hymn at Vespers, all five
+# stanzas and the Amen. Latin from the score; English a plain, literal
+# rendering. The cantor breathes at every quarter of a stanza, so a line
+# is a quarter.
+noise -16
+gap 0.2
+merge 2
+
+Lucis Creátor óptime, | O most kind Creator of the light,
+Lucem diérum próferens, | who bringest forth the light of days,
+Primórdiis lucis novæ | and with the first beginnings of new light
+Mundi parans oríginem: | preparest the origin of the world:
+Qui mane junctum vésperi | Thou who biddest morning joined to evening
+Diem vocári prǽcipis: | to be called day,
+Illábitur tetrum chaos, | now dreadful darkness falls upon us;
+Audi preces cum flétibus. | hear our prayers and our tears.
+Ne mens graváta crímine, | Lest the mind, weighed down by sin,
+Vitæ sit exsul múnere, | be an exile from the gift of life,
+Dum nil perénne cógitat, | while it thinks on nothing everlasting
+Seséque culpis ílligat. | and binds itself in its faults.
+Cæléste pulset óstium, | May it knock at the door of heaven,
+Vitále tollat prǽmium: | may it win the prize of life;
+Vitémus omne nóxium, | let us shun all that harms,
+Purgémus omne péssimum. | let us cleanse away all that is evil.
+Præsta, Pater piíssime, | Grant this, most loving Father,
+Patríque compar Únice, | and Thou, the Only-begotten, equal to the Father,
+Cum Spíritu Paráclito, | with the Spirit, the Paraclete,
+Regnans per omne sǽculum. | reigning through every age.
+Amen. | Amen.

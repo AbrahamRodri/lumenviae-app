@@ -1,0 +1,53 @@
+# O Clavis David, the O antiphon of the 20th of December, before and after
+# the Magnificat in tone II, whose twelve verses are each sung in two
+# breaths at the mediant; the antiphon sung again breathes after
+# "Ísraël" as well, and is given that line more. Latin from the scores, the Magnificat's verses
+# beyond the two its score shows as the Liber sets them; English the app's
+# own Magnificat (the Douay-Rheims) and the antiphon's plain.
+noise -16
+gap 0.2
+merge 1.5
+
+part 0
+O Clavis David, | O Key of David,
+et sceptrum domus Ísraël: qui áperis, | and Sceptre of the house of Israel, who openest,
+et nemo claudit; | and no man shutteth;
+claudis, et nemo áperit: | who shuttest, and no man openeth:
+veni, et educ vinctum | come, and lead forth the captive
+de domo cárceris, | out of the prison house,
+sedéntem in ténebris | him that sitteth in darkness
+et umbra mortis. | and in the shadow of death.
+part 1
+Magníficat ánima mea Dóminum. | My soul doth magnify the Lord.
+Et exsultávit spíritus meus | And my spirit hath rejoiced
+in Deo salutári meo. | in God my Saviour.
+Quia respéxit humilitátem ancíllæ suæ: | Because He hath regarded the humility of His handmaid:
+ecce enim ex hoc beátam me dicent omnes generatiónes. | for behold from henceforth all generations shall call me blessed.
+Quia fecit mihi magna qui potens est: | Because He that is mighty hath done great things to me:
+et sanctum nomen ejus. | and holy is His name.
+Et misericórdia ejus a progénie in progénies | And His mercy is from generation unto generations,
+timéntibus eum. | to them that fear Him.
+Fecit poténtiam in bráchio suo: | He hath shewed might in His arm:
+dispérsit supérbos mente cordis sui. | He hath scattered the proud in the conceit of their heart.
+Depósuit poténtes de sede, | He hath put down the mighty from their seat,
+et exaltávit húmiles. | and hath exalted the humble.
+Esuriéntes implévit bonis: | He hath filled the hungry with good things:
+et dívites dimísit inánes. | and the rich He hath sent empty away.
+Suscépit Israël púerum suum, | He hath received Israel His servant,
+recordátus misericórdiæ suæ. | being mindful of His mercy.
+Sicut locútus est ad patres nostros, | As He spoke to our fathers,
+Abraham et sémini ejus in sǽcula. | to Abraham and to his seed for ever.
+Glória Patri, et Fílio, | Glory be to the Father, and to the Son,
+et Spirítui Sancto. | and to the Holy Spirit.
+Sicut erat in princípio, et nunc, et semper, | As it was in the beginning, is now, and ever shall be,
+et in sǽcula sæculórum. Amen. | world without end. Amen.
+part 2
+O Clavis David, | O Key of David,
+et sceptrum domus Ísraël: | and Sceptre of the house of Israel,
+qui áperis, | who openest,
+et nemo claudit; | and no man shutteth;
+claudis, et nemo áperit: | who shuttest, and no man openeth:
+veni, et educ vinctum | come, and lead forth the captive
+de domo cárceris, | out of the prison house,
+sedéntem in ténebris | him that sitteth in darkness
+et umbra mortis. | and in the shadow of death.

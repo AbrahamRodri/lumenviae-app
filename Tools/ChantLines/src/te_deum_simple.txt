@@ -1,0 +1,72 @@
+# Te Deum, simple tone: the hymn, its versicles Benedicamus Patrem,
+# Benedictus es and Domine exaudi (the priest's Dominus vobiscum is not
+# sung), and the collect Deus cujus misericordiae. The cantor breathes
+# inside "Te Deum laudámus: te Dóminum confitémur", "Te gloriósus
+# Apostolórum chorus", "Venerándum tuum verum, et únicum Fílium", "Tu ad
+# liberándum…", "Et laudámus nomen tuum…" and "Dignáre Dómine…", and sings
+# "Tu ad déxteram Dei sedes, in glória Patris" on one breath. Latin from
+# the scores; English as the solemn tone's.
+noise -20
+gap 0.3
+merge 1.5
+
+part 0
+Te Deum laudámus: | We praise Thee, O God:
+te Dóminum confitémur. | we acknowledge Thee to be the Lord.
+Te ætérnum Patrem omnis terra venerátur. | Thee, the eternal Father, all the earth doth worship.
+Tibi omnes Ángeli, | To Thee all the Angels,
+tibi Cæli et univérsæ Potestátes: | to Thee the heavens and all the Powers,
+Tibi Chérubim et Séraphim incessábili voce proclámant: | to Thee the Cherubim and Seraphim cry out with unceasing voice:
+Sanctus: | Holy,
+Sanctus: | Holy,
+Sanctus Dóminus Deus Sábaoth. | Holy, Lord God of hosts.
+Pleni sunt cæli et terra majestátis glóriæ tuæ. | The heavens and the earth are full of the majesty of Thy glory.
+Te gloriósus | Thee the glorious
+Apostolórum chorus: | choir of the Apostles,
+Te Prophetárum laudábilis númerus: | Thee the praiseworthy company of the Prophets,
+Te Mártyrum candidátus laudat exércitus. | Thee the white-robed army of Martyrs doth praise.
+Te per orbem terrárum sancta confitétur Ecclésia: | Thee the holy Church throughout the whole world doth confess:
+Patrem imménsæ majestátis: | the Father of boundless majesty;
+Venerándum tuum verum, | Thine adorable, true
+et únicum Fílium: | and only Son;
+Sanctum quoque Paráclitum Spíritum. | and the Holy Spirit, the Paraclete.
+Tu Rex glóriæ, Christe. | Thou, O Christ, art the King of glory.
+Tu Patris sempitérnus es Fílius. | Thou art the everlasting Son of the Father.
+Tu ad liberándum susceptúrus hóminem, | Thou, when Thou wouldst take manhood upon Thee to set man free,
+non horruísti Vírginis úterum. | didst not shrink from the Virgin's womb.
+Tu devícto mortis acúleo, aperuísti credéntibus regna cælórum. | Thou, having overcome the sting of death, didst open the kingdom of heaven to them that believe.
+Tu ad déxteram Dei sedes, in glória Patris. | Thou sittest at the right hand of God, in the glory of the Father.
+Judex créderis esse ventúrus. | Thou art believed to be the Judge who shall come.
+Te ergo quǽsumus, tuis fámulis súbveni, | We beseech Thee, therefore, come to the help of Thy servants,
+quos pretióso sánguine redemísti. | whom Thou hast redeemed with Thy precious blood.
+Ætérna fac | Make them
+cum Sanctis tuis in glória numerári. | to be numbered with Thy Saints in glory everlasting.
+Salvum fac pópulum tuum Dómine, | Save Thy people, O Lord,
+et bénedic hereditáti tuæ. | and bless Thine inheritance.
+Et rege eos, | Rule them,
+et extólle illos usque in ætérnum. | and lift them up for ever.
+Per síngulos dies, benedícimus te. | Every day we bless Thee.
+Et laudámus nomen tuum in sǽculum, | And we praise Thy name for ever,
+et in sǽculum sǽculi. | and for ever and ever.
+Dignáre Dómine die isto | Deign, O Lord, this day
+sine peccáto nos custodíre. | to keep us without sin.
+Miserére nostri Dómine, | Have mercy on us, O Lord,
+miserére nostri. | have mercy on us.
+Fiat misericórdia tua Dómine super nos, | Let Thy mercy, O Lord, be upon us,
+quemádmodum sperávimus in te. | as we have hoped in Thee.
+In te Dómine sperávi: | In Thee, O Lord, have I hoped:
+non confúndar in ætérnum. | let me not be confounded for ever.
+part 1
+Benedicámus Patrem et Fílium cum Sancto Spíritu. | Let us bless the Father and the Son, with the Holy Spirit.
+Laudémus et superexaltémus eum in sǽcula. | Let us praise and exalt Him above all for ever.
+Benedíctus es Dómine in firmaménto cæli. | Blessed art Thou, O Lord, in the firmament of heaven.
+Et laudábilis, et gloriósus, et superexaltátus in sǽcula. | And worthy to be praised, and glorious, and exalted above all for ever.
+Dómine exáudi oratiónem meam. | O Lord, hear my prayer.
+Et clamor meus ad te véniat. | And let my cry come unto Thee.
+part 2
+Orémus. | Let us pray.
+Deus cujus misericórdiæ non est númerus, et bonitátis infinítus est thesáurus: | O God, whose mercies are without number, and the treasure of whose goodness is infinite:
+piísimæ Majestáti tuæ pro collátis donis grátias ágimus, tuam semper cleméntiam exorántes: | we give thanks to Thy most gracious Majesty for the gifts Thou hast bestowed, ever beseeching Thy clemency,
+ut qui peténtibus postuláta concédis, eósdem non déserens, ad prǽmia futúra dispónas. | that as Thou grantest the petitions of them that ask Thee, Thou wilt not forsake them, but wilt prepare them for the rewards to come.
+Per Christum Dóminum nostrum. | Through Christ our Lord.
+Amen. | Amen.

@@ -1,0 +1,45 @@
+# Salvete Christi vulnera (Mode II), the hymn of the Precious Blood, all
+# nine stanzas and the Amen. Latin from the score; English a plain,
+# literal rendering. The cantor breathes at every quarter of a stanza, so
+# a line is a quarter.
+noise -16
+gap 0.2
+merge 2.5
+
+Salvéte Christi vúlnera, | Hail, wounds of Christ,
+Imménsi amóris pígnora, | pledges of boundless love,
+Quibus perénnes rívuli | from which unending streams
+Manant rubéntis sánguinis. | of crimson blood flow forth.
+Nitóre stellas víncitis, | In brightness you surpass the stars,
+Rosas odóre et bálsama, | in fragrance roses and balsam,
+Prétio lapíllos Índicos, | in worth the gems of India,
+Mellis favos dulcédine. | in sweetness the honeycomb.
+Per vos patet gratíssimum | Through you is opened a most welcome
+Nostris asýlum méntibus: | refuge for our minds;
+Non huc furor minántium | here the fury of threatening
+Unquam penétrat hóstium. | foes never enters.
+Quot Jesus in prætório | How many scourges Jesus,
+Flagélla nudus éxcipit! | stripped, receives in the praetorium!
+Quot scissa pellis úndique | How many drops of blood
+Stillat cruóris gúttulas! | His torn skin sheds on every side!
+Frontem venústam, proh dolor! | His comely brow, alas,
+Coróna pungit spínea, | a crown of thorns pierces;
+Clavi retúsa cúspide | nails with blunted points
+Pedes manúsque pérforant. | pierce through His feet and hands.
+Postquam sed ille trádidit | But after He had given up
+Amans volénsque spíritum, | His spirit, loving and willing,
+Pectus ferítur láncea, | His breast is struck with a lance,
+Geminúsque liquor éxsilit. | and a twofold stream springs forth.
+Ut plena sit redémptio, | That redemption may be full,
+Sub torculári stríngitur, | He is pressed beneath the winepress,
+Suíque Jesus ímmemor | and Jesus, unmindful of Himself,
+Sibi nil resérvat sánguinis. | keeps for Himself no drop of blood.
+Veníte, quotquot críminum | Come, all whom the deadly
+Funésta labes ínficit: | stain of sin defiles:
+In hoc salútis bálneo | in this bath of salvation
+Qui se lavat, mundábitur. | whoever washes shall be made clean.
+Summi ad Paréntis déxteram | To Him who sits at the right hand
+Sedénti habénda est grátia, | of the Father most high be thanks,
+Qui nos redémit sánguine, | who redeemed us by His blood
+Sanctóque firmat Spíritu. | and strengthens us by the Holy Spirit.
+Amen. | Amen.

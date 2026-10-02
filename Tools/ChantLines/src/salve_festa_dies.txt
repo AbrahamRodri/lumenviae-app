@@ -1,0 +1,46 @@
+# Salve festa dies, the Easter processional of Venantius Fortunatus
+# (Mode IV): the refrain sung twice, then after each of the seven verses.
+# The cantor sings the refrain's halves now in one breath, now in two,
+# and its last two pieces once in a breath; those pieces stand together
+# as one line. Latin from the score; English plain and literal.
+noise -14
+gap 0.3
+merge 1.5
+
+Salve festa dies, | Hail, festal day,
+toto venerábilis ævo, Qua Deus inférnum vicit et astra tenet. | to be honoured through every age, on which God conquered hell and holds the stars.
+Salve festa dies, toto venerábilis ævo, | Hail, festal day, to be honoured through every age,
+Qua Deus inférnum vicit et astra tenet. | on which God conquered hell and holds the stars.
+Ecce renascéntis testátur grátia mundi | Behold, the grace of the world reborn bears witness
+Omnia cum Dómino dona redísse suo. | that all gifts have returned with their Lord.
+Salve festa dies, toto venerábilis ævo, | Hail, festal day, to be honoured through every age,
+Qua Deus inférnum vicit et astra tenet. | on which God conquered hell and holds the stars.
+Namque triumphánti post trístia tártara Christo | For to Christ, triumphant after the gloom of hell,
+Úndique fronde nemus, | the grove on every side with leaf,
+grámina flore favent. | the grasses with flower, give their welcome.
+Salve festa dies, | Hail, festal day,
+toto venerábilis ævo, | to be honoured through every age,
+Qua Deus inférnum vicit et astra tenet. | on which God conquered hell and holds the stars.
+Qui genus humánum cernens mersísse profúndo, | Thou who, seeing mankind sunk in the deep,
+Ut hóminem eríperes, es quoque factus homo. | that Thou mightest rescue man, wast Thyself made man.
+Salve festa dies, | Hail, festal day,
+toto venerábilis ævo, | to be honoured through every age,
+Qua Deus inférnum vicit et astra tenet. | on which God conquered hell and holds the stars.
+Trístia cessérunt inférnæ víncula legis | The grim bonds of the law of hell have given way,
+Expavítque chaos lúminis ore premi. | and chaos trembled to be overwhelmed by the face of light.
+Salve festa dies, toto venerábilis ævo, | Hail, festal day, to be honoured through every age,
+Qua Deus inférnum vicit et astra tenet. | on which God conquered hell and holds the stars.
+Pollícitam sed redde fidem, precor, alma potéstas: | But fulfil Thy promised word, I pray, O gracious Power:
+Tértia lux rédiit, surge sepúlte meus. | the third day has returned; arise, my Buried One.
+Salve festa dies, toto venerábilis ævo, | Hail, festal day, to be honoured through every age,
+Qua Deus inférnum vicit et astra tenet. | on which God conquered hell and holds the stars.
+Solve catenátas inférni cárceris umbras, | Loose the chained shades of the prison of hell,
+Et révoca sursum quidquid ad ima ruit. | and call back on high whatever has fallen to the depths.
+Salve festa dies, | Hail, festal day,
+toto venerábilis ævo, | to be honoured through every age,
+Qua Deus inférnum vicit et astra tenet. | on which God conquered hell and holds the stars.
+Redde tuam fáciem, vídeant ut sǽcula lumen; | Give back Thy face, that the ages may see the light;
+Redde diem qui nos, te moriénte, fugit. | give back the day that fled from us when Thou didst die.
+Salve festa dies, | Hail, festal day,
+toto venerábilis ævo, | to be honoured through every age,
+Qua Deus inférnum vicit et astra tenet. | on which God conquered hell and holds the stars.

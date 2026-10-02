@@ -1,0 +1,48 @@
+# Media vita in morte sumus, the Lenten responsory (Mode IV): the
+# response, its first verse, the response again from Sancte Deus, the
+# second verse, Sancte again, the Gloria Patri, and Sancte a last time.
+# The cantor breathes at the score's bars, and once inside adjutorem,
+# where the line runs over both phrases. Latin from the score; English
+# plain and literal.
+noise -14
+gap 0.3
+merge 1.5
+
+Média vita | In the midst of life
+in morte sumus: | we are in death:
+quem quǽrimus adjutórem, | whom shall we seek as our helper,
+~
+nisi te Dómine? | but Thee, O Lord,
+qui pro peccátis nostris | who for our sins
+juste irásceris: | art justly angered?
+Sancte Deus, | Holy God,
+Sancte fortis, | holy and mighty,
+Sancte miséricors Salvátor, | holy and merciful Saviour,
+amáræ morti | to bitter death
+ne tradas nos. | deliver us not.
+In te speravérunt | In Thee our fathers
+patres nostri; | put their hope;
+speravérunt, | they hoped,
+et liberásti eos. | and Thou didst deliver them.
+Sancte Deus, | Holy God,
+Sancte fortis, | holy and mighty,
+Sancte miséricors Salvátor, | holy and merciful Saviour,
+amáræ morti | to bitter death
+ne tradas nos. | deliver us not.
+Ad te clamavérunt | To Thee our fathers
+patres nostri; | cried out;
+clamavérunt, | they cried,
+et non sunt confúsi. | and were not put to shame.
+Sancte Deus, | Holy God,
+Sancte fortis, | holy and mighty,
+Sancte miséricors Salvátor, | holy and merciful Saviour,
+amáræ morti | to bitter death
+ne tradas nos. | deliver us not.
+Glória Patri, | Glory be to the Father,
+et Fílio, | and to the Son,
+et Spirítui Sancto. | and to the Holy Spirit.
+Sancte Deus, | Holy God,
+Sancte fortis, | holy and mighty,
+Sancte miséricors Salvátor, | holy and merciful Saviour,
+amáræ morti | to bitter death
+ne tradas nos. | deliver us not.

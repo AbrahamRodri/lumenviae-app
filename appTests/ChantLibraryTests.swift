@@ -35,17 +35,17 @@ struct ChantLibraryTests {
     }
 
     @Test func theKindsAreTheBoardsCounts() {
-        #expect(ChantForm.shortChant.chants.count == 19)
-        #expect(ChantForm.hymn.chants.count == 25)
+        #expect(ChantForm.shortChant.chants.count == 30)
+        #expect(ChantForm.hymn.chants.count == 36)
         #expect(ChantForm.sequence.chants.count == 7)
         #expect(ChantForm.litany.chants.count == 5)
-        #expect(ChantForm.psalm.chants.count == 4)
-        #expect(ChantForm.everydayPrayer.chants.count == 17)
+        #expect(ChantForm.psalm.chants.count == 5)
+        #expect(ChantForm.everydayPrayer.chants.count == 21)
     }
 
     @Test func theLengthsAreTheBoardsCounts() {
-        #expect(ChantLength.underAMinute.chants.count == 7)
-        #expect(ChantLength.aFewMinutes.chants.count == 61)
+        #expect(ChantLength.underAMinute.chants.count == 8)
+        #expect(ChantLength.aFewMinutes.chants.count == 87)
         #expect(ChantLength.aLongWhile.chants.count == 9)
     }
 
@@ -167,18 +167,23 @@ struct ChantLibraryTests {
         #expect(calendar.component(.day, from: ahead[1].date) == 25)
     }
 
-    @Test func theDaysAheadOfAdventTakeInTheFifthOAntiphon() {
-        let ahead = ChantFeast.upcoming(from: day(2026, 12, 1), count: 4)
-        #expect(ahead.map(\.feast.id) == ["immaculate_conception", "o_oriens", "christmas", "holy_name"])
-        #expect(calendar.component(.day, from: ahead[1].date) == 21)
-        #expect(ahead[1].feast.chant?.id == "o_oriens_magnificat")
+    @Test func theDaysAheadOfAdventTakeInTheSevenOAntiphons() {
+        let ahead = ChantFeast.upcoming(from: day(2026, 12, 1), count: 9)
+        #expect(ahead.map(\.feast.id) == ["immaculate_conception", "o_sapientia", "o_adonai", "o_radix",
+                                           "o_clavis", "o_oriens", "o_rex", "o_emmanuel", "christmas"])
+        #expect(ahead[1...7].map { calendar.component(.day, from: $0.date) } == Array(17...23))
+        #expect(ahead[5].feast.chant?.id == "o_oriens_magnificat")
     }
 
     @Test func theMassIsSungWhole() throws {
         let mass = try #require(ChantLibraryData.learningPaths.first { $0.id == "mass" })
+        let sundays = try #require(ChantLibraryData.learningPaths.first { $0.id == "sunday_mass" })
         let shelf = try #require(ChantCatalog.groups.first { $0.id == "mass" })
         #expect(mass.chantIDs.allSatisfy { ChantLibraryData.forms[$0] == .everydayPrayer })
-        #expect(Set(mass.chantIDs) == Set(ChantCatalog.chants(in: shelf).map(\.id)))
+        // The two Masses' paths hold the whole shelf: Mass VIII with Credo
+        // III, and Mass XI after the sprinkling with holy water
+        #expect(Set(mass.chantIDs + sundays.chantIDs) == Set(ChantCatalog.chants(in: shelf).map(\.id)))
+        #expect(sundays.chantIDs.first == "asperges_me")
         // The Prayer Book's Nicene Creed is sung as Credo III
         #expect(ChantCatalog.chants(forPrayer: "nicene_creed").map(\.id) == ["credo_iii"])
         // Thursday's set sings the whole Pange Lingua, never its last two
@@ -300,30 +305,35 @@ struct ChantLibraryTests {
     /// timings does not fail this, and one of these losing its lines does
     @Test func theTimedChantsKeepTheirLines() {
         let timed = [
-            "ad_regias", "adeste_fideles", "adoremus", "adoro_te",
-            "agnus_de_angelis", "alma_redemptoris", "angelus", "anima_christi",
-            "attende_domine", "audi_benigne", "ave_maria", "ave_maria_antiphon",
-            "ave_maris_stella", "ave_maris_stella_feasts", "ave_regina_simple", "ave_regina_solemn",
-            "ave_verum", "christus_vincit", "cor_jesu", "creator_alme",
-            "credo_iii", "credo_in_deum", "dies_irae", "divine_praises",
-            "ecce_panis", "flos_carmeli", "gloria_de_angelis", "gloria_patri",
-            "in_nomine_patris", "inviolata", "jesu_dulcis_memoria",
-            "jesu_redemptor", "kyrie_de_angelis", "lauda_sion",
-            "litany_holy_name", "litany_loreto", "litany_sacred_heart",
-            "litany_saints", "litany_st_joseph", "magnificat", "memorare",
-            "miserere", "o_filii", "o_gloriosa", "o_mi_jesu",
-            "o_oriens_magnificat", "o_sacrum_convivium", "o_salutaris",
-            "o_vos_omnes", "pange_lingua", "panis_angelicus", "parce_domine",
-            "pater_noster", "puer_natus", "regina_caeli_simple",
-            "regina_caeli_solemn", "rorate_caeli", "salve_mater",
-            "salve_regina_simple", "salve_regina_solemn", "sancte_michael",
-            "sanctus_de_angelis", "stabat_mater", "sub_tuum", "tantum_ergo",
-            "te_deum", "te_joseph", "te_matrem", "tota_pulchra", "ubi_caritas",
+            "ad_regias", "adeste_fideles", "adoramus_te", "adoremus", "adoro_te",
+            "agnus_de_angelis", "agnus_orbis_factor", "alma_redemptoris",
+            "alma_redemptoris_simple", "angelus", "anima_christi", "asperges_me",
+            "attende_domine", "audi_benigne", "aurora_caelum", "ave_maria",
+            "ave_maria_antiphon", "ave_maris_stella", "ave_maris_stella_feasts",
+            "ave_regina_simple", "ave_regina_solemn", "ave_verum", "christus_vincit",
+            "concordi_laetitia", "cor_jesu", "creator_alme", "credo_iii",
+            "credo_in_deum", "da_pacem", "dies_irae", "divine_praises", "ecce_panis",
+            "en_clara_vox", "flos_carmeli", "gloria_de_angelis", "gloria_orbis_factor",
+            "gloria_patri", "in_nomine_patris", "inviolata", "jesu_dulcis_memoria",
+            "jesu_nostra_redemptio", "jesu_redemptor", "kyrie_de_angelis",
+            "kyrie_orbis_factor", "lauda_sion", "litany_holy_name", "litany_loreto",
+            "litany_sacred_heart", "litany_saints", "litany_st_joseph", "lucis_creator",
+            "magnificat", "media_vita", "memorare", "miserere", "o_adonai_magnificat",
+            "o_clavis_magnificat", "o_emmanuel_magnificat", "o_filii", "o_gloriosa",
+            "o_mi_jesu", "o_oriens_magnificat", "o_radix_magnificat",
+            "o_rex_magnificat", "o_sacrum_convivium", "o_salutaris",
+            "o_sapientia_magnificat", "o_vos_omnes", "omni_die", "pange_lingua",
+            "panis_angelicus", "parce_domine", "pater_noster", "puer_natus",
+            "quem_terra", "regina_caeli_simple", "regina_caeli_solemn", "rorate_caeli",
+            "salve_festa_dies", "salve_mater", "salve_regina_simple",
+            "salve_regina_solemn", "salvete_christi_vulnera", "sancte_michael",
+            "sanctus_de_angelis", "sanctus_orbis_factor", "stabat_mater", "sub_tuum",
+            "tantum_ergo", "te_deum", "te_deum_simple", "te_joseph", "te_matrem",
+            "te_saeculorum", "tota_pulchra", "ubi_caritas", "ut_queant_laxis",
             "veni_creator", "veni_emmanuel", "veni_sancte_reple",
-            "veni_sancte_spiritus", "vexilla_regis", "victimae_paschali",
-            "vidi_aquam"
+            "veni_sancte_spiritus", "vexilla_regis", "victimae_paschali", "vidi_aquam"
         ]
-        #expect(timed.count == 77)
+        #expect(timed.count == 104)
         for id in timed {
             #expect(ChantCatalog.chant(id)?.hasLines == true, "\(id) has lost its lines")
         }
@@ -374,8 +384,8 @@ struct ChantLibraryTests {
         // The Prayer Book's words are every setting's, and name none
         let read = ChantSearch.WordHit(id: "b", chant: solemn, snippet: "Salve", line: nil, start: nil)
         #expect(ChantSearch.setting(of: read) == nil)
-        let teDeum = try #require(ChantCatalog.chant("te_deum"))
-        let alone = ChantSearch.WordHit(id: "c", chant: teDeum, snippet: "Te Deum", line: 0, start: 0)
+        let laudaSion = try #require(ChantCatalog.chant("lauda_sion"))
+        let alone = ChantSearch.WordHit(id: "c", chant: laudaSion, snippet: "Lauda Sion", line: 0, start: 0)
         #expect(ChantSearch.setting(of: alone) == nil)
     }
 

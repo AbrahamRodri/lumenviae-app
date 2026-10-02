@@ -1,0 +1,20 @@
+# Asperges me, the sprinkling before the Sunday Mass outside Eastertide:
+# the antiphon, the verse of Psalm 50 and the Gloria Patri, and the
+# antiphon again, sung whole as the score's R. Asperges me asks; the
+# cantor sings the Sicut erat on one breath. Latin from the score; English
+# the Douay-Rheims's (Ps 50:9 and 50:3), the Gloria Patri as the Vidi
+# aquam's.
+noise -20
+gap 0.3
+merge 1.5
+
+part 0
+Aspérges me, | Thou shalt sprinkle me,
+Dómine, hyssópo, et mundábor: | O Lord, with hyssop, and I shall be cleansed:
+lavábis me, et super nivem dealbábor. | Thou shalt wash me, and I shall be made whiter than snow.
+Miserére mei, Deus, | Have mercy on me, O God,
+secúndum magnam misericórdiam tuam. | according to Thy great mercy.
+Glória Patri, et Fílio, et Spirítui Sancto: | Glory be to the Father, and to the Son, and to the Holy Spirit.
+Sicut erat in princípio, et nunc, et semper, et in sǽcula sæculórum. Amen. | As it was in the beginning, is now, and ever shall be, world without end. Amen.
+Aspérges me, Dómine, hyssópo, et mundábor: | Thou shalt sprinkle me, O Lord, with hyssop, and I shall be cleansed:
+lavábis me, et super nivem dealbábor. | Thou shalt wash me, and I shall be made whiter than snow.

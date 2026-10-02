@@ -1,0 +1,163 @@
+{
+  "id": "concordi_laetitia",
+  "part": null,
+  "method": "breaths by loudness (under -10 dB for 0.08 s, phrases under 1.5 s merged) + text alignment; Whisper: 9 of 25 breaks heard",
+  "lines": [
+    {
+      "latin": "Concórdi lætítia,",
+      "english": "With joy of one accord,",
+      "start": 0.31,
+      "end": 2.99
+    },
+    {
+      "latin": "Propúlsa mæstítia,",
+      "english": "all sorrow put to flight,",
+      "start": 2.99,
+      "end": 7.71
+    },
+    {
+      "latin": "Maríæ præcónia",
+      "english": "the praises of Mary",
+      "start": 7.71,
+      "end": 9.99
+    },
+    {
+      "latin": "Récolat Ecclésia:",
+      "english": "let the Church recall:",
+      "start": 10.07,
+      "end": 16.21
+    },
+    {
+      "latin": "Virgo María!",
+      "english": "O Virgin Mary!",
+      "start": 16.21,
+      "end": 20.58
+    },
+    {
+      "latin": "Quæ felíci gáudio,",
+      "english": "She who with happy joy,",
+      "start": 21.71,
+      "end": 24.23
+    },
+    {
+      "latin": "Resurgénte Dómino,",
+      "english": "when the Lord was rising,",
+      "start": 24.23,
+      "end": 28.99
+    },
+    {
+      "latin": "Flóruit ut lílium,",
+      "english": "flowered like the lily,",
+      "start": 28.99,
+      "end": 31.73
+    },
+    {
+      "latin": "Vivum cernens Fílium:",
+      "english": "beholding her Son alive:",
+      "start": 31.73,
+      "end": 37.12
+    },
+    {
+      "latin": "Virgo María!",
+      "english": "O Virgin Mary!",
+      "start": 37.39,
+      "end": 41.88
+    },
+    {
+      "latin": "Quam concéntu párili",
+      "english": "Her whom with equal harmony",
+      "start": 42.89,
+      "end": 45.91
+    },
+    {
+      "latin": "Chori láudant cælici,",
+      "english": "the choirs of heaven praise,",
+      "start": 45.91,
+      "end": 50.47
+    },
+    {
+      "latin": "Et nos cum cæléstibus",
+      "english": "and we with those of heaven",
+      "start": 50.47,
+      "end": 52.97
+    },
+    {
+      "latin": "Novum melos pángimus:",
+      "english": "raise a new song:",
+      "start": 52.97,
+      "end": 58.9
+    },
+    {
+      "latin": "Virgo María!",
+      "english": "O Virgin Mary!",
+      "start": 59.11,
+      "end": 64.08
+    },
+    {
+      "latin": "O Regína vírginum,",
+      "english": "O Queen of virgins,",
+      "start": 64.91,
+      "end": 67.75
+    },
+    {
+      "latin": "Votis fave súpplicum,",
+      "english": "look kindly on the prayers of thy suppliants,",
+      "start": 67.75,
+      "end": 72.55
+    },
+    {
+      "latin": "Et post mortis stádium,",
+      "english": "and after the course of death",
+      "start": 72.55,
+      "end": 75.33
+    },
+    {
+      "latin": "Vitæ confer prǽmium:",
+      "english": "bestow the reward of life:",
+      "start": 75.33,
+      "end": 81.25
+    },
+    {
+      "latin": "Virgo María!",
+      "english": "O Virgin Mary!",
+      "start": 81.25,
+      "end": 85.36
+    },
+    {
+      "latin": "Gloriósa Trínitas,",
+      "english": "O glorious Trinity,",
+      "start": 86.79,
+      "end": 89.73
+    },
+    {
+      "latin": "Indivísa Únitas,",
+      "english": "undivided Unity,",
+      "start": 89.73,
+      "end": 94.35
+    },
+    {
+      "latin": "Ob Maríæ mérita,",
+      "english": "for the merits of Mary,",
+      "start": 94.35,
+      "end": 97.07
+    },
+    {
+      "latin": "Nos salva per sǽcula:",
+      "english": "save us through all ages:",
+      "start": 97.11,
+      "end": 102.96
+    },
+    {
+      "latin": "Virgo María!",
+      "english": "O Virgin Mary!",
+      "start": 103.27,
+      "end": 107.76
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 108.65,
+      "end": 114.88
+    }
+  ]
+}

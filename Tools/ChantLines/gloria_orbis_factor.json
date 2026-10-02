@@ -1,0 +1,154 @@
+{
+  "id": "gloria_orbis_factor",
+  "part": null,
+  "method": "breaths by loudness (under -20 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 17 of 20 breaks heard",
+  "lines": [
+    {
+      "latin": "Glória in excélsis Deo.",
+      "english": "Glory to God in the highest.",
+      "start": 0.17,
+      "end": 7.37,
+      "part": 0
+    },
+    {
+      "latin": "Et in terra pax homínibus bonæ voluntátis.",
+      "english": "And on earth peace to men of good will.",
+      "start": 7.37,
+      "end": 16.34,
+      "part": 0
+    },
+    {
+      "latin": "Laudámus te. Benedícimus te.",
+      "english": "We praise Thee. We bless Thee.",
+      "start": 16.73,
+      "end": 25.59,
+      "part": 0
+    },
+    {
+      "latin": "Adorámus te. Glorificámus te.",
+      "english": "We adore Thee. We glorify Thee.",
+      "start": 25.59,
+      "end": 35.29,
+      "part": 0
+    },
+    {
+      "latin": "Grátias ágimus tibi propter magnam glóriam tuam.",
+      "english": "We give Thee thanks for Thy great glory.",
+      "start": 35.29,
+      "end": 46.14,
+      "part": 0
+    },
+    {
+      "latin": "Dómine Deus, Rex cæléstis,",
+      "english": "O Lord God, heavenly King,",
+      "start": 46.53,
+      "end": 53.93,
+      "part": 0
+    },
+    {
+      "latin": "Deus Pater omnípotens.",
+      "english": "God the Father almighty.",
+      "start": 53.93,
+      "end": 60.36,
+      "part": 0
+    },
+    {
+      "latin": "Dómine Fili unigénite Jesu Christe.",
+      "english": "O Lord Jesus Christ, the only-begotten Son.",
+      "start": 60.53,
+      "end": 72.79,
+      "part": 0
+    },
+    {
+      "latin": "Dómine Deus, Agnus Dei, Fílius Patris.",
+      "english": "O Lord God, Lamb of God, Son of the Father.",
+      "start": 72.79,
+      "end": 84.6,
+      "part": 0
+    },
+    {
+      "latin": "Qui tollis peccáta mundi,",
+      "english": "Who takest away the sins of the world,",
+      "start": 85.23,
+      "end": 91.15,
+      "part": 0
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 91.15,
+      "end": 96.38,
+      "part": 0
+    },
+    {
+      "latin": "Qui tollis peccáta mundi,",
+      "english": "Who takest away the sins of the world,",
+      "start": 96.93,
+      "end": 102.82,
+      "part": 0
+    },
+    {
+      "latin": "súscipe deprecatiónem nostram.",
+      "english": "receive our prayer.",
+      "start": 102.83,
+      "end": 110.19,
+      "part": 0
+    },
+    {
+      "latin": "Qui sedes ad déxteram Patris,",
+      "english": "Who sittest at the right hand of the Father,",
+      "start": 110.19,
+      "end": 117.57,
+      "part": 0
+    },
+    {
+      "latin": "miserére nobis.",
+      "english": "have mercy on us.",
+      "start": 117.57,
+      "end": 123.2,
+      "part": 0
+    },
+    {
+      "latin": "Quóniam tu solus sanctus.",
+      "english": "For Thou alone art holy.",
+      "start": 123.23,
+      "end": 130.23,
+      "part": 0
+    },
+    {
+      "latin": "Tu solus Dóminus.",
+      "english": "Thou alone art the Lord.",
+      "start": 130.23,
+      "end": 134.17,
+      "part": 0
+    },
+    {
+      "latin": "Tu solus Altíssimus,",
+      "english": "Thou alone art most high,",
+      "start": 134.17,
+      "end": 137.97,
+      "part": 0
+    },
+    {
+      "latin": "Jesu Christe.",
+      "english": "O Jesus Christ,",
+      "start": 137.97,
+      "end": 143.08,
+      "part": 0
+    },
+    {
+      "latin": "Cum Sancto Spíritu, in glória Dei Patris.",
+      "english": "with the Holy Spirit, in the glory of God the Father.",
+      "start": 143.21,
+      "end": 159.37,
+      "part": 0
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 159.37,
+      "end": 166.46,
+      "part": 0
+    }
+  ]
+}

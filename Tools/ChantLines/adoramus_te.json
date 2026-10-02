@@ -1,0 +1,43 @@
+{
+  "id": "adoramus_te",
+  "part": null,
+  "method": "breaths by loudness (under -14 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 3 of 5 breaks heard",
+  "lines": [
+    {
+      "latin": "Adorámus te,",
+      "english": "We adore Thee,",
+      "start": 0.35,
+      "end": 5.33
+    },
+    {
+      "latin": "sanctíssime Dómine Jesu Christe,",
+      "english": "most holy Lord Jesus Christ,",
+      "start": 5.33,
+      "end": 13.0
+    },
+    {
+      "latin": "hic et ad omnes ecclésias tuas",
+      "english": "here and in all Thy churches",
+      "start": 13.63,
+      "end": 21.71
+    },
+    {
+      "latin": "quæ sunt in toto mundo,",
+      "english": "which are throughout the whole world,",
+      "start": 21.71,
+      "end": 28.19
+    },
+    {
+      "latin": "et benedícimus tibi,",
+      "english": "and we bless Thee,",
+      "start": 28.19,
+      "end": 38.4
+    },
+    {
+      "latin": "quia per sanctam crucem tuam redemísti mundum.",
+      "english": "because by Thy holy Cross Thou hast redeemed the world.",
+      "start": 39.49,
+      "end": 52.76
+    }
+  ]
+}

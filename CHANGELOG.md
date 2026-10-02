@@ -80,7 +80,7 @@ gained books of their own, and How to Pray became a course.
   Prayer, the Angelus in the Pray tray, its recordings in the offline
   download, and every door to a prayer opening that prayer's page in the
   book (e118f0f, d9200c5)
-- Add the Chant Library: 77 chants, each sung and written out in sheet
+- Add the Chant Library: 104 chants, each sung and written out in sheet
   music by Verbum Gloriae and shared under their copyleft licence, bundled
   so they play with no signal, on thirteen shelves that open on tonight's
   song to Mary. Each chant's page shows its sheet music, which can be

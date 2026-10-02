@@ -705,7 +705,7 @@ extension Chant {
 
 extension ChantCatalog {
 
-    /// "All 77 chants work offline." Said at the foot of the library,
+    /// "All 104 chants work offline." Said at the foot of the library,
     /// counted from the catalog.
     static var offlineNote: String {
         "All \(all.count) chants work offline."

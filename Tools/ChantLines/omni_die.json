@@ -1,0 +1,295 @@
+{
+  "id": "omni_die",
+  "part": null,
+  "method": "breaths by loudness (under -12 dB for 0.12 s, phrases under 2 s merged) + text alignment; Whisper: 24 of 47 breaks heard",
+  "lines": [
+    {
+      "latin": "Omni die dic Maríæ,",
+      "english": "Every day speak to Mary,",
+      "start": 0.65,
+      "end": 4.37
+    },
+    {
+      "latin": "Mea, laudes, ánima:",
+      "english": "O my soul, her praises;",
+      "start": 4.37,
+      "end": 8.29
+    },
+    {
+      "latin": "Ejus festa, ejus gesta",
+      "english": "her feasts and her deeds",
+      "start": 8.29,
+      "end": 12.43
+    },
+    {
+      "latin": "Cole splendidíssima.",
+      "english": "keep with all splendour.",
+      "start": 12.43,
+      "end": 17.02
+    },
+    {
+      "latin": "Contempláre et miráre",
+      "english": "Behold and wonder at",
+      "start": 17.27,
+      "end": 21.55
+    },
+    {
+      "latin": "Ejus celsitúdinem,",
+      "english": "her exaltation;",
+      "start": 21.55,
+      "end": 25.89
+    },
+    {
+      "latin": "Dic felícem Genitrícem,",
+      "english": "call the Mother happy,",
+      "start": 25.89,
+      "end": 30.17
+    },
+    {
+      "latin": "Dic beátam Vírginem.",
+      "english": "call the Virgin blessed.",
+      "start": 30.17,
+      "end": 33.86
+    },
+    {
+      "latin": "Ipsam cole, ut de mole",
+      "english": "Honour her, that from the weight",
+      "start": 35.01,
+      "end": 39.07
+    },
+    {
+      "latin": "Críminum te líberet:",
+      "english": "of sins she may free thee;",
+      "start": 39.07,
+      "end": 43.59
+    },
+    {
+      "latin": "Hanc appélla, ne procélla Vitiórum súperet.",
+      "english": "call on her, lest the storm of vices overcome thee.",
+      "start": 43.59,
+      "end": 51.9
+    },
+    {
+      "latin": "Propter Hevam homo sævam",
+      "english": "Because of Eve, man received",
+      "start": 53.05,
+      "end": 56.97
+    },
+    {
+      "latin": "Accépit senténtiam:",
+      "english": "a cruel sentence;",
+      "start": 56.97,
+      "end": 61.41
+    },
+    {
+      "latin": "Per Maríam habet viam",
+      "english": "through Mary he has the way",
+      "start": 61.41,
+      "end": 65.71
+    },
+    {
+      "latin": "Quæ ducit ad pátriam.",
+      "english": "that leads to the homeland.",
+      "start": 65.71,
+      "end": 70.38
+    },
+    {
+      "latin": "Clemens audi tuæ laudi",
+      "english": "Gracious one, hear those",
+      "start": 70.97,
+      "end": 75.55
+    },
+    {
+      "latin": "Quos instántes cónspicis:",
+      "english": "whom thou seest intent upon thy praise;",
+      "start": 75.55,
+      "end": 80.13
+    },
+    {
+      "latin": "Munda reos et fac eos",
+      "english": "cleanse the guilty, and make them",
+      "start": 80.13,
+      "end": 84.85
+    },
+    {
+      "latin": "Bonis dignos cælicis.",
+      "english": "worthy of the good things of heaven.",
+      "start": 84.85,
+      "end": 89.04
+    },
+    {
+      "latin": "Virga Jesse, spes oppréssæ",
+      "english": "Rod of Jesse, hope and refuge",
+      "start": 90.43,
+      "end": 95.07
+    },
+    {
+      "latin": "Mentis et refúgium,",
+      "english": "of the burdened mind,",
+      "start": 95.07,
+      "end": 99.33
+    },
+    {
+      "latin": "Decus mundi, lux profúndi,",
+      "english": "glory of the world, light of the deep,",
+      "start": 99.33,
+      "end": 103.87
+    },
+    {
+      "latin": "Dómini sacrárium.",
+      "english": "sanctuary of the Lord.",
+      "start": 103.87,
+      "end": 107.74
+    },
+    {
+      "latin": "Gemma decens rosa recens,",
+      "english": "Comely jewel, fresh rose,",
+      "start": 109.49,
+      "end": 113.81
+    },
+    {
+      "latin": "Castitátis lílium:",
+      "english": "lily of chastity,",
+      "start": 113.81,
+      "end": 117.99
+    },
+    {
+      "latin": "Castum chorum ad polórum",
+      "english": "thou who leadest the chaste choir",
+      "start": 117.99,
+      "end": 122.45
+    },
+    {
+      "latin": "Quæ perdúcis gáudium.",
+      "english": "to the joy of heaven.",
+      "start": 122.45,
+      "end": 126.44
+    },
+    {
+      "latin": "Pulchra tota, sine nota",
+      "english": "All fair, without the mark",
+      "start": 127.55,
+      "end": 131.65
+    },
+    {
+      "latin": "Cujuscúmque máculæ,",
+      "english": "of any stain,",
+      "start": 131.65,
+      "end": 136.03
+    },
+    {
+      "latin": "Fac me mundum et jucúndum",
+      "english": "make me clean and glad",
+      "start": 136.03,
+      "end": 140.35
+    },
+    {
+      "latin": "Te laudáre sédule.",
+      "english": "to praise thee faithfully.",
+      "start": 140.35,
+      "end": 144.16
+    },
+    {
+      "latin": "Ut sim castus et modéstus,",
+      "english": "That I may be chaste and modest,",
+      "start": 145.49,
+      "end": 149.71
+    },
+    {
+      "latin": "Dulcis, blandus, sóbrius,",
+      "english": "gentle, kind and sober,",
+      "start": 149.71,
+      "end": 154.05
+    },
+    {
+      "latin": "Pius, rectus, circumspéctus,",
+      "english": "devout, upright and prudent,",
+      "start": 154.05,
+      "end": 158.67
+    },
+    {
+      "latin": "Simultátis néscius:",
+      "english": "a stranger to strife,",
+      "start": 158.67,
+      "end": 162.72
+    },
+    {
+      "latin": "Erudítus et munítus",
+      "english": "taught and armed",
+      "start": 164.03,
+      "end": 168.21
+    },
+    {
+      "latin": "Divínis elóquiis,",
+      "english": "by the words of God,",
+      "start": 168.21,
+      "end": 172.37
+    },
+    {
+      "latin": "Timorátus et ornátus",
+      "english": "God-fearing and adorned",
+      "start": 172.37,
+      "end": 176.71
+    },
+    {
+      "latin": "Sacris exercítiis.",
+      "english": "with holy exercises.",
+      "start": 176.71,
+      "end": 180.68
+    },
+    {
+      "latin": "Virgo sancta, cerne quanta",
+      "english": "Holy Virgin, see how many",
+      "start": 182.19,
+      "end": 186.71
+    },
+    {
+      "latin": "Perferámus júgiter",
+      "english": "we endure without end,",
+      "start": 186.71,
+      "end": 191.13
+    },
+    {
+      "latin": "Tentaménta, et susténta",
+      "english": "the temptations; and uphold",
+      "start": 191.13,
+      "end": 195.75
+    },
+    {
+      "latin": "Nos ut stemus fórtiter.",
+      "english": "us, that we may stand firm.",
+      "start": 195.75,
+      "end": 200.58
+    },
+    {
+      "latin": "Esto tutrix et adjútrix",
+      "english": "Be the guardian and helper",
+      "start": 201.25,
+      "end": 205.77
+    },
+    {
+      "latin": "Christiáni pópuli;",
+      "english": "of the Christian people;",
+      "start": 205.77,
+      "end": 210.17
+    },
+    {
+      "latin": "Pacem præsta, ne molésta",
+      "english": "grant peace, lest troubled",
+      "start": 210.17,
+      "end": 214.59
+    },
+    {
+      "latin": "Nos pertúrbent sæcula.",
+      "english": "times disturb us.",
+      "start": 214.59,
+      "end": 219.4
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 220.15,
+      "end": 224.94
+    }
+  ]
+}

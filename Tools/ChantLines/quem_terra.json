@@ -1,0 +1,133 @@
+{
+  "id": "quem_terra",
+  "part": null,
+  "method": "breaths by loudness (under -14 dB for 0.15 s, phrases under 2 s merged) + text alignment; Whisper: 8 of 20 breaks heard",
+  "lines": [
+    {
+      "latin": "Quem terra, pontus, sídera",
+      "english": "Him whom earth and sea and stars",
+      "start": 0.33,
+      "end": 6.47
+    },
+    {
+      "latin": "Colunt, adórant, prǽdicant,",
+      "english": "worship, adore and proclaim,",
+      "start": 6.47,
+      "end": 12.39
+    },
+    {
+      "latin": "Trinam regéntem máchinam,",
+      "english": "who rules the threefold frame of the world,",
+      "start": 12.39,
+      "end": 17.89
+    },
+    {
+      "latin": "Claustrum Maríæ bájulat.",
+      "english": "the cloister of Mary carries.",
+      "start": 17.89,
+      "end": 24.96
+    },
+    {
+      "latin": "Cui luna, sol et ómnia",
+      "english": "He whom moon and sun and all things",
+      "start": 26.39,
+      "end": 32.37
+    },
+    {
+      "latin": "Desérviunt per témpora,",
+      "english": "serve through every age,",
+      "start": 32.37,
+      "end": 38.43
+    },
+    {
+      "latin": "Perfúsa cæli grátia,",
+      "english": "filled with the grace of heaven,",
+      "start": 38.43,
+      "end": 44.03
+    },
+    {
+      "latin": "Gestant puéllæ víscera.",
+      "english": "the maiden's womb now bears.",
+      "start": 44.03,
+      "end": 51.2
+    },
+    {
+      "latin": "Beáta Mater múnere,",
+      "english": "Blessed Mother by this gift,",
+      "start": 52.25,
+      "end": 58.2
+    },
+    {
+      "latin": "Cujus, supérnus Ártifex",
+      "english": "whose Maker most high,",
+      "start": 58.41,
+      "end": 64.61
+    },
+    {
+      "latin": "Mundum pugíllo cóntinens,",
+      "english": "holding the world in His hand,",
+      "start": 64.61,
+      "end": 70.31
+    },
+    {
+      "latin": "Ventris sub arca clausus est.",
+      "english": "was enclosed within the ark of her womb.",
+      "start": 70.31,
+      "end": 77.3
+    },
+    {
+      "latin": "Beáta cæli núntio,",
+      "english": "Blessed by the message of heaven,",
+      "start": 79.01,
+      "end": 84.62
+    },
+    {
+      "latin": "Fecúnda Sancto Spíritu,",
+      "english": "fruitful by the Holy Spirit,",
+      "start": 85.07,
+      "end": 91.19
+    },
+    {
+      "latin": "Desiderátus géntibus",
+      "english": "the Desired of the nations",
+      "start": 91.19,
+      "end": 96.72
+    },
+    {
+      "latin": "Cujus per alvum fusus est.",
+      "english": "was brought forth from her womb.",
+      "start": 96.93,
+      "end": 103.92
+    },
+    {
+      "latin": "Jesu, tibi sit glória,",
+      "english": "Glory be to Thee, O Jesus,",
+      "start": 105.67,
+      "end": 112.17
+    },
+    {
+      "latin": "Qui natus es de Vírgine,",
+      "english": "who art born of the Virgin,",
+      "start": 112.17,
+      "end": 118.35
+    },
+    {
+      "latin": "Cum Patre et almo Spíritu,",
+      "english": "with the Father and the loving Spirit,",
+      "start": 118.35,
+      "end": 124.21
+    },
+    {
+      "latin": "In sempitérna sǽcula.",
+      "english": "unto everlasting ages.",
+      "start": 124.21,
+      "end": 132.02
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 132.49,
+      "end": 137.68
+    }
+  ]
+}

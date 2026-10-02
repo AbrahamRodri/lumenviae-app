@@ -1,0 +1,31 @@
+# Ut queant laxis, the hymn of St John the Baptist at Vespers (Mode II),
+# all five stanzas and the Amen. A line is a line of the Sapphic stanza;
+# the first stanza's last two are sung in one breath and stand together,
+# and the cantor breathes inside the third stanza's third line, after
+# reformasti, where the line runs over both phrases. Latin from the score;
+# English plain and literal.
+noise -14
+gap 0.3
+merge 1.5
+
+Ut queant laxis resonáre fibris | That with loosened chords
+Mira gestórum fámuli tuórum, | Thy servants may sound forth the wonders of Thy deeds,
+Solve pollúti lábii reátum, Sancte Joánnes. | loose the guilt of our unclean lips, O holy John.
+Núntius celso véniens Olýmpo, | A messenger coming from high heaven
+Te patri magnum fore nascitúrum, | tells thy father thou shalt be born great,
+Nomen, et vitæ sériem geréndæ | and sets forth in order thy name
+Órdine promit. | and the course of thy life.
+Ille promíssi dúbius supérni, | He, doubting the promise from on high,
+Pérdidit promptæ módulos loquélæ: | lost the ready power of speech;
+Sed reformásti génitus perémptæ | but thou, when born, didst restore
+~
+Órgana vocis. | the organs of his lost voice.
+Ventris obstrúso récubans cubíli | Lying in the hidden chamber of the womb,
+Sénseras Regem thálamo manéntem: | thou didst know the King abiding in His bridal chamber;
+Hinc parens nati méritis utérque | whence each parent, by the merits of the child,
+Ábdita pandit. | made known things hidden.
+Sit decus Patri, genitǽque Proli, | Glory be to the Father and to the begotten Son,
+Et tibi compar utriúsque virtus, | and to Thee, the Power equal to Both,
+Spíritus semper, Deus unus, omni | O Spirit, ever one God,
+Témporis ævo. | through all the ages of time.
+Amen. | Amen.

@@ -1,0 +1,17 @@
+# Kyrie XI, Orbis factor: Kyrie, Christe and Kyrie three times each, the
+# last Kyrie the longer melody. Latin from the score; English plain, as
+# Mass VIII's.
+noise -20
+gap 0.3
+merge 1.5
+
+part 0
+Kýrie, eléison. | Lord, have mercy.
+Kýrie, eléison. | Lord, have mercy.
+Kýrie, eléison. | Lord, have mercy.
+Christe, eléison. | Christ, have mercy.
+Christe, eléison. | Christ, have mercy.
+Christe, eléison. | Christ, have mercy.
+Kýrie, eléison. | Lord, have mercy.
+Kýrie, eléison. | Lord, have mercy.
+Kýrie, eléison. | Lord, have mercy.

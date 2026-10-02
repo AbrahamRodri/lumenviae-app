@@ -1,0 +1,45 @@
+# O Rex Gentium, the O antiphon of the 22nd of December, before and after
+# the Magnificat in tone II. Latin from the scores, the Magnificat's verses
+# beyond the two its score shows as the Liber sets them; English the app's
+# own Magnificat (the Douay-Rheims) and the antiphon's plain.
+noise -20
+gap 0.3
+merge 1.5
+
+part 0
+O Rex géntium, | O King of the nations,
+et desiderátus eárum, | and their Desired One,
+lapísque anguláris, | and the Cornerstone,
+qui facis útraque unum: | who makest both one:
+veni, et salva hóminem, | come, and save man,
+quem de limo formásti. | whom Thou didst form out of clay.
+part 1
+Magníficat ánima mea Dóminum. | My soul doth magnify the Lord.
+Et exsultávit spíritus meus | And my spirit hath rejoiced
+in Deo salutári meo. | in God my Saviour.
+Quia respéxit humilitátem ancíllæ suæ: | Because He hath regarded the humility of His handmaid:
+ecce enim ex hoc beátam me dicent omnes generatiónes. | for behold from henceforth all generations shall call me blessed.
+Quia fecit mihi magna qui potens est: | Because He that is mighty hath done great things to me:
+et sanctum nomen ejus. | and holy is His name.
+Et misericórdia ejus a progénie in progénies | And His mercy is from generation unto generations,
+timéntibus eum. | to them that fear Him.
+Fecit poténtiam in bráchio suo: | He hath shewed might in His arm:
+dispérsit supérbos mente cordis sui. | He hath scattered the proud in the conceit of their heart.
+Depósuit poténtes de sede, | He hath put down the mighty from their seat,
+et exaltávit húmiles. | and hath exalted the humble.
+Esuriéntes implévit bonis: | He hath filled the hungry with good things:
+et dívites dimísit inánes. | and the rich He hath sent empty away.
+Suscépit Israël púerum suum, | He hath received Israel His servant,
+recordátus misericórdiæ suæ. | being mindful of His mercy.
+Sicut locútus est ad patres nostros, Abraham et sémini ejus in sǽcula. | As He spoke to our fathers, to Abraham and to his seed for ever.
+Glória Patri, et Fílio, | Glory be to the Father, and to the Son,
+et Spirítui Sancto. | and to the Holy Spirit.
+Sicut erat in princípio, et nunc, et semper, | As it was in the beginning, is now, and ever shall be,
+et in sǽcula sæculórum. Amen. | world without end. Amen.
+part 2
+O Rex géntium, | O King of the nations,
+et desiderátus eárum, | and their Desired One,
+lapísque anguláris, | and the Cornerstone,
+qui facis útraque unum: | who makest both one:
+veni, et salva hóminem, | come, and save man,
+quem de limo formásti. | whom Thou didst form out of clay.

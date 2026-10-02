@@ -1,0 +1,245 @@
+{
+  "id": "o_rex_magnificat",
+  "part": null,
+  "method": "breaths by loudness (under -20 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 27 of 33 breaks heard",
+  "lines": [
+    {
+      "latin": "O Rex géntium,",
+      "english": "O King of the nations,",
+      "start": 0.21,
+      "end": 7.48,
+      "part": 0
+    },
+    {
+      "latin": "et desiderátus eárum,",
+      "english": "and their Desired One,",
+      "start": 7.57,
+      "end": 13.58,
+      "part": 0
+    },
+    {
+      "latin": "lapísque anguláris,",
+      "english": "and the Cornerstone,",
+      "start": 13.75,
+      "end": 21.29,
+      "part": 0
+    },
+    {
+      "latin": "qui facis útraque unum:",
+      "english": "who makest both one:",
+      "start": 21.29,
+      "end": 27.9,
+      "part": 0
+    },
+    {
+      "latin": "veni, et salva hóminem,",
+      "english": "come, and save man,",
+      "start": 28.15,
+      "end": 36.52,
+      "part": 0
+    },
+    {
+      "latin": "quem de limo formásti.",
+      "english": "whom Thou didst form out of clay.",
+      "start": 36.65,
+      "end": 42.48,
+      "part": 0
+    },
+    {
+      "latin": "Magníficat ánima mea Dóminum.",
+      "english": "My soul doth magnify the Lord.",
+      "start": 44.39,
+      "end": 53.52,
+      "part": 1
+    },
+    {
+      "latin": "Et exsultávit spíritus meus",
+      "english": "And my spirit hath rejoiced",
+      "start": 53.89,
+      "end": 59.09,
+      "part": 1
+    },
+    {
+      "latin": "in Deo salutári meo.",
+      "english": "in God my Saviour.",
+      "start": 59.09,
+      "end": 64.0,
+      "part": 1
+    },
+    {
+      "latin": "Quia respéxit humilitátem ancíllæ suæ:",
+      "english": "Because He hath regarded the humility of His handmaid:",
+      "start": 64.73,
+      "end": 71.13,
+      "part": 1
+    },
+    {
+      "latin": "ecce enim ex hoc beátam me dicent omnes generatiónes.",
+      "english": "for behold from henceforth all generations shall call me blessed.",
+      "start": 71.13,
+      "end": 78.98,
+      "part": 1
+    },
+    {
+      "latin": "Quia fecit mihi magna qui potens est:",
+      "english": "Because He that is mighty hath done great things to me:",
+      "start": 79.45,
+      "end": 85.37,
+      "part": 1
+    },
+    {
+      "latin": "et sanctum nomen ejus.",
+      "english": "and holy is His name.",
+      "start": 85.37,
+      "end": 90.2,
+      "part": 1
+    },
+    {
+      "latin": "Et misericórdia ejus a progénie in progénies",
+      "english": "And His mercy is from generation unto generations,",
+      "start": 90.51,
+      "end": 98.18,
+      "part": 1
+    },
+    {
+      "latin": "timéntibus eum.",
+      "english": "to them that fear Him.",
+      "start": 98.19,
+      "end": 102.84,
+      "part": 1
+    },
+    {
+      "latin": "Fecit poténtiam in bráchio suo:",
+      "english": "He hath shewed might in His arm:",
+      "start": 103.53,
+      "end": 109.23,
+      "part": 1
+    },
+    {
+      "latin": "dispérsit supérbos mente cordis sui.",
+      "english": "He hath scattered the proud in the conceit of their heart.",
+      "start": 109.23,
+      "end": 115.22,
+      "part": 1
+    },
+    {
+      "latin": "Depósuit poténtes de sede,",
+      "english": "He hath put down the mighty from their seat,",
+      "start": 115.79,
+      "end": 121.47,
+      "part": 1
+    },
+    {
+      "latin": "et exaltávit húmiles.",
+      "english": "and hath exalted the humble.",
+      "start": 121.47,
+      "end": 126.44,
+      "part": 1
+    },
+    {
+      "latin": "Esuriéntes implévit bonis:",
+      "english": "He hath filled the hungry with good things:",
+      "start": 127.09,
+      "end": 132.82,
+      "part": 1
+    },
+    {
+      "latin": "et dívites dimísit inánes.",
+      "english": "and the rich He hath sent empty away.",
+      "start": 132.91,
+      "end": 138.52,
+      "part": 1
+    },
+    {
+      "latin": "Suscépit Israël púerum suum,",
+      "english": "He hath received Israel His servant,",
+      "start": 139.49,
+      "end": 145.29,
+      "part": 1
+    },
+    {
+      "latin": "recordátus misericórdiæ suæ.",
+      "english": "being mindful of His mercy.",
+      "start": 145.29,
+      "end": 150.78,
+      "part": 1
+    },
+    {
+      "latin": "Sicut locútus est ad patres nostros, Abraham et sémini ejus in sǽcula.",
+      "english": "As He spoke to our fathers, to Abraham and to his seed for ever.",
+      "start": 151.83,
+      "end": 163.72,
+      "part": 1
+    },
+    {
+      "latin": "Glória Patri, et Fílio,",
+      "english": "Glory be to the Father, and to the Son,",
+      "start": 164.37,
+      "end": 169.71,
+      "part": 1
+    },
+    {
+      "latin": "et Spirítui Sancto.",
+      "english": "and to the Holy Spirit.",
+      "start": 169.71,
+      "end": 174.98,
+      "part": 1
+    },
+    {
+      "latin": "Sicut erat in princípio, et nunc, et semper,",
+      "english": "As it was in the beginning, is now, and ever shall be,",
+      "start": 175.09,
+      "end": 181.98,
+      "part": 1
+    },
+    {
+      "latin": "et in sǽcula sæculórum. Amen.",
+      "english": "world without end. Amen.",
+      "start": 182.03,
+      "end": 188.32,
+      "part": 1
+    },
+    {
+      "latin": "O Rex géntium,",
+      "english": "O King of the nations,",
+      "start": 189.71,
+      "end": 196.96,
+      "part": 2
+    },
+    {
+      "latin": "et desiderátus eárum,",
+      "english": "and their Desired One,",
+      "start": 197.07,
+      "end": 203.23,
+      "part": 2
+    },
+    {
+      "latin": "lapísque anguláris,",
+      "english": "and the Cornerstone,",
+      "start": 203.23,
+      "end": 210.77,
+      "part": 2
+    },
+    {
+      "latin": "qui facis útraque unum:",
+      "english": "who makest both one:",
+      "start": 210.77,
+      "end": 217.38,
+      "part": 2
+    },
+    {
+      "latin": "veni, et salva hóminem,",
+      "english": "come, and save man,",
+      "start": 217.65,
+      "end": 226.0,
+      "part": 2
+    },
+    {
+      "latin": "quem de limo formásti.",
+      "english": "whom Thou didst form out of clay.",
+      "start": 226.15,
+      "end": 231.96,
+      "part": 2
+    }
+  ]
+}

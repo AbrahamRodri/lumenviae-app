@@ -1,0 +1,252 @@
+{
+  "id": "o_radix_magnificat",
+  "part": null,
+  "method": "breaths by loudness (under -20 dB for 0.2 s, phrases under 1.5 s merged) + text alignment; Whisper: 25 of 34 breaks heard",
+  "lines": [
+    {
+      "latin": "O Radix Jesse,",
+      "english": "O Root of Jesse,",
+      "start": 0.23,
+      "end": 7.07,
+      "part": 0
+    },
+    {
+      "latin": "qui stas in signum populórum,",
+      "english": "who standest for an ensign of the peoples,",
+      "start": 7.07,
+      "end": 13.83,
+      "part": 0
+    },
+    {
+      "latin": "super quem continébunt reges os suum,",
+      "english": "before whom kings shall keep their mouths shut,",
+      "start": 13.83,
+      "end": 23.39,
+      "part": 0
+    },
+    {
+      "latin": "quem gentes deprecabúntur:",
+      "english": "to whom the Gentiles shall make their prayer:",
+      "start": 23.44,
+      "end": 31.36,
+      "part": 0
+    },
+    {
+      "latin": "veni ad liberándum nos,",
+      "english": "come to deliver us,",
+      "start": 31.47,
+      "end": 40.01,
+      "part": 0
+    },
+    {
+      "latin": "jam noli tardáre.",
+      "english": "and tarry now no longer.",
+      "start": 40.01,
+      "end": 47.5,
+      "part": 0
+    },
+    {
+      "latin": "Magníficat ánima mea Dóminum.",
+      "english": "My soul doth magnify the Lord.",
+      "start": 48.69,
+      "end": 57.72,
+      "part": 1
+    },
+    {
+      "latin": "Et exsultávit spíritus meus",
+      "english": "And my spirit hath rejoiced",
+      "start": 58.19,
+      "end": 63.4,
+      "part": 1
+    },
+    {
+      "latin": "in Deo salutári meo.",
+      "english": "in God my Saviour.",
+      "start": 63.41,
+      "end": 68.24,
+      "part": 1
+    },
+    {
+      "latin": "Quia respéxit humilitátem ancíllæ suæ:",
+      "english": "Because He hath regarded the humility of His handmaid:",
+      "start": 69.03,
+      "end": 75.45,
+      "part": 1
+    },
+    {
+      "latin": "ecce enim ex hoc beátam me dicent omnes generatiónes.",
+      "english": "for behold from henceforth all generations shall call me blessed.",
+      "start": 75.45,
+      "end": 83.24,
+      "part": 1
+    },
+    {
+      "latin": "Quia fecit mihi magna qui potens est:",
+      "english": "Because He that is mighty hath done great things to me:",
+      "start": 83.75,
+      "end": 89.69,
+      "part": 1
+    },
+    {
+      "latin": "et sanctum nomen ejus.",
+      "english": "and holy is His name.",
+      "start": 89.69,
+      "end": 94.22,
+      "part": 1
+    },
+    {
+      "latin": "Et misericórdia ejus a progénie in progénies",
+      "english": "And His mercy is from generation unto generations,",
+      "start": 94.83,
+      "end": 102.44,
+      "part": 1
+    },
+    {
+      "latin": "timéntibus eum.",
+      "english": "to them that fear Him.",
+      "start": 102.49,
+      "end": 106.98,
+      "part": 1
+    },
+    {
+      "latin": "Fecit poténtiam in bráchio suo:",
+      "english": "He hath shewed might in His arm:",
+      "start": 107.83,
+      "end": 113.53,
+      "part": 1
+    },
+    {
+      "latin": "dispérsit supérbos mente cordis sui.",
+      "english": "He hath scattered the proud in the conceit of their heart.",
+      "start": 113.53,
+      "end": 119.5,
+      "part": 1
+    },
+    {
+      "latin": "Depósuit poténtes de sede,",
+      "english": "He hath put down the mighty from their seat,",
+      "start": 120.11,
+      "end": 125.78,
+      "part": 1
+    },
+    {
+      "latin": "et exaltávit húmiles.",
+      "english": "and hath exalted the humble.",
+      "start": 125.79,
+      "end": 130.54,
+      "part": 1
+    },
+    {
+      "latin": "Esuriéntes implévit bonis:",
+      "english": "He hath filled the hungry with good things:",
+      "start": 131.39,
+      "end": 137.12,
+      "part": 1
+    },
+    {
+      "latin": "et dívites dimísit inánes.",
+      "english": "and the rich He hath sent empty away.",
+      "start": 137.23,
+      "end": 142.82,
+      "part": 1
+    },
+    {
+      "latin": "Suscépit Israël púerum suum,",
+      "english": "He hath received Israel His servant,",
+      "start": 143.81,
+      "end": 149.61,
+      "part": 1
+    },
+    {
+      "latin": "recordátus misericórdiæ suæ.",
+      "english": "being mindful of His mercy.",
+      "start": 149.61,
+      "end": 155.06,
+      "part": 1
+    },
+    {
+      "latin": "Sicut locútus est ad patres nostros,",
+      "english": "As He spoke to our fathers,",
+      "start": 156.15,
+      "end": 162.03,
+      "part": 1
+    },
+    {
+      "latin": "Abraham et sémini ejus in sǽcula.",
+      "english": "to Abraham and to his seed for ever.",
+      "start": 162.04,
+      "end": 167.94,
+      "part": 1
+    },
+    {
+      "latin": "Glória Patri, et Fílio,",
+      "english": "Glory be to the Father, and to the Son,",
+      "start": 168.67,
+      "end": 174.03,
+      "part": 1
+    },
+    {
+      "latin": "et Spirítui Sancto.",
+      "english": "and to the Holy Spirit.",
+      "start": 174.03,
+      "end": 179.06,
+      "part": 1
+    },
+    {
+      "latin": "Sicut erat in princípio, et nunc, et semper,",
+      "english": "As it was in the beginning, is now, and ever shall be,",
+      "start": 179.41,
+      "end": 186.26,
+      "part": 1
+    },
+    {
+      "latin": "et in sǽcula sæculórum. Amen.",
+      "english": "world without end. Amen.",
+      "start": 186.35,
+      "end": 192.6,
+      "part": 1
+    },
+    {
+      "latin": "O Radix Jesse,",
+      "english": "O Root of Jesse,",
+      "start": 194.01,
+      "end": 200.87,
+      "part": 2
+    },
+    {
+      "latin": "qui stas in signum populórum,",
+      "english": "who standest for an ensign of the peoples,",
+      "start": 200.87,
+      "end": 207.47,
+      "part": 2
+    },
+    {
+      "latin": "super quem continébunt reges os suum,",
+      "english": "before whom kings shall keep their mouths shut,",
+      "start": 207.47,
+      "end": 217.19,
+      "part": 2
+    },
+    {
+      "latin": "quem gentes deprecabúntur:",
+      "english": "to whom the Gentiles shall make their prayer:",
+      "start": 217.24,
+      "end": 224.78,
+      "part": 2
+    },
+    {
+      "latin": "veni ad liberándum nos,",
+      "english": "come to deliver us,",
+      "start": 225.27,
+      "end": 233.76,
+      "part": 2
+    },
+    {
+      "latin": "jam noli tardáre.",
+      "english": "and tarry now no longer.",
+      "start": 233.81,
+      "end": 241.3,
+      "part": 2
+    }
+  ]
+}

@@ -1,0 +1,205 @@
+{
+  "id": "te_saeculorum",
+  "part": null,
+  "method": "breaths by loudness (under -18 dB for 0.25 s, phrases under 2.5 s merged) + text alignment; Whisper: 28 of 32 breaks heard",
+  "lines": [
+    {
+      "latin": "Te sæculórum Príncipem,",
+      "english": "Thee, the Prince of the ages,",
+      "start": 0.25,
+      "end": 7.45
+    },
+    {
+      "latin": "Te, Christe, Regem Géntium,",
+      "english": "Thee, O Christ, the King of the nations,",
+      "start": 7.45,
+      "end": 13.42
+    },
+    {
+      "latin": "Te méntium, te córdium",
+      "english": "Thee, of minds and of hearts,",
+      "start": 14.09,
+      "end": 19.12
+    },
+    {
+      "latin": "Unum fatémur árbitrum.",
+      "english": "we confess the one Judge.",
+      "start": 19.39,
+      "end": 26.46
+    },
+    {
+      "latin": "Scelésta turba clámitat:",
+      "english": "The wicked throng cries out:",
+      "start": 27.89,
+      "end": 35.77
+    },
+    {
+      "latin": "Regnáre Christum nólumus:",
+      "english": "We will not have Christ to reign;",
+      "start": 35.77,
+      "end": 41.86
+    },
+    {
+      "latin": "Te nos ovántes ómnium",
+      "english": "we with rejoicing call Thee",
+      "start": 42.65,
+      "end": 47.7
+    },
+    {
+      "latin": "Regem suprémum dícimus.",
+      "english": "the supreme King of all.",
+      "start": 47.97,
+      "end": 55.16
+    },
+    {
+      "latin": "O Christe, Princeps Pácifer,",
+      "english": "O Christ, Prince who bringest peace,",
+      "start": 57.11,
+      "end": 64.77
+    },
+    {
+      "latin": "Mentes rebélles súbjice:",
+      "english": "subdue rebellious minds,",
+      "start": 64.77,
+      "end": 70.82
+    },
+    {
+      "latin": "Tuóque amóre dévios,",
+      "english": "and by Thy love those gone astray",
+      "start": 71.27,
+      "end": 76.2
+    },
+    {
+      "latin": "Ovíle in unum cóngrega.",
+      "english": "gather into one fold.",
+      "start": 76.41,
+      "end": 83.64
+    },
+    {
+      "latin": "Ad hoc cruénta ab árbore,",
+      "english": "For this, from the blood-stained tree,",
+      "start": 85.17,
+      "end": 92.34
+    },
+    {
+      "latin": "Pendes apértis bráchiis:",
+      "english": "Thou hangest with arms outstretched,",
+      "start": 92.47,
+      "end": 98.4
+    },
+    {
+      "latin": "Diráque fossum cúspide",
+      "english": "and, pierced by the cruel spear,",
+      "start": 99.05,
+      "end": 104.1
+    },
+    {
+      "latin": "Cor igne flagrans éxhibes.",
+      "english": "showest Thy Heart burning with fire.",
+      "start": 104.43,
+      "end": 111.78
+    },
+    {
+      "latin": "Ad hoc in aris ábderis",
+      "english": "For this Thou art hidden on the altars",
+      "start": 113.77,
+      "end": 121.02
+    },
+    {
+      "latin": "Vini dapísque imágine,",
+      "english": "under the likeness of wine and bread,",
+      "start": 121.17,
+      "end": 127.18
+    },
+    {
+      "latin": "Fundens salútem fíliis",
+      "english": "pouring out salvation for Thy children",
+      "start": 127.57,
+      "end": 132.72
+    },
+    {
+      "latin": "Transverberáto péctore.",
+      "english": "from Thy pierced breast.",
+      "start": 132.99,
+      "end": 140.24
+    },
+    {
+      "latin": "Te natiónum Prǽsides",
+      "english": "May the rulers of the nations",
+      "start": 141.87,
+      "end": 148.85
+    },
+    {
+      "latin": "Honóre tollant público,",
+      "english": "exalt Thee with public honour;",
+      "start": 148.85,
+      "end": 154.94
+    },
+    {
+      "latin": "Colant magístri, júdices,",
+      "english": "may teachers and judges revere Thee,",
+      "start": 155.05,
+      "end": 160.17
+    },
+    {
+      "latin": "Leges et artes éxprimant.",
+      "english": "may laws and arts set Thee forth.",
+      "start": 160.17,
+      "end": 167.56
+    },
+    {
+      "latin": "Submíssa regum fúlgeant",
+      "english": "May the humbled insignia of kings",
+      "start": 168.75,
+      "end": 176.29
+    },
+    {
+      "latin": "Tibi dicáta insígnia:",
+      "english": "shine as dedicated to Thee;",
+      "start": 176.29,
+      "end": 182.5
+    },
+    {
+      "latin": "Mitíque sceptro pátriam",
+      "english": "and bring under Thy gentle sceptre",
+      "start": 182.71,
+      "end": 188.12
+    },
+    {
+      "latin": "Domósque subde cívium.",
+      "english": "our country and the homes of its people.",
+      "start": 188.15,
+      "end": 195.24
+    },
+    {
+      "latin": "Jesu, tibi sit glória,",
+      "english": "Jesus, glory be to Thee,",
+      "start": 196.69,
+      "end": 204.19
+    },
+    {
+      "latin": "Qui sceptra mundi témperas,",
+      "english": "who rulest the sceptres of the world,",
+      "start": 204.19,
+      "end": 210.73
+    },
+    {
+      "latin": "Cum Patre, et almo Spíritu,",
+      "english": "with the Father and the loving Spirit,",
+      "start": 210.73,
+      "end": 215.94
+    },
+    {
+      "latin": "In sempitérna sǽcula.",
+      "english": "unto everlasting ages.",
+      "start": 216.13,
+      "end": 224.02
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 224.99,
+      "end": 231.4
+    }
+  ]
+}

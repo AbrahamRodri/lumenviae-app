@@ -1,0 +1,30 @@
+# Da pacem Domine (Mode II): the antiphon, two verses of Psalm 121, the
+# antiphon again, the Gloria Patri, and the antiphon a third time. The
+# cantor breathes at the antiphon's bars, but sings some of them through
+# the second and third times (those pieces stand together as one line).
+# Latin from the score; English plain and literal.
+noise -14
+gap 0.3
+merge 1.5
+
+Da pacem Dómine | Give peace, O Lord,
+in diébus nostris: | in our days;
+quia non est álius | for there is none other
+qui pugnet pro nobis, | who fights for us,
+nisi tu Deus noster. | but only Thou, our God.
+Rogáte quæ ad pacem sunt Jerúsalem: | Pray for the things that are for the peace of Jerusalem:
+et abundántia diligéntibus te: | and abundance for them that love thee.
+Fiat pax in virtúte tua: | Let peace be in thy strength,
+et abundántia in túrribus tuis. | and abundance in thy towers.
+Da pacem Dómine in diébus nostris: | Give peace, O Lord, in our days;
+quia non est álius | for there is none other
+qui pugnet pro nobis, | who fights for us,
+nisi tu Deus noster. | but only Thou, our God.
+Glória Patri, et Fílio, | Glory be to the Father, and to the Son,
+et Spirítui Sancto. | and to the Holy Spirit.
+Sicut erat in princípio, et nunc, et semper, | As it was in the beginning, is now, and ever shall be,
+et in sǽcula sæculórum. Amen. | world without end. Amen.
+Da pacem Dómine | Give peace, O Lord,
+in diébus nostris: | in our days;
+quia non est álius qui pugnet pro nobis, | for there is none other who fights for us,
+nisi tu Deus noster. | but only Thou, our God.

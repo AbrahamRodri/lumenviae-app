@@ -1,0 +1,133 @@
+{
+  "id": "lucis_creator",
+  "part": null,
+  "method": "breaths by loudness (under -16 dB for 0.2 s, phrases under 2 s merged) + text alignment; Whisper: 19 of 20 breaks heard",
+  "lines": [
+    {
+      "latin": "Lucis Creátor óptime,",
+      "english": "O most kind Creator of the light,",
+      "start": 0.29,
+      "end": 6.45
+    },
+    {
+      "latin": "Lucem diérum próferens,",
+      "english": "who bringest forth the light of days,",
+      "start": 6.45,
+      "end": 11.97
+    },
+    {
+      "latin": "Primórdiis lucis novæ",
+      "english": "and with the first beginnings of new light",
+      "start": 11.97,
+      "end": 17.65
+    },
+    {
+      "latin": "Mundi parans oríginem:",
+      "english": "preparest the origin of the world:",
+      "start": 17.65,
+      "end": 23.62
+    },
+    {
+      "latin": "Qui mane junctum vésperi",
+      "english": "Thou who biddest morning joined to evening",
+      "start": 24.85,
+      "end": 30.81
+    },
+    {
+      "latin": "Diem vocári prǽcipis:",
+      "english": "to be called day,",
+      "start": 30.81,
+      "end": 36.73
+    },
+    {
+      "latin": "Illábitur tetrum chaos,",
+      "english": "now dreadful darkness falls upon us;",
+      "start": 36.73,
+      "end": 42.71
+    },
+    {
+      "latin": "Audi preces cum flétibus.",
+      "english": "hear our prayers and our tears.",
+      "start": 42.71,
+      "end": 48.78
+    },
+    {
+      "latin": "Ne mens graváta crímine,",
+      "english": "Lest the mind, weighed down by sin,",
+      "start": 50.01,
+      "end": 56.07
+    },
+    {
+      "latin": "Vitæ sit exsul múnere,",
+      "english": "be an exile from the gift of life,",
+      "start": 56.07,
+      "end": 61.95
+    },
+    {
+      "latin": "Dum nil perénne cógitat,",
+      "english": "while it thinks on nothing everlasting",
+      "start": 61.95,
+      "end": 67.91
+    },
+    {
+      "latin": "Seséque culpis ílligat.",
+      "english": "and binds itself in its faults.",
+      "start": 67.91,
+      "end": 74.38
+    },
+    {
+      "latin": "Cæléste pulset óstium,",
+      "english": "May it knock at the door of heaven,",
+      "start": 75.35,
+      "end": 81.65
+    },
+    {
+      "latin": "Vitále tollat prǽmium:",
+      "english": "may it win the prize of life;",
+      "start": 81.65,
+      "end": 87.44
+    },
+    {
+      "latin": "Vitémus omne nóxium,",
+      "english": "let us shun all that harms,",
+      "start": 87.45,
+      "end": 93.65
+    },
+    {
+      "latin": "Purgémus omne péssimum.",
+      "english": "let us cleanse away all that is evil.",
+      "start": 93.65,
+      "end": 99.68
+    },
+    {
+      "latin": "Præsta, Pater piíssime,",
+      "english": "Grant this, most loving Father,",
+      "start": 100.87,
+      "end": 107.15
+    },
+    {
+      "latin": "Patríque compar Únice,",
+      "english": "and Thou, the Only-begotten, equal to the Father,",
+      "start": 107.15,
+      "end": 113.01
+    },
+    {
+      "latin": "Cum Spíritu Paráclito,",
+      "english": "with the Spirit, the Paraclete,",
+      "start": 113.01,
+      "end": 119.15
+    },
+    {
+      "latin": "Regnans per omne sǽculum.",
+      "english": "reigning through every age.",
+      "start": 119.15,
+      "end": 125.48
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 125.87,
+      "end": 131.92
+    }
+  ]
+}

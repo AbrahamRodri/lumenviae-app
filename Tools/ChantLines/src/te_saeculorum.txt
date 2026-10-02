@@ -1,0 +1,41 @@
+# Te saeculorum Principem (Mode I), the hymn of Christ the King, all eight
+# stanzas and the Amen. Latin from the score; English a plain, literal
+# rendering. The cantor breathes at every quarter of a stanza, so a line
+# is a quarter.
+noise -18
+gap 0.25
+merge 2.5
+
+Te sæculórum Príncipem, | Thee, the Prince of the ages,
+Te, Christe, Regem Géntium, | Thee, O Christ, the King of the nations,
+Te méntium, te córdium | Thee, of minds and of hearts,
+Unum fatémur árbitrum. | we confess the one Judge.
+Scelésta turba clámitat: | The wicked throng cries out:
+Regnáre Christum nólumus: | We will not have Christ to reign;
+Te nos ovántes ómnium | we with rejoicing call Thee
+Regem suprémum dícimus. | the supreme King of all.
+O Christe, Princeps Pácifer, | O Christ, Prince who bringest peace,
+Mentes rebélles súbjice: | subdue rebellious minds,
+Tuóque amóre dévios, | and by Thy love those gone astray
+Ovíle in unum cóngrega. | gather into one fold.
+Ad hoc cruénta ab árbore, | For this, from the blood-stained tree,
+Pendes apértis bráchiis: | Thou hangest with arms outstretched,
+Diráque fossum cúspide | and, pierced by the cruel spear,
+Cor igne flagrans éxhibes. | showest Thy Heart burning with fire.
+Ad hoc in aris ábderis | For this Thou art hidden on the altars
+Vini dapísque imágine, | under the likeness of wine and bread,
+Fundens salútem fíliis | pouring out salvation for Thy children
+Transverberáto péctore. | from Thy pierced breast.
+Te natiónum Prǽsides | May the rulers of the nations
+Honóre tollant público, | exalt Thee with public honour;
+Colant magístri, júdices, | may teachers and judges revere Thee,
+Leges et artes éxprimant. | may laws and arts set Thee forth.
+Submíssa regum fúlgeant | May the humbled insignia of kings
+Tibi dicáta insígnia: | shine as dedicated to Thee;
+Mitíque sceptro pátriam | and bring under Thy gentle sceptre
+Domósque subde cívium. | our country and the homes of its people.
+Jesu, tibi sit glória, | Jesus, glory be to Thee,
+Qui sceptra mundi témperas, | who rulest the sceptres of the world,
+Cum Patre, et almo Spíritu, | with the Father and the loving Spirit,
+In sempitérna sǽcula. | unto everlasting ages.
+Amen. | Amen.

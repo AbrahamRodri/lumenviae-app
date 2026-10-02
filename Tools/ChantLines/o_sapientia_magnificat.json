@@ -1,0 +1,238 @@
+{
+  "id": "o_sapientia_magnificat",
+  "part": null,
+  "method": "breaths by loudness (under -20 dB for 0.2 s, phrases under 1.5 s merged) + text alignment; Whisper: 21 of 32 breaks heard",
+  "lines": [
+    {
+      "latin": "O Sapiéntia,",
+      "english": "O Wisdom,",
+      "start": 0.23,
+      "end": 6.83,
+      "part": 0
+    },
+    {
+      "latin": "quæ ex ore Altíssimi prodísti,",
+      "english": "who camest forth from the mouth of the Most High,",
+      "start": 6.83,
+      "end": 14.03,
+      "part": 0
+    },
+    {
+      "latin": "attíngens a fine usque ad finem, fórtiter suáviter disponénsque ómnia:",
+      "english": "reaching from end to end, mightily and sweetly ordering all things:",
+      "start": 14.03,
+      "end": 29.25,
+      "part": 0
+    },
+    {
+      "latin": "veni ad docéndum nos",
+      "english": "come and teach us",
+      "start": 29.28,
+      "end": 37.43,
+      "part": 0
+    },
+    {
+      "latin": "viam prudéntiæ.",
+      "english": "the way of prudence.",
+      "start": 37.43,
+      "end": 43.02,
+      "part": 0
+    },
+    {
+      "latin": "Magníficat ánima mea Dóminum.",
+      "english": "My soul doth magnify the Lord.",
+      "start": 44.55,
+      "end": 53.58,
+      "part": 1
+    },
+    {
+      "latin": "Et exsultávit spíritus meus",
+      "english": "And my spirit hath rejoiced",
+      "start": 54.05,
+      "end": 59.26,
+      "part": 1
+    },
+    {
+      "latin": "in Deo salutári meo.",
+      "english": "in God my Saviour.",
+      "start": 59.27,
+      "end": 64.14,
+      "part": 1
+    },
+    {
+      "latin": "Quia respéxit humilitátem ancíllæ suæ:",
+      "english": "Because He hath regarded the humility of His handmaid:",
+      "start": 64.89,
+      "end": 71.31,
+      "part": 1
+    },
+    {
+      "latin": "ecce enim ex hoc beátam me dicent omnes generatiónes.",
+      "english": "for behold from henceforth all generations shall call me blessed.",
+      "start": 71.31,
+      "end": 79.1,
+      "part": 1
+    },
+    {
+      "latin": "Quia fecit mihi magna qui potens est:",
+      "english": "Because He that is mighty hath done great things to me:",
+      "start": 79.61,
+      "end": 85.53,
+      "part": 1
+    },
+    {
+      "latin": "et sanctum nomen ejus.",
+      "english": "and holy is His name.",
+      "start": 85.53,
+      "end": 90.08,
+      "part": 1
+    },
+    {
+      "latin": "Et misericórdia ejus a progénie in progénies",
+      "english": "And His mercy is from generation unto generations,",
+      "start": 90.69,
+      "end": 98.3,
+      "part": 1
+    },
+    {
+      "latin": "timéntibus eum.",
+      "english": "to them that fear Him.",
+      "start": 98.35,
+      "end": 102.84,
+      "part": 1
+    },
+    {
+      "latin": "Fecit poténtiam in bráchio suo:",
+      "english": "He hath shewed might in His arm:",
+      "start": 103.69,
+      "end": 109.39,
+      "part": 1
+    },
+    {
+      "latin": "dispérsit supérbos mente cordis sui.",
+      "english": "He hath scattered the proud in the conceit of their heart.",
+      "start": 109.39,
+      "end": 115.36,
+      "part": 1
+    },
+    {
+      "latin": "Depósuit poténtes de sede,",
+      "english": "He hath put down the mighty from their seat,",
+      "start": 115.97,
+      "end": 121.64,
+      "part": 1
+    },
+    {
+      "latin": "et exaltávit húmiles.",
+      "english": "and hath exalted the humble.",
+      "start": 121.65,
+      "end": 126.42,
+      "part": 1
+    },
+    {
+      "latin": "Esuriéntes implévit bonis:",
+      "english": "He hath filled the hungry with good things:",
+      "start": 127.25,
+      "end": 132.98,
+      "part": 1
+    },
+    {
+      "latin": "et dívites dimísit inánes.",
+      "english": "and the rich He hath sent empty away.",
+      "start": 133.09,
+      "end": 138.66,
+      "part": 1
+    },
+    {
+      "latin": "Suscépit Israël púerum suum,",
+      "english": "He hath received Israel His servant,",
+      "start": 139.67,
+      "end": 145.47,
+      "part": 1
+    },
+    {
+      "latin": "recordátus misericórdiæ suæ.",
+      "english": "being mindful of His mercy.",
+      "start": 145.47,
+      "end": 150.92,
+      "part": 1
+    },
+    {
+      "latin": "Sicut locútus est ad patres nostros,",
+      "english": "As He spoke to our fathers,",
+      "start": 152.01,
+      "end": 157.89,
+      "part": 1
+    },
+    {
+      "latin": "Abraham et sémini ejus in sǽcula.",
+      "english": "to Abraham and to his seed for ever.",
+      "start": 157.93,
+      "end": 163.82,
+      "part": 1
+    },
+    {
+      "latin": "Glória Patri, et Fílio,",
+      "english": "Glory be to the Father, and to the Son,",
+      "start": 164.53,
+      "end": 169.89,
+      "part": 1
+    },
+    {
+      "latin": "et Spirítui Sancto.",
+      "english": "and to the Holy Spirit.",
+      "start": 169.89,
+      "end": 174.94,
+      "part": 1
+    },
+    {
+      "latin": "Sicut erat in princípio, et nunc, et semper,",
+      "english": "As it was in the beginning, is now, and ever shall be,",
+      "start": 175.25,
+      "end": 182.14,
+      "part": 1
+    },
+    {
+      "latin": "et in sǽcula sæculórum. Amen.",
+      "english": "world without end. Amen.",
+      "start": 182.19,
+      "end": 188.48,
+      "part": 1
+    },
+    {
+      "latin": "O Sapiéntia,",
+      "english": "O Wisdom,",
+      "start": 189.87,
+      "end": 196.47,
+      "part": 2
+    },
+    {
+      "latin": "quæ ex ore Altíssimi prodísti,",
+      "english": "who camest forth from the mouth of the Most High,",
+      "start": 196.47,
+      "end": 203.69,
+      "part": 2
+    },
+    {
+      "latin": "attíngens a fine usque ad finem, fórtiter suáviter disponénsque ómnia:",
+      "english": "reaching from end to end, mightily and sweetly ordering all things:",
+      "start": 203.69,
+      "end": 218.91,
+      "part": 2
+    },
+    {
+      "latin": "veni ad docéndum nos",
+      "english": "come and teach us",
+      "start": 218.94,
+      "end": 227.17,
+      "part": 2
+    },
+    {
+      "latin": "viam prudéntiæ.",
+      "english": "the way of prudence.",
+      "start": 227.17,
+      "end": 232.76,
+      "part": 2
+    }
+  ]
+}

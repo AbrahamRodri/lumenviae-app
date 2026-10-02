@@ -1,0 +1,28 @@
+# Quem terra, pontus, sidera (Mode IV), all five stanzas and the Amen.
+# This cantor breathes at every quarter of a stanza, so a line is a quarter.
+# Latin from the score; English a plain, literal rendering.
+noise -14
+gap 0.15
+merge 2
+
+Quem terra, pontus, sídera | Him whom earth and sea and stars
+Colunt, adórant, prǽdicant, | worship, adore and proclaim,
+Trinam regéntem máchinam, | who rules the threefold frame of the world,
+Claustrum Maríæ bájulat. | the cloister of Mary carries.
+Cui luna, sol et ómnia | He whom moon and sun and all things
+Desérviunt per témpora, | serve through every age,
+Perfúsa cæli grátia, | filled with the grace of heaven,
+Gestant puéllæ víscera. | the maiden's womb now bears.
+Beáta Mater múnere, | Blessed Mother by this gift,
+Cujus, supérnus Ártifex | whose Maker most high,
+Mundum pugíllo cóntinens, | holding the world in His hand,
+Ventris sub arca clausus est. | was enclosed within the ark of her womb.
+Beáta cæli núntio, | Blessed by the message of heaven,
+Fecúnda Sancto Spíritu, | fruitful by the Holy Spirit,
+Desiderátus géntibus | the Desired of the nations
+Cujus per alvum fusus est. | was brought forth from her womb.
+Jesu, tibi sit glória, | Glory be to Thee, O Jesus,
+Qui natus es de Vírgine, | who art born of the Virgin,
+Cum Patre et almo Spíritu, | with the Father and the loving Spirit,
+In sempitérna sǽcula. | unto everlasting ages.
+Amen. | Amen.

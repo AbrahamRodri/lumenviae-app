@@ -1,0 +1,14 @@
+# Sanctus XI, Orbis factor, whole; the cantor sings the threefold Sanctus
+# and "Dóminus Deus Sábaoth" on one breath, and breathes after "venit".
+# Latin from the score; English plain, as Mass VIII's.
+noise -20
+gap 0.3
+merge 1.5
+
+part 0
+Sanctus, Sanctus, Sanctus Dóminus Deus Sábaoth. | Holy, Holy, Holy, Lord God of hosts.
+Pleni sunt cæli et terra glória tua. | Heaven and earth are full of Thy glory.
+Hosánna in excélsis. | Hosanna in the highest.
+Benedíctus qui venit | Blessed is He that cometh
+in nómine Dómini. | in the name of the Lord.
+Hosánna in excélsis. | Hosanna in the highest.

@@ -1,0 +1,127 @@
+{
+  "id": "ut_queant_laxis",
+  "part": null,
+  "method": "breaths by loudness (under -14 dB for 0.3 s, phrases under 1.5 s merged) + text alignment; Whisper: 17 of 19 breaks heard",
+  "lines": [
+    {
+      "latin": "Ut queant laxis resonáre fibris",
+      "english": "That with loosened chords",
+      "start": 0.25,
+      "end": 7.79
+    },
+    {
+      "latin": "Mira gestórum fámuli tuórum,",
+      "english": "Thy servants may sound forth the wonders of Thy deeds,",
+      "start": 7.79,
+      "end": 16.5
+    },
+    {
+      "latin": "Solve pollúti lábii reátum, Sancte Joánnes.",
+      "english": "loose the guilt of our unclean lips, O holy John.",
+      "start": 16.87,
+      "end": 30.6
+    },
+    {
+      "latin": "Núntius celso véniens Olýmpo,",
+      "english": "A messenger coming from high heaven",
+      "start": 31.87,
+      "end": 39.33
+    },
+    {
+      "latin": "Te patri magnum fore nascitúrum,",
+      "english": "tells thy father thou shalt be born great,",
+      "start": 39.33,
+      "end": 48.3
+    },
+    {
+      "latin": "Nomen, et vitæ sériem geréndæ",
+      "english": "and sets forth in order thy name",
+      "start": 48.85,
+      "end": 57.31
+    },
+    {
+      "latin": "Órdine promit.",
+      "english": "and the course of thy life.",
+      "start": 57.31,
+      "end": 62.3
+    },
+    {
+      "latin": "Ille promíssi dúbius supérni,",
+      "english": "He, doubting the promise from on high,",
+      "start": 64.15,
+      "end": 71.91
+    },
+    {
+      "latin": "Pérdidit promptæ módulos loquélæ:",
+      "english": "lost the ready power of speech;",
+      "start": 71.91,
+      "end": 81.2
+    },
+    {
+      "latin": "Sed reformásti génitus perémptæ",
+      "english": "but thou, when born, didst restore",
+      "start": 81.73,
+      "end": 90.67
+    },
+    {
+      "latin": "Órgana vocis.",
+      "english": "the organs of his lost voice.",
+      "start": 90.67,
+      "end": 95.76
+    },
+    {
+      "latin": "Ventris obstrúso récubans cubíli",
+      "english": "Lying in the hidden chamber of the womb,",
+      "start": 97.41,
+      "end": 104.97
+    },
+    {
+      "latin": "Sénseras Regem thálamo manéntem:",
+      "english": "thou didst know the King abiding in His bridal chamber;",
+      "start": 104.97,
+      "end": 114.32
+    },
+    {
+      "latin": "Hinc parens nati méritis utérque",
+      "english": "whence each parent, by the merits of the child,",
+      "start": 114.43,
+      "end": 123.45
+    },
+    {
+      "latin": "Ábdita pandit.",
+      "english": "made known things hidden.",
+      "start": 123.45,
+      "end": 128.2
+    },
+    {
+      "latin": "Sit decus Patri, genitǽque Proli,",
+      "english": "Glory be to the Father and to the begotten Son,",
+      "start": 130.01,
+      "end": 137.17
+    },
+    {
+      "latin": "Et tibi compar utriúsque virtus,",
+      "english": "and to Thee, the Power equal to Both,",
+      "start": 137.17,
+      "end": 146.87
+    },
+    {
+      "latin": "Spíritus semper, Deus unus, omni",
+      "english": "O Spirit, ever one God,",
+      "start": 146.87,
+      "end": 155.55
+    },
+    {
+      "latin": "Témporis ævo.",
+      "english": "through all the ages of time.",
+      "start": 155.55,
+      "end": 160.82
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 162.23,
+      "end": 171.1
+    }
+  ]
+}

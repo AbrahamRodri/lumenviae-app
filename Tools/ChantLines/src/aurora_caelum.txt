@@ -1,0 +1,21 @@
+# Aurora caelum purpurat, the Easter hymn at Lauds (Mode VIII), all six
+# stanzas and the Amen. This cantor breathes at the middle of each stanza,
+# so a line is half a stanza. Latin from the score; English plain and
+# literal.
+noise -14
+gap 0.3
+merge 1.5
+
+Auróra cælum púrpurat, Æther resúltat láudibus: | The dawn makes the heavens crimson, the sky rings with praises;
+Mundus triúmphans júbilat, Horrens avérnus ínfremit: | the world exults in triumph, hell shudders and groans,
+Rex ille dum fortíssimus, De mortis inférno specu, | while that most mighty King, out of death's deep cavern,
+Patrum senátum líberum Edúcit ad vitæ jubar. | leads forth the company of the Fathers, set free, to the light of life.
+Cujus sepúlcrum plúrimo Custóde signábat lapis, | He whose tomb a stone had sealed, with many a guard,
+Victor triúmphat et suo Mortem sepúlcro fúnerat. | rises in triumph as Victor, and buries death in His own tomb.
+Sat fúneri, sat lácrimis, Sat est datum dolóribus: | Enough of mourning, enough of tears, enough is given to sorrow;
+Surréxit exstínctor necis, Clamat corúscans Ángelus. | He is risen who has slain death, cries the shining Angel.
+Ut sis perénne méntibus Paschále Jesu gáudium, | That Thou mayest be, O Jesus, the everlasting Paschal joy of our souls,
+A morte dira críminum Vitæ renátos líbera. | free those reborn to life from the dread death of sin.
+Deo Patri sit glória, Et Fílio, qui a mórtuis | To God the Father be glory, and to the Son, who from the dead
+Surréxit, ac Paráclito, In sempitérna sǽcula. | is risen, and to the Paraclete, for ever and ever.
+Amen. | Amen.

@@ -1,0 +1,133 @@
+{
+  "id": "jesu_nostra_redemptio",
+  "part": null,
+  "method": "breaths by loudness (under -14 dB for 0.15 s, phrases under 2 s merged) + text alignment; Whisper: 15 of 20 breaks heard",
+  "lines": [
+    {
+      "latin": "Jesu nostra redémptio,",
+      "english": "O Jesus, our redemption,",
+      "start": 0.23,
+      "end": 7.91
+    },
+    {
+      "latin": "Amor et desidérium,",
+      "english": "our love and our desire,",
+      "start": 7.91,
+      "end": 13.56
+    },
+    {
+      "latin": "Deus Creátor ómnium,",
+      "english": "God, Creator of all things,",
+      "start": 13.95,
+      "end": 19.39
+    },
+    {
+      "latin": "Homo in fine témporum.",
+      "english": "made Man at the end of the ages.",
+      "start": 19.39,
+      "end": 26.02
+    },
+    {
+      "latin": "Quæ te vicit cleméntia,",
+      "english": "What mercy overcame Thee,",
+      "start": 26.97,
+      "end": 34.99
+    },
+    {
+      "latin": "Ut ferres nostra crímina,",
+      "english": "that Thou shouldst bear our sins,",
+      "start": 34.99,
+      "end": 41.33
+    },
+    {
+      "latin": "Crudélem mortem pátiens,",
+      "english": "suffering a cruel death,",
+      "start": 41.33,
+      "end": 47.03
+    },
+    {
+      "latin": "Ut nos a morte tólleres!",
+      "english": "to take us up from death!",
+      "start": 47.03,
+      "end": 54.18
+    },
+    {
+      "latin": "Inférni claustra pénetrans,",
+      "english": "Breaking through the gates of hell,",
+      "start": 55.53,
+      "end": 63.43
+    },
+    {
+      "latin": "Tuos captívos rédimens:",
+      "english": "redeeming Thine own captives,",
+      "start": 63.43,
+      "end": 69.48
+    },
+    {
+      "latin": "Victor triúmpho nóbili,",
+      "english": "Victor in noble triumph,",
+      "start": 69.71,
+      "end": 75.23
+    },
+    {
+      "latin": "Ad dextram Patris résidens.",
+      "english": "Thou art seated at the Father's right hand.",
+      "start": 75.23,
+      "end": 82.02
+    },
+    {
+      "latin": "Ipsa te cogat píetas,",
+      "english": "May Thy own loving kindness move Thee",
+      "start": 83.37,
+      "end": 91.45
+    },
+    {
+      "latin": "Ut mala nostra súperes",
+      "english": "to overcome our evils",
+      "start": 91.45,
+      "end": 97.48
+    },
+    {
+      "latin": "Parcéndo, et voti cómpotes",
+      "english": "by sparing us, and, granting our prayer,",
+      "start": 97.93,
+      "end": 103.59
+    },
+    {
+      "latin": "Nos tuo vultu sáties.",
+      "english": "to fill us with the sight of Thy face.",
+      "start": 103.59,
+      "end": 110.84
+    },
+    {
+      "latin": "Tu esto nostrum gáudium,",
+      "english": "Be Thou our joy,",
+      "start": 112.41,
+      "end": 120.13
+    },
+    {
+      "latin": "Qui es futúrus prǽmium:",
+      "english": "who art to be our reward;",
+      "start": 120.13,
+      "end": 125.88
+    },
+    {
+      "latin": "Sit nostra in te glória",
+      "english": "may our glory be in Thee",
+      "start": 126.39,
+      "end": 132.19
+    },
+    {
+      "latin": "Per cuncta semper sǽcula.",
+      "english": "through all ages for ever.",
+      "start": 132.19,
+      "end": 139.42
+    },
+    {
+      "latin": "Amen.",
+      "english": "Amen.",
+      "start": 140.29,
+      "end": 146.62
+    }
+  ]
+}

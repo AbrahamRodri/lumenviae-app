@@ -1,0 +1,36 @@
+# Concordi laetitia (Mode VI), all five stanzas, each closing on Virgo
+# Maria, and the Amen. Latin from the score; English a plain, literal
+# rendering. The cantor takes quick, shallow breaths at every line, found
+# only at a short gap; the cantor also breathes inside "Nos salva per
+# saecula", so that line runs over both phrases.
+noise -10
+gap 0.08
+merge 1.5
+
+Concórdi lætítia, | With joy of one accord,
+Propúlsa mæstítia, | all sorrow put to flight,
+Maríæ præcónia | the praises of Mary
+Récolat Ecclésia: | let the Church recall:
+Virgo María! | O Virgin Mary!
+Quæ felíci gáudio, | She who with happy joy,
+Resurgénte Dómino, | when the Lord was rising,
+Flóruit ut lílium, | flowered like the lily,
+Vivum cernens Fílium: | beholding her Son alive:
+Virgo María! | O Virgin Mary!
+Quam concéntu párili | Her whom with equal harmony
+Chori láudant cælici, | the choirs of heaven praise,
+Et nos cum cæléstibus | and we with those of heaven
+Novum melos pángimus: | raise a new song:
+Virgo María! | O Virgin Mary!
+O Regína vírginum, | O Queen of virgins,
+Votis fave súpplicum, | look kindly on the prayers of thy suppliants,
+Et post mortis stádium, | and after the course of death
+Vitæ confer prǽmium: | bestow the reward of life:
+Virgo María! | O Virgin Mary!
+Gloriósa Trínitas, | O glorious Trinity,
+Indivísa Únitas, | undivided Unity,
+Ob Maríæ mérita, | for the merits of Mary,
+Nos salva per sǽcula: | save us through all ages:
+~
+Virgo María! | O Virgin Mary!
+Amen. | Amen.

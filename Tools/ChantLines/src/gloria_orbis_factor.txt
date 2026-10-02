@@ -1,0 +1,29 @@
+# Gloria XI, Orbis factor, whole; the cantor breathes before "Jesu
+# Christe" at the end and sings "Cum Sancto Spíritu, in glória Dei Patris"
+# on one breath. Latin from the score; English plain, as Mass VIII's.
+noise -20
+gap 0.3
+merge 1.5
+
+part 0
+Glória in excélsis Deo. | Glory to God in the highest.
+Et in terra pax homínibus bonæ voluntátis. | And on earth peace to men of good will.
+Laudámus te. Benedícimus te. | We praise Thee. We bless Thee.
+Adorámus te. Glorificámus te. | We adore Thee. We glorify Thee.
+Grátias ágimus tibi propter magnam glóriam tuam. | We give Thee thanks for Thy great glory.
+Dómine Deus, Rex cæléstis, | O Lord God, heavenly King,
+Deus Pater omnípotens. | God the Father almighty.
+Dómine Fili unigénite Jesu Christe. | O Lord Jesus Christ, the only-begotten Son.
+Dómine Deus, Agnus Dei, Fílius Patris. | O Lord God, Lamb of God, Son of the Father.
+Qui tollis peccáta mundi, | Who takest away the sins of the world,
+miserére nobis. | have mercy on us.
+Qui tollis peccáta mundi, | Who takest away the sins of the world,
+súscipe deprecatiónem nostram. | receive our prayer.
+Qui sedes ad déxteram Patris, | Who sittest at the right hand of the Father,
+miserére nobis. | have mercy on us.
+Quóniam tu solus sanctus. | For Thou alone art holy.
+Tu solus Dóminus. | Thou alone art the Lord.
+Tu solus Altíssimus, | Thou alone art most high,
+Jesu Christe. | O Jesus Christ,
+Cum Sancto Spíritu, in glória Dei Patris. | with the Holy Spirit, in the glory of God the Father.
+Amen. | Amen.

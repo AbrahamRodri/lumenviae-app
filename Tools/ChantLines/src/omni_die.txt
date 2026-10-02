@@ -1,0 +1,56 @@
+# Omni die dic Mariae (Mode I), all twelve stanzas and the Amen.
+# This cantor breathes at every quarter of a stanza, so a line is a quarter,
+# but for the last half of the third stanza, sung in one breath.
+# Latin from the score; English a plain, literal rendering.
+noise -12
+gap 0.12
+merge 2
+
+Omni die dic Maríæ, | Every day speak to Mary,
+Mea, laudes, ánima: | O my soul, her praises;
+Ejus festa, ejus gesta | her feasts and her deeds
+Cole splendidíssima. | keep with all splendour.
+Contempláre et miráre | Behold and wonder at
+Ejus celsitúdinem, | her exaltation;
+Dic felícem Genitrícem, | call the Mother happy,
+Dic beátam Vírginem. | call the Virgin blessed.
+Ipsam cole, ut de mole | Honour her, that from the weight
+Críminum te líberet: | of sins she may free thee;
+Hanc appélla, ne procélla Vitiórum súperet. | call on her, lest the storm of vices overcome thee.
+Propter Hevam homo sævam | Because of Eve, man received
+Accépit senténtiam: | a cruel sentence;
+Per Maríam habet viam | through Mary he has the way
+Quæ ducit ad pátriam. | that leads to the homeland.
+Clemens audi tuæ laudi | Gracious one, hear those
+Quos instántes cónspicis: | whom thou seest intent upon thy praise;
+Munda reos et fac eos | cleanse the guilty, and make them
+Bonis dignos cælicis. | worthy of the good things of heaven.
+Virga Jesse, spes oppréssæ | Rod of Jesse, hope and refuge
+Mentis et refúgium, | of the burdened mind,
+Decus mundi, lux profúndi, | glory of the world, light of the deep,
+Dómini sacrárium. | sanctuary of the Lord.
+Gemma decens rosa recens, | Comely jewel, fresh rose,
+Castitátis lílium: | lily of chastity,
+Castum chorum ad polórum | thou who leadest the chaste choir
+Quæ perdúcis gáudium. | to the joy of heaven.
+Pulchra tota, sine nota | All fair, without the mark
+Cujuscúmque máculæ, | of any stain,
+Fac me mundum et jucúndum | make me clean and glad
+Te laudáre sédule. | to praise thee faithfully.
+Ut sim castus et modéstus, | That I may be chaste and modest,
+Dulcis, blandus, sóbrius, | gentle, kind and sober,
+Pius, rectus, circumspéctus, | devout, upright and prudent,
+Simultátis néscius: | a stranger to strife,
+Erudítus et munítus | taught and armed
+Divínis elóquiis, | by the words of God,
+Timorátus et ornátus | God-fearing and adorned
+Sacris exercítiis. | with holy exercises.
+Virgo sancta, cerne quanta | Holy Virgin, see how many
+Perferámus júgiter | we endure without end,
+Tentaménta, et susténta | the temptations; and uphold
+Nos ut stemus fórtiter. | us, that we may stand firm.
+Esto tutrix et adjútrix | Be the guardian and helper
+Christiáni pópuli; | of the Christian people;
+Pacem præsta, ne molésta | grant peace, lest troubled
+Nos pertúrbent sæcula. | times disturb us.
+Amen. | Amen.
