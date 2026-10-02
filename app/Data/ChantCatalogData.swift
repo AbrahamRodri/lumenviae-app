@@ -1118,8 +1118,8 @@ extension ChantCatalog {
             prayerIDs: ["fatima_prayer"],
             duration: 34.5,
             score: [
-                ChantScorePart(file: "chant-o-mi-jesu", caption: "First aspiration", aspectRatio: 3.7498),
-                ChantScorePart(file: "chant-o-maria", caption: "Second aspiration", aspectRatio: 9.0027)
+                ChantScorePart(file: "chant-o-mi-jesu", caption: "First short prayer", aspectRatio: 3.7498),
+                ChantScorePart(file: "chant-o-maria", caption: "Second short prayer", aspectRatio: 9.0027)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/cantos/santo-rosario/misterios-gozosos/")!,
             lines: [
@@ -1952,7 +1952,7 @@ extension ChantCatalog {
                 ChantScorePart(file: "chant-litaniae-sanctissimi-nominis-jesu-2", caption: "Jesu Fili Dei vivi", aspectRatio: 8.0851),
                 ChantScorePart(file: "chant-litaniae-sanctissimi-nominis-jesu-3-alt", caption: "Propitius esto", aspectRatio: 4.5157),
                 ChantScorePart(file: "chant-litaniae-sanctissimi-nominis-jesu-4", caption: "Agnus Dei", aspectRatio: 1.8174),
-                ChantScorePart(file: "chant-litaniae-sanctissimi-nominis-jesu-5", caption: "Collect", aspectRatio: 0.7909)
+                ChantScorePart(file: "chant-litaniae-sanctissimi-nominis-jesu-5", caption: "Closing prayer", aspectRatio: 0.7909)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/litaniae-sanctissimi-nominis-jesu/")!,
             lines: [
@@ -2185,8 +2185,8 @@ extension ChantCatalog {
             duration: 451.1,
             score: [
                 ChantScorePart(file: "chant-te-deum-solemne", caption: "Te Deum", aspectRatio: 0.3275),
-                ChantScorePart(file: "chant-versos-del-te-deum", caption: "Versicles and responses", aspectRatio: 1.0171),
-                ChantScorePart(file: "chant-oracion-del-te-deum", caption: "Collect", aspectRatio: 1.4494)
+                ChantScorePart(file: "chant-versos-del-te-deum", caption: "Verse and response", aspectRatio: 1.0171),
+                ChantScorePart(file: "chant-oracion-del-te-deum", caption: "Closing prayer", aspectRatio: 1.4494)
             ],
             sourceURL: URL(string: "https://www.verbumgloriae.es/project/te-deum-solemne/")!,
             lines: [
