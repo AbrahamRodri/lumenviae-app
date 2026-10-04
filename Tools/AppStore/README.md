@@ -56,9 +56,36 @@ Tools/dev asc --help       # every command
 The repository's `.gitignore` refuses `*.p8` as a guard. The key still
 belongs in `~/.appstoreconnect`, never in the repository.
 
+## Keeping the version current
+
+`Tools/dev asc versioning` (read-only; `asc status` ends with the same
+summary) compares the project with App Store Connect and the repository.
+It reports:
+
+- whether `MARKETING_VERSION` is past the version live on the store
+- whether App Store Connect has that version yet
+- whether `CURRENT_PROJECT_VERSION` is past the highest build uploaded
+- whether CHANGELOG.md has a `## <version>` section
+- whether the in-app `WhatsNewRelease` has notes for it
+
+It ends by listing anything to do before the next upload. `--strict` makes
+that list exit 1. `archive` and `upload` refuse a build number App Store
+Connect already has, instead of letting Apple reject it after the upload.
+
+**Claude sessions keep this current.** At the start of any release work,
+or whenever a session changes what the next version will hold, it runs
+`asc versioning` and applies what it lists. A build behind App Store
+Connect is fixed with `bump --next-build --confirm`. A version already
+live gets `bump --version X.Y --confirm` after asking Abraham which number
+the next version should carry. A missing CHANGELOG section gets one. The
+session then commits the bump with the change it belongs to.
+
 ## A release, step by step
 
 ```bash
+# 0. Where things stand, and what to fix first
+Tools/dev asc versioning
+
 # 1. The version and build number (app target only; shows the diff)
 Tools/dev asc bump --version 4.1 --build 1            # dry run
 Tools/dev asc bump --version 4.1 --build 1 --confirm

@@ -337,6 +337,10 @@ def cmd_status(args):
         attached = f"build {b['attributes']['version']}" if b else "no build"
         print(f"  {v['attributes']['versionString']:8} {state_of(v):28} {attached}")
     cmd_builds(argparse.Namespace(limit=5, version=None), client, app)
+    _, actions = versioning_report(client)
+    print("versioning:" + ("" if actions else " up to date"))
+    for a in actions:
+        print(f"  - {a}")
 
 
 def cmd_versions(args):
@@ -427,6 +431,72 @@ def highest_uploaded_build():
     return max(numbers) if numbers else None
 
 
+def version_tuple(v):
+    return tuple(int(x) for x in re.findall(r"\d+", v or ""))
+
+
+LIVE_STATES = {"READY_FOR_DISTRIBUTION", "READY_FOR_SALE", "PROCESSING_FOR_DISTRIBUTION",
+               "PENDING_DEVELOPER_RELEASE", "PENDING_APPLE_RELEASE"}
+
+
+def versioning_report(client=None):
+    """What the project's version and build need, against App Store
+    Connect, the changelog and the in-app What's New. Returns (lines,
+    actions): actions are the things to do before the next upload."""
+    version, build = project_versions()
+    lines, actions = [f"project:        {version} ({build})"], []
+    client = client or Client()
+    app = find_app(client)
+    versions = app_versions(client, app["id"], limit=20)["data"]
+    live = [v["attributes"]["versionString"] for v in versions if state_of(v) in LIVE_STATES]
+    newest_live = max(live, key=version_tuple) if live else None
+    lines.append(f"live on store:  {newest_live or 'none'}")
+    if newest_live and version_tuple(version) <= version_tuple(newest_live):
+        actions.append(f"the project's version {version} is not past the live {newest_live}: "
+                       f"`asc bump --version X.Y --confirm` before the next release")
+    here = next((v for v in versions if v["attributes"]["versionString"] == version), None)
+    lines.append(f"ASC version:    {version} " + (f"exists ({state_of(here)})" if here else
+                                                  "not created yet (`asc create-version`)"))
+    highest = highest_uploaded_build()
+    lines.append(f"highest build:  {highest if highest is not None else '?'} in App Store Connect")
+    if highest is not None and build.isdigit() and int(build) <= highest:
+        actions.append(f"build {build} is not past App Store Connect's {highest}: "
+                       f"`asc bump --next-build --confirm` (gives {highest + 1})")
+    changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8") if (ROOT / "CHANGELOG.md").exists() else ""
+    if re.search(r"^## " + re.escape(version) + r"\b", changelog, re.M):
+        lines.append(f"CHANGELOG.md:   has a {version} section")
+    else:
+        actions.append(f"CHANGELOG.md has no `## {version}` section")
+    whats_new = "\n".join(f.read_text(encoding="utf-8") for f in (ROOT / "app" / "Views" / "WhatsNew").glob("*.swift"))
+    if re.search(r'WhatsNewRelease\(version:\s*"' + re.escape(version) + '"', whats_new):
+        lines.append(f"in-app notes:   WhatsNewRelease {version} exists")
+    else:
+        lines.append(f"in-app notes:   none for {version} (fine for a point release; the sheet stays quiet)")
+    return lines, actions
+
+
+def cmd_versioning(args):
+    lines, actions = versioning_report()
+    print("\n".join(lines))
+    if actions:
+        print("to do before the next upload:")
+        for a in actions:
+            print(f"  - {a}")
+    else:
+        print("versioning: up to date")
+    return 1 if actions and args.strict else 0
+
+
+def require_fresh_build():
+    """archive and upload refuse a build number App Store Connect already
+    has, which it would reject only after the whole upload."""
+    _, build = project_versions()
+    highest = highest_uploaded_build()
+    if highest is not None and build.isdigit() and int(build) <= highest:
+        raise Fail(f"build {build} is not past App Store Connect's highest ({highest}); "
+                   f"run `asc bump --next-build --confirm` first")
+
+
 def auth_flags():
     key_id, issuer, key_path = credentials()
     return ["-allowProvisioningUpdates", "-authenticationKeyPath", str(key_path),
@@ -450,6 +520,7 @@ def archive_path(version, build):
 
 
 def cmd_archive(args):
+    require_fresh_build()
     version, build = project_versions()
     path = archive_path(version, build)
     cmd = ["xcodebuild", "archive", "-project", str(ROOT / "app.xcodeproj"), "-scheme", "app",
@@ -471,6 +542,7 @@ def cmd_archive(args):
 
 
 def cmd_upload(args):
+    require_fresh_build()
     version, build = project_versions()
     path = archive_path(version, build)
     if not path.exists() and args.confirm:
@@ -655,6 +727,9 @@ def main(argv=None):
     p.add_argument("--limit", type=int, default=10)
     p.add_argument("--version", help="only builds of this version (e.g. 4.1)")
     command("groups", cmd_groups, "list TestFlight groups")
+    p = command("versioning", cmd_versioning,
+                "is the project's version and build ready for the next upload? (read-only)")
+    p.add_argument("--strict", action="store_true", help="exit 1 when something needs doing")
 
     p = command("bump", cmd_bump, "set MARKETING_VERSION and/or CURRENT_PROJECT_VERSION for the app target",
                 writes=True)
@@ -698,7 +773,9 @@ def main(argv=None):
 
     args = parser.parse_args(argv)
     try:
-        args.fn(args)
+        status = args.fn(args)
+        if status:
+            return status
     except Fail as e:
         print(f"asc: {e}", file=sys.stderr)
         return 1

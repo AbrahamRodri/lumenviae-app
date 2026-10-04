@@ -164,6 +164,23 @@ class NextBuildTests(unittest.TestCase):
         self.assertIn(f"CURRENT_PROJECT_VERSION = {int(build) + 1};", out)
 
 
+class VersioningTests(unittest.TestCase):
+    def test_version_order(self):
+        self.assertLess(asc.version_tuple("3"), asc.version_tuple("4.0"))
+        self.assertLess(asc.version_tuple("4.0"), asc.version_tuple("4.0.1"))
+        self.assertLess(asc.version_tuple("4.9"), asc.version_tuple("4.10"))
+
+    def test_archive_refuses_a_used_build(self):
+        _, build = asc.project_versions()
+        with mock.patch.object(asc, "highest_uploaded_build", return_value=int(build)):
+            with self.assertRaises(asc.Fail):
+                asc.require_fresh_build()
+        with mock.patch.object(asc, "highest_uploaded_build", return_value=int(build) - 1):
+            asc.require_fresh_build()
+        with mock.patch.object(asc, "highest_uploaded_build", return_value=None):
+            asc.require_fresh_build()   # offline: nothing to compare against
+
+
 class DryRunTests(unittest.TestCase):
     def test_write_sends_nothing_in_a_dry_run(self):
         client = asc.Client(dry_run=True)
