@@ -108,7 +108,14 @@ Checks
                     the CLAUDE.md rules over app/ (Tools/Lint)
   gen-check [--online] [--only NAME] [--list]
                     generated files still match their generators (Tools/GenCheck)
-  check             lint + lint self-test + gen-check + build + test
+  check             lint + lint self-test + gen-check + asc tests + build + test
+
+App Store Connect (Tools/AppStore/README.md)
+  asc <command>     status, builds, versions, groups, bump, archive, upload,
+                    create-version, whats-new, attach-build, testflight,
+                    submit. Every change is a dry run without --confirm, and
+                    a Claude session asks Abraham before submit --confirm.
+  asc-test          the App Store tool's own tests (no account needed)
 
 Git hooks (opt-in)
   hooks install     point git at Tools/hooks (pre-commit: lint and gen-check on
@@ -240,6 +247,7 @@ cmd_check() {
   step "lint" cmd_lint --no-warnings
   step "lint self-test" cmd_lint --self-test
   step "gen-check" cmd_gen_check
+  step "asc tests" run python3 Tools/AppStore/test_asc.py
   step "build" cmd_build
   step "test" cmd_test
   bold "== summary ($((SECONDS - started))s)"
@@ -279,5 +287,7 @@ case "$command" in
   gen-check) cmd_gen_check "$@" ;;
   check) cmd_check "$@" ;;
   hooks) cmd_hooks "$@" ;;
+  asc) exec python3 Tools/AppStore/asc.py "$@" ;;
+  asc-test) run python3 Tools/AppStore/test_asc.py ;;
   *) cmd_help >&2; fail "unknown command: $command" ;;
 esac
