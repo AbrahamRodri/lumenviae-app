@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Opt-in pre-commit hook (Tools/dev hooks install).
+#   - lints the staged Swift files under app/ (new errors fail; baselined
+#     ones and warnings do not)
+#   - runs gen-check when a generator or its inputs or outputs are staged
+# Skip once with: git commit --no-verify
+set -euo pipefail
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+
+staged="$(git diff --cached --name-only --diff-filter=ACMR)"
+[[ -n "$staged" ]] || exit 0
+
+swift=()
+while IFS= read -r f; do
+  [[ "$f" == app/*.swift ]] && swift+=("$f")
+done <<<"$staged"
+if (( ${#swift[@]} )); then
+  python3 Tools/Lint/lint.py --no-warnings "${swift[@]}" || {
+    echo "pre-commit: lint found new errors (Tools/dev lint for details; --no-verify to skip)" >&2
+    exit 1
+  }
+fi
+
+if grep -qE '^(Tools/(PrayerBook|Chants|ChantLines|TrueDevotion|IconAudit|ScripturalRosary|GenCheck)/|app/Data/|app/Resources/TrueDevotionBook\.json|app/Assets\.xcassets/Icons/lv-)' <<<"$staged"; then
+  python3 Tools/GenCheck/gen_check.py || {
+    echo "pre-commit: a generated file is stale; regenerate it as shown above (--no-verify to skip)" >&2
+    exit 1
+  }
+fi

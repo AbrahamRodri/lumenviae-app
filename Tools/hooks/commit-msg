@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Opt-in commit-msg hook (Tools/dev hooks install).
+# The repo's rule: commits are attributed to the human developer only, so a
+# message carrying an AI co-author or a "Generated with" line is refused.
+set -euo pipefail
+msg_file="$1"
+# Comments git strips are not part of the message
+if grep -v '^#' "$msg_file" | grep -qiE '^\s*Co-Authored-By:|Generated with'; then
+  echo "commit-msg: remove the Co-Authored-By / \"Generated with\" line; commits here carry no AI attribution" >&2
+  grep -v '^#' "$msg_file" | grep -niE '^\s*Co-Authored-By:|Generated with' >&2
+  exit 1
+fi
