@@ -384,7 +384,12 @@ def cmd_bump(args):
     if args.next_build:
         if not old_build or not old_build.isdigit():
             raise Fail(f"CURRENT_PROJECT_VERSION is {old_build!r}; give --build N")
-        build = str(int(old_build) + 1)
+        highest = highest_uploaded_build()
+        build = str(max(int(old_build), highest or 0) + 1)
+        if highest is not None:
+            print(f"highest build in App Store Connect: {highest}; project: {old_build}")
+        else:
+            print("App Store Connect not reachable or not configured; counting from the project alone")
     if not args.version and not build:
         raise Fail("give --version X.Y, --build N or --next-build")
     if args.version and not re.fullmatch(r"\d+(\.\d+){0,2}", args.version):
@@ -405,6 +410,21 @@ def cmd_bump(args):
         return
     PBXPROJ.write_text(new)
     print("wrote app.xcodeproj/project.pbxproj")
+
+
+def highest_uploaded_build():
+    """The highest build number App Store Connect holds for the app, or
+    None when it cannot be asked. Xcode's own uploads renumber builds, so
+    the project's CURRENT_PROJECT_VERSION can trail far behind."""
+    try:
+        client = Client()
+        app = find_app(client)
+        out = client.get("/v1/builds", **{"filter[app]": app["id"], "sort": "-uploadedDate", "limit": "50",
+                                          "fields[builds]": "version"})
+    except Fail:
+        return None
+    numbers = [int(b["attributes"]["version"]) for b in out["data"] if b["attributes"]["version"].isdigit()]
+    return max(numbers) if numbers else None
 
 
 def auth_flags():
@@ -640,7 +660,8 @@ def main(argv=None):
                 writes=True)
     p.add_argument("--version", help="the marketing version, e.g. 4.1")
     p.add_argument("--build", help="the build number")
-    p.add_argument("--next-build", action="store_true", help="the current build number plus one")
+    p.add_argument("--next-build", action="store_true",
+                   help="one past the highest of the project's build number and App Store Connect's")
 
     command("archive", cmd_archive, "archive a Release build for the App Store (.build/archives)", writes=True)
     command("upload", cmd_upload, "export the archive and upload it to App Store Connect", writes=True)

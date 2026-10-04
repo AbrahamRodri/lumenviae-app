@@ -83,8 +83,11 @@ Tools/dev asc submit 4.1
 Tools/dev asc submit 4.1 --confirm
 ```
 
-`bump --next-build` adds one to the current build number. A new upload of
-the same version needs a new build number.
+`bump --next-build` takes one past the higher of the project's build
+number and the highest build App Store Connect holds. Xcode's own uploads
+renumber builds, so the project's number can trail far behind: the project
+said 5 while App Store Connect held 61. A new upload of the same version
+needs a new build number.
 
 ## Two different What's New
 

@@ -146,6 +146,24 @@ class BumpTests(unittest.TestCase):
         self.assertIn("MARKETING_VERSION = 99.9;", out.getvalue())
 
 
+class NextBuildTests(unittest.TestCase):
+    def run_bump(self, highest):
+        out = io.StringIO()
+        with mock.patch.object(asc, "highest_uploaded_build", return_value=highest), redirect_stdout(out):
+            asc.main(["bump", "--next-build"])
+        return out.getvalue()
+
+    def test_counts_past_app_store_connect(self):
+        _, build = asc.project_versions()
+        out = self.run_bump(int(build) + 56)
+        self.assertIn(f"CURRENT_PROJECT_VERSION = {int(build) + 57};", out)
+
+    def test_counts_from_the_project_offline(self):
+        _, build = asc.project_versions()
+        out = self.run_bump(None)
+        self.assertIn(f"CURRENT_PROJECT_VERSION = {int(build) + 1};", out)
+
+
 class DryRunTests(unittest.TestCase):
     def test_write_sends_nothing_in_a_dry_run(self):
         client = asc.Client(dry_run=True)
