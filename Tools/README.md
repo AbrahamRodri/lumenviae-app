@@ -17,7 +17,7 @@ otherwise. Run everything from the repository root.
 
 | Command | What it does |
 |---|---|
-| `doctor` | Checks Xcode (26 or later), Swift, python3, the simulator runtime, the scheme, and the lint self-test. |
+| `doctor [--backend]` | Checks Xcode (26 or later), Swift, python3, the simulator runtime, the scheme, and the lint self-test. `--backend` also probes the server's `GET /healthz` (local `PORT`, or 8080, and production). This only reports and never fails. The backend's own `./dev.sh doctor` checks the server in full. |
 | `build` | Builds the app for the tools' own simulator, one architecture, without booting it. |
 | `test [-only appTests/Suite]` | Runs `appTests` on the tools' own simulator. |
 | `run [--show]` | Builds, installs and launches the app on that simulator; `--show` brings Simulator.app forward. |

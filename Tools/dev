@@ -90,7 +90,9 @@ cmd_help() {
 Tools/dev <command> [options]
 
 Everyday
-  doctor            check Xcode, the simulator runtime, python3 and the repo
+  doctor [--backend]
+                    check Xcode, the simulator runtime, python3 and the repo;
+                    --backend also probes the server's /healthz (report only)
   build             build the app for the tools' simulator (without booting it)
   test [-only X]    run appTests on the tools' own simulator ("$SIM_NAME");
                     -only takes an xcodebuild -only-testing value, e.g.
@@ -142,8 +144,30 @@ cmd_doctor() {
   local hooks
   hooks="$(git config --get core.hooksPath || true)"
   note "  --    git hooks              ${hooks:-not installed (Tools/dev hooks install)}"
+  if [[ "${1:-}" == "--backend" ]]; then doctor_backend; fi
   if (( problems )); then fail "$problems problem(s)"; fi
   note "doctor: all good"
+}
+
+# The backend, reported and never failed on: the app prays offline, and a
+# server down is no reason this Mac cannot build. GET /healthz answers
+# {"status","version","db"} (the backend's own `./dev.sh doctor` checks
+# more). LUMEN_VIAE_HEALTH_URLS overrides the list, space-separated.
+doctor_backend() {
+  bold "Backend (report only)"
+  local urls="${LUMEN_VIAE_HEALTH_URLS:-http://localhost:${PORT:-8080}/healthz https://www.lumenviae.org/healthz https://lumenviae.fly.dev/healthz}"
+  local url code body
+  for url in $urls; do
+    body="$(curl -s -m 5 -w '\n%{http_code}' "$url" 2>/dev/null || true)"
+    code="${body##*$'\n'}"; body="${body%$'\n'*}"
+    case "$code" in
+      200) note "  ok    $url  $body" ;;
+      503) note "  WARN  $url  503 $body (the database did not answer)" ;;
+      000|"") note "  --    $url  unreachable" ;;
+      404) note "  --    $url  404 (no /healthz deployed there yet)" ;;
+      *) note "  WARN  $url  HTTP $code" ;;
+    esac
+  done
 }
 
 cmd_build() {
