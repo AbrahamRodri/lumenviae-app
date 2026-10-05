@@ -3477,6 +3477,13 @@ the generated-file check, the build and the tests. Run tests with
 the booted one. Fix a new `Tools/dev lint` error rather than baselining
 it. Every tool is listed in `Tools/README.md`.
 
+Releases go through `Tools/dev asc` (`Tools/AppStore/README.md`). Every
+change it makes is a dry run without `--confirm`. Keep the version
+current: at the start of release work run `Tools/dev asc versioning` and
+apply what it lists. A build number is yours to raise, but ask Abraham
+which number a new marketing version takes. Never run `asc submit
+--confirm` without his yes in chat for that version.
+
 ## Git Commit Guidelines
 
 **IMPORTANT**: Do NOT add AI co-author attribution to commits. All commits should be attributed to the human developer only.
