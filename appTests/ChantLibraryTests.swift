@@ -725,3 +725,41 @@ struct ChantLibraryTests {
         #expect(ChantHour.present(at: day(2026, 10, 1, hour: 7)) == .morning)
     }
 }
+
+// MARK: - Former wording
+
+@MainActor
+struct ChantFormerWordingTests {
+
+    /// Every occasion's words as the shelf sets them now
+    private var currentWords: Set<String> {
+        var words: Set<String> = []
+        for occasion in ChantLibraryData.occasions {
+            words.insert(occasion.title)
+            words.insert(occasion.note)
+            for block in occasion.blocks { if let rubric = block.rubric { words.insert(rubric) } }
+        }
+        return words
+    }
+
+    @Test func everyRewordingLeadsToWordsTheOccasionsUseNow() {
+        let current = currentWords
+        for (old, new) in ChantLibraryData.formerWords {
+            #expect(current.contains(new), "\"\(old)\" leads to \"\(new)\", which no occasion says")
+        }
+    }
+
+    @Test func noRewordingIsItselfReworded() {
+        for new in ChantLibraryData.formerWords.values {
+            #expect(ChantLibraryData.formerWords[new] == nil, "\(new)")
+            #expect(ChantLibraryData.currentWording(of: new) == new)
+        }
+    }
+
+    @Test func formerWordsAreNoLongerUsed() {
+        let current = currentWords
+        for old in ChantLibraryData.formerWords.keys {
+            #expect(!current.contains(old), "\(old)")
+        }
+    }
+}

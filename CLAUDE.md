@@ -931,8 +931,8 @@ write concurrent code here:
 - SwiftUI may read a `Layout`, a `LayoutValueKey`, or a value
   `onGeometryChange` measures off the main actor, so those types are marked
   `nonisolated` (`ChapelGridLayout`, `ChapelSpanKey`, `ChapelChipFlow`, the Prayer Book's
-  `WordFlow`, onboarding's `WordsExtent`; the meditation shelf's
-  `ChipFlowLayout` still lacks it);
+  `WordFlow`, onboarding's `WordsExtent`, the meditation shelf's
+  `ChipFlowLayout`);
   under default MainActor isolation a new one needs the same, and the
   Swift 5 mode below won't insist on it.
 - The target is still in the **Swift 5 language mode** (`SWIFT_VERSION =

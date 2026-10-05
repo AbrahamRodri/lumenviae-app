@@ -132,22 +132,29 @@ final class ReadingDayMeter {
         return formatter
     }()
 
-    private init() {
-        let d = UserDefaults.standard
+    private let defaults: UserDefaults
+
+    /// The clock, so a test can carry the meter across a day
+    private let now: () -> Date
+
+    init(defaults: UserDefaults = .standard, now: @escaping () -> Date = Date.init) {
+        self.defaults = defaults
+        self.now = now
+        let d = defaults
         dayStamp = d.string(forKey: Self.dayKey) ?? ""
         storedSeconds = d.double(forKey: Self.secondsKey)
         storedChapters = d.integer(forKey: Self.chaptersKey)
     }
 
-    private static var todayStamp: String {
-        stampFormatter.string(from: Date())
+    private var todayStamp: String {
+        Self.stampFormatter.string(from: now())
     }
 
     /// Whether the stored figures belong to a day that has passed. Pure:
     /// the reads below answer for today without rolling the stamp, and
     /// the counting paths roll it when they write.
     private var isStale: Bool {
-        dayStamp != Self.todayStamp
+        dayStamp != todayStamp
     }
 
     // MARK: - The day's figures
@@ -164,7 +171,7 @@ final class ReadingDayMeter {
             // Clamped: the system clock is not monotonic, and a
             // correction that moves it backwards must not read as
             // negative minutes.
-            seconds += max(0, Date().timeIntervalSince(sessionStart))
+            seconds += max(0, now().timeIntervalSince(sessionStart))
         }
         return max(0, Int(seconds / 60))
     }
@@ -203,7 +210,7 @@ final class ReadingDayMeter {
     func enterReader() {
         rollDayIfNeeded()
         screens += 1
-        if sessionStart == nil { sessionStart = Date() }
+        if sessionStart == nil { sessionStart = now() }
     }
 
     /// The reader screen is gone — commit what it counted, once the
@@ -225,7 +232,7 @@ final class ReadingDayMeter {
     func resume() {
         rollDayIfNeeded()
         guard screens > 0, sessionStart == nil else { return }
-        sessionStart = Date()
+        sessionStart = now()
     }
 
     /// Commits the reading under way and stops the clock — called when
@@ -234,7 +241,7 @@ final class ReadingDayMeter {
     func pause() {
         rollDayIfNeeded()
         guard let start = sessionStart else { return }
-        let elapsed = Date().timeIntervalSince(start)
+        let elapsed = now().timeIntervalSince(start)
         if elapsed > 0 { storedSeconds += elapsed }
         sessionStart = nil
         persist()
@@ -256,17 +263,17 @@ final class ReadingDayMeter {
     /// this writes observed state and persists, which during a view's
     /// own update pass is undefined behaviour.
     private func rollDayIfNeeded() {
-        let today = Self.todayStamp
+        let today = todayStamp
         guard dayStamp != today else { return }
         dayStamp = today
         storedSeconds = 0
         storedChapters = 0
-        if sessionStart != nil { sessionStart = Date() }
+        if sessionStart != nil { sessionStart = now() }
         persist()
     }
 
     private func persist() {
-        let d = UserDefaults.standard
+        let d = defaults
         d.set(dayStamp, forKey: Self.dayKey)
         d.set(storedSeconds, forKey: Self.secondsKey)
         d.set(storedChapters, forKey: Self.chaptersKey)

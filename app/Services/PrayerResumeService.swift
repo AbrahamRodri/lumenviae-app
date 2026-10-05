@@ -140,7 +140,7 @@ final class PrayerResumeService {
     /// The unfinished session, if one exists and hasn't expired.
     var inProgress: InProgressPrayer? {
         guard let snapshot else { return nil }
-        guard Date().timeIntervalSince(snapshot.savedAt) <= Self.expiry else {
+        guard now().timeIntervalSince(snapshot.savedAt) <= Self.expiry else {
             return nil
         }
         return snapshot
@@ -159,7 +159,14 @@ final class PrayerResumeService {
     /// Father and first Hail Marys. Both players keep it.
     static let firstMysteryBegunAfter = 60
 
-    private init() {
+    private let defaults: UserDefaults
+
+    /// The clock, so a test can let a snapshot expire
+    private let now: () -> Date
+
+    init(defaults: UserDefaults = .standard, now: @escaping () -> Date = Date.init) {
+        self.defaults = defaults
+        self.now = now
         load()
     }
 
@@ -195,7 +202,7 @@ final class PrayerResumeService {
             spokenStep: step,
             startedAt: startedAt,
             accumulatedSeconds: accumulatedSeconds,
-            savedAt: Date()
+            savedAt: now()
         )
         write(fresh)
     }
@@ -257,7 +264,7 @@ final class PrayerResumeService {
     private func write(_ snapshot: InProgressPrayer) {
         self.snapshot = snapshot
         if let data = try? JSONEncoder().encode(snapshot) {
-            UserDefaults.standard.set(data, forKey: Self.storageKey)
+            defaults.set(data, forKey: Self.storageKey)
         }
     }
 
@@ -270,19 +277,19 @@ final class PrayerResumeService {
     /// Clears the snapshot — on completion, or when the user dismisses it.
     func clear() {
         snapshot = nil
-        UserDefaults.standard.removeObject(forKey: Self.storageKey)
+        defaults.removeObject(forKey: Self.storageKey)
     }
 
     // MARK: - Persistence
 
     private func load() {
-        guard let data = UserDefaults.standard.data(forKey: Self.storageKey),
+        guard let data = defaults.data(forKey: Self.storageKey),
               let stored = try? JSONDecoder().decode(InProgressPrayer.self, from: data) else {
             // Missing or unreadable (schema change): drop any stale blob
-            UserDefaults.standard.removeObject(forKey: Self.storageKey)
+            defaults.removeObject(forKey: Self.storageKey)
             return
         }
-        if Date().timeIntervalSince(stored.savedAt) > Self.expiry {
+        if now().timeIntervalSince(stored.savedAt) > Self.expiry {
             clear()
         } else {
             snapshot = stored

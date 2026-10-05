@@ -22,18 +22,24 @@ final class FavoritesService {
     /// IDs of favorited meditation sets
     private(set) var ids: Set<Int>
 
-    /// False for preview/test instances so toggles never touch UserDefaults
-    private let persists: Bool
+    /// Where the stars are kept; nil for preview instances, whose
+    /// toggles never touch UserDefaults
+    private let defaults: UserDefaults?
 
-    private init() {
-        persists = true
-        let stored = UserDefaults.standard.array(forKey: Self.storageKey) as? [Int] ?? []
+    private convenience init() {
+        self.init(defaults: .standard)
+    }
+
+    /// Reads and keeps the stars in `defaults`
+    init(defaults: UserDefaults) {
+        self.defaults = defaults
+        let stored = defaults.array(forKey: Self.storageKey) as? [Int] ?? []
         ids = Set(stored)
     }
 
-    /// In-memory instance seeded with favorites, for previews and tests
+    /// In-memory instance seeded with favorites, for previews
     init(previewFavorites: Set<Int>) {
-        persists = false
+        defaults = nil
         ids = previewFavorites
     }
 
@@ -47,8 +53,6 @@ final class FavoritesService {
         } else {
             ids.insert(id)
         }
-        if persists {
-            UserDefaults.standard.set(Array(ids), forKey: Self.storageKey)
-        }
+        defaults?.set(Array(ids), forKey: Self.storageKey)
     }
 }
