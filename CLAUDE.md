@@ -3469,6 +3469,14 @@ journal endpoint and none is planned — journal entries are local.
   chaplet of the Seven Sorrows (seven sorrows of seven Hail Marys, no
   Fatima Prayer); not a shorter Rosary
 
+## Developer Tools
+
+`Tools/dev` is the door to everyday tasks: `Tools/dev check` runs lint,
+the generated-file check, the build and the tests. Run tests with
+`Tools/dev test`, which uses its own simulator ("LumenViae Dev"), never
+the booted one. Fix a new `Tools/dev lint` error rather than baselining
+it. Every tool is listed in `Tools/README.md`.
+
 ## Git Commit Guidelines
 
 **IMPORTANT**: Do NOT add AI co-author attribution to commits. All commits should be attributed to the human developer only.

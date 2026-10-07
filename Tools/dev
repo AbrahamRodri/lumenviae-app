@@ -1,0 +1,283 @@
+#!/usr/bin/env bash
+# Tools/dev — one door to the app's everyday tasks.
+#
+#   Tools/dev help
+#
+# Every command prints what it runs. Builds and tests use a simulator of
+# their own ("LumenViae Dev"), never the booted one, which other sessions
+# and the live Simulator panel drive. Build products and logs go under
+# .build/ in this checkout, so two worktrees never share DerivedData.
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+
+PROJECT="app.xcodeproj"
+SCHEME="app"
+BUNDLE_ID="com.lumenviae.app"
+SIM_NAME="${LUMEN_VIAE_SIM_NAME:-LumenViae Dev}"
+SIM_DEVICE_TYPE="${LUMEN_VIAE_SIM_DEVICE:-iPhone 17 Pro}"
+DERIVED="$ROOT/.build/DerivedData"
+LOGS="$ROOT/.build/logs"
+
+bold() { if [[ -t 1 ]]; then printf '\033[1m%s\033[0m\n' "$*"; else printf '%s\n' "$*"; fi; }
+note() { printf '%s\n' "$*"; }
+fail() { printf 'error: %s\n' "$*" >&2; exit 1; }
+
+# Prints a command, then runs it
+run() {
+  printf '+ '; printf '%q ' "$@"; printf '\n'
+  "$@"
+}
+
+# Runs xcodebuild with its full log kept in .build/logs/<name>.log; on
+# failure prints the errors and the log's tail
+xcb() {
+  local name="$1"; shift
+  mkdir -p "$LOGS"
+  local log="$LOGS/$name.log"
+  printf '+ xcodebuild '; printf '%q ' "$@"; printf '\n'
+  note "  (full log: ${log#"$ROOT"/})"
+  local started=$SECONDS
+  if xcodebuild "$@" >"$log" 2>&1; then
+    grep -E 'Test run with|\*\* (BUILD|TEST) ' "$log" | tail -3 || true
+    note "  ${name}: ok in $((SECONDS - started))s"
+  else
+    grep -E '(error|failed|FAILED|✘)' "$log" | grep -v '^\s*$' | sort -u | head -40 || true
+    note "  --- last lines of the log ---"
+    tail -15 "$log"
+    fail "${name} failed after $((SECONDS - started))s (log: ${log#"$ROOT"/})"
+  fi
+}
+
+# The UDID of the tools' own simulator, created on first use
+sim_udid() {
+  local udid
+  udid="$(xcrun simctl list devices -j | python3 -c '
+import json, sys
+name = sys.argv[1]
+for runtime, devices in json.load(sys.stdin)["devices"].items():
+    for d in devices:
+        if d["name"] == name and d.get("isAvailable", True):
+            print(d["udid"]); raise SystemExit
+' "$SIM_NAME")"
+  if [[ -z "$udid" ]]; then
+    local runtime
+    runtime="$(xcrun simctl list runtimes -j | python3 -c '
+import json, sys
+ios = [r for r in json.load(sys.stdin)["runtimes"] if r["platform"] == "iOS" and r["isAvailable"]]
+print(sorted(ios, key=lambda r: [int(p) for p in r["version"].split(".")])[-1]["identifier"] if ios else "")
+')"
+    [[ -n "$runtime" ]] || fail "no iOS simulator runtime installed (Xcode > Settings > Components)"
+    note "creating simulator \"$SIM_NAME\" ($SIM_DEVICE_TYPE, $runtime)" >&2
+    udid="$(xcrun simctl create "$SIM_NAME" "$SIM_DEVICE_TYPE" "$runtime")"
+  fi
+  printf '%s' "$udid"
+}
+
+sim_boot() {
+  local udid="$1"
+  if ! xcrun simctl list devices | grep -q "$udid) (Booted)"; then
+    run xcrun simctl boot "$udid"
+  fi
+  run xcrun simctl bootstatus "$udid" -b >/dev/null
+}
+
+# --- Commands ---------------------------------------------------------------
+
+cmd_help() {
+  cat <<EOF
+Tools/dev <command> [options]
+
+Everyday
+  doctor [--backend]
+                    check Xcode, the simulator runtime, python3 and the repo;
+                    --backend also probes the server's /healthz (report only)
+  build             build the app for the tools' simulator (without booting it)
+  test [-only X]    run appTests on the tools' own simulator ("$SIM_NAME");
+                    -only takes an xcodebuild -only-testing value, e.g.
+                    appTests/ChantCatalogTests
+  run [--show]      build, install and launch on that simulator; --show
+                    brings Simulator.app forward
+  sim [udid|boot|shutdown|erase|delete]
+                    the tools' own simulator (prints its UDID by default)
+  clean             remove .build/ (this checkout's DerivedData and logs)
+
+Checks
+  lint [files] [--all] [--update-baseline] [--self-test] [--list-rules]
+                    the CLAUDE.md rules over app/ (Tools/Lint)
+  gen-check [--online] [--only NAME] [--list]
+                    generated files still match their generators (Tools/GenCheck)
+  check             lint + lint self-test + gen-check + build + test
+
+Git hooks (opt-in)
+  hooks install     point git at Tools/hooks (pre-commit: lint and gen-check on
+                    what is staged; commit-msg: refuses AI attribution lines)
+  hooks uninstall   put git's hooks back
+  hooks status
+
+Everything else in Tools/ is listed in Tools/README.md.
+EOF
+}
+
+cmd_doctor() {
+  local problems=0
+  check() { # label, command...
+    local label="$1"; shift
+    if out="$("$@" 2>&1)"; then printf '  ok    %-22s %s\n' "$label" "$(printf '%s' "$out" | head -1)";
+    else printf '  FAIL  %-22s %s\n' "$label" "$(printf '%s' "$out" | head -1)"; problems=$((problems + 1)); fi
+  }
+  bold "Toolchain"
+  check "xcode-select" xcode-select -p
+  check "Xcode" bash -c 'xcodebuild -version | head -1 | grep -E "Xcode (2[6-9]|[3-9][0-9])" || { xcodebuild -version | head -1; echo "needs Xcode 26 or later"; exit 1; }'
+  check "Swift" bash -c 'xcrun swift --version 2>&1 | head -1'
+  check "python3" bash -c 'python3 -c "import sys; assert sys.version_info >= (3, 9), sys.version; print(sys.version.split()[0])"'
+  check "afconvert (chants)" bash -c 'command -v afconvert'
+  if command -v ffmpeg >/dev/null; then note "  ok    ffmpeg                 $(command -v ffmpeg)";
+  else note "  --    ffmpeg                 not installed (only a new chant recording needs it)"; fi
+  bold "Simulator"
+  check "iOS runtime" bash -c 'xcrun simctl list runtimes | grep -E "^iOS" | tail -1 | grep . || { echo "no iOS runtime"; exit 1; }'
+  check "tools' simulator" bash -c "xcrun simctl list devices | grep -F \"$SIM_NAME (\" | head -1 | sed 's/^ *//' | grep . || echo 'not created yet; Tools/dev sim makes it'"
+  bold "Repository"
+  check "scheme" bash -c "xcodebuild -list -project $PROJECT 2>/dev/null | grep -qE '^ +$SCHEME\$' && echo '$SCHEME in $PROJECT'"
+  check "lint self-test" bash -c 'python3 Tools/Lint/lint.py --self-test | tail -1 | grep " 0 failure"'
+  local hooks
+  hooks="$(git config --get core.hooksPath || true)"
+  note "  --    git hooks              ${hooks:-not installed (Tools/dev hooks install)}"
+  if [[ "${1:-}" == "--backend" ]]; then doctor_backend; fi
+  if (( problems )); then fail "$problems problem(s)"; fi
+  note "doctor: all good"
+}
+
+# The backend, reported and never failed on: the app prays offline, and a
+# server down is no reason this Mac cannot build. GET /healthz answers
+# {"status","version","db"} (the backend's own `./dev.sh doctor` checks
+# more). LUMEN_VIAE_HEALTH_URLS overrides the list, space-separated.
+doctor_backend() {
+  bold "Backend (report only)"
+  local urls="${LUMEN_VIAE_HEALTH_URLS:-http://localhost:${PORT:-8080}/healthz https://www.lumenviae.org/healthz https://lumenviae.fly.dev/healthz}"
+  local url code body
+  for url in $urls; do
+    body="$(curl -s -m 5 -w '\n%{http_code}' "$url" 2>/dev/null || true)"
+    code="${body##*$'\n'}"; body="${body%$'\n'*}"
+    case "$code" in
+      200) note "  ok    $url  $body" ;;
+      503) note "  WARN  $url  503 $body (the database did not answer)" ;;
+      000|"") note "  --    $url  unreachable" ;;
+      404) note "  --    $url  404 (no /healthz deployed there yet)" ;;
+      *) note "  WARN  $url  HTTP $code" ;;
+    esac
+  done
+}
+
+cmd_build() {
+  # For the tools' own simulator (one architecture, and the products test
+  # and run reuse); building for a simulator does not boot it
+  local udid; udid="$(sim_udid)"
+  xcb build -project "$PROJECT" -scheme "$SCHEME" -configuration Debug \
+    -destination "platform=iOS Simulator,id=$udid" -derivedDataPath "$DERIVED" build
+}
+
+cmd_test() {
+  local extra=()
+  while (( $# )); do
+    case "$1" in
+      -only|--only) extra+=("-only-testing:$2"); shift 2 ;;
+      *) fail "test: unknown option $1" ;;
+    esac
+  done
+  local udid; udid="$(sim_udid)"
+  sim_boot "$udid"
+  xcb test -project "$PROJECT" -scheme "$SCHEME" -destination "platform=iOS Simulator,id=$udid" \
+    -derivedDataPath "$DERIVED" ${extra[@]+"${extra[@]}"} test
+}
+
+cmd_run() {
+  local show=0
+  [[ "${1:-}" == "--show" ]] && show=1
+  local udid; udid="$(sim_udid)"
+  sim_boot "$udid"
+  xcb run-build -project "$PROJECT" -scheme "$SCHEME" -configuration Debug \
+    -destination "platform=iOS Simulator,id=$udid" -derivedDataPath "$DERIVED" build
+  local app="$DERIVED/Build/Products/Debug-iphonesimulator/app.app"
+  [[ -d "$app" ]] || fail "built app not found at $app"
+  run xcrun simctl install "$udid" "$app"
+  run xcrun simctl launch "$udid" "$BUNDLE_ID"
+  if (( show )); then run open -a Simulator --args -CurrentDeviceUDID "$udid"; fi
+  note "running on \"$SIM_NAME\" ($udid)"
+}
+
+cmd_sim() {
+  local udid; udid="$(sim_udid)"
+  case "${1:-udid}" in
+    udid) printf '%s\n' "$udid" ;;
+    boot) sim_boot "$udid" ;;
+    shutdown) run xcrun simctl shutdown "$udid" || true ;;
+    erase) run xcrun simctl shutdown "$udid" 2>/dev/null || true; run xcrun simctl erase "$udid" ;;
+    delete) run xcrun simctl delete "$udid" ;;
+    *) fail "sim: unknown action $1" ;;
+  esac
+}
+
+cmd_clean() { run rm -rf "$ROOT/.build"; }
+
+cmd_lint() {
+  if [[ "${1:-}" == "--self-test" ]]; then run python3 Tools/Lint/lint.py --self-test; return; fi
+  run python3 Tools/Lint/lint.py "$@"
+}
+
+cmd_gen_check() { run python3 Tools/GenCheck/gen_check.py "$@"; }
+
+cmd_check() {
+  local results=() status=0 started=$SECONDS
+  step() { # name, command...
+    local name="$1"; shift
+    bold "== $name"
+    local t=$SECONDS
+    if ( "$@" ); then results+=("ok      $name ($((SECONDS - t))s)");
+    else results+=("FAILED  $name ($((SECONDS - t))s)"); status=1; fi
+  }
+  step "lint" cmd_lint --no-warnings
+  step "lint self-test" cmd_lint --self-test
+  step "gen-check" cmd_gen_check
+  step "build" cmd_build
+  step "test" cmd_test
+  bold "== summary ($((SECONDS - started))s)"
+  printf '  %s\n' "${results[@]}"
+  return $status
+}
+
+cmd_hooks() {
+  case "${1:-status}" in
+    install)
+      run chmod +x Tools/hooks/pre-commit Tools/hooks/commit-msg
+      run git config core.hooksPath Tools/hooks
+      note "hooks installed (Tools/hooks); Tools/dev hooks uninstall removes them" ;;
+    uninstall)
+      if git config --get core.hooksPath >/dev/null; then run git config --unset core.hooksPath; fi
+      note "hooks removed; git uses .git/hooks again" ;;
+    status)
+      local p; p="$(git config --get core.hooksPath || true)"
+      if [[ "$p" == "Tools/hooks" ]]; then note "installed (core.hooksPath = Tools/hooks)";
+      elif [[ -n "$p" ]]; then note "core.hooksPath is $p (not these hooks)";
+      else note "not installed"; fi ;;
+    *) fail "hooks: install, uninstall or status" ;;
+  esac
+}
+
+command="${1:-help}"
+shift || true
+case "$command" in
+  help|-h|--help) cmd_help ;;
+  doctor) cmd_doctor "$@" ;;
+  build) cmd_build "$@" ;;
+  test) cmd_test "$@" ;;
+  run) cmd_run "$@" ;;
+  sim) cmd_sim "$@" ;;
+  clean) cmd_clean "$@" ;;
+  lint) cmd_lint "$@" ;;
+  gen-check) cmd_gen_check "$@" ;;
+  check) cmd_check "$@" ;;
+  hooks) cmd_hooks "$@" ;;
+  *) cmd_help >&2; fail "unknown command: $command" ;;
+esac

@@ -1,0 +1,12 @@
+{
+  "about": "Errors that stood when the rule came in. Fix one and it drops out; regenerate with Tools/dev lint --update-baseline.",
+  "entries": [
+    {
+      "rule": "no-hex-color",
+      "path": "app/DesignSystem/ReadingText.swift",
+      "hash": "cd256c981157",
+      "count": 1,
+      "line": "static let red = Color(hex: \"#A0473F\")"
+    }
+  ]
+}
