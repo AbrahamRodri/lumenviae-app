@@ -27,6 +27,7 @@ otherwise. Run everything from the repository root.
 | `gen-check …` | Generated files against their generators (below). |
 | `check` | lint, lint self-test, gen-check, build and test, then a summary. |
 | `hooks install\|uninstall\|status` | The opt-in git hooks (below). |
+| `asc …`, `asc-test` | App Store Connect (below). |
 
 **The tools' own simulator.** `test` and `run` use a simulator named
 "LumenViae Dev", created on first use (an iPhone 17 Pro on the newest iOS
@@ -121,6 +122,18 @@ every worktree of this clone.
 
 Skip a hook once with `git commit --no-verify`.
 
+## Releasing: Tools/AppStore
+
+`Tools/dev asc status` shows where a release stands, and `asc versioning` lists
+what the project's version and build need before the next upload. `bump`, `archive`,
+`upload`, `create-version`, `whats-new`, `attach-build`, `testflight` and
+`submit` carry a release through App Store Connect with the team's API key,
+which is kept in `~/.appstoreconnect` and never in the repository. Each of
+these is a dry run without `--confirm`. **A Claude session asks Abraham in
+chat before every `submit --confirm`.** Setup and the step-by-step flow
+are in [AppStore/README.md](AppStore/README.md). `Tools/dev asc-test` runs
+the tool's own tests.
+
 ## Generators
 
 Each writes files the app ships. Never hand-edit the outputs. Edit the
@@ -153,3 +166,5 @@ A session working in this repo should:
   never the booted one
 - fix a new lint error rather than baseline it; baseline only when a rule
   is introduced
+- keep the version current: run `Tools/dev asc versioning` at the start of
+  release work and apply what it lists (see AppStore/README.md)

@@ -53,3 +53,5 @@ xcuserdata/
 *.env
 *.env.*
 Secrets.swift
+# App Store Connect API keys live in ~/.appstoreconnect/private_keys, never here
+*.p8
