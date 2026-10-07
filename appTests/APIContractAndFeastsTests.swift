@@ -195,6 +195,48 @@ struct MarianFeastDayTests {
         #expect(sorted.count == MarianFeastDay.all.count)
     }
 
+    // MARK: The chooser's preparations
+
+    @Test func everyFeastIsOfferedWithADayOneStillToCome() throws {
+        let today = day(2026, 10, 7)
+        let preparations = MarianFeastDay.upcomingPreparations(from: today)
+        #expect(preparations.count == MarianFeastDay.all.count)
+        #expect(preparations.map(\.start) == preparations.map(\.start).sorted(), "the soonest Day 1 first")
+        for preparation in preparations {
+            #expect(preparation.start >= Calendar.current.startOfDay(for: today), "\(preparation.feast.name)")
+            #expect(preparation.daysUntilStart(from: today) >= 0)
+            #expect(Calendar.current.dateComponents([.day], from: preparation.start, to: preparation.feastDate).day == 33,
+                    "Consecration Day is the feast, 33 days after Day 1")
+        }
+
+        let first = try #require(preparations.first)
+        #expect(first.feast.id == "presentation_mary")
+        #expect(monthDay(first.start) == [10, 19])
+        #expect(first.daysUntilStart(from: today) == 12)
+    }
+
+    @Test func aPreparationAlreadyUnderWayIsOfferedNextYear() throws {
+        // The Presentation's Day 1 was October 19; by the 25th it has passed
+        let presentation = try #require(MarianFeastDay.find("presentation_mary"))
+        let late = try #require(presentation.upcomingPreparation(from: day(2026, 10, 25)))
+        #expect(Calendar.current.component(.year, from: late.feastDate) == 2027)
+        #expect(MarianFeastDay.upcomingPreparations(from: day(2026, 10, 25)).first?.feast.id == "immaculate_conception")
+    }
+
+    @Test func aPreparationBeginningTodayIsStillOffered() throws {
+        let lourdes = try #require(MarianFeastDay.find("lourdes"))
+        let today = try #require(lourdes.upcomingPreparation(from: day(2027, 1, 9)))
+        #expect(today.daysUntilStart(from: day(2027, 1, 9)) == 0)
+        #expect(Calendar.current.component(.year, from: today.feastDate) == 2027)
+    }
+
+    @Test func aStartIsTracedBackToItsFeast() throws {
+        let presentation = try #require(MarianFeastDay.find("presentation_mary"))
+        let start = try #require(presentation.startDate(for: 2026))
+        #expect(MarianFeastDay.feast(endingPreparationFrom: start) == presentation)
+        #expect(MarianFeastDay.feast(endingPreparationFrom: day(2026, 6, 1)) == nil, "a start on no feast's count")
+    }
+
     @Test func everyFeastIsFoundByItsId() {
         let ids = MarianFeastDay.all.map(\.id)
         #expect(Set(ids).count == ids.count)

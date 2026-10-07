@@ -34,6 +34,15 @@ struct ConsecrationOnboardingView: View {
     // MARK: - Properties
 
     @Binding var path: [ConsecrationRoute]
+
+    /// Whether the tab bar should step aside, read by the tab. It does
+    /// while the reader walks the introduction — pages 2 to 5, each with
+    /// a Back — and stands on the page the tab opens on: the welcome for
+    /// a first visit, the feast chooser for a returning reader. The
+    /// welcome has no Back, so without the bar there a reader who only
+    /// looked in could leave the tab only by choosing a feast.
+    @Binding var hidesTabBar: Bool
+
     @Environment(ConsecrationViewModel.self) private var viewModel
 
     /// Once the introduction has been walked (or skipped), later visits
@@ -43,9 +52,18 @@ struct ConsecrationOnboardingView: View {
 
     @State private var step: ConsecrationOnboardingStep = .threshold
 
+    /// Whether the reader came into the pages from the one the tab
+    /// opened on (see `hidesTabBar`)
+    @State private var walking = false
+
     /// Guards the initial returning-user jump so it doesn't re-fire when
     /// this view reappears after a push
     @State private var hasAppeared = false
+
+    /// The glass, measured: page 2's painting is sized from it, and the
+    /// foot of a page without the tab bar sits clear of the home
+    /// indicator by it
+    @State private var metrics = IntroPageMetrics()
 
     // MARK: - Body
 
@@ -53,6 +71,18 @@ struct ConsecrationOnboardingView: View {
         ZStack {
             AppColors.appGradient
                 .ignoresSafeArea()
+
+            // Page 2's painting stands behind the bar, from the top of
+            // the glass, and crossfades in and out with its page
+            if step == .devotion {
+                VStack(spacing: 0) {
+                    AnnunciationPlate()
+                        .frame(height: artHeight)
+                    Spacer(minLength: 0)
+                }
+                .ignoresSafeArea(edges: .top)
+                .transition(.opacity)
+            }
 
             VStack(spacing: 0) {
                 topBar
@@ -65,17 +95,29 @@ struct ConsecrationOnboardingView: View {
                         ThresholdStepView(onContinue: { advance(to: .devotion) })
                             .transition(stepTransition)
                     case .devotion:
-                        DevotionStepView(onContinue: { advance(to: .rhythm) })
-                            .transition(stepTransition)
+                        DevotionStepView(
+                            bottomClearance: footClearance,
+                            onContinue: { advance(to: .rhythm) }
+                        )
+                        .transition(stepTransition)
                     case .rhythm:
-                        RhythmStepView(onContinue: { advance(to: .journey) })
-                            .transition(stepTransition)
+                        RhythmStepView(
+                            bottomClearance: footClearance,
+                            onContinue: { advance(to: .journey) }
+                        )
+                        .transition(stepTransition)
                     case .journey:
-                        JourneyStepView(onContinue: { advance(to: .chooseDay) })
-                            .transition(stepTransition)
+                        JourneyStepView(
+                            bottomClearance: footClearance,
+                            onContinue: { advance(to: .chooseDay) }
+                        )
+                        .transition(stepTransition)
                     case .chooseDay:
-                        ConsecrationDateSelectionView()
-                            .transition(stepTransition)
+                        // Above the tab bar when the tab opened here
+                        ConsecrationDateSelectionView(
+                            bottomClearance: walking ? footClearance : 104
+                        )
+                        .transition(stepTransition)
                     }
                 }
                 // Nothing may render outside the page's own width. Without
@@ -84,6 +126,15 @@ struct ConsecrationOnboardingView: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
+        .onGeometryChange(for: IntroPageMetrics.self) { proxy in
+            IntroPageMetrics(
+                fullHeight: proxy.size.height + proxy.safeAreaInsets.top + proxy.safeAreaInsets.bottom,
+                topInset: proxy.safeAreaInsets.top,
+                bottomInset: proxy.safeAreaInsets.bottom
+            )
+        } action: { measured in
+            metrics = measured
+        }
         .onAppear {
             guard !hasAppeared else { return }
             hasAppeared = true
@@ -91,6 +142,31 @@ struct ConsecrationOnboardingView: View {
                 step = .chooseDay
             }
         }
+        .onChange(of: walking) { _, isWalking in
+            hidesTabBar = isWalking
+        }
+        // Leaving — a consecration begun or scheduled, or the tab put
+        // away — always gives the bar back
+        .onDisappear {
+            hidesTabBar = false
+        }
+    }
+
+    // MARK: - Layout
+
+    /// Page 2's painting: 470 points on a glass 844 tall, and the same
+    /// share of any other, so its words, set from the foot of the page,
+    /// meet its dissolving foot on every phone
+    private var artHeight: CGFloat {
+        guard metrics.fullHeight > 0 else { return 470 }
+        return (metrics.fullHeight * 0.556).rounded()
+    }
+
+    /// A page's one act sits 40 points above the foot of the glass once
+    /// the tab bar has stepped aside, and never closer than 12 to the
+    /// home indicator. With the bar, it clears the bar as it always did.
+    private var footClearance: CGFloat {
+        walking ? max(12, 40 - metrics.bottomInset) : 120
     }
 
     // MARK: - Navigation
@@ -98,6 +174,7 @@ struct ConsecrationOnboardingView: View {
     private func advance(to newStep: ConsecrationOnboardingStep) {
         withAnimation(.easeInOut(duration: 0.4)) {
             step = newStep
+            walking = newStep != .threshold
         }
         if newStep == .chooseDay {
             hasSeenOnboarding = true
@@ -108,12 +185,14 @@ struct ConsecrationOnboardingView: View {
         guard let previous = ConsecrationOnboardingStep(rawValue: step.rawValue - 1) else { return }
         withAnimation(.easeInOut(duration: 0.4)) {
             step = previous
+            walking = previous != .threshold
         }
     }
 
     private func skipToChooser() {
         withAnimation(.easeInOut(duration: 0.4)) {
             step = .chooseDay
+            walking = true
         }
         hasSeenOnboarding = true
     }
@@ -127,17 +206,14 @@ struct ConsecrationOnboardingView: View {
 
     // MARK: - Top Bar
 
+    /// Over page 2's painting the bar's chrome turns to cream on a dark
+    /// scrim, as a reader's does over art
+    private var overArt: Bool { step == .devotion }
+
     private var topBar: some View {
         ZStack {
-            // Progress dots (centered independently of the side buttons)
-            HStack(spacing: 6) {
-                ForEach(ConsecrationOnboardingStep.allCases, id: \.rawValue) { s in
-                    Capsule()
-                        .fill(s.rawValue <= step.rawValue ? AppColors.gold : AppColors.cardBackground)
-                        .frame(width: s == step ? 20 : 8, height: 4)
-                        .animation(.spring(response: 0.4, dampingFraction: 0.7), value: step)
-                }
-            }
+            // Progress (centered independently of the side buttons)
+            progressSegments
 
             HStack {
                 // Back — also how a returning user reaches the
@@ -146,14 +222,18 @@ struct ConsecrationOnboardingView: View {
                     Button {
                         goBack()
                     } label: {
-                        AppIcon("ph-caret-left", size: 16)
-                            .foregroundColor(AppColors.cream.opacity(0.7))
-                            .frame(width: 36, height: 36)
-                            .background(Circle().fill(AppColors.cardBackground))
-                            // 44pt hit target around the 36pt circle
+                        AppIcon("ph-caret-left", size: 18)
+                            .foregroundColor(AppColors.cream)
                             .frame(width: 44, height: 44)
-                            .contentShape(Rectangle())
+                            .background(
+                                Circle().fill(overArt ? Color.black.opacity(0.3) : AppColors.cardBackground)
+                            )
+                            .overlay(
+                                Circle().strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline)
+                            )
+                            .contentShape(Circle())
                     }
+                    .buttonStyle(QuietGlyphButtonStyle())
                     .accessibilityLabel("Back")
                 }
 
@@ -163,19 +243,50 @@ struct ConsecrationOnboardingView: View {
                     Button("Skip") {
                         skipToChooser()
                     }
-                    .font(AppFonts.bodyFont(14))
-                    .foregroundColor(AppColors.textSecondary)
+                    .font(AppFonts.bodyFont(16))
+                    .foregroundColor(overArt ? AppColors.cream : AppColors.textSecondary)
                     // Kept to one line so it can't run into the progress
-                    // dots centered behind it at accessibility sizes
+                    // centered behind it at the larger text sizes
                     .lineLimit(1)
-                    .padding(.horizontal, 10)
+                    .padding(.horizontal, 6)
                     .frame(minHeight: 44)
                     .contentShape(Rectangle())
+                    .accessibilityHint("Goes to choosing your feast")
                 }
             }
         }
         .frame(minHeight: 44)
     }
+
+    /// Five capsules: the page you are on drawn long, the pages behind it
+    /// lit, the pages ahead faint
+    private var progressSegments: some View {
+        HStack(spacing: 6) {
+            ForEach(ConsecrationOnboardingStep.allCases, id: \.rawValue) { s in
+                Capsule()
+                    .fill(segmentColor(s))
+                    .frame(width: s == step ? 22 : 8, height: 4)
+            }
+        }
+        .animation(Motion.settle, value: step)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Page \(step.rawValue + 1) of \(ConsecrationOnboardingStep.allCases.count)")
+    }
+
+    private func segmentColor(_ s: ConsecrationOnboardingStep) -> Color {
+        let lit = overArt ? AppColors.cream : AppColors.gold
+        if s.rawValue <= step.rawValue { return lit }
+        return (overArt ? AppColors.cream : AppColors.textSecondary).opacity(0.3)
+    }
+}
+
+// MARK: - Page Metrics
+
+/// The glass the introduction stands on, measured once per layout
+private nonisolated struct IntroPageMetrics: Equatable {
+    var fullHeight: CGFloat = 0
+    var topInset: CGFloat = 0
+    var bottomInset: CGFloat = 0
 }
 
 // MARK: - Staggered Reveal
@@ -257,15 +368,28 @@ private struct OnboardingContinueButton: View {
     }
 }
 
-/// Small gold tracked label above each step's title
-private struct StepLabel: View {
+/// The small gold capitals above each page's title, on every page of the
+/// introduction and the feast chooser
+struct ConsecrationIntroKicker: View {
     let text: String
 
     var body: some View {
-        Text(text)
-            .font(AppFonts.bodyFont(12))
-            .tracking(3)
+        Text(text.uppercased())
+            .font(AppFonts.labelFont(12))
+            .tracking(4)
             .foregroundColor(AppColors.gold)
+            .multilineTextAlignment(.center)
+    }
+}
+
+/// A fine gold rule between the parts of a card
+struct ConsecrationIntroRule: View {
+    var opacity: Double = 0.18
+
+    var body: some View {
+        Rectangle()
+            .fill(AppColors.gold.opacity(opacity))
+            .frame(height: AppLine.hairline)
     }
 }
 
@@ -320,7 +444,7 @@ private struct ThresholdStepView: View {
                 Spacer(minLength: 12)
 
                 VStack(spacing: 14) {
-                    StepLabel(text: "ALL YOURS")
+                    ConsecrationIntroKicker(text: "ALL YOURS")
 
                     Text("Consecration to Mary")
                         .font(AppFonts.headlineFont(28))
@@ -376,193 +500,281 @@ private struct ThresholdStepView: View {
 
 // MARK: - Step 2: The Devotion
 
+/// The Annunciation over the head of page 2: Mary's own yes, the act a
+/// consecration to her renews. Dark at the very top for the bar, clear
+/// through the middle, and dissolving to clear at its foot — a plate
+/// never ends on an edge.
+private struct AnnunciationPlate: View {
+    var body: some View {
+        // Held about the angel and Mary, a little above the middle
+        CachedAssetImage("joyful_annunciation", focal: UnitPoint(x: 0.5, y: 0.3))
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .clipped()
+            .overlay(
+                LinearGradient(
+                    stops: [
+                        .init(color: .black.opacity(0.55), location: 0),
+                        .init(color: .black.opacity(0), location: 0.3),
+                        .init(color: .black.opacity(0), location: 0.6),
+                        .init(color: AppColors.background.opacity(0.7), location: 1)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
+            .mask(
+                LinearGradient(
+                    stops: [
+                        .init(color: .black, location: 0),
+                        .init(color: .black, location: 0.55),
+                        .init(color: .clear, location: 1)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
+    }
+}
+
+/// The words stand at the foot of the page, beneath the painting that
+/// fills the room above them, and reach up into its dissolving foot.
 private struct DevotionStepView: View {
+    let bottomClearance: CGFloat
     let onContinue: () -> Void
 
     var body: some View {
         StaticSlide {
             VStack(spacing: 0) {
-                Spacer(minLength: 12)
+                // The painting's room: all that the words leave, and never
+                // less than the bar's own depth onto it
+                Spacer(minLength: 72)
 
                 VStack(spacing: 14) {
-                    StepLabel(text: "THE DEVOTION")
+                    ConsecrationIntroKicker(text: "The devotion")
+                        .shadow(color: .black.opacity(0.5), radius: 4, y: 1)
 
-                    Text("What Is the Consecration to Mary?")
+                    Text("Everything you are, given to Jesus through Mary")
                         .font(AppFonts.headlineFont(26))
                         .foregroundColor(AppColors.cream)
                         .multilineTextAlignment(.center)
+                        .lineSpacing(4)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .shadow(color: .black.opacity(0.4), radius: 6, y: 1)
+                        .accessibilityAddTraits(.isHeader)
+
+                    OrnamentDivider(showsCross: false)
+                        .frame(width: 150)
                 }
-                .staggeredReveal(delay: 0.1)
+                .padding(.horizontal, 28)
+                .devotionalEntrance()
 
-                Spacer(minLength: 14)
+                VStack(alignment: .leading, spacing: 14) {
+                    line("I", Text("Your prayers, works, joys and sufferings, placed in her hands"))
+                        .devotionalEntrance(delay: 0.08)
 
-                VStack(spacing: 14) {
-                    // Icons are Christicons, chosen for meaning: the rosary
-                    // as the Marian way, the heart that receives the gift,
-                    // the baptismal candle behind the promise.
-                    devotionCard(
-                        icon: "lv-rosary",
-                        title: "The Way",
-                        text: "Give yourself entirely to Jesus Christ through the hands of His mother — the way St. Louis de Montfort taught in True Devotion to Mary.",
-                        delay: 0.35
+                    line("II", Text("A renewal of the promises of your baptism"))
+                        .devotionalEntrance(delay: 0.16)
+
+                    // The book by its full name: a newcomer has not heard of it
+                    line(
+                        "III",
+                        Text("The way St. Louis de Montfort taught in his book \(Text("True Devotion to Mary").font(AppFonts.readingItalicFont(17)))")
                     )
-
-                    devotionCard(
-                        icon: "ch-sacred-heart",
-                        title: "The Gift",
-                        text: "Your prayers, works, joys, and sufferings — all of it entrusted to Mary, who forms Christ in you.",
-                        delay: 0.55
-                    )
-
-                    devotionCard(
-                        icon: "ch-candle",
-                        title: "The Promise",
-                        text: "A perfect renewal of your baptismal vows — everything given back to God, nothing held back.",
-                        delay: 0.75
-                    )
+                    .devotionalEntrance(delay: 0.24)
                 }
-
-                Spacer(minLength: 12)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 32)
+                .padding(.top, 20)
 
                 OnboardingContinueButton(title: "Continue", action: onContinue)
-                    .staggeredReveal(delay: 0.95)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 26)
+                    .devotionalEntrance(delay: 0.32)
             }
-            .padding(.horizontal, 24)
-            .padding(.bottom, 120)
+            .padding(.bottom, bottomClearance)
         }
     }
 
-    private func devotionCard(icon: String, title: String, text: String, delay: Double) -> some View {
-        HStack(alignment: .top, spacing: 14) {
-            AppIcon(icon, size: 22)
+    /// One line of what the devotion is. The numeral is ornament, a
+    /// printed list's, and VoiceOver reads the line alone.
+    private func line(_ numeral: String, _ text: Text) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 12) {
+            Text(numeral)
+                .font(AppFonts.labelFont(13))
                 .foregroundColor(AppColors.gold)
-                .frame(width: 44, height: 44)
-                .background(
-                    Circle()
-                        .fill(AppColors.gold.opacity(0.1))
-                        .overlay(Circle().stroke(AppColors.gold.opacity(0.25), lineWidth: 1))
+                .frame(width: 18, alignment: .leading)
+                .accessibilityHidden(true)
+
+            text
+                .font(AppFonts.readingFont(17))
+                .foregroundColor(AppColors.cream.opacity(0.92))
+                .lineSpacing(3)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+}
+
+// MARK: - Step 3: Each Day
+
+/// What one day of the preparation holds, shown as the first day itself:
+/// its title, its prayers and its readings read from the bundled plan,
+/// in the order the day's page sets them — the prayers, then the
+/// readings, then the reflection.
+///
+/// The page names what a day holds and never how long it takes. The
+/// design offered "About fifteen quiet minutes", but the app gives no
+/// estimate of time anywhere, and none would be true for long: the
+/// second week adds a whole Rosary to every day.
+private struct RhythmStepView: View {
+    let bottomClearance: CGFloat
+    let onContinue: () -> Void
+
+    private var firstDay: ConsecrationDay? { ConsecrationData.day(1) }
+
+    /// "Come, Creator Spirit · Hail, Star of the Sea · …", in English:
+    /// the hymns' Latin names are their second names, not their first
+    private var prayers: String {
+        ConsecrationData.prayers(for: .preparatory)
+            .map(\.title)
+            .joined(separator: " \u{00B7} ")
+    }
+
+    /// "Matthew 5:1-19 · Guidance for the Twelve Days"
+    private var readings: String {
+        (firstDay?.readings ?? [])
+            .sorted { $0.order < $1.order }
+            .map(\.title)
+            .joined(separator: " \u{00B7} ")
+    }
+
+    var body: some View {
+        StaticSlide {
+            VStack(spacing: 0) {
+                Spacer(minLength: 8)
+
+                VStack(spacing: 12) {
+                    ConsecrationIntroKicker(text: "Each day")
+
+                    Text("The same three steps each day")
+                        .font(AppFonts.headlineFont(26))
+                        .foregroundColor(AppColors.cream)
+                        .multilineTextAlignment(.center)
+                        .lineSpacing(4)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .accessibilityAddTraits(.isHeader)
+
+                    Text("Here is what your first day looks like.")
+                        .font(AppFonts.italicFont(17))
+                        .foregroundColor(AppColors.accentSoft)
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(.horizontal, 28)
+                .devotionalEntrance()
+
+                Spacer(minLength: 16)
+
+                dayCard
+                    .padding(.horizontal, 20)
+                    .devotionalEntrance(delay: 0.08)
+
+                Spacer(minLength: 14)
+
+                // No guilt: the schedule serves the reader, not the reverse
+                Text("Miss a day? Every day stays open. Return whenever you can.")
+                    .font(AppFonts.italicFont(16))
+                    .foregroundColor(AppColors.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.horizontal, 28)
+                    .devotionalEntrance(delay: 0.16)
+
+                Spacer(minLength: 16)
+
+                OnboardingContinueButton(title: "Continue", action: onContinue)
+                    .padding(.horizontal, 20)
+                    .devotionalEntrance(delay: 0.24)
+            }
+            .padding(.bottom, bottomClearance)
+        }
+    }
+
+    // MARK: Day 1, previewed
+
+    private var dayCard: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(alignment: .firstTextBaseline, spacing: 12) {
+                Text("DAY 1")
+                    .font(AppFonts.labelFont(11))
+                    .tracking(2.5)
+                    .foregroundColor(AppColors.gold)
+
+                Spacer(minLength: 0)
+
+                if let title = firstDay?.title {
+                    Text(title)
+                        .font(AppFonts.italicFont(14))
+                        .foregroundColor(AppColors.textSecondary)
+                        .multilineTextAlignment(.trailing)
+                }
+            }
+            .padding(.bottom, 12)
+            .accessibilityElement(children: .combine)
+
+            ConsecrationIntroRule()
+
+            stepRow("I", title: "Pray", detail: prayers)
+
+            ConsecrationIntroRule()
+
+            stepRow("II", title: "Read", detail: readings)
+
+            ConsecrationIntroRule()
+
+            // The card's own padding closes beneath the last step
+            stepRow("III", title: "Reflect", detail: "One question to sit with, and a journal to answer it in.", isLast: true)
+        }
+        .sacredCard(padding: 20, elevated: true)
+    }
+
+    /// One step of the day: its numeral in a ring (ornament), its name,
+    /// and what it holds on Day 1
+    private func stepRow(_ numeral: String, title: String, detail: String, isLast: Bool = false) -> some View {
+        HStack(alignment: .top, spacing: 14) {
+            Text(numeral)
+                .font(AppFonts.labelFont(11))
+                .foregroundColor(AppColors.gold)
+                .frame(width: 30, height: 30)
+                .overlay(
+                    Circle().strokeBorder(AppColors.gold.opacity(0.5), lineWidth: 1)
                 )
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(AppFonts.headlineFont(16))
                     .foregroundColor(AppColors.cream)
 
-                Text(text)
-                    .font(AppFonts.bodyFont(14))
+                Text(detail)
+                    .font(AppFonts.bodyFont(15))
                     .foregroundColor(AppColors.textSecondary)
-                    .lineSpacing(4)
+                    .lineSpacing(2)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(14)
-        .background(
-            RoundedRectangle(cornerRadius: 14)
-                .fill(AppColors.cardBackground.opacity(0.6))
-        )
-        .staggeredReveal(delay: delay)
-    }
-}
-
-// MARK: - Step 3: The Daily Rhythm
-
-private struct RhythmStepView: View {
-    let onContinue: () -> Void
-
-    var body: some View {
-        StaticSlide {
-            VStack(spacing: 0) {
-                Spacer(minLength: 12)
-
-                VStack(spacing: 14) {
-                    StepLabel(text: "EACH DAY")
-
-                    Text("A Short Daily Rhythm")
-                        .font(AppFonts.headlineFont(26))
-                        .foregroundColor(AppColors.cream)
-                        .multilineTextAlignment(.center)
-                }
-                .staggeredReveal(delay: 0.1)
-
-                Spacer(minLength: 14)
-
-                VStack(spacing: 14) {
-                    rhythmRow(
-                        icon: "ch-praying-hands",
-                        title: "Pray",
-                        text: "The day's prayers — hymns to the Holy Spirit and to Mary, and litanies (short petitions, each answered by the same response) — sung aloud if you wish.",
-                        delay: 0.35
-                    )
-
-                    rhythmRow(
-                        icon: "ch-bible",
-                        title: "Read",
-                        text: "A short spiritual reading chosen for the day, from Scripture and True Devotion.",
-                        delay: 0.55
-                    )
-
-                    rhythmRow(
-                        icon: "ph-note-pencil",
-                        title: "Reflect",
-                        text: "One question to sit with, and a journal to answer it in.",
-                        delay: 0.75
-                    )
-                }
-
-                Spacer(minLength: 12)
-
-                // What a day holds, never how long it takes
-                Text("The same three, on each of the thirty-three days.")
-                    .font(AppFonts.italicFont(15))
-                    .foregroundColor(AppColors.textSecondary)
-                    .multilineTextAlignment(.center)
-                    .staggeredReveal(delay: 0.9)
-
-                Spacer(minLength: 12)
-
-                OnboardingContinueButton(title: "Continue", action: onContinue)
-                    .staggeredReveal(delay: 1.05)
-            }
-            .padding(.horizontal, 24)
-            .padding(.bottom, 120)
-        }
-    }
-
-    private func rhythmRow(icon: String, title: String, text: String, delay: Double) -> some View {
-        HStack(alignment: .top, spacing: 16) {
-            AppIcon(icon, size: 22)
-                .foregroundColor(AppColors.gold)
-                .frame(width: 44, height: 44)
-                .background(
-                    Circle()
-                        .fill(AppColors.gold.opacity(0.1))
-                        .overlay(Circle().stroke(AppColors.gold.opacity(0.25), lineWidth: 1))
-                )
-
-            VStack(alignment: .leading, spacing: 4) {
-                Text(title)
-                    .font(AppFonts.headlineFont(17))
-                    .foregroundColor(AppColors.cream)
-
-                Text(text)
-                    .font(AppFonts.bodyFont(14))
-                    .foregroundColor(AppColors.textSecondary)
-                    .lineSpacing(4)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .padding(16)
-        .background(
-            RoundedRectangle(cornerRadius: 14)
-                .fill(AppColors.cardBackground.opacity(0.6))
-        )
-        .staggeredReveal(delay: delay)
+        .padding(.top, 16)
+        .padding(.bottom, isLast ? 0 : 16)
+        .accessibilityElement(children: .combine)
     }
 }
 
 // MARK: - Step 4: The Journey
 
 private struct JourneyStepView: View {
+    let bottomClearance: CGFloat
     let onContinue: () -> Void
 
     var body: some View {
@@ -571,7 +783,7 @@ private struct JourneyStepView: View {
                 Spacer(minLength: 12)
 
                 VStack(spacing: 14) {
-                    StepLabel(text: "THE JOURNEY")
+                    ConsecrationIntroKicker(text: "THE JOURNEY")
 
                     Text("The Path to Consecration")
                         .font(AppFonts.headlineFont(26))
@@ -588,25 +800,18 @@ private struct JourneyStepView: View {
                     }
                 }
 
-                Spacer(minLength: 12)
-
-                // No-guilt: the schedule serves the user, not the reverse
-                Text("Miss a day? Every day stays open — return whenever you can.")
-                    .font(AppFonts.italicFont(14))
-                    .foregroundColor(AppColors.textSecondary)
-                    .multilineTextAlignment(.center)
-                    .staggeredReveal(delay: 1.15)
-
+                // "Miss a day?" stood here; it is on page 3 now, beside
+                // the day it speaks of
                 Spacer(minLength: 12)
 
                 OnboardingContinueButton(
                     title: "Choose my consecration day",
                     action: onContinue
                 )
-                .staggeredReveal(delay: 1.3)
+                .staggeredReveal(delay: 1.15)
             }
             .padding(.horizontal, 24)
-            .padding(.bottom, 120)
+            .padding(.bottom, bottomClearance)
         }
     }
 
@@ -664,7 +869,7 @@ private struct JourneyStepView: View {
 
 #Preview {
     NavigationStack {
-        ConsecrationOnboardingView(path: .constant([]))
+        ConsecrationOnboardingView(path: .constant([]), hidesTabBar: .constant(false))
             .environment(ConsecrationViewModel())
     }
 }

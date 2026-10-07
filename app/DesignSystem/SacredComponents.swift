@@ -764,12 +764,17 @@ extension View {
     ///
     /// `filled: false` keeps the padding and the rule but drops the
     /// surface — an outline on the page for a section that should read
-    /// as a place rather than a slab.
+    /// as a place rather than a slab. `elevated` raises the surface to
+    /// `cardElevated`, for the one card a page is about (the feast chosen
+    /// for a consecration, the first day's preview), and `ruleOpacity`
+    /// lights its rim when it is the chosen one.
     func sacredCard(
         vertical: CGFloat,
         horizontal: CGFloat,
         cornerRadius: CGFloat = 16,
-        filled: Bool = true
+        filled: Bool = true,
+        elevated: Bool = false,
+        ruleOpacity: Double = 0.3
     ) -> some View {
         self
             .padding(.vertical, vertical)
@@ -777,16 +782,29 @@ extension View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
                 RoundedRectangle(cornerRadius: cornerRadius)
-                    .fill(filled ? AppColors.cardBackground : Color.clear)
+                    .fill(filled ? (elevated ? AppColors.cardElevated : AppColors.cardBackground) : Color.clear)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius)
-                    .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline)
+                    .strokeBorder(AppColors.gold.opacity(ruleOpacity), lineWidth: AppLine.hairline)
             )
     }
 
-    func sacredCard(padding: CGFloat = 20, cornerRadius: CGFloat = 16, filled: Bool = true) -> some View {
-        sacredCard(vertical: padding, horizontal: padding, cornerRadius: cornerRadius, filled: filled)
+    func sacredCard(
+        padding: CGFloat = 20,
+        cornerRadius: CGFloat = 16,
+        filled: Bool = true,
+        elevated: Bool = false,
+        ruleOpacity: Double = 0.3
+    ) -> some View {
+        sacredCard(
+            vertical: padding,
+            horizontal: padding,
+            cornerRadius: cornerRadius,
+            filled: filled,
+            elevated: elevated,
+            ruleOpacity: ruleOpacity
+        )
     }
 }
 

@@ -89,6 +89,19 @@ struct ConsecrationFlowTests {
                 "a start chosen ahead waits on day one")
     }
 
+    @Test func aConsecrationChosenAheadWaitsForItsDayOne() throws {
+        let vm = viewModel()
+        let start = Calendar.current.date(byAdding: .day, value: 12, to: Calendar.current.startOfDay(for: .now))!
+        vm.startConsecration(on: start)
+        let progress = try #require(vm.progress)
+        #expect(!progress.hasBegun(), "chosen ahead, it has not begun")
+        #expect(!vm.canAccessDay(1), "no day of it opens before Day 1")
+        #expect(progress.hasBegun(asOf: start), "and Day 1 opens it")
+        #expect(progress.hasBegun(asOf: Calendar.current.date(byAdding: .day, value: 1, to: start)!))
+        #expect(ConsecrationProgress(startDate: daysAgo(3)).hasBegun())
+        #expect(ConsecrationProgress(startDate: .now).hasBegun(), "a start today has begun")
+    }
+
     // MARK: Praying the days
 
     @Test func aDayPrayedIsKeptWithItsReflection() throws {

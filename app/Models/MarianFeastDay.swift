@@ -165,3 +165,70 @@ extension MarianFeastDay {
         all.first { $0.id == id }
     }
 }
+
+// MARK: - FeastPreparation
+
+/// One feast's next preparation that can still be begun on its first day:
+/// Day 1, thirty-three days before the feast, and the feast itself, which
+/// is Consecration Day.
+struct FeastPreparation: Identifiable, Hashable {
+    let feast: MarianFeastDay
+
+    /// Day 1, at the start of its day
+    let start: Date
+
+    /// Consecration Day: the feast
+    let feastDate: Date
+
+    var id: String { feast.id }
+
+    /// Whole days from today to Day 1: 0 when it is today
+    func daysUntilStart(from today: Date = Date()) -> Int {
+        let calendar = Calendar.current
+        return calendar.dateComponents(
+            [.day],
+            from: calendar.startOfDay(for: today),
+            to: start
+        ).day ?? 0
+    }
+}
+
+extension MarianFeastDay {
+
+    /// This year's preparation while its Day 1 is today or later, and
+    /// otherwise next year's. A preparation already under way is never
+    /// offered, so every one the chooser lists begins on Day 1 and ends
+    /// on its feast.
+    func upcomingPreparation(from today: Date = Date()) -> FeastPreparation? {
+        let calendar = Calendar.current
+        let todayStart = calendar.startOfDay(for: today)
+        let year = calendar.component(.year, from: today)
+
+        for candidate in [year, year + 1] {
+            guard let feastDate = date(for: candidate),
+                  let start = calendar.date(byAdding: .day, value: -33, to: feastDate) else { continue }
+            let dayOne = calendar.startOfDay(for: start)
+            if dayOne >= todayStart {
+                return FeastPreparation(feast: self, start: dayOne, feastDate: feastDate)
+            }
+        }
+        return nil
+    }
+
+    /// Every feast's next preparation, the soonest Day 1 first
+    static func upcomingPreparations(from today: Date = Date()) -> [FeastPreparation] {
+        all.compactMap { $0.upcomingPreparation(from: today) }
+            .sorted { $0.start < $1.start }
+    }
+
+    /// The feast a preparation begun on `start` ends on, if it ends on one
+    static func feast(endingPreparationFrom start: Date) -> MarianFeastDay? {
+        let calendar = Calendar.current
+        guard let end = calendar.date(byAdding: .day, value: 33, to: calendar.startOfDay(for: start)) else {
+            return nil
+        }
+        let month = calendar.component(.month, from: end)
+        let day = calendar.component(.day, from: end)
+        return all.first { $0.month == month && $0.day == day }
+    }
+}

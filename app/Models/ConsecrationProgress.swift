@@ -58,10 +58,19 @@ final class ConsecrationProgress {
         return min(max(daysSinceStart + 1, 1), 34)
     }
 
+    /// Whether Day 1 has come. A consecration can be chosen ahead of its
+    /// feast and wait for its first day; until then it is scheduled, and
+    /// no day of it is open (`currentDayNumber` holds at 1 meanwhile).
+    func hasBegun(asOf now: Date = Date()) -> Bool {
+        let calendar = Calendar.current
+        return calendar.startOfDay(for: startDate) <= calendar.startOfDay(for: now)
+    }
+
     /// Whether the user can access a specific day
-    /// User can access today and any past days, but not future days
+    /// User can access today and any past days, but not future days,
+    /// and none at all before Day 1 has come
     func canAccessDay(_ dayNumber: Int) -> Bool {
-        dayNumber <= currentDayNumber
+        hasBegun() && dayNumber <= currentDayNumber
     }
 
     /// Whether a specific day has been completed

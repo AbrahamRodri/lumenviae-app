@@ -1261,6 +1261,7 @@ struct ChapelConsecrationTile: View {
     private enum Stage {
         case underWay(day: Int)
         case made
+        /// Not begun, or chosen ahead and waiting for its Day 1
         case notBegun
     }
 
@@ -1296,7 +1297,9 @@ struct ChapelConsecrationTile: View {
     }
 
     var body: some View {
-        if let active {
+        if let active, !active.hasBegun() {
+            scheduledTile(start: active.startDate)
+        } else if let active {
             activeTile(day: active.currentDayNumber)
         } else if let completed {
             completedTile(completed)
@@ -1418,6 +1421,50 @@ struct ChapelConsecrationTile: View {
                 if span == 2 {
                     Spacer(minLength: 0)
                     ChapelFootAct(title: "Revisit")
+                        .frame(minHeight: 44)
+                }
+            }
+            .padding(.bottom, span == 2 ? 16 : 14)
+        }
+        .frame(minHeight: minHeight)
+    }
+
+    // MARK: Chosen ahead
+
+    /// A consecration waiting for its Day 1: the day it begins, never a
+    /// count, under the painting it is invited with
+    private func scheduledTile(start: Date) -> some View {
+        let long = start.formatted(.dateTime.weekday(.wide).month(.wide).day())
+        let short = start.formatted(.dateTime.month(.abbreviated).day())
+
+        return ChapelTileFrame(
+            tile: .consecration,
+            span: span,
+            surface: .painting(Self.paintingName(.notBegun)),
+            padding: padding,
+            onTap: open,
+            accessibilityLabel: "Consecration to Mary, begins \(long). Opens it."
+        ) {
+            EmptyView()
+        } floor: {
+            HStack(alignment: .bottom, spacing: 12) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Consecration to Mary")
+                        .font(AppFonts.titleFont(span == 2 ? 26 : 18))
+                        .foregroundColor(AppColors.cream)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.8)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    Text(span == 2 ? "Day 1 is \(long)" : "Begins \(short)")
+                        .font(AppFonts.italicFont(span == 2 ? 15 : 14))
+                        .foregroundColor(AppColors.cream.opacity(0.92))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                if span == 2 {
+                    Spacer(minLength: 0)
+                    ChapelFootAct(title: "Open")
                         .frame(minHeight: 44)
                 }
             }

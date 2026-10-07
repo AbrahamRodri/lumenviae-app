@@ -544,8 +544,11 @@ struct MyChapelView: View {
 
     // MARK: - The rule, resolved for today
 
+    /// The preparation under way. One chosen ahead waits off the rule
+    /// until its Day 1, by the calendar as its days are numbered: there
+    /// is nothing of it to pray before then.
     private var activeConsecration: ConsecrationProgress? {
-        consecrations.first { !$0.isCompleted }
+        consecrations.first { !$0.isCompleted && $0.hasBegun() }
     }
 
     /// The user's rule as today sees it. Every act on it is one the app

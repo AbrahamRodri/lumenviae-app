@@ -8,6 +8,7 @@
 //
 //  ## Behavior
 //  - No active consecration → Show intro/start view
+//  - A consecration chosen ahead, before its Day 1 → its scheduled page
 //  - Active consecration → Auto-load today's day overview
 //
 
@@ -55,9 +56,24 @@ struct ConsecrationTabView: View {
     @State private var path: [ConsecrationRoute] = []
 
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.scenePhase) private var scenePhase
 
-    /// Callback to notify parent when navigation depth changes (for hiding tab bar)
+    /// The introduction asks for the tab bar to step aside while it is
+    /// walked (see `ConsecrationOnboardingView.hidesTabBar`)
+    @State private var introHidesTabBar = false
+
+    /// Today, as the root reads it: a consecration chosen ahead waits on
+    /// its own page until Day 1, and turns into Day 1 at midnight, or on
+    /// coming back to the app after it, without leaving the tab
+    @State private var today = Date()
+
+    /// Callback to notify parent when the tab bar should hide: a page
+    /// pushed, or the introduction being walked
     var onNavigationChange: ((Bool) -> Void)?
+
+    private var hidesTabBar: Bool {
+        !path.isEmpty || (introHidesTabBar && viewModel.progress == nil)
+    }
 
     // MARK: - Body
 
@@ -74,8 +90,28 @@ struct ConsecrationTabView: View {
             viewModel.setModelContext(modelContext)
             viewModel.loadProgress()
         }
-        .onChange(of: path.count) { _, newCount in
-            onNavigationChange?(newCount > 0)
+        .onChange(of: hidesTabBar) { _, hides in
+            onNavigationChange?(hides)
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { today = Date() }
+        }
+        // Sleeps to the next midnight while a start is waiting, then
+        // reads the day again. Keyed on the start too, so a feast chosen
+        // while the tab is open sets the watch going.
+        .task(id: [today, scheduledStart ?? .distantPast]) {
+            guard let start = scheduledStart else { return }
+            let calendar = Calendar.current
+            guard let midnight = calendar.date(
+                byAdding: .day, value: 1, to: calendar.startOfDay(for: today)
+            ) else { return }
+            let wait = max(1, midnight.timeIntervalSince(Date()) + 1)
+            try? await Task.sleep(for: .seconds(wait))
+            guard !Task.isCancelled else { return }
+            today = Date()
+            if calendar.startOfDay(for: start) <= calendar.startOfDay(for: today) {
+                viewModel.loadCurrentDay()
+            }
         }
         // Surface persistence failures anywhere in the flow — a day that
         // fails to save should never fail silently.
@@ -94,12 +130,22 @@ struct ConsecrationTabView: View {
 
     // MARK: - Root View
 
+    /// Day 1 of a consecration chosen ahead whose first day has not come
+    private var scheduledStart: Date? {
+        guard let progress = viewModel.progress,
+              !progress.isCompleted,
+              !progress.hasBegun(asOf: today) else { return nil }
+        return progress.startDate
+    }
+
     @ViewBuilder
     private var rootView: some View {
-        if viewModel.hasActiveConsecration {
+        if let start = scheduledStart {
+            ConsecrationScheduledView(start: start, path: $path)
+        } else if viewModel.hasActiveConsecration {
             ConsecrationDayOverviewView(path: $path)
         } else {
-            ConsecrationOnboardingView(path: $path)
+            ConsecrationOnboardingView(path: $path, hidesTabBar: $introHidesTabBar)
         }
     }
 

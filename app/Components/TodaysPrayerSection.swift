@@ -51,9 +51,17 @@ struct TodaysPrayerSection: View {
 
     /// Day 1–33 of the preparation. The record runs to 34 — the day of
     /// consecration itself — but the counter names the preparation, and
-    /// "DAY 34 of 33" is not a thing a ledger says.
+    /// "DAY 34 of 33" is not a thing a ledger says. Nil before Day 1 of
+    /// a consecration chosen ahead.
     private var consecrationDay: Int? {
-        activeConsecration.map { min($0.currentDayNumber, 33) }
+        guard let progress = activeConsecration, progress.hasBegun() else { return nil }
+        return min(progress.currentDayNumber, 33)
+    }
+
+    /// Day 1 of a consecration chosen ahead, while it is still to come
+    private var consecrationStart: Date? {
+        guard let progress = activeConsecration, !progress.hasBegun() else { return nil }
+        return progress.startDate
     }
 
     // MARK: - Body
@@ -312,14 +320,20 @@ struct TodaysPrayerSection: View {
     /// reproach.
     private var consecrationRow: some View {
         let day = consecrationDay
+        let start = consecrationStart
 
         return LedgerRow(
             icon: "ch-consecration",
             name: "Consecration to Mary",
-            accessibility: day.map { "Consecration to Mary, day \($0) of a 33-day preparation" }
-                ?? "Consecration to Mary, a 33-day preparation. Begin."
+            accessibility: consecrationAccessibility(day: day, start: start)
         ) {
-            if let day {
+            if let start {
+                // Chosen ahead: the day it begins, never a count
+                Text("BEGINS \(start.formatted(.dateTime.month(.abbreviated).day()).uppercased())")
+                    .font(AppFonts.labelFont(9))
+                    .tracking(2)
+                    .foregroundColor(AppColors.gold.opacity(0.9))
+            } else if let day {
                 VStack(alignment: .trailing, spacing: 6) {
                     Text("DAY \(day)")
                         .font(AppFonts.labelFont(11))
@@ -337,10 +351,21 @@ struct TodaysPrayerSection: View {
                     .foregroundColor(AppColors.gold.opacity(0.9))
             }
         } action: {
-            // The tab knows both states: mid-preparation it opens the
-            // day, and otherwise it opens the invitation to begin.
+            // The tab knows every state: mid-preparation it opens the
+            // day, chosen ahead the page that waits for Day 1, and
+            // otherwise the invitation to begin.
             router.selectedTab = .consecration
         }
+    }
+
+    private func consecrationAccessibility(day: Int?, start: Date?) -> String {
+        if let start {
+            return "Consecration to Mary, begins \(start.formatted(.dateTime.weekday(.wide).month(.wide).day()))"
+        }
+        if let day {
+            return "Consecration to Mary, day \(day) of a 33-day preparation"
+        }
+        return "Consecration to Mary, a 33-day preparation. Begin."
     }
 }
 

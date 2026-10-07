@@ -296,7 +296,8 @@ Prayer"; it once read VESPERS), the day of the
 preparation over a 46pt hair. There is no line under the names: a plain
 sentence under each once said what the row was, and the section took
 longer to read for it. The consecration row, before any consecration is
-begun, keeps its place, its icon and its weight and offers BEGIN — **no state
+begun, keeps its place, its icon and its weight and offers BEGIN, and one
+chosen ahead of its feast says BEGINS OCT 19 until its Day 1 — **no state
 in this section may shame the user**: no "0 days", no "missed", no
 empty track. True Devotion is reached from the reading shelf below, Explore and the Chapel's
 Library tile, not from here.
@@ -479,7 +480,9 @@ over the day's own title on its floor, CONTINUE beside it, and de
 Montfort's four preparations as a segmented road along the floor,
 tracks weighted 12/7/7/7 days; the half counts "14 / 33" over the
 preparation's name; made, "Consecrated" with its date; not begun,
-"Consecration to Mary" over the Annunciation), **Prayers**
+"Consecration to Mary" over the Annunciation; chosen ahead, the same
+over "Day 1 is Monday, October 19", and off the rule until that day),
+**Prayers**
 (`ChapelPrayerBookTile`, the Prayer Book under the name its tab
 carries: a leaf darkening down the card, the order for
 the hour it is set large and centred with its one line, a door to the
@@ -1277,6 +1280,37 @@ write concurrent code here:
   ribbon once reading is under way), its title and author, and OPEN THE
   BOOK / CONTINUE READING — never a percentage read, and never a Bible
   glyph, which named the wrong book.
+
+  **The introduction** (`ConsecrationOnboardingView`, the "Consecration
+  intro" handoff for pages 2, 3 and 5) is five pages under one bar: a
+  44pt round Back, five capsules (the page you are on drawn long), Skip
+  until the chooser. The tab bar steps aside while the introduction is
+  walked and stands on the page the tab opens on — the welcome for a
+  first visit, the chooser for a returning reader — since the welcome
+  has no Back and a reader who only looked in must still be able to
+  leave. Page 2 (THE DEVOTION) is the Annunciation from the top of the
+  glass, the bar in cream over it, and three numbered lines beneath;
+  page 3 (EACH DAY) previews Day 1 from the bundled plan — its title,
+  its prayers by their English names, its readings, the reflection — in
+  the order the day's page sets them, with "Miss a day?" under it (it
+  was page 4's). The handoff titled page 3 "About fifteen quiet minutes";
+  it says "The same three steps each day" instead, because the app gives
+  no estimate of time, and the second week adds a whole Rosary to every
+  day. The chooser (`ConsecrationDateSelectionView`) holds the chosen
+  feast in one card — the soonest by default, marked SOONEST in an
+  outlined badge (the design drew it filled gold; the page's one filled
+  gold shape is its act) — over three other feasts and "Show more
+  feasts", and its act is BEGIN ON OCTOBER 19 or BEGIN TODAY. Only a
+  preparation that can still begin on its Day 1 is offered
+  (`MarianFeastDay.upcomingPreparations`), so each runs its 33 days to
+  its feast; joining partway is "Start at any day instead". A start in
+  the future is **scheduled**: `ConsecrationProgress.hasBegun` is false
+  until Day 1, no day of it opens, and the tab shows
+  `ConsecrationScheduledView` — when the days begin, the feast they end
+  on, the book to read meanwhile, and Choose another feast, which is
+  why the chooser can say "You can choose another feast until Day 1
+  begins." The tab turns to Day 1 by itself at midnight or on coming
+  back to the app.
 - **True Devotion reader** — the full bundled book with per-chapter progress.
 - **Resource library** — How to Pray the Rosary, Finding the Mysteries in
   Scripture, the Marian Library, St. Carlo Acutis, and The Devotion in
