@@ -63,6 +63,17 @@ enum Motion {
     }
 }
 
+// MARK: - Motion at Rest
+
+extension EnvironmentValues {
+
+    /// Draws the motions that repeat for as long as a view is on screen
+    /// (the breathing glow) at rest, as Reduce Motion draws them. Set by
+    /// the snapshot tests, which need a page to look the same at every
+    /// instant; Reduce Motion itself cannot be set from a view.
+    @Entry var drawsMotionAtRest = false
+}
+
 // MARK: - Devotional Entrance
 
 /// Fades content in with a gentle upward drift. Stagger sections by
@@ -95,6 +106,7 @@ private struct DevotionalEntrance: ViewModifier {
 private struct BreathingGlow: ViewModifier {
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.drawsMotionAtRest) private var drawsMotionAtRest
 
     var color: Color
     var radius: CGFloat
@@ -103,7 +115,7 @@ private struct BreathingGlow: ViewModifier {
     var period: Double
 
     func body(content: Content) -> some View {
-        if reduceMotion {
+        if reduceMotion || drawsMotionAtRest {
             content.shadow(color: color.opacity((dimOpacity + brightOpacity) / 2), radius: radius)
         } else {
             content.phaseAnimator([dimOpacity, brightOpacity]) { view, phase in

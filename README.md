@@ -314,8 +314,8 @@ Book's recordings, all excluded from backup.
 ## Building
 
 Requires Xcode 26 or later. Open `app.xcodeproj` and run the `app` scheme; the
-deployment target is iOS 17.0. No package manager, no secrets, and nothing is
-generated at build time. The generated content is checked in, made by the
+deployment target is iOS 17.0. No package in the app (the tests take one,
+swift-snapshot-testing), no secrets, and nothing is generated at build time. The generated content is checked in, made by the
 scripts in `Tools/`: `Data/ScripturalRosaryData.swift`;
 `Data/ChantCatalogData.swift`, folding in the timed lines from
 `Tools/ChantLines/`; the recordings and `.lvscore` scores in
@@ -325,7 +325,12 @@ written by hand, and `Tools/PrayerBook/` exports its words for the server to
 record. New `.swift` files under `app/` are picked up by Xcode's
 file-system-synchronized groups; there is nothing to add to the project file.
 The unit tests, Swift Testing suites in `appTests/`, run from the same scheme
-(Product → Test, or `xcodebuild test`); there are no UI tests.
+(Product → Test, or `xcodebuild test`); there are no UI tests. The snapshot
+suite in `appTests/Snapshots/` compares the main screens with PNG baselines
+recorded on the iOS 26.2 simulator (skipped on other runtimes); after a
+deliberate visual change, run the tests with
+`TEST_RUNNER_SNAPSHOT_TESTING_RECORD=failed` set, review the new PNGs and
+commit them.
 
 The API is public. The app's only write is the anonymous completion, sent when a
 Rosary prayed with meditations is finished; it carries the set and whether the

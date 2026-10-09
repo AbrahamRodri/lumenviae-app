@@ -3253,9 +3253,26 @@ transition entirely.
   synchronized group, hosted by the app, `@testable import app`), run from
   the shared `app` scheme — `xcodebuild test -project app.xcodeproj -scheme
   app -destination 'platform=iOS Simulator,id=<udid>'` on a simulator of
-  your own. Pure logic only (the strand's arithmetic, the seasons, the
+  your own. Mostly pure logic (the strand's arithmetic, the seasons, the
   chant catalog, the spoken script, the Prayer Book's line pairing); there
   is no UI-test target.
+- **Snapshot tests:** `appTests/Snapshots/` draws the main screens that
+  read nothing off the clock or the network (home's mysteries sections,
+  VIEW ALL, a mysteries' page, a set's page, the Scriptural Rosary's page,
+  a Prayer Book page) from fixed data with swift-snapshot-testing (the
+  test target's one package; the app has none) and compares them with
+  the PNGs in `__Snapshots__/`, in the same `xcodebuild test`.
+  `ScreenSnapshot.assertScreen` is the one way to draw one: an iPhone 17
+  Pro frame, Candlelit, the look's settings at their defaults, the
+  launch's painting preload awaited, and repeating motion held still
+  (`EnvironmentValues.drawsMotionAtRest`, which `breathingGlow` honours
+  as it does Reduce Motion). The baselines are the iOS 26.2 simulator's;
+  on another runtime the suite is skipped. After a deliberate change,
+  record again with `TEST_RUNNER_SNAPSHOT_TESTING_RECORD=failed
+  xcodebuild test ...` (or `=all`), look at the new PNGs, and commit
+  them. Prefire is not used: the main screens have no `#Preview`, many
+  previews read the clock or the network, and its build plugin needs
+  `-skipPackagePluginValidation` on every `xcodebuild`.
 - **Formatting:** `.swift-format` (4-space indent, 120 columns) is the
   style. The agents' format-on-edit hook runs `swift-format` on the lines
   an edit changed, never on whole files; the code base predates the config,
