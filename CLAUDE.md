@@ -3256,6 +3256,10 @@ transition entirely.
   your own. Pure logic only (the strand's arithmetic, the seasons, the
   chant catalog, the spoken script, the Prayer Book's line pairing); there
   is no UI-test target.
+- **Formatting:** `.swift-format` (4-space indent, 120 columns) is the
+  style. The agents' format-on-edit hook runs `swift-format` on the lines
+  an edit changed, never on whole files; the code base predates the config,
+  so formatting a whole file rewrites thousands of unrelated lines.
 
 ### Data Architecture
 
