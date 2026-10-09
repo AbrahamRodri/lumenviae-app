@@ -3273,6 +3273,10 @@ transition entirely.
   them. Prefire is not used: the main screens have no `#Preview`, many
   previews read the clock or the network, and its build plugin needs
   `-skipPackagePluginValidation` on every `xcodebuild`.
+- **Formatting:** `.swift-format` (4-space indent, 120 columns) is the
+  style. The agents' format-on-edit hook runs `swift-format` on the lines
+  an edit changed, never on whole files; the code base predates the config,
+  so formatting a whole file rewrites thousands of unrelated lines.
 
 ### Data Architecture
 
