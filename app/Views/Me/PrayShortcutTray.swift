@@ -93,7 +93,7 @@ struct PrayShortcutTray: View {
                 shortcut.title,
                 detail: subtitle(for: shortcut),
                 icon: shortcut.icon,
-                accessory: isQuickTap ? .label("Quick tap") : .caret,
+                accessory: isQuickTap ? .label("On a tap") : .caret,
                 isLit: isQuickTap
             )
             .frame(height: Self.rowHeight)

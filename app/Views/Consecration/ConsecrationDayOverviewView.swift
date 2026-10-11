@@ -491,7 +491,7 @@ struct ConsecrationDayOverviewView: View {
 
         return VStack(alignment: .leading, spacing: 14) {
             CardHeading(
-                "Prayers for \(phase?.displayName ?? "")",
+                "Today's prayers",
                 meta: rows.count == 1 ? "1 prayer" : "\(rows.count) prayers"
             )
 
@@ -672,7 +672,7 @@ struct ConsecrationDayOverviewView: View {
         let shown = shownPhase ?? phase ?? .preparatory
 
         return VStack(alignment: .leading, spacing: 6) {
-            CardHeading("Your journey", meta: "\(completedCount) of 33 complete")
+            CardHeading("Your journey", meta: "\(completedCount) of 33 prayed")
 
             JourneyRoad(
                 shown: shown,
@@ -820,10 +820,12 @@ struct ConsecrationDayOverviewView: View {
     /// place, not a score.
     private var sourceTextCard: some View {
         let started = readingProgress.first?.hasStartedReading ?? false
-        let book = TrueDevotionLibrary.shared.book
+        // The book's one name and author, as every other page says them:
+        // the generated book carries Faber's edition's own title, "True
+        // Devotion to the Blessed Virgin"
         let display = LibraryCatalog.trueDevotionDisplay
-        let title = book?.title ?? display.title
-        let author = book?.author ?? display.author
+        let title = display.title
+        let author = display.author
 
         return Button {
             path.append(.trueDevotionReader)
@@ -904,7 +906,7 @@ struct ConsecrationDayOverviewView: View {
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("Your day progress will be erased so you can begin again. Journal reflections you have written stay in your Journal.")
+            Text("The days you have prayed will be cleared so you can begin again. Journal reflections you have written stay in your Journal.")
         }
     }
 

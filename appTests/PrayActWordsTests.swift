@@ -33,7 +33,7 @@ struct PrayActWordsTests {
         #expect(PrayerShortcut.consecration.title == "Consecration to Mary")
         #expect(PrayerShortcut.mass.title == "The Mass")
         #expect(PrayerShortcut.office.title == "Hours of Prayer")
-        #expect(PrayerShortcut.chooseMeditation.title == "Today's Mysteries")
+        #expect(PrayerShortcut.chooseMeditation.title == "Choose How to Pray Today")
     }
 
     @Test func theWordsKeepThePlainLanguageRulings() {
@@ -50,7 +50,7 @@ struct PrayActWordsTests {
     }
 
     @Test func theTraysDetailNamesTheDaysMysteriesAndHowTheySound() {
-        #expect(PrayerShortcut.todaysRosary.trayDetail(today: .glorious, praysAloud: false) == "Glorious Mysteries · meditation aloud")
+        #expect(PrayerShortcut.todaysRosary.trayDetail(today: .glorious, praysAloud: false) == "Glorious Mysteries · with a meditation")
         #expect(PrayerShortcut.todaysRosary.trayDetail(today: .glorious, praysAloud: true) == "Glorious Mysteries · whole Rosary aloud")
         #expect(PrayerShortcut.scripturalRosary.trayDetail(today: .joyful, praysAloud: false) == "Joyful Mysteries · a verse for every bead")
         #expect(PrayerShortcut.rosaryAloud.trayDetail(today: .sevenSorrows, praysAloud: false) == "Seven Sorrows of Mary · every prayer aloud")
@@ -84,10 +84,10 @@ struct PrayActWordsTests {
 
     @Test func theConsecrationsPeriodIsNamedOnItsOwnDays() {
         let names: [ConsecrationPhase: String] = [
-            .preparatory: "Renouncing the world",
+            .preparatory: "Letting go of the world",
             .knowledgeOfSelf: "Knowing yourself",
             .knowledgeOfMary: "Knowing Mary",
-            .knowledgeOfJesus: "Knowing Christ",
+            .knowledgeOfJesus: "Knowing Jesus",
             .consecrationDay: "Consecration Day"
         ]
         for day in 1...34 {

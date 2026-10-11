@@ -39,8 +39,8 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .todaysRosary:     return "Today's Rosary"
-        case .chooseMeditation: return "Today's Mysteries"
+        case .todaysRosary:     return "Pray Today's Rosary"
+        case .chooseMeditation: return "Choose How to Pray Today"
         case .sevenSorrows:     return "The Seven Sorrows of Mary"
         case .scripturalRosary: return "The Scriptural Rosary"
         case .rosaryAloud:      return "The Rosary Said Aloud"
@@ -84,7 +84,7 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
     func trayDetail(today: MysteryCategory, praysAloud: Bool) -> String {
         switch self {
         case .todaysRosary:
-            return "\(today.devotionTitle) · \(praysAloud ? "whole Rosary aloud" : "meditation aloud")"
+            return "\(today.devotionTitle) · \(praysAloud ? "whole Rosary aloud" : "with a meditation")"
         case .scripturalRosary:
             return "\(today.devotionTitle) · a verse for every bead"
         case .rosaryAloud:

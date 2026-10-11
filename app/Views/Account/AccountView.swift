@@ -214,7 +214,7 @@ struct AccountView: View {
 
                                 ActionRow(
                                     icon: "ph-bell-fill",
-                                    title: "Enable in Settings",
+                                    title: "Turn On in iPhone Settings",
                                     subtitle: "Notifications are turned off for Lumen Viae"
                                 ) {
                                     if let url = URL(string: UIApplication.openSettingsURLString) {
@@ -645,7 +645,7 @@ struct OfflineContentRows: View {
                 VStack(spacing: 0) {
                     ActionRow(
                         icon: "ph-download-simple",
-                        title: "Download for Offline",
+                        title: "Save for Offline",
                         subtitle: "Every meditation and audio file, ready without a connection"
                     ) {
                         Task { await service.downloadAll() }
@@ -898,9 +898,15 @@ struct TextSizeRow: View {
                     .foregroundColor(AppColors.textSecondary)
                     .frame(width: 24)
 
-                Text("Text Size")
-                    .font(AppFonts.bodyFont(16))
-                    .foregroundColor(AppColors.cream)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Text Size")
+                        .font(AppFonts.bodyFont(16))
+                        .foregroundColor(AppColors.cream)
+
+                    Text("The words of prayers and meditations")
+                        .font(AppFonts.italicFont(13))
+                        .foregroundColor(AppColors.textSecondary)
+                }
 
                 Spacer()
             }
@@ -989,8 +995,8 @@ struct PrayerLanguageRow: View {
         switch language {
         case .english: return "English"
         case .latin: return "Latin"
-        case .both: return "Latin, English beneath"
-        case .latinUnderEnglish: return "English, Latin beneath"
+        case .both: return "Latin with English"
+        case .latinUnderEnglish: return "English with Latin"
         }
     }
 }
@@ -1031,7 +1037,7 @@ struct NarrationVoiceRow: View {
                                     .font(AppFonts.bodyFont(15))
                                     .foregroundColor(selected ? AppColors.gold : AppColors.cream)
 
-                                if let description = voice.description, !description.isEmpty {
+                                if let description = voice.plainDescription, !description.isEmpty {
                                     Text(description)
                                         .font(AppFonts.bodyFont(13))
                                         .foregroundColor(AppColors.textSecondary)
@@ -1166,12 +1172,12 @@ struct AboutSheet: View {
                 VStack(alignment: .leading, spacing: 16) {
                     InfoBlock(
                         title: "Our Mission",
-                        text: "Lumen Viae is a Catholic Rosary companion designed to deepen your prayer life. Through guided meditations, Scripture, and reflection, the app accompanies you through the mysteries of the Rosary, scenes from the lives of Jesus and Mary: the Joyful, Sorrowful, Glorious and Luminous, and the Seven Sorrows of Mary."
+                        text: "Lumen Viae helps you pray the Rosary each day, with a short reading for every mystery, and keeps the Church's other prayers close at hand. The mysteries are scenes from the lives of Jesus and Mary: the Joyful, Sorrowful, Glorious and Luminous, and the Seven Sorrows of Mary."
                     )
 
                     InfoBlock(
                         title: "How to Pray the Rosary",
-                        text: "A Rosary has five mysteries. For each one, think on its scene and pray one Our Father, ten Hail Marys and a Glory Be, together called a decade. The app guides you through all five, with an optional meditation for each: a short reading from a saint or from Scripture."
+                        text: "A Rosary has five mysteries. For each one, think on its scene and pray one Our Father, ten Hail Marys, a Glory Be and the Fatima Prayer, together called a decade. The app guides you through all five, with an optional meditation for each: a short reading from a saint or from Scripture."
                     )
 
                     InfoBlock(
@@ -1275,12 +1281,12 @@ struct HelpSupportSheet: View {
 
                     InfoBlock(
                         title: "What are the different mysteries?",
-                        text: "The mysteries are scenes from the lives of Jesus and Mary, five to a Rosary. There are four sets of them. On the traditional schedule: Joyful (Monday, Thursday), Sorrowful (Tuesday, Friday), and Glorious (Wednesday, Saturday). Sunday takes Joyful in Advent, Sorrowful in Lent, and Glorious otherwise. Luminous mysteries, added by Pope John Paul II, can be prayed any day from View All beside the home grid. The modern schedule (Settings, under Devotion) gives them Thursday and moves the Joyful to Saturday. The Seven Sorrows of Mary can be prayed on any day too."
+                        text: "The mysteries are scenes from the lives of Jesus and Mary, five to a Rosary. There are four sets of them. On the traditional schedule: Joyful (Monday, Thursday), Sorrowful (Tuesday, Friday), and Glorious (Wednesday, Saturday). Sunday takes Joyful in Advent, Sorrowful in Lent, and Glorious otherwise. The Luminous Mysteries, added by St. John Paul II in 2002, can be prayed any day from View All beside the home grid. The modern schedule (Settings, under Devotion) gives them Thursday and moves the Joyful to Saturday. The Seven Sorrows of Mary can be prayed on any day too."
                     )
 
                     InfoBlock(
                         title: "How does audio work?",
-                        text: "Choose it on the Rosary's own page before you pray, or in Settings under Prayer Experience: Meditation Only reads the meditation aloud and leaves the prayers to you, and Whole Rosary says every prayer aloud, the beads moving with the voice. During the prayer, the play button starts and pauses the voice, and the skip buttons move 10 seconds forward or back."
+                        text: "Choose it on the Rosary's own page before you pray, or in Settings under Prayer Experience: Meditation Only reads the meditation aloud and leaves the prayers to you, and Whole Rosary says every prayer aloud, the beads moving with the voice. During the prayer, the play button starts and pauses the voice, and the buttons beside it move 10 seconds, or a whole prayer with Whole Rosary."
                     )
 
                     InfoBlock(

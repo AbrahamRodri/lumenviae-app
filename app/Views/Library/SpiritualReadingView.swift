@@ -96,7 +96,7 @@ struct SpiritualReadingView: View {
                 .foregroundColor(AppColors.gold.opacity(0.8))
                 .multilineTextAlignment(.center)
 
-            Text("Take up and read (Tolle, lege)")
+            Text("Take up and read (St. Augustine's \u{2018}Tolle, lege\u{2019})")
                 .font(AppFonts.italicFont(13))
                 .foregroundColor(AppColors.textSecondary)
 

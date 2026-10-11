@@ -93,7 +93,7 @@ struct MeditationSetDetailView: View {
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("The server may be slow to start. Try again in a few seconds. To pray without a connection, use Download for Offline in Settings.")
+            Text("We couldn't reach the meditations. Try again in a few seconds. To pray without a connection, open Settings and choose Save for Offline.")
         }
     }
 
@@ -207,7 +207,7 @@ struct MeditationSetDetailView: View {
                     switch state {
                     case .available:
                         offlineButton(
-                            title: "Save on this device",
+                            title: "Save for offline",
                             icon: "ph-download-simple",
                             color: AppColors.gold
                         )
@@ -375,7 +375,7 @@ struct MeditationSetDetailView: View {
             VStack(spacing: 10) {
                 sectionRule
 
-                Text("Couldn't load these meditations. The server may be slow to start.")
+                Text("Couldn't load these meditations. Check your connection and try again.")
                     .font(AppFonts.italicFont(15))
                     .foregroundColor(AppColors.textSecondary)
                     .multilineTextAlignment(.center)

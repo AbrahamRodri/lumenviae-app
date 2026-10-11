@@ -123,7 +123,7 @@ struct PrayButtonEditorSheet: View {
         } header: {
             EditorSectionHeader("When you tap")
         } footer: {
-            EditorSectionFooter("One tap starts this straight away — no menus on the way.")
+            EditorSectionFooter("A tap on Pray starts this one, with no menu on the way.")
         }
     }
 

@@ -444,7 +444,7 @@ private struct ThresholdStepView: View {
                 Spacer(minLength: 12)
 
                 VStack(spacing: 14) {
-                    ConsecrationIntroKicker(text: "ALL YOURS")
+                    ConsecrationIntroKicker(text: "33 DAYS WITH MARY")
 
                     Text("Consecration to Mary")
                         .font(AppFonts.headlineFont(28))
@@ -860,7 +860,7 @@ private struct JourneyStepView: View {
 
     private func dayRangeLabel(_ phase: ConsecrationPhase) -> String {
         let range = phase.dayRange
-        if phase == .consecrationDay { return "Consecration Day" }
+        if phase == .consecrationDay { return "Day 34" }
         return range.count == 1 ? "Day \(range.lowerBound)" : "\(range.lowerBound)\u{2013}\(range.upperBound)"
     }
 }

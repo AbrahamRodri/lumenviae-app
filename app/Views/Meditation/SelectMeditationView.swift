@@ -273,15 +273,15 @@ struct SelectMeditationView: View {
     /// mysteries are, for someone who has never prayed with either
     private var meditationsLead: String {
         category == .sevenSorrows
-            ? "Or pray with a meditation: a short reading on each of Mary's seven sorrows."
-            : "Or pray with a meditation: a short reading on each mystery, a scene from the lives of Jesus and Mary."
+            ? "Choose a meditation: a short reading for each of Mary's seven sorrows, read aloud or in silence."
+            : "Choose a meditation: a short reading for each of the five mysteries, read aloud or in silence."
     }
 
     /// How many meditations are showing — a set of five readings is
     /// "meditations" on the page, never a set
     private var countLabel: String {
         let total = viewModel.totalSetCount
-        let unit = total == 1 ? "meditation" : "meditations"
+        let unit = total == 1 ? "set of meditations" : "sets of meditations"
         return viewModel.isNarrowed
             ? "\(viewModel.visibleSetCount) of \(total) \(unit)"
             : "\(total) \(unit)"

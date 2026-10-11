@@ -38,6 +38,9 @@ struct ChapelLiturgyTests {
 
     @Test func cutsAtTheFirstStop() {
         #expect(TodayInChurch.incipit(of: "Exsúrge, quare obdórmis, Dómine?") == "Exsúrge")
+        // The tile reads the English, five words, never ending on a small word
+        #expect(TodayInChurch.incipit(of: "The mouth of the just shall meditate wisdom", words: 5) == "The mouth of the just")
+        #expect(TodayInChurch.incipit(of: "Let us all rejoice in the Lord, celebrating a festival", words: 5) == "Let us all rejoice")
     }
 
     @Test func keepsAtLeastOneWord() {

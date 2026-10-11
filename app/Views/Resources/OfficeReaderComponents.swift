@@ -139,7 +139,7 @@ struct OfficeReadingSheet: View {
     var body: some View {
         @Bindable var settings = settings
 
-        return MissalSheetShell(kicker: "Hours of Prayer", title: "Text Settings") {
+        return MissalSheetShell(kicker: "Hours of Prayer", title: "Text options") {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
                     MissalSheetChipGroup("Language") {

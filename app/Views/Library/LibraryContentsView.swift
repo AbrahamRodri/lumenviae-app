@@ -819,7 +819,7 @@ struct LibraryContentsSheet: View {
                     .font(AppFonts.headlineFont(16))
                     .foregroundColor(AppColors.cream)
 
-                Text("No line in \(info.title) carries those words.")
+                Text("No line in this book has those words.")
                     .font(AppFonts.italicFont(13))
                     .foregroundColor(AppColors.textSecondary)
             }

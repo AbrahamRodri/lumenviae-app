@@ -299,7 +299,7 @@ final class ScripturalRosaryViewModel {
                 return BeadReading(
                     reference: nil,
                     text: Self.prayer("our_father", in: UserSettings.shared.prayerLanguage),
-                    footnote: MysteryData.fruit(for: mystery).map { "Ask for · \($0)" }
+                    footnote: MysteryData.fruit(for: mystery).map { "Grace to ask for · \($0)" }
                 )
             }
             // The mystery's fruit, the grace to ask for while it is
@@ -307,7 +307,7 @@ final class ScripturalRosaryViewModel {
             return BeadReading(
                 reference: mystery.scriptureReference,
                 text: mystery.description ?? "",
-                footnote: MysteryData.fruit(for: mystery).map { "Ask for · \($0)" }
+                footnote: MysteryData.fruit(for: mystery).map { "Grace to ask for · \($0)" }
             )
         }
 

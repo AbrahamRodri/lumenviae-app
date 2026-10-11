@@ -294,7 +294,7 @@ struct MissalReadingSheet: View {
     var body: some View {
         @Bindable var settings = settings
 
-        return MissalSheetShell(kicker: "The Mass", title: "Text Settings") {
+        return MissalSheetShell(kicker: "The Mass", title: "Text options") {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
                     MissalSheetChipGroup("Language") {
@@ -352,7 +352,7 @@ struct MissalReadingSheet: View {
                         .padding(.top, 22)
 
                     toggleRow(
-                        title: "Posture cues",
+                        title: "When to stand, sit and kneel",
                         detail: "Stand, kneel and sit, marked in the text",
                         isOn: $settings.missalPostureCues
                     )

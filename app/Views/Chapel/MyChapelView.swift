@@ -576,7 +576,8 @@ struct MyChapelView: View {
                     shortcut: .consecration,
                     subtitle: subtitle(for: .consecration),
                     done: isDone(.consecration),
-                    day: activeConsecration?.currentDayNumber
+                    day: activeConsecration?.currentDayNumber,
+                    consecrationBegun: !(activeConsecration?.completedDays.isEmpty ?? true)
                 ),
                 at: min(1, acts.count)
             )
@@ -639,7 +640,7 @@ struct MyChapelView: View {
             guard let progress = activeConsecration else { return "Not yet begun" }
             let day = progress.currentDayNumber
             guard day <= 33 else { return "Consecration Day" }
-            return "Day \(day) of 33 · \(ChapelConsecrationTile.phaseName(day: day))"
+            return "Day \(day) of 33"
         case .sevenSorrows:
             return "Seven Hail Marys for each sorrow"
         // The three orders in the Prayers page's own words for when each

@@ -286,7 +286,7 @@ struct ExploreView: View {
     private var epigraph: some View {
         VStack(spacing: 6) {
             // What the page is, before the verse that says why
-            Text("Everything in the app, and a search across it all.")
+            Text("Prayers, books, chant and the Church's day, with a search across the whole app.")
                 .font(AppFonts.readingItalicFont(15))
                 .foregroundColor(AppColors.textSecondary)
                 .multilineTextAlignment(.center)
@@ -411,7 +411,7 @@ struct ExploreView: View {
                 }
 
                 if !libraryHits.isEmpty {
-                    section("In the App") {
+                    section("Pages") {
                         tileGrid(libraryHits.map { entry in
                             ExploreTile(icon: entry.icon, title: entry.title, action: entry.action)
                         })
