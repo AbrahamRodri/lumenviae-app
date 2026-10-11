@@ -469,6 +469,10 @@ enum PrayerBook {
 
     /// A line under a chapter's name in the All Prayers list, where the
     /// name alone is a Church word a newcomer may not know
+    /// How many prayers the book holds, each counted once, however many
+    /// chapters print it — "152 prayers" under the page's title
+    static let prayerCount = Set(chapters.flatMap(\.prayerIDs)).count
+
     static let chapterNotes: [String: String] = [
         "sacrament": "Jesus present in the Host",
         "litanies": "Short petitions, each with the same response",
@@ -1082,7 +1086,7 @@ enum PrayerBookAudio {
     static let title = "Prayers Tab"
 
     /// The Prayer Book's door glyph
-    static let icon = "ch-praying-hands"
+    static let icon = "lv-prayer-book"
 
     /// The quieter way first, as the setting's `false`, as the Rosary's
     /// pills set theirs

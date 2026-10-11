@@ -87,6 +87,59 @@ struct PrayerBookPainting: Equatable {
             return PrayerBookPainting(asset: "glorious_coronation", focal: UnitPoint(x: 0.5, y: 0.12), caption: "The Coronation of Our Lady")
         }
     }
+
+    // MARK: The Prayers page
+
+    /// The Saved shortcut's painting
+    static let saved = PrayerBookPainting(
+        asset: "glorious_coronation", focal: UnitPoint(x: 0.5, y: 0.3), caption: "The Coronation of Our Lady"
+    )
+
+    /// An occasion's order on its shortcut: the Last Supper before Mass,
+    /// Gethsemane before Confession, else the order's hour or the
+    /// Annunciation
+    static func order(_ order: PrayerOrder, on date: Date = Date()) -> PrayerBookPainting {
+        switch order.id {
+        case "before_mass", "after_mass":
+            return PrayerBookPainting(
+                asset: "luminous_eucharist", focal: UnitPoint(x: 0.5, y: 0.35), caption: "The Last Supper")
+        case "before_confession", "after_confession":
+            return PrayerBookPainting(
+                asset: "sorrowful_agony", focal: UnitPoint(x: 0.5, y: 0.3), caption: "The Agony in the Garden")
+        default:
+            return hour(order, on: date)
+        }
+    }
+
+    /// A prayer's painting on the page's rows and shelves: the scene it
+    /// speaks of — the Annunciation for the Hail Mary, Pentecost for the
+    /// Creed the Apostles handed on
+    static func prayer(_ prayerID: String) -> PrayerBookPainting {
+        switch prayerID {
+        case "our_father":
+            return PrayerBookPainting(
+                asset: "luminous_proclamation", focal: UnitPoint(x: 0.5, y: 0.3), caption: "The Sermon on the Mount")
+        case "hail_mary":
+            return PrayerBookPainting(
+                asset: "joyful_annunciation", focal: UnitPoint(x: 0.5, y: 0.18), caption: "The Annunciation")
+        case "glory_be":
+            return PrayerBookPainting(
+                asset: "devotion_holy_trinity", focal: UnitPoint(x: 0.5, y: 0.3), caption: "The Holy Trinity")
+        case "apostles_creed":
+            return PrayerBookPainting(
+                asset: "glorious_pentecost", focal: UnitPoint(x: 0.5, y: 0.3), caption: "Pentecost")
+        case "memorare":
+            return PrayerBookPainting(
+                asset: "glorious_assumption", focal: UnitPoint(x: 0.5, y: 0.3), caption: "The Assumption")
+        case "litany_loreto":
+            return PrayerBookPainting(
+                asset: "feast_our_lady_of_the_rosary", focal: UnitPoint(x: 0.5, y: 0.3),
+                caption: "Our Lady of the Rosary")
+        default:
+            return PrayerBookPainting(
+                asset: "glorious_coronation", focal: UnitPoint(x: 0.5, y: 0.2), caption: "The Coronation of Our Lady")
+        }
+    }
 }
 
 /// A painting set as a card's ground: cropped about its subject and

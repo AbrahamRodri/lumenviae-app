@@ -2,252 +2,307 @@
 //  PrayersComponents.swift
 //  Lumen Viae
 //
-//  The Prayers page's pieces: the bar its three parts are chosen on, a
-//  section's title, the strip of the day's three hours at the foot of
-//  the Pray Now card, the season's antiphon set over its painting, the
-//  ruled row every list on the page shares, a saved prayer's card, a
-//  place chip on Occasions and an occasion's row, and the card a search
-//  names a topic with.
+//  The Prayers page's pieces, drawn as the Chant page draws its own (the
+//  "Prayers Tab Redesign", option A, Oct 2026): a shelf's heading with
+//  SEE ALL, a shortcut tile, the card for this hour, a row with its
+//  painting, a square card for a shelf that scrolls sideways; then the
+//  ruled row the lists share, a saved prayer's card, an occasion's row,
+//  and the cards a search names a topic or an order with.
 //
-//  Ruled rows and hairline outlines on the bare page, as the rest of the
-//  app is drawn; the one gold act on the page is the Pray Now card's.
+//  Cards here are filled with the card ground, as the Chant page's are:
+//  they are doors that stand apart from the page. The page has no filled
+//  gold act; the hour's PRAY is an outlined disc.
 //
 
 import SwiftUI
 
-// MARK: - The three parts
+// MARK: - A shelf's heading
 
-/// TODAY · OCCASIONS · ALL PRAYERS: the part chosen in gold over a short
-/// rule, the others quiet, and a hairline under all three. While a
-/// search stands in the parts' place none is lit.
-struct PrayersSectionBar: View {
-    let selection: PrayersSection?
-    let onSelect: (PrayersSection) -> Void
-
-    var body: some View {
-        HStack(spacing: 0) {
-            ForEach(PrayersSection.allCases) { section in
-                let selected = section == selection
-                Button { onSelect(section) } label: {
-                    VStack(spacing: 6) {
-                        Text(section.title.uppercased())
-                            .font(AppFonts.labelFont(10))
-                            .tracking(2)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.7)
-                            .foregroundColor(selected ? AppColors.gold : AppColors.textSecondary)
-
-                        Rectangle()
-                            .fill(AppColors.gold)
-                            .frame(width: 26, height: 1)
-                            .opacity(selected ? 1 : 0)
-                    }
-                    .frame(maxWidth: .infinity, minHeight: 44)
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(QuietGlyphButtonStyle())
-                .accessibilityLabel(section.title)
-                .accessibilityAddTraits(selected ? [.isSelected] : [])
-            }
-        }
-        .animation(Motion.crossfade, value: selection)
-        .overlay(alignment: .bottom) {
-            Rectangle()
-                .fill(AppColors.gold.opacity(0.15))
-                .frame(height: AppLine.hairline)
-        }
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel("Prayer views")
-    }
-}
-
-// MARK: - Section title
-
-/// A section of the page: its name in the display face and one italic
-/// line saying what stands beneath it
-struct PrayersSectionTitle: View {
+/// A shelf of the page: its name in the display face, and SEE ALL at the
+/// trailing edge where there is more than the shelf shows
+struct PrayersShelfHeading: View {
     let title: String
-    var note: String? = nil
+    var seeAll: (() -> Void)?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        HStack(alignment: .firstTextBaseline) {
             Text(title)
-                .font(AppFonts.titleFont(19))
+                .font(AppFonts.titleFont(17))
                 .foregroundColor(AppColors.cream)
                 .accessibilityAddTraits(.isHeader)
-
-            if let note {
-                Text(note)
-                    .font(AppFonts.readingItalicFont(14.5))
-                    .foregroundColor(AppColors.textSecondary)
-                    .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 8)
+            if let seeAll {
+                Button(action: seeAll) {
+                    Text("SEE ALL")
+                        .font(AppFonts.labelFont(9.5))
+                        .tracking(2)
+                        .foregroundColor(AppColors.gold)
+                        .frame(minHeight: 44)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(QuietGlyphButtonStyle())
+                .accessibilityLabel("See all: \(title)")
             }
         }
+        .frame(minHeight: 30)
     }
 }
 
-// MARK: - The day's three hours, at the card's foot
+// MARK: - A painting, cut square
 
-/// MORNING · NOON · NIGHT across the foot of the Pray Now card, each
-/// saying where it stands — Offered, Now, or when it is said — and each a
-/// way to see that hour's prayers above. The hour shown is lit. Never
-/// "missed": a morning not prayed by evening still reads "On rising".
-/// The Angelus is offered for its bell, not its day: prayed at noon, it
-/// reads OFFERED until three, and then the evening bell asks again.
-struct PrayerHourStations: View {
+/// A painting cut to a square or a strip about its subject, for the
+/// page's tiles, rows and cards
+struct PrayersPaintingThumb: View {
+    let painting: PrayerBookPainting
+    var width: CGFloat
+    var height: CGFloat
+    var radius: CGFloat = 0
+
+    var body: some View {
+        CachedAssetImage(painting.resolvedAsset, focal: painting.focal)
+            .frame(width: width, height: height)
+            .clipShape(RoundedRectangle(cornerRadius: radius))
+            .accessibilityHidden(true)
+    }
+}
+
+// MARK: - A shortcut
+
+/// One of the six shortcuts at the head of the page: a painting at its
+/// leading edge and a name, on the card ground
+struct PrayersShortcutTile: View {
+    let title: String
+    let painting: PrayerBookPainting
+    var spoken: String?
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 10) {
+                PrayersPaintingThumb(painting: painting, width: 56, height: 56)
+                Text(title)
+                    .font(AppFonts.bodyFont(14.5))
+                    .foregroundColor(AppColors.cream)
+                    .multilineTextAlignment(.leading)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.85)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .padding(.trailing, 10)
+            .frame(height: 56)
+            .background(AppColors.cardBackground)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .strokeBorder(AppColors.gold.opacity(0.16), lineWidth: AppLine.hairline)
+            )
+            .contentShape(RoundedRectangle(cornerRadius: 12))
+        }
+        .buttonStyle(SacredCardButtonStyle())
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(spoken ?? title)
+        .accessibilityAddTraits(.isButton)
+    }
+}
+
+// MARK: - This hour
+
+/// The order for the hour it is as one wide card: its painting, NOW and
+/// the hour's name, the order's title and its line, and PRAY on an
+/// outlined disc. The card opens the order's page; the disc prays it.
+struct PrayersNowCard: View {
+    let order: PrayerOrder
     let now: Date
+    let offered: Bool
+    let open: () -> Void
+    let pray: () -> Void
 
-    /// The order the card above is showing
-    let shownID: String
+    var body: some View {
+        let title = order.title(on: now)
+        let hour = PrayerBook.hourName(of: order, at: now).uppercased()
 
-    let onSelect: (PrayerOrder) -> Void
+        HStack(spacing: 0) {
+            ZStack {
+                PrayersPaintingThumb(painting: PrayerBookPainting.hour(order, on: now), width: 136, height: 180)
+                    .id(PrayerBookPainting.hour(order, on: now).resolvedAsset)
+                    .transition(.opacity)
+            }
+            .animation(Motion.crossfade, value: order.id)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(offered ? "\(hour) · PRAYED" : "NOW · \(hour)")
+                    .font(AppFonts.labelFont(9.5))
+                    .tracking(2.2)
+                    .foregroundColor(AppColors.gold)
+                    .contentTransition(.opacity)
+                Text(title)
+                    .font(AppFonts.titleFont(19))
+                    .foregroundColor(AppColors.cream)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.8)
+                    .contentTransition(.opacity)
+                Text(PrayerBook.daySummary(of: order, on: now))
+                    .font(AppFonts.readingItalicFont(13.5))
+                    .foregroundColor(AppColors.textSecondary)
+                    .lineLimit(3)
+                    .minimumScaleFactor(0.9)
+                    .contentTransition(.opacity)
+
+                Spacer(minLength: 6)
+
+                Button(action: pray) {
+                    HStack(spacing: 10) {
+                        AppIcon("ph-play-fill", size: 11)
+                            .foregroundColor(AppColors.gold)
+                            .frame(width: 32, height: 32)
+                            .overlay(Circle().strokeBorder(AppColors.gold, lineWidth: 1.2))
+                            .haloGlow(AppColors.gold, radius: 10, intensity: 0.22)
+                        Text(offered ? "PRAY AGAIN" : "PRAY")
+                            .font(AppFonts.labelFont(10))
+                            .tracking(2)
+                            .foregroundColor(AppColors.gold)
+                    }
+                    .frame(minHeight: 44)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(SacredCardButtonStyle())
+                .accessibilityLabel(offered ? "Pray \(title) again" : "Pray \(title)")
+            }
+            .padding(.leading, 16)
+            .padding(.trailing, 12)
+            .padding(.top, 14)
+            .padding(.bottom, 6)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .frame(height: 180)
+        .background(AppColors.cardBackground)
+        .clipShape(RoundedRectangle(cornerRadius: 18))
+        .overlay(
+            RoundedRectangle(cornerRadius: 18)
+                .strokeBorder(AppColors.gold.opacity(0.28), lineWidth: AppLine.hairline)
+        )
+        .contentShape(RoundedRectangle(cornerRadius: 18))
+        .onTapGesture(perform: open)
+        .animation(Motion.crossfade, value: order.id)
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("\(title), \(offered ? "prayed" : "the prayer for this hour")")
+        .accessibilityAction(named: "Show its prayers", open)
+    }
+}
+
+// MARK: - A row with its painting
+
+/// A prayer as a row: a small painting, its name with a line under it,
+/// the reader's marks, a caret
+struct PrayersPictureRow: View {
+    let prayer: BookPrayer
+    let painting: PrayerBookPainting
+    var note: String?
+    var showsRule = true
+    let action: () -> Void
 
     private var store = PrayerBookStore.shared
 
-    init(now: Date, shownID: String, onSelect: @escaping (PrayerOrder) -> Void) {
-        self.now = now
-        self.shownID = shownID
-        self.onSelect = onSelect
+    init(
+        prayer: BookPrayer,
+        painting: PrayerBookPainting,
+        note: String? = nil,
+        showsRule: Bool = true,
+        action: @escaping () -> Void
+    ) {
+        self.prayer = prayer
+        self.painting = painting
+        self.note = note
+        self.showsRule = showsRule
+        self.action = action
     }
 
     var body: some View {
-        HStack(spacing: 0) {
-            ForEach(Array(PrayerBook.dayOrders.enumerated()), id: \.element.id) { index, order in
-                if index > 0 {
-                    Rectangle()
-                        .fill(AppColors.gold.opacity(0.18))
-                        .frame(width: AppLine.hairline)
-                }
-                station(order)
-            }
-        }
-        // So the hairlines between the stations run their full height
-        .fixedSize(horizontal: false, vertical: true)
-        .overlay(alignment: .top) {
-            Rectangle()
-                .fill(AppColors.gold.opacity(0.2))
-                .frame(height: AppLine.hairline)
-        }
-        .animation(Motion.crossfade, value: shownID)
-    }
+        let kept = store.isKept(prayer.id)
 
-    private func station(_ order: PrayerOrder) -> some View {
-        let offered = PrayerBook.isOfferedNow(
-            order,
-            at: now,
-            offeredToday: store.wasOffered(order.id, on: now),
-            lastOffered: store.lastOffered(order.id)
-        )
-        let standing = PrayerBook.standing(of: order, at: now, offered: offered)
-        // Named for the bell its OFFERED reads (`angelusBellKept`)
-        let hourName = PrayerBook.hourName(of: order, at: now)
-        let shown = order.id == shownID
-        let color: Color = shown
-            ? AppColors.goldLight
-            : standing == .offered ? AppColors.cream.opacity(0.7) : AppColors.textSecondary
-
-        return Button { onSelect(order) } label: {
-            VStack(spacing: 3) {
-                Text(hourName.uppercased())
-                    .font(AppFonts.labelFont(9.5))
-                    .tracking(2)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.7)
-
-                HStack(spacing: 4) {
-                    if standing == .offered {
-                        AppIcon("ph-seal-check-fill", size: 10)
-                            .foregroundColor(AppColors.gold)
+        Button(action: action) {
+            VStack(spacing: 0) {
+                HStack(spacing: 13) {
+                    PrayersPaintingThumb(painting: painting, width: 44, height: 44, radius: 8)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .strokeBorder(AppColors.gold.opacity(0.24), lineWidth: AppLine.hairline)
+                        )
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text(prayer.listTitle)
+                            .font(AppFonts.readingFont(17))
+                            .foregroundColor(AppColors.cream)
+                            .lineLimit(1)
+                        if let note {
+                            Text(note)
+                                .font(AppFonts.readingItalicFont(13.5))
+                                .foregroundColor(AppColors.textSecondary)
+                                .lineLimit(1)
+                        }
                     }
-                    Text(Self.word(for: standing))
-                        .font(AppFonts.readingItalicFont(13))
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.8)
+                    Spacer(minLength: 8)
+                    if kept {
+                        RibbonMark(kept: true, width: 7, restLength: 12, keptLength: 16)
+                    }
+                    AppIcon("ph-caret-right", size: 12)
+                        .foregroundColor(AppColors.gold.opacity(0.6))
                 }
-            }
-            .foregroundColor(color)
-            .padding(.horizontal, 4)
-            .padding(.vertical, 10)
-            .frame(maxWidth: .infinity, minHeight: 58)
-            .background(AppColors.gold.opacity(shown ? 0.1 : 0))
-            .overlay(alignment: .top) {
-                Rectangle()
-                    .fill(AppColors.goldLight)
-                    .frame(height: 1.5)
-                    .padding(.horizontal, 20)
-                    .opacity(shown ? 1 : 0)
+                .padding(.vertical, 8)
+
+                if showsRule {
+                    Rectangle()
+                        .fill(AppColors.gold.opacity(0.12))
+                        .frame(height: AppLine.hairline)
+                }
             }
             .contentShape(Rectangle())
         }
-        .buttonStyle(QuietGlyphButtonStyle())
+        .buttonStyle(SacredCardButtonStyle())
         .accessibilityElement(children: .combine)
-        // Led by the word on the glass, so Voice Control finds it by
-        // what it shows: "Noon, the Angelus, the hour it is now"
-        .accessibilityLabel("\(hourName), \(order.title(on: now)), \(Self.spoken(standing))")
-        .accessibilityAddTraits(shown ? [.isButton, .isSelected] : .isButton)
-        .accessibilityHint(shown ? "" : "Shows its prayers on the card above")
-    }
-
-    static func word(for standing: PrayerBook.HourStanding) -> String {
-        switch standing {
-        case .offered:       return "Prayed"
-        case .now:           return "Now"
-        case .at(let when):  return when
-        }
-    }
-
-    private static func spoken(_ standing: PrayerBook.HourStanding) -> String {
-        switch standing {
-        case .offered:       return "prayed today"
-        case .now:           return "the hour it is now"
-        case .at(let when):  return when.lowercased()
-        }
+        .accessibilityLabel([prayer.listTitle, note, kept ? "saved" : nil].compactMap { $0 }.joined(separator: ", "))
+        .accessibilityAddTraits(.isButton)
     }
 }
 
-// MARK: - The season's antiphon
+// MARK: - A square card
 
-/// The antiphon of Our Lady the Church sings at the close of the day in
-/// this part of the year, over the mystery it sings of
-struct MarianSeasonCard: View {
-    let prayer: BookPrayer
-    let antiphon: MarianAntiphon
+/// A prayer on a shelf that scrolls sideways: its painting cut square,
+/// its name and a line beneath
+struct PrayersSquareCard: View {
+    let title: String
+    let note: String
+    let painting: PrayerBookPainting
+    let action: () -> Void
+
+    static let side: CGFloat = 138
 
     var body: some View {
-        ZStack(alignment: .bottomLeading) {
-            PrayerBookPaintingGround(painting: .antiphon(antiphon), footOpacity: 0.9)
-
+        Button(action: action) {
             VStack(alignment: .leading, spacing: 3) {
-                Text("THIS SEASON'S SONG TO MARY")
-                    .font(AppFonts.labelFont(8.5))
-                    .tracking(2.2)
-                    .foregroundColor(AppColors.gold)
-
-                Text(prayer.listTitle)
-                    .font(AppFonts.titleFont(23))
+                PrayersPaintingThumb(painting: painting, width: Self.side, height: Self.side, radius: 12)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .strokeBorder(AppColors.gold.opacity(0.24), lineWidth: AppLine.hairline)
+                    )
+                    .padding(.bottom, 6)
+                Text(title)
+                    .font(AppFonts.readingFont(16))
                     .foregroundColor(AppColors.cream)
+                    .multilineTextAlignment(.leading)
                     .lineLimit(2)
-                    .minimumScaleFactor(0.7)
-
-                Text("Sung at night, \(antiphon.season)")
-                    .font(AppFonts.readingItalicFont(14.5))
-                    .foregroundColor(AppColors.cream.opacity(0.8))
+                Text(note)
+                    .font(AppFonts.readingItalicFont(13))
+                    .foregroundColor(AppColors.textSecondary)
+                    .multilineTextAlignment(.leading)
+                    .lineLimit(2)
             }
-            .multilineTextAlignment(.leading)
-            .padding(.horizontal, 16)
-            .padding(.bottom, 14)
+            .frame(width: Self.side, alignment: .leading)
+            .contentShape(Rectangle())
         }
-        .frame(maxWidth: .infinity)
-        .frame(height: 200)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline)
-        )
-        .contentShape(RoundedRectangle(cornerRadius: 16))
+        .buttonStyle(SacredCardButtonStyle())
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("This season's song to Mary: \(prayer.listTitle). Sung at night, \(antiphon.season).")
-        .accessibilityHint("Opens the prayer")
+        .accessibilityLabel("\(title), \(note)")
+        .accessibilityAddTraits(.isButton)
     }
 }
 
@@ -424,40 +479,6 @@ struct SavedPrayerCard: View {
 }
 
 // MARK: - Occasions
-
-/// One place on Occasions — AT MASS, CONFESSION — as a pill: lit in gold
-/// when chosen, a quiet outline when not
-struct PrayersPlaceChip: View {
-    let title: String
-    let isSelected: Bool
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            Text(title.uppercased())
-                .font(AppFonts.labelFont(9.5))
-                .tracking(2)
-                .lineLimit(1)
-                .foregroundColor(isSelected ? AppColors.goldLight : AppColors.textSecondary)
-                .padding(.horizontal, 14)
-                .frame(minHeight: 36)
-                .background(Capsule().fill(AppColors.gold.opacity(isSelected ? 0.12 : 0)))
-                .overlay(
-                    Capsule().strokeBorder(
-                        isSelected ? AppColors.gold.opacity(0.7) : AppColors.textSecondary.opacity(0.4),
-                        lineWidth: isSelected ? 1 : AppLine.hairline
-                    )
-                )
-                // The pill is drawn 36 tall and answers to 44
-                .padding(.vertical, 4)
-                .contentShape(Rectangle())
-        }
-        .buttonStyle(SacredCardButtonStyle())
-        .animation(Motion.crossfade, value: isSelected)
-        .accessibilityLabel(title)
-        .accessibilityAddTraits(isSelected ? [.isSelected] : [])
-    }
-}
 
 /// An order of prayer kept for an occasion, as a ruled row: its glyph in
 /// a small outlined frame, its name, and when it is said

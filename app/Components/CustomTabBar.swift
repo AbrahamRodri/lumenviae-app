@@ -57,12 +57,12 @@ enum AppTab: CaseIterable {
         case .progress:     return "ph-flame"
         case .chapel:       return "ch-window"
         // The Prayer Book's glyph on every surface it is a door on
-        case .prayers:      return "ch-praying-hands"
+        case .prayers:      return "lv-prayer-book"
         }
     }
 
     /// Asset icon shown when the tab is selected (the fill weight). The
-    /// praying hands have no fill weight drawn, so Prayers is lit in gold
+    /// prayer book has no fill weight drawn, so Prayers is lit in gold
     /// alone, as the gold and the bead beneath already say it is chosen.
     var selectedIcon: String {
         self == .prayers ? icon : icon + "-fill"

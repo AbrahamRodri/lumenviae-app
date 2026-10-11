@@ -486,6 +486,19 @@ def triptych():
     )
 
 
+def prayer_book():
+    """The Prayer Book, as the Prayers tab names it: a closed book standing,
+    a Latin cross on its cover and its ribbon hanging below the pages. A
+    book is how the Church names her prayer (the Missal, the Breviary);
+    it replaced the joined hands, which read as the emoji (Oct 2026)."""
+    return svg(
+        path("M7.2 2.8H18.5V17.2H7.2C6.25 17.2 5.5 17.95 5.5 18.9V4.5C5.5 3.55 6.25 2.8 7.2 2.8Z"),
+        path("M5.5 18.9C5.5 19.85 6.25 20.6 7.2 20.6H8.6M12.4 20.6H18.5V17.2"),
+        path("M12 6V13.4M9.4 8.5H14.6"),
+        path("M9 19.6V22.2L10.5 21.1L12 22.2V19.6"),
+    )
+
+
 # Drawn for review and not installed until one is chosen
 CANDIDATES = {
     "lv-triptych": triptych,
@@ -511,6 +524,7 @@ GLYPHS = {
     "lv-dart": dart,
     "lv-hourglass": hourglass,
     "lv-lozenge": lozenge,
+    "lv-prayer-book": prayer_book,
 }
 
 
