@@ -119,6 +119,16 @@ enum AppRoute: Hashable {
     /// heard, read and practised.
     case chantLibrary
     case chant(id: String)
+
+    /// The reader's own chants: favourites, chants learned and the sets
+    /// they made, opened on one shelf (`ChantSavedShelf`)
+    case chantSaved(ChantSavedShelf)
+
+    /// The sung sets, opened on one (`ChantLibraryData.occasions`)
+    case chantSets(openID: String?)
+
+    /// Every chant under its topic, one topic, or the Mass of the Angels
+    case chantBrowse(ChantBrowseScope)
 }
 
 // MARK: - ScripturalRosaryLaunch
@@ -220,7 +230,28 @@ final class AppRouter {
             // push from the Chapel does — and a stranded `true` hides the
             // bar app-wide with no gesture that brings it back.
             endChapelArranging()
+            // A push the router did not make, or a pop, leaves the record
+            // of routes the length of the path: an unknown page is nil
+            if routes.count > path.count {
+                routes.removeLast(routes.count - path.count)
+            }
+            while routes.count < path.count { routes.append(nil) }
         }
+    }
+
+    /// The routes on the stack, as far as the router knows them, kept the
+    /// length of `path`, which is type-erased and cannot be read back.
+    /// The app-wide chant player reads the last to stand aside on the
+    /// pages that carry their own transport or a prayer.
+    private(set) var routes: [AppRoute?] = []
+
+    /// The page on top of the stack, when the router pushed it
+    var topRoute: AppRoute? { routes.last ?? nil }
+
+    /// Appends a route to the path and records it
+    private func append(_ route: AppRoute) {
+        path.append(route)
+        if !routes.isEmpty { routes[routes.count - 1] = route }
     }
 
     /// Monotonic token identifying the current navigation state.
@@ -292,15 +323,15 @@ final class AppRouter {
     // MARK: - Navigation Actions
 
     func navigateToAllMysteries() {
-        path.append(AppRoute.allMysteries)
+        append(AppRoute.allMysteries)
     }
 
     func navigateToSettings() {
-        path.append(AppRoute.settings)
+        append(AppRoute.settings)
     }
 
     func navigateToExplore() {
-        path.append(AppRoute.explore)
+        append(AppRoute.explore)
     }
 
     /// Pushes any content destination. The named helpers above predate
@@ -318,16 +349,16 @@ final class AppRouter {
             switchTo(.prayers)
             return
         }
-        path.append(route)
+        append(route)
     }
 
     func navigateToMeditationSelection(category: MysteryCategory) {
         selectedCategory = category
-        path.append(AppRoute.meditationSelection(category: category))
+        append(AppRoute.meditationSelection(category: category))
     }
 
     func navigateToMeditationSetDetail(_ summary: MeditationSetSummary) {
-        path.append(AppRoute.meditationSetDetail(summary: summary))
+        append(AppRoute.meditationSetDetail(summary: summary))
     }
 
     func navigateToPrayerSession(
@@ -344,7 +375,7 @@ final class AppRouter {
             priorSeconds: priorSeconds,
             startedAt: startedAt ?? Date()
         )
-        path.append(AppRoute.prayerSession(meditationSetId: meditationSet.id))
+        append(AppRoute.prayerSession(meditationSetId: meditationSet.id))
     }
 
     /// Shows the completion screen in place of the prayer session, so a
@@ -354,7 +385,7 @@ final class AppRouter {
         if !path.isEmpty {
             path.removeLast()
         }
-        path.append(AppRoute.completion)
+        append(AppRoute.completion)
     }
 
     func pop() {

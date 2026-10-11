@@ -2458,117 +2458,62 @@ write concurrent code here:
   a kept set's name and notes through it (`currentWording(of:)`), so a
   copy kept as "Benediction" is still the occasion's own.
 
-  **The library has six ways in** (the "Chant Library Redesign" boards):
-  `ChantLibraryView` (`.chantLibrary`) is a masthead — CHANT LIBRARY over
-  the section's title, the ornament between them on Today's alone — over
-  a strip of sections, the one chosen remembered (`chantLibrary.section`),
-  its glass opening a search over the page, which stays beneath it hidden
-  so Cancel comes back to the same section at the same place, and its
-  bookmark the Saved section. The strip, Seasons' chips, the search's
-  filters and Saved's shelf are `ChantSideScroll`s, which fade out at
-  whichever edge has more to show (52 points, the Office rail's), and
-  only while it has: cut by the glass with no sign, the strip's "SA…"
-  read as a misprint. **Today**
-  (`ChantTodaySection`): the day's four hours on the sun's arc
-  (`ChantHour`, `ChantDayArc` — the Angelus at six and noon, the Regina
-  Cæli in its place through Eastertide, the Magnificat at evening, the
-  season's song to Mary at night, turning on the Prayer Book's hours,
-  each named in English under the arc — Angelus, Mary's Song, Hail, Holy
-  Queen — from `ChantLibraryData.stationNames`; the heading names what
-  the hour sings that day, Queen of Heaven through the Easter season),
-  tonight's song to Mary in the board's lancet arch (`ArchHero`, 420 tall,
-  the chant's own painting, else the night's) with its play the board's
-  one gold act and a Simple | Solemn pill beneath (`ChantSettingPill`;
-  the catalog's words, never the board's "Ornate"), the weekday's devotion
-  (`ChantWeekday`) as a row of seven, the month's (`ChantMonth`, its
-  feast named in a line, February left out for want of a chant; its
-  kickers the board's FULL ROSARY and FEAST DAY CHANT, and CHANTS IN
-  ORDER for another occasion), and CONTINUE
-  LEARNING. The time Today shows is read in a view of its own
-  (`ChantTonightTime`), as the chant page's transport is, so the board
-  is not redrawn twice a second. **Seasons** (`ChantSeasonsSection`): the year as
-  a wheel (`ChantYearWheel`, from `ChantYear`) — six seasons round the
-  rim, Christmas running on to Septuagesima and Lent beginning there,
-  Pentecost its octave; the four antiphons of Our Lady as a thread
-  within, read a day at a time from `PrayerBook.antiphon(on:)` so the
-  wheel and Night Prayers cannot disagree; today on the rim and the
-  days to the next season in the middle — then the seasons as chips (a
-  chip chosen scrolls to the middle, as far as the row's ends allow), the
-  season's chants, the chant to learn before the next one comes, and the
-  feasts ahead with theirs (`ChantFeast`, the 1962 dates; Christ the
-  King the last Sunday of October; and, though no feasts, the seven O
-  antiphons of the 17th to the 23rd of December, O Sapientia to O
-  Emmanuel, each with its Magnificat; Holy Thursday's the Pange
-  Lingua, sung as the Blessed Sacrament is carried to the altar of
-  repose), each row its red day numeral, its
-  names and the feast's painting as Coming Up hangs the season's (the
-  chant's own where the feast has none). A thumbnail is cut about the
-  point `ChantLibraryData.focalPoints` names for its painting, where the
-  middle would lose its subject — the Father over the Son in the Trinity,
-  the angel's face, Our Lady's in the Immaculate Conception. **Occasions**
-  (`ChantOccasionsSection`): Adoration and Blessing (Benediction), A
-  Visit to Jesus in Church, a Sung Rosary (53
-  minutes, the Ave Maria fifty-three times), Before Bed, Before Work or
-  Study, For Those Who Have Died — an index in red numerals over the
-  chosen one's order of service, what happens between chants in red
-  (`ChantRubricText`), each chant a bead that lights as the set is sung,
-  Pause between chants, PLAY ALL, and the bookmark. Once the set is
-  under way PLAY ALL is the set's own Pause and Resume
-  (`ChantSetPlayButton`, Saved's PLAY THE SET too, through
-  `ChantPlayer.pauseOrResume`, which holds a silence where a tap on the
-  mini player passes over it), and so is the sounding bead; it once
-  began the set again from its first chant (Today's weekday "Play all"
-  answers the same way). The bookmark is a toggle:
-  filled while the occasion is kept as a set of one's own
-  (`ChantSet.occasionID`), a second tap letting that set go — never a
-  second copy — but only while the set is still the occasion's own copy,
-  its name and its chants and pauses in order
-  (`ChantShelfStore.isUntouchedCopy`); where the occasion sings the
-  season's antiphon of Our Lady, any of the four answers, so Before Bed
-  kept in Advent with the Alma Redemptoris is still its own copy in Lent.
-  A set a later build has written fields into is not taken for untouched.
-  Any other kept set is let go only after Saved's own question before a
-  delete (`toggleKeeping` answers `.askFirst`), its line true whatever
-  made the set differ ("This set no longer matches the occasion's
-  order"), since a tap once threw away the reader's work, and a seasonal
-  copy was once told it had been changed. Choosing an occasion, here or from Today's month, brings
-  its order up the page; the tap once seemed to do nothing, the order
-  opening below the fold. **Types** (`ChantTypesSection`): six lettered tiles
-  (`ChantForm` — Short Chants for the antiphons, Hymns, Feast Poems for
-  the sequences, Litanies, Psalms and Canticles, Everyday Prayers; 19,
-  24, 7, 5, 4 and 17 — the Mass's parts among the everyday prayers, and
-  the Te Matrem, the Te Deum's Marian echo in its form and its tone,
-  beside it among the canticles), the kind's chants with their lengths
-  drawn as rules (a kicker that says what one chant is, as Today's
-  weekday card does, reads `Chant.kindName`: its kind's word, but
-  Canticle for the Magnificat, the Te Deum and the Te Matrem, which
-  stand under Psalms and Canticles beside the Miserere, a Psalm), and
-  "Short on time?" (`ChantLength`, a minute and seven minutes the
-  cuts). **Learn** (`ChantLearnSection`): the four steps, the season's
-  chant to learn in time, and the course (`ChantLearningPath`: the
-  Rosary's prayers, the antiphons of Our Lady, the hymns of adoration,
-  then under "See more" the year, the longer chants and the Sung Mass),
-  each chant showing the step
-  it stands on, the one touched last with its CONTINUE in gold, the
-  board's one gold act. **Saved** (`ChantSavedSection`): a shelf of spines
-  (`ChantSpineCloth`) — Learned, Favourites, each set the reader made,
-  and the dashed + after the last — standing side by side on a shelf
-  that runs the gutter, the one chosen taller and lit, over the chants
-  of the one chosen. A spine's title turns up it in an overlay, never
-  in the spine's own stack: there, the line it was set on before
-  turning widened every spine to a hundred points, a cover standing
-  over its neighbours. A set's chants and pauses are moved and
-  removed from the handle's menu, added from `ChantPickerSheet` and
-  `ChantPauseSheet` (a note in red, silence if wanted; with none, its
-  row says NOTE), shared as words and sung as one; then Recently played
-  and the one setting, the Words (Latin and English, either alone). The
-  offline sentence stands once, at the library's foot. A new set is
-  named first (`ChantNewSetSheet`, from "Make your own set" and the
-  shelf's +) and stands on the shelf only once made, or is begun with its
-  first chant from Add to a Set: backing out leaves no empty spine. The
-  Learned and Favourites spines carry a count only once there is
-  something to count, to VoiceOver too, and the spine chosen does not
-  grow under Reduce Motion. The curation — every chant's kind,
+  **The library is one home page, read like a music app's** (the
+  "Simpler Chant Library" design, round 9, Oct 2026):
+  `ChantLibraryView` (`.chantLibrary`) has Back, "Chant" over "104
+  recordings", and search's glass in its bar (the search stands over the
+  page, which stays beneath it hidden so Cancel comes back to the same
+  place). Then, 40 points apart: six tiles, two by three — the chant
+  sounding or sung last (Learned until anything has been), Your
+  favourites, A Sung Rosary, Adoration and Blessing, the Mass of the
+  Angels, Before Bed; TONIGHT, the season's song to Mary as one wide card
+  with LISTEN; PLAYED LATELY, the last three as a song list (painting,
+  names, length, and moving bars, `ChantSoundingBars`, on the one
+  sounding, still under Reduce Motion; ··· for play, favourite, add to a
+  set); SONGS TO MARY as square cards, each with its length and its own
+  play; SUNG SETS, the occasions and then the reader's own sets, each a
+  card of its painting, "4 chants · 7 min" (the recordings' lengths,
+  never a guess) and its numbered chants with their lengths; and BROWSE
+  ALL 104 CHANTS. Every card says how long it plays and has its own play,
+  so the page reads as a library of songs rather than of prayers. The
+  page was asked for when the six sections left a reader not knowing what to
+  do. The page has no filled gold act; its plays are the dark discs.
+
+  It replaced a strip of six sections (Today, Seasons, Occasions, Types,
+  Learn, Saved); the day's arc, the year wheel, the kinds and the
+  learning course went with them, and a chant is learned from its own
+  page. A stored `chantLibrary.section` is let go on opening
+  (`ChantLibraryView.forgetLegacySection`); whatever it held, the same
+  page opens. The library's other pages are pushed: the sung sets
+  (`.chantSets(openID:)`, `ChantSetsPage`: the occasions' index over the
+  chosen one's order of service, `ChantOccasionsSection`, with PLAY ALL
+  and the bookmark that keeps it); a topic, every chant under its topic,
+  or the Mass of the Angels (`.chantBrowse(ChantBrowseScope)`,
+  `ChantBrowsePage`), which is how every chant stays reachable without a
+  search; and the reader's own chants (`.chantSaved(ChantSavedShelf)`,
+  `ChantSavedPage`, `ChantSavedSection` below).
+
+  **An occasion** (`ChantOccasionsSection`): Adoration and Blessing
+  (Benediction), A Visit to Jesus in Church, a Sung Rosary, Before Bed,
+  Before Work or Study, For Those Who Have Died — an index in red
+  numerals over the chosen one's order of service, what happens between
+  chants in red (`ChantRubricText`), each chant a bead that lights as
+  the set is sung, Pause between chants, PLAY ALL, and the bookmark. Once
+  the set is under way PLAY ALL is the set's own Pause and Resume
+  (`ChantSetPlayButton`, through `ChantPlayer.pauseOrResume`), and so is
+  the sounding bead. The bookmark is a toggle: filled while the occasion
+  is kept as a set of one's own (`ChantSet.occasionID`), a second tap
+  letting that set go — but only while the set is still the occasion's
+  own copy (`ChantShelfStore.isUntouchedCopy`); any other kept set is let
+  go only after the question before a delete (`toggleKeeping` answers
+  `.askFirst`). **Saved** (`ChantSavedSection`, on its own page): a shelf
+  of spines (`ChantSpineCloth`) — Learned, Favourites, each set the
+  reader made, and the dashed + — over the chants of the one chosen; a
+  set's chants and pauses are moved and removed from the handle's menu,
+  added from `ChantPickerSheet` and `ChantPauseSheet`, shared as words
+  and sung as one; then Recently played and the Words setting. A new set
+  is named first (`ChantNewSetSheet`) and stands on the shelf only once
+  made. The curation — every chant's kind,
   seasons, feasts, weekdays, months, occasions with their rubrics,
   paths and paintings — is `Data/ChantLibraryData.swift`, hand-written;
   `ChantLibraryTests` fails if it names a chant the catalog lacks or
@@ -2669,17 +2614,20 @@ write concurrent code here:
   a tenth of a second by carrying the clock forward between
   AudioService's half-second ticks.
 
-  **What the library is singing stands at the foot of every section**
-  (`ChantMiniPlayer`): painting, chant, where it stands ("Hail, Holy
+  **What the library is singing stands at the foot of the whole app**
+  (`ChantMiniPlayer` in `ContentView`, above the tab bar or at a pushed
+  page's foot, with a ✕ that puts the chant away; it stands aside on a
+  chant's own page, a prayer under way and its page before PRAY, the
+  readers, the Chapel's arranging, the tour and a consecration day,
+  read from `AppRouter.topRoute`): painting, chant, where it stands ("Hail, Holy
   Queen · 0:21 of 3:05", the time kept whole however long the English
   runs, "Adoration and Blessing · 2 of 4", "Silence · 9:12 left", "Next: Tantum
   Ergo"), its pause, and a gold hairline of progress; a tap opens the
   chant — waiting between chants, the next one, whose page's play goes
   on with the set rather than sing the last again. Under Reduce Motion
-  it fades in rather than rises. It is the one filled surface on the
-  library's pages, because it floats over a page that scrolls beneath
-  it: it stands in the page's bottom safe-area inset, so every section's
-  scroll and the search's run on beneath it and bring their last row
+  it fades in rather than rises. It is a filled surface, because it floats over a page that scrolls
+  beneath it: every page in the stack takes its height as a bottom
+  safe-area inset, so every scroll runs on beneath it and bring their last row
   clear of it at its real height, where a fixed 112 points was a guess. The consecration day's transport plays the same bundled
   recording for its Veni Creator, Ave Maris Stella, Magnificat, litanies
   and Glory Be, with a SCORE door and the credit beneath it. Its chant

@@ -28,6 +28,82 @@ enum ChantSpineCloth {
     }
 }
 
+// MARK: - ChantSavedShelf
+
+/// The shelf the Saved page opens on: the library's Your Chants names one
+enum ChantSavedShelf: Hashable {
+    case favorites
+    case learned
+    case set(UUID)
+}
+
+// MARK: - ChantSavedPage
+
+/// The reader's own chants on a page of their own, pushed from the
+/// library's Your Chants: the spines, the shelf chosen, what was sung
+/// lately and the words. The app-wide mini player stands at its foot.
+struct ChantSavedPage: View {
+
+    @Environment(AppRouter.self) private var router
+    @State private var openSetID: UUID?
+    private let start: ChantSavedShelf
+
+    init(start: ChantSavedShelf) {
+        self.start = start
+        if case .set(let id) = start { _openSetID = State(initialValue: id) }
+    }
+
+    var body: some View {
+        ZStack {
+            AppColors.appGradient.ignoresSafeArea()
+
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 26) {
+                    VStack(spacing: 10) {
+                        Text("CHANT LIBRARY")
+                            .font(AppFonts.labelFont(9.5))
+                            .tracking(3)
+                            .foregroundColor(AppColors.gold)
+                        Text("Your Chants")
+                            .font(AppFonts.titleFont(26))
+                            .foregroundColor(AppColors.cream)
+                            .accessibilityAddTraits(.isHeader)
+                        Text("Your favourite chants, the ones you have learned, and sets you have made.")
+                            .font(AppFonts.readingItalicFont(16))
+                            .foregroundColor(AppColors.cream.opacity(0.78))
+                            .multilineTextAlignment(.center)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.horizontal, 28)
+
+                    ChantSavedSection(
+                        openSetID: $openSetID,
+                        startsOn: start,
+                        open: { router.push(.chant(id: $0.id)) }
+                    )
+                }
+                .padding(.top, 8)
+                .padding(.bottom, 48)
+            }
+            .topChromeFade()
+        }
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: { router.pop() }) {
+                    HStack(spacing: 6) {
+                        AppIcon("ph-caret-left", size: 14)
+                        Text("Back")
+                            .font(AppFonts.bodyFont(16))
+                    }
+                    .foregroundColor(AppColors.gold)
+                }
+            }
+        }
+    }
+}
+
 // MARK: - ChantSavedSection
 
 struct ChantSavedSection: View {
@@ -57,8 +133,13 @@ struct ChantSavedSection: View {
     /// spines
     @State private var shelfWidth: CGFloat = 0
 
-    init(openSetID: Binding<UUID?>, open: @escaping (Chant) -> Void) {
+    init(openSetID: Binding<UUID?>, startsOn: ChantSavedShelf? = nil, open: @escaping (Chant) -> Void) {
         _openSetID = openSetID
+        switch startsOn {
+        case .learned:   _spineChoice = State(initialValue: .learned)
+        case .favorites: _spineChoice = State(initialValue: .favorites)
+        default:         break
+        }
         self.open = open
     }
 
