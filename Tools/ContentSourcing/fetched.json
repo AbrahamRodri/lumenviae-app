@@ -432,5 +432,98 @@
       "O-Oriens-Magnificat-web-3.svg"
     ],
     "licence_page_read": "https://www.verbumgloriae.es/licencia-copyleft/"
+  },
+  "seven_sorrows_finding": {
+    "status": "verified",
+    "commons_file": "File:William Holman Hunt - The Finding of the Saviour in the Temple - Google Art Project.jpg",
+    "source_page": "https://commons.wikimedia.org/wiki/File:William_Holman_Hunt_-_The_Finding_of_the_Saviour_in_the_Temple_-_Google_Art_Project.jpg",
+    "file_url": "https://upload.wikimedia.org/wikipedia/commons/f/f0/William_Holman_Hunt_-_The_Finding_of_the_Saviour_in_the_Temple_-_Google_Art_Project.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "licence": "Public domain",
+    "licence_url": "https://commons.wikimedia.org/wiki/Commons:Reuse_of_PD-Art_photographs",
+    "attribution": null,
+    "width": 8858,
+    "height": 5428,
+    "bytes": 589893,
+    "crop": null
+  },
+  "seven_sorrows_calvary": {
+    "status": "verified",
+    "commons_file": "File:Crucifixion Diptych (Rogier van der Weyden).jpg",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Crucifixion_Diptych_(Rogier_van_der_Weyden).jpg",
+    "file_url": "https://upload.wikimedia.org/wikipedia/commons/a/a9/Crucifixion_Diptych_%28Rogier_van_der_Weyden%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "licence": "Public domain",
+    "licence_url": "https://commons.wikimedia.org/wiki/Commons:Reuse_of_PD-Art_photographs",
+    "attribution": null,
+    "width": 1195,
+    "height": 1128,
+    "bytes": 224685,
+    "crop": null
+  },
+  "glorious_pentecost": {
+    "status": "verified",
+    "commons_file": "File:Pentecostés (El Greco, c. 1600) Prado.jpg",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Pentecost%C3%A9s_(El_Greco,_c._1600)_Prado.jpg",
+    "file_url": "https://upload.wikimedia.org/wikipedia/commons/d/d3/Pentecost%C3%A9s_%28El_Greco%2C_c._1600%29_Prado.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "licence": "Public domain",
+    "licence_url": "https://commons.wikimedia.org/wiki/Commons:Reuse_of_PD-Art_photographs",
+    "attribution": null,
+    "width": 1365,
+    "height": 2964,
+    "bytes": 286726,
+    "crop": null
+  },
+  "glorious_ascension": {
+    "status": "verified",
+    "commons_file": "File:Francisco Camilo - Ascension - Google Art Project.jpg",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Francisco_Camilo_-_Ascension_-_Google_Art_Project.jpg",
+    "file_url": "https://upload.wikimedia.org/wikipedia/commons/4/41/Francisco_Camilo_-_Ascension_-_Google_Art_Project.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "licence": "Public domain",
+    "licence_url": "https://commons.wikimedia.org/wiki/Commons:Reuse_of_PD-Art_photographs",
+    "width": 3474,
+    "height": 5293,
+    "bytes": 393241,
+    "retaken_from": "672×1024"
+  },
+  "glorious_assumption": {
+    "status": "verified",
+    "commons_file": "File:CORRADO GIAQUINTO MOLFETTA 1703 - 1766 NAPLES ASSUMPTION OF THE VIRGIN.jpg",
+    "source_page": "https://commons.wikimedia.org/wiki/File:CORRADO_GIAQUINTO_MOLFETTA_1703_-_1766_NAPLES_ASSUMPTION_OF_THE_VIRGIN.jpg",
+    "file_url": "https://upload.wikimedia.org/wikipedia/commons/9/9a/CORRADO_GIAQUINTO_MOLFETTA_1703_-_1766_NAPLES_ASSUMPTION_OF_THE_VIRGIN.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "licence": "Public domain",
+    "licence_url": "https://commons.wikimedia.org/wiki/Commons:Reuse_of_PD-Art_photographs",
+    "width": 1286,
+    "height": 2000,
+    "bytes": 277576,
+    "retaken_from": "800×1245"
+  },
+  "joyful_nativity": {
+    "status": "verified",
+    "commons_file": "File:The Adoration of the Shepherds by Guido Reni.jpg",
+    "source_page": "https://commons.wikimedia.org/wiki/File:The_Adoration_of_the_Shepherds_by_Guido_Reni.jpg",
+    "file_url": "https://upload.wikimedia.org/wikipedia/commons/e/e7/The_Adoration_of_the_Shepherds_by_Guido_Reni.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "licence": "Public domain",
+    "licence_url": "https://commons.wikimedia.org/wiki/Commons:Reuse_of_PD-Art_photographs",
+    "width": 3953,
+    "height": 6000,
+    "bytes": 232167,
+    "retaken_from": "711×1080"
+  },
+  "glorious_resurrection": {
+    "status": "verified",
+    "commons_file": "File:Carracci - La Résurrection du Christ, 1593, INV 200 ; MR 117.jpg",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Carracci_-_La_R%C3%A9surrection_du_Christ,_1593,_INV_200_;_MR_117.jpg",
+    "file_url": "https://upload.wikimedia.org/wikipedia/commons/2/2e/Carracci_-_La_R%C3%A9surrection_du_Christ%2C_1593%2C_INV_200_%3B_MR_117.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "licence": "Public domain",
+    "licence_url": "https://commons.wikimedia.org/wiki/Commons:Reuse_of_PD-Art_photographs",
+    "attribution": null,
+    "width": 1101,
+    "height": 1500,
+    "bytes": 203962,
+    "crop": [
+      0.15,
+      0.0,
+      0.15,
+      0.0
+    ]
   }
 }

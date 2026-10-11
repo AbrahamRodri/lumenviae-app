@@ -173,6 +173,88 @@ struct LibraryBookParserTests {
 }
 
 @MainActor
+struct LibraryHeadingFormsTests {
+
+    private let prose = String(repeating: "The soul rests in God and wants for nothing, and fears nothing. ", count: 12)
+
+    /// Caussade's Gutenberg edition sets its headings in underscores with
+    /// a closing stop, its parts "Book First.", and some titles past 140
+    /// characters; Brother Lawrence's heads its letters "FIRST LETTER."
+    private var edition: String {
+        """
+        *** START OF THE PROJECT GUTENBERG EBOOK A TEST BOOK ***
+
+        Book First.
+
+        _CHAPTER I._
+
+         God reveals Himself to us as Mysteriously, as Adorably, and with as
+         much Reality in the most Ordinary Events as in the great Events of
+         History and the Holy Scriptures.
+
+
+        \(prose)
+
+        DISCOURSE II.
+
+        ON THE BIRTH OF MARY.
+
+        \(prose)
+
+        FIRST LETTER.
+
+        _To the Same_
+
+        \(prose)
+
+        *** END OF THE PROJECT GUTENBERG EBOOK A TEST BOOK ***
+        """
+    }
+
+    private func info(maximumTitleLength: Int = 140) -> LibraryBookInfo {
+        LibraryBookInfo(
+            id: "forms", title: "Forms", author: "Nobody", blurb: "", gutenbergID: 1,
+            parsing: LibraryParsingRules(
+                chapterPattern: #"^(_?CHAPTER [IVXLC]+\._?|DISCOURSE [IVXLC]+\.|FIRST LETTER\.)$"#,
+                partPattern: #"^Book (First|Second)\.$"#,
+                maximumTitleLength: maximumTitleLength
+            )
+        )
+    }
+
+    @Test func underscoresAndClosingStopsAreReadOutOfHeadingsAndParts() {
+        let chapters = LibraryBookParser.parse(text: edition, info: info()).chapters
+        #expect(chapters.map(\.heading) == ["Chapter I", "Discourse II", "First Letter"])
+        #expect(chapters[0].part == "Book First")
+        #expect(chapters[1].title == "On the Birth of Mary")
+        #expect(chapters[2].title == "To the Same", "the emphasis unwrapped")
+    }
+
+    @Test func aLongTitleIsTheBodyAt140AndTheTitleWhenTheRuleAllows() {
+        let short = LibraryBookParser.parse(text: edition, info: info()).chapters[0]
+        #expect(short.title == nil)
+        #expect(short.paragraphs[0].hasPrefix("God reveals Himself"))
+        let long = LibraryBookParser.parse(text: edition, info: info(maximumTitleLength: 220)).chapters[0]
+        #expect(long.title?.hasPrefix("God reveals Himself") == true)
+        #expect(long.paragraphs[0].hasPrefix("The soul rests"))
+    }
+
+    @Test func theDefaultTitleLengthLeavesTheOldFingerprintsAlone() {
+        // The first four books were cached under a seed without this rule;
+        // only a book that sets it carries it in its fingerprint
+        let plain = LibraryBookInfo(id: "a", title: "A", author: "B", blurb: "", gutenbergID: 1,
+                                    parsing: LibraryParsingRules(chapterPattern: "^X$"))
+        var rules = plain.parsing
+        rules.maximumTitleLength = 140
+        let same = LibraryBookInfo(id: "a", title: "A", author: "B", blurb: "", gutenbergID: 1, parsing: rules)
+        rules.maximumTitleLength = 220
+        let longer = LibraryBookInfo(id: "a", title: "A", author: "B", blurb: "", gutenbergID: 1, parsing: rules)
+        #expect(plain.editionFingerprint == same.editionFingerprint)
+        #expect(plain.editionFingerprint != longer.editionFingerprint)
+    }
+}
+
+@MainActor
 struct LibraryCatalogTests {
 
     @Test func everyBookIsFoundByItsId() {

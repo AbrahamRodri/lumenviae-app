@@ -83,6 +83,32 @@ struct LibraryTrackMapTests {
         #expect(!alignment.readsWholeChapter(track: 2))
     }
 
+    @Test func aUnitTheRecordingPassesOverTakesNoTrackAndShiftsTheRest() {
+        // The Glories of Mary: the two paragraphs that open the virtues are
+        // read into the first virtue's file, so unit 1 has no track and
+        // units 2 and 3 are read by tracks 1 and 2
+        let chapters = [chapter(0, "Section X"), chapter(1, "Of the Virtues"), chapter(2, "Section I"), chapter(3, "Section II")]
+        let tracks = sections(["Part I Chapter X", "Virtues, Section 1", "Virtues, Section 2"])
+        let alignment = LibraryTrackMap.align(chapters: chapters, sections: tracks,
+                                              mapping: .sequential(offset: 0, unread: [1]))
+        #expect(alignment.track(forChapter: 0) == 0)
+        #expect(alignment.track(forChapter: 1) == nil)
+        #expect(alignment.track(forChapter: 2) == 1)
+        #expect(alignment.track(forChapter: 3) == 2)
+        #expect(alignment.readsWholeChapter(track: 1))
+    }
+
+    @Test func aNegativeOffsetLeavesTheTextsOwnFrontMatterUnread() {
+        // Brother Lawrence: the preface is in the text and not in the recording
+        let chapters = [chapter(0, "Preface"), chapter(1, "First Conversation"), chapter(2, "Second Conversation")]
+        let tracks = sections(["First Conversation", "Second Conversation"])
+        let alignment = LibraryTrackMap.align(chapters: chapters, sections: tracks,
+                                              mapping: .sequential(offset: -1))
+        #expect(alignment.track(forChapter: 0) == nil)
+        #expect(alignment.track(forChapter: 1) == 0)
+        #expect(alignment.track(forChapter: 2) == 1)
+    }
+
     @Test func aChapterBeyondTheRecordingHasNoTrack() {
         let chapters = [chapter(0, "Chapter I"), chapter(1, "Chapter II")]
         let alignment = LibraryTrackMap.align(chapters: chapters, sections: sections(["Chapter 1"]),

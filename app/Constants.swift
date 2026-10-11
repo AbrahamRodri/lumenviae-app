@@ -50,14 +50,15 @@ struct Constants {
         "luminous_eucharist"
     ]
 
-    /// Images for the Seven Sorrows of Mary, in sorrow order.
-    /// The third and fifth sorrows share scenes with existing mystery art.
+    /// Images for the Seven Sorrows of Mary, in sorrow order. The third
+    /// and fifth once borrowed the Finding and the Crucifixion from the
+    /// other sets; each sorrow now has a painting of Mary's own part in it.
     static let sevenSorrowsMysteryImages: [String] = [
         "seven_sorrows_simeon",
         "seven_sorrows_flight",
-        "joyful_finding",
+        "seven_sorrows_finding",
         "seven_sorrows_meeting",
-        "sorrowful_crucifixion",
+        "seven_sorrows_calvary",
         "seven_sorrows_descent",
         "seven_sorrows_burial"
     ]

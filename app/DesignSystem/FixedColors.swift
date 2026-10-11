@@ -121,6 +121,9 @@ extension LibraryBookInfo {
         case "confessions-of-st-augustine": return Color(hex: "3d3a24") // bronze-olive
         case "dolorous-passion":          return Color(hex: "342a52")  // passion violet
         case "true-devotion":             return AppColors.marianBlue
+        case "glories-of-mary":           return Color(hex: "1f3a5a")  // Marian blue, darker
+        case "abandonment-to-divine-providence": return Color(hex: "2e4a3a")  // deep green
+        case "practice-of-the-presence-of-god": return Color(hex: "5a4a2a")  // kitchen ochre
         default:                          return Color(hex: "252542")
         }
     }

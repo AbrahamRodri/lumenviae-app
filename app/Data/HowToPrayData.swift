@@ -264,6 +264,85 @@ The Coronation — Jesus crowning thee
                     "If you are exploring the faith, the Rosary is a gentle place to begin: it walks you through the life of Jesus, a scene at a time, in the company of His Mother."
                 ],
                 quote: nil
+            ),
+            LibraryReading(
+                id: "q_origin",
+                title: "Where did the Rosary come from?",
+                detail: "From the Psalms, by way of the monks",
+                paragraphs: [
+                    "Monks have always prayed the hundred and fifty Psalms. In the early Middle Ages the lay brothers who could not read said a hundred and fifty Our Fathers in their place, and counted them on a string of beads. By the twelfth century the Hail Mary was being counted the same way, and a hundred and fifty of them came to be called Our Lady's Psalter.",
+                    "Tradition holds that Our Lady gave the Rosary to St. Dominic, who preached it against the heresies of his day, and his Order carried it across Europe. In the fifteenth century the Dominican Bl. Alan de la Roche gave it the shape it has now, fifteen mysteries in three sets, and founded the first Rosary confraternities.",
+                    "In 1571 St. Pius V, himself a Dominican, asked the whole Church to pray the Rosary while a Christian fleet met the Turks at Lepanto. He credited the victory to Our Lady and kept the day, October 7, as her feast. It is still the feast of Our Lady of the Rosary, and October is still the Rosary's month.",
+                ],
+                quote: nil
+            ),
+            LibraryReading(
+                id: "q_psalter",
+                title: "Why a hundred and fifty Hail Marys?",
+                detail: "Our Lady's Psalter",
+                paragraphs: [
+                    "There are a hundred and fifty Psalms, and the first rosaries counted a hundred and fifty prayers in their place. That is why the full Rosary has fifteen decades of ten Hail Marys: five Joyful, five Sorrowful, five Glorious. Said together they are Our Lady's Psalter, and a string of fifteen decades is still called a psalter rosary.",
+                    "Hardly anyone prays all fifteen at once. The everyday Rosary is one set of five, fifty Hail Marys, prayed on the five-decade beads most people own, and the sets are spread across the week. The Luminous Mysteries, added in 2002, make a fourth set of five for those who pray them.",
+                    "The count is not the point. The Hail Marys are the music; the mystery is what you look at while it plays.",
+                ],
+                quote: nil,
+                doors: [.prayer(id: "hail_mary", note: "The prayer said fifty times")]
+            ),
+            LibraryReading(
+                id: "q_which_day",
+                title: "Which mysteries on which day?",
+                detail: "The app knows, but here is the rule",
+                paragraphs: [
+                    "The custom is to pray the Joyful Mysteries on Monday and Thursday, the Sorrowful on Tuesday and Friday, and the Glorious on Wednesday and Saturday. Sunday follows the season: the Joyful in Advent, the Sorrowful in Lent, and the Glorious the rest of the year.",
+                    "A newer schedule, given with the Luminous Mysteries in 2002, prays the Luminous on Thursday and moves the Joyful to Saturday. The app follows the older custom unless you choose the newer one in Settings, under Devotion.",
+                    "Either way, the schedule is a help and not a law. Any set may be prayed on any day, and the home page's grid always offers them all.",
+                ],
+                quote: nil,
+                doors: [
+                    .page(
+                        .settings, icon: "ph-faders", title: "Daily Mysteries",
+                        note: "Choose the schedule in Settings, under Devotion")
+                ]
+            ),
+            LibraryReading(
+                id: "q_for_dead",
+                title: "Can I pray it for the dead?",
+                detail: "Yes, and the Church asks you to",
+                paragraphs: [
+                    "Any Rosary can be offered for someone, living or dead. Say whom it is for before the Sign of the Cross, and the whole prayer is theirs. Catholics have prayed the Rosary at wakes and gravesides for centuries, usually the Glorious Mysteries, which end in heaven.",
+                    "Praying for the dead is one of the works of mercy. The Church teaches that the souls in purgatory are helped by the prayers of the living, and St. Alphonsus writes that Mary comes to the aid of her servants there. A Rosary for a parent, a friend, or someone no one else remembers is never wasted.",
+                    "It is customary to add the short prayer for the dead, Eternal rest, after the Rosary, or a decade can be given to them within it.",
+                ],
+                quote: ReadingQuote(
+                    text:
+                        "Too happy are the servants of this most kind mother, since not only in this world they are aided by her, but also in purgatory they are assisted and consoled by her protection.",
+                    citation: "St. Alphonsus Liguori, The Glories of Mary"
+                ),
+                doors: [.prayer(id: "requiem_aeternam", note: "Eternal rest grant unto them, O Lord")]
+            ),
+            LibraryReading(
+                id: "q_sorrows",
+                title: "What is the Seven Sorrows chaplet?",
+                detail: "Mary's seven griefs, seven Hail Marys each",
+                paragraphs: [
+                    "A chaplet is a prayer counted on beads that is not the Rosary. The chaplet of the Seven Sorrows walks through seven griefs of Mary's life: Simeon's prophecy, the flight into Egypt, the three days Jesus was lost, meeting Him on the way to Calvary, His death, His body taken down, and His burial.",
+                    "For each sorrow you say an Our Father and seven Hail Marys, so the chaplet has its own beads, seven groups of seven, and takes about as long as a Rosary. It comes from the Servite Order, founded in the thirteenth century to honour Our Lady of Sorrows, whose feast is September 15.",
+                    "In this app it stands beside the four sets of mysteries. Many people pray it on Fridays, or when they have a grief of their own to bring to her.",
+                ],
+                quote: nil,
+                doors: [.mysteries(.sevenSorrows, note: "The seven sorrows, with a meditation on each")]
+            ),
+            LibraryReading(
+                id: "q_bible",
+                title: "Is the Rosary in the Bible?",
+                detail: "Its words are; its beads are not",
+                paragraphs: [
+                    "Nearly every word of the Rosary is Scripture. The Our Father is the prayer Jesus taught (Matthew 6). The first half of the Hail Mary is the angel's greeting and Elizabeth's (Luke 1). The Creed and the Glory Be are the Church's oldest summaries of what the Bible teaches.",
+                    "The mysteries are Gospel scenes: the angel at Nazareth, the birth at Bethlehem, the agony in the garden, the empty tomb, the coming of the Holy Ghost in the Acts of the Apostles. The last two Glorious Mysteries, the Assumption and the Coronation, are the Church's reading of the Bible's own images, the woman clothed with the sun of the Apocalypse and the queen at the King's right hand of the Psalms.",
+                    "The beads are only a way of counting. The Scriptural Rosary goes further and gives a verse of the Bible to every Hail Mary, so the whole prayer is read out of the Gospel.",
+                ],
+                quote: nil,
+                doors: [.act(.scripturalRosary, note: "A verse of Scripture for every bead")]
             )
         ]
     )

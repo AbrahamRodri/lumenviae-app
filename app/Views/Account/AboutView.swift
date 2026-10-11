@@ -22,6 +22,7 @@ struct AboutView: View {
 
     @State private var showAbout = false
     @State private var showPrivacyPolicy = false
+    @State private var showSourcesCredits = false
     @State private var showHelpSupport = false
     @State private var showFeedback = false
 
@@ -98,6 +99,11 @@ struct AboutView: View {
                 .presentationBackground(AppColors.background)
                 .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
+        .sheet(isPresented: $showSourcesCredits) {
+            SourcesCreditsSheet()
+                .presentationBackground(AppColors.background)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
+        }
         .sheet(isPresented: $showHelpSupport, onDismiss: {
             guard feedbackAfterHelp else { return }
             feedbackAfterHelp = false
@@ -164,6 +170,17 @@ struct AboutView: View {
                 Divider()
                     .background(AppColors.gold.opacity(0.2))
 
+                ActionRow(
+                    icon: "ph-scroll",
+                    title: "Sources & Credits",
+                    subtitle: "The paintings, books and recordings, and where they come from"
+                ) {
+                    showSourcesCredits = true
+                }
+
+                Divider()
+                    .background(AppColors.gold.opacity(0.2))
+
                 ActionRow(icon: "ph-shield", title: "Privacy Policy") {
                     showPrivacyPolicy = true
                 }
@@ -187,6 +204,82 @@ struct AboutView: View {
                 }
             }
         }
+    }
+}
+
+// MARK: - Sources & Credits
+
+/// The app's sources, in the sheet grammar: the paintings in the order
+/// the Rosary prays them, then every text, recording and typeface, each
+/// with its maker, edition and licence. The list is generated from
+/// Tools/ContentSourcing/sources.py (`SourcesAndCredits`), so a painting
+/// taken through fetch.py is credited the same day.
+struct SourcesCreditsSheet: View {
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 0) {
+                SheetHeader(
+                    kicker: "Lumen Viae",
+                    title: "Sources & Credits",
+                    lead: "Everything in the app that is not our own writing, and the people and places it comes from. Every painting is by a painter dead more than a hundred years, and every text is in the public domain or used under an open licence."
+                )
+
+                SheetSectionLabel("The Paintings")
+                    .padding(.top, 8)
+                ForEach(SourcesAndCredits.paintings) { work in
+                    creditRow(work)
+                }
+
+                SheetSectionLabel("Texts, Recordings and Type")
+                    .padding(.top, 28)
+                ForEach(SourcesAndCredits.texts) { work in
+                    creditRow(work)
+                }
+
+                Text("Lumen Viae is made by one person, for the greater glory of God. If a credit here is wrong or missing, write through Send Feedback and it will be put right.")
+                    .font(AppFonts.italicFont(14))
+                    .foregroundColor(AppColors.textSecondary)
+                    .lineSpacing(4)
+                    .padding(.horizontal, SheetMetrics.gutter)
+                    .padding(.top, 32)
+                    .padding(.bottom, 48)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .sheetGround()
+    }
+
+    /// One work: its name, its maker, where and when, and its terms
+    private func creditRow(_ work: CreditedWork) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(work.title)
+                .font(AppFonts.semiboldBodyFont(16))
+                .foregroundColor(AppColors.cream)
+            Text(work.maker)
+                .font(AppFonts.italicFont(15))
+                .foregroundColor(AppColors.cream.opacity(0.8))
+            if !work.detail.isEmpty {
+                Text(work.detail)
+                    .font(AppFonts.bodyFont(14))
+                    .foregroundColor(AppColors.textSecondary)
+                    .lineSpacing(3)
+            }
+            Text(work.licence.uppercased())
+                .font(AppFonts.labelFont(10))
+                .tracking(1.5)
+                .foregroundColor(AppColors.gold.opacity(0.7))
+                .padding(.top, 2)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, SheetMetrics.gutter)
+        .padding(.vertical, 14)
+        .overlay(alignment: .bottom) {
+            Rectangle()
+                .fill(AppColors.gold.opacity(0.16))
+                .frame(height: AppLine.hairline)
+                .padding(.horizontal, SheetMetrics.gutter)
+        }
+        .accessibilityElement(children: .combine)
     }
 }
 

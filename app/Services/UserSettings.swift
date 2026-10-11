@@ -923,8 +923,13 @@ final class UserSettings {
     /// multi-intention week hears from each of them, and `offset` walks the
     /// selection forward as the days pass so no weekday ossifies onto one
     /// line. Falls back to the default pool when nothing was chosen.
+    ///
+    /// The season is read once, when the week is scheduled: the seven
+    /// repeating requests then carry it until the next launch or
+    /// foreground reschedules them, so a week of Advent lines can run a
+    /// few days past Christmas on a phone the app has not been opened on.
     private func reminderWeek(offset: Int) -> [ReminderMessage] {
-        let pool = ReminderMessage.pool(for: intentions)
+        let pool = ReminderMessage.pool(for: intentions, on: ScheduleService.today)
         guard !pool.isEmpty else { return [] }
         return (0..<7).map { pool[(offset + $0) % pool.count] }
     }
