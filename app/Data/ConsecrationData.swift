@@ -34,7 +34,7 @@ enum ConsecrationData {
     static let allPrayers: [String: ConsecrationPrayer] = [
         "litany_holy_ghost": ConsecrationPrayer(
             id: "litany_holy_ghost",
-            title: "Litany of the Holy Ghost",
+            title: "Litany of the Holy Spirit",
             latinTitle: nil,
             content: """
 Lord, have mercy on us.
@@ -385,7 +385,7 @@ Let Thy Name be praised, not mine; let Thy work be magnified, not mine; let Thy 
         allDays.append(ConsecrationDay(
             dayNumber: 6,
             phase: .preparatory,
-            title: "The Example of the Holy Fathers",
+            title: "The Example of the Desert Fathers",
             readings: [
                 ConsecrationReading(
                     order: 1,
@@ -521,7 +521,7 @@ It is a great honor, a great glory, to serve Thee, and to despise all things for
         allDays.append(ConsecrationDay(
             dayNumber: 11,
             phase: .preparatory,
-            title: "Amendment of Life",
+            title: "Changing Your Life",
             readings: [
                 ConsecrationReading(
                     order: 1,
@@ -649,7 +649,7 @@ And there were present, at that very time, some that told him of the Galileans, 
                 ),
                 ConsecrationReading(
                     order: 2,
-                    title: "True Devotion, Nos. 81-82",
+                    title: "True Devotion, paragraphs 81–82",
                     text: """
 # We Need Mary in order to Die to Ourselves
 
@@ -701,7 +701,7 @@ We cannot trust over much to ourselves, because grace oftentimes is wanting to u
         allDays.append(ConsecrationDay(
             dayNumber: 17,
             phase: .knowledgeOfSelf,
-            title: "Rendering an Account",
+            title: "Giving God an Account",
             readings: [
                 ConsecrationReading(
                     order: 1,
@@ -726,7 +726,7 @@ Therefore calling together every one of his lord's debtors, he said to the first
                     source: "Douay-Rheims Bible"
                 )
             ],
-            journalPrompt: "If you had to render an account of your stewardship today, what would you want to set right?"
+            journalPrompt: "If you had to answer to God today for how you used what He gave you, what would you want to set right?"
         ))
 
         // Day 18
@@ -818,7 +818,7 @@ And they came with haste; and they found Mary and Joseph, and the infant lying i
                     source: "Douay-Rheims Bible"
                 )
             ],
-            journalPrompt: "Mary 'kept all these words, pondering them in her heart.' Which of her ten principal virtues do you most need to imitate?"
+            journalPrompt: "Mary 'kept all these words, pondering them in her heart.' Which of the ten virtues Montfort sees in Mary do you most need to imitate?"
         ))
 
         // Day 21
@@ -829,7 +829,7 @@ And they came with haste; and they found Mary and Joseph, and the infant lying i
             readings: [
                 ConsecrationReading(
                     order: 1,
-                    title: "The Secret of Mary, Nos. 23-24",
+                    title: "The Secret of Mary, paragraphs 23–24",
                     text: """
 # True Devotion to Our Blessed Lady
 
@@ -857,7 +857,7 @@ We should choose a special feast day on which we give, consecrate and sacrifice 
             readings: [
                 ConsecrationReading(
                     order: 1,
-                    title: "True Devotion, Nos. 106-110",
+                    title: "True Devotion, paragraphs 106–110",
                     text: """
 # Marks of authentic devotion to our Lady
 
@@ -874,7 +874,7 @@ Fifth, true devotion to Mary is disinterested. It inspires us to seek God alone 
                     source: "St. Louis de Montfort"
                 )
             ],
-            journalPrompt: "Is your devotion interior, trustful, holy, constant, and disinterested? Which mark needs the most growth?"
+            journalPrompt: "Is your devotion interior, trustful, holy, constant, and selfless? Which mark needs the most growth?"
         ))
 
         // Day 23
@@ -885,7 +885,7 @@ Fifth, true devotion to Mary is disinterested. It inspires us to seek God alone 
             readings: [
                 ConsecrationReading(
                     order: 1,
-                    title: "True Devotion, Nos. 120-121",
+                    title: "True Devotion, paragraphs 120–121",
                     text: """
 # Nature of perfect devotion to the Blessed Virgin, or perfect consecration to Jesus Christ
 
@@ -914,7 +914,7 @@ In other words, we give her all that we possess both in our natural life and in 
             readings: [
                 ConsecrationReading(
                     order: 1,
-                    title: "True Devotion, Nos. 152-164",
+                    title: "True Devotion, paragraphs 152–164",
                     text: """
 This devotion is a smooth, short, perfect and sure way of attaining union with our Lord, in which Christian perfection consists.
 
@@ -940,7 +940,7 @@ This devotion is a smooth, short, perfect and sure way of attaining union with o
             readings: [
                 ConsecrationReading(
                     order: 1,
-                    title: "True Devotion, Nos. 213-225",
+                    title: "True Devotion, paragraphs 213–225",
                     text: """
 My dear friend, be sure that if you remain faithful to the interior and exterior practices of this devotion which I will point out, the following effects will be produced in your soul:
 
@@ -972,7 +972,7 @@ My dear friend, be sure that if you remain faithful to the interior and exterior
             readings: [
                 ConsecrationReading(
                     order: 1,
-                    title: "True Devotion, Nos. 12-38",
+                    title: "True Devotion, paragraphs 12–38",
                     text: """
 "If you wish to understand the Mother," says a saint, "then understand the Son. She is a worthy Mother of God." Hic taceat omnis lingua: Here let every tongue be silent.
 
@@ -1006,7 +1006,7 @@ During this period we shall apply ourselves to the study of Jesus Christ. What i
                 ),
                 ConsecrationReading(
                     order: 2,
-                    title: "True Devotion, Nos. 61-62",
+                    title: "True Devotion, paragraphs 61–62",
                     text: """
 Jesus, our Saviour, true God and true man must be the ultimate end of all our other devotions; otherwise they would be false and misleading. He is the Alpha and the Omega, the beginning and end of everything. "We labour," says St. Paul, "only to make all men perfect in Jesus Christ."
 
@@ -1124,7 +1124,7 @@ And how is it that Thou dost vouchsafe to come unto a sinner? Thou knowest Thy s
                 ),
                 ConsecrationReading(
                     order: 2,
-                    title: "True Devotion, Nos. 243, 245-246, 249",
+                    title: "True Devotion, paragraphs 243, 245–246, 249",
                     text: """
 Loving slaves of Jesus in Mary should hold in high esteem devotion to Jesus, the Word of God, in the great mystery of the Incarnation, March 25th, which is the mystery proper to this devotion, because it was inspired by the Holy Spirit: (a) That we might honour and imitate the wondrous dependence which God the Son chose to have on Mary, for the glory of his Father and for the redemption of man. This dependence is revealed especially in this mystery where Jesus becomes a captive and slave in the womb of his Blessed Mother, depending on her for everything. (b) That we might thank God for the incomparable graces he has conferred upon Mary and especially that of choosing her to be his most worthy Mother. This choice was made in the mystery of the incarnation. These are the two principal ends of the slavery of Jesus in Mary.
 
@@ -1160,7 +1160,7 @@ Love Him, and keep Him for thy friend, who, when all go away, will not forsake t
                 ),
                 ConsecrationReading(
                     order: 2,
-                    title: "True Devotion, Nos. 257-260",
+                    title: "True Devotion, paragraphs 257–260",
                     text: """
 There are some very sanctifying interior practices for those souls who feel called by the Holy Spirit to a high degree of perfection. They may be expressed in four words: doing everything through Mary, with Mary, in Mary, and for Mary, in order to do it more perfectly through Jesus, with Jesus, in Jesus, and for Jesus.
 
@@ -1171,7 +1171,7 @@ With Mary: in all our actions we must look upon Mary, although a simple human be
                     source: "St. Louis de Montfort"
                 )
             ],
-            journalPrompt: "Jesus 'will admit of no rival.' What creature-attachments compete with Him for your heart?"
+            journalPrompt: "Jesus 'will admit of no rival.' What attachments to people or things compete with Him for your heart?"
         ))
 
         // Day 33
@@ -1192,7 +1192,7 @@ O most sweet Lord Jesus, how great is the pleasure of the devout soul that feast
                 ),
                 ConsecrationReading(
                     order: 2,
-                    title: "True Devotion, Nos. 261-265",
+                    title: "True Devotion, paragraphs 261–265",
                     text: """
 In Mary: we must do everything in Mary. To understand this we must realise that the Blessed Virgin is the true earthly paradise of the new Adam and that the ancient paradise was only a symbol of her. There are in this earthly paradise untold riches, beauties, rarities and delights, which the new Adam, Jesus Christ, has left there. It is in this paradise that he "took his delights" for nine months, worked his wonders and displayed his riches with the magnificence of God himself. In this earthly paradise grows the real Tree of Life which bore our Lord, the fruit of Life, the tree of knowledge of good and evil, which bore the Light of the world. In this divine place there are trees planted by the hand of God and watered by his divine unction which have borne and continue to bear fruit that is pleasing to him. Only the Holy Spirit can teach us the truths that these material objects symbolise.
 

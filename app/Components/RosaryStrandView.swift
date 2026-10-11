@@ -60,7 +60,7 @@ struct RosaryStrandView: View {
 
     /// What stands beside the bead under the hand while the strand is
     /// locked: what to do, and when
-    static let lockedLines = ["Swipe after", "the meditation"]
+    static let lockedLines = ["Listen first,", "then swipe"]
 
     /// Room for the numerals beside the bead column
     static let width: CGFloat = 150

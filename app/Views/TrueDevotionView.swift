@@ -325,21 +325,21 @@ struct TrueDevotionView: View {
     /// The page's epigraph, under the title
     private static let epigraph = Saying(
         text: "God the Father gathered all the waters together and called them the seas; He gathered all His graces together and called them Mary.",
-        source: "True Devotion, n. 23"
+        source: "True Devotion, paragraph 23"
     )
 
     private static let sayings: [Saying] = [
         Saying(
             text: "Mary is the safest, easiest, shortest and most perfect way of approaching Jesus.",
-            source: "True Devotion, n. 55"
+            source: "True Devotion, paragraph 55"
         ),
         Saying(
             text: "The more one is consecrated to Mary, the more one is consecrated to Jesus Christ.",
-            source: "True Devotion, n. 120"
+            source: "True Devotion, paragraph 120"
         ),
         Saying(
             text: "Happy, indeed sublimely happy, is the person to whom the Holy Spirit reveals the secret of Mary.",
-            source: "The Secret of Mary, n. 20"
+            source: "The Secret of Mary, paragraph 20"
         ),
         Saying(
             text: "I am all Thine, and all that I have is Thine.",

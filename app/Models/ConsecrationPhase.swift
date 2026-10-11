@@ -25,13 +25,13 @@ enum ConsecrationPhase: String, Codable, CaseIterable, Hashable {
     var displayName: String {
         switch self {
         case .preparatory:
-            return "Preparatory Period"
+            return "Days 1\u{2013}12"
         case .knowledgeOfSelf:
-            return "Week One"
+            return "Week 1"
         case .knowledgeOfMary:
-            return "Week Two"
+            return "Week 2"
         case .knowledgeOfJesus:
-            return "Week Three"
+            return "Week 3"
         case .consecrationDay:
             return "Consecration Day"
         }
@@ -41,13 +41,13 @@ enum ConsecrationPhase: String, Codable, CaseIterable, Hashable {
     var subtitle: String {
         switch self {
         case .preparatory:
-            return "Emptying Oneself of the Spirit of the World"
+            return "Letting Go of the World"
         case .knowledgeOfSelf:
-            return "Knowledge of Self"
+            return "Knowing Yourself"
         case .knowledgeOfMary:
-            return "Knowledge of the Blessed Virgin"
+            return "Knowing Mary"
         case .knowledgeOfJesus:
-            return "Knowledge of Jesus Christ"
+            return "Knowing Jesus"
         case .consecrationDay:
             return "Total Consecration to Jesus through Mary"
         }

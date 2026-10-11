@@ -322,7 +322,7 @@ struct DivineOfficeView: View {
 
                 Spacer(minLength: 12)
 
-                GoldCTAButton(title: "Pray \(hour.plainName)") {
+                GoldCTAButton(title: "Begin \(hour.plainName)") {
                     openHour = hour
                 }
             }
@@ -492,7 +492,7 @@ struct DivineOfficeView: View {
             OrnamentDivider()
                 .padding(.horizontal, 30)
 
-            Text("The traditional Latin Office (1962 books) · texts from the Divinum Officium Project")
+            Text("The traditional Latin Office, as prayed before 1970 · texts from the Divinum Officium Project")
                 .font(AppFonts.bodyFont(11))
                 .lineSpacing(11 * 0.5)
                 .foregroundColor(AppColors.textSecondary.opacity(0.8))

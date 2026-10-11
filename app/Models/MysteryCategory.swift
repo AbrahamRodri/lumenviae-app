@@ -63,7 +63,7 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
         switch self {
         case .joyful:      return "Jesus' birth and childhood"
         case .sorrowful:   return "Jesus' suffering and death"
-        case .glorious:    return "The Resurrection"
+        case .glorious:    return "Jesus risen, and Mary in glory"
         case .luminous:    return "Jesus' public life"
         case .sevenSorrows: return "Mary in her grief"
         }
@@ -128,7 +128,7 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
     var daysPrayed: String {
         if let days = ScheduleService.daysPrayed(self) { return days }
         switch self {
-        case .sevenSorrows: return "Fridays, and on her feast, September 15"
+        case .sevenSorrows: return "Fridays, and on Our Lady of Sorrows, September 15"
         default:            return "Any day you choose"
         }
     }

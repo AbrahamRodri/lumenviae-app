@@ -91,7 +91,7 @@ struct ChapelLayoutTests {
             #expect(!tile.detail.isEmpty)
             #expect(!tile.shortTitle.isEmpty)
         }
-        #expect(ChapelTile.liturgy.shortTitle == "The Church")
+        #expect(ChapelTile.liturgy.shortTitle == "Mass & Hours")
         #expect(ChapelTile.flame.shortTitle == "Streak")
     }
 }

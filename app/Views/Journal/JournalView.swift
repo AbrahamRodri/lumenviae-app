@@ -141,15 +141,11 @@ struct JournalView: View {
         VStack(spacing: 0) {
             HStack(alignment: .center) {
                 // Title
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("SPIRITUAL")
-                        .font(AppFonts.bodyFont(11))
-                        .tracking(4)
-                        .foregroundColor(AppColors.gold.opacity(0.7))
-                    Text("Journal")
-                        .font(AppFonts.italicFont(30))
-                        .foregroundColor(AppColors.cream)
-                }
+                // The page's name as the Chapel's tile says it, in the
+                // title face every other page uses
+                Text("Reflections")
+                    .font(AppFonts.titleFont(28))
+                    .foregroundColor(AppColors.cream)
 
                 Spacer()
 
@@ -415,11 +411,11 @@ struct JournalView: View {
                 .foregroundColor(AppColors.gold.opacity(0.3))
 
             VStack(spacing: 8) {
-                Text("Your journal awaits")
+                Text("No reflections yet")
                     .font(AppFonts.italicFont(22))
                     .foregroundColor(AppColors.cream.opacity(0.8))
 
-                Text("Record thoughts during or after\nyour Rosary prayers.")
+                Text("Write down what comes to you\nwhile you pray, or after.")
                     .font(AppFonts.bodyFont(15))
                     .foregroundColor(AppColors.textSecondary)
                     .multilineTextAlignment(.center)

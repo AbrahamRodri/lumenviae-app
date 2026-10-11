@@ -76,7 +76,7 @@ nonisolated enum CanonicalHour: String, CaseIterable, Codable, Identifiable {
         case .prime: return "Prime"
         case .terce: return "Terce"
         case .sext: return "Sext"
-        case .nones: return "None"
+        case .nones: return "Nones"
         case .vespers: return "Vespers"
         case .compline: return "Compline"
         }

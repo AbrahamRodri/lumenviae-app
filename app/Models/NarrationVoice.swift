@@ -30,8 +30,34 @@ struct NarrationVoice: nonisolated Codable, Identifiable, Hashable {
         self.isDefault = isDefault
     }
 
-    /// The picker's wording: "Female voice".
-    var displayName: String { "\(name) voice" }
+    /// The voice's own name where the server gives only "Male": the
+    /// server's list names the voices by sex alone, and the row on a
+    /// Rosary's page reads "Frederick · 1×" rather than "Male · 1×".
+    var plainName: String {
+        switch slug {
+        case "frederick": return "Frederick"
+        default:          return name
+        }
+    }
+
+    /// The picker's wording: "Frederick, a man's voice", "A woman's voice".
+    var displayName: String {
+        switch name.lowercased() {
+        case "male":   return "\(plainName), a man's voice"
+        case "female": return "A woman's voice"
+        default:       return "\(plainName) voice"
+        }
+    }
+
+    /// The server's line on the voice, said plainly: "emotive" is not a
+    /// word for a newcomer
+    var plainDescription: String? {
+        switch description {
+        case "A gentle, emotive narrator": return "A gentle, warm voice"
+        case "A warm, reverent narrator":  return "A warm, reverent voice"
+        default:                           return description
+        }
+    }
 
     /// The voice every recording was made in before there were voices.
     /// A stored set from that time carries only `audioUrl`, and a

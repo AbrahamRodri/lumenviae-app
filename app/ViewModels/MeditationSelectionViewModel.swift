@@ -186,7 +186,7 @@ final class MeditationSelectionViewModel {
             if let stored = OfflineContentService.shared.storedSummaries(category: category) {
                 meditationSets = stored
             } else {
-                errorMessage = "Can't reach Lumen Viae. The server may be slow to start."
+                errorMessage = "Couldn't load the meditations. Check your connection and try again."
             }
         }
 

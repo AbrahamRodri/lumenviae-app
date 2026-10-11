@@ -312,7 +312,7 @@ struct OfficeHourView: View {
                 sheet = .index
             }
 
-            PrayerHeaderButton(icon: "ph-text-aa", size: 18, label: "Reading settings") {
+            PrayerHeaderButton(icon: "ph-text-aa", size: 18, label: "Text options") {
                 sheet = .reading
             }
         }
@@ -609,7 +609,7 @@ struct OfficeHourView: View {
             }
             .padding(.top, 6)
 
-            Text("The traditional Latin Office (1962 books) · texts from \(office?.source.name ?? "the Divinum Officium Project")")
+            Text("The traditional Latin Office, as prayed before 1970 · texts from \(office?.source.name ?? "the Divinum Officium Project")")
                 .font(AppFonts.bodyFont(11))
                 .foregroundColor(AppColors.textSecondary.opacity(0.8))
                 .multilineTextAlignment(.center)

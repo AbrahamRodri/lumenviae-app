@@ -54,7 +54,7 @@ enum ChapelTile: String, CaseIterable, Identifiable {
     var shortTitle: String {
         switch self {
         case .flame:   return "Streak"
-        case .liturgy: return "The Church"
+        case .liturgy: return "Mass & Hours"
         default:       return title
         }
     }
