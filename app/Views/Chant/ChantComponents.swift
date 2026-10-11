@@ -780,11 +780,15 @@ nonisolated struct ChantFlowLayout: Layout {
 struct ChantMiniPlayer: View {
 
     let open: () -> Void
+    /// Puts the chant away and the player with it, where the player
+    /// stands over the whole app
+    let close: (() -> Void)?
 
     private var player = ChantPlayer.shared
 
-    init(open: @escaping () -> Void) {
+    init(open: @escaping () -> Void, close: (() -> Void)? = nil) {
         self.open = open
+        self.close = close
     }
 
     /// What it names: the next chant while a set waits for it
@@ -826,10 +830,21 @@ struct ChantMiniPlayer: View {
             ) {
                 player.togglePlayback()
             }
+
+            if let close {
+                Button(action: close) {
+                    AppIcon("ph-x", size: 13)
+                        .foregroundColor(AppColors.textSecondary)
+                        .frame(width: 36, height: 44)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(QuietGlyphButtonStyle())
+                .accessibilityLabel("Stop and close the player")
+            }
         }
         .padding(.vertical, 8)
         .padding(.leading, 10)
-        .padding(.trailing, 6)
+        .padding(.trailing, close == nil ? 6 : 2)
         .background(
             RoundedRectangle(cornerRadius: 16)
                 .fill(AppColors.cardElevated)

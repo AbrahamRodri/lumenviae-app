@@ -716,10 +716,7 @@ struct ChantLibraryTests {
         }
     }
 
-    @Test func theArcStandsTheHoursInTheirPlaces() {
-        #expect(abs(ChantDayArc.position(of: day(2026, 10, 1, hour: 6)) - 0.125) < 0.001)
-        #expect(abs(ChantDayArc.position(of: day(2026, 10, 1, hour: 12)) - 0.375) < 0.001)
-        #expect(ChantDayArc.position(of: day(2026, 10, 1, hour: 4)) < 0.001)
+    @Test func theHoursStandInTheirPlaces() {
         #expect(ChantHour.present(at: day(2026, 10, 1, hour: 21)) == .night)
         #expect(ChantHour.present(at: day(2026, 10, 1, hour: 2)) == .night)
         #expect(ChantHour.present(at: day(2026, 10, 1, hour: 7)) == .morning)
@@ -761,5 +758,54 @@ struct ChantFormerWordingTests {
         for old in ChantLibraryData.formerWords.keys {
             #expect(!current.contains(old), "\(old)")
         }
+    }
+}
+
+// MARK: - The library's home
+
+@MainActor
+struct ChantLibraryHomeTests {
+
+    @Test func everyChantIsOnTheBrowsePage() {
+        let listed = Set(ChantCatalog.groups.flatMap { ChantCatalog.chants(in: $0) }.map(\.id))
+        #expect(listed == Set(ChantCatalog.all.map(\.id)))
+        #expect(ChantBrowseScope.all.chants == nil)
+    }
+
+    @Test func theMassOfTheAngelsIsItsOrdinary() {
+        let mass = ChantBrowseScope.massOfTheAngels.chants ?? []
+        #expect(mass.count >= 4)
+        #expect(mass.allSatisfy { $0.groupID == "mass" && $0.setting == ChantBrowseScope.massSetting })
+    }
+
+    @Test func theTilesOpenSetsThatExist() {
+        for id in ChantLibraryView.tileOccasionIDs {
+            #expect(ChantOccasion.occasion(id) != nil, "No occasion \(id)")
+        }
+        #expect(!(ChantBrowseScope.group("ourLady").chants ?? []).isEmpty)
+    }
+
+    @Test func aSetSaysItsChantsAndItsLength() {
+        #expect(ChantSetCard.summary(count: 4, duration: 431) == "4 chants · 7 min")
+        #expect(ChantSetCard.summary(count: 1, duration: 20) == "1 chant · 1 min")
+    }
+
+    private func defaults() -> UserDefaults {
+        UserDefaults(suiteName: "ChantLibraryHomeTests.\(UUID().uuidString)")!
+    }
+
+    @Test func anOldSectionIsLetGo() {
+        for legacy in ["today", "seasons", "occasions", "types", "learn", "saved", "nonsense"] {
+            let store = defaults()
+            store.set(legacy, forKey: ChantLibraryView.legacySectionKey)
+            ChantLibraryView.forgetLegacySection(in: store)
+            #expect(store.object(forKey: ChantLibraryView.legacySectionKey) == nil)
+        }
+    }
+
+    @Test func letGoOfNothingIsHarmless() {
+        let store = defaults()
+        ChantLibraryView.forgetLegacySection(in: store)
+        #expect(store.object(forKey: ChantLibraryView.legacySectionKey) == nil)
     }
 }

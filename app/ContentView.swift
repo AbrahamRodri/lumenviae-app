@@ -49,6 +49,11 @@ struct ContentView: View {
     /// Computed, so the memberwise init keeps its one argument.
     private var firstUseTour: FirstUseTour { FirstUseTour.shared }
 
+    /// The mini player's height and the tab bar's, so pages make room for
+    /// the one standing over them
+    @State private var chantPlayerHeight: CGFloat = 0
+    @State private var tabBarHeight: CGFloat = 0
+
     private var shouldShowTabBar: Bool {
         router.path.isEmpty && !isConsecrationNavigating && !router.chapelArranging
     }
@@ -79,6 +84,13 @@ struct ContentView: View {
                 .navigationDestination(for: AppRoute.self) { route in
                     destinationView(for: route)
                 }
+            }
+            // Every page makes room at its foot for the chant player
+            // standing over it, so its last row scrolls clear
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                Color.clear
+                    .frame(height: showsChantPlayer ? chantPlayerHeight + 8 : 0)
+                    .allowsHitTesting(false)
             }
             // Under the tour the page is dimmed and takes no touch, and
             // VoiceOver may not wander onto it either: the tour's card is
@@ -128,8 +140,24 @@ struct ContentView: View {
                     // rather than sliding below the glass
                     .offset(y: shouldShowTabBar || reduceMotion ? 0 : 100)
                     .animation(Motion.panel, value: shouldShowTabBar)
+                    .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { tabBarHeight = $0 }
             }
             .accessibilityHidden(firstUseTour.isRunning)
+
+            // What the Chant Library is singing, over the whole app: above
+            // the tab bar's surface where it stands, and at the foot of a
+            // pushed page, so the chant goes on while the reader moves
+            // about. The tab bar's top 52 points are its fade.
+            VStack {
+                Spacer()
+                if showsChantPlayer {
+                    chantPlayer
+                        .padding(.bottom, shouldShowTabBar ? max(0, tabBarHeight - 52) + 34 : 6)
+                        .transition(reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity))
+                }
+            }
+            .animation(reduceMotion ? Motion.crossfade : Motion.panel, value: showsChantPlayer)
+            .animation(Motion.panel, value: shouldShowTabBar)
 
             if firstUseTour.isRunning {
                 FirstUseTourOverlay(tour: firstUseTour)
@@ -536,7 +564,45 @@ struct ContentView: View {
 
         case .chant(let id):
             ChantView(chantID: id)
+
+        case .chantSaved(let shelf):
+            ChantSavedPage(start: shelf)
+
+        case .chantSets(let openID):
+            ChantSetsPage(openID: openID)
+
+        case .chantBrowse(let scope):
+            ChantBrowsePage(scope: scope)
         }
+    }
+
+    // MARK: - The chant player
+
+    /// Whether what the Chant Library is singing stands at the foot of
+    /// the app: while it holds something, and never over a page that
+    /// carries its own transport or a prayer under way — the chant's own
+    /// page, a Rosary and its page before PRAY, a pray-along, a reader —
+    /// nor over the Chapel's arranging, the tour, or a consecration day
+    private var showsChantPlayer: Bool {
+        guard ChantPlayer.shared.isActive, !firstUseTour.isRunning, !router.chapelArranging else { return false }
+        if router.selectedTab == .consecration && isConsecrationNavigating { return false }
+        guard let top = router.topRoute else { return true }
+        switch top {
+        case .chant, .prayerSession, .completion, .guidedRosary, .scripturalRosaryPrayer, .prayAlong,
+             .libraryChapter, .meditationSetDetail, .scripturalRosary, .rosaryAloud, .rosaryLesson:
+            return false
+        default:
+            return true
+        }
+    }
+
+    private var chantPlayer: some View {
+        ChantMiniPlayer(
+            open: { router.push(.chant(id: ChantPlayer.shared.shown.id)) },
+            close: { ChantPlayer.shared.relinquish() }
+        )
+        .padding(.horizontal, 12)
+        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { chantPlayerHeight = $0 }
     }
 }
 

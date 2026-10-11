@@ -3,110 +3,58 @@
 //  Lumen Viae
 //
 //  The Chant Library: the Church's own songs, each with its recording and
-//  its score, to hear, to follow and to learn. The "Chant Library Redesign"
-//  boards made it a library with six ways in, set as a strip of sections
-//  under its masthead:
+//  its score, to hear, to follow and to learn. A home page read top to
+//  bottom, like a music app's (the "Simpler Chant Library" design, round
+//  9, Oct 2026):
 //
-//    TODAY      what is sung now — the hour, tonight's antiphon of Our
-//               Lady, the weekday's devotion, the month's
-//    SEASONS    the Church's year as a wheel, the season's chants, the
-//               feasts ahead
-//    OCCASIONS  chants in the order they are sung: Benediction, a visit,
-//               a sung Rosary
-//    TYPES      by kind — antiphons, hymns, sequences, litanies — and by
-//               length
-//    LEARN      the course, chant by chant in four steps
-//    SAVED      the reader's own: favourites, chants learned, sets they
-//               made, what they sang lately
+//    TILES          six quick ways in, two by three: the chant sounding or
+//                   last sung, the reader's favourites, and the sets sung
+//                   most (a sung Rosary, Adoration and Blessing, the Mass
+//                   of the Angels, Before Bed)
+//    TONIGHT        tonight's song to Mary as one wide card
+//    PLAYED LATELY  a song list, the one sounding marked with moving bars
+//    SONGS TO MARY  square cards, each with its length and its play
+//    SUNG SETS      cards listing their chants in order, with lengths
+//    BROWSE ALL     every chant, under its topic
 //
-//  The glass opens a search across titles, the words and the prayers
-//  sung, and whatever the library is singing stands at the foot of every
-//  section as a mini player. Everything here is bundled: a chapel with no
-//  signal still has every chant.
+//  Every card says how long it plays and has its own play, so the page
+//  reads as a library of songs rather than of prayers. Search stands in
+//  the bar.
+//
+//  It once opened on a strip of six sections (Today, Seasons, Occasions,
+//  Types, Learn, Saved) with the first screen a chart of the day's hours:
+//  nothing on it said what to do. The year wheel, the kinds and the
+//  learning course went with it; a chant is learned from its own page.
+//
+//  What the library is singing stands at the foot of the whole app
+//  (`ContentView`), not of this page alone. Everything here is bundled: a
+//  chapel with no signal still has every chant.
 //
 //  Reached from the Chapel's Chant tile, Explore, and a chant's page.
 //
 
 import SwiftUI
 
-// MARK: - ChantLibrarySection
-
-enum ChantLibrarySection: String, CaseIterable, Identifiable {
-    case today
-    case seasons
-    case occasions
-    case types
-    case learn
-    case saved
-
-    var id: String { rawValue }
-
-    /// The strip's word
-    var tab: String {
-        switch self {
-        case .today:     return "Today"
-        case .seasons:   return "Seasons"
-        case .occasions: return "Occasions"
-        case .types:     return "Types"
-        case .learn:     return "Learn"
-        case .saved:     return "Saved"
-        }
-    }
-
-    /// The masthead's title
-    var title: String {
-        switch self {
-        case .today:     return "Chants for Today"
-        case .seasons:   return "Through the Church Year"
-        case .occasions: return "Chants for Occasions"
-        case .types:     return "Types of Chant"
-        case .learn:     return "Learn by Heart"
-        case .saved:     return "Saved"
-        }
-    }
-
-    /// The masthead's line beneath, when it is not the date
-    var lead: String? {
-        switch self {
-        case .today:
-            return nil
-        case .seasons:
-            return "Different chants belong to different seasons. Here is where we are now."
-        case .occasions:
-            return "Chants in the order they are sung, so you can follow along or lead a group."
-        case .types:
-            return "Browse by kind: short chants, hymns, feast poems, litanies and more."
-        case .learn:
-            return "Learn to sing a chant from memory, a step at a time."
-        case .saved:
-            return "Your favourite chants, the ones you have learned, and sets you have made."
-        }
-    }
-}
-
 // MARK: - ChantLibraryView
 
 struct ChantLibraryView: View {
 
     @Environment(AppRouter.self) private var router
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    @AppStorage("chantLibrary.section") private var sectionRaw = ChantLibrarySection.today.rawValue
     @State private var searching = false
-    @State private var practicing: Chant?
-    @State private var openOccasionID: String?
-    @State private var openSetID: UUID?
-
-    /// Where the page should come to rest once the section arriving has
-    /// been laid out: the occasion's order, when Today opened one
-    @State private var pendingAnchor: String?
 
     private var player = ChantPlayer.shared
+    private var shelf = ChantShelfStore.shared
 
     init() {}
 
-    private var section: ChantLibrarySection {
-        ChantLibrarySection(rawValue: sectionRaw) ?? .today
+    /// The key the build with six sections kept the one last opened
+    /// under. The page has no sections now, so whatever it holds opens
+    /// the same page; it is let go so it never decides anything again.
+    static let legacySectionKey = "chantLibrary.section"
+
+    static func forgetLegacySection(in defaults: UserDefaults = .standard) {
+        defaults.removeObject(forKey: legacySectionKey)
     }
 
     var body: some View {
@@ -114,8 +62,7 @@ struct ChantLibraryView: View {
             AppColors.appGradient.ignoresSafeArea()
 
             // The library stays where it is while the search stands over
-            // it, hidden, so Cancel comes back to the same section at the
-            // same place on the page
+            // it, hidden, so Cancel comes back to the same place
             ZStack {
                 library
                     .opacity(searching ? 0 : 1)
@@ -130,280 +77,376 @@ struct ChantLibraryView: View {
                 }
             }
             .animation(Motion.crossfade, value: searching)
-            // The mini player stands in room of its own at the page's
-            // foot, so every section's scroll, and the search's, runs on
-            // beneath it and still brings its last row clear of it, at
-            // any text size: laid over the page with a fixed 112 points
-            // left at the foot, it was a guess at its height
-            .safeAreaInset(edge: .bottom, spacing: 0) {
-                if player.isActive {
-                    miniPlayer
-                        .transition(reduceMotion ? AnyTransition.opacity : AnyTransition.move(edge: .bottom).combined(with: .opacity))
-                }
-            }
         }
-        .animation(reduceMotion ? Motion.crossfade : Motion.panel, value: player.isActive)
         .navigationBarBackButtonHidden(true)
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                if !searching {
-                    Button(action: { router.pop() }) {
-                        HStack(spacing: 6) {
-                            AppIcon("ph-caret-left", size: 14)
-                            Text("Back")
-                                .font(AppFonts.bodyFont(16))
-                        }
-                        .foregroundColor(AppColors.gold)
-                    }
+            if !searching {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    ChantBackButton()
                 }
-            }
-            ToolbarItemGroup(placement: .navigationBarTrailing) {
-                if !searching {
+                ToolbarItem(placement: .principal) {
+                    VStack(spacing: 1) {
+                        Text("Chant")
+                            .font(AppFonts.titleFont(19))
+                            .foregroundColor(AppColors.cream)
+                        Text("\(ChantCatalog.all.count) recordings")
+                            .font(AppFonts.readingItalicFont(12))
+                            .foregroundColor(AppColors.textSecondary)
+                    }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityAddTraits(.isHeader)
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         withAnimation(Motion.crossfade) { searching = true }
                     } label: {
                         AppIcon("ph-magnifying-glass", size: 19)
                             .foregroundColor(AppColors.gold)
-                            .frame(minWidth: 44, minHeight: 44)
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
                     }
                     .buttonStyle(QuietGlyphButtonStyle())
                     .accessibilityLabel("Search the Chant Library")
-
-                    Button {
-                        choose(.saved)
-                    } label: {
-                        AppIcon(section == .saved ? "ph-bookmark-simple-fill" : "ph-bookmark-simple", size: 19)
-                            .foregroundColor(AppColors.gold)
-                            .frame(minWidth: 44, minHeight: 44)
-                    }
-                    .buttonStyle(QuietGlyphButtonStyle())
-                    .accessibilityLabel("Saved chants")
+                    .accessibilityHint("Find a chant by its name, its words or the prayer it sings")
                 }
             }
         }
-        .fullScreenCover(item: $practicing) { chant in
-            ChantPracticeView(chant: chant)
-                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
-                .presentationBackground(AppColors.background)
-        }
+        .onAppear { Self.forgetLegacySection() }
     }
 
-    // MARK: - The library
+    // MARK: - The page
 
     private var library: some View {
-        ScrollViewReader { proxy in
-            ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 0) {
-                    masthead
-                        .padding(.horizontal, 28)
-                        .id("top")
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 40) {
+                tiles
+                    .padding(.horizontal, 18)
 
-                    sectionStrip(proxy: proxy)
-                        .padding(.top, 22)
-
-                    ZStack(alignment: .top) {
-                        sectionBody(proxy: proxy)
-                            .id(section)
-                            .transition(.opacity)
-                    }
-                    .animation(Motion.crossfade, value: section)
-                    .padding(.top, 26)
-
-                    footer
-                        .padding(.horizontal, 36)
-                        .padding(.top, 44)
-                        .padding(.bottom, 48)
+                if let antiphon = ChantCatalog.antiphonOfTheSeason() {
+                    shelfSection("Tonight") { tonight(antiphon) }
                 }
-                .padding(.top, 8)
-            }
-            .topChromeFade()
-            // A section chosen from far down the page — the glass's Saved —
-            // opens at its head, under the masthead that names it; an
-            // occasion opened from Today, at its order of service. On the
-            // next turn, once the section arriving has been laid out.
-            .onChange(of: sectionRaw) { _, _ in
-                let anchor = pendingAnchor ?? "top"
-                pendingAnchor = nil
-                DispatchQueue.main.async {
-                    withAnimation(Motion.crossfade) { proxy.scrollTo(anchor, anchor: .top) }
+
+                if !played.isEmpty {
+                    shelfSection("Played lately") { playedLately }
                 }
+
+                shelfSection("Songs to Mary", seeAll: { router.push(.chantBrowse(.group("ourLady"))) }) {
+                    songsToMary
+                }
+
+                shelfSection("Sung sets", seeAll: { router.push(.chantSets(openID: nil)) }) {
+                    sungSets
+                }
+
+                browseAll
+                    .padding(.horizontal, 18)
+
+                footer
+                    .padding(.horizontal, 36)
+                    .padding(.bottom, 40)
             }
+            .padding(.top, 8)
         }
+        .topChromeFade()
     }
 
-    // MARK: - Masthead
-
-    private var masthead: some View {
-        VStack(spacing: 12) {
-            Text("CHANT LIBRARY")
-                .font(AppFonts.labelFont(9.5))
-                .tracking(3)
-                .foregroundColor(AppColors.gold)
-
-            // The ornament stands on Today's masthead alone, as the boards
-            // draw it
-            if section == .today {
-                OrnamentDivider()
-                    .frame(width: 150)
-                    .transition(.opacity)
-            }
-
-            Text(section.title)
-                .font(AppFonts.titleFont(26))
-                .foregroundColor(AppColors.cream)
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
-                .contentTransition(.opacity)
-                .accessibilityAddTraits(.isHeader)
-
-            Text(section.lead ?? ChantDates.spelled(Date()))
-                .font(AppFonts.readingItalicFont(16))
-                .foregroundColor(AppColors.cream.opacity(0.78))
-                .multilineTextAlignment(.center)
-                .lineSpacing(3)
-                .fixedSize(horizontal: false, vertical: true)
-                .contentTransition(.opacity)
-        }
-        .frame(maxWidth: .infinity)
-        .animation(Motion.crossfade, value: section)
-    }
-
-    // MARK: - The strip of sections
-
-    private func sectionStrip(proxy: ScrollViewProxy) -> some View {
-        ScrollViewReader { strip in
-            ChantSideScroll {
-                HStack(spacing: 24) {
-                    ForEach(ChantLibrarySection.allCases) { each in
-                        let lit = each == section
-                        Button {
-                            choose(each)
-                        } label: {
-                            VStack(spacing: 6) {
-                                Text(each.tab.uppercased())
-                                    .font(AppFonts.labelFont(9.5))
-                                    .tracking(1.5)
-                                    .foregroundColor(lit ? AppColors.goldLight : AppColors.textSecondary)
-                                    .lineLimit(1)
-                                    .fixedSize()
-                                Rectangle()
-                                    .fill(AppColors.gold)
-                                    .frame(width: 5, height: 5)
-                                    .rotationEffect(.degrees(45))
-                                    .opacity(lit ? 1 : 0)
-                            }
+    /// A shelf of the page: its name in the display face, SEE ALL beside
+    /// it where there is more, and what it holds beneath
+    private func shelfSection<Content: View>(
+        _ title: String,
+        seeAll: (() -> Void)? = nil,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .firstTextBaseline) {
+                Text(title)
+                    .font(AppFonts.titleFont(17))
+                    .foregroundColor(AppColors.cream)
+                    .accessibilityAddTraits(.isHeader)
+                Spacer(minLength: 8)
+                if let seeAll {
+                    Button(action: seeAll) {
+                        Text("SEE ALL")
+                            .font(AppFonts.labelFont(9.5))
+                            .tracking(2)
+                            .foregroundColor(AppColors.gold)
                             .frame(minHeight: 44)
                             .contentShape(Rectangle())
-                        }
-                        .buttonStyle(QuietGlyphButtonStyle())
-                        .id(each)
-                        .accessibilityLabel(each.tab)
-                        .accessibilityAddTraits(lit ? [.isSelected, .isButton] : [.isButton])
+                    }
+                    .buttonStyle(QuietGlyphButtonStyle())
+                    .accessibilityLabel("See all: \(title)")
+                }
+            }
+            .frame(minHeight: 30)
+            .padding(.horizontal, 18)
+
+            content()
+        }
+    }
+
+    // MARK: - Tiles
+
+    /// The six quick ways in. The first is the chant sounding, or the one
+    /// last sung, or until anything has been sung the chants learned.
+    private var tiles: some View {
+        LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
+            if let chant = lastChant {
+                tile(
+                    chant.latinTitle,
+                    painting: ChantCatalog.painting(for: chant),
+                    sounding: player.isPlaying(chant),
+                    spoken: chant.spokenName
+                ) { openChant(chant) }
+            } else {
+                tile("Learned", painting: "glorious_coronation", spoken: "Chants you have learned") {
+                    router.push(.chantSaved(.learned))
+                }
+            }
+
+            tile("Your favourites", painting: favouritesPainting, spoken: "Your favourite chants") {
+                router.push(.chantSaved(.favorites))
+            }
+
+            ForEach(Self.tileOccasionIDs.prefix(2), id: \.self) { id in
+                if let occasion = ChantOccasion.occasion(id) { occasionTile(occasion) }
+            }
+
+            tile("Mass of the Angels", painting: "sorrowful_crucifixion", spoken: "The Mass of the Angels") {
+                router.push(.chantBrowse(.massOfTheAngels))
+            }
+
+            ForEach(Self.tileOccasionIDs.dropFirst(2), id: \.self) { id in
+                if let occasion = ChantOccasion.occasion(id) { occasionTile(occasion) }
+            }
+        }
+    }
+
+    /// The sets the tiles open, in the grid's order around the Mass
+    static let tileOccasionIDs = ["sung_rosary", "benediction", "before_bed"]
+
+    private func occasionTile(_ occasion: ChantOccasion) -> some View {
+        tile(
+            occasion.title,
+            painting: occasion.painting,
+            sounding: player.isSinging(ChantQueue.occasion(occasion)) && player.isGoingOn,
+            spoken: occasion.title
+        ) {
+            router.push(.chantSets(openID: occasion.id))
+        }
+    }
+
+    /// The chant sounding, else the one sung last
+    private var lastChant: Chant? {
+        if player.isActive { return player.current }
+        return shelf.recent.lazy.compactMap { ChantCatalog.chant($0.chantID) }.first
+    }
+
+    private var favouritesPainting: String {
+        shelf.favorites.lazy.compactMap { ChantCatalog.chant($0) }.first.map { ChantCatalog.painting(for: $0) }
+            ?? "glorious_pentecost"
+    }
+
+    private func tile(
+        _ title: String,
+        painting: String,
+        sounding: Bool = false,
+        spoken: String,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            HStack(spacing: 10) {
+                ChantThumbnail(name: painting, size: 56, radius: 0)
+                Text(title)
+                    .font(AppFonts.bodyFont(14.5))
+                    .foregroundColor(AppColors.cream)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.85)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                if sounding {
+                    ChantSoundingBars()
+                }
+            }
+            .padding(.trailing, 10)
+            .frame(height: 56)
+            .background(AppColors.cardBackground)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .strokeBorder(AppColors.gold.opacity(0.16), lineWidth: AppLine.hairline)
+            )
+            .contentShape(RoundedRectangle(cornerRadius: 12))
+        }
+        .buttonStyle(SacredCardButtonStyle())
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(sounding ? "\(spoken), playing now" : spoken)
+        .accessibilityAddTraits(.isButton)
+    }
+
+    // MARK: - Tonight
+
+    /// Tonight's song to Mary as one wide card: its painting, its names
+    /// and length, and LISTEN. The card opens the chant; the disc sings it.
+    private func tonight(_ chant: Chant) -> some View {
+        HStack(spacing: 0) {
+            ChantThumbnail(name: Self.tonightPainting(for: chant), size: 150, radius: 0)
+                .accessibilityHidden(true)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text("SONG TO MARY")
+                    .font(AppFonts.labelFont(9.5))
+                    .tracking(2.2)
+                    .foregroundColor(AppColors.gold)
+                Text(chant.latinTitle)
+                    .font(AppFonts.titleFont(20))
+                    .foregroundColor(AppColors.cream)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.8)
+                Text("\(chant.englishTitle) · \(chant.durationLabel)")
+                    .font(AppFonts.readingItalicFont(14))
+                    .foregroundColor(AppColors.textSecondary)
+                    .lineLimit(2)
+
+                HStack(spacing: 8) {
+                    ChantPlayDisc(
+                        isPlaying: player.isPlaying(chant),
+                        isLoading: player.current.id == chant.id && player.isLoading,
+                        size: 30,
+                        label: chant.spokenName
+                    ) {
+                        player.toggle(chant)
+                    }
+                    Text(player.isPlaying(chant) ? "PAUSE" : "LISTEN")
+                        .font(AppFonts.labelFont(10))
+                        .tracking(2)
+                        .foregroundColor(AppColors.gold)
+                        .accessibilityHidden(true)
+                }
+                .padding(.top, 2)
+            }
+            .padding(.horizontal, 16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .frame(height: 150)
+        .background(AppColors.cardBackground)
+        .clipShape(RoundedRectangle(cornerRadius: 18))
+        .overlay(
+            RoundedRectangle(cornerRadius: 18)
+                .strokeBorder(AppColors.gold.opacity(0.28), lineWidth: AppLine.hairline)
+        )
+        .contentShape(RoundedRectangle(cornerRadius: 18))
+        .onTapGesture { openChant(chant) }
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Tonight's song to Mary: \(chant.spokenName), \(ChantPlayer.spoken(chant.duration))")
+        .accessibilityAction(named: "Open the chant") { openChant(chant) }
+        .chantContextMenu(chant)
+        .padding(.horizontal, 18)
+    }
+
+    /// Tonight's painting: the chant's own where it has one, else the
+    /// night's
+    static func tonightPainting(for chant: Chant) -> String {
+        ChantLibraryData.paintings[chant.id]
+            ?? ChantCatalog.painting(subject: "hour_night", else: ChantCatalog.painting(for: chant))
+    }
+
+    // MARK: - Played lately
+
+    /// The three chants sung last, latest first
+    private var played: [Chant] {
+        Array(shelf.recent.lazy.compactMap { ChantCatalog.chant($0.chantID) }.prefix(3))
+    }
+
+    private var playedLately: some View {
+        VStack(spacing: 0) {
+            ForEach(played) { chant in
+                ChantSongRow(chant: chant, player: player) { openChant(chant) }
+            }
+        }
+        .padding(.horizontal, 18)
+    }
+
+    // MARK: - Songs to Mary
+
+    private var songsToMary: some View {
+        ChantSideScroll {
+            HStack(alignment: .top, spacing: 14) {
+                ForEach(ChantCatalog.groups.first { $0.id == "ourLady" }.map { ChantCatalog.chants(in: $0) } ?? []) {
+                    chant in
+                    ChantSquareCard(chant: chant, player: player) { openChant(chant) }
+                }
+            }
+            .padding(.horizontal, 18)
+        }
+    }
+
+    // MARK: - Sung sets
+
+    /// The occasions sung in order, then the sets the reader made. A set
+    /// kept from an occasion stands under the occasion's own card.
+    private var sungSets: some View {
+        ChantSideScroll {
+            HStack(alignment: .top, spacing: 14) {
+                ForEach(ChantLibraryData.occasions) { occasion in
+                    ChantSetCard(
+                        title: occasion.title,
+                        painting: occasion.painting,
+                        chants: occasion.distinctChants(),
+                        duration: occasion.duration(),
+                        queue: ChantQueue.occasion(occasion)
+                    ) {
+                        router.push(.chantSets(openID: occasion.id))
                     }
                 }
-                .padding(.horizontal, 24)
+                ForEach(shelf.sets.filter { $0.occasionID == nil && $0.chantCount > 0 }) { set in
+                    let chants = set.items.compactMap(\.chant)
+                    ChantSetCard(
+                        title: set.name,
+                        painting: chants.first.map { ChantCatalog.painting(for: $0) } ?? "glorious_coronation",
+                        chants: chants,
+                        duration: set.duration,
+                        queue: ChantQueue.set(set)
+                    ) {
+                        router.push(.chantSaved(.set(set.id)))
+                    }
+                }
             }
-            .onChange(of: section) { _, now in
-                withAnimation(Motion.crossfade) { strip.scrollTo(now, anchor: .center) }
-            }
-            .onAppear { strip.scrollTo(section, anchor: .center) }
+            .fixedSize(horizontal: false, vertical: true)
+            .padding(.horizontal, 18)
         }
-        .overlay(alignment: .bottom) { ChantRule(opacity: 0.18) }
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel("Browse the library")
     }
 
-    private func choose(_ next: ChantLibrarySection) {
-        guard next != section else { return }
-        sectionRaw = next.rawValue
-    }
+    // MARK: - Browse all
 
-    // MARK: - Sections
-
-    @ViewBuilder
-    private func sectionBody(proxy: ScrollViewProxy) -> some View {
-        switch section {
-        case .today:
-            ChantTodaySection(
-                open: openChant,
-                learn: learn,
-                openOccasion: { occasion in
-                    openOccasionID = occasion.id
-                    pendingAnchor = ChantOccasionsSection.orderAnchor
-                    choose(.occasions)
-                }
-            )
-        case .seasons:
-            ChantSeasonsSection(open: openChant, learn: learn)
-        case .occasions:
-            ChantOccasionsSection(
-                openID: $openOccasionID,
-                open: openChant,
-                madeSet: { set in
-                    openSetID = set.id
-                    choose(.saved)
-                },
-                reveal: { id in
-                    withAnimation(Motion.crossfade) { proxy.scrollTo(id, anchor: .top) }
-                }
-            )
-        case .types:
-            ChantTypesSection(open: openChant)
-        case .learn:
-            ChantLearnSection(open: openChant, learn: learn)
-        case .saved:
-            ChantSavedSection(openSetID: $openSetID, open: openChant)
+    private var browseAll: some View {
+        Button {
+            router.push(.chantBrowse(.all))
+        } label: {
+            HStack(spacing: 10) {
+                AppIcon("ph-magnifying-glass", size: 16)
+                Text("BROWSE ALL \(ChantCatalog.all.count) CHANTS")
+                    .font(AppFonts.labelFont(11))
+                    .tracking(2.4)
+            }
+            .foregroundColor(AppColors.gold)
+            .frame(maxWidth: .infinity, minHeight: 50)
+            .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.4), lineWidth: AppLine.hairline))
+            .contentShape(Capsule())
         }
+        .buttonStyle(SacredCardButtonStyle())
+        .accessibilityLabel("Browse all \(ChantCatalog.all.count) chants")
     }
 
     // MARK: - Foot
 
     private var footer: some View {
-        VStack(spacing: 18) {
-            HStack(spacing: 10) {
-                ForEach(0..<2, id: \.self) { _ in
-                    Rectangle()
-                        .fill(AppColors.gold.opacity(0.8))
-                        .frame(width: 5, height: 5)
-                        .rotationEffect(.degrees(45))
-                }
-            }
-            .accessibilityHidden(true)
-
+        VStack(spacing: 14) {
             Text(ChantCatalog.offlineNote)
                 .font(AppFonts.readingItalicFont(14))
                 .foregroundColor(AppColors.textSecondary)
                 .multilineTextAlignment(.center)
-
             ChantCredit()
         }
         .frame(maxWidth: .infinity)
-    }
-
-    // MARK: - Mini player
-
-    private var miniPlayer: some View {
-        // Waiting between chants, the next one: its page's play goes on
-        // with the set
-        ChantMiniPlayer {
-            openChant(player.shown)
-        }
-        .padding(.horizontal, 12)
-        .padding(.top, 36)
-        .padding(.bottom, 8)
-        .background(
-            LinearGradient(
-                stops: [
-                    .init(color: AppColors.backgroundDeep.opacity(0), location: 0),
-                    .init(color: AppColors.backgroundDeep.opacity(0.92), location: 0.4),
-                    .init(color: AppColors.backgroundDeep, location: 1)
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea(edges: .bottom)
-            .allowsHitTesting(false)
-        )
     }
 
     // MARK: - Doors
@@ -411,11 +454,335 @@ struct ChantLibraryView: View {
     private func openChant(_ chant: Chant) {
         router.push(.chant(id: chant.id))
     }
+}
 
-    /// The practice, which keeps the chant as under way only once the
-    /// learner takes a step in it
-    private func learn(_ chant: Chant) {
-        practicing = chant
+// MARK: - ChantBackButton
+
+/// The gold Back every library page draws in its bar
+struct ChantBackButton: View {
+    @Environment(AppRouter.self) private var router
+
+    var body: some View {
+        Button(action: { router.pop() }) {
+            HStack(spacing: 6) {
+                AppIcon("ph-caret-left", size: 14)
+                Text("Back")
+                    .font(AppFonts.bodyFont(16))
+            }
+            .foregroundColor(AppColors.gold)
+        }
+    }
+}
+
+// MARK: - ChantSoundingBars
+
+/// Three small bars beside whatever is sounding, as a music app marks the
+/// song playing. Still under Reduce Motion.
+struct ChantSoundingBars: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    var body: some View {
+        if reduceMotion {
+            bars([6, 12, 8])
+        } else {
+            PhaseAnimator([0, 1, 2]) { phase in
+                bars([[6, 12, 8], [11, 5, 12], [8, 10, 4]][phase])
+            } animation: { _ in
+                .easeInOut(duration: 0.32)
+            }
+        }
+    }
+
+    private func bars(_ heights: [CGFloat]) -> some View {
+        HStack(alignment: .bottom, spacing: 2) {
+            ForEach(heights.indices, id: \.self) { index in
+                RoundedRectangle(cornerRadius: 1)
+                    .fill(AppColors.gold)
+                    .frame(width: 3, height: heights[index])
+            }
+        }
+        .frame(height: 12, alignment: .bottom)
+        .accessibilityHidden(true)
+    }
+}
+
+// MARK: - ChantSongRow
+
+/// A chant as a music app lists a song: its painting, its names, its
+/// length (or the bars while it sounds), and ··· for the hold menu's acts
+struct ChantSongRow: View {
+    let chant: Chant
+    let player: ChantPlayer
+    let open: () -> Void
+
+    private var shelf = ChantShelfStore.shared
+
+    init(chant: Chant, player: ChantPlayer, open: @escaping () -> Void) {
+        self.chant = chant
+        self.player = player
+        self.open = open
+    }
+
+    var body: some View {
+        let sounding = player.isPlaying(chant)
+        HStack(spacing: 12) {
+            Button(action: open) {
+                HStack(spacing: 12) {
+                    ChantThumbnail(name: ChantCatalog.painting(for: chant), size: 44, radius: 8)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(chant.latinTitle)
+                            .font(AppFonts.readingFont(16.5))
+                            .foregroundColor(sounding ? AppColors.goldLight : AppColors.cream)
+                            .lineLimit(1)
+                        Text(chant.settingMidLine.map { "\(chant.englishTitle) · \($0)" } ?? chant.englishTitle)
+                            .font(AppFonts.readingItalicFont(13.5))
+                            .foregroundColor(AppColors.textSecondary)
+                            .lineLimit(1)
+                    }
+                    Spacer(minLength: 8)
+                    if sounding {
+                        ChantSoundingBars()
+                    } else {
+                        Text(chant.durationLabel)
+                            .font(AppFonts.readingFont(13.5))
+                            .foregroundColor(AppColors.textSecondary)
+                            .monospacedDigit()
+                    }
+                }
+                .padding(.vertical, 9)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(
+                "\(chant.spokenName), \(sounding ? "playing now" : ChantPlayer.spoken(chant.duration))"
+            )
+            .accessibilityHint("Opens the chant with its sheet music")
+            .accessibilityAddTraits(.isButton)
+
+            Menu {
+                Button {
+                    player.toggle(chant)
+                } label: {
+                    Label(sounding ? "Pause" : "Play", systemImage: sounding ? "pause" : "play")
+                }
+                Button {
+                    shelf.toggleFavorite(chant.id)
+                } label: {
+                    if shelf.isFavorite(chant.id) {
+                        Label("Remove from Favourites", systemImage: "heart.slash")
+                    } else {
+                        Label("Add to Favourites", systemImage: "heart")
+                    }
+                }
+                if !shelf.sets.isEmpty {
+                    Menu {
+                        ForEach(shelf.sets) { set in
+                            Button(set.name) { shelf.addChant(chant.id, to: set.id) }
+                        }
+                    } label: {
+                        Label("Add to a Set", systemImage: "text.badge.plus")
+                    }
+                }
+            } label: {
+                AppIcon("ph-dots-three", size: 18)
+                    .foregroundColor(AppColors.textSecondary)
+                    .frame(width: 36, height: 44)
+                    .contentShape(Rectangle())
+            }
+            .accessibilityLabel("More for \(chant.latinTitle)")
+        }
+        .overlay(alignment: .bottom) {
+            Rectangle()
+                .fill(AppColors.gold.opacity(0.12))
+                .frame(height: AppLine.hairline)
+        }
+        .chantContextMenu(chant)
+    }
+}
+
+// MARK: - ChantSquareCard
+
+/// One chant as a square of its painting, its length on the painting's
+/// foot and its play beside it, its names beneath
+struct ChantSquareCard: View {
+    let chant: Chant
+    let player: ChantPlayer
+    let open: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            ChantThumbnail(name: ChantCatalog.painting(for: chant), size: 142, radius: 16)
+                .overlay(alignment: .bottomLeading) {
+                    Text(chant.durationLabel)
+                        .font(AppFonts.readingFont(12))
+                        .foregroundColor(AppColors.cream)
+                        .monospacedDigit()
+                        .padding(.horizontal, 7)
+                        .padding(.vertical, 2)
+                        .background(Capsule().fill(AppColors.background.opacity(0.78)))
+                        .padding(8)
+                        .accessibilityHidden(true)
+                }
+                .overlay(alignment: .bottomTrailing) {
+                    ChantPlayDisc(
+                        isPlaying: player.isPlaying(chant),
+                        isLoading: player.current.id == chant.id && player.isLoading,
+                        size: 30,
+                        label: chant.spokenName
+                    ) {
+                        player.toggle(chant)
+                    }
+                    .padding(2)
+                }
+                .onTapGesture(perform: open)
+
+            Button(action: open) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(chant.latinTitle)
+                        .font(AppFonts.readingFont(15.5))
+                        .foregroundColor(player.isPlaying(chant) ? AppColors.goldLight : AppColors.cream)
+                        .lineLimit(1)
+                    Text(chant.settingMidLine.map { "\(chant.englishTitle) · \($0)" } ?? chant.englishTitle)
+                        .font(AppFonts.readingItalicFont(13))
+                        .foregroundColor(AppColors.textSecondary)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .frame(width: 142, alignment: .leading)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("\(chant.spokenName), \(ChantPlayer.spoken(chant.duration))")
+            .accessibilityHint("Opens the chant with its sheet music")
+            .accessibilityAddTraits(.isButton)
+        }
+        .frame(width: 142)
+        .chantContextMenu(chant)
+    }
+}
+
+// MARK: - ChantSetCard
+
+/// A sung set as a card: its painting, its name, how many chants and how
+/// long, its play, and its chants listed in order with their lengths, so
+/// what will be heard is seen before play is pressed
+struct ChantSetCard: View {
+    let title: String
+    let painting: String
+    let chants: [Chant]
+    let duration: TimeInterval
+    let queue: ChantQueue
+    let open: () -> Void
+
+    private var player = ChantPlayer.shared
+
+    /// How many of its chants the card lists before "and n more"
+    static let listed = 4
+
+    init(
+        title: String,
+        painting: String,
+        chants: [Chant],
+        duration: TimeInterval,
+        queue: ChantQueue,
+        open: @escaping () -> Void
+    ) {
+        self.title = title
+        self.painting = painting
+        self.chants = chants
+        self.duration = duration
+        self.queue = queue
+        self.open = open
+    }
+
+    var body: some View {
+        let singing = player.isSinging(queue)
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(spacing: 12) {
+                ChantThumbnail(name: painting, size: 76, radius: 12)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(title)
+                        .font(AppFonts.readingFont(16.5))
+                        .foregroundColor(singing ? AppColors.goldLight : AppColors.cream)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Text(Self.summary(count: chants.count, duration: duration))
+                        .font(AppFonts.readingFont(13))
+                        .foregroundColor(AppColors.textSecondary)
+                        .monospacedDigit()
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                ChantPlayDisc(
+                    isPlaying: singing && player.isGoingOn,
+                    isLoading: false,
+                    size: 36,
+                    label: title
+                ) {
+                    if singing { player.pauseOrResume() } else { player.play(queue) }
+                }
+            }
+            .padding(.bottom, 10)
+
+            ForEach(Array(chants.prefix(Self.listed).enumerated()), id: \.offset) { index, chant in
+                HStack(alignment: .firstTextBaseline, spacing: 10) {
+                    Text("\(index + 1)")
+                        .font(AppFonts.titleFont(12))
+                        .foregroundColor(Rubric.text)
+                        .frame(width: 14, alignment: .leading)
+                    Text(chant.latinTitle)
+                        .font(AppFonts.readingFont(14.5))
+                        .foregroundColor(AppColors.cream.opacity(0.92))
+                        .lineLimit(1)
+                    Spacer(minLength: 6)
+                    Text(chant.durationLabel)
+                        .font(AppFonts.readingFont(12.5))
+                        .foregroundColor(AppColors.textSecondary)
+                        .monospacedDigit()
+                }
+                .padding(.vertical, 7)
+                .overlay(alignment: .top) {
+                    Rectangle()
+                        .fill(AppColors.gold.opacity(index == 0 ? 0.16 : 0.08))
+                        .frame(height: AppLine.hairline)
+                }
+            }
+
+            if chants.count > Self.listed {
+                Text("and \(chants.count - Self.listed) more")
+                    .font(AppFonts.readingItalicFont(13))
+                    .foregroundColor(AppColors.textSecondary)
+                    .padding(.vertical, 7)
+            }
+
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 14)
+        .padding(.top, 12)
+        .padding(.bottom, 6)
+        .frame(width: 272, alignment: .topLeading)
+        // Every card in the row stands as tall as the tallest
+        .frame(maxHeight: .infinity, alignment: .top)
+        .background(RoundedRectangle(cornerRadius: 18).fill(AppColors.cardBackground))
+        .overlay(
+            RoundedRectangle(cornerRadius: 18)
+                .strokeBorder(AppColors.gold.opacity(0.24), lineWidth: AppLine.hairline)
+        )
+        .contentShape(RoundedRectangle(cornerRadius: 18))
+        .onTapGesture(perform: open)
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel(
+            "\(title), \(Self.summary(count: chants.count, duration: duration)): "
+                + chants.map(\.latinTitle).joined(separator: ", ")
+        )
+        .accessibilityAction(named: "Open the set") { open() }
+    }
+
+    /// "4 chants · 7 min": the length of its recordings, never a guess
+    static func summary(count: Int, duration: TimeInterval) -> String {
+        let minutes = max(1, Int((duration / 60).rounded()))
+        return "\(count == 1 ? "1 chant" : "\(count) chants") · \(minutes) min"
     }
 }
 
