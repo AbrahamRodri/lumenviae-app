@@ -237,8 +237,11 @@ struct ExploreView: View {
             readingShelf
         }
 
-        section("Learn More") {
-            libraryIndex
+        // Gone while every guide it lists is archived (`ArchivedPages`)
+        if !studyEntries.isEmpty {
+            section("Learn More") {
+                libraryIndex
+            }
         }
     }
 
@@ -325,7 +328,7 @@ struct ExploreView: View {
         // own title answers only when no reading does: matched as well,
         // "carlo" listed every one of St. Carlo's readings and buried
         // the one asked for.
-        let shelved = LibraryReadings.shelves.flatMap { shelf in
+        let shelved = LibraryReadings.shelves.filter { !ArchivedPages.hides(shelf: $0) }.flatMap { shelf in
             shelf.entries.map { ReadingHit(shelf: shelf, reading: $0) }
         }
         let namedHits = shelved.filter {
@@ -529,6 +532,9 @@ struct ExploreView: View {
         let icon: String
         let title: String
         let matchText: String
+        /// The page it opens, where it opens one, so an archived page's
+        /// door stands down (`ArchivedPages`)
+        var route: AppRoute? = nil
         let action: () -> Void
     }
 
@@ -538,6 +544,10 @@ struct ExploreView: View {
     }
 
     private var libraryEntries: [LibraryEntry] {
+        allLibraryEntries.filter { !ArchivedPages.hides($0.route) }
+    }
+
+    private var allLibraryEntries: [LibraryEntry] {
         [
             LibraryEntry(icon: "ch-altar", title: "Today's Mass",
                          matchText: "daily missal mass 1962 propers latin") { router.push(.missal) },
@@ -546,7 +556,7 @@ struct ExploreView: View {
             LibraryEntry(icon: "ph-crown", title: "True Devotion",
                          matchText: "true devotion to mary montfort book") { router.push(.trueDevotionBook) },
             LibraryEntry(icon: "ph-scroll", title: "The Devotion in Summary",
-                         matchText: "true devotion summary marks false devotions montfort") { router.push(.trueDevotion) },
+                         matchText: "true devotion summary marks false devotions montfort", route: .trueDevotion) { router.push(.trueDevotion) },
             LibraryEntry(icon: "ph-book-open", title: "Spiritual Reading",
                          matchText: "spiritual reading books imitation of christ story of a soul confessions augustine dolorous passion emmerich therese kempis library") { router.push(.spiritualReading) },
             // The Rosary's two forms beside the meditation sets, found by
@@ -561,11 +571,11 @@ struct ExploreView: View {
             // Not the Gospel glyph: that is the Scriptural Rosary's, and
             // the two doors stood side by side wearing the same one
             LibraryEntry(icon: "lv-breviary", title: "In Scripture",
-                         matchText: "mysteries in scripture bible verses") { router.push(.scripture) },
+                         matchText: "mysteries in scripture bible verses", route: .scripture) { router.push(.scripture) },
             LibraryEntry(icon: "ch-lily", title: "Marian Library",
-                         matchText: "marian theology library dogmas apparitions saints") { router.push(.marianLibrary) },
+                         matchText: "marian theology library dogmas apparitions saints", route: .marianLibrary) { router.push(.marianLibrary) },
             LibraryEntry(icon: "ch-monstrance", title: "St. Carlo Acutis",
-                         matchText: "carlo acutis eucharist digital altar saint") { router.push(.carloAcutis) },
+                         matchText: "carlo acutis eucharist digital altar saint", route: .carloAcutis) { router.push(.carloAcutis) },
             LibraryEntry(icon: "ch-praying-hands", title: "Prayers",
                          matchText: "prayer book prayers enchiridion morning night angelus grace confession examination conscience mass communion litany litanies marian our lady latin novena") { router.push(.prayerBook) },
             LibraryEntry(icon: "ph-music-note", title: "The Chant Library",
@@ -896,7 +906,7 @@ struct ExploreView: View {
             "True Devotion", "Spiritual Reading",
             "The Scriptural Rosary", "The Rosary Said Aloud",
             "Prayer Record", "How to Pray", "The Chant Library",
-            "Journal"
+            "Journal", "Prayers"
         ]
         return libraryEntries.filter { !housed.contains($0.title) }
     }

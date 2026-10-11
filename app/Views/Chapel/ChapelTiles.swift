@@ -2369,6 +2369,15 @@ struct ChapelLibraryTile: View {
         Door(title: "Carlo Acutis", line: "A saint of our day", route: .carloAcutis)
     ]
 
+    /// The doors whose pages are not archived (`ArchivedPages`)
+    private static var openBooks: [Door] { books.filter { !ArchivedPages.hides($0.route) } }
+    private static var openGuides: [Door] { guides.filter { !ArchivedPages.hides($0.route) } }
+
+    /// Whether the index stands in its two sections. With a section down
+    /// to one door, the doors stand as one ruled list instead, so neither
+    /// heading is set over a lone row.
+    private static var isSectioned: Bool { openBooks.count >= 2 && openGuides.count >= 2 }
+
     var body: some View {
         if span == 2 {
             ChapelTileFrame(
@@ -2398,8 +2407,12 @@ struct ChapelLibraryTile: View {
     private var full: some View {
         VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading, spacing: 18) {
-                section("Books", Self.books)
-                section("Guides", Self.guides)
+                if Self.isSectioned {
+                    section("Books", Self.openBooks)
+                    section("Guides", Self.openGuides)
+                } else {
+                    section(nil, Self.openBooks + Self.openGuides)
+                }
             }
             .padding(.top, 18)
             .padding(.bottom, 10)
@@ -2415,14 +2428,16 @@ struct ChapelLibraryTile: View {
         }
     }
 
-    private func section(_ name: String, _ doors: [Door]) -> some View {
+    private func section(_ name: String?, _ doors: [Door]) -> some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text(name.uppercased())
-                .font(AppFonts.labelFont(9))
-                .tracking(2.5)
-                .foregroundColor(AppColors.gold.opacity(0.75))
-                .padding(.bottom, 4)
-                .accessibilityAddTraits(.isHeader)
+            if let name {
+                Text(name.uppercased())
+                    .font(AppFonts.labelFont(9))
+                    .tracking(2.5)
+                    .foregroundColor(AppColors.gold.opacity(0.75))
+                    .padding(.bottom, 4)
+                    .accessibilityAddTraits(.isHeader)
+            }
 
             ForEach(Array(doors.enumerated()), id: \.element.title) { index, door in
                 doorRow(door, size: 17, minHeight: 54, showsLine: true, divided: index < doors.count - 1)
@@ -2432,9 +2447,13 @@ struct ChapelLibraryTile: View {
 
     // MARK: Half — the books, and a door to the rest
 
+    /// Three rows, the books first; a guide stands in for a book that is
+    /// archived, so the half keeps its height
+    private static var halfDoors: [Door] { Array((openBooks + openGuides).prefix(3)) }
+
     private var half: some View {
         VStack(alignment: .leading, spacing: 0) {
-            ForEach(Self.books, id: \.title) { door in
+            ForEach(Self.halfDoors, id: \.title) { door in
                 doorRow(door, size: 15, minHeight: 44, showsLine: false, divided: true)
             }
         }

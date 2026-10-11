@@ -1312,6 +1312,18 @@ write concurrent code here:
   begins." The tab turns to Day 1 by itself at midnight or on coming
   back to the app.
 - **True Devotion reader** — the full bundled book with per-chapter progress.
+- **Archived pages** (`Navigation/ArchivedPages.swift`, Oct 2026) — St.
+  Carlo Acutis, In Scripture, the Marian Library and the Devotion in
+  Summary are put away until they are polished. Their views, data and
+  routes stay; every door asks `ArchivedPages.hides` and stands down:
+  Explore's index and search (Learn More is left out while it would list
+  nothing), the Chapel's Library tile (its doors as one ruled list when a
+  section would hold one row; its half keeps three rows), How to Pray's
+  Going Deeper tiles, the readings on those pages' shelves, and any
+  reading's door or way home into them, with `AppRouter.push` refusing
+  them as a backstop. The True Devotion book stays. To bring a page
+  back, take its route out of `ArchivedPages.routes`. The pages are
+  still described below as built.
 - **Resource library** — How to Pray the Rosary, Finding the Mysteries in
   Scripture, the Marian Library, St. Carlo Acutis, and The Devotion in
   Summary. **Each page is laid out for what it is, never from one

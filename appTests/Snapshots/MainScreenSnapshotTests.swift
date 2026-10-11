@@ -72,7 +72,9 @@ struct MainScreenSnapshotTests {
     }
 
     @Test func scripturalRosaryPage() {
-        let view = ScripturalRosaryView(category: .glorious, form: .scriptural)
+        // The Seven Sorrows, which no schedule makes today's: drawn on the
+        // Glorious, the Mysteries row read "Glorious · today" on a Saturday
+        let view = ScripturalRosaryView(category: .sevenSorrows, form: .scriptural)
         ScreenSnapshot.assertScreen(view, named: "scriptural-rosary-page")
     }
 
