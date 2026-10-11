@@ -435,14 +435,20 @@ struct HowToPrayRosaryView: View {
                         router.push(.libraryReading(id: reading.id))
                     }
                 }
-                deeperTile(icon: "ch-lily", title: "How the Rosary Began", note: "Our Lady's Psalter") {
-                    router.push(.libraryReading(id: "psalter"))
+                // The psalter's reading stands in the Marian Library, and
+                // stands down with it while that is archived
+                if !ArchivedPages.hides(.libraryReading(id: "psalter")) {
+                    deeperTile(icon: "ch-lily", title: "How the Rosary Began", note: "Our Lady's Psalter") {
+                        router.push(.libraryReading(id: "psalter"))
+                    }
                 }
                 deeperTile(icon: "ch-bible", title: "The Scriptural Rosary", note: "A verse for every bead") {
                     router.push(.scripturalRosary(ScheduleService.categoryForToday()))
                 }
-                deeperTile(icon: "lv-breviary", title: "In Scripture", note: "Each mystery's passage") {
-                    router.push(.scripture)
+                if !ArchivedPages.hides(.scripture) {
+                    deeperTile(icon: "lv-breviary", title: "In Scripture", note: "Each mystery's passage") {
+                        router.push(.scripture)
+                    }
                 }
             }
             .padding(.horizontal, 20)
