@@ -284,12 +284,13 @@ consecration is a private devotion and not a liturgical observance;
 with the Chapel's day strip. Every row has the same parts — the door's
 own glyph (`ch-altar`, `ph-clock`, `ch-consecration`, the hour's order's own, the same as on
 every other surface), name, the row's own live fact, chevron — so the
-eye reads down the column of facts: the day's rank in a plain word
-beside its silk, a 4×24 bar (FEAST, `TodayInChurch.rank`; the colour is
-the silk's alone on screen, and VoiceOver hears it in words through
-`spokenMeta` — "Today's Mass, Feast, red vestments"; it once read "II
-CLASS · RED", and before that stood under the feast as a caption to
-the whole section), the
+eye reads down the column of facts: the day's rank and the silk's colour
+in plain words beside the silk, a 4×24 bar (LESSER FEAST · WHITE,
+`TodayInChurch.rank` and `MissalVestment.name`; VoiceOver hears
+"Today's Mass, Feast, red vestments" through `spokenMeta`; it once read
+"II CLASS · RED", then the rank alone, since a bare bar said nothing a
+newcomer could read; the feast itself is headed TODAY'S FEAST · once a
+feast is known, and a weekday is named as it is), the
 hour it is as a lit dot and its one plain word (EVENING,
 `CanonicalHour.shortName`; VoiceOver hears `plainName`, "Evening
 Prayer"; it once read VESPERS), the day of the
@@ -511,20 +512,20 @@ spine, or swipe the face, to bring that book forward; the tile is not
 one door, because made one, every spine opened the book in front of it
 and the rest could not be reached; "2 more books started" rides the title
 line; the half stands the book over its title; empty, the books'
-cloths over "Take up and read · choose a book" and ALL BOOKS; no bar of the book read — the board drew
+cloths over "No book open yet · choose one" and ALL BOOKS; no bar of the book read — the board drew
 one, and a share of a book is a judgement of the reader the shelf
-never makes), **Today in the Church** ("The Church" at half, where
+never makes), **Today in the Church** ("Mass & Hours" at half, where
 the whole name has no room; on the deep ground, the date on a
 calendar leaf beside the feast with its rank — "Lesser Feast"
 (`rankLabel`), the vestment's diamond before it, the colour said to
 VoiceOver alone (`TodayInChurch.spokenMeta`, "Lesser Feast, white
 vestments") — over a ledger of the Church's two books for the
 day: THE MASS, Today's Mass over the first words of the day's entrance
-chant ("Entrance chant: Gaudeámus omnes"), in Latin, read from the
-missal's proper — no more than
-three, and never ending on a word that leaves it hanging
-(`TodayInChurch.incipit(of:)`, "Gaudeámus omnes", not "Gaudeámus omnes
-in"; `appTests/ChapelLiturgyTests.swift`) — and HOURS OF PRAYER by
+chant ("Entrance chant: Let us all rejoice"), in English, read from
+the missal's proper — no more than five words, and never ending on a
+word that leaves it hanging (`TodayInChurch.incipit(of:words:)`, "The
+mouth of the just", not "The mouth of the"; the Latin three-word form
+is kept for `appTests/ChapelLiturgyTests.swift`) — and HOURS OF PRAYER by
 the hour it is now in plain words over its Church name
 (`CanonicalHour.plainName` over `label`: "Evening Prayer" over
 "Vespers, the hour now"), from `CanonicalClock` — the
@@ -670,7 +671,7 @@ named as everywhere else — the Rosary Said Aloud, the Seven Sorrows of
 Mary, Consecration to Mary, Queen of Heaven (Regina Cæli) in
 Eastertide — and the focus block's gold act names the prayer without
 repeating the title over it (the three forms' act is PRAY THE ROSARY
-or CONTINUE THE ROSARY, the consecration's OPEN DAY 14), so every act
+or CONTINUE THE ROSARY, the consecration's GO TO DAY 14), so every act
 fits its button on one line at `.xLarge`. Words another area owns are
 read from it, never written again here: the hours' plain names
 (`CanonicalHour.plainName`), the rank (`rankLabel`), the vestment
@@ -3027,8 +3028,9 @@ devotion is the one that devotion's own iconography uses:
 consecration — True Devotion's "The Spirit of This Devotion" and the
 consecration onboarding's "The Gift".
 
-Today's Mysteries (the Pray tray's row, `PrayerShortcut.chooseMeditation`)
-is the one door whose glyph follows the day: it wears the day's own
+Choose How to Pray Today (the Pray tray's row, `PrayerShortcut.chooseMeditation`,
+once named Today's Mysteries, which read as the same thing as Today's
+Rosary stacked above it) is the one door whose glyph follows the day: it wears the day's own
 mysteries' emblem (`MysteryCategory.iconName`, through
 `PrayerShortcut.icon(today:)` and `ScheduleService.categoryForToday()`,
 so the schedule and Sunday's season decide it, as they decide the row's

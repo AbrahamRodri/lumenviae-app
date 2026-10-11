@@ -128,9 +128,16 @@ struct TodaysPrayerSection: View {
     /// second section title under "Today's Prayer" rather than a part of
     /// it. The day's class and colour are the Mass's facts, and stand
     /// beside the Mass row's silk.
+    /// "TODAY'S FEAST · ST. FRANCIS BORGIA" once a feast is known; a
+    /// weekday, or the day before its propers arrive, is named as it is
+    private var feastHeading: String {
+        guard today.proper != nil, let rank = today.rank, !rank.hasSuffix("Weekday") else { return today.title }
+        return "Today's feast · \(today.title)"
+    }
+
     private var feastLine: some View {
         HStack(alignment: .center, spacing: 12) {
-            Text("Today's feast · \(today.title)".uppercased())
+            Text(feastHeading.uppercased())
                 .font(AppFonts.labelFont(9.5))
                 .tracking(2.2)
                 .lineSpacing(3)

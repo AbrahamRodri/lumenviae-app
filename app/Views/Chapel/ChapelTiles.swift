@@ -76,7 +76,7 @@ struct ChapelAct: Identifiable {
         switch shortcut {
         case .todaysRosary, .scripturalRosary, .rosaryAloud:
             return "Pray the Rosary"
-        case .chooseMeditation: return "Open Today's Mysteries"
+        case .chooseMeditation: return "Choose How to Pray Today"
         case .sevenSorrows:     return "Pray the Seven Sorrows"
         case .mass:             return "Open Today\u{2019}s Mass"
         case .office:           return "Open Hours of Prayer"

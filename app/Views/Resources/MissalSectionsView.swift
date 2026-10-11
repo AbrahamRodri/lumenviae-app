@@ -278,14 +278,17 @@ private func missalLines(of text: String) -> [String] {
         .filter { !$0.isEmpty }
 }
 
-/// The source marks the dialogue "S." (sacerdos) and "M." (ministri),
-/// which no newcomer can read, and an antiphon "Ant.": the priest's
-/// lines open "P.", the server's and people's "S.", and an antiphon says
-/// the word. Only at the head of a line, where the marks stand.
+/// The source marks the dialogue "S." (sacerdos) and "M." (ministri), in
+/// both languages, which no newcomer can read, and an antiphon "Ant.":
+/// the priest's lines open "P.", the server's and people's "S.", and an
+/// antiphon says the word. Only at the head of a line, where the marks
+/// stand, and only on a line that ends as a sentence does: a saint named
+/// "S. Joánnis Baptístæ" at the head of a line is left as it is.
 private func missalSpeakerMarked(_ line: String) -> String {
+    if line.hasPrefix("Ant. ") { return "Antiphon: " + line.dropFirst(5) }
+    guard let last = line.last, ".!?:,".contains(last) else { return line }
     if line.hasPrefix("S. ") { return "P. " + line.dropFirst(3) }
     if line.hasPrefix("M. ") { return "S. " + line.dropFirst(3) }
-    if line.hasPrefix("Ant. ") { return "Antiphon: " + line.dropFirst(5) }
     return line
 }
 

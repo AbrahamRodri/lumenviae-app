@@ -278,7 +278,8 @@ struct SelectMeditationView: View {
     }
 
     /// How many meditations are showing — a set of five readings is
-    /// "meditations" on the page, never a set
+    /// "sets of meditations" on the page: the count is of sets, where
+    /// "6 meditations" once named six sets as six readings
     private var countLabel: String {
         let total = viewModel.totalSetCount
         let unit = total == 1 ? "set of meditations" : "sets of meditations"

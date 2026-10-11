@@ -133,7 +133,7 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
     var actName: String {
         switch self {
         case .todaysRosary:     return "The Rosary"
-        case .chooseMeditation: return "Today's Mysteries"
+        case .chooseMeditation: return "Choose How to Pray Today"
         case .sevenSorrows:     return "The Seven Sorrows of Mary"
         case .scripturalRosary: return "Scriptural Rosary"
         case .rosaryAloud:      return "The Rosary Said Aloud"

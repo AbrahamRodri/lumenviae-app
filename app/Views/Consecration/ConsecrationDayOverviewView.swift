@@ -214,15 +214,18 @@ struct ConsecrationDayOverviewView: View {
         return isToday ? "Begin today's prayer" : "Open day \(displayDayNumber)"
     }
 
-    /// The phase's focus under the day's theme — unless the day is the one
-    /// that opens the week and carries the week's own name, in which case
-    /// repeating it twice says nothing and the ordinal is the better line.
+    /// The stage under the day's theme — "Days 1–12 · Letting Go of the
+    /// World" — unless the day is the one that opens the stage and carries
+    /// its name, in which case repeating it says nothing and the ordinal
+    /// is the better line.
     private var heroSubtitle: String {
-        let focus = phase?.subtitle ?? ""
-        guard let day else { return focus }
+        guard let phase else { return "" }
+        let focus = phase.subtitle
+        let stage = phase == .consecrationDay ? focus : "\(phase.displayName) · \(focus)"
+        guard let day else { return stage }
         return day.title.caseInsensitiveCompare(focus) == .orderedSame
             ? day.ordinalLabel
-            : focus
+            : stage
     }
 
     private var badgeText: String {
@@ -230,7 +233,7 @@ struct ConsecrationDayOverviewView: View {
         if phase == .consecrationDay {
             return "CONSECRATION DAY"
         }
-        return "\(phase.displayName.uppercased()) · DAY \(displayDayNumber) OF 33"
+        return "DAY \(displayDayNumber) OF 33"
     }
 
     // MARK: - The Feast

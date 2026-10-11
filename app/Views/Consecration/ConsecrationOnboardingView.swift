@@ -830,12 +830,14 @@ private struct JourneyStepView: View {
                 .fill(phase.accentColor)
                 .frame(width: 3, height: 34)
 
+            // The days stand in the column beside, so the row leads with
+            // what the stage is for
             VStack(alignment: .leading, spacing: 2) {
-                Text(phase.displayName)
+                Text(phase.subtitle)
                     .font(AppFonts.headlineFont(isFinal ? 16 : 15))
                     .foregroundColor(isFinal ? AppColors.goldLight : AppColors.cream)
 
-                Text(phase.subtitle)
+                Text(phase.displayName)
                     .font(AppFonts.bodyFont(12))
                     .foregroundColor(AppColors.textSecondary)
             }
@@ -860,7 +862,7 @@ private struct JourneyStepView: View {
 
     private func dayRangeLabel(_ phase: ConsecrationPhase) -> String {
         let range = phase.dayRange
-        if phase == .consecrationDay { return "Day 34" }
+        if phase == .consecrationDay { return "Consecration Day" }
         return range.count == 1 ? "Day \(range.lowerBound)" : "\(range.lowerBound)\u{2013}\(range.upperBound)"
     }
 }

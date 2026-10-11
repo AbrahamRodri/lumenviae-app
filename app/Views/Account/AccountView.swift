@@ -987,17 +987,9 @@ struct PrayerLanguageRow: View {
         .padding(.vertical, 14)
     }
 
-    /// What a language is called here. The two bilingual choices are
-    /// stored as "Latin & English" and "English & Latin", which read
-    /// alike, so each names the language set first, as onboarding does;
-    /// the stored values do not change.
+    /// What a language is called here: the one name onboarding uses too
     static func displayName(of language: PrayerLanguage) -> String {
-        switch language {
-        case .english: return "English"
-        case .latin: return "Latin"
-        case .both: return "Latin with English"
-        case .latinUnderEnglish: return "English with Latin"
-        }
+        language.displayName
     }
 }
 
