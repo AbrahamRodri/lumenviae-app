@@ -221,7 +221,7 @@ enum GuidedRosary {
             "Take the crucifix in your hand. Touch your forehead, your breast, your left shoulder and your right as you say:",
             prayers: ["sign_of_cross"])
         add(.crucifix, "The crucifix",
-            "Still holding the crucifix, profess the faith of the Church. Everything the Rosary is about is in this prayer.",
+            "Still holding the crucifix, say what the Church believes. Everything the Rosary is about is in this prayer.",
             prayers: ["apostles_creed"])
         add(.pendantLarge(0), "The first large bead",
             "Move your fingers up to the first large bead, and pray the prayer Jesus taught His disciples.",
@@ -297,7 +297,7 @@ enum GuidedRosary {
 
         // The close, on the medal and the crucifix
         add(.medal, "The medal",
-            "You have come round to the medal. Hold it, and greet Our Lady as Queen and Mother.",
+            "You are back at the medal. Hold it, and greet Our Lady as Queen and Mother.",
             prayers: ["hail_holy_queen"],
             closing: true)
         add(.medal, "The medal",

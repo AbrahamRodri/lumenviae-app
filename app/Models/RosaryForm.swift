@@ -81,7 +81,7 @@ enum RosaryChoice: Hashable, CaseIterable {
 
     var title: String {
         switch self {
-        case .audio: return "Audio"
+        case .audio: return "Rosary Audio"
         case .counting: return "Counting"
         }
     }

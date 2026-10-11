@@ -20,6 +20,17 @@ enum PrayerLanguage: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
+    /// What the choice is called on screen, in onboarding and Settings
+    /// alike. The raw value is what is stored, so it never changes.
+    var displayName: String {
+        switch self {
+        case .english:           return "English"
+        case .latin:             return "Latin"
+        case .both:              return "Latin with English"
+        case .latinUnderEnglish: return "English with Latin"
+        }
+    }
+
     /// True when this mode shows a translation beneath each prayer line
     var isBilingual: Bool { self == .both || self == .latinUnderEnglish }
 }

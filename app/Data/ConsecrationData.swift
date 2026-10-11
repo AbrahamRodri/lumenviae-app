@@ -34,7 +34,7 @@ enum ConsecrationData {
     static let allPrayers: [String: ConsecrationPrayer] = [
         "litany_holy_ghost": ConsecrationPrayer(
             id: "litany_holy_ghost",
-            title: "Litany of the Holy Ghost",
+            title: "Litany of the Holy Spirit",
             latinTitle: nil,
             content: """
 Lord, have mercy on us.
@@ -263,7 +263,7 @@ You are the salt of the earth. But if the salt lose its savour, wherewith shall 
                 ),
                 ConsecrationReading(
                     order: 2,
-                    title: "True Devotion, No. 227",
+                    title: "True Devotion, paragraph 227",
                     text: """
 First Practice. Those who wish to enter into this particular devotion, which is not at present erected into a confraternity, though that were to be wished—after having, as I said in the first part of this preparation for the reign of Jesus Christ, employed twelve days at least in emptying themselves of the spirit of the world, which is contrary to the spirit of Jesus Christ—should employ three weeks in filling themselves with Jesus Christ by the holy Virgin. They should observe the following order:
 """,
@@ -429,7 +429,7 @@ And to some who trusted in themselves as just and despised others, he spoke also
         allDays.append(ConsecrationDay(
             dayNumber: 6,
             phase: .preparatory,
-            title: "The Example of the Holy Fathers",
+            title: "The Example of the Desert Fathers",
             readings: [
                 ConsecrationReading(
                     order: 1,
@@ -607,7 +607,7 @@ Love not the world, nor the things which are in the world. If any man love the w
         allDays.append(ConsecrationDay(
             dayNumber: 11,
             phase: .preparatory,
-            title: "Amendment of Life",
+            title: "Changing Your Life",
             readings: [
                 ConsecrationReading(
                     order: 1,
@@ -685,7 +685,7 @@ But God forbid that I should glory, save in the cross of our Lord Jesus Christ: 
             readings: [
                 ConsecrationReading(
                     order: 1,
-                    title: "True Devotion, No. 228",
+                    title: "True Devotion, paragraph 228",
                     text: """
 During the first week they should employ all their prayers and pious actions in asking for a knowledge of themselves, and for contrition of their sins; and they should do this in a spirit of humility. For that end they can, if they choose, meditate on what I have said before of our inward corruption. They can look upon themselves during the six days of this week as snails, crawling things, toads, swine, serpents, and unclean animals; or they can reflect on those three considerations of St. Bernard: the vileness of our origin, the dishonours of our present state, and our ending as the food of worms. They should pray our Lord and the Holy Ghost to enlighten them; and for that end they might use the ejaculations, Domine, ut videam, or Noverim me, or Veni Sancte Spiritus; and they may say daily the Ave maris stella, and the litany of the Holy Ghost.
 """,
@@ -759,7 +759,7 @@ And there were present, at that very time, some that told him of the Galileans, 
                 ),
                 ConsecrationReading(
                     order: 2,
-                    title: "True Devotion, Nos. 81-82",
+                    title: "True Devotion, paragraphs 81–82",
                     text: """
 2. Secondly, in order to empty ourselves of ourselves, we must die to ourselves daily. That is to say, we must renounce the operations of the powers of our soul, and of the senses of our body. We must see as if we saw not, understand as if we understood not, and make use of the things of this world as if we made no use of them at all. This is what St. Paul calls dying daily—Quotidie morior. “If the grain of corn falling on the earth does not die it remains earth, and brings forth no good fruit”—Nisi granum frumenti, cadens in terram, mortuum fuerit, ipsum solum manet. If we die not to ourselves, and if our holiest devotions do not incline us to this necessary and useful death, we shall bring forth no fruit worth anything, and our devotions will become useless. All our justices will be stained by self-love and our own will; and this will cause God to hold in abomination the greatest sacrifices we can make, and the best actions we can do; so that at our death we shall find our hands empty of virtues and of merits, and we shall not have one spark of pure love, which is only communicated to souls dead to themselves, souls whose life is hidden with Jesus Christ in God.
 
@@ -779,7 +779,7 @@ And there were present, at that very time, some that told him of the Galileans, 
             readings: [
                 ConsecrationReading(
                     order: 1,
-                    title: "True Devotion, Nos. 79-80",
+                    title: "True Devotion, paragraphs 79–80",
                     text: """
 1. To empty ourselves of ourselves, we must first thoroughly recognise, by the light of the Holy Ghost, our inward corruption, our incapacity for every good thing useful for salvation, our weakness in all things, our inconstancy at all times, our indignity of every grace, and our iniquity in every position. The sin of our first father has spoilt us all, soured us, puffed us up and corrupted us, as the leaven sours, puffs, and corrupts the paste into which it is put. The actual sins which we have committed, whether mortal or venial, pardoned though they may be, have nevertheless increased our concupiscence, our weakness, our inconstancy, and our corruption, and have left evil consequences in our souls. Our bodies are so corrupted that they are called by the Holy Ghost bodies of sin, conceived in sin, nourished in sin, and capable of all sin—bodies subject to thousands of maladies, which go on corrupting from day to day, and which engender nothing but disease, vermin, and corruption. Our soul, united to our body, has become so carnal that it is called flesh. “All flesh having corrupted its way,” we have nothing for our portion but pride and blindness in the spirit, hardness in the heart, weakness and inconstancy in the soul, concupiscence, revolted passions, and sicknesses in the body. We are naturally prouder than peacocks, more grovelling on the earth than toads, more vile than unclean animals, more envious than serpents, more gluttonous than hogs, more furious than tigers, lazier than tortoises, weaker than reeds, and more capricious than weathercocks. We have down in our own selves nothing but nothingness and sin, and we deserve nothing but the anger of God and the everlasting hell.
 
@@ -805,7 +805,7 @@ We cannot trust over much to ourselves, because grace oftentimes is wanting to u
         allDays.append(ConsecrationDay(
             dayNumber: 17,
             phase: .knowledgeOfSelf,
-            title: "Rendering an Account",
+            title: "Giving God an Account",
             readings: [
                 ConsecrationReading(
                     order: 1,
@@ -830,7 +830,7 @@ Therefore calling together every one of his lord's debtors, he said to the first
                     source: "Douay-Rheims Bible"
                 )
             ],
-            journalPrompt: "If you had to render an account of your stewardship today, what would you want to set right?"
+            journalPrompt: "If you had to answer to God today for how you used what He gave you, what would you want to set right?"
         ))
 
         // Day 18
@@ -917,7 +917,7 @@ Lord, it is true as Thou sayest; let it, I pray Thee, be so with me; let Thy tru
             readings: [
                 ConsecrationReading(
                     order: 1,
-                    title: "True Devotion, No. 229",
+                    title: "True Devotion, paragraph 229",
                     text: """
 During the second week they should apply themselves, during all their prayers and works each day, to know the Blessed Virgin. They should ask this knowledge of the Holy Ghost; they should read and meditate what we have said about it. They should recite, as in the first week, the Litany of the Holy Ghost and the Ave maris stella, and in addition a Rosary daily, or, if not a whole Rosary, at least a chaplet, for the intention of impetrating more knowledge of Mary.
 """,
@@ -934,7 +934,7 @@ And they came with haste; and they found Mary and Joseph, and the infant lying i
                     source: "Douay-Rheims Bible"
                 )
             ],
-            journalPrompt: "Mary 'kept all these words, pondering them in her heart.' Which of her ten principal virtues do you most need to imitate?"
+            journalPrompt: "Mary 'kept all these words, pondering them in her heart.' Which of the ten virtues Montfort sees in Mary do you most need to imitate?"
         ))
 
         // Day 21
@@ -945,7 +945,7 @@ And they came with haste; and they found Mary and Joseph, and the infant lying i
             readings: [
                 ConsecrationReading(
                     order: 1,
-                    title: "True Devotion, Nos. 115-118",
+                    title: "True Devotion, paragraphs 115–118",
                     text: """
 THERE are several interior practices of true devotion to the Blessed Virgin. Here are the principal of them stated compendiously.
 
@@ -989,7 +989,7 @@ Now there stood by the cross of Jesus, his mother and his mother's sister, Mary 
             readings: [
                 ConsecrationReading(
                     order: 1,
-                    title: "True Devotion, Nos. 106-110",
+                    title: "True Devotion, paragraphs 106–110",
                     text: """
 After having laid bare and condemned the false devotions to the most holy Virgin, we must, in a few words, characterise the true devotion. It must be (1) interior, (2) tender, (3) holy, (4) constant, and (5) disinterested.
 
@@ -1016,7 +1016,7 @@ And it came to pass, as he spoke these things, a certain woman from the crowd, l
                     source: "Douay-Rheims Bible"
                 )
             ],
-            journalPrompt: "Is your devotion interior, trustful, holy, constant, and disinterested? Which mark needs the most growth?"
+            journalPrompt: "Is your devotion interior, trustful, holy, constant, and selfless? Which mark needs the most growth?"
         ))
 
         // Day 23
@@ -1027,7 +1027,7 @@ And it came to pass, as he spoke these things, a certain woman from the crowd, l
             readings: [
                 ConsecrationReading(
                     order: 1,
-                    title: "True Devotion, Nos. 120-121",
+                    title: "True Devotion, paragraphs 120–121",
                     text: """
 All our perfection consists in being conformed, united, and consecrated to Jesus Christ; and therefore the most perfect of all devotions is, without any doubt, that which the most perfectly conforms, unites, and consecrates us to Jesus Christ. Now, Mary being the most conformed of all creatures to Jesus Christ, it follows that of all devotions, that which most consecrates and conforms the soul to our Lord is devotion to His holy Mother, and that the more a soul is consecrated to Mary, the more is it consecrated to Jesus. Hence it comes to pass that the most perfect consecration to Jesus Christ is nothing else but a perfect and entire consecration of ourselves to the Blessed Virgin, and this is the devotion which I teach; or, in other words, a perfect renewal of the vows and promises of holy Baptism.
 
@@ -1057,7 +1057,7 @@ Know you not that all we who are baptized in Christ Jesus are baptized in his de
             readings: [
                 ConsecrationReading(
                     order: 1,
-                    title: "True Devotion, Nos. 152-164",
+                    title: "True Devotion, paragraphs 152–164",
                     text: """
 This devotion is an easy, short, perfect, and secure way of arriving at union with our Lord, in which the perfection of a Christian consists.
 
@@ -1093,7 +1093,7 @@ Let not your heart be troubled. You believe in God: believe also in me. In my Fa
             readings: [
                 ConsecrationReading(
                     order: 1,
-                    title: "True Devotion, Nos. 213-225",
+                    title: "True Devotion, paragraphs 213–225",
                     text: """
 My dear brother, be sure that, if you are faithful to the interior and exterior practices of this devotion, which I will point out, the following effects will take place in your soul:
 
@@ -1131,7 +1131,7 @@ I am the true vine: and my Father is the husbandman. Every branch in me that bea
             readings: [
                 ConsecrationReading(
                     order: 1,
-                    title: "True Devotion, Nos. 14-38",
+                    title: "True Devotion, paragraphs 14–38",
                     text: """
 I avow, with all the Church, that Mary, being but a mere creature that has come from the hands of the Most High, is, in comparison with His infinite Majesty, less than an atom; or rather she is nothing at all, because He only is “He who is,” and thus by consequence that grand Lord, always independent and sufficient to Himself, never had, and has not now, any absolute need of the Holy Virgin for the accomplishment of His will and for the manifestation of His glory. He has but to will, in order to do everything. Nevertheless I say that, things being supposed as they are now, God having willed to commence and to complete His greatest works by the most holy Virgin, since He created her, we may well think He will not change His conduct in the eternal ages; for He is God, and He changes not either in His sentiments or in His conduct.
 
@@ -1171,7 +1171,7 @@ And a great sign appeared in heaven: A woman clothed with the sun, and the moon 
             readings: [
                 ConsecrationReading(
                     order: 1,
-                    title: "True Devotion, No. 230",
+                    title: "True Devotion, paragraph 230",
                     text: """
 They should apply themselves in the third week to know Jesus Christ. They can meditate upon what we have said about Him, and say the prayer of St. Augustine, which they will find in the first part of this treatise. They can, with the same Saint, repeat a hundred times a day, Noverim te—“Lord, that I might know Thee!” or Domine, ut videam—“Lord, that I might see who Thou art!” They shall recite, as in the preceding weeks, the litany of the Holy Ghost and the Ave maris stella, and they shall add daily the Litany of the Holy Name of Jesus. At the end of the three weeks they shall confess and communicate, with the intention of giving themselves to Jesus Christ, in the quality of slaves of love, by the hands of Mary. After communion, which they should try to make according to the method given farther on, they should recite the formula of their consecration, which they will find afterwards. They ought to write it, or have it written, unless it is printed; and they should sign it the same day they have made it. It would be well also that on that day they should pay some tribute to Jesus Christ and our Blessed Lady, either as a penance for their past unfaithfulness to the vows of their Baptism, or in testimony of their dependence and allegiance to the domain of Jesus and Mary. This tribute ought to be according to the devotion and capacity of every one, as a fast, a mortification, an alms, or a candle. If they had but a pin to give in homage, yet gave it with a good heart, it would be enough for Jesus, who looks only at the good-will. Once a year at least, on the same day, they should renew the same consecration, observing the same practices during the three weeks. They might also once a month, or even once a day, renew what they have done by these few words: Tuus totus ego sum, et omnia mea tua sunt—“I am all for Thee, and all I have belongs to Thee, O my sweet Jesus, by Mary Thy holy Mother.”
 """,
@@ -1179,7 +1179,7 @@ They should apply themselves in the third week to know Jesus Christ. They can me
                 ),
                 ConsecrationReading(
                     order: 2,
-                    title: "True Devotion, Nos. 61-62",
+                    title: "True Devotion, paragraphs 61–62",
                     text: """
 First Truth. Jesus Christ our Saviour, true God and true Man, ought to be the last end of all our other devotions, else they are false and delusive. Jesus Christ is the alpha and omega, the beginning and the end, of all things. We labour not, as the Apostle says, except to render every man perfect in Jesus Christ; because it is in Him alone that the whole plenitude of the Divinity dwells, together with all the other plenitudes of graces, virtues, and perfections; because it is in Him alone that we have been blessed with all spiritual benediction; and because He is our only Master, who has to teach us; our only Lord, on whom we ought to depend; our only Head, to whom we must belong; our only Model, to whom we should conform ourselves; our only Physician, who can heal us; our only Shepherd, who can feed us; our only Way, who can lead us; our only Truth, who can make us grow; our only Life, who can animate us; and our only All in all things, who can suffice us. There has been no other name given under heaven, except the name of Jesus, by which we can be saved. God has laid no other foundation of our salvation, of our perfection, and of our glory, except Jesus Christ. Every building which is not built upon that firm rock is founded upon the moving sand, and sooner or later will fall infallibly. Every one of the faithful who is not united to Him, as a branch to the stock of the vine, shall fall, shall wither, and shall be fit only to be cast into the fire. If we are in Jesus Christ and Jesus Christ in us, we have no condemnation to fear. Neither the Angels of heaven, nor the men of earth, nor the devils of hell, nor any other creatures, can injure us; because they cannot separate us from the love of God which is in Jesus Christ. By Jesus Christ, with Jesus Christ, in Jesus Christ, we can do all things; we can render all honour and glory to the Father in the unity of the Holy Ghost; we can become perfect ourselves, and be to our neighbour a good odour of eternal life.
 
@@ -1315,7 +1315,7 @@ And how is it that Thou dost vouchsafe to come unto a sinner? Thou knowest Thy s
                 ),
                 ConsecrationReading(
                     order: 2,
-                    title: "True Devotion, Nos. 243, 247, 249, 253",
+                    title: "True Devotion, paragraphs 243, 247, 249, 253",
                     text: """
 Fourth Practice. Those who undertake this holy slavery should have a very special devotion to the great mystery of the Incarnation of the Word on the 25th of March. Indeed, the Incarnation is the proper mystery of this practice, inasmuch as it was a devotion inspired by the Holy Ghost, first, to honour and imitate the ineffable dependence which God the Son has been pleased to have on Mary, for His Father’s glory and our salvation; which dependence particularly appears in this mystery, where Jesus is a captive and a slave in the bosom of the divine Mary, and depends upon her for all things; secondly, to thank God for the incomparable graces He has given Mary, and particularly for having chosen her to be His most holy Mother, which choice was made in this mystery. These are the two principal ends of the slavery of Jesus in Mary.
 
@@ -1351,7 +1351,7 @@ Love Him, and keep Him for thy friend, who, when all go away, will not forsake t
                 ),
                 ConsecrationReading(
                     order: 2,
-                    title: "True Devotion, Nos. 257-260",
+                    title: "True Devotion, paragraphs 257–260",
                     text: """
 These may be expressed in four words: to do all our actions by Mary, with Mary, in Mary, and for Mary; so that we may do them all the more perfectly by Jesus, with Jesus, in Jesus, and for Jesus.
 
@@ -1362,7 +1362,7 @@ II. We must do our actions with Mary; that is to say, we must in all our actions
                     source: "St. Louis de Montfort"
                 )
             ],
-            journalPrompt: "Jesus 'will admit of no rival.' What creature-attachments compete with Him for your heart?"
+            journalPrompt: "Jesus 'will admit of no rival.' What attachments to people or things compete with Him for your heart?"
         ))
 
         // Day 33
@@ -1383,7 +1383,7 @@ O most sweet Lord Jesus, how great is the pleasure of the devout soul that feast
                 ),
                 ConsecrationReading(
                     order: 2,
-                    title: "True Devotion, Nos. 261-265",
+                    title: "True Devotion, paragraphs 261–265",
                     text: """
 III. We must do our actions in Mary. Thoroughly to understand this practice, we must know, first, that our Blessed Lady is the true terrestrial paradise of the new Adam, and that the ancient Paradise was but a figure of her. There are, then, in this earthly paradise, riches, beauties, rarities, and inexplicable sweetnesses, which Jesus Christ, the new Adam, has left there; it was in this paradise that He took His complacence for nine months, worked His wonders, and displayed His riches with the magnificence of a God. This most holy place is composed only of a virgin and immaculate earth, of which the new Adam was formed, and on which He was nourished, without any spot or stain, by the operation of the Holy Ghost, who dwelt there. It is in this earthly paradise that there is the true tree of life, which has borne Jesus Christ, the Fruit of life, and the tree of the knowledge of good and evil, which has given light unto the world. There are in this divine place trees planted by the hand of God, and watered by His Divine unction, which have borne and daily bear fruits of a taste divine. There are flower-beds, enamelled with beautiful and various blossoms; virtues, shedding odours which embalm the very Angels. There are meadows green with hope, impregnable towers of strength, and the most enticing houses of confidence. It is but the Holy Ghost who can make us know the hidden truth of these figures of material things. There are in this place an air of perfect purity; a fair sun, without the shadow of the Divinity; a fair day, without the night of the Sacred Humanity; a continual burning furnace of love, where all the iron that is cast into it is changed, by excessive heat, to gold. There is a river of humility, which springs from the earth, and which, dividing itself into four branches, waters all that enchanted place; and these are the four cardinal virtues. The Holy Ghost, by the mouth of the Fathers, also styles the Blessed Virgin the Eastern Gate, by which the High-Priest, Jesus Christ, enters the world and leaves it. By it He came the first time, and by it He will come the second.
 
@@ -1409,7 +1409,7 @@ Glory to Jesus in Mary! Glory to Mary in Jesus! Glory to God Alone!
             readings: [
                 ConsecrationReading(
                     order: 1,
-                    title: "True Devotion, Nos. 230-231",
+                    title: "True Devotion, paragraphs 230–231",
                     text: """
 They should apply themselves in the third week to know Jesus Christ. They can meditate upon what we have said about Him, and say the prayer of St. Augustine, which they will find in the first part of this treatise. They can, with the same Saint, repeat a hundred times a day, Noverim te—“Lord, that I might know Thee!” or Domine, ut videam—“Lord, that I might see who Thou art!” They shall recite, as in the preceding weeks, the litany of the Holy Ghost and the Ave maris stella, and they shall add daily the Litany of the Holy Name of Jesus. At the end of the three weeks they shall confess and communicate, with the intention of giving themselves to Jesus Christ, in the quality of slaves of love, by the hands of Mary. After communion, which they should try to make according to the method given farther on, they should recite the formula of their consecration, which they will find afterwards. They ought to write it, or have it written, unless it is printed; and they should sign it the same day they have made it. It would be well also that on that day they should pay some tribute to Jesus Christ and our Blessed Lady, either as a penance for their past unfaithfulness to the vows of their Baptism, or in testimony of their dependence and allegiance to the domain of Jesus and Mary. This tribute ought to be according to the devotion and capacity of every one, as a fast, a mortification, an alms, or a candle. If they had but a pin to give in homage, yet gave it with a good heart, it would be enough for Jesus, who looks only at the good-will. Once a year at least, on the same day, they should renew the same consecration, observing the same practices during the three weeks. They might also once a month, or even once a day, renew what they have done by these few words: Tuus totus ego sum, et omnia mea tua sunt—“I am all for Thee, and all I have belongs to Thee, O my sweet Jesus, by Mary Thy holy Mother.”
 """,
@@ -1417,7 +1417,7 @@ They should apply themselves in the third week to know Jesus Christ. They can me
                 ),
                 ConsecrationReading(
                     order: 2,
-                    title: "True Devotion, Nos. 234-256",
+                    title: "True Devotion, paragraphs 234–256",
                     text: """
 Second Practice. They may recite every day of their life, without, however, making any burden of it, the Little Corona of the Blessed Virgin, composed of three Our Fathers and twelve Hail Marys, in honour of our Lady’s twelve privileges and grandeurs. This is a very ancient practice, for it has its foundation in the Holy Scriptures. St. John saw a woman crowned with twelve stars, clothed with the sun, and holding the moon under her feet; and this woman, according to the interpreters, was the most holy Virgin. There are many ways of saying this Corona well; but it would be too long to enter upon them. The Holy Ghost will teach them to those who are the most faithful to this devotion. Nevertheless, to say it quite simply we should begin by saying, Dignare me laudare te, Virgo sacrata, da mihi virtutem contra hostes tuos. After that we should say the Credo, and then a Pater with four Aves, and then one Gloria Patri; then another Pater, four Aves, and one Gloria Patri, and so on with the rest; and at the end we should say the Sub tuum praesidium.
 

@@ -214,15 +214,18 @@ struct ConsecrationDayOverviewView: View {
         return isToday ? "Begin today's prayer" : "Open day \(displayDayNumber)"
     }
 
-    /// The phase's focus under the day's theme — unless the day is the one
-    /// that opens the week and carries the week's own name, in which case
-    /// repeating it twice says nothing and the ordinal is the better line.
+    /// The stage under the day's theme — "Days 1–12 · Letting Go of the
+    /// World" — unless the day is the one that opens the stage and carries
+    /// its name, in which case repeating it says nothing and the ordinal
+    /// is the better line.
     private var heroSubtitle: String {
-        let focus = phase?.subtitle ?? ""
-        guard let day else { return focus }
+        guard let phase else { return "" }
+        let focus = phase.subtitle
+        let stage = phase == .consecrationDay ? focus : "\(phase.displayName) · \(focus)"
+        guard let day else { return stage }
         return day.title.caseInsensitiveCompare(focus) == .orderedSame
             ? day.ordinalLabel
-            : focus
+            : stage
     }
 
     private var badgeText: String {
@@ -230,7 +233,7 @@ struct ConsecrationDayOverviewView: View {
         if phase == .consecrationDay {
             return "CONSECRATION DAY"
         }
-        return "\(phase.displayName.uppercased()) · DAY \(displayDayNumber) OF 33"
+        return "DAY \(displayDayNumber) OF 33"
     }
 
     // MARK: - The Feast
@@ -491,7 +494,7 @@ struct ConsecrationDayOverviewView: View {
 
         return VStack(alignment: .leading, spacing: 14) {
             CardHeading(
-                "Prayers for \(phase?.displayName ?? "")",
+                "Today's prayers",
                 meta: rows.count == 1 ? "1 prayer" : "\(rows.count) prayers"
             )
 
@@ -672,7 +675,7 @@ struct ConsecrationDayOverviewView: View {
         let shown = shownPhase ?? phase ?? .preparatory
 
         return VStack(alignment: .leading, spacing: 6) {
-            CardHeading("Your journey", meta: "\(completedCount) of 33 complete")
+            CardHeading("Your journey", meta: "\(completedCount) of 33 prayed")
 
             JourneyRoad(
                 shown: shown,
@@ -820,10 +823,12 @@ struct ConsecrationDayOverviewView: View {
     /// place, not a score.
     private var sourceTextCard: some View {
         let started = readingProgress.first?.hasStartedReading ?? false
-        let book = TrueDevotionLibrary.shared.book
+        // The book's one name and author, as every other page says them:
+        // the generated book carries Faber's edition's own title, "True
+        // Devotion to the Blessed Virgin"
         let display = LibraryCatalog.trueDevotionDisplay
-        let title = book?.title ?? display.title
-        let author = book?.author ?? display.author
+        let title = display.title
+        let author = display.author
 
         return Button {
             path.append(.trueDevotionReader)
@@ -904,7 +909,7 @@ struct ConsecrationDayOverviewView: View {
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("Your day progress will be erased so you can begin again. Journal reflections you have written stay in your Journal.")
+            Text("The days you have prayed will be cleared so you can begin again. Journal reflections you have written stay in your Journal.")
         }
     }
 

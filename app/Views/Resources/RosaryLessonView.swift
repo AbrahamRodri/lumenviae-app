@@ -253,7 +253,7 @@ struct RosaryLessonView: View {
     private var beadsLesson: some View {
         VStack(alignment: .leading, spacing: 0) {
             ReadingText(
-                text: "The Rosary is a prayer of the Gospel. It is prayed in five decades — sets of ten Hail Marys. For each decade we call to mind one scene from the life of Jesus and His Mother — a mystery — and while we think about it, we pray: an Our Father, ten Hail Marys, a Glory Be, and the Fatima Prayer.\n\nThe words are simple and the same each time, and that is the point. They become a quiet rhythm under the heart, leaving the mind free to look at Christ. The beads keep the count, so you do not have to.",
+                text: "The Rosary is a prayer drawn from the Gospels. It is prayed in five decades — sets of ten Hail Marys. For each decade we call to mind one scene from the life of Jesus and His Mother — a mystery — and while we think about it, we pray: an Our Father, ten Hail Marys, a Glory Be, and the Fatima Prayer.\n\nThe words are simple and the same each time, and that is the point. They become a quiet rhythm under the heart, leaving the mind free to look at Christ. The beads keep the count, so you do not have to.",
                 size: 17,
                 showsDropCap: true
             )
@@ -656,7 +656,7 @@ struct RosaryLessonView: View {
     private var mysteriesLesson: some View {
         VStack(alignment: .leading, spacing: 0) {
             ReadingText(
-                text: "A mystery is a moment in the life of Jesus and Mary — His birth, His agony in the garden, His rising. There are twenty, in four sets of five, and one set is prayed each day. While your lips say the Hail Marys of a decade, your mind stays with its mystery.",
+                text: "A mystery is a moment in the life of Jesus and Mary — His birth, His agony in the garden, His rising. There are twenty, in four sets of five. Each day has its own set, and the Luminous can be prayed any day you choose. While your lips say the Hail Marys of a decade, your mind stays with its mystery.",
                 size: 17,
                 showsDropCap: true
             )

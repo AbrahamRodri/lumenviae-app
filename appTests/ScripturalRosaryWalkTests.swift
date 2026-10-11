@@ -47,7 +47,7 @@ struct ScripturalRosaryWalkTests {
         let reading = vm.reading
         let annunciation = try #require(MysteryData.mysteries(for: .joyful).first)
         #expect(reading.reference == annunciation.scriptureReference)
-        #expect(reading.footnote == "Ask for · Humility")
+        #expect(reading.footnote == "Grace to ask for · Humility")
         #expect(vm.mysteryKicker == "The First Joyful Mystery")
     }
 
@@ -139,7 +139,7 @@ struct ScripturalRosaryWalkTests {
         #expect(vm.resumeKind == .rosaryAloud)
         let ourFather = vm.reading
         #expect(ourFather.reference == nil, "no passage; the prayer is set instead")
-        #expect(ourFather.footnote == "Ask for · Humility")
+        #expect(ourFather.footnote == "Grace to ask for · Humility")
         _ = vm.prayForward()
         let hailMary = vm.reading
         #expect(hailMary.reference == nil)

@@ -53,15 +53,15 @@ struct StreakMilestone: Identifiable, Equatable {
     static let all: [StreakMilestone] = [
         StreakMilestone(
             days: 3,
-            meaning: "a triduum",
+            meaning: nil,
             icon: "ph-number-circle-three",
-            blessing: "Three days in a row: a triduum, the Church's ancient three days of prayer."
+            blessing: "Three days in a row: what the Church calls a triduum, three days of prayer before a feast."
         ),
         StreakMilestone(
             days: 7,
             meaning: "a faithful week",
             icon: "ph-number-circle-seven",
-            blessing: "Seven days — every mystery of the week visited in prayer."
+            blessing: "Seven days in a row: a whole week of the Rosary."
         ),
         StreakMilestone(
             days: 9,
@@ -91,7 +91,7 @@ struct StreakMilestone: Identifiable, Equatable {
             days: 54,
             meaning: "a Rosary novena",
             icon: "lv-rosary",
-            blessing: "The great Rosary novena complete: 27 days asking, and 27 giving thanks."
+            blessing: "54 days in a row, as long as the Rosary novena: 27 days asking, then 27 giving thanks."
         ),
         StreakMilestone(
             days: 100,

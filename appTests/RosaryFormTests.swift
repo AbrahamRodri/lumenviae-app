@@ -57,7 +57,7 @@ struct RosaryFormTests {
     }
 
     @Test func theChoicesAreCalledAudioAndCounting() {
-        #expect(RosaryChoice.audio.title == "Audio")
+        #expect(RosaryChoice.audio.title == "Rosary Audio")
         #expect(RosaryChoice.counting.title == "Counting")
     }
 

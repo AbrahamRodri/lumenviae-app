@@ -30,7 +30,7 @@ extension ReminderMessage {
 
     /// Peace & Stillness — rest, quiet, and the day set down for a while.
     static let peace: [ReminderMessage] = [
-        ReminderMessage(title: "Set the day down for a while", body: "Twenty minutes of quiet, and nothing else asked of you."),
+        ReminderMessage(title: "Set the day down for a while", body: "A little quiet, and nothing else asked of you."),
         ReminderMessage(title: "Nothing here is in a hurry", body: "The beads move at whatever pace you set."),
         ReminderMessage(title: "A pause in the noise", body: "Ten Hail Marys are enough to change the air of a day."),
         ReminderMessage(title: "Come and rest", body: "Sit with a mystery and let the day wait."),
@@ -42,7 +42,7 @@ extension ReminderMessage {
     /// A Daily Habit — rhythm and returning, never a debt owed.
     static let habit: [ReminderMessage] = [
         ReminderMessage(title: "Today's Rosary", body: "The same quiet hour, kept once more."),
-        ReminderMessage(title: "Your rhythm, right on time", body: "A few minutes now, and the day has its anchor."),
+        ReminderMessage(title: "Your time to pray", body: "A few minutes now, and the day has its anchor."),
         ReminderMessage(title: "The hour you set aside", body: "Whatever kind of day it has been, the beads are the same."),
         ReminderMessage(title: "A small, steady thing", body: "The whole Rosary, or ten Hail Marys — the habit is in the returning."),
         ReminderMessage(title: "Prayer keeps the day's shape", body: "Begin whenever it suits; the beads keep no clock."),
@@ -55,7 +55,7 @@ extension ReminderMessage {
         ReminderMessage(title: "Mary is waiting", body: "She has all the time in the world for you."),
         ReminderMessage(title: "A word with your Mother", body: "The Rosary is simply time spent with her."),
         ReminderMessage(title: "She holds out her hand", body: "Take up the beads and walk the mysteries with her."),
-        ReminderMessage(title: "All yours, Mary", body: "Give her these few minutes and she will give them to her Son."),
+        ReminderMessage(title: "A few minutes for Mary", body: "Give her these few minutes and she will give them to her Son."),
         ReminderMessage(title: "Through her, to him", body: "Every Hail Mary you pray she carries straight to Jesus."),
         ReminderMessage(title: "The Mother of God knows your name", body: "Come and tell her what the day has held."),
         ReminderMessage(title: "Hail Mary", body: "Fifty of them, and she is nearer than when you began.")
@@ -66,7 +66,7 @@ extension ReminderMessage {
     /// stale the moment someone learns the Rosary; these do not: each is
     /// as true in the tenth year as in the first week.
     static let learning: [ReminderMessage] = [
-        ReminderMessage(title: "Today's mystery is ready", body: "The scene, the scripture, and the prayers, all in one place."),
+        ReminderMessage(title: "Today's mysteries are ready", body: "The scene, the scripture, and the prayers, all in one place."),
         ReminderMessage(
             title: "There is always more in it", body: "Eight centuries of saints have not exhausted the mysteries."),
         ReminderMessage(

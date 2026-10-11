@@ -665,7 +665,7 @@ struct CompletionBadge: View {
             // Title, emerging from light into focus: what was prayed is
             // offered, and the word that closes every prayer
             VStack(spacing: 6) {
-                Text(isChaplet ? "THE SEVEN SORROWS ARE OFFERED" : "THE ROSARY IS OFFERED")
+                Text(isChaplet ? "YOU HAVE PRAYED THE SEVEN SORROWS" : "YOU HAVE PRAYED THE ROSARY")
                     .font(AppFonts.labelFont(11))
                     .tracking(2.5)
                     .foregroundColor(AppColors.gold)
