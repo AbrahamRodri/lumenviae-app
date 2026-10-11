@@ -86,7 +86,7 @@ struct PrayerOrderView: View {
             if router.selectedTab != .prayers {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button { router.push(.prayerBook) } label: {
-                        AppIcon("ch-praying-hands", size: 18)
+                        AppIcon("lv-prayer-book", size: 18)
                             .foregroundColor(AppColors.gold)
                             .frame(width: 44, height: 44)
                     }

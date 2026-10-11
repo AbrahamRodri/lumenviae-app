@@ -151,6 +151,9 @@ struct PrayersPageTests {
             [PrayerBookPainting.hour(order, on: at(12)), PrayerBookPainting.hour(order, on: at(12, 2026, 4, 12))]
         }
         paintings += MarianAntiphon.allCases.map { PrayerBookPainting.antiphon($0) }
+        paintings += PrayerBook.orders.map { PrayerBookPainting.order($0, on: at(12)) }
+        paintings += (PrayerBookView.everydayIDs + PrayerBook.bestKnownMarianIDs).map { PrayerBookPainting.prayer($0) }
+        paintings.append(.saved)
 
         for painting in paintings {
             #expect(ImageCacheService.shared.image(named: painting.fallback) != nil, "\(painting.fallback) is not in the catalog")
@@ -307,5 +310,22 @@ struct PrayersPageTests {
         // Every other page still pushes
         router.push(.prayerOrder(id: "table"))
         #expect(router.path.count == 1)
+    }
+
+    // MARK: The home page
+
+    @Test func theHomePageNamesOnlyPrayersAndOrdersTheBookHolds() {
+        for id in PrayerBookView.everydayIDs + PrayerBook.bestKnownMarianIDs {
+            #expect(PrayerBook.prayer(id) != nil, "\(id) is not in the book")
+        }
+        for id in PrayerBookView.shortcutOccasionIDs {
+            #expect(PrayerBook.occasionOrders.contains { $0.id == id }, "\(id) is not an occasion's order")
+        }
+    }
+
+    @Test func theCountUnderTheTitleCountsEachPrayerOnce() {
+        let printed = PrayerBook.chapters.reduce(0) { $0 + $1.prayerIDs.count }
+        #expect(PrayerBook.prayerCount > 100)
+        #expect(PrayerBook.prayerCount <= printed)
     }
 }

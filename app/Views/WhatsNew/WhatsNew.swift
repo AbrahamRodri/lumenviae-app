@@ -42,7 +42,7 @@ struct WhatsNewRelease: Identifiable {
     static let all: [WhatsNewRelease] = [
         WhatsNewRelease(version: "4.0", items: [
             WhatsNewItem(
-                icon: "ch-praying-hands",
+                icon: "lv-prayer-book",
                 title: "Prayers",
                 // The Journal gave Prayers its place in the bar. Every row
                 // here is a door, and the Journal is a tab, not a page, so

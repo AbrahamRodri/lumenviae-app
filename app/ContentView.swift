@@ -555,6 +555,9 @@ struct ContentView: View {
         case .prayerOrder(let id):
             PrayerOrderView(orderID: id)
 
+        case .prayerBookSaved:
+            PrayerBookSavedView()
+
         // A player, like the Rosary's
         case .prayAlong(let launch):
             PrayAlongView(launch: launch)
