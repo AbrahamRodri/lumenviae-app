@@ -300,14 +300,16 @@ struct LibraryReadingView: View {
 
     @ViewBuilder
     private func ledger(_ entry: LibraryReading, section: ReadingShelf) -> some View {
-        let prayerDoors = entry.doors.filter {
+        // A door into an archived page stands down (`ArchivedPages`)
+        let doors = (entry.doors + homeDoor(for: entry, section: section)).filter { !ArchivedPages.hides($0) }
+        let prayerDoors = doors.filter {
             if case .page = $0 { return false }
             return true
         }
-        let pageDoors = entry.doors.filter {
+        let pageDoors = doors.filter {
             if case .page = $0 { return true }
             return false
-        } + homeDoor(for: entry, section: section)
+        }
 
         if entry.feast != nil || !prayerDoors.isEmpty || !pageDoors.isEmpty {
             VStack(spacing: 0) {

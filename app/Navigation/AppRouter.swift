@@ -309,7 +309,11 @@ final class AppRouter {
     /// The Prayer Book has a tab of its own, so a door to it — home's hour
     /// row, Explore, the Chapel's tile, a prayer's page — turns to that
     /// tab rather than stacking a second copy of the book on this one.
+    ///
+    /// An archived page (`ArchivedPages`) is never pushed: its doors stand
+    /// down, and this is the backstop for one that was missed.
     func push(_ route: AppRoute) {
+        if ArchivedPages.hides(route) { return }
         if route == .prayerBook {
             switchTo(.prayers)
             return

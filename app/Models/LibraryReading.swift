@@ -173,16 +173,27 @@ enum LibraryReadings {
         return nil
     }
 
+    /// The page a shelf stands in: the Marian Library, St. Carlo's page,
+    /// or the Devotion in Summary. How to Pray's shelves are its own
+    /// lessons' and name no page.
+    static func page(of shelf: ReadingShelf) -> AppRoute? {
+        if MarianLibraryData.sections.contains(where: { $0.id == shelf.id }) { return .marianLibrary }
+        if CarloAcutisData.shelves.contains(where: { $0.id == shelf.id }) { return .carloAcutis }
+        if shelf.id == TrueDevotionData.teaching.id { return .trueDevotion }
+        return nil
+    }
+
     /// The page a shelf belongs to, as a door — the way home for a
     /// reading opened from Explore or How to Pray, where the kicker names
     /// only the shelf and the library it stands in is a page away.
     static func home(of shelf: ReadingShelf) -> ReadingDoor? {
-        if MarianLibraryData.sections.contains(where: { $0.id == shelf.id }) {
+        switch page(of: shelf) {
+        case .marianLibrary:
             return .page(.marianLibrary, icon: "ch-lily", title: "The Marian Library", note: shelf.title)
-        }
-        if CarloAcutisData.shelves.contains(where: { $0.id == shelf.id }) {
+        case .carloAcutis:
             return .page(.carloAcutis, icon: "ch-monstrance", title: "St. Carlo Acutis", note: shelf.title)
+        default:
+            return nil
         }
-        return nil
     }
 }
