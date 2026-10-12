@@ -144,6 +144,33 @@ struct SilentPendantTests {
         #expect(vm.pendant == nil && vm.currentMysteryIndex == 4 && vm.currentBeadIndex == 0)
     }
 
+    @Test func aFirstMysteryTakenUpAgainIsNotBegunAgainOnTheCross() {
+        // Kept at the first mystery's Our Father after a minute's prayer
+        // off the beads, the snapshot is (0, 0) with time carried over
+        let meditations = MysteryData.mysteries(for: .joyful).map { mystery in
+            Meditation(id: 1000 + mystery.order, title: nil, content: "Consider…", author: nil, source: nil,
+                       audioUrl: nil, mystery: mystery)
+        }
+        let set = MeditationSet(id: 7, name: "A Set", category: "joyful", description: nil,
+                                labels: nil, meditations: meditations)
+        let defaults = UserDefaults(suiteName: "SilentPendantTests.\(UUID().uuidString)")!
+        let resumed = PrayerSessionViewModel(
+            meditationSet: set, startAtIndex: 0, startAtBead: 0, priorSeconds: 75,
+            showsOpeningPrayers: true,
+            apiService: APIService(session: StubProtocol.session),
+            audioService: AudioService(integratesWithSystem: false, defaults: defaults)
+        )
+        #expect(resumed.pendant == nil)
+        #expect(resumed.currentMysteryIndex == 0 && resumed.currentBeadIndex == 0)
+
+        let scriptural = ScripturalRosaryViewModel(
+            category: .joyful, startAtIndex: 0, startAtBead: 0, priorSeconds: 75, showsOpeningPrayers: true
+        )
+        #expect(scriptural.spokenPendant == nil)
+        #expect(ScripturalRosaryViewModel(category: .joyful, showsOpeningPrayers: true).spokenPendant != nil,
+                "begun from its start, it opens on the cross")
+    }
+
     @Test func aMysteryReachedAnotherWayLeavesThePendant() {
         let vm = player(pendant: true)
         // The Lock Screen's next, or the voice moving the hand

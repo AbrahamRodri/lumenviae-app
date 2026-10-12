@@ -136,8 +136,10 @@ final class ScripturalRosaryViewModel {
 
         // A Rosary resumed while it was said aloud picks up the prayer
         // it stopped on — the verse, not just the bead
-        if startAtIndex <= 0, startAtBead <= 0 {
-            // Begun from its start, the Rosary begins on the cross
+        if startAtIndex <= 0, startAtBead <= 0, priorSeconds <= 0 {
+            // Begun from its start, the Rosary begins on the cross; taken
+            // up again at the first mystery, kept after a minute's
+            // prayer, it carries its time and begins there
             pendantStep = silentPendant.firstOpening
         } else {
             resumeStep = PrayerResumeService.shared.spokenStep(

@@ -426,8 +426,9 @@ final class PrayerSessionViewModel {
         // resumed past an Our Father is past its meditation
         if currentBeadIndex > 0 { unlockedMysteries.insert(currentMysteryIndex) }
         // A Rosary begun from its start begins on the cross; one taken up
-        // again begins where it was left
-        if startAtIndex <= 0, startAtBead <= 0 {
+        // again begins where it was left — the first mystery too, kept
+        // after a minute's prayer off the beads, which carries its time
+        if startAtIndex <= 0, startAtBead <= 0, priorSeconds <= 0 {
             pendantStep = silentPendant.firstOpening
         }
 

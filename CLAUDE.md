@@ -232,7 +232,7 @@ page opens its own page rather than turning beneath them.
 |-----|-----------|---------|
 | Home | Yes | Search glass → Explore, today's mysteries, mystery grid, Today's Prayer, the reading shelf, quote |
 | Consecrate | Yes | The 33-day preparation for Marian consecration |
-| Prayers | Yes | The Prayer Book: Today, Occasions, All Prayers, and a search over them (see The Prayer Book below) |
+| Prayers | Yes | The Prayer Book: six shortcuts, the order for this hour, Everyday Prayers, prayers to Mary, every occasion and topic, and a search behind the head's glass (see The Prayer Book below) |
 | Journal | No — pushed, via Chapel | Reflections, searchable, stored on device |
 | Progress | No — pushed, via Chapel | Streaks, milestones ahead, prayer history ("Prayer Record") |
 | Chapel | Yes | My Chapel — the user's arrangeable page (Settings and About live in the home masthead) |
@@ -511,7 +511,7 @@ beside NIGHT, and the Regina Cæli could not be set — and the whole tile
 prays it; its line under the order is the Prayers page's own
 sentence for the hour, `PrayerBook.daySummary(of:on:)`, which the
 Prayers page's hour card sets too, so the tile and the page never say what one order is in two
-ways; the reader's ribbons stand under Saved on Prayers' Today, no
+ways; the reader's ribbons stand on the Prayers page's Saved, no
 longer here), **Reading** (the open book standing on a shelf
 with the author and the place beside it — "St. Thérèse · Chapter IV" —
 and the other books under way standing as spines beside it: tap a
@@ -2473,7 +2473,8 @@ write concurrent code here:
   Nothing is carried forward. **Saving**
   is a silk ribbon drawn as a bookmark (`RibbonToggle`,
   `PrayerBookStore.ribbons`), its words Save and Saved — the saved
-  prayers stand under Saved on Prayers' Today.
+  prayers stand on Saved, a page of its own opened from the Prayers
+  page's shortcuts (`.prayerBookSaved`).
   **Learning** is `LearnByHeartSheet`: four steps (read, some hidden,
   first letters, by heart), in English or Latin, a hidden word shown by a
   touch, and at the end the reader's own LEARNED mark — never scored.
@@ -3529,6 +3530,11 @@ journal endpoint and none is planned — journal entries are local.
   Fatima Prayer); not a shorter Rosary
 
 ## Developer Tools
+
+A debug build can be launched on a tab, for screenshots and checks a
+simulator cannot tap to: `SIMCTL_CHILD_LUMEN_VIAE_TAB=prayers xcrun
+simctl launch …` (`AppRouter.launchTab`; the name is an `AppTab` case),
+and on another day with `SIMCTL_CHILD_LUMEN_VIAE_TODAY=2026-10-01`.
 
 `Tools/dev` is the door to everyday tasks: `Tools/dev check` runs lint,
 the generated-file check, the build and the tests. Run tests with

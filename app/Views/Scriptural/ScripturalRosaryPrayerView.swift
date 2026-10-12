@@ -261,8 +261,11 @@ struct ScripturalRosaryPrayerView: View {
         // kept then — and again as the phone locks or the Rosary is left,
         // should either come first. Opened and backed out of, it pins
         // nothing, as on the screen.
-        .task(id: !countsOnScreen && viewModel.currentMysteryIndex == 0) {
-            guard !countsOnScreen, viewModel.currentMysteryIndex == 0 else { return }
+        // The opening prayers are not the first mystery: the minute starts
+        // over when they give way to it, rather than running out unseen
+        .task(id: !countsOnScreen && viewModel.currentMysteryIndex == 0 && viewModel.currentPendantStep == nil) {
+            guard !countsOnScreen, viewModel.currentMysteryIndex == 0,
+                  viewModel.currentPendantStep == nil else { return }
             let left = PrayerResumeService.firstMysteryBegunAfter - viewModel.sessionDuration
             if left > 0 { try? await Task.sleep(for: .seconds(left)) }
             guard !Task.isCancelled else { return }

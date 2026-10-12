@@ -316,8 +316,10 @@ struct MysteryPrayerView: View {
         // either come first. Opened and backed out of, it pins nothing,
         // as on the beads. Said aloud the voice moves the beads on the
         // screen, so this never waits on the voice.
-        .task(id: !onBeads && viewModel.currentMysteryIndex == 0) {
-            guard !onBeads, viewModel.currentMysteryIndex == 0 else { return }
+        // The opening prayers are not the first mystery: the minute starts
+        // over when they give way to it, rather than running out unseen
+        .task(id: !onBeads && viewModel.currentMysteryIndex == 0 && viewModel.currentPendantStep == nil) {
+            guard !onBeads, viewModel.currentMysteryIndex == 0, viewModel.currentPendantStep == nil else { return }
             let left = PrayerResumeService.firstMysteryBegunAfter - viewModel.sessionDuration
             if left > 0 { try? await Task.sleep(for: .seconds(left)) }
             guard !Task.isCancelled else { return }
