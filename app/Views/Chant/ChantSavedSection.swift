@@ -80,7 +80,7 @@ struct ChantSavedPage: View {
                     ChantSavedSection(
                         openSetID: $openSetID,
                         startsOn: start,
-                        open: { router.push(.chant(id: $0.id)) }
+                        open: { router.push(ChantTap.route(to: $0)) }
                     )
                 }
                 .padding(.top, 8)

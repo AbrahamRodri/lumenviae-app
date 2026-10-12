@@ -18,8 +18,9 @@
 //    BROWSE ALL     every chant, under its topic
 //
 //  Every card says how long it plays and has its own play, so the page
-//  reads as a library of songs rather than of prayers. Search stands in
-//  the bar.
+//  reads as a library of songs rather than of prayers. A tap on a chant,
+//  wherever it stands, opens its page; only its disc plays (`ChantTap`).
+//  Search stands in the bar.
 //
 //  It once opened on a strip of six sections (Today, Seasons, Occasions,
 //  Types, Learn, Saved) with the first screen a chart of the day's hours:
@@ -392,10 +393,10 @@ struct ChantLibraryView: View {
                         painting: occasion.painting,
                         chants: occasion.distinctChants(),
                         duration: occasion.duration(),
-                        queue: ChantQueue.occasion(occasion)
-                    ) {
-                        router.push(.chantSets(openID: occasion.id))
-                    }
+                        queue: ChantQueue.occasion(occasion),
+                        open: { router.push(.chantSets(openID: occasion.id)) },
+                        openChant: openChant
+                    )
                 }
                 ForEach(shelf.sets.filter { $0.occasionID == nil && $0.chantCount > 0 }) { set in
                     let chants = set.items.compactMap(\.chant)
@@ -404,10 +405,10 @@ struct ChantLibraryView: View {
                         painting: chants.first.map { ChantCatalog.painting(for: $0) } ?? "glorious_coronation",
                         chants: chants,
                         duration: set.duration,
-                        queue: ChantQueue.set(set)
-                    ) {
-                        router.push(.chantSaved(.set(set.id)))
-                    }
+                        queue: ChantQueue.set(set),
+                        open: { router.push(.chantSaved(.set(set.id))) },
+                        openChant: openChant
+                    )
                 }
             }
             .fixedSize(horizontal: false, vertical: true)
@@ -452,7 +453,7 @@ struct ChantLibraryView: View {
     // MARK: - Doors
 
     private func openChant(_ chant: Chant) {
-        router.push(.chant(id: chant.id))
+        router.push(ChantTap.route(to: chant))
     }
 }
 
@@ -667,7 +668,9 @@ struct ChantSquareCard: View {
 
 /// A sung set as a card: its painting, its name, how many chants and how
 /// long, its play, and its chants listed in order with their lengths, so
-/// what will be heard is seen before play is pressed
+/// what will be heard is seen before play is pressed. The card opens the
+/// set; a chant listed on it opens that chant's page (`ChantTap`); only
+/// the disc plays, and it plays the whole set.
 struct ChantSetCard: View {
     let title: String
     let painting: String
@@ -675,6 +678,7 @@ struct ChantSetCard: View {
     let duration: TimeInterval
     let queue: ChantQueue
     let open: () -> Void
+    let openChant: (Chant) -> Void
 
     private var player = ChantPlayer.shared
 
@@ -687,7 +691,8 @@ struct ChantSetCard: View {
         chants: [Chant],
         duration: TimeInterval,
         queue: ChantQueue,
-        open: @escaping () -> Void
+        open: @escaping () -> Void,
+        openChant: @escaping (Chant) -> Void
     ) {
         self.title = title
         self.painting = painting
@@ -695,6 +700,7 @@ struct ChantSetCard: View {
         self.duration = duration
         self.queue = queue
         self.open = open
+        self.openChant = openChant
     }
 
     var body: some View {
@@ -726,27 +732,37 @@ struct ChantSetCard: View {
             .padding(.bottom, 10)
 
             ForEach(Array(chants.prefix(Self.listed).enumerated()), id: \.offset) { index, chant in
-                HStack(alignment: .firstTextBaseline, spacing: 10) {
-                    Text("\(index + 1)")
-                        .font(AppFonts.titleFont(12))
-                        .foregroundColor(Rubric.text)
-                        .frame(width: 14, alignment: .leading)
-                    Text(chant.latinTitle)
-                        .font(AppFonts.readingFont(14.5))
-                        .foregroundColor(AppColors.cream.opacity(0.92))
-                        .lineLimit(1)
-                    Spacer(minLength: 6)
-                    Text(chant.durationLabel)
-                        .font(AppFonts.readingFont(12.5))
-                        .foregroundColor(AppColors.textSecondary)
-                        .monospacedDigit()
+                Button {
+                    openChant(chant)
+                } label: {
+                    HStack(alignment: .firstTextBaseline, spacing: 10) {
+                        Text("\(index + 1)")
+                            .font(AppFonts.titleFont(12))
+                            .foregroundColor(Rubric.text)
+                            .frame(width: 14, alignment: .leading)
+                        Text(chant.latinTitle)
+                            .font(AppFonts.readingFont(14.5))
+                            .foregroundColor(AppColors.cream.opacity(0.92))
+                            .lineLimit(1)
+                        Spacer(minLength: 6)
+                        Text(chant.durationLabel)
+                            .font(AppFonts.readingFont(12.5))
+                            .foregroundColor(AppColors.textSecondary)
+                            .monospacedDigit()
+                    }
+                    .padding(.vertical, 7)
+                    .contentShape(Rectangle())
                 }
-                .padding(.vertical, 7)
+                .buttonStyle(.plain)
                 .overlay(alignment: .top) {
                     Rectangle()
                         .fill(AppColors.gold.opacity(index == 0 ? 0.16 : 0.08))
                         .frame(height: AppLine.hairline)
                 }
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("\(index + 1). \(chant.spokenName), \(ChantPlayer.spoken(chant.duration))")
+                .accessibilityAddTraits(.isButton)
+                .accessibilityHint("Opens the chant")
             }
 
             if chants.count > Self.listed {
@@ -772,10 +788,7 @@ struct ChantSetCard: View {
         .contentShape(RoundedRectangle(cornerRadius: 18))
         .onTapGesture(perform: open)
         .accessibilityElement(children: .contain)
-        .accessibilityLabel(
-            "\(title), \(Self.summary(count: chants.count, duration: duration)): "
-                + chants.map(\.latinTitle).joined(separator: ", ")
-        )
+        .accessibilityLabel("\(title), \(Self.summary(count: chants.count, duration: duration))")
         .accessibilityAction(named: "Open the set") { open() }
     }
 
