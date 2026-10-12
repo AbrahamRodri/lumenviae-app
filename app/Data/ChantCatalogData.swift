@@ -15,19 +15,49 @@ import Foundation
 extension ChantCatalog {
 
     static let groups: [ChantGroup] = [
-        ChantGroup(id: "ourLady", title: "Mary", note: "Her songs through the year, her hymns and her litany"),
-        ChantGroup(id: "rosary", title: "The Rosary and the Angelus", note: "The prayers of the beads, chanted as a Latin Rosary is sung"),
-        ChantGroup(id: "sacrament", title: "The Blessed Sacrament", note: "Jesus present in the Host: for Mass, Adoration and a visit"),
-        ChantGroup(id: "holyGhost", title: "The Holy Spirit", note: "Pentecost, and the start of any work"),
-        ChantGroup(id: "ourLord", title: "The Sacred Heart and the Holy Name", note: nil),
-        ChantGroup(id: "praise", title: "Praise and Thanksgiving", note: nil),
-        ChantGroup(id: "saints", title: "Angels and Saints", note: nil),
-        ChantGroup(id: "advent", title: "Advent", note: nil),
-        ChantGroup(id: "christmas", title: "Christmas", note: nil),
-        ChantGroup(id: "lent", title: "Lent", note: nil),
-        ChantGroup(id: "easter", title: "Easter", note: nil),
-        ChantGroup(id: "departed", title: "For Those Who Have Died", note: nil),
-        ChantGroup(id: "mass", title: "The Mass", note: "The parts of the Mass sung every Sunday")
+        ChantGroup(id: "asperges", title: "Asperges me and Vidi aquam", note: "Sung as the people are sprinkled with holy water before the Sunday Mass; Vidi aquam in the Easter season", parts: [
+            ChantGroupPart(title: nil, note: nil, chantIDs: ["asperges_me", "vidi_aquam"])
+        ]),
+        ChantGroup(id: "mass", title: "The Ordinary of the Mass", note: "The parts of the Mass whose words never change. Their melody changes with the day: each Mass below says when it is sung", parts: [
+            ChantGroupPart(title: "Mass VIII, De Angelis", note: "The Mass of the Angels: for feasts, and any Sunday", chantIDs: ["kyrie_de_angelis", "gloria_de_angelis", "sanctus_de_angelis", "agnus_de_angelis"]),
+            ChantGroupPart(title: "Mass XI, Orbis factor", note: "For the Sundays through the year", chantIDs: ["kyrie_orbis_factor", "gloria_orbis_factor", "sanctus_orbis_factor", "agnus_orbis_factor"])
+        ]),
+        ChantGroup(id: "creed", title: "The Creed", note: "The Nicene Creed, sung on Sundays and the greater feasts", parts: [
+            ChantGroupPart(title: nil, note: nil, chantIDs: ["credo_iii"])
+        ]),
+        ChantGroup(id: "sequences", title: "Sequences", note: "Feast poems sung before the Gospel at Easter, Pentecost and Corpus Christi", parts: [
+            ChantGroupPart(title: nil, note: nil, chantIDs: ["victimae_paschali", "veni_sancte_spiritus", "lauda_sion"])
+        ]),
+        ChantGroup(id: "requiem", title: "The Mass for the Dead", note: "Sung at a funeral, and for those who have died", parts: [
+            ChantGroupPart(title: nil, note: nil, chantIDs: ["dies_irae"])
+        ]),
+        ChantGroup(id: "hymns", title: "General Hymns and Chants", note: "For any time of the year", parts: [
+            ChantGroupPart(title: nil, note: nil, chantIDs: ["adoramus_te", "adoro_te", "anima_christi", "ave_verum", "christus_vincit", "cor_jesu", "da_pacem", "ecce_panis", "jesu_dulcis_memoria", "lucis_creator", "o_sacrum_convivium", "panis_angelicus", "salvete_christi_vulnera", "sancte_michael", "te_deum_simple", "te_deum", "te_joseph", "te_saeculorum", "ut_queant_laxis", "veni_creator", "veni_sancte_reple"])
+        ]),
+        ChantGroup(id: "ourLady", title: "Hymns and Chants in Honor of the Blessed Virgin Mary", note: "Her four songs through the year, then her other hymns", parts: [
+            ChantGroupPart(title: nil, note: nil, chantIDs: ["alma_redemptoris_simple", "alma_redemptoris", "ave_regina_simple", "ave_regina_solemn", "regina_caeli_simple", "regina_caeli_solemn", "salve_regina_simple", "salve_regina_solemn", "angelus", "ave_maria_antiphon", "ave_maris_stella_feasts", "ave_maris_stella", "flos_carmeli", "inviolata", "memorare", "o_gloriosa", "omni_die", "quem_terra", "salve_mater", "sub_tuum", "te_matrem", "tota_pulchra"])
+        ]),
+        ChantGroup(id: "seasons", title: "Seasonal Hymns and Chants", note: "The Church's year, from Advent to the Ascension", parts: [
+            ChantGroupPart(title: "Advent", note: nil, chantIDs: ["rorate_caeli", "en_clara_vox", "creator_alme", "veni_emmanuel", "o_sapientia_magnificat", "o_adonai_magnificat", "o_radix_magnificat", "o_clavis_magnificat", "o_oriens_magnificat", "o_rex_magnificat", "o_emmanuel_magnificat"]),
+            ChantGroupPart(title: "Christmas", note: nil, chantIDs: ["puer_natus", "adeste_fideles", "jesu_redemptor"]),
+            ChantGroupPart(title: "Lent", note: nil, chantIDs: ["attende_domine", "parce_domine", "media_vita", "miserere", "audi_benigne", "stabat_mater"]),
+            ChantGroupPart(title: "Holy Thursday", note: nil, chantIDs: ["ubi_caritas"]),
+            ChantGroupPart(title: "Good Friday", note: nil, chantIDs: ["vexilla_regis", "o_vos_omnes"]),
+            ChantGroupPart(title: "Easter", note: nil, chantIDs: ["o_filii", "salve_festa_dies", "aurora_caelum", "ad_regias", "concordi_laetitia"]),
+            ChantGroupPart(title: "Ascension", note: nil, chantIDs: ["jesu_nostra_redemptio"])
+        ]),
+        ChantGroup(id: "canticles", title: "Gospel Canticles and Litany of Saints", note: "Mary's song at Evening Prayer, and the saints called on by name", parts: [
+            ChantGroupPart(title: nil, note: nil, chantIDs: ["magnificat", "litany_saints"])
+        ]),
+        ChantGroup(id: "litanies", title: "Litanies", note: "Prayers of many short calls, each answered by all", parts: [
+            ChantGroupPart(title: nil, note: nil, chantIDs: ["litany_loreto", "litany_holy_name", "litany_sacred_heart", "litany_st_joseph"])
+        ]),
+        ChantGroup(id: "benediction", title: "Benediction of the Blessed Sacrament", note: "Adoration and Blessing: sung before Jesus in the Host", parts: [
+            ChantGroupPart(title: nil, note: nil, chantIDs: ["o_salutaris", "tantum_ergo", "divine_praises", "adoremus", "pange_lingua"])
+        ]),
+        ChantGroup(id: "rosary", title: "The Rosary in Latin", note: "The prayers of the beads, chanted as a Latin Rosary is sung", parts: [
+            ChantGroupPart(title: nil, note: nil, chantIDs: ["in_nomine_patris", "credo_in_deum", "pater_noster", "ave_maria", "gloria_patri", "o_mi_jesu"])
+        ])
     ]
 
     static let all: [Chant] = [
@@ -531,7 +561,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "concordi_laetitia",
-            groupID: "ourLady",
+            groupID: "seasons",
             latinTitle: "Concordi Lætitia",
             englishTitle: "With Joy in One Accord",
             setting: nil,
@@ -573,7 +603,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "magnificat",
-            groupID: "ourLady",
+            groupID: "canticles",
             latinTitle: "Magnificat",
             englishTitle: "The Canticle of Mary",
             setting: "With alleluia",
@@ -710,7 +740,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "stabat_mater",
-            groupID: "ourLady",
+            groupID: "seasons",
             latinTitle: "Stabat Mater",
             englishTitle: "The Mother Stood",
             setting: "Feast poem",
@@ -787,7 +817,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "litany_loreto",
-            groupID: "ourLady",
+            groupID: "litanies",
             latinTitle: "Litaniæ Lauretanæ",
             englishTitle: "The Litany of Loreto",
             setting: nil,
@@ -1361,7 +1391,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "angelus",
-            groupID: "rosary",
+            groupID: "ourLady",
             latinTitle: "Angelus Domini",
             englishTitle: "The Angelus",
             setting: nil,
@@ -1417,7 +1447,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "adoro_te",
-            groupID: "sacrament",
+            groupID: "hymns",
             latinTitle: "Adoro Te Devote",
             englishTitle: "I Adore Thee Devoutly",
             setting: nil,
@@ -1462,7 +1492,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "ave_verum",
-            groupID: "sacrament",
+            groupID: "hymns",
             latinTitle: "Ave Verum Corpus",
             englishTitle: "Hail, True Body",
             setting: nil,
@@ -1488,7 +1518,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "o_salutaris",
-            groupID: "sacrament",
+            groupID: "benediction",
             latinTitle: "O Salutaris Hostia",
             englishTitle: "O Saving Victim",
             setting: nil,
@@ -1511,7 +1541,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "tantum_ergo",
-            groupID: "sacrament",
+            groupID: "benediction",
             latinTitle: "Tantum Ergo",
             englishTitle: "Down in Adoration Falling",
             setting: nil,
@@ -1551,7 +1581,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "o_sacrum_convivium",
-            groupID: "sacrament",
+            groupID: "hymns",
             latinTitle: "O Sacrum Convivium",
             englishTitle: "O Sacred Banquet",
             setting: nil,
@@ -1576,7 +1606,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "divine_praises",
-            groupID: "sacrament",
+            groupID: "benediction",
             latinTitle: "Laudes Divinæ",
             englishTitle: "The Divine Praises",
             setting: nil,
@@ -1608,7 +1638,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "anima_christi",
-            groupID: "sacrament",
+            groupID: "hymns",
             latinTitle: "Anima Christi",
             englishTitle: "Soul of Christ",
             setting: nil,
@@ -1637,7 +1667,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "panis_angelicus",
-            groupID: "sacrament",
+            groupID: "hymns",
             latinTitle: "Panis Angelicus",
             englishTitle: "Bread of Angels",
             setting: nil,
@@ -1668,7 +1698,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "lauda_sion",
-            groupID: "sacrament",
+            groupID: "sequences",
             latinTitle: "Lauda Sion",
             englishTitle: "Praise, O Sion",
             setting: nil,
@@ -1764,7 +1794,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "adoremus",
-            groupID: "sacrament",
+            groupID: "benediction",
             latinTitle: "Adoremus in Æternum",
             englishTitle: "Let Us Adore For Ever",
             setting: nil,
@@ -1796,7 +1826,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "ecce_panis",
-            groupID: "sacrament",
+            groupID: "hymns",
             latinTitle: "Ecce Panis Angelorum",
             englishTitle: "Behold the Bread of Angels",
             setting: nil,
@@ -1831,7 +1861,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "ubi_caritas",
-            groupID: "sacrament",
+            groupID: "seasons",
             latinTitle: "Ubi Caritas",
             englishTitle: "Where Charity and Love Are",
             setting: nil,
@@ -1863,7 +1893,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "adoramus_te",
-            groupID: "sacrament",
+            groupID: "hymns",
             latinTitle: "Adoramus Te",
             englishTitle: "We Adore Thee",
             setting: nil,
@@ -1885,7 +1915,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "pange_lingua",
-            groupID: "sacrament",
+            groupID: "benediction",
             latinTitle: "Pange Lingua",
             englishTitle: "Sing, My Tongue, the Saviour's Glory",
             setting: nil,
@@ -1946,7 +1976,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "jesu_nostra_redemptio",
-            groupID: "sacrament",
+            groupID: "seasons",
             latinTitle: "Jesu, Nostra Redemptio",
             englishTitle: "O Jesus, Our Redemption",
             setting: nil,
@@ -1983,7 +2013,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "veni_creator",
-            groupID: "holyGhost",
+            groupID: "hymns",
             latinTitle: "Veni Creator Spiritus",
             englishTitle: "Come, Creator Spirit",
             setting: nil,
@@ -2036,7 +2066,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "veni_sancte_spiritus",
-            groupID: "holyGhost",
+            groupID: "sequences",
             latinTitle: "Veni Sancte Spiritus",
             englishTitle: "Come, Holy Spirit",
             setting: "Feast poem",
@@ -2077,7 +2107,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "veni_sancte_reple",
-            groupID: "holyGhost",
+            groupID: "hymns",
             latinTitle: "Veni Sancte Spiritus, Reple",
             englishTitle: "Come, Holy Ghost",
             setting: "Short chant",
@@ -2108,7 +2138,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "litany_sacred_heart",
-            groupID: "ourLord",
+            groupID: "litanies",
             latinTitle: "Litaniæ Sacratissimi Cordis",
             englishTitle: "The Litany of the Sacred Heart",
             setting: nil,
@@ -2227,7 +2257,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "litany_holy_name",
-            groupID: "ourLord",
+            groupID: "litanies",
             latinTitle: "Litaniæ Sanctissimi Nominis",
             englishTitle: "The Litany of the Holy Name",
             setting: nil,
@@ -2406,7 +2436,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "jesu_dulcis_memoria",
-            groupID: "ourLord",
+            groupID: "hymns",
             latinTitle: "Jesu Dulcis Memoria",
             englishTitle: "Jesus, the Very Thought of Thee",
             setting: nil,
@@ -2442,7 +2472,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "cor_jesu",
-            groupID: "ourLord",
+            groupID: "hymns",
             latinTitle: "Cor Jesu Sacratissimum",
             englishTitle: "Most Sacred Heart of Jesus",
             setting: nil,
@@ -2464,7 +2494,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "te_deum_simple",
-            groupID: "praise",
+            groupID: "hymns",
             latinTitle: "Te Deum",
             englishTitle: "We Praise Thee, O God",
             setting: "Simple melody",
@@ -2539,7 +2569,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "te_deum",
-            groupID: "praise",
+            groupID: "hymns",
             latinTitle: "Te Deum",
             englishTitle: "We Praise Thee, O God",
             setting: "Solemn melody",
@@ -2607,7 +2637,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "christus_vincit",
-            groupID: "praise",
+            groupID: "hymns",
             latinTitle: "Christus Vincit",
             englishTitle: "Christ Conquers",
             setting: nil,
@@ -2638,7 +2668,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "te_saeculorum",
-            groupID: "praise",
+            groupID: "hymns",
             latinTitle: "Te Sæculorum Principem",
             englishTitle: "Thee, Prince of All the Ages",
             setting: nil,
@@ -2687,7 +2717,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "salvete_christi_vulnera",
-            groupID: "ourLord",
+            groupID: "hymns",
             latinTitle: "Salvete, Christi Vulnera",
             englishTitle: "Hail, Wounds of Christ",
             setting: nil,
@@ -2740,7 +2770,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "lucis_creator",
-            groupID: "praise",
+            groupID: "hymns",
             latinTitle: "Lucis Creator Optime",
             englishTitle: "O Blest Creator of the Light",
             setting: nil,
@@ -2777,7 +2807,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "da_pacem",
-            groupID: "praise",
+            groupID: "hymns",
             latinTitle: "Da Pacem, Domine",
             englishTitle: "Give Peace, O Lord",
             setting: nil,
@@ -2814,7 +2844,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "sancte_michael",
-            groupID: "saints",
+            groupID: "hymns",
             latinTitle: "Sancte Michael Archangele",
             englishTitle: "St Michael the Archangel",
             setting: nil,
@@ -2841,7 +2871,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "ut_queant_laxis",
-            groupID: "saints",
+            groupID: "hymns",
             latinTitle: "Ut Queant Laxis",
             englishTitle: "That Thy Servants May Sing",
             setting: nil,
@@ -2877,7 +2907,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "litany_st_joseph",
-            groupID: "saints",
+            groupID: "litanies",
             latinTitle: "Litaniæ Sancti Joseph",
             englishTitle: "The Litany of St Joseph",
             setting: nil,
@@ -2983,7 +3013,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "te_joseph",
-            groupID: "saints",
+            groupID: "hymns",
             latinTitle: "Te Joseph Celebrent",
             englishTitle: "Let Heaven Sing Thee, Joseph",
             setting: nil,
@@ -3020,7 +3050,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "litany_saints",
-            groupID: "saints",
+            groupID: "canticles",
             latinTitle: "Litaniæ Sanctorum",
             englishTitle: "The Litany of the Saints",
             setting: nil,
@@ -3288,7 +3318,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "rorate_caeli",
-            groupID: "advent",
+            groupID: "seasons",
             latinTitle: "Rorate Cæli",
             englishTitle: "Drop Down Dew, Ye Heavens",
             setting: nil,
@@ -3341,7 +3371,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "en_clara_vox",
-            groupID: "advent",
+            groupID: "seasons",
             latinTitle: "En Clara Vox",
             englishTitle: "Hark! A Clear Voice Is Sounding",
             setting: nil,
@@ -3373,7 +3403,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "creator_alme",
-            groupID: "advent",
+            groupID: "seasons",
             latinTitle: "Creator Alme Siderum",
             englishTitle: "Creator of the Stars of Night",
             setting: nil,
@@ -3402,7 +3432,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "veni_emmanuel",
-            groupID: "advent",
+            groupID: "seasons",
             latinTitle: "Veni, Veni, Emmanuel",
             englishTitle: "O Come, O Come, Emmanuel",
             setting: nil,
@@ -3459,7 +3489,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "o_sapientia_magnificat",
-            groupID: "advent",
+            groupID: "seasons",
             latinTitle: "O Sapientia",
             englishTitle: "O Wisdom, with the Magnificat",
             setting: nil,
@@ -3510,7 +3540,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "o_adonai_magnificat",
-            groupID: "advent",
+            groupID: "seasons",
             latinTitle: "O Adonai",
             englishTitle: "O Lord and Ruler, with the Magnificat",
             setting: nil,
@@ -3565,7 +3595,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "o_radix_magnificat",
-            groupID: "advent",
+            groupID: "seasons",
             latinTitle: "O Radix Jesse",
             englishTitle: "O Root of Jesse, with the Magnificat",
             setting: nil,
@@ -3618,7 +3648,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "o_clavis_magnificat",
-            groupID: "advent",
+            groupID: "seasons",
             latinTitle: "O Clavis David",
             englishTitle: "O Key of David, with the Magnificat",
             setting: nil,
@@ -3676,7 +3706,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "o_oriens_magnificat",
-            groupID: "advent",
+            groupID: "seasons",
             latinTitle: "O Oriens",
             englishTitle: "O Morning Star, with the Magnificat",
             setting: nil,
@@ -3726,7 +3756,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "o_rex_magnificat",
-            groupID: "advent",
+            groupID: "seasons",
             latinTitle: "O Rex Gentium",
             englishTitle: "O King of the Nations, with the Magnificat",
             setting: nil,
@@ -3778,7 +3808,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "o_emmanuel_magnificat",
-            groupID: "advent",
+            groupID: "seasons",
             latinTitle: "O Emmanuel",
             englishTitle: "O Emmanuel, with the Magnificat",
             setting: nil,
@@ -3829,7 +3859,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "puer_natus",
-            groupID: "christmas",
+            groupID: "seasons",
             latinTitle: "Puer Natus in Bethlehem",
             englishTitle: "A Child Is Born in Bethlehem",
             setting: nil,
@@ -3901,7 +3931,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "adeste_fideles",
-            groupID: "christmas",
+            groupID: "seasons",
             latinTitle: "Adeste Fideles",
             englishTitle: "O Come, All Ye Faithful",
             setting: nil,
@@ -3961,7 +3991,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "jesu_redemptor",
-            groupID: "christmas",
+            groupID: "seasons",
             latinTitle: "Jesu Redemptor Omnium",
             englishTitle: "Jesus, Redeemer of All",
             setting: nil,
@@ -4006,7 +4036,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "attende_domine",
-            groupID: "lent",
+            groupID: "seasons",
             latinTitle: "Attende Domine",
             englishTitle: "Hear Us, O Lord",
             setting: nil,
@@ -4048,7 +4078,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "parce_domine",
-            groupID: "lent",
+            groupID: "seasons",
             latinTitle: "Parce Domine",
             englishTitle: "Spare, O Lord",
             setting: nil,
@@ -4108,7 +4138,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "media_vita",
-            groupID: "lent",
+            groupID: "seasons",
             latinTitle: "Media Vita",
             englishTitle: "In the Midst of Life",
             setting: nil,
@@ -4161,7 +4191,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "miserere",
-            groupID: "lent",
+            groupID: "seasons",
             latinTitle: "Miserere Mei, Deus",
             englishTitle: "Psalm 50 · Have Mercy on Me",
             setting: nil,
@@ -4219,7 +4249,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "vexilla_regis",
-            groupID: "lent",
+            groupID: "seasons",
             latinTitle: "Vexilla Regis",
             englishTitle: "The Banners of the King",
             setting: nil,
@@ -4264,7 +4294,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "audi_benigne",
-            groupID: "lent",
+            groupID: "seasons",
             latinTitle: "Audi Benigne Conditor",
             englishTitle: "O Kind Creator, Bow Thine Ear",
             setting: nil,
@@ -4293,7 +4323,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "o_vos_omnes",
-            groupID: "lent",
+            groupID: "seasons",
             latinTitle: "O Vos Omnes",
             englishTitle: "O All Ye That Pass By",
             setting: nil,
@@ -4318,7 +4348,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "victimae_paschali",
-            groupID: "easter",
+            groupID: "sequences",
             latinTitle: "Victimæ Paschali Laudes",
             englishTitle: "Praises to the Paschal Victim",
             setting: nil,
@@ -4355,7 +4385,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "o_filii",
-            groupID: "easter",
+            groupID: "seasons",
             latinTitle: "O Filii et Filiæ",
             englishTitle: "O Sons and Daughters",
             setting: nil,
@@ -4447,7 +4477,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "vidi_aquam",
-            groupID: "easter",
+            groupID: "asperges",
             latinTitle: "Vidi Aquam",
             englishTitle: "I Saw Water",
             setting: nil,
@@ -4484,7 +4514,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "salve_festa_dies",
-            groupID: "easter",
+            groupID: "seasons",
             latinTitle: "Salve Festa Dies",
             englishTitle: "Hail, Festive Day",
             setting: nil,
@@ -4537,7 +4567,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "aurora_caelum",
-            groupID: "easter",
+            groupID: "seasons",
             latinTitle: "Aurora Cælum Purpurat",
             englishTitle: "The Dawn Is Reddening the Sky",
             setting: nil,
@@ -4566,7 +4596,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "ad_regias",
-            groupID: "easter",
+            groupID: "seasons",
             latinTitle: "Ad Regias Agni Dapes",
             englishTitle: "At the Lamb's High Feast",
             setting: nil,
@@ -4601,7 +4631,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "dies_irae",
-            groupID: "departed",
+            groupID: "requiem",
             latinTitle: "Dies Iræ",
             englishTitle: "Day of Wrath",
             setting: nil,
@@ -4784,7 +4814,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "credo_iii",
-            groupID: "mass",
+            groupID: "creed",
             latinTitle: "Credo III",
             englishTitle: "The Nicene Creed",
             setting: "Credo III",
@@ -4830,7 +4860,7 @@ extension ChantCatalog {
         ),
         Chant(
             id: "asperges_me",
-            groupID: "mass",
+            groupID: "asperges",
             latinTitle: "Asperges Me",
             englishTitle: "Thou Shalt Sprinkle Me",
             setting: nil,

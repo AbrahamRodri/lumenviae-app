@@ -178,11 +178,15 @@ struct ChantLibraryTests {
     @Test func theMassIsSungWhole() throws {
         let mass = try #require(ChantLibraryData.learningPaths.first { $0.id == "mass" })
         let sundays = try #require(ChantLibraryData.learningPaths.first { $0.id == "sunday_mass" })
-        let shelf = try #require(ChantCatalog.groups.first { $0.id == "mass" })
+        let shelves = ChantCatalog.groups.filter { ["asperges", "mass", "creed"].contains($0.id) }
+        #expect(shelves.count == 3)
         #expect(mass.chantIDs.allSatisfy { ChantLibraryData.forms[$0] == .everydayPrayer })
-        // The two Masses' paths hold the whole shelf: Mass VIII with Credo
-        // III, and Mass XI after the sprinkling with holy water
-        #expect(Set(mass.chantIDs + sundays.chantIDs) == Set(ChantCatalog.chants(in: shelf).map(\.id)))
+        // The two Masses' paths hold the sprinkling, the Ordinary and the
+        // Creed: Mass VIII with Credo III, and Mass XI after the
+        // sprinkling with holy water. The Vidi aquam is the Easter
+        // season's sprinkling, sung in place of the Asperges, on no path.
+        let sections = Set(shelves.flatMap { ChantCatalog.chants(in: $0) }.map(\.id))
+        #expect(Set(mass.chantIDs + sundays.chantIDs) == sections.subtracting(["vidi_aquam"]))
         #expect(sundays.chantIDs.first == "asperges_me")
         // The Prayer Book's Nicene Creed is sung as Credo III
         #expect(ChantCatalog.chants(forPrayer: "nicene_creed").map(\.id) == ["credo_iii"])
@@ -793,6 +797,42 @@ struct ChantLibraryHomeTests {
         let listed = Set(ChantCatalog.groups.flatMap { ChantCatalog.chants(in: $0) }.map(\.id))
         #expect(listed == Set(ChantCatalog.all.map(\.id)))
         #expect(ChantBrowseScope.all.chants == nil)
+    }
+
+    @Test func theSectionsFollowTheParishBookOfChant() {
+        #expect(ChantCatalog.groups.map(\.id) == [
+            "asperges", "mass", "creed", "sequences", "requiem", "hymns",
+            "ourLady", "seasons", "canticles", "litanies", "benediction", "rosary"
+        ])
+        let mass = ChantCatalog.groups.first { $0.id == "mass" }
+        #expect(mass?.parts.map(\.title) == ["Mass VIII, De Angelis", "Mass XI, Orbis factor"])
+        #expect(mass?.parts.allSatisfy { $0.note != nil } == true)
+        let seasons = ChantCatalog.groups.first { $0.id == "seasons" }
+        #expect(seasons?.parts.map(\.title) == [
+            "Advent", "Christmas", "Lent", "Holy Thursday", "Good Friday", "Easter", "Ascension"
+        ])
+        // The four songs to Mary open her section
+        let ourLady = ChantCatalog.groups.first { $0.id == "ourLady" }.map { ChantCatalog.chants(in: $0) } ?? []
+        let antiphons: Set<String> = ["alma_redemptoris", "ave_regina_caelorum", "regina_caeli", "hail_holy_queen"]
+        #expect(ourLady.prefix(8).allSatisfy { !antiphons.isDisjoint(with: $0.prayerIDs) })
+    }
+
+    @Test func everyChantStandsOnceInItsOwnSection() {
+        var seen: [String] = []
+        for group in ChantCatalog.groups {
+            #expect(!group.parts.isEmpty, "\(group.id) has no parts")
+            for part in group.parts {
+                #expect(!part.chantIDs.isEmpty, "\(group.id) has an empty part")
+                for id in part.chantIDs {
+                    let chant = ChantCatalog.chant(id)
+                    #expect(chant != nil, "\(group.id) lists \(id), which the catalog lacks")
+                    #expect(chant?.groupID == group.id, "\(id) is listed under \(group.id)")
+                    seen.append(id)
+                }
+            }
+        }
+        #expect(seen.count == Set(seen).count)
+        #expect(Set(seen) == Set(ChantCatalog.all.map(\.id)))
     }
 
     @Test func theMassOfTheAngelsIsItsOrdinary() {
