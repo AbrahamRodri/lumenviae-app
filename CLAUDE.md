@@ -215,19 +215,26 @@ different place.
 ## App Tabs
 
 `AppTab` (in `Components/CustomTabBar.swift`) has six cases, but the bar shows
-four — Progress is reached from the Chapel's flame tile, Settings → Devotion
-and Explore's search instead, to keep the bar from crowding the raised Pray
-button, and the Journal, which gave its place to Prayers, from the Chapel's
-Reflections tile, Explore's search, and the completion screen's Write a
-Reflection.
+four — Progress is reached from the Chapel's flame tile and Library tile,
+Settings → Devotion and Explore's search instead, to keep the bar from
+crowding the raised Pray button, and the Journal, which gave its place to
+Prayers, from the Chapel's Reflections and Library tiles, Explore's search,
+and the completion screen's Write a Reflection. **Neither is turned to as a
+tab any more:** both are pushed (`AppRoute.prayerRecord`, `.journal`) over
+the tab they were opened from, with the gold Back, and the tab bar stays up
+beneath them (`AppRoute.keepsTabBar`), so the Chapel tab stays lit; reached
+as tabs, they had no Back and no tab lit. `switchTo(.progress)` and
+`switchTo(.journal)` answer with the push. A tab tapped in the bar goes
+through `switchTo`, which clears the stack, so a tab tapped over either
+page opens its own page rather than turning beneath them.
 
 | Tab | In the bar | Purpose |
 |-----|-----------|---------|
 | Home | Yes | Search glass → Explore, today's mysteries, mystery grid, Today's Prayer, the reading shelf, quote |
 | Consecrate | Yes | The 33-day preparation for Marian consecration |
 | Prayers | Yes | The Prayer Book: Today, Occasions, All Prayers, and a search over them (see The Prayer Book below) |
-| Journal | No — via Chapel | Reflections, searchable, stored on device |
-| Progress | No — via Chapel | Streaks, prayer history, milestones ("Prayer Record") |
+| Journal | No — pushed, via Chapel | Reflections, searchable, stored on device |
+| Progress | No — pushed, via Chapel | Streaks, milestones ahead, prayer history ("Prayer Record") |
 | Chapel | Yes | My Chapel — the user's arrangeable page (Settings and About live in the home masthead) |
 
 The **Pray** button raised over the bar runs the user's chosen quick act
@@ -449,7 +456,7 @@ beside them, SAVE dimmed until something is written. With the Journal off the
 tab bar, a new reflection needs a door that is always on the page, and
 the Reflections tile can be put away; the Chapel is where reflections
 are kept, and the Reflections tile still opens the whole journal
-(`switchTo(.journal)`). Tiles (vocabulary `Models/ChapelTile.swift`;
+(`push(.journal)`). Tiles (vocabulary `Models/ChapelTile.swift`;
 layout persists as `userSettings.chapelLayout`, validated against known
 ids on decode, with a one-time migration from the old `meWidgets`
 order; a tile newer than a stored layout is inserted in its default
@@ -546,7 +553,10 @@ is — `ChapelPlacement.completing`, which the Me migration shares; the
 half is the date and the feast over two doors), **Library** (bound
 like a book, a second rule inside its edge: BOOKS — True Devotion,
 Spiritual Reading, the Marian Library — and GUIDES — How to Pray, In
-Scripture, Carlo Acutis — as a ruled index of doors, each name over a
+Scripture, Carlo Acutis — (one section, BOOKS AND GUIDES, while either is
+down to one door) and YOUR PAGES — the Prayer Record and the Journal,
+whose only other doors, the flame and the Reflections tile, can be put
+away — as a ruled index of doors, each name over a
 line saying what it holds, with no glyphs, over Augustine's line; the
 half keeps the three books and makes SEE MORE a door to Explore),
 **Chant** (the Chant Library's player on cloth: the chant it last sang,
@@ -616,7 +626,7 @@ the body ends on a line of its own (the reading shelf) — full: an
 italic note at 13 left, the gold text act right (`labelFont 10`,
 tracking 2, caret 9, 44pt tall); half: the act alone, left-aligned, or
 the note where the tile has no act (the Reflections half, whose whole
-card opens the journal through `switchTo(.journal)`). The
+card opens the journal through `push(.journal)`). The
 grid's rows **stretch** (`ChapelGridLayout` gives every tile in a row
 the row's height, and the card fills it), so two halves always end on
 the same line and share their first; two full rows stand 20 apart, a
@@ -652,9 +662,17 @@ PAGE in an outlined capsule — the 2×2 arrange mark, not the board's
 faders, which are Settings' door — over "Or press and hold anywhere."
 and the imprint, which the board leaves off and the page keeps. The
 default order is Today, Streak, Consecration, Prayers, Reading,
-Chant, Reflections, Today in the Church, Library: the live sections lead, and the
-two indexes of doors stand last, the Library's colophon the right last
-line before the foot. The day strip wraps a long feast to a second
+Reflections, Chant, Library, Today in the Church: the live sections lead,
+the Library's doors follow, and Today in the Church stands last, since
+Home's Today's Prayer carries the same two rows. Only a fresh page takes
+it; a stored layout keeps its own, and a layout saved before Today in the
+Church existed seats it beside the Library, after it. **The
+consecration stands once:** while the Consecration tile is on the page,
+the Today tile leaves out the consecration's row (`MyChapelView.
+todayTileActs`, `ChapelPlacement.isOnPage`), since the tile's CONTINUE
+is the same door; put the tile away and the row comes back. The focus
+block still reads the whole rule, so it never says all is prayed while
+the day's consecration is not. The day strip wraps a long feast to a second
 line rather than cutting it mid-word.
 
 **The Chapel's words** (the plain-language rulings, Oct 2026): what
@@ -712,8 +730,9 @@ The rule's *membership* is edited in `RuleEditorSheet` (Settings →
 Devotion → Daily Prayers, and the EDIT on the Today tile's title line);
 `PrayButtonEditorSheet` (quick tap + hold menu) still opens from the
 Pray tray's "Edit this menu" row. The one-motion acts remain
-`PrayerShortcut`. Prayer Record's standing doors are the flame tile and
-Settings → Devotion (Explore's search also finds it). The old Me page
+`PrayerShortcut`. Prayer Record's standing doors are the flame tile, the
+Library tile's YOUR PAGES and Settings → Devotion (Explore's search also
+finds it). The old Me page
 (`MeView`, `MeWidgets`, `MePageEditorSheet`) and `Components/MenuView.swift`
 were retired in `9be67c6`, with the Me-only API they kept alive
 (`isRuleChecked`/`setRuleChecked`). What outlived them is live:
@@ -1249,7 +1268,13 @@ write concurrent code here:
   settings, favorites, the resume snapshot and small per-page marks
   (lessons opened, St. Carlo's candle).
 - **Progress** — streaks, history, and milestones, reached from the
-  Chapel's Prayer Streak tile, Settings → Devotion, and Explore's search.
+  Chapel's Prayer Streak and Library tiles, Settings → Devotion, and
+  Explore's search, and pushed with the gold Back over the tab it was
+  opened from. Under the streak, MILESTONES AHEAD lists the next five of
+  `StreakMilestone.all` (`StreakMilestone.ahead(of:)`) — each its sign,
+  its days and the Church's name for them, and its blessing — the
+  nearest marked NEXT: what is to come, never what was missed; past the
+  last milestone the section stands down.
 - **Journal** — entries after a Rosary or consecration day, written
   freely from the Journal page, or kept from a book as a note; searchable,
   editable, and entirely on device. It has no place in the bar (Prayers
@@ -1263,9 +1288,10 @@ write concurrent code here:
   cancelled does not count) NOT NOW reads RETURN HOME, and both go home
   whatever tab the prayer began on. The screen scrolls only when it must,
   on a small phone at the largest text size on a milestone day. The page
-  itself opens from the Chapel's Reflections tile
-  (`router.switchTo(.journal)`) and Explore's search, which finds it by
-  name and does not list it in Learn More, as Progress does.
+  itself is pushed (`AppRoute.journal`, with the gold Back) from the
+  Chapel's Reflections tile and the Library tile's YOUR PAGES, and from
+  Explore's search, which finds it by name and does not list it in Learn
+  More, as Progress does.
 - **33-day Consecration** — feast-day selection, per-day scripture and reading,
   bilingual prayers, journal prompts, and a completion rite. The tab's day page
   (`ConsecrationDayOverviewView`) is a column of gold-hairline cards. **Your
@@ -1579,10 +1605,12 @@ write concurrent code here:
   prayer, or a prayer is still being fetched, it waits for the reader to
   come back; if anything pushes a page while it runs (a notification, a
   shortcut) it stands aside (`pause()`), still owed, and begins again
-  from its first stop when home returns. Five coach marks over the real
+  from its first stop when home returns. Six coach marks over the real
   controls, one at a time: Today's Mysteries (the featured card, named
   as it names itself), the Pray
-  button (a tap and a hold), the Prayers tab, the Chapel tab, and
+  button (a tap and a hold), the Prayers tab, the Consecrate tab ("A
+  33-day preparation to give yourself to Jesus through Mary. Choose the
+  feast it ends on."), the Chapel tab, and
   Explore's glass. Each control reports where it
   stands with one appended modifier, `.firstUseTourStop(_:)` (HomeView,
   HeaderView, CustomTabBar); move a control and its stop follows it, and

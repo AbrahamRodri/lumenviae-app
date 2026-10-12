@@ -41,6 +41,14 @@ enum AppRoute: Hashable {
     /// search glass
     case explore
 
+    /// The reader's own pages: the Prayer Record (streak, calendar,
+    /// milestones) and the journal. Pushed over the tab they were opened
+    /// from, with the gold Back, so the tab stays lit and Back returns to
+    /// where the reader was; they were tabs of their own, reached with
+    /// no Back and no tab lit. The tab bar stays up beneath them.
+    case prayerRecord
+    case journal
+
     // Content destinations — pages, not tasks, so they slide in from
     // the right rather than pulling up as sheets. Each draws its own
     // Back pill and pops via `dismiss`.
@@ -129,6 +137,19 @@ enum AppRoute: Hashable {
 
     /// Every chant under its topic, one topic, or the Mass of the Angels
     case chantBrowse(ChantBrowseScope)
+}
+
+extension AppRoute {
+    /// Whether the tab bar stays up over this page: the reader's own
+    /// pages, which were tabs and are reached from the Chapel's tiles, so
+    /// the Chapel tab stays lit beneath them. Every other pushed page
+    /// takes the whole glass.
+    var keepsTabBar: Bool {
+        switch self {
+        case .prayerRecord, .journal: return true
+        default: return false
+        }
+    }
 }
 
 // MARK: - ScripturalRosaryLaunch
@@ -260,7 +281,7 @@ final class AppRouter {
     /// The currently selected bottom tab.
     ///
     /// Lives on the router (not ContentView-local state) so any view can
-    /// switch tabs — e.g. the Chapel's Prayer Streak tile jumps to Progress.
+    /// switch tabs — e.g. Today's Prayer's consecration row turns to the Consecrate tab.
     var selectedTab: AppTab = .home {
         didSet {
             // Leaving the Chapel ends its arranging, for the same reason
@@ -399,7 +420,16 @@ final class AppRouter {
     /// root: from a pushed one — Explore, say — the tab changes silently
     /// underneath a screen that stays put, and the user meets the new tab
     /// later, when they tap Back for something else.
+    ///
+    /// The Prayer Record and the journal are no longer turned to as tabs
+    /// but pushed (`AppRoute.prayerRecord`, `.journal`): a door that still
+    /// asks for their tab is answered with the push.
     func switchTo(_ tab: AppTab) {
+        switch tab {
+        case .progress: push(.prayerRecord); return
+        case .journal: push(.journal); return
+        default: break
+        }
         if !path.isEmpty {
             path.removeLast(path.count)
         }

@@ -2349,8 +2349,9 @@ extension TodayInChurch {
 
 // MARK: - Library
 
-/// The chapel's shelf, bound like a book: the books and the guides as a
-/// ruled index of doors, each with a line saying what it holds, over
+/// The chapel's shelf, bound like a book: the books, the guides and the
+/// reader's own pages (the Prayer Record and the journal) as a ruled
+/// index of doors, each with a line saying what it holds, over
 /// Augustine's line. The liturgy has its own tile, so this heading is
 /// true of every door beneath it.
 struct ChapelLibraryTile: View {
@@ -2377,13 +2378,20 @@ struct ChapelLibraryTile: View {
         Door(title: "Carlo Acutis", line: "A saint of our day", route: .carloAcutis)
     ]
 
+    /// The reader's own pages, which had no door but the flame and the
+    /// Reflections tile, either of which can be put away
+    private static let yourPages: [Door] = [
+        Door(title: "Prayer Record", line: "The days you have prayed", route: .prayerRecord),
+        Door(title: "Journal", line: "Your reflections", route: .journal)
+    ]
+
     /// The doors whose pages are not archived (`ArchivedPages`)
     private static var openBooks: [Door] { books.filter { !ArchivedPages.hides($0.route) } }
     private static var openGuides: [Door] { guides.filter { !ArchivedPages.hides($0.route) } }
 
-    /// Whether the index stands in its two sections. With a section down
-    /// to one door, the doors stand as one ruled list instead, so neither
-    /// heading is set over a lone row.
+    /// Whether the books and the guides stand in sections of their own.
+    /// With either down to one door, they stand together under one
+    /// heading instead, so no heading is set over a lone row.
     private static var isSectioned: Bool { openBooks.count >= 2 && openGuides.count >= 2 }
 
     var body: some View {
@@ -2419,8 +2427,9 @@ struct ChapelLibraryTile: View {
                     section("Books", Self.openBooks)
                     section("Guides", Self.openGuides)
                 } else {
-                    section(nil, Self.openBooks + Self.openGuides)
+                    section("Books and guides", Self.openBooks + Self.openGuides)
                 }
+                section("Your pages", Self.yourPages)
             }
             .padding(.top, 18)
             .padding(.bottom, 10)
@@ -2436,16 +2445,14 @@ struct ChapelLibraryTile: View {
         }
     }
 
-    private func section(_ name: String?, _ doors: [Door]) -> some View {
+    private func section(_ name: String, _ doors: [Door]) -> some View {
         VStack(alignment: .leading, spacing: 0) {
-            if let name {
-                Text(name.uppercased())
-                    .font(AppFonts.labelFont(9))
-                    .tracking(2.5)
-                    .foregroundColor(AppColors.gold.opacity(0.75))
-                    .padding(.bottom, 4)
-                    .accessibilityAddTraits(.isHeader)
-            }
+            Text(name.uppercased())
+                .font(AppFonts.labelFont(9))
+                .tracking(2.5)
+                .foregroundColor(AppColors.gold.opacity(0.75))
+                .padding(.bottom, 4)
+                .accessibilityAddTraits(.isHeader)
 
             ForEach(Array(doors.enumerated()), id: \.element.title) { index, door in
                 doorRow(door, size: 17, minHeight: 54, showsLine: true, divided: index < doors.count - 1)
@@ -2763,7 +2770,7 @@ struct ChapelReflectionsTile: View {
     private var latest: JournalEntry? { entries.first }
 
     private func open() {
-        router.switchTo(.journal)
+        router.push(.journal)
     }
 
     var body: some View {

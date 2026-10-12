@@ -55,7 +55,8 @@ struct ContentView: View {
     @State private var tabBarHeight: CGFloat = 0
 
     private var shouldShowTabBar: Bool {
-        router.path.isEmpty && !isConsecrationNavigating && !router.chapelArranging
+        (router.path.isEmpty || router.topRoute?.keepsTabBar == true)
+            && !isConsecrationNavigating && !router.chapelArranging
     }
 
     // MARK: - Body
@@ -128,8 +129,16 @@ struct ContentView: View {
 
             VStack {
                 Spacer()
+                // A tab tapped goes through `switchTo`, which clears the
+                // stack: the bar stands over the Prayer Record and the
+                // journal, and a tab tapped there must open its page, not
+                // turn beneath them. The lit tab tapped again returns to
+                // its own page, as iOS does.
                 CustomTabBar(
-                    selectedTab: Bindable(router).selectedTab,
+                    selectedTab: Binding(
+                        get: { router.selectedTab },
+                        set: { router.switchTo($0) }
+                    ),
                     isLoadingPrayer: isStartingPrayer,
                     onPrayNow: { perform(UserSettings.shared.prayQuickAction) },
                     onPrayHold: { showPrayTray = true }
@@ -472,6 +481,12 @@ struct ContentView: View {
 
         case .explore:
             ExploreView()
+
+        case .prayerRecord:
+            PrayerProgressView()
+
+        case .journal:
+            JournalView()
 
         // Content pages that slide in. Each carries its own toolbar
         // chrome (a gold Back in place of the hidden system button), so

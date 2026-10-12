@@ -585,6 +585,17 @@ struct MyChapelView: View {
         return acts
     }
 
+    /// The rule as the Today tile lists it: without the consecration's
+    /// row while the Consecration tile stands on the page, whose own
+    /// CONTINUE is the same door, so the preparation is not shown twice
+    /// one above the other. Put the tile away and the row comes back. The
+    /// focus block still reads the whole rule, so it never says all is
+    /// prayed while the day's consecration is not.
+    private func todayTileActs(_ acts: [ChapelAct]) -> [ChapelAct] {
+        guard ChapelPlacement.isOnPage(.consecration, in: settings.chapelLayout) else { return acts }
+        return acts.filter { $0.shortcut != .consecration }
+    }
+
     private func isDone(_ item: PrayerShortcut) -> Bool {
         // Read first, whatever the act, so every row answers to the
         // day's turn at four — the Prayer Book's orders as well, which
@@ -984,7 +995,7 @@ struct MyChapelView: View {
         switch placement.tile {
         case .rule:
             ChapelRuleTile(
-                acts: acts,
+                acts: todayTileActs(acts),
                 span: placement.span,
                 onAct: handleAct,
                 onEditRule: { showRuleEditor = true }
@@ -1017,7 +1028,7 @@ struct MyChapelView: View {
                 streak: flameStats.streak,
                 hasPrayedToday: flameStats.prayedToday,
                 weekStatus: flameStats.week,
-                onOpen: { router.switchTo(.progress) }
+                onOpen: { router.push(.prayerRecord) }
             )
         }
     }

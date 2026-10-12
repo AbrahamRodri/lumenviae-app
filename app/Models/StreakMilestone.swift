@@ -107,6 +107,13 @@ struct StreakMilestone: Identifiable, Equatable {
         all.first { $0.days > streak }
     }
 
+    /// The milestones still ahead of this streak, the nearest first, for
+    /// the Prayer Record's MILESTONES AHEAD: what is to come, never what
+    /// was missed.
+    static func ahead(of streak: Int, limit: Int = 5) -> [StreakMilestone] {
+        Array(all.filter { $0.days > streak }.prefix(limit))
+    }
+
     /// The most recent milestone already achieved, if any.
     static func latest(achievedBy streak: Int) -> StreakMilestone? {
         all.last { $0.days <= streak }
