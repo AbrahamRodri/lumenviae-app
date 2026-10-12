@@ -761,33 +761,40 @@ the page they serve):
   (`AppIconPickerRows.isEnabled = false`), and `appApp` puts any
   alternate back to the primary at launch until it returns.
 - **Prayer Experience** — text size, prayer language (English by
-  default; the app's first face is the one most users read), the
+  default; the app's first face is the one most users read), and the
   narration voice (`NarrationVoiceRow`, the server's list; the same
-  choice stands in the player's playback sheet), then Audio and
-  Counting — the Rosary's two choices, each a pill of its two named options
-  over a line saying what the chosen one does
-  (`RosaryChoiceSettingsRow`, the same pill as a Rosary's own page). They
-  keep the rows the Bead counter and Pray aloud switches stood in; a
-  switch could say only on or off, not which of two ways. Audio comes
-  first, as on the Rosary's own page, since it decides whether Counting
-  is offered at all; Counting once came first, in the switches' order.
-  Counting stands dimmed under the Whole Rosary, saying why: the voice
-  moves the beads on the screen then. Beneath them stands the
-  **Prayers Tab** row (the Prayer Book's, named for its tab), In Silence |
-  Aloud, in the same row and pill
-  (`PrayerBookAudio`), which sets `PrayerBookStore.praysAloud`. It is
-  kept apart from Audio on purpose: the Rosary's choice decides whether
-  the voice leads every prayer or reads the meditation alone, the
-  book's whether it speaks at all. Until the reader answers, the pill
-  shows the default, Aloud, and its line says the book will ask.
-  Drawing the row answers nothing; a tap on either segment does, the lit
-  one too
-- **After the Rosary** — the prayers after the Rosary (For the Pope's
-  intentions, Memorare, Saint Michael), under their own heading and the Voice & speed sheet's
+  choice stands in the player's playback sheet): how every page that
+  prays looks and who reads it
+- **The Rosary** — the Rosary's own choices (the clarity pass, Oct
+  2026, which split them out of Prayer Experience, where the Rosary's
+  Audio and the Prayers tab's stood side by side and neither said
+  which it set). Audio and Counting, each a pill of its two named
+  options over a line saying what the chosen one does
+  (`RosaryChoiceSettingsRow`, the same pill as a Rosary's own page).
+  They keep the rows the Bead counter and Pray aloud switches stood
+  in; a switch could say only on or off, not which of two ways. Audio
+  comes first, as on the Rosary's own page, since it decides whether
+  Counting is offered at all. Counting stands dimmed under the Whole
+  Rosary, saying why: the voice moves the beads on the screen then.
+  Then **Opening and Closing Prayers**, Skip | Show
+  (`OpeningPrayersChoice`, `userSettings.showsOpeningPrayers`, Show by
+  default), whether a Rosary prayed in silence begins and ends on the
+  pendant (see the player, below), dimmed under the Whole Rosary, whose
+  voice says them. Then **After the Rosary**, a small heading inside
+  the section over the prayers after the Rosary (For the Pope's
+  intentions, Memorare, Saint Michael) and the Voice & speed sheet's
   note: they are said aloud after the closing prayer, and only when
-  every prayer is — nothing else reads them. Set as three more switches
-  among the ways of praying, they read as prayers added to every
-  Rosary, and a silent Rosary never said them
+  every prayer is — nothing else reads them. Set as three more
+  switches among the ways of praying, they read as prayers added to
+  every Rosary, and a silent Rosary never said them
+- **Prayers Tab** — the Prayer Book's one choice, its **Audio**, In
+  Silence | Aloud, in the same row and pill (`PrayerBookAudio`), which
+  sets `PrayerBookStore.praysAloud`. It is kept apart from the
+  Rosary's Audio on purpose: the Rosary's choice decides whether the
+  voice leads every prayer or reads the meditation alone, the book's
+  whether it speaks at all. Until the reader answers, the pill shows
+  the default, Aloud, and its line says the book will ask. Drawing the
+  row answers nothing; a tap on either segment does, the lit one too
 - **Devotion** — Daily Prayers (→ `RuleEditorSheet`), Prayer Record,
   Daily Mysteries (Traditional | Modern → `MysteryScheduleSheet`, the row
   under Daily Prayers), Daily Reminders (toggle, time, sound), The Angelus Bell, What Brings
@@ -1066,6 +1073,39 @@ write concurrent code here:
 
   **The beads are optional on both players** (`userSettings.prayOnBeads`,
   on by default: Counting, On the Screen).
+
+  **Prayed in silence, the Rosary begins and ends on the pendant**
+  (`Models/SilentPendant.swift`, the clarity pass, Oct 2026). It once
+  began on the first mystery's Our Father and ended on the last Glory
+  Be, and a newcomer was never shown the Sign of the Cross, the Creed,
+  the three Hail Marys or the Hail, Holy Queen, nor the words of any
+  prayer they were told to say. Now, unless Settings → The Rosary skips
+  them, both players open on the cross: the spoken script's own opening
+  and closing segments (`SpokenRosaryScript.build`, so the order and
+  captions are the voice's; the prayers after the Rosary are left to
+  the voice), a prayer a step, the pendant drawn where the painting
+  stands (`PendantStage`, fed `PrayerSessionViewModel.pendant`, the
+  spoken pendant or the silent one). On the meditation's player the
+  foot gives way to the step: THE OPENING PRAYERS · 2 OF 7, the
+  prayer's name, its words in full (a size down for the Creed and the
+  long closing prayers, so the pendant keeps room; they never scroll,
+  since the vertical swipe is the Rosary's), on the first step a line
+  naming what follows, and BACK and NEXT PRAYER (THE FIRST MYSTERY on
+  the last opening prayer), with AMEN on the last Sign of the Cross;
+  the swipe, the reader's bead row and the decade arrows walk the
+  pendant too (`advanceOffTheBeads`, `retreatOffTheBeads`). The strand,
+  the reader and the reader's book glyph stand aside on the pendant,
+  which has no meditation. The Scriptural Rosary's screen sets the
+  prayer in its column with the pendant beside it, as the Rosary Said
+  Aloud does (`setsPendantWords`). The last Glory Be is then no longer
+  the end (`isLastBeadOfRosary` is the last closing prayer), so a
+  swipe on it goes on to the Hail, Holy Queen. A Rosary begun from its
+  start begins on the cross; one taken up again begins where it was
+  left. On the beads a tap on the bead under the hand (or its name)
+  opens its prayer's words over the painting — the Our Father, a Hail
+  Mary, or the Glory Be with the Fatima Prayer (`SilentPendant.lines(ofBead:)`)
+  — and they stay open bead to bead until tapped again; the strand is
+  otherwise still a readout.
 
   **The two choices that change the prayer are shown before PRAY; the
   rest are rows.** Every form of the Rosary is confirmed on one page
