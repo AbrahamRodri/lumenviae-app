@@ -837,7 +837,7 @@ struct ChantLibraryHomeTests {
 
     @Test func theMassOfTheAngelsIsItsOrdinary() {
         let mass = ChantBrowseScope.massOfTheAngels.chants ?? []
-        #expect(mass.count >= 4)
+        #expect(mass.map(\.id) == ["kyrie_de_angelis", "gloria_de_angelis", "sanctus_de_angelis", "agnus_de_angelis"])
         #expect(mass.allSatisfy { $0.groupID == "mass" && $0.setting == ChantBrowseScope.massSetting })
     }
 
@@ -846,6 +846,11 @@ struct ChantLibraryHomeTests {
             #expect(ChantOccasion.occasion(id) != nil, "No occasion \(id)")
         }
         #expect(!(ChantBrowseScope.group("ourLady").chants ?? []).isEmpty)
+        // The home's Songs to Mary keeps its own chants, in its own order
+        let songs = ChantLibraryData.songsToMary
+        #expect(songs.allSatisfy { ChantCatalog.chant($0) != nil })
+        #expect(songs.first == "salve_regina_simple")
+        #expect(songs.contains("magnificat") && !songs.contains("angelus"))
     }
 
     @Test func aSetSaysItsChantsAndItsLength() {

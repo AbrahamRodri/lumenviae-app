@@ -45,7 +45,9 @@ enum ChantBrowseScope: Hashable {
         case .group:
             return group.map { ChantCatalog.chants(in: $0) } ?? []
         case .massOfTheAngels:
-            return ChantCatalog.all.filter { $0.groupID == "mass" && $0.setting == Self.massSetting }
+            // The Ordinary's first Mass is the Mass of the Angels
+            let mass = ChantCatalog.groups.first { $0.id == "mass" }
+            return mass?.parts.first.map { ChantCatalog.chants(in: $0) } ?? []
         }
     }
 }

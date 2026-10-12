@@ -539,6 +539,18 @@ enum ChantLibraryData {
         "hour_night": "glorious_coronation"
     ]
 
+    /// The home's Songs to Mary shelf, in its own order: the chants the
+    /// Mary topic held before the sections followed the Parish Book of
+    /// Chant, which files some of them elsewhere (the Magnificat with the
+    /// canticles, the Stabat Mater in Lent)
+    static let songsToMary = [
+        "salve_regina_simple", "salve_regina_solemn", "alma_redemptoris_simple", "alma_redemptoris",
+        "ave_regina_simple", "ave_regina_solemn", "regina_caeli_simple", "regina_caeli_solemn", "sub_tuum",
+        "ave_maris_stella_feasts", "ave_maris_stella", "quem_terra", "omni_die", "concordi_laetitia",
+        "magnificat", "tota_pulchra", "flos_carmeli", "stabat_mater", "litany_loreto", "memorare",
+        "ave_maria_antiphon", "salve_mater", "inviolata", "o_gloriosa", "te_matrem"
+    ]
+
     static let groupPaintings: [String: String] = [
         "asperges": "luminous_eucharist",
         "mass": "luminous_eucharist",
