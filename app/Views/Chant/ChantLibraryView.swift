@@ -77,6 +77,7 @@ struct ChantLibraryView: View {
                     .accessibilityHidden(searching)
                 if searching {
                     ChantSearchView(
+                        isTabRoot: isTabRoot,
                         close: { withAnimation(Motion.crossfade) { searching = false } },
                         open: openChant
                     )

@@ -202,18 +202,23 @@ struct AccountView: View {
                             // the rule, and the record of prayer — kept
                             // here so stowing the flame tile never
                             // strands the Prayer Record.
-                            ActionRow(
-                                icon: "ph-scroll",
-                                title: "Daily Prayers",
-                                subtitle: userSettings.ruleItems.isEmpty
-                                    ? "No prayers chosen yet"
-                                    : userSettings.ruleItems.map(\.title).joined(separator: " · ")
-                            ) {
-                                showRuleEditor = true
-                            }
+                            //
+                            // Only the Chapel reads the daily prayers, so
+                            // the row stands down while it is archived.
+                            if !ArchivedPages.chapel {
+                                ActionRow(
+                                    icon: "ph-scroll",
+                                    title: "Daily Prayers",
+                                    subtitle: userSettings.ruleItems.isEmpty
+                                        ? "No prayers chosen yet"
+                                        : userSettings.ruleItems.map(\.title).joined(separator: " · ")
+                                ) {
+                                    showRuleEditor = true
+                                }
 
-                            Divider()
-                                .background(AppColors.gold.opacity(0.2))
+                                Divider()
+                                    .background(AppColors.gold.opacity(0.2))
+                            }
 
                             // Which mysteries the day brings: the
                             // traditional week, or the modern one with
