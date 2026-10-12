@@ -144,6 +144,17 @@ struct SilentPendantTests {
         #expect(vm.pendant == nil && vm.currentMysteryIndex == 4 && vm.currentBeadIndex == 0)
     }
 
+    @Test func aMysteryReachedAnotherWayLeavesThePendant() {
+        let vm = player(pendant: true)
+        // The Lock Screen's next, or the voice moving the hand
+        #expect(vm.nextMystery())
+        #expect(vm.pendant == nil, "the Creed must not stay over the second mystery")
+        let early = player(pendant: true)
+        early.spokenRosaryMoved(mystery: 0, bead: 3)
+        #expect(early.pendant == nil, "the voice on the decades leaves the opening behind")
+        #expect(!early.isFirstBeadOfRosary)
+    }
+
     // MARK: The Scriptural Rosary's Player
 
     @Test func theScripturalRosaryInSilenceSetsThePendantsWords() {

@@ -292,6 +292,12 @@ struct ContentView: View {
     /// or anything that asks the router (`AppRouter.run`): the Chapel's
     /// focus and Today rows, a library reading's Pray door.
     private func perform(_ shortcut: PrayerShortcut) {
+        // The pages that keep the tab bar (the Prayer Record, the Journal)
+        // keep the Pray button over them too; its act is begun from the
+        // tab's root, as from anywhere else the bar stands
+        if router.topRoute?.keepsTabBar == true {
+            router.popToRoot()
+        }
         // The Consecration tab stands above this stack with a stack of its
         // own, so an act pushed here while it was chosen — the Pray
         // button there, the Angelus bell tapped — went on beneath it,

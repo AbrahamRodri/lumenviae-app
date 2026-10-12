@@ -1002,7 +1002,12 @@ struct ChapelFlameTile: View {
             line += " This week, prayed \(days)."
         }
         if let milestoneLine {
-            line += " Next, \(milestoneLine.replacingOccurrences(of: " · ", with: ", "))."
+            // The line already opens on "Next:"; said, its colon and dot
+            // are commas
+            let said = milestoneLine
+                .replacingOccurrences(of: "Next: ", with: "Next, ")
+                .replacingOccurrences(of: " · ", with: ", ")
+            line += " \(said)."
         }
         return line + " Opens the Prayer Record."
     }

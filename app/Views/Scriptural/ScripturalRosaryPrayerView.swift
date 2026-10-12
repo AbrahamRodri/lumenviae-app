@@ -707,7 +707,7 @@ struct ScripturalRosaryPrayerView: View {
                     step: stepPrayer(forward:)
                 )
 
-                if pendant.phase == .closing {
+                if pendant.phase == .closing, showsPendantAmen {
                     amenButton
                 }
             }
@@ -745,7 +745,7 @@ struct ScripturalRosaryPrayerView: View {
                 )
             }
 
-            if pendant.phase == .closing {
+            if pendant.phase == .closing, showsPendantAmen {
                 amenButton
                     .padding(.top, 8)
             }
@@ -917,7 +917,7 @@ struct ScripturalRosaryPrayerView: View {
     /// prayed, the next mystery by name, so the turn is expected. Every
     /// other bead says nothing — a cue repeated fifty times is chrome.
     private var beadCue: String? {
-        if viewModel.isDecadePrayed, viewModel.isLastMystery {
+        if viewModel.isDecadePrayed, viewModel.isLastMystery, !viewModel.lastMysteryEndsRosary {
             return "The closing prayers follow on the next swipe."
         }
         if viewModel.isDecadePrayed {
@@ -1117,6 +1117,15 @@ struct ScripturalRosaryPrayerView: View {
     private var finishesHere: Bool {
         viewModel.isLastBeadOfRosary
             || (viewModel.isLastMystery && viewModel.lastMysteryEndsRosary && viewModel.spokenPendant == nil)
+    }
+
+    /// Whether the closing prayers carry AMEN: said aloud, through all
+    /// of them, as it stood on the last bead; prayed in silence, only on
+    /// the last, since a tap would finish the Rosary before the closing
+    /// prayer — and off the beads not at all, where the arrow's check is
+    /// AMEN already
+    private var showsPendantAmen: Bool {
+        viewModel.isPrayingAloud || (viewModel.isLastBeadOfRosary && countsOnScreen)
     }
 
     /// "The Opening Prayers", and in silence where in them: "· 2 of 7"
@@ -1380,6 +1389,7 @@ struct ScripturalRosaryPrayerView: View {
     /// (`PrayerResumeService.firstMysteryBegunAfter`)
     private func keepFirstMysteryIfBegun() {
         guard !countsOnScreen,
+              viewModel.currentPendantStep == nil,
               viewModel.currentMysteryIndex == 0,
               viewModel.sessionDuration >= PrayerResumeService.firstMysteryBegunAfter else { return }
         saveResumePosition(evenAtTheStart: true)

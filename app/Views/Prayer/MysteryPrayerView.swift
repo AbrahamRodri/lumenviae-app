@@ -501,7 +501,7 @@ struct MysteryPrayerView: View {
             return viewModel.spokenPendant.map(\.title)
         }
         if viewModel.isLastBeadOfRosary { return nil }
-        if viewModel.isDecadePrayed, viewModel.isLastMystery {
+        if viewModel.isDecadePrayed, viewModel.isLastMystery, !viewModel.lastMysteryEndsRosary {
             return "The closing prayers follow on the next tap."
         }
         if viewModel.isDecadePrayed {
@@ -696,7 +696,12 @@ struct MysteryPrayerView: View {
     /// One bead back along the strand, into the previous decade from
     /// an Our Father. On the first bead the string only settles.
     private func prayBack() {
-        guard !viewModel.isFirstBeadOfRosary, !beadsLocked, !voiceHoldsStrand else {
+        // Back from the first Our Father into the opening prayers just
+        // left, even while its meditation is still to be heard: the lock
+        // holds the beads ahead, not the prayers behind
+        let intoOpening = viewModel.isFirstMystery && viewModel.currentBeadIndex == 0
+            && viewModel.currentPendantStep == nil && viewModel.pendantShown
+        guard !viewModel.isFirstBeadOfRosary, !beadsLocked || intoOpening, !voiceHoldsStrand else {
             settleStrand()
             return
         }
@@ -722,7 +727,7 @@ struct MysteryPrayerView: View {
                 Spacer()
 
                 if let pendant = viewModel.silentPendantPrayer {
-                    silentPendantControls(pendant)
+                    silentPendantControls(pendant, fullHeight: fullHeight)
                         .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { controlsHeight = $0 }
                 } else if let meditation = viewModel.currentMeditation {
                     if onBeads {
@@ -740,7 +745,7 @@ struct MysteryPrayerView: View {
                 // above the controls, so the controls never move for it
                 if onBeads, showsBeadWords, viewModel.silentPendantPrayer == nil,
                    !viewModel.isPrayingAloud {
-                    beadWordsPanel
+                    beadWordsPanel(fullHeight: fullHeight)
                         .padding(.bottom, controlsHeight + 14)
                         .transition(.opacity)
                 } else if onBeads, swipeHint == .showing {
@@ -1119,7 +1124,7 @@ struct MysteryPrayerView: View {
     /// at the largest sizes): the vertical swipe is the Rosary's, so they
     /// cannot scroll. The pendant above gives up height to them
     /// (`pendantHeightFraction`).
-    private func silentPendantControls(_ pendant: SpokenPendant) -> some View {
+    private func silentPendantControls(_ pendant: SpokenPendant, fullHeight: CGFloat) -> some View {
         let lines = viewModel.silentPendantLines ?? []
         // The long prayers — the Creed, the Hail, Holy Queen, the closing
         // prayer — a size down, so the pendant keeps room above them
@@ -1146,13 +1151,17 @@ struct MysteryPrayerView: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .contentTransition(.opacity)
 
-                Text(words)
-                    .font(AppFonts.readingFont(wordsSize))
-                    .foregroundColor(AppColors.cream.opacity(0.92))
-                    .lineSpacing(wordsSize > 15 ? 4 : 2)
-                    .frame(maxWidth: .infinity, alignment: .topLeading)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.top, 6)
+                // Whole at its size where it fits; where it does not — the
+                // Creed at the largest text sizes on a small phone — it
+                // comes down until it does
+                ViewThatFits(in: .vertical) {
+                    pendantWordsText(words, size: wordsSize)
+                        .fixedSize(horizontal: false, vertical: true)
+                    pendantWordsText(words, size: wordsSize)
+                        .minimumScaleFactor(0.5)
+                }
+                .frame(maxHeight: fullHeight * 0.38, alignment: .topLeading)
+                .padding(.top, 6)
                     .contentTransition(.opacity)
 
                 if isFirst {
@@ -1214,11 +1223,19 @@ struct MysteryPrayerView: View {
         .padding(.top, 6)
     }
 
+    private func pendantWordsText(_ words: AttributedString, size: CGFloat) -> some View {
+        Text(words)
+            .font(AppFonts.readingFont(size))
+            .foregroundColor(AppColors.cream.opacity(0.92))
+            .lineSpacing(size > 15 ? 4 : 2)
+            .frame(maxWidth: .infinity, alignment: .topLeading)
+    }
+
     /// The words of the bead under the hand, over the painting above the
     /// foot, opened by a tap on the bead or its name: the Our Father, a
     /// Hail Mary, or the Glory Be and the Fatima Prayer. Clear of the
     /// strand's column, and floating, so the foot never moves for it.
-    private var beadWordsPanel: some View {
+    private func beadWordsPanel(fullHeight: CGFloat) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(viewModel.beadLabel.uppercased())
                 .font(AppFonts.labelFont(10))
@@ -1226,12 +1243,14 @@ struct MysteryPrayerView: View {
                 .foregroundColor(AppColors.gold)
                 .contentTransition(.opacity)
 
-            Text(Rubric.paragraph(viewModel.beadLines, size: 16))
-                .font(AppFonts.readingFont(16))
-                .foregroundColor(AppColors.cream)
-                .lineSpacing(3)
-                .fixedSize(horizontal: false, vertical: true)
-                .contentTransition(.opacity)
+            // The Glory Be with the Fatima Prayer runs long in a narrow
+            // column: on a small phone it comes down rather than rise
+            // past the header
+            ViewThatFits(in: .vertical) {
+                beadWordsText.fixedSize(horizontal: false, vertical: true)
+                beadWordsText.minimumScaleFactor(0.6)
+            }
+            .frame(maxHeight: fullHeight * 0.3, alignment: .topLeading)
 
             Text("Tap the bead to hide the words.")
                 .font(AppFonts.italicFont(13))
@@ -1251,8 +1270,17 @@ struct MysteryPrayerView: View {
         )
         .padding(.leading, 18)
         // Clear of the strand and the bead's name beside it
-        .padding(.trailing, 150)
+        .padding(.trailing, 132)
         .accessibilityElement(children: .combine)
+    }
+
+    private var beadWordsText: some View {
+        Text(Rubric.paragraph(viewModel.beadLines, size: 16))
+            .font(AppFonts.readingFont(16))
+            .foregroundColor(AppColors.cream)
+            .lineSpacing(3)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentTransition(.opacity)
     }
 
     // MARK: - Shared Furniture
@@ -1446,6 +1474,7 @@ struct MysteryPrayerView: View {
     /// (`PrayerResumeService.firstMysteryBegunAfter`)
     private func keepFirstMysteryIfBegun() {
         guard !onBeads,
+              viewModel.currentPendantStep == nil,
               viewModel.currentMysteryIndex == 0,
               viewModel.sessionDuration >= PrayerResumeService.firstMysteryBegunAfter else { return }
         saveResumePosition(evenAtTheStart: true)

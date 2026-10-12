@@ -23,7 +23,12 @@ final class PrayerSessionViewModel {
     /// the Lock Screen / AirPods closures, and a new decade must always
     /// begin on its Our Father bead.
     var currentMysteryIndex: Int = 0 {
-        didSet { currentBeadIndex = 0 }
+        didSet {
+            currentBeadIndex = 0
+            // A mystery reached is off the pendant, however it was
+            // reached: the voice, the Lock Screen, a hand on the decades
+            pendantStep = nil
+        }
     }
 
     // MARK: - The Beads
@@ -43,6 +48,11 @@ final class PrayerSessionViewModel {
         // onto the Our Father never locks them again
         didSet {
             if currentBeadIndex > 0 { unlockedMysteries.insert(currentMysteryIndex) }
+            // The voice moving the hand along the decades leaves the
+            // opening behind for good, so the Whole Rosary turned off
+            // later never brings the Sign of the Cross back. The pendant's
+            // own walk sets the bead before its step.
+            if currentBeadIndex > 0, case .opening = pendantStep { pendantStep = nil }
         }
     }
 

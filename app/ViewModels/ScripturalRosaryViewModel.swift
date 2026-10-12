@@ -85,13 +85,24 @@ final class ScripturalRosaryViewModel {
     /// decade always begins on its Our Father bead however it was
     /// reached.
     var currentMysteryIndex: Int = 0 {
-        didSet { currentBeadIndex = 0 }
+        didSet {
+            currentBeadIndex = 0
+            // A mystery reached is off the pendant, however it was reached
+            pendantStep = nil
+        }
     }
 
     /// Which bead of the decade is under the hand: 0 is the Our Father
     /// bead, 1 through `hailMarys` that Hail Mary, and one past the last
     /// the decade prayed — the Glory Be.
-    var currentBeadIndex: Int = 0
+    var currentBeadIndex: Int = 0 {
+        // The voice moving the hand along the decades leaves the opening
+        // behind for good, so read in silence after it the Sign of the
+        // Cross never comes back
+        didSet {
+            if currentBeadIndex > 0, case .opening = pendantStep { pendantStep = nil }
+        }
+    }
 
     /// When THIS segment of the session started. Resumed sessions get a
     /// fresh clock — the gap between segments is not prayer time.
