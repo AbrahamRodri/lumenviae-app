@@ -1874,7 +1874,6 @@ struct ChapelReadingTile: View {
         case "imitation-of-christ":         return "Thomas à Kempis"
         case "story-of-a-soul":             return "St. Thérèse"
         case "confessions-of-st-augustine": return "St. Augustine"
-        case "dolorous-passion":            return "Emmerich"
         default:                            return info.author
         }
     }
