@@ -8,7 +8,9 @@
 //  result for each work, its settings a pill (the simple and the solemn
 //  Salve Regina), grouped by whether it is in season now; the words come
 //  back as the line they stand in, with the place in the recording when
-//  the chant's lines have been timed, and none when they have not.
+//  the chant's lines have been timed, and none when they have not. Every
+//  hit opens the chant's page; only the play disc beside a title sings
+//  it where it stands (`ChantTap`).
 //
 //  It stands in the library's place while it is open, its field at the
 //  head and Cancel beside it.
@@ -421,11 +423,11 @@ struct ChantSearchView: View {
         }
     }
 
+    /// A hit in the words opens the chant's page like every other row; it
+    /// once sang the chant from that line as well, so a tap meant to read
+    /// a chant started it sounding
     private func wordRow(_ hit: ChantSearch.WordHit) -> some View {
         Button {
-            if let line = hit.line {
-                player.playLine(line, of: hit.chant, then: .goOn)
-            }
             open(hit.chant)
         } label: {
             VStack(alignment: .leading, spacing: 6) {
@@ -472,7 +474,7 @@ struct ChantSearchView: View {
             hit.chant.englishTitle
         ].compactMap { $0 }.joined(separator: ", "))
         .accessibilityAddTraits(.isButton)
-        .accessibilityHint(hit.line != nil ? "Plays from this line" : "Opens the chant")
+        .accessibilityHint("Opens the chant")
     }
 }
 

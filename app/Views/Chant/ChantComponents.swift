@@ -312,6 +312,23 @@ struct ChantCredit: View {
     }
 }
 
+// MARK: - ChantTap
+
+/// What a tap on a chant does wherever one is listed: the row, the card
+/// or the name opens the chant's page, and only the small round play
+/// disc beside it plays it where it stands. A set's own disc plays the
+/// whole set; a chant listed on a set opens that chant. A search hit on
+/// a line opens the chant and does not start it. The library's pages,
+/// Explore, the Chapel's tile, the mini player and a prayer's "Hear it
+/// sung" all keep to this; the home page once let a hit in the words
+/// begin singing, and listed a set's chants with no door at all.
+enum ChantTap {
+    /// Where a tap on a listed chant goes
+    static func route(to chant: Chant) -> AppRoute {
+        .chant(id: chant.id)
+    }
+}
+
 // MARK: - ChantLibraryRow
 
 /// A chant on its shelf: its disc to play it where it stands, then its

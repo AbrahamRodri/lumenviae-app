@@ -576,7 +576,7 @@ struct ExploreView: View {
                          matchText: "marian theology library dogmas apparitions saints", route: .marianLibrary) { router.push(.marianLibrary) },
             LibraryEntry(icon: "ch-monstrance", title: "St. Carlo Acutis",
                          matchText: "carlo acutis eucharist digital altar saint", route: .carloAcutis) { router.push(.carloAcutis) },
-            LibraryEntry(icon: "ch-praying-hands", title: "Prayers",
+            LibraryEntry(icon: "lv-prayer-book", title: "Prayers",
                          matchText: "prayer book prayers enchiridion morning night angelus grace confession examination conscience mass communion litany litanies marian our lady latin novena") { router.push(.prayerBook) },
             LibraryEntry(icon: "ph-music-note", title: "The Chant Library",
                          matchText: "chant chants gregorian sung song songs hymn hymns latin score scores sheet music antiphon sing") { router.push(.chantLibrary) },

@@ -118,6 +118,10 @@ enum AppRoute: Hashable {
     case prayerBookChapter(id: String)
     case prayerOrder(id: String)
 
+    /// The prayers the reader has saved with the bookmark at the head of
+    /// a prayer's page, reached from the Saved shortcut on Prayers
+    case prayerBookSaved
+
     /// Prayers said one after another on a screen of their own, aloud or
     /// in silence. A player: it hides the bar and carries its own way out.
     case prayAlong(PrayAlongLaunch)
@@ -282,13 +286,26 @@ final class AppRouter {
     ///
     /// Lives on the router (not ContentView-local state) so any view can
     /// switch tabs — e.g. Today's Prayer's consecration row turns to the Consecrate tab.
-    var selectedTab: AppTab = .home {
+    var selectedTab: AppTab = AppRouter.launchTab {
         didSet {
             // Leaving the Chapel ends its arranging, for the same reason
             // a push does — and `switchTo` from the root never touches
             // `path`, so this is the only place that sees it.
             if oldValue != selectedTab { endChapelArranging() }
         }
+    }
+
+    /// The tab the app opens on: home, or in a debug build the tab named
+    /// at launch, for screenshots and checks a simulator cannot tap to:
+    /// `SIMCTL_CHILD_LUMEN_VIAE_TAB=prayers xcrun simctl launch …`
+    static var launchTab: AppTab {
+        #if DEBUG
+        if let name = ProcessInfo.processInfo.environment["LUMEN_VIAE_TAB"],
+           let tab = AppTab.allCases.first(where: { "\($0)" == name }) {
+            return tab
+        }
+        #endif
+        return .home
     }
 
     /// Currently selected mystery category, persisted across the navigation flow.

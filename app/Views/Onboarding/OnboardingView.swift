@@ -669,7 +669,7 @@ struct OnboardingView: View {
         case .learning:
             return [
                 Offer(icon: "lv-rosary", text: "How to Pray the Rosary in three short lessons, then a guided first Rosary"),
-                Offer(icon: "ch-praying-hands", text: "Every prayer written out, in English or in Latin"),
+                Offer(icon: "lv-prayer-book", text: "Every prayer written out, in English or in Latin"),
                 Offer(icon: "ph-book-open", text: "A meditation on each mystery, to read or to hear")
             ]
         }

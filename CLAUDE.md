@@ -2288,7 +2288,7 @@ write concurrent code here:
   tab of its own, **Prayers**, in the Journal's old place in the bar (the
   "Prayer Book Rethink" design, its Combined boards). Every other door
   turns to that tab rather than pushing a second copy of the book (an
-  order page's praying-hands door stands down when it was opened from
+  order page's prayer-book door stands down when it was opened from
   the tab itself, where Back already goes there):
   home's hour row, Explore's section (titled Prayers) and search (which finds prayers by
   name, Latin name or words), the Chapel's Prayers tile, a prayer's
@@ -2357,64 +2357,50 @@ write concurrent code here:
   files keep "PrayerBook".
 
   **Prayers** (`PrayerBookView(isTabRoot:)`, the tab's root; pushed it
-  draws a Back, but nothing pushes it now) is a plain title, the search
-  field at the head of the page — finding one prayer by name is the
-  book's commonest errand, and the field once stood at the foot of a
-  long page behind a toolbar glass that scrolled there — and three parts
-  chosen on a bar beneath it (`PrayersSection`: TODAY · OCCASIONS · ALL
-  PRAYERS), which take turns in one slot with the search's results.
-  **Today** opens on the hour (`PrayerBook.dayOrder(at:)`) under This
-  Time of Day: the hour's card, the order's painting
-  (`PrayerBookPainting`) dissolving under its name and one italic line,
-  a strip of MORNING · NOON · NIGHT at its foot (`PrayerHourStations`;
-  the Angelus is EVENING from three until the day turns at four, when it
-  is the 6 PM bell being kept), each saying where it stands — PRAYED,
-  Now, or when it is said, ON WAKING · AT NOON · AT 6 PM · AT BEDTIME
-  (`PrayerBook.standing`, in `dayOrderMoment`'s words), never
-  "missed" — and each a way to show that hour above (the choice let go
-  when the hour turns and when the app comes back to the foreground),
-  and the page's one gold act, PRAY THE ANGELUS (PRAY THE ANGELUS AGAIN
-  once offered, so the button always names its prayer). The Angelus is
-  offered for its bell, not its day (`PrayerBook.isOfferedNow`): the
-  middle station is the noon and evening Angelus only
-  (`PrayerBook.angelusBellKept`, which names the station and dates its
-  PRAYED alike). Before eleven it is NOON, at noon, with the bell still
-  to come, whether or not an Angelus was said at six; from eleven it is
-  offered by an Angelus said since eleven, and from three until the day
-  turns at four it is EVENING, offered by one said since three, so an
-  evening Angelus never reads NOON, offered. The six o'clock morning bell
-  has no station (MORNING is Morning Prayers'): an Angelus said then
-  counts for the day wherever `wasOffered` is read, the Chapel's rule and
-  home's hour row, but leaves the strip's NOON and PRAY THE ANGELUS
-  (not AGAIN). That reads the
-  moment an order was offered (`PrayerBookStore.lastOffered`, kept
-  beside the day under its own key), while `wasOffered`, which the
-  Chapel's rule reads, still counts an order once a prayer day. The
-  card's line is the Angelus's ("A short prayer to Mary, said at 6 AM,
-  noon and 6 PM.") and Queen of Heaven's own in the Easter season, with
-  "Regina Cæli" at its head, and Night Prayers' names the season's song
-  to Mary —
-  one pure function, `PrayerBook.daySummary(of:on:)` — and its painting
-  crossfades in a
-  slot of its own as the hour changes. The card is outlined, never
-  filled, its halo the outline's. Then Prayers to Mary: the season's
-  song to Mary over the mystery it sings of (THIS SEASON'S SONG TO MARY,
-  "Sung at night, Pentecost to Advent") — left out in the Easter season
-  while Queen of Heaven is already the hour card's prayer — her
-  three best-known prayers (`PrayerBook.bestKnownMarianIDs`) as ruled
-  rows (the Memorare with its English beneath), and ALL 29 PRAYERS TO
-  MARY; then Saved, the prayers saved with the bookmark at the head of
-  a prayer's page, as small outlined cards of one height the ribbon
-  hangs from (a hold offers Remove from Saved). Lists name a prayer as people say it
+  draws a Back, but nothing pushes it now) is a home page read top to
+  bottom, drawn as the Chant page is (the "Prayers Tab Redesign",
+  option A, Oct 2026), with what people come for first. The head is
+  PRAYERS centred over the book's count ("152 prayers",
+  `PrayerBook.prayerCount`, each prayer once however many chapters print
+  it) with a glass at the trailing edge; the glass turns the head into
+  the search field and CANCEL and the page into the search's results,
+  in one slot. Then **six shortcuts**, two by three, each a painting and
+  a name on the card ground (`PrayersShortcutTile`): Morning Prayers,
+  the Angelus (Queen of Heaven in the Easter season), Night Prayers,
+  Saved (`.prayerBookSaved`, `PrayerBookSavedView`: the prayers kept with
+  the bookmark at the head of a prayer's page, as small outlined cards
+  the ribbon hangs from, a hold offering Remove from Saved; empty, it says
+  how a prayer comes there), Before Mass and Before Confession. Then
+  **Now**, the order for the hour (`PrayerBook.dayOrder(at:)`) as one
+  wide card (`PrayersNowCard`): its painting, NOW · NIGHT (or NIGHT ·
+  PRAYED), the order's name, its line (`PrayerBook.daySummary(of:on:)`)
+  and PRAY on an outlined disc (PRAY AGAIN once offered); the card opens
+  the order's page, the disc prays it. The page has no filled gold act.
+  The Angelus is offered for its bell, not its day
+  (`PrayerBook.isOfferedNow`, read from `PrayerBookStore.lastOffered`),
+  so one said at noon leaves the evening's still to pray, while
+  `wasOffered`, which the Chapel's rule reads, counts an order once a
+  prayer day. Then **Everyday Prayers** (the Our Father, the Hail Mary,
+  the Glory Be, the Apostles' Creed, each a row with its painting,
+  `PrayersPictureRow`, SEE ALL to Basic Prayers); **Prayers to Mary**, a
+  shelf of square cards that scrolls sideways, the season's song to Mary
+  first (`PrayerBook.antiphon(on:)`) then the Memorare and the Litany of
+  Loreto, SEE ALL to the Mary chapter; **For an Occasion**, every order
+  kept for an occasion in the order of its place (`PrayerOccasionPlace`:
+  at Mass, at Confession, at home, in need), a ruled row each with its
+  glyph; and **All Topics**, the twelve chapters with their counts, The
+  Eucharist and Litanies each with a line saying what the word means
+  (`PrayerBook.chapterNotes`). Each painting is chosen in
+  `PrayerBookPainting` (`.order`, `.prayer`, `.saved`, `.hour`,
+  `.antiphon`). The page once opened on three parts chosen on a bar
+  (Today, Occasions, All Prayers), Today a 300-point painting for the
+  hour with a strip of its three hours and a gold PRAY: the prayers
+  people look up most stood two taps away, and the bar said little of
+  what was behind it. Lists name a prayer as people say it
   (`BookPrayer.listTitle`: Hail Mary, Memorare, Litany of Loreto, St
-  Michael); its own page keeps its full title. **Occasions** is where the reader is
-  (`PrayerOccasionPlace`: At Mass, At Confession, At Home, In Need, the last
-  one chosen kept in `prayers.occasionPlace`), each place's orders as
-  ruled rows with their glyph in a small outlined frame. **All Prayers**
-  is the chapters by topic with their counts, The Eucharist and Litanies
-  each with a line saying what the word means (`PrayerBook.chapterNotes`).
-  **Searching**, the parts
-  give way to "7 PRAYERS MATCH", said aloud to VoiceOver once the reader
+  Michael); its own page keeps its full title.
+  **Searching**, the page
+  gives way to "7 PRAYERS MATCH", said aloud to VoiceOver once the reader
   pauses, a card for a topic the words name
   (`PrayerBook.topics(matching:)`: every word searched must begin a word
   of the topic's names, the small words — "the", "prayers", "to" —
@@ -2430,18 +2416,15 @@ write concurrent code here:
   a word, so it finds the Stabat Mater beside the saints), æ and œ read
   as ae and oe ("regina caeli"), and a prayer whose text holds the whole
   search comes after the names. It once matched the whole search as one
-  string, and "St Michael", "Loreto" and the field's own "St Joseph"
-  found nothing. VoiceOver hears the topic and the orders found as well
+  string, and "St Michael", "Loreto" and "St Joseph" found nothing.
+  VoiceOver hears the topic and the orders found as well
   as the count of prayers, as the page sets them. Morning and Night Prayers
   have no mystery of their own: their cards name paintings
-  (`hour_morning`, `hour_night`, names shared with the Chant Library's
-  redesign, still being made) that are not yet in the catalog, and until
-  they are hang the Presentation and Gethsemane
+  (`hour_morning`, `hour_night`) and, while one is missing from the
+  catalog, hang the Presentation and Gethsemane
   (`PrayerBookPainting.resolvedAsset`, looked up once per name, since the
-  image cache keeps no misses). Saved's cards and every surface
-  on the page are outlined, never filled, where the design drew them
-  filled; the ribbon is the prayer page's red silk, where the design
-  drew it gold.
+  image cache keeps no misses). The ribbon is the prayer page's red
+  silk.
 
   The book's hour turns at four, eleven, three and eight
   (`PrayerBook.nextTurn`), none of them an hour of the Office, so the
@@ -3077,9 +3060,12 @@ appears:
   `ch-altar` on every surface (the Liturgy tile, which holds the Missal
   and the Office together, wears it too); the Office `ph-clock`; the
   Marian Library `ch-lily`; In Scripture `lv-breviary` (the Scriptural
-  Rosary keeps `ch-bible`); the Prayer Book `ch-praying-hands`, the one
-  praying-hands glyph (it also marks a prayer's door and Pray aloud, and
-  is the Prayers tab's, lit in gold alone since no fill weight is drawn);
+  Rosary keeps `ch-bible`); the Prayer Book `lv-prayer-book`, a closed
+  book with a cross on its cover and its ribbon (the Prayers tab, lit in
+  gold alone since no fill weight is drawn, Explore's door, an order
+  page's door back to the book, Settings' Prayers Tab row, What's New);
+  it replaced the joined hands (`ch-praying-hands`), which read as the
+  emoji, and which still mark a single prayer's door and Pray aloud;
   the Consecration `ch-consecration` (the Marian monogram, a cross over
   an M; the crown is True Devotion's alone).
 - **The mysteries** (`MysteryCategory.iconName`) — Joyful `lv-star`,

@@ -102,7 +102,7 @@ struct ChantBrowsePage: View {
         VStack(spacing: 0) {
             ChantRule()
             ForEach(chants) { chant in
-                ChantLibraryRow(chant: chant, player: player) { router.push(.chant(id: chant.id)) }
+                ChantLibraryRow(chant: chant, player: player) { router.push(ChantTap.route(to: chant)) }
             }
         }
     }
@@ -144,7 +144,7 @@ struct ChantSetsPage: View {
 
                         ChantOccasionsSection(
                             openID: $openID,
-                            open: { router.push(.chant(id: $0.id)) },
+                            open: { router.push(ChantTap.route(to: $0)) },
                             madeSet: { set in router.push(.chantSaved(.set(set.id))) },
                             reveal: { id in
                                 withAnimation(Motion.crossfade) { proxy.scrollTo(id, anchor: .top) }

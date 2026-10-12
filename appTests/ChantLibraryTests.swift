@@ -389,6 +389,29 @@ struct ChantLibraryTests {
         #expect(ChantSearch.setting(of: alone) == nil)
     }
 
+    // MARK: - A tap on a chant
+
+    /// Wherever a chant is listed, a tap opens its page: the library home's
+    /// cards, a sung set's listed chants, and a hit in the words of search,
+    /// timed to a line or not. Only the play disc sings it where it stands.
+    @Test func aTapOnAChantOpensItsPage() throws {
+        let tonight = try #require(ChantCatalog.antiphonOfTheSeason())
+        #expect(ChantTap.route(to: tonight) == .chant(id: tonight.id))
+
+        let occasion = try #require(ChantOccasion.occasion(ChantLibraryView.tileOccasionIDs[0]))
+        let listed = occasion.distinctChants().prefix(ChantSetCard.listed)
+        #expect(!listed.isEmpty)
+        for chant in listed {
+            #expect(ChantTap.route(to: chant) == .chant(id: chant.id))
+        }
+
+        let hits = ChantSearch.wordHits(matching: ChantSearch.fold("salve"), where: { _ in true })
+        let timed = try #require(hits.first { $0.line != nil })
+        let untimed = ChantSearch.WordHit(id: "b", chant: timed.chant, snippet: "Salve", line: nil, start: nil)
+        #expect(ChantTap.route(to: timed.chant) == .chant(id: timed.chant.id))
+        #expect(ChantTap.route(to: untimed.chant) == ChantTap.route(to: timed.chant))
+    }
+
     @Test func aSettingTheTitleAlreadySaysIsNotSaidAgain() throws {
         let credo = try #require(ChantCatalog.chant("credo_iii"))
         #expect(credo.distinctSetting == nil)
