@@ -128,8 +128,12 @@ enum AppRoute: Hashable {
     /// they made, opened on one shelf (`ChantSavedShelf`)
     case chantSaved(ChantSavedShelf)
 
-    /// The sung sets, opened on one (`ChantLibraryData.occasions`)
-    case chantSets(openID: String?)
+    /// The sung sets: an index of the occasions
+    /// (`ChantLibraryData.occasions`), each opening its own page
+    case chantSets
+
+    /// One sung set on its own page: an occasion, or a set the reader made
+    case chantSet(ChantSetSubject)
 
     /// Every chant under its topic, one topic, or the Mass of the Angels
     case chantBrowse(ChantBrowseScope)

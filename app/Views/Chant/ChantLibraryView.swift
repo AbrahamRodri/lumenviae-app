@@ -135,7 +135,7 @@ struct ChantLibraryView: View {
                     songsToMary
                 }
 
-                shelfSection("Sung sets", seeAll: { router.push(.chantSets(openID: nil)) }) {
+                shelfSection("Sung sets", seeAll: { router.push(.chantSets) }) {
                     sungSets
                 }
 
@@ -232,7 +232,7 @@ struct ChantLibraryView: View {
             sounding: player.isSinging(ChantQueue.occasion(occasion)) && player.isGoingOn,
             spoken: occasion.title
         ) {
-            router.push(.chantSets(openID: occasion.id))
+            router.push(.chantSet(.occasion(occasion.id)))
         }
     }
 
@@ -394,7 +394,7 @@ struct ChantLibraryView: View {
                         chants: occasion.distinctChants(),
                         duration: occasion.duration(),
                         queue: ChantQueue.occasion(occasion),
-                        open: { router.push(.chantSets(openID: occasion.id)) },
+                        open: { router.push(.chantSet(.occasion(occasion.id))) },
                         openChant: openChant
                     )
                 }
@@ -406,7 +406,7 @@ struct ChantLibraryView: View {
                         chants: chants,
                         duration: set.duration,
                         queue: ChantQueue.set(set),
-                        open: { router.push(.chantSaved(.set(set.id))) },
+                        open: { router.push(.chantSet(.own(set.id))) },
                         openChant: openChant
                     )
                 }
@@ -439,15 +439,20 @@ struct ChantLibraryView: View {
 
     // MARK: - Foot
 
+    /// One line of credit, a link to the singers' site. The licence stands
+    /// in full on every chant's own page (`ChantCredit`).
     private var footer: some View {
-        VStack(spacing: 14) {
-            Text(ChantCatalog.offlineNote)
+        Link(destination: ChantCatalog.sourceSite) {
+            (Text(ChantCatalog.libraryCredit).underline(color: AppColors.gold.opacity(0.5))
+                + Text(" ↗").foregroundColor(AppColors.gold))
                 .font(AppFonts.readingItalicFont(14))
-                .foregroundColor(AppColors.textSecondary)
+                .foregroundColor(AppColors.cream.opacity(0.72))
                 .multilineTextAlignment(.center)
-            ChantCredit()
+                .frame(minHeight: 44)
         }
         .frame(maxWidth: .infinity)
+        .accessibilityLabel(ChantCatalog.libraryCredit)
+        .accessibilityHint("Opens Verbum Gloriae's website")
     }
 
     // MARK: - Doors

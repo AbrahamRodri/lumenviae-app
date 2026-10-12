@@ -571,8 +571,11 @@ struct ContentView: View {
         case .chantSaved(let shelf):
             ChantSavedPage(start: shelf)
 
-        case .chantSets(let openID):
-            ChantSetsPage(openID: openID)
+        case .chantSets:
+            ChantSetsPage()
+
+        case .chantSet(let subject):
+            ChantSetPage(subject: subject)
 
         case .chantBrowse(let scope):
             ChantBrowsePage(scope: scope)

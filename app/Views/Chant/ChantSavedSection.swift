@@ -4,10 +4,10 @@
 //
 //  The Saved board: what the reader has made of the library. A shelf of
 //  spines — chants learned, favourites, and every set they have put
-//  together, with a place for a new one — and beneath it the spine
-//  chosen: a list, or a set laid out as an order of its own, its chants
-//  and its pauses moved, removed and added to, and sung as one. Then what
-//  was sung lately, and the library's one setting, the words.
+//  together, with a place for a new one — and beneath it the list chosen.
+//  A set opens on its own page (`ChantSetPage`), where it is changed and
+//  sung. Then what was sung lately, and the library's one setting, the
+//  words.
 //
 //  Everything here is kept on the device (`ChantShelfStore`).
 //
@@ -34,7 +34,6 @@ enum ChantSpineCloth {
 enum ChantSavedShelf: Hashable {
     case favorites
     case learned
-    case set(UUID)
 }
 
 // MARK: - ChantSavedPage
@@ -45,12 +44,10 @@ enum ChantSavedShelf: Hashable {
 struct ChantSavedPage: View {
 
     @Environment(AppRouter.self) private var router
-    @State private var openSetID: UUID?
     private let start: ChantSavedShelf
 
     init(start: ChantSavedShelf) {
         self.start = start
-        if case .set(let id) = start { _openSetID = State(initialValue: id) }
     }
 
     var body: some View {
@@ -78,9 +75,9 @@ struct ChantSavedPage: View {
                     .padding(.horizontal, 28)
 
                     ChantSavedSection(
-                        openSetID: $openSetID,
                         startsOn: start,
-                        open: { router.push(ChantTap.route(to: $0)) }
+                        open: { router.push(ChantTap.route(to: $0)) },
+                        openSet: { router.push(.chantSet(.own($0))) }
                     )
                 }
                 .padding(.top, 8)
@@ -108,8 +105,9 @@ struct ChantSavedPage: View {
 
 struct ChantSavedSection: View {
 
-    @Binding var openSetID: UUID?
     let open: (Chant) -> Void
+    /// Opens a set of the reader's own on its page
+    let openSet: (UUID) -> Void
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -119,32 +117,25 @@ struct ChantSavedSection: View {
     private enum Spine: Hashable {
         case learned
         case favorites
-        case set(UUID)
     }
 
     @State private var spineChoice: Spine?
-    @State private var addingChant: ChantSet?
-    @State private var addingPause: ChantSet?
-    @State private var renaming: ChantSet?
-    @State private var renameText = ""
-    @State private var deleting: ChantSet?
     @State private var namingSet = false
     /// The glass's width, so the shelf runs the whole gutter under a few
     /// spines
     @State private var shelfWidth: CGFloat = 0
 
-    init(openSetID: Binding<UUID?>, startsOn: ChantSavedShelf? = nil, open: @escaping (Chant) -> Void) {
-        _openSetID = openSetID
+    init(startsOn: ChantSavedShelf? = nil, open: @escaping (Chant) -> Void, openSet: @escaping (UUID) -> Void) {
         switch startsOn {
         case .learned:   _spineChoice = State(initialValue: .learned)
         case .favorites: _spineChoice = State(initialValue: .favorites)
-        default:         break
+        case nil:        break
         }
         self.open = open
+        self.openSet = openSet
     }
 
     private var selected: Spine {
-        if let openSetID, shelf.set(openSetID) != nil { return .set(openSetID) }
         if let spineChoice { return spineChoice }
         return shelf.favorites.isEmpty && !shelf.learned.isEmpty ? .learned : .favorites
     }
@@ -173,11 +164,6 @@ struct ChantSavedSection: View {
                         empty: "Press and hold any chant, or tap ⋯ on its page, to add it to your favourites."
                     )
                     .transition(.opacity)
-                case .set(let id):
-                    if let set = shelf.set(id) {
-                        setCard(set)
-                            .transition(.opacity)
-                    }
                 }
             }
             .padding(.horizontal, 20)
@@ -191,51 +177,10 @@ struct ChantSavedSection: View {
             settings
                 .padding(.horizontal, 20)
         }
-        .sheet(item: $addingChant) { set in
-            ChantPickerSheet(set: set)
-                .presentationDetents([.large])
-                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
-        }
-        .sheet(item: $addingPause) { set in
-            ChantPauseSheet(set: set)
-                .presentationDetents([.medium, .large])
-                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
-        }
         .sheet(isPresented: $namingSet) {
-            ChantNewSetSheet { set in
-                spineChoice = nil
-                openSetID = set.id
-            }
+            ChantNewSetSheet { set in openSet(set.id) }
             .presentationDetents([.medium])
             .dynamicTypeSize(...DynamicTypeSize.appMaximum)
-        }
-        .alert("Rename this set", isPresented: Binding(
-            get: { renaming != nil },
-            set: { if !$0 { renaming = nil } }
-        )) {
-            TextField("Name", text: $renameText)
-            Button("Save") {
-                if let renaming { shelf.rename(renaming.id, to: renameText) }
-                renaming = nil
-            }
-            Button("Cancel", role: .cancel) { renaming = nil }
-        }
-        .confirmationDialog(
-            "Delete \(deleting?.name ?? "this set")?",
-            isPresented: Binding(get: { deleting != nil }, set: { if !$0 { deleting = nil } }),
-            titleVisibility: .visible
-        ) {
-            Button("Delete the Set", role: .destructive) {
-                if let deleting {
-                    if openSetID == deleting.id { openSetID = nil }
-                    if spineChoice == .set(deleting.id) { spineChoice = nil }
-                    shelf.deleteSet(deleting.id)
-                }
-                deleting = nil
-            }
-            Button("Cancel", role: .cancel) { deleting = nil }
-        } message: {
-            Text("Its chants stay in the library; only the set goes.")
         }
     }
 
@@ -254,7 +199,6 @@ struct ChantSavedSection: View {
                     height: 150,
                     lit: selected == .learned
                 ) {
-                    openSetID = nil
                     spineChoice = .learned
                 }
                 spine(
@@ -265,7 +209,6 @@ struct ChantSavedSection: View {
                     height: 166,
                     lit: selected == .favorites
                 ) {
-                    openSetID = nil
                     spineChoice = .favorites
                 }
                 ForEach(Array(shelf.sets.enumerated()), id: \.element.id) { index, set in
@@ -274,10 +217,9 @@ struct ChantSavedSection: View {
                         note: "your set",
                         cloth: ChantSpineCloth.sets[index % ChantSpineCloth.sets.count],
                         height: [180, 158, 172, 162][index % 4],
-                        lit: selected == .set(set.id)
+                        lit: false
                     ) {
-                        spineChoice = nil
-                        openSetID = set.id
+                        openSet(set.id)
                     }
                 }
                 newSpine
@@ -428,220 +370,6 @@ struct ChantSavedSection: View {
                 }
             }
         }
-    }
-
-    // MARK: - A set
-
-    private func setCard(_ set: ChantSet) -> some View {
-        let queue = ChantQueue.set(set)
-        return VStack(alignment: .leading, spacing: 14) {
-            HStack(alignment: .top, spacing: 8) {
-                VStack(alignment: .leading, spacing: 5) {
-                    Text("YOUR SET")
-                        .font(AppFonts.labelFont(9))
-                        .tracking(2)
-                        .foregroundColor(AppColors.gold)
-                    Text(set.name)
-                        .font(AppFonts.titleFont(22))
-                        .foregroundColor(AppColors.cream)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .accessibilityAddTraits(.isHeader)
-                    Text(set.items.isEmpty ? "Nothing in it yet" : set.summary)
-                        .font(AppFonts.readingItalicFont(14))
-                        .foregroundColor(AppColors.textSecondary)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-                if !set.items.isEmpty {
-                    ShareLink(item: shareText(set)) {
-                        AppIcon("ph-export", size: 18)
-                            .foregroundColor(AppColors.gold)
-                            .frame(width: 44, height: 44)
-                            .contentShape(Rectangle())
-                    }
-                    .accessibilityLabel("Share this set")
-                }
-
-                Menu {
-                    Button {
-                        renameText = set.name
-                        renaming = set
-                    } label: {
-                        Label("Rename", systemImage: "pencil")
-                    }
-                    Button(role: .destructive) {
-                        deleting = set
-                    } label: {
-                        Label("Delete the Set", systemImage: "trash")
-                    }
-                } label: {
-                    AppIcon("ph-dots-three", size: 20)
-                        .foregroundColor(AppColors.gold)
-                        .frame(width: 44, height: 44)
-                        .contentShape(Rectangle())
-                }
-                .accessibilityLabel("More for this set")
-            }
-
-            ChantRule(opacity: 0.2)
-
-            if set.items.isEmpty {
-                Text("Add chants in the order you will sing them, and pauses between them for silence or a note in red.")
-                    .font(AppFonts.readingItalicFont(15))
-                    .foregroundColor(AppColors.textSecondary)
-                    .fixedSize(horizontal: false, vertical: true)
-            } else {
-                VStack(spacing: 0) {
-                    ForEach(Array(set.items.enumerated()), id: \.element.id) { index, item in
-                        itemRow(item, index: index, in: set, sounding: isSounding(item, index: index, in: set))
-                    }
-                }
-            }
-
-            HStack(spacing: 10) {
-                addButton("Add a chant", color: AppColors.gold) { addingChant = set }
-                addButton("Add a pause", color: Rubric.text) { addingPause = set }
-            }
-
-            ChantSetPlayButton(queue: queue, title: "Play the set")
-                .disabled(set.chantCount == 0)
-            .padding(.top, 4)
-        }
-        .chantShell(padding: 18)
-    }
-
-    /// Whether the item is what the set being sung is on, by the queue's
-    /// own record of which item each entry came from
-    private func isSounding(_ item: ChantSet.Item, index: Int, in set: ChantSet) -> Bool {
-        player.origin(singing: "set:\(set.id.uuidString)") == index
-    }
-
-    private func itemRow(_ item: ChantSet.Item, index: Int, in set: ChantSet, sounding: Bool) -> some View {
-        HStack(spacing: 10) {
-            Menu {
-                Button {
-                    shelf.moveItem(item.id, by: -1, in: set.id)
-                } label: {
-                    Label("Move Up", systemImage: "arrow.up")
-                }
-                .disabled(index == 0)
-                Button {
-                    shelf.moveItem(item.id, by: 1, in: set.id)
-                } label: {
-                    Label("Move Down", systemImage: "arrow.down")
-                }
-                .disabled(index == set.items.count - 1)
-                Button(role: .destructive) {
-                    shelf.removeItem(item.id, from: set.id)
-                } label: {
-                    Label("Remove", systemImage: "minus.circle")
-                }
-            } label: {
-                AppIcon("ph-dots-six-vertical", size: 16)
-                    .foregroundColor(AppColors.textSecondary)
-                    .frame(width: 44, height: 44)
-                    .contentShape(Rectangle())
-            }
-            .accessibilityLabel("Move or remove")
-            .padding(.horizontal, -6)
-
-            switch item.kind {
-            case .chant(let id, let times):
-                if let chant = ChantCatalog.chant(id) {
-                    Button {
-                        open(chant)
-                    } label: {
-                        HStack(alignment: .firstTextBaseline, spacing: 8) {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(times > 1 ? "\(chant.latinTitle) ×\(times)" : chant.latinTitle)
-                                    .font(AppFonts.readingFont(17))
-                                    .foregroundColor(sounding ? AppColors.goldLight : AppColors.cream)
-                                    .fixedSize(horizontal: false, vertical: true)
-                                Text(chant.englishTitle)
-                                    .font(AppFonts.readingItalicFont(13.5))
-                                    .foregroundColor(AppColors.textSecondary)
-                            }
-                            Spacer(minLength: 8)
-                            Text(ChantPlayer.clock(item.duration))
-                                .font(AppFonts.labelFont(9))
-                                .tracking(1)
-                                .foregroundColor(AppColors.textSecondary)
-                                .monospacedDigit()
-                        }
-                        .frame(minHeight: 44)
-                        .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityElement(children: .ignore)
-                    .accessibilityLabel(chant.spokenEntry(times: times, duration: item.duration))
-                    .accessibilityAddTraits(.isButton)
-                    .accessibilityHint("Opens the chant")
-                }
-            case .pause(let note, let seconds):
-                HStack(alignment: .firstTextBaseline, spacing: 8) {
-                    ChantRubricText(text: note.isEmpty ? "Silence" : note, size: 15.5)
-                    Spacer(minLength: 8)
-                    // A note kept with no silence says so in a word
-                    Text(seconds > 0 ? ChantPlayer.clock(TimeInterval(seconds)) : "NOTE")
-                        .font(AppFonts.labelFont(9))
-                        .tracking(1)
-                        .foregroundColor(sounding ? Rubric.text : AppColors.textSecondary)
-                        .monospacedDigit()
-                }
-                .frame(minHeight: 44)
-                .accessibilityElement(children: .ignore)
-                .accessibilityLabel(Self.spokenPause(note: note, seconds: seconds))
-            }
-        }
-        .padding(.vertical, 4)
-        .overlay(alignment: .bottom) { ChantRule(opacity: 0.12) }
-    }
-
-    /// A pause as VoiceOver says it: its silence in words, or that it is
-    /// a note
-    private static func spokenPause(note: String, seconds: Int) -> String {
-        let words = note.isEmpty ? "Silence" : note
-        guard seconds > 0 else { return "A note: \(words)" }
-        return "\(words), \(ChantPlayer.spoken(TimeInterval(seconds))) of silence"
-    }
-
-    private func addButton(_ title: String, color: Color, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            HStack(spacing: 6) {
-                AppIcon("ph-plus", size: 12)
-                Text(title)
-                    .font(AppFonts.readingFont(15))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
-            }
-            .foregroundColor(color)
-            .frame(maxWidth: .infinity, minHeight: 44)
-            .overlay(Capsule().strokeBorder(color.opacity(0.5), lineWidth: AppLine.hairline))
-            .contentShape(Capsule())
-        }
-        .buttonStyle(SacredCardButtonStyle())
-        .accessibilityLabel(title)
-    }
-
-    /// The set as plain words, to send to a prayer group
-    private func shareText(_ set: ChantSet) -> String {
-        var lines = [set.name, ""]
-        var number = 1
-        for item in set.items {
-            switch item.kind {
-            case .chant(let id, let times):
-                guard let chant = ChantCatalog.chant(id) else { continue }
-                let repeats = times > 1 ? " ×\(times)" : ""
-                lines.append("\(number). \(chant.latinTitle)\(repeats) — \(chant.englishTitle) (\(ChantPlayer.clock(item.duration)))")
-                number += 1
-            case .pause(let note, let seconds):
-                let silence = seconds > 0 ? " (\(ChantPlayer.clock(TimeInterval(seconds))))" : ""
-                lines.append("    \(note.isEmpty ? "Silence" : note)\(silence)")
-            }
-        }
-        lines.append("")
-        lines.append("Sung by Verbum Gloriae · from Lumen Viae's Chant Library")
-        return lines.joined(separator: "\n")
     }
 
     // MARK: - Recently played

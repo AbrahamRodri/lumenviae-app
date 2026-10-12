@@ -2,8 +2,8 @@
 //  ChantLibraryPages.swift
 //  Lumen Viae
 //
-//  The pages the library's home opens beyond a chant's own: the sung sets
-//  with their order of service (`.chantSets`), and every chant under its
+//  The pages the library's home opens beyond a chant's own: the index of
+//  the sung sets (`.chantSets`), and every chant under its
 //  topic, or one topic, or the Mass of the Angels (`.chantBrowse`). Both
 //  are pushed, with the gold Back in the bar.
 //
@@ -110,60 +110,40 @@ struct ChantBrowsePage: View {
 
 // MARK: - ChantSetsPage
 
-/// The sung sets: an index of them over the chosen one's order of
-/// service, sung in order, with PLAY ALL and the bookmark that keeps it
+/// The sung sets as an index: each occasion opens on its own page
+/// (`ChantSetPage`), as a set of the reader's own does
 struct ChantSetsPage: View {
 
     @Environment(AppRouter.self) private var router
-    @State private var openID: String?
-
-    init(openID: String?) {
-        _openID = State(initialValue: openID)
-    }
 
     var body: some View {
         ZStack {
             AppColors.appGradient.ignoresSafeArea()
 
-            ScrollViewReader { proxy in
-                ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 26) {
-                        VStack(spacing: 8) {
-                            Text("Sung Sets")
-                                .font(AppFonts.titleFont(26))
-                                .foregroundColor(AppColors.cream)
-                                .accessibilityAddTraits(.isHeader)
-                            Text("Chants sung one after another, for a time of prayer.")
-                                .font(AppFonts.readingItalicFont(16))
-                                .foregroundColor(AppColors.cream.opacity(0.78))
-                                .multilineTextAlignment(.center)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.horizontal, 28)
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 26) {
+                    VStack(spacing: 8) {
+                        Text("Sung Sets")
+                            .font(AppFonts.titleFont(26))
+                            .foregroundColor(AppColors.cream)
+                            .accessibilityAddTraits(.isHeader)
+                        Text("Chants sung one after another, for a time of prayer.")
+                            .font(AppFonts.readingItalicFont(16))
+                            .foregroundColor(AppColors.cream.opacity(0.78))
+                            .multilineTextAlignment(.center)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.horizontal, 28)
 
-                        ChantOccasionsSection(
-                            openID: $openID,
-                            open: { router.push(ChantTap.route(to: $0)) },
-                            madeSet: { set in router.push(.chantSaved(.set(set.id))) },
-                            reveal: { id in
-                                withAnimation(Motion.crossfade) { proxy.scrollTo(id, anchor: .top) }
-                            }
-                        )
-                    }
-                    .padding(.top, 8)
-                    .padding(.bottom, 48)
+                    ChantOccasionsSection(
+                        openSet: { router.push(.chantSet($0)) }
+                    )
                 }
-                .topChromeFade()
-                .onAppear {
-                    // Opened on a set from a tile or a card: its order of
-                    // service, not the index above it, is what was asked for
-                    guard openID != nil else { return }
-                    DispatchQueue.main.async {
-                        proxy.scrollTo(ChantOccasionsSection.orderAnchor, anchor: .top)
-                    }
-                }
+                .padding(.top, 8)
+                .padding(.bottom, 48)
             }
+            .topChromeFade()
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {
