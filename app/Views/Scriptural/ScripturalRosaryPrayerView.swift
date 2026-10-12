@@ -179,7 +179,7 @@ struct ScripturalRosaryPrayerView: View {
                 // the pendant hangs in the strand's own place
                 if countsOnScreen,
                    viewModel.spokenPendant?.phase != .opening,
-                   !(viewModel.isPlain && viewModel.spokenPendant != nil) {
+                   !(viewModel.setsPendantWords && viewModel.spokenPendant != nil) {
                 Color.clear
                     .rosaryStrand(
                         viewModel.strand,
@@ -210,12 +210,12 @@ struct ScripturalRosaryPrayerView: View {
                             pendant: pendant,
                             width: geometry.size.width,
                             fullHeight: fullHeight,
-                            heightFraction: viewModel.isPlain ? 0.435 : 0.4,
-                            topFraction: viewModel.isPlain
+                            heightFraction: viewModel.setsPendantWords ? 0.435 : 0.4,
+                            topFraction: viewModel.setsPendantWords
                                 ? RosaryStrandView.windowTop(fullHeight: fullHeight) / max(fullHeight, 1)
                                 : 0.355,
                             bottomLimit: footTop.map { $0 - Self.pendantFootClearance },
-                            trailingColumn: viewModel.isPlain ? Self.readingTrailingInset : nil,
+                            trailingColumn: viewModel.setsPendantWords ? Self.readingTrailingInset : nil,
                             chromeHidden: chromeHidden,
                             onTap: toggleChrome
                         )
@@ -494,7 +494,9 @@ struct ScripturalRosaryPrayerView: View {
         guard abs(dx) > 60, abs(dx) > abs(dy) * 1.5 else { return }
 
         if dx < 0 {
-            guard !viewModel.isLastMystery else { return }
+            // A swipe never finishes the Rosary
+            guard !(viewModel.isLastMystery && viewModel.lastMysteryEndsRosary),
+                  !viewModel.isLastBeadOfRosary else { return }
             nextMystery()
         } else {
             // A drag begun on the left bezel is the navigation stack's
@@ -656,9 +658,9 @@ struct ScripturalRosaryPrayerView: View {
     /// came back only after the last Amen.
     private func pendantColumn(_ pendant: SpokenPendant) -> some View {
         VStack(alignment: .leading, spacing: 14) {
-            if viewModel.isPlain {
+            if viewModel.setsPendantWords {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(pendant.heading.uppercased())
+                    Text(pendantHeading(pendant).uppercased())
                         .font(AppFonts.labelFont(9.5))
                         .tracking(2)
                         .foregroundColor(AppColors.gold.opacity(0.9))
@@ -714,10 +716,10 @@ struct ScripturalRosaryPrayerView: View {
         .contentShape(Rectangle())
         .onTapGesture { stepPrayer(forward: true) }
         .onLongPressGesture { stepPrayer(forward: false) }
-        .padding(.leading, viewModel.isPlain ? 28 : 32)
+        .padding(.leading, viewModel.setsPendantWords ? 28 : 32)
         // The strand hangs beside the closing prayers, and the words keep
         // the measure they have in the decades either side of them
-        .padding(.trailing, viewModel.isPlain || pendant.phase == .closing ? Self.readingTrailingInset : 32)
+        .padding(.trailing, viewModel.setsPendantWords || pendant.phase == .closing ? Self.readingTrailingInset : 32)
     }
 
     /// The Rosary Aloud's words for the prayer on the pendant, and on the
@@ -764,19 +766,7 @@ struct ScripturalRosaryPrayerView: View {
     /// and the italic a printed book gives it, out of its brackets: a
     /// direction, which the voice does not say, not words to be prayed
     private func pendantParagraph(_ lines: [String]) -> AttributedString {
-        var paragraph = AttributedString()
-        for (index, line) in lines.enumerated() {
-            if index > 0 { paragraph += AttributedString(" ") }
-            if PrayerMarkup.isRubric(line) {
-                var rubric = AttributedString(PrayerMarkup.rubric(line))
-                rubric.font = AppFonts.readingItalicFont(wordsSize)
-                rubric.foregroundColor = Rubric.red
-                paragraph += rubric
-            } else {
-                paragraph += Rubric.rubricated(line)
-            }
-        }
-        return paragraph
+        Rubric.paragraph(lines, size: wordsSize)
     }
 
     /// Which prayer of the pendant is shown: the two Signs of the Cross,
@@ -927,13 +917,16 @@ struct ScripturalRosaryPrayerView: View {
     /// prayed, the next mystery by name, so the turn is expected. Every
     /// other bead says nothing — a cue repeated fifty times is chrome.
     private var beadCue: String? {
+        if viewModel.isDecadePrayed, viewModel.isLastMystery {
+            return "The closing prayers follow on the next swipe."
+        }
         if viewModel.isDecadePrayed {
             let next = viewModel.category.mysteryLabel(ordinal: viewModel.currentMysteryIndex + 2)
             return "\(next) follows on the next swipe."
         }
         // In the Rosary Aloud the voice moves the beads, and how to move
         // them by hand is news only once the voice cannot
-        if viewModel.isFirstBeadOfRosary,
+        if viewModel.isFirstMystery, viewModel.currentBeadIndex == 0,
            !viewModel.isPlain || viewModel.spokenFailure != nil {
             return "Swipe down for the first Hail Mary, and up for the bead before."
         }
@@ -1011,8 +1004,8 @@ struct ScripturalRosaryPrayerView: View {
         // mystery the forward action is the arrow's AMEN, and says so:
         // an action called "Next mystery" must not finish the Rosary
         .accessibilityElement(children: .contain)
-        .accessibilityAction(named: viewModel.isLastMystery ? "Amen — finish the Rosary" : "Next mystery") {
-            if viewModel.isLastMystery { finishRosary() } else { nextMystery() }
+        .accessibilityAction(named: finishesHere ? "Amen — finish the Rosary" : "Next mystery") {
+            if finishesHere { finishRosary() } else { nextMystery() }
         }
         .accessibilityAction(named: "Previous mystery", previousMystery)
     }
@@ -1083,20 +1076,20 @@ struct ScripturalRosaryPrayerView: View {
     /// never rearranges itself under the thumb
     private var previousMysteryArrow: some View {
         TransportButton(icon: .asset("ph-arrow-left"), size: 20, label: "Previous mystery", action: previousMystery)
-            .disabled(viewModel.isFirstMystery)
-            .opacity(viewModel.isFirstMystery ? 0.25 : 1)
-            .accessibilityHidden(viewModel.isFirstMystery)
+            .disabled(viewModel.isFirstBeadOfRosary)
+            .opacity(viewModel.isFirstBeadOfRosary ? 0.25 : 1)
+            .accessibilityHidden(viewModel.isFirstBeadOfRosary)
     }
 
     /// The mystery after — and on the last, the check that is AMEN: the
     /// forward move that ends the Rosary is the one that finishes it
     private var nextMysteryArrow: some View {
         TransportButton(
-            icon: .asset(viewModel.isLastMystery ? "ph-check" : "ph-arrow-right"),
-            size: viewModel.isLastMystery ? 21 : 20,
-            label: viewModel.isLastMystery ? "Amen — finish the Rosary" : "Next mystery"
+            icon: .asset(finishesHere ? "ph-check" : "ph-arrow-right"),
+            size: finishesHere ? 21 : 20,
+            label: finishesHere ? "Amen — finish the Rosary" : "Next mystery"
         ) {
-            if viewModel.isLastMystery {
+            if finishesHere {
                 finishRosary()
             } else {
                 nextMystery()
@@ -1107,16 +1100,29 @@ struct ScripturalRosaryPrayerView: View {
     private func nextMystery() {
         travel = .forward
         withAnimation(Motion.decadeTurn) {
-            _ = viewModel.nextMystery()
+            _ = viewModel.advanceOffTheBeads()
         }
     }
 
     private func previousMystery() {
-        guard !viewModel.isFirstMystery else { return }
+        guard !viewModel.isFirstBeadOfRosary else { return }
         travel = .back
         withAnimation(Motion.decadeTurn) {
-            viewModel.previousMystery()
+            viewModel.retreatOffTheBeads()
         }
+    }
+
+    /// Whether the arrow forward finishes the Rosary: the last mystery
+    /// with no closing prayers shown after it, or the last of them
+    private var finishesHere: Bool {
+        viewModel.isLastBeadOfRosary
+            || (viewModel.isLastMystery && viewModel.lastMysteryEndsRosary && viewModel.spokenPendant == nil)
+    }
+
+    /// "The Opening Prayers", and in silence where in them: "· 2 of 7"
+    private func pendantHeading(_ pendant: SpokenPendant) -> String {
+        guard let count = viewModel.silentPendantCount else { return pendant.heading }
+        return "\(pendant.heading) · \(count)"
     }
 
     // MARK: - Foot

@@ -634,6 +634,7 @@ struct RosaryChoiceSettingsRow: View {
         value: Binding<Bool>,
         isAvailable: Bool = true,
         isAnswered: Bool = true,
+        unavailableNote: String? = nil,
         note: @escaping (Bool) -> String
     ) {
         self.icon = icon
@@ -642,6 +643,7 @@ struct RosaryChoiceSettingsRow: View {
         self._value = value
         self.isAvailable = isAvailable
         self.isAnswered = isAnswered
+        if let unavailableNote { self.unavailableNote = unavailableNote }
         self.note = note
     }
 

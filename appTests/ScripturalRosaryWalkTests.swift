@@ -18,8 +18,9 @@ import Testing
 @MainActor
 struct ScripturalRosaryWalkTests {
 
-    private func walk(_ category: MysteryCategory, form: SpokenForm = .scriptural) -> ScripturalRosaryViewModel {
-        ScripturalRosaryViewModel(category: category, form: form)
+    private func walk(_ category: MysteryCategory, form: SpokenForm = .scriptural,
+                      pendant: Bool = false) -> ScripturalRosaryViewModel {
+        ScripturalRosaryViewModel(category: category, form: form, showsOpeningPrayers: pendant)
     }
 
     @Test func theWholeRosaryIsFiftyHailMarysAndTheWalkEndsOnTheLastBead() {
@@ -124,10 +125,10 @@ struct ScripturalRosaryWalkTests {
     }
 
     @Test func aResumedRosaryIsHeldToItsMysteriesAndBeads() {
-        let vm = ScripturalRosaryViewModel(category: .joyful, startAtIndex: 9, startAtBead: 40)
+        let vm = ScripturalRosaryViewModel(category: .joyful, startAtIndex: 9, startAtBead: 40, showsOpeningPrayers: false)
         #expect(vm.currentMysteryIndex == 4)
         #expect(vm.currentBeadIndex == 11)
-        let early = ScripturalRosaryViewModel(category: .joyful, startAtIndex: -2, startAtBead: -1)
+        let early = ScripturalRosaryViewModel(category: .joyful, startAtIndex: -2, startAtBead: -1, showsOpeningPrayers: false)
         #expect(early.isFirstBeadOfRosary)
     }
 

@@ -40,7 +40,12 @@ struct AccountView: View {
                     }
 
                     // MARK: Prayer Experience
-                    AccountSection(title: "Prayer Experience", icon: "lv-rosary") {
+                    // How the words look and who reads them, for every
+                    // page that prays: the Rosary's own choices stand
+                    // under The Rosary, below, and the Prayers tab's under
+                    // its own name, so neither "Audio" is read as the
+                    // other's
+                    AccountSection(title: "Prayer Experience", icon: "ph-text-aa") {
                         VStack(spacing: 0) {
                             TextSizeRow(value: Bindable(userSettings).textSizeScale)
 
@@ -58,10 +63,16 @@ struct AccountView: View {
                             // stands in the player's playback sheet, so a
                             // Rosary need not be left to change it
                             NarrationVoiceRow()
+                        }
+                    }
+                    .padding(.top, 30)
 
-                            Divider()
-                                .background(AppColors.gold.opacity(0.2))
-
+                    // MARK: The Rosary
+                    // The Rosary's own choices, as its own page sets the
+                    // first two, then what is shown before and after the
+                    // mysteries
+                    AccountSection(title: "The Rosary", icon: "lv-rosary") {
+                        VStack(spacing: 0) {
                             // Audio: the meditation alone, or the Whole
                             // Rosary said aloud in the voice chosen above,
                             // the beads moving with it, for prayer with the
@@ -90,44 +101,41 @@ struct AccountView: View {
                             Divider()
                                 .background(AppColors.gold.opacity(0.2))
 
-                            // The Prayer Book's own: whether it speaks at
-                            // all. Apart from the Rosary's Audio on
-                            // purpose — that one says what the voice
-                            // reads, this one whether the book makes a
-                            // sound. Before any answer it shows the
-                            // default and says the book will ask; only a
-                            // tap here answers the question
+                            // The pendant's prayers on a Rosary prayed in
+                            // silence (`SilentPendant`). Moot with the
+                            // Whole Rosary, whose voice says them
                             RosaryChoiceSettingsRow(
-                                icon: PrayerBookAudio.icon,
-                                title: PrayerBookAudio.title,
-                                options: PrayerBookAudio.options,
-                                value: Binding(
-                                    get: { PrayerBookStore.shared.praysAloud },
-                                    set: { PrayerBookStore.shared.chooseAloud($0) }
-                                ),
-                                isAnswered: PrayerBookStore.shared.hasChosenAloud,
-                                note: { aloud in
-                                    PrayerBookAudio.note(
-                                        for: aloud,
-                                        answered: PrayerBookStore.shared.hasChosenAloud
-                                    )
-                                }
+                                icon: OpeningPrayersChoice.icon,
+                                title: OpeningPrayersChoice.title,
+                                options: OpeningPrayersChoice.options,
+                                value: Bindable(userSettings).showsOpeningPrayers,
+                                isAvailable: !userSettings.prayAloud,
+                                unavailableNote: OpeningPrayersChoice.unavailableNote,
+                                note: { OpeningPrayersChoice.note(for: $0) }
                             )
-                        }
-                    }
-                    .padding(.top, 30)
 
-                    // MARK: After the Rosary
-                    // Prayers after the Rosary's closing prayer, each off
-                    // until chosen. Only the voice says them — nothing
-                    // else reads these switches — so they stand under
-                    // their own heading with the set page's note, rather
-                    // than as three more switches among the ways of
-                    // praying, where they read as prayers added to every
-                    // Rosary. The Seven Sorrows chaplet closes in its
-                    // own way and never says them
-                    AccountSection(title: "After the Rosary", icon: "ch-praying-hands") {
-                        VStack(spacing: 0) {
+                            Divider()
+                                .background(AppColors.gold.opacity(0.2))
+
+                            // After the Rosary: prayers after its closing
+                            // prayer, each off until chosen. Only the voice
+                            // says them — nothing else reads these
+                            // switches — so they stand under their own
+                            // name with the set page's note, rather than
+                            // among the ways of praying, where they read
+                            // as prayers added to every Rosary. The Seven
+                            // Sorrows chaplet closes in its own way and
+                            // never says them
+                            Text("AFTER THE ROSARY")
+                                .font(AppFonts.labelFont(9))
+                                .tracking(2)
+                                .foregroundColor(AppColors.textSecondary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal, 16)
+                                .padding(.top, 16)
+                                .padding(.bottom, 2)
+                                .accessibilityAddTraits(.isHeader)
+
                             ForEach(RosaryClosingExtra.allCases, id: \.self) { extra in
                                 ToggleRow(
                                     icon: extra.icon,
@@ -147,7 +155,7 @@ struct AccountView: View {
                             // Rosary is not chosen, where to choose it
                             Text(userSettings.prayAloud
                                  ? "Said aloud after the closing prayer."
-                                 : "Said aloud after the closing prayer, with the Whole Rosary. Audio is under Prayer Experience, above.")
+                                 : "Said aloud after the closing prayer, with the Whole Rosary. Audio is at the top of this section.")
                                 .font(AppFonts.italicFont(13))
                                 .foregroundColor(AppColors.textSecondary)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -155,6 +163,33 @@ struct AccountView: View {
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 14)
                         }
+                    }
+                    .padding(.top, 30)
+
+                    // MARK: Prayers Tab
+                    // The Prayer Book's own: whether it speaks at all.
+                    // Apart from the Rosary's Audio on purpose — that one
+                    // says what the voice reads, this one whether the book
+                    // makes a sound. Before any answer it shows the default
+                    // and says the book will ask; only a tap here answers
+                    // the question
+                    AccountSection(title: "Prayers Tab", icon: "ch-praying-hands") {
+                        RosaryChoiceSettingsRow(
+                            icon: PrayerBookAudio.icon,
+                            title: "Audio",
+                            options: PrayerBookAudio.options,
+                            value: Binding(
+                                get: { PrayerBookStore.shared.praysAloud },
+                                set: { PrayerBookStore.shared.chooseAloud($0) }
+                            ),
+                            isAnswered: PrayerBookStore.shared.hasChosenAloud,
+                            note: { aloud in
+                                PrayerBookAudio.note(
+                                    for: aloud,
+                                    answered: PrayerBookStore.shared.hasChosenAloud
+                                )
+                            }
+                        )
                     }
                     .padding(.top, 30)
 
@@ -1278,7 +1313,7 @@ struct HelpSupportSheet: View {
 
                     InfoBlock(
                         title: "How does audio work?",
-                        text: "Choose it on the Rosary's own page before you pray, or in Settings under Prayer Experience: Meditation Only reads the meditation aloud and leaves the prayers to you, and Whole Rosary says every prayer aloud, the beads moving with the voice. During the prayer, the play button starts and pauses the voice, and the buttons beside it move 10 seconds, or a whole prayer with Whole Rosary."
+                        text: "Choose it on the Rosary's own page before you pray, or in Settings under The Rosary: Meditation Only reads the meditation aloud and leaves the prayers to you, and Whole Rosary says every prayer aloud, the beads moving with the voice. During the prayer, the play button starts and pauses the voice, and the buttons beside it move 10 seconds, or a whole prayer with Whole Rosary."
                     )
 
                     InfoBlock(

@@ -107,12 +107,15 @@ final class ScripturalRosaryViewModel {
         form: SpokenForm = .scriptural,
         startAtIndex: Int = 0,
         startAtBead: Int = 0,
-        priorSeconds: Int = 0
+        priorSeconds: Int = 0,
+        showsOpeningPrayers: Bool? = nil
     ) {
+        self.showsOpeningPrayers = showsOpeningPrayers
         self.category = category
         self.form = form
         self.mysteries = MysteryData.mysteries(for: category)
         self.priorSeconds = max(priorSeconds, 0)
+        self.silentPendant = SilentPendant(category: category)
 
         let upperBound = max(mysteries.count - 1, 0)
         self.currentMysteryIndex = min(max(startAtIndex, 0), upperBound)
@@ -122,7 +125,10 @@ final class ScripturalRosaryViewModel {
 
         // A Rosary resumed while it was said aloud picks up the prayer
         // it stopped on — the verse, not just the bead
-        if startAtIndex > 0 || startAtBead > 0 {
+        if startAtIndex <= 0, startAtBead <= 0 {
+            // Begun from its start, the Rosary begins on the cross
+            pendantStep = silentPendant.firstOpening
+        } else {
             resumeStep = PrayerResumeService.shared.spokenStep(
                 kind: resumeKind,
                 setId: 0,
@@ -226,14 +232,121 @@ final class ScripturalRosaryViewModel {
         currentBeadIndex > hailMarys
     }
 
-    /// The very first bead of the Rosary — nothing to step back to
+    /// The very first bead of the Rosary — nothing to step back to.
+    /// With the opening prayers shown in silence, the first of them.
     var isFirstBeadOfRosary: Bool {
-        isFirstMystery && currentBeadIndex == 0
+        if pendantShown, let first = silentPendant.firstOpening {
+            return pendantStep == first
+        }
+        return isFirstMystery && currentBeadIndex == 0
     }
 
-    /// The last mystery's Glory Be — the final bead, where AMEN stands
+    /// The last mystery's Glory Be — the final bead, where AMEN stands.
+    /// With the closing prayers shown in silence, the last of them.
     var isLastBeadOfRosary: Bool {
-        isLastMystery && isDecadePrayed
+        if pendantShown, let last = silentPendant.lastClosing {
+            return pendantStep == last
+        }
+        return isLastMystery && isDecadePrayed
+    }
+
+    // MARK: - The Pendant, Prayed in Silence
+
+    /// The opening and closing prayers as steps, for a Rosary read in
+    /// silence (`SilentPendant`); said aloud, the voice says them
+    let silentPendant: SilentPendant
+
+    /// Where on the pendant the hand is, read through
+    /// `currentPendantStep`; nil on the decades
+    private(set) var pendantStep: SilentPendant.Step?
+
+    /// Whether the opening and closing prayers are prayed on the screen:
+    /// shown in Settings, and the voice not saying them
+    var pendantShown: Bool {
+        (showsOpeningPrayers ?? UserSettings.shared.showsOpeningPrayers) && spoken == nil
+    }
+
+    /// Whether the opening and closing prayers are shown, fixed for this
+    /// Rosary; nil follows Settings, read live so a change there holds at
+    /// once. Fixed only by the tests.
+    private let showsOpeningPrayers: Bool?
+
+    var currentPendantStep: SilentPendant.Step? {
+        pendantShown ? pendantStep : nil
+    }
+
+    /// Whether the column sets the pendant prayer's words beside the
+    /// pendant: always in the Rosary Said Aloud, and on the pendant
+    /// prayed in silence, where nothing else gives them
+    var setsPendantWords: Bool {
+        isPlain || currentPendantStep != nil
+    }
+
+    /// "1 of 7" on the pendant prayed in silence
+    var silentPendantCount: String? {
+        currentPendantStep.map(silentPendant.count(of:))
+    }
+
+    /// Whether the last mystery's forward move finishes the Rosary:
+    /// unless the closing prayers follow it on the screen
+    var lastMysteryEndsRosary: Bool {
+        !(pendantShown && silentPendant.firstClosing != nil)
+    }
+
+    /// A prayer on or back along the pendant prayed in silence; from
+    /// the last opening prayer on to the first mystery's Our Father, and
+    /// from the first closing prayer back to the last Glory Be.
+    ///
+    /// - Returns: whether the hand moved
+    private func stepSilentPendant(from step: SilentPendant.Step, forward: Bool) -> Bool {
+        if forward {
+            if let next = silentPendant.step(after: step) {
+                pendantStep = next
+                return true
+            }
+            if case .opening = step {
+                pendantStep = nil
+                return true
+            }
+            return false
+        }
+        if let previous = silentPendant.step(before: step) {
+            pendantStep = previous
+            return true
+        }
+        if case .closing = step {
+            pendantStep = nil
+            return true
+        }
+        return false
+    }
+
+    /// Counted on one's own rosary, a mystery at a time: forward along
+    /// the pendant, to the next mystery, or past the last the closing
+    /// prayers. False where only AMEN is left.
+    func advanceOffTheBeads() -> Bool {
+        if let step = currentPendantStep { return stepSilentPendant(from: step, forward: true) }
+        if !isLastMystery { return nextMystery() }
+        guard pendantShown, let first = silentPendant.firstClosing else { return false }
+        currentBeadIndex = strand.gloryBe
+        pendantStep = first
+        return true
+    }
+
+    /// Counted on one's own rosary, back: along the pendant, to the
+    /// mystery before, or from the first the opening prayers
+    func retreatOffTheBeads() {
+        if let step = currentPendantStep {
+            _ = stepSilentPendant(from: step, forward: false)
+            if pendantStep == nil { currentBeadIndex = 0 }
+            return
+        }
+        if !isFirstMystery {
+            previousMystery()
+            return
+        }
+        guard pendantShown, let last = silentPendant.lastOpening else { return }
+        pendantStep = last
     }
 
     /// Where the hand is, as one value. The screen's haptic keys on it
@@ -251,7 +364,14 @@ final class ScripturalRosaryViewModel {
     ///   bead. The Rosary is finished only by the AMEN tap there, never
     ///   by the move that reaches it.
     func prayForward() -> Bool {
-        if isDecadePrayed { return nextMystery() }
+        if let step = currentPendantStep { return stepSilentPendant(from: step, forward: true) }
+        if isDecadePrayed {
+            if isLastMystery, pendantShown, let first = silentPendant.firstClosing {
+                pendantStep = first
+                return true
+            }
+            return nextMystery()
+        }
         currentBeadIndex += 1
         spokenFollowHand()
         return true
@@ -261,12 +381,19 @@ final class ScripturalRosaryViewModel {
     /// Father the previous mystery's Glory Be. No-op on the first bead
     /// of the Rosary.
     func prayBack() {
+        if let step = currentPendantStep {
+            _ = stepSilentPendant(from: step, forward: false)
+            return
+        }
         if currentBeadIndex > 0 {
             currentBeadIndex -= 1
             spokenFollowHand()
             return
         }
-        guard !isFirstMystery else { return }
+        guard !isFirstMystery else {
+            if pendantShown, let last = silentPendant.lastOpening { pendantStep = last }
+            return
+        }
         // The index's own `didSet` lands on the Our Father; the strand
         // is walked backwards, so the hand belongs on the Glory Be
         currentMysteryIndex -= 1
@@ -523,9 +650,12 @@ extension ScripturalRosaryViewModel: SpokenRosaryHost {
         }
     }
 
-    /// The opening or closing prayer being said, while it is: the screen
-    /// draws the pendant and names the prayer in place of the mystery
-    var spokenPendant: SpokenPendant? { spoken?.pendant }
+    /// The opening or closing prayer under the hand, said aloud or
+    /// prayed in silence: the screen draws the pendant and names the
+    /// prayer in place of the mystery
+    var spokenPendant: SpokenPendant? {
+        spoken?.pendant ?? currentPendantStep.flatMap(silentPendant.pendant(at:))
+    }
 
     /// The words of the prayer being said on the pendant, line by line,
     /// in the Rosary Aloud, which sets every prayer on the screen as it
@@ -533,16 +663,12 @@ extension ScripturalRosaryViewModel: SpokenRosaryHost {
     /// prayers someone learning by ear knows least. Latin when Latin
     /// alone is chosen, as the decades' prayers are. The screen joins
     /// them into one paragraph and sets a rubric line ("[Let us pray.]")
-    /// as a rubric. Nil in the Scriptural Rosary, whose column carries
-    /// Scripture, not the prayers.
+    /// as a rubric. Set too on the pendant prayed in silence, where
+    /// nothing else gives them; nil in the Scriptural Rosary said aloud,
+    /// whose column carries Scripture and leaves the prayers to the voice.
     var spokenPendantLines: [String]? {
-        guard isPlain, let pendant = spokenPendant,
-              let content = DevotionPrayers.find(pendant.prayerID)?.content else { return nil }
-        let source = UserSettings.shared.prayerLanguage == .latin ? content.latin : content.english
-        let lines = source
-            .components(separatedBy: .newlines)
-            .map { $0.trimmingCharacters(in: .whitespaces) }
-            .filter { !$0.isEmpty }
+        guard setsPendantWords, let pendant = spokenPendant else { return nil }
+        let lines = SilentPendant.lines(of: pendant.prayerID, in: UserSettings.shared.prayerLanguage)
         return lines.isEmpty ? nil : lines
     }
 
@@ -555,7 +681,11 @@ extension ScripturalRosaryViewModel: SpokenRosaryHost {
     @MainActor
     @discardableResult
     func stepSpokenPrayer(forward: Bool) -> Bool {
-        guard let spoken else { return false }
+        guard let spoken else {
+            // In silence, a prayer on the pendant prayed on the screen
+            guard let step = currentPendantStep else { return false }
+            return stepSilentPendant(from: step, forward: forward)
+        }
         let before = spoken.currentStep
         spoken.stepPrayer(forward: forward)
         return spoken.currentStep != before

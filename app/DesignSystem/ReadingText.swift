@@ -256,6 +256,26 @@ enum Rubric {
         }
         return attributed
     }
+
+    /// A prayer's lines as one paragraph, the way a player sets a prayer
+    /// beside the beads, with a rubric line — "Let us pray." — in the
+    /// rubric red and the italic a printed book gives it, out of its
+    /// brackets: a direction, which is not said, not words to be prayed
+    static func paragraph(_ lines: [String], size: CGFloat) -> AttributedString {
+        var paragraph = AttributedString()
+        for (index, line) in lines.enumerated() {
+            if index > 0 { paragraph += AttributedString(" ") }
+            if PrayerMarkup.isRubric(line) {
+                var rubric = AttributedString(PrayerMarkup.rubric(line))
+                rubric.font = AppFonts.readingItalicFont(size)
+                rubric.foregroundColor = red
+                paragraph += rubric
+            } else {
+                paragraph += rubricated(line)
+            }
+        }
+        return paragraph
+    }
 }
 
 // MARK: - PrayerMarkup
