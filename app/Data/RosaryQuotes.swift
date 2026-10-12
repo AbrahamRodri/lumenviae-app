@@ -23,9 +23,10 @@
 //  (Gutenberg #3296); Taylor's Story of a Soul (Gutenberg #16772);
 //  Newman's Meditations and Devotions (Longmans, 1893); Longfellow's
 //  Dante (1867) and his rendering of St. Teresa's bookmark (1877). The
-//  copyrighted lines that stood here until October 2026 — Escrivá, Sheen,
-//  Sr. Lucia, Fr. Peyton — were taken out; Tools/ContentSourcing/MANIFEST.md
-//  records the sources.
+//  copyrighted lines that stood here until October 2026 — Escrivá,
+//  Sr. Lucia, Fr. Peyton — were taken out; Sheen's line stays, his work
+//  having been checked and found out of copyright (Oct 2026).
+//  Tools/ContentSourcing/MANIFEST.md records the sources.
 //
 
 import Foundation
@@ -99,6 +100,11 @@ enum RosaryQuotes {
         RosaryQuote(
             text: "The Rosary is the weapon for these times.",
             author: "St. Padre Pio"
+        ),
+        RosaryQuote(
+            text: "The Rosary is the book of the blind, where souls see and there enact the greatest drama of love the world has ever known.",
+            author: "Ven. Fulton J. Sheen",
+            source: "The World's First Love"
         ),
         RosaryQuote(
             text: "The greatest method of praying is to pray the Rosary.",
