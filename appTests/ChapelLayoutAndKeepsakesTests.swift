@@ -27,7 +27,9 @@ struct ChapelLayoutTests {
         #expect(tiles.count == ChapelTile.allCases.count)
         #expect(tiles.first == .rule)
         #expect(tiles[1] == .flame, "the streak stands directly under Today")
-        #expect(tiles.last == .library, "the Library's colophon is the last line before the foot")
+        #expect(tiles.last == .liturgy, "Today in the Church stands last; Home carries the same two rows")
+        #expect(tiles.firstIndex(of: .reflections)! < tiles.firstIndex(of: .chant)!)
+        #expect(tiles.firstIndex(of: .library)! < tiles.firstIndex(of: .liturgy)!)
     }
 
     @Test func anEncodingIsTileSpanAndWhetherItIsOn() {
@@ -78,7 +80,7 @@ struct ChapelLayoutTests {
         #expect(liturgy?.on == false, "on the page only if the Library is")
         let libraryIndex = layout.firstIndex { $0.tile == .library }!
         let liturgyIndex = layout.firstIndex { $0.tile == .liturgy }!
-        #expect(liturgyIndex == libraryIndex - 1, "seated beside the Library, before it as by default")
+        #expect(liturgyIndex == libraryIndex + 1, "seated beside the Library, after it as by default")
     }
 
     @Test func nothingStoredGivesTheDefault() {
@@ -91,7 +93,7 @@ struct ChapelLayoutTests {
             #expect(!tile.detail.isEmpty)
             #expect(!tile.shortTitle.isEmpty)
         }
-        #expect(ChapelTile.liturgy.shortTitle == "The Church")
+        #expect(ChapelTile.liturgy.shortTitle == "Mass & Hours")
         #expect(ChapelTile.flame.shortTitle == "Streak")
     }
 }
@@ -100,7 +102,7 @@ struct ChapelLayoutTests {
 struct StreakMilestoneOrderTests {
 
     @Test func theMilestonesAreTheChurchsNumbersInOrder() {
-        #expect(StreakMilestone.all.map(\.days) == [3, 7, 9, 33, 54, 100, 365])
+        #expect(StreakMilestone.all.map(\.days) == [3, 7, 9, 33, 40, 50, 54, 100, 150, 365, 500, 1000])
     }
 
     @Test func aMilestoneIsReachedOnlyOnItsDay() {
@@ -112,9 +114,10 @@ struct StreakMilestoneOrderTests {
     @Test func theNextAndTheLatest() {
         #expect(StreakMilestone.next(after: 0)?.days == 3)
         #expect(StreakMilestone.next(after: 9)?.days == 33)
-        #expect(StreakMilestone.next(after: 365) == nil)
+        #expect(StreakMilestone.next(after: 365)?.days == 500)
+        #expect(StreakMilestone.next(after: 1000) == nil)
         #expect(StreakMilestone.latest(achievedBy: 2) == nil)
-        #expect(StreakMilestone.latest(achievedBy: 53)?.days == 33)
+        #expect(StreakMilestone.latest(achievedBy: 53)?.days == 50)
         #expect(StreakMilestone.latest(achievedBy: 400)?.days == 365)
     }
 
@@ -122,7 +125,7 @@ struct StreakMilestoneOrderTests {
         #expect(StreakMilestone.progressTowardNext(streak: 0) == 0)
         #expect(StreakMilestone.progressTowardNext(streak: 3) == 0)
         #expect(StreakMilestone.progressTowardNext(streak: 5) == 0.5)
-        #expect(StreakMilestone.progressTowardNext(streak: 500) == 1)
+        #expect(StreakMilestone.progressTowardNext(streak: 1000) == 1)
         for streak in 0...400 {
             let progress = StreakMilestone.progressTowardNext(streak: streak)
             #expect((0...1).contains(progress))

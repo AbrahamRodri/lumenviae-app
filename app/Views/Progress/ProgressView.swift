@@ -19,6 +19,7 @@ struct PrayerProgressView: View {
     // MARK: - Environment
 
     @Environment(\.modelContext) private var modelContext
+    @Environment(AppRouter.self) private var router
     @Query(sort: \PrayerSession.completedAt, order: .reverse) private var sessions: [PrayerSession]
 
     // MARK: - State
@@ -54,6 +55,10 @@ struct PrayerProgressView: View {
                     streakSection
                         .devotionalEntrance(delay: 0.08)
 
+                    // The milestones still to come, the next marked
+                    milestonesSection
+                        .devotionalEntrance(delay: 0.12)
+
                     // Month Navigation
                     monthNavigationSection
                         .devotionalEntrance(delay: 0.16)
@@ -78,6 +83,21 @@ struct PrayerProgressView: View {
         }
         .onAppear {
             service = PrayerHistoryService(modelContext: modelContext)
+        }
+        .navigationBarBackButtonHidden(true)
+        // Pushed over the tab it was opened from, with the gold Back of
+        // every other pushed page; the tab bar stays up beneath it
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: { router.pop() }) {
+                    HStack(spacing: 6) {
+                        AppIcon("ph-caret-left", size: 14)
+                        Text("Back")
+                            .font(AppFonts.bodyFont(16))
+                    }
+                    .foregroundColor(AppColors.gold)
+                }
+            }
         }
     }
 
@@ -110,6 +130,44 @@ struct PrayerProgressView: View {
                 hasPrayedToday: service.hasPrayedToday(),
                 weekStatus: service.weeklyPrayerStatus()
             )
+        }
+    }
+
+    // MARK: - Milestones Ahead
+
+    /// The Church's numbers still ahead of the streak, the nearest marked
+    /// NEXT: an invitation, so nothing here counts what was not prayed.
+    /// Read from `StreakMilestone.all`, whatever it holds. Past the last
+    /// milestone the section stands down.
+    @ViewBuilder
+    private var milestonesSection: some View {
+        let streak = service?.currentStreak() ?? 0
+        let ahead = StreakMilestone.ahead(of: streak)
+        if !ahead.isEmpty {
+            VStack(spacing: 16) {
+                Text("Milestones Ahead")
+                    .font(AppFonts.italicFont(20))
+                    .foregroundColor(AppColors.gold)
+                    .accessibilityAddTraits(.isHeader)
+
+                VStack(spacing: 0) {
+                    ForEach(Array(ahead.enumerated()), id: \.element.id) { index, milestone in
+                        MilestoneAheadRow(milestone: milestone, isNext: index == 0)
+
+                        if index < ahead.count - 1 {
+                            Rectangle()
+                                .fill(AppColors.gold.opacity(0.2))
+                                .frame(height: AppLine.hairline)
+                        }
+                    }
+                }
+                .padding(.vertical, 4)
+                .padding(.horizontal, 16)
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline)
+                )
+            }
         }
     }
 
@@ -381,6 +439,47 @@ struct PrayerProgressView: View {
                 .foregroundColor(AppColors.gold.opacity(0.7))
         }
         .padding(.top, 24)
+    }
+}
+
+// MARK: - MilestoneAheadRow
+
+/// One milestone still to come: its sign, its days and what the Church
+/// calls them, and the blessing that says why; the nearest says NEXT.
+struct MilestoneAheadRow: View {
+    let milestone: StreakMilestone
+    let isNext: Bool
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 14) {
+            AppIcon(milestone.icon, size: 22)
+                .foregroundColor(AppColors.gold.opacity(isNext ? 1 : 0.6))
+                .frame(width: 28)
+                .padding(.top, 2)
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(milestone.title)
+                    .font(AppFonts.semiboldBodyFont(17))
+                    .foregroundColor(AppColors.cream)
+                Text(milestone.blessing)
+                    .font(AppFonts.italicFont(14))
+                    .foregroundColor(AppColors.textSecondary)
+                    .lineSpacing(2)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            if isNext {
+                Text("NEXT")
+                    .font(AppFonts.labelFont(10))
+                    .tracking(2)
+                    .foregroundColor(AppColors.gold)
+                    .padding(.top, 4)
+            }
+        }
+        .padding(.vertical, 14)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(isNext ? "Next: \(milestone.title). \(milestone.blessing)" : "\(milestone.title). \(milestone.blessing)")
     }
 }
 

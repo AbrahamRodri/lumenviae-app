@@ -362,7 +362,7 @@ struct DailyMissalView: View {
                 sheet = .index
             }
 
-            PrayerHeaderButton(icon: "ph-text-aa", size: 18, label: "Reading settings") {
+            PrayerHeaderButton(icon: "ph-text-aa", size: 18, label: "Text options") {
                 sheet = .reading
             }
         }
@@ -741,7 +741,7 @@ struct DailyMissalView: View {
             }
         } label: {
             HStack(spacing: 8) {
-                Text("\(viewModel.propers.count) Masses this day")
+                Text("\(viewModel.propers.count) Masses today · choose one")
                     .font(AppFonts.labelFont(10))
                     .tracking(2)
 

@@ -225,7 +225,7 @@ struct MissalPassage: View {
 private let missalCrossPattern = try? NSRegularExpression(pattern: #"(^|\s)\+\s*"#)
 
 private func missalNormalized(_ line: String) -> String {
-    var normalized = line
+    var normalized = missalSpeakerMarked(line)
     if normalized.contains("☩") {
         normalized = normalized.replacingOccurrences(of: "☩", with: "✠")
     }
@@ -276,6 +276,20 @@ private func missalLines(of text: String) -> [String] {
     text.components(separatedBy: "\n")
         .map { missalNormalized($0.trimmingCharacters(in: .whitespaces)) }
         .filter { !$0.isEmpty }
+}
+
+/// The source marks the dialogue "S." (sacerdos) and "M." (ministri), in
+/// both languages, which no newcomer can read, and an antiphon "Ant.":
+/// the priest's lines open "P.", the server's and people's "S.", and an
+/// antiphon says the word. Only at the head of a line, where the marks
+/// stand, and only on a line that ends as a sentence does: a saint named
+/// "S. Joánnis Baptístæ" at the head of a line is left as it is.
+private func missalSpeakerMarked(_ line: String) -> String {
+    if line.hasPrefix("Ant. ") { return "Antiphon: " + line.dropFirst(5) }
+    guard let last = line.last, ".!?:,".contains(last) else { return line }
+    if line.hasPrefix("S. ") { return "P. " + line.dropFirst(3) }
+    if line.hasPrefix("M. ") { return "S. " + line.dropFirst(3) }
+    return line
 }
 
 // MARK: - Line Pairing
@@ -631,7 +645,7 @@ struct MissalLayoutChoiceSheet: View {
         VStack(alignment: .leading, spacing: 0) {
             SheetHeader(
                 kicker: "The Mass",
-                title: "How should the translation read?"
+                title: "The Mass is in Latin with English beside it. How should they sit?"
             )
 
             HStack(spacing: 10) {
@@ -762,7 +776,7 @@ struct MissalTextSizeSheet: View {
         @Bindable var settings = userSettings
 
         return VStack(alignment: .leading, spacing: 0) {
-            SheetHeader(kicker: "Order of Mass", title: "Text Settings") {
+            SheetHeader(kicker: "Order of Mass", title: "Text options") {
                 SheetHeaderAction(title: "Done") { dismiss() }
             }
 

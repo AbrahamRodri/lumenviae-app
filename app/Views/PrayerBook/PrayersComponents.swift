@@ -122,12 +122,21 @@ struct PrayersNowCard: View {
         let hour = PrayerBook.hourName(of: order, at: now).uppercased()
 
         HStack(spacing: 0) {
-            ZStack {
-                PrayersPaintingThumb(painting: PrayerBookPainting.hour(order, on: now), width: 136, height: 180)
+            // The painting runs the card's height, which is the words'
+            // where they need more than the card's 180 points
+            GeometryReader { proxy in
+                ZStack {
+                    PrayersPaintingThumb(
+                        painting: PrayerBookPainting.hour(order, on: now),
+                        width: 136,
+                        height: max(proxy.size.height, 180)
+                    )
                     .id(PrayerBookPainting.hour(order, on: now).resolvedAsset)
                     .transition(.opacity)
+                }
+                .animation(Motion.crossfade, value: order.id)
             }
-            .animation(Motion.crossfade, value: order.id)
+            .frame(width: 136)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(offered ? "\(hour) · PRAYED" : "NOW · \(hour)")
@@ -168,13 +177,16 @@ struct PrayersNowCard: View {
                 .buttonStyle(SacredCardButtonStyle())
                 .accessibilityLabel(offered ? "Pray \(title) again" : "Pray \(title)")
             }
+            // At least the card's 180 points with its padding, and taller
+            // where the words need it — a fixed height cut them short
+            .frame(minHeight: 160, alignment: .top)
             .padding(.leading, 16)
             .padding(.trailing, 12)
             .padding(.top, 14)
             .padding(.bottom, 6)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .frame(height: 180)
+        .fixedSize(horizontal: false, vertical: true)
         .background(AppColors.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 18))
         .overlay(

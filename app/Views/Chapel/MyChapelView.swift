@@ -576,12 +576,24 @@ struct MyChapelView: View {
                     shortcut: .consecration,
                     subtitle: subtitle(for: .consecration),
                     done: isDone(.consecration),
-                    day: activeConsecration?.currentDayNumber
+                    day: activeConsecration?.currentDayNumber,
+                    consecrationBegun: !(activeConsecration?.completedDays.isEmpty ?? true)
                 ),
                 at: min(1, acts.count)
             )
         }
         return acts
+    }
+
+    /// The rule as the Today tile lists it: without the consecration's
+    /// row while the Consecration tile stands on the page, whose own
+    /// CONTINUE is the same door, so the preparation is not shown twice
+    /// one above the other. Put the tile away and the row comes back. The
+    /// focus block still reads the whole rule, so it never says all is
+    /// prayed while the day's consecration is not.
+    private func todayTileActs(_ acts: [ChapelAct]) -> [ChapelAct] {
+        guard ChapelPlacement.isOnPage(.consecration, in: settings.chapelLayout) else { return acts }
+        return acts.filter { $0.shortcut != .consecration }
     }
 
     private func isDone(_ item: PrayerShortcut) -> Bool {
@@ -639,7 +651,7 @@ struct MyChapelView: View {
             guard let progress = activeConsecration else { return "Not yet begun" }
             let day = progress.currentDayNumber
             guard day <= 33 else { return "Consecration Day" }
-            return "Day \(day) of 33 · \(ChapelConsecrationTile.phaseName(day: day))"
+            return "Day \(day) of 33"
         case .sevenSorrows:
             return "Seven Hail Marys for each sorrow"
         // The three orders in the Prayers page's own words for when each
@@ -983,7 +995,7 @@ struct MyChapelView: View {
         switch placement.tile {
         case .rule:
             ChapelRuleTile(
-                acts: acts,
+                acts: todayTileActs(acts),
                 span: placement.span,
                 onAct: handleAct,
                 onEditRule: { showRuleEditor = true }
@@ -1016,7 +1028,7 @@ struct MyChapelView: View {
                 streak: flameStats.streak,
                 hasPrayedToday: flameStats.prayedToday,
                 weekStatus: flameStats.week,
-                onOpen: { router.switchTo(.progress) }
+                onOpen: { router.push(.prayerRecord) }
             )
         }
     }

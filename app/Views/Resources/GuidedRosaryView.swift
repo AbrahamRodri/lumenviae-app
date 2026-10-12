@@ -614,7 +614,7 @@ struct GuidedRosaryView: View {
 
                 if let fruit {
                     HStack(alignment: .firstTextBaseline, spacing: 10) {
-                        Text("ASK FOR")
+                        Text("GRACE TO ASK FOR")
                             .font(AppFonts.labelFont(8.5))
                             .tracking(1.8)
                             .foregroundColor(AppColors.gold.opacity(0.8))

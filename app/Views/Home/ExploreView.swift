@@ -286,7 +286,7 @@ struct ExploreView: View {
     private var epigraph: some View {
         VStack(spacing: 6) {
             // What the page is, before the verse that says why
-            Text("Everything in the app, and a search across it all.")
+            Text("Prayers, books, chant and the Church's day, with a search across the whole app.")
                 .font(AppFonts.readingItalicFont(15))
                 .foregroundColor(AppColors.textSecondary)
                 .multilineTextAlignment(.center)
@@ -411,7 +411,7 @@ struct ExploreView: View {
                 }
 
                 if !libraryHits.isEmpty {
-                    section("In the App") {
+                    section("Pages") {
                         tileGrid(libraryHits.map { entry in
                             ExploreTile(icon: entry.icon, title: entry.title, action: entry.action)
                         })
@@ -581,11 +581,11 @@ struct ExploreView: View {
             LibraryEntry(icon: "ph-music-note", title: "The Chant Library",
                          matchText: "chant chants gregorian sung song songs hymn hymns latin score scores sheet music antiphon sing") { router.push(.chantLibrary) },
             LibraryEntry(icon: "ph-flame", title: "Prayer Record",
-                         matchText: "sacred record progress streak history calendar") { router.switchTo(.progress) },
+                         matchText: "sacred record progress streak history calendar") { router.push(.prayerRecord) },
             // The Journal gave its place in the bar to Prayers; found by
             // name, it opens as the Chapel's Reflections tile opens it
             LibraryEntry(icon: "ph-book-open", title: "Journal",
-                         matchText: "journal reflections reflection notes entries write diary") { router.switchTo(.journal) }
+                         matchText: "journal reflections reflection notes entries write diary") { router.push(.journal) }
         ]
     }
 
@@ -1021,10 +1021,14 @@ struct ExploreView: View {
         let fetched = await withTaskGroup(of: [MeditationSetSummary].self) { group in
             for category in MysteryCategory.allCases {
                 group.addTask {
+                    // The bundled set for these mysteries stands in the
+                    // index as it stands on the mysteries' page, with no
+                    // signal and nothing downloaded
+                    let bundled = await BundledMeditationSets.summaries(for: category)
                     if let live = try? await APIService.shared.fetchMeditationSets(category: category) {
-                        return live
+                        return live + bundled
                     }
-                    return await OfflineContentService.shared.storedSummaries(category: category) ?? []
+                    return (await OfflineContentService.shared.storedSummaries(category: category) ?? []) + bundled
                 }
             }
 

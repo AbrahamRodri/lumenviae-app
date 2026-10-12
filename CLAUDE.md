@@ -215,19 +215,26 @@ different place.
 ## App Tabs
 
 `AppTab` (in `Components/CustomTabBar.swift`) has six cases, but the bar shows
-four — Progress is reached from the Chapel's flame tile, Settings → Devotion
-and Explore's search instead, to keep the bar from crowding the raised Pray
-button, and the Journal, which gave its place to Prayers, from the Chapel's
-Reflections tile, Explore's search, and the completion screen's Write a
-Reflection.
+four — Progress is reached from the Chapel's flame tile and Library tile,
+Settings → Devotion and Explore's search instead, to keep the bar from
+crowding the raised Pray button, and the Journal, which gave its place to
+Prayers, from the Chapel's Reflections and Library tiles, Explore's search,
+and the completion screen's Write a Reflection. **Neither is turned to as a
+tab any more:** both are pushed (`AppRoute.prayerRecord`, `.journal`) over
+the tab they were opened from, with the gold Back, and the tab bar stays up
+beneath them (`AppRoute.keepsTabBar`), so the Chapel tab stays lit; reached
+as tabs, they had no Back and no tab lit. `switchTo(.progress)` and
+`switchTo(.journal)` answer with the push. A tab tapped in the bar goes
+through `switchTo`, which clears the stack, so a tab tapped over either
+page opens its own page rather than turning beneath them.
 
 | Tab | In the bar | Purpose |
 |-----|-----------|---------|
 | Home | Yes | Search glass → Explore, today's mysteries, mystery grid, Today's Prayer, the reading shelf, quote |
 | Consecrate | Yes | The 33-day preparation for Marian consecration |
-| Prayers | Yes | The Prayer Book: Today, Occasions, All Prayers, and a search over them (see The Prayer Book below) |
-| Journal | No — via Chapel | Reflections, searchable, stored on device |
-| Progress | No — via Chapel | Streaks, prayer history, milestones ("Prayer Record") |
+| Prayers | Yes | The Prayer Book: six shortcuts, the order for this hour, Everyday Prayers, prayers to Mary, every occasion and topic, and a search behind the head's glass (see The Prayer Book below) |
+| Journal | No — pushed, via Chapel | Reflections, searchable, stored on device |
+| Progress | No — pushed, via Chapel | Streaks, milestones ahead, prayer history ("Prayer Record") |
 | Chapel | Yes | My Chapel — the user's arrangeable page (Settings and About live in the home masthead) |
 
 The **Pray** button raised over the bar runs the user's chosen quick act
@@ -284,12 +291,13 @@ consecration is a private devotion and not a liturgical observance;
 with the Chapel's day strip. Every row has the same parts — the door's
 own glyph (`ch-altar`, `ph-clock`, `ch-consecration`, the hour's order's own, the same as on
 every other surface), name, the row's own live fact, chevron — so the
-eye reads down the column of facts: the day's rank in a plain word
-beside its silk, a 4×24 bar (FEAST, `TodayInChurch.rank`; the colour is
-the silk's alone on screen, and VoiceOver hears it in words through
-`spokenMeta` — "Today's Mass, Feast, red vestments"; it once read "II
-CLASS · RED", and before that stood under the feast as a caption to
-the whole section), the
+eye reads down the column of facts: the day's rank and the silk's colour
+in plain words beside the silk, a 4×24 bar (LESSER FEAST · WHITE,
+`TodayInChurch.rank` and `MissalVestment.name`; VoiceOver hears
+"Today's Mass, Feast, red vestments" through `spokenMeta`; it once read
+"II CLASS · RED", then the rank alone, since a bare bar said nothing a
+newcomer could read; the feast itself is headed TODAY'S FEAST · once a
+feast is known, and a weekday is named as it is), the
 hour it is as a lit dot and its one plain word (EVENING,
 `CanonicalHour.shortName`; VoiceOver hears `plainName`, "Evening
 Prayer"; it once read VESPERS), the day of the
@@ -448,7 +456,7 @@ beside them, SAVE dimmed until something is written. With the Journal off the
 tab bar, a new reflection needs a door that is always on the page, and
 the Reflections tile can be put away; the Chapel is where reflections
 are kept, and the Reflections tile still opens the whole journal
-(`switchTo(.journal)`). Tiles (vocabulary `Models/ChapelTile.swift`;
+(`push(.journal)`). Tiles (vocabulary `Models/ChapelTile.swift`;
 layout persists as `userSettings.chapelLayout`, validated against known
 ids on decode, with a one-time migration from the old `meWidgets`
 order; a tile newer than a stored layout is inserted in its default
@@ -503,7 +511,7 @@ beside NIGHT, and the Regina Cæli could not be set — and the whole tile
 prays it; its line under the order is the Prayers page's own
 sentence for the hour, `PrayerBook.daySummary(of:on:)`, which the
 Prayers page's hour card sets too, so the tile and the page never say what one order is in two
-ways; the reader's ribbons stand under Saved on Prayers' Today, no
+ways; the reader's ribbons stand on the Prayers page's Saved, no
 longer here), **Reading** (the open book standing on a shelf
 with the author and the place beside it — "St. Thérèse · Chapter IV" —
 and the other books under way standing as spines beside it: tap a
@@ -511,20 +519,20 @@ spine, or swipe the face, to bring that book forward; the tile is not
 one door, because made one, every spine opened the book in front of it
 and the rest could not be reached; "2 more books started" rides the title
 line; the half stands the book over its title; empty, the books'
-cloths over "Take up and read · choose a book" and ALL BOOKS; no bar of the book read — the board drew
+cloths over "No book open yet · choose one" and ALL BOOKS; no bar of the book read — the board drew
 one, and a share of a book is a judgement of the reader the shelf
-never makes), **Today in the Church** ("The Church" at half, where
+never makes), **Today in the Church** ("Mass & Hours" at half, where
 the whole name has no room; on the deep ground, the date on a
 calendar leaf beside the feast with its rank — "Lesser Feast"
 (`rankLabel`), the vestment's diamond before it, the colour said to
 VoiceOver alone (`TodayInChurch.spokenMeta`, "Lesser Feast, white
 vestments") — over a ledger of the Church's two books for the
 day: THE MASS, Today's Mass over the first words of the day's entrance
-chant ("Entrance chant: Gaudeámus omnes"), in Latin, read from the
-missal's proper — no more than
-three, and never ending on a word that leaves it hanging
-(`TodayInChurch.incipit(of:)`, "Gaudeámus omnes", not "Gaudeámus omnes
-in"; `appTests/ChapelLiturgyTests.swift`) — and HOURS OF PRAYER by
+chant ("Entrance chant: Let us all rejoice"), in English, read from
+the missal's proper — no more than five words, and never ending on a
+word that leaves it hanging (`TodayInChurch.incipit(of:words:)`, "The
+mouth of the just", not "The mouth of the"; the Latin three-word form
+is kept for `appTests/ChapelLiturgyTests.swift`) — and HOURS OF PRAYER by
 the hour it is now in plain words over its Church name
 (`CanonicalHour.plainName` over `label`: "Evening Prayer" over
 "Vespers, the hour now"), from `CanonicalClock` — the
@@ -545,7 +553,10 @@ is — `ChapelPlacement.completing`, which the Me migration shares; the
 half is the date and the feast over two doors), **Library** (bound
 like a book, a second rule inside its edge: BOOKS — True Devotion,
 Spiritual Reading, the Marian Library — and GUIDES — How to Pray, In
-Scripture, Carlo Acutis — as a ruled index of doors, each name over a
+Scripture, Carlo Acutis — (one section, BOOKS AND GUIDES, while either is
+down to one door) and YOUR PAGES — the Prayer Record and the Journal,
+whose only other doors, the flame and the Reflections tile, can be put
+away — as a ruled index of doors, each name over a
 line saying what it holds, with no glyphs, over Augustine's line; the
 half keeps the three books and makes SEE MORE a door to Explore),
 **Chant** (the Chant Library's player on cloth: the chant it last sang,
@@ -615,7 +626,7 @@ the body ends on a line of its own (the reading shelf) — full: an
 italic note at 13 left, the gold text act right (`labelFont 10`,
 tracking 2, caret 9, 44pt tall); half: the act alone, left-aligned, or
 the note where the tile has no act (the Reflections half, whose whole
-card opens the journal through `switchTo(.journal)`). The
+card opens the journal through `push(.journal)`). The
 grid's rows **stretch** (`ChapelGridLayout` gives every tile in a row
 the row's height, and the card fills it), so two halves always end on
 the same line and share their first; two full rows stand 20 apart, a
@@ -651,9 +662,17 @@ PAGE in an outlined capsule — the 2×2 arrange mark, not the board's
 faders, which are Settings' door — over "Or press and hold anywhere."
 and the imprint, which the board leaves off and the page keeps. The
 default order is Today, Streak, Consecration, Prayers, Reading,
-Chant, Reflections, Today in the Church, Library: the live sections lead, and the
-two indexes of doors stand last, the Library's colophon the right last
-line before the foot. The day strip wraps a long feast to a second
+Reflections, Chant, Library, Today in the Church: the live sections lead,
+the Library's doors follow, and Today in the Church stands last, since
+Home's Today's Prayer carries the same two rows. Only a fresh page takes
+it; a stored layout keeps its own, and a layout saved before Today in the
+Church existed seats it beside the Library, after it. **The
+consecration stands once:** while the Consecration tile is on the page,
+the Today tile leaves out the consecration's row (`MyChapelView.
+todayTileActs`, `ChapelPlacement.isOnPage`), since the tile's CONTINUE
+is the same door; put the tile away and the row comes back. The focus
+block still reads the whole rule, so it never says all is prayed while
+the day's consecration is not. The day strip wraps a long feast to a second
 line rather than cutting it mid-word.
 
 **The Chapel's words** (the plain-language rulings, Oct 2026): what
@@ -670,7 +689,7 @@ named as everywhere else — the Rosary Said Aloud, the Seven Sorrows of
 Mary, Consecration to Mary, Queen of Heaven (Regina Cæli) in
 Eastertide — and the focus block's gold act names the prayer without
 repeating the title over it (the three forms' act is PRAY THE ROSARY
-or CONTINUE THE ROSARY, the consecration's OPEN DAY 14), so every act
+or CONTINUE THE ROSARY, the consecration's GO TO DAY 14), so every act
 fits its button on one line at `.xLarge`. Words another area owns are
 read from it, never written again here: the hours' plain names
 (`CanonicalHour.plainName`), the rank (`rankLabel`), the vestment
@@ -711,8 +730,9 @@ The rule's *membership* is edited in `RuleEditorSheet` (Settings →
 Devotion → Daily Prayers, and the EDIT on the Today tile's title line);
 `PrayButtonEditorSheet` (quick tap + hold menu) still opens from the
 Pray tray's "Edit this menu" row. The one-motion acts remain
-`PrayerShortcut`. Prayer Record's standing doors are the flame tile and
-Settings → Devotion (Explore's search also finds it). The old Me page
+`PrayerShortcut`. Prayer Record's standing doors are the flame tile, the
+Library tile's YOUR PAGES and Settings → Devotion (Explore's search also
+finds it). The old Me page
 (`MeView`, `MeWidgets`, `MePageEditorSheet`) and `Components/MenuView.swift`
 were retired in `9be67c6`, with the Me-only API they kept alive
 (`isRuleChecked`/`setRuleChecked`). What outlived them is live:
@@ -741,33 +761,40 @@ the page they serve):
   (`AppIconPickerRows.isEnabled = false`), and `appApp` puts any
   alternate back to the primary at launch until it returns.
 - **Prayer Experience** — text size, prayer language (English by
-  default; the app's first face is the one most users read), the
+  default; the app's first face is the one most users read), and the
   narration voice (`NarrationVoiceRow`, the server's list; the same
-  choice stands in the player's playback sheet), then Audio and
-  Counting — the Rosary's two choices, each a pill of its two named options
-  over a line saying what the chosen one does
-  (`RosaryChoiceSettingsRow`, the same pill as a Rosary's own page). They
-  keep the rows the Bead counter and Pray aloud switches stood in; a
-  switch could say only on or off, not which of two ways. Audio comes
-  first, as on the Rosary's own page, since it decides whether Counting
-  is offered at all; Counting once came first, in the switches' order.
-  Counting stands dimmed under the Whole Rosary, saying why: the voice
-  moves the beads on the screen then. Beneath them stands the
-  **Prayers Tab** row (the Prayer Book's, named for its tab), In Silence |
-  Aloud, in the same row and pill
-  (`PrayerBookAudio`), which sets `PrayerBookStore.praysAloud`. It is
-  kept apart from Audio on purpose: the Rosary's choice decides whether
-  the voice leads every prayer or reads the meditation alone, the
-  book's whether it speaks at all. Until the reader answers, the pill
-  shows the default, Aloud, and its line says the book will ask.
-  Drawing the row answers nothing; a tap on either segment does, the lit
-  one too
-- **After the Rosary** — the prayers after the Rosary (For the Pope's
-  intentions, Memorare, Saint Michael), under their own heading and the Voice & speed sheet's
+  choice stands in the player's playback sheet): how every page that
+  prays looks and who reads it
+- **The Rosary** — the Rosary's own choices (the clarity pass, Oct
+  2026, which split them out of Prayer Experience, where the Rosary's
+  Audio and the Prayers tab's stood side by side and neither said
+  which it set). Audio and Counting, each a pill of its two named
+  options over a line saying what the chosen one does
+  (`RosaryChoiceSettingsRow`, the same pill as a Rosary's own page).
+  They keep the rows the Bead counter and Pray aloud switches stood
+  in; a switch could say only on or off, not which of two ways. Audio
+  comes first, as on the Rosary's own page, since it decides whether
+  Counting is offered at all. Counting stands dimmed under the Whole
+  Rosary, saying why: the voice moves the beads on the screen then.
+  Then **Opening and Closing Prayers**, Skip | Show
+  (`OpeningPrayersChoice`, `userSettings.showsOpeningPrayers`, Show by
+  default), whether a Rosary prayed in silence begins and ends on the
+  pendant (see the player, below), dimmed under the Whole Rosary, whose
+  voice says them. Then **After the Rosary**, a small heading inside
+  the section over the prayers after the Rosary (For the Pope's
+  intentions, Memorare, Saint Michael) and the Voice & speed sheet's
   note: they are said aloud after the closing prayer, and only when
-  every prayer is — nothing else reads them. Set as three more switches
-  among the ways of praying, they read as prayers added to every
-  Rosary, and a silent Rosary never said them
+  every prayer is — nothing else reads them. Set as three more
+  switches among the ways of praying, they read as prayers added to
+  every Rosary, and a silent Rosary never said them
+- **Prayers Tab** — the Prayer Book's one choice, its **Audio**, In
+  Silence | Aloud, in the same row and pill (`PrayerBookAudio`), which
+  sets `PrayerBookStore.praysAloud`. It is kept apart from the
+  Rosary's Audio on purpose: the Rosary's choice decides whether the
+  voice leads every prayer or reads the meditation alone, the book's
+  whether it speaks at all. Until the reader answers, the pill shows
+  the default, Aloud, and its line says the book will ask. Drawing the
+  row answers nothing; a tap on either segment does, the lit one too
 - **Devotion** — Daily Prayers (→ `RuleEditorSheet`), Prayer Record,
   Daily Mysteries (Traditional | Modern → `MysteryScheduleSheet`, the row
   under Daily Prayers), Daily Reminders (toggle, time, sound), The Angelus Bell, What Brings
@@ -775,7 +802,12 @@ the page they serve):
 - **Offline** — download every meditation set and audio file
 
 **`AboutView`** (`AppRoute.about`, the home masthead's **ph-info**) — the app's
-colophon: the wordmark as masthead, then About Lumen Viae, Privacy
+colophon: the wordmark as masthead, then About Lumen Viae, Sources &
+Credits (`SourcesCreditsSheet`: every painting in the order the Rosary
+prays them, then the texts, recordings and type, each with its maker,
+edition and licence, read from `Data/SourcesAndCredits.swift`, which
+`Tools/ContentSourcing/build_credits.py` GENERATES from `sources.py` —
+edit the record there and rerun, never the Swift), Privacy
 Policy, Help & Support, Send Feedback, and the footer (version, "For
 the greater glory of God", the Ad Majorem Dei Gloriam in English). **App Introduction** — which re-runs onboarding —
 stands above Privacy Policy behind `#if DEBUG`: it is for development,
@@ -872,7 +904,11 @@ app/
 │                             # ReadingText (ReadingTypography, ReadingText, PrayerText)
 ├── Data/                     # Bundled content, not code-adjacent constants
 │   ├── ConsecrationData, BilingualConsecrationPrayers, BilingualPrayer
-│   ├── MysteryData, LuminousMeditationData, TrueDevotionData/Prayers
+│   ├── MysteryData, TrueDevotionData/Prayers
+│   ├── BundledMeditationSets  # + the five bundled sets (JoyfulGospel…, SorrowfulEmmerich…,
+│   │                          #   GloriousGospel…, Luminous…, SevenSorrowsLiguori…MeditationData)
+│   ├── JournalPrompts         # Three starter questions per set of mysteries, for the empty journal
+│   ├── SourcesAndCredits      # GENERATED by Tools/ContentSourcing/build_credits.py
 │   ├── ScripturalRosaryData  # GENERATED by Tools/ScripturalRosary — 249 Douay verses
 │   ├── ChantCatalogData      # GENERATED by Tools/Chants — the 104 chants
 │   ├── LibraryCatalog        # Spiritual Reading shelf: sources + cutting rules
@@ -1037,6 +1073,39 @@ write concurrent code here:
 
   **The beads are optional on both players** (`userSettings.prayOnBeads`,
   on by default: Counting, On the Screen).
+
+  **Prayed in silence, the Rosary begins and ends on the pendant**
+  (`Models/SilentPendant.swift`, the clarity pass, Oct 2026). It once
+  began on the first mystery's Our Father and ended on the last Glory
+  Be, and a newcomer was never shown the Sign of the Cross, the Creed,
+  the three Hail Marys or the Hail, Holy Queen, nor the words of any
+  prayer they were told to say. Now, unless Settings → The Rosary skips
+  them, both players open on the cross: the spoken script's own opening
+  and closing segments (`SpokenRosaryScript.build`, so the order and
+  captions are the voice's; the prayers after the Rosary are left to
+  the voice), a prayer a step, the pendant drawn where the painting
+  stands (`PendantStage`, fed `PrayerSessionViewModel.pendant`, the
+  spoken pendant or the silent one). On the meditation's player the
+  foot gives way to the step: THE OPENING PRAYERS · 2 OF 7, the
+  prayer's name, its words in full (a size down for the Creed and the
+  long closing prayers, so the pendant keeps room; they never scroll,
+  since the vertical swipe is the Rosary's), on the first step a line
+  naming what follows, and BACK and NEXT PRAYER (THE FIRST MYSTERY on
+  the last opening prayer), with AMEN on the last Sign of the Cross;
+  the swipe, the reader's bead row and the decade arrows walk the
+  pendant too (`advanceOffTheBeads`, `retreatOffTheBeads`). The strand,
+  the reader and the reader's book glyph stand aside on the pendant,
+  which has no meditation. The Scriptural Rosary's screen sets the
+  prayer in its column with the pendant beside it, as the Rosary Said
+  Aloud does (`setsPendantWords`). The last Glory Be is then no longer
+  the end (`isLastBeadOfRosary` is the last closing prayer), so a
+  swipe on it goes on to the Hail, Holy Queen. A Rosary begun from its
+  start begins on the cross; one taken up again begins where it was
+  left. On the beads a tap on the bead under the hand (or its name)
+  opens its prayer's words over the painting — the Our Father, a Hail
+  Mary, or the Glory Be with the Fatima Prayer (`SilentPendant.lines(ofBead:)`)
+  — and they stay open bead to bead until tapped again; the strand is
+  otherwise still a readout.
 
   **The two choices that change the prayer are shown before PRAY; the
   rest are rows.** Every form of the Rosary is confirmed on one page
@@ -1248,7 +1317,13 @@ write concurrent code here:
   settings, favorites, the resume snapshot and small per-page marks
   (lessons opened, St. Carlo's candle).
 - **Progress** — streaks, history, and milestones, reached from the
-  Chapel's Prayer Streak tile, Settings → Devotion, and Explore's search.
+  Chapel's Prayer Streak and Library tiles, Settings → Devotion, and
+  Explore's search, and pushed with the gold Back over the tab it was
+  opened from. Under the streak, MILESTONES AHEAD lists the next five of
+  `StreakMilestone.all` (`StreakMilestone.ahead(of:)`) — each its sign,
+  its days and the Church's name for them, and its blessing — the
+  nearest marked NEXT: what is to come, never what was missed; past the
+  last milestone the section stands down.
 - **Journal** — entries after a Rosary or consecration day, written
   freely from the Journal page, or kept from a book as a note; searchable,
   editable, and entirely on device. It has no place in the bar (Prayers
@@ -1262,9 +1337,10 @@ write concurrent code here:
   cancelled does not count) NOT NOW reads RETURN HOME, and both go home
   whatever tab the prayer began on. The screen scrolls only when it must,
   on a small phone at the largest text size on a milestone day. The page
-  itself opens from the Chapel's Reflections tile
-  (`router.switchTo(.journal)`) and Explore's search, which finds it by
-  name and does not list it in Learn More, as Progress does.
+  itself is pushed (`AppRoute.journal`, with the gold Back) from the
+  Chapel's Reflections tile and the Library tile's YOUR PAGES, and from
+  Explore's search, which finds it by name and does not list it in Learn
+  More, as Progress does.
 - **33-day Consecration** — feast-day selection, per-day scripture and reading,
   bilingual prayers, journal prompts, and a completion rite. The tab's day page
   (`ConsecrationDayOverviewView`) is a column of gold-hairline cards. **Your
@@ -1453,6 +1529,17 @@ write concurrent code here:
   votive candle (a day, on device) stays, drawn on the bare page.
 - **Reminders** — daily notification at a chosen time and sound, with copy drawn
   from the pool matching the user's stated intentions.
+- **Bundled meditation sets** — one per set of mysteries, compiled in
+  (`Data/BundledMeditationSets.swift`: the Gospel for the Joyful and the
+  Glorious in the Douay-Rheims, Emmerich's Dolorous Passion for the
+  Sorrowful, Liguori's reflections on the seven dolors for the Seven
+  Sorrows, and the Luminous set written for the app), standing after the
+  server's on every mysteries' page and there with no signal, under
+  negative sentinel ids that `MeditationSetResolver` serves from the
+  binary and `recordCompletion` never posts. The Joyful and Glorious
+  Gospel sets are what makes the Gospel filter non-empty while the server
+  has no Scriptural set. Each is generated from its edition's text
+  verbatim; the sources are in `Tools/ContentSourcing/sources.py`.
 - **Offline** — user-initiated download of every set, its narration in the
   chosen voice, its painting, and the spoken Rosary's and the Prayer Book's recordings for that
   voice. A set saved from its own page takes the spoken prayers of its
@@ -1578,10 +1665,12 @@ write concurrent code here:
   prayer, or a prayer is still being fetched, it waits for the reader to
   come back; if anything pushes a page while it runs (a notification, a
   shortcut) it stands aside (`pause()`), still owed, and begins again
-  from its first stop when home returns. Five coach marks over the real
+  from its first stop when home returns. Six coach marks over the real
   controls, one at a time: Today's Mysteries (the featured card, named
   as it names itself), the Pray
-  button (a tap and a hold), the Prayers tab, the Chapel tab, and
+  button (a tap and a hold), the Prayers tab, the Consecrate tab ("A
+  33-day preparation to give yourself to Jesus through Mary. Choose the
+  feast it ends on."), the Chapel tab, and
   Explore's glass. Each control reports where it
   stands with one appended modifier, `.firstUseTourStop(_:)` (HomeView,
   HeaderView, CustomTabBar); move a control and its stop follows it, and
@@ -2027,9 +2116,11 @@ write concurrent code here:
   Coronation use the liturgy's own typology (Canticles, Psalms, Judith,
   Ecclesiasticus, the Apocalypse).
 - **Spiritual Reading** — a curated shelf of public-domain classics
-  (Imitation of Christ, Story of a Soul, Confessions, Dolorous Passion)
-  reached from the home page's reading shelf, Explore, and the Chapel's
-  Library and Reading tiles. Nothing is bundled: the
+  (Imitation of Christ, Story of a Soul, Confessions, Dolorous Passion,
+  The Glories of Mary, Abandonment to Divine Providence, The Practice of
+  the Presence of God; each with a one-sentence blurb under its cloth on
+  its page) reached from the home page's reading shelf, Explore, and the
+  Chapel's Library and Reading tiles. Nothing is bundled: the
   text is fetched from Project Gutenberg the first time a book is opened,
   cut into chapters on device (`LibraryBookParser`, per-edition rules in
   `Data/LibraryCatalog.swift` — Gutenberg serves CRLF, the parser
@@ -2382,7 +2473,8 @@ write concurrent code here:
   Nothing is carried forward. **Saving**
   is a silk ribbon drawn as a bookmark (`RibbonToggle`,
   `PrayerBookStore.ribbons`), its words Save and Saved — the saved
-  prayers stand under Saved on Prayers' Today.
+  prayers stand on Saved, a page of its own opened from the Prayers
+  page's shortcuts (`.prayerBookSaved`).
   **Learning** is `LearnByHeartSheet`: four steps (read, some hidden,
   first letters, by heart), in English or Latin, a hidden word shown by a
   touch, and at the end the reader's own LEARNED mark — never scored.
@@ -3013,8 +3105,9 @@ devotion is the one that devotion's own iconography uses:
 consecration — True Devotion's "The Spirit of This Devotion" and the
 consecration onboarding's "The Gift".
 
-Today's Mysteries (the Pray tray's row, `PrayerShortcut.chooseMeditation`)
-is the one door whose glyph follows the day: it wears the day's own
+Choose How to Pray Today (the Pray tray's row, `PrayerShortcut.chooseMeditation`,
+once named Today's Mysteries, which read as the same thing as Today's
+Rosary stacked above it) is the one door whose glyph follows the day: it wears the day's own
 mysteries' emblem (`MysteryCategory.iconName`, through
 `PrayerShortcut.icon(today:)` and `ScheduleService.categoryForToday()`,
 so the schedule and Sunday's season decide it, as they decide the row's
@@ -3437,6 +3530,11 @@ journal endpoint and none is planned — journal entries are local.
   Fatima Prayer); not a shorter Rosary
 
 ## Developer Tools
+
+A debug build can be launched on a tab, for screenshots and checks a
+simulator cannot tap to: `SIMCTL_CHILD_LUMEN_VIAE_TAB=prayers xcrun
+simctl launch …` (`AppRouter.launchTab`; the name is an `AppTab` case),
+and on another day with `SIMCTL_CHILD_LUMEN_VIAE_TODAY=2026-10-01`.
 
 `Tools/dev` is the door to everyday tasks: `Tools/dev check` runs lint,
 the generated-file check, the build and the tests. Run tests with

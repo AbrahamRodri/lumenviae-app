@@ -186,16 +186,14 @@ final class MeditationSelectionViewModel {
             if let stored = OfflineContentService.shared.storedSummaries(category: category) {
                 meditationSets = stored
             } else {
-                errorMessage = "Can't reach Lumen Viae. The server may be slow to start."
+                errorMessage = "Couldn't load the meditations. Check your connection and try again."
             }
         }
 
-        // The bundled luminous set stands after the server's, and is
-        // there even with no signal and nothing downloaded
-        if category == .luminous {
-            meditationSets.append(LuminousMeditationData.summary)
-            errorMessage = nil
-        }
+        // The bundled set for these mysteries stands after the server's,
+        // and is there even with no signal and nothing downloaded
+        meditationSets.append(contentsOf: BundledMeditationSets.summaries(for: category))
+        errorMessage = nil
 
         isLoading = false
     }

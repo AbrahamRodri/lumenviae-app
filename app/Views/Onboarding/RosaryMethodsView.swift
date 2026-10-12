@@ -53,14 +53,14 @@ struct RosaryMethodsView: View {
         MeditationKind(
             label: "Contemplative",
             icon: "ch-candle",
-            title: "Inside the scene",
+            title: "Step into the scene as it happened",
             description: "Longer passages that place you within the mystery: what was seen, heard, and felt there. Read slowly. You do not need to finish the page before the ten Hail Marys end.\n\nBlessed Anne Catherine Emmerich · Venerable Mary of Agreda · St. Ignatius of Loyola · Fr. Frederick William Faber"
         ),
         MeditationKind(
             label: "Saints",
             icon: "lv-saint",
             title: "In a saint's own words",
-            description: "Meditations written by saints. They also appear under their other kind.\n\nSt. Alphonsus's, for example, are under both Saints and Reflections."
+            description: "Meditations written by saints. Each also appears under a second kind.\n\nSt. Alphonsus's, for example, are under both Saints and Reflections."
         ),
         MeditationKind(
             label: "Scriptural",
@@ -104,7 +104,7 @@ struct RosaryMethodsView: View {
                     .padding(.horizontal, 20)
 
                     // Where the kinds are actually met
-                    Text("Open a mystery to see its meditation sets, each under its own painting. The filter button sorts them by these kinds, and a set you pin stays at the top. You can read each meditation, or listen when a set has narration.")
+                    Text("Open a mystery to see its meditation sets, each under its own painting. The filter button shows only the kinds you choose, and a set you pin stays at the top. You can read each meditation, or listen when a set has narration.")
                         .font(AppFonts.bodyFont(15))
                         .foregroundColor(AppColors.textSecondary)
                         .lineSpacing(ReadingTypography.lineSpacing(for: 15))

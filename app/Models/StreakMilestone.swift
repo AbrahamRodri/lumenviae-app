@@ -9,7 +9,10 @@
 //  Milestones follow real devotional structures of the Church rather than
 //  arbitrary numbers — a 9-day streak completes a novena, a 33-day streak
 //  mirrors St. Louis de Montfort's consecration period, 54 days completes
-//  the traditional 54-Day Rosary Novena.
+//  the traditional 54-Day Rosary Novena, 40 is Lent and the Lord's fast
+//  (Matthew 4:2), 50 the days from Easter to Pentecost (Acts 2:1), 150
+//  the Hail Marys of Our Lady's Psalter, and 1000 the years that are as
+//  yesterday in God's sight (Psalm 89:4).
 //
 //  Design rule: milestones celebrate and invite — they are never used to
 //  guilt the user about what might be lost.
@@ -50,15 +53,15 @@ struct StreakMilestone: Identifiable, Equatable {
     static let all: [StreakMilestone] = [
         StreakMilestone(
             days: 3,
-            meaning: "a triduum",
+            meaning: nil,
             icon: "ph-number-circle-three",
-            blessing: "Three days in a row: a triduum, the Church's ancient three days of prayer."
+            blessing: "Three days in a row: what the Church calls a triduum, three days of prayer before a feast."
         ),
         StreakMilestone(
             days: 7,
             meaning: "a faithful week",
             icon: "ph-number-circle-seven",
-            blessing: "Seven days — every mystery of the week visited in prayer."
+            blessing: "Seven days in a row: a whole week of the Rosary."
         ),
         StreakMilestone(
             days: 9,
@@ -73,10 +76,22 @@ struct StreakMilestone: Identifiable, Equatable {
             blessing: "Thirty-three days, as long as St. Louis de Montfort's Consecration to Mary."
         ),
         StreakMilestone(
+            days: 40,
+            meaning: "the length of Lent",
+            icon: "lv-crown-of-thorns",
+            blessing: "Forty days in a row: the length of Lent, and of the Lord's fast in the desert."
+        ),
+        StreakMilestone(
+            days: 50,
+            meaning: "Easter to Pentecost",
+            icon: "ch-dove",
+            blessing: "Fifty days in a row: from Easter to Pentecost, when the Holy Ghost came down on the Apostles."
+        ),
+        StreakMilestone(
             days: 54,
             meaning: "a Rosary novena",
             icon: "lv-rosary",
-            blessing: "The great Rosary novena complete: 27 days asking, and 27 giving thanks."
+            blessing: "54 days in a row, as long as the Rosary novena: 27 days asking, then 27 giving thanks."
         ),
         StreakMilestone(
             days: 100,
@@ -85,10 +100,28 @@ struct StreakMilestone: Identifiable, Equatable {
             blessing: "Some seed fell on good soil and brought forth fruit a hundredfold."
         ),
         StreakMilestone(
+            days: 150,
+            meaning: "Our Lady's Psalter",
+            icon: "ch-lily",
+            blessing: "A hundred and fifty days in a row: one for each Hail Mary of the full Rosary, Our Lady's Psalter."
+        ),
+        StreakMilestone(
             days: 365,
             meaning: "a year of grace",
             icon: "ch-chi-rho",
             blessing: "A full year of daily prayer, for the greater glory of God."
+        ),
+        StreakMilestone(
+            days: 500,
+            meaning: nil,
+            icon: "ch-candle",
+            blessing: "Five hundred days in a row: a candle kept burning before her, day after day."
+        ),
+        StreakMilestone(
+            days: 1000,
+            meaning: nil,
+            icon: "lv-hourglass",
+            blessing: "A thousand days in a row. A thousand years in His sight are as yesterday, which is past."
         )
     ]
 
@@ -105,6 +138,13 @@ struct StreakMilestone: Identifiable, Equatable {
     /// ("9 days · a novena · 3 days away").
     static func next(after streak: Int) -> StreakMilestone? {
         all.first { $0.days > streak }
+    }
+
+    /// The milestones still ahead of this streak, the nearest first, for
+    /// the Prayer Record's MILESTONES AHEAD: what is to come, never what
+    /// was missed.
+    static func ahead(of streak: Int, limit: Int = 5) -> [StreakMilestone] {
+        Array(all.filter { $0.days > streak }.prefix(limit))
     }
 
     /// The most recent milestone already achieved, if any.

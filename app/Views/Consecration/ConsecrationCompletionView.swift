@@ -121,7 +121,7 @@ struct ConsecrationCompletionView: View {
 
     private var messageSection: some View {
         VStack(spacing: 16) {
-            Text("You have made the Total Consecration to Jesus through Mary.")
+            Text("You have made your consecration to Jesus through Mary.")
                 .font(AppFonts.readingFont(17))
                 .foregroundColor(AppColors.cream.opacity(0.92))
                 .multilineTextAlignment(.center)

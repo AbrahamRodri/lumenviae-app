@@ -54,7 +54,7 @@ enum ChapelTile: String, CaseIterable, Identifiable {
     var shortTitle: String {
         switch self {
         case .flame:   return "Streak"
-        case .liturgy: return "The Church"
+        case .liturgy: return "Mass & Hours"
         default:       return title
         }
     }
@@ -117,20 +117,31 @@ extension ChapelPlacement {
     ///
     /// The live sections come first, in the order a day meets them: the
     /// acts, the record of them, the preparation under way, the book left
-    /// open, the chant, the reader's own words. The two indexes of doors
-    /// stand last — the Liturgy, then the Library, whose colophon is the
-    /// right last line before the imprint.
+    /// open, the reader's own words, the chant. The Library's doors
+    /// follow, and Today in the Church stands last: Home's Today's
+    /// Prayer already carries the Mass and the Hours, so here they are
+    /// the page's last word rather than its middle.
+    ///
+    /// Only a fresh page takes this order; a stored one keeps its own.
     static let defaultLayout: [ChapelPlacement] = [
         ChapelPlacement(tile: .rule, span: 2, on: true),
         ChapelPlacement(tile: .flame, span: 2, on: true),
         ChapelPlacement(tile: .consecration, span: 2, on: true),
         ChapelPlacement(tile: .prayers, span: 2, on: true),
         ChapelPlacement(tile: .reading, span: 2, on: true),
-        ChapelPlacement(tile: .chant, span: 2, on: true),
         ChapelPlacement(tile: .reflections, span: 2, on: true),
-        ChapelPlacement(tile: .liturgy, span: 2, on: true),
-        ChapelPlacement(tile: .library, span: 2, on: true)
+        ChapelPlacement(tile: .chant, span: 2, on: true),
+        ChapelPlacement(tile: .library, span: 2, on: true),
+        ChapelPlacement(tile: .liturgy, span: 2, on: true)
     ]
+
+    /// Whether `tile` stands on the page in `layout`, rather than in the
+    /// tray. The Today tile leaves out the consecration's row while the
+    /// Consecration tile is on the page, so the preparation is not shown
+    /// twice, one above the other.
+    static func isOnPage(_ tile: ChapelTile, in layout: [ChapelPlacement]) -> Bool {
+        layout.contains { $0.tile == tile && $0.on }
+    }
 
     /// "rule:2:1" — id, span, on.
     var encoded: String {
@@ -185,6 +196,15 @@ extension ChapelPlacement {
                     placement.span = sourcePlacement.span
                     placement.on = sourcePlacement.on
                 }
+            }
+
+            // A tile cut from another is seated beside it, on the side
+            // the default order puts it, wherever the reader has moved it
+            if let source = fallback.tile.cutFrom,
+               let sourceIndex = result.firstIndex(where: { $0.tile == source }),
+               let sourceDefault = defaultLayout.firstIndex(where: { $0.tile == source }) {
+                result.insert(placement, at: sourceDefault < position ? sourceIndex + 1 : sourceIndex)
+                continue
             }
 
             let followers = Set(defaultLayout[(position + 1)...].map(\.tile))

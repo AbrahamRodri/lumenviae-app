@@ -18,8 +18,9 @@ import Testing
 @MainActor
 struct ScripturalRosaryWalkTests {
 
-    private func walk(_ category: MysteryCategory, form: SpokenForm = .scriptural) -> ScripturalRosaryViewModel {
-        ScripturalRosaryViewModel(category: category, form: form)
+    private func walk(_ category: MysteryCategory, form: SpokenForm = .scriptural,
+                      pendant: Bool = false) -> ScripturalRosaryViewModel {
+        ScripturalRosaryViewModel(category: category, form: form, showsOpeningPrayers: pendant)
     }
 
     @Test func theWholeRosaryIsFiftyHailMarysAndTheWalkEndsOnTheLastBead() {
@@ -47,7 +48,7 @@ struct ScripturalRosaryWalkTests {
         let reading = vm.reading
         let annunciation = try #require(MysteryData.mysteries(for: .joyful).first)
         #expect(reading.reference == annunciation.scriptureReference)
-        #expect(reading.footnote == "Ask for · Humility")
+        #expect(reading.footnote == "Grace to ask for · Humility")
         #expect(vm.mysteryKicker == "The First Joyful Mystery")
     }
 
@@ -124,10 +125,10 @@ struct ScripturalRosaryWalkTests {
     }
 
     @Test func aResumedRosaryIsHeldToItsMysteriesAndBeads() {
-        let vm = ScripturalRosaryViewModel(category: .joyful, startAtIndex: 9, startAtBead: 40)
+        let vm = ScripturalRosaryViewModel(category: .joyful, startAtIndex: 9, startAtBead: 40, showsOpeningPrayers: false)
         #expect(vm.currentMysteryIndex == 4)
         #expect(vm.currentBeadIndex == 11)
-        let early = ScripturalRosaryViewModel(category: .joyful, startAtIndex: -2, startAtBead: -1)
+        let early = ScripturalRosaryViewModel(category: .joyful, startAtIndex: -2, startAtBead: -1, showsOpeningPrayers: false)
         #expect(early.isFirstBeadOfRosary)
     }
 
@@ -139,7 +140,7 @@ struct ScripturalRosaryWalkTests {
         #expect(vm.resumeKind == .rosaryAloud)
         let ourFather = vm.reading
         #expect(ourFather.reference == nil, "no passage; the prayer is set instead")
-        #expect(ourFather.footnote == "Ask for · Humility")
+        #expect(ourFather.footnote == "Grace to ask for · Humility")
         _ = vm.prayForward()
         let hailMary = vm.reading
         #expect(hailMary.reference == nil)

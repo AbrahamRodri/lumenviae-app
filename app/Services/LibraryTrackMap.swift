@@ -232,8 +232,8 @@ nonisolated enum LibraryTrackMap {
         switch mapping {
         case .none:
             return .empty
-        case .sequential(let offset):
-            aligned = sequential(chapters: chapters, sections: sections, offset: offset)
+        case .sequential(let offset, let unread):
+            aligned = sequential(chapters: chapters, sections: sections, offset: offset, unread: unread)
         case .bookChapterRanges:
             aligned = bookChapterRanges(chapters: chapters, sections: sections)
         case .bookSpans:
@@ -305,7 +305,8 @@ nonisolated enum LibraryTrackMap {
     private static func sequential(
         chapters: [LibraryChapter],
         sections: [LibriVoxSection],
-        offset: Int
+        offset: Int,
+        unread: Set<Int>
     ) -> LibraryTrackAlignment {
         var chapterToTrack = [Int?](repeating: nil, count: chapters.count)
         var trackToChapters: [Int: ClosedRange<Int>] = [:]
@@ -319,8 +320,15 @@ nonisolated enum LibraryTrackMap {
         // which is what follow-along would then pace the page against.
         let groups = Self.groupedByContinuation(sections)
 
+        // A unit the recording passes over takes no track and shifts
+        // every unit after it back by one.
+        var passedOver = 0
         for index in chapters.indices {
-            let position = index + offset
+            if unread.contains(index) {
+                passedOver += 1
+                continue
+            }
+            let position = index + offset - passedOver
             guard groups.indices.contains(position) else { continue }
             for track in groups[position] {
                 trackToChapters[track] = index...index

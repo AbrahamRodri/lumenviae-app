@@ -267,6 +267,17 @@ struct LibraryBookView: View {
                     BookHalo(bindingColor: info.bindingColor)
                 }
                 .padding(.top, 18)
+
+            // One sentence on what the book is, under the cloth, so a
+            // reader who has never heard of it knows before opening it.
+            // The cloth names the title and author; this says why read it.
+            Text(info.blurb)
+                .font(AppFonts.italicFont(15))
+                .foregroundColor(AppColors.textSecondary)
+                .multilineTextAlignment(.center)
+                .lineSpacing(3)
+                .padding(.horizontal, 36)
+                .padding(.top, 22)
         }
         .frame(maxWidth: .infinity)
         .padding(.bottom, 24)
@@ -571,7 +582,7 @@ struct LibraryBookView: View {
                     .font(AppFonts.headlineFont(16))
                     .foregroundColor(AppColors.cream)
 
-                Text("No line in this book carries those words.")
+                Text("No line in this book has those words.")
                     .font(AppFonts.italicFont(13))
                     .foregroundColor(AppColors.textSecondary)
             }
@@ -604,7 +615,7 @@ struct LibraryBookView: View {
                 .fill(AppColors.gold.opacity(0.15))
                 .frame(height: AppLine.hairline)
 
-            Text("KEEP IT ON THIS DEVICE")
+            Text("SAVE FOR OFFLINE")
                 .font(AppFonts.labelFont(10))
                 .tracking(2.2)
                 .foregroundColor(AppColors.gold.opacity(0.85))

@@ -35,8 +35,10 @@ struct StreakMilestoneTests {
         #expect(StreakMilestone.latest(achievedBy: 0) == nil)
         #expect(StreakMilestone.next(after: 9)?.days == 33)
         #expect(StreakMilestone.latest(achievedBy: 9)?.days == 9)
-        #expect(StreakMilestone.next(after: 365) == nil)
-        #expect(StreakMilestone.latest(achievedBy: 1000)?.days == 365)
+        #expect(StreakMilestone.next(after: 365)?.days == 500)
+        #expect(StreakMilestone.next(after: 1000) == nil)
+        #expect(StreakMilestone.latest(achievedBy: 1000)?.days == 1000)
+        #expect(StreakMilestone.latest(achievedBy: 999)?.days == 500)
     }
 
     @Test func progressStaysBetweenZeroAndOne() {
@@ -45,7 +47,8 @@ struct StreakMilestoneTests {
             #expect((0...1).contains(progress), "streak \(streak): \(progress)")
         }
         #expect(StreakMilestone.progressTowardNext(streak: 9) == 0)
-        #expect(StreakMilestone.progressTowardNext(streak: 500) == 1)
+        #expect(StreakMilestone.progressTowardNext(streak: 1000) == 1)
+        #expect(StreakMilestone.progressTowardNext(streak: 500) == 0)
     }
 
     @Test func everyTitleLeadsWithItsNumber() {

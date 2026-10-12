@@ -20,6 +20,17 @@ enum PrayerLanguage: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
+    /// What the choice is called on screen, in onboarding and Settings
+    /// alike. The raw value is what is stored, so it never changes.
+    var displayName: String {
+        switch self {
+        case .english:           return "English"
+        case .latin:             return "Latin"
+        case .both:              return "Latin with English"
+        case .latinUnderEnglish: return "English with Latin"
+        }
+    }
+
     /// True when this mode shows a translation beneath each prayer line
     var isBilingual: Bool { self == .both || self == .latinUnderEnglish }
 }
@@ -197,6 +208,19 @@ final class UserSettings {
     /// called Audio, Meditation Only or Whole Rosary (`RosaryChoice.audio`).
     var prayAloud: Bool = false {
         didSet { UserDefaults.standard.set(prayAloud, forKey: "userSettings.prayAloud") }
+    }
+
+    /// Whether a Rosary prayed in silence begins and ends on the pendant:
+    /// the Sign of the Cross, the Creed, the Our Father, three Hail Marys
+    /// and the Glory Be before the first mystery, and the Hail, Holy
+    /// Queen, the closing prayer and the Sign of the Cross after the last,
+    /// each its own step with its words (`SilentPendant`). Said aloud the
+    /// voice says them whatever this says. On by default: a newcomer was
+    /// never shown the prayers that open the Rosary, nor their words.
+    /// Wherever it is offered it is called Opening and Closing Prayers,
+    /// Show or Skip (`RosaryChoice.openingPrayers`).
+    var showsOpeningPrayers: Bool = true {
+        didSet { UserDefaults.standard.set(showsOpeningPrayers, forKey: "userSettings.showsOpeningPrayers") }
     }
 
     // MARK: - After the Rosary
@@ -658,6 +682,9 @@ final class UserSettings {
             prayOnBeads = d.bool(forKey: "userSettings.prayOnBeads")
         }
         prayAloud = d.bool(forKey: "userSettings.prayAloud")
+        if d.object(forKey: "userSettings.showsOpeningPrayers") != nil {
+            showsOpeningPrayers = d.bool(forKey: "userSettings.showsOpeningPrayers")
+        }
         prayForHolyFather = d.bool(forKey: "userSettings.prayForHolyFather")
         prayMemorare = d.bool(forKey: "userSettings.prayMemorare")
         praySaintMichael = d.bool(forKey: "userSettings.praySaintMichael")
@@ -923,8 +950,13 @@ final class UserSettings {
     /// multi-intention week hears from each of them, and `offset` walks the
     /// selection forward as the days pass so no weekday ossifies onto one
     /// line. Falls back to the default pool when nothing was chosen.
+    ///
+    /// The season is read once, when the week is scheduled: the seven
+    /// repeating requests then carry it until the next launch or
+    /// foreground reschedules them, so a week of Advent lines can run a
+    /// few days past Christmas on a phone the app has not been opened on.
     private func reminderWeek(offset: Int) -> [ReminderMessage] {
-        let pool = ReminderMessage.pool(for: intentions)
+        let pool = ReminderMessage.pool(for: intentions, on: ScheduleService.today)
         guard !pool.isEmpty else { return [] }
         return (0..<7).map { pool[(offset + $0) % pool.count] }
     }

@@ -29,7 +29,8 @@ def build():
     pictures = []
     for p in S.PAINTINGS:
         e = dict(kind="painting", status="unverified", file_url=None, commons_file=None,
-                 width=None, height=None, bytes=None, **p)
+                 width=None, height=None, bytes=None)
+        e.update(p)
         e.update(got.get(p["imageset"], {}))
         pictures.append(e)
 
@@ -147,6 +148,12 @@ def markdown(m) -> str:
     if ask:
         out += ["", "**For Abraham:** where did these come from? " + ", ".join(f"`{a}`" for a in ask)
                 + ". The subject and school are clear but not the painter, so their licence can't be confirmed yet."]
+    out += ["", "## Texts", "",
+            "Every text the app bundles or fetches that is not its own writing, with the edition it is taken from "
+            "(`sources.py`, `TEXTS`; build_credits.py renders the same list into the app's Sources & Credits page).", "",
+            "| Work | Maker and edition | Where in the app | Source | Licence |", "|---|---|---|---|---|"]
+    for t in S.TEXTS:
+        out.append("| {} | {} | {} | {} | {} |".format(cell(t["title"]), cell(t["maker"]), cell(t["detail"]), cell(t["source"]), cell(t["licence"])))
     out += ["", "## Flagged", ""]
     for f in m["flagged"]:
         out += [f"- **`{f['imageset']}`**: {f['work']}. Creator: {f['creator']}. Licence: {f['licence']}.", "", f"  {f['note']}", ""]

@@ -496,10 +496,10 @@ struct OnboardingView: View {
 
     // MARK: - 3. What You'll Hear
 
-    private static let meditationOnlyLead =
-        "The voice reads the meditation, then you say the prayers yourself."
-    private static let wholeRosaryLead =
-        "The voice leads every prayer, bead by bead, and you pray along."
+    /// One lead for both choices: each card's own line says what the
+    /// voice does, so a lead that said it again read twice
+    private static let voiceLead =
+        "Choose what the voice says. You can change it on any Rosary's page."
 
     /// How much of the Rosary the voice says (`UserSettings.prayAloud`),
     /// asked first of the two because it decides whether the beads
@@ -515,10 +515,7 @@ struct OnboardingView: View {
             stage: stage
         ) {
             VStack(spacing: 14) {
-                OnboardingLeadSlot(
-                    praysAloud ? Self.wholeRosaryLead : Self.meditationOnlyLead,
-                    reserving: [Self.meditationOnlyLead, Self.wholeRosaryLead]
-                )
+                OnboardingLead(Self.voiceLead)
 
                 DecadeVoicePreview(praysAloud: praysAloud)
 
@@ -588,7 +585,7 @@ struct OnboardingView: View {
     private var beadsSlide: some View {
         OnboardingSlideLayout(
             kicker: "Make it yours · 2 of 2",
-            title: "Where Will You Count?",
+            title: "How Will You Keep Count?",
             page: .beads,
             stage: stage
         ) {
@@ -682,7 +679,9 @@ struct OnboardingView: View {
         Offer(icon: "ph-calendar-dots", text: "Today's mysteries, chosen by the day of the week"),
         Offer(icon: "ph-book-open", text: "A meditation on each mystery, to read or to hear"),
         Offer(icon: "ch-consecration", text: "A 33-day preparation to give yourself to Jesus through Mary, by St. Louis de Montfort"),
-        Offer(icon: "ch-altar", text: "The traditional Latin Mass and the Church's Hours of Prayer, for each day")
+        Offer(icon: "ch-altar", text: "The traditional Latin Mass and the Church's Hours of Prayer, for each day"),
+        Offer(icon: "ch-praying-hands", text: "Catholic prayers for every day and every need"),
+        Offer(icon: "ph-book", text: "Classic spiritual books and sung chant, to read and hear")
     ]
 
     /// With several reasons chosen, each one's best line comes first, so
@@ -705,13 +704,13 @@ struct OnboardingView: View {
     private var forYouCopy: (title: String, lead: String) {
         switch primaryIntention {
         case .peace:
-            return ("Stillness in a Busy Day", "Pray one mystery at a time, with words to rest your mind on.")
+            return (PrayerIntention.peace.displayName, "Pray one mystery at a time, with words to rest your mind on.")
         case .habit:
-            return ("A Rosary Every Day", "The day's prayer is set out for you each morning.")
+            return (PrayerIntention.habit.displayName, "The day's prayer is set out for you each morning.")
         case .devotion:
-            return ("Closer to Our Lady", "Pray with Mary, and learn from the saints who loved her.")
+            return (PrayerIntention.devotion.displayName, "Pray with Mary, and learn from the saints who loved her.")
         case .learning:
-            return ("Learning the Rosary", "Everything you need to begin is here.")
+            return (PrayerIntention.learning.displayName, "Everything you need to begin is here.")
         case nil:
             return ("What You Will Find", "The Rosary is at the heart of the app. Around it are other prayers of the Church.")
         }
@@ -768,8 +767,8 @@ struct OnboardingView: View {
         switch language {
         case .english:           return "Every prayer in English"
         case .latin:             return "The Church's traditional language of prayer"
-        case .both:              return "Latin first, English beneath each line"
-        case .latinUnderEnglish: return "English first, Latin beneath each line"
+        case .both:              return "Latin with English beneath each line"
+        case .latinUnderEnglish: return "English with Latin beneath each line"
         }
     }
 
@@ -794,7 +793,7 @@ struct OnboardingView: View {
                 VStack(spacing: 10) {
                     ForEach(languageChoices) { language in
                         OnboardingChoiceCard(
-                            label: language.rawValue,
+                            label: language.displayName,
                             detail: detail(for: language),
                             isSelected: selectedLanguage == language
                         ) {
@@ -885,10 +884,10 @@ struct OnboardingView: View {
                 // refusal in sight rather than letting the user leave
                 // believing an hour was set that can never ring.
                 Text(denied
-                     ? "Notifications are off for Lumen Viae. Turn them on in the Settings app, then choose a time in Settings, under Devotion."
+                     ? "Notifications are off for Lumen Viae. Turn them on in your iPhone's Settings app, then choose a time in Lumen Viae's Settings, under Devotion."
                      : UserSettings.shared.notificationAuthorizationGranted
                         ? "You can change the time or turn it off in Settings."
-                        : "Your iPhone will then ask once whether Lumen Viae may send it. You can change the time or turn it off in Settings.")
+                        : "Your iPhone will then ask once whether Lumen Viae may send reminders. You can change the time or turn it off in Settings.")
                     .font(AppFonts.italicFont(14))
                     .foregroundColor(AppColors.cream.opacity(0.62))
                     .multilineTextAlignment(.center)
@@ -1582,7 +1581,7 @@ private struct OnboardingLeadSlot: View {
 private struct DecadeVoicePreview: View {
     let praysAloud: Bool
 
-    private static let parts = ["The meditation", "Our Father", "Ten Hail Marys", "Glory Be"]
+    private static let parts = ["A short reading on the mystery", "Our Father", "Ten Hail Marys", "Glory Be"]
 
     var body: some View {
         VStack(spacing: 0) {
@@ -2052,7 +2051,7 @@ private struct OnboardingThemePicker: View {
         switch theme {
         case .marianBlue: return ("“Tota pulchra es, Maria.” Thou art all fair, O Mary.", "An old chant to Mary")
         case .midnight:   return ("“Be still and see that I am God.”", "Psalm 45:11")
-        case .candlelit:  return ("“Thy word is a lamp to my feet.”", "Psalm 118:105")
+        case .candlelit:  return ("“Thy word is a lamp to my feet.”", "Psalm 118 (119):105")
         }
     }
 

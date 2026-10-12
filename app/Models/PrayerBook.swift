@@ -1083,7 +1083,7 @@ enum PrayerBookAudio {
 
     /// The book's own name, as its tab says it, with the word tab, so the
     /// row is never read as a second Audio, or as every prayer in the app
-    static let title = "Prayers Tab"
+    static let title = "Prayers Tab Audio"
 
     /// The Prayer Book's door glyph
     static let icon = "lv-prayer-book"

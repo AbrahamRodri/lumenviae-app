@@ -22,6 +22,7 @@ struct JournalView: View {
     // MARK: - Data
 
     @Environment(\.modelContext) private var modelContext
+    @Environment(AppRouter.self) private var router
     @Query(sort: \JournalEntry.createdAt, order: .reverse) private var entries: [JournalEntry]
 
     // MARK: - State
@@ -31,6 +32,16 @@ struct JournalView: View {
     @State private var showingSearch = false
     @State private var searchText = ""
     @State private var entryPendingDelete: JournalEntry? = nil
+
+    /// The starter question chosen on the empty page, opening the editor
+    /// with it as the reflection's title
+    @State private var promptToWrite: StarterPrompt? = nil
+
+    /// A starter question, identified by its words for the sheet
+    private struct StarterPrompt: Identifiable {
+        let text: String
+        var id: String { text }
+    }
 
     /// Gallery (the drop-capped cards) or list (one line an entry).
     /// Persisted, because it is a reading preference rather than a mood
@@ -101,6 +112,13 @@ struct JournalView: View {
             }
         }
         // New entry sheet
+        .sheet(item: $promptToWrite) { prompt in
+            JournalEntryEditorView(isMidPrayer: false, initialSubject: prompt.text)
+                .presentationDetents([.large])
+                .presentationDragIndicator(.visible)
+                .presentationBackground(AppColors.background)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
+        }
         .sheet(isPresented: $showingNewEntry) {
             JournalEntryEditorView(isMidPrayer: false)
                 .presentationDetents([.large])
@@ -133,6 +151,21 @@ struct JournalView: View {
             }
             Button("Cancel", role: .cancel) { entryPendingDelete = nil }
         }
+        .navigationBarBackButtonHidden(true)
+        // Pushed over the tab it was opened from, with the gold Back of
+        // every other pushed page; the tab bar stays up beneath it
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: { router.pop() }) {
+                    HStack(spacing: 6) {
+                        AppIcon("ph-caret-left", size: 14)
+                        Text("Back")
+                            .font(AppFonts.bodyFont(16))
+                    }
+                    .foregroundColor(AppColors.gold)
+                }
+            }
+        }
     }
 
     // MARK: - Header
@@ -141,15 +174,11 @@ struct JournalView: View {
         VStack(spacing: 0) {
             HStack(alignment: .center) {
                 // Title
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("SPIRITUAL")
-                        .font(AppFonts.bodyFont(11))
-                        .tracking(4)
-                        .foregroundColor(AppColors.gold.opacity(0.7))
-                    Text("Journal")
-                        .font(AppFonts.italicFont(30))
-                        .foregroundColor(AppColors.cream)
-                }
+                // The page's name as the Chapel's tile says it, in the
+                // title face every other page uses
+                Text("Reflections")
+                    .font(AppFonts.titleFont(28))
+                    .foregroundColor(AppColors.cream)
 
                 Spacer()
 
@@ -407,6 +436,40 @@ struct JournalView: View {
 
     // MARK: - Empty State
 
+    /// Three questions on today's mysteries, each a ruled row that opens
+    /// the editor with the question as the reflection's title, so a
+    /// first page is never blank.
+    private var starterPrompts: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text("TO BEGIN, ON TODAY'S MYSTERIES")
+                .font(AppFonts.labelFont(10))
+                .tracking(2)
+                .foregroundColor(AppColors.gold.opacity(0.8))
+                .padding(.bottom, 6)
+
+            ForEach(JournalPrompts.today, id: \.self) { prompt in
+                Button(action: { promptToWrite = StarterPrompt(text: prompt) }) {
+                    HStack(alignment: .firstTextBaseline, spacing: 10) {
+                        Text(prompt)
+                            .font(AppFonts.italicFont(16))
+                            .foregroundColor(AppColors.cream.opacity(0.9))
+                            .multilineTextAlignment(.leading)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        AppIcon("ph-caret-right", size: 12)
+                            .foregroundColor(AppColors.gold.opacity(0.7))
+                    }
+                    .padding(.vertical, 12)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(SacredCardButtonStyle())
+                .accessibilityHint("Begins a reflection with this question as its title")
+
+                Divider()
+                    .background(AppColors.gold.opacity(0.16))
+            }
+        }
+    }
+
     private var emptyState: some View {
         VStack(spacing: 20) {
             Spacer()
@@ -415,16 +478,20 @@ struct JournalView: View {
                 .foregroundColor(AppColors.gold.opacity(0.3))
 
             VStack(spacing: 8) {
-                Text("Your journal awaits")
+                Text("No reflections yet")
                     .font(AppFonts.italicFont(22))
                     .foregroundColor(AppColors.cream.opacity(0.8))
 
-                Text("Record thoughts during or after\nyour Rosary prayers.")
+                Text("Write down what comes to you\nwhile you pray, or after.")
                     .font(AppFonts.bodyFont(15))
                     .foregroundColor(AppColors.textSecondary)
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
             }
+
+            starterPrompts
+                .padding(.horizontal, 32)
+                .padding(.top, 4)
 
             Button(action: { showingNewEntry = true }) {
                 HStack(spacing: 8) {

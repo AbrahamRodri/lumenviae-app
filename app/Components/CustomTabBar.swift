@@ -90,6 +90,16 @@ struct CustomTabBar: View {
     /// Journal, from the Chapel's Reflections tile and Explore's search.
     private let visibleTabs: [AppTab] = [.home, .consecration, .prayers, .chapel]
 
+    /// The first-use tour's stop at a tab, where it has one
+    private func tourStop(for tab: AppTab) -> FirstUseTourStop? {
+        switch tab {
+        case .consecration: return .consecration
+        case .prayers: return .prayers
+        case .chapel: return .chapel
+        default: return nil
+        }
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             // Scrolling content dissolves into the bar rather than being
@@ -133,7 +143,7 @@ struct CustomTabBar: View {
                         selectedTab = tab
                     }
                     .frame(minWidth: 44)
-                    .firstUseTourStop(tab == .chapel ? .chapel : tab == .prayers ? .prayers : nil)
+                    .firstUseTourStop(tourStop(for: tab))
 
                     if tab != visibleTabs.last {
                         Spacer(minLength: 8)

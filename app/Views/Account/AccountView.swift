@@ -40,7 +40,12 @@ struct AccountView: View {
                     }
 
                     // MARK: Prayer Experience
-                    AccountSection(title: "Prayer Experience", icon: "lv-rosary") {
+                    // How the words look and who reads them, for every
+                    // page that prays: the Rosary's own choices stand
+                    // under The Rosary, below, and the Prayers tab's under
+                    // its own name, so neither "Audio" is read as the
+                    // other's
+                    AccountSection(title: "Prayer Experience", icon: "ph-text-aa") {
                         VStack(spacing: 0) {
                             TextSizeRow(value: Bindable(userSettings).textSizeScale)
 
@@ -58,10 +63,16 @@ struct AccountView: View {
                             // stands in the player's playback sheet, so a
                             // Rosary need not be left to change it
                             NarrationVoiceRow()
+                        }
+                    }
+                    .padding(.top, 30)
 
-                            Divider()
-                                .background(AppColors.gold.opacity(0.2))
-
+                    // MARK: The Rosary
+                    // The Rosary's own choices, as its own page sets the
+                    // first two, then what is shown before and after the
+                    // mysteries
+                    AccountSection(title: "The Rosary", icon: "lv-rosary") {
+                        VStack(spacing: 0) {
                             // Audio: the meditation alone, or the Whole
                             // Rosary said aloud in the voice chosen above,
                             // the beads moving with it, for prayer with the
@@ -90,44 +101,41 @@ struct AccountView: View {
                             Divider()
                                 .background(AppColors.gold.opacity(0.2))
 
-                            // The Prayer Book's own: whether it speaks at
-                            // all. Apart from the Rosary's Audio on
-                            // purpose — that one says what the voice
-                            // reads, this one whether the book makes a
-                            // sound. Before any answer it shows the
-                            // default and says the book will ask; only a
-                            // tap here answers the question
+                            // The pendant's prayers on a Rosary prayed in
+                            // silence (`SilentPendant`). Moot with the
+                            // Whole Rosary, whose voice says them
                             RosaryChoiceSettingsRow(
-                                icon: PrayerBookAudio.icon,
-                                title: PrayerBookAudio.title,
-                                options: PrayerBookAudio.options,
-                                value: Binding(
-                                    get: { PrayerBookStore.shared.praysAloud },
-                                    set: { PrayerBookStore.shared.chooseAloud($0) }
-                                ),
-                                isAnswered: PrayerBookStore.shared.hasChosenAloud,
-                                note: { aloud in
-                                    PrayerBookAudio.note(
-                                        for: aloud,
-                                        answered: PrayerBookStore.shared.hasChosenAloud
-                                    )
-                                }
+                                icon: OpeningPrayersChoice.icon,
+                                title: OpeningPrayersChoice.title,
+                                options: OpeningPrayersChoice.options,
+                                value: Bindable(userSettings).showsOpeningPrayers,
+                                isAvailable: !userSettings.prayAloud,
+                                unavailableNote: OpeningPrayersChoice.unavailableNote,
+                                note: { OpeningPrayersChoice.note(for: $0) }
                             )
-                        }
-                    }
-                    .padding(.top, 30)
 
-                    // MARK: After the Rosary
-                    // Prayers after the Rosary's closing prayer, each off
-                    // until chosen. Only the voice says them — nothing
-                    // else reads these switches — so they stand under
-                    // their own heading with the set page's note, rather
-                    // than as three more switches among the ways of
-                    // praying, where they read as prayers added to every
-                    // Rosary. The Seven Sorrows chaplet closes in its
-                    // own way and never says them
-                    AccountSection(title: "After the Rosary", icon: "ch-praying-hands") {
-                        VStack(spacing: 0) {
+                            Divider()
+                                .background(AppColors.gold.opacity(0.2))
+
+                            // After the Rosary: prayers after its closing
+                            // prayer, each off until chosen. Only the voice
+                            // says them — nothing else reads these
+                            // switches — so they stand under their own
+                            // name with the set page's note, rather than
+                            // among the ways of praying, where they read
+                            // as prayers added to every Rosary. The Seven
+                            // Sorrows chaplet closes in its own way and
+                            // never says them
+                            Text("AFTER THE ROSARY")
+                                .font(AppFonts.labelFont(9))
+                                .tracking(2)
+                                .foregroundColor(AppColors.textSecondary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal, 16)
+                                .padding(.top, 16)
+                                .padding(.bottom, 2)
+                                .accessibilityAddTraits(.isHeader)
+
                             ForEach(RosaryClosingExtra.allCases, id: \.self) { extra in
                                 ToggleRow(
                                     icon: extra.icon,
@@ -147,7 +155,7 @@ struct AccountView: View {
                             // Rosary is not chosen, where to choose it
                             Text(userSettings.prayAloud
                                  ? "Said aloud after the closing prayer."
-                                 : "Said aloud after the closing prayer, with the Whole Rosary. Audio is under Prayer Experience, above.")
+                                 : "Said aloud after the closing prayer, with the Whole Rosary. Audio is at the top of this section.")
                                 .font(AppFonts.italicFont(13))
                                 .foregroundColor(AppColors.textSecondary)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -155,6 +163,33 @@ struct AccountView: View {
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 14)
                         }
+                    }
+                    .padding(.top, 30)
+
+                    // MARK: Prayers Tab
+                    // The Prayer Book's own: whether it speaks at all.
+                    // Apart from the Rosary's Audio on purpose — that one
+                    // says what the voice reads, this one whether the book
+                    // makes a sound. Before any answer it shows the default
+                    // and says the book will ask; only a tap here answers
+                    // the question
+                    AccountSection(title: "Prayers Tab", icon: "ch-praying-hands") {
+                        RosaryChoiceSettingsRow(
+                            icon: PrayerBookAudio.icon,
+                            title: "Audio",
+                            options: PrayerBookAudio.options,
+                            value: Binding(
+                                get: { PrayerBookStore.shared.praysAloud },
+                                set: { PrayerBookStore.shared.chooseAloud($0) }
+                            ),
+                            isAnswered: PrayerBookStore.shared.hasChosenAloud,
+                            note: { aloud in
+                                PrayerBookAudio.note(
+                                    for: aloud,
+                                    answered: PrayerBookStore.shared.hasChosenAloud
+                                )
+                            }
+                        )
                     }
                     .padding(.top, 30)
 
@@ -214,7 +249,7 @@ struct AccountView: View {
 
                                 ActionRow(
                                     icon: "ph-bell-fill",
-                                    title: "Enable in Settings",
+                                    title: "Turn On in iPhone Settings",
                                     subtitle: "Notifications are turned off for Lumen Viae"
                                 ) {
                                     if let url = URL(string: UIApplication.openSettingsURLString) {
@@ -645,7 +680,7 @@ struct OfflineContentRows: View {
                 VStack(spacing: 0) {
                     ActionRow(
                         icon: "ph-download-simple",
-                        title: "Download for Offline",
+                        title: "Save for Offline",
                         subtitle: "Every meditation and audio file, ready without a connection"
                     ) {
                         Task { await service.downloadAll() }
@@ -898,9 +933,15 @@ struct TextSizeRow: View {
                     .foregroundColor(AppColors.textSecondary)
                     .frame(width: 24)
 
-                Text("Text Size")
-                    .font(AppFonts.bodyFont(16))
-                    .foregroundColor(AppColors.cream)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Text Size")
+                        .font(AppFonts.bodyFont(16))
+                        .foregroundColor(AppColors.cream)
+
+                    Text("The words of prayers and meditations")
+                        .font(AppFonts.italicFont(13))
+                        .foregroundColor(AppColors.textSecondary)
+                }
 
                 Spacer()
             }
@@ -981,17 +1022,9 @@ struct PrayerLanguageRow: View {
         .padding(.vertical, 14)
     }
 
-    /// What a language is called here. The two bilingual choices are
-    /// stored as "Latin & English" and "English & Latin", which read
-    /// alike, so each names the language set first, as onboarding does;
-    /// the stored values do not change.
+    /// What a language is called here: the one name onboarding uses too
     static func displayName(of language: PrayerLanguage) -> String {
-        switch language {
-        case .english: return "English"
-        case .latin: return "Latin"
-        case .both: return "Latin, English beneath"
-        case .latinUnderEnglish: return "English, Latin beneath"
-        }
+        language.displayName
     }
 }
 
@@ -1031,7 +1064,7 @@ struct NarrationVoiceRow: View {
                                     .font(AppFonts.bodyFont(15))
                                     .foregroundColor(selected ? AppColors.gold : AppColors.cream)
 
-                                if let description = voice.description, !description.isEmpty {
+                                if let description = voice.plainDescription, !description.isEmpty {
                                     Text(description)
                                         .font(AppFonts.bodyFont(13))
                                         .foregroundColor(AppColors.textSecondary)
@@ -1166,12 +1199,12 @@ struct AboutSheet: View {
                 VStack(alignment: .leading, spacing: 16) {
                     InfoBlock(
                         title: "Our Mission",
-                        text: "Lumen Viae is a Catholic Rosary companion designed to deepen your prayer life. Through guided meditations, Scripture, and reflection, the app accompanies you through the mysteries of the Rosary, scenes from the lives of Jesus and Mary: the Joyful, Sorrowful, Glorious and Luminous, and the Seven Sorrows of Mary."
+                        text: "Lumen Viae helps you pray the Rosary each day, with a short reading for every mystery, and keeps the Church's other prayers close at hand. The mysteries are scenes from the lives of Jesus and Mary: the Joyful, Sorrowful, Glorious and Luminous, and the Seven Sorrows of Mary."
                     )
 
                     InfoBlock(
                         title: "How to Pray the Rosary",
-                        text: "A Rosary has five mysteries. For each one, think on its scene and pray one Our Father, ten Hail Marys and a Glory Be, together called a decade. The app guides you through all five, with an optional meditation for each: a short reading from a saint or from Scripture."
+                        text: "A Rosary has five mysteries. For each one, think on its scene and pray one Our Father, ten Hail Marys, a Glory Be and the Fatima Prayer, together called a decade. The app guides you through all five, with an optional meditation for each: a short reading from a saint or from Scripture."
                     )
 
                     InfoBlock(
@@ -1275,12 +1308,12 @@ struct HelpSupportSheet: View {
 
                     InfoBlock(
                         title: "What are the different mysteries?",
-                        text: "The mysteries are scenes from the lives of Jesus and Mary, five to a Rosary. There are four sets of them. On the traditional schedule: Joyful (Monday, Thursday), Sorrowful (Tuesday, Friday), and Glorious (Wednesday, Saturday). Sunday takes Joyful in Advent, Sorrowful in Lent, and Glorious otherwise. Luminous mysteries, added by Pope John Paul II, can be prayed any day from View All beside the home grid. The modern schedule (Settings, under Devotion) gives them Thursday and moves the Joyful to Saturday. The Seven Sorrows of Mary can be prayed on any day too."
+                        text: "The mysteries are scenes from the lives of Jesus and Mary, five to a Rosary. There are four sets of them. On the traditional schedule: Joyful (Monday, Thursday), Sorrowful (Tuesday, Friday), and Glorious (Wednesday, Saturday). Sunday takes Joyful in Advent, Sorrowful in Lent, and Glorious otherwise. The Luminous Mysteries, added by St. John Paul II in 2002, can be prayed any day from View All beside the home grid. The modern schedule (Settings, under Devotion) gives them Thursday and moves the Joyful to Saturday. The Seven Sorrows of Mary can be prayed on any day too."
                     )
 
                     InfoBlock(
                         title: "How does audio work?",
-                        text: "Choose it on the Rosary's own page before you pray, or in Settings under Prayer Experience: Meditation Only reads the meditation aloud and leaves the prayers to you, and Whole Rosary says every prayer aloud, the beads moving with the voice. During the prayer, the play button starts and pauses the voice, and the skip buttons move 10 seconds forward or back."
+                        text: "Choose it on the Rosary's own page before you pray, or in Settings under The Rosary: Meditation Only reads the meditation aloud and leaves the prayers to you, and Whole Rosary says every prayer aloud, the beads moving with the voice. During the prayer, the play button starts and pauses the voice, and the buttons beside it move 10 seconds, or a whole prayer with Whole Rosary."
                     )
 
                     InfoBlock(

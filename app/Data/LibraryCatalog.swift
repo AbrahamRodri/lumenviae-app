@@ -191,6 +191,100 @@ enum LibraryCatalog {
             // stands the ledger lists LVI twice and never lists LXI.
             headingOverrides: [71: "Chapter LXI"]
         ),
+
+        // The 1852 Dunigan translation, cut into the units the printed
+        // book has: the Introduction; Part I's twenty-two sections
+        // (each chapter of the Salve Regina commentary in its sections,
+        // Chapters IX and X whole) and the prayers of the saints that
+        // close it; Part II's nine discourses on her feasts and the
+        // reflections on each of the seven dolors; the ten sections on
+        // her virtues; then the practices, the examples, the novena, the
+        // meditations for her feasts, the prayers for the week, the
+        // little rosary and the various prayers — 58 units. The
+        // footnotes (1,934 of them, nearly all citations) are gathered
+        // at the end of the Gutenberg text, and the book stops before
+        // them; the markers stay in the prose, as the Imitation's do.
+        // The seven feast meditations are headed by a bare "MEDITATION"
+        // that cannot be told from the second one, so the first is cut
+        // at its own italic subtitle and the bare lines are dropped.
+        //
+        // The recording is LibriVox 8533, read solo by Ann Boulais from
+        // the 1888 Kenedy printing, which is this same translation (the
+        // two were set side by side on the dolors). Her 58 files follow
+        // the book's units one for one, but for two things: she gives no
+        // file to the two paragraphs that open the virtues (they are read
+        // into the first virtue's file, so that unit is `unread`), and she
+        // needed two files for the examples, titled "part 1" and "part 2",
+        // which the track map gathers back into one reading.
+        LibraryBookInfo(
+            id: "glories-of-mary",
+            title: "The Glories of Mary",
+            author: "St. Alphonsus Liguori",
+            blurb:
+                "Every title of the Hail, Holy Queen explained, with her feasts and her seven sorrows: the saints' case for trusting Mary.",
+            gutenbergID: 72411,
+            librivoxID: 8533,
+            trackMapping: .sequential(offset: 0, unread: [40]),
+            parsing: LibraryParsingRules(
+                chapterPattern:
+                    #"^(INTRODUCTION|SECTION [IVXLC]+\.|CHAPTER (IX|X)\.|SOME DEVOUT PRAYERS OF VARIOUS SAINTS TO THE HOLY MOTHER\.|DISCOURSE [IVXLC]+\.|ON THE (FIRST|SECOND|THIRD|FOURTH|FIFTH|SIXTH|SEVENTH) DOLOR\.|VARIOUS PRACTICES OF DEVOTION TO THE DIVINE MOTHER\.|VARIOUS ADDITIONAL EXAMPLES APPERTAINING TO THE MOST HOLY MARY\.|NOVENA OF MEDITATIONS|_For the day of the Purification of Mary and the Presentation of Jesus\._|PRAYERS TO THE DIVINE MOTHER|LITTLE ROSARY OF THE SEVEN DOLORS OF MARY\.|VARIOUS PRAYERS TO MARY\.)$"#,
+                partPattern: #"^(PART (FIRST|SECOND):.*|OF THE VIRTUES OF THE MOST HOLY MARY\.)$"#,
+                startPattern: #"^INTRODUCTION$"#,
+                stopPattern: #"^FOOTNOTES$"#,
+                dropPattern: #"^MEDITATION$"#
+            ),
+            // The subtitle the feast meditations are cut at names only
+            // the first of the seven; the unit holds them all
+            headingOverrides: [54: "Meditations for the Feasts of Mary"]
+        ),
+
+        // Ella McMahon's translation of the Ramière edition, Book First
+        // (nine chapters), Book Second (twelve) and Book Third (twelve):
+        // thirty-three chapters, each headed "_CHAPTER I._" in
+        // Gutenberg's italics with its title on the lines beneath, some
+        // of those titles a hundred and eighty characters long. The
+        // appendix of letters by Surin, Bossuet and St. Francis de Sales
+        // is not Caussade's and ends the book. No complete recording of
+        // this translation is on LibriVox.
+        LibraryBookInfo(
+            id: "abandonment-to-divine-providence",
+            title: "Abandonment to Divine Providence",
+            author: "Jean-Pierre de Caussade",
+            translator: "Ella McMahon",
+            blurb:
+                "How to find God's will in the duty of each moment, and rest in it. Short chapters for anxious people.",
+            gutenbergID: 52057,
+            parsing: LibraryParsingRules(
+                chapterPattern: #"^_?CHAPTER [IVXLC]+\._?$"#,
+                partPattern: #"^Book (First|Second|Third)\.$"#,
+                startPattern: #"^Book First\.$"#,
+                stopPattern: #"^APPENDIX\.$"#,
+                maximumTitleLength: 220
+            )
+        ),
+
+        // The Fleming H. Revell edition (New York, 1895): the editor's
+        // preface, four conversations and fifteen letters, twenty units.
+        // The recording is LibriVox 564, read by Kirsten Ferreri from
+        // the same edition, nineteen files: the conversations and the
+        // letters, with no file for the preface, so the count begins one
+        // unit in.
+        LibraryBookInfo(
+            id: "practice-of-the-presence-of-god",
+            title: "The Practice of the Presence of God",
+            author: "Brother Lawrence",
+            blurb:
+                "A monastery cook's way of praying while he worked: a few conversations and letters, short enough to keep for life.",
+            gutenbergID: 13871,
+            librivoxID: 564,
+            trackMapping: .sequential(offset: -1),
+            parsing: LibraryParsingRules(
+                chapterPattern:
+                    #"^(PREFACE|(FIRST|SECOND|THIRD|FOURTH) CONVERSATION|(FIRST|SECOND|THIRD|FOURTH|FIFTH|SIXTH|SEVENTH|EIGHTH|NINTH|TENTH|ELEVENTH|TWELFTH|THIRTEENTH|FOURTEENTH|FIFTEENTH) LETTER)\.$"#,
+                partPattern: #"^(CONVERSATIONS|LETTERS)\.$"#,
+                startPattern: #"^PREFACE\.$"#
+            )
+        ),
     ]
 
     static func book(id: String) -> LibraryBookInfo? {

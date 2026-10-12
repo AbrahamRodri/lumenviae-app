@@ -45,8 +45,12 @@ struct ChapelAct: Identifiable {
     /// up where it stopped (`InProgressPrayer.isContinued(by:)`)
     var resume: InProgressPrayer? = nil
 
-    /// The consecration's day, for its act's words ("Open Day 14")
+    /// The consecration's day, for its act's words ("Go to Day 14")
     var day: Int? = nil
+
+    /// Whether a day of the consecration has been prayed yet: on Day 1,
+    /// before anything is prayed, the row says BEGIN, not CONTINUE
+    var consecrationBegun: Bool = false
 
     var id: String { shortcut.rawValue }
 
@@ -72,17 +76,17 @@ struct ChapelAct: Identifiable {
         switch shortcut {
         case .todaysRosary, .scripturalRosary, .rosaryAloud:
             return "Pray the Rosary"
-        case .chooseMeditation: return "Open Today's Mysteries"
+        case .chooseMeditation: return "Choose How to Pray Today"
         case .sevenSorrows:     return "Pray the Seven Sorrows"
         case .mass:             return "Open Today\u{2019}s Mass"
         case .office:           return "Open Hours of Prayer"
         case .consecration:
             guard let day else { return "Open the Consecration" }
-            return day > 33 ? "Open Consecration Day" : "Open Day \(day)"
-        case .morningPrayers:   return "Pray Morning Prayers"
+            return day > 33 ? "Go to Consecration Day" : "Go to Day \(day)"
+        case .morningPrayers:   return "Begin Morning Prayers"
         case .angelus:
-            return PrayerBook.isEastertide(Date()) ? "Pray \(PrayerShortcut.angelusTitle)" : "Pray the Angelus"
-        case .nightPrayers:     return "Pray Night Prayers"
+            return PrayerBook.isEastertide(Date()) ? "Begin \(PrayerShortcut.angelusTitle)" : "Begin the Angelus"
+        case .nightPrayers:     return "Begin Night Prayers"
         }
     }
 
@@ -90,7 +94,8 @@ struct ChapelAct: Identifiable {
     /// preparation already under way or a Rosary left off today, BEGIN
     /// for everything else.
     var rowAction: String {
-        shortcut == .consecration || resume != nil ? "Continue" : "Begin"
+        if shortcut == .consecration { return consecrationBegun ? "Continue" : "Begin" }
+        return resume != nil ? "Continue" : "Begin"
     }
 }
 
@@ -962,7 +967,7 @@ struct ChapelFlameTile: View {
     private var milestoneLine: String? {
         guard let next = StreakMilestone.next(after: streak) else { return nil }
         let away = next.days - streak
-        return "\(next.title) · \(away == 1 ? "1 day away" : "\(away) days away")"
+        return "Next: \(next.title) · \(away == 1 ? "1 day away" : "\(away) days away")"
     }
 
     private var litNote: String { hasPrayedToday ? "Prayed today" : "Not yet today" }
@@ -997,7 +1002,12 @@ struct ChapelFlameTile: View {
             line += " This week, prayed \(days)."
         }
         if let milestoneLine {
-            line += " Next, \(milestoneLine.replacingOccurrences(of: " · ", with: ", "))."
+            // The line already opens on "Next:"; said, its colon and dot
+            // are commas
+            let said = milestoneLine
+                .replacingOccurrences(of: "Next: ", with: "Next, ")
+                .replacingOccurrences(of: " · ", with: ", ")
+            line += " \(said)."
         }
         return line + " Opens the Prayer Record."
     }
@@ -1239,10 +1249,10 @@ struct ChapelConsecrationTile: View {
     /// rule's ledger row borrows this for the Consecration's line.
     static func phaseName(day: Int) -> String {
         switch day {
-        case ...12:   return "Renouncing the world"
+        case ...12:   return "Letting go of the world"
         case 13...19: return "Knowing yourself"
         case 20...26: return "Knowing Mary"
-        case 27...33: return "Knowing Christ"
+        case 27...33: return "Knowing Jesus"
         default:      return "Consecration Day"
         }
     }
@@ -1251,10 +1261,11 @@ struct ChapelConsecrationTile: View {
     /// Mary, day 14 of 33, Humble Subjection. Continue." — the day's own title, as
     /// the full tile sets it. The day of consecration is not a
     /// thirty-fourth day of the preparation.
-    private static func spoken(day: Int) -> String {
-        if day > 33 { return "Consecration to Mary, Consecration Day. Continue." }
+    private static func spoken(day: Int, begun: Bool) -> String {
+        let act = begun ? "Continue" : "Begin"
+        if day > 33 { return "Consecration to Mary, Consecration Day. \(act)." }
         let title = ConsecrationData.day(day)?.title ?? phaseName(day: day)
-        return "Consecration to Mary, day \(day) of 33, \(title). Continue."
+        return "Consecration to Mary, day \(day) of 33, \(title). \(act)."
     }
 
     /// Where the user stands with the consecration, as the tile draws it
@@ -1300,7 +1311,7 @@ struct ChapelConsecrationTile: View {
         if let active, !active.hasBegun() {
             scheduledTile(start: active.startDate)
         } else if let active {
-            activeTile(day: active.currentDayNumber)
+            activeTile(day: active.currentDayNumber, begun: !active.completedDays.isEmpty)
         } else if let completed {
             completedTile(completed)
         } else {
@@ -1310,14 +1321,14 @@ struct ChapelConsecrationTile: View {
 
     // MARK: Under way
 
-    private func activeTile(day: Int) -> some View {
+    private func activeTile(day: Int, begun: Bool) -> some View {
         ChapelTileFrame(
             tile: .consecration,
             span: span,
             surface: .painting(Self.paintingName(.underWay(day: day))),
             padding: padding,
             onTap: open,
-            accessibilityLabel: Self.spoken(day: day)
+            accessibilityLabel: Self.spoken(day: day, begun: begun)
         ) {
             EmptyView()
         } floor: {
@@ -1336,7 +1347,7 @@ struct ChapelConsecrationTile: View {
 
                     if span == 2 {
                         Spacer(minLength: 0)
-                        ChapelFootAct(title: "Continue")
+                        ChapelFootAct(title: begun ? "Continue" : "Begin")
                             .frame(minHeight: 44)
                     }
                 }
@@ -1822,7 +1833,7 @@ struct ChapelReadingTile: View {
             act: "All books",
             footRuled: span == 1,
             onTap: { router.push(.spiritualReading) },
-            accessibilityLabel: "Reading. No book open yet. Take up and read: choose a book. Opens all books."
+            accessibilityLabel: "Reading. No book open yet: choose one. Opens all books."
         ) {
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .bottom, spacing: 6) {
@@ -1837,7 +1848,7 @@ struct ChapelReadingTile: View {
                 ChapelShelfLine()
                     .padding(.horizontal, span == 2 ? -18 : -14)
 
-                Text("Take up and read \u{00B7} choose a book")
+                Text("No book open yet \u{00B7} choose one")
                     .font(AppFonts.italicFont(span == 2 ? 14 : 12.5))
                     .foregroundColor(AppColors.cream.opacity(0.85))
                     .lineLimit(2)
@@ -1860,7 +1871,7 @@ struct ChapelReadingTile: View {
     /// the book by, the way "De Montfort" stands for the saint.
     private static func shortAuthor(_ info: LibraryBookInfo) -> String {
         switch info.id {
-        case "imitation-of-christ":         return "à Kempis"
+        case "imitation-of-christ":         return "Thomas à Kempis"
         case "story-of-a-soul":             return "St. Thérèse"
         case "confessions-of-st-augustine": return "St. Augustine"
         case "dolorous-passion":            return "Emmerich"
@@ -2286,14 +2297,14 @@ private extension TodayInChurch {
         }) else { return nil }
 
         for passage in section.body {
-            // Each passage is an [english, latin] pair; a single-element
-            // passage carries the same text for both
-            let latin = passage.count > 1 ? passage[1] : (passage.first ?? "")
-            for line in latin.components(separatedBy: "\n") {
+            // Each passage is an [english, latin] pair, and the English
+            // is what a reader of the tile can read
+            let english = passage.first ?? ""
+            for line in english.components(separatedBy: "\n") {
                 let trimmed = line.trimmingCharacters(in: .whitespaces)
                 // A line in asterisks is the citation, not the text
                 guard !trimmed.isEmpty, !trimmed.hasPrefix("*") else { continue }
-                return Self.incipit(of: trimmed)
+                return Self.incipit(of: trimmed, words: 5)
             }
         }
         return nil
@@ -2307,7 +2318,7 @@ extension TodayInChurch {
     /// marks a missal prints before a text — ℣. ℟. Ant. — are taken off
     /// first: cut at the first stop with them still on, a line opening
     /// "Ant. Gaudeamus" named its Mass "Ant".
-    static func incipit(of line: String) -> String? {
+    static func incipit(of line: String, words count: Int = 3) -> String? {
         var text = line.trimmingCharacters(in: .whitespaces)
         for mark in ["℣.", "℟.", "V.", "R.", "Ant."] where text.hasPrefix(mark) {
             text = String(text.dropFirst(mark.count)).trimmingCharacters(in: .whitespaces)
@@ -2315,7 +2326,7 @@ extension TodayInChurch {
 
         let stops = CharacterSet(charactersIn: ":;,.!?*")
         let opening = text.components(separatedBy: stops).first ?? text
-        var words = Array(opening.split(whereSeparator: \.isWhitespace).prefix(3))
+        var words = Array(opening.split(whereSeparator: \.isWhitespace).prefix(count))
         while words.count > 1, let last = words.last, leavesHanging(last) {
             words.removeLast()
         }
@@ -2323,10 +2334,12 @@ extension TodayInChurch {
         return words.joined(separator: " ")
     }
 
-    /// The prepositions and conjunctions an incipit does not end on
+    /// The prepositions and conjunctions an incipit does not end on,
+    /// Latin and English
     private static let hangingWords: Set<String> = [
         "in", "ad", "et", "de", "cum", "a", "ab", "ex",
-        "per", "pro", "sub", "super", "qui", "quia", "ut"
+        "per", "pro", "sub", "super", "qui", "quia", "ut",
+        "the", "of", "and", "to", "o", "for", "with", "by", "on", "at", "an"
     ]
 
     /// Whatever its case or accent: the missal prints "súper" and "In"
@@ -2341,8 +2354,9 @@ extension TodayInChurch {
 
 // MARK: - Library
 
-/// The chapel's shelf, bound like a book: the books and the guides as a
-/// ruled index of doors, each with a line saying what it holds, over
+/// The chapel's shelf, bound like a book: the books, the guides and the
+/// reader's own pages (the Prayer Record and the journal) as a ruled
+/// index of doors, each with a line saying what it holds, over
 /// Augustine's line. The liturgy has its own tile, so this heading is
 /// true of every door beneath it.
 struct ChapelLibraryTile: View {
@@ -2369,13 +2383,20 @@ struct ChapelLibraryTile: View {
         Door(title: "Carlo Acutis", line: "A saint of our day", route: .carloAcutis)
     ]
 
+    /// The reader's own pages, which had no door but the flame and the
+    /// Reflections tile, either of which can be put away
+    private static let yourPages: [Door] = [
+        Door(title: "Prayer Record", line: "The days you have prayed", route: .prayerRecord),
+        Door(title: "Journal", line: "Your reflections", route: .journal)
+    ]
+
     /// The doors whose pages are not archived (`ArchivedPages`)
     private static var openBooks: [Door] { books.filter { !ArchivedPages.hides($0.route) } }
     private static var openGuides: [Door] { guides.filter { !ArchivedPages.hides($0.route) } }
 
-    /// Whether the index stands in its two sections. With a section down
-    /// to one door, the doors stand as one ruled list instead, so neither
-    /// heading is set over a lone row.
+    /// Whether the books and the guides stand in sections of their own.
+    /// With either down to one door, they stand together under one
+    /// heading instead, so no heading is set over a lone row.
     private static var isSectioned: Bool { openBooks.count >= 2 && openGuides.count >= 2 }
 
     var body: some View {
@@ -2411,13 +2432,14 @@ struct ChapelLibraryTile: View {
                     section("Books", Self.openBooks)
                     section("Guides", Self.openGuides)
                 } else {
-                    section(nil, Self.openBooks + Self.openGuides)
+                    section("Books and guides", Self.openBooks + Self.openGuides)
                 }
+                section("Your pages", Self.yourPages)
             }
             .padding(.top, 18)
             .padding(.bottom, 10)
 
-            Text("Our heart is restless until it rests in thee.")
+            Text("Our heart is restless until it rests in thee. \u{2014} St. Augustine")
                 .font(AppFonts.italicFont(14))
                 .foregroundColor(AppColors.cream.opacity(0.7))
                 .multilineTextAlignment(.center)
@@ -2428,16 +2450,14 @@ struct ChapelLibraryTile: View {
         }
     }
 
-    private func section(_ name: String?, _ doors: [Door]) -> some View {
+    private func section(_ name: String, _ doors: [Door]) -> some View {
         VStack(alignment: .leading, spacing: 0) {
-            if let name {
-                Text(name.uppercased())
-                    .font(AppFonts.labelFont(9))
-                    .tracking(2.5)
-                    .foregroundColor(AppColors.gold.opacity(0.75))
-                    .padding(.bottom, 4)
-                    .accessibilityAddTraits(.isHeader)
-            }
+            Text(name.uppercased())
+                .font(AppFonts.labelFont(9))
+                .tracking(2.5)
+                .foregroundColor(AppColors.gold.opacity(0.75))
+                .padding(.bottom, 4)
+                .accessibilityAddTraits(.isHeader)
 
             ForEach(Array(doors.enumerated()), id: \.element.title) { index, door in
                 doorRow(door, size: 17, minHeight: 54, showsLine: true, divided: index < doors.count - 1)
@@ -2755,7 +2775,7 @@ struct ChapelReflectionsTile: View {
     private var latest: JournalEntry? { entries.first }
 
     private func open() {
-        router.switchTo(.journal)
+        router.push(.journal)
     }
 
     var body: some View {

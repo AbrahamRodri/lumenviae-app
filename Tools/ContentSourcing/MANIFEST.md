@@ -25,11 +25,15 @@ Generated from `sources.py` by `build_manifest.py`; edit there. Machine-readable
 | `devotion_guardian_angels` | (d) Tuesday · the Holy Angels: Chant Main board, weekday devotions strip | The Guardian Angel | Bernardo Strozzi (1581–1644) | — | Museum of Fine Arts, Houston (76.256) | Public domain | verified |
 | `devotion_st_joseph` | (e) Wednesday · St Joseph: Chant Main board, weekday devotions strip | Saint Joseph and the Christ Child | Guido Reni (1575–1642) | c. 1640 | Museum of Fine Arts, Houston | Public domain | verified |
 | `feast_our_lady_of_the_rosary` | (f) October / Our Lady of the Rosary (Oct 7): Chant Main 'Month of the Holy Rosary' card, Year 'Feast days ahead', Occasions 'A Sung Rosary' | Madonna of the Rosary | Caravaggio (1571–1610) | 1607 | Kunsthistorisches Museum, Vienna | Public domain | verified |
-| `feast_christ_the_king` | (g) Christ the King (last Sunday of October): Chant Year 'Feast days ahead' (Christus Vincit) | Christ Triumphant over Sin and Death | Peter Paul Rubens (1577–1640) | c. 1615–22 | Rubens workshop picture; several versions (e.g. Rubenshuis, Antwerp) — pick the version Commons tags PD-Art | Public domain | verified |
+| `feast_christ_the_king` | (g) Christ the King (last Sunday of October): Chant Year 'Feast days ahead' (Christus Vincit) | Christ Triumphant over Sin and Death | Peter Paul Rubens (1577–1640) | c. 1615–22 | Rubens workshop picture, of which there are several versions (Rubenshuis, Antwerp among them) | Public domain | verified |
 | `feast_all_saints` | (g) All Saints (Nov 1): Chant Year 'Feast days ahead' (Litaniæ Sanctorum) | Adoration of the Trinity (The Landauer Altarpiece) | Albrecht Dürer (1471–1528) | 1511 | Kunsthistorisches Museum, Vienna | Public domain | verified |
 | `hour_morning` | (h) Prayer Book 'Pray Now' hero for Morning Prayers (On rising) | The Song of the Lark | Jules Breton (1827–1906) | 1884 | Art Institute of Chicago | Public domain | verified |
 | `hour_night` | (h) Prayer Book 'Pray Now' hero for Night Prayers (Before sleep); Chapel's Prayer Book tile at night | The Penitent Magdalen | Georges de La Tour (1593–1652) | c. 1640 | The Metropolitan Museum of Art | CC0 | verified |
 | `occasion_before_bed` | (i) Chant Occasions 'Before Bed' (Compline chants) | Reuse hour_night (no separate file proposed) | — | — | — | — | unverified |
+| `seven_sorrows_finding` | The third sorrow, the loss of Jesus in the Temple (it borrowed joyful_finding) | The Finding of the Saviour in the Temple | William Holman Hunt (1827–1910) | 1854–60 | Birmingham Museum and Art Gallery | Public domain | verified |
+| `seven_sorrows_calvary` | The fifth sorrow, Mary at the foot of the Cross (it borrowed sorrowful_crucifixion) | Crucifixion Diptych | Rogier van der Weyden (c. 1399–1464) | c. 1460 | Philadelphia Museum of Art | Public domain | verified |
+| `glorious_pentecost` | The third Glorious Mystery (replaces a Pentecost whose painter could not be established) | The Pentecost | El Greco (1541–1614) | c. 1600 | Museo del Prado, Madrid | Public domain | verified |
+| `glorious_resurrection` | The first Glorious Mystery and the Glorious card on home (replaces Coypel's, bundled at 566×732) | The Resurrection of Christ | Annibale Carracci (1560–1609) | 1593 | Musée du Louvre, Paris | Public domain | verified |
 
 Alternates and reasons:
 
@@ -44,6 +48,10 @@ Alternates and reasons:
 - `hour_morning`: A field-worker stopping at sunrise — the day offered at its start; 19th-c. academic like the Hofmann and Bouguereau already bundled. AIC publishes it CC0. *Alternate:* Jean-François Millet, The Angelus (1857–59), Musée d'Orsay — but that is the evening Angelus.
 - `hour_night`: Prayer by a single candle at night — the examination of conscience before sleep. The Met's open-access image is CC0. *Alternate:* Georges de La Tour, The Magdalen with the Smoking Flame (c. 1640), LACMA.
 - `occasion_before_bed`: Same subject as Night Prayers; an alias saves ~500 KB. If a distinct picture is wanted: Gerrit van Honthorst / Jan Lievens candlelight devotional scenes.
+- `seven_sorrows_finding`: Mary's own part in the scene: she has found Him and holds Him, where Veronese's Christ among the Doctors (joyful_finding) shows the boy teaching and no mother.
+- `seven_sorrows_calvary`: Mary swooning into St John's arms beside the Cross: the sorrow is hers, where Velázquez's Christ Crucified (sorrowful_crucifixion) shows Him alone. Commons holds the diptych at 1195×1128, below the 1600 target, so it is pinned.
+- `glorious_pentecost`: Mary at the centre of the Apostles under the dove, the tongues of fire on every head; a known painter and a known museum, where the old file was an unidentified seventeenth-century picture.
+- `glorious_resurrection`: The risen Christ high in the picture over the sleeping guards, so the card's focal point (a fifth of the way down) still finds Him; Commons holds it at 1241×1700 against the old 566×732. *Alternate:* Carl Bloch, The Resurrection (1873), Commons at 1000×1400 only.
 
 Target format: 1600 px on the long edge, progressive JPEG, 300–800 KB; one 1x image per imageset like the existing ones.
 
@@ -83,13 +91,34 @@ Identified by eye from the bundled images, then each compared with the Commons f
 | `joyful_visitation` | The Visitation | Raphael and workshop (Giulio Romano) | c. 1517 | Museo del Prado | confirmed | File:Visitación de Rafael.jpg | Public domain | exact (1.0) | 1157×1600 | fetch.py --provenance's search finds only 'Raphael - The visitation.jpg' (520×719), a weak match; the bundled file is this one, the same size to the pixel, found by comparing the images. |
 | `luminous_cana` | The Marriage Feast at Cana | Bartolomé Esteban Murillo | c. 1672 | Barber Institute of Fine Arts, Birmingham | confirmed | File:The Barber Institute of Fine Arts - Bartolomé Esteban Murillo - The Marriage Feast at CanaFXD.jpg | Public domain | same work (0.965) | 1920×1407 | A crop of this scan. |
 | `sorrowful_carrying` | Christ Carrying the Cross | Anthony van Dyck | 1617–18 | Sint-Pauluskerk, Antwerp | confirmed | File:Anthony van Dyck - Jesus Christ bearing the Cross.jpg | Public domain | exact (1.0) | 1218×1600 | Sint-Pauluskerk's own photograph. Taken again at 1600 px from this file (fetch.py --retake); it was bundled at 960×1261. |
-| `glorious_resurrection` | The Resurrection of Christ | Noël Coypel | 1700 | unconfirmed (French royal commission) | confirmed | File:Noël Coypel - Resurrection of Christ (large version).jpg | Public domain | same work (0.782) | 566×732 | Commons holds the work only small (638×900 at most); the bundled image is a crop of it, the same composition by eye, and the smallest painting in the bundle. |
-| `glorious_pentecost` | Pentecost (not Maíno's: the Prado's Maíno is a different composition) | — | — | — | ask Abraham | — | — | — | — | — |
-| `glorious_ascension` | The Ascension (Spanish or Flemish Baroque, 17th c.) | — | — | — | ask Abraham | — | — | — | — | — |
-| `glorious_assumption` | The Assumption of the Virgin (Neapolitan/Roman, 18th c., in the manner of Giaquinto or Solimena) | — | — | — | ask Abraham | — | — | — | — | — |
-| `joyful_nativity` | The Adoration of the Shepherds, night scene with putti (Italian Baroque, in the manner of Guido Reni) | — | — | — | ask Abraham | — | — | — | — | — |
+| `glorious_ascension` | The Ascension | Francisco Camilo (1615–1673) | 1651 | Museo del Prado, Madrid (Google Art Project scan) | confirmed | File:Francisco Camilo - Ascension - Google Art Project.jpg | Public domain | same work (None) | 672×1024 | The same picture by eye, figure for figure (the signature at the lower left reads F. CAMILO); the Commons file is the Google Art Project scan at 3474×5293. |
+| `glorious_assumption` | The Assumption of the Virgin | Corrado Giaquinto (1703–1766) | — | Private collection (Sotheby's, New York, 2013, lot 76) | confirmed | File:CORRADO GIAQUINTO MOLFETTA 1703 - 1766 NAPLES ASSUMPTION OF THE VIRGIN.jpg | Public domain | same work (None) | 800×1245 | The same picture by eye: the Virgin's raised arm, the two angels on the cloud, the apostle with the staff at the tomb. Commons' file is the auction-house photograph (1286×2000). |
+| `joyful_nativity` | The Adoration of the Shepherds | Guido Reni (1575–1642) | c. 1640 | National Gallery, London | confirmed | File:The Adoration of the Shepherds by Guido Reni.jpg | Public domain | same work (None) | 711×1080 | The National Gallery's picture, the same to the angels' scroll; Commons holds it at 3953×6000. |
 
-**For Abraham:** where did these come from? `glorious_pentecost`, `glorious_ascension`, `glorious_assumption`, `joyful_nativity`. The subject and school are clear but not the painter, so their licence can't be confirmed yet.
+## Texts
+
+Every text the app bundles or fetches that is not its own writing, with the edition it is taken from (`sources.py`, `TEXTS`; build_credits.py renders the same list into the app's Sources & Credits page).
+
+| Work | Maker and edition | Where in the app | Source | Licence |
+|---|---|---|---|---|
+| The Holy Bible | Douay-Rheims translation, Bishop Challoner's revision (1749–52) | The Scriptural Rosary's verses, the consecration's readings, the Gospel meditation sets and the daily quotations | Project Gutenberg #8300 and the Original Douay-Rheims API (thedouayrheims.com) | Public domain |
+| True Devotion to the Blessed Virgin Mary | St. Louis de Montfort, translated by Frederick William Faber (1862; twelfth London edition, 1904) | Bundled whole, and read in the consecration | Resources/TrueDevotionBook.json, from the 1904 printing | Public domain |
+| The Imitation of Christ | Thomas à Kempis, translated by William Benham | On the Spiritual Reading shelf, in the consecration's readings and the daily quotations | Project Gutenberg #1653 | Public domain |
+| The Story of a Soul | St. Thérèse of Lisieux, translated by Thomas N. Taylor (1912) | On the Spiritual Reading shelf | Project Gutenberg #16772; read by Susan Morin for LibriVox (8021) | Public domain |
+| The Confessions | St. Augustine, translated by E. B. Pusey | On the Spiritual Reading shelf | Project Gutenberg #3296; read for LibriVox (2601) | Public domain |
+| The Dolorous Passion of Our Lord Jesus Christ | Anne Catherine Emmerich, Burns & Lambert's English (1862) | On the Spiritual Reading shelf, and cut into the bundled Sorrowful meditations | Project Gutenberg #10866; read for LibriVox (13588) | Public domain |
+| The Glories of Mary | St. Alphonsus Liguori, the Dunigan translation (New York, 1852) | On the Spiritual Reading shelf, cut into the bundled Seven Sorrows meditations, and in the daily quotations | Project Gutenberg #72411; read by Ann Boulais for LibriVox (8533) from the 1888 Kenedy printing of the same translation | Public domain |
+| Abandonment to Divine Providence | Jean-Pierre de Caussade, translated by Ella McMahon (1887) | On the Spiritual Reading shelf | Project Gutenberg #52057 | Public domain |
+| The Practice of the Presence of God | Brother Lawrence of the Resurrection, the Fleming H. Revell edition (1895) | On the Spiritual Reading shelf | Project Gutenberg #13871; read by Kirsten Ferreri for LibriVox (564) | Public domain |
+| Maxims and Counsels of St. Francis de Sales for Every Day of the Year | translated by Ella McMahon (1884) | In the daily quotations | Project Gutenberg #73661 | Public domain |
+| Meditations and Devotions | John Henry Newman (Longmans, 1893) | In the daily quotations | Internet Archive (a2514634smrn00newmuoft) | Public domain |
+| The Divine Comedy | Dante, translated by Henry Wadsworth Longfellow (1867) | In the daily quotations | Paradiso XXXIII | Public domain |
+| The Roman Missal of 1962 | the Missale Meum project | Today's Mass, fetched when opened | missalemeum.com, MIT licence | MIT |
+| The Roman Breviary of 1962 | The Divinum Officium Project | The Hours of Prayer, fetched when opened | divinumofficium.com, by way of Lumen Viae's own server | Free to use, with the project's credit |
+| Gregorian chant: recordings and scores | Verbum Gloriae (verbumgloriae.es) | The Chant Library's 104 recordings and their scores | verbumgloriae.es, copyleft licence | Copyleft (share alike, no attribution required) |
+| Prayers of the Church | the 1910 Raccolta, the Roman Ritual and Missal, and the app's own literal renderings from the Latin | The Prayer Book | Public-domain editions, named in each file of Data/PrayerBook | Public domain |
+| Cinzel and EB Garamond | Natanael Gama; Georg Duffner and Octavio Pardo | The app's type | Google Fonts | SIL Open Font License 1.1 |
+| Phosphor Icons and Christicons | Phosphor (Helena Zhang and Tobias Fried); Christicons | The app's glyphs, beside those drawn for it | phosphoricons.com (MIT); christicons.com (free for commercial use) | MIT; free for commercial use |
 
 ## Flagged
 

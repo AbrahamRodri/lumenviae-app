@@ -63,7 +63,7 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
         switch self {
         case .joyful:      return "Jesus' birth and childhood"
         case .sorrowful:   return "Jesus' suffering and death"
-        case .glorious:    return "The Resurrection"
+        case .glorious:    return "Jesus risen, and Mary in glory"
         case .luminous:    return "Jesus' public life"
         case .sevenSorrows: return "Mary in her grief"
         }
@@ -100,16 +100,17 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
     /// canvas — the point a crop should keep at any size. See `FocalFill`.
     ///
     /// The centred paintings are centred. The Resurrection and the Pietà
-    /// are both tall canvases carrying their subject high — the risen
-    /// Christ a fifth of the way down, the Pietà's halos and faces a
-    /// little under a third — so a centred crop leaves a card of drapery
-    /// and onlookers. Naming the point, rather than an edge plus a nudge
+    /// are both tall canvases carrying their subject high — Carracci's
+    /// risen Christ has his head a tenth of the way down the canvas and his
+    /// raised hand above it, so the window is pinned near the top (0.06),
+    /// the Pietà's halos and faces a little under a third — so a centred
+    /// crop leaves a card of drapery and onlookers. Naming the point, rather than an edge plus a nudge
     /// in points, is what lets the same painting crop right on a 160pt
     /// card, a 260pt frontispiece and a 40pt thumbnail, and it is the rule
     /// API artwork arrives with, so bundled fallbacks obey the same one.
     var cardFocalPoint: UnitPoint {
         switch self {
-        case .glorious:     return UnitPoint(x: 0.5, y: 0.22)
+        case .glorious:     return UnitPoint(x: 0.5, y: 0.06)
         case .sevenSorrows: return UnitPoint(x: 0.5, y: 0.30)
         case .joyful, .sorrowful, .luminous: return .center
         }
@@ -128,7 +129,7 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
     var daysPrayed: String {
         if let days = ScheduleService.daysPrayed(self) { return days }
         switch self {
-        case .sevenSorrows: return "Fridays, and on her feast, September 15"
+        case .sevenSorrows: return "Fridays, and on Our Lady of Sorrows, September 15"
         default:            return "Any day you choose"
         }
     }

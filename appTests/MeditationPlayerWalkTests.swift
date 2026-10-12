@@ -36,10 +36,12 @@ struct MeditationPlayerWalkTests {
     }
 
     private func player(_ category: MysteryCategory = .joyful, narrated: Bool = false,
-                        startAtIndex: Int = 0, startAtBead: Int = 0) -> PrayerSessionViewModel {
+                        startAtIndex: Int = 0, startAtBead: Int = 0,
+                        pendant: Bool = false) -> PrayerSessionViewModel {
         PrayerSessionViewModel(
             meditationSet: set(category, narrated: narrated),
             startAtIndex: startAtIndex, startAtBead: startAtBead,
+            showsOpeningPrayers: pendant,
             apiService: APIService(session: StubProtocol.session),
             audioService: audio()
         )

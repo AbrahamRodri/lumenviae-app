@@ -390,7 +390,7 @@ struct RosaryChoicesSection: View {
             RosaryInfoRowView(
                 title: row.title,
                 value: RosaryInfoRow.voiceValue(
-                    voice: NarrationVoiceCatalog.shared.chosenVoice.name,
+                    voice: NarrationVoiceCatalog.shared.chosenVoice.plainName,
                     // The app's speed, which a chant or a book sounding
                     // meanwhile may have borrowed the player from
                     rate: PlaybackSpeedChoice.rateLabel(AudioService.shared.appRate)
@@ -634,6 +634,7 @@ struct RosaryChoiceSettingsRow: View {
         value: Binding<Bool>,
         isAvailable: Bool = true,
         isAnswered: Bool = true,
+        unavailableNote: String? = nil,
         note: @escaping (Bool) -> String
     ) {
         self.icon = icon
@@ -642,6 +643,7 @@ struct RosaryChoiceSettingsRow: View {
         self._value = value
         self.isAvailable = isAvailable
         self.isAnswered = isAnswered
+        if let unavailableNote { self.unavailableNote = unavailableNote }
         self.note = note
     }
 

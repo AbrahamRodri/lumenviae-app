@@ -123,7 +123,7 @@ nonisolated struct LibraryBookInfo: Identifiable, Hashable {
             overrides = pairs.joined(separator: "\u{3}")
         }
 
-        let parts: [String] = [
+        var parts: [String] = [
             String(gutenbergID),
             parsing.chapterPattern,
             parsing.partPattern ?? "",
@@ -136,6 +136,12 @@ nonisolated struct LibraryBookInfo: Identifiable, Hashable {
             overrides,
             String(parsing.minimumChapterLength)
         ]
+        // Rules added since the first four books were cached ride at
+        // the end, and only when set: a book cut by the old rules keeps
+        // the fingerprint its cache was written under.
+        if parsing.maximumTitleLength != 140 {
+            parts.append(String(parsing.maximumTitleLength))
+        }
         let seed = parts.joined(separator: "\u{1}")
 
         for byte in seed.utf8 {
@@ -211,6 +217,15 @@ nonisolated struct LibraryParsingRules: Hashable {
     /// every contents line without touching any real chapter.
     var minimumChapterLength: Int = 500
 
+    /// The longest block under a heading that can be the chapter's
+    /// printed title; a longer one is the body beginning. 140 holds
+    /// every title in the first four books; Caussade's run to 180
+    /// ("God reveals Himself to us as mysteriously, as adorably, and
+    /// with as much reality in the most ordinary events as in the
+    /// great events of history and the Holy Scriptures"), and at 140
+    /// five of them fell into the prose.
+    var maximumTitleLength: Int = 140
+
     /// A paragraph as it is quoted: without its footnote markers. On
     /// the page each marker is a link to the chapter's apparatus; in a
     /// note, on a share card or in a mark's excerpt there is no
@@ -245,8 +260,14 @@ nonisolated enum LibraryTrackMapping: Hashable {
 
     /// Track `chapterIndex + offset` reads chapter `chapterIndex`, one
     /// for one, in order. The offset covers the front-matter tracks a
-    /// recording opens with and the text does not have.
-    case sequential(offset: Int)
+    /// recording opens with and the text does not have; a negative one
+    /// covers the units the text opens with and the recording does not
+    /// (Brother Lawrence's preface). `unread` names the units in the
+    /// middle of the text that the recording passes over — the Glories
+    /// of Mary's reader took the two paragraphs that open the virtues
+    /// into the first virtue's track — so the count carries on past
+    /// them instead of binding every later chapter to the wrong track.
+    case sequential(offset: Int, unread: Set<Int> = [])
 
     /// Track titles name a part and a span of chapters — "Book 3 -
     /// Chapters 21-30". One track holds many chapters, so a chapter

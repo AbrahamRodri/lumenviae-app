@@ -188,14 +188,14 @@ struct PrayerTrackTray: View {
     @ViewBuilder
     private func downloadRow(showsDivider: Bool) -> some View {
         if isSaved {
-            TrayRow(icon: "ph-trash", title: "Remove download", showsDivider: showsDivider) {
+            TrayRow(icon: "ph-trash", title: "Remove offline copy", showsDivider: showsDivider) {
                 offline.removeAudio(meditationId: actions.meditationId, voice: actions.voice)
                 dismiss()
             }
         } else if let audioURL = actions.audioURL {
             TrayRow(
                 icon: "ph-download-simple",
-                title: isDownloading ? "Downloading…" : "Download audio",
+                title: isDownloading ? "Saving…" : "Save for offline",
                 showsDivider: showsDivider,
                 isEnabled: !isDownloading
             ) {

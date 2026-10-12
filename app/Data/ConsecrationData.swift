@@ -34,7 +34,7 @@ enum ConsecrationData {
     static let allPrayers: [String: ConsecrationPrayer] = [
         "litany_holy_ghost": ConsecrationPrayer(
             id: "litany_holy_ghost",
-            title: "Litany of the Holy Ghost",
+            title: "Litany of the Holy Spirit",
             latinTitle: nil,
             content: """
 Lord, have mercy on us.
@@ -263,15 +263,11 @@ You are the salt of the earth. But if the salt lose its savour, wherewith shall 
                 ),
                 ConsecrationReading(
                     order: 2,
-                    title: "Guidance for the Twelve Days",
+                    title: "True Devotion, paragraph 227",
                     text: """
-Examine your conscience, pray, practice renouncement of your own will; mortification, purity of heart. This purity is the indispensable condition for contemplating God in heaven, to see Him on earth and to know Him by the light of faith. The first part of the preparation should be employed in casting off the spirit of the world which is contrary to that of Jesus Christ.
-
-The spirit of the world consists essentially in the denial of the supreme dominion of God; a denial which is manifested in practice by sin and disobedience; thus it is principally opposed to the spirit of Christ, which is also that of Mary.
-
-It manifests itself by the concupiscence of the flesh, by the concupiscence of the eyes and by the pride of life, and by disobedience to God's laws and the abuse of created things. Its works are: sin in all forms, then all else by which the devil leads to sin; works which bring error and darkness to the mind, and seduction and corruption to the will. Its pomps are the splendor and the charms employed by the devil to render sin alluring in persons, places and things.
+First Practice. Those who wish to enter into this particular devotion, which is not at present erected into a confraternity, though that were to be wished—after having, as I said in the first part of this preparation for the reign of Jesus Christ, employed twelve days at least in emptying themselves of the spirit of the world, which is contrary to the spirit of Jesus Christ—should employ three weeks in filling themselves with Jesus Christ by the holy Virgin. They should observe the following order:
 """,
-                    source: nil
+                    source: "St. Louis de Montfort"
                 )
             ],
             journalPrompt: "What worldly attachments or attitudes do you need to release to follow Christ more fully?"
@@ -300,6 +296,20 @@ Thus therefore shall you pray: Our Father who art in heaven, hallowed be thy nam
 For if you will forgive men their offences, your heavenly Father will forgive you also your offences. But if you will not forgive men, neither will your Father forgive you your offences.
 """,
                     source: "Douay-Rheims Bible"
+                ),
+                ConsecrationReading(
+                    order: 2,
+                    title: "Imitation of Christ, Book 2, Chapter 6",
+                    text: """
+The testimony of a good conscience is the glory of a good man. Have a good conscience and thou shalt ever have joy. A good conscience is able to bear exceeding much, and is exceeding joyful in the midst of adversities; an evil conscience is ever fearful and unquiet. Thou shalt rest sweetly if thy heart condemn thee not. Never rejoice unless when thou hast done well. The wicked have never true joy, nor feel internal peace, for there is no peace, saith my God, to the wicked. And if they say “we are in peace, there shall no harm happen unto us, and who shall dare to do us hurt?” believe them not, for suddenly shall the wrath of God rise up against them, and their deeds shall be brought to nought, and their thoughts shall perish.
+
+To glory in tribulation is not grievous to him who loveth; for such glorying is glorying in the Cross of Christ. Brief is the glory which is given and received of men. Sadness always goeth hand in hand with the glory of the world. The glory of the good is in their conscience, and not in the report of men. The joy of the upright is from God and in God, and their joy is in the truth. He who desireth true and eternal glory careth not for that which is temporal; and he who seeketh temporal glory, or who despiseth it from his heart, is proved to bear little love for that which is heavenly. He who careth for neither praises nor reproaches hath great tranquillity of heart.
+
+He will easily be contented and filled with peace, whose conscience is pure. Thou art none the holier if thou art praised, nor the viler if thou art reproached. Thou art what thou art; and thou canst not be better than God pronounceth thee to be. If thou considerest well what thou art inwardly, thou wilt not care what men will say to thee. Man looketh on the outward appearance, but the Lord looketh on the heart: man looketh on the deed, but God considereth the intent. It is the token of a humble spirit always to do well, and to set little by oneself. Not to look for consolation from any created thing is a sign of great purity and inward faithfulness.
+
+He that seeketh no outward witness on his own behalf, showeth plainly that he hath committed himself wholly to God. For not he that commendeth himself is approved, as St. Paul saith, but whom the Lord commendeth. To walk inwardly with God, and not to be held by any outer affections, is the state of a spiritual man.
+""",
+                    source: "Thomas à Kempis"
                 )
             ],
             journalPrompt: "Do you seek God's approval or the approval of others? How can you practice charity and prayer in secret?"
@@ -326,6 +336,24 @@ All things therefore whatsoever you would that men should do to you, do you also
 Enter ye in at the narrow gate: for wide is the gate, and broad is the way that leadeth to destruction, and many there are who go in thereat. How narrow is the gate, and strait is the way that leadeth to life: and few there are that find it!
 """,
                     source: "Douay-Rheims Bible"
+                ),
+                ConsecrationReading(
+                    order: 2,
+                    title: "Imitation of Christ, Book 3, Chapter 56",
+                    text: """
+My Son, so far as thou art able to go out of thyself so far shalt thou be able to enter into Me. As to desire no outward thing worketh internal peace, so the forsaking of self inwardly joineth unto God. I will that thou learn perfect self-denial, living in My will without contradiction or complaint. Follow Me: I am the way, the truth, and the life. Without the way thou canst not go, without the truth thou canst not know, without the life thou canst not live. I am the Way which thou oughtest to follow; the Truth which thou oughtest to believe; the Life which thou oughtest to hope for. I am the Way unchangeable; the Truth infallible; the Life everlasting. I am the Way altogether straight, the Truth supreme, the true Life, the blessed Life, the uncreated Life. If thou remain in My way thou shalt know the Truth, and the truth shall make thee free, and thou shalt lay hold on eternal life.
+
+“If thou wilt enter into life, keep the commandments. If thou wilt know the truth, believe in Me. If thou wilt be perfect, sell all that thou hast. If thou wilt be My disciple, deny thyself. If thou wouldst possess the blessed life, despise the life which now is. If thou wilt be exalted in heaven, humble thyself in the world. If thou wilt reign with Me, bear the cross with Me; for only the servants of the cross find the way of blessedness and of true light.”
+
+O Lord Jesu, forasmuch as Thy life was straitened and despised by the world, grant unto me to imitate Thee in despising the world, for the servant is not greater than his lord, nor the disciple above his master. Let Thy servant be exercised in Thy life, because there is my salvation and true holiness. Whatsoever I read or hear besides it, it refresheth me not, nor giveth me delight.
+
+“My son, because thou knowest these things and hast read them all, blessed shalt thou be if thou doest them. He who hath My commandments and keepeth them, he it is that loveth Me, and I will love him, and will manifest Myself to him, and I will make him to sit down with Me in My Father’s Kingdom.”
+
+O Lord Jesu, as Thou hast said and promised, even so let it be unto me, and grant me to prove worthy. I have received the cross at Thy hand; I have carried it, and will carry it even unto death, as Thou hast laid it upon me. Truly the life of a truly devoted servant is a cross, but it leadeth to paradise. I have begun; I may not return back nor leave it.
+
+Come, my brothers, let us together go forward. Jesus shall be with us. For Jesus’ sake have we taken up this cross, for Jesus’ sake let us persevere in the cross. He will be our helper, who was our Captain and Forerunner. Behold our King entereth in before us, and He will fight for us. Let us follow bravely, let no man fear terrors; let us be prepared to die bravely in battle, and let us not so stain our honour, as to fly from the cross.
+""",
+                    source: "Thomas à Kempis"
                 )
             ],
             journalPrompt: "How is Christ calling you to enter through the narrow gate? What must you leave behind?"
@@ -350,6 +378,14 @@ But I who am more inclined to go back, than to go forward, continue not always i
 He who would be too secure in time of peace will often be found too much dejected in time of war. If you could always continue to be humble and little in your own eyes, and keep your spirit in due order and subjection, you would not fall so easily into danger and offense. It is good counsel that, when you have conceived the spirit of fervor, you should meditate how it will be when that light shall be withdrawn.
 """,
                     source: "Thomas à Kempis"
+                ),
+                ConsecrationReading(
+                    order: 2,
+                    title: "Psalm 102:13-18",
+                    text: """
+As a father hath compassion on his children, so hath the Lord compassion on them that fear him: For he knoweth our frame. He remembereth that we are dust: Man's days are as grass, as the flower of the field so shall he flourish. For the spirit shall pass in him, and he shall not be: and he shall know his place no more. But the mercy of the Lord is from eternity and unto eternity upon them that fear him: And his justice unto children's children, To such as keep his covenant, And are mindful of his commandments to do them.
+""",
+                    source: "Douay-Rheims Bible"
                 )
             ],
             journalPrompt: "In what ways do you rely on yourself rather than God's grace? How does recognizing your nothingness lead to greater trust in God?"
@@ -376,6 +412,14 @@ But true glory and holy exultation is to glory in Thee, and not in one's self; t
 Let Thy Name be praised, not mine; let Thy work be magnified, not mine; let Thy Holy Name be blessed, but let nothing be attributed to me of the praise of men. Thou art my glory; Thou art the exultation of my heart; in Thee, will I glory and rejoice all the day; but for myself, I will glory in nothing but in my infirmities.
 """,
                     source: "Thomas à Kempis"
+                ),
+                ConsecrationReading(
+                    order: 2,
+                    title: "Luke 18:9-14",
+                    text: """
+And to some who trusted in themselves as just and despised others, he spoke also this parable: Two men went up into the temple to pray: the one a Pharisee and the other a publican. The Pharisee standing, prayed thus with himself: O God, I give thee thanks that I am not as the rest of men, extortioners, unjust, adulterers, as also is this publican. I fast twice in a week: I give tithes of all that I possess. And the publican, standing afar off, would not so much as lift up his eyes towards heaven; but struck his breast, saying: O God, be merciful to me a sinner. I say to you, this man went down into his house justified rather than the other: because every one that exalteth himself shall be humbled: and he that humbleth himself shall be exalted.
+""",
+                    source: "Douay-Rheims Bible"
                 )
             ],
             journalPrompt: "Where do you seek human approval rather than God's glory? How can you redirect your desire for praise toward glorifying God?"
@@ -385,7 +429,7 @@ Let Thy Name be praised, not mine; let Thy work be magnified, not mine; let Thy 
         allDays.append(ConsecrationDay(
             dayNumber: 6,
             phase: .preparatory,
-            title: "The Example of the Holy Fathers",
+            title: "The Example of the Desert Fathers",
             readings: [
                 ConsecrationReading(
                     order: 1,
@@ -404,6 +448,14 @@ What a valiant contest waged they to subdue their imperfections! What purity and
 They renounced all riches, dignities, honors and kindred; they hardly took what was necessary for life. It grieved them to serve the body even in its necessity. Accordingly, they were poor in earthly things, but very rich in grace and virtues.
 """,
                     source: "Thomas à Kempis"
+                ),
+                ConsecrationReading(
+                    order: 2,
+                    title: "Hebrews 12:1-3",
+                    text: """
+And therefore we also having so great a cloud of witnesses over our head, laying aside every weight and sin which surrounds us, let us run by patience to the fight proposed to us: Looking on Jesus, the author and finisher of faith, who, having joy set before him, endured the cross, despising the shame, and now sitteth on the right hand of the throne of God. For think diligently upon him that endured such opposition from sinners against himself that you be not wearied, fainting in your minds.
+""",
+                    source: "Douay-Rheims Bible"
                 )
             ],
             journalPrompt: "What sacrifices are you called to make for Christ? How does the example of the saints inspire you?"
@@ -430,6 +482,14 @@ Their traces that remain still bear witness, that they were truly holy and perfe
 Ah, the lukewarmness and negligence of our state! that we soon fall away from our first fervor, and are even now tired with life, from slothfulness and tepidity. Oh that advancement in virtue be not quite asleep in thee, who has so often seen the manifold examples of the devout!
 """,
                     source: "Thomas à Kempis"
+                ),
+                ConsecrationReading(
+                    order: 2,
+                    title: "Apocalypse 3:14-20",
+                    text: """
+And to the angel of the church of Laodicea write: These things saith the Amen, the faithful and true witness, who is the beginning of the creation of God: I know thy works, that thou art neither cold nor hot. I would thou wert cold or hot. But because thou art lukewarm and neither cold nor hot, I will begin to vomit thee out of my mouth. Because thou sayest: I am rich and made wealthy and have need of nothing: and knowest not that thou art wretched and miserable and poor and blind and naked. I counsel thee to buy of me gold, fire tried, that thou mayest be made rich and mayest be clothed in white garments: and that the shame of thy nakedness may not appear. And anoint thy eyes with eyesalve, that thou mayest see. Such as I love, I rebuke and chastise. Be zealous therefore and do penance. Behold, I stand at the gate and knock. If any man shall hear my voice and open to me the door, I will come in to him and will sup with him: and he with me.
+""",
+                    source: "Douay-Rheims Bible"
                 )
             ],
             journalPrompt: "Where has your spiritual fervor grown cold? How can you rekindle the fire of your first devotion?"
@@ -458,6 +518,14 @@ By degrees and by patience you will, by God's grace, better overcome them than b
 Inconstancy of mind and little confidence in God, is the beginning of all temptations. For as a ship without a helm is driven to and fro by the waves, so the man who neglects and gives up his resolutions is tempted in many ways.
 """,
                     source: "Thomas à Kempis"
+                ),
+                ConsecrationReading(
+                    order: 2,
+                    title: "Matthew 4:1-11",
+                    text: """
+Then Jesus was led by the spirit into the desert, to be tempted by the devil. And when he had fasted forty days and forty nights, afterwards he was hungry. And the tempter coming said to him: If thou be the Son of God, command that these stones be made bread. Who answered and said: It is written, Not in bread alone doth man live, but in every word that proceedeth from the mouth of God. Then the devil took him up into the holy city, and set him upon the pinnacle of the temple, And said to him: If thou be the Son of God, cast thyself down, for it is written: That he hath given his angels charge over thee, and in their hands shall they bear thee up, lest perhaps thou dash thy foot against a stone. Jesus said to him: It is written again: Thou shalt not tempt the Lord thy God. Again the devil took him up into a very high mountain, and shewed him all the kingdoms of the world, and the glory of them, And said to him: All these will I give thee, if falling down thou wilt adore me. Then Jesus saith to him: Begone, Satan: for it is written: The Lord thy God shalt thou adore, and him only shalt thou serve. Then the devil left him; and behold angels came and ministered to him.
+""",
+                    source: "Douay-Rheims Bible"
                 )
             ],
             journalPrompt: "What temptations do you struggle with most? How might patience and humility, rather than flight, help you overcome them?"
@@ -484,6 +552,16 @@ We must not, therefore, despair when we are tempted, but the more fervently pray
 Let us then humble our souls under the hand of God in every temptation and tribulation, for the humble in spirit, He will save and exalt. In temptation and tribulations, it is proved what progress man has made; and there also is great merit, and virtue is made more manifest.
 """,
                     source: "Thomas à Kempis"
+                ),
+                ConsecrationReading(
+                    order: 2,
+                    title: "James 1:12-15; 1 Corinthians 10:13",
+                    text: """
+Blessed is the man that endureth temptation: for, when he hath been proved, he shall receive the crown of life which God hath promised to them that love him. Let no man, when he is tempted, say that he is tempted by God. For God is not a tempter of evils: and he tempteth no man. But every man is tempted by his own concupiscence, being drawn away and allured. Then, when concupiscence hath conceived, it bringeth forth sin. But sin, when it is completed, begetteth death.
+
+Let no temptation take hold on you, but such as is human. And God is faithful, who will not suffer you to be tempted above that which you are able: but will make also with temptation issue, that you may be able to bear it.
+""",
+                    source: "Douay-Rheims Bible"
                 )
             ],
             journalPrompt: "How can you resist temptation at its first appearance, before it gains strength in your mind?"
@@ -512,6 +590,14 @@ What return shall I make to Thee for this favor? For it is granted to all who fo
 It is a great honor, a great glory, to serve Thee, and to despise all things for Thee, for they who willingly subject themselves to Thy holy service, shall have great grace. They shall experience the most sweet consolation of the Holy Spirit, Who for the love of Thee, have cast aside all carnal delight.
 """,
                     source: "Thomas à Kempis"
+                ),
+                ConsecrationReading(
+                    order: 2,
+                    title: "1 John 2:15-17",
+                    text: """
+Love not the world, nor the things which are in the world. If any man love the world, the charity of the Father is not in him. For all that is in the world is the concupiscence of the flesh and the concupiscence of the eyes and the pride of life, which is not of the Father but is of the world. And the world passeth away and the concupiscence thereof: but he that doth the will of God abideth for ever.
+""",
+                    source: "Douay-Rheims Bible"
                 )
             ],
             journalPrompt: "What worldly pleasures hold you back from serving God? What sweetness have you tasted in His service?"
@@ -521,7 +607,7 @@ It is a great honor, a great glory, to serve Thee, and to despise all things for
         allDays.append(ConsecrationDay(
             dayNumber: 11,
             phase: .preparatory,
-            title: "Amendment of Life",
+            title: "Changing Your Life",
             readings: [
                 ConsecrationReading(
                     order: 1,
@@ -540,6 +626,14 @@ There is one thing that keeps many back from spiritual progress, and from fervor
 All have not, indeed, equal difficulties to overcome and mortify, but a diligent and zealous person will make a greater progress though he have more passions than another, who is well regulated but less fervent in the pursuit of virtues.
 """,
                     source: "Thomas à Kempis"
+                ),
+                ConsecrationReading(
+                    order: 2,
+                    title: "Luke 15:11-24",
+                    text: """
+And he said: A certain man had two sons. And the younger of them said to his father: Father, give me the portion of substance that falleth to me. And he divided unto them his substance. And not many days after, the younger son, gathering all together, went abroad into a far country: and there wasted his substance, living riotously. And after he had spent all, there came a mighty famine in that country: and he began to be in want. And he went and cleaved to one of the citizens of that country. And he sent him into his farm to feed swine. And he would fain have filled his belly with the husks the swine did eat: and no man gave unto him. And returning to himself, he said: How many hired servants in my father's house abound with bread, and I here perish with hunger! I will arise and will go to my father and say to him: Father, I have sinned against heaven and before thee. I am not worthy to be called thy son: make me as one of thy hired servants. And rising up, he came to his father. And when he was yet a great way off, his father saw him and was moved with compassion and running to him fell upon his neck and kissed him. And the son said to him: Father: I have sinned against heaven and before thee I am not now worthy to be called thy son. And the father said to his servants: Bring forth quickly the first robe and put it on him: and put a ring on his hand and shoes on his feet. And bring hither the fatted calf, and kill it: and let us eat and make merry: Because this my son was dead and is come to life again, was lost and is found. And they began to be merry.
+""",
+                    source: "Douay-Rheims Bible"
                 )
             ],
             journalPrompt: "What concrete steps can you take to grow in virtue today? What is hardest for you to overcome?"
@@ -566,6 +660,16 @@ A religious person that exercizeth himself seriously and devoutly in the most ho
 It is harder toil to resist vices and passions, than to sweat in bodily labors. He that avoideth not small faults, by little and little falleth into greater. Thou wilt always rejoice in the evening, if thou spend the day profitably. Be watchful over thyself, stir up thyself, warn thyself, and whatsoever becometh of others, neglect not thyself. The more violent thou uses against thyself, the more shalt thou progress. Amen.
 """,
                     source: "Thomas à Kempis"
+                ),
+                ConsecrationReading(
+                    order: 2,
+                    title: "Galatians 2:19-20; 6:14",
+                    text: """
+For I, through the law, am dead to the law, that I may live to God; with Christ I am nailed to the cross. And I live, now not I: but Christ liveth in me. And that I live now in the flesh: I live in the faith of the Son of God, who loved me and delivered himself for me.
+
+But God forbid that I should glory, save in the cross of our Lord Jesus Christ: by whom the world is crucified to me, and I to the world.
+""",
+                    source: "Douay-Rheims Bible"
                 )
             ],
             journalPrompt: "How does meditation on Christ's passion strengthen you? What small faults need your watchfulness today?"
@@ -581,13 +685,11 @@ It is harder toil to resist vices and passions, than to sweat in bodily labors. 
             readings: [
                 ConsecrationReading(
                     order: 1,
-                    title: "Theme for the Week: Knowledge of Self",
+                    title: "True Devotion, paragraph 228",
                     text: """
-Prayers, examinations, reflection, acts of renouncement of our own will, of contrition for our sins, of contempt of self, all performed at the feet of Mary, for it is from her that we hope for light to know ourselves. It is near her, that we shall be able to measure the abyss of our miseries without despairing.
-
-We should employ all our pious actions in asking for a knowledge of ourselves and contrition of our sins: and we should do this in a spirit of piety. During this period, we shall consider not so much the opposition that exists between the spirit of Jesus and ours, as the miserable and humiliating state to which our sins have reduced us. Moreover, the True Devotion being an easy, short, sure and perfect way to arrive at that union with Our Lord which is Christlike perfection, we shall enter seriously upon this way, strongly convinced of our misery and helplessness. But how attain this without a knowledge of ourselves?
+During the first week they should employ all their prayers and pious actions in asking for a knowledge of themselves, and for contrition of their sins; and they should do this in a spirit of humility. For that end they can, if they choose, meditate on what I have said before of our inward corruption. They can look upon themselves during the six days of this week as snails, crawling things, toads, swine, serpents, and unclean animals; or they can reflect on those three considerations of St. Bernard: the vileness of our origin, the dishonours of our present state, and our ending as the food of worms. They should pray our Lord and the Holy Ghost to enlighten them; and for that end they might use the ejaculations, Domine, ut videam, or Noverim me, or Veni Sancte Spiritus; and they may say daily the Ave maris stella, and the litany of the Holy Ghost.
 """,
-                    source: nil
+                    source: "St. Louis de Montfort"
                 ),
                 ConsecrationReading(
                     order: 2,
@@ -626,6 +728,14 @@ It is altogether necessary that thou take up a true contempt for thyself, if tho
 I became of all men the most humble and the most abject, that thou mightest overcome thy pride with My humility. O dust! learn to be obedient. Learn to humble thyself, thou earth and clay, and to bow thyself down under the feet of all men. Learn to break thine own wishes, and to yield thyself to all subjection.
 """,
                     source: "Thomas à Kempis"
+                ),
+                ConsecrationReading(
+                    order: 2,
+                    title: "Philippians 2:5-11",
+                    text: """
+For let this mind be in you, which was also in Christ Jesus: Who being in the form of God, thought it not robbery to be equal with God: But emptied himself, taking the form of a servant, being made in the likeness of men, and in habit found as a man. He humbled himself, becoming obedient unto death, even to the death of the cross. For which cause, God also hath exalted him and hath given him a name which is above all names: That in the name of Jesus every knee should bow, of those that are in heaven, on earth, and under the earth: And that every tongue should confess that the Lord Jesus Christ is in the glory of God the Father.
+""",
+                    source: "Douay-Rheims Bible"
                 )
             ],
             journalPrompt: "Where does your self-will resist obedience? How does Christ's humility challenge your pride?"
@@ -649,15 +759,11 @@ And there were present, at that very time, some that told him of the Galileans, 
                 ),
                 ConsecrationReading(
                     order: 2,
-                    title: "True Devotion, Nos. 81-82",
+                    title: "True Devotion, paragraphs 81–82",
                     text: """
-# We Need Mary in order to Die to Ourselves
+2. Secondly, in order to empty ourselves of ourselves, we must die to ourselves daily. That is to say, we must renounce the operations of the powers of our soul, and of the senses of our body. We must see as if we saw not, understand as if we understood not, and make use of the things of this world as if we made no use of them at all. This is what St. Paul calls dying daily—Quotidie morior. “If the grain of corn falling on the earth does not die it remains earth, and brings forth no good fruit”—Nisi granum frumenti, cadens in terram, mortuum fuerit, ipsum solum manet. If we die not to ourselves, and if our holiest devotions do not incline us to this necessary and useful death, we shall bring forth no fruit worth anything, and our devotions will become useless. All our justices will be stained by self-love and our own will; and this will cause God to hold in abomination the greatest sacrifices we can make, and the best actions we can do; so that at our death we shall find our hands empty of virtues and of merits, and we shall not have one spark of pure love, which is only communicated to souls dead to themselves, souls whose life is hidden with Jesus Christ in God.
 
-Secondly, in order to empty ourselves of self, we must die daily to ourselves. This involves our renouncing what the powers of the soul and the senses of the body incline us to do. We must see as if we did not see, hear as if we did not hear and use the things of this world as if we did not use them. This is what St. Paul calls "dying daily". Unless the grain of wheat falls to the ground and dies, it remains only a single grain and does not bear any good fruit.
-
-If we do not die to self and if our holiest devotions do not lead us to this necessary and fruitful death, we shall not bear fruit of any worth and our devotions will cease to be profitable. All our good works will be tainted by self-love and self-will so that our greatest sacrifices and our best actions will be unacceptable to God. Consequently when we come to die we shall find ourselves devoid of virtue and merit and discover that we do not possess even one spark of that pure love which God shares only with those who have died to themselves and whose life is hidden with Jesus Christ in him.
-
-Thirdly, we must choose among all the devotions to the Blessed Virgin the one which will lead us more surely to this dying to self. This devotion will be the best and the most sanctifying for us.
+3. We must choose, therefore, among all the devotions to the Blessed Virgin, the one which draws us most towards this death to ourselves, inasmuch as it will be the best and the most sanctifying. For we must not think that all that shines is gold, that all that tastes sweet is honey, or all that is easy to do and is done by the greatest number is sanctifying. As there are secrets of nature to do in a short time at little cost and with facility, natural operations, so also in like manner there are secrets in the order of grace to do in a short time with sweetness and facility, supernatural operations, such as emptying ourselves of self, filling ourselves with God, and becoming perfect.
 """,
                     source: "St. Louis de Montfort"
                 )
@@ -673,13 +779,11 @@ Thirdly, we must choose among all the devotions to the Blessed Virgin the one wh
             readings: [
                 ConsecrationReading(
                     order: 1,
-                    title: "True Devotion, No. 228",
+                    title: "True Devotion, paragraphs 79–80",
                     text: """
-# Preparatory Exercises
+1. To empty ourselves of ourselves, we must first thoroughly recognise, by the light of the Holy Ghost, our inward corruption, our incapacity for every good thing useful for salvation, our weakness in all things, our inconstancy at all times, our indignity of every grace, and our iniquity in every position. The sin of our first father has spoilt us all, soured us, puffed us up and corrupted us, as the leaven sours, puffs, and corrupts the paste into which it is put. The actual sins which we have committed, whether mortal or venial, pardoned though they may be, have nevertheless increased our concupiscence, our weakness, our inconstancy, and our corruption, and have left evil consequences in our souls. Our bodies are so corrupted that they are called by the Holy Ghost bodies of sin, conceived in sin, nourished in sin, and capable of all sin—bodies subject to thousands of maladies, which go on corrupting from day to day, and which engender nothing but disease, vermin, and corruption. Our soul, united to our body, has become so carnal that it is called flesh. “All flesh having corrupted its way,” we have nothing for our portion but pride and blindness in the spirit, hardness in the heart, weakness and inconstancy in the soul, concupiscence, revolted passions, and sicknesses in the body. We are naturally prouder than peacocks, more grovelling on the earth than toads, more vile than unclean animals, more envious than serpents, more gluttonous than hogs, more furious than tigers, lazier than tortoises, weaker than reeds, and more capricious than weathercocks. We have down in our own selves nothing but nothingness and sin, and we deserve nothing but the anger of God and the everlasting hell.
 
-During the first week they should offer up all their prayers and acts of devotion to acquire knowledge of themselves and sorrow for their sins. Let them perform all their actions in a spirit of humility. With this end in view they may, if they wish, meditate on what I have said concerning our corrupted nature, and consider themselves during six days of the week as nothing but snails, slugs, toads, swine, snakes and goats. Or else they may meditate on the following three considerations of St. Bernard: "Remember what you were - corrupted seed; what you are - a body destined for decay; what you will be - food for worms."
-
-They will ask our Lord and the Holy Spirit to enlighten them saying, "Lord, that I may see," or "Lord, let me know myself," or the "Come, Holy Spirit". Every day they should say the Litany of the Holy Spirit, with the prayer that follows, as indicated in the first part of this work. They will turn to our Blessed Lady and beg her to obtain for them that great grace which is the foundation of all others, the grace of self-knowledge. For this intention they will say each day the Ave Maris Stella and the Litany of the Blessed Virgin.
+After this, ought we to be astonished if our Lord has said that whosoever wishes to follow Him must renounce himself and hate his own soul, and that whosoever shall love his own soul shall lose it, and whosoever shall hate it shall save it? He who is infinite Wisdom does not give commandments without reason, and He has only commanded us to hate ourselves, because we so richly deserve to be hated. Nothing is worthier of love than God, and nothing is worthier of hatred than ourselves.
 """,
                     source: "St. Louis de Montfort"
                 ),
@@ -701,7 +805,7 @@ We cannot trust over much to ourselves, because grace oftentimes is wanting to u
         allDays.append(ConsecrationDay(
             dayNumber: 17,
             phase: .knowledgeOfSelf,
-            title: "Rendering an Account",
+            title: "Giving God an Account",
             readings: [
                 ConsecrationReading(
                     order: 1,
@@ -726,7 +830,7 @@ Therefore calling together every one of his lord's debtors, he said to the first
                     source: "Douay-Rheims Bible"
                 )
             ],
-            journalPrompt: "If you had to render an account of your stewardship today, what would you want to set right?"
+            journalPrompt: "If you had to answer to God today for how you used what He gave you, what would you want to set right?"
         ))
 
         // Day 18
@@ -782,6 +886,22 @@ And Jesus seeing him become sorrowful, said: How hardly shall they that have ric
 Then Peter said: Behold, we have left all things, and have followed thee. Who said to them: Amen, I say to you, there is no man that hath left house, or parents, or brethren, or wife, or children, for the kingdom of God's sake, Who shall not receive much more in this present time, and in the world to come life everlasting.
 """,
                     source: "Douay-Rheims Bible"
+                ),
+                ConsecrationReading(
+                    order: 2,
+                    title: "Imitation of Christ, Book 3, Chapter 4",
+                    text: """
+“My Son! walk before Me in truth, and in the simplicity of thy heart seek Me continually. He who walketh before Me in the truth shall be safe from evil assaults, and the truth shall deliver him from the wiles and slanders of the wicked. If the truth shall make thee free, thou shalt be free indeed, and shalt not care for the vain words of men.”
+
+Lord, it is true as Thou sayest; let it, I pray Thee, be so with me; let Thy truth teach me, let it keep me and preserve me safe unto the end. Let it free me from all evil and inordinate affection, and I will walk before Thee in great freedom of heart.
+
+“I will teach thee,” saith the Truth, “the things which are right and pleasing before Me. Think upon thy sins with great displeasure and sorrow, and never think thyself anything because of thy good works. Verily thou art a sinner, liable to many passions, yea, tied and bound with them. Of thyself thou always tendest unto nothing, thou wilt quickly fall, quickly be conquered, quickly disturbed, quickly undone. Thou hast nought whereof to glory, but many reasons why thou shouldest reckon thyself vile, for thou art far weaker than thou art able to comprehend.
+
+“Let, therefore, nothing which thou doest seem to thee great; let nothing be grand, nothing of value or beauty, nothing worthy of honour, nothing lofty, nothing praiseworthy or desirable, save what is eternal. Let the eternal truth please thee above all things, let thine own great vileness displease thee continually. Fear, denounce, flee nothing so much as thine own faults and sins, which ought to be more displeasing to thee than any loss whatsoever of goods. There are some who walk not sincerely before me, but being led by curiosity and pride, they desire to know my secret things and to understand the deep things of God, whilst they neglect themselves and their salvation. These often fall into great temptations and sins because of their pride and curiosity, for I am against them.
+
+“Fear thou the judgments of God, fear greatly the wrath of the Almighty. Shrink from debating upon the works of the Most High, but search narrowly thine own iniquities into what great sins thou hast fallen, and how many good things thou hast neglected. There are some who carry their devotion only in books, some in pictures, some in outward signs and figures; some have Me in their mouths, but little in their hearts. Others there are who, being enlightened in their understanding and purged in their affections, continually long after eternal things, hear of earthly things with unwillingness, obey the necessities of nature with sorrow. And these understand what the Spirit of truth speaketh in them; for He teacheth them to despise earthly things and to love heavenly; to neglect the world and to desire heaven all the day and night.”
+""",
+                    source: "Thomas à Kempis"
                 )
             ],
             journalPrompt: "What is the 'one thing wanting' that Jesus asks of you? What riches are hard for you to surrender?"
@@ -797,15 +917,11 @@ Then Peter said: Behold, we have left all things, and have followed thee. Who sa
             readings: [
                 ConsecrationReading(
                     order: 1,
-                    title: "Theme for the Week: Knowledge of the Blessed Virgin",
+                    title: "True Devotion, paragraph 229",
                     text: """
-Acts of love, pious affection for the Blessed Virgin, imitation of her virtues, especially her profound humility, her lively faith, her blind obedience, her continual mental prayer, her mortification in all things, her surpassing purity, her ardent charity, her heroic patience, her angelic sweetness, and her divine wisdom: "these being," as St. Louis de Montfort says, "the ten principal virtues of the Blessed Virgin."
-
-We must unite ourselves to Jesus through Mary — this is the characteristic of our devotion; therefore, St. Louis de Montfort asks that we employ ourselves in acquiring a knowledge of the Blessed Virgin.
-
-Mary is our sovereign and our mediatrix, our Mother and our Mistress. Let us then endeavor to know the effects of this royalty, of this mediation, and of this maternity, as well as the grandeurs and prerogatives which are the foundation or consequences thereof. Our Mother is also a perfect mold wherein we are to be molded in order to make her intentions and dispositions ours. This we cannot achieve without studying the interior life of Mary; namely, her virtues, her sentiments, her actions, her participation in the mysteries of Christ and her union with Him.
+During the second week they should apply themselves, during all their prayers and works each day, to know the Blessed Virgin. They should ask this knowledge of the Holy Ghost; they should read and meditate what we have said about it. They should recite, as in the first week, the Litany of the Holy Ghost and the Ave maris stella, and in addition a Rosary daily, or, if not a whole Rosary, at least a chaplet, for the intention of impetrating more knowledge of Mary.
 """,
-                    source: nil
+                    source: "St. Louis de Montfort"
                 ),
                 ConsecrationReading(
                     order: 2,
@@ -818,7 +934,7 @@ And they came with haste; and they found Mary and Joseph, and the infant lying i
                     source: "Douay-Rheims Bible"
                 )
             ],
-            journalPrompt: "Mary 'kept all these words, pondering them in her heart.' Which of her ten principal virtues do you most need to imitate?"
+            journalPrompt: "Mary 'kept all these words, pondering them in her heart.' Which of the ten virtues Montfort sees in Mary do you most need to imitate?"
         ))
 
         // Day 21
@@ -829,21 +945,37 @@ And they came with haste; and they found Mary and Joseph, and the infant lying i
             readings: [
                 ConsecrationReading(
                     order: 1,
-                    title: "The Secret of Mary, Nos. 23-24",
+                    title: "True Devotion, paragraphs 115–118",
                     text: """
-# True Devotion to Our Blessed Lady
+THERE are several interior practices of true devotion to the Blessed Virgin. Here are the principal of them stated compendiously.
 
-If we would go up to God, and be united with Him, we must use the same means He used to come down to us to be made Man and to impart His graces to us. This means is a true devotion to our Blessed Lady.
+(1) To honour her as the worthy Mother of God, with the worship of hyperdulia; that is to say, to esteem her and honour her above all the other Saints, as the masterpiece of grace, and the first after Jesus Christ, true God and true Man;
 
-There are several true devotions to our Lady: here I do not speak of those which are false. The first consists in fulfilling our Christian duties, avoiding mortal sin, acting more out of love than with fear, praying to our Lady now and then, honoring her as the Mother of God, yet without having any special devotion to her.
+(2) to meditate her virtues, her privileges, and her actions;
 
-The second consists in entertaining for our Lady more perfect feelings of esteem and love, of confidence and veneration. It leads us to join the Confraternities of the Holy Rosary and of the Scapular, to recite the five or the fifteen decades of the Holy Rosary, to honor Mary's images and altars, to publish her praises and to enroll ourselves in her sodalities. This devotion is good, holy and praiseworthy if we keep ourselves free from sin. But it is not so perfect as the next, nor so efficient in severing our soul from creatures, in detaching ourselves in order to be united with Jesus Christ.
+(3) to contemplate her grandeurs;
 
-The third devotion to our Lady, known and practiced by very few persons, is this I am about to disclose to you, predestinate soul. It consists in giving one's self entirely and as a slave to Mary, and to Jesus through Mary, and after that, to do all that we do, through Mary, with Mary, in Mary and for Mary.
+(4) to make to her acts of love, of praise, of gratitude;
 
-We should choose a special feast day on which we give, consecrate and sacrifice to Mary voluntarily, lovingly and without constraint, entirely and without reserve: our body and soul, our exterior property such as house, family and income, and also our interior and spiritual possessions: namely, our merits, graces, virtues, and satisfactions.
+(5) to invoke her cordially;
+
+(6) to offer ourselves to her, and unite ourselves with her;
+
+(7) to do all our actions with the view of pleasing her;
+
+(8) to begin, to continue, and to finish all our actions by her, in her, and with her, in order that we may do them by Jesus Christ, in Jesus Christ, with Jesus Christ, and for Jesus Christ, our Last End.
+
+But after all, I loudly protest that, having read nearly all the books which profess to treat of devotion to our Lady, and having conversed familiarly and holily with the best and wisest of men of these latter times, I have never known nor heard of any practice of devotion towards her at all equal to the one which I wish now to unfold; exacting from the soul as it does more sacrifices for God, emptying the soul more of itself and of its self-love, keeping it more faithfully in grace, and grace more faithfully in it, uniting it more perfectly and more easily to Jesus Christ; and finally, being more glorious to God, more sanctifying to the soul, and more useful to our neighbour, than any other of the devotions to her.
 """,
                     source: "St. Louis de Montfort"
+                ),
+                ConsecrationReading(
+                    order: 2,
+                    title: "John 19:25-27",
+                    text: """
+Now there stood by the cross of Jesus, his mother and his mother's sister, Mary of Cleophas, and Mary Magdalen. When Jesus therefore had seen his mother and the disciple standing whom he loved, he saith to his mother: Woman, behold thy son. After that, he saith to the disciple: Behold thy mother. And from that hour, the disciple took her to his own.
+""",
+                    source: "Douay-Rheims Bible"
                 )
             ],
             journalPrompt: "What would it mean for you to give yourself entirely to Jesus through Mary — holding nothing back?"
@@ -857,24 +989,34 @@ We should choose a special feast day on which we give, consecrate and sacrifice 
             readings: [
                 ConsecrationReading(
                     order: 1,
-                    title: "True Devotion, Nos. 106-110",
+                    title: "True Devotion, paragraphs 106–110",
                     text: """
-# Marks of authentic devotion to our Lady
+After having laid bare and condemned the false devotions to the most holy Virgin, we must, in a few words, characterise the true devotion. It must be (1) interior, (2) tender, (3) holy, (4) constant, and (5) disinterested.
 
-First, true devotion to our Lady is interior, that is, it comes from within the mind and the heart and follows from the esteem in which we hold her, the high regard we have for her greatness, and the love we bear her.
+1. True devotion to our Lady is interior; that is to say, it comes from the spirit and the heart. It flows from the esteem we have of her, the high idea we have formed of her greatness, and the love which we have for her.
 
-Second, it is trustful, that is to say, it fills us with confidence in the Blessed Virgin, the confidence that a child has for its loving Mother. It prompts us to go to her in every need of body and soul with great simplicity, trust and affection.
+2. It is tender; that is to say, full of confidence in her, like a child’s confidence in his loving mother. This confidence makes the soul have recourse to her in all its bodily or mental necessities, with much simplicity, trust, and tenderness. It implores the aid of its good Mother, at all times, in all places, and about all things; in its doubts, that it may be enlightened; in its wanderings, that it may be brought into the right path; in its temptations, that it may be supported; in its weaknesses, that it may be strengthened; in its falls, that it may be lifted up; in its discouragements, that it may be cheered; in its scruples, that they may be taken away; in its crosses, toils, and disappointments of life, that it may be consoled under them. In a word, in all its evils of body and mind, the soul’s ordinary refuge is in Mary, without fearing to be importunate to her or to displease Jesus Christ.
 
-Third, true devotion to our Lady is holy, that is, it leads us to avoid sin and to imitate the virtues of Mary. Her ten principal virtues are: deep humility, lively faith, blind obedience, unceasing prayer, constant self-denial, surpassing purity, ardent love, heroic patience, angelic kindness, and heavenly wisdom.
+3. True devotion to our Lady is holy; that is to say, it leads the soul to avoid sin, and to imitate in the Blessed Virgin particularly her profound humility, her lively faith, her blind obedience, her continual prayer, her universal mortification, her divine purity, her ardent charity, her heroic patience, her angelical sweetness, and her divine wisdom. These are the ten principal virtues of the most holy Virgin.
 
-Fourth, true devotion to our Lady is constant. It strengthens us in our desire to do good and prevents us from giving up our devotional practices too easily. It gives us the courage to oppose the fashions and maxims of the world, the vexations and unruly inclinations of the flesh and the temptations of the devil. Thus a person truly devoted to our Blessed Lady is not changeable, fretful, scrupulous or timid.
+4. True devotion to our Lady is constant. It confirms the soul in good, and it does not let it easily abandon its spiritual exercises. It makes it courageous in opposing the world in its fashions and maxims, the flesh in its wearinesses and passions, and the devil in his temptations. So that a person truly devout to our Blessed Lady is neither changeable, irritable, scrupulous, nor timid. It is not that such a person does not fall, or change sometimes in the sensible feeling of devotion, or in the amount of devotion itself. But when he falls, he rises again by stretching out his hand to his good Mother. If he loses the taste and relish of devotion, he does not disturb himself because of that; for the just and faithful client of Mary lives on the faith of Jesus and Mary, and not on sentiments and sensibilities.
 
-Fifth, true devotion to Mary is disinterested. It inspires us to seek God alone in his Blessed Mother and not ourselves. The true subject of Mary does not serve his illustrious Queen for selfish gain. He does not serve her for temporal or eternal well-being but simply and solely because she has the right to be served and God alone in her.
+5. Lastly, true devotion to our Blessed Lady is disinterested; that is to say, it inspires the soul not to seek itself but God only, and God in His holy Mother. A true client of Mary does not serve that august Queen from a spirit of lucre and interest, nor for its own good, whether temporal, corporal, or spiritual; but exclusively because she merits to be served, and God alone in her. He does not love Mary precisely because she does him good, or because he hopes in her; but because she is so worthy of love. It is on this account that he loves and serves her as faithfully in his disgusts and drynesses, as in his sweetnesses and sensible fervours. He loves her as much on Calvary, as at the marriage of Cana. O, how such a client of our Blessed Lady, who has no self-seeking in his service of her, is agreeable and precious in the eyes of God and of His holy Mother! But in these days how rare is such a sight! It is that it may be less rare that I have taken my pen to put on paper what I have taught, in public and in private, during my missions for many years.
 """,
                     source: "St. Louis de Montfort"
+                ),
+                ConsecrationReading(
+                    order: 2,
+                    title: "Luke 8:19-21; 11:27-28",
+                    text: """
+And his mother and brethren came unto him: and they could not come at him for the crowd. And it was told him: Thy mother and thy brethren stand without, desiring to see thee. Who answering, said to them: My mother and my brethren are they who hear the word of God and do it.
+
+And it came to pass, as he spoke these things, a certain woman from the crowd, lifting up her voice, said to him: Blessed is the womb that bore thee and the paps that gave thee suck. But he said: Yea rather, blessed are they who hear the word of God and keep it.
+""",
+                    source: "Douay-Rheims Bible"
                 )
             ],
-            journalPrompt: "Is your devotion interior, trustful, holy, constant, and disinterested? Which mark needs the most growth?"
+            journalPrompt: "Is your devotion interior, trustful, holy, constant, and selfless? Which mark needs the most growth?"
         ))
 
         // Day 23
@@ -885,22 +1027,23 @@ Fifth, true devotion to Mary is disinterested. It inspires us to seek God alone 
             readings: [
                 ConsecrationReading(
                     order: 1,
-                    title: "True Devotion, Nos. 120-121",
+                    title: "True Devotion, paragraphs 120–121",
                     text: """
-# Nature of perfect devotion to the Blessed Virgin, or perfect consecration to Jesus Christ
+All our perfection consists in being conformed, united, and consecrated to Jesus Christ; and therefore the most perfect of all devotions is, without any doubt, that which the most perfectly conforms, unites, and consecrates us to Jesus Christ. Now, Mary being the most conformed of all creatures to Jesus Christ, it follows that of all devotions, that which most consecrates and conforms the soul to our Lord is devotion to His holy Mother, and that the more a soul is consecrated to Mary, the more is it consecrated to Jesus. Hence it comes to pass that the most perfect consecration to Jesus Christ is nothing else but a perfect and entire consecration of ourselves to the Blessed Virgin, and this is the devotion which I teach; or, in other words, a perfect renewal of the vows and promises of holy Baptism.
 
-As all perfection consists in our being conformed, united and consecrated to Jesus, it naturally follows that the most perfect of all devotions is that which conforms, unites, and consecrates us most completely to Jesus. Now of all God's creatures Mary is the most conformed to Jesus. It therefore follows that, of all devotions, devotion to her makes for the most effective consecration and conformity to him. The more one is consecrated to Mary, the more one is consecrated to Jesus. That is why perfect consecration to Jesus is but a perfect and complete consecration of oneself to the Blessed Virgin, which is the devotion I teach; or in other words, it is the perfect renewal of the vows and promises of holy baptism.
-
-This devotion consists in giving oneself entirely to Mary in order to belong entirely to Jesus through her. It requires us to give:
-
-(1) Our body with its senses and members;
-(2) Our soul with its faculties;
-(3) Our present material possessions and all we shall acquire in the future;
-(4) Our interior and spiritual possessions, that is, our merits, virtues and good actions of the past, the present and the future.
-
-In other words, we give her all that we possess both in our natural life and in our spiritual life as well as everything we shall acquire in the future in the order of nature, of grace, and of glory in heaven. This we do without any reservation, not even of a penny, a hair, or the smallest good deed. And we give for all eternity without claiming or expecting, in return for our offering and our service, any other reward than the honour of belonging to our Lord through Mary and in Mary, even though our Mother were not — as in fact she always is — the most generous and appreciative of all God's creatures.
+This devotion consists, then, in giving ourselves entirely and altogether to our Lady, in order to belong entirely and altogether to Jesus by her. We must give her (1) our body, with all its senses and its members; (2) our soul, with all its powers; (3) the exterior goods of fortune, whether present or to come; (4) our interior and spiritual goods, which are our merits, our virtues, and our good works, past, present, and future. In a word, we must give her all we have in the order of nature and in the order of grace, and all that may become ours in future in the orders of nature, grace, and glory; and this we must do without any reserve of so much as one farthing, one hair, or one least good action; and we must do it also for all eternity, and we must do it further without pretending to, or hoping for, any other recompense for our offering and service, except the honour of belonging to Jesus Christ by Mary and in Mary, even though that sweet Mistress were not, as she always is, the most generous and the most grateful of creatures.
 """,
                     source: "St. Louis de Montfort"
+                ),
+                ConsecrationReading(
+                    order: 2,
+                    title: "Romans 12:1-2; 6:3-4",
+                    text: """
+I beseech you therefore, brethren, by the mercy of God, that you present your bodies a living sacrifice, holy, pleasing unto God, your reasonable service. And be not conformed to this world: but be reformed in the newness of your mind, that you may prove what is the good and the acceptable and the perfect will of God.
+
+Know you not that all we who are baptized in Christ Jesus are baptized in his death? For we are buried together with him by baptism into death: that, as Christ is risen from the dead by the glory of the Father, so we also may walk in newness of life.
+""",
+                    source: "Douay-Rheims Bible"
                 )
             ],
             journalPrompt: "This consecration is a perfect renewal of your baptismal promises. What does belonging entirely to Jesus through Mary ask of you?"
@@ -914,19 +1057,29 @@ In other words, we give her all that we possess both in our natural life and in 
             readings: [
                 ConsecrationReading(
                     order: 1,
-                    title: "True Devotion, Nos. 152-164",
+                    title: "True Devotion, paragraphs 152–164",
                     text: """
-This devotion is a smooth, short, perfect and sure way of attaining union with our Lord, in which Christian perfection consists.
+This devotion is an easy, short, perfect, and secure way of arriving at union with our Lord, in which the perfection of a Christian consists.
 
-(a) This devotion is a smooth way. It is the path which Jesus Christ opened up in coming to us and in which there is no obstruction to prevent us reaching him. It is quite true that we can attain to divine union by other roads, but these involve many more crosses and exceptional setbacks and many difficulties that we cannot easily overcome.
+1. It is an easy way. It is the way which Jesus Christ Himself trod in coming to us, and in which there is no obstacle in arriving at Him. It is true that we can attain to divine union by other roads; but it is by many more crosses and strange deaths, and with many more difficulties, which we shall find it hard to overcome. We must pass through obscure nights, through combats, through strange agonies, over craggy mountains, through cruel thorns, and over frightful deserts. But by the path of Mary we pass more gently and more tranquilly. We do find, it is true, great battles to fight and great hardships to master; but that good Mother and Mistress makes herself so present and so near to her faithful servants, to enlighten them in their darknesses and their doubts, to strengthen them in their fears, and to sustain them in their struggles and their difficulties, that in truth this virginal path to find Jesus Christ is a path of roses and honey compared with the other paths. There have been some Saints, but they have been in small numbers, who have passed by this sweet path to go to Jesus, because the Holy Ghost, faithful Spouse of Mary, has by a singular grace disclosed it to them. Such were St. Ephrem, St. John Damascene, St. Bernard, St. Bernardine, St. Bonaventure, St. Francis of Sales, and others. But the rest of the Saints, who are the greater number, although they have all had devotion to our Blessed Lady, have not on that account, or at least very little, entered upon this way. This is why they have had to pass through ruder and more dangerous trials.
 
-(b) This devotion is a short way to discover Jesus, either because it is a road we do not wander from, or because, as we have just said, we walk along this road with greater ease and joy, and consequently with greater speed. We advance more in a brief period of submission to Mary and dependence on her than in whole years of self-will and self-reliance.
+2. This devotion to the Blessed Virgin is a short road to find Jesus Christ, both because it is a road which we do not stray from, and because, as I have just said, it is a road we tread with joy and facility, and, by consequence, with promptitude. We make more progress in a brief period of submission to and dependence on Mary than in whole years of our own will and of resting upon ourselves. A man obedient and submissive to Mary shall sing the signal victories which he shall gain over his enemies. They will try to hinder his advancing, or to make him retrace his steps, or to fall. This is true. But with the support, the aid, and the guidance of Mary, without falling, without drawing back one step, without even slackening his pace, he shall advance with giant strides towards Jesus, along the same path by which he knows that Jesus also came to us with giant strides, and in the briefest space of time. Why do you think that Jesus lived so short a time on earth, and of those few years spent nearly all of them in subjection and obedience to His Mother? Ah, this is the truth: that He was perfected indeed in a short time, but that He lived a long time, longer than Adam, whose fall He had come to repair, although the patriarch lived above nine hundred years.
 
-(c) This devotion is a perfect way to reach our Lord and be united to him, for Mary is the most perfect and the most holy of all creatures, and Jesus, who came to us in a perfect manner, chose no other road for his great and wonderful journey. The Most High, the Incomprehensible One, the Inaccessible One, He who is, deigned to come down to us poor earthly creatures who are nothing at all. How was this done? The Most High God came down to us in a perfect way through the humble Virgin Mary, without losing anything of his divinity or holiness. It is likewise through Mary that we poor creatures must ascend to almighty God in a perfect manner without having anything to fear.
+3. This practice of devotion to our Blessed Lady is also a perfect path by which to go and unite ourselves to Jesus, because the divine Mary is the most perfect and the most holy of creatures, and because Jesus, who has come to us most perfectly, took no other road for His great and admirable journey. The Most High, the Incomprehensible, the Inaccessible, He Who Is, has deigned to come to us, little worms of earth who are nothing. How has He done this? The Most High has come down to us perfectly and divinely by the humble Mary. He has come to us by her, without losing anything of His divinity and sanctity. So it is by Mary that the unspeakably little are to ascend perfectly and divinely, without any fear, to the Most High. The Incomprehensible has allowed Himself to be comprehended and perfectly contained by the little Mary, without losing anything of His Immensity. So also is it by the little Mary that we must let ourselves be held and guided perfectly without any reserve. The Inaccessible has drawn near to us, and has closely united Himself to us perfectly, and even personally, to our humanity by Mary, without losing any of His Majesty. So also is it by Mary that we must draw near to God, and unite ourselves perfectly and closely to His Majesty without fear of being repulsed. In a word, He Who Is has designed to come to that which is not, and to make that which is not become God in Him Who Is; and He has done this perfectly in giving Himself and subjecting Himself entirely to the young Virgin Mary without ceasing to be in time He who is eternal. In like manner it is by Mary that we, who are nothing, can become like to God by grace and glory by giving ourselves to her so perfectly and entirely as to be nothing in ourselves but everything in her, without fear of delusion.
 
-(d) This devotion to our Lady is a sure way to go to Jesus and to acquire holiness through union with him. The devotion which I teach is not new. Indeed it could not be condemned without overthrowing the foundations of Christianity. It is obvious then that this devotion is not new. If it is not commonly practised, the reason is that it is too sublime to be appreciated and undertaken by everyone. This devotion is a safe means of going to Jesus Christ, because it is Mary's role to lead us safely to her Son.
+4. This devotion to our Blessed Lady is also a secure way to go to Jesus, and to acquire perfection by uniting us to Him.
+
+(2) This devotion is a secure means of going to Jesus Christ, because it is the very characteristic of our Blessed Lady to conduct us surely to Jesus, just as it is the very characteristic of Jesus to conduct us surely to the Eternal Father.
 """,
                     source: "St. Louis de Montfort"
+                ),
+                ConsecrationReading(
+                    order: 2,
+                    title: "John 14:1-6",
+                    text: """
+Let not your heart be troubled. You believe in God: believe also in me. In my Father's house there are many mansions. If not, I would have told you: because I go to prepare a place for you. And if I shall go and prepare a place for you, I will come again and will take you to myself: that where I am, you also may be. And whither I go you know: and the way you know. Thomas saith to him: Lord, we know not whither thou goest. And how can we know the way? Jesus saith to him: I am the way, and the truth, and the life. No man cometh to the Father, but by me.
+""",
+                    source: "Douay-Rheims Bible"
                 )
             ],
             journalPrompt: "Where have years of self-will and self-reliance gotten you? What would submission to Mary's guidance change?"
@@ -940,25 +1093,31 @@ This devotion is a smooth, short, perfect and sure way of attaining union with o
             readings: [
                 ConsecrationReading(
                     order: 1,
-                    title: "True Devotion, Nos. 213-225",
+                    title: "True Devotion, paragraphs 213–225",
                     text: """
-My dear friend, be sure that if you remain faithful to the interior and exterior practices of this devotion which I will point out, the following effects will be produced in your soul:
+My dear brother, be sure that, if you are faithful to the interior and exterior practices of this devotion, which I will point out, the following effects will take place in your soul:
 
-1. Knowledge of our unworthiness. By the light which the Holy Spirit will give you through Mary, his faithful spouse, you will perceive the evil inclinations of your fallen nature and how incapable you are of any good. Finally, the humble Virgin Mary will share her humility with you so that, although you regard yourself with distaste and desire to be disregarded by others, you will not look down slightingly upon anyone.
+1. By the light which the Holy Ghost will give you by His dear Spouse, Mary, you will understand your own evil, your corruption, and your incapacity for anything good, which is not God’s free gift to us, either as Author of nature or of grace. In consequence of this knowledge you will despise yourself. You will only think of yourself with horror. You will regard yourself as a snail, that spoils everything with its slime; or a toad, that poisons everything with its venom; or as a spiteful serpent, only seeking to deceive. In other words, the humble Mary will communicate to you a portion of her profound humility, which will make you despise yourself, despise nobody else, but love to be despised yourself.
 
-2. A share in Mary's faith. Mary will share her faith with you. Her faith on earth was stronger than that of all the patriarchs, prophets, apostles and saints.
+2. Our Blessed Lady will give you also a portion of her faith, which was the greatest of all faiths that ever were on earth, greater than the faith of all the Patriarchs, Prophets, Apostles, and Saints put together. Now that she is reigning in the heavens, she has no longer this faith, because she sees all things clearly in God by the light of glory. Nevertheless, with the consent of the Most High, in entering into glory she has not lost her faith. She has kept it, in order that she may keep it in the Church Militant for her faithful servants. The more, then, you gain the favour of that august Princess and faithful Virgin, the more will you go by pure faith in all your conduct; a pure faith which will make you hardly care at all about the sensible and the extraordinary; a lively faith animated by charity, which will enable you to perform all your actions from the motive of pure love; a faith firm and immovable as a rock, through which you will rest quiet and constant in the midst of storms and hurricanes; a faith active and piercing, which, like a mysterious pass-key, will give you entrance into all the mysteries of Jesus, into the Last Ends of man, and into the Heart of God Himself; a courageous faith, which will enable you to undertake and carry out without hesitation great things for God and for the salvation of souls; lastly, a faith which will be your blazing torch, your divine life, your hidden treasure of divine wisdom, and your omnipotent arm, which you will use to enlighten those who are in the darkness of the shadow of death, to inflame those who are lukewarm and who have need of the heated gold of charity, to give life to those who are dead in sin, to teach and overthrow, by your meek and powerful words, the hearts of marble and the cedars of Lebanon, and finally, to resist the devil and all the enemies of salvation.
 
-3. The gift of pure love. The Mother of fair love will rid your heart of all scruples and inordinate servile fear.
+3. This Mother of fair love will take away from your heart all scruple and all disorder of servile fear. She will open and enlarge it to run the way of her Son’s commandments with the holy liberty of the children of God. She will introduce into it pure love, of which she has the treasure; so that you shall no longer be guided by fear, as hitherto, in your dealings with the God of charity, but by pure love. You will look on Him as your good Father, whom you will be incessantly trying to please, and with whom you will converse confidently, as a child with its tender father. If, unfortunately, you offend Him, you will at once humble yourself before Him. You will ask His pardon with great lowliness, but at the same time you will stretch your hand out to Him with simplicity, and you will raise yourself up lovingly, without trouble or disquietude, and go on your way to Him without discouragement.
 
-4. Great confidence in God and in Mary. Our Blessed Lady will fill you with unbounded confidence in God and in herself, because you will no longer approach Jesus by yourself but always through Mary, your loving Mother.
+4. Our Blessed Lady will fill you with a great confidence in God and in herself: (1) because you will not be approaching to Jesus by yourself, but always by that good Mother;
 
-5. Communication of the spirit of Mary. The soul of Mary will be communicated to you to glorify the Lord. Her spirit will take the place of yours to rejoice in God, her Saviour, but only if you are faithful to the practices of this devotion.
+5. The soul of our Blessed Lady will communicate itself to you, to glorify the Lord. Her spirit will enter into the place of yours, to rejoice in God her salvation, provided only that you are faithful to the practices of this devotion. Sit in singulis anima Mariae, ut magnificet Dominum: sit in singulis spiritus Mariae, ut exultet in Deo (St. Ambrose)—“Let the soul of Mary be in each of us to glorify the Lord: let the spirit of Mary be in each of us to rejoice in God.” Ah! when will the happy time come, said a holy man of our own days, who was all absorbed in Mary—ah! when will the happy time come, when the divine Mary will be established mistress and queen of hearts, in order that she may subject them fully to the empire of her great and holy Jesus? When will souls breathe Mary as the body breathes air? When that time comes wonderful things will happen in those lowly places where the Holy Ghost, finding His dear Spouse as it were reproduced in souls, shall come in with abundance, and fill them full to overflowing with His gifts, and particularly with the gift of wisdom, to work the miracles of grace. My dear brother, when will that happy time, that age of Mary, come, when souls, losing themselves in the abyss of her interior, shall become living copies of Mary, to love and glorify Jesus? That time will not come until men shall know and practise this devotion which I am teaching. Ut adveniat regnum tuum, adveniat regnum Mariae.
 
-6. Transformation into the likeness of Jesus. If Mary, the Tree of Life, is well cultivated in our soul by fidelity to this devotion, she will in due time bring forth her fruit which is none other than Jesus.
-
-7. The greater glory of Christ. If you live this devotion sincerely, you will give more glory to Jesus in a month than in many years of a more demanding devotion.
+6. If Mary, who is the tree of life, is well cultivated in our soul by fidelity to the practices of this devotion, she will bear her fruit in her own time, and her fruit is none other than Jesus Christ. How many devout souls do I see who seek Jesus Christ, some by one way or by one practice, and others by other ways and other practices; and after they have toiled much throughout the night, they say, Per totam noctem laborantes nihil cepimus—“We have toiled all night, and have taken nothing!” We may say to them, Laborastis multum, et intulistis parum—“You have laboured much and gained little:” Jesus is yet feeble in you. But by that immaculate way of Mary and that divine practice which I am teaching, we toil during the day; we toil in a holy place; we toil but little. There is no night in Mary, because there is no sin nor even the slightest shade. Mary is a holy place, and the holy of holies where Saints are formed and moulded. Take notice, if you please, that I say the Saints are moulded in Mary. There is a great difference between making a figure in relief by blows of hammer and chisel, and making a figure by throwing it into a mould. Statuaries and sculptors labour much to make figures in the first manner; but to make them in the second manner, they work little, and do their work quickly.
 """,
                     source: "St. Louis de Montfort"
+                ),
+                ConsecrationReading(
+                    order: 2,
+                    title: "John 15:1-8",
+                    text: """
+I am the true vine: and my Father is the husbandman. Every branch in me that beareth not fruit, he will take away: and every one that beareth fruit, he will purge it, that it may bring forth more fruit. Now you are clean, by reason of the word which I have spoken to you. Abide in me: and I in you. As the branch cannot bear fruit of itself, unless it abide in the vine, so neither can you, unless you abide in me. I am the vine: you the branches. He that abideth in me, and I in him, the same beareth much fruit: for without me you can do nothing. If any one abide not in me, he shall be cast forth as a branch and shall wither: and they shall gather him up and cast him into the fire: and he burneth. If you abide in me and my words abide in you, you shall ask whatever you will: and it shall be done unto you. In this is my Father glorified: that you bring forth very much fruit and become my disciples.
+""",
+                    source: "Douay-Rheims Bible"
                 )
             ],
             journalPrompt: "Which of these seven effects do you most long for? Ask Mary to share her faith and her spirit with you."
@@ -972,17 +1131,31 @@ My dear friend, be sure that if you remain faithful to the interior and exterior
             readings: [
                 ConsecrationReading(
                     order: 1,
-                    title: "True Devotion, Nos. 12-38",
+                    title: "True Devotion, paragraphs 14–38",
                     text: """
-"If you wish to understand the Mother," says a saint, "then understand the Son. She is a worthy Mother of God." Hic taceat omnis lingua: Here let every tongue be silent.
+I avow, with all the Church, that Mary, being but a mere creature that has come from the hands of the Most High, is, in comparison with His infinite Majesty, less than an atom; or rather she is nothing at all, because He only is “He who is,” and thus by consequence that grand Lord, always independent and sufficient to Himself, never had, and has not now, any absolute need of the Holy Virgin for the accomplishment of His will and for the manifestation of His glory. He has but to will, in order to do everything. Nevertheless I say that, things being supposed as they are now, God having willed to commence and to complete His greatest works by the most holy Virgin, since He created her, we may well think He will not change His conduct in the eternal ages; for He is God, and He changes not either in His sentiments or in His conduct.
 
-My heart has dictated with special joy all that I have written to show that Mary has been unknown up till now, and that that is one of the reasons why Jesus Christ is not known as he should be. If then, as is certain, the knowledge and the kingdom of Jesus Christ must come into the world, it can only be as a necessary consequence of the knowledge and reign of Mary. She who first gave him to the world will establish his kingdom in the world.
+God the Father has not given His Only-begotten to the world except by Mary. Whatever sighs the patriarchs may have sent forth—whatever prayers the prophets and the saints of the ancient law may have offered up to obtain that treasure for full four thousand years—it was but Mary that merited it; it was but Mary who found grace before God by the force of her prayers and the eminence of her virtues. The world was unworthy, says St. Augustine, to receive the Son of God immediately from the Father’s hands. He has given Him to Mary in order that the world might receive Him through her. The Son of God has made Himself Man; but it was in Mary and by Mary. God the Holy Ghost has formed Jesus Christ in Mary; but it was only after having asked her consent by one of the first ministers of His court.
 
-With the whole Church I acknowledge that Mary, being a mere creature fashioned by the hands of God is, compared to his infinite majesty, less than an atom, or rather is simply nothing, since he alone can say, "I am he who is". Consequently, this great Lord, who is ever independent and self-sufficient, never had and does not now have any absolute need of the Blessed Virgin for the accomplishment of his will and the manifestation of his glory. To do all things he has only to will them. However, I declare that, considering things as they are, because God has decided to begin and accomplish his greatest works through the Blessed Virgin ever since he created her, we can safely believe that he will not change his plan in the time to come, for he is God and therefore does not change in his thoughts or his way of acting.
+God the Father has communicated to Mary His fruitfulness, as far as a mere creature was capable of it, in order that He might give her the power to produce His Son, and all the members of His mystical Body. God the Son has descended into her virginal womb, as the new Adam into the terrestrial paradise, to take His pleasure there, and to work in secret the marvels of His grace.
 
-Mary is the Queen of heaven and earth by grace as Jesus is king by nature and by conquest. But as the kingdom of Jesus Christ exists primarily in the heart or interior of man, according to the words of the Gospel, "The kingdom of God is within you", so the kingdom of the Blessed Virgin is principally in the interior of man, that is, in his soul. It is principally in souls that she is glorified with her Son more than in any visible creature. So we may call her, as the saints do, Queen of our hearts.
+God the Father made an assemblage of all the waters, and He named it the sea (mare). He has made an assemblage of all His graces, and He has called it Mary (Maria). This great God has a most rich treasury in which He has laid up all that He has of beauty, of splendour, of rarity, and of preciousness, even to His own Son; and this immense treasury is none other than Mary, whom the Saints have named the Treasure of the Lord, out of whose plenitude all men are made rich.
+
+God the Son has communicated to His Mother all that He has acquired by His Life and His Death, His infinite merits and His admirable virtues; and He has made her the treasuress of all that His Father has given Him for His inheritance. It is by her that He applies His merits to His members, and that He communicates His virtues, and distributes His graces. She is His mysterious canal; she is His aqueduct, through which He makes His mercies flow gently and abundantly.
+
+To Mary, His faithful Spouse, God the Holy Ghost has communicated His unspeakable gifts; and He has chosen her to be the dispensatrix of all He possesses, in such sort that she distributes to whom she wills, as much as she wills, as she wills, and when she wills, all His gifts and graces. The Holy Ghost gives no heavenly gift to men which He does not pass through her virginal hands. Such has been the Will of God, who has willed that we should have everything in Mary; so that she who impoverished, humbled, and hid herself even to the abyss of nothingness by her profound humility her whole life long, should now be enriched and exalted by the Most High. Such are the sentiments of the Church and the Holy Fathers.
+
+Mary is the Queen of heaven and earth by grace, as Jesus is the King of them by nature and by conquest. Now, as the kingdom of Jesus Christ consists principally in the heart and interior of a man—according to that word, “The kingdom of God is within you”—in like manner the kingdom of our Blessed Lady is principally in the interior of a man—that is to say, his soul; and it is principally in souls that she is more glorified with her Son than in all visible creatures, and that we can call her as the Saints do, the Queen of hearts.
 """,
                     source: "St. Louis de Montfort"
+                ),
+                ConsecrationReading(
+                    order: 2,
+                    title: "Apocalypse 12:1-6",
+                    text: """
+And a great sign appeared in heaven: A woman clothed with the sun, and the moon under her feet, and on her head a crown of twelve stars. And being with child, she cried travailing in birth: and was in pain to be delivered. And there was seen another sign in heaven. And behold a great red dragon, having seven heads and ten horns and on his heads seven diadems. And his tail drew the third part of the stars of heaven and cast them to the earth. And the dragon stood before the woman who was ready to be delivered: that, when she should be delivered, he might devour her son. And she brought forth a man child, who was to rule all nations with an iron rod. And her son was taken up to God and to his throne. And the woman fled into the wilderness, where she had a place prepared by God, that there they should feed her, a thousand two hundred sixty days.
+""",
+                    source: "Douay-Rheims Bible"
                 )
             ],
             journalPrompt: "Is Mary truly Queen of your heart? What part of your interior life have you not yet given over to her Son?"
@@ -998,23 +1171,19 @@ Mary is the Queen of heaven and earth by grace as Jesus is king by nature and by
             readings: [
                 ConsecrationReading(
                     order: 1,
-                    title: "Theme for the Week: Knowledge of Jesus Christ",
+                    title: "True Devotion, paragraph 230",
                     text: """
-During this period we shall apply ourselves to the study of Jesus Christ. What is to be studied in Christ? First the God-Man, His grace and glory; then His rights to sovereign dominion over us; since, after having renounced Satan and the world, we have taken Jesus Christ for our Lord. What next shall be the object of our study? His exterior actions and also His interior life; namely, the virtues and acts of His Sacred Heart; His association with Mary in the mysteries of the Annunciation and Incarnation, during His infancy and hidden life, at the feast of Cana and on Calvary.
+They should apply themselves in the third week to know Jesus Christ. They can meditate upon what we have said about Him, and say the prayer of St. Augustine, which they will find in the first part of this treatise. They can, with the same Saint, repeat a hundred times a day, Noverim te—“Lord, that I might know Thee!” or Domine, ut videam—“Lord, that I might see who Thou art!” They shall recite, as in the preceding weeks, the litany of the Holy Ghost and the Ave maris stella, and they shall add daily the Litany of the Holy Name of Jesus. At the end of the three weeks they shall confess and communicate, with the intention of giving themselves to Jesus Christ, in the quality of slaves of love, by the hands of Mary. After communion, which they should try to make according to the method given farther on, they should recite the formula of their consecration, which they will find afterwards. They ought to write it, or have it written, unless it is printed; and they should sign it the same day they have made it. It would be well also that on that day they should pay some tribute to Jesus Christ and our Blessed Lady, either as a penance for their past unfaithfulness to the vows of their Baptism, or in testimony of their dependence and allegiance to the domain of Jesus and Mary. This tribute ought to be according to the devotion and capacity of every one, as a fast, a mortification, an alms, or a candle. If they had but a pin to give in homage, yet gave it with a good heart, it would be enough for Jesus, who looks only at the good-will. Once a year at least, on the same day, they should renew the same consecration, observing the same practices during the three weeks. They might also once a month, or even once a day, renew what they have done by these few words: Tuus totus ego sum, et omnia mea tua sunt—“I am all for Thee, and all I have belongs to Thee, O my sweet Jesus, by Mary Thy holy Mother.”
 """,
-                    source: nil
+                    source: "St. Louis de Montfort"
                 ),
                 ConsecrationReading(
                     order: 2,
-                    title: "True Devotion, Nos. 61-62",
+                    title: "True Devotion, paragraphs 61–62",
                     text: """
-Jesus, our Saviour, true God and true man must be the ultimate end of all our other devotions; otherwise they would be false and misleading. He is the Alpha and the Omega, the beginning and end of everything. "We labour," says St. Paul, "only to make all men perfect in Jesus Christ."
+First Truth. Jesus Christ our Saviour, true God and true Man, ought to be the last end of all our other devotions, else they are false and delusive. Jesus Christ is the alpha and omega, the beginning and the end, of all things. We labour not, as the Apostle says, except to render every man perfect in Jesus Christ; because it is in Him alone that the whole plenitude of the Divinity dwells, together with all the other plenitudes of graces, virtues, and perfections; because it is in Him alone that we have been blessed with all spiritual benediction; and because He is our only Master, who has to teach us; our only Lord, on whom we ought to depend; our only Head, to whom we must belong; our only Model, to whom we should conform ourselves; our only Physician, who can heal us; our only Shepherd, who can feed us; our only Way, who can lead us; our only Truth, who can make us grow; our only Life, who can animate us; and our only All in all things, who can suffice us. There has been no other name given under heaven, except the name of Jesus, by which we can be saved. God has laid no other foundation of our salvation, of our perfection, and of our glory, except Jesus Christ. Every building which is not built upon that firm rock is founded upon the moving sand, and sooner or later will fall infallibly. Every one of the faithful who is not united to Him, as a branch to the stock of the vine, shall fall, shall wither, and shall be fit only to be cast into the fire. If we are in Jesus Christ and Jesus Christ in us, we have no condemnation to fear. Neither the Angels of heaven, nor the men of earth, nor the devils of hell, nor any other creatures, can injure us; because they cannot separate us from the love of God which is in Jesus Christ. By Jesus Christ, with Jesus Christ, in Jesus Christ, we can do all things; we can render all honour and glory to the Father in the unity of the Holy Ghost; we can become perfect ourselves, and be to our neighbour a good odour of eternal life.
 
-For in him alone dwells the entire fullness of the divinity and the complete fullness of grace, virtue and perfection. In him alone we have been blessed with every spiritual blessing; he is the only teacher from whom we must learn; the only Lord on whom we should depend; the only Head to whom we should be united and the only model that we should imitate. He is the only Physician that can heal us; the only Shepherd that can feed us; the only Way that can lead us; the only Truth that we can believe; the only Life that can animate us. He alone is everything to us and he alone can satisfy all our desires.
-
-We are given no other name under heaven by which we can be saved. God has laid no other foundation for our salvation, perfection and glory than Jesus. Every edifice which is not built on that firm rock, is founded upon shifting sands and will certainly fall sooner or later. Through him, with him and in him, we can do all things and render all honour and glory to the Father in the unity of the Holy Spirit; we can make ourselves perfect and be for our neighbour a fragrance of eternal life.
-
-If then we are establishing sound devotion to our Blessed Lady, it is only in order to establish devotion to our Lord more perfectly, by providing a smooth but certain way of reaching Jesus Christ. If devotion to our Lady distracted us from our Lord, we would have to reject it as an illusion of the devil. But this is far from being the case. As I have already shown and will show again later on, this devotion is necessary, simply and solely because it is a way of reaching Jesus perfectly, loving him tenderly, and serving him faithfully.
+If, then, we establish the solid devotion to our Blessed Lady, it is only to establish more perfectly the devotion to Jesus Christ, and to put forward an easy and secure means for finding Jesus Christ. If devotion to our Lady removed us from Jesus Christ, we should have to reject it as an illusion of the devil; but on the contrary, so far from this being the case, there is nothing which makes devotion to our Lady more necessary for us, as I have already shown, and will show still further hereafter, than that it is the means of finding Jesus Christ perfectly, of loving Him tenderly, and of serving Him faithfully.
 """,
                     source: "St. Louis de Montfort"
                 )
@@ -1041,6 +1210,20 @@ Then Jesus came with them into a country place which is called Gethsemani; and h
 And he cometh to his disciples, and findeth them asleep, and he saith to Peter: What? Could you not watch one hour with me? Watch ye, and pray that ye enter not into temptation. The spirit indeed is willing, but the flesh weak. Again the second time, he went and prayed, saying: My Father, if this chalice may not pass away, but I must drink it, thy will be done. And he cometh again and findeth them sleeping: for their eyes were heavy. And leaving them, he went again: and he prayed the third time, saying the selfsame word. Then he cometh to his disciples, and saith to them: Sleep ye now and take your rest; behold the hour is at hand, and the Son of man shall be betrayed into the hands of sinners. Rise, let us go: behold he is at hand that will betray me.
 """,
                     source: "Douay-Rheims Bible"
+                ),
+                ConsecrationReading(
+                    order: 2,
+                    title: "Imitation of Christ, Book 2, Chapter 11",
+                    text: """
+Jesus hath many lovers of His heavenly kingdom, but few bearers of His Cross. He hath many seekers of comfort, but few of tribulation. He findeth many companions of His table, but few of His fasting. All desire to rejoice with Him, few are willing to undergo anything for His sake. Many follow Jesus that they may eat of His loaves, but few that they may drink of the cup of His passion. Many are astonished at His Miracles, few follow after the shame of His Cross. Many love Jesus so long as no adversities happen to them. Many praise Him and bless Him, so long as they receive any comforts from Him. But if Jesus hide Himself and withdraw from them a little while, they fall either into complaining or into too great dejection of mind.
+
+But they who love Jesus for Jesus’ sake, and not for any consolation of their own, bless Him in all tribulation and anguish of heart as in the highest consolation. And if He should never give them consolation, nevertheless they would always praise Him and always give Him thanks.
+
+Oh what power hath the pure love of Jesus, unmixed with any gain or love of self! Should not all they be called mercenary who are always seeking consolations? Do they not prove themselves lovers of self more than of Christ who are always seeking their own gain and advantage? Where shall be found one who is willing to serve God altogether for nought?
+
+Rarely is any one found so spiritual as to be stripped of all selfish thoughts, for who shall find a man truly poor in spirit and free of all created things? “His value is from afar, yea from the ends of the earth.” A man may give away all his goods, yet that is nothing; and if he do many deeds of penitence, yet that is a small thing; and though he understand all knowledge, yet that is afar off; and if he have great virtue and zealous devotion, yet much is lacking unto him, yea, one thing which is the most necessary to him of all. What is it then? That having given up all things besides, he give up himself and go forth from himself utterly, and retain nothing of self-love; and having done all things which he knoweth to be his duty to do, that he feel that he hath done nothing. Let him not reckon that much which might be much esteemed, but let him pronounce himself to be in truth an unprofitable servant, as the Truth Himself saith, When ye have done all things that are commanded you, say, we are unprofitable servants. Then may he be truly poor and naked in spirit, and be able to say with the Prophet, As for me, I am poor and needy. Nevertheless, no man is richer than he, no man stronger, no man freer. For he knoweth both how to give up himself and all things, and how to be lowly in his own eyes.
+""",
+                    source: "Thomas à Kempis"
                 )
             ],
             journalPrompt: "'Not as I will, but as thou wilt.' Can you watch one hour with Christ? What chalice are you asking God to take away?"
@@ -1067,6 +1250,14 @@ What doth it avail thee to discourse profoundly of the Trinity, if thou be void 
 Vanity of vanities, and all is vanity, except to love God, and to serve Him only. This is the highest wisdom, by contempt of the world to press forward towards heavenly kingdoms.
 """,
                     source: "Thomas à Kempis"
+                ),
+                ConsecrationReading(
+                    order: 2,
+                    title: "1 Peter 2:21-25",
+                    text: """
+For unto this are you called: because Christ also suffered for us, leaving you an example that you should follow his steps. Who did no sin, neither was guile found in his mouth. Who, when he was reviled, did not revile: when he suffered, he threatened not, but delivered himself to him that judged him unjustly. Who his own self bore our sins in his body upon the tree: that we, being dead to sins, should live to justice: by whose stripes you were healed. For you were as sheep going astray: but you are now converted to the shepherd and bishop of your souls.
+""",
+                    source: "Douay-Rheims Bible"
                 )
             ],
             journalPrompt: "'I had rather feel contrition, than know the definition thereof.' Does your knowledge of the faith translate into a life conformed to Christ?"
@@ -1124,15 +1315,15 @@ And how is it that Thou dost vouchsafe to come unto a sinner? Thou knowest Thy s
                 ),
                 ConsecrationReading(
                     order: 2,
-                    title: "True Devotion, Nos. 243, 245-246, 249",
+                    title: "True Devotion, paragraphs 243, 247, 249, 253",
                     text: """
-Loving slaves of Jesus in Mary should hold in high esteem devotion to Jesus, the Word of God, in the great mystery of the Incarnation, March 25th, which is the mystery proper to this devotion, because it was inspired by the Holy Spirit: (a) That we might honour and imitate the wondrous dependence which God the Son chose to have on Mary, for the glory of his Father and for the redemption of man. This dependence is revealed especially in this mystery where Jesus becomes a captive and slave in the womb of his Blessed Mother, depending on her for everything. (b) That we might thank God for the incomparable graces he has conferred upon Mary and especially that of choosing her to be his most worthy Mother. This choice was made in the mystery of the incarnation. These are the two principal ends of the slavery of Jesus in Mary.
+Fourth Practice. Those who undertake this holy slavery should have a very special devotion to the great mystery of the Incarnation of the Word on the 25th of March. Indeed, the Incarnation is the proper mystery of this practice, inasmuch as it was a devotion inspired by the Holy Ghost, first, to honour and imitate the ineffable dependence which God the Son has been pleased to have on Mary, for His Father’s glory and our salvation; which dependence particularly appears in this mystery, where Jesus is a captive and a slave in the bosom of the divine Mary, and depends upon her for all things; secondly, to thank God for the incomparable graces He has given Mary, and particularly for having chosen her to be His most holy Mother, which choice was made in this mystery. These are the two principal ends of the slavery of Jesus in Mary.
 
-(a) Since we live in an age of pride when a great number of haughty scholars, with proud and critical minds, find fault even with long-established and sound devotions, it is better to speak of "slavery of Jesus in Mary" and to call oneself "slave of Jesus" rather than "slave of Mary". We then avoid giving any pretext for criticism. In this way, we name this devotion after its ultimate end which is Jesus, rather than after the way and the means to arrive there, which is Mary. However, we can very well use either term without any scruple, as I myself do.
+3. Another reason is because this manner of speaking sets forth still more the intimate union which there is between Jesus and Mary. They are so intimately united, that the one is altogether in the other. Jesus is altogether in Mary, and Mary is altogether in Jesus; or rather, she exists no more, but Jesus is all alone in her, and it were easier to separate the light from the sun than Mary from Jesus. So that we might call our Lord Jesus of Mary, and our Blessed Lady Mary of Jesus.
 
-(b) Since the principal mystery celebrated and honoured in this devotion is the mystery of the Incarnation where we find Jesus only in Mary, having become incarnate in her womb, it is appropriate for us to say, "slavery of Jesus in Mary", of Jesus dwelling enthroned in Mary, according to the beautiful prayer, recited by so many great souls, "O Jesus living in Mary".
+Fifth Practice. Those who adopt this slavery ought also to have a great devotion to saying the Hail Mary (the Angelical Salutation). Few Christians, however enlightened, know the real price, merit, excellence, and necessity of the Hail Mary. It was necessary for the Blessed Virgin to appear several times to great and enlightened Saints, to show them the merit of it. She did so to St. Dominic, St. John Capistran, and the Blessed Alan de la Roche. They have composed entire works on the wonders and efficacy of that prayer for converting souls. They have loudly published and openly preached that, salvation having begun with the Hail Mary, the salvation of each one of us in particular is attached to that prayer. They tell us that it is that prayer which made the dry and barren earth bring forth the fruit of life; and that it is that prayer well said which makes the Word of God germinate in our souls, and bring forth Jesus Christ, the Fruit of life. They tell us that the Hail Mary is a heavenly dew for watering the earth, which is the soul, to make it bring forth its fruit in season; and that a soul which is not watered by that prayer bears no fruit, and brings forth only thorns and brambles, and is ready to be cursed.
 
-Those who accept this devotion should have a great love for the Hail Mary, or, as it is called, the Angelic Salutation. Few Christians, however enlightened, understand the value, merit, excellence and necessity of the Hail Mary. Our Blessed Lady herself had to appear on several occasions to men of great holiness and insight, such as St. Dominic, St. John Capistran and Blessed Alan de Rupe, to convince them of the richness of this prayer.
+The Hail Mary well said—that is, with attention, devotion, and modesty—is, according to the Saints, the enemy of the devil which puts him to flight, and the hammer which crushes him. It is the sanctification of the soul, the joy of Angels, the melody of the predestinate, the canticle of the New Testament, the pleasure of Mary, and the glory of the Most Holy Trinity. The Hail Mary is a heavenly dew which fertilises the soul. It is the chaste and loving kiss which we give to Mary. It is a vermillion rose which we present to her; a precious pearl we offer her; a chalice of divine ambrosial nectar which we hold to her. All these are comparisons of the Saints.
 """,
                     source: "St. Louis de Montfort"
                 )
@@ -1160,18 +1351,18 @@ Love Him, and keep Him for thy friend, who, when all go away, will not forsake t
                 ),
                 ConsecrationReading(
                     order: 2,
-                    title: "True Devotion, Nos. 257-260",
+                    title: "True Devotion, paragraphs 257–260",
                     text: """
-There are some very sanctifying interior practices for those souls who feel called by the Holy Spirit to a high degree of perfection. They may be expressed in four words: doing everything through Mary, with Mary, in Mary, and for Mary, in order to do it more perfectly through Jesus, with Jesus, in Jesus, and for Jesus.
+These may be expressed in four words: to do all our actions by Mary, with Mary, in Mary, and for Mary; so that we may do them all the more perfectly by Jesus, with Jesus, in Jesus, and for Jesus.
 
-Through Mary: we must obey her always and be led in all things by her spirit, which is the Holy Spirit of God. "Those who are led by the Spirit of God are children of God," says St. Paul. Those who are led by the spirit of Mary are children of Mary, and, consequently children of God, as we have already shown. Among the many servants of Mary only those who are truly and faithfully devoted to her are led by her spirit. I have said that the spirit of Mary is the spirit of God because she was never led by her own spirit, but always by the spirit of God, who made himself master of her to such an extent that he became her very spirit. That is why St. Ambrose says, "May the soul of Mary be in each one of us to glorify the Lord. May the spirit of Mary be in each one of us to rejoice in God." Happy is the man who follows the example of the good Jesuit Brother Rodriguez, who died a holy death, because he will be completely possessed and governed by the spirit of Mary, a spirit which is gentle yet strong, zealous yet prudent, humble yet courageous, pure yet fruitful.
+I. We must do our actions by Mary; that is to say, we must obey her in all things, and in all things conduct ourselves by her spirit, which is the Holy Spirit of God. Those who are led by the Spirit of God are the children of God—Qui Spiritu Dei aguntur, ii sunt filii Dei. Those who are led by the spirit of Mary are the children of Mary, and consequently the children of God, as we have shown; and among so many clients of the Blessed Virgin none are true or faithful but those who are led by her spirit. I have said that the spirit of Mary was the Spirit of God, because she was never led by her own spirit, but always by the Holy Ghost, who has rendered Himself so completely master of her, that He has become her own proper spirit. It is on this account that St. Ambrose says: Sit in singulis Mariae anima, ut magnificet Dominum; sit in singulis spiritus Mariae, ut exsultet in Deo—“Let the soul of Mary be in each of us to magnify the Lord, and the spirit of Mary be in each of us to rejoice in God.” A soul is happy indeed, when, like the good Jesuit lay brother Alphonso Rodriguez, who died in the odour of sanctity, it is all possessed and overruled by the spirit of Mary, a spirit meek and strong, zealous and prudent, humble and courageous, pure and profound. In order that the soul may let itself be led by Mary’s spirit, it must first of all renounce its own spirit, and its own proper lights and wills, before it does anything. For example: it should do so before its prayer, before its saying or hearing Mass, and before communicating; because the darkness of our own spirit, and the malice of our own will and operation, if we follow them, however good they may appear to us, will put an obstacle to the spirit of Mary. Secondly, we must deliver ourselves to the spirit of Mary to be moved and influenced by it in the manner she chooses. We must put ourselves and leave ourselves in her virginal hands, like a tool in the grasp of a workman, like a lute in the hands of a skilful player. We must lose ourselves, and abandon ourselves to her, like a stone one throws into the sea. This must be done simply, and in an instant, by one glance of the mind, by one little movement of the will, or even verbally, in saying, for example, I renounce myself; I give myself to thee, my dear Mother. We may not, perhaps, feel any sensible sweetness in this act of union, but it is not on that account the less real. It is just as if we were to say with equal sincerity, though without any sensible change in ourselves, what, may it please God, we never shall say, I give myself to the devil; we should not the less truly belong to the devil because we did not feel we belonged to him. Thirdly, we must, from time to time, both during and after the action, renew the same act and offering of union. The more we shall do so, the more we shall be sanctified; and we shall all the sooner attain to union with Jesus Christ, which always follows necessarily on our union with Mary, because the spirit of Mary is the spirit of Jesus.
 
-With Mary: in all our actions we must look upon Mary, although a simple human being, as the perfect model of every virtue and perfection, fashioned by the Holy Spirit for us to imitate. In every action then we should consider how Mary performed it or how she would perform it if she were in our place. For this reason, we must examine and meditate on the great virtues she practised during her life, especially: 1) Her lively faith, by which she believed the angel's word without the least hesitation, and believed faithfully and constantly even to the foot of the Cross on Calvary. 2) Her deep humility, which made her prefer seclusion, maintain silence, submit to every eventuality and put herself in the last place.
+II. We must do our actions with Mary; that is to say, we must in all our actions regard Mary as an accomplished model of every virtue and perfection which the Holy Ghost has formed in a pure creature, for us to imitate according to our little measure. We must therefore in every action consider how Mary has done it, or how she would have done it, had she been in our place. For that end we must examine and meditate the great virtues which she practised during her life, and particularly, first of all, her lively faith, by which she believed without hesitation the Angel’s word, and believed it faithfully and constantly up to the foot of the Cross; secondly, her profound humility, which made her hide herself, hold her peace, submit to everything, and put herself the last of all; and, thirdly, her altogether divine purity, which never has had, and never can have, its equal under heaven; and so on with all her other virtues. Let us remember, I repeat it for the second time, that Mary is the great and exclusive mould of God, proper to make living images of God, at small cost and in a little time; and that a soul which has found that mould, and has lost itself in it, is presently changed into Jesus Christ, whom that mould represents to the life.
 """,
                     source: "St. Louis de Montfort"
                 )
             ],
-            journalPrompt: "Jesus 'will admit of no rival.' What creature-attachments compete with Him for your heart?"
+            journalPrompt: "Jesus 'will admit of no rival.' What attachments to people or things compete with Him for your heart?"
         ))
 
         // Day 33
@@ -1192,13 +1383,17 @@ O most sweet Lord Jesus, how great is the pleasure of the devout soul that feast
                 ),
                 ConsecrationReading(
                     order: 2,
-                    title: "True Devotion, Nos. 261-265",
+                    title: "True Devotion, paragraphs 261–265",
                     text: """
-In Mary: we must do everything in Mary. To understand this we must realise that the Blessed Virgin is the true earthly paradise of the new Adam and that the ancient paradise was only a symbol of her. There are in this earthly paradise untold riches, beauties, rarities and delights, which the new Adam, Jesus Christ, has left there. It is in this paradise that he "took his delights" for nine months, worked his wonders and displayed his riches with the magnificence of God himself. In this earthly paradise grows the real Tree of Life which bore our Lord, the fruit of Life, the tree of knowledge of good and evil, which bore the Light of the world. In this divine place there are trees planted by the hand of God and watered by his divine unction which have borne and continue to bear fruit that is pleasing to him. Only the Holy Spirit can teach us the truths that these material objects symbolise.
+III. We must do our actions in Mary. Thoroughly to understand this practice, we must know, first, that our Blessed Lady is the true terrestrial paradise of the new Adam, and that the ancient Paradise was but a figure of her. There are, then, in this earthly paradise, riches, beauties, rarities, and inexplicable sweetnesses, which Jesus Christ, the new Adam, has left there; it was in this paradise that He took His complacence for nine months, worked His wonders, and displayed His riches with the magnificence of a God. This most holy place is composed only of a virgin and immaculate earth, of which the new Adam was formed, and on which He was nourished, without any spot or stain, by the operation of the Holy Ghost, who dwelt there. It is in this earthly paradise that there is the true tree of life, which has borne Jesus Christ, the Fruit of life, and the tree of the knowledge of good and evil, which has given light unto the world. There are in this divine place trees planted by the hand of God, and watered by His Divine unction, which have borne and daily bear fruits of a taste divine. There are flower-beds, enamelled with beautiful and various blossoms; virtues, shedding odours which embalm the very Angels. There are meadows green with hope, impregnable towers of strength, and the most enticing houses of confidence. It is but the Holy Ghost who can make us know the hidden truth of these figures of material things. There are in this place an air of perfect purity; a fair sun, without the shadow of the Divinity; a fair day, without the night of the Sacred Humanity; a continual burning furnace of love, where all the iron that is cast into it is changed, by excessive heat, to gold. There is a river of humility, which springs from the earth, and which, dividing itself into four branches, waters all that enchanted place; and these are the four cardinal virtues. The Holy Ghost, by the mouth of the Fathers, also styles the Blessed Virgin the Eastern Gate, by which the High-Priest, Jesus Christ, enters the world and leaves it. By it He came the first time, and by it He will come the second.
 
-The Holy Spirit, speaking through the Fathers of the Church, also calls our Lady the Eastern Gate, through which the High Priest, Jesus Christ, enters and goes out into the world. Through this gate he entered the world the first time and through this same gate he will come the second time.
+In the next place, to comprehend thoroughly the practice of doing our actions in Mary, we must know that the most holy Virgin is the Sanctuary of the Divinity, the repose of the Most Holy Trinity, the throne of God, the city of God, the altar of God, the temple of God, the world of God. All these different epithets and panegyrics are most substantially true with reference to the different marvels which the Most High has wrought in Mary. O, what riches! what glory! what pleasure! what happiness! to be able to enter in and dwell in Mary, where the Most High has set up the throne of His supreme glory! But how difficult it is for sinners like ourselves to have the permission, the capacity, and the light to enter into a place so high and so holy, which is guarded not by one of the Cherubim like the old earthly Paradise, but by the Holy Ghost Himself, who is its absolute Master! He Himself has said of it, Hortus conclusus, soror mea sponsa, hortus conclusus, fons signatus; Mary is shut, Mary is sealed. The miserable children of Adam and Eve, driven from the earthly Paradise, cannot enter into this one, except by a particular grace of the Holy Ghost, which they ought to merit.
 
-For Mary: finally, we must do everything for Mary. We take Mary for our proximate end, our mysterious intermediary and the easiest way of reaching Jesus. Relying on her protection, we should undertake and carry out great things for our noble Queen. We must defend her privileges when they are questioned and uphold her good name when it is under attack. We must attract everyone, if possible, to her service and to this true and sound devotion. As a reward for these little services, we should expect nothing in return save the honour of belonging to such a lovable Queen and the joy of being united through her to Jesus, her Son, by a bond that is indissoluble in time and in eternity.
+After we have obtained this illustrious grace by our fidelity, we must remain in the fair interior of Mary with complacency, repose there in peace, lean our weight there in confidence, hide ourselves there with assurance, and lose ourselves there without reserve. Thus, in that virginal bosom, 1. the soul shall be nourished with the milk of grace and maternal mercy; 2. it shall be delivered from its troubles, fears, and scruples; and 3. it shall be in safety against all its enemies—the world, the devil, and sin—who never have an entrance there. It is on this account that Mary says that they who work in her shall not sin: Qui operantur in me, non peccabunt; that is to say, those who dwell in Mary’s spirit shall fall into no considerable fault. Lastly, 4. the soul shall be formed in Jesus Christ, and Jesus Christ in it, because her bosom is, as the Holy Fathers say, the chamber of the divine Sacraments, where Jesus Christ and all the elect have been formed.
+
+IV. Finally, we must do all our actions for Mary. As we have given ourselves up entirely to her service, it is but just to do everything for her as a servant and a slave. It is not that we can take her for the last end of our services, for that is Jesus Christ alone; but we may take her for our proximate end, our mysterious means, and our easy way to go to Him. Like a good servant and slave, we must not remain idle, but, supported by her protection, we must undertake and achieve great things for this august Sovereign. We must defend her privileges when they are disputed; we must stand up for her glory when it is attacked; we must entice all the world, if we can, to her service and to this true and solid devotion; we must speak and cry out against those who abuse her devotion to outrage her Son, and we must at the same time establish this Veritable Devotion; we must pretend to no recompense for our little services, except the honour of belonging to so sweet a Queen, and the happiness of being united by her to Jesus her Son by an indissoluble tie in time and in eternity.
+
+Glory to Jesus in Mary! Glory to Mary in Jesus! Glory to God Alone!
 """,
                     source: "St. Louis de Montfort"
                 )
@@ -1214,34 +1409,29 @@ For Mary: finally, we must do everything for Mary. We take Mary for our proximat
             readings: [
                 ConsecrationReading(
                     order: 1,
-                    title: "The Day of Consecration",
+                    title: "True Devotion, paragraphs 230–231",
                     text: """
-Today is the day of your Total Consecration to Jesus through Mary.
-
-On the day of consecration, either fast, give alms, or offer a votive candle for the good of another (or all of the above); do some spiritual penance and approach consecration in the spirit of mortification.
-
-Go to Confession (or, if that is not possible, go during the 8 days prior) and then receive Communion with the intention of giving yourself to Jesus, as a slave of love, by the hands of Mary. Try to receive Communion per the method described in the Supplement of the book, "True Devotion to the Blessed Virgin Mary" above.
-
-Then pray the words of the consecration. Copy them and have them with you at church; read them after the Mass — in front of the tabernacle would be fitting — and sign your copy of the Act of Consecration.
+They should apply themselves in the third week to know Jesus Christ. They can meditate upon what we have said about Him, and say the prayer of St. Augustine, which they will find in the first part of this treatise. They can, with the same Saint, repeat a hundred times a day, Noverim te—“Lord, that I might know Thee!” or Domine, ut videam—“Lord, that I might see who Thou art!” They shall recite, as in the preceding weeks, the litany of the Holy Ghost and the Ave maris stella, and they shall add daily the Litany of the Holy Name of Jesus. At the end of the three weeks they shall confess and communicate, with the intention of giving themselves to Jesus Christ, in the quality of slaves of love, by the hands of Mary. After communion, which they should try to make according to the method given farther on, they should recite the formula of their consecration, which they will find afterwards. They ought to write it, or have it written, unless it is printed; and they should sign it the same day they have made it. It would be well also that on that day they should pay some tribute to Jesus Christ and our Blessed Lady, either as a penance for their past unfaithfulness to the vows of their Baptism, or in testimony of their dependence and allegiance to the domain of Jesus and Mary. This tribute ought to be according to the devotion and capacity of every one, as a fast, a mortification, an alms, or a candle. If they had but a pin to give in homage, yet gave it with a good heart, it would be enough for Jesus, who looks only at the good-will. Once a year at least, on the same day, they should renew the same consecration, observing the same practices during the three weeks. They might also once a month, or even once a day, renew what they have done by these few words: Tuus totus ego sum, et omnia mea tua sunt—“I am all for Thee, and all I have belongs to Thee, O my sweet Jesus, by Mary Thy holy Mother.”
 """,
-                    source: nil
+                    source: "St. Louis de Montfort"
                 ),
                 ConsecrationReading(
                     order: 2,
-                    title: "Living the Consecration",
+                    title: "True Devotion, paragraphs 234–256",
                     text: """
-Once you have consecrated yourself to Jesus through Mary, live that consecration. St. Louis de Montfort recommended the following:
+Second Practice. They may recite every day of their life, without, however, making any burden of it, the Little Corona of the Blessed Virgin, composed of three Our Fathers and twelve Hail Marys, in honour of our Lady’s twelve privileges and grandeurs. This is a very ancient practice, for it has its foundation in the Holy Scriptures. St. John saw a woman crowned with twelve stars, clothed with the sun, and holding the moon under her feet; and this woman, according to the interpreters, was the most holy Virgin. There are many ways of saying this Corona well; but it would be too long to enter upon them. The Holy Ghost will teach them to those who are the most faithful to this devotion. Nevertheless, to say it quite simply we should begin by saying, Dignare me laudare te, Virgo sacrata, da mihi virtutem contra hostes tuos. After that we should say the Credo, and then a Pater with four Aves, and then one Gloria Patri; then another Pater, four Aves, and one Gloria Patri, and so on with the rest; and at the end we should say the Sub tuum praesidium.
 
-• Keep praying to develop a "great contempt" for the spirit of this world.
-• Maintain a special devotion to the Mystery of the Incarnation, through meditation, spiritual reading, and the Feasts of the Annunciation and the Nativity.
-• Frequently recite the Hail Mary, the Rosary, and the Magnificat.
-• Recite, every day if it is not inconvenient, the "Little Crown of the Blessed Virgin" — a series of Paters, Aves, and Glorias, one Ave for each star in the Virgin's Crown. St. Louis has a special way of praying the Little Crown, which is recommended.
-• Do everything through, with, in and for Mary for the sake of Jesus, with the prayer, "I am all thine, Immaculate One, with all that I have: in time and in eternity" in your heart and on your lips.
-• Associate yourself with Mary in a special way before, during, and after Communion.
-• Wear a little iron chain, around the neck, arm, waist, or ankle, as an outward sign and reminder of holy slavery. This practice is optional, but very recommended by St. Louis. The appearance of this chain is not further specified.
-• Renew the consecration once a year on the same date, following the same 33-day period of exercises. If desired, also renew it monthly with the prayer, "I am all thine and all I have is thine, O dear Jesus, through Mary, Thy holy Mother."
+Fourth Practice. Those who undertake this holy slavery should have a very special devotion to the great mystery of the Incarnation of the Word on the 25th of March. Indeed, the Incarnation is the proper mystery of this practice, inasmuch as it was a devotion inspired by the Holy Ghost, first, to honour and imitate the ineffable dependence which God the Son has been pleased to have on Mary, for His Father’s glory and our salvation; which dependence particularly appears in this mystery, where Jesus is a captive and a slave in the bosom of the divine Mary, and depends upon her for all things; secondly, to thank God for the incomparable graces He has given Mary, and particularly for having chosen her to be His most holy Mother, which choice was made in this mystery. These are the two principal ends of the slavery of Jesus in Mary.
+
+Fifth Practice. Those who adopt this slavery ought also to have a great devotion to saying the Hail Mary (the Angelical Salutation). Few Christians, however enlightened, know the real price, merit, excellence, and necessity of the Hail Mary. It was necessary for the Blessed Virgin to appear several times to great and enlightened Saints, to show them the merit of it. She did so to St. Dominic, St. John Capistran, and the Blessed Alan de la Roche. They have composed entire works on the wonders and efficacy of that prayer for converting souls. They have loudly published and openly preached that, salvation having begun with the Hail Mary, the salvation of each one of us in particular is attached to that prayer. They tell us that it is that prayer which made the dry and barren earth bring forth the fruit of life; and that it is that prayer well said which makes the Word of God germinate in our souls, and bring forth Jesus Christ, the Fruit of life. They tell us that the Hail Mary is a heavenly dew for watering the earth, which is the soul, to make it bring forth its fruit in season; and that a soul which is not watered by that prayer bears no fruit, and brings forth only thorns and brambles, and is ready to be cursed.
+
+I pray you urgently, by the love I bear you in Jesus and Mary, not to content yourselves with saying the Little Corona of the Blessed Virgin, but a whole Chaplet; or even, if you have time, the whole Rosary every day. At the moment of your death you will bless the day and hour in which you have followed my advice. Having thus sown in the benedictions of Jesus and Mary, you will reap eternal benedictions in heaven: qui seminat in benedictionibus, de benedictionibus et metet.
+
+Sixth Practice. To thank God for the graces He has given to our Lady, those who adopt this devotion will often say the Magnificat, as the Blessed Mary d’Oignies did, and many other Saints. It is the only prayer, the only work, which the holy Virgin composed, or, rather, which Jesus composed in her; for He spoke by her mouth. It is the greatest sacrifice of praise which God ever received from a pure creature in the law of grace. It is, on the one hand, the most humble and grateful, and on the other hand, the most sublime and exalted, of all canticles. There are in that song mysteries so great and hidden that the Angels do not know them. The pious and erudite Gerson employed a great part of his life in composing works upon most difficult subjects; and yet it was only at the close of his career, and even then with trembling, that he undertook to comment on the Magnificat, so as to crown all his other works. He wrote a folio volume on it, and brings forward many admirable things about that beautiful and divine canticle. Among other things, he says that our Lady often repeated it herself, and especially for thanksgiving after Communion. The learned Benzonius, in explaining the same Magnificat, relates many miracles wrought by the virtue of it, and says that the devils tremble and fly when they hear these words: Fecit potentiam in brachio suo, dispersit superbos mente cordis sui.
+
+Seventh Practice. Those faithful servants of Mary who adopt this devotion ought always greatly to despise, to hate, and to eschew the corrupted world, and to make use of those practices of the contempt of the world which we have given in the first part of this treatise.
 """,
-                    source: nil
+                    source: "St. Louis de Montfort"
                 )
             ],
             journalPrompt: "Record your thoughts and feelings on this day of consecration. What are you giving to Jesus through Mary today?"
