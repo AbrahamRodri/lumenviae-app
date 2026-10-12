@@ -40,7 +40,7 @@ struct PrayerBookSavedView: View {
                     }
 
                     if kept.isEmpty {
-                        PrayersLedgerRow(title: "Basic Prayers", note: "The first prayers to keep close") {
+                        PrayersLedgerRow(title: "The First Prayers", note: "The first prayers to keep close") {
                             router.push(.prayerBookChapter(id: "first"))
                         }
                     } else {
