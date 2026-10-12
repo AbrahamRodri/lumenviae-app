@@ -234,6 +234,19 @@ struct AccountView: View {
                             Divider()
                                 .background(AppColors.gold.opacity(0.2))
 
+                            // The Journal's standing door, with the
+                            // Chapel and its Reflections tile archived
+                            ActionRow(
+                                icon: "ph-book-open",
+                                title: "Journal",
+                                subtitle: "Your reflections, kept on this device"
+                            ) {
+                                router.switchTo(.journal)
+                            }
+
+                            Divider()
+                                .background(AppColors.gold.opacity(0.2))
+
                             ToggleRow(
                                 icon: "ph-bell",
                                 title: "Daily Reminders",
@@ -1250,7 +1263,7 @@ struct PrivacyPolicySheet: View {
                 VStack(alignment: .leading, spacing: 28) {
                     InfoBlock(
                         title: "What Stays on Your Phone",
-                        text: "Almost everything. Your journal, your prayer record and streak, your place in every book, your Chapel and your settings are kept on this device and never sent to us. They leave it only in your iPhone's own iCloud Backup, if you have it on, under Apple's privacy policy."
+                        text: "Almost everything. Your journal, your prayer record and streak, your place in every book and your settings are kept on this device and never sent to us. They leave it only in your iPhone's own iCloud Backup, if you have it on, under Apple's privacy policy."
                     )
 
                     InfoBlock(

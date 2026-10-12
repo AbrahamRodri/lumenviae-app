@@ -7,14 +7,14 @@
 //  Custom tab bar (instead of TabView) so it can match the design system
 //  and hide during the prayer flow.
 //
-//  Layout: four tabs (Home, Consecrate, Prayers, Chapel) plus a raised
+//  Layout: four tabs (Home, Consecrate, Prayers, Chant) plus a raised
 //  "Pray" button in the bottom-right — the prime action position. It
-//  starts today's Rosary directly, no selection screens. Progress has no
-//  tab; it opens from the Chapel's flame tile, or from Settings →
-//  Devotion → Prayer Record when the flame is stowed in the tray. Nor
-//  has the Journal, since Prayers took its place: it opens from the
-//  Chapel's Reflections tile and Explore's search, and is written in
-//  after a prayer, at its Amen.
+//  starts today's Rosary directly, no selection screens. Chant stands
+//  where the Chapel stood while the Chapel is archived
+//  (`ArchivedPages.chapel`). Progress has no tab; it opens from Settings
+//  → Devotion → Prayer Record and Explore's search. Nor has the Journal,
+//  since Prayers took its place: it opens from Settings → Devotion and
+//  Explore's search, and is written in after a prayer, at its Amen.
 //
 //  The bar is the page's foot, not a slab laid over it: content dissolves
 //  into it through a fade, its surface is the same color the app gradient
@@ -35,6 +35,15 @@ enum AppTab: CaseIterable {
     case chapel
     /// The Prayer Book, in the Journal's old place in the bar
     case prayers
+    /// The Chant Library, in the Chapel's place while it is archived
+    case chant
+
+    /// The tabs shown in the bar, in order. Progress and the Journal are
+    /// pushed pages now; Chant stands in the Chapel's place while the
+    /// Chapel is archived.
+    static var barTabs: [AppTab] {
+        [.home, .consecration, .prayers, ArchivedPages.chapel ? .chant : .chapel]
+    }
 
     var title: String {
         switch self {
@@ -44,6 +53,7 @@ enum AppTab: CaseIterable {
         case .progress:     return Constants.progressTab
         case .chapel:       return Constants.chapelTab
         case .prayers:      return Constants.prayersTab
+        case .chant:        return Constants.chantTab
         }
     }
 
@@ -58,14 +68,17 @@ enum AppTab: CaseIterable {
         case .chapel:       return "ch-window"
         // The Prayer Book's glyph on every surface it is a door on
         case .prayers:      return "lv-prayer-book"
+        // The Chant Library's note, as Explore's door to it wears
+        case .chant:        return "ph-music-note"
         }
     }
 
     /// Asset icon shown when the tab is selected (the fill weight). The
-    /// prayer book has no fill weight drawn, so Prayers is lit in gold
-    /// alone, as the gold and the bead beneath already say it is chosen.
+    /// prayer book and the note have no fill weight drawn, so Prayers and
+    /// Chant are lit in gold alone, as the gold and the bead beneath
+    /// already say they are chosen.
     var selectedIcon: String {
-        self == .prayers ? icon : icon + "-fill"
+        self == .prayers || self == .chant ? icon : icon + "-fill"
     }
 }
 
@@ -85,17 +98,15 @@ struct CustomTabBar: View {
     /// Opens the press-and-hold tray of the user's chosen devotions
     var onPrayHold: () -> Void = {}
 
-    /// Tabs shown in the bar. Progress is reachable from the Chapel's
-    /// flame tile, and from Settings when the flame is stowed; the
-    /// Journal, from the Chapel's Reflections tile and Explore's search.
-    private let visibleTabs: [AppTab] = [.home, .consecration, .prayers, .chapel]
+    /// Tabs shown in the bar
+    private let visibleTabs: [AppTab] = AppTab.barTabs
 
     /// The first-use tour's stop at a tab, where it has one
     private func tourStop(for tab: AppTab) -> FirstUseTourStop? {
         switch tab {
         case .consecration: return .consecration
         case .prayers: return .prayers
-        case .chapel: return .chapel
+        case .chapel, .chant: return .chant
         default: return nil
         }
     }

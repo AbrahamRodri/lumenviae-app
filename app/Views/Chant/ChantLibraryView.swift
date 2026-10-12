@@ -47,7 +47,13 @@ struct ChantLibraryView: View {
     private var player = ChantPlayer.shared
     private var shelf = ChantShelfStore.shared
 
-    init() {}
+    /// Shown as the Chant tab's page: no Back, and room at the foot for
+    /// the tab bar
+    private let isTabRoot: Bool
+
+    init(isTabRoot: Bool = false) {
+        self.isTabRoot = isTabRoot
+    }
 
     /// The key the build with six sections kept the one last opened
     /// under. The page has no sections now, so whatever it holds opens
@@ -82,8 +88,10 @@ struct ChantLibraryView: View {
         .navigationBarBackButtonHidden(true)
         .toolbar {
             if !searching {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    ChantBackButton()
+                if !isTabRoot {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        ChantBackButton()
+                    }
                 }
                 ToolbarItem(placement: .principal) {
                     VStack(spacing: 1) {
@@ -144,7 +152,7 @@ struct ChantLibraryView: View {
 
                 footer
                     .padding(.horizontal, 36)
-                    .padding(.bottom, 40)
+                    .padding(.bottom, isTabRoot ? 130 : 40)
             }
             .padding(.top, 8)
         }
