@@ -82,7 +82,7 @@ nonisolated enum LibraryBookParser {
             if let dropRegex, matches(dropRegex, line) { continue }
             if let partRegex, matches(partRegex, line) {
                 if let finished = current { raw.append(finished) }
-                part = titleCased(line)
+                part = partName(line)
                 // The part opens a unit of its own rather than closing
                 // the book's ear: everything printed between a part
                 // heading and its first chapter used to fall through the
@@ -148,8 +148,12 @@ nonisolated enum LibraryBookParser {
                         block.append(contentLines[end])
                         end += 1
                     }
+                    // Gutenberg's _underscore emphasis_ is unwrapped here
+                    // as it is in the prose: Brother Lawrence's letters
+                    // are headed "_To the Same_".
                     let joined = block.joined(separator: " ")
-                    guard !joined.isEmpty, joined.count <= 140 else { break }
+                        .replacingOccurrences(of: "_", with: "")
+                    guard !joined.isEmpty, joined.count <= rules.maximumTitleLength else { break }
 
                     // Each printed block ends with its own full stop;
                     // joined as they stand they read "…Falls of Jesus..
@@ -230,9 +234,14 @@ nonisolated enum LibraryBookParser {
 
     /// "CHAPTER V VOCATION OF THÉRÈSE" → ("Chapter V", "VOCATION OF
     /// THÉRÈSE"); "BOOK I" → ("Book I", nil); anything else is its own
-    /// heading, split at a colon when it carries one.
-    private static func splitHeading(_ line: String) -> (heading: String, title: String?) {
-        let labelPattern = #"^(CHAPTER|BOOK|PART|SECTION|MEDITATION)\s+([IVXLC]+)\.?(?:\s+(.*))?$"#
+    /// heading, split at a colon when it carries one, its closing
+    /// full stop dropped ("FIRST LETTER." → "First Letter"). A heading
+    /// Gutenberg sets in _underscores_ ("_CHAPTER II._", Caussade) is
+    /// read without them.
+    private static func splitHeading(_ printed: String) -> (heading: String, title: String?) {
+        let line = printed.replacingOccurrences(of: "_", with: "")
+            .trimmingCharacters(in: .whitespaces)
+        let labelPattern = #"^(CHAPTER|BOOK|PART|SECTION|MEDITATION|DISCOURSE)\s+([IVXLC]+)\.?(?:\s+(.*))?$"#
         if let regex = try? NSRegularExpression(pattern: labelPattern),
            let match = regex.firstMatch(in: line, range: NSRange(line.startIndex..., in: line)) {
             let label = substring(line, match.range(at: 1))?.capitalized ?? ""
@@ -246,7 +255,19 @@ nonisolated enum LibraryBookParser {
             let rest = String(line[line.index(after: colon)...]).trimmingCharacters(in: .whitespaces)
             return (titleCased(head), rest.isEmpty ? nil : rest)
         }
-        return (titleCased(line), nil)
+        return (titleCased(line.hasSuffix(".") ? String(line.dropLast()) : line), nil)
+    }
+
+    /// "THE FIRST BOOK" → "The First Book"; "Book First." → "Book
+    /// First"; "PART SECOND:" → "Part Second". The printed stop or colon
+    /// closes a line in the book and opens nothing in a contents ledger.
+    private static func partName(_ line: String) -> String {
+        var name = line.replacingOccurrences(of: "_", with: "")
+            .trimmingCharacters(in: .whitespaces)
+        while let last = name.last, last == "." || last == ":" {
+            name.removeLast()
+        }
+        return titleCased(name)
     }
 
     private static func substring(_ line: String, _ range: NSRange) -> String? {

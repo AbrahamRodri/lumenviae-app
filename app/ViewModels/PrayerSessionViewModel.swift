@@ -947,6 +947,9 @@ final class PrayerSessionViewModel {
     func recordCompletion() async throws {
         guard !hasRecordedCompletion else { return }
         hasRecordedCompletion = true
+        // A bundled set is not one of the server's: there is nothing to
+        // count it against, and its sentinel ID would only be refused
+        guard meditationSet.id > 0 else { return }
         try await apiService.recordCompletion(meditationSetId: meditationSet.id, prayedAloud: isPrayedAloud)
     }
 

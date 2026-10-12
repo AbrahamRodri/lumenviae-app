@@ -119,7 +119,7 @@ extension APIClientTests {
             favorites: FavoritesService(previewFavorites: [])
         )
         await vm.loadMeditationSets()
-        #expect(vm.meditationSets.map(\.id) == [8])
+        #expect(vm.meditationSets.map(\.id) == [8] + BundledMeditationSets.summaries(for: vm.category).map(\.id), "the server's set, then the bundled one")
         #expect(vm.errorMessage == nil)
         #expect(!vm.isLoading)
         #expect(StubProtocol.requests.first?.url?.query == "category=joyful")
@@ -135,6 +135,22 @@ extension APIClientTests {
         )
         await vm.loadMeditationSets()
         #expect(StubProtocol.requests.isEmpty)
+    }
+
+    @Test func everyCategoryHasABundledSetThatStandsWithNoServer() async {
+        for category in MysteryCategory.allCases {
+            StubProtocol.reset { _ in .init(status: 503) }
+            let vm = MeditationSelectionViewModel(
+                category: category,
+                apiService: APIService(session: StubProtocol.session),
+                favorites: FavoritesService(previewFavorites: [])
+            )
+            await vm.loadMeditationSets()
+            let bundled = BundledMeditationSets.summaries(for: category)
+            #expect(!bundled.isEmpty, "\(category)")
+            #expect(vm.meditationSets.suffix(bundled.count).map(\.id) == bundled.map(\.id), "\(category)")
+            #expect(vm.errorMessage == nil, "\(category)")
+        }
     }
 
     @Test func theBundledLuminousSetStandsEvenWithNoServer() async {

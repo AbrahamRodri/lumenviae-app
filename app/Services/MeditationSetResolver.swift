@@ -20,10 +20,9 @@ import Foundation
 enum MeditationSetResolver {
 
     /// Bundled sets compiled into the binary, keyed by their sentinel IDs.
-    /// Add new bundled sets here and every flow picks them up.
-    private static let bundledSets: [Int: MeditationSet] = [
-        LuminousMeditationData.setID: LuminousMeditationData.set
-    ]
+    /// Add a new bundled set to `BundledMeditationSets` and every flow
+    /// picks it up.
+    private static let bundledSets: [Int: MeditationSet] = BundledMeditationSets.byID
 
     /// API sets resolved this session. Content changes only with a
     /// release of the web app, so a session-long memo is safe; a relaunch

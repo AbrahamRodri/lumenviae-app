@@ -33,6 +33,16 @@ struct JournalView: View {
     @State private var searchText = ""
     @State private var entryPendingDelete: JournalEntry? = nil
 
+    /// The starter question chosen on the empty page, opening the editor
+    /// with it as the reflection's title
+    @State private var promptToWrite: StarterPrompt? = nil
+
+    /// A starter question, identified by its words for the sheet
+    private struct StarterPrompt: Identifiable {
+        let text: String
+        var id: String { text }
+    }
+
     /// Gallery (the drop-capped cards) or list (one line an entry).
     /// Persisted, because it is a reading preference rather than a mood
     /// — a long journal is browsed the same way every time.
@@ -102,6 +112,13 @@ struct JournalView: View {
             }
         }
         // New entry sheet
+        .sheet(item: $promptToWrite) { prompt in
+            JournalEntryEditorView(isMidPrayer: false, initialSubject: prompt.text)
+                .presentationDetents([.large])
+                .presentationDragIndicator(.visible)
+                .presentationBackground(AppColors.background)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
+        }
         .sheet(isPresented: $showingNewEntry) {
             JournalEntryEditorView(isMidPrayer: false)
                 .presentationDetents([.large])
@@ -419,6 +436,40 @@ struct JournalView: View {
 
     // MARK: - Empty State
 
+    /// Three questions on today's mysteries, each a ruled row that opens
+    /// the editor with the question as the reflection's title, so a
+    /// first page is never blank.
+    private var starterPrompts: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text("TO BEGIN, ON TODAY'S MYSTERIES")
+                .font(AppFonts.labelFont(10))
+                .tracking(2)
+                .foregroundColor(AppColors.gold.opacity(0.8))
+                .padding(.bottom, 6)
+
+            ForEach(JournalPrompts.today, id: \.self) { prompt in
+                Button(action: { promptToWrite = StarterPrompt(text: prompt) }) {
+                    HStack(alignment: .firstTextBaseline, spacing: 10) {
+                        Text(prompt)
+                            .font(AppFonts.italicFont(16))
+                            .foregroundColor(AppColors.cream.opacity(0.9))
+                            .multilineTextAlignment(.leading)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        AppIcon("ph-caret-right", size: 12)
+                            .foregroundColor(AppColors.gold.opacity(0.7))
+                    }
+                    .padding(.vertical, 12)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(SacredCardButtonStyle())
+                .accessibilityHint("Begins a reflection with this question as its title")
+
+                Divider()
+                    .background(AppColors.gold.opacity(0.16))
+            }
+        }
+    }
+
     private var emptyState: some View {
         VStack(spacing: 20) {
             Spacer()
@@ -437,6 +488,10 @@ struct JournalView: View {
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
             }
+
+            starterPrompts
+                .padding(.horizontal, 32)
+                .padding(.top, 4)
 
             Button(action: { showingNewEntry = true }) {
                 HStack(spacing: 8) {

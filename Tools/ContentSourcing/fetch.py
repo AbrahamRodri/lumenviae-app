@@ -191,13 +191,15 @@ def take_painting(slot: dict, pinned: str = None):
 
 def retake_bundled(name: str):
     """Take a bundled painting again at full size, from the Commons file its
-    provenance matched exactly, over the JPG already in its imageset. The
-    imageset and its Contents.json stay as they are, and the aspect must
-    not move, or the app's focal points would land elsewhere."""
+    provenance matched (exactly, or the same picture by eye), over the JPG
+    already in its imageset. The imageset and its Contents.json stay as
+    they are, and the aspect must not move, or the app's focal points
+    would land elsewhere — that check is what makes a same-work retake
+    safe: a different crop of the picture would fail it."""
     from PIL import Image
     prov = S.PROVENANCE.get(name)
-    if not prov or prov["match"] != "exact":
-        raise Failure("only a painting whose provenance match is exact can be taken again")
+    if not prov or prov["match"] not in ("exact", "same work"):
+        raise Failure("only a painting whose provenance names the Commons file of the same picture can be taken again")
     d = ASSETS / f"{name}.imageset"
     contents = json.loads((d / "Contents.json").read_text())
     filename = next(i["filename"] for i in contents["images"] if i.get("filename"))

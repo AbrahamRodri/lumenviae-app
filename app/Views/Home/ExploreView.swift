@@ -1021,10 +1021,14 @@ struct ExploreView: View {
         let fetched = await withTaskGroup(of: [MeditationSetSummary].self) { group in
             for category in MysteryCategory.allCases {
                 group.addTask {
+                    // The bundled set for these mysteries stands in the
+                    // index as it stands on the mysteries' page, with no
+                    // signal and nothing downloaded
+                    let bundled = await BundledMeditationSets.summaries(for: category)
                     if let live = try? await APIService.shared.fetchMeditationSets(category: category) {
-                        return live
+                        return live + bundled
                     }
-                    return await OfflineContentService.shared.storedSummaries(category: category) ?? []
+                    return (await OfflineContentService.shared.storedSummaries(category: category) ?? []) + bundled
                 }
             }
 

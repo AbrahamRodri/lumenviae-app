@@ -82,6 +82,17 @@ GENERATORS = [
         note="the lv-* glyphs (lv-breviary is drawn by hand and left alone)",
     ),
     Generator(
+        "sources-credits",
+        inputs=["Tools/ContentSourcing/sources.py", "Tools/ContentSourcing/build_credits.py",
+                "Tools/ContentSourcing/fetched.json", "app/Assets.xcassets/*.imageset",
+                "app/Data/SourcesAndCredits.swift"],
+        outputs=["app/Data/SourcesAndCredits.swift"],
+        steps=[["python3", "Tools/ContentSourcing/build_credits.py"]],
+        regenerate="cd Tools/ContentSourcing && python3 build_credits.py",
+        note="the Sources & Credits page's list, from sources.py and what fetch.py recorded "
+             "(MANIFEST.md is rendered by build_manifest.py, which reads the encoded chants' sizes and is not checked here)",
+    ),
+    Generator(
         "scriptural-rosary",
         inputs=["Tools/ScripturalRosary/generate.py", "Tools/ScripturalRosary/cache",
                 "Tools/ScripturalRosary/scriptural_rosary.json", "app/Data/ScripturalRosaryData.swift"],

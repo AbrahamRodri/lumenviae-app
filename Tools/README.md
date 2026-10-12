@@ -148,7 +148,7 @@ have drifted apart.
 | `ScripturalRosary/generate.py` | the curated references in the script, the Douay-Rheims API | `app/Data/ScripturalRosaryData.swift`, `scriptural_rosary.json` | `--check`. The server reads the JSON. |
 | `TrueDevotion/build_book.py`, `verify_book.py` | `TrueDevotion/chapters/*.txt` | `app/Resources/TrueDevotionBook.json`, `VERIFICATION.md` | See `TrueDevotion/README.md`. Append paragraphs and never insert them, because readers' marks are keyed by index. |
 | `IconAudit/draw.py` | the drawings in the script | `app/Assets.xcassets/Icons/lv-*` | `make_sheet.py` renders the contact sheet. `app-icon/fix_icon.py` writes the app icon. |
-| `ContentSourcing/` | `sources.py` | paintings, chant candidates, `MANIFEST.md` | Fetches and verifies licences. See `MANIFEST.md`. Needs Pillow. |
+| `ContentSourcing/` | `sources.py` | paintings, chant candidates, `MANIFEST.md`, `app/Data/SourcesAndCredits.swift` | Fetches and verifies licences (`fetch.py`), renders the manifest (`build_manifest.py`) and the Sources & Credits page's list (`build_credits.py`). See `MANIFEST.md`. Needs Pillow. |
 
 ## Other tools
 

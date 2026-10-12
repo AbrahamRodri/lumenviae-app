@@ -102,7 +102,7 @@ struct ChapelLayoutTests {
 struct StreakMilestoneOrderTests {
 
     @Test func theMilestonesAreTheChurchsNumbersInOrder() {
-        #expect(StreakMilestone.all.map(\.days) == [3, 7, 9, 33, 54, 100, 365])
+        #expect(StreakMilestone.all.map(\.days) == [3, 7, 9, 33, 40, 50, 54, 100, 150, 365, 500, 1000])
     }
 
     @Test func aMilestoneIsReachedOnlyOnItsDay() {
@@ -114,9 +114,10 @@ struct StreakMilestoneOrderTests {
     @Test func theNextAndTheLatest() {
         #expect(StreakMilestone.next(after: 0)?.days == 3)
         #expect(StreakMilestone.next(after: 9)?.days == 33)
-        #expect(StreakMilestone.next(after: 365) == nil)
+        #expect(StreakMilestone.next(after: 365)?.days == 500)
+        #expect(StreakMilestone.next(after: 1000) == nil)
         #expect(StreakMilestone.latest(achievedBy: 2) == nil)
-        #expect(StreakMilestone.latest(achievedBy: 53)?.days == 33)
+        #expect(StreakMilestone.latest(achievedBy: 53)?.days == 50)
         #expect(StreakMilestone.latest(achievedBy: 400)?.days == 365)
     }
 
@@ -124,7 +125,7 @@ struct StreakMilestoneOrderTests {
         #expect(StreakMilestone.progressTowardNext(streak: 0) == 0)
         #expect(StreakMilestone.progressTowardNext(streak: 3) == 0)
         #expect(StreakMilestone.progressTowardNext(streak: 5) == 0.5)
-        #expect(StreakMilestone.progressTowardNext(streak: 500) == 1)
+        #expect(StreakMilestone.progressTowardNext(streak: 1000) == 1)
         for streak in 0...400 {
             let progress = StreakMilestone.progressTowardNext(streak: streak)
             #expect((0...1).contains(progress))
