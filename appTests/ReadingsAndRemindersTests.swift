@@ -135,6 +135,12 @@ struct ReminderMessageTests {
     private let every: [ReminderMessage] =
         ReminderMessage.peace + ReminderMessage.habit + ReminderMessage.devotion
         + ReminderMessage.learning + ReminderMessage.standard
+        + ReminderMessage.advent + ReminderMessage.lent + ReminderMessage.eastertide
+        + ReminderMessage.may + ReminderMessage.october
+
+    private let inSeason: [ReminderMessage] =
+        ReminderMessage.peace + ReminderMessage.habit + ReminderMessage.devotion
+        + ReminderMessage.learning + ReminderMessage.standard
 
     @Test func noReasonChosenGivesTheNeutralPool() {
         #expect(ReminderMessage.pool(for: []) == ReminderMessage.standard)
@@ -147,8 +153,36 @@ struct ReminderMessageTests {
 
     @Test func learningOpensTheWholeCatalog() {
         let pool = ReminderMessage.pool(for: [.learning])
-        #expect(Set(pool) == Set(every))
+        #expect(Set(pool) == Set(inSeason))
         #expect(pool.count == Set(pool).count, "no message twice")
+    }
+
+    @Test func theSeasonsLinesAreWovenIntoTheWeekWhileTheSeasonLasts() throws {
+        let calendar = Calendar(identifier: .gregorian)
+        func day(_ y: Int, _ m: Int, _ d: Int) -> Date {
+            calendar.date(from: DateComponents(year: y, month: m, day: d))!
+        }
+        #expect(ReminderMessage.seasonPool(on: day(2026, 12, 6), calendar: calendar) == ReminderMessage.advent)
+        #expect(ReminderMessage.seasonPool(on: day(2026, 3, 1), calendar: calendar) == ReminderMessage.lent)
+        // Easter 2026 is April 5, Pentecost May 24: Eastertide outranks May
+        #expect(ReminderMessage.seasonPool(on: day(2026, 4, 12), calendar: calendar) == ReminderMessage.eastertide)
+        #expect(ReminderMessage.seasonPool(on: day(2026, 5, 10), calendar: calendar) == ReminderMessage.eastertide)
+        #expect(ReminderMessage.seasonPool(on: day(2026, 5, 28), calendar: calendar) == ReminderMessage.may)
+        #expect(ReminderMessage.seasonPool(on: day(2026, 10, 7), calendar: calendar) == ReminderMessage.october)
+        #expect(ReminderMessage.seasonPool(on: day(2026, 7, 15), calendar: calendar) == nil)
+
+        let week = ReminderMessage.pool(for: [.peace], on: day(2026, 10, 7), calendar: calendar)
+        #expect(Set(week.prefix(2)).contains(ReminderMessage.october[0]))
+        #expect(Set(week.prefix(2)).contains(ReminderMessage.peace[0]))
+        #expect(Set(week) == Set(ReminderMessage.peace + ReminderMessage.october))
+        #expect(ReminderMessage.pool(for: [.peace], on: day(2026, 7, 15), calendar: calendar) == ReminderMessage.peace)
+    }
+
+    @Test func everySeasonHasFiveLinesAndLearningSix() {
+        for pool in [ReminderMessage.advent, ReminderMessage.lent, ReminderMessage.eastertide, ReminderMessage.may, ReminderMessage.october] {
+            #expect(pool.count == 5)
+        }
+        #expect(ReminderMessage.learning.count == 6)
     }
 
     @Test func twoReasonsAreInterleavedSoAWeekHearsFromBoth() {

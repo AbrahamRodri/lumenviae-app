@@ -100,7 +100,7 @@ PAINTINGS = [
     dict(imageset="feast_christ_the_king", slot="(g) Christ the King (last Sunday of October): Chant Year 'Feast days ahead' (Christus Vincit)",
          features=["Chant Library: Year"],
          work="Christ Triumphant over Sin and Death", creator="Peter Paul Rubens (1577–1640)", date="c. 1615–22",
-         collection="Rubens workshop picture; several versions (e.g. Rubenshuis, Antwerp) — pick the version Commons tags PD-Art",
+         collection="Rubens workshop picture, of which there are several versions (Rubenshuis, Antwerp among them)",
          source_page=None,
          commons_search="Rubens Christ triumphant over sin and death",
          why="The risen Christ enthroned over death, Flemish Baroque beside the bundle's Rubens Descent and Van Dyck Crowning.",
@@ -142,6 +142,50 @@ PAINTINGS = [
 # with glyphs; the Chant Library's featured occasion is the bundled
 # Institution of the Eucharist). Kept for a later design; fetch.py never
 # takes these.
+# ------------------------------------------- the mysteries' paintings, Oct 2026
+# The app-clarity round: the two sorrows that borrowed another set's painting
+# get their own, the two paintings whose painter could not be established are
+# replaced, and the Resurrection, bundled at 566×732, is replaced by a larger
+# work. All PD-Art on Commons; fetch.py --take pins each file by name.
+
+PAINTINGS += [
+    dict(imageset="seven_sorrows_finding", slot="The third sorrow, the loss of Jesus in the Temple (it borrowed joyful_finding)",
+         features=["The Seven Sorrows: the mysteries' page, the player, the Scriptural Rosary"],
+         work="The Finding of the Saviour in the Temple", creator="William Holman Hunt (1827–1910)", date="1854–60",
+         collection="Birmingham Museum and Art Gallery", source_page="https://commons.wikimedia.org/wiki/File:William_Holman_Hunt_-_The_Finding_of_the_Saviour_in_the_Temple_-_Google_Art_Project.jpg",
+         commons_search="Holman Hunt Finding of the Saviour in the Temple",
+         commons_file="File:William Holman Hunt - The Finding of the Saviour in the Temple - Google Art Project.jpg",
+         why="Mary's own part in the scene: she has found Him and holds Him, where Veronese's Christ among the Doctors (joyful_finding) shows the boy teaching and no mother.",
+         alternate=None, **PD_ART),
+    dict(imageset="seven_sorrows_calvary", slot="The fifth sorrow, Mary at the foot of the Cross (it borrowed sorrowful_crucifixion)",
+         features=["The Seven Sorrows: the mysteries' page, the player, the Scriptural Rosary"],
+         work="Crucifixion Diptych", creator="Rogier van der Weyden (c. 1399–1464)", date="c. 1460",
+         collection="Philadelphia Museum of Art", source_page="https://commons.wikimedia.org/wiki/File:Crucifixion_Diptych_(Rogier_van_der_Weyden).jpg",
+         commons_search="Rogier van der Weyden Crucifixion Diptych Philadelphia",
+         commons_file="File:Crucifixion Diptych (Rogier van der Weyden).jpg",
+         why="Mary swooning into St John's arms beside the Cross: the sorrow is hers, where Velázquez's Christ Crucified (sorrowful_crucifixion) shows Him alone. Commons holds the diptych at 1195×1128, below the 1600 target, so it is pinned.",
+         alternate=None, **PD_ART),
+    dict(imageset="glorious_pentecost", slot="The third Glorious Mystery (replaces a Pentecost whose painter could not be established)",
+         features=["The Glorious Mysteries: the mysteries' page, the player, the Scriptural Rosary"],
+         work="The Pentecost", creator="El Greco (1541–1614)", date="c. 1600",
+         collection="Museo del Prado, Madrid", source_page="https://commons.wikimedia.org/wiki/File:Pentecostés_(El_Greco,_c._1600)_Prado.jpg",
+         commons_search="El Greco Pentecost Prado",
+         commons_file="File:Pentecostés (El Greco, c. 1600) Prado.jpg",
+         why="Mary at the centre of the Apostles under the dove, the tongues of fire on every head; a known painter and a known museum, where the old file was an unidentified seventeenth-century picture.",
+         alternate=None, **PD_ART),
+    dict(imageset="glorious_resurrection", slot="The first Glorious Mystery and the Glorious card on home (replaces Coypel's, bundled at 566×732)",
+         features=["Home's mystery grid, the mysteries' page, the player, the Scriptural Rosary"],
+         work="The Resurrection of Christ", creator="Annibale Carracci (1560–1609)", date="1593",
+         collection="Musée du Louvre, Paris", source_page="https://commons.wikimedia.org/wiki/File:Carracci_-_La_Résurrection_du_Christ,_1593,_INV_200_;_MR_117.jpg",
+         commons_search="Annibale Carracci Resurrection of Christ Louvre",
+         commons_file="File:Carracci - La Résurrection du Christ, 1593, INV 200 ; MR 117.jpg",
+         why="The risen Christ high in the picture over the sleeping guards, so the card's focal point (a fifth of the way down) still finds Him; Commons holds it at 1241×1700 against the old 566×732.",
+         alternate="Carl Bloch, The Resurrection (1873), Commons at 1000×1400 only",
+         # The Louvre's photograph takes in the gilt spandrels at the top corners of the arched frame
+         crop=(0.15, 0.0, 0.15, 0.0),
+         **PD_ART),
+]
+
 UNUSED = [
     dict(imageset="occasion_before_work", slot="(i) Chant Occasions 'Before Work or Study' (Veni Creator, Veni Sancte reple)",
          features=["Chant Library: Occasions"],
@@ -206,13 +250,16 @@ EXISTING = [
     ("joyful_visitation", "The Visitation", "Raphael and workshop (Giulio Romano)", "c. 1517", "Museo del Prado", "confirmed"),  # signed RAPHAEL URBINAS at the foot
     ("luminous_cana", "The Marriage Feast at Cana", "Bartolomé Esteban Murillo", "c. 1672", "Barber Institute of Fine Arts, Birmingham", "confirmed"),
     ("sorrowful_carrying", "Christ Carrying the Cross", "Anthony van Dyck", "1617–18", "Sint-Pauluskerk, Antwerp", "confirmed"),
-    ("glorious_resurrection", "The Resurrection of Christ", "Noël Coypel", "1700", "unconfirmed (French royal commission)", "confirmed"),
     # Once thought Maíno's; set beside the Prado's Maíno it is another
     # picture (landscape, Mary seated at the centre), so its painter is unknown
-    ("glorious_pentecost", "Pentecost (not Maíno's: the Prado's Maíno is a different composition)", None, None, None, "ask Abraham"),
-    ("glorious_ascension", "The Ascension (Spanish or Flemish Baroque, 17th c.)", None, None, None, "ask Abraham"),
-    ("glorious_assumption", "The Assumption of the Virgin (Neapolitan/Roman, 18th c., in the manner of Giaquinto or Solimena)", None, None, None, "ask Abraham"),
-    ("joyful_nativity", "The Adoration of the Shepherds, night scene with putti (Italian Baroque, in the manner of Guido Reni)", None, None, None, "ask Abraham"),
+    # Identified in the app-clarity round (Oct 2026) by setting the bundled
+    # image beside the Commons file: the same picture to the brushstroke
+    ("glorious_ascension", "The Ascension", "Francisco Camilo (1615–1673)", "1651", "Museo del Prado, Madrid (Google Art Project scan)", "confirmed"),
+    ("glorious_assumption", "The Assumption of the Virgin", "Corrado Giaquinto (1703–1766)", None, "Private collection (Sotheby's, New York, 2013, lot 76)", "confirmed"),
+    ("joyful_nativity", "The Adoration of the Shepherds", "Guido Reni (1575–1642)", "c. 1640", "National Gallery, London", "confirmed"),
+    # Replaced in the same round (see PAINTINGS): the Pentecost could not
+    # be identified — not Maíno's, whose Prado picture is another
+    # composition — and the Resurrection was the smallest file in the bundle
 ]
 
 # The Commons file each confirmed painting matches, its licence as read on
@@ -275,10 +322,17 @@ PROVENANCE = {
     "sorrowful_carrying": dict(commons_file="File:Anthony van Dyck - Jesus Christ bearing the Cross.jpg", licence="Public domain",
                                match="exact", score=1.0, bundled="1218×1600",
                                note="Sint-Pauluskerk's own photograph. Taken again at 1600 px from this file (fetch.py --retake); it was bundled at 960×1261."),
-    "glorious_resurrection": dict(commons_file="File:Noël Coypel - Resurrection of Christ (large version).jpg", licence="Public domain",
-                                  match="same work", score=0.782, bundled="566×732",
-                                  note="Commons holds the work only small (638×900 at most); the bundled image is a crop of it, "
-                                       "the same composition by eye, and the smallest painting in the bundle."),
+    "glorious_ascension": dict(commons_file="File:Francisco Camilo - Ascension - Google Art Project.jpg", licence="Public domain",
+                               match="same work", score=None, bundled="672×1024",
+                               note="The same picture by eye, figure for figure (the signature at the lower left reads F. CAMILO); "
+                                    "the Commons file is the Google Art Project scan at 3474×5293."),
+    "glorious_assumption": dict(commons_file="File:CORRADO GIAQUINTO MOLFETTA 1703 - 1766 NAPLES ASSUMPTION OF THE VIRGIN.jpg", licence="Public domain",
+                                match="same work", score=None, bundled="800×1245",
+                                note="The same picture by eye: the Virgin's raised arm, the two angels on the cloud, the apostle with the staff at the tomb. "
+                                     "Commons' file is the auction-house photograph (1286×2000)."),
+    "joyful_nativity": dict(commons_file="File:The Adoration of the Shepherds by Guido Reni.jpg", licence="Public domain",
+                            match="same work", score=None, bundled="711×1080",
+                            note="The National Gallery's picture, the same to the angels' scroll; Commons holds it at 3953×6000."),
 }
 
 CARLO = dict(
@@ -374,4 +428,52 @@ FALLBACK_SOURCES = [
     ("Musopen", "https://musopen.org/", "Public-domain recordings; little plainchant."),
     ("Internet Archive (78 rpm transfers)", "https://archive.org/",
      "US public domain only for recordings published before 1926 (as of 2026); the transfer itself may carry terms; other countries differ. Check each, and prefer Commons."),
+]
+
+
+# ------------------------------------------------------------------- texts
+# Every text the app bundles or fetches that is not its own writing, with
+# the edition it is taken from. Rendered into MANIFEST.md and, by
+# build_credits.py, into the Sources & Credits page under About. A text
+# fetched at run time (the Spiritual Reading shelf) is listed with the
+# place it is fetched from.
+
+TEXTS = [
+    dict(title="The Holy Bible", maker="Douay-Rheims translation, Bishop Challoner's revision (1749–52)",
+         detail="The Scriptural Rosary's verses, the consecration's readings, the Gospel meditation sets and the daily quotations",
+         source="Project Gutenberg #8300 and the Original Douay-Rheims API (thedouayrheims.com)", licence="Public domain"),
+    dict(title="True Devotion to the Blessed Virgin Mary", maker="St. Louis de Montfort, translated by Frederick William Faber (1862; twelfth London edition, 1904)",
+         detail="Bundled whole, and read in the consecration", source="Resources/TrueDevotionBook.json, from the 1904 printing", licence="Public domain"),
+    dict(title="The Imitation of Christ", maker="Thomas à Kempis, translated by William Benham",
+         detail="On the Spiritual Reading shelf, in the consecration's readings and the daily quotations", source="Project Gutenberg #1653", licence="Public domain"),
+    dict(title="The Story of a Soul", maker="St. Thérèse of Lisieux, translated by Thomas N. Taylor (1912)",
+         detail="On the Spiritual Reading shelf", source="Project Gutenberg #16772; read by Susan Morin for LibriVox (8021)", licence="Public domain"),
+    dict(title="The Confessions", maker="St. Augustine, translated by E. B. Pusey",
+         detail="On the Spiritual Reading shelf", source="Project Gutenberg #3296; read for LibriVox (2601)", licence="Public domain"),
+    dict(title="The Dolorous Passion of Our Lord Jesus Christ", maker="Anne Catherine Emmerich, Burns & Lambert's English (1862)",
+         detail="On the Spiritual Reading shelf, and cut into the bundled Sorrowful meditations", source="Project Gutenberg #10866; read for LibriVox (13588)", licence="Public domain"),
+    dict(title="The Glories of Mary", maker="St. Alphonsus Liguori, the Dunigan translation (New York, 1852)",
+         detail="On the Spiritual Reading shelf, cut into the bundled Seven Sorrows meditations, and in the daily quotations", source="Project Gutenberg #72411; read by Ann Boulais for LibriVox (8533) from the 1888 Kenedy printing of the same translation", licence="Public domain"),
+    dict(title="Abandonment to Divine Providence", maker="Jean-Pierre de Caussade, translated by Ella McMahon (1887)",
+         detail="On the Spiritual Reading shelf", source="Project Gutenberg #52057", licence="Public domain"),
+    dict(title="The Practice of the Presence of God", maker="Brother Lawrence of the Resurrection, the Fleming H. Revell edition (1895)",
+         detail="On the Spiritual Reading shelf", source="Project Gutenberg #13871; read by Kirsten Ferreri for LibriVox (564)", licence="Public domain"),
+    dict(title="Maxims and Counsels of St. Francis de Sales for Every Day of the Year", maker="translated by Ella McMahon (1884)",
+         detail="In the daily quotations", source="Project Gutenberg #73661", licence="Public domain"),
+    dict(title="Meditations and Devotions", maker="John Henry Newman (Longmans, 1893)",
+         detail="In the daily quotations", source="Internet Archive (a2514634smrn00newmuoft)", licence="Public domain"),
+    dict(title="The Divine Comedy", maker="Dante, translated by Henry Wadsworth Longfellow (1867)",
+         detail="In the daily quotations", source="Paradiso XXXIII", licence="Public domain"),
+    dict(title="The Roman Missal of 1962", maker="the Missale Meum project",
+         detail="Today's Mass, fetched when opened", source="missalemeum.com, MIT licence", licence="MIT"),
+    dict(title="The Roman Breviary of 1962", maker="The Divinum Officium Project",
+         detail="The Hours of Prayer, fetched when opened", source="divinumofficium.com, by way of Lumen Viae's own server", licence="Free to use, with the project's credit"),
+    dict(title="Gregorian chant: recordings and scores", maker="Verbum Gloriae (verbumgloriae.es)",
+         detail="The Chant Library's 104 recordings and their scores", source="verbumgloriae.es, copyleft licence", licence="Copyleft (share alike, no attribution required)"),
+    dict(title="Prayers of the Church", maker="the 1910 Raccolta, the Roman Ritual and Missal, and the app's own literal renderings from the Latin",
+         detail="The Prayer Book", source="Public-domain editions, named in each file of Data/PrayerBook", licence="Public domain"),
+    dict(title="Cinzel and EB Garamond", maker="Natanael Gama; Georg Duffner and Octavio Pardo",
+         detail="The app's type", source="Google Fonts", licence="SIL Open Font License 1.1"),
+    dict(title="Phosphor Icons and Christicons", maker="Phosphor (Helena Zhang and Tobias Fried); Christicons",
+         detail="The app's glyphs, beside those drawn for it", source="phosphoricons.com (MIT); christicons.com (free for commercial use)", licence="MIT; free for commercial use"),
 ]

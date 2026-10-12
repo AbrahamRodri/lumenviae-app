@@ -33,6 +33,10 @@ struct JournalEntryEditorView: View {
     /// Whether opened during an active prayer session
     let isMidPrayer: Bool
 
+    /// A title the page opens with: the journal's starter question,
+    /// chosen on its empty page. Nothing when the reader starts blank.
+    let initialSubject: String?
+
     /// Optional existing entry to edit
     let existingEntry: JournalEntry?
 
@@ -78,13 +82,15 @@ struct JournalEntryEditorView: View {
         mysteryTitle: String? = nil,
         mysteryIndex: Int? = nil,
         isMidPrayer: Bool = false,
-        existingEntry: JournalEntry? = nil
+        existingEntry: JournalEntry? = nil,
+        initialSubject: String? = nil
     ) {
         self.lockedCategory = category
         self.lockedMysteryTitle = mysteryTitle
         self.lockedMysteryIndex = mysteryIndex
         self.isMidPrayer = isMidPrayer
         self.existingEntry = existingEntry
+        self.initialSubject = initialSubject
     }
 
     // MARK: - Body
@@ -148,6 +154,8 @@ struct JournalEntryEditorView: View {
             if let entry = existingEntry {
                 text = entry.text
                 subjectText = entry.mysteryTitle ?? ""
+            } else if let initialSubject {
+                subjectText = initialSubject
             }
             // Always go straight to the body field
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
