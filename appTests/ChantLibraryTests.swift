@@ -230,7 +230,7 @@ struct ChantLibraryTests {
         #expect(queue.entries.count == rosary.sequence().count)
         // The decade's Ave Maria is step 6, sung ten times in each of five
         // rounds; the page's step numbers are the queue's
-        let numbers = ChantOccasionsSection.stepNumbers(of: rosary)
+        let numbers = ChantSetPage.stepNumbers(of: rosary)
         #expect(numbers[2][1] == 6)
         #expect(queue.origins.filter { $0 == 6 }.count == 50)
         #expect(queue.source == "occasion:sung_rosary")

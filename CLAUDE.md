@@ -2549,7 +2549,9 @@ write concurrent code here:
   play; SUNG SETS, the occasions and then the reader's own sets, each a
   card of its painting, "4 chants · 7 min" (the recordings' lengths,
   never a guess) and its numbered chants with their lengths; and BROWSE
-  ALL 104 CHANTS. Every card says how long it plays and has its own play,
+  ALL 104 CHANTS; then the credit, one line, "Recordings and scores by
+  Verbum Gloriae" (`ChantCatalog.libraryCredit`), a link to their site.
+  Every card says how long it plays and has its own play,
   so the page reads as a library of songs rather than of prayers. The
   page was asked for when the six sections left a reader not knowing what to
   do. The page has no filled gold act; its plays are the dark discs.
@@ -2559,36 +2561,45 @@ write concurrent code here:
   learning course went with them, and a chant is learned from its own
   page. A stored `chantLibrary.section` is let go on opening
   (`ChantLibraryView.forgetLegacySection`); whatever it held, the same
-  page opens. The library's other pages are pushed: the sung sets
-  (`.chantSets(openID:)`, `ChantSetsPage`: the occasions' index over the
-  chosen one's order of service, `ChantOccasionsSection`, with PLAY ALL
-  and the bookmark that keeps it); a topic, every chant under its topic,
+  page opens. The library's other pages are pushed: a sung set's own page
+  (`.chantSet(ChantSetSubject)`, `ChantSetPage`, below), which every set
+  opens on, an occasion or the reader's own, from the tiles, the Sung
+  Sets cards, the index and Saved; the index of the sung sets
+  (`.chantSets`, `ChantSetsPage`, `ChantOccasionsSection`); a topic, every chant under its topic,
   or the Mass of the Angels (`.chantBrowse(ChantBrowseScope)`,
   `ChantBrowsePage`), which is how every chant stays reachable without a
   search; and the reader's own chants (`.chantSaved(ChantSavedShelf)`,
   `ChantSavedPage`, `ChantSavedSection` below).
 
-  **An occasion** (`ChantOccasionsSection`): Adoration and Blessing
-  (Benediction), A Visit to Jesus in Church, a Sung Rosary, Before Bed,
-  Before Work or Study, For Those Who Have Died — an index in red
-  numerals over the chosen one's order of service, what happens between
-  chants in red (`ChantRubricText`), each chant a bead that lights as
-  the set is sung, Pause between chants, PLAY ALL, and the bookmark. Once
-  the set is under way PLAY ALL is the set's own Pause and Resume
-  (`ChantSetPlayButton`, through `ChantPlayer.pauseOrResume`), and so is
-  the sounding bead. The bookmark is a toggle: filled while the occasion
+  **A set's page** (`ChantSetPage`, the "Chant Library shelves" design,
+  option B, Oct 2026) is one component for every set, laid out as an
+  album: the painting beside the kicker (SUNG SET or YOUR SET), the name,
+  the occasion's line and "7 chants · 53 min"; an outlined PLAY ALL,
+  which is the set's own Pause and Resume once it is under way (through
+  `ChantPlayer.pauseOrResume`), beside the bookmark (an occasion) or share
+  and ··· to rename or delete (the reader's own); Pause between chants
+  (`ChantPausesBetweenRow`); then the order, what happens between chants
+  in red (`ChantRubricText`) over rows of painting, names and length, the
+  one sounding lit with `ChantSoundingBars`. A row opens its chant
+  (`ChantTap`); its ··· sings the set from there and, in the reader's own
+  set, moves and removes it, with Add a chant and Add a pause beneath. A
+  new occasion needs only its data. The set once opened as an order of
+  service under the index of every other set, below the fold, and the
+  reader's own as a card under the Saved shelf. **The occasions**
+  (`ChantOccasionsSection`): Adoration and Blessing (Benediction), A Visit
+  to Jesus in Church, a Sung Rosary, Before Bed, Before Work or Study, For
+  Those Who Have Died — an index in red numerals, each row opening its
+  page, over Make your own set. The bookmark is a toggle: filled while the occasion
   is kept as a set of one's own (`ChantSet.occasionID`), a second tap
   letting that set go — but only while the set is still the occasion's
   own copy (`ChantShelfStore.isUntouchedCopy`); any other kept set is let
   go only after the question before a delete (`toggleKeeping` answers
   `.askFirst`). **Saved** (`ChantSavedSection`, on its own page): a shelf
   of spines (`ChantSpineCloth`) — Learned, Favourites, each set the
-  reader made, and the dashed + — over the chants of the one chosen; a
-  set's chants and pauses are moved and removed from the handle's menu,
-  added from `ChantPickerSheet` and `ChantPauseSheet`, shared as words
-  and sung as one; then Recently played and the Words setting. A new set
-  is named first (`ChantNewSetSheet`) and stands on the shelf only once
-  made. The curation — every chant's kind,
+  reader made, and the dashed + — over the chants of Learned or
+  Favourites; a set's spine opens its page; then Recently played and the
+  Words setting. A new set is named first (`ChantNewSetSheet`), stands on
+  the shelf only once made, and opens on its page. The curation — every chant's kind,
   seasons, feasts, weekdays, months, occasions with their rubrics,
   paths and paintings — is `Data/ChantLibraryData.swift`, hand-written;
   `ChantLibraryTests` fails if it names a chant the catalog lacks or
@@ -2742,9 +2753,10 @@ write concurrent code here:
   gloss: CC "ShareAlike" 4.0 without BY). The app's files are
   adaptations — the Ogg recordings re-encoded as HE-AAC, the SVG scores
   rewritten as recolourable drawings — so they carry that licence, and
-  `ChantCatalog.credit` says so on the chant page, the library, the
-  consecration transport and the Lock Screen (its album line), with
-  `licenceNote` beside it on the chant page and the library; the Chapel's
+  `ChantCatalog.credit` says so on the chant page, the consecration
+  transport and the Lock Screen (its album line), with `licenceNote` and
+  the licence's link beside it on the chant page; the library says it in
+  one linked line (`libraryCredit`); the Chapel's
   Chant tile and Explore's Chant section carry neither. Each chant's own
   source page is its `sourceURL`. Nothing else may be added to the library
   without the same record: the three chants the app sang before (Sept

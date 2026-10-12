@@ -209,6 +209,8 @@ enum ChantCatalog {
     /// the app gives it anyway, and says the files are shared on the same
     /// terms, which the licence does ask.
     static let credit = "Recordings and sheet music by Verbum Gloriae"
+    /// The library page's one line of credit, a link to their site
+    static let libraryCredit = "Recordings and scores by Verbum Gloriae"
     static let licenceNote = "Shared under Verbum Gloriae's free licence, a copyleft licence. Our copies are compressed and recoloured, and they carry the same licence."
     static let sourceSite = URL(string: "https://www.verbumgloriae.es")!
     static let licenceURL = URL(string: "https://www.verbumgloriae.es/licencia-copyleft/")!

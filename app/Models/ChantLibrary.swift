@@ -705,12 +705,6 @@ extension Chant {
 
 extension ChantCatalog {
 
-    /// "All 104 chants work offline." Said at the foot of the library,
-    /// counted from the catalog.
-    static var offlineNote: String {
-        "All \(all.count) chants work offline."
-    }
-
     /// The painting a chant is shown with where a board hangs one: the
     /// antiphons of Our Lady, an occasion's chants
     static func painting(for chant: Chant) -> String {
