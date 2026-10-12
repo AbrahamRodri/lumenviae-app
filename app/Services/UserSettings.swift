@@ -210,6 +210,19 @@ final class UserSettings {
         didSet { UserDefaults.standard.set(prayAloud, forKey: "userSettings.prayAloud") }
     }
 
+    /// Whether a Rosary prayed in silence begins and ends on the pendant:
+    /// the Sign of the Cross, the Creed, the Our Father, three Hail Marys
+    /// and the Glory Be before the first mystery, and the Hail, Holy
+    /// Queen, the closing prayer and the Sign of the Cross after the last,
+    /// each its own step with its words (`SilentPendant`). Said aloud the
+    /// voice says them whatever this says. On by default: a newcomer was
+    /// never shown the prayers that open the Rosary, nor their words.
+    /// Wherever it is offered it is called Opening and Closing Prayers,
+    /// Show or Skip (`RosaryChoice.openingPrayers`).
+    var showsOpeningPrayers: Bool = true {
+        didSet { UserDefaults.standard.set(showsOpeningPrayers, forKey: "userSettings.showsOpeningPrayers") }
+    }
+
     // MARK: - After the Rosary
 
     /// Prayers some add after the Rosary's closing prayer, each off until
@@ -669,6 +682,9 @@ final class UserSettings {
             prayOnBeads = d.bool(forKey: "userSettings.prayOnBeads")
         }
         prayAloud = d.bool(forKey: "userSettings.prayAloud")
+        if d.object(forKey: "userSettings.showsOpeningPrayers") != nil {
+            showsOpeningPrayers = d.bool(forKey: "userSettings.showsOpeningPrayers")
+        }
         prayForHolyFather = d.bool(forKey: "userSettings.prayForHolyFather")
         prayMemorare = d.bool(forKey: "userSettings.prayMemorare")
         praySaintMichael = d.bool(forKey: "userSettings.praySaintMichael")

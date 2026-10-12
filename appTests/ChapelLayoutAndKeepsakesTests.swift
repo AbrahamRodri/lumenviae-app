@@ -27,7 +27,9 @@ struct ChapelLayoutTests {
         #expect(tiles.count == ChapelTile.allCases.count)
         #expect(tiles.first == .rule)
         #expect(tiles[1] == .flame, "the streak stands directly under Today")
-        #expect(tiles.last == .library, "the Library's colophon is the last line before the foot")
+        #expect(tiles.last == .liturgy, "Today in the Church stands last; Home carries the same two rows")
+        #expect(tiles.firstIndex(of: .reflections)! < tiles.firstIndex(of: .chant)!)
+        #expect(tiles.firstIndex(of: .library)! < tiles.firstIndex(of: .liturgy)!)
     }
 
     @Test func anEncodingIsTileSpanAndWhetherItIsOn() {
@@ -78,7 +80,7 @@ struct ChapelLayoutTests {
         #expect(liturgy?.on == false, "on the page only if the Library is")
         let libraryIndex = layout.firstIndex { $0.tile == .library }!
         let liturgyIndex = layout.firstIndex { $0.tile == .liturgy }!
-        #expect(liturgyIndex == libraryIndex - 1, "seated beside the Library, before it as by default")
+        #expect(liturgyIndex == libraryIndex + 1, "seated beside the Library, after it as by default")
     }
 
     @Test func nothingStoredGivesTheDefault() {

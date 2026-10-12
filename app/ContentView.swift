@@ -55,7 +55,8 @@ struct ContentView: View {
     @State private var tabBarHeight: CGFloat = 0
 
     private var shouldShowTabBar: Bool {
-        router.path.isEmpty && !isConsecrationNavigating && !router.chapelArranging
+        (router.path.isEmpty || router.topRoute?.keepsTabBar == true)
+            && !isConsecrationNavigating && !router.chapelArranging
     }
 
     // MARK: - Body
@@ -128,8 +129,16 @@ struct ContentView: View {
 
             VStack {
                 Spacer()
+                // A tab tapped goes through `switchTo`, which clears the
+                // stack: the bar stands over the Prayer Record and the
+                // journal, and a tab tapped there must open its page, not
+                // turn beneath them. The lit tab tapped again returns to
+                // its own page, as iOS does.
                 CustomTabBar(
-                    selectedTab: Bindable(router).selectedTab,
+                    selectedTab: Binding(
+                        get: { router.selectedTab },
+                        set: { router.switchTo($0) }
+                    ),
                     isLoadingPrayer: isStartingPrayer,
                     onPrayNow: { perform(UserSettings.shared.prayQuickAction) },
                     onPrayHold: { showPrayTray = true }
@@ -283,6 +292,12 @@ struct ContentView: View {
     /// or anything that asks the router (`AppRouter.run`): the Chapel's
     /// focus and Today rows, a library reading's Pray door.
     private func perform(_ shortcut: PrayerShortcut) {
+        // The pages that keep the tab bar (the Prayer Record, the Journal)
+        // keep the Pray button over them too; its act is begun from the
+        // tab's root, as from anywhere else the bar stands
+        if router.topRoute?.keepsTabBar == true {
+            router.popToRoot()
+        }
         // The Consecration tab stands above this stack with a stack of its
         // own, so an act pushed here while it was chosen — the Pray
         // button there, the Angelus bell tapped — went on beneath it,
@@ -472,6 +487,12 @@ struct ContentView: View {
 
         case .explore:
             ExploreView()
+
+        case .prayerRecord:
+            PrayerProgressView()
+
+        case .journal:
+            JournalView()
 
         // Content pages that slide in. Each carries its own toolbar
         // chrome (a gold Back in place of the hidden system button), so

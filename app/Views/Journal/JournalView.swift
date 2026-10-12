@@ -22,6 +22,7 @@ struct JournalView: View {
     // MARK: - Data
 
     @Environment(\.modelContext) private var modelContext
+    @Environment(AppRouter.self) private var router
     @Query(sort: \JournalEntry.createdAt, order: .reverse) private var entries: [JournalEntry]
 
     // MARK: - State
@@ -149,6 +150,21 @@ struct JournalView: View {
                 entryPendingDelete = nil
             }
             Button("Cancel", role: .cancel) { entryPendingDelete = nil }
+        }
+        .navigationBarBackButtonHidden(true)
+        // Pushed over the tab it was opened from, with the gold Back of
+        // every other pushed page; the tab bar stays up beneath it
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: { router.pop() }) {
+                    HStack(spacing: 6) {
+                        AppIcon("ph-caret-left", size: 14)
+                        Text("Back")
+                            .font(AppFonts.bodyFont(16))
+                    }
+                    .foregroundColor(AppColors.gold)
+                }
+            }
         }
     }
 

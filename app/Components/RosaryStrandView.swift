@@ -382,6 +382,9 @@ extension View {
     ///     not on it.
     ///   - amenBeckons: The last prayer has been said aloud and AMEN is
     ///     the one thing left; it glows for it (`beckoning`).
+    ///   - onLabelTap: Shows the words of the bead's prayer, from a tap
+    ///     on the bead under the hand or its name. Not on the final
+    ///     bead, where the AMEN stands under the name.
     func rosaryStrand(
         _ strand: RosaryStrand,
         activeIndex: Int,
@@ -392,7 +395,8 @@ extension View {
         activeLabel: [String]? = nil,
         locked: Bool = false,
         onAmen: (() -> Void)? = nil,
-        amenBeckons: Bool = false
+        amenBeckons: Bool = false,
+        onLabelTap: (() -> Void)? = nil
     ) -> some View {
         let windowTop = max(RosaryStrandView.windowTop(fullHeight: fullHeight) - topInset, 0)
         let windowHeight = fullHeight * 0.435
@@ -416,6 +420,22 @@ extension View {
                 // the bead's name let every touch through to the painting
                 // beneath, and only the AMEN laid beside them takes one
                 .allowsHitTesting(false)
+
+                // The bead under the hand and its name, as one target: a
+                // tap shows the words of the bead's prayer. The strand
+                // stays a readout; only this patch over its middle row
+                // answers, and a swipe begun on it still moves the beads.
+                if let onLabelTap, onAmen == nil {
+                    Button(action: onLabelTap) {
+                        Color.clear
+                            .frame(width: 168, height: 48)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.top, windowTop + windowHeight / 2 - 24)
+                    .padding(.trailing, beadInset - RosaryStrandView.beadColumn / 2 - 8)
+                    .accessibilityHidden(true)
+                }
 
                 if let onAmen {
                     GoldCTAButton(
