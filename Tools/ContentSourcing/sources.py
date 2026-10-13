@@ -325,7 +325,7 @@ EXISTING = [
     ("joyful_visitation", "The Visitation", "Raphael and workshop (Giulio Romano)", "c. 1517", "Museo del Prado", "confirmed"),  # signed RAPHAEL URBINAS at the foot
     ("luminous_cana", "The Marriage Feast at Cana", "Bartolomé Esteban Murillo", "c. 1672", "Barber Institute of Fine Arts, Birmingham", "confirmed"),
     ("sorrowful_carrying", "Christ Carrying the Cross", "Anthony van Dyck", "1617–18", "Sint-Pauluskerk, Antwerp", "confirmed"),
-    ("glorious_resurrection", "The Resurrection of Christ", "Noël Coypel", "1700", "unconfirmed (French royal commission)", "confirmed"),
+    ("glorious_resurrection", "The Resurrection of Christ", "Noël Coypel", "1700", None, "confirmed"),
     # Once thought Maíno's; set beside the Prado's Maíno it is another
     # picture (landscape, Mary seated at the centre), so its painter is unknown
     ("glorious_pentecost", "Pentecost", None, None, None, "ask Abraham"),

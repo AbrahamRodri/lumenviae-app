@@ -28,11 +28,13 @@ def esc(s):
 def paintings():
     rows = []
     fetched = json.loads((HERE / "fetched.json").read_text()) if (HERE / "fetched.json").exists() else {}
-    for name, work, creator, date, collection, _ in S.EXISTING:
+    for name, work, creator, date, collection, status in S.EXISTING:
         if not (ASSETS / f"{name}.imageset").exists():
             continue
         prov = S.PROVENANCE.get(name, {})
-        rows.append((name, work, creator or "Painter not established", date, collection, prov.get("licence") or "Public domain"))
+        # A painting never identified has no licence read off a source page
+        fallback = "Public domain" if status == "confirmed" else "Probably public domain (source not established)"
+        rows.append((name, work, creator or "Painter not established", date, collection, prov.get("licence") or fallback))
     for p in S.PAINTINGS:
         name = p["imageset"]
         if p.get("alias_of") or not (ASSETS / f"{name}.imageset").exists():
