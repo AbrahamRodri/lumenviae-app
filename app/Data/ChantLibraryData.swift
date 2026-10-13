@@ -380,7 +380,7 @@ enum ChantLibraryData {
             id: "before_bed",
             title: "Before Bed",
             note: "End the day with Mary",
-            painting: "mary_mother_of_mercy",
+            painting: "hour_night",
             blocks: [
                 ChantOccasionBlock(rubric: "Put yourself under her protection for the night.",
                                    steps: [ChantOccasionStep(chant: .chant("sub_tuum"))]),

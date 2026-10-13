@@ -6,12 +6,10 @@
 //  the antiphon of Our Lady the season sings. The Angelus is the
 //  Annunciation it remembers; the antiphons are the mysteries they sing
 //  of. Morning and Night Prayers have no mystery of their own, so each
-//  names a painting of its own (`hour_morning`, `hour_night`, names
-//  shared with the Chant Library's redesign, which is still being made)
-//  and, until that painting is in the catalog, hangs the mystery nearest
-//  it: the Presentation, a life offered as the morning offers the day,
-//  and Gethsemane, where He asked the disciples to watch and pray through
-//  the night.
+//  hangs a painting of its own: `hour_morning`, and `hour_night`, La
+//  Tour's Penitent Magdalen, which the Chant Library's Before Bed hangs
+//  too. A fallback (the Presentation, Gethsemane) stands in only if the
+//  asset is ever missing.
 //
 
 import SwiftUI
@@ -67,7 +65,7 @@ struct PrayerBookPainting: Equatable {
                 asset: "hour_night",
                 fallback: "sorrowful_agony",
                 focal: UnitPoint(x: 0.5, y: 0.3),
-                caption: "The Agony in the Garden"
+                caption: "The Penitent Magdalen"
             )
         default:
             return PrayerBook.isEastertide(date)

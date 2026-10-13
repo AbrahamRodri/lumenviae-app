@@ -534,6 +534,14 @@ struct ChantLibraryTests {
         #expect(shelf.set(kept.id) != nil)
     }
 
+    /// Before Bed hangs the painting Night Prayers hangs, so the bedtime
+    /// prayer shows one picture wherever it is opened
+    @Test func beforeBedHangsNightPrayersPainting() {
+        let night = PrayerBookPainting.hour(PrayerBook.order(PrayerBook.nightOrderID)!)
+        #expect(ChantOccasion.occasion("before_bed")?.painting == night.asset)
+        #expect(night.caption == "The Penitent Magdalen")
+    }
+
     /// Before Bed sings the season's antiphon: kept in Advent with the Alma
     /// Redemptoris, it is still its own copy in Lent, when the Ave Regina
     /// is sung, and a second tap lets it go without asking
