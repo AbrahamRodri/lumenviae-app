@@ -121,6 +121,12 @@ final class ChantShelfStore {
 
     private let writes: Writes
 
+    /// Whether the app is in front. A gathered change is written at once
+    /// while it is not: one made from the Lock Screen, with the app
+    /// already in the background, would otherwise wait for a resign that
+    /// never comes, and go if the app were closed.
+    private let appIsActive: () -> Bool
+
     private enum Key {
         static let favorites = "chantShelf.favorites"
         static let learning = "chantShelf.learning"
@@ -131,9 +137,14 @@ final class ChantShelfStore {
         static let pausesBetween = "chantShelf.pausesBetween"
     }
 
-    init(defaults: UserDefaults = .standard, writes: Writes = .immediately) {
+    init(
+        defaults: UserDefaults = .standard,
+        writes: Writes = .immediately,
+        appIsActive: @escaping () -> Bool = { UIApplication.shared.applicationState == .active }
+    ) {
         self.defaults = defaults
         self.writes = writes
+        self.appIsActive = appIsActive
         favorites = defaults.stringArray(forKey: Key.favorites) ?? []
         learned = defaults.stringArray(forKey: Key.learned) ?? []
         let learning = Self.readList(LearningRecord.self, key: Key.learning, from: defaults)
@@ -583,6 +594,10 @@ final class ChantShelfStore {
             write.perform(on: defaults)
         case .afterAPause:
             gathered[key] = write
+            guard appIsActive() else {
+                writeGathered(waiting: true)
+                return
+            }
             gatherTask?.cancel()
             gatherTask = Task { @MainActor [weak self] in
                 try? await Task.sleep(for: Self.gatherFor)

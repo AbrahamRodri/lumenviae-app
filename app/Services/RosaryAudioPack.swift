@@ -86,6 +86,10 @@ final class RosaryAudioPack {
     /// read and decoded once, not at every prayer the book opens
     @ObservationIgnored private var savedManifests: [String: RosaryAudioManifest] = [:]
 
+    /// The last manifest write asked for. Each waits for the one before,
+    /// so two preparations that overlap leave the later manifest on disk
+    @ObservationIgnored private var lastWrite: Task<Void, Never>?
+
     /// Fail a stalled clip in 20s; the clips are small
     private let session: URLSession = {
         let config = URLSessionConfiguration.default
@@ -94,12 +98,27 @@ final class RosaryAudioPack {
         return URLSession(configuration: config)
     }()
 
-    private init(apiService: APIService = .shared) {
-        self.apiService = apiService
+    private convenience init(apiService: APIService = .shared) {
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-        root = base
-            .appendingPathComponent("OfflineContent", isDirectory: true)
-            .appendingPathComponent("rosary", isDirectory: true)
+        self.init(
+            apiService: apiService,
+            root: base
+                .appendingPathComponent("OfflineContent", isDirectory: true)
+                .appendingPathComponent("rosary", isDirectory: true)
+        )
+    }
+
+    /// A pack kept under `root`; the app's own is `shared`
+    init(apiService: APIService, root: URL) {
+        self.apiService = apiService
+        self.root = root
+    }
+
+    /// Lets go of the manifests kept in memory, for when the files under
+    /// them have been deleted (removing every download): the next
+    /// preparation reads the disk, finds none, and fetches and saves one
+    func forgetSavedManifests() {
+        savedManifests.removeAll()
     }
 
     // MARK: - Preparing a Rosary
@@ -329,19 +348,33 @@ final class RosaryAudioPack {
 
     /// The manifest saved for the voice, read off the main actor the first
     /// time it is asked for and kept
-    private func savedManifest(voice: String) async -> RosaryAudioManifest? {
-        if let kept = savedManifests[voice] { return kept }
-        guard let data = await Self.read(manifestURL(voice: voice)),
+    func savedManifest(voice: String) async -> RosaryAudioManifest? {
+        let url = manifestURL(voice: voice)
+        // A manifest kept in memory answers only while its file is still
+        // there: kept after its file was deleted, it was never fetched and
+        // saved again, and the next launch with no signal found none
+        if let kept = savedManifests[voice] {
+            if await Self.exists(url) { return kept }
+            savedManifests[voice] = nil
+        }
+        guard let data = await Self.read(url),
               let manifest = try? JSONDecoder().decode(RosaryAudioManifest.self, from: data)
         else { return nil }
         savedManifests[voice] = manifest
         return manifest
     }
 
-    private func save(_ manifest: RosaryAudioManifest) async {
+    func save(_ manifest: RosaryAudioManifest) async {
         savedManifests[manifest.voice] = manifest
         guard let data = try? JSONEncoder().encode(manifest) else { return }
-        await Self.write(data, to: manifestURL(voice: manifest.voice))
+        let url = manifestURL(voice: manifest.voice)
+        let before = lastWrite
+        let write = Task {
+            await before?.value
+            await Self.write(data, to: url)
+        }
+        lastWrite = write
+        await write.value
     }
 
     /// Removes recordings the manifest no longer names, in the kinds just
@@ -430,6 +463,11 @@ final class RosaryAudioPack {
     @concurrent
     private nonisolated static func read(_ url: URL) async -> Data? {
         try? Data(contentsOf: url)
+    }
+
+    @concurrent
+    private nonisolated static func exists(_ url: URL) async -> Bool {
+        FileManager.default.fileExists(atPath: url.path)
     }
 
     @concurrent

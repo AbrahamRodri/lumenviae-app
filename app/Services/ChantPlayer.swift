@@ -147,9 +147,17 @@ final class ChantPlayer {
     }
 
     /// Whether the library is in the middle of something the mini player
-    /// should stand for: a chant loaded, a set under way, a silence kept
+    /// should stand for: a chant loaded, a set under way, a silence kept,
+    /// or a chant that would not play, whose failure it says
     var isActive: Bool {
-        ownsPlayback || isLoading || queue != nil || silence != nil || error != nil
+        holdsAChant || error != nil
+    }
+
+    /// Whether a chant is really in hand: loaded, loading, or a set or a
+    /// silence under way. A chant that failed is not, and is never the
+    /// one sung last (the library's first tile reads this in phase 2)
+    var holdsAChant: Bool {
+        ownsPlayback || isLoading || queue != nil || silence != nil
     }
 
     static func clock(_ seconds: Double) -> String {

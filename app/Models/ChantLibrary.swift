@@ -547,8 +547,7 @@ struct ChantOccasion: Identifiable, Hashable {
     }
 
     /// The occasion unrolled for a day, and what the cards and pages say
-    /// of it. Only tonight's song to Mary changes with the day, so an
-    /// occasion is unrolled once a day, not on every row drawn.
+    /// of it, worked out in one pass
     struct Unrolled {
         let sequence: [Chant]
         let distinct: [Chant]
@@ -563,10 +562,6 @@ struct ChantOccasion: Identifiable, Hashable {
     }
 
     func unrolled(on date: Date = Date()) -> Unrolled {
-        let day = Calendar.current.startOfDay(for: date)
-        if let cached = Self.unrolledCache[id], cached.day == day, cached.blocks == blocks {
-            return cached.unrolled
-        }
         var chants: [Chant] = []
         for block in blocks {
             for _ in 0..<max(1, block.rounds) {
@@ -576,12 +571,8 @@ struct ChantOccasion: Identifiable, Hashable {
                 }
             }
         }
-        let unrolled = Unrolled(chants)
-        Self.unrolledCache[id] = (day, blocks, unrolled)
-        return unrolled
+        return Unrolled(chants)
     }
-
-    private static var unrolledCache: [String: (day: Date, blocks: [ChantOccasionBlock], unrolled: Unrolled)] = [:]
 
     static func occasion(_ id: String) -> ChantOccasion? {
         ChantLibraryData.occasions.first { $0.id == id }

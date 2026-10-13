@@ -17,7 +17,7 @@ extension PrayerBook {
     /// and "Memorare"
     static func isSameName(_ one: String, _ other: String) -> Bool {
         func bare(_ name: String) -> String {
-            let folded = folded(name)
+            let folded = SearchText.fold(name)
             return folded.hasPrefix("the ") ? String(folded.dropFirst(4)) : folded
         }
         return bare(one) == bare(other)
@@ -70,7 +70,7 @@ extension PrayerBook {
         let wanted = searchWords(needle, asName: false)
         guard !wanted.isEmpty else { return [] }
 
-        let phrase = folded(needle).trimmingCharacters(in: .whitespacesAndNewlines)
+        let phrase = SearchText.needle(needle)
         let readsWords = phrase.count >= 4
 
         var named: [BookPrayer] = []
@@ -115,17 +115,6 @@ extension PrayerBook {
             .map(\.chapter)
     }
 
-    /// Text as the searches read it: case and accents let go, and the
-    /// ligatures the Latin is printed with written out, so "regina caeli"
-    /// finds the Regina Cæli and "praesidium" the Sub tuum præsidium
-    private static func folded(_ text: String) -> String {
-        text.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil)
-            .replacingOccurrences(of: "æ", with: "ae")
-            .replacingOccurrences(of: "Æ", with: "ae")
-            .replacingOccurrences(of: "œ", with: "oe")
-            .replacingOccurrences(of: "Œ", with: "oe")
-    }
-
     // MARK: The prepared words
 
     /// A prayer as the search reads it: each of its names as words, and
@@ -158,8 +147,8 @@ extension PrayerBook {
                 PrayerEntry(
                     prayer: prayer,
                     names: nameWords([prayer.title, prayer.listTitle, prayer.latinTitle ?? ""] + prayer.searchWords),
-                    english: folded(prayer.english),
-                    latin: folded(prayer.latin ?? "")
+                    english: SearchText.fold(prayer.english),
+                    latin: SearchText.fold(prayer.latin ?? "")
                 )
             }
     }()
@@ -192,7 +181,7 @@ extension PrayerBook {
     /// out, unless they are all there is. In a name, "st" and "st." read
     /// as "saint"; searched, "st" stays as typed (`answers`).
     private static func searchWords(_ text: String, asName: Bool = true) -> [String] {
-        let words = folded(text)
+        let words = SearchText.fold(text)
             .split { !$0.isLetter }
             .map { asName && $0 == "st" ? "saint" : String($0) }
         let kept = words.filter { !searchStopWords.contains($0) }
@@ -209,7 +198,7 @@ extension PrayerBook {
     /// A name as the topic search reads it: folded, split into words,
     /// the small words dropped
     private static func topicWords(_ text: String) -> [String] {
-        folded(text)
+        SearchText.fold(text)
             .split { !$0.isLetter }
             .map(String.init)
             .filter { !topicStopWords.contains($0) }

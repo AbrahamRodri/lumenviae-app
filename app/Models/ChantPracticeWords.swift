@@ -4,9 +4,7 @@
 //
 //  The words a chant is practised from: the Prayer Book's grammar made
 //  plain lines to sing from, and some or all of them cut to their first
-//  letter for singing from memory. Each version of a text is worked out
-//  once and kept, since the practice screen redraws with the voice and
-//  asks for the same line again many times a second.
+//  letter for singing from memory.
 //
 
 import Foundation
@@ -27,21 +25,14 @@ enum ChantHiding: CaseIterable {
 enum ChantPracticeWords {
 
     /// `text` with every other word, or every word, cut to its first
-    /// letter — as the Prayer Book's learning by heart does — kept once
-    /// worked out
+    /// letter — as the Prayer Book's learning by heart does
     static func hidden(_ text: String, _ hiding: ChantHiding) -> String {
-        guard hiding != .none else { return text }
-        let key = Key(text: text, hiding: hiding, plain: false)
-        if let known = memo[key] { return known }
-        return remember(hide(text, hiding), for: key)
+        hide(text, hiding)
     }
 
-    /// The Prayer Book's grammar as plain lines to sing from, kept once
-    /// worked out
+    /// The Prayer Book's grammar as plain lines to sing from
     static func plain(_ text: String) -> String {
-        let key = Key(text: text, hiding: .none, plain: true)
-        if let known = memo[key] { return known }
-        return remember(makePlain(text), for: key)
+        makePlain(text)
     }
 
     // MARK: Working it out
@@ -68,24 +59,5 @@ enum ChantPracticeWords {
             .map(SearchText.clean)
             .filter { !$0.isEmpty }
             .joined(separator: "\n")
-    }
-
-    // MARK: Kept
-
-    private struct Key: Hashable {
-        let text: String
-        let hiding: ChantHiding
-        let plain: Bool
-    }
-
-    /// A chant's lines in their three versions come to a few hundred
-    /// strings; past that, the oldest practice is let go whole
-    private static let limit = 600
-    private static var memo: [Key: String] = [:]
-
-    private static func remember(_ value: String, for key: Key) -> String {
-        if memo.count >= limit { memo.removeAll(keepingCapacity: true) }
-        memo[key] = value
-        return value
     }
 }

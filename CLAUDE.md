@@ -894,6 +894,9 @@ app/
 │   ├── PrayerDay             # The prayer day, turning at four: what counts as today for everything prayed
 │   ├── Chant                 # Chant, ChantScorePart, ChantGroup, ChantCatalog
 │   ├── ChantScoreDrawing     # A score's drawing, read from .lvscore; SVG path data
+│   ├── ChantPlayback         # ChantPlayer's pure values: a set unrolled, the line clock, turns, errors
+│   ├── ChantPracticeWords    # The words a chant is practised from, plain or cut to first letters
+│   ├── SearchText            # The one fold every search reads text by (case, accents, æ and œ)
 │   └── StreakMilestone, MarianFeastDay, BilingualConsecrationPrayer
 ├── ViewModels/               # @Observable
 │   ├── HomeViewModel, MeditationSelectionViewModel, MeditationSetDetailViewModel
@@ -907,7 +910,9 @@ app/
 │   ├── Chapel/               # MyChapelView (the tab), ChapelGrid (arrange
 │   │                         # machinery), ChapelTiles, ChapelPrayerBookTile
 │   ├── Chant/                # ChantLibraryView, ChantView (a chant's page),
-│   │                         # ChantScoreSheet, ChantComponents
+│   │                         # ChantScoreSheet, ChantComponents, and by role:
+│   │                         # ChantScore, ChantPlayControls, ChantMiniPlayer,
+│   │                         # ChantRows, ChantPaintings
 │   ├── Me/                   # What outlived the retired Me page: MeCustomizeSheet's
 │   │                         # RuleEditorSheet + editor furniture,
 │   │                         # PrayButtonEditorSheet, PrayShortcutTray
@@ -2896,8 +2901,7 @@ write concurrent code here:
   (`ChantLibraryData.occasions`): Adoration and Blessing (Benediction), A
   Visit to Jesus in Church, a Sung Rosary, Before Bed, Before Work or
   Study, For Those Who Have Died — each a card on Sets of Chants opening its
-  page (the numbered index `ChantOccasionsSection` drew them as is no
-  longer shown). The bookmark is a toggle: filled while the occasion
+  page. The bookmark is a toggle: filled while the occasion
   is kept as a set of one's own (`ChantSet.occasionID`), a second tap
   letting that set go — but only while the set is still the occasion's
   own copy (`ChantShelfStore.isUntouchedCopy`); any other kept set is let
@@ -3100,7 +3104,11 @@ write concurrent code here:
   runs, "Adoration and Blessing · 2 of 4", "Silence · 9:12 left", "Next: Tantum
   Ergo"), its pause, and a gold hairline of progress; a tap opens the
   chant — waiting between chants, the next one, whose page's play goes
-  on with the set rather than sing the last again. Under Reduce Motion
+  on with the set rather than sing the last again. A chant that would
+  not play is said there too, wherever it was started ("The chant
+  couldn't be played."), and a tap on its disc tries again; the mini
+  player stays up for it (`ChantPlayer.isActive` counts the error, where
+  `holdsAChant` does not). Under Reduce Motion
   it fades in rather than rises. It is a filled surface, because it floats over a page that scrolls
   beneath it: every page in the stack takes its height as a bottom
   safe-area inset, so every scroll runs on beneath it and bring their last row

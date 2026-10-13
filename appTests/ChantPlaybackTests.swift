@@ -125,11 +125,13 @@ struct ChantPlaybackTests {
         let record: [String: Any] = ["chantID": "sub_tuum", "step": 2, "touched": 0, "reminder": "evening"]
         defaults.set(try JSONSerialization.data(withJSONObject: [record]), forKey: "chantShelf.learning")
 
-        let shelf = ChantShelfStore(defaults: defaults, writes: .afterAPause)
+        let shelf = ChantShelfStore(defaults: defaults, writes: .afterAPause, appIsActive: { true })
         let set = shelf.newSet(named: "Holy hour")
         shelf.addChant("adoro_te", to: set.id)
         shelf.setStep(.singAlong, for: "sub_tuum")
         shelf.notePlayed("adoro_te")
+        #expect(defaults.data(forKey: "chantShelf.sets") == nil, "held back until flushed")
+        #expect(defaults.data(forKey: "chantShelf.recent") == nil, "held back until flushed")
         shelf.flush()
 
         let again = ChantShelfStore(defaults: defaults)
@@ -143,17 +145,27 @@ struct ChantPlaybackTests {
 
     @Test func theLastGatheredChangeWins() throws {
         let defaults = try #require(UserDefaults(suiteName: "ChantPlaybackTests.\(UUID().uuidString)"))
-        let shelf = ChantShelfStore(defaults: defaults, writes: .afterAPause)
+        let shelf = ChantShelfStore(defaults: defaults, writes: .afterAPause, appIsActive: { true })
         let set = shelf.newSet(named: "First")
         shelf.rename(set.id, to: "Second")
         shelf.rename(set.id, to: "Third")
+        #expect(ChantShelfStore(defaults: defaults).set(set.id) == nil, "held back until flushed")
         shelf.flush()
         #expect(ChantShelfStore(defaults: defaults).set(set.id)?.name == "Third")
     }
 
+    /// A change made with the app in the background, from the Lock
+    /// Screen, is written at once rather than gathered
+    @Test func aShelfInTheBackgroundWritesAtOnce() throws {
+        let defaults = try #require(UserDefaults(suiteName: "ChantPlaybackTests.\(UUID().uuidString)"))
+        let shelf = ChantShelfStore(defaults: defaults, writes: .afterAPause, appIsActive: { false })
+        shelf.notePlayed("adoro_te")
+        #expect(ChantShelfStore(defaults: defaults).recent.first?.chantID == "adoro_te")
+    }
+
     @Test func aGatheredShelfWritesOnItsOwnAfterAPause() async throws {
         let defaults = try #require(UserDefaults(suiteName: "ChantPlaybackTests.\(UUID().uuidString)"))
-        let shelf = ChantShelfStore(defaults: defaults, writes: .afterAPause)
+        let shelf = ChantShelfStore(defaults: defaults, writes: .afterAPause, appIsActive: { true })
         let set = shelf.newSet(named: "Night prayer")
         for _ in 0..<40 {
             if ChantShelfStore(defaults: defaults).set(set.id) != nil { break }
