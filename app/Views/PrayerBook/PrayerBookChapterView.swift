@@ -130,7 +130,9 @@ struct PrayerBookChapterView: View {
                 .multilineTextAlignment(.leading)
                 .fixedSize(horizontal: false, vertical: true)
                 .shadow(color: .black.opacity(0.55), radius: 12, y: 2)
-                // Past this a word like COMMUNION breaks mid-word in Cinzel
+                // Only matters if the app-wide cap (DynamicTypeSize.appMaximum,
+                // .xLarge) is ever lifted: past AX1 a word like COMMUNION
+                // breaks mid-word in Cinzel
                 .dynamicTypeSize(...DynamicTypeSize.accessibility1)
                 .accessibilityAddTraits(.isHeader)
 
