@@ -35,6 +35,13 @@ runtime; `LUMEN_VIAE_SIM_NAME` and `LUMEN_VIAE_SIM_DEVICE` change either).
 They never use the booted simulator, because other Claude sessions and the
 live Simulator panel drive that one.
 
+**Opening a debug build on a page.** A simulator cannot tap its way to
+every screen, so a debug build reads three launch variables:
+`SIMCTL_CHILD_LUMEN_VIAE_TAB=prayers` opens on a tab (an `AppTab` case),
+`SIMCTL_CHILD_LUMEN_VIAE_TODAY=2026-10-01` on another day, and
+`SIMCTL_CHILD_LUMEN_VIAE_CHANT=salve_regina_simple` on a chant's page (an
+unknown id opens its not-found page). Pass them to `xcrun simctl launch`.
+
 **Build products** go to `.build/DerivedData` in each checkout, and each
 xcodebuild log goes to `.build/logs/<step>.log`. This keeps two worktrees
 from sharing DerivedData. When a step fails, its errors and the log's tail
