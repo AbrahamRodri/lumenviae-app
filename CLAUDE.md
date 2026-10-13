@@ -384,6 +384,12 @@ About's three short texts; a destination with onward doors of its own
 is pushed.
 The tab bar lays its four labels out content-sized with even gaps (not
 equal cells), padded clear of the raised Pray medallion.
+The bar, and the chant player standing on it, ignore the keyboard's safe
+area (`ContentView`): with a keyboard up they stay at the foot of the
+glass, under it, and the pages keep no room for the player while it is
+up. Riding up with the keyboard, the bar and the Pray button covered
+whatever stood above it, tonight's song on the chant search among them,
+on every page with a field. Don't take the modifiers off.
 
 > Journal is **not** blocked on the API. Entries are a local SwiftData model
 > (`Models/JournalEntry.swift`); nothing is sent to the server.

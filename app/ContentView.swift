@@ -53,6 +53,9 @@ struct ContentView: View {
     /// the one standing over them
     @State private var chantPlayerHeight: CGFloat = 0
     @State private var tabBarHeight: CGFloat = 0
+    /// A keyboard is up: the player stands under it then, and the pages
+    /// keep no room for it
+    @State private var keyboardIsUp = false
 
     private var shouldShowTabBar: Bool {
         (router.path.isEmpty || router.topRoute?.keepsTabBar == true)
@@ -90,8 +93,14 @@ struct ContentView: View {
             // standing over it, so its last row scrolls clear
             .safeAreaInset(edge: .bottom, spacing: 0) {
                 Color.clear
-                    .frame(height: showsChantPlayer ? chantPlayerHeight + 8 : 0)
+                    .frame(height: showsChantPlayer && !keyboardIsUp ? chantPlayerHeight + 8 : 0)
                     .allowsHitTesting(false)
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in
+                keyboardIsUp = true
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
+                keyboardIsUp = false
             }
             // Under the tour the page is dimmed and takes no touch, and
             // VoiceOver may not wander onto it either: the tour's card is
