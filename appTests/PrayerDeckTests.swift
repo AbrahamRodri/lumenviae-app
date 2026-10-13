@@ -65,6 +65,61 @@ struct PrayerDeckTests {
         #expect(deck.topicToOpen == home.id)
     }
 
+    /// Easter Monday, 2026: the Angelus gives way to Queen of Heaven
+    private let eastertide = Calendar.current.date(from: DateComponents(year: 2026, month: 4, day: 6, hour: 12))!
+
+    @Test func theDayReachesTheDeck() throws {
+        let angelus = try #require(PrayerBook.order(PrayerBook.angelusOrderID))
+        let ids = angelus.prayerIDs(eastertide)
+        let at = try #require(ids.firstIndex(of: "regina_caeli"))
+        let deck = PrayerDeck.of("regina_caeli", in: .order(angelus.id, at: at), on: eastertide)
+
+        #expect(deck.name == "QUEEN OF HEAVEN")
+        #expect(deck.ids == ids)
+        #expect(deck.start == at)
+    }
+
+    @Test func anUnknownSetFallsBackToThePrayersOwnTopic() throws {
+        let home = try #require(PrayerBook.homeChapter(of: "memorare"))
+        for set in [PrayerSet.topic("no_such_topic"), .order("no_such_order", at: 0)] {
+            let deck = PrayerDeck.of("memorare", in: set, on: day)
+            #expect(deck.ids == home.prayerIDs)
+            #expect(deck.topicToOpen == home.id)
+        }
+    }
+
+    @Test func aPrayerOutsideEverySetHasNoNeighbours() {
+        let deck = PrayerDeck.of("no_such_prayer", in: nil, on: day)
+        #expect(deck.ids.isEmpty)
+        #expect(deck.start == nil)
+    }
+
+    @Test func aPlaceHoldingAnotherPrayerFallsBackToThisOnesFirst() throws {
+        let order = try #require(PrayerBook.order("before_confession"))
+        let ids = order.prayerIDs(day)
+        // Place 0 is in range but holds the order's first prayer, not its third
+        #expect(PrayerDeck.of(ids[2], in: .order(order.id, at: 0), on: day).start == 2)
+    }
+
+    /// An order's page numbers its rows by the prayers that resolve and
+    /// sends each row's place among the order's ids; the two agree only
+    /// while every id resolves, in every season
+    @Test func everyOrdersIDsAreAllPrayers() {
+        for date in [day, eastertide] {
+            for order in PrayerBook.orders {
+                #expect(order.prayers(on: date).map(\.id) == order.prayerIDs(date), "\(order.id)")
+            }
+        }
+    }
+
+    @Test func theOrdersSayingAPrayerAreFoundOnce() throws {
+        let night = try #require(PrayerBook.order(PrayerBook.nightOrderID))
+        let id = try #require(night.prayerIDs(day).first)
+        let saying = PrayerDeck.ordersSaying([id], on: day)
+        let expected = PrayerBook.orders.filter { $0.prayerIDs(day).contains(id) }.map(\.id)
+        #expect(saying[id] == expected)
+    }
+
     @Test func aDragDealsTheWayItWentWhenFarEnoughOrFlung() {
         // A third of the width, either way
         #expect(DealDirection.of(dx: -120, flung: -120, width: 337, hasNext: true, hasPrevious: true) == .next)

@@ -910,6 +910,8 @@ app/
 │   │                         # reader, contents sheet, transport
 │   ├── PrayerBook/           # The Prayer Book: Prayers (the tab's page,
 │   │                         # + PrayersComponents, PrayerBookPaintings),
+│   │                         # PrayerSet (PrayerSet, PrayerDeck: the set a
+│   │                         # prayer's card deals through),
 │   │                         # chapter, order page, prayer page,
 │   │                         # pray-along, learn by heart
 │   ├── Resources/            # How to Pray (+ RosaryLessonView, GuidedRosaryView),
@@ -2524,7 +2526,7 @@ write concurrent code here:
   alone: a glyph, an ornament, a paragraph, a kicker counting the
   prayers, a Latin line under every prayer and a two-line switch row.
 
-  **A prayer's own page** (`BookPrayerView`, `.devotionPrayer(id:)`, the
+  **A prayer's own page** (`BookPrayerView`, `.devotionPrayer(id:set:)`, the
   "Holy Cards" pick, option B4, Oct 2026) is a holy card. The card
   (`HolyCard`) stands 28 points in from each side between the bar and the
   foot, on the card ground with a gold rim and a second rule inside it,
@@ -2534,7 +2536,7 @@ write concurrent code here:
   the prayer's place in it ("PRAYERS TO MARY · 3 OF 32"), its name, its
   Latin small, a gold rule, the prayer (`PrayerText`, two points under
   the reading size, never under 17), SAID IN with each order as its
-  painting and name, and the topic's prayers as a row of dots
+  painting and name, and the set's prayers as a row of dots
   (`PlaceDots`, 24 around this one in a longer topic) over "Swipe for
   <the next> · All 32" (both buttons). The prayers before and after it
   peek in at the glass's edges as 14-point slivers of their paintings,

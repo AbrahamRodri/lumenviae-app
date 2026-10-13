@@ -260,16 +260,23 @@ struct PrayerOrderView: View {
     // MARK: - The prayers
 
     private func list(_ order: PrayerOrder) -> some View {
-        let prayers = order.prayers(on: now)
+        // Each prayer keeps its place among the order's ids, which is how
+        // its card counts it; an id that names no prayer is passed over
+        // without moving any place after it
+        let rows = Array(
+            order.prayerIDs(now).enumerated().compactMap { place, id in
+                PrayerBook.prayer(id).map { (place: place, prayer: $0) }
+            }
+        )
         return VStack(spacing: 0) {
-            ForEach(Array(prayers.enumerated()), id: \.element.id) { i, prayer in
+            ForEach(Array(rows.enumerated()), id: \.offset) { i, row in
                 OrderPrayerRow(
-                    prayer: prayer,
+                    prayer: row.prayer,
                     number: i + 1,
                     store: store,
-                    showsRule: i < prayers.count - 1
+                    showsRule: i < rows.count - 1
                 ) {
-                    router.push(.devotionPrayer(id: prayer.id, set: .order(order.id, at: i)))
+                    router.push(.devotionPrayer(id: row.prayer.id, set: .order(order.id, at: row.place)))
                 }
             }
         }

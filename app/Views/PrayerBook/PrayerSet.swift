@@ -58,6 +58,19 @@ struct PrayerDeck: Equatable {
         return topic(home, for: prayerID, opensItsPage: true)
     }
 
+    /// The orders that say each of `prayerIDs` on `date`, by order id, in
+    /// the book's order of the orders
+    static func ordersSaying(_ prayerIDs: [String], on date: Date) -> [String: [String]] {
+        let wanted = Set(prayerIDs)
+        var saying: [String: [String]] = [:]
+        for order in PrayerBook.orders {
+            for id in Set(order.prayerIDs(date)) where wanted.contains(id) {
+                saying[id, default: []].append(order.id)
+            }
+        }
+        return saying
+    }
+
     private static func topic(_ chapter: PrayerBookChapter, for prayerID: String, opensItsPage: Bool) -> PrayerDeck {
         let ids = chapter.prayerIDs
         let name = chapter.topic.isEmpty ? chapter.title : chapter.topic

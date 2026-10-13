@@ -37,8 +37,9 @@ struct BookPrayerView: View {
     private let store: PrayerBookStore
 
     /// The day the page reads its orders on: which orders say the prayer,
-    /// and an order's prayers in their seasons. Fixed for the page's life.
-    private let day: Date
+    /// and an order's prayers in their seasons. Held, as the deck is, so
+    /// the page reads one day for its whole life.
+    @State private var day: Date
 
     /// The prayers the cards deal through, read once when the page opens
     /// and held, so a season turning while it is open never moves the
@@ -49,15 +50,15 @@ struct BookPrayerView: View {
     /// outside every set, which has no neighbours
     @State private var position: Int?
     @State private var showsLearn = false
-    @State private var keptNote: String?
+    /// The orders that say each prayer of the deck, worked out once with it
+    @State private var saidIn: [String: [String]]
+    /// What the ribbon last said, read only by the note itself, so a Save
+    /// redraws the note and nothing else
+    @State private var note: RibbonNote
     /// A deal asked for by a tap (a sliver, "Swipe for", VoiceOver), which
     /// the deck plays as it plays a drag
     @State private var dealRequest: DealDirection?
 
-    /// Clears the note after its three seconds; restarted by each note
-    @State private var noteClear: Task<Void, Never>?
-    /// The last thing the ribbon said, held while its words fade out
-    @State private var lastKeptNote = " "
 
     /// Opened scrolled to its end, for a snapshot of the card's foot
     private let opensAtEnd: Bool
@@ -82,12 +83,12 @@ struct BookPrayerView: View {
         self.opensAtEnd = opensAtEnd
         self.turnedBy = turn
         let day = date ?? Date()
-        self.day = day
+        _day = State(initialValue: day)
         let deck = PrayerDeck.of(prayerID, in: set, on: day)
         _deck = State(initialValue: deck)
         _position = State(initialValue: deck.start)
-        _keptNote = State(initialValue: note)
-        _lastKeptNote = State(initialValue: note ?? " ")
+        _saidIn = State(initialValue: PrayerDeck.ordersSaying(deck.ids + [prayerID], on: day))
+        _note = State(initialValue: RibbonNote(showing: note))
     }
 
     private static func prayer(_ id: String) -> BookPrayer? {
@@ -133,7 +134,7 @@ struct BookPrayerView: View {
                         turnedBy: turnedBy,
                         settle: settle(_:)
                     )
-                    .overlay(alignment: .top) { savedNote }
+                    .overlay(alignment: .top) { SavedNote(note: note) }
                     .padding(.top, 6)
 
                     PrayerFoot(
@@ -210,7 +211,7 @@ struct BookPrayerView: View {
         let count = deck.ids.count
         let nextIndex = index.flatMap { $0 < count - 1 ? $0 + 1 : nil }
         let previousIndex = index.flatMap { $0 > 0 ? $0 - 1 : nil }
-        let orders = PrayerBook.orders.filter { $0.prayerIDs(day).contains(prayer.id) }
+        let orders = (saidIn[prayer.id] ?? []).compactMap { PrayerBook.order($0) }
         let facts = HolyCardFacts(
             prayerID: prayer.id,
             title: prayer.title,
@@ -252,30 +253,10 @@ struct BookPrayerView: View {
     private func settle(_ direction: DealDirection) {
         guard let target = direction == .next ? next : previous else { return }
         position = target
-        keptNote = nil
+        note.clear()
         if let prayer = Self.prayer(deck.ids[target]) {
             AccessibilityNotification.Announcement(prayer.title).post()
         }
-    }
-
-    /// What the ribbon says, on a dark capsule at the head of the card for
-    /// three seconds; heard as well, since the bar's ribbon is far from it
-    private var savedNote: some View {
-        Text(lastKeptNote)
-            .font(AppFonts.readingItalicFont(13.5))
-            .foregroundColor(AppColors.gold)
-            .multilineTextAlignment(.center)
-            .fixedSize(horizontal: false, vertical: true)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 8)
-            .background(Capsule().fill(AppColors.background.opacity(0.92)))
-            .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline))
-            .padding(.horizontal, 44)
-            .padding(.top, 14)
-            .opacity(keptNote == nil ? 0 : 1)
-            .animation(Motion.crossfade, value: keptNote)
-            .allowsHitTesting(false)
-            .accessibilityHidden(true)
     }
 
     // MARK: - Language
@@ -289,17 +270,68 @@ struct BookPrayerView: View {
         )
     }
 
-    private func say(_ note: String) {
-        lastKeptNote = note
-        keptNote = note
+    private func say(_ words: String) {
         // Heard as well as seen: the words are hidden from VoiceOver
-        AccessibilityNotification.Announcement(note).post()
-        noteClear?.cancel()
-        noteClear = Task { @MainActor in
+        AccessibilityNotification.Announcement(words).post()
+        note.say(words)
+    }
+}
+
+// MARK: - The ribbon's note
+
+/// What the ribbon says, for three seconds. Observed only by the note
+/// drawn on the card, so a Save never redraws the page or its cards.
+@Observable
+private final class RibbonNote {
+    /// Showing now, or nil once its three seconds are up
+    private(set) var words: String?
+    /// The last thing said, held while its words fade out
+    private(set) var lastWords = " "
+
+    @ObservationIgnored private var clearing: Task<Void, Never>?
+
+    init(showing words: String?) {
+        self.words = words
+        lastWords = words ?? " "
+    }
+
+    func say(_ words: String) {
+        lastWords = words
+        self.words = words
+        clearing?.cancel()
+        clearing = Task { @MainActor [weak self] in
             try? await Task.sleep(for: .seconds(3))
             guard !Task.isCancelled else { return }
-            keptNote = nil
+            self?.words = nil
         }
+    }
+
+    func clear() {
+        clearing?.cancel()
+        words = nil
+    }
+}
+
+/// The ribbon's words on a dark capsule at the head of the card
+private struct SavedNote: View {
+    let note: RibbonNote
+
+    var body: some View {
+        Text(note.lastWords)
+            .font(AppFonts.readingItalicFont(13.5))
+            .foregroundColor(AppColors.gold)
+            .multilineTextAlignment(.center)
+            .fixedSize(horizontal: false, vertical: true)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 8)
+            .background(Capsule().fill(AppColors.background.opacity(0.92)))
+            .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline))
+            .padding(.horizontal, 44)
+            .padding(.top, 14)
+            .opacity(note.words == nil ? 0 : 1)
+            .animation(Motion.crossfade, value: note.words)
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
     }
 }
 
@@ -434,7 +466,13 @@ private struct DealDeck: View {
             DragGesture(minimumDistance: 14)
                 .updating($dragging) { _, state, _ in state = true }
                 .onChanged { value in
-                    guard !dealing else { return }
+                    // A finger down while a card flies off is let be for
+                    // the rest of its drag, or the next card would leap
+                    // under it once the deal is done
+                    guard !dealing else {
+                        dragIsAcross = false
+                        return
+                    }
                     if dragIsAcross == nil {
                         dragIsAcross = abs(value.translation.width) > abs(value.translation.height)
                     }
@@ -807,7 +845,7 @@ private struct HolyCard: View, Equatable {
                     // stand close enough to read as one
                     VStack(spacing: 0) {
                         if let next = facts.nextTitle {
-                            swipeFor(next, minHeight: 36)
+                            swipeFor(next, onTwoLines: true)
                         }
                         all
                     }
@@ -817,16 +855,17 @@ private struct HolyCard: View, Equatable {
         }
     }
 
-    private func swipeFor(_ next: String, minHeight: CGFloat = 44) -> some View {
+    /// "Swipe for the next", a door to it 44 points tall. On two lines its
+    /// words sit at the foot of that height, close over All, and the
+    /// height it keeps stands above them, never over All's own.
+    private func swipeFor(_ next: String, onTwoLines: Bool = false) -> some View {
         Button(action: actions.next) {
             Text("Swipe for \(next)")
                 .font(AppFonts.readingItalicFont(13.5))
                 .foregroundColor(AppColors.textSecondary)
                 .multilineTextAlignment(.center)
-                .frame(minHeight: minHeight)
-                // Drawn close to All on two lines, it still answers a
-                // touch 44 points tall
-                .contentShape(Rectangle().inset(by: -max(0, 44 - minHeight) / 2))
+                .frame(minHeight: 44, alignment: onTwoLines ? .bottom : .center)
+                .contentShape(Rectangle())
         }
         .buttonStyle(QuietGlyphButtonStyle())
         .accessibilityLabel("Next prayer, \(next)")
