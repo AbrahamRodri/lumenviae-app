@@ -96,7 +96,7 @@ final class RosaryAudioPack {
     @ObservationIgnored private var pendingWrites: [String: Int] = [:]
 
     /// How a manifest reaches the disk; a test may slow it down
-    private let writeFile: (Data, URL) async -> Void
+    private let writeFile: @concurrent @Sendable (Data, URL) async -> Void
 
     /// Fail a stalled clip in 20s; the clips are small
     private let session: URLSession = {
@@ -117,10 +117,10 @@ final class RosaryAudioPack {
     }
 
     /// A pack kept under `root`; the app's own is `shared`
-    init(apiService: APIService, root: URL, writeFile: ((Data, URL) async -> Void)? = nil) {
+    init(apiService: APIService, root: URL, writeFile: (@concurrent @Sendable (Data, URL) async -> Void)? = nil) {
         self.apiService = apiService
         self.root = root
-        self.writeFile = writeFile ?? { data, url in await Self.write(data, to: url) }
+        self.writeFile = writeFile ?? Self.writeManifest
     }
 
     /// Lets go of the manifests kept in memory, for when the files under
@@ -499,6 +499,11 @@ final class RosaryAudioPack {
     @concurrent
     private nonisolated static func exists(_ url: URL) async -> Bool {
         FileManager.default.fileExists(atPath: url.path)
+    }
+
+    @concurrent
+    private nonisolated static func writeManifest(_ data: Data, _ url: URL) async {
+        await write(data, to: url)
     }
 
     @concurrent
