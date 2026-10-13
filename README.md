@@ -148,9 +148,9 @@ shared under their copyleft licence.
 
 ### Spiritual reading
 
-Four public-domain classics — *The Imitation of Christ*, *The Story of a Soul*,
-the *Confessions* and *The Dolorous Passion* — are fetched from Project Gutenberg
-the first time each is opened, cut into chapters on device, and kept. Three have
+Public-domain classics such as *The Imitation of Christ*, *The Story of a Soul*
+and the *Confessions* are fetched from Project Gutenberg
+the first time each is opened, cut into chapters on device, and kept. Some have
 LibriVox recordings matched to their chapters, which can be saved for listening
 offline. A passage can be kept as a note in the journal or marked as a place to
 come back to. The complete *True Devotion to Mary* (Faber's 1862 translation) is

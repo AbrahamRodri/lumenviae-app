@@ -2135,9 +2135,8 @@ write concurrent code here:
   Coronation use the liturgy's own typology (Canticles, Psalms, Judith,
   Ecclesiasticus, the Apocalypse).
 - **Spiritual Reading** — a curated shelf of public-domain classics
-  (Imitation of Christ, Story of a Soul, Confessions, Dolorous Passion,
-  The Glories of Mary, Abandonment to Divine Providence, The Practice of
-  the Presence of God; each with a one-sentence blurb under its cloth on
+  (Imitation of Christ, Story of a Soul, Confessions, The Glories of
+  Mary, The Practice of the Presence of God; each with a one-sentence blurb under its cloth on
   its page) reached from the home page's reading shelf, Explore, and the
   Chapel's Library and Reading tiles. Nothing is bundled: the
   text is fetched from Project Gutenberg the first time a book is opened,
@@ -2162,15 +2161,14 @@ write concurrent code here:
   Every one of these rides in `editionFingerprint`, so correcting one
   book retires that book's cached parse and no other's.
 
-  The four books cut to: Imitation 115 units — 114 chapters under four
+  The books cut to (among others): Imitation 115 units — 114 chapters under four
   part headers, plus the exhortation to Holy Communion that opens Book IV
   as a unit of its own; Story of a Soul the Prologue, chapters I–XI, and the
-  Epilogue (13); Confessions 13 books; Dolorous Passion "To the
-  Reader", nine Meditations, the Introduction, and chapters I–LXVI (77).
+  Epilogue (13); Confessions 13 books.
 
   **Audio is tied to the text** by `LibraryTrackMap`, from the catalog's
   `trackMapping`: `.sequential` where a recording gives each chapter its
-  own file (Thérèse, Emmerich — 1:1, verified track for track; an
+  own file (Thérèse — 1:1, verified track for track; an
   `offset` covers front-matter tracks the text does not carry, and
   consecutive files a reader labelled "Part 1"/"Part 2" are gathered back
   into one reading),
