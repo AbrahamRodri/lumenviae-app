@@ -49,6 +49,12 @@ enum Motion {
     /// choice lands, it does not bounce.
     static let choice = ease(0.25)
 
+    /// A prayer card turning to the next or the one before: the card
+    /// slides in over the last (or off it) and slows to a stop, a cubic
+    /// ease-out at 0.34s with no spring, so the eye follows which way it
+    /// went and nothing lands twice.
+    static let pageTurn = Animation.timingCurve(0.33, 1, 0.68, 1, duration: 0.34)
+
     /// The design system's ease-out — cubic-bezier(0, 0, 0.58, 1) —
     /// for chrome that collapses, fades or slides as the page moves.
     /// Nothing springs past its mark.
