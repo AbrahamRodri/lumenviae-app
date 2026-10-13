@@ -65,35 +65,15 @@ enum LibraryBookPlace {
     static let leadIn = 2
 
     /// The numeral a heading ends on — "V" of "Chapter V", "12" of
-    /// "Chapter 12" — or nil for a heading with none ("Prologue").
+    /// "Chapter 12" — or nil for a heading with none ("Prologue"), read
+    /// as strictly as the recordings' ledger reads them
+    /// (`LibraryNumerals`), so an all-caps word is never a numeral.
     static func numeral(ofHeading heading: String) -> String? {
         guard let last = heading.split(separator: " ").last, last.count < heading.count else {
             return nil
         }
         let word = String(last)
-        let roman = Set("IVXLCDM")
-        if word.allSatisfy({ roman.contains($0) }) || word.allSatisfy(\.isNumber) {
-            return word
-        }
-        return nil
-    }
-
-    /// 1 → "I", 4 → "IV": the parts of a book, counted as it counts them.
-    static func roman(_ number: Int) -> String {
-        guard number > 0 else { return "" }
-        let table: [(Int, String)] = [
-            (1000, "M"), (900, "CM"), (500, "D"), (400, "CD"), (100, "C"), (90, "XC"),
-            (50, "L"), (40, "XL"), (10, "X"), (9, "IX"), (5, "V"), (4, "IV"), (1, "I"),
-        ]
-        var left = number
-        var out = ""
-        for (value, letters) in table {
-            while left >= value {
-                out += letters
-                left -= value
-            }
-        }
-        return out
+        return Int(word) != nil || LibraryNumerals.roman(word) != nil ? word : nil
     }
 
     /// The parts a book prints by name. An edition's front matter — the
@@ -129,9 +109,9 @@ enum LibraryBookPlace {
             return chapter.heading
         }
         if let tail = numeral(ofHeading: chapter.heading) {
-            return "\(roman(part)).\(tail)"
+            return "\(LibraryNumerals.numeral(for: part)).\(tail)"
         }
-        return chapter.heading == run.title ? roman(part) : chapter.heading
+        return chapter.heading == run.title ? LibraryNumerals.numeral(for: part) : chapter.heading
     }
 
     /// The chapter the page's list begins at: `leadIn` before the one
@@ -187,11 +167,6 @@ struct LibraryContentsLedger: View {
 
     /// How many ribbons lie in each chapter
     var markCounts: [Int: Int] = [:]
-
-    /// What each chapter's recording is doing, where one begins there.
-    /// Absent for a book with no recording, and in the reader's index,
-    /// where a row is only a door.
-    var listening: (LibraryChapter) -> LibraryRowListening? = { _ in nil }
 
     /// Which parts stand open. Bound so the two callers keep their own.
     @Binding var expandedParts: Set<String>
@@ -288,7 +263,6 @@ struct LibraryContentsLedger: View {
                 isFinished: finished.contains(chapter.id),
                 isLast: chapter.id == chapters.last?.id,
                 markCount: markCounts[chapter.id] ?? 0,
-                listening: listening(chapter),
                 onSelect: onSelect
             )
             .id(chapter.id)

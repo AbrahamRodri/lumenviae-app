@@ -64,6 +64,7 @@ struct LibraryBookView: View {
     /// part index on the edge rides beside the list and nowhere else.
     @State private var listTop: CGFloat = 10_000
     @State private var listEnd: CGFloat = .greatestFiniteMagnitude
+    @State private var rowsEnd: CGFloat = .greatestFiniteMagnitude
 
     /// The contents, partitioned once when the book arrives. Held rather
     /// than derived: partitioning a hundred and fourteen chapters on
@@ -228,8 +229,11 @@ struct LibraryBookView: View {
                         .padding(.bottom, 22)
                         .devotionalEntrance(delay: 0.05)
 
+                        // No entrance on the list itself: laid on the
+                        // several views `contents` returns, it would land on
+                        // every lazily built row and pinned name, each
+                        // fading in as it scrolled into view.
                         contents(book)
-                            .devotionalEntrance(delay: 0.1)
 
                         if let failure = session.failure {
                             quietNote(failure)
@@ -377,17 +381,19 @@ struct LibraryBookView: View {
                 fullWidth: false,
                 action: { openChapter(opening) }
             )
-            .accessibilityHint("Opens \(destination(for: opening))")
+            // Said in full: "III.V" names no part to the ear
+            .accessibilityLabel(spokenAct(opening, isResume: resume != nil))
         }
     }
 
-    /// "Chapter I · Earliest Memories" — or the heading alone where the
-    /// edition prints no title.
-    private func destination(for chapter: LibraryChapter) -> String {
-        if let title = chapter.title, title != chapter.heading {
-            return "\(chapter.heading) · \(title)"
-        }
-        return chapter.displayTitle
+    /// "Continue reading, The Third Book, Chapter V, Of the wonderful
+    /// power of the Divine Love"
+    private func spokenAct(_ chapter: LibraryChapter, isResume: Bool) -> String {
+        var parts = [isResume ? "Continue reading" : "Begin reading"]
+        if let part = chapter.part, part != chapter.heading { parts.append(part) }
+        parts.append(chapter.heading)
+        if let title = chapter.title, title != chapter.heading { parts.append(title) }
+        return parts.joined(separator: ", ")
     }
 
     /// Where the reader left off, if the marker still belongs to this
@@ -442,7 +448,7 @@ struct LibraryBookView: View {
                         AppIcon(isSearching ? "ph-x" : "ph-magnifying-glass", size: 13)
                     }
                     .foregroundColor(AppColors.gold.opacity(0.75))
-                    .padding(.vertical, 12)
+                    .frame(minHeight: 44)
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
@@ -456,6 +462,7 @@ struct LibraryBookView: View {
                     .padding(.bottom, 6)
             }
         }
+        .devotionalEntrance(delay: 0.1)
 
         if isSearching {
             if !query.trimmingCharacters(in: .whitespaces).isEmpty {
@@ -510,8 +517,26 @@ struct LibraryBookView: View {
                 }
             }
 
+            // A list shorter than the index (a reader in the last
+            // chapters, the rest folded) is held open to the index's
+            // length, so the index still stands beside it. Measured from
+            // the rows' own end, above this room, so the room never feeds
+            // its own measure.
+            pageMarker { rowsEnd = $0 }
+
+            if hasParts {
+                Color.clear
+                    .frame(height: listShortfall)
+            }
+
             pageMarker { listEnd = $0 }
         }
+    }
+
+    /// How much shorter the shown list is than the index beside it
+    private var listShortfall: CGFloat {
+        let index = CGFloat(titledParts.count) * Self.indexRowHeight + 8
+        return max(0, index - (rowsEnd - listTop))
     }
 
     /// A line of no height that reports where it stands on the page
@@ -546,24 +571,31 @@ struct LibraryBookView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("Show the \(count) earlier chapters")
+        .accessibilityLabel(count == 1 ? "Show the earlier chapter" : "Show the \(count) earlier chapters")
     }
 
     /// A part's name, pinned over its chapters while they pass under it
     private func partHeader(_ run: LibraryPartRun) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
+            // One line, so the index set a pinned name's height beneath it
+            // never crosses a long one (the Glories of Mary's parts)
             Text((run.title ?? "").uppercased())
                 .font(AppFonts.labelFont(10.5))
                 .tracking(2.2)
                 .foregroundColor(AppColors.gold)
+                .lineLimit(1)
+                .truncationMode(.tail)
 
             Text(totalChapters(of: run) == 1 ? "1 chapter" : "\(totalChapters(of: run)) chapters")
                 .font(AppFonts.bodyFont(13))
                 .foregroundColor(AppColors.textSecondary)
+                .lineLimit(1)
+                .fixedSize()
 
-            Spacer()
+            Spacer(minLength: 0)
         }
-        .padding(.horizontal, 20)
+        .padding(.leading, 20)
+        .padding(.trailing, Self.indexRowHeight)
         .padding(.vertical, 9)
         .frame(maxWidth: .infinity)
         .background(AppColors.cardBackground.opacity(0.97))
@@ -599,11 +631,17 @@ struct LibraryBookView: View {
                 Button {
                     jump(to: run, proxy: proxy)
                 } label: {
-                    Text(LibraryBookPlace.roman(position + 1))
+                    Text(LibraryNumerals.numeral(for: position + 1))
                         .font(AppFonts.labelFont(11))
-                        .foregroundColor(position == reading ? AppColors.background : AppColors.gold.opacity(0.7))
+                        .foregroundColor(position == reading ? AppColors.goldLight : AppColors.gold.opacity(0.7))
                         .frame(width: 24, height: 24)
-                        .background(Circle().fill(position == reading ? AppColors.gold : Color.clear))
+                        // A ring, not a disc: the page's one filled gold
+                        // shape is Continue
+                        .overlay {
+                            if position == reading {
+                                Circle().strokeBorder(AppColors.gold, lineWidth: 1)
+                            }
+                        }
                         .frame(width: Self.indexRowHeight, height: Self.indexRowHeight)
                         .contentShape(Rectangle())
                 }

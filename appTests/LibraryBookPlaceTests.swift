@@ -43,10 +43,13 @@ struct LibraryBookPlaceTests {
     }
 
     @Test func partsAreCountedInRomanNumerals() {
-        #expect(LibraryBookPlace.roman(1) == "I")
-        #expect(LibraryBookPlace.roman(4) == "IV")
-        #expect(LibraryBookPlace.roman(9) == "IX")
-        #expect(LibraryBookPlace.roman(59) == "LIX")
+        #expect(LibraryNumerals.numeral(for: 1) == "I")
+        #expect(LibraryNumerals.numeral(for: 4) == "IV")
+        #expect(LibraryNumerals.numeral(for: 59) == "LIX")
+    }
+
+    @Test func anAllCapsWordIsNoNumeral() {
+        #expect(LibraryBookPlace.numeral(ofHeading: "Chapter CIVIL") == nil)
     }
 
     @Test func theContinuePlaceNamesThePartAndTheChapter() {
