@@ -898,17 +898,18 @@ private struct PrayAlongGround: View {
 }
 
 /// The veil behind the title and the prayer, scrolling with them: the
-/// theme's ground, feathered above and below so it has no edge
+/// theme's ground, feathered above and below so it has no edge. The top
+/// feather lies within the words' own frame: hung above it, the scroll's
+/// edge cut it off in a hard line under the head.
 private struct WordsVeil: View {
     var body: some View {
         VStack(spacing: 0) {
             LinearGradient(colors: [.clear, AppColors.background.opacity(0.62)], startPoint: .top, endPoint: .bottom)
-                .frame(height: 44)
+                .frame(height: 56)
             AppColors.background.opacity(0.62)
             LinearGradient(colors: [AppColors.background.opacity(0.62), .clear], startPoint: .top, endPoint: .bottom)
                 .frame(height: 72)
         }
-        .padding(.top, -44)
         .padding(.bottom, -72)
         .allowsHitTesting(false)
         .accessibilityHidden(true)
