@@ -21,6 +21,7 @@ struct ChantScoreSheet: View {
     var showsTransport = true
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     /// How much closer than the width of the glass: 1 to 3
     @State private var zoom: CGFloat = 1
@@ -156,7 +157,10 @@ struct ChantScoreSheet: View {
 
     private func landing(at newZoom: CGFloat, keeping point: CGPoint, from origin: CGPoint) -> Landing? {
         let glass = glassSize
-        let parts = partFrames.sorted { $0.key < $1.key }
+        // In the score's order, read off its parts rather than sorted
+        let parts = chant.score.indices.compactMap { index in
+            partFrames[index].map { (key: index, value: $0) }
+        }
         // The part under the point, and the point as a fraction of its
         // engraving (clamped to it when the point is on a caption)
         guard glass.width > 0, glass.height > 0,
@@ -214,6 +218,12 @@ struct ChantScoreSheet: View {
         guard size.width > 0, size.height > 0,
               let landing = landing(at: target, keeping: point, from: origin)
         else { return }
+        // Under Reduce Motion the score is laid out at its new size at
+        // once, the tapped phrase kept in place, with no growing between
+        if reduceMotion {
+            settle(at: target, keeping: point, from: origin)
+            return
+        }
         let scale = target / zoom
         func anchor(_ free: CGFloat, _ rest: CGFloat, _ start: CGFloat, _ tapped: CGFloat) -> CGFloat {
             abs(rest - free) < 0.5 ? tapped : (rest - start) / (1 - scale)
@@ -235,7 +245,7 @@ struct ChantScoreSheet: View {
     /// the glass.
     private func settle(at newZoom: CGFloat, keeping point: CGPoint, from origin: CGPoint) {
         guard newZoom != zoom else {
-            withAnimation(Motion.settle) { pinch = 1 }
+            withAnimation(reduceMotion ? nil : Motion.settle) { pinch = 1 }
             return
         }
         if let landing = landing(at: newZoom, keeping: point, from: origin) {

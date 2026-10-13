@@ -85,7 +85,7 @@ enum ChantForm: String, CaseIterable, Identifiable {
 
     /// Its chants, in the catalog's order
     var chants: [Chant] {
-        ChantCatalog.all.filter { $0.form == self }
+        ChantCatalog.index.forms[self] ?? []
     }
 }
 
@@ -115,9 +115,7 @@ enum ChantLength: String, CaseIterable, Identifiable {
 
     /// Its chants, shortest first
     var chants: [Chant] {
-        ChantCatalog.all
-            .filter { ChantLength.of($0.duration) == self }
-            .sorted { $0.duration < $1.duration }
+        ChantCatalog.index.lengths[self] ?? []
     }
 }
 
@@ -346,22 +344,6 @@ struct ChantFeast: Identifiable, Hashable {
         }
     }
 
-    /// The next `count` feasts on or after `date`, soonest first
-    static func upcoming(from date: Date, count: Int, calendar: Calendar = .current) -> [(feast: ChantFeast, date: Date)] {
-        let day = calendar.startOfDay(for: date)
-        let year = calendar.component(.year, from: day)
-        var found: [(feast: ChantFeast, date: Date)] = []
-        for feast in ChantLibraryData.feasts {
-            for candidate in [year, year + 1] {
-                if let when = feast.date(in: candidate, calendar: calendar), when >= day {
-                    found.append((feast, when))
-                    break
-                }
-            }
-        }
-        return Array(found.sorted { $0.date < $1.date }.prefix(count))
-    }
-
     static func feast(_ id: String) -> ChantFeast? {
         ChantLibraryData.feasts.first { $0.id == id }
     }
@@ -552,6 +534,34 @@ struct ChantOccasion: Identifiable, Hashable {
 
     /// Every chant in the order it sounds, repeats and rounds unrolled
     func sequence(on date: Date = Date()) -> [Chant] {
+        unrolled(on: date).sequence
+    }
+
+    /// The different chants it holds
+    func distinctChants(on date: Date = Date()) -> [Chant] {
+        unrolled(on: date).distinct
+    }
+
+    func duration(on date: Date = Date()) -> TimeInterval {
+        unrolled(on: date).duration
+    }
+
+    /// The occasion unrolled for a day, and what the cards and pages say
+    /// of it, worked out in one pass
+    struct Unrolled {
+        let sequence: [Chant]
+        let distinct: [Chant]
+        let duration: TimeInterval
+
+        init(_ sequence: [Chant]) {
+            self.sequence = sequence
+            var seen = Set<String>()
+            distinct = sequence.filter { seen.insert($0.id).inserted }
+            duration = sequence.reduce(0) { $0 + $1.duration }
+        }
+    }
+
+    func unrolled(on date: Date = Date()) -> Unrolled {
         var chants: [Chant] = []
         for block in blocks {
             for _ in 0..<max(1, block.rounds) {
@@ -561,17 +571,7 @@ struct ChantOccasion: Identifiable, Hashable {
                 }
             }
         }
-        return chants
-    }
-
-    /// The different chants it holds
-    func distinctChants(on date: Date = Date()) -> [Chant] {
-        var seen = Set<String>()
-        return sequence(on: date).filter { seen.insert($0.id).inserted }
-    }
-
-    func duration(on date: Date = Date()) -> TimeInterval {
-        sequence(on: date).reduce(0) { $0 + $1.duration }
+        return Unrolled(chants)
     }
 
     static func occasion(_ id: String) -> ChantOccasion? {
@@ -637,20 +637,24 @@ extension Chant {
 
     /// The seasons it belongs to; none for a chant of the whole year
     var seasons: [ChantSeason] {
-        ChantSeason.allCases.filter { ChantLibraryData.seasonChants[$0]?.contains(id) == true }
+        ChantCatalog.index.seasons[id] ?? []
     }
 
     /// Chants of one work in its settings share this: the simple and the
     /// solemn Salve Regina, never the Rosary's Ave Maria and the Advent
     /// Offertory, which share only a name
     var workKey: String {
+        ChantCatalog.index.workKeys[id] ?? Self.workKey(latinTitle: latinTitle, prayerIDs: prayerIDs)
+    }
+
+    static func workKey(latinTitle: String, prayerIDs: [String]) -> String {
         "\(latinTitle)|\(prayerIDs.sorted().joined(separator: ","))"
     }
 
     /// The other settings of the same work, this one among them, in the
     /// catalog's order (simple before solemn)
     var settings: [Chant] {
-        ChantCatalog.all.filter { $0.workKey == workKey }
+        ChantCatalog.index.settings[workKey] ?? []
     }
 
     /// "Simple", "Solemn": the setting without its "melody", for a pill;

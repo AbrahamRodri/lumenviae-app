@@ -122,6 +122,7 @@ private struct SavedPaintedCard: View {
                     .aspectRatio(4 / 5, contentMode: .fit)
                     .overlay(CachedAssetImage(painting.resolvedAsset, focal: painting.focal))
                     .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .accessibilityHidden(true)
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
                             .strokeBorder(AppColors.gold.opacity(0.24), lineWidth: AppLine.hairline)

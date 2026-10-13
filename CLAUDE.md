@@ -920,9 +920,15 @@ app/
 │   ├── BookReadingProgress                                (SwiftData)
 │   ├── PrayerShortcut                       # + MeWidget (read only by the Chapel's migration)
 │   ├── PrayerBook            # BookPrayer, chapters, orders of prayer, seasons
+│   ├── PrayerBookSearch, PrayerBookSchedule  # its search (names folded once) and its hours and seasons
 │   ├── PrayerDay             # The prayer day, turning at four: what counts as today for everything prayed
-│   ├── Chant                 # Chant, ChantScorePart, ChantGroup, ChantCatalog
+│   ├── Chant                 # Chant, ChantScorePart, ChantGroup, ChantCatalog, and ChantCatalogIndex:
+│   │                         # the catalog's lookups (by id, prayer, work, kind, length, season) built once
 │   ├── ChantScoreDrawing     # A score's drawing, read from .lvscore; SVG path data
+│   ├── ChantPlayback         # ChantPlayer's pure values: a set unrolled, the line clock, turns, errors
+│   ├── ChantPracticeWords    # The words a chant is practised from, plain or cut to first letters
+│   ├── SearchText            # The fold (case, accents, æ and œ) the Prayer Book's search and ChantCatalog.search read by;
+│   │                         # ChantSearch, AppSearch and the Chapel's tiles still fold on their own until they adopt it
 │   └── StreakMilestone, MarianFeastDay, BilingualConsecrationPrayer
 ├── ViewModels/               # @Observable
 │   ├── HomeViewModel, MeditationSelectionViewModel, MeditationSetDetailViewModel
@@ -936,7 +942,9 @@ app/
 │   ├── Chapel/               # MyChapelView (the tab), ChapelGrid (arrange
 │   │                         # machinery), ChapelTiles, ChapelPrayerBookTile
 │   ├── Chant/                # ChantLibraryView, ChantView (a chant's page),
-│   │                         # ChantScoreSheet, ChantComponents
+│   │                         # ChantScoreSheet, ChantComponents, and by role:
+│   │                         # ChantScore, ChantPlayControls, ChantMiniPlayer,
+│   │                         # ChantRows, ChantPaintings
 │   ├── Me/                   # What outlived the retired Me page: MeCustomizeSheet's
 │   │                         # RuleEditorSheet + editor furniture,
 │   │                         # PrayButtonEditorSheet, PrayShortcutTray
@@ -2948,8 +2956,7 @@ write concurrent code here:
   (`ChantLibraryData.occasions`): Adoration and Blessing (Benediction), A
   Visit to Jesus in Church, a Sung Rosary, Before Bed, Before Work or
   Study, For Those Who Have Died — each a card on Sets of Chants opening its
-  page (the numbered index `ChantOccasionsSection` drew them as is no
-  longer shown). The bookmark is a toggle: filled while the occasion
+  page. The bookmark is a toggle: filled while the occasion
   is kept as a set of one's own (`ChantSet.occasionID`), a second tap
   letting that set go — but only while the set is still the occasion's
   own copy (`ChantShelfStore.isUntouchedCopy`); any other kept set is let
@@ -3010,7 +3017,12 @@ write concurrent code here:
   this build does not know go back with it on every write. An entry gone
   from the list lets its stored form go, and `setStep` and `notePlayed`
   write their list once, so an entry updated in place keeps its fields
-  and one put down and begun again inherits none.
+  and one put down and begun again inherits none. The app's shelf
+  gathers its list writes for 400 ms and encodes and writes them off the
+  main actor, the last change winning (`ChantShelfStore.Writes`); what is
+  still gathered is written when the app resigns or ends, and a change
+  made while the app is not in front (a Lock Screen play) is written at
+  once. A test's shelf writes at once unless it asks to gather.
 
   **The rubrics are set in `Rubric.text`** (`FixedColors`, a lighter red
   at 4.6:1 or more on every theme): the sentences of an order of
@@ -3138,7 +3150,11 @@ write concurrent code here:
   runs, "Adoration and Blessing · 2 of 4", "Silence · 9:12 left", "Next: Tantum
   Ergo"), its pause, and a gold hairline of progress; a tap opens the
   chant — waiting between chants, the next one, whose page's play goes
-  on with the set rather than sing the last again. Under Reduce Motion
+  on with the set rather than sing the last again. A chant that would
+  not play is said there too, wherever it was started ("The chant
+  couldn't be played."), and a tap on its disc tries again; the mini
+  player stays up for it (`ChantPlayer.isActive` counts the error, where
+  `holdsAChant` does not). Under Reduce Motion
   it fades in rather than rises. It is a filled surface, because it floats over a page that scrolls
   beneath it: every page in the stack takes its height as a bottom
   safe-area inset, so every scroll runs on beneath it and bring their last row

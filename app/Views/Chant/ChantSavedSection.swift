@@ -546,7 +546,7 @@ struct ChantShelfSwitch: View {
     /// A count rolls its digits to a new number, but under Reduce Motion
     /// it only changes, as every crossfade on the page still fades
     static func countTransition(reduceMotion: Bool) -> ContentTransition {
-        reduceMotion ? .identity : .numericText()
+        .chantCount(reduceMotion: reduceMotion)
     }
 
     var body: some View {
@@ -682,7 +682,13 @@ struct ChantSavedSetCover: View {
     /// "Thursday holy hour, 4 chants, 20 minutes"
     static func spoken(_ set: ChantSet) -> String {
         guard let chants = ChantSavedShelf.spokenCount(set.chantCount) else { return "\(set.name), no chants yet" }
-        return "\(set.name), \(chants), \(ChantOccasionsSection.spokenMinutes(set.duration))"
+        return "\(set.name), \(chants), \(spokenMinutes(set.duration))"
+    }
+
+    /// "20 minutes": the length rounded to the minute, never under one
+    static func spokenMinutes(_ duration: TimeInterval) -> String {
+        let whole = max(1, Int((duration / 60).rounded()))
+        return whole == 1 ? "1 minute" : "\(whole) minutes"
     }
 }
 

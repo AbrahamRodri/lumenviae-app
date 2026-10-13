@@ -159,22 +159,6 @@ struct ChantLibraryTests {
         }
     }
 
-    // MARK: - Feasts
-
-    @Test func theFeastsAheadOfTheFirstOfOctober() {
-        let ahead = ChantFeast.upcoming(from: day(2026, 10, 1), count: 4)
-        #expect(ahead.map(\.feast.id) == ["rosary", "christ_the_king", "all_saints", "all_souls"])
-        #expect(calendar.component(.day, from: ahead[1].date) == 25)
-    }
-
-    @Test func theDaysAheadOfAdventTakeInTheSevenOAntiphons() {
-        let ahead = ChantFeast.upcoming(from: day(2026, 12, 1), count: 9)
-        #expect(ahead.map(\.feast.id) == ["immaculate_conception", "o_sapientia", "o_adonai", "o_radix",
-                                           "o_clavis", "o_oriens", "o_rex", "o_emmanuel", "christmas"])
-        #expect(ahead[1...7].map { calendar.component(.day, from: $0.date) } == Array(17...23))
-        #expect(ahead[5].feast.chant?.id == "o_oriens_magnificat")
-    }
-
     @Test func theMassIsSungWhole() throws {
         let mass = try #require(ChantLibraryData.learningPaths.first { $0.id == "mass" })
         let sundays = try #require(ChantLibraryData.learningPaths.first { $0.id == "sunday_mass" })

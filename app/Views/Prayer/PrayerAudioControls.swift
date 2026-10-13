@@ -45,6 +45,9 @@ struct TransportButton: View {
     var label: String
     var action: () -> Void
 
+    /// The glyph grows with the reader's text size, inside its 44pt frame
+    @ScaledMetric(relativeTo: .body) private var textScale: CGFloat = 1
+
     enum TransportGlyph {
         /// A vendored Phosphor/Christicons asset
         case asset(String)
@@ -57,10 +60,10 @@ struct TransportButton: View {
             Group {
                 switch icon {
                 case .asset(let name):
-                    AppIcon(name, size: size)
+                    AppIcon(name, size: size * textScale)
                 case .symbol(let name):
                     Image(systemName: name)
-                        .font(.system(size: size, weight: .light))
+                        .font(.system(size: size * textScale, weight: .light))
                 }
             }
             .foregroundColor(AppColors.gold)

@@ -438,6 +438,8 @@ final class OfflineContentService {
     /// Deletes all downloaded content.
     func removeAll() {
         try? FileManager.default.removeItem(at: root)
+        // The spoken Rosary's manifests went with the folder
+        RosaryAudioPack.shared.forgetSavedManifests()
         createDirectories()
         refreshDiskState()
         state = .idle

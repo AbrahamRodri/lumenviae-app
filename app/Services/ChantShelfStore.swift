@@ -13,16 +13,17 @@
 //
 
 import Foundation
+import UIKit
 
 // MARK: - ChantSet
 
 /// A set of chants the reader has made — a Thursday holy hour, night
 /// prayer — with pauses and notes between them, played in order.
-struct ChantSet: Codable, Identifiable, Hashable {
+struct ChantSet: nonisolated Codable, Identifiable, Hashable {
 
-    struct Item: Codable, Identifiable, Hashable {
+    struct Item: nonisolated Codable, Identifiable, Hashable {
 
-        enum Kind: Codable, Hashable {
+        enum Kind: nonisolated Codable, Hashable {
             /// A chant, sung `times` over
             case chant(id: String, times: Int)
             /// A note in red between chants, with silence of its own when
@@ -104,9 +105,27 @@ enum ChantWordsPreference: String, CaseIterable, Identifiable {
 @Observable
 final class ChantShelfStore {
 
-    static let shared = ChantShelfStore()
+    static let shared = ChantShelfStore(writes: .afterAPause)
 
     private let defaults: UserDefaults
+
+    /// When a list is written to the defaults: at once, or gathered for a
+    /// moment and written off the main actor, the last change winning.
+    /// The app's own shelf gathers, so a run of taps (a set built, chants
+    /// played one after another) is encoded once and never on the main
+    /// actor; a test's shelf writes at once, so it can read what it wrote.
+    enum Writes {
+        case immediately
+        case afterAPause
+    }
+
+    private let writes: Writes
+
+    /// Whether the app is in front. A gathered change is written at once
+    /// while it is not: one made from the Lock Screen, with the app
+    /// already in the background, would otherwise wait for a resign that
+    /// never comes, and go if the app were closed.
+    private let appIsActive: () -> Bool
 
     private enum Key {
         static let favorites = "chantShelf.favorites"
@@ -118,8 +137,14 @@ final class ChantShelfStore {
         static let pausesBetween = "chantShelf.pausesBetween"
     }
 
-    init(defaults: UserDefaults = .standard) {
+    init(
+        defaults: UserDefaults = .standard,
+        writes: Writes = .immediately,
+        appIsActive: @escaping () -> Bool = { UIApplication.shared.applicationState == .active }
+    ) {
         self.defaults = defaults
+        self.writes = writes
+        self.appIsActive = appIsActive
         favorites = defaults.stringArray(forKey: Key.favorites) ?? []
         learned = defaults.stringArray(forKey: Key.learned) ?? []
         let learning = Self.readList(LearningRecord.self, key: Key.learning, from: defaults)
@@ -132,6 +157,17 @@ final class ChantShelfStore {
         stored = [Key.learning: learning.stored, Key.sets: sets.stored, Key.recent: recent.stored]
         words = ChantWordsPreference(rawValue: defaults.string(forKey: Key.words) ?? "") ?? .both
         pausesBetween = defaults.bool(forKey: Key.pausesBetween)
+
+        if writes == .afterAPause {
+            // Whatever is still gathered is written before the app can be
+            // suspended or closed
+            let center = NotificationCenter.default
+            for name in [UIApplication.willResignActiveNotification, UIApplication.willTerminateNotification] {
+                center.addObserver(forName: name, object: nil, queue: .main) { [weak self] _ in
+                    MainActor.assumeIsolated { self?.flush() }
+                }
+            }
+        }
     }
 
     // MARK: - Favourites
@@ -157,7 +193,7 @@ final class ChantShelfStore {
 
     // MARK: - Learning
 
-    struct LearningRecord: Codable, Hashable {
+    struct LearningRecord: nonisolated Codable, Hashable {
         let chantID: String
         var step: Int
         var touched: Date
@@ -458,7 +494,7 @@ final class ChantShelfStore {
 
     // MARK: - Recently played
 
-    struct RecentPlay: Codable, Hashable {
+    struct RecentPlay: nonisolated Codable, Hashable {
         let chantID: String
         let at: Date
     }
@@ -536,20 +572,90 @@ final class ChantShelfStore {
         return (good, unreadable, stored)
     }
 
+    /// Writes a list: its entries as this build encodes them, each with the
+    /// fields its stored form carried that this build does not know, and
+    /// after them the entries it could not read. The work is taken from
+    /// the list as it stands now, so a write gathered for later writes
+    /// this, whatever changes after.
     private func writeList<T: ShelfEntry>(_ values: [T], key: String) {
-        guard let data = try? JSONEncoder().encode(values) else { return }
         let kept = unreadable[key] ?? []
         let storedForms = stored[key] ?? [:]
+        // An entry gone from the list lets go of its stored form, so a new
+        // entry under the same key later inherits nothing of it
+        if !storedForms.isEmpty {
+            let present = Set(values.map { $0.entryKey })
+            stored[key] = storedForms.filter { present.contains($0.key) }
+        }
+        let write = ListWrite(key: key) {
+            Self.encode(values, keeping: kept, storedForms: storedForms)
+        }
+        switch writes {
+        case .immediately:
+            write.perform(on: defaults)
+        case .afterAPause:
+            gathered[key] = write
+            guard appIsActive() else {
+                writeGathered(waiting: true)
+                return
+            }
+            gatherTask?.cancel()
+            gatherTask = Task { @MainActor [weak self] in
+                try? await Task.sleep(for: Self.gatherFor)
+                guard !Task.isCancelled else { return }
+                self?.writeGathered(waiting: false)
+            }
+        }
+    }
+
+    /// Writes every list still gathered, and waits until they are written
+    func flush() {
+        writeGathered(waiting: true)
+    }
+
+    private static let gatherFor: Duration = .milliseconds(400)
+
+    /// One queue for every write, so they land in the order they were made
+    private static let writeQueue = DispatchQueue(label: "ChantShelfStore.writes", qos: .utility)
+
+    @ObservationIgnored private var gathered: [String: ListWrite] = [:]
+    @ObservationIgnored private var gatherTask: Task<Void, Never>?
+
+    private func writeGathered(waiting: Bool) {
+        gatherTask?.cancel()
+        gatherTask = nil
+        let writes = Array(gathered.values)
+        gathered = [:]
+        let defaults = self.defaults
+        let work = { for write in writes { write.perform(on: defaults) } }
+        if waiting {
+            Self.writeQueue.sync(execute: work)
+        } else if !writes.isEmpty {
+            Self.writeQueue.async(execute: work)
+        }
+    }
+
+    /// A list's write, ready to be done anywhere: its data is worked out
+    /// from values taken when it was asked for
+    private struct ListWrite: @unchecked Sendable {
+        let key: String
+        let data: () -> Data?
+
+        func perform(on defaults: UserDefaults) {
+            if let data = data() { defaults.set(data, forKey: key) }
+        }
+    }
+
+    private nonisolated static func encode<T: ShelfEntry>(
+        _ values: [T],
+        keeping kept: [Any],
+        storedForms: [String: [String: Any]]
+    ) -> Data? {
+        guard let data = try? JSONEncoder().encode(values) else { return nil }
         guard !kept.isEmpty || !storedForms.isEmpty,
               let encoded = (try? JSONSerialization.jsonObject(with: data)) as? [Any],
               encoded.count == values.count else {
-            defaults.set(data, forKey: key)
-            return
+            return data
         }
-        // An entry gone from the list lets go of its stored form, so a new
-        // entry under the same key later inherits nothing of it
-        let present = Set(values.map { $0.entryKey })
-        stored[key] = storedForms.filter { present.contains($0.key) }
         var elements: [Any] = []
         for (value, element) in zip(values, encoded) {
             guard var fields = element as? [String: Any], let earlier = storedForms[value.entryKey] else {
@@ -560,16 +666,15 @@ final class ChantShelfStore {
             elements.append(fields)
         }
         elements.append(contentsOf: kept)
-        if let merged = try? JSONSerialization.data(withJSONObject: elements) {
-            defaults.set(merged, forKey: key)
-        }
+        return try? JSONSerialization.data(withJSONObject: elements)
     }
 }
 
 // MARK: - ShelfEntry
 
-/// An entry of one of the shelf's stored lists
-private protocol ShelfEntry: Codable {
+/// An entry of one of the shelf's stored lists. Written off the main
+/// actor, so nonisolated.
+nonisolated private protocol ShelfEntry: Codable {
     /// What names the entry from one read to the next, to find its stored
     /// form again
     var entryKey: String { get }
@@ -583,7 +688,7 @@ private protocol ShelfEntry: Codable {
     static func keepUnknownFields(of earlier: [String: Any], in fields: inout [String: Any])
 }
 
-extension ShelfEntry {
+nonisolated extension ShelfEntry {
     static func keepUnknownFields(of earlier: [String: Any], in fields: inout [String: Any]) {
         for (name, value) in earlier where !knownFields.contains(name) {
             fields[name] = value
@@ -591,17 +696,17 @@ extension ShelfEntry {
     }
 }
 
-extension ChantShelfStore.LearningRecord: ShelfEntry {
+extension ChantShelfStore.LearningRecord: nonisolated ShelfEntry {
     var entryKey: String { chantID }
     static var knownFields: Set<String> { ["chantID", "step", "touched"] }
 }
 
-extension ChantShelfStore.RecentPlay: ShelfEntry {
+extension ChantShelfStore.RecentPlay: nonisolated ShelfEntry {
     var entryKey: String { chantID }
     static var knownFields: Set<String> { ["chantID", "at"] }
 }
 
-extension ChantSet: ShelfEntry {
+extension ChantSet: nonisolated ShelfEntry {
     var entryKey: String { id.uuidString }
     static var knownFields: Set<String> { ["id", "name", "items", "occasionID"] }
 
