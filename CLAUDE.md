@@ -2510,9 +2510,13 @@ write concurrent code here:
   order's name, and ALOUD or SILENT as a word in an outlined capsule
   (the speaker glyph it replaced read as a volume control) — over the
   order's beads, each a door answering to 44 points where the width
-  allows ("6 of 9, The Act of Faith" to VoiceOver). The head always names
-  what was opened: the order (the Angelus too), or PRAYERS for a prayer
-  opened alone; the Angelus's once named its hours. The Latin name
+  allows ("6 of 9, The Act of Faith" to VoiceOver). The head names what
+  was opened: the order, or PRAYERS for a prayer opened alone, and for an
+  order of one prayer bearing its name (the Angelus), so it never repeats
+  the title beneath it; the Angelus's once named its hours. The ground
+  deepens behind the head and its words carry a soft shadow, so they hold
+  over a bright sky, and the scroll dissolves a whole line (`topChromeFade`,
+  38 points) before it reaches the head. The Latin name
   stands small over the title, the Angelus's bell above both. The words
   carry a feathered veil of their own (`WordsVeil`) that scrolls with
   them, so the ground under the head and under a short prayer stays
@@ -2558,7 +2562,7 @@ write concurrent code here:
   lit and followed by proportion, the next prayer turning in after a
   breath; the Angelus rings `church_bell.caf` — aloud only, since in
   silence the book makes no sound at all. The page's words dissolve
-  under its head and beads (`topChromeFade`, no inset) rather than being
+  under its head and beads (`topChromeFade`) rather than being
   cut mid-line. An order prayed to its Amen is offered for the prayer
   day (see The Prayer Day), which turns at four in the morning
   (`PrayerBook.dayBeginsAtHour`) as the book's hours do, not at

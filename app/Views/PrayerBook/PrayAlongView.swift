@@ -79,12 +79,17 @@ struct PrayAlongView: View {
     /// Silent until the reader has said the book may speak
     private var aloud: Bool { store.hasChosenAloud && store.praysAloud }
 
-    /// The head always names what was opened: an order by its name
-    /// (the Angelus too, though its one prayer bears the same name), and
-    /// a prayer opened alone by the book it is from. The Angelus's head
+    /// The head names what was opened: an order by its name, and a
+    /// prayer opened alone by the book it is from. An order of one prayer
+    /// that bears its name — the Angelus — is named by the book too, so
+    /// the head never says the title beneath it again. The Angelus's head
     /// once said when it is prayed, so one head in three named a time.
     private var kicker: String {
-        launch.orderID == nil ? "Prayers" : launch.title
+        guard launch.orderID != nil else { return "Prayers" }
+        if prayers.count == 1, prayers[0].title.caseInsensitiveCompare(launch.title) == .orderedSame {
+            return "Prayers"
+        }
+        return launch.title
     }
 
     private var isAngelus: Bool {
@@ -202,6 +207,9 @@ struct PrayAlongView: View {
                     voiceSwitch
                 }
             }
+            // A soft shadow of the ground under the head's words, so they
+            // hold over a dove's wing or a cherub's cloud
+            .shadow(color: AppColors.background.opacity(0.85), radius: 6)
 
             if prayers.count > 1 {
                 beads
@@ -227,13 +235,13 @@ struct PrayAlongView: View {
                 Text(aloud ? "ALOUD" : "SILENT")
                     .font(AppFonts.labelFont(9.5))
                     .tracking(2)
-                    .foregroundColor(aloud ? AppColors.goldLight : AppColors.cream.opacity(0.7))
+                    .foregroundColor(aloud ? AppColors.goldLight : AppColors.cream.opacity(0.85))
             }
             .padding(.horizontal, 12)
             .frame(height: 30)
             .overlay(
                 Capsule()
-                    .strokeBorder(AppColors.gold.opacity(aloud ? 0.55 : 0.3), lineWidth: AppLine.hairline)
+                    .strokeBorder(AppColors.gold.opacity(aloud ? 0.55 : 0.4), lineWidth: AppLine.hairline)
             )
             .frame(minHeight: 44)
             .contentShape(Rectangle())
@@ -379,9 +387,11 @@ struct PrayAlongView: View {
             .scrollBounceBehavior(.basedOnSize)
             // The words dissolve as they pass under the head and the
             // beads rather than being cut through mid-line at the scroll's
-            // edge. No inset: the title already stands 22pt down, clear
-            // of the band at rest.
-            .topChromeFade(height: 22, inset: 0)
+            // edge. The band is deep enough to dissolve a whole line before
+            // it reaches the head, where a prayer opened alone has no bead
+            // row between them; the title rests clear of it, 22 points under
+            // the band's 14 of inset.
+            .topChromeFade(height: 38, inset: 14)
             // A swipe across turns the page, as a book's does; the scroll
             // keeps the vertical drag
             .simultaneousGesture(
@@ -881,8 +891,11 @@ private struct PrayAlongGround: View {
 
             LinearGradient(
                 stops: [
-                    .init(color: AppColors.background.opacity(0.4), location: 0),
-                    .init(color: AppColors.background.opacity(0.1), location: 0.1),
+                    // Deeper behind the head, so its labels read over the
+                    // brightest sky
+                    .init(color: AppColors.background.opacity(0.62), location: 0),
+                    .init(color: AppColors.background.opacity(0.42), location: 0.1),
+                    .init(color: AppColors.background.opacity(0.15), location: 0.16),
                     .init(color: AppColors.background.opacity(0.45), location: 0.22),
                     .init(color: AppColors.background.opacity(0.55), location: 0.4),
                     .init(color: AppColors.background.opacity(0.55), location: 1)
