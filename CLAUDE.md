@@ -2646,7 +2646,21 @@ write concurrent code here:
   reader made, and the dashed + — over the chants of Learned or
   Favourites; a set's spine opens its page; then Recently played and the
   Words setting. A new set is named first (`ChantNewSetSheet`), stands on
-  the shelf only once made, and opens on its page. The curation — every chant's kind,
+  the shelf only once made, and opens on its page. **The sheets that
+  build a set** (`ChantSheets.swift`, the "Building a sung set" design,
+  option A, Oct 2026; shared pieces in `ChantSetBuilding.swift`) each
+  carry one title and no explaining lead or field labels. Add a chant
+  (`ChantPickerSheet`) is the book's sections under 64-point painted
+  bands with a strip of their short names to jump between them, each
+  chant with its painting and length; a search gives one flat list, the
+  bands and strip hidden. Its ring (`ChantAddRing`) says how many times
+  the chant is in the set ("×2"), never a check, since a tap always adds
+  it again; the foot counts the set and holds the one DONE. Add a pause
+  (`ChantPauseSheet`) writes the note in red, sets the six lengths
+  (None, 1, 2, 5, 10, 15) as beads on one line, and shows the pause as
+  it will read under the set's last chant. A new set hangs the painting
+  an empty set wears (`ChantSet.emptyPainting`) over its name; Add to a
+  set shows each set by its painting with the same ring. The curation — every chant's kind,
   seasons, feasts, weekdays, months, occasions with their rubrics,
   paths and paintings — is `Data/ChantLibraryData.swift`, hand-written;
   `ChantLibraryTests` fails if it names a chant the catalog lacks or
