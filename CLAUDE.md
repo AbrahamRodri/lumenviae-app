@@ -2968,7 +2968,7 @@ write concurrent code here:
   it fades in rather than rises. It is a filled surface, because it floats over a page that scrolls
   beneath it: every page in the stack takes its height as a bottom
   safe-area inset, so every scroll runs on beneath it and bring their last row
-  clear of it at its real height, where a fixed 112 points was a guess. The consecration day's transport plays the same bundled
+  clear of it at its real height, where a fixed 112 points was a guess. The inset is laid on the stack's root and on every pushed destination (`ContentView`'s `ChantPlayerRoom`), since one on the NavigationStack itself reaches the root alone; a page keeps no room of its own. The consecration day's transport plays the same bundled
   recording for its Veni Creator, Ave Maris Stella, Magnificat, litanies
   and Glory Be, with a SCORE door and the credit beneath it. Its chant
   is the first the catalog lists for the prayer
