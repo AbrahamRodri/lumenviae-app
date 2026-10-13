@@ -342,6 +342,7 @@ struct ChantSearchView: View {
     private func exampleRow(_ example: Example) -> some View {
         Button {
             focused = false
+            scope = .all
             query = example.query
         } label: {
             HStack(alignment: .firstTextBaseline) {
@@ -368,7 +369,10 @@ struct ChantSearchView: View {
     /// disc sings it.
     private func tonight(_ chant: Chant) -> some View {
         let painting = ChantLibraryView.tonightPainting(for: chant)
-        return ZStack(alignment: .bottomLeading) {
+        return Button {
+            open(chant)
+        } label: {
+            ZStack(alignment: .bottomLeading) {
             CachedAssetImage(painting, focal: ChantThumbnail.focalPoint(for: painting))
                 .frame(height: 250)
                 .frame(maxWidth: .infinity)
@@ -400,32 +404,43 @@ struct ChantSearchView: View {
                 .padding(.horizontal, -20)
                 .accessibilityHidden(true)
 
-            VStack(alignment: .leading, spacing: 3) {
-                Text("TONIGHT'S SONG TO MARY")
-                    .font(AppFonts.labelFont(9))
-                    .tracking(2)
-                    .foregroundColor(AppColors.gold)
-                Text(chant.latinTitle)
-                    .font(AppFonts.titleFont(24))
-                    .foregroundColor(AppColors.cream)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
-                Text("\(chant.englishTitle) · \(chant.durationLabel)")
-                    .font(AppFonts.readingItalicFont(14))
-                    .foregroundColor(AppColors.cream.opacity(0.78))
-                    .lineLimit(1)
-                listen(chant)
-                    .padding(.top, 4)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("TONIGHT'S SONG TO MARY")
+                        .font(AppFonts.labelFont(9))
+                        .tracking(2)
+                        .foregroundColor(AppColors.gold)
+                    Text(chant.latinTitle)
+                        .font(AppFonts.titleFont(24))
+                        .foregroundColor(AppColors.cream)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                    Text("\(chant.englishTitle) · \(chant.durationLabel)")
+                        .font(AppFonts.readingItalicFont(14))
+                        .foregroundColor(AppColors.cream.opacity(0.78))
+                        .lineLimit(1)
+                    // The room LISTEN stands in, laid over the button
+                    Color.clear
+                        .frame(height: Self.listenHeight)
+                        .padding(.top, 4)
+                }
+                .padding(.horizontal, 2)
             }
-            .padding(.horizontal, 2)
+            .contentShape(Rectangle())
         }
-        .contentShape(Rectangle())
-        .onTapGesture { open(chant) }
-        .accessibilityElement(children: .contain)
+        .buttonStyle(.plain)
+        .accessibilityElement(children: .ignore)
         .accessibilityLabel("Tonight's song to Mary: \(chant.spokenName), \(ChantPlayer.spoken(chant.duration))")
-        .accessibilityAction(named: "Open the chant") { open(chant) }
+        .accessibilityHint("Opens the chant")
+        .accessibilityAddTraits(.isButton)
+        .overlay(alignment: .bottomLeading) {
+            listen(chant)
+                .padding(.horizontal, 2)
+        }
         .chantContextMenu(chant)
     }
+
+    /// The height of the disc and LISTEN beside it
+    private static let listenHeight: CGFloat = 44
 
     /// The disc and the word beside it: LISTEN, or PAUSE while it sounds
     private func listen(_ chant: Chant) -> some View {
@@ -444,6 +459,7 @@ struct ChantSearchView: View {
                 .foregroundColor(AppColors.gold)
                 .accessibilityHidden(true)
         }
+        .frame(height: Self.listenHeight)
     }
 
     // MARK: - Nothing found
@@ -454,8 +470,8 @@ struct ChantSearchView: View {
         VStack(alignment: .leading, spacing: 22) {
             headLine {
                 Text(needle.isEmpty ? "No chant fits every filter chosen." : "Nothing in the library matches “\(query)”.")
-                    .font(AppFonts.readingItalicFont(15))
-                    .foregroundColor(AppColors.textSecondary)
+                    .font(AppFonts.readingItalicFont(16.5))
+                    .foregroundColor(AppColors.cream.opacity(0.8))
                     .fixedSize(horizontal: false, vertical: true)
             }
 
@@ -535,8 +551,8 @@ struct ChantSearchView: View {
         return VStack(alignment: .leading, spacing: 26) {
             headLine {
                 Text(summary(works: works, lines: wordHits.count))
-                    .font(AppFonts.readingItalicFont(14))
-                    .foregroundColor(AppColors.textSecondary)
+                    .font(AppFonts.readingItalicFont(15))
+                    .foregroundColor(AppColors.cream.opacity(0.72))
             }
             .padding(.bottom, -14)
 
@@ -600,42 +616,54 @@ struct ChantSearchView: View {
             .joined(separator: " · ")
 
         return VStack(alignment: .leading, spacing: 10) {
-            HStack(spacing: 0) {
-                ChantThumbnail(name: ChantCatalog.painting(for: chant), size: 132, radius: 0)
+            Button {
+                open(chant)
+            } label: {
+                HStack(spacing: 0) {
+                    ChantThumbnail(name: ChantCatalog.painting(for: chant), size: 132, radius: 0)
 
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(kicker.uppercased())
-                        .font(AppFonts.labelFont(8.5))
-                        .tracking(1.6)
-                        .foregroundColor(AppColors.gold)
-                        .lineLimit(2)
-                    Text(ChantSearch.highlighted(chant.latinTitle, needle: needle))
-                        .font(AppFonts.titleFont(19))
-                        .foregroundColor(player.isPlaying(chant) ? AppColors.goldLight : AppColors.cream)
-                        .lineLimit(2)
-                        .minimumScaleFactor(0.8)
-                    Text(ChantSearch.highlighted(line, needle: needle))
-                    .font(AppFonts.readingItalicFont(14))
-                    .foregroundColor(AppColors.textSecondary)
-                    .lineLimit(2)
-                    listen(chant)
-                        .padding(.top, 4)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(kicker.uppercased())
+                            .font(AppFonts.labelFont(8.5))
+                            .tracking(1.6)
+                            .foregroundColor(AppColors.gold)
+                            .lineLimit(2)
+                        Text(ChantSearch.highlighted(chant.latinTitle, needle: needle))
+                            .font(AppFonts.titleFont(19))
+                            .foregroundColor(player.isPlaying(chant) ? AppColors.goldLight : AppColors.cream)
+                            .lineLimit(2)
+                            .minimumScaleFactor(0.8)
+                        Text(ChantSearch.highlighted(line, needle: needle))
+                            .font(AppFonts.readingItalicFont(14))
+                            .foregroundColor(AppColors.textSecondary)
+                            .lineLimit(2)
+                        // The room LISTEN stands in, laid over the button
+                        Color.clear
+                            .frame(height: Self.listenHeight)
+                    }
+                    .padding(.horizontal, 14)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .padding(.horizontal, 14)
-                .frame(maxWidth: .infinity, alignment: .leading)
+                .frame(height: 132)
+                .background(AppColors.cardBackground)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .strokeBorder(AppColors.gold.opacity(0.28), lineWidth: AppLine.hairline)
+                )
+                .contentShape(RoundedRectangle(cornerRadius: 16))
             }
-            .frame(height: 132)
-            .background(AppColors.cardBackground)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(AppColors.gold.opacity(0.28), lineWidth: AppLine.hairline)
-            )
-            .contentShape(RoundedRectangle(cornerRadius: 16))
-            .onTapGesture { open(chant) }
-            .accessibilityElement(children: .contain)
+            // Plain, so the disc laid over it never stands still while the card presses
+            .buttonStyle(.plain)
+            .accessibilityElement(children: .ignore)
             .accessibilityLabel("Best match: \(chant.latinTitle), \(line), \(kicker)")
-            .accessibilityAction(named: "Open the chant") { open(chant) }
+            .accessibilityHint("Opens the chant")
+            .accessibilityAddTraits(.isButton)
+            .overlay(alignment: .bottomLeading) {
+                listen(chant)
+                    .padding(.leading, 132 + 14)
+                    .padding(.bottom, 8)
+            }
             .chantContextMenu(chant)
 
             if work.chants.count > 1 {
