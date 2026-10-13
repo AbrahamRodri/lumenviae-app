@@ -2500,10 +2500,53 @@ write concurrent code here:
   prayers, a Latin line under every prayer and a two-line switch row.
 
   **Praying** is `PrayAlongView` (`.prayAlong(PrayAlongLaunch)`, a
-  player: bar hidden, its own ×): one prayer at a time, a strand of beads
-  for the order's prayers, aloud or in silence (`PrayerBookStore.
-  praysAloud`, remembered). **The book asks before its first sound**
-  (`PrayAloudChoiceSheet`, once, until `hasChosenAloud`): these are
+  player: bar hidden, its own ×): one prayer at a time, aloud or in
+  silence (`PrayerBookStore.praysAloud`, remembered). **The page is the
+  prayer** (the "simplify Pray Along" pick, option A, Oct 2026): the
+  painting the Prayers page hangs over the order (`PrayerBookPainting.
+  order`; the Angelus's read from its prayer, the Resurrection for the
+  Queen of Heaven and the Annunciation otherwise; `.prayer` for one
+  opened alone) fixed
+  behind the scroll and veiled by a scrim of the theme's own ground,
+  deepest from the title down (`PrayAlongGround`); a quiet head — ×, the
+  order's name, and ALOUD or SILENT as a word in an outlined capsule
+  (the speaker glyph it replaced read as a volume control) — over the
+  order's beads, each a door answering to 44 points where the width
+  allows ("6 of 9, The Act of Faith" to VoiceOver). The head names what
+  was opened: the order, or PRAYERS for a prayer opened alone, and for an
+  order of one prayer bearing its name (the Angelus), so it never repeats
+  the title beneath it; the Angelus's once named its hours. The ground
+  deepens behind the head and its words carry a soft shadow, so they hold
+  over a bright sky, and the scroll dissolves a whole line (`topChromeFade`,
+  38 points) before it reaches the head. The Latin name
+  stands small over the title, the Angelus's bell above both. The words
+  carry a feathered veil of their own (`WordsVeil`) that scrolls with
+  them, so the ground under the head and under a short prayer stays
+  light enough for the painting to show, where one fixed scrim left a
+  flat dark field. A stanza of plain verse is set a line at a time
+  (`PrayAlongStanza`): a line too long for the measure hangs its
+  overflow in by about an em (`HangingIndentRenderer`, iOS 18; flush on
+  17), since wrapped flush it read as a line of its own, and its rubrics
+  stand apart at full strength while the verse beside them dims under
+  the voice; litanies, canticles and translations are `PrayerText`'s.
+  The text is a point under the reading size, as the prayer's own page
+  sets it. And one way on at the
+  foot, the same aloud and in silence: NEXT with the next prayer's name,
+  an outlined pill, or AMEN, the page's one gold act, on the last.
+  Aloud, a pause disc stands beside it, and a note above it while the
+  recordings are fetched or when a prayer has none. A swipe across the
+  page turns it, as the beads and the Lock Screen's arrows do. The page
+  once carried "3 of 9" under the order beside the beads, a ⏮ ▶︎ ⏭
+  transport and a progress line aloud, and a different foot in silence:
+  position said twice, progress said twice, and a music player where a
+  prayer book should be. The Amen brings the painting forward in full,
+  where a seal once stood, over Amen., the order's closing line (the
+  day's three orders under "MORNING PRAYERS · PRAYED", since any other
+  order's line already says it was prayed), DONE,
+  Save this prayer (one prayer, not yet saved) and Pray again.
+  **The book asks before its first sound**
+  (`PrayAloudChoiceSheet`, once, until `hasChosenAloud`, the order's
+  painting at its head): these are
   prayers for the pew, the tabernacle and the bedside, and it once began
   reading the examination of conscience aloud the moment PRAY was
   touched. It cannot be dragged away, so both answers must always be in
@@ -2512,7 +2555,7 @@ write concurrent code here:
   rows were drawn over each other). The
   order page's speaker stands just beside its PRAY, so
   praying from there answers the question with what the speaker shows;
-  afterwards the speaker at the head of the page owns the choice. The
+  afterwards ALOUD or SILENT at the head of the page owns the choice. The
   same choice stands in Settings → Prayer Experience as the Prayers
   Tab row, and a choice made there answers the question before it is asked;
   it never follows the Rosary's Audio. Aloud,
@@ -2521,7 +2564,7 @@ write concurrent code here:
   lit and followed by proportion, the next prayer turning in after a
   breath; the Angelus rings `church_bell.caf` — aloud only, since in
   silence the book makes no sound at all. The page's words dissolve
-  under its head and beads (`topChromeFade`, no inset) rather than being
+  under its head and beads (`topChromeFade`) rather than being
   cut mid-line. An order prayed to its Amen is offered for the prayer
   day (see The Prayer Day), which turns at four in the morning
   (`PrayerBook.dayBeginsAtHour`) as the book's hours do, not at
@@ -2650,11 +2693,54 @@ write concurrent code here:
   (`.chantSet(ChantSetSubject)`, `ChantSetPage`, below), which every set
   opens on, an occasion or the reader's own, from the tiles, the Sung
   Sets cards, the index and Your Chants; the index of the sung sets
-  (`.chantSets`, `ChantSetsPage`, `ChantOccasionsSection`); a topic, every chant under its topic,
-  or the Mass of the Angels (`.chantBrowse(ChantBrowseScope)`,
+  (`.chantSets`, `ChantSetsPage`); every chant under its topic, a topic,
+  the Mass of the Angels or Songs to Mary (`.chantBrowse(ChantBrowseScope)`,
   `ChantBrowsePage`), which is how every chant stays reachable without a
   search; and the reader's own chants, Your Chants
   (`.chantSaved(ChantSavedShelf)`, `ChantSavedPage`, below).
+
+  **The shelf pages** (`ChantLibraryPages.swift`, the "Chant shelf pages"
+  design, option B, Oct 2026) are what SEE ALL and BROWSE ALL open. **All
+  Chants** is the book's twelve sections as painted cards, two by six,
+  each its name and "8 chants" (no note), opening that section's own shelf
+  (`.chantBrowse(.group(id))`), as the Prayers page lists its topics. A
+  card hangs `ChantBrowseScope.contentsPainting(for:)`: the picker's
+  painting (`ChantGroup.painting`), except the hymns' Ascension,
+  Benediction's Blessed Sacrament and the Latin Rosary's Our Lady of the
+  Rosary, so no two cards hang the same one (`ChantShelfPagesTests`
+  holds it). Our Lady's card and shelf read "Hymns to Our Lady", and
+  Benediction's "Benediction" (`cardTitle(of:)`; "Adoration and Blessing"
+  is the sung set's name, and the library must not say it twice). **A shelf**
+  (a section, the Mass of the Angels, Songs to Mary) opens on its
+  painting run up under the bar, 200 points below it and dissolving into
+  the page, rising with the scroll; over its foot the name, when it is
+  sung (the section's note; the Mass of the Angels' part note without its
+  own name, "For feasts, and any Sunday"), "29 chants · 114 min"
+  and one outlined PLAY ALL, which is the shelf's Pause and Resume once
+  under way. A section with parts (the Masses, the seasons) adds a strip
+  of them that scrolls to each, over the small gold part headings. Where
+  the chants hang paintings of their own (Songs to Mary, the seasons,
+  the hymns) each row's painting is the disc that plays it, as on Your
+  Chants; where they all share the shelf's painting (the Mass of the
+  Angels, the Ordinary, Benediction) the rows are numbered with the disc
+  at their end (`numbersItsChants`). A row is its names and length, or
+  the bars and the gold title while it sounds; no caret; a hold offers
+  favourite and add to a set. A row names its setting ("· simple
+  melody", "· feast poem") unless the shelf's name or the part's heading
+  already says it (`rowSaysSetting(of:under:)`): four times "Mass of the
+  Angels" under a shelf of that name said nothing. The three pages set
+  the bar inline (`navigationBarTitleDisplayMode(.inline)`): left
+  automatic, it kept a large title's room and every page began under an
+  empty band. All Chants was once one scroll of 104 rows under headings of
+  three sizes with no painting, and every shelf a centred title over a
+  filled gold Play all. **Sung Sets** keeps its line ("Chants sung one
+  after another, for a time of prayer.") over the occasions as wide
+  painted cards (painting, name, line, "4 chants · 7 min", the bars while
+  one is sung), then Your sets, the reader's own, a copy kept from an
+  occasion among them once the reader has changed it (an untouched copy
+  is the occasion's card; the page once left every set of the reader's
+  out, though the home's Sung sets shelf whose SEE ALL opens it shows them),
+  then the dashed Make your own set, named first and opening on its page.
 
   **A set's page** (`ChantSetPage`, the "Chant Library shelves" design,
   option B, Oct 2026) is one component for every set, laid out as an
@@ -2671,10 +2757,11 @@ write concurrent code here:
   new occasion needs only its data. The set once opened as an order of
   service under the index of every other set, below the fold, and the
   reader's own as a card under the Saved shelf. **The occasions**
-  (`ChantOccasionsSection`): Adoration and Blessing (Benediction), A Visit
-  to Jesus in Church, a Sung Rosary, Before Bed, Before Work or Study, For
-  Those Who Have Died — an index in red numerals, each row opening its
-  page, over Make your own set. The bookmark is a toggle: filled while the occasion
+  (`ChantLibraryData.occasions`): Adoration and Blessing (Benediction), A
+  Visit to Jesus in Church, a Sung Rosary, Before Bed, Before Work or
+  Study, For Those Who Have Died — each a card on Sung Sets opening its
+  page (the numbered index `ChantOccasionsSection` drew them as is no
+  longer shown). The bookmark is a toggle: filled while the occasion
   is kept as a set of one's own (`ChantSet.occasionID`), a second tap
   letting that set go — but only while the set is still the occasion's
   own copy (`ChantShelfStore.isUntouchedCopy`); any other kept set is let
@@ -3480,10 +3567,13 @@ transition entirely.
 - **Snapshot tests:** `appTests/Snapshots/` draws the main screens that
   read nothing off the clock or the network (home's mysteries sections,
   VIEW ALL, a mysteries' page, a set's page, the Scriptural Rosary's page,
-  a Prayer Book page, Saved full and empty, an order's page, a chant's page (top, foot, learning, not found), the chant
-  search before typing, with results and with nothing found, and Your
-  Chants with its shelves full, empty and at its foot, on a fixed day)
-  from fixed data with swift-snapshot-testing (the
+  a Prayer Book page, Saved full and empty, an order's page, the
+  pray-along page in silence, an order part-way through, a prayer
+  opened alone and the Angelus, on a book store of its own, a chant's
+  page (top, foot, learning, not found), the chant search before
+  typing, with results and with nothing found, and Your Chants with its
+  shelves full, empty and at its foot, on a fixed day) from fixed data
+  with swift-snapshot-testing (the
   test target's one package; the app has none) and compares them with
   the PNGs in `__Snapshots__/`, in the same `xcodebuild test`.
   `ScreenSnapshot.assertScreen` is the one way to draw one: an iPhone 17
