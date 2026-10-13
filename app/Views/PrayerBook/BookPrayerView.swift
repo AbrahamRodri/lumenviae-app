@@ -196,8 +196,11 @@ struct BookPrayerView: View {
         }
         .padding(.horizontal, 28)
         .onGeometryChange(for: CGFloat.self) { $0.size.width - 56 } action: { deckWidth = $0 }
-        .overlay(alignment: .leading) { peek(previousID, leading: true) }
-        .overlay(alignment: .trailing) { peek(nextID, leading: false) }
+        // The edges step back while a card is dealt, so the card in hand
+        // never passes beneath them
+        .overlay(alignment: .leading) { peek(previousID, leading: true).opacity(travel == 0 ? 1 : 0) }
+        .overlay(alignment: .trailing) { peek(nextID, leading: false).opacity(travel == 0 ? 1 : 0) }
+        .animation(Motion.crossfade, value: travel == 0)
         .overlay(alignment: .top) { savedNote }
         // The card's own scroll keeps the vertical drag; a drag that
         // starts across deals the card
