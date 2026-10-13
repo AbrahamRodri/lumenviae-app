@@ -130,6 +130,8 @@ struct PrayerBookChapterView: View {
                 .multilineTextAlignment(.leading)
                 .fixedSize(horizontal: false, vertical: true)
                 .shadow(color: .black.opacity(0.55), radius: 12, y: 2)
+                // Past this a word like COMMUNION breaks mid-word in Cinzel
+                .dynamicTypeSize(...DynamicTypeSize.accessibility3)
                 .accessibilityAddTraits(.isHeader)
 
             Text(chapter.epigraph)
@@ -137,7 +139,7 @@ struct PrayerBookChapterView: View {
                 .foregroundColor(AppColors.cream.opacity(0.78))
                 .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(.horizontal, 24)
+        .padding(.horizontal, 18)
         .padding(.bottom, 20)
         .frame(maxWidth: .infinity, alignment: .leading)
         // The scrim behind the words, from clear well above them to the
@@ -155,6 +157,9 @@ struct PrayerBookChapterView: View {
             .padding(.top, -90)
             .accessibilityHidden(true)
         }
+        // Never under the clock or the Back: where the words outgrow the
+        // painting, the painting grows with them
+        .padding(.top, safeTop + Self.backFoot + 16)
         .devotionalEntrance()
         .frame(maxWidth: .infinity, minHeight: height, alignment: .bottomLeading)
         .background { painting(chapter, safeTop: safeTop) }
@@ -199,12 +204,18 @@ struct PrayerBookChapterView: View {
         VStack(spacing: 0) {
             AppColors.backgroundDeep
                 .frame(height: safeTop + Self.backFoot + 6)
+            // Long enough that a row passing beneath dissolves rather than
+            // being sliced at the band's edge
             LinearGradient(
-                colors: [AppColors.backgroundDeep, AppColors.backgroundDeep.opacity(0)],
+                stops: [
+                    .init(color: AppColors.backgroundDeep, location: 0),
+                    .init(color: AppColors.backgroundDeep.opacity(0.85), location: 0.35),
+                    .init(color: AppColors.backgroundDeep.opacity(0), location: 1)
+                ],
                 startPoint: .top,
                 endPoint: .bottom
             )
-            .frame(height: 30)
+            .frame(height: 44)
         }
         .frame(maxWidth: .infinity)
         .ignoresSafeArea(edges: .top)
@@ -503,7 +514,7 @@ private struct TopicPrayerRow: View {
         HStack(spacing: 10) {
             if seasonal {
                 Text("THIS SEASON")
-                    .font(AppFonts.labelFont(8))
+                    .font(AppFonts.labelFont(9))
                     .tracking(1.6)
                     .foregroundColor(AppColors.gold)
                     .fixedSize()

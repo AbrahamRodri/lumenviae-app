@@ -2432,11 +2432,12 @@ write concurrent code here:
   B, Painted Doors, Oct 2026) opens on its painting, 0.47 of the glass,
   with the topic's name and one line set over its foot on a scrim at
   full strength behind the words (at a larger text size they grow up
-  over the painting, never cut). Then, where the topic has orders said
-  together, one painted card, Pray together, a row per order with when
-  it is said (`PrayerOrder.occasion`); then the prayers under the book's
-  sub-headings in the Prayers tab's shelf heading
-  (`PrayersShelfHeading`, none for a one-section topic), each a row
+  over the painting, never cut, and the painting grows with them rather
+  than let them under the clock or the Back). Then, where the topic
+  has orders said together, one painted card, Pray together, a row per
+  order with when it is said (`PrayerOrder.occasion`); then the
+  prayers under the book's sub-headings in the Prayers tab's shelf
+  heading (`PrayersShelfHeading`, none for a one-section topic), each a row
   (`TopicPrayerRow`, a copy of `BookPrayerRow` without its numeral) with
   its second name and the reader's marks, which drop under the name
   where both will not share a line; then the next topic as a painted
@@ -2446,8 +2447,9 @@ write concurrent code here:
   kicker (part and count), a strip of the sub-headings to jump to (it
   repeated the headings below it, and its jump left the heading under
   the clock), gold capital sub-headings with rules, and Roman numerals
-  down the whole topic; all four went. The page once ended on For an Occasion, the orders as ruled
-  rows with glyphs, and All Topics as twelve plain rows; the orders now
+  down the whole topic; all four went. The page once ended on For an
+  Occasion, the orders as ruled rows with glyphs, and All Topics as
+  twelve plain rows; the orders now
   stand at the head of their topics. Each painting is chosen in
   `PrayerBookPainting` (`.order`, `.prayer`, `.saved`, `.hour`,
   `.antiphon`, `.topic`). The page once opened on three parts chosen on a bar
