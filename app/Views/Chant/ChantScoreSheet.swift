@@ -118,8 +118,11 @@ struct ChantScoreSheet: View {
                 }
                 .accessibilityHint("Pinch or double tap to bring the sheet music closer")
             }
-            .overlay(alignment: .bottom) {
-                if showsTransport {
+        }
+        .overlay(alignment: .bottom) {
+            if showsTransport {
+                ZStack(alignment: .bottom) {
+                    ChantScoreSheetTransport.ground
                     ChantScoreSheetTransport(chant: chant)
                 }
             }
@@ -282,7 +285,7 @@ private struct ChantScoreSheetHead: View {
         }
         .padding(.horizontal, SheetMetrics.gutter)
         // Clear of DONE above, and of the painting's last light beneath
-        .padding(.top, 66)
+        .padding(.top, 84)
         .padding(.bottom, 4)
         .frame(maxWidth: .infinity)
         .background(alignment: .top) { painting }
@@ -294,9 +297,9 @@ private struct ChantScoreSheetHead: View {
                     .foregroundColor(AppColors.gold)
                     .padding(.horizontal, 14)
                     .frame(height: 32)
-                    .background(Capsule().fill(AppColors.background.opacity(0.6)))
+                    .background(Capsule(style: .circular).fill(AppColors.background.opacity(0.6)))
                     .overlay(
-                        Capsule().strokeBorder(AppColors.gold.opacity(0.22), lineWidth: AppLine.hairline)
+                        Capsule(style: .circular).strokeBorder(AppColors.gold.opacity(0.22), lineWidth: AppLine.hairline)
                     )
                     .frame(minWidth: 44, minHeight: 44)
                     .contentShape(Rectangle())
@@ -320,7 +323,12 @@ private struct ChantScoreSheetHead: View {
     /// begins
     private var painting: some View {
         let name = ChantCatalog.painting(for: chant)
-        return CachedAssetImage(name, focal: ChantThumbnail.focalPoint(for: name))
+        // A wide, low band: cut high, where the faces are, unless the
+        // curation names the painting's point
+        let focal = ChantLibraryData.focalPoints[name] == nil
+            ? UnitPoint(x: 0.5, y: 0.3)
+            : ChantThumbnail.focalPoint(for: name)
+        return CachedAssetImage(name, focal: focal)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .clipped()
             .overlay {
@@ -372,6 +380,21 @@ private struct ChantScoreSheetTransport: View {
         self.chant = chant
     }
 
+    /// The score fading into the ground beneath the pill, on under the
+    /// home indicator, where the score scrolls too
+    static var ground: some View {
+        LinearGradient(
+            colors: [AppColors.background.opacity(0), AppColors.background.opacity(0.92)],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+        // Run on past the frame's foot, which stands on the safe area
+        .ignoresSafeArea(edges: .bottom)
+        .frame(height: clearance + 36)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
+
     var body: some View {
         let holds = player.holds(chant)
         HStack(spacing: 12) {
@@ -406,21 +429,10 @@ private struct ChantScoreSheetTransport: View {
         .frame(height: Self.pillHeight)
         .frame(maxWidth: 320)
         // Opaque, so no neume reads through it
-        .background(Capsule().fill(AppColors.cardBackground))
-        .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.22), lineWidth: AppLine.hairline))
-        .shadow(color: .black.opacity(0.45), radius: 14, y: 6)
+        .background(Capsule(style: .circular).fill(AppColors.cardBackground))
+        .overlay(Capsule(style: .circular).strokeBorder(AppColors.gold.opacity(0.22), lineWidth: AppLine.hairline))
         .padding(.horizontal, SheetMetrics.gutter)
         .padding(.bottom, Self.bottomGap)
         .frame(maxWidth: .infinity)
-        .background(alignment: .bottom) {
-            // The score fades into the ground beneath the pill
-            LinearGradient(
-                colors: [AppColors.background.opacity(0), AppColors.background.opacity(0.9)],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .frame(height: Self.clearance + 36)
-            .allowsHitTesting(false)
-        }
     }
 }
