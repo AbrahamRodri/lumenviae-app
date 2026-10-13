@@ -699,6 +699,7 @@ struct PrayAlongView: View {
     private func begin() {
         isShowing = true
         store.prayAlongOpened(screenID)
+        store.notePrayed(launch: launch)
         UIApplication.shared.isIdleTimerDisabled = true
         voice.onFinish = { scheduleAdvance() }
         voice.onNext = { if !isLast { goTo(index + 1) } }

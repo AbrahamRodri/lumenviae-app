@@ -145,7 +145,7 @@ struct ChantLibraryView: View {
 
                 shelfSection("Songs to Mary") { songsToMary }
 
-                shelfSection("Sung sets") { sungSets }
+                shelfSection("Sets of chants") { sungSets }
 
                 shelfSection("All chants", count: "\(ChantCatalog.all.count) chants") {
                     ChantSectionsGrid()
@@ -457,7 +457,7 @@ struct ChantLibraryView: View {
         .buttonStyle(SacredCardButtonStyle())
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Make your own set")
-        .accessibilityHint("Opens the sung sets, yours among them")
+        .accessibilityHint("Opens the sets of chants, yours among them")
         .accessibilityAddTraits(.isButton)
     }
 
