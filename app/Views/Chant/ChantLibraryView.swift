@@ -117,9 +117,11 @@ struct ChantLibraryView: View {
                     .padding(.horizontal, 36)
                     .padding(.bottom, isTabRoot ? 130 : 40)
             }
-            .padding(.top, 8)
+            .padding(.top, 4)
         }
-        .topChromeFade()
+        // As the Prayers page's: at the root the page dissolves under
+        // the status bar; pushed, under the Back
+        .topChromeFade(height: isTabRoot ? 32 : 48)
     }
 
     /// A shelf of the page: its name in the display face, how many it

@@ -43,17 +43,9 @@ struct ExploreView: View {
     @State private var query = ""
     @FocusState private var fieldFocused: Bool
 
-    /// The chip lit for the section being read; nil until the scroll
-    /// says, when the first kind found is lit
-    @State private var activeKind: AppSearch.Kind?
-
-    /// Where each section's top stands in the scroll. Held by reference,
-    /// so a scroll frame redraws nothing unless the lit chip changes.
-    @State private var sectionTops = SectionTops()
-
-    private final class SectionTops {
-        var tops: [AppSearch.Kind: CGFloat] = [:]
-    }
+    /// The result at the top of the scroll (`AppSearchResultsView`'s
+    /// scroll ids): a chip sets it to jump, and its kind is the chip lit
+    @State private var scrolledID: String?
 
     init(origin: AppSearch.Origin = .everywhere) {
         self.origin = origin
@@ -85,7 +77,7 @@ struct ExploreView: View {
         ZStack {
             AppColors.appGradient.ignoresSafeArea()
 
-            ScrollViewReader { proxy in
+            Group {
                 VStack(spacing: 0) {
                     searchHeader
 
@@ -93,12 +85,12 @@ struct ExploreView: View {
                     // scroll, so they are there to jump by wherever the
                     // page is read
                     if !trimmedQuery.isEmpty, !results.isEmpty {
-                        AppSearchChips(results: results, active: activeKind ?? results.kinds.first) { kind in
+                        AppSearchChips(
+                            results: results,
+                            active: AppSearchResultsView.kind(ofScrollID: scrolledID, in: results) ?? results.kinds.first
+                        ) { kind in
                             withAnimation(Motion.ease(0.35)) {
-                                proxy.scrollTo(
-                                    results.best?.kind == kind ? AppSearchResultsView.bestID : kind.rawValue,
-                                    anchor: .top
-                                )
+                                scrolledID = AppSearchResultsView.scrollID(of: kind, in: results)
                             }
                         }
                         .padding(.top, 12)
@@ -125,7 +117,7 @@ struct ExploreView: View {
                         .padding(.top, 20)
                         .padding(.bottom, 40)
                     }
-                    .coordinateSpace(name: AppSearchResultsView.space)
+                    .scrollPosition(id: $scrolledID, anchor: .top)
                     .scrollDismissesKeyboard(.interactively)
                 }
                 .animation(Motion.crossfade, value: results.isEmpty)
@@ -162,7 +154,7 @@ struct ExploreView: View {
         // The index is worth fetching only once there is something to
         // match it against — at rest this page lists no sets.
         .onChange(of: trimmedQuery) { _, needle in
-            activeKind = nil
+            scrolledID = nil
             guard !needle.isEmpty else { return }
             Task { await loadSets() }
         }
@@ -231,6 +223,7 @@ struct ExploreView: View {
                 .tint(AppColors.gold)
                 .submitLabel(.search)
                 .autocorrectionDisabled()
+                .textInputAutocapitalization(.never)
                 .focused($fieldFocused)
                 .accessibilityLabel("Search")
 
@@ -377,15 +370,6 @@ struct ExploreView: View {
         libraryEntries.first { $0.title == id }?.action()
     }
 
-    /// The lit chip follows the section being read: the last whose top
-    /// has risen to the head of the scroll
-    private func noteSectionTop(_ kind: AppSearch.Kind, _ top: CGFloat, kinds: [AppSearch.Kind]) {
-        sectionTops.tops[kind] = top
-        let reached = kinds.last { (sectionTops.tops[$0] ?? .infinity) <= 48 }
-        let active = reached ?? kinds.first
-        if active != activeKind { activeKind = active }
-    }
-
     @ViewBuilder
     private func resultsContent(_ results: AppSearch.Results) -> some View {
         ZStack(alignment: .top) {
@@ -439,12 +423,7 @@ struct ExploreView: View {
                     .transition(.opacity)
                 }
             } else {
-                AppSearchResultsView(
-                    results: results,
-                    query: trimmedQuery,
-                    openPage: openPage,
-                    onSectionTop: { kind, top in noteSectionTop(kind, top, kinds: results.kinds) }
-                )
+                AppSearchResultsView(results: results, query: trimmedQuery, openPage: openPage)
                 .transition(.opacity)
             }
         }

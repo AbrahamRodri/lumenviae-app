@@ -23,37 +23,42 @@ struct AppSearchResultsView: View {
     /// What a found door of the app opens, by its `AppSearch.Page` id
     let openPage: (String) -> Void
 
-    /// Tells the page where each section's top stands in the scroll, so
-    /// the chip of the section being read can be lit
-    let onSectionTop: (AppSearch.Kind, CGFloat) -> Void
-
     @Environment(AppRouter.self) private var router
 
     /// How many of a kind are listed before the section says how many more
     static let rowLimit = 12
 
-    /// The scroll's coordinate space, which the section tops are read in
-    static let space = "appSearch"
-
-    /// The best card's scroll id; a section's is its kind's raw value
+    /// The best card's scroll id; a section's is its kind's raw value.
+    /// The page's scroll position is one of these, which is how a chip
+    /// jumps and how the chip of the section being read is lit.
     static let bestID = "best"
+
+    /// The kind a scroll id stands for
+    static func kind(ofScrollID id: String?, in results: AppSearch.Results) -> AppSearch.Kind? {
+        guard let id else { return nil }
+        if id == bestID { return results.best?.kind }
+        return AppSearch.Kind(rawValue: id)
+    }
+
+    /// Where a chip scrolls to: the best card for its kind, else its section
+    static func scrollID(of kind: AppSearch.Kind, in results: AppSearch.Results) -> String {
+        results.best?.kind == kind ? bestID : kind.rawValue
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 28) {
             if let best = results.best {
                 AppSearchBestCard(hit: best, open: { open(best) })
                     .id(Self.bestID)
-                    .reportsTop(of: best.kind, to: onSectionTop)
             }
 
             ForEach(results.sections) { section in
                 sectionView(section)
                     .id(section.kind.rawValue)
-                    // A section whose kind the best card belongs to is
-                    // reached through the card, which stands above it
-                    .reportsTop(of: section.kind, to: results.best?.kind == section.kind ? { _, _ in } : onSectionTop)
             }
         }
+        // The card and the sections are the scroll's targets
+        .scrollTargetLayout()
     }
 
     private func sectionView(_ section: AppSearch.Section) -> some View {
@@ -167,21 +172,6 @@ struct AppSearchResultsView: View {
     }
 }
 
-// MARK: - Section tops
-
-extension View {
-    /// Reports this view's top in the search's scroll, for the lit chip
-    fileprivate func reportsTop(of kind: AppSearch.Kind, to report: @escaping (AppSearch.Kind, CGFloat) -> Void)
-        -> some View
-    {
-        onGeometryChange(for: CGFloat.self) { proxy in
-            proxy.frame(in: .named(AppSearchResultsView.space)).minY
-        } action: { top in
-            report(kind, top)
-        }
-    }
-}
-
 // MARK: - The best match
 
 /// The one card above the sections: the painting at its leading edge,
@@ -204,9 +194,10 @@ struct AppSearchBestCard: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            picture
+            // The text sets the card's height; the painting fills it
+            Color.clear
                 .frame(width: 118)
-                .frame(maxHeight: .infinity)
+                .overlay { picture }
                 .clipped()
                 .accessibilityHidden(true)
 
@@ -439,8 +430,11 @@ enum AppSearchPicture {
         switch self {
         case .painting(let painting):
             CachedAssetImage(painting.resolvedAsset, focal: painting.focal)
-        case .asset(let name, let focal):
+        case .asset(let name, let focal?):
             CachedAssetImage(name, focal: focal)
+        case .asset(let name, nil):
+            CachedAssetImage(name)
+                .aspectRatio(contentMode: .fill)
         case .none:
             AppColors.backgroundDeep
         }

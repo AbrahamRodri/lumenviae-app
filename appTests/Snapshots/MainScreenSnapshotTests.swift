@@ -91,7 +91,7 @@ struct MainScreenSnapshotTests {
                 AppSearchChips(results: results, active: results.kinds.first) { _ in }
                     .padding(.top, 12)
                 ScrollView {
-                    AppSearchResultsView(results: results, query: query, openPage: { _ in }, onSectionTop: { _, _ in })
+                    AppSearchResultsView(results: results, query: query, openPage: { _ in })
                         .padding(.horizontal, 20)
                         .padding(.top, 20)
                 }
