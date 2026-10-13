@@ -106,10 +106,12 @@ struct PrayerBookPainting: Equatable {
         asset: "mary_virgin_in_prayer", focal: UnitPoint(x: 0.5, y: 0.35), caption: "The Virgin in Prayer"
     )
 
-    /// An order's painting on its shortcut and its page: the Last Supper
-    /// at Mass, the Prodigal Son at Confession, Christ with the Host on a
-    /// visit to Him, the Day of the Dead, the storm on the lake in time of
-    /// trouble, Emmaus at table; else the order's hour
+    /// An order's painting on its shortcut, its page and its topic's Pray
+    /// together card, never the topic's own painting above that card: the
+    /// Last Supper at Mass, the penitent Magdalene at Confession, Christ
+    /// with the Host on a visit to Him, Lazarus raised for the dead, the
+    /// Good Shepherd in time of trouble, Emmaus at table; else the
+    /// order's hour
     static func order(_ order: PrayerOrder, on date: Date = Date()) -> PrayerBookPainting {
         switch order.id {
         case "before_mass", "after_mass":
@@ -117,17 +119,17 @@ struct PrayerBookPainting: Equatable {
                 asset: "luminous_eucharist", focal: UnitPoint(x: 0.5, y: 0.35), caption: "The Last Supper")
         case "before_confession", "after_confession":
             return PrayerBookPainting(
-                asset: "topic_confession", focal: UnitPoint(x: 0.5, y: 0.35), caption: "The Return of the Prodigal Son")
+                asset: "order_penitent_magdalene", focal: UnitPoint(x: 0.5, y: 0.3), caption: "The Penitent Magdalene")
         case "visit":
             return PrayerBookPainting(
                 asset: "jesus_eucharist_saviour", focal: UnitPoint(x: 0.5, y: 0.3), caption: "The Saviour")
         case "holy_souls":
             return PrayerBookPainting(
-                asset: "devotion_holy_souls", focal: UnitPoint(x: 0.5, y: 0.4), caption: "The Day of the Dead")
+                asset: "order_raising_of_lazarus", focal: UnitPoint(x: 0.4, y: 0.45), caption: "The Raising of Lazarus")
         case "trouble":
             return PrayerBookPainting(
-                asset: "topic_needs", focal: UnitPoint(x: 0.5, y: 0.35),
-                caption: "Christ in the Storm on the Sea of Galilee")
+                asset: "jesus_good_shepherd", focal: UnitPoint(x: 0.4, y: 0.45),
+                caption: "The Child Jesus as the Good Shepherd")
         case "table":
             return PrayerBookPainting(
                 asset: "prayer_supper_emmaus", focal: UnitPoint(x: 0.5, y: 0.35), caption: "The Supper at Emmaus")

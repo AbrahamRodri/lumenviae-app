@@ -731,6 +731,19 @@ PAINTINGS += [
          commons_file='File:Juan rizi-san benito bendiciendo.jpg',
          why="Benedict blessing the poisoned bread, the miracle the medal's 'drink thou thy own poison' remembers.",
          alternate=None, **PD_ART),
+    dict(imageset='order_penitent_magdalene', slot='Prayers: the Before and After Confession orders',
+         features=["Prayers: an order's shortcut, its page and its Pray together card"], work='The Penitent Magdalene', creator='El Greco (1541–1614)', date='c. 1576–77',
+         collection='Museum of Fine Arts, Budapest', source_page=None, commons_search=None,
+         commons_file='File:Penitent Magdalene by El Greco (Budapest).jpg',
+         why='The penitent with her hand on her heart, looking up for mercy: the orders said around confession, apart from the topic\'s Prodigal Son. The painted edge is cut away.',
+         alternate=None, crop=(0.025, 0.02, 0.03, 0.015), **PD_ART),
+    dict(imageset='order_raising_of_lazarus', slot='Prayers: the For Those Who Have Died order',
+         features=["Prayers: an order's shortcut, its page and its Pray together card"], work='The Raising of Lazarus', creator='Sebastiano del Piombo (c. 1485–1547)', date='1517–19',
+         collection='The National Gallery, London', source_page=None, commons_search=None,
+         commons_file='File:Sebastiano del Piombo - The Raising of Lazarus - Google Art Project.jpg',
+         why='"I am the resurrection and the life": the hope the prayers for the dead are said in, apart from the topic\'s Day of the Dead.',
+         alternate=None, **PD_ART),
+
 ]
 
 UNUSED = [

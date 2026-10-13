@@ -50,6 +50,16 @@ struct SavedPrayerPaintingTests {
         }
     }
 
+    /// An order's Pray together card stands under its topic's painting,
+    /// so the two are never the same
+    @Test func noOrderRepeatsItsTopicsPainting() {
+        for chapter in PrayerBook.chapters {
+            for order in chapter.orders {
+                #expect(PrayerBookPainting.order(order).asset != PrayerBookPainting.topic(chapter).asset, "\(chapter.id): \(order.id)")
+            }
+        }
+    }
+
     /// The Coronation hangs only over a prayer to Our Lady as Queen
     @Test func theCoronationIsOnlyForTheQueen() {
         let crowned = PrayerBook.prayers.keys.filter { PrayerBookPainting.prayer($0).asset == "glorious_coronation" }

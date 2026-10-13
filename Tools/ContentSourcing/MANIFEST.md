@@ -106,6 +106,8 @@ Generated from `sources.py` by `build_manifest.py`; edit there. Machine-readable
 | `apostles_calling_duccio` | Prayers: Prayer of St Richard of Chichester | The Calling of the Apostles Peter and Andrew | Duccio di Buoninsegna (c. 1255–1319) | 1308–11 | National Gallery of Art, Washington | CC0 | verified |
 | `saint_jude` | Prayers: Prayer to St Jude | Saint Jude Thaddeus | El Greco (1541–1614) | c. 1610–14 | Museo del Greco, Toledo (Google Art Project) | Public domain | verified |
 | `saint_benedict` | Prayers: The Verses of the St Benedict Medal | Saint Benedict Blessing the Bread | Juan Rizi (1600–1681) | c. 1655 | Museo del Prado, Madrid | Public domain | verified |
+| `order_penitent_magdalene` | Prayers: the Before and After Confession orders | The Penitent Magdalene | El Greco (1541–1614) | c. 1576–77 | Museum of Fine Arts, Budapest | Public domain | verified |
+| `order_raising_of_lazarus` | Prayers: the For Those Who Have Died order | The Raising of Lazarus | Sebastiano del Piombo (c. 1485–1547) | 1517–19 | The National Gallery, London | Public domain | verified |
 
 Alternates and reasons:
 
@@ -196,6 +198,8 @@ Alternates and reasons:
 - `apostles_calling_duccio`: Christ calling the fishermen from their boat: 'to follow Thee more nearly'. CC0 from the National Gallery of Art.
 - `saint_jude`: The apostle with his halberd: the saint the prayer asks.
 - `saint_benedict`: Benedict blessing the poisoned bread, the miracle the medal's 'drink thou thy own poison' remembers.
+- `order_penitent_magdalene`: The penitent with her hand on her heart, looking up for mercy: the orders said around confession, apart from the topic's Prodigal Son. The painted edge is cut away.
+- `order_raising_of_lazarus`: "I am the resurrection and the life": the hope the prayers for the dead are said in, apart from the topic's Day of the Dead.
 
 Target format: 1600 px on the long edge, progressive JPEG, 300–800 KB; one 1x image per imageset like the existing ones.
 

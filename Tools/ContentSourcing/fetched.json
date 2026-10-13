@@ -1561,5 +1561,36 @@
       0.16,
       0.0
     ]
+  },
+  "order_penitent_magdalene": {
+    "status": "verified",
+    "commons_file": "File:Penitent Magdalene by El Greco (Budapest).jpg",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Penitent_Magdalene_by_El_Greco_(Budapest).jpg",
+    "file_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Penitent_Magdalene_by_El_Greco_%28Budapest%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "licence": "Public domain",
+    "licence_url": "https://commons.wikimedia.org/wiki/Commons:Reuse_of_PD-Art_photographs",
+    "attribution": null,
+    "width": 4473,
+    "height": 5621,
+    "bytes": 596548,
+    "crop": [
+      0.025,
+      0.02,
+      0.03,
+      0.015
+    ]
+  },
+  "order_raising_of_lazarus": {
+    "status": "verified",
+    "commons_file": "File:Sebastiano del Piombo - The Raising of Lazarus - Google Art Project.jpg",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Sebastiano_del_Piombo_-_The_Raising_of_Lazarus_-_Google_Art_Project.jpg",
+    "file_url": "https://upload.wikimedia.org/wikipedia/commons/4/49/Sebastiano_del_Piombo_-_The_Raising_of_Lazarus_-_Google_Art_Project.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "licence": "Public domain",
+    "licence_url": "https://commons.wikimedia.org/wiki/Commons:Reuse_of_PD-Art_photographs",
+    "attribution": null,
+    "width": 2244,
+    "height": 3000,
+    "bytes": 394233,
+    "crop": null
   }
 }
