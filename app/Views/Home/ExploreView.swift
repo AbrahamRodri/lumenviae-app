@@ -37,7 +37,27 @@ struct ExploreView: View {
         Set(reading.filter { $0.hasReadingPlace || $0.hasResumableTrack }.map(\.bookID))
     }
 
+    /// Where the search was opened from: Home's glass, or a page's own
+    let origin: AppSearch.Origin
+
     @State private var query = ""
+    @FocusState private var fieldFocused: Bool
+
+    /// The chip lit for the section being read; nil until the scroll
+    /// says, when the first kind found is lit
+    @State private var activeKind: AppSearch.Kind?
+
+    /// Where each section's top stands in the scroll. Held by reference,
+    /// so a scroll frame redraws nothing unless the lit chip changes.
+    @State private var sectionTops = SectionTops()
+
+    private final class SectionTops {
+        var tops: [AppSearch.Kind: CGFloat] = [:]
+    }
+
+    init(origin: AppSearch.Origin = .everywhere) {
+        self.origin = origin
+    }
 
     /// Every category's set summaries, fetched once per visit
     @State private var sets: [MeditationSetSummary] = []
@@ -60,131 +80,200 @@ struct ExploreView: View {
     }
 
     var body: some View {
+        let results = searchResults
+
         ZStack {
             AppColors.appGradient.ignoresSafeArea()
 
-            VStack(spacing: 0) {
-                searchHeader
+            ScrollViewReader { proxy in
+                VStack(spacing: 0) {
+                    searchHeader
 
-                ScrollView(showsIndicators: false) {
-                    // Browsing and searching share one slot, so typing
-                    // the first letter crossfades the shelf into results
-                    // rather than cutting to them — and each keystroke
-                    // after that fades sections in and out in place
-                    ZStack(alignment: .top) {
-                        if trimmedQuery.isEmpty {
-                            // The browse page is several sections; they
-                            // keep their column inside the slot
-                            VStack(alignment: .leading, spacing: 28) {
-                                browseContent
+                    // The kinds found stand under the field, out of the
+                    // scroll, so they are there to jump by wherever the
+                    // page is read
+                    if !trimmedQuery.isEmpty, !results.isEmpty {
+                        AppSearchChips(results: results, active: activeKind ?? results.kinds.first) { kind in
+                            withAnimation(Motion.ease(0.35)) {
+                                proxy.scrollTo(
+                                    results.best?.kind == kind ? AppSearchResultsView.bestID : kind.rawValue,
+                                    anchor: .top
+                                )
                             }
-                            .transition(.opacity)
-                        } else {
-                            searchResults
-                                .transition(.opacity)
                         }
+                        .padding(.top, 12)
+                        .transition(.opacity)
                     }
-                    .animation(Motion.crossfade, value: trimmedQuery)
-                    .animation(Motion.crossfade, value: isLoadingSets)
-                    .padding(.horizontal, 20)
-                    .padding(.top, 20)
-                    .padding(.bottom, 40)
+
+                    ScrollView(showsIndicators: false) {
+                        // Browsing and searching share one slot, so typing
+                        // the first letter crossfades the shelf into results
+                        // rather than cutting to them — and each keystroke
+                        // after that fades sections in and out in place
+                        ZStack(alignment: .top) {
+                            if trimmedQuery.isEmpty {
+                                restingContent
+                                    .transition(.opacity)
+                            } else {
+                                resultsContent(results)
+                                    .transition(.opacity)
+                            }
+                        }
+                        .animation(Motion.crossfade, value: trimmedQuery)
+                        .animation(Motion.crossfade, value: isLoadingSets)
+                        .padding(.horizontal, 20)
+                        .padding(.top, 20)
+                        .padding(.bottom, 40)
+                    }
+                    .coordinateSpace(name: AppSearchResultsView.space)
+                    .scrollDismissesKeyboard(.interactively)
                 }
+                .animation(Motion.crossfade, value: results.isEmpty)
             }
         }
         .navigationBarBackButtonHidden(true)
-        // A pushed content page keeps the system bar and draws its own
-        // gold Back in it, like every other destination. The Daily
-        // Missal is the one page allowed to hide the bar, because its
-        // collapsing header *is* the chrome; Explore has no such header,
-        // and hiding the bar here only cost the field its own line.
+        // From Home the page keeps the system bar, its gold Back and its
+        // name, like every other destination. Opened from a page's glass
+        // it is that page's search: the field and CANCEL are the head,
+        // and CANCEL is the way back.
+        .toolbar(origin == .everywhere ? .visible : .hidden, for: .navigationBar)
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: { router.pop() }) {
-                    HStack(spacing: 6) {
-                        AppIcon("ph-caret-left", size: 14)
-                        Text("Back")
-                            .font(AppFonts.bodyFont(16))
+            if origin == .everywhere {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: { router.pop() }) {
+                        HStack(spacing: 6) {
+                            AppIcon("ph-caret-left", size: 14)
+                            Text("Back")
+                                .font(AppFonts.bodyFont(16))
+                        }
+                        .foregroundColor(AppColors.gold)
                     }
-                    .foregroundColor(AppColors.gold)
                 }
-            }
-            // The page's name, the one the home masthead's glass and the
-            // first-use tour call it by
-            ToolbarItem(placement: .principal) {
-                Text("Explore")
-                    .font(AppFonts.headlineFont(17))
-                    .foregroundColor(AppColors.cream)
-                    .accessibilityAddTraits(.isHeader)
+                // The page's name, the one the home masthead's glass and the
+                // first-use tour call it by
+                ToolbarItem(placement: .principal) {
+                    Text("Explore")
+                        .font(AppFonts.headlineFont(17))
+                        .foregroundColor(AppColors.cream)
+                        .accessibilityAddTraits(.isHeader)
+                }
             }
         }
         // The index is worth fetching only once there is something to
         // match it against — at rest this page lists no sets.
         .onChange(of: trimmedQuery) { _, needle in
+            activeKind = nil
             guard !needle.isEmpty else { return }
             Task { await loadSets() }
+        }
+        .onAppear {
+            // A page's glass was a request to search: the keyboard rises
+            if origin != .everywhere { fieldFocused = true }
+        }
+        // VoiceOver stays in the field and would hear nothing of the
+        // results: what was found is said once the reader pauses
+        .task(id: trimmedQuery) {
+            guard !trimmedQuery.isEmpty else { return }
+            try? await Task.sleep(for: .milliseconds(700))
+            guard !Task.isCancelled else { return }
+            let found = searchResults
+            let words = found.isEmpty
+                ? "Nothing found"
+                : found.kinds.map { "\($0.title), \(found.count(of: $0))" }.joined(separator: "; ")
+            AccessibilityNotification.Announcement(words).post()
+        }
+    }
+
+    // MARK: - Resting and results
+
+    /// Before a word is typed: Explore's directory from Home; opened from
+    /// a page's glass, one quiet line, since that page is its own
+    /// directory and is a Cancel away
+    @ViewBuilder
+    private var restingContent: some View {
+        if origin == .everywhere {
+            // The browse page is several sections; they keep their column
+            // inside the slot
+            VStack(alignment: .leading, spacing: 28) {
+                browseContent
+            }
+        } else {
+            Text("Search every prayer, chant, mystery and book in the app.")
+                .font(AppFonts.italicFont(15))
+                .foregroundColor(AppColors.textSecondary)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
+                .padding(.top, 50)
+                .padding(.horizontal, 20)
         }
     }
 
     // MARK: - Search header
 
-    /// The field running the whole width — no pill, no card. Back lives
-    /// in the navigation bar above, as it does on every other pushed
-    /// page. The field's only furniture is the fading gold rule beneath
-    /// it, the same thread the section labels run out on.
+    /// The field in the chant search's gold outline, brightening while
+    /// it is being typed in. Opened from a page's glass, CANCEL stands
+    /// beside it and is the way back.
     private var searchHeader: some View {
-        VStack(spacing: 0) {
-            HStack(spacing: 2) {
+        HStack(spacing: 12) {
+            HStack(spacing: 10) {
                 AppIcon("ph-magnifying-glass", size: 15)
-                    .foregroundColor(AppColors.textSecondary)
-                    .padding(.trailing, 10)
+                    .foregroundColor(AppColors.gold.opacity(0.75))
 
                 TextField(
                     "",
                     text: $query,
-                    prompt: Text("Search prayers, mysteries, books and chant")
-                        .font(AppFonts.bodyFont(15))
-                        .foregroundColor(AppColors.textSecondary.opacity(0.8))
+                    prompt: Text(origin.prompt)
+                        .font(AppFonts.readingFont(16))
+                        .foregroundColor(AppColors.textSecondary)
                 )
-                .font(AppFonts.bodyFont(16))
+                .font(AppFonts.readingFont(17))
                 .foregroundColor(AppColors.cream)
                 .tint(AppColors.gold)
                 .submitLabel(.search)
                 .autocorrectionDisabled()
-                .frame(height: 52)
+                .focused($fieldFocused)
+                .accessibilityLabel("Search")
 
                 if !query.isEmpty {
                     Button(action: { query = "" }) {
                         AppIcon("ph-x-circle", size: 15)
                             .foregroundColor(AppColors.textSecondary)
-                            .frame(width: 36, height: 44)
+                            .frame(width: 44, height: 44)
                             .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("Clear search")
+                    // The glyph keeps its place; only the target grows
+                    .padding(.trailing, -7)
+                    .accessibilityLabel("Clear the search")
                 }
             }
-            .padding(.leading, 20)
-            .padding(.trailing, 16)
-
-            // The field's ground: a rule that fades out before either
-            // edge, so the line ends softly rather than being cut off.
-            LinearGradient(
-                stops: [
-                    .init(color: AppColors.gold.opacity(0), location: 0),
-                    .init(color: AppColors.gold.opacity(0.4), location: 0.12),
-                    .init(color: AppColors.gold.opacity(0.4), location: 0.88),
-                    .init(color: AppColors.gold.opacity(0), location: 1)
-                ],
-                startPoint: .leading,
-                endPoint: .trailing
+            .padding(.horizontal, 14)
+            .frame(minHeight: 48)
+            .overlay(
+                RoundedRectangle(cornerRadius: 14)
+                    .strokeBorder(AppColors.gold.opacity(fieldFocused ? 0.7 : 0.35), lineWidth: 1)
             )
-            .frame(height: 1)
-            .padding(.horizontal, 16)
+            .animation(Motion.crossfade, value: fieldFocused)
+
+            if origin != .everywhere {
+                Button {
+                    fieldFocused = false
+                    router.pop()
+                } label: {
+                    Text("CANCEL")
+                        .font(AppFonts.labelFont(10))
+                        .tracking(2)
+                        .foregroundColor(AppColors.gold)
+                        .frame(minHeight: 44)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(QuietGlyphButtonStyle())
+            }
         }
+        .padding(.horizontal, 20)
         .padding(.top, 6)
-        // Deliberately not auto-focused: this page is a place first and
-        // a search second — the keyboard rises only when asked.
+        // From Home deliberately not auto-focused: Explore is a place
+        // first and a search second — the keyboard rises only when asked.
     }
 
     // MARK: - Browse
@@ -272,222 +361,93 @@ struct ExploreView: View {
 
     // MARK: - Search results
 
-    private var searchResults: some View {
-        let needle = trimmedQuery.lowercased()
+    /// Everything the words find, shaped for where the search began
+    private var searchResults: AppSearch.Results {
+        AppSearch.results(for: trimmedQuery, from: origin, sets: sets, pages: searchPages)
+    }
 
-        let categories = MysteryCategory.allCases.filter {
-            $0.devotionTitle.lowercased().contains(needle)
-                || $0.subtitle.lowercased().contains(needle)
+    /// The app's doors, as the search knows them: by name and words
+    private var searchPages: [AppSearch.Page] {
+        libraryEntries.map {
+            AppSearch.Page(id: $0.title, title: $0.title, matchText: $0.matchText, icon: $0.icon)
         }
-        // A door answers to its own name as well as its words: matched on
-        // the words alone, "chant library" found nothing, since the Chant
-        // Library's words say "chant" and "gregorian" but never the two
-        // together, and "prayer record" missed the Prayer Record
-        let libraryHits = libraryEntries.filter {
-            "\($0.title) \($0.matchText)".lowercased().contains(needle)
-        }
-        let setHits = sets.filter { matches($0, needle: needle) }
-        // The library's own readings — Lourdes, Kolbe, the marks of true
-        // devotion — found by name or by their dating line. A shelf's
-        // own title answers only when no reading does: matched as well,
-        // "carlo" listed every one of St. Carlo's readings and buried
-        // the one asked for.
-        let shelved = LibraryReadings.shelves.filter { !ArchivedPages.hides(shelf: $0) }.flatMap { shelf in
-            shelf.entries.map { ReadingHit(shelf: shelf, reading: $0) }
-        }
-        let namedHits = shelved.filter {
-            $0.reading.title.lowercased().contains(needle)
-                || $0.reading.detail.lowercased().contains(needle)
-        }
-        let readingHits = namedHits.isEmpty
-            ? shelved.filter { $0.shelf.title.lowercased().contains(needle) }
-            : namedHits
-        // The Prayer Book's orders by name or occasion, and its prayers
-        // by name, Latin name, or — for a word of four letters or more —
-        // their words
-        let orderHits = PrayerBook.orders.filter {
-            $0.title(on: Date()).lowercased().contains(needle)
-                || $0.occasion.lowercased().contains(needle)
-                || $0.latinTitle.lowercased().contains(needle)
-                || $0.searchWords.contains { $0.contains(needle) }
-        }
-        let prayerHits = PrayerBook.search(needle)
-        let chantHits = ChantCatalog.search(needle)
+    }
 
-        return ZStack(alignment: .top) {
-        if categories.isEmpty && libraryHits.isEmpty && readingHits.isEmpty && setHits.isEmpty
-            && orderHits.isEmpty && prayerHits.isEmpty && chantHits.isEmpty {
-            if isLoadingSets {
-                // The set index can be seconds away on a cold server.
-                // Saying nothing matched before it lands is a confident
-                // wrong answer, so the page waits visibly instead.
-                VStack(spacing: 10) {
-                    ProgressView()
-                        .tint(AppColors.gold)
+    private func openPage(_ id: String) {
+        libraryEntries.first { $0.title == id }?.action()
+    }
 
-                    Text("Searching the meditations…")
-                        .font(AppFonts.italicFont(13))
-                        .foregroundColor(AppColors.textSecondary)
+    /// The lit chip follows the section being read: the last whose top
+    /// has risen to the head of the scroll
+    private func noteSectionTop(_ kind: AppSearch.Kind, _ top: CGFloat, kinds: [AppSearch.Kind]) {
+        sectionTops.tops[kind] = top
+        let reached = kinds.last { (sectionTops.tops[$0] ?? .infinity) <= 48 }
+        let active = reached ?? kinds.first
+        if active != activeKind { activeKind = active }
+    }
+
+    @ViewBuilder
+    private func resultsContent(_ results: AppSearch.Results) -> some View {
+        ZStack(alignment: .top) {
+            if results.isEmpty {
+                if isLoadingSets {
+                    // The set index can be seconds away on a cold server.
+                    // Saying nothing matched before it lands is a confident
+                    // wrong answer, so the page waits visibly instead.
+                    VStack(spacing: 10) {
+                        ProgressView()
+                            .tint(AppColors.gold)
+
+                        Text("Searching the meditations…")
+                            .font(AppFonts.italicFont(13))
+                            .foregroundColor(AppColors.textSecondary)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 60)
+                    .transition(.opacity)
+                } else {
+                    VStack(spacing: 8) {
+                        Text("Nothing found")
+                            .font(AppFonts.headlineFont(16))
+                            .foregroundColor(AppColors.cream)
+
+                        Text(setsUnavailable
+                             ? "Couldn't load the meditations. Check your connection. Prayers, chants, mysteries and books can still be searched."
+                             : "Try a mystery, a prayer, a chant or a saint's name.")
+                            .font(AppFonts.italicFont(13))
+                            .foregroundColor(AppColors.textSecondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 24)
+
+                        // The index is asked for once; if it never came, the
+                        // reader asks again when they have signal rather
+                        // than the page retrying on every keystroke.
+                        if setsUnavailable {
+                            QuietGoldButton(
+                                title: "Try again",
+                                leadingIcon: "ph-arrow-counter-clockwise",
+                                leadingIconSize: 10,
+                                size: 10
+                            ) {
+                                retrySets()
+                            }
+                            .padding(.top, 6)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 60)
+                    .transition(.opacity)
                 }
-                .frame(maxWidth: .infinity)
-                .padding(.top, 60)
-                .transition(.opacity)
             } else {
-                VStack(spacing: 8) {
-                    Text("Nothing found")
-                        .font(AppFonts.headlineFont(16))
-                        .foregroundColor(AppColors.cream)
-
-                    Text(setsUnavailable
-                         ? "Couldn't load the meditations. Check your connection. Prayers, mysteries and books can still be searched."
-                         : "Try a mystery, a prayer, or a saint's name.")
-                        .font(AppFonts.italicFont(13))
-                        .foregroundColor(AppColors.textSecondary)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 24)
-
-                    // The index is asked for once; if it never came, the
-                    // reader asks again when they have signal rather
-                    // than the page retrying on every keystroke.
-                    if setsUnavailable {
-                        QuietGoldButton(
-                            title: "Try again",
-                            leadingIcon: "ph-arrow-counter-clockwise",
-                            leadingIconSize: 10,
-                            size: 10
-                        ) {
-                            retrySets()
-                        }
-                        .padding(.top, 6)
-                    }
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.top, 60)
+                AppSearchResultsView(
+                    results: results,
+                    query: trimmedQuery,
+                    openPage: openPage,
+                    onSectionTop: { kind, top in noteSectionTop(kind, top, kinds: results.kinds) }
+                )
                 .transition(.opacity)
             }
-        } else {
-            VStack(alignment: .leading, spacing: 28) {
-                if !categories.isEmpty {
-                    section("Rosary Mysteries") {
-                        mysteryLedger(categories)
-                    }
-                    .transition(.opacity)
-                }
-
-                if !libraryHits.isEmpty {
-                    section("Pages") {
-                        tileGrid(libraryHits.map { entry in
-                            ExploreTile(icon: entry.icon, title: entry.title, action: entry.action)
-                        })
-                    }
-                    .transition(.opacity)
-                }
-
-                if !readingHits.isEmpty {
-                    section("Readings") {
-                        VStack(alignment: .leading, spacing: 0) {
-                            // Each row wears its shelf's glyph, so a
-                            // Carlo reading and a Marian one are told
-                            // apart before their names are read
-                            ForEach(readingHits.prefix(Self.readingLimit)) { hit in
-                                LedgerDoorRow(title: hit.reading.title, note: hit.reading.detail, icon: hit.shelf.icon) {
-                                    router.push(.libraryReading(id: hit.reading.id))
-                                }
-                            }
-
-                            // A cut list says so, and how to narrow it
-                            if readingHits.count > Self.readingLimit {
-                                Text("And \(readingHits.count - Self.readingLimit) more — add a word to narrow the search.")
-                                    .font(AppFonts.italicFont(13))
-                                    .foregroundColor(AppColors.textSecondary)
-                                    .padding(.top, 8)
-                            }
-                        }
-                    }
-                    .transition(.opacity)
-                }
-
-                if !orderHits.isEmpty || !prayerHits.isEmpty {
-                    section("Prayers") {
-                        VStack(alignment: .leading, spacing: 0) {
-                            ForEach(orderHits) { order in
-                                LedgerDoorRow(title: order.title(on: Date()), note: order.occasion, icon: order.icon) {
-                                    router.push(.prayerOrder(id: order.id))
-                                }
-                            }
-                            ForEach(prayerHits.prefix(Self.readingLimit)) { prayer in
-                                LedgerDoorRow(
-                                    title: prayer.listTitle,
-                                    note: prayer.latinTitle ?? PrayerBook.homeChapter(of: prayer.id)?.title,
-                                    icon: PrayerBook.homeChapter(of: prayer.id)?.icon
-                                ) {
-                                    router.push(.devotionPrayer(id: prayer.id))
-                                }
-                            }
-                            if prayerHits.count > Self.readingLimit {
-                                Text("And \(prayerHits.count - Self.readingLimit) more — add a word to narrow the search.")
-                                    .font(AppFonts.italicFont(13))
-                                    .foregroundColor(AppColors.textSecondary)
-                                    .padding(.top, 8)
-                            }
-                        }
-                    }
-                    .transition(.opacity)
-                }
-
-                if !chantHits.isEmpty {
-                    section("Chants") {
-                        VStack(alignment: .leading, spacing: 0) {
-                            ForEach(chantHits.prefix(Self.readingLimit)) { chant in
-                                ChantLibraryRow(chant: chant, player: ChantPlayer.shared) {
-                                    router.push(.chant(id: chant.id))
-                                }
-                            }
-                            if chantHits.count > Self.readingLimit {
-                                Text("And \(chantHits.count - Self.readingLimit) more — add a word to narrow the search.")
-                                    .font(AppFonts.italicFont(13))
-                                    .foregroundColor(AppColors.textSecondary)
-                                    .padding(.top, 8)
-                            }
-                        }
-                    }
-                    .transition(.opacity)
-                }
-
-                if !setHits.isEmpty {
-                    section("Meditations") {
-                        setRows(setHits)
-                    }
-                    .transition(.opacity)
-                }
-            }
-            .transition(.opacity)
         }
-        }
-    }
-
-    /// How many readings a search lists before it says how many more
-    private static let readingLimit = 12
-
-    /// A reading found, with the shelf it stands on
-    private struct ReadingHit: Identifiable {
-        let shelf: ReadingShelf
-        let reading: LibraryReading
-        var id: String { reading.id }
-    }
-
-    private func matches(_ summary: MeditationSetSummary, needle: String) -> Bool {
-        if summary.name.lowercased().contains(needle) { return true }
-        if let author = summary.author, author.lowercased().contains(needle) { return true }
-        if let source = summary.source, source.lowercased().contains(needle) { return true }
-        // By the label the shelf shows ("Gospel", "Reflections") as well
-        // as the one the server stores
-        if let labels = summary.labels, labels.contains(where: {
-            $0.lowercased().contains(needle) || MeditationLabel.displayName($0).lowercased().contains(needle)
-        }) { return true }
-        if let category = MysteryCategory(rawValue: summary.category),
-           category.devotionTitle.lowercased().contains(needle) { return true }
-        return false
     }
 
     // MARK: - Library entries
@@ -551,19 +511,6 @@ struct ExploreView: View {
             LibraryEntry(icon: "ph-book-open", title: "Journal",
                          matchText: "journal reflections reflection notes entries write diary") { router.push(.journal) }
         ]
-    }
-
-    /// Search hits keep the compact tile — a found door, not a browsed
-    /// shelf.
-    private func tileGrid(_ tiles: [ExploreTile]) -> some View {
-        LazyVGrid(
-            columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)],
-            spacing: 10
-        ) {
-            ForEach(Array(tiles.enumerated()), id: \.offset) { _, tile in
-                tile
-            }
-        }
     }
 
     // MARK: - Pieces
@@ -903,62 +850,6 @@ struct ExploreView: View {
         }
     }
 
-    private func setRows(_ summaries: [MeditationSetSummary]) -> some View {
-        VStack(spacing: 0) {
-            ForEach(summaries) { summary in
-                Button {
-                    router.navigateToMeditationSetDetail(summary)
-                } label: {
-                    HStack(spacing: 14) {
-                        AppIcon("ph-cards", size: 16)
-                            .foregroundColor(AppColors.gold)
-                            .frame(width: 22)
-
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(summary.name)
-                                .font(AppFonts.bodyFont(15))
-                                .foregroundColor(AppColors.cream)
-
-                            Text(setSubtitle(summary))
-                                .font(AppFonts.bodyFont(12))
-                                .foregroundColor(AppColors.textSecondary)
-                        }
-
-                        Spacer()
-
-                        AppIcon("ph-caret-right", size: 13)
-                            .foregroundColor(AppColors.textSecondary.opacity(0.6))
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-
-                if summary.id != summaries.last?.id {
-                    Divider()
-                        .background(AppColors.gold.opacity(0.2))
-                        .padding(.horizontal, 16)
-                }
-            }
-        }
-        .background(AppColors.cardBackground)
-        .cornerRadius(16)
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: AppLine.hairline)
-        )
-    }
-
-    private func setSubtitle(_ summary: MeditationSetSummary) -> String {
-        let category = MysteryCategory(rawValue: summary.category)?.devotionTitle ?? summary.category
-        // A set named for its author would read the same line twice
-        if let author = summary.author, !author.isEmpty, author != summary.name {
-            return "\(author) · \(category)"
-        }
-        return category
-    }
-
     // MARK: - Data
 
     /// Every category's summaries, fetched concurrently on the first
@@ -1078,46 +969,6 @@ enum ExploreShelves {
             defaults: [.massOfTheAngels, .sets],
             recents: recentIDs.filter { ChantCatalog.chant($0) != nil }.map { .chant($0) }
         )
-    }
-}
-
-// MARK: - ExploreTile
-
-/// A small door: icon and name in a quiet cell — how a library door
-/// found by typed search is set.
-private struct ExploreTile: View {
-    let icon: String
-    let title: String
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 10) {
-                AppIcon(icon, size: 16)
-                    .foregroundColor(AppColors.gold)
-
-                Text(title)
-                    .font(AppFonts.bodyFont(13))
-                    .foregroundColor(AppColors.cream)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.85)
-
-                Spacer(minLength: 0)
-            }
-            .padding(.horizontal, 12)
-            .frame(height: 48)
-            .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(AppColors.cardBackground)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 10)
-                    .strokeBorder(AppColors.gold.opacity(0.15), lineWidth: AppLine.hairline)
-            )
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel(title)
     }
 }
 

@@ -77,6 +77,8 @@ enum AppSearch {
         let id: String
         let title: String
         let matchText: String
+        /// The door's glyph, which its row wears
+        var icon: String = "ph-book-open"
     }
 
     /// One thing found
@@ -85,6 +87,7 @@ enum AppSearch {
         case mystery(Mystery)
         case page(Page)
         case reading(shelf: ReadingShelf, reading: LibraryReading)
+        case topic(PrayerBookChapter)
         case order(PrayerOrder)
         case prayer(BookPrayer)
         case chant(Chant)
@@ -96,6 +99,7 @@ enum AppSearch {
             case .mystery(let mystery): return "mystery:\(mystery.category):\(mystery.order)"
             case .page(let page): return "page:\(page.id)"
             case .reading(_, let reading): return "reading:\(reading.id)"
+            case .topic(let chapter): return "topic:\(chapter.id)"
             case .order(let order): return "order:\(order.id)"
             case .prayer(let prayer): return "prayer:\(prayer.id)"
             case .chant(let chant): return "chant:\(chant.id)"
@@ -108,7 +112,7 @@ enum AppSearch {
             case .mysteries, .mystery: return .mysteries
             case .page: return .pages
             case .reading: return .readings
-            case .order, .prayer: return .prayers
+            case .topic, .order, .prayer: return .prayers
             case .chant: return .chants
             case .meditationSet: return .meditations
             }
@@ -121,6 +125,7 @@ enum AppSearch {
             case .mystery(let mystery): return [mystery.name]
             case .page(let page): return [page.title]
             case .reading(_, let reading): return [reading.title]
+            case .topic(let chapter): return [chapter.topic, chapter.title]
             case .order(let order): return [order.title(on: Date()), order.latinTitle]
             case .prayer(let prayer): return [prayer.listTitle, prayer.title] + [prayer.latinTitle].compactMap { $0 }
             case .chant(let chant): return [chant.latinTitle, chant.englishTitle]
@@ -182,8 +187,12 @@ enum AppSearch {
             .filter { "\($0.title) \($0.matchText)".lowercased().contains(needle) }
             .map(Hit.page)
         found[.readings] = readingHits(needle, shelves: shelves)
+        // A topic the words name (Prayers to Mary), then an order of
+        // prayer (Visiting Jesus in Church), then the prayers, as the
+        // Prayers page once set its own search
         found[.prayers] =
-            PrayerBook.searchOrders(needle).map(Hit.order)
+            PrayerBook.topics(matching: needle).prefix(2).map(Hit.topic)
+            + PrayerBook.searchOrders(needle).prefix(3).map(Hit.order)
             + PrayerBook.search(needle).map(Hit.prayer)
         found[.chants] = ChantCatalog.search(needle).map(Hit.chant)
         found[.meditations] = sets.filter { matches($0, needle: needle) }.map(Hit.meditationSet)

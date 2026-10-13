@@ -11,7 +11,6 @@
 //                   last sung, the reader's favourites, and the sets sung
 //                   most (a sung Rosary, Adoration and Blessing, the Mass
 //                   of the Angels, Before Bed)
-//    TONIGHT        tonight's song to Mary as one wide card
 //    PLAYED LATELY  a song list, the one sounding marked with moving bars
 //    SONGS TO MARY  square cards, each with its length and its play
 //    SUNG SETS      cards listing their chants in order, with lengths
@@ -23,7 +22,11 @@
 //  behind SEE ALL: the sections close the page as All Topics close the
 //  Prayers page, where they once waited behind one BROWSE ALL button. A tap on a chant,
 //  wherever it stands, opens its page; only its disc plays (`ChantTap`).
-//  Search stands in the bar.
+//  The head is the Prayers page's: the name over the count, and the glass
+//  that opens the app's one search with chants leading (`.search(from:
+//  .chant)`). The library once searched itself in a look of its own, with
+//  scopes and filters, and opened on tonight's song to Mary as a wide
+//  card; Songs to Mary offers it a scroll below.
 //
 //  It once opened on a strip of six sections (Today, Seasons, Occasions,
 //  Types, Learn, Saved) with the first screen a chart of the day's hours:
@@ -44,8 +47,6 @@ import SwiftUI
 struct ChantLibraryView: View {
 
     @Environment(AppRouter.self) private var router
-
-    @State private var searching = false
 
     private var player = ChantPlayer.shared
     private var shelf = ChantShelfStore.shared
@@ -70,57 +71,13 @@ struct ChantLibraryView: View {
     var body: some View {
         ZStack {
             AppColors.appGradient.ignoresSafeArea()
-
-            // The library stays where it is while the search stands over
-            // it, hidden, so Cancel comes back to the same place
-            ZStack {
-                library
-                    .opacity(searching ? 0 : 1)
-                    .allowsHitTesting(!searching)
-                    .accessibilityHidden(searching)
-                if searching {
-                    ChantSearchView(
-                        isTabRoot: isTabRoot,
-                        close: { withAnimation(Motion.crossfade) { searching = false } },
-                        open: openChant
-                    )
-                    .transition(.opacity)
-                }
-            }
-            .animation(Motion.crossfade, value: searching)
+            library
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {
-            if !searching {
-                if !isTabRoot {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        ChantBackButton()
-                    }
-                }
-                ToolbarItem(placement: .principal) {
-                    VStack(spacing: 1) {
-                        Text("Chant")
-                            .font(AppFonts.titleFont(19))
-                            .foregroundColor(AppColors.cream)
-                        Text("\(ChantCatalog.all.count) recordings")
-                            .font(AppFonts.readingItalicFont(12))
-                            .foregroundColor(AppColors.textSecondary)
-                    }
-                    .accessibilityElement(children: .combine)
-                    .accessibilityAddTraits(.isHeader)
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        withAnimation(Motion.crossfade) { searching = true }
-                    } label: {
-                        AppIcon("ph-magnifying-glass", size: 19)
-                            .foregroundColor(AppColors.gold)
-                            .frame(width: 44, height: 44)
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(QuietGlyphButtonStyle())
-                    .accessibilityLabel("Search the Chant Library")
-                    .accessibilityHint("Find a chant by its name, its words or the prayer it sings")
+            if !isTabRoot {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    ChantBackButton()
                 }
             }
         }
@@ -132,12 +89,16 @@ struct ChantLibraryView: View {
     private var library: some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 40) {
-                tiles
-                    .padding(.horizontal, 18)
-
-                if let antiphon = ChantCatalog.antiphonOfTheSeason() {
-                    shelfSection("Tonight") { tonight(antiphon) }
+                VStack(spacing: 22) {
+                    PageSearchHead(
+                        title: "Chant",
+                        count: "\(ChantCatalog.all.count) recordings",
+                        origin: .chant,
+                        hint: "Find a chant, a prayer or a mystery, chants first"
+                    )
+                    tiles
                 }
+                .padding(.horizontal, 18)
 
                 if !played.isEmpty {
                     shelfSection("Played lately") { playedLately }
@@ -289,73 +250,6 @@ struct ChantLibraryView: View {
         .accessibilityAddTraits(.isButton)
     }
 
-    // MARK: - Tonight
-
-    /// Tonight's song to Mary as one wide card: its painting, its names
-    /// and length, and LISTEN. The card opens the chant; the disc sings it.
-    private func tonight(_ chant: Chant) -> some View {
-        HStack(spacing: 0) {
-            ChantThumbnail(name: Self.tonightPainting(for: chant), size: 150, radius: 0)
-                .accessibilityHidden(true)
-
-            VStack(alignment: .leading, spacing: 4) {
-                Text("SONG TO MARY")
-                    .font(AppFonts.labelFont(9.5))
-                    .tracking(2.2)
-                    .foregroundColor(AppColors.gold)
-                Text(chant.latinTitle)
-                    .font(AppFonts.titleFont(20))
-                    .foregroundColor(AppColors.cream)
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.8)
-                Text("\(chant.englishTitle) · \(chant.durationLabel)")
-                    .font(AppFonts.readingItalicFont(14))
-                    .foregroundColor(AppColors.textSecondary)
-                    .lineLimit(2)
-
-                HStack(spacing: 8) {
-                    ChantPlayDisc(
-                        isPlaying: player.isPlaying(chant),
-                        isLoading: player.current.id == chant.id && player.isLoading,
-                        size: 30,
-                        label: chant.spokenName
-                    ) {
-                        player.toggle(chant)
-                    }
-                    Text(player.isPlaying(chant) ? "PAUSE" : "LISTEN")
-                        .font(AppFonts.labelFont(10))
-                        .tracking(2)
-                        .foregroundColor(AppColors.gold)
-                        .accessibilityHidden(true)
-                }
-                .padding(.top, 2)
-            }
-            .padding(.horizontal, 16)
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .frame(height: 150)
-        .background(AppColors.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 18))
-        .overlay(
-            RoundedRectangle(cornerRadius: 18)
-                .strokeBorder(AppColors.gold.opacity(0.28), lineWidth: AppLine.hairline)
-        )
-        .contentShape(RoundedRectangle(cornerRadius: 18))
-        .onTapGesture { openChant(chant) }
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel("Tonight's song to Mary: \(chant.spokenName), \(ChantPlayer.spoken(chant.duration))")
-        .accessibilityAction(named: "Open the chant") { openChant(chant) }
-        .chantContextMenu(chant)
-        .padding(.horizontal, 18)
-    }
-
-    /// Tonight's painting: the chant's own where it has one, else the
-    /// night's
-    static func tonightPainting(for chant: Chant) -> String {
-        ChantLibraryData.paintings[chant.id]
-            ?? ChantCatalog.painting(subject: "hour_night", else: ChantCatalog.painting(for: chant))
-    }
-
     // MARK: - Played lately
 
     /// The three chants sung last, latest first
@@ -389,7 +283,7 @@ struct ChantLibraryView: View {
     // MARK: - Sung sets
 
     /// The occasions sung in order, then the sets the reader made, then a
-    /// door to the Sung Sets page, where a set is made and every set of
+    /// door to Sets of Chants, where a set is made and every set of
     /// the reader's stands, an empty or a changed one too. A set kept from
     /// an occasion stands under the occasion's own card.
     private var sungSets: some View {

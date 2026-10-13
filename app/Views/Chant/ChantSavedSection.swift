@@ -634,7 +634,7 @@ struct ChantSavedEmpty: View {
 // MARK: - ChantSavedSetCover
 
 /// One of the reader's sets as a square cover — its first chant's
-/// painting, as the library's Sung Sets draw it — over its name and how
+/// painting, as the library's Sets of Chants draw it — over its name and how
 /// many chants and minutes. It opens the set's page.
 struct ChantSavedSetCover: View {
     let set: ChantSet

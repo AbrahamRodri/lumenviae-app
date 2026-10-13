@@ -78,29 +78,33 @@ struct MainScreenSnapshotTests {
         ScreenSnapshot.assertScreen(view, named: "scriptural-rosary-page")
     }
 
-    // MARK: - Chant search
+    // MARK: - The one search
 
-    /// A Monday after Pentecost: the Salve Regina is the season's song
-    static let chantSearchDay = Calendar(identifier: .gregorian)
-        .date(from: DateComponents(year: 2026, month: 10, day: 12, hour: 12))!
-
-    private func chantSearch(_ query: String) -> some View {
-        ZStack {
+    /// What "salve" finds, drawn as the search page draws it under its
+    /// field: the chips, the best match and the sections. The page itself
+    /// fetches the meditation sets, so it is drawn from its parts.
+    private func appSearch(_ query: String, from origin: AppSearch.Origin) -> some View {
+        let results = AppSearch.results(for: query, from: origin)
+        return ZStack(alignment: .top) {
             AppColors.appGradient.ignoresSafeArea()
-            ChantSearchView(today: Self.chantSearchDay, query: query, close: {}, open: { _ in })
+            VStack(spacing: 0) {
+                AppSearchChips(results: results, active: results.kinds.first) { _ in }
+                    .padding(.top, 12)
+                ScrollView {
+                    AppSearchResultsView(results: results, query: query, openPage: { _ in }, onSectionTop: { _, _ in })
+                        .padding(.horizontal, 20)
+                        .padding(.top, 20)
+                }
+            }
         }
     }
 
-    @Test func chantSearchStart() {
-        ScreenSnapshot.assertScreen(chantSearch(""), named: "chant-search-start")
+    @Test func searchFromPrayers() {
+        ScreenSnapshot.assertScreen(appSearch("salve", from: .prayers), named: "search-from-prayers")
     }
 
-    @Test func chantSearchResults() {
-        ScreenSnapshot.assertScreen(chantSearch("salve"), named: "chant-search-results")
-    }
-
-    @Test func chantSearchNothing() {
-        ScreenSnapshot.assertScreen(chantSearch("zebra"), named: "chant-search-nothing")
+    @Test func searchFromChant() {
+        ScreenSnapshot.assertScreen(appSearch("salve", from: .chant), named: "search-from-chant")
     }
 
     // MARK: - The Prayer Book
