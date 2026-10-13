@@ -101,7 +101,6 @@ struct ChantSetPage: View {
                 }
                 .modifier(ChantSavedScrollReading(scroll: scroll))
                 .topChromeFade()
-                .modifier(ChantSetPlayerRoom())
             } else {
                 // A set deleted, or an id no build knows: the page says so
                 // rather than stand empty
@@ -785,23 +784,6 @@ private struct ChantSetBarGround: ViewModifier {
                 .frame(minWidth: 44, minHeight: 44)
                 .contentShape(Rectangle())
         }
-    }
-}
-
-// MARK: - Room for the player
-
-/// Room at the foot of the page for the chant player while it stands
-/// there, as the shelves keep it, so the last row is never under it
-private struct ChantSetPlayerRoom: ViewModifier {
-    @State private var bottomInset: CGFloat = 0
-
-    func body(content: Content) -> some View {
-        content
-            .safeAreaPadding(
-                .bottom,
-                ChantSavedPage.playerRoom(playerActive: ChantPlayer.shared.isActive, bottomInset: bottomInset)
-            )
-            .onGeometryChange(for: CGFloat.self) { $0.safeAreaInsets.bottom } action: { bottomInset = $0 }
     }
 }
 
