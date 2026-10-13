@@ -517,7 +517,7 @@ struct ExploreView: View {
             LibraryEntry(icon: "ph-scroll", title: "The Devotion in Summary",
                          matchText: "true devotion summary marks false devotions montfort", route: .trueDevotion) { router.push(.trueDevotion) },
             LibraryEntry(icon: "ph-book-open", title: "Spiritual Reading",
-                         matchText: "spiritual reading books imitation of christ story of a soul confessions augustine dolorous passion emmerich therese kempis library") { router.push(.spiritualReading) },
+                         matchText: "spiritual reading books imitation of christ story of a soul confessions augustine therese kempis library") { router.push(.spiritualReading) },
             // The Rosary's two forms beside the meditation sets, found by
             // name and opening the day's mysteries' page, where they stand
             // under OTHER WAYS TO PRAY with the sets beneath

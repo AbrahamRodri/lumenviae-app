@@ -150,48 +150,6 @@ enum LibraryCatalog {
             ]
         ),
 
-        // Emmerich's visions, in the Burns & Lambert English. Two
-        // corrections here matter. The nine MEDITATIONS are the Last
-        // Supper — the Holy Thursday half of the book, fifty thousand
-        // characters of it — and the old rules discarded every one.
-        // And with nothing after Chapter LXVI matching the chapter
-        // pattern, that chapter used to swallow the Appendix, the words
-        // "THE END.", and twenty footnotes: eighty-eight per cent of
-        // what it showed the reader was not the chapter.
-        //
-        // Cut this way the book is "To the Reader", nine Meditations,
-        // the Passion's own Introduction, and Chapters I through LXVI —
-        // seventy-seven units, which is the recording's first
-        // seventy-seven tracks, in order. The editorial life of
-        // Emmerich that opens the volume is left out; `startPattern`
-        // steps over it.
-        LibraryBookInfo(
-            id: "dolorous-passion",
-            title: "The Dolorous Passion",
-            author: "Anne Catherine Emmerich",
-            blurb: "A nun's visions, seen in prayer, of the suffering and death of Jesus.",
-            gutenbergID: 10866,
-            librivoxID: 13588,
-            trackMapping: .sequential(offset: 0),
-            parsing: LibraryParsingRules(
-                // "INTRODUCTION." with its period is the Passion's own;
-                // the bare "INTRODUCTION" far above it is the editor's
-                // life of Emmerich, and startPattern steps over that.
-                chapterPattern:
-                    #"^(TO THE READER|MEDITATION [IVXLC]+\.|INTRODUCTION\.|CHAPTER [IVXLC]+\.)$"#,
-                startPattern: #"^TO THE READER$"#,
-                stopPattern: #"^APPENDIX\.$"#,
-                // Nine of this edition's titles are set as two blocks a
-                // single blank line apart.
-                titleRunsToBlankGap: true
-            ),
-            // Gutenberg's transcription heads the sixty-first chapter
-            // "CHAPTER LVI." The printed book, the chapters either side
-            // of it, and LibriVox's own track all say LXI; left as it
-            // stands the ledger lists LVI twice and never lists LXI.
-            headingOverrides: [71: "Chapter LXI"]
-        ),
-
         // The 1852 Dunigan translation, cut into the units the printed
         // book has: the Introduction; Part I's twenty-two sections
         // (each chapter of the Salve Regina commentary in its sections,
@@ -236,31 +194,6 @@ enum LibraryCatalog {
             // The subtitle the feast meditations are cut at names only
             // the first of the seven; the unit holds them all
             headingOverrides: [54: "Meditations for the Feasts of Mary"]
-        ),
-
-        // Ella McMahon's translation of the Ramière edition, Book First
-        // (nine chapters), Book Second (twelve) and Book Third (twelve):
-        // thirty-three chapters, each headed "_CHAPTER I._" in
-        // Gutenberg's italics with its title on the lines beneath, some
-        // of those titles a hundred and eighty characters long. The
-        // appendix of letters by Surin, Bossuet and St. Francis de Sales
-        // is not Caussade's and ends the book. No complete recording of
-        // this translation is on LibriVox.
-        LibraryBookInfo(
-            id: "abandonment-to-divine-providence",
-            title: "Abandonment to Divine Providence",
-            author: "Jean-Pierre de Caussade",
-            translator: "Ella McMahon",
-            blurb:
-                "How to find God's will in the duty of each moment, and rest in it. Short chapters for anxious people.",
-            gutenbergID: 52057,
-            parsing: LibraryParsingRules(
-                chapterPattern: #"^_?CHAPTER [IVXLC]+\._?$"#,
-                partPattern: #"^Book (First|Second|Third)\.$"#,
-                startPattern: #"^Book First\.$"#,
-                stopPattern: #"^APPENDIX\.$"#,
-                maximumTitleLength: 220
-            )
         ),
 
         // The Fleming H. Revell edition (New York, 1895): the editor's
