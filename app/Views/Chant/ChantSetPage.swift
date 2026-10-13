@@ -117,7 +117,7 @@ struct ChantSetPage: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) { ChantBackButton() }
+            ToolbarItem(placement: .navigationBarLeading) { GoldBackButton() }
             if content != nil {
                 if case .occasion(let id) = subject, let occasion = ChantOccasion.occasion(id) {
                     ToolbarItem(placement: .navigationBarTrailing) { keepButton(occasion) }

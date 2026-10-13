@@ -89,7 +89,9 @@ struct ChantCatalogIndexTests {
 
     @Test func foldingSetsCaseAccentsAndLigaturesAside() {
         #expect(SearchText.fold("Regína Cæli") == "regina caeli")
-        #expect(SearchText.fold("CŒLI") == "coeli")
+        // Heaven's two spellings fold alike, ligature or none
+        #expect(SearchText.fold("CŒLI") == "caeli")
+        #expect(SearchText.fold("Regina Coeli") == SearchText.fold("Regína Cæli"))
         #expect(SearchText.fold("Kýrie") == "kyrie")
         // Nothing is trimmed or dropped, so a match maps back to the words
         #expect(SearchText.fold(" Ave ") == " ave ")

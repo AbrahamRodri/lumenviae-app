@@ -586,9 +586,7 @@ final class ChantShelfStore {
             let present = Set(values.map { $0.entryKey })
             stored[key] = storedForms.filter { present.contains($0.key) }
         }
-        let write = ListWrite(key: key) {
-            Self.encode(values, keeping: kept, storedForms: storedForms)
-        }
+        let write = ListWrite(key: key, values: values, kept: kept, storedForms: storedForms)
         switch writes {
         case .immediately:
             write.perform(on: defaults)
@@ -626,7 +624,8 @@ final class ChantShelfStore {
         let writes = Array(gathered.values)
         gathered = [:]
         let defaults = self.defaults
-        let work = { for write in writes { write.perform(on: defaults) } }
+        // Sendable, so it is no main-actor closure run on the write queue
+        let work: @Sendable () -> Void = { for write in writes { write.perform(on: defaults) } }
         if waiting {
             Self.writeQueue.sync(execute: work)
         } else if !writes.isEmpty {
@@ -634,14 +633,29 @@ final class ChantShelfStore {
         }
     }
 
-    /// A list's write, ready to be done anywhere: its data is worked out
-    /// from values taken when it was asked for
-    private struct ListWrite: @unchecked Sendable {
+    /// A list's write, ready to be done anywhere: its data is worked out,
+    /// off the main actor, from values taken when it was asked for. The
+    /// values are plain entries and the stored forms decoded JSON, copied
+    /// in and never touched again, which is what makes it safe to send.
+    private nonisolated struct ListWrite: @unchecked Sendable {
         let key: String
-        let data: () -> Data?
+        private let data: @Sendable () -> Data?
+
+        init<T: ShelfEntry>(key: String, values: [T], kept: [Any], storedForms: [String: [String: Any]]) {
+            self.key = key
+            let taken = Taken(values: values, kept: kept, storedForms: storedForms)
+            data = { ChantShelfStore.encode(taken.values, keeping: taken.kept, storedForms: taken.storedForms) }
+        }
 
         func perform(on defaults: UserDefaults) {
             if let data = data() { defaults.set(data, forKey: key) }
+        }
+
+        /// What the write is made from, carried to the write queue
+        private struct Taken<T: ShelfEntry>: @unchecked Sendable {
+            let values: [T]
+            let kept: [Any]
+            let storedForms: [String: [String: Any]]
         }
     }
 

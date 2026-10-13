@@ -61,8 +61,14 @@ struct PrayerDeck: Equatable {
     /// The orders that say each of `prayerIDs` on `date`, by order id, in
     /// the book's order of the orders
     static func ordersSaying(_ prayerIDs: [String], on date: Date) -> [String: [String]] {
-        let wanted = Set(prayerIDs)
-        return PrayerBook.ordersSaying(on: date).filter { wanted.contains($0.key) }
+        // Looked up by the deck's prayers, not filtered from every prayer
+        // the book's orders say
+        let saying = PrayerBook.ordersSaying(on: date)
+        var found: [String: [String]] = [:]
+        for id in prayerIDs where found[id] == nil {
+            if let orders = saying[id] { found[id] = orders }
+        }
+        return found
     }
 
     private static func topic(_ chapter: PrayerBookChapter, for prayerID: String, opensItsPage: Bool) -> PrayerDeck {

@@ -53,7 +53,7 @@ struct ChantLibraryRow: View {
                 isPlaying: sounding,
                 isLoading: player.current.id == chant.id && player.isLoading,
                 size: 34,
-                label: chant.spokenName
+                label: chant.spokenNameAndSetting
             ) {
                 player.toggle(chant)
             }
@@ -88,7 +88,7 @@ struct ChantLibraryRow: View {
             }
             .buttonStyle(.plain)
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel("\(chant.latinTitle), \(subtitle), \(ChantPlayer.spoken(chant.duration))")
+            .accessibilityLabel("\(chant.latinTitle), \(subtitle), \(chant.spokenLength)")
             .accessibilityHint("Opens the chant with its sheet music")
             .accessibilityAddTraits(.isButton)
         }
@@ -177,6 +177,12 @@ private struct ChantContextMenu: ViewModifier {
 // MARK: - Spoken rows
 
 extension Chant {
+    /// How long its recording plays, said in words and rounded as its
+    /// label is, so VoiceOver says 1 minute 37 seconds beside "1:37"
+    var spokenLength: String {
+        ChantPlayer.spoken(duration.rounded())
+    }
+
     /// A chant in a set as VoiceOver says it: "Ave Maria, 10 times, Hail
     /// Mary, 3 minutes 20 seconds"
     func spokenEntry(times: Int, duration: TimeInterval) -> String {

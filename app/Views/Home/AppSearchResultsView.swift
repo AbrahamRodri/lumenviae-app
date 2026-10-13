@@ -339,7 +339,11 @@ struct AppSearchBestCard: View {
         case .prayer(let prayer): return prayer.latinTitle
         case .topic(let chapter): return PrayerBookView.prayerCount(chapter.prayerIDs.count)
         case .order(let order): return order.occasion
-        case .chant(let chant): return "\(chant.englishTitle) · \(chant.durationLabel)"
+        // The setting where neither title says it, as the rows beneath
+        // say theirs: the two Salve Reginas are told apart
+        case .chant(let chant):
+            return [chant.englishTitle, chant.settingMidLine, chant.durationLabel].compactMap { $0 }
+                .joined(separator: " · ")
         case .mysteries(let category): return category.subtitle
         case .mystery: return nil
         case .reading(_, let reading): return reading.detail
@@ -361,20 +365,24 @@ struct AppSearchBestCard: View {
                     isPlaying: player.isPlaying(chant),
                     isLoading: player.current.id == chant.id && player.isLoading,
                     size: 34,
-                    label: chant.spokenName
+                    label: chant.spokenNameAndSetting
                 ) {
                     player.toggle(chant)
                 }
                 // The word is the disc's too: a tap on it plays, where it
-                // once fell on nothing
-                Text(player.isPlaying(chant) ? "PAUSE" : "LISTEN")
-                    .font(AppFonts.labelFont(10))
-                    .tracking(2)
-                    .foregroundColor(AppColors.gold)
-                    .frame(minHeight: 44)
-                    .contentShape(Rectangle())
-                    .onTapGesture { player.toggle(chant) }
-                    .accessibilityHidden(true)
+                // once fell on nothing. VoiceOver has the disc.
+                Button {
+                    player.toggle(chant)
+                } label: {
+                    Text(player.isPlaying(chant) ? "PAUSE" : "LISTEN")
+                        .font(AppFonts.labelFont(10))
+                        .tracking(2)
+                        .foregroundColor(AppColors.gold)
+                        .frame(minHeight: 44)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(QuietGlyphButtonStyle())
+                .accessibilityHidden(true)
             }
         default:
             EmptyView()

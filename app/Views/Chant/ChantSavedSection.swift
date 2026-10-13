@@ -126,7 +126,7 @@ struct ChantSavedPage: View {
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                ChantBackButton()
+                GoldBackButton()
             }
             ToolbarItem(placement: .principal) {
                 Text("Your Chants")
@@ -357,7 +357,7 @@ struct ChantSavedSection: View {
                                 isPlaying: player.isPlaying(chant),
                                 isLoading: player.current.id == chant.id && player.isLoading,
                                 size: 26,
-                                label: chant.spokenName
+                                label: chant.spokenNameAndSetting
                             ) {
                                 player.toggle(chant)
                             }

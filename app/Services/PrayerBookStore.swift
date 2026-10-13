@@ -41,7 +41,7 @@ final class PrayerBookStore {
         praysAloud = defaults.object(forKey: Key.aloud) as? Bool ?? true
         hasChosenAloud = defaults.object(forKey: Key.aloud) != nil
         angelusBell = defaults.bool(forKey: Key.angelusBell)
-        recent = (defaults.stringArray(forKey: Key.recent) ?? []).compactMap(RecentPrayer.init(stored:))
+        recent = (defaults.stringArray(forKey: Key.recent) ?? []).compactMap { RecentPrayer(stored: $0) }
     }
 
     // MARK: - Ribbons

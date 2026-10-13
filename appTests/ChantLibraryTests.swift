@@ -343,17 +343,25 @@ struct ChantLibraryTests {
     // MARK: - Search
 
     @Test func searchFoldsAccentsAndLigatures() {
-        #expect(ChantSearch.fold("Cæli") == "caeli")
-        #expect(ChantSearch.fold("Regína") == "regina")
-        // The two settings of a work sung for one prayer stand as one work
-        let works = ChantSearch.works(singingPrayerMatching: ChantSearch.fold("hail, holy queen"))
-        let salve = works.first { $0.chants.first?.id == "salve_regina_simple" }
-        #expect(salve?.chants.map(\.id) == ["salve_regina_simple", "salve_regina_solemn"])
+        #expect(SearchText.fold("Cæli") == "caeli")
+        #expect(SearchText.fold("Regína") == "regina")
+        // The two settings of a work sung for one prayer stand together
+        let chants = ChantSearch.chants(singingPrayerMatching: SearchText.needle("hail, holy queen")).map(\.id)
+        let salve = chants.drop { $0 != "salve_regina_simple" }.prefix(2)
+        #expect(Array(salve) == ["salve_regina_simple", "salve_regina_solemn"])
     }
 
     @Test func aPrayerFindsTheChantThatSingsIt() {
-        let works = ChantSearch.works(singingPrayerMatching: ChantSearch.fold("glory"))
-        #expect(works.contains { $0.chants.contains { $0.id == "gloria_patri" } })
+        let chants = ChantSearch.chants(singingPrayerMatching: SearchText.needle("glory"))
+        #expect(chants.contains { $0.id == "gloria_patri" })
+    }
+
+    @Test func aChantIsFoundByItsWordsOncePerChant() {
+        let chants = ChantSearch.chants(withWordsMatching: SearchText.needle("spes nostra")).map(\.id)
+        #expect(chants.contains("salve_regina_simple"))
+        #expect(Set(chants).count == chants.count)
+        // Too short to search the words by
+        #expect(ChantSearch.chants(withWordsMatching: "sa").isEmpty)
     }
 
     // MARK: - A tap on a chant
@@ -372,11 +380,8 @@ struct ChantLibraryTests {
             #expect(ChantTap.route(to: chant) == .chant(id: chant.id))
         }
 
-        let hits = ChantSearch.wordHits(matching: ChantSearch.fold("salve"))
-        let timed = try #require(hits.first { $0.line != nil })
-        let untimed = ChantSearch.WordHit(id: "b", chant: timed.chant, snippet: "Salve", line: nil, start: nil)
-        #expect(ChantTap.route(to: timed.chant) == .chant(id: timed.chant.id))
-        #expect(ChantTap.route(to: untimed.chant) == ChantTap.route(to: timed.chant))
+        let found = try #require(ChantSearch.chants(withWordsMatching: SearchText.needle("salve")).first)
+        #expect(ChantTap.route(to: found) == .chant(id: found.id))
     }
 
     @Test func aSettingTheTitleAlreadySaysIsNotSaidAgain() throws {
@@ -422,8 +427,8 @@ struct ChantLibraryTests {
     }
 
     @Test func theWordsLoseTheirMarks() {
-        #expect(ChantSearch.clean("℣. Ora pro nobis, sancta Dei Génitrix.") == "Ora pro nobis, sancta Dei Génitrix.")
-        #expect(ChantSearch.clean("[Let us pray.]") == "")
+        #expect(SearchText.clean("℣. Ora pro nobis, sancta Dei Génitrix.") == "Ora pro nobis, sancta Dei Génitrix.")
+        #expect(SearchText.clean("[Let us pray.]") == "")
     }
 
     // MARK: - The shelf

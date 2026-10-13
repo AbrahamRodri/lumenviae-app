@@ -160,14 +160,7 @@ struct BookPrayerView: View {
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: { router.pop() }) {
-                    HStack(spacing: 6) {
-                        AppIcon("ph-caret-left", size: 14)
-                        Text("Back")
-                            .font(AppFonts.bodyFont(16))
-                    }
-                    .foregroundColor(AppColors.gold)
-                }
+                GoldBackButton()
             }
             if prayer?.hasLatin == true {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -595,12 +588,12 @@ private struct DealDeck: View {
         }
 
         if reduceMotion {
-            withAnimation(.easeIn(duration: 0.14)) {
+            withAnimation(Motion.pageFadeOut) {
                 fade = 0
                 travel = 0
             } completion: {
                 done()
-                withAnimation(.easeOut(duration: 0.24)) { fade = 1 }
+                withAnimation(Motion.pageFadeIn) { fade = 1 }
             }
             return
         }

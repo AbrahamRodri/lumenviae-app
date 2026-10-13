@@ -55,6 +55,14 @@ enum Motion {
     /// went and nothing lands twice.
     static let pageTurn = Animation.timingCurve(0.33, 1, 0.68, 1, duration: 0.34)
 
+    /// A page put down in place (a prayer, a topic): out quickly, the
+    /// next put in its place unseen, `pageFadeIn` bringing it up. The
+    /// out and the in are named apart so every page turned in place
+    /// keeps the same beat; `pageFadeGap` is how long the swap waits.
+    static let pageFadeOut = Animation.easeIn(duration: 0.14)
+    static let pageFadeIn = Animation.easeOut(duration: 0.24)
+    static let pageFadeGap: Duration = .milliseconds(150)
+
     /// The design system's ease-out — cubic-bezier(0, 0, 0.58, 1) —
     /// for chrome that collapses, fades or slides as the page moves.
     /// Nothing springs past its mark.

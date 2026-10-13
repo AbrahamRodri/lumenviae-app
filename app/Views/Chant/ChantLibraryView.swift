@@ -77,7 +77,7 @@ struct ChantLibraryView: View {
         .toolbar {
             if !isTabRoot {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    ChantBackButton()
+                    GoldBackButton()
                 }
             }
         }
@@ -205,9 +205,11 @@ struct ChantLibraryView: View {
         }
     }
 
-    /// The chant sounding, else the one sung last
+    /// The chant sounding, else the one sung last. A chant that would not
+    /// play is neither: the mini player says it failed, and this tile
+    /// keeps the last one really sung.
     private var lastChant: Chant? {
-        if player.isActive { return player.current }
+        if player.holdsAChant { return player.current }
         return shelf.recent.lazy.compactMap { ChantCatalog.chant($0.chantID) }.first
     }
 
@@ -382,33 +384,16 @@ struct ChantLibraryView: View {
     }
 }
 
-// MARK: - ChantBackButton
-
-/// The gold Back every library page draws in its bar
-struct ChantBackButton: View {
-    @Environment(AppRouter.self) private var router
-
-    var body: some View {
-        Button(action: { router.pop() }) {
-            HStack(spacing: 6) {
-                AppIcon("ph-caret-left", size: 14)
-                Text("Back")
-                    .font(AppFonts.bodyFont(16))
-            }
-            .foregroundColor(AppColors.gold)
-        }
-    }
-}
-
 // MARK: - ChantSoundingBars
 
 /// Three small bars beside whatever is sounding, as a music app marks the
-/// song playing. Still under Reduce Motion.
+/// song playing. Still under Reduce Motion, and in a snapshot.
 struct ChantSoundingBars: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.drawsMotionAtRest) private var drawsMotionAtRest
 
     var body: some View {
-        if reduceMotion {
+        if reduceMotion || drawsMotionAtRest {
             bars([6, 12, 8])
         } else {
             PhaseAnimator([0, 1, 2]) { phase in
@@ -481,7 +466,7 @@ struct ChantSongRow: View {
             .buttonStyle(.plain)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(
-                "\(chant.spokenName), \(sounding ? "playing now" : ChantPlayer.spoken(chant.duration))"
+                "\(chant.spokenName), \(sounding ? "playing now" : chant.spokenLength)"
             )
             .accessibilityHint("Opens the chant with its sheet music")
             .accessibilityAddTraits(.isButton)
@@ -513,9 +498,11 @@ struct ChantSongRow: View {
             } label: {
                 AppIcon("ph-dots-three", size: 18)
                     .foregroundColor(AppColors.textSecondary)
-                    .frame(width: 36, height: 44)
+                    .frame(width: 44, height: 44)
                     .contentShape(Rectangle())
             }
+            // The full 44 points to touch, the glyph where it stood
+            .padding(.horizontal, -4)
             .accessibilityLabel("More for \(chant.latinTitle)")
         }
         .overlay(alignment: .bottom) {
@@ -538,30 +525,38 @@ struct ChantSquareCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            ChantThumbnail(name: ChantCatalog.painting(for: chant), size: 142, radius: 16)
-                .overlay(alignment: .bottomLeading) {
-                    Text(chant.durationLabel)
-                        .font(AppFonts.readingFont(12))
-                        .foregroundColor(AppColors.cream)
-                        .monospacedDigit()
-                        .padding(.horizontal, 7)
-                        .padding(.vertical, 2)
-                        .background(Capsule().fill(AppColors.background.opacity(0.78)))
-                        .padding(8)
-                        .accessibilityHidden(true)
+            // The painting opens the chant as its names do; its play disc,
+            // laid over it, plays. VoiceOver has the names' button.
+            Button(action: open) {
+                ChantThumbnail(name: ChantCatalog.painting(for: chant), size: 142, radius: 16)
+                    .contentShape(RoundedRectangle(cornerRadius: 16))
+            }
+            .buttonStyle(.plain)
+            .accessibilityHidden(true)
+            .overlay(alignment: .bottomLeading) {
+                Text(chant.durationLabel)
+                    .font(AppFonts.readingFont(12))
+                    .foregroundColor(AppColors.cream)
+                    .monospacedDigit()
+                    .padding(.horizontal, 7)
+                    .padding(.vertical, 2)
+                    .background(Capsule().fill(AppColors.background.opacity(0.78)))
+                    .padding(8)
+                    .accessibilityHidden(true)
+                    // A tap on the length falls to the painting beneath
+                    .allowsHitTesting(false)
+            }
+            .overlay(alignment: .bottomTrailing) {
+                ChantPlayDisc(
+                    isPlaying: player.isPlaying(chant),
+                    isLoading: player.current.id == chant.id && player.isLoading,
+                    size: 30,
+                    label: chant.spokenNameAndSetting
+                ) {
+                    player.toggle(chant)
                 }
-                .overlay(alignment: .bottomTrailing) {
-                    ChantPlayDisc(
-                        isPlaying: player.isPlaying(chant),
-                        isLoading: player.current.id == chant.id && player.isLoading,
-                        size: 30,
-                        label: chant.spokenName
-                    ) {
-                        player.toggle(chant)
-                    }
-                    .padding(2)
-                }
-                .onTapGesture(perform: open)
+                .padding(2)
+            }
 
             Button(action: open) {
                 VStack(alignment: .leading, spacing: 2) {
@@ -580,7 +575,7 @@ struct ChantSquareCard: View {
             }
             .buttonStyle(.plain)
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel("\(chant.spokenName), \(ChantPlayer.spoken(chant.duration))")
+            .accessibilityLabel("\(chant.spokenName), \(chant.spokenLength)")
             .accessibilityHint("Opens the chant with its sheet music")
             .accessibilityAddTraits(.isButton)
         }
@@ -632,19 +627,31 @@ struct ChantSetCard: View {
         let singing = player.isSinging(queue)
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 12) {
-                ChantThumbnail(name: painting, size: 76, radius: 12)
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(title)
-                        .font(AppFonts.readingFont(16.5))
-                        .foregroundColor(singing ? AppColors.goldLight : AppColors.cream)
-                        .lineLimit(2)
-                        .fixedSize(horizontal: false, vertical: true)
-                    Text(Self.summary(count: chants.count, duration: duration))
-                        .font(AppFonts.readingFont(13))
-                        .foregroundColor(AppColors.textSecondary)
-                        .monospacedDigit()
+                // The set's door, a button VoiceOver reads as one; the
+                // rest of the card opens it to a tap as well
+                Button(action: open) {
+                    HStack(spacing: 12) {
+                        ChantThumbnail(name: painting, size: 76, radius: 12)
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(title)
+                                .font(AppFonts.readingFont(16.5))
+                                .foregroundColor(singing ? AppColors.goldLight : AppColors.cream)
+                                .lineLimit(2)
+                                .fixedSize(horizontal: false, vertical: true)
+                            Text(Self.summary(count: chants.count, duration: duration))
+                                .font(AppFonts.readingFont(13))
+                                .foregroundColor(AppColors.textSecondary)
+                                .monospacedDigit()
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .contentShape(Rectangle())
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
+                .buttonStyle(.plain)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("\(title), \(Self.summary(count: chants.count, duration: duration))")
+                .accessibilityHint("Opens the set")
+                .accessibilityAddTraits(.isButton)
                 ChantPlayDisc(
                     isPlaying: singing && player.isGoingOn,
                     isLoading: false,
@@ -685,7 +692,7 @@ struct ChantSetCard: View {
                         .frame(height: AppLine.hairline)
                 }
                 .accessibilityElement(children: .ignore)
-                .accessibilityLabel("\(index + 1). \(chant.spokenName), \(ChantPlayer.spoken(chant.duration))")
+                .accessibilityLabel("\(index + 1). \(chant.spokenName), \(chant.spokenLength)")
                 .accessibilityAddTraits(.isButton)
                 .accessibilityHint("Opens the chant")
             }
@@ -711,10 +718,9 @@ struct ChantSetCard: View {
                 .strokeBorder(AppColors.gold.opacity(0.24), lineWidth: AppLine.hairline)
         )
         .contentShape(RoundedRectangle(cornerRadius: 18))
+        // A tap between the doors opens the set too
         .onTapGesture(perform: open)
         .accessibilityElement(children: .contain)
-        .accessibilityLabel("\(title), \(Self.summary(count: chants.count, duration: duration))")
-        .accessibilityAction(named: "Open the set") { open() }
     }
 
     /// "4 chants · 7 min": the length of its recordings, never a guess

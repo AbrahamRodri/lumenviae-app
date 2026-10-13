@@ -150,6 +150,13 @@ struct Chant: Identifiable, Hashable {
     /// Queen". A Latin title is never heard alone.
     var spokenName: String { "\(latinTitle), \(englishTitle)" }
 
+    /// Its names with the setting where neither says it, for a control
+    /// that must tell two settings of one work apart: "Salve Regina, Hail,
+    /// Holy Queen, simple melody"
+    var spokenNameAndSetting: String {
+        settingMidLine.map { "\(spokenName), \($0)" } ?? spokenName
+    }
+
     /// The English name with the Latin after it, where one line holds
     /// both: "Hail, Holy Queen (Salve Regina)"
     var englishWithLatin: String { "\(englishTitle) (\(latinTitle))" }

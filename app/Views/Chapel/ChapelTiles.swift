@@ -2343,10 +2343,8 @@ extension TodayInChurch {
 
     /// Whatever its case or accent: the missal prints "súper" and "In"
     private static func leavesHanging(_ word: Substring) -> Bool {
-        let bare = word
-            .folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil)
+        let bare = SearchText.fold(String(word))
             .trimmingCharacters(in: .punctuationCharacters)
-            .lowercased()
         return hangingWords.contains(bare)
     }
 }

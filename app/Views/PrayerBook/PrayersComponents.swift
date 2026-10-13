@@ -4,10 +4,9 @@
 //
 //  The Prayers page's pieces, drawn as the Chant page draws its own (the
 //  "Prayers Tab Redesign", option A, Oct 2026): a shelf's heading with
-//  SEE ALL, a shortcut tile, the card for this hour, a row with its
-//  painting, a square card for a shelf that scrolls sideways; then the
-//  ruled row the lists share, a saved prayer's card, an occasion's row,
-//  and the cards a search names a topic or an order with.
+//  SEE ALL, a painting cut square, a shortcut tile, the card for this
+//  hour, a row with its painting, and a square card for a shelf that
+//  scrolls sideways.
 //
 //  Cards here are filled with the card ground, as the Chant page's are:
 //  they are doors that stand apart from the page. The page has no filled
@@ -109,7 +108,10 @@ struct PrayersShortcutTile: View {
 
 /// The order for the hour it is as one wide card: its painting, NOW and
 /// the hour's name, the order's title and its line, and PRAY on an
-/// outlined disc. The card opens the order's page; the disc prays it.
+/// outlined disc. The card is one door, opening the order's page; PRAY
+/// stands over its foot as a control of its own, in room the door keeps
+/// for it, as on the search's best card. The card opened on a tap
+/// gesture once, which VoiceOver could not see as a button.
 struct PrayersNowCard: View {
     let order: PrayerOrder
     let now: Date
@@ -117,26 +119,55 @@ struct PrayersNowCard: View {
     let open: () -> Void
     let pray: () -> Void
 
+    private static let paintingWidth: CGFloat = 136
+
     var body: some View {
         let title = order.title(on: now)
-        let hour = PrayerBook.hourName(of: order, at: now).uppercased()
 
-        HStack(spacing: 0) {
+        ZStack(alignment: .bottomLeading) {
+            Button(action: open) { face(title: title) }
+                .buttonStyle(SacredCardButtonStyle())
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(
+                    "\(title), \(offered ? "prayed" : "the prayer for this hour"). \(PrayerBook.daySummary(of: order, on: now))"
+                )
+                .accessibilityHint("Shows its prayers")
+                .accessibilityAddTraits(.isButton)
+
+            prayButton(title: title)
+                .padding(.leading, Self.paintingWidth + 16)
+                .padding(.bottom, 6)
+        }
+        .fixedSize(horizontal: false, vertical: true)
+        .clipShape(RoundedRectangle(cornerRadius: 18))
+        .overlay(
+            RoundedRectangle(cornerRadius: 18)
+                .strokeBorder(AppColors.gold.opacity(0.28), lineWidth: AppLine.hairline)
+                .allowsHitTesting(false)
+        )
+        .animation(Motion.crossfade, value: order.id)
+    }
+
+    private func face(title: String) -> some View {
+        let hour = PrayerBook.hourName(of: order, at: now).uppercased()
+        let painting = PrayerBookPainting.hour(order, on: now)
+
+        return HStack(spacing: 0) {
             // The painting runs the card's height, which is the words'
             // where they need more than the card's 180 points
             GeometryReader { proxy in
                 ZStack {
                     PrayersPaintingThumb(
-                        painting: PrayerBookPainting.hour(order, on: now),
-                        width: 136,
+                        painting: painting,
+                        width: Self.paintingWidth,
                         height: max(proxy.size.height, 180)
                     )
-                    .id(PrayerBookPainting.hour(order, on: now).resolvedAsset)
+                    .id(painting.resolvedAsset)
                     .transition(.opacity)
                 }
                 .animation(Motion.crossfade, value: order.id)
             }
-            .frame(width: 136)
+            .frame(width: Self.paintingWidth)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(offered ? "\(hour) · PRAYED" : "NOW · \(hour)")
@@ -159,23 +190,8 @@ struct PrayersNowCard: View {
 
                 Spacer(minLength: 6)
 
-                Button(action: pray) {
-                    HStack(spacing: 10) {
-                        AppIcon("ph-play-fill", size: 11)
-                            .foregroundColor(AppColors.gold)
-                            .frame(width: 32, height: 32)
-                            .overlay(Circle().strokeBorder(AppColors.gold, lineWidth: 1.2))
-                            .haloGlow(AppColors.gold, radius: 10, intensity: 0.22)
-                        Text(offered ? "PRAY AGAIN" : "PRAY")
-                            .font(AppFonts.labelFont(10))
-                            .tracking(2)
-                            .foregroundColor(AppColors.gold)
-                    }
-                    .frame(minHeight: 44)
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(SacredCardButtonStyle())
-                .accessibilityLabel(offered ? "Pray \(title) again" : "Pray \(title)")
+                // PRAY's room: it stands over this, outside the door
+                Color.clear.frame(height: 44)
             }
             // At least the card's 180 points with its padding, and taller
             // where the words need it — a fixed height cut them short
@@ -186,19 +202,28 @@ struct PrayersNowCard: View {
             .padding(.bottom, 6)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .fixedSize(horizontal: false, vertical: true)
         .background(AppColors.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 18))
-        .overlay(
-            RoundedRectangle(cornerRadius: 18)
-                .strokeBorder(AppColors.gold.opacity(0.28), lineWidth: AppLine.hairline)
-        )
         .contentShape(RoundedRectangle(cornerRadius: 18))
-        .onTapGesture(perform: open)
-        .animation(Motion.crossfade, value: order.id)
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel("\(title), \(offered ? "prayed" : "the prayer for this hour")")
-        .accessibilityAction(named: "Show its prayers", open)
+    }
+
+    private func prayButton(title: String) -> some View {
+        Button(action: pray) {
+            HStack(spacing: 10) {
+                AppIcon("ph-play-fill", size: 11)
+                    .foregroundColor(AppColors.gold)
+                    .frame(width: 32, height: 32)
+                    .overlay(Circle().strokeBorder(AppColors.gold, lineWidth: 1.2))
+                    .haloGlow(AppColors.gold, radius: 10, intensity: 0.22)
+                Text(offered ? "PRAY AGAIN" : "PRAY")
+                    .font(AppFonts.labelFont(10))
+                    .tracking(2)
+                    .foregroundColor(AppColors.gold)
+            }
+            .frame(minHeight: 44)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(SacredCardButtonStyle())
+        .accessibilityLabel(offered ? "Pray \(title) again" : "Pray \(title)")
     }
 }
 
@@ -315,77 +340,5 @@ struct PrayersSquareCard: View {
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(title), \(note)")
         .accessibilityAddTraits(.isButton)
-    }
-}
-
-// MARK: - A saved prayer
-
-/// A prayer the reader keeps with a ribbon, standing on the page as a
-/// small outlined card the ribbon hangs from: its name, and the topic it
-/// belongs to. Every card is one height, so a row of them ends on one
-/// line: a long name takes three lines at most, a little smaller.
-struct SavedPrayerCard: View {
-    let prayer: BookPrayer
-    let action: () -> Void
-
-    private var store = PrayerBookStore.shared
-
-    private static let height: CGFloat = 132
-
-    init(prayer: BookPrayer, action: @escaping () -> Void) {
-        self.prayer = prayer
-        self.action = action
-    }
-
-    var body: some View {
-        let topic = PrayerBook.homeChapter(of: prayer.id)?.title
-
-        Button(action: action) {
-            VStack(alignment: .leading, spacing: 3) {
-                Text(prayer.listTitle)
-                    .font(AppFonts.readingFont(16))
-                    .foregroundColor(AppColors.cream)
-                    .multilineTextAlignment(.leading)
-                    .lineLimit(3)
-                    .minimumScaleFactor(0.75)
-
-                if let topic {
-                    Text(topic)
-                        .font(AppFonts.readingItalicFont(12))
-                        .foregroundColor(AppColors.textSecondary)
-                        .lineLimit(1)
-                }
-            }
-            .padding(.top, 40)
-            .padding(.horizontal, 12)
-            .padding(.bottom, 12)
-            .frame(maxWidth: .infinity, minHeight: Self.height, maxHeight: Self.height, alignment: .bottomLeading)
-            .overlay(
-                RoundedRectangle(cornerRadius: 14)
-                    .strokeBorder(AppColors.gold.opacity(0.28), lineWidth: AppLine.hairline)
-            )
-            // The ribbon the prayer was kept with, hung from the card's
-            // head as it hangs from the head of the prayer's page
-            .overlay(alignment: .topTrailing) {
-                RibbonMark(kept: true, width: 11, restLength: 30, keptLength: 38)
-                    .padding(.trailing, 14)
-                    .offset(y: -1)
-            }
-            .contentShape(RoundedRectangle(cornerRadius: 14))
-        }
-        .buttonStyle(SacredCardButtonStyle())
-        .contextMenu {
-            Button {
-                withAnimation(Motion.crossfade) { store.toggleRibbon(prayer.id) }
-            } label: {
-                Label("Remove from Saved", systemImage: "minus.circle")
-            }
-        }
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel([prayer.listTitle, topic].compactMap { $0 }.joined(separator: ", "))
-        .accessibilityAddTraits(.isButton)
-        .accessibilityAction(named: "Remove from Saved") {
-            withAnimation(Motion.crossfade) { store.toggleRibbon(prayer.id) }
-        }
     }
 }

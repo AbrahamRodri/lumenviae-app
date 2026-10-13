@@ -73,14 +73,7 @@ struct PrayerBookView: View {
                 .navigationBarBackButtonHidden(true)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
-                        Button(action: { router.pop() }) {
-                            HStack(spacing: 6) {
-                                AppIcon("ph-caret-left", size: 14)
-                                Text("Back")
-                                    .font(AppFonts.bodyFont(16))
-                            }
-                            .foregroundColor(AppColors.gold)
-                        }
+                        GoldBackButton()
                     }
                 }
         }
@@ -151,12 +144,15 @@ struct PrayerBookView: View {
             }
             .padding(.horizontal, 18)
 
-            everyday
+            PrayersEverydayShelf()
                 .padding(.horizontal, 18)
 
-            prayersToMary
+            // Its own view, handed the day: the season's song to Mary
+            // changes with the day, not the hour, so the hour's turn
+            // leaves the shelf alone
+            PrayersToMaryShelf(day: Calendar.current.startOfDay(for: now))
 
-            allTopics
+            PrayersAllTopics()
         }
     }
 
@@ -221,12 +217,22 @@ struct PrayerBookView: View {
         )
     }
 
-    // MARK: Everyday prayers
+    /// "11 prayers"
+    static func prayerCount(_ count: Int) -> String {
+        count == 1 ? "1 prayer" : "\(count) prayers"
+    }
+}
 
-    private var everyday: some View {
-        let prayers = Self.everydayIDs.compactMap { PrayerBook.prayer($0) }
+// MARK: - Everyday prayers
 
-        return VStack(alignment: .leading, spacing: 6) {
+/// The first prayers, a row each, SEE ALL to their topic
+private struct PrayersEverydayShelf: View {
+    @Environment(AppRouter.self) private var router
+
+    var body: some View {
+        let prayers = PrayerBookView.everydayIDs.compactMap { PrayerBook.prayer($0) }
+
+        VStack(alignment: .leading, spacing: 6) {
             PrayersShelfHeading(title: "Everyday Prayers") {
                 router.push(.prayerBookChapter(id: "first"))
             }
@@ -244,18 +250,25 @@ struct PrayerBookView: View {
             }
         }
     }
+}
 
-    // MARK: Prayers to Mary
+// MARK: - Prayers to Mary
 
-    /// The season's song to Mary first, then her best-known prayers, on a
-    /// shelf that scrolls sideways
-    private var prayersToMary: some View {
-        let antiphon = PrayerBook.antiphon(on: now)
+/// The season's song to Mary first, then her best-known prayers, on a
+/// shelf that scrolls sideways. Drawn for a day, so it is worked out
+/// again only when the day changes.
+private struct PrayersToMaryShelf: View {
+    let day: Date
+
+    @Environment(AppRouter.self) private var router
+
+    var body: some View {
+        let antiphon = PrayerBook.antiphon(on: day)
         let known = PrayerBook.bestKnownMarianIDs
-            .filter { $0 != antiphon.prayerID && !Self.everydayIDs.contains($0) }
+            .filter { $0 != antiphon.prayerID && !PrayerBookView.everydayIDs.contains($0) }
             .compactMap { PrayerBook.prayer($0) }
 
-        return VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 12) {
             PrayersShelfHeading(title: "Prayers to Mary") {
                 router.push(.prayerBookChapter(id: PrayerBook.ourLady.id))
             }
@@ -275,7 +288,8 @@ struct PrayerBookView: View {
                     ForEach(known) { prayer in
                         PrayersSquareCard(
                             title: prayer.listTitle,
-                            note: PrayerBook.englishNames[prayer.id] ?? Self.marianNotes[prayer.id] ?? PrayerBook.ourLady.title,
+                            note: PrayerBook.englishNames[prayer.id]
+                                ?? PrayerBookView.marianNotes[prayer.id] ?? PrayerBook.ourLady.title,
                             painting: .prayer(prayer.id)
                         ) {
                             router.push(.devotionPrayer(id: prayer.id))
@@ -286,14 +300,18 @@ struct PrayerBookView: View {
             }
         }
     }
+}
 
-    // MARK: All topics
+// MARK: - All topics
 
-    /// The topics under the part of the book each stands in, every part a
-    /// shelf of paintings that scrolls sideways, as Prayers to Mary does.
-    /// The orders once listed here as For an Occasion stand at the head of
-    /// their topics' pages.
-    private var allTopics: some View {
+/// The topics under the part of the book each stands in, every part a
+/// shelf of paintings that scrolls sideways, as Prayers to Mary does.
+/// The orders once listed here as For an Occasion stand at the head of
+/// their topics' pages. Nothing here changes with the hour or the day.
+private struct PrayersAllTopics: View {
+    @Environment(AppRouter.self) private var router
+
+    var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             PrayersShelfHeading(title: "All Topics")
                 .padding(.horizontal, 18)
@@ -314,7 +332,7 @@ struct PrayerBookView: View {
                                 ForEach(part.chapters) { chapter in
                                     PrayersSquareCard(
                                         title: chapter.title,
-                                        note: Self.prayerCount(chapter.prayerIDs.count),
+                                        note: PrayerBookView.prayerCount(chapter.prayerIDs.count),
                                         painting: .topic(chapter)
                                     ) {
                                         router.push(.prayerBookChapter(id: chapter.id))
@@ -327,11 +345,6 @@ struct PrayerBookView: View {
                 }
             }
         }
-    }
-
-    /// "11 prayers"
-    static func prayerCount(_ count: Int) -> String {
-        count == 1 ? "1 prayer" : "\(count) prayers"
     }
 }
 

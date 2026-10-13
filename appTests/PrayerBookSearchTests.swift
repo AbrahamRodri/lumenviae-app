@@ -251,6 +251,8 @@ private enum Reference {
             .replacingOccurrences(of: "Æ", with: "ae")
             .replacingOccurrences(of: "œ", with: "oe")
             .replacingOccurrences(of: "Œ", with: "oe")
+            // Heaven's older spelling, which the one fold reads alike
+            .replacingOccurrences(of: "coel", with: "cael")
     }
 
     private static func searchWords(_ text: String, asName: Bool = true) -> [String] {

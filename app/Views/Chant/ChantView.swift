@@ -755,7 +755,7 @@ private struct NowPlayingTransport: View {
                     isPlaying: player.holds(chant) && player.chantGoesOn,
                     isLoading: player.current.id == chant.id && player.isLoading,
                     size: 68,
-                    label: chant.spokenName
+                    label: chant.spokenNameAndSetting
                 ) {
                     player.toggle(chant)
                 }

@@ -4,8 +4,9 @@
 //
 //  How the app's searches read text: case and accents aside, and the
 //  ligatures the Latin is printed with written out, so "regina caeli"
-//  finds the Regina Cæli and "coeli" the Cœli. One rule, so a chant and
-//  a prayer are found by the same words.
+//  finds the Regina Cæli, and "coeli", the older spelling people still
+//  type, finds it too. One rule, so a chant, a prayer and everything
+//  else the one search finds are found by the same words.
 //
 
 import Foundation
@@ -13,14 +14,17 @@ import Foundation
 nonisolated enum SearchText {
 
     /// Case, accents and the ligatures aside: "Cæli" and "caeli" fold
-    /// alike. A character is never dropped, so a match in the folded text
-    /// can be traced back to the words as written.
+    /// alike, and so do "coeli" and "Cœli", the spelling of heaven older
+    /// books print and many still type ("Regina Coeli"). A character is
+    /// never dropped, so a match in the folded text can be traced back to
+    /// the words as written.
     static func fold(_ text: String) -> String {
         text.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil)
             .replacingOccurrences(of: "æ", with: "ae")
             .replacingOccurrences(of: "Æ", with: "ae")
             .replacingOccurrences(of: "œ", with: "oe")
             .replacingOccurrences(of: "Œ", with: "oe")
+            .replacingOccurrences(of: "coel", with: "cael")
     }
 
     /// A search as typed, folded and trimmed: what a title is searched for

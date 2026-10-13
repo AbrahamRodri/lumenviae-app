@@ -96,7 +96,7 @@ struct ChantAddRow: View {
             .contentShape(Rectangle())
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(
-                [chant.spokenName, chant.settingMidLine, ChantPlayer.spoken(chant.duration), ChantAddRing.spoken(count)]
+                [chant.spokenName, chant.settingMidLine, chant.spokenLength, ChantAddRing.spoken(count)]
                     .compactMap { $0 }
                     .joined(separator: ", ")
             )
