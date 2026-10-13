@@ -32,8 +32,6 @@ Generated from `sources.py` by `build_manifest.py`; edit there. Machine-readable
 | `occasion_before_bed` | (i) Chant Occasions 'Before Bed' (Compline chants) | Reuse hour_night (no separate file proposed) | — | — | — | — | unverified |
 | `seven_sorrows_finding` | The third sorrow, the loss of Jesus in the Temple (it borrowed joyful_finding) | The Finding of the Saviour in the Temple | William Holman Hunt (1827–1910) | 1854–60 | Birmingham Museum and Art Gallery | Public domain | verified |
 | `seven_sorrows_calvary` | The fifth sorrow, Mary at the foot of the Cross (it borrowed sorrowful_crucifixion) | Crucifixion Diptych | Rogier van der Weyden (c. 1399–1464) | c. 1460 | Philadelphia Museum of Art | Public domain | verified |
-| `glorious_pentecost` | The third Glorious Mystery (replaces a Pentecost whose painter could not be established) | The Pentecost | El Greco (1541–1614) | c. 1600 | Museo del Prado, Madrid | Public domain | verified |
-| `glorious_resurrection` | The first Glorious Mystery and the Glorious card on home (replaces Coypel's, bundled at 566×732) | The Resurrection of Christ | Annibale Carracci (1560–1609) | 1593 | Musée du Louvre, Paris | Public domain | verified |
 | `topic_first_prayers` | Prayer Book topic: The First Prayers | The Education of the Virgin | Bartolomé Esteban Murillo (1617–1682) | c. 1641 | Museo del Prado, Madrid | Public domain | verified |
 | `topic_daily_prayers` | Prayer Book topic: Daily Prayers | The Angelus | Jean-François Millet (1814–1875) | 1857–59 | Musée d'Orsay, Paris | Public domain | verified |
 | `topic_short_prayers` | Prayer Book topic: Short Prayers | Saint Francis in Meditation | Francisco de Zurbarán (1598–1664) | 1635–39 | The National Gallery, London | Public domain | verified |
@@ -63,8 +61,6 @@ Alternates and reasons:
 - `occasion_before_bed`: Same subject as Night Prayers; an alias saves ~500 KB. If a distinct picture is wanted: Gerrit van Honthorst / Jan Lievens candlelight devotional scenes.
 - `seven_sorrows_finding`: Mary's own part in the scene: she has found Him and holds Him, where Veronese's Christ among the Doctors (joyful_finding) shows the boy teaching and no mother.
 - `seven_sorrows_calvary`: Mary swooning into St John's arms beside the Cross: the sorrow is hers, where Velázquez's Christ Crucified (sorrowful_crucifixion) shows Him alone. Commons holds the diptych at 1195×1128, below the 1600 target, so it is pinned.
-- `glorious_pentecost`: Mary at the centre of the Apostles under the dove, the tongues of fire on every head; a known painter and a known museum, where the old file was an unidentified seventeenth-century picture.
-- `glorious_resurrection`: The risen Christ high in the picture over the sleeping guards, so the card's focal point (a fifth of the way down) still finds Him; Commons holds it at 1241×1700 against the old 566×732. *Alternate:* Carl Bloch, The Resurrection (1873), Commons at 1000×1400 only.
 - `topic_first_prayers`: St Anne teaching her daughter at her knee: the prayers learned first, from a mother.
 - `topic_daily_prayers`: Two field-workers stopping at the bell: the day kept by its prayers.
 - `topic_short_prayers`: A single upturned face and a word of prayer: a breath of prayer said in passing.
@@ -117,9 +113,13 @@ Identified by eye from the bundled images, then each compared with the Commons f
 | `joyful_visitation` | The Visitation | Raphael and workshop (Giulio Romano) | c. 1517 | Museo del Prado | confirmed | File:Visitación de Rafael.jpg | Public domain | exact (1.0) | 1157×1600 | fetch.py --provenance's search finds only 'Raphael - The visitation.jpg' (520×719), a weak match; the bundled file is this one, the same size to the pixel, found by comparing the images. |
 | `luminous_cana` | The Marriage Feast at Cana | Bartolomé Esteban Murillo | c. 1672 | Barber Institute of Fine Arts, Birmingham | confirmed | File:The Barber Institute of Fine Arts - Bartolomé Esteban Murillo - The Marriage Feast at CanaFXD.jpg | Public domain | same work (0.965) | 1920×1407 | A crop of this scan. |
 | `sorrowful_carrying` | Christ Carrying the Cross | Anthony van Dyck | 1617–18 | Sint-Pauluskerk, Antwerp | confirmed | File:Anthony van Dyck - Jesus Christ bearing the Cross.jpg | Public domain | exact (1.0) | 1218×1600 | Sint-Pauluskerk's own photograph. Taken again at 1600 px from this file (fetch.py --retake); it was bundled at 960×1261. |
+| `glorious_resurrection` | The Resurrection of Christ | Noël Coypel | 1700 | unconfirmed (French royal commission) | confirmed | File:Noël Coypel - Resurrection of Christ (large version).jpg | Public domain | same work (0.782) | 566×732 | Commons holds the work only small (638×900 at most); the bundled image is a crop of it, the same composition by eye, and the smallest painting in the bundle. |
+| `glorious_pentecost` | Pentecost | — | — | — | ask Abraham | — | — | — | — | — |
 | `glorious_ascension` | The Ascension | Francisco Camilo (1615–1673) | 1651 | Museo del Prado, Madrid (Google Art Project scan) | confirmed | File:Francisco Camilo - Ascension - Google Art Project.jpg | Public domain | same work (None) | 672×1024 | The same picture by eye, figure for figure (the signature at the lower left reads F. CAMILO); the Commons file is the Google Art Project scan at 3474×5293. |
 | `glorious_assumption` | The Assumption of the Virgin | Corrado Giaquinto (1703–1766) | — | Private collection (Sotheby's, New York, 2013, lot 76) | confirmed | File:CORRADO GIAQUINTO MOLFETTA 1703 - 1766 NAPLES ASSUMPTION OF THE VIRGIN.jpg | Public domain | same work (None) | 800×1245 | The same picture by eye: the Virgin's raised arm, the two angels on the cloud, the apostle with the staff at the tomb. Commons' file is the auction-house photograph (1286×2000). |
 | `joyful_nativity` | The Adoration of the Shepherds | Guido Reni (1575–1642) | c. 1640 | National Gallery, London | confirmed | File:The Adoration of the Shepherds by Guido Reni.jpg | Public domain | same work (None) | 711×1080 | The National Gallery's picture, the same to the angels' scroll; Commons holds it at 3953×6000. |
+
+**For Abraham:** where did these come from? `glorious_pentecost`. The subject and school are clear but not the painter, so their licence can't be confirmed yet.
 
 ## Texts
 
