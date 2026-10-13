@@ -2646,11 +2646,19 @@ write concurrent code here:
   letting that set go — but only while the set is still the occasion's
   own copy (`ChantShelfStore.isUntouchedCopy`); any other kept set is let
   go only after the question before a delete (`toggleKeeping` answers
-  `.askFirst`). **Saved** (`ChantSavedSection`, on its own page): a shelf
-  of spines (`ChantSpineCloth`) — Learned, Favourites, each set the
-  reader made, and the dashed + — over the chants of Learned or
-  Favourites; a set's spine opens its page; then Recently played and the
-  Words setting. A new set is named first (`ChantNewSetSheet`), stands on
+  `.askFirst`). **Your Chants** (`ChantSavedPage`, the "simplify saved
+  chants" design, option A, Oct 2026): the painting of the first chant on
+  the shelf shown hangs at the head and dissolves into the page (an empty
+  shelf's own painting until something is kept); under it a pill of two
+  halves, Favourites | Learned with their counts (`ChantShelfSwitch`),
+  the tile's shelf lit (`ChantSavedShelf.shown`); the shelf as the
+  library's song rows with a play disc before each, or, empty, a faded
+  painting and one line; Your sets as square covers ending on a dashed
+  New set (`ChantSavedSetCover`, `ChantNewSetCover`, "+ NEW SET" in the
+  heading while any set exists); Played lately as quiet rows, when and
+  the chant; and Words as one line at the foot. It once opened on a
+  shelf of book spines, two of which switched the list and the rest
+  opened pages, under a paragraph saying what the page was. A new set is named first (`ChantNewSetSheet`), stands on
   the shelf only once made, and opens on its page. **The sheets that
   build a set** (`ChantSheets.swift`, the "Building a sung set" design,
   option A, Oct 2026; shared pieces in `ChantSetBuilding.swift`) each
