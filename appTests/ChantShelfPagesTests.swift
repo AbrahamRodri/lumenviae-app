@@ -39,9 +39,11 @@ struct ChantShelfPagesTests {
         let titles = Dictionary(
             uniqueKeysWithValues: ChantCatalog.groups.map { ($0.id, ChantBrowseScope.cardTitle(of: $0)) })
         #expect(titles["ourLady"] == "Hymns to Our Lady")
-        #expect(titles["benediction"] == "Adoration and Blessing")
+        #expect(titles["benediction"] == "Benediction")
         #expect(titles["mass"] == "The Ordinary of the Mass")
-        #expect(ChantBrowseScope.group("benediction").title == "Adoration and Blessing")
+        #expect(ChantBrowseScope.group("benediction").title == "Benediction")
+        // The sung set keeps that name, so the library never says it twice
+        #expect(!titles.values.contains("Adoration and Blessing"))
     }
 
     // MARK: - A shelf
@@ -52,7 +54,10 @@ struct ChantShelfPagesTests {
             #expect(ChantBrowseScope.group(group.id).note == group.note)
         }
         #expect(ChantBrowseScope.songsToMary.painting == "glorious_coronation")
-        #expect(ChantBrowseScope.massOfTheAngels.note == "The Mass of the Angels: for feasts, and any Sunday")
+        // The shelf's note says when, not the shelf's name again
+        #expect(ChantBrowseScope.massOfTheAngels.note == "For feasts, and any Sunday")
+        // The Ordinary's part keeps its own
+        #expect(ChantBrowseScope.group("mass").parts.first?.note == "The Mass of the Angels: for feasts, and any Sunday")
         #expect(ChantBrowseScope.songsToMary.note == nil)
     }
 
@@ -77,10 +82,28 @@ struct ChantShelfPagesTests {
         #expect(!ChantBrowseScope.numbersItsChants(ChantBrowseScope.group("seasons").chants ?? []))
     }
 
-    @Test func rowsNameTheSettingOnlyWhereItTellsThemApart() {
+    @Test func rowsNameTheSettingOnlyWhereNoHeadingDoes() {
+        let mass = ChantBrowseScope.massOfTheAngels
         // Four times "Mass of the Angels" under a shelf of that name says nothing
-        #expect(!ChantBrowseScope.rowsSaySetting(ChantBrowseScope.massOfTheAngels.chants ?? []))
+        for chant in mass.chants ?? [] {
+            #expect(!ChantBrowseScope.rowSaysSetting(of: chant, under: [mass.title, nil, nil]))
+        }
+        // Under the Ordinary, each Mass's heading names its setting
+        let ordinary = ChantBrowseScope.group("mass")
+        for part in ordinary.parts {
+            for chant in ChantCatalog.chants(in: part) {
+                #expect(!ChantBrowseScope.rowSaysSetting(of: chant, under: [ordinary.title, part.title, part.note]))
+            }
+        }
         // The simple Salve Regina beside the solemn
-        #expect(ChantBrowseScope.rowsSaySetting(ChantBrowseScope.songsToMary.chants ?? []))
+        let salve = ChantCatalog.chant("salve_regina_simple")!
+        #expect(ChantBrowseScope.rowSaysSetting(of: salve, under: ["Songs to Mary", nil, nil]))
+        // No heading of the Sequences says "feast poem"
+        let sequences = ChantBrowseScope.group("sequences")
+        let poem = (sequences.chants ?? []).first { $0.settingMidLine != nil }
+        #expect(poem != nil)
+        if let poem {
+            #expect(ChantBrowseScope.rowSaysSetting(of: poem, under: [sequences.title, nil, nil]))
+        }
     }
 }

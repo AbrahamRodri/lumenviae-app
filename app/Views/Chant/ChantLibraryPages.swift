@@ -44,7 +44,7 @@ enum ChantBrowseScope: Hashable {
     /// The home's Songs to Mary shelf, every song in the shelf's order
     case songsToMary
 
-    static let massSetting = "Mass of the Angels"
+    nonisolated static let massSetting = "Mass of the Angels"
 
     var title: String {
         switch self {
@@ -95,7 +95,7 @@ enum ChantBrowseScope: Hashable {
         switch self {
         case .all, .songsToMary: return nil
         case .group: return group?.note
-        case .massOfTheAngels: return massOfTheAngelsPart?.note
+        case .massOfTheAngels: return massOfTheAngelsPart?.note.map(Self.withoutTitle)
         }
     }
 
@@ -118,12 +118,13 @@ enum ChantBrowseScope: Hashable {
 
     /// A section's name on its card and its shelf. The book's own title
     /// where it is short enough to read on a card; Our Lady's runs to
-    /// fifty letters, and Benediction is named in plain words, as the
-    /// library names it everywhere.
+    /// fifty letters, and Benediction's thirty-six take the name it is
+    /// known by. Not "Adoration and Blessing", the sung set's name, which
+    /// would stand twice in the library for two different things.
     nonisolated static func cardTitle(of group: ChantGroup) -> String {
         switch group.id {
         case "ourLady": return "Hymns to Our Lady"
-        case "benediction": return "Adoration and Blessing"
+        case "benediction": return "Benediction"
         default: return group.title
         }
     }
@@ -155,11 +156,23 @@ enum ChantBrowseScope: Hashable {
         Set(chants.map { ChantCatalog.painting(for: $0) }).count <= 1
     }
 
-    /// Whether a run's rows name their setting: not where every chant in
-    /// it is sung in the same one, which the shelf or the part's heading
-    /// already names ("Mass of the Angels" four times over)
-    static func rowsSaySetting(_ chants: [Chant]) -> Bool {
-        Set(chants.map(\.settingMidLine)).count > 1
+    /// A note that opens on the shelf's own name, said without it: "The
+    /// Mass of the Angels: for feasts, and any Sunday" under "Mass of the
+    /// Angels" reads "For feasts, and any Sunday"
+    nonisolated static func withoutTitle(_ note: String) -> String {
+        guard let colon = note.range(of: ": "),
+              note[..<colon.lowerBound].localizedCaseInsensitiveContains(massSetting) else { return note }
+        let rest = note[colon.upperBound...]
+        return rest.prefix(1).uppercased() + rest.dropFirst()
+    }
+
+    /// Whether a row names its chant's setting: not where the shelf's name
+    /// or the part's heading already says it ("Mass of the Angels" four
+    /// times over under a shelf of that name); a setting no heading names,
+    /// the Sequences' "feast poem", stays
+    static func rowSaysSetting(of chant: Chant, under headings: [String?]) -> Bool {
+        guard let setting = chant.settingMidLine else { return false }
+        return !headings.compactMap { $0 }.contains { $0.localizedCaseInsensitiveContains(setting) }
     }
 
     /// "1 chant", "8 chants"
@@ -189,6 +202,9 @@ struct ChantBrowsePage: View {
             }
         }
         .navigationBarBackButtonHidden(true)
+        // No title of the bar's own: left automatic, the bar kept a large
+        // title's room, and every page began under an empty band
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) { ChantBackButton() }
             if scope.chants == nil {
@@ -232,7 +248,9 @@ private struct ChantContents: View {
             .padding(.top, 8)
             .padding(.bottom, 48)
         }
-        .topChromeFade()
+        // A shallow fade: the bar here stands on the bare page, and the
+        // standard 48 points left a band of nothing under it
+        .topChromeFade(height: 24, inset: 24)
         .modifier(ChantPlayerRoom())
     }
 
@@ -319,8 +337,10 @@ private struct ChantShelf: View {
                                         .padding(.bottom, 4)
                                 }
                                 let partChants = ChantCatalog.chants(in: part)
-                                let showsSetting = ChantBrowseScope.rowsSaySetting(partChants)
                                 ForEach(Array(partChants.enumerated()), id: \.element.id) { number, chant in
+                                    let showsSetting = ChantBrowseScope.rowSaysSetting(
+                                        of: chant, under: [scope.title, part.title, part.note]
+                                    )
                                     if numbered {
                                         ChantNumberedRow(
                                             number: number + 1, chant: chant, showsSetting: showsSetting, player: player
@@ -335,7 +355,7 @@ private struct ChantShelf: View {
                                 }
                             }
                             .padding(.top, part.title == nil ? 20 : 30)
-                            .id(index)
+                            .id(Self.partID(index))
                         }
                     }
                     .padding(.horizontal, 18)
@@ -391,7 +411,7 @@ private struct ChantShelf: View {
                 ForEach(Array(parts.enumerated()), id: \.offset) { index, part in
                     if let title = part.title {
                         Button {
-                            withAnimation(Motion.travel(0.4)) { proxy.scrollTo(index, anchor: .top) }
+                            withAnimation(Motion.travel(0.4)) { proxy.scrollTo(Self.partID(index), anchor: .top) }
                         } label: {
                             Text(title)
                                 .font(AppFonts.bodyFont(14))
@@ -418,6 +438,12 @@ private struct ChantShelf: View {
 
     private func open(_ chant: Chant) {
         router.push(ChantTap.route(to: chant))
+    }
+
+    /// A part's place on the page for the strip to scroll to, apart from
+    /// the strip's own buttons
+    private static func partID(_ index: Int) -> String {
+        "part-\(index)"
     }
 }
 
@@ -715,10 +741,14 @@ struct ChantSetsPage: View {
         self.shelf = shelf
     }
 
-    /// The reader's own sets; a set kept from an occasion is that
-    /// occasion's, and stands under its card
+    /// The reader's own sets. A set kept from an occasion and never
+    /// changed is that occasion's card above; one the reader has changed
+    /// since is theirs, and stands here with the rest
     private var ownSets: [ChantSet] {
-        shelf.sets.filter { $0.occasionID == nil }
+        shelf.sets.filter { set in
+            guard let id = set.occasionID, let occasion = ChantOccasion.occasion(id) else { return true }
+            return !shelf.isUntouchedCopy(set, of: occasion)
+        }
     }
 
     var body: some View {
@@ -777,10 +807,15 @@ struct ChantSetsPage: View {
                 .padding(.top, 8)
                 .padding(.bottom, 48)
             }
-            .topChromeFade()
+            // A shallow fade: the bar here stands on the bare page, and the
+            // standard 48 points left a band of nothing under it
+            .topChromeFade(height: 24, inset: 24)
             .modifier(ChantPlayerRoom())
         }
         .navigationBarBackButtonHidden(true)
+        // No title of the bar's own: left automatic, the bar kept a large
+        // title's room, and every page began under an empty band
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) { ChantBackButton() }
             ToolbarItem(placement: .principal) {

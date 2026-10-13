@@ -2709,11 +2709,13 @@ write concurrent code here:
   Benediction's Blessed Sacrament and the Latin Rosary's Our Lady of the
   Rosary, so no two cards hang the same one (`ChantShelfPagesTests`
   holds it). Our Lady's card and shelf read "Hymns to Our Lady", and
-  Benediction's "Adoration and Blessing" (`cardTitle(of:)`). **A shelf**
+  Benediction's "Benediction" (`cardTitle(of:)`; "Adoration and Blessing"
+  is the sung set's name, and the library must not say it twice). **A shelf**
   (a section, the Mass of the Angels, Songs to Mary) opens on its
   painting run up under the bar, 200 points below it and dissolving into
   the page, rising with the scroll; over its foot the name, when it is
-  sung (the section's note, the Mass's part note), "29 chants · 114 min"
+  sung (the section's note; the Mass of the Angels' part note without its
+  own name, "For feasts, and any Sunday"), "29 chants · 114 min"
   and one outlined PLAY ALL, which is the shelf's Pause and Resume once
   under way. A section with parts (the Masses, the seasons) adds a strip
   of them that scrolls to each, over the small gold part headings. Where
@@ -2724,15 +2726,20 @@ write concurrent code here:
   at their end (`numbersItsChants`). A row is its names and length, or
   the bars and the gold title while it sounds; no caret; a hold offers
   favourite and add to a set. A row names its setting ("· simple
-  melody") only where the run holds more than one (`rowsSaySetting`):
-  four times "Mass of the Angels" under a shelf of that name said
-  nothing. All Chants was once one scroll of 104 rows under headings of
+  melody", "· feast poem") unless the shelf's name or the part's heading
+  already says it (`rowSaysSetting(of:under:)`): four times "Mass of the
+  Angels" under a shelf of that name said nothing. The three pages set
+  the bar inline (`navigationBarTitleDisplayMode(.inline)`): left
+  automatic, it kept a large title's room and every page began under an
+  empty band. All Chants was once one scroll of 104 rows under headings of
   three sizes with no painting, and every shelf a centred title over a
   filled gold Play all. **Sung Sets** keeps its line ("Chants sung one
   after another, for a time of prayer.") over the occasions as wide
   painted cards (painting, name, line, "4 chants · 7 min", the bars while
-  one is sung), then Your sets, the reader's own (it once left them out,
-  though the home's Sung sets shelf whose SEE ALL opens it shows them),
+  one is sung), then Your sets, the reader's own, a copy kept from an
+  occasion among them once the reader has changed it (an untouched copy
+  is the occasion's card; the page once left every set of the reader's
+  out, though the home's Sung sets shelf whose SEE ALL opens it shows them),
   then the dashed Make your own set, named first and opening on its page.
 
   **A set's page** (`ChantSetPage`, the "Chant Library shelves" design,
