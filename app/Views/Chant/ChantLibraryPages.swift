@@ -362,7 +362,7 @@ private struct ChantShelf: View {
                 }
                 .modifier(ChantSavedScrollReading(scroll: scroll))
                 .topChromeFade()
-                }
+            }
         }
     }
 
