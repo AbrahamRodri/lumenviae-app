@@ -111,6 +111,33 @@ struct MainScreenSnapshotTests {
             named: "prayer-page"
         )
     }
+
+    @Test func savedPrayers() {
+        let store = Fixtures.prayerBookStore()
+        // Saved newest first, so the page reads Memorare first
+        for id in ["the_confession", "angele_dei", "litany_loreto", "anima_christi", "memorare"] {
+            store.toggleRibbon(id)
+        }
+        ScreenSnapshot.assertScreen(PrayerBookSavedView(store: store), named: "saved-prayers")
+    }
+
+    @Test func savedPrayersEmpty() {
+        ScreenSnapshot.assertScreen(
+            PrayerBookSavedView(store: Fixtures.prayerBookStore()),
+            named: "saved-prayers-empty"
+        )
+    }
+
+    /// An order with no season of its own, prayed in silence, so the page
+    /// names no voice and no day
+    @Test func prayerOrderPage() {
+        let store = Fixtures.prayerBookStore()
+        store.praysAloud = false
+        ScreenSnapshot.assertScreen(
+            PrayerOrderView(orderID: "before_confession", store: store, date: Fixtures.day),
+            named: "prayer-order-page"
+        )
+    }
 }
 
 // MARK: - Fixtures
@@ -118,6 +145,15 @@ struct MainScreenSnapshotTests {
 /// Sets as the server serves them, with no painting, so a page falls
 /// back to its mysteries' bundled one and nothing is fetched.
 private enum Fixtures {
+
+    /// The Prayers tab's store on a defaults suite of its own, empty
+    static func prayerBookStore() -> PrayerBookStore {
+        let suite = "MainScreenSnapshotTests.\(UUID().uuidString)"
+        return PrayerBookStore(defaults: UserDefaults(suiteName: suite)!)
+    }
+
+    /// A fixed weekday in ordinary time
+    static let day = Calendar.current.date(from: DateComponents(year: 2026, month: 10, day: 14, hour: 15))!
 
     static let joyfulSets: [MeditationSetSummary] = [
         MeditationSetSummary(
