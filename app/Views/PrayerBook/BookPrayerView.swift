@@ -10,8 +10,8 @@
 //  one italic paragraph beneath it, learning it by heart and hearing it
 //  sung as two quiet acts, the orders it is said in, and the steps along
 //  its topic. At the foot, fixed as on the order page, PRAY beside the
-//  round speaker that says how it will be prayed. The language is a menu
-//  in the bar, the ribbon beside it.
+//  round speaker that says how it will be prayed. The language is a
+//  small button in the bar, the ribbon beside it.
 //
 //  The page once stood as type alone: a numeral and an ornament over the
 //  name, a bar of three language chips above the prayer, a kicker over
@@ -352,6 +352,7 @@ struct BookPrayerView: View {
         ) {
             showsLearn = true
         }
+        .accessibilityHint("Opens the steps to learn it by heart")
 
         // The first setting (a simple tone before a solemn one); the
         // chant's page offers the others
@@ -682,9 +683,10 @@ private struct SaidInRow: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(SacredCardButtonStyle())
-        .accessibilityElement(children: .ignore)
+        // Combined and named on the Button itself: made an element of
+        // its own with the button's trait added, the row was found twice
+        .accessibilityElement(children: .combine)
         .accessibilityLabel("\(title), \(order.occasion)")
-        .accessibilityAddTraits(.isButton)
     }
 }
 
@@ -709,7 +711,7 @@ private struct SpeakerGlyph: View {
     }
 }
 
-// MARK: - Language Menu
+// MARK: - Language Choice
 
 /// The language in the bar: what is chosen, "EN", "LA" or "EN · LA",
 /// beside the ribbon in the bar's glass (on a dark capsule of its own
@@ -759,7 +761,7 @@ private struct LanguageChoice: View {
     @ViewBuilder
     private var label: some View {
         let name = Text(shortName)
-            .font(AppFonts.labelFont(10))
+            .font(AppFonts.labelFont(12))
             .tracking(1.6)
             .foregroundColor(AppColors.gold)
             .fixedSize()
@@ -800,10 +802,12 @@ private struct LanguageChoice: View {
         .sensoryFeedback(.selection, trigger: chosen)
         .confirmationDialog("Language", isPresented: $choosing, titleVisibility: .visible) {
             ForEach(Choice.allCases) { option in
-                Button(option == chosen ? "\(option.rawValue) (now)" : option.rawValue) {
+                Button(option.rawValue) {
                     choice.wrappedValue = option
                 }
             }
+        } message: {
+            Text(chosen == .both ? "Shown now in English and Latin." : "Shown now in \(chosen.rawValue).")
         }
     }
 }
