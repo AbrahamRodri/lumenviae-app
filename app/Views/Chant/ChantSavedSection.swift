@@ -146,7 +146,7 @@ struct ChantSavedPage: View {
             ChantSavedPainting(name: shown.painting(of: shownChants), scroll: scroll)
 
             ScrollView(showsIndicators: false) {
-                ChantSavedSection(choice: $choice, shelf: shelf, clock: clock)
+                ChantSavedSection(shown: shown, choice: $choice, shelf: shelf, clock: clock)
                     .padding(.top, 4)
                     .padding(.bottom, 48 + playerRoom)
             }
@@ -294,6 +294,8 @@ struct ChantSavedPainting: View {
 /// reader's sets, what was sung lately, and the words
 struct ChantSavedSection: View {
 
+    /// The shelf shown, which the page works out (`ChantSavedShelf.shown`)
+    let shown: ChantSavedShelf
     @Binding var choice: ChantSavedShelf?
     let shelf: ChantShelfStore
     let clock: ChantSavedClock
@@ -304,14 +306,16 @@ struct ChantSavedSection: View {
 
     @State private var namingSet = false
 
-    init(choice: Binding<ChantSavedShelf?>, shelf: ChantShelfStore = .shared, clock: ChantSavedClock = .device) {
+    init(
+        shown: ChantSavedShelf,
+        choice: Binding<ChantSavedShelf?>,
+        shelf: ChantShelfStore = .shared,
+        clock: ChantSavedClock = .device
+    ) {
+        self.shown = shown
         _choice = choice
         self.shelf = shelf
         self.clock = clock
-    }
-
-    private var shown: ChantSavedShelf {
-        ChantSavedShelf.shown(choice: choice, favorites: shelf.favorites.count, learned: shelf.learned.count)
     }
 
     var body: some View {
@@ -516,7 +520,8 @@ struct ChantSavedSection: View {
         }
         var style = Date.FormatStyle(locale: locale, calendar: calendar, timeZone: calendar.timeZone)
         if let days = calendar.dateComponents([.day], from: calendar.startOfDay(for: date), to: calendar.startOfDay(for: now)).day,
-           days < 7 {
+           (0..<7).contains(days) {
+            // A play dated after now, the clock turned back, takes its date
             style = style.weekday(.wide)
         } else {
             style = style.day().month(.abbreviated)
@@ -607,8 +612,10 @@ struct ChantShelfSwitch: View {
                         .monospacedDigit()
                         .contentTransition(Self.countTransition(reduceMotion: reduceMotion))
                         .animation(Motion.crossfade, value: count)
+                        .transition(.opacity)
                 }
             }
+            .animation(Motion.crossfade, value: count > 0)
             .foregroundColor(on ? AppColors.goldLight : AppColors.textSecondary)
             .multilineTextAlignment(.center)
             .fixedSize(horizontal: false, vertical: true)
@@ -705,8 +712,7 @@ struct ChantSavedSetCover: View {
 
     /// "Thursday holy hour, 4 chants, 20 minutes"
     static func spoken(_ set: ChantSet) -> String {
-        guard set.chantCount > 0 else { return "\(set.name), no chants yet" }
-        let chants = set.chantCount == 1 ? "1 chant" : "\(set.chantCount) chants"
+        guard let chants = ChantSavedShelf.spokenCount(set.chantCount) else { return "\(set.name), no chants yet" }
         return "\(set.name), \(chants), \(ChantOccasionsSection.spokenMinutes(set.duration))"
     }
 }

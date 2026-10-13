@@ -2634,7 +2634,7 @@ write concurrent code here:
   page opens. The library's other pages are pushed: a sung set's own page
   (`.chantSet(ChantSetSubject)`, `ChantSetPage`, below), which every set
   opens on, an occasion or the reader's own, from the tiles, the Sung
-  Sets cards, the index and Saved; the index of the sung sets
+  Sets cards, the index and Your Chants; the index of the sung sets
   (`.chantSets`, `ChantSetsPage`, `ChantOccasionsSection`); a topic, every chant under its topic,
   or the Mass of the Angels (`.chantBrowse(ChantBrowseScope)`,
   `ChantBrowsePage`), which is how every chant stays reachable without a

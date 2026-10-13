@@ -67,6 +67,8 @@ struct ChantSavedTests {
         #expect(when(at(10, 11, 20)) == "Yesterday")
         #expect(when(at(10, 9, 20)) == "Friday")
         #expect(when(at(10, 6, 9)) == "Tuesday")
+        // A play dated after now, the clock turned back, takes its date
+        #expect(when(at(10, 14, 9)) == "Oct 14")
         // A week or more ago, the date
         #expect(when(at(10, 5, 9)) == "Oct 5")
         #expect(when(at(9, 22, 9)) == "Sep 22")

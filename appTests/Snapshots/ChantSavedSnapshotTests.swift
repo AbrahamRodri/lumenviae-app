@@ -121,6 +121,7 @@ struct ChantSavedSnapshotTests {
         let view = ZStack(alignment: .bottom) {
             AppColors.appGradient.ignoresSafeArea()
             ChantSavedSection(
+                shown: .learned,
                 choice: .constant(.learned),
                 shelf: shelf("foot", learned: false),
                 clock: Self.clock
