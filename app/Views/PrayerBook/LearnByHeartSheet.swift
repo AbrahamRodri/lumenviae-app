@@ -36,6 +36,9 @@ struct LearnByHeartSheet: View {
     @State private var inLatin: Bool
     @State private var revealed: Set<String> = []
     @State private var sealed = false
+    /// Whether the painting has scrolled up under the top bar, which then
+    /// takes a ground of its own so the words pass beneath it unseen
+    @State private var paintingGone = false
 
     /// Opens on the first step; a later one only for the snapshot tests,
     /// which draw each step without walking to it
@@ -107,6 +110,11 @@ struct LearnByHeartSheet: View {
                         .padding(.top, 28)
                         .padding(.bottom, 28)
                 }
+                .onGeometryChange(for: Bool.self) { proxy in
+                    proxy.frame(in: .scrollView).minY < -(Self.paintingHeight - 90)
+                } action: { gone in
+                    paintingGone = gone
+                }
             }
             // The words dissolve into the foot rather than being cut
             .mask(
@@ -116,7 +124,26 @@ struct LearnByHeartSheet: View {
                         .frame(height: 22)
                 }
             )
-            .overlay(alignment: .top) { topBar }
+            .overlay(alignment: .top) {
+                ZStack(alignment: .top) {
+                    LinearGradient(
+                        stops: [
+                            .init(color: AppColors.backgroundDeep, location: 0),
+                            .init(color: AppColors.backgroundDeep, location: 0.65),
+                            .init(color: AppColors.backgroundDeep.opacity(0), location: 1)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: 86)
+                    .opacity(paintingGone ? 1 : 0)
+                    .animation(Motion.crossfade, value: paintingGone)
+                    .allowsHitTesting(false)
+                    .accessibilityHidden(true)
+
+                    topBar
+                }
+            }
 
             foot
                 .padding(.horizontal, 22)
