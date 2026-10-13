@@ -260,12 +260,13 @@ struct PrayAlongView: View {
                         // hollow one
                         HStack(spacing: 0) {
                             threadSegment.opacity(i > 0 ? 1 : 0)
-                            Color.clear.frame(width: 17)
+                            Color.clear.frame(width: 17, height: 1)
                             threadSegment.opacity(i < prayers.count - 1 ? 1 : 0)
                         }
                         bead(i)
                     }
-                    .frame(maxWidth: 44, minHeight: 44)
+                    .frame(maxWidth: 44)
+                    .frame(height: 44)
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
@@ -455,12 +456,15 @@ struct PrayAlongView: View {
             LinearGradient(
                 stops: [
                     .init(color: AppColors.background.opacity(0), location: 0),
-                    .init(color: AppColors.background.opacity(0.92), location: 0.45),
-                    .init(color: AppColors.background.opacity(0.97), location: 1)
+                    .init(color: AppColors.background.opacity(0.92), location: 0.4),
+                    .init(color: AppColors.background, location: 0.7)
                 ],
                 startPoint: .top,
                 endPoint: .bottom
             )
+            // A view set as a background stops at the safe area; the words
+            // must not show beneath the act, under the home indicator
+            .ignoresSafeArea(edges: .bottom)
             .allowsHitTesting(false)
         )
     }
@@ -862,13 +866,14 @@ private struct PrayAlongGround: View {
                     CachedAssetImage(painting.resolvedAsset, focal: painting.focal)
                 }
                 .clipped()
-                .opacity(0.38)
+                .opacity(0.55)
 
             LinearGradient(
                 stops: [
-                    .init(color: AppColors.background.opacity(0.5), location: 0),
-                    .init(color: AppColors.background.opacity(0.2), location: 0.12),
-                    .init(color: AppColors.background.opacity(0.8), location: 0.27),
+                    .init(color: AppColors.background.opacity(0.4), location: 0),
+                    .init(color: AppColors.background.opacity(0.1), location: 0.1),
+                    .init(color: AppColors.background.opacity(0.45), location: 0.2),
+                    .init(color: AppColors.background.opacity(0.8), location: 0.3),
                     .init(color: AppColors.background.opacity(0.86), location: 0.6),
                     .init(color: AppColors.background.opacity(0.95), location: 1)
                 ],
