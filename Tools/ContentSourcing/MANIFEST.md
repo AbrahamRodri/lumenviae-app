@@ -34,6 +34,19 @@ Generated from `sources.py` by `build_manifest.py`; edit there. Machine-readable
 | `seven_sorrows_calvary` | The fifth sorrow, Mary at the foot of the Cross (it borrowed sorrowful_crucifixion) | Crucifixion Diptych | Rogier van der Weyden (c. 1399–1464) | c. 1460 | Philadelphia Museum of Art | Public domain | verified |
 | `glorious_pentecost` | The third Glorious Mystery (replaces a Pentecost whose painter could not be established) | The Pentecost | El Greco (1541–1614) | c. 1600 | Museo del Prado, Madrid | Public domain | verified |
 | `glorious_resurrection` | The first Glorious Mystery and the Glorious card on home (replaces Coypel's, bundled at 566×732) | The Resurrection of Christ | Annibale Carracci (1560–1609) | 1593 | Musée du Louvre, Paris | Public domain | verified |
+| `topic_first_prayers` | Prayer Book topic: The First Prayers | The Education of the Virgin | Bartolomé Esteban Murillo (1617–1682) | c. 1641 | Museo del Prado, Madrid | Public domain | verified |
+| `topic_daily_prayers` | Prayer Book topic: Daily Prayers | The Angelus | Jean-François Millet (1814–1875) | 1857–59 | Musée d'Orsay, Paris | Public domain | verified |
+| `topic_short_prayers` | Prayer Book topic: Short Prayers | Saint Francis in Meditation | Francisco de Zurbarán (1598–1664) | 1635–39 | The National Gallery, London | Public domain | verified |
+| `topic_confession` | Prayer Book topic: Confession | The Return of the Prodigal Son | Rembrandt van Rijn (1606–1669) | c. 1668 | The Hermitage, Saint Petersburg | Public domain | verified |
+| `topic_holy_mass` | Prayer Book topic: Holy Mass and Communion | The Mass at Bolsena | Raphael (1483–1520) | 1512–14 | Stanza di Eliodoro, Vatican | Public domain | verified |
+| `topic_blessed_sacrament` | Prayer Book topic: The Blessed Sacrament | The Disputation of the Holy Sacrament | Raphael (1483–1520) | 1509–10 | Stanza della Segnatura, Vatican | Public domain | verified |
+| `topic_holy_trinity` | Prayer Book topic: The Holy Trinity and the Holy Spirit | The Holy Trinity | El Greco (1541–1614) | 1577–79 | Museo del Prado, Madrid | Public domain | verified |
+| `topic_our_lord` | Prayer Book topic: Our Lord | The Sacred Heart of Jesus | Pompeo Batoni (1708–1787) | 1767 | Church of the Gesù, Rome | CC0 | verified |
+| `topic_feasts_seasons` | Prayer Book topic: Feasts and Seasons | Adoration of the Magi | Gentile da Fabriano (c. 1370–1427) | 1423 | Uffizi, Florence | Public domain | verified |
+| `topic_for_the_living` | Prayer Book topic: For the Church and the Living | The Delivery of the Keys | Pietro Perugino (c. 1446–1523) | 1481–82 | Sistine Chapel, Vatican | Public domain | verified |
+| `topic_sick_dying` | Prayer Book topic: The Sick and the Dying | The Death of Saint Joseph | Carlo Maratta (1625–1713) | c. 1676 | Kunsthistorisches Museum, Vienna | Public domain | verified |
+| `topic_needs` | Prayer Book topic: In Time of Need | The Storm on the Sea of Galilee | Rembrandt van Rijn (1606–1669) | 1633 | Isabella Stewart Gardner Museum, Boston | Public domain | verified |
+| `topic_thanksgiving` | Prayer Book topic: Thanksgiving | Madonna of the Magnificat | Sandro Botticelli (c. 1445–1510) | c. 1483 | Uffizi, Florence | Public domain | verified |
 
 Alternates and reasons:
 
@@ -52,6 +65,19 @@ Alternates and reasons:
 - `seven_sorrows_calvary`: Mary swooning into St John's arms beside the Cross: the sorrow is hers, where Velázquez's Christ Crucified (sorrowful_crucifixion) shows Him alone. Commons holds the diptych at 1195×1128, below the 1600 target, so it is pinned.
 - `glorious_pentecost`: Mary at the centre of the Apostles under the dove, the tongues of fire on every head; a known painter and a known museum, where the old file was an unidentified seventeenth-century picture.
 - `glorious_resurrection`: The risen Christ high in the picture over the sleeping guards, so the card's focal point (a fifth of the way down) still finds Him; Commons holds it at 1241×1700 against the old 566×732. *Alternate:* Carl Bloch, The Resurrection (1873), Commons at 1000×1400 only.
+- `topic_first_prayers`: St Anne teaching her daughter at her knee: the prayers learned first, from a mother.
+- `topic_daily_prayers`: Two field-workers stopping at the bell: the day kept by its prayers.
+- `topic_short_prayers`: A single upturned face and a word of prayer: a breath of prayer said in passing.
+- `topic_confession`: The son kneeling and the father's hands on his back: the mercy confession asks for.
+- `topic_holy_mass`: A priest at the altar raising the Host: the Mass itself.
+- `topic_blessed_sacrament`: The Host in its monstrance on the altar, heaven and earth gathered round it: adoration.
+- `topic_holy_trinity`: The Father holding the Son, the Dove above them: the Trinity and the Holy Spirit in one picture.
+- `topic_our_lord`: Christ showing His Heart: the devotions to Our Lord the book gathers, the Sacred Heart first among them.
+- `topic_feasts_seasons`: The Epiphany, the first feast the book keeps, in gold.
+- `topic_for_the_living`: Christ giving St Peter the keys: prayer for the Pope and the Church first among prayers for the living.
+- `topic_sick_dying`: St Joseph dying in the arms of Jesus and Mary, the patron of a happy death. *Alternate:* Carl Bloch, Christ Healing the Sick at Bethesda (1883), but Commons holds it only at 600 px.
+- `topic_needs`: Lord, save us, we perish: the prayer of anyone in need.
+- `topic_thanksgiving`: Mary writing her Magnificat: the Church's song of thanks, beside the Te Deum and the Benedictus.
 
 Target format: 1600 px on the long edge, progressive JPEG, 300–800 KB; one 1x image per imageset like the existing ones.
 

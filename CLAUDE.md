@@ -366,8 +366,9 @@ system bar and the gold Back like everything else; only the reading
 surface hides it. Also drawing their own chrome (bar hidden, Back on
 the page): the mysteries' page and the Rosary's own page in its three forms
 (`RosaryConfirmPage`: a set's, the Scriptural Rosary's, the Holy
-Rosary's), the Guided Rosary, the Prayer Book's pray-along, and the prayer and completion
-screens. A page may hide the bar only if it draws its own Back in every
+Rosary's), the Guided Rosary, the Prayer Book's pray-along and its topic
+pages (`PrayerBookChapterView`, its Back over the painting), and the
+prayer and completion screens. A page may hide the bar only if it draws its own Back in every
 branch. Not every push is an `AppRoute`: True Devotion's chapters are
 closure `NavigationLink`s, the Office's hours a
 `navigationDestination(item:)`, and the Missal's Ordo page a `navigationDestination(isPresented:)`.
@@ -2313,11 +2314,23 @@ write concurrent code here:
   `AppRouter.push` answers with `switchTo(.prayers)`. The Pray tray (the
   Angelus, offered once) and every existing door to a prayer
   (`.devotionPrayer(id:)` opens `BookPrayerView`) are unchanged.
-  `Models/PrayerBook.swift` is the model: twelve **chapters**, named in
-  plain words (Basic Prayers, Mary — twenty-nine prayers — Jesus, the
-  Eucharist, the Holy Spirit, Angels and Saints, Through the Day,
-  Confession, For Those Who Have Died, the Church, Litanies, Short
-  Prayers), each
+  `Models/PrayerBook.swift` is the model: eighteen **topics**
+  (`PrayerBookChapter`, still named for the chapters they were), in the
+  order of *Blessed Be God* (Callan and McHugh, 1925) and gathered into
+  its five parts (`PrayerBookPart`: Every Day, the Sacraments, God, Our
+  Lady and the Saints, Through the Year, For Others and in Need) — The
+  First Prayers, Daily Prayers, Short Prayers; Holy Mass and Communion,
+  Confession, the Blessed Sacrament; the Holy Trinity and the Holy
+  Spirit, Our Lord, the Blessed Virgin, St Joseph, Angels and Saints;
+  Feasts and Seasons, Thanksgiving, Litanies; For the Church and the
+  Living, the Sick and the Dying, the Faithful Departed, In Time of
+  Need. Each prints its prayers under the book's own sub-headings
+  (`sections`: Before Mass, At Communion, After Communion, After Mass),
+  a prayer standing in as many topics and sections as it belongs to,
+  and every one of the 152 in at least one (`PrayersPageTests`). Each
+  hangs a painting of its own (`PrayerBookPainting.topic`, sourced in
+  `Tools/ContentSourcing/sources.py`) and names the orders of prayer
+  that belong to it (`orderIDs`), each
   keeping its numeral and Latin title for its own page, a `topic` for
   search ("Prayers to Mary") and `searchWords` that include the names it
   once printed (Our Lady, the Holy Ghost, Penance, the Faithful
@@ -2325,8 +2338,8 @@ write concurrent code here:
   **orders of prayer** said together — Morning Prayers, the Angelus,
   Night Prayers, At Meals, Before Mass, After Communion, Before
   Confession, After Confession, Visiting Jesus in Church (the visit to
-  the Blessed Sacrament), For Those Who Have Died (the order shares its
-  chapter's name), In Time of Trouble. The
+  the Blessed Sacrament), For Those Who Have Died (at the head of the
+  Faithful Departed), In Time of Trouble. The
   texts are `Data/PrayerBook/*.swift` (`PrayerBookTexts`), in
   `PrayerText`'s grammar, English always and Latin only where the Church
   prays in Latin, paired line for line; the Rosary's and the
@@ -2399,17 +2412,21 @@ write concurrent code here:
   `wasOffered`, which the Chapel's rule reads, counts an order once a
   prayer day. Then **Everyday Prayers** (the Our Father, the Hail Mary,
   the Glory Be, the Apostles' Creed, each a row with its painting,
-  `PrayersPictureRow`, SEE ALL to Basic Prayers); **Prayers to Mary**, a
+  `PrayersPictureRow`, SEE ALL to The First Prayers); **Prayers to Mary**, a
   shelf of square cards that scrolls sideways, the season's song to Mary
   first (`PrayerBook.antiphon(on:)`) then the Memorare and the Litany of
-  Loreto, SEE ALL to the Mary chapter; **For an Occasion**, every order
-  kept for an occasion in the order of its place (`PrayerOccasionPlace`:
-  at Mass, at Confession, at home, in need), a ruled row each with its
-  glyph; and **All Topics**, the twelve chapters with their counts, The
-  Eucharist and Litanies each with a line saying what the word means
-  (`PrayerBook.chapterNotes`). Each painting is chosen in
+  Loreto, SEE ALL to the Mary chapter; and **All Topics**, a shelf of
+  square painted cards for each of the book's five parts, each card the
+  topic's painting, name and count. A topic's page
+  (`PrayerBookChapterView`) opens on its painting under its own Back,
+  then the part, the name and one line, a strip of its sub-headings to
+  jump to, the orders said together that belong to it (PRAYED
+  TOGETHER), and its prayers under their sub-headings, numbered down the
+  topic. The page once ended on For an Occasion, the orders as ruled
+  rows with glyphs, and All Topics as twelve plain rows; the orders now
+  stand at the head of their topics. Each painting is chosen in
   `PrayerBookPainting` (`.order`, `.prayer`, `.saved`, `.hour`,
-  `.antiphon`). The page once opened on three parts chosen on a bar
+  `.antiphon`, `.topic`). The page once opened on three parts chosen on a bar
   (Today, Occasions, All Prayers), Today a 300-point painting for the
   hour with a strip of its three hours and a gold PRAY: the prayers
   people look up most stood two taps away, and the bar said little of
@@ -3123,13 +3140,16 @@ appears:
   Reminders' notification bell and the Altar Bell sound), Night Prayers
   `lv-lamp` (Vespers was the *lucernarium*, the lighting of the lamps).
   The moon is left to the reader's sleep timer.
-- **The Prayer Book's chapters** — Jesus `ch-chi-rho`, the Holy
-  Spirit `ch-dove`, Angels and Saints `lv-saint` (every saint: the Marian
+- **The Prayer Book's topics** — Our Lord `ch-chi-rho`, the Holy
+  Spirit `ch-dove`, Angels and Saints and St Joseph `lv-saint` (every saint: the Marian
   Saints shelf, a saint's reading, the Saints kind of meditation),
-  Through the Day `lv-hourglass`, Confession `ch-keys` (the keys of
+  Daily Prayers `lv-hourglass`, Confession `ch-keys` (the keys of
   absolution; the confession orders and Carlo's confession too),
   Litanies `lv-procession-cross` (they were sung in procession), Short
-  Prayers `lv-dart` (*iaculatoriæ*, prayers darted out).
+  Prayers `lv-dart` (*iaculatoriæ*, prayers darted out), Holy Mass
+  `ch-altar`, Feasts and Seasons `ch-window`, Thanksgiving `lv-wheat`,
+  the Sick and the Dying `ch-chalice` (the Viaticum), In Time of Need
+  `lv-stella-maris` (the star over the storm).
 - **The Marian Library's shelves**, whose glyph the doors to their
   readings wear — the dogmas `lv-twelve-stars` (Apoc 12:1), Scripture
   `ch-bible`, the apparitions `lv-rose`, the saints `lv-saint`, the

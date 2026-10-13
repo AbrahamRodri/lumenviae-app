@@ -68,7 +68,20 @@ enum SourcesAndCredits {
         CreditedWork(title: "Madonna of the Rosary", maker: "Caravaggio (1571–1610)", detail: "1607, Kunsthistorisches Museum, Vienna", licence: "Public domain"),
         CreditedWork(title: "The Song of the Lark", maker: "Jules Breton (1827–1906)", detail: "1884, Art Institute of Chicago", licence: "Public domain"),
         CreditedWork(title: "The Penitent Magdalen", maker: "Georges de La Tour (1593–1652)", detail: "c. 1640, The Metropolitan Museum of Art", licence: "CC0"),
-        CreditedWork(title: "The Immaculate Conception of Los Venerables", maker: "Bartolomé Esteban Murillo (1617–1682)", detail: "c. 1678, Museo del Prado, Madrid", licence: "Public domain")
+        CreditedWork(title: "The Immaculate Conception of Los Venerables", maker: "Bartolomé Esteban Murillo (1617–1682)", detail: "c. 1678, Museo del Prado, Madrid", licence: "Public domain"),
+        CreditedWork(title: "The Disputation of the Holy Sacrament", maker: "Raphael (1483–1520)", detail: "1509–10, Stanza della Segnatura, Vatican", licence: "Public domain"),
+        CreditedWork(title: "The Return of the Prodigal Son", maker: "Rembrandt van Rijn (1606–1669)", detail: "c. 1668, The Hermitage, Saint Petersburg", licence: "Public domain"),
+        CreditedWork(title: "The Angelus", maker: "Jean-François Millet (1814–1875)", detail: "1857–59, Musée d'Orsay, Paris", licence: "Public domain"),
+        CreditedWork(title: "Adoration of the Magi", maker: "Gentile da Fabriano (c. 1370–1427)", detail: "1423, Uffizi, Florence", licence: "Public domain"),
+        CreditedWork(title: "The Education of the Virgin", maker: "Bartolomé Esteban Murillo (1617–1682)", detail: "c. 1641, Museo del Prado, Madrid", licence: "Public domain"),
+        CreditedWork(title: "The Delivery of the Keys", maker: "Pietro Perugino (c. 1446–1523)", detail: "1481–82, Sistine Chapel, Vatican", licence: "Public domain"),
+        CreditedWork(title: "The Mass at Bolsena", maker: "Raphael (1483–1520)", detail: "1512–14, Stanza di Eliodoro, Vatican", licence: "Public domain"),
+        CreditedWork(title: "The Holy Trinity", maker: "El Greco (1541–1614)", detail: "1577–79, Museo del Prado, Madrid", licence: "Public domain"),
+        CreditedWork(title: "The Storm on the Sea of Galilee", maker: "Rembrandt van Rijn (1606–1669)", detail: "1633, Isabella Stewart Gardner Museum, Boston", licence: "Public domain"),
+        CreditedWork(title: "The Sacred Heart of Jesus", maker: "Pompeo Batoni (1708–1787)", detail: "1767, Church of the Gesù, Rome", licence: "CC0"),
+        CreditedWork(title: "Saint Francis in Meditation", maker: "Francisco de Zurbarán (1598–1664)", detail: "1635–39, The National Gallery, London", licence: "Public domain"),
+        CreditedWork(title: "The Death of Saint Joseph", maker: "Carlo Maratta (1625–1713)", detail: "c. 1676, Kunsthistorisches Museum, Vienna", licence: "Public domain"),
+        CreditedWork(title: "Madonna of the Magnificat", maker: "Sandro Botticelli (c. 1445–1510)", detail: "c. 1483, Uffizi, Florence", licence: "Public domain")
     ]
 
     /// The texts, the recordings, the type and the glyphs
