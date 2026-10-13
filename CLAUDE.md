@@ -2504,8 +2504,9 @@ write concurrent code here:
   silence (`PrayerBookStore.praysAloud`, remembered). **The page is the
   prayer** (the "simplify Pray Along" pick, option A, Oct 2026): the
   painting the Prayers page hangs over the order (`PrayerBookPainting.
-  order`, `.hour` for the Angelus in the season its prayer belongs to,
-  `.prayer` for one opened alone) fixed
+  order`; the Angelus's read from its prayer, the Resurrection for the
+  Queen of Heaven and the Annunciation otherwise; `.prayer` for one
+  opened alone) fixed
   behind the scroll and veiled by a scrim of the theme's own ground,
   deepest from the title down (`PrayAlongGround`); a quiet head — ×, the
   order's name, and ALOUD or SILENT as a word in an outlined capsule
