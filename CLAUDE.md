@@ -2438,9 +2438,11 @@ write concurrent code here:
   order with when it is said (`PrayerOrder.occasion`); then the
   prayers under the book's sub-headings in the Prayers tab's shelf
   heading (`PrayersShelfHeading`, none for a one-section topic), each a row
-  (`TopicPrayerRow`, a copy of `BookPrayerRow` without its numeral) with
-  its second name and the reader's marks, which drop under the name
-  where both will not share a line; then the next topic as a painted
+  (`TopicPrayerRow`, the "Holy Cards" pick, B4, Oct 2026) with a small
+  arched picture of the prayer's holy card (`MiniHolyCard`, the painting
+  its page hangs, 34 x 44 points), its name and the reader's marks, which
+  drop under the name where both will not share a line (the second name
+  the row once carried stands on the card); then the next topic as a painted
   card over "or back to" the one before, which turn the page in place.
   Once the painting has scrolled away a dark ground stands under the
   clock and the Back, so no prayer runs beneath them. It once stacked a
@@ -2505,9 +2507,11 @@ write concurrent code here:
   "Saved and Prayer Orders" design, option A, Oct 2026) opens on the
   order's painting (`PrayerBookPainting.order`), run up under the bar's
   Back and dissolving into the page, then when it is said (with ·
-  PRAYED TODAY beside it once `wasOffered`), its name, its Latin small,
-  one line saying what it is, and its prayers as a numbered list of
-  names, each a door to its page; where the season decides what it
+  PRAYED TODAY beside it once `wasOffered`), its name and its Latin
+  small, and its prayers as a list numbered 1, 2, 3 (the Holy Cards
+  pick; Roman numerals before, and the line under the Latin saying what
+  the order is, `PrayerOrder.detail`, is no longer drawn), each a door to
+  its page; where the season decides what it
   holds (Night Prayers' song to Mary, Queen of Heaven at Eastertide) a
   sentence under the list says so. The foot is PRAY beside a round
   speaker that switches aloud and silent, and one line beneath saying
@@ -2516,34 +2520,48 @@ write concurrent code here:
   prayers, a Latin line under every prayer and a two-line switch row.
 
   **A prayer's own page** (`BookPrayerView`, `.devotionPrayer(id:)`, the
-  "single prayer" design, option A, Oct 2026) is the order page's twin:
-  the prayer's painting (`SavedPrayerPainting.of`, its own scene where
-  the book gives one, else its topic's, as the Saved shelf hangs it) run
-  up under the bar and dissolving, then in the dissolve its topic in gold
-  ("PRAYERS TO MARY"), its name, its Latin small, and one small line of
-  where it comes from with LEARNED after it, in whose place the ribbon's
-  words stand for three seconds, laid over it so nothing moves. Then the
-  prayer, `PrayerText` at the reading size; when it is said as one italic
-  paragraph beneath it, with no heading; LEARN BY HEART and, where the
-  Church sings it, HEAR IT SUNG as one quiet row of words; SAID IN, each
-  order a row with its painting; and the steps along the topic,
-  PREVIOUS · NEXT over ALL 32 PRAYERS TO MARY, which fade the whole page,
-  painting included, and scroll it back to the top. The foot is the
-  order page's own, fixed: the speaker disc beside PRAY and its line
-  beneath. The language stands in the bar beside the ribbon (EN, LA or
+  "Holy Cards" pick, option B4, Oct 2026) is a holy card. The card
+  (`HolyCard`) stands 28 points in from each side between the bar and the
+  foot, on the card ground with a gold rim and a second rule inside it,
+  and its words scroll inside it: the prayer's painting
+  (`SavedPrayerPainting.of`) in a round-topped arch, then the topic and
+  the prayer's place in it ("PRAYERS TO MARY · 3 OF 32"), its name, its
+  Latin small, a gold rule, the prayer (`PrayerText`, two points under
+  the reading size, never under 17), SAID IN with each order as its
+  painting and name, and the topic's prayers as a row of dots
+  (`PlaceDots`, 24 around this one in a longer topic) over "Swipe for
+  <the next> · All 32" (both buttons). The prayers before and after it
+  peek in at the glass's edges as 14-point slivers of their paintings,
+  each a door to its card. **A drag across deals the card**: it follows
+  the finger leaning up to 9 degrees, the neighbour's card rising beneath
+  it from 0.94; let go past a third of the width, or flung, it flies off
+  and the card beneath becomes the page, opened at its top, with a light
+  tick; short of that it springs back, and toward no card it gives a
+  little. The card's own scroll keeps the vertical drag, decided by the
+  drag's first direction. A tap on a sliver or on "Swipe for" plays the
+  same deal; VoiceOver has Next prayer and Previous prayer on the name
+  and the words, and hears the new name. Under Reduce Motion there is no
+  lean and no rise: the card follows the finger and the turn is a fade.
+  The foot: Learn by heart and Hear it sung (`FootAct`, ringed discs
+  named beneath, LEARNED with the seal once learned) either side of PRAY,
+  the place for Hear it sung kept empty where the Church sings no chant
+  for the prayer, so PRAY never moves; and one line beneath, the speaker
+  and "In silence · tap to change", which switches aloud and silent. The
+  ribbon's words stand for three seconds on a dark capsule at the head of
+  the card. The language stands in the bar beside the ribbon (EN, LA or
   EN · LA, in the bar's glass from iOS 26 and on a dark capsule before),
   only where the prayer has Latin, and opens a choice of English, Latin
   and Both. It is a button and not a Menu: the bar makes a Menu its own
   button, names it from the words it shows, and stood a second, unnamed
-  button beside it for VoiceOver. The small capitals stand at whole
-  points (9, 10, 11), since 8.5, 9.5 and 10.5 did not grow with the
-  text size. It
-  once stood as type alone, eight layers over the first word of the
-  prayer: a numeral and the topic, an ornament, the name, the Latin, the
-  origin, the mark, a bar of three language chips, then the words, with
-  a WHEN IT IS SAID heading and three acts of nearly one weight under
-  them. `LanguageChips` stays in its file, unchanged, for the sheets
-  that use it.
+  button beside it for VoiceOver. The cards are the prayers of the topic
+  the page was opened in (`PrayerBook.homeChapter`). The page once ended
+  on when the prayer is said (`BookPrayer.note`), had its source on a
+  line of small capitals (`BookPrayer.origin`), set Learn by heart and
+  Hear it sung as two quiet words after the prayer, and stepped along the
+  topic by PREVIOUS · NEXT in small capitals, which faded the page; the
+  note and the source stay in the book and are no longer drawn.
+  `LanguageChips` stays in its file, unchanged, for the sheets that use
+  it.
 
   **Praying** is `PrayAlongView` (`.prayAlong(PrayAlongLaunch)`, a
   player: bar hidden, its own ×): one prayer at a time, aloud or in

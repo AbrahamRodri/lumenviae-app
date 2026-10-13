@@ -2,12 +2,12 @@
 //  BookPrayerSnapshotTests.swift
 //  appTests
 //
-//  A prayer's own page, on a Prayer Book store of the test's own, so
-//  nothing the simulator has learned shows through: a prayer with a
-//  chant and the order it is said in, its end with the steps along its
-//  topic, a litany's end clear of the foot, a prayer learned by heart
-//  with the ribbon's words in the origin's place, the app's largest
-//  text, and a prayer that cannot be found. Drawn without the
+//  A prayer's own page, its holy card, on a Prayer Book store of the
+//  test's own, so nothing the simulator has learned shows through: a
+//  prayer with a chant and the order it is said in, the card's end with
+//  its place in the topic, a litany's end, a card part way through its
+//  deal, a prayer learned by heart with the ribbon's words at the head of
+//  the card, the app's largest text, and a prayer that cannot be found. Drawn without the
 //  NavigationStack, as an order's page is, so the bar's Back, language
 //  and ribbon are not drawn here.
 //
@@ -55,6 +55,15 @@ struct BookPrayerSnapshotTests {
         ScreenSnapshot.assertScreen(
             BookPrayerView(prayerID: "litany_loreto", store: try store("long"), opensAtEnd: true),
             named: "prayer-page-litany-end"
+        )
+    }
+
+    /// The card dealt a third of the way toward the next prayer: leaning
+    /// as it goes, the next card rising beneath it
+    @Test func dealingToTheNext() throws {
+        ScreenSnapshot.assertScreen(
+            BookPrayerView(prayerID: "hail_holy_queen", store: try store("deal"), turnedBy: -120),
+            named: "prayer-page-dealing"
         )
     }
 
