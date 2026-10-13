@@ -283,47 +283,53 @@ liturgical day and carries only the journal's pencil, and not the Chapel's foot,
 control and the imprint, nothing else.
 
 **Today's Prayer** (`Components/TodaysPrayerSection.swift`) stands
-between the Rosary Mysteries grid and the reading shelf: a section heading in the home page's own voice ("Today's Prayer" in
-Cinzel 19, the date where the other sections keep their link), the Consecration to Mary first, under the section's name, then the feast as a subsection
-of it — its name in small engraved capitals with a hairline beside it
-running to the edge, the way a card names one of its parts — heading the Mass and
-the Office. Set large in the reading italic, the feast read as a second
-section title. The preparation
-is the user's own devotion, kept whatever day it is, and no part of the
-Church's calendar, so it stands apart from the feast and above it. Beside
-it, and for the same reason, stands **the hour's prayers**: the Prayer
-Book's order for the hour it is (Morning Prayers until eleven, the
-Angelus until eight, Night Prayers after), its fact ON WAKING · AT NOON
-· AT 6 PM · AT BEDTIME (`PrayerBook.dayOrderMoment`, the words the
-Prayers page and the Chapel's tile say too), or PRAYED once prayed to its Amen — never
-"missed"; it opens the Prayer Book, which opens on that same order.
-Four ruled rows on the bare page — no card,
-no panel, no fill. Today's Mass, the Hours of Prayer,
-the Consecration to Mary and the hour's prayers, given equal standing. It is named for the
-user's prayer and **not** "Today in the Church", because the
+between the Rosary Mysteries grid and the reading shelf: a section
+heading in the home page's own voice ("Today's Prayer" in Cinzel 19,
+the date where the other sections keep their link), then four rows
+drawn as a list of routines (the "routine list" design, option B, Oct
+2026): the Consecration to Mary, **the hour's prayers** (the Prayer
+Book's order for the hour it is: Morning Prayers until eleven, the
+Angelus until eight, Night Prayers after), Today's Mass and the Hours
+of Prayer. The preparation and the hour's prayers stand first, as the
+user's own devotions; the Mass and the Office follow. It is named for
+the user's prayer and **not** "Today in the Church", because the
 consecration is a private devotion and not a liturgical observance;
 `TodayInChurch` (the observable) still supplies the day and is shared
-with the Chapel's day strip. Every row has the same parts — the door's
-own glyph (`ch-altar`, `ph-clock`, `ch-consecration`, the hour's order's own, the same as on
-every other surface), name, the row's own live fact, chevron — so the
-eye reads down the column of facts: the day's rank and the silk's colour
-in plain words beside the silk, a 4×24 bar (LESSER FEAST · WHITE,
-`TodayInChurch.rank` and `MissalVestment.name`; VoiceOver hears
-"Today's Mass, Feast, red vestments" through `spokenMeta`; it once read
-"II CLASS · RED", then the rank alone, since a bare bar said nothing a
-newcomer could read; the feast itself is headed TODAY'S FEAST · once a
-feast is known, and a weekday is named as it is), the
-hour it is as a lit dot and its one plain word (EVENING,
-`CanonicalHour.shortName`; VoiceOver hears `plainName`, "Evening
-Prayer"; it once read VESPERS), the day of the
-preparation over a 46pt hair. There is no line under the names: a plain
-sentence under each once said what the row was, and the section took
-longer to read for it. The consecration row, before any consecration is
-begun, keeps its place, its icon and its weight and offers BEGIN, and one
-chosen ahead of its feast says BEGINS OCT 19 until its Day 1 — **no state
-in this section may shame the user**: no "0 days", no "missed", no
-empty track. True Devotion is reached from the reading shelf below, Explore and the Chapel's
-Library tile, not from here.
+with the Chapel's day strip. Every row has the same parts, on the bare
+page with no card or fill: a 64pt painting cut square with a gold
+hairline edge, the name, a line saying what today holds (up to two
+lines, so the hour's sentence is read whole), and the row's live fact
+in small capitals beneath, then a chevron. What each
+says is `TodaysPrayerRow` (one builder per row, unit-tested): the
+consecration's painting is its period's own (`heroImageName`, the
+Coronation before it begins), its line the day's title, its fact DAY 12
+OF 33, THE DAY OF CONSECRATION, BEGIN, or BEGINS OCT 19 when chosen
+ahead; past its day with the act not made, READY TO CONSECRATE (never
+late), and once made, CONSECRATED TODAY with its seal for the rest of
+the day (the section keeps a record completed today as the row's); the
+hour's order hangs `PrayerBookPainting.hour`, its line
+`PrayerBook.daySummary`, its fact ON WAKING · AT NOON · AT 6 PM · AT
+BEDTIME (`PrayerBook.dayOrderMoment`) or PRAYED, the Angelus counted
+for its bell as on the Prayers page (`PrayerBook.isOfferedNow`: one said
+at noon leaves the evening's to pray); the Mass hangs the Mass
+at Bolsena, its line the feast's name (`TodayInChurch.title`; "Prayers
+and readings for today" until the propers arrive) and its fact the rank
+and colour beside a small silk (LESSER FEAST · WHITE); the Office hangs
+Millet's Angelus, its line the hour it is ("Mid-Morning Prayer
+(Terce)") and its fact NOW · UNTIL NOON beside the lit dot
+(`CanonicalHour.clockWord`, which the Office's arch reads too). The two
+liturgy paintings are the Prayer Book's topics' (`PrayerBookPainting.
+topic(id:)`). The feast
+is named in the Mass row's line and not over the two rows. The fact
+stands where a routine app puts a duration: this app never estimates
+one. A gold seal rides on the painting's corner only where the app
+knows the prayer was prayed (today's day of the consecration, the
+hour's order prayed to its Amen); the Mass and the Office are never
+marked. VoiceOver hears each row as one sentence (`TodaysPrayerRow.
+spoken`: name, line, fact, "prayed today"). **No state in this section
+may shame the user**: no "0 days", no "missed", no empty track. True
+Devotion is reached from the reading shelf below, Explore and the
+Chapel's Library tile, not from here.
 
 The search glass (VoiceOver: "Explore", hinted "Search") pushes
 `AppRoute.explore` (`Views/Home/ExploreView.swift`), titled Explore in
@@ -1818,9 +1824,8 @@ write concurrent code here:
   hour by `CanonicalHour.plainName` (Night Vigil, Dawn Prayer, Early
   Morning Prayer, Mid-Morning Prayer, Midday Prayer, Mid-Afternoon
   Prayer, Evening Prayer, Bedtime Prayer — never "Morning Prayer" or
-  "Night Prayer", which are the Prayer Book's), `shortName` in tight
-  places, the Church's name (`label`) small beneath — the pre-Vatican-II Breviarium Romanum (1960 rubrics,
-  the 1962 books), reached from the Divine Office row of Today's Prayer,
+  "Night Prayer", which are the Prayer Book's), the Church's name (`label`) small beneath — the pre-Vatican-II Breviarium Romanum (1960 rubrics,
+  the 1962 books), reached from the Hours of Prayer row of Today's Prayer,
   Explore, the Chapel's Liturgy tile and the Pray tray. Served by our own API's `/office/*` endpoints
   (`GET /office/:date`, `/office/:date/:hour`, `/office/calendar/:year/:month`,
   `/office/versions`), which the Phoenix app assembles from the Divinum
@@ -1873,7 +1878,7 @@ write concurrent code here:
 
   **`CanonicalClock`** (a `Services/` singleton) is the one place that
   says which hour it is now. It sleeps to each boundary rather than
-  ticking, and refreshes on foreground; the home ledger's Office row,
+  ticking, and refreshes on foreground; Home's Hours of Prayer row,
   the arch, and the strand's NOW mark all read it, so they roll over
   together. `CanonicalHour.beginsAtClockHour` is the single boundary
   table — `present(atClockHour:)` and the arch's "until Sext at noon"

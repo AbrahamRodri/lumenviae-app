@@ -144,7 +144,13 @@ struct PrayerBookPainting: Equatable {
     /// head of its own page. Each topic has one of its own; the sources
     /// and licences are in Tools/ContentSourcing/sources.py.
     static func topic(_ chapter: PrayerBookChapter) -> PrayerBookPainting {
-        topics[chapter.id] ?? PrayerBookPainting(
+        topic(id: chapter.id)
+    }
+
+    /// A topic's painting by the topic's id ("mass", "day"), which Home's
+    /// Today's Prayer hangs over the Mass and the Hours of Prayer too
+    static func topic(id: String) -> PrayerBookPainting {
+        topics[id] ?? PrayerBookPainting(
             asset: "topic_first_prayers", focal: UnitPoint(x: 0.5, y: 0.3), caption: "St Anne teaching the Virgin")
     }
 
