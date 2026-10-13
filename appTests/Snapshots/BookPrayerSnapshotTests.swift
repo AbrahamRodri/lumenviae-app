@@ -62,7 +62,12 @@ struct BookPrayerSnapshotTests {
         let store = try store("learned")
         store.setByHeart("hail_mary", true)
         ScreenSnapshot.assertScreen(
-            BookPrayerView(prayerID: "hail_mary", store: store, showingNote: "Removed from Saved."),
+            // The longest thing the ribbon says, which takes a second line
+            BookPrayerView(
+                prayerID: "hail_mary",
+                store: store,
+                showingNote: "Saved. Find it under Saved on the Prayers tab."
+            ),
             named: "prayer-page-learned-note"
         )
         ScreenSnapshot.assertScreen(

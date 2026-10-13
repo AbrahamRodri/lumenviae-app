@@ -138,7 +138,7 @@ struct BookPrayerView: View {
             }
             if prayer?.hasLatin == true {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    LanguageMenu(language: languageBinding)
+                    LanguageChoice(language: languageBinding)
                 }
             }
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -266,11 +266,15 @@ struct BookPrayerView: View {
         .allowsHitTesting(false)
     }
 
+    // The small capitals on this page stand at whole points (9, 10, 11):
+    // a custom face that small is drawn at a whole point once scaled, so
+    // 8.5, 9.5 and 10.5 stayed the same size at the larger text sizes
+    // while everything around them grew.
     private func titleBlock(_ prayer: BookPrayer) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             if let chapter {
                 Text((chapter.topic.isEmpty ? chapter.title : chapter.topic).uppercased())
-                    .font(AppFonts.labelFont(9.5))
+                    .font(AppFonts.labelFont(10))
                     .tracking(2.4)
                     .foregroundColor(AppColors.gold)
                     // Lifted off the painting's dissolve, where a light
@@ -310,15 +314,19 @@ struct BookPrayerView: View {
         if prayer.origin != nil || learned {
             OriginLine(origin: prayer.origin, learned: learned)
                 .opacity(keptNote == nil ? 1 : 0)
-                .overlay(alignment: .leading) {
+                // Hung from the line's top, so the longest note may take a
+                // second line into the gap above the prayer rather than
+                // shrink to fit one
+                .overlay(alignment: .topLeading) {
                     Text(lastKeptNote)
                         .font(AppFonts.readingItalicFont(13.5))
                         .foregroundColor(AppColors.gold.opacity(0.9))
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.7)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.9)
                         // Its own height, not the small print's, or the
                         // line's height scales the words down to fit it
                         .fixedSize(horizontal: false, vertical: true)
+                        .offset(y: -2)
                         .opacity(keptNote == nil ? 0 : 1)
                         .accessibilityHidden(true)
                 }
@@ -338,7 +346,7 @@ struct BookPrayerView: View {
             title: store.isByHeart(prayer.id) ? "Say it by heart again" : "Learn by heart",
             leadingIcon: "ph-heart",
             leadingIconSize: 12,
-            size: 10.5,
+            size: 11,
             color: AppColors.gold.opacity(0.85),
             horizontalPadding: 10
         ) {
@@ -353,7 +361,7 @@ struct BookPrayerView: View {
                 title: "Hear it sung",
                 leadingIcon: "ph-music-note",
                 leadingIconSize: 12,
-                size: 10.5,
+                size: 11,
                 color: AppColors.gold.opacity(0.85),
                 horizontalPadding: 10
             ) {
@@ -412,6 +420,8 @@ struct BookPrayerView: View {
                     .fill(AppColors.gold.opacity(0.15))
                     .frame(height: AppLine.hairline)
 
+                // Unreachable while the app holds the text at .xLarge; kept,
+                // as other pages keep theirs, in case the cap is lifted
                 if typeSize.isAccessibilitySize {
                     VStack(alignment: .leading, spacing: 14) {
                         if let previous { stepButton(previous, forward: false, proxy: proxy) }
@@ -430,12 +440,19 @@ struct BookPrayerView: View {
                     }
                 }
 
-                QuietGoldButton(title: "All \(ids.count) \(chapter.topic)", trailingIcon: "ph-caret-right") {
+                QuietGoldButton(title: "All \(ids.count) \(Self.doorName(of: chapter))", trailingIcon: "ph-caret-right") {
                     router.push(.prayerBookChapter(id: chapter.id))
                 }
             }
             .padding(.horizontal, 28)
         }
+    }
+
+    /// The topic as the door to it says it: "All 11 First Prayers", where
+    /// the topic's own name, "The First Prayers", read "All 11 The First
+    /// Prayers"
+    static func doorName(of chapter: PrayerBookChapter) -> String {
+        chapter.topic.hasPrefix("The ") ? String(chapter.topic.dropFirst(4)) : chapter.topic
     }
 
     private func stepButton(_ target: BookPrayer, forward: Bool, proxy: ScrollViewProxy) -> some View {
@@ -446,7 +463,7 @@ struct BookPrayerView: View {
                 HStack(spacing: 5) {
                     if !forward { AppIcon("ph-caret-left", size: 9) }
                     Text(forward ? "NEXT" : "PREVIOUS")
-                        .font(AppFonts.labelFont(8.5))
+                        .font(AppFonts.labelFont(9))
                         .tracking(2)
                     if forward { AppIcon("ph-caret-right", size: 9) }
                 }
@@ -588,7 +605,7 @@ private struct OriginLine: View {
                 if learned { mark }
             }
         }
-        .font(AppFonts.labelFont(8.5))
+        .font(AppFonts.labelFont(9))
         .tracking(1.8)
         .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .ignore)
@@ -696,10 +713,10 @@ private struct SpeakerGlyph: View {
 
 /// The language in the bar: what is chosen, "EN", "LA" or "EN · LA",
 /// beside the ribbon in the bar's glass (on a dark capsule of its own
-/// before iOS 26), opening a menu of the three. It stood as a bar of three
+/// before iOS 26), opening a choice of the three. It stood as a bar of three
 /// chips above the prayer, the heaviest thing over the words, for a choice
 /// made once.
-private struct LanguageMenu: View {
+private struct LanguageChoice: View {
     @Binding var language: PrayerLanguage
 
     private enum Choice: String, CaseIterable, Identifiable {
@@ -739,39 +756,55 @@ private struct LanguageMenu: View {
         }
     }
 
-    var body: some View {
-        Menu {
-            Picker("Language", selection: choice) {
-                ForEach(Choice.allCases) { choice in
-                    Text(choice.rawValue).tag(choice)
-                }
-            }
-        } label: {
-            let name = Text(shortName)
-                .font(AppFonts.labelFont(10))
-                .tracking(1.6)
-                .foregroundColor(AppColors.gold)
-                .fixedSize()
-            // From iOS 26 the bar's own glass is the capsule, shared with
-            // the ribbon; a dark one inside it stood as a second rim
-            if #available(iOS 26.0, *) {
-                name
-                    .padding(.horizontal, 8)
-                    .frame(minHeight: 44)
-                    .contentShape(Rectangle())
-            } else {
-                name
-                    .padding(.horizontal, 12)
-                    .frame(height: 30)
-                    .background(Capsule().fill(AppColors.background.opacity(0.85)))
-                    .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline))
-                    .frame(minHeight: 44)
-                    .contentShape(Rectangle())
-            }
+    @ViewBuilder
+    private var label: some View {
+        let name = Text(shortName)
+            .font(AppFonts.labelFont(10))
+            .tracking(1.6)
+            .foregroundColor(AppColors.gold)
+            .fixedSize()
+        // From iOS 26 the bar's own glass is the capsule, shared with
+        // the ribbon; a dark one inside it stood as a second rim
+        if #available(iOS 26.0, *) {
+            name
+                .padding(.horizontal, 8)
+                .frame(minHeight: 44)
+                .contentShape(Rectangle())
+        } else {
+            name
+                .padding(.horizontal, 12)
+                .frame(height: 30)
+                .background(Capsule().fill(AppColors.background.opacity(0.85)))
+                .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline))
+                .frame(minHeight: 44)
+                .contentShape(Rectangle())
         }
-        .sensoryFeedback(.selection, trigger: chosen)
+    }
+
+    @State private var choosing = false
+
+    var body: some View {
+        // A button opening the three, not a Menu: the bar makes a Menu
+        // its own button and names it from the words it shows ("EN"),
+        // whatever name it is given, and once stood a second, unnamed
+        // button beside it
+        Button {
+            choosing = true
+        } label: {
+            label
+        }
+        .buttonStyle(QuietGlyphButtonStyle())
         .accessibilityLabel("Language")
         .accessibilityValue(chosen.rawValue)
+        .accessibilityHint("Choose English, Latin or both")
+        .sensoryFeedback(.selection, trigger: chosen)
+        .confirmationDialog("Language", isPresented: $choosing, titleVisibility: .visible) {
+            ForEach(Choice.allCases) { option in
+                Button(option == chosen ? "\(option.rawValue) (now)" : option.rawValue) {
+                    choice.wrappedValue = option
+                }
+            }
+        }
     }
 }
 
