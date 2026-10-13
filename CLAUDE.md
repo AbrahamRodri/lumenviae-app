@@ -2650,11 +2650,47 @@ write concurrent code here:
   (`.chantSet(ChantSetSubject)`, `ChantSetPage`, below), which every set
   opens on, an occasion or the reader's own, from the tiles, the Sung
   Sets cards, the index and Your Chants; the index of the sung sets
-  (`.chantSets`, `ChantSetsPage`, `ChantOccasionsSection`); a topic, every chant under its topic,
-  or the Mass of the Angels (`.chantBrowse(ChantBrowseScope)`,
+  (`.chantSets`, `ChantSetsPage`); every chant under its topic, a topic,
+  the Mass of the Angels or Songs to Mary (`.chantBrowse(ChantBrowseScope)`,
   `ChantBrowsePage`), which is how every chant stays reachable without a
   search; and the reader's own chants, Your Chants
   (`.chantSaved(ChantSavedShelf)`, `ChantSavedPage`, below).
+
+  **The shelf pages** (`ChantLibraryPages.swift`, the "Chant shelf pages"
+  design, option B, Oct 2026) are what SEE ALL and BROWSE ALL open. **All
+  Chants** is the book's twelve sections as painted cards, two by six,
+  each its name and "8 chants" (no note), opening that section's own shelf
+  (`.chantBrowse(.group(id))`), as the Prayers page lists its topics. A
+  card hangs `ChantBrowseScope.contentsPainting(for:)`: the picker's
+  painting (`ChantGroup.painting`), except the hymns' Ascension,
+  Benediction's Blessed Sacrament and the Latin Rosary's Our Lady of the
+  Rosary, so no two cards hang the same one (`ChantShelfPagesTests`
+  holds it). Our Lady's card and shelf read "Hymns to Our Lady", and
+  Benediction's "Adoration and Blessing" (`cardTitle(of:)`). **A shelf**
+  (a section, the Mass of the Angels, Songs to Mary) opens on its
+  painting run up under the bar, 200 points below it and dissolving into
+  the page, rising with the scroll; over its foot the name, when it is
+  sung (the section's note, the Mass's part note), "29 chants · 114 min"
+  and one outlined PLAY ALL, which is the shelf's Pause and Resume once
+  under way. A section with parts (the Masses, the seasons) adds a strip
+  of them that scrolls to each, over the small gold part headings. Where
+  the chants hang paintings of their own (Songs to Mary, the seasons,
+  the hymns) each row's painting is the disc that plays it, as on Your
+  Chants; where they all share the shelf's painting (the Mass of the
+  Angels, the Ordinary, Benediction) the rows are numbered with the disc
+  at their end (`numbersItsChants`). A row is its names and length, or
+  the bars and the gold title while it sounds; no caret; a hold offers
+  favourite and add to a set. A row names its setting ("· simple
+  melody") only where the run holds more than one (`rowsSaySetting`):
+  four times "Mass of the Angels" under a shelf of that name said
+  nothing. All Chants was once one scroll of 104 rows under headings of
+  three sizes with no painting, and every shelf a centred title over a
+  filled gold Play all. **Sung Sets** keeps its line ("Chants sung one
+  after another, for a time of prayer.") over the occasions as wide
+  painted cards (painting, name, line, "4 chants · 7 min", the bars while
+  one is sung), then Your sets, the reader's own (it once left them out,
+  though the home's Sung sets shelf whose SEE ALL opens it shows them),
+  then the dashed Make your own set, named first and opening on its page.
 
   **A set's page** (`ChantSetPage`, the "Chant Library shelves" design,
   option B, Oct 2026) is one component for every set, laid out as an
@@ -2671,10 +2707,11 @@ write concurrent code here:
   new occasion needs only its data. The set once opened as an order of
   service under the index of every other set, below the fold, and the
   reader's own as a card under the Saved shelf. **The occasions**
-  (`ChantOccasionsSection`): Adoration and Blessing (Benediction), A Visit
-  to Jesus in Church, a Sung Rosary, Before Bed, Before Work or Study, For
-  Those Who Have Died — an index in red numerals, each row opening its
-  page, over Make your own set. The bookmark is a toggle: filled while the occasion
+  (`ChantLibraryData.occasions`): Adoration and Blessing (Benediction), A
+  Visit to Jesus in Church, a Sung Rosary, Before Bed, Before Work or
+  Study, For Those Who Have Died — each a card on Sung Sets opening its
+  page (the numbered index `ChantOccasionsSection` drew them as is no
+  longer shown). The bookmark is a toggle: filled while the occasion
   is kept as a set of one's own (`ChantSet.occasionID`), a second tap
   letting that set go — but only while the set is still the occasion's
   own copy (`ChantShelfStore.isUntouchedCopy`); any other kept set is let
