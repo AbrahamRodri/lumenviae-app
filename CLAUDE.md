@@ -879,6 +879,7 @@ app/
 │   ├── BookReadingProgress                                (SwiftData)
 │   ├── PrayerShortcut                       # + MeWidget (read only by the Chapel's migration)
 │   ├── PrayerBook            # BookPrayer, chapters, orders of prayer, seasons
+│   ├── PrayerBookSearch, PrayerBookSchedule  # its search (names folded once) and its hours and seasons
 │   ├── PrayerDay             # The prayer day, turning at four: what counts as today for everything prayed
 │   ├── Chant                 # Chant, ChantScorePart, ChantGroup, ChantCatalog
 │   ├── ChantScoreDrawing     # A score's drawing, read from .lvscore; SVG path data

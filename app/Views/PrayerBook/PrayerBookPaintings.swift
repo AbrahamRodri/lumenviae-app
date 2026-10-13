@@ -15,6 +15,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 /// One painting as a Prayers card hangs it: the asset it wants, the one
 /// it hangs while that asset is missing, where its subject sits, and
@@ -424,5 +425,57 @@ struct PrayerBookPaintingGround: View {
             )
         }
         .accessibilityHidden(true)
+    }
+}
+
+// MARK: - Small paintings
+
+/// A painting drawn small at a fixed size, from a copy scaled down to
+/// that size and kept. A topic's rows of holy cards once drew each
+/// painting whole, 1235 by 1600 pixels decoded, to show it 34 points
+/// wide. A painting already smaller than the frame is drawn as it is.
+struct PaintingThumbnail: View {
+    let painting: PrayerBookPainting
+    let size: CGSize
+
+    @Environment(\.displayScale) private var displayScale
+
+    var body: some View {
+        let asset = painting.resolvedAsset
+        if let small = PaintingThumbnails.image(named: asset, filling: size, scale: displayScale) {
+            FocalFill(uiImage: small, focal: painting.focal)
+        } else {
+            CachedAssetImage(asset, focal: painting.focal)
+        }
+    }
+}
+
+/// The scaled-down copies, by painting and size, let go under memory
+/// pressure and made again when next drawn
+enum PaintingThumbnails {
+
+    private static let kept: NSCache<NSString, UIImage> = {
+        let cache = NSCache<NSString, UIImage>()
+        cache.countLimit = 300
+        return cache
+    }()
+
+    /// The painting scaled to cover `size` at `scale`, keeping its
+    /// shape, or nil when it is missing or no larger than that already
+    static func image(named name: String, filling size: CGSize, scale: CGFloat) -> UIImage? {
+        guard size.width > 0, size.height > 0, scale > 0 else { return nil }
+        let key = "\(name)|\(Int(size.width))x\(Int(size.height))@\(Int(scale))" as NSString
+        if let small = kept.object(forKey: key) { return small }
+        guard let full = UIImage(named: name), full.size.width > 0, full.size.height > 0 else { return nil }
+        let cover = max(size.width / full.size.width, size.height / full.size.height)
+        let pixels = CGSize(
+            width: (full.size.width * cover * scale).rounded(.up),
+            height: (full.size.height * cover * scale).rounded(.up)
+        )
+        guard pixels.width < full.size.width * full.scale,
+              let small = full.preparingThumbnail(of: pixels)
+        else { return nil }
+        kept.setObject(small, forKey: key)
+        return small
     }
 }
