@@ -2,11 +2,12 @@
 //  ChantScoreSheet.swift
 //  Lumen Viae
 //
-//  A chant's score, large: the whole of it at the width of the glass, a
-//  pinch (or a double tap) to bring a phrase closer, and the transport
-//  kept at the foot so the score can be followed while the chant sounds.
-//  A sheet, not a page: it is the score of the page it opens from, with
-//  nowhere else to go.
+//  A chant's score, large: the chant's painting at the head with its name
+//  set over the painting's foot, the whole score at the width of the glass
+//  beneath it, a pinch (or a double tap) to bring a phrase closer, and a
+//  small player floating at the foot so the score can be followed while
+//  the chant sounds. A sheet, not a page: it is the score of the page it
+//  opens from, with nowhere else to go.
 //
 
 import SwiftUI
@@ -52,9 +53,7 @@ struct ChantScoreSheet: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            SheetHeader(kicker: "Sheet music", title: chant.fullTitle, lead: chant.englishTitle) {
-                SheetHeaderAction(title: "Done") { dismiss() }
-            }
+            ChantScoreSheetHead(chant: chant) { dismiss() }
 
             GeometryReader { geo in
                 ScrollViewReader { proxy in
@@ -73,7 +72,7 @@ struct ChantScoreSheet: View {
                                 proxy.scrollTo(ChantScoreView.markID, anchor: anchor)
                             }
                         )
-                        .frame(width: (geo.size.width - 32) * zoom)
+                        .frame(width: (geo.size.width - 2 * Self.margin) * zoom)
                         .onGeometryChange(for: CGRect.self) { geometry in
                             geometry.frame(in: .named(Self.glass))
                         } action: { frame in
@@ -105,21 +104,41 @@ struct ChantScoreSheet: View {
                                     zoomByTap(at: tap.location)
                                 }
                         )
-                        .padding(16)
-                        .padding(.bottom, 24)
+                        .padding(.horizontal, Self.margin)
+                        .padding(.top, Self.top)
+                        .padding(.bottom, bottomRoom)
+                        // A score shorter than the glass starts under the
+                        // title: a scroll view that moves both ways centres
+                        // what is smaller than itself, and a short chant once
+                        // floated some 85 points down the sheet
+                        .frame(minHeight: geo.size.height, alignment: .topLeading)
                     }
                     .coordinateSpace(.named(Self.glass))
                     .onGeometryChange(for: CGSize.self) { $0.size } action: { glassSize = $0 }
                 }
                 .accessibilityHint("Pinch or double tap to bring the sheet music closer")
             }
-
+        }
+        .overlay(alignment: .bottom) {
             if showsTransport {
-                ChantScoreSheetTransport(chant: chant)
+                ZStack(alignment: .bottom) {
+                    ChantScoreSheetTransport.ground
+                    ChantScoreSheetTransport(chant: chant)
+                }
             }
         }
         .sheetGround()
         .presentationDetents([.large])
+    }
+
+    /// The glass's margin about the score, at its sides and above it
+    private static let margin: CGFloat = 16
+    private static let top: CGFloat = 14
+
+    /// Beneath the score: room for the last staff to scroll clear of the
+    /// floating player, where there is one
+    private var bottomRoom: CGFloat {
+        showsTransport ? ChantScoreSheetTransport.fadeHeight : 24
     }
 
     // MARK: - Zoom
@@ -162,13 +181,14 @@ struct ChantScoreSheet: View {
             x: (frame.minX + unit.x * frame.width) * scale,
             y: frame.minY + above * (scale - 1) + unit.y * frame.height * scale
         )
-        let width = (glass.width - 32) * newZoom
+        let width = (glass.width - 2 * Self.margin) * newZoom
         let height = scoreFrame.height + engraved * (scale - 1)
-        // The scroll view keeps 16 points of margin about the score, and 40
-        // beneath it
+        // The scroll view keeps its margin beside the score, `top` above it
+        // and `bottomRoom` beneath it
         let free = CGPoint(x: inGlass.x - markInScore.x, y: inGlass.y - markInScore.y)
-        let left = min(max(free.x, min(glass.width - 16 - width, 16)), 16)
-        let top = min(max(free.y, min(glass.height - 40 - height, 16)), 16)
+        let side = Self.margin
+        let left = min(max(free.x, min(glass.width - side - width, side)), side)
+        let top = min(max(free.y, min(glass.height - bottomRoom - height, Self.top)), Self.top)
 
         return Landing(
             mark: ChantScoreMark(part: index, unit: unit),
@@ -235,14 +255,127 @@ struct ChantScoreSheet: View {
     }
 }
 
+// MARK: - ChantScoreSheetHead
+
+/// The chant's own painting, the one its rows and its page show, dissolving
+/// into the sheet with the chant's names over its foot, and DONE. It stands
+/// above the score's glass, so no staff ever scrolls or zooms over the
+/// painting.
+private struct ChantScoreSheetHead: View {
+    let chant: Chant
+    let done: () -> Void
+
+    var body: some View {
+        VStack(spacing: 4) {
+            Text(chant.latinTitle)
+                .font(AppFonts.titleFont(26))
+                .foregroundColor(AppColors.cream)
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
+                .minimumScaleFactor(0.7)
+                .shadow(color: .black.opacity(0.7), radius: 8)
+                .accessibilityAddTraits(.isHeader)
+
+            Text(englishLine)
+                .font(AppFonts.readingItalicFont(16))
+                .foregroundColor(AppColors.cream.opacity(0.8))
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
+                .shadow(color: .black.opacity(0.7), radius: 6)
+        }
+        .padding(.horizontal, SheetMetrics.gutter)
+        // Clear of DONE above, and of the painting's last light beneath
+        .padding(.top, 84)
+        .padding(.bottom, 4)
+        .frame(maxWidth: .infinity)
+        .background(alignment: .top) { painting }
+        .overlay(alignment: .topTrailing) {
+            Button(action: done) {
+                Text("DONE")
+                    .font(AppFonts.labelFont(10))
+                    .tracking(2)
+                    .foregroundColor(AppColors.gold)
+                    .padding(.horizontal, 14)
+                    .frame(height: 32)
+                    .background(Capsule(style: .circular).fill(AppColors.background.opacity(0.6)))
+                    .overlay(
+                        Capsule(style: .circular).strokeBorder(AppColors.gold.opacity(0.22), lineWidth: AppLine.hairline)
+                    )
+                    .frame(minWidth: 44, minHeight: 44)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(QuietGlyphButtonStyle())
+            .accessibilityLabel("Done")
+            .padding(.top, 14)
+            .padding(.trailing, 14)
+        }
+    }
+
+    /// "Hail, Holy Queen · simple melody": the setting, where neither
+    /// title says it, rides after the English
+    private var englishLine: String {
+        guard let setting = chant.settingMidLine else { return chant.englishTitle }
+        return "\(chant.englishTitle) · \(setting)"
+    }
+
+    /// Drawn behind the names and no taller than them, so the band grows
+    /// with a long title and ends, faded to the ground, where the glass
+    /// begins
+    private var painting: some View {
+        let name = ChantCatalog.painting(for: chant)
+        // A wide, low band: cut high, where the faces are, unless the
+        // curation names the painting's point (the thumbnail's lookup
+        // answers the centre for a painting it has no point for)
+        let curated = ChantThumbnail.focalPoint(for: name)
+        let focal = curated == .center ? UnitPoint(x: 0.5, y: 0.3) : curated
+        return CachedAssetImage(name, focal: focal)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .clipped()
+            .overlay {
+                // The library's shade under a title: dark at the top for
+                // the drag indicator and DONE, darker under the names
+                LinearGradient(
+                    stops: [
+                        .init(color: .black.opacity(0.55), location: 0),
+                        .init(color: .black.opacity(0.1), location: 0.35),
+                        .init(color: .black.opacity(0.45), location: 0.8)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            }
+            .mask(
+                LinearGradient(
+                    stops: [
+                        .init(color: .black, location: 0),
+                        .init(color: .black, location: 0.4),
+                        .init(color: .black.opacity(0.35), location: 0.72),
+                        .init(color: .clear, location: 1)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
+            .accessibilityHidden(true)
+    }
+}
+
 // MARK: - ChantScoreSheetTransport
 
-/// Play, pause and the time, under a hairline — the score stays the
-/// sheet's subject. A view of its own so that the recording's progress,
-/// read twice a second, redraws the transport alone and never the score
-/// above it.
+/// Play, pause, the thread and the time in one small pill floating over
+/// the foot of the score, which stays the sheet's subject. A view of its
+/// own so that the recording's progress, read twice a second, redraws the
+/// pill alone and never the score above it.
 private struct ChantScoreSheetTransport: View {
     let chant: Chant
+
+    /// How much of the glass's foot the pill and its margin stand over
+    static let clearance: CGFloat = pillHeight + bottomGap
+    /// The fade beneath the pill, which the score's last staff scrolls
+    /// clear of
+    static let fadeHeight: CGFloat = clearance + 56
+    private static let pillHeight: CGFloat = 52
+    private static let bottomGap: CGFloat = 10
 
     private var player = ChantPlayer.shared
 
@@ -250,42 +383,63 @@ private struct ChantScoreSheetTransport: View {
         self.chant = chant
     }
 
+    /// The score fading into the ground beneath the pill, on under the
+    /// home indicator, where the score scrolls too
+    static var ground: some View {
+        LinearGradient(
+            stops: [
+                .init(color: AppColors.background.opacity(0), location: 0),
+                .init(color: AppColors.background.opacity(0.85), location: 0.45),
+                .init(color: AppColors.background, location: 1)
+            ],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+        // Run on past the frame's foot, which stands on the safe area
+        .ignoresSafeArea(edges: .bottom)
+        .frame(height: fadeHeight)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
+
     var body: some View {
         let holds = player.holds(chant)
-        return VStack(spacing: 10) {
-            Rectangle()
-                .fill(AppColors.gold.opacity(0.18))
-                .frame(height: AppLine.hairline)
-
-            HStack(spacing: 14) {
-                ChantPlayDisc(
-                    isPlaying: player.isPlaying(chant),
-                    isLoading: player.current.id == chant.id && player.isLoading,
-                    size: 40,
-                    label: chant.spokenName
-                ) {
-                    player.toggle(chant)
-                }
-
-                ChantScrubber(
-                    progress: holds ? player.progress : 0,
-                    duration: holds ? player.duration : chant.duration,
-                    isEnabled: holds
-                ) { fraction in
-                    player.seek(toFraction: fraction)
-                }
-
-                // The scrubber says the time in words; this is for the eye
-                Text(holds ? ChantPlayer.clock(player.currentTime) : chant.durationLabel)
-                    .font(AppFonts.labelFont(9))
-                    .tracking(1.5)
-                    .foregroundColor(AppColors.textSecondary)
-                    .monospacedDigit()
-                    .frame(minWidth: 36, alignment: .trailing)
-                    .accessibilityHidden(true)
+        HStack(spacing: 12) {
+            ChantPlayDisc(
+                isPlaying: player.isPlaying(chant),
+                isLoading: player.current.id == chant.id && player.isLoading,
+                size: 40,
+                label: chant.spokenName
+            ) {
+                player.toggle(chant)
             }
-            .padding(.horizontal, 20)
-            .padding(.bottom, 8)
+
+            ChantScrubber(
+                progress: holds ? player.progress : 0,
+                duration: holds ? player.duration : chant.duration,
+                isEnabled: holds
+            ) { fraction in
+                player.seek(toFraction: fraction)
+            }
+
+            // The scrubber says the time in words; this is for the eye
+            Text(holds ? ChantPlayer.clock(player.currentTime) : chant.durationLabel)
+                .font(AppFonts.labelFont(9))
+                .tracking(1.5)
+                .foregroundColor(AppColors.textSecondary)
+                .monospacedDigit()
+                .frame(minWidth: 34, alignment: .trailing)
+                .accessibilityHidden(true)
         }
+        .padding(.leading, 4)
+        .padding(.trailing, 18)
+        .frame(height: Self.pillHeight)
+        .frame(maxWidth: 320)
+        // Opaque, so no neume reads through it
+        .background(Capsule(style: .circular).fill(AppColors.cardBackground))
+        .overlay(Capsule(style: .circular).strokeBorder(AppColors.gold.opacity(0.22), lineWidth: AppLine.hairline))
+        .padding(.horizontal, SheetMetrics.gutter)
+        .padding(.bottom, Self.bottomGap)
+        .frame(maxWidth: .infinity)
     }
 }
