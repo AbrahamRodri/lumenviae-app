@@ -3,8 +3,11 @@
 //  Lumen Viae
 //
 //  Explore: one page that can reach everything, opened from the home
-//  screen's search bar. Empty, it browses — the five devotions and the
-//  library. Typed into, it searches those and every meditation set.
+//  screen's search bar. Empty, it is a directory of the app — the five
+//  devotions, the Prayer Book's occasions, the chant library, the Mass
+//  and the Hours, and the books — and nothing on it turns with the hour
+//  or the day: that is Home's and the Chapel's work. Typed into, it
+//  searches all of those and every meditation set.
 //
 //  The meditation index is fetched per category from the API the first
 //  time a word is typed, never on arrival: at rest this page lists no
@@ -181,56 +184,36 @@ struct ExploreView: View {
 
     // MARK: - Browse
 
-    /// The page at rest: an epigraph and two doorways. The meditation
-    /// index is fetched quietly for search but never listed here — a
-    /// catalog of every set belongs behind a typed word, not on a
-    /// landing page.
+    /// The page at rest: a directory, each section a shelf of paintings.
+    /// The meditation index is fetched quietly for search but never
+    /// listed here — a catalog of every set belongs behind a typed word,
+    /// not on a landing page.
     @ViewBuilder
     private var browseContent: some View {
-        epigraph
-
+        // Each opens its mysteries' page, where the Rosary is chosen in
+        // its three forms — a meditation set, the Scriptural Rosary, or
+        // the Rosary Said Aloud; typed search still finds the two forms
         section("Rosary Mysteries") {
-            VStack(alignment: .leading, spacing: 10) {
-                // Said once on the page, where a newcomer first meets
-                // the word
-                Text("Scenes from the lives of Jesus and Mary, prayed with the Rosary.")
-                    .font(AppFonts.readingItalicFont(14))
-                    .foregroundColor(AppColors.textSecondary)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                // Each opens its mysteries' page, where the Rosary is
-                // chosen in its three forms — a meditation set, the
-                // Scriptural Rosary, or the Holy Rosary. The Scriptural
-                // Rosary and the Rosary Aloud once stood here as two
-                // banners of their own beneath the five, as though they
-                // were other devotions; every mysteries' page holds them
-                // now, and typed search still finds them
-                mysteryLedger(MysteryCategory.allCases)
-
-                // For someone who has never prayed it: the course, where
-                // a newcomer looks first rather than at the page's foot
-                newcomerDoor
-            }
+            mysteryLedger(MysteryCategory.allCases)
         }
 
-        // The Prayer Book: the day's three hours on one line, the hour it
-        // is lit, and the orders kept for an occasion as a row to hand
-        section("Prayers", link: ("Open", { router.push(.prayerBook) })) {
-            prayerBookShelf
+        // The Prayer Book's orders kept for an occasion, as a shelf of
+        // paintings. The day's three hours stay off this page: which one
+        // is now is Home's and the Chapel's to say.
+        section("Prayers", link: ("All prayers", { router.push(.prayerBook) })) {
+            occasionShelf
         }
 
-        // The Church's songs: tonight's song to Mary, to play where it
-        // stands, over the door to the whole library
-        section("Chant", link: ("See all", { router.push(.chantLibrary) })) {
-            chantShelf
+        // The chant library's ways in, as painted tiles. No chant of the
+        // day here: tonight's song to Mary is the library's own to offer.
+        section("Chant", link: ("Library", { router.push(.chantLibrary) })) {
+            chantTiles
         }
 
-        // Each kind of door carries its own shape: the two liturgical
-        // books as a diptych — the same pairing the home page's shelf
-        // makes — the books to read as a row of standing covers, and
-        // the guides and records as a ruled index.
-        section("Today in the Church") {
-            liturgyDiptych
+        // The Church's two books, named for what they are rather than for
+        // today
+        section("Mass and Hours") {
+            liturgyTiles
         }
 
         section("Spiritual Reading", link: ("All books", { router.push(.spiritualReading) })) {
@@ -280,30 +263,6 @@ struct ExploreView: View {
         .accessibilityLabel(
             "\(info.title), \(info.author)\(hasRibbon ? ". Reading under way." : "")"
         )
-    }
-
-    /// The page's reason for being, in the Gospel's own words.
-    private var epigraph: some View {
-        VStack(spacing: 6) {
-            // What the page is, before the verse that says why
-            Text("Prayers, books, chant and the Church's day, with a search across the whole app.")
-                .font(AppFonts.readingItalicFont(15))
-                .foregroundColor(AppColors.textSecondary)
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.bottom, 8)
-
-            Text("Seek, and you shall find.")
-                .font(AppFonts.italicFont(15))
-                .foregroundColor(AppColors.cream.opacity(0.9))
-
-            Text("MATTHEW 7:7")
-                .font(AppFonts.labelFont(9))
-                .tracking(2)
-                .foregroundColor(AppColors.textSecondary)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.top, 6)
     }
 
     // MARK: - Search results
@@ -716,177 +675,162 @@ struct ExploreView: View {
         .accessibilityLabel("\(category.devotionTitle). \(category.subtitle)")
     }
 
-    /// A quiet line under the devotions for someone who has never
-    /// prayed the Rosary: no card and no gold fill — a door, not a
-    /// banner, beside the five that are. The glyph is How to Pray's own.
-    private var newcomerDoor: some View {
-        Button {
-            router.push(.howToPray)
-        } label: {
-            HStack(spacing: 12) {
-                AppIcon("lv-rosary", size: 16)
-                    .foregroundColor(AppColors.gold.opacity(0.85))
-                    .frame(width: 20)
+    // MARK: - Painted shelves
 
-                Text("New to the Rosary?")
-                    .font(AppFonts.italicFont(15))
-                    .foregroundColor(AppColors.cream.opacity(0.85))
+    /// The Prayer Book's orders kept for an occasion, each a painting with
+    /// its name and when it is said, scrolling sideways to the screen's
+    /// edges
+    private var occasionShelf: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(alignment: .top, spacing: 10) {
+                ForEach(PrayerBook.occasionOrders) { order in
+                    let painting = Self.occasionPainting(order.id)
+                    Button {
+                        router.push(.prayerOrder(id: order.id))
+                    } label: {
+                        VStack(alignment: .leading, spacing: 3) {
+                            CachedAssetImage(painting.asset, focal: painting.focal)
+                                .frame(width: 128, height: 128)
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .strokeBorder(AppColors.gold.opacity(0.22), lineWidth: AppLine.hairline)
+                                )
+                                .padding(.bottom, 4)
 
-                Spacer(minLength: 8)
+                            Text(order.title(on: Date()))
+                                .font(AppFonts.bodyFont(15))
+                                .foregroundColor(AppColors.cream)
+                                .lineLimit(2)
+                                .fixedSize(horizontal: false, vertical: true)
 
-                HStack(spacing: 5) {
-                    Text("HOW TO PRAY")
-                        .font(AppFonts.labelFont(9))
-                        .tracking(1.5)
-                    AppIcon("ph-caret-right", size: 8)
-                }
-                .foregroundColor(AppColors.gold.opacity(0.85))
-            }
-            .padding(.horizontal, 14)
-            .frame(minHeight: 44)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel("New to the Rosary? How to Pray")
-    }
-
-    // MARK: - The Prayer Book
-
-    /// Tonight's antiphon of Our Lady, to play where it stands, over the
-    /// door to the whole Chant Library
-    private var chantShelf: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            if let antiphon = ChantCatalog.antiphonOfTheSeason() {
-                // Why this one chant stands here, before the door to the
-                // rest
-                Text("Tonight's song to Mary")
-                    .font(AppFonts.readingItalicFont(14))
-                    .foregroundColor(AppColors.textSecondary)
-                    .padding(.bottom, 4)
-
-                ChantLibraryRow(chant: antiphon, player: ChantPlayer.shared) {
-                    router.push(.chant(id: antiphon.id))
-                }
-            }
-            LedgerDoorRow(
-                title: "The Chant Library",
-                note: "\(ChantCatalog.all.count) sung prayers of the Church, each with a recording and sheet music",
-                icon: "ph-music-note"
-            ) {
-                router.push(.chantLibrary)
-            }
-        }
-    }
-
-    /// The day's three hours, the hour it is lit, over the orders kept for
-    /// an occasion as a row of small plates
-    private var prayerBookShelf: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            PrayerHoursStrip(now: Date()) { order in
-                router.push(.prayerOrder(id: order.id))
-            }
-            .frame(maxWidth: .infinity)
-
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 10) {
-                    ForEach(PrayerBook.occasionOrders) { order in
-                        Button {
-                            router.push(.prayerOrder(id: order.id))
-                        } label: {
-                            HStack(spacing: 8) {
-                                AppIcon(order.icon, size: 14)
-                                    .foregroundColor(AppColors.gold)
-                                Text(order.title(on: Date()))
-                                    .font(AppFonts.readingFont(15))
-                                    .foregroundColor(AppColors.cream)
-                                    .lineLimit(1)
-                            }
-                            .padding(.horizontal, 14)
-                            .frame(minHeight: 44)
-                            .overlay(
-                                Capsule()
-                                    .strokeBorder(AppColors.gold.opacity(0.28), lineWidth: AppLine.hairline)
-                            )
-                            .contentShape(Capsule())
+                            Text(order.occasion)
+                                .font(AppFonts.italicFont(12))
+                                .foregroundColor(AppColors.textSecondary)
+                                .lineLimit(2)
+                                .fixedSize(horizontal: false, vertical: true)
                         }
-                        .buttonStyle(SacredCardButtonStyle())
+                        .frame(width: 128, alignment: .leading)
+                        .contentShape(Rectangle())
                     }
+                    .buttonStyle(SacredCardButtonStyle())
+                    .accessibilityLabel("\(order.title(on: Date())). \(order.occasion)")
                 }
-                .padding(.horizontal, 20)
             }
-            .padding(.horizontal, -20)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 2)
+        }
+        // Out to the screen edges, so the row scrolls under the page
+        // margin instead of being clipped by it
+        .padding(.horizontal, -20)
+    }
+
+    /// An occasion's painting: the Last Supper at Mass, Gethsemane at
+    /// Confession, the Holy Souls for the dead
+    private static func occasionPainting(_ orderID: String) -> (asset: String, focal: UnitPoint) {
+        switch orderID {
+        case "before_mass", "after_mass": return ("luminous_eucharist", UnitPoint(x: 0.5, y: 0.35))
+        case "before_confession", "after_confession": return ("sorrowful_agony", UnitPoint(x: 0.5, y: 0.3))
+        case "visit": return ("feast_christ_the_king", UnitPoint(x: 0.5, y: 0.3))
+        case "holy_souls": return ("devotion_holy_souls", UnitPoint(x: 0.5, y: 0.3))
+        case "trouble": return ("hour_night", UnitPoint(x: 0.5, y: 0.4))
+        case "table": return ("hour_morning", UnitPoint(x: 0.5, y: 0.35))
+        default: return ("glorious_coronation", UnitPoint(x: 0.5, y: 0.2))
         }
     }
 
-    // MARK: - The Liturgy
+    /// The chant library's four ways in, two by two
+    private var chantTiles: some View {
+        LazyVGrid(
+            columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)],
+            spacing: 10
+        ) {
+            paintedTile(
+                title: "All \(ChantCatalog.all.count) Chants", note: nil,
+                asset: "glorious_pentecost", focal: UnitPoint(x: 0.5, y: 0.3)
+            ) { router.push(.chantBrowse(.all)) }
 
-    /// The Mass and the Office side by side on one card — a diptych,
-    /// hinged on a centre rule, the same pairing the home shelf makes.
-    ///
-    /// The card is its leaves' height and no more. The hinge was a bare
-    /// `Rectangle` with a width and no height, and a shape takes all the
-    /// height it is offered — the one flexible thing in the card — so
-    /// the card could stand far taller than the two short leaves in it,
-    /// a blank band under the names. The hinge has its own height now,
-    /// and the card is held to what its leaves need.
-    private var liturgyDiptych: some View {
-        HStack(spacing: 0) {
-            diptychLeaf(
-                icon: "ch-altar",
-                title: "Today's Mass",
-                subtitle: "Daily Missal"
+            paintedTile(
+                title: "Songs to Mary", note: nil,
+                asset: "glorious_coronation", focal: UnitPoint(x: 0.5, y: 0.25)
+            ) { router.push(.chantBrowse(.group("ourLady"))) }
+
+            paintedTile(
+                title: ChantBrowseScope.massSetting, note: nil,
+                asset: "luminous_proclamation", focal: UnitPoint(x: 0.5, y: 0.3)
+            ) { router.push(.chantBrowse(.massOfTheAngels)) }
+
+            paintedTile(
+                title: "Sung Sets", note: nil,
+                asset: "feast_our_lady_of_the_rosary", focal: UnitPoint(x: 0.5, y: 0.3)
+            ) { router.push(.chantSets) }
+        }
+    }
+
+    /// The Mass and the Office as two painted tiles of the chant's shape
+    private var liturgyTiles: some View {
+        HStack(spacing: 10) {
+            paintedTile(
+                title: "The Mass", note: "Daily Missal",
+                asset: "luminous_eucharist", focal: UnitPoint(x: 0.5, y: 0.35)
             ) { router.push(.missal) }
 
-            Rectangle()
-                .fill(AppColors.gold.opacity(0.25))
-                .frame(width: AppLine.hairline, height: 48)
-
-            // The Office's glyph everywhere is the clock of its hours
-            diptychLeaf(
-                icon: "ph-clock",
-                title: "Hours of Prayer",
-                subtitle: "Divine Office"
+            paintedTile(
+                title: "Hours of Prayer", note: "Divine Office",
+                asset: "hour_morning", focal: UnitPoint(x: 0.5, y: 0.35)
             ) { router.push(.office) }
         }
-        .fixedSize(horizontal: false, vertical: true)
-        .background(AppColors.cardBackground)
-        .cornerRadius(16)
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .strokeBorder(AppColors.gold.opacity(0.2), lineWidth: AppLine.hairline)
-        )
     }
 
-    private func diptychLeaf(
-        icon: String,
+    /// A painting run to a small card's edges, its name on a scrim along
+    /// the foot
+    private func paintedTile(
         title: String,
-        subtitle: String,
+        note: String?,
+        asset: String,
+        focal: UnitPoint,
         action: @escaping () -> Void
     ) -> some View {
         Button(action: action) {
-            VStack(spacing: 7) {
-                AppIcon(icon, size: 22)
-                    .foregroundColor(AppColors.gold)
-
-                Text(title)
-                    .font(AppFonts.headlineFont(15))
-                    .foregroundColor(AppColors.cream)
-                    // Half the card wide: gives way a little at the larger
-                    // text sizes rather than break the name in two
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
-
-                Text(subtitle.uppercased())
-                    .font(AppFonts.labelFont(8))
-                    .tracking(2)
-                    .foregroundColor(AppColors.textSecondary)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
-            .contentShape(Rectangle())
+            CachedAssetImage(asset, focal: focal)
+                .frame(maxWidth: .infinity)
+                .frame(height: 92)
+                .overlay(
+                    LinearGradient(
+                        stops: [
+                            .init(color: AppColors.backgroundDeep.opacity(0), location: 0.2),
+                            .init(color: AppColors.backgroundDeep.opacity(0.9), location: 1)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+                .overlay(alignment: .bottomLeading) {
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text(title)
+                            .font(AppFonts.bodyFont(15))
+                            .foregroundColor(AppColors.cream)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
+                        if let note {
+                            Text(note)
+                                .font(AppFonts.italicFont(12))
+                                .foregroundColor(AppColors.textSecondary)
+                                .lineLimit(1)
+                        }
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.bottom, 9)
+                }
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(AppColors.gold.opacity(0.2), lineWidth: AppLine.hairline)
+                )
+                .contentShape(RoundedRectangle(cornerRadius: 12))
         }
         .buttonStyle(SacredCardButtonStyle())
-        .accessibilityLabel("\(title). \(subtitle)")
+        .accessibilityLabel(note.map { "\(title). \($0)" } ?? title)
     }
 
     // MARK: - The Study index
@@ -898,8 +842,8 @@ struct ExploreView: View {
     /// thing to discover, so it stays off the browse page — typed
     /// search still finds its door, and the Chapel's Prayer Streak tile
     /// and Settings → Devotion keep the real ones.
-    /// How to Pray stands under the mysteries, where a newcomer looks;
-    /// the Rosary's other two forms stand on every mysteries' page.
+    /// How to Pray is found by search and from Home and the Chapel; the
+    /// Rosary's other two forms stand on every mysteries' page.
     private var studyEntries: [LibraryEntry] {
         let housed = [
             "Today's Mass", "Hours of Prayer",
