@@ -26,9 +26,15 @@ enum ChantBrowseScope: Hashable {
     var title: String {
         switch self {
         case .all: return "All Chants"
-        case .group(let id): return ChantCatalog.groups.first { $0.id == id }?.title ?? "Chants"
+        case .group: return group?.title ?? "Chants"
         case .massOfTheAngels: return Self.massSetting
         }
+    }
+
+    /// The section a scope of one topic lists
+    var group: ChantGroup? {
+        guard case .group(let id) = self else { return nil }
+        return ChantCatalog.groups.first { $0.id == id }
     }
 
     /// The chants in a scope of one list; nil for every topic
@@ -36,10 +42,12 @@ enum ChantBrowseScope: Hashable {
         switch self {
         case .all:
             return nil
-        case .group(let id):
-            return ChantCatalog.groups.first { $0.id == id }.map { ChantCatalog.chants(in: $0) } ?? []
+        case .group:
+            return group.map { ChantCatalog.chants(in: $0) } ?? []
         case .massOfTheAngels:
-            return ChantCatalog.all.filter { $0.groupID == "mass" && $0.setting == Self.massSetting }
+            // The Ordinary's first Mass is the Mass of the Angels
+            let mass = ChantCatalog.groups.first { $0.id == "mass" }
+            return mass?.parts.first.map { ChantCatalog.chants(in: $0) } ?? []
         }
     }
 }
@@ -76,12 +84,16 @@ struct ChantBrowsePage: View {
                                 title: "Play all"
                             )
                         }
-                        list(chants)
+                        if let group = scope.group, group.parts.contains(where: { $0.title != nil }) {
+                            parts(of: group)
+                        } else {
+                            list(chants)
+                        }
                     } else {
                         ForEach(ChantCatalog.groups) { group in
                             VStack(alignment: .leading, spacing: 10) {
                                 ChantSectionHeading(kicker: nil, title: group.title, note: group.note, titleSize: 19)
-                                list(ChantCatalog.chants(in: group))
+                                parts(of: group)
                             }
                         }
                     }
@@ -95,6 +107,22 @@ struct ChantBrowsePage: View {
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) { ChantBackButton() }
+        }
+    }
+
+    /// A section's chants, each part under its subheading: the Masses of
+    /// the Ordinary, the seasons
+    private func parts(of group: ChantGroup) -> some View {
+        VStack(alignment: .leading, spacing: 22) {
+            ForEach(Array(group.parts.enumerated()), id: \.offset) { _, part in
+                VStack(alignment: .leading, spacing: 8) {
+                    if let title = part.title {
+                        ChantPartHeading(title: title, note: part.note)
+                            .padding(.top, 6)
+                    }
+                    list(ChantCatalog.chants(in: part))
+                }
+            }
         }
     }
 

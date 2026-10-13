@@ -10,7 +10,8 @@ listed and left out. Idempotent: an id or group already in chants.json is
 skipped. chants.json keeps its own layout — one entry per line, the chants
 grouped by shelf with a blank line between shelves — so each new chant is
 inserted as a line after the last chant of its shelf, and a new shelf's
-group after the last group, its chants at the end. Nothing else in the
+group after the last group, its chants at the end; each new chant is
+also listed at the end of its group's last part. Nothing else in the
 file is touched. Run Tools/Chants/generate.py afterwards.
 """
 
@@ -74,6 +75,16 @@ def main(dry: bool) -> int:
             lines.insert(i + 2, line(c))
             continue
         insert_after(i, line(c))
+
+    # A group's parts list its chants in the order the browse page shows
+    # them: a new chant joins the end of its group's last part
+    for c in take:
+        i = last_index(lambda l, gid=c["group"]: l.startswith(f'{{"id": "{gid}"') and '"slug"' not in l)
+        comma = lines[i].rstrip().endswith(",")
+        group = json.loads(lines[i].rstrip().rstrip(","))
+        parts = group.setdefault("parts", [{"chants": []}])
+        parts[-1]["chants"].append(c["id"])
+        lines[i] = line(group) + ("," if comma else "")
 
     new_text = "\n".join(lines)
     merged = json.loads(new_text)  # must still parse, with every id once

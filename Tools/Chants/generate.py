@@ -54,7 +54,8 @@ longer serves is.
 touching nothing else: no page is read and no file is fetched, so a
 chant's lines can be added with no network, no ffmpeg and no cache.
 --text-only folds chants.json's own words into the Swift already
-written — the shelves, and each chant's shelf, titles, setting, detail
+written — the shelves with their parts (the subheadings and the order
+the browse page lists them in, every chant once), and each chant's shelf, titles, setting, detail
 and prayers — the same lines a full run writes from them, touching the
 durations, the scores' captions and the lines not at all; chants.json
 must still list the chants the Swift holds, in its order.
@@ -573,11 +574,39 @@ def fold_lines_into_swift(ids):
     print(f"lines folded in for {len(found)} chant(s): {', '.join(sorted(found)) or 'none'}")
 
 
+def check_groups(manifest):
+    """Every chant listed once, in a part of its own shelf: the parts
+    are the shelf's order on the browse page and its subheadings."""
+    groups = {g["id"]: g for g in manifest["groups"]}
+    listed = {}
+    for g in manifest["groups"]:
+        for part in g["parts"]:
+            for chant_id in part["chants"]:
+                if chant_id in listed:
+                    sys.exit(f"{chant_id}: listed twice, under {listed[chant_id]} and {g['id']}")
+                listed[chant_id] = g["id"]
+    for c in manifest["chants"]:
+        if c["group"] not in groups:
+            sys.exit(f"{c['id']}: unknown group {c['group']}")
+        if listed.get(c["id"]) != c["group"]:
+            sys.exit(f"{c['id']}: not listed in the parts of its group {c['group']}")
+    unknown = set(listed) - {c["id"] for c in manifest["chants"]}
+    if unknown:
+        sys.exit(f"groups list chants chants.json lacks: {', '.join(sorted(unknown))}")
+
+
 def swift_groups(manifest):
     """The `groups:` table, as the generated file sets it."""
     out = []
     for g in manifest["groups"]:
-        out.append(f"        ChantGroup(id: {swift_string(g['id'])}, title: {swift_string(g['title'])}, note: {swift_string(g.get('note'))}),")
+        out.append(f"        ChantGroup(id: {swift_string(g['id'])}, title: {swift_string(g['title'])}, "
+                   f"note: {swift_string(g.get('note'))}, parts: [")
+        for part in g["parts"]:
+            ids = ", ".join(swift_string(i) for i in part["chants"])
+            out.append(f"            ChantGroupPart(title: {swift_string(part.get('title'))}, "
+                       f"note: {swift_string(part.get('note'))}, chantIDs: [{ids}]),")
+        out[-1] = out[-1].rstrip(",")
+        out.append("        ]),")
     out[-1] = out[-1].rstrip(",")
     return out
 
@@ -602,10 +631,8 @@ def fold_text_into_swift(manifest):
     ids = re.findall(r'^            id: "([^"]+)",', text, re.M)
     if ids != [c["id"] for c in manifest["chants"]]:
         sys.exit("chants.json and the Swift hold different chants: run without --text-only")
+    check_groups(manifest)
     groups = {g["id"] for g in manifest["groups"]}
-    for c in manifest["chants"]:
-        if c["group"] not in groups:
-            sys.exit(f"{c['id']}: unknown group {c['group']}")
 
     out = []
     current = None
@@ -639,7 +666,7 @@ def main():
     ids = [c["id"] for c in chants]
     if len(ids) != len(set(ids)):
         sys.exit("duplicate chant ids in chants.json")
-    groups = {g["id"] for g in manifest["groups"]}
+    check_groups(manifest)
     keep = "--keep-assets" in sys.argv[1:]
 
     if "--lines-only" in sys.argv[1:]:
@@ -660,8 +687,6 @@ def main():
     written_assets = {}
     built = []
     for entry in chants:
-        if entry["group"] not in groups:
-            sys.exit(f"{entry['id']}: unknown group {entry['group']}")
         text = page_html(entry)
         audio_url = find_audio(entry, text)
         recording = AUDIO_OUT / f"{entry['id']}.m4a"
@@ -732,13 +757,7 @@ def main():
         "",
         "    static let groups: [ChantGroup] = [",
     ]
-    for g in manifest["groups"]:
-        lines.append(f"        ChantGroup(id: {swift_string(g['id'])}, title: {swift_string(g['title'])}, note: {swift_string(g.get('note'))}),")
-    lines[-1] = lines[-1].rstrip(",")
-    # `all` lists one function a chant. Written as one array literal of
-    # every chant, the file took the compiler past 20 GB and rebooted the
-    # Mac (Oct 2026): a global's initialiser is type-checked whole, even to
-    # emit the module, and each function's body is checked on its own.
+    lines += swift_groups(manifest)
     lines += ["    ]", "", "    static let all: [Chant] = ["]
     lines += [f"        chant_{b['entry']['id']}()," for b in built]
     lines[-1] = lines[-1].rstrip(",")

@@ -380,7 +380,7 @@ struct ChantLibraryView: View {
     private var songsToMary: some View {
         ChantSideScroll {
             HStack(alignment: .top, spacing: 14) {
-                ForEach(ChantCatalog.groups.first { $0.id == "ourLady" }.map { ChantCatalog.chants(in: $0) } ?? []) {
+                ForEach(ChantLibraryData.songsToMary.compactMap { ChantCatalog.chant($0) }) {
                     chant in
                     ChantSquareCard(chant: chant, player: player) { openChant(chant) }
                 }
