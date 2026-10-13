@@ -709,6 +709,7 @@ struct ChantYourTurn: View {
 private struct NowPlayingTransport: View {
     let chant: Chant
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     private var player = ChantPlayer.shared
 
     init(chant: Chant) {
@@ -729,12 +730,12 @@ private struct NowPlayingTransport: View {
                 }
                 HStack {
                     Text(ChantPlayer.clock(elapsed))
-                        .contentTransition(.numericText())
+                        .contentTransition(.chantCount(reduceMotion: reduceMotion))
                     Spacer()
                     if lines {
                         Text("Line \((holds ? player.lineIndex ?? 0 : 0) + 1) of \(chant.lines.count)")
                             .font(AppFonts.readingItalicFont(13))
-                            .contentTransition(.numericText())
+                            .contentTransition(.chantCount(reduceMotion: reduceMotion))
                         Spacer()
                     }
                     Text(ChantPlayer.clock(total))

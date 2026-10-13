@@ -21,6 +21,7 @@ struct ChantScoreSheet: View {
     var showsTransport = true
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     /// How much closer than the width of the glass: 1 to 3
     @State private var zoom: CGFloat = 1
@@ -217,6 +218,12 @@ struct ChantScoreSheet: View {
         guard size.width > 0, size.height > 0,
               let landing = landing(at: target, keeping: point, from: origin)
         else { return }
+        // Under Reduce Motion the score is laid out at its new size at
+        // once, the tapped phrase kept in place, with no growing between
+        if reduceMotion {
+            settle(at: target, keeping: point, from: origin)
+            return
+        }
         let scale = target / zoom
         func anchor(_ free: CGFloat, _ rest: CGFloat, _ start: CGFloat, _ tapped: CGFloat) -> CGFloat {
             abs(rest - free) < 0.5 ? tapped : (rest - start) / (1 - scale)
@@ -238,7 +245,7 @@ struct ChantScoreSheet: View {
     /// the glass.
     private func settle(at newZoom: CGFloat, keeping point: CGPoint, from origin: CGPoint) {
         guard newZoom != zoom else {
-            withAnimation(Motion.settle) { pinch = 1 }
+            withAnimation(reduceMotion ? nil : Motion.settle) { pinch = 1 }
             return
         }
         if let landing = landing(at: newZoom, keeping: point, from: origin) {

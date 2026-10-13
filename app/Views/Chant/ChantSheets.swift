@@ -19,6 +19,7 @@ struct ChantPickerSheet: View {
     let set: ChantSet
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var query = ""
     /// The row at the top of the list, which lights its section in the strip
     @State private var topID: String?
@@ -126,7 +127,7 @@ struct ChantPickerSheet: View {
                     ForEach(ChantCatalog.groups) { group in
                         let lit = group.id == litGroupID
                         Button {
-                            withAnimation(Motion.travel(0.45)) { topID = "g:\(group.id)" }
+                            withAnimation(reduceMotion ? nil : Motion.travel(0.45)) { topID = "g:\(group.id)" }
                         } label: {
                             Text(group.shortTitle.uppercased())
                                 .font(AppFonts.labelFont(10))
@@ -153,7 +154,7 @@ struct ChantPickerSheet: View {
             .animation(Motion.crossfade, value: litGroupID)
             .onChange(of: litGroupID) { _, id in
                 guard let id else { return }
-                withAnimation(Motion.crossfade) { proxy.scrollTo(id, anchor: .center) }
+                withAnimation(reduceMotion ? nil : Motion.crossfade) { proxy.scrollTo(id, anchor: .center) }
             }
         }
         .padding(.top, 4)
@@ -223,7 +224,7 @@ struct ChantPickerSheet: View {
             Text(current.tally)
                 .font(AppFonts.readingFont(15.5))
                 .foregroundColor(AppColors.cream)
-                .contentTransition(.numericText())
+                .contentTransition(.chantCount(reduceMotion: reduceMotion))
                 .animation(Motion.crossfade, value: current.tally)
 
             Spacer(minLength: 8)

@@ -546,7 +546,7 @@ struct ChantShelfSwitch: View {
     /// A count rolls its digits to a new number, but under Reduce Motion
     /// it only changes, as every crossfade on the page still fades
     static func countTransition(reduceMotion: Bool) -> ContentTransition {
-        reduceMotion ? .identity : .numericText()
+        .chantCount(reduceMotion: reduceMotion)
     }
 
     var body: some View {

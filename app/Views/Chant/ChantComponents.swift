@@ -904,16 +904,10 @@ struct ChantMiniPlayer: View {
                 .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline)
         )
         .overlay(alignment: .bottomLeading) {
-            GeometryReader { geo in
-                Rectangle()
-                    .fill(AppColors.goldCTAGradient)
-                    .frame(width: geo.size.width * player.progress, height: 1.5)
-                    .animation(.linear(duration: 0.5), value: player.progress)
-                    .frame(maxHeight: .infinity, alignment: .bottom)
-            }
-            .clipShape(RoundedRectangle(cornerRadius: 16))
-            .allowsHitTesting(false)
-            .accessibilityHidden(true)
+            ChantMiniProgress(player: player)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .allowsHitTesting(false)
+                .accessibilityHidden(true)
         }
         .shadow(color: .black.opacity(0.45), radius: 16, y: 6)
     }
@@ -926,7 +920,11 @@ struct ChantMiniPlayer: View {
 
     @ViewBuilder
     private var subtitle: some View {
-        if let silence = player.silence {
+        if let error = player.error {
+            // The chant would not play: said here, wherever it was asked
+            // for, and a tap on the disc tries again
+            Text(error.message)
+        } else if let silence = player.silence {
             if let endsAt = silence.endsAt {
                 TimelineView(.periodic(from: .now, by: 1)) { context in
                     let left = max(0, endsAt.timeIntervalSince(context.date))
@@ -955,6 +953,57 @@ struct ChantMiniPlayer: View {
         } else {
             Text(chant.englishTitle)
         }
+    }
+}
+
+// MARK: - ChantMiniProgress
+
+/// The mini player's gold hairline of progress. The player reports its
+/// time twice a second; between those readings the line is carried on at
+/// the chant's pace (`ChantClock`), redrawn with the display while the
+/// chant sounds and not at all while it rests, so it moves smoothly
+/// rather than in half-second steps, and a seek jumps rather than sweeps.
+/// A view of its own, so only the line redraws, never the player around it.
+private struct ChantMiniProgress: View {
+    let player: ChantPlayer
+
+    @State private var clock = ChantClock()
+
+    var body: some View {
+        let sounding = player.isPlaying
+        TimelineView(.animation(minimumInterval: 1.0 / 30, paused: !sounding)) { context in
+            GeometryReader { geo in
+                Rectangle()
+                    .fill(AppColors.goldCTAGradient)
+                    .frame(width: geo.size.width * fraction(at: context.date), height: 1.5)
+                    .frame(maxHeight: .infinity, alignment: .bottom)
+            }
+        }
+        .onChange(of: Reading(time: player.currentTime, playing: sounding), initial: true) { _, reading in
+            clock.observe(reading.time, playing: reading.playing, at: Date())
+        }
+    }
+
+    private struct Reading: Equatable {
+        let time: Double
+        let playing: Bool
+    }
+
+    private func fraction(at date: Date) -> Double {
+        guard player.ownsPlayback else { return 0 }
+        let duration = player.duration
+        guard duration > 0 else { return 0 }
+        return min(1, max(0, clock.time(at: date, rate: player.speed) / duration))
+    }
+}
+
+// MARK: - Counts
+
+extension ContentTransition {
+    /// A count or a time rolls its digits to a new number, but under
+    /// Reduce Motion it only changes, as every crossfade still fades
+    static func chantCount(reduceMotion: Bool) -> ContentTransition {
+        reduceMotion ? .identity : .numericText()
     }
 }
 
