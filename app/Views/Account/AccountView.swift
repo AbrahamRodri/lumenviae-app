@@ -202,18 +202,23 @@ struct AccountView: View {
                             // the rule, and the record of prayer — kept
                             // here so stowing the flame tile never
                             // strands the Prayer Record.
-                            ActionRow(
-                                icon: "ph-scroll",
-                                title: "Daily Prayers",
-                                subtitle: userSettings.ruleItems.isEmpty
-                                    ? "No prayers chosen yet"
-                                    : userSettings.ruleItems.map(\.title).joined(separator: " · ")
-                            ) {
-                                showRuleEditor = true
-                            }
+                            //
+                            // Only the Chapel reads the daily prayers, so
+                            // the row stands down while it is archived.
+                            if !ArchivedPages.chapel {
+                                ActionRow(
+                                    icon: "ph-scroll",
+                                    title: "Daily Prayers",
+                                    subtitle: userSettings.ruleItems.isEmpty
+                                        ? "No prayers chosen yet"
+                                        : userSettings.ruleItems.map(\.title).joined(separator: " · ")
+                                ) {
+                                    showRuleEditor = true
+                                }
 
-                            Divider()
-                                .background(AppColors.gold.opacity(0.2))
+                                Divider()
+                                    .background(AppColors.gold.opacity(0.2))
+                            }
 
                             // Which mysteries the day brings: the
                             // traditional week, or the modern one with
@@ -229,6 +234,19 @@ struct AccountView: View {
                                 subtitle: "Your streaks, history, and milestones"
                             ) {
                                 router.switchTo(.progress)
+                            }
+
+                            Divider()
+                                .background(AppColors.gold.opacity(0.2))
+
+                            // The Journal's standing door, with the
+                            // Chapel and its Reflections tile archived
+                            ActionRow(
+                                icon: "ph-book-open",
+                                title: "Journal",
+                                subtitle: "Your reflections, kept on this device"
+                            ) {
+                                router.switchTo(.journal)
                             }
 
                             Divider()
@@ -1250,7 +1268,7 @@ struct PrivacyPolicySheet: View {
                 VStack(alignment: .leading, spacing: 28) {
                     InfoBlock(
                         title: "What Stays on Your Phone",
-                        text: "Almost everything. Your journal, your prayer record and streak, your place in every book, your Chapel and your settings are kept on this device and never sent to us. They leave it only in your iPhone's own iCloud Backup, if you have it on, under Apple's privacy policy."
+                        text: "Almost everything. Your journal, your prayer record and streak, your place in every book and your settings are kept on this device and never sent to us. They leave it only in your iPhone's own iCloud Backup, if you have it on, under Apple's privacy policy."
                     )
 
                     InfoBlock(

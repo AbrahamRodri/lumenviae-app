@@ -429,6 +429,9 @@ struct ContentView: View {
         case .prayers:
             PrayerBookView(isTabRoot: true)
                 .transition(tabTurn)
+        case .chant:
+            ChantLibraryView(isTabRoot: true)
+                .transition(tabTurn)
         }
     }
 

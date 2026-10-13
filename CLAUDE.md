@@ -214,7 +214,21 @@ different place.
 
 ## App Tabs
 
-`AppTab` (in `Components/CustomTabBar.swift`) has six cases, but the bar shows
+**The Chapel is archived** (Oct 2026, `ArchivedPages.chapel`): the bar
+shows **Chant** in its place, the Chant Library as a tab root
+(`ChantLibraryView(isTabRoot:)`, no Back, its search and foot clear of
+the bar). `AppTab.barTabs` is the bar's list. While the switch is on,
+`switchTo(.chapel)`, the debug launch tab and the first-use tour's last
+tab stop open Chant, and a push of `.chantLibrary` turns to the tab, as
+the Prayer Book's doors do. The Chapel's view, tiles and saved layout
+are untouched; set the constant false and it is back in Chant's place.
+The Prayer Record and the Journal are reached from Settings → Devotion
+and Explore's search, and the Journal from the completion screen; the
+Daily Prayers row stands down in Settings, since only the Chapel reads
+the rule. The Chapel's doors described below are the ones it has when
+it is brought back.
+
+`AppTab` (in `Components/CustomTabBar.swift`) has seven cases, but the bar shows
 four — Progress is reached from the Chapel's flame tile and Library tile,
 Settings → Devotion and Explore's search instead, to keep the bar from
 crowding the raised Pray button, and the Journal, which gave its place to
@@ -233,9 +247,10 @@ page opens its own page rather than turning beneath them.
 | Home | Yes | Search glass → Explore, today's mysteries, mystery grid, Today's Prayer, the reading shelf, quote |
 | Consecrate | Yes | The 33-day preparation for Marian consecration |
 | Prayers | Yes | The Prayer Book: six shortcuts, the order for this hour, Everyday Prayers, prayers to Mary, every occasion and topic, and a search behind the head's glass (see The Prayer Book below) |
-| Journal | No — pushed, via Chapel | Reflections, searchable, stored on device |
-| Progress | No — pushed, via Chapel | Streaks, milestones ahead, prayer history ("Prayer Record") |
-| Chapel | Yes | My Chapel — the user's arrangeable page (Settings and About live in the home masthead) |
+| Journal | No — pushed, via Settings | Reflections, searchable, stored on device |
+| Progress | No — pushed, via Settings | Streaks, milestones ahead, prayer history ("Prayer Record") |
+| Chant | Yes, while the Chapel is archived | The Chant Library (see The Chant Library below) |
+| Chapel | No — archived (`ArchivedPages.chapel`) | My Chapel — the user's arrangeable page (Settings and About live in the home masthead) |
 
 The **Pray** button raised over the bar runs the user's chosen quick act
 (today's Rosary by default), and **press-and-hold** opens a tray of their
@@ -373,6 +388,9 @@ equal cells), padded clear of the raised Pray medallion.
 > (`Models/JournalEntry.swift`); nothing is sent to the server.
 
 ### The Chapel Tab
+
+> Archived, Oct 2026 (`ArchivedPages.chapel`; see App Tabs). Kept as
+> built, and described as it was.
 
 The old Me/Account tab slot, rebuilt as **My Chapel**
 (`Views/Chapel/MyChapelView.swift`, from the "My Chapel" design
@@ -795,7 +813,8 @@ the page they serve):
   whether it speaks at all. Until the reader answers, the pill shows
   the default, Aloud, and its line says the book will ask. Drawing the
   row answers nothing; a tap on either segment does, the lit one too
-- **Devotion** — Daily Prayers (→ `RuleEditorSheet`), Prayer Record,
+- **Devotion** — Daily Prayers (→ `RuleEditorSheet`; hidden while the
+  Chapel is archived), Prayer Record, Journal,
   Daily Mysteries (Traditional | Modern → `MysteryScheduleSheet`, the row
   under Daily Prayers), Daily Reminders (toggle, time, sound), The Angelus Bell, What Brings
   You to the Rosary (decides the reminder copy pool)

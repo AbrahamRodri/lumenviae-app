@@ -306,7 +306,7 @@ final class AppRouter {
         #if DEBUG
         if let name = ProcessInfo.processInfo.environment["LUMEN_VIAE_TAB"],
            let tab = AppTab.allCases.first(where: { "\($0)" == name }) {
-            return tab
+            return tab == .chapel && ArchivedPages.chapel ? .chant : tab
         }
         #endif
         return .home
@@ -382,6 +382,7 @@ final class AppRouter {
     /// The Prayer Book has a tab of its own, so a door to it — home's hour
     /// row, Explore, the Chapel's tile, a prayer's page — turns to that
     /// tab rather than stacking a second copy of the book on this one.
+    /// So does a door to the Chant Library while Chant has a tab.
     ///
     /// An archived page (`ArchivedPages`) is never pushed: its doors stand
     /// down, and this is the backstop for one that was missed.
@@ -389,6 +390,12 @@ final class AppRouter {
         if ArchivedPages.hides(route) { return }
         if route == .prayerBook {
             switchTo(.prayers)
+            return
+        }
+        // The Chant Library has a tab of its own while the Chapel is
+        // archived, and is turned to the same way
+        if route == .chantLibrary && AppTab.barTabs.contains(.chant) {
+            switchTo(.chant)
             return
         }
         append(route)
@@ -449,6 +456,9 @@ final class AppRouter {
         switch tab {
         case .progress: push(.prayerRecord); return
         case .journal: push(.journal); return
+        // The Chapel archived, a door that still asks for it opens Chant,
+        // which stands in its place in the bar
+        case .chapel where ArchivedPages.chapel: switchTo(.chant); return
         default: break
         }
         if !path.isEmpty {

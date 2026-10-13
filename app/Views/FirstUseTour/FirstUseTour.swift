@@ -5,7 +5,7 @@
 //  A new reader's first look at the home page, once, after the
 //  introduction: six coach marks over the real controls, one at a time
 //  — today's Rosary, the Pray button (a tap and a hold), Prayers (the
-//  Prayer Book's tab), Consecrate, the Chapel, and Explore.
+//  Prayer Book's tab), Consecrate, Chant, and Explore.
 //
 //  Why this and not a deck of cards before the app: tutorials read
 //  before the app is seen do not help people use it (NN/g, "Mobile
@@ -31,7 +31,9 @@ import SwiftUI
 
 /// The places the tour stops, in order.
 enum FirstUseTourStop: Int, CaseIterable {
-    case today, pray, prayers, consecration, chapel, explore
+    /// `chant` is the bar's last tab: Chant, or the Chapel while it is
+    /// not archived (`ArchivedPages.chapel`)
+    case today, pray, prayers, consecration, chant, explore
 
     /// The place's name, as the mark's kicker
     var name: String {
@@ -40,7 +42,7 @@ enum FirstUseTourStop: Int, CaseIterable {
         case .pray:    return "The Pray Button"
         case .prayers: return "Prayers"
         case .consecration: return "Consecration"
-        case .chapel:  return "Your Chapel"
+        case .chant:   return ArchivedPages.chapel ? "Chant" : "Your Chapel"
         case .explore: return "Explore"
         }
     }
@@ -56,7 +58,10 @@ enum FirstUseTourStop: Int, CaseIterable {
             return "Catholic prayers for every need, opening on the ones for this time of day. Find any prayer by name, or by where you are: at Mass, at Confession, at home."
         case .consecration:
             return "A 33-day preparation to give yourself to Jesus through Mary. Choose the feast it ends on."
-        case .chapel:
+        case .chant:
+            if ArchivedPages.chapel {
+                return "Gregorian chant, the Church's own songs, each with its recording and sheet music. Listen, or learn one by heart."
+            }
             return "Your own page: your daily prayers, the days you have prayed, and the prayers for this time of day. Arrange it as you like."
         case .explore:
             return "Everything in the app in one place, from prayers and chant to books, with a search across it all."
