@@ -367,6 +367,30 @@ never listed on the browse page, and the field is deliberately not
 auto-focused: the page is a place first, a search second. The real
 search field lives on Explore, not on home.
 
+**There is one search** (`Models/AppSearch.swift`, drawn by
+`Views/Home/AppSearchResultsView.swift`; the "one app search" design,
+option E, Oct 2026). Explore's field, the Prayers page's glass and the
+Chant page's glass all open it; the two pages push
+`.search(from: .prayers)` and `.search(from: .chant)`, which is
+`ExploreView(origin:)` with the field focused, the system bar hidden
+and CANCEL beside the field as the way back, and one quiet line in
+place of the browse page before a word is typed. The field wears the
+gold outline the chant search had. It finds Rosary mysteries (a
+devotion, or one mystery by its name), the app's doors, readings,
+prayers (a topic, an order of prayer, then the prayers, from
+`PrayerBook.topics(matching:)`, `searchOrders` and `search`), chants
+(`ChantCatalog.search`) and the meditation sets, everything but the
+sets bundled, so it works offline. The kind of the page it was opened
+from leads: its best match by name stands on top as a painted card
+with PRAY (an outlined capsule) or the play disc and LISTEN, and its
+section comes first; from Home no kind leads and the best is whichever
+first hit's name answers closest. A section per kind follows, and
+chips under the field, one per kind with its count, scroll to a
+section and light for the section being read. They never filter, so
+there is no All. VoiceOver hears the kinds and counts once the reader
+pauses. Prayers and Chant each searched in place once, in two looks,
+the chant one with Try, Refine, scopes and filters; all of it went.
+
 **Pages push, tasks sheet.** Content destinations — the Missal, the
 Office, True Devotion, Spiritual Reading (the shelf, its books, their
 chapters), How to Pray, In Scripture, the Marian Library,
@@ -2416,9 +2440,9 @@ write concurrent code here:
   option A, Oct 2026), with what people come for first. The head is
   PRAYERS centred over the book's count ("152 prayers",
   `PrayerBook.prayerCount`, each prayer once however many chapters print
-  it) with a glass at the trailing edge; the glass turns the head into
-  the search field and CANCEL and the page into the search's results,
-  in one slot. Then **six shortcuts**, two by three, each a painting and
+  it) with a glass at the trailing edge (`PageSearchHead`, which the
+  Chant page wears too), opening the app's one search with prayers
+  leading (see Explore above). Then **six shortcuts**, two by three, each a painting and
   a name on the card ground (`PrayersShortcutTile`): Morning Prayers,
   the Angelus (Queen of Heaven in the Easter season), Night Prayers,
   Saved (`.prayerBookSaved`, `PrayerBookSavedView`: the prayers kept with
@@ -2479,16 +2503,14 @@ write concurrent code here:
   what was behind it. Lists name a prayer as people say it
   (`BookPrayer.listTitle`: Hail Mary, Memorare, Litany of Loreto, St
   Michael); its own page keeps its full title.
-  **Searching**, the page
-  gives way to "7 PRAYERS MATCH", said aloud to VoiceOver once the reader
-  pauses, a card for a topic the words name
+  **The book's search** (now the one search's Prayers section): a topic
+  the words name
   (`PrayerBook.topics(matching:)`: every word searched must begin a word
   of the topic's names, the small words — "the", "prayers", "to" —
   counting for nothing, so "mary" finds Prayers to Mary and "hail mary"
-  only the prayer), a card for an order of prayer they name
+  only the prayer), an order of prayer they name
   (`PrayerBook.searchOrders`: "blessed sacrament" finds Visiting Jesus in
-  Church), and the prayers found, each with its topic ("Mary · this
-  season" for the season's song to Mary). A prayer answers the same way
+  Church), and the prayers found. A prayer answers the same way
   (`PrayerBook.search`): every word searched begins a word of its title,
   Latin title or the other names it is looked for by
   (`BookPrayer.searchWords`: Salve Regina, Litany of Loreto), "st", "st."
@@ -2497,8 +2519,7 @@ write concurrent code here:
   as ae and oe ("regina caeli"), and a prayer whose text holds the whole
   search comes after the names. It once matched the whole search as one
   string, and "St Michael", "Loreto" and "St Joseph" found nothing.
-  VoiceOver hears the topic and the orders found as well
-  as the count of prayers, as the page sets them. Morning and Night Prayers
+  Morning and Night Prayers
   have no mystery of their own: their cards name paintings
   (`hour_morning`, `hour_night`) and, while one is missing from the
   catalog, hang the Presentation and Gethsemane
@@ -2776,13 +2797,12 @@ write concurrent code here:
   **The library is one home page, read like a music app's** (the
   "Simpler Chant Library" design, round 9, Oct 2026):
   `ChantLibraryView` (`.chantLibrary`) has Back, "Chant" over "104
-  recordings", and search's glass in its bar (the search stands over the
-  page, which stays beneath it hidden so Cancel comes back to the same
-  place). Then, 40 points apart: six tiles, two by three — the chant
+  recordings" with the glass beside them, the Prayers page's head
+  (`PageSearchHead`), set in the page under the bar, the glass opening
+  the app's one search with chants leading. Then, 40 points apart: six tiles, two by three — the chant
   sounding or sung last (Learned until anything has been), Your
   favourites, A Sung Rosary, Adoration and Blessing, the Mass of the
-  Angels, Before Bed; TONIGHT, the season's song to Mary as one wide card
-  with LISTEN; PLAYED LATELY, the last three as a song list (painting,
+  Angels, Before Bed; PLAYED LATELY, the last three as a song list (painting,
   names, length, and moving bars, `ChantSoundingBars`, on the one
   sounding, still under Reduce Motion; ··· for play, favourite, add to a
   set); SONGS TO MARY as square cards, each with its length and its own
@@ -2968,31 +2988,14 @@ write concurrent code here:
   boards print is heard in words (`ChantPlayer.spoken`), never "0:21 of
   3:05".
 
-  **Search** (`ChantSearchView`, `ChantSearch`) folds case, accents and
-  the ligatures ("caeli" finds Cæli, the match underlined under the
-  word as written): titles come back one result per work, its settings a
-  pill, those sung now first, then any time, then other times, the row's
-  own line saying when; Prayers finds the chant that sings a prayer by
-  the Prayer Book's name for it; Words finds a line of what is sung —
-  with its place in the recording only when the chant's lines are timed,
-  and the setting it was sung in where the work has two ("Salve Regina ·
-  Solemn", to VoiceOver too), so the simple and the solemn never give
-  rows that read alike. The page (the "simplify chant search" design,
-  option B, Oct 2026) is the field and what it finds, nothing above it:
-  before typing, TRY over three searches that show the three ways by
-  example (a name, a line it sings, no accents needed; a tap searches
-  it), set first so the keyboard never covers them, over tonight's song
-  to Mary as a painting dissolving into the page; typed, the best match
-  as a painted card with LISTEN, then Chants, Sung prayers and In the
-  words, every row with its chant's painting and its own play disc, the
-  words three to a group until Show all; nothing found, one line over
-  the kinds of chant, each opening every chant of its kind. Where to
-  search (All · Names · Words · Prayers) and the filters (this season,
-  under 3 minutes, still to learn, the kind) stand behind REFINE
-  (`ChantRefineSheet`), lit with their count while any is on, and what
-  is chosen stands under the field as chips a tap takes off. They once
-  stood as four tabs, a funnel and three chips above every result, over
-  a paragraph of instructions and an accent note repeated on every state.
+  **Search** is the app's one search (see Explore), opened from the
+  head's glass with chants leading: its chants are
+  `ChantCatalog.search`'s, each row the library's own with its play disc
+  and length. The library's own search page (`ChantSearchView`: Try,
+  Refine, the scopes All · Names · Words · Prayers and the filters) and
+  the Tonight card at the top of the page were taken out at the CEO's
+  word (Oct 2026); `ChantSearch` (`Views/Chant/ChantSearch.swift`) keeps
+  its folding and word matching for the practice and the tests.
 
   **The chant's page is Now Playing** (`ChantView`, `.chant(id:)`, the
   "simplify the chant page" design, option C, Oct 2026), a painted page
@@ -3727,8 +3730,8 @@ transition entirely.
   a Prayer Book page, Saved full and empty, an order's page, the
   pray-along page in silence, an order part-way through, a prayer
   opened alone and the Angelus, on a book store of its own, a chant's
-  page (top, foot, learning, not found), the chant search before
-  typing, with results and with nothing found, Your Chants with its
+  page (top, foot, learning, not found), the one search's results for
+  "salve" opened from Prayers and from Chant, Your Chants with its
   shelves full, empty and at its foot, the chant score sheet with and
   without its player, on a fixed day, and a sung set's page (an
   occasion at rest, sung and at `.xLarge`, the reader's own set full and
