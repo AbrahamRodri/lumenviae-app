@@ -35,6 +35,11 @@ struct PrayerOrderView: View {
     @State private var now: Date
     @State private var footHeight: CGFloat = 0
 
+    /// Whether the page is scrolled far enough that its words travel
+    /// under the bar. Measured as a flag, so a scroll redraws the page
+    /// only when it flips, never frame by frame.
+    @State private var wordsUnderBar = false
+
     /// How tall the painting stands at the head of the page, the status
     /// bar's height included: low enough that four prayers or more stand
     /// above the foot on a phone
@@ -57,9 +62,14 @@ struct PrayerOrderView: View {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 0) {
                         hero(order)
+                            .onGeometryChange(for: Bool.self) { proxy in
+                                -proxy.frame(in: .global).minY > 70
+                            } action: { under in
+                                withAnimation(Motion.crossfade) { wordsUnderBar = under }
+                            }
 
                         header(order)
-                            .padding(.horizontal, 22)
+                            .padding(.horizontal, 20)
                             .padding(.top, -48)
                             .devotionalEntrance()
 
@@ -127,7 +137,7 @@ struct PrayerOrderView: View {
     /// The order's painting, run to the top of the glass and dissolving
     /// into the page beneath the title, never to a flat slab
     private func hero(_ order: PrayerOrder) -> some View {
-        let painting = PrayerBookPainting.order(order, on: now)
+        let painting = Self.painting(of: order, on: now)
         return CachedAssetImage(painting.resolvedAsset, focal: painting.focal)
             .frame(maxWidth: .infinity)
             .frame(height: Self.heroHeight)
@@ -147,19 +157,44 @@ struct PrayerOrderView: View {
             .accessibilityHidden(true)
     }
 
-    /// A veil held under the status bar and the bar's Back, over the
-    /// painting at rest and over the prayers as they scroll beneath it
-    private var barVeil: some View {
-        LinearGradient(
-            stops: [
-                .init(color: AppColors.background.opacity(0.85), location: 0),
-                .init(color: AppColors.background.opacity(0.7), location: 0.6),
-                .init(color: AppColors.background.opacity(0), location: 1)
-            ],
-            startPoint: .top,
-            endPoint: .bottom
+    /// The order's painting. Night Prayers' Magdalen is hung from the top
+    /// of the canvas, so her face and the flame stand clear of the bar,
+    /// where the Prayers page's shortcut cuts her at the shoulders.
+    static func painting(of order: PrayerOrder, on date: Date) -> PrayerBookPainting {
+        let painting = PrayerBookPainting.order(order, on: date)
+        guard order.id == PrayerBook.nightOrderID else { return painting }
+        return PrayerBookPainting(
+            asset: painting.asset,
+            fallback: painting.fallback,
+            focal: UnitPoint(x: 0.5, y: 0),
+            caption: painting.caption
         )
-        .frame(height: 130)
+    }
+
+    /// A veil under the status bar and the bar's Back: light over the
+    /// painting at rest, and near opaque down past the bar once the title
+    /// travels under it, so no word of the page stands inside the Back
+    private var barVeil: some View {
+        ZStack(alignment: .top) {
+            LinearGradient(
+                colors: [AppColors.background.opacity(0.55), AppColors.background.opacity(0)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 110)
+
+            LinearGradient(
+                stops: [
+                    .init(color: AppColors.background.opacity(0.95), location: 0),
+                    .init(color: AppColors.background.opacity(0.9), location: 0.72),
+                    .init(color: AppColors.background.opacity(0), location: 1)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 158)
+            .opacity(wordsUnderBar ? 1 : 0)
+        }
         .ignoresSafeArea(edges: .top)
         .allowsHitTesting(false)
     }
@@ -169,13 +204,26 @@ struct PrayerOrderView: View {
         let title = order.title(on: now)
 
         return VStack(alignment: .leading, spacing: 6) {
-            HStack(spacing: 6) {
-                Text(order.occasion.uppercased())
-                if offered {
-                    Text("·")
-                        .foregroundColor(AppColors.gold.opacity(0.5))
-                    AppIcon("ph-seal-check-fill", size: 11)
-                    Text("PRAYED TODAY")
+            // When it is said, and that it was prayed today beside it;
+            // where the line has no room, PRAYED TODAY takes a line of its
+            // own rather than be cut, since it is the news
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 6) {
+                    Text(order.occasion.uppercased())
+                    if offered {
+                        Text("·")
+                            .foregroundColor(AppColors.gold.opacity(0.5))
+                        prayedToday
+                    }
+                }
+                .fixedSize()
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(order.occasion.uppercased())
+                        .fixedSize(horizontal: false, vertical: true)
+                    if offered {
+                        prayedToday
+                    }
                 }
             }
             .font(AppFonts.labelFont(9.5))
@@ -206,6 +254,14 @@ struct PrayerOrderView: View {
                 .padding(.top, 4)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var prayedToday: some View {
+        HStack(spacing: 6) {
+            AppIcon("ph-seal-check-fill", size: 11)
+            Text("PRAYED TODAY")
+        }
+        .fixedSize()
     }
 
     // MARK: - The prayers
@@ -264,6 +320,7 @@ struct PrayerOrderView: View {
                 }
                 .buttonStyle(QuietGlyphButtonStyle())
                 .accessibilityLabel("Pray aloud")
+                .accessibilityAddTraits(.isToggle)
                 .accessibilityValue(aloud ? "On, the \(voice) voice" : "Off")
 
                 GoldCTAButton(title: "Pray", glyph: .play) {

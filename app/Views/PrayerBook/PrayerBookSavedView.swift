@@ -18,6 +18,7 @@ import SwiftUI
 struct PrayerBookSavedView: View {
 
     @Environment(AppRouter.self) private var router
+    @Environment(\.dynamicTypeSize) private var typeSize
 
     private let store: PrayerBookStore
 
@@ -53,11 +54,14 @@ struct PrayerBookSavedView: View {
                         }
                         .transition(.opacity)
                     } else {
+                        // Two to a row, as the Prayers page's shortcuts stand;
+                        // one at the accessibility sizes, where half the
+                        // glass cuts a long name short
                         LazyVGrid(
-                            columns: [
-                                GridItem(.flexible(), spacing: 12, alignment: .top),
-                                GridItem(.flexible(), spacing: 12, alignment: .top)
-                            ],
+                            columns: Array(
+                                repeating: GridItem(.flexible(), spacing: 10, alignment: .top),
+                                count: typeSize >= .accessibility1 ? 1 : 2
+                            ),
                             alignment: .leading,
                             spacing: 18
                         ) {
@@ -71,13 +75,18 @@ struct PrayerBookSavedView: View {
                     }
                 }
                 .padding(.horizontal, 20)
-                .padding(.top, 8)
                 .padding(.bottom, 56)
                 .animation(Motion.crossfade, value: store.ribbons)
             }
-            .topChromeFade()
+            // The scroll begins under the bar, so a short dissolve is
+            // enough; the full one held the title a band's depth below
+            // Back, over bare page, on a page meant to open on paintings
+            .topChromeFade(height: 24, inset: 14)
         }
         .navigationBarBackButtonHidden(true)
+        // The page's own title stands just under the bar, not under the
+        // empty band a large title would keep
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button(action: { router.pop() }) {
@@ -137,7 +146,7 @@ private struct SavedPaintedCard: View {
                     Text(topic.title)
                         .font(AppFonts.readingItalicFont(13))
                         .foregroundColor(AppColors.textSecondary)
-                        .lineLimit(1)
+                        .lineLimit(2)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -167,20 +176,29 @@ private struct SavedPaintedCard: View {
 enum SavedPrayerPainting {
 
     static func of(_ prayerID: String) -> PrayerBookPainting {
-        let own = PrayerBookPainting.prayer(prayerID)
-        guard own == unnamed, let topic = PrayerBook.homeChapter(of: prayerID) else { return own }
-        return PrayerBookPainting.topic(topic)
+        if let scene = scene(of: prayerID) { return scene }
+        if let topic = PrayerBook.homeChapter(of: prayerID) { return PrayerBookPainting.topic(topic) }
+        return PrayerBookPainting.prayer(prayerID)
     }
 
-    /// What `PrayerBookPainting.prayer` hangs on a prayer it names no
-    /// scene for
-    private static let unnamed = PrayerBookPainting.prayer("")
+    /// The scene the book hangs on a prayer of its own, or nil where it
+    /// names none. These are the prayers `PrayerBookPainting.prayer`
+    /// gives a scene of their own; every other prayer it gives one
+    /// painting, which here would hang over half the shelf.
+    static func scene(of prayerID: String) -> PrayerBookPainting? {
+        scened.contains(prayerID) ? PrayerBookPainting.prayer(prayerID) : nil
+    }
+
+    private static let scened: Set<String> = [
+        "our_father", "hail_mary", "glory_be", "apostles_creed", "memorare", "litany_loreto"
+    ]
 }
 
 // MARK: - Nothing saved yet
 
 /// The page with nothing on it yet: the Saved shortcut's painting
-/// dissolving into the page with the ribbon hung from it, one sentence
+/// dissolving into the page (with no ribbon, which on this page always
+/// means a prayer is kept), one sentence
 /// saying how a prayer comes here, and the First Prayers as a painted
 /// door to begin with
 private struct SavedEmptyShelf: View {
@@ -195,10 +213,6 @@ private struct SavedEmptyShelf: View {
                 .frame(maxWidth: .infinity)
                 .frame(height: 250)
                 .clipped()
-                .overlay(alignment: .topTrailing) {
-                    RibbonMark(kept: true, width: 14, restLength: 38, keptLength: 48)
-                        .padding(.trailing, 40)
-                }
                 // Dissolves to clear at both edges, so the page's own
                 // gradient shows through rather than a slab of one colour
                 .mask(

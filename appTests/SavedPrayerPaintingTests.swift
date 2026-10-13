@@ -20,13 +20,16 @@ struct SavedPrayerPaintingTests {
 
     @Test func aPrayerWithNoScenePaintsItsTopic() throws {
         let topic = try #require(PrayerBook.homeChapter(of: "anima_christi"))
+        #expect(SavedPrayerPainting.scene(of: "anima_christi") == nil)
         #expect(SavedPrayerPainting.of("anima_christi") == PrayerBookPainting.topic(topic))
-        #expect(SavedPrayerPainting.of("anima_christi") != PrayerBookPainting.prayer("anima_christi"))
     }
 
-    @Test func everyPrayerHasAPainting() {
+    /// Every prayer's painting is one the app carries, so no card on the
+    /// shelf stands empty
+    @Test func everyPrayersPaintingLoads() {
         for id in PrayerBook.prayers.keys {
-            #expect(!SavedPrayerPainting.of(id).asset.isEmpty, "\(id) has no painting")
+            let painting = SavedPrayerPainting.of(id)
+            #expect(ImageCacheService.shared.image(named: painting.resolvedAsset) != nil, "\(id): \(painting.asset)")
         }
     }
 }
