@@ -180,25 +180,31 @@ struct ChantView: View {
     /// A veil under the status bar and the bar's Back and ⋯: light over
     /// the painting at rest, and near opaque down past the bar once the
     /// title travels under it, so no word of the page stands inside them
+    /// Both layers are sized from the bar's measured foot, so a phone with
+    /// a shorter or a taller bar gets the same veil, never a solid band
+    /// over words still in view below the bar.
     private var barVeil: some View {
-        ZStack(alignment: .top) {
+        let veilHeight = barFoot + 60
+        return ZStack(alignment: .top) {
             LinearGradient(
                 colors: [AppColors.background.opacity(0.55), AppColors.background.opacity(0)],
                 startPoint: .top,
                 endPoint: .bottom
             )
-            .frame(height: 110)
+            .frame(height: barFoot)
 
+            // Opaque to a little past the bar's foot, clear by 60 points
+            // past it
             LinearGradient(
                 stops: [
                     .init(color: AppColors.background.opacity(0.99), location: 0),
-                    .init(color: AppColors.background.opacity(0.99), location: 0.8),
+                    .init(color: AppColors.background.opacity(0.99), location: (barFoot + 20) / veilHeight),
                     .init(color: AppColors.background.opacity(0), location: 1)
                 ],
                 startPoint: .top,
                 endPoint: .bottom
             )
-            .frame(height: 172)
+            .frame(height: veilHeight)
             .opacity(wordsUnderBar ? 1 : 0)
         }
         .ignoresSafeArea(edges: .top)
