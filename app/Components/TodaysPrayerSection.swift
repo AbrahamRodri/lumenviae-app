@@ -294,8 +294,11 @@ struct TodaysPrayerRow: Equatable {
             subtitle: summary,
             fact: prayed ? "PRAYED" : moment.uppercased(),
             isPrayed: prayed,
-            spoken: [title, summary.trimmingCharacters(in: CharacterSet(charactersIn: ".")), prayed ? "prayed today" : moment.lowercased()]
-                .joined(separator: ", ")
+            spoken: [
+                title,
+                summary.trimmingCharacters(in: CharacterSet(charactersIn: ".")),
+                prayed ? "prayed today" : moment.lowercased(),
+            ].joined(separator: ", ")
         )
     }
 
