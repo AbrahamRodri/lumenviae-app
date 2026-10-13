@@ -2,15 +2,13 @@
 //  LibraryBookView.swift
 //  Lumen Viae
 //
-//  One book of the Spiritual Reading shelf, set like a title page: the
-//  binding floating over its own halo of cloth-coloured light, one gold
-//  act — take it up, or take it up again where you left it — the day's
-//  measure, and one ledger of chapters that can be read or heard.
-//
-//  The title and author are said once, on the cloth. The typographic
-//  imprint that used to repeat them under the cover is gone, and so is
-//  the full-width wash that sat every dark element on another dark
-//  element: the halo lights the cover only.
+//  One book of the Spiritual Reading shelf (the "Ring and index" design,
+//  Oct 2026): the cloth with the title, author and one gold act beside
+//  it — take it up, or take it up again where you left it — the daily
+//  reading goal as a ring, and one list of chapters that can be read or
+//  heard, opening at the reader's place, each part's name pinned over
+//  its chapters and the parts' numerals down the edge to jump between
+//  them. No line describes the book: the cloth and the title say it.
 //
 //  The recording itself belongs to `LibraryListeningSession`, which
 //  outlives this page — walking into a chapter must not silence the
@@ -57,21 +55,31 @@ struct LibraryBookView: View {
     /// the notes row's count and the pull-up's rows.
     @State private var notes: [JournalEntry] = []
 
-    /// Which parts stand open. Seeded once when the book arrives: the
-    /// part being read, or the first.
-    @State private var expandedParts: Set<String> = []
-    @State private var didSeedExpansion = false
+    /// Whether the chapters before the list's first are shown. The list
+    /// opens at the reader's place; asked for, or jumped to from the
+    /// index, the earlier ones open where they stand.
+    @State private var showsEarlier = false
+
+    /// Where the list's first and last rows stand on the page, so the
+    /// part index on the edge rides beside the list and nowhere else.
+    @State private var listTop: CGFloat = 10_000
+    @State private var listEnd: CGFloat = .greatestFiniteMagnitude
 
     /// The contents, partitioned once when the book arrives. Held rather
     /// than derived: partitioning a hundred and fourteen chapters on
     /// every pass of the body is work done for nothing.
     @State private var runs: [LibraryPartRun] = []
 
+    /// Whether any chapter's heading carries a numeral, so the rows keep
+    /// one column for them. Found once, with the runs.
+    @State private var numbersChapters = false
+
     /// Set as this page pushes a chapter, so a double tap cannot stack
     /// two readers on top of each other.
     @State private var isOpeningChapter = false
 
     @State private var query = ""
+    @FocusState private var searchFocused: Bool
     @State private var isSearching = false
 
     /// What the page has put over itself. One at a time, carried as a
@@ -165,9 +173,9 @@ struct LibraryBookView: View {
         // `loadProgress` here as well as in `onAppear`: the two hooks run
         // in an order SwiftUI does not promise, and `load()` returns
         // without ever suspending when the book is already resident —
-        // exactly the case on a return visit. Seeding the open part off a
-        // marker that had not been read yet is what used to open the
-        // Imitation on the First Book for a reader in the Fourth.
+        // exactly the case on a return visit. Opening the list off a marker
+        // that had not been read yet is what used to open the Imitation on
+        // the First Book for a reader in the Fourth.
         .task {
             loadProgress()
             await load()
@@ -190,100 +198,137 @@ struct LibraryBookView: View {
 
     // MARK: - Content
 
+    /// Whether the book prints parts — the Imitation's four Books — and so
+    /// pins their names over the list and stands their index on the edge.
+    private var hasParts: Bool { runs.count > 1 }
+
     @ViewBuilder
     private func content(_ info: LibraryBookInfo) -> some View {
-        ScrollView(showsIndicators: false) {
-            // One lazy stack for the whole page, footer included. A lazy
-            // stack nested inside an eager one reports a height that
-            // grows as its rows materialize, and everything below it
-            // drifts while the reader scrolls.
-            LazyVStack(alignment: .leading, spacing: 0) {
-                header(info)
-                    .devotionalEntrance()
+        ScrollViewReader { proxy in
+            ScrollView(showsIndicators: false) {
+                // One lazy stack for the whole page, footer included. A lazy
+                // stack nested inside an eager one reports a height that
+                // grows as its rows materialize, and everything below it
+                // drifts while the reader scrolls.
+                LazyVStack(alignment: .leading, spacing: 0, pinnedViews: [.sectionHeaders]) {
+                    header(info)
+                        .devotionalEntrance()
 
-                if let book {
-                    primaryAct(book)
+                    if let book {
+                        DailyReadingGoalCard(
+                            line: meter.progressLine(for: settings.readingGoal),
+                            figure: meter.ringFigure(for: settings.readingGoal),
+                            fraction: meter.fraction(toward: settings.readingGoal),
+                            action: { sheet = .goal }
+                        )
                         .padding(.horizontal, 20)
-                        .padding(.bottom, 18)
+                        .padding(.bottom, 22)
                         .devotionalEntrance(delay: 0.05)
 
-                    goalSection(book)
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 20)
-                        .devotionalEntrance(delay: 0.1)
+                        contents(book)
+                            .devotionalEntrance(delay: 0.1)
 
-                    ledgerSection(book, info)
-                        .padding(.horizontal, 20)
-                        .devotionalEntrance(delay: 0.15)
+                        if let failure = session.failure {
+                            quietNote(failure)
+                                .padding(.horizontal, 20)
+                                .padding(.top, 18)
+                        }
 
-                    if let failure = session.failure {
-                        quietNote(failure)
-                            .padding(.horizontal, 20)
-                            .padding(.top, 18)
+                        if !notes.isEmpty {
+                            BookNotesRow(count: notes.count) { sheet = .notes }
+                                .padding(.horizontal, 20)
+                                .padding(.top, 10)
+                        }
+
+                        if !sections.isEmpty {
+                            offlineSection(info)
+                                .padding(.horizontal, 20)
+                                .padding(.top, 22)
+                        } else if tracksFailed {
+                            recordingUnreachable(info)
+                                .padding(.horizontal, 20)
+                                .padding(.top, 22)
+                        }
+
+                        credit(info)
+                            .padding(.horizontal, 32)
+                            .padding(.top, 26)
+                            .padding(.bottom, session.isActive ? 110 : 48)
+                    } else if loadFailed {
+                        unavailable
+                            .padding(.top, 40)
+                    } else {
+                        loading
                     }
-
-                    if !notes.isEmpty {
-                        BookNotesRow(count: notes.count) { sheet = .notes }
-                            .padding(.horizontal, 20)
-                            .padding(.top, 10)
-                    }
-
-                    if !sections.isEmpty {
-                        offlineSection(info)
-                            .padding(.horizontal, 20)
-                            .padding(.top, 22)
-                    } else if tracksFailed {
-                        recordingUnreachable(info)
-                            .padding(.horizontal, 20)
-                            .padding(.top, 22)
-                    }
-
-                    credit(info)
-                        .padding(.horizontal, 32)
-                        .padding(.top, 26)
-                        .padding(.bottom, session.isActive ? 110 : 48)
-                } else if loadFailed {
-                    unavailable
-                        .padding(.top, 40)
-                } else {
-                    loading
+                }
+            }
+            .coordinateSpace(name: Self.pageSpace)
+            // Held under the bar: a part's name pins at the scroll's top
+            // edge, and the chapters it pushed up would otherwise go on
+            // showing above it, behind the Back capsule.
+            .clipped()
+            .overlay(alignment: .topTrailing) {
+                if hasParts, !isSearching, book != nil {
+                    partIndex(proxy)
+                        // Level with the list's first row, under its part's
+                        // name, then held under the name pinned at the top
+                        // of the glass while the list passes
+                        .offset(y: max(listTop, 0) + Self.partHeaderHeight)
+                        // Only beside the list: above it the goal card's
+                        // ADJUST stands at the edge, below it the offline
+                        // row's act.
+                        .opacity(listEnd > 260 ? 1 : 0)
+                        .animation(.easeOut(duration: 0.2), value: listEnd > 260)
                 }
             }
         }
     }
 
-    /// The head of the page: the book itself, floating over its halo.
-    /// Title and author are said once, on the cloth — nothing repeats
-    /// them beneath it.
-    private func header(_ info: LibraryBookInfo) -> some View {
-        VStack(spacing: 0) {
-            BookCover(info: info, hasRibbon: hasReadingUnderWay)
-                .frame(width: 136)
-                .shadow(color: .black.opacity(0.55), radius: 15, y: 7)
-                // As a background the halo takes none of its 540 points
-                // in layout, and it scrolls away with the cover instead
-                // of clinging to the viewport.
-                .background {
-                    BookHalo(bindingColor: info.bindingColor)
-                }
-                .padding(.top, 18)
+    private static let pageSpace = "libraryBookPage"
 
-            // One sentence on what the book is, under the cloth, so a
-            // reader who has never heard of it knows before opening it.
-            // The cloth names the title and author; this says why read it.
-            Text(info.blurb)
-                .font(AppFonts.italicFont(15))
-                .foregroundColor(AppColors.textSecondary)
-                .multilineTextAlignment(.center)
-                .lineSpacing(3)
-                .padding(.horizontal, 36)
-                .padding(.top, 22)
+    /// About the height of a pinned part name, which the index starts
+    /// beneath so the two never cross
+    private static let partHeaderHeight: CGFloat = 44
+
+    /// The head of the page: the book's cloth, and beside it the title,
+    /// the author and the one gold act. Nothing describes the book here;
+    /// the cloth and the title already say what it is.
+    private func header(_ info: LibraryBookInfo) -> some View {
+        HStack(alignment: .bottom, spacing: 16) {
+            // The shelf's own cloth, drawn at the size its lettering is set
+            // for and then shrunk whole: laid out at 78 points, the title
+            // could only shrink to "THE I…".
+            BookCover(info: info, hasRibbon: hasReadingUnderWay)
+                .frame(width: 136, height: 136 / 0.7)
+                .scaleEffect(Self.coverWidth / 136)
+                .frame(width: Self.coverWidth, height: Self.coverWidth / 0.7)
+                .accessibilityHidden(true)
+
+            VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(info.title)
+                        .font(AppFonts.titleFont(20))
+                        .foregroundColor(AppColors.cream)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .accessibilityAddTraits(.isHeader)
+
+                    Text(info.author)
+                        .font(AppFonts.italicFont(15))
+                        .foregroundColor(AppColors.textSecondary)
+                }
+
+                if let book {
+                    primaryAct(book)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .frame(maxWidth: .infinity)
-        .padding(.bottom, 24)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(info.title), \(info.author). \(info.blurb)")
+        .padding(.horizontal, 20)
+        .padding(.top, 14)
+        .padding(.bottom, 22)
     }
+
+    private static let coverWidth: CGFloat = 78
 
     private var hasReadingUnderWay: Bool {
         guard let progress else { return false }
@@ -293,25 +338,24 @@ struct LibraryBookView: View {
     // MARK: - The one gold act
 
     /// The screen's primary act, and the only filled gold shape on it:
-    /// open the book, at the exact chapter the marker holds — with how
-    /// far into it the reader already is, said against the recording's
-    /// own length where one exists.
+    /// open the book at the exact chapter the marker holds, named short —
+    /// "Continue · III.V" — since the list below lights the same chapter
+    /// in full.
     @ViewBuilder
     private func primaryAct(_ book: LibraryBook) -> some View {
         let resume = resumeChapter(book)
-        let opening = resume ?? book.chapters.first
 
-        if let opening {
-            ContinueReadingAct(
-                kicker: resume == nil ? "BEGIN READING" : "CONTINUE READING",
-                destination: destination(for: opening),
-                fraction: resume == nil ? 0 : chapterFraction(opening),
-                meta: actMeta(for: opening, isResume: resume != nil),
+        if let opening = resume ?? book.chapters.first {
+            GoldCTAButton(
+                title: resume == nil
+                    ? "Begin reading"
+                    : "Continue · \(LibraryBookPlace.shortName(of: opening, in: runs))",
+                prominence: .inline,
+                trailingIcon: "ph-caret-right",
+                fullWidth: false,
                 action: { openChapter(opening) }
             )
-            .accessibilityHint(
-                resume.map { "Opens \($0.displayTitle)" } ?? "Opens the first chapter"
-            )
+            .accessibilityHint("Opens \(destination(for: opening))")
         }
     }
 
@@ -324,48 +368,6 @@ struct LibraryBookView: View {
         return chapter.displayTitle
     }
 
-    /// How far into a chapter the marker stands, by paragraph — the same
-    /// proportional honesty follow-the-voice uses.
-    private func chapterFraction(_ chapter: LibraryChapter) -> Double {
-        guard let progress, LibraryProgressStore.isCurrent(progress),
-              progress.lastChapterIndex == chapter.id,
-              !chapter.paragraphs.isEmpty else { return 0 }
-        return min(max(Double(progress.lastParagraphIndex) / Double(chapter.paragraphs.count), 0), 1)
-    }
-
-    /// "6 MIN IN · 18 MIN LEFT" — minutes taken from the recording's own
-    /// length, the one honest clock this shelf has. Where no recording
-    /// times this chapter, the meta stays quiet rather than guessing.
-    private func actMeta(for chapter: LibraryChapter, isResume: Bool) -> String? {
-        guard let seconds = chapterSeconds(chapter.id) else {
-            return isResume ? nil : "NOT YET OPENED"
-        }
-        let minutes = max(Int((seconds / 60).rounded()), 1)
-        guard isResume else { return "\(minutes) MIN · NOT YET OPENED" }
-
-        let fraction = chapterFraction(chapter)
-        let minutesIn = Int((fraction * Double(minutes)).rounded())
-        guard minutesIn > 0 else { return "\(minutes) MIN" }
-        return "\(minutesIn) MIN IN · \(max(minutes - minutesIn, 1)) MIN LEFT"
-    }
-
-    /// The recording's length for one chapter: its own tracks summed, or
-    /// its share of a track that gathers several chapters into one file.
-    private func chapterSeconds(_ chapter: Int) -> Double? {
-        guard !alignment.isEmpty else { return nil }
-        var total: Double = 0
-        var found = false
-
-        for (index, section) in sections.enumerated() {
-            guard let range = alignment.chapters(forTrack: index),
-                  range.contains(chapter),
-                  let seconds = section.playtimeSeconds else { continue }
-            total += seconds / Double(range.count)
-            found = true
-        }
-        return found ? total : nil
-    }
-
     /// Where the reader left off, if the marker still belongs to this
     /// cutting of the edition and names a chapter it still has.
     private func resumeChapter(_ book: LibraryBook) -> LibraryChapter? {
@@ -373,74 +375,26 @@ struct LibraryBookView: View {
         return book.chapter(at: progress.lastChapterIndex)
     }
 
-    // MARK: - Today's goal
-
-    /// The day's measure, and under it what the whole book still holds —
-    /// both said against the recording's length, a fact about the files.
-    @ViewBuilder
-    private func goalSection(_ book: LibraryBook) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            TodaysGoalBand(
-                line: meter.goalLine(for: settings.readingGoal),
-                fraction: meter.fraction(toward: settings.readingGoal),
-                action: { sheet = .goal }
-            )
-
-            if let line = timeLeftLine(book) {
-                Text(line)
-                    .font(AppFonts.italicFont(12))
-                    .foregroundColor(AppColors.textSecondary)
-            }
-        }
-    }
-
-    /// "2 h 5 m read · 7 h 26 m left in the book", from the recording's
-    /// total length and the chapters read to their end. Absent where the
-    /// book has no recording to time it by.
-    private func timeLeftLine(_ book: LibraryBook) -> String? {
-        // Only the tracks the alignment actually maps to a chapter —
-        // the same tracks `chapterSeconds` can reach, so a finished book
-        // really does reach zero.
-        //
-        // A recording usually carries more than the text does. Thérèse's
-        // reading runs on through the Counsels, the Letters, the Prayers
-        // and the Poems that the catalog's `stopPattern` cuts away, and
-        // the Dolorous Passion's two appendices sit past its last
-        // chapter. Summed into the total, those left four hours and
-        // twenty minutes on the Story of a Soul that no amount of
-        // reading could take off the line.
-        let total = sections.enumerated().reduce(into: 0.0) { sum, pair in
-            guard alignment.chapters(forTrack: pair.offset) != nil,
-                  let seconds = pair.element.playtimeSeconds else { return }
-            sum += seconds
-        }
-        guard total > 60 else { return nil }
-
-        var done: Double = 0
-        if let progress, LibraryProgressStore.isCurrent(progress) {
-            for index in progress.finishedChapterIndexes {
-                done += chapterSeconds(index) ?? 0
-            }
-            if let current = book.chapter(at: progress.lastChapterIndex),
-               !progress.finishedChapterIndexes.contains(current.id),
-               let seconds = chapterSeconds(current.id) {
-                done += seconds * chapterFraction(current)
-            }
-        }
-
-        guard done > 60 else {
-            return "\(ReadingSpans.spell(total)) of reading in this book"
-        }
-        return "\(ReadingSpans.spell(done)) read · \(ReadingSpans.spell(max(total - done, 0))) left in the book"
-    }
-
     // MARK: - Contents
 
-    /// One ledger, not two: the chapter is the thing, and the voice is
-    /// one of the two ways to have it. The header states the rule the
-    /// rows follow.
+    private var currentIndex: Int? {
+        progress.flatMap { LibraryProgressStore.isCurrent($0) ? $0.lastChapterIndex : nil }
+    }
+
+    /// The chapter the list begins at, a little before the one being
+    /// read, unless the reader has asked for the chapters before it.
+    private var firstShown: Int? {
+        showsEarlier ? nil : LibraryBookPlace.firstShown(in: runs, currentIndex: currentIndex)
+    }
+
+    /// One list for the whole book: each part's name pinned over its
+    /// chapters while they pass, and the list opening at the reader's
+    /// place with the chapters before it folded into one line.
     @ViewBuilder
-    private func ledgerSection(_ book: LibraryBook, _ info: LibraryBookInfo) -> some View {
+    private func contents(_ book: LibraryBook) -> some View {
+        // The head and the search field as one view: loose in the lazy
+        // stack, the field was laid out afresh as the keyboard rose and
+        // let go of its focus, so nothing could be typed into it.
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 8) {
                 Text("CONTENTS · \(book.chapters.count) CHAPTERS")
@@ -452,7 +406,12 @@ struct LibraryBookView: View {
 
                 Button {
                     isSearching.toggle()
-                    if !isSearching { query = "" }
+                    if isSearching {
+                        // On the next pass, once the field exists
+                        DispatchQueue.main.async { searchFocused = true }
+                    } else {
+                        query = ""
+                    }
                 } label: {
                     HStack(spacing: 6) {
                         Text(isSearching ? "CLOSE" : "SEARCH")
@@ -461,39 +420,184 @@ struct LibraryBookView: View {
                         AppIcon(isSearching ? "ph-x" : "ph-magnifying-glass", size: 13)
                     }
                     .foregroundColor(AppColors.gold.opacity(0.75))
-                    .padding(.vertical, 8)
+                    .padding(.vertical, 12)
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(isSearching ? "Close the search" : "Search inside this book")
             }
-            .padding(.bottom, 4)
+            .padding(.horizontal, 20)
 
             if isSearching {
                 searchField
+                    .padding(.horizontal, 20)
                     .padding(.bottom, 6)
-            } else if !sections.isEmpty {
-                Text("Tap a chapter to read it. Tap its time to have it read aloud.")
-                    .font(AppFonts.italicFont(12))
-                    .foregroundColor(AppColors.textSecondary)
-                    .padding(.bottom, 6)
+            }
+        }
+
+        if isSearching {
+            if !query.trimmingCharacters(in: .whitespaces).isEmpty {
+                searchResults(book)
+                    .padding(.horizontal, 20)
+            }
+        } else {
+            let first = firstShown
+            let shown = LibraryBookPlace.runs(runs, from: first)
+
+            if let first, let hidden = book.chapters.firstIndex(where: { $0.id == first }) {
+                earlierRow(count: hidden)
             }
 
-            if isSearching, !query.trimmingCharacters(in: .whitespaces).isEmpty {
-                searchResults(book)
-            } else {
-                LibraryContentsLedger(
-                    runs: runs,
-                    currentIndex: progress.flatMap {
-                        LibraryProgressStore.isCurrent($0) ? $0.lastChapterIndex : nil
-                    },
-                    finished: finishedChapters,
-                    markCounts: markCounts,
-                    listening: listening(for:),
-                    expandedParts: $expandedParts,
-                    onSelect: openChapter
-                )
+            // Where the list begins and ends, for the index on the edge.
+            // Markers rather than the list's own frame: a modifier on the
+            // ForEach would land on every section. A marker the lazy
+            // stack lets go keeps its last reading, which is past the
+            // glass's edge in the direction it went.
+            pageMarker { listTop = $0 }
+
+            ForEach(shown) { run in
+                Section {
+                    ForEach(run.chapters) { chapter in
+                        LibraryChapterRow(
+                            chapter: chapter,
+                            isCurrent: chapter.id == currentIndex,
+                            isFinished: finishedChapters.contains(chapter.id),
+                            isLast: chapter.id == run.chapters.last?.id,
+                            markCount: markCounts[chapter.id] ?? 0,
+                            listening: listening(for: chapter),
+                            reservesNumeral: numbersChapters,
+                            onSelect: openChapter
+                        )
+                        .padding(.leading, 20)
+                        // Clear of the index on the edge, where there is one
+                        .padding(.trailing, hasParts ? 34 : 20)
+                        .id(chapter.id)
+                    }
+                } header: {
+                    if hasParts {
+                        partHeader(run)
+                    }
+                }
             }
+
+            pageMarker { listEnd = $0 }
+        }
+    }
+
+    /// A line of no height that reports where it stands on the page
+    private func pageMarker(_ report: @escaping (CGFloat) -> Void) -> some View {
+        Color.clear
+            .frame(height: 0)
+            .onGeometryChange(for: CGFloat.self) { geometry in
+                geometry.frame(in: .named(Self.pageSpace)).minY
+            } action: { y in
+                report(y)
+            }
+    }
+
+    /// The chapters before the list's first, folded into one line —
+    /// "39 earlier chapters" — that opens them where they stand.
+    private func earlierRow(count: Int) -> some View {
+        Button {
+            showsEarlier = true
+        } label: {
+            HStack(spacing: 8) {
+                AppIcon("ph-caret-up", size: 11)
+                Text(count == 1 ? "1 earlier chapter" : "\(count) earlier chapters")
+                    .font(AppFonts.italicFont(14))
+                Spacer()
+                Text("SHOW")
+                    .font(AppFonts.labelFont(9))
+                    .tracking(1.8)
+            }
+            .foregroundColor(AppColors.gold.opacity(0.75))
+            .padding(.horizontal, 20)
+            .frame(minHeight: 44)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Show the \(count) earlier chapters")
+    }
+
+    /// A part's name, pinned over its chapters while they pass under it
+    private func partHeader(_ run: LibraryPartRun) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 8) {
+            Text((run.title ?? "").uppercased())
+                .font(AppFonts.labelFont(10.5))
+                .tracking(2.2)
+                .foregroundColor(AppColors.gold)
+
+            Text(totalChapters(of: run) == 1 ? "1 chapter" : "\(totalChapters(of: run)) chapters")
+                .font(AppFonts.bodyFont(13))
+                .foregroundColor(AppColors.textSecondary)
+
+            Spacer()
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 9)
+        .frame(maxWidth: .infinity)
+        .background(AppColors.cardBackground.opacity(0.97))
+        .overlay(alignment: .top) {
+            Rectangle().fill(AppColors.gold.opacity(0.14)).frame(height: AppLine.hairline)
+        }
+        .overlay(alignment: .bottom) {
+            Rectangle().fill(AppColors.gold.opacity(0.14)).frame(height: AppLine.hairline)
+        }
+        .id(Self.partAnchor(run.id))
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isHeader)
+    }
+
+    /// A part's whole count, though the list may show it cut short
+    private func totalChapters(of run: LibraryPartRun) -> Int {
+        runs.first { $0.id == run.id }?.chapters.count ?? run.chapters.count
+    }
+
+    private static func partAnchor(_ id: String) -> String { "part:\(id)" }
+
+    /// The parts' numerals down the trailing edge, as Contacts stands its
+    /// letters: a tap goes straight to that part. The part being read is
+    /// lit.
+    private func partIndex(_ proxy: ScrollViewProxy) -> some View {
+        let reading = currentIndex.flatMap { index in
+            runs.firstIndex { $0.chapters.contains { $0.id == index } }
+        }
+
+        return VStack(spacing: 0) {
+            ForEach(Array(runs.enumerated()), id: \.element.id) { position, run in
+                Button {
+                    jump(to: run, proxy: proxy)
+                } label: {
+                    Text(LibraryBookPlace.roman(position + 1))
+                        .font(AppFonts.labelFont(11))
+                        .foregroundColor(position == reading ? AppColors.background : AppColors.gold.opacity(0.7))
+                        .frame(width: 24, height: 24)
+                        .background(Circle().fill(position == reading ? AppColors.gold : Color.clear))
+                        .frame(width: 34, height: 40)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(QuietGlyphButtonStyle())
+                .accessibilityLabel(run.title ?? "Part \(position + 1)")
+                .accessibilityHint(position == reading ? "Where you are reading. Goes to this part." : "Goes to this part")
+            }
+        }
+        .padding(.trailing, 2)
+    }
+
+    /// Goes to a part's heading, opening the folded chapters first when
+    /// the part stands among them.
+    private func jump(to run: LibraryPartRun, proxy: ScrollViewProxy) {
+        let anchor = Self.partAnchor(run.id)
+        let shown = LibraryBookPlace.runs(runs, from: firstShown)
+        if !shown.contains(where: { $0.id == run.id }) {
+            showsEarlier = true
+            // The opened rows are laid out on the next pass; scrolling in
+            // this one would aim at a heading that does not exist yet.
+            DispatchQueue.main.async {
+                withAnimation(.easeOut(duration: 0.3)) { proxy.scrollTo(anchor, anchor: .top) }
+            }
+        } else {
+            withAnimation(.easeOut(duration: 0.3)) { proxy.scrollTo(anchor, anchor: .top) }
         }
     }
 
@@ -554,6 +658,7 @@ struct LibraryBookView: View {
                 .foregroundColor(AppColors.gold.opacity(0.7))
 
             TextField("Find a line", text: $query)
+                .focused($searchFocused)
                 .font(AppFonts.bodyFont(15))
                 .foregroundColor(AppColors.cream)
                 .textFieldStyle(.plain)
@@ -803,8 +908,10 @@ struct LibraryBookView: View {
                 let loaded = try await LibraryService.shared.book(for: info)
                 book = loaded
                 runs = LibraryPartRun.runs(of: loaded)
+                numbersChapters = loaded.chapters.contains {
+                    LibraryBookPlace.numeral(ofHeading: $0.heading) != nil
+                }
                 loadFailed = false
-                seedExpansion()
             } catch let error as LibraryError {
                 failure = error
                 loadFailed = true
@@ -866,23 +973,6 @@ struct LibraryBookView: View {
         renderer.scale = 2
         guard let image = renderer.uiImage else { return }
         session.offerArtwork(image, for: info.id)
-    }
-
-    /// The part being read stands open on arrival; without a bookmark,
-    /// the first. Seeded once — the reader's own opening and closing is
-    /// never overridden afterward.
-    private func seedExpansion() {
-        guard !didSeedExpansion else { return }
-        didSeedExpansion = true
-
-        guard runs.count > 1 else { return }
-
-        if let index = progress?.lastChapterIndex,
-           let holding = runs.first(where: { $0.chapters.contains { $0.id == index } }) {
-            expandedParts = [holding.id]
-        } else if let first = runs.first {
-            expandedParts = [first.id]
-        }
     }
 
     /// Opens a chapter. Latched: `router.push` appends unconditionally
