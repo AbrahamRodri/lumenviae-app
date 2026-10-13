@@ -3536,7 +3536,10 @@ transition entirely.
   that is something other than a list — the month grids, the journal and
   feedback forms, the reading and footnote pages, the share card, the
   now-playing transport — keeps its own body and takes the ground and the
-  header only. The Missal's one-time layout question and the Prayer
+  header only. The chant's score sheet is the one exception to the
+  header: it opens on the chant's own painting with the title over it
+  and DONE on a dark capsule (`ChantScoreSheet`, see The Chant Library).
+  The Missal's one-time layout question and the Prayer
   Book's question before it first speaks (`PrayAloudChoiceSheet`) keep
   their indicators hidden, because neither can be dragged away and a
   grabber would say it could.

@@ -138,7 +138,7 @@ struct ChantScoreSheet: View {
     /// Beneath the score: room for the last staff to scroll clear of the
     /// floating player, where there is one
     private var bottomRoom: CGFloat {
-        showsTransport ? ChantScoreSheetTransport.clearance + 16 : 24
+        showsTransport ? ChantScoreSheetTransport.fadeHeight : 24
     }
 
     // MARK: - Zoom
@@ -371,6 +371,9 @@ private struct ChantScoreSheetTransport: View {
 
     /// How much of the glass's foot the pill and its margin stand over
     static let clearance: CGFloat = pillHeight + bottomGap
+    /// The fade beneath the pill, which the score's last staff scrolls
+    /// clear of
+    static let fadeHeight: CGFloat = clearance + 56
     private static let pillHeight: CGFloat = 52
     private static let bottomGap: CGFloat = 10
 
@@ -394,7 +397,7 @@ private struct ChantScoreSheetTransport: View {
         )
         // Run on past the frame's foot, which stands on the safe area
         .ignoresSafeArea(edges: .bottom)
-        .frame(height: clearance + 56)
+        .frame(height: fadeHeight)
         .allowsHitTesting(false)
         .accessibilityHidden(true)
     }
