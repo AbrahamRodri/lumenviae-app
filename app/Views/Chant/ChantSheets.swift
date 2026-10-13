@@ -390,25 +390,33 @@ struct ChantPauseSheet: View {
     /// pill washed out. Drawn here, not as the shared button's outline,
     /// whose rim drew stray hairlines past its rounded ends.
     private var waitingAct: some View {
-        Button(action: add) {
-            HStack(spacing: 10) {
-                Text("ADD THE PAUSE")
-                    .font(AppFonts.labelFont(13))
-                    .tracking(2.5)
-                AppIcon("ph-check", size: 11)
+        // The gold button, hidden, sets the size, so the act keeps its
+        // edges when it turns gold
+        GoldCTAButton(title: "Add the pause", trailingIcon: "ph-check", action: add)
+            .hidden()
+            .overlay {
+                Button(action: add) {
+                    HStack(spacing: 10) {
+                        Text("ADD THE PAUSE")
+                            .font(AppFonts.labelFont(13))
+                            .tracking(2.5)
+                        AppIcon("ph-check", size: 11)
+                    }
+                    .foregroundColor(AppColors.gold.opacity(0.45))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .overlay(
+                        // A radius past half the height rounds the ends
+                        // whole, as the capsule's would
+                        RoundedRectangle(cornerRadius: 100, style: .circular)
+                            .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline)
+                    )
+                    .contentShape(RoundedRectangle(cornerRadius: 100, style: .circular))
+                }
+                .buttonStyle(.plain)
+                .disabled(true)
+                .accessibilityLabel("Add the pause")
+                .accessibilityHint("Write a note or choose a silence first")
             }
-            .foregroundColor(AppColors.gold.opacity(0.45))
-            .frame(maxWidth: .infinity, minHeight: 54)
-            .overlay(
-                RoundedRectangle(cornerRadius: 27, style: .circular)
-                    .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline)
-            )
-            .contentShape(RoundedRectangle(cornerRadius: 27, style: .circular))
-        }
-        .buttonStyle(.plain)
-        .disabled(true)
-        .accessibilityLabel("Add the pause")
-        .accessibilityHint("Write a note or choose a silence first")
     }
 
     /// The set's last chant, which the pause will follow
