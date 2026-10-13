@@ -115,7 +115,7 @@ struct Chant: Identifiable, Hashable {
     }
 
     var group: ChantGroup? {
-        ChantCatalog.groups.first { $0.id == groupID }
+        ChantCatalog.index.groups[groupID]
     }
 
     /// "4:08"
@@ -170,14 +170,19 @@ struct Chant: Identifiable, Hashable {
 /// the generated extension.
 enum ChantCatalog {
 
+    /// The catalog read once into the lookups the library asks of it on
+    /// every row: a chant by its id, the chants of a prayer, a work's
+    /// settings. Each was a scan of all of it.
+    static let index = ChantCatalogIndex(chants: all, groups: groups)
+
     static func chant(_ id: String) -> Chant? {
-        all.first { $0.id == id }
+        index.chants[id]
     }
 
     /// The chants that are a sung form of one of the app's prayers, in the
     /// catalog's order (so a simple tone comes before a solemn one).
     static func chants(forPrayer prayerID: String) -> [Chant] {
-        all.filter { $0.prayerIDs.contains(prayerID) }
+        index.byPrayer[prayerID] ?? []
     }
 
     /// A section's chants in its own order, part after part
@@ -193,18 +198,17 @@ enum ChantCatalog {
     /// simple — for a chant's page to offer.
     static func otherSettings(of chant: Chant) -> [Chant] {
         guard !chant.prayerIDs.isEmpty else { return [] }
-        return all.filter { other in
-            other.id != chant.id && !Set(other.prayerIDs).isDisjoint(with: chant.prayerIDs)
-        }
+        if let known = index.otherSettings[chant.id] { return known }
+        return ChantCatalogIndex.otherSettings(of: chant, in: all)
     }
 
     /// Chants whose Latin or English title holds `query`, accents and
     /// case aside.
     static func search(_ query: String) -> [Chant] {
-        let needle = fold(query)
+        let needle = SearchText.needle(query)
         guard !needle.isEmpty else { return [] }
-        return all.filter { chant in
-            fold(chant.latinTitle).contains(needle) || fold(chant.englishTitle).contains(needle)
+        return index.foldedTitles.compactMap { entry in
+            entry.latin.contains(needle) || entry.english.contains(needle) ? entry.chant : nil
         }
     }
 
@@ -213,12 +217,6 @@ enum ChantCatalog {
     /// reader chooses another.
     static func antiphonOfTheSeason(on date: Date = Date()) -> Chant? {
         chants(forPrayer: PrayerBook.antiphon(on: date).prayerID).first
-    }
-
-    private static func fold(_ text: String) -> String {
-        text.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil)
-            .replacingOccurrences(of: "æ", with: "ae")
-            .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     // MARK: Credit
@@ -232,4 +230,80 @@ enum ChantCatalog {
     static let licenceNote = "Shared under Verbum Gloriae's free licence, a copyleft licence. Our copies are compressed and recoloured, and they carry the same licence."
     static let sourceSite = URL(string: "https://www.verbumgloriae.es")!
     static let licenceURL = URL(string: "https://www.verbumgloriae.es/licencia-copyleft/")!
+}
+
+// MARK: - ChantCatalogIndex
+
+/// The catalog's lookups, built once from its chants: what the library's
+/// rows, search and pages ask of it again and again. The catalog is fixed
+/// for the life of the app, so none of this goes stale.
+struct ChantCatalogIndex {
+    let chants: [String: Chant]
+    let groups: [String: ChantGroup]
+    /// Each prayer's chants, in the catalog's order
+    let byPrayer: [String: [Chant]]
+    /// Each chant's work (`Chant.workKey`), and each work's settings in
+    /// the catalog's order
+    let workKeys: [String: String]
+    let settings: [String: [Chant]]
+    /// Each chant's other settings of the same prayer
+    let otherSettings: [String: [Chant]]
+    /// The seasons each chant belongs to, in the year's order
+    let seasons: [String: [ChantSeason]]
+    /// Each kind's chants in the catalog's order, and each length's,
+    /// shortest first
+    let forms: [ChantForm: [Chant]]
+    let lengths: [ChantLength: [Chant]]
+    /// Every chant's titles folded for search (`SearchText.fold`), in the
+    /// catalog's order
+    let foldedTitles: [(chant: Chant, latin: String, english: String)]
+
+    init(chants all: [Chant], groups: [ChantGroup]) {
+        chants = Dictionary(all.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        self.groups = Dictionary(groups.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+
+        var byPrayer: [String: [Chant]] = [:]
+        var workKeys: [String: String] = [:]
+        var settings: [String: [Chant]] = [:]
+        for chant in all {
+            // A chant once to each prayer, however often it names it
+            for prayerID in Set(chant.prayerIDs) {
+                byPrayer[prayerID, default: []].append(chant)
+            }
+            let key = Chant.workKey(latinTitle: chant.latinTitle, prayerIDs: chant.prayerIDs)
+            workKeys[chant.id] = key
+            settings[key, default: []].append(chant)
+        }
+        self.byPrayer = byPrayer
+        self.workKeys = workKeys
+        self.settings = settings
+
+        otherSettings = Dictionary(
+            all.map { ($0.id, Self.otherSettings(of: $0, in: all)) },
+            uniquingKeysWith: { first, _ in first }
+        )
+
+        var seasons: [String: [ChantSeason]] = [:]
+        for season in ChantSeason.allCases {
+            for id in Set(ChantLibraryData.seasonChants[season] ?? []) {
+                seasons[id, default: []].append(season)
+            }
+        }
+        self.seasons = seasons
+
+        forms = Dictionary(grouping: all, by: \.form)
+        lengths = Dictionary(grouping: all) { ChantLength.of($0.duration) }
+            .mapValues { $0.sorted { $0.duration < $1.duration } }
+
+        foldedTitles = all.map { ($0, SearchText.fold($0.latinTitle), SearchText.fold($0.englishTitle)) }
+    }
+
+    /// The other settings of `chant`'s prayers among `all`: the solemn
+    /// tone beside the simple
+    static func otherSettings(of chant: Chant, in all: [Chant]) -> [Chant] {
+        guard !chant.prayerIDs.isEmpty else { return [] }
+        return all.filter { other in
+            other.id != chant.id && !Set(other.prayerIDs).isDisjoint(with: chant.prayerIDs)
+        }
+    }
 }
