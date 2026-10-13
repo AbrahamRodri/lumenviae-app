@@ -2482,10 +2482,32 @@ write concurrent code here:
   chapter marks THIS SEASON.
 
   **Praying** is `PrayAlongView` (`.prayAlong(PrayAlongLaunch)`, a
-  player: bar hidden, its own ×): one prayer at a time, a strand of beads
-  for the order's prayers, aloud or in silence (`PrayerBookStore.
-  praysAloud`, remembered). **The book asks before its first sound**
-  (`PrayAloudChoiceSheet`, once, until `hasChosenAloud`): these are
+  player: bar hidden, its own ×): one prayer at a time, aloud or in
+  silence (`PrayerBookStore.praysAloud`, remembered). **The page is the
+  prayer** (the "simplify Pray Along" pick, option A, Oct 2026): the
+  painting the Prayers page hangs over the order (`PrayerBookPainting.
+  order`, `.hour` for the Angelus, `.prayer` for one opened alone) fixed
+  behind the scroll and veiled by a scrim of the theme's own ground,
+  deepest from the title down (`PrayAlongGround`); a quiet head — ×, the
+  order's name, and ALOUD or SILENT as a word in an outlined capsule
+  (the speaker glyph it replaced read as a volume control) — over the
+  order's beads, each a door answering to 44 points where the width
+  allows ("6 of 9, The Act of Faith" to VoiceOver); the Latin name small
+  over the title, the Angelus's bell above both; and one way on at the
+  foot, the same aloud and in silence: NEXT with the next prayer's name,
+  an outlined pill, or AMEN, the page's one gold act, on the last.
+  Aloud, a pause disc stands beside it, and a note above it while the
+  recordings are fetched or when a prayer has none. A swipe across the
+  page turns it, as the beads and the Lock Screen's arrows do. The page
+  once carried "3 of 9" under the order beside the beads, a ⏮ ▶︎ ⏭
+  transport and a progress line aloud, and a different foot in silence:
+  position said twice, progress said twice, and a music player where a
+  prayer book should be. The Amen brings the painting forward in full,
+  where a seal once stood, over Amen., the order's closing line, DONE,
+  Save this prayer (one prayer, not yet saved) and Pray again.
+  **The book asks before its first sound**
+  (`PrayAloudChoiceSheet`, once, until `hasChosenAloud`, the order's
+  painting at its head): these are
   prayers for the pew, the tabernacle and the bedside, and it once began
   reading the examination of conscience aloud the moment PRAY was
   touched. It cannot be dragged away, so both answers must always be in
@@ -2494,7 +2516,7 @@ write concurrent code here:
   rows were drawn over each other). The
   order page's switch stands just above its PRAY, so
   praying from there answers the question with what the switch shows;
-  afterwards the speaker at the head of the page owns the choice. The
+  afterwards ALOUD or SILENT at the head of the page owns the choice. The
   same choice stands in Settings → Prayer Experience as the Prayers
   Tab row, and a choice made there answers the question before it is asked;
   it never follows the Rosary's Audio. Aloud,
