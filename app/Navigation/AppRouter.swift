@@ -285,12 +285,17 @@ final class AppRouter {
 
     /// In a debug build, a chant's page named at launch stands pushed over
     /// the tab, for screenshots a simulator cannot tap to:
-    /// `SIMCTL_CHILD_LUMEN_VIAE_CHANT=salve_regina_simple xcrun simctl launch …`
+    /// `SIMCTL_CHILD_LUMEN_VIAE_CHANT=salve_regina_simple xcrun simctl launch …`,
+    /// and a book of the Spiritual Reading shelf the same way with
+    /// `LUMEN_VIAE_BOOK=imitation-of-christ`.
     init() {
         #if DEBUG
         if let id = ProcessInfo.processInfo.environment["LUMEN_VIAE_CHANT"], !id.isEmpty {
             path.append(AppRoute.chant(id: id))
             routes = [.chant(id: id)]
+        } else if let id = ProcessInfo.processInfo.environment["LUMEN_VIAE_BOOK"], !id.isEmpty {
+            path.append(AppRoute.libraryBook(id: id))
+            routes = [.libraryBook(id: id)]
         }
         #endif
     }

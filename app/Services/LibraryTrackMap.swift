@@ -107,8 +107,9 @@ nonisolated enum LibraryNumerals {
     private static let plausibleLimit = 200
 
     /// A number as it would actually be printed — the yardstick
-    /// `roman` measures a candidate against.
-    private static func numeral(for number: Int) -> String {
+    /// `roman` measures a candidate against, and the book page's part
+    /// numerals ("III" of "III.V").
+    static func numeral(for number: Int) -> String {
         let values: [(Int, String)] = [
             (100, "C"), (90, "XC"), (50, "L"), (40, "XL"),
             (10, "X"), (9, "IX"), (5, "V"), (4, "IV"), (1, "I")

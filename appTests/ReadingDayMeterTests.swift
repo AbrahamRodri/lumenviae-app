@@ -73,6 +73,27 @@ struct ReadingDayMeterTests {
         #expect(meter.fraction(toward: .fewMinutes) == 1)
     }
 
+    @Test func theGoalCardSaysMinutesTodayAndHoldsAtTheGoal() {
+        let meter = meter()
+        #expect(meter.progressLine(for: .quarterHour) == "0 of 15 minutes today")
+        #expect(meter.ringFigure(for: .quarterHour) == 0)
+        meter.enterReader()
+        clock.now += 6 * 60
+        #expect(meter.progressLine(for: .quarterHour) == "6 of 15 minutes today")
+        #expect(meter.ringFigure(for: .quarterHour) == 6)
+        clock.now += 40 * 60
+        #expect(meter.progressLine(for: .quarterHour) == "15 of 15 minutes today")
+        #expect(meter.ringFigure(for: .quarterHour) == 15)
+    }
+
+    @Test func theGoalCardCountsChaptersForTheChapterMeasure() {
+        let meter = meter()
+        #expect(meter.progressLine(for: .chapterADay) == "A chapter a day · not yet today")
+        meter.noteChapterFinished()
+        #expect(meter.progressLine(for: .chapterADay) == "A chapter a day · one read today")
+        #expect(meter.ringFigure(for: .chapterADay) == 1)
+    }
+
     // MARK: - Chapters
 
     @Test func theChapterMeasureCountsChaptersReadToTheirEnd() {
