@@ -30,6 +30,12 @@ final class TodayInChurch {
     private let api = MissalAPIService.shared
     private let diskCache = MissalCacheService.shared
 
+    /// A day already known, for previews and snapshots; the app starts
+    /// empty and loads
+    init(proper: MissalProper? = nil) {
+        self.proper = proper
+    }
+
     /// The feast, once known. Until then the ledger names the thing itself.
     var title: String {
         proper?.info.title ?? "Today's Mass"
@@ -42,8 +48,8 @@ final class TodayInChurch {
         return parts.isEmpty ? nil : parts.joined(separator: "  ·  ")
     }
 
-    /// "Great Feast", "Feast", "Lesser Feast", "Weekday" — the word the
-    /// home ledger and the Chapel set beside the day's silk
+    /// "Great Feast", "Feast", "Lesser Feast", "Weekday" — the word
+    /// Home's Mass row and the Chapel set beside the day's silk
     var rank: String? {
         proper?.info.rankLabel
     }

@@ -2,8 +2,8 @@
 //  CanonicalClock.swift
 //  Lumen Viae
 //
-//  Which canonical hour it is, right now — the one fact the home ledger
-//  and the Office landing both stand on, and the one thing on either
+//  Which canonical hour it is, right now — the one fact Home's Hours of
+//  Prayer row and the Office landing both stand on, and the one thing on either
 //  page that goes stale by the clock rather than by the day.
 //
 //  Deliberately not computed afresh in a view body. Both surfaces read
