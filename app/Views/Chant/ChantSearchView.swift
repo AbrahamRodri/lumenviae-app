@@ -49,7 +49,11 @@ struct ChantSearchView: View {
     @State private var showsAllWords = false
     @FocusState private var focused: Bool
 
-    init(close: @escaping () -> Void, open: @escaping (Chant) -> Void) {
+    /// Shown on the Chant tab, where the last rows must clear the tab bar
+    private let isTabRoot: Bool
+
+    init(isTabRoot: Bool = false, close: @escaping () -> Void, open: @escaping (Chant) -> Void) {
+        self.isTabRoot = isTabRoot
         self.close = close
         self.open = open
     }
@@ -73,7 +77,7 @@ struct ChantSearchView: View {
                     results
                         .padding(.horizontal, 20)
                 }
-                .padding(.bottom, 40)
+                .padding(.bottom, isTabRoot ? 130 : 40)
             }
             .scrollDismissesKeyboard(.interactively)
         }

@@ -61,6 +61,116 @@ extension ChantCatalog {
     ]
 
     static let all: [Chant] = [
+        chant_salve_regina_simple(),
+        chant_salve_regina_solemn(),
+        chant_alma_redemptoris_simple(),
+        chant_alma_redemptoris(),
+        chant_ave_regina_simple(),
+        chant_ave_regina_solemn(),
+        chant_regina_caeli_simple(),
+        chant_regina_caeli_solemn(),
+        chant_sub_tuum(),
+        chant_ave_maris_stella_feasts(),
+        chant_ave_maris_stella(),
+        chant_quem_terra(),
+        chant_omni_die(),
+        chant_concordi_laetitia(),
+        chant_magnificat(),
+        chant_tota_pulchra(),
+        chant_flos_carmeli(),
+        chant_stabat_mater(),
+        chant_litany_loreto(),
+        chant_memorare(),
+        chant_ave_maria_antiphon(),
+        chant_salve_mater(),
+        chant_inviolata(),
+        chant_o_gloriosa(),
+        chant_te_matrem(),
+        chant_in_nomine_patris(),
+        chant_credo_in_deum(),
+        chant_pater_noster(),
+        chant_ave_maria(),
+        chant_gloria_patri(),
+        chant_o_mi_jesu(),
+        chant_angelus(),
+        chant_adoro_te(),
+        chant_ave_verum(),
+        chant_o_salutaris(),
+        chant_tantum_ergo(),
+        chant_o_sacrum_convivium(),
+        chant_divine_praises(),
+        chant_anima_christi(),
+        chant_panis_angelicus(),
+        chant_lauda_sion(),
+        chant_adoremus(),
+        chant_ecce_panis(),
+        chant_ubi_caritas(),
+        chant_adoramus_te(),
+        chant_pange_lingua(),
+        chant_jesu_nostra_redemptio(),
+        chant_veni_creator(),
+        chant_veni_sancte_spiritus(),
+        chant_veni_sancte_reple(),
+        chant_litany_sacred_heart(),
+        chant_litany_holy_name(),
+        chant_jesu_dulcis_memoria(),
+        chant_cor_jesu(),
+        chant_te_deum_simple(),
+        chant_te_deum(),
+        chant_christus_vincit(),
+        chant_te_saeculorum(),
+        chant_salvete_christi_vulnera(),
+        chant_lucis_creator(),
+        chant_da_pacem(),
+        chant_sancte_michael(),
+        chant_ut_queant_laxis(),
+        chant_litany_st_joseph(),
+        chant_te_joseph(),
+        chant_litany_saints(),
+        chant_rorate_caeli(),
+        chant_en_clara_vox(),
+        chant_creator_alme(),
+        chant_veni_emmanuel(),
+        chant_o_sapientia_magnificat(),
+        chant_o_adonai_magnificat(),
+        chant_o_radix_magnificat(),
+        chant_o_clavis_magnificat(),
+        chant_o_oriens_magnificat(),
+        chant_o_rex_magnificat(),
+        chant_o_emmanuel_magnificat(),
+        chant_puer_natus(),
+        chant_adeste_fideles(),
+        chant_jesu_redemptor(),
+        chant_attende_domine(),
+        chant_parce_domine(),
+        chant_media_vita(),
+        chant_miserere(),
+        chant_vexilla_regis(),
+        chant_audi_benigne(),
+        chant_o_vos_omnes(),
+        chant_victimae_paschali(),
+        chant_o_filii(),
+        chant_vidi_aquam(),
+        chant_salve_festa_dies(),
+        chant_aurora_caelum(),
+        chant_ad_regias(),
+        chant_dies_irae(),
+        chant_kyrie_de_angelis(),
+        chant_gloria_de_angelis(),
+        chant_sanctus_de_angelis(),
+        chant_agnus_de_angelis(),
+        chant_credo_iii(),
+        chant_asperges_me(),
+        chant_kyrie_orbis_factor(),
+        chant_gloria_orbis_factor(),
+        chant_sanctus_orbis_factor(),
+        chant_agnus_orbis_factor()
+    ]
+
+    // One function a chant: a literal of all 104 at once took the
+    // compiler past 20 GB (each function's body is checked alone).
+
+    private static func chant_salve_regina_simple() -> Chant {
         Chant(
             id: "salve_regina_simple",
             groupID: "ourLady",
@@ -98,7 +208,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Per eumdem Christum Dóminum nostrum.", english: "Through the same Christ our Lord.", start: 171.85, end: 177.38),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 177.45, end: 182.00)
             ]
-        ),
+        )
+    }
+
+    private static func chant_salve_regina_solemn() -> Chant {
         Chant(
             id: "salve_regina_solemn",
             groupID: "ourLady",
@@ -140,7 +253,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Per eumdem Christum Dóminum nostrum.", english: "Through the same Christ our Lord.", start: 235.03, end: 241.02),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 241.33, end: 246.24)
             ]
-        ),
+        )
+    }
+
+    private static func chant_alma_redemptoris_simple() -> Chant {
         Chant(
             id: "alma_redemptoris_simple",
             groupID: "ourLady",
@@ -182,7 +298,10 @@ extension ChantCatalog {
                 ChantLine(latin: "per quam merúimus auctórem vitæ suscípere, Dóminum nostrum Jesum Christum Fílium tuum.", english: "through whom we were made worthy to receive the Author of life, our Lord Jesus Christ, Thy Son.", start: 158.81, end: 168.34, part: 4),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 168.53, end: 173.84, part: 4)
             ]
-        ),
+        )
+    }
+
+    private static func chant_alma_redemptoris() -> Chant {
         Chant(
             id: "alma_redemptoris",
             groupID: "ourLady",
@@ -227,7 +346,10 @@ extension ChantCatalog {
                 ChantLine(latin: "tríbue, quǽsumus; ut ipsam pro nobis intercédere sentiámus, per quam merúimus auctórem vitæ suscípere, Dóminum nostrum Jesum Christum Fílium tuum.", english: "grant, we beseech Thee, that we may know the help of her intercession, through whom we were made worthy to receive the Author of life, our Lord Jesus Christ, Thy Son.", start: 183.57, end: 200.54),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 200.55, end: 205.96)
             ]
-        ),
+        )
+    }
+
+    private static func chant_ave_regina_simple() -> Chant {
         Chant(
             id: "ave_regina_simple",
             groupID: "ourLady",
@@ -259,7 +381,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Per eumdem Christum Dóminum nostrum.", english: "Through the same Christ our Lord.", start: 85.73, end: 91.71),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 91.71, end: 96.14)
             ]
-        ),
+        )
+    }
+
+    private static func chant_ave_regina_solemn() -> Chant {
         Chant(
             id: "ave_regina_solemn",
             groupID: "ourLady",
@@ -290,7 +415,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Per eumdem Christum Dóminum nostrum.", english: "Through the same Christ our Lord.", start: 124.87, end: 130.39),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 130.39, end: 134.80)
             ]
-        ),
+        )
+    }
+
+    private static func chant_regina_caeli_simple() -> Chant {
         Chant(
             id: "regina_caeli_simple",
             groupID: "ourLady",
@@ -321,7 +449,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Per eumdem Christum Dóminum nostrum.", english: "Through the same Christ our Lord.", start: 79.61, end: 85.12),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 85.59, end: 90.08)
             ]
-        ),
+        )
+    }
+
+    private static func chant_regina_caeli_solemn() -> Chant {
         Chant(
             id: "regina_caeli_solemn",
             groupID: "ourLady",
@@ -352,7 +483,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Per eumdem Christum Dóminum nostrum.", english: "Through the same Christ our Lord.", start: 130.69, end: 136.56),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 136.61, end: 141.20)
             ]
-        ),
+        )
+    }
+
+    private static func chant_sub_tuum() -> Chant {
         Chant(
             id: "sub_tuum",
             groupID: "ourLady",
@@ -382,7 +516,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Per Christum Dóminum nostrum.", english: "Through Christ our Lord.", start: 89.47, end: 94.57),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 94.57, end: 99.96)
             ]
-        ),
+        )
+    }
+
+    private static func chant_ave_maris_stella_feasts() -> Chant {
         Chant(
             id: "ave_maris_stella_feasts",
             groupID: "ourLady",
@@ -426,7 +563,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Tribus honor unus.", english: "be the glory one.", start: 161.19, end: 165.38),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 167.37, end: 174.68)
             ]
-        ),
+        )
+    }
+
+    private static func chant_ave_maris_stella() -> Chant {
         Chant(
             id: "ave_maris_stella",
             groupID: "ourLady",
@@ -457,7 +597,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Spirítui Sancto, Tribus honor unus.", english: "in the Holy Spirit, be the glory one.", start: 110.35, end: 118.98),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 120.15, end: 127.18)
             ]
-        ),
+        )
+    }
+
+    private static func chant_quem_terra() -> Chant {
         Chant(
             id: "quem_terra",
             groupID: "ourLady",
@@ -494,7 +637,10 @@ extension ChantCatalog {
                 ChantLine(latin: "In sempitérna sǽcula.", english: "unto everlasting ages.", start: 124.21, end: 132.02),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 132.49, end: 137.68)
             ]
-        ),
+        )
+    }
+
+    private static func chant_omni_die() -> Chant {
         Chant(
             id: "omni_die",
             groupID: "ourLady",
@@ -558,7 +704,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Nos pertúrbent sæcula.", english: "times disturb us.", start: 214.59, end: 219.40),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 220.15, end: 224.94)
             ]
-        ),
+        )
+    }
+
+    private static func chant_concordi_laetitia() -> Chant {
         Chant(
             id: "concordi_laetitia",
             groupID: "seasons",
@@ -600,7 +749,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Virgo María!", english: "O Virgin Mary!", start: 103.27, end: 107.76),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 108.65, end: 114.88)
             ]
-        ),
+        )
+    }
+
+    private static func chant_magnificat() -> Chant {
         Chant(
             id: "magnificat",
             groupID: "canticles",
@@ -651,7 +803,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Allelúia: Allelúia, allelúia.", english: "Alleluia: alleluia, alleluia.", start: 286.01, end: 296.86),
                 ChantLine(latin: "Allelúia: Allelúia, allelúia.", english: "Alleluia: alleluia, alleluia.", start: 297.53, end: 309.72)
             ]
-        ),
+        )
+    }
+
+    private static func chant_tota_pulchra() -> Chant {
         Chant(
             id: "tota_pulchra",
             groupID: "ourLady",
@@ -681,7 +836,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Intercéde pro nobis", english: "intercede for us", start: 89.89, end: 94.51),
                 ChantLine(latin: "ad Dóminum Jesum Christum.", english: "with our Lord Jesus Christ.", start: 94.51, end: 102.88)
             ]
-        ),
+        )
+    }
+
+    private static func chant_flos_carmeli() -> Chant {
         Chant(
             id: "flos_carmeli",
             groupID: "ourLady",
@@ -737,7 +895,10 @@ extension ChantCatalog {
                 ChantLine(latin: "coronáris.", english: "thou art crowned.", start: 148.55, end: 153.34),
                 ChantLine(latin: "Amen. Allelúia.", english: "Amen. Alleluia.", start: 154.87, end: 163.28)
             ]
-        ),
+        )
+    }
+
+    private static func chant_stabat_mater() -> Chant {
         Chant(
             id: "stabat_mater",
             groupID: "seasons",
@@ -814,7 +975,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Paradísi glória.", english: "the glory of paradise.", start: 310.83, end: 316.56),
                 ChantLine(latin: "Amen. Allelúia.", english: "Amen. Alleluia.", start: 316.95, end: 325.62)
             ]
-        ),
+        )
+    }
+
+    private static func chant_litany_loreto() -> Chant {
         Chant(
             id: "litany_loreto",
             groupID: "litanies",
@@ -999,7 +1163,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Per eumdem Christum Dóminum nostrum.", english: "Through the same Christ our Lord.", start: 770.15, end: 775.87),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 775.87, end: 779.82)
             ]
-        ),
+        )
+    }
+
+    private static func chant_memorare() -> Chant {
         Chant(
             id: "memorare",
             groupID: "ourLady",
@@ -1027,7 +1194,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Noli, Mater Verbi, verba mea despícere;", english: "O Mother of the Word Incarnate, despise not my petitions,", start: 97.07, end: 112.14),
                 ChantLine(latin: "sed audi propítia, et exáudi.", english: "but in thy mercy hear and answer me.", start: 112.63, end: 123.28)
             ]
-        ),
+        )
+    }
+
+    private static func chant_ave_maria_antiphon() -> Chant {
         Chant(
             id: "ave_maria_antiphon",
             groupID: "ourLady",
@@ -1049,7 +1219,10 @@ extension ChantCatalog {
                 ChantLine(latin: "ora pro nobis peccatóribus,", english: "pray for us sinners,", start: 36.65, end: 43.53),
                 ChantLine(latin: "nunc et in hora mortis nostræ. Amen.", english: "now and at the hour of our death. Amen.", start: 43.53, end: 53.46)
             ]
-        ),
+        )
+    }
+
+    private static func chant_salve_mater() -> Chant {
         Chant(
             id: "salve_mater",
             groupID: "ourLady",
@@ -1132,7 +1305,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Mater spei, et mater grátiæ, Mater plena sanctæ lætítiæ,", english: "Mother of hope and Mother of grace, Mother full of holy joy,", start: 438.81, end: 452.13),
                 ChantLine(latin: "O María!", english: "O Mary!", start: 452.13, end: 457.48)
             ]
-        ),
+        )
+    }
+
+    private static func chant_inviolata() -> Chant {
         Chant(
             id: "inviolata",
             groupID: "ourLady",
@@ -1160,7 +1336,10 @@ extension ChantCatalog {
                 ChantLine(latin: "O María!", english: "O Mary!", start: 65.75, end: 70.73),
                 ChantLine(latin: "Quæ sola invioláta permansísti.", english: "who alone hast remained inviolate.", start: 70.73, end: 85.12)
             ]
-        ),
+        )
+    }
+
+    private static func chant_o_gloriosa() -> Chant {
         Chant(
             id: "o_gloriosa",
             groupID: "ourLady",
@@ -1193,7 +1372,10 @@ extension ChantCatalog {
                 ChantLine(latin: "In sempitérna sǽcula.", english: "for everlasting ages.", start: 100.57, end: 107.64),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 108.21, end: 113.58)
             ]
-        ),
+        )
+    }
+
+    private static func chant_te_matrem() -> Chant {
         Chant(
             id: "te_matrem",
             groupID: "ourLady",
@@ -1244,7 +1426,10 @@ extension ChantCatalog {
                 ChantLine(latin: "In te Dómina sperávi:", english: "In thee, O Lady, have I hoped:", start: 338.67, end: 345.00, part: 0),
                 ChantLine(latin: "non confúndar in ætérnum.", english: "let me never be confounded.", start: 345.51, end: 354.10, part: 0)
             ]
-        ),
+        )
+    }
+
+    private static func chant_in_nomine_patris() -> Chant {
         Chant(
             id: "in_nomine_patris",
             groupID: "rosary",
@@ -1262,7 +1447,10 @@ extension ChantCatalog {
                 ChantLine(latin: "In nómine Patris, et Fílii, et Spíritus Sancti.", english: "In the name of the Father, and of the Son, and of the Holy Spirit.", start: 0.21, end: 7.84),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 8.13, end: 12.86)
             ]
-        ),
+        )
+    }
+
+    private static func chant_credo_in_deum() -> Chant {
         Chant(
             id: "credo_in_deum",
             groupID: "rosary",
@@ -1301,7 +1489,10 @@ extension ChantCatalog {
                 ChantLine(latin: "vitam ætérnam.", english: "and life everlasting.", start: 153.51, end: 159.82),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 161.23, end: 169.98)
             ]
-        ),
+        )
+    }
+
+    private static func chant_pater_noster() -> Chant {
         Chant(
             id: "pater_noster",
             groupID: "rosary",
@@ -1325,7 +1516,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Sed líbera nos a malo.", english: "but deliver us from evil.", start: 42.09, end: 46.75),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 46.75, end: 51.42)
             ]
-        ),
+        )
+    }
+
+    private static func chant_ave_maria() -> Chant {
         Chant(
             id: "ave_maria",
             groupID: "rosary",
@@ -1347,7 +1541,10 @@ extension ChantCatalog {
                 ChantLine(latin: "ora pro nobis peccatóribus,", english: "pray for us sinners,", start: 21.99, end: 26.30),
                 ChantLine(latin: "nunc et in hora mortis nostræ. Amen.", english: "now and at the hour of our death. Amen.", start: 26.51, end: 33.76)
             ]
-        ),
+        )
+    }
+
+    private static func chant_gloria_patri() -> Chant {
         Chant(
             id: "gloria_patri",
             groupID: "rosary",
@@ -1366,7 +1563,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Sicut erat in princípio, et nunc, et semper,", english: "As it was in the beginning, is now, and ever shall be,", start: 11.89, end: 20.15),
                 ChantLine(latin: "et in sǽcula sæculórum. Amen.", english: "world without end. Amen.", start: 20.15, end: 27.02)
             ]
-        ),
+        )
+    }
+
+    private static func chant_o_mi_jesu() -> Chant {
         Chant(
             id: "o_mi_jesu",
             groupID: "rosary",
@@ -1388,7 +1588,10 @@ extension ChantCatalog {
                 ChantLine(latin: "O María sine labe concépta.", english: "O Mary, conceived without sin,", start: 20.03, end: 24.89),
                 ChantLine(latin: "Ora pro nobis qui confúgimus ad te.", english: "pray for us who have recourse to thee.", start: 24.89, end: 30.34)
             ]
-        ),
+        )
+    }
+
+    private static func chant_angelus() -> Chant {
         Chant(
             id: "angelus",
             groupID: "ourLady",
@@ -1444,7 +1647,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Sicut erat in princípio, et nunc, et semper,", english: "As it was in the beginning, is now, and ever shall be,", start: 221.03, end: 227.35),
                 ChantLine(latin: "et in sǽcula sæculórum. Amen.", english: "world without end. Amen.", start: 227.35, end: 232.68)
             ]
-        ),
+        )
+    }
+
+    private static func chant_adoro_te() -> Chant {
         Chant(
             id: "adoro_te",
             groupID: "hymns",
@@ -1489,7 +1695,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Visu sim beátus tuæ glóriæ.", english: "I may be blessed in beholding Thy glory.", start: 240.69, end: 249.66),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 251.21, end: 260.68)
             ]
-        ),
+        )
+    }
+
+    private static func chant_ave_verum() -> Chant {
         Chant(
             id: "ave_verum",
             groupID: "hymns",
@@ -1515,7 +1724,10 @@ extension ChantCatalog {
                 ChantLine(latin: "O Jesu pie!", english: "O loving Jesus,", start: 63.05, end: 70.17),
                 ChantLine(latin: "O Jesu fili Maríæ.", english: "O Jesus, Son of Mary.", start: 70.17, end: 81.88)
             ]
-        ),
+        )
+    }
+
+    private static func chant_o_salutaris() -> Chant {
         Chant(
             id: "o_salutaris",
             groupID: "benediction",
@@ -1538,7 +1750,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Nobis donet in pátria.", english: "may grant us in our homeland.", start: 45.45, end: 52.90),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 53.13, end: 62.36)
             ]
-        ),
+        )
+    }
+
+    private static func chant_tantum_ergo() -> Chant {
         Chant(
             id: "tantum_ergo",
             groupID: "benediction",
@@ -1578,7 +1793,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Qui vivis et regnas in sǽcula sæculórum.", english: "Who livest and reignest world without end.", start: 121.41, end: 128.69),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 128.69, end: 133.90)
             ]
-        ),
+        )
+    }
+
+    private static func chant_o_sacrum_convivium() -> Chant {
         Chant(
             id: "o_sacrum_convivium",
             groupID: "hymns",
@@ -1603,7 +1821,10 @@ extension ChantCatalog {
                 ChantLine(latin: "allelúia.", english: "Alleluia.", start: 64.93, end: 85.60),
                 ChantLine(latin: "nobis pignus datur.", english: "A pledge is given to us.", start: 90.21, end: 113.60)
             ]
-        ),
+        )
+    }
+
+    private static func chant_divine_praises() -> Chant {
         Chant(
             id: "divine_praises",
             groupID: "benediction",
@@ -1635,7 +1856,10 @@ extension ChantCatalog {
                 ChantLine(latin: "et in Sanctis suis.", english: "and in His Saints.", start: 108.57, end: 114.66),
                 ChantLine(latin: "Fiat! Fiat!", english: "So be it! So be it!", start: 114.83, end: 122.58)
             ]
-        ),
+        )
+    }
+
+    private static func chant_anima_christi() -> Chant {
         Chant(
             id: "anima_christi",
             groupID: "hymns",
@@ -1664,7 +1888,10 @@ extension ChantCatalog {
                 ChantLine(latin: "ut cum Sanctis tuis laudem te", english: "that with Thy Saints I may praise Thee", start: 71.87, end: 77.11),
                 ChantLine(latin: "in sǽcula sæculórum. Amen.", english: "for ever and ever. Amen.", start: 77.11, end: 85.30)
             ]
-        ),
+        )
+    }
+
+    private static func chant_panis_angelicus() -> Chant {
         Chant(
             id: "panis_angelicus",
             groupID: "hymns",
@@ -1695,7 +1922,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Ad lucem quam inhábitas.", english: "to the light wherein Thou dwellest.", start: 67.33, end: 74.58),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 75.95, end: 81.14)
             ]
-        ),
+        )
+    }
+
+    private static func chant_lauda_sion() -> Chant {
         Chant(
             id: "lauda_sion",
             groupID: "sequences",
@@ -1791,7 +2021,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Amen.", english: "Amen.", start: 424.45, end: 427.59),
                 ChantLine(latin: "Allelúia.", english: "Alleluia.", start: 427.59, end: 432.30)
             ]
-        ),
+        )
+    }
+
+    private static func chant_adoremus() -> Chant {
         Chant(
             id: "adoremus",
             groupID: "benediction",
@@ -1823,7 +2056,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Adorémus in ætérnum", english: "Let us adore for ever", start: 83.71, end: 89.77),
                 ChantLine(latin: "sanctíssimum Sacraméntum.", english: "the most holy Sacrament.", start: 89.77, end: 95.84)
             ]
-        ),
+        )
+    }
+
+    private static func chant_ecce_panis() -> Chant {
         Chant(
             id: "ecce_panis",
             groupID: "hymns",
@@ -1858,7 +2094,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Fac Sanctórum civium.", english: "make us of the holy citizens.", start: 83.85, end: 88.62),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 89.49, end: 95.80)
             ]
-        ),
+        )
+    }
+
+    private static func chant_ubi_caritas() -> Chant {
         Chant(
             id: "ubi_caritas",
             groupID: "seasons",
@@ -1890,7 +2129,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Sǽcula per infiníta sæculórum.", english: "unto the endless ages of ages.", start: 129.75, end: 140.32),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 140.69, end: 147.50)
             ]
-        ),
+        )
+    }
+
+    private static func chant_adoramus_te() -> Chant {
         Chant(
             id: "adoramus_te",
             groupID: "hymns",
@@ -1912,7 +2154,10 @@ extension ChantCatalog {
                 ChantLine(latin: "et benedícimus tibi,", english: "and we bless Thee,", start: 28.19, end: 38.40),
                 ChantLine(latin: "quia per sanctam crucem tuam redemísti mundum.", english: "because by Thy holy Cross Thou hast redeemed the world.", start: 39.49, end: 52.76)
             ]
-        ),
+        )
+    }
+
+    private static func chant_pange_lingua() -> Chant {
         Chant(
             id: "pange_lingua",
             groupID: "benediction",
@@ -1973,7 +2218,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Qui vivis et regnas in sǽcula sæculórum.", english: "Who livest and reignest world without end.", start: 260.03, end: 267.31, part: 2),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 267.31, end: 272.56, part: 2)
             ]
-        ),
+        )
+    }
+
+    private static func chant_jesu_nostra_redemptio() -> Chant {
         Chant(
             id: "jesu_nostra_redemptio",
             groupID: "seasons",
@@ -2010,7 +2258,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Per cuncta semper sǽcula.", english: "through all ages for ever.", start: 132.19, end: 139.42),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 140.29, end: 146.62)
             ]
-        ),
+        )
+    }
+
+    private static func chant_veni_creator() -> Chant {
         Chant(
             id: "veni_creator",
             groupID: "hymns",
@@ -2063,7 +2314,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Per Christum Dóminum nostrum.", english: "Through Christ our Lord.", start: 235.27, end: 241.45),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 241.45, end: 246.02)
             ]
-        ),
+        )
+    }
+
+    private static func chant_veni_sancte_spiritus() -> Chant {
         Chant(
             id: "veni_sancte_spiritus",
             groupID: "sequences",
@@ -2104,7 +2358,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Da perénne gáudium.", english: "give everlasting joy.", start: 139.31, end: 143.56),
                 ChantLine(latin: "Amen. Allelúia.", english: "Amen. Alleluia.", start: 144.89, end: 152.66)
             ]
-        ),
+        )
+    }
+
+    private static func chant_veni_sancte_reple() -> Chant {
         Chant(
             id: "veni_sancte_reple",
             groupID: "hymns",
@@ -2135,7 +2392,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Per Christum Dóminum nostrum.", english: "Through Christ our Lord.", start: 73.03, end: 78.10),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 78.55, end: 81.88)
             ]
-        ),
+        )
+    }
+
+    private static func chant_litany_sacred_heart() -> Chant {
         Chant(
             id: "litany_sacred_heart",
             groupID: "litanies",
@@ -2254,7 +2514,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Qui tecum vivit et regnat in sǽcula sæculórum.", english: "Who liveth and reigneth with Thee world without end.", start: 680.39, end: 688.28),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 688.33, end: 692.92)
             ]
-        ),
+        )
+    }
+
+    private static func chant_litany_holy_name() -> Chant {
         Chant(
             id: "litany_holy_name",
             groupID: "litanies",
@@ -2433,7 +2696,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Qui vivis et regnas in sǽcula sæculórum.", english: "Who livest and reignest world without end.", start: 859.51, end: 866.22),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 866.51, end: 870.62)
             ]
-        ),
+        )
+    }
+
+    private static func chant_jesu_dulcis_memoria() -> Chant {
         Chant(
             id: "jesu_dulcis_memoria",
             groupID: "hymns",
@@ -2469,7 +2735,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Per cuncta semper sǽcula.", english: "through all ages for ever.", start: 99.35, end: 105.44),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 105.57, end: 111.34)
             ]
-        ),
+        )
+    }
+
+    private static func chant_cor_jesu() -> Chant {
         Chant(
             id: "cor_jesu",
             groupID: "hymns",
@@ -2491,7 +2760,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Cor Jesu sacratíssimum,", english: "Most Sacred Heart of Jesus,", start: 22.61, end: 27.72),
                 ChantLine(latin: "miserére nobis.", english: "have mercy on us.", start: 27.93, end: 32.80)
             ]
-        ),
+        )
+    }
+
+    private static func chant_te_deum_simple() -> Chant {
         Chant(
             id: "te_deum_simple",
             groupID: "hymns",
@@ -2566,7 +2838,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Per Christum Dóminum nostrum.", english: "Through Christ our Lord.", start: 398.43, end: 403.36, part: 2),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 403.85, end: 407.98, part: 2)
             ]
-        ),
+        )
+    }
+
+    private static func chant_te_deum() -> Chant {
         Chant(
             id: "te_deum",
             groupID: "hymns",
@@ -2634,7 +2909,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Per Christum Dóminum nostrum.", english: "Through Christ our Lord.", start: 436.99, end: 441.54),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 442.57, end: 446.76)
             ]
-        ),
+        )
+    }
+
+    private static func chant_christus_vincit() -> Chant {
         Chant(
             id: "christus_vincit",
             groupID: "hymns",
@@ -2665,7 +2943,10 @@ extension ChantCatalog {
                 ChantLine(latin: "et in sǽcula sæculórum. Amen.", english: "world without end. Amen.", start: 105.65, end: 112.66),
                 ChantLine(latin: "Christus vincit, Christus regnat, Christus ímperat.", english: "Christ conquers, Christ reigns, Christ commands.", start: 113.39, end: 123.86)
             ]
-        ),
+        )
+    }
+
+    private static func chant_te_saeculorum() -> Chant {
         Chant(
             id: "te_saeculorum",
             groupID: "hymns",
@@ -2714,7 +2995,10 @@ extension ChantCatalog {
                 ChantLine(latin: "In sempitérna sǽcula.", english: "unto everlasting ages.", start: 216.13, end: 224.02),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 224.99, end: 231.40)
             ]
-        ),
+        )
+    }
+
+    private static func chant_salvete_christi_vulnera() -> Chant {
         Chant(
             id: "salvete_christi_vulnera",
             groupID: "hymns",
@@ -2767,7 +3051,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Sanctóque firmat Spíritu.", english: "and strengthens us by the Holy Spirit.", start: 246.37, end: 254.66),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 256.05, end: 264.74)
             ]
-        ),
+        )
+    }
+
+    private static func chant_lucis_creator() -> Chant {
         Chant(
             id: "lucis_creator",
             groupID: "hymns",
@@ -2804,7 +3091,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Regnans per omne sǽculum.", english: "reigning through every age.", start: 119.15, end: 125.48),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 125.87, end: 131.92)
             ]
-        ),
+        )
+    }
+
+    private static func chant_da_pacem() -> Chant {
         Chant(
             id: "da_pacem",
             groupID: "hymns",
@@ -2841,7 +3131,10 @@ extension ChantCatalog {
                 ChantLine(latin: "quia non est álius qui pugnet pro nobis,", english: "for there is none other who fights for us,", start: 109.27, end: 119.33),
                 ChantLine(latin: "nisi tu Deus noster.", english: "but only Thou, our God.", start: 119.33, end: 126.50)
             ]
-        ),
+        )
+    }
+
+    private static func chant_sancte_michael() -> Chant {
         Chant(
             id: "sancte_michael",
             groupID: "hymns",
@@ -2868,7 +3161,10 @@ extension ChantCatalog {
                 ChantLine(latin: "divína virtúte", english: "by the power of God,", start: 74.95, end: 79.25),
                 ChantLine(latin: "in inférnum detrúde.", english: "cast into hell.", start: 79.29, end: 87.62)
             ]
-        ),
+        )
+    }
+
+    private static func chant_ut_queant_laxis() -> Chant {
         Chant(
             id: "ut_queant_laxis",
             groupID: "hymns",
@@ -2904,7 +3200,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Témporis ævo.", english: "through all the ages of time.", start: 155.55, end: 160.82),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 162.23, end: 171.10)
             ]
-        ),
+        )
+    }
+
+    private static func chant_litany_st_joseph() -> Chant {
         Chant(
             id: "litany_st_joseph",
             groupID: "litanies",
@@ -3010,7 +3309,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Qui vivis et regnas in sǽcula sæculórum.", english: "Who livest and reignest world without end.", start: 453.99, end: 461.98),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 462.17, end: 467.72)
             ]
-        ),
+        )
+    }
+
+    private static func chant_te_joseph() -> Chant {
         Chant(
             id: "te_joseph",
             groupID: "hymns",
@@ -3047,7 +3349,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Gratum prómere cánticum.", english: "to pour forth to Thee a pleasing song.", start: 174.63, end: 183.24),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 183.87, end: 192.86)
             ]
-        ),
+        )
+    }
+
+    private static func chant_litany_saints() -> Chant {
         Chant(
             id: "litany_saints",
             groupID: "canticles",
@@ -3315,7 +3620,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Christe, eléison.", english: "Christ, have mercy on us.", start: 1055.95, end: 1060.15),
                 ChantLine(latin: "Kýrie, eléison.", english: "Lord, have mercy on us.", start: 1060.15, end: 1067.18)
             ]
-        ),
+        )
+    }
+
+    private static func chant_rorate_caeli() -> Chant {
         Chant(
             id: "rorate_caeli",
             groupID: "seasons",
@@ -3368,7 +3676,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Roráte cæli désuper,", english: "Drop down dew, ye heavens, from above,", start: 268.55, end: 276.43),
                 ChantLine(latin: "et nubes pluant justum.", english: "and let the clouds rain down the Just One.", start: 276.43, end: 282.90)
             ]
-        ),
+        )
+    }
+
+    private static func chant_en_clara_vox() -> Chant {
         Chant(
             id: "en_clara_vox",
             groupID: "seasons",
@@ -3400,7 +3711,10 @@ extension ChantCatalog {
                 ChantLine(latin: "In sæculórum sǽcula.", english: "for ever and ever.", start: 94.17, end: 100.70),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 100.95, end: 108.40)
             ]
-        ),
+        )
+    }
+
+    private static func chant_creator_alme() -> Chant {
         Chant(
             id: "creator_alme",
             groupID: "seasons",
@@ -3429,7 +3743,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Sancto simul Paráclito, In sæculórum sǽcula.", english: "together with the Holy Paraclete, for ever and ever.", start: 101.41, end: 111.04),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 112.17, end: 120.52)
             ]
-        ),
+        )
+    }
+
+    private static func chant_veni_emmanuel() -> Chant {
         Chant(
             id: "veni_emmanuel",
             groupID: "seasons",
@@ -3486,7 +3803,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Gaude, gaude, Emmánuel", english: "Rejoice, rejoice! Emmanuel", start: 252.07, end: 259.85),
                 ChantLine(latin: "Nascétur pro te, Israël.", english: "shall be born for thee, O Israel.", start: 259.85, end: 266.90)
             ]
-        ),
+        )
+    }
+
+    private static func chant_o_sapientia_magnificat() -> Chant {
         Chant(
             id: "o_sapientia_magnificat",
             groupID: "seasons",
@@ -3537,7 +3857,10 @@ extension ChantCatalog {
                 ChantLine(latin: "veni ad docéndum nos", english: "come and teach us", start: 218.94, end: 227.17, part: 2),
                 ChantLine(latin: "viam prudéntiæ.", english: "the way of prudence.", start: 227.17, end: 232.76, part: 2)
             ]
-        ),
+        )
+    }
+
+    private static func chant_o_adonai_magnificat() -> Chant {
         Chant(
             id: "o_adonai_magnificat",
             groupID: "seasons",
@@ -3592,7 +3915,10 @@ extension ChantCatalog {
                 ChantLine(latin: "veni ad rediméndum nos", english: "come to redeem us", start: 222.03, end: 229.21, part: 2),
                 ChantLine(latin: "in bráchio exténto.", english: "with an outstretched arm.", start: 229.21, end: 236.34, part: 2)
             ]
-        ),
+        )
+    }
+
+    private static func chant_o_radix_magnificat() -> Chant {
         Chant(
             id: "o_radix_magnificat",
             groupID: "seasons",
@@ -3645,7 +3971,10 @@ extension ChantCatalog {
                 ChantLine(latin: "veni ad liberándum nos,", english: "come to deliver us,", start: 225.27, end: 233.76, part: 2),
                 ChantLine(latin: "jam noli tardáre.", english: "and tarry now no longer.", start: 233.81, end: 241.30, part: 2)
             ]
-        ),
+        )
+    }
+
+    private static func chant_o_clavis_magnificat() -> Chant {
         Chant(
             id: "o_clavis_magnificat",
             groupID: "seasons",
@@ -3703,7 +4032,10 @@ extension ChantCatalog {
                 ChantLine(latin: "sedéntem in ténebris", english: "him that sitteth in darkness", start: 252.39, end: 259.08, part: 2),
                 ChantLine(latin: "et umbra mortis.", english: "and in the shadow of death.", start: 259.51, end: 265.96, part: 2)
             ]
-        ),
+        )
+    }
+
+    private static func chant_o_oriens_magnificat() -> Chant {
         Chant(
             id: "o_oriens_magnificat",
             groupID: "seasons",
@@ -3753,7 +4085,10 @@ extension ChantCatalog {
                 ChantLine(latin: "sedéntes in ténebris", english: "those who sit in darkness", start: 218.05, end: 225.18, part: 2),
                 ChantLine(latin: "et umbra mortis.", english: "and in the shadow of death.", start: 225.53, end: 232.42, part: 2)
             ]
-        ),
+        )
+    }
+
+    private static func chant_o_rex_magnificat() -> Chant {
         Chant(
             id: "o_rex_magnificat",
             groupID: "seasons",
@@ -3805,7 +4140,10 @@ extension ChantCatalog {
                 ChantLine(latin: "veni, et salva hóminem,", english: "come, and save man,", start: 217.65, end: 226.00, part: 2),
                 ChantLine(latin: "quem de limo formásti.", english: "whom Thou didst form out of clay.", start: 226.15, end: 231.96, part: 2)
             ]
-        ),
+        )
+    }
+
+    private static func chant_o_emmanuel_magnificat() -> Chant {
         Chant(
             id: "o_emmanuel_magnificat",
             groupID: "seasons",
@@ -3856,7 +4194,10 @@ extension ChantCatalog {
                 ChantLine(latin: "veni ad salvándum nos,", english: "come to save us,", start: 213.07, end: 219.53, part: 2),
                 ChantLine(latin: "Dómine Deus noster.", english: "O Lord our God.", start: 219.53, end: 226.30, part: 2)
             ]
-        ),
+        )
+    }
+
+    private static func chant_puer_natus() -> Chant {
         Chant(
             id: "puer_natus",
             groupID: "seasons",
@@ -3928,7 +4269,10 @@ extension ChantCatalog {
                 ChantLine(latin: "In cordis júbilo, Christum natum adorémus,", english: "With joy of heart let us adore Christ newly born,", start: 424.35, end: 432.46),
                 ChantLine(latin: "Cum novo cántico.", english: "with a new song.", start: 432.85, end: 438.78)
             ]
-        ),
+        )
+    }
+
+    private static func chant_adeste_fideles() -> Chant {
         Chant(
             id: "adeste_fideles",
             groupID: "seasons",
@@ -3988,7 +4332,10 @@ extension ChantCatalog {
                 ChantLine(latin: "veníte, adorémus,", english: "come, let us adore,", start: 295.03, end: 300.21),
                 ChantLine(latin: "veníte adorémus Dóminum.", english: "come, let us adore the Lord.", start: 300.21, end: 309.78)
             ]
-        ),
+        )
+    }
+
+    private static func chant_jesu_redemptor() -> Chant {
         Chant(
             id: "jesu_redemptor",
             groupID: "seasons",
@@ -4033,7 +4380,10 @@ extension ChantCatalog {
                 ChantLine(latin: "In sempitérna sǽcula.", english: "unto everlasting ages.", start: 184.71, end: 191.62),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 192.31, end: 196.78)
             ]
-        ),
+        )
+    }
+
+    private static func chant_attende_domine() -> Chant {
         Chant(
             id: "attende_domine",
             groupID: "seasons",
@@ -4075,7 +4425,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Atténde Dómine, et miserére,", english: "Hearken, O Lord, and have mercy,", start: 194.31, end: 200.89),
                 ChantLine(latin: "quia peccávimus tibi.", english: "for we have sinned against Thee.", start: 200.89, end: 207.56)
             ]
-        ),
+        )
+    }
+
+    private static func chant_parce_domine() -> Chant {
         Chant(
             id: "parce_domine",
             groupID: "seasons",
@@ -4135,7 +4488,10 @@ extension ChantCatalog {
                 ChantLine(latin: "ne in ætérnum", english: "be not for ever", start: 228.41, end: 231.67),
                 ChantLine(latin: "irascáris nobis.", english: "angry with us.", start: 231.67, end: 237.40)
             ]
-        ),
+        )
+    }
+
+    private static func chant_media_vita() -> Chant {
         Chant(
             id: "media_vita",
             groupID: "seasons",
@@ -4188,7 +4544,10 @@ extension ChantCatalog {
                 ChantLine(latin: "amáræ morti", english: "to bitter death", start: 283.91, end: 286.79),
                 ChantLine(latin: "ne tradas nos.", english: "deliver us not.", start: 286.79, end: 294.86)
             ]
-        ),
+        )
+    }
+
+    private static func chant_miserere() -> Chant {
         Chant(
             id: "miserere",
             groupID: "seasons",
@@ -4246,7 +4605,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Miserére mei Deus:", english: "Have mercy on me, O God:", start: 303.37, end: 309.11),
                 ChantLine(latin: "miserére mei.", english: "have mercy on me.", start: 309.11, end: 314.62)
             ]
-        ),
+        )
+    }
+
+    private static func chant_vexilla_regis() -> Chant {
         Chant(
             id: "vexilla_regis",
             groupID: "seasons",
@@ -4291,7 +4653,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Largíris, adde prǽmium.", english: "Thou givest, add the reward.", start: 185.05, end: 192.38),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 194.23, end: 199.30)
             ]
-        ),
+        )
+    }
+
+    private static func chant_audi_benigne() -> Chant {
         Chant(
             id: "audi_benigne",
             groupID: "seasons",
@@ -4320,7 +4685,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Ut fructuósa sint tuis Jejuniórum múnera.", english: "that the gifts of fasting may bear fruit for Thine own.", start: 112.03, end: 124.16, part: 0),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 124.77, end: 130.76, part: 0)
             ]
-        ),
+        )
+    }
+
+    private static func chant_o_vos_omnes() -> Chant {
         Chant(
             id: "o_vos_omnes",
             groupID: "seasons",
@@ -4345,7 +4713,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Si est dolor símilis", english: "If there be any sorrow", start: 80.79, end: 92.20, part: 0),
                 ChantLine(latin: "sicut dolor meus.", english: "like to my sorrow.", start: 92.63, end: 105.86, part: 0)
             ]
-        ),
+        )
+    }
+
+    private static func chant_victimae_paschali() -> Chant {
         Chant(
             id: "victimae_paschali",
             groupID: "sequences",
@@ -4382,7 +4753,10 @@ extension ChantCatalog {
                 ChantLine(latin: "miserére.", english: "have mercy.", start: 95.91, end: 100.20),
                 ChantLine(latin: "Amen. Allelúia.", english: "Amen. Alleluia.", start: 101.39, end: 109.10)
             ]
-        ),
+        )
+    }
+
+    private static func chant_o_filii() -> Chant {
         Chant(
             id: "o_filii",
             groupID: "seasons",
@@ -4474,7 +4848,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Allelúia, allelúia,", english: "Alleluia, alleluia,", start: 373.85, end: 379.61),
                 ChantLine(latin: "allelúia.", english: "alleluia.", start: 379.61, end: 385.96)
             ]
-        ),
+        )
+    }
+
+    private static func chant_vidi_aquam() -> Chant {
         Chant(
             id: "vidi_aquam",
             groupID: "asperges",
@@ -4511,7 +4888,10 @@ extension ChantCatalog {
                 ChantLine(latin: "et dicent,", english: "and they shall say,", start: 184.97, end: 190.70, part: 0),
                 ChantLine(latin: "allelúia, allelúia.", english: "alleluia, alleluia.", start: 190.93, end: 205.00, part: 0)
             ]
-        ),
+        )
+    }
+
+    private static func chant_salve_festa_dies() -> Chant {
         Chant(
             id: "salve_festa_dies",
             groupID: "seasons",
@@ -4564,7 +4944,10 @@ extension ChantCatalog {
                 ChantLine(latin: "toto venerábilis ævo,", english: "to be honoured through every age,", start: 327.67, end: 333.29),
                 ChantLine(latin: "Qua Deus inférnum vicit et astra tenet.", english: "on which God conquered hell and holds the stars.", start: 333.29, end: 343.98)
             ]
-        ),
+        )
+    }
+
+    private static func chant_aurora_caelum() -> Chant {
         Chant(
             id: "aurora_caelum",
             groupID: "seasons",
@@ -4593,7 +4976,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Surréxit, ac Paráclito, In sempitérna sǽcula.", english: "is risen, and to the Paraclete, for ever and ever.", start: 110.83, end: 120.36),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 121.03, end: 127.14)
             ]
-        ),
+        )
+    }
+
+    private static func chant_ad_regias() -> Chant {
         Chant(
             id: "ad_regias",
             groupID: "seasons",
@@ -4628,7 +5014,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Surréxit, ac Paráclito, In sempitérna sǽcula.", english: "is risen, and to the Paraclete, for everlasting ages.", start: 194.89, end: 207.18, part: 0),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 208.01, end: 217.36, part: 0)
             ]
-        ),
+        )
+    }
+
+    private static func chant_dies_irae() -> Chant {
         Chant(
             id: "dies_irae",
             groupID: "requiem",
@@ -4700,7 +5089,10 @@ extension ChantCatalog {
                 ChantLine(latin: "dona eis réquiem.", english: "grant them rest.", start: 365.61, end: 371.88),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 372.43, end: 378.54)
             ]
-        ),
+        )
+    }
+
+    private static func chant_kyrie_de_angelis() -> Chant {
         Chant(
             id: "kyrie_de_angelis",
             groupID: "mass",
@@ -4725,7 +5117,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Kýrie, eléison.", english: "Lord, have mercy.", start: 113.01, end: 127.48, part: 0),
                 ChantLine(latin: "Kýrie, eléison.", english: "Lord, have mercy.", start: 128.43, end: 148.10, part: 0)
             ]
-        ),
+        )
+    }
+
+    private static func chant_gloria_de_angelis() -> Chant {
         Chant(
             id: "gloria_de_angelis",
             groupID: "mass",
@@ -4764,7 +5159,10 @@ extension ChantCatalog {
                 ChantLine(latin: "in glória Dei Patris.", english: "in the glory of God the Father.", start: 144.93, end: 151.76, part: 0),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 152.39, end: 159.30, part: 0)
             ]
-        ),
+        )
+    }
+
+    private static func chant_sanctus_de_angelis() -> Chant {
         Chant(
             id: "sanctus_de_angelis",
             groupID: "mass",
@@ -4787,7 +5185,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Benedíctus qui venit", english: "Blessed is He that cometh", start: 57.59, end: 66.89, part: 0),
                 ChantLine(latin: "in nómine Dómini. Hosánna in excélsis.", english: "in the name of the Lord. Hosanna in the highest.", start: 66.89, end: 87.50, part: 0)
             ]
-        ),
+        )
+    }
+
+    private static func chant_agnus_de_angelis() -> Chant {
         Chant(
             id: "agnus_de_angelis",
             groupID: "mass",
@@ -4811,7 +5212,10 @@ extension ChantCatalog {
                 ChantLine(latin: "qui tollis peccáta mundi:", english: "Who takest away the sins of the world,", start: 55.65, end: 63.29, part: 0),
                 ChantLine(latin: "dona nobis pacem.", english: "grant us peace.", start: 63.29, end: 72.44, part: 0)
             ]
-        ),
+        )
+    }
+
+    private static func chant_credo_iii() -> Chant {
         Chant(
             id: "credo_iii",
             groupID: "creed",
@@ -4857,7 +5261,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Et vitam ventúri sǽculi.", english: "and the life of the world to come.", start: 249.31, end: 255.70, part: 0),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 256.15, end: 269.14, part: 0)
             ]
-        ),
+        )
+    }
+
+    private static func chant_asperges_me() -> Chant {
         Chant(
             id: "asperges_me",
             groupID: "asperges",
@@ -4882,7 +5289,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Aspérges me, Dómine, hyssópo, et mundábor:", english: "Thou shalt sprinkle me, O Lord, with hyssop, and I shall be cleansed:", start: 89.31, end: 105.98, part: 0),
                 ChantLine(latin: "lavábis me, et super nivem dealbábor.", english: "Thou shalt wash me, and I shall be made whiter than snow.", start: 106.39, end: 122.00, part: 0)
             ]
-        ),
+        )
+    }
+
+    private static func chant_kyrie_orbis_factor() -> Chant {
         Chant(
             id: "kyrie_orbis_factor",
             groupID: "mass",
@@ -4907,7 +5317,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Kýrie, eléison.", english: "Lord, have mercy.", start: 88.03, end: 98.96, part: 0),
                 ChantLine(latin: "Kýrie, eléison.", english: "Lord, have mercy.", start: 99.63, end: 114.32, part: 0)
             ]
-        ),
+        )
+    }
+
+    private static func chant_gloria_orbis_factor() -> Chant {
         Chant(
             id: "gloria_orbis_factor",
             groupID: "mass",
@@ -4944,7 +5357,10 @@ extension ChantCatalog {
                 ChantLine(latin: "Cum Sancto Spíritu, in glória Dei Patris.", english: "with the Holy Spirit, in the glory of God the Father.", start: 143.21, end: 159.37, part: 0),
                 ChantLine(latin: "Amen.", english: "Amen.", start: 159.37, end: 166.46, part: 0)
             ]
-        ),
+        )
+    }
+
+    private static func chant_sanctus_orbis_factor() -> Chant {
         Chant(
             id: "sanctus_orbis_factor",
             groupID: "mass",
@@ -4966,7 +5382,10 @@ extension ChantCatalog {
                 ChantLine(latin: "in nómine Dómini.", english: "in the name of the Lord.", start: 50.53, end: 60.48, part: 0),
                 ChantLine(latin: "Hosánna in excélsis.", english: "Hosanna in the highest.", start: 60.59, end: 71.42, part: 0)
             ]
-        ),
+        )
+    }
+
+    private static func chant_agnus_orbis_factor() -> Chant {
         Chant(
             id: "agnus_orbis_factor",
             groupID: "mass",
@@ -4991,5 +5410,5 @@ extension ChantCatalog {
                 ChantLine(latin: "dona nobis pacem.", english: "grant us peace.", start: 50.57, end: 57.20, part: 0)
             ]
         )
-    ]
+    }
 }

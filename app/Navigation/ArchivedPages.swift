@@ -8,10 +8,19 @@
 //
 //  To bring a page back, take its route out of `routes`.
 //
+//  The Chapel tab is archived the same way, by one switch: `chapel`.
+//  While it is on, the Chant tab stands in the Chapel's place in the bar
+//  and every door that asked for the Chapel opens Chant instead. Its
+//  view, tiles and saved layout stay as they were.
+//
 
 import Foundation
 
 enum ArchivedPages {
+
+    /// Whether the Chapel tab is put away. Set it false to bring the
+    /// Chapel back to the bar in Chant's place.
+    static let chapel = true
 
     /// The archived pages. Remove a route to bring its page back.
     static let routes: Set<AppRoute> = [

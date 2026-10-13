@@ -20,9 +20,9 @@ struct ChapelPagesAndTourTests {
 
     @Test func thePrayerRecordAndTheJournalArePushedOverTheTabTheyCameFrom() {
         let router = AppRouter()
-        router.selectedTab = .chapel
+        router.selectedTab = .chant
         router.switchTo(.progress)
-        #expect(router.selectedTab == .chapel, "the Chapel tab stays lit")
+        #expect(router.selectedTab == .chant, "the Chant tab stays lit")
         #expect(router.topRoute == .prayerRecord)
         router.switchTo(.journal)
         #expect(router.topRoute == .journal)
@@ -38,7 +38,7 @@ struct ChapelPagesAndTourTests {
 
     @Test func aTabTappedOverAPushedPageOpensItsOwnPage() {
         let router = AppRouter()
-        router.selectedTab = .chapel
+        router.selectedTab = .chant
         router.push(.prayerRecord)
         router.switchTo(.home)
         #expect(router.path.isEmpty)
@@ -74,12 +74,39 @@ struct ChapelPagesAndTourTests {
 
     // MARK: The tour
 
-    @Test func theTourStopsAtConsecrateBetweenPrayersAndTheChapel() {
+    @Test func theTourStopsAtConsecrateBetweenPrayersAndChant() {
         let stops = FirstUseTourStop.allCases
         #expect(stops.count == 6)
         let consecration = stops.firstIndex(of: .consecration)!
         #expect(stops[consecration - 1] == .prayers)
-        #expect(stops[consecration + 1] == .chapel)
+        #expect(stops[consecration + 1] == .chant)
         #expect(FirstUseTourStop.consecration.words.contains("33-day"))
+    }
+
+    // MARK: The Chapel archived
+
+    @Test func theBarShowsChantInTheChapelsPlace() {
+        #expect(ArchivedPages.chapel)
+        #expect(AppTab.barTabs == [.home, .consecration, .prayers, .chant])
+        #expect(!AppTab.barTabs.contains(.chapel))
+        #expect(FirstUseTourStop.chant.name == "Chant")
+    }
+
+    @Test func aDoorToTheChapelOpensChant() {
+        let router = AppRouter()
+        router.push(.settings)
+        router.switchTo(.chapel)
+        #expect(router.selectedTab == .chant)
+        #expect(router.path.isEmpty)
+    }
+
+    @Test func aDoorToTheChantLibraryTurnsToItsTab() {
+        let router = AppRouter()
+        router.push(.explore)
+        router.push(.chantLibrary)
+        #expect(router.selectedTab == .chant)
+        #expect(router.path.isEmpty, "no second copy of the library is stacked")
+        router.push(.chantSets)
+        #expect(router.topRoute == .chantSets, "the library's own pages still push")
     }
 }
