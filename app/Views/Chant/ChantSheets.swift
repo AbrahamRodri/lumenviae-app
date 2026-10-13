@@ -195,7 +195,7 @@ struct ChantPickerSheet: View {
                     row(chant)
                 }
                 if found.isEmpty {
-                    Text("No chant is called \u{201C}\(trimmed)\u{201D}.")
+                    Text("No chant matches \u{201C}\(trimmed)\u{201D}.")
                         .font(AppFonts.readingItalicFont(15))
                         .foregroundColor(AppColors.textSecondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -296,13 +296,19 @@ struct ChantPauseSheet: View {
             silence
                 .padding(.top, 22)
 
-            preview
-                .padding(.top, 18)
-                .padding(.horizontal, SheetMetrics.gutter)
+            // Only after a chant: in an empty set the preview would only
+            // say the red line above it again
+            if let last = lastChant {
+                preview(after: last)
+                    .padding(.top, 18)
+                    .padding(.horizontal, SheetMetrics.gutter)
+            }
 
             Spacer(minLength: 12)
 
-            GoldCTAButton(title: "Add the pause", trailingIcon: "ph-check") {
+            // Outlined until there is a pause to add, so the waiting act
+            // reads as waiting rather than as a gold pill washed out
+            GoldCTAButton(title: "Add the pause", fill: canAdd ? .solid : .outline, trailingIcon: "ph-check") {
                 shelf.addPause(
                     note: words.isEmpty ? (minutes > 0 ? Self.silentPrayer : "") : words,
                     seconds: minutes * 60,
@@ -371,21 +377,24 @@ struct ChantPauseSheet: View {
         .padding(.horizontal, SheetMetrics.gutter - 8)
     }
 
+    /// The set's last chant, which the pause will follow
+    private var lastChant: Chant? {
+        (shelf.set(set.id) ?? set).items.last(where: { $0.chant != nil })?.chant
+    }
+
     /// The pause as it will stand in the set: under the set's last chant,
     /// dimmed, the note in red with its silence beside it
-    private var preview: some View {
+    private func preview(after last: Chant) -> some View {
         let shown = words.isEmpty ? Self.silentPrayer : words
         return VStack(alignment: .leading, spacing: 8) {
-            if let last = (shelf.set(set.id) ?? set).items.last(where: { $0.chant != nil })?.chant {
-                HStack(spacing: 10) {
-                    ChantThumbnail(name: ChantCatalog.painting(for: last), size: 28, radius: 6)
-                    Text(last.latinTitle)
-                        .font(AppFonts.readingFont(15))
-                        .foregroundColor(AppColors.cream)
-                        .lineLimit(1)
-                }
-                .opacity(0.55)
+            HStack(spacing: 10) {
+                ChantThumbnail(name: ChantCatalog.painting(for: last), size: 28, radius: 6)
+                Text(last.englishTitle)
+                    .font(AppFonts.readingFont(15))
+                    .foregroundColor(AppColors.cream)
+                    .lineLimit(1)
             }
+            .opacity(0.55)
             HStack(alignment: .firstTextBaseline, spacing: 8) {
                 Text(shown)
                     .font(AppFonts.readingItalicFont(17))
@@ -544,7 +553,7 @@ struct ChantNewSetSheet: View {
                 SheetHeaderAction(title: "Cancel") { dismiss() }
                     .shadow(color: .black.opacity(0.7), radius: 6)
                     .padding(.top, SheetMetrics.headerTop)
-                    .padding(.trailing, SheetMetrics.gutter - 12)
+                    .padding(.trailing, SheetMetrics.gutter)
             }
 
             Text("A new set")

@@ -864,6 +864,34 @@ struct ChantLibraryHomeTests {
         #expect(ChantSetCard.summary(count: 1, duration: 20) == "1 chant · 1 min")
     }
 
+    @Test func theSetBuildingSheetsCountEveryRepeat() {
+        // Salve Regina sung three times in one entry, then once more, and a pause
+        var set = ChantSet(name: "Thursday holy hour")
+        set.items = [
+            ChantSet.Item(kind: .chant(id: "salve_regina_simple", times: 3)),
+            ChantSet.Item(kind: .pause(note: "Silent prayer", seconds: 60)),
+            ChantSet.Item(kind: .chant(id: "salve_regina_simple", times: 1)),
+            ChantSet.Item(kind: .chant(id: "sub_tuum", times: 1))
+        ]
+        #expect(set.count(of: "salve_regina_simple") == 4)
+        #expect(set.count(of: "sub_tuum") == 1)
+        #expect(set.count(of: "tantum_ergo") == 0)
+        // The foot counts what the rings count, repeats included
+        #expect(set.sungCount == 5)
+        #expect(set.tally.hasPrefix("In the set: 5 chants · "))
+
+        #expect(ChantSet(name: "Empty").tally == "Nothing in the set yet")
+        var pausesOnly = ChantSet(name: "Silence")
+        pausesOnly.items = [ChantSet.Item(kind: .pause(note: "", seconds: 300))]
+        #expect(pausesOnly.tally == "Nothing in the set yet")
+
+        // Under half a minute still says a minute, as the set cards do
+        var short = ChantSet(name: "Short")
+        short.items = [ChantSet.Item(kind: .chant(id: "in_nomine_patris", times: 1))]
+        #expect(short.duration < 30)
+        #expect(short.tally == "In the set: 1 chant · 1 min")
+    }
+
     private func defaults() -> UserDefaults {
         UserDefaults(suiteName: "ChantLibraryHomeTests.\(UUID().uuidString)")!
     }

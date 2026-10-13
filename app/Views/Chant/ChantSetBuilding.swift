@@ -30,7 +30,7 @@ struct ChantAddRing: View {
                 )
             if count > 0 {
                 Text("×\(count)")
-                    .font(AppFonts.labelFont(10))
+                    .font(AppFonts.labelFont(12))
                     .foregroundColor(AppColors.goldLight)
                     .monospacedDigit()
                     .contentTransition(.numericText())
@@ -153,9 +153,19 @@ struct ChantHeadPainting: View {
             .frame(maxWidth: .infinity)
             .clipped()
             .overlay(alignment: .top) {
-                // So the sheet's drag indicator and CANCEL read over it
+                // So the sheet's drag indicator reads over it
                 LinearGradient(colors: [.black.opacity(0.65), .clear], startPoint: .top, endPoint: .bottom)
                     .frame(height: height * 0.45)
+            }
+            .overlay(alignment: .topTrailing) {
+                // A pool of shade where CANCEL stands
+                RadialGradient(
+                    colors: [.black.opacity(0.75), .clear],
+                    center: .topTrailing,
+                    startRadius: 0,
+                    endRadius: 140
+                )
+                .frame(width: 200, height: height * 0.8)
             }
             .mask(
                 LinearGradient(
@@ -193,7 +203,7 @@ struct ChantSetRow: View {
                         .font(AppFonts.readingFont(16.5))
                         .foregroundColor(AppColors.cream)
                         .lineLimit(1)
-                    Text(set.summary)
+                    Text(detail)
                         .font(AppFonts.readingItalicFont(13.5))
                         .foregroundColor(AppColors.textSecondary)
                         .lineLimit(1)
@@ -208,7 +218,7 @@ struct ChantSetRow: View {
             .contentShape(Rectangle())
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(
-                [set.name, set.summary, ChantAddRing.spoken(count)].compactMap { $0 }.joined(separator: ", ")
+                [set.name, detail].joined(separator: ", ")
             )
         }
         .buttonStyle(.plain)
@@ -218,14 +228,32 @@ struct ChantSetRow: View {
         }
         .accessibilityHint("Adds the chant to the end of this set")
     }
+
+    /// What the set holds, said as its own page says it, and whether the
+    /// chant is in it already: "Already in it · 2 chants · about 5 minutes"
+    private var detail: String {
+        let holds = set.items.isEmpty ? "Nothing in it yet" : set.summary
+        return count > 0 ? "Already in it · \(holds)" : holds
+    }
 }
 
 // MARK: - Paintings and short names
 
 extension ChantGroup {
-    /// The painting the section hangs: the curation's for it
+    /// The painting the section hangs in the picker. The curation gives
+    /// the Mass's sections all the Last Supper and Our Lady's all the
+    /// Coronation, which stacked in one list read as the same band again;
+    /// a neighbour takes a painting of its own subject instead: the
+    /// Baptism for the holy water, the Trinity for the Creed, the
+    /// Visitation for Mary's Magnificat, All Saints for the litanies.
     var painting: String {
-        ChantLibraryData.groupPaintings[id] ?? "glorious_coronation"
+        switch id {
+        case "asperges":  return "luminous_baptism"
+        case "creed":     return "devotion_holy_trinity"
+        case "canticles": return "joyful_visitation"
+        case "litanies":  return "feast_all_saints"
+        default:          return ChantLibraryData.groupPaintings[id] ?? ChantSet.emptyPainting
+        }
     }
 
     /// The section's name in the picker's strip, where the book's whole
@@ -267,11 +295,19 @@ extension ChantSet {
         }
     }
 
-    /// The foot of the picker: "2 chants in the set · 5 min"
+    /// How many chants are sung in the set, each repeat counted, as the
+    /// picker's rings count them
+    var sungCount: Int {
+        items.reduce(0) { total, item in
+            if case .chant(_, let times) = item.kind { return total + max(1, times) }
+            return total
+        }
+    }
+
+    /// The foot of the picker, counting what the rings count: "In the set:
+    /// 3 chants · 7 min", in the words of the library's set cards
     var tally: String {
-        guard chantCount > 0 else { return "Nothing in the set yet" }
-        let chants = chantCount == 1 ? "1 chant in the set" : "\(chantCount) chants in the set"
-        let minutes = Int((duration / 60).rounded())
-        return minutes > 0 ? "\(chants) · \(minutes) min" : chants
+        guard sungCount > 0 else { return "Nothing in the set yet" }
+        return "In the set: " + ChantSetCard.summary(count: sungCount, duration: duration)
     }
 }
