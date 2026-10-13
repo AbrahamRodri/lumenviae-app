@@ -735,9 +735,22 @@ def main():
     for g in manifest["groups"]:
         lines.append(f"        ChantGroup(id: {swift_string(g['id'])}, title: {swift_string(g['title'])}, note: {swift_string(g.get('note'))}),")
     lines[-1] = lines[-1].rstrip(",")
+    # `all` lists one function a chant. Written as one array literal of
+    # every chant, the file took the compiler past 20 GB and rebooted the
+    # Mac (Oct 2026): a global's initialiser is type-checked whole, even to
+    # emit the module, and each function's body is checked on its own.
     lines += ["    ]", "", "    static let all: [Chant] = ["]
+    lines += [f"        chant_{b['entry']['id']}()," for b in built]
+    lines[-1] = lines[-1].rstrip(",")
+    lines += ["    ]", "",
+              "    // One function a chant: a literal of all 104 at once took the",
+              "    // compiler past 20 GB (each function's body is checked alone).",
+              ""]
     for b in built:
         e = b["entry"]
+        if not re.fullmatch(r"[A-Za-z0-9_]+", e["id"]):
+            sys.exit(f"{e['id']}: a chant id must be letters, digits and _ (it names a Swift function)")
+        lines.append(f"    private static func chant_{e['id']}() -> Chant {{")
         lines.append("        Chant(")
         lines.append(f"            id: {swift_string(e['id'])},")
         lines.append(f"            groupID: {swift_string(e['group'])},")
@@ -759,9 +772,9 @@ def main():
             lines.extend(swift_lines(timed[e["id"]]))
         else:
             lines.append(source)
-        lines.append("        ),")
-    lines[-1] = lines[-1].rstrip(",")
-    lines += ["    ]", "}", ""]
+        lines += ["        )", "    }", ""]
+    lines.pop()
+    lines += ["}", ""]
     SWIFT_OUT.write_text("\n".join(lines), "utf-8")
 
     audio_mb = sum(f.stat().st_size for f in AUDIO_OUT.glob("*.m4a")) / 1e6
