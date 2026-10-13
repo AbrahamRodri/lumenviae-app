@@ -82,41 +82,10 @@ struct BookHalo: View {
 
 // MARK: - The one gold act
 
-/// The book page's single filled gold shape: where the reading resumes.
-/// Three lines — what this act is, where it goes, and how far along
-/// that chapter already is.
-struct ContinueReadingAct: View {
-
-    /// "CONTINUE READING" on a book with a marker, "BEGIN READING" on
-    /// one not yet opened
-    let kicker: String
-
-    /// Where the act leads — "Chapter I · Earliest Memories"
-    let destination: String
-
-    /// How far into that chapter the reader is, 0…1
-    let fraction: Double
-
-    /// "6 MIN IN · 18 MIN LEFT", or nil where no honest length exists
-    let meta: String?
-
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            ContinueReadingActLabel(
-                kicker: kicker,
-                destination: destination,
-                fraction: fraction,
-                meta: meta
-            )
-        }
-        .buttonStyle(GoldCTAButtonStyle())
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(kicker.capitalized): \(destination)")
-    }
-}
-
+/// True Devotion's resume act: what this act is, where it goes, and how
+/// far along that chapter already is. The shelf's book page gave it up
+/// for a single-line `GoldCTAButton` beside the cover.
+///
 /// The act's face apart from its button, so a `NavigationLink` can
 /// carry it as its label and push what it names. True Devotion's page
 /// once wrapped the whole button in a link and switched the button's
@@ -194,7 +163,7 @@ struct ContinueReadingActLabel: View {
     }
 }
 
-// MARK: - Today's goal
+// MARK: - Daily reading goal band
 
 /// The day's measure, as a ruled band rather than a card: the dial that
 /// is both the section's icon and its progress, the measure in words,
@@ -215,7 +184,7 @@ struct TodaysGoalBand: View {
                 dial
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("TODAY'S GOAL")
+                    Text("DAILY READING GOAL")
                         .font(AppFonts.labelFont(10))
                         .tracking(2.5)
                         .foregroundColor(AppColors.gold)
@@ -249,7 +218,7 @@ struct TodaysGoalBand: View {
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Today's goal. \(line). Opens your reading goal.")
+        .accessibilityLabel("Daily reading goal. \(line). Opens your reading goal.")
     }
 
     /// A 38-point dial whose ring fills as the day's reading does —
@@ -308,6 +277,99 @@ struct TodaysGoalBand: View {
     }
 }
 
+// MARK: - Daily reading goal
+
+/// The book page's daily goal, as Apple Books draws Today's Reading: a
+/// ring with the day's figure in it, what the ring measures in words
+/// beside it, and Adjust. One card, the whole of it the door to the
+/// goal sheet. Never a streak, never a debt.
+struct DailyReadingGoalCard: View {
+
+    /// "6 of 15 minutes today"
+    let line: String
+
+    /// The figure inside the ring — minutes, or chapters
+    let figure: Int
+
+    /// How far today has come toward the measure, 0…1
+    let fraction: Double
+
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 14) {
+                ring
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Daily reading goal")
+                        .font(AppFonts.bodyFont(16))
+                        .foregroundColor(AppColors.cream)
+
+                    Text(line)
+                        .font(AppFonts.bodyFont(14))
+                        .foregroundColor(AppColors.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                Spacer(minLength: 8)
+
+                Text("ADJUST")
+                    .font(AppFonts.labelFont(9))
+                    .tracking(1.8)
+                    .foregroundColor(AppColors.gold.opacity(0.8))
+            }
+            .padding(.vertical, 12)
+            .padding(.horizontal, 14)
+            .frame(maxWidth: .infinity)
+            .overlay(
+                RoundedRectangle(cornerRadius: 14)
+                    .strokeBorder(AppColors.gold.opacity(0.22), lineWidth: AppLine.hairline)
+            )
+            .contentShape(RoundedRectangle(cornerRadius: 14))
+        }
+        .buttonStyle(SacredCardButtonStyle())
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Daily reading goal. \(line).")
+        .accessibilityHint("Adjusts your daily reading goal")
+    }
+
+    /// The day's figure inside its ring; closed, with a check in place
+    /// of the figure, once the goal is met.
+    private var ring: some View {
+        let f = min(max(fraction, 0), 1)
+        let met = f >= 1
+
+        return ZStack {
+            Circle()
+                .stroke(AppColors.gold.opacity(0.22), lineWidth: 3.5)
+
+            Circle()
+                .trim(from: 0, to: f)
+                .stroke(
+                    met ? AppColors.goldLight : AppColors.gold,
+                    style: StrokeStyle(lineWidth: 3.5, lineCap: .round)
+                )
+                .rotationEffect(.degrees(-90))
+
+            if met {
+                AppIcon("ph-check", size: 15)
+                    .foregroundColor(AppColors.goldLight)
+                    .transition(.scale(scale: 0.5).combined(with: .opacity))
+            } else {
+                Text("\(figure)")
+                    .font(AppFonts.titleFont(15))
+                    .foregroundColor(AppColors.goldLight)
+                    .monospacedDigit()
+                    .contentTransition(.numericText())
+            }
+        }
+        .frame(width: 46, height: 46)
+        .animation(.easeOut(duration: 0.45), value: f)
+        .accessibilityHidden(true)
+    }
+}
+
 // MARK: - Goal sheet
 
 /// The measures themselves. The purpose line names what the sheet is
@@ -320,7 +382,7 @@ struct ReadingGoalSheet: View {
 
     var body: some View {
         LibraryTraySheet(
-            kicker: "Today's goal",
+            kicker: "Daily reading goal",
             title: "How Much to Read",
             lead: "Spiritual reading asks for a little every day rather than an evening every month.",
             note: "A day without reading is never counted against you."
@@ -979,16 +1041,8 @@ struct BookNotesSheet: View {
 
 // MARK: - Spans
 
-/// Hours and minutes in the goal band's own hand: "2 h 5 m", "48 m".
+/// A recording's length in words.
 enum ReadingSpans {
-
-    static func spell(_ seconds: Double) -> String {
-        let minutes = max(Int(seconds) / 60, 0)
-        if minutes < 60 { return "\(minutes) m" }
-        let hours = minutes / 60
-        let rest = minutes % 60
-        return rest == 0 ? "\(hours) h" : "\(hours) h \(rest) m"
-    }
 
     /// "24 MIN" — a recording's length as a chip wears it.
     static func chipMinutes(_ seconds: Double) -> String {

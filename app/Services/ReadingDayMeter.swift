@@ -202,6 +202,29 @@ final class ReadingDayMeter {
         }
     }
 
+    /// The daily reading goal card's line, under "Daily reading goal":
+    /// "6 of 15 minutes today", never counting past the goal; for the
+    /// chapter measure, "A chapter a day · not yet today".
+    func progressLine(for goal: ReadingGoal) -> String {
+        if let minutes = goal.minutes {
+            return "\(min(minutesToday, minutes)) of \(minutes) minutes today"
+        }
+        switch chaptersToday {
+        case 0: return "\(goal.readingPhrase) · not yet today"
+        case 1: return "\(goal.readingPhrase) · one read today"
+        default: return "\(goal.readingPhrase) · \(chaptersToday) read today"
+        }
+    }
+
+    /// The figure set inside the goal's ring: minutes read today, or
+    /// chapters for the chapter measure, held at the goal.
+    func ringFigure(for goal: ReadingGoal) -> Int {
+        if let minutes = goal.minutes {
+            return min(minutesToday, minutes)
+        }
+        return chaptersToday
+    }
+
     // MARK: - Counting
 
     /// A reader screen has come up — start counting. Also the way the
