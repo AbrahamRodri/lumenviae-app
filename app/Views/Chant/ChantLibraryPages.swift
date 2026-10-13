@@ -2,12 +2,13 @@
 //  ChantLibraryPages.swift
 //  Lumen Viae
 //
-//  The pages the library's SEE ALL doors open (the "Chant shelf pages"
-//  design, option B, Oct 2026). Both are pushed, with the gold Back in
-//  the bar.
+//  The library's pushed pages (the "Chant shelf pages" design, option B,
+//  Oct 2026), opened from the library's sections and Explore's Chant
+//  doors, with the gold Back in the bar.
 //
 //    ALL CHANTS   the book's twelve sections as painted cards, two by
-//                 six, each opening its own shelf (`.chantBrowse(.all)`)
+//                 six, each opening its own shelf (`.chantBrowse(.all)`);
+//                 the same grid closes the library's own page
 //    A SHELF      a section, the Mass of the Angels or Songs to Mary,
 //                 opening on its painting hung across the top: the name,
 //                 when it is sung, how many chants and how long, an
@@ -223,26 +224,36 @@ struct ChantBrowsePage: View {
 /// way the Prayers page lists its topics
 private struct ChantContents: View {
 
-    @Environment(AppRouter.self) private var router
-
     var body: some View {
         ScrollView(showsIndicators: false) {
-            LazyVGrid(
-                columns: [GridItem(.flexible(), spacing: 12, alignment: .top), GridItem(.flexible(), spacing: 12, alignment: .top)],
-                alignment: .leading,
-                spacing: 20
-            ) {
-                ForEach(ChantCatalog.groups) { group in
-                    card(group)
-                }
-            }
-            .padding(.horizontal, 18)
-            .padding(.top, 8)
-            .padding(.bottom, 48)
+            ChantSectionsGrid()
+                .padding(.horizontal, 18)
+                .padding(.top, 8)
+                .padding(.bottom, 48)
         }
         // A shallow fade: the bar here stands on the bare page, and the
         // standard 48 points left a band of nothing under it
         .topChromeFade(height: 24, inset: 24)
+    }
+}
+
+/// The twelve sections, two by six, each its painting, its name and how
+/// many chants it holds: All Chants' page, and the foot of the library's
+/// own, where they once stood behind BROWSE ALL
+struct ChantSectionsGrid: View {
+
+    @Environment(AppRouter.self) private var router
+
+    var body: some View {
+        LazyVGrid(
+            columns: [GridItem(.flexible(), spacing: 12, alignment: .top), GridItem(.flexible(), spacing: 12, alignment: .top)],
+            alignment: .leading,
+            spacing: 20
+        ) {
+            ForEach(ChantCatalog.groups) { group in
+                card(group)
+            }
+        }
     }
 
     private func card(_ group: ChantGroup) -> some View {
