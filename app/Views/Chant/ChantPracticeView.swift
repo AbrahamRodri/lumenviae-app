@@ -159,7 +159,12 @@ struct ChantPracticeView: View {
             keepPlace()
             player.setLineEnd(.goOn)
             if startedPlayback {
-                if !foundHolding, player.current.id == chant.id,
+                if player.current.id == chant.id, player.error != nil {
+                    // The chant would not play here: its failure is the
+                    // practice's, and goes with it, or the mini player
+                    // said so over every page after
+                    player.relinquish()
+                } else if !foundHolding, player.current.id == chant.id,
                    player.holds(chant) || player.isLoading {
                     // A chant the practice loaded, or is still loading, is
                     // the practice's to put away: left paused, it stood in

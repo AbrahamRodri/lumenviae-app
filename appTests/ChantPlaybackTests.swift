@@ -13,6 +13,7 @@ import CoreGraphics
 import Foundation
 import SwiftUI
 import Testing
+import UIKit
 @testable import app
 
 @MainActor
@@ -80,13 +81,11 @@ struct ChantPlaybackTests {
 
     // MARK: - Practice words
 
-    @Test func practiceWordsAreKeptAsWorkedOut() {
+    @Test func practiceWordsAreCutToTheirFirstLetters() {
         let text = "Salve, Regína, Mater misericórdiæ:\nVita, dulcédo"
-        for hiding in ChantHiding.allCases {
-            #expect(ChantPracticeWords.hidden(text, hiding) == ChantPracticeWords.hide(text, hiding))
-            // Asked again, the same
-            #expect(ChantPracticeWords.hidden(text, hiding) == ChantPracticeWords.hide(text, hiding))
-        }
+        #expect(ChantPracticeWords.hidden(text, .none) == text)
+        #expect(ChantPracticeWords.hidden(text, .half) == "Salve, R·····, Mater m···········:\nVita, d······")
+        #expect(ChantPracticeWords.hidden(text, .all) == "S····, R·····, M···· m···········:\nV···, d······")
         let prayer = "℣. Ora pro nobis.\n[Let us pray.]\n℟. Ut digni efficiámur."
         #expect(ChantPracticeWords.plain(prayer) == "Ora pro nobis.\nUt digni efficiámur.")
         #expect(ChantPracticeView.plain(prayer) == ChantPracticeWords.plain(prayer))
@@ -152,6 +151,20 @@ struct ChantPlaybackTests {
         #expect(ChantShelfStore(defaults: defaults).set(set.id) == nil, "held back until flushed")
         shelf.flush()
         #expect(ChantShelfStore(defaults: defaults).set(set.id)?.name == "Third")
+    }
+
+    /// What is still gathered is written as the app leaves the front
+    @Test func aGatheredShelfWritesAsTheAppResigns() async throws {
+        let defaults = try #require(UserDefaults(suiteName: "ChantPlaybackTests.\(UUID().uuidString)"))
+        let shelf = ChantShelfStore(defaults: defaults, writes: .afterAPause, appIsActive: { true })
+        shelf.notePlayed("adoro_te")
+        #expect(defaults.data(forKey: "chantShelf.recent") == nil, "held back until the app resigns")
+        NotificationCenter.default.post(name: UIApplication.willResignActiveNotification, object: nil)
+        for _ in 0..<20 where defaults.data(forKey: "chantShelf.recent") == nil {
+            try await Task.sleep(for: .milliseconds(10))
+        }
+        #expect(ChantShelfStore(defaults: defaults).recent.first?.chantID == "adoro_te")
+        withExtendedLifetime(shelf) {}
     }
 
     /// A change made with the app in the background, from the Lock

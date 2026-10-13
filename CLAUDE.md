@@ -892,11 +892,13 @@ app/
 │   ├── PrayerBook            # BookPrayer, chapters, orders of prayer, seasons
 │   ├── PrayerBookSearch, PrayerBookSchedule  # its search (names folded once) and its hours and seasons
 │   ├── PrayerDay             # The prayer day, turning at four: what counts as today for everything prayed
-│   ├── Chant                 # Chant, ChantScorePart, ChantGroup, ChantCatalog
+│   ├── Chant                 # Chant, ChantScorePart, ChantGroup, ChantCatalog, and ChantCatalogIndex:
+│   │                         # the catalog's lookups (by id, prayer, work, kind, length, season) built once
 │   ├── ChantScoreDrawing     # A score's drawing, read from .lvscore; SVG path data
 │   ├── ChantPlayback         # ChantPlayer's pure values: a set unrolled, the line clock, turns, errors
 │   ├── ChantPracticeWords    # The words a chant is practised from, plain or cut to first letters
-│   ├── SearchText            # The one fold every search reads text by (case, accents, æ and œ)
+│   ├── SearchText            # The fold (case, accents, æ and œ) the Prayer Book's search and ChantCatalog.search read by;
+│   │                         # ChantSearch and the Chapel's tiles still fold on their own until they adopt it
 │   └── StreakMilestone, MarianFeastDay, BilingualConsecrationPrayer
 ├── ViewModels/               # @Observable
 │   ├── HomeViewModel, MeditationSelectionViewModel, MeditationSetDetailViewModel
@@ -2989,7 +2991,12 @@ write concurrent code here:
   this build does not know go back with it on every write. An entry gone
   from the list lets its stored form go, and `setStep` and `notePlayed`
   write their list once, so an entry updated in place keeps its fields
-  and one put down and begun again inherits none.
+  and one put down and begun again inherits none. The app's shelf
+  gathers its list writes for 400 ms and encodes and writes them off the
+  main actor, the last change winning (`ChantShelfStore.Writes`); what is
+  still gathered is written when the app resigns or ends, and a change
+  made while the app is not in front (a Lock Screen play) is written at
+  once. A test's shelf writes at once unless it asks to gather.
 
   **The rubrics are set in `Rubric.text`** (`FixedColors`, a lighter red
   at 4.6:1 or more on every theme): the sentences of an order of

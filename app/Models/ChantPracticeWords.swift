@@ -27,17 +27,6 @@ enum ChantPracticeWords {
     /// `text` with every other word, or every word, cut to its first
     /// letter — as the Prayer Book's learning by heart does
     static func hidden(_ text: String, _ hiding: ChantHiding) -> String {
-        hide(text, hiding)
-    }
-
-    /// The Prayer Book's grammar as plain lines to sing from
-    static func plain(_ text: String) -> String {
-        makePlain(text)
-    }
-
-    // MARK: Working it out
-
-    static func hide(_ text: String, _ hiding: ChantHiding) -> String {
         guard hiding != .none else { return text }
         var index = 0
         return text.components(separatedBy: "\n").map { line in
@@ -54,7 +43,8 @@ enum ChantPracticeWords {
         .joined(separator: "\n")
     }
 
-    static func makePlain(_ text: String) -> String {
+    /// The Prayer Book's grammar as plain lines to sing from
+    static func plain(_ text: String) -> String {
         text.components(separatedBy: "\n")
             .map(SearchText.clean)
             .filter { !$0.isEmpty }

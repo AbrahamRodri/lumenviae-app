@@ -90,6 +90,14 @@ final class RosaryAudioPack {
     /// so two preparations that overlap leave the later manifest on disk
     @ObservationIgnored private var lastWrite: Task<Void, Never>?
 
+    /// Manifest writes asked for and not yet landed, by voice: a kept
+    /// manifest whose file is still on its way is not taken for one whose
+    /// file was deleted
+    @ObservationIgnored private var pendingWrites: [String: Int] = [:]
+
+    /// How a manifest reaches the disk; a test may slow it down
+    private let writeFile: (Data, URL) async -> Void
+
     /// Fail a stalled clip in 20s; the clips are small
     private let session: URLSession = {
         let config = URLSessionConfiguration.default
@@ -109,9 +117,10 @@ final class RosaryAudioPack {
     }
 
     /// A pack kept under `root`; the app's own is `shared`
-    init(apiService: APIService, root: URL) {
+    init(apiService: APIService, root: URL, writeFile: ((Data, URL) async -> Void)? = nil) {
         self.apiService = apiService
         self.root = root
+        self.writeFile = writeFile ?? { data, url in await Self.write(data, to: url) }
     }
 
     /// Lets go of the manifests kept in memory, for when the files under
@@ -243,9 +252,7 @@ final class RosaryAudioPack {
         }
         do {
             let fetched = try await fetchManifest(voice: voice, kinds: kinds)
-            let merged = merge(fetched, into: await savedManifest(voice: fetched.voice))
-            await save(merged)
-            return (merged, false)
+            return (await keepMerged(fetched), false)
         } catch {
             if let saved { return (saved, true) }
             // Never prayed aloud in this voice, and no connection to fetch
@@ -351,30 +358,54 @@ final class RosaryAudioPack {
     func savedManifest(voice: String) async -> RosaryAudioManifest? {
         let url = manifestURL(voice: voice)
         // A manifest kept in memory answers only while its file is still
-        // there: kept after its file was deleted, it was never fetched and
-        // saved again, and the next launch with no signal found none
+        // there, or on its way: kept after its file was deleted, it was
+        // never fetched and saved again, and the next launch with no
+        // signal found none
         if let kept = savedManifests[voice] {
-            if await Self.exists(url) { return kept }
+            if pendingWrites[voice, default: 0] > 0 { return kept }
+            let onDisk = await Self.exists(url)
+            // Another preparation may have kept a newer one meanwhile
+            guard let current = savedManifests[voice] else { return nil }
+            if onDisk || current != kept || pendingWrites[voice, default: 0] > 0 { return current }
             savedManifests[voice] = nil
         }
         guard let data = await Self.read(url),
               let manifest = try? JSONDecoder().decode(RosaryAudioManifest.self, from: data)
-        else { return nil }
+        else { return savedManifests[voice] }
+        if let newer = savedManifests[voice] { return newer }
         savedManifests[voice] = manifest
         return manifest
     }
 
+    /// The manifest just fetched, merged into the one kept for its voice
+    /// and kept in its place. The merge reads the kept manifest as it
+    /// stands after every wait, and is kept in the same step, so two
+    /// preparations finishing together each add their kinds to the
+    /// other's rather than both to the same older manifest.
+    func keepMerged(_ fetched: RosaryAudioManifest) async -> RosaryAudioManifest {
+        let read = await savedManifest(voice: fetched.voice)
+        let merged = merge(fetched, into: savedManifests[fetched.voice] ?? read)
+        await save(merged)
+        return merged
+    }
+
+    /// Keeps the manifest at once, then writes it after every write asked
+    /// for before it
     func save(_ manifest: RosaryAudioManifest) async {
-        savedManifests[manifest.voice] = manifest
+        let voice = manifest.voice
+        savedManifests[voice] = manifest
         guard let data = try? JSONEncoder().encode(manifest) else { return }
-        let url = manifestURL(voice: manifest.voice)
+        let url = manifestURL(voice: voice)
         let before = lastWrite
+        let writeFile = writeFile
+        pendingWrites[voice, default: 0] += 1
         let write = Task {
             await before?.value
-            await Self.write(data, to: url)
+            await writeFile(data, url)
         }
         lastWrite = write
         await write.value
+        pendingWrites[voice, default: 1] -= 1
     }
 
     /// Removes recordings the manifest no longer names, in the kinds just
