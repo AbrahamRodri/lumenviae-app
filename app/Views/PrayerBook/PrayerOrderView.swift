@@ -3,10 +3,18 @@
 //  Lumen Viae
 //
 //  An order of prayer's own page — Morning Prayers, Before Confession —
-//  set like a title page: when it is prayed, its name, what it is, and
-//  its prayers as a numbered ledger, each a door to its own page. At the
-//  foot, how it will be prayed (aloud in the chosen voice, or in
-//  silence) as one quiet line over PRAY, the page's one gold act.
+//  (the "Saved and Prayer Orders" design, option A, Oct 2026): the
+//  order's painting run up under the bar and dissolving into the page,
+//  when it is prayed (and that it was prayed today), its name, its Latin
+//  small beneath, and one line saying what it is; then its prayers as a
+//  quiet numbered list, each a door to its own page, and where the
+//  season decides what the order holds, a sentence saying so. At the
+//  foot, PRAY, the page's one gold act, beside a round speaker that says
+//  how it will be prayed, aloud or in silence, in one line beneath.
+//
+//  The page once stood as type alone: the order's glyph, an ornament,
+//  a paragraph, a kicker counting the prayers, a Latin line under every
+//  prayer and a two-line switch row stood between the reader and PRAY.
 //
 
 import SwiftUI
@@ -17,14 +25,31 @@ struct PrayerOrderView: View {
 
     @Environment(AppRouter.self) private var router
 
-    private var store = PrayerBookStore.shared
+    private let store: PrayerBookStore
     private var voices = NarrationVoiceCatalog.shared
 
-    @State private var now = Date()
+    /// A day to draw the page on, for a snapshot; otherwise the page
+    /// reads the clock when it appears
+    private let fixedDate: Date?
+
+    @State private var now: Date
     @State private var footHeight: CGFloat = 0
 
-    init(orderID: String) {
+    /// Whether the page is scrolled far enough that its words travel
+    /// under the bar. Measured as a flag, so a scroll redraws the page
+    /// only when it flips, never frame by frame.
+    @State private var wordsUnderBar = false
+
+    /// How tall the painting stands at the head of the page, the status
+    /// bar's height included: low enough that four prayers or more stand
+    /// above the foot on a phone
+    private static let heroHeight: CGFloat = 280
+
+    init(orderID: String, store: PrayerBookStore = .shared, date: Date? = nil) {
         self.orderID = orderID
+        self.store = store
+        self.fixedDate = date
+        _now = State(initialValue: date ?? Date())
     }
 
     private var order: PrayerOrder? { PrayerBook.order(orderID) }
@@ -36,14 +61,21 @@ struct PrayerOrderView: View {
             if let order {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 0) {
+                        hero(order)
+                            .onGeometryChange(for: Bool.self) { proxy in
+                                -proxy.frame(in: .global).minY > 70
+                            } action: { under in
+                                withAnimation(Motion.crossfade) { wordsUnderBar = under }
+                            }
+
                         header(order)
-                            .padding(.horizontal, 28)
-                            .padding(.top, 8)
+                            .padding(.horizontal, 20)
+                            .padding(.top, -48)
                             .devotionalEntrance()
 
-                        ledger(order)
+                        list(order)
                             .padding(.horizontal, 20)
-                            .padding(.top, 28)
+                            .padding(.top, 18)
                             .devotionalEntrance(delay: 0.06)
 
                         if let season = seasonNote(order) {
@@ -62,13 +94,15 @@ struct PrayerOrderView: View {
                         Color.clear.frame(height: max(240, footHeight))
                     }
                 }
-                .topChromeFade()
+                .ignoresSafeArea(edges: .top)
+                .overlay(alignment: .top) { barVeil }
 
                 foot(order)
                     .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { footHeight = $0 }
             }
         }
         .navigationBarBackButtonHidden(true)
+        .toolbarBackground(.hidden, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button(action: { router.pop() }) {
@@ -95,69 +129,154 @@ struct PrayerOrderView: View {
                 }
             }
         }
-        .onAppear { now = Date() }
+        .onAppear { now = fixedDate ?? Date() }
+    }
+
+    // MARK: - Head
+
+    /// The order's painting, run to the top of the glass and dissolving
+    /// into the page beneath the title, never to a flat slab
+    private func hero(_ order: PrayerOrder) -> some View {
+        let painting = Self.painting(of: order, on: now)
+        return CachedAssetImage(painting.resolvedAsset, focal: painting.focal)
+            .frame(maxWidth: .infinity)
+            .frame(height: Self.heroHeight)
+            .clipped()
+            .mask(
+                LinearGradient(
+                    stops: [
+                        .init(color: .black, location: 0),
+                        .init(color: .black, location: 0.5),
+                        .init(color: .black.opacity(0.35), location: 0.8),
+                        .init(color: .clear, location: 1)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
+            .accessibilityHidden(true)
+    }
+
+    /// The order's painting. Night Prayers' Magdalen is hung from the top
+    /// of the canvas, so her face and the flame stand clear of the bar,
+    /// where the Prayers page's shortcut cuts her at the shoulders.
+    static func painting(of order: PrayerOrder, on date: Date) -> PrayerBookPainting {
+        let painting = PrayerBookPainting.order(order, on: date)
+        guard order.id == PrayerBook.nightOrderID else { return painting }
+        return PrayerBookPainting(
+            asset: painting.asset,
+            fallback: painting.fallback,
+            focal: UnitPoint(x: 0.5, y: 0),
+            caption: painting.caption
+        )
+    }
+
+    /// A veil under the status bar and the bar's Back: light over the
+    /// painting at rest, and near opaque down past the bar once the title
+    /// travels under it, so no word of the page stands inside the Back
+    private var barVeil: some View {
+        ZStack(alignment: .top) {
+            LinearGradient(
+                colors: [AppColors.background.opacity(0.55), AppColors.background.opacity(0)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 110)
+
+            LinearGradient(
+                stops: [
+                    .init(color: AppColors.background.opacity(0.99), location: 0),
+                    .init(color: AppColors.background.opacity(0.99), location: 0.8),
+                    .init(color: AppColors.background.opacity(0), location: 1)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 172)
+            .opacity(wordsUnderBar ? 1 : 0)
+        }
+        .ignoresSafeArea(edges: .top)
+        .allowsHitTesting(false)
     }
 
     private func header(_ order: PrayerOrder) -> some View {
         let offered = store.wasOffered(order.id, on: now)
-        return VStack(spacing: 12) {
-            Text(order.occasion.uppercased())
-                .font(AppFonts.labelFont(9.5))
-                .tracking(3)
-                .foregroundColor(AppColors.gold)
+        let title = order.title(on: now)
 
-            AppIcon(order.icon, size: 30)
-                .foregroundColor(AppColors.goldLight)
-                .shadow(color: AppColors.gold.opacity(0.45), radius: 10)
+        return VStack(alignment: .leading, spacing: 6) {
+            // When it is said, and that it was prayed today beside it;
+            // where the line has no room, PRAYED TODAY takes a line of its
+            // own rather than be cut, since it is the news
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 6) {
+                    Text(order.occasion.uppercased())
+                    if offered {
+                        Text("·")
+                            .foregroundColor(AppColors.gold.opacity(0.5))
+                        prayedToday
+                    }
+                }
+                .fixedSize()
 
-            Text(order.title(on: now))
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(order.occasion.uppercased())
+                        .fixedSize(horizontal: false, vertical: true)
+                    if offered {
+                        prayedToday
+                    }
+                }
+            }
+            .font(AppFonts.labelFont(9.5))
+            .tracking(2.4)
+            .foregroundColor(AppColors.gold)
+            // Lifted off the painting's dissolve, where a light passage
+            // of the painting can stand behind it
+            .shadow(color: AppColors.background.opacity(0.9), radius: 6)
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(offered ? "\(order.occasion). Prayed today" : order.occasion)
+
+            Text(title)
                 .font(AppFonts.titleFont(29))
                 .foregroundColor(AppColors.cream)
-                .multilineTextAlignment(.center)
-                .minimumScaleFactor(0.7)
+                .multilineTextAlignment(.leading)
+                .minimumScaleFactor(0.85)
+                .accessibilityAddTraits(.isHeader)
 
             Text(order.latinTitle)
-                .font(AppFonts.readingItalicFont(16))
-                .foregroundColor(AppColors.cream.opacity(0.65))
-
-            OrnamentDivider()
-                .frame(width: 150)
-                .padding(.vertical, 2)
+                .font(AppFonts.readingItalicFont(14.5))
+                .foregroundColor(AppColors.cream.opacity(0.55))
 
             Text(order.detail)
-                .font(AppFonts.readingItalicFont(15.5))
+                .font(AppFonts.readingItalicFont(16))
                 .foregroundColor(AppColors.cream.opacity(0.82))
-                .multilineTextAlignment(.center)
+                .multilineTextAlignment(.leading)
                 .fixedSize(horizontal: false, vertical: true)
-
-            if offered {
-                HStack(spacing: 6) {
-                    AppIcon("ph-seal-check-fill", size: 12)
-                    Text("PRAYED TODAY")
-                        .font(AppFonts.labelFont(8.5))
-                        .tracking(2)
-                }
-                .foregroundColor(AppColors.gold)
                 .padding(.top, 4)
-            }
         }
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    private func ledger(_ order: PrayerOrder) -> some View {
-        let prayers = order.prayers(on: now)
-        return VStack(alignment: .leading, spacing: 4) {
-            Text(prayers.count == 1 ? "THE PRAYER" : "THE \(prayers.count) PRAYERS, IN ORDER")
-                .font(AppFonts.labelFont(8.5))
-                .tracking(2)
-                .foregroundColor(AppColors.gold.opacity(0.75))
-                .padding(.leading, 2)
+    private var prayedToday: some View {
+        HStack(spacing: 6) {
+            AppIcon("ph-seal-check-fill", size: 11)
+            Text("PRAYED TODAY")
+        }
+        .fixedSize()
+    }
 
-            VStack(spacing: 0) {
-                ForEach(Array(prayers.enumerated()), id: \.element.id) { i, prayer in
-                    BookPrayerRow(prayer: prayer, number: i + 1, showsRule: i < prayers.count - 1) {
-                        router.push(.devotionPrayer(id: prayer.id))
-                    }
+    // MARK: - The prayers
+
+    private func list(_ order: PrayerOrder) -> some View {
+        let prayers = order.prayers(on: now)
+        return VStack(spacing: 0) {
+            ForEach(Array(prayers.enumerated()), id: \.element.id) { i, prayer in
+                OrderPrayerRow(
+                    prayer: prayer,
+                    number: i + 1,
+                    store: store,
+                    showsRule: i < prayers.count - 1
+                ) {
+                    router.push(.devotionPrayer(id: prayer.id))
                 }
             }
         }
@@ -181,57 +300,137 @@ struct PrayerOrderView: View {
     // MARK: - Foot
 
     private func foot(_ order: PrayerOrder) -> some View {
-        VStack(spacing: 10) {
-            // A real switch, answering a tap anywhere on the line — a
-            // line of small capitals alone reads as a label nobody knows
-            // to tap
-            Button {
-                withAnimation(Motion.settle) { store.praysAloud.toggle() }
-            } label: {
-                HStack(spacing: 12) {
-                    AppIcon(store.praysAloud ? "ph-speaker-high-fill" : "ph-speaker-high", size: 15)
-                        .foregroundColor(AppColors.gold)
-                        .frame(width: 20)
-                    VStack(alignment: .leading, spacing: 1) {
-                        Text("Pray aloud")
-                            .font(AppFonts.bodyFont(15.5))
-                            .foregroundColor(AppColors.cream)
-                        Text(store.praysAloud
-                             ? "Read to you in the \(voices.chosenVoice.name.lowercased()) voice"
-                             : "The prayers on the page, in silence")
-                            .font(AppFonts.readingItalicFont(12.5))
-                            .foregroundColor(AppColors.textSecondary)
-                            .contentTransition(.opacity)
-                    }
-                    Spacer(minLength: 8)
-                    Toggle("", isOn: .constant(store.praysAloud))
-                        .labelsHidden()
-                        .tint(AppColors.gold)
-                        .allowsHitTesting(false)
-                }
-                .padding(.horizontal, 4)
-                .frame(minHeight: 48)
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel("Pray aloud")
-            .accessibilityValue(store.praysAloud ? "On" : "Off")
-            .accessibilityAddTraits(.isButton)
+        let aloud = store.praysAloud
+        let voice = voices.chosenVoice.name.lowercased()
 
-            GoldCTAButton(title: "Pray", glyph: .play) {
-                // The switch stands just above PRAY, so what it shows is
-                // the reader's answer; the pray-along screen won't ask
-                store.chooseAloud(store.praysAloud)
-                router.push(.prayAlong(.order(order, on: now)))
+        return VStack(spacing: 8) {
+            HStack(spacing: 12) {
+                // How it will be prayed, as a round speaker beside PRAY:
+                // a tap anywhere on the disc changes it, and the line
+                // beneath says the choice in words
+                Button {
+                    withAnimation(Motion.settle) { store.praysAloud.toggle() }
+                } label: {
+                    AloudGlyph(aloud: aloud)
+                        .frame(width: 52, height: 52)
+                        .overlay(
+                            Circle().strokeBorder(AppColors.gold.opacity(aloud ? 0.6 : 0.35), lineWidth: 1.2)
+                        )
+                        .contentShape(Circle())
+                }
+                .buttonStyle(QuietGlyphButtonStyle())
+                .accessibilityLabel("Pray aloud")
+                .accessibilityAddTraits(.isToggle)
+                .accessibilityValue(aloud ? "On, the \(voice) voice" : "Off")
+
+                GoldCTAButton(title: "Pray", glyph: .play) {
+                    // The speaker stands beside PRAY, so what it shows is
+                    // the reader's answer; the pray-along screen won't ask
+                    store.chooseAloud(store.praysAloud)
+                    router.push(.prayAlong(.order(order, on: now)))
+                }
             }
+
+            Text(aloud ? "Aloud, in the \(voice) voice" : "In silence")
+                .font(AppFonts.readingItalicFont(13))
+                .foregroundColor(AppColors.textSecondary)
+                .contentTransition(.opacity)
+                .accessibilityHidden(true)
         }
         .padding(.horizontal, 24)
-        // Clear of the ground's fade, so the ledger never reads through
-        // the switch
+        // Clear of the ground's fade, so the list never reads through
+        // the speaker
         .padding(.top, 92)
-        .padding(.bottom, 20)
+        .padding(.bottom, 16)
         .background(PrayFootGround())
+    }
+}
+
+// MARK: - The speaker
+
+/// The speaker on the foot's disc: sounding when the order will be read
+/// aloud, struck through and dimmed when it will be prayed in silence
+private struct AloudGlyph: View {
+    let aloud: Bool
+
+    var body: some View {
+        ZStack {
+            AppIcon(aloud ? "ph-speaker-high-fill" : "ph-speaker-high", size: 19)
+                .foregroundColor(AppColors.gold.opacity(aloud ? 1 : 0.55))
+            Capsule()
+                .fill(AppColors.gold)
+                .frame(width: 1.4, height: 26)
+                .rotationEffect(.degrees(-45))
+                .opacity(aloud ? 0 : 1)
+        }
+    }
+}
+
+// MARK: - A prayer of the order
+
+/// One prayer of the order: its numeral, its name, the reader's own marks
+/// on it, a caret. The Latin each prayer carries stands on its own page.
+private struct OrderPrayerRow: View {
+    let prayer: BookPrayer
+    let number: Int
+    let store: PrayerBookStore
+    let showsRule: Bool
+    let action: () -> Void
+
+    var body: some View {
+        let byHeart = store.isByHeart(prayer.id)
+        let kept = store.isKept(prayer.id)
+
+        Button(action: action) {
+            VStack(spacing: 0) {
+                HStack(alignment: .center, spacing: 14) {
+                    // The numeral stands on the name's first line, as a
+                    // contents page sets it
+                    HStack(alignment: .firstTextBaseline, spacing: 14) {
+                        Text(LiturgicalCalendarFormat.roman(number))
+                            .font(AppFonts.titleFont(13))
+                            .foregroundColor(AppColors.gold.opacity(0.85))
+                            .frame(width: 30, alignment: .leading)
+
+                        Text(prayer.title)
+                            .font(AppFonts.readingFont(17))
+                            .foregroundColor(AppColors.cream)
+                            .multilineTextAlignment(.leading)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+
+                    Spacer(minLength: 8)
+
+                    HStack(spacing: 10) {
+                        if byHeart {
+                            ByHeartMark()
+                        }
+                        if kept {
+                            RibbonMark(kept: true, width: 7, restLength: 12, keptLength: 16)
+                        }
+                        AppIcon("ph-caret-right", size: 11)
+                            .foregroundColor(AppColors.gold.opacity(0.5))
+                    }
+                }
+                .padding(.vertical, 14)
+                .frame(minHeight: 52)
+
+                if showsRule {
+                    Rectangle()
+                        .fill(AppColors.gold.opacity(0.12))
+                        .frame(height: AppLine.hairline)
+                }
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(SacredCardButtonStyle())
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(
+            ["\(number), \(prayer.title)", byHeart ? "learned by heart" : nil, kept ? "saved" : nil]
+                .compactMap { $0 }
+                .joined(separator: ", ")
+        )
+        .accessibilityAddTraits(.isButton)
     }
 }
 

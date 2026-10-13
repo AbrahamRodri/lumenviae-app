@@ -2404,9 +2404,13 @@ write concurrent code here:
   a name on the card ground (`PrayersShortcutTile`): Morning Prayers,
   the Angelus (Queen of Heaven in the Easter season), Night Prayers,
   Saved (`.prayerBookSaved`, `PrayerBookSavedView`: the prayers kept with
-  the bookmark at the head of a prayer's page, as small outlined cards
-  the ribbon hangs from, a hold offering Remove from Saved; empty, it says
-  how a prayer comes there), Before Mass and Before Confession. Then
+  the bookmark at the head of a prayer's page, newest first, two to a row,
+  each under its painting with the ribbon hung from it and its name and
+  topic beneath (`SavedPrayerPainting`: the scene the book names for the
+  prayer, else its topic's), a hold offering Remove from Saved; empty,
+  the Saved shortcut's own painting, one sentence on how a prayer comes
+  there, and the First Prayers as a painted door; the how-to line stands
+  only while the page is empty), Before Mass and Before Confession. Then
   **Now**, the order for the hour (`PrayerBook.dayOrder(at:)`) as one
   wide card (`PrayersNowCard`): its painting, NOW · NIGHT (or NIGHT ·
   PRAYED), the order's name, its line (`PrayerBook.daySummary(of:on:)`)
@@ -2481,6 +2485,20 @@ write concurrent code here:
   Queen of Heaven, Queen of Heaven, Hail, Holy Queen), which the Mary
   chapter marks THIS SEASON.
 
+  **An order's own page** (`PrayerOrderView`, `.prayerOrder(id:)`, the
+  "Saved and Prayer Orders" design, option A, Oct 2026) opens on the
+  order's painting (`PrayerBookPainting.order`), run up under the bar's
+  Back and dissolving into the page, then when it is said (with ·
+  PRAYED TODAY beside it once `wasOffered`), its name, its Latin small,
+  one line saying what it is, and its prayers as a numbered list of
+  names, each a door to its page; where the season decides what it
+  holds (Night Prayers' song to Mary, Queen of Heaven at Eastertide) a
+  sentence under the list says so. The foot is PRAY beside a round
+  speaker that switches aloud and silent, and one line beneath saying
+  which ("Aloud, in the male voice", "In silence"). It once stood as type
+  alone: a glyph, an ornament, a paragraph, a kicker counting the
+  prayers, a Latin line under every prayer and a two-line switch row.
+
   **Praying** is `PrayAlongView` (`.prayAlong(PrayAlongLaunch)`, a
   player: bar hidden, its own ×): one prayer at a time, a strand of beads
   for the order's prayers, aloud or in silence (`PrayerBookStore.
@@ -2492,8 +2510,8 @@ write concurrent code here:
   reach: it scrolls, and would stand full height at the accessibility
   text sizes the app no longer reaches (held to 340 points there, its
   rows were drawn over each other). The
-  order page's switch stands just above its PRAY, so
-  praying from there answers the question with what the switch shows;
+  order page's speaker stands just beside its PRAY, so
+  praying from there answers the question with what the speaker shows;
   afterwards the speaker at the head of the page owns the choice. The
   same choice stands in Settings → Prayer Experience as the Prayers
   Tab row, and a choice made there answers the question before it is asked;
@@ -3424,7 +3442,7 @@ transition entirely.
 - **Snapshot tests:** `appTests/Snapshots/` draws the main screens that
   read nothing off the clock or the network (home's mysteries sections,
   VIEW ALL, a mysteries' page, a set's page, the Scriptural Rosary's page,
-  a Prayer Book page, and the chant search before typing, with results
+  a Prayer Book page, Saved full and empty, an order's page, and the chant search before typing, with results
   and with nothing found, on a fixed day) from fixed data with swift-snapshot-testing (the
   test target's one package; the app has none) and compares them with
   the PNGs in `__Snapshots__/`, in the same `xcodebuild test`.
