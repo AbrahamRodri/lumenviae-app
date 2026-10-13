@@ -105,6 +105,19 @@ struct AppSearchTests {
         }
     }
 
+    @Test func inEastertideTheAngelusIsFoundAndNamedAsQueenOfHeaven() {
+        let calendar = Calendar(identifier: .gregorian)
+        let easterSeason = calendar.date(from: DateComponents(year: 2027, month: 4, day: 10, hour: 12))!
+        let results = AppSearch.results(for: "queen of heaven", from: .prayers, on: easterSeason)
+        #expect(results.best?.id == "order:\(PrayerBook.angelusOrderID)")
+        #expect(results.best?.names(on: results.date).first == "Queen of Heaven")
+
+        // Out of the season the Angelus keeps its own name
+        let october = calendar.date(from: DateComponents(year: 2026, month: 10, day: 12, hour: 12))!
+        let ordinary = AppSearch.results(for: "queen of heaven", from: .prayers, on: october)
+        #expect(ordinary.best?.id != "order:\(PrayerBook.angelusOrderID)")
+    }
+
     @Test func aChantIsFoundByItsSungWords() {
         // A line of the Salve Regina that no title holds
         let results = AppSearch.results(for: "spes nostra", from: .chant)
@@ -113,6 +126,15 @@ struct AppSearchTests {
         #expect(chants.contains { $0.id.hasPrefix("chant:salve_regina") })
         // Found only in its words, it is no card
         if case .chant = results.best { Issue.record("a chant found in its words took the card") }
+    }
+
+    @Test func aChantIsFoundByThePrayerItSingsAndListedOnce() {
+        let hits = AppSearch.chantHits("mary")
+        let ids = hits.map(\.id)
+        #expect(Set(ids).count == ids.count)
+        let singing = ChantSearch.works(singingPrayerMatching: "mary").flatMap(\.chants).map { "chant:\($0.id)" }
+        #expect(!singing.isEmpty)
+        #expect(Set(singing).isSubset(of: Set(ids)))
     }
 
     @Test func fromEitherPageTheOtherPagesKindComesSecond() {
@@ -139,7 +161,7 @@ struct AppSearchTests {
 
     private static let shelf = ReadingShelf(
         id: "test", icon: "lv-rose", title: "Where Mary Appeared", marginLabel: "", subtitle: "",
-        entries: [reading("lourdes", "Lourdes", "1858 · Bernadette"), reading("fatima", "Fátima", "1917")]
+        entries: [reading("lourdes", "Mary at Lourdes", "1858 · Bernadette"), reading("fatima", "Fátima", "1917")]
     )
 
     @Test func aReadingIsFoundByTitleOrDatingLineFolded() {
@@ -150,18 +172,24 @@ struct AppSearchTests {
     }
 
     @Test func aShelfsTitleAnswersOnlyWhenNoReadingDoes() {
-        let hits = AppSearch.readingHits("appeared", shelves: [Self.shelf])
-        #expect(hits.count == 2)
-        #expect(AppSearch.readingHits("lourdes", shelves: [Self.shelf]).count == 1)
+        // No reading holds "appeared": the shelf's title brings them all
+        #expect(AppSearch.readingHits("appeared", shelves: [Self.shelf]).count == 2)
+        // "mary" is in the shelf's title and in one reading's: the reading
+        // answers alone
+        #expect(AppSearch.readingHits("mary", shelves: [Self.shelf]).map(\.id) == ["reading:lourdes"])
     }
 
-    @Test func archivedShelvesAreLeftOut() {
-        #expect(AppSearch.defaultShelves.allSatisfy { !ArchivedPages.hides(shelf: $0) })
+    @Test func aReadingOnAShelfPutAwayIsNotFound() throws {
+        let hidden = try #require(LibraryReadings.shelves.first { ArchivedPages.hides(shelf: $0) })
+        let reading = try #require(hidden.entries.first)
+        let results = AppSearch.results(for: reading.title, from: .everywhere)
+        let found = [results.best].compactMap { $0 } + results.sections.flatMap(\.hits)
+        #expect(!found.contains { $0.id == "reading:\(reading.id)" })
     }
 
     @Test func aMeditationSetIsFoundByAuthorAndByTheLabelTheShelfShows() {
         let set = MeditationSetSummary(
-            id: 9, name: "The Gospel Read Slowly", category: "joyful", description: nil,
+            id: 9, name: "The Little Way", category: "joyful", description: nil,
             labels: ["Scriptural"], author: "St. Thérèse"
         )
         #expect(AppSearch.matches(set, needle: "therese"))

@@ -216,8 +216,8 @@ different place.
 
 **The Chapel is archived** (Oct 2026, `ArchivedPages.chapel`): the bar
 shows **Chant** in its place, the Chant Library as a tab root
-(`ChantLibraryView(isTabRoot:)`, no Back, its search and foot clear of
-the bar). `AppTab.barTabs` is the bar's list. While the switch is on,
+(`ChantLibraryView(isTabRoot:)`, no Back, its foot clear of the bar;
+its glass opens the one search, pushed over the tab). `AppTab.barTabs` is the bar's list. While the switch is on,
 `switchTo(.chapel)`, the debug launch tab and the first-use tour's last
 tab stop open Chant, and a push of `.chantLibrary` turns to the tab, as
 the Prayer Book's doors do. The Chapel's view, tiles and saved layout
@@ -414,8 +414,9 @@ surface hides it. Also drawing their own chrome (bar hidden, Back on
 the page): the mysteries' page and the Rosary's own page in its three forms
 (`RosaryConfirmPage`: a set's, the Scriptural Rosary's, the Holy
 Rosary's), the Guided Rosary, the Prayer Book's pray-along and its topic
-pages (`PrayerBookChapterView`, its Back over the painting), and the
-prayer and completion screens. A page may hide the bar only if it draws its own Back in every
+pages (`PrayerBookChapterView`, its Back over the painting), the one
+search opened from a page's glass (`.search(from:)`, whose CANCEL is
+its Back), and the prayer and completion screens. A page may hide the bar only if it draws its own Back in every
 branch. Not every push is an `AppRoute`: True Devotion's chapters are
 closure `NavigationLink`s, the Office's hours a
 `navigationDestination(item:)`, and the Missal's Ordo page a `navigationDestination(isPresented:)`.
@@ -435,8 +436,7 @@ The bar, and the chant player standing on it, ignore the keyboard's safe
 area (`ContentView`): with a keyboard up they stay at the foot of the
 glass, under it, and the pages keep no room for the player while it is
 up. Riding up with the keyboard, the bar and the Pray button covered
-whatever stood above it, tonight's song on the chant search among them,
-on every page with a field. Don't take the modifiers off.
+whatever stood above it on every page with a field. Don't take the modifiers off.
 
 > Journal is **not** blocked on the API. Entries are a local SwiftData model
 > (`Models/JournalEntry.swift`); nothing is sent to the server.

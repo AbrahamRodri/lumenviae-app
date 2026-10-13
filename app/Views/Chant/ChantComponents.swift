@@ -1011,8 +1011,7 @@ enum ChantDates {
 // MARK: - ChantGoldPlayButton
 
 /// The board's one gold act when it is a chant to sing: a gold disc with
-/// the play or pause glyph dark upon it, haloed. Tonight's antiphon, the
-/// chant's own page.
+/// the play or pause glyph dark upon it, haloed: the chant's own page.
 struct ChantGoldPlayButton: View {
     let isPlaying: Bool
     let isLoading: Bool

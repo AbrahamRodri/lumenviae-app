@@ -361,36 +361,15 @@ struct ChantLibraryTests {
     @Test func searchFoldsAccentsAndLigatures() {
         #expect(ChantSearch.fold("Cæli") == "caeli")
         #expect(ChantSearch.fold("Regína") == "regina")
-        let works = ChantSearch.works(matching: "regina", where: { _ in true })
+        // The two settings of a work sung for one prayer stand as one work
+        let works = ChantSearch.works(singingPrayerMatching: ChantSearch.fold("hail, holy queen"))
         let salve = works.first { $0.chants.first?.id == "salve_regina_simple" }
         #expect(salve?.chants.map(\.id) == ["salve_regina_simple", "salve_regina_solemn"])
-        // The Rosary's Ave Maria and the Advent offertory share a name, not a work
-        let ave = ChantSearch.works(matching: "ave maria", where: { _ in true })
-        #expect(ave.count >= 2)
-    }
-
-    @Test func aMatchIsDrawnUnderTheWordsAsWritten() {
-        let text = "Regina Cæli, Regina Angelorum"
-        let found = ChantSearch.matches(in: text, needle: "caeli").map { String(text[$0]) }
-        #expect(found == ["Cæli"])
-        #expect(ChantSearch.matches(in: text, needle: "regina").count == 2)
     }
 
     @Test func aPrayerFindsTheChantThatSingsIt() {
-        let works = ChantSearch.works(singingPrayerMatching: ChantSearch.fold("glory"), where: { _ in true })
+        let works = ChantSearch.works(singingPrayerMatching: ChantSearch.fold("glory"))
         #expect(works.contains { $0.chants.contains { $0.id == "gloria_patri" } })
-    }
-
-    @Test func aHitInTheWordsNamesItsSettingWhereTheWorkHasTwo() throws {
-        let solemn = try #require(ChantCatalog.chant("salve_regina_solemn"))
-        let sung = ChantSearch.WordHit(id: "a", chant: solemn, snippet: "Salve", line: 0, start: 0)
-        #expect(ChantSearch.setting(of: sung) == "Solemn")
-        // The Prayer Book's words are every setting's, and name none
-        let read = ChantSearch.WordHit(id: "b", chant: solemn, snippet: "Salve", line: nil, start: nil)
-        #expect(ChantSearch.setting(of: read) == nil)
-        let laudaSion = try #require(ChantCatalog.chant("lauda_sion"))
-        let alone = ChantSearch.WordHit(id: "c", chant: laudaSion, snippet: "Lauda Sion", line: 0, start: 0)
-        #expect(ChantSearch.setting(of: alone) == nil)
     }
 
     // MARK: - A tap on a chant
@@ -409,7 +388,7 @@ struct ChantLibraryTests {
             #expect(ChantTap.route(to: chant) == .chant(id: chant.id))
         }
 
-        let hits = ChantSearch.wordHits(matching: ChantSearch.fold("salve"), where: { _ in true })
+        let hits = ChantSearch.wordHits(matching: ChantSearch.fold("salve"))
         let timed = try #require(hits.first { $0.line != nil })
         let untimed = ChantSearch.WordHit(id: "b", chant: timed.chant, snippet: "Salve", line: nil, start: nil)
         #expect(ChantTap.route(to: timed.chant) == .chant(id: timed.chant.id))

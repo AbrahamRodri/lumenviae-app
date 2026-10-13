@@ -51,6 +51,12 @@ struct ExploreView: View {
     /// scroll ids): a chip sets it to jump, and its kind is the chip lit
     @State private var scrolledID: String?
 
+    /// What the words found, searched again only when the words or the
+    /// meditation sets change: drawn from the body, the search ran over
+    /// every chant's lines and every prayer at each redraw, scrolling
+    /// included
+    @State private var results = AppSearch.Results.empty
+
     init(origin: AppSearch.Origin = .everywhere) {
         self.origin = origin
     }
@@ -76,8 +82,6 @@ struct ExploreView: View {
     }
 
     var body: some View {
-        let results = searchResults
-
         ZStack {
             AppColors.appGradient.ignoresSafeArea()
 
@@ -91,7 +95,7 @@ struct ExploreView: View {
                     if !trimmedQuery.isEmpty, !results.isEmpty {
                         AppSearchChips(
                             results: results,
-                            active: AppSearchResultsView.kind(ofScrollID: scrolledID, in: results) ?? results.kinds.first
+                            active: litKind
                         ) { kind in
                             withAnimation(Motion.ease(0.35)) {
                                 scrolledID = AppSearchResultsView.scrollID(of: kind, in: results)
@@ -158,10 +162,11 @@ struct ExploreView: View {
         // The index is worth fetching only once there is something to
         // match it against — at rest this page lists no sets.
         .onChange(of: trimmedQuery) { _, needle in
-            scrolledID = nil
+            search()
             guard !needle.isEmpty else { return }
             Task { await loadSets() }
         }
+        .onChange(of: sets) { _, _ in search() }
         .onAppear {
             // A page's glass was a request to search: the keyboard rises
             if origin != .everywhere, !didFocusOnArrival {
@@ -175,7 +180,7 @@ struct ExploreView: View {
             guard !trimmedQuery.isEmpty else { return }
             try? await Task.sleep(for: .milliseconds(700))
             guard !Task.isCancelled else { return }
-            let found = searchResults
+            let found = results
             let words = found.isEmpty
                 ? "Nothing found"
                 : found.kinds.map { "\($0.title), \(found.count(of: $0))" }.joined(separator: "; ")
@@ -362,9 +367,19 @@ struct ExploreView: View {
 
     // MARK: - Search results
 
-    /// Everything the words find, shaped for where the search began
-    private var searchResults: AppSearch.Results {
-        AppSearch.results(for: trimmedQuery, from: origin, sets: sets, pages: searchPages)
+    /// Searches again for the words as they stand, and puts the page
+    /// back at its top, the card's chip lit: kept where it was, a longer
+    /// word left the list part-way down under another kind's chip
+    private func search() {
+        results = AppSearch.results(for: trimmedQuery, from: origin, sets: sets, pages: searchPages)
+        scrolledID = results.firstScrollID
+    }
+
+    /// The chip lit: the kind at the top of the scroll, else the first
+    private var litKind: AppSearch.Kind? {
+        let kind = AppSearchResultsView.kind(ofScrollID: scrolledID, in: results)
+        if let kind, results.kinds.contains(kind) { return kind }
+        return results.kinds.first
     }
 
     /// The app's doors, as the search knows them: by name and words

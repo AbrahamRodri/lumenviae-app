@@ -19,6 +19,9 @@ import SwiftUI
 struct AppSearchResultsView: View {
     let results: AppSearch.Results
 
+    /// The day the search was made for, whose names the orders go by
+    private var date: Date { results.date }
+
     /// What a found door of the app opens, by its `AppSearch.Page` id
     let openPage: (String) -> Void
 
@@ -30,7 +33,7 @@ struct AppSearchResultsView: View {
     /// The best card's scroll id; a section's is its kind's raw value.
     /// The page's scroll position is one of these, which is how a chip
     /// jumps and how the chip of the section being read is lit.
-    static let bestID = "best"
+    static let bestID = AppSearch.Results.bestScrollID
 
     /// The kind a scroll id stands for
     static func kind(ofScrollID id: String?, in results: AppSearch.Results) -> AppSearch.Kind? {
@@ -47,7 +50,7 @@ struct AppSearchResultsView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 28) {
             if let best = results.best {
-                AppSearchBestCard(hit: best, open: { open(best) })
+                AppSearchBestCard(hit: best, date: date, open: { open(best) })
                     .id(Self.bestID)
             }
 
@@ -100,9 +103,9 @@ struct AppSearchResultsView: View {
             ) { open(hit) }
         case .order(let order):
             AppSearchPictureRow(
-                title: order.title(on: Date()),
+                title: order.title(on: date),
                 note: order.occasion,
-                picture: .painting(PrayerOrderView.painting(of: order, on: Date()))
+                picture: .painting(PrayerOrderView.painting(of: order, on: date))
             ) { open(hit) }
         case .mysteries(let category):
             AppSearchPictureRow(
@@ -181,13 +184,15 @@ struct AppSearchResultsView: View {
 /// act is nobody's here.
 struct AppSearchBestCard: View {
     let hit: AppSearch.Hit
+    let date: Date
     let open: () -> Void
 
     @Environment(AppRouter.self) private var router
     private var player = ChantPlayer.shared
 
-    init(hit: AppSearch.Hit, open: @escaping () -> Void) {
+    init(hit: AppSearch.Hit, date: Date, open: @escaping () -> Void) {
         self.hit = hit
+        self.date = date
         self.open = open
     }
 
@@ -277,7 +282,7 @@ struct AppSearchBestCard: View {
         case .topic(let chapter):
             AppSearchPicture.painting(PrayerBookPainting.topic(chapter)).view
         case .order(let order):
-            AppSearchPicture.painting(PrayerOrderView.painting(of: order, on: Date())).view
+            AppSearchPicture.painting(PrayerOrderView.painting(of: order, on: date)).view
         case .chant(let chant):
             AppSearchPicture.asset(ChantCatalog.painting(for: chant), focal: nil).view
         case .mysteries(let category):
@@ -319,7 +324,7 @@ struct AppSearchBestCard: View {
         switch hit {
         case .prayer(let prayer): return prayer.listTitle
         case .topic(let chapter): return chapter.topic
-        case .order(let order): return order.title(on: Date())
+        case .order(let order): return order.title(on: date)
         case .chant(let chant): return chant.latinTitle
         case .mysteries(let category): return category.devotionTitle
         case .mystery(let mystery): return mystery.name
@@ -349,7 +354,7 @@ struct AppSearchBestCard: View {
         case .prayer(let prayer):
             prayButton { router.push(.prayAlong(.prayer(prayer))) }
         case .order(let order):
-            prayButton { router.push(.prayAlong(.order(order))) }
+            prayButton { router.push(.prayAlong(.order(order, on: date))) }
         case .chant(let chant):
             HStack(spacing: 10) {
                 ChantPlayDisc(
@@ -360,10 +365,15 @@ struct AppSearchBestCard: View {
                 ) {
                     player.toggle(chant)
                 }
+                // The word is the disc's too: a tap on it plays, where it
+                // once fell on nothing
                 Text(player.isPlaying(chant) ? "PAUSE" : "LISTEN")
                     .font(AppFonts.labelFont(10))
                     .tracking(2)
                     .foregroundColor(AppColors.gold)
+                    .frame(minHeight: 44)
+                    .contentShape(Rectangle())
+                    .onTapGesture { player.toggle(chant) }
                     .accessibilityHidden(true)
             }
         default:

@@ -118,15 +118,16 @@ enum AppSearch {
             }
         }
 
-        /// The names it is known by, for judging how well it matches
-        var names: [String] {
+        /// The names it is known by on a day, for judging how well it
+        /// matches: an order of prayer goes by its day's name
+        func names(on date: Date) -> [String] {
             switch self {
             case .mysteries(let category): return [category.devotionTitle]
             case .mystery(let mystery): return [mystery.name]
             case .page(let page): return [page.title]
             case .reading(_, let reading): return [reading.title]
             case .topic(let chapter): return [chapter.topic, chapter.title]
-            case .order(let order): return [order.title(on: Date()), order.latinTitle]
+            case .order(let order): return [order.title(on: date), order.latinTitle]
             case .prayer(let prayer): return [prayer.listTitle, prayer.title] + [prayer.latinTitle].compactMap { $0 }
             case .chant(let chant): return [chant.latinTitle, chant.englishTitle]
             case .meditationSet(let summary): return [summary.name]
@@ -145,8 +146,24 @@ enum AppSearch {
         /// out of its own section
         let best: Hit?
         let sections: [Section]
+        /// The day the search was made for, whose names its orders of
+        /// prayer are drawn with
+        var date = Date()
+
+        /// The best card's scroll id; a section's is its kind's raw value
+        static let bestScrollID = "best"
+
+        /// Nothing searched for, or nothing found
+        static let empty = Results(best: nil, sections: [])
 
         var isEmpty: Bool { best == nil && sections.isEmpty }
+
+        /// Where the page stands before it is scrolled: the card, else
+        /// the first section (`AppSearchResultsView`'s scroll ids)
+        var firstScrollID: String? {
+            if best != nil { return Self.bestScrollID }
+            return sections.first?.kind.rawValue
+        }
 
         /// The kinds that found something, in the page's order: the
         /// chips. The best match's kind stands first, as its card does,
@@ -199,7 +216,7 @@ enum AppSearch {
         found[.chants] = chantHits(needle)
         found[.meditations] = sets.filter { matches($0, needle: needle) }.map(Hit.meditationSet)
 
-        return shape(found, needle: needle, origin: origin)
+        return shape(found, needle: needle, origin: origin, on: date)
     }
 
     /// The orders of prayer the words name, by the book's own search and
@@ -219,8 +236,8 @@ enum AppSearch {
     static func chantHits(_ needle: String) -> [Hit] {
         var seen = Set<String>()
         let byName = ChantCatalog.search(needle)
-        let byPrayer = ChantSearch.works(singingPrayerMatching: needle, where: { _ in true }).flatMap(\.chants)
-        let byWords = ChantSearch.wordHits(matching: needle, where: { _ in true }).map(\.chant)
+        let byPrayer = ChantSearch.works(singingPrayerMatching: needle).flatMap(\.chants)
+        let byWords = ChantSearch.wordHits(matching: needle).map(\.chant)
         return (byName + byPrayer + byWords)
             .filter { seen.insert($0.id).inserted }
             .map(Hit.chant)
@@ -229,15 +246,15 @@ enum AppSearch {
     /// Orders what was found: picks the best, and puts the leading
     /// kind's section first. Split from the finding so it can be tested
     /// with hits of one's own.
-    static func shape(_ found: [Kind: [Hit]], needle: String, origin: Origin) -> Results {
+    static func shape(_ found: [Kind: [Hit]], needle: String, origin: Origin, on date: Date = Date()) -> Results {
         let order = sectionOrder(for: origin)
-        let best = bestMatch(in: found, needle: needle, order: order, origin: origin)
+        let best = bestMatch(in: found, needle: needle, order: order, origin: origin, on: date)
 
         let sections: [Section] = order.compactMap { kind in
             let hits = (found[kind] ?? []).filter { $0.id != best?.id }
             return hits.isEmpty ? nil : Section(kind: kind, hits: hits)
         }
-        return Results(best: best, sections: sections)
+        return Results(best: best, sections: sections, date: date)
     }
 
     /// The sections' order: the leading kind, then the other page's
@@ -285,13 +302,15 @@ enum AppSearch {
     /// "angelus") is never the best: a card says "this is what you
     /// meant". It once looked at each kind's first hit alone, and that
     /// topic, standing first, gave "angelus" from Prayers a chant's card.
-    static func bestMatch(in found: [Kind: [Hit]], needle: String, order: [Kind], origin: Origin) -> Hit? {
-        if let lead = origin.leadingKind, let closest = closest(in: found[lead] ?? [], to: needle) {
+    static func bestMatch(
+        in found: [Kind: [Hit]], needle: String, order: [Kind], origin: Origin, on date: Date = Date()
+    ) -> Hit? {
+        if let lead = origin.leadingKind, let closest = closest(in: found[lead] ?? [], to: needle, on: date) {
             return closest.hit
         }
         var best: (hit: Hit, closeness: Closeness)?
         for kind in order {
-            guard let closest = closest(in: found[kind] ?? [], to: needle) else { continue }
+            guard let closest = closest(in: found[kind] ?? [], to: needle, on: date) else { continue }
             if closest.closeness > (best?.closeness ?? .none) { best = closest }
         }
         return best?.hit
@@ -299,17 +318,17 @@ enum AppSearch {
 
     /// The hit whose name answers closest, the first winning a tie; nil
     /// when no name answers at all
-    private static func closest(in hits: [Hit], to needle: String) -> (hit: Hit, closeness: Closeness)? {
+    private static func closest(in hits: [Hit], to needle: String, on date: Date) -> (hit: Hit, closeness: Closeness)? {
         var best: (hit: Hit, closeness: Closeness)?
         for hit in hits {
-            let closeness = closenessOfBest(hit, to: needle)
+            let closeness = closenessOfBest(hit, to: needle, on: date)
             if closeness > (best?.closeness ?? .none) { best = (hit, closeness) }
         }
         return best
     }
 
-    private static func closenessOfBest(_ hit: Hit, to needle: String) -> Closeness {
-        hit.names.map { closeness(of: $0, to: needle) }.max() ?? .none
+    private static func closenessOfBest(_ hit: Hit, to needle: String, on date: Date) -> Closeness {
+        hit.names(on: date).map { closeness(of: $0, to: needle) }.max() ?? .none
     }
 
     /// Case, accents and the ligatures folded away, so "caeli" answers
