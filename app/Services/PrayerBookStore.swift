@@ -29,6 +29,7 @@ final class PrayerBookStore {
         static let offeredAt = "prayerBook.offeredAt"
         static let aloud = "prayerBook.aloud"
         static let angelusBell = "prayerBook.angelusBell"
+        static let recent = "prayerBook.recent"
     }
 
     init(defaults: UserDefaults = .standard) {
@@ -40,6 +41,7 @@ final class PrayerBookStore {
         praysAloud = defaults.object(forKey: Key.aloud) as? Bool ?? true
         hasChosenAloud = defaults.object(forKey: Key.aloud) != nil
         angelusBell = defaults.bool(forKey: Key.angelusBell)
+        recent = (defaults.stringArray(forKey: Key.recent) ?? []).compactMap(RecentPrayer.init(stored:))
     }
 
     // MARK: - Ribbons
@@ -131,6 +133,68 @@ final class PrayerBookStore {
 
     func wasOffered(_ orderID: String, on date: Date = PrayerDay.now) -> Bool {
         offered[orderID] == Self.stamp(date)
+    }
+
+    // MARK: - Prayed Recently
+
+    /// What was opened to pray: an order of prayer, or one prayer alone
+    enum RecentPrayer: Hashable {
+        case order(String)
+        case prayer(String)
+
+        init?(stored: String) {
+            let parts = stored.split(separator: ":", maxSplits: 1).map(String.init)
+            guard parts.count == 2, !parts[1].isEmpty else { return nil }
+            switch parts[0] {
+            case "order": self = .order(parts[1])
+            case "prayer": self = .prayer(parts[1])
+            default: return nil
+            }
+        }
+
+        var stored: String {
+            switch self {
+            case .order(let id): "order:\(id)"
+            case .prayer(let id): "prayer:\(id)"
+            }
+        }
+    }
+
+    /// What was prayed lately, the latest first, each once. Explore's
+    /// Prayers shelf gives these the places of its least needed defaults.
+    /// Kept on the device only, and never counted.
+    private(set) var recent: [RecentPrayer] {
+        didSet { defaults.set(recent.map(\.stored), forKey: Key.recent) }
+    }
+
+    static let recentLimit = 8
+
+    /// The day's three hours, alone or as their one prayer: Home names
+    /// the hour's own, so they are never kept here, and so never take a
+    /// place on Explore's shelf without being shown
+    static let unkeptRecents: Set<RecentPrayer> = [
+        .order(PrayerBook.morningOrderID), .order(PrayerBook.angelusOrderID), .order(PrayerBook.nightOrderID),
+        .prayer("angelus"), .prayer("regina_caeli"),
+    ]
+
+    /// The pray-along screen opened on an order or a prayer
+    func notePrayed(launch: PrayAlongLaunch) {
+        if let orderID = launch.orderID {
+            notePrayed(.order(orderID))
+        } else if launch.prayerIDs.count == 1, let id = launch.prayerIDs.first {
+            notePrayed(.prayer(id))
+        }
+    }
+
+    func notePrayed(_ prayed: RecentPrayer) {
+        guard !Self.unkeptRecents.contains(prayed) else { return }
+        var list = recent
+        list.removeAll { $0 == prayed }
+        list.insert(prayed, at: 0)
+        if list.count > Self.recentLimit {
+            list.removeLast(list.count - Self.recentLimit)
+        }
+        recent = list
     }
 
     // MARK: - Praying Aloud

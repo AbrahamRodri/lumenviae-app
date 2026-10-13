@@ -9,9 +9,13 @@
 //  Latin small beneath; then its prayers as a quiet numbered list, each
 //  a door to its own page (the "Holy Cards" pick's list), and where the
 //  season decides what the order holds, a sentence saying so. At the
-//  foot, PRAY, the page's one gold act, beside a round speaker that says
-//  how it will be prayed, aloud or in silence, in one line beneath.
+//  foot, PRAY, the page's one gold act, at the inline size, so the list
+//  keeps the room. Aloud or in silence is the pray-along's own choice:
+//  its head says it in a word, and it asks before its first sound.
 //
+//  The foot once carried a round speaker beside PRAY and a line saying
+//  "Aloud, in the male voice": two controls for one choice the
+//  pray-along already offers, taking the list's room.
 //  The page once stood as type alone: the order's glyph, an ornament,
 //  a paragraph, a kicker counting the prayers, a Latin line under every
 //  prayer and a two-line switch row stood between the reader and PRAY.
@@ -26,7 +30,6 @@ struct PrayerOrderView: View {
     @Environment(AppRouter.self) private var router
 
     private let store: PrayerBookStore
-    private var voices = NarrationVoiceCatalog.shared
 
     /// A day to draw the page on, for a snapshot; otherwise the page
     /// reads the clock when it appears
@@ -90,8 +93,8 @@ struct PrayerOrderView: View {
 
                         // Room to scroll the last prayer clear of the
                         // foot, measured: at the larger text sizes the
-                        // foot outgrows a fixed 240 and hid the last row
-                        Color.clear.frame(height: max(240, footHeight))
+                        // foot outgrows a fixed height and hid the last row
+                        Color.clear.frame(height: max(160, footHeight))
                     }
                 }
                 .ignoresSafeArea(edges: .top)
@@ -300,69 +303,15 @@ struct PrayerOrderView: View {
     // MARK: - Foot
 
     private func foot(_ order: PrayerOrder) -> some View {
-        let aloud = store.praysAloud
-        let voice = voices.chosenVoice.name.lowercased()
-
-        return VStack(spacing: 8) {
-            HStack(spacing: 12) {
-                // How it will be prayed, as a round speaker beside PRAY:
-                // a tap anywhere on the disc changes it, and the line
-                // beneath says the choice in words
-                Button {
-                    withAnimation(Motion.settle) { store.praysAloud.toggle() }
-                } label: {
-                    AloudGlyph(aloud: aloud)
-                        .frame(width: 52, height: 52)
-                        .overlay(
-                            Circle().strokeBorder(AppColors.gold.opacity(aloud ? 0.6 : 0.35), lineWidth: 1.2)
-                        )
-                        .contentShape(Circle())
-                }
-                .buttonStyle(QuietGlyphButtonStyle())
-                .accessibilityLabel("Pray aloud")
-                .accessibilityAddTraits(.isToggle)
-                .accessibilityValue(aloud ? "On, the \(voice) voice" : "Off")
-
-                GoldCTAButton(title: "Pray", glyph: .play) {
-                    // The speaker stands beside PRAY, so what it shows is
-                    // the reader's answer; the pray-along screen won't ask
-                    store.chooseAloud(store.praysAloud)
-                    router.push(.prayAlong(.order(order, on: now)))
-                }
-            }
-
-            Text(aloud ? "Aloud, in the \(voice) voice" : "In silence")
-                .font(AppFonts.readingItalicFont(13))
-                .foregroundColor(AppColors.textSecondary)
-                .contentTransition(.opacity)
-                .accessibilityHidden(true)
+        GoldCTAButton(title: "Pray", prominence: .inline, glyph: .play) {
+            router.push(.prayAlong(.order(order, on: now)))
         }
         .padding(.horizontal, 24)
         // Clear of the ground's fade, so the list never reads through
-        // the speaker
-        .padding(.top, 92)
+        // the button
+        .padding(.top, 72)
         .padding(.bottom, 16)
         .background(PrayFootGround())
-    }
-}
-
-// MARK: - The speaker
-
-/// The speaker on the foot's disc: sounding when the order will be read
-/// aloud, struck through and dimmed when it will be prayed in silence
-private struct AloudGlyph: View {
-    let aloud: Bool
-
-    var body: some View {
-        ZStack {
-            AppIcon(aloud ? "ph-speaker-high-fill" : "ph-speaker-high", size: 19)
-                .foregroundColor(AppColors.gold.opacity(aloud ? 1 : 0.55))
-            Capsule()
-                .fill(AppColors.gold)
-                .frame(width: 1.4, height: 26)
-                .rotationEffect(.degrees(-45))
-                .opacity(aloud ? 0 : 1)
-        }
     }
 }
 

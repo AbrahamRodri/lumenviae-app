@@ -344,14 +344,25 @@ though they were other devotions; typed search still finds both, and
 opens the day's mysteries' page), and a quiet "New to the Rosary? · How to
 Pray" door under that (How to Pray was the fourth item of the index at
 the foot of the page, where a newcomer never reached it); then
-Prayers, Chant (tonight's song to Mary, said as such above it and
-played where it stands, with SEE ALL, the door to the Chant Library), Today in the Church (Today's
+Prayers (the occasion orders as paintings with their names alone,
+most needed first, Before Mass leading), Chant (All 104 Chants, Songs
+to Mary, the Mass of the Angels and Sets of Chants), Today in the Church (Today's
 Mass | Hours of Prayer, each over its book's Church name, Daily Missal
 and Divine Office), Spiritual Reading (ALL BOOKS), and Learn More's
 ruled index — and typing searches mysteries, library doors, library readings,
 chants, the Prayer Book's orders and prayers, and meditation sets at once
 (a set by the label the shelf shows as well as the one the server
-stores, so "gospel" finds the Scriptural sets). The set index is fetched quietly for search but deliberately
+stores, so "gospel" finds the Scriptural sets). **The two shelves take in what the reader uses**
+(`ExploreShelves`, `RecentShelf`): each thing prayed or sung lately
+takes one place, leading the shelf newest first under a small RECENT
+(the chant tiles' note reads Recent), and the least needed default
+gives way first, Before Mass last; the shelf never grows or repeats.
+The prayers are `PrayerBookStore.recent`, noted when the pray-along
+opens on an order or a single prayer (the day's three hours, and the
+Angelus or Queen of Heaven alone, are never kept); the chants, the two
+sung most recently (`ChantShelfStore.recent`), each with its setting
+where its titles do not say it. On the
+device only. The set index is fetched quietly for search but deliberately
 never listed on the browse page, and the field is deliberately not
 auto-focused: the page is a place first, a search second. The real
 search field lives on Explore, not on home.
@@ -2520,16 +2531,18 @@ write concurrent code here:
   the order is, `PrayerOrder.detail`, is no longer drawn), each a door to
   its page; where the season decides what it
   holds (Night Prayers' song to Mary, Queen of Heaven at Eastertide) a
-  sentence under the list says so. The foot is PRAY beside a round
-  speaker that switches aloud and silent, and one line beneath saying
-  which ("Aloud, in the male voice", "In silence"). It once stood as type
+  sentence under the list says so. The foot is PRAY alone, at the
+  inline size; aloud or in silence is the pray-along's choice (its head,
+  and its question before the first sound). A round speaker beside PRAY
+  and a line saying "Aloud, in the male voice" stood there until the
+  "Chant shelves and prayer cards" pick (Oct 2026). It once stood as type
   alone: a glyph, an ornament, a paragraph, a kicker counting the
   prayers, a Latin line under every prayer and a two-line switch row.
 
   **A prayer's own page** (`BookPrayerView`, `.devotionPrayer(id:set:)`, the
   "Holy Cards" pick, option B4, Oct 2026) is a holy card. The card
-  (`HolyCard`) stands 28 points in from each side between the bar and the
-  foot, on the card ground with a gold rim and a second rule inside it,
+  (`HolyCard`) stands 28 points in from each side from the bar to the foot
+  of the glass (the page has no foot of its own), on the card ground with a gold rim and a second rule inside it,
   and its words scroll inside it: the prayer's painting
   (`BookPrayerView.painting(of:)`, the scene `PrayerBookPainting.prayer`
   gives it, else its topic's) in a round-topped arch, then the set and
@@ -2541,12 +2554,20 @@ write concurrent code here:
   <the next> · All 32" (both buttons). The prayers before and after it
   peek in at the glass's edges as 14-point slivers of their paintings,
   each answering a touch 44 points across (not buttons, and hidden from
-  VoiceOver, which has the card's own actions). **A drag across deals the card**: it follows
-  the finger leaning up to 9 degrees, the neighbour's card rising beneath
-  it from 0.94; let go past a third of the width, or flung, it flies off
-  and the card beneath becomes the page, opened at its top, with a light
-  tick; short of that it springs back, and toward no card it gives a
-  little. The card's own scroll keeps the vertical drag, decided by the
+  VoiceOver, which has the card's own actions). **A drag across turns the
+  card as a pushed page slides** (the "Chant shelves and prayer cards"
+  pick, Motion 2, slide over, Oct 2026): toward the next prayer the next
+  card follows the finger in from the right over this one, which steps a
+  third of the way left and dims to 0.45; toward the one before, this
+  card follows the finger off to the right and the one before comes
+  forward from beneath it. Let go past a third of the width, or flung,
+  the turn finishes on `Motion.pageTurn` (a cubic ease-out, 0.34s, no
+  spring, no lean) and the card it turned to becomes the page, opened at
+  its top, with a light tick; short of that it springs back, and toward
+  no card it gives a little. It was a deal: the card leaned up to 9
+  degrees and sped off on an ease-in while the next rose from beneath at
+  0.94, which read as a card thrown away and never said which way the
+  next lay. The card's own scroll keeps the vertical drag, decided by the
   drag's first direction. A tap on a sliver or on "Swipe for" plays the
   same deal; VoiceOver has Next prayer and Previous prayer on the name
   and the words, and hears the new name. A drag the system takes away
@@ -2558,13 +2579,16 @@ write concurrent code here:
   `.equatable()`), so a frame of the drag redraws the deck alone, never
   the page, a card or the foot. Where a let-go drag sends the card is
   `DealDirection.of`. The page reads its orders on one day, given or
-  today (`date:`), so a snapshot never turns with the season. Under Reduce Motion there is no
-  lean and no rise: the card follows the finger and the turn is a fade.
-  The foot: Learn by heart and Hear it sung (`FootAct`, ringed discs
-  named beneath, LEARNED with the seal once learned) either side of PRAY,
+  today (`date:`), so a snapshot never turns with the season. Under Reduce Motion nothing
+  slides: the card follows the finger and the turn is a fade.
+  The card's floor (`CardFloor`, on the card, so it travels with it): PRAY
+  at the inline size between Learn by heart and Hear it sung as 44-point
+  rings (`FloorAct`, named to VoiceOver alone; the seal once learned),
   the place for Hear it sung kept empty where the Church sings no chant
-  for the prayer, so PRAY never moves; and one line beneath, the speaker
-  and "In silence · tap to change", which switches aloud and silent. The
+  for the prayer, so PRAY never moves, over a fade of the card's ground
+  that the words scroll beneath. It was a foot under the card: the two
+  rings at 52 points named in small capitals, a 56-point PRAY, and "In
+  silence · tap to change" beneath, some 200 points. The
   ribbon's words stand for three seconds on a dark capsule at the head of
   the card. The language stands in the bar beside the ribbon (EN, LA or
   EN · LA, in the bar's glass from iOS 26 and on a dark capsule before),
@@ -2637,10 +2661,12 @@ write concurrent code here:
   touched. It cannot be dragged away, so both answers must always be in
   reach: it scrolls, and would stand full height at the accessibility
   text sizes the app no longer reaches (held to 340 points there, its
-  rows were drawn over each other). The
-  order page's speaker stands just beside its PRAY, so
-  praying from there answers the question with what the speaker shows;
-  afterwards ALOUD or SILENT at the head of the page owns the choice. The
+  rows were drawn over each other). It is asked
+  on the pray-along screen itself, from every door, while the reader has
+  not chosen: the order page's PRAY and a prayer card's PRAY answered it
+  once, from a speaker and a line beside them, both gone since the
+  "Chant shelves and prayer cards" pick; afterwards ALOUD or SILENT at
+  the head of the page owns the choice. The
   same choice stands in Settings → Prayer Experience as the Prayers
   Tab row, and a choice made there answers the question before it is asked;
   it never follows the Rosary's Audio. Aloud,
@@ -2707,10 +2733,10 @@ write concurrent code here:
   Mass XI, Orbis factor, each saying when it is sung), the Creed,
   Sequences, the Mass for the Dead, General Hymns and Chants
   (alphabetical, as the book has them), the hymns to Our Lady (the four
-  songs to Mary first; its id stays `ourLady`, the Browse All section
-  alone: the home's Songs to Mary shelf and its SEE ALL both read
+  songs to Mary first; its id stays `ourLady`, the section alone: the
+  home's Songs to Mary shelf and Explore's door read
   `ChantLibraryData.songsToMary`, through `ChantBrowseScope.songsToMary`
-  for SEE ALL), Seasonal Hymns and Chants (Advent to the Ascension, a
+  for Explore's), Seasonal Hymns and Chants (Advent to the Ascension, a
   subheading per season), Gospel Canticles and Litany of Saints,
   Litanies, Benediction, and the Rosary in Latin. A section the app has
   no chant for yet (the Communion chants, the guides) is left out. Each
@@ -2760,15 +2786,22 @@ write concurrent code here:
   names, length, and moving bars, `ChantSoundingBars`, on the one
   sounding, still under Reduce Motion; ··· for play, favourite, add to a
   set); SONGS TO MARY as square cards, each with its length and its own
-  play; SUNG SETS, the occasions and then the reader's own sets, each a
+  play; SETS OF CHANTS, the occasions and then the reader's own sets, each a
   card of its painting, "4 chants · 7 min" (the recordings' lengths,
-  never a guess) and its numbered chants with their lengths; and BROWSE
-  ALL 104 CHANTS; then the credit, one line, "Recordings and scores by
+  never a guess) and its numbered chants with their lengths, ending on a
+  dashed Make your own set that opens the Sets of Chants page (where empty and
+  changed sets of the reader's stand too); and ALL CHANTS, "104 CHANTS"
+  beside it, the book's twelve sections two by six (`ChantSectionsGrid`, the
+  All Chants page's own grid), each opening its shelf; then the credit, one line, "Recordings and scores by
   Verbum Gloriae" (`ChantCatalog.libraryCredit`), a link to their site.
   Every card says how long it plays and has its own play,
   so the page reads as a library of songs rather than of prayers. The
   page was asked for when the six sections left a reader not knowing what to
   do. The page has no filled gold act; its plays are the dark discs.
+  Nothing on it stands behind SEE ALL (the "Chant shelves and prayer
+  cards" pick, Oct 2026): the sections close the page as All Topics close
+  the Prayers page, where they once waited behind BROWSE ALL 104 CHANTS,
+  and Songs to Mary and Sung sets had SEE ALL doors.
 
   It replaced a strip of six sections (Today, Seasons, Occasions, Types,
   Learn, Saved); the day's arc, the year wheel, the kinds and the
@@ -2777,8 +2810,8 @@ write concurrent code here:
   (`ChantLibraryView.forgetLegacySection`); whatever it held, the same
   page opens. The library's other pages are pushed: a sung set's own page
   (`.chantSet(ChantSetSubject)`, `ChantSetPage`, below), which every set
-  opens on, an occasion or the reader's own, from the tiles, the Sung
-  Sets cards, the index and Your Chants; the index of the sung sets
+  opens on, an occasion or the reader's own, from the tiles, the Sets of
+  Chants cards, the index and Your Chants; the index of the sung sets
   (`.chantSets`, `ChantSetsPage`); every chant under its topic, a topic,
   the Mass of the Angels or Songs to Mary (`.chantBrowse(ChantBrowseScope)`,
   `ChantBrowsePage`), which is how every chant stays reachable without a
@@ -2786,7 +2819,8 @@ write concurrent code here:
   (`.chantSaved(ChantSavedShelf)`, `ChantSavedPage`, below).
 
   **The shelf pages** (`ChantLibraryPages.swift`, the "Chant shelf pages"
-  design, option B, Oct 2026) are what SEE ALL and BROWSE ALL open. **All
+  design, option B, Oct 2026) are what Explore's Chant doors and the
+  library's sections open. **All
   Chants** is the book's twelve sections as painted cards, two by six,
   each its name and "8 chants" (no note), opening that section's own shelf
   (`.chantBrowse(.group(id))`), as the Prayers page lists its topics. A
@@ -2819,13 +2853,13 @@ write concurrent code here:
   automatic, it kept a large title's room and every page began under an
   empty band. All Chants was once one scroll of 104 rows under headings of
   three sizes with no painting, and every shelf a centred title over a
-  filled gold Play all. **Sung Sets** keeps its line ("Chants sung one
+  filled gold Play all. **Sets of Chants** (once "Sung Sets", a name that said little) keeps its line ("Chants sung one
   after another, for a time of prayer.") over the occasions as wide
   painted cards (painting, name, line, "4 chants · 7 min", the bars while
   one is sung), then Your sets, the reader's own, a copy kept from an
   occasion among them once the reader has changed it (an untouched copy
   is the occasion's card; the page once left every set of the reader's
-  out, though the home's Sung sets shelf whose SEE ALL opens it shows them),
+  out, though the home's Sets of chants shelf shows them),
   then the dashed Make your own set, named first and opening on its page.
 
   **A set's page** (`ChantSetPage`, the "simplify the sung set page"
@@ -2860,7 +2894,7 @@ write concurrent code here:
   and the reader's own as a card under the Saved shelf. **The occasions**
   (`ChantLibraryData.occasions`): Adoration and Blessing (Benediction), A
   Visit to Jesus in Church, a Sung Rosary, Before Bed, Before Work or
-  Study, For Those Who Have Died — each a card on Sung Sets opening its
+  Study, For Those Who Have Died — each a card on Sets of Chants opening its
   page (the numbered index `ChantOccasionsSection` drew them as is no
   longer shown). The bookmark is a toggle: filled while the occasion
   is kept as a set of one's own (`ChantSet.occasionID`), a second tap

@@ -15,10 +15,13 @@
 //    PLAYED LATELY  a song list, the one sounding marked with moving bars
 //    SONGS TO MARY  square cards, each with its length and its play
 //    SUNG SETS      cards listing their chants in order, with lengths
-//    BROWSE ALL     every chant, under its topic
+//    ALL CHANTS     the book's twelve sections, two by six, each opening
+//                   its shelf
 //
 //  Every card says how long it plays and has its own play, so the page
-//  reads as a library of songs rather than of prayers. A tap on a chant,
+//  reads as a library of songs rather than of prayers. Nothing stands
+//  behind SEE ALL: the sections close the page as All Topics close the
+//  Prayers page, where they once waited behind one BROWSE ALL button. A tap on a chant,
 //  wherever it stands, opens its page; only its disc plays (`ChantTap`).
 //  Search stands in the bar.
 //
@@ -140,16 +143,14 @@ struct ChantLibraryView: View {
                     shelfSection("Played lately") { playedLately }
                 }
 
-                shelfSection("Songs to Mary", seeAll: { router.push(.chantBrowse(.songsToMary)) }) {
-                    songsToMary
-                }
+                shelfSection("Songs to Mary") { songsToMary }
 
-                shelfSection("Sung sets", seeAll: { router.push(.chantSets) }) {
-                    sungSets
-                }
+                shelfSection("Sets of chants") { sungSets }
 
-                browseAll
-                    .padding(.horizontal, 18)
+                shelfSection("All chants", count: "\(ChantCatalog.all.count) chants") {
+                    ChantSectionsGrid()
+                        .padding(.horizontal, 18)
+                }
 
                 footer
                     .padding(.horizontal, 36)
@@ -160,11 +161,12 @@ struct ChantLibraryView: View {
         .topChromeFade()
     }
 
-    /// A shelf of the page: its name in the display face, SEE ALL beside
-    /// it where there is more, and what it holds beneath
+    /// A shelf of the page: its name in the display face, how many it
+    /// holds in small capitals beside it where that is worth saying, and
+    /// what it holds beneath
     private func shelfSection<Content: View>(
         _ title: String,
-        seeAll: (() -> Void)? = nil,
+        count: String? = nil,
         @ViewBuilder content: () -> Content
     ) -> some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -174,17 +176,12 @@ struct ChantLibraryView: View {
                     .foregroundColor(AppColors.cream)
                     .accessibilityAddTraits(.isHeader)
                 Spacer(minLength: 8)
-                if let seeAll {
-                    Button(action: seeAll) {
-                        Text("SEE ALL")
-                            .font(AppFonts.labelFont(9.5))
-                            .tracking(2)
-                            .foregroundColor(AppColors.gold)
-                            .frame(minHeight: 44)
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(QuietGlyphButtonStyle())
-                    .accessibilityLabel("See all: \(title)")
+                if let count {
+                    Text(count.uppercased())
+                        .font(AppFonts.labelFont(9.5))
+                        .tracking(2)
+                        .foregroundColor(AppColors.gold)
+                        .accessibilityLabel(count)
                 }
             }
             .frame(minHeight: 30)
@@ -391,8 +388,10 @@ struct ChantLibraryView: View {
 
     // MARK: - Sung sets
 
-    /// The occasions sung in order, then the sets the reader made. A set
-    /// kept from an occasion stands under the occasion's own card.
+    /// The occasions sung in order, then the sets the reader made, then a
+    /// door to the Sung Sets page, where a set is made and every set of
+    /// the reader's stands, an empty or a changed one too. A set kept from
+    /// an occasion stands under the occasion's own card.
     private var sungSets: some View {
         ChantSideScroll {
             HStack(alignment: .top, spacing: 14) {
@@ -419,31 +418,47 @@ struct ChantLibraryView: View {
                         openChant: openChant
                     )
                 }
+                makeYourOwn
             }
             .fixedSize(horizontal: false, vertical: true)
             .padding(.horizontal, 18)
         }
     }
 
-    // MARK: - Browse all
-
-    private var browseAll: some View {
+    /// The row's last card, dashed: Make your own set, opening the Sung
+    /// Sets page, which names a new set first
+    private var makeYourOwn: some View {
         Button {
-            router.push(.chantBrowse(.all))
+            router.push(.chantSets)
         } label: {
-            HStack(spacing: 10) {
-                AppIcon("ph-magnifying-glass", size: 16)
-                Text("BROWSE ALL \(ChantCatalog.all.count) CHANTS")
-                    .font(AppFonts.labelFont(11))
-                    .tracking(2.4)
+            VStack(spacing: 10) {
+                AppIcon("ph-plus", size: 16)
+                    .foregroundColor(AppColors.gold)
+                    .frame(width: 40, height: 40)
+                    .overlay(Circle().strokeBorder(AppColors.gold.opacity(0.5), lineWidth: AppLine.hairline))
+                Text("Make your own set")
+                    .font(AppFonts.titleFont(15))
+                    .foregroundColor(AppColors.cream)
+                    .multilineTextAlignment(.center)
+                Text("Your sets, and a new one")
+                    .font(AppFonts.readingItalicFont(13.5))
+                    .foregroundColor(AppColors.textSecondary)
+                    .multilineTextAlignment(.center)
             }
-            .foregroundColor(AppColors.gold)
-            .frame(maxWidth: .infinity, minHeight: 50)
-            .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.4), lineWidth: AppLine.hairline))
-            .contentShape(Capsule())
+            .padding(16)
+            .frame(width: 168)
+            .frame(maxHeight: .infinity)
+            .overlay(
+                RoundedRectangle(cornerRadius: 18)
+                    .strokeBorder(AppColors.gold.opacity(0.3), style: StrokeStyle(lineWidth: 1, dash: [4, 4]))
+            )
+            .contentShape(RoundedRectangle(cornerRadius: 18))
         }
         .buttonStyle(SacredCardButtonStyle())
-        .accessibilityLabel("Browse all \(ChantCatalog.all.count) chants")
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Make your own set")
+        .accessibilityHint("Opens the sets of chants, yours among them")
+        .accessibilityAddTraits(.isButton)
     }
 
     // MARK: - Foot
