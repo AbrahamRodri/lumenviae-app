@@ -454,9 +454,9 @@ CHANT_GROUPS_TO_ADD = [
 
 CHANTS = [
     # Tier 1 found on Verbum Gloriae
-    dict(tier=1, found=True, entry={"id": "pange_lingua", "slug": "pange-lingua", "group": "sacrament", "latin": "Pange Lingua", "english": "Sing, My Tongue, the Saviour's Glory", "setting": None, "detail": "St Thomas Aquinas's hymn for Corpus Christi, whose last two verses are the Tantum Ergo", "prayers": []},
+    dict(tier=1, found=True, entry={"id": "pange_lingua", "slug": "pange-lingua", "group": "benediction", "latin": "Pange Lingua", "english": "Sing, My Tongue, the Saviour's Glory", "setting": None, "detail": "St Thomas Aquinas's hymn for Corpus Christi, whose last two verses are the Tantum Ergo", "prayers": []},
          source="https://www.verbumgloriae.es/project/pange-lingua/", est_seconds=270),
-    dict(tier=1, found=True, entry={"id": "vidi_aquam", "slug": "vidi-aquam", "group": "easter", "latin": "Vidi Aquam", "english": "I Saw Water", "setting": None, "detail": "Sung at the sprinkling before Sunday Mass in Eastertide", "prayers": []},
+    dict(tier=1, found=True, entry={"id": "vidi_aquam", "slug": "vidi-aquam", "group": "asperges", "latin": "Vidi Aquam", "english": "I Saw Water", "setting": None, "detail": "Sung at the sprinkling before Sunday Mass in Eastertide", "prayers": []},
          source="https://www.verbumgloriae.es/project/vidi-aquam/", est_seconds=150),
     # Tier 2
     dict(tier=2, found=True, entry={"id": "kyrie_de_angelis", "slug": "misa-viii-de-angelis", "page": "project/misa-viii-de-angelis", "group": "mass", "latin": "Kyrie", "english": "Lord, Have Mercy", "setting": "Mass VIII", "detail": "Mass VIII, the Missa de Angelis", "prayers": []},
@@ -471,21 +471,21 @@ CHANTS = [
     dict(tier=2, found=True, entry={"id": "agnus_de_angelis", "slug": "misa-viii-de-angelis", "page": "project/misa-viii-de-angelis", "group": "mass", "latin": "Agnus Dei", "english": "Lamb of God", "setting": "Mass VIII", "detail": "Mass VIII, the Missa de Angelis", "prayers": []},
          source="https://www.verbumgloriae.es/project/misa-viii-de-angelis/", est_seconds=60, audio_match="agnus", scores_match="agnus",
          note="One of four parts on the Misa VIII page; fetch.py picks its files by the name pattern 'agnus'."),
-    dict(tier=2, found=True, entry={"id": "credo_iii", "slug": "credo-iii", "group": "mass", "latin": "Credo III", "english": "The Nicene Creed", "setting": "Credo III", "detail": "The Creed sung on Sundays and solemnities", "prayers": []},
+    dict(tier=2, found=True, entry={"id": "credo_iii", "slug": "credo-iii", "group": "creed", "latin": "Credo III", "english": "The Nicene Creed", "setting": "Credo III", "detail": "The Creed sung on Sundays and solemnities", "prayers": []},
          source="https://www.verbumgloriae.es/project/credo-iii/", est_seconds=330),
     # Tier 3 found
-    dict(tier=3, found=True, entry={"id": "audi_benigne", "slug": "audi-benigne-conditor", "group": "lent", "latin": "Audi Benigne Conditor", "english": "O Kind Creator, Bow Thine Ear", "setting": None, "detail": "The Vespers hymn of Lent", "prayers": []},
+    dict(tier=3, found=True, entry={"id": "audi_benigne", "slug": "audi-benigne-conditor", "group": "seasons", "latin": "Audi Benigne Conditor", "english": "O Kind Creator, Bow Thine Ear", "setting": None, "detail": "The Vespers hymn of Lent", "prayers": []},
          source="https://www.verbumgloriae.es/project/audi-benigne-conditor/", est_seconds=180),
-    dict(tier=3, found=True, entry={"id": "o_vos_omnes", "slug": "misterios-dolorosos", "page": "cantos/santo-rosario/misterios-dolorosos", "group": "lent", "latin": "O Vos Omnes", "english": "O All Ye That Pass By", "setting": None, "detail": "Lamentations 1:12, sung in the Sorrowful Mysteries", "prayers": []},
+    dict(tier=3, found=True, entry={"id": "o_vos_omnes", "slug": "misterios-dolorosos", "page": "cantos/santo-rosario/misterios-dolorosos", "group": "seasons", "latin": "O Vos Omnes", "english": "O All Ye That Pass By", "setting": None, "detail": "Lamentations 1:12, sung in the Sorrowful Mysteries", "prayers": []},
          source="https://www.verbumgloriae.es/cantos/santo-rosario/misterios-dolorosos/", est_seconds=90, audio_match="vos[-_ ]?omnes", scores_match="vos[-_ ]?omnes",
          note="The page holds the whole sung Sorrowful Rosary; fetch.py picks this antiphon's files by the pattern 'vos-omnes'."),
     # Also on VG, not asked for but fitting slots the designs draw
-    dict(tier="extra", found=True, entry={"id": "ad_regias", "slug": "ad-regias-agni-dapes", "group": "easter", "latin": "Ad Regias Agni Dapes", "english": "At the Lamb's High Feast", "setting": None, "detail": "The Vespers hymn of Eastertide", "prayers": []},
+    dict(tier="extra", found=True, entry={"id": "ad_regias", "slug": "ad-regias-agni-dapes", "group": "seasons", "latin": "Ad Regias Agni Dapes", "english": "At the Lamb's High Feast", "setting": None, "detail": "The Vespers hymn of Eastertide", "prayers": []},
          source="https://www.verbumgloriae.es/project/ad-regias-agni-dapes/", est_seconds=200,
          note="An Eastertide hymn while Haec Dies is missing; there is also an 'otro tono' page."),
     dict(tier="extra", found=True, entry={"id": "te_matrem", "slug": "te-matrem-laudamus", "group": "ourLady", "latin": "Te Matrem Laudamus", "english": "We Praise Thee as Mother", "setting": None, "detail": "A Marian Te Deum", "prayers": []},
          source="https://www.verbumgloriae.es/project/te-matrem-laudamus/", est_seconds=240),
-    dict(tier="extra", found=True, entry={"id": "o_oriens_magnificat", "slug": "o-oriens-et-magnificat", "group": "advent", "latin": "O Oriens", "english": "O Morning Star, with the Magnificat", "setting": None, "detail": "The O Antiphon of December 21, around Mary's song", "prayers": ["magnificat"]},
+    dict(tier="extra", found=True, entry={"id": "o_oriens_magnificat", "slug": "o-oriens-et-magnificat", "group": "seasons", "latin": "O Oriens", "english": "O Morning Star, with the Magnificat", "setting": None, "detail": "The O Antiphon of December 21, around Mary's song", "prayers": ["magnificat"]},
          source="https://www.verbumgloriae.es/project/o-oriens-et-magnificat/", est_seconds=330),
 ]
 

@@ -20,6 +20,8 @@ enum ChantBrowseScope: Hashable {
     case group(String)
     /// The Ordinary of the Mass of the Angels, in the order it is sung
     case massOfTheAngels
+    /// The home's Songs to Mary shelf, every song in the shelf's order
+    case songsToMary
 
     static let massSetting = "Mass of the Angels"
 
@@ -28,6 +30,7 @@ enum ChantBrowseScope: Hashable {
         case .all: return "All Chants"
         case .group: return group?.title ?? "Chants"
         case .massOfTheAngels: return Self.massSetting
+        case .songsToMary: return "Songs to Mary"
         }
     }
 
@@ -48,6 +51,8 @@ enum ChantBrowseScope: Hashable {
             // The Ordinary's first Mass is the Mass of the Angels
             let mass = ChantCatalog.groups.first { $0.id == "mass" }
             return mass?.parts.first.map { ChantCatalog.chants(in: $0) } ?? []
+        case .songsToMary:
+            return ChantLibraryData.songsToMary.compactMap { ChantCatalog.chant($0) }
         }
     }
 }

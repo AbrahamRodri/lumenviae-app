@@ -2540,8 +2540,10 @@ write concurrent code here:
   Mass XI, Orbis factor, each saying when it is sung), the Creed,
   Sequences, the Mass for the Dead, General Hymns and Chants
   (alphabetical, as the book has them), the hymns to Our Lady (the four
-  songs to Mary first; its id stays `ourLady`, which Songs to Mary
-  reads), Seasonal Hymns and Chants (Advent to the Ascension, a
+  songs to Mary first; its id stays `ourLady`, the Browse All section
+  alone: the home's Songs to Mary shelf and its SEE ALL both read
+  `ChantLibraryData.songsToMary`, through `ChantBrowseScope.songsToMary`
+  for SEE ALL), Seasonal Hymns and Chants (Advent to the Ascension, a
   subheading per season), Gospel Canticles and Litany of Saints,
   Litanies, Benediction, and the Rosary in Latin. A section the app has
   no chant for yet (the Communion chants, the guides) is left out. Each
