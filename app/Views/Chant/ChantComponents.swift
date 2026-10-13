@@ -514,6 +514,39 @@ struct ChantSectionHeading: View {
     }
 }
 
+// MARK: - ChantPartHeading
+
+/// A subheading inside a section, as the Parish Book of Chant sets its
+/// Masses and seasons: the name in small gold capitals with a hairline
+/// running beside it to the edge, and when it is sung beneath.
+struct ChantPartHeading: View {
+    let title: String
+    var note: String? = nil
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 10) {
+                Text(title.uppercased())
+                    .font(AppFonts.labelFont(10))
+                    .tracking(1.8)
+                    .foregroundColor(AppColors.gold)
+                    .fixedSize(horizontal: false, vertical: true)
+                ChantRule(opacity: 0.24)
+            }
+            if let note {
+                Text(note)
+                    .font(AppFonts.readingItalicFont(14))
+                    .foregroundColor(AppColors.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel([title, note].compactMap { $0 }.joined(separator: ", "))
+        .accessibilityAddTraits(.isHeader)
+    }
+}
+
 // MARK: - ChantRule
 
 /// The hairline under a section's heading, and between rows

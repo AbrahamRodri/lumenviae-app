@@ -54,11 +54,24 @@ struct ChantLine: Hashable {
 
 // MARK: - ChantGroup
 
-/// A shelf of the library: Our Lady, the Blessed Sacrament, a season.
+/// A section of the library, after the Parish Book of Chant's contents:
+/// the Ordinary of the Mass, the hymns to Our Lady, the seasons.
 struct ChantGroup: Identifiable, Hashable {
     let id: String
     let title: String
     let note: String?
+    /// Its chants in the book's order, under a subheading where the book
+    /// sets one (a Mass of the Kyriale, a season); a section without
+    /// subheadings is one part with no title
+    let parts: [ChantGroupPart]
+}
+
+/// A run of a section's chants, under its own subheading or none
+struct ChantGroupPart: Hashable {
+    let title: String?
+    /// When the part is sung, where the section says
+    let note: String?
+    let chantIDs: [String]
 }
 
 // MARK: - Chant
@@ -167,8 +180,13 @@ enum ChantCatalog {
         all.filter { $0.prayerIDs.contains(prayerID) }
     }
 
+    /// A section's chants in its own order, part after part
     static func chants(in group: ChantGroup) -> [Chant] {
-        all.filter { $0.groupID == group.id }
+        group.parts.flatMap { chants(in: $0) }
+    }
+
+    static func chants(in part: ChantGroupPart) -> [Chant] {
+        part.chantIDs.compactMap { chant($0) }
     }
 
     /// The other settings of the same prayer — the solemn tone beside the
