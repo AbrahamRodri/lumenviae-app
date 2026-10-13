@@ -63,8 +63,8 @@ struct CanonicalHourClockTests {
     @Test func lapsesNamesTheNextHourInWords() {
         #expect(CanonicalHour.terce.lapses == "until Midday Prayer at noon")
         #expect(CanonicalHour.compline.lapses == "until Night Vigil at midnight")
-        #expect(CanonicalHour.sext.lapses == "until Mid-Afternoon Prayer at 2 PM")
-        #expect(CanonicalHour.vespers.lapses == "until Bedtime Prayer at 7 PM")
+        #expect(CanonicalHour.sext.lapses == "until Mid-Afternoon Prayer at two")
+        #expect(CanonicalHour.vespers.lapses == "until Bedtime Prayer at seven")
     }
 
     @Test func theScribesCloseIsInEnglish() {

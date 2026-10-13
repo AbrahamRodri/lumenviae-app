@@ -133,9 +133,9 @@ struct TodaysPrayerRowTests {
 
     @Test func officeSaysWhenTheHourEnds() {
         #expect(TodaysPrayerRow.office(.terce).fact == "NOW · UNTIL NOON")
-        #expect(TodaysPrayerRow.office(.sext).fact == "NOW · UNTIL 2 PM")
+        #expect(TodaysPrayerRow.office(.sext).fact == "NOW · UNTIL TWO")
         #expect(TodaysPrayerRow.office(.compline).fact == "NOW · UNTIL MIDNIGHT")
-        #expect(TodaysPrayerRow.office(.matins).fact == "NOW · UNTIL 5 AM")
+        #expect(TodaysPrayerRow.office(.matins).fact == "NOW · UNTIL FIVE")
         #expect(TodaysPrayerRow.office(.terce).subtitle == "Mid-Morning Prayer (Terce)")
     }
 

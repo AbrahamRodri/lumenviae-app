@@ -157,14 +157,19 @@ nonisolated enum CanonicalHour: String, CaseIterable, Codable, Identifiable {
         return "until \(hour.plainName) at \(Self.clockWord(hour.beginsAtClockHour))"
     }
 
-    /// A clock hour said plainly: "midnight", "noon", "2 PM". The one
-    /// way the app names the hour an hour of the Office begins at.
+    /// The clock said the way a breviary would say it, in words: the
+    /// one way the app names the hour an hour of the Office begins at,
+    /// in the Office's arch and on Home's Hours of Prayer row.
     static func clockWord(_ clockHour: Int) -> String {
         switch clockHour {
-        case 0, 24: return "midnight"
+        case 0: return "midnight"
         case 12: return "noon"
-        case 1..<12: return "\(clockHour) AM"
-        default: return "\(clockHour - 12) PM"
+        default:
+            let names = [
+                "twelve", "one", "two", "three", "four", "five",
+                "six", "seven", "eight", "nine", "ten", "eleven"
+            ]
+            return names[clockHour % 12]
         }
     }
 
