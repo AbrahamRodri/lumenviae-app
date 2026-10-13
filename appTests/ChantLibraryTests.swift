@@ -853,6 +853,12 @@ struct ChantLibraryHomeTests {
         #expect(songs.contains("magnificat") && !songs.contains("angelus"))
     }
 
+    @Test func songsToMarySeeAllOpensTheShelf() {
+        let scope = ChantBrowseScope.songsToMary
+        #expect(scope.title == "Songs to Mary")
+        #expect(scope.chants?.map(\.id) == ChantLibraryData.songsToMary)
+    }
+
     @Test func aSetSaysItsChantsAndItsLength() {
         #expect(ChantSetCard.summary(count: 4, duration: 431) == "4 chants · 7 min")
         #expect(ChantSetCard.summary(count: 1, duration: 20) == "1 chant · 1 min")

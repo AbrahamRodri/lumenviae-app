@@ -109,7 +109,8 @@ struct AssetNamesTests {
     }
 
     @Test func everyChantPaintingIsInTheCatalog() {
-        let names = Array(ChantLibraryData.paintings.values) + ChantSeason.allCases.map(\.painting)
+        let names = Array(ChantLibraryData.paintings.values) + Array(ChantLibraryData.groupPaintings.values)
+            + ChantSeason.allCases.map(\.painting)
         #expect(missing(names) == [])
     }
 }

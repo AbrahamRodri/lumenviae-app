@@ -140,7 +140,7 @@ struct ChantLibraryView: View {
                     shelfSection("Played lately") { playedLately }
                 }
 
-                shelfSection("Songs to Mary", seeAll: { router.push(.chantBrowse(.group("ourLady"))) }) {
+                shelfSection("Songs to Mary", seeAll: { router.push(.chantBrowse(.songsToMary)) }) {
                     songsToMary
                 }
 
