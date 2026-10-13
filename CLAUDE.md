@@ -2784,7 +2784,7 @@ write concurrent code here:
   names, length, and moving bars, `ChantSoundingBars`, on the one
   sounding, still under Reduce Motion; ··· for play, favourite, add to a
   set); SONGS TO MARY as square cards, each with its length and its own
-  play; SUNG SETS, the occasions and then the reader's own sets, each a
+  play; SETS OF CHANTS, the occasions and then the reader's own sets, each a
   card of its painting, "4 chants · 7 min" (the recordings' lengths,
   never a guess) and its numbered chants with their lengths, ending on a
   dashed Make your own set that opens the Sung Sets page (where empty and
@@ -2857,7 +2857,7 @@ write concurrent code here:
   one is sung), then Your sets, the reader's own, a copy kept from an
   occasion among them once the reader has changed it (an untouched copy
   is the occasion's card; the page once left every set of the reader's
-  out, though the home's Sung sets shelf shows them),
+  out, though the home's Sets of chants shelf shows them),
   then the dashed Make your own set, named first and opening on its page.
 
   **A set's page** (`ChantSetPage`, the "simplify the sung set page"
