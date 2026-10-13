@@ -344,14 +344,25 @@ though they were other devotions; typed search still finds both, and
 opens the day's mysteries' page), and a quiet "New to the Rosary? · How to
 Pray" door under that (How to Pray was the fourth item of the index at
 the foot of the page, where a newcomer never reached it); then
-Prayers, Chant (tonight's song to Mary, said as such above it and
-played where it stands, with SEE ALL, the door to the Chant Library), Today in the Church (Today's
+Prayers (the occasion orders as paintings with their names alone,
+most needed first, Before Mass leading), Chant (All 104 Chants, Songs
+to Mary, the Mass of the Angels and Sets of Chants), Today in the Church (Today's
 Mass | Hours of Prayer, each over its book's Church name, Daily Missal
 and Divine Office), Spiritual Reading (ALL BOOKS), and Learn More's
 ruled index — and typing searches mysteries, library doors, library readings,
 chants, the Prayer Book's orders and prayers, and meditation sets at once
 (a set by the label the shelf shows as well as the one the server
-stores, so "gospel" finds the Scriptural sets). The set index is fetched quietly for search but deliberately
+stores, so "gospel" finds the Scriptural sets). **The two shelves take in what the reader uses**
+(`ExploreShelves`, `RecentShelf`): each thing prayed or sung lately
+takes one place, leading the shelf newest first under a small RECENT
+(the chant tiles' note reads Recent), and the least needed default
+gives way first, Before Mass last; the shelf never grows or repeats.
+The prayers are `PrayerBookStore.recent`, noted when the pray-along
+opens on an order or a single prayer (the day's three hours, and the
+Angelus or Queen of Heaven alone, are never kept); the chants, the two
+sung most recently (`ChantShelfStore.recent`), each with its setting
+where its titles do not say it. On the
+device only. The set index is fetched quietly for search but deliberately
 never listed on the browse page, and the field is deliberately not
 auto-focused: the page is a place first, a search second. The real
 search field lives on Explore, not on home.
@@ -2776,10 +2787,10 @@ write concurrent code here:
   names, length, and moving bars, `ChantSoundingBars`, on the one
   sounding, still under Reduce Motion; ··· for play, favourite, add to a
   set); SONGS TO MARY as square cards, each with its length and its own
-  play; SUNG SETS, the occasions and then the reader's own sets, each a
+  play; SETS OF CHANTS, the occasions and then the reader's own sets, each a
   card of its painting, "4 chants · 7 min" (the recordings' lengths,
   never a guess) and its numbered chants with their lengths, ending on a
-  dashed Make your own set that opens the Sung Sets page (where empty and
+  dashed Make your own set that opens the Sets of Chants page (where empty and
   changed sets of the reader's stand too); and ALL CHANTS, "104 CHANTS"
   beside it, the book's twelve sections two by six (`ChantSectionsGrid`, the
   All Chants page's own grid), each opening its shelf; then the credit, one line, "Recordings and scores by
@@ -2800,8 +2811,8 @@ write concurrent code here:
   (`ChantLibraryView.forgetLegacySection`); whatever it held, the same
   page opens. The library's other pages are pushed: a sung set's own page
   (`.chantSet(ChantSetSubject)`, `ChantSetPage`, below), which every set
-  opens on, an occasion or the reader's own, from the tiles, the Sung
-  Sets cards, the index and Your Chants; the index of the sung sets
+  opens on, an occasion or the reader's own, from the tiles, the Sets of
+  Chants cards, the index and Your Chants; the index of the sung sets
   (`.chantSets`, `ChantSetsPage`); every chant under its topic, a topic,
   the Mass of the Angels or Songs to Mary (`.chantBrowse(ChantBrowseScope)`,
   `ChantBrowsePage`), which is how every chant stays reachable without a
@@ -2843,13 +2854,13 @@ write concurrent code here:
   automatic, it kept a large title's room and every page began under an
   empty band. All Chants was once one scroll of 104 rows under headings of
   three sizes with no painting, and every shelf a centred title over a
-  filled gold Play all. **Sung Sets** keeps its line ("Chants sung one
+  filled gold Play all. **Sets of Chants** (once "Sung Sets", a name that said little) keeps its line ("Chants sung one
   after another, for a time of prayer.") over the occasions as wide
   painted cards (painting, name, line, "4 chants · 7 min", the bars while
   one is sung), then Your sets, the reader's own, a copy kept from an
   occasion among them once the reader has changed it (an untouched copy
   is the occasion's card; the page once left every set of the reader's
-  out, though the home's Sung sets shelf shows them),
+  out, though the home's Sets of chants shelf shows them),
   then the dashed Make your own set, named first and opening on its page.
 
   **A set's page** (`ChantSetPage`, the "simplify the sung set page"
@@ -2884,7 +2895,7 @@ write concurrent code here:
   and the reader's own as a card under the Saved shelf. **The occasions**
   (`ChantLibraryData.occasions`): Adoration and Blessing (Benediction), A
   Visit to Jesus in Church, a Sung Rosary, Before Bed, Before Work or
-  Study, For Those Who Have Died — each a card on Sung Sets opening its
+  Study, For Those Who Have Died — each a card on Sets of Chants opening its
   page (the numbered index `ChantOccasionsSection` drew them as is no
   longer shown). The bookmark is a toggle: filled while the occasion
   is kept as a set of one's own (`ChantSet.occasionID`), a second tap

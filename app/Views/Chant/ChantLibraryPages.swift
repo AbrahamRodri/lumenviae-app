@@ -801,7 +801,7 @@ struct ChantSetsPage: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) { ChantBackButton() }
             ToolbarItem(placement: .principal) {
-                Text("Sung Sets")
+                Text("Sets of Chants")
                     .font(AppFonts.titleFont(19))
                     .foregroundColor(AppColors.cream)
                     .accessibilityAddTraits(.isHeader)
