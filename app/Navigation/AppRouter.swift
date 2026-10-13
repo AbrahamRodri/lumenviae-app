@@ -81,8 +81,10 @@ enum AppRoute: Hashable {
     case libraryReading(id: String)
     /// A prayer the library leads to — the Litany, a hymn, a prayer of
     /// the Rosary — opened in the Prayer Book (`BookPrayerView`), by the
-    /// id `PrayerBook.prayer` looks up
-    case devotionPrayer(id: String)
+    /// id `PrayerBook.prayer` looks up. `set` is the topic or order it was
+    /// opened from, whose prayers its card deals through; every other door
+    /// leaves it out, and the card deals through the prayer's own topic.
+    case devotionPrayer(id: String, set: PrayerSet? = nil)
     /// The Missal opened on a given day rather than today — a feast
     /// named elsewhere in the app
     case missalDay(Date)

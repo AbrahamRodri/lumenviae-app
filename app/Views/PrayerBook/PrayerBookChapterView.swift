@@ -9,8 +9,8 @@
 //  said together (Before Mass and After Communion under Holy Mass and
 //  Communion), one painted card, Pray together, stands first with a row
 //  for each. The prayers follow under the book's sub-headings, set as the
-//  Prayers tab sets its shelves, each a row with its second name and the
-//  reader's own marks. The foot is the next topic as a painted card, and
+//  Prayers tab sets its shelves, each a row with a small arched picture
+//  of the prayer's holy card, its name and the reader's own marks. The foot is the next topic as a painted card, and
 //  a quiet line back to the topic before. The page draws its own Back
 //  over the painting, so the system bar is hidden; once the painting has
 //  scrolled away, a dark ground comes up under the clock and the Back so
@@ -307,7 +307,7 @@ struct PrayerBookChapterView: View {
                             seasonal: chapter.id == PrayerBook.ourLady.id && prayer.id == seasonal,
                             showsRule: j < prayers.count - 1
                         ) {
-                            router.push(.devotionPrayer(id: prayer.id))
+                            router.push(.devotionPrayer(id: prayer.id, set: .topic(chapter.id)))
                         }
                     }
                 }
@@ -436,12 +436,12 @@ private struct TopicOrderRow: View {
 
 // MARK: - A prayer's row
 
-/// One prayer of the topic: its name, its second name beneath, and at the
-/// trailing edge the reader's marks — THIS SEASON on Our Lady's song for
-/// the season, LEARNED, the saved ribbon — then a caret. A copy of the
-/// book's `BookPrayerRow` without its numeral. Where the marks and the
-/// name will not share a line, the marks drop under the name rather than
-/// cut it short.
+/// One prayer of the topic: a small arched picture of its holy card (the
+/// painting its own page hangs), its name, and at the trailing edge the
+/// reader's marks — THIS SEASON on Our Lady's song for the season,
+/// LEARNED, the saved ribbon — then a caret. Where the marks and the name
+/// will not share a line, the marks drop under the name rather than cut
+/// it short. The second name the row once carried stands on the card.
 private struct TopicPrayerRow: View {
     let prayer: BookPrayer
     let store: PrayerBookStore
@@ -456,7 +456,9 @@ private struct TopicPrayerRow: View {
     var body: some View {
         Button(action: action) {
             VStack(spacing: 0) {
-                HStack(alignment: .center, spacing: 12) {
+                HStack(alignment: .center, spacing: 14) {
+                    MiniHolyCard(prayerID: prayer.id)
+
                     if hasMarks {
                         ViewThatFits(in: .horizontal) {
                             HStack(spacing: 10) {
@@ -477,7 +479,7 @@ private struct TopicPrayerRow: View {
                     AppIcon("ph-caret-right", size: 11)
                         .foregroundColor(AppColors.gold.opacity(0.5))
                 }
-                .padding(.vertical, 12)
+                .padding(.vertical, 9)
                 .frame(minHeight: 56)
 
                 if showsRule {
@@ -495,21 +497,11 @@ private struct TopicPrayerRow: View {
     }
 
     private var names: some View {
-        VStack(alignment: .leading, spacing: 3) {
-            Text(prayer.title)
-                .font(AppFonts.readingFont(17))
-                .foregroundColor(AppColors.cream)
-                .multilineTextAlignment(.leading)
-                .fixedSize(horizontal: false, vertical: true)
-
-            if let second = prayer.secondTitle {
-                Text(second)
-                    .font(AppFonts.readingItalicFont(13.5))
-                    .foregroundColor(AppColors.textSecondary)
-                    .multilineTextAlignment(.leading)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-        }
+        Text(prayer.title)
+            .font(AppFonts.readingFont(17))
+            .foregroundColor(AppColors.cream)
+            .multilineTextAlignment(.leading)
+            .fixedSize(horizontal: false, vertical: true)
     }
 
     private var marks: some View {
@@ -533,13 +525,36 @@ private struct TopicPrayerRow: View {
     private var spokenLabel: String {
         [
             prayer.title,
-            prayer.secondTitle,
             seasonal ? "This season" : nil,
             learned ? "Learned" : nil,
             saved ? "Saved" : nil
         ]
         .compactMap { $0 }
         .joined(separator: ", ")
+    }
+}
+
+// MARK: - A prayer's card, small
+
+/// The prayer's holy card as a list draws it: its painting in a small
+/// arch with a gold edge, as the prayer's own page sets it large
+private struct MiniHolyCard: View {
+    let prayerID: String
+
+    var body: some View {
+        let painting = BookPrayerView.painting(of: prayerID)
+        let shape = UnevenRoundedRectangle(
+            topLeadingRadius: 17,
+            bottomLeadingRadius: 4,
+            bottomTrailingRadius: 4,
+            topTrailingRadius: 17,
+            style: .continuous
+        )
+        CachedAssetImage(painting.resolvedAsset, focal: painting.focal)
+            .frame(width: 34, height: 44)
+            .clipShape(shape)
+            .overlay(shape.strokeBorder(AppColors.gold.opacity(0.35), lineWidth: AppLine.hairline))
+            .accessibilityHidden(true)
     }
 }
 

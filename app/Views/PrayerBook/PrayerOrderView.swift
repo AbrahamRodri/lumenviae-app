@@ -5,9 +5,9 @@
 //  An order of prayer's own page — Morning Prayers, Before Confession —
 //  (the "Saved and Prayer Orders" design, option A, Oct 2026): the
 //  order's painting run up under the bar and dissolving into the page,
-//  when it is prayed (and that it was prayed today), its name, its Latin
-//  small beneath, and one line saying what it is; then its prayers as a
-//  quiet numbered list, each a door to its own page, and where the
+//  when it is prayed (and that it was prayed today), its name and its
+//  Latin small beneath; then its prayers as a quiet numbered list, each
+//  a door to its own page (the "Holy Cards" pick's list), and where the
 //  season decides what the order holds, a sentence saying so. At the
 //  foot, PRAY, the page's one gold act, beside a round speaker that says
 //  how it will be prayed, aloud or in silence, in one line beneath.
@@ -245,13 +245,6 @@ struct PrayerOrderView: View {
             Text(order.latinTitle)
                 .font(AppFonts.readingItalicFont(14.5))
                 .foregroundColor(AppColors.cream.opacity(0.55))
-
-            Text(order.detail)
-                .font(AppFonts.readingItalicFont(16))
-                .foregroundColor(AppColors.cream.opacity(0.82))
-                .multilineTextAlignment(.leading)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.top, 4)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -267,16 +260,23 @@ struct PrayerOrderView: View {
     // MARK: - The prayers
 
     private func list(_ order: PrayerOrder) -> some View {
-        let prayers = order.prayers(on: now)
+        // Each prayer keeps its place among the order's ids, which is how
+        // its card counts it; an id that names no prayer is passed over
+        // without moving any place after it
+        let rows = Array(
+            order.prayerIDs(now).enumerated().compactMap { place, id in
+                PrayerBook.prayer(id).map { (place: place, prayer: $0) }
+            }
+        )
         return VStack(spacing: 0) {
-            ForEach(Array(prayers.enumerated()), id: \.element.id) { i, prayer in
+            ForEach(Array(rows.enumerated()), id: \.offset) { i, row in
                 OrderPrayerRow(
-                    prayer: prayer,
+                    prayer: row.prayer,
                     number: i + 1,
                     store: store,
-                    showsRule: i < prayers.count - 1
+                    showsRule: i < rows.count - 1
                 ) {
-                    router.push(.devotionPrayer(id: prayer.id))
+                    router.push(.devotionPrayer(id: row.prayer.id, set: .order(order.id, at: row.place)))
                 }
             }
         }
@@ -368,7 +368,7 @@ private struct AloudGlyph: View {
 
 // MARK: - A prayer of the order
 
-/// One prayer of the order: its numeral, its name, the reader's own marks
+/// One prayer of the order: its number, its name, the reader's own marks
 /// on it, a caret. The Latin each prayer carries stands on its own page.
 private struct OrderPrayerRow: View {
     let prayer: BookPrayer
@@ -387,10 +387,10 @@ private struct OrderPrayerRow: View {
                     // The numeral stands on the name's first line, as a
                     // contents page sets it
                     HStack(alignment: .firstTextBaseline, spacing: 14) {
-                        Text(LiturgicalCalendarFormat.roman(number))
-                            .font(AppFonts.titleFont(13))
+                        Text("\(number)")
+                            .font(AppFonts.titleFont(15))
                             .foregroundColor(AppColors.gold.opacity(0.85))
-                            .frame(width: 30, alignment: .leading)
+                            .frame(width: 22, alignment: .leading)
 
                         Text(prayer.title)
                             .font(AppFonts.readingFont(17))

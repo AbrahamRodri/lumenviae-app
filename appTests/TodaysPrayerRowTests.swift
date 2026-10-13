@@ -179,7 +179,7 @@ struct TodaysPrayerRowTests {
         let row = TodaysPrayerRow.hourOrder(
             at: try moment(month: 4, day: 14, hour: 12, minute: 30), store: try store("easter"))
         #expect(row.name == "Queen of Heaven")
-        #expect(row.painting == "glorious_resurrection")
+        #expect(row.painting == "easter_appears_to_mary")
     }
 
     // MARK: The Hours of Prayer
