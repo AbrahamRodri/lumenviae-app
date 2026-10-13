@@ -3006,6 +3006,25 @@ write concurrent code here:
   Gratiæ was left out for its live text; the Litany of Loreto's Easter
   collect is served by the site as a 404 and is skipped).
 
+  **The score sheet is the leaf of the page it opens from**
+  (`ChantScoreSheet`, the "simplify the chant score sheet" design,
+  option A, Oct 2026). The chant's own painting
+  (`ChantCatalog.painting(for:)`) heads it, darkened under the title as the
+  library's cards are and dissolving to the ground, with the Latin title
+  over its foot, the English beneath (the setting after it, "· simple
+  melody", where neither title says it) and DONE on a dark capsule. The
+  head stands above the score's glass, so no staff ever scrolls or zooms
+  over the painting. The score starts 14 points under the English: a
+  scroll view that moves both ways centres what is smaller than itself,
+  so the score's content is held at least as tall as the glass and
+  top-aligned (a short chant once floated some 85 points down the sheet).
+  From a chant's page a small opaque pill floats over the score's foot:
+  the play disc, the thread and the time, with room beneath the last
+  staff to scroll clear of it. From a practice or a consecration day,
+  whose own transport sounds beneath, there is no pill and no strip kept
+  for one. It once opened on a SHEET MUSIC kicker and the title with its
+  setting, over a toolbar under a hairline.
+
   **The enlarged score zooms about the phrase under the finger.** A pinch
   scales the drawing as the fingers move and lays the score out afresh at
   its new width when they lift, so the engraving is sharp again at the
@@ -3512,7 +3531,8 @@ transition entirely.
   pray-along page in silence, an order part-way through, a prayer
   opened alone and the Angelus, on a book store of its own, the chant search before
   typing, with results and with nothing found, and Your Chants with its
-  shelves full, empty and at its foot, on a fixed day) from fixed data
+  shelves full, empty and at its foot, the chant score sheet with and
+  without its player, on a fixed day) from fixed data
   with swift-snapshot-testing (the
   test target's one package; the app has none) and compares them with
   the PNGs in `__Snapshots__/`, in the same `xcodebuild test`.
