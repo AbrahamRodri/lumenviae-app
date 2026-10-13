@@ -137,7 +137,7 @@ struct ChantPracticeView: View {
                 hidden: $hidden
             )
             // As tall as its three rows, not half the glass over nothing
-            .presentationDetents([.height(350), .large])
+            .presentationDetents([.height(300), .large])
             .sheetGround()
             .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
@@ -579,9 +579,11 @@ struct ChantPracticeView: View {
         stage = .singing
         if !lines, step == .listen || step == .readAlong, player.holds(chant) {
             // A whole chant left on the path is taken up where it was
-            // paused, not sung again from its top
+            // paused, not sung again from its top; a set it was being sung
+            // in is put down first, or the set would go on to its next
             if !player.isPlaying(chant) {
                 startedPlayback = true
+                player.endQueue()
                 player.togglePlayback()
             }
         } else {
