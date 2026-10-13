@@ -99,11 +99,30 @@ struct ChantSavedSnapshotTests {
         ScreenSnapshot.assertScreen(view, named: "chant-saved-no-sets")
     }
 
-    /// The largest the app draws its text (`DynamicTypeSize.appMaximum`)
-    @Test func largestText() {
+    /// Asked for at an accessibility size, the page draws at the largest
+    /// the app draws its text, `DynamicTypeSize.appMaximum`
+    @Test func largestAppText() {
         let view = page(.favorites, shelf: shelf("largestText"))
             .dynamicTypeSize(...DynamicTypeSize.appMaximum)
             .dynamicTypeSize(.accessibility3)
-        ScreenSnapshot.assertScreen(view, named: "chant-saved-largest-text")
+        ScreenSnapshot.assertScreen(view, named: "chant-saved-largest-app-text")
+    }
+
+    /// The page's foot, held to the bottom of the glass: Learned empty
+    /// while Favourites holds chants, the sets, every recent play with
+    /// when it was sung, and the Words line
+    @Test func foot() {
+        let view = ZStack(alignment: .bottom) {
+            AppColors.appGradient.ignoresSafeArea()
+            ChantSavedSection(
+                choice: .constant(.learned),
+                shelf: shelf("foot", learned: false),
+                now: Self.now
+            )
+            .padding(.bottom, 48)
+        }
+        .frame(maxHeight: .infinity, alignment: .bottom)
+        .clipped()
+        ScreenSnapshot.assertScreen(view, named: "chant-saved-foot")
     }
 }

@@ -56,6 +56,17 @@ enum ChantSavedShelf: Hashable {
         }
     }
 
+    /// The painting in an empty shelf's arch, another than the one at the
+    /// head of the page, so the page never hangs one painting twice: the
+    /// Visitation for what is kept, the Finding in the Temple, where the
+    /// Child was found among the teachers, for what is learned
+    var emptyArchPainting: String {
+        switch self {
+        case .favorites: return "joyful_visitation"
+        case .learned:   return "joyful_finding"
+        }
+    }
+
     /// The painting at the head of the page: the first chant's, else the
     /// shelf's own
     func painting(of chants: [Chant]) -> String {
@@ -110,10 +121,13 @@ struct ChantSavedPage: View {
                 ChantSavedSection(choice: $choice, shelf: shelf, now: now)
                     .padding(.top, 4)
                     .padding(.bottom, 48)
-                    .onGeometryChange(for: CGFloat.self) { $0.frame(in: .scrollView).minY } action: {
-                        scroll.note($0)
+                    .onGeometryChange(for: CGFloat.self) { $0.frame(in: .scrollView).minY } action: { top in
+                        // Before iOS 18 the content's own top is the only
+                        // reading of the scroll
+                        if #unavailable(iOS 18) { scroll.note(top) }
                     }
             }
+            .modifier(ChantSavedScrollReading(scroll: scroll))
             .topChromeFade()
         }
         .onGeometryChange(for: CGFloat.self) { $0.safeAreaInsets.top } action: { topInset = $0 }
@@ -138,17 +152,50 @@ struct ChantSavedPage: View {
 /// frame redraws the painting and not the page
 @Observable
 final class ChantSavedScroll {
-    /// Where the content's top stood at rest
+    /// Where the content's top stood at rest, before iOS 18
     @ObservationIgnored private var rest: CGFloat?
     /// How far the content has risen, never more than nothing when pulled
     /// down
     private(set) var rise: CGFloat = 0
 
+    func set(rise risen: CGFloat) {
+        let risen = max(0, risen)
+        if risen != rise { rise = risen }
+    }
+
+    /// Before iOS 18: the content's top, read against where it first stood
     func note(_ top: CGFloat) {
         let rest = self.rest ?? top
         self.rest = rest
-        let risen = max(0, rest - top)
-        if risen != rise { rise = risen }
+        set(rise: rest - top)
+    }
+}
+
+/// Reads the scroll from the scroll view itself where the system can: its
+/// offset past its resting inset, whatever the bar's height settles to
+struct ChantSavedScrollReading: ViewModifier {
+    let scroll: ChantSavedScroll
+
+    func body(content: Content) -> some View {
+        if #available(iOS 18.0, *) {
+            content.onScrollGeometryChange(for: CGFloat.self) { geometry in
+                geometry.contentOffset.y + geometry.contentInsets.top
+            } action: { _, risen in
+                scroll.set(rise: risen)
+            }
+        } else {
+            content
+        }
+    }
+}
+
+// MARK: - ChantSavedMotion
+
+/// The page's one rule for motion: every change it animates is drawn at
+/// once under Reduce Motion
+enum ChantSavedMotion {
+    static func animation(_ animation: Animation, reduceMotion: Bool) -> Animation? {
+        reduceMotion ? nil : animation
     }
 }
 
@@ -166,8 +213,9 @@ struct ChantSavedPainting: View {
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    /// How far the painting reaches below the bar
-    static let reach: CGFloat = 180
+    /// How far the painting reaches below the bar: past the switch and no
+    /// further, so the chants beneath stand on the bare page
+    static let reach: CGFloat = 110
 
     var body: some View {
         ZStack {
@@ -205,7 +253,7 @@ struct ChantSavedPainting: View {
             )
         )
         .offset(y: -scroll.rise)
-        .animation(reduceMotion ? nil : Motion.crossfade, value: name)
+        .animation(ChantSavedMotion.animation(Motion.crossfade, reduceMotion: reduceMotion), value: name)
         .frame(maxHeight: .infinity, alignment: .top)
         .ignoresSafeArea(edges: .top)
         .allowsHitTesting(false)
@@ -248,7 +296,7 @@ struct ChantSavedSection: View {
                     favorites: shelf.favorites.count,
                     learned: shelf.learned.count
                 ) { chosen in
-                    withAnimation(reduceMotion ? nil : Motion.choice) { choice = chosen }
+                    withAnimation(ChantSavedMotion.animation(Motion.choice, reduceMotion: reduceMotion)) { choice = chosen }
                 }
                 .padding(.horizontal, 18)
 
@@ -265,7 +313,7 @@ struct ChantSavedSection: View {
                     }
                 }
                 .padding(.horizontal, 18)
-                .animation(reduceMotion ? nil : Motion.crossfade, value: shown)
+                .animation(ChantSavedMotion.animation(Motion.crossfade, reduceMotion: reduceMotion), value: shown)
             }
 
             sets
@@ -294,7 +342,7 @@ struct ChantSavedSection: View {
     @ViewBuilder
     private func list(_ which: ChantSavedShelf, chants: [Chant]) -> some View {
         if chants.isEmpty {
-            ChantSavedEmpty(painting: which.emptyPainting, line: which.emptyLine)
+            ChantSavedEmpty(painting: which.emptyArchPainting, line: which.emptyLine)
                 .frame(maxWidth: .infinity)
                 .padding(.top, 8)
         } else {
@@ -371,7 +419,7 @@ struct ChantSavedSection: View {
     // MARK: - Played lately
 
     private var recentlyPlayed: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 14) {
             Text("Played lately")
                 .font(AppFonts.titleFont(17))
                 .foregroundColor(AppColors.cream)
@@ -390,7 +438,8 @@ struct ChantSavedSection: View {
                                     .font(AppFonts.readingItalicFont(14))
                                     .foregroundColor(AppColors.textSecondary)
                                     .lineLimit(1)
-                                    .frame(width: 104, alignment: .leading)
+                                    .minimumScaleFactor(0.86)
+                                    .frame(width: 112, alignment: .leading)
                                 Text(chant.latinTitle)
                                     .font(AppFonts.readingFont(16))
                                     .foregroundColor(AppColors.cream.opacity(0.9))
@@ -402,11 +451,6 @@ struct ChantSavedSection: View {
                             .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
-                        .overlay(alignment: .bottom) {
-                            Rectangle()
-                                .fill(AppColors.gold.opacity(0.08))
-                                .frame(height: AppLine.hairline)
-                        }
                         .accessibilityElement(children: .ignore)
                         .accessibilityLabel("\(when), \(chant.latinTitle)")
                         .accessibilityHint("Opens the chant")
@@ -418,7 +462,8 @@ struct ChantSavedSection: View {
     }
 
     /// "Tonight", "This morning", "Yesterday", "Tuesday", "Sep 12"
-    static func when(_ date: Date, now: Date = Date(), calendar: Calendar = .current) -> String {
+    static func when(_ date: Date, now: Date = Date(), calendar: Calendar = .current,
+                     locale: Locale = .current) -> String {
         if calendar.isDate(date, inSameDayAs: now) {
             let hour = calendar.component(.hour, from: date)
             switch hour {
@@ -431,11 +476,14 @@ struct ChantSavedSection: View {
            calendar.isDate(date, inSameDayAs: yesterday) {
             return "Yesterday"
         }
+        var style = Date.FormatStyle(locale: locale, calendar: calendar, timeZone: calendar.timeZone)
         if let days = calendar.dateComponents([.day], from: calendar.startOfDay(for: date), to: calendar.startOfDay(for: now)).day,
            days < 7 {
-            return date.formatted(.dateTime.weekday(.wide))
+            style = style.weekday(.wide)
+        } else {
+            style = style.day().month(.abbreviated)
         }
-        return date.formatted(.dateTime.day().month(.abbreviated))
+        return date.formatted(style)
     }
 
     // MARK: - Words
@@ -481,14 +529,21 @@ struct ChantShelfSwitch: View {
     let learned: Int
     let choose: (ChantSavedShelf) -> Void
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     var body: some View {
         HStack(spacing: 0) {
             segment(.favorites, count: favorites)
             segment(.learned, count: learned)
         }
         .padding(3)
-        .background(Capsule().fill(AppColors.background.opacity(0.72)))
-        .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.22), lineWidth: AppLine.hairline))
+        // One capsule, filled and ringed together, so no edge of the
+        // fill shows past the ring
+        .background {
+            Capsule()
+                .fill(AppColors.background.opacity(0.72))
+                .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.22), lineWidth: AppLine.hairline))
+        }
         .sensoryFeedback(.selection, trigger: shown)
     }
 
@@ -506,8 +561,8 @@ struct ChantShelfSwitch: View {
                     Text("\(count)")
                         .font(AppFonts.readingFont(15))
                         .monospacedDigit()
-                        .contentTransition(.numericText())
-                        .animation(Motion.crossfade, value: count)
+                        .contentTransition(reduceMotion ? .identity : .numericText())
+                        .animation(ChantSavedMotion.animation(Motion.crossfade, reduceMotion: reduceMotion), value: count)
                 }
             }
             .foregroundColor(on ? AppColors.goldLight : AppColors.textSecondary)
@@ -516,9 +571,13 @@ struct ChantShelfSwitch: View {
             .padding(.horizontal, 8)
             .padding(.vertical, 6)
             .frame(maxWidth: .infinity, minHeight: 44)
-            .background(Capsule().fill(on ? AppColors.cardElevated : Color.clear))
-            .overlay(Capsule().strokeBorder(on ? AppColors.gold.opacity(0.7) : Color.clear, lineWidth: 1))
-            .contentShape(Capsule())
+            .background {
+                if on {
+                    Capsule()
+                        .fill(AppColors.cardElevated)
+                        .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.7), lineWidth: 1))
+                }
+            }
         }
         .buttonStyle(SacredCardButtonStyle())
         .accessibilityElement(children: .ignore)
@@ -563,13 +622,11 @@ struct ChantSavedSetCover: View {
 
     static let side: CGFloat = 150
 
-    private var chants: [Chant] { self.set.items.compactMap(\.chant) }
-
     var body: some View {
         Button(action: open) {
             VStack(alignment: .leading, spacing: 7) {
                 ChantThumbnail(
-                    name: chants.first.map { ChantCatalog.painting(for: $0) } ?? "glorious_coronation",
+                    name: self.set.painting,
                     size: Self.side,
                     radius: 14
                 )
@@ -606,8 +663,7 @@ struct ChantSavedSetCover: View {
     static func spoken(_ set: ChantSet) -> String {
         guard set.chantCount > 0 else { return "\(set.name), no chants yet" }
         let chants = set.chantCount == 1 ? "1 chant" : "\(set.chantCount) chants"
-        let minutes = max(1, Int((set.duration / 60).rounded()))
-        return "\(set.name), \(chants), \(minutes == 1 ? "1 minute" : "\(minutes) minutes")"
+        return "\(set.name), \(chants), \(ChantOccasionsSection.spokenMinutes(set.duration))"
     }
 }
 

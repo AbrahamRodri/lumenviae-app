@@ -2620,8 +2620,8 @@ write concurrent code here:
   (`.chantSets`, `ChantSetsPage`, `ChantOccasionsSection`); a topic, every chant under its topic,
   or the Mass of the Angels (`.chantBrowse(ChantBrowseScope)`,
   `ChantBrowsePage`), which is how every chant stays reachable without a
-  search; and the reader's own chants (`.chantSaved(ChantSavedShelf)`,
-  `ChantSavedPage`, `ChantSavedSection` below).
+  search; and the reader's own chants, Your Chants
+  (`.chantSaved(ChantSavedShelf)`, `ChantSavedPage`, below).
 
   **A set's page** (`ChantSetPage`, the "Chant Library shelves" design,
   option B, Oct 2026) is one component for every set, laid out as an
@@ -2960,7 +2960,7 @@ write concurrent code here:
   puts the set down. It keeps the line clock (`lineEnd`: on, again,
   take turns, and practice's stop and your-turn-then-stop), the sleep
   timer (minutes, or the chant's end), and notes each chant sung for
-  Recently played. A set's silence plays `Resources/chant_silence.m4a` —
+  Played lately on Your Chants. A set's silence plays `Resources/chant_silence.m4a` —
   five seconds of silence, AAC, kept beside the other bundled sounds and
   not in `Resources/Chants`, which the generator owns — on a loop through
   the set's own claim for as long as the silence lasts: timed by the
