@@ -516,16 +516,15 @@ struct ChantPracticeView: View {
 
     private var learnedPage: some View {
         VStack(spacing: 0) {
-            ZStack(alignment: .bottom) {
-                ChantPainting(name: painting, height: 470, dissolveFrom: 0.5)
+            ChantPainting(name: painting, height: 470, dissolveFrom: 0.5)
+                .ignoresSafeArea(edges: .top)
+
+            VStack(spacing: 8) {
                 AppIcon("ph-seal-check-fill", size: 46)
                     .foregroundColor(AppColors.gold)
                     .shadow(color: AppColors.gold.opacity(0.45), radius: 12)
+                    .padding(.bottom, 10)
                     .accessibilityHidden(true)
-            }
-            .ignoresSafeArea(edges: .top)
-
-            VStack(spacing: 8) {
                 Text("LEARNED BY HEART")
                     .font(AppFonts.labelFont(10))
                     .tracking(2.5)
@@ -542,7 +541,9 @@ struct ChantPracticeView: View {
             }
             .accessibilityElement(children: .combine)
             .accessibilityAddTraits(.isHeader)
-            .padding(.top, 18)
+            // Risen into the painting's dissolve, so the seal stands where
+            // the painting gives way to the page
+            .padding(.top, -70)
             .padding(.horizontal, 28)
 
             Text("Kept in Saved, under Learned.")
