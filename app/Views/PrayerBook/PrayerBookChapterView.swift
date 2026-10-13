@@ -2,14 +2,25 @@
 //  PrayerBookChapterView.swift
 //  Lumen Viae
 //
-//  One topic of the Prayer Book (the "Prayer Book Topics" design, option
-//  B, Oct 2026): its painting at the head of the page, dissolving into
-//  it, the part of the book it stands in, its name and one line, then a
-//  strip of its sub-headings to jump between. Beneath: the orders of
-//  prayer said together that belong here (Before Mass and After
-//  Communion under Holy Mass and Communion), then its prayers under the
-//  book's sub-headings, each with the reader's own marks. The page draws
-//  its own Back over the painting, so the system bar is hidden.
+//  One topic of the Prayer Book (the "simplify the prayer topic" design,
+//  option B, Painted Doors, Oct 2026): its painting at the head of the
+//  page, about half the glass, with the topic's name and one line set
+//  over its foot, then the prayers. Where the topic has orders of prayer
+//  said together (Before Mass and After Communion under Holy Mass and
+//  Communion), one painted card, Pray together, stands first with a row
+//  for each. The prayers follow under the book's sub-headings, set as the
+//  Prayers tab sets its shelves, each a row with its second name and the
+//  reader's own marks. The foot is the next topic as a painted card, and
+//  a quiet line back to the topic before. The page draws its own Back
+//  over the painting, so the system bar is hidden; once the painting has
+//  scrolled away, a dark ground comes up under the clock and the Back so
+//  no prayer runs beneath them.
+//
+//  The page once stacked a kicker (the part of the book and a count), a
+//  strip of its sub-headings to jump between, gold capital sub-headings
+//  with rules, and Roman numerals running down the whole topic: six
+//  voices of small gold capitals over the prayer names. They went; the
+//  strip only repeated the sub-headings beneath it.
 //
 //  The foot turns to the topic before or after in place, as a book's
 //  pages do: the page fades out, the topic is swapped and the scroll put
@@ -24,70 +35,82 @@ struct PrayerBookChapterView: View {
 
     @Environment(AppRouter.self) private var router
 
+    private let store: PrayerBookStore
+    private let fixedDate: Date?
+
     /// The topic on the page — starts as the one pushed, and moves on
     /// when the foot turns the page
     @State private var chapterID: String
     @State private var pageOpacity: Double = 1
 
+    /// Whether the painting has scrolled up behind the clock and the
+    /// Back, so the dark ground under them is needed
+    @State private var paintingGone = false
+
     private var chapter: PrayerBookChapter? { PrayerBook.chapter(chapterID) }
 
-    /// How tall the painting stands at the head of the page
-    private static let heroHeight: CGFloat = 300
+    /// The painting stands this share of the whole glass
+    private static let heroShare: CGFloat = 0.47
 
-    /// Room left above a sub-heading jumped to, clear of the Back capsule
-    private static let jumpClearance: CGFloat = 76
+    /// How far below the safe area the Back capsule ends
+    private static let backFoot: CGFloat = 52
 
-    init(chapterID: String) {
+    init(chapterID: String, store: PrayerBookStore = .shared, date: Date? = nil) {
         _chapterID = State(initialValue: chapterID)
+        self.store = store
+        self.fixedDate = date
     }
 
+    private var now: Date { fixedDate ?? Date() }
+
     var body: some View {
-        ZStack(alignment: .topLeading) {
-            AppColors.appGradient.ignoresSafeArea()
+        GeometryReader { geo in
+            let safeTop = geo.safeAreaInsets.top
+            let heroHeight = (geo.size.height + safeTop + geo.safeAreaInsets.bottom) * Self.heroShare
 
-            if let chapter {
-                ScrollViewReader { proxy in
-                    ScrollView(showsIndicators: false) {
-                        VStack(alignment: .leading, spacing: 0) {
-                            Color.clear.frame(height: 0).id("top")
+            ZStack(alignment: .topLeading) {
+                AppColors.appGradient.ignoresSafeArea()
 
-                            hero(chapter)
+                if let chapter {
+                    ScrollViewReader { proxy in
+                        ScrollView(showsIndicators: false) {
+                            VStack(alignment: .leading, spacing: 0) {
+                                Color.clear.frame(height: 0).id("top")
 
-                            header(chapter)
-                                .padding(.horizontal, 22)
-                                .padding(.top, -64)
-                                .devotionalEntrance()
+                                hero(chapter, height: heroHeight, safeTop: safeTop)
+                                    .onGeometryChange(for: Bool.self) { hero in
+                                        hero.frame(in: .global).maxY < safeTop + Self.backFoot + 64
+                                    } action: { gone in
+                                        paintingGone = gone
+                                    }
 
-                            if chapter.sections.count > 1 {
-                                sectionStrip(chapter, proxy: proxy)
-                                    .padding(.top, 18)
-                            }
+                                VStack(alignment: .leading, spacing: 0) {
+                                    if !chapter.orders.isEmpty {
+                                        prayTogether(chapter)
+                                            .padding(.top, 18)
+                                    }
 
-                            if !chapter.orders.isEmpty {
-                                orders(chapter)
-                                    .padding(.horizontal, 20)
-                                    .padding(.top, 26)
-                            }
+                                    sections(chapter)
 
-                            sections(chapter)
-                                .padding(.horizontal, 20)
-                                .padding(.top, 8)
+                                    foot(chapter, proxy: proxy)
+                                        .padding(.top, 40)
+                                        .padding(.bottom, 48)
+                                }
+                                .padding(.horizontal, 18)
                                 .devotionalEntrance(delay: 0.06)
-
-                            turner(chapter, proxy: proxy)
-                                .padding(.horizontal, 20)
-                                .padding(.top, 34)
-                                .padding(.bottom, 48)
+                            }
+                            .opacity(pageOpacity)
                         }
-                        .opacity(pageOpacity)
+                        .ignoresSafeArea(edges: .top)
                     }
-                    .ignoresSafeArea(edges: .top)
                 }
-            }
 
-            ReaderBackCapsule { router.pop() }
-                .padding(.leading, 16)
-                .padding(.top, 4)
+                chromeGround(safeTop: safeTop)
+
+                ReaderBackCapsule { router.pop() }
+                    .padding(.leading, 16)
+                    .padding(.top, 4)
+            }
         }
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .navigationBar)
@@ -95,31 +118,71 @@ struct PrayerBookChapterView: View {
 
     // MARK: Head
 
-    /// The topic's painting, run to the top of the glass and dissolving
-    /// into the page beneath the title, never to a flat slab
-    private func hero(_ chapter: PrayerBookChapter) -> some View {
+    /// The topic's painting, run to the top of the glass, with its name
+    /// and line over its foot on a scrim that is at full strength behind
+    /// the words. Under a larger text size the words grow upward over the
+    /// painting rather than being cut or shrunk.
+    private func hero(_ chapter: PrayerBookChapter, height: CGFloat, safeTop: CGFloat) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(chapter.title)
+                .font(AppFonts.titleFont(30))
+                .foregroundColor(AppColors.cream)
+                .multilineTextAlignment(.leading)
+                .fixedSize(horizontal: false, vertical: true)
+                .shadow(color: .black.opacity(0.55), radius: 12, y: 2)
+                .accessibilityAddTraits(.isHeader)
+
+            Text(chapter.epigraph)
+                .font(AppFonts.readingItalicFont(17))
+                .foregroundColor(AppColors.cream.opacity(0.78))
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(.horizontal, 24)
+        .padding(.bottom, 20)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        // The scrim behind the words, from clear well above them to the
+        // page's own ground at their foot, across the whole width
+        .background(alignment: .bottom) {
+            LinearGradient(
+                stops: [
+                    .init(color: AppColors.background.opacity(0), location: 0),
+                    .init(color: AppColors.background.opacity(0.72), location: 0.45),
+                    .init(color: AppColors.background.opacity(0.92), location: 1)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .padding(.top, -90)
+            .accessibilityHidden(true)
+        }
+        .devotionalEntrance()
+        .frame(maxWidth: .infinity, minHeight: height, alignment: .bottomLeading)
+        .background { painting(chapter, safeTop: safeTop) }
+        .clipped()
+    }
+
+    /// The painting, dissolving to clear at its foot so the page's own
+    /// gradient shows through beneath it rather than a slab of one colour,
+    /// and veiled under the status bar and the Back
+    private func painting(_ chapter: PrayerBookChapter, safeTop: CGFloat) -> some View {
         let painting = PrayerBookPainting.topic(chapter)
         return CachedAssetImage(painting.resolvedAsset, focal: painting.focal)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .clipped()
             .overlay(alignment: .top) {
-                // A veil under the status bar and the Back capsule
                 LinearGradient(
-                    colors: [AppColors.background.opacity(0.55), AppColors.background.opacity(0)],
+                    colors: [AppColors.backgroundDeep.opacity(0.6), AppColors.backgroundDeep.opacity(0)],
                     startPoint: .top,
                     endPoint: .bottom
                 )
-                .frame(height: 110)
+                .frame(height: safeTop + Self.backFoot + 24)
             }
-            .frame(maxWidth: .infinity)
-            .frame(height: Self.heroHeight)
-            .clipped()
-            // Dissolves to clear, so the page's own gradient shows through
-            // beneath it rather than a slab of one colour
             .mask(
                 LinearGradient(
                     stops: [
                         .init(color: .black, location: 0),
-                        .init(color: .black, location: 0.5),
-                        .init(color: .black.opacity(0.35), location: 0.8),
+                        .init(color: .black, location: 0.55),
+                        .init(color: .black.opacity(0.4), location: 0.85),
                         .init(color: .clear, location: 1)
                     ],
                     startPoint: .top,
@@ -129,214 +192,169 @@ struct PrayerBookChapterView: View {
             .accessibilityHidden(true)
     }
 
-    private func header(_ chapter: PrayerBookChapter) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("\(chapter.part.title) · \(PrayerBookView.prayerCount(chapter.prayerIDs.count))")
-                .font(AppFonts.labelFont(9.5))
-                .tracking(2.4)
-                .textCase(.uppercase)
-                .foregroundColor(AppColors.gold)
-
-            Text(chapter.title)
-                .font(AppFonts.titleFont(28))
-                .foregroundColor(AppColors.cream)
-                .multilineTextAlignment(.leading)
-                .fixedSize(horizontal: false, vertical: true)
-                .accessibilityAddTraits(.isHeader)
-
-            Text(chapter.epigraph)
-                .font(AppFonts.readingItalicFont(16))
-                .foregroundColor(AppColors.textSecondary)
-                .fixedSize(horizontal: false, vertical: true)
+    /// The dark ground under the clock and the Back once the painting has
+    /// gone, so the prayers dissolve beneath them and never run under
+    /// either
+    private func chromeGround(safeTop: CGFloat) -> some View {
+        VStack(spacing: 0) {
+            AppColors.backgroundDeep
+                .frame(height: safeTop + Self.backFoot + 6)
+            LinearGradient(
+                colors: [AppColors.backgroundDeep, AppColors.backgroundDeep.opacity(0)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 30)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity)
+        .ignoresSafeArea(edges: .top)
+        .opacity(paintingGone ? 1 : 0)
+        .animation(Motion.crossfade, value: paintingGone)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
     }
 
-    /// The topic's sub-headings as a strip that scrolls sideways, each a
-    /// jump to its prayers
-    private func sectionStrip(_ chapter: PrayerBookChapter, proxy: ScrollViewProxy) -> some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
-                ForEach(Array(chapter.sections.enumerated()), id: \.offset) { i, section in
-                    Button {
-                        withAnimation(Motion.travel(0.45)) {
-                            proxy.scrollTo(Self.sectionAnchor(i), anchor: .top)
-                        }
-                    } label: {
-                        Text(section.title)
-                            .font(AppFonts.labelFont(9.5))
-                            .tracking(1.6)
-                            .textCase(.uppercase)
-                            .foregroundColor(AppColors.cream)
-                            .padding(.horizontal, 13)
-                            .frame(minHeight: 36)
-                            .overlay(
-                                Capsule()
-                                    .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline)
-                            )
-                            .contentShape(Capsule())
-                            .frame(minHeight: 44)
-                    }
-                    .buttonStyle(SacredCardButtonStyle())
-                    .accessibilityLabel("Go to \(section.title)")
-                }
+    // MARK: Pray together
+
+    /// The orders of prayer said together that belong to this topic: one
+    /// card, the first order's painting on its band, a row for each
+    private func prayTogether(_ chapter: PrayerBookChapter) -> some View {
+        let orders = chapter.orders
+        let painting = PrayerBookPainting.order(orders[0], on: now)
+
+        return VStack(alignment: .leading, spacing: 0) {
+            ZStack(alignment: .bottomLeading) {
+                CachedAssetImage(painting.resolvedAsset, focal: painting.focal)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 112)
+                    .clipped()
+                    .overlay(
+                        LinearGradient(
+                            stops: [
+                                .init(color: AppColors.cardBackground.opacity(0), location: 0.2),
+                                .init(color: AppColors.cardBackground.opacity(0.85), location: 0.82),
+                                .init(color: AppColors.cardBackground, location: 1)
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .accessibilityHidden(true)
+
+                Text("Pray together")
+                    .font(AppFonts.titleFont(18))
+                    .foregroundColor(AppColors.cream)
+                    .accessibilityAddTraits(.isHeader)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 8)
             }
-            .padding(.horizontal, 22)
-        }
-    }
 
-    // MARK: Orders
-
-    /// The orders of prayer said together that belong to this topic, as
-    /// the Prayers page's shortcuts are drawn
-    private func orders(_ chapter: PrayerBookChapter) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
-            sectionHeading("Prayed together")
-
-            LazyVGrid(
-                columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)],
-                spacing: 10
-            ) {
-                ForEach(chapter.orders) { order in
-                    PrayersShortcutTile(
-                        title: order.title(on: Date()),
-                        painting: .order(order)
+            VStack(spacing: 0) {
+                ForEach(Array(orders.enumerated()), id: \.element.id) { i, order in
+                    TopicOrderRow(
+                        title: order.title(on: now),
+                        occasion: order.occasion,
+                        showsRule: i < orders.count - 1
                     ) {
                         router.push(.prayerOrder(id: order.id))
                     }
                 }
             }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 4)
         }
+        .background(AppColors.cardBackground)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .strokeBorder(AppColors.gold.opacity(0.2), lineWidth: AppLine.hairline)
+        )
     }
 
     // MARK: Prayers
 
     private func sections(_ chapter: PrayerBookChapter) -> some View {
-        let seasonal = PrayerBook.antiphon(on: Date()).prayerID
-        let numbered = Self.numbered(chapter)
+        let seasonal = PrayerBook.antiphon(on: now).prayerID
+        let headed = chapter.sections.count > 1
 
         return VStack(alignment: .leading, spacing: 0) {
-            ForEach(Array(numbered.enumerated()), id: \.offset) { i, section in
-                VStack(alignment: .leading, spacing: 4) {
-                    // The anchor a jump lands on, standing clear above the
-                    // heading so it is not left under the Back capsule
-                    Color.clear
-                        .frame(height: Self.jumpClearance)
-                        .padding(.bottom, -Self.jumpClearance)
-                        .id(Self.sectionAnchor(i))
-
-                    if chapter.sections.count > 1 {
-                        sectionHeading(section.title)
-                            .padding(.top, 22)
+            ForEach(Array(chapter.sections.enumerated()), id: \.offset) { i, section in
+                VStack(alignment: .leading, spacing: 0) {
+                    if headed {
+                        PrayersShelfHeading(title: section.title)
+                            .padding(.top, 32)
+                            .padding(.bottom, 4)
                     }
 
-                    VStack(spacing: 0) {
-                        ForEach(Array(section.rows.enumerated()), id: \.offset) { j, row in
-                            BookPrayerRow(
-                                prayer: row.prayer,
-                                number: row.number,
-                                badge: chapter.id == PrayerBook.ourLady.id && row.prayer.id == seasonal
-                                    ? "This season" : nil,
-                                showsRule: j < section.rows.count - 1
-                            ) {
-                                router.push(.devotionPrayer(id: row.prayer.id))
-                            }
+                    let prayers = section.prayers
+                    ForEach(Array(prayers.enumerated()), id: \.offset) { j, prayer in
+                        TopicPrayerRow(
+                            prayer: prayer,
+                            store: store,
+                            seasonal: chapter.id == PrayerBook.ourLady.id && prayer.id == seasonal,
+                            showsRule: j < prayers.count - 1
+                        ) {
+                            router.push(.devotionPrayer(id: prayer.id))
                         }
                     }
                 }
+                // A topic with no sub-headings, or no orders above it,
+                // still stands clear of what comes before
+                .padding(.top, !headed && i == 0 ? 14 : 0)
             }
         }
     }
-
-    private func sectionHeading(_ title: String) -> some View {
-        HStack(spacing: 10) {
-            Text(title)
-                .font(AppFonts.labelFont(9.5))
-                .tracking(2.4)
-                .textCase(.uppercase)
-                .foregroundColor(AppColors.gold)
-                .fixedSize()
-                .accessibilityAddTraits(.isHeader)
-            Rectangle()
-                .fill(AppColors.gold.opacity(0.24))
-                .frame(height: AppLine.hairline)
-        }
-    }
-
-    private struct NumberedSection {
-        let title: String
-        let rows: [(number: Int, prayer: BookPrayer)]
-    }
-
-    /// The prayers numbered down the whole topic, as a contents page
-    /// numbers them, the count running on across the sub-headings
-    private static func numbered(_ chapter: PrayerBookChapter) -> [NumberedSection] {
-        var number = 0
-        return chapter.sections.map { section in
-            NumberedSection(
-                title: section.title,
-                rows: section.prayers.map { prayer in
-                    number += 1
-                    return (number, prayer)
-                }
-            )
-        }
-    }
-
-    private static func sectionAnchor(_ index: Int) -> String { "section-\(index)" }
 
     // MARK: Turning the page
 
+    /// The next topic as a painted card, then a quiet line back to the
+    /// one before. The last topic has no next card: the ornament closes
+    /// the page over the line back.
     @ViewBuilder
-    private func turner(_ chapter: PrayerBookChapter, proxy: ScrollViewProxy) -> some View {
+    private func foot(_ chapter: PrayerBookChapter, proxy: ScrollViewProxy) -> some View {
         let chapters = PrayerBook.chapters
         if let i = chapters.firstIndex(where: { $0.id == chapter.id }) {
-            VStack(spacing: 14) {
-                Rectangle()
-                    .fill(AppColors.gold.opacity(0.15))
-                    .frame(height: AppLine.hairline)
+            let previous = i > 0 ? chapters[i - 1] : nil
+            let next = i < chapters.count - 1 ? chapters[i + 1] : nil
 
-                HStack(alignment: .top) {
-                    if i > 0 {
-                        turnButton(chapters[i - 1], forward: false, proxy: proxy)
+            VStack(spacing: 12) {
+                if let next {
+                    Button {
+                        turn(to: next.id, proxy: proxy)
+                    } label: {
+                        NextTopicCard(chapter: next)
                     }
-                    Spacer(minLength: 12)
-                    if i < chapters.count - 1 {
-                        turnButton(chapters[i + 1], forward: true, proxy: proxy)
+                    .buttonStyle(SacredCardButtonStyle())
+                    .accessibilityLabel("Next topic, \(next.title)")
+                } else {
+                    OrnamentDivider()
+                        .padding(.vertical, 8)
+                }
+
+                if let previous {
+                    Button {
+                        turn(to: previous.id, proxy: proxy)
+                    } label: {
+                        Text(Self.backLine(to: previous.title))
+                            .font(AppFonts.readingItalicFont(15.5))
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: .infinity, minHeight: 44)
+                            .contentShape(Rectangle())
                     }
+                    .buttonStyle(QuietGlyphButtonStyle())
+                    .accessibilityLabel("Topic before, \(previous.title)")
                 }
             }
         }
     }
 
-    /// The next topic replaces this one rather than stacking on it, so
-    /// Back always returns to the Prayers page
-    private func turnButton(_ target: PrayerBookChapter, forward: Bool, proxy: ScrollViewProxy) -> some View {
-        Button {
-            turn(to: target.id, proxy: proxy)
-        } label: {
-            VStack(alignment: forward ? .trailing : .leading, spacing: 4) {
-                HStack(spacing: 5) {
-                    if !forward { AppIcon("ph-caret-left", size: 9) }
-                    Text(forward ? "NEXT TOPIC" : "TOPIC BEFORE")
-                        .font(AppFonts.labelFont(8.5))
-                        .tracking(2)
-                    if forward { AppIcon("ph-caret-right", size: 9) }
-                }
-                .foregroundColor(AppColors.gold.opacity(0.8))
-
-                Text(target.title)
-                    .font(AppFonts.readingFont(15.5))
-                    .foregroundColor(AppColors.cream.opacity(0.9))
-                    .multilineTextAlignment(forward ? .trailing : .leading)
-            }
-            .frame(maxWidth: 170, alignment: forward ? .trailing : .leading)
-            // Hung from the top, so the two kickers share a line when
-            // one title wraps and the other does not
-            .frame(minHeight: 44, alignment: .top)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(SacredCardButtonStyle())
+    /// "or back to Short Prayers", the name in pale gold
+    private static func backLine(to title: String) -> AttributedString {
+        var lead = AttributedString("or back to ")
+        lead.foregroundColor = AppColors.textSecondary
+        var name = AttributedString(title)
+        name.foregroundColor = AppColors.goldLight
+        return lead + name
     }
 
     /// Fades the page out, swaps the topic and puts the scroll back to
@@ -352,6 +370,215 @@ struct PrayerBookChapterView: View {
             // the turn pushed one: it starts again at the header
             AccessibilityNotification.ScreenChanged(nil).post()
         }
+    }
+}
+
+// MARK: - An order's row
+
+/// One order of prayer in the Pray together card: its name over when it
+/// is said, and a caret. The whole row opens the order's page.
+private struct TopicOrderRow: View {
+    let title: String
+    let occasion: String
+    let showsRule: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 0) {
+                HStack(spacing: 12) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(title)
+                            .font(AppFonts.readingFont(17))
+                            .foregroundColor(AppColors.cream)
+                            .fixedSize(horizontal: false, vertical: true)
+                        Text(occasion)
+                            .font(AppFonts.readingItalicFont(13.5))
+                            .foregroundColor(AppColors.textSecondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                    AppIcon("ph-caret-right", size: 11)
+                        .foregroundColor(AppColors.gold.opacity(0.6))
+                }
+                .padding(.vertical, 11)
+                .frame(minHeight: 56)
+
+                if showsRule {
+                    Rectangle()
+                        .fill(AppColors.gold.opacity(0.12))
+                        .frame(height: AppLine.hairline)
+                }
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(SacredCardButtonStyle())
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(title), \(occasion)")
+        .accessibilityHint("Prayed together")
+        .accessibilityAddTraits(.isButton)
+    }
+}
+
+// MARK: - A prayer's row
+
+/// One prayer of the topic: its name, its second name beneath, and at the
+/// trailing edge the reader's marks — THIS SEASON on Our Lady's song for
+/// the season, LEARNED, the saved ribbon — then a caret. A copy of the
+/// book's `BookPrayerRow` without its numeral. Where the marks and the
+/// name will not share a line, the marks drop under the name rather than
+/// cut it short.
+private struct TopicPrayerRow: View {
+    let prayer: BookPrayer
+    let store: PrayerBookStore
+    let seasonal: Bool
+    let showsRule: Bool
+    let action: () -> Void
+
+    private var learned: Bool { store.isByHeart(prayer.id) }
+    private var saved: Bool { store.isKept(prayer.id) }
+    private var hasMarks: Bool { seasonal || learned || saved }
+
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 0) {
+                HStack(alignment: .center, spacing: 12) {
+                    if hasMarks {
+                        ViewThatFits(in: .horizontal) {
+                            HStack(spacing: 10) {
+                                names.fixedSize(horizontal: true, vertical: false)
+                                Spacer(minLength: 8)
+                                marks
+                            }
+                            VStack(alignment: .leading, spacing: 6) {
+                                names
+                                marks
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                    } else {
+                        names.frame(maxWidth: .infinity, alignment: .leading)
+                    }
+
+                    AppIcon("ph-caret-right", size: 11)
+                        .foregroundColor(AppColors.gold.opacity(0.5))
+                }
+                .padding(.vertical, 12)
+                .frame(minHeight: 56)
+
+                if showsRule {
+                    Rectangle()
+                        .fill(AppColors.gold.opacity(0.12))
+                        .frame(height: AppLine.hairline)
+                }
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(SacredCardButtonStyle())
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(spokenLabel)
+        .accessibilityAddTraits(.isButton)
+    }
+
+    private var names: some View {
+        VStack(alignment: .leading, spacing: 3) {
+            Text(prayer.title)
+                .font(AppFonts.readingFont(17))
+                .foregroundColor(AppColors.cream)
+                .multilineTextAlignment(.leading)
+                .fixedSize(horizontal: false, vertical: true)
+
+            if let second = prayer.secondTitle {
+                Text(second)
+                    .font(AppFonts.readingItalicFont(13.5))
+                    .foregroundColor(AppColors.textSecondary)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+    }
+
+    private var marks: some View {
+        HStack(spacing: 10) {
+            if seasonal {
+                Text("THIS SEASON")
+                    .font(AppFonts.labelFont(8))
+                    .tracking(1.6)
+                    .foregroundColor(AppColors.gold)
+                    .fixedSize()
+            }
+            if learned {
+                ByHeartMark()
+            }
+            if saved {
+                RibbonMark(kept: true, width: 7, restLength: 12, keptLength: 16)
+            }
+        }
+    }
+
+    private var spokenLabel: String {
+        [
+            prayer.title,
+            prayer.secondTitle,
+            seasonal ? "This season" : nil,
+            learned ? "Learned" : nil,
+            saved ? "Saved" : nil
+        ]
+        .compactMap { $0 }
+        .joined(separator: ", ")
+    }
+}
+
+// MARK: - The next topic
+
+/// The next topic as a painted card: its own painting under a scrim that
+/// darkens toward the words, "Next topic" over its name
+private struct NextTopicCard: View {
+    let chapter: PrayerBookChapter
+
+    var body: some View {
+        let painting = PrayerBookPainting.topic(chapter)
+
+        VStack(alignment: .leading, spacing: 2) {
+            Text("Next topic")
+                .font(AppFonts.readingItalicFont(14))
+                .foregroundColor(AppColors.cream.opacity(0.78))
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Text(chapter.title)
+                    .font(AppFonts.titleFont(22))
+                    .foregroundColor(AppColors.cream)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                AppIcon("ph-caret-right", size: 12)
+                    .foregroundColor(AppColors.gold)
+            }
+        }
+        .padding(18)
+        .frame(maxWidth: .infinity, minHeight: 150, alignment: .bottomLeading)
+        .background {
+            CachedAssetImage(painting.resolvedAsset, focal: painting.focal)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .clipped()
+                .overlay(
+                    LinearGradient(
+                        stops: [
+                            .init(color: AppColors.background.opacity(0.92), location: 0),
+                            .init(color: AppColors.background.opacity(0.55), location: 0.55),
+                            .init(color: AppColors.background.opacity(0.1), location: 1)
+                        ],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .accessibilityHidden(true)
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .strokeBorder(AppColors.gold.opacity(0.2), lineWidth: AppLine.hairline)
+        )
+        .contentShape(RoundedRectangle(cornerRadius: 16))
     }
 }
 

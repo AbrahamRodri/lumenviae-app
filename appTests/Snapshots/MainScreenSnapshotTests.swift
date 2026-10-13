@@ -138,6 +138,27 @@ struct MainScreenSnapshotTests {
             named: "prayer-order-page"
         )
     }
+
+    /// A topic with orders said together: the painting with the name on
+    /// it, then the Pray together card, then the first prayers
+    @Test func prayerTopicPage() {
+        ScreenSnapshot.assertScreen(
+            PrayerBookChapterView(chapterID: "mass", store: Fixtures.prayerBookStore(), date: Fixtures.day),
+            named: "prayer-topic-page"
+        )
+    }
+
+    /// A topic with no orders, opening straight on its prayers, with the
+    /// reader's marks: this season's song to Mary, one learned, one saved
+    @Test func prayerTopicMarks() {
+        let store = Fixtures.prayerBookStore()
+        store.setByHeart("hail_mary", true)
+        store.toggleRibbon("rosary_closing_prayer")
+        ScreenSnapshot.assertScreen(
+            PrayerBookChapterView(chapterID: PrayerBook.ourLady.id, store: store, date: Fixtures.day),
+            named: "prayer-topic-marks"
+        )
+    }
 }
 
 // MARK: - Fixtures
