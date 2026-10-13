@@ -306,17 +306,16 @@ struct ChantPauseSheet: View {
 
             Spacer(minLength: 12)
 
-            // Outlined until there is a pause to add, so the waiting act
-            // reads as waiting rather than as a gold pill washed out
-            GoldCTAButton(title: "Add the pause", fill: canAdd ? .solid : .outline, trailingIcon: "ph-check") {
-                shelf.addPause(
-                    note: words.isEmpty ? (minutes > 0 ? Self.silentPrayer : "") : words,
-                    seconds: minutes * 60,
-                    to: set.id
-                )
-                dismiss()
+            ZStack {
+                if canAdd {
+                    GoldCTAButton(title: "Add the pause", trailingIcon: "ph-check", action: add)
+                        .transition(.opacity)
+                } else {
+                    waitingAct
+                        .transition(.opacity)
+                }
             }
-            .disabled(!canAdd)
+            .animation(Motion.crossfade, value: canAdd)
             .padding(.horizontal, SheetMetrics.gutter)
             .padding(.bottom, 20)
         }
@@ -375,6 +374,41 @@ struct ChantPauseSheet: View {
                 .accessibilityHidden(true)
         }
         .padding(.horizontal, SheetMetrics.gutter - 8)
+    }
+
+    private func add() {
+        shelf.addPause(
+            note: words.isEmpty ? (minutes > 0 ? Self.silentPrayer : "") : words,
+            seconds: minutes * 60,
+            to: set.id
+        )
+        dismiss()
+    }
+
+    /// The act while there is no pause to add yet: a hairline capsule with
+    /// its words dimmed, so it reads as waiting rather than as the gold
+    /// pill washed out. Drawn here, not as the shared button's outline,
+    /// whose rim drew stray hairlines past its rounded ends.
+    private var waitingAct: some View {
+        Button(action: add) {
+            HStack(spacing: 10) {
+                Text("ADD THE PAUSE")
+                    .font(AppFonts.labelFont(13))
+                    .tracking(2.5)
+                AppIcon("ph-check", size: 11)
+            }
+            .foregroundColor(AppColors.gold.opacity(0.45))
+            .frame(maxWidth: .infinity, minHeight: 54)
+            .overlay(
+                RoundedRectangle(cornerRadius: 27, style: .circular)
+                    .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline)
+            )
+            .contentShape(RoundedRectangle(cornerRadius: 27, style: .circular))
+        }
+        .buttonStyle(.plain)
+        .disabled(true)
+        .accessibilityLabel("Add the pause")
+        .accessibilityHint("Write a note or choose a silence first")
     }
 
     /// The set's last chant, which the pause will follow

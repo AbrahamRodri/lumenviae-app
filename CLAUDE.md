@@ -2657,9 +2657,13 @@ write concurrent code here:
   it again; the foot counts the set and holds the one DONE. Add a pause
   (`ChantPauseSheet`) writes the note in red, sets the six lengths
   (None, 1, 2, 5, 10, 15) as beads on one line, and shows the pause as
-  it will read under the set's last chant. A new set hangs the painting
+  it will read under the set's last chant, only once the set holds a
+  chant (in an empty set it would repeat the red line above it); until a
+  note or a silence is chosen, Add the pause waits as a hairline capsule
+  drawn in the sheet, not the shared gold button. A new set hangs the painting
   an empty set wears (`ChantSet.emptyPainting`) over its name; Add to a
-  set shows each set by its painting with the same ring. The curation — every chant's kind,
+  set shows each set by its painting with the same ring, "Already in it"
+  on its line, and counts it as the picker's foot does (`sungCount`). The curation — every chant's kind,
   seasons, feasts, weekdays, months, occasions with their rubrics,
   paths and paintings — is `Data/ChantLibraryData.swift`, hand-written;
   `ChantLibraryTests` fails if it names a chant the catalog lacks or

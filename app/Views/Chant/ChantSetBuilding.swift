@@ -218,7 +218,7 @@ struct ChantSetRow: View {
             .contentShape(Rectangle())
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(
-                [set.name, detail].joined(separator: ", ")
+                [set.name, holds, ChantAddRing.spoken(count)].compactMap { $0 }.joined(separator: ", ")
             )
         }
         .buttonStyle(.plain)
@@ -229,11 +229,17 @@ struct ChantSetRow: View {
         .accessibilityHint("Adds the chant to the end of this set")
     }
 
-    /// What the set holds, said as its own page says it, and whether the
-    /// chant is in it already: "Already in it · 2 chants · about 5 minutes"
+    /// What the set holds, counted as the picker's foot counts it, every
+    /// repeat included: "4 chants · 23 min", or as its page says when it
+    /// holds no chant
+    private var holds: String {
+        self.set.sungCount == 0 ? "Nothing in it yet" : ChantSetCard.summary(count: set.sungCount, duration: set.duration)
+    }
+
+    /// The line under the set's name, short enough to stand on one line:
+    /// "Already in it · 4 chants · 23 min"
     private var detail: String {
-        let holds = set.items.isEmpty ? "Nothing in it yet" : set.summary
-        return count > 0 ? "Already in it · \(holds)" : holds
+        count > 0 ? "Already in it · \(holds)" : holds
     }
 }
 
