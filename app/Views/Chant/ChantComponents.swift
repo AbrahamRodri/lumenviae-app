@@ -626,55 +626,6 @@ nonisolated struct ChantSideScrollMore: Equatable {
     var trailing = false
 }
 
-// MARK: - ChantSettingPill
-
-/// A work sung in more than one setting — the simple and the solemn Salve
-/// Regina — as a pill of its settings, each with its length. A segmented
-/// picker to VoiceOver.
-struct ChantSettingPill: View {
-    let settings: [Chant]
-    let selected: String
-    let choose: (Chant) -> Void
-
-    var body: some View {
-        HStack(spacing: 4) {
-            ForEach(settings) { chant in
-                let lit = chant.id == selected
-                Button {
-                    choose(chant)
-                } label: {
-                    HStack(spacing: 6) {
-                        Text(chant.settingName ?? chant.latinTitle)
-                            .font(AppFonts.readingItalicFont(14))
-                            .foregroundColor(lit ? AppColors.goldLight : AppColors.textSecondary)
-                            .lineLimit(1)
-                        Text(chant.durationLabel)
-                            .font(AppFonts.labelFont(8.5))
-                            .tracking(1)
-                            .foregroundColor(AppColors.textSecondary)
-                            .monospacedDigit()
-                            .lineLimit(1)
-                    }
-                    .frame(maxWidth: .infinity)
-                    // 38 inside a 3pt rim: the pill stands 44 tall, a
-                    // finger's reach, as drawn
-                    .frame(height: 38)
-                    .background(Capsule().fill(lit ? AppColors.gold.opacity(0.16) : Color.clear))
-                    .contentShape(Capsule())
-                }
-                .buttonStyle(SacredCardButtonStyle())
-                .accessibilityLabel("\(chant.settingName ?? chant.latinTitle), \(ChantPlayer.spoken(chant.duration))")
-                .accessibilityAddTraits(lit ? [.isSelected] : [])
-            }
-        }
-        .padding(3)
-        .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.22), lineWidth: AppLine.hairline))
-        .animation(Motion.choice, value: selected)
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel("Melody")
-    }
-}
-
 // MARK: - ChantPainting
 
 /// A painting hung at the head of a card or a board, dissolving to clear
@@ -1060,8 +1011,7 @@ enum ChantDates {
 // MARK: - ChantGoldPlayButton
 
 /// The board's one gold act when it is a chant to sing: a gold disc with
-/// the play or pause glyph dark upon it, haloed. Tonight's antiphon, the
-/// chant's own page.
+/// the play or pause glyph dark upon it, haloed: the chant's own page.
 struct ChantGoldPlayButton: View {
     let isPlaying: Bool
     let isLoading: Bool
