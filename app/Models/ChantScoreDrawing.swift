@@ -30,15 +30,18 @@
 
 import Foundation
 import CoreGraphics
+import SwiftUI
 
 nonisolated struct ChantScoreDrawing: @unchecked Sendable {
 
     enum Ink { case ink, rubric }
 
+    /// Each shape is made a SwiftUI `Path` once, as it is read, so a
+    /// Canvas redrawing the score never wraps the same paths again
     enum Operation {
-        case fill(CGPath, Ink)
-        case erase(CGPath)
-        case stroke(CGPath, Ink, CGFloat)
+        case fill(Path, Ink)
+        case erase(Path)
+        case stroke(Path, Ink, CGFloat)
     }
 
     /// The engraving's viewBox, in its own units
@@ -70,12 +73,12 @@ nonisolated struct ChantScoreDrawing: @unchecked Sendable {
                 SVGPathData.append(data, to: path)
             }
             switch kind {
-            case "I": operations.append(.fill(path, .ink))
-            case "R": operations.append(.fill(path, .rubric))
-            case "W": operations.append(.erase(path))
+            case "I": operations.append(.fill(Path(path), .ink))
+            case "R": operations.append(.fill(Path(path), .rubric))
+            case "W": operations.append(.erase(Path(path)))
             case "S", "T":
                 let width = CGFloat(Double(line[line.index(after: line.startIndex)..<space]) ?? 1)
-                operations.append(.stroke(path, kind == "T" ? .rubric : .ink, width))
+                operations.append(.stroke(Path(path), kind == "T" ? .rubric : .ink, width))
             default:
                 continue
             }

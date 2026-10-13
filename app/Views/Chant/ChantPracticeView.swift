@@ -84,17 +84,7 @@ struct ChantPracticeView: View {
     @State private var found: (rate: Double, repeats: Bool)?
 
     /// How much of the words is hidden, for singing from memory
-    enum Hiding: CaseIterable {
-        case none, half, all
-
-        var title: String {
-            switch self {
-            case .none: return "None"
-            case .half: return "Half"
-            case .all:  return "All"
-            }
-        }
-    }
+    typealias Hiding = ChantHiding
 
     /// Where the line left is kept (`PracticePlace`)
     private let places: UserDefaults
@@ -342,7 +332,7 @@ struct ChantPracticeView: View {
                                 .font(AppFonts.labelFont(9))
                                 .tracking(1.8)
                                 .foregroundColor(AppColors.cream.opacity(0.7))
-                                .contentTransition(.numericText())
+                                .contentTransition(.chantCount(reduceMotion: reduceMotion))
                         }
                     }
                 }
@@ -508,12 +498,14 @@ struct ChantPracticeView: View {
     /// The seconds the turn was given, for its ring: the line's length at
     /// the pace sounding, as the player reckons it
     private func turnLength(of turn: ChantTurn) -> TimeInterval {
-        let length = chant.lines.indices.contains(turn.line) ? chant.lines[turn.line].length : 4
-        return length / max(player.speed, 0.5) + 0.6
+        ChantTurn.length(of: chant.lines.indices.contains(turn.line) ? chant.lines[turn.line] : nil, speed: player.speed)
     }
 
     private func discCaption(turn: ChantTurn?) -> String {
         if turn != nil { return Self.turnCaption(step: step) }
+        // The chant would not play: said where it was asked for, since the
+        // mini player stands aside for the practice
+        if player.current.id == chant.id, let error = player.error { return error.caption }
         if player.isPlaying(chant) { return "Tap to pause" }
         return Self.restCaption(step: step, timed: lines)
     }
@@ -813,30 +805,14 @@ struct ChantPracticeView: View {
     // MARK: - Words, hidden
 
     /// The words with every other one, or every one, cut to its first
-    /// letter — as the Prayer Book's learning by heart does
+    /// letter (`ChantPracticeWords`)
     static func hide(_ text: String, _ hiding: Hiding) -> String {
-        guard hiding != .none else { return text }
-        var index = 0
-        return text.components(separatedBy: "\n").map { line in
-            line.components(separatedBy: " ").map { word -> String in
-                defer { index += 1 }
-                guard word.count > 1, hiding == .all || index % 2 == 1 else { return word }
-                let letters = word.filter(\.isLetter)
-                guard let first = letters.first else { return word }
-                let trailing = word.last.map { $0.isLetter ? "" : String($0) } ?? ""
-                return String(first) + String(repeating: "·", count: max(1, letters.count - 1)) + trailing
-            }
-            .joined(separator: " ")
-        }
-        .joined(separator: "\n")
+        ChantPracticeWords.hidden(text, hiding)
     }
 
     /// The Prayer Book's grammar as plain lines to sing from
     static func plain(_ text: String) -> String {
-        text.components(separatedBy: "\n")
-            .map(ChantSearch.clean)
-            .filter { !$0.isEmpty }
-            .joined(separator: "\n")
+        ChantPracticeWords.plain(text)
     }
 }
 
@@ -1021,6 +997,8 @@ private struct PracticeLineThread: View {
     let line: Int
     let count: Int
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     var body: some View {
         GeometryReader { geometry in
             let fraction = count > 1 ? CGFloat(line) / CGFloat(count - 1) : 1
@@ -1039,7 +1017,9 @@ private struct PracticeLineThread: View {
                     .offset(x: x - 3.5)
             }
             .frame(height: geometry.size.height)
-            .animation(Motion.settle, value: line)
+            // The bead travels the thread, or under Reduce Motion stands
+            // at the line at once
+            .animation(reduceMotion ? nil : Motion.settle, value: line)
         }
         .frame(height: 8)
         .accessibilityHidden(true)

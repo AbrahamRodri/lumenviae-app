@@ -19,6 +19,8 @@ import SwiftUI
 struct ChantAddRing: View {
     let count: Int
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     var body: some View {
         ZStack {
             Circle()
@@ -33,7 +35,7 @@ struct ChantAddRing: View {
                     .font(AppFonts.labelFont(12))
                     .foregroundColor(AppColors.goldLight)
                     .monospacedDigit()
-                    .contentTransition(.numericText())
+                    .contentTransition(.chantCount(reduceMotion: reduceMotion))
             } else {
                 AppIcon("ph-plus", size: 13)
                     .foregroundColor(AppColors.gold)

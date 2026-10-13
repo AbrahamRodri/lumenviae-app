@@ -446,9 +446,6 @@ enum ChantLibraryData {
                                      "sanctus_orbis_factor", "agnus_orbis_factor"])
     ]
 
-    /// How many paths stand open before "See more"
-    static let openPaths = 3
-
     // MARK: - Paintings
 
     /// The paintings the boards hang beside a chant: the scene, saint or
@@ -631,22 +628,6 @@ enum ChantLibraryData {
         "Alma Redemptoris Mater|alma_redemptoris": "Loving Mother of the Redeemer. Sung at the close of each day from Advent until February 2 (Candlemas).",
         "Ave Regina Cælorum|ave_regina_caelorum": "Hail, Queen of Heaven. Sung at the close of each day from February 2 (Candlemas) until Holy Week.",
         "Regina Cæli|regina_caeli": "Queen of Heaven, rejoice. Sung at the close of each day through the Easter season, and in place of the Angelus."
-    ]
-
-    /// The names the day's four hours give their chants under the arc,
-    /// in English and as short as they honestly can be: a station is a
-    /// quarter of the glass wide
-    static let stationNames: [String: String] = [
-        "angelus": "Angelus",
-        "magnificat": "Mary's Song",
-        "salve_regina_simple": "Hail, Holy Queen",
-        "salve_regina_solemn": "Hail, Holy Queen",
-        "alma_redemptoris": "Loving Mother",
-        "alma_redemptoris_simple": "Loving Mother",
-        "ave_regina_simple": "Hail, Queen of Heaven",
-        "ave_regina_solemn": "Hail, Queen of Heaven",
-        "regina_caeli_simple": "Queen of Heaven",
-        "regina_caeli_solemn": "Queen of Heaven"
     ]
 
     /// The words an occasion's title or a red note once had, by the words

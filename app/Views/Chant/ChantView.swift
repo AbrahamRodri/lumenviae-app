@@ -709,6 +709,7 @@ struct ChantYourTurn: View {
 private struct NowPlayingTransport: View {
     let chant: Chant
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     private var player = ChantPlayer.shared
 
     init(chant: Chant) {
@@ -729,12 +730,12 @@ private struct NowPlayingTransport: View {
                 }
                 HStack {
                     Text(ChantPlayer.clock(elapsed))
-                        .contentTransition(.numericText())
+                        .contentTransition(.chantCount(reduceMotion: reduceMotion))
                     Spacer()
                     if lines {
                         Text("Line \((holds ? player.lineIndex ?? 0 : 0) + 1) of \(chant.lines.count)")
                             .font(AppFonts.readingItalicFont(13))
-                            .contentTransition(.numericText())
+                            .contentTransition(.chantCount(reduceMotion: reduceMotion))
                         Spacer()
                     }
                     Text(ChantPlayer.clock(total))
@@ -782,8 +783,16 @@ private struct NowPlayingTransport: View {
                     AppIcon(back ? "ph-skip-back" : "ph-skip-forward", size: 22)
                 } else {
                     // The system's own glyph, since it carries its number
-                    Image(systemName: back ? "gobackward.10" : "goforward.10")
-                        .font(.system(size: 21, weight: .light))
+                    // (the one place the icon rules keep an SF Symbol), named
+                    // outright so the lint can see it is no door glyph
+                    Group {
+                        if back {
+                            Image(systemName: "gobackward.10")
+                        } else {
+                            Image(systemName: "goforward.10")
+                        }
+                    }
+                    .font(.system(size: 21, weight: .light))
                 }
             }
             .foregroundColor(AppColors.gold.opacity(holds ? 1 : 0.35))

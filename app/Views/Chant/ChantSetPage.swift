@@ -77,6 +77,9 @@ struct ChantSetPage: View {
     }
 
     var body: some View {
+        // Built once a drawing: the rows, the queue and the occasion
+        // unrolled, which the page reads in several places
+        let content = self.content
         ZStack(alignment: .top) {
             AppColors.appGradient.ignoresSafeArea()
 
@@ -217,12 +220,13 @@ struct ChantSetPage: View {
                     Row(id: "step-\(number)", kind: .chant(chant, times: step.times), origin: number, itemID: nil))
             }
         }
+        let unrolled = occasion.unrolled()
         return Content(
             title: occasion.title,
             note: occasion.note,
             painting: occasion.painting,
-            chantCount: occasion.distinctChants().count,
-            duration: occasion.duration(),
+            chantCount: unrolled.distinct.count,
+            duration: unrolled.duration,
             queue: ChantQueue.occasion(occasion),
             rows: rows
         )
