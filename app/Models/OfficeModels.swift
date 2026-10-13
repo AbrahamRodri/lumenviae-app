@@ -97,8 +97,7 @@ nonisolated enum CanonicalHour: String, CaseIterable, Codable, Identifiable {
 
     /// The hour named in English with the part of day it belongs to —
     /// "Terce, the mid-morning hour". `timeOfDay` says the same thing in
-    /// the ledger's telegraphic register; this is the sentence form the
-    /// home ledger and the arch read in.
+    /// a telegraphic register; this is the sentence form of it.
     var dayPart: String {
         switch self {
         case .matins: return "the hour of the night"

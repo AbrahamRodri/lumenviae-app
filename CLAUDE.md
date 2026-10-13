@@ -1825,7 +1825,7 @@ write concurrent code here:
   Morning Prayer, Mid-Morning Prayer, Midday Prayer, Mid-Afternoon
   Prayer, Evening Prayer, Bedtime Prayer — never "Morning Prayer" or
   "Night Prayer", which are the Prayer Book's), the Church's name (`label`) small beneath — the pre-Vatican-II Breviarium Romanum (1960 rubrics,
-  the 1962 books), reached from the Divine Office row of Today's Prayer,
+  the 1962 books), reached from the Hours of Prayer row of Today's Prayer,
   Explore, the Chapel's Liturgy tile and the Pray tray. Served by our own API's `/office/*` endpoints
   (`GET /office/:date`, `/office/:date/:hour`, `/office/calendar/:year/:month`,
   `/office/versions`), which the Phoenix app assembles from the Divinum
@@ -1878,7 +1878,7 @@ write concurrent code here:
 
   **`CanonicalClock`** (a `Services/` singleton) is the one place that
   says which hour it is now. It sleeps to each boundary rather than
-  ticking, and refreshes on foreground; the home ledger's Office row,
+  ticking, and refreshes on foreground; Home's Hours of Prayer row,
   the arch, and the strand's NOW mark all read it, so they roll over
   together. `CanonicalHour.beginsAtClockHour` is the single boundary
   table — `present(atClockHour:)` and the arch's "until Sext at noon"

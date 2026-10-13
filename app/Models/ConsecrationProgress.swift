@@ -51,12 +51,7 @@ final class ConsecrationProgress {
     /// What day should show today (based on start date)
     /// Returns 1-34, capped at 34
     var currentDayNumber: Int {
-        currentDayNumber(asOf: Date())
-    }
-
-    /// `currentDayNumber` as of a given moment
-    func currentDayNumber(asOf now: Date) -> Int {
-        min(daysSinceStart(asOf: now) + 1, 34)
+        min(daysSinceStart(asOf: Date()) + 1, 34)
     }
 
     /// Whole calendar days from Day 1 to `now`, uncapped: 0 on Day 1, 40

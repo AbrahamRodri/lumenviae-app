@@ -108,7 +108,8 @@ struct TodaysPrayerSnapshotTests {
         )
     }
 
-    /// The app's largest text: names and lines take a second line
+    /// The app's largest text: the hour's sentence takes two lines, and
+    /// nothing is cut
     @Test func largestText() throws {
         ScreenSnapshot.assertScreen(
             screen(store: try store("largest"), container: try consecrations(dayTwelvePrayed: true))

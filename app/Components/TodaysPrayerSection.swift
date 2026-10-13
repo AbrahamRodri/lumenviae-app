@@ -55,15 +55,6 @@ struct TodaysPrayerSection: View {
         self.fixedNow = now
     }
 
-    /// The preparation under way, or one made today: on the day of
-    /// consecration, completing it must not turn the row back to BEGIN
-    private func shownConsecration(at now: Date) -> ConsecrationProgress? {
-        consecrations.first { !$0.isCompleted }
-            ?? consecrations.first { progress in
-                progress.completedAt.map { Calendar.current.isDate($0, inSameDayAs: now) } ?? false
-            }
-    }
-
     // MARK: - Body
 
     var body: some View {
@@ -72,7 +63,8 @@ struct TodaysPrayerSection: View {
 
             VStack(spacing: 4) {
                 let now = fixedNow ?? .now
-                TodaysPrayerRowView(row: .consecration(shownConsecration(at: now), now: now)) {
+                let shown = TodaysPrayerRow.shownConsecration(among: consecrations, at: now)
+                TodaysPrayerRowView(row: .consecration(shown, now: now)) {
                     // The tab knows every state: mid-preparation it opens
                     // the day, chosen ahead the page that waits for Day 1,
                     // and otherwise the invitation to begin.
@@ -147,8 +139,7 @@ struct TodaysPrayerSection: View {
         let hour = fixedNow.map { CanonicalHour.present(atClockHour: Calendar.current.component(.hour, from: $0)) }
             ?? clock.hour
 
-        // The words crossfade in place as the hour turns; re-identified,
-        // the old and new rows stood together for the length of the fade
+        // The row's words crossfade in place as the hour turns
         return TodaysPrayerRowView(row: .office(hour)) {
             router.push(.office)
         }
@@ -184,6 +175,17 @@ struct TodaysPrayerRow: Equatable {
 
     // MARK: Consecration to Mary
 
+    /// The record the row shows: the preparation under way, or one made
+    /// today, so completing it on the day of consecration does not turn
+    /// the row back to BEGIN. One made on an earlier day is done, and the
+    /// row invites a new one.
+    static func shownConsecration(among records: [ConsecrationProgress], at now: Date) -> ConsecrationProgress? {
+        records.first { !$0.isCompleted }
+            ?? records.first { progress in
+                progress.completedAt.map { Calendar.current.isDate($0, inSameDayAs: now) } ?? false
+            }
+    }
+
     /// The preparation's painting while it is under way is its period's
     /// own, the one its day page opens on; before it, and once it is
     /// made, the Coronation.
@@ -214,7 +216,7 @@ struct TodaysPrayerRow: Equatable {
                 subtitle: consecrationTitle,
                 fact: "CONSECRATED TODAY",
                 isPrayed: true,
-                spoken: "\(name), consecrated today, \(consecrationTitle)"
+                spoken: "\(name), \(consecrationTitle), consecrated today"
             )
         }
 
@@ -260,7 +262,7 @@ struct TodaysPrayerRow: Equatable {
             subtitle: title,
             fact: fact,
             isPrayed: prayed,
-            spoken: [name, spokenDay, title, prayed ? "prayed today" : nil]
+            spoken: [name, title, spokenDay, prayed ? "prayed today" : nil]
                 .compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: ", ")
         )
     }
@@ -292,7 +294,8 @@ struct TodaysPrayerRow: Equatable {
             subtitle: summary,
             fact: prayed ? "PRAYED" : moment.uppercased(),
             isPrayed: prayed,
-            spoken: "\(title), \(prayed ? "prayed today" : moment.lowercased()). \(summary)"
+            spoken: [title, summary.trimmingCharacters(in: CharacterSet(charactersIn: ".")), prayed ? "prayed today" : moment.lowercased()]
+                .joined(separator: ", ")
         )
     }
 

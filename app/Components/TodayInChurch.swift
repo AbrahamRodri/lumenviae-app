@@ -48,8 +48,8 @@ final class TodayInChurch {
         return parts.isEmpty ? nil : parts.joined(separator: "  ·  ")
     }
 
-    /// "Great Feast", "Feast", "Lesser Feast", "Weekday" — the word the
-    /// home ledger and the Chapel set beside the day's silk
+    /// "Great Feast", "Feast", "Lesser Feast", "Weekday" — the word
+    /// Home's Mass row and the Chapel set beside the day's silk
     var rank: String? {
         proper?.info.rankLabel
     }
