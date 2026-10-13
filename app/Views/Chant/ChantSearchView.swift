@@ -6,11 +6,16 @@
 //  English, the words it sings, and the prayer it is a sung form of —
 //  accents and case aside, so "caeli" finds Cæli. Titles come back as one
 //  result for each work, its settings a pill (the simple and the solemn
-//  Salve Regina), grouped by whether it is in season now; the words come
-//  back as the line they stand in, with the place in the recording when
-//  the chant's lines have been timed, and none when they have not. Every
-//  hit opens the chant's page; only the play disc beside a title sings
-//  it where it stands (`ChantTap`).
+//  Salve Regina), the best match first as a card with its painting; the
+//  words come back as the line they stand in, with the place in the
+//  recording when the chant's lines have been timed, and none when they
+//  have not. Every hit opens the chant's page; only the play disc beside
+//  it sings it where it stands (`ChantTap`).
+//
+//  Before anything is typed the page offers three searches to try, each
+//  one a way of searching, over tonight's song to Mary. Where to search
+//  and the filters wait behind REFINE, and what is chosen there stands
+//  under the field as chips that come off with a tap.
 //
 //  It stands in the library's place while it is open, its field at the
 //  head and Cancel beside it.
@@ -32,14 +37,28 @@ struct ChantSearchView: View {
         var title: String {
             switch self {
             case .all:     return "All"
-            case .titles:  return "Titles"
+            case .titles:  return "Names"
             case .words:   return "Words"
             case .prayers: return "Prayers"
             }
         }
     }
 
-    @State private var query = ""
+    /// A search to try before typing: what is typed, and the way of
+    /// searching it shows. The third stands for the accent note the page
+    /// once printed under every state.
+    struct Example: Hashable {
+        let query: String
+        let note: String
+    }
+
+    static let examples = [
+        Example(query: "Ave Maris Stella", note: "a name"),
+        Example(query: "spes nostra", note: "a line it sings"),
+        Example(query: "regina caeli", note: "no accents needed")
+    ]
+
+    @State private var query: String
     @State private var scope: Scope = .all
     @State private var inSeason = false
     @State private var short = false
@@ -47,13 +66,24 @@ struct ChantSearchView: View {
     @State private var form: ChantForm?
     @State private var chosenSettings: [String: String] = [:]
     @State private var showsAllWords = false
+    @State private var refining = false
     @FocusState private var focused: Bool
 
     /// Shown on the Chant tab, where the last rows must clear the tab bar
     private let isTabRoot: Bool
+    /// The day the seasons are read against; fixed only for snapshots
+    private let today: Date
 
-    init(isTabRoot: Bool = false, close: @escaping () -> Void, open: @escaping (Chant) -> Void) {
+    init(
+        isTabRoot: Bool = false,
+        today: Date = Date(),
+        query: String = "",
+        close: @escaping () -> Void,
+        open: @escaping (Chant) -> Void
+    ) {
         self.isTabRoot = isTabRoot
+        self.today = today
+        self._query = State(initialValue: query)
         self.close = close
         self.open = open
     }
@@ -67,22 +97,33 @@ struct ChantSearchView: View {
                 .padding(.top, 4)
 
             ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 22) {
-                    VStack(alignment: .leading, spacing: 12) {
-                        scopes
-                        filters
+                VStack(alignment: .leading, spacing: 4) {
+                    if filterCount > 0 {
+                        chosenFilters
                     }
-                    .padding(.top, 14)
 
                     results
                         .padding(.horizontal, 20)
                 }
+                .padding(.top, 14)
                 .padding(.bottom, isTabRoot ? 130 : 40)
             }
             .scrollDismissesKeyboard(.interactively)
         }
         .onAppear { focused = true }
         .onChange(of: query) { _, _ in showsAllWords = false }
+        .sheet(isPresented: $refining) {
+            ChantRefineSheet(
+                scope: $scope,
+                inSeason: $inSeason,
+                short: $short,
+                stillToLearn: $stillToLearn,
+                form: $form
+            )
+            .fittedSheetDetent(estimate: 480)
+            .sheetGround()
+            .dynamicTypeSize(...DynamicTypeSize.appMaximum)
+        }
     }
 
     // MARK: - Field
@@ -116,6 +157,7 @@ struct ChantSearchView: View {
             .padding(.leading, 14)
             .padding(.trailing, 4)
             .frame(height: 46)
+            .background(RoundedRectangle(cornerRadius: 14).fill(AppColors.backgroundDeep))
             .overlay(
                 RoundedRectangle(cornerRadius: 14)
                     .strokeBorder(AppColors.gold.opacity(0.5), lineWidth: AppLine.hairline)
@@ -136,90 +178,11 @@ struct ChantSearchView: View {
         }
     }
 
-    // MARK: - Scopes and filters
+    // MARK: - Filters
 
-    private var scopes: some View {
-        HStack(spacing: 22) {
-            ForEach(Scope.allCases) { each in
-                let lit = each == scope
-                Button {
-                    scope = each
-                } label: {
-                    Text(each.title.uppercased())
-                        .font(AppFonts.labelFont(9.5))
-                        .tracking(1.5)
-                        .foregroundColor(lit ? AppColors.goldLight : AppColors.textSecondary)
-                        .frame(minHeight: 44)
-                        .overlay(alignment: .bottom) {
-                            Rectangle()
-                                .fill(AppColors.gold)
-                                .frame(height: 1)
-                                .opacity(lit ? 1 : 0)
-                        }
-                        .contentShape(Rectangle())
-                }
-                .buttonStyle(QuietGlyphButtonStyle())
-                .accessibilityAddTraits(lit ? [.isSelected] : [])
-            }
-            Spacer(minLength: 0)
-        }
-        .padding(.horizontal, 20)
-        .overlay(alignment: .bottom) { ChantRule(opacity: 0.18) }
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel("Search in")
+    private var filterCount: Int {
+        [scope != .all, inSeason, short, stillToLearn, form != nil].filter { $0 }.count
     }
-
-    private var filters: some View {
-        ChantSideScroll {
-            HStack(spacing: 8) {
-                Menu {
-                    Picker("Type", selection: $form) {
-                        Text("Every type").tag(ChantForm?.none)
-                        ForEach(ChantForm.allCases) { each in
-                            Text(each.title).tag(ChantForm?.some(each))
-                        }
-                    }
-                } label: {
-                    AppIcon("ph-funnel", size: 15)
-                        .foregroundColor(AppColors.gold)
-                        .frame(width: 34, height: 34)
-                        .overlay(Circle().strokeBorder(AppColors.gold.opacity(0.35), lineWidth: AppLine.hairline))
-                        .frame(minWidth: 44, minHeight: 44)
-                        .contentShape(Rectangle())
-                }
-                .accessibilityLabel("Type of chant")
-
-                if let form {
-                    chip(form.title, isOn: true) { self.form = nil }
-                }
-                chip("This season", isOn: inSeason) { inSeason.toggle() }
-                chip("Under 3 min", isOn: short) { short.toggle() }
-                chip("Still to learn", isOn: stillToLearn) { stillToLearn.toggle() }
-            }
-            .padding(.horizontal, 20)
-        }
-    }
-
-    private func chip(_ title: String, isOn: Bool, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Text(title)
-                .font(AppFonts.readingFont(14))
-                .foregroundColor(isOn ? AppColors.goldLight : AppColors.cream.opacity(0.75))
-                .lineLimit(1)
-                .fixedSize()
-                .padding(.horizontal, 13)
-                .frame(height: 34)
-                .background(Capsule().fill(isOn ? AppColors.gold.opacity(0.16) : Color.clear))
-                .overlay(Capsule().strokeBorder(AppColors.gold.opacity(isOn ? 0.6 : 0.25), lineWidth: AppLine.hairline))
-                .frame(minHeight: 44)
-                .contentShape(Rectangle())
-        }
-        .buttonStyle(SacredCardButtonStyle())
-        .accessibilityAddTraits(isOn ? [.isSelected] : [])
-        .sensoryFeedback(.selection, trigger: isOn)
-    }
-
-    // MARK: - Results
 
     private var filtering: Bool { inSeason || short || stillToLearn || form != nil }
 
@@ -227,14 +190,94 @@ struct ChantSearchView: View {
         if form != nil, chant.form != form { return false }
         if short, chant.duration >= 180 { return false }
         if stillToLearn, shelf.isLearned(chant.id) { return false }
-        if inSeason, !chant.seasons.contains(ChantSeason.season(on: Date())) { return false }
+        if inSeason, !chant.seasons.contains(ChantSeason.season(on: today)) { return false }
         return true
     }
 
-    /// What stands under the field: the hint before anything is asked,
-    /// a line saying nothing matched, or what did
+    /// What REFINE chose, each a chip that a tap takes off
+    private var chosenFilters: some View {
+        ChantSideScroll {
+            HStack(spacing: 8) {
+                if scope != .all {
+                    chip("\(scope.title) only") { scope = .all }
+                }
+                if let form {
+                    chip(form.title) { self.form = nil }
+                }
+                if inSeason {
+                    chip("This season") { inSeason = false }
+                }
+                if short {
+                    chip("Under 3 min") { short = false }
+                }
+                if stillToLearn {
+                    chip("Still to learn") { stillToLearn = false }
+                }
+            }
+            .padding(.horizontal, 20)
+        }
+        .transition(.opacity)
+    }
+
+    private func chip(_ title: String, remove: @escaping () -> Void) -> some View {
+        Button {
+            withAnimation(Motion.crossfade) { remove() }
+        } label: {
+            HStack(spacing: 7) {
+                Text(title)
+                    .font(AppFonts.readingFont(14))
+                    .lineLimit(1)
+                    .fixedSize()
+                AppIcon("ph-x", size: 10)
+            }
+            .foregroundColor(AppColors.goldLight)
+            .padding(.horizontal, 13)
+            .frame(height: 34)
+            .background(Capsule().fill(AppColors.gold.opacity(0.16)))
+            .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.6), lineWidth: AppLine.hairline))
+            .frame(minHeight: 44)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(SacredCardButtonStyle())
+        .accessibilityLabel("Remove filter: \(title)")
+    }
+
+    /// The one door to where to search and the filters. Lit, and counting
+    /// them, while any is on.
+    private var refineButton: some View {
+        Button {
+            focused = false
+            refining = true
+        } label: {
+            Text(filterCount > 0 ? "REFINE · \(filterCount)" : "REFINE")
+                .font(AppFonts.labelFont(9.5))
+                .tracking(2)
+                .foregroundColor(filterCount > 0 ? AppColors.goldLight : AppColors.gold)
+                .frame(minHeight: 44)
+                .padding(.leading, 12)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(QuietGlyphButtonStyle())
+        .accessibilityLabel("Refine the search")
+        .accessibilityValue(filterCount == 0 ? "No filters" : filterCount == 1 ? "1 filter on" : "\(filterCount) filters on")
+        .accessibilityHint("Search in names, words or prayers, and filter by season, length or kind")
+    }
+
+    /// A line of the page with REFINE at its trailing edge
+    private func headLine<Leading: View>(@ViewBuilder _ leading: () -> Leading) -> some View {
+        HStack(alignment: .center) {
+            leading()
+            Spacer(minLength: 8)
+            refineButton
+        }
+    }
+
+    // MARK: - Results
+
+    /// What stands under the field: the searches to try before anything is
+    /// asked, a line saying nothing matched, or what did
     private enum ResultsState: Hashable {
-        case hint, nothing, found
+        case start, nothing, found
     }
 
     /// The three share one slot and crossfade over one another, never
@@ -249,25 +292,18 @@ struct ChantSearchView: View {
             : []
         let wordHits = asking && (scope == .all || scope == .words) && !needle.isEmpty
             ? ChantSearch.wordHits(matching: needle, where: passes) : []
-        let state: ResultsState = !asking ? .hint
+        let state: ResultsState = !asking ? .start
             : titleWorks.isEmpty && prayerWorks.isEmpty && wordHits.isEmpty ? .nothing
             : .found
 
         return ZStack(alignment: .topLeading) {
             switch state {
-            case .hint:
-                hint
+            case .start:
+                start
                     .transition(.opacity)
             case .nothing:
-                VStack(alignment: .leading, spacing: 0) {
-                    Text(needle.isEmpty ? "No chant fits every filter chosen." : "Nothing in the library matches “\(query)”.")
-                        .font(AppFonts.readingItalicFont(15))
-                        .foregroundColor(AppColors.textSecondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding(.top, 8)
-                    accentNote
-                }
-                .transition(.opacity)
+                nothing
+                    .transition(.opacity)
             case .found:
                 found(titleWorks: titleWorks, prayerWorks: prayerWorks, wordHits: wordHits)
                     .transition(.opacity)
@@ -277,70 +313,370 @@ struct ChantSearchView: View {
         .animation(Motion.crossfade, value: state)
     }
 
+    // MARK: - Before typing
+
+    /// The searches to try stand first, so they are above the keyboard
+    /// that opens with the page; tonight's song to Mary is beneath them.
+    private var start: some View {
+        VStack(alignment: .leading, spacing: 26) {
+            VStack(alignment: .leading, spacing: 0) {
+                headLine {
+                    Text("TRY")
+                        .font(AppFonts.labelFont(9))
+                        .tracking(2)
+                        .foregroundColor(AppColors.gold)
+                        .accessibilityAddTraits(.isHeader)
+                        .accessibilityLabel("Searches to try")
+                }
+                ForEach(Self.examples, id: \.self) { example in
+                    exampleRow(example)
+                }
+            }
+
+            if let chant = ChantCatalog.antiphonOfTheSeason(on: today) {
+                tonight(chant)
+            }
+        }
+    }
+
+    private func exampleRow(_ example: Example) -> some View {
+        Button {
+            focused = false
+            scope = .all
+            query = example.query
+        } label: {
+            HStack(alignment: .firstTextBaseline) {
+                Text(example.query)
+                    .font(AppFonts.readingFont(18))
+                    .foregroundColor(AppColors.cream)
+                Spacer(minLength: 8)
+                Text(example.note)
+                    .font(AppFonts.readingItalicFont(13.5))
+                    .foregroundColor(AppColors.textSecondary)
+            }
+            .frame(maxWidth: .infinity, minHeight: 46, alignment: .leading)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .overlay(alignment: .bottom) { ChantRule(opacity: 0.12) }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Search for \(example.query), \(example.note)")
+        .accessibilityAddTraits(.isButton)
+    }
+
+    /// Tonight's song to Mary, its painting dissolving into the page with
+    /// its names on the painting's foot. The painting opens the chant; the
+    /// disc sings it.
+    private func tonight(_ chant: Chant) -> some View {
+        let painting = ChantLibraryView.tonightPainting(for: chant)
+        return Button {
+            open(chant)
+        } label: {
+            ZStack(alignment: .bottomLeading) {
+            CachedAssetImage(painting, focal: ChantThumbnail.focalPoint(for: painting))
+                .frame(height: 250)
+                .frame(maxWidth: .infinity)
+                .clipped()
+                // Dark under the names, so they read on any painting
+                .overlay(
+                    LinearGradient(
+                        stops: [
+                            .init(color: AppColors.backgroundDeep.opacity(0), location: 0.3),
+                            .init(color: AppColors.backgroundDeep.opacity(0.72), location: 0.85)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+                // Dissolving into the page above and below, never cut
+                .mask(
+                    LinearGradient(
+                        stops: [
+                            .init(color: .black.opacity(0), location: 0),
+                            .init(color: .black, location: 0.16),
+                            .init(color: .black, location: 0.62),
+                            .init(color: .black.opacity(0), location: 1)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+                .padding(.horizontal, -20)
+                .accessibilityHidden(true)
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("TONIGHT'S SONG TO MARY")
+                        .font(AppFonts.labelFont(9))
+                        .tracking(2)
+                        .foregroundColor(AppColors.gold)
+                    Text(chant.latinTitle)
+                        .font(AppFonts.titleFont(24))
+                        .foregroundColor(AppColors.cream)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                    Text("\(chant.englishTitle) · \(chant.durationLabel)")
+                        .font(AppFonts.readingItalicFont(14))
+                        .foregroundColor(AppColors.cream.opacity(0.78))
+                        .lineLimit(1)
+                    // The room LISTEN stands in, laid over the button
+                    Color.clear
+                        .frame(height: Self.listenHeight)
+                        .padding(.top, 4)
+                }
+                .padding(.horizontal, 2)
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Tonight's song to Mary: \(chant.spokenName), \(ChantPlayer.spoken(chant.duration))")
+        .accessibilityHint("Opens the chant")
+        .accessibilityAddTraits(.isButton)
+        .overlay(alignment: .bottomLeading) {
+            listen(chant)
+                .padding(.horizontal, 2)
+        }
+        .chantContextMenu(chant)
+    }
+
+    /// The height of the disc and LISTEN beside it
+    private static let listenHeight: CGFloat = 44
+
+    /// The disc and the word beside it: LISTEN, or PAUSE while it sounds
+    private func listen(_ chant: Chant) -> some View {
+        HStack(spacing: 8) {
+            ChantPlayDisc(
+                isPlaying: player.isPlaying(chant),
+                isLoading: player.current.id == chant.id && player.isLoading,
+                size: 30,
+                label: chant.spokenName
+            ) {
+                player.toggle(chant)
+            }
+            Text(player.isPlaying(chant) ? "PAUSE" : "LISTEN")
+                .font(AppFonts.labelFont(10))
+                .tracking(2)
+                .foregroundColor(AppColors.gold)
+                .accessibilityHidden(true)
+        }
+        .frame(height: Self.listenHeight)
+    }
+
+    // MARK: - Nothing found
+
+    /// One line, then the kinds of chant as a way on: a kind opens every
+    /// chant of it, the search let go
+    private var nothing: some View {
+        VStack(alignment: .leading, spacing: 22) {
+            headLine {
+                Text(needle.isEmpty ? "No chant fits every filter chosen." : "Nothing in the library matches “\(query)”.")
+                    .font(AppFonts.readingItalicFont(16.5))
+                    .foregroundColor(AppColors.cream.opacity(0.8))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            VStack(alignment: .leading, spacing: 0) {
+                groupHeading("Kinds of chant")
+                ForEach(ChantForm.allCases) { kind in
+                    kindRow(kind)
+                }
+            }
+        }
+    }
+
+    /// The painting a kind is shown with, chosen here for the page
+    static func painting(for kind: ChantForm) -> String {
+        switch kind {
+        case .shortChant:     return "glorious_assumption"
+        case .hymn:           return "glorious_pentecost"
+        case .sequence:       return "glorious_resurrection"
+        case .litany:         return "glorious_coronation"
+        case .psalm:          return "joyful_nativity"
+        case .everydayPrayer: return "joyful_annunciation"
+        }
+    }
+
+    private func kindRow(_ kind: ChantForm) -> some View {
+        let count = ChantCatalog.all.filter { $0.form == kind }.count
+        return Button {
+            focused = false
+            query = ""
+            scope = .all
+            inSeason = false
+            short = false
+            stillToLearn = false
+            form = kind
+        } label: {
+            HStack(spacing: 12) {
+                ChantThumbnail(name: Self.painting(for: kind), size: 40, radius: 20)
+                Text(kind.title)
+                    .font(AppFonts.readingFont(17))
+                    .foregroundColor(AppColors.cream)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                Text("\(count)")
+                    .font(AppFonts.readingItalicFont(14))
+                    .foregroundColor(AppColors.textSecondary)
+                AppIcon("ph-caret-right", size: 10)
+                    .foregroundColor(AppColors.gold.opacity(0.4))
+            }
+            .frame(minHeight: 52)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .overlay(alignment: .bottom) { ChantRule(opacity: 0.12) }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(kind.title), \(count == 1 ? "1 chant" : "\(count) chants")")
+        .accessibilityHint("Shows every chant of this kind")
+        .accessibilityAddTraits(.isButton)
+    }
+
+    // MARK: - Found
+
     private func found(
         titleWorks: [ChantSearch.Work],
         prayerWorks: [ChantSearch.Work],
         wordHits: [ChantSearch.WordHit]
     ) -> some View {
-        let season = ChantSeason.season(on: Date())
-        let now = titleWorks.filter { $0.chants[0].seasons.contains(season) }
-        let always = titleWorks.filter { $0.chants[0].seasons.isEmpty }
-        let other = titleWorks.filter { !$0.chants[0].seasons.isEmpty && !$0.chants[0].seasons.contains(season) }
+        // The chants sung now first, then those of every season, then the
+        // rest; the row's own line says when each is sung
+        let season = ChantSeason.season(on: today)
+        let titles = titleWorks.filter { $0.chants[0].seasons.contains(season) }
+            + titleWorks.filter { $0.chants[0].seasons.isEmpty }
+            + titleWorks.filter { !$0.chants[0].seasons.isEmpty && !$0.chants[0].seasons.contains(season) }
+        let top = titles.first ?? prayerWorks.first
+        let restTitles = titles.filter { $0.key != top?.key }
+        let restPrayers = prayerWorks.filter { $0.key != top?.key }
+        let works = titleWorks.count + prayerWorks.count
 
-        return VStack(alignment: .leading, spacing: 28) {
-            if !now.isEmpty { workGroup("This season", now) }
-            if !always.isEmpty { workGroup(now.isEmpty && other.isEmpty ? "Chants" : "Any time of year", always) }
-            if !other.isEmpty { workGroup("Other times of year", other) }
-            if !prayerWorks.isEmpty { workGroup("Sung prayers", prayerWorks) }
-            if !wordHits.isEmpty { wordGroup(wordHits) }
+        return VStack(alignment: .leading, spacing: 26) {
+            headLine {
+                Text(summary(works: works, lines: wordHits.count))
+                    .font(AppFonts.readingItalicFont(15))
+                    .foregroundColor(AppColors.cream.opacity(0.72))
+            }
+            .padding(.bottom, -14)
 
-            accentNote
+            if let top {
+                topResult(top, singsPrayer: titles.isEmpty)
+            }
+            if !restTitles.isEmpty {
+                workGroup("Chants", restTitles)
+            }
+            if !restPrayers.isEmpty {
+                workGroup("Sung prayers", restPrayers)
+            }
+            if !wordHits.isEmpty {
+                wordGroup(wordHits)
+            }
         }
     }
 
-    private var hint: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("Search a chant's name in Latin or in English, the words it sings, or the prayer it is a sung form of.")
-                .font(AppFonts.readingItalicFont(15.5))
-                .foregroundColor(AppColors.cream.opacity(0.75))
-                .fixedSize(horizontal: false, vertical: true)
-            accentNote
-        }
-        .padding(.top, 8)
+    private func summary(works: Int, lines: Int) -> String {
+        var parts: [String] = []
+        if works > 0 { parts.append(works == 1 ? "1 chant" : "\(works) chants") }
+        if lines > 0 { parts.append(lines == 1 ? "1 line" : "\(lines) lines") }
+        return parts.joined(separator: " · ")
     }
 
-    private var accentNote: some View {
-        Text("No need to type accents: caeli finds Cæli.")
-            .font(AppFonts.readingItalicFont(13.5))
-            .foregroundColor(AppColors.textSecondary)
-            .frame(maxWidth: .infinity)
-            .multilineTextAlignment(.center)
-            .padding(.top, 6)
+    private func groupHeading(_ title: String) -> some View {
+        Text(title.uppercased())
+            .font(AppFonts.labelFont(9))
+            .tracking(2)
+            .foregroundColor(AppColors.gold)
+            .accessibilityAddTraits(.isHeader)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.bottom, 6)
+            .overlay(alignment: .bottom) { ChantRule() }
     }
 
-    private func groupHeading(_ title: String, count: String) -> some View {
-        HStack(alignment: .firstTextBaseline) {
-            Text(title.uppercased())
-                .font(AppFonts.labelFont(9))
-                .tracking(2)
-                .foregroundColor(AppColors.gold)
-                .accessibilityAddTraits(.isHeader)
-            Spacer(minLength: 8)
-            Text(count)
-                .font(AppFonts.readingItalicFont(13))
-                .foregroundColor(AppColors.textSecondary)
+    private func chosen(in work: ChantSearch.Work) -> Chant {
+        work.chants.first { $0.id == chosenSettings[work.key] } ?? work.chants[0]
+    }
+
+    private func choose(_ setting: Chant, in work: ChantSearch.Work) {
+        let wasSounding = player.isPlaying(chosen(in: work))
+        chosenSettings[work.key] = setting.id
+        if wasSounding { player.play(setting) }
+    }
+
+    // MARK: - The best match
+
+    /// The best match as a card: its painting, its kind and when it is
+    /// sung, its names, and LISTEN; its settings in a pill beneath
+    private func topResult(_ work: ChantSearch.Work, singsPrayer: Bool) -> some View {
+        let chant = chosen(in: work)
+        let kicker = [
+            chant.form.singular,
+            singsPrayer ? chant.bookPrayer.map { "sings \($0.title)" } : nil
+        ]
+        .compactMap { $0 }
+        .joined(separator: " · ")
+        let line = [chant.englishTitle, work.chants.count == 1 ? chant.settingMidLine : nil, chant.seasonLine(on: today)]
+            .compactMap { $0 }
+            .joined(separator: " · ")
+
+        return VStack(alignment: .leading, spacing: 10) {
+            Button {
+                open(chant)
+            } label: {
+                HStack(spacing: 0) {
+                    ChantThumbnail(name: ChantCatalog.painting(for: chant), size: 132, radius: 0)
+
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(kicker.uppercased())
+                            .font(AppFonts.labelFont(8.5))
+                            .tracking(1.6)
+                            .foregroundColor(AppColors.gold)
+                            .lineLimit(2)
+                        Text(ChantSearch.highlighted(chant.latinTitle, needle: needle))
+                            .font(AppFonts.titleFont(19))
+                            .foregroundColor(player.isPlaying(chant) ? AppColors.goldLight : AppColors.cream)
+                            .lineLimit(2)
+                            .minimumScaleFactor(0.8)
+                        Text(ChantSearch.highlighted(line, needle: needle))
+                            .font(AppFonts.readingItalicFont(14))
+                            .foregroundColor(AppColors.textSecondary)
+                            .lineLimit(2)
+                        // The room LISTEN stands in, laid over the button
+                        Color.clear
+                            .frame(height: Self.listenHeight)
+                    }
+                    .padding(.horizontal, 14)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .frame(height: 132)
+                .background(AppColors.cardBackground)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .strokeBorder(AppColors.gold.opacity(0.28), lineWidth: AppLine.hairline)
+                )
+                .contentShape(RoundedRectangle(cornerRadius: 16))
+            }
+            // Plain, so the disc laid over it never stands still while the card presses
+            .buttonStyle(.plain)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Best match: \(chant.latinTitle), \(line), \(kicker)")
+            .accessibilityHint("Opens the chant")
+            .accessibilityAddTraits(.isButton)
+            .overlay(alignment: .bottomLeading) {
+                listen(chant)
+                    .padding(.leading, 132 + 14)
+                    .padding(.bottom, 8)
+            }
+            .chantContextMenu(chant)
+
+            if work.chants.count > 1 {
+                ChantSettingPill(settings: work.chants, selected: chant.id) { choose($0, in: work) }
+            }
         }
-        .padding(.bottom, 6)
-        .overlay(alignment: .bottom) { ChantRule() }
     }
 
     // MARK: - Works
 
     private func workGroup(_ title: String, _ works: [ChantSearch.Work]) -> some View {
-        let versions = works.reduce(0) { $0 + $1.chants.count }
-        let count = works.count == 1 ? "1 chant" : "\(works.count) chants"
-        return VStack(alignment: .leading, spacing: 0) {
-            groupHeading(title, count: versions > works.count ? "\(count), \(versions) versions" : count)
+        VStack(alignment: .leading, spacing: 0) {
+            groupHeading(title)
             ForEach(works, id: \.key) { work in
                 workRow(work)
             }
@@ -348,67 +684,64 @@ struct ChantSearchView: View {
     }
 
     private func workRow(_ work: ChantSearch.Work) -> some View {
-        let chosen = work.chants.first { $0.id == chosenSettings[work.key] } ?? work.chants[0]
-        let when = chosen.seasonLine()
+        let chant = chosen(in: work)
+        let when = chant.seasonLine(on: today)
 
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 12) {
-                ChantPlayDisc(
-                    isPlaying: player.isPlaying(chosen),
-                    isLoading: player.current.id == chosen.id && player.isLoading,
-                    size: 34,
-                    label: chosen.spokenName
-                ) {
-                    player.toggle(chosen)
-                }
-
                 Button {
-                    open(chosen)
+                    open(chant)
                 } label: {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(ChantSearch.highlighted(chosen.latinTitle, needle: needle))
-                            .font(AppFonts.readingFont(17))
-                            .foregroundColor(player.isPlaying(chosen) ? AppColors.goldLight : AppColors.cream)
-                        Text(ChantSearch.highlighted(
-                            [chosen.englishTitle, work.chants.count == 1 ? chosen.settingMidLine : nil, when]
-                                .compactMap { $0 }
-                                .joined(separator: " · "),
-                            needle: needle
-                        ))
-                        .font(AppFonts.readingItalicFont(13.5))
-                        .foregroundColor(AppColors.textSecondary)
+                    HStack(spacing: 12) {
+                        ChantThumbnail(name: ChantCatalog.painting(for: chant), size: 48, radius: 8)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(ChantSearch.highlighted(chant.latinTitle, needle: needle))
+                                .font(AppFonts.readingFont(17))
+                                .foregroundColor(player.isPlaying(chant) ? AppColors.goldLight : AppColors.cream)
+                            Text(ChantSearch.highlighted(
+                                [chant.englishTitle, work.chants.count == 1 ? chant.settingMidLine : nil, when]
+                                    .compactMap { $0 }
+                                    .joined(separator: " · "),
+                                needle: needle
+                            ))
+                            .font(AppFonts.readingItalicFont(13.5))
+                            .foregroundColor(AppColors.textSecondary)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .frame(minHeight: 44)
+                    .frame(minHeight: 48)
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
                 .accessibilityElement(children: .combine)
                 .accessibilityHint("Opens the chant")
+
+                ChantPlayDisc(
+                    isPlaying: player.isPlaying(chant),
+                    isLoading: player.current.id == chant.id && player.isLoading,
+                    size: 34,
+                    label: chant.spokenName
+                ) {
+                    player.toggle(chant)
+                }
             }
 
             if work.chants.count > 1 {
-                ChantSettingPill(settings: work.chants, selected: chosen.id) { setting in
-                    let wasSounding = player.isPlaying(chosen)
-                    chosenSettings[work.key] = setting.id
-                    if wasSounding { player.play(setting) }
-                }
-                .padding(.leading, 46)
+                ChantSettingPill(settings: work.chants, selected: chant.id) { choose($0, in: work) }
+                    .padding(.leading, 60)
             }
         }
-        .padding(.vertical, 10)
+        .padding(.vertical, 9)
         .overlay(alignment: .bottom) { ChantRule(opacity: 0.12) }
-        .chantContextMenu(chosen)
+        .chantContextMenu(chant)
     }
 
     // MARK: - Words
 
     private func wordGroup(_ hits: [ChantSearch.WordHit]) -> some View {
         let shown = showsAllWords ? hits : Array(hits.prefix(3))
-        let chants = Set(hits.map(\.chant.id)).count
-        let count = "\(hits.count == 1 ? "1 match" : "\(hits.count) matches") in \(chants == 1 ? "1 chant" : "\(chants) chants")"
         return VStack(alignment: .leading, spacing: 0) {
-            groupHeading("In the words", count: count)
+            groupHeading("In the words")
             ForEach(shown) { hit in
                 wordRow(hit)
             }
@@ -434,34 +767,38 @@ struct ChantSearchView: View {
         Button {
             open(hit.chant)
         } label: {
-            VStack(alignment: .leading, spacing: 6) {
-                HStack(alignment: .firstTextBaseline, spacing: 10) {
-                    Text([hit.chant.latinTitle, ChantSearch.setting(of: hit)].compactMap { $0 }.joined(separator: " · "))
-                        .font(AppFonts.readingFont(17))
-                        .foregroundColor(AppColors.cream)
-                    Spacer(minLength: 8)
-                    if let start = hit.start {
-                        Text("AT \(ChantPlayer.clock(start))")
-                            .font(AppFonts.labelFont(8.5))
-                            .tracking(1)
-                            .foregroundColor(AppColors.textSecondary)
-                            .monospacedDigit()
+            HStack(alignment: .top, spacing: 12) {
+                ChantThumbnail(name: ChantCatalog.painting(for: hit.chant), size: 40, radius: 8)
+                    .padding(.top, 2)
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack(alignment: .firstTextBaseline, spacing: 10) {
+                        Text([hit.chant.latinTitle, ChantSearch.setting(of: hit)].compactMap { $0 }.joined(separator: " · "))
+                            .font(AppFonts.readingFont(17))
+                            .foregroundColor(AppColors.cream)
+                        Spacer(minLength: 8)
+                        if let start = hit.start {
+                            Text("AT \(ChantPlayer.clock(start))")
+                                .font(AppFonts.labelFont(8.5))
+                                .tracking(1)
+                                .foregroundColor(AppColors.textSecondary)
+                                .monospacedDigit()
+                        }
                     }
+                    Text(ChantSearch.highlighted(hit.snippet, needle: needle))
+                        .font(AppFonts.readingFont(15))
+                        .foregroundColor(AppColors.cream.opacity(0.82))
+                        .lineSpacing(2)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.leading, 12)
+                        .overlay(alignment: .leading) {
+                            Rectangle()
+                                .fill(AppColors.gold.opacity(0.3))
+                                .frame(width: 1)
+                        }
+                    Text(hit.chant.englishTitle)
+                        .font(AppFonts.readingItalicFont(13))
+                        .foregroundColor(AppColors.textSecondary)
                 }
-                Text(ChantSearch.highlighted(hit.snippet, needle: needle))
-                    .font(AppFonts.readingFont(15))
-                    .foregroundColor(AppColors.cream.opacity(0.82))
-                    .lineSpacing(2)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.leading, 12)
-                    .overlay(alignment: .leading) {
-                        Rectangle()
-                            .fill(AppColors.gold.opacity(0.3))
-                            .frame(width: 1)
-                    }
-                Text(hit.chant.englishTitle)
-                    .font(AppFonts.readingItalicFont(13))
-                    .foregroundColor(AppColors.textSecondary)
             }
             .padding(.vertical, 12)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -479,6 +816,88 @@ struct ChantSearchView: View {
         ].compactMap { $0 }.joined(separator: ", "))
         .accessibilityAddTraits(.isButton)
         .accessibilityHint("Opens the chant")
+    }
+}
+
+// MARK: - ChantRefineSheet
+
+/// Where to search, and the filters, in the sheet grammar: what the page
+/// once set out above every result, kept behind REFINE
+struct ChantRefineSheet: View {
+    @Binding var scope: ChantSearchView.Scope
+    @Binding var inSeason: Bool
+    @Binding var short: Bool
+    @Binding var stillToLearn: Bool
+    @Binding var form: ChantForm?
+
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            SheetHeader(kicker: "Refine", title: "Narrow the search") {
+                SheetHeaderAction(title: "Done") { dismiss() }
+            }
+
+            SheetSectionLabel("Search in")
+            scopes
+                .padding(.horizontal, SheetMetrics.gutter)
+                .padding(.bottom, 12)
+
+            SheetToggleRow(title: "This season", isOn: $inSeason)
+            SheetToggleRow(title: "Under 3 minutes", isOn: $short)
+            SheetToggleRow(title: "Still to learn", detail: "Leaves out the chants you have learned", isOn: $stillToLearn)
+
+            Menu {
+                Picker("Kind of chant", selection: $form) {
+                    Text("Every kind").tag(ChantForm?.none)
+                    ForEach(ChantForm.allCases) { each in
+                        Text(each.title).tag(ChantForm?.some(each))
+                    }
+                }
+            } label: {
+                SheetRow("Kind of chant", showsDivider: false) {
+                    HStack(spacing: 8) {
+                        Text(form?.title ?? "Every kind")
+                            .font(AppFonts.readingItalicFont(14))
+                            .foregroundColor(form == nil ? AppColors.textSecondary : AppColors.goldLight)
+                        AppIcon("ph-caret-right", size: 10)
+                            .foregroundColor(AppColors.gold.opacity(0.4))
+                    }
+                }
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Kind of chant")
+            .accessibilityValue(form?.title ?? "Every kind")
+        }
+        .padding(.bottom, 12)
+    }
+
+    /// All · Names · Words · Prayers, the lit one on a wash of gold
+    private var scopes: some View {
+        HStack(spacing: 4) {
+            ForEach(ChantSearchView.Scope.allCases) { each in
+                let lit = each == scope
+                Button {
+                    withAnimation(Motion.choice) { scope = each }
+                } label: {
+                    Text(each.title)
+                        .font(AppFonts.readingFont(15))
+                        .foregroundColor(lit ? AppColors.goldLight : AppColors.textSecondary)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 38)
+                        .background(Capsule().fill(lit ? AppColors.gold.opacity(0.18) : Color.clear))
+                        .contentShape(Capsule())
+                }
+                .buttonStyle(SacredCardButtonStyle())
+                .accessibilityAddTraits(lit ? [.isSelected] : [])
+            }
+        }
+        .padding(3)
+        .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.25), lineWidth: AppLine.hairline))
+        .frame(minHeight: 44)
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Search in")
+        .sensoryFeedback(.selection, trigger: scope)
     }
 }
 

@@ -78,6 +78,31 @@ struct MainScreenSnapshotTests {
         ScreenSnapshot.assertScreen(view, named: "scriptural-rosary-page")
     }
 
+    // MARK: - Chant search
+
+    /// A Monday after Pentecost: the Salve Regina is the season's song
+    static let chantSearchDay = Calendar(identifier: .gregorian)
+        .date(from: DateComponents(year: 2026, month: 10, day: 12, hour: 12))!
+
+    private func chantSearch(_ query: String) -> some View {
+        ZStack {
+            AppColors.appGradient.ignoresSafeArea()
+            ChantSearchView(today: Self.chantSearchDay, query: query, close: {}, open: { _ in })
+        }
+    }
+
+    @Test func chantSearchStart() {
+        ScreenSnapshot.assertScreen(chantSearch(""), named: "chant-search-start")
+    }
+
+    @Test func chantSearchResults() {
+        ScreenSnapshot.assertScreen(chantSearch("salve"), named: "chant-search-results")
+    }
+
+    @Test func chantSearchNothing() {
+        ScreenSnapshot.assertScreen(chantSearch("zebra"), named: "chant-search-nothing")
+    }
+
     // MARK: - The Prayer Book
 
     @Test func prayerPage() {

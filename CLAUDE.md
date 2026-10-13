@@ -384,6 +384,12 @@ About's three short texts; a destination with onward doors of its own
 is pushed.
 The tab bar lays its four labels out content-sized with even gaps (not
 equal cells), padded clear of the raised Pray medallion.
+The bar, and the chant player standing on it, ignore the keyboard's safe
+area (`ContentView`): with a keyboard up they stay at the foot of the
+glass, under it, and the pages keep no room for the player while it is
+up. Riding up with the keyboard, the bar and the Pray button covered
+whatever stood above it, tonight's song on the chant search among them,
+on every page with a field. Don't take the modifiers off.
 
 > Journal is **not** blocked on the API. Entries are a local SwiftData model
 > (`Models/JournalEntry.swift`); nothing is sent to the server.
@@ -2702,12 +2708,28 @@ write concurrent code here:
   **Search** (`ChantSearchView`, `ChantSearch`) folds case, accents and
   the ligatures ("caeli" finds Cæli, the match underlined under the
   word as written): titles come back one result per work, its settings a
-  pill, grouped in season now / any time / other times; Prayers finds
-  the chant that sings a prayer by the Prayer Book's name for it; Words
-  finds a line of what is sung — with its place in the recording only
-  when the chant's lines are timed, and the setting it was sung in
-  where the work has two ("Salve Regina · Solemn", to VoiceOver too),
-  so the simple and the solemn never give rows that read alike.
+  pill, those sung now first, then any time, then other times, the row's
+  own line saying when; Prayers finds the chant that sings a prayer by
+  the Prayer Book's name for it; Words finds a line of what is sung —
+  with its place in the recording only when the chant's lines are timed,
+  and the setting it was sung in where the work has two ("Salve Regina ·
+  Solemn", to VoiceOver too), so the simple and the solemn never give
+  rows that read alike. The page (the "simplify chant search" design,
+  option B, Oct 2026) is the field and what it finds, nothing above it:
+  before typing, TRY over three searches that show the three ways by
+  example (a name, a line it sings, no accents needed; a tap searches
+  it), set first so the keyboard never covers them, over tonight's song
+  to Mary as a painting dissolving into the page; typed, the best match
+  as a painted card with LISTEN, then Chants, Sung prayers and In the
+  words, every row with its chant's painting and its own play disc, the
+  words three to a group until Show all; nothing found, one line over
+  the kinds of chant, each opening every chant of its kind. Where to
+  search (All · Names · Words · Prayers) and the filters (this season,
+  under 3 minutes, still to learn, the kind) stand behind REFINE
+  (`ChantRefineSheet`), lit with their count while any is on, and what
+  is chosen stands under the field as chips a tap takes off. They once
+  stood as four tabs, a funnel and three chips above every result, over
+  a paragraph of instructions and an accent note repeated on every state.
 
   **The chant's page is Now Playing** (`ChantView`, `.chant(id:)`): the
   names (the setting after the English only where neither title says it,
@@ -3402,7 +3424,8 @@ transition entirely.
 - **Snapshot tests:** `appTests/Snapshots/` draws the main screens that
   read nothing off the clock or the network (home's mysteries sections,
   VIEW ALL, a mysteries' page, a set's page, the Scriptural Rosary's page,
-  a Prayer Book page) from fixed data with swift-snapshot-testing (the
+  a Prayer Book page, and the chant search before typing, with results
+  and with nothing found, on a fixed day) from fixed data with swift-snapshot-testing (the
   test target's one package; the app has none) and compares them with
   the PNGs in `__Snapshots__/`, in the same `xcodebuild test`.
   `ScreenSnapshot.assertScreen` is the one way to draw one: an iPhone 17

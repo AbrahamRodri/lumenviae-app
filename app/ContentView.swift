@@ -53,6 +53,12 @@ struct ContentView: View {
     /// the one standing over them
     @State private var chantPlayerHeight: CGFloat = 0
     @State private var tabBarHeight: CGFloat = 0
+    /// A keyboard is up: the player stands under it then, and the pages
+    /// keep no room for it
+    @State private var keyboardIsUp = false
+    /// Taller than a hardware keyboard's shortcut bar, shorter than any
+    /// keyboard that types
+    private static let keyboardMinimumHeight: CGFloat = 100
 
     private var shouldShowTabBar: Bool {
         (router.path.isEmpty || router.topRoute?.keepsTabBar == true)
@@ -90,8 +96,19 @@ struct ContentView: View {
             // standing over it, so its last row scrolls clear
             .safeAreaInset(edge: .bottom, spacing: 0) {
                 Color.clear
-                    .frame(height: showsChantPlayer ? chantPlayerHeight + 8 : 0)
+                    .frame(height: showsChantPlayer && !keyboardIsUp ? chantPlayerHeight + 8 : 0)
                     .allowsHitTesting(false)
+            }
+            // Up only when a keyboard stands that tall on the glass: with
+            // a hardware keyboard iOS still shows its shortcut bar, and
+            // the player is not under that
+            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillChangeFrameNotification)) { note in
+                guard let end = note.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
+                let shown = (note.object as? UIScreen).map { end.intersection($0.bounds).height } ?? end.height
+                keyboardIsUp = shown > Self.keyboardMinimumHeight
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
+                keyboardIsUp = false
             }
             // Under the tour the page is dimmed and takes no touch, and
             // VoiceOver may not wander onto it either: the tour's card is
@@ -151,6 +168,9 @@ struct ContentView: View {
                     .animation(Motion.panel, value: shouldShowTabBar)
                     .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { tabBarHeight = $0 }
             }
+            // The bar stays at the foot of the glass while a keyboard is
+            // up, under it, rather than riding up over the page above it
+            .ignoresSafeArea(.keyboard)
             .accessibilityHidden(firstUseTour.isRunning)
 
             // What the Chant Library is singing, over the whole app: above
@@ -167,6 +187,8 @@ struct ContentView: View {
             }
             .animation(reduceMotion ? Motion.crossfade : Motion.panel, value: showsChantPlayer)
             .animation(Motion.panel, value: shouldShowTabBar)
+            // Where the bar stands, keyboard or none
+            .ignoresSafeArea(.keyboard)
 
             if firstUseTour.isRunning {
                 FirstUseTourOverlay(tour: firstUseTour)
