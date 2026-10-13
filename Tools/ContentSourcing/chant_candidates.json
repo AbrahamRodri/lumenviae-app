@@ -11,7 +11,7 @@
     {
       "id": "pange_lingua",
       "slug": "pange-lingua",
-      "group": "sacrament",
+      "group": "benediction",
       "latin": "Pange Lingua",
       "english": "Sing, My Tongue, the Saviour's Glory",
       "setting": null,
@@ -21,7 +21,7 @@
     {
       "id": "vidi_aquam",
       "slug": "vidi-aquam",
-      "group": "easter",
+      "group": "asperges",
       "latin": "Vidi Aquam",
       "english": "I Saw Water",
       "setting": null,
@@ -91,7 +91,7 @@
     {
       "id": "credo_iii",
       "slug": "credo-iii",
-      "group": "mass",
+      "group": "creed",
       "latin": "Credo III",
       "english": "The Nicene Creed",
       "setting": "Credo III",
@@ -101,7 +101,7 @@
     {
       "id": "audi_benigne",
       "slug": "audi-benigne-conditor",
-      "group": "lent",
+      "group": "seasons",
       "latin": "Audi Benigne Conditor",
       "english": "O Kind Creator, Bow Thine Ear",
       "setting": null,
@@ -116,7 +116,7 @@
       "scores": [
         "O-vos-omnes-web.svg"
       ],
-      "group": "lent",
+      "group": "seasons",
       "latin": "O Vos Omnes",
       "english": "O All Ye That Pass By",
       "setting": null,
@@ -126,7 +126,7 @@
     {
       "id": "ad_regias",
       "slug": "ad-regias-agni-dapes",
-      "group": "easter",
+      "group": "seasons",
       "latin": "Ad Regias Agni Dapes",
       "english": "At the Lamb's High Feast",
       "setting": null,
@@ -146,7 +146,7 @@
     {
       "id": "o_oriens_magnificat",
       "slug": "o-oriens-et-magnificat",
-      "group": "advent",
+      "group": "seasons",
       "latin": "O Oriens",
       "english": "O Morning Star, with the Magnificat",
       "setting": null,

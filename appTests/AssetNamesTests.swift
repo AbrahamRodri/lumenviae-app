@@ -74,6 +74,12 @@ struct AssetNamesTests {
 
     // MARK: Paintings
 
+    @Test func everyPrayerBookTopicHangsAPaintingOfItsOwn() {
+        let assets = PrayerBook.chapters.map { PrayerBookPainting.topic($0).asset }
+        #expect(missing(assets) == [])
+        #expect(Set(assets).count == assets.count, "two topics hang the same painting")
+    }
+
     @Test func everySetsCardPaintingIsInTheCatalog() {
         #expect(missing(MysteryCategory.allCases.map(\.cardImageName)) == [])
     }
@@ -109,7 +115,8 @@ struct AssetNamesTests {
     }
 
     @Test func everyChantPaintingIsInTheCatalog() {
-        let names = Array(ChantLibraryData.paintings.values) + ChantSeason.allCases.map(\.painting)
+        let names = Array(ChantLibraryData.paintings.values) + Array(ChantLibraryData.groupPaintings.values)
+            + ChantSeason.allCases.map(\.painting)
         #expect(missing(names) == [])
     }
 }

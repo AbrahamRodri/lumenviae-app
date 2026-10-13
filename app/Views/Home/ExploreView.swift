@@ -753,7 +753,7 @@ struct ExploreView: View {
             paintedTile(
                 title: "Songs to Mary", note: nil,
                 asset: "glorious_coronation", focal: UnitPoint(x: 0.5, y: 0.25)
-            ) { router.push(.chantBrowse(.group("ourLady"))) }
+            ) { router.push(.chantBrowse(.songsToMary)) }
 
             paintedTile(
                 title: ChantBrowseScope.massSetting, note: nil,

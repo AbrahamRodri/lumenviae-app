@@ -111,6 +111,37 @@ struct PrayerBookPainting: Equatable {
         }
     }
 
+    // MARK: The topics
+
+    /// The painting over a topic, on its card in All Topics and at the
+    /// head of its own page. Each topic has one of its own; the sources
+    /// and licences are in Tools/ContentSourcing/sources.py.
+    static func topic(_ chapter: PrayerBookChapter) -> PrayerBookPainting {
+        topics[chapter.id] ?? PrayerBookPainting(
+            asset: "glorious_coronation", focal: UnitPoint(x: 0.5, y: 0.2), caption: "The Coronation of Our Lady")
+    }
+
+    private static let topics: [String: PrayerBookPainting] = [
+        "first": PrayerBookPainting(asset: "topic_first_prayers", focal: UnitPoint(x: 0.5, y: 0.3), caption: "St Anne teaching the Virgin"),
+        "day": PrayerBookPainting(asset: "topic_daily_prayers", focal: UnitPoint(x: 0.5, y: 0.45), caption: "The Angelus"),
+        "short": PrayerBookPainting(asset: "topic_short_prayers", focal: UnitPoint(x: 0.5, y: 0.3), caption: "Saint Francis in Meditation"),
+        "mass": PrayerBookPainting(asset: "topic_holy_mass", focal: UnitPoint(x: 0.5, y: 0.5), caption: "The Mass at Bolsena"),
+        "penance": PrayerBookPainting(asset: "topic_confession", focal: UnitPoint(x: 0.5, y: 0.35), caption: "The Return of the Prodigal Son"),
+        "sacrament": PrayerBookPainting(asset: "topic_blessed_sacrament", focal: UnitPoint(x: 0.5, y: 0.45), caption: "The Disputation of the Holy Sacrament"),
+        "holy_ghost": PrayerBookPainting(asset: "topic_holy_trinity", focal: UnitPoint(x: 0.5, y: 0.2), caption: "The Holy Trinity"),
+        "our_lord": PrayerBookPainting(asset: "topic_our_lord", focal: UnitPoint(x: 0.5, y: 0.25), caption: "The Sacred Heart of Jesus"),
+        "our_lady": PrayerBookPainting(asset: "season_advent", focal: UnitPoint(x: 0.5, y: 0.25), caption: "The Immaculate Conception"),
+        "st_joseph": PrayerBookPainting(asset: "devotion_st_joseph", focal: UnitPoint(x: 0.5, y: 0.2), caption: "Saint Joseph and the Christ Child"),
+        "saints": PrayerBookPainting(asset: "devotion_guardian_angels", focal: UnitPoint(x: 0.5, y: 0.3), caption: "The Guardian Angel"),
+        "seasons": PrayerBookPainting(asset: "topic_feasts_seasons", focal: UnitPoint(x: 0.5, y: 0.4), caption: "The Adoration of the Magi"),
+        "thanks": PrayerBookPainting(asset: "topic_thanksgiving", focal: UnitPoint(x: 0.5, y: 0.3), caption: "The Madonna of the Magnificat"),
+        "litanies": PrayerBookPainting(asset: "feast_all_saints", focal: UnitPoint(x: 0.5, y: 0.3), caption: "The Adoration of the Trinity"),
+        "church": PrayerBookPainting(asset: "topic_for_the_living", focal: UnitPoint(x: 0.5, y: 0.6), caption: "The Delivery of the Keys"),
+        "sick": PrayerBookPainting(asset: "topic_sick_dying", focal: UnitPoint(x: 0.5, y: 0.55), caption: "The Death of Saint Joseph"),
+        "departed": PrayerBookPainting(asset: "devotion_holy_souls", focal: UnitPoint(x: 0.5, y: 0.4), caption: "The Day of the Dead"),
+        "needs": PrayerBookPainting(asset: "topic_needs", focal: UnitPoint(x: 0.5, y: 0.35), caption: "Christ in the Storm on the Sea of Galilee")
+    ]
+
     /// A prayer's painting on the page's rows and shelves: the scene it
     /// speaks of — the Annunciation for the Hail Mary, Pentecost for the
     /// Creed the Apostles handed on

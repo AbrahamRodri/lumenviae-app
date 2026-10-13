@@ -8,8 +8,8 @@ Only entries chant_candidates.json marks `verified` (fetch.py read the
 chant's page and Verbum Gloriae's licence page) are taken; the rest are
 listed and left out. Idempotent: an id or group already in chants.json is
 skipped. chants.json keeps its own layout — one entry per line, the chants
-grouped by shelf with a blank line between shelves — so each new chant is
-inserted as a line after the last chant of its shelf, and a new shelf's
+grouped by section with a blank line between sections — so each new chant
+is inserted as a line after the last chant of its section, and a new section's
 group after the last group, its chants at the end; each new chant is
 also listed at the end of its group's last part. Nothing else in the
 file is touched. Run Tools/Chants/generate.py afterwards.
@@ -68,7 +68,7 @@ def main(dry: bool) -> int:
         insert_after(i, line(g))
     for c in take:
         i = last_index(lambda l, gid=c["group"]: l.startswith('{"id"') and f'"group": "{gid}"' in l)
-        if i is None:  # a new shelf: after the last chant, set off by a blank line
+        if i is None:  # a new section: after the last chant, set off by a blank line
             i = last_index(lambda l: l.startswith('{"id"') and '"slug"' in l)
             lines[i] = lines[i].rstrip().rstrip(",") + ","
             lines.insert(i + 1, "")

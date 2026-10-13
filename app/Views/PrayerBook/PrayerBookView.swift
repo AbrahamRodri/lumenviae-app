@@ -14,8 +14,8 @@
 //    EVERYDAY        the first prayers, a row each, SEE ALL to the chapter
 //    MARY            her best-known prayers on a shelf, the season's song
 //                    to Mary first
-//    OCCASIONS       every order kept for an occasion
-//    ALL TOPICS      the book's twelve chapters
+//    ALL TOPICS      the book's topics, in the order of Blessed Be God,
+//                    a sideways shelf of paintings for each of its parts
 //
 //  Typing searches every prayer by name, Latin name and words, and names
 //  a topic or an order of prayer when the words name one.
@@ -275,11 +275,7 @@ struct PrayerBookView: View {
 
             prayersToMary
 
-            occasions
-                .padding(.horizontal, 18)
-
             allTopics
-                .padding(.horizontal, 18)
         }
     }
 
@@ -410,43 +406,51 @@ struct PrayerBookView: View {
         }
     }
 
-    // MARK: Occasions
+    // MARK: All topics
 
-    /// Every order kept for an occasion, in the order of the places it is
-    /// prayed — at Mass, at Confession, at home, in need
-    private var occasions: some View {
-        let orders = PrayerOccasionPlace.allCases.flatMap { PrayerBook.ordersKept(at: $0) }
+    /// The topics under the part of the book each stands in, every part a
+    /// shelf of paintings that scrolls sideways, as Prayers to Mary does.
+    /// The orders once listed here as For an Occasion stand at the head of
+    /// their topics' pages.
+    private var allTopics: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            PrayersShelfHeading(title: "All Topics")
+                .padding(.horizontal, 18)
 
-        return VStack(alignment: .leading, spacing: 6) {
-            PrayersShelfHeading(title: "For an Occasion")
-            VStack(spacing: 0) {
-                ForEach(Array(orders.enumerated()), id: \.element.id) { i, order in
-                    PrayersOccasionRow(order: order, now: now, showsRule: i < orders.count - 1) {
-                        router.push(.prayerOrder(id: order.id))
+            VStack(alignment: .leading, spacing: 26) {
+                ForEach(PrayerBookPart.allCases) { part in
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text(part.title)
+                            .font(AppFonts.labelFont(9.5))
+                            .tracking(2.4)
+                            .textCase(.uppercase)
+                            .foregroundColor(AppColors.gold)
+                            .accessibilityAddTraits(.isHeader)
+                            .padding(.horizontal, 18)
+
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(alignment: .top, spacing: 14) {
+                                ForEach(part.chapters) { chapter in
+                                    PrayersSquareCard(
+                                        title: chapter.title,
+                                        note: Self.prayerCount(chapter.prayerIDs.count),
+                                        painting: .topic(chapter)
+                                    ) {
+                                        router.push(.prayerBookChapter(id: chapter.id))
+                                    }
+                                }
+                            }
+                            .padding(.horizontal, 18)
+                        }
                     }
                 }
             }
         }
     }
 
-    // MARK: All topics
-
-    private var allTopics: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            PrayersShelfHeading(title: "All Topics")
-            VStack(spacing: 0) {
-                ForEach(Array(PrayerBook.chapters.enumerated()), id: \.element.id) { i, chapter in
-                    PrayersLedgerRow(
-                        title: chapter.title,
-                        note: PrayerBook.chapterNotes[chapter.id],
-                        count: chapter.prayerIDs.count,
-                        showsRule: i < PrayerBook.chapters.count - 1
-                    ) {
-                        router.push(.prayerBookChapter(id: chapter.id))
-                    }
-                }
-            }
-        }
+    /// "11 prayers"
+    static func prayerCount(_ count: Int) -> String {
+        count == 1 ? "1 prayer" : "\(count) prayers"
     }
 
     // MARK: - Search
