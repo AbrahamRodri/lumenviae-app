@@ -2404,9 +2404,13 @@ write concurrent code here:
   a name on the card ground (`PrayersShortcutTile`): Morning Prayers,
   the Angelus (Queen of Heaven in the Easter season), Night Prayers,
   Saved (`.prayerBookSaved`, `PrayerBookSavedView`: the prayers kept with
-  the bookmark at the head of a prayer's page, as small outlined cards
-  the ribbon hangs from, a hold offering Remove from Saved; empty, it says
-  how a prayer comes there), Before Mass and Before Confession. Then
+  the bookmark at the head of a prayer's page, newest first, two to a row,
+  each under its painting with the ribbon hung from it and its name and
+  topic beneath (`SavedPrayerPainting`: the scene the book names for the
+  prayer, else its topic's), a hold offering Remove from Saved; empty,
+  the Saved shortcut's own painting, one sentence on how a prayer comes
+  there, and the First Prayers as a painted door; the how-to line stands
+  only while the page is empty), Before Mass and Before Confession. Then
   **Now**, the order for the hour (`PrayerBook.dayOrder(at:)`) as one
   wide card (`PrayersNowCard`): its painting, NOW · NIGHT (or NIGHT ·
   PRAYED), the order's name, its line (`PrayerBook.daySummary(of:on:)`)
@@ -2481,6 +2485,20 @@ write concurrent code here:
   Queen of Heaven, Queen of Heaven, Hail, Holy Queen), which the Mary
   chapter marks THIS SEASON.
 
+  **An order's own page** (`PrayerOrderView`, `.prayerOrder(id:)`, the
+  "Saved and Prayer Orders" design, option A, Oct 2026) opens on the
+  order's painting (`PrayerBookPainting.order`), run up under the bar's
+  Back and dissolving into the page, then when it is said (with ·
+  PRAYED TODAY beside it once `wasOffered`), its name, its Latin small,
+  one line saying what it is, and its prayers as a numbered list of
+  names, each a door to its page; where the season decides what it
+  holds (Night Prayers' song to Mary, Queen of Heaven at Eastertide) a
+  sentence under the list says so. The foot is PRAY beside a round
+  speaker that switches aloud and silent, and one line beneath saying
+  which ("Aloud, in the male voice", "In silence"). It once stood as type
+  alone: a glyph, an ornament, a paragraph, a kicker counting the
+  prayers, a Latin line under every prayer and a two-line switch row.
+
   **Praying** is `PrayAlongView` (`.prayAlong(PrayAlongLaunch)`, a
   player: bar hidden, its own ×): one prayer at a time, a strand of beads
   for the order's prayers, aloud or in silence (`PrayerBookStore.
@@ -2492,8 +2510,8 @@ write concurrent code here:
   reach: it scrolls, and would stand full height at the accessibility
   text sizes the app no longer reaches (held to 340 points there, its
   rows were drawn over each other). The
-  order page's switch stands just above its PRAY, so
-  praying from there answers the question with what the switch shows;
+  order page's speaker stands just beside its PRAY, so
+  praying from there answers the question with what the speaker shows;
   afterwards the speaker at the head of the page owns the choice. The
   same choice stands in Settings → Prayer Experience as the Prayers
   Tab row, and a choice made there answers the question before it is asked;
@@ -2631,12 +2649,12 @@ write concurrent code here:
   page opens. The library's other pages are pushed: a sung set's own page
   (`.chantSet(ChantSetSubject)`, `ChantSetPage`, below), which every set
   opens on, an occasion or the reader's own, from the tiles, the Sung
-  Sets cards, the index and Saved; the index of the sung sets
+  Sets cards, the index and Your Chants; the index of the sung sets
   (`.chantSets`, `ChantSetsPage`, `ChantOccasionsSection`); a topic, every chant under its topic,
   or the Mass of the Angels (`.chantBrowse(ChantBrowseScope)`,
   `ChantBrowsePage`), which is how every chant stays reachable without a
-  search; and the reader's own chants (`.chantSaved(ChantSavedShelf)`,
-  `ChantSavedPage`, `ChantSavedSection` below).
+  search; and the reader's own chants, Your Chants
+  (`.chantSaved(ChantSavedShelf)`, `ChantSavedPage`, below).
 
   **A set's page** (`ChantSetPage`, the "Chant Library shelves" design,
   option B, Oct 2026) is one component for every set, laid out as an
@@ -2661,11 +2679,19 @@ write concurrent code here:
   letting that set go — but only while the set is still the occasion's
   own copy (`ChantShelfStore.isUntouchedCopy`); any other kept set is let
   go only after the question before a delete (`toggleKeeping` answers
-  `.askFirst`). **Saved** (`ChantSavedSection`, on its own page): a shelf
-  of spines (`ChantSpineCloth`) — Learned, Favourites, each set the
-  reader made, and the dashed + — over the chants of Learned or
-  Favourites; a set's spine opens its page; then Recently played and the
-  Words setting. A new set is named first (`ChantNewSetSheet`), stands on
+  `.askFirst`). **Your Chants** (`ChantSavedPage`, the "simplify saved
+  chants" design, option A, Oct 2026): the painting of the first chant on
+  the shelf shown hangs at the head and dissolves into the page (an empty
+  shelf's own painting until something is kept); under it a pill of two
+  halves, Favourites | Learned with their counts (`ChantShelfSwitch`),
+  the tile's shelf lit (`ChantSavedShelf.shown`); the shelf as the
+  library's song rows with a play disc laid over each row's painting, or, empty, a faded
+  painting and one line; Your sets as square covers ending on a dashed
+  New set (`ChantSavedSetCover`, `ChantNewSetCover`, "+ NEW SET" in the
+  heading while any set exists); Played lately as quiet rows, when, then
+  the chant's Latin over its English; and Words as one line at the foot. It once opened on a
+  shelf of book spines, two of which switched the list and the rest
+  opened pages, under a paragraph saying what the page was. A new set is named first (`ChantNewSetSheet`), stands on
   the shelf only once made, and opens on its page. **The sheets that
   build a set** (`ChantSheets.swift`, the "Building a sung set" design,
   option A, Oct 2026; shared pieces in `ChantSetBuilding.swift`) each
@@ -2967,7 +2993,7 @@ write concurrent code here:
   puts the set down. It keeps the line clock (`lineEnd`: on, again,
   take turns, and practice's stop and your-turn-then-stop), the sleep
   timer (minutes, or the chant's end), and notes each chant sung for
-  Recently played. A set's silence plays `Resources/chant_silence.m4a` —
+  Played lately on Your Chants. A set's silence plays `Resources/chant_silence.m4a` —
   five seconds of silence, AAC, kept beside the other bundled sounds and
   not in `Resources/Chants`, which the generator owns — on a loop through
   the set's own claim for as long as the silence lasts: timed by the
@@ -3439,8 +3465,10 @@ transition entirely.
 - **Snapshot tests:** `appTests/Snapshots/` draws the main screens that
   read nothing off the clock or the network (home's mysteries sections,
   VIEW ALL, a mysteries' page, a set's page, the Scriptural Rosary's page,
-  a Prayer Book page, and the chant search before typing, with results
-  and with nothing found, on a fixed day) from fixed data with swift-snapshot-testing (the
+  a Prayer Book page, Saved full and empty, an order's page, the chant
+  search before typing, with results and with nothing found, and Your
+  Chants with its shelves full, empty and at its foot, on a fixed day)
+  from fixed data with swift-snapshot-testing (the
   test target's one package; the app has none) and compares them with
   the PNGs in `__Snapshots__/`, in the same `xcodebuild test`.
   `ScreenSnapshot.assertScreen` is the one way to draw one: an iPhone 17
