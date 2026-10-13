@@ -3,16 +3,27 @@
 //  Lumen Viae
 //
 //  One prayer of the Prayer Book as a holy card (the "Holy Cards" pick,
-//  option B4, Oct 2026): the card stands between the bar and the foot,
-//  its painting set in an arch at its head, the set and the prayer's
-//  place in it, its name and its Latin, then the prayer, the orders it is
-//  said in, and its place among the set's prayers as a row of dots. The
-//  prayers before and after it peek in at the edges of the glass. The
-//  card's words scroll inside it; a drag across deals the card away, the
-//  next one rising from beneath it, as a stack of holy cards is turned.
-//  At the foot, Learn by heart and Hear it sung stand either side of
-//  PRAY, and one line beneath says how it will be prayed. The language
-//  is a small button in the bar, the ribbon beside it.
+//  option B4, Oct 2026): the card stands from the bar to the foot of the
+//  glass, its painting set in an arch at its head, the set and the
+//  prayer's place in it, its name and its Latin, then the prayer, the
+//  orders it is said in, and its place among the set's prayers as a row
+//  of dots. The prayers before and after it peek in at the edges of the
+//  glass. The card's words scroll inside it, under its floor: PRAY with
+//  Learn by heart and Hear it sung as small rings either side, on a fade
+//  of the card's own ground. A drag across turns to the next card, which
+//  slides in from the right over this one (the "Chant shelves and prayer
+//  cards" pick: no foot, slide over, Oct 2026). The language is a small
+//  button in the bar, the ribbon beside it.
+//
+//  The page once had a foot of its own under the card: two 52-point
+//  rings named in small capitals either side of a 56-point PRAY, and a
+//  line beneath, "Aloud, in the male voice · tap to change", which took
+//  some 200 points from the prayer. Aloud or in silence is the
+//  pray-along's choice: it asks before its first sound, and its head
+//  says it in a word. The card was dealt away, leaning up to 9 degrees
+//  and speeding up as it flew, the next rising from beneath: it read as
+//  a card thrown away more than a page turned, and nothing said which
+//  way the next one lay.
 //
 //  The set is the topic or the order the prayer was opened from
 //  (`PrayerSet`, `PrayerDeck`): opened from Before Confession, the cards
@@ -136,21 +147,7 @@ struct BookPrayerView: View {
                     )
                     .overlay(alignment: .top) { SavedNote(note: note) }
                     .padding(.top, 6)
-
-                    PrayerFoot(
-                        prayerID: prayer.id,
-                        store: store,
-                        learn: { showsLearn = true },
-                        pray: {
-                            // The line beneath PRAY says how it will be prayed,
-                            // so it is the reader's answer; the pray-along
-                            // screen won't ask
-                            store.chooseAloud(store.praysAloud)
-                            router.push(.prayAlong(.prayer(prayer)))
-                        },
-                        hear: { chantID in router.push(.chant(id: chantID)) }
-                    )
-                    .equatable()
+                    .padding(.bottom, 8)
                 }
             } else {
                 Text("This prayer could not be found.")
@@ -229,6 +226,9 @@ struct BookPrayerView: View {
         )
         let actions = HolyCardActions(
             openOrder: { id in router.push(.prayerOrder(id: id)) },
+            learn: { showsLearn = true },
+            pray: { router.push(.prayAlong(.prayer(prayer))) },
+            hear: { chantID in router.push(.chant(id: chantID)) },
             next: { dealRequest = .next },
             previous: { dealRequest = .previous },
             all: {
@@ -240,7 +240,7 @@ struct BookPrayerView: View {
                 }
             }
         )
-        return HolyCard(facts: facts, actions: actions)
+        return HolyCard(facts: facts, actions: actions, store: store)
     }
 
     /// The painting of the card before or after this one, for the sliver
@@ -362,11 +362,16 @@ enum DealDirection: Equatable {
     }
 }
 
-/// The card in front, the card waiting beneath it, and the slivers of the
-/// cards before and after at the glass's edges; a drag across deals the
-/// card in front away. It holds the drag itself, so a frame of the drag
-/// redraws this and nothing above it, and its cards are drawn only when
-/// their facts change.
+/// The card in front, the card it is turning to, and the slivers of the
+/// cards before and after at the glass's edges. A drag across turns the
+/// page as a pushed page slides in: toward the next prayer, the next card
+/// slides in from the right over this one, which steps back a third of
+/// the way and dims; toward the one before, this card slides off to the
+/// right and the one before comes forward from beneath it. The card in
+/// hand follows the finger, and the turn finishes on an ease-out with no
+/// lean and no bounce, so the eye can follow where it went. It holds the
+/// drag itself, so a frame of the drag redraws this and nothing above it,
+/// and its cards are drawn only when their facts change.
 private struct DealDeck: View {
     let front: HolyCard
     let previousCard: HolyCard?
@@ -383,7 +388,7 @@ private struct DealDeck: View {
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    /// How far the card in front has travelled across, in points:
+    /// How far the turn has gone, in points of the finger's travel:
     /// negative toward the next prayer, positive toward the one before
     @State private var travel: CGFloat
     /// Whether the drag under way was taken as a deal or left to the scroll
@@ -422,26 +427,44 @@ private struct DealDeck: View {
         _travel = State(initialValue: turnedBy)
     }
 
-    /// How far through a deal the card in front is, 0 at rest and 1 gone
+    /// How far a card travels to leave the glass: its width and the
+    /// margins either side of it
+    private var reach: CGFloat { width + 56 }
+
+    /// How far through a turn the deck is, 0 at rest and 1 turned
     private var progress: CGFloat {
-        min(1, abs(travel) / max(width, 1))
+        min(1, abs(travel) / max(reach, 1))
     }
 
-    /// The card waiting beneath the one in front: the next prayer while the
-    /// front card goes left, the one before while it goes right
+    /// The card the deck is turning to: the next prayer while the drag goes
+    /// left, the one before while it goes right
     private var beneath: HolyCard? {
         if travel < 0 { return nextCard }
         if travel > 0 { return previousCard }
         return nil
     }
 
+    /// The card stepped back under the other, a third of the way over and
+    /// dimmed, as a page is when another is pushed over it
+    private static let stepBack: CGFloat = 0.33
+    private static let dimmed: Double = 0.45
+
     var body: some View {
+        let p = progress
+        let towardNext = travel < 0
+        let turning = beneath != nil && !reduceMotion
+
         ZStack {
             if let beneath {
                 beneath
                     .equatable()
-                    .scaleEffect(reduceMotion ? 1 : 0.94 + 0.06 * progress)
-                    .opacity(reduceMotion ? 0 : 0.85 + 0.15 * Double(progress))
+                    // Toward the next: it slides in from the right, over
+                    // the card in front. Toward the one before: it waits a
+                    // third of the way to the left, dimmed, and comes
+                    // forward as the card in front leaves
+                    .offset(x: reduceMotion ? 0 : (towardNext ? reach * (1 - p) : -reach * Self.stepBack * (1 - p)))
+                    .opacity(reduceMotion ? 0 : (towardNext ? 1 : Self.dimmed + (1 - Self.dimmed) * Double(p)))
+                    .zIndex(towardNext ? 1 : 0)
                     .allowsHitTesting(false)
                     .accessibilityHidden(true)
             }
@@ -449,11 +472,9 @@ private struct DealDeck: View {
             front
                 .equatable()
                 .id(frontID)
-                .offset(x: travel)
-                // Leans into the deal, as a card lifted from a stack does
-                .rotationEffect(.degrees(reduceMotion ? 0 : Double(travel / max(width, 1)) * 9))
-                // Opaque as it goes: the card beneath never reads through it
-                .opacity(fade)
+                .offset(x: turning ? (towardNext ? -reach * Self.stepBack * p : reach * p) : travel)
+                .opacity((turning && towardNext ? 1 - (1 - Self.dimmed) * Double(p) : 1) * fade)
+                .zIndex(towardNext ? 0 : 1)
         }
         .padding(.horizontal, 28)
         .onGeometryChange(for: CGFloat.self) { $0.size.width - 56 } action: { width = $0 }
@@ -461,14 +482,14 @@ private struct DealDeck: View {
         .overlay(alignment: .trailing) { edge(nextEdge, leading: false) }
         .sensoryFeedback(.impact(weight: .light), trigger: dealt)
         // The card's own scroll keeps the vertical drag; a drag that
-        // starts across deals the card
+        // starts across turns the card
         .simultaneousGesture(
             DragGesture(minimumDistance: 14)
                 .updating($dragging) { _, state, _ in state = true }
                 .onChanged { value in
-                    // A finger down while a card flies off is let be for
+                    // A finger down while a card is turning is let be for
                     // the rest of its drag, or the next card would leap
-                    // under it once the deal is done
+                    // under it once the turn is done
                     guard !dealing else {
                         dragIsAcross = false
                         return
@@ -543,16 +564,17 @@ private struct DealDeck: View {
             .contentShape(Rectangle())
             .onTapGesture { deal(leading ? .previous : .next) }
             .accessibilityHidden(true)
-            // The edges step back while a card is dealt, so the card in
-            // hand never passes beneath them
+            // The edges step back while a card turns, so the card in hand
+            // never passes beneath them
             .opacity(travel == 0 ? 1 : 0)
             .animation(Motion.crossfade, value: travel == 0)
         }
     }
 
-    /// Deals the card in front away: it flies off, the card beneath it
-    /// rises to full and takes its place, opened at its top. Under Reduce
-    /// Motion the one card fades into the other.
+    /// Turns to the card before or after: the turn finishes from wherever
+    /// the finger left it, on an ease-out, and the card it turned to
+    /// becomes the page, opened at its top. Under Reduce Motion the one
+    /// card fades into the other.
     private func deal(_ direction: DealDirection) {
         guard !dealing else { return }
         guard (direction == .next ? nextCard : previousCard) != nil else {
@@ -583,28 +605,28 @@ private struct DealDeck: View {
             return
         }
 
-        let away = (direction == .next ? -1 : 1) * width * 1.15
-        let flyOff = {
-            withAnimation(.easeIn(duration: 0.3)) {
-                travel = away
+        let turned = (direction == .next ? -1 : 1) * reach
+        let turn = {
+            withAnimation(Motion.pageTurn) {
+                travel = turned
             } completion: {
                 done()
             }
         }
 
-        // A turn begun by a tap starts from rest: nudge the card first and
-        // let that be drawn, so the card beneath is there at 0.94 to rise
-        // as the front one goes
+        // A turn begun by a tap starts from rest: set the card it turns to
+        // in place first and let that be drawn, so it slides in rather
+        // than appearing mid-turn
         if travel == 0 {
             var still = Transaction()
             still.disablesAnimations = true
             withTransaction(still) { travel = direction == .next ? -0.5 : 0.5 }
             Task { @MainActor in
                 try? await Task.sleep(for: .milliseconds(16))
-                flyOff()
+                turn()
             }
         } else {
-            flyOff()
+            turn()
         }
     }
 }
@@ -638,6 +660,9 @@ private struct HolyCardFacts: Equatable {
 /// What a card's doors do
 private struct HolyCardActions {
     let openOrder: (String) -> Void
+    let learn: () -> Void
+    let pray: () -> Void
+    let hear: (String) -> Void
     let next: () -> Void
     let previous: () -> Void
     let all: () -> Void
@@ -647,10 +672,11 @@ private struct HolyCardActions {
 /// and its place, the name and the Latin, a gold rule, the prayer, the
 /// orders it is said in, and its place in the set. A gold rim with a
 /// second rule inside it, on the card's own ground. The words scroll
-/// inside the card.
+/// inside the card, under its floor, where PRAY stands.
 private struct HolyCard: View, Equatable {
     let facts: HolyCardFacts
     let actions: HolyCardActions
+    let store: PrayerBookStore
 
     /// The card's height, which the arch gives way to on a short card
     @State private var height: CGFloat = 0
@@ -721,7 +747,8 @@ private struct HolyCard: View, Equatable {
                         }
                         .padding(.top, 26)
 
-                        Color.clear.frame(height: 10).id("end")
+                        // Room for the last line to scroll clear of the floor
+                        Color.clear.frame(height: CardFloor.height).id("end")
                     }
                     .padding(.horizontal, 22)
                     .padding(.top, -22)
@@ -742,6 +769,16 @@ private struct HolyCard: View, Equatable {
                         .frame(height: 14)
                 }
             )
+        }
+        .overlay(alignment: .bottom) {
+            CardFloor(
+                prayerID: facts.prayerID,
+                store: store,
+                learn: actions.learn,
+                pray: actions.pray,
+                hear: actions.hear
+            )
+            .equatable()
         }
         .background(AppColors.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: Self.corner, style: .continuous))
@@ -925,121 +962,84 @@ struct PlaceDots: View {
     }
 }
 
-// MARK: - The foot
+// MARK: - The card's floor
 
-/// Learn by heart and Hear it sung either side of PRAY, the page's one
-/// gold act, and beneath them how it will be prayed. Redrawn for its
-/// prayer and the store's own changes, never for a frame of the deal.
-private struct PrayerFoot: View, Equatable {
+/// PRAY, the page's one gold act, with Learn by heart and Hear it sung as
+/// small rings either side, standing on the card's own floor over a fade
+/// of its ground, so the words scroll away beneath them. Redrawn for its
+/// prayer and the store's own changes, never for a frame of the turn.
+private struct CardFloor: View, Equatable {
     let prayerID: String
     let store: PrayerBookStore
     let learn: () -> Void
     let pray: () -> Void
     let hear: (String) -> Void
 
-    private var voices = NarrationVoiceCatalog.shared
+    /// The floor's height, fade included, which the card's words keep
+    /// room for at their end
+    static let height: CGFloat = 92
 
-    init(
-        prayerID: String,
-        store: PrayerBookStore,
-        learn: @escaping () -> Void,
-        pray: @escaping () -> Void,
-        hear: @escaping (String) -> Void
-    ) {
-        self.prayerID = prayerID
-        self.store = store
-        self.learn = learn
-        self.pray = pray
-        self.hear = hear
-    }
-
-    static func == (a: PrayerFoot, b: PrayerFoot) -> Bool {
+    static func == (a: CardFloor, b: CardFloor) -> Bool {
         a.prayerID == b.prayerID && a.store === b.store
     }
 
     var body: some View {
-        let aloud = store.praysAloud
-        let voice = voices.chosenVoice.name.lowercased()
         let learned = store.isByHeart(prayerID)
         // The first setting (a simple tone before a solemn one); the
         // chant's page offers the others
         let chant = ChantCatalog.chants(forPrayer: prayerID).first
 
-        VStack(spacing: 2) {
-            HStack(alignment: .top, spacing: 8) {
-                FootAct(
-                    icon: learned ? "ph-seal-check-fill" : "ph-heart",
-                    label: learned ? "Learned" : "Learn by heart",
-                    action: learn
-                )
+        HStack(spacing: 12) {
+            FloorAct(icon: learned ? "ph-seal-check-fill" : "ph-heart", action: learn)
                 .accessibilityLabel("Learn by heart")
                 .accessibilityValue(learned ? "Learned" : "")
                 .accessibilityHint("Opens the steps to learn it by heart")
 
-                GoldCTAButton(title: "Pray", glyph: .play, action: pray)
+            GoldCTAButton(title: "Pray", prominence: .inline, glyph: .play, action: pray)
 
-                // A prayer with no chant keeps the place empty, so PRAY
-                // stands where it stood on the card before
-                if let chant {
-                    FootAct(icon: "ph-music-note", label: "Hear it sung") {
-                        hear(chant.id)
-                    }
+            // A prayer with no chant keeps the place empty, so PRAY
+            // stands where it stood on the card before
+            if let chant {
+                FloorAct(icon: "ph-music-note") { hear(chant.id) }
                     .accessibilityLabel("Hear it sung")
                     .accessibilityHint("Opens a sung recording, with its sheet music")
-                } else {
-                    Color.clear.frame(width: FootAct.width, height: 1)
-                }
+            } else {
+                Color.clear.frame(width: FloorAct.size, height: 1)
             }
-
-            Button {
-                withAnimation(Motion.settle) { store.praysAloud.toggle() }
-            } label: {
-                HStack(spacing: 6) {
-                    AppIcon(aloud ? "ph-speaker-high-fill" : "ph-speaker-high", size: 12)
-                        .foregroundColor(AppColors.gold.opacity(aloud ? 0.9 : 0.55))
-                    Text(aloud ? "Aloud, in the \(voice) voice · tap to change" : "In silence · tap to change")
-                        .font(AppFonts.readingItalicFont(13))
-                        .foregroundColor(AppColors.textSecondary)
-                        .contentTransition(.opacity)
-                }
-                .frame(minHeight: 44)
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(QuietGlyphButtonStyle())
-            .accessibilityLabel("Pray aloud")
-            .accessibilityAddTraits(.isToggle)
-            .accessibilityValue(aloud ? "On, the \(voice) voice" : "Off")
         }
         .padding(.horizontal, 16)
-        .padding(.top, 14)
+        .padding(.top, 34)
+        .padding(.bottom, 14)
+        .frame(maxWidth: .infinity)
+        .background(
+            LinearGradient(
+                stops: [
+                    .init(color: AppColors.cardBackground.opacity(0), location: 0),
+                    .init(color: AppColors.cardBackground, location: 0.45)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .allowsHitTesting(false)
+        )
     }
 }
 
-/// Learn by heart or Hear it sung: a ringed disc with its glyph, the act
-/// named beneath it in small capitals
-private struct FootAct: View {
+/// Learn by heart or Hear it sung: a small ringed disc with its glyph,
+/// named to VoiceOver
+private struct FloorAct: View {
     let icon: String
-    let label: String
     let action: () -> Void
 
-    static let width: CGFloat = 76
+    static let size: CGFloat = 44
 
     var body: some View {
         Button(action: action) {
-            VStack(spacing: 6) {
-                AppIcon(icon, size: 19)
-                    .foregroundColor(AppColors.gold.opacity(0.85))
-                    .frame(width: 52, height: 52)
-                    .overlay(Circle().strokeBorder(AppColors.gold.opacity(0.4), lineWidth: 1.2))
-                Text(label.uppercased())
-                    .font(AppFonts.labelFont(9))
-                    .tracking(1.2)
-                    .foregroundColor(AppColors.gold)
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            .frame(width: Self.width)
-            .contentShape(Rectangle())
+            AppIcon(icon, size: 17)
+                .foregroundColor(AppColors.gold.opacity(0.85))
+                .frame(width: Self.size, height: Self.size)
+                .overlay(Circle().strokeBorder(AppColors.gold.opacity(0.4), lineWidth: 1.2))
+                .contentShape(Circle())
         }
         .buttonStyle(QuietGlyphButtonStyle())
     }
