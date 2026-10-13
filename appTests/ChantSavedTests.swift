@@ -8,6 +8,7 @@
 //
 
 import Foundation
+import SwiftUI
 import Testing
 
 @testable import app
@@ -29,7 +30,8 @@ struct ChantSavedTests {
     @Test func paintingIsTheFirstChantsElseTheShelfsOwn() throws {
         let salve = try #require(ChantCatalog.chant("salve_regina_simple"))
         let veni = try #require(ChantCatalog.chant("veni_creator"))
-        #expect(ChantSavedShelf.favorites.painting(of: [veni, salve]) == ChantCatalog.painting(for: veni))
+        // Learned's own painting is the Coronation; the first chant's leads
+        #expect(ChantSavedShelf.learned.painting(of: [veni, salve]) == "glorious_pentecost")
         #expect(ChantSavedShelf.favorites.painting(of: []) == ChantSavedShelf.favorites.emptyPainting)
         #expect(ChantSavedShelf.learned.painting(of: []) == ChantSavedShelf.learned.emptyPainting)
     }
@@ -71,7 +73,9 @@ struct ChantSavedTests {
     }
 
     @Test func aSetsCoverSaysItsChantsAndMinutes() throws {
-        let defaults = try #require(UserDefaults(suiteName: "ChantSavedTests.\(UUID().uuidString)"))
+        let suite = "ChantSavedTests.\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
         let shelf = ChantShelfStore(defaults: defaults)
         let empty = shelf.newSet(named: "Lauds")
         #expect(ChantSavedSetCover.summary(of: empty) == "No chants yet")
@@ -94,8 +98,10 @@ struct ChantSavedTests {
         #expect(ChantSavedSetCover.spoken(grace) == "Grace, 1 chant, 1 minute")
     }
 
-    @Test func reduceMotionDrawsEveryChangeAtOnce() {
-        #expect(ChantSavedMotion.animation(Motion.crossfade, reduceMotion: true) == nil)
-        #expect(ChantSavedMotion.animation(Motion.crossfade, reduceMotion: false) == Motion.crossfade)
+    /// Under Reduce Motion a count changes without rolling its digits;
+    /// the page's crossfades stay, since a fade is not travel
+    @Test func underReduceMotionACountDoesNotRoll() {
+        #expect(ChantShelfSwitch.countTransition(reduceMotion: true) == .identity)
+        #expect(ChantShelfSwitch.countTransition(reduceMotion: false) == .numericText())
     }
 }

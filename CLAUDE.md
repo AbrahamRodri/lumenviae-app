@@ -2652,11 +2652,11 @@ write concurrent code here:
   shelf's own painting until something is kept); under it a pill of two
   halves, Favourites | Learned with their counts (`ChantShelfSwitch`),
   the tile's shelf lit (`ChantSavedShelf.shown`); the shelf as the
-  library's song rows with a play disc before each, or, empty, a faded
+  library's song rows with a play disc laid over each row's painting, or, empty, a faded
   painting and one line; Your sets as square covers ending on a dashed
   New set (`ChantSavedSetCover`, `ChantNewSetCover`, "+ NEW SET" in the
-  heading while any set exists); Played lately as quiet rows, when and
-  the chant; and Words as one line at the foot. It once opened on a
+  heading while any set exists); Played lately as quiet rows, when, then
+  the chant's Latin over its English; and Words as one line at the foot. It once opened on a
   shelf of book spines, two of which switched the list and the rest
   opened pages, under a paragraph saying what the page was. A new set is named first (`ChantNewSetSheet`), stands on
   the shelf only once made, and opens on its page. **The sheets that

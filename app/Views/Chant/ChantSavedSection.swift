@@ -88,19 +88,20 @@ struct ChantSavedPage: View {
 
     @State private var choice: ChantSavedShelf?
     @State private var scroll = ChantSavedScroll()
-    /// The status bar's and the bar's height, which the painting runs up
-    /// under
-    @State private var topInset: CGFloat = 0
+    /// The room the page keeps at its foot, read so the player's room is
+    /// added only where the app has not already kept it
+    @State private var bottomInset: CGFloat = 0
 
     private let shelf: ChantShelfStore
-    private let now: Date?
+    private let clock: ChantSavedClock
 
-    /// `now` holds the recent plays' "Tonight" and "Yesterday" to one
-    /// moment, for a snapshot; left out, they read the clock
-    init(start: ChantSavedShelf?, shelf: ChantShelfStore = .shared, now: Date? = nil) {
+    /// `clock` holds the recent plays' "Tonight" and "Yesterday" to one
+    /// moment, calendar and language, for a snapshot; left out, they read
+    /// the device's
+    init(start: ChantSavedShelf?, shelf: ChantShelfStore = .shared, clock: ChantSavedClock = .device) {
         _choice = State(initialValue: start)
         self.shelf = shelf
-        self.now = now
+        self.clock = clock
     }
 
     private var shown: ChantSavedShelf {
@@ -108,16 +109,20 @@ struct ChantSavedPage: View {
     }
 
     /// Room at the foot for the chant player while it stands there, so
-    /// the Words line is never under it. The app's own inset for the
-    /// player does not reach pushed pages yet; when card
-    /// 20261012-2355-mini-player-covers-the-foot-of-pushed-ch fixes that
-    /// in ContentView, this goes.
+    /// the Words line is never under it. The app keeps room for the player
+    /// on every page (`ContentView`), but it does not yet reach a pushed
+    /// page; until card
+    /// 20261012-2355-mini-player-covers-the-foot-of-pushed-ch fixes that,
+    /// the page keeps its own, and none once the app's room arrives, so it
+    /// is never kept twice.
     private var playerRoom: CGFloat {
-        ChantPlayer.shared.isActive ? Self.playerHeight : 0
+        guard ChantPlayer.shared.isActive, bottomInset < Self.playerRoomHeight else { return 0 }
+        return Self.playerRoomHeight
     }
 
-    /// The mini player's height and the gap above it
-    private static let playerHeight: CGFloat = 80
+    /// The mini player as it stands at a pushed page's foot: about 62
+    /// points tall, 6 above the home indicator, and a gap above it
+    static let playerRoomHeight: CGFloat = 80
 
     private var shownChants: [Chant] {
         shown == .favorites ? shelf.favoriteChants : shelf.learnedChants
@@ -127,22 +132,17 @@ struct ChantSavedPage: View {
         ZStack(alignment: .top) {
             AppColors.appGradient.ignoresSafeArea()
 
-            ChantSavedPainting(name: shown.painting(of: shownChants), top: topInset, scroll: scroll)
+            ChantSavedPainting(name: shown.painting(of: shownChants), scroll: scroll)
 
             ScrollView(showsIndicators: false) {
-                ChantSavedSection(choice: $choice, shelf: shelf, now: now)
+                ChantSavedSection(choice: $choice, shelf: shelf, clock: clock)
                     .padding(.top, 4)
                     .padding(.bottom, 48 + playerRoom)
-                    .onGeometryChange(for: CGFloat.self) { $0.frame(in: .scrollView).minY } action: { top in
-                        // Before iOS 18 the content's own top is the only
-                        // reading of the scroll
-                        if #unavailable(iOS 18) { scroll.note(top) }
-                    }
             }
             .modifier(ChantSavedScrollReading(scroll: scroll))
             .topChromeFade()
         }
-        .onGeometryChange(for: CGFloat.self) { $0.safeAreaInsets.top } action: { topInset = $0 }
+        .onGeometryChange(for: CGFloat.self) { $0.safeAreaInsets.bottom } action: { bottomInset = $0 }
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
@@ -158,14 +158,25 @@ struct ChantSavedPage: View {
     }
 }
 
+// MARK: - ChantSavedClock
+
+/// The moment, calendar and language the recent plays are named in
+struct ChantSavedClock {
+    var now: () -> Date
+    var calendar: Calendar
+    var locale: Locale
+
+    static var device: ChantSavedClock {
+        ChantSavedClock(now: { Date() }, calendar: .current, locale: .current)
+    }
+}
+
 // MARK: - ChantSavedScroll
 
 /// How far the page has scrolled, read only by the painting, so a scroll
 /// frame redraws the painting and not the page
 @Observable
 final class ChantSavedScroll {
-    /// Where the content's top stood at rest, before iOS 18
-    @ObservationIgnored private var rest: CGFloat?
     /// How far the content has risen, never more than nothing when pulled
     /// down
     private(set) var rise: CGFloat = 0
@@ -174,17 +185,12 @@ final class ChantSavedScroll {
         let risen = max(0, risen)
         if risen != rise { rise = risen }
     }
-
-    /// Before iOS 18: the content's top, read against where it first stood
-    func note(_ top: CGFloat) {
-        let rest = self.rest ?? top
-        self.rest = rest
-        set(rise: rest - top)
-    }
 }
 
-/// Reads the scroll from the scroll view itself where the system can: its
-/// offset past its resting inset, whatever the bar's height settles to
+/// Reads the scroll from the scroll view itself: its offset past its
+/// resting inset, whatever the bar's height settles to. Before iOS 18,
+/// which cannot read it, the painting stands still and the page scrolls
+/// over it.
 struct ChantSavedScrollReading: ViewModifier {
     let scroll: ChantSavedScroll
 
@@ -201,42 +207,45 @@ struct ChantSavedScrollReading: ViewModifier {
     }
 }
 
-// MARK: - ChantSavedMotion
-
-/// The page's one rule for motion: every change it animates is drawn at
-/// once under Reduce Motion
-enum ChantSavedMotion {
-    static func animation(_ animation: Animation, reduceMotion: Bool) -> Animation? {
-        reduceMotion ? nil : animation
-    }
-}
-
 // MARK: - ChantSavedPainting
 
 /// The painting at the head of the page, run to the top of the glass and
 /// dissolving into the page beneath the switch, as a Prayer Book topic's
 /// does. A veil under the bar and the switch keeps their words readable.
-/// It rises with the page, and crossfades when the shelf changes.
+/// It rises with the page, and crossfades when the shelf changes, Reduce
+/// Motion or not, since a crossfade is not travel.
 struct ChantSavedPainting: View {
     let name: String
-    /// The status bar's and the bar's height
-    let top: CGFloat
     let scroll: ChantSavedScroll
-
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     /// How far the painting reaches below the bar: past the switch and no
     /// further, so the chants beneath stand on the bare page
     static let reach: CGFloat = 110
 
     var body: some View {
+        // A band as tall as the reach, from the bar's foot down, whose
+        // painting runs on up under the bar and the status bar: drawn as
+        // its background with the top safe area ignored, so its height
+        // never waits on a measurement
+        Color.clear
+            .frame(maxWidth: .infinity)
+            .frame(height: Self.reach)
+            .background(alignment: .bottom) {
+                painting
+                    .ignoresSafeArea(edges: .top)
+            }
+            .offset(y: -scroll.rise)
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
+    }
+
+    private var painting: some View {
         ZStack {
             CachedAssetImage(name, focal: ChantThumbnail.focalPoint(for: name))
                 .id(name)
                 .transition(.opacity)
         }
-        .frame(maxWidth: .infinity)
-        .frame(height: top + Self.reach)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .clipped()
         .overlay {
             // A veil under the status bar, the title and the switch
@@ -264,12 +273,7 @@ struct ChantSavedPainting: View {
                 endPoint: .bottom
             )
         )
-        .offset(y: -scroll.rise)
-        .animation(ChantSavedMotion.animation(Motion.crossfade, reduceMotion: reduceMotion), value: name)
-        .frame(maxHeight: .infinity, alignment: .top)
-        .ignoresSafeArea(edges: .top)
-        .allowsHitTesting(false)
-        .accessibilityHidden(true)
+        .animation(Motion.crossfade, value: name)
     }
 }
 
@@ -281,19 +285,18 @@ struct ChantSavedSection: View {
 
     @Binding var choice: ChantSavedShelf?
     let shelf: ChantShelfStore
-    let now: Date?
+    let clock: ChantSavedClock
 
     @Environment(AppRouter.self) private var router
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var player = ChantPlayer.shared
 
     @State private var namingSet = false
 
-    init(choice: Binding<ChantSavedShelf?>, shelf: ChantShelfStore = .shared, now: Date? = nil) {
+    init(choice: Binding<ChantSavedShelf?>, shelf: ChantShelfStore = .shared, clock: ChantSavedClock = .device) {
         _choice = choice
         self.shelf = shelf
-        self.now = now
+        self.clock = clock
     }
 
     private var shown: ChantSavedShelf {
@@ -308,7 +311,7 @@ struct ChantSavedSection: View {
                     favorites: shelf.favorites.count,
                     learned: shelf.learned.count
                 ) { chosen in
-                    withAnimation(ChantSavedMotion.animation(Motion.choice, reduceMotion: reduceMotion)) { choice = chosen }
+                    withAnimation(Motion.choice) { choice = chosen }
                 }
                 .padding(.horizontal, 18)
 
@@ -325,7 +328,7 @@ struct ChantSavedSection: View {
                     }
                 }
                 .padding(.horizontal, 18)
-                .animation(ChantSavedMotion.animation(Motion.crossfade, reduceMotion: reduceMotion), value: shown)
+                .animation(Motion.crossfade, value: shown)
             }
 
             sets
@@ -408,7 +411,9 @@ struct ChantSavedSection: View {
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(QuietGlyphButtonStyle())
-                    .accessibilityLabel("Make a new set")
+                    // The dashed cover at the shelf's end is VoiceOver's
+                    // one door to a new set, so it is not heard twice
+                    .accessibilityHidden(true)
                 }
             }
             .frame(minHeight: 30)
@@ -441,7 +446,7 @@ struct ChantSavedSection: View {
             VStack(spacing: 0) {
                 ForEach(shelf.recent, id: \.chantID) { play in
                     if let chant = ChantCatalog.chant(play.chantID) {
-                        let when = Self.when(play.at, now: now ?? Date())
+                        let when = Self.when(play.at, now: clock.now(), calendar: clock.calendar, locale: clock.locale)
                         Button {
                             open(chant)
                         } label: {
@@ -452,10 +457,18 @@ struct ChantSavedSection: View {
                                     .lineLimit(1)
                                     .minimumScaleFactor(0.86)
                                     .frame(width: 112, alignment: .leading)
-                                Text(chant.latinTitle)
-                                    .font(AppFonts.readingFont(16))
-                                    .foregroundColor(AppColors.cream.opacity(0.9))
-                                    .lineLimit(1)
+                                // A Latin title never stands alone: the
+                                // English beneath it, quieter
+                                VStack(alignment: .leading, spacing: 1) {
+                                    Text(chant.latinTitle)
+                                        .font(AppFonts.readingFont(16))
+                                        .foregroundColor(AppColors.cream.opacity(0.9))
+                                        .lineLimit(1)
+                                    Text(chant.englishTitle)
+                                        .font(AppFonts.readingItalicFont(13.5))
+                                        .foregroundColor(AppColors.textSecondary)
+                                        .lineLimit(1)
+                                }
                                 Spacer(minLength: 0)
                             }
                             .padding(.vertical, 8)
@@ -464,7 +477,7 @@ struct ChantSavedSection: View {
                         }
                         .buttonStyle(.plain)
                         .accessibilityElement(children: .ignore)
-                        .accessibilityLabel("\(when), \(chant.latinTitle)")
+                        .accessibilityLabel("\(when), \(chant.spokenName)")
                         .accessibilityHint("Opens the chant")
                         .accessibilityAddTraits(.isButton)
                     }
@@ -543,6 +556,12 @@ struct ChantShelfSwitch: View {
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
+    /// A count rolls its digits to a new number, but under Reduce Motion
+    /// it only changes, as every crossfade on the page still fades
+    static func countTransition(reduceMotion: Bool) -> ContentTransition {
+        reduceMotion ? .identity : .numericText()
+    }
+
     var body: some View {
         HStack(spacing: 0) {
             segment(.favorites, count: favorites)
@@ -573,8 +592,8 @@ struct ChantShelfSwitch: View {
                     Text("\(count)")
                         .font(AppFonts.readingFont(15))
                         .monospacedDigit()
-                        .contentTransition(reduceMotion ? .identity : .numericText())
-                        .animation(ChantSavedMotion.animation(Motion.crossfade, reduceMotion: reduceMotion), value: count)
+                        .contentTransition(Self.countTransition(reduceMotion: reduceMotion))
+                        .animation(Motion.crossfade, value: count)
                 }
             }
             .foregroundColor(on ? AppColors.goldLight : AppColors.textSecondary)
