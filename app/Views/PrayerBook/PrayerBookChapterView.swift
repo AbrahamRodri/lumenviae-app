@@ -307,7 +307,7 @@ struct PrayerBookChapterView: View {
                             seasonal: chapter.id == PrayerBook.ourLady.id && prayer.id == seasonal,
                             showsRule: j < prayers.count - 1
                         ) {
-                            router.push(.devotionPrayer(id: prayer.id))
+                            router.push(.devotionPrayer(id: prayer.id, set: .topic(chapter.id)))
                         }
                     }
                 }
@@ -542,7 +542,7 @@ private struct MiniHolyCard: View {
     let prayerID: String
 
     var body: some View {
-        let painting = SavedPrayerPainting.of(prayerID)
+        let painting = BookPrayerView.painting(of: prayerID)
         let shape = UnevenRoundedRectangle(
             topLeadingRadius: 17,
             bottomLeadingRadius: 4,

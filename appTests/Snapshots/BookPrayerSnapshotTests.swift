@@ -67,6 +67,17 @@ struct BookPrayerSnapshotTests {
         )
     }
 
+    /// Opened from Before Confession's third prayer: the card names the
+    /// order and its place in it, not the prayer's own topic
+    @Test func openedFromAnOrder() throws {
+        let order = try #require(PrayerBook.order("before_confession"))
+        let id = order.prayerIDs(Date())[2]
+        ScreenSnapshot.assertScreen(
+            BookPrayerView(prayerID: id, set: .order(order.id, at: 2), store: try store("order")),
+            named: "prayer-page-from-order"
+        )
+    }
+
     @Test func learnedWithRibbonNote() throws {
         let store = try store("learned")
         store.setByHeart("hail_mary", true)

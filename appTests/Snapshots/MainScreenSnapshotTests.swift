@@ -153,7 +153,8 @@ struct MainScreenSnapshotTests {
 
     /// A topic with no orders, opening straight on its prayers, with the
     /// reader's marks beside the names: one learned, one saved, and this
-    /// season's song to Mary with all three
+    /// season's song to Mary with all three, which have no room beside its
+    /// name and its card picture and drop under the name
     @Test func prayerTopicMarks() {
         let store = Fixtures.prayerBookStore()
         store.setByHeart("hail_mary", true)

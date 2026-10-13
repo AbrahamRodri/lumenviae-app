@@ -4,9 +4,9 @@
 //
 //  One prayer of the Prayer Book as a holy card (the "Holy Cards" pick,
 //  option B4, Oct 2026): the card stands between the bar and the foot,
-//  its painting set in an arch at its head, the topic and the prayer's
+//  its painting set in an arch at its head, the set and the prayer's
 //  place in it, its name and its Latin, then the prayer, the orders it is
-//  said in, and its place among the topic's prayers as a row of dots. The
+//  said in, and its place among the set's prayers as a row of dots. The
 //  prayers before and after it peek in at the edges of the glass. The
 //  card's words scroll inside it; a drag across deals the card away, the
 //  next one rising from beneath it, as a stack of holy cards is turned.
@@ -14,13 +14,15 @@
 //  PRAY, and one line beneath says how it will be prayed. The language
 //  is a small button in the bar, the ribbon beside it.
 //
+//  The set is the topic or the order the prayer was opened from
+//  (`PrayerSet`, `PrayerDeck`): opened from Before Confession, the cards
+//  are Before Confession's. From anywhere else they are the prayer's own
+//  topic's.
+//
 //  The page once ended on the prayer's note (when it is said), its
 //  source on a line of small capitals, two quiet acts after the words and
 //  PREVIOUS · NEXT as two lines of small capitals. The note and the
 //  source stay in the book; the page no longer draws them.
-//
-//  Every door to a prayer in the app lands here (`AppRoute.devotionPrayer`).
-//  The cards are the prayers of the topic the page was opened in.
 //
 
 import SwiftUI
@@ -34,10 +36,13 @@ struct BookPrayerView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private let store: PrayerBookStore
-    private var voices = NarrationVoiceCatalog.shared
 
-    /// The prayer on the card in front, which the deal moves along the topic
-    @State private var currentID: String
+    /// The prayers the cards deal through, read once when the page opens
+    private let deck: PrayerDeck
+
+    /// The place in the deck of the card in front; nil for a prayer
+    /// outside every set, which has no neighbours
+    @State private var position: Int?
     @State private var showsLearn = false
     @State private var keptNote: String?
 
@@ -46,6 +51,9 @@ struct BookPrayerView: View {
     @State private var travel: CGFloat
     /// Whether the drag under way was taken as a deal or left to the scroll
     @State private var dragIsAcross: Bool?
+    /// True while a finger is on the deck; a drag the system cancels, which
+    /// never ends, lets go of it all the same
+    @GestureState private var dragging = false
     /// A card on its way out: no drag is taken until it has gone
     @State private var dealing = false
     /// The card's opacity during a turn made under Reduce Motion
@@ -68,6 +76,7 @@ struct BookPrayerView: View {
     /// otherwise the page opens on its card, at rest
     init(
         prayerID: String,
+        set: PrayerSet? = nil,
         store: PrayerBookStore = .shared,
         opensAtEnd: Bool = false,
         showingNote note: String? = nil,
@@ -76,7 +85,9 @@ struct BookPrayerView: View {
         self.prayerID = prayerID
         self.store = store
         self.opensAtEnd = opensAtEnd
-        _currentID = State(initialValue: prayerID)
+        let deck = PrayerDeck.of(prayerID, in: set, on: Date())
+        self.deck = deck
+        _position = State(initialValue: deck.start)
         _keptNote = State(initialValue: note)
         _lastKeptNote = State(initialValue: note ?? " ")
         _travel = State(initialValue: turn)
@@ -86,24 +97,31 @@ struct BookPrayerView: View {
         PrayerBook.prayer(id) ?? BookPrayer.bundled(id, origin: nil, note: nil)
     }
 
+    private var currentID: String { position.map { deck.ids[$0] } ?? prayerID }
     private var prayer: BookPrayer? { Self.prayer(currentID) }
 
-    /// The chapter the page belongs to: the one it was first opened in
-    private var chapter: PrayerBookChapter? {
-        PrayerBook.homeChapter(of: prayerID)
+    private var previous: Int? {
+        guard let position, position > 0 else { return nil }
+        return position - 1
     }
 
-    private var ids: [String] { chapter?.prayerIDs ?? [] }
-    private var index: Int? { ids.firstIndex(of: currentID) }
-
-    private var previousID: String? {
-        guard let index, index > 0 else { return nil }
-        return ids[index - 1]
+    private var next: Int? {
+        guard let position, position < deck.ids.count - 1 else { return nil }
+        return position + 1
     }
 
-    private var nextID: String? {
-        guard let index, index < ids.count - 1 else { return nil }
-        return ids[index + 1]
+    /// The topic as the door to it says it: "All 11 First Prayers", where
+    /// the topic's own name, "The First Prayers", read "All 11 The First
+    /// Prayers"
+    static func doorName(of chapter: PrayerBookChapter) -> String {
+        chapter.topic.hasPrefix("The ") ? String(chapter.topic.dropFirst(4)) : chapter.topic
+    }
+
+    /// The painting a prayer's card hangs, here and on the topic's rows:
+    /// its own scene (`PrayerBookPainting.prayer`) where the book gives it
+    /// one, else its topic's
+    static func painting(of prayerID: String) -> PrayerBookPainting {
+        SavedPrayerPainting.of(prayerID)
     }
 
     var body: some View {
@@ -112,9 +130,22 @@ struct BookPrayerView: View {
 
             if let prayer {
                 VStack(spacing: 0) {
-                    deck(prayer)
+                    deckView(prayer)
                         .padding(.top, 6)
-                    foot(prayer)
+                    PrayerFoot(
+                        prayerID: prayer.id,
+                        store: store,
+                        learn: { showsLearn = true },
+                        pray: {
+                            // The line beneath PRAY says how it will be prayed,
+                            // so it is the reader's answer; the pray-along
+                            // screen won't ask
+                            store.chooseAloud(store.praysAloud)
+                            router.push(.prayAlong(.prayer(prayer)))
+                        },
+                        hear: { chantID in router.push(.chant(id: chantID)) }
+                    )
+                    .equatable()
                 }
             } else {
                 Text("This prayer could not be found.")
@@ -170,24 +201,24 @@ struct BookPrayerView: View {
 
     /// The card waiting beneath the one in front: the next prayer while the
     /// front card goes left, the one before while it goes right
-    private var beneathID: String? {
-        if travel < 0 { return nextID }
-        if travel > 0 { return previousID }
+    private var beneath: Int? {
+        if travel < 0 { return next }
+        if travel > 0 { return previous }
         return nil
     }
 
-    private func deck(_ prayer: BookPrayer) -> some View {
+    private func deckView(_ prayer: BookPrayer) -> some View {
         ZStack {
-            if let beneathID, let beneath = Self.prayer(beneathID) {
-                card(beneath, opensAtEnd: false)
+            if let beneath, let card = Self.prayer(deck.ids[beneath]) {
+                holyCard(card, at: beneath, opensAtEnd: false)
                     .scaleEffect(reduceMotion ? 1 : 0.94 + 0.06 * progress)
                     .opacity(reduceMotion ? 0 : 0.85 + 0.15 * Double(progress))
                     .allowsHitTesting(false)
                     .accessibilityHidden(true)
             }
 
-            card(prayer, opensAtEnd: opensAtEnd)
-                .id(currentID)
+            holyCard(prayer, at: position, opensAtEnd: opensAtEnd)
+                .id(currentID + "\(position ?? -1)")
                 .offset(x: travel)
                 // Leans into the deal, as a card lifted from a stack does
                 .rotationEffect(.degrees(reduceMotion ? 0 : Double(travel / max(deckWidth, 1)) * 9))
@@ -196,16 +227,14 @@ struct BookPrayerView: View {
         }
         .padding(.horizontal, 28)
         .onGeometryChange(for: CGFloat.self) { $0.size.width - 56 } action: { deckWidth = $0 }
-        // The edges step back while a card is dealt, so the card in hand
-        // never passes beneath them
-        .overlay(alignment: .leading) { peek(previousID, leading: true).opacity(travel == 0 ? 1 : 0) }
-        .overlay(alignment: .trailing) { peek(nextID, leading: false).opacity(travel == 0 ? 1 : 0) }
-        .animation(Motion.crossfade, value: travel == 0)
+        .overlay(alignment: .leading) { peek(previous, leading: true) }
+        .overlay(alignment: .trailing) { peek(next, leading: false) }
         .overlay(alignment: .top) { savedNote }
         // The card's own scroll keeps the vertical drag; a drag that
         // starts across deals the card
         .simultaneousGesture(
             DragGesture(minimumDistance: 14)
+                .updating($dragging) { _, state, _ in state = true }
                 .onChanged { value in
                     guard !dealing else { return }
                     if dragIsAcross == nil {
@@ -214,7 +243,7 @@ struct BookPrayerView: View {
                     guard dragIsAcross == true else { return }
                     let dx = value.translation.width
                     // Toward no card, it gives a little and comes back
-                    let hasCard = dx < 0 ? nextID != nil : previousID != nil
+                    let hasCard = dx < 0 ? next != nil : previous != nil
                     travel = hasCard ? dx : dx * 0.25
                 }
                 .onEnded { value in
@@ -222,125 +251,78 @@ struct BookPrayerView: View {
                     guard dragIsAcross == true, !dealing else { return }
                     let dx = value.translation.width
                     let flung = value.predictedEndTranslation.width
-                    let target = dx < 0 ? nextID : previousID
-                    if let target, abs(dx) > deckWidth / 3 || abs(flung) > deckWidth * 0.6 {
+                    let target = dx < 0 ? next : previous
+                    // A flick counts only the way the card is going: a drag
+                    // left and a flick back right is no deal
+                    let farEnough = abs(dx) > deckWidth / 3
+                    let flungOn = flung * dx > 0 && abs(flung) > deckWidth * 0.6
+                    if let target, farEnough || flungOn {
                         deal(to: target)
                     } else {
                         withAnimation(Motion.settle) { travel = 0 }
                     }
                 }
         )
+        // A drag the system took away (the scroll, a call, a sheet) never
+        // ends; when the finger is gone, the card comes back to rest
+        .onChange(of: dragging) { _, isDragging in
+            guard !isDragging else { return }
+            dragIsAcross = nil
+            if !dealing, travel != 0 {
+                withAnimation(Motion.settle) { travel = 0 }
+            }
+        }
     }
 
-    /// One prayer's card, the one in front or the one beneath it
-    private func card(_ prayer: BookPrayer, opensAtEnd: Bool) -> some View {
-        let position = ids.firstIndex(of: prayer.id)
-        let kicker = chapter.map { chapter -> String in
-            let topic = (chapter.topic.isEmpty ? chapter.title : chapter.topic).uppercased()
-            guard let position else { return topic }
-            return "\(topic) · \(position + 1) OF \(ids.count)"
-        }
-        return HolyCard(
-            prayer: prayer,
-            kicker: kicker,
+    /// One prayer's card, the one in front or the one beneath it. The card
+    /// is drawn from plain values and redrawn only when they change, never
+    /// for a frame of the drag.
+    private func holyCard(_ prayer: BookPrayer, at index: Int?, opensAtEnd: Bool) -> some View {
+        let count = deck.ids.count
+        let nextIndex = index.flatMap { $0 < count - 1 ? $0 + 1 : nil }
+        let previousIndex = index.flatMap { $0 > 0 ? $0 - 1 : nil }
+        let orders = PrayerBook.orders.filter { $0.prayerIDs(Date()).contains(prayer.id) }
+        let facts = HolyCardFacts(
+            prayerID: prayer.id,
+            title: prayer.title,
+            secondTitle: prayer.secondTitle,
             content: prayer.content(for: settings.prayerLanguage),
             textSize: max(17, settings.meditationFontSize - 2),
-            opensAtEnd: opensAtEnd,
-            onNext: nextID.map { id in { deal(to: id) } },
-            onPrevious: previousID.map { id in { deal(to: id) } }
-        ) {
-            cardFoot(prayer, position: position)
-        }
-        .animation(Motion.crossfade, value: settings.prayerLanguagePreference)
-    }
-
-    /// What closes the card: the orders it is said in, then its place
-    /// among the topic's prayers and the way on
-    @ViewBuilder
-    private func cardFoot(_ prayer: BookPrayer, position: Int?) -> some View {
-        VStack(alignment: .leading, spacing: 22) {
-            ordersHolding(prayer)
-            if let chapter, let position {
-                place(in: chapter, at: position)
-            }
-        }
-    }
-
-    /// The orders this prayer is said in, each a door with its painting
-    @ViewBuilder
-    private func ordersHolding(_ prayer: BookPrayer) -> some View {
-        let orders = PrayerBook.orders.filter { $0.prayerIDs(Date()).contains(prayer.id) }
-        if !orders.isEmpty {
-            VStack(alignment: .leading, spacing: 2) {
-                Text("SAID IN")
-                    .font(AppFonts.labelFont(9))
-                    .tracking(2.2)
-                    .foregroundColor(AppColors.gold.opacity(0.8))
-                    .accessibilityAddTraits(.isHeader)
-
-                ForEach(orders) { order in
-                    SaidInRow(order: order) {
-                        router.push(.prayerOrder(id: order.id))
-                    }
+            kicker: deck.name.isEmpty ? nil : index.map { "\(deck.name) · \($0 + 1) OF \(count)" } ?? deck.name,
+            saidIn: orders.map { SaidIn(id: $0.id, title: $0.title(on: Date())) },
+            position: index,
+            count: count,
+            nextTitle: nextIndex.flatMap { Self.prayer(deck.ids[$0])?.title },
+            hasPrevious: previousIndex != nil,
+            allLabel: "All \(count), \(deck.doorName)",
+            opensAtEnd: opensAtEnd
+        )
+        let actions = HolyCardActions(
+            openOrder: { id in router.push(.prayerOrder(id: id)) },
+            next: { if let nextIndex { deal(to: nextIndex) } },
+            previous: { if let previousIndex { deal(to: previousIndex) } },
+            all: {
+                // Opened from its set's own page, Back already goes there
+                if let topic = deck.topicToOpen {
+                    router.push(.prayerBookChapter(id: topic))
+                } else {
+                    router.pop()
                 }
             }
-        }
-    }
-
-    /// The topic's prayers as a row of dots, this one lit, over "Swipe for
-    /// the next · All 32"
-    private func place(in chapter: PrayerBookChapter, at position: Int) -> some View {
-        let next = position < ids.count - 1 ? Self.prayer(ids[position + 1]) : nil
-        let all = QuietGoldButton(title: "All \(ids.count)", trailingIcon: "ph-caret-right", size: 10) {
-            router.push(.prayerBookChapter(id: chapter.id))
-        }
-        .accessibilityLabel("All \(ids.count) \(Self.doorName(of: chapter))")
-
-        return VStack(spacing: 8) {
-            PlaceDots(count: ids.count, current: position)
-
-            ViewThatFits(in: .horizontal) {
-                HStack(spacing: 6) {
-                    if let next { swipeFor(next) }
-                    all
-                }
-                VStack(spacing: 0) {
-                    if let next { swipeFor(next) }
-                    all
-                }
-            }
-        }
-        .frame(maxWidth: .infinity)
-    }
-
-    private func swipeFor(_ next: BookPrayer) -> some View {
-        Button {
-            deal(to: next.id)
-        } label: {
-            Text("Swipe for \(next.title) ·")
-                .font(AppFonts.readingItalicFont(13.5))
-                .foregroundColor(AppColors.textSecondary)
-                .multilineTextAlignment(.center)
-                .frame(minHeight: 44)
-                .contentShape(Rectangle())
-        }
-        .buttonStyle(QuietGlyphButtonStyle())
-        .accessibilityLabel("Next prayer, \(next.title)")
-    }
-
-    /// The topic as the door to it says it: "All 11 First Prayers", where
-    /// the topic's own name, "The First Prayers", read "All 11 The First
-    /// Prayers"
-    static func doorName(of chapter: PrayerBookChapter) -> String {
-        chapter.topic.hasPrefix("The ") ? String(chapter.topic.dropFirst(4)) : chapter.topic
+        )
+        return HolyCard(facts: facts, actions: actions)
+            .equatable()
+            .animation(Motion.crossfade, value: settings.prayerLanguagePreference)
     }
 
     /// The edge of the card before or after this one, peeking in at the
-    /// side of the glass: its painting in a sliver, a door to it
+    /// side of the glass: its painting in a sliver, which a touch deals to.
+    /// Not a button, and hidden from VoiceOver, which has the card's own
+    /// Next prayer and Previous prayer.
     @ViewBuilder
-    private func peek(_ id: String?, leading: Bool) -> some View {
-        if let id {
-            let painting = SavedPrayerPainting.of(id)
+    private func peek(_ index: Int?, leading: Bool) -> some View {
+        if let index {
+            let painting = Self.painting(of: deck.ids[index])
             let shape = UnevenRoundedRectangle(
                 topLeadingRadius: leading ? 0 : 12,
                 bottomLeadingRadius: leading ? 0 : 12,
@@ -348,25 +330,25 @@ struct BookPrayerView: View {
                 topTrailingRadius: leading ? 12 : 0,
                 style: .continuous
             )
-            Button {
-                deal(to: id)
-            } label: {
-                CachedAssetImage(
-                    painting.resolvedAsset,
-                    focal: UnitPoint(x: leading ? 0.8 : 0.2, y: painting.focal.y)
-                )
-                .frame(width: 14)
-                .frame(maxHeight: 470)
-                .clipShape(shape)
-                .overlay(shape.strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline))
-                .opacity(0.6)
-                .padding(.vertical, 40)
-                // Answers a touch across the gutter, clear of the card
-                .padding(leading ? .trailing : .leading, 12)
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(QuietGlyphButtonStyle())
+            CachedAssetImage(
+                painting.resolvedAsset,
+                focal: UnitPoint(x: leading ? 0.8 : 0.2, y: painting.focal.y)
+            )
+            .frame(width: 14)
+            .frame(maxHeight: 470)
+            .clipShape(shape)
+            .overlay(shape.strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline))
+            .opacity(0.6)
+            .padding(.vertical, 40)
+            // Answers a touch 44 points across, the sliver drawn at 14
+            .frame(width: 44, alignment: leading ? .leading : .trailing)
+            .contentShape(Rectangle())
+            .onTapGesture { deal(to: index) }
             .accessibilityHidden(true)
+            // The edges step back while a card is dealt, so the card in
+            // hand never passes beneath them
+            .opacity(travel == 0 ? 1 : 0)
+            .animation(Motion.crossfade, value: travel == 0)
         }
     }
 
@@ -392,19 +374,23 @@ struct BookPrayerView: View {
 
     // MARK: - Dealing
 
-    /// Deals the card in front away toward `id`'s side: it flies off, the
-    /// card beneath it rises to full, and takes its place, opened at its
-    /// top. Under Reduce Motion the one card fades into the other.
-    private func deal(to id: String) {
-        guard !dealing, let target = Self.prayer(id) else { return }
-        let forward = id == nextID
+    /// Deals the card in front away toward the card at `index`: it flies
+    /// off, the card beneath it rises to full, and takes its place, opened
+    /// at its top. Under Reduce Motion the one card fades into the other.
+    private func deal(to index: Int) {
+        guard !dealing else { return }
+        guard deck.ids.indices.contains(index), let target = Self.prayer(deck.ids[index]) else {
+            withAnimation(Motion.settle) { travel = 0 }
+            return
+        }
+        let forward = index > (position ?? -1)
         dealing = true
 
         let settle = {
             var still = Transaction()
             still.disablesAnimations = true
             withTransaction(still) {
-                currentID = id
+                position = index
                 travel = 0
             }
             keptNote = nil
@@ -438,73 +424,6 @@ struct BookPrayerView: View {
         }
     }
 
-    // MARK: - Foot
-
-    /// Learn by heart and Hear it sung either side of PRAY, the page's one
-    /// gold act, and beneath them how it will be prayed
-    private func foot(_ prayer: BookPrayer) -> some View {
-        let aloud = store.praysAloud
-        let voice = voices.chosenVoice.name.lowercased()
-        let learned = store.isByHeart(prayer.id)
-        // The first setting (a simple tone before a solemn one); the
-        // chant's page offers the others
-        let chant = ChantCatalog.chants(forPrayer: prayer.id).first
-
-        return VStack(spacing: 6) {
-            HStack(alignment: .top, spacing: 8) {
-                FootAct(
-                    icon: learned ? "ph-seal-check-fill" : "ph-heart",
-                    label: learned ? "Learned" : "Learn by heart"
-                ) {
-                    showsLearn = true
-                }
-                .accessibilityLabel("Learn by heart")
-                .accessibilityValue(learned ? "Learned" : "")
-                .accessibilityHint("Opens the steps to learn it by heart")
-
-                GoldCTAButton(title: "Pray", glyph: .play) {
-                    // The line beneath says how it will be prayed, so it is
-                    // the reader's answer; the pray-along screen won't ask
-                    store.chooseAloud(store.praysAloud)
-                    router.push(.prayAlong(.prayer(prayer)))
-                }
-
-                // A prayer with no chant keeps the place empty, so PRAY
-                // stands where it stood on the card before
-                if let chant {
-                    FootAct(icon: "ph-music-note", label: "Hear it sung") {
-                        router.push(.chant(id: chant.id))
-                    }
-                    .accessibilityHint("Opens a sung recording, with its sheet music")
-                } else {
-                    Color.clear.frame(width: FootAct.width, height: 1)
-                }
-            }
-
-            Button {
-                withAnimation(Motion.settle) { store.praysAloud.toggle() }
-            } label: {
-                HStack(spacing: 6) {
-                    AppIcon(aloud ? "ph-speaker-high-fill" : "ph-speaker-high", size: 12)
-                        .foregroundColor(AppColors.gold.opacity(aloud ? 0.9 : 0.55))
-                    Text(aloud ? "Aloud, in the \(voice) voice · tap to change" : "In silence · tap to change")
-                        .font(AppFonts.readingItalicFont(13))
-                        .foregroundColor(AppColors.textSecondary)
-                        .contentTransition(.opacity)
-                }
-                .frame(minHeight: 36)
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(QuietGlyphButtonStyle())
-            .accessibilityLabel("Pray aloud")
-            .accessibilityAddTraits(.isToggle)
-            .accessibilityValue(aloud ? "On, the \(voice) voice" : "Off")
-        }
-        .padding(.horizontal, 16)
-        .padding(.top, 14)
-        .padding(.bottom, 6)
-    }
-
     // MARK: - Language
 
     /// English, Latin, or both, written to the app's prayer language —
@@ -532,31 +451,70 @@ struct BookPrayerView: View {
 
 // MARK: - The holy card
 
-/// A prayer as a holy card: its painting in an arch at the head, the
-/// topic and its place, the name and the Latin, a gold rule, the prayer,
-/// then whatever closes it. A gold rim with a second rule inside it, on
-/// the card's own ground. The words scroll inside the card.
-private struct HolyCard<Foot: View>: View {
-    let prayer: BookPrayer
-    let kicker: String?
+/// An order the prayer is said in, as the card lists it
+private struct SaidIn: Equatable {
+    let id: String
+    let title: String
+}
+
+/// Everything a card shows, as plain values, so a card is redrawn only
+/// when one of them changes
+private struct HolyCardFacts: Equatable {
+    let prayerID: String
+    let title: String
+    let secondTitle: String?
     let content: String
     let textSize: CGFloat
+    let kicker: String?
+    let saidIn: [SaidIn]
+    let position: Int?
+    let count: Int
+    let nextTitle: String?
+    let hasPrevious: Bool
+    let allLabel: String
     let opensAtEnd: Bool
-    let onNext: (() -> Void)?
-    let onPrevious: (() -> Void)?
-    @ViewBuilder let foot: () -> Foot
+}
+
+/// What a card's doors do
+private struct HolyCardActions {
+    let openOrder: (String) -> Void
+    let next: () -> Void
+    let previous: () -> Void
+    let all: () -> Void
+}
+
+/// A prayer as a holy card: its painting in an arch at the head, the set
+/// and its place, the name and the Latin, a gold rule, the prayer, the
+/// orders it is said in, and its place in the set. A gold rim with a
+/// second rule inside it, on the card's own ground. The words scroll
+/// inside the card.
+private struct HolyCard: View, Equatable {
+    let facts: HolyCardFacts
+    let actions: HolyCardActions
+
+    /// The card's height, which the arch gives way to on a short card
+    @State private var height: CGFloat = 0
 
     private static var corner: CGFloat { 20 }
 
+    static func == (a: HolyCard, b: HolyCard) -> Bool { a.facts == b.facts }
+
+    /// The arch stands 250 points, giving way on a short card (a smaller
+    /// phone, the chant player up) so the name and the first lines of the
+    /// prayer stand on the first sight of it
+    private var archHeight: CGFloat {
+        height == 0 ? 250 : min(250, max(170, height * 0.42))
+    }
+
     var body: some View {
-        let painting = SavedPrayerPainting.of(prayer.id)
+        let painting = BookPrayerView.painting(of: facts.prayerID)
 
         ScrollViewReader { proxy in
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
                     CachedAssetImage(painting.resolvedAsset, focal: painting.focal)
                         .frame(maxWidth: .infinity)
-                        .frame(height: 250)
+                        .frame(height: archHeight)
                         .clipShape(
                             UnevenRoundedRectangle(
                                 topLeadingRadius: 150,
@@ -581,31 +539,7 @@ private struct HolyCard<Foot: View>: View {
                         .accessibilityHidden(true)
 
                     VStack(alignment: .leading, spacing: 0) {
-                        if let kicker {
-                            Text(kicker)
-                                .font(AppFonts.labelFont(10))
-                                .tracking(2.2)
-                                .foregroundColor(AppColors.gold)
-                                .shadow(color: AppColors.cardBackground.opacity(0.9), radius: 6)
-                                .lineLimit(2)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
-
-                        Text(prayer.title)
-                            .font(AppFonts.titleFont(24))
-                            .foregroundColor(AppColors.cream)
-                            .multilineTextAlignment(.leading)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .padding(.top, 6)
-                            .accessibilityAddTraits(.isHeader)
-                            .modifier(TurnActions(onNext: onNext, onPrevious: onPrevious))
-
-                        if let latin = prayer.secondTitle {
-                            Text(latin)
-                                .font(AppFonts.readingItalicFont(14.5))
-                                .foregroundColor(AppColors.cream.opacity(0.55))
-                                .padding(.top, 3)
-                        }
+                        titles
 
                         Rectangle()
                             .fill(AppColors.gold.opacity(0.25))
@@ -613,16 +547,19 @@ private struct HolyCard<Foot: View>: View {
                             .padding(.vertical, 14)
 
                         PrayerText(
-                            content: content,
-                            size: textSize,
+                            content: facts.content,
+                            size: facts.textSize,
                             alignment: .leading,
                             showsDropCap: true
                         )
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .modifier(TurnActions(onNext: onNext, onPrevious: onPrevious))
+                        .modifier(turnActions)
 
-                        foot()
-                            .padding(.top, 26)
+                        VStack(alignment: .leading, spacing: 22) {
+                            saidIn
+                            place
+                        }
+                        .padding(.top, 26)
 
                         Color.clear.frame(height: 10).id("end")
                     }
@@ -632,7 +569,7 @@ private struct HolyCard<Foot: View>: View {
                 }
             }
             .onAppear {
-                if opensAtEnd { proxy.scrollTo("end", anchor: .bottom) }
+                if facts.opensAtEnd { proxy.scrollTo("end", anchor: .bottom) }
             }
             // The words dissolve at the card's edges as they scroll,
             // never cut by the rim
@@ -660,6 +597,115 @@ private struct HolyCard<Foot: View>: View {
                 .allowsHitTesting(false)
         )
         .shadow(color: .black.opacity(0.5), radius: 18, y: 12)
+        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height = $0 }
+    }
+
+    private var titles: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            if let kicker = facts.kicker {
+                Text(kicker)
+                    .font(AppFonts.labelFont(10))
+                    .tracking(2.2)
+                    .foregroundColor(AppColors.gold)
+                    .shadow(color: AppColors.cardBackground.opacity(0.9), radius: 6)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            Text(facts.title)
+                .font(AppFonts.titleFont(24))
+                .foregroundColor(AppColors.cream)
+                .multilineTextAlignment(.leading)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.top, 6)
+                .accessibilityAddTraits(.isHeader)
+                .modifier(turnActions)
+
+            if let latin = facts.secondTitle {
+                Text(latin)
+                    .font(AppFonts.readingItalicFont(14.5))
+                    .foregroundColor(AppColors.cream.opacity(0.55))
+                    .padding(.top, 3)
+            }
+        }
+    }
+
+    private var turnActions: TurnActions {
+        TurnActions(
+            onNext: facts.nextTitle == nil ? nil : actions.next,
+            onPrevious: facts.hasPrevious ? actions.previous : nil
+        )
+    }
+
+    /// The orders this prayer is said in, each a door with its painting
+    @ViewBuilder
+    private var saidIn: some View {
+        if !facts.saidIn.isEmpty {
+            VStack(alignment: .leading, spacing: 2) {
+                Text("SAID IN")
+                    .font(AppFonts.labelFont(9))
+                    .tracking(2.2)
+                    .foregroundColor(AppColors.gold.opacity(0.8))
+                    .accessibilityAddTraits(.isHeader)
+
+                ForEach(facts.saidIn, id: \.id) { order in
+                    SaidInRow(orderID: order.id, title: order.title) {
+                        actions.openOrder(order.id)
+                    }
+                }
+            }
+        }
+    }
+
+    /// The set's prayers as a row of dots, this one lit, over "Swipe for
+    /// the next · All 32"
+    @ViewBuilder
+    private var place: some View {
+        if let position = facts.position {
+            let all = QuietGoldButton(title: "All \(facts.count)", trailingIcon: "ph-caret-right", size: 10) {
+                actions.all()
+            }
+            .accessibilityLabel(facts.allLabel)
+
+            VStack(spacing: 8) {
+                PlaceDots(count: facts.count, current: position)
+
+                ViewThatFits(in: .horizontal) {
+                    HStack(spacing: 6) {
+                        if let next = facts.nextTitle {
+                            swipeFor(next)
+                            Text("·")
+                                .font(AppFonts.readingItalicFont(13.5))
+                                .foregroundColor(AppColors.textSecondary)
+                                .accessibilityHidden(true)
+                        }
+                        all
+                    }
+                    // On two lines, the dot between them goes, and the two
+                    // stand close enough to read as one
+                    VStack(spacing: 0) {
+                        if let next = facts.nextTitle {
+                            swipeFor(next, minHeight: 36)
+                        }
+                        all
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity)
+        }
+    }
+
+    private func swipeFor(_ next: String, minHeight: CGFloat = 44) -> some View {
+        Button(action: actions.next) {
+            Text("Swipe for \(next)")
+                .font(AppFonts.readingItalicFont(13.5))
+                .foregroundColor(AppColors.textSecondary)
+                .multilineTextAlignment(.center)
+                .frame(minHeight: minHeight)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(QuietGlyphButtonStyle())
+        .accessibilityLabel("Next prayer, \(next)")
     }
 }
 
@@ -680,22 +726,27 @@ private struct TurnActions: ViewModifier {
     }
 }
 
-// MARK: - The place in the topic
+// MARK: - The place in the set
 
-/// The topic's prayers as dots, the one on the card lit and those before
-/// it half lit. A long topic shows the 24 around this one.
-private struct PlaceDots: View {
+/// The set's prayers as dots, the one on the card lit and those before
+/// it half lit. A long set shows the 24 around this one.
+struct PlaceDots: View {
     let count: Int
     let current: Int
 
-    private static let most = 24
+    static let most = 24
+
+    /// The dots drawn: every one in a set of 24 or fewer, else 24 with the
+    /// current one near their middle, held inside the set at either end
+    static func visibleRange(count: Int, current: Int) -> ClosedRange<Int> {
+        guard count > most else { return 0...max(0, count - 1) }
+        let first = min(max(0, current - most / 2), count - most)
+        return first...(first + most - 1)
+    }
 
     var body: some View {
-        let first = count <= Self.most ? 0 : min(max(0, current - Self.most / 2), count - Self.most)
-        let last = min(count, first + Self.most) - 1
-
         HStack(spacing: 4) {
-            ForEach(first...last, id: \.self) { i in
+            ForEach(Array(Self.visibleRange(count: count, current: current)), id: \.self) { i in
                 Circle()
                     .fill(
                         i == current
@@ -711,7 +762,95 @@ private struct PlaceDots: View {
     }
 }
 
-// MARK: - The foot's acts
+// MARK: - The foot
+
+/// Learn by heart and Hear it sung either side of PRAY, the page's one
+/// gold act, and beneath them how it will be prayed. Redrawn for its
+/// prayer and the store's own changes, never for a frame of the deal.
+private struct PrayerFoot: View, Equatable {
+    let prayerID: String
+    let store: PrayerBookStore
+    let learn: () -> Void
+    let pray: () -> Void
+    let hear: (String) -> Void
+
+    private var voices = NarrationVoiceCatalog.shared
+
+    init(
+        prayerID: String,
+        store: PrayerBookStore,
+        learn: @escaping () -> Void,
+        pray: @escaping () -> Void,
+        hear: @escaping (String) -> Void
+    ) {
+        self.prayerID = prayerID
+        self.store = store
+        self.learn = learn
+        self.pray = pray
+        self.hear = hear
+    }
+
+    static func == (a: PrayerFoot, b: PrayerFoot) -> Bool {
+        a.prayerID == b.prayerID && a.store === b.store
+    }
+
+    var body: some View {
+        let aloud = store.praysAloud
+        let voice = voices.chosenVoice.name.lowercased()
+        let learned = store.isByHeart(prayerID)
+        // The first setting (a simple tone before a solemn one); the
+        // chant's page offers the others
+        let chant = ChantCatalog.chants(forPrayer: prayerID).first
+
+        VStack(spacing: 2) {
+            HStack(alignment: .top, spacing: 8) {
+                FootAct(
+                    icon: learned ? "ph-seal-check-fill" : "ph-heart",
+                    label: learned ? "Learned" : "Learn by heart",
+                    action: learn
+                )
+                .accessibilityLabel("Learn by heart")
+                .accessibilityValue(learned ? "Learned" : "")
+                .accessibilityHint("Opens the steps to learn it by heart")
+
+                GoldCTAButton(title: "Pray", glyph: .play, action: pray)
+
+                // A prayer with no chant keeps the place empty, so PRAY
+                // stands where it stood on the card before
+                if let chant {
+                    FootAct(icon: "ph-music-note", label: "Hear it sung") {
+                        hear(chant.id)
+                    }
+                    .accessibilityLabel("Hear it sung")
+                    .accessibilityHint("Opens a sung recording, with its sheet music")
+                } else {
+                    Color.clear.frame(width: FootAct.width, height: 1)
+                }
+            }
+
+            Button {
+                withAnimation(Motion.settle) { store.praysAloud.toggle() }
+            } label: {
+                HStack(spacing: 6) {
+                    AppIcon(aloud ? "ph-speaker-high-fill" : "ph-speaker-high", size: 12)
+                        .foregroundColor(AppColors.gold.opacity(aloud ? 0.9 : 0.55))
+                    Text(aloud ? "Aloud, in the \(voice) voice · tap to change" : "In silence · tap to change")
+                        .font(AppFonts.readingItalicFont(13))
+                        .foregroundColor(AppColors.textSecondary)
+                        .contentTransition(.opacity)
+                }
+                .frame(minHeight: 44)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(QuietGlyphButtonStyle())
+            .accessibilityLabel("Pray aloud")
+            .accessibilityAddTraits(.isToggle)
+            .accessibilityValue(aloud ? "On, the \(voice) voice" : "Off")
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 14)
+    }
+}
 
 /// Learn by heart or Hear it sung: a ringed disc with its glyph, the act
 /// named beneath it in small capitals
@@ -747,12 +886,12 @@ private struct FootAct: View {
 
 /// One order the prayer is said in: its painting, its name, a caret
 private struct SaidInRow: View {
-    let order: PrayerOrder
+    let orderID: String
+    let title: String
     let action: () -> Void
 
     var body: some View {
-        let painting = PrayerBookPainting.order(order)
-        let title = order.title(on: Date())
+        let painting = PrayerBook.order(orderID).map { PrayerBookPainting.order($0) } ?? PrayerBookPainting.saved
 
         Button(action: action) {
             HStack(spacing: 14) {
@@ -888,79 +1027,6 @@ private struct LanguageChoice: View {
     }
 }
 
-// MARK: - Language Chips
-
-/// ENGLISH · LATIN · BOTH, the choice a prayer book with facing pages
-/// gives by being opened wider
-struct LanguageChips: View {
-    @Binding var language: PrayerLanguage
-
-    /// Off where one language at a time is the point — learning by heart
-    var showsBoth: Bool = true
-
-    private enum Choice: CaseIterable {
-        case english, latin, both
-
-        var label: String {
-            switch self {
-            case .english: return "English"
-            case .latin:   return "Latin"
-            case .both:    return "Both"
-            }
-        }
-    }
-
-    private var chosen: Choice {
-        switch language {
-        case .english: return .english
-        case .latin: return .latin
-        case .both, .latinUnderEnglish: return .both
-        }
-    }
-
-    var body: some View {
-        HStack(spacing: 0) {
-            ForEach(Choice.allCases.filter { showsBoth || $0 != .both }, id: \.self) { choice in
-                let on = choice == chosen
-                Button {
-                    withAnimation(Motion.settle) {
-                        switch choice {
-                        case .english: language = .english
-                        case .latin: language = .latin
-                        case .both:
-                            if !language.isBilingual { language = .latinUnderEnglish }
-                        }
-                    }
-                } label: {
-                    // Side room so the names never run together at the
-                    // larger text sizes, and the whole 44-point band
-                    // answers a touch, not only the 32-point chip
-                    Text(choice.label.uppercased())
-                        .font(AppFonts.labelFont(9))
-                        .tracking(2)
-                        .foregroundColor(on ? AppColors.goldLight : AppColors.gold.opacity(0.65))
-                        .padding(.horizontal, 8)
-                        .frame(minWidth: 74, minHeight: 32)
-                        .background(
-                            Capsule().fill(on ? AppColors.gold.opacity(0.16) : Color.clear)
-                        )
-                        .frame(minHeight: 44)
-                        .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel(choice.label)
-                .accessibilityAddTraits(on ? .isSelected : [])
-            }
-        }
-        .padding(.horizontal, 4)
-        .overlay(
-            Capsule()
-                .strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline)
-                .frame(height: 38)
-        )
-        .sensoryFeedback(.selection, trigger: chosen)
-    }
-}
 
 // MARK: - Preview
 

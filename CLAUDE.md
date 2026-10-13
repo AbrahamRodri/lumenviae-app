@@ -2524,7 +2524,8 @@ write concurrent code here:
   (`HolyCard`) stands 28 points in from each side between the bar and the
   foot, on the card ground with a gold rim and a second rule inside it,
   and its words scroll inside it: the prayer's painting
-  (`SavedPrayerPainting.of`) in a round-topped arch, then the topic and
+  (`BookPrayerView.painting(of:)`, the scene `PrayerBookPainting.prayer`
+  gives it, else its topic's) in a round-topped arch, then the set and
   the prayer's place in it ("PRAYERS TO MARY · 3 OF 32"), its name, its
   Latin small, a gold rule, the prayer (`PrayerText`, two points under
   the reading size, never under 17), SAID IN with each order as its
@@ -2532,7 +2533,8 @@ write concurrent code here:
   (`PlaceDots`, 24 around this one in a longer topic) over "Swipe for
   <the next> · All 32" (both buttons). The prayers before and after it
   peek in at the glass's edges as 14-point slivers of their paintings,
-  each a door to its card. **A drag across deals the card**: it follows
+  each answering a touch 44 points across (not buttons, and hidden from
+  VoiceOver, which has the card's own actions). **A drag across deals the card**: it follows
   the finger leaning up to 9 degrees, the neighbour's card rising beneath
   it from 0.94; let go past a third of the width, or flung, it flies off
   and the card beneath becomes the page, opened at its top, with a light
@@ -2540,7 +2542,13 @@ write concurrent code here:
   little. The card's own scroll keeps the vertical drag, decided by the
   drag's first direction. A tap on a sliver or on "Swipe for" plays the
   same deal; VoiceOver has Next prayer and Previous prayer on the name
-  and the words, and hears the new name. Under Reduce Motion there is no
+  and the words, and hears the new name. A drag the system takes away
+  (the scroll, a call) lets the card back to rest (`@GestureState`). The
+  arch is 250 points, giving way on a short card down to 170 (0.42 of
+  the card), so the name and the prayer's first lines stand at first
+  sight with the chant player up. The cards and the foot are drawn from
+  plain values (`HolyCardFacts`, `.equatable()`), so a frame of the drag
+  redraws neither. Under Reduce Motion there is no
   lean and no rise: the card follows the finger and the turn is a fade.
   The foot: Learn by heart and Hear it sung (`FootAct`, ringed discs
   named beneath, LEARNED with the seal once learned) either side of PRAY,
@@ -2553,15 +2561,18 @@ write concurrent code here:
   only where the prayer has Latin, and opens a choice of English, Latin
   and Both. It is a button and not a Menu: the bar makes a Menu its own
   button, names it from the words it shows, and stood a second, unnamed
-  button beside it for VoiceOver. The cards are the prayers of the topic
-  the page was opened in (`PrayerBook.homeChapter`). The page once ended
+  button beside it for VoiceOver. The cards are the prayers of the set
+  the page was opened from (`PrayerSet` on the route, `PrayerDeck`): an
+  order's page and a topic's page pass theirs, so a prayer opened from
+  Before Confession deals through Before Confession ("BEFORE CONFESSION
+  · 3 OF 6") and its All door goes back to it; every other door leaves
+  the set out and the cards are the prayer's own topic's
+  (`PrayerBook.homeChapter`), its All door opening the topic. The page once ended
   on when the prayer is said (`BookPrayer.note`), had its source on a
   line of small capitals (`BookPrayer.origin`), set Learn by heart and
   Hear it sung as two quiet words after the prayer, and stepped along the
   topic by PREVIOUS · NEXT in small capitals, which faded the page; the
   note and the source stay in the book and are no longer drawn.
-  `LanguageChips` stays in its file, unchanged, for the sheets that use
-  it.
 
   **Praying** is `PrayAlongView` (`.prayAlong(PrayAlongLaunch)`, a
   player: bar hidden, its own ×): one prayer at a time, aloud or in
@@ -2700,8 +2711,9 @@ write concurrent code here:
   choose a painting for a chant that names none
   (`ChantLibraryData.groupPaintings`). Doors:
   the Chapel's Chant tile, Explore (Chant, and search), and **"Hear it
-  sung"** on any Prayer Book page whose prayer has a chant (a
-  quiet act beside Learn by heart, in one row under the prayer).
+  sung"** on any Prayer Book page whose prayer has a chant (a ringed
+  disc beside PRAY at the prayer's foot, Learn by heart on PRAY's other
+  side).
 
   **The library speaks plainly** (the Oct 2026 plain-language pass,
   `copy-audit/GLOSSARY.md` on `claude/copy-audit`): a title says what a

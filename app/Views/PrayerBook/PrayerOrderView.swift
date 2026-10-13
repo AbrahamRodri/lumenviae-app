@@ -269,7 +269,7 @@ struct PrayerOrderView: View {
                     store: store,
                     showsRule: i < prayers.count - 1
                 ) {
-                    router.push(.devotionPrayer(id: prayer.id))
+                    router.push(.devotionPrayer(id: prayer.id, set: .order(order.id, at: i)))
                 }
             }
         }
