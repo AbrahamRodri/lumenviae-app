@@ -284,11 +284,12 @@ extension ChantGroup {
 }
 
 extension ChantSet {
-    /// The painting a set wears while it holds no chant, as on its page
-    static let emptyPainting = "glorious_coronation"
+    /// The painting a set wears while it holds no chant, as on its page:
+    /// Our Lady in glory, as over the library's hymns to her
+    static let emptyPainting = "mary_sistine_madonna"
 
     /// The painting the set wears: its first chant's, as on its own page,
-    /// or the Coronation while it holds none
+    /// or Our Lady in glory while it holds none
     var painting: String {
         items.lazy.compactMap(\.chant).first.map { ChantCatalog.painting(for: $0) } ?? Self.emptyPainting
     }

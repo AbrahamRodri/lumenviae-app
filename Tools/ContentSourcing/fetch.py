@@ -52,8 +52,13 @@ FETCHED = HERE / "fetched.json"
 API = "https://commons.wikimedia.org/w/api.php"
 UA = {"User-Agent": "LumenViaeContentSourcing/1.0 (https://github.com/abrahamrodri/lumenviae-app)"}
 LONG_EDGE = 1600
-MAX_BYTES = 800 * 1024
-MIN_LONG_EDGE = 1200
+# The new paintings' budget (Oct 2026): about 700 KB each, from a source at
+# least 1600 px on its long side. Paintings taken before keep their files.
+MAX_BYTES = 700 * 1024
+MIN_LONG_EDGE = 1600
+# A source larger than this is fetched as Commons' own rendering of the
+# original at this long edge: some scans run past 20,000 px
+DOWNLOAD_EDGE = 2400
 ACCEPT = re.compile(r"^(public domain|pd\b|pd-|cc0|cc[- ]by(-sa)?[- ]?\d)", re.I)
 REJECT = re.compile(r"\b(nc|nd)\b|noncommercial|noderiv", re.I)
 VG_LICENCE = "https://www.verbumgloriae.es/licencia-copyleft/"
@@ -89,9 +94,18 @@ def record(key: str, values: dict):
 
 # ---------------------------------------------------------------- paintings
 
-def imageinfo(titles) -> list:
+def imageinfo(titles, download_edge=None) -> list:
+    """`download_edge` asks for a rendering of the original at that long
+    edge as `download_url` (one title at a time, since the width asked
+    for depends on the file's own aspect)."""
+    extra = {}
+    if download_edge and len(titles) == 1:
+        size = imageinfo(titles)
+        if size and max(size[0]["width"], size[0]["height"]) > download_edge:
+            w, h = size[0]["width"], size[0]["height"]
+            extra = dict(iiurlwidth=round(download_edge * w / max(w, h)))
     pages = api(action="query", prop="imageinfo", titles="|".join(titles),
-                iiprop="url|size|extmetadata|mime")["query"]["pages"]
+                iiprop="url|size|extmetadata|mime", **extra)["query"]["pages"]
     out = []
     for p in pages:
         if "imageinfo" not in p:
@@ -100,7 +114,8 @@ def imageinfo(titles) -> list:
         md = {k: re.sub("<[^>]+>", "", str(v.get("value", ""))).strip() for k, v in ii.get("extmetadata", {}).items()}
         out.append(dict(title=p["title"], url=ii["url"], page=ii.get("descriptionurl"), width=ii["width"],
                         height=ii["height"], mime=ii.get("mime"), licence=md.get("LicenseShortName", ""),
-                        licence_url=md.get("LicenseUrl"), artist=md.get("Artist")))
+                        licence_url=md.get("LicenseUrl"), artist=md.get("Artist"),
+                        download_url=ii.get("thumburl") or ii["url"]))
     return out
 
 
@@ -121,7 +136,7 @@ def surname(creator: str) -> str:
 def choose(slot: dict) -> dict:
     """The pinned file, or the largest openly licensed hit naming the painter."""
     if slot.get("commons_file"):
-        found = imageinfo([slot["commons_file"]])
+        found = imageinfo([slot["commons_file"]], DOWNLOAD_EDGE)
         if not found:
             raise Failure(f"pinned file not on Commons: {slot['commons_file']}")
         return found[0]
@@ -176,7 +191,9 @@ def take_painting(slot: dict, pinned: str = None):
     info = choose(slot)
     if not licence_ok(info):
         raise Failure(f"licence '{info['licence'] or 'none stated'}' is not on the allowed list ({info['page']})")
-    jpeg = encode(get(info["url"]), slot.get("crop"))
+    if max(info["width"], info["height"]) < MIN_LONG_EDGE and not slot.get("small_source_ok"):
+        raise Failure(f"{info['title']} is {info['width']}×{info['height']}, under the {MIN_LONG_EDGE} px bar")
+    jpeg = encode(get(info["download_url"]), slot.get("crop"))
     write_imageset(name, jpeg)
     attribution = None
     if re.search(r"cc[- ]by", info["licence"], re.I):

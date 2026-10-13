@@ -208,7 +208,7 @@ struct ChantLibraryView: View {
                     spoken: chant.spokenName
                 ) { openChant(chant) }
             } else {
-                tile("Learned", painting: "glorious_coronation", spoken: "Chants you have learned") {
+                tile("Learned", painting: ChantSavedShelf.learned.emptyPainting, spoken: "Chants you have learned") {
                     router.push(.chantSaved(.learned))
                 }
             }
@@ -411,7 +411,7 @@ struct ChantLibraryView: View {
                     let chants = set.items.compactMap(\.chant)
                     ChantSetCard(
                         title: set.name,
-                        painting: chants.first.map { ChantCatalog.painting(for: $0) } ?? "glorious_coronation",
+                        painting: chants.first.map { ChantCatalog.painting(for: $0) } ?? ChantSet.emptyPainting,
                         chants: chants,
                         duration: set.duration,
                         queue: ChantQueue.set(set),

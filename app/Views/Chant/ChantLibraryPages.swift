@@ -130,17 +130,9 @@ enum ChantBrowseScope: Hashable {
     }
 
     /// The painting a section's card hangs: the picker's (`ChantGroup.
-    /// painting`), except where that would hang the Last Supper on three
-    /// cards and the Annunciation on two. The hymns take the Ascension,
-    /// their Te Deum's and Christus vincit's; Benediction the Blessed
-    /// Sacrament; the Latin Rosary Our Lady of the Rosary.
+    /// painting`), which gives no two sections the same one
     static func contentsPainting(for group: ChantGroup) -> String {
-        switch group.id {
-        case "hymns": return "glorious_ascension"
-        case "benediction": return "topic_blessed_sacrament"
-        case "rosary": return "feast_our_lady_of_the_rosary"
-        default: return group.painting
-        }
+        group.painting
     }
 
     /// Where a card or a shelf's head cuts its painting: the curation's

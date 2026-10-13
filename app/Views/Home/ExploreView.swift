@@ -725,18 +725,13 @@ struct ExploreView: View {
         .padding(.horizontal, -20)
     }
 
-    /// An occasion's painting: the Last Supper at Mass, Gethsemane at
-    /// Confession, the Holy Souls for the dead
+    /// An occasion's painting: the one its order's own page hangs
+    /// (`PrayerBookPainting.order`), the Last Supper at Mass, the Prodigal
+    /// Son at Confession, Emmaus at table
     private static func occasionPainting(_ orderID: String) -> (asset: String, focal: UnitPoint) {
-        switch orderID {
-        case "before_mass", "after_mass": return ("luminous_eucharist", UnitPoint(x: 0.5, y: 0.35))
-        case "before_confession", "after_confession": return ("sorrowful_agony", UnitPoint(x: 0.5, y: 0.3))
-        case "visit": return ("feast_christ_the_king", UnitPoint(x: 0.5, y: 0.3))
-        case "holy_souls": return ("devotion_holy_souls", UnitPoint(x: 0.5, y: 0.3))
-        case "trouble": return ("hour_night", UnitPoint(x: 0.5, y: 0.4))
-        case "table": return ("hour_morning", UnitPoint(x: 0.5, y: 0.35))
-        default: return ("glorious_coronation", UnitPoint(x: 0.5, y: 0.2))
-        }
+        guard let order = PrayerBook.order(orderID) else { return ("hour_morning", UnitPoint(x: 0.5, y: 0.35)) }
+        let painting = PrayerBookPainting.order(order)
+        return (painting.resolvedAsset, painting.focal)
     }
 
     /// The chant library's four ways in, two by two
@@ -752,7 +747,7 @@ struct ExploreView: View {
 
             paintedTile(
                 title: "Songs to Mary", note: nil,
-                asset: "glorious_coronation", focal: UnitPoint(x: 0.5, y: 0.25)
+                asset: "mary_sistine_madonna", focal: UnitPoint(x: 0.5, y: 0.25)
             ) { router.push(.chantBrowse(.songsToMary)) }
 
             paintedTile(

@@ -52,7 +52,7 @@ enum ChantSavedShelf: Hashable {
     var emptyPainting: String {
         switch self {
         case .favorites: return "glorious_pentecost"
-        case .learned:   return "glorious_coronation"
+        case .learned:   return "psalm_king_david"
         }
     }
 

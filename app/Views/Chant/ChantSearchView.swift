@@ -490,8 +490,8 @@ struct ChantSearchView: View {
         case .shortChant:     return "glorious_assumption"
         case .hymn:           return "glorious_pentecost"
         case .sequence:       return "glorious_resurrection"
-        case .litany:         return "glorious_coronation"
-        case .psalm:          return "joyful_nativity"
+        case .litany:         return "feast_all_saints"
+        case .psalm:          return "psalm_king_david"
         case .everydayPrayer: return "joyful_annunciation"
         }
     }
