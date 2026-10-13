@@ -2772,21 +2772,36 @@ write concurrent code here:
   out, though the home's Sung sets shelf whose SEE ALL opens it shows them),
   then the dashed Make your own set, named first and opening on its page.
 
-  **A set's page** (`ChantSetPage`, the "Chant Library shelves" design,
-  option B, Oct 2026) is one component for every set, laid out as an
-  album: the painting beside the kicker (SUNG SET or YOUR SET), the name,
-  the occasion's line and "7 chants · 53 min"; an outlined PLAY ALL,
-  which is the set's own Pause and Resume once it is under way (through
-  `ChantPlayer.pauseOrResume`), beside the bookmark (an occasion) or share
-  and ··· to rename or delete (the reader's own); Pause between chants
-  (`ChantPausesBetweenRow`); then the order, what happens between chants
-  in red (`ChantRubricText`) over rows of painting, names and length, the
-  one sounding lit with `ChantSoundingBars`. A row opens its chant
-  (`ChantTap`); its ··· sings the set from there and, in the reader's own
-  set, moves and removes it, with Add a chant and Add a pause beneath. A
-  new occasion needs only its data. The set once opened as an order of
-  service under the index of every other set, below the fold, and the
-  reader's own as a card under the Saved shelf. **The occasions**
+  **A set's page** (`ChantSetPage`, the "simplify the sung set page"
+  design, option A, Oct 2026) is one component for every set, drawn as a
+  shelf page is: the set's painting (an occasion's own, else the first
+  chant's) run up under the bar and dissolving into the page, rising with
+  the scroll; on its foot the name, the occasion's line and "7 chants · 53
+  min" ("Nothing in it yet" while it holds no chant), centred; an outlined
+  PLAY ALL, which is the set's own Pause and Resume once it is under way
+  (through `ChantPlayer.pauseOrResume`), and not drawn at all for a set
+  with no chant; then the order, what happens between chants in red
+  (`ChantRubricText`) over the chants it leads to, an occasion's chants
+  numbered (they mostly share its painting) and the reader's hung with
+  their paintings, the one sounding lit with `ChantSoundingBars`. A row
+  opens its chant (`ChantTap`). What is used less stands out of the way:
+  an occasion's bookmark and the ··· stand in the bar, and the ···
+  (`ChantSetPage.MoreItem`) holds Pause Between Chants, the one
+  library-wide switch, with "The next chant waits until you tap" beneath
+  it, and for the reader's own set Share, Rename and Delete; saving an
+  occasion is the bookmark's alone. A hold on a row offers Play from Here
+  and, in the reader's own set, Move Up, Move Down and Remove
+  (`ChantSetPage.RowAction`), the same acts as its VoiceOver actions; the
+  reader's set ends on + ADD A CHANT in gold and + ADD A PAUSE in red, as
+  words. A new occasion needs only its data. The page once stacked nine
+  pieces at one weight before the first chant: a 136-point painting beside
+  a SUNG SET / YOUR SET kicker (gone, since the bookmark or the ··· with
+  Share and Rename already says which kind of set it is), PLAY ALL beside
+  the bookmark or share and ···, a settings row for Pause between chants
+  (`ChantPausesBetweenRow`, which nothing else drew, gone into the ···), a
+  ··· on every row and two capsules to add. Before that the set opened as
+  an order of service under the index of every other set, below the fold,
+  and the reader's own as a card under the Saved shelf. **The occasions**
   (`ChantLibraryData.occasions`): Adoration and Blessing (Benediction), A
   Visit to Jesus in Church, a Sung Rosary, Before Bed, Before Work or
   Study, For Those Who Have Died — each a card on Sung Sets opening its
@@ -3623,9 +3638,11 @@ transition entirely.
   pray-along page in silence, an order part-way through, a prayer
   opened alone and the Angelus, on a book store of its own, a chant's
   page (top, foot, learning, not found), the chant search before
-  typing, with results and with nothing found, and Your Chants with its
+  typing, with results and with nothing found, Your Chants with its
   shelves full, empty and at its foot, the chant score sheet with and
-  without its player, on a fixed day) from fixed data
+  without its player, on a fixed day, and a sung set's page (an
+  occasion at rest, sung and at `.xLarge`, the reader's own set full and
+  empty, a set that is gone)) from fixed data
   with swift-snapshot-testing (the
   test target's one package; the app has none) and compares them with
   the PNGs in `__Snapshots__/`, in the same `xcodebuild test`.

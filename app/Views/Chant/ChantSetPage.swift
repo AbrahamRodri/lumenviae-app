@@ -2,22 +2,31 @@
 //  ChantSetPage.swift
 //  Lumen Viae
 //
-//  One sung set on a page of its own, laid out as an album is: its
-//  painting beside its name, a line saying what it is, how many chants
-//  and how long, PLAY ALL, and then its chants in the order they are
-//  sung, the notes in red between them saying what happens in between
-//  (the "Chant Library shelves" design, option B, Oct 2026).
+//  One sung set on a page of its own, drawn as the library's shelves are
+//  (the "simplify the sung set page" design, option A, Oct 2026): its
+//  painting run up under the bar and dissolving into the page, the name,
+//  one line and "7 chants · 53 min" centred on its foot, one outlined
+//  PLAY ALL, and then its chants in the order they are sung, the notes in
+//  red over the chants they lead to.
 //
 //  Every set opens here, whatever it is: an occasion of the library's
 //  (`ChantLibraryData.occasions`: A Sung Rosary, Adoration and Blessing,
 //  Before Bed...) or a set the reader made. A new occasion needs only its
-//  data. A set once opened as an order of service beneath an index of
-//  every other set, so the set asked for stood below the fold.
+//  data.
 //
-//  An occasion carries the bookmark that keeps it as a set of the
-//  reader's own; a set of the reader's own is changed here: its chants and
-//  pauses moved and removed from each row's menu, added beneath them,
-//  renamed, shared as words and deleted.
+//  What is used less stands out of the way. An occasion's bookmark, which
+//  keeps it as a set of the reader's own, and the ··· stand in the bar; the
+//  ··· holds Pause Between Chants and, for the reader's own set, Share,
+//  Rename and Delete. A row's own acts (Play from Here, and in the
+//  reader's set Move Up, Move Down and Remove) are on a hold and among its
+//  VoiceOver actions. The reader's set ends on two quiet words that add a
+//  chant or a pause.
+//
+//  The page once stacked nine pieces at one weight before the first
+//  chant: a side painting under a SUNG SET / YOUR SET kicker, PLAY ALL
+//  beside the bookmark or share and ···, a settings row for Pause between
+//  chants, and a ··· on every row. The kicker went because the bar's own
+//  controls already say which kind of set it is.
 //
 
 import SwiftUI
@@ -40,8 +49,12 @@ struct ChantSetPage: View {
     let subject: ChantSetSubject
 
     private var player = ChantPlayer.shared
-    private var shelf = ChantShelfStore.shared
+    private var shelf: ChantShelfStore
+    /// What sounds, for a snapshot: the player cannot be made to sing in
+    /// a test, so a test names the row it would light. Nil reads the player.
+    private let drawnSounding: Sounding?
 
+    @State private var scroll = ChantSavedScroll()
     @State private var addingChant: ChantSet?
     @State private var addingPause: ChantSet?
     @State private var renaming: ChantSet?
@@ -51,32 +64,42 @@ struct ChantSetPage: View {
     /// the bookmark lets it go
     @State private var unkeeping: ChantSet?
 
-    init(subject: ChantSetSubject) {
+    /// The row of the set sounding, and whether it is going on
+    struct Sounding {
+        let origin: Int?
+        let goingOn: Bool
+    }
+
+    init(subject: ChantSetSubject, shelf: ChantShelfStore = .shared, sounding: Sounding? = nil) {
         self.subject = subject
+        self.shelf = shelf
+        self.drawnSounding = sounding
     }
 
     var body: some View {
-        ZStack {
+        ZStack(alignment: .top) {
             AppColors.appGradient.ignoresSafeArea()
 
             if let content {
+                ChantSetPainting(name: content.painting, scroll: scroll)
+
                 ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 22) {
-                        header(content)
-                        actions(content)
-                        ChantPausesBetweenRow()
+                    VStack(alignment: .leading, spacing: 0) {
+                        head(content)
+                            .padding(.top, ChantSetPainting.reach - 62)
+
                         order(content)
+                            .padding(.top, 26)
+
                         if case .own(let id) = subject, let set = shelf.set(id) {
-                            HStack(spacing: 10) {
-                                addButton("Add a chant", color: AppColors.gold) { addingChant = set }
-                                addButton("Add a pause", color: Rubric.text) { addingPause = set }
-                            }
+                            addButtons(set)
+                                .padding(.top, 26)
                         }
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 8)
+                    .padding(.horizontal, 18)
                     .padding(.bottom, 48)
                 }
+                .modifier(ChantSavedScrollReading(scroll: scroll))
                 .topChromeFade()
             } else {
                 // A set deleted, or an id no build knows: the page says so
@@ -84,11 +107,20 @@ struct ChantSetPage: View {
                 Text("This set is no longer here.")
                     .font(AppFonts.readingItalicFont(16))
                     .foregroundColor(AppColors.textSecondary)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
         .navigationBarBackButtonHidden(true)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) { ChantBackButton() }
+            if content != nil {
+                if case .occasion(let id) = subject, let occasion = ChantOccasion.occasion(id) {
+                    ToolbarItem(placement: .navigationBarTrailing) { keepButton(occasion) }
+                }
+                ToolbarItem(placement: .navigationBarTrailing) { moreMenu }
+            }
         }
         .sheet(item: $addingChant) { set in
             ChantPickerSheet(set: set)
@@ -134,7 +166,6 @@ struct ChantSetPage: View {
 
     /// A set as the page lays it out, whichever kind it is
     struct Content {
-        let kicker: String
         let title: String
         let note: String?
         let painting: String
@@ -187,7 +218,6 @@ struct ChantSetPage: View {
             }
         }
         return Content(
-            kicker: "Sung set",
             title: occasion.title,
             note: occasion.note,
             painting: occasion.painting,
@@ -214,7 +244,6 @@ struct ChantSetPage: View {
             }
         }
         return Content(
-            kicker: "Your set",
             title: set.name,
             note: nil,
             painting: set.items.lazy.compactMap(\.chant).first.map { ChantCatalog.painting(for: $0) }
@@ -238,28 +267,35 @@ struct ChantSetPage: View {
         }
     }
 
-    // MARK: - Header
+    // MARK: - What sounds
 
-    private func header(_ content: Content) -> some View {
-        HStack(alignment: .bottom, spacing: 16) {
-            ChantThumbnail(name: content.painting, size: 136, radius: 14)
+    private func sounding(_ content: Content) -> Sounding {
+        if let drawnSounding { return drawnSounding }
+        return Sounding(
+            origin: content.queue.source.flatMap { player.origin(singing: $0) },
+            goingOn: player.isGoingOn
+        )
+    }
 
-            VStack(alignment: .leading, spacing: 5) {
-                Text(content.kicker.uppercased())
-                    .font(AppFonts.labelFont(9))
-                    .tracking(2.2)
-                    .foregroundColor(AppColors.gold)
-                Text(content.title)
-                    .font(AppFonts.titleFont(22))
-                    .foregroundColor(AppColors.cream)
-                    .lineLimit(3)
-                    .minimumScaleFactor(0.8)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .accessibilityAddTraits(.isHeader)
+    // MARK: - The head
+
+    /// The name, its line and its length centred on the painting's foot,
+    /// then PLAY ALL while there is a chant to play
+    private func head(_ content: Content) -> some View {
+        VStack(spacing: 6) {
+            Text(content.title)
+                .font(AppFonts.titleFont(26))
+                .foregroundColor(AppColors.cream)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+                .accessibilityAddTraits(.isHeader)
+
+            VStack(spacing: 6) {
                 if let note = content.note {
                     Text(note)
-                        .font(AppFonts.readingItalicFont(14.5))
-                        .foregroundColor(AppColors.cream.opacity(0.78))
+                        .font(AppFonts.readingItalicFont(15))
+                        .foregroundColor(AppColors.cream.opacity(0.8))
+                        .multilineTextAlignment(.center)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 Text(
@@ -271,58 +307,54 @@ struct ChantSetPage: View {
                 .foregroundColor(AppColors.textSecondary)
                 .monospacedDigit()
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .accessibilityElement(children: .combine)
-    }
+            .accessibilityElement(children: .combine)
 
-    // MARK: - Play, and the set's own acts
-
-    private func actions(_ content: Content) -> some View {
-        HStack(spacing: 12) {
-            playAll(content)
-            switch subject {
-            case .occasion(let id):
-                if let occasion = ChantOccasion.occasion(id) { keepButton(occasion) }
-            case .own(let id):
-                if let set = shelf.set(id) { ownSetActs(set) }
+            if content.chantCount > 0 {
+                playAll(content)
+                    .padding(.top, 10)
             }
         }
+        .padding(.horizontal, 12)
+        .frame(maxWidth: .infinity)
     }
 
     /// PLAY ALL, outlined: the library's pages keep no filled gold act. It
     /// pauses and takes up the set once the set is under way.
     private func playAll(_ content: Content) -> some View {
         let queue = content.queue
-        let singing = player.isSinging(queue)
-        let going = singing && player.isGoingOn
+        let singing = drawnSounding.map { $0.origin != nil } ?? player.isSinging(queue)
+        let going = singing && sounding(content).goingOn
+        let waiting = drawnSounding == nil && player.waitingForNext
         let word =
             !singing
             ? "Play all"
-            : player.waitingForNext
+            : waiting
                 ? "Play next"
                 : going ? "Pause" : "Resume"
         return Button {
             if singing { player.pauseOrResume() } else { player.play(queue) }
         } label: {
             HStack(spacing: 8) {
-                AppIcon(going ? "ph-pause-fill" : "ph-play-fill", size: 13)
+                AppIcon(going ? "ph-pause-fill" : "ph-play-fill", size: 12)
                 Text(word.uppercased())
                     .font(AppFonts.labelFont(11))
                     .tracking(2.2)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
                     .contentTransition(.opacity)
             }
             .foregroundColor(AppColors.gold)
-            .frame(maxWidth: .infinity, minHeight: 48)
+            .padding(.horizontal, 26)
+            .frame(minHeight: 46)
             .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.55), lineWidth: AppLine.hairline))
             .contentShape(Capsule())
         }
         .buttonStyle(SacredCardButtonStyle())
         .animation(Motion.crossfade, value: word)
-        .disabled(content.chantCount == 0)
-        .opacity(content.chantCount == 0 ? 0.4 : 1)
         .accessibilityLabel(singing ? word : "Play all of \(content.title)")
     }
+
+    // MARK: - The bar
 
     /// The bookmark: keeps the occasion as a set of the reader's own, and
     /// a second tap lets it go — one kept set for each occasion. A kept set
@@ -336,11 +368,8 @@ struct ChantSetPage: View {
         } label: {
             AppIcon(kept ? "ph-bookmark-simple-fill" : "ph-bookmark-simple", size: 18)
                 .foregroundColor(AppColors.gold)
-                .frame(width: 48, height: 48)
-                .overlay(Circle().strokeBorder(AppColors.gold.opacity(kept ? 0.7 : 0.35), lineWidth: AppLine.hairline))
-                .contentShape(Circle())
+                .modifier(ChantSetBarGround())
         }
-        .buttonStyle(SacredCardButtonStyle())
         .sensoryFeedback(.selection, trigger: kept)
         .accessibilityLabel("Save as your own set")
         .accessibilityValue(kept ? "Saved" : "")
@@ -365,45 +394,82 @@ struct ChantSetPage: View {
         }
     }
 
-    private func ownSetActs(_ set: ChantSet) -> some View {
-        HStack(spacing: 8) {
-            if !set.items.isEmpty {
-                ShareLink(item: Self.shareText(set)) {
-                    chip("ph-export")
+    /// What the ··· holds, group by group, in its order: everything about
+    /// the set used less, in one place. Saving an occasion is the
+    /// bookmark's beside it, never the menu's too.
+    enum MoreItem: Equatable {
+        case share
+        case rename
+        case pausesBetween
+        case delete
+
+        static func groups(own: Bool, hasItems: Bool) -> [[MoreItem]] {
+            guard own else { return [[.pausesBetween]] }
+            return [(hasItems ? [.share] : []) + [.rename], [.pausesBetween], [.delete]]
+        }
+    }
+
+    private var moreMenu: some View {
+        let ownSet = ownSet
+        let groups = MoreItem.groups(own: ownSet != nil, hasItems: !(ownSet?.items.isEmpty ?? true))
+        return Menu {
+            ForEach(Array(groups.enumerated()), id: \.offset) { _, group in
+                Section {
+                    ForEach(group, id: \.self) { item in
+                        moreButton(item, set: ownSet)
+                    }
                 }
-                .accessibilityLabel("Share this set")
             }
-            Menu {
+        } label: {
+            AppIcon("ph-dots-three", size: 22)
+                .foregroundColor(AppColors.gold)
+                .modifier(ChantSetBarGround())
+        }
+        .accessibilityLabel("More options")
+    }
+
+    @ViewBuilder
+    private func moreButton(_ item: MoreItem, set: ChantSet?) -> some View {
+        switch item {
+        case .share:
+            if let set {
+                ShareLink(item: Self.shareText(set)) {
+                    Label("Share", systemImage: "square.and.arrow.up")
+                }
+            }
+        case .rename:
+            if let set {
                 Button {
                     renameText = set.name
                     renaming = set
                 } label: {
                     Label("Rename", systemImage: "pencil")
                 }
+            }
+        case .pausesBetween:
+            // The one library-wide switch, with what it does beneath it
+            Toggle(isOn: Binding(get: { shelf.pausesBetween }, set: { shelf.pausesBetween = $0 })) {
+                Text("Pause Between Chants")
+                Text("The next chant waits until you tap")
+            }
+        case .delete:
+            if let set {
                 Button(role: .destructive) {
                     deleting = set
                 } label: {
                     Label("Delete the Set", systemImage: "trash")
                 }
-            } label: {
-                chip("ph-dots-three")
             }
-            .accessibilityLabel("More for this set")
         }
-    }
-
-    private func chip(_ icon: String) -> some View {
-        AppIcon(icon, size: 18)
-            .foregroundColor(AppColors.gold)
-            .frame(width: 48, height: 48)
-            .overlay(Circle().strokeBorder(AppColors.gold.opacity(0.35), lineWidth: AppLine.hairline))
-            .contentShape(Circle())
     }
 
     // MARK: - The order
 
     private func order(_ content: Content) -> some View {
-        let sounding = content.queue.source.flatMap { player.origin(singing: $0) }
+        let sounding = sounding(content)
+        let numbers = Self.chantNumbers(of: content.rows)
+        let own = Self.isOwn(subject)
+        let items = ownSet?.items ?? []
         return VStack(alignment: .leading, spacing: 0) {
             if content.rows.isEmpty {
                 Text(
@@ -411,147 +477,235 @@ struct ChantSetPage: View {
                 )
                 .font(AppFonts.readingItalicFont(15))
                 .foregroundColor(AppColors.textSecondary)
+                .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, 24)
+                .frame(maxWidth: .infinity)
+                .padding(.top, -4)
             }
             ForEach(Array(content.rows.enumerated()), id: \.element.id) { position, row in
+                let lit = row.origin != nil && row.origin == sounding.origin
+                // The reader's rows move among the set's items, as the
+                // store counts them
+                let place = items.firstIndex { $0.id == row.itemID } ?? position
+                let actions = Self.rowActions(
+                    for: row, own: own, position: place, count: own ? items.count : content.rows.count)
                 switch row.kind {
                 case .rubric(let text, let seconds):
-                    rubricRow(
-                        text, seconds: seconds, lit: row.origin != nil && row.origin == sounding, row: row,
-                        position: position, content: content)
+                    rubricRow(text, seconds: seconds, lit: lit)
+                        .modifier(ChantSetRowActs(actions: actions) { perform($0, row: row, content: content) })
                 case .chant(let chant, let times):
                     chantRow(
-                        chant, times: times, lit: row.origin == sounding, row: row, position: position, content: content
+                        chant, times: times, number: own ? nil : numbers[row.id], lit: lit,
+                        goingOn: sounding.goingOn
                     )
+                    .modifier(ChantSetRowActs(actions: actions) { perform($0, row: row, content: content) })
                 }
             }
         }
     }
 
-    private func rubricRow(_ text: String, seconds: Int?, lit: Bool, row: Row, position: Int, content: Content)
-        -> some View
-    {
+    /// A note in red over the chants it leads to; the reader's own pauses
+    /// say the silence they keep, or that they are a note alone
+    private func rubricRow(_ text: String, seconds: Int?, lit: Bool) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
             ChantRubricText(text: text, size: 15)
             Spacer(minLength: 8)
             if let seconds {
-                // A note kept with no silence says so in a word
                 Text(seconds > 0 ? ChantPlayer.clock(TimeInterval(seconds)) : "NOTE")
                     .font(AppFonts.labelFont(9))
                     .tracking(1)
                     .foregroundColor(lit ? Rubric.text : AppColors.textSecondary)
                     .monospacedDigit()
             }
-            if row.itemID != nil {
-                rowMenu(row: row, position: position, content: content, chant: nil)
-            }
         }
-        .padding(.top, 14)
+        .padding(.top, 18)
         .padding(.bottom, 6)
-        .accessibilityElement(children: .combine)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Self.spokenPause(text, seconds: seconds))
     }
 
-    private func chantRow(_ chant: Chant, times: Int, lit: Bool, row: Row, position: Int, content: Content) -> some View
-    {
+    /// A chant in the order: numbered in an occasion, whose chants mostly
+    /// share its painting, and hung with its own painting in the reader's
+    /// set. A tap opens it.
+    private func chantRow(_ chant: Chant, times: Int, number: Int?, lit: Bool, goingOn: Bool) -> some View {
         let duration = chant.duration * Double(max(1, times))
-        return HStack(spacing: 12) {
-            Button {
-                router.push(ChantTap.route(to: chant))
-            } label: {
-                HStack(spacing: 12) {
-                    ChantThumbnail(name: ChantCatalog.painting(for: chant), size: 44, radius: 8)
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(times > 1 ? "\(chant.latinTitle) ×\(times)" : chant.latinTitle)
-                            .font(AppFonts.readingFont(16.5))
-                            .foregroundColor(lit ? AppColors.goldLight : AppColors.cream)
-                            .lineLimit(2)
-                        Text(chant.englishTitle)
-                            .font(AppFonts.readingItalicFont(13.5))
-                            .foregroundColor(AppColors.textSecondary)
-                            .lineLimit(1)
-                    }
-                    Spacer(minLength: 8)
-                    if lit && player.isGoingOn {
-                        ChantSoundingBars()
-                    } else {
-                        Text(ChantPlayer.clock(duration))
-                            .font(AppFonts.readingFont(13.5))
-                            .foregroundColor(AppColors.textSecondary)
-                            .monospacedDigit()
-                    }
+        let spoken = lit
+            ? "\(chant.spokenEntry(times: times, duration: duration)), playing now"
+            : chant.spokenEntry(times: times, duration: duration)
+        return Button {
+            router.push(ChantTap.route(to: chant))
+        } label: {
+            HStack(spacing: 12) {
+                if let number {
+                    Text("\(number)")
+                        .font(AppFonts.titleFont(14))
+                        .foregroundColor(lit ? AppColors.goldLight : AppColors.textSecondary)
+                        .monospacedDigit()
+                        .frame(width: 24)
+                } else {
+                    ChantThumbnail(name: ChantCatalog.painting(for: chant), size: 46, radius: 8)
                 }
-                .padding(.vertical, 9)
-                .contentShape(Rectangle())
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(
+                        "\(Text(chant.latinTitle).foregroundColor(lit ? AppColors.goldLight : AppColors.cream))\(Text(times > 1 ? "  ×\(times)" : "").foregroundColor(AppColors.gold))"
+                    )
+                        .font(AppFonts.readingFont(16.5))
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .animation(Motion.crossfade, value: lit)
+                    Text(chant.englishTitle)
+                        .font(AppFonts.readingItalicFont(13.5))
+                        .foregroundColor(AppColors.textSecondary)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                if lit && goingOn {
+                    ChantSoundingBars()
+                } else {
+                    Text(ChantPlayer.clock(duration))
+                        .font(AppFonts.readingFont(13.5))
+                        .foregroundColor(AppColors.textSecondary)
+                        .monospacedDigit()
+                }
             }
-            .buttonStyle(.plain)
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel(
-                lit
-                    ? "\(chant.spokenEntry(times: times, duration: duration)), playing now"
-                    : chant.spokenEntry(times: times, duration: duration)
-            )
-            .accessibilityHint("Opens the chant")
-            .accessibilityAddTraits(.isButton)
-
-            rowMenu(row: row, position: position, content: content, chant: chant)
+            .padding(.vertical, number == nil ? 9 : 11)
+            .frame(minHeight: 56)
+            .contentShape(Rectangle())
         }
-        .overlay(alignment: .bottom) { ChantRule(opacity: 0.12) }
+        .buttonStyle(.plain)
+        .overlay(alignment: .bottom) {
+            Rectangle()
+                .fill(AppColors.gold.opacity(0.12))
+                .frame(height: AppLine.hairline)
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(number.map { "\($0). \(spoken)" } ?? spoken)
+        .accessibilityHint("Opens the chant")
+        .accessibilityAddTraits(.isButton)
     }
 
-    /// ··· on a row: sing the set from here, and for the reader's own set,
-    /// move or remove the row
-    private func rowMenu(row: Row, position: Int, content: Content, chant: Chant?) -> some View {
-        Menu {
-            if let chant, let origin = row.origin {
-                Button {
-                    player.play(content.queue, from: content.queue.origins.firstIndex(of: origin) ?? 0)
-                } label: {
-                    Label("Play from Here", systemImage: "play")
-                }
-                .accessibilityLabel("Play from \(chant.spokenName)")
+    // MARK: - A row's acts
+
+    /// What a hold on a row offers, and what VoiceOver offers among its
+    /// actions: the same acts, in the same order
+    enum RowAction: Equatable {
+        case playFromHere
+        case moveUp
+        case moveDown
+        case remove
+
+        var title: String {
+            switch self {
+            case .playFromHere: return "Play from Here"
+            case .moveUp:       return "Move Up"
+            case .moveDown:     return "Move Down"
+            case .remove:       return "Remove"
             }
-            if case .own(let setID) = subject, let itemID = row.itemID, let set = shelf.set(setID) {
-                let index = set.items.firstIndex { $0.id == itemID } ?? 0
-                Button {
-                    shelf.moveItem(itemID, by: -1, in: setID)
-                } label: {
-                    Label("Move Up", systemImage: "arrow.up")
-                }
-                .disabled(index == 0)
-                Button {
-                    shelf.moveItem(itemID, by: 1, in: setID)
-                } label: {
-                    Label("Move Down", systemImage: "arrow.down")
-                }
-                .disabled(index == set.items.count - 1)
-                Button(role: .destructive) {
-                    shelf.removeItem(itemID, from: setID)
-                } label: {
-                    Label("Remove", systemImage: "minus.circle")
-                }
-            }
-        } label: {
-            AppIcon("ph-dots-three", size: 18)
-                .foregroundColor(AppColors.textSecondary)
-                .frame(width: 36, height: 44)
-                .contentShape(Rectangle())
         }
-        .accessibilityLabel(chant.map { "More for \($0.latinTitle)" } ?? "Move or remove")
+
+        var spokenTitle: String {
+            switch self {
+            case .playFromHere: return "Play from here"
+            case .moveUp:       return "Move up"
+            case .moveDown:     return "Move down"
+            case .remove:       return "Remove"
+            }
+        }
+
+        var systemImage: String {
+            switch self {
+            case .playFromHere: return "play"
+            case .moveUp:       return "arrow.up"
+            case .moveDown:     return "arrow.down"
+            case .remove:       return "minus.circle"
+            }
+        }
+    }
+
+    /// A chant can be sung from; in the reader's own set every row can be
+    /// moved, but never past either end, and removed. An occasion's notes
+    /// have none.
+    static func rowActions(for row: Row, own: Bool, position: Int, count: Int) -> [RowAction] {
+        var actions: [RowAction] = []
+        if case .chant = row.kind, row.origin != nil { actions.append(.playFromHere) }
+        if own, row.itemID != nil {
+            if position > 0 { actions.append(.moveUp) }
+            if position < count - 1 { actions.append(.moveDown) }
+            actions.append(.remove)
+        }
+        return actions
+    }
+
+    private func perform(_ action: RowAction, row: Row, content: Content) {
+        switch action {
+        case .playFromHere:
+            guard let origin = row.origin else { return }
+            player.play(content.queue, from: content.queue.origins.firstIndex(of: origin) ?? 0)
+        case .moveUp, .moveDown, .remove:
+            guard case .own(let setID) = subject, let itemID = row.itemID else { return }
+            switch action {
+            case .moveUp: shelf.moveItem(itemID, by: -1, in: setID)
+            case .moveDown: shelf.moveItem(itemID, by: 1, in: setID)
+            default: shelf.removeItem(itemID, from: setID)
+            }
+        }
+    }
+
+    /// Each chant row's place among the chant rows, from 1
+    static func chantNumbers(of rows: [Row]) -> [String: Int] {
+        var numbers: [String: Int] = [:]
+        for row in rows {
+            if case .chant = row.kind { numbers[row.id] = numbers.count + 1 }
+        }
+        return numbers
+    }
+
+    /// "Silent prayer, 10 minutes of silence", or "Kneel., a note"
+    static func spokenPause(_ text: String, seconds: Int?) -> String {
+        guard let seconds else { return text }
+        return seconds > 0
+            ? "\(text), \(ChantPlayer.spoken(TimeInterval(seconds))) of silence"
+            : "\(text), a note"
+    }
+
+    /// The reader's own set, when the page shows one that is still here
+    private var ownSet: ChantSet? {
+        guard case .own(let id) = subject else { return nil }
+        return shelf.set(id)
+    }
+
+    private static func isOwn(_ subject: ChantSetSubject) -> Bool {
+        if case .own = subject { return true }
+        return false
+    }
+
+    // MARK: - Adding
+
+    /// Two quiet words under the reader's own set: a chant in gold, a
+    /// pause in the red its notes are set in
+    private func addButtons(_ set: ChantSet) -> some View {
+        HStack(spacing: 22) {
+            addButton("Add a chant", color: AppColors.gold) { addingChant = set }
+            addButton("Add a pause", color: Rubric.text) { addingPause = set }
+        }
+        .frame(maxWidth: .infinity)
     }
 
     private func addButton(_ title: String, color: Color, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            HStack(spacing: 6) {
-                AppIcon("ph-plus", size: 12)
-                Text(title)
-                    .font(AppFonts.readingFont(15))
+            HStack(spacing: 7) {
+                AppIcon("ph-plus", size: 11)
+                Text(title.uppercased())
+                    .font(AppFonts.labelFont(10.5))
+                    .tracking(2)
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
             }
             .foregroundColor(color)
-            .frame(maxWidth: .infinity, minHeight: 44)
-            .overlay(Capsule().strokeBorder(color.opacity(0.5), lineWidth: AppLine.hairline))
-            .contentShape(Capsule())
+            .frame(minHeight: 44)
+            .contentShape(Rectangle())
         }
         .buttonStyle(SacredCardButtonStyle())
         .accessibilityLabel(title)
@@ -581,41 +735,111 @@ struct ChantSetPage: View {
     }
 }
 
-// MARK: - ChantPausesBetweenRow
+// MARK: - A row's acts, on a hold and to VoiceOver
 
-/// Pause between chants, for every set. The whole row is the switch, as
-/// Settings' rows are: the switch is drawn but takes no touch of its own,
-/// or a tap on it would reach both and flip the setting twice.
-struct ChantPausesBetweenRow: View {
-    private var shelf = ChantShelfStore.shared
+/// The row's acts as its context menu and as its VoiceOver actions; a row
+/// with none carries neither
+private struct ChantSetRowActs: ViewModifier {
+    let actions: [ChantSetPage.RowAction]
+    let perform: (ChantSetPage.RowAction) -> Void
+
+    func body(content: Content) -> some View {
+        if actions.isEmpty {
+            content
+        } else {
+            content
+                .contextMenu {
+                    ForEach(actions, id: \.self) { action in
+                        Button(role: action == .remove ? .destructive : nil) {
+                            perform(action)
+                        } label: {
+                            Label(action.title, systemImage: action.systemImage)
+                        }
+                    }
+                }
+                .accessibilityActions {
+                    ForEach(actions, id: \.self) { action in
+                        Button(action.spokenTitle) { perform(action) }
+                    }
+                }
+        }
+    }
+}
+
+// MARK: - The bar's ground
+
+/// A bar control readable over the painting: the system's glass draws its
+/// ground from iOS 26; before it, a dark circle with a gold ring
+private struct ChantSetBarGround: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 26.0, *) {
+            content
+                .frame(minWidth: 44, minHeight: 44)
+                .contentShape(Rectangle())
+        } else {
+            content
+                .frame(width: 36, height: 36)
+                .background(Circle().fill(AppColors.background.opacity(0.55)))
+                .overlay(Circle().strokeBorder(AppColors.gold.opacity(0.35), lineWidth: AppLine.hairline))
+                .frame(minWidth: 44, minHeight: 44)
+                .contentShape(Rectangle())
+        }
+    }
+}
+
+// MARK: - The set's painting
+
+/// The painting at the head of the set, run up under the bar and the
+/// status bar and dissolving into the page beneath the set's name, as a
+/// shelf hangs its own. It rises with the page.
+private struct ChantSetPainting: View {
+    let name: String
+    let scroll: ChantSavedScroll
+
+    /// How far the painting reaches below the bar: the name, PLAY ALL and
+    /// the first chant still fit on the first screen
+    static let reach: CGFloat = 200
 
     var body: some View {
-        Button {
-            withAnimation(Motion.settle) { shelf.pausesBetween.toggle() }
-        } label: {
-            HStack(spacing: 12) {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Pause between chants")
-                        .font(AppFonts.readingFont(16))
-                        .foregroundColor(AppColors.cream)
-                    Text("The next chant waits until you tap")
-                        .font(AppFonts.readingItalicFont(13.5))
-                        .foregroundColor(AppColors.textSecondary)
-                }
-                Spacer(minLength: 8)
-                Toggle("Pause between chants", isOn: .constant(shelf.pausesBetween))
-                    .labelsHidden()
-                    .tint(AppColors.gold)
-                    .allowsHitTesting(false)
+        Color.clear
+            .frame(maxWidth: .infinity)
+            .frame(height: Self.reach)
+            .background(alignment: .bottom) {
+                CachedAssetImage(name, focal: ChantBrowseScope.focalPoint(for: name))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .clipped()
+                    .overlay {
+                        // A veil under the status bar and the bar's
+                        // controls, and under the name where it fades
+                        LinearGradient(
+                            stops: [
+                                .init(color: AppColors.background.opacity(0.7), location: 0),
+                                .init(color: AppColors.background.opacity(0.1), location: 0.35),
+                                .init(color: AppColors.background.opacity(0.1), location: 0.55),
+                                .init(color: AppColors.background.opacity(0.6), location: 1)
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    }
+                    // Dissolves to clear, so the page's own gradient shows
+                    // through beneath it rather than a slab of one colour
+                    .mask(
+                        LinearGradient(
+                            stops: [
+                                .init(color: .black, location: 0),
+                                .init(color: .black, location: 0.55),
+                                .init(color: .black.opacity(0.35), location: 0.82),
+                                .init(color: .clear, location: 1)
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .ignoresSafeArea(edges: .top)
             }
-            .frame(minHeight: 44)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Pause between chants")
-        .accessibilityValue(shelf.pausesBetween ? "On" : "Off")
-        .accessibilityHint("The next chant waits until you tap")
-        .accessibilityAddTraits(.isButton)
+            .offset(y: -scroll.rise)
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
     }
 }
