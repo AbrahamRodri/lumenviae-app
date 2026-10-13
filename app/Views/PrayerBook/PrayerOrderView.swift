@@ -185,14 +185,14 @@ struct PrayerOrderView: View {
 
             LinearGradient(
                 stops: [
-                    .init(color: AppColors.background.opacity(0.95), location: 0),
-                    .init(color: AppColors.background.opacity(0.9), location: 0.72),
+                    .init(color: AppColors.background.opacity(0.99), location: 0),
+                    .init(color: AppColors.background.opacity(0.99), location: 0.8),
                     .init(color: AppColors.background.opacity(0), location: 1)
                 ],
                 startPoint: .top,
                 endPoint: .bottom
             )
-            .frame(height: 158)
+            .frame(height: 172)
             .opacity(wordsUnderBar ? 1 : 0)
         }
         .ignoresSafeArea(edges: .top)

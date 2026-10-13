@@ -189,7 +189,8 @@ enum SavedPrayerPainting {
         scened.contains(prayerID) ? PrayerBookPainting.prayer(prayerID) : nil
     }
 
-    private static let scened: Set<String> = [
+    /// Held to `PrayerBookPainting.prayer` by `SavedPrayerPaintingTests`
+    static let scened: Set<String> = [
         "our_father", "hail_mary", "glory_be", "apostles_creed", "memorare", "litany_loreto"
     ]
 }

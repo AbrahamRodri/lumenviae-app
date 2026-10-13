@@ -24,6 +24,17 @@ struct SavedPrayerPaintingTests {
         #expect(SavedPrayerPainting.of("anima_christi") == PrayerBookPainting.topic(topic))
     }
 
+    /// The prayers Saved treats as having a scene of their own are exactly
+    /// those `PrayerBookPainting.prayer` gives one, so the two never drift
+    @Test func theScenedPrayersAreTheOnesThePaintingsName() {
+        let unnamed = PrayerBookPainting.prayer("no such prayer")
+        for id in PrayerBook.prayers.keys {
+            let named = PrayerBookPainting.prayer(id) != unnamed
+            #expect(SavedPrayerPainting.scened.contains(id) == named, "\(id)")
+        }
+        #expect(SavedPrayerPainting.scened.isSubset(of: Set(PrayerBook.prayers.keys)))
+    }
+
     /// Every prayer's painting is one the app carries, so no card on the
     /// shelf stands empty
     @Test func everyPrayersPaintingLoads() {
