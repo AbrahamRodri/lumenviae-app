@@ -358,8 +358,10 @@ takes one place, leading the shelf newest first under a small RECENT
 (the chant tiles' note reads Recent), and the least needed default
 gives way first, Before Mass last; the shelf never grows or repeats.
 The prayers are `PrayerBookStore.recent`, noted when the pray-along
-opens on an order or a single prayer (the day's three hours stay off
-the shelf); the chants, `ChantShelfStore.recent`'s last two. On the
+opens on an order or a single prayer (the day's three hours, and the
+Angelus or Queen of Heaven alone, are never kept); the chants, the two
+sung most recently (`ChantShelfStore.recent`), each with its setting
+where its titles do not say it. On the
 device only. The set index is fetched quietly for search but deliberately
 never listed on the browse page, and the field is deliberately not
 auto-focused: the page is a place first, a search second. The real
@@ -2787,7 +2789,7 @@ write concurrent code here:
   play; SETS OF CHANTS, the occasions and then the reader's own sets, each a
   card of its painting, "4 chants · 7 min" (the recordings' lengths,
   never a guess) and its numbered chants with their lengths, ending on a
-  dashed Make your own set that opens the Sung Sets page (where empty and
+  dashed Make your own set that opens the Sets of Chants page (where empty and
   changed sets of the reader's stand too); and ALL CHANTS, "104 CHANTS"
   beside it, the book's twelve sections two by six (`ChantSectionsGrid`, the
   All Chants page's own grid), each opening its shelf; then the credit, one line, "Recordings and scores by
@@ -2808,8 +2810,8 @@ write concurrent code here:
   (`ChantLibraryView.forgetLegacySection`); whatever it held, the same
   page opens. The library's other pages are pushed: a sung set's own page
   (`.chantSet(ChantSetSubject)`, `ChantSetPage`, below), which every set
-  opens on, an occasion or the reader's own, from the tiles, the Sung
-  Sets cards, the index and Your Chants; the index of the sung sets
+  opens on, an occasion or the reader's own, from the tiles, the Sets of
+  Chants cards, the index and Your Chants; the index of the sung sets
   (`.chantSets`, `ChantSetsPage`); every chant under its topic, a topic,
   the Mass of the Angels or Songs to Mary (`.chantBrowse(ChantBrowseScope)`,
   `ChantBrowsePage`), which is how every chant stays reachable without a

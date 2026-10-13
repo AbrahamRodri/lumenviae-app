@@ -169,8 +169,16 @@ final class PrayerBookStore {
 
     static let recentLimit = 8
 
+    /// The day's three hours, alone or as their one prayer: Home names
+    /// the hour's own, so they are never kept here, and so never take a
+    /// place on Explore's shelf without being shown
+    static let unkeptRecents: Set<RecentPrayer> = [
+        .order(PrayerBook.morningOrderID), .order(PrayerBook.angelusOrderID), .order(PrayerBook.nightOrderID),
+        .prayer("angelus"), .prayer("regina_caeli"),
+    ]
+
     /// The pray-along screen opened on an order or a prayer
-    func notePrayed(_ launch: PrayAlongLaunch) {
+    func notePrayed(launch: PrayAlongLaunch) {
         if let orderID = launch.orderID {
             notePrayed(.order(orderID))
         } else if launch.prayerIDs.count == 1, let id = launch.prayerIDs.first {
@@ -179,6 +187,7 @@ final class PrayerBookStore {
     }
 
     func notePrayed(_ prayed: RecentPrayer) {
+        guard !Self.unkeptRecents.contains(prayed) else { return }
         var list = recent
         list.removeAll { $0 == prayed }
         list.insert(prayed, at: 0)

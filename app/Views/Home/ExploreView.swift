@@ -765,9 +765,13 @@ struct ExploreView: View {
                     ) { router.push(.chantSets) }
                 case .chant(let id):
                     if let chant = ChantCatalog.chant(id) {
+                        // The setting beside Recent, so the simple and the
+                        // solemn Salve Regina are told apart
                         paintedTile(
-                            title: chant.englishTitle, note: "Recent",
-                            asset: ChantCatalog.painting(for: chant), focal: UnitPoint(x: 0.5, y: 0.3)
+                            title: chant.englishTitle,
+                            note: ExploreShelves.recentChantNote(chant),
+                            asset: ChantCatalog.painting(for: chant), focal: UnitPoint(x: 0.5, y: 0.3),
+                            spoken: "\(chant.spokenName). Recent"
                         ) { router.push(.chant(id: id)) }
                     }
                 }
@@ -797,6 +801,7 @@ struct ExploreView: View {
         note: String?,
         asset: String,
         focal: UnitPoint,
+        spoken: String? = nil,
         action: @escaping () -> Void
     ) -> some View {
         Button(action: action) {
@@ -838,7 +843,7 @@ struct ExploreView: View {
                 .contentShape(RoundedRectangle(cornerRadius: 12))
         }
         .buttonStyle(SacredCardButtonStyle())
-        .accessibilityLabel(note.map { "\(title). \($0)" } ?? title)
+        .accessibilityLabel(spoken ?? note.map { "\(title). \($0)" } ?? title)
     }
 
     // MARK: - The Study index
@@ -1020,14 +1025,13 @@ enum ExploreShelves {
         "visit", "table", "holy_souls", "trouble",
     ].map { .order($0) }
 
-    /// The shelf for these recents. The day's three hours stay off it,
-    /// as they always have: which is now is Home's to say. A prayer or
-    /// order the book no longer carries is passed over.
+    /// The shelf for these recents. A prayer or order the book no longer
+    /// carries is passed over (the day's three hours are never kept,
+    /// `PrayerBookStore.unkeptRecents`).
     static func prayerSlots(recents: [PrayerBookStore.RecentPrayer]) -> [RecentShelf.Slot<PrayerBookStore.RecentPrayer>] {
-        let occasions = Set(PrayerBook.occasionOrders.map(\.id))
         let usable = recents.filter {
             switch $0 {
-            case .order(let id): occasions.contains(id)
+            case .order(let id): PrayerBook.order(id) != nil
             case .prayer(let id): PrayerBook.prayer(id) != nil
             }
         }
@@ -1054,6 +1058,12 @@ enum ExploreShelves {
                 route = .devotionPrayer(id: id)
             }
         }
+    }
+
+    /// A recent chant's note: Recent, with its setting where its titles
+    /// do not say it ("Recent · simple melody")
+    static func recentChantNote(_ chant: Chant) -> String {
+        chant.settingMidLine.map { "Recent · \($0)" } ?? "Recent"
     }
 
     enum ChantTile: Hashable {
