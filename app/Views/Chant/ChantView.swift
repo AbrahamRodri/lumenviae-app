@@ -64,16 +64,21 @@ struct ChantView: View {
             if let chant {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 0) {
-                        ChantHero(chant: chant)
+                        // The title gives the column its height; the
+                        // painting hangs behind it and takes no room, so
+                        // the score stands 22 points under the subtitle
+                        // however many lines the names take
+                        titleBlock(chant)
+                            .padding(.horizontal, 28)
+                            // Measured on the names themselves, before the
+                            // room above them: under the bar once they rise
+                            // past it
                             .onGeometryChange(for: Bool.self) { proxy in
-                                -proxy.frame(in: .global).minY > Self.titleTop - 110
+                                proxy.frame(in: .global).minY < 110
                             } action: { under in
                                 withAnimation(Motion.crossfade) { wordsUnderBar = under }
                             }
-
-                        titleBlock(chant)
-                            .padding(.horizontal, 28)
-                            .padding(.top, Self.titleTop - Self.heroHeight)
+                            .padding(.top, Self.titleTop)
                             .devotionalEntrance()
 
                         scorePanel(chant)
@@ -103,6 +108,7 @@ struct ChantView: View {
                             .padding(.top, 36)
                             .padding(.bottom, 48)
                     }
+                    .background(alignment: .top) { ChantHero(chant: chant) }
                 }
                 .ignoresSafeArea(edges: .top)
                 .defaultScrollAnchor(opensAtFoot ? .bottom : .top)
@@ -124,6 +130,7 @@ struct ChantView: View {
                             .font(AppFonts.bodyFont(16))
                     }
                     .foregroundColor(AppColors.gold)
+                    .modifier(BarControlGround(shape: Capsule(), horizontal: 12))
                 }
             }
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -217,6 +224,7 @@ struct ChantView: View {
         } label: {
             AppIcon("ph-dots-three", size: 22)
                 .foregroundColor(AppColors.gold)
+                .modifier(BarControlGround(shape: Circle(), horizontal: 0))
                 .frame(minWidth: 44, minHeight: 44)
                 .contentShape(Rectangle())
         }
@@ -394,12 +402,14 @@ struct ChantView: View {
                     .strokeBorder(AppColors.gold.opacity(0.28), lineWidth: AppLine.hairline)
             )
             .contentShape(RoundedRectangle(cornerRadius: 16))
+            // One label for the whole card, set on what the button draws
+            // so the button stays the one element: set on the button, the
+            // beads' own label was read as a second
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("\(words.title). \(words.note)")
         }
         .buttonStyle(SacredCardButtonStyle())
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(words.title). \(words.note)")
         .accessibilityHint("Opens a practice, step by step")
-        .accessibilityAddTraits(.isButton)
     }
 
     // MARK: - Doors
@@ -437,6 +447,28 @@ struct ChantView: View {
                 }
             }
             .padding(.top, prayers.isEmpty ? 36 : 28)
+        }
+    }
+}
+
+// MARK: - BarControlGround
+
+/// A dark ground behind the bar's Back and ⋯ where the system draws no
+/// glass of its own (before iOS 26), so both read over any painting.
+/// iOS 26 draws its glass capsule, and a second inside it would be a
+/// capsule in a capsule.
+private struct BarControlGround<S: Shape>: ViewModifier {
+    let shape: S
+    let horizontal: CGFloat
+
+    func body(content: Content) -> some View {
+        if #available(iOS 26.0, *) {
+            content
+        } else {
+            content
+                .padding(.horizontal, horizontal)
+                .frame(minWidth: 36, minHeight: 36)
+                .background(shape.fill(AppColors.background.opacity(0.55)))
         }
     }
 }
@@ -795,7 +827,7 @@ struct NowPlayingTools: View {
             }
         }
         .padding(3)
-        .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.22), lineWidth: AppLine.hairline))
+        .background(Capsule(style: .circular).strokeBorder(AppColors.gold.opacity(0.22), lineWidth: AppLine.hairline))
     }
 
     private var repeatButton: some View {
@@ -836,6 +868,7 @@ struct NowPlayingTools: View {
         }
         .buttonStyle(QuietGlyphButtonStyle())
         .accessibilityLabel(slow ? "Speed, slower" : speed > 1 ? "Speed, faster" : "Speed, normal")
+        .accessibilityAddTraits(slow ? [.isSelected] : [])
         .accessibilityHint(slow ? "Plays at the normal speed" : "Plays at three-quarters speed, for learning")
     }
 
