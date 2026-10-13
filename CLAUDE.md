@@ -366,8 +366,9 @@ system bar and the gold Back like everything else; only the reading
 surface hides it. Also drawing their own chrome (bar hidden, Back on
 the page): the mysteries' page and the Rosary's own page in its three forms
 (`RosaryConfirmPage`: a set's, the Scriptural Rosary's, the Holy
-Rosary's), the Guided Rosary, the Prayer Book's pray-along, and the prayer and completion
-screens. A page may hide the bar only if it draws its own Back in every
+Rosary's), the Guided Rosary, the Prayer Book's pray-along and its topic
+pages (`PrayerBookChapterView`, its Back over the painting), and the
+prayer and completion screens. A page may hide the bar only if it draws its own Back in every
 branch. Not every push is an `AppRoute`: True Devotion's chapters are
 closure `NavigationLink`s, the Office's hours a
 `navigationDestination(item:)`, and the Missal's Ordo page a `navigationDestination(isPresented:)`.

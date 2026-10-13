@@ -65,6 +65,25 @@ struct PrayersPageTests {
         #expect(PrayerBook.prayerCount == PrayerBook.prayers.count)
     }
 
+    @Test func aPrayerPrintedInManyTopicsKeepsItsHome() {
+        let homes = [
+            "hail_holy_queen": "our_lady",
+            "regina_caeli": "our_lady",
+            "st_michael_prayer": "saints",
+            "requiem_aeternam": "departed",
+            "st_gertrude": "departed",
+        ]
+        for (prayer, topic) in homes {
+            #expect(PrayerBook.homeChapter(of: prayer)?.id == topic, "\(prayer) is not at home in \(topic)")
+        }
+    }
+
+    @Test func everyNamedHomePrintsItsPrayer() {
+        for (prayer, topic) in PrayerBook.homes {
+            #expect(PrayerBook.chapter(topic)?.prayerIDs.contains(prayer) == true, "\(topic) does not print \(prayer)")
+        }
+    }
+
     @Test func herBestKnownPrayersAreHers() {
         for id in PrayerBook.bestKnownMarianIDs {
             #expect(PrayerBook.prayer(id) != nil, "\(id) is not in the book")

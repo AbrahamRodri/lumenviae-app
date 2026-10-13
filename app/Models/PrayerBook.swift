@@ -627,10 +627,40 @@ enum PrayerBook {
         chapters.first { $0.id == id }
     }
 
-    /// The first chapter a prayer is printed in — its home in the book
+    /// A prayer's home in the book: the topic named for it in `homes`, or
+    /// else the first topic that prints it. Its page is headed by it, steps
+    /// along it, and search names it.
     static func homeChapter(of prayerID: String) -> PrayerBookChapter? {
-        chapters.first { $0.prayerIDs.contains(prayerID) }
+        if let id = homes[prayerID], let home = chapter(id), home.prayerIDs.contains(prayerID) {
+            return home
+        }
+        return chapters.first { $0.prayerIDs.contains(prayerID) }
     }
+
+    /// Prayers printed in more than one topic whose home is not the first
+    /// of them. The topics follow Blessed Be God, so Daily Prayers and Holy
+    /// Mass come before Mary and the saints; without these, the Hail, Holy
+    /// Queen would be headed Holy Mass and Communion.
+    static let homes: [String: String] = [
+        "angele_dei": "saints",
+        "angelus": "our_lady",
+        "regina_caeli": "our_lady",
+        "miraculous_medal": "our_lady",
+        "mary_after_communion": "our_lady",
+        "hail_holy_queen": "our_lady",
+        "requiem_aeternam": "departed",
+        "st_gertrude": "departed",
+        "come_holy_ghost": "holy_ghost",
+        "spiritual_communion": "sacrament",
+        "anima_christi": "our_lord",
+        "en_ego": "our_lord",
+        "suscipe": "our_lord",
+        "st_michael_prayer": "saints",
+        "st_patrick_breastplate": "saints",
+        "st_francis_before_crucifix": "saints",
+        "rosary_closing_prayer": "church",
+        "te_deum": "thanks",
+    ]
 
     static var ourLady: PrayerBookChapter { chapter("our_lady")! }
 
