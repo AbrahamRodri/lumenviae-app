@@ -100,13 +100,24 @@ struct PrayAlongView: View {
     /// The painting the Prayers page hangs over this order, or over this
     /// prayer: the same one the reader tapped to come here
     private var painting: PrayerBookPainting {
+        if isAngelus, let order = PrayerBook.order(PrayerBook.angelusOrderID) {
+            return PrayerBookPainting.hour(order, on: angelusSeason)
+        }
         if let id = launch.orderID, let order = PrayerBook.order(id) {
             return PrayerBookPainting.order(order)
         }
-        if isAngelus, let order = PrayerBook.order(PrayerBook.angelusOrderID) {
-            return PrayerBookPainting.hour(order)
-        }
         return PrayerBookPainting.prayer(prayers.first?.id ?? "")
+    }
+
+    /// A day of the season the Angelus being prayed belongs to, read from
+    /// the prayer itself rather than the clock: Easter for the Queen of
+    /// Heaven, a day of Lent for the Angelus. So its painting is the one
+    /// its words sing of, whenever the page is drawn.
+    private var angelusSeason: Date {
+        let year = Calendar.current.component(.year, from: Date())
+        guard let easter = ScheduleService.easterSunday(year: year) else { return Date() }
+        let inEastertide = prayers.first?.id == "regina_caeli"
+        return inEastertide ? easter : Calendar.current.date(byAdding: .day, value: -20, to: easter) ?? easter
     }
 
     /// The words on the page. Aloud, the voice speaks English, so a

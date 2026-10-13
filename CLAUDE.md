@@ -2504,7 +2504,8 @@ write concurrent code here:
   silence (`PrayerBookStore.praysAloud`, remembered). **The page is the
   prayer** (the "simplify Pray Along" pick, option A, Oct 2026): the
   painting the Prayers page hangs over the order (`PrayerBookPainting.
-  order`, `.hour` for the Angelus, `.prayer` for one opened alone) fixed
+  order`, `.hour` for the Angelus in the season its prayer belongs to,
+  `.prayer` for one opened alone) fixed
   behind the scroll and veiled by a scrim of the theme's own ground,
   deepest from the title down (`PrayAlongGround`); a quiet head — ×, the
   order's name, and ALOUD or SILENT as a word in an outlined capsule
@@ -3507,8 +3508,8 @@ transition entirely.
   read nothing off the clock or the network (home's mysteries sections,
   VIEW ALL, a mysteries' page, a set's page, the Scriptural Rosary's page,
   a Prayer Book page, Saved full and empty, an order's page, the
-  pray-along page in silence, an order part-way through and a prayer
-  opened alone, on a book store of its own, the chant search before
+  pray-along page in silence, an order part-way through, a prayer
+  opened alone and the Angelus, on a book store of its own, the chant search before
   typing, with results and with nothing found, and Your Chants with its
   shelves full, empty and at its foot, on a fixed day) from fixed data
   with swift-snapshot-testing (the
