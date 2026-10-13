@@ -98,6 +98,19 @@ struct ChantSavedTests {
         #expect(ChantSavedSetCover.spoken(grace) == "Grace, 1 chant, 1 minute")
     }
 
+    /// The page keeps room for the player only while one stands there and
+    /// the app has not kept it already, on a phone with a home indicator
+    /// or a Home button
+    @Test func roomForThePlayerIsNeverKeptTwice() {
+        let room = ChantSavedPage.playerRoomHeight
+        #expect(ChantSavedPage.playerRoom(playerActive: false, bottomInset: 34) == 0)
+        #expect(ChantSavedPage.playerRoom(playerActive: true, bottomInset: 34) == room)
+        #expect(ChantSavedPage.playerRoom(playerActive: true, bottomInset: 0) == room)
+        // The app's room (the player's height and 8) has arrived
+        #expect(ChantSavedPage.playerRoom(playerActive: true, bottomInset: 34 + 70) == 0)
+        #expect(ChantSavedPage.playerRoom(playerActive: true, bottomInset: 70) == 0)
+    }
+
     /// Under Reduce Motion a count changes without rolling its digits;
     /// the page's crossfades stay, since a fade is not travel
     @Test func underReduceMotionACountDoesNotRoll() {

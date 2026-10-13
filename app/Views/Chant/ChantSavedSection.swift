@@ -42,7 +42,7 @@ enum ChantSavedShelf: Hashable {
     /// The one line an empty shelf says
     var emptyLine: String {
         switch self {
-        case .favorites: return "Hold any chant to keep it here."
+        case .favorites: return "Hold any chant to add it to your favourites."
         case .learned:   return "Chants you learn by heart are kept here."
         }
     }
@@ -116,13 +116,24 @@ struct ChantSavedPage: View {
     /// the page keeps its own, and none once the app's room arrives, so it
     /// is never kept twice.
     private var playerRoom: CGFloat {
-        guard ChantPlayer.shared.isActive, bottomInset < Self.playerRoomHeight else { return 0 }
-        return Self.playerRoomHeight
+        Self.playerRoom(playerActive: ChantPlayer.shared.isActive, bottomInset: bottomInset)
+    }
+
+    /// The room the page keeps for the player: none while no chant is
+    /// loaded, and none once the page's own bottom inset holds more than a
+    /// home indicator, which is the app's room for the player arriving
+    static func playerRoom(playerActive: Bool, bottomInset: CGFloat) -> CGFloat {
+        guard playerActive, bottomInset < appRoomArrives else { return 0 }
+        return playerRoomHeight
     }
 
     /// The mini player as it stands at a pushed page's foot: about 62
     /// points tall, 6 above the home indicator, and a gap above it
     static let playerRoomHeight: CGFloat = 80
+
+    /// More than any home indicator (34) and less than the app's room for
+    /// the player alone (its height and 8, about 70)
+    static let appRoomArrives: CGFloat = 50
 
     private var shownChants: [Chant] {
         shown == .favorites ? shelf.favoriteChants : shelf.learnedChants
@@ -342,7 +353,7 @@ struct ChantSavedSection: View {
                 .padding(.horizontal, 18)
         }
         .sheet(isPresented: $namingSet) {
-            ChantNewSetSheet { set in router.push(.chantSet(.own(set.id))) }
+            ChantNewSetSheet(shelf: shelf) { set in router.push(.chantSet(.own(set.id))) }
                 .presentationDetents([.medium])
                 .dynamicTypeSize(...DynamicTypeSize.appMaximum)
         }
@@ -378,6 +389,8 @@ struct ChantSavedSection: View {
                                 player.toggle(chant)
                             }
                             .frame(width: 44)
+                            // A hold on the painting is a hold on the row
+                            .chantContextMenu(chant)
                         }
                 }
             }
