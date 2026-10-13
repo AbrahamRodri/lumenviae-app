@@ -30,7 +30,7 @@ struct LearnByHeartSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(UserSettings.self) private var settings
 
-    private var store = PrayerBookStore.shared
+    private let store: PrayerBookStore
 
     @State private var stage: Stage = .read
     @State private var inLatin: Bool
@@ -40,10 +40,12 @@ struct LearnByHeartSheet: View {
     /// takes a ground of its own so the words pass beneath it unseen
     @State private var paintingGone = false
 
-    /// Opens on the first step; a later one only for the snapshot tests,
-    /// which draw each step without walking to it
-    init(prayer: BookPrayer, stage: Stage = .read) {
+    /// Opens on the first step; a later one, and a store of its own, only
+    /// for the snapshot tests, which draw each step without walking to it
+    /// and never touch the reader's own Learned marks
+    init(prayer: BookPrayer, stage: Stage = .read, store: PrayerBookStore = .shared) {
         self.prayer = prayer
+        self.store = store
         _stage = State(initialValue: stage)
         _inLatin = State(initialValue: prayer.hasLatin && UserSettings.shared.prayerLanguage == .latin)
     }
@@ -353,14 +355,9 @@ struct LearnByHeartSheet: View {
     private var beads: some View {
         HStack(spacing: 0) {
             ForEach(Stage.allCases) { step in
-                if step != .read {
-                    Rectangle()
-                        .fill(AppColors.gold.opacity(0.4))
-                        .frame(width: 18, height: AppLine.hairline)
-                }
                 Button { go(to: step) } label: {
                     StepBead(state: step == stage ? .current : (step.rawValue < stage.rawValue ? .past : .ahead))
-                        .frame(width: 34, height: 44)
+                        .frame(width: 44, height: 44)
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
@@ -368,6 +365,14 @@ struct LearnByHeartSheet: View {
                 .accessibilityAddTraits(step == stage ? .isSelected : [])
             }
         }
+        // The thread the beads hang on, run from the first bead's centre to
+        // the last's beneath them, so each bead keeps a 44-point target
+        .background(
+            Rectangle()
+                .fill(AppColors.gold.opacity(0.4))
+                .frame(height: AppLine.hairline)
+                .padding(.horizontal, 22)
+        )
         .animation(Motion.settle, value: stage)
     }
 
@@ -393,14 +398,18 @@ struct LearnByHeartSheet: View {
                 // Not offered in the moment of sealing, which closes the
                 // sheet on its own
                 if !sealed {
-                    Button("UNMARK") { store.setByHeart(prayer.id, false) }
-                        .font(AppFonts.labelFont(9.5))
-                        .tracking(2)
-                        .foregroundColor(AppColors.gold.opacity(0.65))
-                        .frame(minWidth: 88, minHeight: 32)
-                        .contentShape(Rectangle())
-                        .buttonStyle(QuietGlyphButtonStyle())
-                        .accessibilityLabel("Remove the Learned mark")
+                    Button {
+                        store.setByHeart(prayer.id, false)
+                    } label: {
+                        Text("UNMARK")
+                            .font(AppFonts.labelFont(9.5))
+                            .tracking(2)
+                            .foregroundColor(AppColors.gold.opacity(0.65))
+                            .frame(minWidth: 88, minHeight: 44)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(QuietGlyphButtonStyle())
+                    .accessibilityLabel("Remove the Learned mark")
                 }
             }
             .frame(maxWidth: .infinity)

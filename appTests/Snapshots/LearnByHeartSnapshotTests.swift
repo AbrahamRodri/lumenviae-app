@@ -3,8 +3,8 @@
 //  appTests
 //
 //  The Learn by Heart sheet drawn at its steps, from the Our Father,
-//  whose painting is bundled. The prayer's Learned mark is read from the
-//  shared store, so each test sets it as it needs and puts it back.
+//  whose painting is bundled. Each draws over a store of its own, so the
+//  Learned mark it sets is never the reader's.
 //
 
 import SwiftUI
@@ -25,8 +25,8 @@ struct LearnByHeartSnapshotTests {
 
     private static let prayerID = "our_father"
 
-    /// Draws the sheet with the prayer marked as learned or not, and
-    /// leaves the store as it found it
+    /// Draws the sheet over a store of its own, in a defaults suite no
+    /// other test reads, so the reader's Learned marks are never touched
     private func assertSheet(
         at stage: LearnByHeartSheet.Stage,
         learned: Bool,
@@ -34,13 +34,15 @@ struct LearnByHeartSnapshotTests {
         testName: String = #function
     ) throws {
         let prayer = try #require(PrayerBook.prayer(Self.prayerID))
-        let store = PrayerBookStore.shared
-        let was = store.isByHeart(Self.prayerID)
+        let suite = "LearnByHeartSnapshotTests.\(testName)"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defaults.removePersistentDomain(forName: suite)
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let store = PrayerBookStore(defaults: defaults)
         store.setByHeart(Self.prayerID, learned)
-        defer { store.setByHeart(Self.prayerID, was) }
 
         ScreenSnapshot.assertScreen(
-            LearnByHeartSheet(prayer: prayer, stage: stage),
+            LearnByHeartSheet(prayer: prayer, stage: stage, store: store),
             named: name,
             testName: testName
         )
