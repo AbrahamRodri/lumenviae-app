@@ -88,9 +88,6 @@ struct ChantSavedPage: View {
 
     @State private var choice: ChantSavedShelf?
     @State private var scroll = ChantSavedScroll()
-    /// The room the page keeps at its foot, read so the player's room is
-    /// added only where the app has not already kept it
-    @State private var bottomInset: CGFloat = 0
 
     private let shelf: ChantShelfStore
     private let clock: ChantSavedClock
@@ -108,33 +105,6 @@ struct ChantSavedPage: View {
         ChantSavedShelf.shown(choice: choice, favorites: shelf.favorites.count, learned: shelf.learned.count)
     }
 
-    /// Room at the foot for the chant player while it stands there, so
-    /// the Words line is never under it. The app keeps room for the player
-    /// on every page (`ContentView`), but it does not yet reach a pushed
-    /// page; until card
-    /// 20261012-2355-mini-player-covers-the-foot-of-pushed-ch fixes that,
-    /// the page keeps its own, and none once the app's room arrives, so it
-    /// is never kept twice.
-    private var playerRoom: CGFloat {
-        Self.playerRoom(playerActive: ChantPlayer.shared.isActive, bottomInset: bottomInset)
-    }
-
-    /// The room the page keeps for the player: none while no chant is
-    /// loaded, and none once the page's own bottom inset holds more than a
-    /// home indicator, which is the app's room for the player arriving
-    static func playerRoom(playerActive: Bool, bottomInset: CGFloat) -> CGFloat {
-        guard playerActive, bottomInset < appRoomArrives else { return 0 }
-        return playerRoomHeight
-    }
-
-    /// The mini player as it stands at a pushed page's foot: about 62
-    /// points tall, 6 above the home indicator, and a gap above it
-    static let playerRoomHeight: CGFloat = 80
-
-    /// More than any home indicator (34) and less than the app's room for
-    /// the player alone (its height and 8, about 70)
-    static let appRoomArrives: CGFloat = 50
-
     private var shownChants: [Chant] {
         shown == .favorites ? shelf.favoriteChants : shelf.learnedChants
     }
@@ -148,12 +118,11 @@ struct ChantSavedPage: View {
             ScrollView(showsIndicators: false) {
                 ChantSavedSection(shown: shown, choice: $choice, shelf: shelf, clock: clock)
                     .padding(.top, 4)
-                    .padding(.bottom, 48 + playerRoom)
+                    .padding(.bottom, 48)
             }
             .modifier(ChantSavedScrollReading(scroll: scroll))
             .topChromeFade()
         }
-        .onGeometryChange(for: CGFloat.self) { $0.safeAreaInsets.bottom } action: { bottomInset = $0 }
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
