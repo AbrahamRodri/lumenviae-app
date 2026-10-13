@@ -487,7 +487,28 @@ enum ChantLibraryData {
         "quem_terra": "joyful_annunciation",
         "ut_queant_laxis": "joyful_visitation",
         "salvete_christi_vulnera": "sorrowful_crucifixion",
-        "media_vita": "sorrowful_agony"
+        "media_vita": "sorrowful_agony",
+        // Each keeps the painting of the topic it stood under before the
+        // library followed the Parish Book of Chant's sections
+        "angelus": "joyful_annunciation",
+        "lauda_sion": "luminous_eucharist",
+        "ubi_caritas": "luminous_eucharist",
+        "litany_sacred_heart": "sorrowful_crucifixion",
+        "litany_holy_name": "sorrowful_crucifixion",
+        "jesu_dulcis_memoria": "sorrowful_crucifixion",
+        "cor_jesu": "sorrowful_crucifixion",
+        "te_deum_simple": "glorious_ascension",
+        "te_deum": "glorious_ascension",
+        "christus_vincit": "glorious_ascension",
+        "te_saeculorum": "glorious_ascension",
+        "lucis_creator": "glorious_ascension",
+        "da_pacem": "glorious_ascension",
+        "sancte_michael": "glorious_assumption",
+        "litany_st_joseph": "glorious_assumption",
+        "te_joseph": "glorious_assumption",
+        "litany_saints": "glorious_assumption",
+        "miserere": "sorrowful_agony",
+        "audi_benigne": "sorrowful_agony"
     ]
 
     /// The paintings asked for by subject, and the painting each falls
@@ -518,20 +539,31 @@ enum ChantLibraryData {
         "hour_night": "glorious_coronation"
     ]
 
+    /// The home's Songs to Mary shelf, in its own order: the chants the
+    /// Mary topic held before the sections followed the Parish Book of
+    /// Chant, which files some of them elsewhere (the Magnificat with the
+    /// canticles, the Stabat Mater in Lent)
+    static let songsToMary = [
+        "salve_regina_simple", "salve_regina_solemn", "alma_redemptoris_simple", "alma_redemptoris",
+        "ave_regina_simple", "ave_regina_solemn", "regina_caeli_simple", "regina_caeli_solemn", "sub_tuum",
+        "ave_maris_stella_feasts", "ave_maris_stella", "quem_terra", "omni_die", "concordi_laetitia",
+        "magnificat", "tota_pulchra", "flos_carmeli", "stabat_mater", "litany_loreto", "memorare",
+        "ave_maria_antiphon", "salve_mater", "inviolata", "o_gloriosa", "te_matrem"
+    ]
+
     static let groupPaintings: [String: String] = [
+        "asperges": "luminous_eucharist",
+        "mass": "luminous_eucharist",
+        "creed": "luminous_eucharist",
+        "sequences": "glorious_pentecost",
+        "requiem": "seven_sorrows_burial",
+        "hymns": "luminous_eucharist",
         "ourLady": "glorious_coronation",
-        "rosary": "joyful_annunciation",
-        "sacrament": "luminous_eucharist",
-        "holyGhost": "glorious_pentecost",
-        "ourLord": "sorrowful_crucifixion",
-        "praise": "glorious_ascension",
-        "saints": "glorious_assumption",
-        "advent": "joyful_annunciation",
-        "christmas": "joyful_nativity",
-        "lent": "sorrowful_agony",
-        "easter": "glorious_resurrection",
-        "departed": "seven_sorrows_burial",
-        "mass": "luminous_eucharist"
+        "seasons": "joyful_annunciation",
+        "canticles": "glorious_coronation",
+        "litanies": "glorious_coronation",
+        "benediction": "luminous_eucharist",
+        "rosary": "joyful_annunciation"
     ]
 
     /// Tonight's antiphon, introduced: keyed by the work, so both its
