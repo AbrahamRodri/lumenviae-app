@@ -100,6 +100,9 @@ gained books of their own, and How to Pray became a course.
 
 ### Changed
 
+- Hang La Tour's Penitent Magdalen over the Chant Library's Before Bed,
+  as Night Prayers does, and have VoiceOver name it rather than the
+  Agony in the Garden.
 - Give the Prayer Book a tab of its own, Prayers, in the Journal's place
   in the bar: the search at the head of the page, then Today (the prayer
   for the hour over its painting, Our Lady's prayers led by the season's
