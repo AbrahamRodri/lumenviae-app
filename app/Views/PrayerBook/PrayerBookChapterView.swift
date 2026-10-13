@@ -131,7 +131,7 @@ struct PrayerBookChapterView: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .shadow(color: .black.opacity(0.55), radius: 12, y: 2)
                 // Past this a word like COMMUNION breaks mid-word in Cinzel
-                .dynamicTypeSize(...DynamicTypeSize.accessibility3)
+                .dynamicTypeSize(...DynamicTypeSize.accessibility1)
                 .accessibilityAddTraits(.isHeader)
 
             Text(chapter.epigraph)
