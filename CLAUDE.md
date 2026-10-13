@@ -2536,6 +2536,21 @@ write concurrent code here:
   **Learning** is `LearnByHeartSheet`: four steps (read, some hidden,
   first letters, by heart), in English or Latin, a hidden word shown by a
   touch, and at the end the reader's own LEARNED mark — never scored.
+  It is laid out as a holy card (the "Learn by Heart" redesign, Option
+  A, Oct 2026): the prayer's painting (`PrayerBookPainting.prayer`),
+  196 points and dissolving into the page, scrolling away with the
+  prayer, which is set centred (`WordFlow(centred:)`); EN · LA (only
+  where the prayer has Latin) and DONE on dark capsules over it; and a
+  fixed foot of four beads (each a door to its step; the first is how
+  to start over), the step's name, one italic line on the two middle
+  steps only ("Touch a word to see it." / "Say it from the first
+  letters."), and a quiet back disc beside the next step's name and a
+  gold disc. The last step's act is the gold I know it by heart; once
+  learned, the foot is the LEARNED seal over "Kept as yours. Practise it
+  here any time." and a small UNMARK, and the painting's veil lifts a
+  little. It once opened on a sentence of instructions per step, a bar
+  of four 7.5-point labels and the language chips, three rows of chrome
+  before the prayer's first word; don't bring them back.
   **The Angelus bell** (Settings → Devotion) rings at 6, noon and 6
   (`PrayerBookStore.setAngelusBell`), its notice saying what the
   Angelus is ("The noon bell: time for the Angelus, a short prayer to
