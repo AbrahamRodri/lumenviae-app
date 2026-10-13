@@ -105,9 +105,12 @@ struct MainScreenSnapshotTests {
 
     // MARK: - The Prayer Book
 
+    /// Prayed in silence, so the foot names no voice
     @Test func prayerPage() {
+        let store = Fixtures.prayerBookStore()
+        store.praysAloud = false
         ScreenSnapshot.assertScreen(
-            BookPrayerView(prayerID: "sub_tuum"),
+            BookPrayerView(prayerID: "sub_tuum", store: store),
             named: "prayer-page"
         )
     }
