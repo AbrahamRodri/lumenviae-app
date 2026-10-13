@@ -2500,10 +2500,53 @@ write concurrent code here:
   prayers, a Latin line under every prayer and a two-line switch row.
 
   **Praying** is `PrayAlongView` (`.prayAlong(PrayAlongLaunch)`, a
-  player: bar hidden, its own ×): one prayer at a time, a strand of beads
-  for the order's prayers, aloud or in silence (`PrayerBookStore.
-  praysAloud`, remembered). **The book asks before its first sound**
-  (`PrayAloudChoiceSheet`, once, until `hasChosenAloud`): these are
+  player: bar hidden, its own ×): one prayer at a time, aloud or in
+  silence (`PrayerBookStore.praysAloud`, remembered). **The page is the
+  prayer** (the "simplify Pray Along" pick, option A, Oct 2026): the
+  painting the Prayers page hangs over the order (`PrayerBookPainting.
+  order`; the Angelus's read from its prayer, the Resurrection for the
+  Queen of Heaven and the Annunciation otherwise; `.prayer` for one
+  opened alone) fixed
+  behind the scroll and veiled by a scrim of the theme's own ground,
+  deepest from the title down (`PrayAlongGround`); a quiet head — ×, the
+  order's name, and ALOUD or SILENT as a word in an outlined capsule
+  (the speaker glyph it replaced read as a volume control) — over the
+  order's beads, each a door answering to 44 points where the width
+  allows ("6 of 9, The Act of Faith" to VoiceOver). The head names what
+  was opened: the order, or PRAYERS for a prayer opened alone, and for an
+  order of one prayer bearing its name (the Angelus), so it never repeats
+  the title beneath it; the Angelus's once named its hours. The ground
+  deepens behind the head and its words carry a soft shadow, so they hold
+  over a bright sky, and the scroll dissolves a whole line (`topChromeFade`,
+  38 points) before it reaches the head. The Latin name
+  stands small over the title, the Angelus's bell above both. The words
+  carry a feathered veil of their own (`WordsVeil`) that scrolls with
+  them, so the ground under the head and under a short prayer stays
+  light enough for the painting to show, where one fixed scrim left a
+  flat dark field. A stanza of plain verse is set a line at a time
+  (`PrayAlongStanza`): a line too long for the measure hangs its
+  overflow in by about an em (`HangingIndentRenderer`, iOS 18; flush on
+  17), since wrapped flush it read as a line of its own, and its rubrics
+  stand apart at full strength while the verse beside them dims under
+  the voice; litanies, canticles and translations are `PrayerText`'s.
+  The text is a point under the reading size, as the prayer's own page
+  sets it. And one way on at the
+  foot, the same aloud and in silence: NEXT with the next prayer's name,
+  an outlined pill, or AMEN, the page's one gold act, on the last.
+  Aloud, a pause disc stands beside it, and a note above it while the
+  recordings are fetched or when a prayer has none. A swipe across the
+  page turns it, as the beads and the Lock Screen's arrows do. The page
+  once carried "3 of 9" under the order beside the beads, a ⏮ ▶︎ ⏭
+  transport and a progress line aloud, and a different foot in silence:
+  position said twice, progress said twice, and a music player where a
+  prayer book should be. The Amen brings the painting forward in full,
+  where a seal once stood, over Amen., the order's closing line (the
+  day's three orders under "MORNING PRAYERS · PRAYED", since any other
+  order's line already says it was prayed), DONE,
+  Save this prayer (one prayer, not yet saved) and Pray again.
+  **The book asks before its first sound**
+  (`PrayAloudChoiceSheet`, once, until `hasChosenAloud`, the order's
+  painting at its head): these are
   prayers for the pew, the tabernacle and the bedside, and it once began
   reading the examination of conscience aloud the moment PRAY was
   touched. It cannot be dragged away, so both answers must always be in
@@ -2512,7 +2555,7 @@ write concurrent code here:
   rows were drawn over each other). The
   order page's speaker stands just beside its PRAY, so
   praying from there answers the question with what the speaker shows;
-  afterwards the speaker at the head of the page owns the choice. The
+  afterwards ALOUD or SILENT at the head of the page owns the choice. The
   same choice stands in Settings → Prayer Experience as the Prayers
   Tab row, and a choice made there answers the question before it is asked;
   it never follows the Rosary's Audio. Aloud,
@@ -2521,7 +2564,7 @@ write concurrent code here:
   lit and followed by proportion, the next prayer turning in after a
   breath; the Angelus rings `church_bell.caf` — aloud only, since in
   silence the book makes no sound at all. The page's words dissolve
-  under its head and beads (`topChromeFade`, no inset) rather than being
+  under its head and beads (`topChromeFade`) rather than being
   cut mid-line. An order prayed to its Amen is offered for the prayer
   day (see The Prayer Day), which turns at four in the morning
   (`PrayerBook.dayBeginsAtHour`) as the book's hours do, not at
@@ -3502,10 +3545,12 @@ transition entirely.
 - **Snapshot tests:** `appTests/Snapshots/` draws the main screens that
   read nothing off the clock or the network (home's mysteries sections,
   VIEW ALL, a mysteries' page, a set's page, the Scriptural Rosary's page,
-  a Prayer Book page, Saved full and empty, an order's page, the chant
-  search before typing, with results and with nothing found, and Your
-  Chants with its shelves full, empty and at its foot, on a fixed day)
-  from fixed data with swift-snapshot-testing (the
+  a Prayer Book page, Saved full and empty, an order's page, the
+  pray-along page in silence, an order part-way through, a prayer
+  opened alone and the Angelus, on a book store of its own, the chant search before
+  typing, with results and with nothing found, and Your Chants with its
+  shelves full, empty and at its foot, on a fixed day) from fixed data
+  with swift-snapshot-testing (the
   test target's one package; the app has none) and compares them with
   the PNGs in `__Snapshots__/`, in the same `xcodebuild test`.
   `ScreenSnapshot.assertScreen` is the one way to draw one: an iPhone 17
