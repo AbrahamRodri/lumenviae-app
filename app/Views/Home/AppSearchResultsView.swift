@@ -18,7 +18,6 @@ import SwiftUI
 
 struct AppSearchResultsView: View {
     let results: AppSearch.Results
-    let query: String
 
     /// What a found door of the app opens, by its `AppSearch.Page` id
     let openPage: (String) -> Void
@@ -192,14 +191,47 @@ struct AppSearchBestCard: View {
         self.open = open
     }
 
+    /// Whether the card carries an act of its own beside the door
+    private var hasAct: Bool {
+        switch hit {
+        case .prayer, .order, .chant: return true
+        default: return false
+        }
+    }
+
+    /// The card is one door, its painting and words a single button
+    /// VoiceOver reads as "Best match: …"; PRAY or the play disc stands
+    /// over its foot as a control of its own, in room the door keeps
+    /// for it
     var body: some View {
+        ZStack(alignment: .bottomLeading) {
+            Button(action: open) { face }
+                .buttonStyle(SacredCardButtonStyle())
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(["Best match: \(title)", kicker, line].compactMap { $0 }.joined(separator: ", "))
+                .accessibilityAddTraits(.isButton)
+
+            if hasAct {
+                act
+                    .padding(.leading, 118 + 14)
+                    .padding(.bottom, 12)
+            }
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 18))
+        .overlay(
+            RoundedRectangle(cornerRadius: 18)
+                .strokeBorder(AppColors.gold.opacity(0.24), lineWidth: AppLine.hairline)
+                .allowsHitTesting(false)
+        )
+    }
+
+    private var face: some View {
         HStack(spacing: 0) {
             // The text sets the card's height; the painting fills it
             Color.clear
                 .frame(width: 118)
                 .overlay { picture }
                 .clipped()
-                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(kicker.uppercased())
@@ -220,8 +252,11 @@ struct AppSearchBestCard: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
 
-                act
-                    .padding(.top, 6)
+                // The act's room: it stands over this, outside the door
+                if hasAct {
+                    Color.clear.frame(height: 44)
+                        .padding(.top, 2)
+                }
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 12)
@@ -229,16 +264,7 @@ struct AppSearchBestCard: View {
         }
         .frame(minHeight: 140)
         .background(AppColors.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 18))
-        .overlay(
-            RoundedRectangle(cornerRadius: 18)
-                .strokeBorder(AppColors.gold.opacity(0.24), lineWidth: AppLine.hairline)
-        )
         .contentShape(RoundedRectangle(cornerRadius: 18))
-        .onTapGesture(perform: open)
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel("Best match: \(title)")
-        .accessibilityAction(named: "Open", open)
     }
 
     // MARK: Parts

@@ -149,11 +149,14 @@ enum AppSearch {
         var isEmpty: Bool { best == nil && sections.isEmpty }
 
         /// The kinds that found something, in the page's order: the
-        /// chips. The best match's kind counts though its section may
-        /// be empty without it.
+        /// chips. The best match's kind stands first, as its card does,
+        /// and counts though its section may be empty without it.
         var kinds: [Kind] {
             var kinds = sections.map(\.kind)
-            if let best, !kinds.contains(best.kind) { kinds.insert(best.kind, at: 0) }
+            if let best {
+                kinds.removeAll { $0 == best.kind }
+                kinds.insert(best.kind, at: 0)
+            }
             return kinds
         }
 
@@ -169,35 +172,58 @@ enum AppSearch {
     /// Everything the words find, shaped for where the search began.
     /// `sets` are the meditation sets the page has fetched; `pages` the
     /// app's doors it can open; `shelves` the reading shelves not put
-    /// away.
+    /// away; `date` the day whose names the orders of prayer go by
+    /// (Queen of Heaven for the Angelus in Eastertide).
     static func results(
         for query: String,
         from origin: Origin,
         sets: [MeditationSetSummary] = [],
         pages: [Page] = [],
-        shelves: [ReadingShelf] = defaultShelves
+        shelves: [ReadingShelf] = defaultShelves,
+        on date: Date = Date()
     ) -> Results {
-        let needle = query.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        let needle = fold(query.trimmingCharacters(in: .whitespacesAndNewlines))
         guard !needle.isEmpty else { return Results(best: nil, sections: []) }
 
         var found: [Kind: [Hit]] = [:]
         found[.mysteries] = mysteryHits(needle)
-        found[.pages] =
-            pages
-            .filter { "\($0.title) \($0.matchText)".lowercased().contains(needle) }
-            .map(Hit.page)
+        found[.pages] = pages.filter { fold("\($0.title) \($0.matchText)").contains(needle) }.map(Hit.page)
         found[.readings] = readingHits(needle, shelves: shelves)
         // A topic the words name (Prayers to Mary), then an order of
         // prayer (Visiting Jesus in Church), then the prayers, as the
         // Prayers page once set its own search
         found[.prayers] =
             PrayerBook.topics(matching: needle).prefix(2).map(Hit.topic)
-            + PrayerBook.searchOrders(needle).prefix(3).map(Hit.order)
+            + orderHits(needle, on: date).prefix(3).map(Hit.order)
             + PrayerBook.search(needle).map(Hit.prayer)
-        found[.chants] = ChantCatalog.search(needle).map(Hit.chant)
+        found[.chants] = chantHits(needle)
         found[.meditations] = sets.filter { matches($0, needle: needle) }.map(Hit.meditationSet)
 
         return shape(found, needle: needle, origin: origin)
+    }
+
+    /// The orders of prayer the words name, by the book's own search and
+    /// by the name the order goes by on the day, which the book's search
+    /// does not know: in Eastertide "queen of heaven" is the Angelus
+    static func orderHits(_ needle: String, on date: Date) -> [PrayerOrder] {
+        let searched = PrayerBook.searchOrders(needle)
+        let seasonal = PrayerBook.orders.filter { order in
+            fold(order.title(on: date)).contains(needle) && !searched.contains { $0.id == order.id }
+        }
+        return searched + seasonal
+    }
+
+    /// Chants by their names, then by the prayer they sing and by a line
+    /// of what is sung, as the Chant Library's own search found them.
+    /// Found only in their words, they are never the best match.
+    static func chantHits(_ needle: String) -> [Hit] {
+        var seen = Set<String>()
+        let byName = ChantCatalog.search(needle)
+        let byPrayer = ChantSearch.works(singingPrayerMatching: needle, where: { _ in true }).flatMap(\.chants)
+        let byWords = ChantSearch.wordHits(matching: needle, where: { _ in true }).map(\.chant)
+        return (byName + byPrayer + byWords)
+            .filter { seen.insert($0.id).inserted }
+            .map(Hit.chant)
     }
 
     /// Orders what was found: picks the best, and puts the leading
@@ -214,11 +240,13 @@ enum AppSearch {
         return Results(best: best, sections: sections)
     }
 
-    /// The sections' order: the leading kind, then the rest as Explore
-    /// sets them
+    /// The sections' order: the leading kind, then the other page's
+    /// kind (Chants after Prayers, Prayers after Chants), then the rest
+    /// as Explore sets them
     static func sectionOrder(for origin: Origin) -> [Kind] {
         guard let lead = origin.leadingKind else { return Kind.allCases }
-        return [lead] + Kind.allCases.filter { $0 != lead }
+        let second: Kind = lead == .prayers ? .chants : .prayers
+        return [lead, second] + Kind.allCases.filter { $0 != lead && $0 != second }
     }
 
     // MARK: - The best match
@@ -249,25 +277,35 @@ enum AppSearch {
         return name.contains(needle) ? .within : .none
     }
 
-    /// The card at the top. Opened from Prayers or Chant, the first of
-    /// that kind, whose own search has already put the closest first;
-    /// from anywhere else, or when that kind found nothing, the first of
-    /// each kind that answers best by name, a tie going to the section
-    /// that stands first. A hit found only in its words is never the
-    /// best: a card says "this is what you meant".
+    /// The card at the top. Opened from Prayers or Chant, the hit of
+    /// that kind whose name answers closest; from anywhere else, or when
+    /// no name of that kind answers, the closest of every kind, a tie
+    /// going to the kind and then the hit that stands first. A hit found
+    /// only by its words or other names (the Daily Prayers topic for
+    /// "angelus") is never the best: a card says "this is what you
+    /// meant". It once looked at each kind's first hit alone, and that
+    /// topic, standing first, gave "angelus" from Prayers a chant's card.
     static func bestMatch(in found: [Kind: [Hit]], needle: String, order: [Kind], origin: Origin) -> Hit? {
-        if let lead = origin.leadingKind, let first = found[lead]?.first,
-            closenessOfBest(first, to: needle) > .none
-        {
-            return first
+        if let lead = origin.leadingKind, let closest = closest(in: found[lead] ?? [], to: needle) {
+            return closest.hit
         }
         var best: (hit: Hit, closeness: Closeness)?
         for kind in order {
-            guard let first = found[kind]?.first else { continue }
-            let closeness = closenessOfBest(first, to: needle)
-            if closeness > (best?.closeness ?? .none) { best = (first, closeness) }
+            guard let closest = closest(in: found[kind] ?? [], to: needle) else { continue }
+            if closest.closeness > (best?.closeness ?? .none) { best = closest }
         }
         return best?.hit
+    }
+
+    /// The hit whose name answers closest, the first winning a tie; nil
+    /// when no name answers at all
+    private static func closest(in hits: [Hit], to needle: String) -> (hit: Hit, closeness: Closeness)? {
+        var best: (hit: Hit, closeness: Closeness)?
+        for hit in hits {
+            let closeness = closenessOfBest(hit, to: needle)
+            if closeness > (best?.closeness ?? .none) { best = (hit, closeness) }
+        }
+        return best
     }
 
     private static func closenessOfBest(_ hit: Hit, to needle: String) -> Closeness {
@@ -284,6 +322,9 @@ enum AppSearch {
     }
 
     // MARK: - The kinds Explore found itself
+    //
+    // Each takes the words already folded (`fold`), and folds what it
+    // matches them against, so "therese" finds Thérèse and "caeli" Cæli.
 
     /// The reading shelves search looks in: every one not put away
     static var defaultShelves: [ReadingShelf] {
@@ -294,11 +335,10 @@ enum AppSearch {
     /// by its name. A devotion found by name stands before its mysteries.
     static func mysteryHits(_ needle: String) -> [Hit] {
         let categories = MysteryCategory.allCases.filter {
-            $0.devotionTitle.lowercased().contains(needle)
-                || $0.subtitle.lowercased().contains(needle)
+            fold($0.devotionTitle).contains(needle) || fold($0.subtitle).contains(needle)
         }
         let mysteries = MysteryCategory.allCases.flatMap { MysteryData.mysteries(for: $0) }
-            .filter { fold($0.name).contains(fold(needle)) }
+            .filter { fold($0.name).contains(needle) }
         return categories.map(Hit.mysteries) + mysteries.map(Hit.mystery)
     }
 
@@ -308,31 +348,19 @@ enum AppSearch {
     /// for.
     static func readingHits(_ needle: String, shelves: [ReadingShelf]) -> [Hit] {
         let shelved = shelves.flatMap { shelf in shelf.entries.map { (shelf, $0) } }
-        let named = shelved.filter {
-            $0.1.title.lowercased().contains(needle) || $0.1.detail.lowercased().contains(needle)
-        }
-        let hits = named.isEmpty ? shelved.filter { $0.0.title.lowercased().contains(needle) } : named
+        let named = shelved.filter { fold($0.1.title).contains(needle) || fold($0.1.detail).contains(needle) }
+        let hits = named.isEmpty ? shelved.filter { fold($0.0.title).contains(needle) } : named
         return hits.map { Hit.reading(shelf: $0.0, reading: $0.1) }
     }
 
     /// A meditation set by its name, author, source, labels (by the word
     /// the shelf shows as well as the one the server stores) or devotion
     static func matches(_ summary: MeditationSetSummary, needle: String) -> Bool {
-        if summary.name.lowercased().contains(needle) { return true }
-        if let author = summary.author, author.lowercased().contains(needle) { return true }
-        if let source = summary.source, source.lowercased().contains(needle) { return true }
-        if let labels = summary.labels,
-            labels.contains(where: {
-                $0.lowercased().contains(needle) || MeditationLabel.displayName($0).lowercased().contains(needle)
-            })
-        {
-            return true
-        }
-        if let category = MysteryCategory(rawValue: summary.category),
-            category.devotionTitle.lowercased().contains(needle)
-        {
-            return true
-        }
-        return false
+        let words =
+            [summary.name, summary.author, summary.source,
+             MysteryCategory(rawValue: summary.category)?.devotionTitle]
+            .compactMap { $0 }
+            + (summary.labels ?? []).flatMap { [$0, MeditationLabel.displayName($0)] }
+        return words.contains { fold($0).contains(needle) }
     }
 }

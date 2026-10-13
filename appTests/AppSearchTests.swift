@@ -24,7 +24,8 @@ struct AppSearchTests {
     @Test func theOriginsKindLeadsAndTheRestKeepTheirOrder() {
         let fromPrayers = AppSearch.sectionOrder(for: .prayers)
         #expect(fromPrayers.first == .prayers)
-        #expect(Array(fromPrayers.dropFirst()) == AppSearch.Kind.allCases.filter { $0 != .prayers })
+        let rest = AppSearch.Kind.allCases.filter { $0 != .prayers && $0 != .chants }
+        #expect(Array(fromPrayers.dropFirst(2)) == rest)
 
         let fromChant = AppSearch.sectionOrder(for: .chant)
         #expect(fromChant.first == .chants)
@@ -87,10 +88,87 @@ struct AppSearchTests {
 
     @Test func fromAnywhereTheClosestNameIsTheBest() {
         // "Memorare" is a prayer's name and a chant's: both exact, so the
-        // section that stands first in Explore's order wins the tie
+        // kind that stands first in Explore's order, Prayers, wins the tie
         let results = AppSearch.results(for: "memorare", from: .everywhere)
-        #expect(results.best != nil)
-        #expect(results.best.map { AppSearch.closeness(of: $0.names.first ?? "", to: "memorare") } == .exact)
+        #expect(results.best?.kind == .prayers)
+        #expect(results.kinds.first == .prayers)
+    }
+
+    @Test func fromPrayersTheAngelusIsAPrayerNotAChant() {
+        // The Daily Prayers topic answers "angelus" by its other words and
+        // stands first among the prayers; the card must still be the
+        // Angelus prayer or its order, never the Angelus chant
+        for word in ["angelus", "night prayers", "morning prayers"] {
+            let results = AppSearch.results(for: word, from: .prayers)
+            #expect(results.best?.kind == .prayers, "\(word) gave \(results.best?.id ?? "no card")")
+            if case .topic = results.best { Issue.record("\(word): a topic found by its other words took the card") }
+        }
+    }
+
+    @Test func aChantIsFoundByItsSungWords() {
+        // A line of the Salve Regina that no title holds
+        let results = AppSearch.results(for: "spes nostra", from: .chant)
+        let chants = ([results.best].compactMap { $0 } + results.sections.flatMap(\.hits))
+            .filter { $0.kind == .chants }
+        #expect(chants.contains { $0.id.hasPrefix("chant:salve_regina") })
+        // Found only in its words, it is no card
+        if case .chant = results.best { Issue.record("a chant found in its words took the card") }
+    }
+
+    @Test func fromEitherPageTheOtherPagesKindComesSecond() {
+        #expect(Array(AppSearch.sectionOrder(for: .prayers).prefix(2)) == [.prayers, .chants])
+        #expect(Array(AppSearch.sectionOrder(for: .chant).prefix(2)) == [.chants, .prayers])
+    }
+
+    @Test func theCardsKindLeadsTheChips() {
+        let page = AppSearch.Page(id: "office", title: "Hours of Prayer", matchText: "office")
+        let chant = ChantCatalog.all.first { $0.latinTitle == "Salve Regina" }!
+        // From Home the pages section stands before the chants, but the
+        // chant is the card, so its chip comes first
+        let results = AppSearch.shape(
+            [.pages: [.page(page)], .chants: [.chant(chant)]], needle: "salve", origin: .everywhere)
+        #expect(results.best?.kind == .chants)
+        #expect(results.kinds == [.chants, .pages])
+    }
+
+    // MARK: - Readings and meditation sets
+
+    private static func reading(_ id: String, _ title: String, _ detail: String) -> LibraryReading {
+        LibraryReading(id: id, title: title, detail: detail, paragraphs: [], quote: nil)
+    }
+
+    private static let shelf = ReadingShelf(
+        id: "test", icon: "lv-rose", title: "Where Mary Appeared", marginLabel: "", subtitle: "",
+        entries: [reading("lourdes", "Lourdes", "1858 · Bernadette"), reading("fatima", "Fátima", "1917")]
+    )
+
+    @Test func aReadingIsFoundByTitleOrDatingLineFolded() {
+        let byTitle = AppSearch.readingHits("fatima", shelves: [Self.shelf])
+        #expect(byTitle.map(\.id) == ["reading:fatima"])
+        let byDetail = AppSearch.readingHits("bernadette", shelves: [Self.shelf])
+        #expect(byDetail.map(\.id) == ["reading:lourdes"])
+    }
+
+    @Test func aShelfsTitleAnswersOnlyWhenNoReadingDoes() {
+        let hits = AppSearch.readingHits("appeared", shelves: [Self.shelf])
+        #expect(hits.count == 2)
+        #expect(AppSearch.readingHits("lourdes", shelves: [Self.shelf]).count == 1)
+    }
+
+    @Test func archivedShelvesAreLeftOut() {
+        #expect(AppSearch.defaultShelves.allSatisfy { !ArchivedPages.hides(shelf: $0) })
+    }
+
+    @Test func aMeditationSetIsFoundByAuthorAndByTheLabelTheShelfShows() {
+        let set = MeditationSetSummary(
+            id: 9, name: "The Gospel Read Slowly", category: "joyful", description: nil,
+            labels: ["Scriptural"], author: "St. Thérèse"
+        )
+        #expect(AppSearch.matches(set, needle: "therese"))
+        #expect(AppSearch.matches(set, needle: "scriptural"))
+        #expect(AppSearch.matches(set, needle: AppSearch.fold("Gospel")))
+        #expect(AppSearch.matches(set, needle: "joyful"))
+        #expect(!AppSearch.matches(set, needle: "sorrowful"))
     }
 
     @Test func aMysteryIsFoundByItsOwnName() {

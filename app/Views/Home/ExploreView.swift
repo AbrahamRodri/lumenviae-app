@@ -43,6 +43,10 @@ struct ExploreView: View {
     @State private var query = ""
     @FocusState private var fieldFocused: Bool
 
+    /// Whether the field has been focused for the reader once: coming
+    /// back from a result must not bring the keyboard up over the list
+    @State private var didFocusOnArrival = false
+
     /// The result at the top of the scroll (`AppSearchResultsView`'s
     /// scroll ids): a chip sets it to jump, and its kind is the chip lit
     @State private var scrolledID: String?
@@ -160,7 +164,10 @@ struct ExploreView: View {
         }
         .onAppear {
             // A page's glass was a request to search: the keyboard rises
-            if origin != .everywhere { fieldFocused = true }
+            if origin != .everywhere, !didFocusOnArrival {
+                didFocusOnArrival = true
+                fieldFocused = true
+            }
         }
         // VoiceOver stays in the field and would hear nothing of the
         // results: what was found is said once the reader pauses
@@ -292,7 +299,8 @@ struct ExploreView: View {
         }
 
         // The chant library's ways in, as painted tiles. No chant of the
-        // day here: tonight's song to Mary is the library's own to offer.
+        // day here: the season's song to Mary stands on the library's Songs
+        // to Mary shelf.
         section("Chant", link: ("Library", { router.push(.chantLibrary) })) {
             chantTiles
         }
@@ -423,7 +431,7 @@ struct ExploreView: View {
                     .transition(.opacity)
                 }
             } else {
-                AppSearchResultsView(results: results, query: trimmedQuery, openPage: openPage)
+                AppSearchResultsView(results: results, openPage: openPage)
                 .transition(.opacity)
             }
         }

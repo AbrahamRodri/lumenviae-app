@@ -372,21 +372,27 @@ search field lives on Explore, not on home.
 option E, Oct 2026). Explore's field, the Prayers page's glass and the
 Chant page's glass all open it; the two pages push
 `.search(from: .prayers)` and `.search(from: .chant)`, which is
-`ExploreView(origin:)` with the field focused, the system bar hidden
+`ExploreView(origin:)` with the field focused on arrival (not again
+on coming back from a result), the system bar hidden
 and CANCEL beside the field as the way back, and one quiet line in
 place of the browse page before a word is typed. The field wears the
 gold outline the chant search had. It finds Rosary mysteries (a
 devotion, or one mystery by its name), the app's doors, readings,
-prayers (a topic, an order of prayer, then the prayers, from
-`PrayerBook.topics(matching:)`, `searchOrders` and `search`), chants
-(`ChantCatalog.search`) and the meditation sets, everything but the
-sets bundled, so it works offline. The kind of the page it was opened
-from leads: its best match by name stands on top as a painted card
-with PRAY (an outlined capsule) or the play disc and LISTEN, and its
-section comes first; from Home no kind leads and the best is whichever
-first hit's name answers closest. A section per kind follows, and
-chips under the field, one per kind with its count, scroll to a
-section and light for the section being read. They never filter, so
+prayers (a topic, an order of prayer, by its day's name too, then the
+prayers, from `PrayerBook.topics(matching:)`, `searchOrders` and
+`search`), chants (by name, then by the prayer they sing and their sung
+words) and the meditation sets, everything but the sets bundled, so it
+works offline, and every match folded (case, accents, æ and œ). The
+kind of the page it was opened from leads: its hit whose name answers
+closest stands on top as a painted card (one button, "Best match: …"
+to VoiceOver) with PRAY (an outlined capsule) or the play disc and
+LISTEN beside it, and its section comes first, the other page's kind
+second; from Home no kind leads and the card is the closest name of
+any kind. A hit found only by its words or other names (the Daily
+Prayers topic for "angelus") is never the card. A section per kind
+follows, and chips under the field, one per kind with its count, the
+card's kind first and lit until the scroll moves, scroll to a section
+and light for the section at the top. They never filter, so
 there is no All. VoiceOver hears the kinds and counts once the reader
 pauses. Prayers and Chant each searched in place once, in two looks,
 the chant one with Try, Refine, scopes and filters; all of it went.
@@ -2803,8 +2809,8 @@ write concurrent code here:
   `copy-audit/GLOSSARY.md` on `claude/copy-audit`): a title says what a
   thing is in everyday English, and a Church or Latin name stands beside
   or beneath it, never alone. The four seasonal antiphons of Our Lady
-  are "songs to Mary" ("TONIGHT'S SONG TO MARY", the Learn path "Songs
-  to Mary"); any other antiphon is a "short chant", a sequence a "feast
+  are "songs to Mary" (the SONGS TO MARY shelf, the Chapel tile's
+  "tonight's song to Mary"); any other antiphon is a "short chant", a sequence a "feast
   poem" (the kinds' kickers say the tile's own word, `ChantForm.singular`);
   the cantor is "the singer", a tone a "melody" (the data's settings read
   "Simple melody", the pill still "Simple | Solemn"), the score "sheet
@@ -3016,13 +3022,16 @@ write concurrent code here:
   3:05".
 
   **Search** is the app's one search (see Explore), opened from the
-  head's glass with chants leading: its chants are
-  `ChantCatalog.search`'s, each row the library's own with its play disc
-  and length. The library's own search page (`ChantSearchView`: Try,
+  head's glass with chants leading: chants are found by name
+  (`ChantCatalog.search`), then by the prayer they sing and a line of
+  what is sung (`ChantSearch.works(singingPrayerMatching:)`,
+  `ChantSearch.wordHits`, in `Views/Chant/ChantSearch.swift`, which also
+  gives the practice its `clean`), each row the library's own with its
+  play disc and length; a chant found only in its words is never the
+  top card. The library's own search page (`ChantSearchView`: Try,
   Refine, the scopes All · Names · Words · Prayers and the filters) and
   the Tonight card at the top of the page were taken out at the CEO's
-  word (Oct 2026); `ChantSearch` (`Views/Chant/ChantSearch.swift`) keeps
-  its folding and word matching for the practice and the tests.
+  word (Oct 2026).
 
   **The chant's page is Now Playing** (`ChantView`, `.chant(id:)`, the
   "simplify the chant page" design, option C, Oct 2026), a painted page
