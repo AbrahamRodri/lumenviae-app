@@ -277,6 +277,18 @@ final class AppRouter {
     /// The page on top of the stack, when the router pushed it
     var topRoute: AppRoute? { routes.last ?? nil }
 
+    /// In a debug build, a chant's page named at launch stands pushed over
+    /// the tab, for screenshots a simulator cannot tap to:
+    /// `SIMCTL_CHILD_LUMEN_VIAE_CHANT=salve_regina_simple xcrun simctl launch …`
+    init() {
+        #if DEBUG
+        if let id = ProcessInfo.processInfo.environment["LUMEN_VIAE_CHANT"], !id.isEmpty {
+            path.append(AppRoute.chant(id: id))
+            routes = [.chant(id: id)]
+        }
+        #endif
+    }
+
     /// Appends a route to the path and records it
     private func append(_ route: AppRoute) {
         path.append(route)

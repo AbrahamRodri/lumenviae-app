@@ -2859,21 +2859,36 @@ write concurrent code here:
   stood as four tabs, a funnel and three chips above every result, over
   a paragraph of instructions and an accent note repeated on every state.
 
-  **The chant's page is Now Playing** (`ChantView`, `.chant(id:)`): the
+  **The chant's page is Now Playing** (`ChantView`, `.chant(id:)`, the
+  "simplify the chant page" design, option C, Oct 2026), a painted page
+  like an order's or a set's: the chant's own painting
+  (`ChantCatalog.painting(for:)`, the library rows' one) hung from the
+  top of the glass and dissolving into the page, under a veil for the
+  bar's Back and ⋯ (`topChromeFade` would cut the painting, so the
+  order page's veil is used); over its foot the
   names (the setting after the English only where neither title says it,
   and mid-line in lower case but for a name, `Chant.settingMidLine`:
   "Lord, Have Mercy · Mass of the Angels", never "· mass of the angels",
   and Credo III
-  never "The Nicene Creed · credo iii"), the score in a window (ENLARGE for `ChantScoreSheet`, in a
-  foot of its own beneath the score's dissolve — laid over it, it was
-  read through the last faded line), the
-  line being sung with its English, the scrubber, five controls around
-  the page's gold play — repeat, back, forward, speed (1× | ¾×) — and
-  Take turns (two arrows passing, since nothing listens — it once wore a
-  microphone), Words (`ChantWordsSheet`) and the sleep timer
-  (`ChantSleepSheet`), "Learn this chant" at its head and Favourites and
-  Add to a Set in its ⋯; beneath the fold the prayer in words, the other
-  settings and the credit. The speed reads as the chant is sounding
+  never "The Nicene Creed · credo iii"); the score, unboxed, in a 132pt
+  window dissolving at its foot, with a small enlarge mark beneath the
+  dissolve, the whole window a door to `ChantScoreSheet`; the line being
+  sung with its English; the scrubber; three controls, back, the gold
+  play and forward; and one quiet hairline capsule of the tools used
+  less (`NowPlayingTools`): repeat, speed (1× | ¾×), Take turns (two
+  arrows passing, since nothing listens — it once wore a microphone;
+  timed chants only) and the sleep timer (`ChantSleepSheet`). The ⋯
+  holds Favourites, Add to a Set, Words (`ChantWordsSheet`), Enlarge the
+  Sheet Music, Stop Learning while under way, and the source
+  (`ChantView.MoreItem`). A scroll away: Learn as an outlined card with
+  the step beads ("Learn this chant", "Continue learning" or "Practise
+  again", `ChantView.learnWords`), The prayer it sings and Also sung as
+  the library's rows (`ChantSongRow` for the other settings), and the
+  credit. The page once stacked twelve controls at one volume — a
+  "Learn this chant" capsule in the bar's title slot, five controls
+  around the play, three pills under them, a hairline box round the
+  score and kicker-and-rule sections — and showed no painting. The
+  speed reads as the chant is sounding
   (`ChantPlayer.speed`), so one chosen on the Lock Screen shows as 1.5×.
   The score window draws a part at its full
   width and cuts it at the window's foot: fitted to the window, a tall
@@ -3554,7 +3569,8 @@ transition entirely.
   VIEW ALL, a mysteries' page, a set's page, the Scriptural Rosary's page,
   a Prayer Book page, Saved full and empty, an order's page, the
   pray-along page in silence, an order part-way through, a prayer
-  opened alone and the Angelus, on a book store of its own, the chant search before
+  opened alone and the Angelus, on a book store of its own, a chant's
+  page (top, foot, learning, not found), the chant search before
   typing, with results and with nothing found, and Your Chants with its
   shelves full, empty and at its foot, on a fixed day) from fixed data
   with swift-snapshot-testing (the
@@ -3793,7 +3809,9 @@ journal endpoint and none is planned — journal entries are local.
 A debug build can be launched on a tab, for screenshots and checks a
 simulator cannot tap to: `SIMCTL_CHILD_LUMEN_VIAE_TAB=prayers xcrun
 simctl launch …` (`AppRouter.launchTab`; the name is an `AppTab` case),
-and on another day with `SIMCTL_CHILD_LUMEN_VIAE_TODAY=2026-10-01`.
+on another day with `SIMCTL_CHILD_LUMEN_VIAE_TODAY=2026-10-01`, and on
+a chant's page with `SIMCTL_CHILD_LUMEN_VIAE_CHANT=<chant id>`
+(`AppRouter.init`; an unknown id opens the not-found page).
 
 `Tools/dev` is the door to everyday tasks: `Tools/dev check` runs lint,
 the generated-file check, the build and the tests. Run tests with
