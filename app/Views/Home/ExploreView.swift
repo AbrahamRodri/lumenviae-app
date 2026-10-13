@@ -23,6 +23,11 @@ struct ExploreView: View {
 
     @Environment(AppRouter.self) private var router
 
+    /// What was prayed and sung lately, which the Prayers shelf and the
+    /// Chant tiles take in over their defaults
+    private var prayerBook = PrayerBookStore.shared
+    private var chantShelf = ChantShelfStore.shared
+
     /// Which books have a reading under way — their covers wear the
     /// marker ribbon here as they do on the shelf itself. The same book
     /// must not carry a marker on one surface and none on another.
@@ -677,44 +682,47 @@ struct ExploreView: View {
 
     // MARK: - Painted shelves
 
-    /// The Prayer Book's orders kept for an occasion, each a painting with
-    /// its name and when it is said, scrolling sideways to the screen's
-    /// edges
+    /// The Prayer Book's orders kept for an occasion, most needed first,
+    /// each a painting and its name, scrolling sideways to the screen's
+    /// edges. What the reader prayed lately leads, marked RECENT, and
+    /// pushes out the least needed defaults (`ExploreShelves`).
     private var occasionShelf: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(alignment: .top, spacing: 10) {
-                ForEach(PrayerBook.occasionOrders) { order in
-                    let painting = Self.occasionPainting(order.id)
-                    Button {
-                        router.push(.prayerOrder(id: order.id))
-                    } label: {
-                        VStack(alignment: .leading, spacing: 3) {
-                            CachedAssetImage(painting.asset, focal: painting.focal)
-                                .frame(width: 128, height: 128)
-                                .clipShape(RoundedRectangle(cornerRadius: 12))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .strokeBorder(AppColors.gold.opacity(0.22), lineWidth: AppLine.hairline)
-                                )
-                                .padding(.bottom, 4)
+                ForEach(ExploreShelves.prayerSlots(recents: prayerBook.recent), id: \.item) { slot in
+                    if let door = ExploreShelves.PrayerDoor(slot.item) {
+                        Button {
+                            router.push(door.route)
+                        } label: {
+                            VStack(alignment: .leading, spacing: 3) {
+                                CachedAssetImage(door.painting.resolvedAsset, focal: door.painting.focal)
+                                    .frame(width: 128, height: 128)
+                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .strokeBorder(AppColors.gold.opacity(0.22), lineWidth: AppLine.hairline)
+                                    )
+                                    .padding(.bottom, 4)
 
-                            Text(order.title(on: Date()))
-                                .font(AppFonts.bodyFont(15))
-                                .foregroundColor(AppColors.cream)
-                                .lineLimit(2)
-                                .fixedSize(horizontal: false, vertical: true)
+                                Text(door.title)
+                                    .font(AppFonts.bodyFont(15))
+                                    .foregroundColor(AppColors.cream)
+                                    .lineLimit(2)
+                                    .fixedSize(horizontal: false, vertical: true)
 
-                            Text(order.occasion)
-                                .font(AppFonts.italicFont(12))
-                                .foregroundColor(AppColors.textSecondary)
-                                .lineLimit(2)
-                                .fixedSize(horizontal: false, vertical: true)
+                                if slot.isRecent {
+                                    Text("RECENT")
+                                        .font(AppFonts.labelFont(8.5))
+                                        .tracking(1.7)
+                                        .foregroundColor(AppColors.gold)
+                                }
+                            }
+                            .frame(width: 128, alignment: .leading)
+                            .contentShape(Rectangle())
                         }
-                        .frame(width: 128, alignment: .leading)
-                        .contentShape(Rectangle())
+                        .buttonStyle(SacredCardButtonStyle())
+                        .accessibilityLabel(slot.isRecent ? "\(door.title). Recent" : door.title)
                     }
-                    .buttonStyle(SacredCardButtonStyle())
-                    .accessibilityLabel("\(order.title(on: Date())). \(order.occasion)")
                 }
             }
             .padding(.horizontal, 20)
@@ -725,16 +733,9 @@ struct ExploreView: View {
         .padding(.horizontal, -20)
     }
 
-    /// An occasion's painting: the one its order's own page hangs
-    /// (`PrayerBookPainting.order`), the Last Supper at Mass, the Prodigal
-    /// Son at Confession, Emmaus at table
-    private static func occasionPainting(_ orderID: String) -> (asset: String, focal: UnitPoint) {
-        guard let order = PrayerBook.order(orderID) else { return ("hour_morning", UnitPoint(x: 0.5, y: 0.35)) }
-        let painting = PrayerBookPainting.order(order)
-        return (painting.resolvedAsset, painting.focal)
-    }
-
-    /// The chant library's four ways in, two by two
+    /// The chant library's ways in, two by two: every chant and the songs
+    /// to Mary, then the two chants sung last, or until anything has been
+    /// sung, the Mass of the Angels and the sets of chants
     private var chantTiles: some View {
         LazyVGrid(
             columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)],
@@ -750,15 +751,27 @@ struct ExploreView: View {
                 asset: "mary_sistine_madonna", focal: UnitPoint(x: 0.5, y: 0.25)
             ) { router.push(.chantBrowse(.songsToMary)) }
 
-            paintedTile(
-                title: ChantBrowseScope.massSetting, note: nil,
-                asset: "luminous_proclamation", focal: UnitPoint(x: 0.5, y: 0.3)
-            ) { router.push(.chantBrowse(.massOfTheAngels)) }
-
-            paintedTile(
-                title: "Sung Sets", note: nil,
-                asset: "feast_our_lady_of_the_rosary", focal: UnitPoint(x: 0.5, y: 0.3)
-            ) { router.push(.chantSets) }
+            ForEach(ExploreShelves.chantSlots(recentIDs: chantShelf.recent.map(\.chantID)), id: \.item) { slot in
+                switch slot.item {
+                case .massOfTheAngels:
+                    paintedTile(
+                        title: ChantBrowseScope.massSetting, note: nil,
+                        asset: "luminous_proclamation", focal: UnitPoint(x: 0.5, y: 0.3)
+                    ) { router.push(.chantBrowse(.massOfTheAngels)) }
+                case .sets:
+                    paintedTile(
+                        title: "Sets of Chants", note: nil,
+                        asset: "feast_our_lady_of_the_rosary", focal: UnitPoint(x: 0.5, y: 0.3)
+                    ) { router.push(.chantSets) }
+                case .chant(let id):
+                    if let chant = ChantCatalog.chant(id) {
+                        paintedTile(
+                            title: chant.englishTitle, note: "Recent",
+                            asset: ChantCatalog.painting(for: chant), focal: UnitPoint(x: 0.5, y: 0.3)
+                        ) { router.push(.chant(id: id)) }
+                    }
+                }
+            }
         }
     }
 
@@ -990,6 +1003,71 @@ struct ExploreView: View {
         didRequestSets = false
         setsUnavailable = false
         Task { await loadSets() }
+    }
+}
+
+// MARK: - ExploreShelves
+
+/// What Explore's Prayers shelf and Chant tiles hold: defaults ranked by
+/// importance, giving way to what the reader prays and sings
+/// (`RecentShelf`)
+enum ExploreShelves {
+
+    /// The occasion orders, most needed first. Before Mass is the last to
+    /// give way to the reader's own.
+    static let prayerDefaults: [PrayerBookStore.RecentPrayer] = [
+        "before_mass", "before_confession", "after_mass", "after_confession",
+        "visit", "table", "holy_souls", "trouble",
+    ].map { .order($0) }
+
+    /// The shelf for these recents. The day's three hours stay off it,
+    /// as they always have: which is now is Home's to say. A prayer or
+    /// order the book no longer carries is passed over.
+    static func prayerSlots(recents: [PrayerBookStore.RecentPrayer]) -> [RecentShelf.Slot<PrayerBookStore.RecentPrayer>] {
+        let occasions = Set(PrayerBook.occasionOrders.map(\.id))
+        let usable = recents.filter {
+            switch $0 {
+            case .order(let id): occasions.contains(id)
+            case .prayer(let id): PrayerBook.prayer(id) != nil
+            }
+        }
+        return RecentShelf.fill(defaults: prayerDefaults, recents: usable)
+    }
+
+    /// One place on the Prayers shelf, as it is drawn and where it goes
+    struct PrayerDoor {
+        let title: String
+        let painting: PrayerBookPainting
+        let route: AppRoute
+
+        init?(_ item: PrayerBookStore.RecentPrayer, on date: Date = Date()) {
+            switch item {
+            case .order(let id):
+                guard let order = PrayerBook.order(id) else { return nil }
+                title = order.title(on: date)
+                painting = PrayerBookPainting.order(order, on: date)
+                route = .prayerOrder(id: id)
+            case .prayer(let id):
+                guard let prayer = PrayerBook.prayer(id) else { return nil }
+                title = prayer.listTitle
+                painting = PrayerBookPainting.prayer(id)
+                route = .devotionPrayer(id: id)
+            }
+        }
+    }
+
+    enum ChantTile: Hashable {
+        case massOfTheAngels
+        case sets
+        case chant(String)
+    }
+
+    /// The two chant tiles after every chant and the songs to Mary
+    static func chantSlots(recentIDs: [String]) -> [RecentShelf.Slot<ChantTile>] {
+        RecentShelf.fill(
+            defaults: [.massOfTheAngels, .sets],
+            recents: recentIDs.filter { ChantCatalog.chant($0) != nil }.map { .chant($0) }
+        )
     }
 }
 
