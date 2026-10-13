@@ -550,7 +550,7 @@ private struct MiniHolyCard: View {
             topTrailingRadius: 17,
             style: .continuous
         )
-        CachedAssetImage(painting.resolvedAsset, focal: painting.focal)
+        PaintingThumbnail(painting: painting, size: CGSize(width: 34, height: 44))
             .frame(width: 34, height: 44)
             .clipShape(shape)
             .overlay(shape.strokeBorder(AppColors.gold.opacity(0.35), lineWidth: AppLine.hairline))

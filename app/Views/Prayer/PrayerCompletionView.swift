@@ -282,8 +282,19 @@ struct SacredParticles: View {
     /// Number of motes on screen
     private let count = 26
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.drawsMotionAtRest) private var drawsMotionAtRest
+    @Environment(\.scenePhase) private var scenePhase
+
+    /// The motes hold still under Reduce Motion, and stop drawing thirty
+    /// frames a second while the app is not in front: the screen stays up
+    /// as long as a reflection takes to write
+    private var isPaused: Bool {
+        reduceMotion || drawsMotionAtRest || scenePhase != .active
+    }
+
     var body: some View {
-        TimelineView(.animation(minimumInterval: 1.0 / 30.0)) { timeline in
+        TimelineView(.animation(minimumInterval: 1.0 / 30.0, paused: isPaused)) { timeline in
             Canvas { context, size in
                 let t = timeline.date.timeIntervalSinceReferenceDate
 
@@ -709,11 +720,14 @@ struct CompletionQuoteCard: View {
     let author: String
     var source: String? = nil
 
+    /// The opening mark grows with the quotation beneath it
+    @ScaledMetric(relativeTo: .body) private var quoteMarkSize: CGFloat = 48
+
     var body: some View {
         VStack(spacing: 16) {
             // Opening quote mark
             Text("\u{201C}")
-                .font(.system(size: 48, weight: .light, design: .serif))
+                .font(.system(size: quoteMarkSize, weight: .light, design: .serif))
                 .foregroundColor(AppColors.gold.opacity(0.5))
                 .offset(y: 10)
 

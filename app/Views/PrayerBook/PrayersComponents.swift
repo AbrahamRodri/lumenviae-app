@@ -59,7 +59,7 @@ struct PrayersPaintingThumb: View {
     var radius: CGFloat = 0
 
     var body: some View {
-        CachedAssetImage(painting.resolvedAsset, focal: painting.focal)
+        PaintingThumbnail(painting: painting, size: CGSize(width: width, height: height))
             .frame(width: width, height: height)
             .clipShape(RoundedRectangle(cornerRadius: radius))
             .accessibilityHidden(true)

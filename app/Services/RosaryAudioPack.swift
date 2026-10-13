@@ -82,6 +82,10 @@ final class RosaryAudioPack {
     private let apiService: APIService
     private let root: URL
 
+    /// The manifests read off disk or saved this run, by voice: each is
+    /// read and decoded once, not at every prayer the book opens
+    @ObservationIgnored private var savedManifests: [String: RosaryAudioManifest] = [:]
+
     /// Fail a stalled clip in 20s; the clips are small
     private let session: URLSession = {
         let config = URLSessionConfiguration.default
@@ -138,12 +142,16 @@ final class RosaryAudioPack {
         var files: [ClipID: URL] = [:]
         var missing: [(ClipID, RosaryAudioClip, URL)] = []
 
-        for id in clips {
-            guard let clip = Self.clip(id, in: manifest) else { continue }
+        let wanted: [(ClipID, RosaryAudioClip, URL)] = clips.compactMap { id in
+            guard let clip = Self.clip(id, in: manifest) else { return nil }
             let local = voiceDir
                 .appendingPathComponent(id.kind, isDirectory: true)
                 .appendingPathComponent(clip.file)
-            if FileManager.default.fileExists(atPath: local.path) {
+            return (id, clip, local)
+        }
+        let onDisk = await Self.existing(wanted.map { $0.2 })
+        for (id, clip, local) in wanted {
+            if onDisk.contains(local) {
                 files[id] = local
             } else {
                 missing.append((id, clip, local))
@@ -184,11 +192,13 @@ final class RosaryAudioPack {
 
         // Whatever could not be fetched is said from an older copy, if
         // the device has one
-        for (id, _, local) in missing where files[id] == nil {
-            if let older = Self.olderCopy(of: local) { files[id] = older }
+        let unfetched = missing.filter { files[$0.0] == nil }
+        let older = await Self.olderCopies(of: unfetched.map { $0.2 })
+        for (id, _, local) in unfetched {
+            if let copy = older[local] { files[id] = copy }
         }
 
-        prune(manifest, kinds: kinds)
+        await prune(manifest, kinds: kinds)
         return (files, manifest.voice, offline)
     }
 
@@ -207,15 +217,15 @@ final class RosaryAudioPack {
         kinds: [String],
         clips: Set<ClipID>
     ) async throws -> (RosaryAudioManifest, offline: Bool) {
-        let saved = savedManifest(voice: voice)
+        let saved = await savedManifest(voice: voice)
         if let saved, Self.covers(saved, kinds: kinds), !Self.linksExpiring(saved),
            clips.allSatisfy({ Self.clip($0, in: saved) != nil }) {
             return (saved, false)
         }
         do {
             let fetched = try await fetchManifest(voice: voice, kinds: kinds)
-            let merged = merge(fetched, into: savedManifest(voice: fetched.voice))
-            save(merged)
+            let merged = merge(fetched, into: await savedManifest(voice: fetched.voice))
+            await save(merged)
             return (merged, false)
         } catch {
             if let saved { return (saved, true) }
@@ -225,7 +235,7 @@ final class RosaryAudioPack {
             // voice plays before silence. A new voice chosen on the way
             // to a flight once left the pack saying it needed the
             // internet, with the other voice's recordings on disk.
-            if let other = savedManifestInAnotherVoice(than: voice, kinds: kinds) {
+            if let other = await savedManifestInAnotherVoice(than: voice, kinds: kinds) {
                 return (other, true)
             }
             throw PackError.unavailable
@@ -234,15 +244,18 @@ final class RosaryAudioPack {
 
     /// The manifest saved for some other voice that holds every kind asked
     /// for, the default voice's first
-    private func savedManifestInAnotherVoice(than voice: String, kinds: [String]) -> RosaryAudioManifest? {
-        let saved = (try? FileManager.default.contentsOfDirectory(atPath: root.path)) ?? []
+    private func savedManifestInAnotherVoice(than voice: String, kinds: [String]) async -> RosaryAudioManifest? {
+        let saved = await Self.names(in: root)
         let preferred = NarrationVoiceCatalog.shared.defaultVoice.slug
-        return saved
+        let others = saved
             .filter { $0 != voice }
             .sorted { ($0 == preferred ? 0 : 1) < ($1 == preferred ? 0 : 1) }
-            .lazy
-            .compactMap { self.savedManifest(voice: $0) }
-            .first { Self.covers($0, kinds: kinds) }
+        for other in others {
+            if let manifest = await savedManifest(voice: other), Self.covers(manifest, kinds: kinds) {
+                return manifest
+            }
+        }
+        return nil
     }
 
     /// A voice the server no longer knows (a stale voice list) is a 400;
@@ -314,19 +327,21 @@ final class RosaryAudioPack {
         root.appendingPathComponent(voice, isDirectory: true).appendingPathComponent("manifest.json")
     }
 
-    private func savedManifest(voice: String) -> RosaryAudioManifest? {
-        guard let data = try? Data(contentsOf: manifestURL(voice: voice)) else { return nil }
-        return try? JSONDecoder().decode(RosaryAudioManifest.self, from: data)
+    /// The manifest saved for the voice, read off the main actor the first
+    /// time it is asked for and kept
+    private func savedManifest(voice: String) async -> RosaryAudioManifest? {
+        if let kept = savedManifests[voice] { return kept }
+        guard let data = await Self.read(manifestURL(voice: voice)),
+              let manifest = try? JSONDecoder().decode(RosaryAudioManifest.self, from: data)
+        else { return nil }
+        savedManifests[voice] = manifest
+        return manifest
     }
 
-    private func save(_ manifest: RosaryAudioManifest) {
-        let url = manifestURL(voice: manifest.voice)
-        try? FileManager.default.createDirectory(
-            at: url.deletingLastPathComponent(), withIntermediateDirectories: true
-        )
-        if let data = try? JSONEncoder().encode(manifest) {
-            try? data.write(to: url, options: .atomic)
-        }
+    private func save(_ manifest: RosaryAudioManifest) async {
+        savedManifests[manifest.voice] = manifest
+        guard let data = try? JSONEncoder().encode(manifest) else { return }
+        await Self.write(data, to: manifestURL(voice: manifest.voice))
     }
 
     /// Removes recordings the manifest no longer names, in the kinds just
@@ -335,17 +350,24 @@ final class RosaryAudioPack {
     /// replacement is not yet on disk — it is what is said until then —
     /// and goes once the new one has arrived, or once the manifest no
     /// longer names that recording at all.
-    private func prune(_ manifest: RosaryAudioManifest, kinds: [String]) {
+    private func prune(_ manifest: RosaryAudioManifest, kinds: [String]) async {
         let voiceDir = root.appendingPathComponent(manifest.voice, isDirectory: true)
+        var namedByKind: [String: Set<String>] = [:]
         for kind in kinds {
-            let named: Set<String>
             switch kind {
-            case "prayers": named = Set((manifest.prayers ?? [:]).values.map(\.file))
-            case "announcements": named = Set((manifest.announcements ?? [:]).values.map(\.file))
-            case "verses": named = Set((manifest.verses ?? [:]).values.flatMap { $0.map(\.file) })
-            case "book": named = Set((manifest.book ?? [:]).values.map(\.file))
+            case "prayers": namedByKind[kind] = Set((manifest.prayers ?? [:]).values.map(\.file))
+            case "announcements": namedByKind[kind] = Set((manifest.announcements ?? [:]).values.map(\.file))
+            case "verses": namedByKind[kind] = Set((manifest.verses ?? [:]).values.flatMap { $0.map(\.file) })
+            case "book": namedByKind[kind] = Set((manifest.book ?? [:]).values.map(\.file))
             default: continue
             }
+        }
+        await Self.prune(voiceDir, keeping: namedByKind)
+    }
+
+    @concurrent
+    private nonisolated static func prune(_ voiceDir: URL, keeping namedByKind: [String: Set<String>]) async {
+        for (kind, named) in namedByKind {
             let dir = voiceDir.appendingPathComponent(kind, isDirectory: true)
             let present = Set((try? FileManager.default.contentsOfDirectory(atPath: dir.path)) ?? [])
             let namedByStem = Dictionary(named.map { (Self.stem(of: $0), $0) }, uniquingKeysWith: { a, _ in a })
@@ -360,7 +382,7 @@ final class RosaryAudioPack {
 
     /// The recording a file holds, without the hash of its words:
     /// "joyful_1_3" for "joyful_1_3-9f2c41ab07.mp3"
-    private static func stem(of file: String) -> String {
+    private nonisolated static func stem(of file: String) -> String {
         guard let dash = file.lastIndex(of: "-") else { return file }
         return String(file[..<dash])
     }
@@ -376,7 +398,7 @@ final class RosaryAudioPack {
 
     /// Another copy of the same recording already on disk — the one the
     /// file at `local` replaces — if there is one
-    private static func olderCopy(of local: URL) -> URL? {
+    private nonisolated static func olderCopy(of local: URL) -> URL? {
         let dir = local.deletingLastPathComponent()
         let prefix = stem(of: local.lastPathComponent) + "-"
         let present = (try? FileManager.default.contentsOfDirectory(atPath: dir.path)) ?? []
@@ -400,6 +422,44 @@ final class RosaryAudioPack {
     }
 
     // MARK: - Files
+
+    // The disk is read and written off the main actor: a Prayer Book page
+    // asks for its recordings as it opens, and a manifest, a check on
+    // every recording and a scan of every folder once ran on the frame.
+
+    @concurrent
+    private nonisolated static func read(_ url: URL) async -> Data? {
+        try? Data(contentsOf: url)
+    }
+
+    @concurrent
+    private nonisolated static func write(_ data: Data, to url: URL) async {
+        try? FileManager.default.createDirectory(
+            at: url.deletingLastPathComponent(), withIntermediateDirectories: true
+        )
+        try? data.write(to: url, options: .atomic)
+    }
+
+    /// The files of `urls` that are on disk
+    @concurrent
+    private nonisolated static func existing(_ urls: [URL]) async -> Set<URL> {
+        Set(urls.filter { FileManager.default.fileExists(atPath: $0.path) })
+    }
+
+    /// An older copy on disk for each of `locals` that has one
+    @concurrent
+    private nonisolated static func olderCopies(of locals: [URL]) async -> [URL: URL] {
+        var copies: [URL: URL] = [:]
+        for local in locals {
+            copies[local] = olderCopy(of: local)
+        }
+        return copies
+    }
+
+    @concurrent
+    private nonisolated static func names(in dir: URL) async -> [String] {
+        (try? FileManager.default.contentsOfDirectory(atPath: dir.path)) ?? []
+    }
 
     @concurrent
     private nonisolated static func download(with session: URLSession, from urlString: String, to destination: URL) async throws -> URL {
