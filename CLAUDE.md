@@ -2571,8 +2571,7 @@ write concurrent code here:
   (Pre-Lent, the Easter season, February 2 (Candlemas)); numbers are
   figures. A Latin title goes with its English: beneath it on a row and
   a card, "Praise, O Sion (Lauda Sion)" where one line holds both, the
-  English alone where only one fits (a chip, a kicker, the practice's
-  head), and both to VoiceOver (`Chant.spokenName`, which every play
+  English alone where only one fits (a chip, a kicker), and both to VoiceOver (`Chant.spokenName`, which every play
   disc in the library is labelled with). The prayers, chant texts and
   the words a score is captioned with are not chrome and keep their
   Latin. An occasion's title or red note reworded is kept in
@@ -2708,15 +2707,40 @@ write concurrent code here:
   Add to a Set in its ⋯; beneath the fold the prayer in words, the other
   settings and the credit. The speed reads as the chant is sounding
   (`ChantPlayer.speed`), so one chosen on the Lock Screen shows as 1.5×.
-  The score windows, here and in the practice, draw a part at its full
-  width and cut it at the window's foot: fitted to the window, a tall
+  The score window draws a part at its full
+  width and cuts it at the window's foot: fitted to the window, a tall
   score (the Magnificat) was drawn some 58 points wide. **Practice** (`ChantPracticeView`, full
-  screen, its own ✕) learns a chant in four steps — Listen, Read along,
-  Sing along (the singer sings, then "Your turn"), On your own (you
-  first, then the singer) — with Repeat, Speed and Hide words (every
-  other word, or all, cut to its first letter), ending on the learner's
-  own "I know it by heart". The note beside its disc says what a tap
-  does, "Tap to pause." while the chant sounds. Its ✕ gives back the
+  screen) learns a chant in four steps — Listen, Read along, Sing along
+  (the singer sings, then your turn), On your own (you first, then the
+  singer) — ending on the learner's own "I know it by heart". It is two
+  quiet screens (the "Chant practice" design, option C, Oct 2026). It
+  opens on **the path**: the chant's painting dissolving into the page,
+  LEARN BY HEART over its name and "9 lines", and the four steps as
+  beads on a thread, each saying once what it is, over BEGIN on a first
+  visit, CONTINUE once begun (back to the step and the line left,
+  `PracticePlace`, kept beside the shelf's step only while it is still
+  that step, and let go when the chant is put down or learned, so BEGIN
+  after Stop Learning starts at the first line; a whole chant left
+  paused is taken up where it was) or PRACTISE AGAIN once learned; the path carries the ✕, and
+  a step tapped begins it. **The singing screen** is the line and little
+  else, over the painting veiled and a scrim deepest where the words
+  stand (`PracticeGround`): the step's name and "LINE 4 OF 9", the one way
+  back to the path; a thread of the lines; the Latin over its English
+  (the English alone in Listen); Again, the play disc and Score (the
+  score sheet, without its transport) with their names beneath; and one
+  gold act, NEXT LINE, NEXT STEP on a step's last line, I KNOW IT BY
+  HEART on the last of all. The learner's turn is the disc itself: the
+  seconds left in a ring of gold running down (`PracticeTurnDisc`, a tap
+  holds it), the words lit, the painting stepping back, and SING IT BACK
+  or YOU SING FIRST beneath. Repeat (each line once or three times, or
+  the whole chant on or off), Speed (Normal | Slower) and Hide words
+  (None | Half | All, every other word or all cut to its first letter,
+  Half from step 4) stand behind the faders (`PracticeOptionsSheet`).
+  Opening the practice, or BEGIN, starts nothing kept: the shelf hears of
+  it at the first act on the singing screen. Learned, the page is the
+  painting, the seal and "Kept in Saved, under Learned." It once stood
+  as one screen of eight framed shapes, the step said three times and
+  the three settings as large as the act. Leaving gives back the
   pace and the Repeat it found, and stops the singer only if the
   practice set it singing: a ¾× chosen to learn by once stayed on every
   chant after. A chant the practice loaded itself, sounded or not, it
