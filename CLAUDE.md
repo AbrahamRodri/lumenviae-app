@@ -2650,10 +2650,12 @@ write concurrent code here:
   touched. It cannot be dragged away, so both answers must always be in
   reach: it scrolls, and would stand full height at the accessibility
   text sizes the app no longer reaches (held to 340 points there, its
-  rows were drawn over each other). The
-  order page's speaker stands just beside its PRAY, so
-  praying from there answers the question with what the speaker shows;
-  afterwards ALOUD or SILENT at the head of the page owns the choice. The
+  rows were drawn over each other). It is asked
+  on the pray-along screen itself, from every door, while the reader has
+  not chosen: the order page's PRAY and a prayer card's PRAY answered it
+  once, from a speaker and a line beside them, both gone since the
+  "Chant shelves and prayer cards" pick; afterwards ALOUD or SILENT at
+  the head of the page owns the choice. The
   same choice stands in Settings → Prayer Experience as the Prayers
   Tab row, and a choice made there answers the question before it is asked;
   it never follows the Rosary's Audio. Aloud,
@@ -2775,8 +2777,10 @@ write concurrent code here:
   set); SONGS TO MARY as square cards, each with its length and its own
   play; SUNG SETS, the occasions and then the reader's own sets, each a
   card of its painting, "4 chants · 7 min" (the recordings' lengths,
-  never a guess) and its numbered chants with their lengths; and ALL
-  CHANTS, the book's twelve sections two by six (`ChantSectionsGrid`, the
+  never a guess) and its numbered chants with their lengths, ending on a
+  dashed Make your own set that opens the Sung Sets page (where empty and
+  changed sets of the reader's stand too); and ALL CHANTS, "104 CHANTS"
+  beside it, the book's twelve sections two by six (`ChantSectionsGrid`, the
   All Chants page's own grid), each opening its shelf; then the credit, one line, "Recordings and scores by
   Verbum Gloriae" (`ChantCatalog.libraryCredit`), a link to their site.
   Every card says how long it plays and has its own play,
