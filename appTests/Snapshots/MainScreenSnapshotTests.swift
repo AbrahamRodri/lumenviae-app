@@ -110,7 +110,7 @@ struct MainScreenSnapshotTests {
         let store = Fixtures.prayerBookStore()
         store.praysAloud = false
         ScreenSnapshot.assertScreen(
-            BookPrayerView(prayerID: "sub_tuum", store: store),
+            BookPrayerView(prayerID: "sub_tuum", store: store, date: Fixtures.day),
             named: "prayer-page"
         )
     }

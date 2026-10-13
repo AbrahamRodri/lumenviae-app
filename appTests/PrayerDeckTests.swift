@@ -65,6 +65,25 @@ struct PrayerDeckTests {
         #expect(deck.topicToOpen == home.id)
     }
 
+    @Test func aDragDealsTheWayItWentWhenFarEnoughOrFlung() {
+        // A third of the width, either way
+        #expect(DealDirection.of(dx: -120, flung: -120, width: 337, hasNext: true, hasPrevious: true) == .next)
+        #expect(DealDirection.of(dx: 120, flung: 120, width: 337, hasNext: true, hasPrevious: true) == .previous)
+        // Short, but flung on the same way
+        #expect(DealDirection.of(dx: -40, flung: -260, width: 337, hasNext: true, hasPrevious: true) == .next)
+    }
+
+    @Test func aDragComesBackWhenShortFlungBackOrTowardNoCard() {
+        // Short and not flung
+        #expect(DealDirection.of(dx: -60, flung: -80, width: 337, hasNext: true, hasPrevious: true) == nil)
+        // Dragged left, flicked back right
+        #expect(DealDirection.of(dx: -60, flung: 300, width: 337, hasNext: true, hasPrevious: true) == nil)
+        // Far enough, but there is no card that way
+        #expect(DealDirection.of(dx: -200, flung: -200, width: 337, hasNext: false, hasPrevious: true) == nil)
+        #expect(DealDirection.of(dx: 200, flung: 200, width: 337, hasNext: true, hasPrevious: false) == nil)
+        #expect(DealDirection.of(dx: 0, flung: 400, width: 337, hasNext: true, hasPrevious: true) == nil)
+    }
+
     @Test func theDotsShowASmallSetWhole() {
         #expect(PlaceDots.visibleRange(count: 5, current: 2) == 0...4)
         #expect(PlaceDots.visibleRange(count: 24, current: 23) == 0...23)

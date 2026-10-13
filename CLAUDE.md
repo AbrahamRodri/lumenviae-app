@@ -2494,7 +2494,7 @@ write concurrent code here:
   Prayer Book tile — redraw on `PrayerBookHourSchedule` rather than on
   `CanonicalClock`, which slept through them and kept home on the
   Angelus until midnight. A chapter's foot turns to the next chapter in
-  place, as a prayer's page steps along its chapter; it once popped and
+  place, as a book's page is turned; it once popped and
   pushed a route in one tick, and the next chapter opened scrolled to
   wherever the last was left. The seasons are computed: the Angelus is
   Queen of Heaven (the Regina Cæli) from Easter to the Saturday after
@@ -2546,9 +2546,12 @@ write concurrent code here:
   (the scroll, a call) lets the card back to rest (`@GestureState`). The
   arch is 250 points, giving way on a short card down to 170 (0.42 of
   the card), so the name and the prayer's first lines stand at first
-  sight with the chant player up. The cards and the foot are drawn from
-  plain values (`HolyCardFacts`, `.equatable()`), so a frame of the drag
-  redraws neither. Under Reduce Motion there is no
+  sight with the chant player up. The drag lives in the deck (`DealDeck`),
+  which is handed its cards drawn from plain values (`HolyCardFacts`,
+  `.equatable()`), so a frame of the drag redraws the deck alone, never
+  the page, a card or the foot. Where a let-go drag sends the card is
+  `DealDirection.of`. The page reads its orders on one day, given or
+  today (`date:`), so a snapshot never turns with the season. Under Reduce Motion there is no
   lean and no rise: the card follows the finger and the turn is a fade.
   The foot: Learn by heart and Hear it sung (`FootAct`, ringed discs
   named beneath, LEARNED with the seal once learned) either side of PRAY,

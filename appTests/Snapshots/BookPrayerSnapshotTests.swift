@@ -38,14 +38,18 @@ struct BookPrayerSnapshotTests {
         return store
     }
 
+    /// The day the pages are drawn on, as the main screens' are, so which
+    /// orders say a prayer never turns with the season the suite runs in
+    private let day = Calendar.current.date(from: DateComponents(year: 2026, month: 10, day: 14, hour: 15))!
+
     @Test func chantAndOrder() throws {
         let store = try store("chant")
         ScreenSnapshot.assertScreen(
-            BookPrayerView(prayerID: "hail_holy_queen", store: store),
+            BookPrayerView(prayerID: "hail_holy_queen", store: store, date: day),
             named: "prayer-page-chant-top"
         )
         ScreenSnapshot.assertScreen(
-            BookPrayerView(prayerID: "hail_holy_queen", store: store, opensAtEnd: true),
+            BookPrayerView(prayerID: "hail_holy_queen", store: store, date: day, opensAtEnd: true),
             named: "prayer-page-chant-end"
         )
     }
@@ -53,7 +57,7 @@ struct BookPrayerSnapshotTests {
     /// The litany's last invocations clear the fixed foot
     @Test func longPrayerEnd() throws {
         ScreenSnapshot.assertScreen(
-            BookPrayerView(prayerID: "litany_loreto", store: try store("long"), opensAtEnd: true),
+            BookPrayerView(prayerID: "litany_loreto", store: try store("long"), date: day, opensAtEnd: true),
             named: "prayer-page-litany-end"
         )
     }
@@ -62,7 +66,7 @@ struct BookPrayerSnapshotTests {
     /// as it goes, the next card rising beneath it
     @Test func dealingToTheNext() throws {
         ScreenSnapshot.assertScreen(
-            BookPrayerView(prayerID: "hail_holy_queen", store: try store("deal"), turnedBy: -120),
+            BookPrayerView(prayerID: "hail_holy_queen", store: try store("deal"), date: day, turnedBy: -120),
             named: "prayer-page-dealing"
         )
     }
@@ -71,9 +75,9 @@ struct BookPrayerSnapshotTests {
     /// order and its place in it, not the prayer's own topic
     @Test func openedFromAnOrder() throws {
         let order = try #require(PrayerBook.order("before_confession"))
-        let id = order.prayerIDs(Date())[2]
+        let id = order.prayerIDs(day)[2]
         ScreenSnapshot.assertScreen(
-            BookPrayerView(prayerID: id, set: .order(order.id, at: 2), store: try store("order")),
+            BookPrayerView(prayerID: id, set: .order(order.id, at: 2), store: try store("order"), date: day),
             named: "prayer-page-from-order"
         )
     }
@@ -86,19 +90,20 @@ struct BookPrayerSnapshotTests {
             BookPrayerView(
                 prayerID: "hail_mary",
                 store: store,
+                date: day,
                 showingNote: "Saved. Find it under Saved on the Prayers tab."
             ),
             named: "prayer-page-learned-note"
         )
         ScreenSnapshot.assertScreen(
-            BookPrayerView(prayerID: "hail_mary", store: store),
+            BookPrayerView(prayerID: "hail_mary", store: store, date: day),
             named: "prayer-page-learned"
         )
     }
 
     @Test func largestText() throws {
         ScreenSnapshot.assertScreen(
-            BookPrayerView(prayerID: "sub_tuum", store: try store("large"))
+            BookPrayerView(prayerID: "sub_tuum", store: try store("large"), date: day)
                 .dynamicTypeSize(DynamicTypeSize.appMaximum),
             named: "prayer-page-xlarge"
         )
@@ -106,7 +111,7 @@ struct BookPrayerSnapshotTests {
 
     @Test func notFound() throws {
         ScreenSnapshot.assertScreen(
-            BookPrayerView(prayerID: "no_such_prayer", store: try store("missing")),
+            BookPrayerView(prayerID: "no_such_prayer", store: try store("missing"), date: day),
             named: "prayer-page-not-found"
         )
     }

@@ -33,34 +33,26 @@ struct BookPrayerView: View {
 
     @Environment(AppRouter.self) private var router
     @Environment(UserSettings.self) private var settings
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private let store: PrayerBookStore
 
+    /// The day the page reads its orders on: which orders say the prayer,
+    /// and an order's prayers in their seasons. Fixed for the page's life.
+    private let day: Date
+
     /// The prayers the cards deal through, read once when the page opens
-    private let deck: PrayerDeck
+    /// and held, so a season turning while it is open never moves the
+    /// place under the reader
+    @State private var deck: PrayerDeck
 
     /// The place in the deck of the card in front; nil for a prayer
     /// outside every set, which has no neighbours
     @State private var position: Int?
     @State private var showsLearn = false
     @State private var keptNote: String?
-
-    /// How far the card in front has travelled across, in points:
-    /// negative toward the next prayer, positive toward the one before
-    @State private var travel: CGFloat
-    /// Whether the drag under way was taken as a deal or left to the scroll
-    @State private var dragIsAcross: Bool?
-    /// True while a finger is on the deck; a drag the system cancels, which
-    /// never ends, lets go of it all the same
-    @GestureState private var dragging = false
-    /// A card on its way out: no drag is taken until it has gone
-    @State private var dealing = false
-    /// The card's opacity during a turn made under Reduce Motion
-    @State private var fade: Double = 1
-    /// Counts the cards dealt, for the tick each one gives
-    @State private var dealt = 0
-    @State private var deckWidth: CGFloat = 337
+    /// A deal asked for by a tap (a sliver, "Swipe for", VoiceOver), which
+    /// the deck plays as it plays a drag
+    @State private var dealRequest: DealDirection?
 
     /// Clears the note after its three seconds; restarted by each note
     @State private var noteClear: Task<Void, Never>?
@@ -69,15 +61,18 @@ struct BookPrayerView: View {
 
     /// Opened scrolled to its end, for a snapshot of the card's foot
     private let opensAtEnd: Bool
+    /// A card part way through its deal, for a snapshot
+    private let turnedBy: CGFloat
 
-    /// A store, an end to open at, a note already showing and a card part
-    /// way through its deal are for the snapshot tests, which draw a page
-    /// without walking to it and never touch the reader's own marks;
-    /// otherwise the page opens on its card, at rest
+    /// A store, a day, an end to open at, a note already showing and a
+    /// card part way through its deal are for the snapshot tests, which
+    /// draw a page without walking to it and never touch the reader's own
+    /// marks; otherwise the page opens on its card, at rest, today
     init(
         prayerID: String,
         set: PrayerSet? = nil,
         store: PrayerBookStore = .shared,
+        date: Date? = nil,
         opensAtEnd: Bool = false,
         showingNote note: String? = nil,
         turnedBy turn: CGFloat = 0
@@ -85,12 +80,14 @@ struct BookPrayerView: View {
         self.prayerID = prayerID
         self.store = store
         self.opensAtEnd = opensAtEnd
-        let deck = PrayerDeck.of(prayerID, in: set, on: Date())
-        self.deck = deck
+        self.turnedBy = turn
+        let day = date ?? Date()
+        self.day = day
+        let deck = PrayerDeck.of(prayerID, in: set, on: day)
+        _deck = State(initialValue: deck)
         _position = State(initialValue: deck.start)
         _keptNote = State(initialValue: note)
         _lastKeptNote = State(initialValue: note ?? " ")
-        _travel = State(initialValue: turn)
     }
 
     private static func prayer(_ id: String) -> BookPrayer? {
@@ -110,13 +107,6 @@ struct BookPrayerView: View {
         return position + 1
     }
 
-    /// The topic as the door to it says it: "All 11 First Prayers", where
-    /// the topic's own name, "The First Prayers", read "All 11 The First
-    /// Prayers"
-    static func doorName(of chapter: PrayerBookChapter) -> String {
-        chapter.topic.hasPrefix("The ") ? String(chapter.topic.dropFirst(4)) : chapter.topic
-    }
-
     /// The painting a prayer's card hangs, here and on the topic's rows:
     /// its own scene (`PrayerBookPainting.prayer`) where the book gives it
     /// one, else its topic's
@@ -130,8 +120,22 @@ struct BookPrayerView: View {
 
             if let prayer {
                 VStack(spacing: 0) {
-                    deckView(prayer)
-                        .padding(.top, 6)
+                    // The drag lives in the deck, so a frame of it redraws
+                    // the deck alone, never this page or its cards
+                    DealDeck(
+                        front: holyCard(prayer, at: position, opensAtEnd: opensAtEnd),
+                        previousCard: previous.flatMap(card(at:)),
+                        nextCard: next.flatMap(card(at:)),
+                        previousEdge: previous.map(edge(at:)),
+                        nextEdge: next.map(edge(at:)),
+                        frontID: "\(position ?? -1)",
+                        request: $dealRequest,
+                        turnedBy: turnedBy,
+                        settle: settle(_:)
+                    )
+                    .overlay(alignment: .top) { savedNote }
+                    .padding(.top, 6)
+
                     PrayerFoot(
                         prayerID: prayer.id,
                         store: store,
@@ -178,9 +182,11 @@ struct BookPrayerView: View {
                         ? "Saved. Find it under Saved on the Prayers tab."
                         : "Removed from Saved.")
                 }
+                // A new card is a new ribbon: dealt from a saved prayer to
+                // one not saved, it must not tick as though it were untied
+                .id(currentID)
             }
         }
-        .sensoryFeedback(.impact(weight: .light), trigger: dealt)
         .sheet(isPresented: $showsLearn) {
             if let prayer {
                 LearnByHeartSheet(prayer: prayer)
@@ -192,96 +198,19 @@ struct BookPrayerView: View {
         }
     }
 
-    // MARK: - The deck
+    // MARK: - The cards
 
-    /// How far through a deal the card in front is, 0 at rest and 1 gone
-    private var progress: CGFloat {
-        min(1, abs(travel) / max(deckWidth, 1))
+    /// The card at a place in the deck, for the deck to hold beneath
+    private func card(at index: Int) -> HolyCard? {
+        Self.prayer(deck.ids[index]).map { holyCard($0, at: index, opensAtEnd: false) }
     }
 
-    /// The card waiting beneath the one in front: the next prayer while the
-    /// front card goes left, the one before while it goes right
-    private var beneath: Int? {
-        if travel < 0 { return next }
-        if travel > 0 { return previous }
-        return nil
-    }
-
-    private func deckView(_ prayer: BookPrayer) -> some View {
-        ZStack {
-            if let beneath, let card = Self.prayer(deck.ids[beneath]) {
-                holyCard(card, at: beneath, opensAtEnd: false)
-                    .scaleEffect(reduceMotion ? 1 : 0.94 + 0.06 * progress)
-                    .opacity(reduceMotion ? 0 : 0.85 + 0.15 * Double(progress))
-                    .allowsHitTesting(false)
-                    .accessibilityHidden(true)
-            }
-
-            holyCard(prayer, at: position, opensAtEnd: opensAtEnd)
-                .id(currentID + "\(position ?? -1)")
-                .offset(x: travel)
-                // Leans into the deal, as a card lifted from a stack does
-                .rotationEffect(.degrees(reduceMotion ? 0 : Double(travel / max(deckWidth, 1)) * 9))
-                // Opaque as it goes: the card beneath never reads through it
-                .opacity(fade)
-        }
-        .padding(.horizontal, 28)
-        .onGeometryChange(for: CGFloat.self) { $0.size.width - 56 } action: { deckWidth = $0 }
-        .overlay(alignment: .leading) { peek(previous, leading: true) }
-        .overlay(alignment: .trailing) { peek(next, leading: false) }
-        .overlay(alignment: .top) { savedNote }
-        // The card's own scroll keeps the vertical drag; a drag that
-        // starts across deals the card
-        .simultaneousGesture(
-            DragGesture(minimumDistance: 14)
-                .updating($dragging) { _, state, _ in state = true }
-                .onChanged { value in
-                    guard !dealing else { return }
-                    if dragIsAcross == nil {
-                        dragIsAcross = abs(value.translation.width) > abs(value.translation.height)
-                    }
-                    guard dragIsAcross == true else { return }
-                    let dx = value.translation.width
-                    // Toward no card, it gives a little and comes back
-                    let hasCard = dx < 0 ? next != nil : previous != nil
-                    travel = hasCard ? dx : dx * 0.25
-                }
-                .onEnded { value in
-                    defer { dragIsAcross = nil }
-                    guard dragIsAcross == true, !dealing else { return }
-                    let dx = value.translation.width
-                    let flung = value.predictedEndTranslation.width
-                    let target = dx < 0 ? next : previous
-                    // A flick counts only the way the card is going: a drag
-                    // left and a flick back right is no deal
-                    let farEnough = abs(dx) > deckWidth / 3
-                    let flungOn = flung * dx > 0 && abs(flung) > deckWidth * 0.6
-                    if let target, farEnough || flungOn {
-                        deal(to: target)
-                    } else {
-                        withAnimation(Motion.settle) { travel = 0 }
-                    }
-                }
-        )
-        // A drag the system took away (the scroll, a call, a sheet) never
-        // ends; when the finger is gone, the card comes back to rest
-        .onChange(of: dragging) { _, isDragging in
-            guard !isDragging else { return }
-            dragIsAcross = nil
-            if !dealing, travel != 0 {
-                withAnimation(Motion.settle) { travel = 0 }
-            }
-        }
-    }
-
-    /// One prayer's card, the one in front or the one beneath it. The card
-    /// is drawn from plain values and redrawn only when they change, never
-    /// for a frame of the drag.
-    private func holyCard(_ prayer: BookPrayer, at index: Int?, opensAtEnd: Bool) -> some View {
+    /// One prayer's card, drawn from plain values
+    private func holyCard(_ prayer: BookPrayer, at index: Int?, opensAtEnd: Bool) -> HolyCard {
         let count = deck.ids.count
         let nextIndex = index.flatMap { $0 < count - 1 ? $0 + 1 : nil }
         let previousIndex = index.flatMap { $0 > 0 ? $0 - 1 : nil }
-        let orders = PrayerBook.orders.filter { $0.prayerIDs(Date()).contains(prayer.id) }
+        let orders = PrayerBook.orders.filter { $0.prayerIDs(day).contains(prayer.id) }
         let facts = HolyCardFacts(
             prayerID: prayer.id,
             title: prayer.title,
@@ -289,7 +218,7 @@ struct BookPrayerView: View {
             content: prayer.content(for: settings.prayerLanguage),
             textSize: max(17, settings.meditationFontSize - 2),
             kicker: deck.name.isEmpty ? nil : index.map { "\(deck.name) · \($0 + 1) OF \(count)" } ?? deck.name,
-            saidIn: orders.map { SaidIn(id: $0.id, title: $0.title(on: Date())) },
+            saidIn: orders.map { SaidIn(id: $0.id, title: $0.title(on: day)) },
             position: index,
             count: count,
             nextTitle: nextIndex.flatMap { Self.prayer(deck.ids[$0])?.title },
@@ -299,8 +228,8 @@ struct BookPrayerView: View {
         )
         let actions = HolyCardActions(
             openOrder: { id in router.push(.prayerOrder(id: id)) },
-            next: { if let nextIndex { deal(to: nextIndex) } },
-            previous: { if let previousIndex { deal(to: previousIndex) } },
+            next: { dealRequest = .next },
+            previous: { dealRequest = .previous },
             all: {
                 // Opened from its set's own page, Back already goes there
                 if let topic = deck.topicToOpen {
@@ -311,44 +240,21 @@ struct BookPrayerView: View {
             }
         )
         return HolyCard(facts: facts, actions: actions)
-            .equatable()
-            .animation(Motion.crossfade, value: settings.prayerLanguagePreference)
     }
 
-    /// The edge of the card before or after this one, peeking in at the
-    /// side of the glass: its painting in a sliver, which a touch deals to.
-    /// Not a button, and hidden from VoiceOver, which has the card's own
-    /// Next prayer and Previous prayer.
-    @ViewBuilder
-    private func peek(_ index: Int?, leading: Bool) -> some View {
-        if let index {
-            let painting = Self.painting(of: deck.ids[index])
-            let shape = UnevenRoundedRectangle(
-                topLeadingRadius: leading ? 0 : 12,
-                bottomLeadingRadius: leading ? 0 : 12,
-                bottomTrailingRadius: leading ? 12 : 0,
-                topTrailingRadius: leading ? 12 : 0,
-                style: .continuous
-            )
-            CachedAssetImage(
-                painting.resolvedAsset,
-                focal: UnitPoint(x: leading ? 0.8 : 0.2, y: painting.focal.y)
-            )
-            .frame(width: 14)
-            .frame(maxHeight: 470)
-            .clipShape(shape)
-            .overlay(shape.strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline))
-            .opacity(0.6)
-            .padding(.vertical, 40)
-            // Answers a touch 44 points across, the sliver drawn at 14
-            .frame(width: 44, alignment: leading ? .leading : .trailing)
-            .contentShape(Rectangle())
-            .onTapGesture { deal(to: index) }
-            .accessibilityHidden(true)
-            // The edges step back while a card is dealt, so the card in
-            // hand never passes beneath them
-            .opacity(travel == 0 ? 1 : 0)
-            .animation(Motion.crossfade, value: travel == 0)
+    /// The painting of the card before or after this one, for the sliver
+    /// at the glass's edge
+    private func edge(at index: Int) -> PrayerBookPainting {
+        Self.painting(of: deck.ids[index])
+    }
+
+    /// The deck has dealt a card: the one it was dealt toward is the page
+    private func settle(_ direction: DealDirection) {
+        guard let target = direction == .next ? next : previous else { return }
+        position = target
+        keptNote = nil
+        if let prayer = Self.prayer(deck.ids[target]) {
+            AccessibilityNotification.Announcement(prayer.title).post()
         }
     }
 
@@ -372,58 +278,6 @@ struct BookPrayerView: View {
             .accessibilityHidden(true)
     }
 
-    // MARK: - Dealing
-
-    /// Deals the card in front away toward the card at `index`: it flies
-    /// off, the card beneath it rises to full, and takes its place, opened
-    /// at its top. Under Reduce Motion the one card fades into the other.
-    private func deal(to index: Int) {
-        guard !dealing else { return }
-        guard deck.ids.indices.contains(index), let target = Self.prayer(deck.ids[index]) else {
-            withAnimation(Motion.settle) { travel = 0 }
-            return
-        }
-        let forward = index > (position ?? -1)
-        dealing = true
-
-        let settle = {
-            var still = Transaction()
-            still.disablesAnimations = true
-            withTransaction(still) {
-                position = index
-                travel = 0
-            }
-            keptNote = nil
-            dealt += 1
-            dealing = false
-            AccessibilityNotification.Announcement(target.title).post()
-        }
-
-        if reduceMotion {
-            withAnimation(.easeIn(duration: 0.14)) {
-                fade = 0
-                travel = 0
-            } completion: {
-                settle()
-                withAnimation(.easeOut(duration: 0.24)) { fade = 1 }
-            }
-            return
-        }
-
-        // A turn begun by a tap starts from rest: nudge the card first, so
-        // the one beneath is there to rise as it goes
-        if travel == 0 {
-            var still = Transaction()
-            still.disablesAnimations = true
-            withTransaction(still) { travel = forward ? -0.5 : 0.5 }
-        }
-        withAnimation(.easeIn(duration: 0.3)) {
-            travel = (forward ? -1 : 1) * deckWidth * 1.15
-        } completion: {
-            settle()
-        }
-    }
-
     // MARK: - Language
 
     /// English, Latin, or both, written to the app's prayer language —
@@ -445,6 +299,274 @@ struct BookPrayerView: View {
             try? await Task.sleep(for: .seconds(3))
             guard !Task.isCancelled else { return }
             keptNote = nil
+        }
+    }
+}
+
+// MARK: - The deck
+
+/// Which way a card is dealt: toward the next prayer or the one before
+enum DealDirection: Equatable {
+    case next, previous
+
+    /// Where a drag that has let go sends the card: the way it went, if it
+    /// went a third of the width or was flung on that way, and there is a
+    /// card that way; else nowhere, and it comes back to rest
+    static func of(
+        dx: CGFloat,
+        flung: CGFloat,
+        width: CGFloat,
+        hasNext: Bool,
+        hasPrevious: Bool
+    ) -> DealDirection? {
+        guard dx != 0 else { return nil }
+        let direction: DealDirection = dx < 0 ? .next : .previous
+        guard direction == .next ? hasNext : hasPrevious else { return nil }
+        let farEnough = abs(dx) > width / 3
+        // A flick counts only the way the card is going: a drag left and
+        // a flick back right is no deal
+        let flungOn = flung * dx > 0 && abs(flung) > width * 0.6
+        return farEnough || flungOn ? direction : nil
+    }
+}
+
+/// The card in front, the card waiting beneath it, and the slivers of the
+/// cards before and after at the glass's edges; a drag across deals the
+/// card in front away. It holds the drag itself, so a frame of the drag
+/// redraws this and nothing above it, and its cards are drawn only when
+/// their facts change.
+private struct DealDeck: View {
+    let front: HolyCard
+    let previousCard: HolyCard?
+    let nextCard: HolyCard?
+    let previousEdge: PrayerBookPainting?
+    let nextEdge: PrayerBookPainting?
+    /// Names the card in front, so a dealt card is a new card, opened at
+    /// its top
+    let frontID: String
+    @Binding var request: DealDirection?
+    let turnedBy: CGFloat
+    /// Told once a card has gone, with the way it went
+    let settle: (DealDirection) -> Void
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    /// How far the card in front has travelled across, in points:
+    /// negative toward the next prayer, positive toward the one before
+    @State private var travel: CGFloat
+    /// Whether the drag under way was taken as a deal or left to the scroll
+    @State private var dragIsAcross: Bool?
+    /// True while a finger is on the deck; a drag the system cancels, which
+    /// never ends, lets go of it all the same
+    @GestureState private var dragging = false
+    /// A card on its way out: no drag is taken until it has gone
+    @State private var dealing = false
+    /// The card's opacity during a turn made under Reduce Motion
+    @State private var fade: Double = 1
+    /// Counts the cards dealt, for the tick each one gives
+    @State private var dealt = 0
+    @State private var width: CGFloat = 337
+
+    init(
+        front: HolyCard,
+        previousCard: HolyCard?,
+        nextCard: HolyCard?,
+        previousEdge: PrayerBookPainting?,
+        nextEdge: PrayerBookPainting?,
+        frontID: String,
+        request: Binding<DealDirection?>,
+        turnedBy: CGFloat,
+        settle: @escaping (DealDirection) -> Void
+    ) {
+        self.front = front
+        self.previousCard = previousCard
+        self.nextCard = nextCard
+        self.previousEdge = previousEdge
+        self.nextEdge = nextEdge
+        self.frontID = frontID
+        self._request = request
+        self.turnedBy = turnedBy
+        self.settle = settle
+        _travel = State(initialValue: turnedBy)
+    }
+
+    /// How far through a deal the card in front is, 0 at rest and 1 gone
+    private var progress: CGFloat {
+        min(1, abs(travel) / max(width, 1))
+    }
+
+    /// The card waiting beneath the one in front: the next prayer while the
+    /// front card goes left, the one before while it goes right
+    private var beneath: HolyCard? {
+        if travel < 0 { return nextCard }
+        if travel > 0 { return previousCard }
+        return nil
+    }
+
+    var body: some View {
+        ZStack {
+            if let beneath {
+                beneath
+                    .equatable()
+                    .scaleEffect(reduceMotion ? 1 : 0.94 + 0.06 * progress)
+                    .opacity(reduceMotion ? 0 : 0.85 + 0.15 * Double(progress))
+                    .allowsHitTesting(false)
+                    .accessibilityHidden(true)
+            }
+
+            front
+                .equatable()
+                .id(frontID)
+                .offset(x: travel)
+                // Leans into the deal, as a card lifted from a stack does
+                .rotationEffect(.degrees(reduceMotion ? 0 : Double(travel / max(width, 1)) * 9))
+                // Opaque as it goes: the card beneath never reads through it
+                .opacity(fade)
+        }
+        .padding(.horizontal, 28)
+        .onGeometryChange(for: CGFloat.self) { $0.size.width - 56 } action: { width = $0 }
+        .overlay(alignment: .leading) { edge(previousEdge, leading: true) }
+        .overlay(alignment: .trailing) { edge(nextEdge, leading: false) }
+        .sensoryFeedback(.impact(weight: .light), trigger: dealt)
+        // The card's own scroll keeps the vertical drag; a drag that
+        // starts across deals the card
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 14)
+                .updating($dragging) { _, state, _ in state = true }
+                .onChanged { value in
+                    guard !dealing else { return }
+                    if dragIsAcross == nil {
+                        dragIsAcross = abs(value.translation.width) > abs(value.translation.height)
+                    }
+                    guard dragIsAcross == true else { return }
+                    let dx = value.translation.width
+                    // Toward no card, it gives a little and comes back
+                    let hasCard = dx < 0 ? nextCard != nil : previousCard != nil
+                    travel = hasCard ? dx : dx * 0.25
+                }
+                .onEnded { value in
+                    defer { dragIsAcross = nil }
+                    guard dragIsAcross == true, !dealing else { return }
+                    if let direction = DealDirection.of(
+                        dx: value.translation.width,
+                        flung: value.predictedEndTranslation.width,
+                        width: width,
+                        hasNext: nextCard != nil,
+                        hasPrevious: previousCard != nil
+                    ) {
+                        deal(direction)
+                    } else {
+                        withAnimation(Motion.settle) { travel = 0 }
+                    }
+                }
+        )
+        // A drag the system took away (the scroll, a call, a sheet) never
+        // ends; when the finger is gone, the card comes back to rest
+        .onChange(of: dragging) { _, isDragging in
+            guard !isDragging else { return }
+            dragIsAcross = nil
+            if !dealing, travel != 0 {
+                withAnimation(Motion.settle) { travel = 0 }
+            }
+        }
+        .onChange(of: request) { _, asked in
+            guard let asked else { return }
+            request = nil
+            deal(asked)
+        }
+    }
+
+    /// The edge of the card before or after this one, peeking in at the
+    /// side of the glass: its painting in a sliver, which a touch deals to.
+    /// Not a button, and hidden from VoiceOver, which has the card's own
+    /// Next prayer and Previous prayer.
+    @ViewBuilder
+    private func edge(_ painting: PrayerBookPainting?, leading: Bool) -> some View {
+        if let painting {
+            let shape = UnevenRoundedRectangle(
+                topLeadingRadius: leading ? 0 : 12,
+                bottomLeadingRadius: leading ? 0 : 12,
+                bottomTrailingRadius: leading ? 12 : 0,
+                topTrailingRadius: leading ? 12 : 0,
+                style: .continuous
+            )
+            CachedAssetImage(
+                painting.resolvedAsset,
+                focal: UnitPoint(x: leading ? 0.8 : 0.2, y: painting.focal.y)
+            )
+            .frame(width: 14)
+            .frame(maxHeight: 470)
+            .clipShape(shape)
+            .overlay(shape.strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline))
+            .opacity(0.6)
+            .padding(.vertical, 40)
+            // Answers a touch 44 points across, the sliver drawn at 14
+            .frame(width: 44, alignment: leading ? .leading : .trailing)
+            .contentShape(Rectangle())
+            .onTapGesture { deal(leading ? .previous : .next) }
+            .accessibilityHidden(true)
+            // The edges step back while a card is dealt, so the card in
+            // hand never passes beneath them
+            .opacity(travel == 0 ? 1 : 0)
+            .animation(Motion.crossfade, value: travel == 0)
+        }
+    }
+
+    /// Deals the card in front away: it flies off, the card beneath it
+    /// rises to full and takes its place, opened at its top. Under Reduce
+    /// Motion the one card fades into the other.
+    private func deal(_ direction: DealDirection) {
+        guard !dealing else { return }
+        guard (direction == .next ? nextCard : previousCard) != nil else {
+            withAnimation(Motion.settle) { travel = 0 }
+            return
+        }
+        dealing = true
+
+        let done = {
+            var still = Transaction()
+            still.disablesAnimations = true
+            withTransaction(still) {
+                settle(direction)
+                travel = 0
+            }
+            dealt += 1
+            dealing = false
+        }
+
+        if reduceMotion {
+            withAnimation(.easeIn(duration: 0.14)) {
+                fade = 0
+                travel = 0
+            } completion: {
+                done()
+                withAnimation(.easeOut(duration: 0.24)) { fade = 1 }
+            }
+            return
+        }
+
+        let away = (direction == .next ? -1 : 1) * width * 1.15
+        let flyOff = {
+            withAnimation(.easeIn(duration: 0.3)) {
+                travel = away
+            } completion: {
+                done()
+            }
+        }
+
+        // A turn begun by a tap starts from rest: nudge the card first and
+        // let that be drawn, so the card beneath is there at 0.94 to rise
+        // as the front one goes
+        if travel == 0 {
+            var still = Transaction()
+            still.disablesAnimations = true
+            withTransaction(still) { travel = direction == .next ? -0.5 : 0.5 }
+            Task { @MainActor in
+                try? await Task.sleep(for: .milliseconds(16))
+                flyOff()
+            }
+        } else {
+            flyOff()
         }
     }
 }
@@ -702,7 +824,9 @@ private struct HolyCard: View, Equatable {
                 .foregroundColor(AppColors.textSecondary)
                 .multilineTextAlignment(.center)
                 .frame(minHeight: minHeight)
-                .contentShape(Rectangle())
+                // Drawn close to All on two lines, it still answers a
+                // touch 44 points tall
+                .contentShape(Rectangle().inset(by: -max(0, 44 - minHeight) / 2))
         }
         .buttonStyle(QuietGlyphButtonStyle())
         .accessibilityLabel("Next prayer, \(next)")
