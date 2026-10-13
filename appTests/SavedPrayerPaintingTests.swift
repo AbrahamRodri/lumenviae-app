@@ -18,11 +18,11 @@ struct SavedPrayerPaintingTests {
         #expect(SavedPrayerPainting.of("hail_mary").asset == "joyful_annunciation")
     }
 
-    @Test func aPrayerWithNoScenePaintsItsTopic() throws {
-        let topic = try #require(PrayerBook.homeChapter(of: "act_of_faith"))
-        #expect(SavedPrayerPainting.scene(of: "act_of_faith") == nil)
-        #expect(SavedPrayerPainting.of("act_of_faith") == PrayerBookPainting.topic(topic))
-        #expect(PrayerBookPainting.prayer("act_of_faith") == PrayerBookPainting.topic(topic))
+    /// A prayer the table does not name (one added to the book later)
+    /// still hangs a painting rather than nothing
+    @Test func aPrayerWithNoScenePaintsSomething() {
+        #expect(SavedPrayerPainting.scene(of: "no_such_prayer") == nil)
+        #expect(PrayerBookPainting.prayer("no_such_prayer") == PrayerBookPainting.saved)
     }
 
     /// Every scene names a prayer the book prints, so a misspelt id
@@ -31,6 +31,22 @@ struct SavedPrayerPaintingTests {
         #expect(SavedPrayerPainting.scened.isSubset(of: Set(PrayerBook.prayers.keys)))
         for id in SavedPrayerPainting.scened {
             #expect(SavedPrayerPainting.of(id) == PrayerBookPainting.scenes[id], "\(id)")
+        }
+    }
+
+    /// Every prayer the book prints has a scene of its own
+    @Test func everyPrayerHasAScene() {
+        let missing = Set(PrayerBook.prayers.keys).subtracting(SavedPrayerPainting.scened)
+        #expect(missing.isEmpty, "\(missing.sorted())")
+    }
+
+    /// A topic's prayers are swiped through one card at a time, so no two
+    /// side by side hang the same painting
+    @Test func noTwoNeighboursInATopicShareAPainting() {
+        for chapter in PrayerBook.chapters {
+            for (a, b) in zip(chapter.prayerIDs, chapter.prayerIDs.dropFirst()) {
+                #expect(PrayerBookPainting.prayer(a).asset != PrayerBookPainting.prayer(b).asset, "\(chapter.id): \(a), \(b)")
+            }
         }
     }
 

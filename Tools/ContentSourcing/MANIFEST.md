@@ -80,6 +80,32 @@ Generated from `sources.py` by `build_manifest.py`; edit there. Machine-readable
 | `prayer_tobias_angel` | Before a Journey | Tobias and the Angel | Workshop of Andrea del Verrocchio | c. 1470–75 | The National Gallery, London | Public domain | verified |
 | `prayer_healing_sick` | For the Sick; Prayer to St Peregrine | Christ Healing the Paralytic at the Pool of Bethesda | Bartolomé Esteban Murillo (1617–1682) | 1667–70 | The National Gallery, London | Public domain | verified |
 | `prayer_supper_emmaus` | Grace before and after Meals; the At Meals order on Explore | Supper at Emmaus | Caravaggio (1571–1610) | 1601 | The National Gallery, London | Public domain | verified |
+| `virtue_faith_isaac` | Prayers: The Act of Faith | The Sacrifice of Isaac | Caravaggio (1571–1610) | c. 1603 | Uffizi, Florence | Public domain | verified |
+| `virtue_hope_dove` | Prayers: The Act of Hope | The Return of the Dove to the Ark | John Everett Millais (1829–1896) | 1851 | Ashmolean Museum, Oxford | Public domain | verified |
+| `virtue_charity_samaritan` | Prayers: The Act of Charity | The Good Samaritan | Jacopo Bassano (c. 1510–1592) | c. 1562–63 | The National Gallery, London | Public domain | verified |
+| `jesus_light_of_the_world` | Prayers: Act of Consecration to the Sacred Heart | The Light of the World | William Holman Hunt (1827–1910) | 1851–53 | Keble College, Oxford | Public domain | verified |
+| `saint_matthew_calling` | Prayers: Some Definite Service (Newman) | The Calling of Saint Matthew | Caravaggio (1571–1610) | 1599–1600 | San Luigi dei Francesi, Rome | Public domain | verified |
+| `jesus_washing_feet` | Prayers: Jesus Meek and Humble of Heart; Litany of Humility | Jesus Washing Peter's Feet | Ford Madox Brown (1821–1893) | 1852–56 | Tate Britain, London | Public domain | verified |
+| `saint_francis_desert` | Prayers: My God and My All; the Peace Prayer | Saint Francis in the Desert | Giovanni Bellini (c. 1430–1516) | c. 1476–78 | The Frick Collection, New York | Public domain | verified |
+| `saint_ambrose` | Prayers: Prayer of St Ambrose before Mass | Saint Ambrose | Giovanni di Paolo (c. 1398–1482) | 1465–70 | The Metropolitan Museum of Art, New York | CC0 | verified |
+| `saint_bonaventure` | Prayers: Prayer of St Bonaventure after Mass (Transfige) | The Prayer of Saint Bonaventure about the Selection of the New Pope | Francisco de Zurbarán (1598–1664) | 1628–29 | Gemäldegalerie Alte Meister, Dresden | Public domain | verified |
+| `saint_peter_tears` | Prayers: Prayer before Confession | Saint Peter in Tears | El Greco (1541–1614) | c. 1587–96 | Bowes Museum (Google Art Project) | Public domain | verified |
+| `christ_and_the_adulteress` | Prayers: Making Your Confession | Christ and the Woman Taken in Adultery | Lorenzo Lotto (c. 1480–1556) | 1546–55 | Museo Antico Tesoro della Santa Casa, Loreto | Public domain | verified |
+| `saint_jerome_penitent` | Prayers: I Confess (Confiteor) | Saint Jerome | Jusepe de Ribera (1591–1652) | 1640s | Cleveland Museum of Art | Public domain | verified |
+| `communion_of_apostles` | Prayers: Act of Spiritual Communion | The Communion of the Apostles | Joos van Wassenhove (c. 1410–c. 1480) | 1473–74 | Galleria Nazionale delle Marche, Urbino | CC0 | verified |
+| `last_supper_juanes` | Prayers: O Sacred Banquet | The Last Supper | Juan de Juanes (c. 1507–1579) | c. 1562 | Museo del Prado, Madrid | Public domain | verified |
+| `pentecost_maino` | Prayers: Come, Creator Spirit; The Secret of Sanctity | Pentecost | Juan Bautista Maíno (1581–1649) | 1620–25 | Museo del Prado, Madrid | Public domain | verified |
+| `jesus_healing_blind` | Prayers: The Jesus Prayer; My Jesus, Mercy | Christ Healing the Blind | El Greco (1541–1614) | c. 1570 | The Metropolitan Museum of Art, New York | CC0 | verified |
+| `crucifixion_mond` | Prayers: Offering of the Precious Blood; the Chaplet of Divine Mercy | The Mond Crucifixion | Raphael (1483–1520) | c. 1502–03 | The National Gallery, London | Public domain | verified |
+| `children_blessed` | Prayers: A Parent's Prayer for Their Children | Christ Blessing the Children | Lucas Cranach the Elder (1472–1553) | after 1537 | Statens Museum for Kunst, Copenhagen | Public domain | verified |
+| `tribute_money` | Prayers: For Our Country | The Tribute Money | Titian (c. 1488–1576) | c. 1560–68 | The National Gallery, London | Public domain | verified |
+| `shepherds_annunciation` | Prayers: For Peace (Da Pacem) | The Annunciation to the Shepherds | Jacopo Bassano (c. 1510–1592) | c. 1555–60 | National Gallery of Art, Washington | CC0 | verified |
+| `saint_gertrude` | Prayers: St Gertrude's Offering for the Holy Souls | Saint Gertrude | Miguel Cabrera (1695–1768) | 18th century | Dallas Museum of Art | Public domain | verified |
+| `saint_teresa_purgatory` | Prayers: Let Nothing Disturb Thee; For All the Faithful Departed | Saint Teresa of Ávila Interceding for Souls in Purgatory | Peter Paul Rubens (1577–1640) | c. 1630 | The Metropolitan Museum of Art, New York | CC0 | verified |
+| `saint_ignatius` | Prayers: Take, O Lord, and Receive; Prayer for Generosity | Saint Ignatius of Loyola | Peter Paul Rubens (1577–1640) | 1610–12 | Norton Simon Museum, Pasadena | Public domain | verified |
+| `apostles_calling_duccio` | Prayers: Prayer of St Richard of Chichester | The Calling of the Apostles Peter and Andrew | Duccio di Buoninsegna (c. 1255–1319) | 1308–11 | National Gallery of Art, Washington | CC0 | verified |
+| `saint_jude` | Prayers: Prayer to St Jude | Saint Jude Thaddeus | El Greco (1541–1614) | c. 1610–14 | Museo del Greco, Toledo (Google Art Project) | Public domain | verified |
+| `saint_benedict` | Prayers: The Verses of the St Benedict Medal | Saint Benedict Blessing the Bread | Juan Rizi (1600–1681) | c. 1655 | Museo del Prado, Madrid | Public domain | verified |
 
 Alternates and reasons:
 
@@ -144,6 +170,32 @@ Alternates and reasons:
 - `prayer_tobias_angel`: Raphael walking beside the young Tobias on his road: the traveller's prayer for an angel's company.
 - `prayer_healing_sick`: Christ bending to the sick man who had no one to help him: the prayer for the sick, where the Death of St Joseph heads the topic.
 - `prayer_supper_emmaus`: Christ blessing the bread at table, and the two knowing Him: grace at a meal.
+- `virtue_faith_isaac`: Abraham, the father of faith, obeying to the last: the act of faith set as Scripture first sets it.
+- `virtue_hope_dove`: Noah's daughters holding the dove come back with the olive leaf: hope of what is promised. The arched top is cut away.
+- `virtue_charity_samaritan`: Love of neighbour as Christ told it: the Samaritan lifting the wounded man.
+- `jesus_light_of_the_world`: Christ knocking at the door of the heart with His lamp: 'Behold, I stand at the gate and knock'; the heart given to Him.
+- `saint_matthew_calling`: Christ pointing at the tax collector at his table: each called to a service of his own.
+- `jesus_washing_feet`: The Lord kneeling at Peter's feet: 'learn of me, because I am meek and humble of heart'.
+- `saint_francis_desert`: Francis stepping out into the light with open arms: 'Deus meus et omnia', the prayer that is his.
+- `saint_ambrose`: The bishop of Milan in his mitre with his book: the saint whose prayer it is. CC0 from the Met.
+- `saint_bonaventure`: The Seraphic Doctor kneeling in prayer, an angel above him: the saint whose prayer it is.
+- `saint_peter_tears`: Peter weeping for his denial, the keys at his belt: sorrow for sin before the sacrament.
+- `christ_and_the_adulteress`: 'Neither will I condemn thee. Go, and now sin no more': the words the penitent comes to hear. An autograph replica of the Louvre picture.
+- `saint_jerome_penitent`: The penitent saint with the cross and the skull: 'through my fault, through my fault'.
+- `communion_of_apostles`: Christ Himself giving the Host to the kneeling apostles: the communion the prayer longs for.
+- `last_supper_juanes`: Christ raising the Host at the table: 'O sacred banquet, in which Christ is received'. The gilt frame is cut away.
+- `pentecost_maino`: The Dove over Our Lady and the Apostles, the flames on their heads: a second Pentecost so the Holy Spirit's prayers do not stand under one picture.
+- `jesus_healing_blind`: 'Jesus, Son of David, have mercy on me': the blind man's cry, which the Jesus Prayer repeats. CC0 from the Met.
+- `crucifixion_mond`: Angels catching the blood and water from Christ's wounds in chalices: the offering of the Precious Blood, and the mercy the chaplet asks. The arched top's corners are cut away.
+- `children_blessed`: Mothers bringing their children to be blessed: 'Suffer the little children to come unto me'.
+- `tribute_money`: 'Render to Caesar the things that are Caesar's, and to God the things that are God's': the prayer for one's country and its rulers.
+- `shepherds_annunciation`: The angel over the shepherds at night: 'on earth peace to men of good will'. CC0 from the National Gallery of Art.
+- `saint_gertrude`: The saint with the Child in her heart and her book: the woman whose offering it is.
+- `saint_teresa_purgatory`: Teresa kneeling before Christ as souls rise from Purgatory: her own 'Nada te turbe', and the prayer for all the faithful departed. CC0 from the Met.
+- `saint_ignatius`: The saint in his vestments, eyes raised, hand on the book of the Society: the Suscipe and the prayer for generosity are his.
+- `apostles_calling_duccio`: Christ calling the fishermen from their boat: 'to follow Thee more nearly'. CC0 from the National Gallery of Art.
+- `saint_jude`: The apostle with his halberd: the saint the prayer asks.
+- `saint_benedict`: Benedict blessing the poisoned bread, the miracle the medal's 'drink thou thy own poison' remembers.
 
 Target format: 1600 px on the long edge, progressive JPEG, 300–800 KB; one 1x image per imageset like the existing ones.
 

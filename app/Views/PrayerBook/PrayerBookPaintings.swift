@@ -177,11 +177,11 @@ struct PrayerBookPainting: Equatable {
         return saved
     }
 
-    /// The prayers that speak of a scene, a saint or a mystery of their
-    /// own. A painting stands over more than one prayer only where they
-    /// share its subject: the Sacred Heart's acts, Our Lady of Sorrows'
-    /// prayers. The sources and licences are in
-    /// Tools/ContentSourcing/sources.py.
+    /// Every prayer's scene: the mystery, saint or story it speaks of. A
+    /// painting stands over more than one prayer only where they share
+    /// its subject, and never over two prayers side by side in a topic,
+    /// since the prayer pages are swiped through one card at a time. The
+    /// sources and licences are in Tools/ContentSourcing/sources.py.
     static let scenes: [String: PrayerBookPainting] = {
         func p(_ asset: String, _ x: Double, _ y: Double, _ caption: String) -> PrayerBookPainting {
             PrayerBookPainting(asset: asset, focal: UnitPoint(x: x, y: y), caption: caption)
@@ -206,7 +206,14 @@ struct PrayerBookPainting: Equatable {
         let family = p("prayer_holy_family", 0.6, 0.4, "The Holy Family")
         let aquinas = p("saint_thomas_aquinas", 0.5, 0.3, "Saint Thomas Aquinas")
         let david = p("psalm_king_david", 0.5, 0.25, "King David")
-        let night = p("hour_night", 0.5, 0.4, "Night Prayers")
+        let night = p("hour_night", 0.5, 0.4, "The Penitent Magdalen")
+        let blind = p("jesus_healing_blind", 0.5, 0.4, "Christ Healing the Blind")
+        let angel = p("devotion_guardian_angels", 0.5, 0.3, "The Guardian Angel")
+        let baptism = p("luminous_baptism", 0.5, 0.3, "The Baptism of Christ")
+        let teresa = p("saint_teresa_purgatory", 0.5, 0.35, "Saint Teresa Interceding for the Souls in Purgatory")
+        let mond = p("crucifixion_mond", 0.5, 0.3, "The Mond Crucifixion")
+        let francis = p("saint_francis_desert", 0.6, 0.6, "Saint Francis in the Desert")
+        let ignatius = p("saint_ignatius", 0.5, 0.3, "Saint Ignatius of Loyola")
         let emmaus = p("prayer_supper_emmaus", 0.5, 0.35, "The Supper at Emmaus")
         let healing = p("prayer_healing_sick", 0.45, 0.4, "Christ Healing the Sick")
         let allSaints = p("feast_all_saints", 0.5, 0.3, "The Adoration of the Trinity")
@@ -224,7 +231,7 @@ struct PrayerBookPainting: Equatable {
             "morning_offering": p("hour_morning", 0.5, 0.35, "Morning Prayers"),
             "benedictus": p("saint_john_baptist_birth", 0.65, 0.6, "The Birth of St John the Baptist"),
             "grace_before": emmaus,
-            "grace_after": emmaus,
+            "grace_after": p("luminous_eucharist", 0.5, 0.35, "The Last Supper"),
             "actiones_nostras": carpenter,
             "aquinas_before_study": aquinas,
             "examen": night,
@@ -233,15 +240,15 @@ struct PrayerBookPainting: Equatable {
             "visita_quaesumus": family,
             // Short Prayers
             "sweet_heart": sacredHeart,
-            "sacred_heart_trust": sacredHeart,
-            "jesus_meek": sacredHeart,
+            "sacred_heart_trust": p("jesus_good_shepherd", 0.4, 0.45, "The Child Jesus as the Good Shepherd"),
+            "jesus_meek": p("jesus_washing_feet", 0.5, 0.4, "Jesus Washing Peter's Feet"),
             "my_lord_and_my_god": p("easter_saint_thomas", 0.4, 0.4, "The Incredulity of Saint Thomas"),
             "o_sacrament_most_holy": host,
-            "blessed_be_conception": immaculate,
+            "blessed_be_conception": p("season_advent", 0.5, 0.25, "The Immaculate Conception"),
             "totus_tuus": atPrayer,
             "st_joseph_pray": joseph,
             "jmj": family,
-            "jmj_heart_and_soul": family,
+            "jmj_heart_and_soul": happyDeath,
             "holy_spirit_enlighten": pentecost,
             // Holy Mass and Communion
             "aquinas_before_mass": aquinas,
@@ -251,31 +258,31 @@ struct PrayerBookPainting: Equatable {
             "miserere": david,
             "beati_quorum": david,
             // The Blessed Sacrament
-            "adoro_te": host,
-            "spiritual_communion": host,
-            "o_sacrum_convivium": host,
-            "ave_verum": host,
+            "adoro_te": p("topic_blessed_sacrament", 0.5, 0.45, "The Disputation of the Holy Sacrament"),
+            "spiritual_communion": p("communion_of_apostles", 0.5, 0.5, "The Communion of the Apostles"),
+            "o_sacrum_convivium": p("last_supper_juanes", 0.5, 0.35, "The Last Supper"),
+            "ave_verum": p("mass_lamb_of_god", 0.5, 0.3, "The Adoration of the Mystic Lamb"),
             // The Holy Spirit
             "come_holy_ghost": pentecost,
-            "veni_creator": pentecost,
+            "veni_creator": p("pentecost_maino", 0.5, 0.3, "Pentecost"),
             "veni_sancte_spiritus": pentecost,
             // Our Lord
             "litany_holy_name": holyName,
-            "jesus_prayer": holyName,
+            "jesus_prayer": blind,
             "golden_arrow": holyName,
             "infant_of_prague": p("jesus_good_shepherd", 0.4, 0.45, "The Child Jesus as the Good Shepherd"),
             "litany_sacred_heart": sacredHeart,
-            "consecration_sacred_heart": sacredHeart,
-            "reparation_sacred_heart": sacredHeart,
+            "consecration_sacred_heart": p("jesus_light_of_the_world", 0.5, 0.3, "The Light of the World"),
+            "reparation_sacred_heart": p("sorrowful_crowning", 0.5, 0.3, "The Crowning with Thorns"),
             "efficacious_novena": sacredHeart,
             "litany_precious_blood": blood,
-            "precious_blood_offering": blood,
+            "precious_blood_offering": mond,
             "en_ego": p("sorrowful_crucifixion", 0.5, 0.3, "Christ Crucified"),
             "christ_the_king": p("feast_christ_the_king", 0.5, 0.3, "Christ the King"),
             "anima_christi": p("jesus_anima_christi", 0.5, 0.3, "Christ Embracing Saint Bernard"),
             // Our Lady
             "hail_holy_queen": p("glorious_coronation", 0.5, 0.12, "The Coronation of Our Lady"),
-            "litany_loreto": rosary,
+            "litany_loreto": p("mary_sistine_madonna", 0.5, 0.25, "The Sistine Madonna"),
             "alma_redemptoris": antiphon(.almaRedemptoris),
             "ave_regina_caelorum": antiphon(.aveReginaCaelorum),
             "regina_caeli": reginaCaeli,
@@ -289,9 +296,9 @@ struct PrayerBookPainting: Equatable {
             "sub_tuum": mercy,
             "memorare": p("glorious_assumption", 0.5, 0.3, "The Assumption"),
             "o_domina_mea": atPrayer,
-            "three_hail_marys": atPrayer,
+            "three_hail_marys": p("feast_annunciation", 0.7, 0.5, "The Annunciation"),
             "miraculous_medal": immaculate,
-            "mary_after_communion": atPrayer,
+            "mary_after_communion": p("joyful_visitation", 0.5, 0.3, "The Visitation"),
             "perpetual_help": mercy,
             "our_lady_of_good_counsel": p("mary_sistine_madonna", 0.5, 0.25, "The Sistine Madonna"),
             "our_lady_of_lourdes": immaculate,
@@ -300,11 +307,11 @@ struct PrayerBookPainting: Equatable {
             "our_lady_of_mount_carmel": carmel,
             "stabat_mater": p("seven_sorrows_calvary", 0.5, 0.35, "Our Lady at the Foot of the Cross"),
             "our_lady_of_sorrows": sorrows,
-            "litany_seven_sorrows": sorrows,
-            "sorrows_closing_prayer": sorrows,
+            "litany_seven_sorrows": p("seven_sorrows_pieta", 0.5, 0.35, "The Pietà"),
+            "sorrows_closing_prayer": p("seven_sorrows_calvary", 0.5, 0.35, "Our Lady at the Foot of the Cross"),
             // St Joseph
             "ad_te_beate_ioseph": joseph,
-            "memorare_st_joseph": joseph,
+            "memorare_st_joseph": family,
             "litany_st_joseph": joseph,
             "st_joseph_workers": carpenter,
             "st_joseph_happy_death": happyDeath,
@@ -314,7 +321,7 @@ struct PrayerBookPainting: Equatable {
             "litany_of_the_saints": allSaints,
             "st_anne": p("topic_first_prayers", 0.5, 0.3, "St Anne teaching the Virgin"),
             "st_anthony": p("saint_anthony", 0.5, 0.35, "Saint Anthony of Padua"),
-            "st_peregrine": healing,
+            "st_peregrine": p("sorrowful_crucifixion", 0.5, 0.3, "Christ Crucified"),
             "st_dominic_o_lumen": rosary,
             "st_francis_before_crucifix": p("topic_short_prayers", 0.5, 0.3, "Saint Francis in Meditation"),
             // Thanksgiving
@@ -324,12 +331,62 @@ struct PrayerBookPainting: Equatable {
             "conversion_of_sinners": p("saint_paul_conversion", 0.5, 0.6, "The Conversion of Saint Paul"),
             "rosary_closing_prayer": rosary,
             "prayer_for_family": family,
-            "parents_for_children": family,
+            "parents_for_children": p("children_blessed", 0.5, 0.4, "Christ Blessing the Children"),
             // The Sick and the Dying
             "prayer_for_the_sick": healing,
-            "happy_death": happyDeath,
+            "happy_death": night,
             // In Time of Need
-            "prayer_for_travel": p("prayer_tobias_angel", 0.5, 0.3, "Tobias and the Angel")
+            "prayer_for_travel": p("prayer_tobias_angel", 0.5, 0.3, "Tobias and the Angel"),
+            // The rest, each its own scene: the virtues, the saints whose
+            // prayers they are, the Holy Spirit, the Sacrament, the dead
+            "act_of_faith": p("virtue_faith_isaac", 0.45, 0.3, "The Sacrifice of Isaac"),
+            "act_of_hope": p("virtue_hope_dove", 0.5, 0.2, "The Return of the Dove to the Ark"),
+            "act_of_charity": p("virtue_charity_samaritan", 0.5, 0.5, "The Good Samaritan"),
+            "after_confession": healing,
+            "angels_prayer_fatima": angel,
+            "pardon_prayer": angel,
+            "before_confession": p("saint_peter_tears", 0.5, 0.3, "Saint Peter in Tears"),
+            "examination_of_conscience": night,
+            "the_confession": p("christ_and_the_adulteress", 0.4, 0.4, "Christ and the Woman Taken in Adultery"),
+            "confiteor": p("saint_jerome_penitent", 0.5, 0.3, "Saint Jerome"),
+            "breathe_in_me": baptism,
+            "seven_gifts": nicene,
+            "secret_of_sanctity": p("pentecost_maino", 0.5, 0.3, "Pentecost"),
+            "litany_holy_ghost": baptism,
+            "st_patrick_breastplate": nicene,
+            "da_pacem": p("shepherds_annunciation", 0.5, 0.25, "The Annunciation to the Shepherds"),
+            "de_profundis": david,
+            "requiem_aeternam": p("last_judgment", 0.5, 0.3, "The Last Judgement"),
+            "fidelium_deus": teresa,
+            "deceased_parents": p("devotion_holy_souls", 0.5, 0.4, "The Day of the Dead"),
+            "st_gertrude": p("saint_gertrude", 0.5, 0.35, "Saint Gertrude"),
+            "divine_mercy_chaplet": mond,
+            "jesus_i_trust_in_thee": p("topic_needs", 0.5, 0.35, "Christ in the Storm on the Sea of Galilee"),
+            "my_jesus_mercy": blind,
+            "my_jesus_i_love_thee": p("jesus_anima_christi", 0.5, 0.3, "Christ Embracing Saint Bernard"),
+            "my_god_and_my_all": francis,
+            "peace_prayer": francis,
+            "divine_praises": p("topic_blessed_sacrament", 0.5, 0.45, "The Disputation of the Holy Sacrament"),
+            "litany_blessed_sacrament": host,
+            "st_alphonsus_visit": host,
+            "o_salutaris": p("topic_holy_mass", 0.5, 0.5, "The Mass at Bolsena"),
+            "tantum_ergo": p("luminous_eucharist", 0.5, 0.35, "The Last Supper"),
+            "lead_kindly_light": p("topic_feasts_seasons", 0.5, 0.4, "The Adoration of the Magi"),
+            "newman_definite_service": p("saint_matthew_calling", 0.3, 0.45, "The Calling of Saint Matthew"),
+            "litany_of_humility": p("jesus_washing_feet", 0.5, 0.4, "Jesus Washing Peter's Feet"),
+            "nada_te_turbe": teresa,
+            "abandonment_foucauld": p("sorrowful_agony", 0.5, 0.3, "The Agony in the Garden"),
+            "generosity_ignatius": ignatius,
+            "suscipe": ignatius,
+            "o_jesus_living_in_mary": p("joyful_visitation", 0.5, 0.3, "The Visitation"),
+            "radiating_christ": p("luminous_transfiguration", 0.5, 0.25, "The Transfiguration"),
+            "st_richard": p("apostles_calling_duccio", 0.5, 0.45, "The Calling of Peter and Andrew"),
+            "prayer_for_our_country": p("tribute_money", 0.5, 0.35, "The Tribute Money"),
+            "prayer_for_the_pope": p("topic_for_the_living", 0.5, 0.6, "The Delivery of the Keys"),
+            "st_jude": p("saint_jude", 0.5, 0.3, "Saint Jude Thaddeus"),
+            "st_benedict_medal": p("saint_benedict", 0.4, 0.35, "Saint Benedict"),
+            "st_ambrose_before_mass": p("saint_ambrose", 0.5, 0.3, "Saint Ambrose"),
+            "transfige": p("saint_bonaventure", 0.5, 0.4, "Saint Bonaventure")
         ]
     }()
 }
