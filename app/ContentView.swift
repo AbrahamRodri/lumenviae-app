@@ -88,16 +88,11 @@ struct ContentView: View {
 
                     tabContent
                 }
+                .modifier(ChantPlayerRoom(height: chantPlayerRoom))
                 .navigationDestination(for: AppRoute.self) { route in
                     destinationView(for: route)
+                        .modifier(ChantPlayerRoom(height: chantPlayerRoom))
                 }
-            }
-            // Every page makes room at its foot for the chant player
-            // standing over it, so its last row scrolls clear
-            .safeAreaInset(edge: .bottom, spacing: 0) {
-                Color.clear
-                    .frame(height: showsChantPlayer && !keyboardIsUp ? chantPlayerHeight + 8 : 0)
-                    .allowsHitTesting(false)
             }
             // Up only when a keyboard stands that tall on the glass: with
             // a hardware keyboard iOS still shows its shortcut bar, and
@@ -648,6 +643,19 @@ struct ContentView: View {
         }
     }
 
+    /// The room every page keeps at its foot for the player standing over
+    /// it: kept on the stack's root and on each pushed page, since an
+    /// inset on the NavigationStack itself reaches the root alone
+    private var chantPlayerRoom: CGFloat {
+        Self.chantPlayerRoom(showsPlayer: showsChantPlayer, keyboardIsUp: keyboardIsUp, playerHeight: chantPlayerHeight)
+    }
+
+    /// The player's height and an 8-point gap while it shows; none while
+    /// it is away or a keyboard is up, since it stands under the keyboard
+    static func chantPlayerRoom(showsPlayer: Bool, keyboardIsUp: Bool, playerHeight: CGFloat) -> CGFloat {
+        showsPlayer && !keyboardIsUp ? playerHeight + 8 : 0
+    }
+
     private var chantPlayer: some View {
         ChantMiniPlayer(
             open: { router.push(.chant(id: ChantPlayer.shared.shown.id)) },
@@ -655,6 +663,22 @@ struct ContentView: View {
         )
         .padding(.horizontal, 12)
         .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { chantPlayerHeight = $0 }
+    }
+}
+
+// MARK: - Room for the chant player
+
+/// Room at a page's foot for the chant player, so its last row scrolls
+/// clear of it
+private struct ChantPlayerRoom: ViewModifier {
+    let height: CGFloat
+
+    func body(content: Content) -> some View {
+        content.safeAreaInset(edge: .bottom, spacing: 0) {
+            Color.clear
+                .frame(height: height)
+                .allowsHitTesting(false)
+        }
     }
 }
 
