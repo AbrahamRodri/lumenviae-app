@@ -7,6 +7,9 @@
 //  short hymn that once floated down the sheet and for Salve Regina,
 //  whose three parts keep their captions. The player is at rest, holding
 //  no chant, so the thread stands at its start beside the chant's length.
+//  The sheet is drawn full screen rather than presented, so the status
+//  bar's dark band stands above the painting and there is no drag
+//  indicator; both are the presentation's, not the sheet's.
 //
 
 import SwiftUI

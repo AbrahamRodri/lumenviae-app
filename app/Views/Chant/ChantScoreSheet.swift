@@ -324,10 +324,10 @@ private struct ChantScoreSheetHead: View {
     private var painting: some View {
         let name = ChantCatalog.painting(for: chant)
         // A wide, low band: cut high, where the faces are, unless the
-        // curation names the painting's point
-        let focal = ChantLibraryData.focalPoints[name] == nil
-            ? UnitPoint(x: 0.5, y: 0.3)
-            : ChantThumbnail.focalPoint(for: name)
+        // curation names the painting's point (the thumbnail's lookup
+        // answers the centre for a painting it has no point for)
+        let curated = ChantThumbnail.focalPoint(for: name)
+        let focal = curated == .center ? UnitPoint(x: 0.5, y: 0.3) : curated
         return CachedAssetImage(name, focal: focal)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .clipped()
@@ -384,13 +384,17 @@ private struct ChantScoreSheetTransport: View {
     /// home indicator, where the score scrolls too
     static var ground: some View {
         LinearGradient(
-            colors: [AppColors.background.opacity(0), AppColors.background.opacity(0.92)],
+            stops: [
+                .init(color: AppColors.background.opacity(0), location: 0),
+                .init(color: AppColors.background.opacity(0.85), location: 0.45),
+                .init(color: AppColors.background, location: 1)
+            ],
             startPoint: .top,
             endPoint: .bottom
         )
         // Run on past the frame's foot, which stands on the safe area
         .ignoresSafeArea(edges: .bottom)
-        .frame(height: clearance + 36)
+        .frame(height: clearance + 56)
         .allowsHitTesting(false)
         .accessibilityHidden(true)
     }
