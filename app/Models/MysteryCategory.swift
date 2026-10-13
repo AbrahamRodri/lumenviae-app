@@ -100,17 +100,16 @@ enum MysteryCategory: String, Codable, CaseIterable, Hashable {
     /// canvas — the point a crop should keep at any size. See `FocalFill`.
     ///
     /// The centred paintings are centred. The Resurrection and the Pietà
-    /// are both tall canvases carrying their subject high — Carracci's
-    /// risen Christ has his head a tenth of the way down the canvas and his
-    /// raised hand above it, so the window is pinned near the top (0.06),
-    /// the Pietà's halos and faces a little under a third — so a centred
-    /// crop leaves a card of drapery and onlookers. Naming the point, rather than an edge plus a nudge
+    /// are both tall canvases carrying their subject high — the risen
+    /// Christ a fifth of the way down, the Pietà's halos and faces a
+    /// little under a third — so a centred crop leaves a card of drapery
+    /// and onlookers. Naming the point, rather than an edge plus a nudge
     /// in points, is what lets the same painting crop right on a 160pt
     /// card, a 260pt frontispiece and a 40pt thumbnail, and it is the rule
     /// API artwork arrives with, so bundled fallbacks obey the same one.
     var cardFocalPoint: UnitPoint {
         switch self {
-        case .glorious:     return UnitPoint(x: 0.5, y: 0.06)
+        case .glorious:     return UnitPoint(x: 0.5, y: 0.22)
         case .sevenSorrows: return UnitPoint(x: 0.5, y: 0.30)
         case .joyful, .sorrowful, .luminous: return .center
         }
