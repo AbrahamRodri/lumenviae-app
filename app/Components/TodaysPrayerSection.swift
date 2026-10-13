@@ -55,8 +55,13 @@ struct TodaysPrayerSection: View {
         self.fixedNow = now
     }
 
-    private var activeConsecration: ConsecrationProgress? {
+    /// The preparation under way, or one made today: on the day of
+    /// consecration, completing it must not turn the row back to BEGIN
+    private func shownConsecration(at now: Date) -> ConsecrationProgress? {
         consecrations.first { !$0.isCompleted }
+            ?? consecrations.first { progress in
+                progress.completedAt.map { Calendar.current.isDate($0, inSameDayAs: now) } ?? false
+            }
     }
 
     // MARK: - Body
@@ -66,7 +71,8 @@ struct TodaysPrayerSection: View {
             header
 
             VStack(spacing: 4) {
-                TodaysPrayerRowView(row: .consecration(activeConsecration)) {
+                let now = fixedNow ?? .now
+                TodaysPrayerRowView(row: .consecration(shownConsecration(at: now), now: now)) {
                     // The tab knows every state: mid-preparation it opens
                     // the day, chosen ahead the page that waits for Day 1,
                     // and otherwise the invitation to begin.
@@ -129,9 +135,7 @@ struct TodaysPrayerSection: View {
     /// row kept the Angelus from eight until midnight.
     private var hourRow: some View {
         TimelineView(PrayerBookHourSchedule()) { context in
-            let now = fixedNow ?? context.date
-            let order = PrayerBook.dayOrder(at: now)
-            TodaysPrayerRowView(row: .hourOrder(order, at: now, prayed: store.wasOffered(order.id, on: now))) {
+            TodaysPrayerRowView(row: .hourOrder(at: fixedNow ?? context.date, store: store)) {
                 router.push(.prayerBook)
             }
         }
@@ -143,12 +147,11 @@ struct TodaysPrayerSection: View {
         let hour = fixedNow.map { CanonicalHour.present(atClockHour: Calendar.current.component(.hour, from: $0)) }
             ?? clock.hour
 
+        // The words crossfade in place as the hour turns; re-identified,
+        // the old and new rows stood together for the length of the fade
         return TodaysPrayerRowView(row: .office(hour)) {
             router.push(.office)
         }
-        .id(hour)
-        .transition(.opacity)
-        .animation(Motion.crossfade, value: hour)
     }
 }
 
@@ -182,19 +185,36 @@ struct TodaysPrayerRow: Equatable {
     // MARK: Consecration to Mary
 
     /// The preparation's painting while it is under way is its period's
-    /// own, the one its day page opens on; before it, the Coronation.
+    /// own, the one its day page opens on; before it, and once it is
+    /// made, the Coronation.
     static func consecration(_ progress: ConsecrationProgress?, now: Date = Date()) -> TodaysPrayerRow {
         let name = "Consecration to Mary"
+        let invitation = "Give yourself to Jesus through Mary"
         let coronation = ConsecrationPhase.consecrationDay.heroImageName
+        let coronationFocal = UnitPoint(x: 0.5, y: 0.12)
+        let consecrationTitle = ConsecrationData.day(34)?.title ?? "Total Consecration"
 
         guard let progress else {
             return TodaysPrayerRow(
                 painting: coronation,
-                focal: UnitPoint(x: 0.5, y: 0.12),
+                focal: coronationFocal,
                 name: name,
-                subtitle: "Give yourself to Jesus through Mary",
+                subtitle: invitation,
                 fact: "BEGIN",
-                spoken: "\(name). Give yourself to Jesus through Mary, a 33-day preparation. Begin."
+                spoken: "\(name). \(invitation), a 33-day preparation. Begin."
+            )
+        }
+
+        // Made today: the row keeps its place and its seal for the day
+        if progress.isCompleted {
+            return TodaysPrayerRow(
+                painting: coronation,
+                focal: coronationFocal,
+                name: name,
+                subtitle: consecrationTitle,
+                fact: "CONSECRATED TODAY",
+                isPrayed: true,
+                spoken: "\(name), consecrated today, \(consecrationTitle)"
             )
         }
 
@@ -203,26 +223,39 @@ struct TodaysPrayerRow: Equatable {
             let start = progress.startDate
             return TodaysPrayerRow(
                 painting: coronation,
-                focal: UnitPoint(x: 0.5, y: 0.12),
+                focal: coronationFocal,
                 name: name,
-                subtitle: "Give yourself to Jesus through Mary",
+                subtitle: invitation,
                 fact: "BEGINS \(start.formatted(.dateTime.month(.abbreviated).day()).uppercased())",
-                spoken: "\(name), begins \(start.formatted(.dateTime.weekday(.wide).month(.wide).day()))"
+                spoken: "\(name). \(invitation). Begins \(start.formatted(.dateTime.weekday(.wide).month(.wide).day()))"
             )
         }
 
-        // Day 1 to 33 of the preparation, then the day of consecration
-        // itself, which "DAY 34 OF 33" would be no way to say
-        let day = progress.currentDayNumber
+        // Day 1 to 33 of the preparation, then the day of consecration,
+        // which "DAY 34 OF 33" would be no way to say. Past it, with the
+        // act not yet made, the row says it is ready, never that it is late.
+        let daysIn = progress.daysSinceStart(asOf: now) + 1
+        let day = min(daysIn, 34)
         let title = ConsecrationData.day(day)?.title ?? ""
         let prayed = progress.isDayCompleted(day)
-        let isConsecrationDay = day > 33
-        let fact = isConsecrationDay ? "THE DAY OF CONSECRATION" : "DAY \(day) OF 33"
-        let spokenDay = isConsecrationDay ? "the day of consecration" : "day \(day) of 33"
+
+        let fact: String
+        let spokenDay: String
+        switch daysIn {
+        case ..<34:
+            fact = "DAY \(day) OF 33"
+            spokenDay = "day \(day) of 33"
+        case 34:
+            fact = "THE DAY OF CONSECRATION"
+            spokenDay = "the day of consecration"
+        default:
+            fact = "READY TO CONSECRATE"
+            spokenDay = "ready to consecrate"
+        }
 
         return TodaysPrayerRow(
             painting: (ConsecrationPhase.phase(for: day) ?? .consecrationDay).heroImageName,
-            focal: UnitPoint(x: 0.5, y: 0.25),
+            focal: day >= 34 ? coronationFocal : UnitPoint(x: 0.5, y: 0.25),
             name: name,
             subtitle: title,
             fact: fact,
@@ -235,9 +268,18 @@ struct TodaysPrayerRow: Equatable {
     // MARK: The hour's prayers
 
     /// The Prayer Book's order for the hour, said in the Prayers page's
-    /// own sentence, and PRAYED once prayed to its Amen this prayer day.
+    /// own sentence, and PRAYED once prayed to its Amen. The Angelus is
+    /// the bell's, not the day's, as on the Prayers page: one said at
+    /// noon leaves the evening's still to pray (`PrayerBook.isOfferedNow`).
     /// Never "missed": an hour gone by is simply not this row any more.
-    static func hourOrder(_ order: PrayerOrder, at now: Date, prayed: Bool) -> TodaysPrayerRow {
+    static func hourOrder(at now: Date, store: PrayerBookStore) -> TodaysPrayerRow {
+        let order = PrayerBook.dayOrder(at: now)
+        let prayed = PrayerBook.isOfferedNow(
+            order,
+            at: now,
+            offeredToday: store.wasOffered(order.id, on: now),
+            lastOffered: store.lastOffered(order.id)
+        )
         let painting = PrayerBookPainting.hour(order, on: now)
         let title = order.title(on: now)
         let moment = PrayerBook.dayOrderMoment(at: now)
@@ -269,9 +311,11 @@ struct TodaysPrayerRow: Equatable {
             return "\(rank) · \(vestment.name)".uppercased()
         }
 
+        let painting = PrayerBookPainting.topic(id: "mass")
+
         return TodaysPrayerRow(
-            painting: "topic_holy_mass",
-            focal: UnitPoint(x: 0.5, y: 0.5),
+            painting: painting.asset,
+            focal: painting.focal,
             name: name,
             subtitle: subtitle,
             fact: fact,
@@ -286,28 +330,18 @@ struct TodaysPrayerRow: Equatable {
     /// The hour it is in plain words over its Church name, and how long
     /// it is the hour: NOW · UNTIL NOON
     static func office(_ hour: CanonicalHour) -> TodaysPrayerRow {
-        let until = untilWord(hour.following.beginsAtClockHour)
+        let until = CanonicalHour.clockWord(hour.following.beginsAtClockHour)
+        let painting = PrayerBookPainting.topic(id: "day")
 
         return TodaysPrayerRow(
-            painting: "topic_daily_prayers",
-            focal: UnitPoint(x: 0.5, y: 0.45),
+            painting: painting.asset,
+            focal: painting.focal,
             name: "Hours of Prayer",
             subtitle: "\(hour.plainName) (\(hour.label))",
             fact: "NOW · UNTIL \(until.uppercased())",
             mark: .litHour,
             spoken: "Hours of Prayer, \(hour.plainName), \(hour.label), the hour now, until \(until)"
         )
-    }
-
-    /// "noon", "midnight", "2 PM": the clock hour an hour of the Office
-    /// begins at, said as the row says it
-    static func untilWord(_ clockHour: Int) -> String {
-        switch clockHour {
-        case 0, 24: return "midnight"
-        case 12: return "noon"
-        case 1..<12: return "\(clockHour) AM"
-        default: return "\(clockHour - 12) PM"
-        }
     }
 }
 
@@ -334,10 +368,12 @@ struct TodaysPrayerRowView: View {
                         .lineLimit(2)
                         .fixedSize(horizontal: false, vertical: true)
 
+                    // Two lines, so the hour's sentence is read whole
                     Text(row.subtitle)
                         .font(AppFonts.bodyFont(14.5))
                         .foregroundColor(AppColors.cream.opacity(0.72))
-                        .lineLimit(1)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
                         .contentTransition(.opacity)
 
                     factLine

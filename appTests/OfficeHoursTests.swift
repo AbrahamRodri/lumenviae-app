@@ -67,8 +67,8 @@ struct OfficeHoursTests {
     @Test func theArchSaysWhenTheHourLapsesInWords() {
         #expect(CanonicalHour.terce.lapses == "until Midday Prayer at noon")
         #expect(CanonicalHour.compline.lapses == "until Night Vigil at midnight")
-        #expect(CanonicalHour.matins.lapses == "until Dawn Prayer at five")
-        #expect(CanonicalHour.vespers.lapses == "until Bedtime Prayer at seven")
+        #expect(CanonicalHour.matins.lapses == "until Dawn Prayer at 5 AM")
+        #expect(CanonicalHour.vespers.lapses == "until Bedtime Prayer at 7 PM")
     }
 
     // MARK: - The Engine's Class

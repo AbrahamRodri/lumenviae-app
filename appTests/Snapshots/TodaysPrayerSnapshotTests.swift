@@ -57,15 +57,15 @@ struct TodaysPrayerSnapshotTests {
         return PrayerBookStore(defaults: defaults)
     }
 
-    /// An in-memory store, holding a consecration begun eleven days ago
-    /// (so today is Day 12) when asked for one
+    /// An in-memory store, holding a consecration begun eleven days
+    /// before the fixed morning (so it is Day 12) when asked for one
     private func consecrations(dayTwelvePrayed: Bool?) throws -> ModelContainer {
         let container = try ModelContainer(
             for: ConsecrationProgress.self,
             configurations: ModelConfiguration(isStoredInMemoryOnly: true)
         )
         if let dayTwelvePrayed {
-            let start = Calendar.current.date(byAdding: .day, value: -11, to: Date())!
+            let start = Calendar.current.date(byAdding: .day, value: -11, to: morning)!
             let progress = ConsecrationProgress(startDate: start)
             if dayTwelvePrayed { progress.completeDay(12) }
             container.mainContext.insert(progress)
@@ -108,7 +108,7 @@ struct TodaysPrayerSnapshotTests {
         )
     }
 
-    /// The app's largest text: names take a second line, nothing is cut
+    /// The app's largest text: names and lines take a second line
     @Test func largestText() throws {
         ScreenSnapshot.assertScreen(
             screen(store: try store("largest"), container: try consecrations(dayTwelvePrayed: true))

@@ -51,11 +51,22 @@ final class ConsecrationProgress {
     /// What day should show today (based on start date)
     /// Returns 1-34, capped at 34
     var currentDayNumber: Int {
+        currentDayNumber(asOf: Date())
+    }
+
+    /// `currentDayNumber` as of a given moment
+    func currentDayNumber(asOf now: Date) -> Int {
+        min(daysSinceStart(asOf: now) + 1, 34)
+    }
+
+    /// Whole calendar days from Day 1 to `now`, uncapped: 0 on Day 1, 40
+    /// a week after the day of consecration. Never below 0.
+    func daysSinceStart(asOf now: Date) -> Int {
         let calendar = Calendar.current
         let startOfStartDate = calendar.startOfDay(for: startDate)
-        let startOfToday = calendar.startOfDay(for: Date())
-        let daysSinceStart = calendar.dateComponents([.day], from: startOfStartDate, to: startOfToday).day ?? 0
-        return min(max(daysSinceStart + 1, 1), 34)
+        let startOfToday = calendar.startOfDay(for: now)
+        let days = calendar.dateComponents([.day], from: startOfStartDate, to: startOfToday).day ?? 0
+        return max(days, 0)
     }
 
     /// Whether Day 1 has come. A consecration can be chosen ahead of its

@@ -52,21 +52,6 @@ nonisolated enum CanonicalHour: String, CaseIterable, Codable, Identifiable {
         }
     }
 
-    /// One word for the tight places — a bar title, a row's fact, the
-    /// home ledger's column of facts — in capitals: "DAWN", "EVENING".
-    var shortName: String {
-        switch self {
-        case .matins: return "VIGIL"
-        case .lauds: return "DAWN"
-        case .prime: return "EARLY"
-        case .terce: return "MID-MORNING"
-        case .sext: return "MIDDAY"
-        case .nones: return "AFTERNOON"
-        case .vespers: return "EVENING"
-        case .compline: return "BEDTIME"
-        }
-    }
-
     /// The Church's name for the hour, kept as the secondary line under
     /// `plainName` so a reader can match it in a printed breviary
     var label: String {
@@ -172,17 +157,14 @@ nonisolated enum CanonicalHour: String, CaseIterable, Codable, Identifiable {
         return "until \(hour.plainName) at \(Self.clockWord(hour.beginsAtClockHour))"
     }
 
-    /// The clock said the way a breviary would say it, in words.
-    private static func clockWord(_ clockHour: Int) -> String {
+    /// A clock hour said plainly: "midnight", "noon", "2 PM". The one
+    /// way the app names the hour an hour of the Office begins at.
+    static func clockWord(_ clockHour: Int) -> String {
         switch clockHour {
-        case 0: return "midnight"
+        case 0, 24: return "midnight"
         case 12: return "noon"
-        default:
-            let names = [
-                "twelve", "one", "two", "three", "four", "five",
-                "six", "seven", "eight", "nine", "ten", "eleven"
-            ]
-            return names[clockHour % 12]
+        case 1..<12: return "\(clockHour) AM"
+        default: return "\(clockHour - 12) PM"
         }
     }
 

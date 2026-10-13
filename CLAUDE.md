@@ -297,20 +297,29 @@ consecration is a private devotion and not a liturgical observance;
 `TodayInChurch` (the observable) still supplies the day and is shared
 with the Chapel's day strip. Every row has the same parts, on the bare
 page with no card or fill: a 64pt painting cut square with a gold
-hairline edge, the name, one line saying what today holds, and the
-row's live fact in small capitals beneath, then a chevron. What each
+hairline edge, the name, a line saying what today holds (up to two
+lines, so the hour's sentence is read whole), and the row's live fact
+in small capitals beneath, then a chevron. What each
 says is `TodaysPrayerRow` (one builder per row, unit-tested): the
 consecration's painting is its period's own (`heroImageName`, the
 Coronation before it begins), its line the day's title, its fact DAY 12
 OF 33, THE DAY OF CONSECRATION, BEGIN, or BEGINS OCT 19 when chosen
-ahead; the hour's order hangs `PrayerBookPainting.hour`, its line
+ahead; past its day with the act not made, READY TO CONSECRATE (never
+late), and once made, CONSECRATED TODAY with its seal for the rest of
+the day (the section keeps a record completed today as the row's); the
+hour's order hangs `PrayerBookPainting.hour`, its line
 `PrayerBook.daySummary`, its fact ON WAKING · AT NOON · AT 6 PM · AT
-BEDTIME (`PrayerBook.dayOrderMoment`) or PRAYED; the Mass hangs the Mass
+BEDTIME (`PrayerBook.dayOrderMoment`) or PRAYED, the Angelus counted
+for its bell as on the Prayers page (`PrayerBook.isOfferedNow`: one said
+at noon leaves the evening's to pray); the Mass hangs the Mass
 at Bolsena, its line the feast's name (`TodayInChurch.title`; "Prayers
 and readings for today" until the propers arrive) and its fact the rank
 and colour beside a small silk (LESSER FEAST · WHITE); the Office hangs
 Millet's Angelus, its line the hour it is ("Mid-Morning Prayer
-(Terce)") and its fact NOW · UNTIL NOON beside the lit dot. The feast
+(Terce)") and its fact NOW · UNTIL NOON beside the lit dot
+(`CanonicalHour.clockWord`, which the Office's arch reads too). The two
+liturgy paintings are the Prayer Book's topics' (`PrayerBookPainting.
+topic(id:)`). The feast
 is named in the Mass row's line and not over the two rows. The fact
 stands where a routine app puts a duration: this app never estimates
 one. A gold seal rides on the painting's corner only where the app
@@ -1815,8 +1824,7 @@ write concurrent code here:
   hour by `CanonicalHour.plainName` (Night Vigil, Dawn Prayer, Early
   Morning Prayer, Mid-Morning Prayer, Midday Prayer, Mid-Afternoon
   Prayer, Evening Prayer, Bedtime Prayer — never "Morning Prayer" or
-  "Night Prayer", which are the Prayer Book's), `shortName` in tight
-  places, the Church's name (`label`) small beneath — the pre-Vatican-II Breviarium Romanum (1960 rubrics,
+  "Night Prayer", which are the Prayer Book's), the Church's name (`label`) small beneath — the pre-Vatican-II Breviarium Romanum (1960 rubrics,
   the 1962 books), reached from the Divine Office row of Today's Prayer,
   Explore, the Chapel's Liturgy tile and the Pray tray. Served by our own API's `/office/*` endpoints
   (`GET /office/:date`, `/office/:date/:hour`, `/office/calendar/:year/:month`,
