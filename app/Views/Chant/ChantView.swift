@@ -38,6 +38,9 @@ struct ChantView: View {
     @State private var addingToSet = false
     @State private var practicing: Chant?
     @State private var wordsUnderBar = false
+    /// Where the bar ends, measured: the top safe area, which inside the
+    /// navigation stack runs past the status bar to the bar's foot
+    @State private var barFoot: CGFloat = 110
 
     private var shelf: ChantShelfStore
     /// Opens scrolled to the foot, for a snapshot of what stands there
@@ -72,9 +75,9 @@ struct ChantView: View {
                             .padding(.horizontal, 28)
                             // Measured on the names themselves, before the
                             // room above them: under the bar once they rise
-                            // past it
+                            // past its foot
                             .onGeometryChange(for: Bool.self) { proxy in
-                                proxy.frame(in: .global).minY < 110
+                                proxy.frame(in: .global).minY < barFoot
                             } action: { under in
                                 withAnimation(Motion.crossfade) { wordsUnderBar = under }
                             }
@@ -113,6 +116,9 @@ struct ChantView: View {
                 .ignoresSafeArea(edges: .top)
                 .defaultScrollAnchor(opensAtFoot ? .bottom : .top)
                 .overlay(alignment: .top) { barVeil }
+                .onGeometryChange(for: CGFloat.self) { proxy in
+                    proxy.safeAreaInsets.top
+                } action: { barFoot = $0 }
             } else {
                 Text("This chant could not be found.")
                     .font(AppFonts.readingItalicFont(16))

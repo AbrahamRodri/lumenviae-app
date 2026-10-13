@@ -3719,7 +3719,9 @@ journal endpoint and none is planned — journal entries are local.
 A debug build can be launched on a tab, for screenshots and checks a
 simulator cannot tap to: `SIMCTL_CHILD_LUMEN_VIAE_TAB=prayers xcrun
 simctl launch …` (`AppRouter.launchTab`; the name is an `AppTab` case),
-and on another day with `SIMCTL_CHILD_LUMEN_VIAE_TODAY=2026-10-01`.
+on another day with `SIMCTL_CHILD_LUMEN_VIAE_TODAY=2026-10-01`, and on
+a chant's page with `SIMCTL_CHILD_LUMEN_VIAE_CHANT=<chant id>`
+(`AppRouter.init`; an unknown id opens the not-found page).
 
 `Tools/dev` is the door to everyday tasks: `Tools/dev check` runs lint,
 the generated-file check, the build and the tests. Run tests with
