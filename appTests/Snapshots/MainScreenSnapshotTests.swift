@@ -141,6 +141,45 @@ struct MainScreenSnapshotTests {
             named: "prayer-order-page"
         )
     }
+
+    /// A topic with orders said together: the painting with the name on
+    /// it, then the Pray together card, then the first prayers
+    @Test func prayerTopicPage() {
+        ScreenSnapshot.assertScreen(
+            PrayerBookChapterView(chapterID: "mass", store: Fixtures.prayerBookStore(), date: Fixtures.day),
+            named: "prayer-topic-page"
+        )
+    }
+
+    /// A topic with no orders, opening straight on its prayers, with the
+    /// reader's marks beside the names: one learned, one saved, and this
+    /// season's song to Mary with all three
+    @Test func prayerTopicMarks() {
+        let store = Fixtures.prayerBookStore()
+        store.setByHeart("hail_mary", true)
+        store.toggleRibbon("rosary_closing_prayer")
+        store.setByHeart("hail_holy_queen", true)
+        store.toggleRibbon("hail_holy_queen")
+        ScreenSnapshot.assertScreen(
+            PrayerBookChapterView(chapterID: PrayerBook.ourLady.id, store: store, date: Fixtures.day),
+            named: "prayer-topic-marks"
+        )
+    }
+
+    /// At the largest text the app allows, a long name leaves its marks no
+    /// room beside it, so they drop beneath the name rather than cut it:
+    /// St Thomas Aquinas's prayer before Mass, learned and saved, on the
+    /// first screen of Holy Mass and Communion
+    @Test func prayerTopicMarksUnderName() {
+        let store = Fixtures.prayerBookStore()
+        store.setByHeart("aquinas_before_mass", true)
+        store.toggleRibbon("aquinas_before_mass")
+        ScreenSnapshot.assertScreen(
+            PrayerBookChapterView(chapterID: "mass", store: store, date: Fixtures.day)
+                .dynamicTypeSize(DynamicTypeSize.appMaximum),
+            named: "prayer-topic-marks-under-name"
+        )
+    }
 }
 
 // MARK: - Fixtures
