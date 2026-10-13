@@ -36,20 +36,20 @@ struct ChantScoreImage: View {
             context.scaleBy(x: scale, y: scale)
             context.translateBy(x: -drawing.bounds.minX, y: -drawing.bounds.minY)
 
-            let ink = AppColors.cream.opacity(0.94)
-            let red = Rubric.red
+            let ink = GraphicsContext.Shading.color(AppColors.cream.opacity(0.94))
+            let red = GraphicsContext.Shading.color(Rubric.red)
             for operation in drawing.operations {
                 switch operation {
                 case .fill(let path, let which):
-                    context.fill(Path(path), with: .color(which == .ink ? ink : red))
+                    context.fill(path, with: which == .ink ? ink : red)
                 case .erase(let path):
                     // A white shape in the engraving: it clears what lies
                     // under it, so the page shows through
                     context.blendMode = .destinationOut
-                    context.fill(Path(path), with: .color(.black))
+                    context.fill(path, with: .color(.black))
                     context.blendMode = .normal
                 case .stroke(let path, let which, let width):
-                    context.stroke(Path(path), with: .color(which == .ink ? ink : red), lineWidth: width)
+                    context.stroke(path, with: which == .ink ? ink : red, lineWidth: width)
                 }
             }
         }

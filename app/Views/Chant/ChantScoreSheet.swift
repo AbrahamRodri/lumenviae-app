@@ -156,7 +156,10 @@ struct ChantScoreSheet: View {
 
     private func landing(at newZoom: CGFloat, keeping point: CGPoint, from origin: CGPoint) -> Landing? {
         let glass = glassSize
-        let parts = partFrames.sorted { $0.key < $1.key }
+        // In the score's order, read off its parts rather than sorted
+        let parts = chant.score.indices.compactMap { index in
+            partFrames[index].map { (key: index, value: $0) }
+        }
         // The part under the point, and the point as a fraction of its
         // engraving (clamped to it when the point is on a caption)
         guard glass.width > 0, glass.height > 0,
