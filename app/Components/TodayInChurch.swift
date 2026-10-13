@@ -30,6 +30,12 @@ final class TodayInChurch {
     private let api = MissalAPIService.shared
     private let diskCache = MissalCacheService.shared
 
+    /// A day already known, for previews and snapshots; the app starts
+    /// empty and loads
+    init(proper: MissalProper? = nil) {
+        self.proper = proper
+    }
+
     /// The feast, once known. Until then the ledger names the thing itself.
     var title: String {
         proper?.info.title ?? "Today's Mass"

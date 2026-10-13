@@ -2,28 +2,30 @@
 //  TodaysPrayerSection.swift
 //  Lumen Viae
 //
-//  "Today's Prayer" — the day's four rows on the home page: the Total
-//  Consecration, the hour's prayers, the Mass, the Divine Office. A
-//  section heading in the home page's own voice, then the consecration —
-//  the user's own devotion, whatever the day — and beside it the Prayer
-//  Book's order for the hour; under them the feast heading the two rows
-//  that keep it, the Mass and the Office. No card, no panel, no fill.
+//  "Today's Prayer" — the day's four rows on the home page: the
+//  Consecration to Mary, the hour's prayers, the Mass, the Hours of
+//  Prayer. A section heading in the home page's own voice, then the
+//  four as a list of routines (the "routine list" design, option B,
+//  Oct 2026): each row a painting, its name, one line saying what today
+//  holds, and the row's own live fact in small capitals beneath.
 //
 //  Named for the user's prayer rather than the Church's calendar,
-//  because the Total Consecration is a private devotion and not a
-//  liturgical observance — its row would otherwise be filed under a
-//  heading it does not belong to.
+//  because the consecration is a private devotion and not a liturgical
+//  observance. The consecration and the hour's prayers stand first, as
+//  the user's own; the Mass and the Office follow, and the feast they
+//  keep is named in the Mass row's line rather than over them.
 //
-//  Every row carries the same three parts — the door's own glyph, its
-//  name, and the row's own live fact — so the eye reads down the column
-//  of facts: the day's silk, the hour it is (TERCE), the day of the
-//  preparation. Each glyph is the one that door wears everywhere else in
-//  the app. A plain line under each name once said what the row was;
-//  the section read slower for it, and the names and facts already say it.
+//  The fact is where a routine app puts a duration. This app never
+//  estimates one, so the slot says what is true now: DAY 12 OF 33, ON
+//  WAKING, LESSER FEAST · WHITE, NOW · UNTIL NOON. A check rides on the
+//  painting only where the app knows the prayer was prayed — today's
+//  day of the consecration and the hour's order. The Mass and the
+//  Office are never marked: the app cannot see them prayed. No state
+//  here shames anyone: no "0 days", no "missed".
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 // MARK: - TodaysPrayerSection
 
@@ -38,30 +40,23 @@ struct TodaysPrayerSection: View {
     /// else on the page happens to redraw.
     private var clock = CanonicalClock.shared
 
+    /// Where the hour's order is marked prayed
+    private let store: PrayerBookStore
+
+    /// A fixed moment for snapshots and previews; the clock otherwise
+    private let fixedNow: Date?
+
     @Query(sort: \ConsecrationProgress.createdAt, order: .reverse)
     private var consecrations: [ConsecrationProgress]
 
-    init(today: TodayInChurch) {
+    init(today: TodayInChurch, store: PrayerBookStore = .shared, now: Date? = nil) {
         self.today = today
+        self.store = store
+        self.fixedNow = now
     }
 
     private var activeConsecration: ConsecrationProgress? {
         consecrations.first { !$0.isCompleted }
-    }
-
-    /// Day 1–33 of the preparation. The record runs to 34 — the day of
-    /// consecration itself — but the counter names the preparation, and
-    /// "DAY 34 of 33" is not a thing a ledger says. Nil before Day 1 of
-    /// a consecration chosen ahead.
-    private var consecrationDay: Int? {
-        guard let progress = activeConsecration, progress.hasBegun() else { return nil }
-        return min(progress.currentDayNumber, 33)
-    }
-
-    /// Day 1 of a consecration chosen ahead, while it is still to come
-    private var consecrationStart: Date? {
-        guard let progress = activeConsecration, !progress.hasBegun() else { return nil }
-        return progress.startDate
     }
 
     // MARK: - Body
@@ -70,39 +65,33 @@ struct TodaysPrayerSection: View {
         VStack(alignment: .leading, spacing: 0) {
             header
 
-            // The preparation stands first, under the section's own name.
-            // It is the user's own devotion, kept whatever day it is, and
-            // being no part of the Church's calendar it stands apart from
-            // the feast rather than under it.
-            consecrationRow
-                .padding(.top, 8)
+            VStack(spacing: 4) {
+                TodaysPrayerRowView(row: .consecration(activeConsecration)) {
+                    // The tab knows every state: mid-preparation it opens
+                    // the day, chosen ahead the page that waits for Day 1,
+                    // and otherwise the invitation to begin.
+                    router.selectedTab = .consecration
+                }
 
-            rowDivider
+                hourRow
 
-            // The hour's own prayers from the Prayer Book — the user's
-            // devotion as the preparation is, so it stands beside it and
-            // above the Church's day
-            hourRow
+                TodaysPrayerRowView(row: .mass(today)) {
+                    router.push(.missal)
+                }
+                .animation(Motion.crossfade, value: today.title)
 
-            // Then the Church's day, a part of this section rather than a
-            // section of its own: its feast named over a rule, and the
-            // two liturgical books that keep it beneath
-            feastLine
-                .padding(.top, 14)
-
-            liturgyRows
-                .padding(.top, 2)
+                officeRow
+            }
+            .padding(.top, 10)
         }
-        .animation(Motion.crossfade, value: today.title)
         .accessibilityElement(children: .contain)
     }
 
     // MARK: - Header
 
-    /// The section's name set as the home page sets its others — "Sacred
+    /// The section's name set as the home page sets its others — "Rosary
     /// Mysteries", "Spiritual Reading" — with the date where they keep
-    /// their link. It was a small tracked label under a larger feast, so
-    /// the section's name read as a caption to the day.
+    /// their link.
     private var header: some View {
         HStack(alignment: .firstTextBaseline) {
             Text("Today's Prayer")
@@ -112,58 +101,18 @@ struct TodaysPrayerSection: View {
 
             Spacer()
 
-            // Abbreviated: the full weekday-and-month form was the
-            // widest thing in the block and earned none of that width.
-            Text(dateLine)
+            Text(Self.dateLine(fixedNow ?? .now))
                 .font(AppFonts.labelFont(9.5))
                 .tracking(2)
                 .foregroundColor(AppColors.textSecondary)
         }
     }
 
-    /// The day's feast, naming the part of the section the Mass and the
-    /// Office belong to: small engraved capitals over a hairline that runs
-    /// to the section's edge, the way a card names one of its parts.
-    /// Set in the reading italic at 18 with air around it, it read as a
-    /// second section title under "Today's Prayer" rather than a part of
-    /// it. The day's class and colour are the Mass's facts, and stand
-    /// beside the Mass row's silk.
-    /// "TODAY'S FEAST · ST. FRANCIS BORGIA" once a feast is known; a
-    /// weekday, or the day before its propers arrive, is named as it is
-    private var feastHeading: String {
-        guard today.proper != nil, let rank = today.rank, !rank.hasSuffix("Weekday") else { return today.title }
-        return "Today's feast · \(today.title)"
-    }
-
-    private var feastLine: some View {
-        HStack(alignment: .center, spacing: 12) {
-            Text(feastHeading.uppercased())
-                .font(AppFonts.labelFont(9.5))
-                .tracking(2.2)
-                .lineSpacing(3)
-                .foregroundColor(AppColors.gold.opacity(0.8))
-                .fixedSize(horizontal: false, vertical: true)
-                .layoutPriority(1)
-                // Crossfades in place as the day turns. Re-identified with
-                // `.id`, the old and new names were laid out side by side
-                // in this row for the length of the fade.
-                .contentTransition(.opacity)
-
-            Rectangle()
-                .fill(AppColors.gold.opacity(0.2))
-                .frame(minWidth: 24)
-                .frame(height: AppLine.hairline)
-        }
-        .accessibilityElement(children: .combine)
-        .accessibilityAddTraits(.isHeader)
-    }
-
-    /// "MON 31 AUG". A fixed pattern rather than a localized one: the
+    /// "TUE 13 OCT". A fixed pattern rather than a localized one: the
     /// locale's own short form puts the month first and hangs a comma
-    /// off the weekday, and this line is set as engraved caps beside a
-    /// tracked label, where a comma reads as grit.
-    private var dateLine: String {
-        Self.dateFormatter.string(from: .now).uppercased()
+    /// off the weekday, and this line is set as engraved caps.
+    private static func dateLine(_ date: Date) -> String {
+        dateFormatter.string(from: date).uppercased()
     }
 
     private static let dateFormatter: DateFormatter = {
@@ -172,275 +121,311 @@ struct TodaysPrayerSection: View {
         return formatter
     }()
 
-    // MARK: - The rows
+    // MARK: - The hour's prayers
 
-    /// The feast's two rows: the Church's public prayer of the day
-    private var liturgyRows: some View {
-        VStack(spacing: 0) {
-            massRow
-
-            rowDivider
-
-            officeRow
-        }
-    }
-
-    /// Inset so it starts at the text, not under the medallion
-    private var rowDivider: some View {
-        Rectangle()
-            .fill(AppColors.gold.opacity(0.1))
-            .frame(height: AppLine.hairline)
-            .padding(.leading, 50)
-            .accessibilityHidden(true)
-    }
-
-    // MARK: Row 2 — The Mass
-
-    private var massRow: some View {
-        LedgerRow(
-            icon: "ch-altar",
-            name: "Today's Mass",
-            // The colour said in words to VoiceOver, where the screen
-            // shows it only as the silk: "Today's Mass, Feast, red vestments"
-            accessibility: ["Today's Mass", today.spokenMeta].compactMap { $0 }.joined(separator: ", ")
-        ) {
-            // The day's rank in plain words beside its silk — "FEAST" —
-            // set as the Office row sets its hour, so the column of facts
-            // reads as one. The colour is the silk's alone: a bare "RED"
-            // beside it said nothing a newcomer could read.
-            HStack(spacing: 10) {
-                if let massFact {
-                    Text(massFact)
-                        .font(AppFonts.labelFont(9))
-                        .tracking(2)
-                        .foregroundColor(AppColors.gold.opacity(0.9))
-                        .lineLimit(1)
-                        .fixedSize()
-                        .contentTransition(.opacity)
-                }
-
-                if let vestment = today.vestment {
-                    RoundedRectangle(cornerRadius: 1)
-                        .fill(vestment.swatch)
-                        .frame(width: 4, height: 24)
-                        .shadow(color: .black.opacity(0.5), radius: 2)
-                }
+    /// The Prayer Book's order for the hour it is — Morning Prayers, the
+    /// Angelus, Night Prayers. Redrawn when the book's hour turns, which
+    /// is never when the Office's does: on the canonical clock alone the
+    /// row kept the Angelus from eight until midnight.
+    private var hourRow: some View {
+        TimelineView(PrayerBookHourSchedule()) { context in
+            let now = fixedNow ?? context.date
+            let order = PrayerBook.dayOrder(at: now)
+            TodaysPrayerRowView(row: .hourOrder(order, at: now, prayed: store.wasOffered(order.id, on: now))) {
+                router.push(.prayerBook)
             }
-            .animation(Motion.crossfade, value: massFact)
-        } action: {
-            router.push(.missal)
         }
     }
 
-    /// "FEAST", once the day's propers are known — the liturgy's own word
-    /// for the rank (`TodayInChurch.rank`)
-    private var massFact: String? {
-        guard let rank = today.rank else { return nil }
-        // The silk's colour in a word beside it, since a bar alone says
-        // nothing a newcomer can read
-        guard let vestment = today.vestment else { return rank.uppercased() }
-        return "\(rank) · \(vestment.name)".uppercased()
-    }
-
-    // MARK: Row 3 — The Hours of Prayer (the Divine Office)
+    // MARK: - The Hours of Prayer
 
     private var officeRow: some View {
-        let hour = clock.hour
+        let hour = fixedNow.map { CanonicalHour.present(atClockHour: Calendar.current.component(.hour, from: $0)) }
+            ?? clock.hour
 
-        return LedgerRow(
-            icon: "ph-clock",
-            name: "Hours of Prayer",
-            accessibility: "Hours of Prayer, \(hour.plainName), the hour now"
-        ) {
-            // The hour itself, lit, in its one plain word — "EVENING" says
-            // which hour it is, where "NOW" only said that there was one,
-            // and "VESPERS" said it in a word a newcomer could not read
-            HStack(spacing: 8) {
-                LitHourDot(size: 9, box: 16, glow: 4)
-
-                Text(hour.shortName)
-                    .font(AppFonts.labelFont(9))
-                    .tracking(2)
-                    .foregroundColor(AppColors.gold.opacity(0.9))
-                    .lineLimit(1)
-                    .fixedSize()
-            }
-        } action: {
+        return TodaysPrayerRowView(row: .office(hour)) {
             router.push(.office)
         }
         .id(hour)
         .transition(.opacity)
         .animation(Motion.crossfade, value: hour)
     }
+}
 
-    // MARK: Row 1b — The hour's prayers
+// MARK: - TodaysPrayerRow
 
-    /// The Prayer Book's order for the hour it is — Morning Prayers, the
-    /// Angelus, Night Prayers — and PRAYED once it has been prayed to
-    /// its Amen today. Opens the book, which opens on this same order.
+/// What one row says: its painting, name, line and fact, whether it was
+/// prayed, and all of it as VoiceOver hears it. Built from the app's own
+/// state by the four builders below, so each row's words live in one place.
+struct TodaysPrayerRow: Equatable {
+
+    /// What stands before the fact
+    enum Mark: Equatable {
+        case none
+        /// The day's silk, in the vestment's colour
+        case silk(MissalVestment)
+        /// The lit dot of the hour it is now
+        case litHour
+    }
+
+    let painting: String
+    let focal: UnitPoint
+    let name: String
+    let subtitle: String
+    /// Nil while the row has nothing true to say yet (the Mass before
+    /// the day's propers arrive); the line keeps its height regardless
+    let fact: String?
+    var mark: Mark = .none
+    var isPrayed = false
+    let spoken: String
+
+    // MARK: Consecration to Mary
+
+    /// The preparation's painting while it is under way is its period's
+    /// own, the one its day page opens on; before it, the Coronation.
+    static func consecration(_ progress: ConsecrationProgress?, now: Date = Date()) -> TodaysPrayerRow {
+        let name = "Consecration to Mary"
+        let coronation = ConsecrationPhase.consecrationDay.heroImageName
+
+        guard let progress else {
+            return TodaysPrayerRow(
+                painting: coronation,
+                focal: UnitPoint(x: 0.5, y: 0.12),
+                name: name,
+                subtitle: "Give yourself to Jesus through Mary",
+                fact: "BEGIN",
+                spoken: "\(name). Give yourself to Jesus through Mary, a 33-day preparation. Begin."
+            )
+        }
+
+        // Chosen ahead: the day it begins, never a count
+        guard progress.hasBegun(asOf: now) else {
+            let start = progress.startDate
+            return TodaysPrayerRow(
+                painting: coronation,
+                focal: UnitPoint(x: 0.5, y: 0.12),
+                name: name,
+                subtitle: "Give yourself to Jesus through Mary",
+                fact: "BEGINS \(start.formatted(.dateTime.month(.abbreviated).day()).uppercased())",
+                spoken: "\(name), begins \(start.formatted(.dateTime.weekday(.wide).month(.wide).day()))"
+            )
+        }
+
+        // Day 1 to 33 of the preparation, then the day of consecration
+        // itself, which "DAY 34 OF 33" would be no way to say
+        let day = progress.currentDayNumber
+        let title = ConsecrationData.day(day)?.title ?? ""
+        let prayed = progress.isDayCompleted(day)
+        let isConsecrationDay = day > 33
+        let fact = isConsecrationDay ? "THE DAY OF CONSECRATION" : "DAY \(day) OF 33"
+        let spokenDay = isConsecrationDay ? "the day of consecration" : "day \(day) of 33"
+
+        return TodaysPrayerRow(
+            painting: (ConsecrationPhase.phase(for: day) ?? .consecrationDay).heroImageName,
+            focal: UnitPoint(x: 0.5, y: 0.25),
+            name: name,
+            subtitle: title,
+            fact: fact,
+            isPrayed: prayed,
+            spoken: [name, spokenDay, title, prayed ? "prayed today" : nil]
+                .compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: ", ")
+        )
+    }
+
+    // MARK: The hour's prayers
+
+    /// The Prayer Book's order for the hour, said in the Prayers page's
+    /// own sentence, and PRAYED once prayed to its Amen this prayer day.
     /// Never "missed": an hour gone by is simply not this row any more.
-    private var hourRow: some View {
-        // Redrawn when the book's hour turns, which is never when the
-        // Office's does: on the canonical clock alone the row kept the
-        // Angelus from eight until midnight
-        TimelineView(PrayerBookHourSchedule()) { context in
-            hourRow(at: context.date)
-        }
+    static func hourOrder(_ order: PrayerOrder, at now: Date, prayed: Bool) -> TodaysPrayerRow {
+        let painting = PrayerBookPainting.hour(order, on: now)
+        let title = order.title(on: now)
+        let moment = PrayerBook.dayOrderMoment(at: now)
+        let summary = PrayerBook.daySummary(of: order, on: now)
+
+        return TodaysPrayerRow(
+            painting: painting.resolvedAsset,
+            focal: painting.focal,
+            name: title,
+            subtitle: summary,
+            fact: prayed ? "PRAYED" : moment.uppercased(),
+            isPrayed: prayed,
+            spoken: "\(title), \(prayed ? "prayed today" : moment.lowercased()). \(summary)"
+        )
     }
 
-    private func hourRow(at now: Date) -> some View {
-        let order = PrayerBook.dayOrder(at: now)
-        let offered = PrayerBookStore.shared.wasOffered(order.id, on: now)
-        let moment = Self.hourMoment(now)
+    // MARK: Today's Mass
 
-        return LedgerRow(
-            icon: order.icon,
-            name: order.title(on: now),
-            accessibility: "\(order.title(on: now)), \(offered ? "prayed today" : moment.lowercased())"
-        ) {
-            HStack(spacing: 6) {
-                if offered {
-                    AppIcon("ph-seal-check-fill", size: 11)
-                        .foregroundColor(AppColors.gold)
-                }
-                Text(offered ? "PRAYED" : moment)
-                    .font(AppFonts.labelFont(9))
-                    .tracking(2)
-                    .foregroundColor(AppColors.gold.opacity(0.9))
-                    .lineLimit(1)
-                    .fixedSize()
-                    .contentTransition(.opacity)
-            }
-            .animation(Motion.crossfade, value: offered)
-        } action: {
-            router.push(.prayerBook)
+    /// The feast in the line, its rank and silk in the fact: "St. Edward"
+    /// over LESSER FEAST · WHITE. Until the propers arrive the line says
+    /// what the Mass holds, and the fact waits.
+    static func mass(_ today: TodayInChurch) -> TodaysPrayerRow {
+        let name = "Today's Mass"
+        let known = today.proper != nil
+        let subtitle = known ? today.title : "Prayers and readings for today"
+
+        let fact: String? = today.rank.map { rank in
+            guard let vestment = today.vestment else { return rank.uppercased() }
+            return "\(rank) · \(vestment.name)".uppercased()
         }
+
+        return TodaysPrayerRow(
+            painting: "topic_holy_mass",
+            focal: UnitPoint(x: 0.5, y: 0.5),
+            name: name,
+            subtitle: subtitle,
+            fact: fact,
+            mark: today.vestment.map { .silk($0) } ?? .none,
+            // The colour said in words, where the screen shows the silk
+            spoken: [name, subtitle, today.spokenMeta].compactMap { $0 }.joined(separator: ", ")
+        )
     }
 
-    /// The hour said the way the row's other facts are: short capitals,
-    /// from the book's own table, so the row turns when the book does
-    private static func hourMoment(_ date: Date) -> String {
-        PrayerBook.dayOrderMoment(at: date).uppercased()
+    // MARK: The Hours of Prayer
+
+    /// The hour it is in plain words over its Church name, and how long
+    /// it is the hour: NOW · UNTIL NOON
+    static func office(_ hour: CanonicalHour) -> TodaysPrayerRow {
+        let until = untilWord(hour.following.beginsAtClockHour)
+
+        return TodaysPrayerRow(
+            painting: "topic_daily_prayers",
+            focal: UnitPoint(x: 0.5, y: 0.45),
+            name: "Hours of Prayer",
+            subtitle: "\(hour.plainName) (\(hour.label))",
+            fact: "NOW · UNTIL \(until.uppercased())",
+            mark: .litHour,
+            spoken: "Hours of Prayer, \(hour.plainName), \(hour.label), the hour now, until \(until)"
+        )
     }
 
-    // MARK: Row 1 — Consecration to Mary
-
-    /// Nothing is greyed out and nothing is hidden. A user who has never
-    /// begun sees an invitation in the same place, at the same weight —
-    /// no "0 days", no empty progress track, nothing that reads as a
-    /// reproach.
-    private var consecrationRow: some View {
-        let day = consecrationDay
-        let start = consecrationStart
-
-        return LedgerRow(
-            icon: "ch-consecration",
-            name: "Consecration to Mary",
-            accessibility: consecrationAccessibility(day: day, start: start)
-        ) {
-            if let start {
-                // Chosen ahead: the day it begins, never a count
-                Text("BEGINS \(start.formatted(.dateTime.month(.abbreviated).day()).uppercased())")
-                    .font(AppFonts.labelFont(9))
-                    .tracking(2)
-                    .foregroundColor(AppColors.gold.opacity(0.9))
-            } else if let day {
-                VStack(alignment: .trailing, spacing: 6) {
-                    Text("DAY \(day)")
-                        .font(AppFonts.labelFont(11))
-                        .tracking(1.5)
-                        .foregroundColor(AppColors.goldLight)
-                        .contentTransition(.numericText())
-
-                    ProgressHair(fraction: Double(day) / 33)
-                }
-                .animation(Motion.crossfade, value: day)
-            } else {
-                Text("BEGIN")
-                    .font(AppFonts.labelFont(9))
-                    .tracking(2)
-                    .foregroundColor(AppColors.gold.opacity(0.9))
-            }
-        } action: {
-            // The tab knows every state: mid-preparation it opens the
-            // day, chosen ahead the page that waits for Day 1, and
-            // otherwise the invitation to begin.
-            router.selectedTab = .consecration
+    /// "noon", "midnight", "2 PM": the clock hour an hour of the Office
+    /// begins at, said as the row says it
+    static func untilWord(_ clockHour: Int) -> String {
+        switch clockHour {
+        case 0, 24: return "midnight"
+        case 12: return "noon"
+        case 1..<12: return "\(clockHour) AM"
+        default: return "\(clockHour - 12) PM"
         }
-    }
-
-    private func consecrationAccessibility(day: Int?, start: Date?) -> String {
-        if let start {
-            return "Consecration to Mary, begins \(start.formatted(.dateTime.weekday(.wide).month(.wide).day()))"
-        }
-        if let day {
-            return "Consecration to Mary, day \(day) of a 33-day preparation"
-        }
-        return "Consecration to Mary, a 33-day preparation. Begin."
     }
 }
 
-// MARK: - LedgerRow
+// MARK: - TodaysPrayerRowView
 
-/// One row of the ledger: medallion, name, the row's own live fact,
-/// chevron. The same parts in the same places on every row, so the three
-/// read as one ledger rather than three cards in a stack.
-private struct LedgerRow<Fact: View>: View {
+/// One routine: painting, name, line, fact, chevron. The same parts in
+/// the same places on every row, so the four read as one list.
+struct TodaysPrayerRowView: View {
 
-    let icon: String
-    var iconSize: CGFloat = 17
-    let name: String
-    let accessibility: String
-
-    @ViewBuilder let fact: Fact
-
+    let row: TodaysPrayerRow
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 16) {
-                medallion
+            HStack(spacing: 14) {
+                painting
 
-                // A door's name is never cut: beside a long fact
-                // ("Hours of Prayer" by MID-MORNING) or at the larger text
-                // sizes it takes a second line, as the Chapel's day
-                // strip does for a long feast
-                Text(name)
-                    .font(AppFonts.headlineFont(16.5))
-                    .foregroundColor(AppColors.cream)
-                    .lineLimit(2)
-                    .fixedSize(horizontal: false, vertical: true)
+                VStack(alignment: .leading, spacing: 3) {
+                    // A name is never cut: at the larger text sizes it
+                    // takes a second line
+                    Text(row.name)
+                        .font(AppFonts.headlineFont(16.5))
+                        .foregroundColor(AppColors.cream)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
 
-                Spacer(minLength: 8)
+                    Text(row.subtitle)
+                        .font(AppFonts.bodyFont(14.5))
+                        .foregroundColor(AppColors.cream.opacity(0.72))
+                        .lineLimit(1)
+                        .contentTransition(.opacity)
 
-                fact
+                    factLine
+                        .padding(.top, 2)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
 
                 AppIcon("ph-caret-right", size: 12)
                     .foregroundColor(AppColors.gold.opacity(0.5))
+                    .accessibilityHidden(true)
             }
-            .padding(.vertical, 13)
+            .padding(.vertical, 9)
             .frame(minHeight: 60)
             .contentShape(Rectangle())
         }
         .buttonStyle(SacredCardButtonStyle())
-        .accessibilityLabel(accessibility)
+        .accessibilityLabel(row.spoken)
+        .animation(Motion.crossfade, value: row.isPrayed)
+        .animation(Motion.crossfade, value: row.fact)
     }
 
-    private var medallion: some View {
-        AppIcon(icon, size: iconSize)
-            .foregroundColor(AppColors.gold)
-            .frame(width: 34, height: 34)
-            .background(Circle().fill(AppColors.gold.opacity(0.05)))
-            .overlay(Circle().strokeBorder(AppColors.gold.opacity(0.35), lineWidth: AppLine.hairline))
+    /// The painting, cut square with a gold hairline edge, the check on
+    /// its corner once prayed
+    private var painting: some View {
+        CachedAssetImage(row.painting, focal: row.focal)
+            .frame(width: 64, height: 64)
+            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .strokeBorder(AppColors.gold.opacity(0.28), lineWidth: AppLine.hairline)
+            )
+            .overlay(alignment: .topTrailing) {
+                if row.isPrayed {
+                    PrayedSeal()
+                        .offset(x: 5, y: -5)
+                        .transition(.opacity)
+                }
+            }
             .accessibilityHidden(true)
+    }
+
+    private var factLine: some View {
+        HStack(spacing: 7) {
+            switch row.mark {
+            case .silk(let vestment):
+                RoundedRectangle(cornerRadius: 1)
+                    .fill(vestment.swatch)
+                    .frame(width: 3, height: 11)
+                    .shadow(color: .black.opacity(0.5), radius: 2)
+            case .litHour:
+                LitHourDot(size: 6, box: 11, glow: 3)
+            case .none:
+                EmptyView()
+            }
+
+            // A space while there is nothing to say, so every row keeps
+            // its height and the list does not jump when the feast arrives
+            Text(row.fact ?? " ")
+                .font(AppFonts.labelFont(9))
+                .tracking(2)
+                .foregroundColor(AppColors.textSecondary)
+                .lineLimit(1)
+                .contentTransition(.opacity)
+        }
+        .accessibilityHidden(true)
+    }
+}
+
+// MARK: - PrayedSeal
+
+/// The check on a prayed row's painting: the seal in gold on the
+/// deepest ground, ringed so it reads over any painting
+private struct PrayedSeal: View {
+
+    var body: some View {
+        AppIcon("ph-seal-check-fill", size: 16)
+            .foregroundColor(AppColors.gold)
+            .frame(width: 20, height: 20)
+            .background(Circle().fill(AppColors.backgroundDeep))
+            .overlay(Circle().strokeBorder(AppColors.gold.opacity(0.4), lineWidth: AppLine.hairline))
     }
 }
 
 // MARK: - LitHourDot
 
 /// The mark that says "this hour, now": the lit disc inside a gold ring.
-/// The same object on the home ledger and in the arch's crown, at the
-/// two sizes each needs.
+/// The same object on the home list and in the Office's arch, at the
+/// sizes each needs.
 struct LitHourDot: View {
 
     var size: CGFloat = 9
@@ -458,27 +443,6 @@ struct LitHourDot: View {
         }
         .frame(width: box, height: box)
         .shadow(color: AppColors.gold.opacity(0.5), radius: glow / 2)
-        .accessibilityHidden(true)
-    }
-}
-
-// MARK: - ProgressHair
-
-/// The preparation's progress as a hairline, never a percentage.
-private struct ProgressHair: View {
-
-    let fraction: Double
-
-    var body: some View {
-        ZStack(alignment: .leading) {
-            Capsule()
-                .fill(AppColors.gold.opacity(0.16))
-
-            Capsule()
-                .fill(AppColors.gold)
-                .frame(width: 46 * min(max(fraction, 0), 1))
-        }
-        .frame(width: 46, height: 1.5)
         .accessibilityHidden(true)
     }
 }
