@@ -151,6 +151,9 @@ struct ContentView: View {
                     .animation(Motion.panel, value: shouldShowTabBar)
                     .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { tabBarHeight = $0 }
             }
+            // The bar stays at the foot of the glass while a keyboard is
+            // up, under it, rather than riding up over the page above it
+            .ignoresSafeArea(.keyboard)
             .accessibilityHidden(firstUseTour.isRunning)
 
             // What the Chant Library is singing, over the whole app: above
@@ -167,6 +170,8 @@ struct ContentView: View {
             }
             .animation(reduceMotion ? Motion.crossfade : Motion.panel, value: showsChantPlayer)
             .animation(Motion.panel, value: shouldShowTabBar)
+            // Where the bar stands, keyboard or none
+            .ignoresSafeArea(.keyboard)
 
             if firstUseTour.isRunning {
                 FirstUseTourOverlay(tour: firstUseTour)
