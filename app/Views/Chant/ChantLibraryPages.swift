@@ -142,6 +142,13 @@ enum ChantBrowseScope: Hashable {
         }
     }
 
+    /// Where a card or a shelf's head cuts its painting: the curation's
+    /// point (`ChantThumbnail.focalPoint`), except Dürer's All Saints,
+    /// whose arched top left pale corners at the head of the Litanies
+    static func focalPoint(for painting: String) -> UnitPoint {
+        painting == "feast_all_saints" ? UnitPoint(x: 0.5, y: 0.85) : ChantThumbnail.focalPoint(for: painting)
+    }
+
     /// Whether a shelf numbers its chants rather than hang a painting on
     /// each: true where every chant would hang the same one
     static func numbersItsChants(_ chants: [Chant]) -> Bool {
@@ -240,7 +247,7 @@ private struct ChantContents: View {
                 Color.clear
                     .aspectRatio(1, contentMode: .fit)
                     .overlay {
-                        CachedAssetImage(painting, focal: ChantThumbnail.focalPoint(for: painting))
+                        CachedAssetImage(painting, focal: ChantBrowseScope.focalPoint(for: painting))
                     }
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .overlay(
@@ -450,7 +457,7 @@ private struct ChantShelfPainting: View {
             .frame(maxWidth: .infinity)
             .frame(height: Self.reach)
             .background(alignment: .bottom) {
-                CachedAssetImage(name, focal: ChantThumbnail.focalPoint(for: name))
+                CachedAssetImage(name, focal: ChantBrowseScope.focalPoint(for: name))
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .clipped()
                     .overlay {
