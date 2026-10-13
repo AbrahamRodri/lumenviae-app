@@ -558,8 +558,8 @@ struct ContentView: View {
 
         // Every door to a prayer in the app opens it in the Prayer Book,
         // where it can be kept, prayed aloud, and learned by heart
-        case .devotionPrayer(let id):
-            BookPrayerView(prayerID: id)
+        case .devotionPrayer(let id, let set):
+            BookPrayerView(prayerID: id, set: set)
 
         case .carloAcutis:
             CarloAcutisView()
