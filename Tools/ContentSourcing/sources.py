@@ -144,9 +144,10 @@ PAINTINGS = [
 # takes these.
 # ------------------------------------------- the mysteries' paintings, Oct 2026
 # The app-clarity round: the two sorrows that borrowed another set's painting
-# get their own, the two paintings whose painter could not be established are
-# replaced, and the Resurrection, bundled at 566×732, is replaced by a larger
-# work. All PD-Art on Commons; fetch.py --take pins each file by name.
+# get their own. All PD-Art on Commons; fetch.py --take pins each file by name.
+# The same round replaced the Pentecost and the Resurrection (with El Greco's
+# and Carracci's); the originals were put back at Abraham's word (Oct 13), so
+# they stand in EXISTING again.
 
 PAINTINGS += [
     dict(imageset="seven_sorrows_finding", slot="The third sorrow, the loss of Jesus in the Temple (it borrowed joyful_finding)",
@@ -165,25 +166,6 @@ PAINTINGS += [
          commons_file="File:Crucifixion Diptych (Rogier van der Weyden).jpg",
          why="Mary swooning into St John's arms beside the Cross: the sorrow is hers, where Velázquez's Christ Crucified (sorrowful_crucifixion) shows Him alone. Commons holds the diptych at 1195×1128, below the 1600 target, so it is pinned.",
          alternate=None, **PD_ART),
-    dict(imageset="glorious_pentecost", slot="The third Glorious Mystery (replaces a Pentecost whose painter could not be established)",
-         features=["The Glorious Mysteries: the mysteries' page, the player, the Scriptural Rosary"],
-         work="The Pentecost", creator="El Greco (1541–1614)", date="c. 1600",
-         collection="Museo del Prado, Madrid", source_page="https://commons.wikimedia.org/wiki/File:Pentecostés_(El_Greco,_c._1600)_Prado.jpg",
-         commons_search="El Greco Pentecost Prado",
-         commons_file="File:Pentecostés (El Greco, c. 1600) Prado.jpg",
-         why="Mary at the centre of the Apostles under the dove, the tongues of fire on every head; a known painter and a known museum, where the old file was an unidentified seventeenth-century picture.",
-         alternate=None, **PD_ART),
-    dict(imageset="glorious_resurrection", slot="The first Glorious Mystery and the Glorious card on home (replaces Coypel's, bundled at 566×732)",
-         features=["Home's mystery grid, the mysteries' page, the player, the Scriptural Rosary"],
-         work="The Resurrection of Christ", creator="Annibale Carracci (1560–1609)", date="1593",
-         collection="Musée du Louvre, Paris", source_page="https://commons.wikimedia.org/wiki/File:Carracci_-_La_Résurrection_du_Christ,_1593,_INV_200_;_MR_117.jpg",
-         commons_search="Annibale Carracci Resurrection of Christ Louvre",
-         commons_file="File:Carracci - La Résurrection du Christ, 1593, INV 200 ; MR 117.jpg",
-         why="The risen Christ high in the picture over the sleeping guards, so the card's focal point (a fifth of the way down) still finds Him; Commons holds it at 1241×1700 against the old 566×732.",
-         alternate="Carl Bloch, The Resurrection (1873), Commons at 1000×1400 only",
-         # The Louvre's photograph takes in the gilt spandrels at the top corners of the arched frame
-         crop=(0.15, 0.0, 0.15, 0.0),
-         **PD_ART),
 ]
 
 # ------------------------------------------- the Prayer Book's topics, Oct 2026
@@ -343,16 +325,15 @@ EXISTING = [
     ("joyful_visitation", "The Visitation", "Raphael and workshop (Giulio Romano)", "c. 1517", "Museo del Prado", "confirmed"),  # signed RAPHAEL URBINAS at the foot
     ("luminous_cana", "The Marriage Feast at Cana", "Bartolomé Esteban Murillo", "c. 1672", "Barber Institute of Fine Arts, Birmingham", "confirmed"),
     ("sorrowful_carrying", "Christ Carrying the Cross", "Anthony van Dyck", "1617–18", "Sint-Pauluskerk, Antwerp", "confirmed"),
+    ("glorious_resurrection", "The Resurrection of Christ", "Noël Coypel", "1700", None, "confirmed"),
     # Once thought Maíno's; set beside the Prado's Maíno it is another
     # picture (landscape, Mary seated at the centre), so its painter is unknown
+    ("glorious_pentecost", "Pentecost", None, None, None, "ask Abraham"),
     # Identified in the app-clarity round (Oct 2026) by setting the bundled
     # image beside the Commons file: the same picture to the brushstroke
     ("glorious_ascension", "The Ascension", "Francisco Camilo (1615–1673)", "1651", "Museo del Prado, Madrid (Google Art Project scan)", "confirmed"),
     ("glorious_assumption", "The Assumption of the Virgin", "Corrado Giaquinto (1703–1766)", None, "Private collection (Sotheby's, New York, 2013, lot 76)", "confirmed"),
     ("joyful_nativity", "The Adoration of the Shepherds", "Guido Reni (1575–1642)", "c. 1640", "National Gallery, London", "confirmed"),
-    # Replaced in the same round (see PAINTINGS): the Pentecost could not
-    # be identified — not Maíno's, whose Prado picture is another
-    # composition — and the Resurrection was the smallest file in the bundle
 ]
 
 # The Commons file each confirmed painting matches, its licence as read on
@@ -415,6 +396,10 @@ PROVENANCE = {
     "sorrowful_carrying": dict(commons_file="File:Anthony van Dyck - Jesus Christ bearing the Cross.jpg", licence="Public domain",
                                match="exact", score=1.0, bundled="1218×1600",
                                note="Sint-Pauluskerk's own photograph. Taken again at 1600 px from this file (fetch.py --retake); it was bundled at 960×1261."),
+    "glorious_resurrection": dict(commons_file="File:Noël Coypel - Resurrection of Christ (large version).jpg", licence="Public domain",
+                                  match="same work", score=0.782, bundled="566×732",
+                                  note="Commons holds the work only small (638×900 at most); the bundled image is a crop of it, "
+                                       "the same composition by eye, and the smallest painting in the bundle."),
     "glorious_ascension": dict(commons_file="File:Francisco Camilo - Ascension - Google Art Project.jpg", licence="Public domain",
                                match="same work", score=None, bundled="672×1024",
                                note="The same picture by eye, figure for figure (the signature at the lower left reads F. CAMILO); "
