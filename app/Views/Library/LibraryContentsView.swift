@@ -13,8 +13,9 @@
 //  opens it with the voice reading.
 //
 //  Marks, and what they mean, deliberately: a gold dot is where you are,
-//  a faint gold rule in the left margin is a chapter you have read to
-//  the end, and a small ribbon with a count is the marks you laid in it.
+//  a chapter you have read to the end is set dimmed on the book page and
+//  under a faint gold rule in the ☰ sheet's margin, and a small ribbon
+//  with a count is the marks you laid in it.
 //  None is a score. Knowing which doors you have been through is
 //  navigation; knowing you have been through forty-one per cent of them
 //  is a scoreboard, and this shelf does not keep one.
@@ -53,21 +54,110 @@ struct LibraryPartRun: Identifiable {
 
 // MARK: - Contents ledger
 
-/// Where a ledger is drawn. The book page keeps its own ruled list; the
-/// reader's ☰ sheet sets the same chapters as the app's sheet rows
+// MARK: - Place
+
+/// How the book page names a place in the book and where its list
+/// begins. Pure, so the rules can be tested without a view.
+enum LibraryBookPlace {
+
+    /// How many chapters before the one being read the page's list
+    /// shows, dimmed, so the reader sees where they came from.
+    static let leadIn = 2
+
+    /// The numeral a heading ends on — "V" of "Chapter V", "12" of
+    /// "Chapter 12" — or nil for a heading with none ("Prologue"), read
+    /// as strictly as the recordings' ledger reads them
+    /// (`LibraryNumerals`), so an all-caps word is never a numeral.
+    static func numeral(ofHeading heading: String) -> String? {
+        guard let last = heading.split(separator: " ").last, last.count < heading.count else {
+            return nil
+        }
+        let word = String(last)
+        return Int(word) != nil || LibraryNumerals.roman(word) != nil ? word : nil
+    }
+
+    /// The parts a book prints by name. An edition's front matter — the
+    /// Glories of Mary's Introduction, the Practice's Preface — stands as
+    /// a run of its own before the first part, with no title, and is no
+    /// part: it is never numbered, pinned or indexed.
+    static func titledParts(_ runs: [LibraryPartRun]) -> [LibraryPartRun] {
+        runs.filter { $0.title != nil }
+    }
+
+    /// Whether the book is printed in parts, so the page pins and indexes
+    /// them
+    static func hasParts(_ runs: [LibraryPartRun]) -> Bool {
+        titledParts(runs).count > 1
+    }
+
+    /// A part's number as the book counts its parts, 1 for the first named
+    /// one; nil for front matter
+    static func partNumber(of runID: String, in runs: [LibraryPartRun]) -> Int? {
+        titledParts(runs).firstIndex { $0.id == runID }.map { $0 + 1 }
+    }
+
+    /// The place on the Continue button: "III.V" in a book of parts —
+    /// the part's numeral and the chapter's — and the heading itself
+    /// ("Chapter V", "Prologue") in a book without them, in front matter,
+    /// or where the heading carries no numeral. A chapter whose heading is
+    /// its part's own name (the exhortation opening the Imitation's Fourth
+    /// Book) is named by the part's numeral alone.
+    static func shortName(of chapter: LibraryChapter, in runs: [LibraryPartRun]) -> String {
+        guard hasParts(runs),
+              let run = runs.first(where: { $0.chapters.contains { $0.id == chapter.id } }),
+              let part = partNumber(of: run.id, in: runs) else {
+            return chapter.heading
+        }
+        if let tail = numeral(ofHeading: chapter.heading) {
+            return "\(LibraryNumerals.numeral(for: part)).\(tail)"
+        }
+        return chapter.heading == run.title ? LibraryNumerals.numeral(for: part) : chapter.heading
+    }
+
+    /// The chapter the page's list begins at: `leadIn` before the one
+    /// being read. Nil when the list begins at the book's start, so
+    /// nothing stands folded above it.
+    static func firstShown(in runs: [LibraryPartRun], currentIndex: Int?) -> Int? {
+        guard let currentIndex else { return nil }
+        let ids = runs.flatMap { $0.chapters.map(\.id) }
+        guard let position = ids.firstIndex(of: currentIndex) else { return nil }
+        let start = position - leadIn
+        return start > 0 ? ids[start] : nil
+    }
+
+    /// The runs as the page draws them from `first` on: earlier runs
+    /// left out, the run holding `first` cut to begin there.
+    static func runs(_ runs: [LibraryPartRun], from first: Int?) -> [LibraryPartRun] {
+        guard let first else { return runs }
+        var shown: [LibraryPartRun] = []
+        var started = false
+        for run in runs {
+            if started {
+                shown.append(run)
+            } else if let cut = run.chapters.firstIndex(where: { $0.id == first }) {
+                started = true
+                var tail = run
+                tail.chapters = Array(run.chapters[cut...])
+                shown.append(tail)
+            }
+        }
+        return shown
+    }
+}
+
+/// Where a chapter row is drawn. The book page keeps its own ruled list;
+/// the reader's ☰ sheet sets the same chapters as the app's sheet rows
 /// (`SheetChrome`), so its index reads like every other sheet's.
 enum LibraryContentsStyle {
     case page
     case sheet
 }
 
-/// The ruled ledger itself, without any chrome around it.
+/// The reader's ☰ sheet's ledger, its parts folding. The book page draws
+/// its own list, with the parts pinned rather than folded.
 struct LibraryContentsLedger: View {
 
     let runs: [LibraryPartRun]
-
-    /// The page's list by default; the ☰ sheet asks for its own rows
-    var style: LibraryContentsStyle = .page
 
     /// Where the reader is now — a gold dot
     var currentIndex: Int?
@@ -77,11 +167,6 @@ struct LibraryContentsLedger: View {
 
     /// How many ribbons lie in each chapter
     var markCounts: [Int: Int] = [:]
-
-    /// What each chapter's recording is doing, where one begins there.
-    /// Absent for a book with no recording, and in the reader's index,
-    /// where a row is only a door.
-    var listening: (LibraryChapter) -> LibraryRowListening? = { _ in nil }
 
     /// Which parts stand open. Bound so the two callers keep their own.
     @Binding var expandedParts: Set<String>
@@ -124,55 +209,11 @@ struct LibraryContentsLedger: View {
                 expandedParts.insert(run.id)
             }
         } label: {
-            switch style {
-            case .page:
-                pagePartLabel(run, isOpen: isOpen, holdsCurrent: holdsCurrent)
-            case .sheet:
-                sheetPartLabel(run, isOpen: isOpen, holdsCurrent: holdsCurrent)
-            }
+            sheetPartLabel(run, isOpen: isOpen, holdsCurrent: holdsCurrent)
         }
         .buttonStyle(.plain)
         .accessibilityLabel("\(run.title ?? "Part"), \(run.chapters.count) chapters")
         .accessibilityHint(isOpen ? "Closes this part's chapters" : "Opens this part's chapters")
-    }
-
-    /// The book page's part heading: engraved caps over a fading rule
-    private func pagePartLabel(_ run: LibraryPartRun, isOpen: Bool, holdsCurrent: Bool) -> some View {
-        HStack(spacing: 12) {
-            Text((run.title ?? "").uppercased())
-                .font(AppFonts.labelFont(11))
-                .tracking(2.5)
-                .foregroundColor(AppColors.gold.opacity(isOpen ? 0.95 : 0.75))
-                .fixedSize()
-
-            if holdsCurrent, !isOpen {
-                Circle()
-                    .fill(AppColors.goldLight)
-                    .frame(width: 5, height: 5)
-            }
-
-            Rectangle()
-                .fill(
-                    LinearGradient(
-                        colors: [AppColors.gold.opacity(0.3), AppColors.gold.opacity(0)],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-                .frame(height: 1)
-
-            Text("\(run.chapters.count)")
-                .font(AppFonts.labelFont(10))
-                .tracking(1)
-                .foregroundColor(AppColors.textSecondary.opacity(0.8))
-
-            AppIcon(isOpen ? "ph-caret-up" : "ph-caret-down", size: 10)
-                .foregroundColor(AppColors.gold.opacity(0.6))
-                .animation(.easeOut(duration: 0.2), value: isOpen)
-        }
-        .padding(.vertical, 14)
-        .frame(minHeight: 44)
-        .contentShape(Rectangle())
     }
 
     /// The sheet's part heading: a `SheetSectionLabel` that still folds,
@@ -217,12 +258,11 @@ struct LibraryContentsLedger: View {
         ForEach(chapters) { chapter in
             LibraryChapterRow(
                 chapter: chapter,
-                style: style,
+                style: .sheet,
                 isCurrent: chapter.id == currentIndex,
                 isFinished: finished.contains(chapter.id),
                 isLast: chapter.id == chapters.last?.id,
                 markCount: markCounts[chapter.id] ?? 0,
-                listening: listening(chapter),
                 onSelect: onSelect
             )
             .id(chapter.id)
@@ -282,6 +322,11 @@ struct LibraryChapterRow: View {
     /// Present where a recording begins at this chapter.
     var listening: LibraryRowListening? = nil
 
+    /// Whether the page row keeps a column for the numeral even where
+    /// this chapter has none, so a Prologue's title stands in line with
+    /// Chapter I's beneath it. Off for a book that numbers nothing.
+    var reservesNumeral: Bool = false
+
     let onSelect: (LibraryChapter) -> Void
 
     /// An edition that prints no chapter titles used to draw its heading
@@ -301,41 +346,82 @@ struct LibraryChapterRow: View {
 
     // MARK: Page row
 
+    /// The numeral the row leads with — "V" of "Chapter V" — or nil for
+    /// a heading with none ("Prologue"), which the title then carries.
+    private var numeral: String? {
+        LibraryBookPlace.numeral(ofHeading: chapter.heading)
+    }
+
+    /// The row's one line of title: the chapter's own where its heading
+    /// is only a number, "Prologue · The Parentage…" where it is a word —
+    /// but not where the heading is the part's own name (the exhortation
+    /// that opens the Imitation's Fourth Book), which is pinned above it.
+    private var rowTitle: String {
+        guard hasDistinctTitle, numeral == nil, chapter.heading != chapter.part else {
+            return chapter.displayTitle
+        }
+        return "\(chapter.heading) · \(chapter.displayTitle)"
+    }
+
+    private var titleColor: Color {
+        if isCurrent { return AppColors.goldLight }
+        if isFinished { return AppColors.cream.opacity(0.5) }
+        return AppColors.cream
+    }
+
+    /// One tight row: the numeral in a column of its own, the title, and
+    /// at the trailing edge only what is there — ribbons laid, and the
+    /// recording's time where one begins here. Read chapters are dimmed,
+    /// the one being read is lit with a dot by its numeral.
     private var pageRow: some View {
         VStack(spacing: 0) {
             Button {
                 onSelect(chapter)
             } label: {
-                HStack(alignment: .center, spacing: 10) {
-                    VStack(alignment: .leading, spacing: 3) {
-                        if hasDistinctTitle {
-                            Text(chapter.heading.uppercased())
-                                .font(AppFonts.labelFont(10))
-                                .tracking(1.2)
-                                .foregroundColor(AppColors.gold.opacity(0.85))
-                                .lineLimit(1)
+                HStack(alignment: .center, spacing: 8) {
+                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        if numeral != nil || reservesNumeral {
+                            HStack(spacing: 4) {
+                                Text(numeral ?? "")
+                                    .font(AppFonts.labelFont(11))
+                                    .foregroundColor(
+                                        isCurrent ? AppColors.goldLight : AppColors.gold.opacity(0.8)
+                                    )
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.7)
+
+                                if isCurrent {
+                                    Circle()
+                                        .fill(AppColors.goldLight)
+                                        .frame(width: 4, height: 4)
+                                        .alignmentGuide(.firstTextBaseline) { $0[.bottom] + 2 }
+                                }
+                            }
+                            .frame(width: 40, alignment: .leading)
                         }
 
-                        Text(chapter.displayTitle)
-                            .font(AppFonts.bodyFont(15))
-                            .foregroundColor(AppColors.cream)
-                            .multilineTextAlignment(.leading)
-                            .fixedSize(horizontal: false, vertical: true)
-
-                        if let excerpt {
-                            Text(excerpt)
-                                .font(AppFonts.italicFont(13))
-                                .foregroundColor(AppColors.textSecondary)
-                                .lineLimit(2)
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(rowTitle)
+                                .font(AppFonts.bodyFont(15))
+                                .foregroundColor(titleColor)
                                 .multilineTextAlignment(.leading)
-                        }
+                                .fixedSize(horizontal: false, vertical: true)
 
-                        // Only where the voice was left part-way: the
-                        // exact place it rests, in the player's own hand.
-                        if let resting = listening?.resting {
-                            Text("\(LibraryListeningSession.time(resting)) in")
-                                .font(AppFonts.italicFont(12))
-                                .foregroundColor(AppColors.goldLight.opacity(0.85))
+                            if let excerpt {
+                                Text(excerpt)
+                                    .font(AppFonts.italicFont(13))
+                                    .foregroundColor(AppColors.textSecondary)
+                                    .lineLimit(2)
+                                    .multilineTextAlignment(.leading)
+                            }
+
+                            // Only where the voice was left part-way: the
+                            // exact place it rests, in the player's own hand.
+                            if let resting = listening?.resting {
+                                Text("\(LibraryListeningSession.time(resting)) in")
+                                    .font(AppFonts.italicFont(12))
+                                    .foregroundColor(AppColors.goldLight.opacity(0.85))
+                            }
                         }
                     }
 
@@ -345,44 +431,24 @@ struct LibraryChapterRow: View {
                         HStack(spacing: 4) {
                             MarkerRibbonShape()
                                 .fill(AppColors.goldLight)
-                                .frame(width: 7, height: 15)
+                                .frame(width: 6, height: 13)
 
                             Text("\(markCount)")
                                 .font(AppFonts.labelFont(9))
                                 .foregroundColor(AppColors.goldLight.opacity(0.9))
                         }
-                        .accessibilityLabel("\(markCount) bookmarks")
+                        .accessibilityHidden(true)
                     }
 
                     if let listening {
                         listenChip(listening)
                         saveMark(listening)
                     }
-
-                    if isCurrent {
-                        Circle()
-                            .fill(AppColors.goldLight)
-                            .frame(width: 6, height: 6)
-                            .accessibilityHidden(true)
-                    } else {
-                        AppIcon("ph-caret-right", size: 11)
-                            .foregroundColor(AppColors.textSecondary.opacity(0.5))
-                    }
                 }
-                .padding(.vertical, 12)
-                .padding(.leading, 14)
+                .padding(.vertical, 9)
                 .frame(minHeight: 44)
                 .fixedSize(horizontal: false, vertical: true)
                 .contentShape(Rectangle())
-                // The read-mark: a thin rule in the margin, the way a
-                // well-used book falls open. Never a checkbox.
-                .overlay(alignment: .leading) {
-                    Rectangle()
-                        .fill(isFinished ? AppColors.gold.opacity(0.45) : Color.clear)
-                        .frame(width: 2)
-                        .padding(.vertical, 8)
-                        .accessibilityHidden(true)
-                }
             }
             .buttonStyle(.plain)
             .accessibilityElement(children: .ignore)
@@ -405,8 +471,9 @@ struct LibraryChapterRow: View {
             }
 
             if !isLast {
-                Divider()
-                    .background(AppColors.gold.opacity(0.15))
+                Rectangle()
+                    .fill(AppColors.gold.opacity(0.08))
+                    .frame(height: AppLine.hairline)
             }
         }
     }
@@ -695,7 +762,6 @@ struct LibraryContentsSheet: View {
 
                         LibraryContentsLedger(
                             runs: runs,
-                            style: .sheet,
                             currentIndex: currentIndex,
                             finished: finished,
                             markCounts: markCounts,
