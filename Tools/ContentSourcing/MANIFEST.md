@@ -47,6 +47,39 @@ Generated from `sources.py` by `build_manifest.py`; edit there. Machine-readable
 | `topic_sick_dying` | Prayer Book topic: The Sick and the Dying | The Death of Saint Joseph | Carlo Maratta (1625–1713) | c. 1676 | Kunsthistorisches Museum, Vienna | Public domain | verified |
 | `topic_needs` | Prayer Book topic: In Time of Need | The Storm on the Sea of Galilee | Rembrandt van Rijn (1606–1669) | 1633 | Isabella Stewart Gardner Museum, Boston | Public domain | verified |
 | `topic_thanksgiving` | Prayer Book topic: Thanksgiving | Madonna of the Magnificat | Sandro Botticelli (c. 1445–1510) | c. 1483 | Uffizi, Florence | Public domain | verified |
+| `mary_immaculate_conception` | The Immaculate Conception: Thou Art All Fair, Inviolate, O Mary Conceived without Sin, Lourdes; the feast on Dec 8; the Marian Library's Immaculate Conception, Lourdes and Guadalupe | The Immaculate Conception | Giovanni Battista Tiepolo (1696–1770) | 1767–69 | Museo del Prado, Madrid | Public domain | verified |
+| `mary_mater_dolorosa` | Our Lady of Sorrows: her prayer, litany and closing prayer; the feast on Sept 15; the Marian Library's Seven Sorrows | Mater Dolorosa | Carlo Dolci (1616–1687) | c. 1655 | National Museum of Western Art, Tokyo | Public domain | verified |
+| `mary_virgin_in_prayer` | Our Lady at prayer: To the Heart of Mary, My Queen My Mother, the Three Hail Marys, To Our Lady after Communion; Saved; the Marian Library's Immaculate Heart | The Virgin in Prayer | Giovanni Battista Salvi da Sassoferrato (1609–1685) | 1640–50 | The National Gallery, London | Public domain | verified |
+| `mary_sistine_madonna` | Our Lady in glory: the Chant Library's hymns to Our Lady (Daily Daily Sing to Mary, O Glorious Virgin, We Praise Thee as Mother, the Saturday Ave Maris Stella), Saturday's devotion, Songs to Mary; the Marian Library's Holy Name of Mary | The Sistine Madonna | Raphael (1483–1520) | 1512–13 | Gemäldegalerie Alte Meister, Dresden | Public domain | verified |
+| `mary_mother_of_mercy` | Under her mantle: We Fly to Thy Patronage, Hail Mother of Mercy, Mary Help of Christians, Perpetual Help; the Before Bed occasion | Madonna della Misericordia (Polyptych of the Misericordia) | Piero della Francesca (c. 1415–1492) | 1445–62 | Museo Civico, Sansepolcro | Public domain | verified |
+| `mary_mount_carmel` | Our Lady of Mount Carmel: Flower of Carmel, her prayer, the feast on July 16, the Marian Library | Madonna del Carmine Giving the Scapular to St Simon Stock | Painter in the manner of Arcangelo Salimbeni | 1535 | Pieve della Santissima Annunziata, Montisi | Public domain | verified |
+| `mary_of_the_snows` | The Marian Library's Our Lady of the Snows (Aug 5) | The Dream of the Patrician | Bartolomé Esteban Murillo (1617–1682) | 1664–65 | Museo del Prado, Madrid | Public domain | verified |
+| `feast_annunciation` | The Annunciation feast (Mar 25), the Ave Maria antiphon, Whom Earth and Sea and Stars, the feast-day Ave Maris Stella; the Marian Library's Annunciation | The Annunciation | Fra Angelico (c. 1395–1455) | 1425–26 | Museo del Prado, Madrid | Public domain | verified |
+| `jesus_holy_name` | The Holy Name: its litany (prayer and chant), Jesus the Very Thought of Thee, the Jesus Prayer, the Golden Arrow; the feast and the month of January | The Adoration of the Name of Jesus | El Greco (1541–1614) | 1578–80 | The National Gallery, London | Public domain | verified |
+| `jesus_precious_blood` | The Precious Blood: its litany and offering, Hail Wounds of Christ, the feast on July 1 and its month | The Blood of the Redeemer | Giovanni Bellini (c. 1430–1516) | c. 1465 | The National Gallery, London | Public domain | verified |
+| `jesus_anima_christi` | Soul of Christ (prayer and chant) | Christ Embracing St Bernard | Francisco Ribalta (1565–1628) | 1625–27 | Museo del Prado, Madrid | Public domain | verified |
+| `jesus_eucharist_saviour` | Jesus in the Host: Hail True Body, I Adore Thee Devoutly, Bread of Angels, Behold the Bread of Angels, O Sacred Banquet, Lord I Am Not Worthy, Spiritual Communion; A Visit to Jesus in Church | The Saviour | Juan de Juanes (c. 1507–1579) | c. 1545–50 | Museo del Prado, Madrid | Public domain | verified |
+| `jesus_good_shepherd` | Prayer to the Infant Jesus of Prague | The Good Shepherd | Bartolomé Esteban Murillo (1617–1682) | c. 1660 | Museo del Prado, Madrid | Public domain | verified |
+| `season_lent` | Lent: the season, Hear Us O Lord, O Kind Creator, Spare O Lord, In the Midst of Life | Christ in the Wilderness | Moretto da Brescia (c. 1498–1554) | c. 1515–20 | The Metropolitan Museum of Art, New York | CC0 | verified |
+| `psalm_king_david` | The psalms: Have Mercy on Me (Miserere), Blessed Are They (Psalm 31), Thou Shalt Sprinkle Me (Asperges, from Psalm 50); the Chant Library's psalm kind and Learned | King David Playing the Harp | Gerard van Honthorst (1592–1656) | 1622 | Centraal Museum, Utrecht | Public domain | verified |
+| `easter_noli_me_tangere` | Easter Sunday and its sequence, Praises to the Paschal Victim | Noli Me Tangere | Correggio (1489–1534) | c. 1525 | Museo del Prado, Madrid | Public domain | verified |
+| `easter_saint_thomas` | O Sons and Daughters; My Lord and My God | The Incredulity of Saint Thomas | Caravaggio (1571–1610) | 1601–02 | Sanssouci Picture Gallery, Potsdam | Public domain | verified |
+| `easter_holy_women` | The Dawn Is Reddening the Sky; Hail Festive Day | The Holy Women at the Tomb | William-Adolphe Bouguereau (1825–1905) | 1890 | Royal Museum of Fine Arts, Antwerp | Public domain | verified |
+| `easter_appears_to_mary` | Queen of Heaven, Rejoice (the prayer, both chants, the Angelus in Eastertide); With Joy in One Accord | Christ Appearing to His Mother | Juan de Flandes (c. 1465–1519) | c. 1496 | The Metropolitan Museum of Art, New York | CC0 | verified |
+| `mass_lamb_of_god` | Lamb of God (both Masses); At the Lamb's High Feast | The Adoration of the Mystic Lamb (Ghent Altarpiece, central panel) | Hubert and Jan van Eyck (d. 1426 and 1441) | 1432 | St Bavo's Cathedral, Ghent | Public domain | verified |
+| `advent_isaiah` | Advent's prophecies: Drop Down Dew (Rorate), O Come O Come Emmanuel, the seven O antiphons and their days, Creator of the Stars of Night, Hark a Clear Voice; the seasonal section | The Prophet Isaiah (Sistine Chapel ceiling) | Michelangelo (1475–1564) | 1508–12 | Sistine Chapel, Vatican | Public domain | verified |
+| `christmas_shepherds` | O Come All Ye Faithful; Christmas Day | The Adoration of the Shepherds | Gerard van Honthorst (1592–1656) | 1622 | Wallraf-Richartz-Museum, Cologne | Public domain | verified |
+| `saint_john_baptist_birth` | The Birth of St John the Baptist (June 24) and its hymn, That Thy Servants May Sing; the Canticle of Zachary | The Birth of St John the Baptist | Artemisia Gentileschi (1593–1654) | c. 1635 | Museo del Prado, Madrid | Public domain | verified |
+| `saint_michael` | St Michael: his prayer, his chant, his feast (Sept 29) | Saint Michael Vanquishing Satan (Le Grand Saint Michel) | Raphael (1483–1520) | 1518 | Musée du Louvre, Paris | Public domain | verified |
+| `saint_joseph_carpenter` | To St Joseph, Model of Workers; Before Work; the Before Work or Study occasion | Saint Joseph the Carpenter | Georges de La Tour (1593–1652) | c. 1642 | Musée du Louvre, Paris | Public domain | verified |
+| `saint_anthony` | Prayer to St Anthony | Saint Anthony of Padua | Francisco de Zurbarán (1598–1664) | 1627–30 | Museu de Arte de São Paulo | Public domain | verified |
+| `saint_thomas_aquinas` | St Thomas Aquinas's prayers before study, before Mass and after Mass | Saint Thomas Aquinas (from the Demidoff Altarpiece) | Carlo Crivelli (c. 1430–1495) | 1476 | The National Gallery, London | Public domain | verified |
+| `saint_paul_conversion` | For the Conversion of Sinners | The Conversion on the Way to Damascus | Caravaggio (1571–1610) | 1600–01 | Santa Maria del Popolo, Rome | Public domain | verified |
+| `last_judgment` | Day of Wrath (Dies Irae) | The Last Judgement | Fra Angelico (c. 1395–1455) | 1435–40 | Gemäldegalerie, Berlin | Public domain | verified |
+| `prayer_holy_family` | For the Family, A Parent's Prayer, Jesus Mary and Joseph (both), Visit This House | The Holy Family with a Little Bird | Bartolomé Esteban Murillo (1617–1682) | c. 1650 | Museo del Prado, Madrid | Public domain | verified |
+| `prayer_tobias_angel` | Before a Journey | Tobias and the Angel | Workshop of Andrea del Verrocchio | c. 1470–75 | The National Gallery, London | Public domain | verified |
+| `prayer_healing_sick` | For the Sick; Prayer to St Peregrine | Christ Healing the Paralytic at the Pool of Bethesda | Bartolomé Esteban Murillo (1617–1682) | 1667–70 | The National Gallery, London | Public domain | verified |
+| `prayer_supper_emmaus` | Grace before and after Meals; the At Meals order on Explore | Supper at Emmaus | Caravaggio (1571–1610) | 1601 | The National Gallery, London | Public domain | verified |
 
 Alternates and reasons:
 
@@ -78,6 +111,39 @@ Alternates and reasons:
 - `topic_sick_dying`: St Joseph dying in the arms of Jesus and Mary, the patron of a happy death. *Alternate:* Carl Bloch, Christ Healing the Sick at Bethesda (1883), but Commons holds it only at 600 px.
 - `topic_needs`: Lord, save us, we perish: the prayer of anyone in need.
 - `topic_thanksgiving`: Mary writing her Magnificat: the Church's song of thanks, beside the Te Deum and the Benedictus.
+- `mary_immaculate_conception`: Our Lady standing on the moon and the serpent, the Dove above: the Tota pulchra's subject, and the name she gave herself at Lourdes. A second Immaculata, so the Our Lady topic's Murillo is not hung on every Marian prayer.
+- `mary_mater_dolorosa`: Our Lady alone in her grief, hands clasped, in the blue the app's Marian pages wear. The oval's painted ground is cut away. *Alternate:* Titian, Mater Dolorosa with her Hands Apart (1554), Museo del Prado.
+- `mary_virgin_in_prayer`: Mary herself praying, eyes lowered: the prayers that give oneself to her heart, and the shelf of prayers a reader keeps.
+- `mary_sistine_madonna`: Our Lady coming down through the clouds with her Son: the hymns sung to her in heaven, where the Coronation had stood for all of them.
+- `mary_mother_of_mercy`: Our Lady sheltering the faithful under her cloak: the Sub tuum's 'we fly to thy patronage', and the night put under her protection. *Alternate:* Domenico Ghirlandaio, Madonna della Misericordia (Ognissanti), on Commons only under CC BY.
+- `mary_mount_carmel`: Our Lady giving the scapular to St Simon Stock, the souls in Purgatory below: the feast's own scene. Its arched frame is cut away. *Alternate:* Tiepolo's ceiling at the Scuola dei Carmini, Venice, whose photographs are not plainly public domain.
+- `mary_of_the_snows`: Our Lady appearing to the sleeping patrician John to ask for the church that became St Mary Major: the feast's own story. The lunette's gilt corners are cut away.
+- `feast_annunciation`: Gabriel's Ave in gold and blue: the feast and the hymns that sing it, kept apart from the Joyful Mysteries' own Annunciation.
+- `jesus_holy_name`: Heaven, earth and hell kneeling to the Name, IHS, in the sky: 'that at the name of Jesus every knee should bow'.
+- `jesus_precious_blood`: An angel catching the blood from Christ's side in a chalice: the devotion itself.
+- `jesus_anima_christi`: Christ leaning down from the Cross to hold the monk: 'within Thy wounds hide me; suffer me not to be separated from Thee'.
+- `jesus_eucharist_saviour`: Christ holding up the Host over the chalice, looking out at the one who kneels: Ave verum corpus, and the visit before the tabernacle.
+- `jesus_good_shepherd`: The Child Jesus with a lamb: the devotion to the Infant, in a painting rather than the crowned statue.
+- `season_lent`: Christ's forty days among the beasts, angels coming to Him: the fast every Lenten hymn keeps. The Met's open-access image is CC0.
+- `psalm_king_david`: The psalmist singing, eyes raised: David's Miserere and the chants learned by heart.
+- `easter_noli_me_tangere`: 'Tell us, Mary, what thou sawest on the way': the Victimae paschali asks Magdalen, and this is what she saw.
+- `easter_saint_thomas`: O filii et filiae tells of Thomas's hand in the wound, and 'My Lord and my God' are his words.
+- `easter_holy_women`: The women at the empty tomb at dawn and the angel telling them He is risen: Aurora caelum purpurat's own verses. By the painter of the bundle's Pietà.
+- `easter_appears_to_mary`: The risen Christ coming first to His Mother: 'Queen of Heaven, rejoice, for He whom thou didst merit to bear is risen'. The panel's frame is cut away; CC0 from the Met.
+- `mass_lamb_of_god`: The Lamb on the altar, its blood flowing into the chalice, the angels and saints adoring: Agnus Dei, and the Lamb's high feast.
+- `advent_isaiah`: Rorate caeli and every O antiphon are Isaiah's words; the prophet turning from his book at a call. The painted architecture round him is cut away.
+- `christmas_shepherds`: 'Venite adoremus': the shepherds come in from the night to the Child, who is the light of the picture. *Alternate:* Murillo, The Adoration of the Shepherds (c. 1650), Museo del Prado.
+- `saint_john_baptist_birth`: The newborn John washed by the women while Zachary writes his name: the feast, the hymn for it, and the Benedictus Zachary then sang.
+- `saint_michael`: 'Defend us in battle': the archangel with his lance over the fallen angel. *Alternate:* Guido Reni, St Michael the Archangel (1635), Santa Maria della Concezione, Rome.
+- `saint_joseph_carpenter`: Joseph at his beam by the light of the Child's candle: work offered and begun in His presence.
+- `saint_anthony`: The saint kneeling as the Child appears above him, his book and lily beside him: the saint the prayer asks, in Zurbarán's quiet dark.
+- `saint_thomas_aquinas`: The Angelic Doctor holding the Church and his open book, the sun of wisdom on his breast: the man whose prayers these are. *Alternate:* Zurbarán, The Apotheosis of St Thomas Aquinas (1631), Seville, on Commons only at 2024 px in a scan cut to the faces, or under CC BY-SA.
+- `saint_paul_conversion`: Saul thrown down by the light: the conversion the prayer asks for others.
+- `last_judgment`: Christ in judgement among the saints, the blessed and the lost on either side: the Dies irae's own vision. *Alternate:* Rogier van der Weyden, the Beaune Altarpiece (1443–51).
+- `prayer_holy_family`: Joseph, Mary and the Child at home, at work and at play: the household these prayers are for.
+- `prayer_tobias_angel`: Raphael walking beside the young Tobias on his road: the traveller's prayer for an angel's company.
+- `prayer_healing_sick`: Christ bending to the sick man who had no one to help him: the prayer for the sick, where the Death of St Joseph heads the topic.
+- `prayer_supper_emmaus`: Christ blessing the bread at table, and the two knowing Him: grace at a meal.
 
 Target format: 1600 px on the long edge, progressive JPEG, 300–800 KB; one 1x image per imageset like the existing ones.
 

@@ -193,7 +193,7 @@ enum ChantLibraryData {
     static let seasonPaintings: [ChantSeason: String] = [
         .advent: "season_advent",
         .christmas: "joyful_nativity",
-        .lent: "sorrowful_agony",
+        .lent: "season_lent",
         .easter: "glorious_resurrection",
         .pentecost: "glorious_pentecost",
         .afterPentecost: "glorious_coronation"
@@ -212,38 +212,38 @@ enum ChantLibraryData {
     // MARK: - Feasts
 
     static let feasts: [ChantFeast] = [
-        ChantFeast(id: "holy_name", name: "The Holy Name of Jesus", rule: .holyName, chantID: "jesu_dulcis_memoria"),
+        ChantFeast(id: "holy_name", name: "The Holy Name of Jesus", rule: .holyName, chantID: "jesu_dulcis_memoria", painting: "jesus_holy_name"),
         ChantFeast(id: "st_joseph", name: "St Joseph", rule: .fixed(month: 3, day: 19), chantID: "te_joseph", painting: "devotion_st_joseph"),
-        ChantFeast(id: "annunciation", name: "The Annunciation", rule: .fixed(month: 3, day: 25), chantID: "ave_maria_antiphon"),
+        ChantFeast(id: "annunciation", name: "The Annunciation", rule: .fixed(month: 3, day: 25), chantID: "ave_maria_antiphon", painting: "feast_annunciation"),
         // Sung as the Blessed Sacrament is carried to the altar of repose
-        ChantFeast(id: "holy_thursday", name: "Holy Thursday", rule: .easter(-3), chantID: "pange_lingua"),
-        ChantFeast(id: "good_friday", name: "Good Friday", rule: .easter(-2), chantID: "vexilla_regis"),
-        ChantFeast(id: "easter", name: "Easter Sunday", rule: .easter(0), chantID: "victimae_paschali"),
-        ChantFeast(id: "ascension", name: "The Ascension", rule: .easter(39), chantID: "jesu_nostra_redemptio"),
-        ChantFeast(id: "pentecost", name: "Pentecost", rule: .easter(49), chantID: "veni_sancte_spiritus"),
-        ChantFeast(id: "corpus_christi", name: "Corpus Christi (the Body of Christ)", rule: .easter(60), chantID: "lauda_sion"),
-        ChantFeast(id: "sacred_heart", name: "The Sacred Heart", rule: .easter(68), chantID: "litany_sacred_heart"),
-        ChantFeast(id: "st_john_baptist", name: "The Birth of St John the Baptist", rule: .fixed(month: 6, day: 24), chantID: "ut_queant_laxis"),
-        ChantFeast(id: "precious_blood", name: "The Precious Blood", rule: .fixed(month: 7, day: 1), chantID: "salvete_christi_vulnera"),
-        ChantFeast(id: "mount_carmel", name: "Our Lady of Mount Carmel", rule: .fixed(month: 7, day: 16), chantID: "flos_carmeli"),
-        ChantFeast(id: "assumption", name: "The Assumption", rule: .fixed(month: 8, day: 15), chantID: "ave_maris_stella_feasts"),
-        ChantFeast(id: "seven_sorrows", name: "Our Lady of Sorrows", rule: .fixed(month: 9, day: 15), chantID: "stabat_mater"),
-        ChantFeast(id: "st_michael", name: "St Michael", rule: .fixed(month: 9, day: 29), chantID: "sancte_michael"),
+        ChantFeast(id: "holy_thursday", name: "Holy Thursday", rule: .easter(-3), chantID: "pange_lingua", painting: "luminous_eucharist"),
+        ChantFeast(id: "good_friday", name: "Good Friday", rule: .easter(-2), chantID: "vexilla_regis", painting: "sorrowful_crucifixion"),
+        ChantFeast(id: "easter", name: "Easter Sunday", rule: .easter(0), chantID: "victimae_paschali", painting: "easter_noli_me_tangere"),
+        ChantFeast(id: "ascension", name: "The Ascension", rule: .easter(39), chantID: "jesu_nostra_redemptio", painting: "glorious_ascension"),
+        ChantFeast(id: "pentecost", name: "Pentecost", rule: .easter(49), chantID: "veni_sancte_spiritus", painting: "glorious_pentecost"),
+        ChantFeast(id: "corpus_christi", name: "Corpus Christi (the Body of Christ)", rule: .easter(60), chantID: "lauda_sion", painting: "topic_blessed_sacrament"),
+        ChantFeast(id: "sacred_heart", name: "The Sacred Heart", rule: .easter(68), chantID: "litany_sacred_heart", painting: "topic_our_lord"),
+        ChantFeast(id: "st_john_baptist", name: "The Birth of St John the Baptist", rule: .fixed(month: 6, day: 24), chantID: "ut_queant_laxis", painting: "saint_john_baptist_birth"),
+        ChantFeast(id: "precious_blood", name: "The Precious Blood", rule: .fixed(month: 7, day: 1), chantID: "salvete_christi_vulnera", painting: "jesus_precious_blood"),
+        ChantFeast(id: "mount_carmel", name: "Our Lady of Mount Carmel", rule: .fixed(month: 7, day: 16), chantID: "flos_carmeli", painting: "mary_mount_carmel"),
+        ChantFeast(id: "assumption", name: "The Assumption", rule: .fixed(month: 8, day: 15), chantID: "ave_maris_stella_feasts", painting: "glorious_assumption"),
+        ChantFeast(id: "seven_sorrows", name: "Our Lady of Sorrows", rule: .fixed(month: 9, day: 15), chantID: "stabat_mater", painting: "mary_mater_dolorosa"),
+        ChantFeast(id: "st_michael", name: "St Michael", rule: .fixed(month: 9, day: 29), chantID: "sancte_michael", painting: "saint_michael"),
         ChantFeast(id: "rosary", name: "Our Lady of the Rosary", rule: .fixed(month: 10, day: 7), chantID: "litany_loreto", painting: "feast_our_lady_of_the_rosary"),
         ChantFeast(id: "christ_the_king", name: "Christ the King", rule: .lastSundayOfOctober, chantID: "christus_vincit", painting: "feast_christ_the_king"),
         ChantFeast(id: "all_saints", name: "All Saints", rule: .fixed(month: 11, day: 1), chantID: "litany_saints", painting: "feast_all_saints"),
         ChantFeast(id: "all_souls", name: "All Souls", rule: .fixed(month: 11, day: 2), chantID: "dies_irae", painting: "devotion_holy_souls"),
-        ChantFeast(id: "immaculate_conception", name: "The Immaculate Conception", rule: .fixed(month: 12, day: 8), chantID: "tota_pulchra", painting: "season_advent"),
+        ChantFeast(id: "immaculate_conception", name: "The Immaculate Conception", rule: .fixed(month: 12, day: 8), chantID: "tota_pulchra", painting: "mary_immaculate_conception"),
         // Not feasts but days of the Office: the O antiphons ring round
         // the Magnificat at Vespers from the 17th to the 23rd, one a day
-        ChantFeast(id: "o_sapientia", name: "Advent's “O Wisdom”", rule: .fixed(month: 12, day: 17), chantID: "o_sapientia_magnificat"),
-        ChantFeast(id: "o_adonai", name: "Advent's “O Lord and Ruler”", rule: .fixed(month: 12, day: 18), chantID: "o_adonai_magnificat"),
-        ChantFeast(id: "o_radix", name: "Advent's “O Root of Jesse”", rule: .fixed(month: 12, day: 19), chantID: "o_radix_magnificat"),
-        ChantFeast(id: "o_clavis", name: "Advent's “O Key of David”", rule: .fixed(month: 12, day: 20), chantID: "o_clavis_magnificat"),
-        ChantFeast(id: "o_oriens", name: "Advent's “O Morning Star”", rule: .fixed(month: 12, day: 21), chantID: "o_oriens_magnificat"),
-        ChantFeast(id: "o_rex", name: "Advent's “O King of the Nations”", rule: .fixed(month: 12, day: 22), chantID: "o_rex_magnificat"),
-        ChantFeast(id: "o_emmanuel", name: "Advent's “O Emmanuel”", rule: .fixed(month: 12, day: 23), chantID: "o_emmanuel_magnificat"),
-        ChantFeast(id: "christmas", name: "Christmas Day", rule: .fixed(month: 12, day: 25), chantID: "adeste_fideles")
+        ChantFeast(id: "o_sapientia", name: "Advent's “O Wisdom”", rule: .fixed(month: 12, day: 17), chantID: "o_sapientia_magnificat", painting: "advent_isaiah"),
+        ChantFeast(id: "o_adonai", name: "Advent's “O Lord and Ruler”", rule: .fixed(month: 12, day: 18), chantID: "o_adonai_magnificat", painting: "advent_isaiah"),
+        ChantFeast(id: "o_radix", name: "Advent's “O Root of Jesse”", rule: .fixed(month: 12, day: 19), chantID: "o_radix_magnificat", painting: "advent_isaiah"),
+        ChantFeast(id: "o_clavis", name: "Advent's “O Key of David”", rule: .fixed(month: 12, day: 20), chantID: "o_clavis_magnificat", painting: "advent_isaiah"),
+        ChantFeast(id: "o_oriens", name: "Advent's “O Morning Star”", rule: .fixed(month: 12, day: 21), chantID: "o_oriens_magnificat", painting: "advent_isaiah"),
+        ChantFeast(id: "o_rex", name: "Advent's “O King of the Nations”", rule: .fixed(month: 12, day: 22), chantID: "o_rex_magnificat", painting: "advent_isaiah"),
+        ChantFeast(id: "o_emmanuel", name: "Advent's “O Emmanuel”", rule: .fixed(month: 12, day: 23), chantID: "o_emmanuel_magnificat", painting: "advent_isaiah"),
+        ChantFeast(id: "christmas", name: "Christmas Day", rule: .fixed(month: 12, day: 25), chantID: "adeste_fideles", painting: "christmas_shepherds")
     ]
 
     // MARK: - The week
@@ -286,7 +286,7 @@ enum ChantLibraryData {
                      headline: "Saturdays honour Mary",
                      collective: "chants of Mary",
                      chantIDs: ["ave_maris_stella", "sub_tuum", "salve_mater"],
-                     painting: "glorious_coronation")
+                     painting: "mary_sistine_madonna")
     ]
 
     // MARK: - The months
@@ -326,7 +326,7 @@ enum ChantLibraryData {
             id: "benediction",
             title: "Adoration and Blessing",
             note: "Benediction: hymns before the Host, then the priest's blessing",
-            painting: "luminous_eucharist",
+            painting: "topic_blessed_sacrament",
             blocks: [
                 ChantOccasionBlock(rubric: "The Host is placed on the altar for all to see. Kneel.",
                                    steps: [ChantOccasionStep(chant: .chant("o_salutaris"))]),
@@ -342,7 +342,7 @@ enum ChantLibraryData {
             id: "visit",
             title: "A Visit to Jesus in Church",
             note: "Quiet time with Jesus, present in the Host",
-            painting: "sorrowful_agony",
+            painting: "jesus_eucharist_saviour",
             blocks: [
                 ChantOccasionBlock(rubric: "Kneel before the tabernacle, where the Host is kept.",
                                    steps: [ChantOccasionStep(chant: .chant("adoro_te"))]),
@@ -356,7 +356,7 @@ enum ChantLibraryData {
             id: "sung_rosary",
             title: "A Sung Rosary",
             note: "Every prayer of the Rosary, sung in Latin",
-            painting: "joyful_annunciation",
+            painting: "feast_our_lady_of_the_rosary",
             blocks: [
                 ChantOccasionBlock(rubric: "On the crucifix: make the Sign of the Cross, then sing the Creed.",
                                    steps: [ChantOccasionStep(chant: .chant("in_nomine_patris")),
@@ -380,7 +380,7 @@ enum ChantLibraryData {
             id: "before_bed",
             title: "Before Bed",
             note: "End the day with Mary",
-            painting: "glorious_coronation",
+            painting: "mary_mother_of_mercy",
             blocks: [
                 ChantOccasionBlock(rubric: "Put yourself under her protection for the night.",
                                    steps: [ChantOccasionStep(chant: .chant("sub_tuum"))]),
@@ -392,7 +392,7 @@ enum ChantLibraryData {
             id: "before_work",
             title: "Before Work or Study",
             note: "Ask for help before you start",
-            painting: "glorious_pentecost",
+            painting: "saint_joseph_carpenter",
             blocks: [
                 ChantOccasionBlock(rubric: "Before you begin, ask the Holy Spirit to come.",
                                    steps: [ChantOccasionStep(chant: .chant("veni_sancte_reple"))]),
@@ -404,7 +404,7 @@ enum ChantLibraryData {
             id: "for_the_dead",
             title: "For Those Who Have Died",
             note: "At a funeral, or any time in November",
-            painting: "seven_sorrows_burial",
+            painting: "devotion_holy_souls",
             blocks: [
                 ChantOccasionBlock(rubric: "The poem sung at the funeral Mass.",
                                    steps: [ChantOccasionStep(chant: .chant("dies_irae"))]),
@@ -451,64 +451,95 @@ enum ChantLibraryData {
 
     // MARK: - Paintings
 
-    /// The paintings the boards hang beside a chant. A chant not named
-    /// here takes its shelf's.
+    /// The paintings the boards hang beside a chant: the scene, saint or
+    /// feast it sings. A chant not named here takes its section's
+    /// (`groupPaintings`). A painting stands beside more than one chant
+    /// only where they sing the same thing: the Sacred Heart, the Host,
+    /// Isaiah's prophecies in Advent.
     static let paintings: [String: String] = [
+        // Hymns and chants to Our Lady
         "salve_regina_simple": "glorious_coronation",
         "salve_regina_solemn": "glorious_coronation",
         "alma_redemptoris": "joyful_nativity",
         "alma_redemptoris_simple": "joyful_nativity",
         "ave_regina_simple": "glorious_assumption",
         "ave_regina_solemn": "glorious_assumption",
-        "regina_caeli_simple": "glorious_resurrection",
-        "regina_caeli_solemn": "glorious_resurrection",
-        "stabat_mater": "seven_sorrows_pieta",
-        "victimae_paschali": "glorious_resurrection",
-        "o_filii": "glorious_resurrection",
-        "vexilla_regis": "sorrowful_crucifixion",
-        "attende_domine": "sorrowful_crowning",
-        "parce_domine": "sorrowful_scourging",
-        "puer_natus": "joyful_nativity",
-        "adeste_fideles": "joyful_nativity",
-        "jesu_redemptor": "joyful_nativity",
-        "rorate_caeli": "joyful_annunciation",
-        "ave_maria_antiphon": "joyful_annunciation",
+        "regina_caeli_simple": "easter_appears_to_mary",
+        "regina_caeli_solemn": "easter_appears_to_mary",
+        "sub_tuum": "mary_mother_of_mercy",
+        "salve_mater": "mary_mother_of_mercy",
+        "ave_maris_stella_feasts": "feast_annunciation",
+        "quem_terra": "feast_annunciation",
+        "ave_maria_antiphon": "feast_annunciation",
+        "tota_pulchra": "mary_immaculate_conception",
+        "inviolata": "mary_immaculate_conception",
+        "flos_carmeli": "mary_mount_carmel",
+        "stabat_mater": "seven_sorrows_calvary",
+        "litany_loreto": "feast_our_lady_of_the_rosary",
+        "memorare": "glorious_assumption",
+        "angelus": "joyful_annunciation",
+        "concordi_laetitia": "easter_appears_to_mary",
+        // The Rosary in Latin: each prayer as the Prayers page hangs it
+        "in_nomine_patris": "devotion_holy_trinity",
+        "credo_in_deum": "glorious_pentecost",
+        "pater_noster": "luminous_proclamation",
+        "ave_maria": "joyful_annunciation",
+        "gloria_patri": "devotion_holy_trinity",
+        // Our Lady of the Rosary gave the Fatima Prayer
+        "o_mi_jesu": "feast_our_lady_of_the_rosary",
+        // Jesus in the Host
+        "adoro_te": "jesus_eucharist_saviour",
+        "ave_verum": "jesus_eucharist_saviour",
+        "o_sacrum_convivium": "jesus_eucharist_saviour",
+        "panis_angelicus": "jesus_eucharist_saviour",
+        "ecce_panis": "jesus_eucharist_saviour",
+        "lauda_sion": "topic_blessed_sacrament",
+        "ubi_caritas": "luminous_eucharist",
+        // Our Lord
+        "adoramus_te": "sorrowful_crucifixion",
+        "anima_christi": "jesus_anima_christi",
+        "litany_sacred_heart": "topic_our_lord",
+        "cor_jesu": "topic_our_lord",
+        "litany_holy_name": "jesus_holy_name",
+        "jesu_dulcis_memoria": "jesus_holy_name",
+        "salvete_christi_vulnera": "jesus_precious_blood",
+        "christus_vincit": "feast_christ_the_king",
+        "te_saeculorum": "feast_christ_the_king",
+        // God, and the praise of all the saints
+        "te_deum_simple": "feast_all_saints",
+        "te_deum": "feast_all_saints",
+        "litany_saints": "feast_all_saints",
+        // Sunday Vespers' hymn of the Creator, on the Trinity's day
+        "lucis_creator": "devotion_holy_trinity",
+        "da_pacem": "topic_for_the_living",
         "veni_creator": "glorious_pentecost",
         "veni_sancte_spiritus": "glorious_pentecost",
         "veni_sancte_reple": "glorious_pentecost",
-        "dies_irae": "seven_sorrows_burial",
+        // The saints
+        "sancte_michael": "saint_michael",
+        "ut_queant_laxis": "saint_john_baptist_birth",
+        "litany_st_joseph": "devotion_st_joseph",
+        "te_joseph": "devotion_st_joseph",
+        // Through the year
+        "rorate_caeli": "advent_isaiah",
+        "puer_natus": "joyful_nativity",
+        "jesu_redemptor": "joyful_nativity",
+        "adeste_fideles": "christmas_shepherds",
+        "attende_domine": "season_lent",
+        "parce_domine": "season_lent",
+        "media_vita": "season_lent",
+        "audi_benigne": "season_lent",
+        "miserere": "psalm_king_david",
+        "vexilla_regis": "sorrowful_crucifixion",
         "o_vos_omnes": "sorrowful_crucifixion",
+        "victimae_paschali": "easter_noli_me_tangere",
+        "o_filii": "easter_saint_thomas",
         "vidi_aquam": "glorious_resurrection",
-        "ad_regias": "glorious_resurrection",
-        "salve_festa_dies": "glorious_resurrection",
-        "aurora_caelum": "glorious_resurrection",
-        "concordi_laetitia": "glorious_resurrection",
+        "salve_festa_dies": "easter_holy_women",
+        "aurora_caelum": "easter_holy_women",
+        "ad_regias": "mass_lamb_of_god",
         "jesu_nostra_redemptio": "glorious_ascension",
-        "quem_terra": "joyful_annunciation",
-        "ut_queant_laxis": "joyful_visitation",
-        "salvete_christi_vulnera": "sorrowful_crucifixion",
-        "media_vita": "sorrowful_agony",
-        // Each keeps the painting of the topic it stood under before the
-        // library followed the Parish Book of Chant's sections
-        "angelus": "joyful_annunciation",
-        "lauda_sion": "luminous_eucharist",
-        "ubi_caritas": "luminous_eucharist",
-        "litany_sacred_heart": "sorrowful_crucifixion",
-        "litany_holy_name": "sorrowful_crucifixion",
-        "jesu_dulcis_memoria": "sorrowful_crucifixion",
-        "cor_jesu": "sorrowful_crucifixion",
-        "te_deum_simple": "glorious_ascension",
-        "te_deum": "glorious_ascension",
-        "christus_vincit": "glorious_ascension",
-        "te_saeculorum": "glorious_ascension",
-        "lucis_creator": "glorious_ascension",
-        "da_pacem": "glorious_ascension",
-        "sancte_michael": "glorious_assumption",
-        "litany_st_joseph": "glorious_assumption",
-        "te_joseph": "glorious_assumption",
-        "litany_saints": "glorious_assumption",
-        "miserere": "sorrowful_agony",
-        "audi_benigne": "sorrowful_agony"
+        "dies_irae": "last_judgment"
     ]
 
     /// The paintings asked for by subject, and the painting each falls
@@ -523,7 +554,31 @@ enum ChantLibraryData {
     static let focalPoints: [String: (x: Double, y: Double)] = [
         "devotion_holy_trinity": (0.5, 0.25),
         "devotion_guardian_angels": (0.5, 0.3),
-        "season_advent": (0.5, 0.3)
+        "season_advent": (0.5, 0.3),
+        "mary_immaculate_conception": (0.5, 0.25),
+        "mary_mater_dolorosa": (0.45, 0.35),
+        "mary_virgin_in_prayer": (0.5, 0.35),
+        "mary_sistine_madonna": (0.5, 0.25),
+        "mary_mother_of_mercy": (0.5, 0.3),
+        "mary_mount_carmel": (0.5, 0.25),
+        "feast_annunciation": (0.7, 0.5),
+        "jesus_holy_name": (0.5, 0.2),
+        "jesus_precious_blood": (0.5, 0.35),
+        "jesus_anima_christi": (0.5, 0.3),
+        "jesus_eucharist_saviour": (0.5, 0.3),
+        "season_lent": (0.75, 0.45),
+        "psalm_king_david": (0.5, 0.25),
+        "easter_noli_me_tangere": (0.6, 0.4),
+        "easter_saint_thomas": (0.4, 0.4),
+        "easter_holy_women": (0.5, 0.45),
+        "easter_appears_to_mary": (0.5, 0.55),
+        "mass_lamb_of_god": (0.5, 0.3),
+        "advent_isaiah": (0.55, 0.25),
+        "christmas_shepherds": (0.5, 0.55),
+        "saint_john_baptist_birth": (0.65, 0.6),
+        "saint_michael": (0.5, 0.3),
+        "saint_joseph_carpenter": (0.5, 0.4),
+        "last_judgment": (0.5, 0.3)
     ]
 
     static let subjectPaintings: [String: String] = [
@@ -532,11 +587,11 @@ enum ChantLibraryData {
         "devotion_holy_souls": "seven_sorrows_burial",
         "devotion_guardian_angels": "sorrowful_agony",
         "devotion_st_joseph": "joyful_nativity",
-        "feast_our_lady_of_the_rosary": "glorious_coronation",
+        "feast_our_lady_of_the_rosary": "joyful_annunciation",
         "feast_christ_the_king": "glorious_ascension",
         "feast_all_saints": "glorious_pentecost",
         "hour_morning": "glorious_resurrection",
-        "hour_night": "glorious_coronation"
+        "hour_night": "sorrowful_agony"
     ]
 
     /// The home's Songs to Mary shelf, in its own order: the chants the
@@ -551,19 +606,22 @@ enum ChantLibraryData {
         "ave_maria_antiphon", "salve_mater", "inviolata", "o_gloriosa", "te_matrem"
     ]
 
+    /// Each section's painting, on its card in All Chants, at the head
+    /// of its shelf, and beside a chant of it not named above. No two
+    /// sections hang the same one.
     static let groupPaintings: [String: String] = [
-        "asperges": "luminous_eucharist",
-        "mass": "luminous_eucharist",
-        "creed": "luminous_eucharist",
+        "asperges": "psalm_king_david",
+        "mass": "mass_lamb_of_god",
+        "creed": "topic_holy_trinity",
         "sequences": "glorious_pentecost",
-        "requiem": "seven_sorrows_burial",
-        "hymns": "luminous_eucharist",
-        "ourLady": "glorious_coronation",
-        "seasons": "joyful_annunciation",
-        "canticles": "glorious_coronation",
-        "litanies": "glorious_coronation",
-        "benediction": "luminous_eucharist",
-        "rosary": "joyful_annunciation"
+        "requiem": "devotion_holy_souls",
+        "hymns": "jesus_eucharist_saviour",
+        "ourLady": "mary_sistine_madonna",
+        "seasons": "advent_isaiah",
+        "canticles": "topic_thanksgiving",
+        "litanies": "feast_all_saints",
+        "benediction": "topic_blessed_sacrament",
+        "rosary": "feast_our_lady_of_the_rosary"
     ]
 
     /// Tonight's antiphon, introduced: keyed by the work, so both its

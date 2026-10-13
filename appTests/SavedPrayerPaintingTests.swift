@@ -19,20 +19,25 @@ struct SavedPrayerPaintingTests {
     }
 
     @Test func aPrayerWithNoScenePaintsItsTopic() throws {
-        let topic = try #require(PrayerBook.homeChapter(of: "anima_christi"))
-        #expect(SavedPrayerPainting.scene(of: "anima_christi") == nil)
-        #expect(SavedPrayerPainting.of("anima_christi") == PrayerBookPainting.topic(topic))
+        let topic = try #require(PrayerBook.homeChapter(of: "act_of_faith"))
+        #expect(SavedPrayerPainting.scene(of: "act_of_faith") == nil)
+        #expect(SavedPrayerPainting.of("act_of_faith") == PrayerBookPainting.topic(topic))
+        #expect(PrayerBookPainting.prayer("act_of_faith") == PrayerBookPainting.topic(topic))
     }
 
-    /// The prayers Saved treats as having a scene of their own are exactly
-    /// those `PrayerBookPainting.prayer` gives one, so the two never drift
-    @Test func theScenedPrayersAreTheOnesThePaintingsName() {
-        let unnamed = PrayerBookPainting.prayer("no such prayer")
-        for id in PrayerBook.prayers.keys {
-            let named = PrayerBookPainting.prayer(id) != unnamed
-            #expect(SavedPrayerPainting.scened.contains(id) == named, "\(id)")
-        }
+    /// Every scene names a prayer the book prints, so a misspelt id
+    /// never leaves its prayer under its topic's painting unnoticed
+    @Test func everySceneNamesAPrayer() {
         #expect(SavedPrayerPainting.scened.isSubset(of: Set(PrayerBook.prayers.keys)))
+        for id in SavedPrayerPainting.scened {
+            #expect(SavedPrayerPainting.of(id) == PrayerBookPainting.scenes[id], "\(id)")
+        }
+    }
+
+    /// The Coronation hangs only over a prayer to Our Lady as Queen
+    @Test func theCoronationIsOnlyForTheQueen() {
+        let crowned = PrayerBook.prayers.keys.filter { PrayerBookPainting.prayer($0).asset == "glorious_coronation" }
+        #expect(Set(crowned) == ["hail_holy_queen"])
     }
 
     /// Every prayer's painting is one the app carries, so no card on the

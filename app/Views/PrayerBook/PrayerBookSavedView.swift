@@ -172,27 +172,22 @@ private struct SavedPaintedCard: View {
 /// The painting a kept prayer stands under: the scene it speaks of where
 /// the book names one (the Annunciation for the Hail Mary), else its
 /// topic's painting, so a shelf of prayers from different topics is not
-/// one painting over and over
+/// one painting over and over. The same as everywhere else the prayer
+/// is drawn (`PrayerBookPainting.prayer`).
 enum SavedPrayerPainting {
 
     static func of(_ prayerID: String) -> PrayerBookPainting {
-        if let scene = scene(of: prayerID) { return scene }
-        if let topic = PrayerBook.homeChapter(of: prayerID) { return PrayerBookPainting.topic(topic) }
-        return PrayerBookPainting.prayer(prayerID)
+        PrayerBookPainting.prayer(prayerID)
     }
 
     /// The scene the book hangs on a prayer of its own, or nil where it
-    /// names none. These are the prayers `PrayerBookPainting.prayer`
-    /// gives a scene of their own; every other prayer it gives one
-    /// painting, which here would hang over half the shelf.
+    /// names none
     static func scene(of prayerID: String) -> PrayerBookPainting? {
-        scened.contains(prayerID) ? PrayerBookPainting.prayer(prayerID) : nil
+        PrayerBookPainting.scenes[prayerID]
     }
 
-    /// Held to `PrayerBookPainting.prayer` by `SavedPrayerPaintingTests`
-    static let scened: Set<String> = [
-        "our_father", "hail_mary", "glory_be", "apostles_creed", "memorare", "litany_loreto"
-    ]
+    /// The prayers with a scene of their own
+    static var scened: Set<String> { Set(PrayerBookPainting.scenes.keys) }
 }
 
 // MARK: - Nothing saved yet

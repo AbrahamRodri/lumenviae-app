@@ -247,7 +247,7 @@ struct ChantSetPage: View {
             title: set.name,
             note: nil,
             painting: set.items.lazy.compactMap(\.chant).first.map { ChantCatalog.painting(for: $0) }
-                ?? "glorious_coronation",
+                ?? ChantSet.emptyPainting,
             chantCount: set.chantCount,
             duration: set.duration,
             queue: ChantQueue.set(set),

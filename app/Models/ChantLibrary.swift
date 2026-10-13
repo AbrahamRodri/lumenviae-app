@@ -164,7 +164,7 @@ enum ChantSeason: String, CaseIterable, Identifiable {
 
     /// Its painting, by subject (`ChantCatalog.painting(subject:)`)
     var painting: String {
-        ChantLibraryData.seasonPaintings[self] ?? "glorious_coronation"
+        ChantLibraryData.seasonPaintings[self] ?? "mary_sistine_madonna"
     }
 
     /// The chant to learn before the season comes
@@ -710,7 +710,7 @@ extension ChantCatalog {
     static func painting(for chant: Chant) -> String {
         ChantLibraryData.paintings[chant.id]
             ?? ChantLibraryData.groupPaintings[chant.groupID]
-            ?? "glorious_coronation"
+            ?? "mary_sistine_madonna"
     }
 
     /// A painting asked for by its subject — `season_advent`,
@@ -731,7 +731,7 @@ extension ChantCatalog {
             subjectsPresent[subject] = present
         }
         if present { return subject }
-        return fallback ?? ChantLibraryData.subjectPaintings[subject] ?? "glorious_coronation"
+        return fallback ?? ChantLibraryData.subjectPaintings[subject] ?? "mary_sistine_madonna"
     }
 
     private static var subjectsPresent: [String: Bool] = [:]

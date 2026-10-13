@@ -45,18 +45,31 @@ enum MarianLibraryData {
         KeptFeast(month: 12, day: 12, name: "Our Lady of Guadalupe", inMissal: false, keptBy: "the Americas")
     ]
 
-    /// The painting a feast is shown in, where the app holds one that
-    /// is its own scene; the Coronation stands in for the rest
+    /// The painting a feast is shown in: its own scene, or Our Lady as
+    /// the feast honours her — the Immaculate for Lourdes and Guadalupe,
+    /// where she came as the woman clothed with the sun; St Anne teaching
+    /// her daughter for her birth and her presentation, the childhood
+    /// they keep; Our Lady in glory for her name
     static func painting(for feast: KeptFeast) -> String {
         [
             "The Purification": "joyful_presentation",
-            "The Annunciation": "joyful_annunciation",
+            "Our Lady of Lourdes": "mary_immaculate_conception",
+            "The Annunciation": "feast_annunciation",
             "The Queenship of Mary": "glorious_coronation",
             "The Visitation": "joyful_visitation",
+            "Our Lady of Mount Carmel": "mary_mount_carmel",
+            "Our Lady of the Snows": "mary_of_the_snows",
             "The Assumption": "glorious_assumption",
-            "The Seven Sorrows": "seven_sorrows_pieta",
-            "The Maternity of Our Lady": "joyful_nativity"
-        ][feast.name] ?? "glorious_coronation"
+            "The Immaculate Heart of Mary": "mary_virgin_in_prayer",
+            "The Nativity of Our Lady": "topic_first_prayers",
+            "The Holy Name of Mary": "mary_sistine_madonna",
+            "The Seven Sorrows": "mary_mater_dolorosa",
+            "The Most Holy Rosary": "feast_our_lady_of_the_rosary",
+            "The Maternity of Our Lady": "joyful_nativity",
+            "The Presentation of Our Lady": "topic_first_prayers",
+            "The Immaculate Conception": "mary_immaculate_conception",
+            "Our Lady of Guadalupe": "mary_immaculate_conception"
+        ][feast.name] ?? "mary_sistine_madonna"
     }
 
     /// The library's reading about a feast, where it has one, and the
