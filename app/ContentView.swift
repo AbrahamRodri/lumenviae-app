@@ -508,6 +508,9 @@ struct ContentView: View {
         case .explore:
             ExploreView()
 
+        case .search(let origin):
+            ExploreView(origin: origin)
+
         case .prayerRecord:
             PrayerProgressView()
 

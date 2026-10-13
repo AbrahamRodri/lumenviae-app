@@ -41,6 +41,10 @@ enum AppRoute: Hashable {
     /// search glass
     case explore
 
+    /// The same search, opened from a page's own glass (Prayers, Chant):
+    /// the field ready, and that page's kind leading the results
+    case search(from: AppSearch.Origin)
+
     /// The reader's own pages: the Prayer Record (streak, calendar,
     /// milestones) and the journal. Pushed over the tab they were opened
     /// from, with the gold Back, so the tab stays lit and Back returns to
