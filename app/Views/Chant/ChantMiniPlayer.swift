@@ -160,7 +160,7 @@ private struct ChantMiniProgress: View {
 
     var body: some View {
         let sounding = player.isPlaying
-        TimelineView(.animation(minimumInterval: 1.0 / 30, paused: !sounding)) { context in
+        TimelineView(.animation(minimumInterval: 1.0 / 20, paused: !sounding)) { context in
             GeometryReader { geo in
                 Rectangle()
                     .fill(AppColors.goldCTAGradient)

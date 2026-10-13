@@ -783,8 +783,16 @@ private struct NowPlayingTransport: View {
                     AppIcon(back ? "ph-skip-back" : "ph-skip-forward", size: 22)
                 } else {
                     // The system's own glyph, since it carries its number
-                    Image(systemName: back ? "gobackward.10" : "goforward.10")
-                        .font(.system(size: 21, weight: .light))
+                    // (the one place the icon rules keep an SF Symbol), named
+                    // outright so the lint can see it is no door glyph
+                    Group {
+                        if back {
+                            Image(systemName: "gobackward.10")
+                        } else {
+                            Image(systemName: "goforward.10")
+                        }
+                    }
+                    .font(.system(size: 21, weight: .light))
                 }
             }
             .foregroundColor(AppColors.gold.opacity(holds ? 1 : 0.35))
