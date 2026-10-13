@@ -2499,6 +2499,36 @@ write concurrent code here:
   alone: a glyph, an ornament, a paragraph, a kicker counting the
   prayers, a Latin line under every prayer and a two-line switch row.
 
+  **A prayer's own page** (`BookPrayerView`, `.devotionPrayer(id:)`, the
+  "single prayer" design, option A, Oct 2026) is the order page's twin:
+  the prayer's painting (`SavedPrayerPainting.of`, its own scene where
+  the book gives one, else its topic's, as the Saved shelf hangs it) run
+  up under the bar and dissolving, then in the dissolve its topic in gold
+  ("PRAYERS TO MARY"), its name, its Latin small, and one small line of
+  where it comes from with LEARNED after it, in whose place the ribbon's
+  words stand for three seconds, laid over it so nothing moves. Then the
+  prayer, `PrayerText` at the reading size; when it is said as one italic
+  paragraph beneath it, with no heading; LEARN BY HEART and, where the
+  Church sings it, HEAR IT SUNG as one quiet row of words; SAID IN, each
+  order a row with its painting; and the steps along the topic,
+  PREVIOUS · NEXT over ALL 32 PRAYERS TO MARY, which fade the whole page,
+  painting included, and scroll it back to the top. The foot is the
+  order page's own, fixed: the speaker disc beside PRAY and its line
+  beneath. The language stands in the bar beside the ribbon (EN, LA or
+  EN · LA, in the bar's glass from iOS 26 and on a dark capsule before),
+  only where the prayer has Latin, and opens a choice of English, Latin
+  and Both. It is a button and not a Menu: the bar makes a Menu its own
+  button, names it from the words it shows, and stood a second, unnamed
+  button beside it for VoiceOver. The small capitals stand at whole
+  points (9, 10, 11), since 8.5, 9.5 and 10.5 did not grow with the
+  text size. It
+  once stood as type alone, eight layers over the first word of the
+  prayer: a numeral and the topic, an ornament, the name, the Latin, the
+  origin, the mark, a bar of three language chips, then the words, with
+  a WHEN IT IS SAID heading and three acts of nearly one weight under
+  them. `LanguageChips` stays in its file, unchanged, for the sheets
+  that use it.
+
   **Praying** is `PrayAlongView` (`.prayAlong(PrayAlongLaunch)`, a
   player: bar hidden, its own ×): one prayer at a time, aloud or in
   silence (`PrayerBookStore.praysAloud`, remembered). **The page is the
@@ -2637,7 +2667,7 @@ write concurrent code here:
   (`ChantLibraryData.groupPaintings`). Doors:
   the Chapel's Chant tile, Explore (Chant, and search), and **"Hear it
   sung"** on any Prayer Book page whose prayer has a chant (a
-  quiet act under Learn it by heart).
+  quiet act beside Learn by heart, in one row under the prayer).
 
   **The library speaks plainly** (the Oct 2026 plain-language pass,
   `copy-audit/GLOSSARY.md` on `claude/copy-audit`): a title says what a
