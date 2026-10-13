@@ -27,27 +27,60 @@ struct PrayersPageTests {
         calendar.date(from: DateComponents(year: 2026, month: 9, day: day, hour: hour, minute: minute))!
     }
 
-    // MARK: Occasions
+    // MARK: Topics
 
-    @Test func everyOccasionsOrderStandsInExactlyOnePlace() {
-        let placed = PrayerOccasionPlace.allCases.flatMap(\.orderIDs)
-        #expect(Set(placed).count == placed.count, "an order stands in two places")
-        #expect(Set(placed) == Set(PrayerBook.occasionOrders.map(\.id)))
-        for place in PrayerOccasionPlace.allCases {
-            #expect(PrayerBook.ordersKept(at: place).count == place.orderIDs.count, "\(place) names an order the book lacks")
+    @Test func everyOccasionsOrderStandsAtTheHeadOfOneTopic() {
+        let placed = PrayerBook.chapters.flatMap(\.orderIDs)
+        #expect(Set(placed).count == placed.count, "an order stands in two topics")
+        #expect(Set(PrayerBook.occasionOrders.map(\.id)).isSubset(of: Set(placed)))
+        for chapter in PrayerBook.chapters {
+            #expect(chapter.orders.count == chapter.orderIDs.count, "\(chapter.id) names an order the book lacks")
         }
     }
 
-    // MARK: Chapters
-
-    @Test func theChaptersCarryTheirPlainNames() {
+    @Test func theTopicsFollowTheBook() {
         #expect(PrayerBook.chapters.map(\.title) == [
-            "Basic Prayers", "Mary", "Jesus", "The Eucharist", "The Holy Spirit",
-            "Angels and Saints", "Through the Day", "Confession", "For Those Who Have Died",
-            "The Church", "Litanies", "Short Prayers"
+            "The First Prayers", "Daily Prayers", "Short Prayers",
+            "Holy Mass and Communion", "Confession", "The Blessed Sacrament",
+            "The Holy Trinity and the Holy Spirit", "Our Lord", "The Blessed Virgin", "St Joseph",
+            "Angels and Saints", "Feasts and Seasons", "Thanksgiving", "Litanies",
+            "For the Church and the Living", "The Sick and the Dying", "The Faithful Departed",
+            "In Time of Need"
         ])
+        // Each part's shelf reads in the book's order
+        #expect(PrayerBookPart.allCases.flatMap(\.chapters) == PrayerBook.chapters)
         for chapter in PrayerBook.chapters {
             #expect(!chapter.topic.isEmpty, "\(chapter.id) has no topic name")
+            #expect(!chapter.sections.isEmpty, "\(chapter.id) has no prayers")
+            for section in chapter.sections {
+                #expect(!section.prayerIDs.isEmpty, "\(chapter.id) prints an empty \(section.title)")
+            }
+        }
+    }
+
+    @Test func everyPrayerStandsInATopic() {
+        let placed = Set(PrayerBook.chapters.flatMap(\.prayerIDs))
+        let unplaced = Set(PrayerBook.prayers.keys).subtracting(placed).sorted()
+        #expect(unplaced == [], "no topic prints \(unplaced)")
+        #expect(PrayerBook.prayerCount == PrayerBook.prayers.count)
+    }
+
+    @Test func aPrayerPrintedInManyTopicsKeepsItsHome() {
+        let homes = [
+            "hail_holy_queen": "our_lady",
+            "regina_caeli": "our_lady",
+            "st_michael_prayer": "saints",
+            "requiem_aeternam": "departed",
+            "st_gertrude": "departed",
+        ]
+        for (prayer, topic) in homes {
+            #expect(PrayerBook.homeChapter(of: prayer)?.id == topic, "\(prayer) is not at home in \(topic)")
+        }
+    }
+
+    @Test func everyNamedHomePrintsItsPrayer() {
+        for (prayer, topic) in PrayerBook.homes {
+            #expect(PrayerBook.chapter(topic)?.prayerIDs.contains(prayer) == true, "\(topic) does not print \(prayer)")
         }
     }
 
