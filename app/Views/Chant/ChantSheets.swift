@@ -41,8 +41,13 @@ struct ChantPickerSheet: View {
     /// The section the list stands in, read off the row at its top
     private var litGroupID: String? {
         guard let topID else { return ChantCatalog.groups.first?.id }
-        if topID.hasPrefix("g:") { return String(topID.dropFirst(2)) }
-        return ChantCatalog.chant(String(topID.dropFirst(2)))?.groupID
+        // "g:<group>" a band, "h:<group>:<part>" a subheading, "c:<chant>" a row
+        let parts = topID.split(separator: ":", maxSplits: 2).map(String.init)
+        guard parts.count >= 2 else { return ChantCatalog.groups.first?.id }
+        switch parts[0] {
+        case "g", "h": return parts[1]
+        default: return ChantCatalog.chant(parts[1])?.groupID
+        }
     }
 
     var body: some View {
@@ -160,12 +165,13 @@ struct ChantPickerSheet: View {
                 ForEach(ChantCatalog.groups) { group in
                     ChantSectionBand(group: group)
                         .id("g:\(group.id)")
-                    ForEach(group.parts, id: \.self) { part in
+                    ForEach(Array(group.parts.enumerated()), id: \.offset) { index, part in
                         if let title = part.title {
                             ChantPartHeading(title: title)
                                 .padding(.horizontal, SheetMetrics.gutter)
                                 .padding(.top, 14)
                                 .padding(.bottom, 2)
+                                .id("h:\(group.id):\(index)")
                         }
                         ForEach(ChantCatalog.chants(in: part)) { chant in
                             row(chant)
@@ -406,7 +412,10 @@ struct ChantPauseSheet: View {
         )
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(
-            "In the set it reads: \(shown)" + (minutes > 0 ? ", then \(minutes == 1 ? "a minute" : "\(minutes) minutes") of silence" : "")
+            canAdd
+                ? "In the set it reads: \(shown)"
+                    + (minutes > 0 ? ", then \(minutes == 1 ? "a minute" : "\(minutes) minutes") of silence" : "")
+                : "Write a note or choose a silence to add a pause"
         )
     }
 }
@@ -452,7 +461,7 @@ struct ChantAddToSetSheet: View {
             ChantThumbnail(name: ChantCatalog.painting(for: chant), size: 44, radius: 8)
 
             VStack(alignment: .leading, spacing: 6) {
-                Text(chant.latinTitle.uppercased())
+                Text(chant.englishTitle.uppercased())
                     .font(AppFonts.labelFont(9))
                     .tracking(2.5)
                     .foregroundColor(AppColors.gold)
@@ -490,7 +499,7 @@ struct ChantAddToSetSheet: View {
                     Text("A new set")
                         .font(AppFonts.readingFont(16.5))
                         .foregroundColor(AppColors.cream)
-                    Text("Begun with \(chant.latinTitle)")
+                    Text("Begun with this chant")
                         .font(AppFonts.readingItalicFont(13.5))
                         .foregroundColor(AppColors.textSecondary)
                         .lineLimit(1)
@@ -501,7 +510,7 @@ struct ChantAddToSetSheet: View {
             .padding(.vertical, 9)
             .contentShape(Rectangle())
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel("A new set, begun with \(chant.latinTitle)")
+            .accessibilityLabel("A new set, begun with \(chant.spokenName)")
         }
         .buttonStyle(.plain)
     }

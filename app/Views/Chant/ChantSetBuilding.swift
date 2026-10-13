@@ -259,9 +259,12 @@ extension ChantSet {
         items.lazy.compactMap(\.chant).first.map { ChantCatalog.painting(for: $0) } ?? Self.emptyPainting
     }
 
-    /// How many times `chantID` stands in the set
+    /// How many times `chantID` is sung in the set, its repeats included
     func count(of chantID: String) -> Int {
-        items.filter { $0.chant?.id == chantID }.count
+        items.reduce(0) { total, item in
+            if case .chant(let id, let times) = item.kind, id == chantID { return total + max(1, times) }
+            return total
+        }
     }
 
     /// The foot of the picker: "2 chants in the set · 5 min"
