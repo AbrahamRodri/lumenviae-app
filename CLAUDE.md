@@ -2492,8 +2492,21 @@ write concurrent code here:
   order's name, and ALOUD or SILENT as a word in an outlined capsule
   (the speaker glyph it replaced read as a volume control) — over the
   order's beads, each a door answering to 44 points where the width
-  allows ("6 of 9, The Act of Faith" to VoiceOver); the Latin name small
-  over the title, the Angelus's bell above both; and one way on at the
+  allows ("6 of 9, The Act of Faith" to VoiceOver). The head always names
+  what was opened: the order (the Angelus too), or PRAYERS for a prayer
+  opened alone; the Angelus's once named its hours. The Latin name
+  stands small over the title, the Angelus's bell above both. The words
+  carry a feathered veil of their own (`WordsVeil`) that scrolls with
+  them, so the ground under the head and under a short prayer stays
+  light enough for the painting to show, where one fixed scrim left a
+  flat dark field. A stanza of plain verse is set a line at a time
+  (`PrayAlongStanza`): a line too long for the measure hangs its
+  overflow in by about an em (`HangingIndentRenderer`, iOS 18; flush on
+  17), since wrapped flush it read as a line of its own, and its rubrics
+  stand apart at full strength while the verse beside them dims under
+  the voice; litanies, canticles and translations are `PrayerText`'s.
+  The text is a point under the reading size, as the prayer's own page
+  sets it. And one way on at the
   foot, the same aloud and in silence: NEXT with the next prayer's name,
   an outlined pill, or AMEN, the page's one gold act, on the last.
   Aloud, a pause disc stands beside it, and a note above it while the
@@ -2503,7 +2516,9 @@ write concurrent code here:
   transport and a progress line aloud, and a different foot in silence:
   position said twice, progress said twice, and a music player where a
   prayer book should be. The Amen brings the painting forward in full,
-  where a seal once stood, over Amen., the order's closing line, DONE,
+  where a seal once stood, over Amen., the order's closing line (the
+  day's three orders under "MORNING PRAYERS · PRAYED", since any other
+  order's line already says it was prayed), DONE,
   Save this prayer (one prayer, not yet saved) and Pray again.
   **The book asks before its first sound**
   (`PrayAloudChoiceSheet`, once, until `hasChosenAloud`, the order's
@@ -3446,8 +3461,10 @@ transition entirely.
 - **Snapshot tests:** `appTests/Snapshots/` draws the main screens that
   read nothing off the clock or the network (home's mysteries sections,
   VIEW ALL, a mysteries' page, a set's page, the Scriptural Rosary's page,
-  a Prayer Book page, and the chant search before typing, with results
-  and with nothing found, on a fixed day) from fixed data with swift-snapshot-testing (the
+  a Prayer Book page, the pray-along page in silence, an order part-way
+  through and a prayer opened alone, on a book store of its own, and the
+  chant search before typing, with results and with nothing found, on a
+  fixed day) from fixed data with swift-snapshot-testing (the
   test target's one package; the app has none) and compares them with
   the PNGs in `__Snapshots__/`, in the same `xcodebuild test`.
   `ScreenSnapshot.assertScreen` is the one way to draw one: an iPhone 17

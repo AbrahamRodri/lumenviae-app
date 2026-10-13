@@ -79,15 +79,12 @@ struct PrayAlongView: View {
     /// Silent until the reader has said the book may speak
     private var aloud: Bool { store.hasChosenAloud && store.praysAloud }
 
-    /// The head names the order; a single prayer is named once, by its
-    /// own title on the page, so the head does not say the title twice.
-    /// An order of one prayer — the Angelus — says when it is prayed, as
-    /// its own page does ("6 AM, NOON AND 6 PM"); a prayer opened alone
-    /// says whose book it is
+    /// The head always names what was opened: an order by its name
+    /// (the Angelus too, though its one prayer bears the same name), and
+    /// a prayer opened alone by the book it is from. The Angelus's head
+    /// once said when it is prayed, so one head in three named a time.
     private var kicker: String {
-        if prayers.count > 1 { return launch.title }
-        if let id = launch.orderID, let order = PrayerBook.order(id) { return order.occasion }
-        return "Prayers"
+        launch.orderID == nil ? "Prayers" : launch.title
     }
 
     private var isAngelus: Bool {
@@ -310,64 +307,68 @@ struct PrayAlongView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     Color.clear.frame(height: 0).id("top")
 
-                    VStack(alignment: .leading, spacing: 10) {
-                        if isAngelus {
-                            // Hangs upright, and swings only while it
-                            // rings: it once rested at one end of its
-                            // swing, so in silence it hung askew
-                            AppIcon("lv-bell", size: 26)
-                                .foregroundColor(AppColors.gold)
-                                .keyframeAnimator(initialValue: 0.0, trigger: bellRings) { bell, angle in
-                                    bell.rotationEffect(.degrees(angle), anchor: .top)
-                                } keyframes: { _ in
-                                    KeyframeTrack {
-                                        CubicKeyframe(14, duration: 0.3)
-                                        CubicKeyframe(-14, duration: 0.55)
-                                        CubicKeyframe(14, duration: 0.55)
-                                        CubicKeyframe(-12, duration: 0.55)
-                                        CubicKeyframe(8, duration: 0.5)
-                                        CubicKeyframe(-4, duration: 0.45)
-                                        CubicKeyframe(0, duration: 0.4)
+                    VStack(alignment: .leading, spacing: 0) {
+                        VStack(alignment: .leading, spacing: 10) {
+                            if isAngelus {
+                                // Hangs upright, and swings only while it
+                                // rings: it once rested at one end of its
+                                // swing, so in silence it hung askew
+                                AppIcon("lv-bell", size: 26)
+                                    .foregroundColor(AppColors.gold)
+                                    .keyframeAnimator(initialValue: 0.0, trigger: bellRings) { bell, angle in
+                                        bell.rotationEffect(.degrees(angle), anchor: .top)
+                                    } keyframes: { _ in
+                                        KeyframeTrack {
+                                            CubicKeyframe(14, duration: 0.3)
+                                            CubicKeyframe(-14, duration: 0.55)
+                                            CubicKeyframe(14, duration: 0.55)
+                                            CubicKeyframe(-12, duration: 0.55)
+                                            CubicKeyframe(8, duration: 0.5)
+                                            CubicKeyframe(-4, duration: 0.45)
+                                            CubicKeyframe(0, duration: 0.4)
+                                        }
                                     }
-                                }
-                                .padding(.bottom, 4)
-                                .accessibilityHidden(true)
-                        }
+                                    .padding(.bottom, 4)
+                                    .accessibilityHidden(true)
+                            }
 
-                        if let latin = prayer.secondTitle {
-                            Text(latin.uppercased())
-                                .font(AppFonts.labelFont(9))
-                                .tracking(2.5)
-                                .foregroundColor(AppColors.gold.opacity(0.8))
-                        }
+                            if let latin = prayer.secondTitle {
+                                Text(latin.uppercased())
+                                    .font(AppFonts.labelFont(9))
+                                    .tracking(2.5)
+                                    .foregroundColor(AppColors.gold.opacity(0.8))
+                            }
 
-                        Text(prayer.title)
-                            .font(AppFonts.titleFont(27))
-                            .foregroundColor(AppColors.cream)
-                            .minimumScaleFactor(0.7)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .accessibilityAddTraits(.isHeader)
+                            Text(prayer.title)
+                                .font(AppFonts.titleFont(27))
+                                .foregroundColor(AppColors.cream)
+                                .minimumScaleFactor(0.7)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .accessibilityAddTraits(.isHeader)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 24)
+                        .padding(.top, 22)
+
+                        VStack(alignment: .leading, spacing: ReadingTypography.stanzaSpacing(for: textSize)) {
+                            ForEach(Array(stanzas.enumerated()), id: \.offset) { i, stanza in
+                                PrayAlongStanza(
+                                    content: stanza,
+                                    size: textSize,
+                                    showsDropCap: i == 0,
+                                    opacity: stanzaOpacity(i, following: following)
+                                )
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .animation(Motion.crossfade, value: litStanza)
+                                .id(i)
+                            }
+                        }
+                        .padding(.horizontal, 24)
+                        .padding(.top, 20)
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 28)
-                    .padding(.top, 22)
-
-                    VStack(alignment: .leading, spacing: ReadingTypography.stanzaSpacing(for: textSize)) {
-                        ForEach(Array(stanzas.enumerated()), id: \.offset) { i, stanza in
-                            PrayerText(
-                                content: stanza,
-                                size: textSize,
-                                alignment: .leading,
-                                showsDropCap: i == 0
-                            )
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .opacity(stanzaOpacity(i, following: following))
-                            .animation(Motion.crossfade, value: litStanza)
-                            .id(i)
-                        }
-                    }
-                    .padding(.horizontal, 28)
-                    .padding(.top, 20)
+                    // The veil goes with the words, so the painting reads
+                    // clear in the room a short prayer leaves beneath it
+                    .background(WordsVeil())
 
                     // Clear of the foot, so the last line can be read
                     // above NEXT
@@ -407,8 +408,10 @@ struct PrayAlongView: View {
         }
     }
 
+    /// A point under the reading size, as the prayer's own page sets it,
+    /// so more of each line of a prayer fits the measure
     private var textSize: CGFloat {
-        max(18, settings.meditationFontSize)
+        max(17, settings.meditationFontSize - 1)
     }
 
     /// The verse under the voice full, what has been said dimmed, what is
@@ -604,7 +607,9 @@ struct PrayAlongView: View {
                 .accessibilityHidden(true)
 
                 VStack(spacing: 10) {
-                    if launch.orderID != nil {
+                    // The day's three orders close on a line of their own;
+                    // any other's closing line already names it, prayed
+                    if closingNamesNoOrder {
                         Text("\(launch.title.uppercased()) · PRAYED")
                             .font(AppFonts.labelFont(10))
                             .tracking(2.5)
@@ -648,6 +653,11 @@ struct PrayAlongView: View {
             .ignoresSafeArea()
         }
         .sensoryFeedback(.success, trigger: finished)
+    }
+
+    private var closingNamesNoOrder: Bool {
+        [PrayerBook.morningOrderID, PrayerBook.nightOrderID, PrayerBook.angelusOrderID]
+            .contains(launch.orderID ?? "")
     }
 
     private var closingLine: String {
@@ -851,9 +861,10 @@ struct PrayAlongView: View {
 
 /// The page's ground: the order's painting veiled, as Chant practice sets
 /// its chant's, and a scrim of the theme's own ground, light at the head
-/// where the painting shows and deepest from the title down, so the words
-/// read over the brightest sky. Hidden from VoiceOver, which reads the
-/// words.
+/// where the painting shows and even below it. The words carry a veil of
+/// their own (`WordsVeil`), so they read over the brightest sky while the
+/// room a short prayer leaves beneath it shows the painting rather than a
+/// flat dark field. Hidden from VoiceOver, which reads the words.
 private struct PrayAlongGround: View {
     let painting: PrayerBookPainting
 
@@ -872,10 +883,9 @@ private struct PrayAlongGround: View {
                 stops: [
                     .init(color: AppColors.background.opacity(0.4), location: 0),
                     .init(color: AppColors.background.opacity(0.1), location: 0.1),
-                    .init(color: AppColors.background.opacity(0.45), location: 0.2),
-                    .init(color: AppColors.background.opacity(0.8), location: 0.3),
-                    .init(color: AppColors.background.opacity(0.86), location: 0.6),
-                    .init(color: AppColors.background.opacity(0.95), location: 1)
+                    .init(color: AppColors.background.opacity(0.45), location: 0.22),
+                    .init(color: AppColors.background.opacity(0.55), location: 0.4),
+                    .init(color: AppColors.background.opacity(0.55), location: 1)
                 ],
                 startPoint: .top,
                 endPoint: .bottom
@@ -884,6 +894,131 @@ private struct PrayAlongGround: View {
         .ignoresSafeArea()
         .allowsHitTesting(false)
         .accessibilityHidden(true)
+    }
+}
+
+/// The veil behind the title and the prayer, scrolling with them: the
+/// theme's ground, feathered above and below so it has no edge
+private struct WordsVeil: View {
+    var body: some View {
+        VStack(spacing: 0) {
+            LinearGradient(colors: [.clear, AppColors.background.opacity(0.62)], startPoint: .top, endPoint: .bottom)
+                .frame(height: 44)
+            AppColors.background.opacity(0.62)
+            LinearGradient(colors: [AppColors.background.opacity(0.62), .clear], startPoint: .top, endPoint: .bottom)
+                .frame(height: 72)
+        }
+        .padding(.top, -44)
+        .padding(.bottom, -72)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
+}
+
+// MARK: - A stanza on the page
+
+/// One stanza of the prayer. A stanza of plain verse — lines and rubrics,
+/// no litany, canticle or translation — is set here a line at a time, so
+/// a line too long for the measure hangs its overflow in, as a prayer book
+/// sets it, rather than wrapping to look like a line of its own; and its
+/// rubrics stand apart from the verse, at full strength while the verse
+/// beside them is dimmed under the voice. Every other stanza is
+/// `PrayerText`'s, dimmed whole.
+private struct PrayAlongStanza: View {
+    let content: String
+    let size: CGFloat
+    let showsDropCap: Bool
+    let opacity: Double
+
+    private var lines: [String] {
+        content.components(separatedBy: "\n")
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+    }
+
+    private var isPlainVerse: Bool {
+        let lines = self.lines
+        guard !lines.isEmpty else { return false }
+        if lines.allSatisfy(PrayerMarkup.isRubric) { return true }
+        guard lines.count > 1 else { return false }
+        return !lines.contains {
+            $0.contains("|||") || PrayerMarkup.isLitany($0) || PrayerMarkup.isPointed($0) || PrayerMarkup.isRule($0)
+        }
+    }
+
+    var body: some View {
+        if isPlainVerse {
+            let lines = self.lines
+            VStack(alignment: .leading, spacing: 0) {
+                ForEach(Array(lines.enumerated()), id: \.offset) { i, line in
+                    let rubric = PrayerMarkup.isRubric(line)
+                    let afterRubric = i > 0 && PrayerMarkup.isRubric(lines[i - 1])
+                    Group {
+                        if rubric {
+                            Text(PrayerMarkup.rubric(line))
+                                .font(AppFonts.readingItalicFont(max(12, size - 2)))
+                                .foregroundColor(Rubric.red)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .opacity(max(opacity, 0.85))
+                        } else {
+                            PrayAlongVerseLine(text: line, size: size)
+                                .opacity(opacity)
+                        }
+                    }
+                    .padding(.top, i == 0 ? 0 : (rubric || afterRubric)
+                        ? ReadingTypography.verseSpacing(for: size)
+                        : ReadingTypography.quoteLineSpacing(for: size))
+                }
+            }
+        } else {
+            PrayerText(content: content, size: size, alignment: .leading, showsDropCap: showsDropCap)
+                .opacity(opacity)
+        }
+    }
+}
+
+/// A line of verse in `PrayerText`'s face, its ℣ ℟ ✠ in red, whose
+/// overflow hangs in by about an em
+private struct PrayAlongVerseLine: View {
+    let text: String
+    let size: CGFloat
+
+    private var indent: CGFloat { (size * 1.1).rounded() }
+
+    var body: some View {
+        let line = Text(Rubric.rubricated(text))
+            .font(AppFonts.bodyFont(size))
+            .foregroundColor(AppColors.cream.opacity(0.92))
+            .lineSpacing(ReadingTypography.quoteLineSpacing(for: size))
+        if #available(iOS 18.0, *) {
+            // Measured an indent short, then every line after the first
+            // drawn an indent in, so the overflow still fits the measure
+            line
+                .textRenderer(HangingIndentRenderer(indent: indent))
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.trailing, indent)
+        } else {
+            line
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+}
+
+@available(iOS 18.0, *)
+private struct HangingIndentRenderer: TextRenderer {
+    let indent: CGFloat
+
+    var displayPadding: EdgeInsets {
+        EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: indent)
+    }
+
+    func draw(layout: Text.Layout, in context: inout GraphicsContext) {
+        for (i, line) in layout.enumerated() {
+            var lineContext = context
+            if i > 0 { lineContext.translateBy(x: indent, y: 0) }
+            lineContext.draw(line)
+        }
     }
 }
 
