@@ -57,6 +57,47 @@ struct LibraryBookPlaceTests {
         #expect(LibraryBookPlace.shortName(of: single[0].chapters[0], in: single) == "Prologue")
     }
 
+    @Test func frontMatterIsNoPartAndIsNeverNumbered() {
+        let runs = [
+            LibraryPartRun(id: "part-0", title: nil, chapters: [chapter(0, nil, "Introduction")]),
+            LibraryPartRun(id: "First", title: "Part First", chapters: [
+                chapter(1, "Part First", "Section I"),
+                chapter(2, "Part First", "Section II"),
+            ]),
+            LibraryPartRun(id: "Second", title: "Part Second", chapters: [
+                chapter(3, "Part Second", "Section I"),
+            ]),
+        ]
+        #expect(LibraryBookPlace.hasParts(runs))
+        #expect(LibraryBookPlace.titledParts(runs).map(\.id) == ["First", "Second"])
+        #expect(LibraryBookPlace.partNumber(of: "part-0", in: runs) == nil)
+        #expect(LibraryBookPlace.partNumber(of: "First", in: runs) == 1)
+        #expect(LibraryBookPlace.shortName(of: runs[1].chapters[0], in: runs) == "I.I")
+        #expect(LibraryBookPlace.shortName(of: runs[2].chapters[0], in: runs) == "II.I")
+        #expect(LibraryBookPlace.shortName(of: runs[0].chapters[0], in: runs) == "Introduction")
+    }
+
+    @Test func aBookWithOneNamedPartAfterItsFrontMatterHasNoParts() {
+        let runs = [
+            LibraryPartRun(id: "part-0", title: nil, chapters: [chapter(0, nil, "Preface")]),
+            LibraryPartRun(id: "Only", title: "The Letters", chapters: [chapter(1, "The Letters", "First Letter")]),
+        ]
+        #expect(!LibraryBookPlace.hasParts(runs))
+        #expect(LibraryBookPlace.shortName(of: runs[1].chapters[0], in: runs) == "First Letter")
+    }
+
+    @Test func aHeadingWithoutANumeralIsNamedAloneOrByItsPart() {
+        let runs = [
+            LibraryPartRun(id: "Third", title: "The Third Book", chapters: [chapter(0, "The Third Book", "Chapter I")]),
+            LibraryPartRun(id: "Fourth", title: "The Fourth Book", chapters: [
+                chapter(1, "The Fourth Book", "The Fourth Book"),
+                chapter(2, "The Fourth Book", "Fifteenth Letter"),
+            ]),
+        ]
+        #expect(LibraryBookPlace.shortName(of: runs[1].chapters[0], in: runs) == "II")
+        #expect(LibraryBookPlace.shortName(of: runs[1].chapters[1], in: runs) == "Fifteenth Letter")
+    }
+
     @Test func theListOpensTwoChaptersBeforeTheOneBeingRead() {
         let runs = runs
         #expect(LibraryBookPlace.firstShown(in: runs, currentIndex: 4) == 2)

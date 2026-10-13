@@ -96,16 +96,42 @@ enum LibraryBookPlace {
         return out
     }
 
+    /// The parts a book prints by name. An edition's front matter — the
+    /// Glories of Mary's Introduction, the Practice's Preface — stands as
+    /// a run of its own before the first part, with no title, and is no
+    /// part: it is never numbered, pinned or indexed.
+    static func titledParts(_ runs: [LibraryPartRun]) -> [LibraryPartRun] {
+        runs.filter { $0.title != nil }
+    }
+
+    /// Whether the book is printed in parts, so the page pins and indexes
+    /// them
+    static func hasParts(_ runs: [LibraryPartRun]) -> Bool {
+        titledParts(runs).count > 1
+    }
+
+    /// A part's number as the book counts its parts, 1 for the first named
+    /// one; nil for front matter
+    static func partNumber(of runID: String, in runs: [LibraryPartRun]) -> Int? {
+        titledParts(runs).firstIndex { $0.id == runID }.map { $0 + 1 }
+    }
+
     /// The place on the Continue button: "III.V" in a book of parts —
     /// the part's numeral and the chapter's — and the heading itself
-    /// ("Chapter V", "Prologue") in a book without them.
+    /// ("Chapter V", "Prologue") in a book without them, in front matter,
+    /// or where the heading carries no numeral. A chapter whose heading is
+    /// its part's own name (the exhortation opening the Imitation's Fourth
+    /// Book) is named by the part's numeral alone.
     static func shortName(of chapter: LibraryChapter, in runs: [LibraryPartRun]) -> String {
-        guard runs.count > 1,
-              let part = runs.firstIndex(where: { $0.chapters.contains { $0.id == chapter.id } }) else {
+        guard hasParts(runs),
+              let run = runs.first(where: { $0.chapters.contains { $0.id == chapter.id } }),
+              let part = partNumber(of: run.id, in: runs) else {
             return chapter.heading
         }
-        let tail = numeral(ofHeading: chapter.heading) ?? chapter.heading
-        return "\(roman(part + 1)).\(tail)"
+        if let tail = numeral(ofHeading: chapter.heading) {
+            return "\(roman(part)).\(tail)"
+        }
+        return chapter.heading == run.title ? roman(part) : chapter.heading
     }
 
     /// The chapter the page's list begins at: `leadIn` before the one
@@ -139,21 +165,19 @@ enum LibraryBookPlace {
     }
 }
 
-/// Where a ledger is drawn. The book page keeps its own ruled list; the
-/// reader's ☰ sheet sets the same chapters as the app's sheet rows
+/// Where a chapter row is drawn. The book page keeps its own ruled list;
+/// the reader's ☰ sheet sets the same chapters as the app's sheet rows
 /// (`SheetChrome`), so its index reads like every other sheet's.
 enum LibraryContentsStyle {
     case page
     case sheet
 }
 
-/// The ruled ledger itself, without any chrome around it.
+/// The reader's ☰ sheet's ledger, its parts folding. The book page draws
+/// its own list, with the parts pinned rather than folded.
 struct LibraryContentsLedger: View {
 
     let runs: [LibraryPartRun]
-
-    /// The page's list by default; the ☰ sheet asks for its own rows
-    var style: LibraryContentsStyle = .page
 
     /// Where the reader is now — a gold dot
     var currentIndex: Int?
@@ -210,55 +234,11 @@ struct LibraryContentsLedger: View {
                 expandedParts.insert(run.id)
             }
         } label: {
-            switch style {
-            case .page:
-                pagePartLabel(run, isOpen: isOpen, holdsCurrent: holdsCurrent)
-            case .sheet:
-                sheetPartLabel(run, isOpen: isOpen, holdsCurrent: holdsCurrent)
-            }
+            sheetPartLabel(run, isOpen: isOpen, holdsCurrent: holdsCurrent)
         }
         .buttonStyle(.plain)
         .accessibilityLabel("\(run.title ?? "Part"), \(run.chapters.count) chapters")
         .accessibilityHint(isOpen ? "Closes this part's chapters" : "Opens this part's chapters")
-    }
-
-    /// The book page's part heading: engraved caps over a fading rule
-    private func pagePartLabel(_ run: LibraryPartRun, isOpen: Bool, holdsCurrent: Bool) -> some View {
-        HStack(spacing: 12) {
-            Text((run.title ?? "").uppercased())
-                .font(AppFonts.labelFont(11))
-                .tracking(2.5)
-                .foregroundColor(AppColors.gold.opacity(isOpen ? 0.95 : 0.75))
-                .fixedSize()
-
-            if holdsCurrent, !isOpen {
-                Circle()
-                    .fill(AppColors.goldLight)
-                    .frame(width: 5, height: 5)
-            }
-
-            Rectangle()
-                .fill(
-                    LinearGradient(
-                        colors: [AppColors.gold.opacity(0.3), AppColors.gold.opacity(0)],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-                .frame(height: 1)
-
-            Text("\(run.chapters.count)")
-                .font(AppFonts.labelFont(10))
-                .tracking(1)
-                .foregroundColor(AppColors.textSecondary.opacity(0.8))
-
-            AppIcon(isOpen ? "ph-caret-up" : "ph-caret-down", size: 10)
-                .foregroundColor(AppColors.gold.opacity(0.6))
-                .animation(.easeOut(duration: 0.2), value: isOpen)
-        }
-        .padding(.vertical, 14)
-        .frame(minHeight: 44)
-        .contentShape(Rectangle())
     }
 
     /// The sheet's part heading: a `SheetSectionLabel` that still folds,
@@ -303,7 +283,7 @@ struct LibraryContentsLedger: View {
         ForEach(chapters) { chapter in
             LibraryChapterRow(
                 chapter: chapter,
-                style: style,
+                style: .sheet,
                 isCurrent: chapter.id == currentIndex,
                 isFinished: finished.contains(chapter.id),
                 isLast: chapter.id == chapters.last?.id,
@@ -808,7 +788,6 @@ struct LibraryContentsSheet: View {
 
                         LibraryContentsLedger(
                             runs: runs,
-                            style: .sheet,
                             currentIndex: currentIndex,
                             finished: finished,
                             markCounts: markCounts,

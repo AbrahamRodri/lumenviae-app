@@ -200,7 +200,10 @@ struct LibraryBookView: View {
 
     /// Whether the book prints parts — the Imitation's four Books — and so
     /// pins their names over the list and stands their index on the edge.
-    private var hasParts: Bool { runs.count > 1 }
+    private var hasParts: Bool { LibraryBookPlace.hasParts(runs) }
+
+    /// The parts the index names, front matter left out
+    private var titledParts: [LibraryPartRun] { LibraryBookPlace.titledParts(runs) }
 
     @ViewBuilder
     private func content(_ info: LibraryBookInfo) -> some View {
@@ -265,20 +268,25 @@ struct LibraryBookView: View {
             .coordinateSpace(name: Self.pageSpace)
             // Held under the bar: a part's name pins at the scroll's top
             // edge, and the chapters it pushed up would otherwise go on
-            // showing above it, behind the Back capsule.
-            .clipped()
+            // showing above it, behind the Back capsule. The top edge
+            // only: the mask runs on past the foot, so the page still
+            // scrolls under the home indicator rather than stopping in a
+            // hard line above it.
+            .mask {
+                Rectangle()
+                    .padding(.bottom, -200)
+            }
             .overlay(alignment: .topTrailing) {
                 if hasParts, !isSearching, book != nil {
                     partIndex(proxy)
-                        // Level with the list's first row, under its part's
-                        // name, then held under the name pinned at the top
-                        // of the glass while the list passes
-                        .offset(y: max(listTop, 0) + Self.partHeaderHeight)
+                        .offset(y: indexTop)
                         // Only beside the list: above it the goal card's
-                        // ADJUST stands at the edge, below it the offline
-                        // row's act.
-                        .opacity(listEnd > 260 ? 1 : 0)
-                        .animation(.easeOut(duration: 0.2), value: listEnd > 260)
+                        // ADJUST stands at the edge, below it the notes row
+                        // and the offline row's act, whose taps it would
+                        // take. Gone once the list's end rises past its foot.
+                        .opacity(indexFitsBesideList ? 1 : 0)
+                        .allowsHitTesting(indexFitsBesideList)
+                        .animation(.easeOut(duration: 0.2), value: indexFitsBesideList)
                 }
             }
         }
@@ -286,9 +294,23 @@ struct LibraryBookView: View {
 
     private static let pageSpace = "libraryBookPage"
 
-    /// About the height of a pinned part name, which the index starts
+    /// About the height of a pinned part name, which the index keeps
     /// beneath so the two never cross
     private static let partHeaderHeight: CGFloat = 44
+
+    /// The height of one of the index's numerals, a full touch target
+    private static let indexRowHeight: CGFloat = 44
+
+    /// Where the index stands: level with the first named part's first
+    /// row, under its name, then held under the name pinned at the top of
+    /// the glass while the list passes
+    private var indexTop: CGFloat {
+        max(listTop, Self.partHeaderHeight)
+    }
+
+    private var indexFitsBesideList: Bool {
+        listEnd > indexTop + CGFloat(titledParts.count) * Self.indexRowHeight
+    }
 
     /// The head of the page: the book's cloth, and beside it the title,
     /// the author and the one gold act. Nothing describes the book here;
@@ -448,15 +470,21 @@ struct LibraryBookView: View {
                 earlierRow(count: hidden)
             }
 
-            // Where the list begins and ends, for the index on the edge.
-            // Markers rather than the list's own frame: a modifier on the
-            // ForEach would land on every section. A marker the lazy
-            // stack lets go keeps its last reading, which is past the
-            // glass's edge in the direction it went.
-            pageMarker { listTop = $0 }
+            // Where the index on the edge rides: from the first named
+            // part's first row (under its pinned name, past any front
+            // matter) to the list's end. Markers rather than the list's
+            // own frame: a modifier on the ForEach would land on every
+            // section. A marker the lazy stack lets go keeps its last
+            // reading, which is past the glass's edge in the direction it
+            // went.
+            let firstNamed = shown.first { $0.title != nil }?.id
 
             ForEach(shown) { run in
                 Section {
+                    if run.id == firstNamed {
+                        pageMarker { listTop = $0 }
+                    }
+
                     ForEach(run.chapters) { chapter in
                         LibraryChapterRow(
                             chapter: chapter,
@@ -470,11 +498,13 @@ struct LibraryBookView: View {
                         )
                         .padding(.leading, 20)
                         // Clear of the index on the edge, where there is one
-                        .padding(.trailing, hasParts ? 34 : 20)
+                        .padding(.trailing, hasParts ? Self.indexRowHeight : 20)
                         .id(chapter.id)
                     }
                 } header: {
-                    if hasParts {
+                    // Front matter stands before the first part with no
+                    // name to pin
+                    if hasParts, run.title != nil {
                         partHeader(run)
                     }
                 }
@@ -559,12 +589,13 @@ struct LibraryBookView: View {
     /// letters: a tap goes straight to that part. The part being read is
     /// lit.
     private func partIndex(_ proxy: ScrollViewProxy) -> some View {
+        let parts = titledParts
         let reading = currentIndex.flatMap { index in
-            runs.firstIndex { $0.chapters.contains { $0.id == index } }
+            parts.firstIndex { $0.chapters.contains { $0.id == index } }
         }
 
         return VStack(spacing: 0) {
-            ForEach(Array(runs.enumerated()), id: \.element.id) { position, run in
+            ForEach(Array(parts.enumerated()), id: \.element.id) { position, run in
                 Button {
                     jump(to: run, proxy: proxy)
                 } label: {
@@ -573,7 +604,7 @@ struct LibraryBookView: View {
                         .foregroundColor(position == reading ? AppColors.background : AppColors.gold.opacity(0.7))
                         .frame(width: 24, height: 24)
                         .background(Circle().fill(position == reading ? AppColors.gold : Color.clear))
-                        .frame(width: 34, height: 40)
+                        .frame(width: Self.indexRowHeight, height: Self.indexRowHeight)
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(QuietGlyphButtonStyle())
@@ -581,15 +612,16 @@ struct LibraryBookView: View {
                 .accessibilityHint(position == reading ? "Where you are reading. Goes to this part." : "Goes to this part")
             }
         }
-        .padding(.trailing, 2)
     }
 
     /// Goes to a part's heading, opening the folded chapters first when
-    /// the part stands among them.
+    /// the part stands among them or is shown cut short, so the jump lands
+    /// on its first chapter rather than two before the reader's place.
     private func jump(to run: LibraryPartRun, proxy: ScrollViewProxy) {
         let anchor = Self.partAnchor(run.id)
         let shown = LibraryBookPlace.runs(runs, from: firstShown)
-        if !shown.contains(where: { $0.id == run.id }) {
+        let whole = shown.first { $0.id == run.id }?.chapters.count == run.chapters.count
+        if !whole {
             showsEarlier = true
             // The opened rows are laid out on the next pass; scrolling in
             // this one would aim at a heading that does not exist yet.

@@ -163,7 +163,7 @@ struct ContinueReadingActLabel: View {
     }
 }
 
-// MARK: - Today's goal
+// MARK: - Daily reading goal band
 
 /// The day's measure, as a ruled band rather than a card: the dial that
 /// is both the section's icon and its progress, the measure in words,
@@ -184,7 +184,7 @@ struct TodaysGoalBand: View {
                 dial
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("TODAY'S GOAL")
+                    Text("DAILY READING GOAL")
                         .font(AppFonts.labelFont(10))
                         .tracking(2.5)
                         .foregroundColor(AppColors.gold)
@@ -218,7 +218,7 @@ struct TodaysGoalBand: View {
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Today's goal. \(line). Opens your reading goal.")
+        .accessibilityLabel("Daily reading goal. \(line). Opens your reading goal.")
     }
 
     /// A 38-point dial whose ring fills as the day's reading does —
@@ -382,7 +382,7 @@ struct ReadingGoalSheet: View {
 
     var body: some View {
         LibraryTraySheet(
-            kicker: "Today's goal",
+            kicker: "Daily reading goal",
             title: "How Much to Read",
             lead: "Spiritual reading asks for a little every day rather than an evening every month.",
             note: "A day without reading is never counted against you."
@@ -1041,16 +1041,8 @@ struct BookNotesSheet: View {
 
 // MARK: - Spans
 
-/// Hours and minutes in the goal band's own hand: "2 h 5 m", "48 m".
+/// A recording's length in words.
 enum ReadingSpans {
-
-    static func spell(_ seconds: Double) -> String {
-        let minutes = max(Int(seconds) / 60, 0)
-        if minutes < 60 { return "\(minutes) m" }
-        let hours = minutes / 60
-        let rest = minutes % 60
-        return rest == 0 ? "\(hours) h" : "\(hours) h \(rest) m"
-    }
 
     /// "24 MIN" — a recording's length as a chip wears it.
     static func chipMinutes(_ seconds: Double) -> String {

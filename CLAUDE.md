@@ -2301,10 +2301,11 @@ write concurrent code here:
 
   Never a percentage, never a streak, never a count of chapters left
   unread. Time against a **recording** is allowed, because it is a
-  fact about a file rather than a judgement of the reader — "2 h 5 m
-  read · 7 h 26 m left in the book" is drawn only from tracks the
-  alignment maps to a chapter, so a finished book really does reach
-  zero. A words-per-minute estimate is never allowed: True Devotion
+  fact about a file rather than a judgement of the reader — a chapter's
+  listen chip ("27 MIN") and the reader's "12 MIN LEFT" are the
+  recording's own lengths (the book page once also printed "2 h 5 m
+  read · 7 h 26 m left in the book", and no longer does; see A book's
+  page, below). A words-per-minute estimate is never allowed: True Devotion
   has no recording, so its act stays quiet rather than guessing — and
   neither True Devotion's contents nor the consecration day page print a
   reading time (both once did, words ÷ 200; removed Sept 2026).
@@ -2320,18 +2321,23 @@ write concurrent code here:
   line each with its numeral in a column of its own, read ones dimmed,
   the one being read lit. A book of parts pins each part's name over its
   chapters and stands the parts' numerals down the trailing edge, as
-  Contacts stands its letters, to jump to a part. The list opens at the
+  Contacts stands its letters, to jump to a part. Only named parts count
+  (`LibraryBookPlace.titledParts`): the front matter some editions print
+  before their first part (the Glories of Mary's Introduction, the
+  Practice's Preface) is never numbered, pinned or indexed, or Part First
+  would read II. The list opens at the
   reader's place, two chapters before it showing, the rest folded into
   "39 earlier chapters" (`LibraryBookPlace.firstShown`). It once opened
   on a large cover over a blurb, a gold card three lines tall, a goal
   band between the act and the contents, and every part as a fold of
   two-line rows (the Third Book alone 59); the CEO found it cluttered,
-  and those must not come back. The book's recording time ("2 h 5 m
-  read · 7 h 26 m left") is no longer printed on the page.
+  and those must not come back.
 
   The one figure the shelf does keep is **the day's measure**
   (`ReadingDayMeter`, the daily reading goal ring on a book's page and
-  TODAY'S GOAL on True Devotion's, chosen in `ReadingGoalSheet`): minutes with a book open, or a chapter a
+  the DAILY READING GOAL band on True Devotion's, chosen in
+  `ReadingGoalSheet`, headed "Daily reading goal" — it was "Today's goal",
+  which did not say what it counted): minutes with a book open, or a chapter a
   day, toward a goal the reader set — a dial for today only, reset
   silently each morning, never carried forward, chained into a streak or
   counted against anyone.
