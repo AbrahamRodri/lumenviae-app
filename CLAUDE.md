@@ -2573,6 +2573,21 @@ write concurrent code here:
   **Learning** is `LearnByHeartSheet`: four steps (read, some hidden,
   first letters, by heart), in English or Latin, a hidden word shown by a
   touch, and at the end the reader's own LEARNED mark — never scored.
+  It is laid out as a holy card (the "Learn by Heart" redesign, Option
+  A, Oct 2026): the prayer's painting (`PrayerBookPainting.prayer`),
+  196 points and dissolving into the page, scrolling away with the
+  prayer, which is set centred (`WordFlow(centred:)`); EN · LA (only
+  where the prayer has Latin) and DONE on dark capsules over it; and a
+  fixed foot of four beads (each a door to its step; the first is how
+  to start over), the step's name, one italic line on the two middle
+  steps only ("Touch a word to see it." / "Say it from the first
+  letters."), and a quiet back disc beside the next step's name and a
+  gold disc. The last step's act is the gold I know it by heart; once
+  learned, the foot is the LEARNED seal over "Kept as yours. Practise it
+  here any time." and a small UNMARK, and the painting's veil lifts a
+  little. It once opened on a sentence of instructions per step, a bar
+  of four 7.5-point labels and the language chips, three rows of chrome
+  before the prayer's first word; don't bring them back.
   **The Angelus bell** (Settings → Devotion) rings at 6, noon and 6
   (`PrayerBookStore.setAngelusBell`), its notice saying what the
   Angelus is ("The noon bell: time for the Angelus, a short prayer to
@@ -2671,12 +2686,12 @@ write concurrent code here:
   page opens. The library's other pages are pushed: a sung set's own page
   (`.chantSet(ChantSetSubject)`, `ChantSetPage`, below), which every set
   opens on, an occasion or the reader's own, from the tiles, the Sung
-  Sets cards, the index and Saved; the index of the sung sets
+  Sets cards, the index and Your Chants; the index of the sung sets
   (`.chantSets`, `ChantSetsPage`, `ChantOccasionsSection`); a topic, every chant under its topic,
   or the Mass of the Angels (`.chantBrowse(ChantBrowseScope)`,
   `ChantBrowsePage`), which is how every chant stays reachable without a
-  search; and the reader's own chants (`.chantSaved(ChantSavedShelf)`,
-  `ChantSavedPage`, `ChantSavedSection` below).
+  search; and the reader's own chants, Your Chants
+  (`.chantSaved(ChantSavedShelf)`, `ChantSavedPage`, below).
 
   **A set's page** (`ChantSetPage`, the "Chant Library shelves" design,
   option B, Oct 2026) is one component for every set, laid out as an
@@ -2701,11 +2716,19 @@ write concurrent code here:
   letting that set go — but only while the set is still the occasion's
   own copy (`ChantShelfStore.isUntouchedCopy`); any other kept set is let
   go only after the question before a delete (`toggleKeeping` answers
-  `.askFirst`). **Saved** (`ChantSavedSection`, on its own page): a shelf
-  of spines (`ChantSpineCloth`) — Learned, Favourites, each set the
-  reader made, and the dashed + — over the chants of Learned or
-  Favourites; a set's spine opens its page; then Recently played and the
-  Words setting. A new set is named first (`ChantNewSetSheet`), stands on
+  `.askFirst`). **Your Chants** (`ChantSavedPage`, the "simplify saved
+  chants" design, option A, Oct 2026): the painting of the first chant on
+  the shelf shown hangs at the head and dissolves into the page (an empty
+  shelf's own painting until something is kept); under it a pill of two
+  halves, Favourites | Learned with their counts (`ChantShelfSwitch`),
+  the tile's shelf lit (`ChantSavedShelf.shown`); the shelf as the
+  library's song rows with a play disc laid over each row's painting, or, empty, a faded
+  painting and one line; Your sets as square covers ending on a dashed
+  New set (`ChantSavedSetCover`, `ChantNewSetCover`, "+ NEW SET" in the
+  heading while any set exists); Played lately as quiet rows, when, then
+  the chant's Latin over its English; and Words as one line at the foot. It once opened on a
+  shelf of book spines, two of which switched the list and the rest
+  opened pages, under a paragraph saying what the page was. A new set is named first (`ChantNewSetSheet`), stands on
   the shelf only once made, and opens on its page. **The sheets that
   build a set** (`ChantSheets.swift`, the "Building a sung set" design,
   option A, Oct 2026; shared pieces in `ChantSetBuilding.swift`) each
@@ -3007,7 +3030,7 @@ write concurrent code here:
   puts the set down. It keeps the line clock (`lineEnd`: on, again,
   take turns, and practice's stop and your-turn-then-stop), the sleep
   timer (minutes, or the chant's end), and notes each chant sung for
-  Recently played. A set's silence plays `Resources/chant_silence.m4a` —
+  Played lately on Your Chants. A set's silence plays `Resources/chant_silence.m4a` —
   five seconds of silence, AAC, kept beside the other bundled sounds and
   not in `Resources/Chants`, which the generator owns — on a loop through
   the set's own claim for as long as the silence lasts: timed by the
@@ -3481,9 +3504,10 @@ transition entirely.
   VIEW ALL, a mysteries' page, a set's page, the Scriptural Rosary's page,
   a Prayer Book page, Saved full and empty, an order's page, the
   pray-along page in silence, an order part-way through and a prayer
-  opened alone, on a book store of its own, and the chant search before
-  typing, with results and with nothing found, on a fixed day) from fixed
-  data with swift-snapshot-testing (the
+  opened alone, on a book store of its own, the chant search before
+  typing, with results and with nothing found, and Your Chants with its
+  shelves full, empty and at its foot, on a fixed day) from fixed data
+  with swift-snapshot-testing (the
   test target's one package; the app has none) and compares them with
   the PNGs in `__Snapshots__/`, in the same `xcodebuild test`.
   `ScreenSnapshot.assertScreen` is the one way to draw one: an iPhone 17
