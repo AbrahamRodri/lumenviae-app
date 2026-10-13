@@ -15,10 +15,13 @@
 //    PLAYED LATELY  a song list, the one sounding marked with moving bars
 //    SONGS TO MARY  square cards, each with its length and its play
 //    SUNG SETS      cards listing their chants in order, with lengths
-//    BROWSE ALL     every chant, under its topic
+//    ALL CHANTS     the book's twelve sections, two by six, each opening
+//                   its shelf
 //
 //  Every card says how long it plays and has its own play, so the page
-//  reads as a library of songs rather than of prayers. A tap on a chant,
+//  reads as a library of songs rather than of prayers. Nothing stands
+//  behind SEE ALL: the sections close the page as All Topics close the
+//  Prayers page, where they once waited behind one BROWSE ALL button. A tap on a chant,
 //  wherever it stands, opens its page; only its disc plays (`ChantTap`).
 //  Search stands in the bar.
 //
@@ -140,16 +143,14 @@ struct ChantLibraryView: View {
                     shelfSection("Played lately") { playedLately }
                 }
 
-                shelfSection("Songs to Mary", seeAll: { router.push(.chantBrowse(.songsToMary)) }) {
-                    songsToMary
-                }
+                shelfSection("Songs to Mary") { songsToMary }
 
-                shelfSection("Sung sets", seeAll: { router.push(.chantSets) }) {
-                    sungSets
-                }
+                shelfSection("Sung sets") { sungSets }
 
-                browseAll
-                    .padding(.horizontal, 18)
+                shelfSection("All chants") {
+                    ChantSectionsGrid()
+                        .padding(.horizontal, 18)
+                }
 
                 footer
                     .padding(.horizontal, 36)
@@ -160,35 +161,19 @@ struct ChantLibraryView: View {
         .topChromeFade()
     }
 
-    /// A shelf of the page: its name in the display face, SEE ALL beside
-    /// it where there is more, and what it holds beneath
+    /// A shelf of the page: its name in the display face, and what it
+    /// holds beneath
     private func shelfSection<Content: View>(
         _ title: String,
-        seeAll: (() -> Void)? = nil,
         @ViewBuilder content: () -> Content
     ) -> some View {
         VStack(alignment: .leading, spacing: 14) {
-            HStack(alignment: .firstTextBaseline) {
-                Text(title)
-                    .font(AppFonts.titleFont(17))
-                    .foregroundColor(AppColors.cream)
-                    .accessibilityAddTraits(.isHeader)
-                Spacer(minLength: 8)
-                if let seeAll {
-                    Button(action: seeAll) {
-                        Text("SEE ALL")
-                            .font(AppFonts.labelFont(9.5))
-                            .tracking(2)
-                            .foregroundColor(AppColors.gold)
-                            .frame(minHeight: 44)
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(QuietGlyphButtonStyle())
-                    .accessibilityLabel("See all: \(title)")
-                }
-            }
-            .frame(minHeight: 30)
-            .padding(.horizontal, 18)
+            Text(title)
+                .font(AppFonts.titleFont(17))
+                .foregroundColor(AppColors.cream)
+                .accessibilityAddTraits(.isHeader)
+                .frame(minHeight: 30, alignment: .leading)
+                .padding(.horizontal, 18)
 
             content()
         }
@@ -423,27 +408,6 @@ struct ChantLibraryView: View {
             .fixedSize(horizontal: false, vertical: true)
             .padding(.horizontal, 18)
         }
-    }
-
-    // MARK: - Browse all
-
-    private var browseAll: some View {
-        Button {
-            router.push(.chantBrowse(.all))
-        } label: {
-            HStack(spacing: 10) {
-                AppIcon("ph-magnifying-glass", size: 16)
-                Text("BROWSE ALL \(ChantCatalog.all.count) CHANTS")
-                    .font(AppFonts.labelFont(11))
-                    .tracking(2.4)
-            }
-            .foregroundColor(AppColors.gold)
-            .frame(maxWidth: .infinity, minHeight: 50)
-            .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.4), lineWidth: AppLine.hairline))
-            .contentShape(Capsule())
-        }
-        .buttonStyle(SacredCardButtonStyle())
-        .accessibilityLabel("Browse all \(ChantCatalog.all.count) chants")
     }
 
     // MARK: - Foot
