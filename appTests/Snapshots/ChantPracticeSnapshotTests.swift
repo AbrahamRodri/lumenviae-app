@@ -29,7 +29,12 @@ struct ChantPracticeSnapshotTests {
         let defaults = try #require(UserDefaults(suiteName: "ChantPracticeSnapshotTests"))
         defaults.removePersistentDomain(forName: "ChantPracticeSnapshotTests")
 
-        let view = ChantPracticeView(chant: chant, shelf: ChantShelfStore(defaults: defaults))
+        // The shelf and the kept line both read the test's own defaults
+        let view = ChantPracticeView(
+            chant: chant,
+            shelf: ChantShelfStore(defaults: defaults),
+            places: defaults
+        )
         ScreenSnapshot.assertScreen(view, named: "chant-practice-path")
     }
 }

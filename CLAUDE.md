@@ -2719,7 +2719,9 @@ write concurrent code here:
   beads on a thread, each saying once what it is, over BEGIN on a first
   visit, CONTINUE once begun (back to the step and the line left,
   `PracticePlace`, kept beside the shelf's step only while it is still
-  that step) or PRACTISE AGAIN once learned; the path carries the ✕, and
+  that step, and let go when the chant is put down or learned, so BEGIN
+  after Stop Learning starts at the first line; a whole chant left
+  paused is taken up where it was) or PRACTISE AGAIN once learned; the path carries the ✕, and
   a step tapped begins it. **The singing screen** is the line and little
   else, over the painting veiled and a scrim deepest where the words
   stand (`PracticeGround`): the step's name and "LINE 4 OF 9", the one way

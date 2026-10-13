@@ -96,9 +96,13 @@ struct ChantPracticeView: View {
         }
     }
 
-    init(chant: Chant, shelf: ChantShelfStore = .shared) {
+    /// Where the line left is kept (`PracticePlace`)
+    private let places: UserDefaults
+
+    init(chant: Chant, shelf: ChantShelfStore = .shared, places: UserDefaults = .standard) {
         self.chant = chant
         self.shelf = shelf
+        self.places = places
     }
 
     private var lines: Bool { chant.hasLines }
@@ -150,8 +154,13 @@ struct ChantPracticeView: View {
             hadBegun = shelf.step(of: chant.id) != nil || shelf.isLearned(chant.id)
             step = shelf.step(of: chant.id) ?? .listen
             if shelf.isLearned(chant.id) { step = .onYourOwn }
-            if lines, let kept = PracticePlace.line(of: chant.id, on: step),
-               chant.lines.indices.contains(kept) {
+            // A line kept for a chant the shelf no longer has under way —
+            // put down with Stop Learning, or learned — means nothing: a
+            // new beginning starts on Listen at the first line
+            if shelf.step(of: chant.id) == nil {
+                PracticePlace.forget(chant.id, defaults: places)
+            } else if lines, let kept = PracticePlace.line(of: chant.id, on: step, defaults: places),
+                chant.lines.indices.contains(kept) {
                 line = kept
             }
             hidden = step == .onYourOwn ? .half : .none
@@ -192,7 +201,7 @@ struct ChantPracticeView: View {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
                     ZStack(alignment: .bottom) {
-                        ChantPainting(name: painting, height: 430, dissolveFrom: 0.5)
+                        ChantPainting(name: painting, height: 430, dissolveFrom: 0.4)
                         pathTitle
                             .padding(.horizontal, 24)
                     }
@@ -254,7 +263,7 @@ struct ChantPracticeView: View {
             Text(shelf.isLearned(chant.id) ? "LEARNED BY HEART" : "LEARN BY HEART")
                 .font(AppFonts.labelFont(10))
                 .tracking(2.5)
-                .foregroundColor(AppColors.gold)
+                .foregroundColor(AppColors.goldLight)
             Text(chant.latinTitle)
                 .font(AppFonts.titleFont(30))
                 .foregroundColor(AppColors.cream)
@@ -332,7 +341,7 @@ struct ChantPracticeView: View {
                             Text("LINE \(line + 1) OF \(chant.lines.count)")
                                 .font(AppFonts.labelFont(9))
                                 .tracking(1.8)
-                                .foregroundColor(AppColors.textSecondary)
+                                .foregroundColor(AppColors.cream.opacity(0.7))
                                 .contentTransition(.numericText())
                         }
                     }
@@ -480,7 +489,7 @@ struct ChantPracticeView: View {
                 Text(discCaption(turn: turn).uppercased())
                     .font(AppFonts.labelFont(9))
                     .tracking(1.8)
-                    .foregroundColor(turn != nil ? AppColors.goldLight : AppColors.textSecondary)
+                    .foregroundColor(turn != nil ? AppColors.goldLight : AppColors.cream.opacity(0.7))
                     .multilineTextAlignment(.center)
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
@@ -568,7 +577,16 @@ struct ChantPracticeView: View {
     /// From the path into the step the learner stands on, where they left it
     private func enter() {
         stage = .singing
-        begin()
+        if !lines, step == .listen || step == .readAlong, player.holds(chant) {
+            // A whole chant left on the path is taken up where it was
+            // paused, not sung again from its top
+            if !player.isPlaying(chant) {
+                startedPlayback = true
+                player.togglePlayback()
+            }
+        } else {
+            begin()
+        }
     }
 
     /// A step chosen on the path: the one under way goes on where it was;
@@ -688,7 +706,7 @@ struct ChantPracticeView: View {
         if isLastOfAll {
             player.setLineEnd(.goOn)
             shelf.markLearned(chant.id)
-            PracticePlace.forget(chant.id)
+            PracticePlace.forget(chant.id, defaults: places)
             withAnimation(reduceMotion ? nil : Motion.crossfade) { stage = .learned }
             return
         }
@@ -729,7 +747,7 @@ struct ChantPracticeView: View {
     /// opening a practice is not beginning one
     private func keepPlace() {
         guard lines, hasActed, !shelf.isLearned(chant.id) else { return }
-        PracticePlace.keep(line: line, of: chant.id, on: step)
+        PracticePlace.keep(line: line, of: chant.id, on: step, defaults: places)
     }
 
     // MARK: - Words for each moment
@@ -1047,7 +1065,7 @@ private struct PracticeQuietControl: View {
                 Text(label.uppercased())
                     .font(AppFonts.labelFont(9))
                     .tracking(1.8)
-                    .foregroundColor(AppColors.textSecondary)
+                    .foregroundColor(AppColors.cream.opacity(0.7))
             }
             .contentShape(Rectangle())
         }
