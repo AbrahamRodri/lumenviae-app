@@ -251,7 +251,6 @@ private struct ChantContents: View {
         // A shallow fade: the bar here stands on the bare page, and the
         // standard 48 points left a band of nothing under it
         .topChromeFade(height: 24, inset: 24)
-        .modifier(ChantPlayerRoom())
     }
 
     private func card(_ group: ChantGroup) -> some View {
@@ -363,7 +362,6 @@ private struct ChantShelf: View {
                 }
                 .modifier(ChantSavedScrollReading(scroll: scroll))
                 .topChromeFade()
-                .modifier(ChantPlayerRoom())
             }
         }
     }
@@ -444,24 +442,6 @@ private struct ChantShelf: View {
     /// the strip's own buttons
     private static func partID(_ index: Int) -> String {
         "part-\(index)"
-    }
-}
-
-// MARK: - Room for the player
-
-/// Room at the foot of a page for the chant player while it stands there,
-/// as Your Chants keeps it (`ChantSavedPage.playerRoom`), so the last row
-/// is never under it; none once the app keeps the room itself
-private struct ChantPlayerRoom: ViewModifier {
-    @State private var bottomInset: CGFloat = 0
-
-    func body(content: Content) -> some View {
-        content
-            .safeAreaPadding(
-                .bottom,
-                ChantSavedPage.playerRoom(playerActive: ChantPlayer.shared.isActive, bottomInset: bottomInset)
-            )
-            .onGeometryChange(for: CGFloat.self) { $0.safeAreaInsets.bottom } action: { bottomInset = $0 }
     }
 }
 
@@ -810,7 +790,6 @@ struct ChantSetsPage: View {
             // A shallow fade: the bar here stands on the bare page, and the
             // standard 48 points left a band of nothing under it
             .topChromeFade(height: 24, inset: 24)
-            .modifier(ChantPlayerRoom())
         }
         .navigationBarBackButtonHidden(true)
         // No title of the bar's own: left automatic, the bar kept a large
