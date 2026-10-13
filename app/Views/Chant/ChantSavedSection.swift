@@ -107,6 +107,18 @@ struct ChantSavedPage: View {
         ChantSavedShelf.shown(choice: choice, favorites: shelf.favorites.count, learned: shelf.learned.count)
     }
 
+    /// Room at the foot for the chant player while it stands there, so
+    /// the Words line is never under it. The app's own inset for the
+    /// player does not reach pushed pages yet; when card
+    /// 20261012-2355-mini-player-covers-the-foot-of-pushed-ch fixes that
+    /// in ContentView, this goes.
+    private var playerRoom: CGFloat {
+        ChantPlayer.shared.isActive ? Self.playerHeight : 0
+    }
+
+    /// The mini player's height and the gap above it
+    private static let playerHeight: CGFloat = 80
+
     private var shownChants: [Chant] {
         shown == .favorites ? shelf.favoriteChants : shelf.learnedChants
     }
@@ -120,7 +132,7 @@ struct ChantSavedPage: View {
             ScrollView(showsIndicators: false) {
                 ChantSavedSection(choice: $choice, shelf: shelf, now: now)
                     .padding(.top, 4)
-                    .padding(.bottom, 48)
+                    .padding(.bottom, 48 + playerRoom)
                     .onGeometryChange(for: CGFloat.self) { $0.frame(in: .scrollView).minY } action: { top in
                         // Before iOS 18 the content's own top is the only
                         // reading of the scroll
