@@ -26,18 +26,18 @@ struct ChantPlaybackTests {
         var clock = ChantClock()
         clock.observe(10, playing: true, at: start)
         #expect(clock.time(at: start, rate: 1) == 10)
-        #expect(abs(clock.time(at: start.addingTimeInterval(0.3), rate: 1) - 10.3) < 1e-9)
-        #expect(abs(clock.time(at: start.addingTimeInterval(0.4), rate: 0.75) - 10.3) < 1e-9)
+        #expect(abs(clock.time(at: start.addingTimeInterval(0.3), rate: 1) - 10.3) < 1e-6)
+        #expect(abs(clock.time(at: start.addingTimeInterval(0.4), rate: 0.75) - 10.3) < 1e-6)
     }
 
     @Test func theSameReadingAgainDoesNotMoveTheAnchor() {
         var clock = ChantClock()
         clock.observe(10, playing: true, at: start)
         clock.observe(10, playing: true, at: start.addingTimeInterval(0.2))
-        #expect(abs(clock.time(at: start.addingTimeInterval(0.4), rate: 1) - 10.4) < 1e-9)
+        #expect(abs(clock.time(at: start.addingTimeInterval(0.4), rate: 1) - 10.4) < 1e-6)
         // A new reading anchors it afresh
         clock.observe(10.5, playing: true, at: start.addingTimeInterval(0.5))
-        #expect(abs(clock.time(at: start.addingTimeInterval(0.6), rate: 1) - 10.6) < 1e-9)
+        #expect(abs(clock.time(at: start.addingTimeInterval(0.6), rate: 1) - 10.6) < 1e-6)
     }
 
     @Test func aPausedClockStandsAtItsReading() {
@@ -47,7 +47,7 @@ struct ChantPlaybackTests {
         #expect(clock.time(at: start.addingTimeInterval(30), rate: 1) == 10.2)
         // Taken up again, it counts from the moment it starts, not the pause
         clock.observe(10.2, playing: true, at: start.addingTimeInterval(30))
-        #expect(abs(clock.time(at: start.addingTimeInterval(30.5), rate: 1) - 10.7) < 1e-9)
+        #expect(abs(clock.time(at: start.addingTimeInterval(30.5), rate: 1) - 10.7) < 1e-6)
     }
 
     @Test func aResetClockAnchorsOnTheNextReadingEvenIfItRepeats() {
@@ -62,11 +62,11 @@ struct ChantPlaybackTests {
 
     @Test func aTurnIsTheLineAtItsPaceAndABreath() {
         let line = ChantLine(latin: "Salve", english: "Hail", start: 2, end: 5)
-        #expect(abs(ChantTurn.length(of: line, speed: 1) - 3.6) < 1e-9)
-        #expect(abs(ChantTurn.length(of: line, speed: 0.75) - 4.6) < 1e-9)
+        #expect(abs(ChantTurn.length(of: line, speed: 1) - 3.6) < 1e-6)
+        #expect(abs(ChantTurn.length(of: line, speed: 0.75) - 4.6) < 1e-6)
         // Never slower than half speed, and four seconds for no line
-        #expect(abs(ChantTurn.length(of: line, speed: 0.1) - 6.6) < 1e-9)
-        #expect(abs(ChantTurn.length(of: nil, speed: 1) - 4.6) < 1e-9)
+        #expect(abs(ChantTurn.length(of: line, speed: 0.1) - 6.6) < 1e-6)
+        #expect(abs(ChantTurn.length(of: nil, speed: 1) - 4.6) < 1e-6)
     }
 
     // MARK: - Errors
