@@ -2,24 +2,26 @@
 //  ChantView.swift
 //  Lumen Viae
 //
-//  One chant on a page of its own — the "Now Playing" board: its name in
-//  Latin and in English, its score, the line being sung with its English
-//  beneath when the chant's lines have been timed, and a transport made
-//  for learning by ear: the line again (or the whole chant again), back
-//  and on by the line (or by ten seconds), a slower pace, the singer and
-//  the reader taking turns line by line, the words, and a sleep timer.
-//  "Learn this chant" opens its practice, step by step.
+//  One chant on a page of its own, its Now Playing: the chant's painting
+//  at the head of the page, dissolving into it, its name in Latin and in
+//  English over it; then what is being sung, the score and the line with
+//  its English beneath when the chant's lines have been timed; the
+//  scrubber and three controls around the gold play, back and on by the
+//  line (or by ten seconds); and one quiet capsule of the tools used
+//  less, the line or the chant again, a slower pace, the singer and the
+//  reader taking turns, and a sleep timer. The words, favourite, a set,
+//  the score enlarged and the source stand in the ⋯ menu.
 //
-//  Beneath the fold: the prayer the chant sings, in words, and its other
-//  settings (the solemn tone beside the simple), each a door; the credit
-//  stands at the foot, as the recordings' licence asks.
+//  A scroll away: learning the chant by heart, as a card; the prayer the
+//  chant sings and its other settings, as the library's rows; the credit
+//  at the foot, as the recordings' licence asks.
 //
 //  Every line-by-line control stands only for a chant that has lines
 //  (`Chant.hasLines`). The rest step by ten seconds and repeat the whole
 //  chant: no timing is guessed.
 //
-//  Reached from the Chant Library, a prayer's own page ("Sing it in
-//  chant"), and the Chapel's Chant tile (`AppRoute.chant(id:)`).
+//  Reached from the Chant Library, a prayer's own page ("Hear it sung"),
+//  and the mini player (`AppRoute.chant(id:)`).
 //
 
 import SwiftUI
@@ -35,14 +37,25 @@ struct ChantView: View {
     @State private var showsSleep = false
     @State private var addingToSet = false
     @State private var practicing: Chant?
+    @State private var wordsUnderBar = false
 
-    private var shelf = ChantShelfStore.shared
+    private var shelf: ChantShelfStore
+    /// Opens scrolled to the foot, for a snapshot of what stands there
+    private let opensAtFoot: Bool
 
-    init(chantID: String) {
+    init(chantID: String, shelf: ChantShelfStore = .shared, opensAtFoot: Bool = false) {
         self.chantID = chantID
+        self.shelf = shelf
+        self.opensAtFoot = opensAtFoot
     }
 
     private var chant: Chant? { ChantCatalog.chant(chantID) }
+
+    /// How tall the painting hangs, from the top of the glass
+    static let heroHeight: CGFloat = 330
+    /// Where the title begins, measured from the top of the glass, so it
+    /// stands on the painting's dissolving foot
+    static let titleTop: CGFloat = 200
 
     var body: some View {
         ZStack {
@@ -51,8 +64,16 @@ struct ChantView: View {
             if let chant {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 0) {
+                        ChantHero(chant: chant)
+                            .onGeometryChange(for: Bool.self) { proxy in
+                                -proxy.frame(in: .global).minY > Self.titleTop - 110
+                            } action: { under in
+                                withAnimation(Motion.crossfade) { wordsUnderBar = under }
+                            }
+
                         titleBlock(chant)
                             .padding(.horizontal, 28)
+                            .padding(.top, Self.titleTop - Self.heroHeight)
                             .devotionalEntrance()
 
                         scorePanel(chant)
@@ -61,28 +82,31 @@ struct ChantView: View {
 
                         NowPlayingLine(chant: chant)
                             .padding(.horizontal, 26)
-                            .padding(.top, 22)
+                            .padding(.top, 14)
 
-                        NowPlayingTransport(
-                            chant: chant,
-                            showWords: { showsWords = true },
-                            showSleep: { showsSleep = true }
-                        )
-                        .padding(.horizontal, 22)
-                        .padding(.top, 20)
+                        NowPlayingTransport(chant: chant)
+                            .padding(.horizontal, 22)
+                            .padding(.top, 18)
+
+                        NowPlayingTools(chant: chant, showSleep: { showsSleep = true })
+                            .padding(.top, 20)
+
+                        learnCard(chant)
+                            .padding(.horizontal, 22)
+                            .padding(.top, 32)
 
                         doors(chant)
-                            .padding(.horizontal, 28)
-                            .padding(.top, 40)
+                            .padding(.horizontal, 22)
 
                         ChantCredit()
                             .padding(.horizontal, 36)
-                            .padding(.top, 40)
+                            .padding(.top, 36)
                             .padding(.bottom, 48)
                     }
-                    .padding(.top, 8)
                 }
-                .topChromeFade()
+                .ignoresSafeArea(edges: .top)
+                .defaultScrollAnchor(opensAtFoot ? .bottom : .top)
+                .overlay(alignment: .top) { barVeil }
             } else {
                 Text("This chant could not be found.")
                     .font(AppFonts.readingItalicFont(16))
@@ -90,6 +114,7 @@ struct ChantView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
+        .toolbarBackground(.hidden, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button(action: { router.pop() }) {
@@ -100,9 +125,6 @@ struct ChantView: View {
                     }
                     .foregroundColor(AppColors.gold)
                 }
-            }
-            ToolbarItem(placement: .principal) {
-                if let chant { learnButton(chant) }
             }
             ToolbarItem(placement: .navigationBarTrailing) {
                 if let chant { moreMenu(chant) }
@@ -142,58 +164,55 @@ struct ChantView: View {
 
     // MARK: - Chrome
 
-    private func learnButton(_ chant: Chant) -> some View {
-        let learned = shelf.isLearned(chant.id)
-        let step = shelf.step(of: chant.id)
-        return Button {
-            practicing = chant
-        } label: {
-            Text(learned ? "Practise again" : step == nil ? "Learn this chant" : "Continue learning")
-                .font(AppFonts.readingFont(14.5))
-                .foregroundColor(AppColors.gold)
-                .lineLimit(1)
-                .padding(.horizontal, 14)
-                .frame(height: 34)
-                .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.4), lineWidth: AppLine.hairline))
-                .frame(minHeight: 44)
-                .contentShape(Rectangle())
+    /// A veil under the status bar and the bar's Back and ⋯: light over
+    /// the painting at rest, and near opaque down past the bar once the
+    /// title travels under it, so no word of the page stands inside them
+    private var barVeil: some View {
+        ZStack(alignment: .top) {
+            LinearGradient(
+                colors: [AppColors.background.opacity(0.55), AppColors.background.opacity(0)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 110)
+
+            LinearGradient(
+                stops: [
+                    .init(color: AppColors.background.opacity(0.99), location: 0),
+                    .init(color: AppColors.background.opacity(0.99), location: 0.8),
+                    .init(color: AppColors.background.opacity(0), location: 1)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 172)
+            .opacity(wordsUnderBar ? 1 : 0)
         }
-        .buttonStyle(SacredCardButtonStyle())
-        .accessibilityHint("Opens a practice, step by step")
+        .ignoresSafeArea(edges: .top)
+        .allowsHitTesting(false)
+    }
+
+    /// What the ⋯ menu holds, in its order: everything used less, in one
+    /// place. Stop Learning stands only while a step is under way.
+    enum MoreItem: Equatable {
+        case favourite
+        case addToSet
+        case words
+        case enlargeScore
+        case stopLearning
+        case source
+
+        static func items(stepUnderWay: Bool) -> [MoreItem] {
+            [.favourite, .addToSet, .words, .enlargeScore]
+                + (stepUnderWay ? [.stopLearning] : [])
+                + [.source]
+        }
     }
 
     private func moreMenu(_ chant: Chant) -> some View {
         Menu {
-            Button {
-                shelf.toggleFavorite(chant.id)
-            } label: {
-                if shelf.isFavorite(chant.id) {
-                    Label("Remove from Favourites", systemImage: "heart.slash")
-                } else {
-                    Label("Add to Favourites", systemImage: "heart")
-                }
-            }
-            Button {
-                addingToSet = true
-            } label: {
-                Label("Add to a Set", systemImage: "text.badge.plus")
-            }
-            Button {
-                showsScore = true
-            } label: {
-                Label("Enlarge the Sheet Music", systemImage: "arrow.up.left.and.arrow.down.right")
-            }
-            // A chant under way can be put down, and nothing then says it
-            // was ever begun
-            if shelf.step(of: chant.id) != nil {
-                Button {
-                    shelf.stopLearning(chant.id)
-                } label: {
-                    Label("Stop Learning", systemImage: "xmark.circle")
-                }
-            }
-            Link(destination: chant.sourceURL) {
-                Label("Open on Verbum Gloriae's Site", systemImage: "safari")
+            ForEach(MoreItem.items(stepUnderWay: shelf.step(of: chant.id) != nil), id: \.self) { item in
+                moreButton(item, chant: chant)
             }
         } label: {
             AppIcon("ph-dots-three", size: 22)
@@ -204,31 +223,80 @@ struct ChantView: View {
         .accessibilityLabel("More options")
     }
 
+    @ViewBuilder
+    private func moreButton(_ item: MoreItem, chant: Chant) -> some View {
+        switch item {
+        case .favourite:
+            Button {
+                shelf.toggleFavorite(chant.id)
+            } label: {
+                if shelf.isFavorite(chant.id) {
+                    Label("Remove from Favourites", systemImage: "heart.slash")
+                } else {
+                    Label("Add to Favourites", systemImage: "heart")
+                }
+            }
+        case .addToSet:
+            Button {
+                addingToSet = true
+            } label: {
+                Label("Add to a Set", systemImage: "text.badge.plus")
+            }
+        case .words:
+            Button {
+                showsWords = true
+            } label: {
+                Label("Words", systemImage: "textformat")
+            }
+        case .enlargeScore:
+            Button {
+                showsScore = true
+            } label: {
+                Label("Enlarge the Sheet Music", systemImage: "arrow.up.left.and.arrow.down.right")
+            }
+        case .stopLearning:
+            // A chant under way can be put down, and nothing then says it
+            // was ever begun
+            Button {
+                shelf.stopLearning(chant.id)
+            } label: {
+                Label("Stop Learning", systemImage: "xmark.circle")
+            }
+        case .source:
+            Link(destination: chant.sourceURL) {
+                Label("Open on Verbum Gloriae's Site", systemImage: "safari")
+            }
+        }
+    }
+
     // MARK: - Title
 
     private func titleBlock(_ chant: Chant) -> some View {
         VStack(spacing: 6) {
             HStack(spacing: 8) {
                 Text(chant.latinTitle)
-                    .font(AppFonts.titleFont(26))
+                    .font(AppFonts.titleFont(28))
                     .foregroundColor(AppColors.cream)
                     .multilineTextAlignment(.center)
                     .lineSpacing(4)
                     .minimumScaleFactor(0.6)
                     .fixedSize(horizontal: false, vertical: true)
+                    .shadow(color: .black.opacity(0.7), radius: 12)
                     .accessibilityAddTraits(.isHeader)
                 if shelf.isFavorite(chant.id) {
                     AppIcon("ph-heart-fill", size: 13)
                         .foregroundColor(AppColors.gold.opacity(0.8))
+                        .shadow(color: .black.opacity(0.7), radius: 8)
                         .accessibilityLabel("A favourite")
                 }
             }
 
             Text(subtitle(chant))
                 .font(AppFonts.readingItalicFont(16))
-                .foregroundColor(AppColors.textSecondary)
+                .foregroundColor(AppColors.cream.opacity(0.75))
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
+                .shadow(color: .black.opacity(0.6), radius: 10)
         }
         .frame(maxWidth: .infinity)
     }
@@ -242,50 +310,96 @@ struct ChantView: View {
 
     // MARK: - Score
 
-    /// The score in a window: the part being sung when the lines say
-    /// which, the opening part otherwise, its foot dissolving. A tap
-    /// opens the whole score large.
+    /// The score, unboxed: the part being sung when the lines say which,
+    /// the opening part otherwise, its foot dissolving, and beneath the
+    /// dissolve a small mark that says a tap enlarges it.
     private func scorePanel(_ chant: Chant) -> some View {
         Button {
             showsScore = true
         } label: {
-            NowPlayingScore(chant: chant)
-                .frame(maxWidth: .infinity)
-                .frame(height: 210, alignment: .top)
-                .clipped()
-                .mask(
-                    LinearGradient(
-                        stops: [
-                            .init(color: .black, location: 0),
-                            .init(color: .black, location: 0.72),
-                            .init(color: .clear, location: 1)
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
+            VStack(spacing: 2) {
+                NowPlayingScore(chant: chant)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 132, alignment: .top)
+                    .clipped()
+                    .mask(
+                        LinearGradient(
+                            stops: [
+                                .init(color: .black, location: 0),
+                                .init(color: .black, location: 0.7),
+                                .init(color: .clear, location: 1)
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
                     )
-                )
-                .padding(.horizontal, 14)
-                .padding(.top, 14)
-                // A foot of its own for ENLARGE, beneath the score's
-                // dissolve: laid over the last line, it was read through
-                // the faded words
-                .padding(.bottom, 32)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 14)
-                        .strokeBorder(AppColors.gold.opacity(0.24), lineWidth: AppLine.hairline)
-                )
-                .overlay(alignment: .bottomTrailing) {
-                    Text("ENLARGE")
-                        .font(AppFonts.labelFont(8.5))
-                        .tracking(2)
-                        .foregroundColor(AppColors.gold.opacity(0.8))
-                        .padding(12)
+                HStack {
+                    Spacer()
+                    Image(systemName: "arrow.up.left.and.arrow.down.right")
+                        .font(.system(size: 13, weight: .light))
+                        .foregroundColor(AppColors.gold.opacity(0.75))
+                        .accessibilityHidden(true)
                 }
-                .contentShape(Rectangle())
+            }
+            .contentShape(Rectangle())
         }
         .buttonStyle(SacredCardButtonStyle())
         .accessibilityLabel("The sheet music")
         .accessibilityHint("Opens the sheet music full screen")
+    }
+
+    // MARK: - Learn
+
+    /// The Learn card's words: what a tap does, and where the learner
+    /// stands. The three labels are the ones the page has always used.
+    static func learnWords(learned: Bool, step: ChantLearningStep?) -> (title: String, note: String) {
+        if learned {
+            return ("Practise again", "Learned")
+        }
+        if let step {
+            return ("Continue learning", "Step \(step.rawValue) of 4 · \(step.title)")
+        }
+        return ("Learn this chant", "Four steps: listen, read along, sing along, on your own")
+    }
+
+    private func learnCard(_ chant: Chant) -> some View {
+        let learned = shelf.isLearned(chant.id)
+        let step = shelf.step(of: chant.id)
+        let words = Self.learnWords(learned: learned, step: step)
+        return Button {
+            practicing = chant
+        } label: {
+            HStack(spacing: 14) {
+                VStack(alignment: .leading, spacing: 8) {
+                    ChantStepBeads(step: step, learned: learned)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(words.title)
+                            .font(AppFonts.titleFont(16))
+                            .foregroundColor(AppColors.cream)
+                        Text(words.note)
+                            .font(AppFonts.readingItalicFont(14))
+                            .foregroundColor(AppColors.textSecondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+                .multilineTextAlignment(.leading)
+                Spacer(minLength: 8)
+                AppIcon("ph-caret-right", size: 13)
+                    .foregroundColor(AppColors.gold)
+            }
+            .padding(16)
+            .frame(maxWidth: .infinity, minHeight: 88, alignment: .leading)
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(AppColors.gold.opacity(0.28), lineWidth: AppLine.hairline)
+            )
+            .contentShape(RoundedRectangle(cornerRadius: 16))
+        }
+        .buttonStyle(SacredCardButtonStyle())
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(words.title). \(words.note)")
+        .accessibilityHint("Opens a practice, step by step")
+        .accessibilityAddTraits(.isButton)
     }
 
     // MARK: - Doors
@@ -297,50 +411,110 @@ struct ChantView: View {
         }
         let others = ChantCatalog.otherSettings(of: chant)
 
-        if !prayers.isEmpty || !others.isEmpty {
-            VStack(alignment: .leading, spacing: 22) {
-                if !prayers.isEmpty {
-                    section("The prayer in words") {
-                        ForEach(prayers, id: \.id) { prayer in
-                            LedgerDoorRow(title: prayer.title, note: prayer.latinTitle, icon: "ch-praying-hands") {
-                                router.push(.devotionPrayer(id: prayer.id))
-                            }
-                        }
-                    }
-                }
-
-                if !others.isEmpty {
-                    section("Other versions") {
-                        ForEach(others) { other in
-                            LedgerDoorRow(
-                                title: other.fullTitle,
-                                note: other.detail,
-                                icon: "ph-music-note"
-                            ) {
-                                router.push(.chant(id: other.id))
-                            }
+        if !prayers.isEmpty {
+            VStack(alignment: .leading, spacing: 6) {
+                ChantSectionHeading(kicker: nil, title: "The prayer it sings", titleSize: 17)
+                VStack(spacing: 0) {
+                    ForEach(prayers, id: \.id) { prayer in
+                        ChantPrayerRow(prayer: prayer) {
+                            router.push(.devotionPrayer(id: prayer.id))
                         }
                     }
                 }
             }
+            .padding(.top, 36)
+        }
+
+        if !others.isEmpty {
+            VStack(alignment: .leading, spacing: 6) {
+                ChantSectionHeading(kicker: nil, title: "Also sung", titleSize: 17)
+                VStack(spacing: 0) {
+                    ForEach(others) { other in
+                        ChantSongRow(chant: other, player: ChantPlayer.shared) {
+                            router.push(.chant(id: other.id))
+                        }
+                    }
+                }
+            }
+            .padding(.top, prayers.isEmpty ? 36 : 28)
         }
     }
+}
 
-    private func section<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 10) {
-                Text(title.uppercased())
-                    .font(AppFonts.labelFont(8.5))
-                    .tracking(2)
-                    .foregroundColor(AppColors.gold.opacity(0.75))
-                Rectangle()
-                    .fill(AppColors.gold.opacity(0.18))
-                    .frame(height: AppLine.hairline)
+// MARK: - ChantHero
+
+/// The chant's own painting, the one the library's rows show, run to the
+/// top of the glass and dissolving into the page beneath the title
+private struct ChantHero: View {
+    let chant: Chant
+
+    var body: some View {
+        let name = ChantCatalog.painting(for: chant)
+        CachedAssetImage(name, focal: ChantThumbnail.focalPoint(for: name))
+            .frame(maxWidth: .infinity)
+            .frame(height: ChantView.heroHeight)
+            .clipped()
+            .mask(
+                LinearGradient(
+                    stops: [
+                        .init(color: .black, location: 0),
+                        .init(color: .black, location: 0.45),
+                        .init(color: .black.opacity(0.35), location: 0.72),
+                        .init(color: .clear, location: 1)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
+            .accessibilityHidden(true)
+    }
+}
+
+// MARK: - ChantPrayerRow
+
+/// The prayer a chant sings, as a row beside the library's song rows: its
+/// glyph where they hang a painting, its name over its Latin, a caret
+private struct ChantPrayerRow: View {
+    let prayer: BookPrayer
+    let open: () -> Void
+
+    var body: some View {
+        Button(action: open) {
+            HStack(spacing: 12) {
+                AppIcon("ch-praying-hands", size: 20)
+                    .foregroundColor(AppColors.gold)
+                    .frame(width: 44, height: 44)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .strokeBorder(AppColors.gold.opacity(0.24), lineWidth: AppLine.hairline)
+                    )
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(prayer.title)
+                        .font(AppFonts.readingFont(16.5))
+                        .foregroundColor(AppColors.cream)
+                        .lineLimit(1)
+                    if let latin = prayer.secondTitle {
+                        Text(latin)
+                            .font(AppFonts.readingItalicFont(13.5))
+                            .foregroundColor(AppColors.textSecondary)
+                            .lineLimit(1)
+                    }
+                }
+                Spacer(minLength: 8)
+                AppIcon("ph-caret-right", size: 12)
+                    .foregroundColor(AppColors.gold)
             }
-            VStack(spacing: 0) {
-                content()
-            }
+            .padding(.vertical, 9)
+            .frame(minHeight: 56)
+            .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
+        .overlay(alignment: .bottom) {
+            Rectangle()
+                .fill(AppColors.gold.opacity(0.12))
+                .frame(height: AppLine.hairline)
+        }
+        .accessibilityHint("Opens the prayer in words")
     }
 }
 
@@ -484,21 +658,17 @@ struct ChantYourTurn: View {
 
 // MARK: - NowPlayingTransport
 
-/// The page's transport: the scrubber and the time, the five controls,
-/// and the practice row. A view of its own so that the recording's
+/// The page's transport: the scrubber and the time, and three controls,
+/// back, the gold play and on. A view of its own so that the recording's
 /// progress, read twice a second, redraws the transport alone — read in
 /// the page's body, it redrew the title, the doors and the score with it.
 private struct NowPlayingTransport: View {
     let chant: Chant
-    let showWords: () -> Void
-    let showSleep: () -> Void
 
     private var player = ChantPlayer.shared
 
-    init(chant: Chant, showWords: @escaping () -> Void, showSleep: @escaping () -> Void) {
+    init(chant: Chant) {
         self.chant = chant
-        self.showWords = showWords
-        self.showSleep = showSleep
     }
 
     var body: some View {
@@ -508,7 +678,7 @@ private struct NowPlayingTransport: View {
         let total = holds ? player.duration : chant.duration
         let lines = chant.hasLines
 
-        return VStack(spacing: 18) {
+        return VStack(spacing: 16) {
             VStack(spacing: 4) {
                 ChantScrubber(progress: progress, duration: total, isEnabled: holds) { fraction in
                     player.seek(toFraction: fraction)
@@ -532,11 +702,8 @@ private struct NowPlayingTransport: View {
                 .accessibilityHidden(true)
             }
 
-            HStack(spacing: 0) {
-                repeatButton(lines: lines, holds: holds)
-                Spacer(minLength: 0)
+            HStack(spacing: 34) {
                 stepButton(back: true, lines: lines, holds: holds)
-                Spacer(minLength: 0)
                 // The reader's turn is the chant going on: drawn as pause,
                 // and a tap holds it
                 ChantGoldPlayButton(
@@ -547,10 +714,7 @@ private struct NowPlayingTransport: View {
                 ) {
                     player.toggle(chant)
                 }
-                Spacer(minLength: 0)
                 stepButton(back: false, lines: lines, holds: holds)
-                Spacer(minLength: 0)
-                speedButton
             }
 
             if let error = player.current.id == chant.id ? player.errorMessage : nil {
@@ -558,50 +722,7 @@ private struct NowPlayingTransport: View {
                     .font(AppFonts.italicFont(12.5))
                     .foregroundColor(AppColors.textSecondary)
             }
-
-            HStack(spacing: 2) {
-                if lines {
-                    pill("Take turns", icon: "ph-arrows-left-right", isOn: holds && player.lineEnd == .takeTurns) {
-                        if !holds { player.play(chant) }
-                        player.setLineEnd(player.lineEnd == .takeTurns ? .goOn : .takeTurns)
-                    }
-                    .accessibilityHint("The singer sings a line, then waits while you sing it back")
-                }
-                pill("Words", icon: "ph-text-align-left", isOn: false, action: showWords)
-                pill("Sleep timer", icon: "ph-moon-stars", isOn: player.hasSleepTimer, action: showSleep)
-            }
-            .frame(maxWidth: .infinity)
         }
-    }
-
-    // MARK: Controls
-
-    private func repeatButton(lines: Bool, holds: Bool) -> some View {
-        let isOn = lines ? (holds && player.lineEnd == .again) : player.repeats
-        return Button {
-            if lines {
-                if !holds { player.play(chant) }
-                player.setLineEnd(player.lineEnd == .again ? .goOn : .again)
-            } else {
-                player.repeats.toggle()
-            }
-        } label: {
-            ZStack(alignment: .bottom) {
-                AppIcon(lines ? "ph-repeat-once" : "ph-repeat", size: 20)
-                    .foregroundColor(isOn ? AppColors.goldLight : AppColors.gold.opacity(0.75))
-                    .frame(width: 44, height: 44)
-                Circle()
-                    .fill(AppColors.goldLight)
-                    .frame(width: 4, height: 4)
-                    .opacity(isOn ? 1 : 0)
-                    .offset(y: -3)
-            }
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(QuietGlyphButtonStyle())
-        .accessibilityLabel(lines ? "Repeat this line" : "Repeat the chant")
-        .accessibilityAddTraits(isOn ? [.isSelected] : [])
-        .sensoryFeedback(.selection, trigger: isOn)
     }
 
     private func stepButton(back: Bool, lines: Bool, holds: Bool) -> some View {
@@ -631,6 +752,73 @@ private struct NowPlayingTransport: View {
             ? (back ? "Previous line" : "Next line")
             : (back ? "Back ten seconds" : "Forward ten seconds"))
     }
+}
+
+// MARK: - NowPlayingTools
+
+/// The tools used less, in one quiet capsule under the transport: the
+/// line (or the chant) again, the slower pace, taking turns with the
+/// singer, and the sleep timer. Each a button of its own to VoiceOver.
+struct NowPlayingTools: View {
+    let chant: Chant
+    let showSleep: () -> Void
+
+    private var player = ChantPlayer.shared
+
+    init(chant: Chant, showSleep: @escaping () -> Void) {
+        self.chant = chant
+        self.showSleep = showSleep
+    }
+
+    enum Tool: Equatable {
+        case again
+        case speed
+        case takeTurns
+        case sleep
+    }
+
+    /// The capsule's tools, in order. Taking turns asks for the chant's
+    /// lines, so it stands only where they are timed.
+    static func tools(for chant: Chant) -> [Tool] {
+        chant.hasLines ? [.again, .speed, .takeTurns, .sleep] : [.again, .speed, .sleep]
+    }
+
+    var body: some View {
+        HStack(spacing: 2) {
+            ForEach(Self.tools(for: chant), id: \.self) { tool in
+                switch tool {
+                case .again: repeatButton
+                case .speed: speedButton
+                case .takeTurns: takeTurnsButton
+                case .sleep: sleepButton
+                }
+            }
+        }
+        .padding(3)
+        .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.22), lineWidth: AppLine.hairline))
+    }
+
+    private var repeatButton: some View {
+        let holds = player.holds(chant)
+        let lines = chant.hasLines
+        let isOn = lines ? (holds && player.lineEnd == .again) : player.repeats
+        return Button {
+            if lines {
+                if !holds { player.play(chant) }
+                player.setLineEnd(player.lineEnd == .again ? .goOn : .again)
+            } else {
+                player.repeats.toggle()
+            }
+        } label: {
+            segment(isOn: isOn) {
+                AppIcon(lines ? "ph-repeat-once" : "ph-repeat", size: 20)
+            }
+        }
+        .buttonStyle(QuietGlyphButtonStyle())
+        .accessibilityLabel(lines ? "Repeat this line" : "Repeat the chant")
+        .accessibilityAddTraits(isOn ? [.isSelected] : [])
+        .sensoryFeedback(.selection, trigger: isOn)
+    }
 
     private var speedButton: some View {
         // The speed sounding, which the Lock Screen may have changed
@@ -639,39 +827,57 @@ private struct NowPlayingTransport: View {
         return Button {
             player.setRate(slow ? 1.0 : 0.75)
         } label: {
-            Text(ChantPlayer.speedLabel(speed))
-                .minimumScaleFactor(0.7)
-                .lineLimit(1)
-                .font(AppFonts.readingFont(16))
-                .foregroundColor(slow ? AppColors.goldLight : AppColors.gold)
-                .frame(width: 44, height: 44)
-                .overlay(Circle().strokeBorder(AppColors.gold.opacity(slow ? 0.5 : 0), lineWidth: AppLine.hairline).padding(4))
-                .contentShape(Rectangle())
+            segment(isOn: slow) {
+                Text(ChantPlayer.speedLabel(speed))
+                    .font(AppFonts.readingFont(16))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+            }
         }
         .buttonStyle(QuietGlyphButtonStyle())
         .accessibilityLabel(slow ? "Speed, slower" : speed > 1 ? "Speed, faster" : "Speed, normal")
         .accessibilityHint(slow ? "Plays at the normal speed" : "Plays at three-quarters speed, for learning")
     }
 
-    private func pill(_ title: String, icon: String, isOn: Bool, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            HStack(spacing: 7) {
-                AppIcon(icon, size: 15)
-                    .foregroundColor(isOn ? AppColors.goldLight : AppColors.gold)
-                Text(title)
-                    .font(AppFonts.readingFont(14.5))
-                    .foregroundColor(isOn ? AppColors.goldLight : AppColors.cream.opacity(0.82))
-                    .lineLimit(1)
-                    .fixedSize()
+    private var takeTurnsButton: some View {
+        let holds = player.holds(chant)
+        let isOn = holds && player.lineEnd == .takeTurns
+        return Button {
+            if !holds { player.play(chant) }
+            player.setLineEnd(player.lineEnd == .takeTurns ? .goOn : .takeTurns)
+        } label: {
+            segment(isOn: isOn) {
+                AppIcon("ph-arrows-left-right", size: 20)
             }
-            .padding(.horizontal, 13)
-            .frame(height: 38)
-            .background(Capsule().fill(isOn ? AppColors.gold.opacity(0.14) : Color.clear))
-            .frame(minHeight: 44)
-            .contentShape(Rectangle())
         }
-        .buttonStyle(SacredCardButtonStyle())
+        .buttonStyle(QuietGlyphButtonStyle())
+        .accessibilityLabel("Take turns")
+        .accessibilityHint("The singer sings a line, then waits while you sing it back")
         .accessibilityAddTraits(isOn ? [.isSelected] : [])
+    }
+
+    private var sleepButton: some View {
+        let isOn = player.hasSleepTimer
+        return Button(action: showSleep) {
+            segment(isOn: isOn) {
+                AppIcon("ph-moon-stars", size: 20)
+            }
+        }
+        .buttonStyle(QuietGlyphButtonStyle())
+        .accessibilityLabel("Sleep timer")
+        .accessibilityValue(isOn ? "On" : "")
+        .accessibilityAddTraits(isOn ? [.isSelected] : [])
+    }
+
+    /// One segment: a 44-point touch, lit on a wash of gold while on,
+    /// never filled
+    private func segment(isOn: Bool, @ViewBuilder content: () -> some View) -> some View {
+        content()
+            .foregroundColor(isOn ? AppColors.goldLight : AppColors.gold)
+            .frame(minWidth: 52, minHeight: 44)
+            .padding(.horizontal, 2)
+            .background(Capsule().fill(AppColors.gold.opacity(isOn ? 0.15 : 0)))
+            .contentShape(Capsule())
     }
 }
 
