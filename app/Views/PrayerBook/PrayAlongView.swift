@@ -574,8 +574,7 @@ struct PrayAlongView: View {
         }
     }
 
-    /// A point under the reading size, as the prayer's own page sets it,
-    /// so more of each line of a prayer fits the measure
+    /// A point under the reading size, so more of each line of a prayer fits the measure
     private var textSize: CGFloat {
         max(17, settings.meditationFontSize - 1)
     }

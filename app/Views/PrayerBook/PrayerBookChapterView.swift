@@ -545,7 +545,7 @@ private struct TopicPrayerRow: View {
 // MARK: - A prayer's card, small
 
 /// The prayer's holy card as a list draws it: its painting in a small
-/// arch with a gold edge, as the prayer's own page sets it large
+/// arch with a gold edge
 private struct MiniHolyCard: View {
     let prayerID: String
 

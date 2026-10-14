@@ -2718,8 +2718,8 @@ write concurrent code here:
   as a Rosary said beside them is, and the next evening still asks for
   its own.
   Nothing is carried forward. **Saving**
-  is a silk ribbon drawn as a bookmark (`RibbonToggle`,
-  `PrayerBookStore.ribbons`), its words Save and Saved — the saved
+  is Save in the pray-along's ··· menu, a bookmark, and a silk ribbon
+  (`RibbonMark`) on the saved prayer's painting (`PrayerBookStore.ribbons`), its words Save and Saved — the saved
   prayers stand on Saved, a page of its own opened from the Prayers
   page's shortcuts (`.prayerBookSaved`).
   **Learning** is `LearnByHeartSheet`: four steps (read, some hidden,

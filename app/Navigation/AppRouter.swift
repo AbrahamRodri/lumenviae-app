@@ -124,8 +124,8 @@ enum AppRoute: Hashable {
     case prayerBookChapter(id: String)
     case prayerOrder(id: String)
 
-    /// The prayers the reader has saved with the bookmark at the head of
-    /// a prayer's page, reached from the Saved shortcut on Prayers
+    /// The prayers the reader has saved with Save in the pray-along's
+    /// menu, reached from the Saved shortcut on Prayers
     case prayerBookSaved
 
     /// Prayers said one after another on a screen of their own, aloud or
@@ -403,7 +403,7 @@ final class AppRouter {
     /// this; new pages ride it directly.
     ///
     /// The Prayer Book has a tab of its own, so a door to it — home's hour
-    /// row, Explore, the Chapel's tile, a prayer's page — turns to that
+    /// row, Explore, the Chapel's tile, an order's page — turns to that
     /// tab rather than stacking a second copy of the book on this one.
     /// So does a door to the Chant Library while Chant has a tab.
     ///
