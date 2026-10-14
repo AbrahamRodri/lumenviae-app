@@ -3557,15 +3557,16 @@ mark on other grounds (`AppIconMarianBlue`, `AppIconMidnight`,
 `icon-preview-*` for the picker. The art is the designer's, final: it is
 copied in, never redrawn or recoloured. The painted Miraculous Medal
 icon it replaced (and the Gothic, Monstrance and Wreath alternates) is
-retired; `Tools/IconAudit/app-icon/fix_icon.py` wrote that painting and
-must not be run again.
+retired, and so are the scripts that made it; its original stays in
+`Tools/IconAudit/app-icon/` for the audit's contact sheet.
 
 The launch screen is the system's, drawn from the `UILaunchScreen`
-dictionary in `Config/Info.plist` (no build setting can fill it): `LaunchMark` (a vector PDF at its own
-48 x 75 points) centred on `LaunchBackground` (#0A0A15). The in-app
-splash (`Views/Launch/LaunchView.swift`) draws the same mark at the same
-size and place, so the hand-over does not move it, and fades the app's
-name in beneath it.
+dictionary in `Config/Info.plist` (no build setting can fill it):
+`LaunchMark` (a vector PDF at its own 48 x 75 points) centred on
+`LaunchBackground` (#0A0A15). The in-app splash
+(`Views/Launch/LaunchView.swift`) opens on the same ground with the
+same mark at the same size and place, so the hand-over does not show,
+then fades in the theme's gradient and the app's name beneath the mark.
 
 SF Symbols appear only where the system's own vocabulary is the point —
 the transport's ±10s skips (glyphs that carry a number), the spoken

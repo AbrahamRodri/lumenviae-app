@@ -25,7 +25,7 @@ CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 # (place, current, proposed, reason)
 SECTIONS = [
     ("The Rosary and its mysteries", [
-        ("The Rosary · 28 places, the launch screen at 88pt", "ch-rosary", "lv-rosary",
+        ("The Rosary · 28 places", "ch-rosary", "lv-rosary",
          "A ring over a cross is the sign for female (♀), and at 16pt it read as that. Beads, medal, pendant and crucifix read as a rosary."),
         ("Joyful Mysteries", "ph-star", "lv-star",
          "A rating star. Now the Star of Bethlehem, with its long lower ray. The drawing is Christicons' star with its four short rays left off; with them it read as a sparkle."),

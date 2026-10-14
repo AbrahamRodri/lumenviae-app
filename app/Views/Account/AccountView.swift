@@ -518,7 +518,7 @@ struct AppIconPickerRows: View {
         IconOption(
             alternateName: "AppIconVellum",
             displayName: "Vellum",
-            detail: "Gold on the page of an old book",
+            detail: "Ink and gold on the page of an old book",
             preview: "icon-preview-Vellum"
         )
     ]
