@@ -5,7 +5,7 @@
 //  A new reader's first look at the home page, once, after the
 //  introduction: six coach marks over the real controls, one at a time
 //  — today's Rosary, the Pray button (a tap and a hold), Prayers (the
-//  Prayer Book's tab), Consecrate, Chant, and Explore.
+//  Prayer Book's tab), Consecration, Chant, and Explore.
 //
 //  Why this and not a deck of cards before the app: tutorials read
 //  before the app is seen do not help people use it (NN/g, "Mobile

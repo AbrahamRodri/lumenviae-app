@@ -2381,7 +2381,7 @@ struct ChapelLibraryTile: View {
     ]
 
     /// The reader's own pages, which had no door but the flame and the
-    /// Reflections tile, either of which can be put away
+    /// Journal tile, either of which can be put away
     private static let yourPages: [Door] = [
         Door(title: "Prayer Record", line: "The days you have prayed", route: .prayerRecord),
         Door(title: "Journal", line: "Your reflections", route: .journal)

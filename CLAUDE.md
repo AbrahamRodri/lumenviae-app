@@ -232,7 +232,7 @@ it is brought back.
 four — Progress is reached from the Chapel's flame tile and Library tile,
 Settings → Devotion and Explore's search instead, to keep the bar from
 crowding the raised Pray button, and the Journal, which gave its place to
-Prayers, from the Chapel's Reflections and Library tiles, Explore's search,
+Prayers, from the Chapel's Journal and Library tiles, Explore's search,
 and the completion screen's Write a Reflection. **Neither is turned to as a
 tab any more:** both are pushed (`AppRoute.prayerRecord`, `.journal`) over
 the tab they were opened from, with the gold Back, and the tab bar stays up
@@ -245,7 +245,7 @@ page opens its own page rather than turning beneath them.
 | Tab | In the bar | Purpose |
 |-----|-----------|---------|
 | Home | Yes | Search glass → Explore, today's mysteries, mystery grid, Today's Prayer, the reading shelf, quote |
-| Consecrate | Yes | The 33-day preparation for Marian consecration |
+| Consecration | Yes | The 33-day preparation for Marian consecration |
 | Prayers | Yes | The Prayer Book: six shortcuts, the order for this hour, Everyday Prayers, prayers to Mary, every occasion and topic, and a search behind the head's glass (see The Prayer Book below) |
 | Journal | No — pushed, via Settings | Reflections, searchable, stored on device |
 | Progress | No — pushed, via Settings | Streaks, milestones ahead, prayer history ("Prayer Record") |
@@ -346,7 +346,8 @@ Pray" door under that (How to Pray was the fourth item of the index at
 the foot of the page, where a newcomer never reached it); then
 Prayers (the occasion orders as paintings with their names alone,
 most needed first, Before Mass leading), Chant (All 104 Chants, Songs
-to Mary, the Mass of the Angels and Sets of Chants), Today in the Church (Today's
+to Mary, the Mass of the Angels and Sets of Chants, its link CHANT
+LIBRARY), Mass & Hours (Today's
 Mass | Hours of Prayer, each over its book's Church name, Daily Missal
 and Divine Office), Spiritual Reading (ALL BOOKS), and Learn More's
 ruled index — and typing searches mysteries, library doors, library readings,
@@ -531,8 +532,8 @@ header: the date over NEW REFLECTION (REFLECTION when one is edited,
 DURING PRAYER over it from a mystery being prayed), CANCEL and SAVE
 beside them, SAVE dimmed until something is written. With the Journal off the
 tab bar, a new reflection needs a door that is always on the page, and
-the Reflections tile can be put away; the Chapel is where reflections
-are kept, and the Reflections tile still opens the whole journal
+the Journal tile can be put away; the Chapel is where reflections
+are kept, and the Journal tile still opens the whole journal
 (`push(.journal)`). Tiles (vocabulary `Models/ChapelTile.swift`;
 layout persists as `userSettings.chapelLayout`, validated against known
 ids on decode, with a one-time migration from the old `meWidgets`
@@ -632,7 +633,7 @@ like a book, a second rule inside its edge: BOOKS — True Devotion,
 Spiritual Reading, the Marian Library — and GUIDES — How to Pray, In
 Scripture, Carlo Acutis — (one section, BOOKS AND GUIDES, while either is
 down to one door) and YOUR PAGES — the Prayer Record and the Journal,
-whose only other doors, the flame and the Reflections tile, can be put
+whose only other doors, the flame and the Journal tile, can be put
 away — as a ruled index of doors, each name over a
 line saying what it holds, with no glyphs, over Augustine's line; the
 half keeps the three books and makes SEE MORE a door to Explore),
@@ -652,7 +653,7 @@ redraw it and not the tile. The elapsed time is said nowhere on screen
 but by the playhead, at both widths, and to VoiceOver on the staff, as
 words ("Sung so far, 1 minute 5 seconds of 3 minutes 20 seconds"); the
 clock once rode the title line and redrew the whole tile every second),
-**Reflections**
+**Journal** (titled Reflections until Oct 2026; its id is still `reflections`)
 (on the quote ground, the latest journal entry in the upright medium
 face under an illuminated versal, or its gilded opening mark when it
 opens on a quotation (`VersalCut.opensOnQuotation`: a lone apostrophe,
@@ -702,7 +703,7 @@ doors), after a Spacer; then the foot, ruled off at `gold@0.16` unless
 the body ends on a line of its own (the reading shelf) — full: an
 italic note at 13 left, the gold text act right (`labelFont 10`,
 tracking 2, caret 9, 44pt tall); half: the act alone, left-aligned, or
-the note where the tile has no act (the Reflections half, whose whole
+the note where the tile has no act (the Journal half, whose whole
 card opens the journal through `push(.journal)`). The
 grid's rows **stretch** (`ChapelGridLayout` gives every tile in a row
 the row's height, and the card fills it), so two halves always end on
@@ -739,7 +740,7 @@ PAGE in an outlined capsule — the 2×2 arrange mark, not the board's
 faders, which are Settings' door — over "Or press and hold anywhere."
 and the imprint, which the board leaves off and the page keeps. The
 default order is Today, Streak, Consecration, Prayers, Reading,
-Reflections, Chant, Library, Today in the Church: the live sections lead,
+Journal, Chant, Library, Today in the Church: the live sections lead,
 the Library's doors follow, and Today in the Church stands last, since
 Home's Today's Prayer carries the same two rows. Only a fresh page takes
 it; a stored layout keeps its own, and a layout saved before Today in the
@@ -1429,11 +1430,10 @@ write concurrent code here:
   whatever tab the prayer began on. The screen scrolls only when it must,
   on a small phone at the largest text size on a milestone day. The page
   itself is pushed (`AppRoute.journal`, with the gold Back) from the
-  Chapel's Reflections tile and the Library tile's YOUR PAGES, and from
+  Chapel's Journal tile and the Library tile's YOUR PAGES, and from
   Explore's search, which finds it by name and does not list it in Learn
   More, as Progress does. The page and every door to it say **Journal**
-  and wear `ph-book-open` (the Chapel's tile, once titled Reflections,
-  included); the things written in it stay reflections.
+  and wear `ph-book-open` (the Chapel's tile included); the things written in it stay reflections.
 - **33-day Consecration** — feast-day selection, per-day scripture and reading,
   bilingual prayers, journal prompts, and a completion rite. The tab's day page
   (`ConsecrationDayOverviewView`) is a column of gold-hairline cards. **Your
@@ -1761,7 +1761,7 @@ write concurrent code here:
   from its first stop when home returns. Six coach marks over the real
   controls, one at a time: Today's Mysteries (the featured card, named
   as it names itself), the Pray
-  button (a tap and a hold), the Prayers tab, the Consecrate tab ("A
+  button (a tap and a hold), the Prayers tab, the Consecration tab ("A
   33-day preparation to give yourself to Jesus through Mary. Choose the
   feast it ends on."), the Chapel tab, and
   Explore's glass. Each control reports where it
@@ -3137,7 +3137,7 @@ write concurrent code here:
   Half from step 4) stand behind the faders (`PracticeOptionsSheet`).
   Opening the practice, or BEGIN, starts nothing kept: the shelf hears of
   it at the first act on the singing screen. Learned, the page is the
-  painting, the seal and "Kept in Saved, under Learned." It once stood
+  painting, the seal and "Kept in Your Chants, under Learned." It once stood
   as one screen of eight framed shapes, the step said three times and
   the three settings as large as the act. Leaving gives back the
   pace and the Repeat it found, and stops the singer only if the

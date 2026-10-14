@@ -240,7 +240,7 @@ struct AccountView: View {
                                 .background(AppColors.gold.opacity(0.2))
 
                             // The Journal's standing door, with the
-                            // Chapel and its Reflections tile archived
+                            // Chapel and its Journal tile archived
                             ActionRow(
                                 icon: "ph-book-open",
                                 title: "Journal",

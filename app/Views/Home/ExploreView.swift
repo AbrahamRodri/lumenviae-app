@@ -520,7 +520,7 @@ struct ExploreView: View {
             LibraryEntry(id: "prayerRecord", icon: "ph-flame", title: "Prayer Record",
                          matchText: "sacred record progress streak history calendar") { router.push(.prayerRecord) },
             // The Journal gave its place in the bar to Prayers; found by
-            // name, it opens as the Chapel's Reflections tile opens it
+            // name, it opens as the Chapel's Journal tile opens it
             LibraryEntry(id: "journal", icon: "ph-book-open", title: "Journal",
                          matchText: "journal reflections reflection notes entries write diary") { router.push(.journal) }
         ]

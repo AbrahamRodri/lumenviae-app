@@ -10,7 +10,7 @@
 //  light the reading is then read by. A day that opened on the text and
 //  prayed afterwards had that backwards.
 //
-//  The Consecrate dashboard lets you enter anywhere — the hero opens the
+//  The Consecration tab lets you enter anywhere — the hero opens the
 //  first prayer, a prayer row opens that prayer, the reading card opens
 //  the reading — so this is built to be entered anywhere and to walk in
 //  both directions from there. Swipe or use PREV/NEXT; the dots say
