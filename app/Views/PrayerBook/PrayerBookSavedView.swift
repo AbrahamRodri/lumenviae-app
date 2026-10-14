@@ -204,14 +204,18 @@ private struct SavedEmptyShelf: View {
                 .frame(height: 250)
                 .clipped()
                 // Dissolves to clear at both edges, so the page's own
-                // gradient shows through rather than a slab of one colour
+                // gradient shows through rather than a slab of one colour.
+                // The painting's dark ground ran to a hard line under the
+                // title at a short top fade; it now comes in over a third
+                // of the height, the face clear of it, and is gone before
+                // the sentence beneath, which once lay over her hands.
                 .mask(
                     LinearGradient(
                         stops: [
                             .init(color: .clear, location: 0),
-                            .init(color: .black, location: 0.14),
-                            .init(color: .black, location: 0.45),
-                            .init(color: .clear, location: 1)
+                            .init(color: .black, location: 0.3),
+                            .init(color: .black, location: 0.52),
+                            .init(color: .clear, location: 0.94)
                         ],
                         startPoint: .top,
                         endPoint: .bottom
