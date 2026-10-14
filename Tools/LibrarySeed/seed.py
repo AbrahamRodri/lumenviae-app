@@ -77,13 +77,16 @@ def live(base: str, name: str) -> dict:
 def main():
     args = sys.argv[1:]
     docs = {}
+    raw = {}
     if "--live" in args:
         i = args.index("--live")
         base = args[i + 1] if i + 1 < len(args) and not args[i + 1].startswith("--") else "https://lumenviae.fly.dev/api"
         docs = {name: live(base.rstrip("/"), name) for name in NAMES}
     else:
         source = pathlib.Path(args[args.index("--from") + 1]) if "--from" in args else api_checkout()
-        docs = {name: json.loads((source / f"{name}.json").read_text("utf-8")) for name in NAMES}
+        # Copied byte for byte, so the app's copy is the server's file
+        raw = {name: (source / f"{name}.json").read_bytes() for name in NAMES}
+        docs = {name: json.loads(data) for name, data in raw.items()}
 
     stale = []
     for name, doc in docs.items():
@@ -91,11 +94,11 @@ def main():
         if bad:
             sys.exit(f"{name}: {bad}; nothing copied")
         dest = SEED / f"{name}.json"
-        current = json.loads(dest.read_text("utf-8")) if dest.exists() else None
-        if current != doc:
+        data = raw.get(name) or (json.dumps(doc, ensure_ascii=False, indent=2, sort_keys=True) + "\n").encode()
+        if not dest.exists() or dest.read_bytes() != data:
             stale.append(name)
         if "--check" not in args:
-            dest.write_text(json.dumps(doc, ensure_ascii=False, indent=2, sort_keys=True) + "\n", "utf-8")
+            dest.write_bytes(data)
             print(f"{name}: {'updated' if name in stale else 'unchanged'} ({dest.relative_to(ROOT)})")
     if "--check" in args:
         if stale:
