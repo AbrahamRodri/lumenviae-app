@@ -61,8 +61,8 @@ struct WhatsNewRelease: Identifiable {
                 icon: PrayerShortcut.rosaryAloud.icon,
                 // The form's name as the Rosary's own screens say it
                 // (`ScripturalRosaryViewModel.displayName`)
-                title: "The Rosary Said Aloud",
-                detail: "Every prayer of the Rosary said aloud, in the voice you choose, at the speed you set",
+                title: "The Audio Rosary",
+                detail: "Listen to every prayer of the Rosary, in the voice you choose, at the speed you set",
                 // Today's mysteries: the notes are decided at launch and
                 // shown the same day
                 route: .rosaryAloud(ScheduleService.categoryForToday())

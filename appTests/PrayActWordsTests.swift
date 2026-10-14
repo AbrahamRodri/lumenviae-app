@@ -27,7 +27,7 @@ struct PrayActWordsTests {
     }
 
     @Test func theFormsAreNamedAsEverywhereElse() {
-        #expect(PrayerShortcut.rosaryAloud.title == "The Rosary Said Aloud")
+        #expect(PrayerShortcut.rosaryAloud.title == "The Audio Rosary")
         #expect(PrayerShortcut.scripturalRosary.title == "The Scriptural Rosary")
         #expect(PrayerShortcut.sevenSorrows.title == "The Seven Sorrows of Mary")
         #expect(PrayerShortcut.consecration.title == "Consecration to Mary")
@@ -44,16 +44,16 @@ struct PrayActWordsTests {
             for line in words {
                 #expect(!line.uppercased().contains("OFFERED"), "\(act): \(line)")
                 #expect(!line.contains("1962"), "\(act): \(line)")
-                #expect(!line.contains("Holy Rosary") && !line.contains("Rosary Aloud"), "the form is the Rosary Said Aloud")
+                #expect(!line.contains("Holy Rosary") && !line.contains("Rosary Aloud"), "the form is the Audio Rosary")
             }
         }
     }
 
     @Test func theTraysDetailNamesTheDaysMysteriesAndHowTheySound() {
         #expect(PrayerShortcut.todaysRosary.trayDetail(today: .glorious, praysAloud: false) == "Glorious Mysteries · with a meditation")
-        #expect(PrayerShortcut.todaysRosary.trayDetail(today: .glorious, praysAloud: true) == "Glorious Mysteries · whole Rosary aloud")
+        #expect(PrayerShortcut.todaysRosary.trayDetail(today: .glorious, praysAloud: true) == "Glorious Mysteries · with the whole Rosary read to you")
         #expect(PrayerShortcut.scripturalRosary.trayDetail(today: .joyful, praysAloud: false) == "Joyful Mysteries · a verse for every bead")
-        #expect(PrayerShortcut.rosaryAloud.trayDetail(today: .sevenSorrows, praysAloud: false) == "Seven Sorrows of Mary · every prayer aloud")
+        #expect(PrayerShortcut.rosaryAloud.trayDetail(today: .sevenSorrows, praysAloud: false) == "Seven Sorrows of Mary · listen and pray along")
         #expect(PrayerShortcut.mass.trayDetail(today: .joyful, praysAloud: true) == PrayerShortcut.mass.subtitle)
     }
 

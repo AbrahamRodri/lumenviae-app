@@ -680,7 +680,7 @@ enum PrayerBookAudio {
     /// pills set theirs
     static let options: [RosaryChoice.Option] = [
         RosaryChoice.Option(value: false, name: "In Silence"),
-        RosaryChoice.Option(value: true, name: "Aloud"),
+        RosaryChoice.Option(value: true, name: "With a Voice"),
     ]
 
     /// What the chosen option does. Until the reader has answered, the
@@ -692,7 +692,7 @@ enum PrayerBookAudio {
             return "Not chosen yet. You'll be asked the first time you pray from the Prayers tab."
         }
         return aloud
-            ? "Each prayer is read aloud to you."
+            ? "A voice reads each prayer to you."
             : "No sound. The words are on screen for you to say."
     }
 }

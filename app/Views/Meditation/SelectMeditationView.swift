@@ -188,7 +188,7 @@ struct SelectMeditationView: View {
                 OtherWayRow(
                     icon: PrayerShortcut.rosaryAloud.icon,
                     title: ScripturalRosaryViewModel.displayName(for: .plain),
-                    detail: "Every prayer, no readings"
+                    detail: "Listen and pray along"
                 ) {
                     openOnce(.rosaryAloud(category))
                 }
@@ -273,8 +273,8 @@ struct SelectMeditationView: View {
     /// mysteries are, for someone who has never prayed with either
     private var meditationsLead: String {
         category == .sevenSorrows
-            ? "Choose a meditation: a short reading for each of Mary's seven sorrows, read aloud or in silence."
-            : "Choose a meditation: a short reading for each of the five mysteries, read aloud or in silence."
+            ? "Choose a meditation: a short reading for each of Mary's seven sorrows, to listen to or read in silence."
+            : "Choose a meditation: a short reading for each of the five mysteries, to listen to or read in silence."
     }
 
     /// How many meditations are showing — a set of five readings is

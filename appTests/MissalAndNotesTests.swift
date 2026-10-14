@@ -98,7 +98,7 @@ struct WhatsNewNotesTests {
     @Test func theFourOhNotesNameWhatItAdded() throws {
         let release = try #require(WhatsNewRelease.release(for: "4.0"))
         #expect(release.items.map(\.title) == [
-            "Prayers", "The Chant Library", "The Rosary Said Aloud", "How to Pray the Rosary"
+            "Prayers", "The Chant Library", "The Audio Rosary", "How to Pray the Rosary"
         ])
     }
 

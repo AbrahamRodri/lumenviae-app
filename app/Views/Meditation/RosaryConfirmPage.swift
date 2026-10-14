@@ -789,8 +789,8 @@ private struct VoiceAndSpeedSheet: View {
                         )
                     }
                     SheetNote(form == .holy
-                        ? "Said aloud after the closing prayer."
-                        : "Said aloud after the closing prayer, with the Whole Rosary.")
+                        ? "Played after the closing prayer."
+                        : "Played after the closing prayer, with the Whole Rosary.")
                 }
             }
             .padding(.bottom, 24)

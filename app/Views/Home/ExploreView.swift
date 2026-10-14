@@ -501,8 +501,8 @@ struct ExploreView: View {
             // under WAYS TO PRAY with the sets beneath
             LibraryEntry(id: "scripturalRosary", icon: PrayerShortcut.scripturalRosary.icon, title: "The Scriptural Rosary",
                          matchText: "scriptural rosary verse every bead gospel douay rheims bible") { openTodaysMysteries() },
-            LibraryEntry(id: "rosaryAloud", icon: PrayerShortcut.rosaryAloud.icon, title: "The Rosary Said Aloud",
-                         matchText: "holy rosary aloud said spoken audio listen voice hear prayers learn by ear no meditation") { openTodaysMysteries() },
+            LibraryEntry(id: "rosaryAloud", icon: PrayerShortcut.rosaryAloud.icon, title: "The Audio Rosary",
+                         matchText: "audio rosary holy rosary aloud said spoken listen voice hear prayers learn by ear no meditation") { openTodaysMysteries() },
             LibraryEntry(id: "howToPray", icon: "lv-rosary", title: "How to Pray",
                          matchText: "how to pray the rosary guide montfort methods") { router.push(.howToPray) },
             // Not the Gospel glyph: that is the Scriptural Rosary's, and

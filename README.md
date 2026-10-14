@@ -18,7 +18,7 @@ Pick a set of mysteries — Joyful, Sorrowful, Glorious, Luminous, or the Seven
 Sorrows of Mary — then the way to pray them. The Rosary comes in three forms,
 chosen on the mysteries' page: with a meditation from the saints read between
 the decades, as the **Scriptural Rosary** with a Bible verse for every Hail
-Mary, or as **The Rosary Said Aloud**, with nothing read between. Each opens on
+Mary, or as **The Audio Rosary**, with nothing read between. Each opens on
 one page, *Your Rosary Today*, which confirms two choices above **PRAY**:
 
 - **Audio** — *Meditation Only* (in the Scriptural Rosary, *Read in Silence*)
@@ -51,12 +51,12 @@ with the Act of Contrition and closes with three Hail Marys for Our Lady's
 tears. Settings → After the Rosary adds prayers for the Pope's intentions, the
 Memorare and the Saint Michael Prayer after the closing prayer.
 
-### The Scriptural Rosary and the Rosary Said Aloud
+### The Scriptural Rosary and the Audio Rosary
 
 The Scriptural Rosary sets a verse of the Douay-Rheims beside every Hail Mary,
 all 249 verses bundled in the app, on the same strand of beads the player hangs.
 It can be read in silence, said aloud, or counted on your own rosary a mystery
-at a time. **The Rosary Said Aloud** prays on the same screens with nothing read
+at a time. **The Audio Rosary** prays on the same screens with nothing read
 between the decades, every prayer said by the voice and set in full as it is
 said.
 
@@ -224,7 +224,7 @@ app/
 ├── Views/
 │   ├── Home/                 Home, Explore, all mysteries
 │   ├── Meditation/ Prayer/   The shelf, Your Rosary Today, the player
-│   ├── Scriptural/           The Scriptural Rosary (and the Rosary Said Aloud)
+│   ├── Scriptural/           The Scriptural Rosary (and the Audio Rosary)
 │   ├── Chapel/               The arrangeable page and its tiles
 │   ├── Consecration/         33-day preparation (its own NavigationStack)
 │   ├── TrueDevotion/         Book reader

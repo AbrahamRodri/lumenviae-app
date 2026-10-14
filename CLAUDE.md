@@ -22,7 +22,7 @@ Home Screen
             ▼
 The mysteries' page (SelectMeditationView) — one Rosary, three forms
     │
-    ├── WAYS TO PRAY: The Scriptural Rosary · The Rosary Said Aloud, each
+    ├── WAYS TO PRAY: The Scriptural Rosary · The Audio Rosary, each
     │   opening its own page with these mysteries chosen
     ├── MEDITATIONS ("a short reading on each mystery"): gallery of tiles
     │   (default) or ruled list (remembered), pinned sets on top, the
@@ -31,13 +31,13 @@ The mysteries' page (SelectMeditationView) — one Rosary, three forms
         │
         ▼
 The Rosary's own page (RosaryConfirmPage — a set's, the Scriptural
-Rosary's and the Rosary Said Aloud's are the same page)
+Rosary's and the Audio Rosary's are the same page)
     │
     ├── The painting dissolving into the page, Back over it
     ├── Kicker, name in Cinzel, one italic line
     ├── YOUR ROSARY TODAY
     │   ├── Audio: Meditation Only | Whole Rosary (Read in Silence in the
-    │   │   Scriptural Rosary; none in the Rosary Said Aloud, always aloud)
+    │   │   Scriptural Rosary; none in the Audio Rosary, always aloud)
     │   ├── Counting: On My Rosary | On the Screen — only while the Whole
     │   │   Rosary is not chosen
     │   └── Rows: Mysteries (not for a set), Voice & speed (not while
@@ -198,11 +198,13 @@ sets at random.
 
 The Rosary is **one prayer in three forms**, chosen on each mysteries'
 page: with a meditation set, as **the Scriptural Rosary** — a verse for
-every Hail Mary, no meditation — or as **the Rosary Said Aloud**, every
+every Hail Mary, no meditation — or as **the Audio Rosary**, every
 prayer said aloud with no readings between (it was the Rosary Aloud,
-then the Holy Rosary, which a newcomer could not tell from the Rosary;
-the mysteries' page lists it as "The Rosary Said Aloud · Every prayer,
-no readings", under WAYS TO PRAY). Every page reads its name from
+then the Holy Rosary, which a newcomer could not tell from the Rosary,
+then the Rosary Said Aloud, whose "said aloud" a regular reader found
+confusing (Oct 2026);
+the mysteries' page lists it as "The Audio Rosary · Listen and pray
+along", under WAYS TO PRAY). Every page reads its name from
 `ScripturalRosaryViewModel.displayName` (`holyRosaryName`). The forms are
 `RosaryForm` (`Models/RosaryForm.swift`); the Scriptural Rosary is not a
 kind of meditation, and the filter's "Scriptural" label reads as
@@ -550,7 +552,7 @@ an empty ring; every row shows at its trailing edge what a tap does —
 PRAYED with the seal, BEGIN › / CONTINUE › until then, every act on
 the rule being one the app watches finish (the row marked by hand went
 out with the acts that needed it); the Rosary, the Scriptural Rosary,
-the Rosary Said Aloud, the Seven Sorrows and the consecration day check from real
+the Audio Rosary, the Seven Sorrows and the consecration day check from real
 data, and the Prayer Book's three orders from their Amen
 (`PrayerBookStore.wasOffered`), reset when the prayer day turns at four
 in the morning (the consecration day by its own numbering, on the
@@ -763,7 +765,7 @@ is "N days in a row", "1 day so far", or "Pray today to begin", and a
 milestone leads with its number ("9 days · a novena",
 `StreakMilestone.title`; the completion card sets `name`, "9 days",
 over a blessing that says what the Church calls it). The forms are
-named as everywhere else — the Rosary Said Aloud, the Seven Sorrows of
+named as everywhere else — the Audio Rosary, the Seven Sorrows of
 Mary, Consecration to Mary, Queen of Heaven (Regina Cæli) in
 Eastertide — and the focus block's gold act names the prayer without
 repeating the title over it (the three forms' act is PRAY THE ROSARY
@@ -783,11 +785,11 @@ are reflections, never entries; a new one's title starts empty under
 words "Arrange" and "Rearrange" stay.
 
 **The rule's vocabulary** (`PrayerShortcut.isRuleEligible`): the
-Rosary, the Scriptural Rosary, the Rosary Said Aloud and the Seven
+Rosary, the Scriptural Rosary, the Audio Rosary and the Seven
 Sorrows of Mary can be chosen, and the Prayer Book's three orders of the day — Morning Prayers,
 the Angelus, Night Prayers — which the pray-along screen marks offered
 at their Amen (`PrayerBookStore.wasOffered`), so the Chapel can ask
-about them honestly. The Rosary Said Aloud is still recorded under its old
+about them honestly. The Audio Rosary is still recorded under its old
 name, "The Rosary Aloud" (`ScripturalRosaryViewModel.aloudDevotionName`),
 since the Prayer Record holds days prayed under it and the rule matches
 by it. "A
@@ -866,12 +868,12 @@ the page they serve):
   switches among the ways of praying, they read as prayers added to
   every Rosary, and a silent Rosary never said them
 - **Prayers Tab** — the Prayer Book's one choice, its **Audio**, In
-  Silence | Aloud, in the same row and pill (`PrayerBookAudio`), which
+  Silence | With a Voice, in the same row and pill (`PrayerBookAudio`), which
   sets `PrayerBookStore.praysAloud`. It is kept apart from the
   Rosary's Audio on purpose: the Rosary's choice decides whether the
   voice leads every prayer or reads the meditation alone, the book's
   whether it speaks at all. Until the reader answers, the pill shows
-  the default, Aloud, and its line says the book will ask. Drawing the
+  the default, With a Voice, and its line says the book will ask. Drawing the
   row answers nothing; a tap on either segment does, the lit one too
 - **Devotion** — Daily Prayers (→ `RuleEditorSheet`; hidden while the
   Chapel is archived), Prayer Record, Journal,
@@ -1190,8 +1192,8 @@ write concurrent code here:
   pendant too (`advanceOffTheBeads`, `retreatOffTheBeads`). The strand,
   the reader and the reader's book glyph stand aside on the pendant,
   which has no meditation. The Scriptural Rosary's screen sets the
-  prayer in its column with the pendant beside it, as the Rosary Said
-  Aloud does (`setsPendantWords`). The last Glory Be is then no longer
+  prayer in its column with the pendant beside it, as the Audio
+  Rosary does (`setsPendantWords`). The last Glory Be is then no longer
   the end (`isLastBeadOfRosary` is the last closing prayer), so a
   swipe on it goes on to the Hail, Holy Queen. A Rosary begun from its
   start begins on the cross; one taken up again begins where it was
@@ -1218,8 +1220,8 @@ write concurrent code here:
   no Voice & speed row (`RosaryInfoRow.rows(for:aloud:)`): nothing is
   spoken, and the prayers after the Rosary are said only aloud. It comes
   back with the Whole Rosary. A set's page keeps the row in either mode,
-  since its meditation is always read aloud, and so does the Rosary
-  Said Aloud's. The Rosary Said Aloud offers no choice: its audio
+  since its meditation is always read aloud, and so does the Audio
+  Rosary's. The Audio Rosary offers no choice: its audio
   is a plain row, "Whole Rosary · pause anytime". The words for every
   option and note are `RosaryChoice`'s, read by the pages, Settings and
   the playback sheet; onboarding sets the same names and notes from its
@@ -1777,7 +1779,7 @@ write concurrent code here:
   line saying the Journal now opens from the Chapel and after each
   Rosary, since every row is a door and the Journal is a tab, not a
   page; it turns to the Prayers tab), the Chant Library, the Rosary said aloud (with the
-  speed slider; its row is "The Rosary Said Aloud", the form's own name,
+  speed slider; its row is "The Audio Rosary", the form's own name,
   and opens that form's own
   page on today's mysteries, `.rosaryAloud(today)`), and How to Pray
   with Your First Rosary — and not the
@@ -2110,8 +2112,8 @@ write concurrent code here:
   as the day's Rosary, since it is one.
 
   **`ScripturalRosaryView`** is the Rosary's own page
-  (`RosaryConfirmPage`) for the Scriptural Rosary and the Rosary Said
-  Aloud: A VERSE FOR EVERY BEAD / EVERY PRAYER, NO READINGS over the
+  (`RosaryConfirmPage`) for the Scriptural Rosary and the Audio
+  Rosary: A VERSE FOR EVERY BEAD / LISTEN AND PRAY ALONG over the
   name and one
   line, the chosen mysteries' painting crossfading as the Mysteries row
   changes them (nothing remembered: tomorrow's page opens on tomorrow's
@@ -2169,11 +2171,11 @@ write concurrent code here:
   forward. The column still taps forward and long-presses back
   (VoiceOver cannot swipe), and the one haptic keys on `beadPosition`.
   The header is × · SCRIPTURAL ROSARY · Aa (`ReaderTextOptionsSheet`
-  without its narration section); the Rosary Said Aloud's header reads
-  THE ROSARY SAID ALOUD. The foot is the still mystery strand over the mystery's
+  without its narration section); the Audio Rosary's header reads
+  THE AUDIO ROSARY. The foot is the still mystery strand over the mystery's
   ordinal name, a Whole Rosary switch (`SetupTogglePill`,
   `UserSettings.prayAloud`, named as the Audio choice names it; this
-  screen has no playback sheet to put it in, and the Rosary Said Aloud,
+  screen has no playback sheet to put it in, and the Audio Rosary,
   which has no such choice, has no switch) and the ⋯ tray with no download row.
   There is no meditation narration and no reader; said aloud, the spoken
   Rosary (see API Endpoints below) reads each verse before its Hail Mary,
@@ -2220,7 +2222,7 @@ write concurrent code here:
   as it stood on the last bead; it once vanished for the Hail, Holy Queen
   and came back only after the last Amen.
 
-  **The Rosary Said Aloud sets every prayer as it is said, the
+  **The Audio Rosary sets every prayer as it is said, the
   pendant's too.** It is this screen (`SpokenForm.plain`), and its column carries
   the prayer where the Scriptural Rosary's carries the verse. The Creed,
   the Hail, Holy Queen, the closing prayer and the prayers after the
@@ -2231,7 +2233,7 @@ write concurrent code here:
   (`PendantStage(trailingColumn:)`); laid under the words, even dimmed,
   the cross ran through the Creed's lines. A rubric line ("[Let us
   pray.]") is set as a rubric, red and italic and out of its brackets,
-  since the voice does not say it. The Rosary Said Aloud's prayers come down
+  since the voice does not say it. The Audio Rosary's prayers come down
   as far as they must to be on the page whole (`prayerMinimumScale`) —
   at 0.7 the Our Father was cut off at "who trespass a…" at the largest
   sizes — and the Creed closes its lines up as well once it cannot fit
@@ -2245,12 +2247,12 @@ write concurrent code here:
   Home's card (`InProgressPrayer.kind`), on its own screen, at its bead.
   The screens name the form by `ScripturalRosaryViewModel.displayName` —
   the header, the Lock Screen, a share, the resume card, the ⋯ tray and
-  the feedback form say The Rosary Said Aloud (`holyRosaryName`, which
+  the feedback form say The Audio Rosary (`holyRosaryName`, which
   keeps its old symbol) — while `CompletedPrayer` records
   `devotionName`, still "The Rosary Aloud" for this form (above, the
   rule's vocabulary). Home's card names a snapshot by its kind, never
   its stored name, so a card saved as "The Rosary Aloud" or "The Holy
-  Rosary" comes back as the Rosary Said Aloud.
+  Rosary" comes back as the Audio Rosary.
 
   The 249 verses are **bundled** (`Data/ScripturalRosaryData.swift`,
   keyed `"<category>_<order>"` like MysteryData's fruits) — prayer must
@@ -2708,10 +2710,10 @@ write concurrent code here:
   opened alone) fixed
   behind the scroll and veiled by a scrim of the theme's own ground,
   deepest from the title down (`PrayAlongGround`); a quiet head — ×, the
-  order's name, and ALOUD or SILENT as a word in an outlined capsule
+  order's name, and VOICE or SILENT as a word in an outlined capsule
   (the speaker glyph it replaced read as a volume control) — over the
   order's beads, each a door answering to 44 points where the width
-  allows ("6 of 9, The Act of Faith" to VoiceOver). Beside ALOUD or
+  allows ("6 of 9, The Act of Faith" to VoiceOver). Beside VOICE or
   SILENT a ··· (`ph-dots-three`, "More" to VoiceOver) is a `Menu` of
   what is done less often with the prayer on the page: its language
   (English, Latin, Both, only where it has Latin, written to the app's
@@ -2763,7 +2765,7 @@ write concurrent code here:
   on the pray-along screen itself, from every door, while the reader has
   not chosen: the order page's PRAY and the holy card's PRAY answered it
   once, from a speaker and a line beside them, both gone since the
-  "Chant shelves and prayer cards" pick; afterwards ALOUD or SILENT at
+  "Chant shelves and prayer cards" pick; afterwards VOICE or SILENT at
   the head of the page owns the choice. The
   same choice stands in Settings → Prayer Experience as the Prayers
   Tab row, and a choice made there answers the question before it is asked;
@@ -4028,12 +4030,12 @@ GET /v2/chant-library                   # JSON:API; bare: version, updated_at; ?
 ```
 **The completion is the app's one write, and it is not nothing.** When a
 meditation set's Rosary is finished, `recordCompletion` posts the set id
-and whether it was said aloud as the Whole Rosary (`prayed_aloud`; the
-Privacy Policy says it in those words). The server stores it with the time, a
+and whether it was prayed as the Whole Rosary (`prayed_aloud`; the
+Privacy Policy says "whether you listened to the Whole Rosary"). The server stores it with the time, a
 city/region/country looked up from the request's IP through a third-party
 service, and the IP truncated to /24 — no account, device or install
 identifier (the backend's `docs/COMPLETION_ANALYTICS.md`). The Scriptural
-Rosary, the Rosary Said Aloud and the Guided Rosary never post, and the
+Rosary, the Audio Rosary and the Guided Rosary never post, and the
 Privacy Policy names all three. The privacy manifest
 (`PrivacyInfo.xcprivacy`: Product Interaction and Coarse Location, not
 linked, not tracking, for Analytics) and the in-app Privacy Policy
@@ -4041,7 +4043,7 @@ linked, not tracking, for Analytics) and the in-app Privacy Policy
 Us") say so, and App Store Connect's App Privacy answers must match them —
 keep the three in step with any change to what is sent.
 The spoken Rosary (`UserSettings.prayAloud` — Audio: Whole Rosary — off
-by default, and always in the Rosary Said Aloud) says every prayer aloud and
+by default, and always in the Audio Rosary) says every prayer aloud and
 moves the beads with the voice, in both the meditation's player and the
 Scriptural Rosary's screen. `SpokenRosaryScript` (Models/SpokenRosary)
 builds the script, pure; `SpokenRosaryPlayer` walks it and takes track

@@ -91,7 +91,7 @@ struct SpiritualReadingView: View {
             // What the shelf is, then the words that converted Augustine,
             // in English with the Latin small: a motto may follow an
             // explanation, never stand in its place
-            Text("Classic Catholic books to read, or to hear read aloud")
+            Text("Classic Catholic books to read, or to listen to")
                 .font(AppFonts.italicFont(16))
                 .foregroundColor(AppColors.gold.opacity(0.8))
                 .multilineTextAlignment(.center)

@@ -768,7 +768,7 @@ struct MyChapelView: View {
         case .scripturalRosary:
             return "The \(ScheduleService.categoryForToday().devotionTitle), with a Bible verse for every Hail Mary."
         case .rosaryAloud:
-            return "The \(ScheduleService.categoryForToday().devotionTitle), every prayer said aloud and the beads moving with the voice."
+            return "The \(ScheduleService.categoryForToday().devotionTitle), every prayer read to you and the beads moving with the voice."
         case .mass:
             return "Today\u{2019}s prayers and readings, in the traditional Latin Mass (1962 Missal)."
         case .office:

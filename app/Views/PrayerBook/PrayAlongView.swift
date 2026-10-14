@@ -267,7 +267,7 @@ struct PrayAlongView: View {
                         .frame(width: 6, height: 6)
                         .shadow(color: AppColors.gold.opacity(0.8), radius: 3)
                 }
-                Text(aloud ? "ALOUD" : "SILENT")
+                Text(aloud ? "VOICE" : "SILENT")
                     .font(AppFonts.labelFont(9.5))
                     .tracking(2)
                     .foregroundColor(aloud ? AppColors.goldLight : AppColors.cream.opacity(0.85))
@@ -283,8 +283,8 @@ struct PrayAlongView: View {
         }
         .buttonStyle(QuietGlyphButtonStyle())
         .animation(Motion.crossfade, value: aloud)
-        .accessibilityLabel(aloud ? "Praying aloud" : "Praying in silence")
-        .accessibilityHint(aloud ? "Double-tap to pray in silence" : "Double-tap to have the prayers read aloud")
+        .accessibilityLabel(aloud ? "Praying with a voice" : "Praying in silence")
+        .accessibilityHint(aloud ? "Double-tap to pray in silence" : "Double-tap to hear a voice read the prayers")
     }
 
     /// What the page does less often, for the prayer on it: its
@@ -1313,13 +1313,13 @@ struct PrayAloudChoiceSheet: View {
 
                 SheetHeader(
                     kicker: "Prayers",
-                    title: "Aloud, or in silence?",
-                    lead: "The app can read each prayer aloud to you, or leave you to say the words yourself."
+                    title: "With a voice, or in silence?",
+                    lead: "A voice can read each prayer to you, or you can say the words yourself."
                 )
 
                 Button { onChoose(true) } label: {
                     SheetRow(
-                        "Aloud",
+                        "With a voice",
                         detail: "Read to you in the \(voices.chosenVoice.name.lowercased()) voice",
                         icon: "ph-speaker-high",
                         detailLineLimit: nil
@@ -1338,7 +1338,7 @@ struct PrayAloudChoiceSheet: View {
                 }
                 .buttonStyle(SacredCardButtonStyle())
 
-                SheetNote("Change this any time with ALOUD or SILENT at the top of the page, or in Settings.")
+                SheetNote("Change this any time with VOICE or SILENT at the top of the page, or in Settings.")
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }

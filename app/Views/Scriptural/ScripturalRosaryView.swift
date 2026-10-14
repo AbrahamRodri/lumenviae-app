@@ -54,7 +54,7 @@ struct ScripturalRosaryView: View {
 
     var body: some View {
         RosaryConfirmPage(
-            kicker: isPlain ? "Every prayer, no readings" : "A verse for every bead",
+            kicker: isPlain ? "Listen and pray along" : "A verse for every bead",
             title: ScripturalRosaryViewModel.displayName(for: form),
             subtitle: isPlain
                 ? "A voice leads every prayer, with no readings between."
