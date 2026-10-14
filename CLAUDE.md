@@ -4171,6 +4171,10 @@ a chant's page with `SIMCTL_CHILD_LUMEN_VIAE_CHANT=<chant id>`
 Spiritual Reading book's page with
 `SIMCTL_CHILD_LUMEN_VIAE_BOOK=<book id>` (`imitation-of-christ`,
 `story-of-a-soul`; the ids are `LibraryCatalog`'s).
+`SIMCTL_CHILD_LUMEN_VIAE_ROUTE` opens a page or a prayer by name
+(`missal`, `howToPray`, `mysteries:joyful`, `prayer:sorrowful:1:4`,
+`rosaryAloudPrayer:joyful`…; `AppRouter.launchRoute` lists them), which
+the App Store screenshots use (`Tools/AppStore/screenshots`).
 
 `Tools/dev` is the door to everyday tasks: `Tools/dev check` runs lint,
 the generated-file check, the build and the tests. Run tests with

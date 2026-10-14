@@ -205,5 +205,213 @@ class DryRunTests(unittest.TestCase):
                 asc.credentials()
 
 
+def png(path, width, height, alpha=False):
+    """A PNG header good enough for png_info (the pixels are never read)."""
+    color_type = 6 if alpha else 2
+    ihdr = width.to_bytes(4, "big") + height.to_bytes(4, "big") + bytes([8, color_type, 0, 0, 0])
+    path.write_bytes(b"\x89PNG\r\n\x1a\n" + (13).to_bytes(4, "big") + b"IHDR" + ihdr + b"\x00" * 4 + b"rest")
+
+
+class FakeASC:
+    """App Store Connect for one app, one version and one localization,
+    answering the requests the listing commands make and recording every
+    write."""
+
+    def __init__(self, state="PREPARE_FOR_SUBMISSION", old_shots=("old-1.png", "old-2.png"), sets=True,
+                 description="Old.", deliveries=None):
+        self.state = state
+        self.description = description
+        self.old_shots = list(old_shots)
+        self.has_set = sets
+        self.writes = []
+        self.deliveries = deliveries or {}
+        self.made = 0
+        self.in_set = len(self.old_shots)
+
+    def request(self, method, path, body=None, params=None):
+        path = path.split("?")[0]
+        if method != "GET":
+            self.writes.append((method, path, body))
+        if method == "GET" and path == "/v1/apps":
+            return {"data": [{"id": "APP", "attributes": {"name": "Lumen Viae"}}]}
+        if method == "GET" and path == "/v1/apps/APP/appStoreVersions":
+            return {"data": [{"id": "VER", "attributes": {"versionString": "4.0", "appVersionState": self.state}}]}
+        if method == "GET" and path == "/v1/appStoreVersions/VER/appStoreVersionLocalizations":
+            return {"data": [{"id": "LOC", "attributes": {
+                "locale": "en-US", "description": self.description, "keywords": "rosary",
+                "promotionalText": None}}]}
+        if method == "GET" and path == "/v1/appStoreVersionLocalizations/LOC/appScreenshotSets":
+            sets = [{"id": "SET", "attributes": {"screenshotDisplayType": "APP_IPHONE_67"}}] if self.has_set else []
+            return {"data": sets}
+        if method == "GET" and path == "/v1/appScreenshotSets/SET/appScreenshots":
+            return {"data": [{"id": f"OLD{i}", "attributes": {"fileName": n}} for i, n in enumerate(self.old_shots)]}
+        if method == "POST" and path == "/v1/appScreenshotSets":
+            self.has_set = True
+            return {"data": {"id": "SET"}}
+        if method == "POST" and path == "/v1/appScreenshots":
+            if self.in_set >= 10:  # Apple's limit per set
+                raise asc.Fail("POST /v1/appScreenshots: HTTP 409: the set already holds 10 screenshots")
+            self.in_set += 1
+            self.made += 1
+            size = body["data"]["attributes"]["fileSize"]
+            return {"data": {"id": f"NEW{self.made}", "attributes": {"uploadOperations": [
+                {"method": "PUT", "url": f"https://upload.example/{self.made}", "offset": 0, "length": size,
+                 "requestHeaders": [{"name": "Content-Type", "value": "image/png"}]}]}}}
+        if method == "GET" and path.startswith("/v1/appScreenshots/"):
+            sid = path.rsplit("/", 1)[1]
+            states = self.deliveries.get(sid, ["COMPLETE"])
+            state = states.pop(0) if len(states) > 1 else states[0]
+            return {"data": {"id": sid, "attributes": {"fileName": sid, "assetDeliveryState": {"state": state}}}}
+        if method == "GET" and path == "/v1/reviewSubmissions":
+            return {"data": [{"id": "SUB-OTHER", "attributes": {"state": "WAITING_FOR_REVIEW"}},
+                             {"id": "SUB", "attributes": {"state": "WAITING_FOR_REVIEW"}}]}
+        if method == "GET" and path == "/v1/reviewSubmissions/SUB/items":
+            return {"data": [{"relationships": {"appStoreVersion": {"data": {"type": "appStoreVersions", "id": "VER"}}}}]}
+        if method == "GET" and path == "/v1/reviewSubmissions/SUB-OTHER/items":
+            return {"data": [{"relationships": {"appStoreVersion": {"data": {"type": "appStoreVersions", "id": "X"}}}}]}
+        if method == "DELETE" and path.startswith("/v1/appScreenshots/"):
+            self.in_set -= 1
+            return {}
+        if method == "PATCH":
+            return {}
+        raise AssertionError(f"unexpected {method} {path}")
+
+
+class ListingTests(unittest.TestCase):
+    def run_asc(self, fake, argv, puts=None):
+        out = io.StringIO()
+        with mock.patch.object(asc.Client, "request", lambda self, *a, **k: fake.request(*a, **k)), \
+                mock.patch.object(asc, "put_parts", lambda path, ops: (puts if puts is not None else []).append(
+                    (pathlib.Path(path).name, ops))), \
+                mock.patch.object(asc.time, "sleep", lambda s: None), redirect_stdout(out):
+            code = asc.main(argv)
+        return code, out.getvalue()
+
+    def shots_dir(self, names=("02.png", "01.png", "03.png"), size=(1320, 2868), alpha=False):
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        d = pathlib.Path(tmp.name)
+        for n in names:
+            png(d / n, *size, alpha=alpha)
+        (d / "notes.txt").write_text("not a screenshot")
+        return d
+
+    def test_listing_reads_and_writes_nothing(self):
+        fake = FakeASC()
+        code, out = self.run_asc(fake, ["listing", "4.0"])
+        self.assertEqual(code, 0)
+        self.assertEqual(fake.writes, [])
+        self.assertIn("description (4/4000)", out)
+        self.assertIn("APP_IPHONE_67: 2", out)
+
+    def test_set_listing_is_a_dry_run_without_confirm(self):
+        fake = FakeASC()
+        code, out = self.run_asc(fake, ["set-listing", "4.0", "--description", "New.", "--promo-text", "Hi"])
+        self.assertEqual(code, 0)
+        self.assertEqual(fake.writes, [])
+        self.assertIn('"description": "New."', out)
+        self.assertIn('"promotionalText": "Hi"', out)
+        self.assertNotIn('"keywords"', out)
+        self.assertIn("dry run", out)
+
+    def test_set_listing_sends_only_what_changed(self):
+        fake = FakeASC()
+        self.run_asc(fake, ["set-listing", "4.0", "--description", "Old.", "--keywords", "rosary,chant", "--confirm"])
+        self.assertEqual(len(fake.writes), 1)
+        method, path, body = fake.writes[0]
+        self.assertEqual((method, path), ("PATCH", "/v1/appStoreVersionLocalizations/LOC"))
+        self.assertEqual(body["data"]["attributes"], {"keywords": "rosary,chant"})
+
+    def test_listing_limits(self):
+        with self.assertRaises(asc.Fail):
+            asc.check_listing_text(description="x" * 4001)
+        with self.assertRaises(asc.Fail):
+            asc.check_listing_text(keywords="x" * 101)
+        with self.assertRaises(asc.Fail):
+            asc.check_listing_text(keywords="rosary, chant")
+        with self.assertRaises(asc.Fail):
+            asc.check_listing_text(promo="x" * 171)
+        asc.check_listing_text("x" * 4000, "x" * 100, "x" * 170)
+
+    def test_set_listing_warns_when_the_version_is_in_review(self):
+        fake = FakeASC(state="WAITING_FOR_REVIEW")
+        _, out = self.run_asc(fake, ["set-listing", "4.0", "--description", "New."])
+        self.assertIn("cancel-review", out)
+
+    def test_screenshot_files_order_and_checks(self):
+        d = self.shots_dir()
+        self.assertEqual([f.name for f in asc.screenshot_files(d, "APP_IPHONE_67")], ["01.png", "02.png", "03.png"])
+        with self.assertRaises(asc.Fail):
+            asc.screenshot_files(self.shots_dir(size=(1179, 2556)), "APP_IPHONE_67")
+        with self.assertRaises(asc.Fail):
+            asc.screenshot_files(self.shots_dir(alpha=True), "APP_IPHONE_67")
+        with self.assertRaises(asc.Fail):
+            asc.screenshot_files(self.shots_dir(names=[f"{i:02}.png" for i in range(11)]), "APP_IPHONE_67")
+
+    def test_screenshots_dry_run_sends_nothing(self):
+        fake, puts = FakeASC(), []
+        code, out = self.run_asc(fake, ["screenshots", "4.0", "--dir", str(self.shots_dir())], puts)
+        self.assertEqual(code, 0)
+        self.assertEqual(fake.writes, [])
+        self.assertEqual(puts, [])
+        self.assertIn("DELETE /v1/appScreenshots/OLD0", out)
+        self.assertIn("dry run", out)
+
+    def test_screenshots_upload_then_delete_the_old_then_order(self):
+        fake, puts = FakeASC(deliveries={"NEW2": ["UPLOAD_COMPLETE", "COMPLETE"]}), []
+        d = self.shots_dir()
+        code, _ = self.run_asc(fake, ["screenshots", "4.0", "--dir", str(d), "--confirm"], puts)
+        self.assertEqual(code, 0)
+        self.assertEqual([p[0] for p in puts], ["01.png", "02.png", "03.png"])
+        writes = [(m, p) for m, p, _ in fake.writes]
+        reserves = [b["data"]["attributes"]["fileName"] for m, p, b in fake.writes if p == "/v1/appScreenshots"]
+        self.assertEqual(reserves, ["01.png", "02.png", "03.png"])
+        commit = next(b for m, p, b in fake.writes if (m, p) == ("PATCH", "/v1/appScreenshots/NEW1"))
+        self.assertEqual(commit["data"]["attributes"],
+                         {"uploaded": True, "sourceFileChecksum": asc.md5_of(d / "01.png")})
+        first_delete = writes.index(("DELETE", "/v1/appScreenshots/OLD0"))
+        last_commit = writes.index(("PATCH", "/v1/appScreenshots/NEW3"))
+        self.assertGreater(first_delete, last_commit)
+        method, path, body = fake.writes[-1]
+        self.assertEqual(path, "/v1/appScreenshotSets/SET/relationships/appScreenshots")
+        self.assertEqual([x["id"] for x in body["data"]], ["NEW1", "NEW2", "NEW3"])
+
+    def test_screenshots_keep_the_old_set_when_one_fails(self):
+        fake = FakeASC(deliveries={"NEW2": ["FAILED"]})
+        code, _ = self.run_asc(fake, ["screenshots", "4.0", "--dir", str(self.shots_dir()), "--confirm"])
+        self.assertEqual(code, 1)
+        deleted = [p for m, p, _ in fake.writes if m == "DELETE"]
+        self.assertEqual(deleted, [f"/v1/appScreenshots/NEW{i}" for i in (1, 2, 3)])   # the new, not the old
+        self.assertEqual(fake.in_set, 2)
+
+    def test_screenshots_delete_the_old_first_when_a_set_would_overflow(self):
+        fake = FakeASC(old_shots=[f"old-{i}.png" for i in range(5)])
+        d = self.shots_dir(names=[f"{i:02}.png" for i in range(1, 9)])
+        code, out = self.run_asc(fake, ["screenshots", "4.0", "--dir", str(d), "--confirm"])
+        self.assertEqual(code, 0, out)
+        writes = [(m, p) for m, p, _ in fake.writes]
+        last_old_delete = writes.index(("DELETE", "/v1/appScreenshots/OLD4"))
+        first_reserve = writes.index(("POST", "/v1/appScreenshots"))
+        self.assertLess(last_old_delete, first_reserve)
+        self.assertEqual(fake.in_set, 8)
+        self.assertEqual([x["id"] for x in fake.writes[-1][2]["data"]], [f"NEW{i}" for i in range(1, 9)])
+
+    def test_screenshots_make_the_set_when_there_is_none(self):
+        fake = FakeASC(sets=False, old_shots=())
+        self.run_asc(fake, ["screenshots", "4.0", "--dir", str(self.shots_dir()), "--confirm"])
+        self.assertEqual(fake.writes[0][1], "/v1/appScreenshotSets")
+        self.assertEqual(fake.writes[0][2]["data"]["attributes"]["screenshotDisplayType"], "APP_IPHONE_67")
+
+    def test_cancel_review_finds_the_versions_submission(self):
+        fake = FakeASC(state="WAITING_FOR_REVIEW")
+        code, out = self.run_asc(fake, ["cancel-review", "4.0"])
+        self.assertEqual(code, 0)
+        self.assertEqual(fake.writes, [])
+        self.assertIn("PATCH /v1/reviewSubmissions/SUB\n", out)
+        self.run_asc(fake, ["cancel-review", "4.0", "--confirm"])
+        self.assertEqual(fake.writes, [("PATCH", "/v1/reviewSubmissions/SUB", {"data": {
+            "type": "reviewSubmissions", "id": "SUB", "attributes": {"canceled": True}}})])
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

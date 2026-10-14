@@ -29,6 +29,8 @@ __pycache__/
 # not here — tens of megabytes of PNG per set, and a set is regenerated
 # whenever the look changes. Keep them out of history.
 screenshots/
+# ...but the tool that makes them is source
+!Tools/AppStore/screenshots/
 
 # macOS
 .DS_Store

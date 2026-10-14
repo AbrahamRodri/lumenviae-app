@@ -1,0 +1,15 @@
+# The App Store screenshots, in the order the store shows them.
+# NN|launch variables|seconds to settle|headline line 1|headline line 2|subline
+#
+# Launch variables are LUMEN_VIAE_<NAME>=<value> without the prefix:
+# TAB (an AppTab case), ROUTE (AppRouter.launchRoute), CHANT (a chant id),
+# BOOK (a Spiritual Reading book id), TODAY (YYYY-MM-DD). A line of text
+# wider than the image stops frame.swift: shorten it.
+01|TODAY=2026-10-14|6|Pray the Rosary|with Meditations|From Saints, Theologians, Fathers
+02|TODAY=2026-10-14 ROUTE=prayer:sorrowful:1:4|6|One Bead|at a Time|Swipe down, and the decade turns
+03|TODAY=2026-10-14 ROUTE=rosaryAloudPrayer:joyful:1:3|7|The Rosary|Said Aloud|Every prayer, in the voice you choose
+04|TODAY=2026-10-14 ROUTE=scripturalRosaryPrayer:joyful:0:3|6|A Verse for|Every Hail Mary|The Scriptural Rosary, in the Douay-Rheims
+05|TODAY=2026-10-14 TAB=prayers|5|The Church's|Common Prayers|For morning, noon, night and every need
+06|TODAY=2026-10-14 TAB=chant|6|Sing the|Church's Chant|Gregorian chant, with recordings and scores
+07|TODAY=2026-10-14 ROUTE=howToPray|5|New to|the Rosary?|A short course, then a guided first Rosary
+08|TODAY=2026-10-14 ROUTE=missal|9|The Mass and|the Hours|The 1962 Missal and the Divine Office

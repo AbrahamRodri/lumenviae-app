@@ -119,7 +119,8 @@ Content
 App Store Connect (Tools/AppStore/README.md)
   asc <command>     status, versioning, builds, versions, groups, bump, archive, upload,
                     create-version, whats-new, attach-build, testflight,
-                    submit. Every change is a dry run without --confirm, and
+                    submit, listing, set-listing, screenshots,
+                    cancel-review. Every change is a dry run without --confirm, and
                     a Claude session asks Abraham before submit --confirm.
   asc-test          the App Store tool's own tests (no account needed)
 
