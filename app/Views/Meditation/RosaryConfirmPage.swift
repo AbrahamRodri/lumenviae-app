@@ -390,7 +390,7 @@ struct RosaryChoicesSection: View {
             RosaryInfoRowView(
                 title: row.title,
                 value: RosaryInfoRow.voiceValue(
-                    voice: NarrationVoiceCatalog.shared.chosenVoice.plainName,
+                    voice: NarrationVoiceCatalog.shared.chosenVoice.displayName,
                     // The app's speed, which a chant or a book sounding
                     // meanwhile may have borrowed the player from
                     rate: PlaybackSpeedChoice.rateLabel(AudioService.shared.appRate)

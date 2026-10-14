@@ -4,8 +4,8 @@
 //
 //  The Office's clock and ranks: which canonical hour each clock hour
 //  falls in (one boundary table, `beginsAtClockHour`, which the ledger,
-//  the arch and `CanonicalClock` all read), how the hours wrap, what the
-//  arch says of when the present hour lapses, and how the engine's Latin
+//  the hour now and `CanonicalClock` all read), how the hours wrap, what the
+//  landing says of when the present hour lapses, and how the engine's Latin
 //  class is read and named in the Missal's words.
 //
 
@@ -64,11 +64,11 @@ struct OfficeHoursTests {
 
     // MARK: - When an Hour Lapses
 
-    @Test func theArchSaysWhenTheHourLapsesInWords() {
-        #expect(CanonicalHour.terce.lapses == "until Midday Prayer at noon")
-        #expect(CanonicalHour.compline.lapses == "until Night Vigil at midnight")
-        #expect(CanonicalHour.matins.lapses == "until Dawn Prayer at five")
-        #expect(CanonicalHour.vespers.lapses == "until Bedtime Prayer at seven")
+    @Test func theHourNowSaysWhenItLapsesInWords() {
+        #expect(CanonicalHour.terce.lapses == "until noon")
+        #expect(CanonicalHour.compline.lapses == "until midnight")
+        #expect(CanonicalHour.matins.lapses == "until five")
+        #expect(CanonicalHour.vespers.lapses == "until seven")
     }
 
     // MARK: - The Engine's Class
@@ -108,5 +108,35 @@ struct OfficeHoursTests {
         let opacities = ranks.map(\.markOpacity)
         #expect(opacities == opacities.sorted(by: >))
         #expect(OfficeRank.feria.markOpacity == 0)
+    }
+    // MARK: - The Hours' Paintings
+
+    @Test func noTwoHoursSideBySideShareAPainting() {
+        for hour in CanonicalHour.allCases {
+            #expect(PrayerBookPainting.office(hour).asset != PrayerBookPainting.office(hour.following).asset)
+        }
+    }
+
+    @Test func everyHoursPaintingIsInTheCatalog() {
+        for hour in CanonicalHour.allCases {
+            let painting = PrayerBookPainting.office(hour)
+            #expect(painting.resolvedAsset == painting.asset)
+        }
+    }
+
+    // MARK: - Section Headings
+
+    @Test func aBilingualHeadingIsTheEnglishAlone() throws {
+        let sections = OfficeReaderSection.build(from: [
+            OfficeSection(
+                latin: OfficeCell(title: "Psalmi", note: nil, lines: ["Psalmus 92"]),
+                vernacular: OfficeCell(title: "Psalms", note: nil, lines: ["Psalm 92"])
+            )
+        ])
+        let section = try #require(sections.first)
+        #expect(section.displayName(.both) == "Psalms")
+        #expect(section.displayName(.latinUnderEnglish) == "Psalms")
+        #expect(section.displayName(.english) == "Psalms")
+        #expect(section.displayName(.latin) == "Psalmi")
     }
 }

@@ -232,7 +232,7 @@ it is brought back.
 four — Progress is reached from the Chapel's flame tile and Library tile,
 Settings → Devotion and Explore's search instead, to keep the bar from
 crowding the raised Pray button, and the Journal, which gave its place to
-Prayers, from the Chapel's Reflections and Library tiles, Explore's search,
+Prayers, from the Chapel's Journal and Library tiles, Explore's search,
 and the completion screen's Write a Reflection. **Neither is turned to as a
 tab any more:** both are pushed (`AppRoute.prayerRecord`, `.journal`) over
 the tab they were opened from, with the gold Back, and the tab bar stays up
@@ -245,7 +245,7 @@ page opens its own page rather than turning beneath them.
 | Tab | In the bar | Purpose |
 |-----|-----------|---------|
 | Home | Yes | Search glass → Explore, today's mysteries, mystery grid, Today's Prayer, the reading shelf, quote |
-| Consecrate | Yes | The 33-day preparation for Marian consecration |
+| Consecration | Yes | The 33-day preparation for Marian consecration |
 | Prayers | Yes | The Prayer Book: six shortcuts, the order for this hour, Everyday Prayers, prayers to Mary, every occasion and topic, and a search behind the head's glass (see The Prayer Book below) |
 | Journal | No — pushed, via Settings | Reflections, searchable, stored on device |
 | Progress | No — pushed, via Settings | Streaks, milestones ahead, prayer history ("Prayer Record") |
@@ -317,7 +317,7 @@ and readings for today" until the propers arrive) and its fact the rank
 and colour beside a small silk (LESSER FEAST · WHITE); the Office hangs
 Millet's Angelus, its line the hour it is ("Mid-Morning Prayer
 (Terce)") and its fact NOW · UNTIL NOON beside the lit dot
-(`CanonicalHour.clockWord`, which the Office's arch reads too). The two
+(`CanonicalHour.clockWord`, which the Office's landing reads too). The two
 liturgy paintings are the Prayer Book's topics' (`PrayerBookPainting.
 topic(id:)`). The feast
 is named in the Mass row's line and not over the two rows. The fact
@@ -346,7 +346,8 @@ Pray" door under that (How to Pray was the fourth item of the index at
 the foot of the page, where a newcomer never reached it); then
 Prayers (the occasion orders as paintings with their names alone,
 most needed first, Before Mass leading), Chant (All 104 Chants, Songs
-to Mary, the Mass of the Angels and Sets of Chants), Today in the Church (Today's
+to Mary, the Mass of the Angels and Sets of Chants, its link CHANT
+LIBRARY), Mass & Hours (Today's
 Mass | Hours of Prayer, each over its book's Church name, Daily Missal
 and Divine Office), Spiritual Reading (ALL BOOKS), and Learn More's
 ruled index — and typing searches mysteries, library doors, library readings,
@@ -531,8 +532,8 @@ header: the date over NEW REFLECTION (REFLECTION when one is edited,
 DURING PRAYER over it from a mystery being prayed), CANCEL and SAVE
 beside them, SAVE dimmed until something is written. With the Journal off the
 tab bar, a new reflection needs a door that is always on the page, and
-the Reflections tile can be put away; the Chapel is where reflections
-are kept, and the Reflections tile still opens the whole journal
+the Journal tile can be put away; the Chapel is where reflections
+are kept, and the Journal tile still opens the whole journal
 (`push(.journal)`). Tiles (vocabulary `Models/ChapelTile.swift`;
 layout persists as `userSettings.chapelLayout`, validated against known
 ids on decode, with a one-time migration from the old `meWidgets`
@@ -632,7 +633,7 @@ like a book, a second rule inside its edge: BOOKS — True Devotion,
 Spiritual Reading, the Marian Library — and GUIDES — How to Pray, In
 Scripture, Carlo Acutis — (one section, BOOKS AND GUIDES, while either is
 down to one door) and YOUR PAGES — the Prayer Record and the Journal,
-whose only other doors, the flame and the Reflections tile, can be put
+whose only other doors, the flame and the Journal tile, can be put
 away — as a ruled index of doors, each name over a
 line saying what it holds, with no glyphs, over Augustine's line; the
 half keeps the three books and makes SEE MORE a door to Explore),
@@ -652,7 +653,7 @@ redraw it and not the tile. The elapsed time is said nowhere on screen
 but by the playhead, at both widths, and to VoiceOver on the staff, as
 words ("Sung so far, 1 minute 5 seconds of 3 minutes 20 seconds"); the
 clock once rode the title line and redrew the whole tile every second),
-**Reflections**
+**Journal** (titled Reflections until Oct 2026; its id is still `reflections`)
 (on the quote ground, the latest journal entry in the upright medium
 face under an illuminated versal, or its gilded opening mark when it
 opens on a quotation (`VersalCut.opensOnQuotation`: a lone apostrophe,
@@ -702,7 +703,7 @@ doors), after a Spacer; then the foot, ruled off at `gold@0.16` unless
 the body ends on a line of its own (the reading shelf) — full: an
 italic note at 13 left, the gold text act right (`labelFont 10`,
 tracking 2, caret 9, 44pt tall); half: the act alone, left-aligned, or
-the note where the tile has no act (the Reflections half, whose whole
+the note where the tile has no act (the Journal half, whose whole
 card opens the journal through `push(.journal)`). The
 grid's rows **stretch** (`ChapelGridLayout` gives every tile in a row
 the row's height, and the card fills it), so two halves always end on
@@ -739,7 +740,7 @@ PAGE in an outlined capsule — the 2×2 arrange mark, not the board's
 faders, which are Settings' door — over "Or press and hold anywhere."
 and the imprint, which the board leaves off and the page keeps. The
 default order is Today, Streak, Consecration, Prayers, Reading,
-Reflections, Chant, Library, Today in the Church: the live sections lead,
+Journal, Chant, Library, Today in the Church: the live sections lead,
 the Library's doors follow, and Today in the Church stands last, since
 Home's Today's Prayer carries the same two rows. Only a fresh page takes
 it; a stored layout keeps its own, and a layout saved before Today in the
@@ -1313,7 +1314,8 @@ write concurrent code here:
   UserDefaults, with the built-in pair as the first-launch list), and
   the choice is `UserSettings.narrationVoiceSlug`, resolved through the
   catalog: a retired voice with a successor moves to it when the settings
-  load (`NarrationVoice.successors`, the original male voice to Frederick),
+  load (`NarrationVoice.successors`, the original male voice to the
+  `frederick` slug, still shown by its server name, Male),
   and only a withdrawn voice with none falls back to the default. The player
   reads the chosen voice at every load (`PrayerSessionViewModel.
   audioSource`), plays the meditation's default when it lacks the
@@ -1432,9 +1434,10 @@ write concurrent code here:
   whatever tab the prayer began on. The screen scrolls only when it must,
   on a small phone at the largest text size on a milestone day. The page
   itself is pushed (`AppRoute.journal`, with the gold Back) from the
-  Chapel's Reflections tile and the Library tile's YOUR PAGES, and from
+  Chapel's Journal tile and the Library tile's YOUR PAGES, and from
   Explore's search, which finds it by name and does not list it in Learn
-  More, as Progress does.
+  More, as Progress does. The page and every door to it say **Journal**
+  and wear `ph-book-open` (the Chapel's tile included); the things written in it stay reflections.
 - **33-day Consecration** — feast-day selection, per-day scripture and reading,
   bilingual prayers, journal prompts, and a completion rite. The tab's day page
   (`ConsecrationDayOverviewView`) is a column of gold-hairline cards. **Your
@@ -1762,7 +1765,7 @@ write concurrent code here:
   from its first stop when home returns. Six coach marks over the real
   controls, one at a time: Today's Mysteries (the featured card, named
   as it names itself), the Pray
-  button (a tap and a hold), the Prayers tab, the Consecrate tab ("A
+  button (a tap and a hold), the Prayers tab, the Consecration tab ("A
   33-day preparation to give yourself to Jesus through Mary. Choose the
   feast it ends on."), the Chapel tab, and
   Explore's glass. Each control reports where it
@@ -1904,30 +1907,43 @@ write concurrent code here:
   a language setting must add it there too, or English pages cached
   earlier will be served to someone who chose another language.
 
-  **`DivineOfficeView` opens on the hour it is now.** The page has one
-  purpose — the present hour reachable in one tap, and obvious at a
-  glance which hour that is — so that hour is lifted out of the eight
-  into a lit **lancet arch** (`GothicArchShape(riseRatio: 44/354)`, the
-  shallower rise, with the app's standard two-shadow halo applied to the
-  *shape* rather than a rounded rect). Every other hour on the page is a
-  plain row on the strand, and the arch — a shallower rise than the home
-  hero's `ArchHero` (0.34), so it reads as a plate, not a window — is why
-  the eye lands there first. It carries
-  the page's one filled gold act ("Pray" and the hour's plain name, e.g. "Pray Bedtime Prayer"), and **no corner
-  ticks, second border, or ornament divider inside it** — one ornament
-  per idea. Its halo is steady; only the lit NOW mark may pulse.
+  **`DivineOfficeView` opens on the hour it is now** (the "hours page
+  polish", Oct 2026). The page has one purpose — the present hour
+  reachable in one tap — so it opens as an order of prayer's page does:
+  the hour's own painting (`PrayerBookPainting.office`, below) run up
+  under the bar and dissolving into the page, with the bar's veil
+  (`toolbarBackground(.hidden)`, the order pages' `barVeil`); over its
+  foot NOW · UNTIL NOON (`CanonicalHour.lapses`, "until noon", the
+  words Home's row builds from `clockWord`), the hour's plain name, its Church name small,
+  and the page's one gold act, PRAY at the inline size and content
+  width. Then the day's feast and its rank and vestment, then the eight.
+  It once opened on a sentence explaining the Divine Office, set the hour
+  now in a 212-point lit lancet arch with a full-width "Begin Bedtime
+  Prayer", and closed on an ornament and a paragraph of provenance; none
+  of it should come back. The foot is one line, `OfficeCredit.line`
+  ("Texts: Divinum Officium"), which the reader's foot shares.
+
+  **Each hour hangs a painting of its own** (`PrayerBookPainting.office`
+  in `OfficeReaderComponents.swift`), the scene its hour remembers, no
+  two neighbours alike (`OfficeHoursTests`): Night Vigil Gethsemane,
+  Dawn Prayer the Resurrection, Early Morning Prayer the Song of the
+  Lark, Mid-Morning Prayer Pentecost (the third hour, Acts 2:15), Midday
+  Prayer the Crucifixion, Mid-Afternoon Prayer the Descent from the
+  Cross, Evening Prayer the Visitation (the Magnificat), Bedtime Prayer
+  the Presentation (the Nunc Dimittis).
 
   Beneath it the eight stand in three groups — the night and the dawn,
   through the day (the little hours), evening and night — each strung on one strand of
   gold, each bead in its hour's own `skyColor`, so the strand runs dark
-  through bright and back to dark over the day, the three groups under
-  their headings (`showHourGroups` is a constant, always on).
+  through bright and back to dark over the day. A row is the plain name
+  over the Church name, NOW on the present one; the time of day it once
+  added beside the Church name repeated the name and the heading.
   The bar carries Back, the book's name, and **`ph-calendar-dots` as the
   only day-switching control** — an earlier draft's
   `‹ Thursday, 27 August ›` stepper was cut for costing most of the
   first screenful, and must not come back. The ledger never waits on the
-  network: the hours are the hours, and the arch's choice of hour is
-  read from the clock.
+  network: the hours are the hours, and the hour now is read from the
+  clock.
 
   **English in the chrome, on both Office screens.** The engine answers
   in Latin — "III. classis", "S. Raymundi Nonnati Confessoris" — and
@@ -1942,14 +1958,21 @@ write concurrent code here:
   **`CanonicalClock`** (a `Services/` singleton) is the one place that
   says which hour it is now. It sleeps to each boundary rather than
   ticking, and refreshes on foreground; Home's Hours of Prayer row,
-  the arch, and the strand's NOW mark all read it, so they roll over
-  together. `CanonicalHour.beginsAtClockHour` is the single boundary
-  table — `present(atClockHour:)` and the arch's "until Sext at noon"
-  are both derived from it, because written separately they agreed only
+  the landing's head, and the strand's NOW mark all read it, so they
+  roll over together. `CanonicalHour.beginsAtClockHour` is the single
+  boundary table — `present(atClockHour:)` and the landing's "until
+  noon" are both derived from it, because written separately they agreed only
   by accident. Boundaries are fixed clock times, not solar hours.
 
   **`OfficeHourView` is the missal's reader.** It hides the system bar
-  and carries the same chrome: Back / ☰ / Aa, a jump-to-section rail
+  and carries its own chrome: Back and a "..." menu holding Parts of
+  This Prayer (the ☰ index) and Language and Text Size (the Aa sheet),
+  which were two more round buttons beside the hour's name; the hour's
+  painting under the chrome, run up past the status bar and dissolving
+  into the day's two lines, risen and faded with the plate as the page
+  scrolls (`OfficeHourPainting`, which reads the scroll itself, laid as
+  a background of its own: in one stack with the page's colour it was
+  laid from the glass's top, not the chrome's); a jump-to-section rail
   (faded 52pt at its right edge so it reads as scrollable), a 1pt
   progress line, and the active section spied from each section's
   reported top — the same `onGeometryChange` machinery, measured in the
@@ -1971,7 +1994,9 @@ write concurrent code here:
   missal's `CollapsingReaderPlate` — no thresholds to tune to a plate's
   height, since the plate's own height is the whole travel. `OfficeReaderSection` cuts the
   hour into addressable sections (`OfficeSectionView` draws one), so
-  the ☰ index and the rail can name and reach them; an unnamed section
+  the index and the rail can name and reach them, in English (a
+  bilingual heading is the English alone, `displayName`; the index no
+  longer sets the Latin beneath each part); an unnamed section
   is a continuation and is drawn but never listed. A jump to the
   **last** section anchors `.bottom`, not `.top`: the Conclusio is ten
   lines, cannot rise to the header, and the scroll would overrun the
@@ -2017,7 +2042,7 @@ write concurrent code here:
   `OfficeCacheService`; after the first load, today's and tomorrow's
   hours are prefetched quietly and days more than 30 back are pruned.
   Every hour names its source — the texts are The Divinum Officium
-  Project's work, and the footer credits it.
+  Project's work, and the footer credits it (`OfficeCredit.line`).
 
 - **Scriptural Rosary** — a verse of Scripture for every Hail Mary bead:
   one of the Rosary's three forms (`Views/Scriptural/`). It was a Prayer
@@ -3146,7 +3171,7 @@ write concurrent code here:
   Half from step 4) stand behind the faders (`PracticeOptionsSheet`).
   Opening the practice, or BEGIN, starts nothing kept: the shelf hears of
   it at the first act on the singing screen. Learned, the page is the
-  painting, the seal and "Kept in Saved, under Learned." It once stood
+  painting, the seal and "Kept in Your Chants, under Learned." It once stood
   as one screen of eight framed shapes, the step said three times and
   the three settings as large as the act. Leaving gives back the
   pace and the Repeat it found, and stops the singer only if the
@@ -3591,6 +3616,10 @@ appears:
   emoji, and which still mark a single prayer's door and Pray aloud;
   the Consecration `ch-consecration` (the Marian monogram, a cross over
   an M; the crown is True Devotion's alone).
+  The Devotion in Summary, the book's digest, wears `ph-scroll` on
+  every door. Saving is a bookmark (the prayer's silk ribbon, a chant
+  set's `ph-bookmark-simple`); `ph-push-pin` is the meditation shelf's
+  pin to the top, a different act.
 - **The mysteries** (`MysteryCategory.iconName`) — Joyful `lv-star`,
   the Star of Bethlehem; Sorrowful `lv-crown-of-thorns`, a plaited
   ring; Glorious `lv-banner`, the Resurrection's vexillum; Luminous
