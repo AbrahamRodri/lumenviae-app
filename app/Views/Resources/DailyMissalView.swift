@@ -71,6 +71,10 @@ struct DailyMissalView: View {
     /// A section id waiting to be scrolled to
     @State private var pendingJump: String?
 
+    /// The section a jump is travelling to. While it is set the rail
+    /// stays on it, rather than lighting every section the page passes.
+    @State private var jumpHold: Int?
+
     /// The day's Mass as the reader shows it — see `rebuildSections()`
     @State private var readerSections: [MissalReaderSection] = []
 
@@ -152,6 +156,7 @@ struct DailyMissalView: View {
     /// renumber them has to throw them away with the list.
     private func resetSectionTracking() {
         sectionTops = [:]
+        jumpHold = nil
         activeSectionIndex = 0
     }
 
@@ -271,8 +276,14 @@ struct DailyMissalView: View {
             }
             .onChange(of: pendingJump) { _, target in
                 guard let target else { return }
+                let index = readerSections.firstIndex { $0.id == target } ?? 0
+                jumpHold = index
+                activeSectionIndex = index
                 withAnimation(travelAnim(0.5)) {
                     proxy.scrollTo(target, anchor: .top)
+                } completion: {
+                    jumpHold = nil
+                    refreshActiveSection()
                 }
                 pendingJump = nil
             }
@@ -286,8 +297,7 @@ struct DailyMissalView: View {
     private var headerFootGlobal: CGFloat { headerGlobalTop + collapsedHeaderHeight }
 
     /// Each section's top measured against the content itself — values
-    /// that scrolling never moves, so a mid-flight misreport from a
-    /// lazily built section is always corrected by its settling layout.
+    /// that scrolling never moves.
     @State private var sectionTops: [Int: CGFloat] = [:]
 
     private func handleScrollOffset(_ markerGlobalMinY: CGFloat) {
@@ -313,6 +323,10 @@ struct DailyMissalView: View {
     /// The active section is the last one whose top has risen into the
     /// band just under the collapsed header.
     private func refreshActiveSection() {
+        if let jumpHold {
+            if jumpHold != activeSectionIndex { activeSectionIndex = jumpHold }
+            return
+        }
         let limit = scroll.pastTop + 33
         let active = sectionTops.filter { $0.value < limit }.keys.max() ?? 0
         if active != activeSectionIndex {
@@ -664,7 +678,10 @@ struct DailyMissalView: View {
     // MARK: - Content
 
     private var content: some View {
-        LazyVStack(alignment: .leading, spacing: 0) {
+        // Built whole, not lazily: a jump then lands where it aims,
+        // instead of guessing the height of sections not yet built and
+        // correcting itself as it arrives.
+        VStack(alignment: .leading, spacing: 0) {
             // The plate's share of the resting header. The first
             // section's own top padding supplies the jump gap, so this
             // spacer gives that much back to keep the resting position
@@ -714,7 +731,7 @@ struct DailyMissalView: View {
         .padding(.bottom, 90)
         .coordinateSpace(name: Self.contentSpace)
         // The whole content column carries the scroll marker: unlike a
-        // marker view inside the lazy stack, it can never be released
+        // marker view inside the stack, it can never be released
         // mid-scroll, so the offset never goes stale.
         .onGeometryChange(for: CGFloat.self) { proxy in
             proxy.frame(in: .global).minY
