@@ -226,6 +226,7 @@ class FakeASC:
         self.writes = []
         self.deliveries = deliveries or {}
         self.made = 0
+        self.in_set = len(self.old_shots)
 
     def request(self, method, path, body=None, params=None):
         path = path.split("?")[0]
@@ -248,6 +249,9 @@ class FakeASC:
             self.has_set = True
             return {"data": {"id": "SET"}}
         if method == "POST" and path == "/v1/appScreenshots":
+            if self.in_set >= 10:  # Apple's limit per set
+                raise asc.Fail("POST /v1/appScreenshots: HTTP 409: the set already holds 10 screenshots")
+            self.in_set += 1
             self.made += 1
             size = body["data"]["attributes"]["fileSize"]
             return {"data": {"id": f"NEW{self.made}", "attributes": {"uploadOperations": [
@@ -265,7 +269,10 @@ class FakeASC:
             return {"data": [{"relationships": {"appStoreVersion": {"data": {"type": "appStoreVersions", "id": "VER"}}}}]}
         if method == "GET" and path == "/v1/reviewSubmissions/SUB-OTHER/items":
             return {"data": [{"relationships": {"appStoreVersion": {"data": {"type": "appStoreVersions", "id": "X"}}}}]}
-        if method in ("PATCH", "DELETE"):
+        if method == "DELETE" and path.startswith("/v1/appScreenshots/"):
+            self.in_set -= 1
+            return {}
+        if method == "PATCH":
             return {}
         raise AssertionError(f"unexpected {method} {path}")
 
@@ -373,7 +380,21 @@ class ListingTests(unittest.TestCase):
         fake = FakeASC(deliveries={"NEW2": ["FAILED"]})
         code, _ = self.run_asc(fake, ["screenshots", "4.0", "--dir", str(self.shots_dir()), "--confirm"])
         self.assertEqual(code, 1)
-        self.assertFalse(any(m == "DELETE" for m, _, _ in fake.writes))
+        deleted = [p for m, p, _ in fake.writes if m == "DELETE"]
+        self.assertEqual(deleted, [f"/v1/appScreenshots/NEW{i}" for i in (1, 2, 3)])   # the new, not the old
+        self.assertEqual(fake.in_set, 2)
+
+    def test_screenshots_delete_the_old_first_when_a_set_would_overflow(self):
+        fake = FakeASC(old_shots=[f"old-{i}.png" for i in range(5)])
+        d = self.shots_dir(names=[f"{i:02}.png" for i in range(1, 9)])
+        code, out = self.run_asc(fake, ["screenshots", "4.0", "--dir", str(d), "--confirm"])
+        self.assertEqual(code, 0, out)
+        writes = [(m, p) for m, p, _ in fake.writes]
+        last_old_delete = writes.index(("DELETE", "/v1/appScreenshots/OLD4"))
+        first_reserve = writes.index(("POST", "/v1/appScreenshots"))
+        self.assertLess(last_old_delete, first_reserve)
+        self.assertEqual(fake.in_set, 8)
+        self.assertEqual([x["id"] for x in fake.writes[-1][2]["data"]], [f"NEW{i}" for i in range(1, 9)])
 
     def test_screenshots_make_the_set_when_there_is_none(self):
         fake = FakeASC(sets=False, old_shots=())

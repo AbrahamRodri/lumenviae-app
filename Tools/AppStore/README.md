@@ -145,10 +145,14 @@ Tools/dev asc screenshots 4.1 --dir .build/screenshots --confirm
   (`01.png`, `02.png` …), at most ten, each the size its display type
   takes (`APP_IPHONE_67`, the default: 1320x2868 or 1290x2796) and with no
   alpha channel. For each it reserves the file in the set, uploads its
-  parts to the URLs Apple returns, and commits it with its MD5. It waits
-  until Apple has processed every new one (`COMPLETE`), and only then
-  deletes the old screenshots and puts the new ones in order. If one
-  fails, the old set is left as it was.
+  parts to the URLs Apple returns, and commits it with its MD5, then
+  waits until Apple has processed every new one (`COMPLETE`) and puts
+  them in order. A set holds at most ten: while the old and the new
+  together fit, the old are deleted only once the new are processed;
+  when they would be more than ten (5 old and 8 new), the old are deleted
+  first and the set stands empty until the new are in. If an upload
+  fails, the new screenshots already added are deleted again, so the set
+  is the old one, or empty when the old went first; run it again.
 
 ### Making the screenshots
 
@@ -210,6 +214,7 @@ each signature with openssl, along with the token's header and claims
 check the bump (the app target only, a dry run unless confirmed) and that
 a dry run sends nothing. The listing commands run against a fake App
 Store Connect: only changed fields are sent, the limits hold, and
-screenshots are uploaded in file-name order, the old ones deleted only
-once the new ones are processed, and kept when one fails. They do not reach App Store Connect. The first
+screenshots are uploaded in file-name order, the old ones deleted after
+the new ones are processed or, when the set would hold more than ten,
+before, and a failed upload takes its new screenshots out again. They do not reach App Store Connect. The first
 real call is `asc setup` with Abraham's key.

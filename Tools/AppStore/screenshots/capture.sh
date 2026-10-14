@@ -107,7 +107,7 @@ capture() {
   "${d[@]}" hasSeenOnboarding -bool true
   "${d[@]}" whatsNew.lastVersionSeen -string "$version"
   "${d[@]}" firstUseTour.due -bool false
-  "${d[@]}" userSettings.missalLayout -string interlinear
+  "${d[@]}" userSettings.missalLayout -string "Line by Line"
   "${d[@]}" userSettings.hasSeenPrayerSwipeHint -bool true
   "${d[@]}" userSettings.prayAloud -bool false
   "${d[@]}" prayerBook.aloud -bool false

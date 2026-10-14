@@ -905,8 +905,8 @@ def wait_until_complete(client, shot_ids, sleep=time.sleep, poll=UPLOAD_POLL_SEC
         waiting = still
         if waiting:
             if waited >= timeout:
-                raise Fail(f"{len(waiting)} screenshot(s) still processing after {timeout}s; "
-                           "the old set has been left in place. Check `asc listing`.")
+                raise Fail(f"{len(waiting)} screenshot(s) still processing after {timeout}s. "
+                           "Check `asc listing`.")
             sleep(poll)
             waited += poll
 
@@ -938,31 +938,56 @@ def cmd_screenshots(args):
                 "data": {"type": "appStoreVersionLocalizations", "id": loc["id"]}}}}})
         set_id = made["data"]["id"] if made else "<new set>"
 
-    new_ids = []
-    for f in files:
-        print(f"reserve {f.name}:")
-        made = client.write("POST", "/v1/appScreenshots", {"data": {
-            "type": "appScreenshots", "attributes": {"fileName": f.name, "fileSize": f.stat().st_size},
-            "relationships": {"appScreenshotSet": {"data": {"type": "appScreenshotSets", "id": set_id}}}}})
-        sid = made["data"]["id"] if made else f"<{f.name}>"
-        operations = (made["data"]["attributes"].get("uploadOperations") or []) if made else []
-        print(f"  PUT {len(operations) or 'each'} part(s) to the upload URLs Apple returns")
-        if not client.dry_run:
-            put_parts(f, operations)
-        client.write("PATCH", f"/v1/appScreenshots/{sid}", {"data": {
-            "type": "appScreenshots", "id": sid,
-            "attributes": {"uploaded": True, "sourceFileChecksum": md5_of(f)}}})
-        new_ids.append(sid)
-
-    print("wait for Apple to process them (assetDeliveryState COMPLETE)")
-    if not client.dry_run:
-        wait_until_complete(client, new_ids)
-
-    if old:
-        print("then delete the old screenshots:")
+    def delete_old():
         for shot in old:
             print(f"  ({shot['attributes'].get('fileName')})")
             client.write("DELETE", f"/v1/appScreenshots/{shot['id']}")
+
+    # A set holds at most ten. When the old and the new together would be
+    # more, the old go first and the set stands empty until the new are in;
+    # otherwise the old stay until every new one is processed.
+    old_first = len(old) + len(files) > SCREENSHOTS_PER_SET
+    if old and old_first:
+        print(f"the old and the new are {len(old) + len(files)}, more than a set holds "
+              f"({SCREENSHOTS_PER_SET}), so delete the old screenshots first:")
+        delete_old()
+
+    new_ids = []
+    try:
+        for f in files:
+            print(f"reserve {f.name}:")
+            made = client.write("POST", "/v1/appScreenshots", {"data": {
+                "type": "appScreenshots", "attributes": {"fileName": f.name, "fileSize": f.stat().st_size},
+                "relationships": {"appScreenshotSet": {"data": {"type": "appScreenshotSets", "id": set_id}}}}})
+            sid = made["data"]["id"] if made else f"<{f.name}>"
+            new_ids.append(sid)
+            operations = (made["data"]["attributes"].get("uploadOperations") or []) if made else []
+            print(f"  PUT {len(operations) or 'each'} part(s) to the upload URLs Apple returns")
+            if not client.dry_run:
+                put_parts(f, operations)
+            client.write("PATCH", f"/v1/appScreenshots/{sid}", {"data": {
+                "type": "appScreenshots", "id": sid,
+                "attributes": {"uploaded": True, "sourceFileChecksum": md5_of(f)}}})
+
+        print("wait for Apple to process them (assetDeliveryState COMPLETE)")
+        if not client.dry_run:
+            wait_until_complete(client, new_ids)
+    except Fail:
+        if new_ids and not client.dry_run:
+            print("the upload failed; delete the new screenshots added so far:", file=sys.stderr)
+            for sid in new_ids:
+                try:
+                    client.write("DELETE", f"/v1/appScreenshots/{sid}")
+                except Fail as e:
+                    print(f"  could not delete {sid}: {e}", file=sys.stderr)
+        if old_first and old:
+            print("the old screenshots were already deleted; the set is empty until this is run again",
+                  file=sys.stderr)
+        raise
+
+    if old and not old_first:
+        print("then delete the old screenshots:")
+        delete_old()
     print("and put the new ones in file-name order:")
     client.write("PATCH", f"/v1/appScreenshotSets/{set_id}/relationships/appScreenshots",
                  {"data": [{"type": "appScreenshots", "id": sid} for sid in new_ids]})
