@@ -493,8 +493,8 @@ struct AppIconPickerRows: View {
     private static let options: [IconOption] = [
         IconOption(
             alternateName: nil,
-            displayName: "Candlelit",
-            detail: "Gold on candlelit black",
+            displayName: "Painting",
+            detail: "Our Lady with the Marian monogram",
             preview: "icon-preview-Candlelit"
         ),
         IconOption(
