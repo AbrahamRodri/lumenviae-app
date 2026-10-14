@@ -20,6 +20,14 @@ struct ChantScoreImage: View {
 
     @State private var drawing: ChantScoreDrawing?
 
+    /// The page is not on the phone and could not be fetched (offline)
+    @State private var unavailable = false
+
+    /// Tries made since: each coming back to the app, or the phone coming
+    /// back online, tries a page that could not be had again
+    @State private var attempt = 0
+    @Environment(\.scenePhase) private var scenePhase
+
     init(part: ChantScorePart) {
         self.part = part
         // A score already read is drawn at once, never faded in again
@@ -52,16 +60,38 @@ struct ChantScoreImage: View {
         }
         .aspectRatio(part.aspectRatio, contentMode: .fit)
         .opacity(drawing == nil ? 0 : 1)
-        .animation(Motion.crossfade, value: drawing == nil)
-        .task(id: part.file) {
-            if drawing == nil {
-                drawing = await ChantScoreStore.shared.load(part.file)
+        .overlay {
+            if drawing == nil && unavailable {
+                Text("The sheet music comes with a connection")
+                    .font(AppFonts.italicFont(13))
+                    .foregroundColor(AppColors.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 12)
+                    .transition(.opacity)
             }
+        }
+        .animation(Motion.crossfade, value: drawing == nil)
+        .animation(Motion.crossfade, value: unavailable)
+        .task(id: LoadKey(file: part.file, attempt: attempt, online: ChantAssetStore.shared.reconnections)) {
+            if drawing == nil {
+                drawing = await ChantScoreStore.shared.load(part)
+                unavailable = drawing == nil
+            }
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active, unavailable { attempt += 1 }
         }
         .accessibilityElement()
         .accessibilityLabel("Sheet music: \(part.caption)")
         .accessibilityAddTraits(.isImage)
     }
+}
+
+/// What a score's load is keyed by: a change of any part loads again
+private struct LoadKey: Hashable {
+    let file: String
+    let attempt: Int
+    let online: Int
 }
 
 // MARK: - ChantScoreView

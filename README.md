@@ -115,7 +115,8 @@ ahead.
 ### Prayers
 
 The Prayer Book is a tab of its own: more than 150 of the Church's common
-prayers, bundled, in English and, where the Church prays in Latin, in Latin too.
+prayers, kept by our server and shipped in the app so they pray offline, in
+English and, where the Church prays in Latin, in Latin too.
 It opens on a search, then three parts: **Today**, the prayer for the hour over
 its painting, Our Lady's prayers led by the antiphon the season sings, and the
 prayers you have saved; **Occasions** — At Mass, At Confession, At Home, In
@@ -133,8 +134,9 @@ six.
 ### The Chant Library
 
 A hundred and four chants, each with its recording, its score and its words in
-Latin and English, timed line by line and bundled so they sound without a
-connection. The library has six ways in — **Today** (led by tonight's song to
+Latin and English, timed line by line. The words ship in the app; the
+recordings and scores come from our server, by themselves on Wi-Fi after the
+first launch, and a chant streams until its file is on the phone. The library has six ways in — **Today** (led by tonight's song to
 Mary), **Seasons**, **Occasions**, **Types**, **Learn** and **Saved** — a search
 across titles, words and the prayers sung, and a mini player at the foot of
 every section.
@@ -193,8 +195,8 @@ page of its own, leading on to a feast, a prayer, or the next reading.
   copy follows what you said drew you to the Rosary
   (`app/Data/ReminderMessages.swift`) and never mentions streaks.
 - **Offline downloads** — every meditation set with its painting and narration,
-  and the spoken Rosary's and the Prayer Book's recordings. With them and the
-  bundled prayers, verses, chants and books, the Rosary prays without a
+  and the spoken Rosary's and the Prayer Book's recordings, and every chant's
+  recording and score. With them and the bundled prayers, verses and books, the Rosary prays without a
   connection; the Missal, the Office and the shelf keep whatever they have fetched.
 - **A first-run introduction** of nine slides, skippable, asks what brings you to
   the Rosary, what you'll hear, where you'll count (not asked when the whole
@@ -239,9 +241,10 @@ app/
 ├── DesignSystem/             Theme, fixed colours, Typography, AppIcon, Motion,
 │                             ReadingText
 ├── Data/                     Bundled prayers, mysteries, verses, consecration,
-│                             the Prayer Book (PrayerBook/), the chant catalog
+│                             the chant library's shelves
 ├── Services/                 API clients, audio, caches, offline, settings
-└── Resources/                Fonts, True Devotion JSON, reminder sounds, chants
+└── Resources/                Fonts, True Devotion JSON, reminder sounds, and
+                              Library/ (the Prayer Book and chant library documents)
 ```
 
 ### Where the data lives
@@ -258,9 +261,11 @@ app that owns the meditation content, so it can change without an app release:
 | `GET /rosary/audio` | The spoken Rosary's and the Prayer Book's recordings for one voice |
 | `GET /office/…` | A day, an hour, or a month of the Divine Office |
 | `POST /completions` | An anonymous note that a Rosary was finished |
+| `GET /v2/prayer-book` | The Prayer Book's words: prayers and topics (JSON:API, by version) |
+| `GET /v2/chant-library` | The chant catalog: sections, chants, timed lines, file links |
 
-The server also offers GraphQL and a versioned JSON:API at `/api/v2`; the app
-calls neither yet.
+The chants' recordings and scores are files on S3 named in the chant library.
+The server also offers GraphQL; the app does not call it.
 
 **Elsewhere** — the Missal from the Missale Meum API, the shelf's texts from
 Project Gutenberg and its recordings from LibriVox. The Scriptural Rosary's
@@ -270,9 +275,10 @@ paintings from Wikimedia Commons, at generation time; the app never calls them.
 **Bundled** — every Rosary prayer in English and Latin, the mysteries themselves
 (names, scripture, descriptions and fruits, in `Data/MysteryData.swift`; the app
 does not fetch them), the Scriptural Rosary's verses, the 33 days of preparation
-and the day of consecration, *True Devotion*, the Prayer Book, the Chant
-Library's recordings, scores and timed words, one Luminous meditation set that
-prays with no signal, the resource pages and the quotes.
+and the day of consecration, *True Devotion*, a starting copy of the Prayer
+Book and the chant library (`Resources/Library/`, refreshed from the server),
+one Luminous meditation set that prays with no signal, the resource pages and
+the quotes.
 
 **On device** — SwiftData holds prayer sessions, journal entries, consecration
 progress, and reading progress in *True Devotion* and the shelf. `UserDefaults`
@@ -292,6 +298,8 @@ Book's recordings, all excluded from backup.
 | `SpokenRosaryPlayer` | Prays the Rosary aloud, moving the beads with the voice |
 | `RosaryAudioPack` | The spoken Rosary's and the Prayer Book's recordings, fetched per voice and kept |
 | `ChantPlayer` | The Chant Library's hold on the shared player |
+| `ChantAssetStore` | The chants' recordings and scores, fetched on Wi-Fi, checked and kept |
+| `LibraryContent` | The Prayer Book's and chant library's documents: the shipped copy, the kept one, the refresh |
 | `ChantShelfStore` | The Chant Library's favourites, learning steps, sets and recent chants |
 | `PrayerBookStore` | The Prayer Book's saved prayers, prayers known by heart, the day's offered orders, the Angelus bell |
 | `NarrationVoiceCatalog` | The server's narration voices and the one chosen |
@@ -317,12 +325,12 @@ Requires Xcode 26 or later. Open `app.xcodeproj` and run the `app` scheme; the
 deployment target is iOS 17.0. No package in the app (the tests take one,
 swift-snapshot-testing), no secrets, and nothing is generated at build time. The generated content is checked in, made by the
 scripts in `Tools/`: `Data/ScripturalRosaryData.swift`;
-`Data/ChantCatalogData.swift`, folding in the timed lines from
-`Tools/ChantLines/`; the recordings and `.lvscore` scores in
-`Resources/Chants/`; the paintings fetched by `Tools/ContentSourcing/`; and
-`Resources/TrueDevotionBook.json`. The Prayer Book in `Data/PrayerBook/` is
-written by hand, and `Tools/PrayerBook/` exports its words for the server to
-record. New `.swift` files under `app/` are picked up by Xcode's
+the paintings fetched by `Tools/ContentSourcing/`; and
+`Resources/TrueDevotionBook.json`. The Prayer Book's words and the chant
+library are the server's documents, copied into `Resources/Library/` by
+`Tools/dev library-seed`; `Tools/Chants/` stages a new chant's recording and
+score for the server, and `Tools/PrayerBook/` exports the book's words for the
+server to record. New `.swift` files under `app/` are picked up by Xcode's
 file-system-synchronized groups; there is nothing to add to the project file.
 The unit tests, Swift Testing suites in `appTests/`, run from the same scheme
 (Product → Test, or `xcodebuild test`); there are no UI tests. The snapshot

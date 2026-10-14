@@ -404,6 +404,16 @@ final class OfflineContentService {
                 self?.state = .downloading(stage: "Prayers Audio", completed: done, total: max(total, 1))
             }
 
+            // Stage 6 — the chants' recordings and sheet music, on any
+            // network since the reader asked. They are kept apart, by
+            // `ChantAssetStore`, which fetches them by itself on Wi-Fi;
+            // a chant not fetched still streams, so this counts as no
+            // failure of the library.
+            state = .downloading(stage: "Chants", completed: 0, total: 1)
+            _ = await ChantAssetStore.shared.fetchAll(ChantCatalog.all) { [weak self] done, total in
+                self?.state = .downloading(stage: "Chants", completed: done, total: max(total, 1))
+            }
+
             // Manifest is written for partial runs too, so a relaunch
             // restores an honest .failed instead of pretending .idle.
             let bytes = await Self.directorySize(of: root)

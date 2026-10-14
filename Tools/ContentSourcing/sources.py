@@ -1008,7 +1008,7 @@ TEXTS = [
     dict(title="Gregorian chant: recordings and scores", maker="Verbum Gloriae (verbumgloriae.es)",
          detail="The Chant Library's 104 recordings and their scores", source="verbumgloriae.es, copyleft licence", licence="Copyleft (share alike, no attribution required)"),
     dict(title="Prayers of the Church", maker="the 1910 Raccolta, the Roman Ritual and Missal, and the app's own literal renderings from the Latin",
-         detail="The Prayer Book", source="Public-domain editions, named in each file of Data/PrayerBook", licence="Public domain"),
+         detail="The Prayer Book", source="Public-domain editions, named in the Prayer Book's source notes", licence="Public domain"),
     dict(title="Cinzel and EB Garamond", maker="Natanael Gama; Georg Duffner and Octavio Pardo",
          detail="The app's type", source="Google Fonts", licence="SIL Open Font License 1.1"),
     dict(title="Phosphor Icons and Christicons", maker="Phosphor (Helena Zhang and Tobias Fried); Christicons",

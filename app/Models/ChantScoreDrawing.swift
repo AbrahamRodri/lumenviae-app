@@ -48,11 +48,10 @@ nonisolated struct ChantScoreDrawing: @unchecked Sendable {
     let bounds: CGRect
     let operations: [Operation]
 
-    /// The bundled score, inflated and parsed. Nil if it is missing or not
-    /// a score this build can read.
-    static func load(file: String) -> ChantScoreDrawing? {
-        guard let url = Bundle.main.url(forResource: file, withExtension: "lvscore"),
-              let packed = try? Data(contentsOf: url),
+    /// A score on the phone, inflated and parsed. Nil if it is missing or
+    /// not a score this build can read.
+    static func load(url: URL) -> ChantScoreDrawing? {
+        guard let packed = try? Data(contentsOf: url),
               let inflated = try? (packed as NSData).decompressed(using: .zlib),
               let text = String(data: inflated as Data, encoding: .utf8)
         else { return nil }
@@ -119,16 +118,20 @@ final class ChantScoreStore {
         cache.object(forKey: file as NSString)?.drawing
     }
 
-    func load(_ file: String) async -> ChantScoreDrawing? {
-        if let hit = cached(file) { return hit }
-        let drawing = await Self.read(file)
-        if let drawing { cache.setObject(Entry(drawing), forKey: file as NSString) }
+    /// The part's drawing: read from the phone, or fetched first when it
+    /// is not there yet (a chant whose files have not all come down). Nil
+    /// when it cannot be had, offline.
+    func load(_ part: ChantScorePart, assets: ChantAssetStore? = nil) async -> ChantScoreDrawing? {
+        if let hit = cached(part.file) { return hit }
+        guard let url = await (assets ?? .shared).fetchNow(part.asset) else { return nil }
+        let drawing = await Self.read(url)
+        if let drawing { cache.setObject(Entry(drawing), forKey: part.file as NSString) }
         return drawing
     }
 
     @concurrent
-    private nonisolated static func read(_ file: String) async -> ChantScoreDrawing? {
-        ChantScoreDrawing.load(file: file)
+    private nonisolated static func read(_ url: URL) async -> ChantScoreDrawing? {
+        ChantScoreDrawing.load(url: url)
     }
 }
 

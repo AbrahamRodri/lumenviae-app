@@ -22,7 +22,8 @@ fails the chant.
         Check each chant and write <id>.json; remove the json of a
         chant that no longer passes.
     python3 lines.py score <part> [...]
-        Render a score part (app/Resources/Chants/Scores/<part>.lvscore)
+        Render a score part (Tools/Chants/out/Scores/<part>.lvscore, fetched
+        from the server when it is not staged)
         as cache/scores/<part>.png, to read the words and the bars from.
 
 src/<id>.txt holds settings, a blank line, then the lines:
@@ -35,7 +36,7 @@ src/<id>.txt holds settings, a blank line, then the lines:
     Salve, Regína, Mater misericórdiæ: | Hail, holy Queen, Mother of mercy,
 
 A line reading `part N` gives the lines below it the score part they are
-engraved on (N counts from 0, in ChantCatalogData's order); a file that
+engraved on (N counts from 0, in the library's order of the chant's score); a file that
 uses it must give every line one. A line of its own reading `~` carries the line above it over one more
 phrase: for a breath the cantor takes inside a line where the text is not
 sure enough to be parted (a breath inside one word's melisma, say). `#`
@@ -55,8 +56,11 @@ TOOL = Path(__file__).resolve().parent
 ROOT = TOOL.parent.parent
 SRC = TOOL / "src"
 CACHE = TOOL / "cache"
-AUDIO = ROOT / "app" / "Resources" / "Chants"
+# The chants' files are the server's: staged by Tools/Chants/generate.py,
+# or fetched here from the app's copy of the library when they are not
+AUDIO = ROOT / "Tools" / "Chants" / "out"
 SCORES = AUDIO / "Scores"
+LIBRARY = ROOT / "app" / "Resources" / "Library" / "chant_library.json"
 CHANTS = ROOT / "Tools" / "Chants" / "chants.json"
 WHISPER = Path(os.environ.get("WHISPER_DIR", CACHE / "models" / "sherpa-onnx-whisper-small"))
 
@@ -74,6 +78,10 @@ def wav_of(chant: str) -> Path:
     """The recording as 16 kHz mono PCM, which both ffmpeg's filter and
     Whisper read."""
     src = AUDIO / f"{chant}.m4a"
+    if not src.exists():
+        found = library_chant(chant)
+        if found:
+            staged(found["audio"]["url"], src)
     if not src.exists():
         sys.exit(f"{chant}: no recording at {src}")
     out = CACHE / "wav" / f"{chant}.wav"
@@ -425,13 +433,23 @@ def check(chant: str) -> tuple:
     return out, problems
 
 
-def score_parts(chant: str):
-    """How many score parts the catalog gives the chant, or None."""
-    catalog = ROOT / "app" / "Data" / "ChantCatalogData.swift"
-    if not catalog.exists():
+def library_chant(chant: str):
+    """The chant as the app's copy of the library has it, or None."""
+    if not LIBRARY.exists():
         return None
-    m = re.search(r'^ {12}id: "' + re.escape(chant) + r'",(.*?)sourceURL', catalog.read_text("utf-8"), re.S | re.M)
-    return len(re.findall(r"ChantScorePart\(", m.group(1))) if m else None
+    return next((c for c in json.loads(LIBRARY.read_text("utf-8"))["chants"] if c["id"] == chant), None)
+
+
+def staged(url: str, dest: Path):
+    """A file of the library's, fetched from the server into Tools/Chants/out."""
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    subprocess.run(["curl", "-sSfL", "--retry", "3", "-o", str(dest), url], check=True)
+
+
+def score_parts(chant: str):
+    """How many score parts the library gives the chant, or None."""
+    found = library_chant(chant)
+    return len(found["score"]) if found else None
 
 
 def build(chants: list):
@@ -459,7 +477,13 @@ def build(chants: list):
 def score(names: list):
     import cairosvg
     for name in names:
-        text = zlib.decompress((SCORES / f"{name}.lvscore").read_bytes(), -15).decode()
+        path = SCORES / f"{name}.lvscore"
+        if not path.exists() and LIBRARY.exists():
+            parts = [p for c in json.loads(LIBRARY.read_text("utf-8"))["chants"] for p in c["score"]]
+            found = next((p for p in parts if p["file"] == name), None)
+            if found:
+                staged(found["url"], path)
+        text = zlib.decompress(path.read_bytes(), -15).decode()
         rows = text.split("\n")
         paint = []
         for row in rows[2:]:

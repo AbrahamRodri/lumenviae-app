@@ -54,7 +54,11 @@ final class APIService {
 
     // MARK: - Configuration
 
-    private let baseURL: String = {
+    private let baseURL = APIService.baseURL
+
+    /// The API's root, which the library's documents (`LibraryContentSync`)
+    /// are asked of too
+    nonisolated static let baseURL: String = {
         #if DEBUG
         // A debug build can be pointed at a server on this Mac, to try an
         // endpoint before it is deployed:

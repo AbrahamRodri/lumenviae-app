@@ -26,11 +26,12 @@ struct ChantScoreSheetSnapshotTests {
 
     init() async {
         await ScreenSnapshot.preloadPaintings()
+        ScoreFixtures.install()
         // The engravings read from disk ahead, so each is drawn at once
         // rather than faded in after the snapshot is taken
         for id in ["ut_queant_laxis", "salve_regina_simple"] {
             for part in ChantCatalog.chant(id)?.score ?? [] {
-                _ = await ChantScoreStore.shared.load(part.file)
+                _ = await ChantScoreStore.shared.load(part)
             }
         }
     }

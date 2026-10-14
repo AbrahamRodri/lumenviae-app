@@ -1,7 +1,7 @@
 # Chant lines
 
 The words of each chant in the Chant Library, line by line, with the
-second each line begins and ends in the bundled recording — what the
+second each line begins and ends in the chant's recording — what the
 library's line controls draw on (Line 2 of 9, the previous and next line,
 repeat this line, Take turns, a lyric found "at 8:40").
 
@@ -17,17 +17,19 @@ One file per chant, `<chant id>.json`, as Tools/Chants reads it:
 
 `part` is always null: every file covers the whole recording, the
 antiphon, its versicle and its collect alike, in the order they are sung.
-Times are seconds from the start of `app/Resources/Chants/<id>.m4a`.
+Times are seconds from the start of the chant's recording (the server's
+file, staged in `Tools/Chants/out/<id>.m4a`).
 
 A line may carry a `"part"` of its own, the score part (0-based, in the
-order `ChantCatalogData.swift` lists them) its words are engraved on — the
+order the library lists them) its words are engraved on — the
 Pange Lingua's hymn, versicle and collect are three parts, and O Oriens's
 antiphon, Magnificat and antiphon again are three. A source that gives its
 lines parts writes `part N` on a line of its own before the lines engraved
 on part N, and `build` stops if a part is not one of the chant's.
 
 **A chant has a file here only when it passed every check below.** The
-Chant Library ships whatever is in this folder, so a chant that would not
+Chant Library's lines are made from whatever is in this folder
+(`Tools/Chants/generate.py --text-only`, then to the server), so a chant that would not
 line up is left out rather than guessed at; the ones left out are listed
 at the end.
 
@@ -35,7 +37,7 @@ at the end.
 
 1. **The words, as sung** (`src/<id>.txt`). The Latin is read off the
    chant's own score (`python3 lines.py score <part>` renders a part of
-   `app/Resources/Chants/Scores` as a PNG), so it is the text the cantor
+   the score as a PNG, fetched from the server when it is not staged), so it is the text the cantor
    sings — the Liber's accents, its spelling (*Jesu*, *cujus*, *Génitrix*),
    every verse the recording holds — with the score's syllable hyphens
    closed up. It is broken into lines where the cantor breathes, which is

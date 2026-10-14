@@ -33,7 +33,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 
 class Generator:
     def __init__(self, name, inputs, outputs, steps, regenerate,
-                 needs_cache=None, offline=True, note=""):
+                 needs_cache=None, offline=True, note="", skip_reason=None):
         self.name = name
         self.inputs = inputs          # paths (files or dirs, globs) copied into the scratch tree
         self.outputs = outputs        # paths compared after the run
@@ -42,26 +42,51 @@ class Generator:
         self.needs_cache = needs_cache
         self.offline = offline
         self.note = note
+        self.skip_reason = skip_reason  # set when the generator cannot run on this machine
 
+
+def api_library():
+    """The API checkout's priv/library beside this repository, or None."""
+    if os.environ.get("LUMEN_VIAE_API_DIR"):
+        found = pathlib.Path(os.environ["LUMEN_VIAE_API_DIR"]) / "priv" / "library"
+        return found if found.is_dir() else None
+    common = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "--path-format=absolute", "--git-common-dir"],
+                            capture_output=True, text=True).stdout.strip()
+    for base in [ROOT.parent, pathlib.Path(common).parent.parent if common else None]:
+        if base and (base / "api" / "priv" / "library").is_dir():
+            return base / "api" / "priv" / "library"
+    return None
+
+
+API_LIBRARY = api_library()
 
 GENERATORS = [
     Generator(
         "prayer-book",
-        inputs=["Tools/PrayerBook", "app/Data/PrayerBook", "app/Data/BilingualConsecrationPrayers.swift",
-                "app/Data/RosaryPrayers.swift"],
+        inputs=["Tools/PrayerBook", "app/Resources/Library/prayer_book.json", "app/Data/RosaryPrayers.swift"],
         outputs=["Tools/PrayerBook/prayer_book.json"],
         steps=[["python3", "Tools/PrayerBook/export.py"]],
         regenerate="python3 Tools/PrayerBook/export.py   (then copy to the server's priv/rosary_audio/)",
+        note="the words to record, from the app's copy of the Prayer Book",
     ),
     Generator(
         "chants",
         inputs=["Tools/Chants/generate.py", "Tools/Chants/chants.json", "Tools/ChantLines/*.json",
-                "app/Data/ChantCatalogData.swift"],
-        outputs=["app/Data/ChantCatalogData.swift"],
-        steps=[["python3", "Tools/Chants/generate.py", "--text-only"],
-               ["python3", "Tools/Chants/generate.py", "--lines-only"]],
-        regenerate="python3 Tools/Chants/generate.py --text-only && python3 Tools/Chants/generate.py --lines-only",
-        note="words and timed lines only; recordings and scores need a full (online) run",
+                "app/Resources/Library/chant_library.json"],
+        outputs=[],
+        steps=[["python3", "Tools/Chants/generate.py", "--check"]],
+        regenerate="python3 Tools/Chants/generate.py --text-only, take out/chant_library.json to the server, "
+                   "then Tools/dev library-seed",
+        note="chants.json and the line files against the app's copy of the library (words and lines only)",
+    ),
+    Generator(
+        "library-seed",
+        inputs=["Tools/LibrarySeed", "app/Resources/Library"],
+        outputs=[],
+        steps=[["python3", "Tools/LibrarySeed/seed.py", "--check", "--from", str(API_LIBRARY or "")]],
+        regenerate="Tools/dev library-seed",
+        note="the app's copies of the Prayer Book and chant library against the API checkout's priv/library",
+        skip_reason=None if API_LIBRARY else "no API checkout with priv/library beside this one (LUMEN_VIAE_API_DIR)",
     ),
     Generator(
         "true-devotion",
@@ -158,6 +183,8 @@ def porcelain():
 
 
 def run(gen, online, verbose):
+    if gen.skip_reason:
+        return "skipped", gen.skip_reason, []
     if not gen.offline and not online:
         return "skipped", "needs the network (run with --online)", []
     if gen.needs_cache and not (ROOT / gen.needs_cache).exists() and not online:

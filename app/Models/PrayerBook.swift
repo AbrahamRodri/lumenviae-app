@@ -2,8 +2,9 @@
 //  PrayerBook.swift
 //  Lumen Viae
 //
-//  The Prayer Book: the Church's common prayers, bundled so they pray
-//  with no signal, gathered two ways at once — into chapters, as a
+//  The Prayer Book: the Church's common prayers, kept by the server and
+//  shipped in the app so they pray with no signal (`LibraryContent`),
+//  gathered two ways at once — into chapters, as a
 //  printed prayer book is bound, and into orders of prayer, the few
 //  prayers a Catholic says together at one moment of the day or of the
 //  week (on rising, at the Angelus bell, before Mass, after
@@ -104,12 +105,6 @@ extension BookPrayer {
         )
     }
 }
-
-// MARK: - PrayerBookTexts
-
-/// The texts, one file per part of the book (`Data/PrayerBook/`), each
-/// an extension adding its own array.
-enum PrayerBookTexts {}
 
 // MARK: - PrayerBookChapter
 
@@ -330,311 +325,65 @@ enum PrayerBook {
 
     // MARK: Prayers
 
-    /// Every prayer of the book, by id. The book's own texts, then the
-    /// prayers the Rosary and the consecration already carry.
-    static let prayers: [String: BookPrayer] = {
-        var all: [String: BookPrayer] = [:]
-        let parts: [[BookPrayer]] = [
-            PrayerBookTexts.ourLady,
-            PrayerBookTexts.foundations,
-            PrayerBookTexts.ourLord1,
-            PrayerBookTexts.ourLord2,
-            PrayerBookTexts.ourLord3,
-            PrayerBookTexts.ourLord4,
-            PrayerBookTexts.ourLord5,
-            PrayerBookTexts.ourLord6,
-            PrayerBookTexts.day,
-            PrayerBookTexts.mary2,
-            PrayerBookTexts.jesus2,
-            PrayerBookTexts.jesus3,
-            PrayerBookTexts.jesus4,
-            PrayerBookTexts.jesus5,
-            PrayerBookTexts.eucharist2,
-            PrayerBookTexts.eucharist3,
-            PrayerBookTexts.saints2,
-            PrayerBookTexts.saints3,
-            PrayerBookTexts.saints4,
-            PrayerBookTexts.saints5,
-            PrayerBookTexts.saints6,
-            PrayerBookTexts.day2,
-            bundled
-        ]
-        for prayer in parts.joined() where all[prayer.id] == nil {
-            all[prayer.id] = prayer
-        }
-        return all
-    }()
+    /// Every prayer of the book, by id, from the book's document
+    /// (`LibraryContent.prayerBook`): the server keeps the words, the
+    /// Rosary's and the consecration's prayers among them, and the app
+    /// ships a copy.
+    static let prayers: [String: BookPrayer] = Dictionary(
+        LibraryContent.prayerBook.prayers.map { prayer in
+            (prayer.id, BookPrayer(
+                id: prayer.id, title: prayer.title, latinTitle: prayer.latinTitle,
+                origin: prayer.origin, note: prayer.note, english: prayer.english, latin: prayer.latin
+            ))
+        },
+        uniquingKeysWith: { first, _ in first }
+    )
 
     static func prayer(_ id: String) -> BookPrayer? { prayers[id] }
 
-    /// The Rosary's prayers and the consecration's, with the small print
-    /// the book gives them
-    private static let bundled: [BookPrayer] = [
-        BookPrayer.bundled("sign_of_cross", origin: "Apostolic tradition",
-                           note: "Begins and ends every prayer; the right hand touches the forehead, the breast, the left shoulder and the right."),
-        BookPrayer.bundled("our_father", origin: "Our Lord · Matthew 6:9–13",
-                           note: "The prayer Christ Himself taught when the disciples asked Him how to pray."),
-        BookPrayer.bundled("hail_mary", origin: "Luke 1:28, 42 · the Church, 15th century",
-                           note: "The Angel's greeting and Elizabeth's, and the Church's petition after them."),
-        BookPrayer.bundled("glory_be", origin: "The Church · 4th century",
-                           note: "Praise of the Trinity, said after each ten Hail Marys of the Rosary and after the psalms in the Church's Hours of Prayer."),
-        BookPrayer.bundled("apostles_creed", origin: "The Roman Church · 2nd century",
-                           note: "The creed said at baptism in Rome: the faith of the Apostles in twelve statements."),
-        BookPrayer.bundled("fatima_prayer", title: "The Fatima Prayer", origin: "Our Lady of Fatima · 1917",
-                           note: "Asked for by Mary at Fatima, to be said in the Rosary after each Glory Be."),
-        BookPrayer.bundled("hail_holy_queen", origin: "Western Church · 11th century",
-                           note: "Said at the end of the Rosary, and sung to close the Church's Bedtime Prayer (Compline) from Pentecost to Advent."),
-        BookPrayer.bundled("memorare", origin: "Attributed to St Bernard of Clairvaux · 12th century",
-                           note: "Spread by Fr Claude Bernard in the seventeenth century, who owed his own conversion to it."),
-        BookPrayer.bundled("act_of_contrition", origin: "Traditional",
-                           note: "Said in the confessional, and each night at bedtime."),
-        BookPrayer.bundled("st_michael_prayer", origin: "Pope Leo XIII · 1886",
-                           note: "Once said kneeling at the end of every spoken Mass, asking St Michael to defend the Church."),
-        BookPrayer.bundled("sorrows_closing_prayer", title: "To Our Lady of Sorrows", origin: "The Servants of Mary (Servites)",
-                           note: "The last prayer of the Seven Sorrows of Mary, prayed on their own beads."),
-        BookPrayer.bundled("rosary_closing_prayer", title: "Prayer after the Rosary", origin: "The Mass of the Holy Rosary",
-                           note: "The Church's prayer from the Mass of the Holy Rosary, said when the beads are done."),
-        BookPrayer.bundled("veni_creator", origin: "Attributed to Rabanus Maurus · 9th century",
-                           note: "Sung at Pentecost, at ordinations, and whenever the Church asks the Holy Spirit to come."),
-        BookPrayer.bundled("ave_maris_stella", origin: "Western Church · 9th century",
-                           note: "The hymn the Church sings at Evening Prayer (Vespers) on Mary's feast days."),
-        BookPrayer.bundled("magnificat", origin: "Our Lady · Luke 1:46–55",
-                           note: "Mary's own song when she visited Elizabeth, sung every evening at the Church's Evening Prayer (Vespers)."),
-        BookPrayer.bundled("litany_loreto", origin: "The Holy House of Loreto · 16th century",
-                           note: "Sung at Loreto since the 1550s, and approved for the whole Church in 1587."),
-        BookPrayer.bundled("litany_holy_name", origin: "St Bernardine of Siena · 15th century",
-                           note: "A litany to the Holy Name, approved for the whole Church in 1862."),
-        BookPrayer.bundled("o_jesus_living_in_mary", origin: "Fr Charles de Condren · 17th century",
-                           note: "Said each day of the 33-day preparation to give yourself to Jesus through Mary, on the Consecration tab.")
-    ].compactMap { $0 } + consecrationOnly
-
-    /// The consecration's English-only prayers the book prints too
-    private static let consecrationOnly: [BookPrayer] = [
-        ConsecrationData.allPrayers["litany_holy_ghost"].map { prayer in
-            BookPrayer(id: prayer.id, title: "Litany of the Holy Spirit", latinTitle: nil,
-                       origin: "Traditional",
-                       note: "Said in the first days of the 33-day preparation, asking the Holy Spirit to come.",
-                       english: prayer.content, latin: nil)
-        }
-    ].compactMap { $0 }
-
     // MARK: Chapters
 
-    static let chapters: [PrayerBookChapter] = [
-        PrayerBookChapter(
-            id: "first", numeral: "I", title: "The First Prayers", latinTitle: "Orationes Primæ",
-            icon: "ch-praying-hands", part: .everyDay,
-            sections: [
-                PrayerBookSection(title: "The first prayers", prayerIDs: ["sign_of_cross", "our_father", "hail_mary", "glory_be", "fatima_prayer"]),
-                PrayerBookSection(title: "The creeds", prayerIDs: ["apostles_creed", "nicene_creed"]),
-                PrayerBookSection(title: "Faith, hope, love and sorrow", prayerIDs: ["act_of_faith", "act_of_hope", "act_of_charity", "act_of_contrition"]),
-            ],
-            topic: "The First Prayers",
-            searchWords: ["basic prayers", "first prayers", "basics", "creed", "acts"]
-        ),
-        PrayerBookChapter(
-            id: "day", numeral: "II", title: "Daily Prayers", latinTitle: "Preces Quotidianæ",
-            icon: "lv-hourglass", part: .everyDay,
-            epigraph: "Morning, the Angelus, meals and night.",
-            sections: [
-                PrayerBookSection(title: "In the morning", prayerIDs: ["morning_offering", "benedictus", "angele_dei"]),
-                PrayerBookSection(title: "The Angelus", prayerIDs: ["angelus", "regina_caeli"]),
-                PrayerBookSection(title: "At meals", prayerIDs: ["grace_before", "grace_after"]),
-                PrayerBookSection(title: "Through the day", prayerIDs: ["actiones_nostras", "aquinas_before_study", "newman_definite_service", "lead_kindly_light"]),
-                PrayerBookSection(title: "At night", prayerIDs: ["examen", "act_of_contrition", "in_manus_tuas", "nunc_dimittis", "visita_quaesumus"]),
-            ],
-            orderIDs: ["morning", "angelus", "night", "table"],
-            topic: "Daily Prayers",
-            searchWords: ["through the day", "morning", "evening", "bedtime", "night", "meals", "grace", "angelus"]
-        ),
-        PrayerBookChapter(
-            id: "short", numeral: "III", title: "Short Prayers", latinTitle: "Iaculatoriæ",
-            icon: "lv-dart", part: .everyDay,
-            sections: [
-                PrayerBookSection(title: "To Jesus", prayerIDs: ["my_jesus_mercy", "jesus_meek", "sweet_heart", "sacred_heart_trust", "jesus_i_trust_in_thee", "my_jesus_i_love_thee", "my_lord_and_my_god", "my_god_and_my_all", "o_sacrament_most_holy", "pardon_prayer"]),
-                PrayerBookSection(title: "To Mary and St Joseph", prayerIDs: ["miraculous_medal", "blessed_be_conception", "totus_tuus", "st_joseph_pray", "jmj", "jmj_heart_and_soul"]),
-                PrayerBookSection(title: "To the Holy Spirit, and for the dead", prayerIDs: ["holy_spirit_enlighten", "requiem_aeternam"]),
-            ],
-            topic: "Short Prayers",
-            searchWords: ["ejaculations", "aspirations", "aspiration"]
-        ),
-        PrayerBookChapter(
-            id: "mass", numeral: "IV", title: "Holy Mass and Communion", latinTitle: "De Sancta Missa",
-            icon: "ch-altar", part: .sacraments,
-            sections: [
-                PrayerBookSection(title: "Before Mass", prayerIDs: ["aquinas_before_mass", "st_ambrose_before_mass", "come_holy_ghost"]),
-                PrayerBookSection(title: "At Communion", prayerIDs: ["domine_non_sum_dignus", "spiritual_communion"]),
-                PrayerBookSection(title: "After Communion", prayerIDs: ["anima_christi", "en_ego", "aquinas_after_mass", "transfige", "mary_after_communion", "suscipe"]),
-                PrayerBookSection(title: "After Mass", prayerIDs: ["hail_holy_queen", "st_michael_prayer"]),
-            ],
-            orderIDs: ["before_mass", "after_mass"],
-            topic: "Prayers for Mass",
-            searchWords: ["the mass", "holy communion", "communion", "before mass", "after mass", "thanksgiving after communion"]
-        ),
-        PrayerBookChapter(
-            id: "penance", numeral: "V", title: "Confession", latinTitle: "De Pænitentia",
-            icon: "ch-keys", part: .sacraments,
-            sections: [
-                PrayerBookSection(title: "Before Confession", prayerIDs: ["before_confession", "examination_of_conscience", "miserere"]),
-                PrayerBookSection(title: "In the confessional", prayerIDs: ["the_confession", "confiteor", "act_of_contrition"]),
-                PrayerBookSection(title: "After Confession", prayerIDs: ["after_confession", "beati_quorum"]),
-            ],
-            orderIDs: ["before_confession", "after_confession"],
-            topic: "Prayers for Confession",
-            searchWords: ["penance", "contrition", "examination", "sorrow for sin"]
-        ),
-        PrayerBookChapter(
-            id: "sacrament", numeral: "VI", title: "The Blessed Sacrament", latinTitle: "De Sanctissimo Sacramento",
-            icon: "ch-monstrance", part: .sacraments,
-            epigraph: "Jesus present in the Host.",
-            sections: [
-                PrayerBookSection(title: "A visit", prayerIDs: ["st_alphonsus_visit", "adoro_te", "spiritual_communion", "angels_prayer_fatima", "o_sacrament_most_holy"]),
-                PrayerBookSection(title: "Benediction", prayerIDs: ["o_salutaris", "tantum_ergo", "divine_praises", "o_sacrum_convivium", "ave_verum"]),
-                PrayerBookSection(title: "The litany", prayerIDs: ["litany_blessed_sacrament"]),
-            ],
-            orderIDs: ["visit"],
-            topic: "Prayers of the Eucharist",
-            searchWords: ["eucharist", "the eucharist", "adoration", "benediction", "visit", "holy hour"]
-        ),
-        PrayerBookChapter(
-            id: "holy_ghost", numeral: "VII", title: "The Holy Trinity and the Holy Spirit", latinTitle: "De Sanctissima Trinitate",
-            icon: "ch-dove", part: .god,
-            sections: [
-                PrayerBookSection(title: "The Holy Trinity", prayerIDs: ["glory_be", "st_patrick_breastplate"]),
-                PrayerBookSection(title: "The Holy Spirit", prayerIDs: ["come_holy_ghost", "veni_creator", "veni_sancte_spiritus", "breathe_in_me", "seven_gifts", "secret_of_sanctity", "holy_spirit_enlighten", "litany_holy_ghost"]),
-            ],
-            topic: "Prayers to the Holy Spirit",
-            searchWords: ["holy spirit", "holy ghost", "the holy ghost", "paraclete", "pentecost", "trinity"]
-        ),
-        PrayerBookChapter(
-            id: "our_lord", numeral: "VIII", title: "Our Lord", latinTitle: "De Domino Nostro",
-            icon: "ch-chi-rho", part: .god,
-            sections: [
-                PrayerBookSection(title: "The Holy Name", prayerIDs: ["litany_holy_name", "jesus_prayer"]),
-                PrayerBookSection(title: "The Holy Child", prayerIDs: ["infant_of_prague"]),
-                PrayerBookSection(title: "The Sacred Heart", prayerIDs: ["litany_sacred_heart", "consecration_sacred_heart", "reparation_sacred_heart", "efficacious_novena"]),
-                PrayerBookSection(title: "The Holy Face", prayerIDs: ["golden_arrow"]),
-                PrayerBookSection(title: "The Precious Blood", prayerIDs: ["litany_precious_blood", "precious_blood_offering"]),
-                PrayerBookSection(title: "The Passion", prayerIDs: ["en_ego", "st_francis_before_crucifix"]),
-                PrayerBookSection(title: "Christ the King", prayerIDs: ["christ_the_king"]),
-                PrayerBookSection(title: "Divine Mercy", prayerIDs: ["divine_mercy_chaplet", "jesus_i_trust_in_thee"]),
-                PrayerBookSection(title: "Prayers to Christ", prayerIDs: ["anima_christi", "st_richard", "suscipe", "o_jesus_living_in_mary", "generosity_ignatius", "abandonment_foucauld", "radiating_christ", "peace_prayer"]),
-            ],
-            topic: "Prayers to Jesus",
-            searchWords: ["jesus", "christ", "sacred heart", "holy name", "precious blood", "holy face", "divine mercy", "passion"]
-        ),
-        PrayerBookChapter(
-            id: "our_lady", numeral: "IX", title: "The Blessed Virgin", latinTitle: "De Beata Maria Virgine",
-            icon: "ch-lily", part: .god,
-            epigraph: "Prayers to Mary.",
-            sections: [
-                PrayerBookSection(title: "The Rosary", prayerIDs: ["hail_mary", "fatima_prayer", "hail_holy_queen", "rosary_closing_prayer"]),
-                PrayerBookSection(title: "The litany", prayerIDs: ["litany_loreto"]),
-                PrayerBookSection(title: "The Church's songs to Mary", prayerIDs: ["alma_redemptoris", "ave_regina_caelorum", "regina_caeli", "hail_holy_queen", "magnificat", "ave_maris_stella", "inviolata", "salve_mater", "tota_pulchra", "flos_carmeli"]),
-                PrayerBookSection(title: "Every day", prayerIDs: ["angelus", "sub_tuum", "memorare", "o_domina_mea", "three_hail_marys", "miraculous_medal", "totus_tuus", "mary_after_communion"]),
-                PrayerBookSection(title: "Her titles", prayerIDs: ["perpetual_help", "our_lady_of_good_counsel", "our_lady_of_lourdes", "immaculate_heart", "mary_help_of_christians", "our_lady_of_mount_carmel"]),
-                PrayerBookSection(title: "Her Seven Sorrows", prayerIDs: ["stabat_mater", "our_lady_of_sorrows", "litany_seven_sorrows", "sorrows_closing_prayer"]),
-            ],
-            topic: "Prayers to Mary",
-            searchWords: ["mary", "our lady", "the virgin", "virgin mary", "blessed virgin", "marian", "mother of god"]
-        ),
-        PrayerBookChapter(
-            id: "st_joseph", numeral: "X", title: "St Joseph", latinTitle: "De Sancto Ioseph",
-            icon: "lv-saint", part: .god,
-            sections: [
-                PrayerBookSection(title: "Prayers to St Joseph", prayerIDs: ["ad_te_beate_ioseph", "memorare_st_joseph", "litany_st_joseph", "st_joseph_workers", "st_joseph_happy_death", "st_joseph_pray", "jmj"]),
-            ],
-            topic: "Prayers to St Joseph",
-            searchWords: ["joseph", "saint joseph"]
-        ),
-        PrayerBookChapter(
-            id: "saints", numeral: "XI", title: "Angels and Saints", latinTitle: "De Angelis et Sanctis",
-            icon: "lv-saint", part: .god,
-            sections: [
-                PrayerBookSection(title: "The angels", prayerIDs: ["angele_dei", "st_michael_prayer"]),
-                PrayerBookSection(title: "The saints", prayerIDs: ["litany_of_the_saints", "st_anne", "st_anthony", "st_jude", "st_peregrine", "st_benedict_medal", "st_dominic_o_lumen", "st_patrick_breastplate", "st_francis_before_crucifix"]),
-            ],
-            topic: "Prayers to the Angels and Saints",
-            searchWords: ["angels", "saints", "guardian angel", "archangel"]
-        ),
-        PrayerBookChapter(
-            id: "seasons", numeral: "XII", title: "Feasts and Seasons", latinTitle: "De Festis et Temporibus",
-            icon: "ch-window", part: .year,
-            sections: [
-                PrayerBookSection(title: "Advent and Christmas", prayerIDs: ["alma_redemptoris", "nunc_dimittis"]),
-                PrayerBookSection(title: "Lent and the Passion", prayerIDs: ["stabat_mater", "miserere", "en_ego"]),
-                PrayerBookSection(title: "Easter", prayerIDs: ["regina_caeli"]),
-                PrayerBookSection(title: "Pentecost", prayerIDs: ["veni_creator", "veni_sancte_spiritus"]),
-                PrayerBookSection(title: "Christ the King", prayerIDs: ["christ_the_king"]),
-                PrayerBookSection(title: "All Saints and All Souls", prayerIDs: ["litany_of_the_saints", "st_gertrude"]),
-                PrayerBookSection(title: "The year's end", prayerIDs: ["te_deum"]),
-            ],
-            topic: "Prayers for the Church's Year",
-            searchWords: ["feasts", "seasons", "advent", "christmas", "lent", "easter", "liturgical year"]
-        ),
-        PrayerBookChapter(
-            id: "thanks", numeral: "XIII", title: "Thanksgiving", latinTitle: "Gratiarum Actio",
-            icon: "lv-wheat", part: .year,
-            sections: [
-                PrayerBookSection(title: "Songs of thanks", prayerIDs: ["te_deum", "magnificat", "benedictus", "nunc_dimittis", "grace_after"]),
-            ],
-            topic: "Prayers of Thanksgiving",
-            searchWords: ["thanks", "thank you", "gratitude", "te deum"]
-        ),
-        PrayerBookChapter(
-            id: "litanies", numeral: "XIV", title: "Litanies", latinTitle: "Litaniæ",
-            icon: "lv-procession-cross", part: .year,
-            epigraph: "Short petitions, each with the same response.",
-            sections: [
-                PrayerBookSection(title: "Litanies", prayerIDs: ["litany_loreto", "litany_holy_name", "litany_sacred_heart", "litany_st_joseph", "litany_of_the_saints", "litany_holy_ghost", "litany_precious_blood", "litany_blessed_sacrament", "litany_seven_sorrows", "litany_of_humility"]),
-            ],
-            topic: "Litanies",
-            searchWords: ["the litanies", "litany"]
-        ),
-        PrayerBookChapter(
-            id: "church", numeral: "XV", title: "For the Church and the Living", latinTitle: "Pro Vivis",
-            icon: "ch-church", part: .others,
-            sections: [
-                PrayerBookSection(title: "The Church", prayerIDs: ["prayer_for_the_pope", "prayer_for_priests", "conversion_of_sinners", "rosary_closing_prayer"]),
-                PrayerBookSection(title: "Family", prayerIDs: ["prayer_for_family", "parents_for_children"]),
-                PrayerBookSection(title: "Country and peace", prayerIDs: ["prayer_for_our_country", "da_pacem"]),
-            ],
-            topic: "Prayers for the Church and the Living",
-            searchWords: ["the church", "the pope", "holy father", "priests", "family", "country", "peace", "the living"]
-        ),
-        PrayerBookChapter(
-            id: "sick", numeral: "XVI", title: "The Sick and the Dying", latinTitle: "Pro Infirmis et Morientibus",
-            icon: "ch-chalice", part: .others,
-            sections: [
-                PrayerBookSection(title: "For the sick", prayerIDs: ["prayer_for_the_sick", "st_peregrine"]),
-                PrayerBookSection(title: "For a happy death", prayerIDs: ["happy_death", "st_joseph_happy_death"]),
-            ],
-            topic: "Prayers for the Sick and the Dying",
-            searchWords: ["sick", "illness", "healing", "dying", "happy death", "death"]
-        ),
-        PrayerBookChapter(
-            id: "departed", numeral: "XVII", title: "The Faithful Departed", latinTitle: "Pro Defunctis",
-            icon: "ch-candle", part: .others,
-            epigraph: "For those who have died.",
-            sections: [
-                PrayerBookSection(title: "For the dead", prayerIDs: ["requiem_aeternam", "de_profundis", "fidelium_deus", "deceased_parents", "st_gertrude"]),
-            ],
-            orderIDs: ["holy_souls"],
-            topic: "Prayers for Those Who Have Died",
-            searchWords: ["for the dead", "the dead", "for those who have died", "departed", "holy souls", "purgatory", "funeral"]
-        ),
-        PrayerBookChapter(
-            id: "needs", numeral: "XVIII", title: "In Time of Need", latinTitle: "In Variis Necessitatibus",
-            icon: "lv-stella-maris", part: .others,
-            sections: [
-                PrayerBookSection(title: "In trouble", prayerIDs: ["sub_tuum", "memorare", "perpetual_help", "st_michael_prayer", "st_jude"]),
-                PrayerBookSection(title: "At work, at study, on the road", prayerIDs: ["actiones_nostras", "aquinas_before_study", "prayer_for_travel", "st_anthony"]),
-                PrayerBookSection(title: "For trust and peace", prayerIDs: ["nada_te_turbe", "abandonment_foucauld", "lead_kindly_light", "litany_of_humility"]),
-            ],
-            orderIDs: ["trouble"],
-            topic: "Prayers in Time of Need",
-            searchWords: ["need", "trouble", "help", "protection", "occasions", "travel", "work", "study", "trust", "peace"]
+    /// The book's topics, in its order: the words from the document, and
+    /// how the app sets each (its glyph, its shelf, its orders of prayer)
+    /// from `layouts`
+    static let chapters: [PrayerBookChapter] = LibraryContent.prayerBook.chapters.map { chapter in
+        let layout = layouts[chapter.id] ?? ChapterLayout(icon: "lv-prayer-book", part: .others)
+        return PrayerBookChapter(
+            id: chapter.id, numeral: chapter.numeral, title: chapter.title, latinTitle: chapter.latinTitle,
+            icon: layout.icon, part: layout.part, epigraph: chapter.note,
+            sections: chapter.sections.map { PrayerBookSection(title: $0.title, prayerIDs: $0.prayerIDs) },
+            orderIDs: layout.orderIDs, topic: chapter.topic ?? "", searchWords: chapter.searchWords
         )
+    }
+
+    /// How the app sets a topic: not words, so not the server's. A topic
+    /// the server adds that the app does not know yet stands on the last
+    /// shelf under the book's own glyph.
+    struct ChapterLayout {
+        let icon: String
+        let part: PrayerBookPart
+        var orderIDs: [String] = []
+    }
+
+    static let layouts: [String: ChapterLayout] = [
+        "first": ChapterLayout(icon: "ch-praying-hands", part: .everyDay),
+        "day": ChapterLayout(icon: "lv-hourglass", part: .everyDay, orderIDs: ["morning", "angelus", "night", "table"]),
+        "short": ChapterLayout(icon: "lv-dart", part: .everyDay),
+        "mass": ChapterLayout(icon: "ch-altar", part: .sacraments, orderIDs: ["before_mass", "after_mass"]),
+        "penance": ChapterLayout(icon: "ch-keys", part: .sacraments, orderIDs: ["before_confession", "after_confession"]),
+        "sacrament": ChapterLayout(icon: "ch-monstrance", part: .sacraments, orderIDs: ["visit"]),
+        "holy_ghost": ChapterLayout(icon: "ch-dove", part: .god),
+        "our_lord": ChapterLayout(icon: "ch-chi-rho", part: .god),
+        "our_lady": ChapterLayout(icon: "ch-lily", part: .god),
+        "st_joseph": ChapterLayout(icon: "lv-saint", part: .god),
+        "saints": ChapterLayout(icon: "lv-saint", part: .god),
+        "seasons": ChapterLayout(icon: "ch-window", part: .year),
+        "thanks": ChapterLayout(icon: "lv-wheat", part: .year),
+        "litanies": ChapterLayout(icon: "lv-procession-cross", part: .year),
+        "church": ChapterLayout(icon: "ch-church", part: .others),
+        "sick": ChapterLayout(icon: "ch-chalice", part: .others),
+        "departed": ChapterLayout(icon: "ch-candle", part: .others, orderIDs: ["holy_souls"]),
+        "needs": ChapterLayout(icon: "lv-stella-maris", part: .others, orderIDs: ["trouble"]),
     ]
 
     /// How many prayers the book holds, each counted once, however many
@@ -692,7 +441,15 @@ enum PrayerBook {
         "te_deum": "thanks",
     ]
 
-    static var ourLady: PrayerBookChapter { chapter("our_lady")! }
+    /// Our Lady's topic. The book's document always has it (a copy without
+    /// it is refused, `PrayerBookDocument.namedChapterIDs`); an empty one
+    /// stands in should it ever not
+    static var ourLady: PrayerBookChapter {
+        chapter("our_lady")
+            ?? PrayerBookChapter(
+                id: "our_lady", numeral: "", title: "The Blessed Virgin", latinTitle: "",
+                icon: "ch-lily", part: .god, sections: [])
+    }
 
     // MARK: Orders
 
@@ -821,23 +578,17 @@ enum PrayerBook {
 
     /// The English set beneath a prayer that is known by its Latin name,
     /// where its Latin would only say the name again
-    static let englishNames: [String: String] = [
-        "memorare": "Remember, O most gracious Virgin Mary",
-    ]
+    static let englishNames: [String: String] = Dictionary(
+        LibraryContent.prayerBook.prayers.compactMap { prayer in prayer.englishName.map { (prayer.id, $0) } },
+        uniquingKeysWith: { first, _ in first }
+    )
 
     /// The names a list gives a prayer where its title is longer than
     /// the name people use
-    static let listTitles: [String: String] = [
-        "hail_mary": "Hail Mary",
-        "our_father": "Our Father",
-        "glory_be": "Glory Be",
-        "memorare": "Memorare",
-        "litany_loreto": "Litany of Loreto",
-        "st_michael_prayer": "St Michael",
-        "apostles_creed": "Apostles' Creed",
-        "act_of_contrition": "Act of Contrition",
-        "sign_of_cross": "Sign of the Cross",
-    ]
+    static let listTitles: [String: String] = Dictionary(
+        LibraryContent.prayerBook.prayers.compactMap { prayer in prayer.listTitle.map { (prayer.id, $0) } },
+        uniquingKeysWith: { first, _ in first }
+    )
 
     // MARK: Our Lady's best-known prayers
 

@@ -110,6 +110,12 @@ Checks
                     generated files still match their generators (Tools/GenCheck)
   check             lint + lint self-test + gen-check + asc tests + build + test
 
+Content
+  library-seed [--from DIR | --live [BASE] | --check]
+                    copy the server's Prayer Book and chant library documents
+                    into app/Resources/Library (default: the API checkout's
+                    priv/library beside this one)
+
 App Store Connect (Tools/AppStore/README.md)
   asc <command>     status, versioning, builds, versions, groups, bump, archive, upload,
                     create-version, whats-new, attach-build, testflight,
@@ -235,6 +241,8 @@ cmd_lint() {
 
 cmd_gen_check() { run python3 Tools/GenCheck/gen_check.py "$@"; }
 
+cmd_library_seed() { run python3 Tools/LibrarySeed/seed.py "$@"; }
+
 cmd_check() {
   local results=() status=0 started=$SECONDS
   step() { # name, command...
@@ -285,6 +293,7 @@ case "$command" in
   clean) cmd_clean "$@" ;;
   lint) cmd_lint "$@" ;;
   gen-check) cmd_gen_check "$@" ;;
+  library-seed) cmd_library_seed "$@" ;;
   check) cmd_check "$@" ;;
   hooks) cmd_hooks "$@" ;;
   asc) exec python3 Tools/AppStore/asc.py "$@" ;;

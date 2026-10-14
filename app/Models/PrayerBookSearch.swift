@@ -23,33 +23,14 @@ extension PrayerBook {
         return bare(one) == bare(other)
     }
 
-    /// The other names a prayer is looked for by
-    static let prayerSearchWords: [String: [String]] = [
-        "litany_loreto": ["litany of loreto", "loretto", "litany of our lady"],
-        "peace_prayer": ["prayer of st francis", "instrument of thy peace", "instrument of your peace"],
-        "divine_mercy_chaplet": ["divine mercy", "chaplet", "st faustina"],
-        "efficacious_novena": ["novena", "padre pio"],
-        "litany_of_the_saints": ["all saints", "litaniae sanctorum"],
-        "litany_seven_sorrows": ["our lady of sorrows", "seven sorrows"],
-        "st_anthony": ["lost things", "anthony of padua"],
-        "st_jude": ["hopeless cases", "desperate cases"],
-        "st_peregrine": ["cancer"],
-        "prayer_for_travel": ["journey", "travel", "itinerarium"],
-        "aquinas_before_study": ["study", "students", "exams"],
-        "prayer_for_the_sick": ["sick", "illness", "healing"],
-        "lead_kindly_light": ["newman"],
-        "newman_definite_service": ["newman", "purpose"],
-        "christ_the_king": ["consecration to christ the king"],
-        "consecration_sacred_heart": ["sacred heart", "enthronement"],
-        "st_benedict_medal": ["vade retro satana", "benedict medal", "exorcism"],
-        "hail_holy_queen": ["salve regina"],
-        "st_michael_prayer": ["st michael", "michael the archangel"],
-        "ad_te_beate_ioseph": ["st joseph", "prayer to st joseph"],
-        "angele_dei": ["guardian angel"],
-        "memorare": ["remember o most gracious"],
-        "anima_christi": ["soul of christ"],
-        "regina_caeli": ["queen of heaven rejoice"],
-    ]
+    /// The other names a prayer is looked for by, from the book's
+    /// document
+    static let prayerSearchWords: [String: [String]] = Dictionary(
+        LibraryContent.prayerBook.prayers.compactMap { prayer in
+            prayer.searchWords.isEmpty ? nil : (prayer.id, prayer.searchWords)
+        },
+        uniquingKeysWith: { first, _ in first }
+    )
 
     /// The other names an order of prayer is looked for by
     static let orderSearchWords: [String: [String]] = [

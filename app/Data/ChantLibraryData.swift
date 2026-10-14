@@ -5,8 +5,8 @@
 //  The Chant Library's curation: which chant is which kind, which belong
 //  to which season and feast, the devotions of the week and the month,
 //  the occasions sung as a set, and the course chants are learned in.
-//  Hand-written, unlike `ChantCatalogData.swift` beside it, which the
-//  generator writes from the recordings. Every id here is a catalog id,
+//  Hand-written, unlike the catalog itself, which the server keeps
+//  (`LibraryContent.chantLibrary`). Every id here is a catalog id,
 //  and `ChantLibraryTests` fails if one is not, or if a chant is left
 //  without a kind.
 //

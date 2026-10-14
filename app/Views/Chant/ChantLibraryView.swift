@@ -34,8 +34,9 @@
 //  learning course went with it; a chant is learned from its own page.
 //
 //  What the library is singing stands at the foot of the whole app
-//  (`ContentView`), not of this page alone. Everything here is bundled: a
-//  chapel with no signal still has every chant.
+//  (`ContentView`), not of this page alone. The words ship in the app and
+//  the recordings come down on Wi-Fi (`ChantAssetStore`): once they have,
+//  a chapel with no signal still has every chant.
 //
 //  Reached from the Chapel's Chant tile, Explore, and a chant's page.
 //

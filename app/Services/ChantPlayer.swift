@@ -82,7 +82,7 @@ final class ChantPlayer {
 
     private init() {
         let stored = ChantCatalog.chant(UserSettings.shared.chapelChantID)
-        current = stored ?? ChantCatalog.antiphonOfTheSeason() ?? ChantCatalog.all[0]
+        current = stored ?? ChantCatalog.antiphonOfTheSeason() ?? ChantCatalog.all.first ?? .unavailable
     }
 
     // MARK: - What is sounding

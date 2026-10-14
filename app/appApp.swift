@@ -29,6 +29,9 @@ struct appApp: App {
 
     private let userSettings = UserSettings.shared
 
+    /// Whether this launch has asked the server for the library yet
+    @State private var libraryChecked = false
+
     init() {
         FontRegistrar.registerBundledFonts()
         TrueDevotionLibrary.preload()
@@ -39,6 +42,11 @@ struct appApp: App {
         // Once: the unlicensed chants earlier builds saved offline go,
         // whether or not the offline library is ever opened again
         OfflineContentService.retireUnlicensedChants()
+        // A newer chant library kept from the server has its files
+        // fetched before the next launch reads it
+        LibraryContentSync.shared.onChantLibraryKept = { document in
+            ChantAssetStore.shared.libraryKept(document)
+        }
         // Before the introduction can finish: an install that had not
         // finished it by now is new, and this version is no news to it
         WhatsNewStore.shared.decideAtLaunch()
@@ -88,6 +96,19 @@ struct appApp: App {
                 // A clock asleep through a suspension may wake late: the
                 // prayer day must be right the moment the page is seen
                 PrayerDayClock.shared.refresh()
+                // The Prayer Book's words and the chant library: asked of
+                // the server at launch, then once a day; a newer copy is
+                // read at the next launch
+                // (never while the app only hosts the tests: a hundred
+                // megabytes of chant on every simulator they run on)
+                if !LibraryContent.hostsTests {
+                    LibraryContentSync.shared.refreshIfDue(force: !libraryChecked)
+                    libraryChecked = true
+                    // The chants' recordings and sheet music, on Wi-Fi,
+                    // taking up whatever a run before could not finish
+                    ChantAssetStore.shared.syncInBackground()
+                    ChantAssetStore.shared.watchConnection()
+                }
             }
         }
     }
