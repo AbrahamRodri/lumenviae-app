@@ -172,6 +172,13 @@ final class AudioClaim {
         service?.reset(preservingNowPlaying: preservingNowPlaying)
     }
 
+    /// A span the Lock Screen shows in place of the recording's own length
+    /// and place, while this claim holds its item: a silence kept on a
+    /// loop of a few seconds. Nil gives the recording's back.
+    func setNowPlayingTimeline(_ timeline: AudioService.NowPlayingTimeline?) {
+        service?.setNowPlayingTimeline(timeline, for: self)
+    }
+
     /// The claim's speed: a borrowed one at a new pace, or the app's own
     func setRate(_ rate: Double) {
         service?.setRate(rate, for: self)

@@ -1357,10 +1357,10 @@ write concurrent code here:
   gives the audio session back; a claim already ended releases nothing.
   Kept for the item alone, every consecration day whose chant was heard
   ended on a reading with the Veni Creator still on the Lock Screen over
-  nothing, and the session held. The Chant Library and the consecration
-  day hold claims. The prayer flow, the spoken Rosary, the reading shelf
-  and the Prayer Book still use the older surface — owner tokens for the
-  arrows (`setTrackNavigation(owner:)`),
+  nothing, and the session held. The Chant Library, the consecration
+  day and a meditation set's narration hold claims. The spoken Rosary,
+  the reading shelf and the Prayer Book still use the older surface —
+  owner tokens for the arrows (`setTrackNavigation(owner:)`),
   `setPlaybackRate(_:remember:borrower:)`, `currentURL` and
   `loadGeneration` — which keeps working beside claims until each moves.
   `appTests/AudioClaimTests.swift` covers how claims are given, ended
@@ -1370,6 +1370,31 @@ write concurrent code here:
   `play()` on it would still activate the session, so a test loads and
   plays only where it needs the wish to play (a chant stopped by a call),
   stopping in the same turn of the main actor, so nothing is heard.
+
+  **Every recording is on the Lock Screen** (Oct 2026): a title, a
+  second line, a picture and a moving scrubber, and play, pause and
+  the arrows doing what the screen's own controls do. Every flow keeps
+  a transport above the player's and hands it to the Lock Screen
+  (`onTransport`, on its claim or its arrows; a claim's answers even
+  before it has arrows), so a pause taken there, or headphones pulled
+  out, holds what the flow would have done next: the Rosary's next
+  mystery coming on by itself, the pray-along's next prayer after its
+  breath (play then goes on to it), a set of chants' silence, the
+  shelf's place written. The arrows stand where a flow steps tracks and
+  the ten-second skips where it has nowhere to step (a prayer opened
+  alone), and a set's silence cannot be scrubbed. A flow that names no painting,
+  or one the catalog lacks, gets `AudioService.fallbackArtworkAsset`;
+  a chant hangs its library painting, a prayer its pray-along painting,
+  a consecration day its period's. A set's silence is named for the
+  chant it leads to ("Next, after a pause"), never "Silence", and its
+  scrubber shows the whole silence at the clock's pace
+  (`NowPlayingTimeline`), not the five seconds looping under it. The
+  entry is cleared when the flow ends. What would be published, and
+  which controls stand, can be read off a service that keeps off the
+  system (`nowPlayingInfo`, `remoteCommandAvailability`,
+  `handleRemoteCommand`), which `appTests/LockScreenPlayerTests.swift`
+  does. The Angelus bell and the reminder sounds are sound effects and
+  stay off the Lock Screen.
 
   **The narration's speed is a slider** (`PlaybackSpeedChoice`, in the
   playback sheet and the Voice & speed sheet): 0.7× to 1.7×

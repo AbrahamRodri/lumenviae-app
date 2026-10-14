@@ -146,8 +146,36 @@ struct ChantSilence: Equatable {
     let note: String
     var endsAt: Date?
     var remaining: TimeInterval
+    /// How long the whole silence is, for the Lock Screen's scrubber
+    var length: TimeInterval = 0
 
     var isPaused: Bool { endsAt == nil }
+
+    /// The silence as the Lock Screen shows it: its whole length, not the
+    /// few seconds of bundled silence looping under it
+    var timeline: AudioService.NowPlayingTimeline {
+        AudioService.NowPlayingTimeline(duration: max(length, remaining), remaining: remaining, endsAt: endsAt)
+    }
+}
+
+// MARK: - ChantSilenceNowPlaying
+
+/// What the Lock Screen shows while a set keeps a silence: the chant it
+/// leads to, or the one just sung when the set ends on it — never a track
+/// called "Silence"
+struct ChantSilenceNowPlaying: Equatable {
+    let title: String
+    let subtitle: String
+    let painting: String
+
+    init(queue: ChantQueue?, current: Chant) {
+        let next = queue?.nextChant
+        let shown = next ?? current
+        let set = queue?.title ?? "Chant"
+        title = shown.latinTitle
+        subtitle = next == nil ? set : "\(set) · Next, after a pause"
+        painting = ChantCatalog.painting(for: shown)
+    }
 }
 
 // MARK: - ChantTurn length

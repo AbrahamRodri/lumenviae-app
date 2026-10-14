@@ -255,11 +255,7 @@ final class AudioService {
                   let reasonValue = info[AVAudioSessionRouteChangeReasonKey] as? UInt,
                   let reason = AVAudioSession.RouteChangeReason(rawValue: reasonValue),
                   reason == .oldDeviceUnavailable else { return }
-            if let owner = self.onTransportRequest {
-                owner(.pause)
-            } else {
-                self.pause()
-            }
+            self.audioRouteLost()
         }
 
         // The audio server can be reset out from under us. Every player and
@@ -317,6 +313,15 @@ final class AudioService {
     /// taken here did nothing and the next prayer began anyway — through
     /// the phone's speaker, if the headphones had just come out.
     private var onTransportRequest: ((TransportRequest) -> Void)?
+
+    /// Who answers play and pause from outside the screen: the arrows'
+    /// owner, else the claim holding the player — a claim's transport is
+    /// its own whether or not it has arrows on the Lock Screen yet (a
+    /// chant still arriving, a Rosary's mystery whose arrows come after
+    /// its load)
+    private var transportHandler: ((TransportRequest) -> Void)? {
+        onTransportRequest ?? holder?.onTransport
+    }
 
     /// Whether a next/previous step exists right now. The Lock Screen
     /// arrows and AirPods presses are enabled from these, so pressing ⏭ on
@@ -396,49 +401,123 @@ final class AudioService {
         updateTrackCommandAvailability()
     }
 
+    /// Which of the Lock Screen's track controls are live: the arrows, or
+    /// the ten-second skips. One or the other, never both.
+    struct RemoteCommandAvailability: Equatable {
+        var next: Bool
+        var previous: Bool
+        var skipForward: Bool
+        var skipBackward: Bool
+    }
+
+    /// What the Lock Screen and the headphones are offered now. Read by
+    /// the tests, and written to the system by
+    /// `updateTrackCommandAvailability`.
+    var remoteCommandAvailability: RemoteCommandAvailability {
+        let next = trackNavigationOwner != nil && canGoNext
+        let previous = trackNavigationOwner != nil && canGoPrevious
+        // ±10s stands wherever no arrow does — no flow driving tracks, or
+        // one with nowhere to step (a prayer opened alone) — so a missed
+        // line can still be replayed from the Lock Screen.
+        let skips = !next && !previous
+        return RemoteCommandAvailability(
+            // Track arrows appear only where there is somewhere to go.
+            next: next,
+            previous: previous,
+            skipForward: skips,
+            skipBackward: skips
+        )
+    }
+
     private func updateTrackCommandAvailability() {
         guard integratesWithSystem else { return }
         let center = MPRemoteCommandCenter.shared()
-        let hasNavigation = trackNavigationOwner != nil
-
-        // Track arrows appear only where there is somewhere to go.
-        center.nextTrackCommand.isEnabled = hasNavigation && canGoNext
-        center.previousTrackCommand.isEnabled = hasNavigation && canGoPrevious
-
-        // ±10s stays available whenever a flow is not driving tracks, so a
-        // missed line can still be replayed from the Lock Screen.
-        center.skipForwardCommand.isEnabled = !hasNavigation
-        center.skipBackwardCommand.isEnabled = !hasNavigation
+        let available = remoteCommandAvailability
+        center.nextTrackCommand.isEnabled = available.next
+        center.previousTrackCommand.isEnabled = available.previous
+        center.skipForwardCommand.isEnabled = available.skipForward
+        center.skipBackwardCommand.isEnabled = available.skipBackward
     }
 
     // MARK: - Remote Commands (Lock Screen / headphones / watch)
 
+    /// A press from outside the screen: the Lock Screen, Control Center,
+    /// the headphones, the car
+    enum RemoteCommand {
+        case play
+        case pause
+        case togglePlayPause
+        case nextTrack
+        case previousTrack
+    }
+
+    /// What a remote press does, in one place, so the Lock Screen's
+    /// targets and the tests take the same path.
+    ///
+    /// An owner with a transport of its own answers play and pause first —
+    /// even with no track loaded, since a spoken Rosary paused between
+    /// prayers has let its last one go and still has everything to resume.
+    ///
+    /// AirPods double/triple presses arrive as track commands, not skips.
+    /// `.noSuchContent` at the ends: reporting `.success` for a press that
+    /// did nothing tells iOS the gesture landed, so the user gets neither
+    /// movement nor feedback.
+    @discardableResult
+    func handleRemoteCommand(_ command: RemoteCommand) -> MPRemoteCommandHandlerStatus {
+        switch command {
+        case .play, .pause, .togglePlayPause:
+            let request: TransportRequest = switch command {
+            case .play: .play
+            case .pause: .pause
+            default: .toggle
+            }
+            if let owner = transportHandler {
+                owner(request)
+                return .success
+            }
+            guard player != nil else { return .noActionableNowPlayingItem }
+            switch request {
+            case .play: play()
+            case .pause: pause()
+            case .toggle: togglePlayback()
+            }
+            return .success
+        case .nextTrack:
+            guard let advance = onNextTrack else { return .noActionableNowPlayingItem }
+            guard canGoNext else { return .noSuchContent }
+            advance()
+            return .success
+        case .previousTrack:
+            guard let back = onPreviousTrack else { return .noActionableNowPlayingItem }
+            guard canGoPrevious else { return .noSuchContent }
+            back()
+            return .success
+        }
+    }
+
+    /// Headphones pulled out, or the car's audio gone: the system has
+    /// paused the player, and the owner's transport pauses with it, so a
+    /// flow waiting between two recordings never begins the next from
+    /// the phone's speaker
+    func audioRouteLost() {
+        if let owner = transportHandler {
+            owner(.pause)
+        } else {
+            pause()
+        }
+    }
+
     private func setupRemoteCommands() {
         let center = MPRemoteCommandCenter.shared()
 
-        // An owner with a transport of its own answers first — even with
-        // no track loaded, since a spoken Rosary paused between prayers
-        // has let its last one go and still has everything to resume.
         center.playCommand.addTarget { [weak self] _ in
-            guard let self else { return .noActionableNowPlayingItem }
-            if let owner = self.onTransportRequest { owner(.play); return .success }
-            guard self.player != nil else { return .noActionableNowPlayingItem }
-            self.play()
-            return .success
+            self?.handleRemoteCommand(.play) ?? .noActionableNowPlayingItem
         }
         center.pauseCommand.addTarget { [weak self] _ in
-            guard let self else { return .noActionableNowPlayingItem }
-            if let owner = self.onTransportRequest { owner(.pause); return .success }
-            guard self.player != nil else { return .noActionableNowPlayingItem }
-            self.pause()
-            return .success
+            self?.handleRemoteCommand(.pause) ?? .noActionableNowPlayingItem
         }
         center.togglePlayPauseCommand.addTarget { [weak self] _ in
-            guard let self else { return .noActionableNowPlayingItem }
-            if let owner = self.onTransportRequest { owner(.toggle); return .success }
-            guard self.player != nil else { return .noActionableNowPlayingItem }
-            self.togglePlayback()
-            return .success
+            self?.handleRemoteCommand(.togglePlayPause) ?? .noActionableNowPlayingItem
         }
 
         center.skipForwardCommand.isEnabled = true
@@ -462,26 +541,19 @@ final class AudioService {
                   let event = event as? MPChangePlaybackPositionCommandEvent else {
                 return .noActionableNowPlayingItem
             }
+            // A span shown in place of the recording (a set's silence) is
+            // the clock's, not the few seconds of recording beneath it
+            guard self.nowPlayingTimeline == nil else { return .commandFailed }
             self.seek(to: event.positionTime)
             return .success
         }
 
-        // AirPods double/triple presses arrive as track commands, not
-        // skips — without these, a double-tap does nothing at all.
-        // `.noSuchContent` at the ends: reporting `.success` for a press
-        // that did nothing tells iOS the gesture landed, so the user gets
-        // neither movement nor feedback.
+        // Without these, an AirPods double-tap does nothing at all.
         center.nextTrackCommand.addTarget { [weak self] _ in
-            guard let self, let advance = self.onNextTrack else { return .noActionableNowPlayingItem }
-            guard self.canGoNext else { return .noSuchContent }
-            advance()
-            return .success
+            self?.handleRemoteCommand(.nextTrack) ?? .noActionableNowPlayingItem
         }
         center.previousTrackCommand.addTarget { [weak self] _ in
-            guard let self, let back = self.onPreviousTrack else { return .noActionableNowPlayingItem }
-            guard self.canGoPrevious else { return .noSuchContent }
-            back()
-            return .success
+            self?.handleRemoteCommand(.previousTrack) ?? .noActionableNowPlayingItem
         }
 
         // Press-and-hold scrubbing. Wired remotes, most Bluetooth car head
@@ -977,16 +1049,73 @@ final class AudioService {
         updateNowPlayingInfo()
     }
 
+    /// The Lock Screen's entry as last published, or nil when there is
+    /// none. Kept whether or not this instance speaks to the system, so a
+    /// test can read what the Lock Screen would show.
+    private(set) var nowPlayingInfo: [String: Any]?
+
+    /// The painting the Lock Screen falls back on when a flow names none
+    /// that the app has: never a blank square where a picture belongs
+    static let fallbackArtworkAsset = "mary_sistine_madonna"
+
+    /// The asset the Lock Screen's picture is drawn from, for the tests:
+    /// the flow's own, else the fallback. Nil when the flow handed over an
+    /// image of its own (a book's cloth).
+    var nowPlayingArtworkName: String? {
+        nowPlayingArtworkImage == nil ? (nowPlayingArtworkAsset ?? Self.fallbackArtworkAsset) : nil
+    }
+
+    /// A span the Lock Screen's scrubber shows in place of the recording's
+    /// own: a set of chants keeping a silence of several minutes plays a
+    /// few seconds of bundled silence on a loop, and its scrubber would
+    /// otherwise run 0:00 to 0:05 over and over.
+    struct NowPlayingTimeline: Equatable {
+        /// The whole span
+        var duration: Double
+        /// What is left of it while it is held still
+        var remaining: Double
+        /// When it ends, while it is running; nil while it is held
+        var endsAt: Date?
+
+        var elapsed: Double {
+            let left = endsAt.map { max(0, $0.timeIntervalSinceNow) } ?? remaining
+            return min(max(0, duration - left), duration)
+        }
+    }
+
+    /// The span in place of the recording's, for the item loaded now.
+    /// Let go when another item is loaded or the player is reset.
+    private var nowPlayingTimeline: NowPlayingTimeline?
+
+    /// Shows `timeline` on the Lock Screen in place of the recording's own
+    /// length and place, while `claim` holds the item. Nil gives the
+    /// recording's back.
+    func setNowPlayingTimeline(_ timeline: NowPlayingTimeline?, for claim: AudioClaim) {
+        guard holdsItem(claim) else { return }
+        nowPlayingTimeline = timeline
+        updateNowPlayingInfo()
+    }
+
+    /// The Lock Screen's length, place and speed: the recording's, or the
+    /// span shown in its place, which runs at the clock's pace
+    private var publishedTimeline: (duration: Double, elapsed: Double, rate: Double) {
+        if let timeline = nowPlayingTimeline {
+            let running = isPlaying && timeline.endsAt != nil
+            return (timeline.duration, timeline.elapsed, running ? 1.0 : 0.0)
+        }
+        return (duration, currentTime, isPlaying ? playbackRate : 0.0)
+    }
+
     /// Publishes metadata to the Lock Screen / Control Center.
     private func updateNowPlayingInfo() {
-        guard integratesWithSystem else { return }
+        let timeline = publishedTimeline
         var info: [String: Any] = [:]
         info[MPMediaItemPropertyTitle] = nowPlayingTitle ?? "Meditation"
         info[MPMediaItemPropertyArtist] = nowPlayingSubtitle ?? "Lumen Viae"
-        info[MPMediaItemPropertyPlaybackDuration] = duration
-        info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
-        info[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? playbackRate : 0.0
-        info[MPNowPlayingInfoPropertyDefaultPlaybackRate] = playbackRate
+        info[MPMediaItemPropertyPlaybackDuration] = timeline.duration
+        info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = timeline.elapsed
+        info[MPNowPlayingInfoPropertyPlaybackRate] = timeline.rate
+        info[MPNowPlayingInfoPropertyDefaultPlaybackRate] = nowPlayingTimeline == nil ? playbackRate : 1.0
         info[MPNowPlayingInfoPropertyMediaType] = MPNowPlayingInfoMediaType.audio.rawValue
         info[MPNowPlayingInfoPropertyIsLiveStream] = false
         if let album = nowPlayingAlbum {
@@ -998,24 +1127,32 @@ final class AudioService {
             info[MPNowPlayingInfoPropertyPlaybackQueueIndex] = index
             info[MPNowPlayingInfoPropertyPlaybackQueueCount] = count
         }
-        if let artwork = lockScreenArtwork() {
-            info[MPMediaItemPropertyArtwork] = artwork
-        }
+        info[MPMediaItemPropertyArtwork] = lockScreenArtwork()
+        publish(info)
+    }
+
+    /// Writes the entry to the Lock Screen, or clears it
+    private func publish(_ info: [String: Any]?) {
+        nowPlayingInfo = info
+        guard integratesWithSystem else { return }
         MPNowPlayingInfoCenter.default().nowPlayingInfo = info
-        MPNowPlayingInfoCenter.default().playbackState = isPlaying ? .playing : .paused
+        MPNowPlayingInfoCenter.default().playbackState = info == nil ? .stopped : (isPlaying ? .playing : .paused)
     }
 
     /// Nominal bounds for Lock Screen artwork. The request handler hands
     /// back the asset at its natural size and the system scales it.
     private static let artworkBounds = CGSize(width: 1024, height: 1024)
 
-    /// The mystery's painting on the Lock Screen player.
+    /// The painting on the Lock Screen player: the image a flow handed
+    /// over, else the asset it named, else the fallback — a chant, a
+    /// prayer or a reading whose flow named none once stood over a blank
+    /// square.
     ///
     /// The image is loaded inside the request handler, which the system
     /// calls lazily and off this path: decoding a full-screen painting
     /// here would run on the main actor at exactly the moment the
     /// artwork transition is animating on screen.
-    private func lockScreenArtwork() -> MPMediaItemArtwork? {
+    private func lockScreenArtwork() -> MPMediaItemArtwork {
         if let image = nowPlayingArtworkImage {
             if let cached = cachedImageArtwork, cached.image === image {
                 return cached.artwork
@@ -1025,12 +1162,13 @@ final class AudioService {
             return artwork
         }
 
-        guard let asset = nowPlayingArtworkAsset else { return nil }
+        let asset = nowPlayingArtworkAsset ?? Self.fallbackArtworkAsset
         if let cached = cachedArtwork, cached.asset == asset {
             return cached.artwork
         }
         let artwork = MPMediaItemArtwork(boundsSize: Self.artworkBounds) { _ in
-            UIImage(named: asset) ?? UIImage()
+            // A name the catalog lacks falls back rather than draw nothing
+            UIImage(named: asset) ?? UIImage(named: Self.fallbackArtworkAsset) ?? UIImage()
         }
         cachedArtwork = (asset, artwork)
         return artwork
@@ -1042,16 +1180,24 @@ final class AudioService {
     /// Lock Screen scrubber from elapsed at the moment rate was set, so a
     /// stale elapsed makes the scrubber drift or crawl over silence.
     private func updateNowPlayingPlaybackState() {
-        guard integratesWithSystem else { return }
-        guard var info = MPNowPlayingInfoCenter.default().nowPlayingInfo else {
-            updateNowPlayingInfo()
+        guard var info = nowPlayingInfo else {
+            // Nothing published since the last reset: only a loaded item
+            // earns an entry, or a pause after leaving would bring back a
+            // Lock Screen player for a flow that has ended
+            if player != nil { updateNowPlayingInfo() }
             return
         }
-        info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
-        info[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? playbackRate : 0.0
-        info[MPNowPlayingInfoPropertyDefaultPlaybackRate] = playbackRate
-        MPNowPlayingInfoCenter.default().nowPlayingInfo = info
-        MPNowPlayingInfoCenter.default().playbackState = isPlaying ? .playing : .paused
+        let timeline = publishedTimeline
+        // With no recording in the player — a flow between two of its own,
+        // the next one on its way — the length published stands, rather
+        // than read 0:00 of 0:00
+        if player != nil || nowPlayingTimeline != nil {
+            info[MPMediaItemPropertyPlaybackDuration] = timeline.duration
+        }
+        info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = timeline.elapsed
+        info[MPNowPlayingInfoPropertyPlaybackRate] = timeline.rate
+        info[MPNowPlayingInfoPropertyDefaultPlaybackRate] = nowPlayingTimeline == nil ? playbackRate : 1.0
+        publish(info)
     }
 
     // MARK: - Loading Audio
@@ -1449,9 +1595,9 @@ final class AudioService {
         isBuffering = false
         errorMessage = nil
         rewindOnResume = false
-        if !preservingNowPlaying, integratesWithSystem {
-            MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
-            MPNowPlayingInfoCenter.default().playbackState = .stopped
+        nowPlayingTimeline = nil
+        if !preservingNowPlaying {
+            publish(nil)
             nowPlayingAlbum = nil
             nowPlayingQueueIndex = nil
             nowPlayingQueueCount = nil
@@ -1532,10 +1678,10 @@ final class AudioService {
     /// Freezes the Lock Screen scrubber while buffering: rate 0 at the true
     /// elapsed time, so it stops advancing over audio that isn't arriving.
     private func publishStalledState() {
-        guard integratesWithSystem, var info = MPNowPlayingInfoCenter.default().nowPlayingInfo else { return }
-        info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
+        guard var info = nowPlayingInfo else { return }
+        info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = publishedTimeline.elapsed
         info[MPNowPlayingInfoPropertyPlaybackRate] = 0.0
-        MPNowPlayingInfoCenter.default().nowPlayingInfo = info
+        publish(info)
     }
 
     private func removeTransportObservations() {

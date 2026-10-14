@@ -331,6 +331,7 @@ final class ChantPlayer {
                 url,
                 title: chant.latinTitle,
                 subtitle: self.nowPlayingSubtitle(for: chant),
+                artworkAssetName: ChantCatalog.painting(for: chant),
                 album: ChantCatalog.credit,
                 claimNowPlaying: true
             )
@@ -547,7 +548,12 @@ final class ChantPlayer {
     // MARK: Silence
 
     private func beginSilence(note: String, seconds: TimeInterval) {
-        silence = ChantSilence(note: note, endsAt: Date().addingTimeInterval(seconds), remaining: seconds)
+        silence = ChantSilence(
+            note: note,
+            endsAt: Date().addingTimeInterval(seconds),
+            remaining: seconds,
+            length: seconds
+        )
         scheduleSilenceEnd(after: seconds)
         playSilentClip(note: note)
     }
@@ -569,10 +575,14 @@ final class ChantPlayer {
         loadTask?.cancel()
         loadTask = Task { @MainActor [weak self] in
             guard let self else { return }
+            // Named on the Lock Screen for the chant it leads to, with the
+            // whole silence on its scrubber
+            let shown = ChantSilenceNowPlaying(queue: self.queue, current: self.current)
             let ready = await claim.load(
                 url,
-                title: note.isEmpty ? "Silence" : note,
-                subtitle: self.queue?.title ?? "Silence",
+                title: shown.title,
+                subtitle: shown.subtitle,
+                artworkAssetName: shown.painting,
                 album: ChantCatalog.credit,
                 claimNowPlaying: true
             )
@@ -585,11 +595,14 @@ final class ChantPlayer {
                 return
             }
             guard !Task.isCancelled, claim.isCurrent,
-                  ready || claim.holdsItem, let silence = self.silence, !silence.isPaused else { return }
+                  ready || claim.holdsItem, let silence = self.silence else { return }
+            claim.setNowPlayingTimeline(silence.timeline)
+            guard !silence.isPaused else { return }
             self.attachNavigation(to: claim)
             claim.play()
         }
     }
+
 
     private func scheduleSilenceEnd(after seconds: TimeInterval) {
         silenceTask?.cancel()
@@ -620,7 +633,10 @@ final class ChantPlayer {
         self.silence = silence
         silenceTask?.cancel()
         silenceTask = nil
-        if silentClipLoaded { claim?.pause() }
+        if silentClipLoaded {
+            claim?.pause()
+            claim?.setNowPlayingTimeline(silence.timeline)
+        }
     }
 
     private func resumeSilence() {
@@ -629,6 +645,7 @@ final class ChantPlayer {
         self.silence = silence
         scheduleSilenceEnd(after: silence.remaining)
         if silentClipLoaded, let claim, claim.holdsItem {
+            claim.setNowPlayingTimeline(silence.timeline)
             claim.play()
         } else {
             playSilentClip(note: silence.note)
