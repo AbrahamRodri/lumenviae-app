@@ -23,6 +23,11 @@ struct ChantScoreImage: View {
     /// The page is not on the phone and could not be fetched (offline)
     @State private var unavailable = false
 
+    /// Tries made since: each coming back to the app, or the phone coming
+    /// back online, tries a page that could not be had again
+    @State private var attempt = 0
+    @Environment(\.scenePhase) private var scenePhase
+
     init(part: ChantScorePart) {
         self.part = part
         // A score already read is drawn at once, never faded in again
@@ -67,16 +72,26 @@ struct ChantScoreImage: View {
         }
         .animation(Motion.crossfade, value: drawing == nil)
         .animation(Motion.crossfade, value: unavailable)
-        .task(id: part.file) {
+        .task(id: LoadKey(file: part.file, attempt: attempt, online: ChantAssetStore.shared.reconnections)) {
             if drawing == nil {
                 drawing = await ChantScoreStore.shared.load(part)
                 unavailable = drawing == nil
             }
         }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active, unavailable { attempt += 1 }
+        }
         .accessibilityElement()
         .accessibilityLabel("Sheet music: \(part.caption)")
         .accessibilityAddTraits(.isImage)
     }
+}
+
+/// What a score's load is keyed by: a change of any part loads again
+private struct LoadKey: Hashable {
+    let file: String
+    let attempt: Int
+    let online: Int
 }
 
 // MARK: - ChantScoreView

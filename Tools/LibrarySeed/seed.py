@@ -15,10 +15,18 @@ Usage (through Tools/dev library-seed):
                              # which also gives each its version
     seed.py --check          # exit 1 if the API checkout's files differ from the app's
 
+Each copy is the server's file byte for byte with one line added, its
+"version", the fingerprint the server serves (LumenViae.Rosary.Content
+.version: SHA-256 of the sections as compact JSON with sorted keys, its
+first 16 hex digits), so a phone with the shipped copy never fetches the
+same document again. --check removes that line and compares the rest.
+
 A document that does not hold together (an id twice, a chapter or group
 naming what the document lacks, a chant with no file) is refused.
 """
+import hashlib
 import json
+import os
 import pathlib
 import subprocess
 import sys
@@ -28,11 +36,28 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 SEED = ROOT / "app" / "Resources" / "Library"
 NAMES = {"prayer_book": ("prayer-book", "version,updated_at,prayers,chapters"),
          "chant_library": ("chant-library", "version,updated_at,groups,chants")}
+SECTIONS = {"prayer_book": ["prayers", "chapters"], "chant_library": ["groups", "chants"]}
+
+
+def version(name: str, doc: dict) -> str:
+    """The server's fingerprint of a document's sections."""
+    sections = {key: doc[key] for key in SECTIONS[name]}
+    text = json.dumps(sections, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
+
+
+def with_version(name: str, raw: bytes, doc: dict) -> bytes:
+    """The server's file with its version on the line after the brace."""
+    assert raw.startswith(b"{\n"), f"{name}: expected the file to open on its own line"
+    line = f'  "version": "{version(name, doc)}",\n'.encode("utf-8")
+    return b"{\n" + line + raw[2:]
 
 
 def api_checkout() -> pathlib.Path:
     """priv/library of the API repository beside this one (a worktree's
-    common checkout counts)."""
+    common checkout counts), or LUMEN_VIAE_API_DIR's."""
+    if os.environ.get("LUMEN_VIAE_API_DIR"):
+        return pathlib.Path(os.environ["LUMEN_VIAE_API_DIR"]) / "priv" / "library"
     common = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "--path-format=absolute", "--git-common-dir"],
                             capture_output=True, text=True).stdout.strip()
     for base in [ROOT.parent, pathlib.Path(common).parent.parent if common else None]:
@@ -87,6 +112,7 @@ def main():
         # Copied byte for byte, so the app's copy is the server's file
         raw = {name: (source / f"{name}.json").read_bytes() for name in NAMES}
         docs = {name: json.loads(data) for name, data in raw.items()}
+        raw = {name: with_version(name, data, docs[name]) for name, data in raw.items()}
 
     stale = []
     for name, doc in docs.items():

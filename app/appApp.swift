@@ -29,9 +29,6 @@ struct appApp: App {
 
     private let userSettings = UserSettings.shared
 
-    /// Whether the app was launched to host the unit tests
-    private static let hostsTests = ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
-
     /// Whether this launch has asked the server for the library yet
     @State private var libraryChecked = false
 
@@ -104,12 +101,13 @@ struct appApp: App {
                 // read at the next launch
                 // (never while the app only hosts the tests: a hundred
                 // megabytes of chant on every simulator they run on)
-                if !Self.hostsTests {
+                if !LibraryContent.hostsTests {
                     LibraryContentSync.shared.refreshIfDue(force: !libraryChecked)
                     libraryChecked = true
                     // The chants' recordings and sheet music, on Wi-Fi,
                     // taking up whatever a run before could not finish
                     ChantAssetStore.shared.syncInBackground()
+                    ChantAssetStore.shared.watchConnection()
                 }
             }
         }

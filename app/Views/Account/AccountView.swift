@@ -1312,7 +1312,7 @@ struct PrivacyPolicySheet: View {
 
                     InfoBlock(
                         title: "What the App Fetches",
-                        text: "Meditations, narration and the Hours of Prayer (the Divine Office) come from our own server; the Mass texts from Missale Meum; the books and recordings under Spiritual Reading from Project Gutenberg and LibriVox. Each receives the request itself, as any website does, and nothing more. The app carries no analytics or advertising code from anyone else, and nothing is used to track you."
+                        text: "Meditations, narration, the Hours of Prayer (the Divine Office), the words of the prayers, and the chants' recordings and sheet music come from our own server; the Mass texts from Missale Meum; the books and recordings under Spiritual Reading from Project Gutenberg and LibriVox. Each receives the request itself, as any website does, and nothing more. The app carries no analytics or advertising code from anyone else, and nothing is used to track you."
                     )
 
                     InfoBlock(

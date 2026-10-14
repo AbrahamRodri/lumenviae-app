@@ -62,12 +62,26 @@ extension ChantLibraryDocument: LibraryDocument {
         }
         for chant in chants {
             guard groupIDs.contains(chant.groupID) else { return "\(chant.id) is in no known group" }
-            guard chant.audio.url != nil, chant.audio.sha256.count == 64 else { return "\(chant.id) has no recording" }
-            if chant.score.contains(where: { $0.url == nil || $0.sha256.count != 64 }) {
+            guard Self.isFile(url: chant.audio.url, sha256: chant.audio.sha256) else {
+                return "\(chant.id) has no recording"
+            }
+            if chant.score.contains(where: { !Self.isFile(url: $0.url, sha256: $0.sha256) }) {
                 return "\(chant.id) has a score page with no file"
             }
+            guard Self.isHTTPS(chant.sourceURL) else { return "\(chant.id) has no source page" }
         }
         return nil
+    }
+
+    /// A file the app may fetch: an https URL and a SHA-256 in hex
+    nonisolated static func isFile(url: String?, sha256: String) -> Bool {
+        guard let url, isHTTPS(url) else { return false }
+        return sha256.count == 64 && sha256.allSatisfy { $0.isHexDigit && !$0.isUppercase }
+    }
+
+    nonisolated static func isHTTPS(_ string: String) -> Bool {
+        guard let url = URL(string: string) else { return false }
+        return url.scheme == "https" && url.host?.isEmpty == false
     }
 }
 
@@ -158,8 +172,13 @@ nonisolated enum LibraryContent {
 
     /// The book and the library as this launch reads them. The shipped
     /// copy is checked by the tests, so the app always has one.
+    /// Whether the app was launched to host the unit tests, which read
+    /// the shipped copies alone: never what a simulator kept from the
+    /// server
+    static let hostsTests = ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
+
     static let prayerBook: PrayerBookDocument = {
-        guard let document = prayerBookStore.current() else {
+        guard let document = hostsTests ? prayerBookStore.seed : prayerBookStore.current() else {
             assertionFailure("No Prayer Book: the app's prayer_book.json is missing or broken")
             return PrayerBookDocument(prayers: [], chapters: [])
         }
@@ -167,7 +186,7 @@ nonisolated enum LibraryContent {
     }()
 
     static let chantLibrary: ChantLibraryDocument = {
-        guard let document = chantLibraryStore.current() else {
+        guard let document = hostsTests ? chantLibraryStore.seed : chantLibraryStore.current() else {
             assertionFailure("No chant library: the app's chant_library.json is missing or broken")
             return ChantLibraryDocument(groups: [], chants: [])
         }
@@ -282,8 +301,15 @@ final class LibraryContentSync {
         _ store: LibraryDocumentStore<Document>, path: String, type: String, fields: String
     ) async throws -> Document? {
         let bare = try await attributes(of: "\(baseURL)/v2/\(path)", as: Version.self)
-        let onPhone = await Self.version(on: store)
-        guard let version = bare.version, version != onPhone else { return nil }
+        let onPhone = await Self.stamp(on: store)
+        guard let version = bare.version, version != onPhone.version else { return nil }
+        // A server copy no newer than the phone's (an app update shipped a
+        // later one) is not fetched: it would never be read
+        if let theirs = bare.updatedAt.flatMap(LibraryContent.date(from:)),
+           let ours = onPhone.updatedAt.flatMap(LibraryContent.date(from:)),
+           theirs <= ours {
+            return nil
+        }
 
         var components = URLComponents(string: "\(baseURL)/v2/\(path)")
         components?.queryItems = [URLQueryItem(name: "fields[\(type)]", value: fields)]
@@ -292,13 +318,14 @@ final class LibraryContentSync {
         return try await Self.keep(data, in: store)
     }
 
-    /// The version of the copy on the phone, read off the main actor: a
-    /// document is up to a megabyte of JSON
+    /// The version and date of the copy on the phone, read off the main
+    /// actor: a document is up to a megabyte of JSON
     @concurrent
-    nonisolated static func version<Document: LibraryDocument>(
+    nonisolated static func stamp<Document: LibraryDocument>(
         on store: LibraryDocumentStore<Document>
-    ) async -> String? {
-        store.current()?.version
+    ) async -> (version: String?, updatedAt: String?) {
+        let current = store.current()
+        return (current?.version, current?.updatedAt)
     }
 
     @concurrent
@@ -310,6 +337,12 @@ final class LibraryContentSync {
 
     private struct Version: Decodable {
         let version: String?
+        let updatedAt: String?
+
+        enum CodingKeys: String, CodingKey {
+            case version
+            case updatedAt = "updated_at"
+        }
     }
 
     private func attributes<T: Decodable>(of urlString: String, as: T.Type) async throws -> T {

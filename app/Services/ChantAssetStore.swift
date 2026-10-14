@@ -18,6 +18,7 @@
 
 import CryptoKit
 import Foundation
+import Network
 
 // MARK: - ChantFile
 
@@ -36,6 +37,7 @@ nonisolated struct ChantFile: Hashable, Sendable {
 
 enum ChantAssetError: Error, Equatable {
     case noURL
+    case sizeMismatch
     case checksumMismatch
     case badStatus(Int)
 }
@@ -61,8 +63,17 @@ final class ChantAssetStore {
     /// Whether a run is fetching files now
     private(set) var isFetching = false
 
+    /// Counts the times the phone has come back online, so a page of
+    /// sheet music that could not be had tries again
+    private(set) var reconnections = 0
+
+    @ObservationIgnored private var pathMonitor: NWPathMonitor?
+    @ObservationIgnored private var wasOnline = true
+
     @ObservationIgnored private var run: Task<Void, Never>?
-    @ObservationIgnored private var scoreFetches: [String: Task<URL?, Never>] = [:]
+    /// One download a file, whoever asked for it (the Wi-Fi run, Save for
+    /// Offline, a score's page): a second asker waits on the first
+    @ObservationIgnored private var inFlight: [String: Task<URL, Error>] = [:]
     @ObservationIgnored private let wifiSession: URLSession
     @ObservationIgnored private let anySession: URLSession
 
@@ -88,6 +99,27 @@ final class ChantAssetStore {
         try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         LibraryContent.excludeFromBackup(directory)
         present = Self.names(in: directory)
+    }
+
+    /// Watches the network, and when it comes back counts a reconnection
+    /// and takes up the files a run could not finish. Started by the app
+    /// at launch, never by the tests.
+    func watchConnection() {
+        guard pathMonitor == nil else { return }
+        let monitor = NWPathMonitor()
+        monitor.pathUpdateHandler = { [weak self] path in
+            let online = path.status == .satisfied
+            Task { @MainActor [weak self] in self?.connectionChanged(online: online) }
+        }
+        monitor.start(queue: DispatchQueue(label: "ChantAssetStore.path"))
+        pathMonitor = monitor
+    }
+
+    func connectionChanged(online: Bool) {
+        defer { wasOnline = online }
+        guard online, !wasOnline else { return }
+        reconnections += 1
+        syncInBackground()
     }
 
     nonisolated static func names(in directory: URL) -> Set<String> {
@@ -135,7 +167,11 @@ final class ChantAssetStore {
     /// A run under way is left to finish; the next call takes up what it
     /// could not.
     func syncInBackground(_ chants: [Chant]? = nil) {
-        let wanted = (chants ?? ChantCatalog.all).flatMap(\.files) + upcoming
+        let chants = chants ?? ChantCatalog.all
+        // A catalog that could not be read is no reason to let go of
+        // every chant on the phone
+        guard !chants.isEmpty else { return }
+        let wanted = chants.flatMap(\.files) + upcoming
         prune(keeping: Set(wanted))
         guard run == nil else { return }
         let missing = missing(wanted)
@@ -162,16 +198,30 @@ final class ChantAssetStore {
     /// One file now, on any network: a score whose page has been opened.
     /// Nil when it cannot be had (offline).
     func fetchNow(_ file: ChantFile) async -> URL? {
+        try? await fetchOne(file, session: anySession)
+    }
+
+    /// The file on the phone, fetching it first if it is not: through the
+    /// one download of it under way, if there is one
+    func fetchOne(_ file: ChantFile, session: URLSession) async throws -> URL {
         if let local = localURL(for: file) { return local }
-        if let pending = scoreFetches[file.localName] { return await pending.value }
-        let task = Task<URL?, Never> { [directory, anySession] in
-            try? await Self.download(file, session: anySession, into: directory)
+        let name = file.localName
+        let task: Task<URL, Error>
+        if let pending = inFlight[name] {
+            task = pending
+        } else {
+            task = Task { [directory] in try await Self.download(file, session: session, into: directory) }
+            inFlight[name] = task
         }
-        scoreFetches[file.localName] = task
-        let url = await task.value
-        scoreFetches[file.localName] = nil
-        if url != nil { present.insert(file.localName) }
-        return url
+        do {
+            let url = try await task.value
+            present.insert(name)
+            if inFlight[name] == task { inFlight[name] = nil }
+            return url
+        } catch {
+            if inFlight[name] == task { inFlight[name] = nil }
+            throw error
+        }
     }
 
     func missingFiles(of chants: [Chant]) -> [ChantFile] {
@@ -185,9 +235,20 @@ final class ChantAssetStore {
         }
     }
 
-    /// Files a few at a time; a run stops at the first failure of the
-    /// network itself (Wi-Fi gone) rather than try each file in turn. A
-    /// file that fails its checksum is let go and the run goes on.
+    /// Whether an error means the network itself is gone (offline, Wi-Fi
+    /// lost, not allowed on this network) or the run was put down, when
+    /// trying the next file is pointless. A timeout or a file the server
+    /// would not give counts against that one file.
+    nonisolated static func stopsTheRun(_ error: Error) -> Bool {
+        if error is CancellationError { return true }
+        guard let error = error as? URLError else { return false }
+        return [.notConnectedToInternet, .networkConnectionLost, .cancelled, .dataNotAllowed]
+            .contains(error.code)
+    }
+
+    /// Files a few at a time; a run stops when the network itself is gone
+    /// rather than try each file in turn. A file that fails (its hash, a
+    /// timeout) is let go and the run goes on.
     private func fetch(_ files: [ChantFile], session: URLSession, progress: ((Int, Int) -> Void)?) async -> Int {
         isFetching = true
         defer { isFetching = false }
@@ -195,27 +256,26 @@ final class ChantAssetStore {
         var failed = 0
         var queue = files[...]
         progress?(0, files.count)
-        await withTaskGroup(of: (ChantFile, Result<URL, Error>).self) { group in
+        await withTaskGroup(of: (ChantFile, Error?).self) { group in
             var networkDown = false
             func startNext() {
                 guard !networkDown, let file = queue.popFirst() else { return }
-                group.addTask { [directory] in
+                group.addTask { [weak self] in
+                    guard let self else { return (file, CancellationError()) }
                     do {
-                        return (file, .success(try await Self.download(file, session: session, into: directory)))
+                        _ = try await self.fetchOne(file, session: session)
+                        return (file, nil)
                     } catch {
-                        return (file, .failure(error))
+                        return (file, error)
                     }
                 }
             }
             for _ in 0..<Self.parallel { startNext() }
-            while let (file, result) = await group.next() {
+            while let (_, error) = await group.next() {
                 done += 1
-                switch result {
-                case .success:
-                    present.insert(file.localName)
-                case .failure(let error):
+                if let error {
                     failed += 1
-                    if error is URLError { networkDown = true }
+                    if Self.stopsTheRun(error) { networkDown = true }
                 }
                 progress?(done, files.count)
                 startNext()
@@ -239,16 +299,23 @@ final class ChantAssetStore {
     }
 
     /// Moves a file into `directory` if it is the one `file` names; a
-    /// file whose hash or size is wrong is never kept
+    /// file whose size or hash is wrong is never kept. It is written
+    /// under a name of its own (`<hash>.<uuid>.part`) and moved into
+    /// place whole, so two writers never share a half-written file.
     nonisolated static func install(_ source: URL, as file: ChantFile, into directory: URL) throws -> URL {
+        let size = (try? source.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? -1
+        guard size == file.bytes else { throw ChantAssetError.sizeMismatch }
         guard try sha256(of: source) == file.sha256.lowercased() else { throw ChantAssetError.checksumMismatch }
         let destination = directory.appendingPathComponent(file.localName)
-        let staging = directory.appendingPathComponent(file.localName + ".part")
+        let staging = directory.appendingPathComponent("\(file.localName).\(UUID().uuidString).part")
         let manager = FileManager.default
-        try? manager.removeItem(at: staging)
+        defer { try? manager.removeItem(at: staging) }
         try manager.copyItem(at: source, to: staging)
-        if manager.fileExists(atPath: destination.path) { try manager.removeItem(at: destination) }
-        try manager.moveItem(at: staging, to: destination)
+        do {
+            try manager.moveItem(at: staging, to: destination)
+        } catch where manager.fileExists(atPath: destination.path) {
+            // Kept already by another writer: the same bytes, by its hash
+        }
         return destination
     }
 
@@ -277,8 +344,9 @@ final class ChantAssetStore {
         let manager = FileManager.default
         let all = (try? manager.contentsOfDirectory(atPath: directory.path)) ?? []
         for name in all where !names.contains(name) {
-            // A file being written by a run under way is left to it
-            if name.hasSuffix(".part"), run != nil { continue }
+            // A file being written is left to its writer; a half-written
+            // one is let go only when nothing is being fetched
+            if name.hasSuffix(".part"), !inFlight.isEmpty { continue }
             try? manager.removeItem(at: directory.appendingPathComponent(name))
         }
         present = present.intersection(names)

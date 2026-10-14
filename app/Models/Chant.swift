@@ -188,11 +188,15 @@ struct Chant: Identifiable, Hashable {
 enum ChantCatalog {
 
     /// The Parish Book of Chant's sections, in its order
-    static let groups: [ChantGroup] = LibraryContent.chantLibrary.groups.map { group in
-        ChantGroup(
-            id: group.id, title: group.title, note: group.note,
-            parts: group.parts.map { ChantGroupPart(title: $0.title, note: $0.note, chantIDs: $0.chantIDs) }
-        )
+    static let groups: [ChantGroup] = groups(from: LibraryContent.chantLibrary)
+
+    static func groups(from document: ChantLibraryDocument) -> [ChantGroup] {
+        document.groups.map { group in
+            ChantGroup(
+                id: group.id, title: group.title, note: group.note,
+                parts: group.parts.map { ChantGroupPart(title: $0.title, note: $0.note, chantIDs: $0.chantIDs) }
+            )
+        }
     }
 
     /// Every chant, in the catalog's order (which decides a prayer's
@@ -220,7 +224,7 @@ enum ChantCatalog {
     }
 
     static func chants(in part: ChantGroupPart) -> [Chant] {
-        part.chantIDs.compactMap { chant($0) }
+        index.chants(in: part)
     }
 
     /// The other settings of the same prayer — the solemn tone beside the
@@ -262,6 +266,17 @@ enum ChantCatalog {
 }
 
 // MARK: - From the document
+
+extension Chant {
+    /// What the player holds when the catalog could not be read at all: no
+    /// recording, so a play says the chant could not be played
+    static let unavailable = Chant(
+        id: "", groupID: "", latinTitle: "", englishTitle: "", setting: nil, detail: "",
+        prayerIDs: [], duration: 0, score: [],
+        audio: ChantFile(url: nil, bytes: 0, sha256: "", fileExtension: "m4a"),
+        sourceURL: ChantCatalog.sourceSite
+    )
+}
 
 extension Chant {
     init(document chant: ChantLibraryDocument.Chant) {
@@ -357,6 +372,11 @@ struct ChantCatalogIndex {
             .mapValues { $0.sorted { $0.duration < $1.duration } }
 
         foldedTitles = all.map { ($0, SearchText.fold($0.latinTitle), SearchText.fold($0.englishTitle)) }
+    }
+
+    /// A part's chants, in its order: what a section's page lists
+    func chants(in part: ChantGroupPart) -> [Chant] {
+        part.chantIDs.compactMap { chants[$0] }
     }
 
     /// The other settings of `chant`'s prayers among `all`: the solemn

@@ -2403,7 +2403,8 @@ write concurrent code here:
   silently each morning, never carried forward, chained into a streak or
   counted against anyone.
 
-- **The Prayer Book** — the Church's common prayers, bundled, with a
+- **The Prayer Book** — the Church's common prayers, kept by the server
+  with a copy in the app, with a
   tab of its own, **Prayers**, in the Journal's old place in the bar (the
   "Prayer Book Rethink" design, its Combined boards). Every other door
   turns to that tab rather than pushing a second copy of the book (an
@@ -3164,7 +3165,7 @@ write concurrent code here:
   chant steps by ten seconds (the system's ±10 glyphs), repeats whole,
   takes its words from the Prayer Book, and is practised whole. No
   timing is ever guessed. The lines come from
-  `Tools/ChantLines/<chant id>.json`, derived from the bundled recording
+  `Tools/ChantLines/<chant id>.json`, derived from the chant's recording
   and checked before a file is added (its README says how), which the
   generator folds into the library's document (below). As of Oct 2026
   all 104 chants are timed, 3,181 lines in all — each file covers its whole
@@ -3196,7 +3197,7 @@ write concurrent code here:
   it fades in rather than rises. It is a filled surface, because it floats over a page that scrolls
   beneath it: every page in the stack takes its height as a bottom
   safe-area inset, so every scroll runs on beneath it and bring their last row
-  clear of it at its real height, where a fixed 112 points was a guess. The inset is laid on the stack's root and on every pushed destination (`ContentView`'s `ChantPlayerRoom`), since one on the NavigationStack itself reaches the root alone; a page keeps no room of its own. The consecration day's transport plays the same bundled
+  clear of it at its real height, where a fixed 112 points was a guess. The inset is laid on the stack's root and on every pushed destination (`ContentView`'s `ChantPlayerRoom`), since one on the NavigationStack itself reaches the root alone; a page keeps no room of its own. The consecration day's transport plays the same
   recording for its Veni Creator, Ave Maris Stella, Magnificat, litanies
   and Glory Be, with a SCORE door and the credit beneath it. Its chant
   is the first the catalog lists for the prayer
@@ -3245,7 +3246,8 @@ write concurrent code here:
   2026) were files on S3 with no licence — the Magnificat a YouTube
   download — and were disconnected for it. Older builds still ask for those
   files through `GET /prayers/:id/audio`, which the server now answers with
-  410 Gone; this app calls no chant endpoint at all.
+  410 Gone; this app reads the chant library from `GET /api/v2/chant-library`
+  and its files from S3 (see The Prayer Book's and the Chant Library's content).
 
   **The files are made by `Tools/Chants/generate.py`** from the
   curated `Tools/Chants/chants.json` (which chants, their English titles
@@ -3922,11 +3924,22 @@ first second.
   (`?fields[prayer_book]=…`) only when the version differs from the copy
   on the phone. A failed fetch, or a copy that does not decode or hold
   together, leaves the old one; the newer one is read at the next launch.
-  The app hosting the unit tests asks nothing (`appApp.hostsTests`).
+  A server copy dated no later than the phone's is not fetched (an app
+  update may ship a newer one). The shipped copies carry the server's
+  `version`, which `Tools/dev library-seed` writes in, so a phone with
+  the shipped copy fetches nothing until the server changes. The app
+  hosting the unit tests asks nothing and reads the shipped copies alone
+  (`LibraryContent.hostsTests`).
 - **The chants' files are not in the app** (it was about 100 MB larger).
   `ChantAssetStore` keeps them in Application Support/Chants, out of the
   backup, each named by its SHA-256 (`ChantFile.localName`) and kept only
-  when its hash matches; a file no chant names any more is let go. After
+  when its size and hash match; a file no chant names any more is let go.
+  A file is downloaded once however many ask for it (the Wi-Fi run, Save
+  for Offline, a score's page wait on the same download), written under a
+  name of its own and moved into place whole. A run stops only when the
+  network itself is gone (offline, connection lost, not allowed); a
+  timeout or a missing file counts against that file alone. A score that
+  could not be had is tried again on coming back to the app or online. After
   the first launch, and on every coming to the front, they come down by
   themselves, three at a time, **on Wi-Fi only**
   (`allowsExpensiveNetworkAccess` and `allowsConstrainedNetworkAccess`
@@ -3976,7 +3989,7 @@ first second.
 
 ## Content Requirements
 
-> **Note:** Meditation sets and their narration are managed in the web app and served by the API; everything under "Bundled in the app" above ships in the app, the chants included.
+> **Note:** Meditation sets and their narration are managed in the web app and served by the API; everything under "Bundled in the app" above ships in the app. The Prayer Book's words and the chant library are the server's, with a starting copy in the app, and the chants' recordings and scores are fetched to the phone.
 
 ### Meditation Content Structure (from API)
 - **Sets:** five meditations each (seven for the Seven Sorrows), in all
@@ -3994,6 +4007,8 @@ GET /meditations/:id/audio[?voice=]     # Freshly signed narration URL + voice +
 GET /voices                             # [NarrationVoice], default first
 GET /rosary/audio[?voice=][&include=]   # Recorded prayers: the spoken Rosary's (prayers, announcements, verses) and the Prayer Book's (include=book)
 POST /completions                       # { meditation_set_id, prayed_aloud } — a finished set's Rosary
+GET /v2/prayer-book                     # JSON:API; bare: version, updated_at; ?fields[prayer_book]=…,prayers,chapters
+GET /v2/chant-library                   # JSON:API; bare: version, updated_at; ?fields[chant_library]=…,groups,chants
 ```
 **The completion is the app's one write, and it is not nothing.** When a
 meditation set's Rosary is finished, `recordCompletion` posts the set id
