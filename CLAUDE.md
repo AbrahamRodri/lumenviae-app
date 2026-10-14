@@ -1310,7 +1310,8 @@ write concurrent code here:
   UserDefaults, with the built-in pair as the first-launch list), and
   the choice is `UserSettings.narrationVoiceSlug`, resolved through the
   catalog: a retired voice with a successor moves to it when the settings
-  load (`NarrationVoice.successors`, the original male voice to Frederick),
+  load (`NarrationVoice.successors`, the original male voice to the
+  `frederick` slug, still shown by its server name, Male),
   and only a withdrawn voice with none falls back to the default. The player
   reads the chosen voice at every load (`PrayerSessionViewModel.
   audioSource`), plays the meditation's default when it lacks the

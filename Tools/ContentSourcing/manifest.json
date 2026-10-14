@@ -427,9 +427,10 @@
       "height": 8140,
       "bytes": 449898,
       "imageset": "topic_confession",
-      "slot": "Prayer Book topic: Confession",
+      "slot": "Prayer Book topic: Confession; the After Confession order",
       "features": [
-        "Prayers: All Topics, and the topic's own page"
+        "Prayers: All Topics, and the topic's own page",
+        "Prayers: an order's shortcut, its page and its Pray together card"
       ],
       "work": "The Return of the Prodigal Son",
       "creator": "Rembrandt van Rijn (1606–1669)",
@@ -1866,9 +1867,10 @@
       "height": 5121,
       "bytes": 445674,
       "imageset": "saint_peter_tears",
-      "slot": "Prayers: Prayer before Confession",
+      "slot": "Prayers: Prayer before Confession; the Before Confession order",
       "features": [
-        "Prayers: a prayer's rows, its page, Saved and Learn by Heart; Chant Library: a chant's rows and page"
+        "Prayers: a prayer's rows, its page, Saved and Learn by Heart; Chant Library: a chant's rows and page",
+        "Prayers: an order's shortcut, its page and its Pray together card"
       ],
       "work": "Saint Peter in Tears",
       "creator": "El Greco (1541–1614)",
@@ -2333,37 +2335,6 @@
       "licence_url": "https://commons.wikimedia.org/wiki/Commons:Reuse_of_PD-Art_photographs",
       "attribution": null,
       "crop": null
-    },
-    {
-      "kind": "painting",
-      "status": "verified",
-      "file_url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Penitent_Magdalene_by_El_Greco_%28Budapest%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-      "commons_file": "File:Penitent Magdalene by El Greco (Budapest).jpg",
-      "width": 4473,
-      "height": 5621,
-      "bytes": 596548,
-      "imageset": "order_penitent_magdalene",
-      "slot": "Prayers: the Before and After Confession orders",
-      "features": [
-        "Prayers: an order's shortcut, its page and its Pray together card"
-      ],
-      "work": "The Penitent Magdalene",
-      "creator": "El Greco (1541–1614)",
-      "date": "c. 1576–77",
-      "collection": "Museum of Fine Arts, Budapest",
-      "source_page": "https://commons.wikimedia.org/wiki/File:Penitent_Magdalene_by_El_Greco_(Budapest).jpg",
-      "commons_search": null,
-      "why": "The penitent with her hand on her heart, looking up for mercy: the orders said around confession, apart from the topic's Prodigal Son. The painted edge is cut away.",
-      "alternate": null,
-      "crop": [
-        0.025,
-        0.02,
-        0.03,
-        0.015
-      ],
-      "licence": "Public domain",
-      "licence_url": "https://commons.wikimedia.org/wiki/Commons:Reuse_of_PD-Art_photographs",
-      "attribution": null
     },
     {
       "kind": "painting",

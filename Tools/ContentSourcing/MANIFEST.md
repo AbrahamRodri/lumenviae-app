@@ -35,7 +35,7 @@ Generated from `sources.py` by `build_manifest.py`; edit there. Machine-readable
 | `topic_first_prayers` | Prayer Book topic: The First Prayers | The Education of the Virgin | Bartolomé Esteban Murillo (1617–1682) | c. 1641 | Museo del Prado, Madrid | Public domain | verified |
 | `topic_daily_prayers` | Prayer Book topic: Daily Prayers | The Angelus | Jean-François Millet (1814–1875) | 1857–59 | Musée d'Orsay, Paris | Public domain | verified |
 | `topic_short_prayers` | Prayer Book topic: Short Prayers | Saint Francis in Meditation | Francisco de Zurbarán (1598–1664) | 1635–39 | The National Gallery, London | Public domain | verified |
-| `topic_confession` | Prayer Book topic: Confession | The Return of the Prodigal Son | Rembrandt van Rijn (1606–1669) | c. 1668 | The Hermitage, Saint Petersburg | Public domain | verified |
+| `topic_confession` | Prayer Book topic: Confession; the After Confession order | The Return of the Prodigal Son | Rembrandt van Rijn (1606–1669) | c. 1668 | The Hermitage, Saint Petersburg | Public domain | verified |
 | `topic_holy_mass` | Prayer Book topic: Holy Mass and Communion | The Mass at Bolsena | Raphael (1483–1520) | 1512–14 | Stanza di Eliodoro, Vatican | Public domain | verified |
 | `topic_blessed_sacrament` | Prayer Book topic: The Blessed Sacrament | The Disputation of the Holy Sacrament | Raphael (1483–1520) | 1509–10 | Stanza della Segnatura, Vatican | Public domain | verified |
 | `topic_holy_trinity` | Prayer Book topic: The Holy Trinity and the Holy Spirit | The Holy Trinity | El Greco (1541–1614) | 1577–79 | Museo del Prado, Madrid | Public domain | verified |
@@ -87,7 +87,7 @@ Generated from `sources.py` by `build_manifest.py`; edit there. Machine-readable
 | `saint_francis_desert` | Prayers: My God and My All; the Peace Prayer | Saint Francis in the Desert | Giovanni Bellini (c. 1430–1516) | c. 1476–78 | The Frick Collection, New York | Public domain | verified |
 | `saint_ambrose` | Prayers: Prayer of St Ambrose before Mass | Saint Ambrose | Giovanni di Paolo (c. 1398–1482) | 1465–70 | The Metropolitan Museum of Art, New York | CC0 | verified |
 | `saint_bonaventure` | Prayers: Prayer of St Bonaventure after Mass (Transfige) | The Prayer of Saint Bonaventure about the Selection of the New Pope | Francisco de Zurbarán (1598–1664) | 1628–29 | Gemäldegalerie Alte Meister, Dresden | Public domain | verified |
-| `saint_peter_tears` | Prayers: Prayer before Confession | Saint Peter in Tears | El Greco (1541–1614) | c. 1587–96 | Bowes Museum (Google Art Project) | Public domain | verified |
+| `saint_peter_tears` | Prayers: Prayer before Confession; the Before Confession order | Saint Peter in Tears | El Greco (1541–1614) | c. 1587–96 | Bowes Museum (Google Art Project) | Public domain | verified |
 | `christ_and_the_adulteress` | Prayers: Making Your Confession | Christ and the Woman Taken in Adultery | Lorenzo Lotto (c. 1480–1556) | 1546–55 | Museo Antico Tesoro della Santa Casa, Loreto | Public domain | verified |
 | `saint_jerome_penitent` | Prayers: I Confess (Confiteor) | Saint Jerome | Jusepe de Ribera (1591–1652) | 1640s | Cleveland Museum of Art | Public domain | verified |
 | `communion_of_apostles` | Prayers: Act of Spiritual Communion | The Communion of the Apostles | Joos van Wassenhove (c. 1410–c. 1480) | 1473–74 | Galleria Nazionale delle Marche, Urbino | CC0 | verified |
@@ -104,7 +104,6 @@ Generated from `sources.py` by `build_manifest.py`; edit there. Machine-readable
 | `apostles_calling_duccio` | Prayers: Prayer of St Richard of Chichester | The Calling of the Apostles Peter and Andrew | Duccio di Buoninsegna (c. 1255–1319) | 1308–11 | National Gallery of Art, Washington | CC0 | verified |
 | `saint_jude` | Prayers: Prayer to St Jude | Saint Jude Thaddeus | El Greco (1541–1614) | c. 1610–14 | Museo del Greco, Toledo (Google Art Project) | Public domain | verified |
 | `saint_benedict` | Prayers: The Verses of the St Benedict Medal | Saint Benedict Blessing the Bread | Juan Rizi (1600–1681) | c. 1655 | Museo del Prado, Madrid | Public domain | verified |
-| `order_penitent_magdalene` | Prayers: the Before and After Confession orders | The Penitent Magdalene | El Greco (1541–1614) | c. 1576–77 | Museum of Fine Arts, Budapest | Public domain | verified |
 | `order_raising_of_lazarus` | Prayers: the For Those Who Have Died order | The Raising of Lazarus | Sebastiano del Piombo (c. 1485–1547) | 1517–19 | The National Gallery, London | Public domain | verified |
 
 Alternates and reasons:
@@ -194,7 +193,6 @@ Alternates and reasons:
 - `apostles_calling_duccio`: Christ calling the fishermen from their boat: 'to follow Thee more nearly'. CC0 from the National Gallery of Art.
 - `saint_jude`: The apostle with his halberd: the saint the prayer asks.
 - `saint_benedict`: Benedict blessing the poisoned bread, the miracle the medal's 'drink thou thy own poison' remembers.
-- `order_penitent_magdalene`: The penitent with her hand on her heart, looking up for mercy: the orders said around confession, apart from the topic's Prodigal Son. The painted edge is cut away.
 - `order_raising_of_lazarus`: "I am the resurrection and the life": the hope the prayers for the dead are said in, apart from the topic's Day of the Dead.
 
 Target format: 1600 px on the long edge, progressive JPEG, 300–800 KB; one 1x image per imageset like the existing ones.
