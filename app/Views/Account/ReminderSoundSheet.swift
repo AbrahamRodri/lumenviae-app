@@ -3,9 +3,8 @@
 //  Lumen Viae
 //
 //  Picker for the daily reminder's notification sound. Tapping an option
-//  selects it and plays a preview, so each bell can be heard before
-//  choosing. All bundled sounds are public domain (pdsounds.org /
-//  Wikimedia Commons) — see ReminderSound in UserSettings.swift.
+//  selects it and plays a preview, so each sound can be heard before
+//  choosing. See ReminderSound in UserSettings.swift for the sounds.
 //
 
 import SwiftUI
@@ -26,7 +25,7 @@ struct ReminderSoundSheet: View {
 
     var body: some View {
         // Scrolls so the last sound is never cut on a small phone, where
-        // the header and four rows stand taller than the medium detent
+        // the header and the rows can stand taller than the medium detent
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 0) {
                 SheetHeader(
@@ -46,7 +45,7 @@ struct ReminderSoundSheet: View {
                     }
                 }
 
-                SheetNote("All sounds are public domain recordings.")
+                SheetNote("The chime was made for Lumen Viae; the bell is a public domain recording.")
             }
         }
         .sheetGround()

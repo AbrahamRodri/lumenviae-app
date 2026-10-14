@@ -100,6 +100,10 @@ gained books of their own, and How to Pray became a course.
 
 ### Changed
 
+- Cut the daily reminder's sounds to two: a Candle Chime made for the
+  app, now the default, and the Altar Bell. Church Bells, Harp of David
+  and Songbird go; the Angelus keeps its peal. A phone set to one of the
+  three falls back to the chime
 - Hang La Tour's Penitent Magdalen over the Chant Library's Before Bed,
   as Night Prayers does, and have VoiceOver name it rather than the
   Agony in the Garden.
