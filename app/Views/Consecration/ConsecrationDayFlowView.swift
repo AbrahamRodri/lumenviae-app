@@ -94,11 +94,18 @@ struct ConsecrationDayFlowView: View {
     /// The chant whose score is open over the day
     @State private var scoreChant: Chant?
 
-    /// Lock Screen artwork for the chants. The Coronation of Mary is the
-    /// nearest bundled image to the consecration's subject and matches the
-    /// crown used as the consecration symbol elsewhere; swap in dedicated
-    /// art here if one is ever added to the catalog.
-    private let dayArtworkAsset = "glorious_coronation"
+    /// Lock Screen artwork for the chants: the period's own painting, the
+    /// one its day page opens on, else the Coronation of Mary, the nearest
+    /// bundled image to the consecration's subject
+    private var dayArtworkAsset: String {
+        phase?.heroImageName ?? "glorious_coronation"
+    }
+
+    /// The Lock Screen's line under the chant's name: the devotion and
+    /// which of its days
+    private var lockScreenSubtitle: String {
+        phase == .consecrationDay ? "Consecration to Mary · Consecration Day" : "Consecration to Mary · Day \(dayNumber)"
+    }
 
     private let audio = AudioService.shared
 
@@ -343,6 +350,22 @@ struct ConsecrationDayFlowView: View {
             onNext: { goToStep(stepIndex + 1) },
             onPrevious: { goToStep(stepIndex - 1) }
         )
+        // Play and pause from the Lock Screen and the headphones do what
+        // the day's own play does: a chant another flow has taken back
+        // since is loaded afresh rather than played over someone else's
+        claim.onTransport = { request in
+            switch request {
+            case .pause: audioClaim?.pause()
+            case .play: playChant()
+            case .toggle: if audioClaim?.isPlaying == true { audioClaim?.pause() } else { playChant() }
+            }
+        }
+    }
+
+    /// The day's play: its chant, loaded afresh when the player is no
+    /// longer the day's
+    private func playChant() {
+        if ownsAudio { audioClaim?.play() } else { loadAudioIfAvailable(thenPlay: true) }
     }
 
     /// The chant this prayer is sung to, from the Chant Library — the
@@ -401,7 +424,7 @@ struct ConsecrationDayFlowView: View {
             let ready = await claim.load(
                 url,
                 title: prayer.title,
-                subtitle: "Consecration to Mary",
+                subtitle: lockScreenSubtitle,
                 artworkAssetName: dayArtworkAsset,
                 album: phase == .consecrationDay ? "Consecration Day" : "Day \(dayNumber)",
                 queueIndex: stepIndex,

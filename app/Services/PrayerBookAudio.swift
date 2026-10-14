@@ -49,6 +49,10 @@ final class PrayAlongVoice {
     /// The Lock Screen's and headphones' arrows
     var onNext: (() -> Void)?
     var onPrevious: (() -> Void)?
+    /// Play and pause from the Lock Screen and the headphones, and
+    /// headphones pulled out: the screen's own, so a pause taken in the
+    /// breath between two prayers holds the next one back
+    var onTransport: ((AudioService.TransportRequest) -> Void)?
 
     private let owner = UUID()
     private var loadedGeneration: Int?
@@ -125,7 +129,8 @@ final class PrayAlongVoice {
         _ prayer: BookPrayer,
         in title: String,
         index: Int,
-        of count: Int
+        of count: Int,
+        painting: String? = nil
     ) async -> Bool {
         guard let url = files[prayer.id] else { return false }
         let audio = AudioService.shared
@@ -136,14 +141,18 @@ final class PrayAlongVoice {
             canGoPrevious: index > 0,
             onNext: { [weak self] in self?.onNext?() },
             onPrevious: { [weak self] in self?.onPrevious?() },
-            onFinish: { [weak self] in self?.onFinish?() }
+            onFinish: { [weak self] in self?.onFinish?() },
+            onTransport: { [weak self] request in self?.transport(request) }
         )
 
         currentPrayerID = prayer.id
         let ready = await audio.loadAudio(
             from: url.absoluteString,
             title: prayer.title,
-            subtitle: title,
+            // The order it is said in, or the book's name for a prayer
+            // said alone, whose title is already the line above
+            subtitle: title == prayer.title ? "Prayers" : title,
+            artworkAssetName: painting,
             album: "Prayers",
             queueIndex: index,
             queueCount: count,
@@ -181,10 +190,30 @@ final class PrayAlongVoice {
         AudioService.shared.play()
     }
 
-    /// Lets the player go: paused, and the arrows handed back
+    /// The screen's answer to a play or pause from outside it, or the
+    /// player's own when the screen gave none
+    private func transport(_ request: AudioService.TransportRequest) {
+        if let onTransport {
+            onTransport(request)
+            return
+        }
+        switch request {
+        case .play: resume()
+        case .pause: pause()
+        case .toggle: if isPlaying { pause() } else { resume() }
+        }
+    }
+
+    /// Lets the player go: stopped, the arrows handed back, and the Lock
+    /// Screen cleared — paused, the prayer stood there after the page
+    /// had closed
     func stop() {
-        if ownsPlayer { AudioService.shared.pause() }
-        AudioService.shared.clearTrackNavigation(owner: owner)
+        let audio = AudioService.shared
+        if ownsPlayer {
+            audio.reset()
+            audio.deactivateSession()
+        }
+        audio.clearTrackNavigation(owner: owner)
         loadedGeneration = nil
         currentPrayerID = nil
     }

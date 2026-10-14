@@ -146,8 +146,16 @@ struct ChantSilence: Equatable {
     let note: String
     var endsAt: Date?
     var remaining: TimeInterval
+    /// How long the whole silence is, for the Lock Screen's scrubber
+    var length: TimeInterval = 0
 
     var isPaused: Bool { endsAt == nil }
+
+    /// The silence as the Lock Screen shows it: its whole length, not the
+    /// few seconds of bundled silence looping under it
+    var timeline: AudioService.NowPlayingTimeline {
+        AudioService.NowPlayingTimeline(duration: max(length, remaining), remaining: remaining, endsAt: endsAt)
+    }
 }
 
 // MARK: - ChantTurn length

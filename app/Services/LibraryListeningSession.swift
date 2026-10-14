@@ -416,6 +416,17 @@ final class LibraryListeningSession {
                     return
                 }
                 step(by: 1)
+            },
+            // Play and pause from the Lock Screen and the headphones are
+            // the shelf's own, so the place is kept on a pause and kept
+            // being written while a reading resumed there runs
+            onTransport: { [weak self] request in
+                guard let self else { return }
+                switch request {
+                case .pause: pause()
+                case .play: if !audio.isPlaying { togglePlayPause() }
+                case .toggle: togglePlayPause()
+                }
             }
         )
     }
