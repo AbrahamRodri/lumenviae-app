@@ -159,7 +159,7 @@ struct TrueDevotionView: View {
                             .strokeBorder(AppColors.gold.opacity(0.4), lineWidth: AppLine.hairline)
                     )
 
-                    Text("Opens the Consecrate tab")
+                    Text("Opens the Consecration tab")
                         .font(AppFonts.readingItalicFont(14))
                         .foregroundColor(AppColors.textSecondary)
                 }

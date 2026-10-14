@@ -645,14 +645,14 @@ struct OnboardingView: View {
 
     /// What the app holds for each reason, most useful first. Named
     /// plainly, with the full names a newcomer can look up, never the
-    /// app's own shorthand (Consecrate, the flame, the Chapel).
+    /// app's own shorthand (the Consecration tab, the flame, the Chapel).
     private static func offers(for intention: PrayerIntention) -> [Offer] {
         switch intention {
         case .peace:
             return [
                 Offer(icon: "ph-book-open", text: "A meditation on each mystery, to read or to hear"),
                 Offer(icon: "ch-bible", text: "The Scriptural Rosary, with a verse for every bead"),
-                Offer(icon: "ph-note-pencil", text: "A private journal, kept only on your phone")
+                Offer(icon: "ph-book-open", text: "A private journal, kept only on your phone")
             ]
         case .habit:
             return [
@@ -680,7 +680,7 @@ struct OnboardingView: View {
         Offer(icon: "ph-book-open", text: "A meditation on each mystery, to read or to hear"),
         Offer(icon: "ch-consecration", text: "A 33-day preparation to give yourself to Jesus through Mary, by St. Louis de Montfort"),
         Offer(icon: "ch-altar", text: "The traditional Latin Mass and the Church's Hours of Prayer, for each day"),
-        Offer(icon: "ch-praying-hands", text: "Catholic prayers for every day and every need"),
+        Offer(icon: "lv-prayer-book", text: "Catholic prayers for every day and every need"),
         Offer(icon: "ph-book", text: "Classic spiritual books and sung chant, to read and hear")
     ]
 

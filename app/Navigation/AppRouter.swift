@@ -312,7 +312,7 @@ final class AppRouter {
     /// The currently selected bottom tab.
     ///
     /// Lives on the router (not ContentView-local state) so any view can
-    /// switch tabs — e.g. Today's Prayer's consecration row turns to the Consecrate tab.
+    /// switch tabs — e.g. Today's Prayer's consecration row turns to the Consecration tab.
     var selectedTab: AppTab = AppRouter.launchTab {
         didSet {
             // Leaving the Chapel ends its arranging, for the same reason

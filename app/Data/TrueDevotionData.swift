@@ -38,7 +38,7 @@ enum TrueDevotionData {
 
     static let keyPrinciples = DevotionSection(
         title: "Key Principles of True Devotion",
-        icon: "ch-bible",
+        icon: "ch-consecration",
         items: [
             DevotionItem(
                 title: "Perfect Consecration",
@@ -389,7 +389,7 @@ extension TrueDevotionData {
     /// stepped through in `LibraryReadingView`.
     static let teaching = ReadingShelf(
         id: "true_devotion_teaching",
-        icon: "ph-crown",
+        icon: "ph-scroll",
         title: "The Devotion in Summary",
         marginLabel: "The\nteaching",
         subtitle: "Montfort's teaching, a part at a time",

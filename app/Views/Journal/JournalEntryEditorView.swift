@@ -72,7 +72,7 @@ struct JournalEntryEditorView: View {
     // Same source of truth as JournalEntry.categoryIcon — categories
     // always render MysteryCategory.iconName
     private var categoryIcon: String {
-        lockedCategory?.iconName ?? "ph-book"
+        lockedCategory?.iconName ?? "ph-book-open"
     }
 
     // MARK: - Init
