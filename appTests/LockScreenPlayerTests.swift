@@ -370,11 +370,13 @@ struct LockScreenPlayerTests {
         )
     }
 
-    /// Waits on the main actor, a little at a time, until `done` holds
-    private func until(_ done: () -> Bool) async {
+    /// Waits on the main actor, a little at a time, until `done` holds.
+    /// False when it never did, for the test to say so.
+    private func until(_ done: () -> Bool) async -> Bool {
         for _ in 0..<100 where !done() {
             try? await Task.sleep(for: .milliseconds(20))
         }
+        return done()
     }
 
     @Test func aPauseCallsOffTheNextMysteryBeginningByItself() async {
@@ -385,9 +387,11 @@ struct LockScreenPlayerTests {
         // The arrow asks the next mystery to begin by itself; the pause
         // that follows at once calls that off
         service.handleRemoteCommand(.nextTrack)
-        #expect(vm.isPlaying == false)
+        // On its way to begin, it shows Pause
+        #expect(vm.isPlaying)
         service.handleRemoteCommand(.pause)
-        await until { vm.totalDuration > 0 && vm.currentMysteryIndex == 1 }
+        #expect(!vm.isPlaying)
+        #expect(await until { vm.totalDuration > 0 && vm.currentMysteryIndex == 1 })
         try? await Task.sleep(for: .milliseconds(200))
         #expect(vm.currentMysteryIndex == 1)
         #expect(!vm.isPlaying)
@@ -403,8 +407,10 @@ struct LockScreenPlayerTests {
         service.handleRemoteCommand(.nextTrack)
         // On its way, the mystery counts as playing for the screen as for
         // the Lock Screen: the screen's pause is a pause, not a play
+        #expect(vm.isPlaying)
         vm.isPlaying = false
-        await until { vm.totalDuration > 0 && vm.currentMysteryIndex == 1 }
+        #expect(!vm.isPlaying)
+        #expect(await until { vm.totalDuration > 0 && vm.currentMysteryIndex == 1 })
         try? await Task.sleep(for: .milliseconds(200))
         #expect(!service.isPlaying)
         vm.stopAudio()
@@ -420,12 +426,88 @@ struct LockScreenPlayerTests {
         #expect(service.holder?.kind == .chant)
 
         vm.isPlaying = true
-        await until { service.holder?.kind == .prayerFlow && service.isPlaying }
+        #expect(await until { service.holder?.kind == .prayerFlow && service.isPlaying })
         #expect(service.holder?.kind == .prayerFlow)
         #expect(vm.isPlaying)
         #expect(!chant.isCurrent)
         vm.isPlaying = false
         vm.stopAudio()
+    }
+
+    @Test func aLoadTheNextMysteryReplacedLeavesItsStartToTheNewerLoad() async {
+        let service = makeService()
+        let vm = setPlayer(service)
+        await vm.loadCurrentAudio()
+        vm.isPlaying = true
+
+        // NEXT while the first mystery sounds: the second is on its way to
+        // begin by itself, and NEXT again replaces its load mid-way
+        _ = vm.nextMystery()
+        let replaced = Task { await vm.loadCurrentAudio() }
+        // A local recording arrives within a turn or two: yield only until
+        // the load has begun, not past its arrival
+        for _ in 0..<50 where !service.isLoading { await Task.yield() }
+        #expect(service.isLoading)
+        _ = vm.nextMystery()
+        await vm.loadCurrentAudio()
+        await replaced.value
+
+        #expect(vm.currentMysteryIndex == 2)
+        #expect(service.isPlaying, "the newer load keeps the wish to play on")
+        let third = vm.currentMeditation?.displayTitle
+        #expect(info(service, MPMediaItemPropertyTitle) as? String == third)
+        #expect(service.nowPlayingArtworkName == Constants.mysteryImageURL(category: "joyful", index: 2))
+        vm.isPlaying = false
+        vm.stopAudio()
+    }
+
+    @Test func aMysteryWithNoNarrationIsNamedAsItself() async {
+        let set = narratedSet()
+        var meditations = set.meditations ?? []
+        let silent = meditations[1]
+        meditations[1] = Meditation(
+            id: silent.id, title: nil, content: silent.content, author: nil, source: nil,
+            audioUrl: nil, mystery: silent.mystery
+        )
+        let service = makeService()
+        let vm = PrayerSessionViewModel(
+            meditationSet: MeditationSet(
+                id: set.id, name: set.name, category: set.category, description: nil,
+                labels: nil, meditations: meditations),
+            showsOpeningPrayers: false,
+            apiService: APIService(session: StubProtocol.session),
+            audioService: service
+        )
+        await vm.loadCurrentAudio()
+        _ = vm.nextMystery()
+        await vm.loadCurrentAudio()
+
+        #expect(info(service, MPMediaItemPropertyTitle) as? String == meditations[1].displayTitle)
+        #expect(service.nowPlayingArtworkName == Constants.mysteryImageURL(category: "joyful", index: 1))
+        #expect(service.remoteCommandAvailability.next, "the arrows still step past it")
+        vm.stopAudio()
+        #expect(service.nowPlayingInfo == nil)
+    }
+
+    @Test func leavingBeforeTheWholeRosaryBeginsClearsTheLockScreen() async {
+        let service = makeService()
+        let vm = setPlayer(service)
+        await vm.loadCurrentAudio()
+        #expect(service.nowPlayingInfo != nil)
+
+        // Settled first, so the Whole Rosary below is chosen mid-Rosary,
+        // while paused: it waits for play, holding the meditation's entry
+        await vm.setPrayAloud(false)
+        let turnedOn = Task { await vm.setPrayAloud(true) }
+        for _ in 0..<50 where !vm.isPrayingAloud { await Task.yield() }
+        #expect(vm.isPrayingAloud)
+        #expect(service.holder?.kind == .prayerFlow, "the entry is kept for the voice")
+
+        // Left before the voice took the player
+        vm.stopAudio()
+        await turnedOn.value
+        #expect(service.holder == nil)
+        #expect(service.nowPlayingInfo == nil, "no entry whose play does nothing")
     }
 
     @Test func theMeditationHeardToItsEndUnlocksTheBeads() async {

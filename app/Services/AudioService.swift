@@ -1096,6 +1096,30 @@ final class AudioService {
         updateNowPlayingInfo()
     }
 
+    /// Names a step of `claim`'s flow that has no recording — a mystery
+    /// with no narration — on the Lock Screen entry kept from the step
+    /// before, so it does not go on naming the step left. Nothing while
+    /// another flow holds the player, or when no entry stands.
+    func setNowPlayingDetails(
+        for claim: AudioClaim,
+        title: String?,
+        subtitle: String?,
+        artworkAssetName: String?,
+        album: String?,
+        queueIndex: Int?,
+        queueCount: Int?
+    ) {
+        guard holder === claim, nowPlayingInfo != nil else { return }
+        nowPlayingTitle = title
+        nowPlayingSubtitle = subtitle
+        nowPlayingArtworkAsset = artworkAssetName
+        nowPlayingArtworkImage = nil
+        nowPlayingAlbum = album
+        nowPlayingQueueIndex = queueIndex
+        nowPlayingQueueCount = queueCount
+        updateNowPlayingInfo()
+    }
+
     /// The Lock Screen's length, place and speed: the recording's, or the
     /// span shown in its place, which runs at the clock's pace
     private var publishedTimeline: (duration: Double, elapsed: Double, rate: Double) {

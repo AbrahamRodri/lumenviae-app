@@ -124,13 +124,16 @@ final class PrayAlongVoice {
 
     /// Loads and plays one prayer's recording. False when it has none or
     /// it would not load — the screen then stays on the page, silent.
+    /// `startsWhenLoaded` is asked once the recording is in: a pause taken
+    /// while it loaded leaves it loaded and still.
     @discardableResult
     func play(
         _ prayer: BookPrayer,
         in title: String,
         index: Int,
         of count: Int,
-        painting: String? = nil
+        painting: String? = nil,
+        startsWhenLoaded: () -> Bool = { true }
     ) async -> Bool {
         guard let url = files[prayer.id] else { return false }
         let audio = AudioService.shared
@@ -160,7 +163,7 @@ final class PrayAlongVoice {
         )
         guard ready, currentPrayerID == prayer.id else { return false }
         loadedGeneration = audio.loadGeneration
-        audio.play()
+        if startsWhenLoaded() { audio.play() }
         return true
     }
 
@@ -192,10 +195,12 @@ final class PrayAlongVoice {
 
     /// Lets the player go: stopped, the arrows handed back, and the Lock
     /// Screen cleared — paused, the prayer stood there after the page
-    /// had closed
+    /// had closed. A prayer still loading is called off too: the arrows
+    /// are this screen's from before the load begins, and the load would
+    /// otherwise leave its prayer on the Lock Screen with no page behind it
     func stop() {
         let audio = AudioService.shared
-        if ownsPlayer {
+        if ownsPlayer || audio.isTrackNavigationOwner(owner) {
             audio.reset()
             audio.deactivateSession()
         }
