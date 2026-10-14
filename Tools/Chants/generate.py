@@ -69,7 +69,7 @@ and date aside), exiting 1 when they differ: a word in chants.json or a
 line file that has not reached the server.
 
 LINES. Tools/ChantLines/<chant id>.json holds one chant's sung lines,
-derived from its bundled recording and checked line by line before the
+derived from its recording and checked line by line before the
 file is added — every file in the folder is taken as shippable:
 
     { "id": "salve_regina_simple", "part": null,
@@ -133,6 +133,24 @@ def fetch(url: str, dest: Path) -> Path:
     return dest
 
 
+UPLOADS = re.compile(r"^https?://(?:www\.)?verbumgloriae\.es/wp-content/uploads/[A-Za-z0-9_./%-]+$")
+
+
+def upload_url(url: str):
+    """A file of the site's own uploads, as an https URL, or None: nothing
+    else is ever fetched."""
+    if not UPLOADS.match(url) or ".." in url:
+        return None
+    return "https://www.verbumgloriae.es/wp-content/uploads/" + url.split("/wp-content/uploads/", 1)[1]
+
+
+def cached(url: str) -> Path:
+    """Where a fetched file is kept: named by a hash of its URL, so no URL
+    can name a path outside the cache."""
+    suffix = Path(url).suffix if re.fullmatch(r"\.[a-z0-9]{1,5}", Path(url).suffix) else ""
+    return CACHE / "files" / (hashlib.sha256(url.encode("utf-8")).hexdigest()[:24] + suffix)
+
+
 def page_url(entry: dict) -> str:
     if entry.get("page"):
         return f"{SITE}/{entry['page']}/"
@@ -157,8 +175,9 @@ def page_html(entry: dict) -> str:
 
 def find_audio(entry: dict, text: str) -> str:
     urls = []
-    for u in re.findall(r'https?://(?:www\.)?verbumgloriae\.es/wp-content/uploads/[^"?\s\']+\.(?:ogg|mp3|m4a)', text):
-        if u not in urls:
+    for found in re.findall(r'https?://(?:www\.)?verbumgloriae\.es/wp-content/uploads/[^"?\s\']+\.(?:ogg|mp3|m4a)', text):
+        u = upload_url(found)
+        if u and u not in urls:
             urls.append(u)
     want = entry.get("audio")
     if want:
@@ -199,8 +218,11 @@ def find_scores(entry: dict, text: str) -> list:
         # The same image as a builder shortcode
         r'|et_pb_image src="([^"\s]+\.svg)" alt="(.*?)"(?=\s+[a-z_]+=|\s*/?\]|\s*/?$)')
     for m in images.finditer(plain_quotes(text)):
-        url = m.group(1) or m.group(3)
+        url = upload_url(m.group(1) or m.group(3))
         alt = html.unescape(m.group(2) if m.group(1) else m.group(4)).strip()
+        if url is None:
+            print(f"  ! {entry['id']}: a score outside the site's uploads, skipped: {m.group(1) or m.group(3)}")
+            continue
         if not alt.lower().startswith("partitura") or url in seen:
             continue
         seen.add(url)
@@ -676,7 +698,7 @@ def main():
         elif keep:
             sys.exit(f"{entry['id']}: no recording in the library to keep; run without --keep-assets")
         else:
-            src = fetch(audio_url, CACHE / "files" / audio_url.split("/uploads/")[1])
+            src = fetch(audio_url, cached(audio_url))
             duration = encode(src, recording)
 
         parts = []
@@ -702,7 +724,7 @@ def main():
                 continue
             if name not in written_assets:
                 try:
-                    svg = fetch(url, CACHE / "files" / url.split("/uploads/")[1])
+                    svg = fetch(url, cached(url))
                 except subprocess.CalledProcessError:
                     # The site links a few scores it no longer serves (the
                     # Litany of Loreto's Easter collect); the chant keeps

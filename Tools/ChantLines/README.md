@@ -1,7 +1,7 @@
 # Chant lines
 
 The words of each chant in the Chant Library, line by line, with the
-second each line begins and ends in the bundled recording — what the
+second each line begins and ends in the chant's recording — what the
 library's line controls draw on (Line 2 of 9, the previous and next line,
 repeat this line, Take turns, a lyric found "at 8:40").
 

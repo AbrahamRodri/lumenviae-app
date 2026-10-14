@@ -19,17 +19,23 @@ Each copy is the server's file byte for byte with one line added, its
 "version", the fingerprint the server serves (LumenViae.Rosary.Content
 .version: SHA-256 of the sections as compact JSON with sorted keys, its
 first 16 hex digits), so a phone with the shipped copy never fetches the
-same document again. --check removes that line and compares the rest.
+same document again. --check adds that line to the server's file and
+compares the result with the app's copy.
 
-A document that does not hold together (an id twice, a chapter or group
-naming what the document lacks, a chant with no file) is refused.
+A document the app would refuse is refused here too, with the app's own
+checks (LibraryContent.swift, `problem`): an id twice, a chapter or group
+naming what the document lacks, a chapter the app names missing, a prayer
+with no words, a chant in no known group, or a file that is not an https
+URL with a 64-digit lowercase hex SHA-256.
 """
 import hashlib
 import json
 import os
 import pathlib
+import re
 import subprocess
 import sys
+import urllib.parse
 import urllib.request
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
@@ -66,28 +72,69 @@ def api_checkout() -> pathlib.Path:
     sys.exit("no API checkout beside this one: pass --from <api>/priv/library")
 
 
+# The chapters the app names by id (PrayerBookDocument.namedChapterIDs)
+NAMED_CHAPTERS = {
+    "first", "day", "short", "mass", "penance", "sacrament", "holy_ghost", "our_lord", "our_lady",
+    "st_joseph", "saints", "seasons", "thanks", "litanies", "church", "sick", "departed", "needs",
+}
+HEX64 = re.compile(r"^[0-9a-f]{64}$")
+
+
+def https(url) -> bool:
+    parts = urllib.parse.urlparse(url or "")
+    return parts.scheme == "https" and bool(parts.netloc)
+
+
+def is_file(asset: dict) -> bool:
+    return https(asset.get("url")) and bool(HEX64.match(asset.get("sha256") or ""))
+
+
 def problem(name: str, doc: dict):
+    """The app's own checks (LibraryContent.swift), so no seed is made that
+    the app would refuse."""
     if name == "prayer_book":
-        ids = [p["id"] for p in doc.get("prayers", [])]
-        if not ids or len(ids) != len(set(ids)):
-            return "no prayers, or a prayer id twice"
-        for c in doc.get("chapters", []):
-            named = c["prayer_ids"] + [i for s in c.get("sections", []) for i in s["prayer_ids"]]
-            missing = [i for i in named if i not in set(ids)]
-            if missing:
-                return f"{c['id']} names {missing[0]}"
-        return None if doc.get("chapters") else "no chapters"
-    ids = [c["id"] for c in doc.get("chants", [])]
-    if not ids or len(ids) != len(set(ids)):
-        return "no chants, or a chant id twice"
-    for g in doc.get("groups", []):
-        for p in g["parts"]:
-            missing = [i for i in p["chant_ids"] if i not in set(ids)]
-            if missing:
-                return f"{g['id']} names {missing[0]}"
-    for c in doc["chants"]:
-        if not c["audio"].get("url") or any(not s.get("url") for s in c["score"]):
-            return f"{c['id']} has a file with no URL"
+        prayers, chapters = doc.get("prayers") or [], doc.get("chapters") or []
+        if not prayers or not chapters:
+            return "empty"
+        ids = {p["id"] for p in prayers}
+        if len(ids) != len(prayers):
+            return "a prayer id twice"
+        chapter_ids = {c["id"] for c in chapters}
+        if len(chapter_ids) != len(chapters):
+            return "a chapter id twice"
+        missing = sorted(NAMED_CHAPTERS - chapter_ids)
+        if missing:
+            return f"no chapter {missing[0]}, which the app names"
+        for c in chapters:
+            named = c["prayer_ids"] + [i for s in c.get("sections") or [] for i in s["prayer_ids"]]
+            lacking = [i for i in named if i not in ids]
+            if lacking:
+                return f"{c['id']} names {lacking[0]}, which the book lacks"
+        empty = [p["id"] for p in prayers if not p.get("english")]
+        return f"{empty[0]} has no words" if empty else None
+
+    chants, groups = doc.get("chants") or [], doc.get("groups") or []
+    if not chants or not groups:
+        return "empty"
+    ids = {c["id"] for c in chants}
+    if len(ids) != len(chants):
+        return "a chant id twice"
+    group_ids = {g["id"] for g in groups}
+    if len(group_ids) != len(groups):
+        return "a group id twice"
+    for g in groups:
+        lacking = [i for p in g["parts"] for i in p["chant_ids"] if i not in ids]
+        if lacking:
+            return f"{g['id']} names {lacking[0]}, which the library lacks"
+    for c in chants:
+        if c["group_id"] not in group_ids:
+            return f"{c['id']} is in no known group"
+        if not is_file(c["audio"]):
+            return f"{c['id']} has no recording"
+        if any(not is_file(s) for s in c["score"]):
+            return f"{c['id']} has a score page with no file"
+        if not https(c.get("source_url")):
+            return f"{c['id']} has no source page"
     return None
 
 

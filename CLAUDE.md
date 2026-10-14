@@ -1643,6 +1643,9 @@ write concurrent code here:
   mysteries too, every prayer after the Rosary included
   (`OfflineContentService.spokenClips(for:)`): it once said "Saved on
   this device" and then, with the Whole Rosary chosen, would not begin on a plane.
+  It fetches every chant's recording and score as well, on any network
+  (the chants otherwise come down by themselves on Wi-Fi; see The Prayer
+  Book's and the Chant Library's content).
 - **Personalization** — three themes, prayer language, text
   size (app-wide, plus the missal's and the reading shelf's own); the Chapel
   tab's arrange-in-place page (tile order, full/half widths, the tray, rule
@@ -3939,7 +3942,9 @@ first second.
   are read the first time the book or the library is touched: the copy
   kept from the server (Application Support/Content, out of the backup),
   unless it does not decode or hold together (`problem`: an id twice, a
-  topic or group naming what the document lacks, a chant with no file),
+  topic or group naming what the document lacks, a topic the app names
+  missing (`PrayerBookDocument.namedChapterIDs`, which `PrayerBook.layouts`
+  must equal), a file that is not https with a hex SHA-256),
   or the app shipped a newer one since (`updated_at`); else the shipped
   copy. `PrayerBook.prayers`, `.chapters`, `.listTitles`,
   `.englishNames`, `.prayerSearchWords` and `ChantCatalog.all`,
@@ -3954,7 +3959,9 @@ first second.
   on the phone. A failed fetch, or a copy that does not decode or hold
   together, leaves the old one; the newer one is read at the next launch.
   A server copy dated no later than the phone's is not fetched (an app
-  update may ship a newer one). The shipped copies carry the server's
+  update may ship a newer one), nor a version this phone fetched and
+  refused (`libraryContent.refused.<route>`) until the server changes it.
+  `Tools/LibrarySeed/seed.py` refuses what the app would. The shipped copies carry the server's
   `version`, which `Tools/dev library-seed` writes in, so a phone with
   the shipped copy fetches nothing until the server changes. The app
   hosting the unit tests asks nothing and reads the shipped copies alone
@@ -3967,8 +3974,16 @@ first second.
   for Offline, a score's page wait on the same download), written under a
   name of its own and moved into place whole. A run stops only when the
   network itself is gone (offline, connection lost, not allowed); a
-  timeout or a missing file counts against that file alone. A score that
-  could not be had is tried again on coming back to the app or online. After
+  timeout or a missing file counts against that file alone; a download
+  allowed any network never waits on a Wi-Fi-only one of the same file.
+  A score that could not be had is tried again on coming back to the app
+  or online, and the run takes up its files when Wi-Fi comes back (from
+  none, or from cellular). **An older version of a file stays until the
+  newer is here**: each file is kept under its key (`ChantFile.key`,
+  "audio:<id>", "score:<page>"), and a chant whose recording the server
+  has replaced plays the older one from the phone
+  (`bestLocalURL(for:)`) until the newer has come down, so an update
+  waiting for Wi-Fi never takes a saved chant away. After
   the first launch, and on every coming to the front, they come down by
   themselves, three at a time, **on Wi-Fi only**
   (`allowsExpensiveNetworkAccess` and `allowsConstrainedNetworkAccess`

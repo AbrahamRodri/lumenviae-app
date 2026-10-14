@@ -146,6 +146,15 @@ struct LibraryContentSeedTests {
         #expect(bad.problem != nil)
     }
 
+    /// A book without a topic the app names is refused, and the app's
+    /// layouts name exactly the topics it requires
+    @Test func aBookMissingANamedTopicIsRefused() throws {
+        #expect(Set(PrayerBook.layouts.keys) == PrayerBookDocument.namedChapterIDs)
+        var book = try shippedBook()
+        book.chapters.removeAll { $0.id == "our_lady" }
+        #expect(book.problem != nil)
+    }
+
     /// The book shows every field of its document, and the app sets every
     /// chapter the document has
     @Test func theBookIsTheDocument() throws {
@@ -415,6 +424,31 @@ struct LibraryContentSyncTests {
         #expect(!FileManager.default.fileExists(atPath: directory.appendingPathComponent("prayer_book.json").path))
     }
 
+    /// A server document refused once is not fetched again until the
+    /// server changes its version
+    @Test func aRefusedVersionIsNotFetchedAgain() async throws {
+        let directory = try temporaryDirectory()
+        let defaults = defaults()
+        LibraryStubProtocol.reset { request in
+            let url = request.url!.absoluteString
+            if url.contains("fields") { return .init(body: Data("{\"data\":{\"attributes\":{\"prayers\":[]".utf8)) }
+            return .init(
+                body: (try? jsonAPI("x", ["version": "9999999999999999", "updated_at": "2100-01-01T00:00:00Z"]))
+                    ?? Data())
+        }
+        let sync = sync(in: directory, defaults: defaults)
+        await sync.refresh()
+        let first = LibraryStubProtocol.requested.filter { $0.url?.absoluteString.contains("fields") == true }.count
+        #expect(first == 2)
+        LibraryStubProtocol.reset { request in
+            .init(
+                body: (try? jsonAPI("x", ["version": "9999999999999999", "updated_at": "2100-01-01T00:00:00Z"]))
+                    ?? Data())
+        }
+        await sync.refresh()
+        #expect(!LibraryStubProtocol.requested.contains { $0.url?.absoluteString.contains("fields") == true })
+    }
+
     @Test func atLaunchItAsksWhateverTheDay() async throws {
         let defaults = defaults()
         defaults.set(Date(), forKey: LibraryContentSync.checkedKey)
@@ -465,8 +499,14 @@ struct ChantAssetStoreTests {
         ChantFile(url: URL(string: url), bytes: data.count, sha256: sha256(data), fileExtension: "m4a")
     }
 
+    /// A store of its own, its catalog one chant, so no run it begins
+    /// outlives the test
     private func store(_ directory: URL) -> ChantAssetStore {
-        ChantAssetStore(directory: directory, sessions: (LibraryStubProtocol.session, LibraryStubProtocol.session))
+        let small = Array(ChantCatalog.all.prefix(1))
+        return ChantAssetStore(
+            directory: directory, sessions: (LibraryStubProtocol.session, LibraryStubProtocol.session),
+            defaults: UserDefaults(suiteName: "ChantAssetStoreTests.\(UUID().uuidString)")!,
+            catalog: { small })
     }
 
     @Test func aFileNotHereStreamsAndOnceHereIsPlayedFromThePhone() async throws {
@@ -600,15 +640,97 @@ struct ChantAssetStoreTests {
             return .init(body: data)
         }
 
-        var newer = try shippedLibrary()
-        newer.chants = []
-        store.libraryKept(newer)
         store.syncInBackground(chants)
-        for _ in 0..<200 where store.savedCount(of: chants) < chants.count {
-            try await Task.sleep(for: .milliseconds(20))
-        }
+        await store.waitForRun()
         #expect(store.savedCount(of: chants) == chants.count)
         #expect(store.localURL(for: file(stray)) == nil)
+    }
+
+    /// A newer library kept from the server has its files fetched now,
+    /// though no chant of this launch's catalog names them, and they stay
+    /// through the run's clearing out
+    @Test func aNewerLibrarysFilesAreFetchedAndKept() async throws {
+        let directory = try temporaryDirectory()
+        let store = store(directory)
+        let stray = Data("a file no chant names".utf8)
+        let source = directory.appendingPathComponent("source")
+        try stray.write(to: source)
+        try store.adopt(source, as: file(stray))
+        try FileManager.default.removeItem(at: source)
+
+        let recording = Data("a recording only the newer library names".utf8)
+        let page = Data("a page only the newer library names".utf8)
+        var newer = try shippedLibrary()
+        var newcomer = newer.chants[0]
+        newcomer.id = "newcomer"
+        newcomer.audio = .init(url: "https://files.test/new/newcomer.m4a", bytes: recording.count, sha256: sha256(recording))
+        newcomer.score = [.init(file: "newcomer-page", caption: "Newcomer", aspectRatio: 1,
+                                url: "https://files.test/new/newcomer.lvscore", bytes: page.count, sha256: sha256(page))]
+        newer.chants = [newcomer]
+        let newFiles = Chant(document: newcomer).files
+
+        LibraryStubProtocol.reset { request in
+            switch request.url?.absoluteString {
+            case "https://files.test/new/newcomer.m4a": return .init(body: recording)
+            case "https://files.test/new/newcomer.lvscore": return .init(body: page)
+            default: return .init(status: 404)
+            }
+        }
+        store.libraryKept(newer)
+        await store.waitForRun()
+        #expect(newFiles.allSatisfy { store.localURL(for: $0) != nil })
+        #expect(store.localURL(for: file(stray)) == nil)
+
+        // A later run over the catalog alone keeps them
+        store.syncInBackground()
+        #expect(newFiles.allSatisfy { store.localURL(for: $0) != nil })
+        await store.waitForRun()
+    }
+
+    /// An older version of a chant's recording stays, and plays, until the
+    /// newer has come down
+    @Test func anOlderRecordingPlaysUntilTheNewerIsHere() throws {
+        let directory = try temporaryDirectory()
+        let store = store(directory)
+        let old = Data("the first recording".utf8)
+        let new = Data("the corrected recording".utf8)
+        let oldFile = ChantFile(url: URL(string: "https://files.test/a-1.m4a"), bytes: old.count,
+                                sha256: sha256(old), fileExtension: "m4a", key: "audio:a")
+        let newFile = ChantFile(url: URL(string: "https://files.test/a-2.m4a"), bytes: new.count,
+                                sha256: sha256(new), fileExtension: "m4a", key: "audio:a")
+        let source = directory.appendingPathComponent("source")
+        try old.write(to: source)
+        try store.adopt(source, as: oldFile)
+
+        store.prune(keeping: [newFile])
+        #expect(store.localURL(for: newFile) == nil)
+        #expect(store.playableURL(for: newFile) == directory.appendingPathComponent(oldFile.localName))
+
+        try new.write(to: source)
+        try store.adopt(source, as: newFile)
+        try FileManager.default.removeItem(at: source)
+        store.prune(keeping: [newFile])
+        #expect(store.playableURL(for: newFile) == directory.appendingPathComponent(newFile.localName))
+        #expect(ChantAssetStore.names(in: directory) == [newFile.localName])
+    }
+
+    /// Back on Wi-Fi from cellular, the run takes up its files
+    @Test func wifiAgainStartsTheRun() async throws {
+        let store = store(try temporaryDirectory())
+        LibraryStubProtocol.reset { _ in .init(status: 404) }
+        store.connectionChanged(online: true, expensive: true)
+        #expect(store.reconnections == 0)
+        await store.waitForRun()
+        #expect(LibraryStubProtocol.requested.isEmpty, "nothing on cellular")
+
+        store.connectionChanged(online: true, expensive: false)
+        await store.waitForRun()
+        #expect(!LibraryStubProtocol.requested.isEmpty, "Wi-Fi again: the run begins")
+
+        store.connectionChanged(online: false)
+        store.connectionChanged(online: true)
+        #expect(store.reconnections == 1)
+        await store.waitForRun()
     }
 
     /// A catalog that could not be read lets go of nothing

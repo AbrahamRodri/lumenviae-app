@@ -346,8 +346,8 @@ struct ConsecrationDayFlowView: View {
     }
 
     /// The chant this prayer is sung to, from the Chant Library — the
-    /// same bundled recording its page plays, so the day sounds in a
-    /// chapel with no signal.
+    /// same recording its page plays, kept on the phone once it has come
+    /// down, so the day sounds in a chapel with no signal.
     private func chant(for prayer: ConsecrationPrayer) -> Chant? {
         ChantCatalog.chants(forPrayer: prayer.id).first
     }

@@ -441,7 +441,15 @@ enum PrayerBook {
         "te_deum": "thanks",
     ]
 
-    static var ourLady: PrayerBookChapter { chapter("our_lady")! }
+    /// Our Lady's topic. The book's document always has it (a copy without
+    /// it is refused, `PrayerBookDocument.namedChapterIDs`); an empty one
+    /// stands in should it ever not
+    static var ourLady: PrayerBookChapter {
+        chapter("our_lady")
+            ?? PrayerBookChapter(
+                id: "our_lady", numeral: "", title: "The Blessed Virgin", latinTitle: "",
+                icon: "ch-lily", part: .god, sections: [])
+    }
 
     // MARK: Orders
 

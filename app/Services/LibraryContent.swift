@@ -32,11 +32,23 @@ nonisolated protocol LibraryDocument: Codable, Sendable {
 }
 
 extension PrayerBookDocument: LibraryDocument {
+    /// The topics the app names by id (`PrayerBook.layouts`, the Prayers
+    /// page's Mary shelf, the Saved page's First Prayers): a book that
+    /// lacks one is refused, so no page reaches for a topic that is gone
+    nonisolated static let namedChapterIDs: Set<String> = [
+        "first", "day", "short", "mass", "penance", "sacrament", "holy_ghost", "our_lord", "our_lady",
+        "st_joseph", "saints", "seasons", "thanks", "litanies", "church", "sick", "departed", "needs",
+    ]
+
     nonisolated var problem: String? {
         guard !prayers.isEmpty, !chapters.isEmpty else { return "empty" }
         let ids = Set(prayers.map(\.id))
         guard ids.count == prayers.count else { return "a prayer id twice" }
-        guard Set(chapters.map(\.id)).count == chapters.count else { return "a chapter id twice" }
+        let chapterIDs = Set(chapters.map(\.id))
+        guard chapterIDs.count == chapters.count else { return "a chapter id twice" }
+        if let missing = Self.namedChapterIDs.subtracting(chapterIDs).sorted().first {
+            return "no chapter \(missing), which the app names"
+        }
         for chapter in chapters {
             let named = chapter.prayerIDs + chapter.sections.flatMap(\.prayerIDs)
             if let missing = named.first(where: { !ids.contains($0) }) {
@@ -157,7 +169,6 @@ nonisolated enum LibraryContent {
 
     enum Failure: Error, Equatable {
         case invalid(String, String)
-        case noSeed(String)
     }
 
     /// Application Support/Content, kept out of the phone's backup: the
@@ -170,13 +181,13 @@ nonisolated enum LibraryContent {
     static let prayerBookStore = LibraryDocumentStore<PrayerBookDocument>(name: "prayer_book")
     static let chantLibraryStore = LibraryDocumentStore<ChantLibraryDocument>(name: "chant_library")
 
-    /// The book and the library as this launch reads them. The shipped
-    /// copy is checked by the tests, so the app always has one.
     /// Whether the app was launched to host the unit tests, which read
     /// the shipped copies alone: never what a simulator kept from the
     /// server
     static let hostsTests = ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
 
+    /// The book and the library as this launch reads them. The shipped
+    /// copy is checked by the tests, so the app always has one.
     static let prayerBook: PrayerBookDocument = {
         guard let document = hostsTests ? prayerBookStore.seed : prayerBookStore.current() else {
             assertionFailure("No Prayer Book: the app's prayer_book.json is missing or broken")
@@ -303,6 +314,10 @@ final class LibraryContentSync {
         let bare = try await attributes(of: "\(baseURL)/v2/\(path)", as: Version.self)
         let onPhone = await Self.stamp(on: store)
         guard let version = bare.version, version != onPhone.version else { return nil }
+        // A version this phone already fetched and refused (it did not
+        // hold together) is not fetched again until the server changes it
+        let refusedKey = Self.refusedKey(path)
+        guard defaults.string(forKey: refusedKey) != version else { return nil }
         // A server copy no newer than the phone's (an app update shipped a
         // later one) is not fetched: it would never be read
         if let theirs = bare.updatedAt.flatMap(LibraryContent.date(from:)),
@@ -315,8 +330,20 @@ final class LibraryContentSync {
         components?.queryItems = [URLQueryItem(name: "fields[\(type)]", value: fields)]
         guard let url = components?.url else { throw URLError(.badURL) }
         let data = try await body(of: url)
-        return try await Self.keep(data, in: store)
+        do {
+            let kept = try await Self.keep(data, in: store)
+            defaults.removeObject(forKey: refusedKey)
+            return kept
+        } catch {
+            // It arrived whole and would not do: not JSON, not the
+            // document, or not holding together
+            defaults.set(version, forKey: refusedKey)
+            throw error
+        }
     }
+
+    /// Where a refused version of a document is remembered
+    static func refusedKey(_ path: String) -> String { "libraryContent.refused.\(path)" }
 
     /// The version and date of the copy on the phone, read off the main
     /// actor: a document is up to a megabyte of JSON

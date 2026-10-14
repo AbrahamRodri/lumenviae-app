@@ -29,6 +29,10 @@ nonisolated struct ChantFile: Hashable, Sendable {
     let sha256: String
     /// "m4a" or "lvscore"
     let fileExtension: String
+    /// What the file is, whatever its version: "audio:<chant id>",
+    /// "score:<page name>". An older version kept under the same key
+    /// plays until the newer is on the phone.
+    var key: String = ""
 
     /// Its name on the phone: its hash, so the same file is kept once
     /// however many chants share it (the versicles, the collects)
@@ -60,19 +64,30 @@ final class ChantAssetStore {
     /// The names of the files on the phone
     private(set) var present: Set<String>
 
-    /// Whether a run is fetching files now
-    private(set) var isFetching = false
-
     /// Counts the times the phone has come back online, so a page of
     /// sheet music that could not be had tries again
     private(set) var reconnections = 0
 
     @ObservationIgnored private var pathMonitor: NWPathMonitor?
     @ObservationIgnored private var wasOnline = true
+    @ObservationIgnored private var wasExpensive = false
+
+    /// The file kept for each key (`ChantFile.key`): when a newer version
+    /// of a chant's recording is named, the one on the phone stays and is
+    /// played until the newer has come down
+    @ObservationIgnored private var keptByKey: [String: String]
+    @ObservationIgnored private let defaults: UserDefaults
+    static let keptKey = "chantAssets.keptByKey"
+
+    /// A run asked for while one was under way, for these chants: begun
+    /// when that one ends
+    @ObservationIgnored private var runAgain: [Chant]?
 
     @ObservationIgnored private var run: Task<Void, Never>?
-    /// One download a file, whoever asked for it (the Wi-Fi run, Save for
-    /// Offline, a score's page): a second asker waits on the first
+    /// One download a file on each kind of network, whoever asked for it
+    /// (the Wi-Fi run, Save for Offline, a score's page): a second asker
+    /// on the same session waits on the first. An asker allowed any
+    /// network never waits on a Wi-Fi-only download, which may never come.
     @ObservationIgnored private var inFlight: [String: Task<URL, Error>] = [:]
     @ObservationIgnored private let wifiSession: URLSession
     @ObservationIgnored private let anySession: URLSession
@@ -80,8 +95,19 @@ final class ChantAssetStore {
     /// How many files a run fetches at once
     static let parallel = 3
 
-    init(directory: URL = ChantAssetStore.defaultDirectory, sessions: (wifi: URLSession, any: URLSession)? = nil) {
+    /// The chants a run without its own list fetches for: the catalog
+    @ObservationIgnored private let catalog: () -> [Chant]
+
+    init(
+        directory: URL = ChantAssetStore.defaultDirectory,
+        sessions: (wifi: URLSession, any: URLSession)? = nil,
+        defaults: UserDefaults = .standard,
+        catalog: (() -> [Chant])? = nil
+    ) {
         self.directory = directory
+        self.defaults = defaults
+        self.catalog = catalog ?? { ChantCatalog.all }
+        keptByKey = defaults.dictionary(forKey: Self.keptKey) as? [String: String] ?? [:]
         if let sessions {
             wifiSession = sessions.wifi
             anySession = sessions.any
@@ -109,17 +135,23 @@ final class ChantAssetStore {
         let monitor = NWPathMonitor()
         monitor.pathUpdateHandler = { [weak self] path in
             let online = path.status == .satisfied
-            Task { @MainActor [weak self] in self?.connectionChanged(online: online) }
+            let expensive = path.isExpensive || path.isConstrained
+            Task { @MainActor [weak self] in self?.connectionChanged(online: online, expensive: expensive) }
         }
         monitor.start(queue: DispatchQueue(label: "ChantAssetStore.path"))
         pathMonitor = monitor
     }
 
-    func connectionChanged(online: Bool) {
-        defer { wasOnline = online }
-        guard online, !wasOnline else { return }
-        reconnections += 1
-        syncInBackground()
+    /// Back online, a score that could not be had tries again; on Wi-Fi
+    /// again (from none, or from cellular), the run takes up its files
+    func connectionChanged(online: Bool, expensive: Bool = false) {
+        defer {
+            wasOnline = online
+            wasExpensive = expensive
+        }
+        guard online else { return }
+        if !wasOnline { reconnections += 1 }
+        if !expensive, !wasOnline || wasExpensive { syncInBackground() }
     }
 
     nonisolated static func names(in directory: URL) -> Set<String> {
@@ -129,15 +161,23 @@ final class ChantAssetStore {
 
     // MARK: Reading
 
-    /// The file on the phone, if it is here
+    /// This very file on the phone, if it is here
     func localURL(for file: ChantFile) -> URL? {
         present.contains(file.localName) ? directory.appendingPathComponent(file.localName) : nil
     }
 
-    /// What a player loads: the file on the phone, else the server's,
-    /// which streams
+    /// This file on the phone, or else an older version of it still kept
+    /// (a recording the server has since replaced)
+    func bestLocalURL(for file: ChantFile) -> URL? {
+        if let exact = localURL(for: file) { return exact }
+        guard !file.key.isEmpty, let older = keptByKey[file.key], present.contains(older) else { return nil }
+        return directory.appendingPathComponent(older)
+    }
+
+    /// What a player loads: the file on the phone (an older version of it
+    /// if that is what is here), else the server's, which streams
     func playableURL(for file: ChantFile) -> URL? {
-        localURL(for: file) ?? file.url
+        bestLocalURL(for: file) ?? file.url
     }
 
     /// A chant is saved when its recording and every page of its score
@@ -167,20 +207,32 @@ final class ChantAssetStore {
     /// A run under way is left to finish; the next call takes up what it
     /// could not.
     func syncInBackground(_ chants: [Chant]? = nil) {
-        let chants = chants ?? ChantCatalog.all
+        let chants = chants ?? catalog()
         // A catalog that could not be read is no reason to let go of
         // every chant on the phone
         guard !chants.isEmpty else { return }
         let wanted = chants.flatMap(\.files) + upcoming
         prune(keeping: Set(wanted))
-        guard run == nil else { return }
+        guard run == nil else {
+            runAgain = chants
+            return
+        }
         let missing = missing(wanted)
         guard !missing.isEmpty else { return }
         run = Task(priority: .utility) { [weak self] in
             guard let self else { return }
             _ = await self.fetch(missing, session: self.wifiSession, progress: nil)
             self.run = nil
+            if let next = self.runAgain {
+                self.runAgain = nil
+                self.syncInBackground(next)
+            }
         }
+    }
+
+    /// Until the run under way, if any, has ended
+    func waitForRun() async {
+        while let run { await run.value }
     }
 
     /// Fetches every file `chants` need on any network, the reader having
@@ -196,9 +248,11 @@ final class ChantAssetStore {
     }
 
     /// One file now, on any network: a score whose page has been opened.
-    /// Nil when it cannot be had (offline).
+    /// Offline, an older version of it kept on the phone; nil when there
+    /// is none.
     func fetchNow(_ file: ChantFile) async -> URL? {
-        try? await fetchOne(file, session: anySession)
+        if let url = try? await fetchOne(file, session: anySession) { return url }
+        return bestLocalURL(for: file)
     }
 
     /// The file on the phone, fetching it first if it is not: through the
@@ -206,22 +260,32 @@ final class ChantAssetStore {
     func fetchOne(_ file: ChantFile, session: URLSession) async throws -> URL {
         if let local = localURL(for: file) { return local }
         let name = file.localName
+        let flight = "\(name)|\(ObjectIdentifier(session).hashValue)"
         let task: Task<URL, Error>
-        if let pending = inFlight[name] {
+        if let pending = inFlight[flight] {
             task = pending
         } else {
             task = Task { [directory] in try await Self.download(file, session: session, into: directory) }
-            inFlight[name] = task
+            inFlight[flight] = task
         }
         do {
             let url = try await task.value
             present.insert(name)
-            if inFlight[name] == task { inFlight[name] = nil }
+            remember(file)
+            if inFlight[flight] == task { inFlight[flight] = nil }
             return url
         } catch {
-            if inFlight[name] == task { inFlight[name] = nil }
+            if inFlight[flight] == task { inFlight[flight] = nil }
             throw error
         }
+    }
+
+    /// Notes `file` as the one kept for its key, the version before it
+    /// now free to go
+    private func remember(_ file: ChantFile) {
+        guard !file.key.isEmpty, keptByKey[file.key] != file.localName else { return }
+        keptByKey[file.key] = file.localName
+        defaults.set(keptByKey, forKey: Self.keptKey)
     }
 
     func missingFiles(of chants: [Chant]) -> [ChantFile] {
@@ -250,8 +314,6 @@ final class ChantAssetStore {
     /// rather than try each file in turn. A file that fails (its hash, a
     /// timeout) is let go and the run goes on.
     private func fetch(_ files: [ChantFile], session: URLSession, progress: ((Int, Int) -> Void)?) async -> Int {
-        isFetching = true
-        defer { isFetching = false }
         var done = 0
         var failed = 0
         var queue = files[...]
@@ -303,7 +365,8 @@ final class ChantAssetStore {
     /// under a name of its own (`<hash>.<uuid>.part`) and moved into
     /// place whole, so two writers never share a half-written file.
     nonisolated static func install(_ source: URL, as file: ChantFile, into directory: URL) throws -> URL {
-        let size = (try? source.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? -1
+        // Read from the disk, never a URL's cached resource values
+        let size = (try? FileManager.default.attributesOfItem(atPath: source.path)[.size] as? Int) ?? -1
         guard size == file.bytes else { throw ChantAssetError.sizeMismatch }
         guard try sha256(of: source) == file.sha256.lowercased() else { throw ChantAssetError.checksumMismatch }
         let destination = directory.appendingPathComponent(file.localName)
@@ -324,6 +387,7 @@ final class ChantAssetStore {
     func adopt(_ source: URL, as file: ChantFile) throws {
         _ = try Self.install(source, as: file, into: directory)
         present.insert(file.localName)
+        remember(file)
     }
 
     /// Read a megabyte at a time, so a long recording is never held whole
@@ -338,9 +402,20 @@ final class ChantAssetStore {
     }
 
     /// Lets go of every file on the phone that none of `keeping` names,
-    /// and of any half-written one
+    /// and of any half-written one. An older version of a file `keeping`
+    /// names stays until the newer is here, so a chant saved for offline
+    /// never loses its recording to an update still waiting for Wi-Fi.
     func prune(keeping: Set<ChantFile>) {
-        let names = Set(keeping.map(\.localName))
+        var names = Set(keeping.map(\.localName))
+        for file in keeping where !present.contains(file.localName) {
+            if !file.key.isEmpty, let older = keptByKey[file.key] { names.insert(older) }
+        }
+        let keys = Set(keeping.map(\.key))
+        let forgotten = keptByKey.keys.filter { !keys.contains($0) }
+        if !forgotten.isEmpty {
+            for key in forgotten { keptByKey[key] = nil }
+            defaults.set(keptByKey, forKey: Self.keptKey)
+        }
         let manager = FileManager.default
         let all = (try? manager.contentsOfDirectory(atPath: directory.path)) ?? []
         for name in all where !names.contains(name) {

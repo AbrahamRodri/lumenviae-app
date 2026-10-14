@@ -4,7 +4,8 @@
 //
 //  The Chant Library's vocabulary. A chant is one recording and its score:
 //  sung and engraved by Verbum Gloriae, a Spanish apostolate of Gregorian
-//  chant, and bundled so it sounds in a chapel with no signal. The pieces
+//  chant, kept by our server and on the phone once it has come down, so
+//  it sounds in a chapel with no signal. The pieces
 //  themselves — which chants, their titles, the prayers each is a sung
 //  form of, their timed lines — are the server's chant library
 //  (`LibraryContent.chantLibrary`); the recordings and scores are kept on
@@ -40,7 +41,7 @@ struct ChantScorePart: Hashable {
 
 /// One sung line of a chant: its words, a plain English rendering, and
 /// where it stands in the recording. Lines come from
-/// `Tools/ChantLines/<chant id>.json`, derived from the bundled recording
+/// `Tools/ChantLines/<chant id>.json`, derived from the chant's recording
 /// and checked line by line before they are added; a chant without that
 /// file has none, and every surface that steps by the line falls back to
 /// the whole chant. No timing is ever guessed.
@@ -92,7 +93,7 @@ struct Chant: Identifiable, Hashable {
     let detail: String
     /// The app's own prayers this chant is a sung form of
     let prayerIDs: [String]
-    /// Seconds, measured from the bundled file
+    /// Seconds, measured from the recording
     let duration: TimeInterval
     let score: [ChantScorePart]
     /// The recording on the server, kept on the phone by `ChantAssetStore`
@@ -294,12 +295,12 @@ extension Chant {
                     file: part.file, caption: part.caption, aspectRatio: CGFloat(part.aspectRatio),
                     asset: ChantFile(
                         url: part.url.flatMap(URL.init(string:)), bytes: part.bytes, sha256: part.sha256,
-                        fileExtension: "lvscore")
+                        fileExtension: "lvscore", key: "score:\(part.file)")
                 )
             },
             audio: ChantFile(
                 url: chant.audio.url.flatMap(URL.init(string:)), bytes: chant.audio.bytes,
-                sha256: chant.audio.sha256, fileExtension: "m4a"),
+                sha256: chant.audio.sha256, fileExtension: "m4a", key: "audio:\(chant.id)"),
             sourceURL: URL(string: chant.sourceURL) ?? ChantCatalog.sourceSite,
             lines: chant.lines.map {
                 ChantLine(latin: $0.latin, english: $0.english, start: $0.start, end: $0.end, part: $0.part)
