@@ -306,10 +306,10 @@ struct PrayersPictureRow: View {
 // MARK: - A square card
 
 /// A prayer on a shelf that scrolls sideways: its painting cut square,
-/// its name and a line beneath
+/// its name and, where it has one, a line beneath
 struct PrayersSquareCard: View {
     let title: String
-    let note: String
+    let note: String?
     let painting: PrayerBookPainting
     let action: () -> Void
 
@@ -329,18 +329,20 @@ struct PrayersSquareCard: View {
                     .foregroundColor(AppColors.cream)
                     .multilineTextAlignment(.leading)
                     .lineLimit(2)
-                Text(note)
-                    .font(AppFonts.readingItalicFont(13))
-                    .foregroundColor(AppColors.textSecondary)
-                    .multilineTextAlignment(.leading)
-                    .lineLimit(2)
+                if let note {
+                    Text(note)
+                        .font(AppFonts.readingItalicFont(13))
+                        .foregroundColor(AppColors.textSecondary)
+                        .multilineTextAlignment(.leading)
+                        .lineLimit(2)
+                }
             }
             .frame(width: Self.side, alignment: .leading)
             .contentShape(Rectangle())
         }
         .buttonStyle(SacredCardButtonStyle())
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(title), \(note)")
+        .accessibilityLabel([title, note].compactMap { $0 }.joined(separator: ", "))
         .accessibilityAddTraits(.isButton)
     }
 }

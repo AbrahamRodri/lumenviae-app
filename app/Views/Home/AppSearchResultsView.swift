@@ -149,9 +149,10 @@ struct AppSearchResultsView: View {
 
     // MARK: Words
 
-    /// A prayer's line: its Latin name, else the topic it stands in
+    /// A prayer's line: the Latin name it goes by, else the topic it
+    /// stands in
     static func note(for prayer: BookPrayer) -> String? {
-        prayer.latinTitle ?? PrayerBook.homeChapter(of: prayer.id)?.title
+        prayer.secondTitle ?? PrayerBook.homeChapter(of: prayer.id)?.title
     }
 
     static func note(for summary: MeditationSetSummary) -> String {
@@ -344,7 +345,7 @@ struct AppSearchBestCard: View {
 
     private var line: String? {
         switch hit {
-        case .prayer(let prayer): return prayer.latinTitle
+        case .prayer(let prayer): return prayer.secondTitle
         case .topic(let chapter): return PrayerBookView.prayerCount(chapter.prayerIDs.count)
         case .order(let order): return order.occasion
         // The setting where neither title says it, as the rows beneath

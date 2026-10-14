@@ -773,27 +773,16 @@ struct PrayAlongView: View {
                 .accessibilityHidden(true)
 
                 VStack(spacing: 10) {
-                    // The day's three orders close on a line of their own;
-                    // any other's closing line already names it, prayed
-                    if closingNamesNoOrder {
-                        Text("\(launch.title.uppercased()) · PRAYED")
-                            .font(AppFonts.labelFont(10))
-                            .tracking(2.5)
-                            .foregroundColor(AppColors.goldLight)
-                            .multilineTextAlignment(.center)
-                    }
+                    Text("\(launch.title.uppercased()) · PRAYED")
+                        .font(AppFonts.labelFont(10))
+                        .tracking(2.5)
+                        .foregroundColor(AppColors.goldLight)
+                        .multilineTextAlignment(.center)
 
                     Text("Amen.")
                         .font(AppFonts.titleFont(40))
                         .foregroundColor(AppColors.cream)
                         .accessibilityAddTraits(.isHeader)
-
-                    Text(closingLine)
-                        .font(AppFonts.readingItalicFont(17))
-                        .foregroundColor(AppColors.cream.opacity(0.85))
-                        .multilineTextAlignment(.center)
-                        .frame(maxWidth: 290)
-                        .fixedSize(horizontal: false, vertical: true)
 
                     VStack(spacing: 4) {
                         GoldCTAButton(title: "Done", fullWidth: false) {
@@ -817,21 +806,6 @@ struct PrayAlongView: View {
                 .padding(.bottom, max(proxy.safeAreaInsets.bottom, 16) + 8)
             }
             .ignoresSafeArea()
-        }
-    }
-
-    private var closingNamesNoOrder: Bool {
-        [PrayerBook.morningOrderID, PrayerBook.nightOrderID, PrayerBook.angelusOrderID]
-            .contains(launch.orderID ?? "")
-    }
-
-    private var closingLine: String {
-        guard let orderID = launch.orderID else { return "\(launch.title), prayed." }
-        switch orderID {
-        case PrayerBook.morningOrderID: return "The day is offered before it is begun."
-        case PrayerBook.nightOrderID: return "The day is given back. Rest in His peace."
-        case PrayerBook.angelusOrderID: return "The Word was made flesh, and dwelt among us."
-        default: return "\(launch.title), prayed today."
         }
     }
 

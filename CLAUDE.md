@@ -2463,7 +2463,17 @@ write concurrent code here:
   Adoration Falling over Tantum Ergo, I Confess over Confiteor, Queen of
   Heaven over Regina Cæli — except the Memorare, set over its English
   (`PrayerBook.englishNames`), and `BookPrayer.secondTitle` is the line
-  beneath, never the name said twice. The four seasonal antiphons are
+  beneath, never the name said twice. That Latin is drawn only for a
+  prayer that goes by it (`PrayerBook.latinNamesKnown`: Salve Regina,
+  Anima Christi); a Latin that only translates the title (Actus Fidei,
+  Litaniæ Lauretanæ) is kept for search and not drawn. **The small print
+  is held to one rule** (the small-print trim, Oct 2026; the catalog is
+  `.claude/runs/prayer-copy-trim/catalog.md` in the workspace): a line
+  under a title stays only if the reader needs it to act — what this is
+  where the title does not say it, when it is said, whether it is prayed
+  today — in one short plain fact. No devotional flourish or closing
+  sentiment, no Latin second name on an order of prayer, no line that
+  repeats the title or the headings beneath it. The four seasonal antiphons are
   "the season's song to Mary" (`MarianAntiphon.name` is English,
   `latinName` the Latin), their seasons plain dates ("Pentecost to
   Advent", "Advent to February 2"). Centuries are numbers ("13th
@@ -2521,7 +2531,8 @@ write concurrent code here:
   topic's painting, name and count. A topic's page
   (`PrayerBookChapterView`, the "simplify the prayer topic" pick, option
   B, Painted Doors, Oct 2026) opens on its painting, 0.47 of the glass,
-  with the topic's name and one line set over its foot on a scrim at
+  with the topic's name and, where the name does not say what it holds
+  (`PrayerBookChapter.epigraph`, optional), one line set over its foot on a scrim at
   full strength behind the words (at a larger text size they grow up
   over the painting, never cut, and the painting grows with them rather
   than let them under the clock or the Back). Then, where the topic
@@ -2597,13 +2608,14 @@ write concurrent code here:
   "Saved and Prayer Orders" design, option A, Oct 2026) opens on the
   order's painting (`PrayerBookPainting.order`), run up under the bar's
   Back and dissolving into the page, then when it is said (with ·
-  PRAYED TODAY beside it once `wasOffered`), its name and its Latin
-  small, and its prayers as a list numbered 1, 2, 3 (the Holy Cards
-  pick; Roman numerals before, and the line under the Latin saying what
+  PRAYED TODAY beside it once `wasOffered`) and its name (its Latin
+  name, `PrayerOrder.latinTitle`, is kept for search, not drawn), and its
+  prayers as a list numbered 1, 2, 3 (the Holy Cards
+  pick; Roman numerals before, and the line saying what
   the order is, `PrayerOrder.detail`, is no longer drawn), each a door
-  that prays the order from that prayer (`PrayAlongLaunch.order(_:on:startingAt:)`); where the season decides what it
-  holds (Night Prayers' song to Mary, Queen of Heaven at Eastertide) a
-  sentence under the list says so. The foot is PRAY alone, at the
+  that prays the order from that prayer (`PrayAlongLaunch.order(_:on:startingAt:)`); in Eastertide a sentence under the Angelus's list says
+  Queen of Heaven is said in its place (Night Prayers' song to Mary is
+  named by its own row, and no sentence explains it). The foot is PRAY alone, at the
   inline size; aloud or in silence is the pray-along's choice (its head,
   and its question before the first sound). A round speaker beside PRAY
   and a line saying "Aloud, in the male voice" stood there until the
@@ -2671,9 +2683,10 @@ write concurrent code here:
   transport and a progress line aloud, and a different foot in silence:
   position said twice, progress said twice, and a music player where a
   prayer book should be. The Amen brings the painting forward in full,
-  where a seal once stood, over Amen., the order's closing line (the
-  day's three orders under "MORNING PRAYERS · PRAYED", since any other
-  order's line already says it was prayed), DONE,
+  where a seal once stood, under "NIGHT PRAYERS · PRAYED" over Amen.
+  and nothing more (a closing sentiment stood under the Amen until the
+  small-print trim — "The day is given back. Rest in His peace." — and
+  must not come back), DONE,
   Save this prayer (one prayer, not yet saved) and Pray again.
   **The book asks before its first sound**
   (`PrayAloudChoiceSheet`, once, until `hasChosenAloud`, the order's
