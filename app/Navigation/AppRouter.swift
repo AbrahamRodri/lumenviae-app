@@ -296,9 +296,57 @@ final class AppRouter {
         } else if let id = ProcessInfo.processInfo.environment["LUMEN_VIAE_BOOK"], !id.isEmpty {
             path.append(AppRoute.libraryBook(id: id))
             routes = [.libraryBook(id: id)]
+        } else if let spec = ProcessInfo.processInfo.environment["LUMEN_VIAE_ROUTE"],
+                  let (route, launch) = AppRouter.launchRoute(spec) {
+            pendingPrayer = launch
+            if case .meditationSelection(let category) = route { selectedCategory = category }
+            path.append(route)
+            routes = [route]
         }
         #endif
     }
+
+    #if DEBUG
+    /// A page named at launch by `LUMEN_VIAE_ROUTE`, for the App Store
+    /// screenshots (`Tools/AppStore/screenshots`): `missal`, `office`,
+    /// `howToPray`, `explore`, `spiritualReading`, `allMysteries`,
+    /// `mysteries:<category>`, `scripturalRosary:<category>`,
+    /// `rosaryAloud:<category>`, `scripturalRosaryPrayer:<category>[:<mystery>[:<bead>]]`,
+    /// `rosaryAloudPrayer:<category>[:<mystery>[:<bead>]]`,
+    /// `prayer:<category>[:<mystery>[:<bead>]]` (the category's bundled
+    /// meditation set), `prayerOrder:<id>`, `guidedRosary:<category>` and
+    /// `rosaryLesson:<n>`. Categories are `MysteryCategory` raw values.
+    static func launchRoute(_ spec: String) -> (AppRoute, PrayerLaunch?)? {
+        let parts = spec.split(separator: ":").map(String.init)
+        guard let name = parts.first else { return nil }
+        let category = parts.count > 1 ? MysteryCategory(rawValue: parts[1]) : nil
+        let mystery = parts.count > 2 ? Int(parts[2]) ?? 0 : 0
+        let bead = parts.count > 3 ? Int(parts[3]) ?? 0 : 0
+        switch (name, category) {
+        case ("missal", _): return (.missal, nil)
+        case ("office", _): return (.office, nil)
+        case ("howToPray", _): return (.howToPray, nil)
+        case ("explore", _): return (.explore, nil)
+        case ("spiritualReading", _): return (.spiritualReading, nil)
+        case ("allMysteries", _): return (.allMysteries, nil)
+        case ("mysteries", let c?): return (.meditationSelection(category: c), nil)
+        case ("scripturalRosary", let c?): return (.scripturalRosary(c), nil)
+        case ("rosaryAloud", let c?): return (.rosaryAloud(c), nil)
+        case ("guidedRosary", let c?): return (.guidedRosary(c), nil)
+        case ("scripturalRosaryPrayer", let c?), ("rosaryAloudPrayer", let c?):
+            let form: SpokenForm = name == "rosaryAloudPrayer" ? .plain : .scriptural
+            return (.scripturalRosaryPrayer(ScripturalRosaryLaunch(
+                category: c, form: form, startIndex: mystery, startBead: bead)), nil)
+        case ("prayer", let c?):
+            guard let set = BundledMeditationSets.all.first(where: { $0.category == c.rawValue }) else { return nil }
+            return (.prayerSession(meditationSetId: set.id),
+                    PrayerLaunch(meditationSet: set, startIndex: mystery, startBead: bead))
+        case ("prayerOrder", _) where parts.count > 1: return (.prayerOrder(id: parts[1]), nil)
+        case ("rosaryLesson", _): return (.rosaryLesson(parts.count > 1 ? Int(parts[1]) ?? 0 : 0), nil)
+        default: return nil
+        }
+    }
+    #endif
 
     /// Appends a route to the path and records it
     private func append(_ route: AppRoute) {

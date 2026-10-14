@@ -17,7 +17,7 @@ Tools/dev asc --help       # every command
   signing and `project.pbxproj`. A dry run prints exactly what it would do
   (each request's method, path and body, or the xcodebuild command) and
   does nothing. Read-only commands (`setup`, `status`, `versions`,
-  `builds`, `groups`) take no flag.
+  `builds`, `groups`, `versioning`, `listing`) take no flag.
 - **Submitting for review: a Claude session must ask Abraham in chat, and
   have his yes for that version, before it runs `submit --confirm`. It
   must ask every time.** A yes for one version is not a yes for the next.
@@ -116,6 +116,58 @@ renumber builds, so the project's number can trail far behind: the project
 said 5 while App Store Connect held 61. A new upload of the same version
 needs a new build number.
 
+## The store listing and screenshots
+
+```bash
+# What the store shows for a version (read-only)
+Tools/dev asc listing 4.1
+
+# Description, keywords and promotional text: only what changed is sent
+Tools/dev asc set-listing 4.1 --description-file description.txt \
+    --keywords-file keywords.txt --promo-file promo.txt          # dry run, with a diff
+Tools/dev asc set-listing 4.1 ... --confirm
+
+# The screenshots: capture and frame them, then replace the set
+Tools/AppStore/screenshots/capture.sh --out .build/screenshots
+Tools/dev asc screenshots 4.1 --dir .build/screenshots           # dry run
+Tools/dev asc screenshots 4.1 --dir .build/screenshots --confirm
+```
+
+- The limits are checked before anything is sent: description 4000
+  characters, keywords 100 (comma separated, no spaces after the commas),
+  promotional text 170.
+- Promotional text can change at any time. The description, keywords and
+  screenshots change only while the version is editable. A version
+  waiting for review has to be pulled back first with `asc cancel-review
+  4.1 --confirm`, and then sent again with `asc submit`, which needs
+  Abraham's yes as always.
+- `screenshots` takes every `.png` in the directory, in file-name order
+  (`01.png`, `02.png` …), at most ten, each the size its display type
+  takes (`APP_IPHONE_67`, the default: 1320x2868 or 1290x2796) and with no
+  alpha channel. For each it reserves the file in the set, uploads its
+  parts to the URLs Apple returns, and commits it with its MD5. It waits
+  until Apple has processed every new one (`COMPLETE`), and only then
+  deletes the old screenshots and puts the new ones in order. If one
+  fails, the old set is left as it was.
+
+### Making the screenshots
+
+`Tools/AppStore/screenshots/capture.sh` makes the whole set again for a
+release. It builds the Debug app on its own iPhone 17 Pro Max simulator
+("LumenViae Screenshots", 6.9", so a capture is 1320x2868), sets the
+status bar to 9:41 with a full battery, answers the first-run questions,
+and opens each scene with the debug launch variables (`LUMEN_VIAE_TAB`,
+`LUMEN_VIAE_ROUTE`, `LUMEN_VIAE_CHANT`, `LUMEN_VIAE_TODAY`; see
+`AppRouter.launchRoute`), so nothing is tapped. It then frames each
+capture with `frame.swift`: the navy ground, a two-line headline in EB
+Garamond, a gold line under it, and the screen in an iPhone, matching the
+3.0 set.
+
+The scenes, their launch variables and their words are in `scenes.txt`,
+one line each. Change a headline there and rerun with `--frame-only` to
+frame the captures again without the simulator. `--only 03` does one
+scene. The captures are kept in `<out>/raw/`.
+
 ## Two different What's New
 
 - **The App Store's What's New** is the text on the App Store page,
@@ -134,7 +186,8 @@ separately.
 
 - Apple's App Store Connect API (`/v1/apps`, `appStoreVersions`,
   `appStoreVersionLocalizations`, `builds`, `betaGroups`,
-  `betaBuildLocalizations`, `reviewSubmissions`, `reviewSubmissionItems`).
+  `betaBuildLocalizations`, `reviewSubmissions`, `reviewSubmissionItems`,
+  `appScreenshotSets`, `appScreenshots`).
 - `xcodebuild archive` and `xcodebuild -exportArchive` with an
   `app-store-connect` / `upload` export. Both are authenticated with the
   API key (`-authenticationKeyPath/ID/IssuerID`, `-allowProvisioningUpdates`),
@@ -155,5 +208,8 @@ The tests sign with a P-256 key made in a temporary directory and check
 each signature with openssl, along with the token's header and claims
 (`aud` appstoreconnect-v1, a lifetime of at most 20 minutes). They also
 check the bump (the app target only, a dry run unless confirmed) and that
-a dry run sends nothing. They do not reach App Store Connect. The first
+a dry run sends nothing. The listing commands run against a fake App
+Store Connect: only changed fields are sent, the limits hold, and
+screenshots are uploaded in file-name order, the old ones deleted only
+once the new ones are processed, and kept when one fails. They do not reach App Store Connect. The first
 real call is `asc setup` with Abraham's key.

@@ -141,7 +141,9 @@ which is kept in `~/.appstoreconnect` and never in the repository. Each of
 these is a dry run without `--confirm`. **A Claude session asks Abraham in
 chat before every `submit --confirm`.** Setup and the step-by-step flow
 are in [AppStore/README.md](AppStore/README.md). `Tools/dev asc-test` runs
-the tool's own tests.
+the tool's own tests. `listing`, `set-listing` and `screenshots` keep the
+store page current, and `AppStore/screenshots/capture.sh` captures and
+frames the App Store screenshots on a simulator of its own.
 
 ## Generators
 
