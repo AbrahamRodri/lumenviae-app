@@ -401,3 +401,34 @@ private struct HaloModifier: ViewModifier {
     }
     .background(AppColors.appGradient)
 }
+
+// MARK: - GoldBackButton
+
+/// The gold Back a pushed page draws in its bar's leading slot, where the
+/// page hides the system's own (`navigationBarBackButtonHidden`)
+struct GoldBackButton: View {
+    /// Set on a dark capsule (`BarControlGround`), for a bar that stands
+    /// over a painting
+    var grounded = false
+
+    @Environment(AppRouter.self) private var router
+
+    var body: some View {
+        Button(action: { router.pop() }) {
+            if grounded {
+                label.modifier(BarControlGround(shape: Capsule(), horizontal: 12))
+            } else {
+                label
+            }
+        }
+    }
+
+    private var label: some View {
+        HStack(spacing: 6) {
+            AppIcon("ph-caret-left", size: 14)
+            Text("Back")
+                .font(AppFonts.bodyFont(16))
+        }
+        .foregroundColor(AppColors.gold)
+    }
+}

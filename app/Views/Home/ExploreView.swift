@@ -140,14 +140,7 @@ struct ExploreView: View {
         .toolbar {
             if origin == .everywhere {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: { router.pop() }) {
-                        HStack(spacing: 6) {
-                            AppIcon("ph-caret-left", size: 14)
-                            Text("Back")
-                                .font(AppFonts.bodyFont(16))
-                        }
-                        .foregroundColor(AppColors.gold)
-                    }
+                    GoldBackButton()
                 }
                 // The page's name, the one the home masthead's glass and the
                 // first-use tour call it by
@@ -166,7 +159,9 @@ struct ExploreView: View {
             guard !needle.isEmpty else { return }
             Task { await loadSets() }
         }
-        .onChange(of: sets) { _, _ in search() }
+        // The sets arriving add their section where the reader is: put
+        // back at the top, a reader already scrolling was thrown up there
+        .onChange(of: sets) { _, _ in search(keepingPlace: true) }
         .onAppear {
             // A page's glass was a request to search: the keyboard rises
             if origin != .everywhere, !didFocusOnArrival {
@@ -175,9 +170,12 @@ struct ExploreView: View {
             }
         }
         // VoiceOver stays in the field and would hear nothing of the
-        // results: what was found is said once the reader pauses
-        .task(id: trimmedQuery) {
-            guard !trimmedQuery.isEmpty else { return }
+        // results: what was found is said once the reader pauses. While
+        // the meditations are still being fetched with nothing else found,
+        // the page says it is searching, so "Nothing found" waits for
+        // them; their arrival is said again.
+        .task(id: "\(trimmedQuery)|\(isLoadingSets)") {
+            guard !trimmedQuery.isEmpty, !(isLoadingSets && results.isEmpty) else { return }
             try? await Task.sleep(for: .milliseconds(700))
             guard !Task.isCancelled else { return }
             let found = results
@@ -246,7 +244,7 @@ struct ExploreView: View {
                             .frame(width: 44, height: 44)
                             .contentShape(Rectangle())
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(QuietGlyphButtonStyle())
                     // The glyph keeps its place; only the target grows
                     .padding(.trailing, -7)
                     .accessibilityLabel("Clear the search")
@@ -367,12 +365,19 @@ struct ExploreView: View {
 
     // MARK: - Search results
 
-    /// Searches again for the words as they stand, and puts the page
-    /// back at its top, the card's chip lit: kept where it was, a longer
-    /// word left the list part-way down under another kind's chip
-    private func search() {
+    /// Searches again for the words as they stand. New words put the
+    /// page back at its top, the card's chip lit: kept where it was, a
+    /// longer word left the list part-way down under another kind's chip.
+    /// Searched again in place (`keepingPlace`, the sets arriving), the
+    /// page stays where it was unless the section it stood on is gone.
+    private func search(keepingPlace: Bool = false) {
+        let wasEmpty = results.isEmpty
         results = AppSearch.results(for: trimmedQuery, from: origin, sets: sets, pages: searchPages)
-        scrolledID = results.firstScrollID
+        let standing = AppSearchResultsView.kind(ofScrollID: scrolledID, in: results)
+        let stillThere = standing.map { results.kinds.contains($0) } ?? false
+        if !keepingPlace || wasEmpty || !stillThere {
+            scrolledID = results.firstScrollID
+        }
     }
 
     /// The chip lit: the kind at the top of the scroll, else the first
@@ -385,12 +390,12 @@ struct ExploreView: View {
     /// The app's doors, as the search knows them: by name and words
     private var searchPages: [AppSearch.Page] {
         libraryEntries.map {
-            AppSearch.Page(id: $0.title, title: $0.title, matchText: $0.matchText, icon: $0.icon)
+            AppSearch.Page(id: $0.id, title: $0.title, matchText: $0.matchText, icon: $0.icon)
         }
     }
 
     private func openPage(_ id: String) {
-        libraryEntries.first { $0.title == id }?.action()
+        libraryEntries.first { $0.id == id }?.action()
     }
 
     @ViewBuilder
@@ -455,12 +460,18 @@ struct ExploreView: View {
     // MARK: - Library entries
 
     private struct LibraryEntry {
+        /// What names the door to the search and back, whatever its title
+        /// says: a door renamed keeps its hit
+        let id: String
         let icon: String
         let title: String
         let matchText: String
         /// The page it opens, where it opens one, so an archived page's
         /// door stands down (`ArchivedPages`)
         var route: AppRoute? = nil
+        /// Listed in Learn More: a guide with no shelf of its own above.
+        /// Every other door is found by search alone.
+        var inLearnMore = false
         let action: () -> Void
     }
 
@@ -475,42 +486,42 @@ struct ExploreView: View {
 
     private var allLibraryEntries: [LibraryEntry] {
         [
-            LibraryEntry(icon: "ch-altar", title: "Today's Mass",
+            LibraryEntry(id: "missal", icon: "ch-altar", title: "Today's Mass",
                          matchText: "daily missal mass 1962 propers latin") { router.push(.missal) },
-            LibraryEntry(icon: "ph-clock", title: "Hours of Prayer",
+            LibraryEntry(id: "office", icon: "ph-clock", title: "Hours of Prayer",
                          matchText: "divine office breviary hours of prayer matins lauds prime terce sext none vespers compline") { router.push(.office) },
-            LibraryEntry(icon: "ph-crown", title: "True Devotion",
+            LibraryEntry(id: "trueDevotion", icon: "ph-crown", title: "True Devotion",
                          matchText: "true devotion to mary montfort book") { router.push(.trueDevotionBook) },
-            LibraryEntry(icon: "ph-scroll", title: "The Devotion in Summary",
-                         matchText: "true devotion summary marks false devotions montfort", route: .trueDevotion) { router.push(.trueDevotion) },
-            LibraryEntry(icon: "ph-book-open", title: "Spiritual Reading",
+            LibraryEntry(id: "devotionSummary", icon: "ph-scroll", title: "The Devotion in Summary",
+                         matchText: "true devotion summary marks false devotions montfort", route: .trueDevotion, inLearnMore: true) { router.push(.trueDevotion) },
+            LibraryEntry(id: "spiritualReading", icon: "ph-book-open", title: "Spiritual Reading",
                          matchText: "spiritual reading books imitation of christ story of a soul confessions augustine therese kempis library") { router.push(.spiritualReading) },
             // The Rosary's two forms beside the meditation sets, found by
             // name and opening the day's mysteries' page, where they stand
-            // under OTHER WAYS TO PRAY with the sets beneath
-            LibraryEntry(icon: PrayerShortcut.scripturalRosary.icon, title: "The Scriptural Rosary",
+            // under WAYS TO PRAY with the sets beneath
+            LibraryEntry(id: "scripturalRosary", icon: PrayerShortcut.scripturalRosary.icon, title: "The Scriptural Rosary",
                          matchText: "scriptural rosary verse every bead gospel douay rheims bible") { openTodaysMysteries() },
-            LibraryEntry(icon: PrayerShortcut.rosaryAloud.icon, title: "The Rosary Said Aloud",
+            LibraryEntry(id: "rosaryAloud", icon: PrayerShortcut.rosaryAloud.icon, title: "The Rosary Said Aloud",
                          matchText: "holy rosary aloud said spoken audio listen voice hear prayers learn by ear no meditation") { openTodaysMysteries() },
-            LibraryEntry(icon: "lv-rosary", title: "How to Pray",
+            LibraryEntry(id: "howToPray", icon: "lv-rosary", title: "How to Pray",
                          matchText: "how to pray the rosary guide montfort methods") { router.push(.howToPray) },
             // Not the Gospel glyph: that is the Scriptural Rosary's, and
             // the two doors stood side by side wearing the same one
-            LibraryEntry(icon: "lv-breviary", title: "In Scripture",
-                         matchText: "mysteries in scripture bible verses", route: .scripture) { router.push(.scripture) },
-            LibraryEntry(icon: "ch-lily", title: "Marian Library",
-                         matchText: "marian theology library dogmas apparitions saints", route: .marianLibrary) { router.push(.marianLibrary) },
-            LibraryEntry(icon: "ch-monstrance", title: "St. Carlo Acutis",
-                         matchText: "carlo acutis eucharist digital altar saint", route: .carloAcutis) { router.push(.carloAcutis) },
-            LibraryEntry(icon: "lv-prayer-book", title: "Prayers",
+            LibraryEntry(id: "scripture", icon: "lv-breviary", title: "In Scripture",
+                         matchText: "mysteries in scripture bible verses", route: .scripture, inLearnMore: true) { router.push(.scripture) },
+            LibraryEntry(id: "marianLibrary", icon: "ch-lily", title: "Marian Library",
+                         matchText: "marian theology library dogmas apparitions saints", route: .marianLibrary, inLearnMore: true) { router.push(.marianLibrary) },
+            LibraryEntry(id: "carloAcutis", icon: "ch-monstrance", title: "St. Carlo Acutis",
+                         matchText: "carlo acutis eucharist digital altar saint", route: .carloAcutis, inLearnMore: true) { router.push(.carloAcutis) },
+            LibraryEntry(id: "prayerBook", icon: "lv-prayer-book", title: "Prayers",
                          matchText: "prayer book prayers enchiridion morning night angelus grace confession examination conscience mass communion litany litanies marian our lady latin novena") { router.push(.prayerBook) },
-            LibraryEntry(icon: "ph-music-note", title: "The Chant Library",
+            LibraryEntry(id: "chantLibrary", icon: "ph-music-note", title: "The Chant Library",
                          matchText: "chant chants gregorian sung song songs hymn hymns latin score scores sheet music antiphon sing") { router.push(.chantLibrary) },
-            LibraryEntry(icon: "ph-flame", title: "Prayer Record",
+            LibraryEntry(id: "prayerRecord", icon: "ph-flame", title: "Prayer Record",
                          matchText: "sacred record progress streak history calendar") { router.push(.prayerRecord) },
             // The Journal gave its place in the bar to Prayers; found by
             // name, it opens as the Chapel's Reflections tile opens it
-            LibraryEntry(icon: "ph-book-open", title: "Journal",
+            LibraryEntry(id: "journal", icon: "ph-book-open", title: "Journal",
                          matchText: "journal reflections reflection notes entries write diary") { router.push(.journal) }
         ]
     }
@@ -540,7 +551,7 @@ struct ExploreView: View {
                             endPoint: .trailing
                         )
                     )
-                    .frame(height: 1)
+                    .frame(height: AppLine.hairline)
 
                 if let link {
                     Button(action: link.1) {
@@ -555,7 +566,7 @@ struct ExploreView: View {
                         .frame(minHeight: 44)
                         .contentShape(Rectangle())
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(QuietGlyphButtonStyle())
                     .accessibilityLabel(link.0)
                 }
             }
@@ -807,14 +818,7 @@ struct ExploreView: View {
     /// How to Pray is found by search and from Home and the Chapel; the
     /// Rosary's other two forms stand on every mysteries' page.
     private var studyEntries: [LibraryEntry] {
-        let housed = [
-            "Today's Mass", "Hours of Prayer",
-            "True Devotion", "Spiritual Reading",
-            "The Scriptural Rosary", "The Rosary Said Aloud",
-            "Prayer Record", "How to Pray", "The Chant Library",
-            "Journal", "Prayers"
-        ]
-        return libraryEntries.filter { !housed.contains($0.title) }
+        libraryEntries.filter(\.inLearnMore)
     }
 
     private var libraryIndex: some View {

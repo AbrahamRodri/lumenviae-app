@@ -107,9 +107,9 @@ enum ChantBrowseScope: Hashable {
         case .all:
             return ChantSet.emptyPainting
         case .group:
-            return group.map(Self.contentsPainting) ?? ChantSet.emptyPainting
+            return group.map(\.painting) ?? ChantSet.emptyPainting
         case .massOfTheAngels:
-            return ChantCatalog.groups.first { $0.id == "mass" }.map(Self.contentsPainting) ?? ChantSet.emptyPainting
+            return ChantCatalog.groups.first { $0.id == "mass" }.map(\.painting) ?? ChantSet.emptyPainting
         case .songsToMary:
             return chants?.first.map { ChantCatalog.painting(for: $0) } ?? ChantSet.emptyPainting
         }
@@ -128,12 +128,6 @@ enum ChantBrowseScope: Hashable {
         case "benediction": return "Benediction"
         default: return group.title
         }
-    }
-
-    /// The painting a section's card hangs: the picker's (`ChantGroup.
-    /// painting`), which gives no two sections the same one
-    static func contentsPainting(for group: ChantGroup) -> String {
-        group.painting
     }
 
     /// Where a card or a shelf's head cuts its painting: the curation's
@@ -199,7 +193,7 @@ struct ChantBrowsePage: View {
         // title's room, and every page began under an empty band
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) { ChantBackButton() }
+            ToolbarItem(placement: .navigationBarLeading) { GoldBackButton() }
             if scope.chants == nil {
                 ToolbarItem(placement: .principal) {
                     VStack(spacing: 1) {
@@ -257,7 +251,7 @@ struct ChantSectionsGrid: View {
     }
 
     private func card(_ group: ChantGroup) -> some View {
-        let painting = ChantBrowseScope.contentsPainting(for: group)
+        let painting = group.painting
         let count = ChantBrowseScope.chantCount(ChantCatalog.chants(in: group).count)
         let title = ChantBrowseScope.cardTitle(of: group)
         return Button {
@@ -618,7 +612,7 @@ private struct ChantPaintedRow: View {
                     isPlaying: sounding,
                     isLoading: player.current.id == chant.id && player.isLoading,
                     size: 26,
-                    label: chant.spokenName
+                    label: chant.spokenNameAndSetting
                 ) {
                     player.toggle(chant)
                 }
@@ -680,7 +674,7 @@ private struct ChantNumberedRow: View {
                 isPlaying: sounding,
                 isLoading: player.current.id == chant.id && player.isLoading,
                 size: 30,
-                label: chant.spokenName
+                label: chant.spokenNameAndSetting
             ) {
                 player.toggle(chant)
             }
@@ -701,7 +695,7 @@ private struct ChantShelfRow: ViewModifier {
     }
 
     static func spoken(_ chant: Chant, showsSetting: Bool, sounding: Bool) -> String {
-        let length = sounding ? "playing now" : ChantPlayer.spoken(chant.duration)
+        let length = sounding ? "playing now" : chant.spokenLength
         return "\(chant.latinTitle), \(ChantShelfNames.subtitle(of: chant, showsSetting: showsSetting)), \(length)"
     }
 }
@@ -799,7 +793,7 @@ struct ChantSetsPage: View {
         // title's room, and every page began under an empty band
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) { ChantBackButton() }
+            ToolbarItem(placement: .navigationBarLeading) { GoldBackButton() }
             ToolbarItem(placement: .principal) {
                 Text("Sets of Chants")
                     .font(AppFonts.titleFont(19))

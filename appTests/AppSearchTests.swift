@@ -118,6 +118,14 @@ struct AppSearchTests {
         #expect(ordinary.best?.id != "order:\(PrayerBook.angelusOrderID)")
     }
 
+    @Test func heavensOlderSpellingFindsTheQueenOfHeaven() {
+        // "Regina Coeli" is how many still spell it
+        let results = AppSearch.results(for: "regina coeli", from: .chant)
+        let ids = ([results.best].compactMap { $0 } + results.sections.flatMap(\.hits)).map(\.id)
+        #expect(ids.contains("chant:regina_caeli_simple"))
+        #expect(ids.contains("prayer:regina_caeli"))
+    }
+
     @Test func aChantIsFoundByItsSungWords() {
         // A line of the Salve Regina that no title holds
         let results = AppSearch.results(for: "spes nostra", from: .chant)
@@ -132,7 +140,7 @@ struct AppSearchTests {
         let hits = AppSearch.chantHits("mary")
         let ids = hits.map(\.id)
         #expect(Set(ids).count == ids.count)
-        let singing = ChantSearch.works(singingPrayerMatching: "mary").flatMap(\.chants).map { "chant:\($0.id)" }
+        let singing = ChantSearch.chants(singingPrayerMatching: "mary").map { "chant:\($0.id)" }
         #expect(!singing.isEmpty)
         #expect(Set(singing).isSubset(of: Set(ids)))
     }
@@ -194,7 +202,7 @@ struct AppSearchTests {
         )
         #expect(AppSearch.matches(set, needle: "therese"))
         #expect(AppSearch.matches(set, needle: "scriptural"))
-        #expect(AppSearch.matches(set, needle: AppSearch.fold("Gospel")))
+        #expect(AppSearch.matches(set, needle: SearchText.needle("Gospel")))
         #expect(AppSearch.matches(set, needle: "joyful"))
         #expect(!AppSearch.matches(set, needle: "sorrowful"))
     }

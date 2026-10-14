@@ -471,7 +471,7 @@ struct ChantPracticeView: View {
                             isPlaying: player.isPlaying(chant),
                             isLoading: player.current.id == chant.id && player.isLoading,
                             size: 76,
-                            label: chant.spokenName
+                            label: chant.spokenNameAndSetting
                         ) {
                             play()
                         }

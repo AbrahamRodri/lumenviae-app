@@ -159,7 +159,7 @@ extension PrayerBook {
 
     private static let topicIndex: [TopicEntry] = chapters.map { chapter in
         let names = [chapter.title, chapter.topic, chapter.latinTitle] + chapter.searchWords
-        return TopicEntry(chapter: chapter, names: names.map(topicWords).filter { !$0.isEmpty })
+        return TopicEntry(chapter: chapter, names: names.map { topicWords($0) }.filter { !$0.isEmpty })
     }
 
     /// Names as words, a name with none left out, since it answers nothing

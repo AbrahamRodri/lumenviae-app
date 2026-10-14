@@ -34,6 +34,7 @@ struct PrayAlongView: View {
     @Environment(AppRouter.self) private var router
     @Environment(UserSettings.self) private var settings
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.scenePhase) private var scenePhase
 
     private let store: PrayerBookStore
     private let prayers: [BookPrayer]
@@ -44,6 +45,14 @@ struct PrayAlongView: View {
     @State private var finished = false
     @State private var bellRings = 0
     @State private var advanceTask: Task<Void, Never>?
+
+    /// The page turning to another prayer. One at a time: two quick turns
+    /// (NEXT and a swipe) once each loaded the recording, and the second
+    /// read the index the first had not yet set
+    @State private var turnTask: Task<Void, Never>?
+
+    /// Each prayer's stanzas measured once, for following the voice
+    @State private var measures = StanzaMeasures()
     @State private var asksHowToPray = false
 
     /// Whether the page is on screen. Recordings still being fetched when
@@ -178,6 +187,16 @@ struct PrayAlongView: View {
         .onChange(of: voice.progress) { _, progress in
             follow(progress)
         }
+        .onChange(of: scenePhase) { _, phase in
+            keepAwake(phase == .active && isShowing && !finished)
+        }
+        .onChange(of: finished) { _, done in
+            keepAwake(isShowing && !done)
+        }
+        // On the root, which stands for as long as the page: on the Amen,
+        // which is drawn only once the prayer has finished, it never saw
+        // the change and never sounded
+        .sensoryFeedback(.success, trigger: finished) { _, done in done }
     }
 
     // MARK: - Header
@@ -279,7 +298,7 @@ struct PrayAlongView: View {
                     .frame(height: 44)
                     .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(QuietGlyphButtonStyle())
                 .accessibilityLabel("\(i + 1) of \(prayers.count), \(prayers[i].title)")
                 .accessibilityAddTraits(i == index ? .isSelected : [])
             }
@@ -413,7 +432,7 @@ struct PrayAlongView: View {
             )
             .onChange(of: litStanza) { _, lit in
                 guard let lit, aloud else { return }
-                withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.7)) {
+                withAnimation(reduceMotion ? nil : Motion.travel(0.7)) {
                     proxy.scrollTo(lit, anchor: UnitPoint(x: 0.5, y: 0.3))
                 }
             }
@@ -667,7 +686,6 @@ struct PrayAlongView: View {
             }
             .ignoresSafeArea()
         }
-        .sensoryFeedback(.success, trigger: finished)
     }
 
     private var closingNamesNoOrder: Bool {
@@ -700,7 +718,7 @@ struct PrayAlongView: View {
         isShowing = true
         store.prayAlongOpened(screenID)
         store.notePrayed(launch: launch)
-        UIApplication.shared.isIdleTimerDisabled = true
+        keepAwake(!finished)
         voice.onFinish = { scheduleAdvance() }
         voice.onNext = { if !isLast { goTo(index + 1) } }
         voice.onPrevious = { if index > 0 { goTo(index - 1) } }
@@ -724,9 +742,17 @@ struct PrayAlongView: View {
         isShowing = false
         store.prayAlongClosed(screenID)
         advanceTask?.cancel()
+        turnTask?.cancel()
         voice.stop()
         AngelusBellSound.shared.silence()
-        UIApplication.shared.isIdleTimerDisabled = false
+        keepAwake(false)
+    }
+
+    /// The screen stays lit while a prayer is being said on it, and only
+    /// then: not on the Amen, which can be left standing, and not once
+    /// the page is gone or the app is put away
+    private func keepAwake(_ awake: Bool) {
+        UIApplication.shared.isIdleTimerDisabled = awake
     }
 
     private func startVoice() {
@@ -781,11 +807,13 @@ struct PrayAlongView: View {
         advanceTask?.cancel()
         litStanza = nil
         if aloud { voice.pause() }
-        withAnimation(.easeIn(duration: 0.14)) { pageOpacity = 0 }
-        Task { @MainActor in
-            try? await Task.sleep(for: .milliseconds(150))
+        withAnimation(Motion.pageFadeOut) { pageOpacity = 0 }
+        turnTask?.cancel()
+        turnTask = Task { @MainActor in
+            try? await Task.sleep(for: Motion.pageFadeGap)
+            guard !Task.isCancelled else { return }
             index = target
-            withAnimation(.easeOut(duration: 0.26)) { pageOpacity = 1 }
+            withAnimation(Motion.pageFadeIn) { pageOpacity = 1 }
             if isShowing, aloud, case .ready = voice.state {
                 await playCurrent()
             }
@@ -815,18 +843,16 @@ struct PrayAlongView: View {
     /// the book readers' is
     private func follow(_ progress: Double) {
         guard aloud, let prayer, voice.currentPrayerID == prayer.id else { return }
-        let weights = Self.spokenWeights(prayer.english)
-        let total = weights.reduce(0, +)
-        guard total > 0 else { return }
+        let measure = measures.of(prayer, in: displayLanguage)
+        guard measure.total > 0 else { return }
         var running = 0
-        let reached = progress * Double(total)
-        var lit = weights.count - 1
-        for (i, weight) in weights.enumerated() {
+        let reached = progress * Double(measure.total)
+        var lit = measure.weights.count - 1
+        for (i, weight) in measure.weights.enumerated() {
             running += weight
             if Double(running) > reached { lit = i; break }
         }
-        let displayed = Self.stanzas(prayer.content(for: displayLanguage)).count
-        lit = min(lit, max(displayed - 1, 0))
+        lit = min(lit, max(measure.displayed - 1, 0))
         if lit != litStanza { litStanza = lit }
     }
 
@@ -870,6 +896,35 @@ struct PrayAlongView: View {
             }
             return max(count, 1)
         }
+    }
+}
+
+// MARK: - Following the voice
+
+/// How much the voice says in each stanza of a prayer, and how many
+/// stanzas the page shows of it in a language, worked out once a prayer
+/// rather than at every one of the voice's ticks. A class, so filling it
+/// redraws nothing.
+final class StanzaMeasures {
+    struct Measure {
+        let weights: [Int]
+        let total: Int
+        let displayed: Int
+    }
+
+    private var kept: [String: Measure] = [:]
+
+    func of(_ prayer: BookPrayer, in language: PrayerLanguage) -> Measure {
+        let key = "\(prayer.id)|\(language)"
+        if let measure = kept[key] { return measure }
+        let weights = PrayAlongView.spokenWeights(prayer.english)
+        let measure = Measure(
+            weights: weights,
+            total: weights.reduce(0, +),
+            displayed: PrayAlongView.stanzas(prayer.content(for: language)).count
+        )
+        kept[key] = measure
+        return measure
     }
 }
 

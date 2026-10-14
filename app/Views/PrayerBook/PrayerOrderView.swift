@@ -28,6 +28,7 @@ struct PrayerOrderView: View {
     let orderID: String
 
     @Environment(AppRouter.self) private var router
+    @Environment(\.scenePhase) private var scenePhase
 
     private let store: PrayerBookStore
 
@@ -102,20 +103,15 @@ struct PrayerOrderView: View {
 
                 foot(order)
                     .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { footHeight = $0 }
+            } else {
+                missing
             }
         }
         .navigationBarBackButtonHidden(true)
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: { router.pop() }) {
-                    HStack(spacing: 6) {
-                        AppIcon("ph-caret-left", size: 14)
-                        Text("Back")
-                            .font(AppFonts.bodyFont(16))
-                    }
-                    .foregroundColor(AppColors.gold)
-                }
+                GoldBackButton()
             }
             // Prayers is a tab, and the door to it clears the stack it is
             // opened from. Opened from the tab itself, Back already goes
@@ -133,6 +129,32 @@ struct PrayerOrderView: View {
             }
         }
         .onAppear { now = fixedDate ?? Date() }
+        // Left open across the day's turn or brought back to the front,
+        // the page reads the clock again: PRAYED TODAY, the season's name
+        // and its note are the day's, as on the Prayers page
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active, fixedDate == nil { now = Date() }
+        }
+        .background {
+            if fixedDate == nil {
+                TimelineView(PrayerBookHourSchedule()) { context in
+                    Color.clear.onChange(of: context.date) { _, date in
+                        withAnimation(Motion.crossfade) { now = date }
+                    }
+                }
+            }
+        }
+    }
+
+    /// An order the book does not hold: said, as the prayer's page says
+    /// it, under the bar's Back
+    private var missing: some View {
+        Text("This order of prayer could not be found.")
+            .font(AppFonts.readingItalicFont(16))
+            .foregroundColor(AppColors.textSecondary)
+            .multilineTextAlignment(.center)
+            .padding(.horizontal, 32)
+            .frame(maxHeight: .infinity)
     }
 
     // MARK: - Head

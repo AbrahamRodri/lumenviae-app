@@ -43,6 +43,10 @@ struct PrayerBookChapterView: View {
     @State private var chapterID: String
     @State private var pageOpacity: Double = 1
 
+    /// The page turning to another topic. One at a time: two quick taps
+    /// once ran two turns from the same topic
+    @State private var turnTask: Task<Void, Never>?
+
     /// Whether the painting has scrolled up behind the clock and the
     /// Back, so the dark ground under them is needed
     @State private var paintingGone = false
@@ -373,12 +377,14 @@ struct PrayerBookChapterView: View {
     /// Fades the page out, swaps the topic and puts the scroll back to
     /// the top unseen, then fades in — never a flash of the old topic
     private func turn(to id: String, proxy: ScrollViewProxy) {
-        withAnimation(.easeIn(duration: 0.14)) { pageOpacity = 0 }
-        Task { @MainActor in
-            try? await Task.sleep(for: .milliseconds(150))
+        withAnimation(Motion.pageFadeOut) { pageOpacity = 0 }
+        turnTask?.cancel()
+        turnTask = Task { @MainActor in
+            try? await Task.sleep(for: Motion.pageFadeGap)
+            guard !Task.isCancelled else { return }
             chapterID = id
             proxy.scrollTo("top", anchor: .top)
-            withAnimation(.easeOut(duration: 0.24)) { pageOpacity = 1 }
+            withAnimation(Motion.pageFadeIn) { pageOpacity = 1 }
             // A new topic is a new page to VoiceOver too, as it was when
             // the turn pushed one: it starts again at the header
             AccessibilityNotification.ScreenChanged(nil).post()

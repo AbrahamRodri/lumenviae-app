@@ -419,7 +419,7 @@ private struct ChantScoreSheetTransport: View {
                 isPlaying: player.isPlaying(chant),
                 isLoading: player.current.id == chant.id && player.isLoading,
                 size: 40,
-                label: chant.spokenName
+                label: chant.spokenNameAndSetting
             ) {
                 player.toggle(chant)
             }

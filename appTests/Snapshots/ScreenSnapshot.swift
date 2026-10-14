@@ -61,6 +61,8 @@ enum ScreenSnapshot {
     /// re-rendered copy, and the two differ by a shade, so a suite's first
     /// snapshot would depend on which it raced.
     static func preloadPaintings() async {
+        // Small paintings made at once, not fetched after the page is drawn
+        PaintingThumbnails.makesAtOnce = true
         guard !paintingsPreloaded else { return }
         await ImageCacheService.shared.preloadImages()
         paintingsPreloaded = true

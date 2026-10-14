@@ -148,11 +148,6 @@ enum ChantSeason: String, CaseIterable, Identifiable {
         }
     }
 
-    /// "for Easter", "until Advent": the season as a preposition takes it
-    var prose: String {
-        self == .afterPentecost ? "the season after Pentecost" : title
-    }
-
     var note: String { ChantLibraryData.seasonNotes[self] ?? "" }
 
     /// Its own chants, in the order the board lists them
@@ -666,20 +661,6 @@ extension Chant {
             .replacingOccurrences(of: " melody", with: "")
             .replacingOccurrences(of: " tone", with: "")
         return word.prefix(1).uppercased() + word.dropFirst()
-    }
-
-    /// When it is sung in the year, against `date`: "this season, until
-    /// Advent", "for Easter", or nil for a chant of every season
-    func seasonLine(on date: Date = Date()) -> String? {
-        let seasons = self.seasons
-        guard !seasons.isEmpty else { return nil }
-        let now = ChantYear.containing(date).season(on: date)
-        if seasons.contains(now) {
-            var last = now
-            while seasons.contains(last.next), last.next != now { last = last.next }
-            return "this season, until \(last.next.prose)"
-        }
-        return "for \(seasons[0].prose)"
     }
 
     /// The Prayer Book's own text of the prayer the chant sings, when

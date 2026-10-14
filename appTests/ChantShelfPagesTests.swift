@@ -16,7 +16,7 @@ struct ChantShelfPagesTests {
     // MARK: - All Chants
 
     @Test func theTwelveCardsHangDifferentPaintings() {
-        let paintings = ChantCatalog.groups.map { ChantBrowseScope.contentsPainting(for: $0) }
+        let paintings = ChantCatalog.groups.map(\.painting)
         #expect(paintings.count == 12)
         #expect(Set(paintings).count == paintings.count, "Two cards hang the same painting: \(paintings)")
         for name in paintings {
@@ -50,7 +50,7 @@ struct ChantShelfPagesTests {
 
     @Test func aShelfOpensOnTheCardItWasOpenedFrom() {
         for group in ChantCatalog.groups {
-            #expect(ChantBrowseScope.group(group.id).painting == ChantBrowseScope.contentsPainting(for: group))
+            #expect(ChantBrowseScope.group(group.id).painting == group.painting)
             #expect(ChantBrowseScope.group(group.id).note == group.note)
         }
         #expect(ChantBrowseScope.songsToMary.painting == "glorious_coronation")

@@ -51,7 +51,8 @@ struct ChantThumbnail: View {
     var focal: UnitPoint? = nil
 
     var body: some View {
-        CachedAssetImage(name, focal: focal ?? Self.focalPoint(for: name))
+        // From a copy scaled to the square, made off the main actor
+        ThumbnailImage(name: name, focal: focal ?? Self.focalPoint(for: name), size: CGSize(width: size, height: size))
             .frame(width: size, height: size)
             .clipShape(RoundedRectangle(cornerRadius: radius))
             .overlay(

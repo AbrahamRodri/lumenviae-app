@@ -382,7 +382,12 @@ prayers (a topic, an order of prayer, by its day's name too, then the
 prayers, from `PrayerBook.topics(matching:)`, `searchOrders` and
 `search`), chants (by name, then by the prayer they sing and their sung
 words) and the meditation sets, everything but the sets bundled, so it
-works offline, and every match folded (case, accents, æ and œ). The
+works offline, and every match folded by the one fold, `SearchText.fold`
+(case, accents, æ and œ, and "coeli" read as "caeli", so Regina Coeli
+finds the Regina Cæli). The chants' names and sung lines, the largest
+part of what is searched, are folded once, not at each keystroke (the
+Prayer Book's index is prepared the same way); the page searches again
+only when the words or the meditation sets change. The
 kind of the page it was opened from leads: its hit whose name answers
 closest stands on top as a painted card (one button, "Best match: …"
 to VoiceOver) with PRAY (an outlined capsule) or the play disc and
@@ -927,8 +932,8 @@ app/
 │   ├── ChantScoreDrawing     # A score's drawing, read from .lvscore; SVG path data
 │   ├── ChantPlayback         # ChantPlayer's pure values: a set unrolled, the line clock, turns, errors
 │   ├── ChantPracticeWords    # The words a chant is practised from, plain or cut to first letters
-│   ├── SearchText            # The fold (case, accents, æ and œ) the Prayer Book's search and ChantCatalog.search read by;
-│   │                         # ChantSearch, AppSearch and the Chapel's tiles still fold on their own until they adopt it
+│   ├── SearchText            # The one fold (case, accents, æ and œ, coeli as caeli) every search reads by:
+│   │                         # the Prayer Book's, ChantCatalog's, ChantSearch's, AppSearch's and the Chapel's incipits
 │   └── StreakMilestone, MarianFeastDay, BilingualConsecrationPrayer
 ├── ViewModels/               # @Observable
 │   ├── HomeViewModel, MeditationSelectionViewModel, MeditationSetDetailViewModel
@@ -977,11 +982,14 @@ app/
 │                             # BookCover, QuotedPassageText, PrayerPainting(Stage)
 │                             # (the player's ground), RosaryStrandView,
 │                             # BeadStatusRow (the reader's), RosaryDiagram,
-│                             # PendantCrossView, OrdoMasthead
+│                             # PendantCrossView, OrdoMasthead, ThumbnailImage
+│                             # (a painting drawn small from a copy made off the
+│                             # main actor: the Prayers and Chant pages' paintings)
 ├── DesignSystem/             # Theme, Typography, AppIcon, Motion,
 │                             # CallToAction (GoldCTAButton, QuietGoldButton,
 │                             # PrayFootScrim + PrayFootGround, the Prayer
-│                             # Book's), SheetChrome, FocalFill,
+│                             # Book's, GoldBackButton, the pushed page's Back),
+│                             # SheetChrome, FocalFill,
 │                             # FixedColors (the colours a thing wears),
 │                             # SacredComponents (OrnamentDivider, DropCapText…),
 │                             # ReadingText (ReadingTypography, ReadingText, PrayerText)
@@ -2564,8 +2572,10 @@ write concurrent code here:
   have no mystery of their own: their cards name paintings
   (`hour_morning`, `hour_night`) and, while one is missing from the
   catalog, hang the Presentation and Gethsemane
-  (`PrayerBookPainting.resolvedAsset`, looked up once per name, since the
-  image cache keeps no misses). The ribbon is the prayer page's red
+  (`PrayerBookPainting.resolvedAsset`, looked up once per name in the
+  asset catalog and remembered, so a missing painting is not looked for
+  again at every redraw, and no painting is kept whole for it). The
+  ribbon is the prayer page's red
   silk.
 
   The book's hour turns at four, eleven, three and eight
@@ -2827,8 +2837,12 @@ write concurrent code here:
   (Pre-Lent, the Easter season, February 2 (Candlemas)); numbers are
   figures. A Latin title goes with its English: beneath it on a row and
   a card, "Praise, O Sion (Lauda Sion)" where one line holds both, the
-  English alone where only one fits (a chip, a kicker), and both to VoiceOver (`Chant.spokenName`, which every play
-  disc in the library is labelled with). The prayers, chant texts and
+  English alone where only one fits (a chip, a kicker), and both to
+  VoiceOver (`Chant.spokenName`; every play disc in the library is
+  labelled with `Chant.spokenNameAndSetting`, the setting added where
+  neither title says it, so the two Salve Reginas' discs are told
+  apart, and a length is said rounded as its label shows it,
+  `Chant.spokenLength`). The prayers, chant texts and
   the words a score is captioned with are not chrome and keep their
   Latin. An occasion's title or red note reworded is kept in
   `ChantLibraryData.formerWords`, old words to new, and the shelf reads
@@ -2885,11 +2899,10 @@ write concurrent code here:
   Chants** is the book's twelve sections as painted cards, two by six,
   each its name and "8 chants" (no note), opening that section's own shelf
   (`.chantBrowse(.group(id))`), as the Prayers page lists its topics. A
-  card hangs `ChantBrowseScope.contentsPainting(for:)`: the picker's
-  painting (`ChantGroup.painting`), except the hymns' Ascension,
-  Benediction's Blessed Sacrament and the Latin Rosary's Our Lady of the
-  Rosary, so no two cards hang the same one (`ChantShelfPagesTests`
-  holds it). Our Lady's card and shelf read "Hymns to Our Lady", and
+  card hangs its section's painting (`ChantGroup.painting`, chosen in
+  `ChantLibraryData`), the hymns' the Ascension, Benediction's the
+  Blessed Sacrament and the Latin Rosary's Our Lady of the Rosary, so no
+  two cards hang the same one (`ChantShelfPagesTests` holds it). Our Lady's card and shelf read "Hymns to Our Lady", and
   Benediction's "Benediction" (`cardTitle(of:)`; "Adoration and Blessing"
   is the sung set's name, and the library must not say it twice). **A shelf**
   (a section, the Mass of the Angels, Songs to Mary) opens on its
@@ -3036,9 +3049,10 @@ write concurrent code here:
   **Search** is the app's one search (see Explore), opened from the
   head's glass with chants leading: chants are found by name
   (`ChantCatalog.search`), then by the prayer they sing and a line of
-  what is sung (`ChantSearch.works(singingPrayerMatching:)`,
-  `ChantSearch.wordHits`, in `Views/Chant/ChantSearch.swift`, which also
-  gives the practice its `clean`), each row the library's own with its
+  what is sung (`ChantSearch.chants(singingPrayerMatching:)`,
+  `ChantSearch.chants(withWordsMatching:)`, in
+  `Views/Chant/ChantSearch.swift`, over every chant's names and lines
+  folded once), each row the library's own with its
   play disc and length; a chant found only in its words is never the
   top card. The library's own search page (`ChantSearchView`: Try,
   Refine, the scopes All · Names · Words · Prayers and the filters) and
@@ -3611,7 +3625,10 @@ crossfading to the next mystery), `chrome`, `panel` (a reader or tray
 arriving), `settle` (a press or toggle landing), `crossfade` (content
 changing in place), `choice` (one of the Rosary's two choices changing —
 the pill's lit segment, its note, a choice arriving or leaving beneath
-another — `ease(0.25)`), and `ease(_:)`/`travel(_:)` — the design system's
+another — `ease(0.25)`), `pageFadeOut`/`pageFadeIn` (a page put down
+and taken up in place — a prayer in the pray-along, a topic, a prayer
+card under Reduce Motion — with `pageFadeGap` between), and
+`ease(_:)`/`travel(_:)` — the design system's
 cubic-bezier curves the missal and office readers use. Springs settle:
 the named ones damp at 0.74–0.86 and any other at 0.7 or more, so they
 barely overshoot. Only a celebration bounces — the milestone card and

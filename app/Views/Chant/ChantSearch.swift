@@ -4,116 +4,68 @@
 //
 //  How a chant is found by what it sings: by the prayer it sings and by
 //  a line of its words. The one search (`AppSearch.chantHits`) lists
-//  these after the chants found by name, and the practice reads `clean`
-//  for a sung line. It came from the library's own search page, retired
-//  for the one search.
+//  these after the chants found by name. Every name and line is folded
+//  once (`SearchText.fold`), the first time anything is searched, so a
+//  keystroke only compares.
 //
 
-import SwiftUI
+import Foundation
 
 // MARK: - ChantSearch
 
-/// Finding chants by what they sing, and a sung line's plain words
+/// Finding chants by what they sing
 enum ChantSearch {
 
-    /// The chants of one work, its settings in the catalog's order
-    struct Work {
-        let key: String
-        let chants: [Chant]
-    }
-
-    /// A match in a chant's words: the line it stands in, and where that
-    /// line sounds when the chant's lines are timed
-    struct WordHit: Identifiable {
-        let id: String
+    /// What one chant is searched by, folded once
+    private struct Entry {
         let chant: Chant
-        let snippet: String
-        /// The line's index in `Chant.lines`, for a timed chant
-        let line: Int?
-        let start: TimeInterval?
+        /// The names of the prayer it sings, in the Prayer Book
+        let prayerNames: [String]
+        /// Its words a line at a time: a timed chant's own lines, Latin and
+        /// English; else the lines of the Prayer Book's text, quoted under
+        /// the first untimed chant that sings it and no other
+        let lines: [String]
     }
 
-    /// Case, accents and the ligatures aside: "Cæli" and "caeli" fold alike
-    static func fold(_ text: String) -> String {
-        text.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil)
-            .replacingOccurrences(of: "æ", with: "ae")
-            .replacingOccurrences(of: "œ", with: "oe")
-    }
-
-    private static func group(_ chants: [Chant]) -> [Work] {
-        var order: [String] = []
-        var byKey: [String: [Chant]] = [:]
-        for chant in chants {
-            if byKey[chant.workKey] == nil { order.append(chant.workKey) }
-            byKey[chant.workKey, default: []].append(chant)
-        }
-        return order.map { Work(key: $0, chants: byKey[$0] ?? []) }
-    }
-
-    /// Works that sing a prayer whose name, in the Prayer Book, holds
-    /// `needle`: "glory be" finds the Gloria Patri
-    static func works(singingPrayerMatching needle: String) -> [Work] {
-        guard !needle.isEmpty else { return [] }
-        let chants = ChantCatalog.all.filter { chant in
-            guard let prayer = chant.bookPrayer else { return false }
-            return fold(prayer.title).contains(needle) || fold(prayer.latinTitle ?? "").contains(needle)
-        }
-        return group(chants)
-    }
-
-    /// Every line of every chant's words holding `needle`: a timed
-    /// chant's own lines, with their place; else the lines of the Prayer
-    /// Book's text, with none
-    static func wordHits(matching needle: String) -> [WordHit] {
-        guard needle.count >= 3 else { return [] }
-        var hits: [WordHit] = []
-        var seenTexts = Set<String>()
-        for chant in ChantCatalog.all {
+    private static let entries: [Entry] = {
+        var quoted = Set<String>()
+        return ChantCatalog.all.map { chant in
+            let prayer = chant.bookPrayer
+            let names = [prayer?.title, prayer?.latinTitle].compactMap { $0 }.map(SearchText.fold)
+            var lines: [String] = []
             if chant.hasLines {
-                for (index, line) in chant.lines.enumerated() {
-                    let latin = fold(line.latin).contains(needle)
-                    let english = fold(line.english).contains(needle)
-                    guard latin || english else { continue }
-                    hits.append(WordHit(
-                        id: "\(chant.id)#\(index)",
-                        chant: chant,
-                        snippet: latin ? line.latin : line.english,
-                        line: index,
-                        start: line.start
-                    ))
-                }
-            } else if let prayer = chant.bookPrayer {
-                // A prayer sung in two settings is quoted once, under the
-                // first, rather than twice in the same words
-                guard !seenTexts.contains(prayer.id) else { continue }
-                let lines = ((prayer.latin ?? "") + "\n" + prayer.english).components(separatedBy: "\n")
-                var found = false
-                for (index, raw) in lines.enumerated() {
-                    let text = clean(raw)
-                    guard !text.isEmpty, fold(text).contains(needle) else { continue }
-                    hits.append(WordHit(id: "\(chant.id)~\(index)", chant: chant, snippet: text, line: nil, start: nil))
-                    found = true
-                }
-                if found { seenTexts.insert(prayer.id) }
+                lines = chant.lines.flatMap { [SearchText.fold($0.latin), SearchText.fold($0.english)] }
+            } else if let prayer, quoted.insert(prayer.id).inserted {
+                lines = ((prayer.latin ?? "") + "\n" + prayer.english)
+                    .components(separatedBy: "\n")
+                    .map(SearchText.clean)
+                    .filter { !$0.isEmpty }
+                    .map(SearchText.fold)
             }
+            return Entry(chant: chant, prayerNames: names, lines: lines)
         }
-        return hits
+    }()
+
+    /// Chants that sing a prayer whose name, in the Prayer Book, holds
+    /// `needle` (folded): "glory be" finds the Gloria Patri. The settings
+    /// of one work stand together, in the catalog's order.
+    static func chants(singingPrayerMatching needle: String) -> [Chant] {
+        guard !needle.isEmpty else { return [] }
+        let found = entries.filter { $0.prayerNames.contains { $0.contains(needle) } }.map(\.chant)
+        var order: [String] = []
+        var byWork: [String: [Chant]] = [:]
+        for chant in found {
+            if byWork[chant.workKey] == nil { order.append(chant.workKey) }
+            byWork[chant.workKey, default: []].append(chant)
+        }
+        return order.flatMap { byWork[$0] ?? [] }
     }
 
-    /// A line of the Prayer Book's grammar as plain words: the marks of
-    /// versicle and response, the pointing and a rubric's brackets gone.
-    /// Words in, words out, touching nothing else, so it is called from
-    /// anywhere — a function reference to it included.
-    nonisolated static func clean(_ line: String) -> String {
-        var text = line
-        for mark in ["℣.", "℟.", "℣", "℟", "✠", "|||"] {
-            text = text.replacingOccurrences(of: mark, with: " ")
-        }
-        text = text.replacingOccurrences(of: " * ", with: " ")
-        if text.hasPrefix("["), text.hasSuffix("]") { return "" }
-        return text
-            .components(separatedBy: .whitespaces)
-            .filter { !$0.isEmpty }
-            .joined(separator: " ")
+    /// Chants with a line of their words holding `needle` (folded), in
+    /// the catalog's order. Fewer than three letters find no words: every
+    /// chant has "a".
+    static func chants(withWordsMatching needle: String) -> [Chant] {
+        guard needle.count >= 3 else { return [] }
+        return entries.filter { $0.lines.contains { $0.contains(needle) } }.map(\.chant)
     }
 }
