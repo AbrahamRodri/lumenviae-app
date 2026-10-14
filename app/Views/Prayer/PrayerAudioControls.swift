@@ -272,7 +272,7 @@ struct NarrationVoiceChoice: View {
                 Button {
                     voices.choose(voice)
                 } label: {
-                    Text(voice.plainName)
+                    Text(voice.displayName)
                         .font(AppFonts.bodyFont(14))
                         .foregroundColor(selected ? AppColors.background : AppColors.cream.opacity(0.75))
                         .lineLimit(1)

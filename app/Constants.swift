@@ -110,7 +110,7 @@ struct Constants {
     static let homeTab = "HOME"
     static let consecrationTab = "CONSECRATION"
     static let journalTab = "JOURNAL"
-    static let progressTab = "PROGRESS"
+    static let progressTab = "PRAYER RECORD"
     static let chapelTab = "CHAPEL"
     static let chantTab = "CHANT"
     static let prayersTab = "PRAYERS"

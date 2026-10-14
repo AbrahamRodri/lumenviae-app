@@ -30,24 +30,9 @@ struct NarrationVoice: nonisolated Codable, Identifiable, Hashable {
         self.isDefault = isDefault
     }
 
-    /// The voice's own name where the server gives only "Male": the
-    /// server's list names the voices by sex alone, and the row on a
-    /// Rosary's page reads "Frederick · 1×" rather than "Male · 1×".
-    var plainName: String {
-        switch slug {
-        case "frederick": return "Frederick"
-        default:          return name
-        }
-    }
-
-    /// The picker's wording: "Frederick, a man's voice", "A woman's voice".
-    var displayName: String {
-        switch name.lowercased() {
-        case "male":   return "\(plainName), a man's voice"
-        case "female": return "A woman's voice"
-        default:       return "\(plainName) voice"
-        }
-    }
+    /// The picker's wording is the server's own: "Male", "Female", with
+    /// the description beneath it.
+    var displayName: String { name }
 
     /// The server's line on the voice, said plainly: "emotive" is not a
     /// word for a newcomer

@@ -173,7 +173,7 @@ struct AccountView: View {
                     // makes a sound. Before any answer it shows the default
                     // and says the book will ask; only a tap here answers
                     // the question
-                    AccountSection(title: "Prayers Tab", icon: "ch-praying-hands") {
+                    AccountSection(title: "Prayers Tab", icon: "lv-prayer-book") {
                         RosaryChoiceSettingsRow(
                             icon: PrayerBookAudio.icon,
                             title: "Audio",
@@ -240,7 +240,7 @@ struct AccountView: View {
                                 .background(AppColors.gold.opacity(0.2))
 
                             // The Journal's standing door, with the
-                            // Chapel and its Reflections tile archived
+                            // Chapel and its Journal tile archived
                             ActionRow(
                                 icon: "ph-book-open",
                                 title: "Journal",

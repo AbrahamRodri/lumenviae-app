@@ -107,9 +107,8 @@ struct MeditationSetDecodingTests {
         let voices = try decode([NarrationVoice].self, #"[{"slug": "frederick", "name": "Male", "description": null, "default": true}, {"slug": "female", "name": "Female", "default": false}]"#)
         #expect(voices.map(\.slug) == ["frederick", "female"])
         #expect(voices.first?.isDefault == true)
-        #expect(voices.first?.displayName == "Frederick, a man's voice")
-        #expect(voices.first?.plainName == "Frederick")
-        #expect(voices.last?.displayName == "A woman's voice")
+        #expect(voices.first?.displayName == "Male")
+        #expect(voices.last?.displayName == "Female")
     }
 }
 

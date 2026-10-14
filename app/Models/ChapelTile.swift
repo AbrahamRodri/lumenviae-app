@@ -42,7 +42,7 @@ enum ChapelTile: String, CaseIterable, Identifiable {
         case .liturgy:      return "Today in the Church"
         case .library:      return "Library"
         case .chant:        return "Chant"
-        case .reflections:  return "Reflections"
+        case .reflections:  return "Journal"
         case .flame:        return "Prayer Streak"
         case .prayers:      return "Prayers"
         }
