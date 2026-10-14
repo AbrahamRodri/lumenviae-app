@@ -90,7 +90,7 @@ struct AppSearchResultsView: View {
         case .prayer(let prayer):
             PrayersPictureRow(
                 prayer: prayer,
-                painting: BookPrayerView.painting(of: prayer.id),
+                painting: SavedPrayerPainting.of(prayer.id),
                 note: Self.note(for: prayer)
             ) { open(hit) }
         case .chant(let chant):
@@ -286,7 +286,7 @@ struct AppSearchBestCard: View {
     private func picture(size: CGSize) -> some View {
         switch hit {
         case .prayer(let prayer):
-            AppSearchPicture.painting(BookPrayerView.painting(of: prayer.id)).view(size: size)
+            AppSearchPicture.painting(SavedPrayerPainting.of(prayer.id)).view(size: size)
         case .topic(let chapter):
             AppSearchPicture.painting(PrayerBookPainting.topic(chapter)).view(size: size)
         case .order(let order):

@@ -109,16 +109,6 @@ struct MainScreenSnapshotTests {
 
     // MARK: - The Prayer Book
 
-    /// Prayed in silence, so the foot names no voice
-    @Test func prayerPage() {
-        let store = Fixtures.prayerBookStore()
-        store.praysAloud = false
-        ScreenSnapshot.assertScreen(
-            BookPrayerView(prayerID: "sub_tuum", store: store, date: Fixtures.day),
-            named: "prayer-page"
-        )
-    }
-
     @Test func savedPrayers() {
         let store = Fixtures.prayerBookStore()
         // Saved newest first, so the page reads Memorare first

@@ -83,11 +83,11 @@ enum AppRoute: Hashable {
     /// chapter of St. Carlo's life — by its id (`LibraryReadings`),
     /// stepped in place along its shelf
     case libraryReading(id: String)
-    /// A prayer the library leads to — the Litany, a hymn, a prayer of
-    /// the Rosary — opened in the Prayer Book (`BookPrayerView`), by the
-    /// id `PrayerBook.prayer` looks up. `set` is the topic or order it was
-    /// opened from, whose prayers its card deals through; every other door
-    /// leaves it out, and the card deals through the prayer's own topic.
+    /// One prayer — the Litany, a hymn, a prayer of the Rosary — opened
+    /// on the pray-along screen (`PrayAlongLaunch.opening`), by the id
+    /// `PrayerBook.prayer` looks up. `set` is the topic or order it was
+    /// opened from: from an order, the order is prayed from that prayer
+    /// on; otherwise the prayer is prayed alone.
     case devotionPrayer(id: String, set: PrayerSet? = nil)
     /// The Missal opened on a given day rather than today — a feast
     /// named elsewhere in the app
@@ -118,8 +118,8 @@ enum AppRoute: Hashable {
     /// prayer for the hour it is — the Prayers tab's root, to which
     /// `push(.prayerBook)` turns; one of its chapters; and an order of
     /// prayer's own page — Morning Prayers, Before Confession. A single
-    /// prayer's page is `devotionPrayer(id:)`, which every door to a
-    /// prayer in the app already uses.
+    /// prayer has no page of its own: `devotionPrayer(id:)`, which every
+    /// door to a prayer uses, opens it to be prayed.
     case prayerBook
     case prayerBookChapter(id: String)
     case prayerOrder(id: String)

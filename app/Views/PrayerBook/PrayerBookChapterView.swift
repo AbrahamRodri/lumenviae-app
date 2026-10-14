@@ -548,7 +548,7 @@ private struct MiniHolyCard: View {
     let prayerID: String
 
     var body: some View {
-        let painting = BookPrayerView.painting(of: prayerID)
+        let painting = SavedPrayerPainting.of(prayerID)
         let shape = UnevenRoundedRectangle(
             topLeadingRadius: 17,
             bottomLeadingRadius: 4,

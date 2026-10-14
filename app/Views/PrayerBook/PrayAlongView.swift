@@ -69,12 +69,19 @@ struct PrayAlongView: View {
     /// title never flashes over the new prayer
     @State private var pageOpacity: Double = 1
 
+    /// The prayer on the page being learned by heart, from the menu
+    @State private var learning: BookPrayer?
+
+    /// What Save last said, for three seconds under the head
+    @State private var savedNote: String?
+    @State private var clearingNote: Task<Void, Never>?
+
     /// `store` is the book's own except in a test, which brings one of
     /// its own so nothing the simulator has prayed shows through
     init(launch: PrayAlongLaunch, store: PrayerBookStore = .shared) {
         self.launch = launch
         self.store = store
-        let resolved = launch.prayerIDs.compactMap { PrayerBook.prayer($0) }
+        let resolved = launch.prayerIDs.compactMap { PrayAlongLaunch.resolve($0) }
         prayers = resolved
         _index = State(initialValue: min(max(launch.startIndex, 0), max(resolved.count - 1, 0)))
     }
@@ -147,6 +154,7 @@ struct PrayAlongView: View {
                     header
                     pageScroll(prayer)
                 }
+                .overlay(alignment: .top) { savedNoteCapsule }
                 // Gone from beneath the Amen rather than dimmed: under the
                 // cover alone the prayer's words showed through it
                 .opacity(finished ? 0 : 1)
@@ -201,35 +209,36 @@ struct PrayAlongView: View {
 
     // MARK: - Header
 
-    /// ×, the order's name, ALOUD or SILENT; and beneath, the beads
+    /// ×, the order's name, ALOUD or SILENT and the menu; and beneath,
+    /// the beads. The name stands in the room between the two sides,
+    /// which the menu made too narrow to keep it centred on the glass.
     private var header: some View {
         VStack(spacing: 0) {
-            ZStack {
+            HStack(spacing: 0) {
+                Button {
+                    router.pop()
+                } label: {
+                    AppIcon("ph-x", size: 18)
+                        .foregroundColor(AppColors.cream)
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(QuietGlyphButtonStyle())
+                .accessibilityLabel("Close")
+
                 Text(kicker.uppercased())
                     .font(AppFonts.labelFont(10.5))
                     .tracking(2.5)
                     .foregroundColor(AppColors.goldLight)
                     .lineLimit(1)
                     .minimumScaleFactor(0.75)
-                    .padding(.horizontal, 96)
+                    .padding(.horizontal, 8)
+                    .frame(maxWidth: .infinity)
                     .accessibilityAddTraits(.isHeader)
 
-                HStack {
-                    Button {
-                        router.pop()
-                    } label: {
-                        AppIcon("ph-x", size: 18)
-                            .foregroundColor(AppColors.cream)
-                            .frame(width: 44, height: 44)
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(QuietGlyphButtonStyle())
-                    .accessibilityLabel("Close")
+                voiceSwitch
 
-                    Spacer(minLength: 0)
-
-                    voiceSwitch
-                }
+                moreMenu
             }
             // A soft shadow of the ground under the head's words, so they
             // hold over a dove's wing or a cherub's cloud
@@ -274,6 +283,127 @@ struct PrayAlongView: View {
         .animation(Motion.crossfade, value: aloud)
         .accessibilityLabel(aloud ? "Praying aloud" : "Praying in silence")
         .accessibilityHint(aloud ? "Double-tap to pray in silence" : "Double-tap to have the prayers read aloud")
+    }
+
+    /// What the page does less often, for the prayer on it: its
+    /// language, Save, Learn by heart and Hear it sung. The prayer's own
+    /// page once carried them, and a prayer opened alone now opens here.
+    private var moreMenu: some View {
+        Menu {
+            if let prayer {
+                if prayer.hasLatin {
+                    Picker(selection: languageChoice) {
+                        ForEach(LanguageChoice.allCases) { choice in
+                            Text(choice.rawValue).tag(choice)
+                        }
+                    } label: {
+                        Label("Language", systemImage: "character.book.closed")
+                    }
+                    .pickerStyle(.menu)
+                }
+
+                let kept = store.isKept(prayer.id)
+                Button {
+                    store.toggleRibbon(prayer.id)
+                    say(store.isKept(prayer.id)
+                        ? "Saved. Find it under Saved on the Prayers tab."
+                        : "Removed from Saved.")
+                } label: {
+                    Label(kept ? "Remove from Saved" : "Save", systemImage: kept ? "bookmark.fill" : "bookmark")
+                }
+
+                Button {
+                    learning = prayer
+                } label: {
+                    Label(store.isByHeart(prayer.id) ? "Learned by Heart" : "Learn by Heart", systemImage: "heart")
+                }
+
+                // The first setting, a simple melody before a solemn one;
+                // the chant's page offers the others
+                if let chant = ChantCatalog.chants(forPrayer: prayer.id).first {
+                    Button {
+                        router.push(.chant(id: chant.id))
+                    } label: {
+                        Label("Hear It Sung", systemImage: "music.note")
+                    }
+                }
+            }
+        } label: {
+            AppIcon("ph-dots-three", size: 22)
+                .foregroundColor(AppColors.cream)
+                .frame(width: 44, height: 44)
+                .contentShape(Rectangle())
+        }
+        .accessibilityLabel("More")
+        .accessibilityHint("Language, Save, Learn by heart, Hear it sung")
+        .sheet(item: $learning) { prayer in
+            LearnByHeartSheet(prayer: prayer)
+                .environment(settings)
+                .presentationDetents([.large])
+                .presentationBackground(AppColors.background)
+                .dynamicTypeSize(...DynamicTypeSize.appMaximum)
+        }
+    }
+
+    /// The prayer's three languages, written to the app's prayer
+    /// language, which the Rosary and the Missal read too
+    private enum LanguageChoice: String, CaseIterable, Identifiable {
+        case english = "English", latin = "Latin", both = "Both"
+        var id: Self { self }
+    }
+
+    private var languageChoice: Binding<LanguageChoice> {
+        Binding(
+            get: {
+                switch settings.prayerLanguage {
+                case .english: return .english
+                case .latin: return .latin
+                case .both, .latinUnderEnglish: return .both
+                }
+            },
+            set: { choice in
+                let language: PrayerLanguage
+                switch choice {
+                case .english: language = .english
+                case .latin: language = .latin
+                case .both: language = settings.prayerLanguage.isBilingual ? settings.prayerLanguage : .latinUnderEnglish
+                }
+                withAnimation(Motion.crossfade) {
+                    settings.prayerLanguagePreference = language.rawValue
+                }
+            }
+        )
+    }
+
+    /// Save's words, seen under the head and heard by VoiceOver
+    private func say(_ words: String) {
+        AccessibilityNotification.Announcement(words).post()
+        savedNote = words
+        clearingNote?.cancel()
+        clearingNote = Task { @MainActor in
+            try? await Task.sleep(for: .seconds(3))
+            guard !Task.isCancelled else { return }
+            savedNote = nil
+        }
+    }
+
+    /// Save's words on a dark capsule, laid over the page under the head
+    private var savedNoteCapsule: some View {
+        Text(savedNote ?? " ")
+            .font(AppFonts.readingItalicFont(13.5))
+            .foregroundColor(AppColors.gold)
+            .multilineTextAlignment(.center)
+            .fixedSize(horizontal: false, vertical: true)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 8)
+            .background(Capsule().fill(AppColors.background.opacity(0.92)))
+            .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.3), lineWidth: AppLine.hairline))
+            .padding(.horizontal, 44)
+            .padding(.top, 52)
+            .opacity(savedNote == nil ? 0 : 1)
+            .animation(Motion.crossfade, value: savedNote)
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
     }
 
     /// One bead for each prayer of the order: those prayed filled, the

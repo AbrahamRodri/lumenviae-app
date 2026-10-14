@@ -964,9 +964,8 @@ app/
 │   │                         # reader, contents sheet, transport
 │   ├── PrayerBook/           # The Prayer Book: Prayers (the tab's page,
 │   │                         # + PrayersComponents, PrayerBookPaintings),
-│   │                         # PrayerSet (PrayerSet, PrayerDeck: the set a
-│   │                         # prayer's card deals through),
-│   │                         # chapter, order page, prayer page,
+│   │                         # PrayerSet (the topic or order a prayer
+│   │                         # was opened from), chapter, order page,
 │   │                         # pray-along, learn by heart
 │   ├── Resources/            # How to Pray (+ RosaryLessonView, GuidedRosaryView),
 │   │                         # Marian Library, In Scripture, Carlo Acutis,
@@ -1609,8 +1608,8 @@ write concurrent code here:
   says which mysteries will be prayed. It is not Home's resume card and
   must not become one — the guide is How to Pray's.
 
-  Prayers get a page of their own through `.devotionPrayer(id:)`
-  (`BookPrayerView`, the Prayer Book's page), found by `PrayerBook.prayer`, else `DevotionPrayers.find`, across the
+  A prayer opens on the pray-along screen through `.devotionPrayer(id:)`
+  (`PrayAlongLaunch.opening`), found by `PrayerBook.prayer`, else `DevotionPrayers.find`, across the
   Rosary's prayers (`Data/RosaryPrayers.swift`, which How to Pray sets
   under each step of its bead chain) and the consecration's hymns and
   litanies. In Scripture's mysteries open `MysteryPassageView`
@@ -2411,7 +2410,7 @@ write concurrent code here:
   order page and What's New all `push(.prayerBook)`, which
   `AppRouter.push` answers with `switchTo(.prayers)`. The Pray tray (the
   Angelus, offered once) and every existing door to a prayer
-  (`.devotionPrayer(id:)` opens `BookPrayerView`) are unchanged.
+  (`.devotionPrayer(id:)` opens it on the pray-along screen) are unchanged.
   `Models/PrayerBook.swift` is the model: eighteen **topics**
   (`PrayerBookChapter`, still named for the chapters they were), in the
   order of *Blessed Be God* (Callan and McHugh, 1925) and gathered into
@@ -2496,7 +2495,7 @@ write concurrent code here:
   a name on the card ground (`PrayersShortcutTile`): Morning Prayers,
   the Angelus (Queen of Heaven in the Easter season), Night Prayers,
   Saved (`.prayerBookSaved`, `PrayerBookSavedView`: the prayers kept with
-  the bookmark at the head of a prayer's page, newest first, two to a row,
+  Save in the pray-along's ··· menu, newest first, two to a row,
   each under its painting with the ribbon hung from it and its name and
   topic beneath (`SavedPrayerPainting`: the scene the book names for the
   prayer, else its topic's), a hold offering Remove from Saved; empty,
@@ -2601,8 +2600,8 @@ write concurrent code here:
   PRAYED TODAY beside it once `wasOffered`), its name and its Latin
   small, and its prayers as a list numbered 1, 2, 3 (the Holy Cards
   pick; Roman numerals before, and the line under the Latin saying what
-  the order is, `PrayerOrder.detail`, is no longer drawn), each a door to
-  its page; where the season decides what it
+  the order is, `PrayerOrder.detail`, is no longer drawn), each a door
+  that prays the order from that prayer (`PrayAlongLaunch.order(_:on:startingAt:)`); where the season decides what it
   holds (Night Prayers' song to Mary, Queen of Heaven at Eastertide) a
   sentence under the list says so. The foot is PRAY alone, at the
   inline size; aloud or in silence is the pray-along's choice (its head,
@@ -2612,74 +2611,17 @@ write concurrent code here:
   alone: a glyph, an ornament, a paragraph, a kicker counting the
   prayers, a Latin line under every prayer and a two-line switch row.
 
-  **A prayer's own page** (`BookPrayerView`, `.devotionPrayer(id:set:)`, the
-  "Holy Cards" pick, option B4, Oct 2026) is a holy card. The card
-  (`HolyCard`) stands 28 points in from each side from the bar to the foot
-  of the glass (the page has no foot of its own), on the card ground with a gold rim and a second rule inside it,
-  and its words scroll inside it: the prayer's painting
-  (`BookPrayerView.painting(of:)`, the scene `PrayerBookPainting.prayer`
-  gives it, else its topic's) in a round-topped arch, then the set and
-  the prayer's place in it ("PRAYERS TO MARY · 3 OF 32"), its name, its
-  Latin small, a gold rule, the prayer (`PrayerText`, two points under
-  the reading size, never under 17), SAID IN with each order as its
-  painting and name, and the set's prayers as a row of dots
-  (`PlaceDots`, 24 around this one in a longer topic) over "Swipe for
-  <the next> · All 32" (both buttons). The prayers before and after it
-  peek in at the glass's edges as 14-point slivers of their paintings,
-  each answering a touch 44 points across (not buttons, and hidden from
-  VoiceOver, which has the card's own actions). **A drag across turns the
-  card as a pushed page slides** (the "Chant shelves and prayer cards"
-  pick, Motion 2, slide over, Oct 2026): toward the next prayer the next
-  card follows the finger in from the right over this one, which steps a
-  third of the way left and dims to 0.45; toward the one before, this
-  card follows the finger off to the right and the one before comes
-  forward from beneath it. Let go past a third of the width, or flung,
-  the turn finishes on `Motion.pageTurn` (a cubic ease-out, 0.34s, no
-  spring, no lean) and the card it turned to becomes the page, opened at
-  its top, with a light tick; short of that it springs back, and toward
-  no card it gives a little. It was a deal: the card leaned up to 9
-  degrees and sped off on an ease-in while the next rose from beneath at
-  0.94, which read as a card thrown away and never said which way the
-  next lay. The card's own scroll keeps the vertical drag, decided by the
-  drag's first direction. A tap on a sliver or on "Swipe for" plays the
-  same deal; VoiceOver has Next prayer and Previous prayer on the name
-  and the words, and hears the new name. A drag the system takes away
-  (the scroll, a call) lets the card back to rest (`@GestureState`). The
-  arch is 250 points, giving way on a short card down to 170 (0.42 of
-  the card), so the name and the prayer's first lines stand at first
-  sight with the chant player up. The drag lives in the deck (`DealDeck`),
-  which is handed its cards drawn from plain values (`HolyCardFacts`,
-  `.equatable()`), so a frame of the drag redraws the deck alone, never
-  the page, a card or the foot. Where a let-go drag sends the card is
-  `DealDirection.of`. The page reads its orders on one day, given or
-  today (`date:`), so a snapshot never turns with the season. Under Reduce Motion nothing
-  slides: the card follows the finger and the turn is a fade.
-  The card's floor (`CardFloor`, on the card, so it travels with it): PRAY
-  at the inline size between Learn by heart and Hear it sung as 44-point
-  rings (`FloorAct`, named to VoiceOver alone; the seal once learned),
-  the place for Hear it sung kept empty where the Church sings no chant
-  for the prayer, so PRAY never moves, over a fade of the card's ground
-  that the words scroll beneath. It was a foot under the card: the two
-  rings at 52 points named in small capitals, a 56-point PRAY, and "In
-  silence · tap to change" beneath, some 200 points. The
-  ribbon's words stand for three seconds on a dark capsule at the head of
-  the card. The language stands in the bar beside the ribbon (EN, LA or
-  EN · LA, in the bar's glass from iOS 26 and on a dark capsule before),
-  only where the prayer has Latin, and opens a choice of English, Latin
-  and Both. It is a button and not a Menu: the bar makes a Menu its own
-  button, names it from the words it shows, and stood a second, unnamed
-  button beside it for VoiceOver. The cards are the prayers of the set
-  the page was opened from (`PrayerSet` on the route, `PrayerDeck`): an
-  order's page and a topic's page pass theirs, so a prayer opened from
-  Before Confession deals through Before Confession ("BEFORE CONFESSION
-  · 3 OF 6") and its All door goes back to it; every other door leaves
-  the set out and the cards are the prayer's own topic's
-  (`PrayerBook.homeChapter`), its All door opening the topic. The page once ended
-  on when the prayer is said (`BookPrayer.note`), had its source on a
-  line of small capitals (`BookPrayer.origin`), set Learn by heart and
-  Hear it sung as two quiet words after the prayer, and stepped along the
-  topic by PREVIOUS · NEXT in small capitals, which faded the page; the
-  note and the source stay in the book and are no longer drawn.
+  **A prayer has no page of its own** (Oct 2026): every door to one
+  (`.devotionPrayer(id:set:)`) opens the pray-along screen on it
+  (`PrayAlongLaunch.opening`), alone, or, from an order's page, as the
+  order from that prayer on. The holy card that stood there
+  (`BookPrayerView`: a card dealt through the prayer's topic, SAID IN,
+  the dots, PRAY between Learn by heart and Hear it sung) was taken out
+  at the CEO's word, so there is one way to pray a prayer; what it held
+  besides the words is in the pray-along's ··· menu (below). "Said in",
+  the prayer's note (when it is said) and its source stay in the book
+  and are not drawn anywhere. `SavedPrayerPainting.of` is the painting
+  a prayer hangs on its rows and the search's cards.
 
   **Praying** is `PrayAlongView` (`.prayAlong(PrayAlongLaunch)`, a
   player: bar hidden, its own ×): one prayer at a time, aloud or in
@@ -2694,7 +2636,15 @@ write concurrent code here:
   order's name, and ALOUD or SILENT as a word in an outlined capsule
   (the speaker glyph it replaced read as a volume control) — over the
   order's beads, each a door answering to 44 points where the width
-  allows ("6 of 9, The Act of Faith" to VoiceOver). The head names what
+  allows ("6 of 9, The Act of Faith" to VoiceOver). Beside ALOUD or
+  SILENT a ··· (`ph-dots-three`, "More" to VoiceOver) is a `Menu` of
+  what is done less often with the prayer on the page: its language
+  (English, Latin, Both, only where it has Latin, written to the app's
+  prayer language), Save or Remove from Saved (its words said for three
+  seconds on a dark capsule under the head, and to VoiceOver), Learn by
+  Heart (`LearnByHeartSheet`) and Hear It Sung (where the Church sings
+  it, its first setting's page). The head's name stands in the room
+  between × and the two, no longer centred on the glass. The head names what
   was opened: the order, or PRAYERS for a prayer opened alone, and for an
   order of one prayer bearing its name (the Angelus), so it never repeats
   the title beneath it; the Angelus's once named its hours. The ground
@@ -2711,8 +2661,7 @@ write concurrent code here:
   17), since wrapped flush it read as a line of its own, and its rubrics
   stand apart at full strength while the verse beside them dims under
   the voice; litanies, canticles and translations are `PrayerText`'s.
-  The text is a point under the reading size, as the prayer's own page
-  sets it. And one way on at the
+  The text is a point under the reading size, as the holy card set it. And one way on at the
   foot, the same aloud and in silence: NEXT with the next prayer's name,
   an outlined pill, or AMEN, the page's one gold act, on the last.
   Aloud, a pause disc stands beside it, and a note above it while the
@@ -2736,7 +2685,7 @@ write concurrent code here:
   text sizes the app no longer reaches (held to 340 points there, its
   rows were drawn over each other). It is asked
   on the pray-along screen itself, from every door, while the reader has
-  not chosen: the order page's PRAY and a prayer card's PRAY answered it
+  not chosen: the order page's PRAY and the holy card's PRAY answered it
   once, from a speaker and a line beside them, both gone since the
   "Chant shelves and prayer cards" pick; afterwards ALOUD or SILENT at
   the head of the page owns the choice. The
@@ -2819,10 +2768,8 @@ write concurrent code here:
   untouched, since `chants(forPrayer:).first` reads it. The sections
   choose a painting for a chant that names none
   (`ChantLibraryData.groupPaintings`). Doors:
-  the Chapel's Chant tile, Explore (Chant, and search), and **"Hear it
-  sung"** on any Prayer Book page whose prayer has a chant (a ringed
-  disc beside PRAY at the prayer's foot, Learn by heart on PRAY's other
-  side).
+  the Chapel's Chant tile, Explore (Chant, and search), and **Hear It Sung**
+  in the pray-along's ··· menu, for a prayer that has a chant.
 
   **The library speaks plainly** (the Oct 2026 plain-language pass,
   `copy-audit/GLOSSARY.md` on `claude/copy-audit`): a title says what a
