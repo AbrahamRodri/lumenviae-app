@@ -277,13 +277,13 @@ struct PrayersPageTests {
         let night = PrayerBook.order(PrayerBook.nightOrderID)!
         let table = PrayerBook.order("table")!
 
-        #expect(PrayerBook.daySummary(of: angelus, on: at(12)) == "A short prayer to Mary, said at 6 AM, noon and 6 PM.")
+        #expect(PrayerBook.daySummary(of: angelus, on: at(12)) == "A short prayer to Mary at 6 AM, noon and 6 PM.")
         #expect(PrayerBook.daySummary(of: angelus, on: at(12, 2026, 4, 12)).contains("Easter"))
-        #expect(PrayerBook.daySummary(of: morning, on: at(7)) == "A few short prayers on waking, giving the day to God.")
-        // Night Prayers close on the antiphon the season sings
-        #expect(PrayerBook.daySummary(of: night, on: at(22)) == "Look back on the day, ask God's forgiveness, and end with this season's song to Mary: Hail, Holy Queen.")
-        #expect(PrayerBook.daySummary(of: night, on: at(22, 2026, 12, 20)).hasSuffix("Loving Mother of the Redeemer."))
-        #expect(PrayerBook.daySummary(of: night, on: at(22, 2026, 4, 12)).hasSuffix("Queen of Heaven."))
+        #expect(PrayerBook.daySummary(of: morning, on: at(7)) == "Giving the day to God.")
+        // One short line: the season's song is named on the order's list,
+        // not in the summary
+        #expect(PrayerBook.daySummary(of: night, on: at(22)) == "A look back on the day, ending with a song to Mary.")
+        #expect(PrayerBook.daySummary(of: night, on: at(22, 2026, 12, 20)) == PrayerBook.daySummary(of: night, on: at(22)))
         // Any other order is its own detail
         #expect(PrayerBook.daySummary(of: table) == table.detail)
     }
@@ -329,6 +329,13 @@ struct PrayersPageTests {
         #expect(PrayerBook.prayer("tantum_ergo")?.title == "Down in Adoration Falling")
         #expect(PrayerBook.prayer("tantum_ergo")?.secondTitle == "Tantum Ergo")
         #expect(PrayerBook.isSameName("The Memorare", "memorare"))
+        // A Latin that only translates the title is not drawn
+        #expect(PrayerBook.prayer("hail_holy_queen")?.secondTitle == "Salve Regina")
+        #expect(PrayerBook.prayer("act_of_faith")?.secondTitle == nil)
+        #expect(PrayerBook.prayer("act_of_faith")?.latinTitle == "Actus Fidei")
+        for id in PrayerBook.latinNamesKnown {
+            #expect(PrayerBook.prayer(id)?.secondTitle != nil, "\(id) is known by a Latin name it does not show")
+        }
     }
 
     // MARK: The tab

@@ -177,22 +177,19 @@ extension PrayerBook {
         return lastOffered >= angelusBellBegan(at: date, calendar: calendar) && lastOffered <= date
     }
 
-    /// One plain line saying what one of the day's three orders is, as
-    /// the Prayers page's card sets it under the order's name: the
-    /// Angelus at its three hours, Queen of Heaven in its place in the
-    /// Easter season with its Latin name beneath the English, and Night
-    /// Prayers ending on the season's song to Mary. Any other order is
-    /// its own detail.
+    /// One short plain line saying what one of the day's three orders
+    /// is, as the Prayers page's card and home's hour row set it under
+    /// the order's name. Any other order is its own detail.
     static func daySummary(of order: PrayerOrder, on date: Date = Date()) -> String {
         switch order.id {
         case morningOrderID:
-            return "A few short prayers on waking, giving the day to God."
+            return "Giving the day to God."
         case angelusOrderID:
             return isEastertide(date)
-                ? "Regina Cæli: a short Easter prayer to Mary, said instead of the Angelus from Easter to Pentecost."
-                : "A short prayer to Mary, said at 6 AM, noon and 6 PM."
+                ? "The Easter prayer to Mary, said in place of the Angelus."
+                : "A short prayer to Mary at 6 AM, noon and 6 PM."
         case nightOrderID:
-            return "Look back on the day, ask God's forgiveness, and end with this season's song to Mary: \(antiphon(on: date).name)."
+            return "A look back on the day, ending with a song to Mary."
         default:
             return order.detail
         }
