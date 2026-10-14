@@ -54,13 +54,17 @@ struct BookPrayer: Identifiable, Hashable {
     /// Loreto" — beside its title and Latin title
     var searchWords: [String] { PrayerBook.prayerSearchWords[id] ?? [] }
 
-    /// The line set small beneath its name: its Latin, or, for the one
-    /// prayer known by its Latin name ("Memorare"), its English. Never
-    /// the name said twice, whatever its case or article: "Tantum Ergo"
-    /// once stood over "Tantum ergo".
+    /// The line set small beneath its name: its Latin, only where the
+    /// prayer goes by that name (`PrayerBook.latinNamesKnown`), or, for
+    /// the one titled in Latin ("Memorare"), its English. A Latin that
+    /// only translates the title ("Actus Fidei") stays for search and is
+    /// not drawn. Never the name said twice, whatever its case or
+    /// article: "Tantum Ergo" once stood over "Tantum ergo".
     var secondTitle: String? {
         if let english = PrayerBook.englishNames[id] { return english }
-        guard let latinTitle, !PrayerBook.isSameName(latinTitle, title) else { return nil }
+        guard let latinTitle, PrayerBook.latinNamesKnown.contains(id),
+              !PrayerBook.isSameName(latinTitle, title)
+        else { return nil }
         return latinTitle
     }
 
@@ -125,8 +129,9 @@ struct PrayerBookChapter: Identifiable, Hashable {
     /// Which part of the book it stands in, a shelf on the Prayers page
     let part: PrayerBookPart
 
-    /// One italic line under the topic's name
-    let epigraph: String
+    /// One italic line under the topic's name, only where the name does
+    /// not say what the topic holds
+    let epigraph: String?
 
     /// Its prayers under the book's sub-headings ("Before Mass", "At
     /// Communion"). A prayer may stand in more than one topic, and in more
@@ -159,7 +164,7 @@ struct PrayerBookChapter: Identifiable, Hashable {
         latinTitle: String,
         icon: String,
         part: PrayerBookPart,
-        epigraph: String,
+        epigraph: String? = nil,
         sections: [PrayerBookSection],
         orderIDs: [String] = [],
         topic: String = "",
@@ -234,7 +239,8 @@ struct PrayerOrder: Identifiable, Hashable {
     /// When it is prayed, as a kicker — "ON WAKING"
     let occasion: String
 
-    /// One italic line saying what the order is
+    /// One italic line saying what the order is. No page draws it now;
+    /// kept as the order's description
     let detail: String
 
     /// Its prayers on a given day. Most never change; the Angelus gives
@@ -418,7 +424,6 @@ enum PrayerBook {
         PrayerBookChapter(
             id: "first", numeral: "I", title: "The First Prayers", latinTitle: "Orationes Primæ",
             icon: "ch-praying-hands", part: .everyDay,
-            epigraph: "The prayers every Catholic learns first.",
             sections: [
                 PrayerBookSection(title: "The first prayers", prayerIDs: ["sign_of_cross", "our_father", "hail_mary", "glory_be", "fatima_prayer"]),
                 PrayerBookSection(title: "The creeds", prayerIDs: ["apostles_creed", "nicene_creed"]),
@@ -445,7 +450,6 @@ enum PrayerBook {
         PrayerBookChapter(
             id: "short", numeral: "III", title: "Short Prayers", latinTitle: "Iaculatoriæ",
             icon: "lv-dart", part: .everyDay,
-            epigraph: "A few words said in passing.",
             sections: [
                 PrayerBookSection(title: "To Jesus", prayerIDs: ["my_jesus_mercy", "jesus_meek", "sweet_heart", "sacred_heart_trust", "jesus_i_trust_in_thee", "my_jesus_i_love_thee", "my_lord_and_my_god", "my_god_and_my_all", "o_sacrament_most_holy", "pardon_prayer"]),
                 PrayerBookSection(title: "To Mary and St Joseph", prayerIDs: ["miraculous_medal", "blessed_be_conception", "totus_tuus", "st_joseph_pray", "jmj", "jmj_heart_and_soul"]),
@@ -457,7 +461,6 @@ enum PrayerBook {
         PrayerBookChapter(
             id: "mass", numeral: "IV", title: "Holy Mass and Communion", latinTitle: "De Sancta Missa",
             icon: "ch-altar", part: .sacraments,
-            epigraph: "Before Mass, at Communion, and after.",
             sections: [
                 PrayerBookSection(title: "Before Mass", prayerIDs: ["aquinas_before_mass", "st_ambrose_before_mass", "come_holy_ghost"]),
                 PrayerBookSection(title: "At Communion", prayerIDs: ["domine_non_sum_dignus", "spiritual_communion"]),
@@ -471,7 +474,6 @@ enum PrayerBook {
         PrayerBookChapter(
             id: "penance", numeral: "V", title: "Confession", latinTitle: "De Pænitentia",
             icon: "ch-keys", part: .sacraments,
-            epigraph: "Getting ready, confessing, giving thanks.",
             sections: [
                 PrayerBookSection(title: "Before Confession", prayerIDs: ["before_confession", "examination_of_conscience", "miserere"]),
                 PrayerBookSection(title: "In the confessional", prayerIDs: ["the_confession", "confiteor", "act_of_contrition"]),
@@ -497,7 +499,6 @@ enum PrayerBook {
         PrayerBookChapter(
             id: "holy_ghost", numeral: "VII", title: "The Holy Trinity and the Holy Spirit", latinTitle: "De Sanctissima Trinitate",
             icon: "ch-dove", part: .god,
-            epigraph: "Father, Son and Holy Spirit.",
             sections: [
                 PrayerBookSection(title: "The Holy Trinity", prayerIDs: ["glory_be", "st_patrick_breastplate"]),
                 PrayerBookSection(title: "The Holy Spirit", prayerIDs: ["come_holy_ghost", "veni_creator", "veni_sancte_spiritus", "breathe_in_me", "seven_gifts", "secret_of_sanctity", "holy_spirit_enlighten", "litany_holy_ghost"]),
@@ -508,7 +509,6 @@ enum PrayerBook {
         PrayerBookChapter(
             id: "our_lord", numeral: "VIII", title: "Our Lord", latinTitle: "De Domino Nostro",
             icon: "ch-chi-rho", part: .god,
-            epigraph: "His Name, His Heart, His Blood, His mercy.",
             sections: [
                 PrayerBookSection(title: "The Holy Name", prayerIDs: ["litany_holy_name", "jesus_prayer"]),
                 PrayerBookSection(title: "The Holy Child", prayerIDs: ["infant_of_prague"]),
@@ -526,7 +526,7 @@ enum PrayerBook {
         PrayerBookChapter(
             id: "our_lady", numeral: "IX", title: "The Blessed Virgin", latinTitle: "De Beata Maria Virgine",
             icon: "ch-lily", part: .god,
-            epigraph: "Prayers to Mary, from the oldest to the newest.",
+            epigraph: "Prayers to Mary.",
             sections: [
                 PrayerBookSection(title: "The Rosary", prayerIDs: ["hail_mary", "fatima_prayer", "hail_holy_queen", "rosary_closing_prayer"]),
                 PrayerBookSection(title: "The litany", prayerIDs: ["litany_loreto"]),
@@ -541,7 +541,6 @@ enum PrayerBook {
         PrayerBookChapter(
             id: "st_joseph", numeral: "X", title: "St Joseph", latinTitle: "De Sancto Ioseph",
             icon: "lv-saint", part: .god,
-            epigraph: "Patron of the Church, of workers and of a happy death.",
             sections: [
                 PrayerBookSection(title: "Prayers to St Joseph", prayerIDs: ["ad_te_beate_ioseph", "memorare_st_joseph", "litany_st_joseph", "st_joseph_workers", "st_joseph_happy_death", "st_joseph_pray", "jmj"]),
             ],
@@ -551,7 +550,6 @@ enum PrayerBook {
         PrayerBookChapter(
             id: "saints", numeral: "XI", title: "Angels and Saints", latinTitle: "De Angelis et Sanctis",
             icon: "lv-saint", part: .god,
-            epigraph: "The friends of God, asked to pray for us.",
             sections: [
                 PrayerBookSection(title: "The angels", prayerIDs: ["angele_dei", "st_michael_prayer"]),
                 PrayerBookSection(title: "The saints", prayerIDs: ["litany_of_the_saints", "st_anne", "st_anthony", "st_jude", "st_peregrine", "st_benedict_medal", "st_dominic_o_lumen", "st_patrick_breastplate", "st_francis_before_crucifix"]),
@@ -562,7 +560,6 @@ enum PrayerBook {
         PrayerBookChapter(
             id: "seasons", numeral: "XII", title: "Feasts and Seasons", latinTitle: "De Festis et Temporibus",
             icon: "ch-window", part: .year,
-            epigraph: "Through the Church's year.",
             sections: [
                 PrayerBookSection(title: "Advent and Christmas", prayerIDs: ["alma_redemptoris", "nunc_dimittis"]),
                 PrayerBookSection(title: "Lent and the Passion", prayerIDs: ["stabat_mater", "miserere", "en_ego"]),
@@ -578,7 +575,6 @@ enum PrayerBook {
         PrayerBookChapter(
             id: "thanks", numeral: "XIII", title: "Thanksgiving", latinTitle: "Gratiarum Actio",
             icon: "lv-wheat", part: .year,
-            epigraph: "The Church's songs of thanks.",
             sections: [
                 PrayerBookSection(title: "Songs of thanks", prayerIDs: ["te_deum", "magnificat", "benedictus", "nunc_dimittis", "grace_after"]),
             ],
@@ -598,7 +594,6 @@ enum PrayerBook {
         PrayerBookChapter(
             id: "church", numeral: "XV", title: "For the Church and the Living", latinTitle: "Pro Vivis",
             icon: "ch-church", part: .others,
-            epigraph: "For the Pope, priests, family and country.",
             sections: [
                 PrayerBookSection(title: "The Church", prayerIDs: ["prayer_for_the_pope", "prayer_for_priests", "conversion_of_sinners", "rosary_closing_prayer"]),
                 PrayerBookSection(title: "Family", prayerIDs: ["prayer_for_family", "parents_for_children"]),
@@ -610,7 +605,6 @@ enum PrayerBook {
         PrayerBookChapter(
             id: "sick", numeral: "XVI", title: "The Sick and the Dying", latinTitle: "Pro Infirmis et Morientibus",
             icon: "ch-chalice", part: .others,
-            epigraph: "For healing, and for a holy death.",
             sections: [
                 PrayerBookSection(title: "For the sick", prayerIDs: ["prayer_for_the_sick", "st_peregrine"]),
                 PrayerBookSection(title: "For a happy death", prayerIDs: ["happy_death", "st_joseph_happy_death"]),
@@ -621,7 +615,7 @@ enum PrayerBook {
         PrayerBookChapter(
             id: "departed", numeral: "XVII", title: "The Faithful Departed", latinTitle: "Pro Defunctis",
             icon: "ch-candle", part: .others,
-            epigraph: "Rest and peace for those who have died.",
+            epigraph: "For those who have died.",
             sections: [
                 PrayerBookSection(title: "For the dead", prayerIDs: ["requiem_aeternam", "de_profundis", "fidelium_deus", "deceased_parents", "st_gertrude"]),
             ],
@@ -632,7 +626,6 @@ enum PrayerBook {
         PrayerBookChapter(
             id: "needs", numeral: "XVIII", title: "In Time of Need", latinTitle: "In Variis Necessitatibus",
             icon: "lv-stella-maris", part: .others,
-            epigraph: "For help, protection and peace of heart.",
             sections: [
                 PrayerBookSection(title: "In trouble", prayerIDs: ["sub_tuum", "memorare", "perpetual_help", "st_michael_prayer", "st_jude"]),
                 PrayerBookSection(title: "At work, at study, on the road", prayerIDs: ["actiones_nostras", "aquinas_before_study", "prayer_for_travel", "st_anthony"]),
@@ -740,7 +733,7 @@ enum PrayerBook {
         ),
         PrayerOrder(
             id: "before_mass", title: "Before Mass", latinTitle: "Præparatio ad Missam",
-            icon: "ch-altar", occasion: "In the pew, before Mass begins",
+            icon: "ch-altar", occasion: "In the pew",
             detail: "Prayers to get ready for Mass: for light, a ready heart, and faith, hope and love.",
             prayerIDs: { _ in
                 ["sign_of_cross", "come_holy_ghost", "aquinas_before_mass",
@@ -749,7 +742,7 @@ enum PrayerBook {
         ),
         PrayerOrder(
             id: "after_mass", title: "After Communion", latinTitle: "Gratiarum Actio",
-            icon: "ch-chalice", occasion: "In thanksgiving, after Mass",
+            icon: "ch-chalice", occasion: "After Mass",
             detail: "Prayers of thanks for the minutes after you receive Communion.",
             prayerIDs: { _ in
                 ["anima_christi", "en_ego", "aquinas_after_mass", "mary_after_communion", "suscipe"]
@@ -829,6 +822,22 @@ enum PrayerBook {
     }
 
     // MARK: Names
+
+    /// The prayers that go by their Latin name, whose Latin is set
+    /// beneath the English title. Any other prayer's Latin title only
+    /// translates its English one, or is the first words of a prayer
+    /// nobody calls by them, and is not drawn.
+    static let latinNamesKnown: Set<String> = [
+        "our_father", "hail_mary", "glory_be", "hail_holy_queen",
+        "angele_dei", "visita_quaesumus", "in_manus_tuas", "nunc_dimittis", "benedictus",
+        "magnificat", "te_deum", "confiteor", "requiem_aeternam", "de_profundis",
+        "beati_quorum", "miserere", "domine_non_sum_dignus", "anima_christi", "suscipe",
+        "adoro_te", "o_sacrum_convivium", "ave_verum", "o_salutaris", "tantum_ergo",
+        "veni_creator", "veni_sancte_spiritus", "sub_tuum", "ave_maris_stella",
+        "alma_redemptoris", "ave_regina_caelorum", "regina_caeli", "inviolata", "salve_mater",
+        "tota_pulchra", "flos_carmeli", "stabat_mater", "totus_tuus", "ad_te_beate_ioseph",
+        "actiones_nostras", "da_pacem",
+    ]
 
     /// The English set beneath a prayer that is known by its Latin name,
     /// where its Latin would only say the name again

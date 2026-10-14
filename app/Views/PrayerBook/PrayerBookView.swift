@@ -55,10 +55,6 @@ struct PrayerBookView: View {
     /// The first prayers, a row each under Everyday Prayers
     static let everydayIDs = ["our_father", "hail_mary", "glory_be", "apostles_creed"]
 
-    /// A line under a prayer to Mary on the shelf, where the book gives
-    /// none: the words it is known by
-    static let marianNotes = ["litany_loreto": "Holy Mary, pray for us"]
-
     /// The orders kept for an occasion with a shortcut of their own
     static let shortcutOccasionIDs = ["before_mass", "before_confession"]
 
@@ -279,7 +275,7 @@ private struct PrayersToMaryShelf: View {
                     if let seasonal = PrayerBook.prayer(antiphon.prayerID) {
                         PrayersSquareCard(
                             title: seasonal.listTitle,
-                            note: "This season's song to Mary",
+                            note: "This season",
                             painting: .antiphon(antiphon)
                         ) {
                             router.push(.devotionPrayer(id: seasonal.id))
@@ -288,8 +284,7 @@ private struct PrayersToMaryShelf: View {
                     ForEach(known) { prayer in
                         PrayersSquareCard(
                             title: prayer.listTitle,
-                            note: PrayerBook.englishNames[prayer.id]
-                                ?? PrayerBookView.marianNotes[prayer.id] ?? PrayerBook.ourLady.title,
+                            note: PrayerBook.englishNames[prayer.id],
                             painting: .prayer(prayer.id)
                         ) {
                             router.push(.devotionPrayer(id: prayer.id))

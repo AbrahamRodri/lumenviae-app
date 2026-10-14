@@ -103,9 +103,10 @@ struct PrayerBookPainting: Equatable {
     // MARK: The Prayers page
 
     /// The Saved shortcut's painting: Our Lady at prayer, over the
-    /// prayers a reader keeps
+    /// prayers a reader keeps, cut about her face and veil so the tile
+    /// and the Saved page's head both hold the whole head
     static let saved = PrayerBookPainting(
-        asset: "mary_virgin_in_prayer", focal: UnitPoint(x: 0.5, y: 0.35), caption: "The Virgin in Prayer"
+        asset: "mary_virgin_in_prayer", focal: UnitPoint(x: 0.5, y: 0.27), caption: "The Virgin in Prayer"
     )
 
     /// An order's painting on its shortcut, its page and its topic's Pray
