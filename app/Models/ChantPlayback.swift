@@ -158,6 +158,26 @@ struct ChantSilence: Equatable {
     }
 }
 
+// MARK: - ChantSilenceNowPlaying
+
+/// What the Lock Screen shows while a set keeps a silence: the chant it
+/// leads to, or the one just sung when the set ends on it — never a track
+/// called "Silence"
+struct ChantSilenceNowPlaying: Equatable {
+    let title: String
+    let subtitle: String
+    let painting: String
+
+    init(queue: ChantQueue?, current: Chant) {
+        let next = queue?.nextChant
+        let shown = next ?? current
+        let set = queue?.title ?? "Chant"
+        title = shown.latinTitle
+        subtitle = next == nil ? set : "\(set) · Next, after a pause"
+        painting = ChantCatalog.painting(for: shown)
+    }
+}
+
 // MARK: - ChantTurn length
 
 extension ChantTurn {

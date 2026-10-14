@@ -414,15 +414,18 @@ final class AudioService {
     /// the tests, and written to the system by
     /// `updateTrackCommandAvailability`.
     var remoteCommandAvailability: RemoteCommandAvailability {
-        let hasNavigation = trackNavigationOwner != nil
+        let next = trackNavigationOwner != nil && canGoNext
+        let previous = trackNavigationOwner != nil && canGoPrevious
+        // ±10s stands wherever no arrow does — no flow driving tracks, or
+        // one with nowhere to step (a prayer opened alone) — so a missed
+        // line can still be replayed from the Lock Screen.
+        let skips = !next && !previous
         return RemoteCommandAvailability(
             // Track arrows appear only where there is somewhere to go.
-            next: hasNavigation && canGoNext,
-            previous: hasNavigation && canGoPrevious,
-            // ±10s stays available whenever a flow is not driving tracks,
-            // so a missed line can still be replayed from the Lock Screen.
-            skipForward: !hasNavigation,
-            skipBackward: !hasNavigation
+            next: next,
+            previous: previous,
+            skipForward: skips,
+            skipBackward: skips
         )
     }
 
@@ -538,6 +541,9 @@ final class AudioService {
                   let event = event as? MPChangePlaybackPositionCommandEvent else {
                 return .noActionableNowPlayingItem
             }
+            // A span shown in place of the recording (a set's silence) is
+            // the clock's, not the few seconds of recording beneath it
+            guard self.nowPlayingTimeline == nil else { return .commandFailed }
             self.seek(to: event.positionTime)
             return .success
         }
@@ -1182,7 +1188,12 @@ final class AudioService {
             return
         }
         let timeline = publishedTimeline
-        info[MPMediaItemPropertyPlaybackDuration] = timeline.duration
+        // With no recording in the player — a flow between two of its own,
+        // the next one on its way — the length published stands, rather
+        // than read 0:00 of 0:00
+        if player != nil || nowPlayingTimeline != nil {
+            info[MPMediaItemPropertyPlaybackDuration] = timeline.duration
+        }
         info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = timeline.elapsed
         info[MPNowPlayingInfoPropertyPlaybackRate] = timeline.rate
         info[MPNowPlayingInfoPropertyDefaultPlaybackRate] = nowPlayingTimeline == nil ? playbackRate : 1.0

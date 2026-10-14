@@ -9,10 +9,13 @@
 //  tracks and the ten-second skips where none does; play and pause from
 //  outside the screen, and headphones pulled out, reach the owner's own
 //  transport; a set's silence shows its whole length on the scrubber,
-//  running at the clock's pace; and the entry goes when the flow ends.
-//  A meditation set's player is walked through it as well: it holds the
-//  player by a claim, and the Lock Screen's play, pause and arrows are
-//  the Rosary's own.
+//  running at the clock's pace, named for the chant it leads to; and
+//  the entry goes when the flow ends. A meditation set's player is walked
+//  through it as well: it holds the player by a claim, the Lock Screen's
+//  play, pause and arrows are the Rosary's own, a pause calls off the
+//  next mystery beginning by itself, a play after another flow took the
+//  player loads the meditation again, and the meditation heard to its
+//  end unlocks the beads.
 //
 
 import Foundation
@@ -37,6 +40,14 @@ struct LockScreenPlayerTests {
         service.nowPlayingInfo?[key]
     }
 
+    /// Whether the Lock Screen's picture draws an image: the artwork asked
+    /// for a size, as the system asks it, hands back something to draw
+    private func drawsPicture(_ service: AudioService) -> Bool {
+        guard let artwork = info(service, MPMediaItemPropertyArtwork) as? MPMediaItemArtwork,
+              let image = artwork.image(at: CGSize(width: 64, height: 64)) else { return false }
+        return image.size.width > 0 && image.size.height > 0
+    }
+
     // MARK: - What is published
 
     @Test func aLoadPublishesTitleSecondLinePictureAndLength() async {
@@ -53,7 +64,7 @@ struct LockScreenPlayerTests {
         #expect(info(service, MPMediaItemPropertyTitle) as? String == "Salve Regina")
         #expect(info(service, MPMediaItemPropertyArtist) as? String == "Chant · Simple melody")
         #expect(info(service, MPMediaItemPropertyAlbumTitle) as? String == "Verbum Gloriae")
-        #expect(info(service, MPMediaItemPropertyArtwork) is MPMediaItemArtwork)
+        #expect(drawsPicture(service))
         #expect(service.nowPlayingArtworkName == "mary_sistine_madonna")
         let length = info(service, MPMediaItemPropertyPlaybackDuration) as? Double ?? 0
         #expect(length > 0)
@@ -65,8 +76,29 @@ struct LockScreenPlayerTests {
         let service = makeService()
         let claim = service.claim(.prayerBook)!
         await claim.load(recording, title: "Memorare", subtitle: "Prayers")
-        #expect(info(service, MPMediaItemPropertyArtwork) is MPMediaItemArtwork)
+        #expect(drawsPicture(service))
         #expect(service.nowPlayingArtworkName == AudioService.fallbackArtworkAsset)
+        claim.release()
+    }
+
+    @Test func aPictureTheCatalogLacksFallsBackRatherThanDrawNothing() async {
+        let service = makeService()
+        let claim = service.claim(.chant)!
+        await claim.load(recording, title: "Ave Maria", artworkAssetName: "no_such_painting")
+        #expect(drawsPicture(service))
+        claim.release()
+    }
+
+    @Test func theLengthStandsWhileTheFlowIsBetweenRecordings() async {
+        let service = makeService()
+        let claim = service.claim(.consecration)!
+        await claim.load(recording, title: "Veni Creator")
+        let length = info(service, MPMediaItemPropertyPlaybackDuration) as? Double ?? 0
+        #expect(length > 0)
+        claim.unload(preservingNowPlaying: true)
+        service.pause()
+        service.setPlaybackRate(1.25)
+        #expect(info(service, MPMediaItemPropertyPlaybackDuration) as? Double == length)
         claim.release()
     }
 
@@ -122,6 +154,11 @@ struct LockScreenPlayerTests {
         #expect(
             service.remoteCommandAvailability
                 == .init(next: false, previous: true, skipForward: false, skipBackward: false))
+
+        // A flow with nowhere to step — a prayer opened alone — has the
+        // skips rather than nothing
+        claim.navigation?.canGoPrevious = false
+        #expect(service.remoteCommandAvailability == .init(next: false, previous: false, skipForward: true, skipBackward: true))
 
         claim.release()
         #expect(service.remoteCommandAvailability.skipForward)
@@ -242,7 +279,7 @@ struct LockScreenPlayerTests {
 
         #expect(service.holder?.kind == .prayerFlow)
         #expect(info(service, MPMediaItemPropertyArtist) as? String == "The Joyful Gospel")
-        #expect(info(service, MPMediaItemPropertyArtwork) is MPMediaItemArtwork)
+        #expect(drawsPicture(service))
         #expect(service.nowPlayingArtworkName == Constants.mysteryImageURL(category: "joyful", index: 0))
         #expect(
             service.remoteCommandAvailability
@@ -286,5 +323,132 @@ struct LockScreenPlayerTests {
         vm.stopAudio()
         #expect(chant.isCurrent)
         chant.release()
+    }
+
+    // MARK: - A set's silence, as named
+
+    @Test func aSilenceIsNamedForTheChantItLeadsTo() throws {
+        let chants = Array(ChantCatalog.all.prefix(2))
+        try #require(chants.count == 2)
+        var queue = ChantQueue(
+            title: "Before Bed",
+            entries: [.chant(chants[0]), .silence(note: "", seconds: 60), .chant(chants[1])],
+            origins: [0, 1, 2],
+            source: nil
+        )
+        queue.index = 1
+        let shown = ChantSilenceNowPlaying(queue: queue, current: chants[0])
+        #expect(shown.title == chants[1].latinTitle)
+        #expect(shown.subtitle == "Before Bed · Next, after a pause")
+        #expect(shown.painting == ChantCatalog.painting(for: chants[1]))
+        #expect(shown.title != "Silence")
+    }
+
+    @Test func aSilenceThatEndsTheSetKeepsTheChantJustSung() throws {
+        let chant = try #require(ChantCatalog.all.first)
+        var queue = ChantQueue(
+            title: "Before Bed",
+            entries: [.chant(chant), .silence(note: "Rest", seconds: 60)],
+            origins: [0, 1],
+            source: nil
+        )
+        queue.index = 1
+        let shown = ChantSilenceNowPlaying(queue: queue, current: chant)
+        #expect(shown.title == chant.latinTitle)
+        #expect(shown.subtitle == "Before Bed")
+        #expect(shown.painting == ChantCatalog.painting(for: chant))
+    }
+
+    // MARK: - The sets player's transport
+
+    private func setPlayer(_ service: AudioService) -> PrayerSessionViewModel {
+        PrayerSessionViewModel(
+            meditationSet: narratedSet(),
+            showsOpeningPrayers: false,
+            apiService: APIService(session: StubProtocol.session),
+            audioService: service
+        )
+    }
+
+    /// Waits on the main actor, a little at a time, until `done` holds
+    private func until(_ done: () -> Bool) async {
+        for _ in 0..<100 where !done() {
+            try? await Task.sleep(for: .milliseconds(20))
+        }
+    }
+
+    @Test func aPauseCallsOffTheNextMysteryBeginningByItself() async {
+        let service = makeService()
+        let vm = setPlayer(service)
+        await vm.loadCurrentAudio()
+
+        // The arrow asks the next mystery to begin by itself; the pause
+        // that follows at once calls that off
+        service.handleRemoteCommand(.nextTrack)
+        #expect(vm.isPlaying == false)
+        service.handleRemoteCommand(.pause)
+        await until { vm.totalDuration > 0 && vm.currentMysteryIndex == 1 }
+        try? await Task.sleep(for: .milliseconds(200))
+        #expect(vm.currentMysteryIndex == 1)
+        #expect(!vm.isPlaying)
+        #expect(!service.isPlaying)
+        vm.stopAudio()
+    }
+
+    @Test func theScreensPauseCallsItOffToo() async {
+        let service = makeService()
+        let vm = setPlayer(service)
+        await vm.loadCurrentAudio()
+
+        service.handleRemoteCommand(.nextTrack)
+        // On its way, the mystery counts as playing for the screen as for
+        // the Lock Screen: the screen's pause is a pause, not a play
+        vm.isPlaying = false
+        await until { vm.totalDuration > 0 && vm.currentMysteryIndex == 1 }
+        try? await Task.sleep(for: .milliseconds(200))
+        #expect(!service.isPlaying)
+        vm.stopAudio()
+    }
+
+    @Test func aPlayAfterAnotherFlowTookThePlayerLoadsTheMeditationAgain() async {
+        let service = makeService()
+        let vm = setPlayer(service)
+        await vm.loadCurrentAudio()
+
+        let chant = service.claim(.chant)!
+        #expect(!chant.holdsItem)
+        #expect(service.holder?.kind == .chant)
+
+        vm.isPlaying = true
+        await until { service.holder?.kind == .prayerFlow && service.isPlaying }
+        #expect(service.holder?.kind == .prayerFlow)
+        #expect(vm.isPlaying)
+        #expect(!chant.isCurrent)
+        vm.isPlaying = false
+        vm.stopAudio()
+    }
+
+    @Test func theMeditationHeardToItsEndUnlocksTheBeads() async {
+        let service = makeService()
+        let vm = setPlayer(service)
+        await vm.loadCurrentAudio()
+        #expect(!vm.beadsUnlocked, "the meditation comes first")
+
+        service.itemDidPlayToEnd()
+        #expect(vm.beadsUnlocked)
+        vm.stopAudio()
+    }
+
+    @Test func aFailedLoadsErrorGoesWithTheMysteryLeft() async {
+        let service = makeService()
+        let vm = setPlayer(service)
+        await vm.loadCurrentAudio()
+        service.itemDidFail()
+        #expect(vm.audioErrorMessage != nil)
+
+        _ = vm.nextMystery()
+        #expect(vm.audioErrorMessage == nil)
+        #expect(!vm.beadsUnlocked, "the next mystery's meditation is still to be heard")
+        vm.stopAudio()
     }
 }

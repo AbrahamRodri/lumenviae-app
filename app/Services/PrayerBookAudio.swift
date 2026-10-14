@@ -142,7 +142,7 @@ final class PrayAlongVoice {
             onNext: { [weak self] in self?.onNext?() },
             onPrevious: { [weak self] in self?.onPrevious?() },
             onFinish: { [weak self] in self?.onFinish?() },
-            onTransport: { [weak self] request in self?.transport(request) }
+            onTransport: { [weak self] request in self?.onTransport?(request) }
         )
 
         currentPrayerID = prayer.id
@@ -188,20 +188,6 @@ final class PrayAlongVoice {
     func resume() {
         guard ownsPlayer else { return }
         AudioService.shared.play()
-    }
-
-    /// The screen's answer to a play or pause from outside it, or the
-    /// player's own when the screen gave none
-    private func transport(_ request: AudioService.TransportRequest) {
-        if let onTransport {
-            onTransport(request)
-            return
-        }
-        switch request {
-        case .play: resume()
-        case .pause: pause()
-        case .toggle: if isPlaying { pause() } else { resume() }
-        }
     }
 
     /// Lets the player go: stopped, the arrows handed back, and the Lock

@@ -689,15 +689,15 @@ struct PrayAlongView: View {
                     .fill(AppColors.background.opacity(0.4))
                 Circle()
                     .strokeBorder(AppColors.gold.opacity(0.75), lineWidth: 1.2)
-                AppIcon(voice.isPlaying ? "ph-pause-fill" : "ph-play-fill", size: 20)
+                AppIcon(voiceGoesOn ? "ph-pause-fill" : "ph-play-fill", size: 20)
                     .foregroundColor(AppColors.goldLight)
-                    .offset(x: voice.isPlaying ? 0 : 2)
+                    .offset(x: voiceGoesOn ? 0 : 2)
             }
             .frame(width: 58, height: 58)
             .shadow(color: AppColors.gold.opacity(0.25), radius: 10)
         }
         .buttonStyle(QuietGlyphButtonStyle())
-        .accessibilityLabel(voice.isPlaying ? "Pause" : "Play")
+        .accessibilityLabel(voiceGoesOn ? "Pause" : "Play")
     }
 
     /// The next prayer named and a tap away: an outlined pill, since the
@@ -890,6 +890,7 @@ struct PrayAlongView: View {
         store.chooseAloud(!aloud)
         advanceTask?.cancel()
         advanceTask = nil
+        heldBeforeNext = false
         if aloud {
             startVoice()
         } else {
@@ -906,8 +907,12 @@ struct PrayAlongView: View {
     /// headphones, the same either way. A pause in the breath after a
     /// prayer holds the next one back, and play then goes on to it — it
     /// once came anyway, and the disc said the finished prayer again.
+    /// The voice sounding, or in the breath before the next prayer, which
+    /// a tap on the disc pauses: the disc shows Pause through it
+    private var voiceGoesOn: Bool { voice.isPlaying || advanceTask != nil }
+
     private func transport(_ request: AudioService.TransportRequest) {
-        let goingOn = voice.isPlaying || advanceTask != nil
+        let goingOn = voiceGoesOn
         switch request {
         case .pause:
             if advanceTask != nil {

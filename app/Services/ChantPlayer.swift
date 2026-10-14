@@ -575,15 +575,14 @@ final class ChantPlayer {
         loadTask?.cancel()
         loadTask = Task { @MainActor [weak self] in
             guard let self else { return }
-            // Named on the Lock Screen for the chant it leads to, or the
-            // one just sung when the set ends on it — never a track called
-            // "Silence" — with the whole silence on its scrubber
-            let shown = self.queue?.nextChant ?? self.current
+            // Named on the Lock Screen for the chant it leads to, with the
+            // whole silence on its scrubber
+            let shown = ChantSilenceNowPlaying(queue: self.queue, current: self.current)
             let ready = await claim.load(
                 url,
-                title: shown.latinTitle,
-                subtitle: self.silenceSubtitle(leadingTo: self.queue?.nextChant),
-                artworkAssetName: ChantCatalog.painting(for: shown),
+                title: shown.title,
+                subtitle: shown.subtitle,
+                artworkAssetName: shown.painting,
                 album: ChantCatalog.credit,
                 claimNowPlaying: true
             )
@@ -604,11 +603,6 @@ final class ChantPlayer {
         }
     }
 
-    /// The Lock Screen's line under the title while a set keeps a silence
-    private func silenceSubtitle(leadingTo next: Chant?) -> String {
-        let set = queue?.title ?? "Chant"
-        return next == nil ? set : "\(set) · Next, after a pause"
-    }
 
     private func scheduleSilenceEnd(after seconds: TimeInterval) {
         silenceTask?.cancel()

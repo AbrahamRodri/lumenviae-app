@@ -1381,7 +1381,8 @@ write concurrent code here:
   mystery coming on by itself, the pray-along's next prayer after its
   breath (play then goes on to it), a set of chants' silence, the
   shelf's place written. The arrows stand where a flow steps tracks and
-  the ten-second skips where none does. A flow that names no painting,
+  the ten-second skips where it has nowhere to step (a prayer opened
+  alone), and a set's silence cannot be scrubbed. A flow that names no painting,
   or one the catalog lacks, gets `AudioService.fallbackArtworkAsset`;
   a chant hangs its library painting, a prayer its pray-along painting,
   a consecration day its period's. A set's silence is named for the
