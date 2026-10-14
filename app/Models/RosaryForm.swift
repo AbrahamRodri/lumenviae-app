@@ -118,11 +118,11 @@ enum RosaryChoice: Hashable, CaseIterable {
         switch (self, form == .scriptural) {
         case (.audio, false):
             return value
-                ? "Every prayer is said aloud. Pray along with the voice."
-                : "The meditation is read aloud. You say the prayers."
+                ? "You hear every prayer. Pray along with the voice."
+                : "You hear the meditation. You say the prayers."
         case (.audio, true):
             return value
-                ? "Every verse and prayer is said aloud."
+                ? "You hear every verse and prayer."
                 : "A verse is shown for each Hail Mary. You read and pray in silence."
         case (.counting, _):
             return value

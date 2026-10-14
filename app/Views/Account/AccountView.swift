@@ -154,8 +154,8 @@ struct AccountView: View {
                             // The set page's note, and while the Whole
                             // Rosary is not chosen, where to choose it
                             Text(userSettings.prayAloud
-                                 ? "Said aloud after the closing prayer."
-                                 : "Said aloud after the closing prayer, with the Whole Rosary. Audio is at the top of this section.")
+                                 ? "Played after the closing prayer."
+                                 : "Played after the closing prayer, with the Whole Rosary. Audio is at the top of this section.")
                                 .font(AppFonts.italicFont(13))
                                 .foregroundColor(AppColors.textSecondary)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -1307,7 +1307,7 @@ struct PrivacyPolicySheet: View {
 
                     InfoBlock(
                         title: "What Reaches Us",
-                        text: "One short note, when you finish a Rosary prayed with meditations: which meditations they were, and whether it was said aloud as the Whole Rosary. Our server keeps it with the time and an approximate city, region and country, looked up through ipapi.co from the address your phone connects from, and keeps that address only in a shortened form. No name, account or device identifier goes with it, so two Rosaries prayed on one phone look like two prayed by strangers. We use these notes only to learn which meditations are prayed, and roughly where. The Scriptural Rosary, the Rosary Said Aloud and the guided Rosary send nothing, and nothing else reaches us unless you write to us."
+                        text: "One short note, when you finish a Rosary prayed with meditations: which meditations they were, and whether you listened to the Whole Rosary. Our server keeps it with the time and an approximate city, region and country, looked up through ipapi.co from the address your phone connects from, and keeps that address only in a shortened form. No name, account or device identifier goes with it, so two Rosaries prayed on one phone look like two prayed by strangers. We use these notes only to learn which meditations are prayed, and roughly where. The Scriptural Rosary, the Audio Rosary and the guided Rosary send nothing, and nothing else reaches us unless you write to us."
                     )
 
                     InfoBlock(
@@ -1355,7 +1355,7 @@ struct HelpSupportSheet: View {
                 VStack(alignment: .leading, spacing: 28) {
                     InfoBlock(
                         title: "How do I begin praying?",
-                        text: "From the home screen, tap \"Pray the Rosary\" under today's mysteries, or tap any mystery in the grid below. On the page that opens, choose a meditation (a short reading on each mystery), or another way to pray: the Scriptural Rosary, with a Bible verse for every Hail Mary, or the Rosary Said Aloud, with no readings. The next page shows how you'll pray, the audio and the counting, just above Pray."
+                        text: "From the home screen, tap \"Pray the Rosary\" under today's mysteries, or tap any mystery in the grid below. On the page that opens, choose a meditation (a short reading on each mystery), or another way to pray: the Scriptural Rosary, with a Bible verse for every Hail Mary, or the Audio Rosary, where you listen and pray along. The next page shows how you'll pray, the audio and the counting, just above Pray."
                     )
 
                     InfoBlock(
@@ -1365,7 +1365,7 @@ struct HelpSupportSheet: View {
 
                     InfoBlock(
                         title: "How does audio work?",
-                        text: "Choose it on the Rosary's own page before you pray, or in Settings under The Rosary: Meditation Only reads the meditation aloud and leaves the prayers to you, and Whole Rosary says every prayer aloud, the beads moving with the voice. During the prayer, the play button starts and pauses the voice, and the buttons beside it move 10 seconds, or a whole prayer with Whole Rosary."
+                        text: "Choose it on the Rosary's own page before you pray, or in Settings under The Rosary: with Meditation Only you hear the meditation and say the prayers yourself, and with Whole Rosary you hear every prayer, the beads moving with the voice. During the prayer, the play button starts and pauses the voice, and the buttons beside it move 10 seconds, or a whole prayer with Whole Rosary."
                     )
 
                     InfoBlock(

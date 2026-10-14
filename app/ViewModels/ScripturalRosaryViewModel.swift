@@ -68,7 +68,7 @@ final class ScripturalRosaryViewModel {
     /// its kind and never by its stored name, so a card saved under "The
     /// Rosary Aloud" or "The Holy Rosary" still comes back as this form.
     /// What the Prayer Record keeps is `aloudDevotionName`, unchanged.
-    static let holyRosaryName = "The Rosary Said Aloud"
+    static let holyRosaryName = "The Audio Rosary"
 
     /// Which snapshot an interrupted one is kept as, so it comes back
     /// as itself

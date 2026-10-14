@@ -522,7 +522,7 @@ struct OnboardingView: View {
                 VStack(spacing: 10) {
                     OnboardingChoiceCard(
                         label: "Meditation Only",
-                        detail: "The meditation is read aloud; you say the prayers",
+                        detail: "You hear the meditation; you say the prayers",
                         isSelected: !praysAloud
                     ) {
                         choose(aloud: false)
@@ -530,7 +530,7 @@ struct OnboardingView: View {
 
                     OnboardingChoiceCard(
                         label: "Whole Rosary",
-                        detail: "Every prayer is said aloud; pray along with the voice",
+                        detail: "You hear every prayer; pray along with the voice",
                         isSelected: praysAloud
                     ) {
                         choose(aloud: true)

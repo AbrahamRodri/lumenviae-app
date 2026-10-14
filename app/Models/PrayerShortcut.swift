@@ -43,7 +43,7 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
         case .chooseMeditation: return "Choose How to Pray Today"
         case .sevenSorrows:     return "The Seven Sorrows of Mary"
         case .scripturalRosary: return "The Scriptural Rosary"
-        case .rosaryAloud:      return "The Rosary Said Aloud"
+        case .rosaryAloud:      return "The Audio Rosary"
         case .mass:             return "The Mass"
         case .office:           return "Hours of Prayer"
         case .consecration:     return "Consecration to Mary"
@@ -68,7 +68,7 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
         case .chooseMeditation: return "Choose how to pray today's mysteries"
         case .sevenSorrows:     return "Seven Hail Marys for each sorrow"
         case .scripturalRosary: return "A Bible verse for every Hail Mary"
-        case .rosaryAloud:      return "Every prayer said aloud, no readings"
+        case .rosaryAloud:      return "Listen and pray along"
         case .mass:             return "Today's traditional Latin Mass"
         case .office:           return "The Church\u{2019}s prayer for each hour (Divine Office)"
         case .consecration:     return "Giving yourself to Jesus through Mary"
@@ -84,11 +84,11 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
     func trayDetail(today: MysteryCategory, praysAloud: Bool) -> String {
         switch self {
         case .todaysRosary:
-            return "\(today.devotionTitle) · \(praysAloud ? "whole Rosary aloud" : "with a meditation")"
+            return "\(today.devotionTitle) · \(praysAloud ? "with the whole Rosary read to you" : "with a meditation")"
         case .scripturalRosary:
             return "\(today.devotionTitle) · a verse for every bead"
         case .rosaryAloud:
-            return "\(today.devotionTitle) · every prayer aloud"
+            return "\(today.devotionTitle) · listen and pray along"
         default:
             return subtitle
         }
@@ -136,7 +136,7 @@ enum PrayerShortcut: String, CaseIterable, Identifiable {
         case .chooseMeditation: return "Choose How to Pray Today"
         case .sevenSorrows:     return "The Seven Sorrows of Mary"
         case .scripturalRosary: return "Scriptural Rosary"
-        case .rosaryAloud:      return "The Rosary Said Aloud"
+        case .rosaryAloud:      return "The Audio Rosary"
         case .mass:             return "The Mass"
         case .office:           return "Hours of Prayer"
         case .consecration:     return "Consecration to Mary"
