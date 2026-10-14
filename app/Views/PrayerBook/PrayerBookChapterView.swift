@@ -43,6 +43,10 @@ struct PrayerBookChapterView: View {
     @State private var chapterID: String
     @State private var pageOpacity: Double = 1
 
+    /// The page turning to another topic. One at a time: two quick taps
+    /// once ran two turns from the same topic
+    @State private var turnTask: Task<Void, Never>?
+
     /// Whether the painting has scrolled up behind the clock and the
     /// Back, so the dark ground under them is needed
     @State private var paintingGone = false
@@ -374,8 +378,10 @@ struct PrayerBookChapterView: View {
     /// the top unseen, then fades in — never a flash of the old topic
     private func turn(to id: String, proxy: ScrollViewProxy) {
         withAnimation(Motion.pageFadeOut) { pageOpacity = 0 }
-        Task { @MainActor in
+        turnTask?.cancel()
+        turnTask = Task { @MainActor in
             try? await Task.sleep(for: Motion.pageFadeGap)
+            guard !Task.isCancelled else { return }
             chapterID = id
             proxy.scrollTo("top", anchor: .top)
             withAnimation(Motion.pageFadeIn) { pageOpacity = 1 }

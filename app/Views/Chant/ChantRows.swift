@@ -187,6 +187,7 @@ extension Chant {
     /// Mary, 3 minutes 20 seconds"
     func spokenEntry(times: Int, duration: TimeInterval) -> String {
         let name = times > 1 ? "\(latinTitle), \(times) times" : latinTitle
-        return "\(name), \(englishTitle), \(ChantPlayer.spoken(duration))"
+        // Rounded as the lengths beside it are shown
+        return "\(name), \(englishTitle), \(ChantPlayer.spoken(duration.rounded()))"
     }
 }

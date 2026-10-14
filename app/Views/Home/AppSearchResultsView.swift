@@ -274,21 +274,29 @@ struct AppSearchBestCard: View {
 
     // MARK: Parts
 
-    @ViewBuilder
+    /// The painting at the card's leading edge, from a copy made for the
+    /// height the words give the card
     private var picture: some View {
+        GeometryReader { proxy in
+            picture(size: proxy.size)
+        }
+    }
+
+    @ViewBuilder
+    private func picture(size: CGSize) -> some View {
         switch hit {
         case .prayer(let prayer):
-            AppSearchPicture.painting(BookPrayerView.painting(of: prayer.id)).view
+            AppSearchPicture.painting(BookPrayerView.painting(of: prayer.id)).view(size: size)
         case .topic(let chapter):
-            AppSearchPicture.painting(PrayerBookPainting.topic(chapter)).view
+            AppSearchPicture.painting(PrayerBookPainting.topic(chapter)).view(size: size)
         case .order(let order):
-            AppSearchPicture.painting(PrayerOrderView.painting(of: order, on: date)).view
+            AppSearchPicture.painting(PrayerOrderView.painting(of: order, on: date)).view(size: size)
         case .chant(let chant):
-            AppSearchPicture.asset(ChantCatalog.painting(for: chant), focal: nil).view
+            AppSearchPicture.asset(ChantCatalog.painting(for: chant), focal: nil).view(size: size)
         case .mysteries(let category):
-            AppSearchPicture.asset(category.cardImageName, focal: category.cardFocalPoint).view
+            AppSearchPicture.asset(category.cardImageName, focal: category.cardFocalPoint).view(size: size)
         case .mystery(let mystery):
-            AppSearchResultsView.picture(of: mystery).view
+            AppSearchResultsView.picture(of: mystery).view(size: size)
         case .reading, .page, .meditationSet:
             ZStack {
                 AppColors.backgroundDeep
@@ -463,22 +471,20 @@ struct AppSearchChips: View {
 // MARK: - Pieces
 
 /// A small square picture: a Prayer Book painting, an asset by name, or
-/// nothing
+/// nothing. Drawn from a copy made for its frame (`ThumbnailImage`), so a
+/// search never keeps a painting whole.
 enum AppSearchPicture {
     case painting(PrayerBookPainting)
     case asset(String, focal: UnitPoint?)
     case none
 
     @ViewBuilder
-    var view: some View {
+    func view(size: CGSize) -> some View {
         switch self {
         case .painting(let painting):
-            CachedAssetImage(painting.resolvedAsset, focal: painting.focal)
-        case .asset(let name, let focal?):
-            CachedAssetImage(name, focal: focal)
-        case .asset(let name, nil):
-            CachedAssetImage(name)
-                .aspectRatio(contentMode: .fill)
+            ThumbnailImage(name: painting.resolvedAsset, focal: painting.focal, size: size)
+        case .asset(let name, let focal):
+            ThumbnailImage(name: name, focal: focal ?? .center, size: size)
         case .none:
             AppColors.backgroundDeep
         }
@@ -496,7 +502,7 @@ struct AppSearchPictureRow: View {
         Button(action: action) {
             VStack(spacing: 0) {
                 HStack(spacing: 13) {
-                    picture.view
+                    picture.view(size: CGSize(width: 44, height: 44))
                         .frame(width: 44, height: 44)
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                         .overlay(

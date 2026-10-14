@@ -129,15 +129,7 @@ struct ChantView: View {
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: { router.pop() }) {
-                    HStack(spacing: 6) {
-                        AppIcon("ph-caret-left", size: 14)
-                        Text("Back")
-                            .font(AppFonts.bodyFont(16))
-                    }
-                    .foregroundColor(AppColors.gold)
-                    .modifier(BarControlGround(shape: Capsule(), horizontal: 12))
-                }
+                GoldBackButton(grounded: true)
             }
             ToolbarItem(placement: .navigationBarTrailing) {
                 if let chant { moreMenu(chant) }
@@ -469,7 +461,7 @@ struct ChantView: View {
 /// glass of its own (before iOS 26), so both read over any painting.
 /// iOS 26 draws its glass capsule, and a second inside it would be a
 /// capsule in a capsule.
-private struct BarControlGround<S: Shape>: ViewModifier {
+struct BarControlGround<S: Shape>: ViewModifier {
     let shape: S
     let horizontal: CGFloat
 

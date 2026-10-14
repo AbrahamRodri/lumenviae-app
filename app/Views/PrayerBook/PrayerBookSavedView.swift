@@ -89,14 +89,7 @@ struct PrayerBookSavedView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: { router.pop() }) {
-                    HStack(spacing: 6) {
-                        AppIcon("ph-caret-left", size: 14)
-                        Text("Back")
-                            .font(AppFonts.bodyFont(16))
-                    }
-                    .foregroundColor(AppColors.gold)
-                }
+                GoldBackButton()
             }
         }
     }

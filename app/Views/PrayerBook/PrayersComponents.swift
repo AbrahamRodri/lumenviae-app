@@ -126,7 +126,9 @@ struct PrayersNowCard: View {
 
         ZStack(alignment: .bottomLeading) {
             Button(action: open) { face(title: title) }
-                .buttonStyle(SacredCardButtonStyle())
+                // PRAY lies over the face from outside it, so the face
+                // dims when pressed but does not shrink out from under it
+                .buttonStyle(SacredCardButtonStyle(scales: false))
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(
                     "\(title), \(offered ? "prayed" : "the prayer for this hour"). \(PrayerBook.daySummary(of: order, on: now))"

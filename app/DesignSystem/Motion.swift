@@ -201,10 +201,15 @@ extension View {
 /// The whole label rectangle is tappable — without an explicit content
 /// shape, Spacers inside card labels leave dead zones a finger can miss.
 struct SacredCardButtonStyle: ButtonStyle {
+    /// Off for a card with a control laid over it from outside the
+    /// button, which would stand still while the card shrank beneath it:
+    /// the press is then the dimming alone
+    var scales = true
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .contentShape(Rectangle())
-            .scaleEffect(configuration.isPressed ? 0.98 : 1)
+            .scaleEffect(scales && configuration.isPressed ? 0.98 : 1)
             .opacity(configuration.isPressed ? 0.92 : 1)
             .animation(.easeOut(duration: 0.18), value: configuration.isPressed)
     }

@@ -26,27 +26,53 @@ struct ThumbnailImage: View {
 
     @Environment(\.displayScale) private var displayScale
 
-    /// Bumped when the copy is ready, so the body reads the cache again
-    @State private var made = 0
+    /// The copy made for this frame, held here as well as in the cache:
+    /// the cache may let it go under memory pressure before it is drawn,
+    /// which left the frame on the bare ground
+    @State private var prepared: Prepared?
+
+    private struct Prepared {
+        let request: PaintingThumbnails.Request
+        /// Nil for a painting drawn as it is
+        let image: UIImage?
+    }
 
     var body: some View {
-        // Read so the body is drawn again once the copy is made
-        let _ = made
         let request = PaintingThumbnails.Request(name: name, size: size, scale: displayScale)
         ZStack {
-            switch PaintingThumbnails.ready(request) {
-            case .small(let image):
-                FocalFill(uiImage: image, focal: focal)
+            if let prepared, prepared.request == request {
+                drawn(prepared.image)
                     .transition(.opacity)
-            case .whole:
-                CachedAssetImage(name, focal: focal)
-            case .pending:
-                AppColors.cardBackground
-                    .task(id: request) {
-                        await PaintingThumbnails.prepare(request)
-                        withAnimation(Motion.crossfade) { made += 1 }
-                    }
+            } else {
+                switch PaintingThumbnails.ready(request) {
+                case .small(let image):
+                    drawn(image)
+                case .whole:
+                    drawn(nil)
+                case .pending:
+                    AppColors.cardBackground
+                        .task(id: request) {
+                            let image = await PaintingThumbnails.prepare(request)
+                            withAnimation(Motion.crossfade) { prepared = Prepared(request: request, image: image) }
+                        }
+                }
             }
+        }
+    }
+
+    /// The copy, else the painting as it is, read from the asset catalog
+    /// (whose images the system may let go) and never kept for good by
+    /// `ImageCacheService`, else the quiet ground a missing painting gets
+    @ViewBuilder
+    private func drawn(_ image: UIImage?) -> some View {
+        if let image = image ?? UIImage(named: name) {
+            FocalFill(uiImage: image, focal: focal)
+        } else {
+            LinearGradient(
+                colors: [AppColors.cardBackground, AppColors.background],
+                startPoint: .top,
+                endPoint: .bottom
+            )
         }
     }
 }
@@ -89,11 +115,35 @@ enum PaintingThumbnails {
         return image(named: request.name, filling: request.size, scale: request.scale).map(Readiness.small) ?? .whole
     }
 
-    /// Makes the copy off the main actor and keeps it, or notes that the
-    /// painting is drawn as it is
+    /// The copy, made off the main actor and kept, or nil where the
+    /// painting is drawn as it is. Two frames asking for one copy at once
+    /// share its making rather than read the painting twice.
+    @discardableResult
+    static func prepare(_ request: Request) async -> UIImage? {
+        if let making = inFlight[request] { return await making.value }
+        let making = Task { await make(request) }
+        inFlight[request] = making
+        let image = await making.value
+        inFlight[request] = nil
+        return image
+    }
+
+    private static var inFlight: [Request: Task<UIImage?, Never>] = [:]
+
     @concurrent
-    static func prepare(_ request: Request) async {
-        _ = Store.make(request)
+    private static func make(_ request: Request) async -> UIImage? {
+        Store.make(request)
+    }
+
+    /// Whether the cache holds a copy for `request`, whatever
+    /// `makesAtOnce` says: for the tests
+    static func isKept(_ request: Request) -> Bool {
+        Store.kept.object(forKey: request.key) != nil
+    }
+
+    /// Whether the cache has noted that `request` is drawn as it is
+    static func isWhole(_ request: Request) -> Bool {
+        Store.whole.object(forKey: request.key) != nil
     }
 
     /// The painting scaled to cover `size` at `scale`, keeping its

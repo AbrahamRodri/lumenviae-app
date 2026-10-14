@@ -344,14 +344,16 @@ enum AppSearch {
 
     /// A devotion by its name or what it is about, and a single mystery
     /// by its name. A devotion found by name stands before its mysteries.
-    static func mysteryHits(_ needle: String) -> [Hit] {
+    /// `mysteries` are the bundled ones, but for a test.
+    static func mysteryHits(_ needle: String, among mysteries: [Mystery]? = nil) -> [Hit] {
         let categories = MysteryCategory.allCases.filter {
             SearchText.fold($0.devotionTitle).contains(needle) || SearchText.fold($0.subtitle).contains(needle)
         }
-        // A mystery opens its devotion's page, so one with none is no hit
-        let mysteries = MysteryCategory.allCases.flatMap { MysteryData.mysteries(for: $0) }
+        // A mystery opens its devotion's page, so one with none is no hit:
+        // it was a row whose tap did nothing
+        let named = (mysteries ?? MysteryCategory.allCases.flatMap { MysteryData.mysteries(for: $0) })
             .filter { $0.mysteryCategory != nil && SearchText.fold($0.name).contains(needle) }
-        return categories.map(Hit.mysteries) + mysteries.map(Hit.mystery)
+        return categories.map(Hit.mysteries) + named.map(Hit.mystery)
     }
 
     /// A reading by its title or its dating line. A shelf's own title

@@ -384,9 +384,10 @@ prayers, from `PrayerBook.topics(matching:)`, `searchOrders` and
 words) and the meditation sets, everything but the sets bundled, so it
 works offline, and every match folded by the one fold, `SearchText.fold`
 (case, accents, æ and œ, and "coeli" read as "caeli", so Regina Coeli
-finds the Regina Cæli); every name and line is folded once, not at each
-keystroke, and the page searches again only when the words or the
-meditation sets change. The
+finds the Regina Cæli). The chants' names and sung lines, the largest
+part of what is searched, are folded once, not at each keystroke (the
+Prayer Book's index is prepared the same way); the page searches again
+only when the words or the meditation sets change. The
 kind of the page it was opened from leads: its hit whose name answers
 closest stands on top as a painted card (one button, "Best match: …"
 to VoiceOver) with PRAY (an outlined capsule) or the play disc and
@@ -2571,8 +2572,10 @@ write concurrent code here:
   have no mystery of their own: their cards name paintings
   (`hour_morning`, `hour_night`) and, while one is missing from the
   catalog, hang the Presentation and Gethsemane
-  (`PrayerBookPainting.resolvedAsset`, looked up once per name, since the
-  image cache keeps no misses). The ribbon is the prayer page's red
+  (`PrayerBookPainting.resolvedAsset`, looked up once per name in the
+  asset catalog and remembered, so a missing painting is not looked for
+  again at every redraw, and no painting is kept whole for it). The
+  ribbon is the prayer page's red
   silk.
 
   The book's hour turns at four, eleven, three and eight
@@ -2834,8 +2837,12 @@ write concurrent code here:
   (Pre-Lent, the Easter season, February 2 (Candlemas)); numbers are
   figures. A Latin title goes with its English: beneath it on a row and
   a card, "Praise, O Sion (Lauda Sion)" where one line holds both, the
-  English alone where only one fits (a chip, a kicker), and both to VoiceOver (`Chant.spokenName`, which every play
-  disc in the library is labelled with). The prayers, chant texts and
+  English alone where only one fits (a chip, a kicker), and both to
+  VoiceOver (`Chant.spokenName`; every play disc in the library is
+  labelled with `Chant.spokenNameAndSetting`, the setting added where
+  neither title says it, so the two Salve Reginas' discs are told
+  apart, and a length is said rounded as its label shows it,
+  `Chant.spokenLength`). The prayers, chant texts and
   the words a score is captioned with are not chrome and keep their
   Latin. An occasion's title or red note reworded is kept in
   `ChantLibraryData.formerWords`, old words to new, and the shelf reads

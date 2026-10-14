@@ -70,14 +70,15 @@ struct SearchAndPaintingsTests {
         }
     }
 
-    @Test func everyMysteryFoundOpensItsDevotion() {
-        for query in ["the", "jesus", "mary", "cross", "temple"] {
-            for hit in AppSearch.mysteryHits(SearchText.needle(query)) {
-                if case .mystery(let mystery) = hit {
-                    #expect(mystery.mysteryCategory != nil, "\(mystery.name)")
-                }
-            }
-        }
+    @Test func aMysteryWithNoDevotionIsNoHit() {
+        let known = Mystery(
+            id: 1, name: "The Annunciation", category: "joyful", order: 1,
+            description: nil, scriptureReference: nil)
+        let stray = Mystery(
+            id: 2, name: "The Annunciation of Nowhere", category: "unknown", order: 1,
+            description: nil, scriptureReference: nil)
+        let hits = AppSearch.mysteryHits("annunciation", among: [known, stray])
+        #expect(hits.map(\.id) == ["mystery:joyful:1"])
     }
 
     // MARK: - What VoiceOver hears
@@ -118,21 +119,18 @@ struct SearchAndPaintingsTests {
     // MARK: - Small paintings
 
     @Test func aSmallPaintingIsMadeOffTheMainActorAndKept() async {
+        // Asked of the cache itself, not of `ready`, which a snapshot suite
+        // run before this one makes answer at once
         let asset = PrayerBookPainting.topic(PrayerBook.ourLady).resolvedAsset
-        let request = PaintingThumbnails.Request(name: asset, size: CGSize(width: 21, height: 29), scale: 3)
-        await PaintingThumbnails.prepare(request)
-        guard case .small(let small) = PaintingThumbnails.ready(request) else {
-            Issue.record("the copy was not kept")
-            return
-        }
-        #expect(small.size.width * small.scale < 1000)
+        let request = PaintingThumbnails.Request(name: asset, size: CGSize(width: 23, height: 31), scale: 3)
+        let small = await PaintingThumbnails.prepare(request)
+        #expect(small != nil)
+        #expect(PaintingThumbnails.isKept(request))
+        if let small { #expect(small.size.width * small.scale < 1000) }
 
-        let missing = PaintingThumbnails.Request(
-            name: "no_such_painting", size: CGSize(width: 21, height: 29), scale: 3)
-        await PaintingThumbnails.prepare(missing)
-        guard case .whole = PaintingThumbnails.ready(missing) else {
-            Issue.record("a missing painting is drawn as it is")
-            return
-        }
+        let missing = PaintingThumbnails.Request(name: "no_such_painting", size: CGSize(width: 23, height: 31), scale: 3)
+        #expect(await PaintingThumbnails.prepare(missing) == nil)
+        #expect(!PaintingThumbnails.isKept(missing))
+        #expect(PaintingThumbnails.isWhole(missing), "a missing painting is drawn as it is")
     }
 }
