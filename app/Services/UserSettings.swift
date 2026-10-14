@@ -97,11 +97,11 @@ enum PrayerIntention: String, CaseIterable, Identifiable {
 
 // MARK: - Reminder Sound
 
-/// A bundled notification sound. Every recording here is public domain
-/// (pdsounds.org / Wikimedia Commons), trimmed, faded, and normalized
-/// for use as an iOS notification sound (.caf, mono, under 30s).
+/// A bundled notification sound: .caf, mono, a few seconds, trimmed, faded
+/// and normalized. The chime was made for Lumen Viae; the Altar Bell is a
+/// public domain recording (pdsounds.org / Wikimedia Commons).
 struct ReminderSound: Identifiable, Equatable {
-    /// Bundle file name including extension, e.g. "church_bell.caf"
+    /// Bundle file name including extension, e.g. "candle_chime.caf"
     let fileName: String
 
     /// Name shown in the picker
@@ -117,28 +117,16 @@ struct ReminderSound: Identifiable, Equatable {
 
     static let all: [ReminderSound] = [
         ReminderSound(
-            fileName: "church_bell.caf",
-            displayName: "Church Bells",
-            detail: "A full peal of church bells",
-            icon: "lv-bell"
+            fileName: "candle_chime.caf",
+            displayName: "Candle Chime",
+            detail: "One warm tone with a soft shimmer",
+            icon: "ph-flame"
         ),
         ReminderSound(
             fileName: "altar_bell.caf",
             displayName: "Altar Bell",
             detail: "A single strike of a small bronze bell",
             icon: "ph-bell"
-        ),
-        ReminderSound(
-            fileName: "harp.caf",
-            displayName: "Harp of David",
-            detail: "A gentle sweep of harp strings",
-            icon: "ph-music-note"
-        ),
-        ReminderSound(
-            fileName: "songbird.caf",
-            displayName: "Songbird",
-            detail: "A hermit thrush at dawn in Yosemite",
-            icon: "ph-bird"
         )
     ]
 

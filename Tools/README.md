@@ -166,6 +166,7 @@ have drifted apart.
 
 | Tool | What it is for |
 |---|---|
+| `ReminderSounds/README.md` | How each reminder sound in `app/Resources/` was made (the Candle Chime's ElevenLabs prompt and ffmpeg recipe), and how to add one. |
 | `MotionSheet/sheet.swift` | Lays a simulator recording out as a contact sheet of timestamped frames, to judge an animation. See `MotionSheet/README.md`. |
 
 ## Claude sessions

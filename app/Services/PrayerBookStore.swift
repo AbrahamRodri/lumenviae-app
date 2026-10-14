@@ -295,6 +295,8 @@ final class PrayerBookStore {
             content.title = "The Angelus"
             let bell = hour == 12 ? "noon" : hour < 12 ? "morning" : "evening"
             content.body = "The \(bell) bell: time for the Angelus, a short prayer to Mary. Tap to pray it."
+            // The Angelus keeps the full peal; it is no longer one of the
+            // reminder picker's sounds, so the file stays in the bundle for this.
             content.sound = UNNotificationSound(named: UNNotificationSoundName("church_bell.caf"))
             content.categoryIdentifier = Self.angelusCategory
             content.threadIdentifier = "angelus"
