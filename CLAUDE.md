@@ -1971,8 +1971,8 @@ write concurrent code here:
   the ☰ index and the rail can name and reach them; an unnamed section
   is a continuation and is drawn but never listed. A jump to the
   **last** section anchors `.bottom`, not `.top`: the Conclusio is ten
-  lines, cannot rise to the header, and a lazily built column answers
-  that request by scrolling past its own end into blank.
+  lines, cannot rise to the header, and the scroll would overrun the
+  end and spring back.
 
   Its sheets are the missal's, minus what the breviary has no data
   for: `OfficeReadingSheet` (language, stacked/side-by-side, size) on
