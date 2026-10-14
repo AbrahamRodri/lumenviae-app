@@ -109,7 +109,7 @@ reports `skipped (no cache)` and does not fail the run.
 | Name | Checks | Offline? |
 |---|---|---|
 | `prayer-book` | `Tools/PrayerBook/prayer_book.json` | yes |
-| `chants` | `app/Data/ChantCatalogData.swift`: words and timed lines (`--text-only`, `--lines-only`) | yes |
+| `chants` | `Chants/chants.json` and `ChantLines/*.json` against the app's copy of the library, `app/Resources/Library/chant_library.json` (`generate.py --check`) | yes |
 | `true-devotion` | `app/Resources/TrueDevotionBook.json`, `Tools/TrueDevotion/VERIFICATION.md` | yes |
 | `icons` | the `lv-*` imagesets `draw.py` writes | yes |
 | `scriptural-rosary` | `app/Data/ScripturalRosaryData.swift`, `scriptural_rosary.json` | only with `Tools/ScripturalRosary/cache/` |
@@ -149,10 +149,9 @@ have drifted apart.
 
 | Tool | Input | Writes | Notes |
 |---|---|---|---|
-| `Chants/generate.py` | `Chants/chants.json`, `ChantLines/*.json`, Verbum Gloriae | `app/Resources/Chants/`, `app/Data/ChantCatalogData.swift` | `--text-only`, `--lines-only` and `--keep-assets` need no encoding. A new recording needs ffmpeg and afconvert. |
+| `Chants/generate.py` | `Chants/chants.json`, `ChantLines/*.json`, the library's files on the server, Verbum Gloriae | `Chants/out/`: every recording and score, and `chant_library.json` | What the API's `mix lumen_viae.upload_chants --source <out> --from <out>/chant_library.json` puts on S3 and in the server's document; then `Tools/dev library-seed`. `--text-only` needs no network; `--check` compares with the app's copy. A new recording needs ffmpeg and afconvert. |
 | `ChantLines/lines.py` | `ChantLines/src/<id>.txt`, the recordings | `ChantLines/<id>.json` | Times each line of a chant. See `ChantLines/README.md`. |
-| `ContentExport/export.sh` | the compiled Prayer Book and chant catalog, the chant files | `ContentExport/out/prayer_book.json`, `chant_library.json`, `chant_assets.json` | The server's two documents (`/api/v2/prayer-book`, `/api/v2/chant-library`) in their shape, asset urls null, and every chant file's path, bytes and sha256 for the upload. Runs `appTests/ContentExportTests`, which also checks the files decode back to the compiled data. |
-| `PrayerBook/export.py` | `app/Data/PrayerBook/`, consecration and Rosary prayers | `PrayerBook/prayer_book.json` | The server records the Prayer Book from this file. Copy it to the server's `priv/rosary_audio/`. `--check` reports a stale file. |
+| `PrayerBook/export.py` | `app/Resources/Library/prayer_book.json`, the Rosary's prayer ids | `PrayerBook/prayer_book.json` | The server records the Prayer Book from this file. Copy it to the server's `priv/rosary_audio/`. `--check` reports a stale file. |
 | `ScripturalRosary/generate.py` | the curated references in the script, the Douay-Rheims API | `app/Data/ScripturalRosaryData.swift`, `scriptural_rosary.json` | `--check`. The server reads the JSON. |
 | `TrueDevotion/build_book.py`, `verify_book.py` | `TrueDevotion/chapters/*.txt` | `app/Resources/TrueDevotionBook.json`, `VERIFICATION.md` | See `TrueDevotion/README.md`. Append paragraphs and never insert them, because readers' marks are keyed by index. |
 | `IconAudit/draw.py` | the drawings in the script | `app/Assets.xcassets/Icons/lv-*` | `make_sheet.py` renders the contact sheet. `app-icon/fix_icon.py` writes the app icon. |

@@ -692,6 +692,29 @@ struct OfflineContentRows: View {
         // One slot for the four states, so idle → downloading → available
         // crossfade over one another rather than the rows being torn
         // down and rebuilt around a live count
+        VStack(spacing: 0) {
+            stateRows
+
+            Divider()
+                .background(AppColors.gold.opacity(0.2))
+
+            ChantsSavedLine()
+        }
+        .confirmationDialog(
+            "Remove offline downloads?",
+            isPresented: $showRemoveConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Remove Downloads", role: .destructive) {
+                service.removeAll()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Meditations and audio will stream when you're online. You can download everything again at any time.")
+        }
+    }
+
+    private var stateRows: some View {
         ZStack(alignment: .top) {
             switch service.state {
             case .idle:
@@ -817,18 +840,6 @@ struct OfflineContentRows: View {
             }
         }
         .animation(Motion.crossfade, value: Self.stage(of: service.state))
-        .confirmationDialog(
-            "Remove offline downloads?",
-            isPresented: $showRemoveConfirm,
-            titleVisibility: .visible
-        ) {
-            Button("Remove Downloads", role: .destructive) {
-                service.removeAll()
-            }
-            Button("Cancel", role: .cancel) {}
-        } message: {
-            Text("Meditations and audio will stream when you're online. You can download everything again at any time.")
-        }
     }
 
     private var removeRow: some View {
@@ -839,6 +850,29 @@ struct OfflineContentRows: View {
         ) {
             showRemoveConfirm = true
         }
+    }
+}
+
+// MARK: - Chants Saved Line
+
+/// How many of the chants are on the phone. They come down by themselves
+/// on Wi-Fi, and stream until they do, so this only says how far that has
+/// gone: never a control, never a count of what is missing.
+struct ChantsSavedLine: View {
+    private var assets = ChantAssetStore.shared
+
+    var body: some View {
+        let total = ChantCatalog.all.count
+        let saved = assets.savedCount(of: ChantCatalog.all)
+        Text(saved >= total ? "All chants saved" : "Chants: \(saved) of \(total) saved")
+            .font(AppFonts.bodyFont(13))
+            .foregroundColor(AppColors.textSecondary)
+            .monospacedDigit()
+            .contentTransition(.numericText())
+            .animation(Motion.crossfade, value: saved)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
     }
 }
 

@@ -263,7 +263,7 @@ Every text the app bundles or fetches that is not its own writing, with the edit
 | The Roman Missal of 1962 | the Missale Meum project | Today's Mass, fetched when opened | missalemeum.com, MIT licence | MIT |
 | The Roman Breviary of 1962 | The Divinum Officium Project | The Hours of Prayer, fetched when opened | divinumofficium.com, by way of Lumen Viae's own server | Free to use, with the project's credit |
 | Gregorian chant: recordings and scores | Verbum Gloriae (verbumgloriae.es) | The Chant Library's 104 recordings and their scores | verbumgloriae.es, copyleft licence | Copyleft (share alike, no attribution required) |
-| Prayers of the Church | the 1910 Raccolta, the Roman Ritual and Missal, and the app's own literal renderings from the Latin | The Prayer Book | Public-domain editions, named in each file of Data/PrayerBook | Public domain |
+| Prayers of the Church | the 1910 Raccolta, the Roman Ritual and Missal, and the app's own literal renderings from the Latin | The Prayer Book | Public-domain editions, named in the Prayer Book's source notes | Public domain |
 | Cinzel and EB Garamond | Natanael Gama; Georg Duffner and Octavio Pardo | The app's type | Google Fonts | SIL Open Font License 1.1 |
 | Phosphor Icons and Christicons | Phosphor (Helena Zhang and Tobias Fried); Christicons | The app's glyphs, beside those drawn for it | phosphoricons.com (MIT); christicons.com (free for commercial use) | MIT; free for commercial use |
 

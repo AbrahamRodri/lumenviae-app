@@ -17,17 +17,30 @@ import Testing
 @MainActor
 struct ChantCatalogTests {
 
-    @Test func everyChantShipsItsRecordingAndScore() {
+    /// The files are the server's: every chant names its recording and
+    /// every page of its score, each with the hash it is checked against
+    @Test func everyChantNamesItsRecordingAndScore() {
         #expect(!ChantCatalog.all.isEmpty)
         for chant in ChantCatalog.all {
-            #expect(chant.audioURL != nil, "\(chant.id) has no recording in the bundle")
+            #expect(chant.audio.url?.scheme == "https", "\(chant.id) has no recording on the server")
+            #expect(chant.audio.sha256.count == 64)
+            #expect(chant.audioURL != nil)
             #expect(!chant.score.isEmpty, "\(chant.id) has no score")
             for part in chant.score {
-                let drawing = ChantScoreDrawing.load(file: part.file)
-                #expect(drawing != nil, "\(chant.id): \(part.file) does not read")
-                #expect(drawing?.operations.isEmpty == false, "\(chant.id): \(part.file) draws nothing")
+                #expect(part.asset.url?.scheme == "https", "\(chant.id): \(part.file) has no file on the server")
+                #expect(part.asset.sha256.count == 64)
             }
         }
+    }
+
+    /// The scores the tests keep read as drawings
+    @Test func scoresRead() throws {
+        for url in ScoreFixtures.urls {
+            let drawing = ChantScoreDrawing.load(url: url)
+            #expect(drawing != nil, "\(url.lastPathComponent) does not read")
+            #expect(drawing?.operations.isEmpty == false, "\(url.lastPathComponent) draws nothing")
+        }
+        #expect(!ScoreFixtures.urls.isEmpty)
     }
 
     @Test func idsAreUniqueAndGroupsKnown() {

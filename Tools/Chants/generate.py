@@ -6,59 +6,67 @@ apostolate of Gregorian chant, published under its copyleft licence
 (https://www.verbumgloriae.es/licencia-copyleft/): free to copy, adapt and
 use for any purpose, commercial included, with no attribution required,
 on the one condition that an adaptation is shared under the same licence.
-What this script writes into the app is such an adaptation — the Ogg
-recordings re-encoded as AAC, the SVG scores split into two layers and
-recoloured by the app — so it carries the same licence, and the app says
-so wherever a chant plays.
+What this script makes is such an adaptation — the Ogg recordings
+re-encoded as AAC, the SVG scores split into two layers and recoloured by
+the app — so it carries the same licence, and the app says so wherever a
+chant plays.
 
-The selection is curated in chants.json. For each chant this script:
+The server keeps the library (the API's priv/library/chant_library.json,
+served as GET /api/v2/chant-library, its files on S3), and the app ships
+a copy of it (app/Resources/Library/chant_library.json, refreshed by
+`Tools/dev library-seed`). This script is how a chant is added to it or
+its words changed: the selection is curated in chants.json, and the
+script stages, in Tools/Chants/out/ (never committed), what the API's
+`mix lumen_viae.upload_chants --source <out> --from <out>/chant_library.json`
+puts on S3 and into the server's document. For each chant it:
 
   1. reads the chant's page (cached in cache/pages/) for its recording
      and the SVG scores whose alt text begins "Partitura", each part
      captioned with the Latin words of its alt text — or, where the page
      files its parts by number, with the `captions` chants.json gives it;
      a caption still holding the site's markup or filing stops the build;
-  2. downloads them (cache/files/);
-  3. re-encodes the recording as mono HE-AAC at 32 kbps
-     (app/Resources/Chants/<id>.m4a) — ffmpeg decodes the Ogg, Apple's
-     afconvert encodes. Four hours of chant ship in the app, so the rate
-     is the one Apple's own tools use for a single voice;
-  4. rewrites each SVG score as the ordered drawing operations the app
-     replays on a Canvas (app/Resources/Chants/Scores/<name>.lvscore,
-     raw DEFLATE): fills in ink and in red, the white shapes that erase,
-     and the few stroked lines — so the app draws the notes in its cream
-     and the initials in its rubric red, sharp at any zoom. Asset
-     catalogs store SVG uncompressed (110 scores came to 30 MB) and
-     CoreSVG would not read every one; this is about a fifth of that;
-  5. writes app/Data/ChantCatalogData.swift, with each chant's timed lines
-     where Tools/ChantLines/<chant id>.json holds them (see LINES below).
+  2. takes each file the library already has from the server, checked
+     against its SHA-256 — so a chant already in the library keeps its
+     recording and scores exactly, and its URLs stay the same;
+  3. for a recording the library lacks, downloads the source (cache/files/)
+     and re-encodes it as mono HE-AAC at 32 kbps (out/<id>.m4a) — ffmpeg
+     decodes the Ogg, Apple's afconvert encodes, the rate Apple's own
+     tools use for a single voice;
+  4. for a score the library lacks, rewrites the SVG as the ordered
+     drawing operations the app replays on a Canvas
+     (out/Scores/<name>.lvscore, raw DEFLATE): fills in ink and in red,
+     the white shapes that erase, and the few stroked lines — so the app
+     draws the notes in its cream and the initials in its rubric red;
+  5. writes out/chant_library.json, the server's document with each
+     file's bytes and SHA-256 (its URL where the library already has it),
+     and each chant's timed lines where Tools/ChantLines/<chant id>.json
+     holds them (see LINES below).
 
 Usage:
     python3 generate.py            # fetch what is missing, build, write
     FFMPEG=/path/to/ffmpeg python3 generate.py
     python3 generate.py --keep-assets
+    python3 generate.py --text-only     # or --lines-only: no network
+    python3 generate.py --check         # the app's copy against chants.json
 
-Requires ffmpeg (brew install ffmpeg, or set FFMPEG) and macOS's afconvert.
+Requires ffmpeg (brew install ffmpeg, or set FFMPEG) and macOS's afconvert,
+for a recording the library does not have yet.
 
-A recording already in the app is kept as it is — delete it to take a
-new one — so its source is neither fetched nor encoded, and ffmpeg is
-needed only for a chant that has none.
+A recording already staged in out/ is kept as it is — delete it to take a
+new one.
 
---keep-assets rebuilds the catalog alone — titles, captions, the order of
-the shelves — from the chant pages, reusing the scores already in the
-app as well: nothing is downloaded but the pages, nothing is re-encoded
-or redrawn, and neither ffmpeg nor the cache of source files is needed. A
-score the app does not already hold is left out, as a score the site no
-longer serves is.
---lines-only folds the line files into the Swift already written,
-touching nothing else: no page is read and no file is fetched, so a
-chant's lines can be added with no network, no ffmpeg and no cache.
---text-only folds chants.json's own words into the Swift already
-written — the shelves with their parts (the subheadings and the order
-the browse page lists them in, every chant once), and each chant's shelf, titles, setting, detail
-and prayers — the same lines a full run writes from them, touching the
-durations, the scores' captions and the lines not at all; chants.json
-must still list the chants the Swift holds, in its order.
+--keep-assets rebuilds the document alone — titles, captions, the order
+of the shelves — from the chant pages, using only the files the library
+or out/ already has: nothing is encoded or redrawn. A score neither has
+is left out, as a score the site no longer serves is.
+--text-only (or --lines-only) writes the document from chants.json's own
+words and the line files, with each chant's recording, duration and
+score taken as the app's copy of the library has them: no page is read
+and no file is fetched. Every chant in chants.json must already be in
+the library.
+--check does the same and compares it with the app's copy (URLs, version
+and date aside), exiting 1 when they differ: a word in chants.json or a
+line file that has not reached the server.
 
 LINES. Tools/ChantLines/<chant id>.json holds one chant's sung lines,
 derived from its bundled recording and checked line by line before the
@@ -79,9 +87,10 @@ a line past the recording's end, a part the score lacks — stops the
 build. A chant with no file has no lines, and the app steps it by ten
 seconds and repeats it whole.
 
-Never hand-edit the generated Swift; edit chants.json and rerun.
+Never hand-edit out/; edit chants.json and rerun.
 """
 
+import hashlib
 import html
 import json
 import os
@@ -96,9 +105,11 @@ from pathlib import Path
 TOOL = Path(__file__).resolve().parent
 ROOT = TOOL.parent.parent
 CACHE = TOOL / "cache"
-AUDIO_OUT = ROOT / "app" / "Resources" / "Chants"
-SCORES_OUT = ROOT / "app" / "Resources" / "Chants" / "Scores"
-SWIFT_OUT = ROOT / "app" / "Data" / "ChantCatalogData.swift"
+OUT = TOOL / "out"
+AUDIO_OUT = OUT
+SCORES_OUT = OUT / "Scores"
+DOCUMENT_OUT = OUT / "chant_library.json"
+SEED = ROOT / "app" / "Resources" / "Library" / "chant_library.json"
 LINES_DIR = ROOT / "Tools" / "ChantLines"
 SITE = "https://www.verbumgloriae.es"
 UA = {"User-Agent": "Mozilla/5.0 (Macintosh) LumenViae/1.0 (chant library build)"}
@@ -443,26 +454,109 @@ def encode(src: Path, dest: Path) -> float:
     return duration_of(dest)
 
 
-# ---------------------------------------------------------------- swift
+# ---------------------------------------------------------------- the library
 
-SWIFT_ESCAPES = {"\\": "\\\\", '"': '\\"', "\n": "\\n", "\r": "\\r", "\t": "\\t"}
+def library() -> dict:
+    """The app's copy of the server's document."""
+    return json.loads(SEED.read_text("utf-8"))
 
 
-def swift_string(s):
-    """A Swift string literal: a backslash and a quote escaped, and every
-    control character, which a literal may not hold as it stands, written
-    as an escape (\\u{1B})."""
-    if s is None:
-        return "nil"
-    out = []
-    for c in s:
-        if c in SWIFT_ESCAPES:
-            out.append(SWIFT_ESCAPES[c])
-        elif ord(c) < 0x20 or ord(c) == 0x7F:
-            out.append("\\u{%X}" % ord(c))
-        else:
-            out.append(c)
-    return '"' + "".join(out) + '"'
+def sha256_of(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def from_library(asset: dict, dest: Path):
+    """A file the library already has, fetched from the server into out/
+    and checked against its hash."""
+    if dest.exists() and sha256_of(dest) == asset["sha256"]:
+        return
+    dest.unlink(missing_ok=True)
+    fetch(asset["url"], dest)
+    if sha256_of(dest) != asset["sha256"]:
+        dest.unlink()
+        sys.exit(f"{dest.name}: the server's file does not match its hash")
+
+
+def asset_of(path: Path, known=None) -> dict:
+    """A staged file as the document names it: the library's URL when it
+    is the library's file, else none yet (the upload gives it one)."""
+    sha = sha256_of(path)
+    url = known["url"] if known and known.get("sha256") == sha else None
+    return {"url": url, "bytes": path.stat().st_size, "sha256": sha}
+
+
+def doc_groups(manifest):
+    return [{"id": g["id"], "title": g["title"], "note": g.get("note"),
+             "parts": [{"title": p.get("title"), "note": p.get("note"), "chant_ids": p["chants"]}
+                       for p in g["parts"]]}
+            for g in manifest["groups"]]
+
+
+def doc_chant(e, duration, score, audio, source, lines):
+    return {
+        "id": e["id"], "group_id": e["group"], "latin_title": e["latin"], "english_title": e["english"],
+        "setting": e.get("setting"), "detail": e["detail"], "prayer_ids": e["prayers"],
+        "duration": round(duration, 1), "source_url": source, "audio": audio, "score": score,
+        "lines": [{"latin": l["latin"], "english": l["english"], "start": round(l["start"], 2),
+                   "end": round(l["end"], 2), "part": l["part"]} for l in lines],
+    }
+
+
+def write_document(document):
+    OUT.mkdir(parents=True, exist_ok=True)
+    DOCUMENT_OUT.write_text(json.dumps(document, ensure_ascii=False, indent=2, sort_keys=True) + "\n", "utf-8")
+    print(f"wrote {DOCUMENT_OUT.relative_to(ROOT)}")
+
+
+def offline_document(manifest):
+    """The document from chants.json and the line files, each chant's
+    files, duration, captions and source as the library has them."""
+    known = {c["id"]: c for c in library()["chants"]}
+    ids = [c["id"] for c in manifest["chants"]]
+    new = [i for i in ids if i not in known]
+    if new:
+        sys.exit(f"not in the library yet, run without --text-only: {', '.join(new)}")
+    timed = read_lines(set(ids), {i: known[i]["duration"] for i in ids},
+                       {i: len(known[i]["score"]) for i in ids})
+    chants = [doc_chant(e, known[e["id"]]["duration"], known[e["id"]]["score"], known[e["id"]]["audio"],
+                        known[e["id"]]["source_url"], timed.get(e["id"], []))
+              for e in manifest["chants"]]
+    return {"groups": doc_groups(manifest), "chants": chants}
+
+
+def without_urls(document):
+    """The content alone: no version or date, no URLs, numbers as numbers"""
+    def strip(value):
+        if isinstance(value, dict):
+            return {k: strip(v) for k, v in value.items() if k not in ("url", "version", "updated_at")}
+        if isinstance(value, list):
+            return [strip(v) for v in value]
+        if isinstance(value, int) and not isinstance(value, bool):
+            return float(value)
+        return value
+    return strip(document)
+
+
+def check(manifest):
+    """--check: chants.json and the line files against the app's copy."""
+    built = without_urls(offline_document(manifest))
+    shipped = without_urls(library())
+    if built == shipped:
+        print("chant_library.json holds chants.json and the line files")
+        return
+    shipped_chants = {c["id"]: c for c in shipped["chants"]}
+    for c in built["chants"]:
+        if shipped_chants.get(c["id"]) != c:
+            print(f"  differs: {c['id']}")
+    if built["groups"] != shipped["groups"]:
+        print("  differs: the groups")
+    print("app/Resources/Library/chant_library.json differs from chants.json and Tools/ChantLines: "
+          "run generate.py --text-only, take out/chant_library.json to the server, then Tools/dev library-seed")
+    sys.exit(1)
 
 
 # ---------------------------------------------------------------- lines
@@ -523,57 +617,6 @@ def read_lines(ids, durations, part_counts):
     return found
 
 
-def swift_lines(lines):
-    """The `lines:` argument of a Chant, as the generated file sets it."""
-    out = ["            lines: ["]
-    for l in lines:
-        part = "" if l["part"] is None else f", part: {l['part']}"
-        out.append(f"                ChantLine(latin: {swift_string(l['latin'])}, "
-                   f"english: {swift_string(l['english'])}, "
-                   f"start: {l['start']:.2f}, end: {l['end']:.2f}{part}),")
-    out[-1] = out[-1].rstrip(",")
-    out.append("            ]")
-    return out
-
-
-def fold_lines_into_swift(ids):
-    """--lines-only: the line files written into the Swift as it stands."""
-    text = SWIFT_OUT.read_text("utf-8")
-    # A chant's own id stands alone on its line, twelve spaces in; a
-    # shelf's is inside `ChantGroup(` and is never matched
-    durations = {m.group(1): float(m.group(2)) for m in re.finditer(
-        r'^            id: "([^"]+)",.*?duration: ([0-9.]+),', text, re.S | re.M)}
-    part_counts = {}
-    for block in re.finditer(r'^            id: "([^"]+)",(.*?)sourceURL:', text, re.S | re.M):
-        part_counts[block.group(1)] = block.group(2).count("ChantScorePart(")
-    found = read_lines(set(ids), durations, part_counts)
-
-    out = []
-    current = None
-    skipping = False
-    for raw in text.split("\n"):
-        if skipping:
-            if raw == "            ]":
-                skipping = False
-            continue
-        m = re.match(r'            id: "([^"]+)",', raw)
-        if m:
-            current = m.group(1)
-        if raw.startswith("            lines: ["):
-            # Lines from an earlier fold: dropped, and the sourceURL above
-            # them loses its comma again
-            out[-1] = out[-1].rstrip(",")
-            skipping = not raw.rstrip().endswith("]")
-            continue
-        if raw.startswith("            sourceURL:") and current in found:
-            out.append(raw.rstrip(",") + ",")
-            out.extend(swift_lines(found[current]))
-            continue
-        out.append(raw)
-    SWIFT_OUT.write_text("\n".join(out), "utf-8")
-    print(f"lines folded in for {len(found)} chant(s): {', '.join(sorted(found)) or 'none'}")
-
-
 def check_groups(manifest):
     """Every chant listed once, in a part of its own shelf: the parts
     are the shelf's order on the browse page and its subheadings."""
@@ -595,71 +638,6 @@ def check_groups(manifest):
         sys.exit(f"groups list chants chants.json lacks: {', '.join(sorted(unknown))}")
 
 
-def swift_groups(manifest):
-    """The `groups:` table, as the generated file sets it."""
-    out = []
-    for g in manifest["groups"]:
-        out.append(f"        ChantGroup(id: {swift_string(g['id'])}, title: {swift_string(g['title'])}, "
-                   f"note: {swift_string(g.get('note'))}, parts: [")
-        for part in g["parts"]:
-            ids = ", ".join(swift_string(i) for i in part["chants"])
-            out.append(f"            ChantGroupPart(title: {swift_string(part.get('title'))}, "
-                       f"note: {swift_string(part.get('note'))}, chantIDs: [{ids}]),")
-        out[-1] = out[-1].rstrip(",")
-        out.append("        ]),")
-    out[-1] = out[-1].rstrip(",")
-    return out
-
-
-def swift_chant_text(e):
-    """A chant's lines that chants.json decides, keyed by their label."""
-    return {
-        "groupID": f"            groupID: {swift_string(e['group'])},",
-        "latinTitle": f"            latinTitle: {swift_string(e['latin'])},",
-        "englishTitle": f"            englishTitle: {swift_string(e['english'])},",
-        "setting": f"            setting: {swift_string(e.get('setting'))},",
-        "detail": f"            detail: {swift_string(e['detail'])},",
-        "prayerIDs": f"            prayerIDs: [{', '.join(swift_string(p) for p in e['prayers'])}],",
-    }
-
-
-def fold_text_into_swift(manifest):
-    """--text-only: chants.json's words written into the Swift as it
-    stands, the same lines `main` writes from them."""
-    entries = {c["id"]: c for c in manifest["chants"]}
-    text = SWIFT_OUT.read_text("utf-8")
-    ids = re.findall(r'^            id: "([^"]+)",', text, re.M)
-    if ids != [c["id"] for c in manifest["chants"]]:
-        sys.exit("chants.json and the Swift hold different chants: run without --text-only")
-    check_groups(manifest)
-    groups = {g["id"] for g in manifest["groups"]}
-
-    out = []
-    current = None
-    in_groups = False
-    for raw in text.split("\n"):
-        if raw == "    static let groups: [ChantGroup] = [":
-            out.append(raw)
-            out.extend(swift_groups(manifest))
-            in_groups = True
-            continue
-        if in_groups:
-            if raw == "    ]":
-                in_groups = False
-                out.append(raw)
-            continue
-        m = re.match(r'            id: "([^"]+)",', raw)
-        if m:
-            current = entries[m.group(1)]
-        label = re.match(r"            (groupID|latinTitle|englishTitle|setting|detail|prayerIDs): ", raw)
-        if label and current is not None:
-            out.append(swift_chant_text(current)[label.group(1)])
-            continue
-        out.append(raw)
-    SWIFT_OUT.write_text("\n".join(out), "utf-8")
-    print(f"words folded in for {len(ids)} chants and {len(groups)} shelves")
-
-
 def main():
     manifest = json.loads((TOOL / "chants.json").read_text("utf-8"))
     chants = manifest["chants"]
@@ -669,20 +647,19 @@ def main():
     check_groups(manifest)
     keep = "--keep-assets" in sys.argv[1:]
 
-    if "--lines-only" in sys.argv[1:]:
-        fold_lines_into_swift(ids)
+    if "--check" in sys.argv[1:]:
+        check(manifest)
         return
 
-    if "--text-only" in sys.argv[1:]:
-        fold_text_into_swift(manifest)
+    if "--lines-only" in sys.argv[1:] or "--text-only" in sys.argv[1:]:
+        write_document(offline_document(manifest))
         return
 
-    if not keep:
-        if SCORES_OUT.exists():
-            shutil.rmtree(SCORES_OUT)
-        for stale in AUDIO_OUT.glob("*.m4a") if AUDIO_OUT.exists() else []:
-            if stale.stem not in ids:
-                stale.unlink()
+    known = {c["id"]: c for c in library()["chants"]}
+    known_scores = {p["file"]: p for c in known.values() for p in c["score"]}
+    for stale in AUDIO_OUT.glob("*.m4a") if AUDIO_OUT.exists() else []:
+        if stale.stem not in ids:
+            stale.unlink()
 
     written_assets = {}
     built = []
@@ -690,10 +667,14 @@ def main():
         text = page_html(entry)
         audio_url = find_audio(entry, text)
         recording = AUDIO_OUT / f"{entry['id']}.m4a"
+        had = known.get(entry["id"])
+        if not recording.exists() and had:
+            from_library(had["audio"], recording)
         if recording.exists():
-            duration = duration_of(recording)
+            same = had and sha256_of(recording) == had["audio"]["sha256"]
+            duration = had["duration"] if same else duration_of(recording)
         elif keep:
-            sys.exit(f"{entry['id']}: no recording in the app to keep; run without --keep-assets")
+            sys.exit(f"{entry['id']}: no recording in the library to keep; run without --keep-assets")
         else:
             src = fetch(audio_url, CACHE / "files" / audio_url.split("/uploads/")[1])
             duration = encode(src, recording)
@@ -708,11 +689,17 @@ def main():
             sys.exit(f"{entry['id']}: {len(named)} captions for {len(scores)} scores")
         for index, (url, alt) in enumerate(scores):
             name = score_name(url)
+            staged = SCORES_OUT / f"{name}.lvscore"
+            if name not in written_assets and not staged.exists() and name in known_scores:
+                SCORES_OUT.mkdir(parents=True, exist_ok=True)
+                from_library(known_scores[name], staged)
+            if name not in written_assets and staged.exists():
+                kept = known_scores.get(name)
+                same = kept and sha256_of(staged) == kept["sha256"]
+                written_assets[name] = kept["aspect_ratio"] if same else kept_aspect(name)
             if keep and name not in written_assets:
-                if not (SCORES_OUT / f"{name}.lvscore").exists():
-                    print(f"  ! {entry['id']}: score not in the app, left out: {url}")
-                    continue
-                written_assets[name] = kept_aspect(name)
+                print(f"  ! {entry['id']}: score not in the library, left out: {url}")
+                continue
             if name not in written_assets:
                 try:
                     svg = fetch(url, CACHE / "files" / url.split("/uploads/")[1])
@@ -738,63 +725,17 @@ def main():
         {b["entry"]["id"]: len(b["parts"]) for b in built},
     )
 
-    lines = [
-        "//",
-        "//  ChantCatalogData.swift",
-        "//  Lumen Viae",
-        "//",
-        "//  GENERATED by Tools/Chants/generate.py from chants.json — edit the",
-        "//  selection there and regenerate; never by hand here.",
-        "//",
-        "//  Recordings and scores: Verbum Gloriae (verbumgloriae.es), under",
-        "//  their copyleft licence. The AAC files and recoloured scores bundled",
-        "//  here are adaptations and carry the same licence.",
-        "//",
-        "",
-        "import Foundation",
-        "",
-        "extension ChantCatalog {",
-        "",
-        "    static let groups: [ChantGroup] = [",
-    ]
-    lines += swift_groups(manifest)
-    lines += ["    ]", "", "    static let all: [Chant] = ["]
-    lines += [f"        chant_{b['entry']['id']}()," for b in built]
-    lines[-1] = lines[-1].rstrip(",")
-    lines += ["    ]", "",
-              "    // One function a chant: a literal of all 104 at once took the",
-              "    // compiler past 20 GB (each function's body is checked alone).",
-              ""]
+    chants_out = []
     for b in built:
         e = b["entry"]
-        if not re.fullmatch(r"[A-Za-z0-9_]+", e["id"]):
-            sys.exit(f"{e['id']}: a chant id must be letters, digits and _ (it names a Swift function)")
-        lines.append(f"    private static func chant_{e['id']}() -> Chant {{")
-        lines.append("        Chant(")
-        lines.append(f"            id: {swift_string(e['id'])},")
-        lines.append(f"            groupID: {swift_string(e['group'])},")
-        lines.append(f"            latinTitle: {swift_string(e['latin'])},")
-        lines.append(f"            englishTitle: {swift_string(e['english'])},")
-        lines.append(f"            setting: {swift_string(e.get('setting'))},")
-        lines.append(f"            detail: {swift_string(e['detail'])},")
-        lines.append(f"            prayerIDs: [{', '.join(swift_string(p) for p in e['prayers'])}],")
-        lines.append(f"            duration: {b['duration']:.1f},")
-        lines.append("            score: [")
+        score = []
         for p in b["parts"]:
-            lines.append(f"                ChantScorePart(file: {swift_string(p['file'])}, "
-                         f"caption: {swift_string(p['caption'])}, aspectRatio: {p['aspect']:.4f}),")
-        lines[-1] = lines[-1].rstrip(",")
-        lines.append("            ],")
-        source = f"            sourceURL: URL(string: {swift_string(b['source'])})!"
-        if e["id"] in timed:
-            lines.append(source + ",")
-            lines.extend(swift_lines(timed[e["id"]]))
-        else:
-            lines.append(source)
-        lines += ["        )", "    }", ""]
-    lines.pop()
-    lines += ["}", ""]
-    SWIFT_OUT.write_text("\n".join(lines), "utf-8")
+            asset = asset_of(SCORES_OUT / f"{p['file']}.lvscore", known_scores.get(p["file"]))
+            score.append({"file": p["file"], "caption": p["caption"], "aspect_ratio": round(p["aspect"], 4), **asset})
+        had = known.get(e["id"])
+        audio = asset_of(AUDIO_OUT / f"{e['id']}.m4a", had["audio"] if had else None)
+        chants_out.append(doc_chant(e, b["duration"], score, audio, b["source"], timed.get(e["id"], [])))
+    write_document({"groups": doc_groups(manifest), "chants": chants_out})
 
     audio_mb = sum(f.stat().st_size for f in AUDIO_OUT.glob("*.m4a")) / 1e6
     svg_mb = sum(f.stat().st_size for f in SCORES_OUT.glob("*.lvscore")) / 1e6

@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Exports the Prayer Book's prayers for the server to record.
 
-The app owns the words (app/Data/PrayerBook/*.swift, and the consecration's
-hymns and litanies in app/Data/BilingualConsecrationPrayers.swift). The
-server records each prayer with ElevenLabs in every narration voice
+The words are the Prayer Book's document, which the server keeps
+(priv/library/prayer_book.json) and the app ships a copy of
+(app/Resources/Library/prayer_book.json, refreshed by
+`Tools/dev library-seed`); this reads the app's copy. The server records each prayer with ElevenLabs in every narration voice
 (LumenViae.Rosary.PrayerAudio, kind `book`) from this export, so what is
 heard is what is on the page. The Rosary's own prayers — the Our Father,
 the Memorare — are left out: the server already records them as `prayers`,
@@ -35,16 +36,13 @@ import re
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
-BOOK_DIR = ROOT / "app" / "Data" / "PrayerBook"
-CONSECRATION = ROOT / "app" / "Data" / "BilingualConsecrationPrayers.swift"
+BOOK = ROOT / "app" / "Resources" / "Library" / "prayer_book.json"
 ROSARY = ROOT / "app" / "Data" / "RosaryPrayers.swift"
 OUT = pathlib.Path(__file__).resolve().parent / "prayer_book.json"
 
-# The consecration's prayers the book carries (PrayerBook.bundled)
-CONSECRATION_IDS = [
-    "veni_creator", "ave_maris_stella", "magnificat",
-    "litany_loreto", "litany_holy_name", "o_jesus_living_in_mary",
-]
+# The consecration's English-only litany the book prints: the server has
+# never recorded it, and the export keeps to what it recorded
+NOT_RECORDED = {"litany_holy_ghost"}
 
 # Texts whose directions are the prayer: said aloud as guidance
 GUIDED = {
@@ -58,29 +56,10 @@ ALTERNATIVE = re.compile(r"^\[(From Christmas|A Nativitate)")
 # Gestures and seasonal headings never said
 SILENT = re.compile(r"^\[(Strike the breast|Here all|In Advent|Tempore|Hic |Percutit|At night)", re.I)
 
-BLOCK = r'"""\n(.*?)\n\s*"""'
-
-
 def book_entries():
-    for path in sorted(BOOK_DIR.glob("*.swift")):
-        src = path.read_text(encoding="utf-8")
-        for body in re.findall(r"BookPrayer\(\s*\n(.*?)\n\s*\)(?=,?\s*\n\s*(?:BookPrayer\(|\]))", src, re.S):
-            pid = re.search(r'\bid:\s*"([^"]+)"', body).group(1)
-            title = re.search(r'\btitle:\s*"((?:[^"\\]|\\.)*)"', body).group(1)
-            english = re.search(r"\benglish:\s*" + BLOCK, body, re.S).group(1)
-            yield pid, title, english
-
-
-def consecration_entries():
-    src = CONSECRATION.read_text(encoding="utf-8")
-    for pid in CONSECRATION_IDS:
-        m = re.search(
-            r'id:\s*"' + re.escape(pid) + r'".*?englishTitle:\s*"((?:[^"\\]|\\.)*)".*?englishContent:\s*' + BLOCK,
-            src, re.S,
-        )
-        if not m:
-            raise SystemExit(f"could not find {pid} in {CONSECRATION.name}")
-        yield pid, m.group(1), m.group(2)
+    for prayer in json.loads(BOOK.read_text(encoding="utf-8"))["prayers"]:
+        if prayer["id"] not in NOT_RECORDED:
+            yield prayer["id"], prayer["title"], prayer["english"]
 
 
 def rosary_ids():
@@ -160,7 +139,7 @@ def main():
     skip = rosary_ids()
     seen = set()
     prayers = []
-    for pid, title, english in list(book_entries()) + list(consecration_entries()):
+    for pid, title, english in book_entries():
         if pid in skip or pid in seen:
             continue
         seen.add(pid)

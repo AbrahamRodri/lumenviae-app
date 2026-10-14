@@ -47,21 +47,21 @@ class Generator:
 GENERATORS = [
     Generator(
         "prayer-book",
-        inputs=["Tools/PrayerBook", "app/Data/PrayerBook", "app/Data/BilingualConsecrationPrayers.swift",
-                "app/Data/RosaryPrayers.swift"],
+        inputs=["Tools/PrayerBook", "app/Resources/Library/prayer_book.json", "app/Data/RosaryPrayers.swift"],
         outputs=["Tools/PrayerBook/prayer_book.json"],
         steps=[["python3", "Tools/PrayerBook/export.py"]],
         regenerate="python3 Tools/PrayerBook/export.py   (then copy to the server's priv/rosary_audio/)",
+        note="the words to record, from the app's copy of the Prayer Book",
     ),
     Generator(
         "chants",
         inputs=["Tools/Chants/generate.py", "Tools/Chants/chants.json", "Tools/ChantLines/*.json",
-                "app/Data/ChantCatalogData.swift"],
-        outputs=["app/Data/ChantCatalogData.swift"],
-        steps=[["python3", "Tools/Chants/generate.py", "--text-only"],
-               ["python3", "Tools/Chants/generate.py", "--lines-only"]],
-        regenerate="python3 Tools/Chants/generate.py --text-only && python3 Tools/Chants/generate.py --lines-only",
-        note="words and timed lines only; recordings and scores need a full (online) run",
+                "app/Resources/Library/chant_library.json"],
+        outputs=[],
+        steps=[["python3", "Tools/Chants/generate.py", "--check"]],
+        regenerate="python3 Tools/Chants/generate.py --text-only, take out/chant_library.json to the server, "
+                   "then Tools/dev library-seed",
+        note="chants.json and the line files against the app's copy of the library (words and lines only)",
     ),
     Generator(
         "true-devotion",

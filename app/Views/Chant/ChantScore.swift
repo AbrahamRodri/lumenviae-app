@@ -20,6 +20,9 @@ struct ChantScoreImage: View {
 
     @State private var drawing: ChantScoreDrawing?
 
+    /// The page is not on the phone and could not be fetched (offline)
+    @State private var unavailable = false
+
     init(part: ChantScorePart) {
         self.part = part
         // A score already read is drawn at once, never faded in again
@@ -52,10 +55,22 @@ struct ChantScoreImage: View {
         }
         .aspectRatio(part.aspectRatio, contentMode: .fit)
         .opacity(drawing == nil ? 0 : 1)
+        .overlay {
+            if drawing == nil && unavailable {
+                Text("The sheet music comes with a connection")
+                    .font(AppFonts.italicFont(13))
+                    .foregroundColor(AppColors.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 12)
+                    .transition(.opacity)
+            }
+        }
         .animation(Motion.crossfade, value: drawing == nil)
+        .animation(Motion.crossfade, value: unavailable)
         .task(id: part.file) {
             if drawing == nil {
-                drawing = await ChantScoreStore.shared.load(part.file)
+                drawing = await ChantScoreStore.shared.load(part)
+                unavailable = drawing == nil
             }
         }
         .accessibilityElement()

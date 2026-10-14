@@ -36,7 +36,8 @@ struct AudioClaimTests {
         return AudioService(integratesWithSystem: false, defaults: defaults)
     }
 
-    private var recording: URL { ChantCatalog.all[0].audioURL! }
+    /// A recording the app ships (the chants' are the server's)
+    private var recording: URL { Bundle.main.url(forResource: "chant_silence", withExtension: "m4a")! }
 
     private func navigation() -> AudioNavigation {
         AudioNavigation(canGoNext: true, canGoPrevious: false, onNext: {}, onPrevious: {})

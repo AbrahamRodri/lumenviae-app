@@ -24,11 +24,12 @@ struct ChantViewSnapshotTests {
 
     init() async {
         await ScreenSnapshot.preloadPaintings()
+        ScoreFixtures.install()
         // The score is read from disk off the main actor; read once, it
         // is drawn at once, so the window is never caught empty
         for id in ["salve_regina_simple", "quem_terra"] {
             for part in ChantCatalog.chant(id)?.score ?? [] {
-                _ = await ChantScoreStore.shared.load(part.file)
+                _ = await ChantScoreStore.shared.load(part)
             }
         }
     }
