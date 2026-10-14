@@ -94,6 +94,13 @@ struct ConsecrationDayFlowView: View {
     /// The chant whose score is open over the day
     @State private var scoreChant: Chant?
 
+    /// Whether the chant loading now begins when it arrives: asked to play,
+    /// and no pause taken since. A pause from the Lock Screen, or
+    /// headphones pulled out, while it loaded was once lost, and the chant
+    /// began anyway, as `ChantPlayer.pauseAskedWhileLoading` keeps it from
+    /// doing in the library.
+    @State private var chantStartsWhenLoaded = false
+
     /// Lock Screen artwork for the chants: the period's own painting, the
     /// one its day page opens on, else the Coronation of Mary, the nearest
     /// bundled image to the consecration's subject
@@ -101,11 +108,10 @@ struct ConsecrationDayFlowView: View {
         phase?.heroImageName ?? "glorious_coronation"
     }
 
-    /// The Lock Screen's line under the chant's name: the devotion and
-    /// which of its days
-    private var lockScreenSubtitle: String {
-        phase == .consecrationDay ? "Consecration to Mary · Consecration Day" : "Consecration to Mary · Day \(dayNumber)"
-    }
+    /// The Lock Screen's line under the chant's name: the devotion. Which
+    /// of its days is the album line's, so it is named once
+    private let lockScreenSubtitle = "Consecration to Mary"
+
 
     private let audio = AudioService.shared
 
@@ -355,9 +361,9 @@ struct ConsecrationDayFlowView: View {
         // since is loaded afresh rather than played over someone else's
         claim.onTransport = { request in
             switch request {
-            case .pause: audioClaim?.pause()
+            case .pause: pauseChant()
             case .play: playChant()
-            case .toggle: if audioClaim?.isPlaying == true { audioClaim?.pause() } else { playChant() }
+            case .toggle: if chantGoesOn { pauseChant() } else { playChant() }
             }
         }
     }
@@ -365,7 +371,24 @@ struct ConsecrationDayFlowView: View {
     /// The day's play: its chant, loaded afresh when the player is no
     /// longer the day's
     private func playChant() {
-        if ownsAudio { audioClaim?.play() } else { loadAudioIfAvailable(thenPlay: true) }
+        if isLoadingChant {
+            chantStartsWhenLoaded = true
+        } else if ownsAudio {
+            audioClaim?.play()
+        } else {
+            loadAudioIfAvailable(thenPlay: true)
+        }
+    }
+
+    /// The day's pause: the chant sounding, or one still loading to begin
+    private func pauseChant() {
+        chantStartsWhenLoaded = false
+        audioClaim?.pause()
+    }
+
+    /// Sounding, or loading to begin when it arrives
+    private var chantGoesOn: Bool {
+        audioClaim?.isPlaying == true || (isLoadingChant && chantStartsWhenLoaded)
     }
 
     /// The chant this prayer is sung to, from the Chant Library — the
@@ -419,6 +442,7 @@ struct ConsecrationDayFlowView: View {
         // way, is loaded afresh by the claim, so the day's chant begins at
         // its top
         isLoadingChant = true
+        chantStartsWhenLoaded = thenPlay
         audioLoadTask = Task {
             defer { isLoadingChant = false }
             let ready = await claim.load(
@@ -440,7 +464,7 @@ struct ConsecrationDayFlowView: View {
                 audioError = "The chant couldn't be played. The prayer is here to pray."
                 return
             }
-            if thenPlay { claim.play() }
+            if chantStartsWhenLoaded { claim.play() }
         }
     }
 
@@ -457,7 +481,7 @@ struct ConsecrationDayFlowView: View {
                 onToggle: {
                     // A player another flow took back is loaded afresh,
                     // then played, rather than toggled on someone else
-                    if ownsAudio { audioClaim?.togglePlayback() } else { loadAudioIfAvailable(thenPlay: true) }
+                    if chantGoesOn { pauseChant() } else { playChant() }
                 },
                 onSeek: { audioClaim?.seek(to: $0) }
             )
@@ -537,7 +561,7 @@ struct ConsecrationDayFlowView: View {
 
     private var miniTransportButton: some View {
         Button {
-            if ownsAudio { audioClaim?.togglePlayback() } else { loadAudioIfAvailable(thenPlay: true) }
+            if chantGoesOn { pauseChant() } else { playChant() }
         } label: {
             ZStack {
                 Circle()

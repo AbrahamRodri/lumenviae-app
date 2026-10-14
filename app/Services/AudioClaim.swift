@@ -179,6 +179,27 @@ final class AudioClaim {
         service?.setNowPlayingTimeline(timeline, for: self)
     }
 
+    /// Names a step with no recording on the Lock Screen entry the step
+    /// before left, while this claim holds the player
+    func setNowPlayingDetails(
+        title: String?,
+        subtitle: String?,
+        artworkAssetName: String?,
+        album: String?,
+        queueIndex: Int? = nil,
+        queueCount: Int? = nil
+    ) {
+        service?.setNowPlayingDetails(
+            for: self,
+            title: title,
+            subtitle: subtitle,
+            artworkAssetName: artworkAssetName,
+            album: album,
+            queueIndex: queueIndex,
+            queueCount: queueCount
+        )
+    }
+
     /// The claim's speed: a borrowed one at a new pace, or the app's own
     func setRate(_ rate: Double) {
         service?.setRate(rate, for: self)

@@ -45,8 +45,8 @@ struct PrayAlongView: View {
     @State private var finished = false
     @State private var bellRings = 0
     @State private var advanceTask: Task<Void, Never>?
-    /// A pause taken in the breath after a prayer: play goes on to the next
-    @State private var heldBeforeNext = false
+    /// Where the voice stands between prayers, for play and pause
+    @State private var turn = PrayAlongTransport()
 
     /// The page turning to another prayer. One at a time: two quick turns
     /// (NEXT and a swipe) once each loaded the recording, and the second
@@ -852,6 +852,7 @@ struct PrayAlongView: View {
         advanceTask?.cancel()
         advanceTask = nil
         turnTask?.cancel()
+        turn.reset()
         voice.stop()
         AngelusBellSound.shared.silence()
         keepAwake(false)
@@ -865,32 +866,42 @@ struct PrayAlongView: View {
     }
 
     private func startVoice() {
+        turn.turnBegan()
         Task { @MainActor in
             if case .ready = voice.state {} else {
                 await voice.prepare(prayers)
             }
-            guard isShowing, aloud, !finished else { return }
+            guard isShowing, aloud, !finished else {
+                turn.arrived()
+                return
+            }
             await playCurrent()
         }
     }
 
     private func playCurrent() async {
-        guard let prayer else { return }
+        guard let prayer else {
+            turn.arrived()
+            return
+        }
+        turn.turnBegan()
         litStanza = 0
         await voice.play(
             prayer,
             in: launch.title,
             index: index,
             of: prayers.count,
-            painting: painting.resolvedAsset
+            painting: painting.resolvedAsset,
+            startsWhenLoaded: { turn.startsOnArrival }
         )
+        turn.arrived()
     }
 
     private func toggleAloud() {
         store.chooseAloud(!aloud)
         advanceTask?.cancel()
         advanceTask = nil
-        heldBeforeNext = false
+        turn.reset()
         if aloud {
             startVoice()
         } else {
@@ -903,36 +914,36 @@ struct PrayAlongView: View {
         transport(.toggle)
     }
 
+    /// The voice sounding, in the breath before the next prayer, or with
+    /// the next on its way in, each of which a tap on the disc pauses: the
+    /// disc shows Pause through them
+    private var voiceGoesOn: Bool { turn.goesOn(voiceSounding: voice.isPlaying) }
+
     /// Play and pause, from the disc or from the Lock Screen and the
     /// headphones, the same either way. A pause in the breath after a
     /// prayer holds the next one back, and play then goes on to it — it
-    /// once came anyway, and the disc said the finished prayer again.
-    /// The voice sounding, or in the breath before the next prayer, which
-    /// a tap on the disc pauses: the disc shows Pause through it
-    private var voiceGoesOn: Bool { voice.isPlaying || advanceTask != nil }
-
+    /// once came anyway, and the disc said the finished prayer again. A
+    /// pause while the next prayer loads lets it arrive still.
     private func transport(_ request: AudioService.TransportRequest) {
-        let goingOn = voiceGoesOn
-        switch request {
+        guard aloud, !finished else {
+            if request == .pause { voice.pause() }
+            return
+        }
+        switch turn.handle(request, voiceSounding: voice.isPlaying) {
+        case .nothing:
+            break
         case .pause:
-            if advanceTask != nil {
-                advanceTask?.cancel()
-                advanceTask = nil
-                heldBeforeNext = true
-            }
+            advanceTask?.cancel()
+            advanceTask = nil
             voice.pause()
-        case .play:
-            guard !goingOn, aloud, !finished else { return }
-            if heldBeforeNext {
-                heldBeforeNext = false
-                if isLast { finish() } else { goTo(index + 1) }
-            } else if voice.ownsPlayer, voice.currentPrayerID == prayer?.id {
+        case .goToNext:
+            if isLast { finish() } else { goTo(index + 1) }
+        case .resume:
+            if voice.ownsPlayer, voice.currentPrayerID == prayer?.id {
                 voice.resume()
             } else {
                 Task { await playCurrent() }
             }
-        case .toggle:
-            transport(goingOn ? .pause : .play)
         }
     }
 
@@ -940,7 +951,7 @@ struct PrayAlongView: View {
     private func scheduleAdvance() {
         advanceTask?.cancel()
         advanceTask = nil
-        heldBeforeNext = false
+        turn.breathBegan()
         advanceTask = Task { @MainActor in
             try? await Task.sleep(for: .milliseconds(1100))
             guard !Task.isCancelled, aloud else { return }
@@ -953,7 +964,9 @@ struct PrayAlongView: View {
         guard prayers.indices.contains(target) else { return }
         advanceTask?.cancel()
         advanceTask = nil
-        heldBeforeNext = false
+        // A turn asked for is a turn wanted sounding, whatever was held
+        turn.reset()
+        if aloud { turn.turnBegan() }
         litStanza = nil
         if aloud { voice.pause() }
         withAnimation(Motion.pageFadeOut) { pageOpacity = 0 }
@@ -965,6 +978,8 @@ struct PrayAlongView: View {
             withAnimation(Motion.pageFadeIn) { pageOpacity = 1 }
             if isShowing, aloud, case .ready = voice.state {
                 await playCurrent()
+            } else {
+                turn.arrived()
             }
         }
     }
@@ -972,6 +987,7 @@ struct PrayAlongView: View {
     private func finish() {
         advanceTask?.cancel()
         advanceTask = nil
+        turn.reset()
         voice.stop()
         if let orderID = launch.orderID {
             store.markOffered(orderID)

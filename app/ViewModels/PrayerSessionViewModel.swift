@@ -371,7 +371,9 @@ final class PrayerSessionViewModel {
     // directly to the ViewModel while the audio logic lives in one place.
 
     var isPlaying: Bool {
-        get { spoken?.isPlaying ?? narrationClaim?.isPlaying ?? false }
+        // A mystery on its way to begin by itself shows Pause, so a tap
+        // on the screen calls it off as the Lock Screen's pause does
+        get { spoken?.isPlaying ?? isGoingOn }
         set {
             if let spoken {
                 if newValue != spoken.isPlaying { spoken.togglePlayback() }
@@ -558,7 +560,8 @@ final class PrayerSessionViewModel {
         let generation = flowGeneration
         let asked = currentMeditation?.id
 
-        guard let meditation = currentMeditation,
+        let meditation = currentMeditation
+        guard let meditation,
               let source = await audioSource(for: meditation) else {
             // Only for the mystery still under the hand
             guard !Task.isCancelled, generation == flowGeneration, currentMeditation?.id == asked else { return }
@@ -566,8 +569,20 @@ final class PrayerSessionViewModel {
             // the Lock Screen player and the track arrows alive so the user
             // can still step past a silent mystery without unlocking.
             pendingRemoteAutoplay = false
-            takePlayer()
+            let claim = takePlayer()
             audioService.reset(preservingNowPlaying: true)
+            // Named as itself, not as the mystery left
+            claim.setNowPlayingDetails(
+                title: meditation?.displayTitle,
+                subtitle: meditationSet.name,
+                artworkAssetName: Constants.mysteryImageURL(
+                    category: meditationSet.category,
+                    index: currentMysteryIndex
+                ),
+                album: meditationSet.name,
+                queueIndex: currentMysteryIndex,
+                queueCount: totalMysteries
+            )
             attachRemoteNavigation()
             // Nothing to hear, so nothing to wait for before the beads
             meditationHeard()
@@ -856,6 +871,9 @@ final class PrayerSessionViewModel {
     /// we awaited, and resetting then would kill *its* audio. The claim
     /// sees to that.
     private func tearDownIfStillOwner() {
+        // Disowned by the Whole Rosary, whose voice takes the entry kept
+        // for its first prayer: released, it would clear it
+        guard spoken == nil else { return }
         narrationClaim?.release()
         narrationClaim = nil
     }
@@ -920,7 +938,7 @@ final class PrayerSessionViewModel {
     }
 
     /// Sounding, or a mystery on its way to begin by itself
-    private var isGoingOn: Bool { isPlaying || pendingRemoteAutoplay }
+    private var isGoingOn: Bool { (narrationClaim?.isPlaying ?? false) || pendingRemoteAutoplay }
 
     // MARK: - Hands-Off Navigation
 
@@ -1068,6 +1086,11 @@ final class PrayerSessionViewModel {
             self.spoken = nil
             // The step it reached stays on the snapshot to resume at
             PrayerResumeService.shared.endSpokenSteps(forgettingStep: false)
+            // The meditation's claim, kept for the voice's first prayer,
+            // when the Rosary is left before the voice took the player:
+            // left standing, its entry stayed with a play that did nothing
+            narrationClaim?.release()
+            narrationClaim = nil
             audioService.deactivateSession()
             return
         }
