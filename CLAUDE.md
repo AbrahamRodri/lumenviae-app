@@ -4030,8 +4030,8 @@ GET /v2/chant-library                   # JSON:API; bare: version, updated_at; ?
 ```
 **The completion is the app's one write, and it is not nothing.** When a
 meditation set's Rosary is finished, `recordCompletion` posts the set id
-and whether it was said aloud as the Whole Rosary (`prayed_aloud`; the
-Privacy Policy says it in those words). The server stores it with the time, a
+and whether it was prayed as the Whole Rosary (`prayed_aloud`; the
+Privacy Policy says "whether you listened to the Whole Rosary"). The server stores it with the time, a
 city/region/country looked up from the request's IP through a third-party
 service, and the IP truncated to /24 — no account, device or install
 identifier (the backend's `docs/COMPLETION_ANALYTICS.md`). The Scriptural
