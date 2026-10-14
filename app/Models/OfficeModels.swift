@@ -81,23 +81,8 @@ nonisolated enum CanonicalHour: String, CaseIterable, Codable, Identifiable {
         }
     }
 
-    /// When the hour is traditionally prayed
-    var timeOfDay: String {
-        switch self {
-        case .matins: return "In the night"
-        case .lauds: return "At dawn"
-        case .prime: return "Early morning"
-        case .terce: return "Mid-morning"
-        case .sext: return "At midday"
-        case .nones: return "Mid-afternoon"
-        case .vespers: return "At evening"
-        case .compline: return "At bedtime"
-        }
-    }
-
     /// The hour named in English with the part of day it belongs to —
-    /// "Terce, the mid-morning hour". `timeOfDay` says the same thing in
-    /// a telegraphic register; this is the sentence form of it.
+    /// "Terce, the mid-morning hour".
     var dayPart: String {
         switch self {
         case .matins: return "the hour of the night"
@@ -114,7 +99,7 @@ nonisolated enum CanonicalHour: String, CaseIterable, Codable, Identifiable {
     /// The clock hour at which this hour's traditional time begins.
     ///
     /// One table, and everything else is derived from it: which hour is
-    /// present, when it lapses, and the words the arch says it lapses
+    /// present, when it lapses, and the words the landing says it lapses
     /// in. Written as eight separate expressions they agreed only by
     /// accident, and would have parted the first time one was touched.
     ///
@@ -149,16 +134,15 @@ nonisolated enum CanonicalHour: String, CaseIterable, Codable, Identifiable {
         return all[(index + 1) % all.count]
     }
 
-    /// "until Midday Prayer at noon" — why this hour is the one being
-    /// prayed and when it lapses.
+    /// "until noon" — when this hour gives way to the next, as the
+    /// landing's NOW and Home's Hours of Prayer row say it
     var lapses: String {
-        let hour = following
-        return "until \(hour.plainName) at \(Self.clockWord(hour.beginsAtClockHour))"
+        "until \(Self.clockWord(following.beginsAtClockHour))"
     }
 
     /// The clock said the way a breviary would say it, in words: the
     /// one way the app names the hour an hour of the Office begins at,
-    /// in the Office's arch and on Home's Hours of Prayer row.
+    /// on the Office's landing and on Home's Hours of Prayer row.
     static func clockWord(_ clockHour: Int) -> String {
         switch clockHour {
         case 0: return "midnight"

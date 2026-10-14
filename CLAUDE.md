@@ -317,7 +317,7 @@ and readings for today" until the propers arrive) and its fact the rank
 and colour beside a small silk (LESSER FEAST · WHITE); the Office hangs
 Millet's Angelus, its line the hour it is ("Mid-Morning Prayer
 (Terce)") and its fact NOW · UNTIL NOON beside the lit dot
-(`CanonicalHour.clockWord`, which the Office's arch reads too). The two
+(`CanonicalHour.clockWord`, which the Office's landing reads too). The two
 liturgy paintings are the Prayer Book's topics' (`PrayerBookPainting.
 topic(id:)`). The feast
 is named in the Mass row's line and not over the two rows. The fact
@@ -1901,30 +1901,43 @@ write concurrent code here:
   a language setting must add it there too, or English pages cached
   earlier will be served to someone who chose another language.
 
-  **`DivineOfficeView` opens on the hour it is now.** The page has one
-  purpose — the present hour reachable in one tap, and obvious at a
-  glance which hour that is — so that hour is lifted out of the eight
-  into a lit **lancet arch** (`GothicArchShape(riseRatio: 44/354)`, the
-  shallower rise, with the app's standard two-shadow halo applied to the
-  *shape* rather than a rounded rect). Every other hour on the page is a
-  plain row on the strand, and the arch — a shallower rise than the home
-  hero's `ArchHero` (0.34), so it reads as a plate, not a window — is why
-  the eye lands there first. It carries
-  the page's one filled gold act ("Pray" and the hour's plain name, e.g. "Pray Bedtime Prayer"), and **no corner
-  ticks, second border, or ornament divider inside it** — one ornament
-  per idea. Its halo is steady; only the lit NOW mark may pulse.
+  **`DivineOfficeView` opens on the hour it is now** (the "hours page
+  polish", Oct 2026). The page has one purpose — the present hour
+  reachable in one tap — so it opens as an order of prayer's page does:
+  the hour's own painting (`PrayerBookPainting.office`, below) run up
+  under the bar and dissolving into the page, with the bar's veil
+  (`toolbarBackground(.hidden)`, the order pages' `barVeil`); over its
+  foot NOW · UNTIL NOON (`CanonicalHour.lapses`, "until noon", which
+  Home's row says too), the hour's plain name, its Church name small,
+  and the page's one gold act, PRAY at the inline size and content
+  width. Then the day's feast and its rank and vestment, then the eight.
+  It once opened on a sentence explaining the Divine Office, set the hour
+  now in a 212-point lit lancet arch with a full-width "Begin Bedtime
+  Prayer", and closed on an ornament and a paragraph of provenance; none
+  of it should come back. The foot is one line, `OfficeCredit.line`
+  ("Texts: Divinum Officium"), which the reader's foot shares.
+
+  **Each hour hangs a painting of its own** (`PrayerBookPainting.office`
+  in `OfficeReaderComponents.swift`), the scene its hour remembers, no
+  two neighbours alike (`OfficeHoursTests`): Night Vigil Gethsemane,
+  Dawn Prayer the Resurrection, Early Morning Prayer the Song of the
+  Lark, Mid-Morning Prayer Pentecost (the third hour, Acts 2:15), Midday
+  Prayer the Crucifixion, Mid-Afternoon Prayer the Descent from the
+  Cross, Evening Prayer the Visitation (the Magnificat), Bedtime Prayer
+  the Presentation (the Nunc Dimittis).
 
   Beneath it the eight stand in three groups — the night and the dawn,
   through the day (the little hours), evening and night — each strung on one strand of
   gold, each bead in its hour's own `skyColor`, so the strand runs dark
-  through bright and back to dark over the day, the three groups under
-  their headings (`showHourGroups` is a constant, always on).
+  through bright and back to dark over the day. A row is the plain name
+  over the Church name, NOW on the present one; the time of day it once
+  added beside the Church name repeated the name and the heading.
   The bar carries Back, the book's name, and **`ph-calendar-dots` as the
   only day-switching control** — an earlier draft's
   `‹ Thursday, 27 August ›` stepper was cut for costing most of the
   first screenful, and must not come back. The ledger never waits on the
-  network: the hours are the hours, and the arch's choice of hour is
-  read from the clock.
+  network: the hours are the hours, and the hour now is read from the
+  clock.
 
   **English in the chrome, on both Office screens.** The engine answers
   in Latin — "III. classis", "S. Raymundi Nonnati Confessoris" — and
@@ -1939,14 +1952,21 @@ write concurrent code here:
   **`CanonicalClock`** (a `Services/` singleton) is the one place that
   says which hour it is now. It sleeps to each boundary rather than
   ticking, and refreshes on foreground; Home's Hours of Prayer row,
-  the arch, and the strand's NOW mark all read it, so they roll over
-  together. `CanonicalHour.beginsAtClockHour` is the single boundary
-  table — `present(atClockHour:)` and the arch's "until Sext at noon"
-  are both derived from it, because written separately they agreed only
+  the landing's head, and the strand's NOW mark all read it, so they
+  roll over together. `CanonicalHour.beginsAtClockHour` is the single
+  boundary table — `present(atClockHour:)` and the landing's "until
+  noon" are both derived from it, because written separately they agreed only
   by accident. Boundaries are fixed clock times, not solar hours.
 
   **`OfficeHourView` is the missal's reader.** It hides the system bar
-  and carries the same chrome: Back / ☰ / Aa, a jump-to-section rail
+  and carries its own chrome: Back and a "..." menu holding Parts of
+  This Prayer (the ☰ index) and Language and Text Size (the Aa sheet),
+  which were two more round buttons beside the hour's name; the hour's
+  painting under the chrome, run up past the status bar and dissolving
+  into the day's two lines, risen and faded with the plate as the page
+  scrolls (`OfficeHourPainting`, which reads the scroll itself, laid as
+  a background of its own: in one stack with the page's colour it was
+  laid from the glass's top, not the chrome's); a jump-to-section rail
   (faded 52pt at its right edge so it reads as scrollable), a 1pt
   progress line, and the active section spied from each section's
   reported top — the same `onGeometryChange` machinery, measured in the
@@ -1968,7 +1988,9 @@ write concurrent code here:
   missal's `CollapsingReaderPlate` — no thresholds to tune to a plate's
   height, since the plate's own height is the whole travel. `OfficeReaderSection` cuts the
   hour into addressable sections (`OfficeSectionView` draws one), so
-  the ☰ index and the rail can name and reach them; an unnamed section
+  the index and the rail can name and reach them, in English (a
+  bilingual heading is the English alone, `displayName`; the index no
+  longer sets the Latin beneath each part); an unnamed section
   is a continuation and is drawn but never listed. A jump to the
   **last** section anchors `.bottom`, not `.top`: the Conclusio is ten
   lines, cannot rise to the header, and the scroll would overrun the
@@ -2014,7 +2036,7 @@ write concurrent code here:
   `OfficeCacheService`; after the first load, today's and tomorrow's
   hours are prefetched quietly and days more than 30 back are pruned.
   Every hour names its source — the texts are The Divinum Officium
-  Project's work, and the footer credits it.
+  Project's work, and the footer credits it (`OfficeCredit.line`).
 
 - **Scriptural Rosary** — a verse of Scripture for every Hail Mary bead:
   one of the Rosary's three forms (`Views/Scriptural/`). It was a Prayer
