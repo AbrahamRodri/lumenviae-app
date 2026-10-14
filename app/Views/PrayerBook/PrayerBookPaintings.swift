@@ -8,7 +8,7 @@
 //  of. Morning and Night Prayers have no mystery of their own, so each
 //  hangs a painting of its own: `hour_morning`, and `hour_night`, La
 //  Tour's Penitent Magdalen, which the Chant Library's Before Bed hangs
-//  too. A fallback (the Presentation, Gethsemane) stands in only if the
+//  too. The Presentation stands in for `hour_morning` only if that
 //  asset is ever missing.
 //
 
@@ -66,7 +66,6 @@ struct PrayerBookPainting: Equatable {
         case PrayerBook.nightOrderID:
             return PrayerBookPainting(
                 asset: "hour_night",
-                fallback: "sorrowful_agony",
                 focal: UnitPoint(x: 0.5, y: 0.3),
                 caption: "The Penitent Magdalen"
             )
@@ -110,7 +109,9 @@ struct PrayerBookPainting: Equatable {
 
     /// An order's painting on its shortcut, its page and its topic's Pray
     /// together card, never the topic's own painting above that card: the
-    /// Last Supper at Mass, the penitent Magdalene at Confession, Christ
+    /// Last Supper at Mass, Peter weeping before Confession and the
+    /// Prodigal Son's father embracing him after it (the topic's card
+    /// stands under the first order's painting alone), Christ
     /// with the Host on a visit to Him, Lazarus raised for the dead, the
     /// Good Shepherd in time of trouble, Emmaus at table; else the
     /// order's hour
@@ -119,9 +120,12 @@ struct PrayerBookPainting: Equatable {
         case "before_mass", "after_mass":
             return PrayerBookPainting(
                 asset: "luminous_eucharist", focal: UnitPoint(x: 0.5, y: 0.35), caption: "The Last Supper")
-        case "before_confession", "after_confession":
+        case "before_confession":
             return PrayerBookPainting(
-                asset: "order_penitent_magdalene", focal: UnitPoint(x: 0.5, y: 0.3), caption: "The Penitent Magdalene")
+                asset: "saint_peter_tears", focal: UnitPoint(x: 0.5, y: 0.27), caption: "Saint Peter in Tears")
+        case "after_confession":
+            return PrayerBookPainting(
+                asset: "topic_confession", focal: UnitPoint(x: 0.3, y: 0.32), caption: "The Return of the Prodigal Son")
         case "visit":
             return PrayerBookPainting(
                 asset: "jesus_eucharist_saviour", focal: UnitPoint(x: 0.5, y: 0.3), caption: "The Saviour")
