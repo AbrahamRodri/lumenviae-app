@@ -837,7 +837,7 @@ glyph-led kickers (`AccountSection` — no filled card surfaces, same as
 the page they serve):
 
 - **Appearance** — theme (re-themes live). An **App Icon** section (the
-  primary, Candlelit, and four alternates: Marian Blue, Midnight,
+  primary, the painting, and four alternates: Marian Blue, Midnight,
   Sorrowful, Vellum) is built but switched off
   (`AppIconPickerRows.isEnabled = false`), and `appApp` puts any
   alternate back to the primary at launch until it returns.
@@ -3548,17 +3548,19 @@ Phosphor Light is a third lighter than the 1.5 glyphs, so a list that
 mixes a Phosphor door (True Devotion's crown, the Office's clock, the
 Chant's note, the scroll, the flame) with `ch-*` glyphs stands uneven.
 
-The app icon is the logo suite's (Oct 2026): the gold arch and star on
-candlelit black (`AppIcon.appiconset`: `AppIcon-Candlelit-1024.png`,
-with its own dark and tinted images), and four alternates in the same
-mark on other grounds (`AppIconMarianBlue`, `AppIconMidnight`,
+The app icon is the painted Madonna with the Miraculous Medal's
+monogram and a rosary (`AppIcon.appiconset`: `AppIcon-1024.png`; the
+dark and tinted appearances are left empty, so iOS derives them). The
+logo suite's arch and star (Oct 2026) is everywhere else: the launch
+mark, the in-app splash, the website, and the four alternate icons in
+the same mark on other grounds (`AppIconMarianBlue`, `AppIconMidnight`,
 `AppIconSorrowful`, `AppIconVellum`, named in
 `ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES`), each with a 180px
 `icon-preview-*` for the picker. The art is the designer's, final: it is
-copied in, never redrawn or recoloured. The painted Miraculous Medal
-icon it replaced (and the Gothic, Monstrance and Wreath alternates) is
-retired, and so are the scripts that made it; its original stays in
-`Tools/IconAudit/app-icon/` for the audit's contact sheet.
+copied in, never redrawn or recoloured. The Gothic, Monstrance and
+Wreath alternates are retired, and so are the scripts that made the
+painted icon; its original stays in `Tools/IconAudit/app-icon/` for the
+audit's contact sheet.
 
 The launch screen is the system's, drawn from the `UILaunchScreen`
 dictionary in `Config/Info.plist` (no build setting can fill it):
