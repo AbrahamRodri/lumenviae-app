@@ -115,26 +115,6 @@ struct PrayerBookSearchTests {
         }
     }
 
-    /// Through the seasons that change the Angelus and Night Prayers, and
-    /// asked twice on a day, where the second answer is the one kept
-    @Test func ordersSayingAPrayerAnswerAsTheScanDid() {
-        let calendar = Calendar.current
-        let days = [
-            DateComponents(year: 2026, month: 1, day: 10, hour: 9),  // after Christmas
-            DateComponents(year: 2026, month: 3, day: 1, hour: 9),  // Lent
-            DateComponents(year: 2026, month: 4, day: 12, hour: 9),  // Eastertide
-            DateComponents(year: 2026, month: 7, day: 1, hour: 23),  // after Pentecost
-            DateComponents(year: 2026, month: 12, day: 6, hour: 1),  // Advent
-        ].compactMap { calendar.date(from: $0) }
-        let ids = Array(PrayerBook.prayers.keys)
-        for date in days {
-            let expected = Reference.ordersSaying(ids, on: date)
-            #expect(PrayerDeck.ordersSaying(ids, on: date) == expected)
-            #expect(PrayerDeck.ordersSaying(ids, on: date) == expected, "asked again")
-            #expect(PrayerDeck.ordersSaying(["regina_caeli"], on: date) == expected.filter { $0.key == "regina_caeli" })
-        }
-    }
-
     // MARK: - Small paintings
 
     @Test func aSmallPaintingIsScaledToItsFrame() throws {
@@ -224,17 +204,6 @@ private enum Reference {
             return home
         }
         return PrayerBook.chapters.first { $0.prayerIDs.contains(prayerID) }
-    }
-
-    static func ordersSaying(_ prayerIDs: [String], on date: Date) -> [String: [String]] {
-        let wanted = Set(prayerIDs)
-        var saying: [String: [String]] = [:]
-        for order in PrayerBook.orders {
-            for id in Set(order.prayerIDs(date)) where wanted.contains(id) {
-                saying[id, default: []].append(order.id)
-            }
-        }
-        return saying
     }
 
     private static func nameAnswers(_ wanted: [String], _ name: String) -> Bool {

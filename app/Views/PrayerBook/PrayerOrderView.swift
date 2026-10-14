@@ -283,23 +283,18 @@ struct PrayerOrderView: View {
     // MARK: - The prayers
 
     private func list(_ order: PrayerOrder) -> some View {
-        // Each prayer keeps its place among the order's ids, which is how
-        // its card counts it; an id that names no prayer is passed over
-        // without moving any place after it
-        let rows = Array(
-            order.prayerIDs(now).enumerated().compactMap { place, id in
-                PrayerBook.prayer(id).map { (place: place, prayer: $0) }
-            }
-        )
+        // A prayer tapped begins the order there, so the order goes on
+        // from it as PRAY's does from the first
+        let prayers = order.prayers(on: now)
         return VStack(spacing: 0) {
-            ForEach(Array(rows.enumerated()), id: \.offset) { i, row in
+            ForEach(Array(prayers.enumerated()), id: \.offset) { i, prayer in
                 OrderPrayerRow(
-                    prayer: row.prayer,
+                    prayer: prayer,
                     number: i + 1,
                     store: store,
-                    showsRule: i < rows.count - 1
+                    showsRule: i < prayers.count - 1
                 ) {
-                    router.push(.devotionPrayer(id: row.prayer.id, set: .order(order.id, at: row.place)))
+                    router.push(.prayAlong(.order(order, on: now, startingAt: i)))
                 }
             }
         }

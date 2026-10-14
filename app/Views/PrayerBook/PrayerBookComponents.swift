@@ -55,41 +55,6 @@ struct RibbonMark: View {
     }
 }
 
-/// The prayer page's ribbon: tap to keep the prayer, and it drops into
-/// the book; tap again to take it out. What a ribbon does is said once
-/// in words as it drops.
-struct RibbonToggle: View {
-    let prayerID: String
-    var onChange: (Bool) -> Void = { _ in }
-
-    private var store = PrayerBookStore.shared
-
-    init(prayerID: String, onChange: @escaping (Bool) -> Void = { _ in }) {
-        self.prayerID = prayerID
-        self.onChange = onChange
-    }
-
-    var body: some View {
-        let kept = store.isKept(prayerID)
-        Button {
-            withAnimation(.spring(response: 0.42, dampingFraction: 0.72)) {
-                store.toggleRibbon(prayerID)
-            }
-            onChange(store.isKept(prayerID))
-        } label: {
-            // Centred as a bookmark in the toolbar's round glass: a
-            // ribbon hung from the top of the circle read as a letter
-            RibbonMark(kept: kept, width: 12, restLength: 19, keptLength: 22)
-                .frame(width: 44, height: 44)
-                .contentShape(Rectangle())
-        }
-        .buttonStyle(QuietGlyphButtonStyle())
-        .sensoryFeedback(.selection, trigger: kept)
-        .accessibilityLabel(kept ? "Saved" : "Save this prayer")
-        .accessibilityHint(kept ? "Removes it from Saved" : "Adds it to Saved on the Prayers tab")
-    }
-}
-
 // MARK: - Prayer Row
 
 /// One prayer in a ruled list: its name, its Latin, and the reader's own

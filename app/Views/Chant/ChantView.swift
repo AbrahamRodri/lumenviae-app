@@ -20,7 +20,7 @@
 //  (`Chant.hasLines`). The rest step by ten seconds and repeat the whole
 //  chant: no timing is guessed.
 //
-//  Reached from the Chant Library, a prayer's own page ("Hear it sung"),
+//  Reached from the Chant Library, the pray-along's menu ("Hear It Sung"),
 //  and the mini player (`AppRoute.chant(id:)`).
 //
 
