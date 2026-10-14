@@ -79,6 +79,10 @@ struct OfficeHourView: View {
     /// A section id waiting to be scrolled to
     @State private var pendingJump: String?
 
+    /// The section a jump is travelling to. While it is set the rail
+    /// stays on it, rather than lighting every section the page passes.
+    @State private var jumpHold: Int?
+
     /// Where the header's inset area begins, in global points
     @State private var headerGlobalTop: CGFloat = 0
 
@@ -220,13 +224,19 @@ struct OfficeHourView: View {
             .onChange(of: pendingJump) { _, target in
                 guard let target else { return }
                 // The last section is the end of the leaf. Pulled to the
-                // top it asks for more page than exists, and a lazily
-                // built column answers that by scrolling past its own
-                // end into blank. Anchored to the foot, the same tap
+                // top it asks for more page than exists, and the scroll
+                // would overrun the end and spring back. Anchored to the
+                // foot, the same tap
                 // lands on the conclusion with the colophon beneath it.
                 let anchor: UnitPoint = target == readerSections.last?.id ? .bottom : .top
+                let index = readerSections.first { $0.id == target }?.index ?? 0
+                jumpHold = index
+                activeSectionIndex = index
                 withAnimation(travelAnim(0.5)) {
                     proxy.scrollTo(target, anchor: anchor)
+                } completion: {
+                    jumpHold = nil
+                    refreshActiveSection()
                 }
                 pendingJump = nil
             }
@@ -255,6 +265,10 @@ struct OfficeHourView: View {
     /// The active section is the last one whose top has risen into the
     /// band just under the collapsed header.
     private func refreshActiveSection() {
+        if let jumpHold {
+            if jumpHold != activeSectionIndex { activeSectionIndex = jumpHold }
+            return
+        }
         let limit = scroll.pastTop + 33
         let active = sectionTops.filter { $0.value < limit }.keys.max() ?? 0
         if active != activeSectionIndex {
@@ -508,7 +522,10 @@ struct OfficeHourView: View {
     // MARK: - Content
 
     private var content: some View {
-        LazyVStack(alignment: .leading, spacing: 0) {
+        // Built whole, not lazily: a jump then lands where it aims,
+        // instead of guessing the height of sections not yet built and
+        // correcting itself as it arrives.
+        VStack(alignment: .leading, spacing: 0) {
             // The plate's share of the resting header. The first
             // section's own top padding supplies the jump gap, so this
             // spacer gives that much back.
@@ -553,7 +570,7 @@ struct OfficeHourView: View {
         .padding(.bottom, 90)
         .coordinateSpace(name: Self.contentSpace)
         // The whole content column carries the scroll marker: unlike a
-        // marker inside the lazy stack, it can never be released
+        // marker inside the stack, it can never be released
         // mid-scroll, so the offset never goes stale.
         .onGeometryChange(for: CGFloat.self) { proxy in
             proxy.frame(in: .global).minY
