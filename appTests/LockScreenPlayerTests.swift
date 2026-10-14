@@ -489,6 +489,27 @@ struct LockScreenPlayerTests {
         #expect(service.nowPlayingInfo == nil)
     }
 
+    @Test func leavingBeforeTheWholeRosaryBeginsClearsTheLockScreen() async {
+        let service = makeService()
+        let vm = setPlayer(service)
+        await vm.loadCurrentAudio()
+        #expect(service.nowPlayingInfo != nil)
+
+        // Settled first, so the Whole Rosary below is chosen mid-Rosary,
+        // while paused: it waits for play, holding the meditation's entry
+        await vm.setPrayAloud(false)
+        let turnedOn = Task { await vm.setPrayAloud(true) }
+        for _ in 0..<50 where !vm.isPrayingAloud { await Task.yield() }
+        #expect(vm.isPrayingAloud)
+        #expect(service.holder?.kind == .prayerFlow, "the entry is kept for the voice")
+
+        // Left before the voice took the player
+        vm.stopAudio()
+        await turnedOn.value
+        #expect(service.holder == nil)
+        #expect(service.nowPlayingInfo == nil, "no entry whose play does nothing")
+    }
+
     @Test func theMeditationHeardToItsEndUnlocksTheBeads() async {
         let service = makeService()
         let vm = setPlayer(service)

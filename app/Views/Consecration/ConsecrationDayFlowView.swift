@@ -75,6 +75,9 @@ struct ConsecrationDayFlowView: View {
     /// load cannot land over the prayer now on screen.
     @State private var audioLoadTask: Task<Void, Never>?
     @State private var isLoadingChant = false
+    /// Which load is the current one, so a load a step change cancelled
+    /// cannot mark the next one's chant as arrived
+    @State private var chantLoadSerial = 0
 
     /// The day's claim on the shared player, taken for a step with a
     /// chant. The transport reads and drives the player only through it,
@@ -443,8 +446,10 @@ struct ConsecrationDayFlowView: View {
         // its top
         isLoadingChant = true
         chantStartsWhenLoaded = thenPlay
+        chantLoadSerial &+= 1
+        let serial = chantLoadSerial
         audioLoadTask = Task {
-            defer { isLoadingChant = false }
+            defer { if chantLoadSerial == serial { isLoadingChant = false } }
             let ready = await claim.load(
                 url,
                 title: prayer.title,
