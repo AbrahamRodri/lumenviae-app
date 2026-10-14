@@ -1907,8 +1907,8 @@ write concurrent code here:
   the hour's own painting (`PrayerBookPainting.office`, below) run up
   under the bar and dissolving into the page, with the bar's veil
   (`toolbarBackground(.hidden)`, the order pages' `barVeil`); over its
-  foot NOW · UNTIL NOON (`CanonicalHour.lapses`, "until noon", which
-  Home's row says too), the hour's plain name, its Church name small,
+  foot NOW · UNTIL NOON (`CanonicalHour.lapses`, "until noon", the
+  words Home's row builds from `clockWord`), the hour's plain name, its Church name small,
   and the page's one gold act, PRAY at the inline size and content
   width. Then the day's feast and its rank and vestment, then the eight.
   It once opened on a sentence explaining the Divine Office, set the hour

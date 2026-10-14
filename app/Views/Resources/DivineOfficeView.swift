@@ -292,27 +292,32 @@ struct DivineOfficeView: View {
     private var feastPlate: some View {
         VStack(alignment: .leading, spacing: 6) {
             if let feast = viewModel.feastTitle {
-                Text(feast)
-                    .font(AppFonts.headlineFont(17))
-                    .lineSpacing(17 * 0.2)
-                    .foregroundColor(AppColors.cream.opacity(0.9))
-                    .fixedSize(horizontal: false, vertical: true)
+                // The feast and its rank heard as one; the offline branch
+                // below keeps Try again as a stop of its own
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(feast)
+                        .font(AppFonts.headlineFont(17))
+                        .lineSpacing(17 * 0.2)
+                        .foregroundColor(AppColors.cream.opacity(0.9))
+                        .fixedSize(horizontal: false, vertical: true)
 
-                if let line = dayClassLine(viewModel.day?.celebration?.rank) {
-                    HStack(spacing: 9) {
-                        if let vestment = viewModel.vestment {
-                            Circle()
-                                .fill(vestment.swatch)
-                                .frame(width: 6, height: 6)
-                                .shadow(color: vestment.swatch.opacity(0.45), radius: 1.5)
+                    if let line = dayClassLine(viewModel.day?.celebration?.rank) {
+                        HStack(spacing: 9) {
+                            if let vestment = viewModel.vestment {
+                                Circle()
+                                    .fill(vestment.swatch)
+                                    .frame(width: 6, height: 6)
+                                    .shadow(color: vestment.swatch.opacity(0.45), radius: 1.5)
+                            }
+
+                            Text(line)
+                                .font(AppFonts.labelFont(9.5))
+                                .tracking(2.2)
+                                .foregroundColor(AppColors.textSecondary)
                         }
-
-                        Text(line)
-                            .font(AppFonts.labelFont(9.5))
-                            .tracking(2.2)
-                            .foregroundColor(AppColors.textSecondary)
                     }
                 }
+                .accessibilityElement(children: .combine)
             } else if viewModel.isLoadingDay {
                 ProgressView()
                     .tint(AppColors.gold)
@@ -336,7 +341,6 @@ struct DivineOfficeView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .accessibilityElement(children: .combine)
         .animation(reduceMotion ? nil : .easeOut(duration: 0.35), value: viewModel.feastTitle)
     }
 
