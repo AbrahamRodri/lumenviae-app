@@ -50,14 +50,24 @@ struct SavedPrayerPaintingTests {
         }
     }
 
-    /// An order's Pray together card stands under its topic's painting,
-    /// so the two are never the same
-    @Test func noOrderRepeatsItsTopicsPainting() {
+    /// A topic's Pray together card hangs its first order's painting
+    /// under the topic's own, so the two are never the same
+    @Test func noPrayTogetherCardRepeatsItsTopicsPainting() {
         for chapter in PrayerBook.chapters {
-            for order in chapter.orders {
-                #expect(PrayerBookPainting.order(order).asset != PrayerBookPainting.topic(chapter).asset, "\(chapter.id): \(order.id)")
-            }
+            guard let first = chapter.orders.first else { continue }
+            #expect(PrayerBookPainting.order(first).asset != PrayerBookPainting.topic(chapter).asset, "\(chapter.id): \(first.id)")
         }
+    }
+
+    /// Confession's two orders each hang their own moment, Peter's tears
+    /// before and the Prodigal Son's welcome after, and never the Agony
+    @Test func theConfessionOrdersHangTheirOwnPaintings() throws {
+        let before = PrayerBookPainting.order(try #require(PrayerBook.order("before_confession")))
+        let after = PrayerBookPainting.order(try #require(PrayerBook.order("after_confession")))
+        #expect(before.asset == "saint_peter_tears")
+        #expect(after.asset == "topic_confession")
+        #expect(before.resolvedAsset == before.asset)
+        #expect(after.resolvedAsset == after.asset)
     }
 
     /// The Coronation hangs only over a prayer to Our Lady as Queen
