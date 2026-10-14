@@ -55,13 +55,17 @@ struct BookPrayer: Identifiable, Hashable {
     /// Loreto" — beside its title and Latin title
     var searchWords: [String] { PrayerBook.prayerSearchWords[id] ?? [] }
 
-    /// The line set small beneath its name: its Latin, or, for the one
-    /// prayer known by its Latin name ("Memorare"), its English. Never
-    /// the name said twice, whatever its case or article: "Tantum Ergo"
-    /// once stood over "Tantum ergo".
+    /// The line set small beneath its name: its Latin, only where the
+    /// prayer goes by that name (`PrayerBook.latinNamesKnown`), or, for
+    /// the one titled in Latin ("Memorare"), its English. A Latin that
+    /// only translates the title ("Actus Fidei") stays for search and is
+    /// not drawn. Never the name said twice, whatever its case or
+    /// article: "Tantum Ergo" once stood over "Tantum ergo".
     var secondTitle: String? {
         if let english = PrayerBook.englishNames[id] { return english }
-        guard let latinTitle, !PrayerBook.isSameName(latinTitle, title) else { return nil }
+        guard let latinTitle, PrayerBook.latinNamesKnown.contains(id),
+              !PrayerBook.isSameName(latinTitle, title)
+        else { return nil }
         return latinTitle
     }
 
@@ -120,8 +124,9 @@ struct PrayerBookChapter: Identifiable, Hashable {
     /// Which part of the book it stands in, a shelf on the Prayers page
     let part: PrayerBookPart
 
-    /// One italic line under the topic's name
-    let epigraph: String
+    /// One italic line under the topic's name, only where the name does
+    /// not say what the topic holds
+    let epigraph: String?
 
     /// Its prayers under the book's sub-headings ("Before Mass", "At
     /// Communion"). A prayer may stand in more than one topic, and in more
@@ -154,7 +159,7 @@ struct PrayerBookChapter: Identifiable, Hashable {
         latinTitle: String,
         icon: String,
         part: PrayerBookPart,
-        epigraph: String,
+        epigraph: String? = nil,
         sections: [PrayerBookSection],
         orderIDs: [String] = [],
         topic: String = "",
@@ -229,7 +234,8 @@ struct PrayerOrder: Identifiable, Hashable {
     /// When it is prayed, as a kicker — "ON WAKING"
     let occasion: String
 
-    /// One italic line saying what the order is
+    /// One italic line saying what the order is. No page draws it now;
+    /// kept as the order's description
     let detail: String
 
     /// Its prayers on a given day. Most never change; the Angelus gives
@@ -344,7 +350,7 @@ enum PrayerBook {
         let layout = layouts[chapter.id] ?? ChapterLayout(icon: "lv-prayer-book", part: .others)
         return PrayerBookChapter(
             id: chapter.id, numeral: chapter.numeral, title: chapter.title, latinTitle: chapter.latinTitle,
-            icon: layout.icon, part: layout.part, epigraph: chapter.note ?? "",
+            icon: layout.icon, part: layout.part, epigraph: chapter.note,
             sections: chapter.sections.map { PrayerBookSection(title: $0.title, prayerIDs: $0.prayerIDs) },
             orderIDs: layout.orderIDs, topic: chapter.topic ?? "", searchWords: chapter.searchWords
         )
@@ -476,7 +482,7 @@ enum PrayerBook {
         ),
         PrayerOrder(
             id: "before_mass", title: "Before Mass", latinTitle: "Præparatio ad Missam",
-            icon: "ch-altar", occasion: "In the pew, before Mass begins",
+            icon: "ch-altar", occasion: "In the pew",
             detail: "Prayers to get ready for Mass: for light, a ready heart, and faith, hope and love.",
             prayerIDs: { _ in
                 ["sign_of_cross", "come_holy_ghost", "aquinas_before_mass",
@@ -485,7 +491,7 @@ enum PrayerBook {
         ),
         PrayerOrder(
             id: "after_mass", title: "After Communion", latinTitle: "Gratiarum Actio",
-            icon: "ch-chalice", occasion: "In thanksgiving, after Mass",
+            icon: "ch-chalice", occasion: "After Mass",
             detail: "Prayers of thanks for the minutes after you receive Communion.",
             prayerIDs: { _ in
                 ["anima_christi", "en_ego", "aquinas_after_mass", "mary_after_communion", "suscipe"]
@@ -565,6 +571,22 @@ enum PrayerBook {
     }
 
     // MARK: Names
+
+    /// The prayers that go by their Latin name, whose Latin is set
+    /// beneath the English title. Any other prayer's Latin title only
+    /// translates its English one, or is the first words of a prayer
+    /// nobody calls by them, and is not drawn.
+    static let latinNamesKnown: Set<String> = [
+        "our_father", "hail_mary", "glory_be", "hail_holy_queen",
+        "angele_dei", "visita_quaesumus", "in_manus_tuas", "nunc_dimittis", "benedictus",
+        "magnificat", "te_deum", "confiteor", "requiem_aeternam", "de_profundis",
+        "beati_quorum", "miserere", "domine_non_sum_dignus", "anima_christi", "suscipe",
+        "adoro_te", "o_sacrum_convivium", "ave_verum", "o_salutaris", "tantum_ergo",
+        "veni_creator", "veni_sancte_spiritus", "sub_tuum", "ave_maris_stella",
+        "alma_redemptoris", "ave_regina_caelorum", "regina_caeli", "inviolata", "salve_mater",
+        "tota_pulchra", "flos_carmeli", "stabat_mater", "totus_tuus", "ad_te_beate_ioseph",
+        "actiones_nostras", "da_pacem",
+    ]
 
     /// The English set beneath a prayer that is known by its Latin name,
     /// where its Latin would only say the name again

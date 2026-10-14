@@ -204,14 +204,18 @@ private struct SavedEmptyShelf: View {
                 .frame(height: 250)
                 .clipped()
                 // Dissolves to clear at both edges, so the page's own
-                // gradient shows through rather than a slab of one colour
+                // gradient shows through rather than a slab of one colour.
+                // The painting's dark ground ran to a hard line under the
+                // title at a short top fade; it now comes in over a third
+                // of the height, the face clear of it, and is gone before
+                // the sentence beneath, which once lay over her hands.
                 .mask(
                     LinearGradient(
                         stops: [
                             .init(color: .clear, location: 0),
-                            .init(color: .black, location: 0.14),
-                            .init(color: .black, location: 0.45),
-                            .init(color: .clear, location: 1)
+                            .init(color: .black, location: 0.3),
+                            .init(color: .black, location: 0.52),
+                            .init(color: .clear, location: 0.94)
                         ],
                         startPoint: .top,
                         endPoint: .bottom
@@ -220,7 +224,7 @@ private struct SavedEmptyShelf: View {
                 .padding(.horizontal, -20)
                 .accessibilityHidden(true)
 
-            Text("Tap the bookmark at the top of any prayer, and it will wait for you here.")
+            Text("Tap the bookmark on any prayer to keep it here.")
                 .font(AppFonts.readingItalicFont(17))
                 .foregroundColor(AppColors.cream.opacity(0.85))
                 .multilineTextAlignment(.center)
@@ -241,7 +245,6 @@ private struct SavedEmptyShelf: View {
 
                 SavedBeginBanner(
                     title: first.title,
-                    note: "The first prayers to keep close",
                     painting: PrayerBookPainting.topic(first),
                     action: openFirstPrayers
                 )
@@ -254,22 +257,15 @@ private struct SavedEmptyShelf: View {
 /// leading edge where the name stands
 private struct SavedBeginBanner: View {
     let title: String
-    let note: String
     let painting: PrayerBookPainting
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .font(AppFonts.titleFont(17))
-                    .foregroundColor(AppColors.cream)
-                    .multilineTextAlignment(.leading)
-                Text(note)
-                    .font(AppFonts.readingItalicFont(13.5))
-                    .foregroundColor(AppColors.cream.opacity(0.75))
-                    .multilineTextAlignment(.leading)
-            }
+            Text(title)
+                .font(AppFonts.titleFont(17))
+                .foregroundColor(AppColors.cream)
+                .multilineTextAlignment(.leading)
             .fixedSize(horizontal: false, vertical: true)
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
@@ -298,7 +294,7 @@ private struct SavedBeginBanner: View {
         }
         .buttonStyle(SacredCardButtonStyle())
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(title), \(note)")
+        .accessibilityLabel(title)
         .accessibilityAddTraits(.isButton)
     }
 }
