@@ -140,10 +140,12 @@ struct PrayerBookChapterView: View {
                 .dynamicTypeSize(...DynamicTypeSize.accessibility1)
                 .accessibilityAddTraits(.isHeader)
 
-            Text(chapter.epigraph)
-                .font(AppFonts.readingItalicFont(17))
-                .foregroundColor(AppColors.cream.opacity(0.78))
-                .fixedSize(horizontal: false, vertical: true)
+            if let epigraph = chapter.epigraph {
+                Text(epigraph)
+                    .font(AppFonts.readingItalicFont(17))
+                    .foregroundColor(AppColors.cream.opacity(0.78))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
         .padding(.horizontal, 18)
         .padding(.bottom, 20)

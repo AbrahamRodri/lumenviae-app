@@ -220,7 +220,7 @@ private struct SavedEmptyShelf: View {
                 .padding(.horizontal, -20)
                 .accessibilityHidden(true)
 
-            Text("Tap the bookmark at the top of any prayer, and it will wait for you here.")
+            Text("Tap the bookmark on any prayer to keep it here.")
                 .font(AppFonts.readingItalicFont(17))
                 .foregroundColor(AppColors.cream.opacity(0.85))
                 .multilineTextAlignment(.center)
@@ -241,7 +241,6 @@ private struct SavedEmptyShelf: View {
 
                 SavedBeginBanner(
                     title: first.title,
-                    note: "The first prayers to keep close",
                     painting: PrayerBookPainting.topic(first),
                     action: openFirstPrayers
                 )
@@ -254,22 +253,15 @@ private struct SavedEmptyShelf: View {
 /// leading edge where the name stands
 private struct SavedBeginBanner: View {
     let title: String
-    let note: String
     let painting: PrayerBookPainting
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .font(AppFonts.titleFont(17))
-                    .foregroundColor(AppColors.cream)
-                    .multilineTextAlignment(.leading)
-                Text(note)
-                    .font(AppFonts.readingItalicFont(13.5))
-                    .foregroundColor(AppColors.cream.opacity(0.75))
-                    .multilineTextAlignment(.leading)
-            }
+            Text(title)
+                .font(AppFonts.titleFont(17))
+                .foregroundColor(AppColors.cream)
+                .multilineTextAlignment(.leading)
             .fixedSize(horizontal: false, vertical: true)
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
@@ -298,7 +290,7 @@ private struct SavedBeginBanner: View {
         }
         .buttonStyle(SacredCardButtonStyle())
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(title), \(note)")
+        .accessibilityLabel(title)
         .accessibilityAddTraits(.isButton)
     }
 }
