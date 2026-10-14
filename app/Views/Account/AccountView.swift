@@ -493,27 +493,33 @@ struct AppIconPickerRows: View {
     private static let options: [IconOption] = [
         IconOption(
             alternateName: nil,
-            displayName: "Original",
-            detail: "Our Lady beneath a crown of stars",
-            preview: "icon-preview-Original"
+            displayName: "Candlelit",
+            detail: "Gold on candlelit black",
+            preview: "icon-preview-Candlelit"
         ),
         IconOption(
-            alternateName: "AppIconGothic",
-            displayName: "Cathedral Window",
-            detail: "A lancet arch beneath the stars",
-            preview: "icon-preview-Gothic"
+            alternateName: "AppIconMarianBlue",
+            displayName: "Marian Blue",
+            detail: "Gold on Our Lady's blue",
+            preview: "icon-preview-MarianBlue"
         ),
         IconOption(
-            alternateName: "AppIconMonstrance",
-            displayName: "Monstrance",
-            detail: "Radiant gold on chapel black",
-            preview: "icon-preview-Monstrance"
+            alternateName: "AppIconMidnight",
+            displayName: "Midnight",
+            detail: "Gold on the night sky",
+            preview: "icon-preview-Midnight"
         ),
         IconOption(
-            alternateName: "AppIconWreath",
-            displayName: "Rosary Wreath",
-            detail: "Beads crowned by twelve stars",
-            preview: "icon-preview-Wreath"
+            alternateName: "AppIconSorrowful",
+            displayName: "Sorrowful",
+            detail: "Gold on the violet of the Passion",
+            preview: "icon-preview-Sorrowful"
+        ),
+        IconOption(
+            alternateName: "AppIconVellum",
+            displayName: "Vellum",
+            detail: "Ink and gold on the page of an old book",
+            preview: "icon-preview-Vellum"
         )
     ]
 

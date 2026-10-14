@@ -837,7 +837,8 @@ glyph-led kickers (`AccountSection` — no filled card surfaces, same as
 the page they serve):
 
 - **Appearance** — theme (re-themes live). An **App Icon** section (the
-  primary + three alternates) is built but switched off
+  primary, Candlelit, and four alternates: Marian Blue, Midnight,
+  Sorrowful, Vellum) is built but switched off
   (`AppIconPickerRows.isEnabled = false`), and `appApp` puts any
   alternate back to the primary at launch until it returns.
 - **Prayer Experience** — text size, prayer language (English by
@@ -3547,15 +3548,25 @@ Phosphor Light is a third lighter than the 1.5 glyphs, so a list that
 mixes a Phosphor door (True Devotion's crown, the Office's clock, the
 Chant's note, the scroll, the flame) with `ch-*` glyphs stands uneven.
 
-The app icon (`AppIcon.appiconset/AppIcon-1024.png`) is a painting run
-to all four edges, with no rim or dark corners of its own: iOS draws the
-rounded mask, and a rim painted inside it read as a second frame. Its
-monogram is the Miraculous Medal's, an M with a bar and a cross rising
-from it (the M's legs once crossed into an X under the cross), and the
-crown is twelve stars (Apoc 12:1). It is made from
-`Tools/IconAudit/app-icon/original-1024.png` by `fix_icon.py`, which
-writes the catalog's PNG; change the script and rerun it rather than
-painting over the PNG.
+The app icon is the logo suite's (Oct 2026): the gold arch and star on
+candlelit black (`AppIcon.appiconset`: `AppIcon-Candlelit-1024.png`,
+with its own dark and tinted images), and four alternates in the same
+mark on other grounds (`AppIconMarianBlue`, `AppIconMidnight`,
+`AppIconSorrowful`, `AppIconVellum`, named in
+`ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES`), each with a 180px
+`icon-preview-*` for the picker. The art is the designer's, final: it is
+copied in, never redrawn or recoloured. The painted Miraculous Medal
+icon it replaced (and the Gothic, Monstrance and Wreath alternates) is
+retired, and so are the scripts that made it; its original stays in
+`Tools/IconAudit/app-icon/` for the audit's contact sheet.
+
+The launch screen is the system's, drawn from the `UILaunchScreen`
+dictionary in `Config/Info.plist` (no build setting can fill it):
+`LaunchMark` (a vector PDF at its own 48 x 75 points) centred on
+`LaunchBackground` (#0A0A15). The in-app splash
+(`Views/Launch/LaunchView.swift`) opens on the same ground with the
+same mark at the same size and place, so the hand-over does not show,
+then fades in the theme's gradient and the app's name beneath the mark.
 
 SF Symbols appear only where the system's own vocabulary is the point —
 the transport's ±10s skips (glyphs that carry a number), the spoken

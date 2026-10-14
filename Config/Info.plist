@@ -17,5 +17,20 @@
 	<array>
 		<string>audio</string>
 	</array>
+	<!--
+	  The launch screen's mark and ground. Like UIBackgroundModes, the
+	  UILaunchScreen dictionary's keys have no INFOPLIST_KEY_* build
+	  setting (INFOPLIST_KEY_UILaunchScreen_Generation, now removed, only
+	  nested an empty one inside this),
+	  so they are set here. Verify with:
+	    plutil -extract UILaunchScreen json -o - <built>/app.app/Info.plist
+	-->
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>UIColorName</key>
+		<string>LaunchBackground</string>
+		<key>UIImageName</key>
+		<string>LaunchMark</string>
+	</dict>
 </dict>
 </plist>
