@@ -3548,8 +3548,9 @@ Phosphor Light is a third lighter than the 1.5 glyphs, so a list that
 mixes a Phosphor door (True Devotion's crown, the Office's clock, the
 Chant's note, the scroll, the flame) with `ch-*` glyphs stands uneven.
 
-The app icon is the logo suite's (Oct 2026): the gold arch and star on
-candlelit black (`AppIcon.appiconset`: `AppIcon-Candlelit-1024.png`,
+The app icon is the logo suite's (Oct 2026): the Lit Window, the gold
+arch with a flame inside it (it held a four-pointed star until the
+CEO's pick, the same day), on candlelit black (`AppIcon.appiconset`: `AppIcon-Candlelit-1024.png`,
 with its own dark and tinted images), and four alternates in the same
 mark on other grounds (`AppIconMarianBlue`, `AppIconMidnight`,
 `AppIconSorrowful`, `AppIconVellum`, named in
