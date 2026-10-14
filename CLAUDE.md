@@ -1861,9 +1861,10 @@ write concurrent code here:
   day's Introit — the first proper, never the Ordinary before it, never
   in columns. Motion uses the design system's ease-out
   (cubic-bezier 0,0,0.58,1); the scroll offset is measured on the whole
-  content column (a marker inside the LazyVStack gets released
-  mid-scroll and goes stale) and section tops in content-space
-  coordinates, which scrolling never moves. The ☰ button
+  content column and section tops in content-space coordinates, which
+  scrolling never moves. The column (and the Hours') is a plain VStack,
+  not lazy, so a jump lands where it aims instead of correcting itself
+  on arrival; while a jump travels the rail holds its target. The ☰ button
   raises the Order of Mass index sheet (the section being read lit and
   marked HERE, propers with their diamond, postures, tap to jump); the
   colophon ("THE MASS IS ENDED") links the full `OrdoMissaeView`. The date

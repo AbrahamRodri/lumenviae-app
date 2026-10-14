@@ -280,6 +280,7 @@ struct OfficeHourView: View {
     /// throw them away with the list.
     private func resetSectionTracking() {
         sectionTops = [:]
+        jumpHold = nil
         activeSectionIndex = 0
         scroll.pastTop = 0
     }

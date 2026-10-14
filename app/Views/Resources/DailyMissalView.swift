@@ -156,6 +156,7 @@ struct DailyMissalView: View {
     /// renumber them has to throw them away with the list.
     private func resetSectionTracking() {
         sectionTops = [:]
+        jumpHold = nil
         activeSectionIndex = 0
     }
 
@@ -296,8 +297,7 @@ struct DailyMissalView: View {
     private var headerFootGlobal: CGFloat { headerGlobalTop + collapsedHeaderHeight }
 
     /// Each section's top measured against the content itself — values
-    /// that scrolling never moves, so a mid-flight misreport from a
-    /// lazily built section is always corrected by its settling layout.
+    /// that scrolling never moves.
     @State private var sectionTops: [Int: CGFloat] = [:]
 
     private func handleScrollOffset(_ markerGlobalMinY: CGFloat) {
