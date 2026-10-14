@@ -304,7 +304,7 @@ struct ExploreView: View {
         // The chant library's ways in, as painted tiles. No chant of the
         // day here: the season's song to Mary stands on the library's Songs
         // to Mary shelf.
-        section("Chant", link: ("All chants", { router.push(.chantLibrary) })) {
+        section("Chant", link: ("Chant Library", { router.push(.chantLibrary) })) {
             chantTiles
         }
 
