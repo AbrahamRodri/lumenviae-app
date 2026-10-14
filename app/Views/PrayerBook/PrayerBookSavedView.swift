@@ -2,8 +2,8 @@
 //  PrayerBookSavedView.swift
 //  Lumen Viae
 //
-//  Saved: the prayers the reader has kept with the bookmark at the head
-//  of a prayer's page, opened from the Saved shortcut at the top of
+//  Saved: the prayers the reader has kept with Save in the pray-along's
+//  menu, opened from the Saved shortcut at the top of
 //  Prayers (the "Saved and Prayer Orders" design, option A, Oct 2026).
 //  The kept prayers lead, two to a row, each under its own painting with
 //  the ribbon it was kept with hung from the painting's head. Empty, the
@@ -121,7 +121,7 @@ private struct SavedPaintedCard: View {
                             .strokeBorder(AppColors.gold.opacity(0.24), lineWidth: AppLine.hairline)
                     )
                     // The ribbon the prayer was kept with, hung from the
-                    // painting's head as it hangs from the prayer's page
+                    // painting's head
                     .overlay(alignment: .topTrailing) {
                         RibbonMark(kept: true, width: 11, restLength: 30, keptLength: 38)
                             .padding(.trailing, 12)

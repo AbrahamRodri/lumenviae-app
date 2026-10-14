@@ -559,10 +559,11 @@ struct ContentView: View {
         case .libraryReading(let id):
             LibraryReadingView(entryID: id)
 
-        // Every door to a prayer in the app opens it in the Prayer Book,
-        // where it can be kept, prayed aloud, and learned by heart
+        // Every door to a prayer in the app opens it to be prayed: alone,
+        // or from an order's page, the order from that prayer on. Saving,
+        // the language and learning it by heart are in the page's menu
         case .devotionPrayer(let id, let set):
-            BookPrayerView(prayerID: id, set: set)
+            PrayAlongView(launch: .opening(id, from: set))
 
         case .carloAcutis:
             CarloAcutisView()

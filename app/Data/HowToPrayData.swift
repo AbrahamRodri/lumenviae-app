@@ -183,7 +183,7 @@ The Coronation — Jesus crowning thee
                     "Start with the Hail Mary, since it is said fifty-three times in a Rosary. The first half is the angel Gabriel's greeting and St. Elizabeth's words from the Gospel of Luke; the second half is a request for Mary's prayers."
                 ],
                 quote: nil,
-                doors: [.page(.devotionPrayer(id: "hail_mary"), icon: "ch-praying-hands", title: "The Hail Mary", note: "The words, on a page of their own")]
+                doors: [.page(.devotionPrayer(id: "hail_mary"), icon: "ch-praying-hands", title: "The Hail Mary", note: "The words, to pray along with")]
             ),
             LibraryReading(
                 id: "q_think",

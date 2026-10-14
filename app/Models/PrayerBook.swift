@@ -790,26 +790,6 @@ enum PrayerBook {
     private static let ordersByID: [String: PrayerOrder] =
         Dictionary(orders.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
 
-    /// The orders that say each prayer on `date`, by prayer id, each
-    /// list in the book's order of the orders. Only the Angelus and Night
-    /// Prayers change, and only with the day, so the lookup is built once
-    /// for the day and kept until it is asked for another.
-    static func ordersSaying(on date: Date) -> [String: [String]] {
-        let day = Calendar.current.startOfDay(for: date)
-        if let kept = ordersSayingKept, kept.day == day { return kept.saying }
-        var saying: [String: [String]] = [:]
-        for order in orders {
-            var seen = Set<String>()
-            for id in order.prayerIDs(date) where seen.insert(id).inserted {
-                saying[id, default: []].append(order.id)
-            }
-        }
-        ordersSayingKept = (day, saying)
-        return saying
-    }
-
-    private static var ordersSayingKept: (day: Date, saying: [String: [String]])?
-
     /// The three orders that keep the hours of an ordinary day
     static var dayOrders: [PrayerOrder] {
         [morningOrderID, angelusOrderID, nightOrderID].compactMap { order($0) }
@@ -892,6 +872,38 @@ struct PrayAlongLaunch: Hashable {
 
     static func prayer(_ prayer: BookPrayer) -> PrayAlongLaunch {
         PrayAlongLaunch(orderID: nil, prayerIDs: [prayer.id], title: prayer.title)
+    }
+
+    /// An order begun at one of its prayers, the one tapped on the
+    /// order's page, and going on from it. `start` counts the order's
+    /// prayers as the screen does.
+    static func order(_ order: PrayerOrder, on date: Date = Date(), startingAt start: Int) -> PrayAlongLaunch {
+        var launch = Self.order(order, on: date)
+        launch.startIndex = min(max(start, 0), max(launch.prayerIDs.count - 1, 0))
+        return launch
+    }
+
+    /// What every door to one prayer opens (`AppRoute.devotionPrayer`):
+    /// the prayer alone, or, from an order's page, the order from the
+    /// prayer tapped. `set`'s place counts the order's ids, an id that
+    /// names no prayer included; where it no longer holds the prayer, the
+    /// prayer's first place in the order is taken.
+    static func opening(_ prayerID: String, from set: PrayerSet?, on date: Date = Date()) -> PrayAlongLaunch {
+        if case .order(let id, let place) = set, let order = PrayerBook.order(id) {
+            let ids = order.prayerIDs(date)
+            let tapped = ids.indices.contains(place) && ids[place] == prayerID ? place : ids.firstIndex(of: prayerID)
+            if let tapped {
+                let start = ids[..<tapped].filter { PrayerBook.prayer($0) != nil }.count
+                return .order(order, on: date, startingAt: start)
+            }
+        }
+        return PrayAlongLaunch(orderID: nil, prayerIDs: [prayerID], title: resolve(prayerID)?.title ?? "Prayers")
+    }
+
+    /// A prayer by its id: the book's, or one of the Rosary's or the
+    /// consecration's the book does not print
+    static func resolve(_ id: String) -> BookPrayer? {
+        PrayerBook.prayer(id) ?? BookPrayer.bundled(id, origin: nil, note: nil)
     }
 }
 

@@ -22,7 +22,7 @@
 //  so Back still returns to the reading it was opened from.
 //
 //  A prayer door — the Litany, the hymns, the Magnificat — opens the
-//  prayer in the Prayer Book (`BookPrayerView`). The readings themselves
+//  prayer to be prayed (`PrayAlongView`). The readings themselves
 //  are data (`Models/LibraryReading.swift`).
 //
 

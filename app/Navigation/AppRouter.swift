@@ -83,11 +83,11 @@ enum AppRoute: Hashable {
     /// chapter of St. Carlo's life — by its id (`LibraryReadings`),
     /// stepped in place along its shelf
     case libraryReading(id: String)
-    /// A prayer the library leads to — the Litany, a hymn, a prayer of
-    /// the Rosary — opened in the Prayer Book (`BookPrayerView`), by the
-    /// id `PrayerBook.prayer` looks up. `set` is the topic or order it was
-    /// opened from, whose prayers its card deals through; every other door
-    /// leaves it out, and the card deals through the prayer's own topic.
+    /// One prayer — the Litany, a hymn, a prayer of the Rosary — opened
+    /// on the pray-along screen (`PrayAlongLaunch.opening`), by the id
+    /// `PrayerBook.prayer` looks up. `set` is the topic or order it was
+    /// opened from: from an order, the order is prayed from that prayer
+    /// on; otherwise the prayer is prayed alone.
     case devotionPrayer(id: String, set: PrayerSet? = nil)
     /// The Missal opened on a given day rather than today — a feast
     /// named elsewhere in the app
@@ -118,14 +118,14 @@ enum AppRoute: Hashable {
     /// prayer for the hour it is — the Prayers tab's root, to which
     /// `push(.prayerBook)` turns; one of its chapters; and an order of
     /// prayer's own page — Morning Prayers, Before Confession. A single
-    /// prayer's page is `devotionPrayer(id:)`, which every door to a
-    /// prayer in the app already uses.
+    /// prayer has no page of its own: `devotionPrayer(id:)`, which every
+    /// door to a prayer uses, opens it to be prayed.
     case prayerBook
     case prayerBookChapter(id: String)
     case prayerOrder(id: String)
 
-    /// The prayers the reader has saved with the bookmark at the head of
-    /// a prayer's page, reached from the Saved shortcut on Prayers
+    /// The prayers the reader has saved with Save in the pray-along's
+    /// menu, reached from the Saved shortcut on Prayers
     case prayerBookSaved
 
     /// Prayers said one after another on a screen of their own, aloud or
@@ -403,7 +403,7 @@ final class AppRouter {
     /// this; new pages ride it directly.
     ///
     /// The Prayer Book has a tab of its own, so a door to it — home's hour
-    /// row, Explore, the Chapel's tile, a prayer's page — turns to that
+    /// row, Explore, the Chapel's tile, an order's page — turns to that
     /// tab rather than stacking a second copy of the book on this one.
     /// So does a door to the Chant Library while Chant has a tab.
     ///
