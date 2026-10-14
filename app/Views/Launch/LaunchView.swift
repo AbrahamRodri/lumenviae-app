@@ -9,20 +9,20 @@ import SwiftUI
 
 /// Splash screen displayed while the app loads.
 ///
-/// Shows the app logo and name with an elegant fade-in animation,
-/// then transitions to the main content once images are preloaded.
+/// Shows the launch mark where the system launch screen left it, fades
+/// in the app's name beneath it, then transitions to the main content once images are preloaded.
 struct LaunchView: View {
 
     // MARK: - State
 
-    /// Controls the fade-in animation of elements
+    /// Controls the fade-in animation of the words beneath the mark
     @State private var opacity: Double = 0
-
-    /// Controls the scale animation of the logo
-    @State private var scale: Double = 0.8
 
     /// Called when launch sequence completes
     var onComplete: () -> Void
+
+    /// The height of `LaunchMark.pdf`, in points
+    private static let markHeight: CGFloat = 75
 
     // MARK: - Body
 
@@ -32,39 +32,34 @@ struct LaunchView: View {
             AppColors.appGradient
                 .ignoresSafeArea()
 
+            // The mark stands where the system launch screen drew it
+            // (`LaunchMark` at its own size, centred on the whole
+            // screen over `LaunchBackground`), already in full, so the
+            // hand-over from the system's screen to this one does not
+            // move it; only the words around it fade in
+            Color.clear.overlay {
+                Image("LaunchMark")
+                    .accessibilityHidden(true)
+                    .overlay(alignment: .top) {
+                        // App name
+                        VStack(spacing: 10) {
+                            Text("LUMEN VIAE")
+                                .font(AppFonts.headlineFont(30))
+                                .tracking(6)
+                                .foregroundColor(AppColors.cream)
+
+                            Text("Light of the Way")
+                                .font(AppFonts.italicFont(16))
+                                .foregroundColor(AppColors.gold.opacity(0.8))
+                        }
+                        .fixedSize()
+                        .alignmentGuide(.top) { _ in -(Self.markHeight + 24) }
+                        .opacity(opacity)
+                    }
+            }
+            .ignoresSafeArea()
+
             VStack(spacing: 24) {
-                Spacer()
-
-                // App icon/logo — a rosary, glowing like a votive candle
-                AppIcon("lv-rosary", size: 88)
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [AppColors.goldLight, AppColors.gold],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    )
-                    .breathingGlow(
-                        AppColors.gold,
-                        radius: 18,
-                        dimOpacity: 0.25,
-                        brightOpacity: 0.55,
-                        period: 2.2
-                    )
-                    .scaleEffect(scale)
-
-                // App name
-                VStack(spacing: 10) {
-                    Text("LUMEN VIAE")
-                        .font(AppFonts.headlineFont(30))
-                        .tracking(6)
-                        .foregroundColor(AppColors.cream)
-
-                    Text("Light of the Way")
-                        .font(AppFonts.italicFont(16))
-                        .foregroundColor(AppColors.gold.opacity(0.8))
-                }
-
                 Spacer()
 
                 // Loading indicator
@@ -89,7 +84,6 @@ struct LaunchView: View {
             // Animate in
             withAnimation(.easeOut(duration: 0.6)) {
                 opacity = 1
-                scale = 1
             }
 
             // Warm the API and prefetch today's meditation sets so the
