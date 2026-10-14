@@ -176,7 +176,7 @@ struct JournalView: View {
                 // Title
                 // The page's name as the Chapel's tile says it, in the
                 // title face every other page uses
-                Text("Reflections")
+                Text("Journal")
                     .font(AppFonts.titleFont(28))
                     .foregroundColor(AppColors.cream)
 
@@ -474,7 +474,7 @@ struct JournalView: View {
         VStack(spacing: 20) {
             Spacer()
 
-            AppIcon("ph-book", size: 52)
+            AppIcon("ph-book-open", size: 52)
                 .foregroundColor(AppColors.gold.opacity(0.3))
 
             VStack(spacing: 8) {

@@ -2,7 +2,7 @@
 //  ConsecrationDayOverviewView.swift
 //  Lumen Viae
 //
-//  The Consecrate tab's home: today's day of the 33, framed by the
+//  The Consecration tab's home: today's day of the 33, framed by the
 //  phase's own painting.
 //
 //  Built in the home screen's language — an arch-framed hero with real

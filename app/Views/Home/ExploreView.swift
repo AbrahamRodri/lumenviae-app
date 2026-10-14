@@ -304,13 +304,13 @@ struct ExploreView: View {
         // The chant library's ways in, as painted tiles. No chant of the
         // day here: the season's song to Mary stands on the library's Songs
         // to Mary shelf.
-        section("Chant", link: ("Library", { router.push(.chantLibrary) })) {
+        section("Chant", link: ("Chant Library", { router.push(.chantLibrary) })) {
             chantTiles
         }
 
         // The Church's two books, named for what they are rather than for
         // today
-        section("Mass and Hours") {
+        section("Mass & Hours") {
             liturgyTiles
         }
 
@@ -520,7 +520,7 @@ struct ExploreView: View {
             LibraryEntry(id: "prayerRecord", icon: "ph-flame", title: "Prayer Record",
                          matchText: "sacred record progress streak history calendar") { router.push(.prayerRecord) },
             // The Journal gave its place in the bar to Prayers; found by
-            // name, it opens as the Chapel's Reflections tile opens it
+            // name, it opens as the Chapel's Journal tile opens it
             LibraryEntry(id: "journal", icon: "ph-book-open", title: "Journal",
                          matchText: "journal reflections reflection notes entries write diary") { router.push(.journal) }
         ]

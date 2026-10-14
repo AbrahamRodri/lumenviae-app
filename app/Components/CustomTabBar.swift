@@ -7,7 +7,7 @@
 //  Custom tab bar (instead of TabView) so it can match the design system
 //  and hide during the prayer flow.
 //
-//  Layout: four tabs (Home, Consecrate, Prayers, Chant) plus a raised
+//  Layout: four tabs (Home, Consecration, Prayers, Chant) plus a raised
 //  "Pray" button in the bottom-right — the prime action position. It
 //  starts today's Rosary directly, no selection screens. Chant stands
 //  where the Chapel stood while the Chapel is archived

@@ -552,7 +552,7 @@ struct ChantPracticeView: View {
             .padding(.top, -70)
             .padding(.horizontal, 28)
 
-            Text("Kept in Saved, under Learned.")
+            Text("Kept in Your Chants, under Learned.")
                 .font(AppFonts.readingItalicFont(16))
                 .foregroundColor(AppColors.textSecondary)
                 .multilineTextAlignment(.center)

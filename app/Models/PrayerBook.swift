@@ -405,7 +405,7 @@ enum PrayerBook {
         BookPrayer.bundled("litany_holy_name", origin: "St Bernardine of Siena · 15th century",
                            note: "A litany to the Holy Name, approved for the whole Church in 1862."),
         BookPrayer.bundled("o_jesus_living_in_mary", origin: "Fr Charles de Condren · 17th century",
-                           note: "Said each day of the 33-day preparation to give yourself to Jesus through Mary, on the Consecrate tab.")
+                           note: "Said each day of the 33-day preparation to give yourself to Jesus through Mary, on the Consecration tab.")
     ].compactMap { $0 } + consecrationOnly
 
     /// The consecration's English-only prayers the book prints too

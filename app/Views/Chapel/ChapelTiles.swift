@@ -2381,7 +2381,7 @@ struct ChapelLibraryTile: View {
     ]
 
     /// The reader's own pages, which had no door but the flame and the
-    /// Reflections tile, either of which can be put away
+    /// Journal tile, either of which can be put away
     private static let yourPages: [Door] = [
         Door(title: "Prayer Record", line: "The days you have prayed", route: .prayerRecord),
         Door(title: "Journal", line: "Your reflections", route: .journal)
@@ -2793,7 +2793,7 @@ struct ChapelReflectionsTile: View {
                 act: span == 2 ? "Open the journal" : nil,
                 footNote: span == 2 ? nil : day,
                 onTap: open,
-                accessibilityLabel: "Reflections, \(day). \(text). Opens the journal."
+                accessibilityLabel: "Journal, \(day). \(text). Opens the journal."
             ) {
                 entryBlock(
                     text,
@@ -2811,7 +2811,7 @@ struct ChapelReflectionsTile: View {
                 surface: .quote,
                 act: span == 2 ? "Open the journal" : "Open",
                 onTap: open,
-                accessibilityLabel: "Reflections. After you pray, write a reflection and it will appear here. Opens the journal."
+                accessibilityLabel: "Journal. After you pray, write a reflection and it will appear here. Opens the journal."
             ) {
                 Text("After you pray, write a reflection and it will appear here.")
                     .font(AppFonts.italicFont(span == 2 ? 15 : 13))

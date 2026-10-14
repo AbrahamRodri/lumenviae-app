@@ -512,7 +512,7 @@ struct MyChapelView: View {
             //
             // The one exception is the journal's pencil. With the
             // Journal off the tab bar, a new reflection needs a door
-            // that is always on the page — the Reflections tile can be
+            // that is always on the page — the Journal tile can be
             // put away — and the Chapel is where reflections are kept
             Button { showNewReflection = true } label: {
                 AppIcon("ph-pencil-simple", size: 17)

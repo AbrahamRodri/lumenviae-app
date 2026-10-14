@@ -626,7 +626,7 @@ struct DropCapText: View {
 /// How a paragraph opens, cut for illumination: the quotation marks it
 /// may open on, the letter that takes the versal, and everything after.
 /// One rule for every versal in the app — the readers', the journal's,
-/// the Chapel's Reflections tile — so an entry that opens on a letter
+/// the Chapel's Journal tile — so an entry that opens on a letter
 /// is gilded everywhere it is shown, and one that opens on a digit or a
 /// dash is gilded nowhere.
 struct VersalCut {
