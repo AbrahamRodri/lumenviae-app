@@ -282,15 +282,30 @@ final class LibraryContentSync {
         _ store: LibraryDocumentStore<Document>, path: String, type: String, fields: String
     ) async throws -> Document? {
         let bare = try await attributes(of: "\(baseURL)/v2/\(path)", as: Version.self)
-        let onPhone = store.current()?.version
+        let onPhone = await Self.version(on: store)
         guard let version = bare.version, version != onPhone else { return nil }
 
         var components = URLComponents(string: "\(baseURL)/v2/\(path)")
         components?.queryItems = [URLQueryItem(name: "fields[\(type)]", value: fields)]
         guard let url = components?.url else { throw URLError(.badURL) }
         let data = try await body(of: url)
-        let attributes = try Self.attributesData(of: data)
-        return try store.keep(attributes)
+        return try await Self.keep(data, in: store)
+    }
+
+    /// The version of the copy on the phone, read off the main actor: a
+    /// document is up to a megabyte of JSON
+    @concurrent
+    nonisolated static func version<Document: LibraryDocument>(
+        on store: LibraryDocumentStore<Document>
+    ) async -> String? {
+        store.current()?.version
+    }
+
+    @concurrent
+    nonisolated static func keep<Document: LibraryDocument>(
+        _ body: Data, in store: LibraryDocumentStore<Document>
+    ) async throws -> Document {
+        try store.keep(attributesData(of: body))
     }
 
     private struct Version: Decodable {
