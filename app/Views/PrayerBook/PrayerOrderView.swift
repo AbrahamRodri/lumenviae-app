@@ -5,10 +5,10 @@
 //  An order of prayer's own page — Morning Prayers, Before Confession —
 //  (the "Saved and Prayer Orders" design, option A, Oct 2026): the
 //  order's painting run up under the bar and dissolving into the page,
-//  when it is prayed (and that it was prayed today), its name and its
-//  Latin small beneath; then its prayers as a quiet numbered list, each
-//  a door to its own page (the "Holy Cards" pick's list), and where the
-//  season decides what the order holds, a sentence saying so. At the
+//  when it is prayed (and that it was prayed today) and its name; then
+//  its prayers as a quiet numbered list, each a door to its own page
+//  (the "Holy Cards" pick's list), and in Eastertide, a sentence saying
+//  the Angelus gives way to Queen of Heaven. At the
 //  foot, PRAY, the page's one gold act, at the inline size, so the list
 //  keeps the room. Aloud or in silence is the pray-along's own choice:
 //  its head says it in a word, and it asks before its first sound.
@@ -19,6 +19,8 @@
 //  The page once stood as type alone: the order's glyph, an ornament,
 //  a paragraph, a kicker counting the prayers, a Latin line under every
 //  prayer and a two-line switch row stood between the reader and PRAY.
+//  Its Latin name under the title, and a sentence on the season's song
+//  to Mary under Night Prayers, went in the small-print trim (Oct 2026).
 //
 
 import SwiftUI
@@ -266,10 +268,6 @@ struct PrayerOrderView: View {
                 .multilineTextAlignment(.leading)
                 .minimumScaleFactor(0.85)
                 .accessibilityAddTraits(.isHeader)
-
-            Text(order.latinTitle)
-                .font(AppFonts.readingItalicFont(14.5))
-                .foregroundColor(AppColors.cream.opacity(0.55))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -310,13 +308,8 @@ struct PrayerOrderView: View {
     /// Why the order holds what it holds today, where the season decides
     private func seasonNote(_ order: PrayerOrder) -> String? {
         switch order.id {
-        case PrayerBook.nightOrderID:
-            // The season named as it is written, never lowered: lowered,
-            // it once read "trinity Sunday" and "eastertide"
-            let antiphon = PrayerBook.antiphon(on: now)
-            return "Night Prayers end with this season's song to Mary, \(antiphon.name) (\(antiphon.latinName)), sung at night from \(antiphon.season)."
         case PrayerBook.angelusOrderID where PrayerBook.isEastertide(now):
-            return "From Easter to Pentecost, Queen of Heaven (Regina Cæli) is said instead of the Angelus."
+            return "Said in place of the Angelus until Pentecost."
         default:
             return nil
         }
