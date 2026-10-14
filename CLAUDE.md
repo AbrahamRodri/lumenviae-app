@@ -1431,7 +1431,9 @@ write concurrent code here:
   itself is pushed (`AppRoute.journal`, with the gold Back) from the
   Chapel's Reflections tile and the Library tile's YOUR PAGES, and from
   Explore's search, which finds it by name and does not list it in Learn
-  More, as Progress does.
+  More, as Progress does. The page and every door to it say **Journal**
+  and wear `ph-book-open` (the Chapel's tile, once titled Reflections,
+  included); the things written in it stay reflections.
 - **33-day Consecration** — feast-day selection, per-day scripture and reading,
   bilingual prayers, journal prompts, and a completion rite. The tab's day page
   (`ConsecrationDayOverviewView`) is a column of gold-hairline cards. **Your
@@ -3559,6 +3561,10 @@ appears:
   emoji, and which still mark a single prayer's door and Pray aloud;
   the Consecration `ch-consecration` (the Marian monogram, a cross over
   an M; the crown is True Devotion's alone).
+  The Devotion in Summary, the book's digest, wears `ph-scroll` on
+  every door. Saving is a bookmark (the prayer's silk ribbon, a chant
+  set's `ph-bookmark-simple`); `ph-push-pin` is the meditation shelf's
+  pin to the top, a different act.
 - **The mysteries** (`MysteryCategory.iconName`) — Joyful `lv-star`,
   the Star of Bethlehem; Sorrowful `lv-crown-of-thorns`, a plaited
   ring; Glorious `lv-banner`, the Resurrection's vexillum; Luminous

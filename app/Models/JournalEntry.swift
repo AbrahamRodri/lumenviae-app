@@ -134,7 +134,7 @@ final class JournalEntry {
         if isConsecrationEntry {
             return "ch-consecration-fill"
         }
-        return category?.iconName ?? "ph-book"
+        return category?.iconName ?? "ph-book-open"
     }
 
     // MARK: - Init (Rosary)

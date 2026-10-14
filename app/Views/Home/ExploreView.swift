@@ -304,13 +304,13 @@ struct ExploreView: View {
         // The chant library's ways in, as painted tiles. No chant of the
         // day here: the season's song to Mary stands on the library's Songs
         // to Mary shelf.
-        section("Chant", link: ("Library", { router.push(.chantLibrary) })) {
+        section("Chant", link: ("All chants", { router.push(.chantLibrary) })) {
             chantTiles
         }
 
         // The Church's two books, named for what they are rather than for
         // today
-        section("Mass and Hours") {
+        section("Mass & Hours") {
             liturgyTiles
         }
 

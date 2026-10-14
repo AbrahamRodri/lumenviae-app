@@ -173,7 +173,7 @@ struct AccountView: View {
                     // makes a sound. Before any answer it shows the default
                     // and says the book will ask; only a tap here answers
                     // the question
-                    AccountSection(title: "Prayers Tab", icon: "ch-praying-hands") {
+                    AccountSection(title: "Prayers Tab", icon: "lv-prayer-book") {
                         RosaryChoiceSettingsRow(
                             icon: PrayerBookAudio.icon,
                             title: "Audio",

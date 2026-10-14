@@ -680,7 +680,7 @@ struct OnboardingView: View {
         Offer(icon: "ph-book-open", text: "A meditation on each mystery, to read or to hear"),
         Offer(icon: "ch-consecration", text: "A 33-day preparation to give yourself to Jesus through Mary, by St. Louis de Montfort"),
         Offer(icon: "ch-altar", text: "The traditional Latin Mass and the Church's Hours of Prayer, for each day"),
-        Offer(icon: "ch-praying-hands", text: "Catholic prayers for every day and every need"),
+        Offer(icon: "lv-prayer-book", text: "Catholic prayers for every day and every need"),
         Offer(icon: "ph-book", text: "Classic spiritual books and sung chant, to read and hear")
     ]
 
