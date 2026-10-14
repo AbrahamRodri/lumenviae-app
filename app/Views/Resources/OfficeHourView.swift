@@ -24,6 +24,15 @@
 //  index it is a thumb's length of scrolling to find the Te Deum, which
 //  is the whole reason the missal grew this chrome.
 //
+//  The hour's own painting (`PrayerBookPainting.office`) hangs under
+//  the chrome, run up under the status bar and dissolving into the day's
+//  two lines, and is taken away with the plate as the page scrolls, point
+//  for point. The text options and the hour's index stand behind one
+//  "..." at the top right, as the other players keep theirs; they were
+//  two more round buttons beside the title (the "hours page polish", Oct
+//  2026, which also cut the colophon's ornament and its paragraph of
+//  provenance to one short credit).
+//
 //  The header is the screen's own chrome — back button included — so
 //  this page hides the system bar, and every branch it can draw carries
 //  that Back.
@@ -107,6 +116,9 @@ struct OfficeHourView: View {
 
     /// The chrome row's height (its circular buttons are 44pt)
     private static let chromeHeight: CGFloat = 44
+
+    /// The room the plate keeps for the painting above the day's lines
+    private static let paintingRoom: CGFloat = 140
 
     // MARK: - Derived
 
@@ -295,6 +307,18 @@ struct OfficeHourView: View {
             plate
             railBlock
         }
+        // The painting is laid from the chrome's top, not the glass's, so
+        // its foot meets the plate's; it reaches up past the status bar
+        // itself. In one stack with the page's colour, which runs up under
+        // the status bar, it was laid from the glass's top instead.
+        .background(alignment: .top) {
+            OfficeHourPainting(
+                painting: .office(hour),
+                offset: scroll,
+                height: Self.chromeHeight + plateHeight,
+                plateHeight: plateHeight
+            )
+        }
         .background(alignment: .top) { headerBackground }
     }
 
@@ -323,19 +347,41 @@ struct OfficeHourView: View {
 
             Spacer(minLength: 0)
 
-            PrayerHeaderButton(icon: "ph-list", size: 17, label: "Parts of this prayer") {
-                sheet = .index
-            }
-
-            PrayerHeaderButton(icon: "ph-text-aa", size: 18, label: "Text options") {
-                sheet = .reading
-            }
+            moreMenu
         }
         .padding(.horizontal, 12)
         .frame(height: Self.chromeHeight)
         // Centred on the screen, not flexed between the buttons — the
         // two right-hand buttons would otherwise pull the title left.
         .overlay { hourTitle }
+    }
+
+    /// The hour's index and the text options, behind one "..." — styled
+    /// as the Back beside it, a glyph on a dark disc over the painting
+    private var moreMenu: some View {
+        Menu {
+            Button {
+                sheet = .index
+            } label: {
+                Label("Parts of This Prayer", systemImage: "list.bullet")
+            }
+            .disabled(readerSections.named.isEmpty)
+
+            Button {
+                sheet = .reading
+            } label: {
+                Label("Language and Text Size", systemImage: "textformat.size")
+            }
+        } label: {
+            AppIcon("ph-dots-three", size: 18)
+                .foregroundColor(.white)
+                .padding(13)
+                .background(Color.black.opacity(0.3))
+                .clipShape(Circle())
+                .frame(minWidth: 44, minHeight: 44)
+                .contentShape(Circle())
+        }
+        .accessibilityLabel("More options")
     }
 
     /// The hour, named here and nowhere else on the screen. It no longer
@@ -346,6 +392,7 @@ struct OfficeHourView: View {
             .font(AppFonts.labelFont(12.5))
             .tracking(2.5)
             .foregroundColor(AppColors.cream)
+            .shadow(color: AppColors.background.opacity(0.9), radius: 6)
             .lineLimit(1)
             // "EARLY MORNING PRAYER" is the longest, and comes down a
             // little to fit between the buttons rather than be cut
@@ -366,26 +413,33 @@ struct OfficeHourView: View {
         }
     }
 
-    /// The day, in two lines. Never has to wait for the text: the date
-    /// is known before a line is fetched, and the day's class and feast
-    /// come from the ledger's own copy until the hour lands with its.
+    /// The day, in two lines, under the painting's room. Never has to
+    /// wait for the text: the date is known before a line is fetched, and
+    /// the day's class and feast come from the ledger's own copy until the
+    /// hour lands with its.
     private var plateContent: some View {
         VStack(spacing: 5) {
+            Color.clear
+                .frame(height: Self.paintingRoom)
+                .accessibilityHidden(true)
+
             Text(dayLine)
                 .font(AppFonts.labelFont(9.5))
                 .tracking(2.4)
-                .foregroundColor(AppColors.gold.opacity(0.7))
+                .foregroundColor(AppColors.gold)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
 
             if let feastTitle {
                 Text(feastTitle)
                     .font(AppFonts.italicFont(14.5))
-                    .foregroundColor(AppColors.accentSoft)
+                    .foregroundColor(AppColors.cream.opacity(0.85))
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
+        // Lifted off the painting's dissolve beneath them
+        .shadow(color: AppColors.background.opacity(0.9), radius: 6)
         .padding(.top, 8)
         .padding(.horizontal, 24)
         .frame(maxWidth: .infinity)
@@ -588,10 +642,6 @@ struct OfficeHourView: View {
     /// colophon repeating them reads as a stutter rather than a close.
     private var colophon: some View {
         VStack(spacing: 14) {
-            OrnamentDivider()
-                .frame(width: 150)
-                .padding(.top, 8)
-
             Text(hour.explicit)
                 .font(AppFonts.labelFont(10))
                 .tracking(3)
@@ -627,11 +677,13 @@ struct OfficeHourView: View {
             }
             .padding(.top, 6)
 
-            Text("The traditional Latin Office, as prayed before 1970 · texts from \(office?.source.name ?? "the Divinum Officium Project")")
+            Text(OfficeCredit.line)
                 .font(AppFonts.bodyFont(11))
                 .foregroundColor(AppColors.textSecondary.opacity(0.8))
                 .multilineTextAlignment(.center)
+                .padding(.top, 10)
         }
+        .padding(.top, 8)
         .frame(maxWidth: .infinity)
     }
 
@@ -693,6 +745,80 @@ struct OfficeHourView: View {
         formatter.dateFormat = "EEEE, d MMMM"
         return formatter
     }()
+}
+
+// MARK: - The Hour's Painting
+
+/// The hour's painting under the reader's chrome: run up past the status
+/// bar, dissolving into the day's two lines, and taken away with the
+/// plate as the page scrolls — risen point for point and faded as the
+/// plate fades. Reads the scroll offset itself, so a scroll frame redraws
+/// the painting and not the page.
+private struct OfficeHourPainting: View {
+    let painting: PrayerBookPainting
+    let offset: ReaderScrollOffset
+
+    /// The chrome and the plate together, under which it hangs
+    let height: CGFloat
+
+    /// The plate's natural height, the whole of the collapse
+    let plateHeight: CGFloat
+
+    /// How far above the header it runs, to reach the top of the glass
+    /// past any status bar
+    private static let overreach: CGFloat = 80
+
+    var body: some View {
+        let risen: CGFloat = min(max(offset.pastTop, 0), plateHeight)
+        let progress: Double = plateHeight > 0 ? Double(risen / plateHeight) : 0
+
+        Color.clear
+            .frame(height: height)
+            .overlay(alignment: .bottom) {
+                ZStack(alignment: .top) {
+                    CachedAssetImage(painting.resolvedAsset, focal: painting.focal)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .clipped()
+                        .mask(
+                            LinearGradient(
+                                stops: [
+                                    .init(color: .black, location: 0),
+                                    .init(color: .black, location: 0.55),
+                                    .init(color: .black.opacity(0.35), location: 0.82),
+                                    .init(color: .clear, location: 1)
+                                ],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+
+                    // A veil under the status bar and the hour's name, as
+                    // the order pages lay one under their bar: from the top
+                    // of the glass to just below the chrome, measured from
+                    // the painting's foot, since how far it runs above the
+                    // glass depends on the status bar
+                    VStack(spacing: 0) {
+                        LinearGradient(
+                            stops: [
+                                .init(color: AppColors.background.opacity(0.8), location: 0),
+                                .init(color: AppColors.background.opacity(0.6), location: 0.7),
+                                .init(color: AppColors.background.opacity(0), location: 1)
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        Color.clear
+                            .frame(height: max(0, plateHeight - 24))
+                    }
+                }
+                .frame(height: height + Self.overreach)
+                .frame(maxWidth: .infinity)
+            }
+            .offset(y: -risen)
+            .opacity(1 - min(1, progress * 1.1))
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
+    }
 }
 
 // MARK: - Preview

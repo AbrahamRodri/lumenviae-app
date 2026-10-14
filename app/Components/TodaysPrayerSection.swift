@@ -466,8 +466,8 @@ private struct PrayedSeal: View {
 // MARK: - LitHourDot
 
 /// The mark that says "this hour, now": the lit disc inside a gold ring.
-/// The same object on the home list and in the Office's arch, at the
-/// sizes each needs.
+/// The same object on the home list and at the head of the Office's
+/// landing, at the sizes each needs.
 struct LitHourDot: View {
 
     var size: CGFloat = 9

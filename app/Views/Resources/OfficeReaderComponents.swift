@@ -19,7 +19,7 @@ import SwiftUI
 // MARK: - LitHourMark
 
 /// The disc that marks the hour being prayed *now* — on the home
-/// ledger's Office row and in the arch's crown.
+/// ledger's Office row and over the Office's hour now.
 ///
 /// Held apart from the eight sky colours deliberately. Those say *which*
 /// hour; this one says *now*, and Compline marking itself in its own
@@ -41,6 +41,54 @@ extension CanonicalHour {
     /// close stood in the chrome with nothing to say what it meant.
     var explicit: String {
         "END OF \(plainName.uppercased())"
+    }
+}
+
+// MARK: - The Source
+
+/// The one line that names where the Office's texts come from, on the
+/// landing's foot and under every hour: the Divinum Officium Project's
+/// work, said short. It once ran "The traditional Latin Office, as prayed
+/// before 1970 · texts from the Divinum Officium Project".
+enum OfficeCredit {
+    static let line = "Texts: Divinum Officium"
+}
+
+// MARK: - The Hours' Paintings
+
+extension PrayerBookPainting {
+
+    /// The painting an hour of the Office hangs at the head of its page,
+    /// and the landing over the hour now: the scene its hour of the day
+    /// remembers. No two hours side by side share one.
+    ///
+    /// Night Vigil keeps watch in Gethsemane; Dawn Prayer is the
+    /// Resurrection at first light; Early Morning Prayer the Song of the
+    /// Lark, the day taken up at sunrise; Mid-Morning Prayer Pentecost,
+    /// which came at the third hour (Acts 2:15); Midday Prayer the
+    /// Crucifixion, at the sixth; Mid-Afternoon Prayer the Descent from
+    /// the Cross, after the ninth; Evening Prayer the Visitation, whose
+    /// Magnificat it sings; Bedtime Prayer the Presentation, whose Nunc
+    /// Dimittis closes the day.
+    static func office(_ hour: CanonicalHour) -> PrayerBookPainting {
+        switch hour {
+        case .matins:
+            return PrayerBookPainting(asset: "sorrowful_agony", focal: UnitPoint(x: 0.5, y: 0.3), caption: "The Agony in the Garden")
+        case .lauds:
+            return PrayerBookPainting(asset: "glorious_resurrection", focal: UnitPoint(x: 0.5, y: 0.2), caption: "The Resurrection")
+        case .prime:
+            return PrayerBookPainting(asset: "hour_morning", fallback: "joyful_presentation", focal: UnitPoint(x: 0.5, y: 0.3), caption: "The Song of the Lark")
+        case .terce:
+            return PrayerBookPainting(asset: "glorious_pentecost", focal: UnitPoint(x: 0.5, y: 0.3), caption: "Pentecost")
+        case .sext:
+            return PrayerBookPainting(asset: "sorrowful_crucifixion", focal: UnitPoint(x: 0.5, y: 0.15), caption: "The Crucifixion")
+        case .nones:
+            return PrayerBookPainting(asset: "seven_sorrows_descent", focal: UnitPoint(x: 0.5, y: 0.3), caption: "The Descent from the Cross")
+        case .vespers:
+            return PrayerBookPainting(asset: "joyful_visitation", focal: UnitPoint(x: 0.5, y: 0.3), caption: "The Visitation")
+        case .compline:
+            return PrayerBookPainting(asset: "joyful_presentation", focal: UnitPoint(x: 0.5, y: 0.5), caption: "The Presentation in the Temple")
+        }
     }
 }
 
@@ -242,20 +290,16 @@ struct OfficeIndexSheet: View {
     }
 
     private func row(_ section: OfficeReaderSection, isActive: Bool) -> some View {
-        let showsBothNames = !section.englishName.isEmpty
-            && !section.latinName.isEmpty
-            && section.latinName.caseInsensitiveCompare(section.englishName) != .orderedSame
-
         // No caret on the other rows: the missal's index carries none
-        // either, and the two ledgers are one kind of page
-        return Button {
+        // either, and the two ledgers are one kind of page. The name in
+        // English alone, as the rail names it: the Latin beneath every
+        // row said each part twice.
+        Button {
             onJump(section.id)
             dismiss()
         } label: {
-            // English first and the Latin beneath, as on the prayer pages
             SheetRow(
-                section.englishName.isEmpty ? section.latinName : section.englishName,
-                detail: showsBothNames ? section.latinName : nil,
+                section.railName,
                 accessory: isActive ? .label("Here") : .none,
                 isLit: isActive
             )

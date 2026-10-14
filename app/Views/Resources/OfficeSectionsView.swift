@@ -36,24 +36,19 @@ struct OfficeReaderSection: Identifiable {
     /// where the engine gives one, since the rail has room for one word.
     var railName: String { englishName.isEmpty ? latinName : englishName }
 
-    /// The section name in the language being read — "PSALMI" when
-    /// praying in Latin, "PSALMS" in English, both when bilingual, in
-    /// the user's own order.
+    /// The section name over its text — "PSALMI" when praying in Latin
+    /// alone, "PSALMS" otherwise. Bilingual, the heading is the English
+    /// alone, as the rail and the index name it: "PSALMI · PSALMS" said
+    /// every part twice above a text that already pairs the two.
     func displayName(_ language: PrayerLanguage) -> String? {
         let latin = latinName.isEmpty ? nil : latinName
         let english = englishName.isEmpty ? nil : englishName
-        let distinct = latin != nil && english != nil
-            && latin!.caseInsensitiveCompare(english!) != .orderedSame
 
         switch language {
-        case .english:
-            return english ?? latin
         case .latin:
             return latin ?? english
-        case .both:
-            return distinct ? "\(latin!) · \(english!)" : (latin ?? english)
-        case .latinUnderEnglish:
-            return distinct ? "\(english!) · \(latin!)" : (english ?? latin)
+        case .english, .both, .latinUnderEnglish:
+            return english ?? latin
         }
     }
 
