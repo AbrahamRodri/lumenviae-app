@@ -24,6 +24,7 @@ Python 3 standard library and the openssl CLI (for the ES256 signature).
 import argparse
 import base64
 import difflib
+import hashlib
 import json
 import os
 import pathlib
@@ -705,6 +706,299 @@ def done(client):
     print("dry run: nothing was sent; add --confirm to send" if client.dry_run else "done")
 
 
+# --- The store listing -------------------------------------------------------------------
+
+DESCRIPTION_LIMIT = 4000
+KEYWORDS_LIMIT = 100
+PROMO_LIMIT = 170
+SCREENSHOTS_PER_SET = 10
+# The pixel sizes App Store Connect takes for each display type this app uses (portrait)
+SCREENSHOT_SIZES = {
+    "APP_IPHONE_67": {(1290, 2796), (1320, 2868)},
+    "APP_IPHONE_65": {(1242, 2688), (1284, 2778)},
+    "APP_IPHONE_61": {(1179, 2556), (1206, 2622)},
+    "APP_IPHONE_55": {(1242, 2208)},
+}
+UPLOAD_POLL_SECONDS = 3
+UPLOAD_TIMEOUT_SECONDS = 300
+
+
+def version_localization(client, version_id, locale):
+    locs = client.get(f"/v1/appStoreVersions/{version_id}/appStoreVersionLocalizations")["data"]
+    loc = next((l for l in locs if l["attributes"]["locale"] == locale), None)
+    if not loc:
+        raise Fail(f"the version has no {locale} localization (has: "
+                   + ", ".join(l["attributes"]["locale"] for l in locs) + ")")
+    return loc
+
+
+def screenshot_sets(client, loc_id):
+    return client.get_all(f"/v1/appStoreVersionLocalizations/{loc_id}/appScreenshotSets",
+                          **{"fields[appScreenshotSets]": "screenshotDisplayType"})
+
+
+def set_screenshots(client, set_id):
+    return client.get_all(f"/v1/appScreenshotSets/{set_id}/appScreenshots",
+                          **{"fields[appScreenshots]": "fileName,fileSize,imageAsset,assetDeliveryState"})
+
+
+def cmd_listing(args):
+    client = Client()
+    app = find_app(client)
+    version, _ = find_version(client, app["id"], args.version)
+    loc = version_localization(client, version["id"], args.locale)
+    a = loc["attributes"]
+    print(f"{app['attributes']['name']} {args.version} ({state_of(version)}), {args.locale}")
+    for label, key, limit in (("description", "description", DESCRIPTION_LIMIT),
+                              ("keywords", "keywords", KEYWORDS_LIMIT),
+                              ("promotional text", "promotionalText", PROMO_LIMIT),
+                              ("what's new", "whatsNew", DESCRIPTION_LIMIT)):
+        text = a.get(key) or ""
+        print(f"\n{label} ({len(text)}/{limit}):")
+        print("  " + (text.replace("\n", "\n  ") if text else "(empty)"))
+    print(f"\nsupport URL:   {a.get('supportUrl') or '(none)'}")
+    print(f"marketing URL: {a.get('marketingUrl') or '(none)'}")
+    print("\nscreenshots:")
+    sets = screenshot_sets(client, loc["id"])
+    if not sets:
+        print("  (none)")
+    for s in sets:
+        shots = set_screenshots(client, s["id"])
+        print(f"  {s['attributes']['screenshotDisplayType']}: {len(shots)}")
+        for shot in shots:
+            sa = shot["attributes"]
+            size = sa.get("imageAsset") or {}
+            state = (sa.get("assetDeliveryState") or {}).get("state", "?")
+            print(f"    {sa.get('fileName')}  {size.get('width', '?')}x{size.get('height', '?')}  {state}")
+
+
+def check_listing_text(description=None, keywords=None, promo=None):
+    """Apple's limits, checked here rather than after the PATCH is refused."""
+    if description is not None and len(description) > DESCRIPTION_LIMIT:
+        raise Fail(f"the description is {len(description)} characters; App Store Connect allows {DESCRIPTION_LIMIT}")
+    if keywords is not None:
+        if len(keywords) > KEYWORDS_LIMIT:
+            raise Fail(f"the keywords are {len(keywords)} characters; App Store Connect allows {KEYWORDS_LIMIT}")
+        if ", " in keywords:
+            raise Fail("keywords are comma separated with no spaces after the commas (each space counts)")
+    if promo is not None and len(promo) > PROMO_LIMIT:
+        raise Fail(f"the promotional text is {len(promo)} characters; App Store Connect allows {PROMO_LIMIT}")
+
+
+def file_or_text(path, text):
+    if path:
+        return pathlib.Path(path).read_text(encoding="utf-8").strip()
+    return text.strip() if text is not None else None
+
+
+def cmd_set_listing(args):
+    description = file_or_text(args.description_file, args.description)
+    keywords = file_or_text(args.keywords_file, args.keywords)
+    promo = file_or_text(args.promo_file, args.promo_text)
+    if description is None and keywords is None and promo is None:
+        raise Fail("give at least one of --description(-file), --keywords(-file), --promo-text/--promo-file")
+    check_listing_text(description, keywords, promo)
+    client = Client(dry_run=not args.confirm)
+    app = find_app(client)
+    version, _ = find_version(client, app["id"], args.version)
+    loc = version_localization(client, version["id"], args.locale)
+    attributes = {}
+    for key, new in (("description", description), ("keywords", keywords), ("promotionalText", promo)):
+        if new is None:
+            continue
+        old = loc["attributes"].get(key) or ""
+        if old == new:
+            print(f"{key}: unchanged")
+            continue
+        attributes[key] = new
+        print(f"{key}: {len(old)} -> {len(new)} characters")
+        diff = difflib.unified_diff(old.splitlines(), new.splitlines(), "now", "new", lineterm="", n=0)
+        print("  " + "\n  ".join(list(diff)[2:]))
+    if not attributes:
+        print("nothing to change")
+        return
+    editable = state_of(version) in EDITABLE_STATES
+    if not editable and set(attributes) - {"promotionalText"}:
+        print(f"note: {args.version} is {state_of(version)}; App Store Connect takes a new description or "
+              f"keywords only while the version is editable (`asc cancel-review {args.version}` first)")
+    print(f"set the {args.version} listing ({args.locale}):")
+    client.write("PATCH", f"/v1/appStoreVersionLocalizations/{loc['id']}", {"data": {
+        "type": "appStoreVersionLocalizations", "id": loc["id"], "attributes": attributes}})
+    done(client)
+
+
+EDITABLE_STATES = {"PREPARE_FOR_SUBMISSION", "DEVELOPER_REJECTED", "REJECTED", "METADATA_REJECTED",
+                   "INVALID_BINARY"}
+
+
+def png_info(path):
+    """(width, height, has_alpha) read from a PNG's header."""
+    with open(path, "rb") as fh:
+        head = fh.read(33)
+    if head[:8] != b"\x89PNG\r\n\x1a\n" or head[12:16] != b"IHDR":
+        raise Fail(f"{path} is not a PNG")
+    width, height = int.from_bytes(head[16:20], "big"), int.from_bytes(head[20:24], "big")
+    color_type = head[25]
+    return width, height, color_type in (4, 6)
+
+
+def screenshot_files(directory, display_type):
+    """The PNGs in a directory, in file-name order, checked against what
+    App Store Connect takes: the size of the display type, no alpha, at
+    most ten."""
+    files = sorted(p for p in pathlib.Path(directory).iterdir() if p.suffix.lower() == ".png")
+    if not files:
+        raise Fail(f"no .png files in {directory}")
+    if len(files) > SCREENSHOTS_PER_SET:
+        raise Fail(f"{len(files)} screenshots; a set holds at most {SCREENSHOTS_PER_SET}")
+    sizes = SCREENSHOT_SIZES.get(display_type)
+    for f in files:
+        w, h, alpha = png_info(f)
+        if sizes and (w, h) not in sizes:
+            raise Fail(f"{f.name} is {w}x{h}; {display_type} takes "
+                       + " or ".join(f"{a}x{b}" for a, b in sorted(sizes)))
+        if alpha:
+            raise Fail(f"{f.name} has an alpha channel; App Store Connect refuses transparent screenshots")
+    return files
+
+
+def md5_of(path):
+    return hashlib.md5(pathlib.Path(path).read_bytes()).hexdigest()
+
+
+def put_parts(path, operations):
+    """Each part of the file to the URL Apple gave for it. These go to
+    Apple's asset store, not the API, and carry no token."""
+    data = pathlib.Path(path).read_bytes()
+    for op in operations:
+        chunk = data[op["offset"]:op["offset"] + op["length"]]
+        headers = {h["name"]: h["value"] for h in op.get("requestHeaders") or []}
+        req = urllib.request.Request(op["url"], data=chunk, method=op.get("method", "PUT"), headers=headers)
+        try:
+            with urllib.request.urlopen(req, timeout=120):
+                pass
+        except urllib.error.HTTPError as e:
+            raise Fail(f"uploading {pathlib.Path(path).name} (bytes {op['offset']}+{op['length']}): "
+                       f"HTTP {e.code}") from None
+        except urllib.error.URLError as e:
+            raise Fail(f"uploading {pathlib.Path(path).name}: {e.reason}") from None
+
+
+def wait_until_complete(client, shot_ids, sleep=time.sleep, poll=UPLOAD_POLL_SECONDS,
+                        timeout=UPLOAD_TIMEOUT_SECONDS):
+    """Until Apple has processed every new screenshot. A FAILED one stops it."""
+    waiting, waited = list(shot_ids), 0
+    while waiting:
+        still = []
+        for sid in waiting:
+            a = client.get(f"/v1/appScreenshots/{sid}", **{"fields[appScreenshots]": "fileName,assetDeliveryState"})
+            a = a["data"]["attributes"]
+            delivery = a.get("assetDeliveryState") or {}
+            state = delivery.get("state")
+            if state == "COMPLETE":
+                print(f"  {a.get('fileName')}: COMPLETE")
+            elif state == "FAILED":
+                errors = "; ".join(e.get("description") or e.get("code", "") for e in delivery.get("errors") or [])
+                raise Fail(f"Apple could not process {a.get('fileName')}: {errors or 'FAILED'}")
+            else:
+                still.append(sid)
+        waiting = still
+        if waiting:
+            if waited >= timeout:
+                raise Fail(f"{len(waiting)} screenshot(s) still processing after {timeout}s; "
+                           "the old set has been left in place. Check `asc listing`.")
+            sleep(poll)
+            waited += poll
+
+
+def cmd_screenshots(args):
+    files = screenshot_files(args.dir, args.display_type)
+    client = Client(dry_run=not args.confirm)
+    app = find_app(client)
+    version, _ = find_version(client, app["id"], args.version)
+    if state_of(version) not in EDITABLE_STATES:
+        print(f"note: {args.version} is {state_of(version)}; App Store Connect changes screenshots only while "
+              f"the version is editable (`asc cancel-review {args.version}` first)")
+    loc = version_localization(client, version["id"], args.locale)
+    existing = next((s for s in screenshot_sets(client, loc["id"])
+                     if s["attributes"]["screenshotDisplayType"] == args.display_type), None)
+    old = set_screenshots(client, existing["id"]) if existing else []
+    print(f"{args.display_type} for {args.version} ({args.locale}): {len(old)} now, {len(files)} new")
+    for f in files:
+        w, h, _ = png_info(f)
+        print(f"  {f.name}  {w}x{h}  {f.stat().st_size} bytes")
+
+    if existing:
+        set_id = existing["id"]
+    else:
+        print("create the screenshot set:")
+        made = client.write("POST", "/v1/appScreenshotSets", {"data": {
+            "type": "appScreenshotSets", "attributes": {"screenshotDisplayType": args.display_type},
+            "relationships": {"appStoreVersionLocalization": {
+                "data": {"type": "appStoreVersionLocalizations", "id": loc["id"]}}}}})
+        set_id = made["data"]["id"] if made else "<new set>"
+
+    new_ids = []
+    for f in files:
+        print(f"reserve {f.name}:")
+        made = client.write("POST", "/v1/appScreenshots", {"data": {
+            "type": "appScreenshots", "attributes": {"fileName": f.name, "fileSize": f.stat().st_size},
+            "relationships": {"appScreenshotSet": {"data": {"type": "appScreenshotSets", "id": set_id}}}}})
+        sid = made["data"]["id"] if made else f"<{f.name}>"
+        operations = (made["data"]["attributes"].get("uploadOperations") or []) if made else []
+        print(f"  PUT {len(operations) or 'each'} part(s) to the upload URLs Apple returns")
+        if not client.dry_run:
+            put_parts(f, operations)
+        client.write("PATCH", f"/v1/appScreenshots/{sid}", {"data": {
+            "type": "appScreenshots", "id": sid,
+            "attributes": {"uploaded": True, "sourceFileChecksum": md5_of(f)}}})
+        new_ids.append(sid)
+
+    print("wait for Apple to process them (assetDeliveryState COMPLETE)")
+    if not client.dry_run:
+        wait_until_complete(client, new_ids)
+
+    if old:
+        print("then delete the old screenshots:")
+        for shot in old:
+            print(f"  ({shot['attributes'].get('fileName')})")
+            client.write("DELETE", f"/v1/appScreenshots/{shot['id']}")
+    print("and put the new ones in file-name order:")
+    client.write("PATCH", f"/v1/appScreenshotSets/{set_id}/relationships/appScreenshots",
+                 {"data": [{"type": "appScreenshots", "id": sid} for sid in new_ids]})
+    done(client)
+
+
+REVIEW_STATES = ("WAITING_FOR_REVIEW", "IN_REVIEW", "UNRESOLVED_ISSUES")
+
+
+def cmd_cancel_review(args):
+    client = Client(dry_run=not args.confirm)
+    app = find_app(client)
+    version, _ = find_version(client, app["id"], args.version)
+    subs = client.get("/v1/reviewSubmissions", **{
+        "filter[app]": app["id"], "filter[platform]": "IOS", "filter[state]": ",".join(REVIEW_STATES)})["data"]
+    match = None
+    for sub in subs:
+        items = client.get(f"/v1/reviewSubmissions/{sub['id']}/items", include="appStoreVersion")["data"]
+        ids = {((i.get("relationships", {}).get("appStoreVersion", {}) or {}).get("data") or {}).get("id")
+               for i in items}
+        if version["id"] in ids:
+            match = sub
+            break
+    if not match:
+        raise Fail(f"{args.version} ({state_of(version)}) is in no review submission waiting or in review")
+    print(f"pull {args.version} (now {state_of(version)}) back from App Review, submission {match['id']} "
+          f"({match['attributes'].get('state')}):")
+    client.write("PATCH", f"/v1/reviewSubmissions/{match['id']}", {"data": {
+        "type": "reviewSubmissions", "id": match["id"], "attributes": {"canceled": True}}})
+    if not client.dry_run:
+        print("canceled; the version becomes editable once App Store Connect has processed it "
+              "(`asc versions`). Submitting it again needs Abraham's yes, as always.")
+    else:
+        done(client)
+
+
 # --- Entry -----------------------------------------------------------------------------
 
 def main(argv=None):
@@ -770,6 +1064,33 @@ def main(argv=None):
                 writes=True)
     p.add_argument("version")
     p.add_argument("--allow-empty-notes", action="store_true")
+
+    p = command("listing", cmd_listing,
+                "a version's store listing: description, keywords, promotional text, URLs, screenshots (read-only)")
+    p.add_argument("version")
+    p.add_argument("--locale", default=DEFAULT_LOCALE)
+
+    p = command("set-listing", cmd_set_listing,
+                "set a version's description, keywords and/or promotional text", writes=True)
+    p.add_argument("version")
+    p.add_argument("--description")
+    p.add_argument("--description-file")
+    p.add_argument("--keywords", help="comma separated, no spaces after the commas")
+    p.add_argument("--keywords-file")
+    p.add_argument("--promo-text")
+    p.add_argument("--promo-file")
+    p.add_argument("--locale", default=DEFAULT_LOCALE)
+
+    p = command("screenshots", cmd_screenshots,
+                "replace a version's screenshots with the PNGs in a directory, in file-name order", writes=True)
+    p.add_argument("version")
+    p.add_argument("--dir", required=True)
+    p.add_argument("--display-type", default="APP_IPHONE_67", choices=sorted(SCREENSHOT_SIZES))
+    p.add_argument("--locale", default=DEFAULT_LOCALE)
+
+    p = command("cancel-review", cmd_cancel_review,
+                "pull a version back from App Review so its listing can be changed", writes=True)
+    p.add_argument("version")
 
     args = parser.parse_args(argv)
     try:
