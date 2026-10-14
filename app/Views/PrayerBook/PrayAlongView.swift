@@ -309,7 +309,9 @@ struct PrayAlongView: View {
                         ? "Saved. Find it under Saved on the Prayers tab."
                         : "Removed from Saved.")
                 } label: {
-                    Label(kept ? "Remove from Saved" : "Save", systemImage: kept ? "bookmark.fill" : "bookmark")
+                    // The bookmark, as every save in the app is; a pin means pinned
+                    // to the top
+                    Label(kept ? "Remove from Saved" : "Save", image: kept ? "ph-bookmark-simple-fill" : "ph-bookmark-simple")
                 }
 
                 Button {
@@ -800,7 +802,7 @@ struct PrayAlongView: View {
                         .padding(.top, 14)
 
                         if launch.orderID == nil, let only = prayers.first, !store.isKept(only.id) {
-                            QuietGoldButton(title: "Save this prayer", leadingIcon: "ph-push-pin") {
+                            QuietGoldButton(title: "Save this prayer", leadingIcon: "ph-bookmark-simple") {
                                 store.toggleRibbon(only.id)
                             }
                         }
