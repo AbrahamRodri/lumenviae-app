@@ -3560,8 +3560,8 @@ icon it replaced (and the Gothic, Monstrance and Wreath alternates) is
 retired; `Tools/IconAudit/app-icon/fix_icon.py` wrote that painting and
 must not be run again.
 
-The launch screen is the system's generated one
-(`INFOPLIST_KEY_UILaunchScreen_*`): `LaunchMark` (a vector PDF at its own
+The launch screen is the system's, drawn from the `UILaunchScreen`
+dictionary in `Config/Info.plist` (no build setting can fill it): `LaunchMark` (a vector PDF at its own
 48 x 75 points) centred on `LaunchBackground` (#0A0A15). The in-app
 splash (`Views/Launch/LaunchView.swift`) draws the same mark at the same
 size and place, so the hand-over does not move it, and fades the app's
