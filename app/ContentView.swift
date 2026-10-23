@@ -603,6 +603,12 @@ struct ContentView: View {
         case .prayerBookSaved:
             PrayerBookSavedView()
 
+        case .myPrayers:
+            MyPrayersView()
+
+        case .myPlaylist(let id):
+            MyPlaylistView(playlistID: id)
+
         // A player, like the Rosary's
         case .prayAlong(let launch):
             PrayAlongView(launch: launch)

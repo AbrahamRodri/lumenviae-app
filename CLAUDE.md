@@ -2826,6 +2826,27 @@ write concurrent code here:
   (`mix lumen_viae.generate_rosary_audio --kind book`) before deploying.
   The library download fetches the book's recordings too.
 
+- **My Prayers** (4.1) — the reader's own prayers and playlists, kept on
+  the device only (`MyPrayersStore`, `Application Support/MyPrayers/
+  library.json`; an unreadable file is set aside, never written over). A
+  prayer of their own has a `my_<uuid>` id (`CustomPrayer.prayerID`) that
+  `PrayAlongLaunch.resolve` and `PrayerBookPainting.prayer` find as they
+  find the book's, so the pray-along, Saved and the playlists take it
+  unchanged; with no recording it is read in the device voice. A
+  playlist (`PrayerPlaylist`) is an ordered list of book and `my_` ids,
+  the same id allowed twice, prayed through `PrayAlongLaunch.playlist`
+  (order id `playlist_<uuid>`, kept out of the recent prayers), each page
+  hanging the prayer's own chosen image, else the playlist's, else the
+  prayer's book painting. Images are an asset name or `photo:<uuid>.jpg`,
+  a photo from `PhotosPicker` scaled to 1600 px (`UserPhotoStore`); every
+  by-name painting loader reads both (`PaintingSource`), and photos
+  nothing hangs are swept at launch. The Prayers tab's My Prayers shelf
+  stands under the shortcuts (`MyPrayersShelf`), SEE ALL to `AppRoute.
+  myPrayers`; a playlist's page is `.myPlaylist(id:)`. The painting
+  picker's list is `MyPrayersPaintings`. TestFlight builds add the
+  family's Family Morning Prayer once (`FamilyPrayersSeed`, App Store
+  transaction environment `.sandbox`; Debug only with
+  `-seedFamilyPrayers`). The look is a first pass, to be redesigned.
 - **The Chant Library** — the Church's own songs, each with its
   recording and its score, kept on the phone so they sound in a chapel
   with no signal once they have come down (see The Prayer Book's and the

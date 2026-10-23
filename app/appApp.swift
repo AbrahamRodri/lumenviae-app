@@ -50,6 +50,10 @@ struct appApp: App {
         // Before the introduction can finish: an install that had not
         // finished it by now is new, and this version is no news to it
         WhatsNewStore.shared.decideAtLaunch()
+        // Before any editor can be open: photos picked and never saved go
+        MyPrayersStore.shared.sweepUnusedPhotos()
+        // The family's morning prayers, on the TestFlight build only, once
+        FamilyPrayersSeed.seedIfDue()
     }
 
     var body: some Scene {

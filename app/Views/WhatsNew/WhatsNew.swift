@@ -40,6 +40,14 @@ struct WhatsNewRelease: Identifiable {
     var id: String { version }
 
     static let all: [WhatsNewRelease] = [
+        WhatsNewRelease(version: "4.1", items: [
+            WhatsNewItem(
+                icon: "ph-note-pencil",
+                title: "My Prayers",
+                detail: "Write your own prayers and gather them into playlists, each with a painting or a photo of your own",
+                route: .myPrayers
+            )
+        ]),
         WhatsNewRelease(version: "4.0", items: [
             WhatsNewItem(
                 icon: "lv-prayer-book",

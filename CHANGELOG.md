@@ -10,6 +10,22 @@ entries are written in the imperative and carry a commit reference, and a
 change that was made and then undone inside the same release is not listed
 at all — only the net difference from the version before it.
 
+## 4.1 - Unreleased
+
+Prayers of the reader's own, and playlists to pray them in order.
+
+### Added
+
+- Add My Prayers to the Prayers tab: write a prayer of your own, gather
+  the book's prayers and your own into playlists in the order you say
+  them, and pray a playlist on the pray-along screen, one prayer after
+  another. Each prayer and playlist can hang one of the app's paintings
+  or a photo from your library. Kept on the device only
+  (`MyPrayersStore`)
+- Add the family's morning prayers, nine prayers and their playlist (the
+  Sign of the Cross said at both ends), to TestFlight builds only, once
+  (`FamilyPrayersSeed`)
+
 ## 4.0 - Unreleased
 
 The Rosary can be said aloud, the Church's common prayers and her chant

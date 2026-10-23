@@ -134,6 +134,11 @@ struct PrayerBookView: View {
             shortcuts
                 .padding(.horizontal, 18)
 
+            // The reader's own playlists, the family's morning prayer
+            // among them, before the book's hour
+            MyPrayersShelf()
+                .padding(.horizontal, 18)
+
             VStack(alignment: .leading, spacing: 12) {
                 PrayersShelfHeading(title: "Now")
                 nowCard

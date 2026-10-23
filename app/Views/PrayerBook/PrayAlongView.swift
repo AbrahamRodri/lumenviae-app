@@ -118,6 +118,18 @@ struct PrayAlongView: View {
     /// The painting the Prayers page hangs over this order, or over this
     /// prayer: the same one the reader tapped to come here
     private var painting: PrayerBookPainting {
+        // A prayer of the reader's hangs the painting they chose for it;
+        // a playlist, its own, else each prayer's as the page turns
+        if let prayer, CustomPrayer.uuid(in: prayer.id) != nil,
+           MyPrayersStore.shared.prayer(withPrayerID: prayer.id)?.art != nil {
+            return PrayerBookPainting.prayer(prayer.id)
+        }
+        if let art = launch.art {
+            return PrayerBookPainting.chosen(art, caption: launch.title)
+        }
+        if launch.isPlaylist, let prayer {
+            return PrayerBookPainting.prayer(prayer.id)
+        }
         if isAngelus {
             // Read from the prayer, not the clock: the Queen of Heaven sings
             // of the Resurrection, the Angelus of the Annunciation — the

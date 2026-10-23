@@ -33,6 +33,9 @@ struct PrayerBookPainting: Equatable {
         // Asked of the asset catalog, whose images the system may let go:
         // asked of `ImageCacheService`, every painting looked up was kept
         // whole for good, though only a thumbnail of it is drawn
+        // A photo of the reader's is looked for every time: it can be
+        // chosen and deleted while the app runs
+        if UserPhotoStore.isPhoto(asset) { return PaintingSource.exists(asset) ? asset : fallback }
         let found = UIImage(named: asset) == nil ? fallback : asset
         Self.resolved[asset] = found
         return found
@@ -98,6 +101,19 @@ struct PrayerBookPainting: Equatable {
     /// The Regina Cæli's painting, wherever it stands in for the Angelus
     private static let reginaCaeli = PrayerBookPainting(
         asset: "easter_appears_to_mary", focal: UnitPoint(x: 0.5, y: 0.55), caption: "Christ Appearing to His Mother")
+
+    // MARK: The reader's own
+
+    /// A painting or photo the reader chose for a prayer or playlist of
+    /// their own, Our Lady at prayer standing in should a photo be gone
+    static func chosen(_ name: String, caption: String) -> PrayerBookPainting {
+        PrayerBookPainting(
+            asset: name,
+            fallback: saved.asset,
+            focal: UserPhotoStore.isPhoto(name) ? UnitPoint(x: 0.5, y: 0.4) : UnitPoint(x: 0.5, y: 0.25),
+            caption: caption
+        )
+    }
 
     // MARK: The Prayers page
 
@@ -187,6 +203,10 @@ struct PrayerBookPainting: Equatable {
     /// (`scenes`), else its topic's painting, so no prayer stands under a
     /// painting chosen for nothing
     static func prayer(_ prayerID: String) -> PrayerBookPainting {
+        if CustomPrayer.uuid(in: prayerID) != nil {
+            let mine = MyPrayersStore.shared.prayer(withPrayerID: prayerID)
+            return mine?.art.map { chosen($0, caption: mine?.title ?? "") } ?? saved
+        }
         if let scene = scenes[prayerID] { return scene }
         if let topic = PrayerBook.homeChapter(of: prayerID) { return self.topic(topic) }
         return saved
