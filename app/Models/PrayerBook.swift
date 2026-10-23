@@ -613,6 +613,25 @@ struct PrayAlongLaunch: Hashable {
 
     var startIndex: Int = 0
 
+    /// The painting or photo a playlist of the reader's hangs behind its
+    /// prayers (`PrayerPlaylist.art`), or nil for the book's own
+    var art: String?
+
+    /// Whether this is one of the reader's playlists, whose prayers each
+    /// hang their own painting as the page turns
+    var isPlaylist: Bool { orderID?.hasPrefix("playlist_") == true }
+
+    static func playlist(_ playlist: PrayerPlaylist, startingAt start: Int = 0) -> PrayAlongLaunch {
+        let ids = playlist.prayerIDs.filter { resolve($0) != nil }
+        return PrayAlongLaunch(
+            orderID: playlist.orderID,
+            prayerIDs: ids,
+            title: playlist.displayName,
+            startIndex: min(max(start, 0), max(ids.count - 1, 0)),
+            art: playlist.art
+        )
+    }
+
     static func order(_ order: PrayerOrder, on date: Date = Date()) -> PrayAlongLaunch {
         PrayAlongLaunch(
             orderID: order.id,
@@ -651,10 +670,14 @@ struct PrayAlongLaunch: Hashable {
         return PrayAlongLaunch(orderID: nil, prayerIDs: [prayerID], title: resolve(prayerID)?.title ?? "Prayers")
     }
 
-    /// A prayer by its id: the book's, or one of the Rosary's or the
-    /// consecration's the book does not print
+    /// A prayer by its id: the book's, one of the Rosary's or the
+    /// consecration's the book does not print, or one of the reader's own
+    /// (`my_` ids, `MyPrayersStore`)
     static func resolve(_ id: String) -> BookPrayer? {
-        PrayerBook.prayer(id) ?? BookPrayer.bundled(id, origin: nil, note: nil)
+        if CustomPrayer.uuid(in: id) != nil {
+            return MyPrayersStore.shared.prayer(withPrayerID: id)?.bookPrayer
+        }
+        return PrayerBook.prayer(id) ?? BookPrayer.bundled(id, origin: nil, note: nil)
     }
 }
 

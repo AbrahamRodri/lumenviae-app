@@ -65,7 +65,9 @@ final class PrayerBookStore {
 
     /// The kept prayers the book still carries, in the order kept
     var keptPrayers: [BookPrayer] {
-        ribbons.compactMap { PrayerBook.prayer($0) }
+        // Through the pray-along's lookup, so a prayer of the reader's own
+        // saved with its menu stands here too
+        ribbons.compactMap { PrayAlongLaunch.resolve($0) }
     }
 
     // MARK: - By Heart
@@ -179,6 +181,9 @@ final class PrayerBookStore {
 
     /// The pray-along screen opened on an order or a prayer
     func notePrayed(launch: PrayAlongLaunch) {
+        // The reader's playlists keep a page of their own, not a place
+        // among the book's recent prayers
+        guard !launch.isPlaylist else { return }
         if let orderID = launch.orderID {
             notePrayed(.order(orderID))
         } else if launch.prayerIDs.count == 1, let id = launch.prayerIDs.first {

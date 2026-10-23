@@ -65,7 +65,7 @@ struct ThumbnailImage: View {
     /// `ImageCacheService`, else the quiet ground a missing painting gets
     @ViewBuilder
     private func drawn(_ image: UIImage?) -> some View {
-        if let image = image ?? UIImage(named: name) {
+        if let image = image ?? PaintingSource.image(named: name) {
             FocalFill(uiImage: image, focal: focal)
         } else {
             LinearGradient(
@@ -170,7 +170,7 @@ enum PaintingThumbnails {
             if let small = kept.object(forKey: key) { return small }
             let size = request.size
             guard size.width > 0, size.height > 0, request.scale > 0,
-                let full = UIImage(named: request.name), full.size.width > 0, full.size.height > 0
+                let full = PaintingSource.image(named: request.name), full.size.width > 0, full.size.height > 0
             else {
                 whole.setObject(NSNull(), forKey: key)
                 return nil

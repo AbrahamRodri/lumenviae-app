@@ -128,6 +128,11 @@ enum AppRoute: Hashable {
     /// menu, reached from the Saved shortcut on Prayers
     case prayerBookSaved
 
+    /// The reader's own prayers and playlists, from the My Prayers shelf
+    /// on Prayers, and one playlist's page
+    case myPrayers
+    case myPlaylist(id: UUID)
+
     /// Prayers said one after another on a screen of their own, aloud or
     /// in silence. A player: it hides the bar and carries its own way out.
     case prayAlong(PrayAlongLaunch)
@@ -342,6 +347,7 @@ final class AppRouter {
             return (.prayerSession(meditationSetId: set.id),
                     PrayerLaunch(meditationSet: set, startIndex: mystery, startBead: bead))
         case ("prayerOrder", _) where parts.count > 1: return (.prayerOrder(id: parts[1]), nil)
+        case ("myPrayers", _): return (.myPrayers, nil)
         case ("rosaryLesson", _): return (.rosaryLesson(parts.count > 1 ? Int(parts[1]) ?? 0 : 0), nil)
         default: return nil
         }

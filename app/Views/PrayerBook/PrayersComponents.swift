@@ -209,14 +209,32 @@ struct PrayersNowCard: View {
     }
 
     private func prayButton(title: String) -> some View {
-        Button(action: pray) {
+        PrayersPrayButton(
+            title: offered ? "PRAY AGAIN" : "PRAY",
+            spoken: offered ? "Pray \(title) again" : "Pray \(title)",
+            action: pray
+        )
+    }
+}
+
+// MARK: - PRAY
+
+/// PRAY on an outlined disc: the Now card's, and a playlist's of the
+/// reader's
+struct PrayersPrayButton: View {
+    let title: String
+    let spoken: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
             HStack(spacing: 10) {
                 AppIcon("ph-play-fill", size: 11)
                     .foregroundColor(AppColors.gold)
                     .frame(width: 32, height: 32)
                     .overlay(Circle().strokeBorder(AppColors.gold, lineWidth: 1.2))
                     .haloGlow(AppColors.gold, radius: 10, intensity: 0.22)
-                Text(offered ? "PRAY AGAIN" : "PRAY")
+                Text(title)
                     .font(AppFonts.labelFont(10))
                     .tracking(2)
                     .foregroundColor(AppColors.gold)
@@ -225,9 +243,10 @@ struct PrayersNowCard: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(SacredCardButtonStyle())
-        .accessibilityLabel(offered ? "Pray \(title) again" : "Pray \(title)")
+        .accessibilityLabel(spoken)
     }
 }
+
 
 // MARK: - A row with its painting
 

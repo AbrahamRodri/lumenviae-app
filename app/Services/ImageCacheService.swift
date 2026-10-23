@@ -78,6 +78,9 @@ final class ImageCacheService: @unchecked Sendable {
         if let cached = cache[name] {
             return cached
         }
+        // A photo of the reader's is read from its file each time, never
+        // kept: it can be replaced while the app runs
+        if UserPhotoStore.isPhoto(name) { return UserPhotoStore.image(named: name) }
         // Fallback: load and cache if not preloaded
         if let uiImage = UIImage(named: name) {
             cache[name] = uiImage
