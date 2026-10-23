@@ -3,7 +3,7 @@
 //  Lumen Viae
 //
 //  The app maker's family's morning prayers, given to the TestFlight build
-//  only (its testers are the family): ten prayers in their own words and
+//  only (its testers are the family): nine prayers in their own words and
 //  the playlist that says them in order, added once to My Prayers. An
 //  App Store build never adds them. Once added they are the reader's
 //  like any others, to change or delete, and never added again.

@@ -25,6 +25,11 @@ final class MyPrayersStore {
 
     private let fileURL: URL
 
+    /// False when the library file is there but could not be read (the
+    /// phone still locked since it started): nothing is written over it
+    /// and no photo is swept until a launch that can read it
+    private var canWrite = true
+
     /// Where the reader's photos are kept, beside the library file
     let photosDirectory: URL
 
@@ -123,6 +128,11 @@ final class MyPrayersStore {
     /// picked, so one picked in an editor then cancelled, or picked over,
     /// is left behind. Run at launch, when no editor is open.
     func sweepUnusedPhotos() {
+        // A library set aside still names its photos: none is swept while
+        // one is kept, nor while the library itself could not be read
+        let folder = fileURL.deletingLastPathComponent()
+        let names = (try? FileManager.default.contentsOfDirectory(atPath: folder.path)) ?? []
+        guard canWrite, !names.contains(where: { $0.hasPrefix("library.unreadable-") }) else { return }
         guard let files = try? FileManager.default.contentsOfDirectory(atPath: photosDirectory.path) else { return }
         let inUse = artInUse
         for file in files where !inUse.contains(UserPhotoStore.prefix + file) {
@@ -138,7 +148,11 @@ final class MyPrayersStore {
     }
 
     private func load() {
-        guard let data = try? Data(contentsOf: fileURL) else { return }
+        guard FileManager.default.fileExists(atPath: fileURL.path) else { return }
+        guard let data = try? Data(contentsOf: fileURL) else {
+            canWrite = false
+            return
+        }
         guard let library = try? JSONDecoder().decode(Library.self, from: data) else {
             // Never written over: a file this build cannot read (a later
             // build's, or one cut short) is set aside whole, so the next
@@ -153,6 +167,7 @@ final class MyPrayersStore {
     }
 
     private func write() {
+        guard canWrite else { return }
         let library = Library(prayers: prayers, playlists: playlists)
         do {
             try FileManager.default.createDirectory(

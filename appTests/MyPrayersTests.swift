@@ -163,6 +163,17 @@ struct MyPrayersTests {
         #expect(try String(contentsOf: directory.appendingPathComponent(aside), encoding: .utf8) == "{ not a library")
     }
 
+    @Test func noPhotoIsSweptWhileALibraryIsSetAside() throws {
+        let first = store()
+        let kept = try photo(in: first)
+        first.save(CustomPrayer(title: "T", text: "W", art: kept))
+        try Data("{ cut short".utf8).write(to: directory.appendingPathComponent("library.json"))
+
+        let again = store()
+        again.sweepUnusedPhotos()
+        #expect(isOnDisk(kept, in: again))
+    }
+
     @Test func onlyANameTheStoreGaveNamesAFile() {
         #expect(UserPhotoStore.url(for: "photo:../escape.jpg") == nil)
         #expect(UserPhotoStore.url(for: "photo:..") == nil)

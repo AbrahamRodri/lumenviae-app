@@ -22,8 +22,9 @@ Prayers of the reader's own, and playlists to pray them in order.
   another. Each prayer and playlist can hang one of the app's paintings
   or a photo from your library. Kept on the device only
   (`MyPrayersStore`)
-- Add the family's morning prayers, ten prayers and their playlist, to
-  TestFlight builds only, once (`FamilyPrayersSeed`)
+- Add the family's morning prayers, nine prayers and their playlist (the
+  Sign of the Cross said at both ends), to TestFlight builds only, once
+  (`FamilyPrayersSeed`)
 
 ## 4.0 - Unreleased
 

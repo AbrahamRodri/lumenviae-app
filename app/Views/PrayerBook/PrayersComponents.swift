@@ -247,7 +247,6 @@ struct PrayersPrayButton: View {
     }
 }
 
-
 // MARK: - A row with its painting
 
 /// A prayer as a row: a small painting, its name with a line under it,
