@@ -301,7 +301,7 @@ struct PrayNowButton: View {
                 }
         )
         .sensoryFeedback(.impact(weight: .medium), trigger: holdCount)
-        .accessibilityLabel(isLoading ? "Preparing prayer" : "Pray")
+        .accessibilityLabel(isLoading ? Text("Preparing prayer") : Text("Pray"))
         .accessibilityHint("Double-tap to begin. Touch and hold for more devotions.")
         .accessibilityAction(named: "Open your devotions menu") { onHold() }
     }

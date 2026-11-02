@@ -47,16 +47,16 @@ enum MysterySchedule: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .traditional: return "Traditional"
-        case .modern:      return "Modern"
+        case .traditional: return String(localized: "Traditional", comment: "Settings, Daily Mysteries: the name of a weekly schedule of mysteries")
+        case .modern:      return String(localized: "Modern", comment: "Settings, Daily Mysteries: the name of a weekly schedule of mysteries")
         }
     }
 
     /// Thursday and Saturday, the two days the schedules differ on
     var detail: String {
         switch self {
-        case .traditional: return "Joyful on Thursday, Glorious on Saturday"
-        case .modern:      return "Luminous on Thursday, Joyful on Saturday"
+        case .traditional: return String(localized: "Joyful on Thursday, Glorious on Saturday", comment: "Settings, Daily Mysteries: the two days on which this schedule differs; Joyful, Glorious and Luminous are sets of mysteries")
+        case .modern:      return String(localized: "Luminous on Thursday, Joyful on Saturday", comment: "Settings, Daily Mysteries: the two days on which this schedule differs; Joyful, Glorious and Luminous are sets of mysteries")
         }
     }
 }

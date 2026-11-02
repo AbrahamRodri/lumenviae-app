@@ -29,9 +29,9 @@ struct ReminderSoundSheet: View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 0) {
                 SheetHeader(
-                    kicker: "Daily reminder",
-                    title: "Reminder Sound",
-                    lead: "Tap a sound to hear it and make it yours."
+                    kicker: String(localized: "Daily reminder", comment: "Settings, Reminder Sound sheet: the small label over its title"),
+                    title: String(localized: "Reminder Sound", comment: "Settings, Reminder Sound sheet: its title"),
+                    lead: String(localized: "Tap a sound to hear it and make it yours.", comment: "Settings, Reminder Sound sheet: the line under its title")
                 )
 
                 ForEach(ReminderSound.all) { sound in
@@ -45,7 +45,7 @@ struct ReminderSoundSheet: View {
                     }
                 }
 
-                SheetNote("The chime was made for Lumen Viae; the bell is a public domain recording.")
+                SheetNote(String(localized: "The chime was made for Lumen Viae; the bell is a public domain recording.", comment: "Settings, Reminder Sound sheet: the note at its foot"))
             }
         }
         .sheetGround()

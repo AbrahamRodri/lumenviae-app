@@ -184,7 +184,10 @@ struct HomeView: View {
         Task {
             defer { isResuming = false }
             if !(await router.resume(session)) {
-                resumeError = "Couldn't load — check your connection"
+                resumeError = String(
+                    localized: "Couldn't load — check your connection",
+                    comment: "Home: an unfinished Rosary could not be loaded to continue it"
+                )
             }
         }
     }
@@ -416,7 +419,7 @@ struct FeaturedMysteryCard: View {
 
     var body: some View {
         ArchHero(imageName: category.cardImageName) {
-            HeroBadge("TODAY'S MYSTERIES")
+            HeroBadge(String(localized: "TODAY'S MYSTERIES", comment: "Home: badge over the featured card naming today's set of mysteries"))
             devotionTitle
             beginPrayerButton
         }
@@ -451,7 +454,11 @@ struct FeaturedMysteryCard: View {
     /// chose, a hold opens the tray.
     private var beginPrayerButton: some View {
         // Goes on to the mysteries' page, so a chevron, not play
-        GoldCTAButton(title: "Pray the Rosary", glyph: .chevron, action: onBeginPrayer)
+        GoldCTAButton(
+            title: String(localized: "Pray the Rosary", comment: "Home: the featured card's button, opening today's mysteries"),
+            glyph: .chevron,
+            action: onBeginPrayer
+        )
             .padding(.horizontal, 20)
             .padding(.top, 8)
     }

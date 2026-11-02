@@ -315,6 +315,7 @@ final class AppRouter {
     /// A page named at launch by `LUMEN_VIAE_ROUTE`, for the App Store
     /// screenshots (`Tools/AppStore/screenshots`): `missal`, `office`,
     /// `howToPray`, `explore`, `spiritualReading`, `allMysteries`,
+    /// `settings`, `about`,
     /// `mysteries:<category>`, `scripturalRosary:<category>`,
     /// `rosaryAloud:<category>`, `scripturalRosaryPrayer:<category>[:<mystery>[:<bead>]]`,
     /// `rosaryAloudPrayer:<category>[:<mystery>[:<bead>]]`,
@@ -334,6 +335,8 @@ final class AppRouter {
         case ("explore", _): return (.explore, nil)
         case ("spiritualReading", _): return (.spiritualReading, nil)
         case ("allMysteries", _): return (.allMysteries, nil)
+        case ("settings", _): return (.settings, nil)
+        case ("about", _): return (.about, nil)
         case ("mysteries", let c?): return (.meditationSelection(category: c), nil)
         case ("scripturalRosary", let c?): return (.scripturalRosary(c), nil)
         case ("rosaryAloud", let c?): return (.rosaryAloud(c), nil)

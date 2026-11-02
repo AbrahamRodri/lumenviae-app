@@ -149,9 +149,9 @@ struct AboutView: View {
     // MARK: - The doors
 
     private var ledger: some View {
-        AccountSection(title: "About", icon: "ph-info") {
+        AccountSection(title: String(localized: "About", comment: "About: a row's name, a heading, or the line under it"), icon: "ph-info") {
             VStack(spacing: 0) {
-                ActionRow(icon: "ph-info", title: "About Lumen Viae") {
+                ActionRow(icon: "ph-info", title: String(localized: "About Lumen Viae", comment: "About: a row's name, a heading, or the line under it")) {
                     showAbout = true
                 }
 
@@ -162,7 +162,7 @@ struct AboutView: View {
                 Divider()
                     .background(AppColors.gold.opacity(0.2))
 
-                ActionRow(icon: "ph-book-open", title: "App Introduction") {
+                ActionRow(icon: "ph-book-open", title: String(localized: "App Introduction", comment: "About: a row's name, a heading, or the line under it")) {
                     showOnboarding = true
                 }
                 #endif
@@ -172,8 +172,8 @@ struct AboutView: View {
 
                 ActionRow(
                     icon: "ph-scroll",
-                    title: "Sources & Credits",
-                    subtitle: "The paintings, books and recordings, and where they come from"
+                    title: String(localized: "Sources & Credits", comment: "About: a row's name, a heading, or the line under it"),
+                    subtitle: String(localized: "The paintings, books and recordings, and where they come from", comment: "About: a row's name, a heading, or the line under it")
                 ) {
                     showSourcesCredits = true
                 }
@@ -181,14 +181,14 @@ struct AboutView: View {
                 Divider()
                     .background(AppColors.gold.opacity(0.2))
 
-                ActionRow(icon: "ph-shield", title: "Privacy Policy") {
+                ActionRow(icon: "ph-shield", title: String(localized: "Privacy Policy", comment: "About: a row's name, a heading, or the line under it")) {
                     showPrivacyPolicy = true
                 }
 
                 Divider()
                     .background(AppColors.gold.opacity(0.2))
 
-                ActionRow(icon: "ph-question", title: "Help & Support") {
+                ActionRow(icon: "ph-question", title: String(localized: "Help & Support", comment: "About: a row's name, a heading, or the line under it")) {
                     showHelpSupport = true
                 }
 
@@ -197,8 +197,8 @@ struct AboutView: View {
 
                 ActionRow(
                     icon: "ph-chat-teardrop-text",
-                    title: "Send Feedback",
-                    subtitle: "Report a problem or share an idea"
+                    title: String(localized: "Send Feedback", comment: "About: a row's name, a heading, or the line under it"),
+                    subtitle: String(localized: "Report a problem or share an idea", comment: "About: a row's name, a heading, or the line under it")
                 ) {
                     showFeedback = true
                 }
@@ -220,17 +220,17 @@ struct SourcesCreditsSheet: View {
             VStack(alignment: .leading, spacing: 0) {
                 SheetHeader(
                     kicker: "Lumen Viae",
-                    title: "Sources & Credits",
-                    lead: "Everything in the app that is not our own writing, and the people and places it comes from. Every painting is by a painter dead more than a hundred years, and every text is in the public domain or used under an open licence."
+                    title: String(localized: "Sources & Credits", comment: "About: a row's name, a heading, or the line under it"),
+                    lead: String(localized: "Everything in the app that is not our own writing, and the people and places it comes from. Every painting is by a painter dead more than a hundred years, and every text is in the public domain or used under an open licence.", comment: "About, Sources & Credits: the line under the heading, or a section label")
                 )
 
-                SheetSectionLabel("The Paintings")
+                SheetSectionLabel(String(localized: "The Paintings", comment: "About, Sources & Credits: the line under the heading, or a section label"))
                     .padding(.top, 8)
                 ForEach(SourcesAndCredits.paintings) { work in
                     creditRow(work)
                 }
 
-                SheetSectionLabel("Texts, Recordings and Type")
+                SheetSectionLabel(String(localized: "Texts, Recordings and Type", comment: "About, Sources & Credits: the line under the heading, or a section label"))
                     .padding(.top, 28)
                 ForEach(SourcesAndCredits.texts) { work in
                     creditRow(work)

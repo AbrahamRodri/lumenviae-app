@@ -38,6 +38,17 @@ enum FeedbackTopic: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
+        case .problem: return String(localized: "Something's wrong", comment: "Send Feedback: a topic to choose, a problem with the app")
+        case .idea: return String(localized: "An idea", comment: "Send Feedback: a topic to choose, an idea for the app")
+        case .meditations: return String(localized: "The meditations", comment: "Send Feedback: a topic to choose, about the meditation texts")
+        case .other: return String(localized: "Something else", comment: "Send Feedback: a topic to choose, anything else")
+        }
+    }
+
+    /// The topic as the email names it. The email stays English in every
+    /// language, so the one reading it can always read it.
+    var mailTitle: String {
+        switch self {
         case .problem: return "Something's wrong"
         case .idea: return "An idea"
         case .meditations: return "The meditations"
@@ -68,10 +79,10 @@ enum FeedbackTopic: String, CaseIterable, Identifiable {
     /// the prompt changes with the topic so it asks the right question.
     var prompt: String {
         switch self {
-        case .problem: return "What happened, and what were you doing when it did?"
-        case .idea: return "What would you like Lumen Viae to do?"
-        case .meditations: return "What did you notice — a typo, a translation, a passage?"
-        case .other: return "Say anything you'd like us to hear…"
+        case .problem: return String(localized: "What happened, and what were you doing when it did?", comment: "Send Feedback: the placeholder in the empty message field; it changes with the topic")
+        case .idea: return String(localized: "What would you like Lumen Viae to do?", comment: "Send Feedback: the placeholder in the empty message field; it changes with the topic")
+        case .meditations: return String(localized: "What did you notice — a typo, a translation, a passage?", comment: "Send Feedback: the placeholder in the empty message field; it changes with the topic")
+        case .other: return String(localized: "Say anything you'd like us to hear…", comment: "Send Feedback: the placeholder in the empty message field; it changes with the topic")
         }
     }
 }
@@ -121,7 +132,7 @@ struct FeedbackDraft {
             lines.append("Meditation: \(context.summary)")
         }
 
-        lines.append("About: \(topic.title)")
+        lines.append("About: \(topic.mailTitle)")
         lines.append(
             "Lumen Viae \(Bundle.main.appVersion) (\(Bundle.main.buildNumber))"
         )
@@ -274,8 +285,8 @@ struct FeedbackView: View {
     /// The sheet grammar's header. Cancel is the header's quiet act; Send
     /// stays the form's one gold act in the bar at its foot.
     private var header: some View {
-        SheetHeader(kicker: "Lumen Viae", title: "Send Feedback") {
-            SheetHeaderAction(title: "Cancel") { dismiss() }
+        SheetHeader(kicker: "Lumen Viae", title: String(localized: "Send Feedback", comment: "The feedback sheet's title")) {
+            SheetHeaderAction(title: String(localized: "Cancel", comment: "Send Feedback: closes the sheet without sending")) { dismiss() }
         }
     }
 
@@ -314,7 +325,7 @@ struct FeedbackView: View {
 
     private var topicPicker: some View {
         VStack(alignment: .leading, spacing: 12) {
-            SectionLabel("What is this about?")
+            SectionLabel(String(localized: "What is this about?", comment: "Send Feedback: label over the topics"))
 
             // Two columns rather than a scrolling row: four choices
             // should all be in view, none of them hiding off an edge.
@@ -369,7 +380,7 @@ struct FeedbackView: View {
 
     private var messageField: some View {
         VStack(alignment: .leading, spacing: 12) {
-            SectionLabel("Your note")
+            SectionLabel(String(localized: "Your note", comment: "Send Feedback: label over the message field"))
 
             ZStack(alignment: .topLeading) {
                 if message.isEmpty {
@@ -427,7 +438,7 @@ struct FeedbackView: View {
         VStack(spacing: 0) {
             Divider().background(AppColors.gold.opacity(0.12))
 
-            GoldCTAButton(title: "Send", trailingIcon: nil) {
+            GoldCTAButton(title: String(localized: "Send", comment: "Send Feedback: opens the email with the note"), trailingIcon: nil) {
                 send()
             }
             .disabled(!canSend)
@@ -460,7 +471,7 @@ struct FeedbackView: View {
 
             Spacer()
 
-            GoldCTAButton(title: "Done") { dismiss() }
+            GoldCTAButton(title: String(localized: "Done", comment: "Send Feedback: closes the sheet after sending, or after the note was copied")) { dismiss() }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 24)
         }
@@ -491,10 +502,10 @@ struct FeedbackView: View {
 
             Spacer()
 
-            GoldCTAButton(title: "Done") { dismiss() }
+            GoldCTAButton(title: String(localized: "Done", comment: "Send Feedback: closes the sheet after sending, or after the note was copied")) { dismiss() }
                 .padding(.horizontal, 20)
 
-            QuietGoldButton(title: "Back to my note") { stage = .writing }
+            QuietGoldButton(title: String(localized: "Back to my note", comment: "Send Feedback: returns to the note after no mail account was found")) { stage = .writing }
                 .padding(.bottom, 16)
         }
     }

@@ -694,7 +694,7 @@ enum PrayerBookAudio {
 
     /// The book's own name, as its tab says it, with the word tab, so the
     /// row is never read as a second Audio, or as every prayer in the app
-    static let title = "Prayers Tab Audio"
+    static let title = String(localized: "Prayers Tab Audio", comment: "Settings: whether the Prayers tab reads its prayers aloud")
 
     /// The Prayer Book's door glyph
     static let icon = "lv-prayer-book"
@@ -702,8 +702,8 @@ enum PrayerBookAudio {
     /// The quieter way first, as the setting's `false`, as the Rosary's
     /// pills set theirs
     static let options: [RosaryChoice.Option] = [
-        RosaryChoice.Option(value: false, name: "In Silence"),
-        RosaryChoice.Option(value: true, name: "With a Voice"),
+        RosaryChoice.Option(value: false, name: String(localized: "In Silence", comment: "Prayers Tab Audio option: no sound")),
+        RosaryChoice.Option(value: true, name: String(localized: "With a Voice", comment: "Prayers Tab Audio option: a voice reads the prayers")),
     ]
 
     /// What the chosen option does. Until the reader has answered, the
@@ -712,10 +712,13 @@ enum PrayerBookAudio {
     /// says that instead.
     static func note(for aloud: Bool, answered: Bool = true) -> String {
         guard answered else {
-            return "Not chosen yet. You'll be asked the first time you pray from the Prayers tab."
+            return String(
+                localized: "Not chosen yet. You'll be asked the first time you pray from the Prayers tab.",
+                comment: "Settings, Prayers Tab Audio: the line before the reader has chosen"
+            )
         }
         return aloud
-            ? "A voice reads each prayer to you."
-            : "No sound. The words are on screen for you to say."
+            ? String(localized: "A voice reads each prayer to you.", comment: "Settings, Prayers Tab Audio: the line under the chosen option")
+            : String(localized: "No sound. The words are on screen for you to say.", comment: "Settings, Prayers Tab Audio: the line under the chosen option")
     }
 }
