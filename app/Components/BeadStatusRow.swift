@@ -65,7 +65,7 @@ struct BeadStatusRow: View {
             ZStack(alignment: .leading) {
                 if let onAmen {
                     GoldCTAButton(
-                        title: "Amen",
+                        title: String(localized: "Amen", comment: "Gold button on the Rosary's last bead that finishes the Rosary"),
                         prominence: .inline,
                         trailingIcon: "ph-check",
                         fullWidth: false,
@@ -96,7 +96,7 @@ struct BeadStatusRow: View {
         .onLongPressGesture(perform: onRetreat)
         .accessibilityElement(children: .contain)
         .accessibilityLabel(accessibilityText)
-        .accessibilityHint(onAmen == nil ? "Tap for the next bead" : "")
+        .accessibilityHint(onAmen == nil ? Text("Tap for the next bead") : Text(verbatim: ""))
         .accessibilityAction(named: "Next bead", onAdvance)
         .accessibilityAction(named: "Previous bead", onRetreat)
     }

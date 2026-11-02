@@ -39,7 +39,10 @@ struct SpokenRosaryNotice: View {
             switch failure {
             case .offline:
                 GoldCTAButton(
-                    title: "Try again",
+                    title: String(
+                        localized: "Try again",
+                        comment: "Prayer screen notice: button that tries again to download the recordings for the Whole Rosary"
+                    ),
                     fill: .outline,
                     prominence: .inline,
                     trailingIcon: "ph-arrow-counter-clockwise",

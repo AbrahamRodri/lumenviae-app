@@ -319,7 +319,9 @@ struct PendantCrossView: View {
             }
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(current.map { "The cross and first beads. \($0.name)" } ?? "The cross and first beads")
+        .accessibilityLabel(
+            current.map { Text("The cross and first beads. \($0.name)") } ?? Text("The cross and first beads")
+        )
     }
 
     // MARK: Where Everything Hangs
@@ -588,7 +590,12 @@ struct PendantStage: View {
         .allowsHitTesting(onTap != nil)
         // Where the voice is on it, as the pendant itself says
         .modifier(StageTapAccessibility(
-            label: pendant.place.map { "The cross and first beads. \($0.name)" } ?? "The cross and first beads",
+            label: pendant.place.map {
+                String(
+                    localized: "The cross and first beads. \($0.name)",
+                    comment: "VoiceOver for the drawn rosary pendant: what it is, then the part the voice is on, like The large bead"
+                )
+            } ?? String(localized: "The cross and first beads", comment: "VoiceOver for the drawn rosary pendant: the cross and the beads above it"),
             chromeHidden: chromeHidden,
             action: { onTap?() }
         ))
@@ -613,7 +620,10 @@ struct PendantTitleBlock: View {
     /// "The First Glorious Mystery" read mid-sentence
     static func leadIn(to kicker: String) -> String {
         let phrase = kicker.hasPrefix("The ") ? "the " + kicker.dropFirst(4) : kicker
-        return "Then \(phrase)"
+        return String(
+            localized: "Then \(phrase)",
+            comment: "Prayer screen, the opening prayers: the mystery they lead to, read mid-sentence, like Then the First Glorious Mystery"
+        )
     }
 
     var body: some View {

@@ -264,9 +264,15 @@ struct MeditationReaderView: View {
     private var header: some View {
         VStack(spacing: 0) {
             HStack {
-                ReaderChromeButton(icon: "ph-x", size: 16, label: "Close the reader", action: onClose)
+                ReaderChromeButton(icon: "ph-x", size: 16, label: String(
+                    localized: "Close the reader",
+                    comment: "Meditation reader: VoiceOver name of the close button, back to the player"
+                ), action: onClose)
                 Spacer()
-                ReaderChromeButton(icon: "ph-text-aa", size: 18, label: "Text options") {
+                ReaderChromeButton(icon: "ph-text-aa", size: 18, label: String(
+                    localized: "Text options",
+                    comment: "Meditation reader: VoiceOver name of the button that opens text size and reading options"
+                )) {
                     activeSheet = .textOptions
                 }
             }
@@ -541,7 +547,7 @@ struct MiniPlayerPill: View {
                     .frame(width: 40, height: 40)
                     .contentShape(Rectangle())
                 }
-                .accessibilityLabel(viewModel.isPlaying ? "Pause" : "Play")
+                .accessibilityLabel(viewModel.isPlaying ? Text("Pause") : Text("Play"))
             }
 
             Button(action: onShowTray) {
@@ -603,18 +609,33 @@ struct ReaderTextOptionsSheet: View {
         @Bindable var settings = userSettings
 
         return VStack(alignment: .leading, spacing: 0) {
-            SheetHeader(title: "Text") {
-                SheetHeaderAction(title: "Done") { dismiss() }
+            SheetHeader(title: String(localized: "Text", comment: "Meditation reader, text options sheet: its title")) {
+                SheetHeaderAction(title: String(
+                    localized: "Done",
+                    comment: "Sheet header button that closes the sheet"
+                )) { dismiss() }
             }
 
-            SheetSizeSlider(label: "Size", scale: $settings.textSizeScale)
+            SheetSizeSlider(label: String(
+                localized: "Size",
+                comment: "Meditation reader, text options sheet: the text size slider's name"
+            ), scale: $settings.textSizeScale)
 
             if showsNarrationOptions {
-                SheetSectionLabel("While listening")
+                SheetSectionLabel(String(
+                    localized: "While listening",
+                    comment: "Meditation reader, text options sheet: section label over the choices that apply while the narration plays"
+                ))
 
                 SheetToggleRow(
-                    title: "Follow the narration",
-                    detail: "The page keeps pace with the voice",
+                    title: String(
+                        localized: "Follow the narration",
+                        comment: "Meditation reader, text options sheet: switch that scrolls the page with the voice"
+                    ),
+                    detail: String(
+                        localized: "The page keeps pace with the voice",
+                        comment: "Meditation reader, text options sheet: the line under Follow the narration"
+                    ),
                     icon: "ph-text-align-left",
                     isOn: $settings.readerAutoScroll,
                     showsDivider: false,

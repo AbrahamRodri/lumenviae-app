@@ -481,7 +481,15 @@ struct MysteryPrayerView: View {
     /// stands, used as the kicker on both surfaces.
     private var mysteryKicker: String {
         meditationSet.mysteryCategory?.mysteryLabel(ordinal: viewModel.currentMysteryIndex + 1)
-            ?? "The \(Constants.ordinalWord(viewModel.currentMysteryIndex + 1)) Mystery"
+            ?? Self.unknownMysteryLabel(ordinal: viewModel.currentMysteryIndex + 1)
+    }
+
+    /// "The Fourth Mystery", for a set whose mysteries are not known
+    private static func unknownMysteryLabel(ordinal: Int) -> String {
+        String(
+            localized: "The \(Constants.ordinalWord(ordinal)) Mystery",
+            comment: "Prayer screen: a decade by its place when its set is not known; the ordinal is a word like Fourth"
+        )
     }
 
     /// What to do on the bead under the hand, for the reader's bead row
@@ -504,18 +512,31 @@ struct MysteryPrayerView: View {
         }
         if viewModel.isLastBeadOfRosary { return nil }
         if viewModel.isDecadePrayed, viewModel.isLastMystery, !viewModel.lastMysteryEndsRosary {
-            return "The closing prayers follow on the next tap."
+            return String(
+                localized: "The closing prayers follow on the next tap.",
+                comment: "Meditation reader, bead row cue after the last decade: a tap goes on to the closing prayers"
+            )
         }
         if viewModel.isDecadePrayed {
             let next = meditationSet.mysteryCategory?.mysteryLabel(ordinal: viewModel.currentMysteryIndex + 2)
-                ?? "The \(Constants.ordinalWord(viewModel.currentMysteryIndex + 2)) Mystery"
-            return "\(next) follows on the next tap."
+                ?? Self.unknownMysteryLabel(ordinal: viewModel.currentMysteryIndex + 2)
+            return String(
+                localized: "\(next) follows on the next tap.",
+                comment: "Meditation reader, bead row cue once a decade is prayed: the next mystery's title, like The Second Joyful Mystery"
+            )
         }
         if viewModel.currentBeadIndex == 0 {
-            let act = meditation.hasAudio ? "Listen to" : "Read"
-            return "\(act) the meditation, then tap for the first Hail Mary"
+            return meditation.hasAudio
+                ? String(
+                    localized: "Listen to the meditation, then tap for the first Hail Mary",
+                    comment: "Meditation reader, bead row cue on the Our Father bead of a meditation with narration"
+                )
+                : String(
+                    localized: "Read the meditation, then tap for the first Hail Mary",
+                    comment: "Meditation reader, bead row cue on the Our Father bead of a meditation with no narration"
+                )
         }
-        return "Tap for the next bead"
+        return String(localized: "Tap for the next bead", comment: "Meditation reader, bead row cue on a Hail Mary bead")
     }
 
     // MARK: - The Painting
@@ -549,7 +570,10 @@ struct MysteryPrayerView: View {
             meditationId: meditation?.id ?? 0,
             audioURL: viewModel.currentRemoteAudioURL,
             voice: viewModel.currentNarrationVoice,
-            shareText: "\(title) — a meditation from \(meditationSet.name) on Lumen Viae",
+            shareText: String(
+                localized: "\(title) — a meditation from \(meditationSet.name) on Lumen Viae",
+                comment: "Text shared from the prayer screen: the meditation's title, then its set's name; Lumen Viae is the app's name"
+            ),
             feedbackContext: FeedbackContext(
                 meditationTitle: title,
                 setName: meditationSet.name
@@ -882,7 +906,11 @@ struct MysteryPrayerView: View {
             }
 
             HStack {
-                PrayerHeaderButton(icon: "ph-x", size: 18, label: "End prayer") {
+                PrayerHeaderButton(
+                    icon: "ph-x",
+                    size: 18,
+                    label: String(localized: "End prayer", comment: "Prayer screen: VoiceOver name of the close button that leaves the Rosary")
+                ) {
                     router.popToRoot()
                 }
                 Spacer()
@@ -910,12 +938,14 @@ struct MysteryPrayerView: View {
                 .accessibilityValue(viewModel.beadLabel)
                 .accessibilityHint(
                     beadsLocked
-                        ? "The beads unlock when the meditation ends"
-                        : (viewModel.isLastBeadOfRosary ? "" : "Swipe down, or use the actions, for the next bead")
+                        ? Text("The beads unlock when the meditation ends")
+                        : (viewModel.isLastBeadOfRosary
+                            ? Text(verbatim: "")
+                            : Text("Swipe down, or use the actions, for the next bead"))
                 )
                 .accessibilityAction(named: "Next bead", prayForward)
                 .accessibilityAction(named: "Previous bead", prayBack)
-                .accessibilityAction(named: showsBeadWords ? "Hide the prayer's words" : "Show the prayer's words") {
+                .accessibilityAction(named: showsBeadWords ? Text("Hide the prayer's words") : Text("Show the prayer's words")) {
                     showsBeadWords.toggle()
                 }
 
@@ -965,7 +995,13 @@ struct MysteryPrayerView: View {
         return TransportButton(
             icon: .symbol(aloud ? "backward.end" : "gobackward.10"),
             size: aloud ? size - 4 : size,
-            label: aloud ? "Previous prayer" : "Back 10 seconds"
+            label: aloud ? String(
+                localized: "Previous prayer",
+                comment: "Prayer screen, said aloud: VoiceOver name of the button that goes back a prayer"
+            ) : String(
+                localized: "Back 10 seconds",
+                comment: "Prayer screen: VoiceOver name of the button that skips the narration back ten seconds"
+            )
         ) {
             if aloud { viewModel.stepSpokenPrayer(forward: false) } else { viewModel.skipBackward() }
         }
@@ -983,7 +1019,13 @@ struct MysteryPrayerView: View {
         return TransportButton(
             icon: .symbol(aloud ? "forward.end" : "goforward.10"),
             size: aloud ? size - 4 : size,
-            label: aloud ? "Next prayer" : "Forward 10 seconds"
+            label: aloud ? String(
+                localized: "Next prayer",
+                comment: "Prayer screen, said aloud: VoiceOver name of the button that goes on a prayer"
+            ) : String(
+                localized: "Forward 10 seconds",
+                comment: "Prayer screen: VoiceOver name of the button that skips the narration forward ten seconds"
+            )
         ) {
             if aloud { viewModel.stepSpokenPrayer(forward: true) } else { viewModel.skipForward() }
         }
@@ -1052,7 +1094,10 @@ struct MysteryPrayerView: View {
             TransportButton(
                 icon: .asset("ph-arrow-left"),
                 size: 20,
-                label: "Previous mystery"
+                label: String(
+                    localized: "Previous mystery",
+                    comment: "Prayer screen, counted on one's own rosary: VoiceOver name of the arrow back to the previous mystery"
+                )
             ) {
                 travel = .back
                 withAnimation(Motion.decadeTurn) { viewModel.retreatOffTheBeads() }
@@ -1087,8 +1132,17 @@ struct MysteryPrayerView: View {
                 icon: .asset(finishesHere ? "ph-check" : "ph-arrow-right"),
                 size: finishesHere ? 21 : 20,
                 label: finishesHere
-                    ? "Amen — finish the Rosary"
-                    : (viewModel.isLastMystery ? "The closing prayers" : "Next mystery"),
+                    ? String(
+                        localized: "Amen — finish the Rosary",
+                        comment: "Prayer screen: VoiceOver name of the check on the last mystery that finishes the Rosary"
+                    )
+                    : (viewModel.isLastMystery ? String(
+                        localized: "The closing prayers",
+                        comment: "Prayer screen: VoiceOver name of the arrow on the last mystery, which goes on to the closing prayers"
+                    ) : String(
+                        localized: "Next mystery",
+                        comment: "Prayer screen, counted on one's own rosary: VoiceOver name of the arrow on to the next mystery"
+                    )),
                 action: handleNextMystery
             )
             // During the opening prayers said aloud the next mystery was
@@ -1181,7 +1235,10 @@ struct MysteryPrayerView: View {
 
             HStack(spacing: 12) {
                 QuietGoldButton(
-                    title: "Back",
+                    title: String(
+                        localized: "Back",
+                        comment: "Prayer screen, the opening and closing prayers: the quiet button back to the prayer before"
+                    ),
                     leadingIcon: "ph-caret-left",
                     leadingIconSize: 10,
                     horizontalPadding: 0
@@ -1194,7 +1251,10 @@ struct MysteryPrayerView: View {
 
                 if isLast {
                     GoldCTAButton(
-                        title: "Amen",
+                        title: String(
+                            localized: "Amen",
+                            comment: "Prayer screen, last closing prayer: the gold button that finishes the Rosary"
+                        ),
                         prominence: .inline,
                         trailingIcon: "ph-check",
                         fullWidth: false,
@@ -1204,7 +1264,20 @@ struct MysteryPrayerView: View {
                     .transition(.opacity)
                 } else {
                     QuietGoldButton(
-                        title: isLastOpening ? (chaplet ? "The first sorrow" : "The first mystery") : "Next prayer",
+                        title: isLastOpening
+                            ? (chaplet
+                                ? String(
+                                    localized: "The first sorrow",
+                                    comment: "Prayer screen, last opening prayer of the Seven Sorrows chaplet: the button on to the first sorrow"
+                                )
+                                : String(
+                                    localized: "The first mystery",
+                                    comment: "Prayer screen, last opening prayer: the button on to the first mystery"
+                                ))
+                            : String(
+                                localized: "Next prayer",
+                                comment: "Prayer screen, the opening and closing prayers: the button on to the next prayer"
+                            ),
                         trailingIcon: "ph-caret-right",
                         horizontalPadding: 0
                     ) {
@@ -1409,7 +1482,10 @@ struct MysteryPrayerView: View {
                 icon: "ph-faders",
                 size: 21,
                 tint: Self.utilityTint,
-                label: "Playback settings"
+                label: String(
+                    localized: "Playback settings",
+                    comment: "Prayer screen: VoiceOver name of the button that opens the voice, speed and Rosary choices"
+                )
             ) {
                 activeSheet = .playback
             }
@@ -1420,7 +1496,10 @@ struct MysteryPrayerView: View {
                     icon: "ph-book-open",
                     size: 21,
                     tint: Self.utilityTint,
-                    label: "Read the meditation"
+                    label: String(
+                        localized: "Read the meditation",
+                        comment: "Prayer screen: VoiceOver name of the button that opens the meditation as text"
+                    )
                 ) {
                     setReaderOpen(true)
                 }
@@ -1430,7 +1509,10 @@ struct MysteryPrayerView: View {
                 icon: "ph-dots-three",
                 size: 23,
                 tint: Self.utilityTint,
-                label: "More"
+                label: String(
+                    localized: "More",
+                    comment: "Prayer screen: VoiceOver name of the button that opens the menu of more actions"
+                )
             ) {
                 activeSheet = .tray
             }

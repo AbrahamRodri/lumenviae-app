@@ -172,8 +172,8 @@ struct PrayerCompletionView: View {
                             }
                             .buttonStyle(GoldCTAButtonStyle())
                             .animation(Motion.crossfade, value: savedReflection)
-                            .accessibilityLabel(savedReflection ? "Return home" : "Not now")
-                            .accessibilityHint(savedReflection ? "" : "Returns home")
+                            .accessibilityLabel(savedReflection ? Text("Return home") : Text("Not now"))
+                            .accessibilityHint(savedReflection ? Text(verbatim: "") : Text("Returns home"))
                         }
                         .padding(.horizontal, 20)
                         .padding(.bottom, 16)

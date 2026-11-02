@@ -176,17 +176,27 @@ enum RosaryInfoRow: Hashable {
     var title: String {
         switch self {
         case .audio: return RosaryChoice.audio.title
-        case .mysteries: return "Mysteries"
-        case .voice: return "Voice & speed"
+        case .mysteries:
+            return String(localized: "Mysteries", comment: "A Rosary's own page: name of the row that opens the choice of mysteries")
+        case .voice:
+            return String(localized: "Voice & speed", comment: "A Rosary's own page: name of the row that opens the narration voice and speed")
         }
     }
 
     /// The Holy Rosary's audio, said as a fact rather than offered
-    static let holyAudioValue = "Whole Rosary · pause anytime"
+    static let holyAudioValue = String(
+        localized: "Whole Rosary · pause anytime",
+        comment: "The Audio Rosary's own page: the Audio row's value, a fact rather than a choice: every prayer is said aloud and can be paused"
+    )
 
     /// "Joyful · today", or the mysteries' name alone on another day's
     static func mysteriesValue(_ category: MysteryCategory, today: MysteryCategory) -> String {
-        category == today ? "\(category.displayName) · today" : category.displayName
+        category == today
+            ? String(
+                localized: "\(category.displayName) · today",
+                comment: "A Rosary's own page: the Mysteries row's value when today's mysteries are chosen, like Joyful · today"
+            )
+            : category.displayName
     }
 
     /// "Female · 1×"

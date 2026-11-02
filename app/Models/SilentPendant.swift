@@ -95,8 +95,16 @@ struct SilentPendant: Equatable {
     /// "1 of 7", counted on its own side of the decades
     func count(of step: Step) -> String {
         switch step {
-        case .opening(let index): return "\(index + 1) of \(opening.count)"
-        case .closing(let index): return "\(index + 1) of \(closing.count)"
+        case .opening(let index):
+            return String(
+                localized: "\(index + 1) of \(opening.count)",
+                comment: "Prayer screen, the opening prayers on the cross: which prayer of the opening this is, like 2 of 7"
+            )
+        case .closing(let index):
+            return String(
+                localized: "\(index + 1) of \(closing.count)",
+                comment: "Prayer screen, the closing prayers: which prayer of the close this is, like 1 of 3"
+            )
         }
     }
 
@@ -105,8 +113,14 @@ struct SilentPendant: Equatable {
     /// Creed, an Our Father, three Hail Marys and a Glory Be"
     static func openingSummary(isChaplet: Bool) -> String {
         isChaplet
-            ? "Then the Act of Contrition, and the first sorrow."
-            : "Then the Apostles' Creed, an Our Father, three Hail Marys and a Glory Be."
+            ? String(
+                localized: "Then the Act of Contrition, and the first sorrow.",
+                comment: "Prayer screen, Seven Sorrows chaplet, first opening prayer: a line naming what follows"
+            )
+            : String(
+                localized: "Then the Apostles' Creed, an Our Father, three Hail Marys and a Glory Be.",
+                comment: "Prayer screen, the Rosary's first opening prayer (the Sign of the Cross): a line naming what follows"
+            )
     }
 
     // MARK: - The Words

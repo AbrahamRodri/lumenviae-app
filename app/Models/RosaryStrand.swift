@@ -90,17 +90,50 @@ struct RosaryStrand: Hashable {
     /// is named for both; a sorrow of the chaplet closes on the Glory Be
     /// alone.
     func label(bead: Int) -> String {
-        if bead <= 0 { return "Our Father" }
-        if bead > hailMarys { return saysFatimaPrayer ? "Glory Be & Fatima Prayer" : "Glory Be" }
-        return "Hail Mary · \(bead) of \(hailMarys)"
+        if bead <= 0 { return String(localized: "Our Father", comment: "Prayer screen: name of the bead under the hand, the Our Father") }
+        if bead > hailMarys {
+            return saysFatimaPrayer
+                ? String(
+                    localized: "Glory Be & Fatima Prayer",
+                    comment: "Prayer screen: name of the bead that closes a decade, said with the Glory Be and the Fatima Prayer"
+                )
+                : String(localized: "Glory Be", comment: "Prayer screen: name of the bead that closes a sorrow of the chaplet, the Glory Be alone")
+        }
+        return String(
+            localized: "Hail Mary · \(bead) of \(hailMarys)",
+            comment: "Prayer screen: name of a Hail Mary bead and which of the decade's Hail Marys it is, like Hail Mary · 4 of 10"
+        )
     }
 
     /// The same name broken for the strand's margin, where a line is a
     /// dozen characters: the prayer, then its count or its companion.
     func labelLines(bead: Int) -> [String] {
-        if bead <= 0 { return ["Our Father"] }
-        if bead > hailMarys { return saysFatimaPrayer ? ["Glory Be &", "Fatima Prayer"] : ["Glory Be"] }
-        return ["Hail Mary", "\(bead) of \(hailMarys)"]
+        let ourFather = String(
+            localized: "Our Father",
+            comment: "Prayer screen: name of the bead under the hand, the Our Father"
+        )
+        if bead <= 0 { return [ourFather] }
+        if bead > hailMarys {
+            return saysFatimaPrayer
+                ? [
+                    String(
+                        localized: "Glory Be &",
+                        comment: "Strand margin, first of two short lines naming the bead that closes a decade: Glory Be & / Fatima Prayer"
+                    ),
+                    String(
+                        localized: "Fatima Prayer",
+                        comment: "Strand margin, second of two short lines naming the bead that closes a decade: Glory Be & / Fatima Prayer"
+                    ),
+                ]
+                : [String(localized: "Glory Be", comment: "Prayer screen: name of the bead that closes a sorrow of the chaplet, the Glory Be alone")]
+        }
+        return [
+            String(localized: "Hail Mary", comment: "Strand margin, first of two short lines naming a Hail Mary bead: Hail Mary / 4 of 10"),
+            String(
+                localized: "\(bead) of \(hailMarys)",
+                comment: "Strand margin, second of two short lines naming a Hail Mary bead: which Hail Mary of the decade, like 4 of 10"
+            ),
+        ]
     }
 
     /// The label beside a bead on the drawn strand, where one is drawn:
@@ -115,7 +148,7 @@ struct RosaryStrand: Hashable {
         switch bead(at: index) {
         case .ourFather(let decade): return "\(decade + 1)"
         case .hailMary: return nil
-        case .amen: return "Amen"
+        case .amen: return String(localized: "Amen", comment: "Drawn strand: the label beside the last bead, where the Rosary ends")
         }
     }
 }

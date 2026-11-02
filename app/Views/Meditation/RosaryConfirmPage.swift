@@ -258,7 +258,10 @@ struct RosaryConfirmPage<Painting: View, Choices: View, Ledger: View>: View {
 
     private var header: some View {
         HStack {
-            PrayerHeaderButton(icon: "ph-caret-left", size: 16, label: "Back", action: onBack)
+            PrayerHeaderButton(icon: "ph-caret-left", size: 16, label: String(
+                localized: "Back",
+                comment: "A Rosary's own page: VoiceOver name of the back button"
+            ), action: onBack)
             Spacer()
         }
         .padding(.horizontal, 16)
@@ -275,7 +278,10 @@ struct RosaryConfirmPage<Painting: View, Choices: View, Ledger: View>: View {
     /// Tinted in `backgroundDeep`, where the page's gradient ends, so it
     /// only ever deepens.
     private var prayFoot: some View {
-        GoldCTAButton(title: "Pray", glyph: .play, action: onPray)
+        GoldCTAButton(title: String(
+            localized: "Pray",
+            comment: "A Rosary's own page: the gold button that begins the Rosary"
+        ), glyph: .play, action: onPray)
             .disabled(!prayEnabled)
             .padding(.horizontal, 24)
             .padding(.top, 40)
@@ -382,7 +388,10 @@ struct RosaryChoicesSection: View {
             RosaryInfoRowView(
                 title: row.title,
                 value: RosaryInfoRow.mysteriesValue(chosenCategory ?? today, today: today),
-                hint: "Choose the mysteries"
+                hint: String(
+                    localized: "Choose the mysteries",
+                    comment: "A Rosary's own page: VoiceOver hint on the Mysteries row"
+                )
             ) {
                 sheet = .mysteries
             }
@@ -395,7 +404,10 @@ struct RosaryChoicesSection: View {
                     // meanwhile may have borrowed the player from
                     rate: PlaybackSpeedChoice.rateLabel(AudioService.shared.appRate)
                 ),
-                hint: "Choose the voice and its speed"
+                hint: String(
+                    localized: "Choose the voice and its speed",
+                    comment: "A Rosary's own page: VoiceOver hint on the Voice & speed row"
+                )
             ) {
                 sheet = .voice
             }
@@ -609,7 +621,10 @@ struct RosaryChoiceSettingsRow: View {
     var isAvailable: Bool = true
 
     /// What the row says while it is not available
-    var unavailableNote: String = "With the Whole Rosary, the voice moves the beads on the screen."
+    var unavailableNote: String = String(
+        localized: "With the Whole Rosary, the voice moves the beads on the screen.",
+        comment: "A Rosary's own page and Settings: why the Counting choice is dimmed while the Whole Rosary is chosen"
+    )
 
     /// False while the setting stands at a default nobody chose
     /// (`RosaryChoicePill.isAnswered`)
@@ -763,20 +778,38 @@ private struct VoiceAndSpeedSheet: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                SheetHeader(kicker: "Your Rosary today", title: "Voice & speed") {
-                    SheetHeaderAction(title: "Done") { dismiss() }
+                SheetHeader(kicker: String(
+                    localized: "Your Rosary today",
+                    comment: "Voice & speed sheet from a Rosary's own page: small capitals over its title"
+                ), title: String(
+                    localized: "Voice & speed",
+                    comment: "Voice & speed sheet from a Rosary's own page: its title"
+                )) {
+                    SheetHeaderAction(title: String(
+                        localized: "Done",
+                        comment: "Sheet header button that closes the sheet"
+                    )) { dismiss() }
                 }
 
-                SheetSectionLabel("Voice")
+                SheetSectionLabel(String(
+                    localized: "Voice",
+                    comment: "Voice & speed sheet: section label over the narration voices"
+                ))
                 NarrationVoiceChoice()
                     .padding(.horizontal, SheetMetrics.gutter)
 
-                SheetSectionLabel("Speed")
+                SheetSectionLabel(String(
+                    localized: "Speed",
+                    comment: "Voice & speed sheet: section label over the narration speed slider"
+                ))
                 PlaybackSpeedChoice()
                     .padding(.horizontal, SheetMetrics.gutter)
 
                 if category != .sevenSorrows {
-                    SheetSectionLabel("After the Rosary")
+                    SheetSectionLabel(String(
+                        localized: "After the Rosary",
+                        comment: "Voice & speed sheet: section label over the prayers that may be said after the Rosary"
+                    ))
                     ForEach(RosaryClosingExtra.allCases, id: \.self) { extra in
                         switchRow(
                             extra.title,
@@ -789,8 +822,14 @@ private struct VoiceAndSpeedSheet: View {
                         )
                     }
                     SheetNote(form == .holy
-                        ? "Played after the closing prayer."
-                        : "Played after the closing prayer, with the Whole Rosary.")
+                        ? String(
+                            localized: "Played after the closing prayer.",
+                            comment: "Voice & speed sheet, Audio Rosary: note under the prayers after the Rosary"
+                        )
+                        : String(
+                            localized: "Played after the closing prayer, with the Whole Rosary.",
+                            comment: "Voice & speed sheet: note under the prayers after the Rosary, which are said only when every prayer is said aloud"
+                        ))
                 }
             }
             .padding(.bottom, 24)
@@ -809,7 +848,7 @@ private struct VoiceAndSpeedSheet: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel(title)
-        .accessibilityValue(isOn.wrappedValue ? "On" : "Off")
+        .accessibilityValue(isOn.wrappedValue ? Text("On") : Text("Off"))
         .accessibilityHint(detail)
         .accessibilityAddTraits(.isToggle)
     }
@@ -832,10 +871,19 @@ private struct MysteriesChoiceSheet: View {
         VStack(alignment: .leading, spacing: 0) {
             SheetHeader(
                 kicker: ScripturalRosaryViewModel.displayName(for: form == .holy ? SpokenForm.plain : .scriptural),
-                title: "Choose the Mysteries",
-                lead: "The scenes from the lives of Jesus and Mary that you will pray on."
+                title: String(
+                    localized: "Choose the Mysteries",
+                    comment: "Choose the Mysteries sheet from a Rosary's own page: its title"
+                ),
+                lead: String(
+                    localized: "The scenes from the lives of Jesus and Mary that you will pray on.",
+                    comment: "Choose the Mysteries sheet: the line under the title saying what the mysteries are"
+                )
             ) {
-                SheetHeaderAction(title: "Done") { dismiss() }
+                SheetHeaderAction(title: String(
+                    localized: "Done",
+                    comment: "Sheet header button that closes the sheet"
+                )) { dismiss() }
             }
 
             ForEach(MysteryCategory.allCases, id: \.self) { category in
@@ -850,14 +898,27 @@ private struct MysteriesChoiceSheet: View {
                         // The check takes the trailing edge from TODAY when
                         // today's mysteries are the chosen ones, as they
                         // usually are: the line under the name says it
-                        detail: chosen && category == today ? "Today · \(category.subtitle)" : category.subtitle,
+                        detail: chosen && category == today
+                            ? String(
+                                localized: "Today · \(category.subtitle)",
+                                comment: "Choose the Mysteries sheet: the line under today's mysteries when they are chosen; the rest says what they are about"
+                            )
+                            : category.subtitle,
                         icon: category.iconName,
-                        accessory: chosen ? .check : (category == today ? .label("Today") : .none),
+                        accessory: chosen
+                            ? .check
+                            : (category == today
+                                ? .label(String(localized: "Today", comment: "Choose the Mysteries sheet: small tracked label beside today's mysteries"))
+                                : .none),
                         isLit: chosen
                     )
                 }
                 .buttonStyle(SacredCardButtonStyle())
-                .accessibilityLabel(category.devotionTitle + (category == today ? ", today's" : ""))
+                .accessibilityLabel(
+                    category == today
+                        ? Text("\(category.devotionTitle), today's")
+                        : Text(category.devotionTitle)
+                )
                 .accessibilityAddTraits(chosen ? [.isSelected] : [])
             }
         }
